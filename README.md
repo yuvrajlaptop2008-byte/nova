@@ -31,79 +31,17 @@ MIT — see [LICENSE](LICENSE).
 > below may still reference upstream terminology; the code and repository are
 > fully independent.
 
-## Sponsors
-
-<table>
-  <tr>
-    <td align="center" width="16.66%">
-      <a href="https://openai.com/">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/openai-light.svg">
-          <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/openai.svg" alt="OpenAI" height="28">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="16.66%">
-      <a href="https://github.com/">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/github-light.svg">
-          <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/github.svg" alt="GitHub" height="28">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="16.66%">
-      <a href="https://www.nvidia.com/">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/nvidia.svg">
-          <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/nvidia-dark.svg" alt="NVIDIA" height="28">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="16.66%">
-      <a href="https://vercel.com/">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/vercel-light.svg">
-          <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/vercel.svg" alt="Vercel" height="24">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="16.66%">
-      <a href="https://blacksmith.sh/">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/blacksmith-light.svg">
-          <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/blacksmith.svg" alt="Blacksmith" height="28">
-        </picture>
-      </a>
-    </td>
-    <td align="center" width="16.66%">
-      <a href="https://www.convex.dev/">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/convex-light.svg">
-          <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/sponsors/convex.svg" alt="Convex" height="24">
-        </picture>
-      </a>
-    </td>
-  </tr>
-</table>
-
-**Subscriptions (OAuth):**
-
-- **[OpenAI](https://openai.com/)** (ChatGPT/Codex)
-
-Model note: while many providers and models are supported, prefer a current flagship model from the provider you trust and already use. See [Onboarding](https://docs.nova.dev/start/wizard).
-
 ## Install (recommended)
 
 Runtime: **Node 24.15+ (recommended), Node 22.22.3+, or Node 25.9+**.
 
 ```bash
-npm install -g openclaw@latest
-# or: pnpm add -g openclaw@latest
-
-openclaw onboard --install-daemon
+# Cross-platform install (macOS / Linux / Windows via npm or pnpm):
+npm install -g nova@latest        # or: pnpm add -g nova@latest
+nova onboard --install-daemon
 ```
 
-OpenClaw Onboard installs the Gateway daemon (launchd/systemd user service) so it stays running.
+Nova Onboard installs the Gateway daemon (launchd/systemd user service) so it stays running.
 
 ## Quick start (TL;DR)
 
@@ -114,8 +52,8 @@ Full beginner guide (auth, pairing, channels): [Getting started](https://docs.no
 Recommended daemon mode:
 
 ```bash
-openclaw onboard --install-daemon
-openclaw gateway status
+nova onboard --install-daemon
+nova gateway status
 ```
 
 Foreground/debug mode:

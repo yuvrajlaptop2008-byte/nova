@@ -20,7 +20,7 @@
     "url": "git+https://github.com/yuvrajlaptop2008-byte/nova.git"
   },
   "bin": {
-    "openclaw": "openclaw.mjs"
+    "nova": "nova.mjs"
   },
   "directories": {
     "doc": "docs",
@@ -30,7 +30,7 @@
     "CHANGELOG.md",
     "LICENSE",
     "npm-shrinkwrap.json",
-    "openclaw.mjs",
+    "nova.mjs",
     "pnpm-workspace.yaml",
     "README.md",
     "THIRD_PARTY_NOTICES.md",
@@ -914,7 +914,7 @@
       "types": "./dist/plugin-sdk/zod.d.ts",
       "default": "./dist/plugin-sdk/zod.js"
     },
-    "./cli-entry": "./openclaw.mjs"
+    "./cli-entry": "./nova.mjs"
   },
   "scripts": {
     "android:assemble": "node scripts/run-android-gradle.mjs :app:assemblePlayDebug :wear-shared:assembleDebug",
@@ -1202,7 +1202,7 @@
     "runtime-sidecars:gen": "node --import tsx scripts/generate-runtime-sidecar-paths-baseline.ts --write",
     "sqlite:sessions-schema:check": "node --import tsx scripts/generate-sqlite-session-schema-baseline.ts --check",
     "sqlite:sessions-schema:gen": "node --import tsx scripts/generate-sqlite-session-schema-baseline.ts --write",
-    "start": "node openclaw.mjs",
+    "start": "node nova.mjs",
     "test": "node scripts/test-projects.mjs",
     "test:all": "pnpm lint && pnpm build && pnpm test && pnpm test:e2e && pnpm test:live && pnpm test:docker:all",
     "test:auth:compat": "node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway.config.ts src/gateway/server.auth.compat-baseline.test.ts src/gateway/client.test.ts src/gateway/reconnect-gating.test.ts && node scripts/run-vitest.mjs run packages/gateway-protocol/src/connect-error-details.test.ts",

@@ -608,7 +608,7 @@ NODE
           "set -euo pipefail",
           `cd ${JSON.stringify(process.cwd())}`,
           `source ${JSON.stringify(SCRIPT_PATH)}`,
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install nova@latest ${JSON.stringify(join(tmp, "install.log"))}`,
           'printf "cmd=%s\\n" "$LAST_NPM_INSTALL_CMD"',
         ].join("\n"),
         {
@@ -676,7 +676,7 @@ NODE
           "set -euo pipefail",
           `cd ${JSON.stringify(process.cwd())}`,
           `source ${JSON.stringify(SCRIPT_PATH)}`,
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install nova@latest ${JSON.stringify(join(tmp, "install.log"))}`,
           'printf "cmd=%s\\n" "$LAST_NPM_INSTALL_CMD"',
         ].join("\n"),
         {
@@ -746,7 +746,7 @@ NODE
           "set -euo pipefail",
           `cd ${JSON.stringify(process.cwd())}`,
           `source ${JSON.stringify(SCRIPT_PATH)}`,
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install nova@latest ${JSON.stringify(join(tmp, "install.log"))}`,
           'printf "cmd=%s\\n" "$LAST_NPM_INSTALL_CMD"',
         ].join("\n"),
         {
@@ -1117,7 +1117,7 @@ NODE
           `PATH=${JSON.stringify(`${bin}:/usr/bin:/bin`)}`,
           "NPM_LOGLEVEL=error",
           "NPM_SILENT_FLAG=",
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install nova@latest ${JSON.stringify(join(tmp, "install.log"))}`,
         ].join("\n"),
       );
       argsOutput = readFileSync(argsLog, "utf8");
@@ -1155,7 +1155,7 @@ NODE
           `PATH=${JSON.stringify(`${bin}:/usr/bin:/bin`)}`,
           "NPM_LOGLEVEL=error",
           "NPM_SILENT_FLAG=",
-          `run_npm_global_install openclaw@latest ${JSON.stringify(join(tmp, "install.log"))}`,
+          `run_npm_global_install nova@latest ${JSON.stringify(join(tmp, "install.log"))}`,
         ].join("\n"),
       );
       argsOutput = readFileSync(argsLog, "utf8");
@@ -1602,7 +1602,7 @@ NODE
     expect(noSudoWarningIndex).toBeGreaterThan(npmSetIndex);
     expect(result?.stdout).toContain("npm global prefix is not writable");
     expect(result?.stdout).toContain("npm normally writes that setting to ~/.npmrc");
-    expect(result?.stdout).toContain("npm i -g openclaw@latest");
+    expect(result?.stdout).toContain("npm i -g nova@latest");
     expect(result?.stdout).toContain("using this user prefix");
     expect(result?.stdout).not.toContain("has been saved");
   });
@@ -2152,7 +2152,7 @@ describe("install.sh duplicate OpenClaw install detection", () => {
     expect(result.stdout).toContain("/brew/openclaw");
     expect(result.stdout).toContain("/fnm/openclaw");
     expect(result.stdout).toContain("Active openclaw:");
-    expect(result.stdout).toContain("npm uninstall -g openclaw");
+    expect(result.stdout).toContain("npm uninstall -g nova");
   });
 
   it("stays quiet when only one OpenClaw npm root exists", () => {

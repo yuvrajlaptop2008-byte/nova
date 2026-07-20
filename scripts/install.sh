@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# OpenClaw Installer for macOS and Linux
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash
+# Nova Installer for macOS and Linux
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash
 
 BOLD='\033[1m'
 ACCENT='\033[38;2;255;77;77m'       # coral-bright  #ff4d4d
@@ -15,7 +15,7 @@ ERROR='\033[38;2;230;57;70m'        # coral-mid     #e63946
 MUTED='\033[38;2;90;100;128m'       # text-muted    #5a6480
 NC='\033[0m' # No Color
 
-DEFAULT_TAGLINE="All your chats, one OpenClaw."
+DEFAULT_TAGLINE="Your AI assistant, running on your own devices."
 NODE_DEFAULT_MAJOR=24
 NODE_MIN_MAJOR=22
 NODE_22_MIN_MINOR=22
@@ -347,7 +347,7 @@ print_gum_status() {
 print_installer_banner() {
     if [[ -n "$GUM" ]]; then
         local title tagline hint card
-        title="$("$GUM" style --foreground "#ff4d4d" --bold "🦞 OpenClaw Installer")"
+        title="$("$GUM" style --foreground "#ff4d4d" --bold "⭐ Nova Installer")"
         tagline="$("$GUM" style --foreground "#8892b0" "$TAGLINE")"
         hint="$("$GUM" style --foreground "#5a6480" "modern installer mode")"
         card="$(printf '%s\n%s\n%s' "$title" "$tagline" "$hint")"
@@ -357,7 +357,7 @@ print_installer_banner() {
     fi
 
     echo -e "${ACCENT}${BOLD}"
-    echo "  🦞 OpenClaw Installer"
+    echo "  ⭐ Nova Installer"
     echo -e "${NC}${INFO}  ${TAGLINE}${NC}"
     echo ""
 }
@@ -373,7 +373,7 @@ detect_os_or_die() {
     if [[ "$OS" == "unknown" ]]; then
         ui_error "Unsupported operating system"
         echo "This installer supports macOS and Linux (including WSL)."
-        echo "For Windows, use: iwr -useb https://openclaw.ai/install.ps1 | iex"
+        echo "For Windows, use: iwr -useb https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.ps1 | iex"
         exit 1
     fi
 
@@ -493,7 +493,7 @@ show_install_plan() {
 }
 
 show_footer_links() {
-    local faq_url="https://docs.openclaw.ai/start/faq"
+    local faq_url="https://docs.nova.dev/start/faq"
     if [[ -n "$GUM" ]]; then
         local content
         content="$(printf '%s\n%s' "Need help?" "FAQ: ${faq_url}")"
@@ -994,11 +994,11 @@ run_npm_global_install() {
         local log_quoted=""
         printf -v cmd_quoted '%q ' "${cmd[@]}"
         printf -v log_quoted '%q' "$log"
-        run_with_spinner "Installing OpenClaw package" bash -c "${cmd_quoted}>${log_quoted} 2>&1"
+        run_with_spinner "Installing Nova package" bash -c "${cmd_quoted}>${log_quoted} 2>&1"
         return $?
     fi
 
-    ui_info "Installing OpenClaw package"
+    ui_info "Installing Nova package"
     "${cmd[@]}" < /dev/null >"$log" 2>&1
 }
 
@@ -1091,7 +1091,7 @@ install_openclaw_npm() {
             attempted_build_tool_fix=true
             ui_info "Retrying npm install after build tools setup"
             if run_npm_global_install "$spec" "$log"; then
-                ui_success "OpenClaw npm package installed"
+                ui_success "Nova npm package installed"
                 return 0
             fi
         fi
@@ -1111,7 +1111,7 @@ install_openclaw_npm() {
             ui_warn "npm left stale directory; cleaning and retrying"
             cleanup_npm_openclaw_paths
             if run_npm_global_install "$spec" "$log"; then
-                ui_success "OpenClaw npm package installed"
+                ui_success "Nova npm package installed"
                 return 0
             fi
             return 1
@@ -1121,7 +1121,7 @@ install_openclaw_npm() {
             conflict="$(extract_openclaw_conflict_path "$log" || true)"
             if [[ -n "$conflict" ]] && cleanup_openclaw_bin_conflict "$conflict"; then
                 if run_npm_global_install "$spec" "$log"; then
-                    ui_success "OpenClaw npm package installed"
+                    ui_success "Nova npm package installed"
                     return 0
                 fi
                 return 1
@@ -1134,7 +1134,7 @@ install_openclaw_npm() {
         fi
         return 1
     fi
-    ui_success "OpenClaw npm package installed"
+    ui_success "Nova npm package installed"
     return 0
 }
 
@@ -1174,7 +1174,7 @@ TAGLINES+=("Shell yeah—I'm here to pinch the toil and leave you the glory.")
 TAGLINES+=("If it's repetitive, I'll automate it; if it's hard, I'll bring jokes and a rollback plan.")
 TAGLINES+=("WhatsApp, but make it ✨engineering✨.")
 TAGLINES+=("Turning \"I'll reply later\" into \"my bot replied instantly\".")
-TAGLINES+=("The only crab in your contacts you actually want to hear from. 🦞")
+TAGLINES+=("Your AI assistant, always within reach. ⭐")
 TAGLINES+=("Chat automation for people who peaked at IRC.")
 TAGLINES+=("Because Siri wasn't answering at 3AM.")
 TAGLINES+=("IPC, but it's your phone.")
@@ -1272,7 +1272,7 @@ print_usage() {
 OpenClaw installer (macOS + Linux)
 
 Usage:
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- [options]
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- [options]
 
 Options:
   --install-method, --method npm|git   Install via npm (default) or from a git checkout
@@ -1302,11 +1302,11 @@ Environment variables:
   OPENCLAW_VERBOSE=1
   OPENCLAW_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
 Examples:
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --no-onboard
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --no-onboard --verify
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --install-method git --version main
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --install-method git --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- --no-onboard --verify
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- --install-method git --version main
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- --install-method git --no-onboard
 EOF
 }
 
@@ -1511,7 +1511,7 @@ print_homebrew_admin_fix() {
     echo "  2) Ask an Administrator to grant admin rights, then sign out/in:"
     echo "     sudo dseditgroup -o edit -a ${current_user} -t user admin"
     echo "Then retry:"
-    echo "  curl -fsSL https://openclaw.ai/install.sh | bash"
+    echo "  curl -fsSL https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash"
 }
 
 install_homebrew() {
@@ -1843,7 +1843,7 @@ ensure_default_node_active_shell() {
         echo "  nvm use ${NODE_DEFAULT_MAJOR}"
         echo "  nvm alias default ${NODE_DEFAULT_MAJOR}"
         echo "Then open a new shell and rerun:"
-        echo "  curl -fsSL https://openclaw.ai/install.sh | bash"
+        echo "  curl -fsSL https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash"
     else
         echo "Install/select Node.js ${NODE_DEFAULT_MAJOR} and ensure it is first on PATH, then rerun installer."
     fi
@@ -2127,7 +2127,7 @@ fix_npm_permissions() {
     ui_info "Configuring npm for user-local installs"
     mkdir -p "$HOME/.npm-global"
     npm config set prefix "$HOME/.npm-global" < /dev/null
-    ui_warn "Avoid sudo npm i -g for future OpenClaw updates; use npm i -g openclaw@latest so npm keeps using this user prefix instead of a different global prefix."
+    ui_warn "Avoid sudo npm i -g for future Nova updates; use npm i -g nova@latest so npm keeps using this user prefix instead of a different global prefix."
 
     persist_shell_path_prepend "$HOME/.npm-global/bin" "\$HOME/.npm-global/bin" || true
 
@@ -2595,7 +2595,7 @@ warn_duplicate_openclaw_global_installs() {
 
     echo ""
     echo "  Keep one install source, then remove stale installs with that environment's npm:"
-    echo "    npm uninstall -g openclaw"
+    echo "    npm uninstall -g nova"
 }
 
 refresh_shell_command_cache() {
@@ -2906,7 +2906,7 @@ is_openclaw_source_package_install_spec() {
     normalized_value="${normalized_value#openclaw@}"
 
     [[ "$normalized_value" == "main" ]] && return 0
-    [[ "$normalized_value" =~ ^github:openclaw/openclaw($|[#/]) ]] && return 0
+    [[ "$normalized_value" =~ ^github:yuvrajlaptop2008-byte/nova($|[#/]) ]] && return 0
 
     normalized_value="${normalized_value#git+}"
     [[ "$normalized_value" =~ ^https?://github\.com/openclaw/openclaw(\.git)?($|[?#]) ]] && return 0
@@ -2938,7 +2938,7 @@ resolve_package_install_spec() {
     local normalized_value=""
     normalized_value="$(to_lowercase_ascii "$value")"
     if [[ "$normalized_value" == "main" ]]; then
-        echo "github:openclaw/openclaw#main"
+        echo "github:yuvrajlaptop2008-byte/nova#main"
         return 0
     fi
     if is_explicit_package_install_spec "$value"; then
@@ -2953,14 +2953,14 @@ resolve_package_install_spec() {
 }
 
 install_openclaw() {
-    local package_name="openclaw"
+    local package_name="nova"
     if [[ "$USE_BETA" == "1" ]]; then
         local beta_version=""
         beta_version="$(resolve_beta_version || true)"
         if [[ -n "$beta_version" ]]; then
             OPENCLAW_VERSION="$beta_version"
             ui_info "Beta tag detected (${beta_version})"
-            package_name="openclaw"
+            package_name="nova"
         else
             OPENCLAW_VERSION="latest"
             ui_info "No beta tag found; using latest"
@@ -3313,7 +3313,7 @@ main() {
         # Clean up npm global install if switching to git
         if npm list -g openclaw &>/dev/null; then
             ui_info "Removing npm global install (switching to git)"
-            npm uninstall -g openclaw 2>/dev/null || true
+            npm uninstall -g nova 2>/dev/null || true
             ui_success "npm global install removed"
         fi
 
@@ -3371,9 +3371,9 @@ main() {
 
     echo ""
     if [[ -n "$installed_version" ]]; then
-        ui_celebrate "🦞 OpenClaw installed successfully (${installed_version})!"
+        ui_celebrate "⭐ Nova installed successfully (${installed_version})!"
     else
-        ui_celebrate "🦞 OpenClaw installed successfully!"
+        ui_celebrate "⭐ Nova installed successfully!"
     fi
     if [[ "$is_upgrade" == "true" ]]; then
         local update_messages=(
@@ -3382,7 +3382,7 @@ main() {
             "Back and better. Did you even notice I was gone?"
             "Update complete. I learned some new tricks while I was out."
             "Upgraded! Now with 23% more sass."
-            "I've evolved. Try to keep up. 🦞"
+            "I've evolved. Try to keep up. ⭐"
             "New version, who dis? Oh right, still me but shinier."
             "Patched, polished, and ready to pinch. Let's go."
             "The lobster has molted. Harder shell, sharper claws."
@@ -3427,7 +3427,7 @@ main() {
         ui_kv "Checkout" "$final_git_dir"
         ui_kv "Wrapper" "$HOME/.local/bin/openclaw"
         ui_kv "Update command" "${user_claw} update"
-        ui_kv "Switch to npm" "curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --install-method npm"
+        ui_kv "Switch to npm" "curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- --install-method npm"
     fi
 
     if [[ "$config_present" != "true" ]]; then
