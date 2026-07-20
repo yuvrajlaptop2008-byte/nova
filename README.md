@@ -229,7 +229,7 @@ root is not a supported source setup.
 For the dev loop:
 
 ```bash
-git clone https://github.com/openclaw/openclaw.git
+git clone https://github.com/yuvrajlaptop2008-byte/nova.git
 cd openclaw
 
 pnpm install
@@ -286,7 +286,7 @@ Minimal `~/.openclaw/openclaw.json` (model + defaults):
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=openclaw/openclaw&type=date&legend=top-left)](https://www.star-history.com/#openclaw/openclaw&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/svg?repos=yuvrajlaptop2008-byte/nova&type=date&legend=top-left)](https://www.star-history.com/#yuvrajlaptop2008-byte/nova&type=date&legend=top-left)
 
 ## Molty
 
@@ -301,7 +301,7 @@ by Peter Steinberger and the community.
 ## Community
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, maintainers, and how to submit PRs.
-Use the [issue chooser](https://github.com/openclaw/openclaw/issues/new/choose) for bugs, docs bugs, and feature requests;
+Use the [issue chooser](https://github.com/yuvrajlaptop2008-byte/nova/issues/new/choose) for bugs, docs bugs, and feature requests;
 ask setup/support questions in [Discord](https://discord.gg/clawd); and report vulnerabilities through [SECURITY.md](SECURITY.md).
 PRs should link the relevant issue when possible and follow the [PR template](.github/pull_request_template.md) with problem, impact, and evidence.
 AI/vibe-coded PRs welcome! 🤖
