@@ -1,6 +1,6 @@
 import EventKit
 import Foundation
-import OpenClawKit
+import NovaKit
 
 final class CalendarService: CalendarServicing {
     private let eventAuthorizationStatus: @Sendable () -> EKAuthorizationStatus
@@ -13,7 +13,7 @@ final class CalendarService: CalendarServicing {
         self.eventAuthorizationStatus = eventAuthorizationStatus
     }
 
-    func events(params: OpenClawCalendarEventsParams) async throws -> OpenClawCalendarEventsPayload {
+    func events(params: NovaCalendarEventsParams) async throws -> NovaCalendarEventsPayload {
         let status = self.eventAuthorizationStatus()
         guard EventKitAuthorization.allowsRead(status: status) else {
             throw NSError(domain: "Calendar", code: 1, userInfo: [
@@ -32,7 +32,7 @@ final class CalendarService: CalendarServicing {
 
         let formatter = ISO8601DateFormatter()
         let payload = selected.map { event in
-            OpenClawCalendarEventPayload(
+            NovaCalendarEventPayload(
                 identifier: event.eventIdentifier ?? UUID().uuidString,
                 title: event.title ?? "(untitled)",
                 startISO: formatter.string(from: event.startDate),
@@ -42,10 +42,10 @@ final class CalendarService: CalendarServicing {
                 calendarTitle: event.calendar.title)
         }
 
-        return OpenClawCalendarEventsPayload(events: payload)
+        return NovaCalendarEventsPayload(events: payload)
     }
 
-    func add(params: OpenClawCalendarAddParams) async throws -> OpenClawCalendarAddPayload {
+    func add(params: NovaCalendarAddParams) async throws -> NovaCalendarAddPayload {
         let status = self.eventAuthorizationStatus()
         guard EventKitAuthorization.allowsWrite(status: status) else {
             throw NSError(domain: "Calendar", code: 2, userInfo: [
@@ -91,7 +91,7 @@ final class CalendarService: CalendarServicing {
 
         try store.save(event, span: .thisEvent)
 
-        let payload = OpenClawCalendarEventPayload(
+        let payload = NovaCalendarEventPayload(
             identifier: event.eventIdentifier ?? UUID().uuidString,
             title: event.title ?? title,
             startISO: formatter.string(from: event.startDate),
@@ -100,7 +100,7 @@ final class CalendarService: CalendarServicing {
             location: event.location,
             calendarTitle: event.calendar.title)
 
-        return OpenClawCalendarAddPayload(event: payload)
+        return NovaCalendarAddPayload(event: payload)
     }
 
     private static func resolveCalendar(

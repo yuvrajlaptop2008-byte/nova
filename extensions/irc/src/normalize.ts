@@ -1,10 +1,10 @@
-import { buildChannelOutboundSessionRoute } from "openclaw/plugin-sdk/channel-core";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { buildChannelOutboundSessionRoute } from "nova/plugin-sdk/channel-core";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 // Irc helper module supports normalize behavior.
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { hasIrcControlChars } from "./control-chars.js";
 import type { IrcInboundMessage } from "./types.js";
 
@@ -40,7 +40,7 @@ export function normalizeIrcMessagingTarget(raw: string): string | undefined {
 }
 
 export function resolveIrcOutboundSessionRoute(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   accountId?: string | null;
   target: string;

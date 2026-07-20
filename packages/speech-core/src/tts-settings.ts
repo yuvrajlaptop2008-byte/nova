@@ -2,19 +2,19 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type {
-  OpenClawConfig,
+  NovaConfig,
   ResolvedTtsPersona,
   TtsAutoMode,
   TtsConfig,
   TtsModelOverrideConfig,
   TtsProvider,
-} from "openclaw/plugin-sdk/config-contracts";
+} from "nova/plugin-sdk/config-contracts";
 import {
   getRuntimeConfigSnapshot,
   getRuntimeConfigSourceSnapshot,
   selectApplicableRuntimeConfig,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
-import type { SpeechProviderConfig } from "openclaw/plugin-sdk/speech-core";
+} from "nova/plugin-sdk/runtime-config-snapshot";
+import type { SpeechProviderConfig } from "nova/plugin-sdk/speech-core";
 import {
   normalizeSpeechProviderId,
   normalizeTtsAutoMode,
@@ -22,12 +22,12 @@ import {
   type ResolvedTtsConfig,
   type ResolvedTtsModelOverrides,
   type TtsConfigResolutionContext,
-} from "openclaw/plugin-sdk/speech-settings";
+} from "nova/plugin-sdk/speech-settings";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolveConfigDir, resolveUserPath } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
+import { resolveConfigDir, resolveUserPath } from "nova/plugin-sdk/text-utility-runtime";
 import { withSpeakerSelectionCompat } from "../speaker.js";
 
 export type { ResolvedTtsConfig, ResolvedTtsModelOverrides };
@@ -106,7 +106,7 @@ export function resolveModelOverridePolicy(
   };
 }
 
-export function resolveTtsRuntimeConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function resolveTtsRuntimeConfig(cfg: NovaConfig): NovaConfig {
   return (
     selectApplicableRuntimeConfig({
       inputConfig: cfg,
@@ -201,7 +201,7 @@ function collectDirectProviderConfigEntries(raw: TtsConfig): Record<string, Spee
 }
 
 export function resolveTtsConfig(
-  cfgInput: OpenClawConfig,
+  cfgInput: NovaConfig,
   contextOrAgentId?: string | TtsConfigResolutionContext,
 ): ResolvedTtsConfig {
   const cfg = resolveTtsRuntimeConfig(cfgInput);
@@ -301,7 +301,7 @@ type ResolvedTtsSettingsSnapshot = {
 };
 
 export function resolveTtsSettingsSnapshot(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionAuto?: string;
   agentId?: string;
   channelId?: string;
@@ -335,10 +335,7 @@ export function resolveTtsSettingsSnapshot(params: {
   };
 }
 
-export function buildTtsSystemPromptHint(
-  cfg: OpenClawConfig,
-  agentId?: string,
-): string | undefined {
+export function buildTtsSystemPromptHint(cfg: NovaConfig, agentId?: string): string | undefined {
   const settings = resolveTtsSettingsSnapshot({ cfg, agentId });
   if (settings.autoMode === "off") {
     return undefined;

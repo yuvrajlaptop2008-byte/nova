@@ -2,15 +2,15 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
-import type { SessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
+import type { SessionEntry } from "nova/plugin-sdk/session-store-runtime";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "./runtime-api.js";
+import type { NovaConfig } from "./runtime-api.js";
 import { resolveMatrixOutboundSessionRoute } from "./session-route.js";
 
 const tempDirs = new Set<string>();
 const currentDmSessionKey = "agent:main:matrix:channel:!dm:example.org";
-type MatrixChannelConfig = NonNullable<NonNullable<OpenClawConfig["channels"]>["matrix"]>;
+type MatrixChannelConfig = NonNullable<NonNullable<NovaConfig["channels"]>["matrix"]>;
 
 const perRoomDmMatrixConfig = {
   dm: {
@@ -42,7 +42,7 @@ async function createTempStore(entries: Record<string, SessionEntry>): Promise<s
 async function createMatrixRouteConfig(
   entries: Record<string, SessionEntry>,
   matrix: MatrixChannelConfig = perRoomDmMatrixConfig,
-): Promise<OpenClawConfig> {
+): Promise<NovaConfig> {
   return {
     session: {
       store: await createTempStore(entries),
@@ -50,7 +50,7 @@ async function createMatrixRouteConfig(
     channels: {
       matrix,
     },
-  } satisfies OpenClawConfig;
+  } satisfies NovaConfig;
 }
 
 function createStoredDirectDmSession(
@@ -115,7 +115,7 @@ function createStoredChannelSession(): SessionEntry {
   };
 }
 
-function resolveUserRoute(params: { cfg: OpenClawConfig; accountId?: string; target?: string }) {
+function resolveUserRoute(params: { cfg: NovaConfig; accountId?: string; target?: string }) {
   const target = params.target ?? "@alice:example.org";
   return resolveMatrixOutboundSessionRoute({
     cfg: params.cfg,

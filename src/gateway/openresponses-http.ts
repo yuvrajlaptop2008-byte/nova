@@ -143,7 +143,7 @@ function createResponseSessionScope(params: {
   return normalizeResponseSessionScope({
     authSubject: resolveResponseSessionAuthSubject({ req: params.req, auth: params.auth }),
     agentId: params.agentId,
-    requestedSessionKey: getHeader(params.req, "x-openclaw-session-key"),
+    requestedSessionKey: getHeader(params.req, "x-nova-session-key"),
   });
 }
 

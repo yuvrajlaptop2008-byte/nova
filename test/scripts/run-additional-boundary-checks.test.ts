@@ -347,7 +347,7 @@ describe("run-additional-boundary-checks", () => {
   it.skipIf(process.platform === "win32")(
     "waits for timed-out process groups after the wrapper exits",
     async () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-timeout-"));
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-timeout-"));
       const childPidPath = path.join(tempDir, "child.pid");
       let childPid: number | undefined;
       try {
@@ -396,7 +396,7 @@ describe("run-additional-boundary-checks", () => {
   it.skipIf(process.platform === "win32")(
     "cleans active check descendants on parent signal",
     async () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-signal-"));
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-signal-"));
       const readyPath = path.join(tempDir, "ready");
       const childPidPath = path.join(tempDir, "child.pid");
       let childPid: number | undefined;

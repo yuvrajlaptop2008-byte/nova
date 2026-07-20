@@ -4,31 +4,31 @@ import path from "node:path";
 import {
   embeddedAgentLog,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { replaceRuntimeAuthProfileStoreSnapshots } from "openclaw/plugin-sdk/agent-runtime";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { replaceRuntimeAuthProfileStoreSnapshots } from "nova/plugin-sdk/agent-runtime";
+import { SessionManager } from "nova/plugin-sdk/agent-sessions";
 import {
   onInternalDiagnosticEvent,
   waitForDiagnosticEventsDrained,
   type DiagnosticEventPayload,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-import { initializeGlobalHookRunner, registerInternalHook } from "openclaw/plugin-sdk/hook-runtime";
-import { registerMemoryCapability } from "openclaw/plugin-sdk/memory-core-host-runtime-core";
-import { MESSAGE_TOOL_DELIVERY_HINTS } from "openclaw/plugin-sdk/message-tool-delivery-hints";
-import { registerPluginCommand } from "openclaw/plugin-sdk/plugin-runtime";
-import { createMockPluginRegistry } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { GPT5_BEHAVIOR_CONTRACT as CODEX_GPT5_BEHAVIOR_CONTRACT } from "openclaw/plugin-sdk/provider-model-shared";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
-import { readSessionTranscriptEvents } from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/diagnostic-runtime";
+import { initializeGlobalHookRunner, registerInternalHook } from "nova/plugin-sdk/hook-runtime";
+import { registerMemoryCapability } from "nova/plugin-sdk/memory-core-host-runtime-core";
+import { MESSAGE_TOOL_DELIVERY_HINTS } from "nova/plugin-sdk/message-tool-delivery-hints";
+import { registerPluginCommand } from "nova/plugin-sdk/plugin-runtime";
+import { createMockPluginRegistry } from "nova/plugin-sdk/plugin-test-runtime";
+import { GPT5_BEHAVIOR_CONTRACT as CODEX_GPT5_BEHAVIOR_CONTRACT } from "nova/plugin-sdk/provider-model-shared";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
+import { readSessionTranscriptEvents } from "nova/plugin-sdk/session-transcript-runtime";
 import { describe, expect, it, vi } from "vitest";
 import WebSocket from "ws";
 import { defaultCodexAppInventoryCache } from "./app-inventory-cache.js";
 import {
-  buildCodexOpenClawPromptContext,
+  buildCodexNovaPromptContext,
   buildCodexSystemPromptReport,
   buildCodexWorkspaceBootstrapContext,
   getCodexWorkspaceMemoryToolNames,
-  prependCodexOpenClawPromptContext,
+  prependCodexNovaPromptContext,
 } from "./attempt-context.js";
 import { withCodexStartupTimeout } from "./attempt-timeouts.js";
 import { prepareCodexAppServerAuthBinding } from "./auth-binding.js";
@@ -115,19 +115,19 @@ const testing = {
     if (
       hostSystemAgentActive &&
       params.toolsAllow?.length === 1 &&
-      params.toolsAllow[0] === "openclaw"
+      params.toolsAllow[0] === "nova"
     ) {
-      names.push("openclaw");
+      names.push("nova");
     }
     if (params.sourceReplyDeliveryMode === "message_tool_only") {
       names.push("message");
     }
     return names;
   },
-  setOpenClawCodingToolsFactoryForTests(
-    factory: NonNullable<typeof dynamicToolBuildState.openClawCodingToolsFactory>,
+  setNovaCodingToolsFactoryForTests(
+    factory: NonNullable<typeof dynamicToolBuildState.novaCodingToolsFactory>,
   ): void {
-    dynamicToolBuildState.openClawCodingToolsFactory = factory;
+    dynamicToolBuildState.novaCodingToolsFactory = factory;
   },
   shouldEnableCodexAppServerNativeToolSurface,
   withCodexStartupTimeout,
@@ -379,14 +379,11 @@ async function buildCodexTurnContextForTest(
   ]
     .filter((section) => section?.trim())
     .join("\n\n");
-  const openClawPromptContext = buildCodexOpenClawPromptContext({
+  const novaPromptContext = buildCodexNovaPromptContext({
     params,
     workspacePromptContext: workspaceBootstrapContext.promptContext,
   });
-  const codexTurnPromptText = prependCodexOpenClawPromptContext(
-    params.prompt,
-    openClawPromptContext,
-  );
+  const codexTurnPromptText = prependCodexNovaPromptContext(params.prompt, novaPromptContext);
   const turnStartParams = buildTurnStartParams(params, {
     threadId: "thread-1",
     cwd: workspaceDir,
@@ -648,7 +645,7 @@ describe("runCodexAppServerAttempt", () => {
   });
 
   it("starts active Nova sandbox threads with Codex native execution disabled", async () => {
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("exec"),
       createRuntimeDynamicTool("process"),
       createRuntimeDynamicTool("message"),
@@ -743,7 +740,7 @@ describe("runCodexAppServerAttempt", () => {
       request,
     };
     try {
-      testing.setOpenClawCodingToolsFactoryForTests(() => [
+      testing.setNovaCodingToolsFactoryForTests(() => [
         createRuntimeDynamicTool("exec"),
         createRuntimeDynamicTool("process"),
         createRuntimeDynamicTool("message"),
@@ -838,7 +835,7 @@ describe("runCodexAppServerAttempt", () => {
         | undefined;
 
       expect(nativeToolSurfaceEnabled).toBe(true);
-      expect(environmentAddParams?.environmentId).toMatch(/^openclaw-sandbox-/);
+      expect(environmentAddParams?.environmentId).toMatch(/^nova-sandbox-/);
       expect(environmentAddParams?.execServerUrl).toMatch(/^ws:\/\/127\.0\.0\.1:/);
       expect(startParams?.cwd).toBe("/workspace");
       expect(startParams?.config?.["features.code_mode"]).toBe(true);
@@ -1306,7 +1303,7 @@ describe("runCodexAppServerAttempt", () => {
         },
         {
           text: "Nova main command guidance.",
-          surfaces: ["openclaw_main"],
+          surfaces: ["nova_main"],
         },
       ],
       handler: async () => ({ text: "ok" }),
@@ -1337,7 +1334,7 @@ describe("runCodexAppServerAttempt", () => {
       type: string;
     }> = [];
     Object.assign(params, {
-      trajectorySessionFile: `sqlite:main:session-1:${path.join(tempDir, "openclaw-agent.sqlite")}`,
+      trajectorySessionFile: `sqlite:main:session-1:${path.join(tempDir, "nova-agent.sqlite")}`,
       trajectoryRecorder: {
         recordEvent: (type: string, data?: { prompt?: string; systemPrompt?: string }) => {
           trajectoryEvents.push({ type, data });
@@ -1700,9 +1697,9 @@ describe("runCodexAppServerAttempt", () => {
 
     expect(message).not.toHaveProperty("namespace");
     expect(message).not.toHaveProperty("deferLoading");
-    expect(webSearch?.namespace).toBe("openclaw");
+    expect(webSearch?.namespace).toBe("nova");
     expect(webSearch?.deferLoading).toBe(true);
-    expect(heartbeat?.namespace).toBe("openclaw");
+    expect(heartbeat?.namespace).toBe("nova");
     expect(heartbeat?.deferLoading).toBe(true);
     expect(agentsList).not.toHaveProperty("namespace");
     expect(agentsList).not.toHaveProperty("deferLoading");
@@ -1713,7 +1710,7 @@ describe("runCodexAppServerAttempt", () => {
   });
 
   it("keeps the heartbeat schema deferred and stable across normal and heartbeat turns", async () => {
-    testing.setOpenClawCodingToolsFactoryForTests((options) => [
+    testing.setNovaCodingToolsFactoryForTests((options) => [
       createRuntimeDynamicTool("message"),
       ...(options?.enableHeartbeatTool === true
         ? [createRuntimeDynamicTool("heartbeat_respond")]
@@ -1773,7 +1770,7 @@ describe("runCodexAppServerAttempt", () => {
       const heartbeat = flattenSpecsWithNamespace(bridge.specs).find(
         (tool) => tool.name === "heartbeat_respond",
       );
-      expect(heartbeat?.namespace).toBe("openclaw");
+      expect(heartbeat?.namespace).toBe("nova");
       expect(heartbeat?.deferLoading).toBe(true);
     }
     expect(codexDynamicToolsFingerprint(heartbeatBridge.specs)).toBe(
@@ -1866,7 +1863,7 @@ describe("runCodexAppServerAttempt", () => {
   });
 
   it("keeps the persistent dynamic schema stable across heartbeat-only turns", async () => {
-    testing.setOpenClawCodingToolsFactoryForTests((options) => [
+    testing.setNovaCodingToolsFactoryForTests((options) => [
       createRuntimeDynamicTool("message"),
       createRuntimeDynamicTool("web_search"),
       ...(options?.enableHeartbeatTool === true
@@ -1921,7 +1918,7 @@ describe("runCodexAppServerAttempt", () => {
   });
 
   it("disables Codex native tool surfaces when runtime toolsAllow is empty", async () => {
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("message"),
       createRuntimeDynamicTool("web_search"),
     ]);
@@ -1988,7 +1985,7 @@ describe("runCodexAppServerAttempt", () => {
   });
 
   it("fails closed for Codex app defaults when restricted native tools have no plugin config", async () => {
-    testing.setOpenClawCodingToolsFactoryForTests(() => [createRuntimeDynamicTool("message")]);
+    testing.setNovaCodingToolsFactoryForTests(() => [createRuntimeDynamicTool("message")]);
     const params = createParams(
       path.join(tempDir, "session.jsonl"),
       path.join(tempDir, "workspace"),
@@ -2349,7 +2346,7 @@ describe("runCodexAppServerAttempt", () => {
     }
     const harness = createStartedThreadHarness();
     const params = createParams(sessionFile, workspaceDir);
-    params.prompt = "make the default webpage openclaw";
+    params.prompt = "make the default webpage nova";
 
     const run = runCodexAppServerAttempt(params);
     await harness.waitForMethod("turn/start");
@@ -2369,7 +2366,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(inputText).toContain("we are fixing the Opik default project");
     expect(inputText).toContain("Opik default project context");
     expect(inputText).toContain("Current user request:");
-    expect(inputText).toContain("make the default webpage openclaw");
+    expect(inputText).toContain("make the default webpage nova");
   });
 
   it("keeps large fresh-thread continuity under the Codex turn/start input limit", async () => {
@@ -2637,8 +2634,8 @@ describe("runCodexAppServerAttempt", () => {
     );
     const copilotMirrorMessage = {
       ...assistantMessage("copilot mirror context also matters", bindingUpdatedAt + 3_000),
-      __openclaw: { mirrorIdentity: "copilot:assistant-1" },
-    } as ReturnType<typeof assistantMessage> & { __openclaw: { mirrorIdentity: string } };
+      __nova: { mirrorIdentity: "copilot:assistant-1" },
+    } as ReturnType<typeof assistantMessage> & { __nova: { mirrorIdentity: string } };
     sessionManager.appendMessage(copilotMirrorMessage);
     const harness = createResumeHarness();
     const params = createParams(sessionFile, workspaceDir);
@@ -2680,16 +2677,16 @@ describe("runCodexAppServerAttempt", () => {
     const codexMirrorUserMessage = {
       ...userMessage("codex mirrored user echo", bindingUpdatedAt + 1_000),
       idempotencyKey: "client-run:user",
-      __openclaw: { mirrorIdentity: "turn-1:prompt", mirrorOrigin: "codex-app-server" },
+      __nova: { mirrorIdentity: "turn-1:prompt", mirrorOrigin: "codex-app-server" },
     } as ReturnType<typeof userMessage> & {
       idempotencyKey: string;
-      __openclaw: { mirrorIdentity: string; mirrorOrigin: string };
+      __nova: { mirrorIdentity: string; mirrorOrigin: string };
     };
     sessionManager.appendMessage(codexMirrorUserMessage);
     const codexMirrorAssistantMessage = {
       ...assistantMessage("codex mirrored assistant echo", bindingUpdatedAt + 2_000),
-      __openclaw: { mirrorIdentity: "codex-app-server:assistant-1" },
-    } as ReturnType<typeof assistantMessage> & { __openclaw: { mirrorIdentity: string } };
+      __nova: { mirrorIdentity: "codex-app-server:assistant-1" },
+    } as ReturnType<typeof assistantMessage> & { __nova: { mirrorIdentity: string } };
     sessionManager.appendMessage(codexMirrorAssistantMessage);
     const harness = createResumeHarness();
     const params = createParams(sessionFile, workspaceDir);
@@ -2833,7 +2830,7 @@ describe("runCodexAppServerAttempt", () => {
     await fs.writeFile(path.join(workspaceDir, "USER.md"), userProfile);
     await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), memorySummary);
     registerMemoryPromptForTest();
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("memory_search"),
       createRuntimeDynamicTool("memory_get"),
     ]);
@@ -2942,7 +2939,7 @@ describe("runCodexAppServerAttempt", () => {
     await fs.mkdir(path.join(workspaceDir, "memory"), { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "memory/2026-06-09.md"), datedMemory);
     registerMemoryPromptForTest();
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("memory_search"),
       createRuntimeDynamicTool("memory_get"),
     ]);
@@ -2972,7 +2969,7 @@ describe("runCodexAppServerAttempt", () => {
     const memorySummary = "User avoids Chase cards while over 5/24.";
     await fs.mkdir(workspaceDir, { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), memorySummary);
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("memory_search"),
       createRuntimeDynamicTool("memory_get"),
     ]);
@@ -3103,7 +3100,7 @@ describe("runCodexAppServerAttempt", () => {
     await fs.mkdir(workspaceDir, { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), memorySummary);
     registerMemoryPromptForTest();
-    testing.setOpenClawCodingToolsFactoryForTests(() => [createRuntimeDynamicTool("memory_get")]);
+    testing.setNovaCodingToolsFactoryForTests(() => [createRuntimeDynamicTool("memory_get")]);
     const params = createParams(sessionFile, workspaceDir);
     params.disableTools = false;
     params.runtimePlan = createCodexRuntimePlanFixture();
@@ -3202,7 +3199,7 @@ describe("runCodexAppServerAttempt", () => {
         },
       },
     } as EmbeddedRunAttemptParams["config"];
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("memory_search"),
       createRuntimeDynamicTool("memory_get"),
     ]);
@@ -3253,7 +3250,7 @@ describe("runCodexAppServerAttempt", () => {
         },
       ];
     });
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("memory_search"),
       createRuntimeDynamicTool("memory_get"),
     ]);
@@ -3295,7 +3292,7 @@ describe("runCodexAppServerAttempt", () => {
     await fs.mkdir(workspaceDir, { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), memorySummary);
     registerMemoryPromptForTest();
-    testing.setOpenClawCodingToolsFactoryForTests(() => [
+    testing.setNovaCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("memory_search"),
       createRuntimeDynamicTool("memory_get"),
     ]);
@@ -3444,7 +3441,7 @@ describe("runCodexAppServerAttempt", () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const exactCommand =
-      "cd /Users/phaedrus/Projects/openclaw && /Users/phaedrus/clawd/scripts/clawsweeper-related-scan.py";
+      "cd /Users/phaedrus/Projects/nova && /Users/phaedrus/clawd/scripts/clawsweeper-related-scan.py";
     await fs.mkdir(workspaceDir, { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "AGENTS.md"), "Follow AGENTS guidance.");
     await fs.writeFile(path.join(workspaceDir, "SOUL.md"), "Soul voice goes here.");
@@ -6392,10 +6389,10 @@ describe("runCodexAppServerAttempt", () => {
       true,
     );
     expect(payloads[offIndex]?.channelData).toEqual({
-      openclawProgressKind: "fast-mode-auto",
+      novaProgressKind: "fast-mode-auto",
     });
     expect(payloads[onIndex]?.channelData).toEqual({
-      openclawProgressKind: "fast-mode-auto",
+      novaProgressKind: "fast-mode-auto",
     });
     const fastEvents = onAgentEvent.mock.calls
       .map(([event]) => event)

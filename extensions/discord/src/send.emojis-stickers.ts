@@ -2,8 +2,8 @@
 import {
   normalizeOptionalLowercaseString,
   normalizeStringEntries,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { loadWebMediaRaw } from "openclaw/plugin-sdk/web-media";
+} from "nova/plugin-sdk/string-coerce-runtime";
+import { loadWebMediaRaw } from "nova/plugin-sdk/web-media";
 import { createGuildEmoji, createGuildSticker, listGuildEmojis } from "./internal/discord.js";
 import { normalizeEmojiName, resolveDiscordRest } from "./send.shared.js";
 import type { DiscordEmojiUpload, DiscordReactOpts, DiscordStickerUpload } from "./send.types.js";

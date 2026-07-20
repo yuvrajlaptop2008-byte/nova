@@ -1,10 +1,10 @@
 // Signal tests cover doctor contract api plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { legacyConfigRules, normalizeCompatibilityConfig } from "./doctor-contract-api.js";
 
-function signalConfig(entry: Record<string, unknown>): OpenClawConfig {
+function signalConfig(entry: Record<string, unknown>): NovaConfig {
   return { channels: { signal: entry } } as never;
 }
 

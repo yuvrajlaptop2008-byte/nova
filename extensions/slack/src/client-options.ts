@@ -1,7 +1,7 @@
 // Slack plugin module implements client options behavior.
 import type { Agent } from "node:http";
 import type { RetryOptions, WebClientOptions } from "@slack/web-api";
-import { createNodeProxyAgent } from "openclaw/plugin-sdk/fetch-runtime";
+import { createNodeProxyAgent } from "nova/plugin-sdk/fetch-runtime";
 
 export type SlackLookupClientOptions = Pick<WebClientOptions, "agent" | "slackApiUrl" | "timeout">;
 

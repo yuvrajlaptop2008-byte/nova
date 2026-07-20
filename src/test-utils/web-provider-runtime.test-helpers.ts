@@ -1,5 +1,5 @@
 // Test helpers for mocked web provider runtime dependencies.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type {
   PluginWebFetchProviderEntry,
   PluginWebSearchProviderEntry,
@@ -13,7 +13,7 @@ type CommonWebProviderTestParams = {
   requiresCredential?: boolean;
   authProviderId?: string;
   getCredentialValue?: (config?: Record<string, unknown>) => unknown;
-  getConfiguredCredentialValue?: (config?: OpenClawConfig) => unknown;
+  getConfiguredCredentialValue?: (config?: NovaConfig) => unknown;
   getConfiguredCredentialFallback?:
     | PluginWebSearchProviderEntry["getConfiguredCredentialFallback"]
     | PluginWebFetchProviderEntry["getConfiguredCredentialFallback"];

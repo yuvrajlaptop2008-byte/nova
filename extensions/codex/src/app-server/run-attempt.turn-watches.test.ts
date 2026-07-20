@@ -5,12 +5,12 @@ import {
   embeddedAgentLog,
   invokeNativeHookRelay,
   nativeHookRelayTesting,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   onInternalDiagnosticEvent,
   type DiagnosticEventPayload,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-import * as mediaStore from "openclaw/plugin-sdk/media-store";
+} from "nova/plugin-sdk/diagnostic-runtime";
+import * as mediaStore from "nova/plugin-sdk/media-store";
 import { describe, expect, it, vi } from "vitest";
 import { buildCodexAppServerPromptTimeoutOutcome } from "./attempt-results.js";
 import { createCodexAttemptTurnWatchController } from "./attempt-turn-watches.js";
@@ -3219,7 +3219,7 @@ describe("runCodexAppServerAttempt turn watches", () => {
   });
 
   it("clears the thread binding after a completion-idle timeout so the next turn starts fresh", async () => {
-    // Regression for openclaw#89974. Codex writes a generic <turn_aborted>
+    // Regression for nova#89974. Codex writes a generic <turn_aborted>
     // marker for every interrupted turn. Clearing the timed-out binding keeps
     // that marker out of the next turn by starting a fresh thread.
     vi.spyOn(embeddedAgentLog, "warn").mockImplementation(() => undefined);
@@ -5372,7 +5372,7 @@ describe("runCodexAppServerAttempt turn watches", () => {
   });
 
   it("releases completion when a projector callback throws during turn/completed", async () => {
-    // Regression for openclaw/openclaw#67996: a throw inside the projector's
+    // Regression for nova/nova#67996: a throw inside the projector's
     // turn/completed handler must not strand resolveCompletion, otherwise the
     // gateway session lane stays locked and every follow-up message queues
     // behind a run that will never resolve.

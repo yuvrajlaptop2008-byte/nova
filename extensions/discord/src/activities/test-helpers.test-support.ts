@@ -1,8 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type {
-  PluginStateEntry,
-  PluginStateKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { PluginStateEntry, PluginStateKeyedStore } from "nova/plugin-sdk/plugin-state-runtime";
 import { DiscordActivitiesRuntime } from "./runtime.js";
 import { DiscordActivityStore } from "./store.js";
 
@@ -75,7 +72,7 @@ export function createActivityTestConfig(params?: {
   userId?: string;
   clientSecret?: string;
   applicationId?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     channels: {
       discord: {

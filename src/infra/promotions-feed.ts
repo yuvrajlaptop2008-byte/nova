@@ -1,8 +1,5 @@
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import {
   type ClawHubPromotionsFeedEntry,
   fetchClawHubPromotionsFeed,
@@ -28,7 +25,7 @@ const PROMOTIONS_FEED_CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const PROMOTIONS_FEED_FETCH_TIMEOUT_MS = 2500;
 
 type PromotionsFeedDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "clawhub_promotions_feed_state" | "clawhub_promotion_claims"
 >;
 
@@ -69,7 +66,7 @@ function parseSlugListJson(raw: string | null): Set<string> {
 
 function readPromotionsFeedStateWithMetadata(): PromotionsFeedStateRead {
   try {
-    const database = openOpenClawStateDatabase();
+    const database = openNovaStateDatabase();
     const db = getNodeSqliteKysely<PromotionsFeedDatabase>(database.db);
     const row = executeSqliteQueryTakeFirstSync(
       database.db,
@@ -138,7 +135,7 @@ type WritePromotionsFeedStateParams = {
 };
 
 function writePromotionsFeedState(params: WritePromotionsFeedStateParams): void {
-  runOpenClawStateWriteTransaction((database) => {
+  runNovaStateWriteTransaction((database) => {
     const db = getNodeSqliteKysely<PromotionsFeedDatabase>(database.db);
     const existing = executeSqliteQueryTakeFirstSync(
       database.db,
@@ -292,7 +289,7 @@ export async function maybeRefreshPromotionsFeed(
 
 export function recordPromotionClaim(record: PromotionClaimRecord): void {
   try {
-    runOpenClawStateWriteTransaction((database) => {
+    runNovaStateWriteTransaction((database) => {
       const db = getNodeSqliteKysely<PromotionsFeedDatabase>(database.db);
       const values = {
         slug: record.slug,
@@ -316,7 +313,7 @@ export function recordPromotionClaim(record: PromotionClaimRecord): void {
 
 export function readPromotionClaims(): PromotionClaimRecord[] {
   try {
-    const database = openOpenClawStateDatabase();
+    const database = openNovaStateDatabase();
     const db = getNodeSqliteKysely<PromotionsFeedDatabase>(database.db);
     const { rows } = executeSqliteQuerySync(
       database.db,

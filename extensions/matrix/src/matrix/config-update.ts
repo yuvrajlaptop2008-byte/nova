@@ -1,8 +1,8 @@
 // Matrix helper module supports config update behavior.
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { resolveOptionalIntegerOption } from "openclaw/plugin-sdk/number-runtime";
-import { coerceSecretRef } from "openclaw/plugin-sdk/secret-ref-runtime";
-import { normalizeSecretInputString } from "openclaw/plugin-sdk/setup";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "nova/plugin-sdk/account-id";
+import { resolveOptionalIntegerOption } from "nova/plugin-sdk/number-runtime";
+import { coerceSecretRef } from "nova/plugin-sdk/secret-ref-runtime";
+import { normalizeSecretInputString } from "nova/plugin-sdk/setup";
 import type { CoreConfig, MatrixConfig } from "../types.js";
 import { findMatrixAccountConfig } from "./account-config.js";
 import {

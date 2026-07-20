@@ -1,13 +1,13 @@
 ---
 name: verify-release
-description: "Verify an OpenClaw release is fully published across GitHub, npm, plugins, ClawHub, package smoke, and live Gateway agent turns."
+description: "Verify an Nova release is fully published across GitHub, npm, plugins, ClawHub, package smoke, and live Gateway agent turns."
 ---
 
 # Verify Release
 
-Use this when asked whether an OpenClaw release is fully released, published,
+Use this when asked whether an Nova release is fully released, published,
 promoted, smoke-tested, or live-verified. This is a verification skill, not a
-publish skill; use `$release-openclaw-maintainer` before changing release state.
+publish skill; use `$release-nova-maintainer` before changing release state.
 
 ## Rules
 
@@ -24,7 +24,7 @@ publish skill; use `$release-openclaw-maintainer` before changing release state.
 ## Core Checks
 
 1. GitHub release:
-   - `gh release view v<VERSION> --repo openclaw/openclaw --json tagName,name,publishedAt,isDraft,isPrerelease,targetCommitish,url,body,assets`
+   - `gh release view v<VERSION> --repo nova/nova --json tagName,name,publishedAt,isDraft,isPrerelease,targetCommitish,url,body,assets`
    - Confirm stable releases are not draft/prerelease.
    - Confirm release body has npm, CI, plugin npm, ClawHub, mac/appcast evidence
      links when expected.
@@ -34,7 +34,7 @@ publish skill; use `$release-openclaw-maintainer` before changing release state.
    - Download each immutable evidence asset and its `.sha256` companion, then
      verify the checksum before trusting the release record.
 2. Root npm:
-   - `npm view openclaw@<VERSION> version dist-tags.latest dist.tarball dist.integrity time.<VERSION> --json`
+   - `npm view nova@<VERSION> version dist-tags.latest dist.tarball dist.integrity time.<VERSION> --json`
    - `latest` must equal `<VERSION>` for stable.
    - Record tarball, integrity, publish time.
    - Confirm the release postpublish evidence records
@@ -42,41 +42,41 @@ publish skill; use `$release-openclaw-maintainer` before changing release state.
      `npmProvenanceAttestationMatched: true`.
 3. Plugin publish set:
    - Get exact tag metadata from GitHub, not the local checkout when dirty:
-     download `https://api.github.com/repos/openclaw/openclaw/tarball/v<VERSION>`
-     into `/tmp/openclaw-v<VERSION>-src`.
+     download `https://api.github.com/repos/nova/nova/tarball/v<VERSION>`
+     into `/tmp/nova-v<VERSION>-src`.
    - Count `extensions/*/package.json` with
-     `openclaw.release.publishToNpm === true` and
-     `openclaw.release.publishToClawHub === true`.
+     `nova.release.publishToNpm === true` and
+     `nova.release.publishToClawHub === true`.
    - Compare expected counts to workflow job counts:
-     `gh api repos/openclaw/openclaw/actions/runs/<RUN>/jobs --paginate`.
+     `gh api repos/nova/nova/actions/runs/<RUN>/jobs --paginate`.
    - Each expected npm plugin must have version `<VERSION>` and
      `dist-tags.latest === <VERSION>`.
 4. ClawHub:
    - Check the Plugin ClawHub Release workflow conclusion and publish job count.
-   - Use OpenClaw itself for live registry proof:
-     `openclaw plugins search <known-plugin> --json`.
+   - Use Nova itself for live registry proof:
+     `nova plugins search <known-plugin> --json`.
    - Install one official plugin from ClawHub in an isolated HOME:
-     `openclaw plugins install clawhub:@nova/matrix --pin`.
+     `nova plugins install clawhub:@nova/matrix --pin`.
      Prefer `matrix` unless that plugin is not in the expected set.
 5. Release workflows:
    - Verify conclusions for release notes evidence links:
-     Full Release Validation, OpenClaw Release Checks, OpenClaw NPM Release,
+     Full Release Validation, Nova Release Checks, Nova NPM Release,
      Plugin NPM Release, Plugin ClawHub Release, mac preflight/validation/publish
      when stable mac assets are expected.
-   - For stable, verify `OpenClaw Stable Main Closeout` succeeded and its
+   - For stable, verify `Nova Stable Main Closeout` succeeded and its
      manifest records the matching release tag, current rollback drill, stable
      soak, and blocking performance evidence.
    - Summarize only relevant successful/failed jobs; ignore routine skipped
      optional lanes unless the release body promised them.
 6. Published package smoke:
    - In `/tmp`, isolated HOME:
-     `npm exec --yes --package openclaw@<VERSION> -- openclaw --version`.
+     `npm exec --yes --package nova@<VERSION> -- nova --version`.
    - Run at least one harmless command that touches the published CLI surface,
      for example `plugins --help` or `gateway --help`.
 7. Dev Gateway live model smoke:
    - Use temp HOME/workspace, not the user's normal state:
-     `HOME=/tmp/openclaw-release-smoke/home OPENCLAW_WORKSPACE=/tmp/openclaw-release-smoke/work pnpm openclaw --dev gateway run --auth none --force --verbose`.
-   - Health check via CLI: `openclaw --dev gateway health --json`.
+     `HOME=/tmp/nova-release-smoke/home NOVA_WORKSPACE=/tmp/nova-release-smoke/work pnpm nova --dev gateway run --auth none --force --verbose`.
+   - Health check via CLI: `nova --dev gateway health --json`.
    - Run one Gateway-backed agent turn with inherited `OPENAI_API_KEY`, short
      prompt, explicit session key, JSON output, and a known-available model.
    - If the configured default model fails as unavailable, record that caveat

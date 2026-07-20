@@ -1,5 +1,5 @@
 /** Applies mutually exclusive plugin slot selection for memory and context-engine plugins. */
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import type { PluginSlotsConfig } from "../config/types.plugins.js";
 import type { PluginKind } from "./plugin-kind.types.js";
 
@@ -81,14 +81,14 @@ export function resetPluginSlotsToDefaults(
 }
 
 type SlotSelectionResult = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   warnings: string[];
   changed: boolean;
 };
 
 /** Updates config so the selected plugin owns all slots implied by its kind. */
 export function applyExclusiveSlotSelection(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   selectedId: string;
   selectedKind?: PluginKind | PluginKind[];
   registry?: { plugins: SlotPluginRecord[] };

@@ -1,5 +1,5 @@
 import type { CronJob } from "../cron/types.js";
-import { markOpenClawExecEnv } from "../infra/openclaw-exec-env.js";
+import { markNovaExecEnv } from "../infra/nova-exec-env.js";
 import type { ManagedRun, ProcessSupervisor } from "../process/supervisor/index.js";
 import { resolveExitWatchShell } from "./cron-exit-watch-shell.js";
 
@@ -131,7 +131,7 @@ export function createCronExitWatchers(params: {
           // Mark the child as an Nova-launched subprocess (loop protection /
           // detection) and bound its lifetime — consistent with how cron
           // command-payload jobs run via runCommandWithTimeout.
-          env: markOpenClawExecEnv({ ...process.env }),
+          env: markNovaExecEnv({ ...process.env }),
           timeoutMs: ON_EXIT_WATCH_TIMEOUT_MS,
           captureOutput: true,
         });

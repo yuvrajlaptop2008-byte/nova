@@ -9,7 +9,7 @@ vi.mock("./preflight-audio.runtime.js", () => ({
 
 import { resolveDiscordPreflightAudioMentionContext } from "./preflight-audio.js";
 
-const cfg = {} as import("openclaw/plugin-sdk/config-contracts").OpenClawConfig;
+const cfg = {} as import("nova/plugin-sdk/config-contracts").NovaConfig;
 
 describe("resolveDiscordPreflightAudioMentionContext", () => {
   beforeEach(() => {

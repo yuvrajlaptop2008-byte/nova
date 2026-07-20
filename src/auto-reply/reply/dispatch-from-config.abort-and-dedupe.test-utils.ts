@@ -1,6 +1,6 @@
 // Imported by dispatch-from-config.test.ts to keep its mocked suite in one Vitest module graph.
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { createApprovalNativeRouteReporter } from "../../infra/approval-native-route-coordinator.js";
 import type { SessionBindingRecord } from "../../infra/outbound/session-binding-service.js";
 import type { MsgContext } from "../templating.js";
@@ -55,11 +55,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:main",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onPlanUpdate?.({
         phase: "update",
         explanation: "Inspect code.",
@@ -205,11 +201,7 @@ describe("dispatchReplyFromConfig", () => {
       ChatType: "direct",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onToolResult?.({ mediaUrl: "https://example.com/tts-preview.opus" });
       return { text: "done" } satisfies ReplyPayload;
     };
@@ -238,11 +230,7 @@ describe("dispatchReplyFromConfig", () => {
       CommandSource: "native",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onToolResult?.({
         text: "Approval required.\n\n```txt\n/approve 117ba06d allow-once\n```",
         channelData: {
@@ -491,7 +479,7 @@ describe("dispatchReplyFromConfig", () => {
         dispatch: { enabled: true },
         stream: { deliveryMode: "live", coalesceIdleMs: 0, maxChunkChars: 128 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "discord",
@@ -558,7 +546,7 @@ describe("dispatchReplyFromConfig", () => {
           dispatch: { enabled: true },
           stream: { coalesceIdleMs: 0, maxChunkChars: 128 },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       dispatcher,
       replyOptions: {
         runId: "run-acp-lifecycle-end",
@@ -624,7 +612,7 @@ describe("dispatchReplyFromConfig", () => {
           dispatch: { enabled: true },
           stream: { coalesceIdleMs: 0, maxChunkChars: 128 },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       dispatcher,
       replyOptions: {
         runId: "run-acp-lifecycle-error",
@@ -712,7 +700,7 @@ describe("dispatchReplyFromConfig", () => {
           dispatch: { enabled: true },
           stream: { coalesceIdleMs: 0, maxChunkChars: 128 },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       dispatcher: createDispatcher(),
     });
 
@@ -778,7 +766,7 @@ describe("dispatchReplyFromConfig", () => {
         enabled: true,
         dispatch: { enabled: true },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "discord",
@@ -860,7 +848,7 @@ describe("dispatchReplyFromConfig", () => {
         enabled: true,
         dispatch: { enabled: true },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "discord",
@@ -918,7 +906,7 @@ describe("dispatchReplyFromConfig", () => {
           defaultAccount: "work",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const replyResolver = vi.fn(async () => undefined);
     const ctx = buildTestCtx({
@@ -975,7 +963,7 @@ describe("dispatchReplyFromConfig", () => {
       { type: "done" },
     ]);
     acpMocks.readAcpSessionEntry.mockImplementation(
-      (params: { sessionKey: string; cfg?: OpenClawConfig }) =>
+      (params: { sessionKey: string; cfg?: NovaConfig }) =>
         params.sessionKey === boundSessionKey
           ? {
               sessionKey: boundSessionKey,
@@ -1021,7 +1009,7 @@ describe("dispatchReplyFromConfig", () => {
         dispatch: { enabled: true },
         stream: { deliveryMode: "live", coalesceIdleMs: 0, maxChunkChars: 256 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const replyResolver = vi.fn(async () => ({ text: "fallback reply" }) satisfies ReplyPayload);
     const ctx = buildTestCtx({
@@ -1110,7 +1098,7 @@ describe("dispatchReplyFromConfig", () => {
         dispatch: { enabled: true },
         stream: { deliveryMode: "live", coalesceIdleMs: 0, maxChunkChars: 256 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "discord",
@@ -1166,7 +1154,7 @@ describe("dispatchReplyFromConfig", () => {
         dispatch: { enabled: true },
         stream: { deliveryMode: "live", coalesceIdleMs: 0, maxChunkChars: 256 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "discord",
@@ -1189,8 +1177,8 @@ describe("dispatchReplyFromConfig", () => {
     replyMediaPathMocks.createReplyMediaPathNormalizer.mockReturnValue(
       async (payload: ReplyPayload) => ({
         ...payload,
-        mediaUrl: "/tmp/openclaw-media/normalized-tts.ogg",
-        mediaUrls: ["/tmp/openclaw-media/normalized-tts.ogg"],
+        mediaUrl: "/tmp/nova-media/normalized-tts.ogg",
+        mediaUrls: ["/tmp/nova-media/normalized-tts.ogg"],
       }),
     );
     const dispatcher = createDispatcher();
@@ -1213,8 +1201,8 @@ describe("dispatchReplyFromConfig", () => {
       .calls[0]?.[0] as { messageProvider?: unknown } | undefined;
     expect(normalizerOptions?.messageProvider).toBe("feishu");
     const finalPayload = firstFinalReplyPayload(dispatcher);
-    expect(finalPayload?.mediaUrl).toBe("/tmp/openclaw-media/normalized-tts.ogg");
-    expect(finalPayload?.mediaUrls).toStrictEqual(["/tmp/openclaw-media/normalized-tts.ogg"]);
+    expect(finalPayload?.mediaUrl).toBe("/tmp/nova-media/normalized-tts.ogg");
+    expect(finalPayload?.mediaUrls).toStrictEqual(["/tmp/nova-media/normalized-tts.ogg"]);
     expect(finalPayload?.audioAsVoice).toBe(true);
     expect(finalPayload?.spokenText).toBe("Hello from block streaming.");
     expect(finalPayload?.trustedLocalMedia).toBe(true);
@@ -1248,7 +1236,7 @@ describe("dispatchReplyFromConfig", () => {
         enabled: true,
         dispatch: { enabled: true },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "discord",
@@ -1292,7 +1280,7 @@ describe("dispatchReplyFromConfig", () => {
       messages: {
         groupChat: { visibleReplies: "message_tool" },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const ctx = buildTestCtx({
       Provider: "telegram",
       Surface: "telegram",
@@ -1321,7 +1309,7 @@ describe("dispatchReplyFromConfig", () => {
         groupChat: { visibleReplies: "message_tool" },
       },
       tools: { allow: ["read"] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const ctx = buildTestCtx({
       Provider: "telegram",
       Surface: "telegram",
@@ -1355,7 +1343,7 @@ describe("dispatchReplyFromConfig", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "discord",
@@ -1394,7 +1382,7 @@ describe("dispatchReplyFromConfig", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const reporter = createApprovalNativeRouteReporter({
       handledKinds: new Set(["exec"]),
       channel: "discord",
@@ -1446,7 +1434,7 @@ describe("dispatchReplyFromConfig", () => {
           enabled: true,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "signal",
@@ -1489,7 +1477,7 @@ describe("dispatchReplyFromConfig", () => {
           enabled: true,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const reporter = createApprovalNativeRouteReporter({
       handledKinds: new Set(["exec"]),
       channel: "signal",
@@ -1544,7 +1532,7 @@ describe("dispatchReplyFromConfig", () => {
           enabled: false,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const reporter = createApprovalNativeRouteReporter({
       handledKinds: new Set(["exec"]),
       channel: "signal",

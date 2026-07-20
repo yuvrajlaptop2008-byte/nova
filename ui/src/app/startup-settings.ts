@@ -90,7 +90,7 @@ export function resolveApplicationStartupSettings(
 
   const url = new URL(
     `${location.pathname}${location.search}${location.hash}`,
-    "http://openclaw.local",
+    "http://nova.local",
   );
   const params = new URLSearchParams(url.search);
   const hashParams = new URLSearchParams(url.hash.startsWith("#") ? url.hash.slice(1) : url.hash);
@@ -116,7 +116,7 @@ export function resolveApplicationStartupSettings(
     if (queryToken != null) {
       queryTokenUsed = true;
       console.warn(
-        "[openclaw] Auth token passed as query parameter (?token=). Use URL fragment instead: #token=<token>. Query parameters may appear in server logs.",
+        "[nova] Auth token passed as query parameter (?token=). Use URL fragment instead: #token=<token>. Query parameters may appear in server logs.",
       );
     }
     if (token && gatewayUrlChanged) {

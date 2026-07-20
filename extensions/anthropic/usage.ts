@@ -2,25 +2,25 @@ import type {
   ProviderFetchUsageSnapshotContext,
   ProviderResolveUsageAuthContext,
   ProviderResolvedUsageAuth,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-entry";
 import {
   readClaudeCliCredentialsCached,
   validateAnthropicSetupToken,
-} from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/provider-auth";
 import {
   buildUsageHttpErrorSnapshot,
   fetchClaudeUsage,
   type ProviderUsageCostDaily,
   type ProviderUsageModelBreakdown,
   type ProviderUsageSnapshot,
-} from "openclaw/plugin-sdk/provider-usage";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
+} from "nova/plugin-sdk/provider-usage";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
 import { CLAUDE_CLI_BACKEND_ID } from "./cli-constants.js";
 
 const ANTHROPIC_COST_URL = "https://api.anthropic.com/v1/organizations/cost_report";
 const ANTHROPIC_MESSAGES_USAGE_URL =
   "https://api.anthropic.com/v1/organizations/usage_report/messages";
-const ANTHROPIC_ADMIN_TOKEN_PREFIX = "openclaw:anthropic-admin:v1:";
+const ANTHROPIC_ADMIN_TOKEN_PREFIX = "nova:anthropic-admin:v1:";
 const ANTHROPIC_USAGE_RESPONSE_MAX_BYTES = 4 * 1024 * 1024;
 const ANTHROPIC_USAGE_HISTORY_DAYS = 30;
 const MAX_PAGES = 100;

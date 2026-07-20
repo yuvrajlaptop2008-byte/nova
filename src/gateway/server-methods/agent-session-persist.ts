@@ -18,7 +18,7 @@ import {
   patchSessionEntryTarget,
   type SessionEntryPatchOptions,
 } from "../../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { assertAgentRunLifecycleGenerationCurrent } from "../../infra/agent-events.js";
 import { resolveSendPolicy } from "../../sessions/send-policy.js";
 import { getGeneratedMediaTaskIdsForSessionKey } from "../../tasks/task-status-access.js";
@@ -68,7 +68,7 @@ type AgentSessionPersistResult = {
 
 export async function persistAgentSessionPhase(params: {
   request: AgentRunRequest;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   storePath: string;
   storeKeys?: string[];
   entry?: SessionEntry;

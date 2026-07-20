@@ -175,12 +175,12 @@ export function assertSupportedRuntime(
   const execLabel = details.execPath ?? "unknown";
   const requirement =
     details.kind === "bun"
-      ? "openclaw cannot run under Bun because the runtime does not provide node:sqlite."
-      : "openclaw requires Node >=22.22.3 <23, >=24.15.0 <25, or >=25.9.0.";
+      ? "nova cannot run under Bun because the runtime does not provide node:sqlite."
+      : "nova requires Node >=22.22.3 <23, >=24.15.0 <25, or >=25.9.0.";
   const retryHint =
     details.kind === "bun"
       ? "Run Nova with Node; Bun remains supported for installs and package scripts."
-      : "Upgrade Node and re-run openclaw.";
+      : "Upgrade Node and re-run nova.";
 
   runtime.error(
     [

@@ -2,11 +2,11 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { setDiscordRuntime } from "../runtime.js";
 import {
@@ -19,7 +19,7 @@ type DiscordRuntime = Parameters<typeof setDiscordRuntime>[0];
 const tempDirs: string[] = [];
 
 async function createStateEnv(): Promise<NodeJS.ProcessEnv> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-model-picker-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-model-picker-"));
   tempDirs.push(dir);
   const env = { ...process.env, NOVA_STATE_DIR: dir };
   setDiscordRuntime({

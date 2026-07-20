@@ -332,9 +332,9 @@ describe("getStatusSummary", () => {
         state: "configured-unavailable",
         diagnostic: {
           kind: "plugin-verification",
-          reason: "missing-openclaw-peer-link",
+          reason: "missing-nova-peer-link",
           detail:
-            "/private/plugins/peer-plugin/node_modules/openclaw points to /private/other/openclaw instead of /private/host/openclaw",
+            "/private/plugins/peer-plugin/node_modules/nova points to /private/other/nova instead of /private/host/nova",
           installPath: "/private/plugins/peer-plugin",
         },
       },
@@ -366,9 +366,9 @@ describe("getStatusSummary", () => {
         state: "configured-unavailable",
         diagnostic: {
           kind: "plugin-verification",
-          reason: "missing-openclaw-peer-link",
+          reason: "missing-nova-peer-link",
           detail:
-            'Plugin declares peerDependency "openclaw", but its host peer link is missing or invalid.',
+            'Plugin declares peerDependency "nova", but its host peer link is missing or invalid.',
         },
       },
     ]);

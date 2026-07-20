@@ -73,7 +73,7 @@ function makeClient(params: {
   return {
     connId: params.connId,
     connect: {
-      client: { id: "openclaw-control-ui", mode: "webchat" },
+      client: { id: "nova-control-ui", mode: "webchat" },
       ...(params.deviceId ? { device: { id: params.deviceId } } : {}),
     },
     ...(params.authenticatedUserId ? { authenticatedUserId: params.authenticatedUserId } : {}),
@@ -106,8 +106,8 @@ async function callChat(
   const calls: RespondCall[] = [];
   const respond: RespondFn = (ok, payload, error) => calls.push({ ok, payload, error });
   await expectDefined(
-    systemAgentHandlers["openclaw.chat"],
-    'systemAgentHandlers["openclaw.chat"] test invariant',
+    systemAgentHandlers["nova.chat"],
+    'systemAgentHandlers["nova.chat"] test invariant',
   )({
     params,
     client,
@@ -131,7 +131,7 @@ afterEach(() => {
   resetCommandQueueStateForTest();
 });
 
-describe("openclaw.chat session ownership", () => {
+describe("nova.chat session ownership", () => {
   it("binds a new non-delegated session and rejects another principal", async () => {
     const sessions = new Map<string, SystemAgentChatSession>();
     const context = makeContext(sessions);
@@ -281,7 +281,7 @@ describe("openclaw.chat session ownership", () => {
   });
 });
 
-describe("openclaw.chat session responses", () => {
+describe("nova.chat session responses", () => {
   it("returns the stored welcome when no message is sent", async () => {
     const sessions = new Map<string, SystemAgentChatSession>([["s1", seededSession()]]);
     const call = await callChat(makeContext(sessions), { sessionId: "s1" });

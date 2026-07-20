@@ -1,5 +1,5 @@
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeOptionalString, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import { normalizeOptionalString, uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   ACTIVE_MEMORY_DEBUG_PREFIX,
   ACTIVE_MEMORY_STATUS_PREFIX,
@@ -10,7 +10,7 @@ import {
 } from "./types.js";
 
 function resolveCanonicalSessionKeyFromSessionId(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   agentId: string;
   sessionId?: string;
 }): string | undefined {
@@ -53,7 +53,7 @@ function resolveCanonicalSessionKeyFromSessionId(params: {
 }
 
 function resolveRecallRunChannelContext(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   agentId: string;
   sessionKey?: string;
   sessionId?: string;
@@ -269,7 +269,7 @@ function sanitizeDebugText(text: string): string {
 }
 
 async function persistPluginStatusLines(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   agentId: string;
   sessionKey?: string;
   statusLine?: string;

@@ -1,23 +1,23 @@
-import type { OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
+import type { NovaPluginToolContext } from "nova/plugin-sdk/plugin-entry";
 // Memory Core helper module supports tools helpers behavior.
 import { expect } from "vitest";
-import type { OpenClawConfig } from "../api.js";
+import type { NovaConfig } from "../api.js";
 import { createMemoryGetTool, createMemorySearchTool } from "./tools.js";
 
-export function asOpenClawConfig(config: Partial<OpenClawConfig>): OpenClawConfig {
+export function asNovaConfig(config: Partial<NovaConfig>): NovaConfig {
   return config;
 }
 
-export function createDefaultMemoryToolConfig(): OpenClawConfig {
-  return asOpenClawConfig({ agents: { list: [{ id: "main", default: true }] } });
+export function createDefaultMemoryToolConfig(): NovaConfig {
+  return asNovaConfig({ agents: { list: [{ id: "main", default: true }] } });
 }
 
 export function createMemorySearchToolOrThrow(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   agentSessionKey?: string;
   oneShotCliRun?: boolean;
-  conversationRecall?: OpenClawPluginToolContext["conversationRecall"];
+  conversationRecall?: NovaPluginToolContext["conversationRecall"];
 }) {
   const tool = createMemorySearchTool({
     config: params?.config ?? createDefaultMemoryToolConfig(),
@@ -32,9 +32,7 @@ export function createMemorySearchToolOrThrow(params?: {
   return tool;
 }
 
-export function createMemoryGetToolOrThrow(
-  config: OpenClawConfig = createDefaultMemoryToolConfig(),
-) {
+export function createMemoryGetToolOrThrow(config: NovaConfig = createDefaultMemoryToolConfig()) {
   const tool = createMemoryGetTool({ config });
   if (!tool) {
     throw new Error("tool missing");
@@ -44,7 +42,7 @@ export function createMemoryGetToolOrThrow(
 
 export function createAutoCitationsMemorySearchTool(agentSessionKey: string) {
   return createMemorySearchToolOrThrow({
-    config: asOpenClawConfig({
+    config: asNovaConfig({
       memory: { citations: "auto" },
       agents: { list: [{ id: "main", default: true }] },
     }),

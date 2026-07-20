@@ -1,11 +1,11 @@
 // Diffs API module exposes the plugin public contract.
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+export type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 export {
   definePluginEntry,
   type AnyAgentTool,
-  type OpenClawPluginApi,
-  type OpenClawPluginConfigSchema,
-  type OpenClawPluginToolContext,
+  type NovaPluginApi,
+  type NovaPluginConfigSchema,
+  type NovaPluginToolContext,
   type PluginLogger,
-} from "openclaw/plugin-sdk/plugin-entry";
-export { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/plugin-entry";
+export { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";

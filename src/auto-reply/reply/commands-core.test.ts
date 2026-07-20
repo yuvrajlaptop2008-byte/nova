@@ -57,8 +57,8 @@ describe("emitResetCommandHooks", () => {
       previousSessionEntry: {
         sessionId: "prev-session",
       } as HandleCommandsParams["previousSessionEntry"],
-      storePath: "/tmp/openclaw-agent.sqlite",
-      workspaceDir: "/tmp/openclaw-workspace",
+      storePath: "/tmp/nova-agent.sqlite",
+      workspaceDir: "/tmp/nova-workspace",
     });
 
     expect(hookRunnerMocks.runBeforeReset).toHaveBeenCalledTimes(1);
@@ -84,7 +84,7 @@ describe("emitResetCommandHooks", () => {
     expect(ctx?.agentId).toBe("navi");
     expect(ctx?.sessionKey).toBe("agent:navi:main");
     expect(ctx?.sessionId).toBe("prev-session");
-    expect(ctx?.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(ctx?.workspaceDir).toBe("/tmp/nova-workspace");
   });
 
   it("falls back to main when the reset hook has no session key", async () => {
@@ -92,7 +92,7 @@ describe("emitResetCommandHooks", () => {
     expect(ctx?.agentId).toBe("main");
     expect(ctx?.sessionKey).toBeUndefined();
     expect(ctx?.sessionId).toBe("prev-session");
-    expect(ctx?.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(ctx?.workspaceDir).toBe("/tmp/nova-workspace");
   });
 
   it("keeps the main-agent path on the main agent workspace", async () => {
@@ -100,7 +100,7 @@ describe("emitResetCommandHooks", () => {
     expect(ctx?.agentId).toBe("main");
     expect(ctx?.sessionKey).toBe("agent:main:main");
     expect(ctx?.sessionId).toBe("prev-session");
-    expect(ctx?.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(ctx?.workspaceDir).toBe("/tmp/nova-workspace");
   });
 
   it("loads marker-backed before_reset transcripts by session identity", async () => {
@@ -126,12 +126,12 @@ describe("emitResetCommandHooks", () => {
       cfg: {} as HandleCommandsParams["cfg"],
       command,
       sessionKey: "agent:main:telegram:group:-1003826723328:topic:8428",
-      storePath: "/tmp/openclaw-agent.sqlite",
+      storePath: "/tmp/nova-agent.sqlite",
       previousSessionEntry: {
         sessionId: "prev-session",
-        sessionFile: "sqlite:main:prev-session:/tmp/openclaw-agent.sqlite",
+        sessionFile: "sqlite:main:prev-session:/tmp/nova-agent.sqlite",
       } as HandleCommandsParams["previousSessionEntry"],
-      workspaceDir: "/tmp/openclaw-workspace",
+      workspaceDir: "/tmp/nova-workspace",
     });
 
     await vi.waitFor(() => expect(hookRunnerMocks.runBeforeReset).toHaveBeenCalledTimes(1));
@@ -140,9 +140,9 @@ describe("emitResetCommandHooks", () => {
       agentId: "main",
       sessionId: "prev-session",
       sessionKey: "agent:main:telegram:group:-1003826723328:topic:8428",
-      storePath: "/tmp/openclaw-agent.sqlite",
+      storePath: "/tmp/nova-agent.sqlite",
     });
-    expect(event.sessionFile).toBe("sqlite:main:prev-session:/tmp/openclaw-agent.sqlite");
+    expect(event.sessionFile).toBe("sqlite:main:prev-session:/tmp/nova-agent.sqlite");
     expect(event.messages).toEqual([{ role: "user", content: "Recovered from archive" }]);
     expect(event.reason).toBe("new");
     expect(ctx.sessionId).toBe("prev-session");
@@ -194,12 +194,12 @@ describe("emitResetCommandHooks", () => {
         resetHookTriggered: false,
       } as HandleCommandsParams["command"],
       sessionKey: "agent:main:main",
-      storePath: "/tmp/openclaw-agent.sqlite",
+      storePath: "/tmp/nova-agent.sqlite",
       previousSessionEntry: {
         sessionId: "prev-session",
-        sessionFile: "sqlite:main:prev-session:/tmp/openclaw-agent.sqlite",
+        sessionFile: "sqlite:main:prev-session:/tmp/nova-agent.sqlite",
       } as HandleCommandsParams["previousSessionEntry"],
-      workspaceDir: "/tmp/openclaw-workspace",
+      workspaceDir: "/tmp/nova-workspace",
     });
 
     await vi.waitFor(() => expect(hookRunnerMocks.runBeforeReset).toHaveBeenCalledTimes(1));

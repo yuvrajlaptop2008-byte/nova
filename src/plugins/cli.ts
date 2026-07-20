@@ -1,7 +1,7 @@
 // Registers plugin-related CLI commands.
 import type { Command } from "commander";
 import { getRuntimeConfig, readConfigFileSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   createPluginCliLogger,
   loadPluginCliDescriptors,
@@ -9,7 +9,7 @@ import {
   type PluginCliLoaderOptions,
 } from "./cli-registry-loader.js";
 import { registerPluginCliCommandGroups } from "./register-plugin-cli-command-groups.js";
-import type { OpenClawPluginCliCommandDescriptor, PluginLogger } from "./types.js";
+import type { NovaPluginCliCommandDescriptor, PluginLogger } from "./types.js";
 
 type PluginCliRegistrationMode = "eager" | "lazy";
 
@@ -22,7 +22,7 @@ type PluginCliRegistrationEntries = Awaited<
   ReturnType<typeof loadPluginCliRegistrationEntriesWithDefaults>
 >;
 
-const PLUGIN_CLI_ENTRIES_CACHE_KEY = Symbol.for("openclaw.plugin-cli-registration-entries-cache");
+const PLUGIN_CLI_ENTRIES_CACHE_KEY = Symbol.for("nova.plugin-cli-registration-entries-cache");
 
 interface ProgramWithEntriesCache {
   [PLUGIN_CLI_ENTRIES_CACHE_KEY]?: {
@@ -75,26 +75,25 @@ function loaderOptionsKey(loaderOptions: PluginCliLoaderOptions | undefined): st
   return String(id);
 }
 
-export const loadValidatedConfigForPluginRegistration =
-  async (): Promise<OpenClawConfig | null> => {
-    const snapshot = await readConfigFileSnapshot();
-    if (!snapshot.valid) {
-      return null;
-    }
-    return getRuntimeConfig();
-  };
+export const loadValidatedConfigForPluginRegistration = async (): Promise<NovaConfig | null> => {
+  const snapshot = await readConfigFileSnapshot();
+  if (!snapshot.valid) {
+    return null;
+  }
+  return getRuntimeConfig();
+};
 
 export async function getPluginCliCommandDescriptors(
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
   env?: NodeJS.ProcessEnv,
   loaderOptions?: PluginCliLoaderOptions,
-): Promise<OpenClawPluginCliCommandDescriptor[]> {
+): Promise<NovaPluginCliCommandDescriptor[]> {
   return loadPluginCliDescriptors({ cfg, env, loaderOptions, logger: quietDescriptorLogger });
 }
 
 export async function registerPluginCliCommands(
   program: Command,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
   env?: NodeJS.ProcessEnv,
   loaderOptions?: PluginCliLoaderOptions,
   options?: RegisterPluginCliOptions,
@@ -133,7 +132,7 @@ export async function registerPluginCliCommandsFromValidatedConfig(
   env?: NodeJS.ProcessEnv,
   loaderOptions?: PluginCliLoaderOptions,
   options?: RegisterPluginCliOptions,
-): Promise<OpenClawConfig | null> {
+): Promise<NovaConfig | null> {
   const config = await loadValidatedConfigForPluginRegistration();
   if (!config) {
     return null;

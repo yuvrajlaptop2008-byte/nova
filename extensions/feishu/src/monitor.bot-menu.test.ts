@@ -77,7 +77,7 @@ describe("Feishu bot menu handler", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.NOVA_STATE_DIR = `/tmp/openclaw-feishu-bot-menu-test-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    process.env.NOVA_STATE_DIR = `/tmp/nova-feishu-bot-menu-test-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   });
 
   afterEach(() => {

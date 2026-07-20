@@ -1,10 +1,10 @@
 /** Agent runtime id normalization and retired runtime-selection compatibility helpers. */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 
-export type EmbeddedAgentRuntime = "openclaw" | "auto" | (string & {});
+export type EmbeddedAgentRuntime = "nova" | "auto" | (string & {});
 
-export const NOVA_AGENT_RUNTIME_ID = "openclaw";
+export const NOVA_AGENT_RUNTIME_ID = "nova";
 export const AUTO_AGENT_RUNTIME_ID = "auto";
 
 /** Normalizes configured runtime aliases to the current embedded-agent runtime id vocabulary. */
@@ -13,7 +13,7 @@ export function normalizeEmbeddedAgentRuntime(raw: string | undefined): Embedded
   if (!value) {
     return NOVA_AGENT_RUNTIME_ID;
   }
-  if (value === "openclaw" || value === "pi") {
+  if (value === "nova" || value === "pi") {
     return NOVA_AGENT_RUNTIME_ID;
   }
   if (value === "auto") {
@@ -36,7 +36,7 @@ export function normalizeOptionalAgentRuntimeId(raw: unknown): EmbeddedAgentRunt
 
 /** Resolves the deprecated explicit whole-agent runtime override, when present. */
 export function resolveAgentScopedRuntimeOverride(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
 }): EmbeddedAgentRuntime | undefined {
   const agentId = params.agentId ? normalizeAgentId(params.agentId) : undefined;

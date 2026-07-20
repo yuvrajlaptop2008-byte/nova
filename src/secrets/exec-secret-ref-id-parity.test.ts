@@ -270,7 +270,7 @@ describe("exec SecretRef id parity", () => {
 
   function planAcceptsExecRefForSample(params: {
     type: string;
-    configFile: "openclaw.json" | "auth-profiles.json";
+    configFile: "nova.json" | "auth-profiles.json";
     pathSegments: string[];
     id: string;
   }): boolean {

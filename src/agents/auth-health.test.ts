@@ -138,7 +138,7 @@ describe("buildAuthHealthSummary", () => {
           provider: "openai-codex",
           expires: now + DEFAULT_OAUTH_WARN_MS + 60_000,
           oauthRef: {
-            source: "openclaw-credentials" as const,
+            source: "nova-credentials" as const,
             provider: "openai-codex" as const,
             id: "0123456789abcdef0123456789abcdef",
           },
@@ -319,7 +319,7 @@ describe("buildAuthHealthSummary", () => {
         "zai:default": {
           type: "api_key" as const,
           provider: "zai",
-          key: "openclaw onboard --auth-choice zai-coding-global",
+          key: "nova onboard --auth-choice zai-coding-global",
         },
       },
     };

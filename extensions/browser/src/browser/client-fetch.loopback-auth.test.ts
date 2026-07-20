@@ -1,8 +1,8 @@
 // Browser tests cover client fetch.loopback auth plugin behavior.
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "../test-support/browser-security.mock.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { BrowserControlAuth } from "./control-auth.js";
 import type { BrowserDispatchResponse } from "./routes/dispatcher.js";
 
@@ -10,9 +10,9 @@ type BridgeAuth = NonNullable<
   ReturnType<typeof import("./bridge-auth-registry.js").getBridgeAuthForPort>
 >;
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-    "openclaw/plugin-sdk/ssrf-runtime",
+vi.mock("nova/plugin-sdk/ssrf-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+    "nova/plugin-sdk/ssrf-runtime",
   );
   return {
     ...actual,
@@ -36,7 +36,7 @@ function okDispatchResponse(): BrowserDispatchResponse {
 }
 
 const mocks = vi.hoisted(() => ({
-  loadConfig: vi.fn<() => OpenClawConfig>(() => ({
+  loadConfig: vi.fn<() => NovaConfig>(() => ({
     gateway: {
       auth: {
         token: "loopback-token",
@@ -337,9 +337,9 @@ describe("fetchBrowserJson loopback auth", () => {
   it("keeps restart-gateway guidance for managed local dispatcher timeouts", async () => {
     mocks.loadConfig.mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: {
+          nova: {
             cdpPort: 18800,
             color: "#FF4500",
           },
@@ -349,7 +349,7 @@ describe("fetchBrowserJson loopback auth", () => {
     mocks.dispatch.mockRejectedValueOnce(new Error("Chrome CDP handshake timeout"));
 
     await expectThrownBrowserFetchError(
-      () => fetchBrowserJson<{ ok: boolean }>("/tabs?profile=openclaw"),
+      () => fetchBrowserJson<{ ok: boolean }>("/tabs?profile=nova"),
       {
         contains: [
           "Chrome CDP handshake timeout",
@@ -385,9 +385,9 @@ describe("fetchBrowserJson loopback auth", () => {
   it("keeps restart-gateway guidance for unknown dispatcher profiles", async () => {
     mocks.loadConfig.mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: {
+          nova: {
             cdpPort: 18800,
             color: "#FF4500",
           },
@@ -527,7 +527,7 @@ describe("fetchBrowserJson loopback auth", () => {
         error: "display required",
         reason: "no_display_for_headed_profile",
         details: {
-          profile: "openclaw",
+          profile: "nova",
           requestedHeadless: false,
           headlessSource: "request",
           displayPresent: false,
@@ -544,7 +544,7 @@ describe("fetchBrowserJson loopback auth", () => {
       message: "display required",
       reason: "no_display_for_headed_profile",
       details: {
-        profile: "openclaw",
+        profile: "nova",
         requestedHeadless: false,
         headlessSource: "request",
         displayPresent: false,

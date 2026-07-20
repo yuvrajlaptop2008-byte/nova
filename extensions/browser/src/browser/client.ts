@@ -4,10 +4,7 @@
  * Provides typed helpers for status, profile lifecycle, tabs, and snapshots
  * over the browser-control transport.
  */
-import {
-  clampPositiveTimerTimeoutMs,
-  resolveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
+import { clampPositiveTimerTimeoutMs, resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
 import { buildProfileQuery, withBaseUrl } from "./client-actions-url.js";
 import { fetchBrowserJson } from "./client-fetch.js";
 import type {
@@ -89,7 +86,7 @@ export type ProfileStatus = {
   cdpPort: number | null;
   cdpUrl: string | null;
   color: string;
-  driver: "openclaw" | "existing-session" | "extension";
+  driver: "nova" | "existing-session" | "extension";
   running: boolean;
   tabCount: number;
   isDefault: boolean;
@@ -285,7 +282,7 @@ export async function browserCreateProfile(
     color?: string;
     cdpUrl?: string;
     userDataDir?: string;
-    driver?: "openclaw" | "existing-session";
+    driver?: "nova" | "existing-session";
   },
 ): Promise<BrowserCreateProfileResult> {
   return await fetchBrowserJson<BrowserCreateProfileResult>(

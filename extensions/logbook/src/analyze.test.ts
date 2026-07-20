@@ -109,7 +109,7 @@ describe("parseCardsJson", () => {
   it("accepts a valid card array and normalizes fields", () => {
     const result = parseCardsJson({
       raw: `Here you go:\n${JSON.stringify([
-        card({ category: "CODING", appSites: { primary: "https://GitHub.com/openclaw" } }),
+        card({ category: "CODING", appSites: { primary: "https://GitHub.com/nova" } }),
       ])}\nHope that helps!`,
       day: DAY,
       windowStartMs,

@@ -1,12 +1,12 @@
 // Xiaomi tests cover speech provider plugin behavior.
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const transcodeAudioBufferToOpusMock = vi.hoisted(() => vi.fn());
 
 const PROVIDER_RESPONSE_MAX_BYTES = 16 * 1024 * 1024;
 
-vi.mock("openclaw/plugin-sdk/media-runtime", () => ({
+vi.mock("nova/plugin-sdk/media-runtime", () => ({
   transcodeAudioBufferToOpus: transcodeAudioBufferToOpusMock,
 }));
 

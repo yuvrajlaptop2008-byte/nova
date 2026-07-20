@@ -798,50 +798,50 @@
     },
     {
       "locale": "fr",
-      "source": "Asking OpenClaw",
+      "source": "Asking Nova",
       "translations": [
-        "Demande à OpenClaw",
-        "Interrogation d’OpenClaw"
+        "Demande à Nova",
+        "Interrogation d’Nova"
       ]
     },
     {
       "locale": "id",
-      "source": "Asking OpenClaw",
+      "source": "Asking Nova",
       "translations": [
-        "Bertanya kepada OpenClaw",
-        "Meminta OpenClaw"
+        "Bertanya kepada Nova",
+        "Meminta Nova"
       ]
     },
     {
       "locale": "ja-JP",
-      "source": "Asking OpenClaw",
+      "source": "Asking Nova",
       "translations": [
-        "OpenClaw に問い合わせ中",
-        "OpenClawに問い合わせ中"
+        "Nova に問い合わせ中",
+        "Novaに問い合わせ中"
       ]
     },
     {
       "locale": "ko",
-      "source": "Asking OpenClaw",
+      "source": "Asking Nova",
       "translations": [
-        "OpenClaw에 문의 중",
-        "OpenClaw에 요청 중"
+        "Nova에 문의 중",
+        "Nova에 요청 중"
       ]
     },
     {
       "locale": "pl",
-      "source": "Asking OpenClaw",
+      "source": "Asking Nova",
       "translations": [
-        "Pytanie OpenClaw",
-        "Pytanie do OpenClaw"
+        "Pytanie Nova",
+        "Pytanie do Nova"
       ]
     },
     {
       "locale": "tr",
-      "source": "Asking OpenClaw",
+      "source": "Asking Nova",
       "translations": [
-        "OpenClaw'a soruluyor",
-        "OpenClaw’a soruluyor"
+        "Nova'a soruluyor",
+        "Nova’a soruluyor"
       ]
     },
     {
@@ -6303,82 +6303,82 @@
     },
     {
       "locale": "ar",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "لا يستطيع OpenClaw تحديد إذن الموقع الحالي في iOS.",
-        "يتعذّر على OpenClaw تحديد إذن الموقع الحالي في iOS."
+        "لا يستطيع Nova تحديد إذن الموقع الحالي في iOS.",
+        "يتعذّر على Nova تحديد إذن الموقع الحالي في iOS."
       ]
     },
     {
       "locale": "fr",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw ne peut pas déterminer l'autorisation de localisation iOS actuelle.",
-        "OpenClaw ne peut pas déterminer l’autorisation de localisation iOS actuelle."
+        "Nova ne peut pas déterminer l'autorisation de localisation iOS actuelle.",
+        "Nova ne peut pas déterminer l’autorisation de localisation iOS actuelle."
       ]
     },
     {
       "locale": "hi",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw वर्तमान iOS लोकेशन अनुमति निर्धारित नहीं कर सकता।",
-        "OpenClaw वर्तमान iOS स्थान अनुमति निर्धारित नहीं कर सकता।"
+        "Nova वर्तमान iOS लोकेशन अनुमति निर्धारित नहीं कर सकता।",
+        "Nova वर्तमान iOS स्थान अनुमति निर्धारित नहीं कर सकता।"
       ]
     },
     {
       "locale": "it",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw non può determinare l’autorizzazione alla posizione iOS attuale.",
-        "OpenClaw non riesce a determinare l'attuale autorizzazione alla posizione di iOS."
+        "Nova non può determinare l’autorizzazione alla posizione iOS attuale.",
+        "Nova non riesce a determinare l'attuale autorizzazione alla posizione di iOS."
       ]
     },
     {
       "locale": "ja-JP",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw は現在の iOS 位置情報の権限を確認できません。",
-        "OpenClaw は現在の iOS 位置情報許可を判別できません。"
+        "Nova は現在の iOS 位置情報の権限を確認できません。",
+        "Nova は現在の iOS 位置情報許可を判別できません。"
       ]
     },
     {
       "locale": "ru",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw не может определить текущее разрешение iOS на доступ к местоположению.",
-        "OpenClaw не удается определить текущее разрешение iOS на доступ к геопозиции."
+        "Nova не может определить текущее разрешение iOS на доступ к местоположению.",
+        "Nova не удается определить текущее разрешение iOS на доступ к геопозиции."
       ]
     },
     {
       "locale": "th",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw ไม่สามารถระบุการอนุญาตตำแหน่งที่ตั้งของ iOS ในปัจจุบันได้",
-        "OpenClaw ไม่สามารถระบุการอนุญาตตำแหน่งที่ตั้งปัจจุบันของ iOS ได้"
+        "Nova ไม่สามารถระบุการอนุญาตตำแหน่งที่ตั้งของ iOS ในปัจจุบันได้",
+        "Nova ไม่สามารถระบุการอนุญาตตำแหน่งที่ตั้งปัจจุบันของ iOS ได้"
       ]
     },
     {
       "locale": "tr",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw geçerli iOS konum iznini belirleyemiyor.",
-        "OpenClaw mevcut iOS konum iznini belirleyemiyor."
+        "Nova geçerli iOS konum iznini belirleyemiyor.",
+        "Nova mevcut iOS konum iznini belirleyemiyor."
       ]
     },
     {
       "locale": "uk",
-      "source": "OpenClaw cannot determine the current iOS location permission.",
+      "source": "Nova cannot determine the current iOS location permission.",
       "translations": [
-        "OpenClaw не може визначити поточний дозвіл iOS на геолокацію.",
-        "OpenClaw не може визначити поточний дозвіл iOS на доступ до геолокації."
+        "Nova не може визначити поточний дозвіл iOS на геолокацію.",
+        "Nova не може визначити поточний дозвіл iOS на доступ до геолокації."
       ]
     },
     {
       "locale": "ko",
-      "source": "OpenClaw unavailable",
+      "source": "Nova unavailable",
       "translations": [
-        "OpenClaw를 사용할 수 없습니다",
-        "OpenClaw을 사용할 수 없습니다"
+        "Nova를 사용할 수 없습니다",
+        "Nova을 사용할 수 없습니다"
       ]
     },
     {
@@ -9593,18 +9593,18 @@
     },
     {
       "locale": "hi",
-      "source": "Updating OpenClaw",
+      "source": "Updating Nova",
       "translations": [
-        "OpenClaw अपडेट किया जा रहा है",
-        "OpenClaw को अपडेट किया जा रहा है"
+        "Nova अपडेट किया जा रहा है",
+        "Nova को अपडेट किया जा रहा है"
       ]
     },
     {
       "locale": "ja-JP",
-      "source": "Updating OpenClaw",
+      "source": "Updating Nova",
       "translations": [
-        "OpenClaw を更新中",
-        "OpenClawを更新中"
+        "Nova を更新中",
+        "Novaを更新中"
       ]
     },
     {

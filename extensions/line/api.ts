@@ -2,11 +2,11 @@
 export type {
   ChannelAccountSnapshot,
   ChannelPlugin,
-  OpenClawConfig,
-  OpenClawPluginApi,
+  NovaConfig,
+  NovaPluginApi,
   PluginRuntime,
-} from "openclaw/plugin-sdk/core";
-export type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
+} from "nova/plugin-sdk/core";
+export type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
 export type { ResolvedLineAccount } from "./runtime-api.js";
 export { linePlugin } from "./src/channel.js";
 export { lineSetupPlugin } from "./src/channel.setup.js";

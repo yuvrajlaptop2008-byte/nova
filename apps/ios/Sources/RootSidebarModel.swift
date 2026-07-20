@@ -1,10 +1,10 @@
 import Foundation
 import Observation
-import OpenClawChatUI
-import OpenClawProtocol
+import NovaChatUI
+import NovaProtocol
 
 struct ChatSessionRosterSnapshot: Sendable {
-    let sessions: [OpenClawChatSessionEntry]
+    let sessions: [NovaChatSessionEntry]
     let isCached: Bool
 }
 
@@ -47,7 +47,7 @@ final class RootSidebarModel {
         let isPartial: Bool
     }
 
-    private(set) var sessions: [OpenClawChatSessionEntry] = []
+    private(set) var sessions: [NovaChatSessionEntry] = []
     private(set) var usage: CostUsageSummaryLite?
     private(set) var cronJobs: [CronJob] = []
     private(set) var isRefreshing = false
@@ -71,7 +71,7 @@ final class RootSidebarModel {
         currentSessionKey: String,
         mainSessionKey: String,
         activeAgentID: String?,
-        groups: [OpenClawChatSessionGroup]) -> [ChatSessionSidebarModel.Section]
+        groups: [NovaChatSessionGroup]) -> [ChatSessionSidebarModel.Section]
     {
         ChatSessionSidebarModel.sections(
             sessions: self.sessions,
@@ -149,7 +149,7 @@ final class RootSidebarModel {
         self.sessionErrorText = error.localizedDescription
     }
 
-    static func tokenUsageSummary(for sessions: [OpenClawChatSessionEntry]) -> TokenUsageSummary {
+    static func tokenUsageSummary(for sessions: [NovaChatSessionEntry]) -> TokenUsageSummary {
         let knownTotals = sessions.compactMap(\.totalTokens)
         return TokenUsageSummary(
             total: knownTotals.isEmpty ? nil : knownTotals.reduce(0, +),

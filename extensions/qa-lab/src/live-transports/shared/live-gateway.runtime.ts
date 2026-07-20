@@ -1,5 +1,5 @@
 // Qa Lab plugin module implements live gateway behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   startQaGatewayChild,
   type QaCliBackendAuthMode,
@@ -48,7 +48,7 @@ function omitMemoryCoreEntry<T extends Record<string, unknown> | undefined>(entr
   return rest as T;
 }
 
-function prepareLiveTransportGatewayConfig(cfg: OpenClawConfig): OpenClawConfig {
+function prepareLiveTransportGatewayConfig(cfg: NovaConfig): NovaConfig {
   const defaults = cfg.agents?.defaults ?? {};
   return {
     ...cfg,
@@ -91,9 +91,7 @@ export async function startQaLiveLaneGateway(params: {
   command?: QaGatewayChildCommand;
   transport: {
     requiredPluginIds: readonly string[];
-    createGatewayConfig: (params: {
-      baseUrl: string;
-    }) => Pick<OpenClawConfig, "channels" | "messages">;
+    createGatewayConfig: (params: { baseUrl: string }) => Pick<NovaConfig, "channels" | "messages">;
   };
   transportBaseUrl: string;
   controlUiAllowedOrigins?: string[];
@@ -106,7 +104,7 @@ export async function startQaLiveLaneGateway(params: {
   claudeCliAuthMode?: QaCliBackendAuthMode;
   controlUiEnabled?: boolean;
   mockAuthAgentIds?: readonly string[];
-  mutateConfig?: (cfg: OpenClawConfig) => OpenClawConfig;
+  mutateConfig?: (cfg: NovaConfig) => NovaConfig;
 }) {
   const mock = await startQaProviderServer(params.providerMode, {
     modelRefs: [params.primaryModel, params.alternateModel],

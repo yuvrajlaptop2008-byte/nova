@@ -1,6 +1,6 @@
 // Telegram tests cover channel actions.contract plugin behavior.
-import { installChannelActionsContractSuite } from "openclaw/plugin-sdk/channel-test-helpers";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { installChannelActionsContractSuite } from "nova/plugin-sdk/channel-test-helpers";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { telegramPlugin } from "../api.js";
 
@@ -16,7 +16,7 @@ describe("telegram actions contract", () => {
               botToken: "test-token-placeholder",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         expectedActions: ["send", "poll", "react", "delete", "edit", "topic-create", "topic-edit"],
         expectedCapabilities: ["delivery-pin", "presentation"],
       },
@@ -50,7 +50,7 @@ describe("telegram actions contract", () => {
               richMessages,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
       });
 
       expect(hints?.text_markup).toBe(expectedMarkup);
@@ -77,7 +77,7 @@ describe("telegram actions contract", () => {
             richMessages: true,
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
 
     expect(capabilities).toContain("inlineButtons");
@@ -93,7 +93,7 @@ describe("telegram actions contract", () => {
             capabilities: [],
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
 
     expect(capabilities).toContain("inlineButtons");
@@ -103,7 +103,7 @@ describe("telegram actions contract", () => {
     const discovery = telegramPlugin.actions?.describeMessageTool?.({
       cfg: {
         channels: { telegram: { botToken: "test-token-placeholder" } },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
     const schema = discovery?.schema;
     const contributions = Array.isArray(schema) ? schema : schema ? [schema] : [];
@@ -124,7 +124,7 @@ describe("telegram actions contract", () => {
             capabilities: ["vision"],
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
 
     expect(capabilities).not.toContain("inlineButtons");
@@ -144,7 +144,7 @@ describe("telegram actions contract", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: "ops",
     });
 
@@ -162,7 +162,7 @@ describe("telegram actions contract", () => {
               richMessages: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
       }),
     ).not.toThrow();
   });
@@ -185,7 +185,7 @@ describe("telegram actions contract", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
 
     expect(hints?.text_markup).toBe("markdown_telegram_rich");
@@ -225,7 +225,7 @@ describe("telegram actions contract", () => {
         ctx: {
           channel: "telegram",
           action: "send",
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: { quoteText: "  original message  " },
         },
         to: "123456",
@@ -250,7 +250,7 @@ describe("telegram actions contract", () => {
         ctx: {
           channel: "telegram",
           action: "send",
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: { quoteText: "original message" },
         },
         to: "123456",
@@ -262,7 +262,7 @@ describe("telegram actions contract", () => {
         ctx: {
           channel: "telegram",
           action: "send",
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: { quote_text: "  snake case quote  " },
         },
         to: "123456",
@@ -284,7 +284,7 @@ describe("telegram actions contract", () => {
         ctx: {
           channel: "telegram",
           action: "send",
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: { asVideoNote: true },
         },
         to: "123456",
@@ -296,7 +296,7 @@ describe("telegram actions contract", () => {
         ctx: {
           channel: "telegram",
           action: "send",
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: { location },
         },
         to: "123456",

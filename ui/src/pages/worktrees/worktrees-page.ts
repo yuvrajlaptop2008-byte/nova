@@ -18,7 +18,7 @@ import { renderSettingsWorkspace } from "../../components/settings-workspace.ts"
 import { t } from "../../i18n/index.ts";
 import { formatRelativeTimestamp } from "../../lib/format.ts";
 import { searchForSession } from "../../lib/sessions/index.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 
 type WorktreesListResult = { worktrees: WorktreeRecord[] };
@@ -39,7 +39,7 @@ function repoName(repoRoot: string): string {
   return repoRoot.split(/[\\/]/).findLast(Boolean) ?? repoRoot;
 }
 
-class WorktreesPage extends OpenClawLightDomElement {
+class WorktreesPage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -490,6 +490,6 @@ class WorktreesPage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-worktrees-page")) {
-  customElements.define("openclaw-worktrees-page", WorktreesPage);
+if (!customElements.get("nova-worktrees-page")) {
+  customElements.define("nova-worktrees-page", WorktreesPage);
 }

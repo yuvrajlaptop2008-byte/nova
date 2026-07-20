@@ -85,7 +85,7 @@ describe("sdk-loader", () => {
       );
       writeFileSync(
         path.join(pkgDir, "index.cjs"),
-        "module.exports = { openclawDefaultImporterSentinel: true };",
+        "module.exports = { novaDefaultImporterSentinel: true };",
       );
 
       const primaryImport = vi.fn(async () => {
@@ -101,9 +101,9 @@ describe("sdk-loader", () => {
         fallbackDir: tmp,
         primaryImport,
         // Intentionally NOT injecting fallbackImport; exercise the default.
-      })) as unknown as { openclawDefaultImporterSentinel?: boolean };
+      })) as unknown as { novaDefaultImporterSentinel?: boolean };
 
-      expect(sdk.openclawDefaultImporterSentinel).toBe(true);
+      expect(sdk.novaDefaultImporterSentinel).toBe(true);
       expect(primaryImport).toHaveBeenCalledTimes(1);
     } finally {
       rmSync(tmp, { recursive: true, force: true });
@@ -127,7 +127,7 @@ describe("sdk-loader", () => {
       }),
     ).rejects.toMatchObject({
       code: "COPILOT_SDK_MISSING",
-      message: expect.stringContaining("openclaw plugins install @nova/copilot"),
+      message: expect.stringContaining("nova plugins install @nova/copilot"),
     });
 
     expect(fallbackImport).not.toHaveBeenCalled();
@@ -154,7 +154,7 @@ describe("sdk-loader", () => {
     expect(message).toContain("primary boom");
     expect(message).toContain(path.join(fallbackDir, "node_modules", "@github", "copilot-sdk"));
     expect(message).toContain(COPILOT_SDK_SPEC);
-    expect(message).toContain("openclaw plugins install @nova/copilot");
+    expect(message).toContain("nova plugins install @nova/copilot");
   });
 
   it("caches successful loads across calls when cache is enabled", async () => {

@@ -47,7 +47,7 @@ describe("delegation capability", () => {
     const tools = [
       createTool("sessions_spawn"),
       createTool("sessions_send"),
-      createTool("openclaw"),
+      createTool("nova"),
       createTool("llm-task"),
       createTool("codex_session_send"),
       createTool("message"),

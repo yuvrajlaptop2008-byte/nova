@@ -2,8 +2,8 @@
 // thought-signature replay rules.
 
 import { expectDefined } from "@nova/normalization-core";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { AssistantMessage, ToolResultMessage, UserMessage } from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
+import type { AssistantMessage, ToolResultMessage, UserMessage } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import {
   sanitizeGoogleTurnOrdering,

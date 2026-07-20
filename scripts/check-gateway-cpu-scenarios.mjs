@@ -270,7 +270,7 @@ function createQaState(outputDir) {
   const home = path.join(root, "home");
   const stateDir = path.join(root, "state");
   return {
-    configPath: path.join(stateDir, "openclaw.json"),
+    configPath: path.join(stateDir, "nova.json"),
     home,
     root,
     stateDir,
@@ -348,7 +348,7 @@ async function runGatewayCpuScenarios(options, params = {}) {
   if (!options.skipQa) {
     const qaCommand = pnpmCommand(
       [
-        "openclaw",
+        "nova",
         "qa",
         "suite",
         "--provider-mode",

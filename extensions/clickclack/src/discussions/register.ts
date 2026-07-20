@@ -1,6 +1,6 @@
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/core";
-import { registerSessionDiscussionProvider } from "openclaw/plugin-sdk/session-discussion";
-import { createSessionVisibilityChecker } from "openclaw/plugin-sdk/session-visibility";
+import type { NovaPluginApi } from "nova/plugin-sdk/core";
+import { registerSessionDiscussionProvider } from "nova/plugin-sdk/session-discussion";
+import { createSessionVisibilityChecker } from "nova/plugin-sdk/session-visibility";
 import { ClickClackDiscussionService } from "./service.js";
 import {
   enforceClickClackDiscussionToolTarget,
@@ -8,7 +8,7 @@ import {
 } from "./tool-policy.js";
 import { createClickClackDiscussionTool } from "./tool.js";
 
-export function registerClickClackDiscussions(api: OpenClawPluginApi): void {
+export function registerClickClackDiscussions(api: NovaPluginApi): void {
   if (api.registrationMode === "tool-discovery") {
     api.registerTool(() => null, { name: "discussion" });
     return;

@@ -4,14 +4,14 @@ import { EventEmitter } from "node:events";
 import fs from "node:fs";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import { bundledPluginFile } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledPluginFile } from "nova/plugin-sdk/test-fixtures";
 import { describe, expect, it, vi } from "vitest";
 import { runNodeWatchedPaths } from "../../scripts/run-node.mjs";
 import { runWatchMain } from "../../scripts/watch-node.mjs";
 import { withTempDir } from "../test-helpers/temp-dir.js";
 
 const VOICE_CALL_README = bundledPluginFile("voice-call", "README.md");
-const VOICE_CALL_MANIFEST = bundledPluginFile("voice-call", "openclaw.plugin.json");
+const VOICE_CALL_MANIFEST = bundledPluginFile("voice-call", "nova.plugin.json");
 const VOICE_CALL_PACKAGE = bundledPluginFile("voice-call", "package.json");
 const VOICE_CALL_INDEX = bundledPluginFile("voice-call", "index.ts");
 const VOICE_CALL_RUNTIME = bundledPluginFile("voice-call", "src/runtime.ts");
@@ -121,7 +121,7 @@ function requireSpawnEnv(spawn: ReturnType<typeof vi.fn>, callIndex: number) {
 describe("watch-node script", () => {
   it("wires chokidar watch to run-node with watched source/config paths", async () => {
     const { child, spawn, watcher, createWatcher, fakeProcess } = createWatchHarness();
-    await withTempDir({ prefix: "openclaw-watch-node-" }, async (cwd) => {
+    await withTempDir({ prefix: "nova-watch-node-" }, async (cwd) => {
       fs.mkdirSync(path.join(cwd, "src", "infra"), { recursive: true });
       fs.mkdirSync(path.join(cwd, "extensions", "voice-call"), { recursive: true });
 
@@ -210,7 +210,7 @@ describe("watch-node script", () => {
 
   it("preserves explicit sync I/O trace overrides for gateway watch", async () => {
     const { child, spawn, createWatcher, fakeProcess } = createWatchHarness();
-    await withTempDir({ prefix: "openclaw-watch-node-" }, async (cwd) => {
+    await withTempDir({ prefix: "nova-watch-node-" }, async (cwd) => {
       const runPromise = runWatch({
         args: ["gateway", "--force"],
         cwd,
@@ -470,7 +470,7 @@ describe("watch-node script", () => {
       args: ["gateway", "--force"],
       createWatcher,
       env: {
-        LAUNCH_JOB_LABEL: "ai.openclaw.gateway",
+        LAUNCH_JOB_LABEL: "ai.nova.gateway",
         PATH: "/usr/bin",
       },
       lockDisabled: true,
@@ -482,7 +482,7 @@ describe("watch-node script", () => {
     expect(spawnCall[0]).toBe("/usr/local/bin/node");
     expect(spawnCall[1]).toEqual(["scripts/run-node.mjs", "gateway", "--force"]);
     const spawnEnv = requireSpawnEnv(spawn, 0);
-    expect(spawnEnv.LAUNCH_JOB_LABEL).toBe("ai.openclaw.gateway");
+    expect(spawnEnv.LAUNCH_JOB_LABEL).toBe("ai.nova.gateway");
     expect(spawnEnv.NOVA_NO_RESPAWN).toBe("1");
 
     fakeProcess.emit("SIGINT");
@@ -696,7 +696,7 @@ describe("watch-node script", () => {
   it("prints recovery guidance when chokidar fails with invalid package config", async () => {
     const error = Object.assign(
       new Error(
-        'Invalid package config /tmp/openclaw/.pnpm/chokidar/package.json while importing "chokidar" from /tmp/openclaw/scripts/watch-node.mjs.',
+        'Invalid package config /tmp/nova/.pnpm/chokidar/package.json while importing "chokidar" from /tmp/nova/scripts/watch-node.mjs.',
       ),
       { code: "ERR_INVALID_PACKAGE_CONFIG" },
     );
@@ -708,7 +708,7 @@ describe("watch-node script", () => {
       await expect(
         runWatch({
           args: ["gateway", "--force"],
-          cwd: "/tmp/openclaw",
+          cwd: "/tmp/nova",
           loadChokidar: vi.fn(async () => {
             throw error;
           }),
@@ -722,16 +722,16 @@ describe("watch-node script", () => {
       expect(errorSpy.mock.calls).toEqual([
         [""],
         [
-          "[openclaw] gateway:watch could not start because a dependency package config looks corrupted.",
+          "[nova] gateway:watch could not start because a dependency package config looks corrupted.",
         ],
-        ["[openclaw] Invalid package config: /tmp/openclaw/.pnpm/chokidar/package.json"],
-        ["[openclaw] This usually means a file in node_modules is empty or truncated."],
-        ["[openclaw] Recommended recovery:"],
-        ["[openclaw]   rm -rf node_modules"],
-        ["[openclaw]   pnpm store prune"],
-        ["[openclaw]   pnpm install"],
+        ["[nova] Invalid package config: /tmp/nova/.pnpm/chokidar/package.json"],
+        ["[nova] This usually means a file in node_modules is empty or truncated."],
+        ["[nova] Recommended recovery:"],
+        ["[nova]   rm -rf node_modules"],
+        ["[nova]   pnpm store prune"],
+        ["[nova]   pnpm install"],
         [""],
-        ["[openclaw] Original error:"],
+        ["[nova] Original error:"],
         [error],
       ]);
     } finally {
@@ -768,7 +768,7 @@ describe("watch-node script", () => {
 
   it("replaces an existing watcher lock holder before starting", async () => {
     const { child, spawn, watcher, createWatcher, fakeProcess } = createWatchHarness();
-    await withTempDir({ prefix: "openclaw-watch-node-lock-" }, async (cwd) => {
+    await withTempDir({ prefix: "nova-watch-node-lock-" }, async (cwd) => {
       const lockPath = resolveTestWatchLockPath(cwd, ["gateway", "--force"]);
       fs.mkdirSync(path.dirname(lockPath), { recursive: true });
       fs.writeFileSync(

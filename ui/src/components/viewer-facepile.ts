@@ -3,7 +3,7 @@ import { property, state } from "lit/decorators.js";
 import type { PresenceEntry } from "../api/types.ts";
 import { t } from "../i18n/index.ts";
 import { resolveAvatar } from "../lib/identity-avatar.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import "./menu-surface.ts";
 import "./tooltip.ts";
 import { consumeDropdownKeyboardDismissal, trackDropdownKeyboardDismissal } from "./web-awesome.ts";
@@ -153,7 +153,7 @@ function resolveViewerAvatar(user: PresenceViewer) {
 
 export type ViewerAvatarVariant = "session" | "footer" | "profile";
 
-class ViewerAvatar extends OpenClawLightDomContentsElement {
+class ViewerAvatar extends NovaLightDomContentsElement {
   @property({ attribute: false }) user: PresenceViewer | null = null;
   @property() variant: ViewerAvatarVariant = "session";
 
@@ -179,7 +179,7 @@ function renderRosterRow(user: PresenceViewer, isSelf: boolean) {
   // as a subtitle would just echo the same line.
   const subtitle = user.email && user.email !== label ? user.email : undefined;
   return html`<wa-dropdown-item class="presence-roster-menu__item" data-viewer-id=${user.id}>
-    <openclaw-viewer-avatar slot="icon" .user=${user} variant="footer"></openclaw-viewer-avatar>
+    <nova-viewer-avatar slot="icon" .user=${user} variant="footer"></nova-viewer-avatar>
     <span class="presence-roster-menu__text">
       <span class="presence-roster-menu__name"
         >${label}${isSelf
@@ -191,7 +191,7 @@ function renderRosterRow(user: PresenceViewer, isSelf: boolean) {
   </wa-dropdown-item>`;
 }
 
-class ViewerFacepile extends OpenClawLightDomContentsElement {
+class ViewerFacepile extends NovaLightDomContentsElement {
   @property({ attribute: false }) presencePayload: unknown;
   @property({ attribute: false }) selfInstanceId?: string;
   @property({ attribute: false }) sessionKey?: string;
@@ -236,7 +236,7 @@ class ViewerFacepile extends OpenClawLightDomContentsElement {
     if (!position) {
       return nothing;
     }
-    return html`<openclaw-menu-surface>
+    return html`<nova-menu-surface>
       <wa-dropdown
         class="presence-roster-menu"
         .open=${true}
@@ -276,7 +276,7 @@ class ViewerFacepile extends OpenClawLightDomContentsElement {
         </div>
         ${roster.map((user) => renderRosterRow(user, user.id === selfUserId))}
       </wa-dropdown>
-    </openclaw-menu-surface>`;
+    </nova-menu-surface>`;
   }
 
   override render() {
@@ -301,18 +301,18 @@ class ViewerFacepile extends OpenClawLightDomContentsElement {
     >
       ${visible.map((user) => {
         const label = presenceViewerLabel(user);
-        return html`<openclaw-tooltip .content=${label}>
-          <openclaw-viewer-avatar .user=${user} .variant=${this.variant}></openclaw-viewer-avatar>
-        </openclaw-tooltip>`;
+        return html`<nova-tooltip .content=${label}>
+          <nova-viewer-avatar .user=${user} .variant=${this.variant}></nova-viewer-avatar>
+        </nova-tooltip>`;
       })}
       ${overflow.length > 0
-        ? html`<openclaw-tooltip .content=${overflow.map(presenceViewerLabel).join("\n")}>
+        ? html`<nova-tooltip .content=${overflow.map(presenceViewerLabel).join("\n")}>
             <span
               class="viewer-avatar viewer-avatar--overflow"
               aria-label=${overflow.map(presenceViewerLabel).join(", ")}
               >+${overflow.length}</span
             >
-          </openclaw-tooltip>`
+          </nova-tooltip>`
         : nothing}
     </span>`;
     if (this.variant !== "footer") {
@@ -338,17 +338,17 @@ class ViewerFacepile extends OpenClawLightDomContentsElement {
 }
 
 if (globalThis.customElements) {
-  if (!customElements.get("openclaw-viewer-avatar")) {
-    customElements.define("openclaw-viewer-avatar", ViewerAvatar);
+  if (!customElements.get("nova-viewer-avatar")) {
+    customElements.define("nova-viewer-avatar", ViewerAvatar);
   }
-  if (!customElements.get("openclaw-viewer-facepile")) {
-    customElements.define("openclaw-viewer-facepile", ViewerFacepile);
+  if (!customElements.get("nova-viewer-facepile")) {
+    customElements.define("nova-viewer-facepile", ViewerFacepile);
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-viewer-avatar": ViewerAvatar;
-    "openclaw-viewer-facepile": ViewerFacepile;
+    "nova-viewer-avatar": ViewerAvatar;
+    "nova-viewer-facepile": ViewerFacepile;
   }
 }

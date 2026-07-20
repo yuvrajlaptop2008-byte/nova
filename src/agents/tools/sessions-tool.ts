@@ -3,7 +3,7 @@ import { normalizeOptionalString } from "@nova/normalization-core/string-coerce"
 import { Type } from "typebox";
 import { SESSION_AGENT_ATTENTION_ICON_IDS } from "../../../packages/gateway-protocol/src/session-icon.js";
 import { getRuntimeConfig } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { withAgentSessionModelPatchOrigin } from "../../gateway/session-model-patch-origin.js";
 import { resolveAgentIdFromSessionKey } from "../../routing/session-key.js";
 import { stringEnum } from "../schema/typebox.js";
@@ -75,7 +75,7 @@ const SessionsToolSchema = Type.Object(
 type SessionsToolOptions = {
   agentSessionKey?: string;
   sandboxed?: boolean;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   callGateway?: InProcessGatewayCaller;
   hasInProcessGatewayContext?: () => boolean;
 };
@@ -137,7 +137,7 @@ function readGroupNames(value: unknown): string[] {
 async function resolvePatchTarget(
   opts: SessionsToolOptions,
   sessionKey: string | undefined,
-): Promise<{ cfg: OpenClawConfig; key: string }> {
+): Promise<{ cfg: NovaConfig; key: string }> {
   const context = resolveSessionToolContext(opts);
   const rawKey = sessionKey ?? context.effectiveRequesterKey;
   const resolved = await resolveSessionReference({

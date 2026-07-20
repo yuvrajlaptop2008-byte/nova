@@ -86,7 +86,7 @@ function requireAgent<T extends { agent?: unknown }>(options: T): NonNullable<T[
 }
 
 function writeTempCa(contents: string): string {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-slack-proxy-ca-"));
+  const dir = mkdtempSync(path.join(os.tmpdir(), "nova-slack-proxy-ca-"));
   tempDirs.push(dir);
   const caFile = path.join(dir, "proxy-ca.pem");
   writeFileSync(caFile, contents, "utf8");

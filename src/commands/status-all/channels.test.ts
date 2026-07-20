@@ -48,10 +48,10 @@ vi.mock("../../plugins/official-external-plugin-repair-hints.js", () => ({
           channelId,
           label: "Feishu",
           installSpec: "@nova/feishu",
-          installCommand: "openclaw plugins install @nova/feishu",
-          doctorFixCommand: "openclaw doctor --fix",
+          installCommand: "nova plugins install @nova/feishu",
+          doctorFixCommand: "nova doctor --fix",
           repairHint:
-            "Install the official external plugin with: openclaw plugins install @nova/feishu, or run: openclaw doctor --fix.",
+            "Install the official external plugin with: nova plugins install @nova/feishu, or run: nova doctor --fix.",
         }
       : null,
 }));
@@ -136,7 +136,7 @@ describe("buildChannelsTable", () => {
           enabled: true,
           state: "warn",
           detail:
-            "plugin not installed - run openclaw plugins install @nova/feishu or openclaw doctor --fix",
+            "plugin not installed - run nova plugins install @nova/feishu or nova doctor --fix",
         },
       ],
       details: [],
@@ -163,7 +163,7 @@ describe("buildChannelsTable", () => {
           label: "telegram",
           enabled: true,
           state: "warn",
-          detail: "plugin load failed: dependency tree corrupted; run openclaw doctor --fix",
+          detail: "plugin load failed: dependency tree corrupted; run nova doctor --fix",
         },
       ],
       details: [],

@@ -9,7 +9,7 @@ import { assertMediaNotDataUrl, resolveSandboxedMediaSource } from "../../agents
 import { readStringArrayParam, readStringParam } from "../../agents/tools/common.js";
 import { resolveChannelMessageToolMediaSourceParamKeys } from "../../channels/plugins/message-action-discovery.js";
 import type { ChannelId, ChannelMessageActionName } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { root } from "../../infra/fs-safe.js";
 import { basenameFromMediaSource } from "../../infra/local-file-access.js";
 import { resolveChannelAccountMediaMaxMb } from "../../media/configured-max-bytes.js";
@@ -173,7 +173,7 @@ function buildActionMediaSourceParamKeys(extraParamKeys?: readonly string[]): st
 
 /** Resolves plugin-declared media source param aliases for a message action. */
 export function resolveExtraActionMediaSourceParamKeys(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   action?: ChannelMessageActionName;
   args: Record<string, unknown>;
   channel?: string;
@@ -243,7 +243,7 @@ function readAttachmentFileHint(args: Record<string, unknown>): string | undefin
 }
 
 function resolveAttachmentMaxBytes(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: ChannelId;
   accountId?: string | null;
 }): number | undefined {
@@ -288,7 +288,7 @@ function normalizeBase64Payload(params: { base64?: string; contentType?: string 
 }
 
 function resolveSendBufferMaxBytes(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: ChannelId;
   accountId?: string | null;
 }): number {
@@ -320,7 +320,7 @@ function decodeBoundedBase64Attachment(params: { base64: string; maxBytes: numbe
 }
 
 async function hydrateSendBufferMediaParams(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: ChannelId;
   accountId?: string | null;
   args: Record<string, unknown>;
@@ -481,7 +481,7 @@ function buildAttachmentMediaLoadOptions(params: {
 }
 
 async function hydrateAttachmentPayload(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: ChannelId;
   accountId?: string | null;
   args: Record<string, unknown>;
@@ -614,7 +614,7 @@ export async function normalizeSandboxMediaList(params: {
 }
 
 async function hydrateAttachmentActionPayload(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: ChannelId;
   accountId?: string | null;
   args: Record<string, unknown>;
@@ -664,7 +664,7 @@ async function hydrateAttachmentActionPayload(params: {
 
 /** Hydrates attachment-bearing message actions with base64 buffers and metadata. */
 export async function hydrateAttachmentParamsForAction(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: ChannelId;
   accountId?: string | null;
   args: Record<string, unknown>;

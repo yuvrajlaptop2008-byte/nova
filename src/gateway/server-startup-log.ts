@@ -13,7 +13,7 @@ import {
   resolveConfiguredModelRef,
 } from "../agents/model-selection-shared.js";
 import { resolveThinkingDefault } from "../agents/model-thinking-default.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { getResolvedLoggerSettings } from "../logging.js";
 import { collectEnabledInsecureOrDangerousFlagsFromCurrentSnapshot } from "../security/dangerous-config-flags-current.js";
 
@@ -30,8 +30,8 @@ type StartupThinkLevel =
 
 /** Emit startup summary lines after Gateway bind and plugin loading complete. */
 export async function logGatewayStartup(params: {
-  cfg: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  cfg: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   bindHost: string;
   bindHosts?: string[];
   port: number;
@@ -82,7 +82,7 @@ export async function logGatewayStartup(params: {
   if (enabledDangerousFlags.length > 0) {
     const warning =
       `security warning: dangerous config flags enabled: ${enabledDangerousFlags.join(", ")}. ` +
-      "Run `openclaw security audit`.";
+      "Run `nova security audit`.";
     params.log.warn(warning);
   }
 }
@@ -104,7 +104,7 @@ function normalizeStartupThinkLevel(value: unknown): StartupThinkLevel | undefin
 
 /** Resolve explicit thinking overrides from agent defaults and per-model config. */
 function resolveExplicitStartupThinking(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
   defaultAgentThinking: unknown;
@@ -134,7 +134,7 @@ function isConfiguredReasoningDisabled(params: {
 
 /** Format model thinking and fast-mode details for the Gateway startup banner. */
 export function formatAgentModelStartupDetails(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
 }): string {
@@ -180,8 +180,8 @@ export function formatAgentModelStartupDetails(params: {
 }
 
 async function collectConfiguredChannelStartupWarnings(params: {
-  cfg: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  cfg: NovaConfig;
+  activationSourceConfig?: NovaConfig;
 }): Promise<string[]> {
   const [blockerModule, presencePolicyModule, pluginRegistryModule] = await Promise.all([
     import("../commands/doctor/shared/channel-plugin-blockers.js"),
@@ -222,7 +222,7 @@ function formatConfiguredChannelMissingOwnerStartupWarning(entry: {
   const reasons = normalizeSortedUniqueStringEntries(entry.blockedReasons).join(", ");
   return (
     `configured channel warning: channels.${channelId} is configured but no channel plugin ` +
-    `is installed or loadable (${reasons}). Run \`openclaw doctor --fix\` or install the ` +
+    `is installed or loadable (${reasons}). Run \`nova doctor --fix\` or install the ` +
     "channel plugin before relying on this channel."
   );
 }

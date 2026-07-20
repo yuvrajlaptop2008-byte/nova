@@ -1,15 +1,12 @@
 import { setTimeout as sleep } from "node:timers/promises";
 // Qa Lab plugin module owns Telegram live adapter API and credential behavior.
 import type { TelegramBotMessage, TelegramBotUpdate } from "@nova/telegram/api.js";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import {
-  parseStrictPositiveInteger,
-  resolveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { readProviderJsonResponse } from "openclaw/plugin-sdk/provider-http";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
-import { isRecord, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { parseStrictPositiveInteger, resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import { readProviderJsonResponse } from "nova/plugin-sdk/provider-http";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
+import { isRecord, uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import { z } from "zod";
 
 export type TelegramQaRuntimeEnv = {
@@ -251,14 +248,14 @@ export function normalizeTelegramObservedMessage(
 }
 
 export function buildTelegramQaConfig(
-  baseCfg: OpenClawConfig,
+  baseCfg: NovaConfig,
   params: {
     groupId: string;
     sutToken: string;
     driverBotId: number;
     sutAccountId: string;
   },
-): OpenClawConfig {
+): NovaConfig {
   return {
     ...baseCfg,
     agents: {
@@ -269,7 +266,7 @@ export function buildTelegramQaConfig(
           ...baseCfg.agents?.defaults?.models,
           "openai/gpt-5.6-luna": {
             ...baseCfg.agents?.defaults?.models?.["openai/gpt-5.6-luna"],
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "nova" },
           },
         },
         skipBootstrap: true,

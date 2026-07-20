@@ -2,21 +2,18 @@
 import type {
   ChannelApprovalCapabilityHandlerContext,
   PendingApprovalView,
-} from "openclaw/plugin-sdk/approval-handler-runtime";
-import { createChannelApprovalNativeRuntimeAdapter } from "openclaw/plugin-sdk/approval-handler-runtime";
-import { buildChannelApprovalNativeTargetKey } from "openclaw/plugin-sdk/approval-native-runtime";
-import { buildPluginApprovalPendingReplyPayload } from "openclaw/plugin-sdk/approval-reply-runtime";
+} from "nova/plugin-sdk/approval-handler-runtime";
+import { createChannelApprovalNativeRuntimeAdapter } from "nova/plugin-sdk/approval-handler-runtime";
+import { buildChannelApprovalNativeTargetKey } from "nova/plugin-sdk/approval-native-runtime";
+import { buildPluginApprovalPendingReplyPayload } from "nova/plugin-sdk/approval-reply-runtime";
 import {
   buildApprovalPresentationFromActionDescriptors,
   buildExecApprovalPendingReplyPayload,
-} from "openclaw/plugin-sdk/approval-reply-runtime";
-import type { ExecApprovalPendingReplyParams } from "openclaw/plugin-sdk/approval-reply-runtime";
-import type {
-  ExecApprovalRequest,
-  PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/approval-reply-runtime";
+import type { ExecApprovalPendingReplyParams } from "nova/plugin-sdk/approval-reply-runtime";
+import type { ExecApprovalRequest, PluginApprovalRequest } from "nova/plugin-sdk/approval-runtime";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   buildTelegramNativeExpiredApprovalText,
   buildTelegramNativeResolvedApprovalText,

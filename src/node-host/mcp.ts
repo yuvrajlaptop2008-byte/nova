@@ -297,7 +297,7 @@ export async function startNodeHostMcpManager(
     deps.createClient ??
     (() =>
       new Client(
-        { name: "openclaw-node-host", version: VERSION },
+        { name: "nova-node-host", version: VERSION },
         { jsonSchemaValidator: createMcpJsonSchemaValidator() },
       ) as NodeHostMcpClient);
   const resolveTransport = deps.resolveTransport ?? resolveMcpTransport;

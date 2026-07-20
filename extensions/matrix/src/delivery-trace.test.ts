@@ -18,18 +18,18 @@ import {
   type DeliveryTraceInStep,
   type DeliveryTraceScenario,
   type WireRecorder,
-} from "openclaw/plugin-sdk/channel-contract-testing";
+} from "nova/plugin-sdk/channel-contract-testing";
 import {
   implicitMentionKindWhen,
   resolveInboundMentionDecision,
-} from "openclaw/plugin-sdk/channel-mention-gating";
-import { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
+} from "nova/plugin-sdk/channel-mention-gating";
+import { resolveMarkdownTableMode } from "nova/plugin-sdk/markdown-table-runtime";
 import {
   chunkMarkdownTextWithMode,
   resolveChunkMode,
   resolveTextChunkLimit,
-} from "openclaw/plugin-sdk/reply-chunking";
-import { convertMarkdownTables } from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/reply-chunking";
+import { convertMarkdownTables } from "nova/plugin-sdk/text-chunking";
 import { beforeAll, describe, it, vi } from "vitest";
 import {
   createMatrixHandlerTestHarness,
@@ -40,7 +40,7 @@ import type { PluginRuntime, ReplyPayload } from "./runtime-api.js";
 import { installMatrixTestRuntime } from "./test-runtime.js";
 
 const ROOM_ID = "!room:example.org";
-const BOT_USER_ID = "@openclaw:example.org";
+const BOT_USER_ID = "@nova:example.org";
 const INBOUND_EVENT_ID = "$inbound-1";
 
 beforeAll(() => {

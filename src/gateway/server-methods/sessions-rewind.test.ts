@@ -2,8 +2,8 @@ import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ErrorCodes } from "../../../packages/gateway-protocol/src/index.js";
 import { useAutoCleanupTempDirTracker } from "../../../test/helpers/temp-dir.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import type { GatewayRequestContext, RespondFn } from "./types.js";
 
 const mocks = vi.hoisted(() => ({
@@ -71,7 +71,7 @@ beforeEach(async () => {
   mocks.external = false;
   mocks.upstreamFork.mockReset();
   mocks.queueClear.mockReset();
-  vi.stubEnv("NOVA_STATE_DIR", tempDirs.make("openclaw-rewind-handler-"));
+  vi.stubEnv("NOVA_STATE_DIR", tempDirs.make("nova-rewind-handler-"));
   await upsertSessionEntry(
     { agentId: "main", sessionKey },
     {
@@ -120,8 +120,8 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
   vi.unstubAllEnvs();
 });
 

@@ -5,18 +5,15 @@ import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import { replaceSessionEntrySync } from "../config/sessions/session-accessor.entry.js";
 import { deleteSessionEntryLifecycle } from "../config/sessions/session-accessor.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
-import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest, openNovaAgentDatabase } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { InMemoryBoardStore, type BoardStore } from "./board-store.js";
 import { SqliteBoardStore } from "./sqlite-board-store.js";
 
 const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
 function seedSession(env: NodeJS.ProcessEnv, agentId: string, sessionKey: string): string {
-  const database = openOpenClawAgentDatabase({ agentId, env });
+  const database = openNovaAgentDatabase({ agentId, env });
   const sessionId = `session-${agentId}-${sessionKey.replaceAll(":", "-")}`;
   replaceSessionEntrySync(
     { agentId, sessionKey, storePath: database.path },
@@ -26,7 +23,7 @@ function seedSession(env: NodeJS.ProcessEnv, agentId: string, sessionKey: string
 }
 
 function createSqliteStore(): BoardStore {
-  const stateDir = tempDirs.make("openclaw-board-parity-");
+  const stateDir = tempDirs.make("nova-board-parity-");
   const env = { NOVA_STATE_DIR: stateDir };
   seedSession(env, "main", "agent:main:board");
   return new SqliteBoardStore({
@@ -39,8 +36,8 @@ function createSqliteStore(): BoardStore {
 }
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 describe.each([
@@ -311,14 +308,14 @@ describe.each([
 
 describe("SqliteBoardStore persistence", () => {
   it("lazily creates board tables for an existing v13 database", () => {
-    const stateDir = tempDirs.make("openclaw-board-lazy-schema-");
+    const stateDir = tempDirs.make("nova-board-lazy-schema-");
     const env = { NOVA_STATE_DIR: stateDir };
     const sessionKey = "agent:main:board";
     seedSession(env, "main", sessionKey);
-    const opened = openOpenClawAgentDatabase({ agentId: "main", env });
+    const opened = openNovaAgentDatabase({ agentId: "main", env });
     const databasePath = opened.path;
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
 
     const { DatabaseSync } = requireNodeSqlite();
     const existingV13 = new DatabaseSync(databasePath);
@@ -330,7 +327,7 @@ describe("SqliteBoardStore persistence", () => {
     `);
     existingV13.close();
 
-    const reopened = openOpenClawAgentDatabase({ agentId: "main", env });
+    const reopened = openNovaAgentDatabase({ agentId: "main", env });
     expect(
       reopened.db
         .prepare("SELECT name FROM sqlite_schema WHERE type = 'table' AND name = 'board_tabs'")
@@ -380,7 +377,7 @@ describe("SqliteBoardStore persistence", () => {
   });
 
   it("does not create an unregistered agent database during widget byte lookup", () => {
-    const stateDir = tempDirs.make("openclaw-board-no-create-");
+    const stateDir = tempDirs.make("nova-board-no-create-");
     const store = new SqliteBoardStore({
       resolveSession: () => ({
         agentId: "attacker-selected",
@@ -404,15 +401,13 @@ describe("SqliteBoardStore persistence", () => {
       }),
     ).toThrow("board session not found");
     expect(
-      existsSync(
-        path.join(stateDir, "agents", "attacker-selected", "agent", "openclaw-agent.sqlite"),
-      ),
+      existsSync(path.join(stateDir, "agents", "attacker-selected", "agent", "nova-agent.sqlite")),
     ).toBe(false);
     expect(existsSync(path.join(stateDir, "agents", "attacker-selected"))).toBe(false);
   });
 
   it("canonicalizes aliases before reading and writing board rows", () => {
-    const stateDir = tempDirs.make("openclaw-board-alias-");
+    const stateDir = tempDirs.make("nova-board-alias-");
     const env = { NOVA_STATE_DIR: stateDir };
     const canonicalSessionKey = "agent:main:main";
     seedSession(env, "main", canonicalSessionKey);
@@ -446,7 +441,7 @@ describe("SqliteBoardStore persistence", () => {
   });
 
   it("reads widget bytes only from the canonical per-agent database", () => {
-    const stateDir = tempDirs.make("openclaw-board-canonical-bytes-");
+    const stateDir = tempDirs.make("nova-board-canonical-bytes-");
     const env = { NOVA_STATE_DIR: stateDir };
     const agentId = "worker-1";
     const sessionKey = "agent:worker-1:board";
@@ -461,7 +456,7 @@ describe("SqliteBoardStore persistence", () => {
       content: { kind: "html", html: "canonical" },
     });
 
-    const relocated = openOpenClawAgentDatabase({
+    const relocated = openNovaAgentDatabase({
       agentId,
       env,
       path: path.join(stateDir, "000-relocated.sqlite"),
@@ -485,7 +480,7 @@ describe("SqliteBoardStore persistence", () => {
   });
 
   it("purges board rows through the shared session deletion lifecycle", async () => {
-    const stateDir = tempDirs.make("openclaw-board-shared-delete-");
+    const stateDir = tempDirs.make("nova-board-shared-delete-");
     const env = { NOVA_STATE_DIR: stateDir };
     const sessionKey = "agent:main:cleanup";
     const databasePath = seedSession(env, "main", sessionKey);
@@ -507,7 +502,7 @@ describe("SqliteBoardStore persistence", () => {
     });
 
     expect(result.deleted).toBe(true);
-    const database = openOpenClawAgentDatabase({ agentId: "main", env });
+    const database = openNovaAgentDatabase({ agentId: "main", env });
     expect(database.db.prepare("SELECT count(*) AS count FROM board_widgets").get()).toEqual({
       count: 0,
     });
@@ -517,7 +512,7 @@ describe("SqliteBoardStore persistence", () => {
   });
 
   it("rebinds a preserved grant to the updated widget digest", () => {
-    const stateDir = tempDirs.make("openclaw-board-granted-digest-");
+    const stateDir = tempDirs.make("nova-board-granted-digest-");
     const env = { NOVA_STATE_DIR: stateDir };
     const sessionKey = "agent:main:grant-digest";
     seedSession(env, "main", sessionKey);
@@ -539,7 +534,7 @@ describe("SqliteBoardStore persistence", () => {
       declared: { tools: ["status.read"] },
     });
 
-    const database = openOpenClawAgentDatabase({ agentId: "main", env });
+    const database = openNovaAgentDatabase({ agentId: "main", env });
     expect(
       database.db
         .prepare(
@@ -560,7 +555,7 @@ describe("SqliteBoardStore persistence", () => {
   });
 
   it("reopens durable boards and isolates owning agent databases", () => {
-    const stateDir = tempDirs.make("openclaw-board-durable-");
+    const stateDir = tempDirs.make("nova-board-durable-");
     const options = {
       resolveSession: (sessionKey: string) => ({
         agentId: sessionKey.split(":")[1] ?? "main",
@@ -582,8 +577,8 @@ describe("SqliteBoardStore persistence", () => {
       content: { kind: "html", html: "beta" },
     });
 
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
 
     const reopened = new SqliteBoardStore(options);
     expect(reopened.getSnapshot("agent:alpha:board").widgets).toEqual([

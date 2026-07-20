@@ -1,12 +1,12 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   MeetingSessionRuntime,
   type MeetingSessionRuntimeHandles,
   type MeetingSessionRuntimeJoinContext,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { PluginRuntime, RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { PluginRuntime, RuntimeLogger } from "nova/plugin-sdk/plugin-runtime";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
 import type { ZoomMeetingsConfig, ZoomMeetingsMode, ZoomMeetingsTransport } from "./config.js";
 import {
   testZoomMeetingListening,
@@ -96,7 +96,7 @@ export class ZoomMeetingsRuntime {
   constructor(
     private readonly params: {
       config: ZoomMeetingsConfig;
-      fullConfig: OpenClawConfig;
+      fullConfig: NovaConfig;
       runtime: PluginRuntime;
       logger: RuntimeLogger;
     },

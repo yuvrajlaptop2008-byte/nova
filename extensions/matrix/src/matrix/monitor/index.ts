@@ -1,13 +1,13 @@
 // Matrix plugin entrypoint registers its Nova integration.
 import { format } from "node:util";
-import { CHANNEL_APPROVAL_NATIVE_RUNTIME_CONTEXT_CAPABILITY } from "openclaw/plugin-sdk/approval-handler-adapter-runtime";
-import type { ChannelRuntimeSurface } from "openclaw/plugin-sdk/channel-contract";
+import { CHANNEL_APPROVAL_NATIVE_RUNTIME_CONTEXT_CAPABILITY } from "nova/plugin-sdk/approval-handler-adapter-runtime";
+import type { ChannelRuntimeSurface } from "nova/plugin-sdk/channel-contract";
 import {
   resolveChannelStreamingBlockEnabled,
   waitUntilAbort,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { registerChannelRuntimeContext } from "openclaw/plugin-sdk/channel-runtime-context";
-import { resolveOptionalIntegerOption } from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/channel-outbound";
+import { registerChannelRuntimeContext } from "nova/plugin-sdk/channel-runtime-context";
+import { resolveOptionalIntegerOption } from "nova/plugin-sdk/number-runtime";
 import {
   GROUP_POLICY_BLOCKED_LABEL,
   resolveThreadBindingIdleTimeoutMsForChannel,
@@ -65,7 +65,7 @@ type MonitorMatrixOpts = {
   initialSyncLimit?: number;
   replyToMode?: ReplyToMode;
   accountId?: string | null;
-  setStatus?: (next: import("openclaw/plugin-sdk/channel-contract").ChannelAccountSnapshot) => void;
+  setStatus?: (next: import("nova/plugin-sdk/channel-contract").ChannelAccountSnapshot) => void;
 };
 
 // Account entries are schema-open (accounts: z.record(z.unknown())), so

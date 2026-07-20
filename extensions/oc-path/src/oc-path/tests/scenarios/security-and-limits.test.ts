@@ -197,7 +197,7 @@ describe("sentinel literal at format boundary", () => {
 });
 
 describe("numeric segments dispatch by node kind", () => {
-  it("negative numeric key on object resolves as literal key (openclaw#59934)", () => {
+  it("negative numeric key on object resolves as literal key (nova#59934)", () => {
     // Telegram supergroup IDs are negative numbers used as map keys.
     const ast = parseJsonc(
       '{"channels":{"telegram":{"groups":{"-5028303500":{"requireMention":false}}}}}',

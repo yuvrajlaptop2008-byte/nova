@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { runWithAgentRingZeroTools } from "../agent-tools.ring-zero-context.js";
 import { createStubTool } from "../test-helpers/agent-tool-stubs.js";
 import {
@@ -15,7 +15,7 @@ function tools(names: string[]) {
   return names.map(createStubTool);
 }
 
-function createRuntime(config: OpenClawConfig) {
+function createRuntime(config: NovaConfig) {
   return createAgentHarnessToolSurfaceRuntime({
     config,
     executeTool: async () => ({ content: [], details: {} }),
@@ -25,31 +25,31 @@ function createRuntime(config: OpenClawConfig) {
 
 describe("createAgentHarnessToolSurfaceRuntime", () => {
   it("suppresses catalog controls for a host-scoped ring-zero run", () => {
-    const openclaw = {
-      ...createStubTool("openclaw"),
+    const nova = {
+      ...createStubTool("nova"),
       catalogMode: "direct-only" as const,
     };
 
-    runWithAgentRingZeroTools([openclaw], () => {
+    runWithAgentRingZeroTools([nova], () => {
       const runtime = createAgentHarnessToolSurfaceRuntime({
         config: { tools: { toolSearch: true } },
         executeTool: async () => ({ content: [], details: {} }),
         modelToolsEnabled: true,
-        runtimeToolAllowlist: ["openclaw"],
-        toolsAllow: ["openclaw"],
+        runtimeToolAllowlist: ["nova"],
+        toolsAllow: ["nova"],
       });
 
       expect(runtime.codeModeControlsEnabled).toBe(false);
       expect(runtime.toolSearchControlsEnabled).toBe(false);
       expect(runtime.includeToolSearchControls).toBe(false);
-      expect(runtime.runtimeToolAllowlist).toEqual(["openclaw"]);
-      expect(runtime.compactTools([openclaw]).tools).toEqual([openclaw]);
+      expect(runtime.runtimeToolAllowlist).toEqual(["nova"]);
+      expect(runtime.compactTools([nova]).tools).toEqual([nova]);
       runtime.cleanup();
     });
   });
 
   it("filters raw SDK tools but does not refilter prepared constructor output", () => {
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       agents: { defaults: { experimental: { localModelLean: true } } },
       tools: { alsoAllow: ["image_generate"], toolSearch: { enabled: false } },
     };
@@ -69,7 +69,7 @@ describe("createAgentHarnessToolSurfaceRuntime", () => {
   });
 
   it("keeps exec direct in lean structured Tool Search mode", () => {
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       agents: { defaults: { experimental: { localModelLean: true } } },
     };
     const runtime = createRuntime(config);
@@ -98,7 +98,7 @@ describe("createAgentHarnessToolSurfaceRuntime", () => {
   it("preserves explicit code-mode compaction for lean runs", () => {
     testing.setToolSearchCodeModeSupportedForTest(true);
     try {
-      const config: OpenClawConfig = {
+      const config: NovaConfig = {
         agents: { defaults: { experimental: { localModelLean: true } } },
         tools: { toolSearch: { mode: "code" } },
       };

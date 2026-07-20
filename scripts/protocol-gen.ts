@@ -19,7 +19,7 @@ async function writeJsonSchema() {
 
   const rootSchema = {
     $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "https://openclaw.ai/protocol.schema.json",
+    $id: "https://nova.ai/protocol.schema.json",
     title: "Nova Gateway Protocol",
     description: "Handshake, request/response, and event frames for the Gateway WebSocket.",
     oneOf: [

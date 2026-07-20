@@ -9,7 +9,7 @@ import {
   isFileChangePatchUpdatedNotification,
   isAssistantCommentaryCompletionNotification,
   isNativeToolProgressNotification,
-  isPendingOpenClawDynamicToolCompletionNotification,
+  isPendingNovaDynamicToolCompletionNotification,
   isRawAssistantProgressNotification,
   isRawReasoningCompletionNotification,
   isRawToolOutputCompletionNotification,
@@ -88,7 +88,7 @@ export function applyCodexTurnNotificationState(params: {
   activeTurnItemIds: Set<string>;
   activeCompletionBlockerItemIds: Set<string>;
   activeAppServerTurnRequests: number;
-  pendingOpenClawDynamicToolCompletionIds: Set<string>;
+  pendingNovaDynamicToolCompletionIds: Set<string>;
   turnCrossedToolHandoff: boolean;
   postToolRawAssistantCompletionIdleTimeoutMs: number;
   onScheduleTerminalDynamicToolReleaseCheck: () => void;
@@ -126,9 +126,9 @@ export function applyCodexTurnNotificationState(params: {
     turnWatches.isAssistantCompletionIdleWatchArmed() &&
     notification.method === "item/completed" &&
     params.activeTurnItemIds.size === 0;
-  const trackedDynamicToolCompletion = isPendingOpenClawDynamicToolCompletionNotification(
+  const trackedDynamicToolCompletion = isPendingNovaDynamicToolCompletionNotification(
     notification,
-    params.pendingOpenClawDynamicToolCompletionIds,
+    params.pendingNovaDynamicToolCompletionIds,
   );
   const rawToolOutputCompletion = isRawToolOutputCompletionNotification(notification);
   if (
@@ -265,7 +265,7 @@ export function applyCodexTurnNotificationState(params: {
   if (trackedDynamicToolCompletion) {
     const itemId = readNotificationItemId(notification);
     if (itemId) {
-      params.pendingOpenClawDynamicToolCompletionIds.delete(itemId);
+      params.pendingNovaDynamicToolCompletionIds.delete(itemId);
       params.onScheduleTerminalDynamicToolReleaseCheck();
     }
   }

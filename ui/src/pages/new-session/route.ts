@@ -42,6 +42,6 @@ export const page = definePage({
   component: () =>
     import("./new-session-page.ts").then(() => ({
       render: (data: unknown) =>
-        html`<openclaw-new-session-page .data=${data}></openclaw-new-session-page>`,
+        html`<nova-new-session-page .data=${data}></nova-new-session-page>`,
     })),
 });

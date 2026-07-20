@@ -1,12 +1,12 @@
-# OpenClaw Baseten Provider
+# Nova Baseten Provider
 
-Official OpenClaw provider plugin for Baseten Model APIs, including Thinking Machines Lab's Inkling.
+Official Nova provider plugin for Baseten Model APIs, including Thinking Machines Lab's Inkling.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/baseten-provider
-openclaw gateway restart
+nova plugins install @nova/baseten-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/baseten> for setup and configuration.
+See <https://docs.nova.ai/providers/baseten> for setup and configuration.

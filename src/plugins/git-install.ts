@@ -250,19 +250,19 @@ async function withGitStagingDir<T>(
   fn: (tmpDir: string) => Promise<T>,
 ): Promise<T> {
   if (!persistentRepoDir) {
-    return await withTempDir("openclaw-git-plugin-", fn);
+    return await withTempDir("nova-git-plugin-", fn);
   }
   const targetParent = path.dirname(persistentRepoDir);
   try {
     await fs.mkdir(targetParent, { recursive: true });
   } catch {
-    return await withTempDir("openclaw-git-plugin-", fn);
+    return await withTempDir("nova-git-plugin-", fn);
   }
 
   let callbackStarted = false;
   try {
     return await withTempDir(
-      "openclaw-git-plugin-",
+      "nova-git-plugin-",
       async (tmpDir) => {
         callbackStarted = true;
         return await fn(tmpDir);
@@ -275,7 +275,7 @@ async function withGitStagingDir<T>(
     if (callbackStarted) {
       throw err;
     }
-    return await withTempDir("openclaw-git-plugin-", fn);
+    return await withTempDir("nova-git-plugin-", fn);
   }
 }
 

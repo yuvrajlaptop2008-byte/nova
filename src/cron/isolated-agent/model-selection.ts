@@ -1,7 +1,7 @@
 import { resolveConfiguredModelPolicyAllow } from "../../agents/model-selection-shared.js";
 /** Resolves provider/model precedence for isolated cron runs. */
 import type { AgentConfig } from "../../config/types.agents.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { CronJob } from "../types.js";
 import {
   DEFAULT_MODEL,
@@ -24,9 +24,9 @@ type CronModelSelectionSource = "default" | "subagent" | "agent" | "hook" | "pay
 
 /** Inputs used to resolve the model for one isolated cron run. */
 type ResolveCronModelSelectionParams = {
-  cfg: OpenClawConfig;
-  catalogConfig: OpenClawConfig;
-  cfgWithAgentDefaults: OpenClawConfig;
+  cfg: NovaConfig;
+  catalogConfig: NovaConfig;
+  cfgWithAgentDefaults: NovaConfig;
   agentConfigOverride?: Pick<AgentConfig, "model" | "subagents">;
   sessionEntry: CronSessionModelOverrides;
   payload: CronJob["payload"];
@@ -49,7 +49,7 @@ type ResolveCronModelSelectionResult =
       error: string;
     };
 
-function formatAllowedModelRefs(params: { cfg: OpenClawConfig; agentId?: string }): string {
+function formatAllowedModelRefs(params: { cfg: NovaConfig; agentId?: string }): string {
   const configured = resolveConfiguredModelPolicyAllow(params).refs;
   if (configured && configured.length > 0) {
     return configured.toSorted().join(", ");
@@ -58,7 +58,7 @@ function formatAllowedModelRefs(params: { cfg: OpenClawConfig; agentId?: string 
 }
 
 function formatCronPayloadModelRejection(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   modelOverride: string;
   error: string;

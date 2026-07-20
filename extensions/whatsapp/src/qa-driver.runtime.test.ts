@@ -261,7 +261,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -269,7 +269,7 @@ describe("startWhatsAppQaDriverSession", () => {
     });
 
     expect(mocks.jidToE164).toHaveBeenCalledWith("12345@lid", {
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
     const observedMessages = session.getObservedMessages();
     const observedAt = observedMessages[0]?.observedAt;
@@ -295,7 +295,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -309,7 +309,7 @@ describe("startWhatsAppQaDriverSession", () => {
     });
 
     expect(mocks.jidToE164).toHaveBeenCalledWith("15551234567@s.whatsapp.net", {
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
     const observedMessages = session.getObservedMessages();
     const observedAt = observedMessages[0]?.observedAt;
@@ -338,7 +338,7 @@ describe("startWhatsAppQaDriverSession", () => {
     );
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -358,7 +358,7 @@ describe("startWhatsAppQaDriverSession", () => {
     });
 
     expect(mocks.jidToE164).toHaveBeenCalledWith("15551234567@s.whatsapp.net", {
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
     const observedMessages = session.getObservedMessages();
     const observedAt = observedMessages[0]?.observedAt;
@@ -386,7 +386,7 @@ describe("startWhatsAppQaDriverSession", () => {
 
     vi.setSystemTime(new Date("2026-06-04T23:42:32.036Z"));
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -421,7 +421,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -445,7 +445,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -469,7 +469,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -502,7 +502,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -526,7 +526,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -548,7 +548,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -576,7 +576,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -603,7 +603,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.jidToE164.mockReturnValue("+15551234567");
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     sock.ev.emit("messages.upsert", {
@@ -632,7 +632,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.sendReaction.mockResolvedValue({ messageId: "reaction-send-1" });
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     await expect(
@@ -683,7 +683,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.sendSticker.mockResolvedValue({ messageId: "sticker-1" });
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
 
     await expect(
@@ -726,7 +726,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.waitForWaConnection.mockResolvedValue(undefined);
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
       connectionTimeoutMs: 45_000,
     });
 
@@ -741,7 +741,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.waitForWaConnection.mockResolvedValue(undefined);
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
     const sendApiParams = mocks.createWebSendApi.mock.calls[0]?.[0] as {
       sock: {
@@ -774,7 +774,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.waitForWaConnection.mockResolvedValue(undefined);
 
     const pending = startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
       connectionTimeoutMs: 10_000,
       waitForPendingNotifications: true,
     });
@@ -804,7 +804,7 @@ describe("startWhatsAppQaDriverSession", () => {
     mocks.waitForWaConnection.mockResolvedValue(undefined);
 
     const session = await startWhatsAppQaDriverSession({
-      authDir: "/tmp/openclaw-whatsapp-auth",
+      authDir: "/tmp/nova-whatsapp-auth",
     });
     const pending = session.waitForMessage({
       match: (message) => message.text.includes("approval required"),
@@ -843,7 +843,7 @@ describe("startWhatsAppQaDriverSession", () => {
 
     await expect(
       startWhatsAppQaDriverSession({
-        authDir: "/tmp/openclaw-whatsapp-auth",
+        authDir: "/tmp/nova-whatsapp-auth",
         connectionTimeoutMs: 10,
       }),
     ).rejects.toThrow("timed out waiting for WhatsApp QA driver session");

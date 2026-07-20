@@ -4,9 +4,9 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
 import type { PluginCandidate } from "./discovery.js";
 import { readPersistedInstalledPluginIndexInstallRecords } from "./installed-plugin-index-records.js";
 import {
@@ -22,12 +22,12 @@ import { cleanupTrackedTempDirs, makeTrackedTempDir } from "./test-helpers/fs-fi
 const tempDirs: string[] = [];
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   cleanupTrackedTempDirs(tempDirs);
 });
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-installed-plugin-index-store", tempDirs);
+  return makeTrackedTempDir("nova-installed-plugin-index-store", tempDirs);
 }
 
 function createIndex(overrides: Partial<InstalledPluginIndex> = {}): InstalledPluginIndex {
@@ -42,7 +42,7 @@ function createIndex(overrides: Partial<InstalledPluginIndex> = {}): InstalledPl
     plugins: [
       {
         pluginId: "demo",
-        manifestPath: "/plugins/demo/openclaw.plugin.json",
+        manifestPath: "/plugins/demo/nova.plugin.json",
         manifestHash: "manifest-hash",
         rootDir: "/plugins/demo",
         origin: "global",
@@ -74,7 +74,7 @@ function createCandidate(
     "utf8",
   );
   fs.writeFileSync(
-    path.join(rootDir, "openclaw.plugin.json"),
+    path.join(rootDir, "nova.plugin.json"),
     JSON.stringify({
       id,
       name: id === "demo" ? "Demo" : "Next Demo",
@@ -177,7 +177,7 @@ function insertPersistedIndexRow(
     diagnosticsJson?: string;
   },
 ) {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       db.prepare(
         `
@@ -208,7 +208,7 @@ describe("installed plugin index persistence", () => {
     const stateDir = makeTempDir();
 
     expect(resolveInstalledPluginIndexStorePath({ stateDir })).toBe(
-      path.join(stateDir, "state", "openclaw.sqlite"),
+      path.join(stateDir, "state", "nova.sqlite"),
     );
   });
 
@@ -234,7 +234,7 @@ describe("installed plugin index persistence", () => {
     const stateDir = makeTempDir();
     const filePath = resolveInstalledPluginIndexStorePath({ stateDir });
     await writePersistedInstalledPluginIndex(createIndex(), { stateDir });
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
 
     const sqlite = requireNodeSqlite();
     const mutate = new sqlite.DatabaseSync(filePath);
@@ -273,7 +273,7 @@ describe("installed plugin index persistence", () => {
       plugins: [
         {
           pluginId: "browser",
-          manifestPath: "/plugins/browser/openclaw.plugin.json",
+          manifestPath: "/plugins/browser/nova.plugin.json",
           manifestHash: "browser-manifest-hash",
           rootDir: "/plugins/browser",
           origin: "bundled",
@@ -304,7 +304,7 @@ describe("installed plugin index persistence", () => {
       plugins: [
         {
           pluginId: "provider-owner",
-          manifestPath: "/plugins/provider-owner/openclaw.plugin.json",
+          manifestPath: "/plugins/provider-owner/nova.plugin.json",
           manifestHash: "provider-owner-manifest-hash",
           rootDir: "/plugins/provider-owner",
           origin: "bundled",
@@ -496,7 +496,7 @@ describe("installed plugin index persistence", () => {
     expectPluginFields(policyInspect.current, "demo", { enabled: false });
 
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify({
         id: "demo",
         name: "Demo",
@@ -559,7 +559,7 @@ describe("installed plugin index persistence", () => {
       env,
     });
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify({
         id: "demo",
         name: "Demo",

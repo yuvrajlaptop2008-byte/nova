@@ -122,14 +122,14 @@ describe("env test utils", () => {
   });
 
   it("createPathResolutionEnv clears leaked path overrides before applying explicit ones", () => {
-    const homeDir = path.join(path.sep, "tmp", "openclaw-home");
+    const homeDir = path.join(path.sep, "tmp", "nova-home");
     const resolvedHomeDir = path.resolve(homeDir);
-    const previousOpenClawHome = process.env.NOVA_HOME;
+    const previousNovaHome = process.env.NOVA_HOME;
     const previousStateDir = process.env.NOVA_STATE_DIR;
     const previousBundledDir = process.env.NOVA_BUNDLED_PLUGINS_DIR;
-    setTestEnvValue("NOVA_HOME", "/srv/openclaw-home");
-    setTestEnvValue("NOVA_STATE_DIR", "/srv/openclaw-state");
-    setTestEnvValue("NOVA_BUNDLED_PLUGINS_DIR", "/srv/openclaw-bundled");
+    setTestEnvValue("NOVA_HOME", "/srv/nova-home");
+    setTestEnvValue("NOVA_STATE_DIR", "/srv/nova-state");
+    setTestEnvValue("NOVA_BUNDLED_PLUGINS_DIR", "/srv/nova-bundled");
 
     try {
       const env = createPathResolutionEnv(homeDir, {
@@ -141,17 +141,17 @@ describe("env test utils", () => {
       expect(env.NOVA_BUNDLED_PLUGINS_DIR).toBeUndefined();
       expect(env.NOVA_STATE_DIR).toBe("~/state");
     } finally {
-      restoreEnvKey("NOVA_HOME", previousOpenClawHome);
+      restoreEnvKey("NOVA_HOME", previousNovaHome);
       restoreEnvKey("NOVA_STATE_DIR", previousStateDir);
       restoreEnvKey("NOVA_BUNDLED_PLUGINS_DIR", previousBundledDir);
     }
   });
 
   it("withPathResolutionEnv only applies the explicit path env inside the callback", () => {
-    const homeDir = path.join(path.sep, "tmp", "openclaw-home");
+    const homeDir = path.join(path.sep, "tmp", "nova-home");
     const resolvedHomeDir = path.resolve(homeDir);
-    const previousOpenClawHome = process.env.NOVA_HOME;
-    setTestEnvValue("NOVA_HOME", "/srv/openclaw-home");
+    const previousNovaHome = process.env.NOVA_HOME;
+    setTestEnvValue("NOVA_HOME", "/srv/nova-home");
 
     try {
       const seen = withPathResolutionEnv(
@@ -159,7 +159,7 @@ describe("env test utils", () => {
         { NOVA_BUNDLED_PLUGINS_DIR: "~/bundled" },
         (env) => ({
           processHome: process.env.HOME,
-          processOpenClawHome: process.env.NOVA_HOME,
+          processNovaHome: process.env.NOVA_HOME,
           processBundledDir: process.env.NOVA_BUNDLED_PLUGINS_DIR,
           envBundledDir: env.NOVA_BUNDLED_PLUGINS_DIR,
         }),
@@ -167,13 +167,13 @@ describe("env test utils", () => {
 
       expect(seen).toEqual({
         processHome: resolvedHomeDir,
-        processOpenClawHome: undefined,
+        processNovaHome: undefined,
         processBundledDir: "~/bundled",
         envBundledDir: "~/bundled",
       });
-      expect(process.env.NOVA_HOME).toBe("/srv/openclaw-home");
+      expect(process.env.NOVA_HOME).toBe("/srv/nova-home");
     } finally {
-      restoreEnvKey("NOVA_HOME", previousOpenClawHome);
+      restoreEnvKey("NOVA_HOME", previousNovaHome);
     }
   });
 });

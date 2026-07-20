@@ -4,20 +4,20 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { timestampMsToIsoString } from "openclaw/plugin-sdk/number-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { timestampMsToIsoString } from "nova/plugin-sdk/number-runtime";
 import type {
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeInvokePolicy,
-} from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+  NovaPluginNodeHostCommand,
+  NovaPluginNodeInvokePolicy,
+} from "nova/plugin-sdk/plugin-entry";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   materializeWindowsSpawnProgram,
   resolveWindowsSpawnProgram,
-} from "openclaw/plugin-sdk/windows-spawn";
+} from "nova/plugin-sdk/windows-spawn";
 import { formatCodexDisplayText } from "./command-formatters.js";
 
 const CODEX_CLI_SESSIONS_LIST_COMMAND = "codex.cli.sessions.list";
@@ -69,7 +69,7 @@ const DEFAULT_RESUME_SPAWN_RUNTIME: CodexCliResumeSpawnRuntime = {
   execPath: process.execPath,
 };
 
-export function createCodexCliSessionNodeHostCommands(): OpenClawPluginNodeHostCommand[] {
+export function createCodexCliSessionNodeHostCommands(): NovaPluginNodeHostCommand[] {
   return [
     {
       command: CODEX_CLI_SESSIONS_LIST_COMMAND,
@@ -85,7 +85,7 @@ export function createCodexCliSessionNodeHostCommands(): OpenClawPluginNodeHostC
   ];
 }
 
-export function createCodexCliSessionNodeInvokePolicies(): OpenClawPluginNodeInvokePolicy[] {
+export function createCodexCliSessionNodeInvokePolicies(): NovaPluginNodeInvokePolicy[] {
   return [
     {
       commands: [CODEX_CLI_SESSIONS_LIST_COMMAND],
@@ -259,7 +259,7 @@ async function runCodexExecResume(params: {
   timeoutMs: number;
 }): Promise<string> {
   const outputPath = path.join(
-    await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-codex-cli-")),
+    await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-codex-cli-")),
     "last-message.txt",
   );
   try {

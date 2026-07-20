@@ -189,7 +189,7 @@ function writeImageGeneration(res) {
         b64_json:
           "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yf7kAAAAASUVORK5CYII=",
         mime_type: "image/png",
-        revised_prompt: "openclaw mock image",
+        revised_prompt: "nova mock image",
       },
     ],
   });
@@ -316,7 +316,7 @@ const server = http.createServer((req, res) => {
     if (req.method === "GET" && url.pathname === "/v1/models") {
       writeJson(res, 200, {
         object: "list",
-        data: [{ id: "gpt-5.6-luna", object: "model", owned_by: "openclaw-e2e" }],
+        data: [{ id: "gpt-5.6-luna", object: "model", owned_by: "nova-e2e" }],
       });
       return;
     }

@@ -1,7 +1,7 @@
 // Covers heartbeat ack truncation limits.
 import fs from "node:fs/promises";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { runHeartbeatOnce, type HeartbeatDeps } from "./heartbeat-runner.js";
 import { installHeartbeatRunnerTestRuntime } from "./heartbeat-runner.test-harness.js";
 import {
@@ -25,7 +25,7 @@ describe("runHeartbeatOnce ack handling", () => {
     heartbeat: Record<string, unknown>;
     channels: Record<string, unknown>;
     messages?: Record<string, unknown>;
-  }): OpenClawConfig {
+  }): NovaConfig {
     return {
       agents: {
         defaults: {
@@ -81,7 +81,7 @@ describe("runHeartbeatOnce ack handling", () => {
 
   function expectTelegramMessageSend(
     send: ReturnType<typeof vi.fn>,
-    params: { to: string; text: string; cfg: OpenClawConfig },
+    params: { to: string; text: string; cfg: NovaConfig },
   ) {
     expect(send.mock.calls).toEqual([
       [
@@ -98,7 +98,7 @@ describe("runHeartbeatOnce ack handling", () => {
 
   function expectWhatsAppMessageSend(
     send: ReturnType<typeof vi.fn>,
-    params: { to: string; text: string; cfg: OpenClawConfig },
+    params: { to: string; text: string; cfg: NovaConfig },
   ) {
     expect(send.mock.calls).toEqual([
       [
@@ -176,7 +176,7 @@ describe("runHeartbeatOnce ack handling", () => {
     storePath: string;
     heartbeat?: Record<string, unknown>;
     visibility?: Record<string, unknown>;
-  }): OpenClawConfig {
+  }): NovaConfig {
     return createHeartbeatConfig({
       tmpDir: params.tmpDir,
       storePath: params.storePath,
@@ -199,7 +199,7 @@ describe("runHeartbeatOnce ack handling", () => {
     storePath: string;
     heartbeat?: Record<string, unknown>;
     visibility?: Record<string, unknown>;
-  }): Promise<OpenClawConfig> {
+  }): Promise<NovaConfig> {
     const cfg = createWhatsAppHeartbeatConfig(params);
     await seedMainSessionStore(params.storePath, cfg, {
       lastChannel: "whatsapp",
@@ -381,8 +381,8 @@ describe("runHeartbeatOnce ack handling", () => {
     },
     {
       title: "strips responsePrefix before HEARTBEAT_OK detection and suppresses short ack text",
-      replyText: "[openclaw] HEARTBEAT_OK all good",
-      messages: { responsePrefix: "[openclaw]" },
+      replyText: "[nova] HEARTBEAT_OK all good",
+      messages: { responsePrefix: "[nova]" },
       expectedCalls: 0,
     },
     {

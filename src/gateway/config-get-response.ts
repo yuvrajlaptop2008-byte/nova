@@ -1,6 +1,6 @@
 import { redactConfigSnapshot } from "../config/redact-snapshot.js";
 import { getRuntimeConfigAppliedHash, hashRuntimeConfigValue } from "../config/runtime-snapshot.js";
-import type { ConfigFileSnapshot } from "../config/types.openclaw.js";
+import type { ConfigFileSnapshot } from "../config/types.nova.js";
 
 export function createConfigGetResponse(
   snapshot: ConfigFileSnapshot,

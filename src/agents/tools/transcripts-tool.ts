@@ -7,7 +7,7 @@ import path from "node:path";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { Type } from "typebox";
 import { resolveStateDir } from "../../config/paths.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   type ResolvedTranscriptsAutoStartConfig,
   resolveTranscriptsConfig,
@@ -296,7 +296,7 @@ async function statusTranscripts(ctx: TranscriptsRuntimeContext) {
 
 /** Create the agent-facing transcripts tool. */
 export function createTranscriptsTool(options?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   stateDir?: string;
   logger?: TranscriptsLogger;
 }): AnyAgentTool {

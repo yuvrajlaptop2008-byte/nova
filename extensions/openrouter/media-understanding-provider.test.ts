@@ -2,7 +2,7 @@
 import {
   describeImageWithModel,
   describeImagesWithModel,
-} from "openclaw/plugin-sdk/media-understanding";
+} from "nova/plugin-sdk/media-understanding";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { openrouterMediaUnderstandingProvider } from "./media-understanding-provider.js";
 
@@ -23,7 +23,7 @@ const { assertOkOrThrowHttpErrorMock, postJsonRequestMock, resolveProviderHttpRe
     })),
   }));
 
-vi.mock("openclaw/plugin-sdk/provider-http", () => ({
+vi.mock("nova/plugin-sdk/provider-http", () => ({
   assertOkOrThrowHttpError: assertOkOrThrowHttpErrorMock,
   postJsonRequest: postJsonRequestMock,
   // Pass-through: bounded-reader enforcement is tested via bounded-reader unit tests.
@@ -97,7 +97,7 @@ describe("openrouter media understanding provider", () => {
       defaultHeaders: {
         Authorization: "Bearer sk-openrouter",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://openclaw.ai",
+        "HTTP-Referer": "https://nova.ai",
         "X-OpenRouter-Title": "Nova",
       },
       provider: "openrouter",
@@ -127,7 +127,7 @@ describe("openrouter media understanding provider", () => {
       throw new Error("expected OpenRouter request headers");
     }
     expect(headers.get("authorization")).toBe("Bearer sk-openrouter");
-    expect(headers.get("http-referer")).toBe("https://openclaw.ai");
+    expect(headers.get("http-referer")).toBe("https://nova.ai");
     expect(headers.get("x-openrouter-title")).toBe("Nova");
     expect(release).toHaveBeenCalledOnce();
   });

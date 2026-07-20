@@ -1,5 +1,5 @@
 // Feishu plugin module implements monitor.startup behavior.
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import type { RuntimeEnv } from "../runtime-api.js";
 import { resolveStartupProbeTimeoutMs } from "./monitor-startup-timeout.js";
 import { probeFeishu } from "./probe.js";

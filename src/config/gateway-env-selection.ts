@@ -1,5 +1,5 @@
 import { collectConfigRuntimeEnvVars } from "./env-vars.js";
-import type { OpenClawConfig } from "./types.js";
+import type { NovaConfig } from "./types.js";
 
 export const GATEWAY_CONFIG_SELECTION_ENV_KEYS: ReadonlySet<string> = new Set([
   "ANDROID_DATA",
@@ -24,10 +24,10 @@ export const GATEWAY_CONFIG_SELECTION_ENV_KEYS: ReadonlySet<string> = new Set([
 
 /** Rejects config.env changes that would retarget a running Gateway process. */
 export function assertGatewayConfigEnvSelectionUnchanged(
-  previousConfig: OpenClawConfig,
-  nextConfig: OpenClawConfig,
+  previousConfig: NovaConfig,
+  nextConfig: NovaConfig,
 ): void {
-  const normalize = (config: OpenClawConfig) =>
+  const normalize = (config: NovaConfig) =>
     new Map(
       Object.entries(collectConfigRuntimeEnvVars(config)).map(([key, value]) => [
         key.toUpperCase(),

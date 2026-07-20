@@ -6,12 +6,12 @@ import {
   selectApplicableRuntimeConfig,
 } from "../../config/config.js";
 import type { AgentDefaultsConfig } from "../../config/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 
 type ResolvedAgentConfig = NonNullable<ReturnType<typeof resolveAgentConfig>>;
 
 /** Selects the active reloadable config when it descends from the cron caller's snapshot. */
-export function resolveCronActiveRuntimeConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function resolveCronActiveRuntimeConfig(cfg: NovaConfig): NovaConfig {
   const runtimeConfig = getRuntimeConfigSnapshot();
   const runtimeSourceConfig = getRuntimeConfigSourceSnapshot();
   if (!runtimeConfig || !runtimeSourceConfig) {

@@ -1,5 +1,5 @@
-import type { HealthFinding } from "openclaw/plugin-sdk/health";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { HealthFinding } from "nova/plugin-sdk/health";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { PolicyDataHandlingEvidence, PolicyEvidence } from "../policy-state.js";
 import { POLICY_CHECK_IDS } from "./check-ids.js";
 import { SUPPORTED_AUTH_PROFILE_MODES } from "./policy-constants.js";
@@ -192,7 +192,7 @@ export function dataHandlingFinding(
     severity: "error",
     message: params.message,
     source: "policy",
-    path: "openclaw config",
+    path: "nova config",
     ocPath: entry.source,
     target: entry.source,
     requirement: params.requirement,
@@ -244,7 +244,7 @@ export function secretPolicyShapeFindings(
           policyPath,
           `oc://${policyDocName}/secrets/denySources/#${invalidIndex}`,
           `${policyPath} secrets.denySources[${invalidIndex}] must be a non-empty source name.`,
-          "Use non-empty source names such as env, file, exec, or openclaw.",
+          "Use non-empty source names such as env, file, exec, or nova.",
         ),
       );
     }

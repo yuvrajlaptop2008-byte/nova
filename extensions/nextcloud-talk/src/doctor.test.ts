@@ -2,8 +2,8 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createPersistentDedupe } from "openclaw/plugin-sdk/persistent-dedupe";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { createPersistentDedupe } from "nova/plugin-sdk/persistent-dedupe";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   NEXTCLOUD_TALK_PLUGIN_ID,
@@ -91,7 +91,7 @@ describe("nextcloud-talk doctor", () => {
             },
           },
         } as never,
-        doctorFixCommand: "openclaw doctor --fix",
+        doctorFixCommand: "nova doctor --fix",
       }),
     ).resolves.toEqual([
       '- channels.nextcloud-talk.default: Nextcloud Talk bot "Nova" (1) is missing the response feature (features=9); outbound replies will fail.',
@@ -99,7 +99,7 @@ describe("nextcloud-talk doctor", () => {
   });
 
   it("migrates legacy replay dedupe JSON into SQLite during doctor repair", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-nextcloud-doctor-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-nextcloud-doctor-"));
     const canonicalStateDir = await fs.realpath(stateDir);
     const legacyDir = path.join(canonicalStateDir, "nextcloud-talk", "replay-dedupe");
     const legacyPath = path.join(legacyDir, "account-a.json");
@@ -125,7 +125,7 @@ describe("nextcloud-talk doctor", () => {
           },
         },
       } as never,
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
       env,
     });
 

@@ -1,7 +1,7 @@
 // Private MIME keeps stray text and file drags from becoming session actions.
-export const SESSION_DRAG_MIME = "application/x-openclaw-session-key";
-const SESSION_GROUP_DRAG_MIME = "application/x-openclaw-session-group";
-const SIDEBAR_ROUTE_DRAG_MIME = "application/x-openclaw-sidebar-route";
+export const SESSION_DRAG_MIME = "application/x-nova-session-key";
+const SESSION_GROUP_DRAG_MIME = "application/x-nova-session-group";
+const SIDEBAR_ROUTE_DRAG_MIME = "application/x-nova-sidebar-route";
 
 export function writeSessionDragData(dataTransfer: DataTransfer, sessionKey: string): void {
   dataTransfer.setData(SESSION_DRAG_MIME, sessionKey);

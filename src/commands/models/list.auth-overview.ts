@@ -17,7 +17,7 @@ import {
   resolveEnvApiKey,
   resolveUsableCustomProviderApiKey,
 } from "../../agents/model-auth.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { ProviderAuthEvidence } from "../../secrets/provider-env-vars.js";
 import { maskApiKey } from "../../security/secret-mask.js";
 import { shortenHomePath } from "../../utils.js";
@@ -66,7 +66,7 @@ function resolveProfileSourceAgentDir(params: {
 /** Resolves the effective auth source and profile counts for a provider. */
 export function resolveProviderAuthOverview(params: {
   provider: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   store: AuthProfileStore;
   modelsPath: string;
   agentDir?: string;

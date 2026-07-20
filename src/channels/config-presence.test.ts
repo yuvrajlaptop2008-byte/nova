@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import {
   hasMeaningfulChannelConfig,
   listExplicitlyDisabledChannelIdsForConfig,
@@ -23,13 +23,13 @@ const matrixPresenceOptions = {
 };
 
 function makeTempStateDir() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-channel-config-presence-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-channel-config-presence-"));
   tempDirs.push(dir);
   return dir;
 }
 
 function expectPotentialConfiguredChannelCase(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   expectedIds: string[];
   options?: Parameters<typeof listPotentialConfiguredChannelIds>[2];
@@ -77,7 +77,7 @@ describe("config presence", () => {
         slack: { botToken: "token" },
         discord: false,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(listExplicitlyDisabledChannelIdsForConfig(cfg)).toEqual(["matrix"]);
   });
@@ -121,7 +121,7 @@ describe("config presence", () => {
 
   it("detects persisted Matrix credentials without config or env", () => {
     const stateDir = makeTempStateDir().replace(
-      "openclaw-channel-config-presence-",
+      "nova-channel-config-presence-",
       "persisted-matrix-",
     );
     fs.mkdirSync(stateDir, { recursive: true });

@@ -20,12 +20,12 @@ import {
 import type { loadSessionEntry } from "../session-utils.js";
 
 export function readChatHistoryMessageId(message: unknown): string | undefined {
-  const metadata = asOptionalRecord(asOptionalRecord(message)?.["__openclaw"]);
+  const metadata = asOptionalRecord(asOptionalRecord(message)?.["__nova"]);
   return typeof metadata?.id === "string" ? metadata.id : undefined;
 }
 
 export function readChatHistoryMessageSeq(message: unknown): number | undefined {
-  const metadata = asOptionalRecord(asOptionalRecord(message)?.["__openclaw"]);
+  const metadata = asOptionalRecord(asOptionalRecord(message)?.["__nova"]);
   const seq = metadata?.seq;
   return typeof seq === "number" && Number.isSafeInteger(seq) && seq > 0 ? seq : undefined;
 }
@@ -63,7 +63,7 @@ export function enrichChatHistoryCompactionMarkers(
   let changed = false;
   const enriched = messages.map((message) => {
     const record = asOptionalRecord(message);
-    const metadata = asOptionalRecord(record?.["__openclaw"]);
+    const metadata = asOptionalRecord(record?.["__nova"]);
     if (metadata?.kind !== "compaction" || typeof metadata.id !== "string") {
       return message;
     }
@@ -82,7 +82,7 @@ export function enrichChatHistoryCompactionMarkers(
     changed = true;
     return {
       ...record,
-      __openclaw: {
+      __nova: {
         ...metadata,
         ...(typeof tokensBefore === "number" && Number.isFinite(tokensBefore)
           ? { tokensBefore }

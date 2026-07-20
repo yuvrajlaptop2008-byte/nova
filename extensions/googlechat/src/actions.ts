@@ -1,19 +1,15 @@
 // Googlechat plugin module implements actions behavior.
-import {
-  jsonResult,
-  readStringArrayParam,
-  readStringParam,
-} from "openclaw/plugin-sdk/channel-actions";
-import type { ChannelMessageActionAdapter } from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { extractToolSend } from "openclaw/plugin-sdk/tool-send";
+import { jsonResult, readStringArrayParam, readStringParam } from "nova/plugin-sdk/channel-actions";
+import type { ChannelMessageActionAdapter } from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { extractToolSend } from "nova/plugin-sdk/tool-send";
 import { listEnabledGoogleChatAccounts, resolveGoogleChatAccount } from "./accounts.js";
 import { sendGoogleChatMessage } from "./api.js";
 import { resolveGoogleChatOutboundSpace } from "./targets.js";
 
 const providerId = "googlechat";
 
-function listEnabledAccounts(cfg: OpenClawConfig) {
+function listEnabledAccounts(cfg: NovaConfig) {
   return listEnabledGoogleChatAccounts(cfg).filter(
     (account) =>
       account.enabled &&

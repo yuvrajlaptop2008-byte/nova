@@ -3,14 +3,14 @@ import {
   channelIngressRoutes,
   resolveStableChannelMessageIngress,
   type StableChannelIngressIdentityParams,
-} from "openclaw/plugin-sdk/channel-ingress-runtime";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/channel-ingress-runtime";
+import { normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   DEFAULT_ACCOUNT_ID,
   createChannelPairingController,
   isDangerousNameMatchingEnabled,
   resolveDefaultGroupPolicy,
-  type OpenClawConfig,
+  type NovaConfig,
 } from "../../runtime-api.js";
 import { normalizeMSTeamsConversationId } from "../inbound.js";
 import { resolveMSTeamsRouteConfig } from "../policy.js";
@@ -40,7 +40,7 @@ function normalizeIngressValue(value?: string | null): string | null {
 }
 
 export async function resolveMSTeamsSenderAccess(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   activity: MSTeamsTurnContext["activity"];
   hasControlCommand?: boolean;
 }) {

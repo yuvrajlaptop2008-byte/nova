@@ -2,7 +2,7 @@ import { html } from "lit";
 import { property } from "lit/decorators.js";
 import type { ThemeMode } from "../app/theme.ts";
 import { t } from "../i18n/index.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import { icons } from "./icons.ts";
 import "./tooltip.ts";
 
@@ -11,7 +11,7 @@ export type ThemeModeChangeDetail = {
   element: HTMLElement;
 };
 
-class ThemeModeToggle extends OpenClawLightDomContentsElement {
+class ThemeModeToggle extends NovaLightDomContentsElement {
   @property({ attribute: false }) mode: ThemeMode = "system";
 
   private readonly handleModeChange = (event: Event) => {
@@ -36,7 +36,7 @@ class ThemeModeToggle extends OpenClawLightDomContentsElement {
     const tooltip = t("common.colorModeOption", { mode: label });
 
     return html`
-      <openclaw-tooltip .content=${tooltip}>
+      <nova-tooltip .content=${tooltip}>
         <button
           type="button"
           class="theme-mode-toggle"
@@ -45,11 +45,11 @@ class ThemeModeToggle extends OpenClawLightDomContentsElement {
         >
           ${this.mode === "system" ? icons.monitor : this.mode === "light" ? icons.sun : icons.moon}
         </button>
-      </openclaw-tooltip>
+      </nova-tooltip>
     `;
   }
 }
 
-if (!customElements.get("openclaw-theme-mode-toggle")) {
-  customElements.define("openclaw-theme-mode-toggle", ThemeModeToggle);
+if (!customElements.get("nova-theme-mode-toggle")) {
+  customElements.define("nova-theme-mode-toggle", ThemeModeToggle);
 }

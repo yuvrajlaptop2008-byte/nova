@@ -1,6 +1,6 @@
 import type { WorkboardCard } from "@nova/workboard-contract";
 // Workboard Gateway methods that can persist workspace-bearing card metadata.
-import type { OpenClawPluginApi } from "../api.js";
+import type { NovaPluginApi } from "../api.js";
 import {
   readId,
   readPatch,
@@ -36,7 +36,7 @@ async function resolveGatewayWorkspaceMutationAccess(
 }
 
 type WorkspaceGatewayMethodParams = {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   store: WorkboardStore;
   redactCard: (card: WorkboardCard) => WorkboardCard;
 };

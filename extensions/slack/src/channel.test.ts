@@ -1,10 +1,10 @@
 // Slack tests cover channel plugin behavior.
-import { createRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { slackPlugin } from "./channel.js";
 import { slackOutbound } from "./outbound-adapter.js";
 import * as probeModule from "./probe.js";
-import type { OpenClawConfig } from "./runtime-api.js";
+import type { NovaConfig } from "./runtime-api.js";
 import { setSlackRuntime } from "./runtime.js";
 
 const { handleSlackActionMock } = vi.hoisted(() => ({
@@ -72,7 +72,7 @@ beforeEach(async () => {
   } as never);
 });
 
-async function getSlackConfiguredState(cfg: OpenClawConfig) {
+async function getSlackConfiguredState(cfg: NovaConfig) {
   const account = slackPlugin.config.resolveAccount(cfg, "default");
   const inspectedAccount = slackPlugin.config.inspectAccount?.(cfg, "default") ?? account;
   return {
@@ -229,7 +229,7 @@ describe("slackPlugin actions", () => {
   });
 
   it("honors the selected Slack account during message tool discovery", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         slack: {
           botToken: "xoxb-root",
@@ -317,7 +317,7 @@ describe("slackPlugin actions", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     setSlackRuntime({
       config: {
         loadConfig: () => cfg,
@@ -350,7 +350,7 @@ describe("slackPlugin actions", () => {
           enterpriseOrgInstall: true,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const notify = slackPlugin.pairing?.notifyApproval;
     if (!notify) {
       throw new Error("slack pairing notify unavailable");
@@ -371,7 +371,7 @@ describe("slackPlugin actions", () => {
             appToken: "xapp-test",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
     const downloadFile = findSchemaEntry(discovery?.schema, ["download-file"], "Slack schema");
     const downloadProperties = requireRecord(downloadFile.properties, "download-file properties");
@@ -488,7 +488,7 @@ describe("slackPlugin status", () => {
           appToken: "test-app-token",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const account = slackPlugin.config.resolveAccount(cfg, "default");
 
     const result = await slackPlugin.status!.probeAccount!({
@@ -512,7 +512,7 @@ describe("slackPlugin status", () => {
     const probeSpy = vi.spyOn(probeModule, "probeSlack").mockResolvedValueOnce({
       ok: true,
       status: 200,
-      bot: { id: "B1", name: "openclaw-bot" },
+      bot: { id: "B1", name: "nova-bot" },
       team: { id: "T1", name: "Nova" },
     });
     const cfg = {
@@ -526,7 +526,7 @@ describe("slackPlugin status", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const account = slackPlugin.config.resolveAccount(cfg, "work");
 
     const result = await slackPlugin.status!.probeAccount!({
@@ -539,7 +539,7 @@ describe("slackPlugin status", () => {
     expect(result).toEqual({
       ok: true,
       status: 200,
-      bot: { id: "B1", name: "openclaw-bot" },
+      bot: { id: "B1", name: "nova-bot" },
       team: { id: "T1", name: "Nova" },
     });
   });
@@ -586,7 +586,7 @@ describe("slackPlugin status", () => {
     }
 
     const route = await resolveRoute({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       agentId: "main",
       target: "channel:C1",
       currentSessionKey: "agent:main:slack:channel:C1:thread:1712345678.123456",
@@ -606,7 +606,7 @@ describe("slackPlugin status", () => {
     }
 
     const route = await resolveRoute({
-      cfg: { session: { dmScope: "per-channel-peer" } } as OpenClawConfig,
+      cfg: { session: { dmScope: "per-channel-peer" } } as NovaConfig,
       agentId: "main",
       target: "w09g2dj0275",
     });
@@ -642,7 +642,7 @@ describe("slackPlugin status", () => {
             appToken: "xapp-test",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       agentId: "main",
       target: "d0aewsdhaqh",
       threadId: "1778110574.653649",
@@ -689,7 +689,7 @@ describe("slackPlugin status", () => {
             appToken: "xapp-test",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       agentId: "main",
       target: "channel:D123",
     });
@@ -724,7 +724,7 @@ describe("slackPlugin status", () => {
               botToken: "test",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         agentId: "main",
         target: "D0NOUSER001",
         threadId: "1778110574.653649",
@@ -744,7 +744,7 @@ describe("slackPlugin status", () => {
     });
 
     const route = await resolveRoute({
-      cfg: { channels: { slack: { botToken: "xoxb-test" } } } as OpenClawConfig,
+      cfg: { channels: { slack: { botToken: "xoxb-test" } } } as NovaConfig,
       agentId: "main",
       target: "g08gqh53ejm",
     });
@@ -805,7 +805,7 @@ describe("slackPlugin security", () => {
             allowFrom: ["  slack:U123  "],
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       account: slackPlugin.config.resolveAccount(
         {
           channels: {
@@ -816,7 +816,7 @@ describe("slackPlugin security", () => {
               allowFrom: ["  slack:U123  "],
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         "default",
       ),
     });
@@ -1657,7 +1657,7 @@ describe("slackPlugin config", () => {
     async ({ slack, expectedTransportSource }) => {
       const { configured, snapshot } = await getSlackConfiguredState({
         channels: { slack },
-      } as OpenClawConfig);
+      } as NovaConfig);
 
       expect(configured).toBe(true);
       expect(snapshot).toMatchObject({
@@ -1671,7 +1671,7 @@ describe("slackPlugin config", () => {
   );
 
   it("treats HTTP mode accounts with bot token + signing secret as configured", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         slack: {
           mode: "http",
@@ -1688,7 +1688,7 @@ describe("slackPlugin config", () => {
   });
 
   it("keeps socket mode requiring app token", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         slack: {
           mode: "socket",
@@ -1716,7 +1716,7 @@ describe("slackPlugin config", () => {
         appTokenSource: "none",
         config: {},
       } as never,
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       runtime: undefined,
     });
 
@@ -1743,7 +1743,7 @@ describe("slackPlugin config", () => {
           signingSecret: { source: "env", provider: "default", id: "SLACK_SIGNING_SECRET" },
         },
       } as never,
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       runtime: undefined,
     });
 

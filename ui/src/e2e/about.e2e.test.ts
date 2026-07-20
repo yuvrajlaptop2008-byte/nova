@@ -44,8 +44,8 @@ describeControlUiE2e("Control UI About mocked Gateway E2E", () => {
         configurable: true,
         value: {
           writeText: async (text: string) => {
-            (globalThis as typeof globalThis & { __openclawCopiedCommit?: string })[
-              "__openclawCopiedCommit"
+            (globalThis as typeof globalThis & { __novaCopiedCommit?: string })[
+              "__novaCopiedCommit"
             ] = text;
           },
         },
@@ -89,15 +89,13 @@ describeControlUiE2e("Control UI About mocked Gateway E2E", () => {
         .toBe("v2026.7.10");
 
       const githubLink = hero.getByRole("link", { name: "GitHub", exact: true });
-      await expect
-        .poll(() => githubLink.getAttribute("href"))
-        .toBe("https://github.com/openclaw/openclaw");
+      await expect.poll(() => githubLink.getAttribute("href")).toBe("https://github.com/nova/nova");
       await expect.poll(() => githubLink.getAttribute("target")).toBe("_blank");
       await expect.poll(() => githubLink.getAttribute("rel")).toContain("noopener");
       const discordLink = hero.getByRole("link", { name: "Discord", exact: true });
       await expect.poll(() => discordLink.getAttribute("href")).toBe("https://discord.gg/clawd");
       const xLink = hero.getByRole("link", { name: "X (Twitter)", exact: true });
-      await expect.poll(() => xLink.getAttribute("href")).toBe("https://x.com/openclaw");
+      await expect.poll(() => xLink.getAttribute("href")).toBe("https://x.com/nova");
 
       const clawd = page.getByRole("button", { name: "Wave hello to Clawd" });
       await clawd.click();
@@ -115,8 +113,8 @@ describeControlUiE2e("Control UI About mocked Gateway E2E", () => {
         .poll(() =>
           page.evaluate(
             () =>
-              (globalThis as typeof globalThis & { __openclawCopiedCommit?: string })[
-                "__openclawCopiedCommit"
+              (globalThis as typeof globalThis & { __novaCopiedCommit?: string })[
+                "__novaCopiedCommit"
               ],
           ),
         )

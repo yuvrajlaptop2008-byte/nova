@@ -16,7 +16,7 @@ afterEach(async () => {
 
 describe("legacy usage-cost cache cleanup", () => {
   it("removes only rebuildable usage-cost cache sidecars", async () => {
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-usage-cost-doctor-"));
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-usage-cost-doctor-"));
     const sessionsDir = path.join(root, "agents", "main", "sessions");
     await fs.mkdir(sessionsDir, { recursive: true });
     const cacheFiles = [
@@ -57,7 +57,7 @@ describe("legacy usage-cost cache cleanup", () => {
   });
 
   it("reports legacy skill-upload staging without deleting it unless repair is enabled", async () => {
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-upload-doctor-"));
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-upload-doctor-"));
     const uploadRoot = path.join(root, "tmp", "skill-uploads");
     const metadataPath = path.join(uploadRoot, randomUploadId(), "metadata.json");
     await fs.mkdir(path.dirname(metadataPath), { recursive: true });
@@ -73,7 +73,7 @@ describe("legacy usage-cost cache cleanup", () => {
 
   const symlinkTest = process.platform === "win32" ? it.skip : it;
   symlinkTest("removes a legacy staging symlink without touching its target", async () => {
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-upload-link-"));
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-upload-link-"));
     const uploadRoot = path.join(root, "tmp", "skill-uploads");
     const external = path.join(root, "external");
     await fs.mkdir(path.dirname(uploadRoot), { recursive: true });

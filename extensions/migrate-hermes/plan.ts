@@ -6,12 +6,12 @@ import {
   markMigrationItemConflict,
   MIGRATION_REASON_TARGET_EXISTS,
   summarizeMigrationItems,
-} from "openclaw/plugin-sdk/migration";
+} from "nova/plugin-sdk/migration";
 import type {
   MigrationItem,
   MigrationPlan,
   MigrationProviderContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-entry";
 import { buildAuthItems } from "./auth.js";
 import { buildConfigItems } from "./config.js";
 import { exists, parseEnv, parseHermesConfig, readText } from "./helpers.js";
@@ -168,7 +168,7 @@ export async function buildHermesPlan(ctx: MigrationProviderContext): Promise<Mi
         source: source.configPath ?? source.root,
         message: "Hermes Qwen Portal OAuth and Qwen CLI credentials cannot be reused by Nova.",
         recommendation:
-          "Authenticate qwen with an API key after migration: openclaw onboard --auth-choice qwen-api-key.",
+          "Authenticate qwen with an API key after migration: nova onboard --auth-choice qwen-api-key.",
       }),
     );
   }
@@ -222,7 +222,7 @@ export async function buildHermesPlan(ctx: MigrationProviderContext): Promise<Mi
     summary: summarizeMigrationItems(items),
     items,
     warnings,
-    nextSteps: ["Run openclaw doctor after applying the migration."],
+    nextSteps: ["Run nova doctor after applying the migration."],
     metadata: { agentDir: targets.agentDir },
   };
 }

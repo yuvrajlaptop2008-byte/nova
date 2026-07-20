@@ -228,10 +228,10 @@ describe("gateway cli backend live helpers", () => {
     expect(
       resolveImportedClaudeCliSessionId([
         null,
-        { __openclaw: "invalid" },
-        { __openclaw: { importedFrom: "codex-cli", cliSessionId: "wrong-provider" } },
-        { __openclaw: { importedFrom: "claude-cli", cliSessionId: 42 } },
-        { __openclaw: { importedFrom: "claude-cli", cliSessionId: "claude-session" } },
+        { __nova: "invalid" },
+        { __nova: { importedFrom: "codex-cli", cliSessionId: "wrong-provider" } },
+        { __nova: { importedFrom: "claude-cli", cliSessionId: 42 } },
+        { __nova: { importedFrom: "claude-cli", cliSessionId: "claude-session" } },
       ]),
     ).toBe("claude-session");
     expect(resolveImportedClaudeCliSessionId([])).toBeUndefined();

@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import {
   bindIngressLifecycleToReplyOptions,
   createChannelIngressDrain,
@@ -25,11 +25,11 @@ import {
 type Payload = { text: string };
 
 async function withTempState<T>(fn: (stateDir: string) => Promise<T>): Promise<T> {
-  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-ingress-drain-"));
+  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-ingress-drain-"));
   try {
     return await fn(stateDir);
   } finally {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   }
 }
@@ -41,7 +41,7 @@ describe("channel ingress drain", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
   });
 
   it("crash-window: lost claim is recovered and dispatched exactly once", async () => {

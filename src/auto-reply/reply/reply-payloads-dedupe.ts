@@ -8,7 +8,7 @@ import type { MessagingToolSend } from "../../agents/embedded-agent-messaging.ty
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import { getLoadedChannelPluginForRead } from "../../channels/plugins/registry-loaded.js";
 import { normalizeAnyChannelId } from "../../channels/registry.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { normalizeMediaReferenceForComparison } from "../../media/media-reference-comparison.js";
 import {
   channelRouteTargetsMatchExact,
@@ -200,7 +200,7 @@ function targetsMatchForDedupe(params: {
 
 function resolveOriginThreadIdForPayload(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   accountId?: string;
   originatingThreadId?: string | number;
   replyToId?: string;
@@ -237,7 +237,7 @@ function resolveOriginThreadIdForPayload(params: {
 
 /** Returns true when message-tool route evidence says source replies should be deduped. */
 export function shouldDedupeMessagingToolRepliesForRoute(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   messageProvider?: string;
   messagingToolSentTargets?: MessagingToolSend[];
   originatingTo?: string;
@@ -252,7 +252,7 @@ export function shouldDedupeMessagingToolRepliesForRoute(params: {
 
 /** Finds message-tool sends that target the same channel/account/thread as the source reply. */
 function getMatchingMessagingToolReplyTargets(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   messageProvider?: string;
   messagingToolSentTargets?: MessagingToolSend[];
   originatingTo?: string;
@@ -349,7 +349,7 @@ export type MessagingToolPayloadDedupeDecision = {
 
 /** Resolves whether and how to dedupe final payloads against message-tool sends. */
 export function resolveMessagingToolPayloadDedupe(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   messageProvider?: string;
   messagingToolSentTargets?: MessagingToolSend[];
   originatingTo?: string;

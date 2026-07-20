@@ -20,10 +20,10 @@ function resolveTranscriptMessageId(message: Record<string, unknown>): string | 
   if (typeof message.messageId === "string" && message.messageId.trim()) {
     return message.messageId;
   }
-  const openClawMeta = message["__openclaw"];
+  const novaMeta = message["__nova"];
   const transcriptMeta =
-    openClawMeta && typeof openClawMeta === "object" && !Array.isArray(openClawMeta)
-      ? (openClawMeta as Record<string, unknown>)
+    novaMeta && typeof novaMeta === "object" && !Array.isArray(novaMeta)
+      ? (novaMeta as Record<string, unknown>)
       : null;
   return typeof transcriptMeta?.id === "string" && transcriptMeta.id.trim()
     ? transcriptMeta.id
@@ -320,7 +320,7 @@ function extractToolCards(message: unknown, prefix = "tool"): ToolCard[] {
   const m = message as Record<string, unknown>;
   const content = normalizeContent(m.content);
   const messageIsError = readToolErrorFlag(m);
-  const isLiveToolStream = m["__openclawToolStreamLive"] === true;
+  const isLiveToolStream = m["__novaToolStreamLive"] === true;
   const cards: ToolCard[] = [];
   const fallbackMatchedCards = new WeakSet<ToolCard>();
   const transcriptMessageId = resolveTranscriptMessageId(m);
@@ -341,7 +341,7 @@ function extractToolCards(message: unknown, prefix = "tool"): ToolCard[] {
         args,
         inputText: serializeToolInput(args),
         ...(isLiveToolStream
-          ? { live: true, completed: m["__openclawToolStreamResultReceived"] === true }
+          ? { live: true, completed: m["__novaToolStreamResultReceived"] === true }
           : {}),
         messageId: transcriptMessageId,
       });

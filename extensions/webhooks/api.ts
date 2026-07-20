@@ -1,7 +1,7 @@
 // Webhooks API module exposes the plugin public contract.
 export {
   definePluginEntry,
-  type OpenClawPluginApi,
+  type NovaPluginApi,
   type PluginLogger,
   type PluginRuntime,
-} from "openclaw/plugin-sdk/core";
+} from "nova/plugin-sdk/core";

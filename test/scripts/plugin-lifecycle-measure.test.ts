@@ -17,7 +17,7 @@ const tempDirs: string[] = [];
 const scriptPath = "scripts/e2e/lib/plugin-lifecycle-matrix/measure.mjs";
 
 function makeTempDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-plugin-lifecycle-measure-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "nova-plugin-lifecycle-measure-"));
   tempDirs.push(dir);
   return dir;
 }

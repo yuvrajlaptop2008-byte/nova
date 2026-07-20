@@ -3,7 +3,7 @@ import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
 } from "../../infra/kysely-sync.js";
-import type { OpenClawAgentDatabase } from "../../state/openclaw-agent-db.js";
+import type { NovaAgentDatabase } from "../../state/nova-agent-db.js";
 import type {
   MaterializedSqliteSessionStateDeletePlan,
   SqliteSessionStateDeletePlan,
@@ -72,7 +72,7 @@ function sessionKeySegmentStartsWith(sessionKey: string, prefix: string): boolea
 }
 
 function readSessionTranscriptUpdatedAt(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): number | undefined {
   const db = getSessionKysely(database.db);
@@ -90,7 +90,7 @@ function readSessionTranscriptUpdatedAt(
 }
 
 function sqliteTranscriptStateIsReclaimable(params: {
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   sessionId: string;
   nowMs: number;
   orphanTranscriptMinAgeMs: number;
@@ -100,7 +100,7 @@ function sqliteTranscriptStateIsReclaimable(params: {
 }
 
 function sqliteTranscriptStateHasMarker(params: {
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   sessionId: string;
   transcriptContentMarker: string;
 }): boolean {
@@ -117,7 +117,7 @@ function sqliteTranscriptStateHasMarker(params: {
 }
 
 /** Session ids protected by live entry state or durable route targets. */
-export function readReferencedSqliteSessionIds(database: OpenClawAgentDatabase): Set<string> {
+export function readReferencedSqliteSessionIds(database: NovaAgentDatabase): Set<string> {
   const db = getSessionKysely(database.db);
   const rows = executeSqliteQuerySync(
     database.db,
@@ -147,7 +147,7 @@ export function readReferencedSqliteSessionIds(database: OpenClawAgentDatabase):
 // Projects references after a lifecycle mutation so reset/delete can archive
 // before removing entry rows while still preserving shared session ids.
 export function readReferencedSqliteSessionIdsAfterTargetMutation(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   target: { canonicalKey: string; storeKeys: string[] },
   nextEntry?: SessionEntry,
 ): Set<string> {
@@ -191,7 +191,7 @@ export function readReferencedSqliteSessionIdsAfterTargetMutation(
 }
 
 function readSqliteTranscriptArchiveLines(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): string[] {
   const db = getSessionKysely(database.db);
@@ -208,7 +208,7 @@ function readSqliteTranscriptArchiveLines(
 export function planSqliteSessionStateDeleteIfUnreferenced(params: {
   archiveTranscript?: boolean;
   archiveDirectory: string;
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   reason?: "deleted" | "reset";
   referencedSessionIds: ReadonlySet<string>;
   sessionId: string;
@@ -229,7 +229,7 @@ export function planSqliteSessionStateDeleteIfUnreferenced(params: {
 }
 
 export function deleteMaterializedSqliteSessionStatePlans(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   plans: readonly MaterializedSqliteSessionStateDeletePlan[],
   protectedSessionIds?: ReadonlySet<string>,
 ): SessionLifecycleArchivedTranscript[] {
@@ -263,7 +263,7 @@ export function deleteMaterializedSqliteSessionStatePlans(
 export function planSqliteSessionStateAfterEntryRemoval(params: {
   archiveDirectory: string;
   archiveTranscript?: boolean;
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   entry: SessionEntry;
   reason: "deleted" | "reset";
   referencedSessionIds?: ReadonlySet<string>;
@@ -289,7 +289,7 @@ export function planSqliteSessionStateAfterEntryRemoval(params: {
 
 /** Ids of every persisted generation owned by the given logical session keys. */
 export function readSqliteSessionGenerationIdsForKeys(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   keys: Iterable<string>,
 ): string[] {
   const sessionKeys = uniqueStrings([...keys].map((key) => key.trim()));
@@ -306,7 +306,7 @@ export function readSqliteSessionGenerationIdsForKeys(
 // Projects removals and upserts before archive materialization so same-call
 // upserts can keep a transcript live without producing a spurious archive.
 export async function projectSqliteSessionEntryLifecycleMutation(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   params: {
     archiveDirectory: string;
     removals: readonly SessionEntryLifecycleRemoval[];
@@ -392,7 +392,7 @@ function collectReferencedSqliteSessionIdsFromStore(
 // Projected deletes must preserve raw session_entries.session_id references for
 // remaining rows whose entry_json cannot be parsed into a SessionEntry.
 export function collectProjectedReferencedSqliteSessionIds(params: {
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   excludedSessionKeys: Iterable<string>;
   projectedStore: Record<string, SessionEntry>;
 }): Set<string> {
@@ -454,7 +454,7 @@ export function collectSqliteSessionStateIdsForEntry(entry: SessionEntry): strin
   return uniqueStrings(sessionIds);
 }
 
-function deleteSqliteSessionStateRows(database: OpenClawAgentDatabase, sessionId: string): void {
+function deleteSqliteSessionStateRows(database: NovaAgentDatabase, sessionId: string): void {
   const db = getSessionKysely(database.db);
   // The sessions row cascades canonical transcript tables, but FTS is virtual
   // and its watermark has no cascade; clear both before dropping the owner row.
@@ -470,7 +470,7 @@ function deleteSqliteSessionStateRows(database: OpenClawAgentDatabase, sessionId
 function planSqliteOrphanLifecycleTranscriptStateDeletes(params: {
   archiveRemovedEntryTranscripts: boolean;
   archiveDirectory: string;
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   excludedSessionIds?: ReadonlySet<string>;
   referencedSessionIds: ReadonlySet<string>;
   transcriptContentMarker: string;
@@ -524,7 +524,7 @@ function planSqliteOrphanLifecycleTranscriptStateDeletes(params: {
 }
 
 export function planSqliteSessionLifecycleArtifactCleanup(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   params: {
     archiveRemovedEntryTranscripts: boolean;
     archiveDirectory: string;
@@ -607,7 +607,7 @@ export function planSqliteSessionLifecycleArtifactCleanup(
 }
 
 export function deletePlannedSqliteLifecycleArtifactEntries(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   entries: readonly SqliteSessionEntryRemovalPlan[],
 ): number {
   let removedEntries = 0;

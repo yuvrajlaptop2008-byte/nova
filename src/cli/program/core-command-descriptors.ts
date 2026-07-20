@@ -13,7 +13,7 @@ const coreCliCommandCatalog = defineCommandDescriptorCatalog([
   },
   {
     name: "crestodian", // hidden alias
-    description: "Deprecated: use openclaw setup",
+    description: "Deprecated: use nova setup",
     hasSubcommands: false,
     hidden: true,
   },

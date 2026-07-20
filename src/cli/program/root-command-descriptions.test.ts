@@ -18,9 +18,9 @@ describe("root command descriptions", () => {
   });
 
   it("keeps catalog placeholders and registered commands in sync", async () => {
-    const program = new Command().name("openclaw");
+    const program = new Command().name("nova");
     const ctx = createProgramContext();
-    const argv = ["node", "openclaw", "completion"];
+    const argv = ["node", "nova", "completion"];
 
     for (const name of getCoreCliCommandNames()) {
       await registerCoreCliByName(program, ctx, name, argv);

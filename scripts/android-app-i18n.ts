@@ -16,16 +16,16 @@ const TOOL_DISPLAY_PATH = path.join(
   ROOT,
   "apps",
   "shared",
-  "OpenClawKit",
+  "NovaKit",
   "Sources",
-  "OpenClawKit",
+  "NovaKit",
   "Resources",
   "tool-display.json",
 );
 const GENERATED_KOTLIN_PATH = path.join(
   SOURCE_ROOT,
   "ai",
-  "openclaw",
+  "nova",
   "app",
   "i18n",
   "NativeStringResources.kt",
@@ -443,7 +443,7 @@ const ALLOWED_UI_LITERALS = new Map<string, ReadonlySet<string>>([
       "O",
       "OC",
       "OK",
-      "OPENCLAW",
+      "nova",
       "Nova",
       "U",
       "e.g. America/New_York",
@@ -452,41 +452,41 @@ const ALLOWED_UI_LITERALS = new Map<string, ReadonlySet<string>>([
       "iMessage",
       "main, isolated, current, or session:<id>",
       "n/a",
-      "openclaw gateway",
-      "openclaw qr",
+      "nova gateway",
+      "nova qr",
       "PTT_BUSY: previous push-to-talk turn is still finishing",
       "WhatsApp",
     ]),
   ],
-  ["apps/android/app/src/main/java/ai/openclaw/app/chat/ChatController.kt", new Set(["Off"])],
+  ["apps/android/app/src/main/java/ai/nova/app/chat/ChatController.kt", new Set(["Off"])],
   [
-    "apps/android/app/src/main/java/ai/openclaw/app/ui/SkillWorkshopSettingsScreen.kt",
+    "apps/android/app/src/main/java/ai/nova/app/ui/SkillWorkshopSettingsScreen.kt",
     new Set(["all", "applied", "held", "pending", "rejected"]),
   ],
   [
-    "apps/android/app/src/main/java/ai/openclaw/app/ui/GatewayDiagnostics.kt",
+    "apps/android/app/src/main/java/ai/nova/app/ui/GatewayDiagnostics.kt",
     new Set(["$versionName-dev"]),
   ],
   [
-    "apps/android/app/src/main/java/ai/openclaw/app/ui/chat/ChatScreen.kt",
+    "apps/android/app/src/main/java/ai/nova/app/ui/chat/ChatScreen.kt",
     // Plan checklist chrome: numeric done-counter and checkmark glyph.
     new Set(["$completedCount/${steps.size}", "✓"]),
   ],
   [
-    "apps/android/app/src/main/java/ai/openclaw/app/ui/SettingsScreens.kt",
+    "apps/android/app/src/main/java/ai/nova/app/ui/SettingsScreens.kt",
     // Discovered-gateway subtitles are host:port endpoints, not translatable copy.
     new Set(["${endpoint.host}:${endpoint.port}"]),
   ],
   [
-    "apps/android/app/src/main/java/ai/openclaw/app/ui/VoiceScreen.kt",
+    "apps/android/app/src/main/java/ai/nova/app/ui/VoiceScreen.kt",
     new Set(["${normalized.takeUtf16Safe(87)}..."]),
   ],
   [
-    "apps/android/app/src/main/java/ai/openclaw/app/ui/chat/ChatCommandControls.kt",
+    "apps/android/app/src/main/java/ai/nova/app/ui/chat/ChatCommandControls.kt",
     new Set(["/$name", "help"]),
   ],
   [
-    "apps/android/app/src/main/java/ai/openclaw/app/ui/chat/ChatMessageActions.kt",
+    "apps/android/app/src/main/java/ai/nova/app/ui/chat/ChatMessageActions.kt",
     new Set([">", "> $line"]),
   ],
 ]);
@@ -509,7 +509,7 @@ function shouldScanUiLiterals(repoPath: string): boolean {
   if (repoPath.endsWith("/ui/design/ClawComponents.kt")) {
     return false;
   }
-  if (repoPath.endsWith("/ui/design/OpenClawMascot.kt")) {
+  if (repoPath.endsWith("/ui/design/NovaMascot.kt")) {
     return false;
   }
   return (
@@ -1068,7 +1068,7 @@ function renderStringsXml(
 function renderAssistantXml(items: readonly string[]): string {
   return [
     "<resources>",
-    '    <string-array name="ask_openclaw_query_patterns">',
+    '    <string-array name="ask_nova_query_patterns">',
     ...items.map((item) => `        <item>"${renderAndroidResourceValue(item, item)}"</item>`),
     "    </string-array>",
     "</resources>",
@@ -1080,9 +1080,9 @@ function renderKotlin(sourceToKey: ReadonlyMap<string, string>): string {
   const entries = [...sourceToKey].toSorted(([left], [right]) => compareText(left, right));
   return [
     GENERATED_KOTLIN_HEADER,
-    "package ai.openclaw.app.i18n",
+    "package ai.nova.app.i18n",
     "",
-    "import ai.openclaw.app.R",
+    "import ai.nova.app.R",
     "",
     "internal val nativeStringResourceIds: Map<String, Int> =",
     "  mapOf(",
@@ -1198,7 +1198,7 @@ async function buildCatalog(): Promise<GeneratedCatalog> {
     path.join(RESOURCE_ROOT, "values", "assistant.xml"),
     "utf8",
   );
-  const assistantItems = parseArrays(assistantSource).get("ask_openclaw_query_patterns") ?? [];
+  const assistantItems = parseArrays(assistantSource).get("ask_nova_query_patterns") ?? [];
   for (const [locale, artifactEntries] of artifacts) {
     const translatedBySource = new Map<string, string[]>();
     for (const entry of artifactEntries) {

@@ -24,10 +24,10 @@ import {
   type AcpRuntimeTurnResult,
   type SessionAgentOptions,
 } from "acpx/runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import { redactSensitiveText } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { sliceUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
+import { redactSensitiveText } from "nova/plugin-sdk/security-runtime";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
+import { sliceUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { AcpRuntimeError, type AcpRuntime, type AcpRuntimeErrorCode } from "../runtime-api.js";
 import { CODEX_ACP_PACKAGE, NOVA_CODEX_CONFIG_ARG } from "./codex-adapter.js";
 import { splitCommandParts } from "./command-line.js";
@@ -39,8 +39,8 @@ import {
   type AcpxProcessLeaseStore,
 } from "./process-lease.js";
 import {
-  cleanupOpenClawOwnedAcpxProcessTree,
-  isOpenClawLeaseAwareAcpxProcessCommand,
+  cleanupNovaOwnedAcpxProcessTree,
+  isNovaLeaseAwareAcpxProcessCommand,
   type AcpxProcessCleanupDeps,
 } from "./process-reaper.js";
 
@@ -48,36 +48,36 @@ type AcpSessionStore = AcpRuntimeOptions["sessionStore"];
 type AcpSessionRecord = Parameters<AcpSessionStore["save"]>[0];
 type AcpLoadedSessionRecord = Awaited<ReturnType<AcpSessionStore["load"]>>;
 type BaseAcpxRuntimeTestOptions = ConstructorParameters<typeof BaseAcpxRuntime>[1];
-type OpenClawAcpxRuntimeOptions = AcpRuntimeOptions & {
-  openclawWrapperRoot?: string;
-  openclawGatewayInstanceId?: string;
-  openclawProcessLeaseStore?: AcpxProcessLeaseStore;
+type NovaAcpxRuntimeOptions = AcpRuntimeOptions & {
+  novaWrapperRoot?: string;
+  novaGatewayInstanceId?: string;
+  novaProcessLeaseStore?: AcpxProcessLeaseStore;
   pluginToolsMcpBridgeEnabled?: boolean;
-  openclawToolsMcpBridgeEnabled?: boolean;
+  novaToolsMcpBridgeEnabled?: boolean;
 };
 type AcpxRuntimeTestOptions = Record<string, unknown> & {
-  openclawProcessCleanup?: AcpxProcessCleanupDeps;
+  novaProcessCleanup?: AcpxProcessCleanupDeps;
 };
-type OpenClawRuntimeTurnInput = Parameters<NonNullable<AcpRuntime["startTurn"]>>[0];
-type OpenClawRuntimeEnsureInput = Parameters<AcpRuntime["ensureSession"]>[0];
-type OpenClawRuntimeHandle = Awaited<ReturnType<AcpRuntime["ensureSession"]>>;
+type NovaRuntimeTurnInput = Parameters<NonNullable<AcpRuntime["startTurn"]>>[0];
+type NovaRuntimeEnsureInput = Parameters<AcpRuntime["ensureSession"]>[0];
+type NovaRuntimeHandle = Awaited<ReturnType<AcpRuntime["ensureSession"]>>;
 type AcpxDelegateEnsureInput = Parameters<BaseAcpxRuntime["ensureSession"]>[0];
 type AcpxMcpServer = NonNullable<AcpRuntimeOptions["mcpServers"]>[number];
 
-const ACPX_PLUGIN_TOOLS_MCP_SERVER_NAME = "openclaw-plugin-tools";
-const ACPX_NOVA_TOOLS_MCP_SERVER_NAME = "openclaw-tools";
+const ACPX_PLUGIN_TOOLS_MCP_SERVER_NAME = "nova-plugin-tools";
+const ACPX_NOVA_TOOLS_MCP_SERVER_NAME = "nova-tools";
 const NOVA_TOOLS_MCP_AGENT_SESSION_KEY_ENV = "NOVA_TOOLS_MCP_AGENT_SESSION_KEY";
 
 type ResetAwareSessionStore = AcpSessionStore & {
   markFresh: (sessionKey: string) => void;
 };
 
-type OpenClawLeaseSessionMetadata = {
-  openclawLeaseId: string;
-  openclawGatewayInstanceId: string;
+type NovaLeaseSessionMetadata = {
+  novaLeaseId: string;
+  novaGatewayInstanceId: string;
 };
 
-function withOpenClawManagedTurnTimeout<T extends object>(input: T): T & { timeoutMs: 0 } {
+function withNovaManagedTurnTimeout<T extends object>(input: T): T & { timeoutMs: 0 } {
   // Nova owns ACP turn deadlines. acpx treats timeout after partial agent
   // output as a completed turn, which can mark background work done early.
   return {
@@ -86,14 +86,14 @@ function withOpenClawManagedTurnTimeout<T extends object>(input: T): T & { timeo
   };
 }
 
-function withOpenClawLeaseSessionMetadata<T extends object>(
+function withNovaLeaseSessionMetadata<T extends object>(
   record: T,
-  metadata: OpenClawLeaseSessionMetadata,
-): T & OpenClawLeaseSessionMetadata {
+  metadata: NovaLeaseSessionMetadata,
+): T & NovaLeaseSessionMetadata {
   return {
     ...record,
-    openclawLeaseId: metadata.openclawLeaseId,
-    openclawGatewayInstanceId: metadata.openclawGatewayInstanceId,
+    novaLeaseId: metadata.novaLeaseId,
+    novaGatewayInstanceId: metadata.novaGatewayInstanceId,
   };
 }
 
@@ -201,21 +201,21 @@ function readRecordAgentPid(record: unknown): number | undefined {
   return numericPid && Number.isInteger(numericPid) && numericPid > 0 ? numericPid : undefined;
 }
 
-function readOpenClawLeaseIdFromRecord(record: unknown): string | undefined {
+function readNovaLeaseIdFromRecord(record: unknown): string | undefined {
   if (typeof record !== "object" || record === null) {
     return undefined;
   }
-  const { openclawLeaseId } = record as { openclawLeaseId?: unknown };
-  return typeof openclawLeaseId === "string" ? openclawLeaseId.trim() || undefined : undefined;
+  const { novaLeaseId } = record as { novaLeaseId?: unknown };
+  return typeof novaLeaseId === "string" ? novaLeaseId.trim() || undefined : undefined;
 }
 
-function readOpenClawGatewayInstanceIdFromRecord(record: unknown): string | undefined {
+function readNovaGatewayInstanceIdFromRecord(record: unknown): string | undefined {
   if (typeof record !== "object" || record === null) {
     return undefined;
   }
-  const { openclawGatewayInstanceId } = record as { openclawGatewayInstanceId?: unknown };
-  return typeof openclawGatewayInstanceId === "string"
-    ? openclawGatewayInstanceId.trim() || undefined
+  const { novaGatewayInstanceId } = record as { novaGatewayInstanceId?: unknown };
+  return typeof novaGatewayInstanceId === "string"
+    ? novaGatewayInstanceId.trim() || undefined
     : undefined;
 }
 
@@ -278,9 +278,9 @@ function createResetAwareSessionStore(
       if (!lease) {
         return record;
       }
-      return withOpenClawLeaseSessionMetadata(record, {
-        openclawLeaseId: lease.leaseId,
-        openclawGatewayInstanceId: lease.gatewayInstanceId,
+      return withNovaLeaseSessionMetadata(record, {
+        novaLeaseId: lease.leaseId,
+        novaGatewayInstanceId: lease.gatewayInstanceId,
       });
     },
     async save(record: AcpSessionRecord): Promise<void> {
@@ -309,7 +309,7 @@ function createResetAwareSessionStore(
           state: "open",
         };
         await params.leaseStore.save(lease);
-        recordToSave = withOpenClawLeaseSessionMetadata(
+        recordToSave = withNovaLeaseSessionMetadata(
           {
             ...record,
             // ACPX uses agentCommand as reuse identity. Lease metadata belongs to
@@ -317,8 +317,8 @@ function createResetAwareSessionStore(
             agentCommand: stableAgentCommand,
           },
           {
-            openclawLeaseId: launch.leaseId,
-            openclawGatewayInstanceId: launch.gatewayInstanceId,
+            novaLeaseId: launch.leaseId,
+            novaGatewayInstanceId: launch.gatewayInstanceId,
           },
         );
       }
@@ -336,7 +336,7 @@ function createResetAwareSessionStore(
   };
 }
 
-const NOVA_BRIDGE_EXECUTABLE = "openclaw";
+const NOVA_BRIDGE_EXECUTABLE = "nova";
 const NOVA_BRIDGE_SUBCOMMAND = "acp";
 const CODEX_ACP_AGENT_ID = "codex";
 const CODEX_ACP_NOVA_PREFIX = "openai/";
@@ -460,7 +460,7 @@ function isAcpCommand(
   return scriptName === params.executableName || scriptName === `${params.executableName}-wrapper`;
 }
 
-function isOpenClawBridgeCommand(command: string | undefined): boolean {
+function isNovaBridgeCommand(command: string | undefined): boolean {
   if (!command) {
     return false;
   }
@@ -472,7 +472,7 @@ function isOpenClawBridgeCommand(command: string | undefined): boolean {
     return false;
   }
   const scriptName = basename(parts[1] ?? "");
-  return /^openclaw(?:\.[cm]?js)?$/i.test(scriptName) && parts[2] === NOVA_BRIDGE_SUBCOMMAND;
+  return /^nova(?:\.[cm]?js)?$/i.test(scriptName) && parts[2] === NOVA_BRIDGE_SUBCOMMAND;
 }
 
 function isCodexAcpCommand(command: string | undefined): boolean {
@@ -500,7 +500,7 @@ function failUnsupportedCodexAcpModel(rawModel: string, detail?: string): never 
 // acpx's `decodeAcpxRuntimeHandleState` only accepts `persistent` and `oneshot`; any other
 // value silently round-trips through the encoded handle as `persistent` and later throws
 // `SessionResumeRequiredError` on agent restart. Fail fast at this boundary instead.
-// See openclaw/openclaw#73071.
+// See nova/nova#73071.
 const SUPPORTED_RUNTIME_SESSION_MODES = new Set(["persistent", "oneshot"] as const);
 const WIRE_TIMEOUT_CONFIG_KEYS = new Set(["timeout", "timeout_seconds"]);
 
@@ -614,7 +614,7 @@ function normalizeClaudeAcpModelOverride(rawModel: string | undefined): string |
   return raw.slice(CLAUDE_ACP_NOVA_PREFIX.length).trim() || undefined;
 }
 
-function withAcpxSessionOptions(input: OpenClawRuntimeEnsureInput): AcpxDelegateEnsureInput {
+function withAcpxSessionOptions(input: NovaRuntimeEnsureInput): AcpxDelegateEnsureInput {
   const existingOptions = (input as { sessionOptions?: SessionAgentOptions }).sessionOptions;
   const model = input.model?.trim() || existingOptions?.model;
   const sessionOptions = model ? { ...existingOptions, model } : existingOptions;
@@ -633,7 +633,7 @@ function isAcpModelCapabilityMissingError(error: unknown): boolean {
 // Retry only the former so explicit model mistakes remain visible to the caller.
 async function ensureDelegateSessionWithModelFallback(
   delegate: BaseAcpxRuntime,
-  input: OpenClawRuntimeEnsureInput,
+  input: NovaRuntimeEnsureInput,
 ): Promise<AcpRuntimeHandle> {
   try {
     return await delegate.ensureSession(withAcpxSessionOptions(input));
@@ -700,7 +700,7 @@ function resolveAgentCommand(params: {
 }
 
 function shouldUseBridgeSafeDelegateForCommand(command: string | undefined): boolean {
-  return isOpenClawBridgeCommand(command);
+  return isNovaBridgeCommand(command);
 }
 
 function shouldUseDistinctBridgeDelegate(options: AcpRuntimeOptions): boolean {
@@ -710,13 +710,13 @@ function shouldUseDistinctBridgeDelegate(options: AcpRuntimeOptions): boolean {
 
 function withManagedToolsMcpSessionEnv(params: {
   pluginToolsEnabled: boolean;
-  openclawToolsEnabled: boolean;
+  novaToolsEnabled: boolean;
   mcpServers: AcpRuntimeOptions["mcpServers"];
   sessionKey: string;
 }): AcpRuntimeOptions["mcpServers"] {
   const sessionKey = params.sessionKey.trim();
   if (
-    (!params.pluginToolsEnabled && !params.openclawToolsEnabled) ||
+    (!params.pluginToolsEnabled && !params.novaToolsEnabled) ||
     !sessionKey ||
     !params.mcpServers?.length
   ) {
@@ -726,9 +726,9 @@ function withManagedToolsMcpSessionEnv(params: {
   const nextServers = params.mcpServers.map((server): AcpxMcpServer => {
     const isManagedPluginTools =
       params.pluginToolsEnabled && server.name === ACPX_PLUGIN_TOOLS_MCP_SERVER_NAME;
-    const isManagedOpenClawTools =
-      params.openclawToolsEnabled && server.name === ACPX_NOVA_TOOLS_MCP_SERVER_NAME;
-    if ((!isManagedPluginTools && !isManagedOpenClawTools) || !("command" in server)) {
+    const isManagedNovaTools =
+      params.novaToolsEnabled && server.name === ACPX_NOVA_TOOLS_MCP_SERVER_NAME;
+    if ((!isManagedPluginTools && !isManagedNovaTools) || !("command" in server)) {
       return server;
     }
     changed = true;
@@ -758,7 +758,7 @@ export class AcpxRuntime implements AcpRuntime {
   private readonly delegateOptions: AcpRuntimeOptions;
   private readonly delegateTestOptions: BaseAcpxRuntimeTestOptions;
   private readonly pluginToolsMcpBridgeEnabled: boolean;
-  private readonly openclawToolsMcpBridgeEnabled: boolean;
+  private readonly novaToolsMcpBridgeEnabled: boolean;
   private readonly managedToolsMcpBridgeEnabled: boolean;
   private readonly managedToolsSessionDelegates = new Map<string, BaseAcpxRuntime>();
   private readonly processCleanupDeps: AcpxProcessCleanupDeps | undefined;
@@ -768,16 +768,16 @@ export class AcpxRuntime implements AcpRuntime {
   private readonly launchLeaseScope = new AsyncLocalStorage<AcpxLaunchLeaseContext | undefined>();
   private readonly cwd: string;
 
-  constructor(options: OpenClawAcpxRuntimeOptions, testOptions?: AcpxRuntimeTestOptions) {
-    const { openclawProcessCleanup, ...delegateTestOptions } = testOptions ?? {};
-    this.processCleanupDeps = openclawProcessCleanup;
-    this.wrapperRoot = options.openclawWrapperRoot;
-    this.gatewayInstanceId = options.openclawGatewayInstanceId;
-    this.processLeaseStore = options.openclawProcessLeaseStore;
+  constructor(options: NovaAcpxRuntimeOptions, testOptions?: AcpxRuntimeTestOptions) {
+    const { novaProcessCleanup, ...delegateTestOptions } = testOptions ?? {};
+    this.processCleanupDeps = novaProcessCleanup;
+    this.wrapperRoot = options.novaWrapperRoot;
+    this.gatewayInstanceId = options.novaGatewayInstanceId;
+    this.processLeaseStore = options.novaProcessLeaseStore;
     this.pluginToolsMcpBridgeEnabled = options.pluginToolsMcpBridgeEnabled === true;
-    this.openclawToolsMcpBridgeEnabled = options.openclawToolsMcpBridgeEnabled === true;
+    this.novaToolsMcpBridgeEnabled = options.novaToolsMcpBridgeEnabled === true;
     this.managedToolsMcpBridgeEnabled =
-      this.pluginToolsMcpBridgeEnabled || this.openclawToolsMcpBridgeEnabled;
+      this.pluginToolsMcpBridgeEnabled || this.novaToolsMcpBridgeEnabled;
     this.cwd = options.cwd;
     this.sessionStore = createResetAwareSessionStore(options.sessionStore, {
       gatewayInstanceId: this.gatewayInstanceId,
@@ -846,7 +846,7 @@ export class AcpxRuntime implements AcpRuntime {
         ...this.delegateOptions,
         mcpServers: withManagedToolsMcpSessionEnv({
           pluginToolsEnabled: this.pluginToolsMcpBridgeEnabled,
-          openclawToolsEnabled: this.openclawToolsMcpBridgeEnabled,
+          novaToolsEnabled: this.novaToolsMcpBridgeEnabled,
           mcpServers: this.delegateOptions.mcpServers,
           sessionKey: normalizedSessionKey,
         }),
@@ -957,7 +957,7 @@ export class AcpxRuntime implements AcpRuntime {
       !this.wrapperRoot ||
       !this.gatewayInstanceId ||
       !this.processLeaseStore ||
-      !isOpenClawLeaseAwareAcpxProcessCommand({
+      !isNovaLeaseAwareAcpxProcessCommand({
         command: params.command,
         wrapperRoot: this.wrapperRoot,
       })
@@ -1017,7 +1017,7 @@ export class AcpxRuntime implements AcpRuntime {
     );
     return readCodexWrapperStderrTail({
       wrapperRoot: this.wrapperRoot,
-      leaseId: readOpenClawLeaseIdFromRecord(record),
+      leaseId: readNovaLeaseIdFromRecord(record),
     });
   }
 
@@ -1025,7 +1025,7 @@ export class AcpxRuntime implements AcpRuntime {
     handle: AcpRuntimeHandle,
     record: AcpLoadedSessionRecord,
   ): Promise<void> {
-    const leaseId = readOpenClawLeaseIdFromRecord(record);
+    const leaseId = readNovaLeaseIdFromRecord(record);
     const rootPid = readAgentPidFromRecord(record);
     const sessionKeys = [handle.sessionKey, readSessionRecordName(record)];
     const openLeases =
@@ -1048,7 +1048,7 @@ export class AcpxRuntime implements AcpRuntime {
         : undefined);
     if (lease && lease.gatewayInstanceId === this.gatewayInstanceId && lease.rootPid > 0) {
       await this.processLeaseStore?.markState(lease.leaseId, "closing");
-      const result = await cleanupOpenClawOwnedAcpxProcessTree({
+      const result = await cleanupNovaOwnedAcpxProcessTree({
         rootPid: lease.rootPid,
         rootCommand: readAgentCommandFromRecord(record),
         expectedLeaseId: lease.leaseId,
@@ -1074,8 +1074,8 @@ export class AcpxRuntime implements AcpRuntime {
     if (!rootPid || !rootCommand) {
       return;
     }
-    const expectedGatewayInstanceId = readOpenClawGatewayInstanceIdFromRecord(record);
-    await cleanupOpenClawOwnedAcpxProcessTree({
+    const expectedGatewayInstanceId = readNovaGatewayInstanceIdFromRecord(record);
+    await cleanupNovaOwnedAcpxProcessTree({
       rootPid,
       rootCommand,
       ...(leaseId ? { expectedLeaseId: leaseId } : {}),
@@ -1099,7 +1099,7 @@ export class AcpxRuntime implements AcpRuntime {
 
   async ensureSession(
     input: Parameters<AcpRuntime["ensureSession"]>[0],
-  ): Promise<OpenClawRuntimeHandle> {
+  ): Promise<NovaRuntimeHandle> {
     assertSupportedRuntimeSessionMode(input.mode);
     const command = resolveAgentCommand({
       agentName: input.agent,
@@ -1126,7 +1126,7 @@ export class AcpxRuntime implements AcpRuntime {
         ? classifiedCodexOverride
         : undefined;
     const requestedModel = input.model?.trim();
-    const appliedModel: OpenClawRuntimeHandle["appliedModel"] =
+    const appliedModel: NovaRuntimeHandle["appliedModel"] =
       isCodexAcp && requestedModel
         ? codexModelOverride?.model
           ? { kind: "applied", model: requestedModel }
@@ -1181,7 +1181,7 @@ export class AcpxRuntime implements AcpRuntime {
     const command = await this.resolveCommandForHandle(input.handle);
     const delegate = await this.resolveDelegateForHandle(input.handle);
     try {
-      for await (const event of delegate.runTurn(withOpenClawManagedTurnTimeout(input))) {
+      for await (const event of delegate.runTurn(withNovaManagedTurnTimeout(input))) {
         if (
           event.type !== "error" ||
           !isCodexAcpCommand(command) ||
@@ -1215,7 +1215,7 @@ export class AcpxRuntime implements AcpRuntime {
     }
   }
 
-  startTurn(input: OpenClawRuntimeTurnInput): AcpRuntimeTurn {
+  startTurn(input: NovaRuntimeTurnInput): AcpRuntimeTurn {
     const readCodexTurnFailureStderr = () =>
       this.readCodexTurnFailureStderr({
         handle: input.handle,
@@ -1227,7 +1227,7 @@ export class AcpxRuntime implements AcpRuntime {
       try {
         return {
           command,
-          turn: delegate.startTurn(withOpenClawManagedTurnTimeout(input)),
+          turn: delegate.startTurn(withNovaManagedTurnTimeout(input)),
         };
       } catch (error) {
         if (!isCodexAcpCommand(command) || !isGenericInternalAcpError(error)) {

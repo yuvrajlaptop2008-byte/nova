@@ -1,7 +1,7 @@
 /** Builds web-tool secret metadata from config, plugins, and provider contracts. */
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { sortUniqueStrings } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
 import { loadInstalledPluginIndexInstallRecordsSync } from "../plugins/installed-plugin-index-records.js";
 import type {
@@ -69,7 +69,7 @@ const loadRuntimeWebToolsManifest = createLazyRuntimeSurface(
   (mod) => mod,
 );
 
-type FetchConfig = NonNullable<OpenClawConfig["tools"]>["web"] extends infer Web
+type FetchConfig = NonNullable<NovaConfig["tools"]>["web"] extends infer Web
   ? Web extends { fetch?: infer Fetch }
     ? Fetch
     : undefined
@@ -138,7 +138,7 @@ function collectUnavailableWebProviders(params: {
   kind: "search" | "fetch";
   result: RuntimeWebProviderSelectionResult;
   context: ResolverContext;
-  sourceConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
   metadata: RuntimeWebSearchMetadata | RuntimeWebFetchMetadata;
   degradedOwners: DegradedSecretOwner[];
 }): void {
@@ -213,7 +213,7 @@ function toWebSecretOwnerRefState(
 
 function associateWebProviderResolutionError(params: {
   kind: "search" | "fetch";
-  config: OpenClawConfig;
+  config: NovaConfig;
   error: unknown;
   unavailableProviders: RuntimeWebProviderFailure[];
 }): void {
@@ -301,10 +301,7 @@ function needsRuntimeWebFetchProviderDiscovery(params: {
   return hasCredentialBearingObjectValue(params.fetch, params.defaults);
 }
 
-function hasPluginScopedWebToolConfig(
-  config: OpenClawConfig,
-  key: "webSearch" | "webFetch",
-): boolean {
+function hasPluginScopedWebToolConfig(config: NovaConfig, key: "webSearch" | "webFetch"): boolean {
   const entries = config.plugins?.entries;
   if (!entries) {
     return false;
@@ -319,7 +316,7 @@ function hasPluginScopedWebToolConfig(
 }
 
 function inferSingleBundledPluginScopedWebToolConfigOwner(
-  config: OpenClawConfig,
+  config: NovaConfig,
   key: "webSearch" | "webFetch",
 ): string | undefined {
   const entries = config.plugins?.entries;
@@ -344,7 +341,7 @@ function inferSingleBundledPluginScopedWebToolConfigOwner(
 }
 
 function inferExactBundledPluginScopedWebToolConfigOwner(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   key: "webSearch" | "webFetch";
   pluginId: string;
 }): string | undefined {
@@ -360,7 +357,7 @@ type WebProviderContract = "webSearchProviders" | "webFetchProviders";
 
 async function hasCustomWebProviderPluginRisk(params: {
   contract: WebProviderContract;
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): Promise<boolean> {
   const installRecords = loadInstalledPluginIndexInstallRecordsSync({ env: params.env });
@@ -416,7 +413,7 @@ function readNonEmptyEnvValue(
 async function resolveSecretInputWithEnvFallback(params: {
   kind: "search" | "fetch";
   providerId: string;
-  sourceConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
   context: ResolverContext;
   defaults: SecretDefaults | undefined;
   value: unknown;
@@ -547,7 +544,7 @@ async function resolveSecretInputWithEnvFallback(params: {
 }
 
 function setResolvedWebSearchApiKey(params: {
-  resolvedConfig: OpenClawConfig;
+  resolvedConfig: NovaConfig;
   provider: PluginWebSearchProviderEntry;
   value: string;
 }): void {
@@ -562,7 +559,7 @@ function setResolvedWebSearchApiKey(params: {
 }
 
 async function resolveBundledWebSearchProviders(params: {
-  sourceConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
   context: ResolverContext;
   configuredBundledPluginId?: string;
   onlyPluginIds?: readonly string[];
@@ -615,7 +612,7 @@ async function resolveBundledWebSearchProviders(params: {
 }
 
 async function resolveBundledWebFetchProviders(params: {
-  sourceConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
   context: ResolverContext;
   configuredBundledPluginId?: string;
   hasCustomWebFetchPluginRisk: boolean;
@@ -667,7 +664,7 @@ async function resolveBundledWebFetchProviders(params: {
 
 function readConfiguredProviderCredential(params: {
   provider: PluginWebSearchProviderEntry;
-  config: OpenClawConfig;
+  config: NovaConfig;
   search: Record<string, unknown> | undefined;
 }): unknown {
   return (
@@ -678,7 +675,7 @@ function readConfiguredProviderCredential(params: {
 
 function readConfiguredProviderCredentialFallback(params: {
   provider: PluginWebSearchProviderEntry;
-  config: OpenClawConfig;
+  config: NovaConfig;
   search: Record<string, unknown> | undefined;
 }): { path: string; value: unknown } | undefined {
   return params.provider.getConfiguredCredentialFallback?.(params.config);
@@ -694,7 +691,7 @@ function inactivePathsForProvider(provider: PluginWebSearchProviderEntry): strin
 }
 
 function setResolvedWebFetchApiKey(params: {
-  resolvedConfig: OpenClawConfig;
+  resolvedConfig: NovaConfig;
   provider: PluginWebFetchProviderEntry;
   value: string;
 }): void {
@@ -710,7 +707,7 @@ function setResolvedWebFetchApiKey(params: {
 
 function readConfiguredFetchProviderCredential(params: {
   provider: PluginWebFetchProviderEntry;
-  config: OpenClawConfig;
+  config: NovaConfig;
   fetch: Record<string, unknown> | undefined;
 }): unknown {
   return (
@@ -721,7 +718,7 @@ function readConfiguredFetchProviderCredential(params: {
 
 function readConfiguredFetchProviderCredentialFallback(params: {
   provider: PluginWebFetchProviderEntry;
-  config: OpenClawConfig;
+  config: NovaConfig;
   fetch: Record<string, unknown> | undefined;
 }): { path: string; value: unknown } | undefined {
   return params.provider.getConfiguredCredentialFallback?.(params.config);
@@ -741,8 +738,8 @@ function inactivePathsForFetchProvider(provider: PluginWebFetchProviderEntry): s
  */
 /** Resolves web search/fetch secret metadata from config, plugins, and fallback runtime providers. */
 export async function resolveRuntimeWebTools(params: {
-  sourceConfig: OpenClawConfig;
-  resolvedConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
+  resolvedConfig: NovaConfig;
   context: ResolverContext;
   allowUnavailableSecretOwners?: boolean;
 }): Promise<ResolvedRuntimeWebTools> {

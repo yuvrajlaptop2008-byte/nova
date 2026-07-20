@@ -31,7 +31,7 @@ import {
   claimPluginInteractiveCallbackDedupe,
   commitPluginInteractiveCallbackDedupe,
 } from "./interactive-state.js";
-import { loadOpenClawPlugins } from "./loader.js";
+import { loadNovaPlugins } from "./loader.js";
 import {
   makeTempDir,
   mkdirSafe,
@@ -77,7 +77,7 @@ import { ensurePluginRegistryLoaded } from "./runtime/runtime-registry-loader.js
 afterEach(globalAfterEach0);
 afterAll(globalAfterAll1);
 
-describe("loadOpenClawPlugins", () => {
+describe("loadNovaPlugins", () => {
   it("runs consecutive plugin hook handlers with shared mutable context but isolated plugin config", async () => {
     useNoBundledPlugins();
     const first = writePlugin({
@@ -118,7 +118,7 @@ describe("loadOpenClawPlugins", () => {
     });
     for (const plugin of [first, second]) {
       fs.writeFileSync(
-        path.join(plugin.dir, "openclaw.plugin.json"),
+        path.join(plugin.dir, "nova.plugin.json"),
         JSON.stringify(
           {
             id: plugin.id,
@@ -133,7 +133,7 @@ describe("loadOpenClawPlugins", () => {
 
     clearInternalHooks();
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir: first.dir,
       onlyPluginIds: ["hook-context-first", "hook-context-second"],
@@ -227,7 +227,7 @@ describe("loadOpenClawPlugins", () => {
     clearPluginCommands();
     clearPluginInteractiveHandlers();
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -276,7 +276,7 @@ describe("loadOpenClawPlugins", () => {
 
     clearInternalHooks();
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -319,7 +319,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -352,7 +352,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(scopedDir, "package.json"),
       JSON.stringify({
         name: "@nova/scoped-provider",
-        openclaw: { extensions: ["./index.cjs"] },
+        nova: { extensions: ["./index.cjs"] },
       }),
       "utf-8",
     );
@@ -379,7 +379,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(unscopedDir, "package.json"),
       JSON.stringify({
         name: "@nova/unscoped-provider",
-        openclaw: { extensions: ["./index.cjs"] },
+        nova: { extensions: ["./index.cjs"] },
       }),
       "utf-8",
     );
@@ -401,7 +401,7 @@ describe("loadOpenClawPlugins", () => {
     process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
     delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
-    const scoped = loadOpenClawPlugins({
+    const scoped = loadNovaPlugins({
       cache: false,
       activate: false,
       config: {
@@ -426,7 +426,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(bundledPluginDir, "package.json"),
       JSON.stringify({
         name: "@nova/notify-host",
-        openclaw: { extensions: ["./index.cjs"] },
+        nova: { extensions: ["./index.cjs"] },
       }),
       "utf-8",
     );
@@ -448,7 +448,7 @@ describe("loadOpenClawPlugins", () => {
     process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
     delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
-    const bundledRegistry = loadOpenClawPlugins({
+    const bundledRegistry = loadNovaPlugins({
       cache: false,
       config: { plugins: { allow: ["notify-host"] } },
       onlyPluginIds: ["notify-host"],
@@ -471,7 +471,7 @@ describe("loadOpenClawPlugins", () => {
           },
         };`,
     });
-    const externalRegistry = loadOpenClawPlugins({
+    const externalRegistry = loadNovaPlugins({
       cache: false,
       workspaceDir: external.dir,
       config: {
@@ -556,7 +556,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    const scoped = loadOpenClawPlugins({
+    const scoped = loadNovaPlugins({
       cache: false,
       activate: false,
       workspaceDir: plugin.dir,
@@ -605,7 +605,7 @@ describe("loadOpenClawPlugins", () => {
       contracts: { embeddingProviders: ["snapshot"] },
     });
 
-    const scoped = loadOpenClawPlugins({
+    const scoped = loadNovaPlugins({
       cache: false,
       activate: false,
       workspaceDir: plugin.dir,
@@ -652,7 +652,7 @@ describe("loadOpenClawPlugins", () => {
       contracts: { embeddingProviders: ["shared"] },
     });
 
-    const scoped = loadOpenClawPlugins({
+    const scoped = loadNovaPlugins({
       cache: false,
       activate: false,
       workspaceDir: plugin.dir,
@@ -696,7 +696,7 @@ describe("loadOpenClawPlugins", () => {
       contracts: { embeddingProviders: ["failed"] },
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -759,7 +759,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -807,7 +807,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    const scoped = loadOpenClawPlugins({
+    const scoped = loadNovaPlugins({
       cache: false,
       activate: false,
       workspaceDir: plugin.dir,
@@ -852,7 +852,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -902,15 +902,15 @@ describe("loadOpenClawPlugins", () => {
         },
       },
       onlyPluginIds: ["cached-detached-runtime"],
-    } satisfies Parameters<typeof loadOpenClawPlugins>[0];
+    } satisfies Parameters<typeof loadNovaPlugins>[0];
 
-    loadOpenClawPlugins(loadOptions);
+    loadNovaPlugins(loadOptions);
     expect(getDetachedTaskLifecycleRuntimeRegistration()?.pluginId).toBe("cached-detached-runtime");
 
     clearDetachedTaskLifecycleRuntimeRegistration();
     expect(getDetachedTaskLifecycleRuntimeRegistration()).toBeUndefined();
 
-    loadOpenClawPlugins(loadOptions);
+    loadNovaPlugins(loadOptions);
 
     expect(getDetachedTaskLifecycleRuntimeRegistration()?.pluginId).toBe("cached-detached-runtime");
   });
@@ -946,9 +946,9 @@ describe("loadOpenClawPlugins", () => {
         },
       },
       onlyPluginIds: ["cached-command-interactive"],
-    } satisfies Parameters<typeof loadOpenClawPlugins>[0];
+    } satisfies Parameters<typeof loadNovaPlugins>[0];
 
-    const registry = loadOpenClawPlugins(loadOptions);
+    const registry = loadNovaPlugins(loadOptions);
     expect(getPluginCommandSpecs()).toEqual([
       { name: "hue", description: "Control Hue lights", acceptsArgs: false },
     ]);
@@ -968,7 +968,7 @@ describe("loadOpenClawPlugins", () => {
     commitPluginInteractiveCallbackDedupe(dedupeKey, 1_000);
     expect(claimPluginInteractiveCallbackDedupe(dedupeKey, 1_001)).toBe(false);
 
-    loadOpenClawPlugins(loadOptions);
+    loadNovaPlugins(loadOptions);
     expect(claimPluginInteractiveCallbackDedupe(dedupeKey, 1_002)).toBe(false);
 
     clearPluginCommands();
@@ -976,7 +976,7 @@ describe("loadOpenClawPlugins", () => {
     expect(getPluginCommandSpecs()).toStrictEqual([]);
     expect(resolvePluginInteractiveNamespaceMatch("telegram", "hue:on")).toBeNull();
 
-    loadOpenClawPlugins(loadOptions);
+    loadNovaPlugins(loadOptions);
 
     expect(getPluginCommandSpecs()).toEqual([
       { name: "hue", description: "Control Hue lights", acceptsArgs: false },
@@ -992,7 +992,7 @@ describe("loadOpenClawPlugins", () => {
     useNoBundledPlugins();
     registerDetachedTaskLifecycleRuntime("stale-runtime", createDetachedTaskRuntimeStub("stale"));
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -1058,14 +1058,14 @@ describe("loadOpenClawPlugins", () => {
       },
     ];
 
-    const first = loadOpenClawPlugins(options);
+    const first = loadNovaPlugins(options);
     await expect(listActiveMemoryPublicArtifacts({ cfg: {} as never })).resolves.toEqual(
       expectedArtifacts,
     );
 
     clearMemoryPluginState();
 
-    const second = loadOpenClawPlugins(options);
+    const second = loadNovaPlugins(options);
     expect(second).toBe(first);
     await expect(listActiveMemoryPublicArtifacts({ cfg: {} as never })).resolves.toEqual(
       expectedArtifacts,
@@ -1117,7 +1117,7 @@ describe("loadOpenClawPlugins", () => {
         slots: { memory: "capability-survives-memory" },
       },
     };
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir: memoryPlugin.dir,
       config: activateConfig,
@@ -1141,7 +1141,7 @@ describe("loadOpenClawPlugins", () => {
     // Simulate what resolvePluginWebSearchProviders and similar read-only paths do:
     // load plugins again with activate:false. Each per-plugin snapshot/rollback must
     // preserve the previously registered memory capability.
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       activate: false,
       workspaceDir: memoryPlugin.dir,
@@ -1155,7 +1155,7 @@ describe("loadOpenClawPlugins", () => {
 
   it("uses discovery registration mode for non-activating loads", () => {
     useNoBundledPlugins();
-    const marker = "__openclawDiscoveryModeTest";
+    const marker = "__novaDiscoveryModeTest";
     const plugin = writePlugin({
       id: "discovery-mode-test",
       filename: "discovery-mode-test.cjs",
@@ -1182,7 +1182,7 @@ describe("loadOpenClawPlugins", () => {
       },
     };
 
-    const snapshot = loadOpenClawPlugins({
+    const snapshot = loadNovaPlugins({
       activate: false,
       cache: false,
       workspaceDir: plugin.dir,
@@ -1192,7 +1192,7 @@ describe("loadOpenClawPlugins", () => {
     expect(snapshot.providers.map((entry) => entry.provider.id)).toEqual(["discovery-provider"]);
     expect(snapshot.tools.flatMap((entry) => entry.names)).toContain("discovery_tool");
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config,
@@ -1231,7 +1231,7 @@ describe("loadOpenClawPlugins", () => {
       contracts: { tools: ["attested_tool", "unknown_policy_tool"] },
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       activate: false,
       cache: false,
       workspaceDir: plugin.dir,
@@ -1274,7 +1274,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       activate: false,
       cache: false,
       workspaceDir: plugin.dir,
@@ -1315,7 +1315,7 @@ describe("loadOpenClawPlugins", () => {
     });
     updatePluginManifest(plugin, { contracts: { tools: ["manifest_tool"] } });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       activate: false,
       cache: false,
       workspaceDir: plugin.dir,
@@ -1340,7 +1340,7 @@ describe("loadOpenClawPlugins", () => {
   it("caches non-activating snapshots without restoring global side effects", () => {
     useNoBundledPlugins();
     clearPluginCommands();
-    const marker = "__openclawSnapshotCacheRegisterCount";
+    const marker = "__novaSnapshotCacheRegisterCount";
     const plugin = writePlugin({
       id: "snapshot-cache",
       filename: "snapshot-cache.cjs",
@@ -1368,15 +1368,15 @@ describe("loadOpenClawPlugins", () => {
       onlyPluginIds: ["snapshot-cache"],
     };
 
-    const first = loadOpenClawPlugins(options);
-    const second = loadOpenClawPlugins(options);
+    const first = loadNovaPlugins(options);
+    const second = loadNovaPlugins(options);
 
     expect(second).toBe(first);
     expect((globalThis as Record<string, unknown>)[marker]).toBe(1);
     expect(first.commands.map((entry) => entry.command.name)).toEqual(["snapshot-command"]);
     expect(getPluginCommandSpecs()).toStrictEqual([]);
 
-    const active = loadOpenClawPlugins({
+    const active = loadNovaPlugins({
       workspaceDir: plugin.dir,
       config: options.config,
       onlyPluginIds: ["snapshot-cache"],
@@ -1395,7 +1395,7 @@ describe("loadOpenClawPlugins", () => {
 
   it("does not re-register non-bundled plugins after gateway-bindable boot loads", () => {
     useNoBundledPlugins();
-    const marker = "__openclawGatewayBootRegisterCount";
+    const marker = "__novaGatewayBootRegisterCount";
     const plugin = writePlugin({
       id: "costclaw-boot-cache",
       filename: "costclaw-boot-cache.cjs",
@@ -1416,7 +1416,7 @@ describe("loadOpenClawPlugins", () => {
       },
     };
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       workspaceDir: plugin.dir,
       config,
       runtimeOptions: {
@@ -1435,7 +1435,7 @@ describe("loadOpenClawPlugins", () => {
 
   it("reuses a gateway-bindable cache entry for later default-mode loads", () => {
     useNoBundledPlugins();
-    const marker = "__openclawGatewayBindableCacheRegisterCount";
+    const marker = "__novaGatewayBindableCacheRegisterCount";
     const plugin = writePlugin({
       id: "gateway-bindable-cache",
       filename: "gateway-bindable-cache.cjs",
@@ -1459,13 +1459,13 @@ describe("loadOpenClawPlugins", () => {
       },
     };
 
-    const gatewayBindable = loadOpenClawPlugins({
+    const gatewayBindable = loadNovaPlugins({
       ...options,
       runtimeOptions: {
         allowGatewaySubagentBinding: true,
       },
     });
-    const defaultMode = loadOpenClawPlugins(options);
+    const defaultMode = loadNovaPlugins(options);
 
     expect(defaultMode).toBe(gatewayBindable);
     expect((globalThis as Record<string, unknown>)[marker]).toBe(1);
@@ -1490,13 +1490,13 @@ describe("loadOpenClawPlugins", () => {
       },
     };
 
-    const first = loadOpenClawPlugins(options);
+    const first = loadNovaPlugins(options);
     expectGlobalHookRunner(getGlobalHookRunner());
 
     resetGlobalHookRunner();
     expect(getGlobalHookRunner()).toBeNull();
 
-    const second = loadOpenClawPlugins(options);
+    const second = loadNovaPlugins(options);
     expect(second).toBe(first);
     expectGlobalHookRunner(getGlobalHookRunner());
 
@@ -1520,7 +1520,7 @@ describe("loadOpenClawPlugins", () => {
         } };`,
     });
 
-    const gatewayRegistry = loadOpenClawPlugins({
+    const gatewayRegistry = loadNovaPlugins({
       workspaceDir: gatewayPlugin.dir,
       config: {
         plugins: {
@@ -1545,7 +1545,7 @@ describe("loadOpenClawPlugins", () => {
       expect(getGlobalPluginRegistry()).toBe(gatewayRegistry);
       expect(expectGlobalHookRunner(getGlobalHookRunner()).hasHooks("subagent_ended")).toBe(true);
 
-      const defaultRegistry = loadOpenClawPlugins({
+      const defaultRegistry = loadNovaPlugins({
         workspaceDir: defaultPlugin.dir,
         config: {
           plugins: {
@@ -1590,7 +1590,7 @@ describe("loadOpenClawPlugins", () => {
         } };`,
     });
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       workspaceDir: firstPlugin.dir,
       config: {
         plugins: {
@@ -1604,7 +1604,7 @@ describe("loadOpenClawPlugins", () => {
 
     // A second activation retires the unpinned first registry entirely; its
     // hooks must drop instead of dispatching stale config closures.
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       workspaceDir: secondPlugin.dir,
       config: {
         plugins: {
@@ -1654,7 +1654,7 @@ describe("loadOpenClawPlugins", () => {
           expectedFirstSource: pluginA.file,
           expectedSecondSource: pluginB.file,
           loadFirst: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               env: {
                 ...process.env,
@@ -1662,7 +1662,7 @@ describe("loadOpenClawPlugins", () => {
               },
             }),
           loadSecond: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               env: {
                 ...process.env,
@@ -1711,7 +1711,7 @@ describe("loadOpenClawPlugins", () => {
           expectedFirstSource: pluginA.file,
           expectedSecondSource: pluginB.file,
           loadFirst: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               env: {
                 ...process.env,
@@ -1722,7 +1722,7 @@ describe("loadOpenClawPlugins", () => {
               },
             }),
           loadSecond: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               env: {
                 ...process.env,

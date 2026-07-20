@@ -5,10 +5,7 @@ import type {
   WAMessage,
   WAPresence,
 } from "baileys";
-import {
-  parseStrictPositiveInteger,
-  resolveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
+import { parseStrictPositiveInteger, resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
 
 export type WhatsAppSocketTimingOptions = {
   keepAliveIntervalMs?: number;

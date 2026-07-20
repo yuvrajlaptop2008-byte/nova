@@ -3,7 +3,7 @@
  * Keeps provider/model allow and hide rules aligned with catalog row metadata.
  */
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   resolveLogicalModelCatalogEntryState,
   resolveLogicalVisibleModelCatalog,
@@ -42,7 +42,7 @@ describe("resolveLogicalVisibleModelCatalog", () => {
   it("dedupes physical routes after selected-route projection", async () => {
     const catalog = [platform, chatGPT];
     const result = await resolveLogicalVisibleModelCatalog({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       catalog,
       defaultProvider: "openai",
       view: "all",
@@ -75,7 +75,7 @@ describe("resolveLogicalVisibleModelCatalog", () => {
 
   it("omits physical capabilities while managed route selection is unresolved", async () => {
     const result = await resolveLogicalVisibleModelCatalog({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       catalog: [platform],
       defaultProvider: "openai",
       view: "all",
@@ -122,7 +122,7 @@ describe("resolveLogicalVisibleModelCatalog", () => {
       );
 
       const result = await resolveLogicalVisibleModelCatalog({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         catalog: [platformNano],
         routeVariants,
         defaultProvider: "openai",

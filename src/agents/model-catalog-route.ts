@@ -4,7 +4,7 @@ import {
   resolveMergedModelProviderConfig,
   resolveMergedModelProviderModels,
 } from "../config/model-provider-config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ProviderModelRouteCandidate } from "../plugin-sdk/provider-model-types.js";
 import type { ModelCatalogEntry } from "./model-catalog.types.js";
 import { splitTrailingAuthProfile } from "./model-ref-profile.js";
@@ -43,7 +43,7 @@ function normalizeExactModelId(value: string): string {
 
 /** Reads explicit logical capability overrides without re-resolving auth. */
 export function resolveConfiguredModelCatalogOverrides(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: Pick<ModelCatalogEntry, "provider" | "id">;
   policy?: ModelCatalogRoutePolicy;
 }): ModelCatalogLogicalOverrides | undefined {

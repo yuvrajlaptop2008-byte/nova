@@ -14,9 +14,9 @@ import { parse } from "yaml";
 import { useAutoCleanupTempDirTracker } from "../helpers/temp-dir.js";
 
 const PACKAGE_ACCEPTANCE_WORKFLOW = ".github/workflows/package-acceptance.yml";
-const LIVE_E2E_WORKFLOW = ".github/workflows/openclaw-live-and-e2e-checks-reusable.yml";
+const LIVE_E2E_WORKFLOW = ".github/workflows/nova-live-and-e2e-checks-reusable.yml";
 const LIVE_MEDIA_RUNNER_DOCKERFILE = ".github/images/live-media-runner/Dockerfile";
-const LIVE_MEDIA_RUNNER_IMAGE = "ghcr.io/openclaw/openclaw-live-media-runner:ubuntu-24.04";
+const LIVE_MEDIA_RUNNER_IMAGE = "ghcr.io/nova/nova-live-media-runner:ubuntu-24.04";
 const LIVE_MEDIA_RUNNER_IMAGE_WORKFLOW = ".github/workflows/live-media-runner-image.yml";
 const NPM_TELEGRAM_WORKFLOW = ".github/workflows/npm-telegram-beta-e2e.yml";
 const MANTIS_DISCORD_SMOKE_WORKFLOW = ".github/workflows/mantis-discord-smoke.yml";
@@ -32,15 +32,15 @@ const MANTIS_WEB_UI_CHAT_PROOF_WORKFLOW = ".github/workflows/mantis-web-ui-chat-
 const PACKAGE_JSON = "package.json";
 const SETUP_PNPM_STORE_CACHE_ACTION = ".github/actions/setup-pnpm-store-cache/action.yml";
 const DOCKER_E2E_PLAN_ACTION = ".github/actions/docker-e2e-plan/action.yml";
-const RELEASE_CHECKS_WORKFLOW = ".github/workflows/openclaw-release-checks.yml";
-const RELEASE_TELEGRAM_QA_WORKFLOW = ".github/workflows/openclaw-release-telegram-qa.yml";
-const RELEASE_PUBLISH_WORKFLOW = ".github/workflows/openclaw-release-publish.yml";
+const RELEASE_CHECKS_WORKFLOW = ".github/workflows/nova-release-checks.yml";
+const RELEASE_TELEGRAM_QA_WORKFLOW = ".github/workflows/nova-release-telegram-qa.yml";
+const RELEASE_PUBLISH_WORKFLOW = ".github/workflows/nova-release-publish.yml";
 const PLUGIN_PRERELEASE_WORKFLOW = ".github/workflows/plugin-prerelease.yml";
-const NOVA_NPM_RELEASE_WORKFLOW = ".github/workflows/openclaw-npm-release.yml";
+const NOVA_NPM_RELEASE_WORKFLOW = ".github/workflows/nova-npm-release.yml";
 const PLUGIN_CLAWHUB_RELEASE_WORKFLOW = ".github/workflows/plugin-clawhub-release.yml";
 const PLUGIN_NPM_RELEASE_WORKFLOW = ".github/workflows/plugin-npm-release.yml";
 const ANDROID_RELEASE_WORKFLOW = ".github/workflows/android-release.yml";
-const STABLE_MAIN_CLOSEOUT_WORKFLOW = ".github/workflows/openclaw-stable-main-closeout.yml";
+const STABLE_MAIN_CLOSEOUT_WORKFLOW = ".github/workflows/nova-stable-main-closeout.yml";
 const WINDOWS_NODE_RELEASE_WORKFLOW = ".github/workflows/windows-node-release.yml";
 const FULL_RELEASE_VALIDATION_WORKFLOW = ".github/workflows/full-release-validation.yml";
 const QA_LIVE_TRANSPORTS_WORKFLOW = ".github/workflows/qa-live-transports-convex.yml";
@@ -51,10 +51,10 @@ const CI_BUILD_ARTIFACTS_TESTBOX_WORKFLOW = ".github/workflows/ci-build-artifact
 const WINDOWS_BLACKSMITH_TESTBOX_WORKFLOW = ".github/workflows/windows-blacksmith-testbox.yml";
 const CRABBOX_HYDRATE_WORKFLOW = ".github/workflows/crabbox-hydrate.yml";
 const CRABBOX_CONFIG = ".crabbox.yaml";
-const SCHEDULED_LIVE_CHECKS_WORKFLOW = ".github/workflows/openclaw-scheduled-live-checks.yml";
+const SCHEDULED_LIVE_CHECKS_WORKFLOW = ".github/workflows/nova-scheduled-live-checks.yml";
 const CI_HYDRATE_LIVE_AUTH_SCRIPT = "scripts/ci-hydrate-live-auth.sh";
 const VERIFY_PROVIDER_SECRETS_SCRIPT =
-  ".agents/skills/release-openclaw-ci/scripts/verify-provider-secrets.mjs";
+  ".agents/skills/release-nova-ci/scripts/verify-provider-secrets.mjs";
 const UPGRADE_SURVIVOR_RUN_SCRIPT = "scripts/e2e/lib/upgrade-survivor/run.sh";
 const SETUP_NODE_V6 = "actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e";
 const DOWNLOAD_ARTIFACT_V8 = "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c";
@@ -226,7 +226,7 @@ function runNpmTelegramInputValidation(overrides: Record<string, string>) {
       PACKAGE_FILE_NAME: "",
       PACKAGE_SHA256: "",
       PACKAGE_SOURCE_SHA: "",
-      PACKAGE_SPEC: "openclaw@beta",
+      PACKAGE_SPEC: "nova@beta",
       PACKAGE_VERSION: "",
       PATH: process.env.PATH,
       PROVIDER_MODE: "mock-openai",
@@ -271,7 +271,7 @@ esac
       ARTIFACT_NAME: artifactName,
       ARTIFACT_RUN_ATTEMPT: attempt,
       ARTIFACT_RUN_ID: params.producerRunId,
-      GITHUB_REPOSITORY: "openclaw/openclaw",
+      GITHUB_REPOSITORY: "nova/nova",
       GITHUB_RUN_ID: params.currentRunId,
       MOCK_ARTIFACT_JSON: JSON.stringify({
         created_at: "2026-07-15T08:49:20Z",
@@ -322,13 +322,13 @@ function runReleasePublishInputValidation(overrides: Record<string, string>) {
   });
 }
 
-function runOpenClawNpmTrustedRefGuard(overrides: Record<string, string>) {
+function runNovaNpmTrustedRefGuard(overrides: Record<string, string>) {
   const job = workflowJob(NOVA_NPM_RELEASE_WORKFLOW, "validate_publish_request");
   const script = workflowStep(job, "Require trusted workflow ref for publish").run;
   if (!script) {
     throw new Error("Expected Nova npm trusted ref guard");
   }
-  const binDir = tempDirs.make("openclaw-npm-trusted-ref-");
+  const binDir = tempDirs.make("nova-npm-trusted-ref-");
   const gitPath = `${binDir}/git`;
   writeFileSync(
     gitPath,
@@ -363,7 +363,7 @@ function runReleaseChecksSummary(params: {
   }
   const runId = "123456";
   const targetSha = "a".repeat(40);
-  const workdir = tempDirs.make("openclaw-release-check-status-");
+  const workdir = tempDirs.make("nova-release-check-status-");
   return spawnSync("bash", ["-c", script], {
     cwd: workdir,
     encoding: "utf8",
@@ -446,7 +446,7 @@ describe("package acceptance workflow", () => {
     });
     expect(invalidResumeRun.status).toBe(1);
     expect(invalidResumeRun.stderr).toContain(
-      "openclaw_npm_resume_run_id must be a positive GitHub Actions run id",
+      "nova_npm_resume_run_id must be a positive GitHub Actions run id",
     );
   });
 
@@ -457,7 +457,7 @@ describe("package acceptance workflow", () => {
     writeFileSync(ghPath, `#!/bin/sh\nprintf '%s\\n' "\${MOCK_MERGE_BASE_SHA}"\n`);
     chmodSync(ghPath, 0o755);
     const pinnedEnv = {
-      GITHUB_REPOSITORY: "openclaw/openclaw",
+      GITHUB_REPOSITORY: "nova/nova",
       PATH: `${binDir}:${process.env.PATH}`,
       WORKFLOW_REF: `refs/tags/release-publish/${workflowSha.slice(0, 12)}-123`,
       WORKFLOW_SHA: workflowSha,
@@ -492,13 +492,13 @@ describe("package acceptance workflow", () => {
     const workflowSha = "a".repeat(40);
     const protectedRef = `refs/tags/release-publish/${workflowSha.slice(0, 12)}-123`;
 
-    const valid = runOpenClawNpmTrustedRefGuard({
+    const valid = runNovaNpmTrustedRefGuard({
       WORKFLOW_REF: protectedRef,
       WORKFLOW_SHA: workflowSha,
     });
     expect(valid.status, valid.stderr).toBe(0);
 
-    const mismatchedName = runOpenClawNpmTrustedRefGuard({
+    const mismatchedName = runNovaNpmTrustedRefGuard({
       WORKFLOW_REF: `refs/tags/release-publish/${"b".repeat(12)}-123`,
       WORKFLOW_SHA: workflowSha,
     });
@@ -507,7 +507,7 @@ describe("package acceptance workflow", () => {
       "SHA-pinned release-publish tag does not match the Nova npm workflow SHA",
     );
 
-    const unreachable = runOpenClawNpmTrustedRefGuard({
+    const unreachable = runNovaNpmTrustedRefGuard({
       MOCK_WORKFLOW_ANCESTOR: "false",
       WORKFLOW_REF: protectedRef,
       WORKFLOW_SHA: workflowSha,
@@ -568,7 +568,7 @@ describe("package acceptance workflow", () => {
       "Attest Android release approval",
       "Upload Android release approval",
     ]) {
-      expect(workflowStep(publishJob, stepName).if).toContain("inputs.publish_openclaw_npm");
+      expect(workflowStep(publishJob, stepName).if).toContain("inputs.publish_nova_npm");
     }
 
     expect(publishOrchestration.env?.PARENT_WORKFLOW_SHA).toBe("${{ github.sha }}");
@@ -585,7 +585,7 @@ describe("package acceptance workflow", () => {
       'dispatch_workflow_at_ref "${RELEASE_TAG}" "${TARGET_SHA}" android-release.yml',
       'wait_for_run android-release.yml "${android_release_run_id}" "${TARGET_SHA}"',
       'wait_for_run plugin-npm-release.yml "${plugin_npm_run_id}" "${PARENT_WORKFLOW_SHA}"',
-      'wait_for_run_background openclaw-npm-release.yml "${openclaw_npm_run_id}" "${PARENT_WORKFLOW_SHA}"',
+      'wait_for_run_background nova-npm-release.yml "${nova_npm_run_id}" "${PARENT_WORKFLOW_SHA}"',
       "plugin-clawhub-release.yml: detached; approval and publish not awaited",
       "plugin-clawhub-new.yml: detached; approvals and bootstrap not awaited",
     ]);
@@ -746,7 +746,7 @@ describe("package acceptance workflow", () => {
       '--require-complete-platform-assets "$ALLOW_FAILED_PUBLISH_RECOVERY"',
     );
     expect(workflow).toContain("verify_checksum_manifest Nova-Android-SHA256SUMS.txt");
-    expect(workflow).toContain("verify_checksum_manifest OpenClawCompanion-SHA256SUMS.txt");
+    expect(workflow).toContain("verify_checksum_manifest NovaCompanion-SHA256SUMS.txt");
     expect(workflow).toContain("actual=\"$(awk 'NF { name=$2;");
     expect(workflow).toContain('sub(/^\\*/, "", name)');
     expect(workflow).not.toContain('sub(/^\\\\*/, "", name)');
@@ -771,9 +771,7 @@ describe("package acceptance workflow", () => {
       "REPAIR_PARTIAL_CLOSEOUT: ${{ needs.resolve.outputs.repair_partial_closeout }}",
     );
     expect(workflow).toContain('--allow-stale-rollback-drill "$REPAIR_PARTIAL_CLOSEOUT"');
-    expect(workflow).toContain(
-      'awk -v asset="openclaw-${release_version}-stable-main-closeout.json"',
-    );
+    expect(workflow).toContain('awk -v asset="nova-${release_version}-stable-main-closeout.json"');
     expect(workflow).toContain("attach_or_verify \\");
     expect(attachStep.run).toContain('cp -- "$source_path" "$existing_dir/$asset_name"');
     expect(attachStep.run).toContain(
@@ -785,7 +783,7 @@ describe("package acceptance workflow", () => {
     );
     expect(workflow).toContain("(.[0].runAttempt == null) or");
     expect(workflow).toContain(
-      'release_manifest_asset="openclaw-${evidence_version}-release-manifest.json"',
+      'release_manifest_asset="nova-${evidence_version}-release-manifest.json"',
     );
     expect(workflow).toContain('sha256sum --strict --status -c "$release_manifest_checksum_asset"');
     expect(workflow).toContain(
@@ -801,7 +799,7 @@ describe("package acceptance workflow", () => {
       'String(run.run_attempt ?? "") !== process.env.FULL_RELEASE_VALIDATION_RUN_ATTEMPT',
     );
     expect(evidenceStep.run).toContain(
-      'manifest_asset="openclaw-${evidence_version}-release-manifest.json"',
+      'manifest_asset="nova-${evidence_version}-release-manifest.json"',
     );
     expect(evidenceStep.run).toContain('gh_with_retry release download "$EVIDENCE_TAG"');
     expect(evidenceStep.run).toContain(".runId == $run_id");
@@ -948,7 +946,7 @@ describe("package acceptance workflow", () => {
       "$Value | Out-File -FilePath $Path -Encoding utf8 -Append",
     );
     expect(hydrateWindowsPnpm.run).toContain('"--filter",');
-    expect(hydrateWindowsPnpm.run).toContain('"openclaw",');
+    expect(hydrateWindowsPnpm.run).toContain('"nova",');
     expect(hydrateWindowsPnpm.run).toContain(
       "New-Item -ItemType Junction -Path $workspaceNodeModules -Target $env:PNPM_CONFIG_MODULES_DIR",
     );
@@ -1070,15 +1068,13 @@ describe("package acceptance workflow", () => {
     expect(workflow).toContain("trusted_source_id:");
     expect(workflow).toContain("TRUSTED_SOURCE_ID: ${{ inputs.trusted_source_id }}");
     expect(workflow).toContain('--trusted-source-id "$TRUSTED_SOURCE_ID"');
-    expect(workflow).toContain("scripts/resolve-openclaw-package-candidate.mjs");
+    expect(workflow).toContain("scripts/resolve-nova-package-candidate.mjs");
     expect(workflow).toContain('--package-ref "$PACKAGE_REF"');
     expect(workflow).toContain("artifact-ids: ${{ inputs.artifact_id }}");
     expect(workflow).toContain("actions/artifacts/${ARTIFACT_ID}");
     expect(workflow).toContain("name: ${{ env.PACKAGE_ARTIFACT_NAME }}");
     expect(workflow).toContain("pull-requests: read");
-    expect(workflow).toContain(
-      "uses: ./.github/workflows/openclaw-live-and-e2e-checks-reusable.yml",
-    );
+    expect(workflow).toContain("uses: ./.github/workflows/nova-live-and-e2e-checks-reusable.yml");
     expect(workflow).toContain(
       "ref: ${{ needs.resolve_package.outputs.package_source_sha || inputs.workflow_ref }}",
     );
@@ -1087,7 +1083,7 @@ describe("package acceptance workflow", () => {
     );
     expect(workflow).toContain("package_integrity:");
     expect(workflow).toContain("name: Package integrity");
-    expect(workflow).toContain('node scripts/check-openclaw-package-tarball.mjs "$package"');
+    expect(workflow).toContain('node scripts/check-nova-package-tarball.mjs "$package"');
     expect(workflow).toContain('[[ "$actual_sha256" == "$EXPECTED_PACKAGE_SHA256" ]]');
     expect(workflow).toContain("needs: [resolve_package, package_integrity]");
     expect(workflow).toContain("package_integrity=${PACKAGE_INTEGRITY_RESULT}");
@@ -1100,7 +1096,7 @@ describe("package acceptance workflow", () => {
       workflow.indexOf("  package_integrity:"),
     );
 
-    expect(resolveJob).toContain("scripts/resolve-openclaw-package-candidate.mjs");
+    expect(resolveJob).toContain("scripts/resolve-nova-package-candidate.mjs");
     expect(resolveJob).not.toContain("pnpm install");
   });
 
@@ -1162,7 +1158,7 @@ describe("package acceptance workflow", () => {
     expect(workflow).toContain("telegram_scenarios:");
     expect(workflow).toContain("scenario: ${{ inputs.telegram_scenarios }}");
     expect(workflow).toContain(
-      "package_label: openclaw@${{ needs.resolve_package.outputs.package_version }}",
+      "package_label: nova@${{ needs.resolve_package.outputs.package_version }}",
     );
     expect(npmTelegramWorkflow).toContain("package_artifact_run_id:");
     expect(npmTelegramWorkflow).toContain("Download package-under-test artifact from release run");
@@ -1247,7 +1243,7 @@ describe("package acceptance workflow", () => {
       "source: ${{ (needs.resolve_target.outputs.package_acceptance_package_spec != '' || needs.resolve_target.outputs.release_package_spec != '') && 'npm' || 'artifact' }}",
     );
     expect(releaseChecksWorkflow).toContain(
-      "package_spec: ${{ needs.resolve_target.outputs.package_acceptance_package_spec || needs.resolve_target.outputs.release_package_spec || 'openclaw@beta' }}",
+      "package_spec: ${{ needs.resolve_target.outputs.package_acceptance_package_spec || needs.resolve_target.outputs.release_package_spec || 'nova@beta' }}",
     );
   });
 
@@ -1286,7 +1282,7 @@ describe("package acceptance workflow", () => {
       "Validate full release validation manifest",
     );
     const npmValidationStep = workflowStep(
-      workflowJob(".github/workflows/openclaw-npm-release.yml", "publish_openclaw_npm"),
+      workflowJob(".github/workflows/nova-npm-release.yml", "publish_nova_npm"),
       "Verify full release validation target",
     );
 
@@ -1359,7 +1355,7 @@ describe("package acceptance workflow", () => {
       "read: i/o timeout",
       "network is unreachable",
       "unexpected EOF",
-      'Post "https://api.github.com/repos/openclaw/openclaw/actions/workflows/ci.yml/dispatches": EOF',
+      'Post "https://api.github.com/repos/nova/nova/actions/workflows/ci.yml/dispatches": EOF',
       "EOF",
       "ETIMEDOUT",
       "ECONNRESET",
@@ -1597,10 +1593,10 @@ describe("package artifact reuse", () => {
     expect(publishedUpgradeSurvivor).toContain("write_update_restart_service_secretref_env");
     expect(publishedUpgradeSurvivor).toContain("GATEWAY_AUTH_TOKEN_REF=%s");
     expect(publishedUpgradeSurvivor).toContain(
-      "env -u NOVA_GATEWAY_TOKEN -u NOVA_GATEWAY_PASSWORD openclaw",
+      "env -u NOVA_GATEWAY_TOKEN -u NOVA_GATEWAY_PASSWORD nova",
     );
     expect(publishedUpgradeSurvivor).toContain("phase prepare-update-restart-probe");
-    expect(publishedUpgradeSurvivor).toContain("openclaw@(alpha|beta|latest|");
+    expect(publishedUpgradeSurvivor).toContain("nova@(alpha|beta|latest|");
     expect(publishedUpgradeSurvivor).toContain("plugin_deps_cleanup_plugin_dirs");
     expect(publishedUpgradeSurvivor).toContain('"$(package_root)/extensions/$plugin"');
     expect(publishedUpgradeSurvivor).toContain("probe_gateway_endpoint");
@@ -1610,7 +1606,7 @@ describe("package artifact reuse", () => {
     expect(publishedUpgradeSurvivor.indexOf("phase seed-source-only-plugin-shadow")).toBeLessThan(
       publishedUpgradeSurvivor.indexOf("phase assert-baseline"),
     );
-    expect(publishedUpgradeSurvivor).toContain('"id": "opik-openclaw"');
+    expect(publishedUpgradeSurvivor).toContain('"id": "opik-nova"');
     expect(publishedUpgradeSurvivor).toContain('"configSchema": {');
     expect(publishedUpgradeSurvivor).toContain(
       "Legacy plugin dependency debris was already removed before doctor",
@@ -1633,7 +1629,7 @@ describe("package artifact reuse", () => {
       'retry_delay_seconds="${NOVA_DOCKER_PULL_RETRY_DELAY_SECONDS:-5}"',
     );
     expect(pullHelper).toContain('source "$SCRIPT_DIR/lib/host-timeout.sh"');
-    expect(pullHelper).toContain("openclaw_host_timeout_bin");
+    expect(pullHelper).toContain("nova_host_timeout_bin");
     expect(pullHelper).toContain('"$timeout_bin" --kill-after=1s 1s true');
     expect(pullHelper).toContain(
       '"$timeout_bin" --kill-after=30s "${timeout_seconds}s" docker pull "$image"',
@@ -1665,7 +1661,7 @@ describe("package artifact reuse", () => {
       'if bash .release-harness/scripts/ci-docker-pull-retry.sh "$CACHE_IMAGE_REF"; then',
     );
     expect(workflow).toContain("Bare image cache pull failed; continuing with a cold build.");
-    expect(workflow).toContain("--build-context openclaw_package=.artifacts/docker-e2e-package");
+    expect(workflow).toContain("--build-context nova_package=.artifacts/docker-e2e-package");
     expect(workflow).toContain('cache=(--cache-from "$BARE_IMAGE_REF")');
     expect(workflow).not.toContain('docker push "$CACHE_IMAGE_REF"');
     expect(workflow).toContain("uses: useblacksmith/setup-docker-builder@");
@@ -1686,7 +1682,7 @@ describe("package artifact reuse", () => {
       "Dispatch and monitor release checks",
     );
 
-    expect(prepare.uses).toBe("./.github/workflows/openclaw-live-and-e2e-checks-reusable.yml");
+    expect(prepare.uses).toBe("./.github/workflows/nova-live-and-e2e-checks-reusable.yml");
     expect(prepare.with).toMatchObject({
       prepare_only: true,
       shared_image_policy: "no-push-artifact",
@@ -2089,11 +2085,11 @@ describe("package artifact reuse", () => {
     expect(scheduler).not.toContain("harness=.release-harness");
     expect(scheduler).toContain('liveDockerHarnessScriptCommand("test-live-build-docker.sh")');
     expect(liveDockerAuth).toContain("codex-cli | openai)");
-    expect(liveDockerAuth).toContain("openclaw_live_init_docker_run_args()");
-    expect(liveDockerAuth).toContain("openclaw_live_stage_profile_into_home()");
-    expect(liveDockerAuth).toContain("openclaw_live_chown_bind_dirs_for_container_user()");
-    expect(liveDockerAuth).toContain("openclaw_live_uses_managed_bind_dirs()");
-    expect(liveDockerAuth).toContain('openclaw_live_truthy "${NOVA_TESTBOX:-}"');
+    expect(liveDockerAuth).toContain("nova_live_init_docker_run_args()");
+    expect(liveDockerAuth).toContain("nova_live_stage_profile_into_home()");
+    expect(liveDockerAuth).toContain("nova_live_chown_bind_dirs_for_container_user()");
+    expect(liveDockerAuth).toContain("nova_live_uses_managed_bind_dirs()");
+    expect(liveDockerAuth).toContain('nova_live_truthy "${NOVA_TESTBOX:-}"');
     expect(liveDockerAuth).toContain('[[ -n "${NOVA_DOCKER_CACHE_HOME_DIR:-}" ]]');
     expect(liveDockerAuth).toContain(
       'timeout_value="${2:-${NOVA_LIVE_DOCKER_RUN_TIMEOUT:-2700s}}"',
@@ -2111,13 +2107,13 @@ describe("package artifact reuse", () => {
     for (const script of [harness, ...sharedLiveScripts]) {
       expect(script).toContain('source "$TRUSTED_HARNESS_DIR/scripts/lib/live-docker-auth.sh"');
       expect(script).not.toContain('source "$ROOT_DIR/scripts/lib/live-docker-auth.sh"');
-      expect(script).toContain("openclaw_live_init_docker_run_args DOCKER_RUN_ARGS");
-      expect(script).toContain("openclaw_live_prepare_bind_dir_for_container_user");
+      expect(script).toContain("nova_live_init_docker_run_args DOCKER_RUN_ARGS");
+      expect(script).toContain("nova_live_prepare_bind_dir_for_container_user");
       expect(script).toContain("DOCKER_RUN_ARGS+=(--rm -t \\");
       expect(script).not.toContain("DOCKER_RUN_ARGS=(docker run --rm -t \\");
     }
     for (const script of sharedLiveScripts) {
-      expect(script).toContain("openclaw_live_uses_managed_bind_dirs");
+      expect(script).toContain("nova_live_uses_managed_bind_dirs");
       expect(script).toContain(
         'NOVA_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR" "$TRUSTED_HARNESS_DIR/scripts/test-live-build-docker.sh"',
       );
@@ -2126,7 +2122,7 @@ describe("package artifact reuse", () => {
         '-e NOVA_LIVE_DOCKER_SCRIPTS_DIR="${DOCKER_TRUSTED_HARNESS_CONTAINER_DIR}/scripts"',
       );
       expect(script).toContain(
-        "openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT",
+        "nova_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT",
       );
     }
     for (const script of [
@@ -2149,7 +2145,7 @@ describe("package artifact reuse", () => {
       "NOVA_LIVE_CLI_BACKEND_DOCKER_RUN_TIMEOUT:-2700s",
     );
     expect(readFileSync("scripts/test-live-cli-backend-docker.sh", "utf8")).toContain(
-      'CLI_SETUP_TIMEOUT_SECONDS="$(openclaw_live_read_positive_int_env NOVA_LIVE_CLI_BACKEND_SETUP_TIMEOUT_SECONDS 180)"',
+      'CLI_SETUP_TIMEOUT_SECONDS="$(nova_live_read_positive_int_env NOVA_LIVE_CLI_BACKEND_SETUP_TIMEOUT_SECONDS 180)"',
     );
     expect(readFileSync("scripts/test-live-cli-backend-docker.sh", "utf8")).toContain(
       'timeout_value="${NOVA_LIVE_CLI_BACKEND_SETUP_TIMEOUT_SECONDS:?missing live CLI backend setup timeout seconds}s"',
@@ -2161,7 +2157,7 @@ describe("package artifact reuse", () => {
       "NOVA_LIVE_ACP_BIND_DOCKER_RUN_TIMEOUT:-2700s",
     );
     expect(readFileSync("scripts/test-live-acp-bind-docker.sh", "utf8")).toContain(
-      'ACP_SETUP_TIMEOUT_SECONDS="$(openclaw_live_read_positive_int_env NOVA_LIVE_ACP_BIND_SETUP_TIMEOUT_SECONDS 180)"',
+      'ACP_SETUP_TIMEOUT_SECONDS="$(nova_live_read_positive_int_env NOVA_LIVE_ACP_BIND_SETUP_TIMEOUT_SECONDS 180)"',
     );
     expect(readFileSync("scripts/test-live-acp-bind-docker.sh", "utf8")).toContain(
       'timeout_value="${NOVA_LIVE_ACP_BIND_SETUP_TIMEOUT_SECONDS:?missing live ACP bind setup timeout seconds}s"',
@@ -2199,7 +2195,7 @@ describe("package artifact reuse", () => {
       "NOVA_LIVE_CODEX_HARNESS_DOCKER_RUN_TIMEOUT:-$((2100 * CODEX_HARNESS_TARGET_COUNT))s",
     );
     expect(readFileSync("scripts/test-live-codex-harness-docker.sh", "utf8")).toContain(
-      'CODEX_HARNESS_SETUP_TIMEOUT_SECONDS="$(openclaw_live_read_positive_int_env NOVA_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS 180)"',
+      'CODEX_HARNESS_SETUP_TIMEOUT_SECONDS="$(nova_live_read_positive_int_env NOVA_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS 180)"',
     );
     expect(readFileSync("scripts/test-live-codex-harness-docker.sh", "utf8")).toContain(
       'timeout_value="${NOVA_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS:?missing live Codex harness setup timeout seconds}s"',
@@ -2232,9 +2228,9 @@ describe("package artifact reuse", () => {
   it("fails Droid ACP Docker live proof when Factory auth is missing", () => {
     const script = readFileSync("scripts/test-live-acp-bind-docker.sh", "utf8");
 
-    expect(script).toContain("openclaw_live_acp_bind_load_factory_api_key_from_profile");
+    expect(script).toContain("nova_live_acp_bind_load_factory_api_key_from_profile");
     expect(script).not.toContain('source "$PROFILE_FILE"');
-    expect(script.indexOf("openclaw_live_acp_bind_load_factory_api_key_from_profile")).toBeLessThan(
+    expect(script.indexOf("nova_live_acp_bind_load_factory_api_key_from_profile")).toBeLessThan(
       script.indexOf('if [[ "$ACP_AGENT" == "droid" && -z "${FACTORY_API_KEY:-}" ]]; then'),
     );
     expect(script).toContain(
@@ -2395,7 +2391,7 @@ describe("package artifact reuse", () => {
       "Run Testbox",
     );
 
-    expect(workflow).toContain('PNPM_CONFIG_STORE_DIR: "/tmp/openclaw-pnpm-store"');
+    expect(workflow).toContain('PNPM_CONFIG_STORE_DIR: "/tmp/nova-pnpm-store"');
     expect(workflow).not.toContain("PNPM_CONFIG_MODULES_DIR");
     expect(workflow).not.toContain("PNPM_CONFIG_VIRTUAL_STORE_DIR");
     expect(checkTestboxJob["timeout-minutes"]).toBe(
@@ -2464,7 +2460,7 @@ describe("package artifact reuse", () => {
       "source: ${{ (needs.resolve_target.outputs.package_acceptance_package_spec != '' || needs.resolve_target.outputs.release_package_spec != '') && 'npm' || 'artifact' }}",
     );
     expect(workflow).toContain(
-      "package_spec: ${{ needs.resolve_target.outputs.package_acceptance_package_spec || needs.resolve_target.outputs.release_package_spec || 'openclaw@beta' }}",
+      "package_spec: ${{ needs.resolve_target.outputs.package_acceptance_package_spec || needs.resolve_target.outputs.release_package_spec || 'nova@beta' }}",
     );
     expect(workflow).toContain(".artifacts/docker-e2e-package/package-candidate.json");
     expect(workflow).toContain(
@@ -2579,8 +2575,8 @@ describe("package artifact reuse", () => {
     }
     expect(releaseWorkflow).not.toContain("qa_live_matrix_release_checks");
     expect(releaseWorkflow).not.toContain("Run QA Lab live Matrix lane");
-    expect(releaseWorkflow).not.toContain("pnpm openclaw qa matrix");
-    expect(qaWorkflow).toContain("pnpm openclaw qa matrix");
+    expect(releaseWorkflow).not.toContain("pnpm nova qa matrix");
+    expect(qaWorkflow).toContain("pnpm nova qa matrix");
     expect(qaWorkflow).toContain('for attempt in $(seq 1 "${MATRIX_ATTEMPTS}")');
     expect(qaWorkflow).toContain("matrix_status:");
     expect(qaWorkflow).toContain("value: ${{ jobs.run_live_matrix.outputs.status }}");
@@ -3143,7 +3139,7 @@ describe("package artifact reuse", () => {
     expectTextToIncludeAll(validateStep.run, [
       'if [[ -z "${PACKAGE_ARTIFACT_NAME// }" ]]; then',
       "Artifact-backed Telegram E2E requires all artifact identity fields or none.",
-      "package_spec must be openclaw@alpha",
+      "package_spec must be nova@alpha",
       "Artifact-backed Telegram E2E requires the complete immutable artifact and package identity tuple.",
     ]);
     expect(identityStep.env).toMatchObject({
@@ -3354,7 +3350,7 @@ describe("package artifact reuse", () => {
 
     const telegramCaller = workflowJob(RELEASE_CHECKS_WORKFLOW, "qa_live_telegram_release_checks");
     const telegramDispatch = workflowStep(telegramCaller, "Dispatch and await trusted Telegram QA");
-    expect(telegramDispatch.run).toContain('workflow="openclaw-release-telegram-qa.yml"');
+    expect(telegramDispatch.run).toContain('workflow="nova-release-telegram-qa.yml"');
     expect(telegramDispatch.run).toContain('--repo "$GITHUB_REPOSITORY"');
     expect(telegramDispatch.run).toContain("--ref main");
     expect(telegramDispatch.run).toContain(
@@ -3540,11 +3536,8 @@ describe("package artifact reuse", () => {
 
   it("keeps release publish creation compatible with gh api and prerelease notes", () => {
     const workflow = readFileSync(RELEASE_PUBLISH_WORKFLOW, "utf8");
-    const npmWorkflow = readFileSync(".github/workflows/openclaw-npm-release.yml", "utf8");
-    const maintainerSkill = readFileSync(
-      ".agents/skills/release-openclaw-maintainer/SKILL.md",
-      "utf8",
-    );
+    const npmWorkflow = readFileSync(".github/workflows/nova-npm-release.yml", "utf8");
+    const maintainerSkill = readFileSync(".agents/skills/release-nova-maintainer/SKILL.md", "utf8");
     const fullReleaseWorkflow = readFileSync(FULL_RELEASE_VALIDATION_WORKFLOW, "utf8");
     const resolveJob = workflowJob(RELEASE_PUBLISH_WORKFLOW, "resolve_release_target");
     const publishJob = workflowJob(RELEASE_PUBLISH_WORKFLOW, "publish");
@@ -3554,10 +3547,7 @@ describe("package artifact reuse", () => {
     const validateManifest = workflowStep(resolveJob, "Validate full release validation manifest");
     const publishDownload = workflowStep(publishJob, "Download full release validation manifest");
     const publishOrchestration = workflowStep(publishJob, "Dispatch publish workflows");
-    const npmPublishJob = workflowJob(
-      ".github/workflows/openclaw-npm-release.yml",
-      "publish_openclaw_npm",
-    );
+    const npmPublishJob = workflowJob(".github/workflows/nova-npm-release.yml", "publish_nova_npm");
     const npmCheckout = workflowStep(npmPublishJob, "Checkout");
     const npmFullRun = workflowStep(npmPublishJob, "Verify full release validation run metadata");
     const npmDownload = workflowStep(npmPublishJob, "Download full release validation manifest");
@@ -3640,7 +3630,7 @@ describe("package artifact reuse", () => {
       "Full release validation must run rerun_group=all before npm publish",
     );
     expect(workflow).toContain(
-      "publish_openclaw_npm=true requires plugin_publish_scope=all-publishable",
+      "publish_nova_npm=true requires plugin_publish_scope=all-publishable",
     );
     expect(workflow).toContain("preflight-manifest.json");
     expect(npmWorkflow).toContain("preflight-manifest.json");
@@ -3652,7 +3642,7 @@ describe("package artifact reuse", () => {
     expect(fullReleaseWorkflow).toContain("docker build");
     expect(fullReleaseWorkflow).toContain("--target runtime-assets");
     expect(fullReleaseWorkflow).toContain("timeout --kill-after=30s 15m docker build");
-    expect(fullReleaseWorkflow).not.toContain("node /app/openclaw.mjs agent");
+    expect(fullReleaseWorkflow).not.toContain("node /app/nova.mjs agent");
     expect(fullReleaseWorkflow).toContain('NOVA_EXTENSIONS="diagnostics-otel,codex"');
     expect(fullReleaseWorkflow).not.toContain("/app/src/agents/templates/HEARTBEAT.md");
     expect(fullReleaseWorkflow).toContain("inputs.rerun_group == 'all'");
@@ -3670,7 +3660,7 @@ describe("package artifact reuse", () => {
     expect(npmWorkflow).toContain("dependencyTarballs");
     expect(npmWorkflow).toContain('packageName: "@nova/ai"');
     expect(npmWorkflow).toContain("AI_TARBALL_SHA256");
-    expect(npmWorkflow).toContain("does not match openclaw");
+    expect(npmWorkflow).toContain("does not match nova");
     expect(npmWorkflow).toContain("Frozen target does not depend on @nova/ai");
     expect(npmWorkflow).toContain("dependencyTarballs: process.env.AI_TARBALL_NAME");
     expect(npmWorkflow).toContain('verify_args=("$TARBALL_PATH" "$PACKAGE_VERSION")');
@@ -3694,7 +3684,7 @@ describe("package artifact reuse", () => {
     expect(notesIndex).toBeGreaterThan(setupIndex);
     expect(androidApprovalIndex).toBeGreaterThan(notesIndex);
     expect(dispatchIndex).toBeGreaterThan(notesIndex);
-    expect(publishSteps[notesIndex]?.if).toBe("${{ inputs.publish_openclaw_npm }}");
+    expect(publishSteps[notesIndex]?.if).toBe("${{ inputs.publish_nova_npm }}");
     expect(publishSteps[notesIndex]?.run).toContain("scripts/render-github-release-notes.mjs");
     expect(workflow).toContain('git show "${TARGET_SHA}:CHANGELOG.md" > "${changelog_file}"');
     expect(workflow).not.toContain('awk -v version="${notes_version}"');
@@ -3708,7 +3698,7 @@ describe("package artifact reuse", () => {
   });
 
   it("keeps Nova npm release pack tarball paths local before preflight upload", () => {
-    const npmWorkflow = readFileSync(".github/workflows/openclaw-npm-release.yml", "utf8");
+    const npmWorkflow = readFileSync(".github/workflows/nova-npm-release.yml", "utf8");
     const packStepIndex = npmWorkflow.indexOf("- name: Pack prepared npm tarball");
     const copyIndex = npmWorkflow.indexOf('cp "$PACK_PATH" "$ARTIFACT_DIR/"');
     const uploadIndex = npmWorkflow.indexOf("- name: Upload prepared npm publish bundle");
@@ -3729,7 +3719,7 @@ describe("package artifact reuse", () => {
   });
 
   it("accepts tag-matched frozen release branches in Nova npm preflight", () => {
-    const preflight = workflowJob(NOVA_NPM_RELEASE_WORKFLOW, "preflight_openclaw_npm");
+    const preflight = workflowJob(NOVA_NPM_RELEASE_WORKFLOW, "preflight_nova_npm");
     const metadata = workflowStep(preflight, "Validate release metadata");
 
     expect(metadata.run).toContain("git merge-base --is-ancestor");
@@ -3744,10 +3734,7 @@ describe("package artifact reuse", () => {
     const releaseWorkflow = readFileSync(RELEASE_PUBLISH_WORKFLOW, "utf8");
     const windowsWorkflow = readFileSync(WINDOWS_NODE_RELEASE_WORKFLOW, "utf8");
     const releaseDocs = readFileSync("docs/reference/RELEASING.md", "utf8");
-    const releaseSkill = readFileSync(
-      ".agents/skills/release-openclaw-maintainer/SKILL.md",
-      "utf8",
-    );
+    const releaseSkill = readFileSync(".agents/skills/release-nova-maintainer/SKILL.md", "utf8");
 
     expect(releaseWorkflow).toContain("Stable Nova publish requires an explicit windows_node_tag.");
     expect(releaseWorkflow).toContain(
@@ -3774,9 +3761,9 @@ describe("package artifact reuse", () => {
     expect(releaseWorkflow).toContain("missing prevalidated Windows installer digests");
     expect(releaseWorkflow).toContain("does not match its pinned digest");
     expect(releaseWorkflow).toContain(
-      "Stable release OpenClawCompanion asset names do not exactly match the current contract",
+      "Stable release NovaCompanion asset names do not exactly match the current contract",
     );
-    expect(releaseWorkflow).toContain('select(.name | startswith("OpenClawCompanion-"))');
+    expect(releaseWorkflow).toContain('select(.name | startswith("NovaCompanion-"))');
     expect(releaseWorkflow).toContain(
       "Windows checksum manifest does not exactly match the installer asset contract",
     );
@@ -3806,7 +3793,7 @@ describe("package artifact reuse", () => {
     expect(windowsWorkflow).not.toContain("default: latest");
     expect(windowsWorkflow).toContain("expected_installer_digests:");
     expect(windowsWorkflow).toContain("expected_installer_digests must contain exactly");
-    expect(windowsWorkflow).toContain("must be an explicit openclaw-windows-node release tag");
+    expect(windowsWorkflow).toContain("must be an explicit nova-windows-node release tag");
     expect(windowsWorkflow).toContain("$installerPatterns = @(");
     expect(windowsWorkflow).toContain("Every matched installer is signature-checked");
     expect(windowsWorkflow).toContain("Get-ChildItem -LiteralPath dist -File");
@@ -3814,7 +3801,7 @@ describe("package artifact reuse", () => {
       "Downloaded Windows source asset does not match pinned digest",
     );
     expect(windowsWorkflow).toContain(
-      "--repo openclaw/openclaw-windows-node --json tagName,isDraft,isPrerelease,assets,url",
+      "--repo nova/nova-windows-node --json tagName,isDraft,isPrerelease,assets,url",
     );
     expect(windowsWorkflow).toContain(
       "Windows source release must contain exactly one required asset",
@@ -3826,10 +3813,10 @@ describe("package artifact reuse", () => {
       "CN=Nova Foundation, O=Nova Foundation, L=Mill Valley, S=California, C=US",
     );
     expect(windowsWorkflow).toContain("has unexpected signer subject");
-    expect(windowsWorkflow).toContain("OpenClawCompanion-SHA256SUMS.txt");
+    expect(windowsWorkflow).toContain("NovaCompanion-SHA256SUMS.txt");
     expect(windowsWorkflow).toContain("Verify promoted release asset contract");
     expect(windowsWorkflow).toContain(
-      "Promoted OpenClawCompanion asset names do not exactly match the current contract",
+      "Promoted NovaCompanion asset names do not exactly match the current contract",
     );
     expect(windowsWorkflow).toContain(
       "$targetRelease = gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --json assets",
@@ -3876,7 +3863,7 @@ describe("package artifact reuse", () => {
       "android-release-approval-${{ inputs.release_publish_run_id }}",
     );
     expect(androidWorkflow).toContain(
-      '--signer-workflow "${GITHUB_REPOSITORY}/.github/workflows/openclaw-release-publish.yml"',
+      '--signer-workflow "${GITHUB_REPOSITORY}/.github/workflows/nova-release-publish.yml"',
     );
     expect(androidWorkflow).toContain('--source-ref "refs/heads/${EXPECTED_WORKFLOW_BRANCH}"');
     expect(approvalScript).toContain(
@@ -3939,7 +3926,7 @@ describe("package artifact reuse", () => {
     expect(promoteAndroidCall).toBeGreaterThan(createDraftCall);
     expect(publishReleaseCall).toBeGreaterThan(promoteAndroidCall);
 
-    expect(androidDocs).toContain("github.com/openclaw/openclaw/releases");
+    expect(androidDocs).toContain("github.com/nova/nova/releases");
     expect(androidDocs).not.toContain("releases/latest/download/Nova-Android.apk");
     expect(androidDocs).toContain("gh attestation verify Nova-Android.apk");
     expect(androidDocs).toContain('--source-ref "refs/tags/${release_tag}"');
@@ -3963,7 +3950,7 @@ describe("package artifact reuse", () => {
       "if ($stableRelease -and $sourceRelease.isPrerelease)",
     );
     const rejectUnexpectedTargetAssetsIndex = windowsWorkflow.indexOf(
-      "Target Nova release contains unexpected OpenClawCompanion assets before upload",
+      "Target Nova release contains unexpected NovaCompanion assets before upload",
     );
     const uploadAssetsIndex = windowsWorkflow.indexOf("gh release upload $env:RELEASE_TAG");
 
@@ -3982,7 +3969,7 @@ describe("package artifact reuse", () => {
     const clawHubWorkflow = readFileSync(".github/workflows/plugin-clawhub-release.yml", "utf8");
     const clawHubNewWorkflow = readFileSync(".github/workflows/plugin-clawhub-new.yml", "utf8");
     const pluginNpmWorkflow = readFileSync(PLUGIN_NPM_RELEASE_WORKFLOW, "utf8");
-    const openclawNpmWorkflow = readFileSync(".github/workflows/openclaw-npm-release.yml", "utf8");
+    const novaNpmWorkflow = readFileSync(".github/workflows/nova-npm-release.yml", "utf8");
     const fastPretagScript = readFileSync("scripts/release-fast-pretag-check.sh", "utf8");
     const pluginPretagPackScript = readFileSync(
       "scripts/plugin-release-pretag-pack-check.ts",
@@ -3990,7 +3977,7 @@ describe("package artifact reuse", () => {
     );
     const approvalScript = readFileSync("scripts/validate-release-publish-approval.mjs", "utf8");
     const clawHubReleasePlanScript = readFileSync(
-      "scripts/lib/openclaw-release-clawhub-plan.ts",
+      "scripts/lib/nova-release-clawhub-plan.ts",
       "utf8",
     );
     const clawHubResolveRefIndex = clawHubWorkflow.indexOf("- name: Resolve checked-out ref");
@@ -4068,7 +4055,7 @@ describe("package artifact reuse", () => {
       "github.event_name == 'workflow_dispatch' && inputs.dry_run != true && inputs.publish_scope == 'selected' && steps.plan.outputs.skipped_published_count != '0'",
     );
     expect(clawHubWorkflow).toContain(
-      "uses: openclaw/clawhub/.github/workflows/package-publish.yml@d8096dfc039e86ab942ddf9ef117d04849fd84c1",
+      "uses: nova/clawhub/.github/workflows/package-publish.yml@d8096dfc039e86ab942ddf9ef117d04849fd84c1",
     );
     expect(clawHubWorkflow).toContain(
       'family: ${{ contains(fromJson(\'["@nova/acpx","@nova/diffs","@nova/feishu","@nova/qqbot"]\'), matrix.plugin.packageName) && \'bundle-plugin\' || \'\' }}',
@@ -4167,11 +4154,11 @@ describe("package artifact reuse", () => {
     expect(releaseWorkflow).not.toContain("before_json");
     expect(releaseWorkflow).toContain("plugin-clawhub-new.yml");
     expect(releaseWorkflow).toContain("Plugin ClawHub bootstrap run ID");
-    expect(releaseWorkflow).toContain("scripts/openclaw-release-clawhub-plan.ts");
-    expect(releaseWorkflow).toContain("scripts/openclaw-release-clawhub-runtime-state.ts");
-    expect(isExecutable("scripts/openclaw-release-clawhub-plan.ts")).toBe(true);
-    expect(isExecutable("scripts/openclaw-release-clawhub-runtime-state.ts")).toBe(true);
-    expect(releaseWorkflow).toContain("openclaw-release-clawhub-plan.json");
+    expect(releaseWorkflow).toContain("scripts/nova-release-clawhub-plan.ts");
+    expect(releaseWorkflow).toContain("scripts/nova-release-clawhub-runtime-state.ts");
+    expect(isExecutable("scripts/nova-release-clawhub-plan.ts")).toBe(true);
+    expect(isExecutable("scripts/nova-release-clawhub-runtime-state.ts")).toBe(true);
+    expect(releaseWorkflow).toContain("nova-release-clawhub-plan.json");
     expect(trustedReleaseToolingCheckout.with).toMatchObject({
       ref: "${{ github.sha }}",
       path: ".release-harness",
@@ -4179,10 +4166,10 @@ describe("package artifact reuse", () => {
       "persist-credentials": false,
     });
     expect(releaseWorkflow).toContain(
-      '"${GITHUB_WORKSPACE}/.release-harness/scripts/openclaw-release-clawhub-plan.ts"',
+      '"${GITHUB_WORKSPACE}/.release-harness/scripts/nova-release-clawhub-plan.ts"',
     );
     expect(trustedClawHubPlan.run).toContain(
-      '"${GITHUB_WORKSPACE}/.release-harness/scripts/openclaw-release-clawhub-plan.ts"',
+      '"${GITHUB_WORKSPACE}/.release-harness/scripts/nova-release-clawhub-plan.ts"',
     );
     expect(trustedClawHubPlan.run).toContain('--release-sha "${TARGET_SHA}"');
     expect(trustedClawHubPlan.run).toContain(
@@ -4212,12 +4199,12 @@ describe("package artifact reuse", () => {
     expect(releaseWorkflow).toContain("parentWorkflowSha: process.env.GITHUB_SHA");
     expect(releaseWorkflow).toContain("bootstrapWorkflowSha: plan.bootstrapWorkflowSha");
     expect(releaseWorkflow).toContain(
-      '"${GITHUB_WORKSPACE}/.release-harness/scripts/openclaw-release-clawhub-runtime-state.ts"',
+      '"${GITHUB_WORKSPACE}/.release-harness/scripts/nova-release-clawhub-runtime-state.ts"',
     );
     expect(releaseWorkflow).toContain(
       '"${GITHUB_WORKSPACE}/.release-harness/scripts/release-verify-beta.ts"',
     );
-    expect(releaseWorkflow).toContain("openclaw-release-clawhub-runtime-state");
+    expect(releaseWorkflow).toContain("nova-release-clawhub-runtime-state");
     expect(releaseWorkflow).toContain("bootstrap_plugins");
     expect(releaseWorkflow).toContain("missing_trusted_plugins");
     expect(releaseWorkflow).toContain(".summary.bootstrapPlugins");
@@ -4266,7 +4253,7 @@ describe("package artifact reuse", () => {
     expect(releaseWorkflow).toContain(
       "already has a public GitHub release page without complete postpublish evidence",
     );
-    expect(releaseWorkflow).toContain("resolve_openclaw_npm_publish_state");
+    expect(releaseWorkflow).toContain("resolve_nova_npm_publish_state");
     expect(releaseWorkflow).toContain(
       "already published on npm with this tag's preflight tarball; resuming from",
     );
@@ -4275,11 +4262,11 @@ describe("package artifact reuse", () => {
       releaseWorkflow.match(/assets already promoted and verified; skipping dispatch/g),
     ).toHaveLength(2);
     expect(releaseWorkflow).toContain("registry tarball");
-    expect(releaseWorkflow).toContain("openclawNpmTarball");
+    expect(releaseWorkflow).toContain("novaNpmTarball");
     // The release proof must cite the verified evidence tarball; the only
     // direct registry tarball query is the resume identity check.
     expect(
-      releaseWorkflow.match(/npm view "openclaw@\$\{release_version\}" dist\.tarball/g),
+      releaseWorkflow.match(/npm view "nova@\$\{release_version\}" dist\.tarball/g),
     ).toHaveLength(1);
     expect(releaseWorkflow).toContain("release SHA");
     expect(clawHubReleasePlanScript).toContain("not awaited by this proof");
@@ -4312,18 +4299,18 @@ describe("package artifact reuse", () => {
     expect(releaseWorkflow).toContain('conclusion" == "skipped"');
     expect(releaseWorkflow).toContain("approve_child_publish_environment");
     expect(releaseWorkflow).toContain("Approve child release gate after parent release approval");
-    expect(releaseWorkflow).toContain("openclaw_npm_resume_run_id");
+    expect(releaseWorkflow).toContain("nova_npm_resume_run_id");
     expect(releaseWorkflow).toContain(
-      '"${GITHUB_WORKSPACE}/.release-harness/scripts/openclaw-npm-resume-run.mjs"',
+      '"${GITHUB_WORKSPACE}/.release-harness/scripts/nova-npm-resume-run.mjs"',
     );
     expect(releaseWorkflow).toContain('--run-id "${NOVA_NPM_RESUME_RUN_ID}"');
-    expect(releaseWorkflow).toContain("openclaw_npm_expected_workflow_ref=\"$(printf '%s'");
-    expect(releaseWorkflow).toContain("openclaw_npm_expected_workflow_sha=\"$(printf '%s'");
+    expect(releaseWorkflow).toContain("nova_npm_expected_workflow_ref=\"$(printf '%s'");
+    expect(releaseWorkflow).toContain("nova_npm_expected_workflow_sha=\"$(printf '%s'");
     expect(releaseWorkflow).toContain(
-      '"${GITHUB_WORKSPACE}/.release-harness/scripts/openclaw-npm-postpublish-verify.ts"',
+      '"${GITHUB_WORKSPACE}/.release-harness/scripts/nova-npm-postpublish-verify.ts"',
     );
     expect(releaseWorkflow).toContain(
-      '"${GITHUB_WORKSPACE}/.release-harness/scripts/openclaw-npm-postpublish-verify.ts"',
+      '"${GITHUB_WORKSPACE}/.release-harness/scripts/nova-npm-postpublish-verify.ts"',
     );
     expect(releaseWorkflow).toContain("--postpublish-verifier");
     expect(releaseWorkflow).toContain('"${verify_args[@]}"');
@@ -4339,24 +4326,22 @@ describe("package artifact reuse", () => {
       '"${RELEASE_TAG}" == *"-alpha."* && "${RELEASE_NPM_DIST_TAG}" == "alpha"',
     );
     expect(releaseWorkflow).toContain('--workflow-ref "${CHILD_WORKFLOW_REF}"');
-    expect(releaseWorkflow).toContain('openclaw_npm_expected_workflow_ref="${GITHUB_REF}"');
+    expect(releaseWorkflow).toContain('nova_npm_expected_workflow_ref="${GITHUB_REF}"');
+    expect(releaseWorkflow).toContain('nova_npm_expected_workflow_sha="${PARENT_WORKFLOW_SHA}"');
     expect(releaseWorkflow).toContain(
-      'openclaw_npm_expected_workflow_sha="${PARENT_WORKFLOW_SHA}"',
-    );
-    expect(releaseWorkflow).toContain(
-      'NOVA_NPM_EXPECTED_WORKFLOW_REF="${openclaw_npm_expected_workflow_ref}"',
+      'NOVA_NPM_EXPECTED_WORKFLOW_REF="${nova_npm_expected_workflow_ref}"',
     );
     expect(releaseWorkflow).toContain('if [[ "${PUBLISH_NOVA_NPM}" == "true" ]]');
     expect(releaseWorkflow).toContain("--skip-github-release");
     expect(clawHubReleasePlanScript).toContain("--plugin-clawhub-bootstrap-run");
     expect(releaseWorkflow).toContain('verify_args+=(--plugins "${PLUGINS}")');
-    expect(releaseWorkflow).toContain("openclaw-release-postpublish-evidence");
+    expect(releaseWorkflow).toContain("nova-release-postpublish-evidence");
     const postpublishEvidenceUpload = workflowStep(
       workflowJob(RELEASE_PUBLISH_WORKFLOW, "publish"),
       "Upload postpublish evidence",
     );
     expect(postpublishEvidenceUpload.if).toContain("always()");
-    expect(postpublishEvidenceUpload.if).toContain("inputs.publish_openclaw_npm");
+    expect(postpublishEvidenceUpload.if).toContain("inputs.publish_nova_npm");
     expect(postpublishEvidenceUpload.with?.["if-no-files-found"]).toBe("error");
     expect(releaseWorkflow).toContain("Failed child job summary");
     expect(releaseWorkflow).toContain("Workflow completion waits for ClawHub");
@@ -4368,7 +4353,7 @@ describe("package artifact reuse", () => {
     expect(clawHubReleasePlanScript).toContain("--skip-clawhub");
     expect(pluginNpmWorkflow).toContain("Validate release publish approval run");
     expect(clawHubWorkflow).toContain("Validate release publish approval run");
-    expect(openclawNpmWorkflow).toContain("Validate release publish approval run");
+    expect(novaNpmWorkflow).toContain("Validate release publish approval run");
     const pluginNpmPublishJob = workflowJob(PLUGIN_NPM_RELEASE_WORKFLOW, "publish_plugins_npm");
     const npmPackageVersionStep = workflowStep(
       pluginNpmPublishJob,
@@ -4384,16 +4369,16 @@ describe("package artifact reuse", () => {
     );
     expect(pluginNpmWorkflow).toContain("Direct Plugin NPM Release dispatch");
     expect(clawHubWorkflow).toContain("Direct Plugin ClawHub Release dispatch");
-    expect(openclawNpmWorkflow).toContain("Direct Nova npm publish");
+    expect(novaNpmWorkflow).toContain("Direct Nova npm publish");
     expect(pluginNpmWorkflow).toContain('GITHUB_ACTOR}" != "github-actions[bot]"');
     expect(clawHubWorkflow).toContain('GITHUB_ACTOR}" != "github-actions[bot]"');
-    expect(openclawNpmWorkflow).toContain('GITHUB_ACTOR}" != "github-actions[bot]"');
+    expect(novaNpmWorkflow).toContain('GITHUB_ACTOR}" != "github-actions[bot]"');
     expect(pluginNpmWorkflow).toContain("Direct Plugin NPM Release recovery");
     expect(clawHubWorkflow).toContain("Direct Plugin ClawHub Release recovery");
-    expect(openclawNpmWorkflow).toContain("Direct Nova npm recovery");
+    expect(novaNpmWorkflow).toContain("Direct Nova npm recovery");
     expect(pluginNpmWorkflow).toContain("validate-release-publish-approval.mjs");
     expect(clawHubWorkflow).toContain("validate-release-publish-approval.mjs");
-    expect(openclawNpmWorkflow).toContain("validate-release-publish-approval.mjs");
+    expect(novaNpmWorkflow).toContain("validate-release-publish-approval.mjs");
     expect(approvalScript).toContain("must still be in_progress");
     expect(approvalScript).toContain("completed with success/failure");
     expect(pluginNpmWorkflow).toContain("environment: npm-release");
@@ -4405,7 +4390,7 @@ describe("package artifact reuse", () => {
     expect(clawHubNewWorkflow).toContain("environment: clawhub-plugin-bootstrap");
     expect(clawHubNewWorkflow).toContain("secrets.CLAWHUB_TOKEN");
     expect(clawHubNewWorkflow).not.toContain(
-      "uses: openclaw/clawhub/.github/workflows/package-publish.yml",
+      "uses: nova/clawhub/.github/workflows/package-publish.yml",
     );
     expect(clawHubNewWorkflow).not.toContain("clawhub_token:");
     expect(clawHubNewWorkflow).toContain("Validate pinned ClawHub trusted publisher CLI support");
@@ -4475,7 +4460,7 @@ describe("package artifact reuse", () => {
     expect(clawHubNewWorkflow).not.toContain("packages/clawhub/src/cli.ts");
     expect(clawHubNewWorkflow).toContain("Verify exact ClawHub registry artifact bytes");
     expect(clawHubNewWorkflow).toContain("verify-clawhub-published-artifact.mjs");
-    expect(openclawNpmWorkflow).toContain("environment: npm-release");
+    expect(novaNpmWorkflow).toContain("environment: npm-release");
     expect(releaseWorkflow).toContain("default: from-validation");
     expect(releaseWorkflow).toContain('--release-publish-branch "${PARENT_WORKFLOW_BRANCH}"');
     expect(releaseWorkflow).toContain('--release-publish-run-attempt "${GITHUB_RUN_ATTEMPT}"');
@@ -4521,10 +4506,7 @@ describe("package artifact reuse", () => {
     const publishRun =
       workflowStep(workflowJob(RELEASE_PUBLISH_WORKFLOW, "publish"), "Dispatch publish workflows")
         .run ?? "";
-    const resolvePublishState = shellFunctionSource(
-      publishRun,
-      "resolve_openclaw_npm_publish_state",
-    );
+    const resolvePublishState = shellFunctionSource(publishRun, "resolve_nova_npm_publish_state");
     const registryDownload = resolvePublishState.match(
       /curl -fsSL[\s\S]*?"\$\{published_tarball_url\}"/u,
     )?.[0];
@@ -4552,7 +4534,7 @@ describe("package artifact reuse", () => {
         "-c",
         `
 set -uo pipefail
-GITHUB_REPOSITORY=openclaw/openclaw
+GITHUB_REPOSITORY=nova/nova
 gh() {
   if [[ "$1" == "run" && "$2" == "view" ]]; then
     printf '%s\\n' '{"headSha":"${expectedSha}","url":"https://example.invalid/run/123"}'
@@ -4584,7 +4566,7 @@ approve_pending_deployments plugin-clawhub-new.yml 123 "${expectedSha}" || statu
         "-c",
         `
 set -uo pipefail
-GITHUB_REPOSITORY=openclaw/openclaw
+GITHUB_REPOSITORY=nova/nova
 GITHUB_STEP_SUMMARY=/dev/null
 gh() {
   if [[ "$1" == "run" && "$2" == "view" ]]; then
@@ -4615,7 +4597,7 @@ approve_child_publish_environment plugin-clawhub-new.yml 123 "${expectedSha}" ||
         "-c",
         `
 set -uo pipefail
-GITHUB_REPOSITORY=openclaw/openclaw
+GITHUB_REPOSITORY=nova/nova
 gh() {
   if [[ "$1" == "run" && "$2" == "view" ]]; then
     printf '%s\\n' '{"headSha":"${"b".repeat(40)}","url":"https://example.invalid/run/123"}'
@@ -4641,18 +4623,18 @@ wait_for_run plugin-clawhub-new.yml 123 "${expectedSha}" || status=$?
   it("keeps release workflow setup and timeout budgets bounded", () => {
     const fullRelease = readWorkflow(FULL_RELEASE_VALIDATION_WORKFLOW);
     const releaseChecks = readWorkflow(RELEASE_CHECKS_WORKFLOW);
-    const crossOs = readWorkflow(".github/workflows/openclaw-cross-os-release-checks-reusable.yml");
+    const crossOs = readWorkflow(".github/workflows/nova-cross-os-release-checks-reusable.yml");
     const liveE2e = readWorkflow(LIVE_E2E_WORKFLOW);
     const releaseWorkflowPaths = [
       FULL_RELEASE_VALIDATION_WORKFLOW,
       RELEASE_CHECKS_WORKFLOW,
       RELEASE_TELEGRAM_QA_WORKFLOW,
-      ".github/workflows/openclaw-cross-os-release-checks-reusable.yml",
+      ".github/workflows/nova-cross-os-release-checks-reusable.yml",
       LIVE_E2E_WORKFLOW,
       NPM_TELEGRAM_WORKFLOW,
-      ".github/workflows/openclaw-release-publish.yml",
+      ".github/workflows/nova-release-publish.yml",
       ".github/workflows/android-release.yml",
-      ".github/workflows/openclaw-npm-release.yml",
+      ".github/workflows/nova-npm-release.yml",
       ".github/workflows/macos-release.yml",
       ".github/workflows/plugin-clawhub-release.yml",
       PACKAGE_ACCEPTANCE_WORKFLOW,
@@ -4692,7 +4674,7 @@ wait_for_run plugin-clawhub-new.yml 123 "${expectedSha}" || status=$?
       packageArtifactDigest: "b".repeat(64),
       packageArtifactRunId: "456",
       packageArtifactRunAttempt: "1",
-      packageFileName: "openclaw-current.tgz",
+      packageFileName: "nova-current.tgz",
       packageSourceSha: selectedSha,
       packageSha256: "c".repeat(64),
       packageVersion: "2026.7.2",
@@ -4742,10 +4724,10 @@ wait_for_run plugin-clawhub-new.yml 123 "${expectedSha}" || status=$?
       [PACKAGE_ACCEPTANCE_WORKFLOW, "resolve_package", "Checkout package workflow ref"],
       [PLUGIN_NPM_RELEASE_WORKFLOW, "preview_plugins_npm", "Checkout"],
       [PLUGIN_CLAWHUB_RELEASE_WORKFLOW, "preview_plugins_clawhub", "Checkout"],
-      [NOVA_NPM_RELEASE_WORKFLOW, "preflight_openclaw_npm", "Checkout"],
+      [NOVA_NPM_RELEASE_WORKFLOW, "preflight_nova_npm", "Checkout"],
       [NOVA_NPM_RELEASE_WORKFLOW, "validate_publish_request", "Checkout"],
       [
-        ".github/workflows/openclaw-cross-os-release-checks-reusable.yml",
+        ".github/workflows/nova-cross-os-release-checks-reusable.yml",
         "prepare",
         "Checkout public source ref",
       ],

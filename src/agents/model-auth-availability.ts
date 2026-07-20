@@ -5,7 +5,7 @@ import {
 } from "@nova/model-catalog-core/provider-id";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
 import { resolveMergedModelProviderConfig } from "../config/model-provider-config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { coerceSecretRef } from "../config/types.secrets.js";
 import type {
   ProviderModelRouteAuthRequirement,
@@ -99,7 +99,7 @@ export type ModelAuthAvailabilityResolver = {
   hasSyntheticAuth(provider: string): boolean;
 };
 type CreateModelAuthAvailabilityResolverParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   authStore: AuthProfileStore;
   agentDir?: string;
   workspaceDir?: string;

@@ -25,15 +25,15 @@ import { pluginCommands } from "./command-registry-state.js";
 import type { PluginRegistryState } from "./registry-state.js";
 import type { PluginRecord } from "./registry-types.js";
 import type {
-  OpenClawGatewayDiscoveryService,
-  OpenClawPluginCliCommandDescriptor,
-  OpenClawPluginCliRegistrar,
-  OpenClawPluginCommandDefinition,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginReloadRegistration,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginService,
+  NovaGatewayDiscoveryService,
+  NovaPluginCliCommandDescriptor,
+  NovaPluginCliRegistrar,
+  NovaPluginCommandDefinition,
+  NovaPluginNodeHostCommand,
+  NovaPluginNodeInvokePolicy,
+  NovaPluginReloadRegistration,
+  NovaPluginSecurityAuditCollector,
+  NovaPluginService,
 } from "./types.js";
 
 function isOfficialCodexPluginRecord(
@@ -63,11 +63,11 @@ export function createOperationRegistrars(state: PluginRegistryState) {
 
   const registerCli = (
     record: PluginRecord,
-    registrar: OpenClawPluginCliRegistrar,
+    registrar: NovaPluginCliRegistrar,
     opts?: {
       parentPath?: string[];
       commands?: string[];
-      descriptors?: OpenClawPluginCliCommandDescriptor[];
+      descriptors?: NovaPluginCliCommandDescriptor[];
     },
   ) => {
     const normalizeCommandRoot = (raw: string, source: "command" | "descriptor") => {
@@ -97,9 +97,7 @@ export function createOperationRegistrars(state: PluginRegistryState) {
           ? { name, description, hasSubcommands: descriptor.hasSubcommands }
           : null;
       })
-      .filter(
-        (descriptor): descriptor is OpenClawPluginCliCommandDescriptor => descriptor !== null,
-      );
+      .filter((descriptor): descriptor is NovaPluginCliCommandDescriptor => descriptor !== null);
     const commands = [
       ...(opts?.commands ?? []),
       ...descriptors.map((descriptor) => descriptor.name),
@@ -149,8 +147,8 @@ export function createOperationRegistrars(state: PluginRegistryState) {
     });
   };
 
-  const registerReload = (record: PluginRecord, registration: OpenClawPluginReloadRegistration) => {
-    const normalized: OpenClawPluginReloadRegistration = {
+  const registerReload = (record: PluginRecord, registration: NovaPluginReloadRegistration) => {
+    const normalized: NovaPluginReloadRegistration = {
       restartPrefixes: normalizeStringEntries(registration.restartPrefixes),
       hotPrefixes: normalizeStringEntries(registration.hotPrefixes),
       noopPrefixes: normalizeStringEntries(registration.noopPrefixes),
@@ -185,7 +183,7 @@ export function createOperationRegistrars(state: PluginRegistryState) {
 
   const registerNodeHostCommand = (
     record: PluginRecord,
-    nodeCommand: OpenClawPluginNodeHostCommand,
+    nodeCommand: NovaPluginNodeHostCommand,
   ) => {
     const command = nodeCommand.command.trim();
     if (!command) {
@@ -231,7 +229,7 @@ export function createOperationRegistrars(state: PluginRegistryState) {
 
   const registerNodeInvokePolicy = (
     record: PluginRecord,
-    policy: OpenClawPluginNodeInvokePolicy,
+    policy: NovaPluginNodeInvokePolicy,
     pluginConfig?: Record<string, unknown>,
   ) => {
     const commands = normalizeUniqueStringEntries(
@@ -281,7 +279,7 @@ export function createOperationRegistrars(state: PluginRegistryState) {
 
   const registerSecurityAuditCollector = (
     record: PluginRecord,
-    collector: OpenClawPluginSecurityAuditCollector,
+    collector: NovaPluginSecurityAuditCollector,
   ) => {
     registry.securityAuditCollectors.push({
       pluginId: record.id,
@@ -292,7 +290,7 @@ export function createOperationRegistrars(state: PluginRegistryState) {
     });
   };
 
-  const registerService = (record: PluginRecord, service: OpenClawPluginService) => {
+  const registerService = (record: PluginRecord, service: NovaPluginService) => {
     const id = service.id.trim();
     if (!id) {
       return;
@@ -325,7 +323,7 @@ export function createOperationRegistrars(state: PluginRegistryState) {
 
   const registerGatewayDiscoveryService = (
     record: PluginRecord,
-    service: OpenClawGatewayDiscoveryService,
+    service: NovaGatewayDiscoveryService,
   ) => {
     const id = service.id.trim();
     if (!id) {
@@ -354,7 +352,7 @@ export function createOperationRegistrars(state: PluginRegistryState) {
     });
   };
 
-  const registerCommand = (record: PluginRecord, command: OpenClawPluginCommandDefinition) => {
+  const registerCommand = (record: PluginRecord, command: NovaPluginCommandDefinition) => {
     const name = command.name.trim();
     if (!name) {
       pushDiagnostic({

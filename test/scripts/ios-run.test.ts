@@ -20,7 +20,7 @@ function writeExecutable(filePath: string, body: string): void {
 }
 
 function makeFixture(bundleId: string): { root: string; script: string; logFile: string } {
-  const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-ios-run-"));
+  const root = mkdtempSync(path.join(os.tmpdir(), "nova-ios-run-"));
   tempDirs.push(root);
 
   const scriptsDir = path.join(root, "scripts");
@@ -176,17 +176,17 @@ describe("scripts/ios-run.sh", () => {
   });
 
   it("installs and launches the configured app bundle identifier", () => {
-    const fixture = makeFixture("ai.openclawfoundation.app");
+    const fixture = makeFixture("ai.novafoundation.app");
 
     runIosRun(fixture, { SIMCTL_BOOT_MODE: "booted" });
 
     expect(readFileSync(fixture.logFile, "utf8")).toContain(
-      "simctl launch iPhone 17 ai.openclawfoundation.app",
+      "simctl launch iPhone 17 ai.novafoundation.app",
     );
   });
 
   it("builds simulator sandbox relay mode and injects proof secret only at launch", () => {
-    const fixture = makeFixture("ai.openclawfoundation.app");
+    const fixture = makeFixture("ai.novafoundation.app");
     const proofSecret = "x".repeat(32);
 
     runIosRun(
@@ -200,15 +200,15 @@ describe("scripts/ios-run.sh", () => {
 
     const log = readFileSync(fixture.logFile, "utf8");
     expect(log).toContain("NOVA_PUSH_MODE=simulatorSandbox");
-    expect(log).toContain("NOVA_PUSH_RELAY_BASE_URL=https://ios-push-relay-sandbox.openclaw.ai");
-    expect(log).toContain("simctl launch iPhone 17 ai.openclawfoundation.app");
+    expect(log).toContain("NOVA_PUSH_RELAY_BASE_URL=https://ios-push-relay-sandbox.nova.ai");
+    expect(log).toContain("simctl launch iPhone 17 ai.novafoundation.app");
     expect(log).toContain("simctl-launch-proof set");
     expect(log).not.toContain("proof-env leaked");
     expect(log).not.toContain(proofSecret);
   });
 
   it("scrubs exported simulator proof secrets from normal build helpers", () => {
-    const fixture = makeFixture("ai.openclawfoundation.app");
+    const fixture = makeFixture("ai.novafoundation.app");
     const proofSecret = "x".repeat(32);
     const customProofSecret = "y".repeat(32);
 
@@ -220,7 +220,7 @@ describe("scripts/ios-run.sh", () => {
     });
 
     const log = readFileSync(fixture.logFile, "utf8");
-    expect(log).toContain("simctl launch iPhone 17 ai.openclawfoundation.app");
+    expect(log).toContain("simctl launch iPhone 17 ai.novafoundation.app");
     expect(log).toContain("simctl-launch-proof unset");
     expect(log).not.toContain("proof-env leaked");
     expect(log).not.toContain(proofSecret);
@@ -228,7 +228,7 @@ describe("scripts/ios-run.sh", () => {
   });
 
   it("does not ignore simulator boot failures other than already booted", () => {
-    const fixture = makeFixture("ai.openclawfoundation.app");
+    const fixture = makeFixture("ai.novafoundation.app");
 
     expect(() => runIosRun(fixture, { SIMCTL_BOOT_MODE: "fail" })).toThrow();
     expect(readFileSync(fixture.logFile, "utf8")).not.toContain("simctl launch");

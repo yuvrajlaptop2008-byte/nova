@@ -92,7 +92,7 @@ import {
   type SessionScope,
 } from "../config/sessions.js";
 import { listSessionEntries as listAccessorSessionEntries } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { projectPluginSessionExtensionsSync } from "../plugins/host-hook-state.js";
 import { withPinnedActivePluginRegistryWorkspaceDir } from "../plugins/runtime-workspace-state.js";
 import {
@@ -298,7 +298,7 @@ function buildCompactionCheckpointPreview(
 function resolveModelCostConfigCached(
   provider: string | undefined,
   model: string | undefined,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   rowContext?: SessionListRowContext,
 ): ModelCostConfig | undefined {
   if (!rowContext) {
@@ -314,7 +314,7 @@ function resolveModelCostConfigCached(
 }
 
 function resolveEstimatedSessionCostUsd(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider?: string;
   model?: string;
   entry?: Pick<
@@ -691,7 +691,7 @@ function createSessionRowModelCacheKey(provider: string | undefined, model: stri
 }
 
 function resolveSessionSelectedModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry?: SessionEntry;
   agentId: string;
   rowContext?: SessionListRowContext;
@@ -726,7 +726,7 @@ function resolveSessionSelectedModelRef(params: {
 }
 
 function resolveSessionRowThinkingMetadata(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   provider: string;
   model: string;
@@ -814,7 +814,7 @@ function resolveChildSessionKeys(
 }
 
 function resolveTranscriptUsageFallback(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   entry?: SessionEntry;
   storePath: string;
@@ -893,7 +893,7 @@ function resolveTranscriptUsageFallback(params: {
 }
 
 function readAcpMetaForDeletedAgentCheck(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   entry?: Pick<SessionEntry, "acp" | "sessionId"> | null;
   acpMetadataSessionKey?: string | null;
@@ -942,7 +942,7 @@ function readAcpMetaForDeletedAgentCheck(params: {
  * exists (#65524).
  */
 export function resolveDeletedAgentIdFromSessionKey(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   sessionKey: string,
   entry?: SessionEntry | null,
   options?: { acpMetadataSessionKey?: string | null },
@@ -1073,7 +1073,7 @@ function pruneLegacyStoreKeys(params: {
 }
 
 export function migrateAndPruneGatewaySessionStoreKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   store: Record<string, SessionEntry>;
   agentId?: string;
@@ -1178,7 +1178,7 @@ function normalizeFallbackList(values: readonly string[]): string[] {
 }
 
 function resolveGatewayAgentModel(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId: string,
 ): GatewayAgentRow["model"] | undefined {
   const primary = resolveAgentEffectiveModelPrimary(cfg, agentId)?.trim();
@@ -1195,7 +1195,7 @@ function resolveGatewayAgentModel(
 }
 
 export function listAgentsForGateway(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   modelCatalog?: ModelCatalogEntry[],
   options?: { modelCatalogByAgentId?: ReadonlyMap<string, ModelCatalogEntry[]> },
 ): {
@@ -1300,7 +1300,7 @@ export function listAgentsForGateway(
 }
 
 function buildGatewaySessionStoreScanTargets(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   canonicalKey: string;
   agentId: string;
@@ -1323,7 +1323,7 @@ function buildGatewaySessionStoreScanTargets(params: {
 }
 
 function resolveGatewaySessionStoreCandidates(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId: string,
 ): { existing: SessionStoreTarget[]; fallback: SessionStoreTarget } {
   const storeConfig = cfg.session?.store;
@@ -1363,7 +1363,7 @@ function loadGatewaySessionLookupStore(
 }
 
 function resolveGatewaySessionStoreLookup(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   canonicalKey: string;
   agentId: string;
@@ -1435,7 +1435,7 @@ function isAgentScopedSentinelSessionKey(canonicalKey: string): boolean {
 }
 
 function resolveExplicitDeletedLegacyMainStoreTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   clone?: boolean;
 }): GatewaySessionStoreTargetWithStore | null {
@@ -1503,7 +1503,7 @@ function resolveExplicitDeletedLegacyMainStoreTarget(params: {
 }
 
 export function resolveGatewaySessionStoreTargetWithStore(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   agentId?: string;
   clone?: boolean;
@@ -1557,7 +1557,7 @@ export function resolveGatewaySessionStoreTargetWithStore(params: {
 }
 
 export function resolveGatewaySessionStoreTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   agentId?: string;
   clone?: boolean;
@@ -1598,7 +1598,7 @@ function resolveGatewaySessionThinkingLevel(params: {
 }
 
 function resolveGatewaySessionThinkingDefault(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
   agentId?: string;
@@ -1627,7 +1627,7 @@ function resolveGatewaySessionThinkingDefault(params: {
 }
 
 type GatewaySessionThinkingProjectionParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
   agentId: string;
@@ -1705,7 +1705,7 @@ function resolveGatewaySessionThinkingProjectionInternal(
 
 /** Resolve the canonical runtime, selected level, and picker metadata for a session. */
 export function resolveGatewaySessionThinkingProjection(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
   agentId: string;
@@ -1717,7 +1717,7 @@ export function resolveGatewaySessionThinkingProjection(params: {
 }
 
 export function getSessionDefaults(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   modelCatalog?: ModelCatalogEntry[],
   options?: { allowPluginNormalization?: boolean },
 ): GatewaySessionsDefaults {
@@ -1845,7 +1845,7 @@ export async function resolveGatewayModelSupportsImages(params: {
 }
 
 function resolveSessionDisplayModelIdentityRefCached(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   provider?: string;
   model?: string;
@@ -1869,7 +1869,7 @@ function resolveSessionDisplayModelIdentityRefCached(params: {
 }
 
 export function resolveSessionDisplayModelIdentityRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   provider?: string;
   model?: string;
@@ -1908,7 +1908,7 @@ export function resolveSessionDisplayModelIdentityRef(params: {
 }
 
 export function buildGatewaySessionRow(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   storePath: string;
   store: Record<string, SessionEntry>;
   key: string;
@@ -2370,7 +2370,7 @@ function resolveSessionListRowContext(params: {
 }
 
 function resolveSessionListSearchModelFields(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   entry?: SessionEntry;
   rowContext?: SessionListRowContext;
@@ -2460,7 +2460,7 @@ export function loadGatewaySessionRow(
 }
 
 export function buildGatewaySessionInfo(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   storePath: string;
   store: Record<string, SessionEntry>;
   key: string;
@@ -2534,7 +2534,7 @@ function resolveSessionsListWindowLimit(limit: number | undefined, offset: numbe
 }
 
 function filterSessionEntries(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   store: Record<string, SessionEntry>;
   opts: SessionsListParams;
   now: number;
@@ -2679,7 +2679,7 @@ function isPhantomAgentStoreListEntry(key: string, entry: SessionEntry | undefin
 }
 
 function selectSessionEntries(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   store: Record<string, SessionEntry>;
   opts: SessionsListParams;
   now: number;
@@ -2707,7 +2707,7 @@ function selectSessionEntries(params: {
 }
 
 export function filterAndSortSessionEntries(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   store: Record<string, SessionEntry>;
   opts: SessionsListParams;
   now: number;
@@ -2718,7 +2718,7 @@ export function filterAndSortSessionEntries(params: {
 }
 
 export function listSessionsFromStore(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   storePath: string;
   store: Record<string, SessionEntry>;
   modelCatalog?: ModelCatalogEntry[];
@@ -2808,7 +2808,7 @@ export function listSessionsFromStore(params: {
  * loop responsive for WebSocket heartbeats, channel I/O, and concurrent RPC.
  */
 export async function listSessionsFromStoreAsync(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   storePath: string;
   store: Record<string, SessionEntry>;
   modelCatalog?: ModelCatalogEntry[];

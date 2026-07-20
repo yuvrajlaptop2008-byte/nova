@@ -2,7 +2,7 @@
 import { createHash } from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { getRuntimeConfig } from "../config/io.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   formatUserProfileAvatarEtag,
   getProfileAvatar,
@@ -38,7 +38,7 @@ const MAX_GRAVATAR_BYTES = 1_000_000;
 const MAX_GRAVATAR_EMAIL_LOOKUPS = 8;
 const GRAVATAR_MIME_TYPES = new Set(["image/gif", "image/jpeg", "image/png", "image/webp"]);
 
-function resolveAvatarCorsOrigin(req: IncomingMessage, cfg: OpenClawConfig): string | undefined {
+function resolveAvatarCorsOrigin(req: IncomingMessage, cfg: NovaConfig): string | undefined {
   const rawOrigin = typeof req.headers.origin === "string" ? req.headers.origin.trim() : "";
   if (!rawOrigin) {
     return undefined;
@@ -59,11 +59,7 @@ function resolveAvatarCorsOrigin(req: IncomingMessage, cfg: OpenClawConfig): str
     : undefined;
 }
 
-function setAvatarCorsHeaders(
-  req: IncomingMessage,
-  res: ServerResponse,
-  cfg: OpenClawConfig,
-): boolean {
+function setAvatarCorsHeaders(req: IncomingMessage, res: ServerResponse, cfg: NovaConfig): boolean {
   if (!req.headers.origin) {
     return true;
   }

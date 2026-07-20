@@ -44,7 +44,7 @@ describe("bundled package channel metadata", () => {
     const extensionsRoot = path.join(root, "dist", "extensions");
     writeJsonFile(path.join(extensionsRoot, "matrix", "package.json"), {
       name: "@nova/matrix",
-      openclaw: {
+      nova: {
         channel: {
           id: "matrix",
           label: "Matrix",
@@ -58,7 +58,7 @@ describe("bundled package channel metadata", () => {
         },
       },
     });
-    writeJsonFile(path.join(extensionsRoot, "matrix", "openclaw.plugin.json"), {
+    writeJsonFile(path.join(extensionsRoot, "matrix", "nova.plugin.json"), {
       id: "matrix",
       configSchema: { type: "object" },
       channels: ["matrix"],
@@ -88,14 +88,14 @@ describe("bundled package channel metadata", () => {
 
     writeJsonFile(packagePath, {
       name: "@nova/matrix",
-      openclaw: {
+      nova: {
         channel: {
           id: "matrix",
           label: "Before",
         },
       },
     });
-    writeJsonFile(path.join(extensionsRoot, "matrix", "openclaw.plugin.json"), {
+    writeJsonFile(path.join(extensionsRoot, "matrix", "nova.plugin.json"), {
       id: "matrix",
       configSchema: { type: "object" },
       channels: ["matrix"],
@@ -109,7 +109,7 @@ describe("bundled package channel metadata", () => {
 
     writeJsonFile(packagePath, {
       name: "@nova/matrix",
-      openclaw: {
+      nova: {
         channel: {
           id: "matrix",
           label: "After",

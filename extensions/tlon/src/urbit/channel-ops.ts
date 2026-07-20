@@ -1,9 +1,6 @@
 // Tlon plugin module implements channel ops behavior.
-import {
-  readProviderJsonResponse,
-  readResponseTextLimited,
-} from "openclaw/plugin-sdk/provider-http";
-import type { LookupFn, SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+import { readProviderJsonResponse, readResponseTextLimited } from "nova/plugin-sdk/provider-http";
+import type { LookupFn, SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 import { UrbitHttpError } from "./errors.js";
 import { urbitFetch } from "./fetch.js";
 

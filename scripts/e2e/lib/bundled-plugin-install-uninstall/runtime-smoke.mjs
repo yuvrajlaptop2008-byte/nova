@@ -234,9 +234,9 @@ export function createReadyLogScanner(file) {
 
 function manifestPath(pluginDir, pluginRoot) {
   const candidates = [
-    ...(isNonEmptyString(pluginRoot) ? [path.join(pluginRoot, "openclaw.plugin.json")] : []),
-    path.join(process.cwd(), "dist", "extensions", pluginDir, "openclaw.plugin.json"),
-    path.join(process.cwd(), "dist-runtime", "extensions", pluginDir, "openclaw.plugin.json"),
+    ...(isNonEmptyString(pluginRoot) ? [path.join(pluginRoot, "nova.plugin.json")] : []),
+    path.join(process.cwd(), "dist", "extensions", pluginDir, "nova.plugin.json"),
+    path.join(process.cwd(), "dist-runtime", "extensions", pluginDir, "nova.plugin.json"),
   ];
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
@@ -250,7 +250,7 @@ function loadManifest(pluginDir, pluginRoot) {
 }
 
 function configPathFromEnv(env = process.env) {
-  return env.NOVA_CONFIG_PATH || path.join(env.HOME || os.homedir(), ".openclaw", "openclaw.json");
+  return env.NOVA_CONFIG_PATH || path.join(env.HOME || os.homedir(), ".nova", "nova.json");
 }
 
 function readConfig(env = process.env) {
@@ -862,7 +862,7 @@ export async function assertReadyzProbe(options) {
 }
 
 export async function rpcCall(method, params, options) {
-  const rpcStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-runtime-rpc-"));
+  const rpcStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-runtime-rpc-"));
   const args = [
     options.entrypoint,
     "gateway",
@@ -1070,7 +1070,7 @@ async function smokePlugin(pluginId, pluginDir, requiresConfig, pluginIndex, plu
   }
   writeConfig(config);
 
-  const logPath = `/tmp/openclaw-plugin-runtime-${pluginIndex}-${pluginId}.log`;
+  const logPath = `/tmp/nova-plugin-runtime-${pluginIndex}-${pluginId}.log`;
   const child = startGateway({
     entrypoint,
     port,
@@ -1396,7 +1396,7 @@ async function smokeTtsGlobalDisable(pluginId, pluginDir, provider, pluginIndex,
     ),
     env,
   );
-  const logPath = `/tmp/openclaw-plugin-runtime-${pluginIndex}-${pluginId}-tts-disabled.log`;
+  const logPath = `/tmp/nova-plugin-runtime-${pluginIndex}-${pluginId}-tts-disabled.log`;
   const child = startGateway({ entrypoint, port, logPath, env, skipChannels: true });
   try {
     await waitForReady({ child, port, logPath });
@@ -1457,7 +1457,7 @@ async function smokeOpenAiTts(pluginIndex) {
     ),
     env,
   );
-  const logPath = `/tmp/openclaw-plugin-runtime-${pluginIndex}-openai-tts-live.log`;
+  const logPath = `/tmp/nova-plugin-runtime-${pluginIndex}-openai-tts-live.log`;
   const child = startGateway({ entrypoint, port, logPath, env, skipChannels: true });
   try {
     await waitForReady({ child, port, logPath });
@@ -1482,10 +1482,10 @@ async function smokeOpenAiTts(pluginIndex) {
 }
 
 export function createIsolatedStateEnv(label) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), `openclaw-${label}-`));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), `nova-${label}-`));
   const home = path.join(root, "home");
-  const stateDir = path.join(home, ".openclaw");
-  const configPath = path.join(stateDir, "openclaw.json");
+  const stateDir = path.join(home, ".nova");
+  const configPath = path.join(stateDir, "nova.json");
   fs.mkdirSync(stateDir, { recursive: true });
   const env = {
     ...process.env,

@@ -1,8 +1,8 @@
 // Slack plugin module implements slash skill commands behavior.
-import { listSkillCommandsForAgents as listSkillCommandsForAgentsImpl } from "openclaw/plugin-sdk/command-auth-native";
+import { listSkillCommandsForAgents as listSkillCommandsForAgentsImpl } from "nova/plugin-sdk/command-auth-native";
 
 type ListSkillCommandsForAgents =
-  typeof import("openclaw/plugin-sdk/command-auth-native").listSkillCommandsForAgents;
+  typeof import("nova/plugin-sdk/command-auth-native").listSkillCommandsForAgents;
 
 export function listSkillCommandsForAgents(
   ...args: Parameters<ListSkillCommandsForAgents>

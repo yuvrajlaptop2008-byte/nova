@@ -29,11 +29,11 @@ import type { ConfigIoFactoryOptions, NormalizedConfigIoDeps } from "./io.types.
 import { materializeRuntimeConfig } from "./materialize.js";
 import { applyConfigOverrides } from "./runtime-overrides.js";
 import { resolveShellEnvExpectedKeys } from "./shell-env-expected-keys.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "./types.js";
+import type { ConfigFileSnapshot, NovaConfig } from "./types.js";
 import { validateConfigObjectWithPlugins } from "./validation.js";
 
 type ValidationPluginMetadataSnapshotLoader = {
-  load: (config: OpenClawConfig) => PluginMetadataSnapshot;
+  load: (config: NovaConfig) => PluginMetadataSnapshot;
   getSnapshot: () => PluginMetadataSnapshot | undefined;
 };
 
@@ -42,13 +42,13 @@ export type ConfigIoContext = {
   configPath: string;
   options: ConfigIoFactoryOptions;
   observeLoadConfigSnapshot: (snapshot: ConfigFileSnapshot) => ConfigFileSnapshot;
-  finalizeLoadedRuntimeConfig: (config: OpenClawConfig) => OpenClawConfig;
+  finalizeLoadedRuntimeConfig: (config: NovaConfig) => NovaConfig;
   createValidationPluginMetadataSnapshotLoader: (params: {
     effectiveConfigRaw: unknown;
     env: NodeJS.ProcessEnv;
   }) => ValidationPluginMetadataSnapshotLoader;
-  resolveRuntimePreflightSourceConfig: (candidate: OpenClawConfig) => OpenClawConfig;
-  resolveSuspiciousRecoveryBackupCandidate: (parsed: unknown) => OpenClawConfig | null;
+  resolveRuntimePreflightSourceConfig: (candidate: NovaConfig) => NovaConfig;
+  resolveSuspiciousRecoveryBackupCandidate: (parsed: unknown) => NovaConfig | null;
 };
 
 export function createConfigIoContext(options: ConfigIoFactoryOptions = {}): ConfigIoContext {
@@ -62,7 +62,7 @@ export function createConfigIoContext(options: ConfigIoFactoryOptions = {}): Con
     return snapshot;
   }
 
-  function finalizeLoadedRuntimeConfig(cfg: OpenClawConfig): OpenClawConfig {
+  function finalizeLoadedRuntimeConfig(cfg: NovaConfig): NovaConfig {
     const duplicates = findDuplicateAgentDirs(cfg, { env: deps.env, homedir: deps.homedir });
     if (duplicates.length > 0) {
       throw new DuplicateAgentDirError(duplicates);
@@ -121,14 +121,14 @@ export function createConfigIoContext(options: ConfigIoFactoryOptions = {}): Con
     };
   }
 
-  function resolveRuntimePreflightSourceConfig(candidate: OpenClawConfig): OpenClawConfig {
+  function resolveRuntimePreflightSourceConfig(candidate: NovaConfig): NovaConfig {
     const env = { ...deps.env } as NodeJS.ProcessEnv;
     const resolvedIncludes = resolveConfigIncludesForRead(candidate, configPath, { ...deps, env });
     const resolution = resolveConfigForRead(resolvedIncludes, env, deps.lowerPrecedenceEnv);
     return coerceConfig(resolution.resolvedConfigRaw);
   }
 
-  function resolveSuspiciousRecoveryBackupCandidate(parsed: unknown): OpenClawConfig | null {
+  function resolveSuspiciousRecoveryBackupCandidate(parsed: unknown): NovaConfig | null {
     try {
       const candidateEnv = cloneEnvWithPlatformSemantics(deps.env);
       const resolved = resolveConfigIncludesForRead(parsed, configPath, {
@@ -172,10 +172,10 @@ export function resolveModelIdNormalizationPolicies(snapshot: PluginMetadataSnap
 
 export function materializeConfigForLoad(
   _context: ConfigIoContext,
-  config: OpenClawConfig,
+  config: NovaConfig,
   _effectiveConfigRaw: unknown,
   pluginMetadata: PluginMetadataSnapshot | undefined,
-): OpenClawConfig {
+): NovaConfig {
   return materializeRuntimeConfig(config, "load", {
     manifestRegistry: pluginMetadata?.manifestRegistry,
   });

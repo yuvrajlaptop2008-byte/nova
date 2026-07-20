@@ -4,7 +4,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { testing as cliBackendsTesting } from "../agents/cli-backends.test-support.js";
 import { fingerprintResolvedProviderAuth } from "../agents/execution-auth-binding.js";
-import type { CliBackendConfig, OpenClawConfig } from "../config/types.js";
+import type { CliBackendConfig, NovaConfig } from "../config/types.js";
 import {
   cleanupSystemAgentSession,
   createSystemAgentSession,
@@ -47,7 +47,7 @@ vi.mock("../config/config.js", async (importOriginal) => ({
   readConfigFileSnapshot: vi.fn(async () => ({
     exists: true,
     valid: true,
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     hash: "hash",
     config: { agents: { defaults: { model: { primary: "openai/gpt-5.5" } } } },
     runtimeConfig: { agents: { defaults: { model: { primary: "openai/gpt-5.5" } } } },
@@ -59,17 +59,17 @@ vi.mock("../config/config.js", async (importOriginal) => ({
 const tempDirs: string[] = [];
 
 function useTempStateDir(): string {
-  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-turn-"));
+  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-turn-"));
   tempDirs.push(stateDir);
   vi.stubEnv("NOVA_STATE_DIR", stateDir);
   return stateDir;
 }
 
-function configSnapshot(config: OpenClawConfig) {
+function configSnapshot(config: NovaConfig) {
   return {
     exists: true,
     valid: true,
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     hash: "hash",
     config,
     runtimeConfig: config,
@@ -85,7 +85,7 @@ function requireValue<T>(value: T | undefined, message: string): T {
   return value;
 }
 
-async function createVerifiedSession(config: OpenClawConfig) {
+async function createVerifiedSession(config: NovaConfig) {
   const fixture = await createSystemAgentVerifiedInferenceTestFixture(config);
   return {
     ...fixture,
@@ -101,7 +101,7 @@ const cliBackendRouteChanges: Array<{
   {
     name: "backend command",
     first: { command: "claude" },
-    second: { command: "/opt/openclaw/bin/claude" },
+    second: { command: "/opt/nova/bin/claude" },
   },
   {
     name: "effective model alias",
@@ -163,14 +163,14 @@ describe("runSystemAgentTurn", () => {
         defaults: {
           model: "openai/gpt-5.5",
           models: {
-            "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+            "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
           },
         },
       },
       auth: {
         profiles: { "openai:p2": { provider: "openai", mode: "api_key" } },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const configuredRoute = await resolveSystemAgentConfiguredRouteFromConfig(verifiedConfig);
     if (!configuredRoute) {
       throw new Error("missing test route");
@@ -201,12 +201,12 @@ describe("runSystemAgentTurn", () => {
       auth: {
         authProfileId: "openai:p2",
         authFingerprint,
-        agentHarnessId: "openclaw",
+        agentHarnessId: "nova",
       },
       deps: authDeps,
     });
     const session = createSystemAgentSession(binding);
-    let currentConfig: OpenClawConfig = verifiedConfig;
+    let currentConfig: NovaConfig = verifiedConfig;
     const runEmbeddedAgent = vi.fn(async () => ({
       meta: { finalAssistantVisibleText: "ready" },
     }));
@@ -250,7 +250,7 @@ describe("runSystemAgentTurn", () => {
     useTempStateDir();
     const config = {
       agents: { defaults: { model: { primary: "openai/gpt-5.5" } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const overview = { defaultModel: "openai/gpt-5.5" } as never;
     const fixture = await createSystemAgentVerifiedInferenceTestFixture(config);
     const first = createSystemAgentSession(fixture.binding);
@@ -316,7 +316,7 @@ describe("runSystemAgentTurn", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runCliAgent = vi.fn(async (_params: RunCliAgentParams) => ({
       payloads: [{ text: "ready" }],
     }));
@@ -349,19 +349,19 @@ describe("runSystemAgentTurn", () => {
       model: "claude-opus-4-8",
       agentDir,
       authProfileId: "claude-cli:ops",
-      agentId: "openclaw",
-      sessionKey: "agent:openclaw:main",
+      agentId: "nova",
+      sessionKey: "agent:nova:main",
       sessionId: session.sessionId,
-      workspaceDir: path.join(stateDir, "openclaw", "workspace"),
-      sessionFile: path.join(stateDir, "openclaw", "sessions", `${session.sessionId}.jsonl`),
-      messageChannel: "openclaw",
-      messageProvider: "openclaw",
+      workspaceDir: path.join(stateDir, "nova", "workspace"),
+      sessionFile: path.join(stateDir, "nova", "sessions", `${session.sessionId}.jsonl`),
+      messageChannel: "nova",
+      messageProvider: "nova",
     });
     expect(call.disableCliLiveSession).toBe(true);
     expect(call.cleanupCliLiveSessionOnRunEnd).toBe(true);
     expect(call.cliToolAvailability).toEqual({
       native: [],
-      mcp: ["mcp__openclaw__openclaw"],
+      mcp: ["mcp__nova__nova"],
     });
     expect(call.toolsAllow).toBeUndefined();
     expect(requireValue(call.systemAgentTool, "missing CLI Nova tool").proposalRef).toBe(
@@ -378,7 +378,7 @@ describe("runSystemAgentTurn", () => {
           model: "google-gemini-cli/gemini-3.1-pro-preview",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runCliAgent = vi.fn();
     const runEmbeddedAgent = vi.fn();
     const { session, deps } = await createVerifiedSession(config);
@@ -425,7 +425,7 @@ describe("runSystemAgentTurn", () => {
           model: "claude-cli/claude-opus-4-8@claude-cli:ops",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const binding = {
       sessionId: "native-claude-session",
       authProfileId: "claude-cli:ops",
@@ -467,7 +467,7 @@ describe("runSystemAgentTurn", () => {
       disableCliLiveSession: true,
       cleanupCliLiveSessionOnRunEnd: true,
     });
-    const transcript = path.join(stateDir, "openclaw", "sessions", `${session.sessionId}.jsonl`);
+    const transcript = path.join(stateDir, "nova", "sessions", `${session.sessionId}.jsonl`);
     await fs.promises.writeFile(transcript, "transcript");
 
     await cleanupSystemAgentSession(session);
@@ -494,7 +494,7 @@ describe("runSystemAgentTurn", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runCliAgent = vi.fn(async (_params: RunCliAgentParams) => ({
       payloads: [{ text: "ready" }],
     }));
@@ -543,14 +543,14 @@ describe("runSystemAgentTurn", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const binding = {
       sessionId: "native-claude-session",
       authProfileId: "claude-cli:ops",
       authEpoch: "auth-epoch",
       authEpochVersion: 1,
       cwdHash: "cwd-hash",
-      mcpResumeHash: "openclaw-mcp-resume",
+      mcpResumeHash: "nova-mcp-resume",
     };
     const runCliAgent = vi.fn(async (_params: RunCliAgentParams) => ({
       payloads: [{ text: "ready" }],
@@ -607,7 +607,7 @@ describe("runSystemAgentTurn", () => {
             model: `claude-cli/claude-opus-4-8@${profileId}`,
           },
         },
-      }) as OpenClawConfig;
+      }) as NovaConfig;
     const binding = { sessionId: "native-claude-session", authEpochVersion: 1 };
     const runCliAgent = vi.fn(async (_params: RunCliAgentParams) => ({
       payloads: [{ text: "ready" }],
@@ -654,7 +654,7 @@ describe("runSystemAgentTurn", () => {
               model: "claude-cli/current@claude-cli:ops",
             },
           },
-        }) as OpenClawConfig;
+        }) as NovaConfig;
       const binding = {
         sessionId: "native-claude-session",
         authProfileId: "claude-cli:ops",
@@ -717,7 +717,7 @@ describe("runSystemAgentTurn", () => {
             model: `claude-cli/${model}@claude-cli:ops`,
           },
         },
-      }) as OpenClawConfig;
+      }) as NovaConfig;
     const binding = { sessionId: "native-claude-session", authEpochVersion: 1 };
     const runCliAgent = vi.fn(async (_params: RunCliAgentParams) => ({
       payloads: [{ text: "ready" }],
@@ -772,7 +772,7 @@ describe("runSystemAgentTurn", () => {
             },
           ],
         },
-      }) as OpenClawConfig;
+      }) as NovaConfig;
     const binding = {
       sessionId: "native-claude-session",
       authProfileId: "claude-cli:ops",
@@ -826,7 +826,7 @@ describe("runSystemAgentTurn", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const embeddedConfig = {
       agents: {
         list: [
@@ -839,7 +839,7 @@ describe("runSystemAgentTurn", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const binding = { sessionId: "native-claude-session", authEpochVersion: 1 };
     const runCliAgent = vi.fn(async (_params: RunCliAgentParams) => ({
       payloads: [{ text: "cli" }],
@@ -890,7 +890,7 @@ describe("runSystemAgentTurn", () => {
         defaults: {
           model: { primary: "anthropic/claude-global" },
           models: {
-            "openai/gpt-5.4": { agentRuntime: { id: "openclaw" } },
+            "openai/gpt-5.4": { agentRuntime: { id: "nova" } },
           },
         },
         list: [
@@ -906,13 +906,13 @@ describe("runSystemAgentTurn", () => {
             },
           },
           {
-            id: "openclaw",
+            id: "nova",
             params: { temperature: 1.7 },
             tools: { allow: ["exec"] },
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runCliAgent = vi.fn(async (_params: RunCliAgentParams) => ({ payloads: [] }));
     const runEmbeddedAgent = vi.fn(async (_params: RunEmbeddedAgentParams) => ({
       payloads: [{ text: "ready" }],
@@ -945,19 +945,19 @@ describe("runSystemAgentTurn", () => {
       authProfileId: "openai:ops",
       authProfileIdSource: "user",
       agentHarnessRuntimeOverride: "codex",
-      agentId: "openclaw",
-      sessionKey: "agent:openclaw:main",
+      agentId: "nova",
+      sessionKey: "agent:nova:main",
       sessionId: session.sessionId,
-      workspaceDir: path.join(stateDir, "openclaw", "workspace"),
-      sessionFile: path.join(stateDir, "openclaw", "sessions", `${session.sessionId}.jsonl`),
-      messageChannel: "openclaw",
-      messageProvider: "openclaw",
-      toolsAllow: ["openclaw"],
+      workspaceDir: path.join(stateDir, "nova", "workspace"),
+      sessionFile: path.join(stateDir, "nova", "sessions", `${session.sessionId}.jsonl`),
+      messageChannel: "nova",
+      messageProvider: "nova",
+      toolsAllow: ["nova"],
       disableMessageTool: true,
     });
     expect(call.agentHarnessId).toBeUndefined();
-    expect(call.config?.agents?.list?.find((agent) => agent.id === "openclaw")).toEqual({
-      id: "openclaw",
+    expect(call.config?.agents?.list?.find((agent) => agent.id === "nova")).toEqual({
+      id: "nova",
       params: { temperature: 0.2 },
       tools: { allow: ["read"], deny: ["exec"] },
     });
@@ -974,7 +974,7 @@ describe("runSystemAgentTurn", () => {
       configSnapshot({ agents: { defaults: { model: "openai/gpt-5.5" } } }),
     );
     const unverifiedSession = {
-      sessionId: "openclaw-unverified",
+      sessionId: "nova-unverified",
       proposalRef: {},
     } as unknown as SystemAgentSession;
 
@@ -1003,7 +1003,7 @@ describe("runSystemAgentTurn", () => {
     useTempStateDir();
     const config = {
       agents: { defaults: { model: "openai/gpt-5.5" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const { session, deps } = await createVerifiedSession(config);
     session.proposalRef.current = "partial-proposal";
     session.cliSession = {
@@ -1045,7 +1045,7 @@ describe("runSystemAgentTurn", () => {
     },
   ])("clears partial session state after $name", async ({ runEmbeddedAgent }) => {
     useTempStateDir();
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       agents: { defaults: { model: { primary: "openai/gpt-5.5" } } },
     };
     const { session, deps } = await createVerifiedSession(config);

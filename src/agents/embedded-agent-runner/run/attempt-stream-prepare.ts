@@ -284,7 +284,7 @@ export function prepareEmbeddedAttemptStream(input: {
 
   const toolSearchCatalogExecutor: ToolSearchCatalogToolExecutor = async (toolParams) => {
     try {
-      if (toolParams.source === "openclaw" && toolParams.sourceName === "core") {
+      if (toolParams.source === "nova" && toolParams.sourceName === "core") {
         recordStructuredReplayTrustForToolCall(
           toolParams.toolCallId,
           toolParams.tool as never,

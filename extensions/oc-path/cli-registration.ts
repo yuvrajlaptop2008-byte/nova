@@ -1,7 +1,7 @@
 // OC Path module implements cli registration behavior.
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
 
-export function registerOcPathCli(api: OpenClawPluginApi): void {
+export function registerOcPathCli(api: NovaPluginApi): void {
   api.registerCli(
     async ({ program }) => {
       const { registerPathCli } = await import("./src/cli.js");

@@ -5,7 +5,7 @@ import type {
   AcpRuntimeHandle,
   AcpRuntimeStatus,
 } from "@nova/acp-core/runtime/types";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { toErrorObject } from "../../infra/errors.js";
 import { isAcpSessionKey } from "../../sessions/session-key-utils.js";
@@ -81,7 +81,7 @@ export class AcpSessionManager {
     this.deps = deps;
   }
 
-  resolveSession(params: { cfg: OpenClawConfig; sessionKey: string }): AcpSessionResolution {
+  resolveSession(params: { cfg: NovaConfig; sessionKey: string }): AcpSessionResolution {
     const sessionKey = canonicalizeAcpSessionKey(params);
     if (!sessionKey) {
       return {
@@ -137,7 +137,7 @@ export class AcpSessionManager {
   }
 
   async reconcilePendingSessionIdentities(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
   }): Promise<AcpStartupIdentityReconcileResult> {
     return await runManagerStartupIdentityReconcile({
       cfg: params.cfg,
@@ -175,7 +175,7 @@ export class AcpSessionManager {
   }
 
   async getSessionStatus(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     signal?: AbortSignal;
   }): Promise<AcpSessionStatus> {
@@ -203,7 +203,7 @@ export class AcpSessionManager {
   }
 
   async setSessionRuntimeMode(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     runtimeMode: string;
   }): Promise<AcpSessionRuntimeOptions> {
@@ -225,7 +225,7 @@ export class AcpSessionManager {
   }
 
   async setSessionConfigOption(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     key: string;
     value: string;
@@ -251,7 +251,7 @@ export class AcpSessionManager {
   }
 
   async updateSessionRuntimeOptions(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     patch: Partial<AcpSessionRuntimeOptions>;
   }): Promise<AcpSessionRuntimeOptions> {
@@ -273,7 +273,7 @@ export class AcpSessionManager {
   }
 
   async resetSessionRuntimeOptions(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
   }): Promise<AcpSessionRuntimeOptions> {
     const sessionKey = canonicalizeAcpSessionKey(params);
@@ -321,7 +321,7 @@ export class AcpSessionManager {
   }
 
   async cancelSession(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     reason?: string;
   }): Promise<void> {
@@ -367,7 +367,7 @@ export class AcpSessionManager {
   }
 
   private async ensureRuntimeHandle(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     meta: SessionAcpMeta;
   }): Promise<{ runtime: AcpRuntime; handle: AcpRuntimeHandle; meta: SessionAcpMeta }> {
@@ -391,7 +391,7 @@ export class AcpSessionManager {
     };
   }
 
-  private enforceConcurrentSessionLimit(params: { cfg: OpenClawConfig; sessionKey: string }): void {
+  private enforceConcurrentSessionLimit(params: { cfg: NovaConfig; sessionKey: string }): void {
     const limit = DEFAULT_ACP_MAX_CONCURRENT_SESSIONS;
     if (this.runtimeHandles.has(params.sessionKey)) {
       return;
@@ -450,7 +450,7 @@ export class AcpSessionManager {
   }
 
   private async setSessionState(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     state: SessionAcpMeta["state"];
     lastError?: string;
@@ -493,7 +493,7 @@ export class AcpSessionManager {
   }
 
   private async reconcileRuntimeSessionIdentifiers(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     runtime: AcpRuntime;
     handle: AcpRuntimeHandle;
@@ -518,7 +518,7 @@ export class AcpSessionManager {
   }
 
   private async writeSessionMeta(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     mutate: (
       current: SessionAcpMeta | undefined,

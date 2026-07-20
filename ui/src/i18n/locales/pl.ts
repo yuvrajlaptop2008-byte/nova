@@ -1347,7 +1347,7 @@ export const pl: TranslationMap = {
     autoSaveFailed: "Nie udało się zapisać",
     autoSaveConflict: "Ustawienia zostały zmienione gdzie indziej",
     retry: "Ponów",
-    applyBannerText: "Zapisano do openclaw.json — zrestartuj gateway, aby zastosować.",
+    applyBannerText: "Zapisano do nova.json — zrestartuj gateway, aby zastosować.",
     applyBannerAction: "Zrestartuj i zastosuj",
     rawDiscard: "Odrzuć",
     rawDraftBlocksApply:
@@ -1740,7 +1740,7 @@ export const pl: TranslationMap = {
     skillWorkshop: "Przeglądaj, dopracowuj i stosuj propozycje, zanim staną się aktywnymi skills.",
     nodes: "Sparowane urządzenia i polecenia.",
     chat: "Czat Gateway do szybkich interwencji.",
-    config: "Edytuj openclaw.json.",
+    config: "Edytuj nova.json.",
     profile: "Statystyki, serie i życie Twojego agenta na rafie.",
     communications: "Kanały, wiadomości i ustawienia audio.",
     appearance: "Motyw, UI i ustawienia kreatora konfiguracji.",
@@ -2467,7 +2467,7 @@ export const pl: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3486,9 +3486,9 @@ export const pl: TranslationMap = {
         title: "Wymagane uwierzytelnienie",
         summary:
           "Gateway jest osiągalny, ale wymaga pasującego tokenu lub hasła, zanim ta przeglądarka będzie mogła się połączyć.",
-        stepPaste: "Wklej token z openclaw dashboard --no-open albo wpisz skonfigurowane hasło.",
+        stepPaste: "Wklej token z nova dashboard --no-open albo wpisz skonfigurowane hasło.",
         stepGenerate:
-          "Jeśli token nie jest skonfigurowany, uruchom openclaw doctor --generate-gateway-token na hoście Gateway.",
+          "Jeśli token nie jest skonfigurowany, uruchom nova doctor --generate-gateway-token na hoście Gateway.",
         stepConnect: "Kliknij ponownie Connect po zaktualizowaniu poświadczeń.",
       },
       authFailed: {
@@ -3496,7 +3496,7 @@ export const pl: TranslationMap = {
         summary:
           "Podane poświadczenia zostały odrzucone. Najczęstsza przyczyna to nieaktualny token lub token skopiowany z innego URL Gateway.",
         stepDashboard:
-          "Uruchom openclaw dashboard --no-open i otwórz świeży URL albo wklej jego token.",
+          "Uruchom nova dashboard --no-open i otwórz świeży URL albo wklej jego token.",
         stepReplace:
           "Zastąp nieaktualne wartości tokenu/hasła; nie używaj ponownie tokenu z innego URL Gateway.",
         stepMode:
@@ -3520,8 +3520,8 @@ export const pl: TranslationMap = {
           "Ta przeglądarka wymaga jednorazowej zgody z hosta Gateway, zanim będzie mogła używać Control UI.",
         upgradeSummary:
           "Ta przeglądarka jest już znana, ale żądany dostęp się zmienił i wymaga nowej zgody.",
-        stepList: "Uruchom openclaw devices list na hoście Gateway.",
-        stepApproveId: "Zatwierdź to żądanie: openclaw devices approve {requestId}.",
+        stepList: "Uruchom nova devices list na hoście Gateway.",
+        stepApproveId: "Zatwierdź to żądanie: nova devices approve {requestId}.",
         stepApprove: "Zatwierdź oczekujące żądanie przeglądarki/urządzenia z tej listy.",
         stepReconnect: "Po zakończeniu zatwierdzania połącz się ponownie.",
       },
@@ -3548,7 +3548,7 @@ export const pl: TranslationMap = {
         summary:
           "Udostępniana Control UI i działający Gateway nie zgadzają się co do obsługiwanego protokołu połączenia.",
         stepDashboard:
-          "Otwórz ponownie udostępniany dashboard poleceniem openclaw dashboard, aby UI i Gateway pochodziły z tej samej instalacji.",
+          "Otwórz ponownie udostępniany dashboard poleceniem nova dashboard, aby UI i Gateway pochodziły z tej samej instalacji.",
         stepDevUi:
           "Jeśli używasz pnpm ui:dev, przebuduj lub uruchom ponownie UI dev względem bieżącego checkoutu.",
         stepRestart: "Zrestartuj Gateway po aktualizacji Nova, aby udostępniał bieżący protokół.",
@@ -3557,11 +3557,10 @@ export const pl: TranslationMap = {
         title: "Nie udało się połączyć",
         summary:
           "Przeglądarka nie mogła dokończyć połączenia z Gateway. Sprawdź cel i transport przed ponowną próbą z poświadczeniami.",
-        stepGateway:
-          "Potwierdź, że Gateway działa, używając openclaw status lub openclaw gateway run.",
+        stepGateway: "Potwierdź, że Gateway działa, używając nova status lub nova gateway run.",
         stepUrl: "Sprawdź URL WebSocket i użyj wss://, gdy Gateway jest za HTTPS/Tailscale Serve.",
         stepDashboard:
-          "Otwórz ponownie dashboard przez openclaw dashboard --no-open, aby skopiować bieżący URL i szczegóły auth.",
+          "Otwórz ponownie dashboard przez nova dashboard --no-open, aby skopiować bieżący URL i szczegóły auth.",
       },
     },
   },

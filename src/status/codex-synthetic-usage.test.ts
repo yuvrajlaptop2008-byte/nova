@@ -9,7 +9,7 @@ describe("shouldUseCodexSyntheticUsageForRuntime", () => {
     expect(
       shouldUseCodexSyntheticUsageForRuntime({
         provider: "openai",
-        effectiveHarness: "openclaw",
+        effectiveHarness: "nova",
         sessionHarnessId: "codex",
       }),
     ).toBe(true);
@@ -19,8 +19,8 @@ describe("shouldUseCodexSyntheticUsageForRuntime", () => {
     expect(
       shouldUseCodexSyntheticUsageForRuntime({
         provider: "openai",
-        effectiveHarness: "openclaw",
-        sessionHarnessId: "openclaw",
+        effectiveHarness: "nova",
+        sessionHarnessId: "nova",
       }),
     ).toBe(false);
   });

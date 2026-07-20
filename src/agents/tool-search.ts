@@ -14,7 +14,7 @@ import {
 } from "@nova/normalization-core/string-normalization";
 import { sliceUtf16Safe, truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { Type, type TSchema } from "typebox";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { getPluginToolMeta, type PluginToolMcpMeta } from "../plugins/tools.js";
 import {
   isPreExecutionBlockedToolResult,
@@ -58,7 +58,7 @@ const MAX_TOOL_SCHEMA_DIRECTORY_PROMPT_CHARS = 18_000;
 const TOOL_DIRECTORY_IDENTIFIER_RE = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/u;
 
 type ToolSearchMode = "code" | "tools" | "directory";
-type CatalogSource = "openclaw" | "mcp" | "client";
+type CatalogSource = "nova" | "mcp" | "client";
 type CatalogTool = AnyAgentTool | ToolDefinition;
 type CatalogVisibilityOptions = {
   includeMcp?: boolean;
@@ -117,8 +117,8 @@ export type ToolSearchConfig = {
 
 /** Per-run/session context used by Tool Search control tools. */
 export type ToolSearchToolContext = {
-  config?: OpenClawConfig;
-  runtimeConfig?: OpenClawConfig;
+  config?: NovaConfig;
+  runtimeConfig?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
   sessionId?: string;
@@ -262,7 +262,7 @@ function settleBridge(message) {
 }
 
 function buildModelScriptSource(code) {
-  return "(async (openclaw, console) => {\n" + code + "\n})(openclaw, console)";
+  return "(async (nova, console) => {\n" + code + "\n})(nova, console)";
 }
 
 function buildControllerSource() {
@@ -316,7 +316,7 @@ function buildControllerSource() {
     "  warn: (...items) => logs.push(items.map(formatLogItem)),\n" +
     "  error: (...items) => logs.push(items.map(formatLogItem)),\n" +
     "});\n" +
-    "const openclaw = Object.freeze({\n" +
+    "const nova = Object.freeze({\n" +
     "  tools: Object.freeze({\n" +
     "    search: (query, options) => bridge('search', [query, options]),\n" +
     "    describe: (id) => bridge('describe', [id]),\n" +
@@ -324,7 +324,7 @@ function buildControllerSource() {
     "  }),\n" +
     "});\n" +
     "return Object.freeze({\n" +
-    "  openclaw,\n" +
+    "  nova,\n" +
     "  console,\n" +
     "  isBridgeIdle,\n" +
     "  waitForBridgeIdle,\n" +
@@ -370,7 +370,7 @@ async function runModelCode(code, timeoutMs) {
   });
   Object.defineProperties(sandbox, {
     console: { value: controller.console, enumerable: true },
-    openclaw: { value: controller.openclaw, enumerable: true },
+    nova: { value: controller.nova, enumerable: true },
   });
   activeController = controller;
   const pumpTimer = setInterval(() => pumpController(controller), 1);
@@ -425,7 +425,7 @@ process.on("message", (message) => {
 });
 `;
 
-const SESSION_CATALOGS_KEY = Symbol.for("openclaw.toolSearch.sessionCatalogs");
+const SESSION_CATALOGS_KEY = Symbol.for("nova.toolSearch.sessionCatalogs");
 const globalToolSearchState = globalThis as typeof globalThis & {
   [SESSION_CATALOGS_KEY]?: Map<string, ToolSearchCatalogSession>;
 };
@@ -439,7 +439,7 @@ const untrustedSchemaIdentities = new WeakMap<object, number>();
 let nextCatalogToolIdentity = 1;
 let nextUntrustedSchemaIdentity = 1;
 
-function readToolSearchConfig(config?: OpenClawConfig): Record<string, unknown> {
+function readToolSearchConfig(config?: NovaConfig): Record<string, unknown> {
   const tools = isRecord(config?.tools) ? config.tools : undefined;
   const toolSearch = tools?.toolSearch;
   if (toolSearch === true) {
@@ -473,7 +473,7 @@ function resolveMinCodeTimeoutMs(): number {
   return toolSearchMinCodeTimeoutMsForTest ?? 1000;
 }
 
-export function resolveToolSearchConfig(config?: OpenClawConfig): ToolSearchConfig {
+export function resolveToolSearchConfig(config?: NovaConfig): ToolSearchConfig {
   const raw = readToolSearchConfig(config);
   const rawMode = typeof raw.mode === "string" ? raw.mode : "code";
   const requestedMode: ToolSearchMode =
@@ -602,10 +602,10 @@ function catalogEntriesFingerprint(entries: readonly ToolSearchCatalogEntry[]): 
         entry.description,
         // Remote/client schemas may be attacker-sized. Object identity still
         // invalidates reuse when a schema object is replaced without walking it.
-        entry.source === "openclaw"
+        entry.source === "nova"
           ? stableJsonFingerprint(entry.parameters)
           : untrustedSchemaFingerprint(entry.parameters),
-        entry.source === "openclaw"
+        entry.source === "nova"
           ? stableJsonFingerprint(entry.outputSchema)
           : untrustedSchemaFingerprint(entry.outputSchema),
         String(catalogToolIdentity(entry.tool)),
@@ -702,9 +702,9 @@ function classifyTool(tool: CatalogTool): {
     return { source: "mcp", sourceName: pluginId };
   }
   if (pluginId) {
-    return { source: "openclaw", sourceName: pluginId };
+    return { source: "nova", sourceName: pluginId };
   }
-  return { source: "openclaw", sourceName: "core" };
+  return { source: "nova", sourceName: "core" };
 }
 
 function makeCatalogId(tool: CatalogTool, source: CatalogSource, sourceName?: string): string {
@@ -740,7 +740,7 @@ function toCatalogEntry(
     parameters: tool.parameters,
     // Only locally loaded Nova/core tools may declare model-visible output
     // contracts. MCP and client metadata remains untrusted and deferred.
-    ...(source === "openclaw" && (tool as AnyAgentTool).outputSchema
+    ...(source === "nova" && (tool as AnyAgentTool).outputSchema
       ? { outputSchema: (tool as AnyAgentTool).outputSchema }
       : {}),
     tool: catalogTool,
@@ -983,7 +983,7 @@ export function createToolSearchCatalogRef(): ToolSearchCatalogRef {
 /** Replace visible tools with Tool Search controls and register hidden catalog entries. */
 export function applyToolSearchCatalog(params: {
   tools: AnyAgentTool[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
@@ -1011,7 +1011,7 @@ export function applyToolSearchCatalog(params: {
 /** Keep tool names discoverable while deferring heavyweight JSON schemas behind describe/call. */
 export function applyToolSchemaDirectoryCatalog(params: {
   tools: AnyAgentTool[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
@@ -1098,7 +1098,7 @@ export function resolveToolSearchCatalogTool(
 /** Move client-provided tools into an existing Tool Search catalog. */
 export function addClientToolsToToolSearchCatalog(params: {
   tools: ToolDefinition[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
@@ -1209,8 +1209,7 @@ function resolveCatalog(ctx: ToolSearchToolContext): ToolSearchCatalogSession {
 }
 
 export function compactToolSearchCatalogEntry(entry: ToolSearchCatalogEntry) {
-  const output =
-    entry.source === "openclaw" ? compactToolOutputHint(entry.outputSchema) : undefined;
+  const output = entry.source === "nova" ? compactToolOutputHint(entry.outputSchema) : undefined;
   return {
     id: entry.id,
     source: entry.source,
@@ -1221,7 +1220,7 @@ export function compactToolSearchCatalogEntry(entry: ToolSearchCatalogEntry) {
     description: entry.description,
     // Remote MCP and client schemas are untrusted metadata. Keep them deferred
     // rather than repeatedly traversing attacker-sized property maps on search.
-    input: entry.source === "openclaw" ? compactToolInputHint(entry.parameters) : "unknown",
+    input: entry.source === "nova" ? compactToolInputHint(entry.parameters) : "unknown",
     ...(output ? { output } : {}),
   };
 }
@@ -1242,7 +1241,7 @@ function formatToolDirectoryIdentifier(value: string | undefined): string | unde
 function formatToolDirectoryEntry(
   entry: ReturnType<typeof compactToolSearchCatalogEntry>,
 ): string | undefined {
-  if (entry.source !== "openclaw") {
+  if (entry.source !== "nova") {
     return undefined;
   }
   const name = formatToolDirectoryIdentifier(entry.name);
@@ -1703,7 +1702,7 @@ function formatUnknownToolIdError(
   ).slice(0, 3);
   const recoveryText =
     options.recoverySurface === "code-mode"
-      ? "Use openclaw.tools.search to find a tool, openclaw.tools.describe to inspect it, then openclaw.tools.call with the exact id or name."
+      ? "Use nova.tools.search to find a tool, nova.tools.describe to inspect it, then nova.tools.call with the exact id or name."
       : options.recoverySurface === "tools"
         ? "Use tools.search to find a tool, tools.describe to inspect it, then tools.call with the exact id or name."
         : "Use tool_search to find a tool, tool_describe to inspect it, then tool_call with the exact id or name.";
@@ -1794,7 +1793,7 @@ function readCallArgs(args: unknown): { id: string; input: unknown } {
 
 function getTelemetry(catalog: ToolSearchCatalogSession) {
   const sources: Record<CatalogSource, number> = {
-    openclaw: 0,
+    nova: 0,
     mcp: 0,
     client: 0,
   };
@@ -1954,7 +1953,7 @@ export class ToolSearchRuntime {
     } catch {
       return false;
     }
-    if (entry.source !== "openclaw") {
+    if (entry.source !== "nova") {
       return false;
     }
     const pluginMeta = getPluginToolMeta(entry.tool as Parameters<typeof getPluginToolMeta>[0]);
@@ -2480,11 +2479,11 @@ export function createToolSearchTools(ctx: ToolSearchToolContext): AnyAgentTool[
       name: TOOL_SEARCH_CODE_MODE_TOOL_NAME,
       label: "Tool Search Code",
       description:
-        "Run JavaScript in an isolated Node subprocess over a large tool catalog. APIs: `openclaw.tools.search(query: string, options?)`, `openclaw.tools.describe(id: string)`, and `openclaw.tools.call(id: string, args?)`. Search takes a positional query string. Call returns `{ tool, result }`; JSON values normally live in `result.details`.",
+        "Run JavaScript in an isolated Node subprocess over a large tool catalog. APIs: `nova.tools.search(query: string, options?)`, `nova.tools.describe(id: string)`, and `nova.tools.call(id: string, args?)`. Search takes a positional query string. Call returns `{ tool, result }`; JSON values normally live in `result.details`.",
       parameters: Type.Object({
         code: Type.String({
           description:
-            "JavaScript body for an async function. Use return to return the final value. The openclaw.tools bridge is available.",
+            "JavaScript body for an async function. Use return to return the final value. The nova.tools bridge is available.",
         }),
       }),
       execute: async (
@@ -2573,6 +2572,6 @@ const testing = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.toolSearchTestApi")] = testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.toolSearchTestApi")] = testing;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

@@ -9,7 +9,7 @@ const tempDirs: string[] = [];
 const scriptPath = "scripts/package-mac-dist.sh";
 
 function makePlist(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-dist-plist-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "nova-dist-plist-"));
   tempDirs.push(dir);
   const plist = path.join(dir, "Info.plist");
   writeFileSync(
@@ -132,7 +132,7 @@ describe("package-mac-dist plist validation", () => {
   });
 
   it("fails on old Swift before reading package metadata", () => {
-    const toolsDir = mkdtempSync(path.join(tmpdir(), "openclaw-dist-swift-tools-"));
+    const toolsDir = mkdtempSync(path.join(tmpdir(), "nova-dist-swift-tools-"));
     tempDirs.push(toolsDir);
 
     writeFileSync(
@@ -171,9 +171,9 @@ describe("package-mac-dist plist validation", () => {
 
   it("prefers repo Corepack pnpm over a global pnpm shim", () => {
     const helperBlock = getPackageManagerHelperBlock();
-    const tempRoot = mkdtempSync(path.join(tmpdir(), "openclaw-dist-pnpm-root-"));
-    const outerRoot = mkdtempSync(path.join(tmpdir(), "openclaw-dist-pnpm-outer-"));
-    const toolsDir = mkdtempSync(path.join(tmpdir(), "openclaw-dist-pnpm-tools-"));
+    const tempRoot = mkdtempSync(path.join(tmpdir(), "nova-dist-pnpm-root-"));
+    const outerRoot = mkdtempSync(path.join(tmpdir(), "nova-dist-pnpm-outer-"));
+    const toolsDir = mkdtempSync(path.join(tmpdir(), "nova-dist-pnpm-tools-"));
     const logPath = path.join(tempRoot, "pnpm.log");
     tempDirs.push(tempRoot, outerRoot, toolsDir);
 
@@ -237,7 +237,7 @@ describe("package-mac-dist plist validation", () => {
       script.indexOf("DIST_PNPM_CMD=()"),
       script.indexOf("correction_build_from_exact_tag()"),
     );
-    const dir = mkdtempSync(path.join(tmpdir(), "openclaw-dist-sparkle-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "nova-dist-sparkle-"));
     tempDirs.push(dir);
     const tools = path.join(dir, "tools");
     const marker = path.join(dir, "installed");
@@ -302,7 +302,7 @@ describe("package-mac-dist plist validation", () => {
       script.indexOf("DIST_PNPM_CMD=()"),
       script.indexOf("correction_build_from_exact_tag()"),
     );
-    const dir = mkdtempSync(path.join(tmpdir(), "openclaw-dist-sparkle-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "nova-dist-sparkle-"));
     tempDirs.push(dir);
     const tools = path.join(dir, "tools");
     const marker = path.join(dir, "installed");

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type {
   resolveAutoMediaKeyProviders,
   resolveDefaultMediaModel,
@@ -44,7 +44,7 @@ type ImageWebMediaRuntime = {
 };
 
 type ResolveImageCompressionPolicy = (params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   imageModelConfig?: ImageModelConfig | null;
   modelOverride?: string;
   imageCount: number;
@@ -63,7 +63,7 @@ type ImageToolProviderDeps = {
   resolveModelAsync: ResolveModelAsync;
   resolveRegisteredMediaUnderstandingProvider(params: {
     providerId: string;
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
   }): MediaUnderstandingProvider | undefined;
   resolveImageCompressionPolicy: ResolveImageCompressionPolicy;
   loadImageWebMediaRuntime: () => Promise<ImageWebMediaRuntime>;
@@ -80,7 +80,7 @@ type ImageToolTestApi = {
   resolveImageCompressionPolicy: ResolveImageCompressionPolicy;
   setProviderDepsForTest(overrides?: Partial<ImageToolProviderDeps>): void;
   resolveImageModelConfigForTool(params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     agentDir: string;
     workspaceDir?: string;
     authStore?: AuthProfileStore;
@@ -88,7 +88,7 @@ type ImageToolTestApi = {
 };
 
 function getTestApi(): ImageToolTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.imageToolTestApi")];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.imageToolTestApi")];
   if (!api) {
     throw new Error("image tool test API is unavailable");
   }

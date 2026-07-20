@@ -1,7 +1,7 @@
 // Media-understanding resolve tests cover timeout clamping and capability filtering.
 import { MAX_TIMER_TIMEOUT_MS } from "@nova/normalization-core/number-coercion";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { resolveMediaRuntimeTimeoutMs, resolveModelEntries, resolveTimeoutMs } from "./resolve.js";
 import type { MediaUnderstandingCapability } from "./types.js";
 
@@ -24,7 +24,7 @@ describe("media timeout resolution", () => {
 
 describe("resolveModelEntries", () => {
   it("uses provider capabilities for shared entries without explicit caps", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       tools: {
         media: {
           models: [{ provider: "openai", model: "gpt-5.4" }],
@@ -52,7 +52,7 @@ describe("resolveModelEntries", () => {
   });
 
   it("keeps per-capability entries even without explicit caps", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       tools: {
         media: {
           image: {
@@ -73,7 +73,7 @@ describe("resolveModelEntries", () => {
   });
 
   it("skips shared CLI entries without capabilities", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       tools: {
         media: {
           models: [{ type: "cli", command: "gemini", args: ["--file", "{{MediaPath}}"] }],

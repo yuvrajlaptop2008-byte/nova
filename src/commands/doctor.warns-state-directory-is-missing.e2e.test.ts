@@ -137,7 +137,7 @@ describe("doctor command", () => {
   it("warns when the state directory is missing", async () => {
     mockDoctorConfigSnapshot();
 
-    const missingDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-missing-state-"));
+    const missingDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-missing-state-"));
     fs.rmSync(missingDir, { recursive: true, force: true });
     await withEnvAsync({ NOVA_STATE_DIR: missingDir }, async () => {
       await doctorCommand(createDoctorRuntime(), {
@@ -371,8 +371,8 @@ describe("doctor command", () => {
 
     const gatewayAuthNote = requireTerminalNote({ title: "Gateway auth" });
     expect(String(gatewayAuthNote[0])).toContain("gateway.auth.mode is unset");
-    expect(String(gatewayAuthNote[0])).toContain("openclaw config set gateway.auth.mode token");
-    expect(String(gatewayAuthNote[0])).toContain("openclaw config set gateway.auth.mode password");
+    expect(String(gatewayAuthNote[0])).toContain("nova config set gateway.auth.mode token");
+    expect(String(gatewayAuthNote[0])).toContain("nova config set gateway.auth.mode password");
   });
 
   it("keeps doctor read-only when gateway token is SecretRef-managed but unresolved", async () => {

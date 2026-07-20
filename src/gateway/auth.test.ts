@@ -93,7 +93,7 @@ describe("gateway auth", () => {
     expect(res.user).toBe(params.expected.user);
   }
 
-  it("resolves token/password from OPENCLAW gateway env vars", () => {
+  it("resolves token/password from nova gateway env vars", () => {
     const auth = resolveGatewayAuth({
       authConfig: {},
       env: {
@@ -736,7 +736,7 @@ describe("trusted-proxy auth", () => {
       headers: {
         "x-forwarded-user": "nick@example.com",
         "x-forwarded-proto": "https",
-        "x-openclaw-proxy-auth": "present",
+        "x-nova-proxy-auth": "present",
       },
     });
 

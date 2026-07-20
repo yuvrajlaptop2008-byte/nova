@@ -2,12 +2,12 @@
  * Gateway startup orchestration tests.
  */
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 
 const prepareModelRuntimeSnapshotMock = vi.fn(async (_params: unknown) => ({}));
 const refreshPreparedModelRuntimeSnapshotsMock = vi.fn(
   async (
-    _cfg: OpenClawConfig,
+    _cfg: NovaConfig,
     _options?: { gatewayLifecycle?: boolean; defaultWorkspaceDir?: string },
   ) => {},
 );
@@ -21,7 +21,7 @@ vi.mock("../agents/agent-scope.js", () => ({
 vi.mock("../agents/prepared-model-runtime.js", () => ({
   publishPreparedModelRuntimeSnapshot: (params: unknown) => prepareModelRuntimeSnapshotMock(params),
   refreshPreparedModelRuntimeSnapshots: (
-    cfg: OpenClawConfig,
+    cfg: NovaConfig,
     options?: { gatewayLifecycle?: boolean; defaultWorkspaceDir?: string },
   ) => refreshPreparedModelRuntimeSnapshotsMock(cfg, options),
 }));
@@ -55,7 +55,7 @@ describe("gateway startup primary model warmup", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await prewarmConfiguredPrimaryModel({
       cfg,
@@ -68,7 +68,7 @@ describe("gateway startup primary model warmup", () => {
   });
 
   it("prewarms the default catalog when no explicit primary model is configured", async () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     await prewarmConfiguredPrimaryModel({
       cfg,
       log: { warn: vi.fn() },
@@ -99,7 +99,7 @@ describe("gateway startup primary model warmup", () => {
     try {
       await publishStartupModelRuntime(
         {
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           workspaceDir: "/tmp/skip-explicit-workspace",
           log: { warn: vi.fn() },
         },
@@ -132,7 +132,7 @@ describe("gateway startup primary model warmup", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await prewarmConfiguredPrimaryModel({ cfg, log: { warn: vi.fn() } });
 
     expect(refreshPreparedModelRuntimeSnapshotsMock).toHaveBeenCalledWith(cfg, {
@@ -141,7 +141,7 @@ describe("gateway startup primary model warmup", () => {
   });
 
   it("preserves the explicit startup workspace in the published default owner", async () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     await prewarmConfiguredPrimaryModel({
       cfg,
       workspaceDir: "/tmp/explicit-workspace",
@@ -168,7 +168,7 @@ describe("gateway startup primary model warmup", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         log: { warn: vi.fn() },
       }),
     ).rejects.toBe(error);

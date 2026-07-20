@@ -2,19 +2,19 @@
 import type { Dirent } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { buildAgentSessionKey, parseAgentSessionKey } from "openclaw/plugin-sdk/routing";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { buildAgentSessionKey, parseAgentSessionKey } from "nova/plugin-sdk/routing";
 import {
   archiveLegacyStateSource,
   type PluginDoctorStateMigration,
-} from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/runtime-doctor";
 import {
   deleteSessionEntry,
   listSessionEntries,
   resolveStorePath,
   upsertSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/session-store-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveZalouserDmSessionScope } from "./src/session-scope.js";
 import {
   isZaloCredentialRevocation,
@@ -82,7 +82,7 @@ async function collectLegacyZalouserCredentialSources(
 }
 
 function collectLegacyZalouserDmEntries(
-  config: OpenClawConfig,
+  config: NovaConfig,
   env: NodeJS.ProcessEnv,
   options: { readOnly?: boolean } = {},
 ): LegacyZalouserDmEntry[] {

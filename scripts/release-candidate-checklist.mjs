@@ -34,7 +34,7 @@ import {
   validateFullReleaseValidationEvidence,
 } from "./validate-full-release-validation-evidence.mjs";
 
-const DEFAULT_REPO = "openclaw/openclaw";
+const DEFAULT_REPO = "nova/nova";
 const DEFAULT_PROVIDER = "openai";
 const DEFAULT_MODE = "both";
 const DEFAULT_NPM_DIST_TAG = "beta";
@@ -47,10 +47,10 @@ const TOOLING_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const TIDECLAW_ALPHA_WORKFLOW_REF_PATTERN =
   /^tideclaw\/alpha\/[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4}Z$/u;
 const WINDOWS_NODE_TAG_PATTERN = /^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$/u;
-const WINDOWS_NODE_REPO = "openclaw/openclaw-windows-node";
+const WINDOWS_NODE_REPO = "nova/nova-windows-node";
 const WINDOWS_NODE_REQUIRED_ASSETS = [
-  "OpenClawCompanion-Setup-x64.exe",
-  "OpenClawCompanion-Setup-arm64.exe",
+  "NovaCompanion-Setup-x64.exe",
+  "NovaCompanion-Setup-arm64.exe",
 ];
 const SHA256_DIGEST_PATTERN = /^sha256:[a-f0-9]{64}$/u;
 const RELEASE_CANDIDATE_STATE_VERSION = 1;
@@ -510,7 +510,7 @@ function fetchTrustedWorkflowSha(workflowRef, toolingRoot) {
 
 function runFromTrustedTooling(argv, { targetRoot, workflowRef }) {
   const trustedToolingSha = fetchTrustedWorkflowSha(workflowRef, targetRoot);
-  const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-release-tooling-"));
+  const tempRoot = mkdtempSync(join(tmpdir(), "nova-release-tooling-"));
   const toolingRoot = join(tempRoot, "checkout");
   let worktreeAdded = false;
   try {
@@ -1150,7 +1150,7 @@ export function buildPublishCommand(options) {
     ["full_release_validation_run_attempt", options.fullReleaseRunAttempt],
     ["npm_dist_tag", options.npmDistTag],
     ["plugin_publish_scope", options.pluginPublishScope],
-    ["publish_openclaw_npm", "true"],
+    ["publish_nova_npm", "true"],
     ["release_profile", "from-validation"],
     ["wait_for_clawhub", "false"],
   ];
@@ -1170,7 +1170,7 @@ export function buildPublishCommand(options) {
     "gh",
     "workflow",
     "run",
-    "openclaw-release-publish.yml",
+    "nova-release-publish.yml",
     "--repo",
     options.repo,
     "--ref",
@@ -1345,7 +1345,7 @@ async function runTelegramIfNeeded(options, artifact, manifest, runAttempt, sour
     sourceSha,
   });
   const runId = dispatchWorkflow(options.repo, workflowFile, options.workflowRef, {
-    package_spec: `openclaw@${options.tag.replace(/^v/u, "")}`,
+    package_spec: `nova@${options.tag.replace(/^v/u, "")}`,
     package_label: options.tag,
     ...artifactInputs,
     harness_ref: options.workflowRef,
@@ -1448,7 +1448,7 @@ async function main() {
   }
 
   if (!options.npmPreflightRunId && !options.skipDispatch) {
-    const workflowFile = "openclaw-npm-release.yml";
+    const workflowFile = "nova-npm-release.yml";
     options.npmPreflightRunId = dispatchWorkflow(options.repo, workflowFile, options.workflowRef, {
       tag: options.tag,
       preflight_only: "true",
@@ -1482,8 +1482,8 @@ async function main() {
   const npmArtifact = await downloadResolvedArtifact(
     options.repo,
     options.npmPreflightRunId,
-    `openclaw-npm-preflight-${options.tag}`,
-    "openclaw-npm-preflight-",
+    `nova-npm-preflight-${options.tag}`,
+    "nova-npm-preflight-",
     npmDir,
   );
   const npmArtifactName = npmArtifact.name;

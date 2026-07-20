@@ -1,12 +1,12 @@
 // Telegram plugin module owns dispatch-time session and transcript access.
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
 import {
   appendAssistantMirrorMessageByIdentity,
   readLatestAssistantTextByIdentity,
-} from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/session-transcript-runtime";
 import { resolveTelegramConfigReasoningDefault } from "./agent-config.js";
 import type { TelegramBotDeps } from "./bot-deps.js";
 import type { TelegramMessageContext } from "./bot-message-context.js";
@@ -20,7 +20,7 @@ import type {
 } from "./bot-message-dispatch.types.js";
 
 export function createFreshTelegramSessionEntryLoader(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   telegramDeps: TelegramBotDeps;
 }): FreshTelegramSessionEntryLoader {
   const entriesByPathAndKey = new Map<string, ReturnType<typeof getSessionEntry>>();
@@ -43,7 +43,7 @@ export function createFreshTelegramSessionEntryLoader(params: {
 }
 
 export function resolveTelegramReasoningLevel(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey?: string;
   agentId: string;
   loadFreshSessionEntry: FreshTelegramSessionEntryLoader;
@@ -88,7 +88,7 @@ function resolveTelegramScopedTranscriptSession(params: {
 }
 
 export async function mirrorTelegramAssistantReplyToTranscript(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   idempotencyKey: string;
   loadFreshSessionEntry: FreshTelegramSessionEntryLoader;
   route: TelegramMessageContext["route"];

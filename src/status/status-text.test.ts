@@ -135,20 +135,20 @@ describe("Codex usage after runtime fallback", () => {
     }));
   });
 
-  async function renderFallbackStatus(agentHarnessId: "codex" | "openclaw"): Promise<string> {
+  async function renderFallbackStatus(agentHarnessId: "codex" | "nova"): Promise<string> {
     return await buildStatusText({
       cfg: {},
       sessionEntry: {
         sessionId: `fallback-${agentHarnessId}`,
         updatedAt: 0,
-        agentRuntimeOverride: "openclaw",
+        agentRuntimeOverride: "nova",
         agentHarnessId,
       },
       sessionKey: "agent:main:main",
       statusChannel: "mobilechat",
       provider: "openai",
       model: "gpt-5.4-mini",
-      resolvedHarness: "openclaw",
+      resolvedHarness: "nova",
       resolvedVerboseLevel: "off",
       resolvedReasoningLevel: "off",
       resolveDefaultThinkingLevel: async () => undefined,
@@ -177,7 +177,7 @@ describe("Codex usage after runtime fallback", () => {
   });
 
   it("omits Codex rate-limit usage for a never-Codex session", async () => {
-    const text = await renderFallbackStatus("openclaw");
+    const text = await renderFallbackStatus("nova");
 
     expect(text).not.toContain("📊 Usage:");
     expect(mocks.loadProviderUsageSummary).toHaveBeenCalledWith(
@@ -193,7 +193,7 @@ describe("session status cost line", () => {
     sessionFile: formatSqliteSessionFileMarker({
       agentId: "main",
       sessionId: "cost-session",
-      storePath: "/tmp/openclaw-status-cost/sessions.json",
+      storePath: "/tmp/nova-status-cost/sessions.json",
     }),
   };
 
@@ -330,7 +330,7 @@ describe("buildStatusText thinking facts", () => {
           reasoning: true,
         },
       ],
-      resolvedHarness: "openclaw",
+      resolvedHarness: "nova",
       resolvedThinkLevel: "high",
       resolvedVerboseLevel: "off",
       resolvedReasoningLevel: "on",

@@ -106,7 +106,7 @@ function expectRecoveryMarkers(entry: SessionEntry | undefined): void {
 
 describe("session store key normalization", () => {
   const suiteRootTracker = createSuiteTempRootTracker({
-    prefix: "openclaw-session-key-normalize-",
+    prefix: "nova-session-key-normalize-",
   });
   let tempDir = "";
   let storePath = "";

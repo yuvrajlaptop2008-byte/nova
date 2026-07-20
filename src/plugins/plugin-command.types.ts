@@ -1,5 +1,5 @@
 import type { ReplyPayload } from "../auto-reply/reply-payload.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { OperatorScope } from "../gateway/operator-scopes.js";
 import type {
   PluginConversationBinding,
@@ -79,7 +79,7 @@ export type PluginCommandContext = {
   /** The full normalized command body */
   commandBody: string;
   /** Current Nova configuration */
-  config: OpenClawConfig;
+  config: NovaConfig;
   /** Raw "From" value (channel-scoped id) */
   from?: string;
   /** Raw "To" value (channel-scoped id) */
@@ -130,8 +130,8 @@ type PluginCommandHandler = (
  * Definition for a plugin-registered command.
  */
 export const AGENT_PROMPT_SURFACE_KINDS = [
-  "openclaw_main",
-  /** @deprecated Use openclaw_main. */
+  "nova_main",
+  /** @deprecated Use nova_main. */
   "pi_main",
   "codex_app_server",
   "cli_backend",
@@ -148,7 +148,7 @@ export type AgentPromptGuidanceEntry = {
 
 export type AgentPromptGuidance = string | AgentPromptGuidanceEntry;
 
-export type OpenClawPluginCommandDefinition = {
+export type NovaPluginCommandDefinition = {
   /** Command name without leading slash (e.g., "tts") */
   name: string;
   /**

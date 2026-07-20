@@ -2,9 +2,9 @@
 // selected real model providers.
 
 import { expectDefined } from "@nova/normalization-core";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
-import type { Context, Model } from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
+import { SessionManager } from "nova/plugin-sdk/agent-sessions";
+import type { Context, Model } from "nova/plugin-sdk/llm";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import { getRuntimeConfig } from "../config/config.js";
@@ -21,7 +21,7 @@ import {
   type CompleteSimpleContent,
 } from "./live-test-helpers.js";
 import { getApiKeyForModel, requireApiKey } from "./model-auth.js";
-import { ensureOpenClawModelsJson } from "./models-config.js";
+import { ensureNovaModelsJson } from "./models-config.js";
 import { transformTransportMessages } from "./transport-message-transform.js";
 
 const LIVE = isLiveTestEnabled();
@@ -243,7 +243,7 @@ describeLive("tool replay repair live", () => {
       `accepts repaired displaced and missing tool results with ${target.ref}`,
       async () => {
         const cfg = getRuntimeConfig();
-        await ensureOpenClawModelsJson(cfg);
+        await ensureNovaModelsJson(cfg);
 
         const agentDir = resolveDefaultAgentDir(cfg);
         const authStorage = discoverAuthStorage(agentDir);
@@ -356,7 +356,7 @@ describeLive("tool replay repair live", () => {
       `accepts transport replay after dropping aborted assistant tool calls with ${target.ref}`,
       async () => {
         const cfg = getRuntimeConfig();
-        await ensureOpenClawModelsJson(cfg);
+        await ensureNovaModelsJson(cfg);
 
         const agentDir = resolveDefaultAgentDir(cfg);
         const authStorage = discoverAuthStorage(agentDir);

@@ -3,13 +3,13 @@ import {
   DEFAULT_TIMING,
   logAckFailure,
   removeAckReactionAfterReply,
-} from "openclaw/plugin-sdk/channel-feedback";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { logVerbose, sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/channel-feedback";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { logVerbose, sleepWithAbort } from "nova/plugin-sdk/runtime-env";
 import type { TelegramMessageContext } from "./bot-message-context.js";
 
 export function createTelegramDispatchStatus(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   context: TelegramMessageContext;
 }) {
   const { context } = params;

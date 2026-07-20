@@ -1,8 +1,5 @@
 // Matrix plugin module implements url validation behavior.
-import {
-  assertHttpUrlTargetsPrivateNetwork,
-  type LookupFn,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+import { assertHttpUrlTargetsPrivateNetwork, type LookupFn } from "nova/plugin-sdk/ssrf-runtime";
 import { isPrivateOrLoopbackHost } from "./private-network-host.js";
 
 const MATRIX_HTTP_HOMESERVER_ERROR =

@@ -10,11 +10,11 @@ import {
 } from "../app/context.ts";
 import type { CatalogOpenTarget } from "../app/settings.ts";
 import type { ThemeMode } from "../app/theme.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import type { NewSessionTarget } from "../pages/new-session/location.ts";
 
 /** Stable custom-element inputs. Behavior is layered in focused sidebar modules. */
-export abstract class AppSidebarBase extends OpenClawLightDomContentsElement {
+export abstract class AppSidebarBase extends NovaLightDomContentsElement {
   @property({ attribute: false }) basePath = "";
   @property({ attribute: false }) activeRouteId?: NavigationRouteId;
   @property({ attribute: false }) activePluginTabId = "";

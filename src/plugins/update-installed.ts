@@ -1,8 +1,8 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveNpmSpecMetadata } from "../infra/install-source-utils.js";
 import { parseRegistryNpmSpec } from "../infra/npm-registry-spec.js";
 import {
-  installedPackageNeedsOpenClawPeerLinkRepair,
+  installedPackageNeedsNovaPeerLinkRepair,
   readInstalledPackageManifest,
   readInstalledPackageVersion,
 } from "../infra/package-update-utils.js";
@@ -44,7 +44,7 @@ import {
   disablePluginAfterUpdateFailure,
   hasRunnableInstalledNpmPayload,
   migratePluginConfigId,
-  repairOpenClawPeerLinksForNpmInstalls,
+  repairNovaPeerLinksForNpmInstalls,
   resolveRecordedExtensionsDir,
   withoutPluginInstallRecord,
 } from "./update-config.js";
@@ -72,7 +72,7 @@ import {
 } from "./update-source.js";
 
 export async function updateNpmInstalledPlugins(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   logger?: PluginUpdateLogger;
   pluginIds?: string[];
   skipIds?: Set<string>;
@@ -422,7 +422,7 @@ export async function updateNpmInstalledPlugins(params: {
           currentVersion &&
           !bypassTrustedOfficialUnchangedNpmCheck &&
           isNpmMetadataCompatibleWithCurrentHost(metadataResult.metadata) &&
-          !installedPackageNeedsOpenClawPeerLinkRepair(installPath) &&
+          !installedPackageNeedsNovaPeerLinkRepair(installPath) &&
           shouldSkipUnchangedNpmInstall({
             currentVersion,
             record,
@@ -717,7 +717,7 @@ export async function updateNpmInstalledPlugins(params: {
 
   if (ranNpmInstaller) {
     changed =
-      (await repairOpenClawPeerLinksForNpmInstalls({
+      (await repairNovaPeerLinksForNpmInstalls({
         config: next,
         logger,
       })) || changed;

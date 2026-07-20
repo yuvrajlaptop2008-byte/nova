@@ -51,7 +51,7 @@ import {
   workerWorkspaceResultRef,
 } from "./workspace-result-staging.js";
 
-const WORKER_LAUNCH_SCRIPT = 'exec node "$HOME/.openclaw-worker/$1/openclaw.mjs" worker';
+const WORKER_LAUNCH_SCRIPT = 'exec node "$HOME/.nova-worker/$1/nova.mjs" worker';
 
 type WorkerTurnEnvironmentService = Pick<
   WorkerEnvironmentService,
@@ -326,7 +326,7 @@ async function executeWorkerTurn(params: {
   const handoffAbort = new AbortController();
   params.onHandoff();
   const processPromise = tunnel.runWorkspaceCommand({
-    argv: ["sh", "-c", WORKER_LAUNCH_SCRIPT, "openclaw-worker", placement.workerBundleHash],
+    argv: ["sh", "-c", WORKER_LAUNCH_SCRIPT, "nova-worker", placement.workerBundleHash],
     input: JSON.stringify(descriptor),
     timeoutMs: turn.timeoutMs,
     signal: turn.abortSignal

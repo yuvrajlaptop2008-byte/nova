@@ -9,7 +9,7 @@ import type { SessionsPatchParams } from "../../packages/gateway-protocol/src/sc
 import type { WorkspaceBootstrapFile } from "../agents/workspace.js";
 import type { CliDeps } from "../cli/outbound-send-deps.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
@@ -23,7 +23,7 @@ export type { InternalHookEvent, InternalHookEventType, InternalHookHandler };
 export type AgentBootstrapHookContext = {
   workspaceDir: string;
   bootstrapFiles: WorkspaceBootstrapFile[];
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   sessionKey?: string;
   sessionId?: string;
   agentId?: string;
@@ -36,7 +36,7 @@ export type AgentBootstrapHookEvent = InternalHookEvent & {
 };
 
 export type GatewayStartupHookContext = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   deps?: CliDeps;
   workspaceDir?: string;
 };
@@ -167,7 +167,7 @@ export type MessagePreprocessedHookEvent = InternalHookEvent & {
 export type SessionPatchHookContext = {
   sessionEntry: SessionEntry;
   patch: SessionsPatchParams;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 };
 
 export type SessionPatchHookEvent = InternalHookEvent & {
@@ -186,12 +186,12 @@ export type SessionPatchHookEvent = InternalHookEvent & {
  * are invisible to triggerInternalHook in another chunk, causing hooks
  * to silently fire with zero handlers.
  */
-const INTERNAL_HOOK_HANDLERS_KEY = Symbol.for("openclaw.internalHookHandlers");
+const INTERNAL_HOOK_HANDLERS_KEY = Symbol.for("nova.internalHookHandlers");
 const handlers = resolveGlobalSingleton<Map<string, InternalHookHandler[]>>(
   INTERNAL_HOOK_HANDLERS_KEY,
   () => new Map<string, InternalHookHandler[]>(),
 );
-const INTERNAL_HOOKS_ENABLED_KEY = Symbol.for("openclaw.internalHooksEnabled");
+const INTERNAL_HOOKS_ENABLED_KEY = Symbol.for("nova.internalHooksEnabled");
 const internalHooksEnabledState = resolveGlobalSingleton<{ enabled: boolean }>(
   INTERNAL_HOOKS_ENABLED_KEY,
   () => ({ enabled: true }),

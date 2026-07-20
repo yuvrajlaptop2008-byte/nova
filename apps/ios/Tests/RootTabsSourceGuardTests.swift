@@ -1,11 +1,11 @@
 import Foundation
 import SwiftUI
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 struct RootTabsSourceGuardTests {
     @Test func `app applies initial scene phase before gateway admission`() throws {
-        let source = try String(contentsOf: Self.openClawAppSourceURL(), encoding: .utf8)
+        let source = try String(contentsOf: Self.novaAppSourceURL(), encoding: .utf8)
         let startupTask = try Self.extract(
             source,
             from: ".task {",
@@ -28,7 +28,7 @@ struct RootTabsSourceGuardTests {
         #expect(source.contains("Show Sidebar"))
         #expect(source.contains("shouldShowSidebarRevealInDestinationHeader"))
         #expect(source.contains("layoutMode: self.isSidebarDrawerLayout ? .drawer : .split"))
-        #expect(componentSource.contains("OpenClawSidebarHeaderLeadingSlot"))
+        #expect(componentSource.contains("NovaSidebarHeaderLeadingSlot"))
         #expect(componentSource.contains(".frame(width: 44, height: 44, alignment: .center)"))
         #expect(componentSource.contains(".frame(width: 44, height: 44)"))
         #expect(source.contains(".safeAreaPadding(.top, 8)"))
@@ -49,7 +49,7 @@ struct RootTabsSourceGuardTests {
         #expect(!source.contains("safeAreaInset(edge: .top"))
         #expect(!source.contains("thinMaterial, in: Circle"))
         #expect(!source.contains("sidebarRevealInset"))
-        #expect(source.contains(".background(OpenClawSidebarPalette.background)"))
+        #expect(source.contains(".background(NovaSidebarPalette.background)"))
         #expect(!source.contains("Color.black.opacity(0.35)"))
         #expect(!source.contains("sidebarRevealCornerButton"))
         #expect(!source.contains("shouldShowSidebarRevealOverlay"))
@@ -86,7 +86,7 @@ struct RootTabsSourceGuardTests {
         #expect(drawerContent.contains("self.sidebarContentDismissGesture(sidebarWidth: sidebarWidth)"))
         #expect(drawerContent.contains(".allowsHitTesting(!self.isSidebarVisible)"))
         #expect(drawerContent.contains(".clipShape(RoundedRectangle("))
-        #expect(drawerContent.contains("cornerRadius: OpenClawProMetric.drawerRadius * progress"))
+        #expect(drawerContent.contains("cornerRadius: NovaProMetric.drawerRadius * progress"))
         #expect(drawerContent.contains(".offset(x: Self.sidebarContentOffset("))
         #expect(drawerContent.contains(".shadow("))
         #expect(drawerContent.contains(".fill(Color(uiColor: .systemGroupedBackground))"))
@@ -108,7 +108,7 @@ struct RootTabsSourceGuardTests {
         #expect(!rootSource.contains("tabViewBottomAccessory"))
         #expect(!rootSource.contains("PhoneVoiceTabAccessory"))
         #expect(chatSource.contains("talkControl: Self.shouldExposeCaptureControl("))
-        #expect(chatSource.contains("private var talkControl: OpenClawChatTalkControl"))
+        #expect(chatSource.contains("private var talkControl: NovaChatTalkControl"))
         #expect(chatSource.contains("self.appModel.setTalkEnabled(!self.appModel.talkMode.isEnabled)"))
     }
 
@@ -119,7 +119,7 @@ struct RootTabsSourceGuardTests {
 
         #expect(controls.contains("Label(\"Record Voice Note\", systemImage: \"waveform\")"))
         #expect(controls.contains("primaryAction:"))
-        #expect(controls.contains("struct OpenClawChatMicButton: View"))
+        #expect(controls.contains("struct NovaChatMicButton: View"))
         #expect(controls.contains("private var isDictationActionEnabled: Bool"))
         #expect(controls.contains("isDictationActive: self.dictationControl?.isActive == true"))
         #expect(composer.contains("if self.dictationControl != nil || self.voiceNoteControl != nil"))
@@ -127,7 +127,7 @@ struct RootTabsSourceGuardTests {
         #expect(composer.contains("voiceNoteControl: self.voiceNoteControl"))
         #expect(composer.contains("embedded: true"))
         #expect(chat.contains("voiceNoteControl: self.voiceNoteControl"))
-        #expect(!chat.contains("OpenClawVoiceNoteButton("))
+        #expect(!chat.contains("NovaVoiceNoteButton("))
     }
 
     @Test func `sidebar keeps navigation model destination only`() throws {
@@ -241,7 +241,7 @@ struct RootTabsSourceGuardTests {
         let commandCenterSource = try String(contentsOf: Self.commandCenterSourceURL(), encoding: .utf8)
         let defaultSession = try Self.extract(
             commandCenterSource,
-            from: "private var effectiveDefaultChatSessionEntry: OpenClawChatSessionEntry?",
+            from: "private var effectiveDefaultChatSessionEntry: NovaChatSessionEntry?",
             to: "private var effectiveRecentChatSessions:")
 
         #expect(source.contains("private var resolvedSelectedSessionKey: String"))
@@ -286,13 +286,13 @@ struct RootTabsSourceGuardTests {
         #expect(sidebarDetail.contains("headerTitle: \"Dreaming\""))
         #expect(sidebarDetail.contains("headerTitle: \"Usage\""))
         #expect(sidebarDetail.contains("headerTitle: \"Automations\""))
-        #expect(!sidebarDetail.contains("headerTitle: \"OpenClaw\""))
-        #expect(agentOverviewSource.contains("OpenClawAdaptiveHeaderRow("))
+        #expect(!sidebarDetail.contains("headerTitle: \"Nova\""))
+        #expect(agentOverviewSource.contains("NovaAdaptiveHeaderRow("))
         #expect(agentOverviewSource.contains("title: .localized(self.headerTitle)"))
-        #expect(!agentOverviewSource.contains("Text(\"OpenClaw\")"))
-        #expect(docsSource.contains("OpenClawAdaptiveHeaderRow("))
+        #expect(!agentOverviewSource.contains("Text(\"Nova\")"))
+        #expect(docsSource.contains("NovaAdaptiveHeaderRow("))
         #expect(docsSource.contains("title: \"Docs\""))
-        #expect(!docsSource.contains("Text(\"OpenClaw Docs\")"))
+        #expect(!docsSource.contains("Text(\"Nova Docs\")"))
     }
 
     @Test func `agents direct route keeps single sidebar control`() throws {
@@ -312,20 +312,20 @@ struct RootTabsSourceGuardTests {
         #expect(destinationsSource.contains("self.directHeader(\n                        for: .usage"))
         #expect(destinationsSource.contains("self.directHeader(\n                        for: .cron"))
         #expect(destinationsSource.contains("self.directRoute == route ? self.headerSidebarAction : nil"))
-        #expect(nodesSource.contains("OpenClawSidebarHeaderLeadingSlot(action: headerSidebarAction)"))
-        #expect(dreamingSource.contains("OpenClawSidebarHeaderLeadingSlot(action: headerSidebarAction)"))
+        #expect(nodesSource.contains("NovaSidebarHeaderLeadingSlot(action: headerSidebarAction)"))
+        #expect(dreamingSource.contains("NovaSidebarHeaderLeadingSlot(action: headerSidebarAction)"))
     }
 
     @Test func `iOS 26 chrome uses native glass while content cards stay quiet`() throws {
         let rootSource = try String(contentsOf: Self.rootTabsSourceURL(), encoding: .utf8)
-        let appSource = try String(contentsOf: Self.openClawAppSourceURL(), encoding: .utf8)
+        let appSource = try String(contentsOf: Self.novaAppSourceURL(), encoding: .utf8)
         let componentsSource = try String(contentsOf: Self.proComponentsSourceURL(), encoding: .utf8)
         let cardSurface = try Self.extract(
             componentsSource,
             from: "private struct ProPanelSurfaceModifier: ViewModifier",
             to: "struct ProIconBadge: View")
 
-        #expect(!rootSource.contains(".openClawTabBarBehavior()"))
+        #expect(!rootSource.contains(".novaTabBarBehavior()"))
         #expect(!rootSource.contains("TabView("))
         #expect(appSource.contains(".preferredColorScheme(self.appearanceModel.preference.colorScheme)"))
         #expect(!appSource.contains("overrideUserInterfaceStyle"))
@@ -336,7 +336,7 @@ struct RootTabsSourceGuardTests {
         #expect(componentsSource.contains("if #available(iOS 26.0, *)"))
         #expect(componentsSource.contains(".buttonStyle(.borderedProminent)"))
         #expect(componentsSource.contains(".buttonStyle(.bordered)"))
-        #expect(componentsSource.contains("struct OpenClawNoticeBanner: View"))
+        #expect(componentsSource.contains("struct NovaNoticeBanner: View"))
         #expect(!cardSurface.contains("glassEffect"))
     }
 
@@ -351,7 +351,7 @@ struct RootTabsSourceGuardTests {
         let overviewRowsSource = try String(contentsOf: Self.commandCenterSupportSourceURL(), encoding: .utf8)
         let gatewayStatus = try Self.extract(
             componentsSource,
-            from: "struct OpenClawGatewayCompactPill: View",
+            from: "struct NovaGatewayCompactPill: View",
             to: "struct ProMetricTile: View")
         let agentFilterMenu = try Self.extract(
             agentSource,
@@ -373,7 +373,7 @@ struct RootTabsSourceGuardTests {
             settingsSource,
             from: "private struct AppearanceSettingsScreen: View",
             to: "extension SettingsProTab")
-        #expect(gatewayStatus.contains("OpenClawStatusBadge(label: .verbatim(self.title), tone: self.tone)"))
+        #expect(gatewayStatus.contains("NovaStatusBadge(label: .verbatim(self.title), tone: self.tone)"))
         #expect(!gatewayStatus.contains("ProCapsule("))
         #expect(!gatewayStatus.contains("Capsule()"))
         #expect(agentDestinationsSource.contains("List {"))
@@ -388,7 +388,7 @@ struct RootTabsSourceGuardTests {
         #expect(agentRow.contains("Image(systemName: \"checkmark\")"))
         #expect(agentRow.contains("agentAccessibilityLabel"))
         #expect(settingsList.contains("Text(\"Device\")"))
-        #expect(settingsList.contains(".font(OpenClawType.captionSemiBold)"))
+        #expect(settingsList.contains(".font(NovaType.captionSemiBold)"))
         #expect(!settingsList.contains("ProCard("))
         #expect(settingsRow.contains("NavigationLink(value: route)"))
         #expect(!settingsRow.contains("chevron.right"))
@@ -419,7 +419,7 @@ struct RootTabsSourceGuardTests {
         #expect(!aboutDestination.contains("detailStatusCard("))
         #expect(aboutDestination.contains("detailListCard"))
         #expect(aboutDestination.contains("SettingsBuildMetadataStrip(metadata: DeviceInfoHelper.buildMetadata())"))
-        #expect(!aboutDestination.contains("SettingsDetailRow(\"OpenClaw app version\""))
+        #expect(!aboutDestination.contains("SettingsDetailRow(\"Nova app version\""))
         #expect(aboutDestination.contains(
             "SettingsDetailRow(\"Device\", value: .verbatim(DeviceInfoHelper.deviceFamily()))"))
         #expect(aboutDestination.contains(
@@ -471,25 +471,25 @@ struct RootTabsSourceGuardTests {
         let agentOverviewSource = try String(contentsOf: Self.agentProTabOverviewSourceURL(), encoding: .utf8)
         let settingsSource = try String(contentsOf: Self.settingsProTabSourceURL(), encoding: .utf8)
 
-        #expect(componentsSource.contains("struct OpenClawAdaptiveHeaderRow<Leading: View, Accessory: View>: View"))
+        #expect(componentsSource.contains("struct NovaAdaptiveHeaderRow<Leading: View, Accessory: View>: View"))
         #expect(componentsSource.contains("ViewThatFits(in: .horizontal)"))
         #expect(componentsSource.contains("private var stackedLayout: some View"))
         #expect(componentsSource.contains(".layoutPriority(1)"))
         #expect(componentsSource.contains(".fixedSize(horizontal: true, vertical: false)"))
-        #expect(featureChromeSource.contains("OpenClawAdaptiveHeaderRow("))
+        #expect(featureChromeSource.contains("NovaAdaptiveHeaderRow("))
         #expect(featureChromeSource.contains("if !self.usesNativeNavigationChrome"))
         #expect(!featureChromeSource.contains("if self.headerSidebarAction != nil"))
-        #expect(docsSource.contains("OpenClawAdaptiveHeaderRow("))
+        #expect(docsSource.contains("NovaAdaptiveHeaderRow("))
         #expect(docsSource.contains("if !self.usesNativeNavigationChrome"))
-        #expect(overviewSource.contains("OpenClawAdaptiveHeaderRow("))
+        #expect(overviewSource.contains("NovaAdaptiveHeaderRow("))
         #expect(overviewSource.matches(of: /if !self\.usesNativeNavigationChrome/).count == 2)
         #expect(chatSource.contains(".navigationTitle(self.showsAgentBadge ? \"\" : self.headerDisplayTitle)"))
         #expect(chatSource.contains("self.headerAgentIdentity"))
         #expect(!chatSource.contains("headerAgentModelPicker"))
         #expect(chatSource.contains(".sharedBackgroundVisibility(.hidden)"))
-        #expect(chatSource.contains("OpenClawSidebarRevealButton(action: headerSidebarAction)"))
-        #expect(!chatSource.contains("OpenClawAdaptiveHeaderRow("))
-        #expect(agentOverviewSource.contains("OpenClawAdaptiveHeaderRow("))
+        #expect(chatSource.contains("NovaSidebarRevealButton(action: headerSidebarAction)"))
+        #expect(!chatSource.contains("NovaAdaptiveHeaderRow("))
+        #expect(agentOverviewSource.contains("NovaAdaptiveHeaderRow("))
         #expect(settingsSource.contains("ToolbarItem(placement: .topBarLeading)"))
         #expect(!settingsSource.contains("ToolbarItem(placement: .topBarTrailing)"))
     }
@@ -753,7 +753,7 @@ extension RootTabsSourceGuardTests {
         #expect(!appModelSource.contains("defaultAgentId: self.gatewayDefaultAgentId"))
         #expect(activitySource.contains("IPadSidebarScreenChrome("))
         #expect(!taskSource.contains("struct IPadActivityScreen"))
-        #expect(!taskSource.contains("import OpenClawChatUI"))
+        #expect(!taskSource.contains("import NovaChatUI"))
         #expect(projectSource.contains("IPadActivityScreen.swift in Sources"))
     }
 
@@ -763,8 +763,8 @@ extension RootTabsSourceGuardTests {
         let projectSource = try String(contentsOf: Self.xcodeProjectSourceURL(), encoding: .utf8)
 
         #expect(chromeSource.contains("struct IPadSidebarScreenChrome<Content: View>: View"))
-        #expect(chromeSource.contains("OpenClawSidebarHeaderLeadingSlot(action: headerSidebarAction)"))
-        #expect(chromeSource.contains("OpenClawGatewayCompactPill()"))
+        #expect(chromeSource.contains("NovaSidebarHeaderLeadingSlot(action: headerSidebarAction)"))
+        #expect(chromeSource.contains("NovaGatewayCompactPill()"))
         #expect(!taskSource.contains("struct IPadSidebarScreenChrome"))
         #expect(projectSource.contains("IPadSidebarScreenChrome.swift in Sources"))
     }
@@ -778,7 +778,7 @@ extension RootTabsSourceGuardTests {
         #expect(chromeSource.contains("private var gatewayPill: some View"))
         #expect(chromeSource.contains("Button(action: gatewayAction)"))
         #expect(chromeSource.contains(".buttonBorderShape(.capsule)"))
-        #expect(chromeSource.contains(".openClawGlassButton()"))
+        #expect(chromeSource.contains(".novaGlassButton()"))
         #expect(chromeSource.contains(".accessibilityHint(\"Opens Settings / Gateway\")"))
         #expect(featureSource.matches(of: /gatewayAction: self\.openSettings/).count == 2)
         #expect(rootSource.contains("IPadActivityScreen("))
@@ -835,7 +835,7 @@ extension RootTabsSourceGuardTests {
         #expect(overviewSource.contains("Button(action: self.openSettings)"))
         #expect(overviewSource.contains(".accessibilityHint(\"Opens gateway settings\")"))
         #expect(agentSource.contains("let openSettings: (() -> Void)?"))
-        #expect(agentOverviewSource.contains("OpenClawGatewayCompactPill()"))
+        #expect(agentOverviewSource.contains("NovaGatewayCompactPill()"))
         #expect(agentOverviewSource.contains("Button(action: openSettings)"))
         #expect(rootSource
             .matches(of: /AgentProTab\([\s\S]*?openSettings: \{ self\.selectSidebarDestination\(\.gateway\) \}/)
@@ -852,7 +852,7 @@ extension RootTabsSourceGuardTests {
         #expect(chatSource.contains("composerChrome: .clean"))
         #expect(docsSource.contains("let gatewayAction: (() -> Void)?"))
         #expect(docsSource.contains(".buttonBorderShape(.capsule)"))
-        #expect(docsSource.contains(".openClawGlassButton()"))
+        #expect(docsSource.contains(".novaGlassButton()"))
         #expect(settingsSource.contains("NavigationLink(value: SettingsRoute.gateway)"))
         #expect(rootSource.contains("case .settings:"))
         #expect(rootSource.matches(of: settingsRoutePattern).count >= 1)
@@ -916,7 +916,7 @@ extension RootTabsSourceGuardTests {
     }
 
     @Test func `push enrollment stays behind notification disclosure flow`() throws {
-        let appSource = try String(contentsOf: Self.openClawAppSourceURL(), encoding: .utf8)
+        let appSource = try String(contentsOf: Self.novaAppSourceURL(), encoding: .utf8)
         let actionsSource = try String(contentsOf: Self.settingsProTabActionsSourceURL(), encoding: .utf8)
         let modelSource = try String(contentsOf: Self.nodeAppModelSourceURL(), encoding: .utf8)
 
@@ -960,7 +960,7 @@ extension RootTabsSourceGuardTests {
             sectionsSource.contains("Toggle(isOn: self.notificationToggleBinding)")
                 && sectionsSource.contains("Text(\"Notifications\")"))
         #expect(locationCard.contains("Text(\"Location\")"))
-        #expect(locationCard.contains(".font(OpenClawType.body)"))
+        #expect(locationCard.contains(".font(NovaType.body)"))
         #expect(locationCard.contains(".accessibilityLabel(\"Location Sharing\")"))
         #expect(!locationCard.contains("Text(\"Location Sharing\")"))
         #expect(!locationCard.contains("SettingsIcon("))
@@ -1260,7 +1260,7 @@ extension RootTabsSourceGuardTests {
     }
 
     @Test func `local network access is requested from visible gateway flows`() throws {
-        let appSource = try String(contentsOf: Self.openClawAppSourceURL(), encoding: .utf8)
+        let appSource = try String(contentsOf: Self.novaAppSourceURL(), encoding: .utf8)
         let rootSource = try String(contentsOf: Self.rootTabsSourceURL(), encoding: .utf8)
         let onboardingSource = try Self.onboardingWizardSource()
         let actionsSource = try String(contentsOf: Self.settingsProTabActionsSourceURL(), encoding: .utf8)
@@ -1583,7 +1583,7 @@ extension RootTabsSourceGuardTests {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("Sources/Design/OpenClawProComponents.swift")
+            .appendingPathComponent("Sources/Design/NovaProComponents.swift")
     }
 
     private static func commandCenterSourceURL() -> URL {
@@ -1705,7 +1705,7 @@ extension RootTabsSourceGuardTests {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("Sources/Design/OpenClawDocsScreen.swift")
+            .appendingPathComponent("Sources/Design/NovaDocsScreen.swift")
     }
 
     static func settingsProTabSectionsSourceURL() -> URL {
@@ -1752,11 +1752,11 @@ extension RootTabsSourceGuardTests {
             .appendingPathComponent("Sources/Onboarding/QRScannerView.swift")
     }
 
-    private static func openClawAppSourceURL() -> URL {
+    private static func novaAppSourceURL() -> URL {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("Sources/OpenClawApp.swift")
+            .appendingPathComponent("Sources/NovaApp.swift")
     }
 
     private static func notificationPermissionGuidanceDialogSourceURL() -> URL {
@@ -1844,7 +1844,7 @@ extension RootTabsSourceGuardTests {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("shared/OpenClawKit/Sources/OpenClawChatUI/ChatView+Previews.swift")
+            .appendingPathComponent("shared/NovaKit/Sources/NovaChatUI/ChatView+Previews.swift")
     }
 
     private static func sharedChatComposerSourceURL() -> URL {
@@ -1852,7 +1852,7 @@ extension RootTabsSourceGuardTests {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("shared/OpenClawKit/Sources/OpenClawChatUI/ChatComposer.swift")
+            .appendingPathComponent("shared/NovaKit/Sources/NovaChatUI/ChatComposer.swift")
     }
 
     private static func cleanChatComposerControlsSourceURL() -> URL {
@@ -1860,14 +1860,14 @@ extension RootTabsSourceGuardTests {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("shared/OpenClawKit/Sources/OpenClawChatUI/CleanChatComposerControls.swift")
+            .appendingPathComponent("shared/NovaKit/Sources/NovaChatUI/CleanChatComposerControls.swift")
     }
 
     private static func xcodeProjectSourceURL() -> URL {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("OpenClaw.xcodeproj/project.pbxproj")
+            .appendingPathComponent("Nova.xcodeproj/project.pbxproj")
     }
 
     static func extract(_ source: String, from start: String, to end: String) throws -> String {

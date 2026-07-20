@@ -1,20 +1,20 @@
 import { createHash } from "node:crypto";
 // Memory Core plugin module implements search manager behavior.
 import fs from "node:fs/promises";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import {
   createSubsystemLogger,
   resolveAgentContextLimits,
   resolveAgentWorkspaceDir,
   resolveGlobalSingleton,
   resolveMemorySearchSyncConfig,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+  type NovaConfig,
+} from "nova/plugin-sdk/memory-core-host-engine-foundation";
 import {
   checkQmdBinaryAvailability,
   resolveQmdBinaryUnavailableReason,
-} from "openclaw/plugin-sdk/memory-core-host-engine-qmd";
+} from "nova/plugin-sdk/memory-core-host-engine-qmd";
 import {
   resolveMemoryBackendConfig,
   type MemoryEmbeddingProbeResult,
@@ -23,9 +23,9 @@ import {
   type MemorySource,
   type MemorySyncParams,
   type ResolvedQmdConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
-import type { PluginStateLeaseRunner } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/memory-core-host-engine-storage";
+import type { PluginStateLeaseRunner } from "nova/plugin-sdk/plugin-state-runtime";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
 import {
   resolveMemoryCoreLocalServiceHostIdentity,
   type MemoryCoreAcquireLocalService,
@@ -38,7 +38,7 @@ import {
   type MemorySearchDeadlineControlOptions,
 } from "./search-deadline.js";
 
-const MEMORY_SEARCH_MANAGER_CACHE_KEY = Symbol.for("openclaw.memorySearchManagerCache");
+const MEMORY_SEARCH_MANAGER_CACHE_KEY = Symbol.for("nova.memorySearchManagerCache");
 type Maybe<T> = T | null;
 type QmdManagerRuntimeConfig = {
   workspaceDir: string;
@@ -138,7 +138,7 @@ type MemorySearchManagerResult = {
 
 type MemorySearchManagerPurpose = "default" | "status" | "cli";
 type MemorySearchManagerParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   purpose?: MemorySearchManagerPurpose;
   acquireLocalService?: MemoryCoreAcquireLocalService;
@@ -545,7 +545,7 @@ export async function closeAllMemorySearchManagers(): Promise<void> {
 }
 
 export async function closeMemorySearchManager(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
 }): Promise<void> {
   const normalizedAgentId = normalizeAgentId(params.agentId);
@@ -811,10 +811,7 @@ function buildQmdManagerIdentityKey(
   return `${agentId}:${JSON.stringify(config)}:${JSON.stringify(runtimeConfig.syncSettings ?? null)}:${JSON.stringify(runtimeConfig.contextLimits ?? null)}:${runtimeConfig.workspaceDir}:${localServiceHostId}:${leaseHostId}`;
 }
 
-function resolveQmdManagerRuntimeConfig(
-  cfg: OpenClawConfig,
-  agentId: string,
-): QmdManagerRuntimeConfig {
+function resolveQmdManagerRuntimeConfig(cfg: NovaConfig, agentId: string): QmdManagerRuntimeConfig {
   return {
     workspaceDir: resolveAgentWorkspaceDir(cfg, agentId),
     syncSettings: resolveMemorySearchSyncConfig(cfg, agentId),

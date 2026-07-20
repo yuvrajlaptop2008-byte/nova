@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveAgentHarnessPolicy } from "./policy.js";
 
-function openAIProviderConfig(overrides: Record<string, unknown>): OpenClawConfig {
+function openAIProviderConfig(overrides: Record<string, unknown>): NovaConfig {
   return {
     models: {
       providers: {
@@ -14,7 +14,7 @@ function openAIProviderConfig(overrides: Record<string, unknown>): OpenClawConfi
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 describe("resolveAgentHarnessPolicy", () => {
@@ -27,7 +27,7 @@ describe("resolveAgentHarnessPolicy", () => {
     {
       name: "HTTP official Responses route",
       params: { config: openAIProviderConfig({ baseUrl: "http://api.openai.com/v1" }) },
-      runtime: "openclaw",
+      runtime: "nova",
     },
     {
       name: "HTTP official ChatGPT route",
@@ -37,22 +37,22 @@ describe("resolveAgentHarnessPolicy", () => {
           baseUrl: "http://chatgpt.com/backend-api/codex",
         }),
       },
-      runtime: "openclaw",
+      runtime: "nova",
     },
     {
       name: "custom endpoint",
       params: { config: openAIProviderConfig({ baseUrl: "https://relay.example.test/v1" }) },
-      runtime: "openclaw",
+      runtime: "nova",
     },
     {
       name: "authored Completions route",
       params: { config: openAIProviderConfig({ api: "openai-completions" }) },
-      runtime: "openclaw",
+      runtime: "nova",
     },
     {
       name: "request override",
       params: { config: openAIProviderConfig({ headers: { "x-route": "custom" } }) },
-      runtime: "openclaw",
+      runtime: "nova",
     },
   ])("uses the provider-owned runtime for $name", ({ params, runtime }) => {
     expect(
@@ -96,7 +96,7 @@ describe("resolveAgentHarnessPolicy", () => {
                 },
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           env: {},
         }),
       ).toEqual({ runtime: "auto", runtimeSource: "implicit" });
@@ -123,7 +123,7 @@ describe("resolveAgentHarnessPolicy", () => {
           config: customConfig,
           env: {},
         }),
-      ).toEqual({ runtime: "openclaw", runtimeSource: "implicit" });
+      ).toEqual({ runtime: "nova", runtimeSource: "implicit" });
     },
   );
 
@@ -168,7 +168,7 @@ describe("resolveAgentHarnessPolicy", () => {
         sessionKey,
         env: {},
       }),
-    ).toEqual({ runtime: "openclaw", runtimeSource: "implicit" });
+    ).toEqual({ runtime: "nova", runtimeSource: "implicit" });
   });
 
   it("keeps prepared request overrides on Nova", () => {
@@ -181,14 +181,14 @@ describe("resolveAgentHarnessPolicy", () => {
         requestTransportOverrides: "present",
         env: {},
       }),
-    ).toEqual({ runtime: "openclaw", runtimeSource: "implicit" });
+    ).toEqual({ runtime: "nova", runtimeSource: "implicit" });
   });
 
   it("applies global request params before a concrete model is selected", () => {
     const config = openAIProviderConfig({});
     config.agents = { defaults: { params: { temperature: 0.2 } } };
     expect(resolveAgentHarnessPolicy({ provider: "openai", config, env: {} })).toEqual({
-      runtime: "openclaw",
+      runtime: "nova",
       runtimeSource: "implicit",
     });
   });
@@ -197,7 +197,7 @@ describe("resolveAgentHarnessPolicy", () => {
     {
       name: "later route facts fill an omitted adapter",
       models: [{ id: "gpt-5.5" }, { id: "gpt-5.5", api: "openai-completions" }],
-      runtime: "openclaw",
+      runtime: "nova",
     },
     {
       name: "a provider-looking native id stays distinct",
@@ -205,7 +205,7 @@ describe("resolveAgentHarnessPolicy", () => {
         { id: "openai/gpt-5.5", api: "openai-responses" },
         { id: "gpt-5.5", api: "openai-completions" },
       ],
-      runtime: "openclaw",
+      runtime: "nova",
     },
     {
       name: "an authored empty header map stays authoritative",
@@ -218,7 +218,7 @@ describe("resolveAgentHarnessPolicy", () => {
     {
       name: "later headers fill an omitted header map",
       models: [{ id: "gpt-5.5" }, { id: "gpt-5.5", headers: { "x-route": "custom" } }],
-      runtime: "openclaw",
+      runtime: "nova",
     },
   ])("keeps duplicate model config aligned: $name", ({ models, runtime }) => {
     expect(

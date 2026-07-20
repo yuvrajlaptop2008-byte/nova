@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# One-time host setup for rootless OpenClaw in Podman. Uses the current
+# One-time host setup for rootless Nova in Podman. Uses the current
 # non-root user throughout, builds or pulls the image into that user's Podman
-# store, writes config under ~/.openclaw by default, and uses the repo-local
-# launch script at ./scripts/run-openclaw-podman.sh.
+# store, writes config under ~/.nova by default, and uses the repo-local
+# launch script at ./scripts/run-nova-podman.sh.
 #
 # Usage: ./scripts/podman/setup.sh [--quadlet|--container]
 #   --quadlet   Install a Podman Quadlet as the current user's systemd service
@@ -10,23 +10,23 @@
 #   Or set NOVA_PODMAN_QUADLET=1 (or 0) to choose without a flag.
 #
 # After this, start the gateway manually:
-#   ./scripts/run-openclaw-podman.sh launch
-#   ./scripts/run-openclaw-podman.sh launch setup
+#   ./scripts/run-nova-podman.sh launch
+#   ./scripts/run-nova-podman.sh launch setup
 # Or, if you used --quadlet:
-#   systemctl --user start openclaw.service
+#   systemctl --user start nova.service
 set -euo pipefail
 
 REPO_PATH="${NOVA_REPO_PATH:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 source "$REPO_PATH/scripts/lib/build-metadata.sh"
 source "$REPO_PATH/scripts/lib/host-timeout.sh"
-RUN_SCRIPT_SRC="$REPO_PATH/scripts/run-openclaw-podman.sh"
-QUADLET_TEMPLATE="$REPO_PATH/scripts/podman/openclaw.container.in"
+RUN_SCRIPT_SRC="$REPO_PATH/scripts/run-nova-podman.sh"
+QUADLET_TEMPLATE="$REPO_PATH/scripts/podman/nova.container.in"
 NOVA_USER="$(id -un)"
 NOVA_HOME="${HOME:-}"
 NOVA_CONFIG_DIR="${NOVA_CONFIG_DIR:-}"
 NOVA_WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-}"
-NOVA_IMAGE="${NOVA_PODMAN_IMAGE:-${NOVA_IMAGE:-openclaw:local}}"
-NOVA_CONTAINER_NAME="${NOVA_PODMAN_CONTAINER:-openclaw}"
+NOVA_IMAGE="${NOVA_PODMAN_IMAGE:-${NOVA_IMAGE:-nova:local}}"
+NOVA_CONTAINER_NAME="${NOVA_PODMAN_CONTAINER:-nova}"
 PLATFORM_NAME="$(uname -s 2>/dev/null || echo unknown)"
 HOST_GATEWAY_PORT="${NOVA_PODMAN_GATEWAY_HOST_PORT:-${NOVA_GATEWAY_PORT:-18789}}"
 QUADLET_GATEWAY_PORT="18789"
@@ -49,11 +49,11 @@ fail() {
 
 run_podman_pull() {
   local image="$1"
-  openclaw_host_timeout_cmd "$PODMAN_PULL_TIMEOUT" podman pull "$image"
+  nova_host_timeout_cmd "$PODMAN_PULL_TIMEOUT" podman pull "$image"
 }
 
 run_podman_build() {
-  openclaw_host_timeout_cmd "$PODMAN_BUILD_TIMEOUT" podman build "$@"
+  nova_host_timeout_cmd "$PODMAN_BUILD_TIMEOUT" podman build "$@"
 }
 
 validate_single_line_value() {
@@ -337,7 +337,7 @@ if is_root; then
   echo "Run scripts/podman/setup.sh as your normal user so Podman stays rootless." >&2
   exit 1
 fi
-if [[ "$NOVA_IMAGE" == "openclaw:local" ]] && [[ ! -f "$REPO_PATH/Dockerfile" ]]; then
+if [[ "$NOVA_IMAGE" == "nova:local" ]] && [[ ! -f "$REPO_PATH/Dockerfile" ]]; then
   echo "Dockerfile not found at $REPO_PATH. Set NOVA_REPO_PATH to the repo root." >&2
   exit 1
 fi
@@ -354,7 +354,7 @@ if [[ -z "$NOVA_HOME" ]]; then
   exit 1
 fi
 if [[ -z "$NOVA_CONFIG_DIR" ]]; then
-  NOVA_CONFIG_DIR="$NOVA_HOME/.openclaw"
+  NOVA_CONFIG_DIR="$NOVA_HOME/.nova"
 fi
 if [[ -z "$NOVA_WORKSPACE_DIR" ]]; then
   NOVA_WORKSPACE_DIR="$NOVA_CONFIG_DIR/workspace"
@@ -374,8 +374,8 @@ ensure_private_existing_dir_owned_by_user "workspace directory" "$NOVA_WORKSPACE
 NOVA_IMAGE_APT_PACKAGES="${NOVA_IMAGE_APT_PACKAGES-${NOVA_DOCKER_APT_PACKAGES:-}}"
 NOVA_IMAGE_PIP_PACKAGES="${NOVA_IMAGE_PIP_PACKAGES:-}"
 BUILD_ARGS=()
-BUILD_GIT_COMMIT="$(openclaw_resolve_git_commit "$REPO_PATH")"
-BUILD_TIMESTAMP="$(openclaw_resolve_build_timestamp)"
+BUILD_GIT_COMMIT="$(nova_resolve_git_commit "$REPO_PATH")"
+BUILD_TIMESTAMP="$(nova_resolve_build_timestamp)"
 BUILD_ARGS+=(--build-arg "NOVA_BUILD_TIMESTAMP=${BUILD_TIMESTAMP}")
 if [[ "$BUILD_GIT_COMMIT" =~ ^[0-9a-fA-F]{40}$ ]]; then
   BUILD_ARGS+=(--build-arg "GIT_COMMIT=${BUILD_GIT_COMMIT}")
@@ -393,7 +393,7 @@ if [[ -n "${NOVA_INSTALL_BROWSER:-}" ]]; then
   BUILD_ARGS+=(--build-arg "NOVA_INSTALL_BROWSER=${NOVA_INSTALL_BROWSER}")
 fi
 
-if [[ "$NOVA_IMAGE" == "openclaw:local" ]]; then
+if [[ "$NOVA_IMAGE" == "nova:local" ]]; then
   echo "Building image $NOVA_IMAGE ..."
   run_podman_build -t "$NOVA_IMAGE" -f "$REPO_PATH/Dockerfile" "${BUILD_ARGS[@]+"${BUILD_ARGS[@]}"}" "$REPO_PATH"
 else
@@ -419,7 +419,7 @@ fi
 upsert_env_var "$ENV_FILE" "NOVA_PODMAN_CONTAINER" "$NOVA_CONTAINER_NAME"
 upsert_env_var "$ENV_FILE" "NOVA_PODMAN_IMAGE" "$NOVA_IMAGE"
 
-CONFIG_JSON="$NOVA_CONFIG_DIR/openclaw.json"
+CONFIG_JSON="$NOVA_CONFIG_DIR/nova.json"
 if [[ ! -f "$CONFIG_JSON" ]]; then
   (
     umask 077
@@ -443,7 +443,7 @@ seed_local_control_ui_origins "$CONFIG_JSON" "$SEED_GATEWAY_PORT"
 
 if [[ "$INSTALL_QUADLET" == true ]]; then
   QUADLET_DIR="$NOVA_HOME/.config/containers/systemd"
-  QUADLET_DST="$QUADLET_DIR/openclaw.container"
+  QUADLET_DST="$QUADLET_DIR/nova.container"
   echo "Installing Quadlet to $QUADLET_DST ..."
   mkdir -p "$QUADLET_DIR"
   ensure_safe_existing_dir "quadlet directory" "$QUADLET_DIR"
@@ -462,11 +462,11 @@ if [[ "$INSTALL_QUADLET" == true ]]; then
 
   if command -v systemctl >/dev/null 2>&1; then
     echo "Reloading and starting user service..."
-    if systemctl --user daemon-reload && systemctl --user start openclaw.service; then
+    if systemctl --user daemon-reload && systemctl --user start nova.service; then
       echo "Quadlet installed and service started."
     else
       echo "Quadlet installed, but automatic start failed." >&2
-      echo "Try: systemctl --user daemon-reload && systemctl --user start openclaw.service" >&2
+      echo "Try: systemctl --user daemon-reload && systemctl --user start nova.service" >&2
       if command -v loginctl >/dev/null 2>&1; then
         echo "For boot persistence on headless hosts, you may also need: sudo loginctl enable-linger $(whoami)" >&2
       fi
@@ -480,6 +480,6 @@ fi
 
 echo
 echo "Next:"
-echo "  ./scripts/run-openclaw-podman.sh launch"
-echo "  ./scripts/run-openclaw-podman.sh launch setup"
-echo "  openclaw --container $NOVA_CONTAINER_NAME dashboard --no-open"
+echo "  ./scripts/run-nova-podman.sh launch"
+echo "  ./scripts/run-nova-podman.sh launch setup"
+echo "  nova --container $NOVA_CONTAINER_NAME dashboard --no-open"

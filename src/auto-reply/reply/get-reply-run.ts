@@ -36,7 +36,7 @@ import {
 } from "../../config/sessions/sqlite-marker.js";
 import type { PendingSkillSuggestion, SessionEntry } from "../../config/sessions/types.js";
 import { resolveSilentReplySettings } from "../../config/silent-reply.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { measureDiagnosticsTimelineSpan } from "../../infra/diagnostics-timeline.js";
 import { resolveHeartbeatRunScope } from "../../infra/heartbeat-run-scope.js";
@@ -157,7 +157,7 @@ type InternalGetReplyOptions = BaseInternalGetReplyOptions & {
   extractedFileImages?: ExtractedFileImage[];
 };
 
-type AgentDefaults = NonNullable<OpenClawConfig["agents"]>["defaults"];
+type AgentDefaults = NonNullable<NovaConfig["agents"]>["defaults"];
 type ExecOverrides = Pick<ExecToolDefaults, "host" | "security" | "ask" | "node" | "nodeCwd">;
 const EPOCH_MILLISECONDS_THRESHOLD = 1_000_000_000_000;
 
@@ -432,11 +432,11 @@ function hasReplyTargetContext(ctx: MsgContext | TemplateContext): boolean {
 type RunPreparedReplyParams = {
   ctx: MsgContext;
   sessionCtx: TemplateContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   agentDir: string;
   agentCfg: AgentDefaults;
-  sessionCfg: OpenClawConfig["session"];
+  sessionCfg: NovaConfig["session"];
   commandAuthorized: boolean;
   command: ReturnType<typeof buildCommandContext>;
   commandSource?: string;
@@ -1519,7 +1519,7 @@ export async function runPreparedReply(
           // LLM-boundary stamping site (normalizeMessagesForLlmBoundary) can
           // derive a stable per-message `[DOW YYYY-MM-DD HH:MM TZ]` prefix that
           // is identical whether this turn is sent as the current turn or
-          // replayed as history. See: https://github.com/openclaw/openclaw/issues/3658
+          // replayed as history. See: https://github.com/nova/nova/issues/3658
           ...(userTurnTimestamp ? { timestamp: userTurnTimestamp } : {}),
           // Direct transcripts keep their existing identity-storage boundary.
           sender: persistGroupSender

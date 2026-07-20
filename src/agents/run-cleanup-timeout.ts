@@ -62,7 +62,7 @@ function resolveAgentCleanupStepTimeoutMs(params: {
   }
 
   const env = params.env ?? process.env;
-  if (params.step === "openclaw-trajectory-flush") {
+  if (params.step === "nova-trajectory-flush") {
     const trajectoryTimeoutMs = parseTimeoutEnvValue(env[TRAJECTORY_FLUSH_TIMEOUT_ENV]);
     if (trajectoryTimeoutMs !== undefined) {
       return trajectoryTimeoutMs;

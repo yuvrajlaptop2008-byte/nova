@@ -47,7 +47,7 @@ function createContext(): { context: ApplicationContext; client: GatewayBrowserC
       type: "hello-ok" as const,
       protocol: 1,
       auth: { role: "operator", scopes: ["operator.read", "operator.admin"] },
-      features: { methods: ["openclaw.setup.detect", "openclaw.setup.verify"] },
+      features: { methods: ["nova.setup.detect", "nova.setup.verify"] },
     },
     assistantAgentId: "main",
     sessionKey: "main",
@@ -75,7 +75,7 @@ function createContext(): { context: ApplicationContext; client: GatewayBrowserC
     client,
     context: {
       gateway,
-      basePath: "/openclaw",
+      basePath: "/nova",
       navigate: vi.fn(),
     } as unknown as ApplicationContext,
   };
@@ -86,7 +86,7 @@ async function mountPage(
   routeData: ModelSetupRouteData,
 ): Promise<{ page: TestModelSetupPage; provider: ApplicationContextProvider }> {
   const provider = createApplicationContextProvider(context);
-  const page = document.createElement("openclaw-model-setup-page") as TestModelSetupPage;
+  const page = document.createElement("nova-model-setup-page") as TestModelSetupPage;
   page.routeData = routeData;
   provider.append(page);
   document.body.append(provider);
@@ -138,7 +138,7 @@ describe("ModelSetupPage catalog icons", () => {
       ).toBe("blob:ollama-icon");
     });
     expect(fetchMock).toHaveBeenCalledWith(
-      `/openclaw/__openclaw__/catalog-icon/${encodeURIComponent(recommendedIconUrl)}`,
+      `/nova/__nova__/catalog-icon/${encodeURIComponent(recommendedIconUrl)}`,
       expect.objectContaining({ credentials: "same-origin" }),
     );
     expect(page.innerHTML).not.toContain(recommendedIconUrl);

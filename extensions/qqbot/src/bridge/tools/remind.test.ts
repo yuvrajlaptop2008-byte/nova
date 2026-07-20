@@ -1,8 +1,4 @@
-import type {
-  AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginToolContext,
-} from "openclaw/plugin-sdk/core";
+import type { AnyAgentTool, NovaPluginApi, NovaPluginToolContext } from "nova/plugin-sdk/core";
 // Qqbot tests cover remind plugin behavior.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -10,21 +6,21 @@ const { callGatewayToolMock } = vi.hoisted(() => ({
   callGatewayToolMock: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/agent-harness-runtime", () => ({
+vi.mock("nova/plugin-sdk/agent-harness-runtime", () => ({
   callGatewayTool: callGatewayToolMock,
 }));
 
 import { registerRemindTool } from "./remind.js";
 
-function createRegisteredRemindTool(context: OpenClawPluginToolContext = {}): AnyAgentTool {
-  let factory: ((ctx: OpenClawPluginToolContext) => AnyAgentTool) | undefined;
+function createRegisteredRemindTool(context: NovaPluginToolContext = {}): AnyAgentTool {
+  let factory: ((ctx: NovaPluginToolContext) => AnyAgentTool) | undefined;
   const api = {
-    registerTool(tool: AnyAgentTool | ((ctx: OpenClawPluginToolContext) => AnyAgentTool)) {
+    registerTool(tool: AnyAgentTool | ((ctx: NovaPluginToolContext) => AnyAgentTool)) {
       if (typeof tool === "function") {
         factory = tool;
       }
     },
-  } as unknown as OpenClawPluginApi;
+  } as unknown as NovaPluginApi;
   registerRemindTool(api);
   if (!factory) {
     throw new Error("Expected QQBot reminder tool factory");

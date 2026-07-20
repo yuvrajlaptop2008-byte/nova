@@ -383,10 +383,7 @@ function extractPairingQrTerminalText(record: Record<string, unknown>): string {
       continue;
     }
     const blockRecord = block as Record<string, unknown>;
-    if (
-      blockRecord.type === "openclaw_pairing_qr" &&
-      typeof blockRecord.terminalText === "string"
-    ) {
+    if (blockRecord.type === "nova_pairing_qr" && typeof blockRecord.terminalText === "string") {
       const text = sanitizeRenderableText(blockRecord.terminalText).trim();
       if (text) {
         parts.push(text);

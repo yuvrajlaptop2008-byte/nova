@@ -323,7 +323,7 @@ function renderSessionDetailPanel(
               `
             : nothing}
         </div>
-        <openclaw-tooltip .content=${t("usage.details.close")}>
+        <nova-tooltip .content=${t("usage.details.close")}>
           <button
             class="btn btn--sm btn--ghost"
             @click=${onClose}
@@ -331,7 +331,7 @@ function renderSessionDetailPanel(
           >
             ×
           </button>
-        </openclaw-tooltip>
+        </nova-tooltip>
       </div>
       ${session.scope === "family" && session.includedSessionIds?.length
         ? html`

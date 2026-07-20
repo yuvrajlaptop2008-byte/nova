@@ -406,7 +406,7 @@ export abstract class AppSidebarMenusElement extends AppSidebarSessionGroupsElem
     return keyed(
       menu,
       html`
-        <openclaw-session-menu
+        <nova-session-menu
           .session=${{
             label: session.label,
             icon: session.icon,
@@ -489,7 +489,7 @@ export abstract class AppSidebarMenusElement extends AppSidebarSessionGroupsElem
                 break;
             }
           }}
-        ></openclaw-session-menu>
+        ></nova-session-menu>
       `,
     );
   }

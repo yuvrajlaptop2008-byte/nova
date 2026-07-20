@@ -1,11 +1,11 @@
-import { resolveFfmpegBin } from "openclaw/plugin-sdk/media-runtime";
+import { resolveFfmpegBin } from "nova/plugin-sdk/media-runtime";
 // Google tests cover google plugin behavior.
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { normalizeTranscriptForMatch } from "openclaw/plugin-sdk/provider-test-contracts";
-import { isLiveTestEnabled } from "openclaw/plugin-sdk/test-live";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import { normalizeTranscriptForMatch } from "nova/plugin-sdk/provider-test-contracts";
+import { isLiveTestEnabled } from "nova/plugin-sdk/test-live";
 import { describe, expect, it } from "vitest";
 import plugin from "./index.js";
 import { createGeminiWebSearchProvider } from "./src/gemini-web-search-provider.js";

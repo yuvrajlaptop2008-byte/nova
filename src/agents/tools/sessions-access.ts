@@ -4,7 +4,7 @@
  * Adds Nova session-key alias normalization and sandbox requester scoping over SDK visibility contracts.
  */
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveSandboxSessionToolsVisibility } from "../../plugin-sdk/session-visibility.js";
 import { isSubagentSessionKey } from "../../routing/session-key.js";
 import { resolveInternalSessionKey, resolveMainSessionAlias } from "./sessions-resolution.js";
@@ -18,7 +18,7 @@ export {
 
 /** Resolves the requester context used to filter sandboxed session-tool access. */
 export function resolveSandboxedSessionToolContext(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentSessionKey?: string;
   sandboxed?: boolean;
 }): {

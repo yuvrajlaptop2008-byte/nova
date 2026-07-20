@@ -1,11 +1,11 @@
 import { createHash } from "node:crypto";
-import { listAgentIds, resolveDefaultAgentId } from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { parseAgentSessionKey } from "openclaw/plugin-sdk/routing";
-import { resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { listAgentIds, resolveDefaultAgentId } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { parseAgentSessionKey } from "nova/plugin-sdk/routing";
+import { resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { CodexThread } from "./app-server/protocol.js";
 import { importCodexThreadHistoryToTranscript } from "./app-server/transcript-mirror.js";
 import {
@@ -77,7 +77,7 @@ export function adoptionSessionKeyRest(sessionKey: string): string {
   return parseAgentSessionKey(trimmed)?.rest ?? trimmed;
 }
 
-export function listSupervisionAgentIds(config: OpenClawConfig): string[] {
+export function listSupervisionAgentIds(config: NovaConfig): string[] {
   const defaultAgentId = resolveDefaultAgentId(config);
   return [defaultAgentId, ...listAgentIds(config).filter((agentId) => agentId !== defaultAgentId)];
 }
@@ -134,7 +134,7 @@ function readNodeSessionMarker(entry: CatalogSessionEntry): CodexNodeSessionMark
 }
 
 export function listNodeAdoptedSessionEntries(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   runtime: PluginRuntime;
   includeInitializing?: boolean;
 }): Map<string, AdoptedSessionEntry> {
@@ -176,7 +176,7 @@ export function listNodeAdoptedSessionEntries(params: {
 }
 
 export function findNodeAdoptedSessionEntry(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: PluginRuntime;
   hostId: string;
   threadId: string;
@@ -202,7 +202,7 @@ export function nodeSessionMarker(params: {
 }
 
 export async function finalizeNodeAdoptedSession(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   adopted: AdoptedSessionEntry;
   marker: CodexNodeSessionMarker;
 }): Promise<void> {
@@ -264,8 +264,8 @@ export async function finalizeNodeAdoptedSession(params: {
 }
 
 export async function createOrReuseNodeAdoptedSession(params: {
-  api: OpenClawPluginApi;
-  config: OpenClawConfig;
+  api: NovaPluginApi;
+  config: NovaConfig;
   hostId: string;
   nodeId: string;
   record: CodexSessionCatalogSession;

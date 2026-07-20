@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-build.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"
-IMAGE_NAME="${NOVA_CLEANUP_SMOKE_IMAGE:-openclaw-cleanup-smoke:local}"
+IMAGE_NAME="${NOVA_CLEANUP_SMOKE_IMAGE:-nova-cleanup-smoke:local}"
 DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${NOVA_CLEANUP_SMOKE_DOCKER_TIMEOUT:-600s}}"
 
 resolve_default_cleanup_platform() {

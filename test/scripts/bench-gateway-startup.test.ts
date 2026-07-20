@@ -140,7 +140,7 @@ describe("gateway startup benchmark script", () => {
   });
 
   it("does not disable local-check policy in the child gateway environment", () => {
-    const env = testing.sanitizedEnv("/tmp/openclaw-bench", "/tmp/openclaw-bench/config.json", {
+    const env = testing.sanitizedEnv("/tmp/nova-bench", "/tmp/nova-bench/config.json", {
       config: {},
       id: "default",
       name: "gateway default",
@@ -422,7 +422,7 @@ describe("gateway startup benchmark script", () => {
   });
 
   it("writes 50-plugin fixtures as a parent load path with explicit startup activation", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-config-test-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-config-test-"));
     try {
       const configPath = testing.writeConfig(root, {
         config: {},
@@ -438,10 +438,7 @@ describe("gateway startup benchmark script", () => {
       expect(config.plugins?.load?.paths).toEqual([path.join(root, "plugins")]);
       expect(config.plugins?.allow).toEqual(["bench-plugin-01", "bench-plugin-02"]);
       const manifest = JSON.parse(
-        fs.readFileSync(
-          path.join(root, "plugins", "bench-plugin-01", "openclaw.plugin.json"),
-          "utf8",
-        ),
+        fs.readFileSync(path.join(root, "plugins", "bench-plugin-01", "nova.plugin.json"), "utf8"),
       ) as { activation?: { onStartup?: boolean } };
       expect(manifest.activation?.onStartup).toBe(true);
     } finally {
@@ -450,7 +447,7 @@ describe("gateway startup benchmark script", () => {
   });
 
   it("keeps startup-lazy plugin fixtures opted out of startup activation", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-config-test-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-config-test-"));
     try {
       testing.writeConfig(root, {
         config: {},
@@ -460,10 +457,7 @@ describe("gateway startup benchmark script", () => {
         pluginCount: 1,
       });
       const manifest = JSON.parse(
-        fs.readFileSync(
-          path.join(root, "plugins", "bench-plugin-01", "openclaw.plugin.json"),
-          "utf8",
-        ),
+        fs.readFileSync(path.join(root, "plugins", "bench-plugin-01", "nova.plugin.json"), "utf8"),
       ) as { activation?: { onStartup?: boolean } };
       expect(manifest.activation?.onStartup).toBe(false);
     } finally {

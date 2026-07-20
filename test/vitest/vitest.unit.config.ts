@@ -153,9 +153,7 @@ export function createUnitVitestConfigWithOptions(
       ...(isolate ? { runner: undefined } : { runner: nonIsolatedRunnerPath }),
       setupFiles: [
         ...new Set(
-          [...(sharedTest.setupFiles ?? []), "test/setup-openclaw-runtime.ts"].map(
-            resolveRepoRootPath,
-          ),
+          [...(sharedTest.setupFiles ?? []), "test/setup-nova-runtime.ts"].map(resolveRepoRootPath),
         ),
       ],
       include: envIncludePatterns ?? cliIncludePatterns ?? defaultIncludePatterns,

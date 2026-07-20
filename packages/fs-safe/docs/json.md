@@ -88,7 +88,7 @@ read instead of a full `root()` handle.
 ```ts
 const result = readRootJsonObjectSync({
   rootDir: "/safe/workspace",
-  relativePath: "plugin/openclaw.plugin.json",
+  relativePath: "plugin/nova.plugin.json",
   boundaryLabel: "plugin manifest",
   maxBytes: 256 * 1024,
 });

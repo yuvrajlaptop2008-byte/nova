@@ -1,6 +1,6 @@
 // Daemon lifecycle core tests cover service lifecycle transitions and platform adapters.
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { GatewayServiceControlArgs } from "../../daemon/service-types.js";
 import type { GatewayService } from "../../daemon/service.js";
 import {
@@ -12,7 +12,7 @@ import {
   stubEmptyGatewayEnv,
 } from "./test-helpers/lifecycle-core-harness.js";
 
-const loadConfig = vi.fn<() => OpenClawConfig>(() => ({
+const loadConfig = vi.fn<() => NovaConfig>(() => ({
   gateway: {
     auth: {
       token: "config-token",
@@ -177,7 +177,7 @@ describe("runServiceRestart token drift", () => {
         runServiceStart({
           serviceNoun: "Gateway",
           service: unsupportedService,
-          renderStartHints: () => ["openclaw gateway install"],
+          renderStartHints: () => ["nova gateway install"],
           opts: { json: true },
           onNotLoaded,
         }),
@@ -221,7 +221,7 @@ describe("runServiceRestart token drift", () => {
         runServiceRestart({
           serviceNoun: "Gateway",
           service: unsupportedService,
-          renderStartHints: () => ["openclaw gateway install"],
+          renderStartHints: () => ["nova gateway install"],
           opts: { json: true },
           onNotLoaded,
           postRestartCheck,
@@ -236,28 +236,28 @@ describe("runServiceRestart token drift", () => {
 
   it("prints the container restart hint when restart is requested for a not-loaded service", async () => {
     service.isLoaded.mockResolvedValue(false);
-    vi.stubEnv("NOVA_CONTAINER_HINT", "openclaw-demo-container");
+    vi.stubEnv("NOVA_CONTAINER_HINT", "nova-demo-container");
 
     await runServiceRestart({
       serviceNoun: "Gateway",
       service,
       renderStartHints: () => [
-        "Restart the container or the service that manages it for openclaw-demo-container.",
-        "openclaw gateway install",
+        "Restart the container or the service that manages it for nova-demo-container.",
+        "nova gateway install",
       ],
       opts: { json: false },
     });
 
     expect(runtimeLogs).toContain("Gateway service not loaded.");
     expect(runtimeLogs).toContain(
-      "Start with: Restart the container or the service that manages it for openclaw-demo-container.",
+      "Start with: Restart the container or the service that manages it for nova-demo-container.",
     );
   });
 
   it("repairs managed port drift before restarting", async () => {
     service.readRuntime.mockResolvedValue({ status: "running", pid: 1234 });
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway", "--port", "18789"],
+      programArguments: ["nova", "gateway", "--port", "18789"],
       environment: { NOVA_GATEWAY_PORT: "18789" },
     });
     type RepairLoadedService = NonNullable<
@@ -603,7 +603,7 @@ describe("runServiceRestart token drift", () => {
   it("warns in json when an already-running gateway definition needs repair", async () => {
     service.readRuntime.mockResolvedValue({ status: "running", pid: 4242 });
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway", "run"],
+      programArguments: ["nova", "gateway", "run"],
       environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
 
@@ -613,7 +613,7 @@ describe("runServiceRestart token drift", () => {
     expect(payload.result).toBe("already-running");
     expect(payload.warnings).toEqual([
       expect.stringMatching(
-        /^Gateway service already running, but its installed service definition needs repair: service was installed by Nova 2026\.4\.24, current CLI is .+; run `openclaw gateway restart` to apply\.$/,
+        /^Gateway service already running, but its installed service definition needs repair: service was installed by Nova 2026\.4\.24, current CLI is .+; run `nova gateway restart` to apply\.$/,
       ),
     ]);
     expect(service.start).not.toHaveBeenCalled();
@@ -622,7 +622,7 @@ describe("runServiceRestart token drift", () => {
   it("prints one warning line when an already-running gateway definition needs repair", async () => {
     service.readRuntime.mockResolvedValue({ status: "running", pid: 4242 });
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway", "run"],
+      programArguments: ["nova", "gateway", "run"],
       environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
 
@@ -638,7 +638,7 @@ describe("runServiceRestart token drift", () => {
       ),
     );
     expect(repairWarnings).toHaveLength(1);
-    expect(repairWarnings[0]).toContain("run `openclaw gateway restart` to apply.");
+    expect(repairWarnings[0]).toContain("run `nova gateway restart` to apply.");
     expect(service.start).not.toHaveBeenCalled();
   });
 
@@ -715,7 +715,7 @@ describe("runServiceRestart token drift", () => {
 
   it("repairs stale loaded services during start before reporting success", async () => {
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway"],
+      programArguments: ["nova", "gateway"],
       environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
     type RepairLoadedService = NonNullable<
@@ -762,7 +762,7 @@ describe("runServiceRestart token drift", () => {
 
   it("fails start with an install hint when a stale loaded service has no repair callback", async () => {
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway"],
+      programArguments: ["nova", "gateway"],
       environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
 
@@ -771,7 +771,7 @@ describe("runServiceRestart token drift", () => {
     const payload = readJsonLog<{ ok?: boolean; error?: string; hints?: string[] }>();
     expect(payload.ok).toBe(false);
     expect(payload.error).toContain("service needs repair");
-    expect(payload.hints).toEqual(["openclaw gateway install --force"]);
+    expect(payload.hints).toEqual(["nova gateway install --force"]);
     expect(service.start).not.toHaveBeenCalled();
   });
 
@@ -793,7 +793,7 @@ describe("runServiceRestart token drift", () => {
     await runServiceStart({
       serviceNoun: "Gateway",
       service,
-      renderStartHints: () => ["openclaw gateway install"],
+      renderStartHints: () => ["nova gateway install"],
       opts: { json: true },
     });
 
@@ -805,10 +805,10 @@ describe("runServiceRestart token drift", () => {
     }>();
     expect(payload.ok).toBe(true);
     expect(payload.result).toBe("not-loaded");
-    expect(payload.hints?.includes("openclaw gateway install")).toBe(true);
+    expect(payload.hints?.includes("nova gateway install")).toBe(true);
     expect(
       payload.hintItems?.some(
-        (item) => item.kind === "install" && item.text === "openclaw gateway install",
+        (item) => item.kind === "install" && item.text === "nova gateway install",
       ),
     ).toBe(true);
     expect(service.start).not.toHaveBeenCalled();

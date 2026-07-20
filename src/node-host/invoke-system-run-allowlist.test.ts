@@ -134,7 +134,7 @@ describe("resolveSystemRunExecArgv", () => {
   it.runIf(process.platform === "win32")(
     "executes the allowlisted path instead of a workspace shadow executable",
     async () => {
-      const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-windows-shadow-"));
+      const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-windows-shadow-"));
       const trustedBin = path.join(fixtureRoot, "trusted-bin");
       const workspace = path.join(fixtureRoot, "workspace");
       fs.mkdirSync(trustedBin);

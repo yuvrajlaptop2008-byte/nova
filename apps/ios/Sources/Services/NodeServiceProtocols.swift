@@ -1,19 +1,19 @@
 import CoreLocation
 import Foundation
-import OpenClawKit
+import NovaKit
 import UIKit
 
-typealias OpenClawCameraSnapResult = (format: String, base64: String, width: Int, height: Int)
-typealias OpenClawCameraClipResult = (format: String, base64: String, durationMs: Int, hasAudio: Bool)
+typealias NovaCameraSnapResult = (format: String, base64: String, width: Int, height: Int)
+typealias NovaCameraClipResult = (format: String, base64: String, durationMs: Int, hasAudio: Bool)
 
 protocol CameraServicing: Sendable {
     func listDevices() async -> [CameraController.CameraDeviceInfo]
     func snap(
-        params: OpenClawCameraSnapParams,
-        defaultFacing: OpenClawCameraFacing) async throws -> OpenClawCameraSnapResult
+        params: NovaCameraSnapParams,
+        defaultFacing: NovaCameraFacing) async throws -> NovaCameraSnapResult
     func clip(
-        params: OpenClawCameraClipParams,
-        defaultFacing: OpenClawCameraFacing) async throws -> OpenClawCameraClipResult
+        params: NovaCameraClipParams,
+        defaultFacing: NovaCameraFacing) async throws -> NovaCameraClipResult
 }
 
 protocol ScreenRecordingServicing: Sendable {
@@ -29,10 +29,10 @@ protocol ScreenRecordingServicing: Sendable {
 protocol LocationServicing: Sendable {
     func authorizationStatus() -> CLAuthorizationStatus
     func accuracyAuthorization() -> CLAccuracyAuthorization
-    func ensureAuthorization(mode: OpenClawLocationMode) async -> CLAuthorizationStatus
+    func ensureAuthorization(mode: NovaLocationMode) async -> CLAuthorizationStatus
     func currentLocation(
-        params: OpenClawLocationGetParams,
-        desiredAccuracy: OpenClawLocationAccuracy,
+        params: NovaLocationGetParams,
+        desiredAccuracy: NovaLocationAccuracy,
         maxAgeMs: Int?,
         timeoutMs: Int?) async throws -> CLLocation
     func setBackgroundLocationUpdatesEnabled(_ enabled: Bool)
@@ -44,32 +44,32 @@ protocol LocationServicing: Sendable {
 
 @MainActor
 protocol DeviceStatusServicing: Sendable {
-    func status() async throws -> OpenClawDeviceStatusPayload
-    func info() -> OpenClawDeviceInfoPayload
+    func status() async throws -> NovaDeviceStatusPayload
+    func info() -> NovaDeviceInfoPayload
 }
 
 protocol PhotosServicing: Sendable {
-    func latest(params: OpenClawPhotosLatestParams) async throws -> OpenClawPhotosLatestPayload
+    func latest(params: NovaPhotosLatestParams) async throws -> NovaPhotosLatestPayload
 }
 
 protocol ContactsServicing: Sendable {
-    func search(params: OpenClawContactsSearchParams) async throws -> OpenClawContactsSearchPayload
-    func add(params: OpenClawContactsAddParams) async throws -> OpenClawContactsAddPayload
+    func search(params: NovaContactsSearchParams) async throws -> NovaContactsSearchPayload
+    func add(params: NovaContactsAddParams) async throws -> NovaContactsAddPayload
 }
 
 protocol CalendarServicing: Sendable {
-    func events(params: OpenClawCalendarEventsParams) async throws -> OpenClawCalendarEventsPayload
-    func add(params: OpenClawCalendarAddParams) async throws -> OpenClawCalendarAddPayload
+    func events(params: NovaCalendarEventsParams) async throws -> NovaCalendarEventsPayload
+    func add(params: NovaCalendarAddParams) async throws -> NovaCalendarAddPayload
 }
 
 protocol RemindersServicing: Sendable {
-    func list(params: OpenClawRemindersListParams) async throws -> OpenClawRemindersListPayload
-    func add(params: OpenClawRemindersAddParams) async throws -> OpenClawRemindersAddPayload
+    func list(params: NovaRemindersListParams) async throws -> NovaRemindersListPayload
+    func add(params: NovaRemindersAddParams) async throws -> NovaRemindersAddPayload
 }
 
 protocol MotionServicing: Sendable {
-    func activities(params: OpenClawMotionActivityParams) async throws -> OpenClawMotionActivityPayload
-    func pedometer(params: OpenClawPedometerParams) async throws -> OpenClawPedometerPayload
+    func activities(params: NovaMotionActivityParams) async throws -> NovaMotionActivityPayload
+    func pedometer(params: NovaPedometerParams) async throws -> NovaPedometerPayload
 }
 
 struct WatchMessagingStatus: Equatable {
@@ -101,7 +101,7 @@ struct WatchExecApprovalResolveEvent: Codable, Equatable {
     var replyId: String
     var approvalId: String
     var gatewayStableID: String?
-    var decision: OpenClawWatchExecApprovalDecision
+    var decision: NovaWatchExecApprovalDecision
     var sentAtMs: Int64?
     var transport: String
 }
@@ -141,7 +141,7 @@ struct WatchAppSnapshotRequestEvent: Equatable {
 
 struct WatchAppCommandEvent: Codable, Equatable {
     var commandId: String
-    var command: OpenClawWatchAppCommand
+    var command: NovaWatchAppCommand
     var sessionKey: String?
     var gatewayStableID: String?
     var text: String?
@@ -168,20 +168,20 @@ protocol WatchMessagingServicing: AnyObject, Sendable {
     func sendDirectNodeSetup(setupCode: String) async throws -> WatchNotificationSendResult
     func sendNotification(
         id: String,
-        params: OpenClawWatchNotifyParams,
+        params: NovaWatchNotifyParams,
         gatewayStableID: String?) async throws -> WatchNotificationSendResult
     func sendExecApprovalPrompt(
-        _ message: OpenClawWatchExecApprovalPromptMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalPromptMessage) async throws -> WatchNotificationSendResult
     func sendExecApprovalResolved(
-        _ message: OpenClawWatchExecApprovalResolvedMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalResolvedMessage) async throws -> WatchNotificationSendResult
     func sendExecApprovalExpired(
-        _ message: OpenClawWatchExecApprovalExpiredMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalExpiredMessage) async throws -> WatchNotificationSendResult
     func syncExecApprovalSnapshot(
-        _ message: OpenClawWatchExecApprovalSnapshotMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalSnapshotMessage) async throws -> WatchNotificationSendResult
     func syncAppSnapshot(
-        _ message: OpenClawWatchAppSnapshotMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchAppSnapshotMessage) async throws -> WatchNotificationSendResult
     func sendChatCompletion(
-        _ message: OpenClawWatchChatCompletionMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchChatCompletionMessage) async throws -> WatchNotificationSendResult
 }
 
 extension CameraController: CameraServicing {}

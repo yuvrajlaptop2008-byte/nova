@@ -1,11 +1,11 @@
 import Foundation
-import OpenClawKit
-import OpenClawProtocol
+import NovaKit
+import NovaProtocol
 import Testing
 import UIKit
 import UserNotifications
-@testable import OpenClaw
-@testable import OpenClawChatUI
+@testable import Nova
+@testable import NovaChatUI
 
 @MainActor
 private final class MockVoiceNoteAudioCapture: VoiceNoteAudioCapture {
@@ -35,15 +35,15 @@ private actor CancellingCameraService: CameraServicing {
     }
 
     func snap(
-        params _: OpenClawCameraSnapParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraSnapResult
+        params _: NovaCameraSnapParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraSnapResult
     {
         throw CancellationError()
     }
 
     func clip(
-        params _: OpenClawCameraClipParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraClipResult
+        params _: NovaCameraClipParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraClipResult
     {
         throw CancellationError()
     }
@@ -57,15 +57,15 @@ private actor RecordingCameraService: CameraServicing {
     }
 
     func snap(
-        params _: OpenClawCameraSnapParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraSnapResult
+        params _: NovaCameraSnapParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraSnapResult
     {
         (format: "jpg", base64: "", width: 1, height: 1)
     }
 
     func clip(
-        params _: OpenClawCameraClipParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraClipResult
+        params _: NovaCameraClipParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraClipResult
     {
         self.clipCalls += 1
         return (format: "mp4", base64: "", durationMs: 1, hasAudio: true)
@@ -89,11 +89,11 @@ private actor ApprovalResolutionCapture {
 }
 
 private actor MockHealthSummaryService: HealthSummaryServicing {
-    private(set) var periods: [OpenClawHealthSummaryPeriod] = []
+    private(set) var periods: [NovaHealthSummaryPeriod] = []
 
-    func summary(params: OpenClawHealthSummaryParams) async throws -> OpenClawHealthSummaryPayload {
+    func summary(params: NovaHealthSummaryParams) async throws -> NovaHealthSummaryPayload {
         self.periods.append(params.period)
-        return OpenClawHealthSummaryPayload(
+        return NovaHealthSummaryPayload(
             period: params.period,
             startISO: "2026-07-06T00:00:00Z",
             endISO: "2026-07-12T18:30:00Z",
@@ -118,15 +118,15 @@ private actor BlockingAudioCameraService: CameraServicing {
     }
 
     func snap(
-        params _: OpenClawCameraSnapParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraSnapResult
+        params _: NovaCameraSnapParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraSnapResult
     {
         (format: "jpg", base64: "", width: 1, height: 1)
     }
 
     func clip(
-        params _: OpenClawCameraClipParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraClipResult
+        params _: NovaCameraClipParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraClipResult
     {
         await self.barrier.suspendFirstPreparation()
         try Task.checkCancellation()
@@ -153,7 +153,7 @@ private actor BlockingAudioScreenRecorder: ScreenRecordingServicing {
         await self.barrier.suspendFirstPreparation()
         try Task.checkCancellation()
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("openclaw-screen-test-\(UUID().uuidString).mp4")
+            .appendingPathComponent("nova-screen-test-\(UUID().uuidString).mp4")
         try Data().write(to: url)
         return url.path
     }
@@ -205,8 +205,8 @@ private actor OverlappingCameraService: CameraServicing {
     }
 
     func snap(
-        params _: OpenClawCameraSnapParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraSnapResult
+        params _: NovaCameraSnapParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraSnapResult
     {
         self.snapCount += 1
         if self.snapCount == 1 {
@@ -223,8 +223,8 @@ private actor OverlappingCameraService: CameraServicing {
     }
 
     func clip(
-        params _: OpenClawCameraClipParams,
-        defaultFacing _: OpenClawCameraFacing) async throws -> OpenClawCameraClipResult
+        params _: NovaCameraClipParams,
+        defaultFacing _: NovaCameraFacing) async throws -> NovaCameraClipResult
     {
         throw CancellationError()
     }
@@ -282,7 +282,7 @@ private func waitForTalkCondition(_ condition: @MainActor () -> Bool) async {
     Issue.record("Timed out waiting for Talk state")
 }
 
-private func talkRequest(id: String, command: OpenClawTalkCommand) -> BridgeInvokeRequest {
+private func talkRequest(id: String, command: NovaTalkCommand) -> BridgeInvokeRequest {
     BridgeInvokeRequest(id: id, command: command.rawValue)
 }
 
@@ -299,7 +299,7 @@ private func makeAgentDeepLinkURL(
     key: String? = nil) -> URL
 {
     var components = URLComponents()
-    components.scheme = "openclaw"
+    components.scheme = "nova"
     components.host = "agent"
     var queryItems: [URLQueryItem] = [URLQueryItem(name: "message", value: message)]
     if deliver {
@@ -326,10 +326,10 @@ private func makeWatchChatRawMessage(
     idempotencyKey: String? = nil,
     stopReason: String? = nil) throws -> AnyCodable
 {
-    let message = OpenClawChatMessage(
+    let message = NovaChatMessage(
         role: role,
         content: [
-            OpenClawChatMessageContent(
+            NovaChatMessageContent(
                 type: type,
                 text: text,
                 mimeType: nil,
@@ -354,10 +354,10 @@ private func makeProjectedWatchChatRawMessage(
         "role": role,
         "content": [["type": "text", "text": text]],
         "timestamp": timestamp,
-        "__openclaw": ["id": serverId],
+        "__nova": ["id": serverId],
     ]
     if isMessageToolMirror {
-        object["openclawMessageToolMirror"] = ["toolName": "message"]
+        object["novaMessageToolMirror"] = ["toolName": "message"]
     }
     let data = try JSONSerialization.data(withJSONObject: object)
     return try JSONDecoder().decode(AnyCodable.self, from: data)
@@ -409,18 +409,18 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
         queuedForDelivery: false,
         transport: "sendMessage")
     var sendError: Error?
-    var lastSent: (id: String, params: OpenClawWatchNotifyParams, gatewayStableID: String?)?
+    var lastSent: (id: String, params: NovaWatchNotifyParams, gatewayStableID: String?)?
     var lastDirectNodeSetupCode: String?
-    var lastSentExecApprovalPrompt: OpenClawWatchExecApprovalPromptMessage?
-    var sentExecApprovalPrompts: [OpenClawWatchExecApprovalPromptMessage] = []
-    var lastSentExecApprovalResolved: OpenClawWatchExecApprovalResolvedMessage?
-    var lastSentExecApprovalExpired: OpenClawWatchExecApprovalExpiredMessage?
-    var lastSentExecApprovalSnapshot: OpenClawWatchExecApprovalSnapshotMessage?
-    var sentExecApprovalSnapshots: [OpenClawWatchExecApprovalSnapshotMessage] = []
-    var lastSentAppSnapshot: OpenClawWatchAppSnapshotMessage?
-    var syncExecApprovalSnapshotHandler: ((OpenClawWatchExecApprovalSnapshotMessage) async throws
+    var lastSentExecApprovalPrompt: NovaWatchExecApprovalPromptMessage?
+    var sentExecApprovalPrompts: [NovaWatchExecApprovalPromptMessage] = []
+    var lastSentExecApprovalResolved: NovaWatchExecApprovalResolvedMessage?
+    var lastSentExecApprovalExpired: NovaWatchExecApprovalExpiredMessage?
+    var lastSentExecApprovalSnapshot: NovaWatchExecApprovalSnapshotMessage?
+    var sentExecApprovalSnapshots: [NovaWatchExecApprovalSnapshotMessage] = []
+    var lastSentAppSnapshot: NovaWatchAppSnapshotMessage?
+    var syncExecApprovalSnapshotHandler: ((NovaWatchExecApprovalSnapshotMessage) async throws
         -> WatchNotificationSendResult)?
-    var lastSentChatCompletion: OpenClawWatchChatCompletionMessage?
+    var lastSentChatCompletion: NovaWatchChatCompletionMessage?
     private var statusHandler: (@Sendable (WatchMessagingStatus) -> Void)?
     private var replyHandler: (@Sendable (WatchQuickReplyEvent) -> Void)?
     private var execApprovalResolveHandler: (@Sendable (WatchExecApprovalResolveEvent) -> Void)?
@@ -465,7 +465,7 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
 
     func sendNotification(
         id: String,
-        params: OpenClawWatchNotifyParams,
+        params: NovaWatchNotifyParams,
         gatewayStableID: String?) async throws -> WatchNotificationSendResult
     {
         self.lastSent = (id: id, params: params, gatewayStableID: gatewayStableID)
@@ -484,7 +484,7 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
     }
 
     func sendExecApprovalPrompt(
-        _ message: OpenClawWatchExecApprovalPromptMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalPromptMessage) async throws -> WatchNotificationSendResult
     {
         self.lastSentExecApprovalPrompt = message
         self.sentExecApprovalPrompts.append(message)
@@ -495,7 +495,7 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
     }
 
     func sendExecApprovalResolved(
-        _ message: OpenClawWatchExecApprovalResolvedMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalResolvedMessage) async throws -> WatchNotificationSendResult
     {
         self.lastSentExecApprovalResolved = message
         if let sendError {
@@ -505,7 +505,7 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
     }
 
     func sendExecApprovalExpired(
-        _ message: OpenClawWatchExecApprovalExpiredMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalExpiredMessage) async throws -> WatchNotificationSendResult
     {
         self.lastSentExecApprovalExpired = message
         if let sendError {
@@ -515,7 +515,7 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
     }
 
     func syncExecApprovalSnapshot(
-        _ message: OpenClawWatchExecApprovalSnapshotMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchExecApprovalSnapshotMessage) async throws -> WatchNotificationSendResult
     {
         self.lastSentExecApprovalSnapshot = message
         self.sentExecApprovalSnapshots.append(message)
@@ -529,7 +529,7 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
     }
 
     func syncAppSnapshot(
-        _ message: OpenClawWatchAppSnapshotMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchAppSnapshotMessage) async throws -> WatchNotificationSendResult
     {
         self.lastSentAppSnapshot = message
         if let sendError {
@@ -539,7 +539,7 @@ private final class MockWatchMessagingService: @preconcurrency WatchMessagingSer
     }
 
     func sendChatCompletion(
-        _ message: OpenClawWatchChatCompletionMessage) async throws -> WatchNotificationSendResult
+        _ message: NovaWatchChatCompletionMessage) async throws -> WatchNotificationSendResult
     {
         self.lastSentChatCompletion = message
         if let sendError {
@@ -724,7 +724,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 @Suite(.serialized) struct NodeAppModelInvokeTests {
     @Test @MainActor func `decode params fails without JSON`() {
         #expect(throws: Error.self) {
-            _ = try NodeAppModel._test_decodeParams(OpenClawCanvasNavigateParams.self, from: nil)
+            _ = try NodeAppModel._test_decodeParams(NovaCanvasNavigateParams.self, from: nil)
         }
     }
 
@@ -741,11 +741,11 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let appModel = NodeAppModel(healthSummaryService: service)
         let request = BridgeInvokeRequest(
             id: "health-1",
-            command: OpenClawHealthCommand.summary.rawValue,
+            command: NovaHealthCommand.summary.rawValue,
             paramsJSON: #"{"period":"today"}"#)
 
         let response = await appModel._test_handleInvoke(request)
-        let payload = try decodeTalkPayload(OpenClawHealthSummaryPayload.self, from: response)
+        let payload = try decodeTalkPayload(NovaHealthSummaryPayload.self, from: response)
 
         #expect(response.ok)
         #expect(payload.period == .today)
@@ -758,7 +758,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let appModel = NodeAppModel(healthSummaryService: service)
         let request = BridgeInvokeRequest(
             id: "health-invalid",
-            command: OpenClawHealthCommand.summary.rawValue,
+            command: NovaHealthCommand.summary.rawValue,
             paramsJSON: #"{"period":"90d"}"#)
 
         let response = await appModel._test_handleInvoke(request)
@@ -1442,7 +1442,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             NotificationSnapshot(
                 identifier: "old-requested-approval",
                 userInfo: [
-                    "openclaw": [
+                    "nova": [
                         "kind": ExecApprovalNotificationBridge.requestedKind,
                         "approvalId": "recovery-a",
                         "gatewayDeviceId": "device-a",
@@ -1451,7 +1451,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             NotificationSnapshot(
                 identifier: "new-requested-approval",
                 userInfo: [
-                    "openclaw": [
+                    "nova": [
                         "kind": ExecApprovalNotificationBridge.requestedKind,
                         "approvalId": "recovery-b",
                         "gatewayDeviceId": "device-b",
@@ -1559,7 +1559,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             expiresAtMs: 4_000_000_000_000))
         appModel._test_presentExecApprovalPrompt(prompt)
 
-        let uncertainMessage = "Decision status is unknown. Actions remain locked until OpenClaw reconnects."
+        let uncertainMessage = "Decision status is unknown. Actions remain locked until Nova reconnects."
         appModel._test_setPendingExecApprovalPromptUncertain(uncertainMessage)
 
         #expect(appModel._test_pendingExecApprovalState().resolving)
@@ -1984,7 +1984,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         // owner-frozen uncertain contract with a durable readback record.
         #expect(appModel._test_pendingExecApprovalState().resolving)
         #expect(appModel._test_pendingExecApprovalState().error ==
-            "Decision status is unknown. Actions remain locked until OpenClaw reconnects.")
+            "Decision status is unknown. Actions remain locked until Nova reconnects.")
         #expect(appModel._test_pendingPersistedExecApprovalReadbacks().contains { readback in
             readback.approvalId == approvalID && readback.gatewayStableID == gatewayA.effectiveStableID
         })
@@ -2202,7 +2202,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         notificationCenter.delivered = [NotificationSnapshot(
             identifier: "offline-request-alert",
             userInfo: [
-                "openclaw": [
+                "nova": [
                     "kind": ExecApprovalNotificationBridge.requestedKind,
                     "approvalId": push.approvalId,
                     "gatewayDeviceId": "gateway-device-a",
@@ -2259,7 +2259,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         let request = BridgeInvokeRequest(
             id: "ptt-start",
-            command: OpenClawTalkCommand.pttStart.rawValue)
+            command: NovaTalkCommand.pttStart.rawValue)
         let response = await appModel._test_handleInvoke(request)
 
         #expect(response.ok == false)
@@ -2270,7 +2270,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
     @Test @MainActor func `PTT start preserves an active voice note`() async {
         let capture = MockVoiceNoteAudioCapture()
-        let recorder = OpenClawVoiceNoteRecorder(capture: capture)
+        let recorder = NovaVoiceNoteRecorder(capture: capture)
         #expect(await recorder.start())
         let appModel = NodeAppModel(
             talkMode: TalkModeManager(allowSimulatorCapture: true),
@@ -2278,7 +2278,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         let request = BridgeInvokeRequest(
             id: "ptt-start-with-voice-note",
-            command: OpenClawTalkCommand.pttStart.rawValue)
+            command: NovaTalkCommand.pttStart.rawValue)
         let response = await appModel._test_handleInvoke(request)
 
         #expect(response.ok == false)
@@ -2314,7 +2314,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         let activeResponse = await active.value
         let queuedResponse = await queued.value
-        let activePayload = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: activeResponse)
+        let activePayload = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: activeResponse)
         #expect(activeResponse.ok)
         #expect(!queuedResponse.ok)
         #expect(talkMode._test_activePushToTalkCaptureId() == activePayload.captureId)
@@ -2373,7 +2373,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         #expect(await stale.value.ok == false)
         let freshResponse = await fresh.value
-        let freshPayload = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: freshResponse)
+        let freshPayload = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: freshResponse)
         #expect(freshResponse.ok)
         #expect(talkMode._test_activePushToTalkCaptureId() == freshPayload.captureId)
 
@@ -2452,8 +2452,8 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let barrier = TalkPreparationBarrier()
         let stableID = "talk-routing-restore-\(UUID().uuidString)"
         let databaseDirectoryURL = try #require(NodeAppModel.chatDatabaseDirectoryURL())
-        let databases = try OpenClawClientDatabases(directoryURL: databaseDirectoryURL)
-        let identity = try #require(OpenClawChatSessionRoutingIdentity(
+        let databases = try NovaClientDatabases(directoryURL: databaseDirectoryURL)
+        let identity = try #require(NovaChatSessionRoutingIdentity(
             scope: "per-sender",
             mainSessionKey: "restored-main",
             defaultAgentID: "main"))
@@ -2491,8 +2491,8 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let barrier = TalkPreparationBarrier()
         let stableID = "cancelled-routing-restore-\(UUID().uuidString)"
         let databaseDirectoryURL = try #require(NodeAppModel.chatDatabaseDirectoryURL())
-        let databases = try OpenClawClientDatabases(directoryURL: databaseDirectoryURL)
-        let identity = try #require(OpenClawChatSessionRoutingIdentity(
+        let databases = try NovaClientDatabases(directoryURL: databaseDirectoryURL)
+        let identity = try #require(NovaChatSessionRoutingIdentity(
             scope: "per-sender",
             mainSessionKey: "stale-main",
             defaultAgentID: "main"))
@@ -2658,7 +2658,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         let activeResponse = await appModel._test_handleInvoke(
             talkRequest(id: "node-route-active", command: .pttStart))
-        let active = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: activeResponse)
+        let active = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: activeResponse)
         #expect(talkMode._test_activePushToTalkCaptureId() == active.captureId)
 
         appModel._test_invalidateNodePushToTalkRoute()
@@ -2691,7 +2691,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         }
         let startResponse = await appModel._test_handleInvoke(
             talkRequest(id: "fresh-before-stale-cancel", command: .pttStart))
-        let active = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: startResponse)
+        let active = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: startResponse)
         let staleCancel = Task { @MainActor in
             await barrier.suspendFirstPreparation()
             return await appModel._test_handleInvoke(
@@ -2778,9 +2778,9 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         await waitForTalkCondition { talkMode._test_activePushToTalkCaptureId() != nil }
         let cancelledCaptureId = try #require(talkMode._test_activePushToTalkCaptureId())
         let cancelResponse = await appModel._test_handleInvoke(talkRequest(id: "cancel", command: .pttCancel))
-        let cancelPayload = try decodeTalkPayload(OpenClawTalkPTTStopPayload.self, from: cancelResponse)
+        let cancelPayload = try decodeTalkPayload(NovaTalkPTTStopPayload.self, from: cancelResponse)
         let cancelledOncePayload = try await decodeTalkPayload(
-            OpenClawTalkPTTStopPayload.self,
+            NovaTalkPTTStopPayload.self,
             from: cancelledOnce.value)
         #expect(cancelPayload.captureId == cancelledCaptureId)
         #expect(cancelPayload.status == "cancelled")
@@ -2792,8 +2792,8 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         await waitForTalkCondition { talkMode._test_activePushToTalkCaptureId() != nil }
         let stoppedCaptureId = try #require(talkMode._test_activePushToTalkCaptureId())
         let stopResponse = await appModel._test_handleInvoke(talkRequest(id: "stop", command: .pttStop))
-        let stopPayload = try decodeTalkPayload(OpenClawTalkPTTStopPayload.self, from: stopResponse)
-        let stoppedOncePayload = try await decodeTalkPayload(OpenClawTalkPTTStopPayload.self, from: stoppedOnce.value)
+        let stopPayload = try decodeTalkPayload(NovaTalkPTTStopPayload.self, from: stopResponse)
+        let stoppedOncePayload = try await decodeTalkPayload(NovaTalkPTTStopPayload.self, from: stoppedOnce.value)
         #expect(stopPayload.captureId == stoppedCaptureId)
         #expect(stopPayload.status == "empty")
         #expect(stoppedOncePayload == stopPayload)
@@ -2886,7 +2886,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
                 caps: [],
                 commands: [],
                 permissions: [:],
-                clientId: "openclaw-ios",
+                clientId: "nova-ios",
                 clientMode: "node",
                 clientDisplayName: nil))
         appModel._test_setActiveGatewayConnectConfig(config)
@@ -2995,10 +2995,10 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         #expect(!remoteStart.ok)
         #expect(remoteStart.error?.message.contains("PTT_BUSY") == true)
 
-        for command in [OpenClawTalkCommand.pttStop, .pttCancel] {
+        for command in [NovaTalkCommand.pttStop, .pttCancel] {
             let response = await appModel._test_handleInvoke(
                 talkRequest(id: "remote-\(command.rawValue)-during-dictation", command: command))
-            let payload = try decodeTalkPayload(OpenClawTalkPTTStopPayload.self, from: response)
+            let payload = try decodeTalkPayload(NovaTalkPTTStopPayload.self, from: response)
             #expect(payload.status == "idle")
             #expect(payload.captureId != captureId)
             #expect(talkMode._test_activePushToTalkCaptureId() == captureId)
@@ -3462,7 +3462,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         talkMode.suspendForBackground()
 
-        let payload = try await decodeTalkPayload(OpenClawTalkPTTStopPayload.self, from: once.value)
+        let payload = try await decodeTalkPayload(NovaTalkPTTStopPayload.self, from: once.value)
         #expect(payload.captureId == captureId)
         #expect(payload.status == "cancelled")
         #expect(talkMode._test_activePushToTalkCaptureId() == nil)
@@ -3479,7 +3479,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         defer { appModel.voiceWake.stop() }
 
         let startResponse = await appModel._test_handleInvoke(talkRequest(id: "background-start", command: .pttStart))
-        let start = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: startResponse)
+        let start = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: startResponse)
         #expect(appModel._test_pttVoiceWakeLeaseCaptureIds() == [start.captureId])
 
         appModel.setScenePhase(.background)
@@ -3515,7 +3515,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         }
 
         let response = await appModel._test_handleInvoke(talkRequest(id: "background-pref-start", command: .pttStart))
-        let start = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: response)
+        let start = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: response)
         #expect(talkMode._test_activePushToTalkCaptureId() == start.captureId)
 
         appModel.setScenePhase(.background)
@@ -3593,14 +3593,14 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         let startResponse = await appModel._test_handleInvoke(
             talkRequest(id: "background-finalizer-start", command: .pttStart))
-        let start = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: startResponse)
+        let start = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: startResponse)
         await talkMode._test_handlePushToTalkTranscript(
             "finish in background",
             isFinal: false,
             captureId: start.captureId)
         let stopResponse = await appModel._test_handleInvoke(
             talkRequest(id: "background-finalizer-stop", command: .pttStop))
-        #expect(try decodeTalkPayload(OpenClawTalkPTTStopPayload.self, from: stopResponse).status == "queued")
+        #expect(try decodeTalkPayload(NovaTalkPTTStopPayload.self, from: stopResponse).status == "queued")
         await barrier.waitUntilEntered()
 
         appModel.setScenePhase(.background)
@@ -3717,7 +3717,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         let response = await appModel._test_handleInvoke(
             talkRequest(id: "disconnect-ptt-start", command: .pttStart))
-        let start = try decodeTalkPayload(OpenClawTalkPTTStartPayload.self, from: response)
+        let start = try decodeTalkPayload(NovaTalkPTTStartPayload.self, from: response)
         #expect(appModel._test_pttVoiceWakeLeaseCaptureIds() == [start.captureId])
 
         talkMode.updateGatewayConnected(false)
@@ -3797,7 +3797,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
     @Test @MainActor func `voice note start cannot race an acquired PTT lease`() async {
         let capture = MockVoiceNoteAudioCapture()
-        let recorder = OpenClawVoiceNoteRecorder(capture: capture)
+        let recorder = NovaVoiceNoteRecorder(capture: capture)
         let appModel = NodeAppModel(
             talkMode: TalkModeManager(allowSimulatorCapture: true),
             voiceNoteRecorder: recorder)
@@ -3812,7 +3812,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
     @Test @MainActor func `voice note cannot start after the app backgrounds`() async {
         let capture = MockVoiceNoteAudioCapture()
-        let recorder = OpenClawVoiceNoteRecorder(capture: capture)
+        let recorder = NovaVoiceNoteRecorder(capture: capture)
         let appModel = NodeAppModel(voiceNoteRecorder: recorder)
         defer { appModel.setScenePhase(.active) }
 
@@ -3826,7 +3826,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
     @Test @MainActor func `voice note cannot start during PTT preparation`() async {
         let capture = MockVoiceNoteAudioCapture()
-        let recorder = OpenClawVoiceNoteRecorder(capture: capture)
+        let recorder = NovaVoiceNoteRecorder(capture: capture)
         let talkMode = TalkModeManager(allowSimulatorCapture: true)
         let appModel = NodeAppModel(talkMode: talkMode, voiceNoteRecorder: recorder)
         let barrier = TalkPreparationBarrier()
@@ -3858,10 +3858,10 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             talkMode: TalkModeManager(allowSimulatorCapture: true))
         appModel._test_acquirePttVoiceWakeLease(captureId: "camera-audio-ptt")
         defer { appModel._test_releasePttVoiceWakeLease(captureId: "camera-audio-ptt") }
-        let params = try JSONEncoder().encode(OpenClawCameraClipParams(includeAudio: true))
+        let params = try JSONEncoder().encode(NovaCameraClipParams(includeAudio: true))
         let request = try BridgeInvokeRequest(
             id: "camera-audio-during-ptt",
-            command: OpenClawCameraCommand.clip.rawValue,
+            command: NovaCameraCommand.clip.rawValue,
             paramsJSON: #require(String(data: params, encoding: .utf8)))
 
         let response = await appModel._test_handleInvoke(request)
@@ -3875,7 +3875,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let barrier = TalkPreparationBarrier()
         let talkMode = TalkModeManager(allowSimulatorCapture: true)
         let voiceNoteCapture = MockVoiceNoteAudioCapture()
-        let voiceNoteRecorder = OpenClawVoiceNoteRecorder(capture: voiceNoteCapture)
+        let voiceNoteRecorder = NovaVoiceNoteRecorder(capture: voiceNoteCapture)
         let appModel = NodeAppModel(
             camera: BlockingAudioCameraService(barrier: barrier),
             talkMode: talkMode,
@@ -3885,10 +3885,10 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             barrier.release()
             talkMode.stop()
         }
-        let params = try JSONEncoder().encode(OpenClawCameraClipParams(includeAudio: true))
+        let params = try JSONEncoder().encode(NovaCameraClipParams(includeAudio: true))
         let clipRequest = try BridgeInvokeRequest(
             id: "blocking-camera-audio",
-            command: OpenClawCameraCommand.clip.rawValue,
+            command: NovaCameraCommand.clip.rawValue,
             paramsJSON: #require(String(data: params, encoding: .utf8)))
         let clip = Task { @MainActor in await appModel._test_handleInvoke(clipRequest) }
         await barrier.waitUntilEntered()
@@ -3921,10 +3921,10 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             barrier.release()
             talkMode.stop()
         }
-        let params = try JSONEncoder().encode(OpenClawScreenRecordParams(includeAudio: true))
+        let params = try JSONEncoder().encode(NovaScreenRecordParams(includeAudio: true))
         let recordRequest = try BridgeInvokeRequest(
             id: "blocking-screen-audio",
-            command: OpenClawScreenCommand.record.rawValue,
+            command: NovaScreenCommand.record.rawValue,
             paramsJSON: #require(String(data: params, encoding: .utf8)))
         let recording = Task { @MainActor in await appModel._test_handleInvoke(recordRequest) }
         await barrier.waitUntilEntered()
@@ -3945,16 +3945,16 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             let recorder = BlockingAudioScreenRecorder(barrier: barrier)
             let appModel = NodeAppModel(screenRecorder: recorder)
             let firstParams = try JSONEncoder().encode(
-                OpenClawScreenRecordParams(includeAudio: firstIncludesAudio))
+                NovaScreenRecordParams(includeAudio: firstIncludesAudio))
             let secondParams = try JSONEncoder().encode(
-                OpenClawScreenRecordParams(includeAudio: secondIncludesAudio))
+                NovaScreenRecordParams(includeAudio: secondIncludesAudio))
             let firstRequest = try BridgeInvokeRequest(
                 id: "screen-first-\(firstIncludesAudio)",
-                command: OpenClawScreenCommand.record.rawValue,
+                command: NovaScreenCommand.record.rawValue,
                 paramsJSON: #require(String(data: firstParams, encoding: .utf8)))
             let secondRequest = try BridgeInvokeRequest(
                 id: "screen-second-\(secondIncludesAudio)",
-                command: OpenClawScreenCommand.record.rawValue,
+                command: NovaScreenCommand.record.rawValue,
                 paramsJSON: #require(String(data: secondParams, encoding: .utf8)))
 
             let first = Task { @MainActor in await appModel._test_handleInvoke(firstRequest) }
@@ -3983,10 +3983,10 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         }
         appModel.voiceWake.isEnabled = true
         appModel.voiceWake.statusText = "Listening"
-        let params = try JSONEncoder().encode(OpenClawCameraClipParams(includeAudio: true))
+        let params = try JSONEncoder().encode(NovaCameraClipParams(includeAudio: true))
         let request = try BridgeInvokeRequest(
             id: "background-camera-audio",
-            command: OpenClawCameraCommand.clip.rawValue,
+            command: NovaCameraCommand.clip.rawValue,
             paramsJSON: #require(String(data: params, encoding: .utf8)))
         let capture = Task { @MainActor in await appModel._test_handleInvoke(request) }
         await barrier.waitUntilEntered()
@@ -4007,10 +4007,10 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             barrier.release()
             appModel.setScenePhase(.active)
         }
-        let params = try JSONEncoder().encode(OpenClawScreenRecordParams(includeAudio: false))
+        let params = try JSONEncoder().encode(NovaScreenRecordParams(includeAudio: false))
         let request = try BridgeInvokeRequest(
             id: "background-screen-no-audio",
-            command: OpenClawScreenCommand.record.rawValue,
+            command: NovaScreenCommand.record.rawValue,
             paramsJSON: #require(String(data: params, encoding: .utf8)))
         let capture = Task { @MainActor in await appModel._test_handleInvoke(request) }
         await barrier.waitUntilEntered()
@@ -4035,10 +4035,10 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             barrier.release()
             appModel.setScenePhase(.active)
         }
-        let params = try JSONEncoder().encode(OpenClawScreenRecordParams(includeAudio: false))
+        let params = try JSONEncoder().encode(NovaScreenRecordParams(includeAudio: false))
         let request = try BridgeInvokeRequest(
             id: "late-cancelled-screen",
-            command: OpenClawScreenCommand.record.rawValue,
+            command: NovaScreenCommand.record.rawValue,
             paramsJSON: #require(String(data: params, encoding: .utf8)))
         let capture = Task { @MainActor in await appModel._test_handleInvoke(request) }
         await barrier.waitUntilEntered()
@@ -5345,7 +5345,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
                 id: "main",
                 name: "Main",
                 identity: [
-                    "avatarUrl": AnyCodable("https://example.com/openclaw.png"),
+                    "avatarUrl": AnyCodable("https://example.com/nova.png"),
                     "emoji": AnyCodable("OC"),
                 ],
                 workspace: nil,
@@ -5362,7 +5362,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         await Task.yield()
 
         let snapshot = try #require(watchService.lastSentAppSnapshot)
-        #expect(snapshot.agentAvatarURL == "https://example.com/openclaw.png")
+        #expect(snapshot.agentAvatarURL == "https://example.com/nova.png")
         #expect(snapshot.agentAvatarText == "OC")
     }
 
@@ -5447,7 +5447,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         appModel._test_setConnectedGatewayID("gateway-current")
         appModel.setTalkEnabled(false)
 
-        for command in [OpenClawWatchAppCommand.openChat, .startTalk] {
+        for command in [NovaWatchAppCommand.openChat, .startTalk] {
             watchService.emitAppCommand(
                 WatchAppCommandEvent(
                     commandId: "watch-stale-\(command.rawValue)",
@@ -5638,7 +5638,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
     }
 
     @Test func `watch chat completion bounds reply text`() {
-        let message = OpenClawWatchChatCompletionMessage(
+        let message = NovaWatchChatCompletionMessage(
             commandId: "watch-voice",
             replyText: String(repeating: "x", count: 5000))
 
@@ -6125,7 +6125,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         notificationCenter.delivered = [NotificationSnapshot(
             identifier: "delivered-approval",
             userInfo: [
-                "openclaw": [
+                "nova": [
                     "kind": ExecApprovalNotificationBridge.requestedKind,
                     "approvalId": "approval-delivered-recovery",
                     "gatewayDeviceId": "gateway-device-a",
@@ -6371,7 +6371,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         notificationCenter.delivered = [NotificationSnapshot(
             identifier: "approval-event-notification",
             userInfo: [
-                "openclaw": [
+                "nova": [
                     "kind": ExecApprovalNotificationBridge.requestedKind,
                     "approvalId": "approval-event-resolved",
                     "gatewayDeviceId": "gateway-device-a",
@@ -6688,7 +6688,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let appModel = NodeAppModel()
         appModel.setScenePhase(.background)
 
-        let req = BridgeInvokeRequest(id: "bg", command: OpenClawCanvasCommand.present.rawValue)
+        let req = BridgeInvokeRequest(id: "bg", command: NovaCanvasCommand.present.rawValue)
         let res = await appModel._test_handleInvoke(req)
         #expect(res.ok == false)
         #expect(res.error?.code == .backgroundUnavailable)
@@ -6700,7 +6700,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
     @Test @MainActor func `handle invoke rejects camera when disabled`() async {
         let appModel = NodeAppModel()
-        let req = BridgeInvokeRequest(id: "cam", command: OpenClawCameraCommand.snap.rawValue)
+        let req = BridgeInvokeRequest(id: "cam", command: NovaCameraCommand.snap.rawValue)
 
         let defaults = UserDefaults.standard
         let key = "camera.enabled"
@@ -6733,7 +6733,7 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
             }
         }
         let appModel = NodeAppModel(camera: CancellingCameraService())
-        let request = BridgeInvokeRequest(id: "cancelled-camera", command: OpenClawCameraCommand.snap.rawValue)
+        let request = BridgeInvokeRequest(id: "cancelled-camera", command: NovaCameraCommand.snap.rawValue)
 
         let response = await appModel._test_handleInvoke(request)
 
@@ -6764,14 +6764,14 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let appModel = NodeAppModel(camera: camera)
         let firstTask = Task {
             await appModel._test_handleInvoke(
-                BridgeInvokeRequest(id: "camera-first", command: OpenClawCameraCommand.snap.rawValue))
+                BridgeInvokeRequest(id: "camera-first", command: NovaCameraCommand.snap.rawValue))
         }
         for await _ in firstStarted.stream {
             break
         }
         let secondTask = Task {
             await appModel._test_handleInvoke(
-                BridgeInvokeRequest(id: "camera-second", command: OpenClawCameraCommand.snap.rawValue))
+                BridgeInvokeRequest(id: "camera-second", command: NovaCameraCommand.snap.rawValue))
         }
         for await _ in secondStarted.stream {
             break
@@ -6792,11 +6792,11 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let center = MockBootstrapNotificationCenter()
         center.status = .notDetermined
         let appModel = NodeAppModel(notificationCenter: center)
-        let params = OpenClawSystemNotifyParams(title: "Approval", body: "Review request")
+        let params = NovaSystemNotifyParams(title: "Approval", body: "Review request")
         let paramsData = try JSONEncoder().encode(params)
         let req = BridgeInvokeRequest(
             id: "notify-off",
-            command: OpenClawSystemCommand.notify.rawValue,
+            command: NovaSystemCommand.notify.rawValue,
             paramsJSON: String(decoding: paramsData, as: UTF8.self))
 
         let res = await appModel._test_handleInvoke(req)
@@ -6813,11 +6813,11 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let center = MockBootstrapNotificationCenter()
         center.status = .authorized
         let appModel = NodeAppModel(notificationCenter: center)
-        let params = OpenClawSystemNotifyParams(title: "Approval", body: "Review request")
+        let params = NovaSystemNotifyParams(title: "Approval", body: "Review request")
         let paramsData = try JSONEncoder().encode(params)
         let req = BridgeInvokeRequest(
             id: "notify-on",
-            command: OpenClawSystemCommand.notify.rawValue,
+            command: NovaSystemCommand.notify.rawValue,
             paramsJSON: String(decoding: paramsData, as: UTF8.self))
 
         let res = await appModel._test_handleInvoke(req)
@@ -6832,11 +6832,11 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let center = MockBootstrapNotificationCenter()
         center.status = .authorized
         let appModel = NodeAppModel(notificationCenter: center)
-        let params = OpenClawSystemNotifyParams(title: "Approval", body: "Review request")
+        let params = NovaSystemNotifyParams(title: "Approval", body: "Review request")
         let paramsData = try JSONEncoder().encode(params)
         let req = BridgeInvokeRequest(
             id: "notify-disabled",
-            command: OpenClawSystemCommand.notify.rawValue,
+            command: NovaSystemCommand.notify.rawValue,
             paramsJSON: String(decoding: paramsData, as: UTF8.self))
 
         let res = await appModel._test_handleInvoke(req)
@@ -6874,11 +6874,11 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let center = MockBootstrapNotificationCenter()
         center.status = .notDetermined
         let appModel = NodeAppModel(notificationCenter: center)
-        let params = OpenClawChatPushParams(text: "Build finished", speak: false)
+        let params = NovaChatPushParams(text: "Build finished", speak: false)
         let paramsData = try JSONEncoder().encode(params)
         let req = BridgeInvokeRequest(
             id: "chat-push-off",
-            command: OpenClawChatCommand.push.rawValue,
+            command: NovaChatCommand.push.rawValue,
             paramsJSON: String(decoding: paramsData, as: UTF8.self))
 
         let res = await appModel._test_handleInvoke(req)
@@ -6895,11 +6895,11 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
         let center = MockBootstrapNotificationCenter()
         center.status = .authorized
         let appModel = NodeAppModel(notificationCenter: center)
-        let params = OpenClawChatPushParams(text: "Build finished", speak: false)
+        let params = NovaChatPushParams(text: "Build finished", speak: false)
         let paramsData = try JSONEncoder().encode(params)
         let req = BridgeInvokeRequest(
             id: "chat-push-on",
-            command: OpenClawChatCommand.push.rawValue,
+            command: NovaChatCommand.push.rawValue,
             paramsJSON: String(decoding: paramsData, as: UTF8.self))
 
         let res = await appModel._test_handleInvoke(req)
@@ -6910,13 +6910,13 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
     @Test @MainActor func `handle invoke rejects invalid screen format`() async {
         let appModel = NodeAppModel()
-        let params = OpenClawScreenRecordParams(format: "gif")
+        let params = NovaScreenRecordParams(format: "gif")
         let data = try? JSONEncoder().encode(params)
         let json = data.flatMap { String(data: $0, encoding: .utf8) }
 
         let req = BridgeInvokeRequest(
             id: "screen",
-            command: OpenClawScreenCommand.record.rawValue,
+            command: NovaScreenCommand.record.rawValue,
             paramsJSON: json)
 
         let res = await appModel._test_handleInvoke(req)
@@ -6931,1012 +6931,28 @@ private func overrideNotificationServingPreference(_ enabled: Bool) -> () -> Voi
 
         appModel.screen.navigate(to: "http://example.com")
 
-        let present = BridgeInvokeRequest(id: "present", command: OpenClawCanvasCommand.present.rawValue)
+        let present = BridgeInvokeRequest(id: "present", command: NovaCanvasCommand.present.rawValue)
         let presentRes = await appModel._test_handleInvoke(present)
         #expect(presentRes.ok == true)
         #expect(appModel.screen.urlString.isEmpty)
 
         // Loopback URLs are rejected (they are not meaningful for a remote gateway).
-        let navigateParams = OpenClawCanvasNavigateParams(url: "http://example.com/")
+        let navigateParams = NovaCanvasNavigateParams(url: "http://example.com/")
         let navData = try JSONEncoder().encode(navigateParams)
         let navJSON = String(decoding: navData, as: UTF8.self)
         let navigate = BridgeInvokeRequest(
             id: "nav",
-            command: OpenClawCanvasCommand.navigate.rawValue,
+            command: NovaCanvasCommand.navigate.rawValue,
             paramsJSON: navJSON)
         let navRes = await appModel._test_handleInvoke(navigate)
         #expect(navRes.ok == true)
         #expect(appModel.screen.urlString == "http://example.com/")
 
-        let evalParams = OpenClawCanvasEvalParams(javaScript: "1+1")
+        let evalParams = NovaCanvasEvalParams(javaScript: "1+1")
         let evalData = try JSONEncoder().encode(evalParams)
         let evalJSON = String(decoding: evalData, as: UTF8.self)
         let eval = BridgeInvokeRequest(
             id: "eval",
-            command: OpenClawCanvasCommand.evalJS.rawValue,
+            command: NovaCanvasCommand.evalJS.rawValue,
             paramsJSON: evalJSON)
         var evalRes = await appModel._test_handleInvoke(eval)
-        let deadline = ContinuousClock().now.advanced(by: .seconds(3))
-        while evalRes.ok != true, ContinuousClock().now < deadline {
-            try? await Task.sleep(nanoseconds: 100_000_000)
-            evalRes = await appModel._test_handleInvoke(eval)
-        }
-        #expect(evalRes.ok == true)
-        let payloadData = try #require(evalRes.payloadJSON?.data(using: .utf8))
-        let payload = try JSONSerialization.jsonObject(with: payloadData) as? [String: Any]
-        #expect(payload?["result"] as? String == "2")
-    }
-
-    @Test @MainActor func `pending foreground actions replay canvas navigate`() async throws {
-        let appModel = NodeAppModel()
-        let navigateParams = OpenClawCanvasNavigateParams(url: "http://example.com/")
-        let navData = try JSONEncoder().encode(navigateParams)
-        let navJSON = String(decoding: navData, as: UTF8.self)
-
-        await appModel._test_applyPendingForegroundNodeActions([
-            (
-                id: "pending-nav-1",
-                command: OpenClawCanvasCommand.navigate.rawValue,
-                paramsJSON: navJSON),
-        ])
-
-        #expect(appModel.screen.urlString == "http://example.com/")
-    }
-
-    @Test @MainActor func `pending foreground actions do not apply while backgrounded`() async throws {
-        let appModel = NodeAppModel()
-        appModel.setScenePhase(.background)
-        let navigateParams = OpenClawCanvasNavigateParams(url: "http://example.com/")
-        let navData = try JSONEncoder().encode(navigateParams)
-        let navJSON = String(decoding: navData, as: UTF8.self)
-
-        await appModel._test_applyPendingForegroundNodeActions([
-            (
-                id: "pending-nav-bg",
-                command: OpenClawCanvasCommand.navigate.rawValue,
-                paramsJSON: navJSON),
-        ])
-
-        #expect(appModel.screen.urlString.isEmpty)
-    }
-
-    @Test @MainActor func `handle invoke A 2 UI commands fail when local host unavailable`() async throws {
-        let appModel = NodeAppModel()
-
-        let reset = BridgeInvokeRequest(id: "reset", command: OpenClawCanvasA2UICommand.reset.rawValue)
-        let resetRes = await appModel._test_handleInvoke(reset)
-        #expect(resetRes.ok == false)
-        #expect(resetRes.error?.message.contains("A2UI_HOST_UNAVAILABLE") == true)
-
-        let jsonl = "{\"beginRendering\":{}}"
-        let pushParams = OpenClawCanvasA2UIPushJSONLParams(jsonl: jsonl)
-        let pushData = try JSONEncoder().encode(pushParams)
-        let pushJSON = String(decoding: pushData, as: UTF8.self)
-        let push = BridgeInvokeRequest(
-            id: "push",
-            command: OpenClawCanvasA2UICommand.pushJSONL.rawValue,
-            paramsJSON: pushJSON)
-        let pushRes = await appModel._test_handleInvoke(push)
-        #expect(pushRes.ok == false)
-        #expect(pushRes.error?.message.contains("A2UI_HOST_UNAVAILABLE") == true)
-    }
-
-    @Test @MainActor func `handle invoke unknown command returns invalid request`() async {
-        let appModel = NodeAppModel()
-        let req = BridgeInvokeRequest(id: "unknown", command: "nope")
-        let res = await appModel._test_handleInvoke(req)
-        #expect(res.ok == false)
-        #expect(res.error?.code == .invalidRequest)
-    }
-
-    @Test @MainActor func `handle invoke watch status returns service snapshot`() async throws {
-        let watchService = MockWatchMessagingService()
-        watchService.currentStatus = WatchMessagingStatus(
-            supported: true,
-            paired: true,
-            appInstalled: true,
-            reachable: false,
-            activationState: "inactive")
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        let req = BridgeInvokeRequest(id: "watch-status", command: OpenClawWatchCommand.status.rawValue)
-
-        let res = await appModel._test_handleInvoke(req)
-        #expect(res.ok == true)
-
-        let payloadData = try #require(res.payloadJSON?.data(using: .utf8))
-        let payload = try JSONDecoder().decode(OpenClawWatchStatusPayload.self, from: payloadData)
-        #expect(payload.supported == true)
-        #expect(payload.reachable == false)
-        #expect(payload.activationState == "inactive")
-    }
-
-    @Test @MainActor func `watch status refresh publishes service snapshot`() async {
-        let watchService = MockWatchMessagingService()
-        let status = WatchMessagingStatus(
-            supported: true,
-            paired: true,
-            appInstalled: true,
-            reachable: false,
-            activationState: "activated")
-        watchService.currentStatus = status
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-
-        await appModel.refreshWatchMessagingStatus()
-
-        #expect(appModel.watchMessagingStatus == status)
-    }
-
-    @Test @MainActor func `watch status callback publishes reachability changes`() async {
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        let status = WatchMessagingStatus(
-            supported: true,
-            paired: true,
-            appInstalled: true,
-            reachable: true,
-            activationState: "activated")
-
-        watchService.emitStatus(status)
-        await waitForMainActorWork { appModel.watchMessagingStatus == status }
-
-        #expect(appModel.watchMessagingStatus == status)
-    }
-
-    @Test @MainActor func `handle invoke watch notify routes to watch service`() async throws {
-        let watchService = MockWatchMessagingService()
-        watchService.nextSendResult = WatchNotificationSendResult(
-            deliveredImmediately: false,
-            queuedForDelivery: true,
-            transport: "transferUserInfo")
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        appModel._test_setConnectedGatewayID("gateway-watch-notify")
-        let params = OpenClawWatchNotifyParams(
-            title: "OpenClaw",
-            body: "Meeting with Peter is at 4pm",
-            priority: .timeSensitive)
-        let paramsData = try JSONEncoder().encode(params)
-        let paramsJSON = String(decoding: paramsData, as: UTF8.self)
-        let req = BridgeInvokeRequest(
-            id: "watch-notify",
-            command: OpenClawWatchCommand.notify.rawValue,
-            paramsJSON: paramsJSON)
-
-        let res = await appModel._test_handleInvoke(req, gatewayStableID: "gateway-a")
-        #expect(res.ok == true)
-        #expect(watchService.lastSent?.params.title == "OpenClaw")
-        #expect(watchService.lastSent?.params.body == "Meeting with Peter is at 4pm")
-        #expect(watchService.lastSent?.params.priority == .timeSensitive)
-        #expect(watchService.lastSent?.gatewayStableID == "gateway-watch-notify")
-
-        let payloadData = try #require(res.payloadJSON?.data(using: .utf8))
-        let payload = try JSONDecoder().decode(OpenClawWatchNotifyPayload.self, from: payloadData)
-        #expect(payload.deliveredImmediately == false)
-        #expect(payload.queuedForDelivery == true)
-        #expect(payload.transport == "transferUserInfo")
-    }
-
-    @Test @MainActor func `watch reply codec preserves prompt gateway owner`() throws {
-        let params = OpenClawWatchNotifyParams(
-            title: "Approval",
-            body: "Allow?",
-            promptId: "prompt-a",
-            sessionKey: "ios-a",
-            gatewayStableID: "gateway-a")
-        let notification = WatchMessagingPayloadCodec.encodeNotificationPayload(
-            id: "notification-a",
-            params: params,
-            gatewayStableID: "gateway-a")
-        #expect(notification["gatewayStableID"] as? String == "gateway-a")
-
-        let reply = try #require(WatchMessagingPayloadCodec.parseQuickReplyPayload([
-            "type": OpenClawWatchPayloadType.reply.rawValue,
-            "replyId": "reply-a",
-            "promptId": "prompt-a",
-            "actionId": "approve",
-            "gatewayStableID": "gateway-a",
-        ], transport: "sendMessage"))
-        #expect(reply.gatewayStableID == "gateway-a")
-    }
-
-    @Test @MainActor func `watch exec approval codec preserves gateway owner`() throws {
-        let approval = OpenClawWatchExecApprovalItem(
-            id: "approval-a",
-            gatewayStableID: "gateway-a",
-            commandText: "echo safe",
-            warningText: "Review shell expansion",
-            allowedDecisions: [.allowOnce, .deny])
-        let prompt = WatchMessagingPayloadCodec.encodeExecApprovalPromptPayload(
-            OpenClawWatchExecApprovalPromptMessage(approval: approval))
-        let encodedApproval = try #require(prompt["approval"] as? [String: Any])
-        #expect(encodedApproval["gatewayStableID"] as? String == "gateway-a")
-        #expect(encodedApproval["warningText"] as? String == "Review shell expansion")
-
-        let reply = try #require(WatchMessagingPayloadCodec.parseExecApprovalResolvePayload([
-            "type": OpenClawWatchPayloadType.execApprovalResolve.rawValue,
-            "replyId": "reply-a",
-            "approvalId": "approval-a",
-            "gatewayStableID": "gateway-a",
-            "decision": OpenClawWatchExecApprovalDecision.allowOnce.rawValue,
-        ], transport: "sendMessage"))
-        #expect(reply.gatewayStableID == "gateway-a")
-
-        let resolved = WatchMessagingPayloadCodec.encodeExecApprovalResolvedPayload(
-            OpenClawWatchExecApprovalResolvedMessage(
-                approvalId: "approval-a",
-                gatewayStableID: "gateway-a",
-                outcome: .allowedAlways,
-                outcomeText: "This approval was already set to Always Allow."))
-        let expired = WatchMessagingPayloadCodec.encodeExecApprovalExpiredPayload(
-            OpenClawWatchExecApprovalExpiredMessage(
-                approvalId: "approval-a",
-                gatewayStableID: "gateway-a",
-                reason: .notFound))
-        #expect(resolved["gatewayStableID"] as? String == "gateway-a")
-        #expect(resolved["outcome"] as? String == "allowedAlways")
-        #expect(resolved["outcomeText"] as? String == "This approval was already set to Always Allow.")
-        #expect(expired["gatewayStableID"] as? String == "gateway-a")
-
-        let requestID = "\u{0085}snapshot-request-a"
-        let heldApprovalID = "\u{0085}held-approval-a\u{0085}"
-        let activeResolutionAttemptID = "\u{0085}resolution-attempt-a\u{0085}"
-        let snapshotRequest = try #require(
-            WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-                "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-                "requestId": requestID,
-                "gatewayStableID": "gateway-a",
-                "heldApprovals": [
-                    [
-                        "approvalId": heldApprovalID,
-                        "activeResolutionAttemptId": activeResolutionAttemptID,
-                    ],
-                    ["approvalId": "held-approval-b"],
-                ],
-            ], transport: "sendMessage"))
-        #expect(Array(snapshotRequest.requestId.utf8) == Array(requestID.utf8))
-        #expect(snapshotRequest.gatewayStableID == "gateway-a")
-        #expect(snapshotRequest.heldApprovals.count == 2)
-        #expect(Array(snapshotRequest.heldApprovals[0].approvalId.utf8) == Array(heldApprovalID.utf8))
-        #expect(try Array(#require(snapshotRequest.heldApprovals[0].activeResolutionAttemptId).utf8) ==
-            Array(activeResolutionAttemptID.utf8))
-        #expect(snapshotRequest.heldApprovals[1].activeResolutionAttemptId == nil)
-
-        let snapshot = WatchMessagingPayloadCodec.encodeExecApprovalSnapshotPayload(
-            OpenClawWatchExecApprovalSnapshotMessage(
-                approvals: [approval],
-                gatewayStableID: "gateway-a",
-                requestId: requestID,
-                requestGatewayStableID: "gateway-a"))
-        #expect(try Array(#require(snapshot["requestId"] as? String).utf8) == Array(requestID.utf8))
-        #expect(snapshot["requestGatewayStableID"] as? String == "gateway-a")
-
-        let legacySnapshot = try JSONDecoder().decode(
-            OpenClawWatchExecApprovalSnapshotMessage.self,
-            from: Data(#"{"type":"watch.execApproval.snapshot","approvals":[]}"#.utf8))
-        #expect(legacySnapshot.requestId == nil)
-        #expect(legacySnapshot.requestGatewayStableID == nil)
-        #expect(throws: DecodingError.self) {
-            _ = try JSONDecoder().decode(
-                OpenClawWatchExecApprovalSnapshotRequestMessage.self,
-                from: Data(#"{"type":"watch.execApproval.snapshotRequest","requestId":"legacy"}"#.utf8))
-        }
-        // Shipped Watch binaries request snapshots with neither requestId nor heldApprovals.
-        let shippedShapeRequest = try #require(
-            WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-                "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-            ], transport: "sendMessage"))
-        #expect(!shippedShapeRequest.requestId.isEmpty)
-        #expect(shippedShapeRequest.heldApprovals.isEmpty)
-        #expect(shippedShapeRequest.gatewayStableID == nil)
-        let missingHeldApprovalsRequest = try #require(
-            WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-                "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-                "requestId": "missing-held-approvals",
-            ], transport: "applicationContext"))
-        #expect(missingHeldApprovalsRequest.requestId == "missing-held-approvals")
-        #expect(missingHeldApprovalsRequest.heldApprovals.isEmpty)
-        let missingRequestIdRequest = try #require(
-            WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-                "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-                "heldApprovals": [],
-            ], transport: "applicationContext"))
-        #expect(!missingRequestIdRequest.requestId.isEmpty)
-        let emptyRequestIdRequest = try #require(
-            WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-                "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-                "requestId": "",
-                "heldApprovals": [],
-            ], transport: "applicationContext"))
-        #expect(!emptyRequestIdRequest.requestId.isEmpty)
-        // A present heldApprovals key keeps strict rejection when malformed.
-        #expect(WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-            "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-            "requestId": "malformed-held-approvals-shape",
-            "heldApprovals": "not-an-array",
-        ], transport: "applicationContext") == nil)
-        #expect(WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-            "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-            "requestId": "malformed-held-approval",
-            "heldApprovals": [
-                ["approvalId": "valid"],
-                ["approvalId": ""],
-            ],
-        ], transport: "applicationContext") == nil)
-        #expect(WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-            "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-            "requestId": "malformed-attempt",
-            "heldApprovals": [[
-                "approvalId": "valid",
-                "activeResolutionAttemptId": "",
-            ]],
-        ], transport: "applicationContext") == nil)
-    }
-
-    @Test @MainActor func `watch exec approval codec round trips exact opaque identifiers`() throws {
-        let approvalID = "\u{0085}approval-a\u{0085}"
-        let gatewayID = "\u{0085}gateway-a\u{0085}"
-        let replyID = "\u{0085}reply-e\u{0301}\u{0085}"
-        let prompt = WatchMessagingPayloadCodec.encodeExecApprovalPromptPayload(
-            OpenClawWatchExecApprovalPromptMessage(approval: OpenClawWatchExecApprovalItem(
-                id: approvalID,
-                gatewayStableID: gatewayID,
-                commandText: "echo exact",
-                allowedDecisions: [.allowOnce, .deny])))
-        let encodedApproval = try #require(prompt["approval"] as? [String: Any])
-        let encodedApprovalID = try #require(encodedApproval["id"] as? String)
-        let encodedGatewayID = try #require(encodedApproval["gatewayStableID"] as? String)
-        let reply = try #require(WatchMessagingPayloadCodec.parseExecApprovalResolvePayload([
-            "type": OpenClawWatchPayloadType.execApprovalResolve.rawValue,
-            "replyId": replyID,
-            "approvalId": encodedApprovalID,
-            "gatewayStableID": encodedGatewayID,
-            "decision": OpenClawWatchExecApprovalDecision.allowOnce.rawValue,
-        ], transport: "sendMessage"))
-
-        #expect(Array(reply.replyId.utf8) == Array(replyID.utf8))
-        #expect(Array(reply.approvalId.utf8) == Array(approvalID.utf8))
-        #expect(try Array(#require(reply.gatewayStableID).utf8) == Array(gatewayID.utf8))
-    }
-
-    @Test @MainActor func `watch direct node setup codec carries opaque setup code`() {
-        let payload = WatchMessagingPayloadCodec.encodeDirectNodeSetupPayload(
-            setupCode: "opaque-bootstrap-code")
-
-        #expect(payload["type"] as? String == OpenClawWatchPayloadType.directNodeSetup.rawValue)
-        #expect(payload["setupCode"] as? String == "opaque-bootstrap-code")
-        #expect(payload["sentAtMs"] is Int64)
-        #expect(payload["token"] == nil)
-        #expect(payload["password"] == nil)
-    }
-
-    @Test @MainActor func `watch payload codec preserves 64 bit epoch milliseconds`() throws {
-        let sentAtMs: Int64 = 1_725_000_000_123
-        let encodedTimestamp = NSNumber(value: sentAtMs)
-
-        let reply = try #require(WatchMessagingPayloadCodec.parseQuickReplyPayload([
-            "type": OpenClawWatchPayloadType.reply.rawValue,
-            "actionId": "approve",
-            "sentAtMs": encodedTimestamp,
-        ], transport: "sendMessage"))
-        let resolution = try #require(WatchMessagingPayloadCodec.parseExecApprovalResolvePayload([
-            "type": OpenClawWatchPayloadType.execApprovalResolve.rawValue,
-            "approvalId": "approval-a",
-            "decision": OpenClawWatchExecApprovalDecision.allowOnce.rawValue,
-            "sentAtMs": encodedTimestamp,
-        ], transport: "sendMessage"))
-        let approvalSnapshotRequest = try #require(
-            WatchMessagingPayloadCodec.parseExecApprovalSnapshotRequestPayload([
-                "type": OpenClawWatchPayloadType.execApprovalSnapshotRequest.rawValue,
-                "requestId": "timestamp-request",
-                "sentAtMs": encodedTimestamp,
-                "heldApprovals": [],
-            ], transport: "sendMessage"))
-        let appSnapshotRequest = try #require(WatchMessagingPayloadCodec.parseAppSnapshotRequestPayload([
-            "type": OpenClawWatchPayloadType.appSnapshotRequest.rawValue,
-            "sentAtMs": encodedTimestamp,
-        ], transport: "sendMessage"))
-        let appCommand = try #require(WatchMessagingPayloadCodec.parseAppCommandPayload([
-            "type": OpenClawWatchPayloadType.appCommand.rawValue,
-            "command": OpenClawWatchAppCommand.refresh.rawValue,
-            "sentAtMs": encodedTimestamp,
-        ], transport: "sendMessage"))
-
-        #expect(reply.sentAtMs == sentAtMs)
-        #expect(resolution.sentAtMs == sentAtMs)
-        #expect(approvalSnapshotRequest.sentAtMs == sentAtMs)
-        #expect(appSnapshotRequest.sentAtMs == sentAtMs)
-        #expect(appCommand.sentAtMs == sentAtMs)
-    }
-
-    @Test @MainActor func `watch application context retains app and approval snapshots`() throws {
-        let appPayload = WatchMessagingPayloadCodec.encodeAppSnapshotPayload(
-            OpenClawWatchAppSnapshotMessage(
-                gatewayStatus: OpenClawWatchAppStatus(code: .gatewayConnected),
-                gatewayStatusText: "Connected",
-                gatewayConnected: true,
-                agentName: "Main",
-                agentAvatarURL: "https://example.com/avatar.png",
-                sessionKey: "main",
-                gatewayStableID: "gateway-a",
-                talkStatus: OpenClawWatchAppStatus(code: .talkOff),
-                talkStatusText: "Off",
-                talkEnabled: false,
-                talkListening: false,
-                talkSpeaking: false,
-                pendingApprovalCount: 1,
-                chatStatus: OpenClawWatchAppStatus(code: .chatConnectIPhone),
-                chatStatusText: "Connect iPhone chat to read messages",
-                snapshotId: "app-a"))
-        let approvalPayload = WatchMessagingPayloadCodec.encodeExecApprovalSnapshotPayload(
-            OpenClawWatchExecApprovalSnapshotMessage(
-                approvals: [
-                    OpenClawWatchExecApprovalItem(
-                        id: "approval-a",
-                        gatewayStableID: "gateway-a",
-                        commandText: "echo safe",
-                        warningText: "Review shell expansion",
-                        allowedDecisions: [.allowOnce, .deny]),
-                ],
-                gatewayStableID: "gateway-a",
-                snapshotId: "approval-a"))
-
-        let appContext = WatchMessagingPayloadCodec.encodeSnapshotApplicationContext(
-            appPayload,
-            merging: [:])
-        let combined = WatchMessagingPayloadCodec.encodeSnapshotApplicationContext(
-            approvalPayload,
-            merging: appContext)
-
-        #expect(combined["type"] as? String == OpenClawWatchPayloadType.execApprovalSnapshot.rawValue)
-        let nestedApp = try #require(
-            combined[OpenClawWatchPayloadType.appSnapshot.rawValue] as? [String: Any])
-        let nestedApprovals = try #require(
-            combined[OpenClawWatchPayloadType.execApprovalSnapshot.rawValue] as? [String: Any])
-        #expect(nestedApp["gatewayStableID"] as? String == "gateway-a")
-        #expect(nestedApp["agentAvatarUrl"] as? String == "https://example.com/avatar.png")
-        #expect(nestedApp["agentAvatarURL"] == nil)
-        let nestedChatStatus = try #require(nestedApp["chatStatus"] as? [String: Any])
-        #expect(nestedChatStatus["code"] as? String == "chatConnectIPhone")
-        #expect(nestedApp["chatStatusCode"] == nil)
-        #expect(nestedApp["snapshotId"] as? String == "app-a")
-        #expect(nestedApprovals["snapshotId"] as? String == "approval-a")
-        #expect(nestedApprovals["gatewayStableID"] as? String == "gateway-a")
-        #expect((nestedApprovals["approvals"] as? [Any])?.count == 1)
-        let nestedApproval = try #require((nestedApprovals["approvals"] as? [[String: Any]])?.first)
-        #expect(nestedApproval["warningText"] as? String == "Review shell expansion")
-    }
-
-    @Test @MainActor func `handle invoke watch notify rejects empty message`() async throws {
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        let params = OpenClawWatchNotifyParams(title: "   ", body: "\n")
-        let paramsData = try JSONEncoder().encode(params)
-        let paramsJSON = String(decoding: paramsData, as: UTF8.self)
-        let req = BridgeInvokeRequest(
-            id: "watch-notify-empty",
-            command: OpenClawWatchCommand.notify.rawValue,
-            paramsJSON: paramsJSON)
-
-        let res = await appModel._test_handleInvoke(req)
-        #expect(res.ok == false)
-        #expect(res.error?.code == .invalidRequest)
-        #expect(watchService.lastSent == nil)
-    }
-
-    @Test @MainActor func `handle invoke watch notify adds default actions for prompt`() async throws {
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        let params = OpenClawWatchNotifyParams(
-            title: "Task",
-            body: "Action needed",
-            priority: .passive,
-            promptId: "prompt-123")
-        let paramsData = try JSONEncoder().encode(params)
-        let paramsJSON = String(decoding: paramsData, as: UTF8.self)
-        let req = BridgeInvokeRequest(
-            id: "watch-notify-default-actions",
-            command: OpenClawWatchCommand.notify.rawValue,
-            paramsJSON: paramsJSON)
-
-        let res = await appModel._test_handleInvoke(req)
-        #expect(res.ok == true)
-        #expect(watchService.lastSent?.params.risk == .low)
-        let actionIDs = watchService.lastSent?.params.actions?.map(\.id)
-        #expect(actionIDs == ["done", "snooze_10m", "open_phone", "escalate"])
-    }
-
-    @Test @MainActor func `legacy watch reply binds to latest prompt owner`() async throws {
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        appModel._test_setConnectedGatewayID("gateway-a")
-        let params = OpenClawWatchNotifyParams(
-            title: "Task",
-            body: "Action needed",
-            promptId: "prompt-legacy")
-        let paramsJSON = try String(decoding: JSONEncoder().encode(params), as: UTF8.self)
-        let request = BridgeInvokeRequest(
-            id: "watch-notify-legacy-owner",
-            command: OpenClawWatchCommand.notify.rawValue,
-            paramsJSON: paramsJSON)
-        #expect(await appModel._test_handleInvoke(request, gatewayStableID: "gateway-a").ok)
-
-        watchService.emitReply(WatchQuickReplyEvent(
-            replyId: "legacy-reply",
-            promptId: "prompt-legacy",
-            actionId: "done",
-            actionLabel: "Done",
-            sessionKey: nil,
-            gatewayStableID: nil,
-            note: nil,
-            sentAtMs: 1234,
-            transport: "transferUserInfo"))
-        await Task.yield()
-
-        #expect(appModel._test_queuedWatchReplyCount() == 1)
-    }
-
-    @Test @MainActor func `handle invoke watch notify adds approval defaults`() async throws {
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        let params = OpenClawWatchNotifyParams(
-            title: "Approval",
-            body: "Allow command?",
-            promptId: "prompt-approval",
-            kind: "approval")
-        let paramsData = try JSONEncoder().encode(params)
-        let paramsJSON = String(decoding: paramsData, as: UTF8.self)
-        let req = BridgeInvokeRequest(
-            id: "watch-notify-approval-defaults",
-            command: OpenClawWatchCommand.notify.rawValue,
-            paramsJSON: paramsJSON)
-
-        let res = await appModel._test_handleInvoke(req)
-        #expect(res.ok == true)
-        let actionIDs = watchService.lastSent?.params.actions?.map(\.id)
-        #expect(actionIDs == ["approve", "decline", "open_phone", "escalate"])
-        #expect(watchService.lastSent?.params.actions?[1].style == "destructive")
-    }
-
-    @Test @MainActor func `handle invoke watch notify derives priority from risk and caps actions`() async throws {
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        let params = OpenClawWatchNotifyParams(
-            title: "Urgent",
-            body: "Check now",
-            risk: .high,
-            actions: [
-                OpenClawWatchAction(id: "a1", label: "A1"),
-                OpenClawWatchAction(id: "a2", label: "A2"),
-                OpenClawWatchAction(id: "a3", label: "A3"),
-                OpenClawWatchAction(id: "a4", label: "A4"),
-                OpenClawWatchAction(id: "a5", label: "A5"),
-            ])
-        let paramsData = try JSONEncoder().encode(params)
-        let paramsJSON = String(decoding: paramsData, as: UTF8.self)
-        let req = BridgeInvokeRequest(
-            id: "watch-notify-derive-priority",
-            command: OpenClawWatchCommand.notify.rawValue,
-            paramsJSON: paramsJSON)
-
-        let res = await appModel._test_handleInvoke(req)
-        #expect(res.ok == true)
-        #expect(watchService.lastSent?.params.priority == .timeSensitive)
-        #expect(watchService.lastSent?.params.risk == .high)
-        let actionIDs = watchService.lastSent?.params.actions?.map(\.id)
-        #expect(actionIDs == ["a1", "a2", "a3", "a4"])
-    }
-
-    @Test @MainActor func `handle invoke watch notify returns unavailable on delivery failure`() async throws {
-        let watchService = MockWatchMessagingService()
-        watchService.sendError = NSError(
-            domain: "watch",
-            code: 1,
-            userInfo: [NSLocalizedDescriptionKey: "WATCH_UNAVAILABLE: no paired Apple Watch"])
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        let params = OpenClawWatchNotifyParams(title: "OpenClaw", body: "Delivery check")
-        let paramsData = try JSONEncoder().encode(params)
-        let paramsJSON = String(decoding: paramsData, as: UTF8.self)
-        let req = BridgeInvokeRequest(
-            id: "watch-notify-fail",
-            command: OpenClawWatchCommand.notify.rawValue,
-            paramsJSON: paramsJSON)
-
-        let res = await appModel._test_handleInvoke(req)
-        #expect(res.ok == false)
-        #expect(res.error?.code == .unavailable)
-        #expect(res.error?.message.contains("WATCH_UNAVAILABLE") == true)
-    }
-
-    @Test @MainActor func `watch reply queues when gateway offline`() async {
-        NodeAppModel._test_resetPersistedWatchReplyQueueState()
-        defer { NodeAppModel._test_resetPersistedWatchReplyQueueState() }
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        appModel._test_setConnectedGatewayID("gateway-watch-reply")
-        watchService.emitReply(
-            WatchQuickReplyEvent(
-                replyId: "reply-offline-1",
-                promptId: "prompt-1",
-                actionId: "approve",
-                actionLabel: "Approve",
-                sessionKey: "ios",
-                gatewayStableID: "gateway-watch-reply",
-                note: nil,
-                sentAtMs: 1234,
-                transport: "transferUserInfo"))
-        await Task.yield()
-        #expect(appModel._test_queuedWatchReplyCount() == 1)
-    }
-
-    @Test @MainActor func `watch chat and reply preserve boundary whitespace gateway owner`() async {
-        NodeAppModel._test_resetPersistedWatchChatQueueState()
-        defer { NodeAppModel._test_resetPersistedWatchChatQueueState() }
-        let gatewayID = " gateway-boundary "
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        appModel._test_setConnectedGatewayID(gatewayID)
-
-        watchService.emitAppCommand(WatchAppCommandEvent(
-            commandId: "watch-boundary-chat",
-            command: .sendChat,
-            sessionKey: "main",
-            gatewayStableID: gatewayID,
-            text: "Keep exact owner",
-            sentAtMs: 1,
-            transport: "sendMessage"))
-        watchService.emitReply(WatchQuickReplyEvent(
-            replyId: "watch-boundary-reply",
-            promptId: "watch-boundary-prompt",
-            actionId: "approve",
-            actionLabel: "Approve",
-            sessionKey: "main",
-            gatewayStableID: gatewayID,
-            note: nil,
-            sentAtMs: 2,
-            transport: "sendMessage"))
-        await waitForMainActorWork { appModel._test_queuedWatchReplyCount() == 1 }
-
-        #expect(appModel._test_queuedWatchChatCommandIds() == ["watch-boundary-chat"])
-        #expect(appModel._test_queuedWatchReplyCount() == 1)
-
-        watchService.emitAppCommand(WatchAppCommandEvent(
-            commandId: "watch-trimmed-owner-chat",
-            command: .sendChat,
-            sessionKey: "main",
-            gatewayStableID: "gateway-boundary",
-            text: "Wrong owner",
-            sentAtMs: 3,
-            transport: "sendMessage"))
-        await Task.yield()
-        #expect(appModel._test_queuedWatchChatCommandIds() == ["watch-boundary-chat"])
-    }
-
-    @Test @MainActor func `watch message outbox restores queued reply after restart`() throws {
-        let suiteName = "watch-reply-queue-\(UUID().uuidString)"
-        let defaults = try #require(UserDefaults(suiteName: suiteName))
-        defaults.removePersistentDomain(forName: suiteName)
-        defer {
-            defaults.removePersistentDomain(forName: suiteName)
-        }
-
-        let event = WatchAppCommandEvent(
-            commandId: "reply-restore-1",
-            command: .sendChat,
-            sessionKey: "ios",
-            gatewayStableID: "gateway-a",
-            text: "Watch reply: Approve",
-            sentAtMs: 1235,
-            transport: "transferUserInfo",
-            messageKind: .quickReply)
-        let firstOutbox = WatchMessageOutbox(defaults: defaults)
-        if case .queue = firstOutbox.ingest(event, isAvailable: false, gatewayStableID: "gateway-a") {
-        } else {
-            Issue.record("expected watch reply to queue")
-        }
-
-        let secondOutbox = WatchMessageOutbox(defaults: defaults)
-        #expect(secondOutbox.nextQueuedMessage(isAvailable: true, gatewayStableID: "gateway-b") == nil)
-        let restored = secondOutbox.nextQueuedMessage(isAvailable: true, gatewayStableID: "gateway-a")
-
-        #expect(restored == event)
-        #expect(secondOutbox.queuedCount(kind: .quickReply) == 1)
-        secondOutbox.removeQueuedMessage(messageID: event.commandId, gatewayStableID: "gateway-a")
-        #expect(secondOutbox.queuedCount() == 0)
-    }
-
-    @Test @MainActor func `watch message outbox restores delivery tombstones and prompt routes`() throws {
-        let suiteName = "watch-message-metadata-\(UUID().uuidString)"
-        let defaults = try #require(UserDefaults(suiteName: suiteName))
-        defaults.removePersistentDomain(forName: suiteName)
-        defer { defaults.removePersistentDomain(forName: suiteName) }
-        let event = WatchAppCommandEvent(
-            commandId: "delivered-reply",
-            command: .sendChat,
-            sessionKey: "main",
-            gatewayStableID: "gateway-a",
-            text: "Delivered reply",
-            sentAtMs: 1,
-            transport: "sendMessage",
-            messageKind: .quickReply)
-        let firstOutbox = WatchMessageOutbox(defaults: defaults)
-        firstOutbox.recordPromptRoute(promptID: "prompt-a", gatewayStableID: "gateway-a")
-        _ = firstOutbox.ingest(event, isAvailable: true, gatewayStableID: "gateway-a")
-        firstOutbox.removeQueuedMessage(messageID: event.commandId, gatewayStableID: "gateway-a")
-        for index in 0..<140 {
-            let pending = WatchAppCommandEvent(
-                commandId: "pending-\(index)",
-                command: .sendChat,
-                sessionKey: "main",
-                gatewayStableID: "gateway-a",
-                text: "Pending \(index)",
-                sentAtMs: Int64(index + 2),
-                transport: "transferUserInfo")
-            _ = firstOutbox.ingest(pending, isAvailable: false, gatewayStableID: "gateway-a")
-        }
-
-        let restoredOutbox = WatchMessageOutbox(defaults: defaults)
-        #expect(restoredOutbox.gatewayStableID(forPromptID: "prompt-a") == "gateway-a")
-        if case .deduped = restoredOutbox.ingest(
-            event,
-            isAvailable: true,
-            gatewayStableID: "gateway-a")
-        {
-        } else {
-            Issue.record("expected delivered reply to remain deduped after restart")
-        }
-    }
-
-    @Test @MainActor func `watch reply drops stale gateway target`() async {
-        NodeAppModel._test_resetPersistedWatchReplyQueueState()
-        defer { NodeAppModel._test_resetPersistedWatchReplyQueueState() }
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        appModel._test_setConnectedGatewayID("gateway-current")
-
-        watchService.emitReply(
-            WatchQuickReplyEvent(
-                replyId: "reply-stale-gateway",
-                promptId: "prompt-stale",
-                actionId: "approve",
-                actionLabel: "Approve",
-                sessionKey: "ios",
-                gatewayStableID: "gateway-old",
-                note: nil,
-                sentAtMs: 1236,
-                transport: "transferUserInfo"))
-        await Task.yield()
-
-        #expect(appModel._test_queuedWatchReplyCount() == 0)
-        #expect(appModel.openChatRequestID == 0)
-    }
-
-    @Test @MainActor func `watch reply uses idempotent chat outbox`() async {
-        NodeAppModel._test_resetPersistedWatchReplyQueueState()
-        defer { NodeAppModel._test_resetPersistedWatchReplyQueueState() }
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        appModel.enterAppleReviewDemoMode()
-        appModel._test_recordWatchPromptRoute(
-            promptID: "prompt-idempotent",
-            gatewayStableID: AppleReviewDemoMode.gatewayID)
-        let initialOpenChatRequestID = appModel.openChatRequestID
-        let event = WatchQuickReplyEvent(
-            replyId: "reply-idempotent",
-            promptId: "prompt-idempotent",
-            actionId: "approve",
-            actionLabel: "Approve",
-            sessionKey: "main",
-            gatewayStableID: nil,
-            note: nil,
-            sentAtMs: 1237,
-            transport: "sendMessage")
-
-        watchService.emitReply(event)
-        await waitForMainActorWork { appModel.openChatRequestID == initialOpenChatRequestID + 1 }
-        watchService.emitReply(event)
-        await waitForMainActorWork { appModel._test_queuedWatchReplyCount() == 0 }
-
-        #expect(appModel.openChatRequestID == initialOpenChatRequestID + 1)
-        #expect(appModel._test_queuedWatchReplyCount() == 0)
-    }
-
-    @Test @MainActor func `watch reply rejects legacy prompt without a gateway owner`() async {
-        NodeAppModel._test_resetPersistedWatchReplyQueueState()
-        defer { NodeAppModel._test_resetPersistedWatchReplyQueueState() }
-        let watchService = MockWatchMessagingService()
-        let appModel = NodeAppModel(watchMessagingService: watchService)
-        appModel.enterAppleReviewDemoMode()
-        let initialOpenChatRequestID = appModel.openChatRequestID
-        let event = WatchQuickReplyEvent(
-            replyId: "reply-legacy-prompt",
-            promptId: "prompt-from-previous-release",
-            actionId: "approve",
-            actionLabel: "Approve",
-            sessionKey: "main",
-            gatewayStableID: nil,
-            note: nil,
-            sentAtMs: 1238,
-            transport: "sendMessage")
-
-        watchService.emitReply(event)
-        await Task.yield()
-        watchService.emitReply(event)
-        await Task.yield()
-
-        #expect(appModel.openChatRequestID == initialOpenChatRequestID)
-        #expect(appModel._test_queuedWatchReplyCount() == 0)
-    }
-
-    @Test @MainActor func `handle deep link sets error when not connected`() async throws {
-        let appModel = NodeAppModel()
-        let url = try #require(URL(string: "openclaw://agent?message=hello"))
-        await appModel.handleDeepLink(url: url)
-        #expect(appModel.screen.errorText?.contains("Gateway not connected") == true)
-    }
-
-    @Test @MainActor func `handle deep link rejects oversized message`() async throws {
-        let appModel = NodeAppModel()
-        let msg = String(repeating: "a", count: 20001)
-        let url = try #require(URL(string: "openclaw://agent?message=\(msg)"))
-        await appModel.handleDeepLink(url: url)
-        #expect(appModel.screen.errorText?.contains("Deep link too large") == true)
-    }
-
-    @Test @MainActor func `handle deep link requires confirmation when connected and unkeyed`() async {
-        let appModel = NodeAppModel()
-        appModel._test_setGatewayConnected(true)
-        appModel._test_setAgentRequestHandler { _ in }
-        let url = makeAgentDeepLinkURL(message: "hello from deep link")
-
-        await appModel.handleDeepLink(url: url)
-        #expect(appModel.pendingAgentDeepLinkPrompt != nil)
-        #expect(appModel.openChatRequestID == 0)
-
-        await appModel.approvePendingAgentDeepLinkPrompt()
-        #expect(appModel.pendingAgentDeepLinkPrompt == nil)
-        #expect(appModel.openChatRequestID == 1)
-        #expect(appModel.screen.errorText == nil)
-    }
-
-    @Test @MainActor func `handle deep link coalesces prompt when rate limited`() async throws {
-        let appModel = NodeAppModel()
-        appModel._test_setGatewayConnected(true)
-
-        await appModel.handleDeepLink(url: makeAgentDeepLinkURL(message: "first prompt"))
-        let firstPrompt = try #require(appModel.pendingAgentDeepLinkPrompt)
-
-        await appModel.handleDeepLink(url: makeAgentDeepLinkURL(message: "second prompt"))
-        let coalescedPrompt = try #require(appModel.pendingAgentDeepLinkPrompt)
-
-        #expect(coalescedPrompt.id != firstPrompt.id)
-        #expect(coalescedPrompt.messagePreview.contains("second prompt"))
-    }
-
-    @Test @MainActor func `handle deep link strips delivery fields when unkeyed`() async throws {
-        let appModel = NodeAppModel()
-        appModel._test_setGatewayConnected(true)
-        let url = makeAgentDeepLinkURL(
-            message: "route this",
-            deliver: true,
-            to: "123456",
-            channel: "telegram")
-
-        await appModel.handleDeepLink(url: url)
-        let prompt = try #require(appModel.pendingAgentDeepLinkPrompt)
-        #expect(prompt.request.deliver == false)
-        #expect(prompt.request.to == nil)
-        #expect(prompt.request.channel == nil)
-    }
-
-    @Test @MainActor func `handle deep link rejects long unkeyed message when connected`() async {
-        let appModel = NodeAppModel()
-        appModel._test_setGatewayConnected(true)
-        let message = String(repeating: "x", count: 241)
-        let url = makeAgentDeepLinkURL(message: message)
-
-        await appModel.handleDeepLink(url: url)
-        #expect(appModel.pendingAgentDeepLinkPrompt == nil)
-        #expect(appModel.screen.errorText?.contains("blocked") == true)
-    }
-
-    @Test @MainActor func `handle deep link bypasses prompt with valid key`() async {
-        let appModel = NodeAppModel()
-        appModel._test_setGatewayConnected(true)
-        appModel._test_setAgentRequestHandler { _ in }
-        let key = NodeAppModel._test_currentDeepLinkKey()
-        let url = makeAgentDeepLinkURL(message: "trusted request", key: key)
-
-        await appModel.handleDeepLink(url: url)
-        #expect(appModel.pendingAgentDeepLinkPrompt == nil)
-        #expect(appModel.openChatRequestID == 1)
-        #expect(appModel.screen.errorText == nil)
-    }
-
-    @Test @MainActor func `operator scopes use the active gateway token`() throws {
-        let tempDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString, isDirectory: true)
-        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        let previousStateDir = ProcessInfo.processInfo.environment["OPENCLAW_STATE_DIR"]
-        setenv("OPENCLAW_STATE_DIR", tempDir.path, 1)
-        defer {
-            if let previousStateDir {
-                setenv("OPENCLAW_STATE_DIR", previousStateDir, 1)
-            } else {
-                unsetenv("OPENCLAW_STATE_DIR")
-            }
-            try? FileManager.default.removeItem(at: tempDir)
-        }
-
-        let appModel = NodeAppModel()
-        defer { appModel.disconnectGateway() }
-        let stableID = "manual|gateway.example.com|443"
-        let authenticationOwnerID = stableID
-        let config = try GatewayConnectConfig(
-            url: #require(URL(string: "wss://127.0.0.1:1")),
-            stableID: stableID,
-            tls: nil,
-            token: nil,
-            bootstrapToken: nil,
-            password: nil,
-            nodeOptions: GatewayConnectOptions(
-                role: "node",
-                scopes: [],
-                caps: [],
-                commands: [],
-                permissions: [:],
-                clientId: "openclaw-ios",
-                clientMode: "node",
-                clientDisplayName: nil,
-                deviceAuthGatewayID: authenticationOwnerID))
-        appModel.applyGatewayConnectConfig(config)
-        let identity = DeviceIdentityStore.loadOrCreate()
-        #expect(appModel.hasOperatorAdminScope == false)
-
-        _ = DeviceAuthStore.storeToken(
-            deviceId: identity.deviceId,
-            role: "operator",
-            token: "operator-token",
-            scopes: ["operator.read", "operator.admin", "operator.approvals"],
-            gatewayID: authenticationOwnerID)
-        appModel._test_refreshOperatorAdminScopeFromStore()
-        #expect(appModel.hasOperatorAdminScope == true)
-        #expect(appModel._test_shouldRequestStoredOperatorAdminScope(gatewayID: authenticationOwnerID))
-        #expect(appModel._test_shouldRequestStoredOperatorApprovalScope(
-            gatewayID: authenticationOwnerID,
-            forceTalkPermissionUpgradeRequest: true))
-
-        let otherStableID = "manual|other.example.com|443"
-        #expect(!appModel._test_shouldRequestStoredOperatorAdminScope(gatewayID: otherStableID))
-        #expect(!appModel._test_shouldRequestStoredOperatorApprovalScope(
-            gatewayID: otherStableID,
-            forceTalkPermissionUpgradeRequest: true))
-
-        DeviceAuthStore.clearToken(
-            deviceId: identity.deviceId,
-            role: "operator",
-            gatewayID: authenticationOwnerID)
-        appModel._test_refreshOperatorAdminScopeFromStore()
-        #expect(appModel.hasOperatorAdminScope == false)
-    }
-
-    @Test @MainActor func `send voice transcript throws when gateway offline`() async {
-        let appModel = NodeAppModel()
-        await #expect(throws: Error.self) {
-            try await appModel.sendVoiceTranscript(text: "hello", sessionKey: "main")
-        }
-    }
-
-    @Test @MainActor func `canvas A 2 UI action dispatches status`() async {
-        let appModel = NodeAppModel()
-        let body: [String: Any] = [
-            "userAction": [
-                "name": "tap",
-                "id": "action-1",
-                "surfaceId": "main",
-                "sourceComponentId": "button-1",
-                "context": ["value": "ok"],
-            ],
-        ]
-        await appModel._test_handleCanvasA2UIAction(body: body)
-        #expect(appModel.screen.urlString.isEmpty)
-    }
-}

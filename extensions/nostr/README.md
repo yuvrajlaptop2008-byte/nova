@@ -1,10 +1,10 @@
 # @nova/nostr
 
-Nostr DM channel plugin for OpenClaw using NIP-04 encrypted direct messages.
+Nostr DM channel plugin for Nova using NIP-04 encrypted direct messages.
 
 ## Overview
 
-This extension adds Nostr as a messaging channel to OpenClaw. It enables your bot to:
+This extension adds Nostr as a messaging channel to Nova. It enables your bot to:
 
 - Receive encrypted DMs from Nostr users
 - Send encrypted responses back
@@ -13,7 +13,7 @@ This extension adds Nostr as a messaging channel to OpenClaw. It enables your bo
 ## Installation
 
 ```bash
-openclaw plugins install @nova/nostr
+nova plugins install @nova/nostr
 ```
 
 ## Quick Setup
@@ -94,7 +94,7 @@ processed unless approved.
 # Using strfry
 docker run -p 7777:7777 ghcr.io/hoytech/strfry
 
-# Configure openclaw to use local relay
+# Configure nova to use local relay
 "relays": ["ws://localhost:7777"]
 ```
 

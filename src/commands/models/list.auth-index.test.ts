@@ -42,14 +42,14 @@ const dualRouteResolverFactory = (() => () => ({
       baseUrl: "https://api.openai.com/v1",
       authRequirement: "api-key",
       requestTransportOverrides: "none",
-      runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+      runtimePolicy: { compatibleIds: ["nova", "codex"] },
     },
     {
       api: "openai-chatgpt-responses",
       baseUrl: "https://chatgpt.com/backend-api/codex",
       authRequirement: "subscription",
       requestTransportOverrides: "none",
-      runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+      runtimePolicy: { compatibleIds: ["nova", "codex"] },
     },
   ],
 })) as typeof createOpenAIModelRoutesResolver;

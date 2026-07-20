@@ -17,7 +17,7 @@ import {
   getCliSessionBinding,
   normalizeCliSessionReseedReceipt,
 } from "../config/sessions/cli-session-binding.js";
-import { attachOpenClawTranscriptMeta } from "./session-transcript-readers.js";
+import { attachNovaTranscriptMeta } from "./session-transcript-readers.js";
 
 export const CLAUDE_CLI_PROVIDER = "claude-cli";
 const CLAUDE_PROJECTS_RELATIVE_DIR = path.join(".claude", "projects");
@@ -353,7 +353,7 @@ export function parseClaudeCliHistoryEntry(
         }
       }
     }
-    return attachOpenClawTranscriptMeta(
+    return attachNovaTranscriptMeta(
       {
         role: "user",
         content,
@@ -363,7 +363,7 @@ export function parseClaudeCliHistoryEntry(
     ) as TranscriptLikeMessage;
   }
 
-  return attachOpenClawTranscriptMeta(
+  return attachNovaTranscriptMeta(
     {
       role: "assistant",
       content,

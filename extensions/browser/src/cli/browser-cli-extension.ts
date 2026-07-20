@@ -1,5 +1,5 @@
 /**
- * `openclaw browser extension` CLI: locate the unpacked Chrome extension and
+ * `nova browser extension` CLI: locate the unpacked Chrome extension and
  * print the pairing string that connects it to this install's relay.
  */
 import path from "node:path";
@@ -107,7 +107,7 @@ function buildPairingString(gatewayUrl?: string): {
   };
 }
 
-/** Register `openclaw browser extension {path,pair}`. */
+/** Register `nova browser extension {path,pair}`. */
 export function registerBrowserExtensionCommands(
   browser: Command,
   _parentOpts: (cmd: Command) => BrowserParentOpts,

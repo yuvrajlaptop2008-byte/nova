@@ -1,8 +1,8 @@
 // Detects dangerous core config flags during security audits.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 /** List enabled core config flags that intentionally weaken security posture. */
-export function collectCoreInsecureOrDangerousFlags(cfg: OpenClawConfig): string[] {
+export function collectCoreInsecureOrDangerousFlags(cfg: NovaConfig): string[] {
   const enabledFlags: string[] = [];
   if (cfg.gateway?.controlUi?.allowInsecureAuth === true) {
     enabledFlags.push("gateway.controlUi.allowInsecureAuth=true");

@@ -51,7 +51,7 @@ describeControlUiE2e("Control UI file-drop guard", () => {
       await composer.waitFor({ state: "visible", timeout: 10_000 });
       await composer.fill("draft survives stray drop");
 
-      const stray = await page.locator("openclaw-app-shell").evaluate((element) => {
+      const stray = await page.locator("nova-app-shell").evaluate((element) => {
         const transfer = new DataTransfer();
         transfer.items.add(new File(["stray"], "stray-proof.txt", { type: "text/plain" }));
         const beforeUrl = location.href;

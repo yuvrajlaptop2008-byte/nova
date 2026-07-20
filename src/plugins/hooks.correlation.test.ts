@@ -102,7 +102,7 @@ describe("hook correlation fields", () => {
           agentId: "test-agent",
           sessionKey: "test-session",
           sessionId: "test-session-id",
-          workspaceDir: "/tmp/openclaw-test",
+          workspaceDir: "/tmp/nova-test",
           messageProvider: "test",
         },
         { unrefTimeout: false },

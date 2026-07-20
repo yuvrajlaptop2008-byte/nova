@@ -8,7 +8,7 @@ import { createContext, Script } from "node:vm";
 import {
   validateJsonSchemaValue,
   type JsonSchemaObject,
-} from "openclaw/plugin-sdk/json-schema-runtime";
+} from "nova/plugin-sdk/json-schema-runtime";
 import {
   convertMeetingTtsAudioForBridge,
   createLocalMeetingRealtimeAudioTransport,
@@ -19,13 +19,13 @@ import {
   type MeetingRealtimeAudioEngineHealth,
   type MeetingRealtimeAudioTransport,
   type MeetingRealtimeToolCallParams,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { RealtimeTranscriptionProviderPlugin } from "openclaw/plugin-sdk/realtime-transcription";
-import type { RealtimeVoiceProviderPlugin } from "openclaw/plugin-sdk/realtime-voice";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { RealtimeTranscriptionProviderPlugin } from "nova/plugin-sdk/realtime-transcription";
+import type { RealtimeVoiceProviderPlugin } from "nova/plugin-sdk/realtime-voice";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import plugin, { testing as googleMeetPluginTesting } from "./index.js";
 import {
-  consultOpenClawAgentForGoogleMeet,
+  consultNovaAgentForGoogleMeet,
   handleGoogleMeetRealtimeConsultToolCall,
   resolveGoogleMeetRealtimeTools,
 } from "./src/agent-consult.js";
@@ -116,9 +116,9 @@ function createEmptyMeetingRealtimeAudioEngineHealth(): MeetingRealtimeAudioEngi
 
 function createGoogleMeetTestEngineBindings(params: {
   config: GoogleMeetConfig;
-  fullConfig: Parameters<typeof consultOpenClawAgentForGoogleMeet>[0]["fullConfig"];
-  runtime: Parameters<typeof consultOpenClawAgentForGoogleMeet>[0]["runtime"];
-  logger: Parameters<typeof consultOpenClawAgentForGoogleMeet>[0]["logger"];
+  fullConfig: Parameters<typeof consultNovaAgentForGoogleMeet>[0]["fullConfig"];
+  runtime: Parameters<typeof consultNovaAgentForGoogleMeet>[0]["runtime"];
+  logger: Parameters<typeof consultNovaAgentForGoogleMeet>[0]["logger"];
 }) {
   return {
     platform: {
@@ -127,7 +127,7 @@ function createGoogleMeetTestEngineBindings(params: {
       sessionIdPrefix: "google-meet",
     },
     consultAgent: (consult: MeetingAgentConsultParams) =>
-      consultOpenClawAgentForGoogleMeet({ ...params, ...consult }),
+      consultNovaAgentForGoogleMeet({ ...params, ...consult }),
     tools: resolveGoogleMeetRealtimeTools(params.config.realtime.toolPolicy),
     handleToolCall: (call: MeetingRealtimeToolCallParams) =>
       handleGoogleMeetRealtimeConsultToolCall({ ...params, ...call }),
@@ -264,8 +264,8 @@ const fetchGuardMocks = vi.hoisted(() => ({
   ),
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/ssrf-runtime")>();
+vi.mock("nova/plugin-sdk/ssrf-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/ssrf-runtime")>();
   return {
     ...actual,
     fetchWithSsrFGuard: fetchGuardMocks.fetchWithSsrFGuard,
@@ -374,7 +374,7 @@ type MockSessionEntry = {
 };
 
 function createMockSessionRuntime(sessionStore: Record<string, unknown>) {
-  const sessionRoot = createIsolatedTestDir("openclaw-google-meet-session-");
+  const sessionRoot = createIsolatedTestDir("nova-google-meet-session-");
   return {
     resolveStorePath: vi.fn(() => path.join(sessionRoot, "sessions.json")),
     loadSessionStore: vi.fn(() => sessionStore),
@@ -897,7 +897,7 @@ describe("google-meet plugin", () => {
   });
 
   afterAll(() => {
-    vi.doUnmock("openclaw/plugin-sdk/ssrf-runtime");
+    vi.doUnmock("nova/plugin-sdk/ssrf-runtime");
     vi.doUnmock("./src/voice-call-gateway.js");
     vi.resetModules();
   });
@@ -980,7 +980,7 @@ describe("google-meet plugin", () => {
     expect(config.realtime.introMessage).toBe("Say exactly: I'm here and listening.");
     expect(config.realtime.toolPolicy).toBe("safe-read-only");
     expect(config.realtime.providers).toEqual({});
-    expect(config.realtime.instructions).toContain("openclaw_agent_consult");
+    expect(config.realtime.instructions).toContain("nova_agent_consult");
     expect(config.oauth).toEqual({});
     expect(config.auth).toEqual({ provider: "google-oauth" });
 
@@ -1130,7 +1130,7 @@ describe("google-meet plugin", () => {
 
   it("declares advanced config metadata in the plugin entry and manifest", () => {
     const manifest = JSON.parse(
-      readFileSync(new URL("./openclaw.plugin.json", import.meta.url), "utf8"),
+      readFileSync(new URL("./nova.plugin.json", import.meta.url), "utf8"),
     ) as {
       uiHints?: Record<string, unknown>;
       configSchema?: GoogleMeetManifestConfigSchema;
@@ -2115,7 +2115,7 @@ describe("google-meet plugin", () => {
         details: {
           manualActionRequired: true,
           reason: "not-authenticated",
-          browser: { profile: "openclaw" },
+          browser: { profile: "nova" },
         },
       });
     });
@@ -2131,7 +2131,7 @@ describe("google-meet plugin", () => {
     expect(result.details).toEqual({
       manualActionRequired: true,
       reason: "not-authenticated",
-      browser: { profile: "openclaw" },
+      browser: { profile: "nova" },
     });
   });
 
@@ -2320,8 +2320,8 @@ describe("google-meet plugin", () => {
     try {
       const { tools } = setup({
         chrome: {
-          audioInputCommand: ["openclaw-audio-bridge", "capture"],
-          audioOutputCommand: ["openclaw-audio-bridge", "play"],
+          audioInputCommand: ["nova-audio-bridge", "capture"],
+          audioOutputCommand: ["nova-audio-bridge", "play"],
         },
       });
       const tool = tools[0] as {
@@ -2424,7 +2424,7 @@ describe("google-meet plugin", () => {
 
   it("writes export bundles through the tool", async () => {
     stubMeetArtifactsApi();
-    const tempDir = mkdtempSync(path.join(tmpdir(), "openclaw-google-meet-tool-export-"));
+    const tempDir = mkdtempSync(path.join(tmpdir(), "nova-google-meet-tool-export-"));
     const { tools } = setup();
     const tool = tools[0] as {
       execute: (
@@ -2483,7 +2483,7 @@ describe("google-meet plugin", () => {
 
   it("dry-runs export bundles through the tool", async () => {
     stubMeetArtifactsApi();
-    const parentDir = mkdtempSync(path.join(tmpdir(), "openclaw-google-meet-tool-dry-run-"));
+    const parentDir = mkdtempSync(path.join(tmpdir(), "nova-google-meet-tool-dry-run-"));
     const outputDir = path.join(parentDir, "bundle");
     const { tools } = setup();
     const tool = tools[0] as {
@@ -3270,7 +3270,7 @@ describe("google-meet plugin", () => {
           return { ok: true };
         }
         if (request.path === "/act") {
-          if (String(request.body?.fn).includes("state = window.__openclawMeetCaptions")) {
+          if (String(request.body?.fn).includes("state = window.__novaMeetCaptions")) {
             const finalizing = String(request.body?.fn).includes("if (true &&");
             if (!finalizing) {
               options?.onNonFinalTranscriptRead?.();
@@ -3515,7 +3515,7 @@ describe("google-meet plugin", () => {
         const request = call[2] as { body?: { fn?: string } };
         const script = String(request.body?.fn);
         return (
-          script.includes("state = window.__openclawMeetCaptions") && script.includes("if (true &&")
+          script.includes("state = window.__novaMeetCaptions") && script.includes("if (true &&")
         );
       });
       expect(finalCaptures).toHaveLength(1);
@@ -4313,7 +4313,7 @@ describe("google-meet plugin", () => {
     ).runInContext(context) as () => string | Promise<string>;
 
     const first = JSON.parse(await inspect()) as { captionsEnabledAttempted?: boolean };
-    const captionsStateKey = "__openclawMeetCaptions";
+    const captionsStateKey = "__novaMeetCaptions";
     const stateAfterFirst = windowState[captionsStateKey] as {
       enabledAttempted?: boolean;
     };
@@ -4408,7 +4408,7 @@ describe("google-meet plugin", () => {
     expect(first.leaveReason).toBeUndefined();
     page.caption = "Alice\nmeeting ended after the recap";
     await inspect();
-    const state = windowState["__openclawMeetCaptions"] as {
+    const state = windowState["__novaMeetCaptions"] as {
       epoch: string;
       lines: Array<{ text: string }>;
       visible: Array<{ text: string }>;
@@ -4446,9 +4446,9 @@ describe("google-meet plugin", () => {
     };
     expect(afterFinalize.lines).toHaveLength(2);
 
-    delete windowState["__openclawMeetCaptions"];
+    delete windowState["__novaMeetCaptions"];
     await inspect();
-    const reloadedState = windowState["__openclawMeetCaptions"] as { epoch: string };
+    const reloadedState = windowState["__novaMeetCaptions"] as { epoch: string };
     expect(reloadedState.epoch).not.toBe(state.epoch);
 
     const inspectNextSession = new Script(
@@ -4459,7 +4459,7 @@ describe("google-meet plugin", () => {
       })})`,
     ).runInContext(context) as () => string | Promise<string>;
     await inspectNextSession();
-    const nextState = windowState["__openclawMeetCaptions"] as {
+    const nextState = windowState["__novaMeetCaptions"] as {
       droppedLines: number;
       epoch: string;
       sessionId?: string;
@@ -7170,7 +7170,7 @@ describe("google-meet plugin", () => {
     });
 
     expect(result.details.error).toContain("No connected Google Meet-capable node");
-    expect(result.details.error).toContain("openclaw node run");
+    expect(result.details.error).toContain("nova node run");
   });
 
   it("requires chromeNode.node when multiple capable nodes are connected", async () => {
@@ -7738,7 +7738,7 @@ describe("google-meet plugin", () => {
     callbacks?.onToolCall?.({
       itemId: "item-1",
       callId: "tool-call-1",
-      name: "openclaw_agent_consult",
+      name: "nova_agent_consult",
       args: { question: "What should I say about launch timing?" },
     });
     expect(bridge.submitToolResult).toHaveBeenCalled();
@@ -7747,7 +7747,7 @@ describe("google-meet plugin", () => {
     expect(firstToolResultCall[2]).toStrictEqual({ willContinue: true });
     const progressPayload = requireRecord(firstToolResultCall[1], "tool progress payload");
     expect(progressPayload.status).toBe("working");
-    expect(progressPayload.tool).toBe("openclaw_agent_consult");
+    expect(progressPayload.tool).toBe("nova_agent_consult");
 
     expect(spawnMock).toHaveBeenNthCalledWith(1, "play-meet", [], {
       stdio: ["pipe", "ignore", "pipe"],
@@ -7800,7 +7800,7 @@ describe("google-meet plugin", () => {
       channels: 1,
     });
     expect(callbacks.autoRespondToAudio).toBe(true);
-    expect(callbacks.tools?.map((tool) => tool.name)).toContain("openclaw_agent_consult");
+    expect(callbacks.tools?.map((tool) => tool.name)).toContain("nova_agent_consult");
     await vi.waitFor(() => {
       expect(bridge.submitToolResult).toHaveBeenLastCalledWith(
         "tool-call-1",
@@ -8255,7 +8255,7 @@ describe("google-meet plugin", () => {
     let releaseIdlePull: (() => void) | undefined;
     const fullConfig = { models: { providers: {} } } as never;
     const sessionStore: Record<string, unknown> = {};
-    const testRoot = createIsolatedTestDir("openclaw-google-meet-node-agent-");
+    const testRoot = createIsolatedTestDir("nova-google-meet-node-agent-");
     const runtime = {
       nodes: {
         invoke: vi.fn(async ({ params }: { params?: { action?: string; base64?: string } }) => {
@@ -8317,7 +8317,7 @@ describe("google-meet plugin", () => {
     callbacks?.onToolCall?.({
       itemId: "item-1",
       callId: "tool-call-1",
-      name: "openclaw_agent_consult",
+      name: "nova_agent_consult",
       args: { question: "What should I say?" },
     });
     expect(bridge.submitToolResult).toHaveBeenCalled();
@@ -8326,7 +8326,7 @@ describe("google-meet plugin", () => {
     expect(firstToolResultCall[2]).toStrictEqual({ willContinue: true });
     const progressPayload = requireRecord(firstToolResultCall[1], "node tool progress payload");
     expect(progressPayload.status).toBe("working");
-    expect(progressPayload.tool).toBe("openclaw_agent_consult");
+    expect(progressPayload.tool).toBe("nova_agent_consult");
 
     await vi.waitFor(() => {
       expect(sendAudio).toHaveBeenCalledWith(Buffer.from([9, 8, 7]));
@@ -8373,7 +8373,7 @@ describe("google-meet plugin", () => {
       channels: 1,
     });
     expect(callbacks.autoRespondToAudio).toBe(true);
-    expect(callbacks.tools?.map((tool) => tool.name)).toContain("openclaw_agent_consult");
+    expect(callbacks.tools?.map((tool) => tool.name)).toContain("nova_agent_consult");
     expect(handle.type).toBe("node-command-pair");
     expect(handle.providerId).toBe("openai");
     expect(handle.nodeId).toBe("node-1");

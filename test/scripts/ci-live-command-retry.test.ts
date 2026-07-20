@@ -47,7 +47,7 @@ afterEach(() => {
 
 describe("scripts/ci-live-command-retry.sh", () => {
   it("retries a provider-internal RPC timeout", () => {
-    const { commandPath, counterPath } = writeCommand("openclaw-ci-live-rpc-timeout-", [
+    const { commandPath, counterPath } = writeCommand("nova-ci-live-rpc-timeout-", [
       'attempts="$(cat "$NOVA_RETRY_TEST_COUNTER" 2>/dev/null || printf 0)"',
       'attempts="$((attempts + 1))"',
       'printf "%s" "$attempts" > "$NOVA_RETRY_TEST_COUNTER"',
@@ -71,7 +71,7 @@ describe("scripts/ci-live-command-retry.sh", () => {
     ["live test timeout", "Error: Test timed out in 45000ms."],
     ["live terminal timeout", "Error: terminal timeout after 300000ms"],
   ])("retries a transient %s", (_label, message) => {
-    const { commandPath, counterPath } = writeCommand("openclaw-ci-live-transient-", [
+    const { commandPath, counterPath } = writeCommand("nova-ci-live-transient-", [
       'attempts="$(cat "$NOVA_RETRY_TEST_COUNTER" 2>/dev/null || printf 0)"',
       'attempts="$((attempts + 1))"',
       'printf "%s" "$attempts" > "$NOVA_RETRY_TEST_COUNTER"',
@@ -89,7 +89,7 @@ describe("scripts/ci-live-command-retry.sh", () => {
   });
 
   it("does not retry a MiniMax authentication failure", () => {
-    const { commandPath, counterPath } = writeCommand("openclaw-ci-live-auth-failure-", [
+    const { commandPath, counterPath } = writeCommand("nova-ci-live-auth-failure-", [
       'attempts="$(cat "$NOVA_RETRY_TEST_COUNTER" 2>/dev/null || printf 0)"',
       'attempts="$((attempts + 1))"',
       'printf "%s" "$attempts" > "$NOVA_RETRY_TEST_COUNTER"',

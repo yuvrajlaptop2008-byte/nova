@@ -6,7 +6,7 @@ import type { RunEmbeddedAgentParams } from "../agents/embedded-agent-runner/run
 import type { SessionEntry } from "../config/sessions/types.js";
 import { MODEL_SELECTION_LOCKED_MESSAGE } from "../sessions/model-overrides.js";
 import { runExclusiveSessionLifecycleMutation } from "../sessions/session-lifecycle-admission.js";
-import { closeOpenClawAgentDatabaseByPath } from "../state/openclaw-agent-db.js";
+import { closeNovaAgentDatabaseByPath } from "../state/nova-agent-db.js";
 import { consultRealtimeVoiceAgent } from "./agent-consult-runtime.js";
 import { REALTIME_VOICE_AGENT_CONSULT_TOOL } from "./agent-consult-tool.js";
 import {
@@ -171,9 +171,7 @@ describe("realtime voice agent consult runtime", () => {
   beforeEach(async () => {
     // macOS aliases its temp directory through /var; canonical paths keep the
     // SQLite cache key and cleanup target aligned.
-    testTempDir = await fs.realpath(
-      await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-talk-consult-")),
-    );
+    testTempDir = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "nova-talk-consult-")));
   });
 
   afterEach(async () => {
@@ -188,7 +186,7 @@ describe("realtime voice agent consult runtime", () => {
     const tempDir = testTempDir;
     testTempDir = undefined;
     if (tempDir) {
-      closeOpenClawAgentDatabaseByPath(path.join(tempDir, "openclaw-agent.sqlite"));
+      closeNovaAgentDatabaseByPath(path.join(tempDir, "nova-agent.sqlite"));
       await fs.rm(tempDir, { recursive: true, force: true });
     }
   });

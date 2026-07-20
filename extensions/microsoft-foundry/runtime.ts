@@ -2,15 +2,15 @@
 import type {
   ProviderPreparedRuntimeAuth,
   ProviderPrepareRuntimeAuthContext,
-} from "openclaw/plugin-sdk/core";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+} from "nova/plugin-sdk/core";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   asDateTimestampMs,
   resolveDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { ensureAuthProfileStore } from "openclaw/plugin-sdk/provider-auth";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { ensureAuthProfileStore } from "nova/plugin-sdk/provider-auth";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import { getAccessTokenResultAsync } from "./cli.js";
 import {
   ANTHROPIC_MESSAGES_API,
@@ -34,7 +34,7 @@ function resetFoundryRuntimeAuthCaches(): void {
 }
 
 if (process.env.VITEST === "true") {
-  const key = Symbol.for("openclaw.microsoftFoundryTestApi");
+  const key = Symbol.for("nova.microsoftFoundryTestApi");
   const api = (Reflect.get(globalThis, key) as Record<string, unknown> | undefined) ?? {};
   Reflect.set(globalThis, key, { ...api, resetFoundryRuntimeAuthCaches });
 }

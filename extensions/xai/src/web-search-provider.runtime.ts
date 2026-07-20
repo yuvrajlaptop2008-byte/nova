@@ -1,12 +1,12 @@
 // Xai provider module implements model/runtime integration.
-import { resolveDefaultAgentDir } from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { resolveDefaultAgentDir } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   coerceSecretRef,
   ensureAuthProfileStore,
   listUsableProviderAuthProfileIds,
-} from "openclaw/plugin-sdk/provider-auth";
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/provider-auth-runtime";
+} from "nova/plugin-sdk/provider-auth";
+import { resolveApiKeyForProvider } from "nova/plugin-sdk/provider-auth-runtime";
 import {
   DEFAULT_CACHE_TTL_MINUTES,
   formatCliCommand,
@@ -22,7 +22,7 @@ import {
   resolveWebSearchProviderCredential,
   type WebSearchProviderSetupContext,
   writeCache,
-} from "openclaw/plugin-sdk/provider-web-search";
+} from "nova/plugin-sdk/provider-web-search";
 import {
   buildXaiWebSearchPayload,
   extractXaiWebSearchContent,
@@ -67,7 +67,7 @@ export async function runXaiSearchProviderSetup(
     [
       "x_search lets your agent search X (formerly Twitter) posts via xAI.",
       "It reuses the same xAI credential you configured for Grok web search.",
-      `You can change this later with ${formatCliCommand("openclaw configure --section web")}.`,
+      `You can change this later with ${formatCliCommand("nova configure --section web")}.`,
     ].join("\n"),
     "X search",
   );
@@ -212,7 +212,7 @@ async function resolveXaiProviderAuthCredential(params: {
   profileId?: string;
 }): Promise<XaiResolvedWebSearchAuth | undefined> {
   try {
-    const config = params.config as OpenClawConfig | undefined;
+    const config = params.config as NovaConfig | undefined;
     const agentDir =
       params.agentDir?.trim() || (config ? resolveDefaultAgentDir(config) : undefined);
     const resolved = await resolveApiKeyForProvider({
@@ -246,7 +246,7 @@ async function resolveXaiProviderApiKeyProfileFallback(params: {
   config?: Record<string, unknown>;
   agentDir?: string;
 }): Promise<XaiResolvedWebSearchAuth | undefined> {
-  const config = params.config as OpenClawConfig | undefined;
+  const config = params.config as NovaConfig | undefined;
   const usableProfiles = listUsableProviderAuthProfileIds({
     agentDir: params.agentDir,
     cfg: config,
@@ -362,8 +362,8 @@ export async function executeXaiWebSearchProviderTool(
     return {
       error: "missing_xai_api_key",
       message:
-        "web_search (grok) needs xAI credentials. Run `openclaw onboard --auth-choice xai-oauth` to sign in with Grok, run `openclaw onboard --auth-choice xai-api-key`, set `XAI_API_KEY` in the Gateway environment, or configure `plugins.entries.xai.config.webSearch.apiKey`. If you do not want to configure search credentials, use web_fetch for a specific URL or the browser tool for interactive pages.",
-      docs: "https://docs.openclaw.ai/tools/web",
+        "web_search (grok) needs xAI credentials. Run `nova onboard --auth-choice xai-oauth` to sign in with Grok, run `nova onboard --auth-choice xai-api-key`, set `XAI_API_KEY` in the Gateway environment, or configure `plugins.entries.xai.config.webSearch.apiKey`. If you do not want to configure search credentials, use web_fetch for a specific URL or the browser tool for interactive pages.",
+      docs: "https://docs.nova.ai/tools/web",
     };
   }
 

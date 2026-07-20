@@ -1,5 +1,5 @@
-import { OpenClawFilePreviewModal } from "./file-preview-modal.ts";
+import { NovaFilePreviewModal } from "./file-preview-modal.ts";
 
-if (!customElements.get("openclaw-file-preview-modal")) {
-  customElements.define("openclaw-file-preview-modal", OpenClawFilePreviewModal);
+if (!customElements.get("nova-file-preview-modal")) {
+  customElements.define("nova-file-preview-modal", NovaFilePreviewModal);
 }

@@ -93,7 +93,7 @@ export function buildWidgetDocument(title: string, widgetCode: string): string {
     // measure the body box, which tracks the actual widget height.
     "let last=0;const report=()=>{const b=document.body;if(!b)return;" +
     "const h=Math.ceil(Math.max(b.scrollHeight,b.offsetHeight,b.getBoundingClientRect().height));" +
-    'if(h&&h!==last){last=h;window.parent.postMessage({type:"openclaw:widget-size",height:h},"*");}};' +
+    'if(h&&h!==last){last=h;window.parent.postMessage({type:"nova:widget-size",height:h},"*");}};' +
     "addEventListener('load',report);new ResizeObserver(report).observe(document.body);" +
     "setTimeout(report,50);setTimeout(report,500);})();</script>";
   // The prompt bridge precedes widget code so inline handlers can reference
@@ -117,9 +117,9 @@ export function buildWidgetDocument(title: string, widgetCode: string): string {
     "try{const ua=navigator.userActivation;" +
     'const d=ua&&Object.getOwnPropertyDescriptor(Object.getPrototypeOf(ua),"isActive");' +
     "if(d&&d.get)act=d.get.bind(ua);}catch{}" +
-    'window.parent.postMessage({type:"openclaw:widget-prompt-offer"},"*",[c.port2]);' +
+    'window.parent.postMessage({type:"nova:widget-prompt-offer"},"*",[c.port2]);' +
     "window.sendPrompt=text=>{if(!act||act()!==true)return;" +
-    'post({type:"openclaw:widget-prompt",prompt:String(text)});};})();</script>';
+    'post({type:"nova:widget-prompt",prompt:String(text)});};})();</script>';
   /*
    * The host may push a new theme after every theme change. Each message is a
    * full snapshot: omitted or invalid tokens are removed so a theme switch
@@ -133,7 +133,7 @@ export function buildWidgetDocument(title: string, widgetCode: string): string {
     "const rm=root.style.removeProperty.bind(root.style);" +
     `const keys=${JSON.stringify(WIDGET_THEME_TOKENS)};` +
     'addEventListener("message",event=>{if(event.source!==window.parent)return;' +
-    'const data=event.data;if(!data||data.type!=="openclaw:widget-theme"||' +
+    'const data=event.data;if(!data||data.type!=="nova:widget-theme"||' +
     'typeof data.tokens!=="object"||data.tokens===null)return;' +
     "for(const key of keys){const raw=data.tokens[key];" +
     'const value=typeof raw==="string"?raw.trim():"";' +
@@ -170,7 +170,7 @@ export function buildWidgetDocument(title: string, widgetCode: string): string {
     "const encode=encodeURIComponent;const P=Promise;const ErrorCtor=Error;const stringify=String;" +
     "const max=Math.max.bind(Math);const min=Math.min.bind(Math);const ceil=Math.ceil.bind(Math);" +
     'listen("message",event=>{if(event.source!==parent)return;' +
-    'const data=event.data;if(!data||data.type!=="openclaw:widget-snapshot-request"||typeof data.id!=="string")return;' +
+    'const data=event.data;if(!data||data.type!=="nova:widget-snapshot-request"||typeof data.id!=="string")return;' +
     "void (async()=>{try{const body=document.body;" +
     "const width=max(1,body.scrollWidth);const height=max(1,body.scrollHeight);" +
     'const root=clone.call(document.documentElement,true);const scripts=query.call(root,"script");' +
@@ -195,8 +195,8 @@ export function buildWidgetDocument(title: string, widgetCode: string): string {
     'const context=getContext.call(canvas,"2d");if(!context||!setFill)throw new ErrorCtor("widget snapshot canvas unavailable");' +
     'setFill.call(context,getProperty.call(styles(document.documentElement),"--surface"));' +
     "fill.call(context,0,0,canvasWidth,canvasHeight);draw.call(context,image,0,0,canvasWidth,canvasHeight);" +
-    'post({type:"openclaw:widget-snapshot",id:data.id,dataUrl:toDataURL.call(canvas,"image/png"),width,height},"*");' +
-    '}catch(error){post({type:"openclaw:widget-snapshot",id:data.id,error:stringify(error)},"*");}})();});})();</script>';
+    'post({type:"nova:widget-snapshot",id:data.id,dataUrl:toDataURL.call(canvas,"image/png"),width,height},"*");' +
+    '}catch(error){post({type:"nova:widget-snapshot",id:data.id,error:stringify(error)},"*");}})();});})();</script>';
   return `<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;"><title>${escapeHtml(title)}</title><style>${WIDGET_BASE_STYLES}</style></head><body${bodyClass}>${promptBridge}${themeBridge}${snapshotBridge}${widgetCode}${sizeReporter}</body></html>`;
 }

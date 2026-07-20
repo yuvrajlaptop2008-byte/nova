@@ -26,7 +26,7 @@ import {
   clearRuntimeConfigSnapshot,
   readConfigFileSnapshotWithPluginMetadata,
 } from "../../../src/config/config.js";
-import type { OpenClawConfig } from "../../../src/config/types.openclaw.js";
+import type { NovaConfig } from "../../../src/config/types.nova.js";
 import { startGatewayServer } from "../../../src/gateway/server.js";
 import { getFreeGatewayPort } from "../../../src/gateway/test-helpers.e2e.js";
 import { captureEnv, setTestEnvValue } from "../../../src/test-utils/env.js";
@@ -359,9 +359,9 @@ describeConformance("MCP App Control UI and standalone host conformance", () => 
       "NOVA_SKIP_PROVIDERS",
       "NOVA_BUNDLED_PLUGINS_DIR",
     ]);
-    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mcp-app-conformance-"));
+    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-mcp-app-conformance-"));
     const stateDir = path.join(tempRoot, "state");
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     const fixturePath = path.join(tempRoot, "fixture-server.mjs");
     await fs.mkdir(path.join(tempRoot, "empty-plugins"), { recursive: true });
     controlUiServer = await startControlUiE2eServer();
@@ -393,7 +393,7 @@ describeConformance("MCP App Control UI and standalone host conformance", () => 
     do {
       sandboxPort = await getFreeGatewayPort();
     } while (sandboxPort === gatewayPort);
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       gateway: {
         auth: { mode: "token", token: authValue },
         controlUi: { allowedOrigins: [controlUiOrigin] },

@@ -6,7 +6,7 @@ import {
   resolveModelProviderRouteOverridePresence,
 } from "../config/model-provider-config.js";
 import type { ModelApi, ModelDefinitionConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type {
   ProviderModelRouteResolution,
   ProviderModelRouteSource,
@@ -67,7 +67,7 @@ function projectConfiguredModelRoute(model: ModelDefinitionConfig): ProviderMode
 /** Captures one provider artifact and config view for repeated row resolution. */
 export function createProviderModelRoutesResolver(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: Readonly<Record<string, string | undefined>>;
   requestTransportOverrides?: ProviderRouteOverridePresence;
   surface?: BundledProviderPolicySurface | null;
@@ -157,7 +157,7 @@ export function resolveProviderModelRoutes(params: {
   modelId?: string;
   api?: ModelApi | null;
   baseUrl?: unknown;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: Readonly<Record<string, string | undefined>>;
   requestTransportOverrides?: ProviderRouteOverridePresence;
   surface?: BundledProviderPolicySurface | null;

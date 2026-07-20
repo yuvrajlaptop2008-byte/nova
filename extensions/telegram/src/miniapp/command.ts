@@ -1,21 +1,19 @@
 // Telegram Mini App /dashboard command.
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "nova/plugin-sdk/account-id";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import type {
-  OpenClawPluginApi,
-  OpenClawPluginCommandDefinition,
+  NovaPluginApi,
+  NovaPluginCommandDefinition,
   PluginCommandContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-entry";
 import { isTelegramMiniAppOwner } from "./owner.js";
 import { resolveTelegramMiniAppUrls, TELEGRAM_MINIAPP_URL_ERROR } from "./url.js";
 
-export function registerTelegramMiniAppCommand(api: OpenClawPluginApi): void {
+export function registerTelegramMiniAppCommand(api: NovaPluginApi): void {
   api.registerCommand(createTelegramMiniAppDashboardCommand(api));
 }
 
-function createTelegramMiniAppDashboardCommand(
-  api: OpenClawPluginApi,
-): OpenClawPluginCommandDefinition {
+function createTelegramMiniAppDashboardCommand(api: NovaPluginApi): NovaPluginCommandDefinition {
   return {
     name: "dashboard",
     description: "Open the Nova dashboard",
@@ -54,8 +52,8 @@ function createTelegramMiniAppDashboardCommand(
   };
 }
 
-function currentConfig(api: OpenClawPluginApi): OpenClawConfig {
-  return (api.runtime.config?.current?.() ?? api.config) as OpenClawConfig;
+function currentConfig(api: NovaPluginApi): NovaConfig {
+  return (api.runtime.config?.current?.() ?? api.config) as NovaConfig;
 }
 
 function isTelegramDirectCommand(ctx: PluginCommandContext): boolean {

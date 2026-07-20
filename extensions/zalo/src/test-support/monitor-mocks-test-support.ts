@@ -1,20 +1,20 @@
 // Zalo plugin module implements monitor mocks test support behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/channel-test-helpers";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/channel-test-helpers";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import {
   createEmptyPluginRegistry,
   createRuntimeEnv,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { vi, type Mock } from "vitest";
-import type { OpenClawConfig, PluginRuntime } from "../runtime-api.js";
+import type { NovaConfig, PluginRuntime } from "../runtime-api.js";
 import type { ResolvedZaloAccount } from "../types.js";
 
 type MonitorModule = typeof import("../monitor.js");
@@ -114,7 +114,7 @@ const importCachedWebhookModule = createLazyRuntimeModule(
 );
 
 export async function resetLifecycleTestState() {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   if (lifecycleStateDir) {
     await fs.rm(lifecycleStateDir, { recursive: true, force: true });
     lifecycleStateDir = undefined;
@@ -133,7 +133,7 @@ export async function resetLifecycleTestState() {
 async function installLifecycleWebhookIngressState(): Promise<void> {
   const runtime = getZaloRuntimeMock() as PluginRuntime;
   const createdDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-zalo-lifecycle-"),
+    path.join(resolvePreferredNovaTmpDir(), "nova-zalo-lifecycle-"),
   );
   const stateDir = await fs.realpath(createdDir);
   previousLifecycleStateDir = process.env.NOVA_STATE_DIR;
@@ -181,7 +181,7 @@ export async function loadCachedLifecycleMonitorModule(cacheKey: string): Promis
 
 export async function startWebhookLifecycleMonitor(params: {
   account: ResolvedZaloAccount;
-  config: OpenClawConfig;
+  config: NovaConfig;
   token?: string;
   webhookUrl?: string;
   webhookSecret?: string;

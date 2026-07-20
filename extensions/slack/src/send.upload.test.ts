@@ -3,9 +3,9 @@ import type { WebClient } from "@slack/web-api";
 import {
   formatErrorMessage,
   PlatformMessageNotDispatchedError,
-} from "openclaw/plugin-sdk/error-runtime";
-import type { LookupFn } from "openclaw/plugin-sdk/ssrf-runtime";
-import { withServer } from "openclaw/plugin-sdk/test-env";
+} from "nova/plugin-sdk/error-runtime";
+import type { LookupFn } from "nova/plugin-sdk/ssrf-runtime";
+import { withServer } from "nova/plugin-sdk/test-env";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "./blocks.test-helpers.js";
 import {
@@ -46,7 +46,7 @@ const buildTimeoutAbortSignal = vi.hoisted(() =>
 );
 const fetchWithSsrFGuard = vi.fn(
   async (
-    params: Parameters<typeof import("openclaw/plugin-sdk/ssrf-runtime").fetchWithSsrFGuard>[0],
+    params: Parameters<typeof import("nova/plugin-sdk/ssrf-runtime").fetchWithSsrFGuard>[0],
   ) => {
     const signal = params.signal;
     if (!signal) {
@@ -63,9 +63,9 @@ const fetchWithSsrFGuard = vi.fn(
   },
 );
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-    "openclaw/plugin-sdk/ssrf-runtime",
+vi.mock("nova/plugin-sdk/ssrf-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+    "nova/plugin-sdk/ssrf-runtime",
   );
   return {
     ...actual,
@@ -74,9 +74,9 @@ vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/extension-shared", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/extension-shared")>(
-    "openclaw/plugin-sdk/extension-shared",
+vi.mock("nova/plugin-sdk/extension-shared", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/extension-shared")>(
+    "nova/plugin-sdk/extension-shared",
   );
   return {
     ...actual,
@@ -85,9 +85,9 @@ vi.mock("openclaw/plugin-sdk/extension-shared", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/fetch-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/fetch-runtime")>(
-    "openclaw/plugin-sdk/fetch-runtime",
+vi.mock("nova/plugin-sdk/fetch-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/fetch-runtime")>(
+    "nova/plugin-sdk/fetch-runtime",
   );
   return {
     ...actual,
@@ -519,8 +519,8 @@ describe("sendMessageSlack file upload with user IDs", () => {
   });
 
   it("preserves HTTP upload URLs on an alternate Slack API origin", async () => {
-    const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-      "openclaw/plugin-sdk/ssrf-runtime",
+    const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+      "nova/plugin-sdk/ssrf-runtime",
     );
     await withServer(
       (req, res) => {
@@ -569,8 +569,8 @@ describe("sendMessageSlack file upload with user IDs", () => {
       upload_url: "https://files.slack.com/upload/v1/relayed-capability",
       file_id: "F001",
     });
-    const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-      "openclaw/plugin-sdk/ssrf-runtime",
+    const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+      "nova/plugin-sdk/ssrf-runtime",
     );
     const networkFetch = vi.fn(async () => new Response("ok", { status: 200 }));
     fetchWithSsrFGuard.mockImplementationOnce(async (params) =>
@@ -599,8 +599,8 @@ describe("sendMessageSlack file upload with user IDs", () => {
       upload_url: "https://files.slack-gov.com/upload/v1/gov-capability",
       file_id: "F001",
     });
-    const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-      "openclaw/plugin-sdk/ssrf-runtime",
+    const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+      "nova/plugin-sdk/ssrf-runtime",
     );
     const networkFetch = vi.fn(async () => new Response("ok", { status: 200 }));
     fetchWithSsrFGuard.mockImplementationOnce(async (params) =>
@@ -620,8 +620,8 @@ describe("sendMessageSlack file upload with user IDs", () => {
 
   it("retains the shipped RFC2544 fake-IP path for an exact Slack upload host", async () => {
     const client = createUploadTestClient();
-    const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-      "openclaw/plugin-sdk/ssrf-runtime",
+    const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+      "nova/plugin-sdk/ssrf-runtime",
     );
     const networkFetch = vi.fn(async () => new Response("ok", { status: 200 }));
     fetchWithSsrFGuard.mockImplementationOnce(async (params) =>
@@ -647,8 +647,8 @@ describe("sendMessageSlack file upload with user IDs", () => {
     "rejects exact Slack upload hosts resolving to blocked address %s",
     async (address) => {
       const client = createUploadTestClient();
-      const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-        "openclaw/plugin-sdk/ssrf-runtime",
+      const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+        "nova/plugin-sdk/ssrf-runtime",
       );
       const networkFetch = vi.fn(async () => new Response("unexpected"));
       fetchWithSsrFGuard.mockImplementationOnce(async (params) =>
@@ -731,8 +731,8 @@ describe("sendMessageSlack file upload with user IDs", () => {
         upload_url: uploadUrl,
         file_id: "F001",
       });
-      const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-        "openclaw/plugin-sdk/ssrf-runtime",
+      const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+        "nova/plugin-sdk/ssrf-runtime",
       );
       const networkFetch = vi.fn(async () => new Response("unexpected"));
       fetchWithSsrFGuard.mockImplementationOnce(async (params) =>

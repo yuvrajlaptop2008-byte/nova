@@ -12,7 +12,7 @@ import { applicationContext, type ApplicationContext } from "../app/context.ts";
 import { t } from "../i18n/index.ts";
 import { createInitialCronState, loadCronJobsPage } from "../lib/cron/index.ts";
 import { loadModelAuthStatus } from "../lib/model-auth.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import { SubscriptionsController } from "../lit/subscriptions-controller.ts";
 import { icons } from "./icons.ts";
 import {
@@ -35,7 +35,7 @@ const VISIBILITY_REFRESH_MIN_AGE_MS = 60_000;
 // slow lifecycle-owned interval keeps the chips from going permanently stale.
 const IDLE_REFRESH_INTERVAL_MS = 10 * 60_000;
 
-class SidebarAttention extends OpenClawLightDomContentsElement {
+class SidebarAttention extends NovaLightDomContentsElement {
   @consume({ context: applicationContext, subscribe: true })
   private context?: ApplicationContext;
 
@@ -248,6 +248,6 @@ class SidebarAttention extends OpenClawLightDomContentsElement {
   }
 }
 
-if (!customElements.get("openclaw-sidebar-attention")) {
-  customElements.define("openclaw-sidebar-attention", SidebarAttention);
+if (!customElements.get("nova-sidebar-attention")) {
+  customElements.define("nova-sidebar-attention", SidebarAttention);
 }

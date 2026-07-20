@@ -1,6 +1,6 @@
 // Feishu plugin module implements monitor.acp init failure.lifecycle support behavior.
 import "./lifecycle.test-support.js";
-import { createRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ClawdbotConfig } from "../runtime-api.js";
 import {
@@ -74,7 +74,7 @@ describe("Feishu ACP-init failure lifecycle", () => {
     vi.useRealTimers();
     resetFeishuLifecycleTestMocks();
     lastRuntime = createRuntimeEnv();
-    setFeishuLifecycleStateDir("openclaw-feishu-acp-failure");
+    setFeishuLifecycleStateDir("nova-feishu-acp-failure");
 
     resolveBoundConversationMock.mockReturnValue(null);
     resolveAgentRouteMock.mockReturnValue({

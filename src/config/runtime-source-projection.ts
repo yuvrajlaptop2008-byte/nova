@@ -1,11 +1,11 @@
 import { createMergePatch, projectSourceOntoRuntimeShape } from "./io.write-prepare.js";
 import { applyMergePatch } from "./merge-patch.js";
 import { getRuntimeConfigSnapshot, getRuntimeConfigSourceSnapshot } from "./runtime-snapshot.js";
-import type { OpenClawConfig } from "./types.js";
+import type { NovaConfig } from "./types.js";
 
 function isCompatibleTopLevelRuntimeProjectionShape(params: {
-  runtimeSnapshot: OpenClawConfig;
-  candidate: OpenClawConfig;
+  runtimeSnapshot: NovaConfig;
+  candidate: NovaConfig;
 }): boolean {
   const runtime = params.runtimeSnapshot as Record<string, unknown>;
   const candidate = params.candidate as Record<string, unknown>;
@@ -33,7 +33,7 @@ function isCompatibleTopLevelRuntimeProjectionShape(params: {
 }
 
 /** Projects a runtime-derived config back onto the active authored source snapshot. */
-export function projectConfigOntoRuntimeSourceSnapshot(config: OpenClawConfig): OpenClawConfig {
+export function projectConfigOntoRuntimeSourceSnapshot(config: NovaConfig): NovaConfig {
   const runtimeConfigSnapshot = getRuntimeConfigSnapshot();
   const runtimeConfigSourceSnapshot = getRuntimeConfigSourceSnapshot();
   if (!runtimeConfigSnapshot || !runtimeConfigSourceSnapshot) {
@@ -53,7 +53,7 @@ export function projectConfigOntoRuntimeSourceSnapshot(config: OpenClawConfig): 
   const projectedSource = projectSourceOntoRuntimeShape(
     runtimeConfigSourceSnapshot,
     runtimeConfigSnapshot,
-  ) as OpenClawConfig;
+  ) as NovaConfig;
   const runtimePatch = createMergePatch(runtimeConfigSnapshot, config);
-  return applyMergePatch(projectedSource, runtimePatch) as OpenClawConfig;
+  return applyMergePatch(projectedSource, runtimePatch) as NovaConfig;
 }

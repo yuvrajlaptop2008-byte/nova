@@ -2,12 +2,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import type { OpenClawCrablineChannelDriverSelection } from "@nova/crabline";
-import { disposeRegisteredAgentHarnesses } from "openclaw/plugin-sdk/agent-harness";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import type { NovaCrablineChannelDriverSelection } from "@nova/crabline";
+import { disposeRegisteredAgentHarnesses } from "nova/plugin-sdk/agent-harness";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 import { assertQaSuiteArtifactWritten } from "./artifact-assertion.js";
 import {
   hasQaCrablineArtifactPath,
@@ -95,7 +95,7 @@ import { closeQaWebSessions } from "./web-runtime.js";
 
 type QaCrablineRuntime = typeof import("@nova/crabline");
 type QaCrablineChannelDriverSmokeResult = Awaited<
-  ReturnType<QaCrablineRuntime["runOpenClawCrablineChannelDriverSmoke"]>
+  ReturnType<QaCrablineRuntime["runNovaCrablineChannelDriverSmoke"]>
 >;
 function resolveQaSuiteControlUiEnabled(params: {
   explicit?: boolean;
@@ -127,7 +127,7 @@ async function createQaSuiteTransportAdapter(params: {
   adapterFactories?: readonly QaTransportAdapterFactory[];
   channelDriver?: QaScorecardChannelDriver | null;
   channelId?: string;
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection | null;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection | null;
   cleanupOnFailure?: () => Promise<void>;
   outputDir: string;
   transportPolicy?: NonNullable<QaSuiteRunParams["adapterOptions"]>["transportPolicy"];
@@ -175,12 +175,12 @@ export type QaSuiteRunParams = {
   channelId?: string;
   evidenceMode?: QaScorecardEvidenceMode;
   repoRoot?: string;
-  sutOpenClawCommand?: QaGatewayChildCommand;
+  sutNovaCommand?: QaGatewayChildCommand;
   outputDir?: string;
   providerMode?: QaProviderMode;
   transportId?: QaTransportId;
   channelDriver?: QaScorecardChannelDriver;
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection | null;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection | null;
   primaryModel?: string;
   alternateModel?: string;
   fastMode?: boolean;
@@ -246,7 +246,7 @@ function formatQaSuiteRunStartProgress(params: {
   concurrency: number;
   transportId: QaTransportId;
   channelDriver?: QaScorecardChannelDriver | null;
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection | null;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection | null;
 }) {
   const channelDriver = params.channelDriver ?? params.channelDriverSelection?.channelDriver;
   const channel = params.channelDriverSelection?.channel;
@@ -495,17 +495,16 @@ function buildRuntimeParityScenarioResult(params: {
   result: RuntimeParityResult;
 }): QaSuiteScenarioResult {
   const driftStepStatus = isRuntimeParityPass(params.result) ? "pass" : "fail";
-  const openclawCell = params.result.cells.openclaw;
+  const novaCell = params.result.cells.nova;
   return {
     name: params.scenarioName,
     status: driftStepStatus,
     details: params.result.driftDetails ?? `runtime drift classified as ${params.result.drift}`,
     steps: [
       {
-        name: openclawCell.runtime,
-        status:
-          openclawCell.runtimeErrorClass || openclawCell.transportErrorClass ? "fail" : "pass",
-        details: formatRuntimeParityCellDetails(openclawCell),
+        name: novaCell.runtime,
+        status: novaCell.runtimeErrorClass || novaCell.transportErrorClass ? "fail" : "pass",
+        details: formatRuntimeParityCellDetails(novaCell),
       },
       {
         name: params.result.cells.codex.runtime,
@@ -535,13 +534,13 @@ function createQaSuiteReportNotes(params: {
   fastMode: boolean;
   concurrency: number;
   isolatedWorkers?: boolean;
-  createCrablineChannelReportNotes?: QaCrablineRuntime["createOpenClawCrablineChannelReportNotes"];
+  createCrablineChannelReportNotes?: QaCrablineRuntime["createNovaCrablineChannelReportNotes"];
 }) {
   return [
     ...params.transport.createReportNotes(params),
     // Crabline reports completed generation paths through this filename-narrowed selection.
     ...(params.createCrablineChannelReportNotes?.(
-      params.channelDriverSelection as OpenClawCrablineChannelDriverSelection | null | undefined,
+      params.channelDriverSelection as NovaCrablineChannelDriverSelection | null | undefined,
     ) ?? []),
   ];
 }
@@ -552,7 +551,7 @@ function buildQaIsolatedScenarioWorkerParams(params: {
   providerMode: QaProviderMode;
   transportId: QaTransportId;
   channelDriver?: QaScorecardChannelDriver;
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection | null;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection | null;
   primaryModel: string;
   alternateModel: string;
   fastMode: boolean;
@@ -565,7 +564,7 @@ function buildQaIsolatedScenarioWorkerParams(params: {
     adapterOptions: params.input?.adapterOptions,
     channelId: params.input?.channelId,
     repoRoot: params.repoRoot,
-    sutOpenClawCommand: params.input?.sutOpenClawCommand,
+    sutNovaCommand: params.input?.sutNovaCommand,
     outputDir: params.outputDir,
     providerMode: params.providerMode,
     transportId: params.transportId,
@@ -766,7 +765,7 @@ async function runQaRuntimeParitySuite(params: {
   claudeCliAuthMode?: QaCliBackendAuthMode;
   enabledPluginIds?: string[];
   channelDriver?: QaScorecardChannelDriver | null;
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection | null;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection | null;
   concurrency: number;
   selectedScenarios: ReturnType<typeof readQaBootstrapScenarioCatalog>["scenarios"];
   startLab?: QaSuiteStartLabFn;
@@ -1019,13 +1018,13 @@ async function writeQaSuiteArtifacts(params: {
   fastMode: boolean;
   concurrency: number;
   channelDriver?: QaScorecardChannelDriver | null;
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection | null;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection | null;
   isolatedWorkers?: boolean;
   scenarioIds?: readonly string[];
   runtimePair?: [RuntimeId, RuntimeId];
   writeEvidenceFile?: boolean;
   runCrablineChannelDriverSmoke?: (
-    params: Parameters<QaCrablineRuntime["runOpenClawCrablineChannelDriverSmoke"]>[0],
+    params: Parameters<QaCrablineRuntime["runNovaCrablineChannelDriverSmoke"]>[0],
   ) => Promise<QaCrablineChannelDriverSmokeResult>;
 }) {
   const reportPath = path.join(params.outputDir, "qa-suite-report.md");
@@ -1040,8 +1039,7 @@ async function writeQaSuiteArtifacts(params: {
   let crablineChannelDriverSmoke: QaCrablineChannelDriverSmokeResult | undefined;
   if (crablineChannelDriverSelection) {
     const runCrablineChannelDriverSmoke =
-      params.runCrablineChannelDriverSmoke ??
-      crablineRuntime?.runOpenClawCrablineChannelDriverSmoke;
+      params.runCrablineChannelDriverSmoke ?? crablineRuntime?.runNovaCrablineChannelDriverSmoke;
     if (!runCrablineChannelDriverSmoke) {
       throw new Error("Crabline runtime did not provide its channel-driver smoke helper.");
     }
@@ -1075,7 +1073,7 @@ async function writeQaSuiteArtifacts(params: {
     notes: createQaSuiteReportNotes({
       ...params,
       channelDriverSelection: effectiveChannelDriverSelection,
-      createCrablineChannelReportNotes: crablineRuntime?.createOpenClawCrablineChannelReportNotes,
+      createCrablineChannelReportNotes: crablineRuntime?.createNovaCrablineChannelReportNotes,
     }),
   });
   const evidence =
@@ -1119,7 +1117,7 @@ async function writeQaSuiteArtifacts(params: {
       `${JSON.stringify(
         {
           version: 1,
-          source: "openclaw/crabline",
+          source: "nova/crabline",
           channelDriver: crablineChannelDriverSelection.channelDriver,
           selectedChannel: crablineChannelDriverSelection.channel,
           manifestPath: crablineChannelDriverSmoke.manifestPath,
@@ -1141,7 +1139,7 @@ async function writeQaSuiteArtifacts(params: {
       `${JSON.stringify(
         {
           version: 1,
-          source: "openclaw/crabline",
+          source: "nova/crabline",
           channelDriver: crablineChannelDriverSelection.channelDriver,
           selectedChannel: crablineChannelDriverSelection.channel,
           manifestPath: crablineChannelDriverSmoke.manifestPath,
@@ -1346,9 +1344,7 @@ export async function runQaFlowSuite(params?: QaSuiteRunParams): Promise<QaSuite
     ...new Set([
       ...collectQaSuitePluginIds(selectedScenarios),
       ...(params?.enabledPluginIds ?? []).map((pluginId) => pluginId.trim()).filter(Boolean),
-      ...(params?.forcedRuntime && params.forcedRuntime !== "openclaw"
-        ? [params.forcedRuntime]
-        : []),
+      ...(params?.forcedRuntime && params.forcedRuntime !== "nova" ? [params.forcedRuntime] : []),
     ]),
   ];
   const gatewayConfigPatch = collectQaSuiteGatewayConfigPatch(
@@ -1753,7 +1749,7 @@ export async function runQaFlowSuite(params?: QaSuiteRunParams): Promise<QaSuite
     writeQaSuiteProgress(progressEnabled, "gateway start");
     const activeGateway = await startQaGatewayChild({
       repoRoot,
-      command: params?.sutOpenClawCommand,
+      command: params?.sutNovaCommand,
       providerBaseUrl: activeMock ? `${activeMock.baseUrl}/v1` : undefined,
       transport,
       transportBaseUrl: lab.listenUrl,
@@ -1769,7 +1765,7 @@ export async function runQaFlowSuite(params?: QaSuiteRunParams): Promise<QaSuite
       enabledPluginIds,
       forwardHostHome: gatewayRuntimeOptions?.forwardHostHome,
       mutateConfig: gatewayConfigPatch
-        ? (cfg) => applyQaMergePatch(cfg, gatewayConfigPatch) as OpenClawConfig
+        ? (cfg) => applyQaMergePatch(cfg, gatewayConfigPatch) as NovaConfig
         : undefined,
       runtimeEnvPatch: mergeQaRuntimeEnvPatches(
         buildQaRuntimeEnvPatch({

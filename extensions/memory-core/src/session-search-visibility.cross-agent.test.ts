@@ -1,9 +1,9 @@
 // Memory Core tests cover cross-agent session search visibility behavior.
-import type { MemorySearchResult } from "openclaw/plugin-sdk/memory-core-host-runtime-files";
-import * as sessionTranscriptHit from "openclaw/plugin-sdk/session-transcript-hit";
+import type { MemorySearchResult } from "nova/plugin-sdk/memory-core-host-runtime-files";
+import * as sessionTranscriptHit from "nova/plugin-sdk/session-transcript-hit";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { filterMemorySearchHitsBySessionVisibility } from "./session-search-visibility.js";
-import { asOpenClawConfig } from "./tools.test-helpers.js";
+import { asNovaConfig } from "./tools.test-helpers.js";
 
 type TestSessionEntry = {
   sessionId: string;
@@ -22,9 +22,8 @@ const crossAgentStore: Record<string, TestSessionEntry> = {
 };
 let combinedSessionStore: Record<string, TestSessionEntry> = crossAgentStore;
 
-vi.mock("openclaw/plugin-sdk/session-transcript-hit", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/session-transcript-hit")>();
+vi.mock("nova/plugin-sdk/session-transcript-hit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/session-transcript-hit")>();
   return {
     ...actual,
     loadCombinedSessionStoreForGateway: vi.fn(() => ({
@@ -56,7 +55,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: true, allow: ["*"] },
@@ -87,7 +86,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: true, allow: ["*"] },
@@ -118,7 +117,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       session: { scope: "global" },
       tools: {
         sessions: { visibility: "all" },
@@ -145,7 +144,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: true, allow: ["*"] },
@@ -170,7 +169,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: true, allow: ["*"] },
@@ -201,7 +200,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: true, allow: ["*"] },
@@ -225,7 +224,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: false },
@@ -250,7 +249,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "agent" },
       },
@@ -276,7 +275,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: false },
@@ -303,7 +302,7 @@ describe("filterMemorySearchHitsBySessionVisibility across agents", () => {
       startLine: 1,
       endLine: 2,
     };
-    const cfg = asOpenClawConfig({
+    const cfg = asNovaConfig({
       tools: {
         sessions: { visibility: "all" },
         agentToAgent: { enabled: true, allow: ["*"] },

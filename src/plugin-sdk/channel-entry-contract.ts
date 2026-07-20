@@ -26,9 +26,8 @@ import type {
 } from "./channel-entry-contract.types.js";
 
 export type AnyAgentTool = import("../plugins/types.js").AnyAgentTool;
-export type OpenClawPluginApi = import("../plugins/types.js").OpenClawPluginApi;
-export type OpenClawPluginCommandDefinition =
-  import("../plugins/types.js").OpenClawPluginCommandDefinition;
+export type NovaPluginApi = import("../plugins/types.js").NovaPluginApi;
+export type NovaPluginCommandDefinition = import("../plugins/types.js").NovaPluginCommandDefinition;
 export type PluginCommandContext = import("../plugins/types.js").PluginCommandContext;
 
 export type {
@@ -61,8 +60,8 @@ type DefineBundledChannelEntryOptions<TPlugin = ChannelPlugin> = {
   runtime?: BundledEntryModuleRef;
   accountInspect?: BundledEntryModuleRef;
   features?: BundledChannelEntryFeatures;
-  registerCliMetadata?: (api: OpenClawPluginApi) => void;
-  registerFull?: (api: OpenClawPluginApi) => void;
+  registerCliMetadata?: (api: NovaPluginApi) => void;
+  registerFull?: (api: NovaPluginApi) => void;
 };
 
 type DefineBundledChannelSetupEntryOptions = {
@@ -72,7 +71,7 @@ type DefineBundledChannelSetupEntryOptions = {
   runtime?: BundledEntryModuleRef;
   legacyStateMigrations?: BundledEntryModuleRef;
   legacySessionSurface?: BundledEntryModuleRef;
-  registerSetupRuntime?: (api: OpenClawPluginApi) => void;
+  registerSetupRuntime?: (api: NovaPluginApi) => void;
   features?: BundledChannelSetupEntryFeatures;
 };
 
@@ -95,7 +94,7 @@ export type BundledChannelEntryContract<TPlugin = ChannelPlugin> = {
   description: string;
   configSchema: ChannelEntryConfigSchema<TPlugin>;
   features?: BundledChannelEntryFeatures;
-  register: (api: OpenClawPluginApi) => void;
+  register: (api: NovaPluginApi) => void;
   loadChannelPlugin: (options?: BundledEntryModuleLoadOptions) => TPlugin;
   loadChannelOutbound?: (
     options?: BundledEntryModuleLoadOptions,
@@ -123,7 +122,7 @@ export type BundledChannelSetupEntryContract<TPlugin = ChannelPlugin> = {
     options?: BundledEntryModuleLoadOptions,
   ) => BundledChannelLegacySessionSurface;
   setChannelRuntime?: (runtime: BundledChannelRuntime) => void;
-  registerSetupRuntime?: (api: OpenClawPluginApi) => void;
+  registerSetupRuntime?: (api: NovaPluginApi) => void;
   features?: BundledChannelSetupEntryFeatures;
 };
 
@@ -364,7 +363,7 @@ function resolveBundledEntryModulePath(importMetaUrl: string, specifier: string)
 function getSourceModuleLoader(
   modulePath: string,
   options: BundledEntryModuleLoadOptions,
-  transformOpenClawDependencies = false,
+  transformNovaDependencies = false,
 ) {
   return getCachedPluginSourceModuleLoader({
     cache: moduleLoaders,
@@ -372,7 +371,7 @@ function getSourceModuleLoader(
     importerUrl: import.meta.url,
     preferBuiltDist: true,
     loaderFilename: import.meta.url,
-    transformOpenClawDependencies,
+    transformNovaDependencies,
     ...(options.createLoaderForTest ? { createLoader: options.createLoaderForTest } : {}),
   });
 }
@@ -532,7 +531,7 @@ export function defineBundledChannelEntry<TPlugin = ChannelPlugin>({
     ...(features || accountInspect
       ? { features: { ...features, ...(accountInspect ? { accountInspect: true } : {}) } }
       : {}),
-    register(api: OpenClawPluginApi) {
+    register(api: NovaPluginApi) {
       if (api.registrationMode === "cli-metadata") {
         registerCliMetadata?.(api);
         return;

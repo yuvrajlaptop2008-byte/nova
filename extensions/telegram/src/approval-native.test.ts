@@ -1,16 +1,16 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
-import type { SessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
-import { closeOpenClawAgentDatabasesForTest } from "openclaw/plugin-sdk/sqlite-runtime-testing";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
+import type { SessionEntry } from "nova/plugin-sdk/session-store-runtime";
+import { closeNovaAgentDatabasesForTest } from "nova/plugin-sdk/sqlite-runtime-testing";
 import { afterEach, describe, expect, it } from "vitest";
 import { telegramApprovalCapability } from "./approval-native.js";
 
 function buildConfig(
-  overrides?: Partial<NonNullable<NonNullable<OpenClawConfig["channels"]>["telegram"]>>,
-): OpenClawConfig {
+  overrides?: Partial<NonNullable<NonNullable<NovaConfig["channels"]>["telegram"]>>,
+): NovaConfig {
   return {
     channels: {
       telegram: {
@@ -23,20 +23,20 @@ function buildConfig(
         ...overrides,
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 const tempDirs: string[] = [];
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
+  closeNovaAgentDatabasesForTest();
   for (const dir of tempDirs.splice(0)) {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
 function createTempStorePath(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-telegram-approval-native-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-telegram-approval-native-"));
   tempDirs.push(dir);
   return path.join(dir, "sessions.json");
 }

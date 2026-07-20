@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
 import JSZip from "jszip";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import * as tar from "tar";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ReleaseAsset } from "./install-signal-cli.js";
@@ -21,24 +21,24 @@ const {
   tempDownloadPaths: [] as string[],
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("nova/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchWithSsrFGuardMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/setup-tools", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/setup-tools")>();
+vi.mock("nova/plugin-sdk/setup-tools", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/setup-tools")>();
   return {
     ...actual,
     resolveBrewExecutable: resolveBrewExecutableMock,
   };
 });
 
-vi.mock("openclaw/plugin-sdk/run-command", () => ({
+vi.mock("nova/plugin-sdk/run-command", () => ({
   runPluginCommandWithTimeout: runPluginCommandWithTimeoutMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/temp-path", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/temp-path")>();
+vi.mock("nova/plugin-sdk/temp-path", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/temp-path")>();
   return {
     ...actual,
     withTempDownloadPath: async (
@@ -102,7 +102,7 @@ function okDownloadResponse(body: BodyInit, init: ResponseInit = {}) {
 }
 
 async function withTempFile(run: (filePath: string) => Promise<void>) {
-  const workDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-signal-download-"));
+  const workDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-signal-download-"));
   try {
     await run(path.join(workDir, "signal-cli.tgz"));
   } finally {
@@ -441,7 +441,7 @@ describe("installSignalCliFromRelease", () => {
       auditContext: "signal-cli-release-info",
       init: {
         headers: {
-          "User-Agent": "openclaw",
+          "User-Agent": "nova",
           Accept: "application/vnd.github+json",
         },
       },
@@ -475,7 +475,7 @@ describe("installSignalCliFromRelease", () => {
 
   it("removes the download temp dir on the success path too", async () => {
     setProcessPlatform("linux", "x64");
-    const staging = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-signal-staging-"));
+    const staging = await fs.mkdtemp(path.join(os.tmpdir(), "nova-signal-staging-"));
     try {
       const inner = path.join(staging, "signal-cli-0.0.0-success-test");
       await fs.mkdir(inner, { recursive: true });
@@ -546,7 +546,7 @@ describe("installSignalCliFromRelease", () => {
 describe("installSignalCli", () => {
   it("uses Homebrew on macOS instead of downloading the first GitHub release archive", async () => {
     setProcessPlatform("darwin", "arm64");
-    const brewPrefix = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-signal-brew-"));
+    const brewPrefix = await fs.mkdtemp(path.join(os.tmpdir(), "nova-signal-brew-"));
     await fs.mkdir(path.join(brewPrefix, "bin"), { recursive: true });
     await fs.writeFile(path.join(brewPrefix, "bin", "signal-cli"), "");
     resolveBrewExecutableMock.mockReturnValue("/opt/homebrew/bin/brew");
@@ -572,7 +572,7 @@ describe("installSignalCli", () => {
 
 describe("extractSignalCliArchive", () => {
   async function withArchiveWorkspace(run: (workDir: string) => Promise<void>) {
-    const workDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-signal-install-"));
+    const workDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-signal-install-"));
     try {
       await run(workDir);
     } finally {

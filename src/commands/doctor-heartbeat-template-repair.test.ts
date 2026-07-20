@@ -18,7 +18,7 @@ vi.mock("../../packages/terminal-core/src/note.js", () => ({
 const tempDirs: string[] = [];
 
 async function makeTempRoot(): Promise<string> {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-heartbeat-template-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-heartbeat-template-"));
   tempDirs.push(root);
   return root;
 }
@@ -35,7 +35,7 @@ async function makeWorkspaceWithHeartbeat(content: string): Promise<{
 
 async function collectFindingsForContent(content: string) {
   return collectHeartbeatTemplateHealthFindings(
-    { agents: { defaults: { workspace: "/tmp/openclaw-heartbeat-template-test" } } },
+    { agents: { defaults: { workspace: "/tmp/nova-heartbeat-template-test" } } },
     { readFile: async () => content },
   );
 }
@@ -214,7 +214,7 @@ Add short tasks below the comments only when you want the agent to check somethi
         severity: "warning",
         path: heartbeatPath,
         requirement: "legacy-template",
-        fixHint: expect.stringContaining("openclaw doctor --fix"),
+        fixHint: expect.stringContaining("nova doctor --fix"),
       }),
     ]);
   });

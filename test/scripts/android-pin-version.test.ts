@@ -57,7 +57,7 @@ describe("pinAndroidVersion", () => {
     const rootDir = writeAndroidFixture({
       version: "2026.6.2",
       versionCode: 2026060201,
-      prefix: "openclaw-android-pin-",
+      prefix: "nova-android-pin-",
     });
 
     const result = pinAndroidVersion({
@@ -91,7 +91,7 @@ describe("pinAndroidVersion", () => {
       version: "2026.6.2",
       versionCode: 2026060201,
       packageVersion: "2026.6.5-beta.3",
-      prefix: "openclaw-android-pin-",
+      prefix: "nova-android-pin-",
     });
 
     const result = pinAndroidVersion({
@@ -112,7 +112,7 @@ describe("pinAndroidVersion", () => {
     const rootDir = writeAndroidFixture({
       version: "2026.6.2",
       versionCode: 2026060201,
-      prefix: "openclaw-android-pin-",
+      prefix: "nova-android-pin-",
     });
 
     const result = pinAndroidVersion({
@@ -133,7 +133,7 @@ describe("pinAndroidVersion", () => {
       version: "2026.6.2",
       versionCode: 2026060201,
       versionProperties: "stale\n",
-      prefix: "openclaw-android-pin-",
+      prefix: "nova-android-pin-",
     });
 
     const result = pinAndroidVersion({

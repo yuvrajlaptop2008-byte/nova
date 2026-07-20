@@ -4,7 +4,7 @@ import type { ApiRegistry } from "@nova/ai";
  *
  * Registers provider-specific stream functions and rewrites models that need Nova-managed transport semantics.
  */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { Api, Model } from "../llm/types.js";
 import { wrapProviderSimpleCompletionStreamFn } from "../plugins/provider-runtime.js";
 import { createAnthropicVertexStreamFnForModel } from "./anthropic-vertex-stream.js";
@@ -13,17 +13,17 @@ import { prepareGoogleSimpleCompletionModel } from "./google-simple-completion-s
 import { registerProviderStreamForModel } from "./provider-stream.js";
 import {
   buildTransportAwareSimpleStreamFn,
-  createOpenClawTransportStreamFnForModel,
+  createNovaTransportStreamFnForModel,
   prepareTransportAwareSimpleModel,
   resolveTransportAwareSimpleApi,
 } from "./provider-transport-stream.js";
 import type { StreamFn } from "./runtime/index.js";
 
-const PROVIDER_SIMPLE_COMPLETION_API_PREFIX = "openclaw-provider-simple:";
+const PROVIDER_SIMPLE_COMPLETION_API_PREFIX = "nova-provider-simple:";
 
 function resolveAnthropicVertexSimpleApi(baseUrl?: string): Api {
   const suffix = baseUrl?.trim() ? encodeURIComponent(baseUrl.trim()) : "default";
-  return `openclaw-anthropic-vertex-simple:${suffix}`;
+  return `nova-anthropic-vertex-simple:${suffix}`;
 }
 
 export function normalizeCodexResponsesBaseUrlForOpenAISdk(baseUrl?: string): string {
@@ -68,7 +68,7 @@ function resolveProviderSimpleCompletionApi(model: Model): Api {
 function applyProviderSimpleCompletionWrapper(
   registry: ApiRegistry,
   model: Model,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): Model {
   if (model.api.startsWith(PROVIDER_SIMPLE_COMPLETION_API_PREFIX)) {
     return model;
@@ -104,7 +104,7 @@ function applyProviderSimpleCompletionWrapper(
 function prepareCodexSimpleTransportModel<TApi extends Api>(
   registry: ApiRegistry,
   model: Model<TApi>,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): Model | undefined {
   if (model.provider !== "openai" || model.api !== "openai-chatgpt-responses") {
     return undefined;
@@ -117,7 +117,7 @@ function prepareCodexSimpleTransportModel<TApi extends Api>(
     baseUrl: normalizeCodexResponsesBaseUrlForOpenAISdk(model.baseUrl),
   } as Model;
   const api = resolveTransportAwareSimpleApi(model.api);
-  const streamFn = createOpenClawTransportStreamFnForModel(transportModel, { cfg });
+  const streamFn = createNovaTransportStreamFnForModel(transportModel, { cfg });
   if (!api || !streamFn) {
     return undefined;
   }
@@ -132,7 +132,7 @@ function prepareCodexSimpleTransportModel<TApi extends Api>(
 export function prepareModelForSimpleCompletion<TApi extends Api>(params: {
   apiRegistry: ApiRegistry;
   model: Model<TApi>;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): Model {
   const { apiRegistry, model, cfg } = params;
   // Only provider-owned custom APIs need runtime stream registration here.

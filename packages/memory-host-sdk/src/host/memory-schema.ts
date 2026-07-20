@@ -1,7 +1,7 @@
 // Memory Host SDK module implements memory schema behavior.
 import type { DatabaseSync } from "node:sqlite";
 import { formatErrorMessage } from "./error-utils.js";
-import { migrateSqliteSchemaToStrict } from "./openclaw-runtime-sqlite.js";
+import { migrateSqliteSchemaToStrict } from "./nova-runtime-sqlite.js";
 
 // SQLite schema setup for builtin memory index, embedding cache, and FTS.
 

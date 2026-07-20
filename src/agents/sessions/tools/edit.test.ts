@@ -28,7 +28,7 @@ describe("edit tool", () => {
   });
 
   async function createTempFile(content: string) {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-edit-tool-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-edit-tool-"));
     const filePath = path.join(tmpDir, "demo.txt");
     await fs.writeFile(filePath, content, "utf-8");
     return filePath;

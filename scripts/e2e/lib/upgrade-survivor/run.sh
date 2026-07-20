@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/nova-e2e-instance.sh
 
 export npm_config_loglevel=error
 export npm_config_fund=false
@@ -13,15 +13,15 @@ export NOVA_SKIP_PROVIDERS=1
 export NOVA_SKIP_CHANNELS=1
 export NOVA_DISABLE_BONJOUR=1
 export GATEWAY_AUTH_TOKEN_REF="upgrade-survivor-token"
-export OPENAI_API_KEY="sk-openclaw-upgrade-survivor"
+export OPENAI_API_KEY="sk-nova-upgrade-survivor"
 export DISCORD_BOT_TOKEN="upgrade-survivor-discord-token"
 export TELEGRAM_BOT_TOKEN="123456:upgrade-survivor-telegram-token"
 export FEISHU_APP_SECRET="upgrade-survivor-feishu-secret"
 export MATRIX_ACCESS_TOKEN="upgrade-survivor-matrix-token"
 export BRAVE_API_KEY="BSA_upgrade_survivor_brave_key"
 
-ARTIFACT_ROOT="$(dirname "${NOVA_UPGRADE_SURVIVOR_SUMMARY_JSON:-/tmp/openclaw-upgrade-survivor-artifacts/summary.json}")"
-export NOVA_UPGRADE_SURVIVOR_RUNTIME_ROOT="${NOVA_UPGRADE_SURVIVOR_RUNTIME_ROOT:-/tmp/openclaw-upgrade-survivor-runtime}"
+ARTIFACT_ROOT="$(dirname "${NOVA_UPGRADE_SURVIVOR_SUMMARY_JSON:-/tmp/nova-upgrade-survivor-artifacts/summary.json}")"
+export NOVA_UPGRADE_SURVIVOR_RUNTIME_ROOT="${NOVA_UPGRADE_SURVIVOR_RUNTIME_ROOT:-/tmp/nova-upgrade-survivor-runtime}"
 RUNTIME_ROOT="$NOVA_UPGRADE_SURVIVOR_RUNTIME_ROOT"
 STATE_HOME_ROOT="${NOVA_UPGRADE_SURVIVOR_STATE_HOME_ROOT:-$RUNTIME_ROOT/state-home}"
 mkdir -p "$ARTIFACT_ROOT"
@@ -86,10 +86,10 @@ rm -f "$SUMMARY_JSON" "$CONFIG_COVERAGE_JSON"
 
 validate_baseline_package_spec() {
   local spec="$1"
-  if [[ "$spec" =~ ^openclaw@(alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
+  if [[ "$spec" =~ ^nova@(alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
     return 0
   fi
-  echo "NOVA_UPGRADE_SURVIVOR_BASELINE must be openclaw@latest, openclaw@beta, openclaw@alpha, an exact OpenClaw release version, or a bare release version; got: $spec" >&2
+  echo "NOVA_UPGRADE_SURVIVOR_BASELINE must be nova@latest, nova@beta, nova@alpha, an exact Nova release version, or a bare release version; got: $spec" >&2
   return 1
 }
 
@@ -100,17 +100,17 @@ normalize_baseline() {
     return 1
   fi
   case "$raw" in
-    openclaw@*)
+    nova@*)
       baseline_spec="$raw"
-      baseline_version="${raw#openclaw@}"
+      baseline_version="${raw#nova@}"
       ;;
     *@*)
-      echo "NOVA_UPGRADE_SURVIVOR_BASELINE must be openclaw@<version> or a bare version" >&2
+      echo "NOVA_UPGRADE_SURVIVOR_BASELINE must be nova@<version> or a bare version" >&2
       return 1
       ;;
     *)
       baseline_version="$raw"
-      baseline_spec="openclaw@$raw"
+      baseline_spec="nova@$raw"
       ;;
   esac
   case "$baseline_version" in
@@ -119,7 +119,7 @@ normalize_baseline() {
       baseline_version_expected="0"
       ;;
     dev | main | "")
-      echo "NOVA_UPGRADE_SURVIVOR_BASELINE must be openclaw@latest, openclaw@beta, openclaw@alpha, openclaw@<version>, or a bare version" >&2
+      echo "NOVA_UPGRADE_SURVIVOR_BASELINE must be nova@latest, nova@beta, nova@alpha, nova@<version>, or a bare version" >&2
       return 1
       ;;
     *)
@@ -227,12 +227,12 @@ cleanup() {
   if [ -n "${plugin_registry_pid:-}" ]; then
     kill "$plugin_registry_pid" >/dev/null 2>&1 || true
   fi
-  openclaw_e2e_terminate_gateways "${gateway_pid:-}"
+  nova_e2e_terminate_gateways "${gateway_pid:-}"
   if [ -s "$SYSTEMCTL_SHIM_PID_FILE" ]; then
     local shim_pid
     shim_pid="$(cat "$SYSTEMCTL_SHIM_PID_FILE" 2>/dev/null || true)"
     if [[ "$shim_pid" =~ ^[0-9]+$ ]] && [ "$shim_pid" -gt 1 ]; then
-      openclaw_e2e_terminate_gateways "$shim_pid"
+      nova_e2e_terminate_gateways "$shim_pid"
     fi
   fi
 }
@@ -276,7 +276,7 @@ phase() {
 }
 
 package_root() {
-  printf '%s/lib/node_modules/openclaw\n' "$npm_config_prefix"
+  printf '%s/lib/node_modules/nova\n' "$npm_config_prefix"
 }
 
 legacy_runtime_deps_symlink_plugin() {
@@ -295,7 +295,7 @@ legacy_runtime_deps_symlink_plugin() {
 
 legacy_runtime_deps_symlink_target() {
   local plugin="$1"
-  printf '%s/@openclaw-upgrade-survivor/%s-runtime-dep\n' "$(dirname "$(package_root)")" "$plugin"
+  printf '%s/@nova-upgrade-survivor/%s-runtime-dep\n' "$(dirname "$(package_root)")" "$plugin"
 }
 
 legacy_runtime_deps_symlink_source() {
@@ -331,20 +331,20 @@ source_only_plugin_shadow_enabled() {
 seed_source_only_plugin_shadow() {
   source_only_plugin_shadow_enabled || return 0
 
-  local shadow_root="$NOVA_STATE_DIR/extensions/opik-openclaw"
+  local shadow_root="$NOVA_STATE_DIR/extensions/opik-nova"
   mkdir -p "$shadow_root/src"
   cat >"$shadow_root/package.json" <<'JSON'
 {
-  "name": "@opik/opik-openclaw",
+  "name": "@opik/opik-nova",
   "version": "0.0.0-upgrade-survivor",
-  "openclaw": {
+  "nova": {
     "extensions": ["./src/index.ts"]
   }
 }
 JSON
-  cat >"$shadow_root/openclaw.plugin.json" <<'JSON'
+  cat >"$shadow_root/nova.plugin.json" <<'JSON'
 {
-  "id": "opik-openclaw",
+  "id": "opik-nova",
   "activation": {
     "onStartup": false
   },
@@ -357,7 +357,7 @@ JSON
 JSON
   cat >"$shadow_root/src/index.ts" <<'TS'
 export default {
-  id: "opik-openclaw",
+  id: "opik-nova",
   name: "Source-only Opik shadow",
   register() {},
 };
@@ -370,7 +370,7 @@ configure_configured_plugin_install_fixture_registry() {
 
   local fixture_root="$ARTIFACT_ROOT/configured-plugin-installs-npm-fixture"
   local package_dir="$fixture_root/package"
-  local tarball="$fixture_root/openclaw-brave-plugin-2026.5.2.tgz"
+  local tarball="$fixture_root/nova-brave-plugin-2026.5.2.tgz"
   local port_file="$fixture_root/npm-registry-port"
   local log_file="$fixture_root/npm-registry.log"
   mkdir -p "$package_dir"
@@ -385,14 +385,14 @@ fs.writeFileSync(
     {
       name: "@nova/brave-plugin",
       version: "2026.5.2",
-      openclaw: { extensions: ["./index.js"] },
+      nova: { extensions: ["./index.js"] },
     },
     null,
     2,
   )}\n`,
 );
 fs.writeFileSync(
-  path.join(root, "openclaw.plugin.json"),
+  path.join(root, "nova.plugin.json"),
   `${JSON.stringify(
     {
       id: "brave",
@@ -441,13 +441,13 @@ NODE
       return 0
     fi
     if ! kill -0 "$plugin_registry_pid" 2>/dev/null; then
-      openclaw_e2e_print_log "$log_file" >&2
+      nova_e2e_print_log "$log_file" >&2
       return 1
     fi
     sleep 0.1
   done
 
-  openclaw_e2e_print_log "$log_file" >&2
+  nova_e2e_print_log "$log_file" >&2
   echo "Timed out waiting for configured plugin install npm fixture registry." >&2
   return 1
 }
@@ -458,11 +458,11 @@ legacy_plugin_dependency_probe_paths() {
   while IFS= read -r plugin_dir; do
     printf '%s\n' \
       "$plugin_dir/node_modules" \
-      "$plugin_dir/.openclaw-runtime-deps.json" \
-      "$plugin_dir/.openclaw-runtime-deps-stamp.json" \
-      "$plugin_dir/.openclaw-runtime-deps-copy-upgrade-survivor" \
-      "$plugin_dir/.openclaw-install-stage-upgrade-survivor" \
-      "$plugin_dir/.openclaw-pnpm-store"
+      "$plugin_dir/.nova-runtime-deps.json" \
+      "$plugin_dir/.nova-runtime-deps-stamp.json" \
+      "$plugin_dir/.nova-runtime-deps-copy-upgrade-survivor" \
+      "$plugin_dir/.nova-install-stage-upgrade-survivor" \
+      "$plugin_dir/.nova-pnpm-store"
   done < <(plugin_deps_cleanup_plugin_dirs "$plugin")
   printf '%s\n' \
     "$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor" \
@@ -493,27 +493,27 @@ seed_legacy_plugin_dependency_debris() {
     [ -n "$plugin_dir" ] || continue
     found=1
     mkdir -p \
-      "$plugin_dir/node_modules/openclaw-upgrade-survivor-dep" \
-      "$plugin_dir/.openclaw-runtime-deps-copy-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep" \
-      "$plugin_dir/.openclaw-install-stage-upgrade-survivor" \
-      "$plugin_dir/.openclaw-pnpm-store" \
-      "$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep" \
-      "$NOVA_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep" \
-      "$NOVA_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$plugin_dir/node_modules/openclaw-upgrade-survivor-dep/package.json"
+      "$plugin_dir/node_modules/nova-upgrade-survivor-dep" \
+      "$plugin_dir/.nova-runtime-deps-copy-upgrade-survivor/node_modules/nova-upgrade-survivor-dep" \
+      "$plugin_dir/.nova-install-stage-upgrade-survivor" \
+      "$plugin_dir/.nova-pnpm-store" \
+      "$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/nova-upgrade-survivor-dep" \
+      "$NOVA_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/nova-upgrade-survivor-dep" \
+      "$NOVA_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/nova-upgrade-survivor-dep"
+    printf '{"name":"nova-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$plugin_dir/node_modules/nova-upgrade-survivor-dep/package.json"
     printf '{"plugin":"%s","scenario":"plugin-deps-cleanup"}\n' "$plugin" \
-      >"$plugin_dir/.openclaw-runtime-deps.json"
+      >"$plugin_dir/.nova-runtime-deps.json"
     printf '{"plugin":"%s","scenario":"plugin-deps-cleanup","stale":true}\n' "$plugin" \
-      >"$plugin_dir/.openclaw-runtime-deps-stamp.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$plugin_dir/.openclaw-runtime-deps-copy-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$NOVA_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
-    printf '{"name":"openclaw-upgrade-survivor-dep","version":"0.0.0"}\n' \
-      >"$NOVA_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/openclaw-upgrade-survivor-dep/package.json"
+      >"$plugin_dir/.nova-runtime-deps-stamp.json"
+    printf '{"name":"nova-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$plugin_dir/.nova-runtime-deps-copy-upgrade-survivor/node_modules/nova-upgrade-survivor-dep/package.json"
+    printf '{"name":"nova-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$(package_root)/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/nova-upgrade-survivor-dep/package.json"
+    printf '{"name":"nova-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$NOVA_STATE_DIR/.local/bundled-plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/nova-upgrade-survivor-dep/package.json"
+    printf '{"name":"nova-upgrade-survivor-dep","version":"0.0.0"}\n' \
+      >"$NOVA_STATE_DIR/plugin-runtime-deps/$plugin-upgrade-survivor/node_modules/nova-upgrade-survivor-dep/package.json"
     echo "Seeded legacy plugin dependency debris for configured plugin: $plugin"
   done
 
@@ -603,7 +603,7 @@ seed_legacy_runtime_deps_symlink() {
   target_dir="$(legacy_runtime_deps_symlink_target "$plugin")"
   mkdir -p "$source_dir"
   mkdir -p "$(dirname "$target_dir")"
-  printf '{"name":"openclaw-upgrade-survivor-legacy-runtime-deps","version":"0.0.0"}\n' \
+  printf '{"name":"nova-upgrade-survivor-legacy-runtime-deps","version":"0.0.0"}\n' \
     >"$source_dir/package.json"
   rm -rf "$target_dir"
   ln -s "$source_dir" "$target_dir"
@@ -658,13 +658,13 @@ reset_run_state() {
 install_baseline() {
   normalize_baseline
   echo "Installing baseline package: $baseline_spec"
-  if ! openclaw_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix "$npm_config_prefix" "$baseline_spec" --no-fund --no-audit >"$BASELINE_INSTALL_LOG" 2>&1; then
+  if ! nova_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix "$npm_config_prefix" "$baseline_spec" --no-fund --no-audit >"$BASELINE_INSTALL_LOG" 2>&1; then
     echo "baseline npm install failed" >&2
-    openclaw_e2e_print_log "$BASELINE_INSTALL_LOG" >&2
+    nova_e2e_print_log "$BASELINE_INSTALL_LOG" >&2
     return 1
   fi
-  if ! command -v openclaw >/dev/null; then
-    echo "baseline install did not expose openclaw on PATH" >&2
+  if ! command -v nova >/dev/null; then
+    echo "baseline install did not expose nova on PATH" >&2
     echo "PATH=$PATH" >&2
     find "$npm_config_prefix" -maxdepth 3 -type f -o -type l >&2 || true
     return 1
@@ -677,29 +677,29 @@ install_baseline() {
   fi
   baseline_version="$installed_version"
   local version_output
-  if ! version_output="$(openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw --version 2>&1)"; then
-    echo "baseline openclaw --version failed" >&2
+  if ! version_output="$(nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" nova --version 2>&1)"; then
+    echo "baseline nova --version failed" >&2
     echo "$version_output" >&2
     return 1
   fi
   if [[ "$version_output" != *"$baseline_version"* ]]; then
-    echo "baseline openclaw --version mismatch: expected output to include $baseline_version" >&2
+    echo "baseline nova --version mismatch: expected output to include $baseline_version" >&2
     echo "$version_output" >&2
     return 1
   fi
 }
 
 seed_state() {
-  openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_FUNCTION_B64:?missing NOVA_TEST_STATE_FUNCTION_B64}"
+  nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_FUNCTION_B64:?missing NOVA_TEST_STATE_FUNCTION_B64}"
   if [ "$ROOT_MANAGED_VPS" = "1" ]; then
     if [ "$(id -u)" -ne 0 ]; then
       echo "root-managed VPS survivor mode must run as uid 0" >&2
       return 1
     fi
-    rm -rf /root/.openclaw /root/workspace
-    openclaw_test_state_create /root minimal
+    rm -rf /root/.nova /root/workspace
+    nova_test_state_create /root minimal
   else
-    openclaw_test_state_create "$STATE_HOME_ROOT" minimal
+    nova_test_state_create "$STATE_HOME_ROOT" minimal
   fi
   export NOVA_UPGRADE_SURVIVOR_BASELINE_VERSION="$baseline_version"
   node scripts/e2e/lib/upgrade-survivor/assertions.mjs seed
@@ -712,9 +712,9 @@ apply_baseline_config_recipe() {
 }
 
 validate_baseline_config() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw config validate >"$BASELINE_CONFIG_VALIDATE_LOG" 2>&1; then
+  if ! nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" nova config validate >"$BASELINE_CONFIG_VALIDATE_LOG" 2>&1; then
     echo "generated baseline config failed baseline validation" >&2
-    openclaw_e2e_print_log "$BASELINE_CONFIG_VALIDATE_LOG" >&2
+    nova_e2e_print_log "$BASELINE_CONFIG_VALIDATE_LOG" >&2
     return 1
   fi
 }
@@ -726,9 +726,9 @@ install_update_restart_systemctl_shim() {
 #!/usr/bin/env bash
 set -euo pipefail
 
-log_file="${NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG:-/tmp/openclaw-systemctl-shim.log}"
-pid_file="${NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE:-/tmp/openclaw-systemctl-shim.pid}"
-daemon_log="${NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG:-/tmp/openclaw-systemctl-shim-gateway.log}"
+log_file="${NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG:-/tmp/nova-systemctl-shim.log}"
+pid_file="${NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE:-/tmp/nova-systemctl-shim.pid}"
+daemon_log="${NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG:-/tmp/nova-systemctl-shim-gateway.log}"
 printf '%s\n' "$*" >>"$log_file"
 
 filtered=()
@@ -772,7 +772,7 @@ stop_gateway() {
 }
 
 unit_path() {
-  printf '%s/.config/systemd/user/openclaw-gateway.service\n' "${HOME:?missing HOME}"
+  printf '%s/.config/systemd/user/nova-gateway.service\n' "${HOME:?missing HOME}"
 }
 
 load_unit_environment() {
@@ -862,10 +862,10 @@ SHIM
 }
 
 install_update_restart_service_unit() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" env -u NOVA_GATEWAY_TOKEN -u NOVA_GATEWAY_PASSWORD openclaw gateway install --force --json >"$BASELINE_SERVICE_INSTALL_JSON" 2>"$BASELINE_SERVICE_INSTALL_ERR"; then
+  if ! nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" env -u NOVA_GATEWAY_TOKEN -u NOVA_GATEWAY_PASSWORD nova gateway install --force --json >"$BASELINE_SERVICE_INSTALL_JSON" 2>"$BASELINE_SERVICE_INSTALL_ERR"; then
     echo "baseline gateway service install failed" >&2
-    openclaw_e2e_print_log "$BASELINE_SERVICE_INSTALL_ERR" >&2
-    openclaw_e2e_print_log "$BASELINE_SERVICE_INSTALL_JSON" >&2
+    nova_e2e_print_log "$BASELINE_SERVICE_INSTALL_ERR" >&2
+    nova_e2e_print_log "$BASELINE_SERVICE_INSTALL_JSON" >&2
     return 1
   fi
 }
@@ -1083,10 +1083,10 @@ update_candidate() {
   if [ "$ROOT_MANAGED_VPS" != "1" ]; then
     update_env+=(NOVA_ALLOW_ROOT=1)
   fi
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${update_env[@]}" openclaw "${update_args[@]}" >"$UPDATE_JSON" 2>"$UPDATE_ERR"; then
-    echo "openclaw update failed" >&2
-    openclaw_e2e_print_log "$UPDATE_ERR" >&2
-    openclaw_e2e_print_log "$UPDATE_JSON" >&2
+  if ! nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${update_env[@]}" nova "${update_args[@]}" >"$UPDATE_JSON" 2>"$UPDATE_ERR"; then
+    echo "nova update failed" >&2
+    nova_e2e_print_log "$UPDATE_ERR" >&2
+    nova_e2e_print_log "$UPDATE_JSON" >&2
     return 1
   fi
   if [ "$UPDATE_RESTART_MODE" = "auto-auth" ]; then
@@ -1107,22 +1107,22 @@ assert_root_managed_vps_cli_usable() {
     -u NOVA_GATEWAY_PASSWORD
     -u NOVA_ALLOW_ROOT
   )
-  openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" openclaw config file >"$ARTIFACT_ROOT/root-vps-config-file.out" 2>"$ARTIFACT_ROOT/root-vps-config-file.err"
-  openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" openclaw plugins >"$ARTIFACT_ROOT/root-vps-plugins.out" 2>"$ARTIFACT_ROOT/root-vps-plugins.err"
+  nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" nova config file >"$ARTIFACT_ROOT/root-vps-config-file.out" 2>"$ARTIFACT_ROOT/root-vps-config-file.err"
+  nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" "${root_cli_env[@]}" nova plugins >"$ARTIFACT_ROOT/root-vps-plugins.out" 2>"$ARTIFACT_ROOT/root-vps-plugins.err"
 }
 
 run_doctor() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw doctor --fix --non-interactive >"$DOCTOR_LOG" 2>&1; then
-    echo "openclaw doctor failed" >&2
-    openclaw_e2e_print_log "$DOCTOR_LOG" >&2
+  if ! nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" nova doctor --fix --non-interactive >"$DOCTOR_LOG" 2>&1; then
+    echo "nova doctor failed" >&2
+    nova_e2e_print_log "$DOCTOR_LOG" >&2
     return 1
   fi
 }
 
 validate_post_doctor_config() {
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw config validate >>"$DOCTOR_LOG" 2>&1; then
+  if ! nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" nova config validate >>"$DOCTOR_LOG" 2>&1; then
     echo "post-doctor config validation failed" >&2
-    openclaw_e2e_print_log "$DOCTOR_LOG" >&2
+    nova_e2e_print_log "$DOCTOR_LOG" >&2
     return 1
   fi
 }
@@ -1164,21 +1164,21 @@ probe_gateway_endpoint() {
 start_gateway() {
   local port=18789
   local budget
-  budget="$(openclaw_e2e_read_positive_int_env NOVA_UPGRADE_SURVIVOR_START_BUDGET_SECONDS 90)"
+  budget="$(nova_e2e_read_positive_int_env NOVA_UPGRADE_SURVIVOR_START_BUDGET_SECONDS 90)"
   local start_epoch
   local ready_epoch
   start_epoch="$(node -e "process.stdout.write(String(Date.now()))")"
-  env -u NOVA_GATEWAY_TOKEN -u NOVA_GATEWAY_PASSWORD openclaw gateway --port "$port" --bind loopback --allow-unconfigured >"$GATEWAY_LOG" 2>&1 &
+  env -u NOVA_GATEWAY_TOKEN -u NOVA_GATEWAY_PASSWORD nova gateway --port "$port" --bind loopback --allow-unconfigured >"$GATEWAY_LOG" 2>&1 &
   gateway_pid="$!"
   if [ "$UPDATE_RESTART_MODE" = "auto-auth" ]; then
     printf '%s\n' "$gateway_pid" >"$SYSTEMCTL_SHIM_PID_FILE"
   fi
-  openclaw_e2e_wait_gateway_ready "$gateway_pid" "$GATEWAY_LOG" 360 "$port" "${1:-strict}"
+  nova_e2e_wait_gateway_ready "$gateway_pid" "$GATEWAY_LOG" 360 "$port" "${1:-strict}"
   ready_epoch="$(node -e "process.stdout.write(String(Date.now()))")"
   start_seconds=$(((ready_epoch - start_epoch + 999) / 1000))
   if [ "$start_seconds" -gt "$budget" ]; then
     echo "gateway startup exceeded survivor budget: ${start_seconds}s > ${budget}s" >&2
-    openclaw_e2e_print_log "$GATEWAY_LOG" >&2
+    nova_e2e_print_log "$GATEWAY_LOG" >&2
     return 1
   fi
 }
@@ -1198,21 +1198,21 @@ check_gateway_probes() {
 check_gateway_status() {
   local port=18789
   local budget
-  budget="$(openclaw_e2e_read_positive_int_env NOVA_UPGRADE_SURVIVOR_STATUS_BUDGET_SECONDS 30)"
+  budget="$(nova_e2e_read_positive_int_env NOVA_UPGRADE_SURVIVOR_STATUS_BUDGET_SECONDS 30)"
   local status_start
   local status_end
   status_start="$(node -e "process.stdout.write(String(Date.now()))")"
-  if ! openclaw_e2e_maybe_timeout "$COMMAND_TIMEOUT" openclaw gateway status --url "ws://127.0.0.1:$port" --token "$GATEWAY_AUTH_TOKEN_REF" --require-rpc --timeout 30000 --json >"$STATUS_JSON" 2>"$STATUS_ERR"; then
+  if ! nova_e2e_maybe_timeout "$COMMAND_TIMEOUT" nova gateway status --url "ws://127.0.0.1:$port" --token "$GATEWAY_AUTH_TOKEN_REF" --require-rpc --timeout 30000 --json >"$STATUS_JSON" 2>"$STATUS_ERR"; then
     echo "gateway status failed" >&2
-    openclaw_e2e_print_log "$STATUS_ERR" >&2
-    openclaw_e2e_print_log "$GATEWAY_LOG" >&2
+    nova_e2e_print_log "$STATUS_ERR" >&2
+    nova_e2e_print_log "$GATEWAY_LOG" >&2
     return 1
   fi
   status_end="$(node -e "process.stdout.write(String(Date.now()))")"
   status_seconds=$(((status_end - status_start + 999) / 1000))
   if [ "$status_seconds" -gt "$budget" ]; then
     echo "gateway status exceeded survivor budget: ${status_seconds}s > ${budget}s" >&2
-    openclaw_e2e_print_log "$STATUS_JSON" >&2
+    nova_e2e_print_log "$STATUS_JSON" >&2
     return 1
   fi
   node scripts/e2e/lib/upgrade-survivor/assertions.mjs assert-status-json "$STATUS_JSON"

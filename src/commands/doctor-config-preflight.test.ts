@@ -4,22 +4,19 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { applyCliProfileEnv } from "../cli/profile.js";
 import { promoteConfigSnapshotToLastKnownGood, readConfigFileSnapshot } from "../config/config.js";
-import { withEnvOverride, withTempHome, writeOpenClawConfig } from "../config/test-helpers.js";
+import { withEnvOverride, withTempHome, writeNovaConfig } from "../config/test-helpers.js";
 import { executeSqliteQueryTakeFirstSync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import {
   runDoctorConfigPreflight,
   shouldSkipPluginValidationForDoctorConfigPreflight,
 } from "./doctor-config-preflight.js";
 
-type ConfigHealthDatabase = Pick<OpenClawStateKyselyDatabase, "config_health_entries">;
+type ConfigHealthDatabase = Pick<NovaStateKyselyDatabase, "config_health_entries">;
 
 function readConfigHealthRow(env: NodeJS.ProcessEnv, configPath: string) {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const healthDb = getNodeSqliteKysely<ConfigHealthDatabase>(db);
   return executeSqliteQueryTakeFirstSync(
     db,
@@ -39,12 +36,12 @@ async function writeLegacyConfig(home: string): Promise<string> {
 
 describe("runDoctorConfigPreflight", () => {
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
   });
 
   it("supports non-observing config reads", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeOpenClawConfig(home, { gateway: { mode: "local" } });
+      const configPath = await writeNovaConfig(home, { gateway: { mode: "local" } });
 
       await runDoctorConfigPreflight({
         migrateState: false,
@@ -61,8 +58,8 @@ describe("runDoctorConfigPreflight", () => {
     await withTempHome(async (home) => {
       await writeLegacyConfig(home);
       const stateDir = await fs.realpath(await fs.mkdtemp(path.join(home, "custom-state-")));
-      const configPath = path.join(stateDir, "openclaw.json");
-      const defaultConfigPath = path.join(home, ".openclaw", "openclaw.json");
+      const configPath = path.join(stateDir, "nova.json");
+      const defaultConfigPath = path.join(home, ".nova", "nova.json");
 
       await withEnvOverride(
         {
@@ -88,7 +85,7 @@ describe("runDoctorConfigPreflight", () => {
     await withTempHome(async (home) => {
       await writeLegacyConfig(home);
       const configRoot = await fs.realpath(await fs.mkdtemp(path.join(home, "custom-config-")));
-      const configPath = path.join(configRoot, "nested", "custom-openclaw.json");
+      const configPath = path.join(configRoot, "nested", "custom-nova.json");
 
       await withEnvOverride(
         {
@@ -112,8 +109,8 @@ describe("runDoctorConfigPreflight", () => {
   it("migrates legacy config into the selected profile", async () => {
     await withTempHome(async (home) => {
       await writeLegacyConfig(home);
-      const profileStateDir = path.join(home, ".openclaw-work");
-      const configPath = path.join(profileStateDir, "openclaw.json");
+      const profileStateDir = path.join(home, ".nova-work");
+      const configPath = path.join(profileStateDir, "nova.json");
 
       await withEnvOverride(
         {
@@ -155,7 +152,7 @@ describe("runDoctorConfigPreflight", () => {
 
   it("collects legacy config issues outside the normal config read path", async () => {
     await withTempHome(async (home) => {
-      await writeOpenClawConfig(home, {
+      await writeNovaConfig(home, {
         memorySearch: {
           provider: "local",
           fallback: "none",
@@ -182,7 +179,7 @@ describe("runDoctorConfigPreflight", () => {
 
   it("restores invalid config from last-known-good only during repair preflight", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeOpenClawConfig(home, {
+      const configPath = await writeNovaConfig(home, {
         gateway: { mode: "local", port: 19091 },
       });
       await promoteConfigSnapshotToLastKnownGood(await readConfigFileSnapshot());
@@ -211,7 +208,7 @@ describe("runDoctorConfigPreflight", () => {
 
   it("preserves and rejects unparseable config without last-known-good during repair preflight", async () => {
     await withTempHome(async (home) => {
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
+      const configPath = path.join(home, ".nova", "nova.json");
       const brokenRaw = '{ "gateway": { "mode": "local" }, "models": {';
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(configPath, brokenRaw, "utf-8");
@@ -231,7 +228,7 @@ describe("runDoctorConfigPreflight", () => {
 
       await expect(fs.readFile(configPath, "utf-8")).resolves.toBe(brokenRaw);
       const entries = await fs.readdir(path.dirname(configPath));
-      const clobbered = entries.filter((entry) => entry.startsWith("openclaw.json.clobbered."));
+      const clobbered = entries.filter((entry) => entry.startsWith("nova.json.clobbered."));
       expect(clobbered).toHaveLength(1);
       const clobberedPath = path.join(path.dirname(configPath), clobbered[0] ?? "missing");
       expect((failure as Error).message).toContain(`Original preserved at ${clobberedPath}.`);
@@ -241,7 +238,7 @@ describe("runDoctorConfigPreflight", () => {
 
   it("does not restore last-known-good for stale plugins.deny entries", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeOpenClawConfig(home, {
+      const configPath = await writeNovaConfig(home, {
         gateway: { mode: "local", port: 19091 },
       });
       await promoteConfigSnapshotToLastKnownGood(await readConfigFileSnapshot());
@@ -267,7 +264,7 @@ describe("runDoctorConfigPreflight", () => {
 
   it("restores last-known-good for malformed plugin policy values", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeOpenClawConfig(home, {
+      const configPath = await writeNovaConfig(home, {
         gateway: { mode: "local", port: 19091 },
       });
       await promoteConfigSnapshotToLastKnownGood(await readConfigFileSnapshot());

@@ -2,11 +2,8 @@
  * Builds runtime model catalog entries from stored Cloudflare AI Gateway auth
  * profiles.
  */
-import {
-  coerceSecretRef,
-  resolveNonEnvSecretRefApiKeyMarker,
-} from "openclaw/plugin-sdk/provider-auth";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { coerceSecretRef, resolveNonEnvSecretRefApiKeyMarker } from "nova/plugin-sdk/provider-auth";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   buildCloudflareAiGatewayModelDefinition,
   resolveCloudflareAiGatewayBaseUrl,

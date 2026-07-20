@@ -18,7 +18,7 @@ import {
   assertLiveImageProbeReply,
   buildLiveCronProbeMessage,
   createLiveCronProbeSpec,
-  runOpenClawCliJson,
+  runNovaCliJson,
   type CronListJob,
 } from "./live-agent-probes.js";
 import { getActiveMcpLoopbackRuntime } from "./mcp-http.loopback-runtime.js";
@@ -83,7 +83,7 @@ async function removeCliCronJobBestEffort(params: {
   env: NodeJS.ProcessEnv;
 }): Promise<void> {
   try {
-    await runOpenClawCliJson(
+    await runNovaCliJson(
       [
         "cron",
         "rm",
@@ -196,10 +196,10 @@ async function callLoopbackJsonRpc(params: {
     "x-session-key": params.sessionKey,
   };
   if (params.messageProvider) {
-    headers["x-openclaw-message-channel"] = params.messageProvider;
+    headers["x-nova-message-channel"] = params.messageProvider;
   }
   if (params.accountId) {
-    headers["x-openclaw-account-id"] = params.accountId;
+    headers["x-nova-account-id"] = params.accountId;
   }
   const timeoutMs = parsePositiveInt(
     params.env?.NOVA_MCP_LOOPBACK_PROBE_TIMEOUT_MS,

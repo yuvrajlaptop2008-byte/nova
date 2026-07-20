@@ -2,18 +2,18 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 // Telegram supersede policy for durable ingress (authorization-gated).
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   addChannelAllowFromStoreEntry,
-  closeOpenClawStateDatabaseForTest,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+  closeNovaStateDatabaseForTest,
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, describe, expect, it } from "vitest";
 
 let previousStateDir: string | undefined;
 let stateDirTouched = false;
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   if (!stateDirTouched) {
     return;
   }
@@ -35,7 +35,7 @@ import { createShouldSupersedeTelegramSpooledPending } from "./telegram-ingress-
 const OWNER_ID = "111";
 const STRANGER_ID = "999";
 
-function cfgWithOwner(ownerId = OWNER_ID): OpenClawConfig {
+function cfgWithOwner(ownerId = OWNER_ID): NovaConfig {
   return {
     channels: {
       telegram: {
@@ -43,7 +43,7 @@ function cfgWithOwner(ownerId = OWNER_ID): OpenClawConfig {
         dmPolicy: "allowlist",
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function messageUpdate(params: {
@@ -284,7 +284,7 @@ describe("telegram ingress supersede policy", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: "default",
     };
     const shouldSupersedeTopic = createShouldSupersedeTelegramSpooledPending(topicRestrictedAuth);
@@ -353,7 +353,7 @@ describe("telegram ingress supersede policy", () => {
 
   it("authorizes paired DM senders via the pairing store under dmPolicy pairing", async () => {
     const pairedId = "424242";
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-supersede-store-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-supersede-store-"));
     // The shared pairing-store loader reads process.env; scoped set + afterEach restore.
     previousStateDir = process.env.NOVA_STATE_DIR;
     stateDirTouched = true;
@@ -370,7 +370,7 @@ describe("telegram ingress supersede policy", () => {
             dmPolicy: "pairing",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: "default",
     };
     const shouldSupersedePaired = createShouldSupersedeTelegramSpooledPending(pairingAuth);
@@ -409,7 +409,7 @@ describe("telegram ingress supersede policy", () => {
         commands: {
           ownerAllowFrom: [ownerId],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: "default",
     };
     const shouldSupersedeOwner = createShouldSupersedeTelegramSpooledPending(ownerAuth);

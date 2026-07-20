@@ -783,7 +783,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
               {
                 type: "mcp_tool_use",
                 id: toolCallId,
-                name: "mcp__openclaw__message",
+                name: "mcp__nova__message",
                 input: { action: "react" },
               },
             ],
@@ -862,7 +862,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
               {
                 type: "mcp_tool_use",
                 id: "call-early",
-                name: "mcp__openclaw__message",
+                name: "mcp__nova__message",
                 input: { action: "react", emoji: "early" },
               },
             ],
@@ -937,13 +937,13 @@ describe("executePreparedCliRun supervisor output capture", () => {
               {
                 type: "mcp_tool_use",
                 id: "call-a",
-                name: "mcp__openclaw__message",
+                name: "mcp__nova__message",
                 input: { action: "react", emoji: "A" },
               },
               {
                 type: "mcp_tool_use",
                 id: "call-b",
-                name: "mcp__openclaw__message",
+                name: "mcp__nova__message",
                 input: { action: "react", emoji: "B" },
               },
             ],
@@ -1023,7 +1023,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
               content: toolCallIds.map((id) => ({
                 type: "mcp_tool_use",
                 id,
-                name: "mcp__openclaw__message",
+                name: "mcp__nova__message",
                 input: toolArgs,
               })),
             },
@@ -1153,7 +1153,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
               {
                 type: "mcp_tool_use",
                 id: "call-draining",
-                name: "mcp__openclaw__message",
+                name: "mcp__nova__message",
                 input: toolArgs,
               },
             ],
@@ -1271,7 +1271,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
           {
             type: "mcp_tool_use",
             id: "call-cancelled",
-            name: "mcp__openclaw__cron",
+            name: "mcp__nova__cron",
             input: {},
           },
         ],
@@ -1325,7 +1325,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
       label: "MCP tool",
       type: "mcp_tool_use",
       toolCallId: "call-timeout",
-      name: "mcp__openclaw__cron",
+      name: "mcp__nova__cron",
       expected: { terminalReason: "timed_out" },
     },
     {
@@ -1433,7 +1433,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
             {
               type: "mcp_tool_use",
               id: "message-send-1",
-              name: "mcp__openclaw__message",
+              name: "mcp__nova__message",
               input: {
                 action: "send",
                 channel: "telegram",
@@ -1505,7 +1505,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
             {
               type: "mcp_tool_use",
               id: "message-send-text-alias",
-              name: "mcp__openclaw__message",
+              name: "mcp__nova__message",
               input: {
                 action: "send",
                 channel: "telegram",
@@ -1559,7 +1559,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
     const starts = Array.from({ length: 65 }, (_, index) => ({
       type: "mcp_tool_use",
       id: `message-send-${index}`,
-      name: "mcp__openclaw__message",
+      name: "mcp__nova__message",
       input: {
         action: "send",
         channel: "telegram",
@@ -1609,7 +1609,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
     const starts = Array.from({ length: 65 }, (_, index) => ({
       type: "mcp_tool_use",
       id: `message-send-${index}`,
-      name: "mcp__openclaw__message",
+      name: "mcp__nova__message",
       input: {
         action: "send",
         channel: "telegram",
@@ -1671,7 +1671,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
           {
             type: "mcp_tool_use",
             id: "message-send-unresolved",
-            name: "mcp__openclaw__message",
+            name: "mcp__nova__message",
             input: {
               action: "send",
               channel: "telegram",
@@ -1718,7 +1718,7 @@ describe("executePreparedCliRun supervisor output capture", () => {
           {
             type: "mcp_tool_use",
             id: "message-dry-run-unresolved",
-            name: "mcp__openclaw__message",
+            name: "mcp__nova__message",
             input: {
               action: "send",
               channel: "telegram",

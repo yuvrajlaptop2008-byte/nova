@@ -3,8 +3,8 @@ import {
   buildPluginBindingResolvedText,
   parsePluginBindingApprovalCustomId,
   resolvePluginConversationBindingApproval,
-} from "openclaw/plugin-sdk/conversation-runtime";
-import { logVerbose, sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/conversation-runtime";
+import { logVerbose, sleepWithAbort } from "nova/plugin-sdk/runtime-env";
 import type {
   TelegramCallbackButton,
   TelegramCallbackMessageActions,

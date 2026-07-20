@@ -15,7 +15,7 @@ function writePlugin(extensionsRoot: string, dirName: string, manifestId?: strin
   fs.writeFileSync(path.join(pluginDir, "package.json"), `${JSON.stringify({ name: dirName })}\n`);
   if (manifestId) {
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       `${JSON.stringify({ id: manifestId })}\n`,
     );
   }
@@ -29,7 +29,7 @@ function runSelector(extensionsRoot: string, selection: string) {
 
 describe("Docker plugin selection", () => {
   it("resolves manifest ids and source directory names deterministically", () => {
-    const extensionsRoot = tempDirs.make("openclaw-docker-plugin-selection-");
+    const extensionsRoot = tempDirs.make("nova-docker-plugin-selection-");
     writePlugin(extensionsRoot, "source-only");
     writePlugin(extensionsRoot, "provider-source", "provider-id");
 
@@ -44,7 +44,7 @@ describe("Docker plugin selection", () => {
   });
 
   it("fails closed for unknown, invalid, and ambiguous ids", () => {
-    const extensionsRoot = tempDirs.make("openclaw-docker-plugin-selection-errors-");
+    const extensionsRoot = tempDirs.make("nova-docker-plugin-selection-errors-");
     writePlugin(extensionsRoot, "shared");
     writePlugin(extensionsRoot, "other-source", "shared");
 

@@ -185,7 +185,7 @@ describe("exec approvals pending and resolve CLI", () => {
           },
         ];
       }
-      if (method === "openclaw.approval.list") {
+      if (method === "nova.approval.list") {
         return [
           {
             id: "system-agent:1",
@@ -210,7 +210,7 @@ describe("exec approvals pending and resolve CLI", () => {
     expect(callGatewayFromCli.mock.calls.map((call) => call[0])).toEqual([
       "exec.approval.list",
       "plugin.approval.list",
-      "openclaw.approval.list",
+      "nova.approval.list",
     ]);
     for (const call of callGatewayFromCli.mock.calls) {
       expect(call[3]).toEqual({ scopes: ["operator.admin"] });

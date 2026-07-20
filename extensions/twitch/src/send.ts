@@ -8,9 +8,9 @@
 import {
   createMessageReceiptFromOutboundResults,
   type MessageReceipt,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+} from "nova/plugin-sdk/channel-outbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import { getClientManager as getRegistryClientManager } from "./client-manager-registry.js";
 import { resolveTwitchAccountContext } from "./config.js";
 import { stripMarkdownForTwitch } from "./utils/markdown.js";
@@ -70,7 +70,7 @@ function createTwitchSendReceipt(params: {
  * const result = await sendMessageTwitchInternal(
  *   "#mychannel",
  *   "Hello Twitch!",
- *   openclawConfig,
+ *   novaConfig,
  *   "default",
  *   true,
  *   console,
@@ -79,7 +79,7 @@ function createTwitchSendReceipt(params: {
 export async function sendMessageTwitchInternal(
   channel: string,
   text: string,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId?: string,
   stripMarkdown = true,
   logger: Console = console,

@@ -1,9 +1,9 @@
 // Feishu plugin module implements probe behavior.
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/number-runtime";
 import { raceWithTimeoutAndAbort } from "./async.js";
 import { createFeishuClient, type FeishuClientCredentials } from "./client.js";
 import type { FeishuProbeResult } from "./types.js";
@@ -101,7 +101,7 @@ export async function probeFeishu(
     const responseResult = await raceWithTimeoutAndAbort<FeishuPingResponse>(
       client.request({
         method: "POST",
-        url: "/open-apis/bot/v1/openclaw_bot/ping",
+        url: "/open-apis/bot/v1/nova_bot/ping",
         data: { needBotInfo: true },
         timeout: timeoutMs,
       }),

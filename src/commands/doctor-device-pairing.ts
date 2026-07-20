@@ -6,7 +6,7 @@ import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text
 import { formatCliCommand } from "../cli/command-format.js";
 import { quoteCliArg } from "../cli/quote-cli-arg.js";
 import { resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { HealthFinding } from "../flows/health-checks.js";
 import { callGateway } from "../gateway/call.js";
 import { loadDeviceIdentityIfPresent } from "../infra/device-identity.js";
@@ -141,7 +141,7 @@ function normalizeLocalPairedDevice(device: PairedDevice): DoctorPairedDevice {
 }
 
 async function loadDoctorPairingSnapshot(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   healthOk: boolean;
 }): Promise<DoctorPairingSnapshot | null> {
   if (params.healthOk) {
@@ -245,8 +245,8 @@ function resolvePendingPairingIssue(
     displayName: pending.displayName,
     clientId: pending.clientId,
   });
-  const approveCommand = formatCliArgs(["openclaw", "devices", "approve", pending.requestId]);
-  const inspectCommand = formatCliArgs(["openclaw", "devices", "list"]);
+  const approveCommand = formatCliArgs(["nova", "devices", "approve", pending.requestId]);
+  const inspectCommand = formatCliArgs(["nova", "devices", "list"]);
   if (!paired) {
     return {
       kind: "first-time",
@@ -263,7 +263,7 @@ function resolvePendingPairingIssue(
       deviceLabel,
       approveCommand,
       inspectCommand,
-      removeCommand: formatCliArgs(["openclaw", "devices", "remove", pending.deviceId]),
+      removeCommand: formatCliArgs(["nova", "devices", "remove", pending.deviceId]),
     };
   }
   const requestedRoles = normalizeUniqueSingleOrTrimmedStringList(
@@ -354,7 +354,7 @@ function collectPairedRecordIssues(snapshot: DoctorPairingSnapshot): PairedRecor
     for (const role of approvedRoles) {
       const token = findTokenSummary(device, role);
       const rotateCommand = formatCliArgs([
-        "openclaw",
+        "nova",
         "devices",
         "rotate",
         "--device",
@@ -480,7 +480,7 @@ function collectLocalDeviceAuthIssues(snapshot: DoctorPairingSnapshot): LocalDev
       continue;
     }
     const rotateCommand = formatCliArgs([
-      "openclaw",
+      "nova",
       "devices",
       "rotate",
       "--device",
@@ -526,7 +526,7 @@ function formatLegacyPairingStoreIssue(filePath: string): string {
 }
 
 /** Warn about legacy devices/*.json files the startup SQLite import has not archived. */
-async function collectLegacyPairingStoreIssues(cfg: OpenClawConfig): Promise<string[]> {
+async function collectLegacyPairingStoreIssues(cfg: NovaConfig): Promise<string[]> {
   if (cfg.gateway?.mode === "remote") {
     return [];
   }
@@ -593,7 +593,7 @@ function legacyPairingStoreIssueToHealthFinding(message: string): HealthFinding 
 }
 
 export async function collectDevicePairingHealthFindings(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   healthOk?: boolean;
 }): Promise<HealthFinding[]> {
   const legacyStoreFindings = (await collectLegacyPairingStoreIssues(params.cfg)).map(
@@ -621,7 +621,7 @@ export async function collectDevicePairingHealthFindings(params: {
  * local SQLite pairing state when the gateway is down.
  */
 export async function noteDevicePairingHealth(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   healthOk: boolean;
 }): Promise<void> {
   const legacyStoreLines = await collectLegacyPairingStoreIssues(params.cfg);

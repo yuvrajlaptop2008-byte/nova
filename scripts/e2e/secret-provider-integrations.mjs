@@ -55,7 +55,7 @@ const RESOLVER_STDIN_LIMIT_BYTES = readPositiveInt(
 );
 const RESULTS_PATH =
   process.env.NOVA_SECRET_PROOF_RESULTS_PATH?.trim() ||
-  path.join(os.tmpdir(), `openclaw-secret-provider-e2e-results-${process.pid}.json`);
+  path.join(os.tmpdir(), `nova-secret-provider-e2e-results-${process.pid}.json`);
 
 const results = [];
 let gatewayClientStateCounter = 0;
@@ -273,7 +273,7 @@ function parseJsonObjectsFromMixedOutput(text) {
   return objects;
 }
 
-function resolveOpenClawRunner() {
+function resolveNovaRunner() {
   if (process.env.NOVA_ENTRY) {
     return {
       command: "node",
@@ -289,13 +289,13 @@ function resolveOpenClawRunner() {
       }
     }
   }
-  return { pnpm: true, baseArgs: ["openclaw"], label: "pnpm openclaw" };
+  return { pnpm: true, baseArgs: ["nova"], label: "pnpm nova" };
 }
 
 function makeEnv(name) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), `openclaw-secret-proof-${name}-`));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), `nova-secret-proof-${name}-`));
   const home = path.join(root, "home");
-  const stateDir = path.join(home, ".openclaw");
+  const stateDir = path.join(home, ".nova");
   const agentDir = path.join(stateDir, "agents", "main", "agent");
   const hostHome = os.homedir();
   const serviceProfile = `secret-proof-${process.pid}-${name.replace(/[^a-z0-9-]/giu, "-")}`;
@@ -306,15 +306,15 @@ function makeEnv(name) {
     USERPROFILE: home,
     NOVA_HOME: home,
     NOVA_STATE_DIR: stateDir,
-    NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+    NOVA_CONFIG_PATH: path.join(stateDir, "nova.json"),
     NOVA_AGENT_DIR: agentDir,
     PI_CODING_AGENT_DIR: "",
     NOVA_NO_ONBOARD: "1",
     NOVA_SKIP_PROVIDERS: "0",
     NOVA_LOG_COLOR: "0",
     NOVA_PROFILE: serviceProfile,
-    NOVA_LAUNCHD_LABEL: `ai.openclaw.${serviceProfile}`,
-    NOVA_SYSTEMD_UNIT: `openclaw-gateway-${serviceProfile}.service`,
+    NOVA_LAUNCHD_LABEL: `ai.nova.${serviceProfile}`,
+    NOVA_SYSTEMD_UNIT: `nova-gateway-${serviceProfile}.service`,
     NOVA_WINDOWS_TASK_NAME: `Nova Gateway (${serviceProfile})`,
     NO_COLOR: "1",
     PNPM_HOME:
@@ -514,15 +514,15 @@ function runCommand(command, args, options = {}) {
 }
 
 async function runNova(args, env, options = {}) {
-  const command = await resolveOpenClawCommand(args, env, options);
+  const command = await resolveNovaCommand(args, env, options);
   return await runCommand(command.command, command.args, {
     ...options,
     ...command.options,
   });
 }
 
-export async function resolveOpenClawCommand(args, env, options = {}) {
-  const runner = options.runner ?? resolveOpenClawRunner();
+export async function resolveNovaCommand(args, env, options = {}) {
+  const runner = options.runner ?? resolveNovaRunner();
   const stdio = options.stdio ?? ["pipe", "pipe", "pipe"];
   if (runner.pnpm) {
     const { createPnpmRunnerSpawnSpec } = await import("../pnpm-runner.mjs");
@@ -619,7 +619,7 @@ function baseConfig(port, overrides = {}) {
 function writeProofPlugin(envCtx, options = {}) {
   const pluginRoot = path.join(envCtx.stateDir, "extensions", PLUGIN_ID);
   fs.mkdirSync(pluginRoot, { recursive: true, mode: 0o755 });
-  writeJson(path.join(pluginRoot, "openclaw.plugin.json"), {
+  writeJson(path.join(pluginRoot, "nova.plugin.json"), {
     id: PLUGIN_ID,
     name: "Secret Provider Proof",
     enabledByDefault: true,
@@ -697,7 +697,7 @@ function readPersistedProfile() {
 
 async function loadSecretRuntime() {
   const requireFromRepo = createRequire(path.join(REPO_ROOT, "package.json"));
-  const resolved = requireFromRepo.resolve("openclaw/plugin-sdk/secret-ref-runtime");
+  const resolved = requireFromRepo.resolve("nova/plugin-sdk/secret-ref-runtime");
   return await import(pathToFileURL(resolved).href);
 }
 
@@ -866,7 +866,7 @@ function serviceManagerEnv(source) {
 }
 
 async function startGateway(envCtx, port, token = TOKEN_V1) {
-  const command = await resolveOpenClawCommand(
+  const command = await resolveNovaCommand(
     ["gateway", "run", "--port", String(port), "--bind", "loopback", "--allow-unconfigured"],
     envCtx.env,
     {
@@ -1144,7 +1144,7 @@ async function expectReloadMayCloseForAuthChange(env, port, token) {
 }
 
 async function expectGatewayStartupFails(envCtx, port, reason) {
-  const command = await resolveOpenClawCommand(
+  const command = await resolveNovaCommand(
     ["gateway", "run", "--port", String(port), "--bind", "loopback", "--allow-unconfigured"],
     envCtx.env,
     {
@@ -1802,7 +1802,7 @@ async function p12OpenAiLiveProof() {
 
 async function runPtySecretsConfigurePreset(envCtx, options = {}) {
   const { spawn } = await import("@lydell/node-pty");
-  const command = await resolveOpenClawCommand(
+  const command = await resolveNovaCommand(
     ["secrets", "configure", "--providers-only", "--apply", "--yes", "--allow-exec", "--json"],
     envCtx.env,
   );
@@ -2086,7 +2086,7 @@ async function p17StaticMetadataAlignment() {
 }
 
 async function main() {
-  console.log(`[info] runner=${resolveOpenClawRunner().label}`);
+  console.log(`[info] runner=${resolveNovaRunner().label}`);
   console.log(`[info] results=${RESULTS_PATH}`);
   let runError;
   try {
@@ -2149,7 +2149,7 @@ async function main() {
   } finally {
     writeJson(RESULTS_PATH, {
       generatedAt: new Date().toISOString(),
-      runner: resolveOpenClawRunner().label,
+      runner: resolveNovaRunner().label,
       results,
     });
   }

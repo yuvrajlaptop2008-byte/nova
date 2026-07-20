@@ -1,13 +1,13 @@
 // Whatsapp plugin module implements outbound base behavior.
-import { normalizeOptionalAccountId } from "openclaw/plugin-sdk/account-core";
-import { resolveOutboundSendDep } from "openclaw/plugin-sdk/channel-outbound";
+import { normalizeOptionalAccountId } from "nova/plugin-sdk/account-core";
+import { resolveOutboundSendDep } from "nova/plugin-sdk/channel-outbound";
 import {
   attachChannelToResult,
   createAttachedChannelResultAdapter,
   type ChannelOutboundAdapter,
-} from "openclaw/plugin-sdk/channel-send-result";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { sendTextMediaPayload } from "openclaw/plugin-sdk/reply-payload";
+} from "nova/plugin-sdk/channel-send-result";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { sendTextMediaPayload } from "nova/plugin-sdk/reply-payload";
 import { resolveDefaultWhatsAppAccountId } from "./account-ids.js";
 import {
   normalizeWhatsAppOutboundPayload,
@@ -20,7 +20,7 @@ import { toWhatsappJid } from "./text-runtime.js";
 type WhatsAppChunker = NonNullable<ChannelOutboundAdapter["chunker"]>;
 type WhatsAppSendTextOptions = {
   verbose: boolean;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   mediaUrl?: string;
   mediaAccess?: {
     localRoots?: readonly string[];
@@ -51,7 +51,7 @@ type WhatsAppSendMessage = (
 type WhatsAppSendPoll = (
   to: string,
   poll: Parameters<NonNullable<ChannelOutboundAdapter["sendPoll"]>>[0]["poll"],
-  options: { verbose: boolean; accountId?: string; cfg: OpenClawConfig },
+  options: { verbose: boolean; accountId?: string; cfg: NovaConfig },
 ) => Promise<{ messageId: string; toJid: string }>;
 
 type CreateWhatsAppOutboundBaseParams = {
@@ -64,7 +64,7 @@ type CreateWhatsAppOutboundBaseParams = {
   skipEmptyText?: boolean;
 };
 
-function resolveQuoteLookupAccountId(cfg?: OpenClawConfig, accountId?: string | null): string {
+function resolveQuoteLookupAccountId(cfg?: NovaConfig, accountId?: string | null): string {
   const explicitAccountId = normalizeOptionalAccountId(accountId);
   if (explicitAccountId) {
     return explicitAccountId;

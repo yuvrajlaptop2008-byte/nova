@@ -316,7 +316,7 @@ export type AgentDefaultsConfig = {
   /** Embedded Nova runner hardening and compatibility controls. */
   embeddedAgent?: {
     /**
-     * How embedded Nova should trust workspace-local `.openclaw/settings.json`.
+     * How embedded Nova should trust workspace-local `.nova/settings.json`.
      * - sanitize (default): apply project settings except shellPath/shellCommandPrefix
      * - ignore: ignore project settings entirely
      * - trusted: trust project settings as-is

@@ -262,7 +262,7 @@ describe("registerQrCli", () => {
     expect(output).toContain("Gateway:");
     expect(output).toContain("Access:");
     expect(output).toContain("full");
-    expect(output).toContain("openclaw devices approve <requestId>");
+    expect(output).toContain("nova devices approve <requestId>");
   });
 
   it("fails fast for insecure remote mobile pairing setup urls", async () => {

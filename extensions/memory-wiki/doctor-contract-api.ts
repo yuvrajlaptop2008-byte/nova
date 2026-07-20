@@ -1,13 +1,13 @@
 // Memory Wiki doctor contract owns legacy state cleanup and migrations.
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/plugin-entry";
+import type { NovaConfig } from "nova/plugin-sdk/plugin-entry";
 import {
   archiveLegacyStateSource,
   legacyStateFileExists,
   type PluginDoctorStateMigration,
-} from "openclaw/plugin-sdk/runtime-doctor";
-import { FsSafeError, root as fsRoot } from "openclaw/plugin-sdk/security-runtime";
+} from "nova/plugin-sdk/runtime-doctor";
+import { FsSafeError, root as fsRoot } from "nova/plugin-sdk/security-runtime";
 import { LEGACY_MEMORY_WIKI_COMPILED_CACHE_PATHS } from "./src/compiled-cache.js";
 import {
   resolveMemoryWikiAgentConfig,
@@ -16,7 +16,7 @@ import {
   type MemoryWikiPluginConfig,
 } from "./src/config.js";
 export { legacyConfigRules, normalizeCompatibilityConfig } from "./src/config-compat.js";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   countMemoryWikiImportRunStateRows,
   createMemoryWikiImportRunStateStore,
@@ -73,7 +73,7 @@ async function openExistingVaultRoot(vaultRoot: string) {
   }
 }
 
-function readConfiguredPluginConfig(config: OpenClawConfig): MemoryWikiPluginConfig | undefined {
+function readConfiguredPluginConfig(config: NovaConfig): MemoryWikiPluginConfig | undefined {
   const entries = config.plugins?.entries;
   const pluginEntry = isRecord(entries) ? entries["memory-wiki"] : undefined;
   if (!isRecord(pluginEntry) || !isRecord(pluginEntry.config)) {
@@ -83,7 +83,7 @@ function readConfiguredPluginConfig(config: OpenClawConfig): MemoryWikiPluginCon
 }
 
 function resolveConfiguredVaultRoots(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): string[] {
   const homeDir = resolveHomeDir(params.env);

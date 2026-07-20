@@ -3,7 +3,7 @@ import type { MessageOptions, SessionEvent, SessionEventType } from "@github/cop
 import type {
   AgentHarnessAttemptResult,
   AgentMessage,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   buildCopilotAssistantUsage,
   normalizeCopilotUsage,

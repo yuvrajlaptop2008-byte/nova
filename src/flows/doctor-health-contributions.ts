@@ -8,7 +8,7 @@ import {
   UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE_ENV,
 } from "../commands/doctor/shared/update-phase.js";
 import { resolveIsNixMode } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { buildGatewayConnectionDetails } from "../gateway/call.js";
 import type { UpdatePostInstallDoctorResult } from "../infra/update-doctor-result.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -22,7 +22,7 @@ type PluginVersionDriftReport =
   import("../plugins/plugin-version-drift.js").PluginVersionDriftReport;
 
 type DoctorConfigResult = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   path?: string;
   shouldWriteConfig?: boolean;
   sourceConfigValid?: boolean;
@@ -38,8 +38,8 @@ export type DoctorHealthFlowContext = {
   options: DoctorOptions;
   prompter: DoctorPrompter;
   configResult: DoctorConfigResult;
-  cfg: OpenClawConfig;
-  cfgForPersistence: OpenClawConfig;
+  cfg: NovaConfig;
+  cfgForPersistence: NovaConfig;
   sourceConfigValid: boolean;
   configPath: string;
   env?: NodeJS.ProcessEnv;
@@ -95,7 +95,7 @@ function isUpdateDoctorRun(env: NodeJS.ProcessEnv | Record<string, string | unde
   return value === "1" || value === "true";
 }
 
-function resolveDoctorMode(cfg: OpenClawConfig): DoctorFlowMode {
+function resolveDoctorMode(cfg: NovaConfig): DoctorFlowMode {
   return cfg.gateway?.mode === "remote" ? "remote" : "local";
 }
 
@@ -267,11 +267,11 @@ async function runGatewayConfigHealth(ctx: DoctorHealthFlowContext): Promise<voi
   if (!ctx.cfg.gateway?.mode) {
     const lines = [
       "gateway.mode is unset; gateway start will be blocked.",
-      `Fix: run ${formatCliCommand("openclaw configure")} and set Gateway mode (local/remote).`,
-      `Or set directly: ${formatCliCommand("openclaw config set gateway.mode local")}`,
+      `Fix: run ${formatCliCommand("nova configure")} and set Gateway mode (local/remote).`,
+      `Or set directly: ${formatCliCommand("nova config set gateway.mode local")}`,
     ];
     if (!fs.existsSync(ctx.configPath)) {
-      lines.push(`Missing config: run ${formatCliCommand("openclaw setup")} first.`);
+      lines.push(`Missing config: run ${formatCliCommand("nova setup")} first.`);
     }
     note(lines.join("\n"), "Gateway");
   }
@@ -280,8 +280,8 @@ async function runGatewayConfigHealth(ctx: DoctorHealthFlowContext): Promise<voi
       [
         "gateway.auth.token and gateway.auth.password are both configured while gateway.auth.mode is unset.",
         "Set an explicit mode to avoid ambiguous auth selection and startup/runtime failures.",
-        `Set token mode: ${formatCliCommand("openclaw config set gateway.auth.mode token")}`,
-        `Set password mode: ${formatCliCommand("openclaw config set gateway.auth.mode password")}`,
+        `Set token mode: ${formatCliCommand("nova config set gateway.auth.mode token")}`,
+        `Set password mode: ${formatCliCommand("nova config set gateway.auth.mode password")}`,
       ].join("\n"),
       "Gateway auth",
     );
@@ -731,7 +731,7 @@ async function runGatewayServicesHealth(ctx: DoctorHealthFlowContext): Promise<v
   const {
     noteMacLaunchAgentOverrides,
     noteMacLaunchctlGatewayEnvOverrides,
-    noteMacStaleOpenClawUpdateLaunchdJobs,
+    noteMacStaleNovaUpdateLaunchdJobs,
   } = await import("../commands/doctor-platform-notes.js");
   await maybeScanExtraGatewayServices(ctx.options, ctx.runtime, ctx.prompter);
   const updateDoctorRun = isUpdateDoctorRun(ctx.env ?? process.env);
@@ -750,7 +750,7 @@ async function runGatewayServicesHealth(ctx: DoctorHealthFlowContext): Promise<v
     },
   );
   await noteMacLaunchAgentOverrides();
-  await noteMacStaleOpenClawUpdateLaunchdJobs();
+  await noteMacStaleNovaUpdateLaunchdJobs();
   await noteMacLaunchctlGatewayEnvOverrides(ctx.cfg);
 }
 
@@ -846,9 +846,7 @@ type ToolResultCapTarget = {
   target?: string;
 };
 
-async function collectToolResultCapFindings(
-  cfg: OpenClawConfig,
-): Promise<readonly HealthFinding[]> {
+async function collectToolResultCapFindings(cfg: NovaConfig): Promise<readonly HealthFinding[]> {
   const { resolveAgentContextLimits } = await loadAgentScopeModule();
   const { normalizeAgentId } = await import("../routing/session-key.js");
   const targets: ToolResultCapTarget[] = [];
@@ -899,7 +897,7 @@ async function collectToolResultCapFindings(
 }
 
 async function collectToolResultCapTargetAdvice(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   readOnlyCatalog?: boolean;
   targets: readonly ToolResultCapTarget[];
 }): Promise<
@@ -1099,7 +1097,7 @@ async function hasActiveGatewayExecCredential(
 }
 
 async function collectWorkspaceStatusPluginVersionDrift(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   options?: Pick<DoctorOptions, "allowExec" | "deep" | "nonInteractive">;
 }): Promise<PluginVersionDriftReport | undefined> {
   if (params.cfg.gateway?.mode !== "remote") {
@@ -1170,7 +1168,7 @@ async function runGatewayHealthChecks(ctx: DoctorHealthFlowContext): Promise<voi
   const { note } = await loadNoteModule();
   if ((await hasActiveGatewayExecCredential(ctx)) && ctx.options.allowExec !== true) {
     note(
-      "Gateway health probes skipped because gateway credentials use an exec SecretRef. Run `openclaw doctor --allow-exec` to verify Gateway health with exec SecretRefs.",
+      "Gateway health probes skipped because gateway credentials use an exec SecretRef. Run `nova doctor --allow-exec` to verify Gateway health with exec SecretRefs.",
       "Gateway",
     );
     ctx.gatewayHealthSkipped = true;
@@ -2335,7 +2333,7 @@ export async function runDoctorHealthContributions(ctx: DoctorHealthFlowContext)
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
   (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.doctorHealthContributionsTestApi")
+    Symbol.for("nova.doctorHealthContributionsTestApi")
   ] = { createDoctorHealthContribution, resolveDoctorHealthContributions };
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

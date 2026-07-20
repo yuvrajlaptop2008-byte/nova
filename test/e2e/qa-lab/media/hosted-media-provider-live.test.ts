@@ -81,7 +81,7 @@ describe("hosted media provider live QA producer", () => {
   });
 
   it("maps video provider live coverage roles without making tool invocation primary", () => {
-    const artifactBase = path.join(os.tmpdir(), "openclaw-hosted-media-live-test");
+    const artifactBase = path.join(os.tmpdir(), "nova-hosted-media-live-test");
     const options = parseHostedMediaOptions(["--suite", "video", "--artifact-base", artifactBase]);
     const evidence = buildHostedMediaEvidence({
       options,

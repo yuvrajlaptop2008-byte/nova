@@ -7,7 +7,7 @@ import { getChannelPlugin } from "../channels/plugins/registry.js";
 import type { ChannelLegacyStateMigrationPlan } from "../channels/plugins/types.core.js";
 import type { ChannelId } from "../channels/plugins/types.public.js";
 import { resolveOAuthDir, resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
   createPluginStateKeyedStore,
@@ -25,10 +25,10 @@ import {
 import { resolveLegacyInstalledPluginIndexStorePath } from "../plugins/installed-plugin-index-store.js";
 import { DEFAULT_ACCOUNT_ID, DEFAULT_MAIN_KEY, normalizeAgentId } from "../routing/session-key.js";
 import {
-  detectOpenClawStateDatabaseSchemaMigrations,
-  repairOpenClawStateDatabaseSchema,
-  type OpenClawStateDatabaseSchemaMigration,
-} from "../state/openclaw-state-db.js";
+  detectNovaStateDatabaseSchemaMigrations,
+  repairNovaStateDatabaseSchema,
+  type NovaStateDatabaseSchemaMigration,
+} from "../state/nova-state-db.js";
 import { acquireGatewayLock } from "./gateway-lock.js";
 import {
   detectLegacyAcpReplayLedger,
@@ -154,7 +154,7 @@ import {
   migrateLegacyWorkspaceState,
 } from "./state-migrations.workspace-setup.js";
 
-function describeStateSchemaMigration(migration: OpenClawStateDatabaseSchemaMigration): string {
+function describeStateSchemaMigration(migration: NovaStateDatabaseSchemaMigration): string {
   switch (migration.kind) {
     case "agent-databases-composite-primary-key":
       return "agent database registry primary key → agent_id,path";
@@ -182,7 +182,7 @@ export function resetAutoMigrateLegacyStateForTest(): void {
 }
 
 async function collectChannelLegacyStateMigrationPlans(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir: string;
   oauthDir: string;
@@ -212,8 +212,8 @@ async function collectChannelLegacyStateMigrationPlans(params: {
 }
 
 async function collectPluginDoctorStateMigrationPlans(params: {
-  cfg: OpenClawConfig;
-  pluginDoctorConfig?: OpenClawConfig;
+  cfg: NovaConfig;
+  pluginDoctorConfig?: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir: string;
   oauthDir: string;
@@ -277,8 +277,8 @@ function createPluginDoctorStateMigrationContext(
 }
 
 export async function detectLegacyStateMigrations(params: {
-  cfg: OpenClawConfig;
-  pluginDoctorConfig?: OpenClawConfig;
+  cfg: NovaConfig;
+  pluginDoctorConfig?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   homedir?: () => string;
   pluginSessionStoreAgentIds?: readonly string[];
@@ -372,7 +372,7 @@ export async function detectLegacyStateMigrations(params: {
   const pluginInstallIndexPath = resolveLegacyInstalledPluginIndexStorePath({ stateDir });
   const hasPluginInstallIndex = fileExists(pluginInstallIndexPath);
   const debugProxyCaptureSidecar = detectLegacyDebugProxyCaptureSidecar(stateDir, env);
-  const stateSchemaMigrations = detectOpenClawStateDatabaseSchemaMigrations({
+  const stateSchemaMigrations = detectNovaStateDatabaseSchemaMigrations({
     env: { ...env, NOVA_STATE_DIR: stateDir },
   });
   const taskRunsSidecarPath = resolveLegacyTaskRunsSidecarPath(stateDir);
@@ -772,7 +772,7 @@ export async function detectLegacyStateMigrations(params: {
 
 async function runPluginDoctorStateMigrationPlans(params: {
   detected: LegacyStateDetection;
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): Promise<MigrationMessages> {
   const changes: string[] = [];
@@ -808,7 +808,7 @@ async function runPluginDoctorStateMigrationPlans(params: {
 
 async function migratePluginDoctorStatePlans(params: {
   plans: readonly DetectedPluginDoctorStateMigrationPlan[];
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir: string;
   oauthDir: string;
@@ -872,7 +872,7 @@ async function migratePluginDoctorStatePlans(params: {
 }
 
 export async function autoMigrateLegacyPluginDoctorState(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env?: NodeJS.ProcessEnv;
   homedir?: () => string;
   log?: MigrationLogger;
@@ -891,7 +891,7 @@ export async function autoMigrateLegacyPluginDoctorState(params: {
   });
   const stateDir = resolveStateDir(env, params.homedir ?? os.homedir);
   const oauthDir = resolveOAuthDir(env, stateDir);
-  const stateSchema = repairOpenClawStateDatabaseSchema({
+  const stateSchema = repairNovaStateDatabaseSchema({
     env: { ...env, NOVA_STATE_DIR: stateDir },
   });
   const changes = [...stateDirResult.changes, ...stateSchema.changes];
@@ -939,14 +939,14 @@ function migrateLegacyStateSchema(
   changes: string[];
   warnings: string[];
 } {
-  return repairOpenClawStateDatabaseSchema({
+  return repairNovaStateDatabaseSchema({
     env: { ...env, NOVA_STATE_DIR: detected.stateDir },
   });
 }
 
 export async function runLegacyStateMigrations(params: {
   detected: LegacyStateDetection;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   now?: () => number;
   recoverCorruptTargetStore?: boolean;
@@ -1071,14 +1071,14 @@ export async function runLegacyStateMigrations(params: {
     ? { changes: [], warnings: [] }
     : await runPluginDoctorStateMigrationPlans({
         detected,
-        config: params.config ?? ({} as OpenClawConfig),
+        config: params.config ?? ({} as NovaConfig),
         env,
       });
   const sessions = await migrateLegacySessions(detected, now, {
     recoverCorruptTargetStore: params.recoverCorruptTargetStore,
   });
   const acpSessionMetadata = await migrateLegacyAcpSessionMetadata({
-    cfg: params.config ?? ({} as OpenClawConfig),
+    cfg: params.config ?? ({} as NovaConfig),
     env: { ...env, NOVA_STATE_DIR: detected.stateDir },
     now,
   });
@@ -1190,8 +1190,8 @@ export async function runLegacyStateMigrations(params: {
  * Safe to run multiple times (idempotent). See #29683.
  */
 export async function autoMigrateLegacyState(params: {
-  cfg: OpenClawConfig;
-  pluginDoctorConfig?: OpenClawConfig;
+  cfg: NovaConfig;
+  pluginDoctorConfig?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   homedir?: () => string;
   log?: MigrationLogger;
@@ -1222,7 +1222,7 @@ export async function autoMigrateLegacyState(params: {
   });
   const stateDir = resolveStateDir(env, homedir);
   autoMigrateChecked.add(`${path.resolve(stateDir)}\0${migrationMode}`);
-  const stateSchema = repairOpenClawStateDatabaseSchema({
+  const stateSchema = repairNovaStateDatabaseSchema({
     env: { ...env, NOVA_STATE_DIR: stateDir },
   });
   if (stateSchema.warnings.length > 0) {

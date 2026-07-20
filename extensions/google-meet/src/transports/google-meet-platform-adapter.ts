@@ -1,11 +1,11 @@
 // Google Meet adapter: platform URL, DOM, wire-value, and manual-action ownership.
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import type {
   MeetingBrowserJoinSession,
   MeetingManualActionCategory,
   MeetingPlatformAdapter,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
 import type { GoogleMeetConfig, GoogleMeetMode } from "../config.js";
 import { normalizeMeetUrl } from "../meet-url.js";
 import { createMeetWithBrowserProxyOnNode } from "./chrome-create.js";

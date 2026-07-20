@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Copies the unpacked Nova Chrome extension into the browser plugin dist so
- * `openclaw browser extension path` resolves a stable location for
+ * `nova browser extension path` resolves a stable location for
  * chrome://extensions "Load unpacked".
  */
 import fs from "node:fs/promises";

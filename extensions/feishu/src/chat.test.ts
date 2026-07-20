@@ -1,7 +1,7 @@
 // Feishu tests cover chat plugin behavior.
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawPluginApi, PluginRuntime } from "../runtime-api.js";
+import type { NovaPluginApi, PluginRuntime } from "../runtime-api.js";
 
 const createFeishuClientMock = vi.hoisted(() => vi.fn());
 const chatGetMock = vi.hoisted(() => vi.fn());
@@ -48,9 +48,9 @@ describe("registerFeishuChatTools", () => {
   }
 
   function createChatToolApi(params: {
-    config: OpenClawPluginApi["config"];
-    registerTool: OpenClawPluginApi["registerTool"];
-  }): OpenClawPluginApi {
+    config: NovaPluginApi["config"];
+    registerTool: NovaPluginApi["registerTool"];
+  }): NovaPluginApi {
     return createTestPluginApi({
       id: "feishu-test",
       name: "Feishu Test",

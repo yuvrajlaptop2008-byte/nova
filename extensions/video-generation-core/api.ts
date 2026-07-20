@@ -1,5 +1,5 @@
 // Video Generation Core API module exposes the plugin public contract.
-export type { AuthProfileStore } from "openclaw/plugin-sdk/video-generation-core";
+export type { AuthProfileStore } from "nova/plugin-sdk/video-generation-core";
 export {
   buildNoCapabilityModelConfiguredMessage,
   createSubsystemLogger,
@@ -13,11 +13,11 @@ export {
   resolveAgentModelPrimaryValue,
   resolveCapabilityModelCandidates,
   throwCapabilityGenerationFailure,
-} from "openclaw/plugin-sdk/video-generation-core";
+} from "nova/plugin-sdk/video-generation-core";
 export type {
   FallbackAttempt,
   GeneratedVideoAsset,
-  OpenClawConfig,
+  NovaConfig,
   VideoGenerationIgnoredOverride,
   VideoGenerationMode,
   VideoGenerationModeCapabilities,
@@ -30,4 +30,4 @@ export type {
   VideoGenerationResult,
   VideoGenerationSourceAsset,
   VideoGenerationTransformCapabilities,
-} from "openclaw/plugin-sdk/video-generation-core";
+} from "nova/plugin-sdk/video-generation-core";

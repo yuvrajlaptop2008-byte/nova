@@ -9,7 +9,7 @@ import {
   scaleAnnotations,
 } from "./screenshot-annotate.js";
 
-const ANNOTATION_OVERLAY_ATTR = "data-openclaw-labels";
+const ANNOTATION_OVERLAY_ATTR = "data-nova-labels";
 
 const sampleInputs: RawAnnotationInput[] = [
   {

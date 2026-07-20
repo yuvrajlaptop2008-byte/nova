@@ -33,7 +33,7 @@ fi
 last_status=1
 run_docker_pull() {
   local timeout_bin
-  if ! timeout_bin="$(openclaw_host_timeout_bin)"; then
+  if ! timeout_bin="$(nova_host_timeout_bin)"; then
     echo "timeout or gtimeout command not found; cannot bound Docker pull after ${timeout_seconds}s" >&2
     return 127
   fi

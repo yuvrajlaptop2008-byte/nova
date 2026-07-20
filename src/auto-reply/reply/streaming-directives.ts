@@ -1,6 +1,6 @@
 import { expectDefined } from "@nova/normalization-core";
 // Converts streaming reply directives into payload delivery decisions.
-import { hasOutboundReplyContent } from "openclaw/plugin-sdk/reply-payload";
+import { hasOutboundReplyContent } from "nova/plugin-sdk/reply-payload";
 import { parseInlineDirectives } from "../../utils/directive-tags.js";
 import {
   isSilentReplyPrefixText,

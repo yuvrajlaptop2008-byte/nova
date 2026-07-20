@@ -1,6 +1,6 @@
 // Vydra tests cover video generation provider plugin behavior.
-import { expectExplicitVideoGenerationCapabilities } from "openclaw/plugin-sdk/provider-test-contracts";
-import { installPinnedHostnameTestHooks } from "openclaw/plugin-sdk/test-media-understanding";
+import { expectExplicitVideoGenerationCapabilities } from "nova/plugin-sdk/provider-test-contracts";
+import { installPinnedHostnameTestHooks } from "nova/plugin-sdk/test-media-understanding";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   binaryResponse,

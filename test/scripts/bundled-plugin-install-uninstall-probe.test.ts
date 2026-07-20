@@ -28,7 +28,7 @@ type PluginListEntry = {
 };
 
 function createPackageRoot(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bundled-probe-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bundled-probe-"));
   fs.writeFileSync(path.join(root, "package.json"), '{"type":"module"}\n', "utf8");
   fs.mkdirSync(path.join(root, "dist"), { recursive: true });
   return root;
@@ -60,7 +60,7 @@ function writePluginManifest(root: string, pluginRoot: string, manifest: Record<
   const dir = path.join(root, pluginRoot);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(
-    path.join(dir, "openclaw.plugin.json"),
+    path.join(dir, "nova.plugin.json"),
     `${JSON.stringify(manifest, null, 2)}\n`,
     "utf8",
   );
@@ -282,7 +282,7 @@ describe("bundled plugin install/uninstall probe", () => {
 
     expect(sweep).toContain("source scripts/lib/docker-e2e-logs.sh");
     expect(sweep).toContain("NOVA_BUNDLED_PLUGIN_SWEEP_COMMAND_TIMEOUT:-300s");
-    expect(sweep.match(/openclaw_e2e_maybe_timeout/g)).toHaveLength(1);
+    expect(sweep.match(/nova_e2e_maybe_timeout/g)).toHaveLength(1);
     expect(sweep).toContain('run_logged_sweep_command "install $plugin_id"');
     expect(sweep).toContain('run_logged_sweep_command "uninstall $plugin_id"');
     expect(sweep.match(/docker_e2e_print_log/g)).toHaveLength(3);
@@ -1145,7 +1145,7 @@ describe("bundled plugin install/uninstall probe", () => {
     ).resolves.toEqual({ status: "ok" });
 
     const rpcStateDir = fs.readFileSync(statePath, "utf8");
-    expect(path.basename(rpcStateDir)).toMatch(/^openclaw-plugin-runtime-rpc-/u);
+    expect(path.basename(rpcStateDir)).toMatch(/^nova-plugin-runtime-rpc-/u);
     expect(fs.existsSync(rpcStateDir)).toBe(false);
   });
 
@@ -1388,8 +1388,8 @@ describe("bundled plugin install/uninstall probe", () => {
 
     expect(env.USERPROFILE).toBe(env.HOME);
     expect(env.NOVA_HOME).toBe(env.HOME);
-    expect(env.NOVA_STATE_DIR).toBe(path.join(env.HOME, ".openclaw"));
-    expect(env.NOVA_CONFIG_PATH).toBe(path.join(env.NOVA_STATE_DIR, "openclaw.json"));
+    expect(env.NOVA_STATE_DIR).toBe(path.join(env.HOME, ".nova"));
+    expect(env.NOVA_CONFIG_PATH).toBe(path.join(env.NOVA_STATE_DIR, "nova.json"));
     expect(fs.existsSync(path.dirname(env.HOME))).toBe(true);
 
     runtimeSmoke.cleanupIsolatedStateEnv(env);
@@ -1401,7 +1401,7 @@ describe("bundled plugin install/uninstall probe", () => {
     const root = makePackageRoot();
     fs.mkdirSync(path.join(root, "dist", "extensions", "qa-channel"), { recursive: true });
     fs.writeFileSync(
-      path.join(root, "dist", "extensions", "qa-channel", "openclaw.plugin.json"),
+      path.join(root, "dist", "extensions", "qa-channel", "nova.plugin.json"),
       '{"id":"qa-channel"}\n',
       "utf8",
     );
@@ -1587,7 +1587,7 @@ describe("bundled plugin install/uninstall probe", () => {
       recursive: true,
     });
     fs.writeFileSync(
-      path.join(root, "dist-runtime", "extensions", "runtime-only", "openclaw.plugin.json"),
+      path.join(root, "dist-runtime", "extensions", "runtime-only", "nova.plugin.json"),
       '{"id":"runtime-only"}\n',
       "utf8",
     );
@@ -1614,7 +1614,7 @@ describe("bundled plugin install/uninstall probe", () => {
     const windowsSourcePath = "C:\\crabbox\\qa-windows\\dist\\extensions\\nostr";
     fs.mkdirSync(path.join(stateDir, "plugins"), { recursive: true });
     fs.writeFileSync(
-      path.join(stateDir, "openclaw.json"),
+      path.join(stateDir, "nova.json"),
       JSON.stringify({ plugins: { entries: { nostr: { enabled: true } } } }),
       "utf8",
     );
@@ -1650,7 +1650,7 @@ describe("bundled plugin install/uninstall probe", () => {
     fs.mkdirSync(selectedRoot, { recursive: true });
     fs.mkdirSync(staleRoot, { recursive: true });
     fs.writeFileSync(
-      path.join(stateDir, "openclaw.json"),
+      path.join(stateDir, "nova.json"),
       JSON.stringify({ plugins: { entries: { nostr: { enabled: true } } } }),
       "utf8",
     );
@@ -1688,7 +1688,7 @@ describe("bundled plugin install/uninstall probe", () => {
     const selectedRoot = path.join(root, "dist-runtime", "extensions", "nostr");
     fs.mkdirSync(path.join(stateDir, "plugins"), { recursive: true });
     fs.writeFileSync(
-      path.join(stateDir, "openclaw.json"),
+      path.join(stateDir, "nova.json"),
       JSON.stringify({ plugins: { entries: { nostr: { enabled: true } } } }),
       "utf8",
     );
@@ -1725,7 +1725,7 @@ describe("bundled plugin install/uninstall probe", () => {
     const stateDir = path.join(root, "state");
     fs.mkdirSync(path.join(stateDir, "plugins"), { recursive: true });
     fs.writeFileSync(
-      path.join(stateDir, "openclaw.json"),
+      path.join(stateDir, "nova.json"),
       JSON.stringify({
         plugins: { load: { paths: ["C:\\crabbox\\qa-windows\\dist\\extensions\\nostr"] } },
       }),

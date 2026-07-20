@@ -1,6 +1,6 @@
 // Resolves manifest contracts into runtime-facing plugin capabilities.
 import { sortUniqueStrings } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   hasManifestContractValue,
   listAvailableManifestContractPlugins,
@@ -14,7 +14,7 @@ type ManifestContractRuntimePluginResolution = {
 };
 
 export function resolveManifestContractRuntimePluginResolution(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   contract: PluginManifestContractListKey;
   value?: string;
 }): ManifestContractRuntimePluginResolution {

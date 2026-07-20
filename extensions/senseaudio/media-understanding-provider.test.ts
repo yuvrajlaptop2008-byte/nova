@@ -3,12 +3,12 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { runFfmpeg } from "openclaw/plugin-sdk/media-runtime";
+import { runFfmpeg } from "nova/plugin-sdk/media-runtime";
 import {
   createAuthCaptureJsonFetch,
   createRequestCaptureJsonFetch,
   installPinnedHostnameTestHooks,
-} from "openclaw/plugin-sdk/test-media-understanding";
+} from "nova/plugin-sdk/test-media-understanding";
 import { describe, expect, it } from "vitest";
 import { senseaudioMediaUnderstandingProvider } from "./media-understanding-provider.js";
 
@@ -116,7 +116,7 @@ describe("transcribeSenseAudioAudio", () => {
       return;
     }
 
-    const tempDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-senseaudio-live-"));
+    const tempDir = mkdtempSync(path.join(os.tmpdir(), "nova-senseaudio-live-"));
     try {
       const aiffPath = path.join(tempDir, "speech.aiff");
       const mp3Path = path.join(tempDir, "speech.mp3");

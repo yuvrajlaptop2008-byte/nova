@@ -2,7 +2,7 @@
 
 import { expectDefined } from "@nova/normalization-core";
 import chalk from "chalk";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterAll, afterEach, describe, expect, it } from "vitest";
 
 const originalChalkLevel = chalk.level;

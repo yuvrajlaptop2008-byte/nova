@@ -5,11 +5,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../infra/nova-root.js";
 import { isPathInside } from "../infra/path-guards.js";
 import { resolveUserPath } from "../utils.js";
 
-const DISABLED_BUNDLED_PLUGINS_DIR = path.join(os.tmpdir(), "openclaw-empty-bundled-plugins");
+const DISABLED_BUNDLED_PLUGINS_DIR = path.join(os.tmpdir(), "nova-empty-bundled-plugins");
 const TEST_TRUST_BUNDLED_PLUGINS_DIR_ENV = "NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR";
 const bundledPluginsDirCache = new Map<string, string | undefined>();
 
@@ -64,7 +64,7 @@ function hasUsableBundledPluginTree(pluginsDir: string): boolean {
       const pluginDir = path.join(pluginsDir, entry.name);
       return (
         fs.existsSync(path.join(pluginDir, "package.json")) ||
-        fs.existsSync(path.join(pluginDir, "openclaw.plugin.json"))
+        fs.existsSync(path.join(pluginDir, "nova.plugin.json"))
       );
     });
   } catch {
@@ -96,8 +96,8 @@ function trustedBundledPluginRootsForPackageRoot(packageRoot: string): string[] 
 }
 
 function resolvePackageRootsForBundledPlugins(): string[] {
-  const argvRoot = resolveOpenClawPackageRootSync({ argv1: process.argv[1] });
-  const moduleRoot = resolveOpenClawPackageRootSync({ moduleUrl: import.meta.url });
+  const argvRoot = resolveNovaPackageRootSync({ argv1: process.argv[1] });
+  const moduleRoot = resolveNovaPackageRootSync({ moduleUrl: import.meta.url });
   return uniqueStrings([argvRoot, moduleRoot].filter((entry): entry is string => Boolean(entry)));
 }
 
@@ -133,7 +133,7 @@ function resolveTrustedExistingOverride(resolvedOverride: string): string | null
     return null;
   }
 
-  const modulePackageRoot = resolveOpenClawPackageRootSync({ moduleUrl: import.meta.url });
+  const modulePackageRoot = resolveNovaPackageRootSync({ moduleUrl: import.meta.url });
   const packageRoots = modulePackageRoot ? [modulePackageRoot] : [];
   const trustedRoots = packageRoots
     .flatMap((packageRoot) => trustedBundledPluginRootsForPackageRoot(packageRoot))
@@ -206,7 +206,7 @@ function createBundledPluginsDirCacheKey(env: NodeJS.ProcessEnv): string {
     nodeEnv: process.env.NODE_ENV ?? "",
     argv1: process.argv[1] ?? "",
     execPath: process.execPath,
-    openClawHome: env.NOVA_HOME ?? "",
+    novaHome: env.NOVA_HOME ?? "",
     home: env.HOME ?? "",
     userProfile: env.USERPROFILE ?? "",
   });
@@ -234,7 +234,7 @@ function resolveBundledPluginsDirUncached(env: NodeJS.ProcessEnv): string | unde
   }
 
   try {
-    const argvRoot = resolveOpenClawPackageRootSync({ argv1: process.argv[1] });
+    const argvRoot = resolveNovaPackageRootSync({ argv1: process.argv[1] });
     const rejectedOverrideUsesArgvRoot = Boolean(
       argvRoot &&
       rejectedExistingOverride &&
@@ -244,7 +244,7 @@ function resolveBundledPluginsDirUncached(env: NodeJS.ProcessEnv): string | unde
       }),
     );
     const safeArgvRoot = rejectedOverrideUsesArgvRoot ? null : argvRoot;
-    const moduleRoot = resolveOpenClawPackageRootSync({ moduleUrl: import.meta.url });
+    const moduleRoot = resolveNovaPackageRootSync({ moduleUrl: import.meta.url });
     const packageRoots = uniqueStrings(
       [safeArgvRoot, moduleRoot].filter((entry): entry is string => Boolean(entry)),
     );

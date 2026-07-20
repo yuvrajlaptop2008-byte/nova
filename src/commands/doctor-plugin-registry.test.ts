@@ -33,7 +33,7 @@ afterEach(() => {
 });
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-doctor-plugin-registry", tempDirs);
+  return makeTrackedTempDir("nova-doctor-plugin-registry", tempDirs);
 }
 
 async function readRequiredPersistedInstalledPluginIndex(
@@ -62,7 +62,7 @@ function createCandidate(rootDir: string, id = "demo"): PluginCandidate {
     "utf8",
   );
   fs.writeFileSync(
-    path.join(rootDir, "openclaw.plugin.json"),
+    path.join(rootDir, "nova.plugin.json"),
     JSON.stringify({
       id,
       name: id,
@@ -91,7 +91,7 @@ function createBundledCandidate(params: {
     "utf8",
   );
   fs.writeFileSync(
-    path.join(params.rootDir, "openclaw.plugin.json"),
+    path.join(params.rootDir, "nova.plugin.json"),
     JSON.stringify({
       id: params.id,
       name: params.id,
@@ -179,14 +179,14 @@ function createManagedNpmPlugin(params: {
       name: params.packageName,
       version: params.version,
       ...(params.peerDependencies ? { peerDependencies: params.peerDependencies } : {}),
-      openclaw: {
+      nova: {
         extensions: ["."],
       },
     }),
     "utf8",
   );
   fs.writeFileSync(
-    path.join(packageDir, "openclaw.plugin.json"),
+    path.join(packageDir, "nova.plugin.json"),
     JSON.stringify({
       id: params.id,
       name: params.id,
@@ -263,7 +263,7 @@ function expectedPluginIndexRecord(params: {
     pluginId: params.pluginId,
     ...(params.packageName ? { packageName: params.packageName } : {}),
     ...(params.packageVersion ? { packageVersion: params.packageVersion } : {}),
-    manifestPath: path.join(params.rootDir, "openclaw.plugin.json"),
+    manifestPath: path.join(params.rootDir, "nova.plugin.json"),
     manifestHash: expect.any(String),
     manifestFile: {
       size: expect.any(Number),
@@ -318,7 +318,7 @@ describe("maybeRepairPluginRegistryState", () => {
       checkId: "core/doctor/plugin-registry",
       severity: "warning",
       path: registryPath,
-      fixHint: "Run `openclaw doctor --fix` to rebuild the plugin registry from enabled plugins.",
+      fixHint: "Run `nova doctor --fix` to rebuild the plugin registry from enabled plugins.",
     });
     expect(pluginRegistryIssueToRepairEffect(expectDefined(issue, "issue test invariant"))).toEqual(
       {
@@ -836,7 +836,7 @@ describe("maybeRepairPluginRegistryState", () => {
     expect(packageLock.dependencies).toHaveProperty("other-plugin");
   });
 
-  it("repairs managed npm openclaw peer links during registry repair", async () => {
+  it("repairs managed npm nova peer links during registry repair", async () => {
     const stateDir = makeTempDir();
     const managed = createManagedNpmPlugin({
       stateDir,
@@ -844,7 +844,7 @@ describe("maybeRepairPluginRegistryState", () => {
       packageName: "codex-plugin",
       version: "2026.5.3",
       peerDependencies: {
-        openclaw: ">=2026.5.3",
+        nova: ">=2026.5.3",
       },
     });
     await writePersistedInstalledPluginIndex(
@@ -864,13 +864,13 @@ describe("maybeRepairPluginRegistryState", () => {
       prompter: { shouldRepair: true },
     });
 
-    const linkPath = path.join(managed.packageDir, "node_modules", "openclaw");
+    const linkPath = path.join(managed.packageDir, "node_modules", "nova");
     expect(fs.lstatSync(linkPath).isSymbolicLink()).toBe(true);
     expect(fs.realpathSync(linkPath)).toBe(fs.realpathSync(process.cwd()));
     expect(vi.mocked(note).mock.calls.join("\n")).toContain("Repaired Nova host peer link");
   });
 
-  it("warns about broken managed npm openclaw peer links without repairing them", async () => {
+  it("warns about broken managed npm nova peer links without repairing them", async () => {
     const stateDir = makeTempDir();
     const managed = createManagedNpmPlugin({
       stateDir,
@@ -878,7 +878,7 @@ describe("maybeRepairPluginRegistryState", () => {
       packageName: "codex-plugin",
       version: "2026.5.3",
       peerDependencies: {
-        openclaw: ">=2026.5.3",
+        nova: ">=2026.5.3",
       },
     });
     await writePersistedInstalledPluginIndex(
@@ -898,11 +898,11 @@ describe("maybeRepairPluginRegistryState", () => {
       prompter: { shouldRepair: false },
     });
 
-    const linkPath = path.join(managed.packageDir, "node_modules", "openclaw");
+    const linkPath = path.join(managed.packageDir, "node_modules", "nova");
     const notes = vi.mocked(note).mock.calls.join("\n");
     expect(notes).toContain("Managed npm Nova host peer links need repair");
     expect(notes).toContain("codex-plugin");
-    expect(notes).toContain("openclaw doctor --fix");
+    expect(notes).toContain("nova doctor --fix");
     expect(fs.existsSync(linkPath)).toBe(false);
   });
 

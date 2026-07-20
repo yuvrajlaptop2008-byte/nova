@@ -14,16 +14,16 @@ describe("prepareCliBundleMcpConfig gemini", () => {
         command: "gemini",
         args: ["--prompt", "{prompt}"],
       },
-      workspaceDir: "/tmp/openclaw-bundle-mcp-gemini",
+      workspaceDir: "/tmp/nova-bundle-mcp-gemini",
       config: { plugins: { enabled: false } },
       additionalConfig: {
         mcpServers: {
-          openclaw: {
+          nova: {
             type: "http",
             url: "http://127.0.0.1:23119/mcp",
             headers: {
               Authorization: "Bearer ${NOVA_MCP_TOKEN}",
-              "x-openclaw-client-caps": "${NOVA_MCP_CLIENT_CAPS}",
+              "x-nova-client-caps": "${NOVA_MCP_CLIENT_CAPS}",
             },
           },
         },
@@ -44,10 +44,10 @@ describe("prepareCliBundleMcpConfig gemini", () => {
       mcp?: { allowed?: string[] };
       mcpServers?: Record<string, { url?: string; headers?: Record<string, string> }>;
     };
-    expect(raw.mcp?.allowed).toEqual(["openclaw"]);
-    expect(raw.mcpServers?.openclaw?.url).toBe("http://127.0.0.1:23119/mcp");
-    expect(raw.mcpServers?.openclaw?.headers?.Authorization).toBe("Bearer lb-tk-123");
-    expect(raw.mcpServers?.openclaw?.headers?.["x-openclaw-client-caps"]).toBe(
+    expect(raw.mcp?.allowed).toEqual(["nova"]);
+    expect(raw.mcpServers?.nova?.url).toBe("http://127.0.0.1:23119/mcp");
+    expect(raw.mcpServers?.nova?.headers?.Authorization).toBe("Bearer lb-tk-123");
+    expect(raw.mcpServers?.nova?.headers?.["x-nova-client-caps"]).toBe(
       "tool-events,inline-widgets",
     );
 
@@ -62,7 +62,7 @@ describe("prepareCliBundleMcpConfig gemini", () => {
         command: "gemini",
         args: ["--prompt", "{prompt}"],
       },
-      workspaceDir: "/tmp/openclaw-bundle-mcp-gemini",
+      workspaceDir: "/tmp/nova-bundle-mcp-gemini",
       config: {
         plugins: { enabled: false },
         mcp: {
@@ -111,15 +111,15 @@ describe("prepareCliBundleMcpConfig gemini", () => {
         command: "gemini",
         args: ["--prompt", "{prompt}"],
       },
-      workspaceDir: "/tmp/openclaw-bundle-mcp-gemini",
+      workspaceDir: "/tmp/nova-bundle-mcp-gemini",
       config: { plugins: { enabled: false } },
       additionalConfig: {
         mcpServers: {
-          openclaw: {
+          nova: {
             type: "http",
             url: "http://127.0.0.1:23119/mcp",
             headers: {
-              "x-openclaw-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
+              "x-nova-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
             },
           },
         },
@@ -140,7 +140,7 @@ describe("prepareCliBundleMcpConfig gemini", () => {
       ) as {
         mcpServers?: Record<string, { headers?: Record<string, string> }>;
       };
-      expect(raw.mcpServers?.openclaw?.headers?.["x-openclaw-cli-capture-key"]).toBe("attempt-123");
+      expect(raw.mcpServers?.nova?.headers?.["x-nova-cli-capture-key"]).toBe("attempt-123");
       expect(attempt.env?.GEMINI_CLI_SYSTEM_SETTINGS_PATH).not.toBe(
         prepared.env?.GEMINI_CLI_SYSTEM_SETTINGS_PATH,
       );
@@ -151,7 +151,7 @@ describe("prepareCliBundleMcpConfig gemini", () => {
   });
 
   it("preserves inherited Gemini auth selection in generated system settings", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gemini-settings-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-gemini-settings-"));
     const inheritedSettingsPath = path.join(dir, "settings.json");
     await fs.writeFile(
       inheritedSettingsPath,
@@ -178,11 +178,11 @@ describe("prepareCliBundleMcpConfig gemini", () => {
         command: "gemini",
         args: ["--prompt", "{prompt}"],
       },
-      workspaceDir: "/tmp/openclaw-bundle-mcp-gemini",
+      workspaceDir: "/tmp/nova-bundle-mcp-gemini",
       config: { plugins: { enabled: false } },
       additionalConfig: {
         mcpServers: {
-          openclaw: {
+          nova: {
             type: "http",
             url: "http://127.0.0.1:23119/mcp",
           },

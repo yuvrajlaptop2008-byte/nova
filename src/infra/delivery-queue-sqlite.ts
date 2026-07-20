@@ -1,6 +1,6 @@
 // Stores durable delivery queue entries in SQLite.
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import { openOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase } from "../state/nova-state-db.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -11,7 +11,7 @@ import { runSqliteImmediateTransactionSync } from "./sqlite-transaction.js";
 // Generic durable delivery queue storage shared by session and outbound queues.
 // Queue-specific wrappers own payload shape; this layer owns SQLite state.
 type QueueStatus = "pending" | "failed" | "completed";
-type DeliveryQueueDatabase = Pick<OpenClawStateKyselyDatabase, "delivery_queue_entries">;
+type DeliveryQueueDatabase = Pick<NovaStateKyselyDatabase, "delivery_queue_entries">;
 const COMPLETED_TOMBSTONE_RETENTION_MS = 30 * 24 * 60 * 60_000;
 const PERMANENT_COMPLETION_RECOVERY_STATE = "completed_permanent";
 
@@ -67,7 +67,7 @@ type QueueRow = {
 };
 
 function openStateDatabase(stateDir?: string) {
-  return openOpenClawStateDatabase({
+  return openNovaStateDatabase({
     env: stateDir ? { ...process.env, NOVA_STATE_DIR: stateDir } : process.env,
   });
 }
@@ -254,7 +254,7 @@ function commitStagedDeliveryQueueEntryInternal(
       return "created";
     },
     {
-      databaseLabel: "openclaw-state",
+      databaseLabel: "nova-state",
       operationLabel: "commit staged delivery queue entry",
     },
   );
@@ -331,7 +331,7 @@ export function expireStagingAndLoadDeliveryQueueEntries(params: {
       };
     },
     {
-      databaseLabel: "openclaw-state",
+      databaseLabel: "nova-state",
       operationLabel: "expire delivery queue staging entries",
     },
   );
@@ -548,7 +548,7 @@ export function reserveDeliveryQueueEntryAttempt(params: {
       return { status: "reserved", attemptCount: reservedAttemptCount };
     },
     {
-      databaseLabel: "openclaw-state",
+      databaseLabel: "nova-state",
       operationLabel: `reserve ${params.queueName} delivery attempt`,
     },
   );

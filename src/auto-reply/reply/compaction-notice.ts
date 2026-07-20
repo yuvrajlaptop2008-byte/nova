@@ -1,7 +1,7 @@
 // Shared compaction formatting and user-facing notice payload helpers.
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { sanitizeForLog } from "../../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { ReplyPayload } from "../types.js";
 
 export type CompactionNoticePhase =
@@ -34,7 +34,7 @@ export function formatCompactionModelRef(provider?: string, model?: string): str
   return "unknown model";
 }
 
-export function shouldNotifyUserAboutCompaction(cfg?: OpenClawConfig): boolean {
+export function shouldNotifyUserAboutCompaction(cfg?: NovaConfig): boolean {
   return cfg?.agents?.defaults?.compaction?.notifyUser === true;
 }
 

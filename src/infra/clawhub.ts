@@ -40,7 +40,7 @@ export type ClawHubPackageChannel = "official" | "community" | "private";
 // Keep aligned with @nova/plugin-package-contract ExternalPluginCompatibility.
 export type ClawHubPackageCompatibility = {
   pluginApiRange?: string;
-  builtWithOpenClawVersion?: string;
+  builtWithNovaVersion?: string;
   pluginSdkVersion?: string;
   minGatewayVersion?: string;
 };
@@ -553,13 +553,13 @@ function shouldPreservePluginApiPrereleaseFloor(target: string): boolean {
 }
 
 function normalizePluginApiVersionForComparator(version: string, target: string): string {
-  const normalizedCorrection = normalizeOpenClawNumericCorrectionForPluginApi(version);
+  const normalizedCorrection = normalizeNovaNumericCorrectionForPluginApi(version);
   if (normalizedCorrection) {
     return normalizedCorrection;
   }
   return shouldPreservePluginApiPrereleaseFloor(target)
     ? version
-    : normalizeOpenClawReleaseSuffixForPluginApi(version);
+    : normalizeNovaReleaseSuffixForPluginApi(version);
 }
 
 function satisfiesComparator(version: string, token: string): boolean {
@@ -600,13 +600,11 @@ const NOVA_RELEASE_SUFFIX_PATTERN =
   /^[vV]?(\d{4}\.[1-9]\d?\.[1-9]\d*)(?:-\d+|-(?:alpha|beta|rc)\.\d+)$/i;
 const NOVA_NUMERIC_CORRECTION_PATTERN = /^[vV]?(\d{4}\.[1-9]\d?\.[1-9]\d*)-\d+$/;
 
-function normalizeOpenClawNumericCorrectionForPluginApi(
-  pluginApiVersion: string,
-): string | undefined {
+function normalizeNovaNumericCorrectionForPluginApi(pluginApiVersion: string): string | undefined {
   return NOVA_NUMERIC_CORRECTION_PATTERN.exec(pluginApiVersion.trim())?.[1];
 }
 
-function normalizeOpenClawReleaseSuffixForPluginApi(pluginApiVersion: string): string {
+function normalizeNovaReleaseSuffixForPluginApi(pluginApiVersion: string): string {
   const match = NOVA_RELEASE_SUFFIX_PATTERN.exec(pluginApiVersion.trim());
   return match?.[1] ?? pluginApiVersion;
 }
@@ -1409,7 +1407,7 @@ export async function downloadClawHubPackageArchive(params: {
     const rawSpecVersion = response.headers.get("X-ClawHub-ClawPack-Spec-Version");
     const specVersion = parseStrictPositiveInteger(rawSpecVersion);
     const target = await createTempDownloadTarget({
-      prefix: "openclaw-clawhub-clawpack",
+      prefix: "nova-clawhub-clawpack",
       fileName: npmTarballName,
     });
     await fs.writeFile(target.path, bytes);
@@ -1451,7 +1449,7 @@ export async function downloadClawHubPackageArchive(params: {
   });
   const sha256Hex = formatSha256Hex(bytes);
   const target = await createTempDownloadTarget({
-    prefix: "openclaw-clawhub-package",
+    prefix: "nova-clawhub-package",
     fileName: `${params.name}.zip`,
   });
   await fs.writeFile(target.path, bytes);
@@ -1497,7 +1495,7 @@ export async function downloadClawHubSkillArchive(params: {
   });
   const sha256Hex = formatSha256Hex(bytes);
   const target = await createTempDownloadTarget({
-    prefix: "openclaw-clawhub-skill",
+    prefix: "nova-clawhub-skill",
     fileName: `${params.slug}.zip`,
   });
   await fs.writeFile(target.path, bytes);
@@ -1539,7 +1537,7 @@ export async function downloadClawHubSkillArchiveUrl(params: {
   });
   const sha256Hex = formatSha256Hex(bytes);
   const target = await createTempDownloadTarget({
-    prefix: "openclaw-clawhub-skill",
+    prefix: "nova-clawhub-skill",
     fileName: "skill.zip",
   });
   await fs.writeFile(target.path, bytes);
@@ -1575,7 +1573,7 @@ export async function downloadClawHubGitHubSkillArchive(params: {
   });
   const sha256Hex = formatSha256Hex(bytes);
   const target = await createTempDownloadTarget({
-    prefix: "openclaw-clawhub-github-skill",
+    prefix: "nova-clawhub-github-skill",
     fileName: `${params.commit}.zip`,
   });
   await fs.writeFile(target.path, bytes);

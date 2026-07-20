@@ -1,7 +1,7 @@
 // Imessage plugin module implements persisted echo cache behavior.
 import { createHash } from "node:crypto";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
+import type { PluginStateSyncKeyedStore } from "nova/plugin-sdk/plugin-state-runtime";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
 import { getIMessageRuntime } from "../runtime.js";
 import { stripLeadingEchoTextCorruptionMarkers } from "./echo-text-corruption.js";
 

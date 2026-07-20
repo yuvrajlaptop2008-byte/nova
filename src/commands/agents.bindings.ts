@@ -10,7 +10,7 @@ import { normalizeChannelId as normalizeBundledChannelId } from "../channels/reg
 import { formatUnknownChannelMessage } from "../cli/error-format.js";
 import { isRouteBinding, listRouteBindings } from "../config/bindings.js";
 import type { AgentRouteBinding } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { listManifestChannelContributionIds } from "../plugins/manifest-contribution-ids.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAgentId } from "../routing/session-key.js";
 import type { ChannelChoice } from "./onboard-types.js";
@@ -57,10 +57,10 @@ function canUpgradeBindingAccountScope(params: {
 
 /** Merge new route bindings into config while reporting adds, upgrades, skips, and conflicts. */
 export function applyAgentBindings(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   bindings: AgentRouteBinding[],
 ): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   added: AgentRouteBinding[];
   updated: AgentRouteBinding[];
   skipped: AgentRouteBinding[];
@@ -144,10 +144,10 @@ export function applyAgentBindings(
 
 /** Remove matching route bindings from config without disturbing non-route binding entries. */
 export function removeAgentBindings(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   bindings: AgentRouteBinding[],
 ): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   removed: AgentRouteBinding[];
   missing: AgentRouteBinding[];
   conflicts: Array<{ binding: AgentRouteBinding; existingAgentId: string }>;
@@ -211,7 +211,7 @@ export function removeAgentBindings(
   };
 }
 
-function resolveDefaultAccountId(cfg: OpenClawConfig, provider: ChannelId): string {
+function resolveDefaultAccountId(cfg: NovaConfig, provider: ChannelId): string {
   const plugin = getBindingChannelPlugin(provider);
   if (!plugin) {
     return DEFAULT_ACCOUNT_ID;
@@ -219,7 +219,7 @@ function resolveDefaultAccountId(cfg: OpenClawConfig, provider: ChannelId): stri
   return resolveChannelDefaultAccountId({ plugin, cfg });
 }
 
-function listManifestChannelIds(config: OpenClawConfig): Set<string> {
+function listManifestChannelIds(config: NovaConfig): Set<string> {
   return new Set(
     listManifestChannelContributionIds({
       includeDisabled: true,
@@ -229,10 +229,7 @@ function listManifestChannelIds(config: OpenClawConfig): Set<string> {
   );
 }
 
-function normalizeBindingChannelId(
-  raw: string | undefined,
-  config: OpenClawConfig,
-): ChannelId | null {
+function normalizeBindingChannelId(raw: string | undefined, config: NovaConfig): ChannelId | null {
   const bundled = normalizeBundledChannelId(raw);
   if (bundled) {
     return bundled;
@@ -250,7 +247,7 @@ function getBindingChannelPlugin(channel: ChannelId) {
 
 function resolveBindingAccountId(params: {
   channel: ChannelId;
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId: string;
   explicitAccountId?: string;
 }): string | undefined {
@@ -282,7 +279,7 @@ function resolveBindingAccountId(params: {
 export function buildChannelBindings(params: {
   agentId: string;
   selection: ChannelChoice[];
-  config: OpenClawConfig;
+  config: NovaConfig;
   accountIds?: Partial<Record<ChannelChoice, string>>;
 }): AgentRouteBinding[] {
   const bindings: AgentRouteBinding[] = [];
@@ -306,7 +303,7 @@ export function buildChannelBindings(params: {
 export function parseBindingSpecs(params: {
   agentId: string;
   specs?: string[];
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): { bindings: AgentRouteBinding[]; errors: string[] } {
   const bindings: AgentRouteBinding[] = [];
   const errors: string[] = [];

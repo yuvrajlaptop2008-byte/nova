@@ -1,9 +1,9 @@
 // Migrate Claude provider module implements model/runtime integration.
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/provider-auth";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import type { MigrationProviderContext } from "nova/plugin-sdk/plugin-entry";
+import type { NovaConfig } from "nova/plugin-sdk/provider-auth";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 
 const tempRoots = new Set<string>();
 
@@ -15,9 +15,7 @@ const logger = {
 };
 
 export async function makeTempRoot() {
-  const root = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-migrate-claude-"),
-  );
+  const root = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-migrate-claude-"));
   tempRoots.add(root);
   return root;
 }
@@ -35,11 +33,11 @@ export async function writeFile(filePath: string, content: string) {
 }
 
 export function makeConfigRuntime(
-  config: OpenClawConfig,
-  onWrite?: (next: OpenClawConfig) => void,
+  config: NovaConfig,
+  onWrite?: (next: NovaConfig) => void,
 ): NonNullable<MigrationProviderContext["runtime"]> {
-  const commitConfig = (next: OpenClawConfig) => {
-    for (const key of Object.keys(config) as Array<keyof OpenClawConfig>) {
+  const commitConfig = (next: NovaConfig) => {
+    for (const key of Object.keys(config) as Array<keyof NovaConfig>) {
       delete config[key];
     }
     Object.assign(config, next);
@@ -54,12 +52,12 @@ export function makeConfigRuntime(
         mutate,
       }: {
         afterWrite?: unknown;
-        mutate: (draft: OpenClawConfig, context: unknown) => Promise<unknown> | void;
+        mutate: (draft: NovaConfig, context: unknown) => Promise<unknown> | void;
       }) => {
         const next = structuredClone(config);
         const result = await mutate(next, {
           snapshot: {
-            path: "/tmp/openclaw.json",
+            path: "/tmp/nova.json",
             exists: true,
             raw: "{}",
             parsed: {},
@@ -87,7 +85,7 @@ export function makeConfigRuntime(
         nextConfig,
       }: {
         afterWrite?: unknown;
-        nextConfig: OpenClawConfig;
+        nextConfig: NovaConfig;
       }) => {
         commitConfig(nextConfig);
         return {
@@ -104,7 +102,7 @@ export function makeContext(params: {
   source: string;
   stateDir: string;
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   includeSecrets?: boolean;
   overwrite?: boolean;
   targetAgentId?: string;
@@ -120,7 +118,7 @@ export function makeContext(params: {
           workspace: params.workspaceDir,
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
   return {
     config,
     stateDir: params.stateDir,

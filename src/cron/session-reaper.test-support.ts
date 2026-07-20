@@ -6,7 +6,7 @@ type CronSessionReaperTestApi = {
 
 function getTestApi(): CronSessionReaperTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.cronSessionReaperTestApi")
+    Symbol.for("nova.cronSessionReaperTestApi")
   ] as CronSessionReaperTestApi;
 }
 

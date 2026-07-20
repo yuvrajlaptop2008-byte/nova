@@ -2,7 +2,7 @@ import { normalizeOptionalString } from "@nova/normalization-core/string-coerce"
 import type { InternalSessionEntry as SessionEntry } from "../config/sessions.js";
 import { loadSessionEntry } from "../config/sessions/session-accessor.js";
 import { appendAssistantMessageToSessionTranscript } from "../config/sessions/transcript.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { GatewayRecoveryRuntime } from "../gateway/server-instance-runtime.types.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
@@ -44,7 +44,7 @@ async function claimMainRestartRecoveryTombstone(params: {
 }
 
 export async function tombstoneMainRestartRecoveryWithNotice(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   entry: SessionEntry;
   gatewayRuntime: GatewayRecoveryRuntime;
   observation: MainSessionRecoveryObservation;

@@ -178,7 +178,7 @@ describeControlUiE2e("Control UI cron mocked Gateway E2E", () => {
           enabled: true,
           jobs: 2,
           nextWakeAtMs: Date.parse("2026-05-29T09:00:00.000Z"),
-          storePath: "/tmp/openclaw-e2e/cron/jobs.json",
+          storePath: "/tmp/nova-e2e/cron/jobs.json",
         },
       },
     });

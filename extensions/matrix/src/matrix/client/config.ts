@@ -1,14 +1,14 @@
 // Matrix helper module supports config behavior.
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { resolveOptionalIntegerOption } from "openclaw/plugin-sdk/number-runtime";
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { retryAsync } from "openclaw/plugin-sdk/retry-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { resolveOptionalIntegerOption } from "nova/plugin-sdk/number-runtime";
+import { requireRuntimeConfig } from "nova/plugin-sdk/plugin-config-runtime";
+import { retryAsync } from "nova/plugin-sdk/retry-runtime";
 import {
   coerceSecretRef,
   normalizeResolvedSecretInputString,
-} from "openclaw/plugin-sdk/secret-input-runtime";
-import type { PinnedDispatcherPolicy } from "openclaw/plugin-sdk/ssrf-dispatcher";
+} from "nova/plugin-sdk/secret-input-runtime";
+import type { PinnedDispatcherPolicy } from "nova/plugin-sdk/ssrf-dispatcher";
 import {
   requiresExplicitMatrixDefaultAccount,
   resolveMatrixDefaultOrOnlyAccountId,

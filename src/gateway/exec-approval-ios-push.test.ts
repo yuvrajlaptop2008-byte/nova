@@ -23,7 +23,7 @@ function apnsRegistration(nodeId = "ios-device-1") {
     nodeId,
     transport: "direct",
     token: "apns-token",
-    topic: "ai.openclaw.ios.test",
+    topic: "ai.nova.ios.test",
     environment: "sandbox",
     updatedAtMs: 1,
   };
@@ -36,7 +36,7 @@ function relayApnsRegistration(nodeId = "ios-device-1") {
     relayHandle: `relay-${nodeId}`,
     sendGrant: `grant-${nodeId}`,
     installationId: `installation-${nodeId}`,
-    topic: "ai.openclaw.ios.test",
+    topic: "ai.nova.ios.test",
     environment: "sandbox",
     distribution: "official",
     relayOrigin: "https://relay.example.test",
@@ -49,7 +49,7 @@ function successfulApnsPushResult() {
     ok: true,
     status: 200,
     environment: "sandbox",
-    topic: "ai.openclaw.ios.test",
+    topic: "ai.nova.ios.test",
     tokenSuffix: "token",
     transport: "direct",
   };
@@ -298,7 +298,7 @@ describe("createExecApprovalIosPushDelivery", () => {
       status: 410,
       reason: "Unregistered",
       environment: "sandbox",
-      topic: "ai.openclaw.ios.test",
+      topic: "ai.nova.ios.test",
       tokenSuffix: "token",
       transport: "direct",
     });

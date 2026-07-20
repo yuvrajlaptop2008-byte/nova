@@ -2,13 +2,13 @@
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
 import {
   normalizeTranscriptForMatch,
   runRealtimeSttLiveTest,
   synthesizeElevenLabsLiveSpeech,
-} from "openclaw/plugin-sdk/provider-test-contracts";
-import { isLiveTestEnabled } from "openclaw/plugin-sdk/test-live";
+} from "nova/plugin-sdk/provider-test-contracts";
+import { isLiveTestEnabled } from "nova/plugin-sdk/test-live";
 import { describe, expect, it } from "vitest";
 import plugin from "./index.js";
 import { elevenLabsMediaUnderstandingProvider } from "./media-understanding-provider.js";
@@ -61,7 +61,7 @@ describeLive("elevenlabs plugin live", () => {
     });
 
     const normalized = normalizeTranscriptForMatch(transcript?.text ?? "");
-    expect(normalized).toContain("openclaw");
+    expect(normalized).toContain("nova");
     expect(normalized).toMatch(/(?:elevenlabs|11labs)/);
   }, 90_000);
 

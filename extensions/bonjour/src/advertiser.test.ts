@@ -166,13 +166,13 @@ describe("gateway bonjour advertiser", () => {
       sshPort: 2222,
       gatewayDirectReachable: true,
       tailnetDns: "host.tailnet.ts.net",
-      cliPath: "/opt/homebrew/bin/openclaw",
+      cliPath: "/opt/homebrew/bin/nova",
       minimal: false,
     });
 
     expect(createService).toHaveBeenCalledTimes(1);
     const [gatewayCall] = createService.mock.calls as Array<[Record<string, unknown>]>;
-    expect(gatewayCall?.[0]?.type).toBe("openclaw-gw");
+    expect(gatewayCall?.[0]?.type).toBe("nova-gw");
     const gatewayType = asString(gatewayCall?.[0]?.type, "");
     expect(gatewayType.length).toBeLessThanOrEqual(15);
     expect(gatewayCall?.[0]?.port).toBe(18789);
@@ -186,7 +186,7 @@ describe("gateway bonjour advertiser", () => {
       "host.tailnet.ts.net",
     );
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.cliPath).toBe(
-      "/opt/homebrew/bin/openclaw",
+      "/opt/homebrew/bin/nova",
     );
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.transport).toBe("gateway");
 
@@ -210,7 +210,7 @@ describe("gateway bonjour advertiser", () => {
     const started = await startAdvertiser({
       gatewayPort: 18789,
       sshPort: 2222,
-      cliPath: "/opt/homebrew/bin/openclaw",
+      cliPath: "/opt/homebrew/bin/nova",
       tailnetDns: "host.tailnet.ts.net",
       minimal: true,
     });
@@ -252,7 +252,7 @@ describe("gateway bonjour advertiser", () => {
   it("auto-disables Bonjour on Fly Machines without Docker sentinel files", async () => {
     enableAdvertiserUnitMode();
     vi.stubEnv("FLY_MACHINE_ID", "3d8d5459a03038");
-    vi.stubEnv("FLY_APP_NAME", "openclaw-clawcks-test");
+    vi.stubEnv("FLY_APP_NAME", "nova-clawcks-test");
     vi.spyOn(fs, "existsSync").mockReturnValue(false);
     vi.spyOn(fs, "readFileSync").mockReturnValue("10:cpuset:/\n9:perf_event:/\n8:memory:/\n0::/\n");
 
@@ -441,7 +441,7 @@ describe("gateway bonjour advertiser", () => {
       });
 
       console.log(
-        "[test._openclaw-gw._tcp.local.] failed probing with reason: Error: Can't probe for a service which is announced already. Received announcing for service test._openclaw-gw._tcp.local.. Trying again in 2 seconds!",
+        "[test._nova-gw._tcp.local.] failed probing with reason: Error: Can't probe for a service which is announced already. Received announcing for service test._nova-gw._tcp.local.. Trying again in 2 seconds!",
       );
       console.log("ordinary console line");
 
@@ -602,7 +602,7 @@ describe("gateway bonjour advertiser", () => {
     await started.stop();
   });
 
-  it("falls back to openclaw when system hostname is invalid for DNS", async () => {
+  it("falls back to nova when system hostname is invalid for DNS", async () => {
     // Allow advertiser to run in unit tests.
     vi.stubEnv("VITEST", undefined);
     vi.stubEnv("NODE_ENV", "development");
@@ -619,8 +619,8 @@ describe("gateway bonjour advertiser", () => {
     });
 
     const [gatewayCall] = createService.mock.calls as Array<[ServiceCall]>;
-    expect(gatewayCall?.[0]?.hostname).toBe("openclaw");
-    expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("openclaw.local");
+    expect(gatewayCall?.[0]?.hostname).toBe("nova");
+    expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("nova.local");
 
     await started.stop();
   });

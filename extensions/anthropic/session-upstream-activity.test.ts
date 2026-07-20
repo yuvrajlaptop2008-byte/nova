@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { SessionUpstreamProbe } from "openclaw/plugin-sdk/session-catalog";
+import type { SessionUpstreamProbe } from "nova/plugin-sdk/session-catalog";
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import { checkClaudeUpstreamActivity, linkContinued } from "./session-upstream-activity.js";
 
@@ -42,7 +42,7 @@ afterEach(() => {
 
 describe("Claude upstream activity", () => {
   it("counts only external user rows after the byte marker", async () => {
-    const dir = await makeTempDir("openclaw-claude-upstream-");
+    const dir = await makeTempDir("nova-claude-upstream-");
     const filePath = path.join(dir, "thread-1.jsonl");
     const baseline = `${row({
       type: "user",
@@ -106,7 +106,7 @@ describe("Claude upstream activity", () => {
   });
 
   it("stats without reading when the file did not grow", async () => {
-    const dir = await makeTempDir("openclaw-claude-upstream-static-");
+    const dir = await makeTempDir("nova-claude-upstream-static-");
     const filePath = path.join(dir, "thread-2.jsonl");
     await fs.writeFile(filePath, "{}\n");
     await expect(
@@ -124,7 +124,7 @@ describe("Claude upstream activity", () => {
   });
 
   it("filters Nova-authored rows by normalized transcript text", async () => {
-    const dir = await makeTempDir("openclaw-claude-upstream-provenance-");
+    const dir = await makeTempDir("nova-claude-upstream-provenance-");
     const filePath = path.join(dir, "thread-provenance.jsonl");
     await fs.writeFile(
       filePath,
@@ -155,10 +155,7 @@ describe("Claude upstream activity", () => {
   });
 
   it("returns missing for an absent local transcript", async () => {
-    const filePath = path.join(
-      await makeTempDir("openclaw-claude-upstream-missing-"),
-      "gone.jsonl",
-    );
+    const filePath = path.join(await makeTempDir("nova-claude-upstream-missing-"), "gone.jsonl");
 
     await expect(
       checkActivity({
@@ -196,7 +193,7 @@ describe("Claude upstream activity", () => {
   });
 
   it("isolates a missing transcript from healthy probes", async () => {
-    const dir = await makeTempDir("openclaw-claude-upstream-batch-");
+    const dir = await makeTempDir("nova-claude-upstream-batch-");
     const filePath = path.join(dir, "thread-good.jsonl");
     await fs.writeFile(
       filePath,
@@ -278,7 +275,7 @@ describe("Claude upstream activity", () => {
   });
 
   it("scans forward across bounded ticks without skipping a middle user row", async () => {
-    const dir = await makeTempDir("openclaw-claude-upstream-chunks-");
+    const dir = await makeTempDir("nova-claude-upstream-chunks-");
     const filePath = path.join(dir, "thread-chunks.jsonl");
     const firstRow = `${row({
       type: "assistant",
@@ -327,7 +324,7 @@ describe("Claude upstream activity", () => {
   });
 
   it("treats legacy size and current offset markers as the same scan cursor", async () => {
-    const dir = await makeTempDir("openclaw-claude-upstream-marker-");
+    const dir = await makeTempDir("nova-claude-upstream-marker-");
     const filePath = path.join(dir, "thread-marker.jsonl");
     const baseline = "{}\n";
     await fs.writeFile(

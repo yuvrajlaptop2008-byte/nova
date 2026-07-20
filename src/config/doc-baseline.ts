@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { sortUniqueStrings } from "@nova/normalization-core/string-normalization";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../infra/nova-root.js";
 import { replaceFileAtomicSync } from "../infra/replace-file.js";
 import { createLazyRuntimeModule } from "../shared/lazy-runtime.js";
 import type { ConfigSchemaResponse } from "./schema.js";
@@ -120,7 +120,7 @@ function compareBaselineStrings(left: string, right: string): number {
 }
 
 function resolveRepoRoot(): string {
-  const fromPackage = resolveOpenClawPackageRootSync({
+  const fromPackage = resolveNovaPackageRootSync({
     cwd: path.dirname(fileURLToPath(import.meta.url)),
     moduleUrl: import.meta.url,
   });
@@ -368,7 +368,7 @@ async function loadBundledConfigSchemaResponse(): Promise<ConfigSchemaResponse> 
   const env = {
     ...process.env,
     HOME: os.tmpdir(),
-    NOVA_STATE_DIR: path.join(os.tmpdir(), "openclaw-config-doc-baseline-state"),
+    NOVA_STATE_DIR: path.join(os.tmpdir(), "nova-config-doc-baseline-state"),
     NOVA_BUNDLED_PLUGINS_DIR: path.join(repoRoot, "extensions"),
   };
 

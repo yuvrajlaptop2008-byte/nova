@@ -7,7 +7,7 @@ import {
   parseNpmPackPrefixPath,
   resolveFileNpmSpecToLocalPath,
 } from "../../cli/plugins-command-helpers.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
 import { resolveArchiveKind } from "../../infra/archive.js";
 import { parseClawHubPluginSpec } from "../../infra/clawhub.js";
@@ -23,7 +23,7 @@ import {
 import {
   formatNonClawHubInstallWarning,
   NON_CLAWHUB_INSTALL_FORCE_FLAG,
-  resolveOpenClawTrustedNpmPackageInstall,
+  resolveNovaTrustedNpmPackageInstall,
   type NonClawHubInstallSourceClass,
 } from "../../plugins/install-provenance.js";
 import {
@@ -68,7 +68,7 @@ function resolveNonClawHubChatInstallAcknowledgement(params: {
 export async function installPluginFromPluginsCommand(params: {
   raw: string;
   force: boolean;
-  config: OpenClawConfig;
+  config: NovaConfig;
   snapshot: ConfigSnapshotForInstallPersist;
 }): Promise<
   { ok: true; pluginId: string; warnings?: readonly string[] } | { ok: false; error: string }
@@ -234,7 +234,7 @@ export async function installPluginFromPluginsCommand(params: {
       if (result.code === CLAWHUB_INSTALL_ERROR_CODE.CLAWHUB_RISK_ACKNOWLEDGEMENT_REQUIRED) {
         return {
           ok: false,
-          error: `${warningPrefix}${result.error} The /plugins chat command cannot acknowledge ClawHub risk; run the local openclaw plugins install command with --acknowledge-clawhub-risk from a trusted shell after reviewing the warning.`,
+          error: `${warningPrefix}${result.error} The /plugins chat command cannot acknowledge ClawHub risk; run the local nova plugins install command with --acknowledge-clawhub-risk from a trusted shell after reviewing the warning.`,
         };
       }
       return { ok: false, error: `${warningPrefix}${result.error}` };
@@ -275,7 +275,7 @@ export async function installPluginFromPluginsCommand(params: {
       warnings: bundledInstall.warnings,
     };
   }
-  const trustedNpmInstall = resolveOpenClawTrustedNpmPackageInstall(npmSpec);
+  const trustedNpmInstall = resolveNovaTrustedNpmPackageInstall(npmSpec);
   const officialIdPlan = resolveCatalogOfficialExternalInstallPlan(params.raw);
   const arbitraryNpmAcknowledgement =
     !trustedNpmInstall && !officialIdPlan

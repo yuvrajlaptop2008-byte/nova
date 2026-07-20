@@ -118,7 +118,7 @@ export async function agentsSetIdentityCommand(
   const resolvedAgentId = expectDefined(agentId, "agent id");
   const resolvedAgentIds = listAgentIds(cfg).map((id) => normalizeAgentId(id));
   if (!resolvedAgentIds.includes(resolvedAgentId)) {
-    runtime.error(`Agent "${resolvedAgentId}" not found. Create it with \`openclaw agents add\`.`);
+    runtime.error(`Agent "${resolvedAgentId}" not found. Create it with \`nova agents add\`.`);
     runtime.exit(1);
     return;
   }

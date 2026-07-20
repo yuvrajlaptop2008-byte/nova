@@ -13,7 +13,7 @@ import { registerTranscriptsCli } from "./register.transcripts.js";
 const originalStateDir = process.env.NOVA_STATE_DIR;
 
 async function makeStateDir(): Promise<string> {
-  return await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-transcripts-cli-"));
+  return await fs.mkdtemp(path.join(os.tmpdir(), "nova-transcripts-cli-"));
 }
 
 async function writeSession(
@@ -54,7 +54,7 @@ async function runTranscriptsCli(args: string[]): Promise<string> {
   }) as typeof process.stdout.write);
   try {
     const program = new Command();
-    program.name("openclaw");
+    program.name("nova");
     registerTranscriptsCli(program);
     await program.parseAsync(["transcripts", ...args], { from: "user" });
     return output;

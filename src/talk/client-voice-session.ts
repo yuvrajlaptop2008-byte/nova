@@ -5,7 +5,7 @@ import {
   loadSessionEntry,
   upsertSessionEntry,
 } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   onTrustedInternalDiagnosticEvent,
   onTrustedToolExecutionEvent,
@@ -13,10 +13,7 @@ import {
 } from "../infra/diagnostic-events.js";
 import { buildOutboundSessionContext } from "../infra/outbound/session-context.js";
 import { resolveSessionDeliveryTarget } from "../infra/outbound/targets-session.js";
-import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-} from "../state/openclaw-agent-db.js";
+import { openNovaAgentDatabase, runNovaAgentWriteTransaction } from "../state/nova-agent-db.js";
 import { truncateUtf16Safe } from "../utils.js";
 import {
   deactivateClientVoiceConfirmationSession,
@@ -41,7 +38,7 @@ import {
 
 const voiceSessionByRunId = new Map<string, ClientVoiceRunBinding>();
 const voiceSessionOperations = new Map<string, Promise<void>>();
-const deferredDigestConfigs = new Map<string, OpenClawConfig>();
+const deferredDigestConfigs = new Map<string, NovaConfig>();
 let unsubscribeToolEffects: (() => void) | undefined;
 let unsubscribeRunCompletion: (() => void) | undefined;
 
@@ -99,7 +96,7 @@ function recordClientVoiceToolEffect(event: TrustedToolExecutionEvent): void {
   if (!binding) {
     return;
   }
-  runOpenClawAgentWriteTransaction(
+  runNovaAgentWriteTransaction(
     (database) => {
       const record = readRecordInTransaction(database, binding.voiceSessionId);
       if (!record) {
@@ -170,7 +167,7 @@ export function createOrResumeClientVoiceSession(params: {
   const voiceSessionId = params.voiceSessionId?.trim() || randomUUID();
   const provider = params.provider?.trim() || undefined;
   const now = params.now ?? Date.now();
-  runOpenClawAgentWriteTransaction(
+  runNovaAgentWriteTransaction(
     (database) => {
       const existing = readRecordInTransaction(database, voiceSessionId);
       if (existing) {
@@ -235,10 +232,10 @@ export function registerClientVoiceConsultRun(params: {
   sessionKey: string;
   voiceSessionId: string;
   runId: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): void {
   let recordClosed = false;
-  runOpenClawAgentWriteTransaction(
+  runNovaAgentWriteTransaction(
     (database) => {
       const record = readRecordInTransaction(database, params.voiceSessionId);
       if (!record) {
@@ -325,7 +322,7 @@ export function resolveOpenClientVoiceSessionId(params: {
   agentId: string;
   sessionKey: string;
 }): string | undefined {
-  const database = openOpenClawAgentDatabase({ agentId: params.agentId });
+  const database = openNovaAgentDatabase({ agentId: params.agentId });
   const rows = database.db
     .prepare("SELECT value_json FROM cache_entries WHERE scope = ? ORDER BY updated_at DESC")
     .all(CACHE_SCOPE) as Array<{ value_json?: unknown }>;
@@ -383,7 +380,7 @@ async function appendVoiceTranscript(params: {
   role: "user" | "assistant";
   text: string;
   timestamp?: number;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<void> {
   await runVoiceSessionOperation(params.agentId, params.voiceSessionId, async () => {
     const text = truncateUtf16Safe(params.text.trim(), MAX_TRANSCRIPT_CHARS);
@@ -428,7 +425,7 @@ async function appendVoiceTranscript(params: {
         now: timestamp,
       },
     );
-    runOpenClawAgentWriteTransaction(
+    runNovaAgentWriteTransaction(
       (database) => {
         const current = readRecordInTransaction(database, params.voiceSessionId);
         if (!current) {
@@ -494,7 +491,7 @@ function formatMutationDigest(effects: ClientVoiceToolEffect[]): string | undefi
 
 async function deliverMutationDigest(
   record: ClientVoiceSessionRecord,
-  config: OpenClawConfig,
+  config: NovaConfig,
   target: { channel: string; to: string; accountId?: string; threadId?: string | number | null },
   text: string,
 ): Promise<void> {
@@ -522,7 +519,7 @@ async function deliverMutationDigest(
 
 async function deliverMutationDigestOnce(
   record: ClientVoiceSessionRecord,
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): Promise<void> {
   if (record.digestDeliveredAt) {
     return;
@@ -551,7 +548,7 @@ async function deliverMutationDigestOnce(
     text,
   );
   const deliveredAt = Date.now();
-  runOpenClawAgentWriteTransaction(
+  runNovaAgentWriteTransaction(
     (database) => {
       const current = readRecordInTransaction(database, record.voiceSessionId);
       if (!current || current.digestDeliveredAt) {
@@ -605,7 +602,7 @@ async function closeClientVoiceSessionInternal(params: {
   agentId: string;
   sessionKey: string;
   voiceSessionId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   now?: number;
 }): Promise<void> {
   const existing = readRecord(params.agentId, params.voiceSessionId);
@@ -614,7 +611,7 @@ async function closeClientVoiceSessionInternal(params: {
   }
   assertOwnership(existing, params);
   const now = params.now ?? Date.now();
-  runOpenClawAgentWriteTransaction(
+  runNovaAgentWriteTransaction(
     (database) => {
       const current = readRecordInTransaction(database, params.voiceSessionId);
       if (!current) {
@@ -661,7 +658,7 @@ export async function closeClientVoiceSession(params: {
   agentId: string;
   sessionKey: string;
   voiceSessionId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   now?: number;
 }): Promise<void> {
   await runVoiceSessionOperation(params.agentId, params.voiceSessionId, async () => {
@@ -672,7 +669,7 @@ export async function closeClientVoiceSession(params: {
 /** Close abandoned open calls idle for the fixed six-hour recovery window. */
 export async function closeStaleClientVoiceSessions(params: {
   agentId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   excludeVoiceSessionId?: string;
   now?: number;
   warn?: (message: string) => void;
@@ -681,7 +678,7 @@ export async function closeStaleClientVoiceSessions(params: {
   // A new voice session is the natural retry point for a digest whose delivery
   // failed after its own call had already closed and its runs completed.
   await retryDeferredMutationDigests(params.agentId);
-  const database = openOpenClawAgentDatabase({ agentId: params.agentId });
+  const database = openNovaAgentDatabase({ agentId: params.agentId });
   const rows = database.db
     .prepare("SELECT value_json FROM cache_entries WHERE scope = ? AND updated_at <= ?")
     .all(CACHE_SCOPE, now - STALE_AFTER_MS) as Array<{ value_json?: unknown }>;
@@ -727,6 +724,6 @@ const clientVoiceSessionTesting = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.clientVoiceSessionTestApi")] =
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.clientVoiceSessionTestApi")] =
     clientVoiceSessionTesting;
 }

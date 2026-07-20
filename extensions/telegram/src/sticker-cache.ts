@@ -1,20 +1,20 @@
 // Telegram plugin module implements sticker cache behavior.
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/agent-runtime";
-import type { ModelCatalogEntry } from "openclaw/plugin-sdk/agent-runtime";
+import { resolveApiKeyForProvider } from "nova/plugin-sdk/agent-runtime";
+import type { ModelCatalogEntry } from "nova/plugin-sdk/agent-runtime";
 import {
   findModelInCatalog,
   loadPreparedModelCatalog,
   modelSupportsVision,
-} from "openclaw/plugin-sdk/agent-runtime";
-import { resolveAgentDir, resolveDefaultModelForAgent } from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveAutoImageModel } from "openclaw/plugin-sdk/media-runtime";
+} from "nova/plugin-sdk/agent-runtime";
+import { resolveAgentDir, resolveDefaultModelForAgent } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolveAutoImageModel } from "nova/plugin-sdk/media-runtime";
 import {
   resolveAutoMediaKeyProviders,
   resolveDefaultMediaModel,
-} from "openclaw/plugin-sdk/media-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/media-runtime";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import { getTelegramRuntime } from "./runtime.js";
 export {
   cacheSticker,
@@ -40,7 +40,7 @@ function isMinimaxVlmProvider(provider: string): boolean {
 
 export interface DescribeStickerParams {
   imagePath: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir?: string;
   agentId?: string;
 }

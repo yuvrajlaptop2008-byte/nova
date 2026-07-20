@@ -5,10 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { MAX_DATE_TIMESTAMP_MS } from "@nova/normalization-core/number-coercion";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../../state/nova-state-db.js";
 import { SkillUploadRequestError } from "./upload-store.js";
 import {
   deleteExpiredSkillUploadUnlessLeased,
@@ -41,7 +38,7 @@ const ACTIVE_UPLOAD_LIMIT = 32;
 let tempDirs: string[] = [];
 
 async function makeTempDir(): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-upload-store-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-upload-store-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -53,7 +50,7 @@ async function makeStore(options?: {
   ttlMs?: number;
 }) {
   const root = await makeTempDir();
-  const databasePath = path.join(root, "openclaw.sqlite");
+  const databasePath = path.join(root, "nova.sqlite");
   return {
     root,
     databasePath,
@@ -66,7 +63,7 @@ async function makeStore(options?: {
 }
 
 function stateDatabase(databasePath: string) {
-  return openOpenClawStateDatabase({ path: databasePath }).db;
+  return openNovaStateDatabase({ path: databasePath }).db;
 }
 
 function uploadCount(databasePath: string): number {
@@ -146,9 +143,9 @@ describe("skill upload store", () => {
   let activeLimitRoot: string | undefined;
 
   beforeAll(async () => {
-    activeLimitRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-upload-limit-"));
+    activeLimitRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-upload-limit-"));
     const store = createSkillUploadStore({
-      path: path.join(activeLimitRoot, "openclaw.sqlite"),
+      path: path.join(activeLimitRoot, "nova.sqlite"),
       tempRootDir: activeLimitRoot,
     });
     for (let i = 0; i < ACTIVE_UPLOAD_LIMIT; i += 1) {
@@ -162,7 +159,7 @@ describe("skill upload store", () => {
   });
 
   afterAll(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     if (activeLimitRoot) {
       await fs.rm(activeLimitRoot, { recursive: true, force: true });
     }
@@ -177,7 +174,7 @@ describe("skill upload store", () => {
     uploadSqliteMocks.readSkillUploadArchiveChunks.mockImplementation(
       uploadSqliteMocks.defaultReadSkillUploadArchiveChunks!,
     );
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await Promise.all(
       tempDirs.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true })),
     );

@@ -1,4 +1,4 @@
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness-runtime";
+import type { EmbeddedRunAttemptParams } from "nova/plugin-sdk/agent-harness-runtime";
 import { normalizeCodexDynamicToolName } from "./dynamic-tool-profile.js";
 
 type MutableDynamicTool = {

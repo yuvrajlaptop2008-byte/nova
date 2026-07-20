@@ -1,13 +1,13 @@
 // Tests diagnostics command output and runtime diagnostic toggles.
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { clearPluginCommands, registerPluginCommand } from "../../plugins/commands.js";
 import { createPluginRegistry } from "../../plugins/registry.js";
 import type { PluginRuntime } from "../../plugins/runtime/types.js";
 import { createBundledPluginRecord } from "../../plugins/status.test-fixtures.js";
-import type { OpenClawPluginCommandDefinition, PluginCommandContext } from "../../plugins/types.js";
+import type { NovaPluginCommandDefinition, PluginCommandContext } from "../../plugins/types.js";
 
-type PluginCommandHandler = OpenClawPluginCommandDefinition["handler"];
+type PluginCommandHandler = NovaPluginCommandDefinition["handler"];
 import type { MsgContext } from "../templating.js";
 import { handleDiagnosticsCommand as defaultDiagnosticsCommandHandler } from "./commands-diagnostics.js";
 import type { HandleCommandsParams } from "./commands-types.js";
@@ -102,7 +102,7 @@ function buildDiagnosticsParams(
   overrides: Partial<HandleCommandsParams> = {},
 ): HandleCommandsParams {
   return {
-    cfg: { commands: { text: true } } as OpenClawConfig,
+    cfg: { commands: { text: true } } as NovaConfig,
     ctx: {
       Provider: "whatsapp",
       Surface: "whatsapp",
@@ -263,7 +263,7 @@ function createDiagnosticsHandlerForTest(
             expiresAtMs: Date.now() + 60_000,
             allowedDecisions: ["allow-once", "deny"] as const,
             host: "gateway" as const,
-            command: "openclaw gateway diagnostics export --json",
+            command: "nova gateway diagnostics export --json",
             cwd: "/tmp",
           },
         }
@@ -314,7 +314,7 @@ describe("diagnostics command", () => {
       "Diagnostics can include sensitive local logs and host-level runtime metadata.",
     );
     expect(execCall.defaults.approvalWarningText).toContain(
-      "https://docs.openclaw.ai/gateway/diagnostics",
+      "https://docs.nova.ai/gateway/diagnostics",
     );
     expect(execCall.params.security).toBe("allowlist");
     expect(execCall.params.ask).toBe("always");
@@ -323,7 +323,7 @@ describe("diagnostics command", () => {
     expect(command).toContain("diagnostics");
     expect(command).toContain("export");
     expect(command).toContain("--json");
-    expect(command).not.toBe("openclaw gateway diagnostics export --json");
+    expect(command).not.toBe("nova gateway diagnostics export --json");
   });
 
   it("uses the originating Telegram route for native diagnostics followups", async () => {
@@ -385,7 +385,7 @@ describe("diagnostics command", () => {
     expect(result?.reply?.text).toContain(
       "Diagnostics can include sensitive local logs and host-level runtime metadata.",
     );
-    expect(result?.reply?.text).toContain("https://docs.openclaw.ai/gateway/diagnostics");
+    expect(result?.reply?.text).toContain("https://docs.nova.ai/gateway/diagnostics");
     expect(result?.reply?.text).toContain("no interactive approval client");
     expect(execCalls).toHaveLength(1);
   });

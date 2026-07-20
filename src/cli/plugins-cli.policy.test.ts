@@ -1,6 +1,6 @@
 // Plugins CLI policy tests cover plugin command policy checks and warnings.
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import {
   buildPluginRegistrySnapshotReport,
   enablePluginInConfig,
@@ -41,7 +41,7 @@ describe("plugins cli policy mutations", () => {
     });
   }
 
-  function requireFirstWrittenConfig(): OpenClawConfig {
+  function requireFirstWrittenConfig(): NovaConfig {
     const call = writeConfigFile.mock.calls[0];
     if (!call) {
       throw new Error("expected writeConfigFile to be called");
@@ -54,8 +54,8 @@ describe("plugins cli policy mutations", () => {
   }
 
   function requirePluginEntries(
-    config: OpenClawConfig,
-  ): NonNullable<NonNullable<OpenClawConfig["plugins"]>["entries"]> {
+    config: NovaConfig,
+  ): NonNullable<NonNullable<NovaConfig["plugins"]>["entries"]> {
     if (!config.plugins?.entries) {
       throw new Error("expected plugin entries in config");
     }
@@ -63,14 +63,14 @@ describe("plugins cli policy mutations", () => {
   }
 
   it("refreshes the persisted plugin registry after enabling a plugin", async () => {
-    const sourceConfig = {} as OpenClawConfig;
+    const sourceConfig = {} as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     loadConfig.mockReturnValue(sourceConfig);
     enablePluginInConfig.mockReturnValue({
       config: enabledConfig,
@@ -119,7 +119,7 @@ describe("plugins cli policy mutations", () => {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
     mockPluginRegistry(["alpha"]);
 
     await runPluginsCommand(["plugins", "disable", "alpha"]);
@@ -138,14 +138,14 @@ describe("plugins cli policy mutations", () => {
   it.each(compatibilityPluginIds)(
     "enables compatibility id $alias through canonical plugin $pluginId",
     async ({ alias, pluginId }) => {
-      const sourceConfig = {} as OpenClawConfig;
+      const sourceConfig = {} as NovaConfig;
       const enabledConfig = {
         plugins: {
           entries: {
             [pluginId]: { enabled: true },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       loadConfig.mockReturnValue(sourceConfig);
       enablePluginInConfig.mockReturnValue({
         config: enabledConfig,
@@ -171,7 +171,7 @@ describe("plugins cli policy mutations", () => {
             [pluginId]: { enabled: true },
           },
         },
-      } as OpenClawConfig);
+      } as NovaConfig);
       mockPluginRegistry([pluginId]);
 
       await runPluginsCommand(["plugins", "disable", alias]);
@@ -193,7 +193,7 @@ describe("plugins cli policy mutations", () => {
       );
 
       expect(runtimeErrors).toContain(
-        "Plugin not found: missing-plugin. Run `openclaw plugins list` to see installed plugins, or `openclaw plugins search missing-plugin` to look for installable plugins.",
+        "Plugin not found: missing-plugin. Run `nova plugins list` to see installed plugins, or `nova plugins search missing-plugin` to look for installable plugins.",
       );
       expect(enablePluginInConfig).not.toHaveBeenCalled();
       expect(writeConfigFile).not.toHaveBeenCalled();
@@ -202,7 +202,7 @@ describe("plugins cli policy mutations", () => {
   );
 
   it("does not create a channel config when disabling a channel plugin by policy", async () => {
-    loadConfig.mockReturnValue({} as OpenClawConfig);
+    loadConfig.mockReturnValue({} as NovaConfig);
     mockPluginRegistry(["twitch"]);
 
     await runPluginsCommand(["plugins", "disable", "twitch"]);

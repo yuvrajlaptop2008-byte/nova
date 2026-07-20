@@ -513,7 +513,7 @@ describe("Skill Workshop history scan", () => {
   });
 
   it("rejects an opposite-direction scan while one is active", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-history-scan-test-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-history-scan-test-"));
     try {
       const workspaceDir = path.join(tempDir, "workspace");
       await fs.mkdir(workspaceDir, { recursive: true });
@@ -535,7 +535,7 @@ describe("Skill Workshop history scan", () => {
   });
 
   it("keeps scan cursors separate when the transcript store changes", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-history-store-scope-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-history-store-scope-"));
     try {
       const workspaceDir = path.join(tempDir, "workspace");
       const env = { ...process.env, NOVA_STATE_DIR: path.join(tempDir, "state") };
@@ -573,7 +573,7 @@ describe("Skill Workshop history scan", () => {
 
   it("keeps the wire result free of transcript content", () => {
     const result: SkillHistoryScanResult = {
-      schema: "openclaw.skill-workshop.history-scan.v1",
+      schema: "nova.skill-workshop.history-scan.v1",
       hasScanned: true,
       reviewedSessions: 20,
       ideasFound: 2,

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { resolveConfigEnvVars } from "../config/env-substitution.js";
 import { createConfigRuntimeEnv } from "../config/env-vars.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import { tryReadJsonSync } from "../infra/json-files.js";
 import { resolveUserPath } from "../utils.js";
@@ -15,7 +15,7 @@ import {
   type NormalizedPluginsConfig,
   type PluginActivationConfigSource,
 } from "./config-state.js";
-import { resolveOpenClawDevSourceRoot } from "./dev-source-root.js";
+import { resolveNovaDevSourceRoot } from "./dev-source-root.js";
 import { loadInstalledPluginIndexInstallRecordsSync } from "./installed-plugin-index-records.js";
 import type { PluginLoadOptions, PluginRuntimeSubagentMode } from "./loader-types.js";
 import {
@@ -320,14 +320,14 @@ export function resolvePluginLoadCacheContext(options: PluginLoadOptions = {}) {
     shouldResolveRawConfigEnvVars
       ? (resolveConfigEnvVars(rawConfig, env, {
           onMissing: () => undefined,
-        }) as OpenClawConfig)
+        }) as NovaConfig)
       : rawConfig,
     env,
   );
   const activationSourceConfig = shouldResolveRawConfigEnvVars
     ? (resolveConfigEnvVars(rawActivationSourceConfig, env, {
         onMissing: () => undefined,
-      }) as OpenClawConfig)
+      }) as NovaConfig)
     : rawActivationSourceConfig;
   const normalized = normalizePluginsConfig(cfg.plugins);
   const activationSource = createPluginActivationSource({ config: activationSourceConfig });
@@ -349,7 +349,7 @@ export function resolvePluginLoadCacheContext(options: PluginLoadOptions = {}) {
     ...(options.installRecords ?? loadInstalledPluginIndexInstallRecordsSync({ env })),
     ...cfg.plugins?.installs,
   };
-  const devSourceRoot = resolveOpenClawDevSourceRoot(env);
+  const devSourceRoot = resolveNovaDevSourceRoot(env);
   const cacheKey = buildCacheKey({
     workspaceDir: options.workspaceDir,
     plugins: shouldResolveRawConfigEnvVars

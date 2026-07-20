@@ -1,12 +1,12 @@
-# OpenClaw Arcee AI Provider
+# Nova Arcee AI Provider
 
-Official OpenClaw provider plugin for Arcee AI.
+Official Nova provider plugin for Arcee AI.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/arcee-provider
-openclaw gateway restart
+nova plugins install @nova/arcee-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/arcee> for setup and configuration.
+See <https://docs.nova.ai/providers/arcee> for setup and configuration.

@@ -124,7 +124,7 @@ describe("readLatestAssistantReply", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "already delivered through message tool" }],
-          openclawMessageToolMirror: {
+          novaMessageToolMirror: {
             toolName: "message",
             toolCallId: "call-message-send",
           },
@@ -132,7 +132,7 @@ describe("readLatestAssistantReply", () => {
         },
         {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "gateway-injected",
           content: [{ type: "text", text: "gateway notice" }],
           timestamp: 12,
@@ -181,7 +181,7 @@ describe("readLatestAssistantReply", () => {
         },
         {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "gateway-injected",
           content: [{ type: "text", text: "gateway notice" }],
           timestamp: 11,
@@ -535,7 +535,7 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
           baselineMessage,
           {
             role: "assistant",
-            provider: "openclaw",
+            provider: "nova",
             model: "delivery-mirror",
             content: [{ type: "text", text: "already delivered source reply" }],
             timestamp: 42,
@@ -575,7 +575,7 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
           {
             role: "assistant",
             content: [{ type: "text", text: "already delivered source reply" }],
-            openclawMessageToolMirror: {
+            novaMessageToolMirror: {
               toolName: "message",
               toolCallId: "call-message-send",
             },
@@ -611,13 +611,13 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
             sourceTool: "sessions_send",
           },
           content: [{ type: "text", text: "forwarded request" }],
-          __openclaw: { seq: 41 },
+          __nova: { seq: 41 },
           timestamp: 41,
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "source reply awaiting delivery" }],
-          openclawMessageToolMirror: {
+          novaMessageToolMirror: {
             toolName: "message",
             toolCallId: "call-message-send",
             sourceReplySink: "internal-ui",
@@ -651,13 +651,13 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
             sourceTool: "sessions_send",
           },
           content: [{ type: "text", text: "forwarded request" }],
-          __openclaw: { seq: 41 },
+          __nova: { seq: 41 },
           timestamp: 41,
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "source reply awaiting delivery" }],
-          openclawMessageToolMirror: {
+          novaMessageToolMirror: {
             toolName: "message",
             toolCallId: "call-message-send",
             sourceReplySink: "internal-ui",
@@ -696,13 +696,13 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
             sourceTool: "sessions_send",
           },
           content: [{ type: "text", text: "new forwarded request" }],
-          __openclaw: { seq: 42 },
+          __nova: { seq: 42 },
           timestamp: 42,
         },
         {
           role: "assistant",
           content: [{ type: "text", text: "stale source reply" }],
-          openclawMessageToolMirror: {
+          novaMessageToolMirror: {
             toolName: "message",
             toolCallId: "call-message-before-request",
             sourceReplySink: "internal-ui",
@@ -746,7 +746,7 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "already delivered source reply" }],
-          openclawMessageToolMirror: {
+          novaMessageToolMirror: {
             toolName: "message",
             toolCallId: "call-message-send",
           },
@@ -778,7 +778,7 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
         {
           role: "assistant",
           content: [{ type: "text", text: "older delivered reply" }],
-          openclawMessageToolMirror: {
+          novaMessageToolMirror: {
             toolName: "message",
             toolCallId: "call-older-message-send",
           },
@@ -828,7 +828,7 @@ describe("waitForAgentRunAndReadUpdatedAssistantReply", () => {
           },
           {
             role: "assistant",
-            provider: "openclaw",
+            provider: "nova",
             model: "delivery-mirror",
             content: [{ type: "text", text: "already delivered source reply" }],
             timestamp: 42,

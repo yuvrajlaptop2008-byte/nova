@@ -12,7 +12,7 @@ import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { Type } from "typebox";
 import { parseScreenSnapshotPayload } from "../../cli/nodes-screen.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import {
   DEFAULT_IMAGE_MAX_DIMENSION_PX,
@@ -592,7 +592,7 @@ function isButtonAlreadyReleasedError(err: unknown): boolean {
 }
 
 export function createComputerTool(options?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   modelHasVision?: boolean;
   /** Stable run scope used to deduplicate a replayed model tool call on the node. */
   idempotencyScope?: string;
@@ -796,7 +796,7 @@ export function createComputerTool(options?: {
           // >= referenceWidth, so it is a no-op and the node maps coordinates
           // against this same width for both portrait and landscape captures. A
           // portrait frame (height > referenceWidth) is uniformly scaled down here,
-          // matching OpenClawComputerInputGeometry.capturedWidth on the node.
+          // matching NovaComputerInputGeometry.capturedWidth on the node.
           // media.outbound=false keeps desktop pixels model-only (#44759).
           const result = await sanitizeToolResultImages(
             {

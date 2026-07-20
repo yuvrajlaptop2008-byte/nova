@@ -3,10 +3,10 @@ import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import type { DatabaseSync } from "node:sqlite";
-import { withOpenClawStateDatabaseReadOnly } from "../state/openclaw-state-db-readonly.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import { withOpenClawStateStartupMigrationCheckpointDatabase } from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import { withNovaStateDatabaseReadOnly } from "../state/nova-state-db-readonly.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { withNovaStateStartupMigrationCheckpointDatabase } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { VERSION } from "../version.js";
 import {
   executeSqliteQuerySync,
@@ -16,7 +16,7 @@ import {
 import { runSqliteImmediateTransactionSync } from "./sqlite-transaction.js";
 
 type StartupMigrationCheckpointDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "schema_meta" | "state_leases"
 >;
 
@@ -66,7 +66,7 @@ function withStartupMigrationCheckpointDatabase<T>(
   env: NodeJS.ProcessEnv,
   callback: (db: DatabaseSync) => T,
 ): T {
-  return withOpenClawStateStartupMigrationCheckpointDatabase(callback, { env });
+  return withNovaStateStartupMigrationCheckpointDatabase(callback, { env });
 }
 
 function writeStartupMigrationCheckpointDatabase<T>(
@@ -104,11 +104,11 @@ export function hasActiveStartupMigrationLease(
 ): boolean {
   const env = params.env ?? process.env;
   const nowMs = params.nowMs ?? Date.now();
-  const pathname = resolveOpenClawStateSqlitePath(env);
+  const pathname = resolveNovaStateSqlitePath(env);
   if (!existsSync(pathname)) {
     return false;
   }
-  return withOpenClawStateDatabaseReadOnly(
+  return withNovaStateDatabaseReadOnly(
     ({ db }) => {
       const stateDb = getNodeSqliteKysely<StartupMigrationCheckpointDatabase>(db);
       return Boolean(

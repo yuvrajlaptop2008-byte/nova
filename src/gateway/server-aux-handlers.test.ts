@@ -6,7 +6,7 @@ import {
   getRuntimeAuthProfileStoreSnapshot,
   setRuntimeAuthProfileStoreSnapshot,
 } from "../agents/auth-profiles/runtime-snapshots.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   activateSecretsRuntimeSnapshot,
   clearSecretsRuntimeSnapshot,
@@ -30,8 +30,8 @@ function publishSharedGatewayGeneration(
   });
 }
 
-function asConfig(value: unknown): OpenClawConfig {
-  return value as OpenClawConfig;
+function asConfig(value: unknown): NovaConfig {
+  return value as NovaConfig;
 }
 
 function createReloadPlan(overrides?: Partial<GatewayReloadPlan>): GatewayReloadPlan {
@@ -53,7 +53,7 @@ function createReloadPlan(overrides?: Partial<GatewayReloadPlan>): GatewayReload
   };
 }
 
-function createSnapshot(config: OpenClawConfig): PreparedSecretsRuntimeSnapshot {
+function createSnapshot(config: NovaConfig): PreparedSecretsRuntimeSnapshot {
   return {
     sourceConfig: asConfig({}),
     config,
@@ -68,7 +68,7 @@ function createSnapshot(config: OpenClawConfig): PreparedSecretsRuntimeSnapshot 
   };
 }
 
-function createSourceSnapshot(config: OpenClawConfig): PreparedSecretsRuntimeSnapshot {
+function createSourceSnapshot(config: NovaConfig): PreparedSecretsRuntimeSnapshot {
   return { ...createSnapshot(config), sourceConfig: config };
 }
 
@@ -112,11 +112,11 @@ function gatewayTokenSlackConfig(token: string, signingSecret: string) {
   });
 }
 
-function activateSnapshot(config: OpenClawConfig) {
+function activateSnapshot(config: NovaConfig) {
   activateSecretsRuntimeSnapshot(createSnapshot(config));
 }
 
-function mockResolvedSecrets(config: OpenClawConfig) {
+function mockResolvedSecrets(config: NovaConfig) {
   return vi.fn().mockResolvedValue(createSnapshot(config));
 }
 
@@ -393,7 +393,7 @@ describe("gateway aux handlers", () => {
     const activateRuntimeSecrets = Object.assign(
       vi.fn(
         async (
-          config: OpenClawConfig,
+          config: NovaConfig,
           _activationParams: Parameters<GatewayAuxHandlerParams["activateRuntimeSecrets"]>[1],
         ) => {
           if (activateRuntimeSecrets.mock.calls.length === 1) {
@@ -432,7 +432,7 @@ describe("gateway aux handlers", () => {
   });
 
   it("rolls back stopped channels when a later restart fails", async () => {
-    const authAgentDir = "/tmp/openclaw-secrets-reload-concurrent-oauth";
+    const authAgentDir = "/tmp/nova-secrets-reload-concurrent-oauth";
     const buildReloadPlan = buildRestartChannelsPlan("slack", "zalo");
     activateSnapshot(slackZaloConfig("old-slack-secret", "old-zalo-secret"));
     const activateRuntimeSecrets = mockResolvedSecrets(
@@ -522,7 +522,7 @@ describe("gateway aux handlers", () => {
     const concurrent = createSnapshot(slackConfig("concurrent-secret"));
     const activateRuntimeSecrets = vi.fn(
       async (
-        _config: OpenClawConfig,
+        _config: NovaConfig,
         _activationParams: Parameters<GatewayAuxHandlerParams["activateRuntimeSecrets"]>[1],
       ) => {
         return prepared;

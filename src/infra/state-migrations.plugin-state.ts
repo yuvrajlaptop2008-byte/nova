@@ -12,8 +12,8 @@ import {
   resolveLegacyInstalledPluginIndexStorePath,
   writePersistedInstalledPluginIndexSync,
 } from "../plugins/installed-plugin-index-store.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -38,7 +38,7 @@ import {
 } from "./state-migrations.storage.js";
 import type { MigrationMessages } from "./state-migrations.types.js";
 
-type LegacyPluginStateImportDatabase = Pick<OpenClawStateKyselyDatabase, "plugin_state_entries">;
+type LegacyPluginStateImportDatabase = Pick<NovaStateKyselyDatabase, "plugin_state_entries">;
 
 export async function migrateLegacyPluginStateSidecar(params: {
   stateDir: string;
@@ -71,7 +71,7 @@ export async function migrateLegacyPluginStateSidecar(params: {
     let imported = 0;
     let skippedExpired = 0;
     const now = Date.now();
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<LegacyPluginStateImportDatabase>(db);
         for (const row of rows) {

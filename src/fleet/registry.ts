@@ -7,11 +7,11 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
-import { withOpenClawStateDatabaseReadOnly } from "../state/openclaw-state-db-readonly.js";
-import { tableExists } from "../state/openclaw-state-db-schema-helpers.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import { withNovaStateDatabaseReadOnly } from "../state/nova-state-db-readonly.js";
+import { tableExists } from "../state/nova-state-db-schema-helpers.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { runNovaStateWriteTransaction } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { allocateHostPort } from "./cell-profile.js";
 
 export type FleetCellRecord = {
@@ -28,9 +28,9 @@ type ReserveFleetCellParams = Omit<FleetCellRecord, "hostPort"> & {
   requestedPort?: number;
 };
 
-type FleetCellsTable = OpenClawStateKyselyDatabase["fleet_cells"];
+type FleetCellsTable = NovaStateKyselyDatabase["fleet_cells"];
 type FleetCellRow = Selectable<FleetCellsTable>;
-type FleetRegistryDatabase = Pick<OpenClawStateKyselyDatabase, "fleet_cells" | "state_leases">;
+type FleetRegistryDatabase = Pick<NovaStateKyselyDatabase, "fleet_cells" | "state_leases">;
 
 const FLEET_OPERATION_LEASE_SCOPE = "fleet-cell-operation";
 const FLEET_OPERATION_LEASE_TTL_MS = 5 * 60_000;
@@ -87,11 +87,11 @@ function recordToRow(record: FleetCellRecord): Insertable<FleetCellsTable> {
 }
 
 export function listFleetCells(env: NodeJS.ProcessEnv = process.env): FleetCellRecord[] {
-  if (!fs.existsSync(resolveOpenClawStateSqlitePath(env))) {
+  if (!fs.existsSync(resolveNovaStateSqlitePath(env))) {
     return [];
   }
   // CLI reads must not join the Gateway's writable SQLite lifecycle (#101290).
-  return withOpenClawStateDatabaseReadOnly(
+  return withNovaStateDatabaseReadOnly(
     ({ db }) => {
       if (!tableExists(db, "fleet_cells")) {
         return [];
@@ -110,11 +110,11 @@ export function getFleetCell(
   env: NodeJS.ProcessEnv,
   tenantId: string,
 ): FleetCellRecord | undefined {
-  if (!fs.existsSync(resolveOpenClawStateSqlitePath(env))) {
+  if (!fs.existsSync(resolveNovaStateSqlitePath(env))) {
     return undefined;
   }
   // CLI reads must not join the Gateway's writable SQLite lifecycle (#101290).
-  return withOpenClawStateDatabaseReadOnly(
+  return withNovaStateDatabaseReadOnly(
     ({ db }) => {
       if (!tableExists(db, "fleet_cells")) {
         return undefined;
@@ -133,7 +133,7 @@ export function reserveFleetCell(
   env: NodeJS.ProcessEnv,
   params: ReserveFleetCellParams,
 ): FleetCellRecord {
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => {
       const kysely = kyselyFor(db);
       const existing = executeSqliteQueryTakeFirstSync(
@@ -174,7 +174,7 @@ export function updateFleetCellImage(
   tenantId: string,
   image: string,
 ): void {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       const result = executeSqliteQuerySync(
         db,
@@ -198,7 +198,7 @@ export function acquireFleetCellOperation(params: {
   const nowMs = params.nowMs ?? Date.now();
   const expiresAt = nowMs + FLEET_OPERATION_LEASE_TTL_MS;
   const owner = params.owner ?? crypto.randomUUID();
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       const kysely = kyselyFor(db);
       executeSqliteQuerySync(
@@ -259,7 +259,7 @@ export function acquireFleetCellOperation(params: {
     owner,
     heartbeat: (heartbeatNowMs = Date.now()) => {
       const heartbeatExpiresAt = heartbeatNowMs + FLEET_OPERATION_LEASE_TTL_MS;
-      runOpenClawStateWriteTransaction(
+      runNovaStateWriteTransaction(
         ({ db }) => {
           const result = executeSqliteQuerySync(
             db,
@@ -283,7 +283,7 @@ export function acquireFleetCellOperation(params: {
       );
     },
     release: () => {
-      runOpenClawStateWriteTransaction(
+      runNovaStateWriteTransaction(
         ({ db }) => {
           executeSqliteQuerySync(
             db,
@@ -301,7 +301,7 @@ export function acquireFleetCellOperation(params: {
 }
 
 export function deleteFleetCell(env: NodeJS.ProcessEnv, tenantId: string): void {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       executeSqliteQuerySync(
         db,

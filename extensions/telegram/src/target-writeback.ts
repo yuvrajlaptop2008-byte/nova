@@ -1,19 +1,16 @@
 // Telegram plugin module implements target writeback behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import {
-  readConfigFileSnapshotForWrite,
-  replaceConfigFile,
-} from "openclaw/plugin-sdk/config-mutation";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { readConfigFileSnapshotForWrite, replaceConfigFile } from "nova/plugin-sdk/config-mutation";
 import {
   loadCronStore,
   resolveCronStorePath,
   saveCronStore,
-} from "openclaw/plugin-sdk/cron-store-runtime";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/cron-store-runtime";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import {
   normalizeTelegramChatId,
   normalizeTelegramLookupTarget,
@@ -104,7 +101,7 @@ function rewriteTargetIfMatch(params: {
 }
 
 function replaceTelegramDefaultToTargets(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   matchKey: string;
   resolvedTarget: string;
 }): boolean {
@@ -143,7 +140,7 @@ function replaceTelegramDefaultToTargets(params: {
 }
 
 export async function maybePersistResolvedTelegramTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   rawTarget: string;
   resolvedChatId: string;
   verbose?: boolean;

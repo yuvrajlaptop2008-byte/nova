@@ -273,7 +273,7 @@ function expectSecurityConnectError(
 ) {
   const error = firstMockArg(onConnectError, "connect error") as Error;
   expect(error.message).toContain("SECURITY ERROR");
-  expect(error.message).toContain("openclaw doctor --fix");
+  expect(error.message).toContain("nova doctor --fix");
   if (params?.expectTailscaleHint) {
     expect(error.message).toContain("Tailscale Serve/Funnel");
   }
@@ -568,7 +568,7 @@ describe("GatewayClient security checks", () => {
     process.env.NOVA_ALLOW_INSECURE_PRIVATE_WS = "1";
     const onConnectError = vi.fn();
     const client = new GatewayClient({
-      url: "ws://openclaw-gateway.ai:18789",
+      url: "ws://nova-gateway.ai:18789",
       onConnectError,
     });
 
@@ -716,7 +716,7 @@ describe("GatewayClient close handling", () => {
 
   it("clears stale token on device token mismatch close", () => {
     const onClose = vi.fn();
-    const env = { NOVA_HOME: "/tmp/custom-openclaw-home" };
+    const env = { NOVA_HOME: "/tmp/custom-nova-home" };
     const client = createClientWithIdentity("dev-1", onClose, { env });
 
     client.start();
@@ -1742,7 +1742,7 @@ describe("GatewayClient connect auth payload", () => {
     });
     const env = {
       ...process.env,
-      NOVA_STATE_DIR: "/tmp/openclaw-client-service-state",
+      NOVA_STATE_DIR: "/tmp/nova-client-service-state",
     } as NodeJS.ProcessEnv;
     const client = new GatewayClient({
       url: "ws://127.0.0.1:18789",
@@ -2062,7 +2062,7 @@ describe("GatewayClient connect auth payload", () => {
       token: "stored-device-token",
       scopes: ["operator.read"],
     });
-    const env = { NOVA_HOME: "/tmp/custom-openclaw-home" };
+    const env = { NOVA_HOME: "/tmp/custom-nova-home" };
     const client = new GatewayClient({
       url: "ws://127.0.0.1:18789",
       env,

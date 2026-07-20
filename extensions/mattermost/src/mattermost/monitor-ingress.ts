@@ -3,9 +3,9 @@ import {
   createChannelIngressMonitor,
   type ChannelIngressQueue,
   type ChannelIngressMonitorDeliveryResult,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/channel-outbound";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import { getMattermostRuntime } from "../runtime.js";
 import type { MattermostPost } from "./client.js";
 import {

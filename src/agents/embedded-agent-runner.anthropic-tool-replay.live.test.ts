@@ -1,5 +1,5 @@
 // Live checks for Anthropic replay transcript sanitization and tool-call history.
-import type { Message, Model } from "openclaw/plugin-sdk/llm";
+import type { Message, Model } from "nova/plugin-sdk/llm";
 import { describe, expect, it, vi } from "vitest";
 import { wrapStreamFnSanitizeMalformedToolCalls } from "./embedded-agent-runner/run/attempt.tool-call-normalization.js";
 import { extractAssistantText } from "./embedded-agent-utils.js";

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { readInstalledPackageVersion } from "../infra/package-update-utils.js";
 import type { UpdateChannel } from "../infra/update-channels.js";
 import { resolveBundledPluginSources } from "./bundled-sources.js";
@@ -46,13 +46,13 @@ type PluginChannelSyncSummary = {
 };
 
 type PluginChannelSyncResult = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   changed: boolean;
   summary: PluginChannelSyncSummary;
 };
 
 export async function syncPluginsForUpdateChannel(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   channel: UpdateChannel;
   coreVersion?: string;
   workspaceDir?: string;

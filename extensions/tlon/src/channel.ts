@@ -1,17 +1,17 @@
 // Tlon plugin module implements channel behavior.
-import { describeAccountSnapshot } from "openclaw/plugin-sdk/account-helpers";
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
-import { createHybridChannelConfigAdapter } from "openclaw/plugin-sdk/channel-config-helpers";
-import { createChatChannelPlugin, type ChannelPlugin } from "openclaw/plugin-sdk/channel-core";
-import { createChannelMessageAdapterFromOutbound } from "openclaw/plugin-sdk/channel-outbound";
-import { createRuntimeOutboundDelegates } from "openclaw/plugin-sdk/channel-outbound";
-import type { ChannelOutboundAdapter } from "openclaw/plugin-sdk/channel-send-result";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { describeAccountSnapshot } from "nova/plugin-sdk/account-helpers";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/account-id";
+import { createHybridChannelConfigAdapter } from "nova/plugin-sdk/channel-config-helpers";
+import { createChatChannelPlugin, type ChannelPlugin } from "nova/plugin-sdk/channel-core";
+import { createChannelMessageAdapterFromOutbound } from "nova/plugin-sdk/channel-outbound";
+import { createRuntimeOutboundDelegates } from "nova/plugin-sdk/channel-outbound";
+import type { ChannelOutboundAdapter } from "nova/plugin-sdk/channel-send-result";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import {
   createComputedAccountStatusAdapter,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/status-helpers";
-import { sanitizeAssistantVisibleText } from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/status-helpers";
+import { sanitizeAssistantVisibleText } from "nova/plugin-sdk/text-chunking";
 import { tlonChannelConfigSchema } from "./config-schema.js";
 import { tlonDoctor } from "./doctor.js";
 import { resolveTlonOutboundSessionRoute } from "./session-route.js";

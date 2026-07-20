@@ -3,7 +3,7 @@
 
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   forgetActiveSessionForShutdown,
   listActiveSessionsForShutdown,
@@ -16,7 +16,7 @@ import {
 // already been finalized through replace / reset / delete / compaction so
 // the shutdown drain never double-fires `session_end` for them.
 
-const cfg: OpenClawConfig = {};
+const cfg: NovaConfig = {};
 
 afterEach(() => {
   for (const entry of listActiveSessionsForShutdown()) {

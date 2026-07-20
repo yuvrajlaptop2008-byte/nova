@@ -3,12 +3,12 @@ import { isDeepStrictEqual } from "node:util";
 import type {
   ChannelDoctorConfigMutation,
   ChannelDoctorLegacyConfigRule,
-} from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { mergeDeep } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { asObjectRecord, defineChannelAliasMigration } from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { mergeDeep } from "nova/plugin-sdk/plugin-config-runtime";
+import { asObjectRecord, defineChannelAliasMigration } from "nova/plugin-sdk/runtime-doctor";
 
-type GoogleChatChannelsConfig = NonNullable<OpenClawConfig["channels"]>;
+type GoogleChatChannelsConfig = NonNullable<NovaConfig["channels"]>;
 
 // Google Chat's nested streaming schema is delivery-only ({chunkMode, block});
 // it has no preview mode (legacy streamMode is removed outright above), so
@@ -124,13 +124,13 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
   {
     path: ["channels", "googlechat"],
     message:
-      'channels.googlechat.actions.reactions is retired and ignored. Run "openclaw doctor --fix".',
+      'channels.googlechat.actions.reactions is retired and ignored. Run "nova doctor --fix".',
     match: hasRetiredReactions,
   },
   {
     path: ["channels", "googlechat", "accounts"],
     message:
-      'channels.googlechat.accounts.<id>.actions.reactions is retired and ignored. Run "openclaw doctor --fix".',
+      'channels.googlechat.accounts.<id>.actions.reactions is retired and ignored. Run "nova doctor --fix".',
     match: (value) => hasLegacyAccountAliases(value, hasRetiredReactions),
   },
   {
@@ -147,19 +147,19 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
   {
     path: ["channels", "googlechat"],
     message:
-      'channels.googlechat.groups.<id>.allow is legacy; use channels.googlechat.groups.<id>.enabled instead. Run "openclaw doctor --fix".',
+      'channels.googlechat.groups.<id>.allow is legacy; use channels.googlechat.groups.<id>.enabled instead. Run "nova doctor --fix".',
     match: hasLegacyGoogleChatGroupAllowAlias,
   },
   {
     path: ["channels", "googlechat", "accounts"],
     message:
-      'channels.googlechat.accounts.<id>.groups.<id>.allow is legacy; use channels.googlechat.accounts.<id>.groups.<id>.enabled instead. Run "openclaw doctor --fix".',
+      'channels.googlechat.accounts.<id>.groups.<id>.allow is legacy; use channels.googlechat.accounts.<id>.groups.<id>.enabled instead. Run "nova doctor --fix".',
     match: (value) => hasLegacyAccountAliases(value, hasLegacyGoogleChatGroupAllowAlias),
   },
   ...streamingAliasMigration.legacyConfigRules,
 ];
 
-function normalizeRetiredGoogleChatKeys(cfg: OpenClawConfig): ChannelDoctorConfigMutation {
+function normalizeRetiredGoogleChatKeys(cfg: NovaConfig): ChannelDoctorConfigMutation {
   const rawEntry = asObjectRecord(
     (cfg.channels as Record<string, unknown> | undefined)?.googlechat,
   );
@@ -224,10 +224,10 @@ function normalizeRetiredGoogleChatKeys(cfg: OpenClawConfig): ChannelDoctorConfi
 // flat aliases, materialize the effective root < accounts.default < named value
 // so the canonical runtime path preserves the pre-migration behavior.
 function materializeMigratedAccountStreaming(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountsBefore: Record<string, unknown> | null;
   changes: string[];
-}): OpenClawConfig {
+}): NovaConfig {
   const channels = params.cfg.channels as Record<string, unknown> | undefined;
   const entry = asObjectRecord(channels?.googlechat);
   const accounts = asObjectRecord(entry?.accounts);
@@ -285,13 +285,13 @@ function materializeMigratedAccountStreaming(params: {
       ...channels,
       googlechat: { ...entry, accounts: nextAccounts },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 export function normalizeCompatibilityConfig({
   cfg,
 }: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): ChannelDoctorConfigMutation {
   const retired = normalizeRetiredGoogleChatKeys(cfg);
   const accountsBefore = asObjectRecord(

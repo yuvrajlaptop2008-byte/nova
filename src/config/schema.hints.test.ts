@@ -5,7 +5,7 @@ import { z } from "zod";
 import { buildSecretInputSchema } from "../plugin-sdk/secret-input-schema.js";
 import { buildBaseHints, testApi } from "./schema.hints.js";
 import { isSensitiveConfigPath } from "./sensitive-paths.js";
-import { OpenClawSchema } from "./zod-schema.js";
+import { NovaSchema } from "./zod-schema.js";
 import { sensitive } from "./zod-schema.sensitive.js";
 
 const { collectMatchingSchemaPaths, mapSensitivePaths } = testApi;
@@ -172,12 +172,12 @@ describe("mapSensitivePaths", () => {
   });
 
   it("main schema yields correct hints (samples)", () => {
-    const schema = OpenClawSchema.toJSONSchema({
+    const schema = NovaSchema.toJSONSchema({
       target: "draft-07",
       unrepresentable: "any",
     });
-    schema.title = "OpenClawConfig";
-    const hints = mapSensitivePaths(OpenClawSchema, "", {});
+    schema.title = "NovaConfig";
+    const hints = mapSensitivePaths(NovaSchema, "", {});
 
     expect(hints["agents.defaults.memorySearch.remote.apiKey"]?.sensitive).toBe(true);
     expect(hints["agents.list[].memorySearch.remote.apiKey"]?.sensitive).toBe(true);
@@ -209,7 +209,7 @@ describe("mapSensitivePaths", () => {
 
 describe("collectMatchingSchemaPaths", () => {
   it("finds base-config URL fields that may embed secrets", () => {
-    const paths = collectMatchingSchemaPaths(OpenClawSchema, "", isSensitiveUrlConfigPath);
+    const paths = collectMatchingSchemaPaths(NovaSchema, "", isSensitiveUrlConfigPath);
 
     expect(paths.has("mcp.servers.*.url")).toBe(true);
     expect(paths.has("models.providers.*.baseUrl")).toBe(true);

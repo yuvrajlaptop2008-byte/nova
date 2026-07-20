@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CommandContext } from "../auto-reply/reply/commands-types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   createCorePluginStateSyncKeyedStore,
   resetPluginStateStoreForTests,
@@ -25,7 +25,7 @@ function readLastAuditEntry(): Record<string, unknown> {
 
 const mockConfig = vi.hoisted(() => {
   const state = {
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     config: {} as TestConfig,
     hash: "mock-hash-0" as string | undefined,
   };
@@ -50,7 +50,7 @@ const mockConfig = vi.hoisted(() => {
   };
   return {
     reset() {
-      state.path = "/tmp/openclaw.json";
+      state.path = "/tmp/nova.json";
       state.config = {};
       state.hash = "mock-hash-0";
     },
@@ -156,8 +156,8 @@ function commandContext(overrides: Partial<CommandContext> = {}): CommandContext
     senderIsOwner: true,
     isAuthorizedSender: true,
     senderId: "user:owner",
-    rawBodyNormalized: "/openclaw models",
-    commandBodyNormalized: "/openclaw models",
+    rawBodyNormalized: "/nova models",
+    commandBodyNormalized: "/nova models",
     from: "user:owner",
     to: "account:default",
     ...overrides,
@@ -183,7 +183,7 @@ function requireFirstMockCall<T>(mock: { mock: { calls: T[][] } }, label: string
 
 async function runRescue(
   commandBody: string,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   ctx = commandContext(),
   deps?: Parameters<typeof runSystemAgentRescueMessage>[0]["deps"],
 ) {
@@ -217,14 +217,14 @@ describe("Nova rescue message", () => {
   });
 
   it("recognizes the Nova rescue command", () => {
-    expect(extractSystemAgentRescueMessage("/openclaw status")).toBe("status");
-    expect(extractSystemAgentRescueMessage("/openclaw")).toBe("");
+    expect(extractSystemAgentRescueMessage("/nova status")).toBe("status");
+    expect(extractSystemAgentRescueMessage("/nova")).toBe("");
     expect(extractSystemAgentRescueMessage("/status")).toBeNull();
   });
 
   it("denies rescue when sandboxing is active", async () => {
     await expect(
-      runRescue("/openclaw status", {
+      runRescue("/nova status", {
         systemAgent: { rescue: { enabled: true } },
         agents: { defaults: { sandbox: { mode: "all" } } },
       }),
@@ -232,24 +232,24 @@ describe("Nova rescue message", () => {
   });
 
   it("refuses TUI handoff from remote rescue", async () => {
-    const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+    const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
     const deps = {
       runTui: vi.fn(async () => {
         throw new Error("remote rescue must not open the TUI");
       }),
     };
 
-    await expect(
-      runRescue("/openclaw talk to agent", cfg, commandContext(), deps),
-    ).resolves.toContain("cannot open the local TUI");
-    await expect(runRescue("/openclaw chat", cfg, commandContext(), deps)).resolves.toContain(
+    await expect(runRescue("/nova talk to agent", cfg, commandContext(), deps)).resolves.toContain(
+      "cannot open the local TUI",
+    );
+    await expect(runRescue("/nova chat", cfg, commandContext(), deps)).resolves.toContain(
       "cannot open the local TUI",
     );
     expect(deps.runTui).not.toHaveBeenCalled();
   });
 
   it("rejects natural language instead of guessing an operation", async () => {
-    const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+    const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
     const deps = {
       runGatewayStop: vi.fn(async () => {}),
       runGatewayRestart: vi.fn(async () => {}),
@@ -258,42 +258,42 @@ describe("Nova rescue message", () => {
     // Questions must never become mutation plans (previously "why did my
     // gateway stop" keyword-matched into a gateway-stop proposal).
     await expect(
-      runRescue("/openclaw why did my gateway stop", cfg, commandContext(), deps),
+      runRescue("/nova why did my gateway stop", cfg, commandContext(), deps),
     ).resolves.toContain("I can run doctor/status/health");
     await expect(
-      runRescue("/openclaw explain how restart gateway works", cfg, commandContext(), deps),
+      runRescue("/nova explain how restart gateway works", cfg, commandContext(), deps),
     ).resolves.toContain("I can run doctor/status/health");
     expect(deps.runGatewayStop).not.toHaveBeenCalled();
     expect(deps.runGatewayRestart).not.toHaveBeenCalled();
   });
 
   it("refuses channel setup from remote rescue with a local pointer", async () => {
-    const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
-    await expect(runRescue("/openclaw connect telegram", cfg)).resolves.toContain(
+    const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
+    await expect(runRescue("/nova connect telegram", cfg)).resolves.toContain(
       "cannot host the interactive channel setup",
     );
   });
 
   it("refuses model provider setup from remote rescue with a local pointer", async () => {
-    const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
-    const reply = await runRescue("/openclaw configure model provider", cfg);
+    const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
+    const reply = await runRescue("/nova configure model provider", cfg);
     expect(reply).toContain("cannot host model-provider credential setup");
-    expect(reply).toContain("openclaw onboard");
+    expect(reply).toContain("nova onboard");
   });
 
   it("refuses doctor repairs without creating a pending approval", async () => {
     await withRescueStateDir("doctor-fix-refused-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = {
         runDoctor: vi.fn(async () => {
           throw new Error("remote rescue must not run doctor repair");
         }),
       };
 
-      await expect(
-        runRescue("/openclaw doctor fix", cfg, commandContext(), deps),
-      ).resolves.toContain("run `openclaw doctor --fix` in a terminal");
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toBe(
+      await expect(runRescue("/nova doctor fix", cfg, commandContext(), deps)).resolves.toContain(
+        "run `nova doctor --fix` in a terminal",
+      );
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toBe(
         "No pending Nova rescue change is waiting for approval.",
       );
       expect(deps.runDoctor).not.toHaveBeenCalled();
@@ -302,16 +302,16 @@ describe("Nova rescue message", () => {
 
   it("drops a pending rescue change on decline", async () => {
     await withRescueStateDir("decline-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
 
       await expect(
-        runRescue("/openclaw restart gateway", cfg, commandContext(), deps),
-      ).resolves.toContain("Reply /openclaw yes to apply");
-      await expect(runRescue("/openclaw no", cfg, commandContext(), deps)).resolves.toContain(
+        runRescue("/nova restart gateway", cfg, commandContext(), deps),
+      ).resolves.toContain("Reply /nova yes to apply");
+      await expect(runRescue("/nova no", cfg, commandContext(), deps)).resolves.toContain(
         "Dropped the pending Nova rescue change",
       );
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toBe(
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toBe(
         "No pending Nova rescue change is waiting for approval.",
       );
       expect(deps.runGatewayRestart).not.toHaveBeenCalled();
@@ -320,19 +320,19 @@ describe("Nova rescue message", () => {
 
   it("revokes a pending write when a fresh read-only command arrives", async () => {
     await withRescueStateDir("read-revokes-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = {
         runGatewayRestart: vi.fn(async () => {}),
         runPluginsList: vi.fn(async (runtime: RuntimeEnv) => runtime.log("plugin rows")),
       };
 
       await expect(
-        runRescue("/openclaw restart gateway", cfg, commandContext(), deps),
-      ).resolves.toContain("Reply /openclaw yes to apply");
-      await expect(runRescue("/openclaw plugins list", cfg, commandContext(), deps)).resolves.toBe(
+        runRescue("/nova restart gateway", cfg, commandContext(), deps),
+      ).resolves.toContain("Reply /nova yes to apply");
+      await expect(runRescue("/nova plugins list", cfg, commandContext(), deps)).resolves.toBe(
         "plugin rows",
       );
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toBe(
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toBe(
         "No pending Nova rescue change is waiting for approval.",
       );
       expect(deps.runGatewayRestart).not.toHaveBeenCalled();
@@ -341,37 +341,35 @@ describe("Nova rescue message", () => {
 
   it("consumes a pending approval at most once under concurrent approvals", async () => {
     await withRescueStateDir("concurrent-approve-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
 
-      await runRescue("/openclaw restart gateway", cfg, commandContext(), deps);
+      await runRescue("/nova restart gateway", cfg, commandContext(), deps);
       const replies = await Promise.all([
-        runRescue("/openclaw yes", cfg, commandContext(), deps),
-        runRescue("/openclaw yes", cfg, commandContext(), deps),
+        runRescue("/nova yes", cfg, commandContext(), deps),
+        runRescue("/nova yes", cfg, commandContext(), deps),
       ]);
 
       expect(deps.runGatewayRestart).toHaveBeenCalledTimes(1);
       expect(replies).toContain("No pending Nova rescue change is waiting for approval.");
-      expect(replies.some((reply) => reply?.includes("[openclaw] done: gateway.restart"))).toBe(
-        true,
-      );
+      expect(replies.some((reply) => reply?.includes("[nova] done: gateway.restart"))).toBe(true);
     });
   });
 
   it("keeps failed execution consumed", async () => {
     await withRescueStateDir("failed-consumed-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = {
         runGatewayRestart: vi.fn(async () => {
           throw new Error("restart failed");
         }),
       };
 
-      await runRescue("/openclaw restart gateway", cfg, commandContext(), deps);
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).rejects.toThrow(
+      await runRescue("/nova restart gateway", cfg, commandContext(), deps);
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).rejects.toThrow(
         "restart failed",
       );
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toBe(
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toBe(
         "No pending Nova rescue change is waiting for approval.",
       );
       expect(deps.runGatewayRestart).toHaveBeenCalledTimes(1);
@@ -380,7 +378,7 @@ describe("Nova rescue message", () => {
 
   it("preserves a new plan created while the consumed plan executes", async () => {
     await withRescueStateDir("replacement-during-execute-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       let releaseRestart: (() => void) | undefined;
       let noteRestartEntered: (() => void) | undefined;
       const restartEntered = new Promise<void>((resolve) => {
@@ -397,14 +395,14 @@ describe("Nova rescue message", () => {
         runGatewayStart: vi.fn(async () => {}),
       };
 
-      await runRescue("/openclaw restart gateway", cfg, commandContext(), deps);
-      const approval = runRescue("/openclaw yes", cfg, commandContext(), deps);
+      await runRescue("/nova restart gateway", cfg, commandContext(), deps);
+      const approval = runRescue("/nova yes", cfg, commandContext(), deps);
       await restartEntered;
-      await runRescue("/openclaw start gateway", cfg, commandContext(), deps);
+      await runRescue("/nova start gateway", cfg, commandContext(), deps);
       releaseRestart?.();
-      await expect(approval).resolves.toContain("[openclaw] done: gateway.restart");
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toContain(
-        "[openclaw] done: gateway.start",
+      await expect(approval).resolves.toContain("[nova] done: gateway.restart");
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toContain(
+        "[nova] done: gateway.start",
       );
       expect(deps.runGatewayRestart).toHaveBeenCalledTimes(1);
       expect(deps.runGatewayStart).toHaveBeenCalledTimes(1);
@@ -413,18 +411,18 @@ describe("Nova rescue message", () => {
 
   it("publishes concurrently invoked persistent plans in call order", async () => {
     await withRescueStateDir("latest-plan-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = {
         runGatewayRestart: vi.fn(async () => {}),
         runGatewayStart: vi.fn(async () => {}),
       };
 
-      const olderPlan = runRescue("/openclaw restart gateway", cfg, commandContext(), deps);
-      const newerPlan = runRescue("/openclaw start gateway", cfg, commandContext(), deps);
+      const olderPlan = runRescue("/nova restart gateway", cfg, commandContext(), deps);
+      const newerPlan = runRescue("/nova start gateway", cfg, commandContext(), deps);
       await expect(olderPlan).resolves.toContain("restart the Gateway");
       await expect(newerPlan).resolves.toContain("start the Gateway");
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toContain(
-        "[openclaw] done: gateway.start",
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toContain(
+        "[nova] done: gateway.start",
       );
       expect(deps.runGatewayRestart).not.toHaveBeenCalled();
       expect(deps.runGatewayStart).toHaveBeenCalledTimes(1);
@@ -433,17 +431,17 @@ describe("Nova rescue message", () => {
 
   it("persists a pending approval only in SQLite across store reopen", async () => {
     await withRescueStateDir("sqlite-reopen-", async (stateDir) => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
 
-      await runRescue("/openclaw restart gateway", cfg, commandContext(), deps);
+      await runRescue("/nova restart gateway", cfg, commandContext(), deps);
       resetPluginStateStoreForTests();
 
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toContain(
-        "[openclaw] done: gateway.restart",
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toContain(
+        "[nova] done: gateway.restart",
       );
       expect(deps.runGatewayRestart).toHaveBeenCalledTimes(1);
-      await expect(fs.access(path.join(stateDir, "openclaw", "rescue-pending"))).rejects.toThrow(
+      await expect(fs.access(path.join(stateDir, "nova", "rescue-pending"))).rejects.toThrow(
         /ENOENT/,
       );
     });
@@ -451,22 +449,22 @@ describe("Nova rescue message", () => {
 
   it("isolates pending approvals by account, channel, and sender", async () => {
     await withRescueStateDir("route-isolation-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
       const original = commandContext();
 
-      await runRescue("/openclaw restart gateway", cfg, original, deps);
+      await runRescue("/nova restart gateway", cfg, original, deps);
       for (const isolated of [
         commandContext({ accountId: "secondary" }),
         commandContext({ channelId: "telegram" }),
         commandContext({ from: "user:other", senderId: "user:other" }),
       ]) {
-        await expect(runRescue("/openclaw yes", cfg, isolated, deps)).resolves.toBe(
+        await expect(runRescue("/nova yes", cfg, isolated, deps)).resolves.toBe(
           "No pending Nova rescue change is waiting for approval.",
         );
       }
-      await expect(runRescue("/openclaw yes", cfg, original, deps)).resolves.toContain(
-        "[openclaw] done: gateway.restart",
+      await expect(runRescue("/nova yes", cfg, original, deps)).resolves.toContain(
+        "[nova] done: gateway.restart",
       );
       expect(deps.runGatewayRestart).toHaveBeenCalledTimes(1);
     });
@@ -474,28 +472,28 @@ describe("Nova rescue message", () => {
 
   it("falls back to the channel destination when account id is absent", async () => {
     await withRescueStateDir("route-account-fallback-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
       const original = commandContext({ accountId: undefined, to: "bot:primary" });
 
-      await runRescue("/openclaw restart gateway", cfg, original, deps);
+      await runRescue("/nova restart gateway", cfg, original, deps);
       await expect(
         runRescue(
-          "/openclaw yes",
+          "/nova yes",
           cfg,
           commandContext({ accountId: undefined, to: "bot:secondary" }),
           deps,
         ),
       ).resolves.toBe("No pending Nova rescue change is waiting for approval.");
-      await expect(runRescue("/openclaw yes", cfg, original, deps)).resolves.toContain(
-        "[openclaw] done: gateway.restart",
+      await expect(runRescue("/nova yes", cfg, original, deps)).resolves.toContain(
+        "[nova] done: gateway.restart",
       );
       expect(deps.runGatewayRestart).toHaveBeenCalledTimes(1);
     });
   });
 
   it("refuses plugin install from remote rescue", async () => {
-    const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+    const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
     const deps = {
       runPluginInstall: vi.fn(async () => {
         throw new Error("remote rescue must not install plugins");
@@ -503,13 +501,13 @@ describe("Nova rescue message", () => {
     };
 
     await expect(
-      runRescue("/openclaw plugin install clawhub:openclaw-demo", cfg, commandContext(), deps),
+      runRescue("/nova plugin install clawhub:nova-demo", cfg, commandContext(), deps),
     ).resolves.toContain("cannot install plugins from a message channel");
     expect(deps.runPluginInstall).not.toHaveBeenCalled();
   });
 
   it("allows plugin list and search from remote rescue", async () => {
-    const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+    const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
     const deps = {
       runPluginsList: vi.fn(async (runtime: RuntimeEnv) => {
         runtime.log("plugin rows");
@@ -519,11 +517,11 @@ describe("Nova rescue message", () => {
       }),
     };
 
+    await expect(runRescue("/nova plugins list", cfg, commandContext(), deps)).resolves.toContain(
+      "plugin rows",
+    );
     await expect(
-      runRescue("/openclaw plugins list", cfg, commandContext(), deps),
-    ).resolves.toContain("plugin rows");
-    await expect(
-      runRescue("/openclaw plugins search calendar", cfg, commandContext(), deps),
+      runRescue("/nova plugins search calendar", cfg, commandContext(), deps),
     ).resolves.toContain("search rows: calendar");
     expect(deps.runPluginsList).toHaveBeenCalledTimes(1);
     expect(deps.runPluginsSearch).toHaveBeenCalledTimes(1);
@@ -537,7 +535,7 @@ describe("Nova rescue message", () => {
 
   it("queues and applies persistent writes through conversational approval", async () => {
     await withRescueStateDir("models-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = {
         verifyInferenceConfig: vi.fn(async () => ({
           ok: true as const,
@@ -546,9 +544,9 @@ describe("Nova rescue message", () => {
         })),
       };
       await expect(
-        runRescue("/openclaw set default model openai/gpt-5.2", cfg, commandContext(), deps),
-      ).resolves.toContain("Reply /openclaw yes to apply");
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toContain(
+        runRescue("/nova set default model openai/gpt-5.2", cfg, commandContext(), deps),
+      ).resolves.toContain("Reply /nova yes to apply");
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toContain(
         "Default model: openai/gpt-5.2",
       );
 
@@ -569,14 +567,14 @@ describe("Nova rescue message", () => {
 
   it("queues and applies gateway restart through conversational approval", async () => {
     await withRescueStateDir("gateway-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
 
-      await expect(
-        runRescue("/openclaw restart gateway", cfg, commandContext(), deps),
-      ).resolves.toBe("Plan: restart the Gateway. Reply /openclaw yes to apply.");
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toContain(
-        "[openclaw] done: gateway.restart",
+      await expect(runRescue("/nova restart gateway", cfg, commandContext(), deps)).resolves.toBe(
+        "Plan: restart the Gateway. Reply /nova yes to apply.",
+      );
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toContain(
+        "[nova] done: gateway.restart",
       );
 
       expect(deps.runGatewayRestart).toHaveBeenCalledTimes(1);
@@ -596,13 +594,13 @@ describe("Nova rescue message", () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date(8_640_000_000_000_000));
       try {
-        const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+        const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
 
-        await expect(
-          runRescue("/openclaw restart gateway", cfg, commandContext()),
-        ).resolves.toContain("expiry clock is invalid");
+        await expect(runRescue("/nova restart gateway", cfg, commandContext())).resolves.toContain(
+          "expiry clock is invalid",
+        );
 
-        await expect(fs.readdir(path.join(tempDir, "openclaw", "rescue-pending"))).rejects.toThrow(
+        await expect(fs.readdir(path.join(tempDir, "nova", "rescue-pending"))).rejects.toThrow(
           /ENOENT/,
         );
       } finally {
@@ -615,18 +613,18 @@ describe("Nova rescue message", () => {
     await withRescueStateDir("expired-", async () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
 
       await runRescue(
-        "/openclaw restart gateway",
+        "/nova restart gateway",
         { systemAgent: { rescue: { enabled: true, pendingTtlMinutes: 1 } } },
         commandContext(),
         deps,
       );
       vi.advanceTimersByTime(60_001);
 
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toBe(
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toBe(
         "No pending Nova rescue change is waiting for approval.",
       );
       expect(deps.runGatewayRestart).not.toHaveBeenCalled();
@@ -635,10 +633,10 @@ describe("Nova rescue message", () => {
 
   it("consumes malformed pending rows without executing them", async () => {
     await withRescueStateDir("malformed-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = { runGatewayRestart: vi.fn(async () => {}) };
 
-      await runRescue("/openclaw restart gateway", cfg, commandContext(), deps);
+      await runRescue("/nova restart gateway", cfg, commandContext(), deps);
       const store = openRescuePendingTestStore();
       const [entry] = store.entries();
       if (!entry) {
@@ -650,10 +648,10 @@ describe("Nova rescue message", () => {
         { ttlMs: 60_000 },
       );
 
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toBe(
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toBe(
         "No pending Nova rescue change is waiting for approval.",
       );
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toBe(
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toBe(
         "No pending Nova rescue change is waiting for approval.",
       );
       expect(deps.runGatewayRestart).not.toHaveBeenCalled();
@@ -662,7 +660,7 @@ describe("Nova rescue message", () => {
 
   it("queues and applies agent creation through conversational approval", async () => {
     await withRescueStateDir("agent-", async () => {
-      const cfg: OpenClawConfig = { systemAgent: { rescue: { enabled: true } } };
+      const cfg: NovaConfig = { systemAgent: { rescue: { enabled: true } } };
       const deps = {
         createAgent: vi.fn(async () => ({
           status: "created" as const,
@@ -675,12 +673,12 @@ describe("Nova rescue message", () => {
       };
 
       await expect(
-        runRescue("/openclaw create agent work workspace /tmp/work", cfg, commandContext(), deps),
+        runRescue("/nova create agent work workspace /tmp/work", cfg, commandContext(), deps),
       ).resolves.toBe(
-        "Plan: create agent work with workspace /tmp/work. Reply /openclaw yes to apply.",
+        "Plan: create agent work with workspace /tmp/work. Reply /nova yes to apply.",
       );
-      await expect(runRescue("/openclaw yes", cfg, commandContext(), deps)).resolves.toContain(
-        "[openclaw] done: agents.create",
+      await expect(runRescue("/nova yes", cfg, commandContext(), deps)).resolves.toContain(
+        "[nova] done: agents.create",
       );
 
       expect(deps.createAgent).toHaveBeenCalledTimes(1);

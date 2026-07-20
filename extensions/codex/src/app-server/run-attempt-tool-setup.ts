@@ -3,7 +3,7 @@ import {
   isHostScopedAgentToolActive,
   materializeRequesterScopedMcpToolsForHarnessRun,
   resolveAgentDir,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   buildDynamicTools,
   formatCodexDynamicToolBuildStageSummary,
@@ -224,7 +224,7 @@ export async function prepareCodexAttemptTools(runtime: CodexAttemptRuntime) {
     }),
     directToolNames: resolveCodexDynamicToolDirectNames(
       params,
-      isHostScopedAgentToolActive("openclaw"),
+      isHostScopedAgentToolActive("nova"),
     ),
     hookContext: {
       agentId: sessionAgentId,

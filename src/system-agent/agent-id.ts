@@ -1,6 +1,6 @@
 import { normalizeAgentId } from "../routing/session-key.js";
 
-export const SYSTEM_AGENT_ID = "openclaw";
+export const SYSTEM_AGENT_ID = "nova";
 
 const RESERVED_SYSTEM_AGENT_IDS = new Set([
   normalizeAgentId(SYSTEM_AGENT_ID),

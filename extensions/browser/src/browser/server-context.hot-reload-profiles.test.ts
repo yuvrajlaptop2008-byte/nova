@@ -16,7 +16,7 @@ type TestProfileConfig = {
   color?: string;
   headless?: boolean;
   executablePath?: string;
-  driver?: "openclaw" | "existing-session" | "extension";
+  driver?: "nova" | "existing-session" | "extension";
   mcpCommand?: string;
   mcpArgs?: string[];
 };
@@ -44,7 +44,7 @@ const lifecycleMocks = vi.hoisted(() => ({
   closeChromeMcpSession: vi.fn(async () => false),
   closePlaywrightBrowserConnection: vi.fn(async (_opts: { cdpUrl: string }) => {}),
   retirePlaywrightBrowserConnection: vi.fn((_opts: { cdpUrl: string }) => true),
-  stopOpenClawChrome: vi.fn(async () => {}),
+  stopNovaChrome: vi.fn(async () => {}),
 }));
 
 function buildConfig(): TestConfig {
@@ -53,7 +53,7 @@ function buildConfig(): TestConfig {
       enabled: true,
       color: "#FF4500",
       headless: true,
-      defaultProfile: "openclaw",
+      defaultProfile: "nova",
       profiles: { ...mockState.cfgProfiles },
     },
   };
@@ -80,7 +80,7 @@ vi.mock("./config-refresh-source.js", () => ({
 }));
 
 vi.mock("./chrome.js", () => ({
-  stopOpenClawChrome: lifecycleMocks.stopOpenClawChrome,
+  stopNovaChrome: lifecycleMocks.stopNovaChrome,
 }));
 
 vi.mock("./chrome-mcp.runtime.js", () => ({
@@ -139,15 +139,15 @@ describe("server-context hot-reload profiles", () => {
     lifecycleMocks.closeChromeMcpSession.mockResolvedValue(false);
     lifecycleMocks.closePlaywrightBrowserConnection.mockResolvedValue(undefined);
     lifecycleMocks.retirePlaywrightBrowserConnection.mockReturnValue(true);
-    lifecycleMocks.stopOpenClawChrome.mockResolvedValue(undefined);
+    lifecycleMocks.stopNovaChrome.mockResolvedValue(undefined);
     mockState.cfgProfiles = {
-      openclaw: { cdpPort: 18800, color: "#FF4500" },
+      nova: { cdpPort: 18800, color: "#FF4500" },
     };
     mockState.cachedConfig = null; // Clear simulated cache
   });
 
   it("forProfile hot-reloads newly added profiles from config", () => {
-    // Start with only openclaw profile
+    // Start with only nova profile
     // 1. Prime the cache by calling getRuntimeConfig() first
     const cfg = getRuntimeConfig();
     const resolved = resolveBrowserConfig(cfg.browser, cfg);
@@ -170,7 +170,7 @@ describe("server-context hot-reload profiles", () => {
       }),
     ).toBeNull();
 
-    // 2. Simulate adding a new profile to config (like user editing openclaw.json)
+    // 2. Simulate adding a new profile to config (like user editing nova.json)
     mockState.cfgProfiles.desktop = { cdpUrl: "http://127.0.0.1:9222", color: "#0066CC" };
 
     // 3. Verify without clearConfigCache, getRuntimeConfig() still returns stale cached value
@@ -269,16 +269,16 @@ describe("server-context hot-reload profiles", () => {
       profiles: new Map(),
     };
 
-    mockState.cfgProfiles.openclaw = { cdpPort: 19999, color: "#FF4500" };
+    mockState.cfgProfiles.nova = { cdpPort: 19999, color: "#FF4500" };
     mockState.cachedConfig = null;
 
     const after = resolveBrowserProfileWithHotReload({
       current: state,
       refreshConfigFromDisk: true,
-      name: "openclaw",
+      name: "nova",
     });
     expect(after?.cdpPort).toBe(19999);
-    expect(state.resolved.profiles.openclaw?.cdpPort).toBe(19999);
+    expect(state.resolved.profiles.nova?.cdpPort).toBe(19999);
   });
 
   it("listProfiles refreshes config before enumerating profiles", () => {
@@ -304,29 +304,24 @@ describe("server-context hot-reload profiles", () => {
   it("captures the old profile before adopting changed invariants", async () => {
     const cfg = getRuntimeConfig();
     const resolved = resolveBrowserConfig(cfg.browser, cfg);
-    const openclawProfile = requireValue(
-      resolveProfile(resolved, "openclaw"),
-      "openclaw profile missing",
-    );
+    const novaProfile = requireValue(resolveProfile(resolved, "nova"), "nova profile missing");
     const state: BrowserServerState = {
       server: null,
       port: 18791,
       resolved,
-      profiles: new Map([
-        ["openclaw", runtimeState(openclawProfile, { pid: 123 } as never, "tab-1")],
-      ]),
+      profiles: new Map([["nova", runtimeState(novaProfile, { pid: 123 } as never, "tab-1")]]),
     };
 
-    mockState.cfgProfiles.openclaw = { cdpPort: 19999, color: "#FF4500" };
+    mockState.cfgProfiles.nova = { cdpPort: 19999, color: "#FF4500" };
     mockState.cachedConfig = null;
-    const oldCdpUrl = openclawProfile.cdpUrl;
+    const oldCdpUrl = novaProfile.cdpUrl;
 
     refreshResolvedBrowserConfigFromDisk({
       current: state,
       refreshConfigFromDisk: true,
     });
 
-    const runtime = requireValue(state.profiles.get("openclaw"), "openclaw runtime missing");
+    const runtime = requireValue(state.profiles.get("nova"), "nova runtime missing");
     expect(runtime.profile.cdpPort).toBe(19999);
     expect(runtime.lastTargetId).toBeNull();
     expect(getProfileLifecycle(runtime).transitionReason).toContain("cdpPort");
@@ -342,21 +337,16 @@ describe("server-context hot-reload profiles", () => {
   it("marks local managed runtime state for reconcile when profile headless changes", () => {
     const cfg = getRuntimeConfig();
     const resolved = resolveBrowserConfig(cfg.browser, cfg);
-    const openclawProfile = requireValue(
-      resolveProfile(resolved, "openclaw"),
-      "openclaw profile missing",
-    );
-    expect(openclawProfile.headless).toBe(true);
+    const novaProfile = requireValue(resolveProfile(resolved, "nova"), "nova profile missing");
+    expect(novaProfile.headless).toBe(true);
     const state: BrowserServerState = {
       server: null,
       port: 18791,
       resolved,
-      profiles: new Map([
-        ["openclaw", runtimeState(openclawProfile, { pid: 123 } as never, "tab-1")],
-      ]),
+      profiles: new Map([["nova", runtimeState(novaProfile, { pid: 123 } as never, "tab-1")]]),
     };
 
-    mockState.cfgProfiles.openclaw = {
+    mockState.cfgProfiles.nova = {
       cdpPort: 18800,
       color: "#FF4500",
       headless: false,
@@ -368,14 +358,14 @@ describe("server-context hot-reload profiles", () => {
       refreshConfigFromDisk: true,
     });
 
-    const runtime = requireValue(state.profiles.get("openclaw"), "openclaw runtime missing");
+    const runtime = requireValue(state.profiles.get("nova"), "nova runtime missing");
     expect(runtime.profile.headless).toBe(false);
     expect(runtime.lastTargetId).toBeNull();
     expect(getProfileLifecycle(runtime).transitionReason).toContain("headless");
   });
 
   it("marks local managed runtime state for reconcile when profile executablePath changes", () => {
-    mockState.cfgProfiles.openclaw = {
+    mockState.cfgProfiles.nova = {
       cdpPort: 18800,
       color: "#FF4500",
       executablePath: "/usr/bin/chrome-old",
@@ -383,21 +373,16 @@ describe("server-context hot-reload profiles", () => {
     mockState.cachedConfig = null;
     const cfg = getRuntimeConfig();
     const resolved = resolveBrowserConfig(cfg.browser, cfg);
-    const openclawProfile = requireValue(
-      resolveProfile(resolved, "openclaw"),
-      "openclaw profile missing",
-    );
-    expect(openclawProfile.executablePath).toBe("/usr/bin/chrome-old");
+    const novaProfile = requireValue(resolveProfile(resolved, "nova"), "nova profile missing");
+    expect(novaProfile.executablePath).toBe("/usr/bin/chrome-old");
     const state: BrowserServerState = {
       server: null,
       port: 18791,
       resolved,
-      profiles: new Map([
-        ["openclaw", runtimeState(openclawProfile, { pid: 123 } as never, "tab-1")],
-      ]),
+      profiles: new Map([["nova", runtimeState(novaProfile, { pid: 123 } as never, "tab-1")]]),
     };
 
-    mockState.cfgProfiles.openclaw = {
+    mockState.cfgProfiles.nova = {
       cdpPort: 18800,
       color: "#FF4500",
       executablePath: "/usr/bin/chrome-new",
@@ -409,7 +394,7 @@ describe("server-context hot-reload profiles", () => {
       refreshConfigFromDisk: true,
     });
 
-    const runtime = requireValue(state.profiles.get("openclaw"), "openclaw runtime missing");
+    const runtime = requireValue(state.profiles.get("nova"), "nova runtime missing");
     expect(runtime.profile.executablePath).toBe("/usr/bin/chrome-new");
     expect(runtime.lastTargetId).toBeNull();
     expect(getProfileLifecycle(runtime).transitionReason).toContain("executablePath");
@@ -475,7 +460,7 @@ describe("server-context hot-reload profiles", () => {
       resolveProfile(resolved, "remote"),
       "remote profile missing",
     );
-    expect(remoteProfile.driver).toBe("openclaw");
+    expect(remoteProfile.driver).toBe("nova");
     expect(remoteProfile.attachOnly).toBe(false);
     expect(remoteProfile.cdpIsLoopback).toBe(false);
     expect(remoteProfile.headless).toBe(true);
@@ -502,7 +487,7 @@ describe("server-context hot-reload profiles", () => {
     });
 
     const runtime = requireValue(state.profiles.get("remote"), "remote runtime missing");
-    expect(runtime.profile.driver).toBe("openclaw");
+    expect(runtime.profile.driver).toBe("nova");
     expect(runtime.profile.cdpIsLoopback).toBe(false);
     expect(runtime.profile.headless).toBe(false);
     expect(runtime.lastTargetId).toBe("tab-remote-cdp");
@@ -720,8 +705,8 @@ describe("server-context hot-reload profiles", () => {
     await getProfileLifecycle(oldRuntime).tail;
     await Promise.resolve();
     expect(state.profiles.has("work")).toBe(false);
-    expect(lifecycleMocks.stopOpenClawChrome).toHaveBeenCalledOnce();
-    expect(lifecycleMocks.stopOpenClawChrome).toHaveBeenCalledWith(lateRunning);
+    expect(lifecycleMocks.stopNovaChrome).toHaveBeenCalledOnce();
+    expect(lifecycleMocks.stopNovaChrome).toHaveBeenCalledWith(lateRunning);
     const replacement = getOrCreateProfileRuntime(state, workB);
     expect(replacement).not.toBe(oldRuntime);
     await expect(

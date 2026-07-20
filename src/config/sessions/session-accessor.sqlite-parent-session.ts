@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
+  openNovaAgentDatabase,
+  runNovaAgentWriteTransaction,
+  type NovaAgentDatabase,
+} from "../../state/nova-agent-db.js";
 import type {
   ForkSessionEntryFromParentTargetParams,
   ForkSessionEntryFromParentTargetResult,
@@ -67,7 +67,7 @@ export async function forkSqliteSessionTranscriptFromParent(
   if (!crossDatabase) {
     return await runExclusiveSqliteSessionWrite(resolved, async () => {
       let result: ForkSessionFromParentTranscriptResult = { status: "failed" };
-      runOpenClawAgentWriteTransaction((database) => {
+      runNovaAgentWriteTransaction((database) => {
         result = forkSqliteParentTranscriptInTransaction(database, resolved, {
           parentEntry: params.parentEntry,
           parentSessionKey: params.parentSessionKey,
@@ -86,7 +86,7 @@ export async function forkSqliteSessionTranscriptFromParent(
   if (!params.parentEntry.sessionId) {
     return { status: "missing-parent" };
   }
-  const sourceDatabase = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const sourceDatabase = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const source = resolveSqliteParentForkSourceTranscript(
     loadSqliteTranscriptEventsFromDatabase(sourceDatabase, params.parentEntry.sessionId),
   );
@@ -106,7 +106,7 @@ export async function forkSqliteSessionTranscriptFromParent(
       sessionKey: normalizeSqliteSessionKey(params.sessionKey),
     };
     const sessionFile = formatSqliteSessionMarkerForScope(targetScope);
-    runOpenClawAgentWriteTransaction((database) => {
+    runNovaAgentWriteTransaction((database) => {
       writeSqliteForkedChildTranscriptInTransaction(database, targetScope, {
         parentSessionFile,
         source,
@@ -124,7 +124,7 @@ export async function forkSqliteSessionEntryFromParentTarget(
   const parentTarget = normalizeSqliteLifecycleTarget(params.parentTarget);
   const sessionTarget = normalizeSqliteLifecycleTarget(params.sessionTarget);
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const parent = resolveSqliteLifecyclePrimaryEntry(database, parentTarget);
     if (!parent?.entry.sessionId) {
       return { status: "missing-parent" };
@@ -188,7 +188,7 @@ export async function forkSqliteSessionEntryFromParentTarget(
     const maintenancePlans: SqliteSessionEntryMaintenancePlan[] = [];
     let previousIdentity = new Map<string, SessionEntry>();
     let currentIdentity = new Map<string, SessionEntry>();
-    runOpenClawAgentWriteTransaction((writeDatabase) => {
+    runNovaAgentWriteTransaction((writeDatabase) => {
       const freshParent = resolveSqliteLifecyclePrimaryEntry(writeDatabase, parentTarget)?.entry;
       if (!freshParent?.sessionId) {
         result = { status: "missing-parent" };
@@ -266,7 +266,7 @@ async function persistSqliteParentForkSkipPatch(params: {
   const maintenancePlans: SqliteSessionEntryMaintenancePlan[] = [];
   let previousIdentity = new Map<string, SessionEntry>();
   let currentIdentity = new Map<string, SessionEntry>();
-  runOpenClawAgentWriteTransaction((database) => {
+  runNovaAgentWriteTransaction((database) => {
     previousIdentity = readSqliteSessionIdentitySnapshot(database, params.sessionTarget.storeKeys);
     deleteSqliteLifecycleTargetRows(database, params.sessionTarget);
     writeSessionEntry(database, params.sessionTarget.canonicalKey, next);
@@ -299,7 +299,7 @@ export async function resolveSqliteSessionParentForkDecision(params: {
     return resolveSqliteParentForkDecision(params.parentEntry);
   }
   const resolved = resolveSqliteStoreScope(params.storePath);
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   return resolveSqliteParentForkDecision(
     params.parentEntry,
     estimateSqliteTranscriptPromptTokens(
@@ -309,7 +309,7 @@ export async function resolveSqliteSessionParentForkDecision(params: {
 }
 
 function forkSqliteParentTranscriptInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   resolved: ResolvedSqliteScope,
   params: {
     parentEntry: SessionEntry;
@@ -353,7 +353,7 @@ function forkSqliteParentTranscriptInTransaction(
 }
 
 function writeSqliteForkedChildTranscriptInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   targetScope: ResolvedTranscriptScope,
   params: {
     parentSessionFile: string;

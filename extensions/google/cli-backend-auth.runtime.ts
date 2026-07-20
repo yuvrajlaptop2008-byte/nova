@@ -1,9 +1,9 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { CliBackendPreparedExecution } from "openclaw/plugin-sdk/cli-backend";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import type { CliBackendPreparedExecution } from "nova/plugin-sdk/cli-backend";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import {
   GOOGLE_GEMINI_CLI_PROVIDER_ID,
   resolveGeminiCliProfileHome as resolveGeminiCliProfileHomePath,
@@ -93,14 +93,14 @@ function throwUnstageableSelectedGeminiProfile(
   }
   if (!credential) {
     throw new Error(
-      "Gemini CLI auth profile was selected but no credential material was found. Re-authenticate with `openclaw models auth login --provider google-gemini-cli --force`.",
+      "Gemini CLI auth profile was selected but no credential material was found. Re-authenticate with `nova models auth login --provider google-gemini-cli --force`.",
     );
   }
   if (credential.provider !== GEMINI_CLI_PROVIDER_ID) {
     throwUnsupportedGeminiCredential(credential);
   }
   throw new Error(
-    "Gemini CLI execution supports google-gemini-cli OAuth or API-key auth profiles. Re-authenticate with `openclaw models auth login --provider google-gemini-cli --force`.",
+    "Gemini CLI execution supports google-gemini-cli OAuth or API-key auth profiles. Re-authenticate with `nova models auth login --provider google-gemini-cli --force`.",
   );
 }
 
@@ -126,7 +126,7 @@ function requireGeminiOAuthCredential(
     !Number.isFinite(credential.expires)
   ) {
     throw new Error(
-      "Gemini CLI OAuth profile is missing usable token material. Re-authenticate with `openclaw models auth login --provider google-gemini-cli --force`.",
+      "Gemini CLI OAuth profile is missing usable token material. Re-authenticate with `nova models auth login --provider google-gemini-cli --force`.",
     );
   }
 
@@ -279,7 +279,7 @@ async function prepareGeminiCliProfileHome(
   const settings = buildGeminiCliAuthSettings(selectedType);
   const systemSettings = await buildGeminiCliSystemSettings(ctx, selectedType);
   const systemSettingsDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-gemini-cli-"),
+    path.join(resolvePreferredNovaTmpDir(), "nova-gemini-cli-"),
   );
   await fs.chmod(systemSettingsDir, 0o700);
   const systemSettingsPath = path.join(systemSettingsDir, "settings.json");

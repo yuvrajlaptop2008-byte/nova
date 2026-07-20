@@ -73,14 +73,14 @@ function buildCliStartup(repoRoot: string) {
   }
 }
 
-async function runRealPicker(options: ProducerOptions, openclawHome: string) {
+async function runRealPicker(options: ProducerOptions, novaHome: string) {
   const startedAt = Date.now();
   const deadline = startedAt + options.timeoutMs;
   const child = spawn(
     process.execPath,
     [
       "scripts/e2e/lib/run-with-pty.mjs",
-      path.join(openclawHome, "picker.raw.log"),
+      path.join(novaHome, "picker.raw.log"),
       process.execPath,
       "nova.mjs",
       "configure",
@@ -93,13 +93,13 @@ async function runRealPicker(options: ProducerOptions, openclawHome: string) {
         ...process.env,
         CI: undefined,
         COLUMNS: "120",
-        HOME: openclawHome,
+        HOME: novaHome,
         LANG: "en_US.UTF-8",
         LC_ALL: "en_US.UTF-8",
         LC_MESSAGES: "en_US.UTF-8",
         LINES: "40",
         NOVA_CONFIG_PATH: undefined,
-        NOVA_HOME: openclawHome,
+        NOVA_HOME: novaHome,
         NOVA_LOCALE: "en",
         NOVA_STATE_DIR: undefined,
         TELEGRAM_BOT_TOKEN: undefined,
@@ -217,7 +217,7 @@ function assertPickerConfig(config: unknown) {
   }
   return {
     channelEnabled: true,
-    configPath: ".openclaw/openclaw.json",
+    configPath: ".nova/nova.json",
     defaultGroupRequiresMention: true,
     pluginEnabled: true,
     selectedChannel: "telegram",
@@ -248,15 +248,15 @@ async function runCliChannelPickerProducer(options: ProducerOptions) {
   const startedAt = Date.now();
   const writer = createEvidenceWriter(options);
   const workDir = path.join(options.artifactBase, ".work");
-  const openclawHome = path.join(workDir, "openclaw-home");
+  const novaHome = path.join(workDir, "nova-home");
 
   try {
     await fs.rm(workDir, { force: true, recursive: true });
-    await fs.mkdir(openclawHome, { recursive: true });
+    await fs.mkdir(novaHome, { recursive: true });
     buildCliStartup(options.repoRoot);
-    const result = await runRealPicker(options, openclawHome);
+    const result = await runRealPicker(options, novaHome);
     writer.appendLog(sanitizePickerTranscript(result.transcript));
-    const configPath = path.join(openclawHome, ".openclaw", "openclaw.json");
+    const configPath = path.join(novaHome, ".nova", "nova.json");
     const assertion = assertPickerConfig(JSON.parse(await fs.readFile(configPath, "utf8")));
     await fs.writeFile(
       path.join(options.artifactBase, "config-assertion.json"),

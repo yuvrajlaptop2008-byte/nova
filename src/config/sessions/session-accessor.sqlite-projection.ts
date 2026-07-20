@@ -5,10 +5,7 @@ import {
   resolveAgentHarnessSessionStoreError,
   resolveAgentHarnessSessionStoreTransitionError,
 } from "../../sessions/agent-harness-session-key.js";
-import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-} from "../../state/openclaw-agent-db.js";
+import { openNovaAgentDatabase, runNovaAgentWriteTransaction } from "../../state/nova-agent-db.js";
 import {
   materializeSqliteSessionStateDeletePlans,
   type MaterializedSqliteSessionStateDeletePlan,
@@ -95,7 +92,7 @@ export async function applySqliteSessionEntryReplacements<T>(params: {
     storePath: params.storePath,
   });
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const selectedKeys = params.sessionKeys ? new Set(params.sessionKeys) : undefined;
     const selectedStatuses = params.statuses ? new Set(params.statuses) : undefined;
     const entries = selectedStatuses
@@ -142,7 +139,7 @@ export async function applySqliteSessionEntryReplacements<T>(params: {
     }
 
     const maintenancePlans: SqliteSessionEntryMaintenancePlan[] = [];
-    runOpenClawAgentWriteTransaction(
+    runNovaAgentWriteTransaction(
       (transactionDb) => {
         for (const replacement of applicable) {
           const current = readExactSessionEntryRow(transactionDb, replacement.sessionKey)?.entry;
@@ -212,7 +209,7 @@ export async function applySqliteSessionStoreProjection<T>(params: {
     storePath: params.storePath,
   });
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const before = readSqliteSessionEntryStore(database);
     const projected = structuredClone(before);
     const operation = await params.update(projected);
@@ -239,7 +236,7 @@ export async function applySqliteSessionStoreProjection<T>(params: {
     }
 
     const maintenancePlans: SqliteSessionEntryMaintenancePlan[] = [];
-    runOpenClawAgentWriteTransaction(
+    runNovaAgentWriteTransaction(
       (transactionDb) => {
         for (const sessionKey of changedKeys) {
           const current = readExactSessionEntryRow(transactionDb, sessionKey)?.entry;
@@ -307,7 +304,7 @@ export async function applySqliteSessionEntryLifecycleMutation(params: {
       }
       throw error;
     };
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const projected = await projectSqliteSessionEntryLifecycleMutation(database, {
       archiveDirectory: resolveSqliteTranscriptArchiveDirectory(resolved),
       removals,
@@ -319,7 +316,7 @@ export async function applySqliteSessionEntryLifecycleMutation(params: {
     } catch (error) {
       captureArtifactCleanupError(error);
     }
-    runOpenClawAgentWriteTransaction((transactionDb) => {
+    runNovaAgentWriteTransaction((transactionDb) => {
       for (const removal of projected.removals) {
         const entry = readExactSessionEntryRow(transactionDb, removal.sessionKey)?.entry;
         if (!sqliteSessionEntriesEqual(entry, removal.expectedEntry)) {
@@ -363,7 +360,7 @@ export async function applySqliteSessionEntryLifecycleMutation(params: {
     );
     archivedTranscripts = [...archivedTranscripts, ...maintenanceArchivedTranscripts];
     const afterCount = readSqliteSessionEntryCount(
-      openOpenClawAgentDatabase(toDatabaseOptions(resolved)),
+      openNovaAgentDatabase(toDatabaseOptions(resolved)),
     );
     emitArchivedSqliteTranscriptUpdates(archivedTranscripts);
     const archivedTranscriptDirectories = uniqueStrings(
@@ -399,7 +396,7 @@ export async function purgeSqliteDeletedAgentSessionEntries(
 ): Promise<SessionEntryLifecycleMutationResult> {
   const resolved = resolveSqliteStoreScope(params.storePath, { agentId: params.storeAgentId });
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const store = readSqliteSessionEntryStore(database);
     const remainingStore = { ...store };
     const entryRemovals: SqliteSessionEntryRemovalPlan[] = [];
@@ -439,7 +436,7 @@ export async function purgeSqliteDeletedAgentSessionEntries(
     const removedSessionKeys = entryRemovals.map((removal) => removal.sessionKey);
     let archivedTranscripts: SessionLifecycleArchivedTranscript[] = [];
     const maintenancePlans: SqliteSessionEntryMaintenancePlan[] = [];
-    runOpenClawAgentWriteTransaction((transactionDb) => {
+    runNovaAgentWriteTransaction((transactionDb) => {
       deletePlannedSqliteLifecycleArtifactEntries(transactionDb, entryRemovals);
       maintenancePlans.push(
         applySqliteSessionEntryMaintenance(transactionDb, {
@@ -458,7 +455,7 @@ export async function purgeSqliteDeletedAgentSessionEntries(
       ...finalizeSqliteSessionEntryMaintenancePlansBestEffort(resolved, maintenancePlans),
     ];
     const afterCount = readSqliteSessionEntryCount(
-      openOpenClawAgentDatabase(toDatabaseOptions(resolved)),
+      openNovaAgentDatabase(toDatabaseOptions(resolved)),
     );
     emitArchivedSqliteTranscriptUpdates(archivedTranscripts);
     return {

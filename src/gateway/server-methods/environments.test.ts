@@ -85,7 +85,7 @@ function workerRecord(overrides: Partial<TestWorkerRecord> = {}): TestWorkerReco
     sshEndpoint: {
       host: "worker.example.test",
       port: 22,
-      user: "openclaw",
+      user: "nova",
       hostKey: ["ssh-ed25519", "AAAA"].join(" "),
       keyRef: { source: "file", provider: "default", id: "/worker/private-key" },
     },

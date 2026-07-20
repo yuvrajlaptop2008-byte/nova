@@ -28,8 +28,7 @@ export function registerAuditCommand(program: Command): void {
     .option("--json", "Output a bounded JSON page", false)
     .addHelpText(
       "after",
-      () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/audit", "docs.openclaw.ai/cli/audit")}\n`,
+      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/audit", "docs.nova.ai/cli/audit")}\n`,
     )
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {

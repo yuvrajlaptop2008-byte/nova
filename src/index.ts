@@ -97,10 +97,7 @@ if (isMain) {
       return;
     }
     if (isBenignUncaughtExceptionError(error)) {
-      console.warn(
-        "[openclaw] Non-fatal uncaught exception (continuing):",
-        formatUncaughtError(error),
-      );
+      console.warn("[nova] Non-fatal uncaught exception (continuing):", formatUncaughtError(error));
       return;
     }
     for (const line of formatCliFailureLines({
@@ -111,7 +108,7 @@ if (isMain) {
       console.error(line);
     }
     for (const message of runFatalErrorHooks({ reason: "uncaught_exception", error })) {
-      console.error("[openclaw]", message);
+      console.error("[nova]", message);
     }
     restoreTerminalState("uncaught exception", { resumeStdinIfPaused: false });
     process.exit(1);
@@ -126,7 +123,7 @@ if (isMain) {
       console.error(line);
     }
     for (const message of runFatalErrorHooks({ reason: "legacy_cli_failure", error: err })) {
-      console.error("[openclaw]", message);
+      console.error("[nova]", message);
     }
     restoreTerminalState("legacy cli failure", { resumeStdinIfPaused: false });
     process.exit(1);

@@ -32,7 +32,7 @@ import {
   isMissingOperatorReadScopeError,
 } from "../../lib/gateway-errors.ts";
 import { buildSessionUsageDateParams, requestSessionsUsage } from "../../lib/sessions/index.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { PROFILE_SETTINGS_TARGET_IDS } from "../config/settings-targets.ts";
 import {
   decideUsageRefresh,
@@ -76,7 +76,7 @@ function toIdentityErrorMessage(error: unknown): string {
     : t("profilePage.identity.profileUnavailable");
 }
 
-export class ProfilePage extends OpenClawLightDomElement {
+export class ProfilePage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: false })
   private context!: ApplicationContext;
 
@@ -589,6 +589,6 @@ export class ProfilePage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-profile-page")) {
-  customElements.define("openclaw-profile-page", ProfilePage);
+if (!customElements.get("nova-profile-page")) {
+  customElements.define("nova-profile-page", ProfilePage);
 }

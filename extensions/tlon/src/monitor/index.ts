@@ -1,12 +1,12 @@
-import { resolveHumanDelayConfig } from "openclaw/plugin-sdk/agent-runtime";
-import { createChannelInboundEnvelopeBuilder } from "openclaw/plugin-sdk/channel-inbound";
-import { bindIngressLifecycleToReplyOptions } from "openclaw/plugin-sdk/channel-outbound";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-import { sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
-import { asFiniteNumber } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { sliceUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
-import type { OpenClawConfig } from "../../runtime-api.js";
+import { resolveHumanDelayConfig } from "nova/plugin-sdk/agent-runtime";
+import { createChannelInboundEnvelopeBuilder } from "nova/plugin-sdk/channel-inbound";
+import { bindIngressLifecycleToReplyOptions } from "nova/plugin-sdk/channel-outbound";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime";
+import { sleepWithAbort } from "nova/plugin-sdk/runtime-env";
+import { asFiniteNumber } from "nova/plugin-sdk/string-coerce-runtime";
+import { sliceUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
+import type { NovaConfig } from "../../runtime-api.js";
 import { createLoggerBackedRuntime } from "../../runtime-api.js";
 import { getTlonRuntime } from "../runtime.js";
 import { createSettingsManager, type TlonSettingsStore } from "../settings.js";
@@ -62,7 +62,7 @@ function readNumber(record: Record<string, unknown> | null, key: string): number
 
 export async function monitorTlonProvider(opts: MonitorTlonOpts = {}): Promise<void> {
   const core = getTlonRuntime();
-  const cfg = core.config.current() as OpenClawConfig;
+  const cfg = core.config.current() as NovaConfig;
   if (cfg.channels?.tlon?.enabled === false) {
     return;
   }
@@ -450,7 +450,7 @@ export async function monitorTlonProvider(opts: MonitorTlonOpts = {}): Promise<v
             `This can leak conversation context between users.\n\n` +
             `Fix: Add to your Nova config:\n` +
             `session:\n  dmScope: "per-channel-peer"\n\n` +
-            `Docs: https://docs.openclaw.ai/concepts/session#secure-dm-mode`;
+            `Docs: https://docs.nova.ai/concepts/session#secure-dm-mode`;
 
           sendDm({
             api,

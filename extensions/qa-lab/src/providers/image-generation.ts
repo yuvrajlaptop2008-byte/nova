@@ -1,8 +1,5 @@
 // Qa Lab plugin module implements image generation behavior.
-import {
-  normalizeTrimmedStringList,
-  uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeTrimmedStringList, uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   QA_BASE_RUNTIME_PLUGIN_IDS,
   QA_CODEX_OPENAI_CATALOG_BASE_URL,

@@ -1,6 +1,6 @@
 # @nova/diffs-language-pack
 
-Official extended syntax highlighting pack for the OpenClaw Diffs plugin.
+Official extended syntax highlighting pack for the Nova Diffs plugin.
 
 The base `@nova/diffs` plugin ships a curated language set. Install this package when you want the full Shiki language catalog available in rendered diff viewers and diff image/PDF output.
 
@@ -9,7 +9,7 @@ The pack adds highlighting for languages outside the default diffs viewer set, i
 ## Install
 
 ```bash
-openclaw plugins install @nova/diffs-language-pack
+nova plugins install @nova/diffs-language-pack
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -20,11 +20,11 @@ Install `@nova/diffs` first, then install this language pack. The language pack 
 
 ## Docs
 
-- https://docs.openclaw.ai/tools/diffs
-- https://docs.openclaw.ai/plugins/reference/diffs-language-pack
+- https://docs.nova.ai/tools/diffs
+- https://docs.nova.ai/plugins/reference/diffs-language-pack
 
 ## Package
 
 - Plugin id: `diffs-language-pack`
 - Package: `@nova/diffs-language-pack`
-- Minimum OpenClaw host: `2026.5.27`
+- Minimum Nova host: `2026.5.27`

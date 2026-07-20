@@ -186,7 +186,7 @@ export function registerOnboardCommand(program: Command): void {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/onboard", "docs.openclaw.ai/cli/onboard")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/onboard", "docs.nova.ai/cli/onboard")}\n`,
     )
     .option(
       "--workspace <dir>",
@@ -306,8 +306,8 @@ export function registerOnboardCommand(program: Command): void {
           defaultRuntime.error(
             [
               "Non-interactive setup requires explicit risk acknowledgement.",
-              "Read: https://docs.openclaw.ai/security",
-              `Re-run with: ${formatCliCommand("openclaw onboard --modern --non-interactive --accept-risk ...")}`,
+              "Read: https://docs.nova.ai/security",
+              `Re-run with: ${formatCliCommand("nova onboard --modern --non-interactive --accept-risk ...")}`,
             ].join("\n"),
           );
           defaultRuntime.exit(1);

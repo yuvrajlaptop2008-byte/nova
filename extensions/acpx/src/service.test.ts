@@ -2,12 +2,12 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const { runtimeRegistry } = vi.hoisted(() => ({
@@ -18,8 +18,8 @@ const { prepareAcpxCodexAuthConfigMock } = vi.hoisted(() => ({
     async ({ pluginConfig }: { pluginConfig: unknown }) => pluginConfig,
   ),
 }));
-const { cleanupOpenClawOwnedAcpxProcessTreeMock } = vi.hoisted(() => ({
-  cleanupOpenClawOwnedAcpxProcessTreeMock: vi.fn(
+const { cleanupNovaOwnedAcpxProcessTreeMock } = vi.hoisted(() => ({
+  cleanupNovaOwnedAcpxProcessTreeMock: vi.fn(
     async (): Promise<{
       inspectedPids: number[];
       terminatedPids: number[];
@@ -30,8 +30,8 @@ const { cleanupOpenClawOwnedAcpxProcessTreeMock } = vi.hoisted(() => ({
     }),
   ),
 }));
-const { reapStaleOpenClawOwnedAcpxOrphansMock } = vi.hoisted(() => ({
-  reapStaleOpenClawOwnedAcpxOrphansMock: vi.fn(
+const { reapStaleNovaOwnedAcpxOrphansMock } = vi.hoisted(() => ({
+  reapStaleNovaOwnedAcpxOrphansMock: vi.fn(
     async (): Promise<{
       inspectedPids: number[];
       terminatedPids: number[];
@@ -91,12 +91,12 @@ vi.mock("./codex-auth-bridge.js", () => ({
 }));
 
 vi.mock("./process-reaper.js", () => ({
-  cleanupOpenClawOwnedAcpxProcessTree: cleanupOpenClawOwnedAcpxProcessTreeMock,
-  reapStaleOpenClawOwnedAcpxOrphans: reapStaleOpenClawOwnedAcpxOrphansMock,
+  cleanupNovaOwnedAcpxProcessTree: cleanupNovaOwnedAcpxProcessTreeMock,
+  reapStaleNovaOwnedAcpxOrphans: reapStaleNovaOwnedAcpxOrphansMock,
 }));
 
 import { getAcpRuntimeBackend } from "../runtime-api.js";
-import type { OpenClawPluginServiceContext } from "../runtime-api.js";
+import type { NovaPluginServiceContext } from "../runtime-api.js";
 import { openAcpxProcessLeaseStateStore, type AcpxProcessLease } from "./process-lease.js";
 import {
   createAcpxRuntimeService as createRealAcpxRuntimeService,
@@ -126,7 +126,7 @@ function restoreEnv(name: keyof typeof previousEnv): void {
 }
 
 async function makeTempDir(): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acpx-service-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acpx-service-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -135,8 +135,8 @@ afterEach(async () => {
   resetPluginStateStoreForTests();
   runtimeRegistry.clear();
   prepareAcpxCodexAuthConfigMock.mockClear();
-  cleanupOpenClawOwnedAcpxProcessTreeMock.mockClear();
-  reapStaleOpenClawOwnedAcpxOrphansMock.mockClear();
+  cleanupNovaOwnedAcpxProcessTreeMock.mockClear();
+  reapStaleNovaOwnedAcpxOrphansMock.mockClear();
   acpxRuntimeConstructorMock.mockClear();
   createAgentRegistryMock.mockClear();
   createFileSessionStoreMock.mockClear();
@@ -148,10 +148,10 @@ afterEach(async () => {
   }
 });
 
-function createServiceContext(workspaceDir: string): OpenClawPluginServiceContext {
+function createServiceContext(workspaceDir: string): NovaPluginServiceContext {
   return {
     workspaceDir,
-    stateDir: path.join(workspaceDir, ".openclaw-plugin-state"),
+    stateDir: path.join(workspaceDir, ".nova-plugin-state"),
     config: {},
     logger: {
       info: vi.fn(),
@@ -162,7 +162,7 @@ function createServiceContext(workspaceDir: string): OpenClawPluginServiceContex
   };
 }
 
-function createOpenKeyedStore(ctx: OpenClawPluginServiceContext) {
+function createOpenKeyedStore(ctx: NovaPluginServiceContext) {
   const env = { ...process.env, NOVA_STATE_DIR: ctx.stateDir };
   return <T>(options: OpenKeyedStoreOptions) =>
     createPluginStateKeyedStoreForTests<T>("acpx", {
@@ -172,7 +172,7 @@ function createOpenKeyedStore(ctx: OpenClawPluginServiceContext) {
 }
 
 function createAcpxRuntimeService(
-  ctx: OpenClawPluginServiceContext,
+  ctx: NovaPluginServiceContext,
   params: Parameters<typeof createRealAcpxRuntimeService>[0] = {},
 ) {
   return createRealAcpxRuntimeService({
@@ -181,14 +181,14 @@ function createAcpxRuntimeService(
   });
 }
 
-function openGatewayInstanceStore(ctx: OpenClawPluginServiceContext) {
+function openGatewayInstanceStore(ctx: NovaPluginServiceContext) {
   return createOpenKeyedStore(ctx)<AcpxGatewayInstanceRecord>({
     namespace: ACPX_GATEWAY_INSTANCE_NAMESPACE,
     maxEntries: ACPX_GATEWAY_INSTANCE_MAX_ENTRIES,
   });
 }
 
-function openProcessLeaseStore(ctx: OpenClawPluginServiceContext) {
+function openProcessLeaseStore(ctx: NovaPluginServiceContext) {
   return openAcpxProcessLeaseStateStore(createOpenKeyedStore(ctx));
 }
 
@@ -398,7 +398,7 @@ describe("createAcpxRuntimeService", () => {
       state: "open",
     };
     await openProcessLeaseStore(ctx).register(lease.leaseId, lease);
-    cleanupOpenClawOwnedAcpxProcessTreeMock.mockResolvedValueOnce({
+    cleanupNovaOwnedAcpxProcessTreeMock.mockResolvedValueOnce({
       inspectedPids: [101, 102],
       terminatedPids: [101, 102],
     });
@@ -409,7 +409,7 @@ describe("createAcpxRuntimeService", () => {
 
     await service.start(ctx);
 
-    expect(cleanupOpenClawOwnedAcpxProcessTreeMock).toHaveBeenCalledWith({
+    expect(cleanupNovaOwnedAcpxProcessTreeMock).toHaveBeenCalledWith({
       rootPid: 101,
       expectedLeaseId: "lease-1",
       expectedGatewayInstanceId: "gw-test",
@@ -444,7 +444,7 @@ describe("createAcpxRuntimeService", () => {
       state: "open",
     };
     await openProcessLeaseStore(ctx).register(lease.leaseId, lease);
-    reapStaleOpenClawOwnedAcpxOrphansMock.mockResolvedValueOnce({
+    reapStaleNovaOwnedAcpxOrphansMock.mockResolvedValueOnce({
       inspectedPids: [201, 202],
       terminatedPids: [201, 202],
     });
@@ -455,8 +455,8 @@ describe("createAcpxRuntimeService", () => {
 
     await service.start(ctx);
 
-    expect(cleanupOpenClawOwnedAcpxProcessTreeMock).not.toHaveBeenCalled();
-    expect(reapStaleOpenClawOwnedAcpxOrphansMock).toHaveBeenCalledWith({
+    expect(cleanupNovaOwnedAcpxProcessTreeMock).not.toHaveBeenCalled();
+    expect(reapStaleNovaOwnedAcpxOrphansMock).toHaveBeenCalledWith({
       wrapperRoot,
       deps: processCleanupDeps,
     });
@@ -476,7 +476,7 @@ describe("createAcpxRuntimeService", () => {
 
     await service.start(ctx);
 
-    expect(cleanupOpenClawOwnedAcpxProcessTreeMock).not.toHaveBeenCalled();
+    expect(cleanupNovaOwnedAcpxProcessTreeMock).not.toHaveBeenCalled();
     expect(ctx.logger.warn).not.toHaveBeenCalled();
 
     await service.stop?.(ctx);

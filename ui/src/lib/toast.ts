@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import { state } from "lit/decorators.js";
 import { t } from "../i18n/index.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 
 type ToastOptions = {
   message: string;
@@ -12,7 +12,7 @@ type ToastOptions = {
 
 const DEFAULT_TOAST_DURATION_MS = 6_000;
 
-class OpenClawToastHost extends OpenClawLightDomContentsElement {
+class NovaToastHost extends NovaLightDomContentsElement {
   @state() private toast: ToastOptions | null = null;
   private dismissTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
@@ -78,15 +78,15 @@ class OpenClawToastHost extends OpenClawLightDomContentsElement {
 }
 
 export function showToast(options: ToastOptions): void {
-  document.querySelector<OpenClawToastHost>("openclaw-toast-host")?.show(options);
+  document.querySelector<NovaToastHost>("nova-toast-host")?.show(options);
 }
 
-if (!customElements.get("openclaw-toast-host")) {
-  customElements.define("openclaw-toast-host", OpenClawToastHost);
+if (!customElements.get("nova-toast-host")) {
+  customElements.define("nova-toast-host", NovaToastHost);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-toast-host": OpenClawToastHost;
+    "nova-toast-host": NovaToastHost;
   }
 }

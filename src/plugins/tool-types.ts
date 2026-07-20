@@ -3,23 +3,23 @@ import type { ConversationRecallContext } from "../agents/conversation-recall.ty
 import type { ToolFsPolicy } from "../agents/tool-fs-policy.types.js";
 import type { AnyAgentTool } from "../agents/tools/common.js";
 import type { ConversationReadInvocationOrigin } from "../channels/plugins/conversation-read-origin.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { HookEntry } from "../hooks/types.js";
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
 
-export type OpenClawPluginActiveModelContext = {
+export type NovaPluginActiveModelContext = {
   provider?: string;
   modelId?: string;
   modelRef?: string;
 };
 
 /** Trusted execution context passed to plugin-owned agent tool factories. */
-export type OpenClawPluginToolContext = {
-  config?: OpenClawConfig;
+export type NovaPluginToolContext = {
+  config?: NovaConfig;
   /** Active runtime-resolved config snapshot when one is available. */
-  runtimeConfig?: OpenClawConfig;
+  runtimeConfig?: NovaConfig;
   /** Returns the latest runtime-resolved config snapshot for long-lived tool definitions. */
-  getRuntimeConfig?: () => OpenClawConfig | undefined;
+  getRuntimeConfig?: () => NovaConfig | undefined;
   /** Effective filesystem policy for the active tool run. */
   fsPolicy?: ToolFsPolicy;
   workspaceDir?: string;
@@ -37,7 +37,7 @@ export type OpenClawPluginToolContext = {
    * and plugin-owned policy decisions. This is not a security boundary against
    * the local operator, installed plugin code, or a modified Nova runtime.
    */
-  activeModel?: OpenClawPluginActiveModelContext;
+  activeModel?: NovaPluginActiveModelContext;
   browser?: {
     sandboxBridgeUrl?: string;
     allowHostControl?: boolean;
@@ -69,17 +69,17 @@ export type OpenClawPluginToolContext = {
   oneShotCliRun?: boolean;
 };
 
-export type OpenClawPluginToolFactory = (
-  ctx: OpenClawPluginToolContext,
+export type NovaPluginToolFactory = (
+  ctx: NovaPluginToolContext,
 ) => AnyAgentTool | AnyAgentTool[] | null | undefined;
 
-export type OpenClawPluginToolOptions = {
+export type NovaPluginToolOptions = {
   name?: string;
   names?: string[];
   optional?: boolean;
 };
 
-export type OpenClawPluginHookOptions = {
+export type NovaPluginHookOptions = {
   entry?: HookEntry;
   name?: string;
   description?: string;

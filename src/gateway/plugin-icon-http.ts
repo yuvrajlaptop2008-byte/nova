@@ -1,7 +1,7 @@
 // Authenticated same-origin proxy for plugin manifest/catalog icons.
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { fileTypeFromBuffer } from "file-type";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { readRemoteMediaBuffer } from "../media/fetch.js";
 import {
   createImageProcessor,
@@ -257,7 +257,7 @@ export async function handlePluginIconHttpRequest(
   res: ServerResponse,
   opts: {
     auth: ResolvedGatewayAuth;
-    config: OpenClawConfig;
+    config: NovaConfig;
     basePath?: string;
     trustedProxies?: string[];
     allowRealIpFallback?: boolean;

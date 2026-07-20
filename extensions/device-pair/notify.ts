@@ -1,11 +1,11 @@
 // Device Pair plugin module implements notify behavior.
 import { randomUUID } from "node:crypto";
-import type { OpenClawPluginService } from "openclaw/plugin-sdk/core";
-import { listDevicePairing } from "openclaw/plugin-sdk/device-bootstrap";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginStateKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaPluginService } from "nova/plugin-sdk/core";
+import { listDevicePairing } from "nova/plugin-sdk/device-bootstrap";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import type { PluginStateKeyedStore } from "nova/plugin-sdk/plugin-state-runtime";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   DEVICE_PAIR_NOTIFY_MAX_SEEN_AGE_MS,
   DEVICE_PAIR_NOTIFY_SEEN_REQUEST_MAX_ENTRIES,
@@ -83,7 +83,7 @@ type NotifySubscriberStore = PluginStateKeyedStore<NotifySubscription> & {
   deleteIf: NonNullable<PluginStateKeyedStore<NotifySubscription>["deleteIf"]>;
 };
 
-function openNotifySubscriberStore(api: OpenClawPluginApi): NotifySubscriberStore {
+function openNotifySubscriberStore(api: NovaPluginApi): NotifySubscriberStore {
   const store = api.runtime.state.openKeyedStore<NotifySubscription>({
     namespace: DEVICE_PAIR_NOTIFY_SUBSCRIBER_NAMESPACE,
     maxEntries: DEVICE_PAIR_NOTIFY_SUBSCRIBER_MAX_ENTRIES,
@@ -96,9 +96,7 @@ function openNotifySubscriberStore(api: OpenClawPluginApi): NotifySubscriberStor
   return store as NotifySubscriberStore;
 }
 
-function openNotifySeenRequestStore(
-  api: OpenClawPluginApi,
-): PluginStateKeyedStore<NotifySeenRequest> {
+function openNotifySeenRequestStore(api: NovaPluginApi): PluginStateKeyedStore<NotifySeenRequest> {
   return api.runtime.state.openKeyedStore<NotifySeenRequest>({
     namespace: DEVICE_PAIR_NOTIFY_SEEN_REQUEST_NAMESPACE,
     maxEntries: DEVICE_PAIR_NOTIFY_SEEN_REQUEST_MAX_ENTRIES,
@@ -147,7 +145,7 @@ function nextNotifySubscription(
 }
 
 async function registerNotifySubscriber(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   target: NotifyTarget;
   mode: NotifySubscription["mode"];
   refresh: boolean;
@@ -224,7 +222,7 @@ function shouldNotifySubscriberForRequest(
 }
 
 async function notifySubscriber(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   subscriber: NotifySubscription;
   text: string;
 }): Promise<boolean> {
@@ -256,7 +254,7 @@ async function notifySubscriber(params: {
   }
 }
 
-async function notifyPendingPairingRequests(params: { api: OpenClawPluginApi }): Promise<void> {
+async function notifyPendingPairingRequests(params: { api: NovaPluginApi }): Promise<void> {
   const subscriberStore = openNotifySubscriberStore(params.api);
   const seenRequestStore = openNotifySeenRequestStore(params.api);
   const [subscriberEntries, seenRequestEntries, pairing] = await Promise.all([
@@ -331,7 +329,7 @@ async function notifyPendingPairingRequests(params: { api: OpenClawPluginApi }):
   }
 }
 
-async function runNotifyPoll(api: OpenClawPluginApi): Promise<void> {
+async function runNotifyPoll(api: NovaPluginApi): Promise<void> {
   if (notifyPollInFlight) {
     return;
   }
@@ -344,7 +342,7 @@ async function runNotifyPoll(api: OpenClawPluginApi): Promise<void> {
 }
 
 export async function armPairNotifyOnce(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   ctx: {
     channel: string;
     senderId?: string;
@@ -372,7 +370,7 @@ export async function armPairNotifyOnce(params: {
 }
 
 export async function handleNotifyCommand(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   ctx: {
     channel: string;
     senderId?: string;
@@ -449,7 +447,7 @@ export async function handleNotifyCommand(params: {
   return { text: "Usage: /pair notify on|off|once|status" };
 }
 
-export function createPairingNotifierService(api: OpenClawPluginApi): OpenClawPluginService {
+export function createPairingNotifierService(api: NovaPluginApi): NovaPluginService {
   let notifyInterval: ReturnType<typeof setInterval> | null = null;
 
   return {

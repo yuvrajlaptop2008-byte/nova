@@ -9,7 +9,7 @@ import {
 import { createStorageMock } from "../test-helpers/storage.ts";
 import "./sidebar-update-card.ts";
 
-const DISMISS_KEY = "openclaw:control-ui:update-banner-dismissed:v1";
+const DISMISS_KEY = "nova:control-ui:update-banner-dismissed:v1";
 
 type SidebarUpdateCardElement = HTMLElement & {
   updateAvailable: UpdateAvailable | null;
@@ -22,9 +22,7 @@ let originalWebkit: PropertyDescriptor | undefined;
 let originalLocalStorage: PropertyDescriptor | undefined;
 
 async function mount(update: UpdateAvailable | null) {
-  const element = document.createElement(
-    "openclaw-sidebar-update-card",
-  ) as SidebarUpdateCardElement;
+  const element = document.createElement("nova-sidebar-update-card") as SidebarUpdateCardElement;
   element.updateAvailable = update;
   document.body.append(element);
   await element.updateComplete;
@@ -102,7 +100,7 @@ describe("SidebarUpdateCard", () => {
     const postMessage = vi.fn();
     Object.defineProperty(window, "webkit", {
       configurable: true,
-      value: { messageHandlers: { openclawUpdate: { postMessage } } },
+      value: { messageHandlers: { novaUpdate: { postMessage } } },
     });
     const element = await mount({
       currentVersion: "1.0.0",
@@ -131,7 +129,7 @@ describe("SidebarUpdateCard", () => {
 
     Object.defineProperty(window, "webkit", {
       configurable: true,
-      value: { messageHandlers: { openclawUpdate: { postMessage: vi.fn() } } },
+      value: { messageHandlers: { novaUpdate: { postMessage: vi.fn() } } },
     });
     window.dispatchEvent(new CustomEvent(NATIVE_UPDATE_AVAILABILITY_CHANGED_EVENT));
     await element.updateComplete;
@@ -156,7 +154,7 @@ describe("SidebarUpdateCard", () => {
 
     Object.defineProperty(window, "webkit", {
       configurable: true,
-      value: { messageHandlers: { openclawUpdate: { postMessage } } },
+      value: { messageHandlers: { novaUpdate: { postMessage } } },
     });
     element.querySelector<HTMLButtonElement>(".sidebar-update-card__action")?.click();
 
@@ -194,7 +192,7 @@ describe("SidebarUpdateCard", () => {
     const postMessage = vi.fn();
     Object.defineProperty(window, "webkit", {
       configurable: true,
-      value: { messageHandlers: { openclawUpdate: { postMessage } } },
+      value: { messageHandlers: { novaUpdate: { postMessage } } },
     });
     const element = await mount({
       currentVersion: "1.0.0",
@@ -224,7 +222,7 @@ describe("SidebarUpdateCard", () => {
     const postMessage = vi.fn();
     Object.defineProperty(window, "webkit", {
       configurable: true,
-      value: { messageHandlers: { openclawUpdate: { postMessage } } },
+      value: { messageHandlers: { novaUpdate: { postMessage } } },
     });
     const element = await mount({
       currentVersion: "1.0.0",

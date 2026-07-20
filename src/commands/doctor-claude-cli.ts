@@ -23,7 +23,7 @@ import type {
 import { readClaudeCliCredentialsCached } from "../agents/cli-credentials.js";
 import { resolveClaudeCliProjectDirForWorkspace } from "../agents/command/claude-cli-project-dir.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveExecutablePath } from "../infra/executable-path.js";
 import { shortenHomePath } from "../utils.js";
 
@@ -36,7 +36,7 @@ type ClaudeCliReadableCredential =
 
 type ClaudeCliDirHealth = "present" | "missing" | "not_directory" | "unreadable" | "readonly";
 
-function usesClaudeCliModelSelection(cfg: OpenClawConfig): boolean {
+function usesClaudeCliModelSelection(cfg: NovaConfig): boolean {
   const primary = resolvePrimaryStringValue(
     cfg.agents?.defaults?.model as string | { primary?: string; fallbacks?: string[] } | undefined,
   );
@@ -48,7 +48,7 @@ function usesClaudeCliModelSelection(cfg: OpenClawConfig): boolean {
   );
 }
 
-function resolveClaudeCliCommand(cfg: OpenClawConfig): string {
+function resolveClaudeCliCommand(cfg: NovaConfig): string {
   const configured = cfg.agents?.defaults?.cliBackends ?? {};
   for (const [key, entry] of Object.entries(configured)) {
     if (normalizeOptionalLowercaseString(key) !== CLAUDE_CLI_PROVIDER) {
@@ -122,7 +122,7 @@ function formatProjectDirProblemLine(
   return `- ${label}: ${display} is not writable by this user.`;
 }
 
-function resolveClaudeCliAgentIds(cfg: OpenClawConfig): string[] {
+function resolveClaudeCliAgentIds(cfg: NovaConfig): string[] {
   const agentIds = listAgentIds(cfg);
   const runtimeAgentIds = agentIds.filter(
     (agentId) => resolveModelAgentRuntimeMetadata({ cfg, agentId }).id === CLAUDE_CLI_PROVIDER,
@@ -145,7 +145,7 @@ type ClaudeCliWorkspaceTarget = {
 };
 
 function resolveClaudeCliWorkspaceTargets(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   homeDir?: string;
   workspaceDir?: string;
@@ -187,7 +187,7 @@ function resolveClaudeCliWorkspaceTargets(params: {
  * touching the user's real Claude credentials or filesystem.
  */
 export function noteClaudeCliHealth(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: {
     noteFn?: typeof note;
     env?: NodeJS.ProcessEnv;
@@ -241,7 +241,7 @@ export function noteClaudeCliHealth(
     lines.push("- Headless Claude auth: unavailable without interactive prompting.");
     fixHints.push(
       `- Fix: run ${formatCliCommand("claude auth login")}, then ${formatCliCommand(
-        "openclaw models auth login --provider anthropic --method cli --set-default",
+        "nova models auth login --provider anthropic --method cli --set-default",
       )}.`,
     );
   }
@@ -250,7 +250,7 @@ export function noteClaudeCliHealth(
     lines.push(`- Nova auth profile: missing (${CLAUDE_CLI_PROFILE_ID}) in ${authStorePath}.`);
     fixHints.push(
       `- Fix: run ${formatCliCommand(
-        "openclaw models auth login --provider anthropic --method cli --set-default",
+        "nova models auth login --provider anthropic --method cli --set-default",
       )}.`,
     );
   } else if (storedProfile && storedProfile.provider !== CLAUDE_CLI_PROVIDER) {
@@ -259,7 +259,7 @@ export function noteClaudeCliHealth(
     );
     fixHints.push(
       `- Fix: rerun ${formatCliCommand(
-        "openclaw models auth login --provider anthropic --method cli --set-default",
+        "nova models auth login --provider anthropic --method cli --set-default",
       )} to rewrite the profile cleanly.`,
     );
   }

@@ -7,7 +7,7 @@ import { resolveProviderIdForAuth } from "../agents/provider-auth-aliases.js";
 import { resolveSessionModelRef } from "../agents/session-model-ref.js";
 import type { SessionEntry } from "../config/sessions.js";
 import { createAgentPatchedSessionModelFallback } from "../config/sessions/session-model-fallback.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 const agentSessionModelPatch = new AsyncLocalStorage<boolean>();
 
@@ -20,7 +20,7 @@ export function isAgentSessionModelPatchOrigin(): boolean {
 }
 
 export function shouldPreserveSessionAuthProfileOverride(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: SessionEntry;
   currentProvider: string;
   provider: string;
@@ -46,7 +46,7 @@ export function shouldPreserveSessionAuthProfileOverride(params: {
 }
 
 export function snapshotAgentModelFallback(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   entry: SessionEntry,
   agentId: string,
   now: number,

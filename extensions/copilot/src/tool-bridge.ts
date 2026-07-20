@@ -9,7 +9,7 @@ import type {
   AnyAgentTool,
   EmbeddedRunAttemptParams,
   SandboxContext,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   applyEmbeddedAttemptToolsAllow,
   buildEmbeddedAttemptToolRunContext,
@@ -21,12 +21,12 @@ import {
   resolveEmbeddedAttemptToolConstructionPlan,
   resolveModelAuthMode,
   sanitizeToolResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { createAgentHarnessToolSurfaceRuntime } from "openclaw/plugin-sdk/agent-harness-tool-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { createAgentHarnessToolSurfaceRuntime } from "nova/plugin-sdk/agent-harness-tool-runtime";
 
-type CreateOpenClawCodingTools =
-  (typeof import("openclaw/plugin-sdk/agent-harness"))["createOpenClawCodingTools"];
-type OpenClawCodingToolsOptions = NonNullable<Parameters<CreateOpenClawCodingTools>[0]>;
+type CreateNovaCodingTools =
+  (typeof import("nova/plugin-sdk/agent-harness"))["createNovaCodingTools"];
+type NovaCodingToolsOptions = NonNullable<Parameters<CreateNovaCodingTools>[0]>;
 type AgentHarnessToolSurfaceRuntime = ReturnType<typeof createAgentHarnessToolSurfaceRuntime>;
 type CatalogExecuteParams = Parameters<
   NonNullable<AgentHarnessToolSurfaceRuntime["toolSearchCatalogExecutor"]>
@@ -48,10 +48,10 @@ interface CopilotSessionHolder {
  * Structural subset of `EmbeddedRunAttemptParams` carried into the tool
  * bridge for PI-parity tool context (see
  * `src/agents/pi-embedded-runner/run/attempt.ts:1029-1117` — the
- * authoritative `createOpenClawCodingTools({...})` call shape).
+ * authoritative `createNovaCodingTools({...})` call shape).
  *
  * Declared as `Partial<EmbeddedRunAttemptParams>` (imported from the
- * `openclaw/plugin-sdk/agent-harness-runtime` boundary, *not* from
+ * `nova/plugin-sdk/agent-harness-runtime` boundary, *not* from
  * `attempt.ts` in this extension) to avoid an `attempt.ts` ↔
  * `tool-bridge.ts` import cycle while keeping the field shapes
  * authoritative. Production callers pass the live attempt params; test
@@ -107,7 +107,7 @@ interface CopilotToolBridgeInput {
   /**
    * Full PI-parity attempt parameters. When set, the bridge forwards
    * identity, channel, owner/policy, auth-profile, message-routing,
-   * model, and run-trace fields to `createOpenClawCodingTools` so the
+   * model, and run-trace fields to `createNovaCodingTools` so the
    * wrapped-tool enforcement layer
    * (`src/agents/pi-tools.before-tool-call.ts`) receives the same
    * context the in-tree PI runner provides. See
@@ -133,7 +133,7 @@ interface CopilotToolBridgeInput {
    */
   onYieldDetected?: (message?: string) => void;
   onToolCompleted?: (completion: CopilotToolCompletion) => void | Promise<void>;
-  createOpenClawCodingTools?: (opts: unknown) => AnyAgentTool[] | Promise<AnyAgentTool[]>;
+  createNovaCodingTools?: (opts: unknown) => AnyAgentTool[] | Promise<AnyAgentTool[]>;
   beforeExecute?: (ctx: {
     toolName: string;
     toolCallId: string;
@@ -177,7 +177,7 @@ export async function createCopilotToolBridge(
         codingToolConstructionPlan: {
           includeBaseCodingTools: true,
           includeChannelTools: true,
-          includeOpenClawTools: true,
+          includeNovaTools: true,
           includePluginTools: true,
           includeShellTools: true,
         },
@@ -189,9 +189,9 @@ export async function createCopilotToolBridge(
     return { sdkTools: [], sourceTools: [] };
   }
 
-  const createOpenClawCodingTools =
-    input.createOpenClawCodingTools ??
-    (await import("openclaw/plugin-sdk/agent-harness")).createOpenClawCodingTools;
+  const createNovaCodingTools =
+    input.createNovaCodingTools ??
+    (await import("nova/plugin-sdk/agent-harness")).createNovaCodingTools;
 
   const toolSurfaceRuntime = createAgentHarnessToolSurfaceRuntime({
     abortSignal: input.abortSignal,
@@ -212,7 +212,7 @@ export async function createCopilotToolBridge(
     sourceReplyDeliveryMode: attemptParams.sourceReplyDeliveryMode,
     toolsAllow: attemptParams.toolsAllow,
   });
-  const toolOptions = buildOpenClawCodingToolsOptions(
+  const toolOptions = buildNovaCodingToolsOptions(
     input,
     {
       ...effectiveToolPlan,
@@ -223,18 +223,16 @@ export async function createCopilotToolBridge(
 
   let sourceTools: unknown;
   try {
-    sourceTools = await createOpenClawCodingTools(toolOptions);
+    sourceTools = await createNovaCodingTools(toolOptions);
   } catch (error: unknown) {
     throw createError(
-      `[copilot-tool-bridge] createOpenClawCodingTools failed: ${toError(error).message}`,
+      `[copilot-tool-bridge] createNovaCodingTools failed: ${toError(error).message}`,
       error,
     );
   }
 
   if (!Array.isArray(sourceTools)) {
-    throw new Error(
-      "[copilot-tool-bridge] createOpenClawCodingTools must return an array of tools",
-    );
+    throw new Error("[copilot-tool-bridge] createNovaCodingTools must return an array of tools");
   }
 
   const allowedSourceTools = filterCopilotToolsForAllowlist(
@@ -265,7 +263,7 @@ export async function createCopilotToolBridge(
   return {
     cleanup: toolSurfaceRuntime.cleanup,
     sdkTools: filteredTools.map((sourceTool) =>
-      convertOpenClawToolToSdkTool(sourceTool, {
+      convertNovaToolToSdkTool(sourceTool, {
         abortSignal: input.abortSignal,
         beforeExecute: input.beforeExecute,
         onAgentToolResult: input.attemptParams?.onAgentToolResult,
@@ -278,12 +276,12 @@ export async function createCopilotToolBridge(
 }
 
 /**
- * Builds the full `createOpenClawCodingTools` options bag mirroring the
+ * Builds the full `createNovaCodingTools` options bag mirroring the
  * PI in-tree call at `src/agents/pi-embedded-runner/run/attempt.ts:1029-1117`.
  *
  * Why PI parity matters: bridged Nova tools register with the SDK
  * as `overridesBuiltInTool: true, skipPermission: true` (see
- * `convertOpenClawToolToSdkTool` below). That means the wrapped-tool
+ * `convertNovaToolToSdkTool` below). That means the wrapped-tool
  * enforcement layer
  * (`src/agents/pi-tools.before-tool-call.ts → wrapToolWithBeforeToolCallHook`)
  * is the single gate for permission, owner-only allowlists, loop
@@ -299,11 +297,11 @@ export async function createCopilotToolBridge(
  * {@link CopilotToolBridgeInput}; callers resolve it via
  * `resolveSandboxContext` before constructing the bridge.
  */
-function buildOpenClawCodingToolsOptions(
+function buildNovaCodingToolsOptions(
   input: CopilotToolBridgeInput,
   toolPlan: ReturnType<typeof resolveEmbeddedAttemptToolConstructionPlan>,
   toolSurfaceRuntime?: ReturnType<typeof createAgentHarnessToolSurfaceRuntime>,
-): OpenClawCodingToolsOptions {
+): NovaCodingToolsOptions {
   const a = input.attemptParams ?? ({} as CopilotToolAttemptParams);
 
   // Mirror PI's `sandboxSessionKey` derivation (attempt.ts:873-874) so
@@ -348,7 +346,7 @@ function buildOpenClawCodingToolsOptions(
     "compat" in model &&
     model.compat &&
     typeof model.compat === "object"
-      ? (model.compat as OpenClawCodingToolsOptions["modelCompat"])
+      ? (model.compat as NovaCodingToolsOptions["modelCompat"])
       : undefined;
 
   return {
@@ -455,7 +453,7 @@ function buildOpenClawCodingToolsOptions(
   };
 }
 
-function convertOpenClawToolToSdkTool(
+function convertNovaToolToSdkTool(
   sourceTool: AnyAgentTool,
   ctx: {
     abortSignal?: AbortSignal;

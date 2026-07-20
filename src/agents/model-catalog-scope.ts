@@ -3,7 +3,7 @@
  */
 import { findNormalizedProviderValue } from "@nova/model-catalog-core/provider-id";
 import { normalizeUniqueSingleOrTrimmedStringList } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 function providerConfigDeclaresModel(
   providerConfig: { models?: readonly { id?: string }[] } | undefined,
@@ -18,7 +18,7 @@ function providerConfigDeclaresModel(
 
 /** Resolves provider/model refs used to scope model catalog discovery. */
 export function resolveModelCatalogScope(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider: string;
   model: string;
 }): { providerRefs: string[]; modelRefs: string[] } {

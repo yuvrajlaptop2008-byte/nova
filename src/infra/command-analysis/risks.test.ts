@@ -242,7 +242,7 @@ describe("command-analysis risks", () => {
     expect(buildCommandPayloadCandidates(["env", "-P", "/usr/bin", "/approve", "abc"])).toEqual([
       "/approve abc",
     ]);
-    expect(buildCommandPayloadCandidates(["exec", "-a", "openclaw", "/approve", "abc"])).toEqual([
+    expect(buildCommandPayloadCandidates(["exec", "-a", "nova", "/approve", "abc"])).toEqual([
       "/approve abc",
     ]);
     expect(buildCommandPayloadCandidates(["command", "-v", "/approve"])).toEqual([
@@ -256,13 +256,13 @@ describe("command-analysis risks", () => {
         "env",
         "env",
         "env",
-        "openclaw",
+        "nova",
         "channels",
         "login",
         "--channel",
         "whatsapp",
       ]),
-    ).toContain("openclaw channels login --channel whatsapp");
+    ).toContain("nova channels login --channel whatsapp");
   });
 
   it("checks both effective and original argv for segment inline eval", () => {

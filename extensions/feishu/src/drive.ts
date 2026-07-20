@@ -1,9 +1,9 @@
 // Feishu plugin module implements drive behavior.
 import type * as Lark from "@larksuiteoapi/node-sdk";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
-import { jsonResult } from "openclaw/plugin-sdk/tool-results";
-import type { OpenClawPluginApi } from "../runtime-api.js";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { readPositiveIntegerParam } from "nova/plugin-sdk/param-readers";
+import { jsonResult } from "nova/plugin-sdk/tool-results";
+import type { NovaPluginApi } from "../runtime-api.js";
 import { listEnabledFeishuAccounts } from "./accounts.js";
 import { cleanupAmbientCommentTypingReaction } from "./comment-reaction.js";
 import {
@@ -795,7 +795,7 @@ export async function deliverCommentThreadText(
 
 // ============ Tool Registration ============
 
-export function registerFeishuDriveTools(api: OpenClawPluginApi) {
+export function registerFeishuDriveTools(api: NovaPluginApi) {
   if (!api.config) {
     return;
   }

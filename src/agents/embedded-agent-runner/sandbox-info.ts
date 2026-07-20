@@ -1,7 +1,7 @@
 /**
  * Builds sandbox/full-access status metadata for embedded-agent run results.
  */
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { ExecElevatedDefaults, ExecToolDefaults } from "../bash-tools.js";
 import { resolveExecDefaults } from "../exec-defaults.js";
 import type { resolveSandboxContext } from "../sandbox.js";
@@ -70,7 +70,7 @@ export function resolveEmbeddedFullAccessState(params: {
 
 /** Resolves the effective exec policy for sandbox-info reporting. */
 export function resolveEmbeddedSandboxInfoExecPolicy(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
   sandboxAvailable?: boolean;

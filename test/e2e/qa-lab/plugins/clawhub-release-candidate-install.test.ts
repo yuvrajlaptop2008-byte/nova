@@ -17,9 +17,7 @@ afterEach(async () => {
 
 describe("ClawHub release candidate install producer", () => {
   it("writes blocked evidence when no candidate tarball is available", async () => {
-    const artifactBase = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-clawhub-release-evidence-"),
-    );
+    const artifactBase = await fs.mkdtemp(path.join(os.tmpdir(), "nova-clawhub-release-evidence-"));
     tempRoots.push(artifactBase);
     const missingTarballEnv = "NOVA_TEST_MISSING_RELEASE_CANDIDATE_TARBALL";
     vi.stubEnv(missingTarballEnv, "");

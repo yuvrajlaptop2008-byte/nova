@@ -4,11 +4,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import {
-  clearRuntimeConfigSnapshot,
-  getRuntimeConfig,
-  type OpenClawConfig,
-} from "../config/config.js";
+import { clearRuntimeConfigSnapshot, getRuntimeConfig, type NovaConfig } from "../config/config.js";
 import { callGateway as realCallGateway } from "../gateway/call.js";
 import { GatewayClient } from "../gateway/client.js";
 import { dispatchGatewayMethodInProcess as realDispatchGatewayMethodInProcess } from "../gateway/server-plugins.js";
@@ -17,10 +13,7 @@ import { extractPayloadText } from "../gateway/test-helpers.agent-results.js";
 import { onAgentEvent, type AgentEventPayload } from "../infra/agent-events.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { clearCurrentPluginMetadataSnapshot } from "../plugins/current-plugin-metadata-snapshot.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import { GATEWAY_CLIENT_MODES, GATEWAY_CLIENT_NAMES } from "../utils/message-channel.js";
 import { isLiveTestEnabled } from "./live-test-helpers.js";
 import { testing as subagentAnnounceDeliveryTesting } from "./subagent-announce-delivery.test-support.js";
@@ -54,7 +47,7 @@ type LiveSubagentModelConfig = {
   provider: "openai" | "google";
   requiredEnv: "OPENAI_API_KEY" | "GEMINI_API_KEY" | "GOOGLE_API_KEY";
 };
-type LiveSubagentModelProviders = NonNullable<NonNullable<OpenClawConfig["models"]>["providers"]>;
+type LiveSubagentModelProviders = NonNullable<NonNullable<NovaConfig["models"]>["providers"]>;
 
 function resolveLiveSubagentModelConfig(): LiveSubagentModelConfig {
   const modelKey = process.env.NOVA_LIVE_SUBAGENT_E2E_MODEL?.trim() || "openai/gpt-5.6-luna";
@@ -80,17 +73,17 @@ function liveSubagentConfig(
   port: number,
   token: string,
   options?: {
-    queue?: NonNullable<OpenClawConfig["messages"]>["queue"];
+    queue?: NonNullable<NovaConfig["messages"]>["queue"];
     toolAllow?: string[];
   },
-): OpenClawConfig {
+): NovaConfig {
   const providerConfig = resolveLiveSubagentModelConfig();
   const modelId = modelKey.replace(/^(openai|google)\//u, "");
   const providers: LiveSubagentModelProviders = {};
   if (providerConfig.provider === "google") {
     providers.google = {
       api: "google-generative-ai" as const,
-      agentRuntime: { id: "openclaw" },
+      agentRuntime: { id: "nova" },
       baseUrl: "https://generativelanguage.googleapis.com/v1beta",
       apiKey: {
         source: "env" as const,
@@ -103,7 +96,7 @@ function liveSubagentConfig(
           id: modelId,
           name: modelId,
           api: "google-generative-ai" as const,
-          agentRuntime: { id: "openclaw" },
+          agentRuntime: { id: "nova" },
           input: ["text" as const],
           reasoning: true,
           contextWindow: 1_048_576,
@@ -115,7 +108,7 @@ function liveSubagentConfig(
   } else {
     providers.openai = {
       api: "openai-responses" as const,
-      agentRuntime: { id: "openclaw" },
+      agentRuntime: { id: "nova" },
       apiKey: {
         source: "env" as const,
         provider: "default" as const,
@@ -128,7 +121,7 @@ function liveSubagentConfig(
           id: modelId,
           name: modelId,
           api: "openai-responses" as const,
-          agentRuntime: { id: "openclaw" },
+          agentRuntime: { id: "nova" },
           input: ["text" as const],
           reasoning: true,
           contextWindow: 1_047_576,
@@ -155,7 +148,7 @@ function liveSubagentConfig(
       defaults: {
         workspace,
         model: { primary: modelKey },
-        models: { [modelKey]: { agentRuntime: { id: "openclaw" }, params: { maxTokens: 1024 } } },
+        models: { [modelKey]: { agentRuntime: { id: "nova" }, params: { maxTokens: 1024 } } },
         sandbox: { mode: "off" },
         subagents: {
           allowAgents: ["*"],
@@ -245,7 +238,7 @@ function createGatewayClient(params: {
 }
 
 describeLive("subagent announce live", () => {
-  let state: OpenClawTestState | undefined;
+  let state: NovaTestState | undefined;
   let server: GatewayServer | undefined;
   let client: GatewayClient | undefined;
   let stopAgentEventCapture: (() => void) | undefined;
@@ -285,7 +278,7 @@ describeLive("subagent announce live", () => {
       const parentToken = `ISSUE_82913_PARENT_SAW_${nonce}`;
       const sessionKey = `agent:main:issue-82913-${nonce.toLowerCase()}`;
 
-      state = await createOpenClawTestState({
+      state = await createNovaTestState({
         label: "subagent-issue-82913-live",
         layout: "split",
         env: {
@@ -478,7 +471,7 @@ describeLive("subagent announce live", () => {
         }),
       });
 
-      state = await createOpenClawTestState({
+      state = await createNovaTestState({
         label: "subagent-announce-live",
         layout: "split",
         env: {
@@ -673,7 +666,7 @@ describeLive("subagent announce live", () => {
       const childTokens = [1, 2, 3].map((index) => `GEMINI_STRESS_${nonce}_${index}`);
       const parentToken = `GEMINI_STRESS_PARENT_${nonce}`;
 
-      state = await createOpenClawTestState({
+      state = await createNovaTestState({
         label: "subagent-gemini-stress-live",
         layout: "split",
         env: {
@@ -694,7 +687,7 @@ describeLive("subagent announce live", () => {
       });
       await fs.writeFile(
         path.join(state.workspaceDir, "package.json"),
-        `${JSON.stringify({ name: "openclaw-gemini-stress-live", private: true }, null, 2)}\n`,
+        `${JSON.stringify({ name: "nova-gemini-stress-live", private: true }, null, 2)}\n`,
         "utf8",
       );
       await fs.writeFile(
@@ -745,7 +738,7 @@ describeLive("subagent announce live", () => {
                     `You are stress child ${childNumber}.`,
                     "Use available tools for a tiny multi-tool check.",
                     "First read package.json if the read tool is available.",
-                    "Then run a tiny shell command if the bash tool is available: printf openclaw.",
+                    "Then run a tiny shell command if the bash tool is available: printf nova.",
                     "If web_search or memory_search is available, use at most one small query.",
                     `After the tool work, reply exactly ${childToken}.`,
                   ].join(" "),

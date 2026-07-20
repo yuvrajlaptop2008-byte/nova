@@ -1,12 +1,12 @@
-# OpenClaw Qianfan Provider
+# Nova Qianfan Provider
 
-Official OpenClaw provider plugin for Qianfan.
+Official Nova provider plugin for Qianfan.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/qianfan-provider
-openclaw gateway restart
+nova plugins install @nova/qianfan-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/qianfan> for setup and configuration.
+See <https://docs.nova.ai/providers/qianfan> for setup and configuration.

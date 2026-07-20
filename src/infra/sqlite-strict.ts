@@ -58,7 +58,7 @@ export type SqliteStrictMigrationResult = {
 };
 
 const DEFAULT_STRICT_MIGRATION_BUSY_TIMEOUT_MS = 5_000;
-const STRICT_MIGRATION_TABLE_PREFIX = "__openclaw_strict_migration_";
+const STRICT_MIGRATION_TABLE_PREFIX = "__nova_strict_migration_";
 const SQLITE_ROWID_ALIASES = ["_rowid_", "rowid", "oid"] as const;
 
 function quoteSqliteIdentifier(identifier: string): string {

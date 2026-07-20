@@ -14,10 +14,10 @@ import {
 import type { PluginHttpRouteRegistration, PluginRecord } from "./registry-types.js";
 import type { SessionCatalogProvider } from "./session-catalog.js";
 import type {
-  OpenClawPluginChannelRegistration,
-  OpenClawPluginHostedMediaResolver,
-  OpenClawPluginHttpRouteParams,
-  OpenClawPluginMcpServerConnectionResolver,
+  NovaPluginChannelRegistration,
+  NovaPluginHostedMediaResolver,
+  NovaPluginHttpRouteParams,
+  NovaPluginMcpServerConnectionResolver,
   PluginRegistrationMode,
 } from "./types.js";
 
@@ -121,7 +121,7 @@ export function createNetworkRegistrars(state: PluginRegistryState) {
   const canDispatchGatewayMethodsFromHttpRoute = (record: PluginRecord): boolean =>
     (record.contracts?.gatewayMethodDispatch ?? []).includes(GATEWAY_METHOD_DISPATCH_CONTRACT);
 
-  const registerHttpRoute = (record: PluginRecord, params: OpenClawPluginHttpRouteParams) => {
+  const registerHttpRoute = (record: PluginRecord, params: NovaPluginHttpRouteParams) => {
     const normalizedPath = normalizePluginHttpPath(params.path);
     if (!normalizedPath) {
       pushDiagnostic({
@@ -209,7 +209,7 @@ export function createNetworkRegistrars(state: PluginRegistryState) {
 
   const registerHostedMediaResolver = (
     record: PluginRecord,
-    resolver: OpenClawPluginHostedMediaResolver,
+    resolver: NovaPluginHostedMediaResolver,
   ) => {
     if (typeof resolver !== "function") {
       pushDiagnostic({
@@ -231,7 +231,7 @@ export function createNetworkRegistrars(state: PluginRegistryState) {
 
   const registerMcpServerConnectionResolver = (
     record: PluginRecord,
-    resolver: OpenClawPluginMcpServerConnectionResolver,
+    resolver: NovaPluginMcpServerConnectionResolver,
   ) => {
     const serverName = normalizeOptionalString(resolver?.serverName);
     if (!serverName || typeof resolver.resolve !== "function") {
@@ -278,7 +278,7 @@ export function createNetworkRegistrars(state: PluginRegistryState) {
 
   const registerChannel = (
     record: PluginRecord,
-    registration: OpenClawPluginChannelRegistration | ChannelPlugin,
+    registration: NovaPluginChannelRegistration | ChannelPlugin,
     mode: PluginRegistrationMode = "full",
   ) => {
     if (record.origin === "workspace" && !record.enabled) {
@@ -292,8 +292,8 @@ export function createNetworkRegistrars(state: PluginRegistryState) {
     }
     const registrationCapabilities = resolvePluginRegistrationCapabilities(mode);
     const normalized =
-      typeof (registration as OpenClawPluginChannelRegistration).plugin === "object"
-        ? (registration as OpenClawPluginChannelRegistration)
+      typeof (registration as NovaPluginChannelRegistration).plugin === "object"
+        ? (registration as NovaPluginChannelRegistration)
         : { plugin: registration as ChannelPlugin };
     const plugin = normalizeRegisteredChannelPlugin({
       pluginId: record.id,

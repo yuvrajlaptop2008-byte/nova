@@ -1,6 +1,6 @@
 // Isolated agent session tests cover session creation and metadata for cron runs.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
 
 vi.mock("../../config/sessions/paths.js", () => ({
@@ -47,7 +47,7 @@ function resolveWithStoredEntry(params?: {
   vi.mocked(evaluateSessionFreshness).mockReturnValue({ fresh: params?.fresh ?? true });
 
   return resolveCronSession({
-    cfg: {} as OpenClawConfig,
+    cfg: {} as NovaConfig,
     sessionKey,
     sourceSessionKey,
     agentId: "main",
@@ -219,7 +219,7 @@ describe("resolveCronSession", () => {
         entry: {
           sessionId: "existing-session-id-runtime",
           updatedAt: NOW_MS - 1000,
-          agentRuntimeOverride: "openclaw",
+          agentRuntimeOverride: "nova",
           agentHarnessId: "codex",
         },
         fresh: true,
@@ -265,7 +265,7 @@ describe("resolveCronSession", () => {
             threadId: "1737500000.123456",
           },
           modelOverride: "gpt-5.4",
-          agentRuntimeOverride: "openclaw",
+          agentRuntimeOverride: "nova",
           agentHarnessId: "codex",
         },
         fresh: true,
@@ -283,7 +283,7 @@ describe("resolveCronSession", () => {
       expect(result.sessionEntry.deliveryContext).toBeUndefined();
       // Per-session overrides must be preserved
       expect(result.sessionEntry.modelOverride).toBe("gpt-5.4");
-      expect(result.sessionEntry.agentRuntimeOverride).toBe("openclaw");
+      expect(result.sessionEntry.agentRuntimeOverride).toBe("nova");
       expect(result.sessionEntry.agentHarnessId).toBeUndefined();
     });
 
@@ -448,7 +448,7 @@ describe("resolveCronSession", () => {
           modelOverride: "claude-sonnet-4-6",
           providerOverride: "anthropic",
           modelOverrideSource: "user",
-          agentRuntimeOverride: "openclaw",
+          agentRuntimeOverride: "nova",
           authProfileOverride: "work-profile",
           authProfileOverrideSource: "user",
           authProfileOverrideCompactionCount: 3,
@@ -461,7 +461,7 @@ describe("resolveCronSession", () => {
       expect(result.sessionEntry.modelOverride).toBe("claude-sonnet-4-6");
       expect(result.sessionEntry.providerOverride).toBe("anthropic");
       expect(result.sessionEntry.modelOverrideSource).toBe("user");
-      expect(result.sessionEntry.agentRuntimeOverride).toBe("openclaw");
+      expect(result.sessionEntry.agentRuntimeOverride).toBe("nova");
       expect(result.sessionEntry.authProfileOverride).toBe("work-profile");
       expect(result.sessionEntry.authProfileOverrideSource).toBe("user");
       expect(result.sessionEntry.authProfileOverrideCompactionCount).toBe(3);

@@ -101,8 +101,8 @@ describe("exec shell snapshots", () => {
   });
 
   it("leaves commands unchanged when trusted process env disables snapshots", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-disabled-state-"));
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-disabled-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-disabled-state-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-disabled-home-"));
     tempDirs.push(stateDir, home);
     setSnapshotStateForTest(stateDir, { home });
     setTestEnvValue(EXEC_SHELL_SNAPSHOT_ENV, "0");
@@ -123,16 +123,12 @@ describe("exec shell snapshots", () => {
 
   it("does not honor per-call env for selecting the snapshot state dir", async () => {
     // Per-call env may be model/tool-controlled, so snapshot roots come from process env.
-    const trustedStateDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-snapshot-trusted-state-"),
-    );
+    const trustedStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-trusted-state-"));
     const untrustedStateDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-snapshot-untrusted-state-"),
+      path.join(os.tmpdir(), "nova-snapshot-untrusted-state-"),
     );
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-state-home-"));
-    const untrustedHome = fs.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-snapshot-untrusted-home-"),
-    );
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-state-home-"));
+    const untrustedHome = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-untrusted-home-"));
     const sideEffectPath = path.join(untrustedHome, "side-effect");
     tempDirs.push(trustedStateDir, untrustedStateDir, home, untrustedHome);
     setSnapshotStateForTest(trustedStateDir, { home });
@@ -172,9 +168,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     fs.writeFileSync(
@@ -241,9 +237,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-interactive-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-interactive-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-interactive-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-interactive-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-interactive-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-interactive-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     fs.writeFileSync(
@@ -287,9 +283,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-env-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-env-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-env-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-env-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-env-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-env-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     process.env.PNPM_HOME = "/trusted";
@@ -330,9 +326,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-plugin-env-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-plugin-env-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-plugin-env-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-plugin-env-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-plugin-env-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-plugin-env-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     fs.writeFileSync(path.join(home, ".bashrc"), "alias oc_snapshot_alias='printf alias-ok'\n");
@@ -368,9 +364,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-branch-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-branch-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-branch-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-branch-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-branch-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-branch-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     fs.writeFileSync(
@@ -429,9 +425,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-refresh-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-refresh-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-refresh-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-refresh-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-refresh-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-refresh-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     const aliasPath = path.join(home, ".bash_aliases");
@@ -484,9 +480,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-corrupt-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-corrupt-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-corrupt-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-corrupt-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-corrupt-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-corrupt-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     fs.writeFileSync(path.join(home, ".bashrc"), "alias oc_clean_alias='printf ok'\n");
@@ -549,9 +545,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-secret-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-secret-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-secret-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-secret-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-secret-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-secret-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     fs.writeFileSync(
@@ -591,9 +587,9 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-zsh-home-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-zsh-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-zsh-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-zsh-home-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-zsh-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-zsh-cwd-"));
     tempDirs.push(home, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home });
     fs.writeFileSync(
@@ -636,10 +632,10 @@ describe("exec shell snapshots", () => {
       return;
     }
 
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-zdot-home-"));
-    const zdotdir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-zdot-dir-"));
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-zdot-state-"));
-    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-snapshot-zdot-cwd-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-zdot-home-"));
+    const zdotdir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-zdot-dir-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-zdot-state-"));
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-snapshot-zdot-cwd-"));
     tempDirs.push(home, zdotdir, stateDir, cwd);
     setSnapshotStateForTest(stateDir, { home, zdotdir });
     fs.writeFileSync(path.join(home, ".zshrc"), "alias oc_snap_zdot_alias='printf wrong-home'\n");

@@ -2,8 +2,8 @@ import {
   buildSkillWorkshopPromptSection,
   SKILL_WORKSHOP_TOOL_NAME,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { listRegisteredPluginAgentPromptGuidance } from "openclaw/plugin-sdk/plugin-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { listRegisteredPluginAgentPromptGuidance } from "nova/plugin-sdk/plugin-runtime";
 import { flattenCodexDynamicToolFunctions, type CodexDynamicToolSpec } from "./protocol.js";
 
 export function buildDeveloperInstructions(

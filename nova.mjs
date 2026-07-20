@@ -50,7 +50,7 @@ const isSupportedNodeVersion = (version) => {
 const ensureSupportedRuntimeVersion = () => {
   if (process.versions.bun) {
     process.stderr.write(
-      "openclaw: the Bun runtime is unsupported because Nova requires node:sqlite.\n" +
+      "nova: the Bun runtime is unsupported because Nova requires node:sqlite.\n" +
         `Use Node.js ${SUPPORTED_NODE_RANGE}; Bun remains supported for installs and package scripts.\n`,
     );
     process.exit(1);
@@ -60,7 +60,7 @@ const ensureSupportedRuntimeVersion = () => {
   }
 
   process.stderr.write(
-    `openclaw: Node.js ${SUPPORTED_NODE_RANGE} is required (current: v${process.versions.node}).\n` +
+    `nova: Node.js ${SUPPORTED_NODE_RANGE} is required (current: v${process.versions.node}).\n` +
       "If you use nvm, run:\n" +
       `  nvm install ${RECOMMENDED_NODE_MAJOR}\n` +
       `  nvm use ${RECOMMENDED_NODE_MAJOR}\n` +
@@ -110,12 +110,7 @@ const resolvePackagedCompileCacheDirectory = () => {
   const baseDirectory = isNodeCompileCacheRequested()
     ? process.env.NODE_COMPILE_CACHE
     : path.join(os.tmpdir(), "node-compile-cache");
-  return path.join(
-    baseDirectory,
-    "openclaw",
-    version,
-    sanitizeCompileCachePathSegment(installMarker),
-  );
+  return path.join(baseDirectory, "nova", version, sanitizeCompileCachePathSegment(installMarker));
 };
 
 const respawnSignals =
@@ -214,7 +209,7 @@ const runRespawnedChild = (command, args, env) => {
   child.once("error", (error) => {
     detach();
     process.stderr.write(
-      `[openclaw] Failed to respawn launcher: ${
+      `[nova] Failed to respawn launcher: ${
         error instanceof Error ? (error.stack ?? error.message) : String(error)
       }\n`,
     );
@@ -364,7 +359,7 @@ const exists = async (specifier) => {
 };
 
 const buildMissingEntryErrorMessage = async () => {
-  const lines = ["openclaw: missing dist/entry.(m)js (build output)."];
+  const lines = ["nova: missing dist/entry.(m)js (build output)."];
   if (!(await exists("./src/entry.ts"))) {
     return lines.join("\n");
   }
@@ -376,7 +371,7 @@ const buildMissingEntryErrorMessage = async () => {
   lines.push(
     "For pinned GitHub installs, use `npm install -g github:yuvrajlaptop2008-byte/nova#<ref>` instead of a raw `/archive/<ref>.tar.gz` URL.",
   );
-  lines.push("For releases, use `npm install -g openclaw@latest`.");
+  lines.push("For releases, use `npm install -g nova@latest`.");
   return lines.join("\n");
 };
 
@@ -536,13 +531,13 @@ const resolveLauncherConfigPaths = () => {
   const stateOverride = process.env.NOVA_STATE_DIR?.trim();
   if (stateOverride) {
     const stateDir = resolveLauncherUserPath(stateOverride);
-    return [path.join(stateDir, "openclaw.json"), path.join(stateDir, "clawdbot.json")];
+    return [path.join(stateDir, "nova.json"), path.join(stateDir, "clawdbot.json")];
   }
   const homeDir = resolveLauncherHomeDir();
   return [
-    path.join(homeDir, ".openclaw", "openclaw.json"),
-    path.join(homeDir, ".openclaw", "clawdbot.json"),
-    path.join(homeDir, ".clawdbot", "openclaw.json"),
+    path.join(homeDir, ".nova", "nova.json"),
+    path.join(homeDir, ".nova", "clawdbot.json"),
+    path.join(homeDir, ".clawdbot", "nova.json"),
     path.join(homeDir, ".clawdbot", "clawdbot.json"),
   ];
 };

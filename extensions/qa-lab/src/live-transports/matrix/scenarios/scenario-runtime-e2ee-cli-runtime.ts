@@ -2,8 +2,8 @@
 import { randomUUID } from "node:crypto";
 import { chmod, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { runMatrixQaOpenClawCli, startMatrixQaOpenClawCli } from "./scenario-runtime-cli.js";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
+import { runMatrixQaNovaCli, startMatrixQaNovaCli } from "./scenario-runtime-cli.js";
 import {
   assertMatrixQaPrivatePathMode,
   buildMatrixQaEmptyMatrixCliConfig,
@@ -22,9 +22,7 @@ export async function createMatrixQaCliSelfVerificationRuntime(params: {
   userId: string;
 }) {
   const outputDir = requireMatrixQaE2eeOutputDir(params.context);
-  const rootDir = await mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-matrix-cli-qa-"),
-  );
+  const rootDir = await mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-matrix-cli-qa-"));
   const artifactDir = path.join(
     outputDir,
     "cli-self-verification",
@@ -86,14 +84,14 @@ export async function createMatrixQaCliSelfVerificationRuntime(params: {
     NOVA_STATE_DIR: stateDir,
   };
   const run = async (args: string[], timeoutMs = params.context.timeoutMs, stdin?: string) =>
-    await runMatrixQaOpenClawCli({
+    await runMatrixQaNovaCli({
       args,
       env,
       stdin,
       timeoutMs,
     });
   const start = (args: string[], timeoutMs = params.context.timeoutMs) =>
-    startMatrixQaOpenClawCli({
+    startMatrixQaNovaCli({
       args,
       env,
       timeoutMs,
@@ -117,7 +115,7 @@ export async function createMatrixQaCliE2eeSetupRuntime(params: {
 }) {
   const outputDir = requireMatrixQaE2eeOutputDir(params.context);
   const rootDir = await mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-matrix-e2ee-setup-qa-"),
+    path.join(resolvePreferredNovaTmpDir(), "nova-matrix-e2ee-setup-qa-"),
   );
   const artifactDir = path.join(
     outputDir,
@@ -149,14 +147,14 @@ export async function createMatrixQaCliE2eeSetupRuntime(params: {
     NOVA_STATE_DIR: stateDir,
   };
   const run = async (args: string[], timeoutMs = params.context.timeoutMs, stdin?: string) =>
-    await runMatrixQaOpenClawCli({
+    await runMatrixQaNovaCli({
       args,
       env,
       stdin,
       timeoutMs,
     });
   const start = (args: string[], timeoutMs = params.context.timeoutMs) =>
-    startMatrixQaOpenClawCli({
+    startMatrixQaNovaCli({
       args,
       env,
       timeoutMs,
@@ -193,7 +191,7 @@ export async function createMatrixQaCliGatewayRuntime(params: {
     NOVA_NO_AUTO_UPDATE: "1",
   };
   const run = async (args: string[], timeoutMs = params.context.timeoutMs) =>
-    await runMatrixQaOpenClawCli({
+    await runMatrixQaNovaCli({
       args,
       env,
       timeoutMs,

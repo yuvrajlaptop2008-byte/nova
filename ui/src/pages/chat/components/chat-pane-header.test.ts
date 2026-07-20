@@ -39,8 +39,8 @@ function mount(patch: Partial<ChatPaneHeaderProps> = {}) {
     catalog: false,
     editing: false,
     renameValue: "Session title",
-    workspaceRoot: "/repo/openclaw",
-    workspaceLabel: "openclaw",
+    workspaceRoot: "/repo/nova",
+    workspaceLabel: "nova",
     branch: "feature/header",
     branches: [],
     branchSwitchDisabledReason: null,
@@ -104,7 +104,7 @@ describe("chat pane header", () => {
     const title = container.querySelector<HTMLButtonElement>(".chat-pane__session-title-button");
     const chip = container.querySelector<HTMLButtonElement>(".chat-pane__workspace-chip");
     expect(title?.textContent?.trim()).toBe("Session title");
-    expect(chip?.textContent?.trim()).toContain("openclaw");
+    expect(chip?.textContent?.trim()).toContain("nova");
     title?.click();
     expect(props.onBeginRename).toHaveBeenCalledOnce();
   });
@@ -227,39 +227,39 @@ describe("chat pane workspace resolution", () => {
       resolveChatPaneWorkspace({
         session: row({
           spawnedCwd: "/tmp/worktrees/title-bar",
-          worktree: { id: "wt-1", branch: "title-bar", repoRoot: "/src/openclaw" },
+          worktree: { id: "wt-1", branch: "title-bar", repoRoot: "/src/nova" },
         }),
       }),
-    ).toEqual({ root: "/tmp/worktrees/title-bar", label: "openclaw" });
+    ).toEqual({ root: "/tmp/worktrees/title-bar", label: "nova" });
   });
 
   it("does not substitute the agent workspace for a missing worktree checkout", () => {
     expect(
       resolveChatPaneWorkspace({
         session: row({
-          worktree: { id: "wt-missing", branch: "feature", repoRoot: "/src/openclaw" },
+          worktree: { id: "wt-missing", branch: "feature", repoRoot: "/src/nova" },
         }),
         agentWorkspace: "/src/default-agent-workspace",
         worktreePath: null,
       }),
-    ).toEqual({ root: null, label: "openclaw" });
+    ).toEqual({ root: null, label: "nova" });
   });
 
   it("matches the gateway root order: spawned workspace before spawned cwd", () => {
     expect(
       resolveChatPaneWorkspace({
         session: row({
-          spawnedWorkspaceDir: "/src/openclaw",
-          spawnedCwd: "/src/openclaw/packages/nested",
+          spawnedWorkspaceDir: "/src/nova",
+          spawnedCwd: "/src/nova/packages/nested",
         }),
       }),
-    ).toEqual({ root: "/src/openclaw", label: "openclaw" });
+    ).toEqual({ root: "/src/nova", label: "nova" });
     // execCwd is exec-node routing state; it never overrides local facts.
     expect(
       resolveChatPaneWorkspace({
-        session: row({ execCwd: "/remote/stale", spawnedCwd: "/src/openclaw" }),
+        session: row({ execCwd: "/remote/stale", spawnedCwd: "/src/nova" }),
       }),
-    ).toEqual({ root: "/src/openclaw", label: "openclaw" });
+    ).toEqual({ root: "/src/nova", label: "nova" });
   });
 
   it("prefers exec cwd and falls back to the agent workspace", () => {
@@ -278,9 +278,9 @@ describe("chat pane workspace resolution", () => {
         worktreePath: "/local/worktree",
       }),
     ).toEqual({ root: null, label: null });
-    expect(resolveChatPaneWorkspace({ session: row(), agentWorkspace: "/src/openclaw" })).toEqual({
-      root: "/src/openclaw",
-      label: "openclaw",
+    expect(resolveChatPaneWorkspace({ session: row(), agentWorkspace: "/src/nova" })).toEqual({
+      root: "/src/nova",
+      label: "nova",
     });
   });
 
@@ -304,7 +304,7 @@ describe("chat pane workspace resolution", () => {
     expect(
       canRevealSessionWorkspace({
         session: row(),
-        workspaceRoot: "/src/openclaw",
+        workspaceRoot: "/src/nova",
         methodAdvertised: false,
         hasAdminAccess: true,
       }),
@@ -312,7 +312,7 @@ describe("chat pane workspace resolution", () => {
     expect(
       canRevealSessionWorkspace({
         session: row(),
-        workspaceRoot: "/src/openclaw",
+        workspaceRoot: "/src/nova",
         methodAdvertised: true,
         hasAdminAccess: false,
       }),

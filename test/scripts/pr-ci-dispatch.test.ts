@@ -11,7 +11,7 @@ const changedSha = "fedcba9876543210fedcba9876543210fedcba98";
 const describePosix = process.platform === "win32" ? describe.skip : describe;
 
 function createFakeGh() {
-  const tempDir = tempDirs.make("openclaw-pr-ci-dispatch-");
+  const tempDir = tempDirs.make("nova-pr-ci-dispatch-");
   const fakeGh = join(tempDir, "gh");
   const calls = join(tempDir, "calls.log");
   const dispatched = join(tempDir, "dispatched");
@@ -26,7 +26,7 @@ case "$1 $2" in
     if [ "\${NOVA_TEST_GH_MODE:-}" = "pending-head-change" ]; then
       printf '[]\\n'
     elif [ -e "$NOVA_TEST_GH_SEEN_RUN_LIST" ]; then
-      printf '[{"databaseId":99,"url":"https://github.com/openclaw/openclaw/actions/runs/99","headSha":"%s","createdAt":"2026-01-01T00:00:00Z","status":"queued"}]\\n' "$NOVA_TEST_HEAD_SHA"
+      printf '[{"databaseId":99,"url":"https://github.com/nova/nova/actions/runs/99","headSha":"%s","createdAt":"2026-01-01T00:00:00Z","status":"queued"}]\\n' "$NOVA_TEST_HEAD_SHA"
     else
       : > "$NOVA_TEST_GH_SEEN_RUN_LIST"
       printf '[]\\n'
@@ -57,7 +57,7 @@ function runDispatch(
 ) {
   let nodeOptions = process.env.NODE_OPTIONS ?? "";
   if (options.immediateTimers) {
-    const preload = join(tempDirs.make("openclaw-pr-ci-dispatch-timers-"), "immediate-timers.cjs");
+    const preload = join(tempDirs.make("nova-pr-ci-dispatch-timers-"), "immediate-timers.cjs");
     writeFileSync(preload, "global.setTimeout = (callback) => { callback(); return 0; };\n");
     nodeOptions = `${nodeOptions} --require ${preload}`.trim();
   }
@@ -88,7 +88,7 @@ describePosix("scripts/pr ci-dispatch", () => {
 
     expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(0);
     expect(result.stdout).toContain(
-      "observed_run_url=https://github.com/openclaw/openclaw/actions/runs/99",
+      "observed_run_url=https://github.com/nova/nova/actions/runs/99",
     );
     expect(readFileSync(fakeGh.calls, "utf8")).toContain(
       `workflow run ci.yml --ref contributor/fix-hosted-gates -f target_ref=${sha} -f release_gate=true -f pull_request_number=12345`,

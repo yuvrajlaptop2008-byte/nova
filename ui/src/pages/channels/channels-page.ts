@@ -7,7 +7,7 @@ import { titleForRoute } from "../../app-navigation.ts";
 import { applicationContext, type ApplicationContext } from "../../app/context.ts";
 import { resolveControlUiAuthHeader } from "../../app/control-ui-auth.ts";
 import { renderSettingsWorkspace } from "../../components/settings-workspace.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import { importNostrProfile, parseValidationErrors, putNostrProfile } from "./nostr-profile-ops.ts";
 import { createNostrProfileFormState } from "./view.nostr-profile-form.ts";
@@ -35,7 +35,7 @@ function formatNostrProfileOperationError(error: unknown, prefix: string): strin
     : `${prefix}: ${String(error)}`;
 }
 
-class ChannelsPage extends OpenClawLightDomElement {
+class ChannelsPage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -501,6 +501,6 @@ class ChannelsPage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-channels-page")) {
-  customElements.define("openclaw-channels-page", ChannelsPage);
+if (!customElements.get("nova-channels-page")) {
+  customElements.define("nova-channels-page", ChannelsPage);
 }

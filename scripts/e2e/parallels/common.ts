@@ -15,7 +15,7 @@ export {
   packNova,
   packageBuildCommitFromTgz,
   packageVersionFromTgz,
-  resolveOpenClawRegistryVersion,
+  resolveNovaRegistryVersion,
 } from "./package-artifact.ts";
 export * from "./parallels-vm.ts";
 export * from "./plugin-isolation.ts";

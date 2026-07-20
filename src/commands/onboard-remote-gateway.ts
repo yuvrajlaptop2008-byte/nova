@@ -6,7 +6,7 @@ import type {
   SystemAgentSetupDetectResult,
   SystemAgentSetupVerifyResult,
 } from "../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { CallGatewayCliOptions } from "../gateway/call.js";
 import { defaultRuntime, type RuntimeEnv } from "../runtime.js";
 import type {
@@ -28,7 +28,7 @@ const GATEWAY_SYSTEM_AGENT_CHAT_TIMEOUT_MS = 190_000;
 type CallGateway = <T>(options: CallGatewayCliOptions) => Promise<T>;
 
 type RemoteGatewayInferenceTarget = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   gatewayUrl: string;
   token?: string;
   password?: string;
@@ -132,7 +132,7 @@ function activationTimeoutMs(kind: ActivateSetupInferenceParams["kind"]): number
     : GATEWAY_SETUP_ACTIVATE_TIMEOUT_MS;
 }
 
-function bindGatewayConfig(target: RemoteGatewayInferenceTarget): OpenClawConfig {
+function bindGatewayConfig(target: RemoteGatewayInferenceTarget): NovaConfig {
   return {
     ...target.config,
     gateway: {
@@ -209,7 +209,7 @@ export async function runRemoteGatewayInferenceOnboarding(
 
   const detect = async (): Promise<SetupInferenceDetection> => {
     const result = await request<SystemAgentSetupDetectResult>({
-      method: "openclaw.setup.detect",
+      method: "nova.setup.detect",
       payload: {},
       timeoutMs: GATEWAY_SETUP_DETECT_TIMEOUT_MS,
     });
@@ -222,7 +222,7 @@ export async function runRemoteGatewayInferenceOnboarding(
     params: ActivateSetupInferenceParams,
   ): Promise<ActivateSetupInferenceResult> => {
     const result = await request<SystemAgentSetupActivateResult>({
-      method: "openclaw.setup.activate",
+      method: "nova.setup.activate",
       payload: {
         kind: params.kind,
         ...(params.modelRef !== undefined ? { modelRef: params.modelRef } : {}),
@@ -237,7 +237,7 @@ export async function runRemoteGatewayInferenceOnboarding(
       return activation;
     }
     const verification = await request<SystemAgentSetupVerifyResult>({
-      method: "openclaw.setup.verify",
+      method: "nova.setup.verify",
       payload: {},
       timeoutMs: GATEWAY_SETUP_VERIFY_TIMEOUT_MS,
     });
@@ -265,7 +265,7 @@ export async function runRemoteGatewayInferenceOnboarding(
       await prompter.intro("Nova");
       const sessionId = randomUUID();
       let reply = await request<SystemAgentChatResult>({
-        method: "openclaw.chat",
+        method: "nova.chat",
         payload: { sessionId, welcomeVariant: "onboarding" },
         timeoutMs: GATEWAY_SYSTEM_AGENT_CHAT_TIMEOUT_MS,
       });
@@ -289,7 +289,7 @@ export async function runRemoteGatewayInferenceOnboarding(
             validate: (value) => (value.trim() ? undefined : "Required"),
           });
           reply = await request<SystemAgentChatResult>({
-            method: "openclaw.chat",
+            method: "nova.chat",
             payload: { sessionId, message },
             timeoutMs: GATEWAY_SYSTEM_AGENT_CHAT_TIMEOUT_MS,
           });

@@ -321,7 +321,7 @@ describe("qa coverage report", () => {
     });
 
     expect(report).toContain(
-      "- Suite command: `pnpm openclaw qa suite --scenario control-ui-chat-flow-playwright`",
+      "- Suite command: `pnpm nova qa suite --scenario control-ui-chat-flow-playwright`",
     );
     expect(report).toContain("  - execution: playwright ui/src/e2e/chat-flow.e2e.test.ts");
     expect(report).not.toContain("Native test refs");
@@ -338,7 +338,7 @@ describe("qa coverage report", () => {
     });
 
     expect(report).toContain(
-      "- Suite command: `pnpm openclaw qa suite --channel-driver live --channel whatsapp --scenario whatsapp-access-control-group-disabled`",
+      "- Suite command: `pnpm nova qa suite --channel-driver live --channel whatsapp --scenario whatsapp-access-control-group-disabled`",
     );
   });
 
@@ -353,7 +353,7 @@ describe("qa coverage report", () => {
     });
 
     expect(report).toContain(
-      "- Suite command: `pnpm openclaw qa suite --scenario instruction-followthrough-repo-contract`",
+      "- Suite command: `pnpm nova qa suite --scenario instruction-followthrough-repo-contract`",
     );
     expect(report).not.toContain("--channel-driver live --channel qa-channel");
   });
@@ -366,7 +366,7 @@ describe("qa coverage report", () => {
     });
 
     expect(report).toContain(
-      "- Suite command: `pnpm openclaw qa suite --channel-driver live --channel matrix --scenario dm-per-room-session`",
+      "- Suite command: `pnpm nova qa suite --channel-driver live --channel matrix --scenario dm-per-room-session`",
     );
   });
 
@@ -433,10 +433,8 @@ describe("qa coverage report", () => {
     });
 
     expect(report).toContain("- Suite commands:");
-    expect(report).toContain("  - flow: `pnpm openclaw qa suite --scenario flow-proof`");
-    expect(report).toContain(
-      "  - playwright: `pnpm openclaw qa suite --scenario playwright-proof`",
-    );
+    expect(report).toContain("  - flow: `pnpm nova qa suite --scenario flow-proof`");
+    expect(report).toContain("  - playwright: `pnpm nova qa suite --scenario playwright-proof`");
   });
 
   it("reports missing taxonomy coverage refs without treating them as inventoried", () => {
@@ -666,7 +664,7 @@ describe("qa coverage report", () => {
         scenarioWithCoverage({
           primary: [TEST_EXECUTABLE_COVERAGE_ID],
           executionKind: "playwright",
-          executionPath: "../outside-openclaw.test.ts",
+          executionPath: "../outside-nova.test.ts",
         }),
       ],
     });

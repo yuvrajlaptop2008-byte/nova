@@ -498,7 +498,7 @@ function renderChatGoalActionButton(options: {
   onClick: () => void;
 }): TemplateResult {
   return html`
-    <openclaw-tooltip content=${options.label}>
+    <nova-tooltip content=${options.label}>
       <button
         class="agent-chat__goal-action ${options.className}"
         type="button"
@@ -507,7 +507,7 @@ function renderChatGoalActionButton(options: {
       >
         ${options.icon}
       </button>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
 }
 
@@ -1142,7 +1142,7 @@ function renderChatQueueItem(item: ChatQueueItem, props: ChatQueueProps) {
         ${busy
           ? nothing
           : html`
-              <openclaw-tooltip .content=${t("chat.queue.removeQueuedMessage")}>
+              <nova-tooltip .content=${t("chat.queue.removeQueuedMessage")}>
                 <button
                   class="chat-queue__remove"
                   type="button"
@@ -1151,7 +1151,7 @@ function renderChatQueueItem(item: ChatQueueItem, props: ChatQueueProps) {
                 >
                   ${icons.x}
                 </button>
-              </openclaw-tooltip>
+              </nova-tooltip>
             `}
       </span>
       ${item.sendError ? html`<span class="chat-queue__error">${item.sendError}</span>` : nothing}
@@ -1250,11 +1250,11 @@ function renderFallbackIndicator(status: FallbackStatus | null | undefined) {
       : "compaction-indicator compaction-indicator--fallback";
   const icon = phase === "cleared" ? icons.check : icons.brain;
   return html`
-    <openclaw-tooltip .content=${details}>
+    <nova-tooltip .content=${details}>
       <div class=${className} role="status" aria-live="polite" aria-label=${details}>
         ${icon} ${message}
       </div>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
 }
 
@@ -1887,7 +1887,7 @@ function renderComposerVoiceButton(props: ChatRunControlsProps) {
   // or replacing the button releases capture and cancels the active hold.
   return html`
     <span class="chat-talk-control">
-      <openclaw-tooltip .content=${label}>
+      <nova-tooltip .content=${label}>
         <button
           class=${active
             ? `chat-send-btn chat-send-btn--dictating${finalizing ? " chat-send-btn--dictation-finalizing" : ""}`
@@ -1916,7 +1916,7 @@ function renderComposerVoiceButton(props: ChatRunControlsProps) {
                   <span class="agent-chat__control-label">${label}</span>
                 `}
         </button>
-      </openclaw-tooltip>
+      </nova-tooltip>
       ${holding ? nothing : props.microphonePicker}
     </span>
   `;
@@ -1950,7 +1950,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
   };
   const abortAction = props.canAbort
     ? html`
-        <openclaw-tooltip .content=${t("chat.runControls.stop")}>
+        <nova-tooltip .content=${t("chat.runControls.stop")}>
           <button
             class="chat-send-btn chat-send-btn--stop"
             @click=${props.onAbort}
@@ -1959,7 +1959,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
             ${icons.stop}
             <span class="agent-chat__control-label">${t("chat.runControls.stop")}</span>
           </button>
-        </openclaw-tooltip>
+        </nova-tooltip>
       `
     : nothing;
 
@@ -1970,7 +1970,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
   const voiceErrored = props.voiceStatus === "error";
   const voiceButton = renderComposerVoiceButton(props);
   const sendAction = html`
-    <openclaw-tooltip
+    <nova-tooltip
       .content=${props.isBusy ? t("chat.runControls.queue") : t("chat.runControls.send")}
     >
       <button
@@ -1986,7 +1986,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
           >${props.isBusy ? t("chat.runControls.queue") : t("chat.runControls.send")}</span
         >
       </button>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
   const dictationPrimaryAction = html`
     ${props.dictation?.active || !hasComposedContent ? nothing : sendAction} ${voiceButton}
@@ -1995,7 +1995,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
     ${props.voiceActive && props.onToggleVoice
       ? html`
           <span class="chat-talk-control chat-talk-control--active">
-            <openclaw-tooltip .content=${t("chat.composer.stopVoiceInput")}>
+            <nova-tooltip .content=${t("chat.composer.stopVoiceInput")}>
               <button
                 class="chat-send-btn chat-send-btn--voice-live${voiceErrored
                   ? " chat-send-btn--voice-error"
@@ -2011,7 +2011,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
                     })}
                 <span class="chat-send-btn__voice-stop-glyph">${icons.stop}</span>
               </button>
-            </openclaw-tooltip>
+            </nova-tooltip>
             ${props.microphonePicker}
           </span>
           ${voiceErrored
@@ -2027,7 +2027,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
               `}
           ${props.voiceVideoCapable && props.onToggleCamera
             ? html`
-                <openclaw-tooltip
+                <nova-tooltip
                   .content=${props.voiceVideoEnabled
                     ? t("chat.composer.turnCameraOff")
                     : t("chat.composer.turnCameraOn")}
@@ -2050,7 +2050,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
                         : t("chat.composer.turnCameraOn")}</span
                     >
                   </button>
-                </openclaw-tooltip>
+                </nova-tooltip>
               `
             : nothing}
           ${abortAction}
@@ -2059,7 +2059,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
         ? html`
             ${hasComposedContent
               ? html`
-                  <openclaw-tooltip .content=${activeRunActionLabel}>
+                  <nova-tooltip .content=${activeRunActionLabel}>
                     <button
                       class="chat-send-btn"
                       @click=${storeDraftAndSend}
@@ -2069,10 +2069,10 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
                       ${icons.arrowUp}
                       <span class="agent-chat__control-label">${activeRunActionLabel}</span>
                     </button>
-                  </openclaw-tooltip>
+                  </nova-tooltip>
                 `
               : nothing}
-            <openclaw-tooltip .content=${t("chat.runControls.stop")}>
+            <nova-tooltip .content=${t("chat.runControls.stop")}>
               <button
                 class="chat-send-btn chat-send-btn--stop"
                 @click=${props.onAbort}
@@ -2081,7 +2081,7 @@ function renderChatPrimaryActions(props: ChatRunControlsProps) {
                 ${icons.stop}
                 <span class="agent-chat__control-label">${t("chat.runControls.stop")}</span>
               </button>
-            </openclaw-tooltip>
+            </nova-tooltip>
           `
         : props.dictation
           ? dictationPrimaryAction
@@ -2679,9 +2679,7 @@ export function renderChatComposer(props: ChatComposerProps) {
                 }
               })}
             >
-              <openclaw-chat-question-panel
-                .props=${questionPanelProps}
-              ></openclaw-chat-question-panel>
+              <nova-chat-question-panel .props=${questionPanelProps}></nova-chat-question-panel>
             </div>
           `
         : nothing}
@@ -2788,7 +2786,7 @@ export function renderChatComposer(props: ChatComposerProps) {
                     props.realtimeTalkCameraDevices.length >= 2 &&
                     props.onSwitchRealtimeCamera
                       ? html`
-                          <openclaw-tooltip
+                          <nova-tooltip
                             class="agent-chat__video-preview-switch-tooltip"
                             .content=${t("chat.composer.switchCamera")}
                           >
@@ -2801,7 +2799,7 @@ export function renderChatComposer(props: ChatComposerProps) {
                             >
                               ${icons.switchCamera}
                             </button>
-                          </openclaw-tooltip>
+                          </nova-tooltip>
                         `
                       : nothing}
                   </div>

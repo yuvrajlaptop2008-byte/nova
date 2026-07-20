@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 private final class CameraCancellationProbe: @unchecked Sendable {
     private let lock = NSLock()

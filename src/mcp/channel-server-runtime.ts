@@ -1,11 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { VERSION } from "../version.js";
-import { OpenClawChannelBridge } from "./channel-bridge.js";
+import { NovaChannelBridge } from "./channel-bridge.js";
 import { ClaudePermissionRequestSchema, type ClaudeChannelMode } from "./channel-shared.js";
 import { getChannelMcpCapabilities, registerChannelMcpTools } from "./channel-tools.js";
 
-async function resolveMcpConfig(config: OpenClawConfig | undefined): Promise<OpenClawConfig> {
+async function resolveMcpConfig(config: NovaConfig | undefined): Promise<NovaConfig> {
   if (config) {
     return config;
   }
@@ -18,13 +18,13 @@ export async function createChannelMcpRuntime(
     gatewayUrl?: string;
     gatewayToken?: string;
     gatewayPassword?: string;
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     claudeChannelMode?: ClaudeChannelMode;
     verbose?: boolean;
   } = {},
 ): Promise<{
   server: McpServer;
-  bridge: OpenClawChannelBridge;
+  bridge: NovaChannelBridge;
   start: () => Promise<void>;
   close: () => Promise<void>;
 }> {
@@ -32,10 +32,10 @@ export async function createChannelMcpRuntime(
   const claudeChannelMode = opts.claudeChannelMode ?? "auto";
   const capabilities = getChannelMcpCapabilities(claudeChannelMode);
   const server = new McpServer(
-    { name: "openclaw", version: VERSION },
+    { name: "nova", version: VERSION },
     capabilities ? { capabilities } : undefined,
   );
-  const bridge = new OpenClawChannelBridge(cfg, {
+  const bridge = new NovaChannelBridge(cfg, {
     gatewayUrl: opts.gatewayUrl,
     gatewayToken: opts.gatewayToken,
     gatewayPassword: opts.gatewayPassword,

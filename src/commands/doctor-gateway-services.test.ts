@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import { createDoctorPrompter } from "./doctor-prompter.js";
 import {
@@ -174,12 +174,12 @@ function mockProcessPlatform(platform: NodeJS.Platform) {
   });
 }
 
-async function runRepair(cfg: OpenClawConfig, options: { allowExecSecretRefs?: boolean } = {}) {
+async function runRepair(cfg: NovaConfig, options: { allowExecSecretRefs?: boolean } = {}) {
   await maybeRepairGatewayServiceConfig(cfg, "local", makeDoctorIo(), makeDoctorPrompts(), options);
 }
 
 async function runNonInteractiveRepair(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   updateInProgress?: boolean;
   lastTouchedVersionOverride?: string;
 }) {
@@ -211,7 +211,7 @@ async function runNonInteractiveRepair(params: {
 
 const gatewayProgramArguments = [
   "/usr/bin/node",
-  "/usr/local/bin/openclaw",
+  "/usr/local/bin/nova",
   "gateway",
   "--port",
   "18789",
@@ -358,8 +358,8 @@ describe("maybeRepairGatewayServiceConfig", () => {
     mocks.renderSystemNodeWarning.mockReturnValue(undefined);
     mocks.resolveSystemNodeInfo.mockResolvedValue(null);
     mocks.isSystemdUnitActive.mockResolvedValue(false);
-    mocks.readWindowsProcessArgsSync.mockReturnValue(["node", "openclaw.mjs", "update"]);
-    mocks.resolveGatewayAuthTokenForService.mockImplementation(async (cfg: OpenClawConfig, env) => {
+    mocks.readWindowsProcessArgsSync.mockReturnValue(["node", "nova.mjs", "update"]);
+    mocks.resolveGatewayAuthTokenForService.mockImplementation(async (cfg: NovaConfig, env) => {
       const configToken =
         typeof cfg.gateway?.auth?.token === "string" ? cfg.gateway.auth.token.trim() : undefined;
       const envToken = env.NOVA_GATEWAY_TOKEN?.trim() || undefined;
@@ -405,7 +405,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   });
 
   it("reports the installed Gateway heap limit and derivation", async () => {
-    const command = createGatewayCommand("/opt/openclaw/dist/index.js");
+    const command = createGatewayCommand("/opt/nova/dist/index.js");
     command.environment = { NODE_OPTIONS: "--max-old-space-size=6144" };
     mocks.readCommand.mockResolvedValue(command);
     mocks.auditGatewayServiceConfig.mockResolvedValue({ ok: true, issues: [] });
@@ -420,7 +420,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("treats gateway.auth.token as source of truth for service token repairs", async () => {
     setupGatewayTokenRepairScenario();
 
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -441,7 +441,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("passes exec SecretRef policy into service token resolution", async () => {
     setupGatewayTokenRepairScenario();
 
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -472,7 +472,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("does not duplicate gateway runtime warnings already emitted by the node install plan", async () => {
     const nvmNode = "/home/test/.nvm/versions/node/v22.22.3/bin/node";
     mocks.readCommand.mockResolvedValue({
-      programArguments: [nvmNode, "/usr/local/bin/openclaw", "gateway", "--port", "18789"],
+      programArguments: [nvmNode, "/usr/local/bin/nova", "gateway", "--port", "18789"],
       environment: {},
     });
     mocks.buildGatewayInstallPlan.mockImplementation(async ({ warn }) => {
@@ -481,7 +481,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
         "Gateway runtime",
       );
       return {
-        programArguments: [nvmNode, "/usr/local/bin/openclaw", "gateway", "--port", "18789"],
+        programArguments: [nvmNode, "/usr/local/bin/nova", "gateway", "--port", "18789"],
         workingDirectory: "/tmp",
         environment: {},
       };
@@ -553,7 +553,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       environment: {},
     });
     mocks.buildGatewayInstallPlan.mockResolvedValue({
-      programArguments: ["/usr/bin/node", "/usr/local/bin/openclaw", "gateway", "--port", "18888"],
+      programArguments: ["/usr/bin/node", "/usr/local/bin/nova", "gateway", "--port", "18888"],
       workingDirectory: "/tmp",
       environment: {},
     });
@@ -620,7 +620,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
     await withEnvAsync({ NOVA_GATEWAY_TOKEN: "env-token" }, async () => {
       setupGatewayTokenRepairScenario();
 
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         gateway: {},
       };
 
@@ -641,15 +641,15 @@ describe("maybeRepairGatewayServiceConfig", () => {
 
   it("does not flag entrypoint mismatch when symlink and realpath match", async () => {
     setupGatewayEntrypointRepairScenario({
-      currentEntrypoint: "/Users/test/Library/pnpm/global/5/node_modules/openclaw/dist/index.js",
+      currentEntrypoint: "/Users/test/Library/pnpm/global/5/node_modules/nova/dist/index.js",
       installEntrypoint:
-        "/Users/test/Library/pnpm/global/5/node_modules/.pnpm/openclaw@2026.3.12/node_modules/openclaw/dist/index.js",
+        "/Users/test/Library/pnpm/global/5/node_modules/.pnpm/nova@2026.3.12/node_modules/nova/dist/index.js",
       realpath: async (value: string) => {
         const normalized = value.replaceAll("\\", "/").replace(/^[A-Z]:/i, "");
-        if (normalized.includes("/global/5/node_modules/openclaw/")) {
+        if (normalized.includes("/global/5/node_modules/nova/")) {
           return normalized.replace(
-            "/global/5/node_modules/openclaw/",
-            "/global/5/node_modules/.pnpm/openclaw@2026.3.12/node_modules/openclaw/",
+            "/global/5/node_modules/nova/",
+            "/global/5/node_modules/.pnpm/nova@2026.3.12/node_modules/nova/",
           );
         }
         return normalized;
@@ -668,8 +668,8 @@ describe("maybeRepairGatewayServiceConfig", () => {
 
   it("does not flag entrypoint mismatch when realpath fails but normalized absolute paths match", async () => {
     setupGatewayEntrypointRepairScenario({
-      currentEntrypoint: "/opt/openclaw/../openclaw/dist/index.js",
-      installEntrypoint: "/opt/openclaw/dist/index.js",
+      currentEntrypoint: "/opt/nova/../nova/dist/index.js",
+      installEntrypoint: "/opt/nova/dist/index.js",
       realpathError: new Error("no realpath"),
     });
 
@@ -684,7 +684,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   });
 
   it("keeps wrapper-managed gateway services aligned during entrypoint drift checks", async () => {
-    const wrapperPath = "/usr/local/bin/openclaw-doppler";
+    const wrapperPath = "/usr/local/bin/nova-doppler";
     mocks.readCommand.mockResolvedValue({
       programArguments: [wrapperPath, "gateway", "--port", "18789"],
       environment: {
@@ -718,7 +718,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       "Gateway service config",
     );
     expect(mocks.note).toHaveBeenCalledWith(
-      "Gateway service invokes NOVA_WRAPPER: /usr/local/bin/openclaw-doppler",
+      "Gateway service invokes NOVA_WRAPPER: /usr/local/bin/nova-doppler",
       "Gateway",
     );
     expect(mocks.stage).not.toHaveBeenCalled();
@@ -728,8 +728,8 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("still flags entrypoint mismatch when canonicalized paths differ", async () => {
     setupGatewayEntrypointRepairScenario({
       currentEntrypoint:
-        "/Users/test/.nvm/versions/node/v22.0.0/lib/node_modules/openclaw/dist/index.js",
-      installEntrypoint: "/Users/test/Library/pnpm/global/5/node_modules/openclaw/dist/index.js",
+        "/Users/test/.nvm/versions/node/v22.0.0/lib/node_modules/nova/dist/index.js",
+      installEntrypoint: "/Users/test/Library/pnpm/global/5/node_modules/nova/dist/index.js",
     });
 
     await runRepair({ gateway: {} });
@@ -745,7 +745,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("skips entrypoint rewrites for an active systemd unit", async () => {
     mockProcessPlatform("linux");
     mocks.readCommand.mockResolvedValue({
-      ...createGatewayCommand("/opt/old-openclaw/dist/index.js"),
+      ...createGatewayCommand("/opt/old-nova/dist/index.js"),
       sourcePath: "/etc/systemd/system/custom-gateway.service",
     });
     mocks.auditGatewayServiceConfig.mockResolvedValue({
@@ -753,7 +753,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [],
     });
     mocks.buildGatewayInstallPlan.mockResolvedValue({
-      ...createGatewayCommand("/opt/new-openclaw/dist/index.js"),
+      ...createGatewayCommand("/opt/new-nova/dist/index.js"),
       workingDirectory: "/tmp",
     });
     mocks.isSystemdUnitActive.mockResolvedValue(true);
@@ -773,7 +773,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("repairs entrypoint drift when the systemd unit is stopped", async () => {
     mockProcessPlatform("linux");
     mocks.readCommand.mockResolvedValue({
-      ...createGatewayCommand("/opt/old-openclaw/dist/index.js"),
+      ...createGatewayCommand("/opt/old-nova/dist/index.js"),
       sourcePath: "/home/test/.config/systemd/user/custom-gateway.service",
     });
     mocks.auditGatewayServiceConfig.mockResolvedValue({
@@ -781,7 +781,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [],
     });
     mocks.buildGatewayInstallPlan.mockResolvedValue({
-      ...createGatewayCommand("/opt/new-openclaw/dist/index.js"),
+      ...createGatewayCommand("/opt/new-nova/dist/index.js"),
       workingDirectory: "/tmp",
     });
     mocks.isSystemdUnitActive.mockResolvedValue(false);
@@ -800,9 +800,9 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("leaves all service metadata unchanged when an active unit has command drift plus other issues", async () => {
     mockProcessPlatform("linux");
     mocks.readCommand.mockResolvedValue({
-      programArguments: ["/usr/bin/openclaw", "run"],
+      programArguments: ["/usr/bin/nova", "run"],
       environment: {},
-      sourcePath: "/home/test/.config/systemd/user/openclaw-gateway.service",
+      sourcePath: "/home/test/.config/systemd/user/nova-gateway.service",
     });
     mocks.auditGatewayServiceConfig.mockResolvedValue({
       ok: false,
@@ -840,8 +840,8 @@ describe("maybeRepairGatewayServiceConfig", () => {
 
   it("skips entrypoint rewrite in non-interactive fix mode", async () => {
     setupGatewayEntrypointRepairScenario({
-      currentEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/entry.js",
-      installEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/index.js",
+      currentEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/entry.js",
+      installEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/index.js",
       installWorkingDirectory: "/tmp",
     });
 
@@ -854,7 +854,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       "Gateway service entrypoint does not match the current install.",
       "Gateway service config",
     );
-    expectNoteContaining("openclaw gateway install --force", "Gateway service config");
+    expectNoteContaining("nova gateway install --force", "Gateway service config");
     expect(mocks.stage).not.toHaveBeenCalled();
     expect(mocks.install).not.toHaveBeenCalled();
   });
@@ -863,8 +863,8 @@ describe("maybeRepairGatewayServiceConfig", () => {
     mockProcessPlatform("linux");
     process.env.NOVA_UPDATE_PARENT_ALLOWS_GATEWAY_SERVICE_REPAIR = "1";
     setupGatewayEntrypointRepairScenario({
-      currentEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/entry.js",
-      installEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/index.js",
+      currentEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/entry.js",
+      installEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/index.js",
       installWorkingDirectory: "/tmp",
     });
 
@@ -886,8 +886,8 @@ describe("maybeRepairGatewayServiceConfig", () => {
     mockProcessPlatform("darwin");
     process.env.NOVA_UPDATE_PARENT_ALLOWS_GATEWAY_SERVICE_REPAIR = "1";
     setupGatewayEntrypointRepairScenario({
-      currentEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/entry.js",
-      installEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/index.js",
+      currentEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/entry.js",
+      installEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/index.js",
       installWorkingDirectory: "/tmp",
     });
 
@@ -923,7 +923,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
     });
     mocks.install.mockResolvedValue(undefined);
 
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -952,7 +952,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       async () => {
         setupGatewayTokenRepairScenario();
 
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           gateway: {},
         };
 
@@ -989,7 +989,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       async () => {
         setupGatewayTokenRepairScenario();
 
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           gateway: {},
         };
 
@@ -1015,9 +1015,9 @@ describe("maybeRepairGatewayServiceConfig", () => {
   });
 
   it.each([
-    ["update command", ["node", "openclaw.mjs", "update"]],
-    ["--update shorthand", ["node", "openclaw.mjs", "--update"]],
-    ["doctor update prompt", ["node", "openclaw.mjs", "doctor"]],
+    ["update command", ["node", "nova.mjs", "update"]],
+    ["--update shorthand", ["node", "nova.mjs", "--update"]],
+    ["doctor update prompt", ["node", "nova.mjs", "doctor"]],
   ])("does not rewrite a service for a legacy %s parent", async (_, args) => {
     mockProcessPlatform("win32");
     Object.defineProperty(process.stdin, "isTTY", {
@@ -1144,15 +1144,15 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it.each([
     {
       parent: "direct --no-restart update",
-      args: ["node", "openclaw.mjs", "update", "--no-restart"],
+      args: ["node", "nova.mjs", "update", "--no-restart"],
     },
     {
       parent: "--update shorthand with --no-restart",
-      args: ["node", "openclaw.mjs", "--update", "--no-restart"],
+      args: ["node", "nova.mjs", "--update", "--no-restart"],
     },
     {
       parent: "interactive update wizard",
-      args: ["node", "openclaw.mjs", "update", "wizard"],
+      args: ["node", "nova.mjs", "update", "wizard"],
     },
     {
       parent: "unrecognized shell",
@@ -1160,7 +1160,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
     },
     {
       parent: "gateway RPC process",
-      args: ["node", "openclaw.mjs", "gateway"],
+      args: ["node", "nova.mjs", "gateway"],
     },
   ])("stages repairs for a $parent parent without an activation marker", async ({ args }) => {
     mockProcessPlatform("win32");
@@ -1422,7 +1422,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
         });
         mocks.install.mockResolvedValue(undefined);
 
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           gateway: {},
         };
 
@@ -1438,8 +1438,8 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("reports service config drift but skips service rewrite when service repair policy is external", async () => {
     await withEnvAsync({ NOVA_SERVICE_REPAIR_POLICY: "external" }, async () => {
       setupGatewayEntrypointRepairScenario({
-        currentEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/entry.js",
-        installEntrypoint: "/Users/test/Library/npm/node_modules/openclaw/dist/index.js",
+        currentEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/entry.js",
+        installEntrypoint: "/Users/test/Library/npm/node_modules/nova/dist/index.js",
         installWorkingDirectory: "/tmp",
       });
 
@@ -1462,7 +1462,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
 
   it("warns when the gateway service entrypoint resolves to a source checkout", async () => {
     await withEnvAsync({}, async () => {
-      const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-doctor-service-layout-"));
+      const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-doctor-service-layout-"));
       try {
         await fs.mkdir(path.join(root, ".git"), { recursive: true });
         await fs.mkdir(path.join(root, "src"), { recursive: true });
@@ -1470,7 +1470,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
         await fs.mkdir(path.join(root, "dist"), { recursive: true });
         await fs.writeFile(
           path.join(root, "package.json"),
-          JSON.stringify({ name: "openclaw", version: "0.0.0-test" }),
+          JSON.stringify({ name: "nova", version: "0.0.0-test" }),
           "utf8",
         );
         const entrypoint = path.join(root, "dist", "index.js");
@@ -1491,9 +1491,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
 
   it("does not duplicate Gateway service config panels for a source-checkout entrypoint with audit findings", async () => {
     await withEnvAsync({}, async () => {
-      const root = await fs.mkdtemp(
-        path.join(os.tmpdir(), "openclaw-doctor-service-config-dedup-"),
-      );
+      const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-doctor-service-config-dedup-"));
       try {
         await fs.mkdir(path.join(root, ".git"), { recursive: true });
         await fs.mkdir(path.join(root, "src"), { recursive: true });
@@ -1501,12 +1499,12 @@ describe("maybeRepairGatewayServiceConfig", () => {
         await fs.mkdir(path.join(root, "dist"), { recursive: true });
         await fs.writeFile(
           path.join(root, "package.json"),
-          JSON.stringify({ name: "openclaw", version: "0.0.0-test" }),
+          JSON.stringify({ name: "nova", version: "0.0.0-test" }),
           "utf8",
         );
         const sourceCheckoutEntrypoint = path.join(root, "dist", "index.js");
         await fs.writeFile(sourceCheckoutEntrypoint, "export {};\n", "utf8");
-        const installEntrypoint = "/usr/local/lib/node_modules/openclaw/dist/index.js";
+        const installEntrypoint = "/usr/local/lib/node_modules/nova/dist/index.js";
         setupGatewayEntrypointRepairScenario({
           currentEntrypoint: sourceCheckoutEntrypoint,
           installEntrypoint,
@@ -1524,7 +1522,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
           "Gateway service entrypoint does not match the current install.",
         );
         expect(consolidated).not.toContain("resolves to a source checkout");
-        const forceMatches = consolidated.match(/openclaw gateway install --force/g) ?? [];
+        const forceMatches = consolidated.match(/nova gateway install --force/g) ?? [];
         expect(forceMatches).toHaveLength(0);
       } finally {
         await fs.rm(root, { recursive: true, force: true });
@@ -1535,7 +1533,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
   it("keeps the gateway install force hint when a source-checkout warning is suppressed and repair is declined", async () => {
     await withEnvAsync({}, async () => {
       const root = await fs.mkdtemp(
-        path.join(os.tmpdir(), "openclaw-doctor-service-config-force-hint-"),
+        path.join(os.tmpdir(), "nova-doctor-service-config-force-hint-"),
       );
       try {
         await fs.mkdir(path.join(root, ".git"), { recursive: true });
@@ -1544,12 +1542,12 @@ describe("maybeRepairGatewayServiceConfig", () => {
         await fs.mkdir(path.join(root, "dist"), { recursive: true });
         await fs.writeFile(
           path.join(root, "package.json"),
-          JSON.stringify({ name: "openclaw", version: "0.0.0-test" }),
+          JSON.stringify({ name: "nova", version: "0.0.0-test" }),
           "utf8",
         );
         const sourceCheckoutEntrypoint = path.join(root, "dist", "index.js");
         await fs.writeFile(sourceCheckoutEntrypoint, "export {};\n", "utf8");
-        const installEntrypoint = "/usr/local/lib/node_modules/openclaw/dist/index.js";
+        const installEntrypoint = "/usr/local/lib/node_modules/nova/dist/index.js";
         setupGatewayEntrypointRepairScenario({
           currentEntrypoint: sourceCheckoutEntrypoint,
           installEntrypoint,
@@ -1578,7 +1576,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
           "Gateway service entrypoint does not match the current install.",
         );
         expect(auditNote).not.toContain("resolves to a source checkout");
-        expect(gatewayServiceConfigNotes[1]?.[0]).toContain("openclaw gateway install --force");
+        expect(gatewayServiceConfigNotes[1]?.[0]).toContain("nova gateway install --force");
       } finally {
         await fs.rm(root, { recursive: true, force: true });
       }
@@ -1676,7 +1674,7 @@ describe("maybeScanExtraGatewayServices", () => {
     expect(
       extraGatewayServiceToHealthFinding({
         platform: "linux",
-        label: "openclaw-gateway.service",
+        label: "nova-gateway.service",
         detail: "legacy unit",
         scope: "user",
         legacy: true,
@@ -1686,7 +1684,7 @@ describe("maybeScanExtraGatewayServices", () => {
         checkId: "core/doctor/gateway-services/extra",
         severity: "warning",
         source: "linux",
-        target: "openclaw-gateway.service",
+        target: "nova-gateway.service",
       }),
     );
   });

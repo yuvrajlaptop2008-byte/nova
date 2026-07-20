@@ -2,13 +2,13 @@
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { getRuntimeConfig } from "../../config/config.js";
 import { discoverModels } from "../agent-model-discovery.js";
 import { isLiveTestEnabled } from "../live-test-helpers.js";
-import { ensureOpenClawModelsJson } from "../models-config.js";
+import { ensureNovaModelsJson } from "../models-config.js";
 import type { AgentMessage } from "../runtime/index.js";
 import { AgentSession } from "./agent-session.js";
 import { AuthStorage } from "./auth-storage.js";
@@ -73,7 +73,7 @@ async function resolveLiveModel(
   agentDir: string,
   authStorage: AuthStorage,
 ): Promise<{ model: Model; modelRegistry: ModelRegistry }> {
-  await ensureOpenClawModelsJson(getRuntimeConfig(), agentDir, {
+  await ensureNovaModelsJson(getRuntimeConfig(), agentDir, {
     providerDiscoveryProviderIds: ["anthropic"],
   });
   const modelRegistry = discoverModels(authStorage, agentDir, { providerFilter: "anthropic" });
@@ -98,7 +98,7 @@ async function createLiveSession(
     handlers?: ExtensionHandlers;
   } = {},
 ) {
-  const root = await mkdtemp(join(tmpdir(), "openclaw-agent-session-live-"));
+  const root = await mkdtemp(join(tmpdir(), "nova-agent-session-live-"));
   tempRoots.push(root);
   const cwd = join(root, "workspace");
   const agentDir = join(root, "agent");

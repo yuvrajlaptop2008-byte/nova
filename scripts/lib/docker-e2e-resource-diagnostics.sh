@@ -24,7 +24,7 @@ docker_e2e_resource_limit_error_file() {
 }
 
 docker_e2e_resource_limit_temp_dir() {
-  local template="${TMPDIR:-/tmp}/openclaw-docker-resource-limits.XXXXXX"
+  local template="${TMPDIR:-/tmp}/nova-docker-resource-limits.XXXXXX"
   if command -v mktemp >/dev/null 2>&1; then
     mktemp -d "$template"
     return

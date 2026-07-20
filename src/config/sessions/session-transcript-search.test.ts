@@ -4,12 +4,12 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../../infra/kysely-sync.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../../state/openclaw-agent-db.generated.js";
+import type { DB as NovaAgentKyselyDatabase } from "../../state/nova-agent-db.generated.js";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+  closeNovaAgentDatabasesForTest,
+  openNovaAgentDatabase,
+} from "../../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import type { TranscriptEvent } from "./session-accessor.js";
 import {
   appendSqliteTranscriptEvent,
@@ -29,7 +29,7 @@ type TestPaths = { stateDir: string; tempDir: string };
 let paths: TestPaths;
 
 beforeEach(() => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-session-search-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-session-search-"));
   paths = {
     stateDir: path.join(tempDir, "state"),
     tempDir,
@@ -80,18 +80,18 @@ async function waitForSearchReconcile(query: string): Promise<void> {
 
 afterEach(async () => {
   await waitForSearchReconcile("cleanup-probe");
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
   fs.rmSync(paths.tempDir, { recursive: true, force: true });
 });
 
 function agentKysely() {
-  const database = openOpenClawAgentDatabase({ agentId: "main", env: env() });
+  const database = openNovaAgentDatabase({ agentId: "main", env: env() });
   return {
     db: database.db,
     kysely: getNodeSqliteKysely<
       Pick<
-        OpenClawAgentKyselyDatabase,
+        NovaAgentKyselyDatabase,
         "session_transcript_fts" | "session_transcript_index_state" | "transcript_events"
       >
     >(database.db),

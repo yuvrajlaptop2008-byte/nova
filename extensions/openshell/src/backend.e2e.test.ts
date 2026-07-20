@@ -5,12 +5,12 @@ import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import { createSandboxTestContext } from "openclaw/plugin-sdk/test-fixtures";
+import { createSandboxTestContext } from "nova/plugin-sdk/test-fixtures";
 import {
   createSandboxBrowserConfig,
   createSandboxPruneConfig,
   createSandboxSshConfig,
-} from "openclaw/plugin-sdk/test-fixtures";
+} from "nova/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 import { createOpenShellSandboxBackendFactory } from "./backend.js";
 import { resolveOpenShellPluginConfig } from "./config.js";
@@ -32,7 +32,7 @@ RUN groupadd -g 1000660000 sandbox && \\
     useradd -m -u 1000660000 -g sandbox sandbox && \\
     install -d -o sandbox -g sandbox /sandbox
 
-RUN echo "openclaw-openshell-e2e" > /opt/openshell-e2e-marker.txt
+RUN echo "nova-openshell-e2e" > /opt/openshell-e2e-marker.txt
 
 USER sandbox
 WORKDIR /sandbox
@@ -454,7 +454,7 @@ describe("openshell sandbox backend e2e", () => {
         throw new Error("OpenShell E2E requires an active local registered gateway");
       }
 
-      const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-openshell-e2e-"));
+      const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-openshell-e2e-"));
       const env = openshellEnv(rootDir);
       const previousHome = process.env.HOME;
       const previousXdgConfigHome = process.env.XDG_CONFIG_HOME;
@@ -466,7 +466,7 @@ describe("openshell sandbox backend e2e", () => {
       const allowPolicyPath = path.join(rootDir, "allow-policy.yaml");
       const scopeSuffix = `${process.pid}-${Date.now()}`;
       const scopeKey = `session:openshell-e2e-deny:${scopeSuffix}`;
-      const allowSandboxName = `openclaw-policy-allow-${scopeSuffix}`;
+      const allowSandboxName = `nova-policy-allow-${scopeSuffix}`;
       let hostPolicyServer: HostPolicyServer | null | undefined;
       const sandboxCfg = {
         mode: "all" as const,
@@ -475,8 +475,8 @@ describe("openshell sandbox backend e2e", () => {
         workspaceAccess: "rw" as const,
         workspaceRoot: path.join(rootDir, "sandboxes"),
         docker: {
-          image: "openclaw-sandbox:bookworm-slim",
-          containerPrefix: "openclaw-sbx-",
+          image: "nova-sandbox:bookworm-slim",
+          containerPrefix: "nova-sbx-",
           workdir: "/workspace",
           readOnlyRoot: true,
           tmpfs: ["/tmp"],
@@ -484,7 +484,7 @@ describe("openshell sandbox backend e2e", () => {
           capDrop: ["ALL"],
           env: {},
         },
-        ssh: createSandboxSshConfig("/tmp/openclaw-sandboxes"),
+        ssh: createSandboxSshConfig("/tmp/nova-sandboxes"),
         browser: createSandboxBrowserConfig(),
         tools: { allow: [], deny: [] },
         prune: createSandboxPruneConfig(),
@@ -557,7 +557,7 @@ describe("openshell sandbox backend e2e", () => {
         expect(execResult.code).toBe(0);
         const stdout = execResult.stdout.trim();
         expect(stdout).toContain("/sandbox");
-        expect(stdout).toContain("openclaw-openshell-e2e");
+        expect(stdout).toContain("nova-openshell-e2e");
         expect(stdout).toContain("seed-from-local");
 
         const curlPathResult = await runBackendExec({

@@ -10,7 +10,7 @@ import {
   type ExecSessionDefaults,
   resolveNodeExecEligibility,
 } from "../../agents/exec-defaults.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { getRemoteSkillEligibility } from "../runtime/remote.js";
 import type { SkillCommandSpec } from "../types.js";
@@ -24,7 +24,7 @@ export {
 
 export function listSkillCommandsForWorkspace(params: {
   workspaceDir: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   skillFilter?: string[];
   sessionEntry?: ExecSessionDefaults;
@@ -69,7 +69,7 @@ function dedupeBySkillName(commands: SkillCommandSpec[]): SkillCommandSpec[] {
 }
 
 export function listSkillCommandsForAgents(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentIds?: string[];
   sessionEntry?: ExecSessionDefaults;
   sessionKey?: string;

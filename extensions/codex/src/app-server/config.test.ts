@@ -1,8 +1,8 @@
 // Codex tests cover config plugin behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
-import { withTempDir } from "openclaw/plugin-sdk/test-env";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
+import { withTempDir } from "nova/plugin-sdk/test-env";
 import { describe, expect, it, vi } from "vitest";
 import {
   canUseCodexModelBackedApprovalsReviewerForModel,
@@ -14,7 +14,7 @@ import {
   resolveCodexSupervisionAppServerRuntimeOptions,
   resolveCodexComputerUseConfig,
   resolveCodexModelBackedReviewerPolicyContext,
-  resolveOpenClawExecPolicyForCodexAppServer,
+  resolveNovaExecPolicyForCodexAppServer,
   resolveCodexPluginsPolicy,
   shouldAutoApproveCodexAppServerApprovals,
   withMcpElicitationsApprovalPolicy,
@@ -99,11 +99,11 @@ describe("Codex app-server config", () => {
         approvalPolicy: "never",
         sandbox: "danger-full-access",
         networkProxy: {
-          profileName: "openclaw-network",
+          profileName: "nova-network",
           configFingerprint: "network-proxy-v1",
           configPatch: {
             "features.network_proxy.enabled": true,
-            default_permissions: "openclaw-network",
+            default_permissions: "nova-network",
             permissions: {},
           },
         },
@@ -251,7 +251,7 @@ describe("Codex app-server config", () => {
       { filesystem: { ":project_roots": { ".": string } } }
     >;
 
-    expect(profileName).toMatch(/^openclaw-network-[a-f0-9]{16}$/u);
+    expect(profileName).toMatch(/^nova-network-[a-f0-9]{16}$/u);
     expect(runtime.networkProxy?.configPatch.default_permissions).toBe(profileName);
     expect(permissions[profileName ?? ""]?.filesystem[":project_roots"]["."]).toBe("read");
   });
@@ -396,8 +396,8 @@ describe("Codex app-server config", () => {
           connectionClass: "remote",
           remoteAppsSubstrate: "preconfigured",
           remoteWorkspace: {
-            localRoot: "/Users/kevinlin/code/openclaw",
-            remoteRoot: "/home/oai/openclaw-workspaces",
+            localRoot: "/Users/kevinlin/code/nova",
+            remoteRoot: "/home/oai/nova-workspaces",
           },
         },
       }),
@@ -406,8 +406,8 @@ describe("Codex app-server config", () => {
       readCodexPluginConfig({
         appServer: {
           remoteWorkspace: {
-            localRoot: "/Users/kevinlin/code/openclaw",
-            remoteRoot: "/home/oai/openclaw-workspaces",
+            localRoot: "/Users/kevinlin/code/nova",
+            remoteRoot: "/home/oai/nova-workspaces",
           },
         },
       }),
@@ -430,7 +430,7 @@ describe("Codex app-server config", () => {
           transport: "websocket",
           url: "wss://codex-app-server.example.internal/ws",
           authToken: "capability-token",
-          remoteWorkspaceRoot: " /home/oai/openclaw-workspaces ",
+          remoteWorkspaceRoot: " /home/oai/nova-workspaces ",
         },
       },
     });
@@ -438,7 +438,7 @@ describe("Codex app-server config", () => {
     expectFields(runtime, "runtime", {
       connectionClass: "remote",
       remoteAppsSubstrate: "preconfigured",
-      remoteWorkspaceRoot: "/home/oai/openclaw-workspaces",
+      remoteWorkspaceRoot: "/home/oai/nova-workspaces",
     });
   });
 
@@ -676,7 +676,7 @@ describe("Codex app-server config", () => {
   });
 
   it("checks shared user config before enabling model-backed approval review", async () => {
-    await withTempDir("openclaw-codex-user-home-", async (codexHome) => {
+    await withTempDir("nova-codex-user-home-", async (codexHome) => {
       await fs.writeFile(
         path.join(codexHome, "config.toml"),
         'openai_base_url = "http://localhost:8080/v1"\n',
@@ -855,7 +855,7 @@ describe("Codex app-server config", () => {
       },
       {
         baseUrl: "https://api.openai.com/v1",
-        headers: { "x-openclaw-reviewer-proxy": "local" },
+        headers: { "x-nova-reviewer-proxy": "local" },
         models: [],
       },
       {
@@ -874,7 +874,7 @@ describe("Codex app-server config", () => {
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 128_000,
             maxTokens: 8_192,
-            headers: { "x-openclaw-reviewer-proxy": "local" },
+            headers: { "x-nova-reviewer-proxy": "local" },
           },
         ],
       },
@@ -1260,7 +1260,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   it("rejects the retired dynamic tool profile key", () => {
     expect(
       readCodexPluginConfig({
-        codexDynamicToolsProfile: "openclaw-compat",
+        codexDynamicToolsProfile: "nova-compat",
         codexDynamicToolsLoading: "direct",
       }),
     ).toEqual({});
@@ -1614,7 +1614,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     const resolveForConfig = (codexConfigToml: string) =>
       resolveCodexAppServerStartOptionsForAgent({
         startOptions,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         codexConfigToml,
       }).managedCommandOrder;
 
@@ -1647,14 +1647,14 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     expect(
       resolveCodexAppServerStartOptionsForAgent({
         startOptions: customIdentityStartOptions,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         codexConfigToml: '[plugins."computer-use@openai-bundled"]\nenabled = true\n',
       }).managedCommandOrder,
     ).toBe("desktop-first");
     expect(
       resolveCodexAppServerStartOptionsForAgent({
         startOptions: customIdentityStartOptions,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         codexConfigToml:
           '[plugins."computer-use@openai-bundled"]\nenabled = false\n[plugins."custom-computer-use@local"]\nenabled = true\n',
       }).managedCommandOrder,
@@ -1667,14 +1667,14 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     expect(
       resolveCodexAppServerStartOptionsForAgent({
         startOptions: privateStartOptions,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         codexConfigToml: '[plugins."computer-use@openai-bundled"]\nenabled = true\n',
       }).managedCommandOrder,
     ).toBe("package-first");
   });
 
   it("keeps desktop ownership for Computer Use persisted in an agent Codex home", async () => {
-    await withTempDir("openclaw-codex-agent-home-", async (agentDir) => {
+    await withTempDir("nova-codex-agent-home-", async (agentDir) => {
       const startOptions = resolveRuntimeForTest({ pluginConfig: {} }).start;
       const codexHome = path.join(agentDir, "codex-home");
       await fs.mkdir(codexHome);
@@ -1693,7 +1693,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("uses desktop-first when persisted Codex state cannot be read", async () => {
-    await withTempDir("openclaw-codex-unreadable-home-", async (agentDir) => {
+    await withTempDir("nova-codex-unreadable-home-", async (agentDir) => {
       const startOptions = resolveRuntimeForTest({ pluginConfig: {} }).start;
       await fs.mkdir(path.join(agentDir, "codex-home"), { recursive: true });
       await fs.mkdir(path.join(agentDir, "codex-home", "config.toml"));
@@ -1727,8 +1727,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
       resolveRuntimeForTest({
         pluginConfig: {
           appServer: {
-            command:
-              "node C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+            command: "node C:\\Users\\me\\.nova\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
           },
         },
       }),
@@ -1740,7 +1739,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
         pluginConfig: {},
         env: {
           NOVA_CODEX_APP_SERVER_BIN:
-            "node C:\\Users\\me\\.openclaw\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+            "node C:\\Users\\me\\.nova\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
         },
       }),
     ).toThrow("NOVA_CODEX_APP_SERVER_BIN must be only the Codex app-server executable path");
@@ -2337,7 +2336,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
           },
         },
       };
-      const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({ config });
+      const execPolicy = resolveNovaExecPolicyForCodexAppServer({ config });
 
       expectRuntimePolicy(
         resolveRuntimeForTest({
@@ -2369,7 +2368,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
         },
       },
     };
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({ config });
+    const execPolicy = resolveNovaExecPolicyForCodexAppServer({ config });
 
     expectRuntimePolicy(resolveRuntimeForTest({ execPolicy }), {
       approvalPolicy: "never",
@@ -2390,7 +2389,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
     expect(() =>
       resolveRuntimeForTest({
-        execPolicy: resolveOpenClawExecPolicyForCodexAppServer({ config }),
+        execPolicy: resolveNovaExecPolicyForCodexAppServer({ config }),
         requirementsToml: 'allowed_sandbox_modes = ["read-only", "workspace-write"]\n',
       }),
     ).toThrow("legacy full exec security with ask requires Codex app-server danger-full-access");
@@ -2408,8 +2407,8 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
     expectRuntimePolicy(
       resolveRuntimeForTest({
-        execPolicy: resolveOpenClawExecPolicyForCodexAppServer({ config }),
-        openClawSandboxActive: true,
+        execPolicy: resolveNovaExecPolicyForCodexAppServer({ config }),
+        novaSandboxActive: true,
         requirementsToml: 'allowed_sandbox_modes = ["read-only", "workspace-write"]\n',
       }),
       {
@@ -2421,7 +2420,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies host exec approval security floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveNovaExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -2454,7 +2453,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies host exec approval ask floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveNovaExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -2493,7 +2492,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("preserves explicit read-only sandbox for host exec approval ask floors", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveNovaExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -2532,7 +2531,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies agent-scoped exec approval security floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveNovaExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -2570,7 +2569,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it("applies agent-scoped exec approval ask floors before starting Codex app-server", () => {
-    const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+    const execPolicy = resolveNovaExecPolicyForCodexAppServer({
       config: {
         tools: {
           exec: {
@@ -2878,7 +2877,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 
   it("publishes stable defaults without schema-defaulting mode-derived policy fields", async () => {
     const manifest = JSON.parse(
-      await fs.readFile(new URL("../../openclaw.plugin.json", import.meta.url), "utf8"),
+      await fs.readFile(new URL("../../nova.plugin.json", import.meta.url), "utf8"),
     ) as {
       configSchema: {
         properties: {

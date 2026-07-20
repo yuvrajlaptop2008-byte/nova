@@ -15,7 +15,7 @@ describe("cloud draft advancement", () => {
 
   it("preserves a recovered session when recovery storage becomes unavailable", async () => {
     sessionStorage.setItem(
-      "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+      "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
       JSON.stringify({
         sessionKey: "agent:cloud:recovered",
         messageId: "message-recovered",
@@ -65,7 +65,7 @@ describe("cloud draft advancement", () => {
 
   it("does not overwrite recovery after submission ownership is lost", async () => {
     sessionStorage.setItem(
-      "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+      "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
       JSON.stringify({
         sessionKey: "agent:cloud:newer",
         messageId: "message-newer",
@@ -101,7 +101,7 @@ describe("cloud draft advancement", () => {
     expect(
       JSON.parse(
         sessionStorage.getItem(
-          "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+          "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
         ) ?? "null",
       ),
     ).toMatchObject({ sessionKey: "agent:cloud:newer" });
@@ -137,7 +137,7 @@ describe("cloud draft advancement", () => {
     expect(
       JSON.parse(
         sessionStorage.getItem(
-          "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+          "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
         ) ?? "null",
       ),
     ).toMatchObject({ sessionKey: "agent:cloud:cancelled" });
@@ -146,7 +146,7 @@ describe("cloud draft advancement", () => {
 
   it("redispatches a recovered transcript after terminal placement", async () => {
     sessionStorage.setItem(
-      "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+      "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
       JSON.stringify({
         sessionKey: "agent:cloud:recovered",
         messageId: "message-recovered",
@@ -203,7 +203,7 @@ describe("cloud draft advancement", () => {
 
   it("abandons recovery after a definitive redispatch rejection", async () => {
     sessionStorage.setItem(
-      "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+      "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
       JSON.stringify({
         sessionKey: "agent:cloud:recovered",
         messageId: "message-recovered",
@@ -256,7 +256,7 @@ describe("cloud draft advancement", () => {
 
   it("clears recovery when its draft session no longer exists", async () => {
     sessionStorage.setItem(
-      "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+      "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
       JSON.stringify({
         sessionKey: "agent:cloud:missing",
         messageId: "message-missing",
@@ -298,7 +298,7 @@ describe("cloud draft advancement", () => {
 
   it("deletes a terminal recovery that never reached first-turn sending", async () => {
     sessionStorage.setItem(
-      "openclaw.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
+      "nova.new-session.cloud-recovery.v1:ws://gateway.example:principal-a",
       JSON.stringify({
         sessionKey: "agent:cloud:pre-send",
         messageId: "message-pre-send",

@@ -13,17 +13,17 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
 } from "@nova/normalization-core/string-coerce";
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 import { isAcpRuntimeSpawnAvailable } from "../../acp/runtime/availability.js";
 import type { SourceReplyDeliveryMode } from "../../auto-reply/get-reply-options.types.js";
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import type { ChatType } from "../../channels/chat-type.js";
 import type { CliBackendConfig } from "../../config/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveRuntimeOsLabel } from "../../infra/os-summary.js";
 import { privateFileStore } from "../../infra/private-file-store.js";
 import { tempWorkspace } from "../../infra/private-temp-workspace.js";
-import { resolvePreferredOpenClawTmpDir } from "../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../../infra/tmp-nova-dir.js";
 import type { ImageContent } from "../../llm/types.js";
 import type { PromptImageOrderEntry } from "../../media/prompt-image-order.js";
 import { listRegisteredPluginAgentPromptGuidance } from "../../plugins/command-registry-state.js";
@@ -131,7 +131,7 @@ export function resolveCliRunQueueKey(params: {
 export function buildCliAgentSystemPrompt(params: {
   workspaceDir: string;
   cwd?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   defaultThinkLevel?: ThinkLevel;
   extraSystemPrompt?: string;
   sourceReplyDeliveryMode?: SourceReplyDeliveryMode;
@@ -167,7 +167,7 @@ export function buildCliAgentSystemPrompt(params: {
     runtime: {
       sessionKey: params.sessionKey,
       sessionId: params.sessionId,
-      host: "openclaw",
+      host: "nova",
       os: resolveRuntimeOsLabel(),
       arch: os.arch(),
       node: process.version,
@@ -296,14 +296,14 @@ function resolveCliImagePath(image: ImageContent): string {
     .update("\0")
     .update(image.data)
     .digest("hex");
-  return path.join(resolvePreferredOpenClawTmpDir(), "openclaw-cli-images", `${digest}${ext}`);
+  return path.join(resolvePreferredNovaTmpDir(), "nova-cli-images", `${digest}${ext}`);
 }
 
 function resolveCliImageRoot(params: { backend: CliBackendConfig; workspaceDir: string }): string {
   if (params.backend.imagePathScope === "workspace") {
-    return path.join(params.workspaceDir, ".openclaw-cli-images");
+    return path.join(params.workspaceDir, ".nova-cli-images");
   }
-  return path.join(resolvePreferredOpenClawTmpDir(), "openclaw-cli-images");
+  return path.join(resolvePreferredNovaTmpDir(), "nova-cli-images");
 }
 
 function isFileNotFoundError(error: unknown): boolean {
@@ -438,8 +438,8 @@ export async function writeCliSystemPromptFile(params: {
     return { cleanup: async () => {} };
   }
   const workspace = await tempWorkspace({
-    rootDir: resolvePreferredOpenClawTmpDir(),
-    prefix: "openclaw-cli-system-prompt-",
+    rootDir: resolvePreferredNovaTmpDir(),
+    prefix: "nova-cli-system-prompt-",
   });
   const filePath = await workspace.write(
     "system-prompt.md",

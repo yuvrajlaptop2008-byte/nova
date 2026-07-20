@@ -1,6 +1,6 @@
-import type { ChannelIngressQueue } from "openclaw/plugin-sdk/channel-outbound";
+import type { ChannelIngressQueue } from "nova/plugin-sdk/channel-outbound";
 // Qqbot type declarations define plugin contracts.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
+import type { NovaConfig } from "nova/plugin-sdk/core";
 import type { EngineLogger } from "../types.js";
 export type { EngineLogger };
 
@@ -226,7 +226,7 @@ interface GatewayGroupOptions {
 export interface CoreGatewayContext {
   account: GatewayAccount;
   abortSignal: AbortSignal;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   onReady?: (data: unknown) => void;
   /**
    * Invoked when a RESUMED event is received after reconnect.

@@ -67,7 +67,7 @@ describe("exec security floor", () => {
       "NOVA_STATE_DIR",
       "SHELL",
     ]);
-    tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-exec-security-floor-"));
+    tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-exec-security-floor-"));
     setTestEnvValue("HOME", tempRoot);
     setTestEnvValue("USERPROFILE", tempRoot);
     setTestEnvValue("NOVA_HOME", tempRoot);

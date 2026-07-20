@@ -11,10 +11,7 @@ import "../../components/app-sidebar.ts";
 
 describe("AppSidebar session section visibility", () => {
   it("renders an active draft first inside an expanded empty Threads section", async () => {
-    localStorage.setItem(
-      "openclaw:sidebar:sessions:collapsed-sections",
-      JSON.stringify(["ungrouped"]),
-    );
+    localStorage.setItem("nova:sidebar:sessions:collapsed-sections", JSON.stringify(["ungrouped"]));
     const gateway = createGateway({} as GatewayBrowserClient);
     const { sidebar } = await mountSidebar(gateway, createSessions("main", ["agent:main:main"]));
     const draftSidebar = sidebar as SidebarLifecycleState & { draftSessionAgentId: string };
@@ -49,10 +46,7 @@ describe("AppSidebar session section visibility", () => {
   });
 
   it("keeps normal pagination when a draft overrides collapsed Threads", async () => {
-    localStorage.setItem(
-      "openclaw:sidebar:sessions:collapsed-sections",
-      JSON.stringify(["ungrouped"]),
-    );
+    localStorage.setItem("nova:sidebar:sessions:collapsed-sections", JSON.stringify(["ungrouped"]));
     const gateway = createGateway({} as GatewayBrowserClient);
     const { sidebar } = await mountSidebar(
       gateway,

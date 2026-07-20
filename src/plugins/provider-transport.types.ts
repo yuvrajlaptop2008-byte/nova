@@ -1,5 +1,5 @@
 import type { StreamFn } from "../agents/runtime/index.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ProviderRuntimeModel } from "./provider-runtime-model.types.js";
 import type { ProviderPrepareExtraParamsContext } from "./provider-runtime.types.js";
 
@@ -11,7 +11,7 @@ import type { ProviderPrepareExtraParamsContext } from "./provider-runtime.types
  * as a wrapper around `streamSimple`).
  */
 export type ProviderCreateStreamFnContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -120,7 +120,7 @@ export type PluginEmbeddingProvider = {
  * plugin instead of the core memory switchboard.
  */
 export type ProviderCreateEmbeddingProviderContext = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -158,7 +158,7 @@ export type ProviderCacheTtlEligibilityContext = {
  * "No API key found" error.
  */
 export type ProviderBuildMissingAuthMessageContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -174,7 +174,7 @@ export type ProviderBuildMissingAuthMessageContext = {
  * error.
  */
 export type ProviderBuildUnknownModelHintContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;

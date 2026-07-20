@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import type { PluginRuntime } from "openclaw/plugin-sdk/core";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/core";
+import type { PluginStateSyncKeyedStore } from "nova/plugin-sdk/plugin-state-runtime";
 
 export const REEF_REGISTRATION_NAMESPACE = "registration";
 export const REEF_REGISTRATION_IDENTITY_KEY = "identity";
@@ -107,7 +107,7 @@ export function assertReefIdentityBinding(
   const existing = loadReefIdentityBinding(runtime);
   if (!existing) {
     throw new Error(
-      "Reef identity binding is missing; run openclaw doctor --fix or register this claw",
+      "Reef identity binding is missing; run nova doctor --fix or register this claw",
     );
   }
   if (existing.handle !== binding.handle || existing.relayUrl !== binding.relayUrl) {

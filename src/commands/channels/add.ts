@@ -1,4 +1,4 @@
-// Implements guided and non-interactive `openclaw channels add` account setup.
+// Implements guided and non-interactive `nova channels add` account setup.
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { getBundledChannelSetupPlugin } from "../../channels/plugins/bundled.js";
@@ -12,7 +12,7 @@ import {
   formatUnknownChannelMessage,
   formatUnsupportedChannelActionMessage,
 } from "../../cli/error-format.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { parseStrictNonNegativeInteger } from "../../infra/parse-finite-number.js";
 import { commitConfigWithPendingPluginInstalls } from "../../plugins/install-record-commit.js";
 import { refreshPluginRegistryAfterConfigMutation } from "../../plugins/registry-refresh.js";
@@ -51,7 +51,7 @@ export type ChannelsAddOptions = {
 const CHANNEL_ADD_CONTROL_OPTION_KEYS = new Set(["channel", "account"]);
 const NEXTCLOUD_TALK_CLI_ALIASES = new Set(["nextcloud-talk", "nc-talk", "nc"]);
 
-async function resolveCatalogChannelEntry(raw: string, cfg: OpenClawConfig | null) {
+async function resolveCatalogChannelEntry(raw: string, cfg: NovaConfig | null) {
   const trimmed = normalizeOptionalLowercaseString(raw);
   if (!trimmed) {
     return undefined;
@@ -148,7 +148,7 @@ async function channelsAddCommandImpl(
   if (!configSnapshot) {
     return;
   }
-  const cfg = (configSnapshot.sourceConfig ?? configSnapshot.config) as OpenClawConfig;
+  const cfg = (configSnapshot.sourceConfig ?? configSnapshot.config) as NovaConfig;
   const baseHash = configSnapshot.hash;
   let nextConfig = cfg;
   let pluginRegistrySourceChanged = false;
@@ -245,7 +245,7 @@ async function channelsAddCommandImpl(
 
   if (!channel) {
     const hint = catalogEntry
-      ? `Plugin ${catalogEntry.meta.label} could not be loaded after install. Run openclaw doctor --fix, then retry openclaw channels add.`
+      ? `Plugin ${catalogEntry.meta.label} could not be loaded after install. Run nova doctor --fix, then retry nova channels add.`
       : formatUnknownChannelMessage({ channel: rawChannel });
     runtime.error(hint);
     runtime.exit(1);
@@ -258,7 +258,7 @@ async function channelsAddCommandImpl(
       `${formatUnsupportedChannelActionMessage({
         channel,
         action: "non-interactive add",
-      })} Run ${formatCliCommand("openclaw channels add")} with no flags for guided setup.`,
+      })} Run ${formatCliCommand("nova channels add")} with no flags for guided setup.`,
     );
     runtime.exit(1);
     return;

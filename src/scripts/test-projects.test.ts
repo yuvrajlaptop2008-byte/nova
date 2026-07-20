@@ -73,11 +73,11 @@ describe("test-projects args", () => {
   });
 
   it("routes boundary targets to the boundary config", () => {
-    expect(buildVitestRunPlans(["src/infra/openclaw-root.test.ts"])).toEqual([
+    expect(buildVitestRunPlans(["src/infra/nova-root.test.ts"])).toEqual([
       {
         config: "test/vitest/vitest.boundary.config.ts",
         forwardedArgs: [],
-        includePatterns: ["src/infra/openclaw-root.test.ts"],
+        includePatterns: ["src/infra/nova-root.test.ts"],
         watchMode: false,
       },
     ]);
@@ -412,11 +412,11 @@ describe("test-projects args", () => {
   });
 
   it("routes infra targets to the infra config", () => {
-    expect(buildVitestRunPlans(["src/infra/openclaw-root.test.ts"])).toEqual([
+    expect(buildVitestRunPlans(["src/infra/nova-root.test.ts"])).toEqual([
       {
         config: "test/vitest/vitest.boundary.config.ts",
         forwardedArgs: [],
-        includePatterns: ["src/infra/openclaw-root.test.ts"],
+        includePatterns: ["src/infra/nova-root.test.ts"],
         watchMode: false,
       },
     ]);
@@ -1089,30 +1089,30 @@ describe("test-projects args", () => {
     expect(spec?.includePatterns).toEqual([
       "extensions/discord/src/monitor/message-handler.preflight.test.ts",
     ]);
-    expect(spec?.includeFilePath).toContain("openclaw-vitest-include-");
+    expect(spec?.includeFilePath).toContain("nova-vitest-include-");
     expect(spec?.env.NOVA_VITEST_INCLUDE_FILE).toBe(spec?.includeFilePath);
   });
 
   it("rejects explicit test file targets that do not exist", () => {
-    expect(findUnmatchedExplicitTestTargets(["src/not-a-real-openclaw-test.test.ts"])).toEqual([
+    expect(findUnmatchedExplicitTestTargets(["src/not-a-real-nova-test.test.ts"])).toEqual([
       {
-        target: "src/not-a-real-openclaw-test.test.ts",
+        target: "src/not-a-real-nova-test.test.ts",
         reason: "path-does-not-exist",
       },
     ]);
   });
 
   it("rejects explicit globs that match no files", () => {
-    expect(findUnmatchedExplicitTestTargets(["src/**/not-a-real-openclaw-test.test.ts"])).toEqual([
+    expect(findUnmatchedExplicitTestTargets(["src/**/not-a-real-nova-test.test.ts"])).toEqual([
       {
-        target: "src/**/not-a-real-openclaw-test.test.ts",
+        target: "src/**/not-a-real-nova-test.test.ts",
         reason: "glob-matched-no-files",
       },
     ]);
   });
 
   it("rejects explicit non-test file targets with no sibling tests", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-test-targets-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-test-targets-"));
     try {
       fs.mkdirSync(path.join(tempDir, "src", "lonely"), { recursive: true });
       fs.writeFileSync(path.join(tempDir, "src", "lonely", "runtime.ts"), "export {};\n");
@@ -1130,7 +1130,7 @@ describe("test-projects args", () => {
   });
 
   it("accepts explicit untracked test files that exist on disk", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-test-targets-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-test-targets-"));
     try {
       fs.mkdirSync(path.join(tempDir, "src"), { recursive: true });
       fs.writeFileSync(path.join(tempDir, "src", "new.test.ts"), "test('new', () => {});\n");
@@ -1157,7 +1157,7 @@ describe("test-projects args", () => {
   });
 
   it("rejects explicit test-support helper files with no importing tests", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-test-targets-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-test-targets-"));
     try {
       fs.mkdirSync(path.join(tempDir, "src", "lonely"), { recursive: true });
       fs.writeFileSync(
@@ -1222,7 +1222,7 @@ describe("test-projects args", () => {
   });
 
   it("skips channel contract configs with no matching external include patterns", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-contract-include-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-contract-include-"));
     try {
       const includeFile = path.join(tempDir, "include.json");
       fs.writeFileSync(

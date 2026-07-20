@@ -497,7 +497,7 @@ describe("plugin interactive handlers", () => {
 
   it("hydrates legacy interactive state shapes before clearing handlers", async () => {
     const globalStore = globalThis as Record<PropertyKey, unknown>;
-    const stateKey = Symbol.for("openclaw.pluginInteractiveState");
+    const stateKey = Symbol.for("nova.pluginInteractiveState");
     const originalState = globalStore[stateKey];
 
     globalStore[stateKey] = {
@@ -659,7 +659,7 @@ describe("plugin interactive handlers", () => {
     const handler = vi.fn(async () => ({ handled: true }));
     const registry = createEmptyPluginRegistry();
     registry.plugins.push({
-      id: "openclaw-code-agent",
+      id: "nova-code-agent",
       name: "Nova Code Agent",
       status: "loaded",
     } as never);
@@ -667,15 +667,15 @@ describe("plugin interactive handlers", () => {
       {
         channel: "telegram",
         namespace: "code-agent",
-        pluginId: "openclaw-code-agent",
+        pluginId: "nova-code-agent",
         pluginName: "Nova Code Agent",
-        pluginRoot: "/plugins/openclaw-code-agent",
+        pluginRoot: "/plugins/nova-code-agent",
         handler: handler as never,
       },
     ];
     expect(
       registerRegistryPluginInteractiveHandler(
-        "openclaw-code-agent",
+        "nova-code-agent",
         {
           channel: "telegram",
           namespace: "code-agent",
@@ -683,7 +683,7 @@ describe("plugin interactive handlers", () => {
         },
         {
           pluginName: "Nova Code Agent",
-          pluginRoot: "/plugins/openclaw-code-agent",
+          pluginRoot: "/plugins/nova-code-agent",
         },
       ),
     ).toEqual({ ok: true });

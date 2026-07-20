@@ -9,12 +9,12 @@ import {
   getNodeSqliteKysely,
 } from "../../infra/kysely-sync.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
-import type { DB as OpenClawStateDatabase } from "../../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateDatabase } from "../../state/nova-state-db.generated.js";
 import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-  type OpenClawStateDatabaseOptions,
-} from "../../state/openclaw-state-db.js";
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+  type NovaStateDatabaseOptions,
+} from "../../state/nova-state-db.js";
 import { normalizeSkillIndexName } from "../discovery/skill-index.js";
 import { readSkillProposalManifest, readSkillProposalRecord } from "./store.js";
 import type { SkillProposalRecord } from "./types.js";
@@ -34,7 +34,7 @@ let loggedArchivedSkillReadFailure = false;
 type SkillLifecycleState = "active" | "archived" | "stale";
 
 type CuratorDatabase = Pick<
-  OpenClawStateDatabase,
+  NovaStateDatabase,
   "skill_curator_state" | "skill_lifecycle" | "skill_usage"
 >;
 
@@ -82,12 +82,12 @@ export type SkillCuratorStatus = {
   overlaps: SkillOverlapCandidate[];
 };
 
-type CuratorOptions = OpenClawStateDatabaseOptions & {
+type CuratorOptions = NovaStateDatabaseOptions & {
   nowMs?: number;
 };
 
-function curatorDb(options: OpenClawStateDatabaseOptions = {}) {
-  const database = openOpenClawStateDatabase(options);
+function curatorDb(options: NovaStateDatabaseOptions = {}) {
+  const database = openNovaStateDatabase(options);
   return {
     database,
     kysely: getNodeSqliteKysely<CuratorDatabase>(database.db),
@@ -106,7 +106,7 @@ function recordSkillUsage(
   event: Pick<DiagnosticSkillUsedEvent, "agentId" | "skillName" | "skillSource" | "ts"> & {
     skillFile?: string;
   },
-  options: OpenClawStateDatabaseOptions = {},
+  options: NovaStateDatabaseOptions = {},
 ): void {
   const rawSkillFile = event.skillFile?.trim();
   // Lifecycle identity is the canonical file. Name-only usage would refresh unrelated
@@ -117,7 +117,7 @@ function recordSkillUsage(
   }
   const skillFile = canonicalizePath(path.resolve(rawSkillFile));
   const skillKey = canonicalSkillKey(event.skillName);
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runNovaStateWriteTransaction(({ db }) => {
     const kysely = getNodeSqliteKysely<CuratorDatabase>(db);
     executeSqliteQuerySync(
       db,
@@ -154,7 +154,7 @@ function recordSkillUsage(
 }
 
 /** Register once per Gateway lifetime; listener failures never reach tool execution. */
-function registerSkillUsageTracking(options: OpenClawStateDatabaseOptions = {}): () => void {
+function registerSkillUsageTracking(options: NovaStateDatabaseOptions = {}): () => void {
   return onTrustedInternalDiagnosticEvent((event, metadata, privateData) => {
     if (!metadata.trusted || event.type !== "skill.used") {
       return;
@@ -202,9 +202,7 @@ export function startSkillCuratorMaintenance(options: {
   };
 }
 
-async function loadCuratedSkills(
-  options: OpenClawStateDatabaseOptions = {},
-): Promise<CuratedSkill[]> {
+async function loadCuratedSkills(options: NovaStateDatabaseOptions = {}): Promise<CuratedSkill[]> {
   const manifest = await readSkillProposalManifest({ env: options.env });
   const byFile = new Map<string, CuratedSkill>();
   const appliedRecords: Array<{ appliedAtMs: number; record: SkillProposalRecord }> = [];
@@ -310,8 +308,8 @@ function desiredLifecycleState(ageMs: number): SkillLifecycleState {
   return "active";
 }
 
-function writeSweepAttempt(nowMs: number, options: OpenClawStateDatabaseOptions): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
+function writeSweepAttempt(nowMs: number, options: NovaStateDatabaseOptions): void {
+  runNovaStateWriteTransaction(({ db }) => {
     const kysely = getNodeSqliteKysely<CuratorDatabase>(db);
     executeSqliteQuerySync(
       db,
@@ -329,12 +327,8 @@ function writeSweepAttempt(nowMs: number, options: OpenClawStateDatabaseOptions)
   }, options);
 }
 
-function writeSweepFailure(
-  nowMs: number,
-  error: unknown,
-  options: OpenClawStateDatabaseOptions,
-): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
+function writeSweepFailure(nowMs: number, error: unknown, options: NovaStateDatabaseOptions): void {
+  runNovaStateWriteTransaction(({ db }) => {
     const kysely = getNodeSqliteKysely<CuratorDatabase>(db);
     executeSqliteQuerySync(
       db,
@@ -366,7 +360,7 @@ async function runSkillCuratorSweep(
   try {
     const curated = await loadCuratedSkills(options);
     const existingCurated: CuratedSkill[] = [];
-    const result = runOpenClawStateWriteTransaction(({ db }) => {
+    const result = runNovaStateWriteTransaction(({ db }) => {
       const kysely = getNodeSqliteKysely<CuratorDatabase>(db);
       const lifecycleQuery = kysely.selectFrom("skill_lifecycle").selectAll();
       const lifecycleRows = executeSqliteQuerySync(db, lifecycleQuery).rows;
@@ -446,7 +440,7 @@ async function runSkillCuratorSweep(
       durationMs: Math.max(0, Date.now() - startedAtMs),
       overlaps: detectOverlapCandidates(existingCurated),
     };
-    runOpenClawStateWriteTransaction(({ db }) => {
+    runNovaStateWriteTransaction(({ db }) => {
       const kysely = getNodeSqliteKysely<CuratorDatabase>(db);
       executeSqliteQuerySync(
         db,
@@ -489,9 +483,7 @@ function parseOverlapCandidates(value: string | null | undefined): SkillOverlapC
   }
 }
 
-export function getSkillCuratorStatus(
-  options: OpenClawStateDatabaseOptions = {},
-): SkillCuratorStatus {
+export function getSkillCuratorStatus(options: NovaStateDatabaseOptions = {}): SkillCuratorStatus {
   const { database, kysely } = curatorDb(options);
   const state = executeSqliteQueryTakeFirstSync(
     database.db,
@@ -539,9 +531,9 @@ export function getSkillCuratorStatus(
   };
 }
 
-function updateLifecyclePin(skill: string, pinned: boolean, options: OpenClawStateDatabaseOptions) {
+function updateLifecyclePin(skill: string, pinned: boolean, options: NovaStateDatabaseOptions) {
   const skillKey = canonicalSkillKey(skill);
-  const firstSkillFile = runOpenClawStateWriteTransaction(({ db }) => {
+  const firstSkillFile = runNovaStateWriteTransaction(({ db }) => {
     const kysely = getNodeSqliteKysely<CuratorDatabase>(db);
     const first = executeSqliteQueryTakeFirstSync(
       db,
@@ -569,18 +561,18 @@ function updateLifecyclePin(skill: string, pinned: boolean, options: OpenClawSta
   return getSkillCuratorStatus(options).skills.find((entry) => entry.skillFile === firstSkillFile)!;
 }
 
-export function pinCuratedSkill(skill: string, options: OpenClawStateDatabaseOptions = {}) {
+export function pinCuratedSkill(skill: string, options: NovaStateDatabaseOptions = {}) {
   return updateLifecyclePin(skill, true, options);
 }
 
-export function unpinCuratedSkill(skill: string, options: OpenClawStateDatabaseOptions = {}) {
+export function unpinCuratedSkill(skill: string, options: NovaStateDatabaseOptions = {}) {
   return updateLifecyclePin(skill, false, options);
 }
 
 export function restoreCuratedSkill(skill: string, options: CuratorOptions = {}) {
   const skillKey = canonicalSkillKey(skill);
   const nowMs = options.nowMs ?? Date.now();
-  const firstSkillFile = runOpenClawStateWriteTransaction(({ db }) => {
+  const firstSkillFile = runNovaStateWriteTransaction(({ db }) => {
     const kysely = getNodeSqliteKysely<CuratorDatabase>(db);
     const first = executeSqliteQueryTakeFirstSync(
       db,
@@ -616,9 +608,7 @@ export function restoreCuratedSkill(skill: string, options: CuratorOptions = {})
   return getSkillCuratorStatus(options).skills.find((entry) => entry.skillFile === firstSkillFile)!;
 }
 
-export function getArchivedSkillFiles(
-  options: OpenClawStateDatabaseOptions = {},
-): ReadonlySet<string> {
+export function getArchivedSkillFiles(options: NovaStateDatabaseOptions = {}): ReadonlySet<string> {
   try {
     const { database, kysely } = curatorDb(options);
     const rows = executeSqliteQuerySync(

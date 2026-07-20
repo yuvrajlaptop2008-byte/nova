@@ -1,7 +1,7 @@
 // Model/auth provider selection step shared by the classic wizard and bootstrap onboarding.
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import type { AuthChoice, OnboardOptions } from "../commands/onboard-types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { createLazyRuntimeModule } from "../shared/lazy-runtime.js";
@@ -15,7 +15,7 @@ type PreparedAuthChoiceResult = Awaited<
 >;
 
 export type SetupModelAuthCandidate = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   authProfiles: PreparedAuthChoiceResult["authProfiles"];
   persistAuthProfiles: PreparedAuthChoiceResult["persistAuthProfiles"];
 };
@@ -33,12 +33,12 @@ function isAuthChoiceSelected(
 
 async function resolveAuthChoiceModelSelectionPolicy(params: {
   authChoice: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   resolvePreferredProviderForAuthChoice: (params: {
     choice: string;
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     workspaceDir?: string;
     env?: NodeJS.ProcessEnv;
   }) => Promise<string | undefined>;
@@ -122,7 +122,7 @@ async function resolveAuthChoiceModelSelectionPolicy(params: {
  * (public onboarding automation contract).
  */
 export async function runSetupModelAuthStep(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   stagedCandidate?: SetupModelAuthCandidate;
   opts: OnboardOptions;
   prompter: WizardPrompter;

@@ -1,6 +1,6 @@
 // Tests follow-up reply delivery and route preservation.
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { getReplyPayloadMetadata, setReplyPayloadMetadata } from "../reply-payload.js";
 import { resolveFollowupDeliveryPayloads } from "./followup-delivery.js";
 
@@ -8,7 +8,7 @@ vi.mock("../../channels/plugins/index.js", () => ({
   getChannelPlugin: () => undefined,
 }));
 
-const baseConfig = {} as OpenClawConfig;
+const baseConfig = {} as NovaConfig;
 
 describe("resolveFollowupDeliveryPayloads", () => {
   it("drops payloads without visible content", () => {
@@ -105,7 +105,7 @@ describe("resolveFollowupDeliveryPayloads", () => {
             replyToMode: "all",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       payloads: [{ text: "queued reply" }],
       originatingChannel: "slack",
       originatingChatType: "channel",

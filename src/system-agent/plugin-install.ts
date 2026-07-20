@@ -1,4 +1,4 @@
-import { isOpenClawTrustedPluginInstallSpec } from "../plugins/install-provenance.js";
+import { isNovaTrustedPluginInstallSpec } from "../plugins/install-provenance.js";
 
 export function validateSystemAgentPluginInstallSpec(spec: string): string | null {
   const trimmed = spec.trim();
@@ -12,8 +12,8 @@ export function validateSystemAgentPluginInstallSpec(spec: string): string | nul
     // Nova does not install local paths or URLs; those can execute arbitrary package code.
     return "Nova plugin install accepts npm or ClawHub package specs only.";
   }
-  if (!isOpenClawTrustedPluginInstallSpec(trimmed)) {
-    return "Nova installs only ClawHub, bundled, or official-catalog plugins. Use `openclaw plugins install <spec>` in a trusted shell to review an arbitrary executable source.";
+  if (!isNovaTrustedPluginInstallSpec(trimmed)) {
+    return "Nova installs only ClawHub, bundled, or official-catalog plugins. Use `nova plugins install <spec>` in a trusted shell to review an arbitrary executable source.";
   }
   return null;
 }

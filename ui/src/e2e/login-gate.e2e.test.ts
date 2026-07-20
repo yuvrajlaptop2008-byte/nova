@@ -27,8 +27,8 @@ async function renderLoginGate(page: Page): Promise<void> {
 
 async function mountLoginGate(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    await customElements.whenDefined("openclaw-login-gate");
-    const gate = document.createElement("openclaw-login-gate") as HTMLElement & {
+    await customElements.whenDefined("nova-login-gate");
+    const gate = document.createElement("nova-login-gate") as HTMLElement & {
       props: Record<string, unknown>;
       updateComplete: Promise<unknown>;
     };

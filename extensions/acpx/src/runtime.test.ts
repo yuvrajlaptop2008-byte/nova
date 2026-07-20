@@ -21,9 +21,9 @@ type TestSessionStore = {
 };
 
 const DOCUMENTED_NOVA_BRIDGE_COMMAND =
-  "env NOVA_HIDE_BANNER=1 NOVA_SUPPRESS_NOTES=1 openclaw acp --url ws://127.0.0.1:18789 --token-file ~/.openclaw/gateway.token --session agent:main:main";
+  "env NOVA_HIDE_BANNER=1 NOVA_SUPPRESS_NOTES=1 nova acp --url ws://127.0.0.1:18789 --token-file ~/.nova/gateway.token --session agent:main:main";
 const CODEX_ACP_COMMAND = "npx @agentclientprotocol/codex-acp@1.1.2";
-const CODEX_ACP_WRAPPER_COMMAND = `node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"`;
+const CODEX_ACP_WRAPPER_COMMAND = `node "/tmp/nova/acpx/codex-acp-wrapper.mjs"`;
 const CODEX_ACP_WRAPPER_COMMAND_WITH_LEASE = `${CODEX_ACP_WRAPPER_COMMAND} ${NOVA_ACPX_LEASE_ID_ARG} lease-close ${NOVA_GATEWAY_INSTANCE_ID_ARG} gateway-test`;
 const LOCAL_NODE_MODULES_CODEX_COMMAND = `node "${path.resolve(
   "node_modules/@agentclientprotocol/codex-acp/dist/index.js",
@@ -62,8 +62,8 @@ function makeRuntime(
       cwd: "/tmp",
       sessionStore: baseStore as unknown as AcpSessionStore,
       agentRegistry: {
-        resolve: (agentName: string) => (agentName === "openclaw" ? "openclaw acp" : agentName),
-        list: () => ["codex", "openclaw"],
+        resolve: (agentName: string) => (agentName === "nova" ? "nova acp" : agentName),
+        list: () => ["codex", "nova"],
       },
       permissionMode: "approve-reads",
       ...options,
@@ -203,18 +203,18 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     };
     const { runtime } = makeRuntime(baseStore, {
       pluginToolsMcpBridgeEnabled: true,
-      openclawToolsMcpBridgeEnabled: true,
+      novaToolsMcpBridgeEnabled: true,
       mcpServers: [
         {
-          name: "openclaw-plugin-tools",
+          name: "nova-plugin-tools",
           command: "node",
           args: ["dist/mcp/plugin-tools-serve.js"],
           env: [],
         },
         {
-          name: "openclaw-tools",
+          name: "nova-tools",
           command: "node",
-          args: ["dist/mcp/openclaw-tools-serve.js"],
+          args: ["dist/mcp/nova-tools-serve.js"],
           env: [],
         },
       ],
@@ -236,11 +236,11 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       return delegate.options.mcpServers?.find((server) => server.name === serverName)?.env;
     };
 
-    expect(readScopedMcpEnv("agent:worker:main", "openclaw-plugin-tools")).toContainEqual({
+    expect(readScopedMcpEnv("agent:worker:main", "nova-plugin-tools")).toContainEqual({
       name: "NOVA_TOOLS_MCP_AGENT_SESSION_KEY",
       value: "agent:worker:main",
     });
-    expect(readScopedMcpEnv("agent:research:main", "openclaw-tools")).toContainEqual({
+    expect(readScopedMcpEnv("agent:research:main", "nova-tools")).toContainEqual({
       name: "NOVA_TOOLS_MCP_AGENT_SESSION_KEY",
       value: "agent:research:main",
     });
@@ -252,12 +252,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       save: vi.fn(async () => {}),
     };
     const { runtime } = makeRuntime(baseStore, {
-      openclawToolsMcpBridgeEnabled: true,
+      novaToolsMcpBridgeEnabled: true,
       mcpServers: [
         {
-          name: "openclaw-tools",
+          name: "nova-tools",
           command: "node",
-          args: ["dist/mcp/openclaw-tools-serve.js"],
+          args: ["dist/mcp/nova-tools-serve.js"],
           env: [],
         },
       ],
@@ -284,12 +284,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       save: vi.fn(async () => {}),
     };
     const { runtime, delegate, bridgeSafeDelegate } = makeRuntime(baseStore, {
-      openclawToolsMcpBridgeEnabled: true,
+      novaToolsMcpBridgeEnabled: true,
       mcpServers: [
         {
-          name: "openclaw-tools",
+          name: "nova-tools",
           command: "node",
-          args: ["dist/mcp/openclaw-tools-serve.js"],
+          args: ["dist/mcp/nova-tools-serve.js"],
           env: [],
         },
       ],
@@ -313,7 +313,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -347,7 +347,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "claude" ? "npx @agentclientprotocol/claude-agent-acp" : agentName,
-        list: () => ["claude", "openclaw"],
+        list: () => ["claude", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -396,7 +396,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -436,7 +436,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       forbiddenFragment: "\ude80",
     },
   ])("$name", async ({ stderr, expectedFragment, forbiddenFragment }) => {
-    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acpx-runtime-"));
+    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acpx-runtime-"));
     const leaseStore = makeLeaseStore();
     const wrapperCommand = `node "${path.join(wrapperRoot, "codex-acp-wrapper.mjs")}"`;
     const baseStore: TestSessionStore = {
@@ -444,9 +444,9 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       save: vi.fn(async () => {}),
     };
     const { runtime, delegate } = makeRuntime(baseStore, {
-      openclawGatewayInstanceId: "gateway-test",
-      openclawProcessLeaseStore: leaseStore.store,
-      openclawWrapperRoot: wrapperRoot,
+      novaGatewayInstanceId: "gateway-test",
+      novaProcessLeaseStore: leaseStore.store,
+      novaWrapperRoot: wrapperRoot,
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? wrapperCommand : agentName),
         list: () => ["codex"],
@@ -491,7 +491,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
   });
 
   it("adds Codex wrapper stderr tail to generic first-turn failures", async () => {
-    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acpx-runtime-"));
+    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acpx-runtime-"));
     await fs.writeFile(
       path.join(wrapperRoot, "codex-acp-wrapper.stderr.lease-turn.log"),
       "Unhandled error during turn: upstream model returned 404\n",
@@ -501,12 +501,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:test",
         agentCommand: CODEX_ACP_WRAPPER_COMMAND,
-        openclawLeaseId: "lease-turn",
+        novaLeaseId: "lease-turn",
       })),
       save: vi.fn(async () => {}),
     };
     const { runtime, delegate } = makeRuntime(baseStore, {
-      openclawWrapperRoot: wrapperRoot,
+      novaWrapperRoot: wrapperRoot,
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "codex" ? CODEX_ACP_WRAPPER_COMMAND : agentName,
@@ -546,7 +546,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
   });
 
   it("adds Codex wrapper stderr tail to generic terminal turn error events", async () => {
-    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acpx-runtime-"));
+    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acpx-runtime-"));
     await fs.writeFile(
       path.join(wrapperRoot, "codex-acp-wrapper.stderr.lease-turn-event.log"),
       "Unhandled error during turn: profile missing OPENAI_API_KEY\n",
@@ -556,12 +556,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:test",
         agentCommand: CODEX_ACP_WRAPPER_COMMAND,
-        openclawLeaseId: "lease-turn-event",
+        novaLeaseId: "lease-turn-event",
       })),
       save: vi.fn(async () => {}),
     };
     const { runtime, delegate } = makeRuntime(baseStore, {
-      openclawWrapperRoot: wrapperRoot,
+      novaWrapperRoot: wrapperRoot,
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "codex" ? CODEX_ACP_WRAPPER_COMMAND : agentName,
@@ -602,7 +602,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
   });
 
   it("adds Codex wrapper stderr tail to generic startTurn failure results", async () => {
-    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acpx-runtime-"));
+    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acpx-runtime-"));
     await fs.writeFile(
       path.join(wrapperRoot, "codex-acp-wrapper.stderr.lease-start-turn.log"),
       "Unhandled error during turn: adapter disconnected after progress\n",
@@ -612,12 +612,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:test",
         agentCommand: CODEX_ACP_WRAPPER_COMMAND,
-        openclawLeaseId: "lease-start-turn",
+        novaLeaseId: "lease-start-turn",
       })),
       save: vi.fn(async () => {}),
     };
     const { runtime, delegate } = makeRuntime(baseStore, {
-      openclawWrapperRoot: wrapperRoot,
+      novaWrapperRoot: wrapperRoot,
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "codex" ? CODEX_ACP_WRAPPER_COMMAND : agentName,
@@ -680,7 +680,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
   });
 
   it("adds Codex wrapper stderr tail when startTurn creation throws", async () => {
-    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acpx-runtime-"));
+    const wrapperRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acpx-runtime-"));
     await fs.writeFile(
       path.join(wrapperRoot, "codex-acp-wrapper.stderr.lease-start-turn-create.log"),
       "Unhandled error during turn: adapter failed before returning turn\n",
@@ -690,12 +690,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:test",
         agentCommand: CODEX_ACP_WRAPPER_COMMAND,
-        openclawLeaseId: "lease-start-turn-create",
+        novaLeaseId: "lease-start-turn-create",
       })),
       save: vi.fn(async () => {}),
     };
     const { runtime, delegate } = makeRuntime(baseStore, {
-      openclawWrapperRoot: wrapperRoot,
+      novaWrapperRoot: wrapperRoot,
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "codex" ? CODEX_ACP_WRAPPER_COMMAND : agentName,
@@ -811,7 +811,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "main" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["main", "codex", "openclaw"],
+        list: () => ["main", "codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -941,7 +941,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     ).toBe(
       `npx @agentclientprotocol/codex-acp@1.1.2 ${NOVA_CODEX_CONFIG_ARG} '{"model":"gpt-5.4","model_reasoning_effort":"medium"}'`,
     );
-    expect(testing.isCodexAcpCommand("openclaw acp")).toBe(false);
+    expect(testing.isCodexAcpCommand("nova acp")).toBe(false);
   });
 
   it("passes gpt-5.5 Codex ACP startup through instead of blocking it", async () => {
@@ -952,7 +952,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -985,7 +985,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1078,7 +1078,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1112,7 +1112,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1139,7 +1139,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1166,7 +1166,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1197,7 +1197,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1228,7 +1228,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       const { runtime, delegate } = makeRuntime(baseStore, {
         agentRegistry: {
           resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-          list: () => ["codex", "openclaw"],
+          list: () => ["codex", "nova"],
         },
       });
       const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1258,7 +1258,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(baseStore, {
       agentRegistry: {
         resolve: (agentName: string) => (agentName === "codex" ? CODEX_ACP_COMMAND : agentName),
-        list: () => ["codex", "openclaw"],
+        list: () => ["codex", "nova"],
       },
     });
     const ensure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -1577,20 +1577,20 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     );
     expect(testing.isClaudeAcpCommand("claude-agent-acp")).toBe(true);
     expect(testing.isClaudeAcpCommand("claude-agent-acp.exe")).toBe(true);
-    expect(
-      testing.isClaudeAcpCommand(`node "/tmp/openclaw/acpx/claude-agent-acp-wrapper.mjs"`),
-    ).toBe(true);
+    expect(testing.isClaudeAcpCommand(`node "/tmp/nova/acpx/claude-agent-acp-wrapper.mjs"`)).toBe(
+      true,
+    );
     expect(
       testing.isClaudeAcpCommand(
-        `node.exe "C:/Users/runner/AppData/Local/Temp/openclaw/acpx/claude-agent-acp-wrapper.mjs"`,
+        `node.exe "C:/Users/runner/AppData/Local/Temp/nova/acpx/claude-agent-acp-wrapper.mjs"`,
       ),
     ).toBe(true);
     expect(
       testing.isClaudeAcpCommand(
-        `Node.EXE "C:/Users/runner/AppData/Local/Temp/openclaw/acpx/claude-agent-acp-wrapper.mjs"`,
+        `Node.EXE "C:/Users/runner/AppData/Local/Temp/nova/acpx/claude-agent-acp-wrapper.mjs"`,
       ),
     ).toBe(true);
-    expect(testing.isClaudeAcpCommand("openclaw acp")).toBe(false);
+    expect(testing.isClaudeAcpCommand("nova acp")).toBe(false);
     expect(testing.isClaudeAcpCommand("npx @agentclientprotocol/codex-acp")).toBe(false);
   });
 
@@ -1666,12 +1666,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     };
 
     const { runtime } = makeRuntime(baseStore, {
-      openclawToolsMcpBridgeEnabled: true,
+      novaToolsMcpBridgeEnabled: true,
       mcpServers: [
         {
-          name: "openclaw-tools",
+          name: "nova-tools",
           command: "node",
-          args: ["dist/mcp/openclaw-tools-serve.js"],
+          args: ["dist/mcp/nova-tools-serve.js"],
           env: [],
         },
       ],
@@ -1702,7 +1702,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
         pid: 900,
       })),
       save: vi.fn(async () => {}),
@@ -1711,21 +1711,21 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(
       baseStore,
       {
-        openclawWrapperRoot: "/tmp/openclaw/acpx",
+        novaWrapperRoot: "/tmp/nova/acpx",
       },
       {
-        openclawProcessCleanup: {
+        novaProcessCleanup: {
           listProcesses: vi.fn(async () => [
             {
               pid: 900,
               ppid: 1,
-              command: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
+              command: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
             },
             {
               pid: 901,
               ppid: 900,
               command:
-                "node /tmp/openclaw/plugin-runtime-deps/node_modules/@agentclientprotocol/codex-acp/dist/index.js",
+                "node /tmp/nova/plugin-runtime-deps/node_modules/@agentclientprotocol/codex-acp/dist/index.js",
             },
           ]),
           killProcess: vi.fn((pid, signal) => {
@@ -1763,9 +1763,9 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     };
     const leaseStore = makeLeaseStore();
     const { runtime, delegate, wrappedStore } = makeRuntime(baseStore, {
-      openclawGatewayInstanceId: "gateway-test",
-      openclawProcessLeaseStore: leaseStore.store,
-      openclawWrapperRoot: "/tmp/openclaw/acpx",
+      novaGatewayInstanceId: "gateway-test",
+      novaProcessLeaseStore: leaseStore.store,
+      novaWrapperRoot: "/tmp/nova/acpx",
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "codex" ? CODEX_ACP_WRAPPER_COMMAND : agentName,
@@ -1803,12 +1803,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(lease?.sessionKey).toBe("agent:codex:acp:binding:test");
     expect(lease?.rootPid).toBe(777);
     expect(lease?.state).toBe("open");
-    expect(lease?.wrapperPath).toBe("/tmp/openclaw/acpx/codex-acp-wrapper.mjs");
+    expect(lease?.wrapperPath).toBe("/tmp/nova/acpx/codex-acp-wrapper.mjs");
     expect(launchCommands[0]).toContain("NOVA_ACPX_LEASE_ID=");
     expect(launchCommands[0]).toContain("NOVA_GATEWAY_INSTANCE_ID=gateway-test");
     expect(savedRecords[0]?.agentCommand).toBe(CODEX_ACP_WRAPPER_COMMAND);
-    expect(savedRecords[0]?.openclawGatewayInstanceId).toBe("gateway-test");
-    expect(savedRecords[0]?.openclawLeaseId).toBe(lease?.leaseId);
+    expect(savedRecords[0]?.novaGatewayInstanceId).toBe("gateway-test");
+    expect(savedRecords[0]?.novaLeaseId).toBe(lease?.leaseId);
   });
 
   it("does not create launch leases for direct plugin-local ACP adapter commands", async () => {
@@ -1819,9 +1819,9 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     };
     const leaseStore = makeLeaseStore();
     const { runtime, delegate, wrappedStore } = makeRuntime(baseStore, {
-      openclawGatewayInstanceId: "gateway-test",
-      openclawProcessLeaseStore: leaseStore.store,
-      openclawWrapperRoot: "/tmp/openclaw/acpx",
+      novaGatewayInstanceId: "gateway-test",
+      novaProcessLeaseStore: leaseStore.store,
+      novaWrapperRoot: "/tmp/nova/acpx",
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "codex" ? LOCAL_NODE_MODULES_CODEX_COMMAND : agentName,
@@ -1869,9 +1869,9 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     };
     const leaseStore = makeLeaseStore();
     const { runtime, delegate } = makeRuntime(baseStore, {
-      openclawGatewayInstanceId: "gateway-test",
-      openclawProcessLeaseStore: leaseStore.store,
-      openclawWrapperRoot: "/tmp/openclaw/acpx",
+      novaGatewayInstanceId: "gateway-test",
+      novaProcessLeaseStore: leaseStore.store,
+      novaWrapperRoot: "/tmp/nova/acpx",
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "codex" ? CODEX_ACP_WRAPPER_COMMAND : agentName,
@@ -1908,8 +1908,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       leaseId: "lease-loaded",
       gatewayInstanceId: "gateway-test",
       sessionKey: "agent:codex:acp:binding:test",
-      wrapperRoot: "/tmp/openclaw/acpx",
-      wrapperPath: "/tmp/openclaw/acpx/codex-acp-wrapper.mjs",
+      wrapperRoot: "/tmp/nova/acpx",
+      wrapperPath: "/tmp/nova/acpx/codex-acp-wrapper.mjs",
       rootPid: 777,
       commandHash: "hash",
       startedAt: 1,
@@ -1918,20 +1918,20 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         name: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
         pid: 777,
       })),
       save: vi.fn(async () => {}),
     };
     const { wrappedStore } = makeRuntime(baseStore, {
-      openclawGatewayInstanceId: "gateway-test",
-      openclawProcessLeaseStore: leaseStore.store,
-      openclawWrapperRoot: "/tmp/openclaw/acpx",
+      novaGatewayInstanceId: "gateway-test",
+      novaProcessLeaseStore: leaseStore.store,
+      novaWrapperRoot: "/tmp/nova/acpx",
     });
 
     const loadedRecord = await wrappedStore.load("agent:codex:acp:binding:test");
-    expect(loadedRecord?.openclawGatewayInstanceId).toBe("gateway-test");
-    expect(loadedRecord?.openclawLeaseId).toBe("lease-loaded");
+    expect(loadedRecord?.novaGatewayInstanceId).toBe("gateway-test");
+    expect(loadedRecord?.novaLeaseId).toBe("lease-loaded");
   });
 
   it("merges the lease for the current ACPX session process when old leases exist", async () => {
@@ -1940,8 +1940,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       leaseId: "lease-old",
       gatewayInstanceId: "gateway-test",
       sessionKey: "agent:codex:acp:binding:test",
-      wrapperRoot: "/tmp/openclaw/acpx",
-      wrapperPath: "/tmp/openclaw/acpx/codex-acp-wrapper.mjs",
+      wrapperRoot: "/tmp/nova/acpx",
+      wrapperPath: "/tmp/nova/acpx/codex-acp-wrapper.mjs",
       rootPid: 700,
       commandHash: "hash",
       startedAt: 1,
@@ -1951,8 +1951,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       leaseId: "lease-current",
       gatewayInstanceId: "gateway-test",
       sessionKey: "agent:codex:acp:binding:test",
-      wrapperRoot: "/tmp/openclaw/acpx",
-      wrapperPath: "/tmp/openclaw/acpx/codex-acp-wrapper.mjs",
+      wrapperRoot: "/tmp/nova/acpx",
+      wrapperPath: "/tmp/nova/acpx/codex-acp-wrapper.mjs",
       rootPid: 777,
       commandHash: "hash",
       startedAt: 2,
@@ -1961,20 +1961,20 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         name: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
         pid: 777,
       })),
       save: vi.fn(async () => {}),
     };
     const { wrappedStore } = makeRuntime(baseStore, {
-      openclawGatewayInstanceId: "gateway-test",
-      openclawProcessLeaseStore: leaseStore.store,
-      openclawWrapperRoot: "/tmp/openclaw/acpx",
+      novaGatewayInstanceId: "gateway-test",
+      novaProcessLeaseStore: leaseStore.store,
+      novaWrapperRoot: "/tmp/nova/acpx",
     });
 
     const loadedRecord = await wrappedStore.load("agent:codex:acp:binding:test");
-    expect(loadedRecord?.openclawGatewayInstanceId).toBe("gateway-test");
-    expect(loadedRecord?.openclawLeaseId).toBe("lease-current");
+    expect(loadedRecord?.novaGatewayInstanceId).toBe("gateway-test");
+    expect(loadedRecord?.novaLeaseId).toBe("lease-current");
   });
 
   it("uses matching leases before legacy pid cleanup on close", async () => {
@@ -1983,8 +1983,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       leaseId: "lease-close",
       gatewayInstanceId: "gateway-test",
       sessionKey: "agent:codex:acp:binding:test",
-      wrapperRoot: "/tmp/openclaw/acpx",
-      wrapperPath: "/tmp/openclaw/acpx/codex-acp-wrapper.mjs",
+      wrapperRoot: "/tmp/nova/acpx",
+      wrapperPath: "/tmp/nova/acpx/codex-acp-wrapper.mjs",
       rootPid: 930,
       commandHash: "hash",
       startedAt: 1,
@@ -1993,8 +1993,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
-        openclawLeaseId: "lease-close",
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
+        novaLeaseId: "lease-close",
         pid: 930,
       })),
       save: vi.fn(async () => {}),
@@ -2003,12 +2003,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(
       baseStore,
       {
-        openclawGatewayInstanceId: "gateway-test",
-        openclawProcessLeaseStore: leaseStore.store,
-        openclawWrapperRoot: "/tmp/openclaw/acpx",
+        novaGatewayInstanceId: "gateway-test",
+        novaProcessLeaseStore: leaseStore.store,
+        novaWrapperRoot: "/tmp/nova/acpx",
       },
       {
-        openclawProcessCleanup: {
+        novaProcessCleanup: {
           listProcesses: vi.fn(async () => [
             {
               pid: 930,
@@ -2049,8 +2049,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       leaseId: "lease-old",
       gatewayInstanceId: "gateway-test",
       sessionKey: "agent:codex:acp:binding:test",
-      wrapperRoot: "/tmp/openclaw/acpx",
-      wrapperPath: "/tmp/openclaw/acpx/codex-acp-wrapper.mjs",
+      wrapperRoot: "/tmp/nova/acpx",
+      wrapperPath: "/tmp/nova/acpx/codex-acp-wrapper.mjs",
       rootPid: 930,
       commandHash: "hash",
       startedAt: 1,
@@ -2060,8 +2060,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       leaseId: "lease-current",
       gatewayInstanceId: "gateway-test",
       sessionKey: "agent:codex:acp:binding:test",
-      wrapperRoot: "/tmp/openclaw/acpx",
-      wrapperPath: "/tmp/openclaw/acpx/codex-acp-wrapper.mjs",
+      wrapperRoot: "/tmp/nova/acpx",
+      wrapperPath: "/tmp/nova/acpx/codex-acp-wrapper.mjs",
       rootPid: 940,
       commandHash: "hash",
       startedAt: 2,
@@ -2070,8 +2070,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
-        openclawLeaseId: "lease-old",
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
+        novaLeaseId: "lease-old",
         pid: 940,
       })),
       save: vi.fn(async () => {}),
@@ -2080,12 +2080,12 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(
       baseStore,
       {
-        openclawGatewayInstanceId: "gateway-test",
-        openclawProcessLeaseStore: leaseStore.store,
-        openclawWrapperRoot: "/tmp/openclaw/acpx",
+        novaGatewayInstanceId: "gateway-test",
+        novaProcessLeaseStore: leaseStore.store,
+        novaWrapperRoot: "/tmp/nova/acpx",
       },
       {
-        openclawProcessCleanup: {
+        novaProcessCleanup: {
           listProcesses: vi.fn(async () => [
             {
               pid: 930,
@@ -2131,7 +2131,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
         pid: 920,
       })),
       save: vi.fn(async () => {}),
@@ -2140,10 +2140,10 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(
       baseStore,
       {
-        openclawWrapperRoot: "/tmp/openclaw/acpx",
+        novaWrapperRoot: "/tmp/nova/acpx",
       },
       {
-        openclawProcessCleanup: {
+        novaProcessCleanup: {
           listProcesses: vi.fn(async () => [
             {
               pid: 920,
@@ -2185,11 +2185,11 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(
       baseStore,
       {
-        openclawGatewayInstanceId: "gateway-test",
-        openclawWrapperRoot: "/tmp/openclaw/acpx",
+        novaGatewayInstanceId: "gateway-test",
+        novaWrapperRoot: "/tmp/nova/acpx",
       },
       {
-        openclawProcessCleanup: {
+        novaProcessCleanup: {
           listProcesses: vi.fn(async () => [
             {
               pid: 920,
@@ -2226,9 +2226,9 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
-        openclawGatewayInstanceId: "gateway-test",
-        openclawLeaseId: "lease-record",
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
+        novaGatewayInstanceId: "gateway-test",
+        novaLeaseId: "lease-record",
         pid: 920,
       })),
       save: vi.fn(async () => {}),
@@ -2237,11 +2237,11 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate } = makeRuntime(
       baseStore,
       {
-        openclawGatewayInstanceId: "gateway-test",
-        openclawWrapperRoot: "/tmp/openclaw/acpx",
+        novaGatewayInstanceId: "gateway-test",
+        novaWrapperRoot: "/tmp/nova/acpx",
       },
       {
-        openclawProcessCleanup: {
+        novaProcessCleanup: {
           listProcesses: vi.fn(async () => [
             {
               pid: 920,
@@ -2274,7 +2274,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:binding:test",
-        agentCommand: 'node "/tmp/openclaw/acpx/codex-acp-wrapper.mjs"',
+        agentCommand: 'node "/tmp/nova/acpx/codex-acp-wrapper.mjs"',
         processId: "910",
       })),
       save: vi.fn(async () => {}),
@@ -2287,7 +2287,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       baseStore,
       {},
       {
-        openclawProcessCleanup: {
+        novaProcessCleanup: {
           listProcesses,
           killProcess: vi.fn((pid, signal) => {
             killed.push({ pid, signal });
@@ -2313,7 +2313,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(killed).toStrictEqual([]);
   });
 
-  it("routes openclaw ensureSession through the bridge-safe delegate when MCP servers are configured", async () => {
+  it("routes nova ensureSession through the bridge-safe delegate when MCP servers are configured", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2328,14 +2328,14 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       runtimeSessionName: "default",
     });
     const bridgeEnsure = vi.spyOn(bridgeSafeDelegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "bridge",
     });
 
     const result = await runtime.ensureSession({
-      sessionKey: "agent:openclaw:acp:test",
-      agent: "openclaw",
+      sessionKey: "agent:nova:acp:test",
+      agent: "nova",
       mode: "persistent",
     });
 
@@ -2344,7 +2344,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(defaultEnsure).not.toHaveBeenCalled();
   });
 
-  it("routes non-openclaw sessions through the default delegate", async () => {
+  it("routes non-nova sessions through the default delegate", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2359,7 +2359,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       runtimeSessionName: "default",
     });
     const bridgeEnsure = vi.spyOn(bridgeSafeDelegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "bridge",
     });
@@ -2375,7 +2375,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(bridgeEnsure).not.toHaveBeenCalled();
   });
 
-  it("routes handle-based follow-up calls for openclaw sessions through the bridge-safe delegate", async () => {
+  it("routes handle-based follow-up calls for nova sessions through the bridge-safe delegate", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2391,9 +2391,9 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       summary: "bridge",
     });
     const handle: Parameters<NonNullable<AcpRuntime["getStatus"]>>[0]["handle"] = {
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
-      runtimeSessionName: "openclaw-session-handle",
+      runtimeSessionName: "nova-session-handle",
     };
 
     const status = await runtime.getStatus({ handle });
@@ -2403,7 +2403,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(defaultStatus).not.toHaveBeenCalled();
   });
 
-  it("keeps MCP-enabled routing when the openclaw agent is overridden to a non-bridge adapter", async () => {
+  it("keeps MCP-enabled routing when the nova agent is overridden to a non-bridge adapter", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2412,24 +2412,24 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate, bridgeSafeDelegate } = makeRuntime(baseStore, {
       mcpServers: [{ name: "tools", command: "mcp-tools" }] as never,
       agentRegistry: {
-        resolve: (agentName: string) => (agentName === "openclaw" ? "codex" : agentName),
-        list: () => ["codex", "openclaw"],
+        resolve: (agentName: string) => (agentName === "nova" ? "codex" : agentName),
+        list: () => ["codex", "nova"],
       },
     });
     const defaultEnsure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "default",
     });
     const bridgeEnsure = vi.spyOn(bridgeSafeDelegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "bridge",
     });
 
     const result = await runtime.ensureSession({
-      sessionKey: "agent:openclaw:acp:test",
-      agent: "openclaw",
+      sessionKey: "agent:nova:acp:test",
+      agent: "nova",
       mode: "persistent",
     });
 
@@ -2438,7 +2438,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(bridgeEnsure).not.toHaveBeenCalled();
   });
 
-  it("uses the bridge-safe delegate for any agent mapped to the openclaw bridge command", async () => {
+  it("uses the bridge-safe delegate for any agent mapped to the nova bridge command", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2447,8 +2447,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate, bridgeSafeDelegate } = makeRuntime(baseStore, {
       mcpServers: [{ name: "tools", command: "mcp-tools" }] as never,
       agentRegistry: {
-        resolve: (agentName: string) => (agentName === "codex" ? "openclaw acp" : agentName),
-        list: () => ["codex", "openclaw"],
+        resolve: (agentName: string) => (agentName === "codex" ? "nova acp" : agentName),
+        list: () => ["codex", "nova"],
       },
     });
     const defaultEnsure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
@@ -2473,7 +2473,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(defaultEnsure).not.toHaveBeenCalled();
   });
 
-  it("uses the bridge-safe delegate for documented env-wrapped openclaw bridge commands", async () => {
+  it("uses the bridge-safe delegate for documented env-wrapped nova bridge commands", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2483,24 +2483,24 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       mcpServers: [{ name: "tools", command: "mcp-tools" }] as never,
       agentRegistry: {
         resolve: (agentName: string) =>
-          agentName === "openclaw" ? DOCUMENTED_NOVA_BRIDGE_COMMAND : agentName,
-        list: () => ["codex", "openclaw"],
+          agentName === "nova" ? DOCUMENTED_NOVA_BRIDGE_COMMAND : agentName,
+        list: () => ["codex", "nova"],
       },
     });
     const defaultEnsure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "default",
     });
     const bridgeEnsure = vi.spyOn(bridgeSafeDelegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "bridge",
     });
 
     const result = await runtime.ensureSession({
-      sessionKey: "agent:openclaw:acp:test",
-      agent: "openclaw",
+      sessionKey: "agent:nova:acp:test",
+      agent: "nova",
       mode: "persistent",
     });
 
@@ -2509,7 +2509,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(defaultEnsure).not.toHaveBeenCalled();
   });
 
-  it("uses the bridge-safe delegate for local node openclaw entrypoints", async () => {
+  it("uses the bridge-safe delegate for local node nova entrypoints", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2519,24 +2519,24 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       mcpServers: [{ name: "tools", command: "mcp-tools" }] as never,
       agentRegistry: {
         resolve: (agentName: string) =>
-          agentName === "openclaw" ? "env NOVA_HIDE_BANNER=1 node openclaw.mjs acp" : agentName,
-        list: () => ["codex", "openclaw"],
+          agentName === "nova" ? "env NOVA_HIDE_BANNER=1 node nova.mjs acp" : agentName,
+        list: () => ["codex", "nova"],
       },
     });
     const defaultEnsure = vi.spyOn(delegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "default",
     });
     const bridgeEnsure = vi.spyOn(bridgeSafeDelegate, "ensureSession").mockResolvedValue({
-      sessionKey: "agent:openclaw:acp:test",
+      sessionKey: "agent:nova:acp:test",
       backend: "acpx",
       runtimeSessionName: "bridge",
     });
 
     const result = await runtime.ensureSession({
-      sessionKey: "agent:openclaw:acp:test",
-      agent: "openclaw",
+      sessionKey: "agent:nova:acp:test",
+      agent: "nova",
       mode: "persistent",
     });
 
@@ -2548,7 +2548,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
   it("routes follow-up calls by persisted agent command before current config", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
-        acpxRecordId: "agent:openclaw:acp:test",
+        acpxRecordId: "agent:nova:acp:test",
         agentCommand: DOCUMENTED_NOVA_BRIDGE_COMMAND,
       })),
       save: vi.fn(async () => {}),
@@ -2557,8 +2557,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     const { runtime, delegate, bridgeSafeDelegate } = makeRuntime(baseStore, {
       mcpServers: [{ name: "tools", command: "mcp-tools" }] as never,
       agentRegistry: {
-        resolve: (agentName: string) => (agentName === "openclaw" ? "codex" : agentName),
-        list: () => ["codex", "openclaw"],
+        resolve: (agentName: string) => (agentName === "nova" ? "codex" : agentName),
+        list: () => ["codex", "nova"],
       },
     });
     const defaultStatus = vi.spyOn(delegate, "getStatus").mockResolvedValue({
@@ -2570,9 +2570,9 @@ describe("AcpxRuntime fresh reset wrapper", () => {
 
     const status = await runtime.getStatus({
       handle: {
-        sessionKey: "agent:openclaw:acp:test",
+        sessionKey: "agent:nova:acp:test",
         backend: "acpx",
-        runtimeSessionName: "agent:openclaw:acp:test",
+        runtimeSessionName: "agent:nova:acp:test",
       },
     });
 
@@ -2581,7 +2581,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(defaultStatus).not.toHaveBeenCalled();
   });
 
-  it("probes through the bridge-safe delegate when probeAgent resolves to openclaw bridge", async () => {
+  it("probes through the bridge-safe delegate when probeAgent resolves to nova bridge", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -2592,8 +2592,8 @@ describe("AcpxRuntime fresh reset wrapper", () => {
       probeAgent: "  Nova  ",
       agentRegistry: {
         resolve: (agentName: string) =>
-          agentName === "openclaw" ? DOCUMENTED_NOVA_BRIDGE_COMMAND : agentName,
-        list: () => ["codex", "openclaw"],
+          agentName === "nova" ? DOCUMENTED_NOVA_BRIDGE_COMMAND : agentName,
+        list: () => ["codex", "nova"],
       },
     });
     const defaultProbe = vi.spyOn(delegate, "probeAvailability").mockResolvedValue(undefined);

@@ -54,5 +54,5 @@ export {
   safeParseJson,
   withTimeout,
 } from "./sdk-node-runtime.js";
-export type { OpenClawConfig } from "./sdk-config.js";
+export type { NovaConfig } from "./sdk-config.js";
 export type { GatewayRequestHandlers, GatewayRpcOpts, NodeSession } from "./sdk-node-runtime.js";

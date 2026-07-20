@@ -14,7 +14,7 @@ describe("detectMacCloudSyncedStateDir", () => {
       "Mobile Documents",
       "com~apple~CloudDocs",
       "Nova",
-      ".openclaw",
+      ".nova",
     );
 
     const result = detectMacCloudSyncedStateDir(stateDir, {
@@ -29,7 +29,7 @@ describe("detectMacCloudSyncedStateDir", () => {
   });
 
   it("detects state dir under Library/CloudStorage", () => {
-    const stateDir = path.join(home, "Library", "CloudStorage", "Dropbox", "Nova", ".openclaw");
+    const stateDir = path.join(home, "Library", "CloudStorage", "Dropbox", "Nova", ".nova");
 
     const result = detectMacCloudSyncedStateDir(stateDir, {
       platform: "darwin",
@@ -43,14 +43,14 @@ describe("detectMacCloudSyncedStateDir", () => {
   });
 
   it("detects cloud-synced target when state dir resolves via symlink", () => {
-    const symlinkPath = "/tmp/openclaw-state";
+    const symlinkPath = "/tmp/nova-state";
     const resolvedCloudPath = path.join(
       home,
       "Library",
       "CloudStorage",
       "OneDrive-Personal",
       "Nova",
-      ".openclaw",
+      ".nova",
     );
 
     const result = detectMacCloudSyncedStateDir(symlinkPath, {
@@ -72,9 +72,9 @@ describe("detectMacCloudSyncedStateDir", () => {
       "CloudStorage",
       "OneDrive-Personal",
       "Nova",
-      ".openclaw",
+      ".nova",
     );
-    const resolvedLocalPath = path.join(home, ".openclaw");
+    const resolvedLocalPath = path.join(home, ".nova");
 
     const result = detectMacCloudSyncedStateDir(symlinkPath, {
       platform: "darwin",
@@ -86,9 +86,9 @@ describe("detectMacCloudSyncedStateDir", () => {
   });
 
   it("anchors cloud detection to OS homedir when NOVA_HOME is overridden", () => {
-    const stateDir = path.join(home, "Library", "CloudStorage", "iCloud Drive", ".openclaw");
-    const originalOpenClawHome = process.env.NOVA_HOME;
-    process.env.NOVA_HOME = "/tmp/openclaw-home-override";
+    const stateDir = path.join(home, "Library", "CloudStorage", "iCloud Drive", ".nova");
+    const originalNovaHome = process.env.NOVA_HOME;
+    process.env.NOVA_HOME = "/tmp/nova-home-override";
     const homedirSpy = vi.spyOn(os, "homedir").mockReturnValue(home);
     try {
       const result = detectMacCloudSyncedStateDir(stateDir, {
@@ -101,10 +101,10 @@ describe("detectMacCloudSyncedStateDir", () => {
       });
     } finally {
       homedirSpy.mockRestore();
-      if (originalOpenClawHome === undefined) {
+      if (originalNovaHome === undefined) {
         delete process.env.NOVA_HOME;
       } else {
-        process.env.NOVA_HOME = originalOpenClawHome;
+        process.env.NOVA_HOME = originalNovaHome;
       }
     }
   });
@@ -116,7 +116,7 @@ describe("detectMacCloudSyncedStateDir", () => {
       "Mobile Documents",
       "com~apple~CloudDocs",
       "Nova",
-      ".openclaw",
+      ".nova",
     );
 
     const result = detectMacCloudSyncedStateDir(stateDir, {

@@ -34,12 +34,12 @@ describe("qa-lab web search provider", () => {
       query: "Nova runtime parity fixed query",
       results: [
         {
-          url: "https://docs.openclaw.ai/qa-lab/search-fixture/1",
-          siteName: "docs.openclaw.ai",
+          url: "https://docs.nova.ai/qa-lab/search-fixture/1",
+          siteName: "docs.nova.ai",
         },
         {
-          url: "https://docs.openclaw.ai/qa-lab/search-fixture/2",
-          siteName: "docs.openclaw.ai",
+          url: "https://docs.nova.ai/qa-lab/search-fixture/2",
+          siteName: "docs.nova.ai",
         },
       ],
     });

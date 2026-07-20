@@ -5,8 +5,8 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { replaceSessionEntry } from "../config/sessions/session-accessor.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import {
   mockSessionsConfig,
   resetMockSessionsConfig,
@@ -64,8 +64,8 @@ async function withSqliteStore<T>(
     );
     return await run(storePath);
   } finally {
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     fs.rmSync(dir, { force: true, recursive: true });
   }
 }
@@ -172,7 +172,7 @@ describe("sessionsCommand model resolution", () => {
         defaults: {
           model: { primary: "openai/gpt-5.5" },
           models: {
-            "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+            "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
           },
           contextTokens: 200_000,
         },
@@ -187,7 +187,7 @@ describe("sessionsCommand model resolution", () => {
           modelProvider: "openai",
           model: "gpt-5.5",
           agentHarnessId: "codex",
-          agentRuntimeOverride: "openclaw",
+          agentRuntimeOverride: "nova",
           modelSelectionLocked: true,
         },
       },

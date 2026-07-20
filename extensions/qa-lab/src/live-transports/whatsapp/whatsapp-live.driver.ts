@@ -4,7 +4,7 @@ import {
   type WhatsAppQaDriverObservedMessage,
   type WhatsAppQaDriverSession,
 } from "@nova/whatsapp/api.js";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import type { WhatsAppQaMessageScenarioContext } from "./whatsapp-live.contracts.js";
 import {
   isWhatsAppScenarioSutMessage,

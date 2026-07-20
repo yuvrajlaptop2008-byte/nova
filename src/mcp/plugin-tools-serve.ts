@@ -17,7 +17,7 @@ import {
 } from "../agents/tool-policy.js";
 import type { AnyAgentTool } from "../agents/tools/common.js";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { routeLogsToStderr } from "../logging/console.js";
 import { ensureStandalonePluginToolRegistryLoaded, resolvePluginTools } from "../plugins/tools.js";
@@ -28,7 +28,7 @@ import {
 } from "./agent-session-env.js";
 import { connectToolsMcpServerToStdio, createToolsMcpServer } from "./tools-stdio-server.js";
 
-function resolvePluginToolPolicy(config: OpenClawConfig): {
+function resolvePluginToolPolicy(config: NovaConfig): {
   toolAllowlist?: string[];
   toolDenylist?: string[];
 } {
@@ -46,7 +46,7 @@ function resolvePluginToolPolicy(config: OpenClawConfig): {
 }
 
 export function resolvePluginToolsForMcp(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentSessionKey?: string;
 }): AnyAgentTool[] {
   const agentSessionKey = (params.agentSessionKey ?? resolveToolsMcpAgentSessionKey())?.trim();
@@ -75,7 +75,7 @@ export function resolvePluginToolsForMcp(params: {
 
 export function createPluginToolsMcpServer(
   params: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     tools?: AnyAgentTool[];
     agentSessionKey?: string;
   } = {},
@@ -84,7 +84,7 @@ export function createPluginToolsMcpServer(
   const tools =
     params.tools ??
     resolvePluginToolsForMcp({ config: cfg, agentSessionKey: params.agentSessionKey });
-  return createToolsMcpServer({ name: "openclaw-plugin-tools", tools });
+  return createToolsMcpServer({ name: "nova-plugin-tools", tools });
 }
 
 export async function servePluginToolsMcp(): Promise<void> {

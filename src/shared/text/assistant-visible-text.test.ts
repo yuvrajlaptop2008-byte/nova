@@ -897,9 +897,9 @@ describe("sanitizeAssistantVisibleText", () => {
   it("strips internal tool trace warning lines on the delivery path", () => {
     const input = [
       "Visible intro.",
-      "⚠️ 🛠️ `run openclaw definitely-not-a-real-subcommand (agent)` failed",
-      "⚠️ 🛠️ gh search issues --repo openclaw/openclaw --state open --no-search-pages.jsonl /tmp/openclaw_open_unlabeled_current.json (agent) failed",
-      "⚠️ 🛠️ gh search issues --repo openclaw/openclaw --state open (agent) failed: command timed out",
+      "⚠️ 🛠️ `run nova definitely-not-a-real-subcommand (agent)` failed",
+      "⚠️ 🛠️ gh search issues --repo nova/nova --state open --no-search-pages.jsonl /tmp/nova_open_unlabeled_current.json (agent) failed",
+      "⚠️ 🛠️ gh search issues --repo nova/nova --state open (agent) failed: command timed out",
       "🛠️ run git status",
       "Visible outro.",
     ].join("\n");
@@ -911,7 +911,7 @@ describe("sanitizeAssistantVisibleText", () => {
     const input = [
       "Example:",
       "```",
-      "⚠️ 🛠️ `run openclaw definitely-not-a-real-subcommand (agent)` failed",
+      "⚠️ 🛠️ `run nova definitely-not-a-real-subcommand (agent)` failed",
       "```",
     ].join("\n");
 

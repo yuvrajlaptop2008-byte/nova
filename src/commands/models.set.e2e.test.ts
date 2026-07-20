@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createModelVisibilityPolicy } from "../agents/model-visibility-policy.js";
 import { stampConfigWriteMetadata } from "../config/io.meta.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 const mocks = vi.hoisted(() => ({
   currentConfig: {} as Record<string, unknown>,
@@ -42,11 +42,11 @@ function makeRuntime() {
   return { log: vi.fn(), error: vi.fn(), exit: vi.fn() };
 }
 
-function getWrittenConfig(): OpenClawConfig {
+function getWrittenConfig(): NovaConfig {
   if (!mocks.writtenConfig) {
     throw new Error("expected config write");
   }
-  return mocks.writtenConfig as OpenClawConfig;
+  return mocks.writtenConfig as NovaConfig;
 }
 
 function expectWrittenPrimaryModel(model: string) {

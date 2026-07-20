@@ -1,13 +1,13 @@
 // Slack plugin module implements prepare routing behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   resolveConfiguredBindingRoute,
   resolveRuntimeConversationBindingRoute,
   type ConfiguredBindingRouteResult,
   type RuntimeConversationBindingRouteResult,
-} from "openclaw/plugin-sdk/conversation-runtime";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { resolveThreadSessionKeys } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/conversation-runtime";
+import { resolveAgentRoute } from "nova/plugin-sdk/routing";
+import { resolveThreadSessionKeys } from "nova/plugin-sdk/routing";
 import { resolveSlackReplyToMode } from "../../account-reply-mode.js";
 import type { ResolvedSlackAccount } from "../../accounts.js";
 import { parseSlackTarget, type SlackTargetKind } from "../../targets.js";
@@ -17,7 +17,7 @@ import type { SlackChannelConfigResolved } from "../channel-config.js";
 import type { SlackEventScope } from "../event-scope.js";
 
 type SlackRoutingContextDeps = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   teamId: string;
   threadInheritParent: boolean;
   threadHistoryScope: "thread" | "channel";
@@ -39,12 +39,12 @@ type SlackRoutingContext = {
   historyKey: string;
 };
 
-type SlackRouteBinding = NonNullable<OpenClawConfig["bindings"]>[number];
+type SlackRouteBinding = NonNullable<NovaConfig["bindings"]>[number];
 type SlackRouteBindingPeer = NonNullable<SlackRouteBinding["match"]["peer"]>;
 
 const slackRouteBindingConfigCache = new WeakMap<
-  OpenClawConfig,
-  { bindingsRef: OpenClawConfig["bindings"]; normalizedCfg: OpenClawConfig }
+  NovaConfig,
+  { bindingsRef: NovaConfig["bindings"]; normalizedCfg: NovaConfig }
 >();
 
 function slackTargetDefaultKindForPeer(kind: SlackRouteBindingPeer["kind"]): SlackTargetKind {
@@ -82,7 +82,7 @@ function normalizeSlackRouteBindingPeer(peer: SlackRouteBindingPeer): SlackRoute
   return { ...peer, id: target.id };
 }
 
-function normalizeSlackRouteBindingConfig(cfg: OpenClawConfig): OpenClawConfig {
+function normalizeSlackRouteBindingConfig(cfg: NovaConfig): NovaConfig {
   const bindings = cfg.bindings;
   const cached = slackRouteBindingConfigCache.get(cfg);
   if (cached && cached.bindingsRef === bindings) {
@@ -115,9 +115,7 @@ function normalizeSlackRouteBindingConfig(cfg: OpenClawConfig): OpenClawConfig {
     };
   });
 
-  const normalizedCfg = changed
-    ? ({ ...cfg, bindings: normalizedBindings } as OpenClawConfig)
-    : cfg;
+  const normalizedCfg = changed ? ({ ...cfg, bindings: normalizedBindings } as NovaConfig) : cfg;
   slackRouteBindingConfigCache.set(cfg, { bindingsRef: bindings, normalizedCfg });
   return normalizedCfg;
 }

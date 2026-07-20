@@ -68,20 +68,20 @@ const GLOBAL_PRUNE_INTERVAL_MS = 5_000;
 
 function getState(): SkipCacheState {
   const globalStore = globalThis as typeof globalThis & {
-    openclawFallbackSkipCache?: SkipBySession;
-    openclawFallbackSkipCacheState?: SkipCacheState;
+    novaFallbackSkipCache?: SkipBySession;
+    novaFallbackSkipCacheState?: SkipCacheState;
   };
-  if (!globalStore.openclawFallbackSkipCacheState) {
+  if (!globalStore.novaFallbackSkipCacheState) {
     // Reuse the existing buckets map if a prior version of this module already
     // populated the legacy global; otherwise start fresh.
-    const buckets = globalStore.openclawFallbackSkipCache ?? new Map();
-    globalStore.openclawFallbackSkipCacheState = {
+    const buckets = globalStore.novaFallbackSkipCache ?? new Map();
+    globalStore.novaFallbackSkipCacheState = {
       buckets,
       lastGlobalPruneAtMs: 0,
     };
-    globalStore.openclawFallbackSkipCache = buckets;
+    globalStore.novaFallbackSkipCache = buckets;
   }
-  return globalStore.openclawFallbackSkipCacheState;
+  return globalStore.novaFallbackSkipCacheState;
 }
 
 function getBuckets(): SkipBySession {

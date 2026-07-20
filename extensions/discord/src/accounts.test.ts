@@ -1,9 +1,9 @@
 // Discord tests cover accounts plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   clearRuntimeConfigSnapshot,
   setRuntimeConfigSnapshot,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
+} from "nova/plugin-sdk/runtime-config-snapshot";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createDiscordActionGate,
@@ -89,7 +89,7 @@ describe("Discord defaultAccount omission contract", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(listDiscordAccountIds(cfg)).toEqual(["default", "work"]);
     expect(resolveDefaultDiscordAccountId(cfg)).toBe("default");
@@ -397,7 +397,7 @@ describe("resolveDiscordAccount runtime config selection", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const runtimeCfg = {
       channels: {
         discord: {
@@ -410,7 +410,7 @@ describe("resolveDiscordAccount runtime config selection", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     setRuntimeConfigSnapshot(runtimeCfg, sourceCfg);
 
     const resolved = resolveDiscordAccount({ cfg: sourceCfg });
@@ -430,7 +430,7 @@ describe("resolveDiscordAccount runtime config selection", () => {
             token: { source: "env", provider: "default", id: "DISCORD_BOT_TOKEN" },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       accountId: "default",
     });
 

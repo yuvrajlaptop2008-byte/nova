@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { openOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import { openNovaStateDatabase } from "../state/nova-state-db.js";
 import {
   completeDeliveryQueueEntry,
   countFailedDeliveryQueueEntries,
@@ -14,7 +14,7 @@ import {
   updateDeliveryQueueEntry,
   upsertDeliveryQueueEntry,
 } from "./delivery-queue-sqlite.js";
-import { resolvePreferredOpenClawTmpDir } from "./tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "./tmp-nova-dir.js";
 
 describe("delivery-queue-sqlite corrupt JSON resilience", () => {
   let stateDir: string;
@@ -22,7 +22,7 @@ describe("delivery-queue-sqlite corrupt JSON resilience", () => {
   const QUEUE = "test-q";
 
   beforeEach(() => {
-    tmpDir = fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-dq-case-"));
+    tmpDir = fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-dq-case-"));
     stateDir = path.join(tmpDir, "state");
     fs.mkdirSync(stateDir, { recursive: true });
   });
@@ -32,7 +32,7 @@ describe("delivery-queue-sqlite corrupt JSON resilience", () => {
   });
 
   function insertCorruptRow(id: string, json: string) {
-    const { db } = openOpenClawStateDatabase({
+    const { db } = openNovaStateDatabase({
       env: { ...process.env, NOVA_STATE_DIR: stateDir },
     });
     db.prepare(
@@ -195,7 +195,7 @@ describe("delivery-queue-sqlite corrupt JSON resilience", () => {
       expect(loadDeliveryQueueEntry(QUEUE, "rt-completed", stateDir)).toBeNull();
       expect(getDeliveryQueueEntryStatus(QUEUE, "rt-completed", stateDir)).toBe("completed");
       expect(getDeliveryQueueEntryStatus(QUEUE, "rt-expired-completed", stateDir)).toBeUndefined();
-      const { db } = openOpenClawStateDatabase({
+      const { db } = openNovaStateDatabase({
         env: { ...process.env, NOVA_STATE_DIR: stateDir },
       });
       const row = db
@@ -233,7 +233,7 @@ describe("delivery-queue-sqlite corrupt JSON resilience", () => {
         stateDir,
       });
       completeDeliveryQueueEntry(QUEUE, "rt-permanent", stateDir);
-      const { db } = openOpenClawStateDatabase({
+      const { db } = openNovaStateDatabase({
         env: { ...process.env, NOVA_STATE_DIR: stateDir },
       });
       db.prepare(
@@ -267,7 +267,7 @@ describe("countFailedDeliveryQueueEntries", () => {
   let stateDir: string;
 
   beforeEach(() => {
-    tmpDir = fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-dq-count-"));
+    tmpDir = fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-dq-count-"));
     stateDir = path.join(tmpDir, "state");
     fs.mkdirSync(stateDir, { recursive: true });
   });

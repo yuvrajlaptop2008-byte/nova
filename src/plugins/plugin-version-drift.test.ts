@@ -1,6 +1,6 @@
 /** Tests plugin version drift detection between package, manifest, and install records. */
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import {
   detectPluginVersionDrift,
@@ -144,9 +144,9 @@ describe("detectPluginVersionDrift", () => {
     const result = detectPluginVersionDrift({
       gatewayVersion: "2026.5.4",
       installRecords: {
-        "openclaw-plugin-yuanbao": npmRecord("2.13.1", {
-          resolvedName: "openclaw-plugin-yuanbao",
-          spec: "openclaw-plugin-yuanbao@2.13.1",
+        "nova-plugin-yuanbao": npmRecord("2.13.1", {
+          resolvedName: "nova-plugin-yuanbao",
+          spec: "nova-plugin-yuanbao@2.13.1",
         }),
       },
     });
@@ -158,9 +158,9 @@ describe("detectPluginVersionDrift", () => {
     const result = detectPluginVersionDrift({
       gatewayVersion: "2026.5.7",
       installRecords: {
-        "wecom-openclaw-plugin": npmRecord("2026.5.6", {
-          resolvedName: "@wecom/wecom-openclaw-plugin",
-          spec: "@wecom/wecom-openclaw-plugin@2026.5.6",
+        "wecom-nova-plugin": npmRecord("2026.5.6", {
+          resolvedName: "@wecom/wecom-nova-plugin",
+          spec: "@wecom/wecom-nova-plugin@2026.5.6",
         }),
       },
     });
@@ -228,14 +228,14 @@ describe("detectPluginVersionDrift", () => {
   });
 
   it("skips plugins that are explicitly disabled in config", () => {
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       plugins: {
         entries: {
           whatsapp: { enabled: false },
           discord: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = detectPluginVersionDrift({
       gatewayVersion: "2026.5.4",
@@ -250,11 +250,11 @@ describe("detectPluginVersionDrift", () => {
   });
 
   it("skips plugins disabled by the global plugin activation policy", () => {
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       plugins: {
         enabled: false,
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = detectPluginVersionDrift({
       gatewayVersion: "2026.5.4",
@@ -277,7 +277,7 @@ describe("detectPluginVersionDrift", () => {
         plugins: {
           deny: ["whatsapp"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
     const notAllowed = detectPluginVersionDrift({
       gatewayVersion: "2026.5.4",
@@ -288,7 +288,7 @@ describe("detectPluginVersionDrift", () => {
         plugins: {
           allow: ["discord"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
 
     expect(denied.drifts).toEqual([]);
@@ -296,7 +296,7 @@ describe("detectPluginVersionDrift", () => {
   });
 
   it("includes plugins with no entry in config (default-enabled)", () => {
-    const config: OpenClawConfig = { plugins: { entries: {} } } as OpenClawConfig;
+    const config: NovaConfig = { plugins: { entries: {} } } as NovaConfig;
     const result = detectPluginVersionDrift({
       gatewayVersion: "2026.5.4",
       installRecords: {
@@ -333,7 +333,7 @@ describe("resolvePluginVersionDriftUpdateCommand", () => {
         packageName: "@nova/brave-plugin",
         spec: "@nova/brave-plugin@2026.6.9",
       }),
-    ).toBe("openclaw plugins update @nova/brave-plugin@2026.6.10-beta.1");
+    ).toBe("nova plugins update @nova/brave-plugin@2026.6.10-beta.1");
   });
 
   it("parses the package name from exact npm specs when drift metadata is sparse", () => {
@@ -345,7 +345,7 @@ describe("resolvePluginVersionDriftUpdateCommand", () => {
         source: "npm",
         spec: "@nova/brave-plugin@2026.6.9",
       }),
-    ).toBe("openclaw plugins update @nova/brave-plugin@2026.6.10-beta.1");
+    ).toBe("nova plugins update @nova/brave-plugin@2026.6.10-beta.1");
   });
 
   it("prefers the parsed exact npm spec package over inconsistent drift metadata", () => {
@@ -358,7 +358,7 @@ describe("resolvePluginVersionDriftUpdateCommand", () => {
         packageName: "@nova/other-plugin",
         spec: "@nova/brave-plugin@2026.6.9",
       }),
-    ).toBe("openclaw plugins update @nova/brave-plugin@2026.6.10-beta.1");
+    ).toBe("nova plugins update @nova/brave-plugin@2026.6.10-beta.1");
   });
 
   it("keeps plugin-id updates for floating npm install records", () => {
@@ -371,7 +371,7 @@ describe("resolvePluginVersionDriftUpdateCommand", () => {
         packageName: "@nova/brave-plugin",
         spec: "@nova/brave-plugin",
       }),
-    ).toBe("openclaw plugins update brave");
+    ).toBe("nova plugins update brave");
   });
 
   it("keeps plugin-id updates when the gateway version is not a registry version", () => {
@@ -384,6 +384,6 @@ describe("resolvePluginVersionDriftUpdateCommand", () => {
         packageName: "@nova/brave-plugin",
         spec: "@nova/brave-plugin@2026.6.9",
       }),
-    ).toBe("openclaw plugins update brave");
+    ).toBe("nova plugins update brave");
   });
 });

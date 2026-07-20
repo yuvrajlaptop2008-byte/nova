@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { resolveHomeRelativePath, resolveRequiredHomeDir } from "../infra/home-dir.js";
 import { parseTcpPort } from "../infra/tcp-port.js";
-import type { OpenClawConfig } from "./types.js";
+import type { NovaConfig } from "./types.js";
 
 /**
  * Nix mode detection: When NOVA_NIX_MODE=1, the gateway is running under Nix.
@@ -21,8 +21,8 @@ export let isNixMode = resolveIsNixMode();
 
 // Support the remaining legacy pre-rebrand state dir.
 const LEGACY_STATE_DIRNAMES = [".clawdbot"] as const;
-const NEW_STATE_DIRNAME = ".openclaw";
-const CONFIG_FILENAME = "openclaw.json";
+const NEW_STATE_DIRNAME = ".nova";
+const CONFIG_FILENAME = "nova.json";
 const LEGACY_CONFIG_FILENAMES = ["clawdbot.json"] as const;
 
 /** True when the root CLI selected a non-default isolated profile. */
@@ -59,7 +59,7 @@ export function resolveNewStateDir(homedir: () => string = resolveDefaultHomeDir
 /**
  * State directory for mutable data (sessions, logs, caches).
  * Can be overridden via NOVA_STATE_DIR.
- * Default: ~/.openclaw
+ * Default: ~/.nova
  */
 export function resolveStateDir(
   env: NodeJS.ProcessEnv = process.env,
@@ -94,9 +94,9 @@ export function resolveStateDir(
 
 export function normalizeStateDirEnv(env: NodeJS.ProcessEnv = process.env): void {
   const effectiveHomedir = () => resolveRequiredHomeDir(env, envHomedir(env));
-  const openclawOverride = env.NOVA_STATE_DIR?.trim();
-  if (openclawOverride) {
-    env.NOVA_STATE_DIR = resolveUserPath(openclawOverride, env, effectiveHomedir);
+  const novaOverride = env.NOVA_STATE_DIR?.trim();
+  if (novaOverride) {
+    env.NOVA_STATE_DIR = resolveUserPath(novaOverride, env, effectiveHomedir);
   }
 }
 
@@ -118,7 +118,7 @@ function resolveUserPath(
  *
  * Returns an empty array when the var is unset or contains no usable entries,
  * preserving the historical behavior where `$include` is confined to the
- * directory containing `openclaw.json`.
+ * directory containing `nova.json`.
  */
 export function resolveIncludeRoots(
   env: NodeJS.ProcessEnv = process.env,
@@ -153,7 +153,7 @@ export let STATE_DIR = resolveStateDir();
 /**
  * Config file path (JSON or JSON5).
  * Can be overridden via NOVA_CONFIG_PATH.
- * Default: ~/.openclaw/openclaw.json (or $NOVA_STATE_DIR/openclaw.json)
+ * Default: ~/.nova/nova.json (or $NOVA_STATE_DIR/nova.json)
  */
 export function resolveCanonicalConfigPath(
   env: NodeJS.ProcessEnv = process.env,
@@ -265,9 +265,9 @@ export function resolveDefaultConfigCandidates(
   }
 
   const candidates: string[] = [];
-  const openclawStateDir = env.NOVA_STATE_DIR?.trim();
-  if (openclawStateDir) {
-    const resolved = resolveUserPath(openclawStateDir, env, effectiveHomedir);
+  const novaStateDir = env.NOVA_STATE_DIR?.trim();
+  if (novaStateDir) {
+    const resolved = resolveUserPath(novaStateDir, env, effectiveHomedir);
     candidates.push(path.join(resolved, CONFIG_FILENAME));
     candidates.push(...LEGACY_CONFIG_FILENAMES.map((name) => path.join(resolved, name)));
   }
@@ -284,12 +284,12 @@ export const DEFAULT_GATEWAY_PORT = 18789;
 
 /**
  * Gateway lock directory (ephemeral).
- * Default: os.tmpdir()/openclaw-<uid> (uid suffix when available).
+ * Default: os.tmpdir()/nova-<uid> (uid suffix when available).
  */
 export function resolveGatewayLockDir(tmpdir: () => string = os.tmpdir): string {
   const base = tmpdir();
   const uid = typeof process.getuid === "function" ? process.getuid() : undefined;
-  const suffix = uid != null ? `openclaw-${uid}` : "openclaw";
+  const suffix = uid != null ? `nova-${uid}` : "nova";
   return path.join(base, suffix);
 }
 
@@ -357,10 +357,7 @@ function parseGatewayPortEnvValue(raw: string | undefined): number | null {
   return parseTcpPort(suffix);
 }
 
-export function resolveGatewayPort(
-  cfg?: OpenClawConfig,
-  env: NodeJS.ProcessEnv = process.env,
-): number {
+export function resolveGatewayPort(cfg?: NovaConfig, env: NodeJS.ProcessEnv = process.env): number {
   const envRaw = env.NOVA_GATEWAY_PORT?.trim();
   const envPort = parseGatewayPortEnvValue(envRaw);
   if (envPort !== null) {

@@ -8,7 +8,7 @@ import type {
   TaskSuggestionDeliveryMode,
 } from "../auto-reply/get-reply-options.types.js";
 import type { InboundEventKind } from "../channels/inbound-event/kind.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginHookChannelContext } from "../plugins/hook-types.js";
 import {
   buildMcpToolSchema,
@@ -29,12 +29,12 @@ type CachedScopedTools = {
   agentId: string | undefined;
   tools: McpLoopbackTool[];
   toolSchema: McpToolSchemaEntry[];
-  configRef: OpenClawConfig;
+  configRef: NovaConfig;
   time: number;
 };
 
 type McpLoopbackScopeParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   runtimePolicySessionKey?: string;
   agentId?: string;

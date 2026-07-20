@@ -17,13 +17,9 @@ async function runLocalShellCommand(
   // This backend shim executes the exact shell script the fs bridge emits, so
   // failures prove the generated POSIX script rather than a mocked Docker call.
   return await new Promise<SandboxBackendCommandResult>((resolve, reject) => {
-    const child = spawn(
-      "sh",
-      ["-c", params.script, "openclaw-sandbox-fs", ...(params.args ?? [])],
-      {
-        stdio: ["pipe", "pipe", "pipe"],
-      },
-    );
+    const child = spawn("sh", ["-c", params.script, "nova-sandbox-fs", ...(params.args ?? [])], {
+      stdio: ["pipe", "pipe", "pipe"],
+    });
 
     const stdoutChunks: Buffer[] = [];
     const stderrChunks: Buffer[] = [];
@@ -77,7 +73,7 @@ describe("sandbox fs bridge local backend e2e", () => {
   it.runIf(process.platform !== "win32")(
     "writes through backend shell commands using the pinned mutation helper",
     async () => {
-      const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fsbridge-e2e-"));
+      const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fsbridge-e2e-"));
       const workspacePath = path.join(stateDir, "workspace");
       await fs.mkdir(workspacePath, { recursive: true });
       const workspaceDir = await fs.realpath(workspacePath);

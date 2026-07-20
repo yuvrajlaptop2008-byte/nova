@@ -2,8 +2,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import { monitorTelegramProvider } from "../../../../extensions/telegram/runtime-api.js";
 import { formatErrorMessage } from "../../../../src/infra/errors.js";
 import { createQaScriptEvidenceWriter } from "./script-evidence.js";
@@ -156,7 +156,7 @@ export async function runTelegramBotTokenRuntime(
       throw new Error(`Telegram runtime requested exit ${code}`);
     },
   };
-  const config: OpenClawConfig = {
+  const config: NovaConfig = {
     channels: { telegram: { enabled: true } },
   };
   const previousStateDir = process.env.NOVA_STATE_DIR;

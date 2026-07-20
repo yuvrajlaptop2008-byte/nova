@@ -280,8 +280,8 @@ export async function probeApnsHttp2ReachabilityViaProxy(
         ":path": `/3/device/${"0".repeat(64)}`,
         // APNs should reject this token with InvalidProviderToken. That failure
         // is the success signal that the proxy actually tunneled to Apple.
-        authorization: "bearer intentionally.invalid.openclaw.proxy.validation",
-        "apns-topic": "ai.openclaw.ios",
+        authorization: "bearer intentionally.invalid.nova.proxy.validation",
+        "apns-topic": "ai.nova.ios",
         "apns-push-type": "alert",
         "apns-priority": "10",
       });

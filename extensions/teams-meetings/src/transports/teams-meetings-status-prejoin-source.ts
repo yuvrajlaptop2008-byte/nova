@@ -120,8 +120,8 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
     entry?.bridge?.remove?.();
   };
   const retireOwnedAudioBridges = (restoreSources = true) => {
-    const entries = Array.isArray(window.__openclawTeamsAudioOutputs)
-      ? window.__openclawTeamsAudioOutputs
+    const entries = Array.isArray(window.__novaTeamsAudioOutputs)
+      ? window.__novaTeamsAudioOutputs
       : [];
     const retained = [];
     for (const entry of entries) {
@@ -131,12 +131,12 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
       }
       retireAudioBridge(entry, restoreSources);
     }
-    if (retained.length > 0) window.__openclawTeamsAudioOutputs = retained;
-    else delete window.__openclawTeamsAudioOutputs;
+    if (retained.length > 0) window.__novaTeamsAudioOutputs = retained;
+    else delete window.__novaTeamsAudioOutputs;
   };
   const adoptAudioBridgeSourcesForSession = () => {
-    const entries = Array.isArray(window.__openclawTeamsAudioOutputs)
-      ? window.__openclawTeamsAudioOutputs
+    const entries = Array.isArray(window.__novaTeamsAudioOutputs)
+      ? window.__novaTeamsAudioOutputs
       : [];
     const suspendedBySource = new Map();
     for (const entry of entries) {
@@ -158,12 +158,12 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
       retireAudioBridge(entry, false);
     }
     const suspended = [...suspendedBySource.values()];
-    if (suspended.length > 0) window.__openclawTeamsAudioOutputs = suspended;
-    else delete window.__openclawTeamsAudioOutputs;
+    if (suspended.length > 0) window.__novaTeamsAudioOutputs = suspended;
+    else delete window.__novaTeamsAudioOutputs;
   };
   const suspendOwnedAudioBridges = () => {
-    const entries = Array.isArray(window.__openclawTeamsAudioOutputs)
-      ? window.__openclawTeamsAudioOutputs
+    const entries = Array.isArray(window.__novaTeamsAudioOutputs)
+      ? window.__novaTeamsAudioOutputs
       : [];
     const retained = [];
     const suspendedBySource = new Map();
@@ -199,18 +199,18 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
       retireAudioBridge(entry, false);
     }
     const next = [...retained, ...suspendedBySource.values()];
-    if (next.length > 0) window.__openclawTeamsAudioOutputs = next;
-    else delete window.__openclawTeamsAudioOutputs;
+    if (next.length > 0) window.__novaTeamsAudioOutputs = next;
+    else delete window.__novaTeamsAudioOutputs;
   };
   const retireOwnedCaptions = () => {
-    const active = window.__openclawTeamsCaptions;
+    const active = window.__novaTeamsCaptions;
     const owned = Boolean(
       active && sessionId && (!active.sessionId || active.sessionId === sessionId)
     );
     if (!owned) return;
     if (active.settleTimer !== undefined) clearTimeout(active.settleTimer);
     active.observer?.disconnect?.();
-    delete window.__openclawTeamsCaptions;
+    delete window.__novaTeamsCaptions;
   };
   const finalizeCaptionState = (active) => {
     if (!active) return;
@@ -238,18 +238,18 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
   };
   const archiveFinalizedCaptions = (active) => {
     if (active?.finalized !== true || !active.sessionId) return;
-    const archive = window.__openclawTeamsCaptionArchive &&
-        typeof window.__openclawTeamsCaptionArchive === "object"
-      ? window.__openclawTeamsCaptionArchive
+    const archive = window.__novaTeamsCaptionArchive &&
+        typeof window.__novaTeamsCaptionArchive === "object"
+      ? window.__novaTeamsCaptionArchive
       : {};
     archive[active.sessionId] = active;
     const retained = Object.entries(archive)
       .sort((left, right) => Number(right[1]?.finalizedAt || 0) - Number(left[1]?.finalizedAt || 0))
       .slice(0, 4);
-    window.__openclawTeamsCaptionArchive = Object.fromEntries(retained);
+    window.__novaTeamsCaptionArchive = Object.fromEntries(retained);
   };
   const finalizeOwnedCaptions = () => {
-    const active = window.__openclawTeamsCaptions;
+    const active = window.__novaTeamsCaptions;
     const owned = Boolean(
       active && sessionId && (!active.sessionId || active.sessionId === sessionId)
     );
@@ -267,7 +267,7 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
   });
   const notes = [];
   const currentIdentity = meetingIdentity(location.href);
-  const priorMeeting = window.__openclawTeamsMeeting;
+  const priorMeeting = window.__novaTeamsMeeting;
   if (expectedIdentity && currentIdentity && currentIdentity !== expectedIdentity) {
     // A confirmed SPA transition must stop resources still owned by this
     // request, while preserving any newer session already committed to the tab.
@@ -278,7 +278,7 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
       sessionId &&
       (!priorMeeting.sessionId || priorMeeting.sessionId === sessionId)
     );
-    if (requestOwnsMeeting) delete window.__openclawTeamsMeeting;
+    if (requestOwnsMeeting) delete window.__novaTeamsMeeting;
     return JSON.stringify({
       inCall: false,
       manualActionRequired: true,
@@ -293,8 +293,8 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
     priorMeeting?.sessionId && priorMeeting.sessionId !== sessionId
   );
   const captionOwnerConflict = Boolean(
-    window.__openclawTeamsCaptions?.sessionId &&
-    window.__openclawTeamsCaptions.sessionId !== sessionId
+    window.__novaTeamsCaptions?.sessionId &&
+    window.__novaTeamsCaptions.sessionId !== sessionId
   );
   const committedOwnerConflict = meetingOwnerConflict || captionOwnerConflict;
   const canRepairCaptionOwner = Boolean(
@@ -398,7 +398,7 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
   }
   if (canMutateSession && !inCall && !identityAwaitingRerender) retireOwnedAudioBridges();
   if (canMutateSession && (identityVerifiedBeforeCall || identityPreservedInCall)) {
-    window.__openclawTeamsMeeting = {
+    window.__novaTeamsMeeting = {
       ...(priorMeeting?.identity === expectedIdentity && !meetingOwnerConflict ? priorMeeting : {}),
       identity: expectedIdentity,
       sessionId: sessionId || priorMeeting?.sessionId,
@@ -412,7 +412,7 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
     !identityAwaitingRerender &&
     (priorMeeting.inCallControl || markerAgeMs >= identityRetentionMs)
   ) {
-    delete window.__openclawTeamsMeeting;
+    delete window.__novaTeamsMeeting;
   }
   const microphone = first(selectors.microphone) || findTextButton(/mute|unmute|microphone/i);
   let microphoneState = identityVerified ? toggleState(microphone, "microphone") : undefined;
@@ -486,7 +486,7 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
       // Teams hides the selected-device control after admission. Reopen the in-call audio
       // options and verify the current selection before unmuting; installed devices alone
       // do not prove which microphone Teams is using.
-      const preparedInput = window.__openclawTeamsMeeting;
+      const preparedInput = window.__novaTeamsMeeting;
       const preparedSelection = Boolean(
         readOnly &&
         preparedInput?.identity === expectedIdentity &&
@@ -525,8 +525,8 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
         }
         selected = Boolean(selectedMicrophoneLabel());
       }
-      if (selected && window.__openclawTeamsMeeting?.identity === expectedIdentity) {
-        window.__openclawTeamsMeeting.audioInputDeviceId = input.deviceId;
+      if (selected && window.__novaTeamsMeeting?.identity === expectedIdentity) {
+        window.__novaTeamsMeeting.audioInputDeviceId = input.deviceId;
       }
       return selected;
     } catch (error) {

@@ -5,7 +5,7 @@ import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { ChannelPlugin } from "../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { fixSecurityFootguns } from "./fix.js";
 
 const isWindows = process.platform === "win32";
@@ -36,11 +36,11 @@ describe("security fix", () => {
 
   const runConfigFixScenario = async (params: {
     prefix: string;
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     channelPlugins?: ChannelPlugin[];
   }) => {
     const stateDir = await createStateDir(params.prefix);
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     await fs.writeFile(configPath, `${JSON.stringify(params.cfg, null, 2)}\n`, "utf-8");
     const res = await fixSecurityFootguns({
       env: createFixEnv(stateDir, configPath),
@@ -48,7 +48,7 @@ describe("security fix", () => {
       configPath,
       channelPlugins: params.channelPlugins,
     });
-    const cfg = JSON.parse(await fs.readFile(configPath, "utf-8")) as OpenClawConfig;
+    const cfg = JSON.parse(await fs.readFile(configPath, "utf-8")) as NovaConfig;
     return { res, cfg };
   };
 
@@ -158,7 +158,7 @@ describe("security fix", () => {
         channels: {
           whatsapp: params.whatsapp,
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       channelPlugins: [createWhatsAppConfigFixTestPlugin(params.allowFromStore)],
     });
     return {
@@ -168,7 +168,7 @@ describe("security fix", () => {
   };
 
   beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-security-fix-suite-"));
+    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-security-fix-suite-"));
   });
 
   afterAll(async () => {
@@ -187,7 +187,7 @@ describe("security fix", () => {
         imessage: { groupPolicy: "open" },
       },
       logging: { redactSensitive: "off" },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const fixed = await runConfigFixScenario({
       prefix: "group-policy",
       cfg,
@@ -260,7 +260,7 @@ describe("security fix", () => {
     const stateDir = await createStateDir("invalid-config");
     await fs.chmod(stateDir, 0o755);
 
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     await fs.writeFile(configPath, "{ this is not json }\n", "utf-8");
     await fs.chmod(configPath, 0o644);
 
@@ -281,7 +281,7 @@ describe("security fix", () => {
     await fs.writeFile(includePath, "{ logging: { redactSensitive: 'off' } }\n", "utf-8");
     await fs.chmod(includePath, 0o644);
 
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     await fs.writeFile(
       configPath,
       `{ "$include": "./includes/extra.json5", channels: { whatsapp: { groupPolicy: "open" } } }\n`,
@@ -301,7 +301,7 @@ describe("security fix", () => {
 
     const agentDir = path.join(stateDir, "agents", "main", "agent");
     await fs.mkdir(agentDir, { recursive: true });
-    const authDatabasePath = path.join(agentDir, "openclaw-agent.sqlite");
+    const authDatabasePath = path.join(agentDir, "nova-agent.sqlite");
     await fs.writeFile(authDatabasePath, "sqlite\n", "utf-8");
     await fs.writeFile(`${authDatabasePath}-wal`, "wal\n", "utf-8");
     await fs.writeFile(`${authDatabasePath}-shm`, "shm\n", "utf-8");
@@ -350,7 +350,7 @@ describe("security fix", () => {
     "tightens only includes accepted by the config include resolver",
     async () => {
       const stateDir = await createStateDir("include-boundary");
-      const configPath = path.join(stateDir, "openclaw.json");
+      const configPath = path.join(stateDir, "nova.json");
       const safeIncludePath = path.join(stateDir, "safe.json5");
       const escapedIncludePath = path.join(fixtureRoot, "escaped.json5");
       await fs.writeFile(safeIncludePath, "{}\n", "utf-8");
@@ -379,7 +379,7 @@ describe("security fix", () => {
     "keeps explicitly allowed include roots in the permission target set",
     async () => {
       const stateDir = await createStateDir("include-allowed-root");
-      const configPath = path.join(stateDir, "openclaw.json");
+      const configPath = path.join(stateDir, "nova.json");
       const sharedDir = path.join(fixtureRoot, "shared-includes");
       const sharedIncludePath = path.join(sharedDir, "shared.json5");
       await fs.mkdir(sharedDir, { recursive: true });

@@ -3,7 +3,7 @@
 import { isDeepStrictEqual } from "node:util";
 import { applyConfigOverrides } from "../config/runtime-overrides.js";
 import type { GatewayAuthConfig, GatewayTailscaleConfig } from "../config/types.gateway.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/types.openclaw.js";
+import type { ConfigFileSnapshot, NovaConfig } from "../config/types.nova.js";
 import { measureDiagnosticsTimelineSpan } from "../infra/diagnostics-timeline.js";
 import type { PluginManifestRegistry } from "../plugins/manifest-registry.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.js";
@@ -73,7 +73,7 @@ type RuntimeSecretsActivationParams = {
   env?: NodeJS.ProcessEnv;
   includeAuthStoreRefs?: boolean;
   /** Raw config source paired with an otherwise fully activated prepared snapshot. */
-  runtimeSourceConfig?: OpenClawConfig;
+  runtimeSourceConfig?: NovaConfig;
   /** Defer degradation/recovery publication until a larger transaction can no longer roll back. */
   deferStatePublication?: boolean;
 };
@@ -86,7 +86,7 @@ type DeferredSecretsStateTransition = {
 
 /** Gateway startup hook that prepares secrets and optionally activates the prepared snapshot. */
 export type ActivateRuntimeSecrets = ((
-  config: OpenClawConfig,
+  config: NovaConfig,
   params: RuntimeSecretsActivationParams,
 ) => Promise<PreparedRuntimeSecretsSnapshot>) & {
   activatePreparedSnapshot?: (
@@ -122,11 +122,7 @@ export function publishRuntimeSecretsStateTransition(
 /** Create the serialized secrets activation function used by startup and reload paths. */
 export function createRuntimeSecretsActivator(params: {
   logSecrets: GatewayStartupLog;
-  emitStateEvent: (
-    code: GatewaySecretsStateEventCode,
-    message: string,
-    cfg: OpenClawConfig,
-  ) => void;
+  emitStateEvent: (code: GatewaySecretsStateEventCode, message: string, cfg: NovaConfig) => void;
   prepareRuntimeSecretsSnapshot?: PrepareRuntimeSecretsSnapshot;
   activateRuntimeSecretsSnapshot?: ActivateRuntimeSecretsSnapshot;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
@@ -136,7 +132,7 @@ export function createRuntimeSecretsActivator(params: {
   let secretsDegraded = false;
   let degradationGeneration = 0;
   let activeDegradationGeneration: number | null = null;
-  let activeDegradationConfig: OpenClawConfig | null = null;
+  let activeDegradationConfig: NovaConfig | null = null;
   let activeDegradationSupportsSourceOnlyRecovery = false;
   let activeDegradationScope: SecretsStateScope | null = null;
   const deferredStateTransitions = new WeakMap<object, DeferredSecretsStateTransition>();
@@ -169,7 +165,7 @@ export function createRuntimeSecretsActivator(params: {
   };
 
   const publishRecovery = (
-    config: OpenClawConfig,
+    config: NovaConfig,
     expectedGeneration?: number,
     scope: SecretsStateScope = "full",
   ) => {
@@ -296,7 +292,7 @@ export function createRuntimeSecretsActivator(params: {
   const handleSecretsActivationError = (
     err: unknown,
     activationParams: RuntimeSecretsActivationParams,
-    eventConfig: OpenClawConfig,
+    eventConfig: NovaConfig,
   ): never => {
     const mayPublishReloadDegradation =
       (activationParams.activate || activationParams.publishFailureAsDegraded === true) &&
@@ -633,7 +629,7 @@ export async function prepareGatewayStartupConfig(params: {
     },
     { omitErrorMessage: true },
   );
-  const canReusePreflightPreparedSnapshot = (config: OpenClawConfig): boolean =>
+  const canReusePreflightPreparedSnapshot = (config: NovaConfig): boolean =>
     Boolean(
       preflightPrepared &&
       params.activateRuntimeSecrets.activatePreparedSnapshot &&
@@ -642,7 +638,7 @@ export async function prepareGatewayStartupConfig(params: {
         preflightPrepared.sourceConfig,
       ),
     );
-  const activateStartupSecrets = async (config: OpenClawConfig) => {
+  const activateStartupSecrets = async (config: NovaConfig) => {
     // Reuse the preflight snapshot only if generated startup auth did not
     // change the secret-relevant source config.
     if (preflightPrepared && canReusePreflightPreparedSnapshot(config)) {

@@ -5,11 +5,11 @@ import {
   cliBackendAcceptsAuthProfileForwarding,
   resolveCliExecutionAuthProfileId,
 } from "../agents/cli-execution-auth.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 
 export type SystemAgentConfiguredRoute = {
-  runConfig: OpenClawConfig;
+  runConfig: NovaConfig;
   modelLabel: string;
   provider: string;
   model: string;
@@ -38,18 +38,15 @@ export type DefaultInferenceRouteProjection = {
   defaults: unknown;
   agent?: unknown;
   executionAgent?: unknown;
-  env: OpenClawConfig["env"];
-  secrets: OpenClawConfig["secrets"];
-  plugins: OpenClawConfig["plugins"];
-  tools: OpenClawConfig["tools"];
+  env: NovaConfig["env"];
+  secrets: NovaConfig["secrets"];
+  plugins: NovaConfig["plugins"];
+  tools: NovaConfig["tools"];
 };
 
-const SYSTEM_AGENT_EXECUTION_AGENT_ID = "openclaw";
+const SYSTEM_AGENT_EXECUTION_AGENT_ID = "nova";
 
-function projectSystemAgentExecutionConfig(
-  config: OpenClawConfig,
-  routeAgentId: string,
-): OpenClawConfig {
+function projectSystemAgentExecutionConfig(config: NovaConfig, routeAgentId: string): NovaConfig {
   const agents = config.agents?.list;
   if (!agents) {
     return config;
@@ -90,7 +87,7 @@ function projectSystemAgentExecutionConfig(
 }
 
 export async function resolveSystemAgentConfiguredRouteFromConfig(
-  runConfig: OpenClawConfig,
+  runConfig: NovaConfig,
   requestedAgentId?: string,
 ): Promise<SystemAgentConfiguredRoute | null> {
   const [agentScope, modelSelection, modelRuntimeAliases, simpleCompletion, harnessPolicy] =
@@ -195,14 +192,14 @@ function projectRelevantModelMap(params: {
 
 /** Project every config input that can change the configured default-agent route. */
 export async function projectDefaultInferenceRoute(
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): Promise<DefaultInferenceRouteProjection> {
   return await projectInferenceRoute(config);
 }
 
 /** Project every config input that can change one configured agent route. */
 export async function projectInferenceRoute(
-  config: OpenClawConfig,
+  config: NovaConfig,
   requestedAgentId?: string,
 ): Promise<DefaultInferenceRouteProjection> {
   const [{ resolveDefaultAgentId }, { resolveProviderIdForAuth }] = await Promise.all([

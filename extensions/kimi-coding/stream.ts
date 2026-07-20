@@ -1,13 +1,13 @@
 // Kimi Coding plugin module implements stream behavior.
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
 import {
   streamSimple,
   type AssistantMessage,
   type AssistantMessageEvent,
-} from "openclaw/plugin-sdk/llm";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
-import { streamWithPayloadPatch } from "openclaw/plugin-sdk/provider-stream-shared";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/llm";
+import type { ProviderWrapStreamFnContext } from "nova/plugin-sdk/plugin-entry";
+import { streamWithPayloadPatch } from "nova/plugin-sdk/provider-stream-shared";
+import { normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 import { isKimiK3ModelId } from "./provider-policy-api.js";
 
 const TOOL_CALLS_SECTION_BEGIN = "<|tool_calls_section_begin|>";

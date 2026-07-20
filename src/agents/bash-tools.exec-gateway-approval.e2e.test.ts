@@ -59,16 +59,16 @@ describe("gateway-hosted exec approvals", () => {
       const envSnapshot = captureEnv(TEST_ENV_KEYS);
       cleanup.push(() => envSnapshot.restore());
 
-      const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-exec-approval-e2e-"));
+      const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-exec-approval-e2e-"));
       cleanup.push(() => fs.rm(tempHome, { recursive: true, force: true, maxRetries: 5 }));
 
-      const stateDir = path.join(tempHome, ".openclaw");
+      const stateDir = path.join(tempHome, ".nova");
       const workspaceDir = path.join(tempHome, "workspace");
       await fs.mkdir(workspaceDir, { recursive: true });
 
       const port = await getFreeGatewayPort();
       const token = "exec-approval-e2e-token";
-      const configPath = path.join(stateDir, "openclaw.json");
+      const configPath = path.join(stateDir, "nova.json");
       await fs.mkdir(stateDir, { recursive: true });
       await fs.writeFile(
         configPath,

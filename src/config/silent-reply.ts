@@ -7,10 +7,10 @@ import {
   type SilentReplyPolicy,
   type SilentReplyPolicyShape,
 } from "../shared/silent-reply-policy.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { NovaConfig } from "./types.nova.js";
 
 type ResolveSilentReplyParams = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   sessionKey?: string;
   surface?: string;
   conversationType?: SilentReplyConversationType;

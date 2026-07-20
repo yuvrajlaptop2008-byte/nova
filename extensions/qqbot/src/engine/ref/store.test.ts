@@ -18,7 +18,7 @@ function createTempDir(prefix: string): string {
 }
 
 function refIndexFile(homeDir: string): string {
-  return path.join(homeDir, ".openclaw", "qqbot", "data", "ref-index.jsonl");
+  return path.join(homeDir, ".nova", "qqbot", "data", "ref-index.jsonl");
 }
 
 async function useMockHome(homeDir: string): Promise<void> {

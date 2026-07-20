@@ -59,8 +59,8 @@ describe("runAgentTurnWithFallback: run lifecycle and ownership", () => {
       agents: {
         defaults: {
           models: {
-            "openai/gpt-5.6-sol": { agentRuntime: { id: "openclaw" } },
-            "demo/basic": { agentRuntime: { id: "openclaw" } },
+            "openai/gpt-5.6-sol": { agentRuntime: { id: "nova" } },
+            "demo/basic": { agentRuntime: { id: "nova" } },
           },
         },
       },

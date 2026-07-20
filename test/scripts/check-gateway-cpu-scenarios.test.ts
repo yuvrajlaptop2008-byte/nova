@@ -300,7 +300,7 @@ describe("gateway CPU scenario guard", () => {
           writeFileSync(path.join(pluginSdkDist, "qa-lab.js"), "export {};\n");
           writeFileSync(path.join(pluginSdkDist, "qa-runtime.js"), "export {};\n");
         }
-        if (args.includes("openclaw") && args.includes("qa")) {
+        if (args.includes("nova") && args.includes("qa")) {
           writeQaSuiteSummary(outputDir);
         }
         return { status: 0 };
@@ -313,7 +313,7 @@ describe("gateway CPU scenario guard", () => {
     expect(calls[0]?.env).toMatchObject({
       HOME: path.join(outputDir, "qa-state-root", "home"),
       NOVA_BUILD_PRIVATE_QA: "1",
-      NOVA_CONFIG_PATH: path.join(outputDir, "qa-state-root", "state", "openclaw.json"),
+      NOVA_CONFIG_PATH: path.join(outputDir, "qa-state-root", "state", "nova.json"),
       NOVA_ENABLE_PRIVATE_QA_CLI: "1",
       NOVA_HOME: path.join(outputDir, "qa-state-root", "home"),
       NOVA_RUN_NODE_SKIP_DTS_BUILD: "1",
@@ -345,14 +345,14 @@ describe("gateway CPU scenario guard", () => {
       cwd,
       env: {
         HOME: "/real/user/home",
-        NOVA_CONFIG_PATH: "/real/user/.openclaw/openclaw.json",
+        NOVA_CONFIG_PATH: "/real/user/.nova/nova.json",
         NOVA_HOME: "/real/user/home",
-        NOVA_STATE_DIR: "/real/user/.openclaw",
+        NOVA_STATE_DIR: "/real/user/.nova",
       },
       silent: true,
       spawnSync: (_command: string, args: string[], opts?: { env?: Record<string, string> }) => {
         calls.push({ args, env: opts?.env });
-        if (args.includes("openclaw") && args.includes("qa")) {
+        if (args.includes("nova") && args.includes("qa")) {
           writeQaSuiteSummary(outputDir);
         }
         return { status: 0 };
@@ -364,7 +364,7 @@ describe("gateway CPU scenario guard", () => {
     expect(calls.some((call) => call.args[0] === "scripts/build-all.mjs")).toBe(false);
     expect(calls[0]?.env).toMatchObject({
       HOME: path.join(outputDir, "qa-state-root", "home"),
-      NOVA_CONFIG_PATH: path.join(outputDir, "qa-state-root", "state", "openclaw.json"),
+      NOVA_CONFIG_PATH: path.join(outputDir, "qa-state-root", "state", "nova.json"),
       NOVA_HOME: path.join(outputDir, "qa-state-root", "home"),
       NOVA_STATE_DIR: path.join(outputDir, "qa-state-root", "state"),
       PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
@@ -386,7 +386,7 @@ describe("gateway CPU scenario guard", () => {
     const result = await testing.runGatewayCpuScenarios(options, {
       silent: true,
       spawnSync: (_command: string, args: string[]) => {
-        if (args.includes("openclaw") && args.includes("qa")) {
+        if (args.includes("nova") && args.includes("qa")) {
           writeQaSuiteSummary(outputDir, { failed: 1, passed: 0, total: 1 });
         }
         return { status: 0 };

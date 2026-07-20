@@ -68,7 +68,7 @@ describe("generate-dependency-release-evidence", () => {
       releaseRef: "v2026.5.13-beta.1",
       releaseSha: "abc123",
       npmDistTag: "beta",
-      packageName: "openclaw",
+      packageName: "nova",
       packageVersion: "2026.5.13-beta.1",
       workflowRunId: "123",
       workflowRunAttempt: "2",
@@ -251,7 +251,7 @@ describe("generate-dependency-release-evidence", () => {
   });
 
   it("collects report counts and renders human summaries", async () => {
-    const dir = await mkdtemp(path.join(tmpdir(), "openclaw-release-dependency-evidence-test-"));
+    const dir = await mkdtemp(path.join(tmpdir(), "nova-release-dependency-evidence-test-"));
     try {
       await writeJson(dir, "dependency-vulnerability-gate.json", {
         blockers: [{ id: "GHSA-blocker" }],
@@ -304,12 +304,12 @@ describe("generate-dependency-release-evidence", () => {
       expect(summary).toContain("- Resolved package changes: +5 -6 changed 7");
 
       const stepSummary = renderDependencyEvidenceStepSummary({
-        evidenceArtifactName: "openclaw-release-dependency-evidence-v2026.5.13",
+        evidenceArtifactName: "nova-release-dependency-evidence-v2026.5.13",
         baseRef: "v2026.5.1",
         counts,
       });
       expect(stepSummary).toContain(
-        "- Evidence artifact: `openclaw-release-dependency-evidence-v2026.5.13`",
+        "- Evidence artifact: `nova-release-dependency-evidence-v2026.5.13`",
       );
       expect(stepSummary).toContain("- npm advisory vulnerability hard blockers: `1`");
 

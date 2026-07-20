@@ -1,14 +1,14 @@
 // Discord plugin module implements account inspect behavior.
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { normalizeSecretInputString } from "openclaw/plugin-sdk/secret-input";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "nova/plugin-sdk/account-id";
+import { normalizeSecretInputString } from "nova/plugin-sdk/secret-input";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import { inspectDiscordConfiguredToken } from "./account-token-inspect.js";
 import {
   mergeDiscordAccountConfig,
   resolveDefaultDiscordAccountId,
   resolveDiscordAccountConfig,
 } from "./accounts.js";
-import type { DiscordAccountConfig, OpenClawConfig } from "./runtime-api.js";
+import type { DiscordAccountConfig, NovaConfig } from "./runtime-api.js";
 import type { DiscordCredentialStatus } from "./token.js";
 
 export type InspectedDiscordAccount = {
@@ -23,7 +23,7 @@ export type InspectedDiscordAccount = {
 };
 
 export function inspectDiscordAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   envToken?: string | null;
 }): InspectedDiscordAccount {

@@ -3,14 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { clearRuntimeAuthProfileStoreSnapshots } from "../agents/auth-profiles/store.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import { maybeRepairCanonicalApiKeyFieldAlias } from "./doctor-auth-flat-profiles.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
 
-const states: OpenClawTestState[] = [];
+const states: NovaTestState[] = [];
 
 function makePrompter(shouldRepair: boolean): DoctorPrompter {
   return {
@@ -31,10 +28,10 @@ function makePrompter(shouldRepair: boolean): DoctorPrompter {
   };
 }
 
-async function makeTestState(): Promise<OpenClawTestState> {
-  const state = await createOpenClawTestState({
+async function makeTestState(): Promise<NovaTestState> {
+  const state = await createNovaTestState({
     layout: "state-only",
-    prefix: "openclaw-doctor-canonical-api-key-",
+    prefix: "nova-doctor-canonical-api-key-",
     env: {
       NOVA_AGENT_DIR: undefined,
     },
@@ -43,10 +40,7 @@ async function makeTestState(): Promise<OpenClawTestState> {
   return state;
 }
 
-async function writeLegacyAuthProfilesJson(
-  state: OpenClawTestState,
-  value: unknown,
-): Promise<string> {
+async function writeLegacyAuthProfilesJson(state: NovaTestState, value: unknown): Promise<string> {
   return await state.writeText(
     "agents/main/agent/auth-profiles.json",
     `${JSON.stringify(value, null, 2)}\n`,

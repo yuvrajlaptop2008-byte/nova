@@ -1,11 +1,11 @@
 // Shared doctor state helpers for previewing or applying config mutations.
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 
 export type DoctorConfigMutationState = {
   /** Config currently used for command execution. */
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   /** Best candidate config after pending doctor mutations. */
-  candidate: OpenClawConfig;
+  candidate: NovaConfig;
   /** True when candidate differs from the persisted/effective config path. */
   pendingChanges: boolean;
   /** User-facing fix hints printed when preview mode leaves changes unapplied. */
@@ -14,7 +14,7 @@ export type DoctorConfigMutationState = {
 
 export type DoctorConfigMutationResult = {
   /** Candidate config after the mutation. */
-  config: OpenClawConfig;
+  config: NovaConfig;
   /** User-facing change lines; empty means no mutation should be applied. */
   changes: string[];
 };

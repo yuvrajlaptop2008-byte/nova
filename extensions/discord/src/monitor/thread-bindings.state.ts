@@ -1,11 +1,11 @@
 // Discord plugin module implements thread bindings.state behavior.
-import { recordOutboundMessageIdentity } from "openclaw/plugin-sdk/channel-outbound";
-import { normalizeAccountId, resolveAgentIdFromSessionKey } from "openclaw/plugin-sdk/routing";
+import { recordOutboundMessageIdentity } from "nova/plugin-sdk/channel-outbound";
+import { normalizeAccountId, resolveAgentIdFromSessionKey } from "nova/plugin-sdk/routing";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   normalizeOptionalStringifiedId,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { getDiscordRuntime } from "../runtime.js";
 import type {
   PersistedThreadBindingRecord,
@@ -30,7 +30,7 @@ type ThreadBindingsGlobalState = {
 // Plugin hooks can load this module through a separate runtime path while core
 // imports it via ESM. Store mutable state on globalThis so both paths share one
 // registry.
-const THREAD_BINDINGS_STATE_KEY = Symbol.for("openclaw.discordThreadBindingsState");
+const THREAD_BINDINGS_STATE_KEY = Symbol.for("nova.discordThreadBindingsState");
 let threadBindingsState: ThreadBindingsGlobalState | undefined;
 
 function createThreadBindingsGlobalState(): ThreadBindingsGlobalState {

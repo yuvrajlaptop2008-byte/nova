@@ -1,5 +1,5 @@
-import type { OpenClawPluginNodeHostCommandAvailabilityContext } from "openclaw/plugin-sdk/plugin-entry";
-import { buildPluginConfigSchema } from "openclaw/plugin-sdk/plugin-entry";
+import type { NovaPluginNodeHostCommandAvailabilityContext } from "nova/plugin-sdk/plugin-entry";
+import { buildPluginConfigSchema } from "nova/plugin-sdk/plugin-entry";
 import { z } from "zod";
 
 const CapabilityConfigSchema = z.strictObject({
@@ -52,7 +52,7 @@ export function resolveLinuxNodePluginConfig(value: unknown): ResolvedLinuxNodeP
 }
 
 export function resolveLinuxNodePluginConfigFromHost(
-  config: OpenClawPluginNodeHostCommandAvailabilityContext["config"],
+  config: NovaPluginNodeHostCommandAvailabilityContext["config"],
 ): ResolvedLinuxNodePluginConfig | null {
   try {
     return resolveLinuxNodePluginConfig(config.plugins?.entries?.["linux-node"]?.config);

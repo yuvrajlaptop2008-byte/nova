@@ -6,7 +6,7 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { gunzipSync, gzipSync } from "node:zlib";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { readChannelPairingStateSnapshot } from "../pairing/pairing-store-sqlite.test-helpers.js";
@@ -24,10 +24,10 @@ import {
 } from "../plugins/installed-plugin-index-store.js";
 import type { InstalledPluginInstallRecordInfo } from "../plugins/installed-plugin-index.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
   NOVA_STATE_SCHEMA_VERSION,
-} from "../state/openclaw-state-db.js";
+} from "../state/nova-state-db.js";
 import { loadTaskFlowRegistryStateFromSqlite } from "../tasks/task-flow-registry.store.sqlite.js";
 import { loadTaskRegistryStateFromSqlite } from "../tasks/task-registry.store.sqlite.js";
 import {
@@ -139,14 +139,14 @@ vi.mock("../plugins/doctor-contract-registry.js", () => ({
 }));
 
 async function makeTempRoot() {
-  const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-doctor-"));
+  const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-doctor-"));
   tempRoots.push(root);
   return root;
 }
 
 async function makeRootWithEmptyCfg() {
   const root = await makeTempRoot();
-  const cfg: OpenClawConfig = {};
+  const cfg: NovaConfig = {};
   return { root, cfg };
 }
 
@@ -165,7 +165,7 @@ function writeLegacyTelegramAllowFromStore(oauthDir: string) {
   );
 }
 
-async function runTelegramAllowFromMigration(params: { root: string; cfg: OpenClawConfig }) {
+async function runTelegramAllowFromMigration(params: { root: string; cfg: NovaConfig }) {
   const oauthDir = ensureCredentialsDir(params.root);
   writeLegacyTelegramAllowFromStore(oauthDir);
   const env = { NOVA_STATE_DIR: params.root } as NodeJS.ProcessEnv;
@@ -186,7 +186,7 @@ afterEach(async () => {
   resetAutoMigrateLegacyStateForTest();
   resetAutoMigrateLegacyStateDirForTest();
   resetAutoMigrateLegacyTaskStateSidecarsForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   setMaxPluginStateEntriesPerPluginForTests();
   resetPluginStateStoreForTests();
   mockedChannelMigrationPlans.plans = [];
@@ -213,7 +213,7 @@ function readPrimaryKeyColumns(db: DatabaseSync, tableName: string): string[] {
 }
 
 function createLegacyAgentDatabaseRegistry(stateDir: string): string {
-  const stateDatabasePath = path.join(stateDir, "state", "openclaw.sqlite");
+  const stateDatabasePath = path.join(stateDir, "state", "nova.sqlite");
   fs.mkdirSync(path.dirname(stateDatabasePath), { recursive: true });
   const { DatabaseSync } = requireNodeSqlite();
   const db = new DatabaseSync(stateDatabasePath);
@@ -234,7 +234,7 @@ function createLegacyAgentDatabaseRegistry(stateDir: string): string {
         size_bytes
       ) VALUES (
         'worker-1',
-        '/legacy/worker-1/openclaw-agent.sqlite',
+        '/legacy/worker-1/nova-agent.sqlite',
         1,
         10,
         20
@@ -352,8 +352,8 @@ function writeLegacyDebugProxyCaptureSidecar(
       100,
       200,
       "proxy-run",
-      "openclaw",
-      "openclaw",
+      "nova",
+      "nova",
       "http://127.0.0.1:8080",
       sourcePath,
       blobDir,
@@ -367,8 +367,8 @@ function writeLegacyDebugProxyCaptureSidecar(
     ).run(
       "legacy-session",
       150,
-      "openclaw",
-      "openclaw",
+      "nova",
+      "nova",
       "https",
       "outbound",
       "request",
@@ -647,7 +647,7 @@ function appendLegacyTaskWithObsoleteDeliveryStatus(taskRunsPath: string): void 
 
 async function detectAndRunMigrations(params: {
   root: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   now?: () => number;
 }) {
   const detected = await detectLegacyStateMigrations({
@@ -680,7 +680,7 @@ function readSessionsStore(targetDir: string) {
 
 async function runAndReadSessionsStore(params: {
   root: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   targetDir: string;
   now?: () => number;
 }) {
@@ -698,7 +698,7 @@ const DIR_LINK_TYPE = process.platform === "win32" ? "junction" : "dir";
 
 function getStateDirMigrationPaths(root: string) {
   return {
-    targetDir: path.join(root, ".openclaw"),
+    targetDir: path.join(root, ".nova"),
     legacyDir: path.join(root, ".clawdbot"),
   };
 }
@@ -724,7 +724,7 @@ async function runFreshStateDirMigration(root: string, env = {} as NodeJS.Proces
 
 async function runAutoMigrateLegacyStateWithLog(params: {
   root: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   now?: () => number;
 }) {
   const log = { info: vi.fn(), warn: vi.fn() };
@@ -774,7 +774,7 @@ describe("doctor legacy state migrations", () => {
 
   beforeAll(async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const legacySessionsDir = writeLegacySessionsFixture({
       root,
       sessions: {
@@ -934,7 +934,7 @@ describe("doctor legacy state migrations", () => {
 
   it("migrates the legacy shared state agent registry primary key", async () => {
     const root = await makeTempRoot();
-    const stateDir = path.join(root, ".openclaw");
+    const stateDir = path.join(root, ".nova");
     const stateDatabasePath = createLegacyAgentDatabaseRegistry(stateDir);
     const detected = await detectLegacyStateMigrations({
       cfg: {},
@@ -966,7 +966,7 @@ describe("doctor legacy state migrations", () => {
             size_bytes
           ) VALUES (
             'worker-1',
-            '/relocated/worker-1/openclaw-agent.sqlite',
+            '/relocated/worker-1/nova-agent.sqlite',
             1,
             20,
             30
@@ -983,7 +983,7 @@ describe("doctor legacy state migrations", () => {
 
   it("does not repair newer shared state schemas", async () => {
     const root = await makeTempRoot();
-    const stateDir = path.join(root, ".openclaw");
+    const stateDir = path.join(root, ".nova");
     const stateDatabasePath = createLegacyAgentDatabaseRegistry(stateDir);
     const { DatabaseSync } = requireNodeSqlite();
     const seededDb = new DatabaseSync(stateDatabasePath);
@@ -1012,7 +1012,7 @@ describe("doctor legacy state migrations", () => {
 
   it("migrates legacy ACP metadata from sessions.json into shared SQLite", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const legacySessionKey = "acp:binding:discord:default:feedface";
     const sessionKey = "agent:main:acp:binding:discord:default:feedface";
     writeLegacySessionsFixture({
@@ -1050,7 +1050,7 @@ describe("doctor legacy state migrations", () => {
     expect(store[legacySessionKey]?.acp).toBeUndefined();
 
     const sqlite = requireNodeSqlite();
-    const db = new sqlite.DatabaseSync(path.join(root, "state", "openclaw.sqlite"));
+    const db = new sqlite.DatabaseSync(path.join(root, "state", "nova.sqlite"));
     try {
       const row = db
         .prepare(
@@ -1089,7 +1089,7 @@ describe("doctor legacy state migrations", () => {
     const legacySessionKey = "acp:binding:discord:default:feedface";
     const sessionKey = "agent:ops:acp:binding:discord:default:feedface";
     const storePath = path.join(customRoot, "agents", "ops", "sessions", "sessions.json");
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       session: {
         store: path.join(customRoot, "agents", "{agentId}", "sessions", "sessions.json"),
       },
@@ -1125,7 +1125,7 @@ describe("doctor legacy state migrations", () => {
     expect(store[legacySessionKey]?.acp).toBeUndefined();
 
     const sqlite = requireNodeSqlite();
-    const db = new sqlite.DatabaseSync(path.join(root, "state", "openclaw.sqlite"));
+    const db = new sqlite.DatabaseSync(path.join(root, "state", "nova.sqlite"));
     try {
       const row = db
         .prepare(
@@ -1197,7 +1197,7 @@ describe("doctor legacy state migrations", () => {
     const customRoot = await makeTempRoot();
     const outsideRoot = await makeTempRoot();
     const sessionKey = "agent:main:acp:binding:discord:default:feedface";
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       session: {
         store: path.join(customRoot, "agents", "{agentId}", "sessions", "sessions.json"),
       },
@@ -1238,7 +1238,7 @@ describe("doctor legacy state migrations", () => {
 
   it("keeps shipped WhatsApp legacy group keys channel-qualified during migration", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const targetDir = path.join(root, "agents", "main", "sessions");
 
     writeLegacySessionsFixture({
@@ -1335,7 +1335,7 @@ describe("doctor legacy state migrations", () => {
 
   it("uses the channel-resolved default account for unscoped pairing allowFrom", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         whatsapp: {
           accounts: {
@@ -1373,7 +1373,7 @@ describe("doctor legacy state migrations", () => {
 
   it("does not fan out legacy Telegram pairing allowFrom store to configured named accounts", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         telegram: {
           defaultAccount: "bot2",
@@ -1395,7 +1395,7 @@ describe("doctor legacy state migrations", () => {
 
   it("migrates legacy Telegram pairing allowFrom store to the default agent bound account", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         list: [{ id: "ops", default: true }],
       },
@@ -1421,7 +1421,7 @@ describe("doctor legacy state migrations", () => {
 
   it("no-ops when nothing detected", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const detected = await detectLegacyStateMigrations({
       cfg,
       env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
@@ -2213,7 +2213,7 @@ describe("doctor legacy state migrations", () => {
     expect(fs.existsSync(`${blobDir}.migrated`)).toBe(true);
     expect(fs.readFileSync(path.join(certDir, "ca.pem"), "utf8")).toBe("keep");
 
-    const state = openOpenClawStateDatabase({
+    const state = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(
@@ -2241,7 +2241,7 @@ describe("doctor legacy state migrations", () => {
     ]);
     expect(fs.existsSync(`${sourcePath}.migrated`)).toBe(true);
     expect(fs.existsSync(blobDir)).toBe(true);
-    const state = openOpenClawStateDatabase({
+    const state = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(
@@ -2290,7 +2290,7 @@ describe("doctor legacy state migrations", () => {
     const retryResult = await runLegacyStateMigrationsForRoot(root);
 
     expect(retryResult.warnings).toStrictEqual([]);
-    const state = openOpenClawStateDatabase({
+    const state = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(state.db.prepare("SELECT COUNT(*) AS count FROM capture_events").get()).toEqual({
@@ -2301,7 +2301,7 @@ describe("doctor legacy state migrations", () => {
   it("leaves debug proxy sources in place when a session id conflicts", async () => {
     const root = await makeTempRoot();
     const { sourcePath, blobDir } = writeLegacyDebugProxyCaptureSidecar(root);
-    const state = openOpenClawStateDatabase({
+    const state = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     state.db
@@ -2310,7 +2310,7 @@ describe("doctor legacy state migrations", () => {
           id, started_at, mode, source_scope, source_process
         ) VALUES (?, ?, ?, ?, ?)`,
       )
-      .run("legacy-session", 999, "different", "openclaw", "openclaw");
+      .run("legacy-session", 999, "different", "nova", "nova");
 
     const result = await runLegacyStateMigrationsForRoot(root);
 
@@ -2353,7 +2353,7 @@ describe("doctor legacy state migrations", () => {
     expect(retryResult.changes).toStrictEqual([
       `Archived debug proxy capture blobs → ${blobDir}.migrated`,
     ]);
-    const state = openOpenClawStateDatabase({
+    const state = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(state.db.prepare("SELECT COUNT(*) AS count FROM capture_events").get()).toEqual({
@@ -2692,7 +2692,7 @@ describe("doctor legacy state migrations", () => {
   it("converges the reported plugin, update-check, and config-health conflicts", async () => {
     const root = await makeTempRoot();
     const env = { ...process.env, NOVA_STATE_DIR: root };
-    const configPath = path.join(root, "openclaw.json");
+    const configPath = path.join(root, "nova.json");
     const pluginSourcePath = writeLegacyPluginInstallIndex(root, {
       demo: {
         source: "npm",
@@ -2731,7 +2731,7 @@ describe("doctor legacy state migrations", () => {
       }),
       "utf8",
     );
-    const { db } = openOpenClawStateDatabase({ env });
+    const { db } = openNovaStateDatabase({ env });
     db.prepare(
       `INSERT INTO update_check_state (
         state_key, last_checked_at, last_available_version, updated_at_ms
@@ -3002,7 +3002,7 @@ describe("doctor legacy state migrations", () => {
     // Even direct doctor repair must not copy or archive default approvals.
     const root = await makeTempRoot();
     const stateDir = path.join(root, "custom-state");
-    const sourcePath = path.join(root, ".openclaw", "exec-approvals.json");
+    const sourcePath = path.join(root, ".nova", "exec-approvals.json");
     const targetPath = path.join(stateDir, "exec-approvals.json");
     writeJson5(sourcePath, {
       version: 1,
@@ -3035,7 +3035,7 @@ describe("doctor legacy state migrations", () => {
   it("keeps default exec approvals in place during automatic state migration", async () => {
     const root = await makeTempRoot();
     const stateDir = path.join(root, "custom-state");
-    const sourcePath = path.join(root, ".openclaw", "exec-approvals.json");
+    const sourcePath = path.join(root, ".nova", "exec-approvals.json");
     const targetPath = path.join(stateDir, "exec-approvals.json");
     writeJson5(sourcePath, {
       version: 1,
@@ -3627,7 +3627,7 @@ describe("doctor legacy state migrations", () => {
     expect(fs.existsSync(taskRunsPath)).toBe(false);
     expect(fs.existsSync(`${taskRunsPath}.migrated`)).toBe(true);
 
-    const shared = openOpenClawStateDatabase({
+    const shared = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(
@@ -3673,9 +3673,9 @@ describe("doctor legacy state migrations", () => {
 
     await withStateDir(root, async () => {
       loadTaskRegistryStateFromSqlite();
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       const sqlite = requireNodeSqlite();
-      const db = new sqlite.DatabaseSync(path.join(root, "state", "openclaw.sqlite"));
+      const db = new sqlite.DatabaseSync(path.join(root, "state", "nova.sqlite"));
       try {
         db.prepare(
           `INSERT INTO task_runs (
@@ -3733,7 +3733,7 @@ describe("doctor legacy state migrations", () => {
 
     await withStateDir(root, async () => {
       const sqlite = requireNodeSqlite();
-      const sharedPath = path.join(root, "state", "openclaw.sqlite");
+      const sharedPath = path.join(root, "state", "nova.sqlite");
       fs.mkdirSync(path.dirname(sharedPath), { recursive: true });
       const db = new sqlite.DatabaseSync(sharedPath);
       try {
@@ -3806,7 +3806,7 @@ describe("doctor legacy state migrations", () => {
 
   it("routes legacy state to the default agent entry", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: { list: [{ id: "alpha", default: true }] },
     };
     writeLegacySessionsFixture({
@@ -3828,7 +3828,7 @@ describe("doctor legacy state migrations", () => {
 
   it("honors session.mainKey when seeding the direct-chat bucket", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = { session: { mainKey: "work" } };
+    const cfg: NovaConfig = { session: { mainKey: "work" } };
     writeLegacySessionsFixture({
       root,
       sessions: {
@@ -3868,7 +3868,7 @@ describe("doctor legacy state migrations", () => {
 
   it("prefers the newest entry when collapsing main aliases", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = { session: { mainKey: "work" } };
+    const cfg: NovaConfig = { session: { mainKey: "work" } };
     const targetDir = path.join(root, "agents", "main", "sessions");
     writeJson5(path.join(targetDir, "sessions.json"), {
       "agent:main:main": { sessionId: "legacy", updatedAt: 50 },
@@ -3887,7 +3887,7 @@ describe("doctor legacy state migrations", () => {
 
   it("lowercases agent session keys during canonicalization", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const targetDir = path.join(root, "agents", "main", "sessions");
     writeJson5(path.join(targetDir, "sessions.json"), {
       "agent:main:slack:channel:C123": { sessionId: "legacy", updatedAt: 10 },
@@ -3905,7 +3905,7 @@ describe("doctor legacy state migrations", () => {
 
   it("preserves Matrix room and thread casing during canonicalization", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const targetDir = path.join(root, "agents", "main", "sessions");
     writeJson5(path.join(targetDir, "sessions.json"), {
       "agent:main:Matrix:Channel:!Mixed:Example.Org:Thread:$EventABC": {
@@ -3928,7 +3928,7 @@ describe("doctor legacy state migrations", () => {
 
   it("preserves unscoped legacy Matrix room casing when scoping to an agent", async () => {
     const root = await makeTempRoot();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const targetDir = path.join(root, "agents", "main", "sessions");
     writeJson5(path.join(targetDir, "sessions.json"), {
       "Matrix:Channel:!Mixed:Example.Org": { sessionId: "matrix", updatedAt: 10 },

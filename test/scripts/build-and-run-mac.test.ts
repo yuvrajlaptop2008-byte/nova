@@ -17,7 +17,7 @@ const scriptPath = "scripts/build-and-run-mac.sh";
 const tempRoots: string[] = [];
 
 function runStopExistingLocalApp(params: { fakeLsof?: string; fakePgrep: string }) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-build-run-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-build-run-mac-test-"));
   tempRoots.push(root);
   const binDir = join(root, "bin");
   const killCallsPath = join(root, "kill-calls.txt");
@@ -136,11 +136,11 @@ describe("scripts/build-and-run-mac.sh", () => {
 
     expect(script).toContain('cd "$APP_DIR"');
     expect(script).toContain(
-      'LOG_PATH="${NOVA_MAC_RUN_LOG:-$(mktemp "${TMPDIR:-/tmp}/openclaw-${PRODUCT}.XXXXXX.log")}"',
+      'LOG_PATH="${NOVA_MAC_RUN_LOG:-$(mktemp "${TMPDIR:-/tmp}/nova-${PRODUCT}.XXXXXX.log")}"',
     );
     expect(script).toContain('nohup "$BIN_ABS" >"$LOG_PATH" 2>&1 &');
     expect(script).toContain('printf "Started $PRODUCT (PID $PID). Logs: $LOG_PATH\\n"');
-    expect(script).not.toContain("/tmp/openclaw.log");
+    expect(script).not.toContain("/tmp/nova.log");
   });
 
   it("stops only the local debug app binary before relaunching", () => {

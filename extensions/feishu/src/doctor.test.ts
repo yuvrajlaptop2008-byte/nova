@@ -8,13 +8,13 @@ import {
   listSessionEntries,
   type SessionEntry,
   upsertSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/session-store-runtime";
 import {
   appendSessionTranscriptMessageByIdentity,
   readSessionTranscriptEvents,
-} from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/session-transcript-runtime";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { NovaConfig } from "../runtime-api.js";
 import { feishuDoctor } from "./doctor.js";
 
 const runFeishuDoctorSequence = feishuDoctor.runConfigSequence!;
@@ -44,7 +44,7 @@ function restoreEnv(snapshot: EnvSnapshot) {
   }
 }
 
-function feishuConfig(): OpenClawConfig {
+function feishuConfig(): NovaConfig {
   return {
     channels: {
       feishu: {
@@ -52,7 +52,7 @@ function feishuConfig(): OpenClawConfig {
         appSecret: "secret_xxx",
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function stateDir(): string {
@@ -72,7 +72,7 @@ function storePath(agentId = "main"): string {
 }
 
 function sqliteStorePath(agentId = "main"): string {
-  return path.join(stateDir(), "agents", agentId, "agent", "openclaw-agent.sqlite");
+  return path.join(stateDir(), "agents", agentId, "agent", "nova-agent.sqlite");
 }
 
 function corruptTranscriptEventJson(agentId: string, sessionId: string): void {
@@ -145,10 +145,10 @@ describe("Feishu doctor state repair", () => {
 
   beforeEach(() => {
     envSnapshot = captureEnv();
-    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-feishu-doctor-"));
+    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "nova-feishu-doctor-"));
     process.env.HOME = tempHome;
     process.env.NOVA_HOME = tempHome;
-    process.env.NOVA_STATE_DIR = path.join(tempHome, ".openclaw");
+    process.env.NOVA_STATE_DIR = path.join(tempHome, ".nova");
     fs.mkdirSync(process.env.NOVA_STATE_DIR, { recursive: true, mode: 0o700 });
   });
 
@@ -201,7 +201,7 @@ describe("Feishu doctor state repair", () => {
       cfg: {
         ...feishuConfig(),
         session: { store: customStorePath },
-      } as OpenClawConfig,
+      } as NovaConfig,
       env: process.env,
       shouldRepair: false,
     });
@@ -352,7 +352,7 @@ describe("Feishu doctor state repair", () => {
     expect(result.changeNotes).toEqual([]);
     expect(result.warningNotes.join("\n")).toContain("Feishu local channel state may need repair");
     expect(result.warningNotes.join("\n")).toContain("preserving Feishu App ID/secret config");
-    expect(result.warningNotes.join("\n")).toContain("openclaw doctor --fix");
+    expect(result.warningNotes.join("\n")).toContain("nova doctor --fix");
   });
 
   it("rebuilds corrupt Feishu state without deleting healthy Feishu sessions", async () => {
@@ -459,9 +459,9 @@ describe("Feishu doctor state repair", () => {
     expect(fs.existsSync(path.join(backupDir, "session-stores", "main", "sessions.json"))).toBe(
       true,
     );
-    expect(
-      fs.existsSync(path.join(backupDir, "session-stores", "main", "openclaw-agent.sqlite")),
-    ).toBe(true);
+    expect(fs.existsSync(path.join(backupDir, "session-stores", "main", "nova-agent.sqlite"))).toBe(
+      true,
+    );
 
     const store = readStoreEntries(targetStorePath);
     expect(store["agent:main:feishu:direct:ou_user"]).toBeUndefined();
@@ -550,19 +550,16 @@ describe("Feishu doctor state repair", () => {
     expect(fs.existsSync(path.join(backupDir, "session-stores", "main", "sessions.json"))).toBe(
       false,
     );
-    expect(
-      fs.existsSync(path.join(backupDir, "session-stores", "main", "openclaw-agent.sqlite")),
-    ).toBe(true);
+    expect(fs.existsSync(path.join(backupDir, "session-stores", "main", "nova-agent.sqlite"))).toBe(
+      true,
+    );
 
     expect(readStoreEntries(targetStorePath)[sessionKey]).toBeUndefined();
   });
 
   it("backs up and repairs Feishu sessions in an agent-scoped custom SQLite store", async () => {
     const customStorePath = path.join(stateDir(), "custom-sessions", "sessions.json");
-    const customSqlitePath = path.join(
-      path.dirname(customStorePath),
-      "openclaw-agent.support.sqlite",
-    );
+    const customSqlitePath = path.join(path.dirname(customStorePath), "nova-agent.support.sqlite");
     const sessionKey = "agent:support:feishu:direct:ou_migrated";
     await upsertSessionEntry({
       agentId: "support",
@@ -589,7 +586,7 @@ describe("Feishu doctor state repair", () => {
         ...feishuConfig(),
         agents: { list: [{ id: "support", default: true }] },
         session: { store: customStorePath },
-      } as OpenClawConfig,
+      } as NovaConfig,
       env: process.env,
       shouldRepair: true,
     });
@@ -604,9 +601,7 @@ describe("Feishu doctor state repair", () => {
       false,
     );
     expect(
-      fs.existsSync(
-        path.join(backupDir, "session-stores", "support", "openclaw-agent.support.sqlite"),
-      ),
+      fs.existsSync(path.join(backupDir, "session-stores", "support", "nova-agent.support.sqlite")),
     ).toBe(true);
 
     expect(readStoreEntries(customStorePath, "support")[sessionKey]).toBeUndefined();

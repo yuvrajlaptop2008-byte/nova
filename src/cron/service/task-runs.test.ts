@@ -10,7 +10,7 @@ import {
   resetTaskRegistryForTests,
   setDetachedTaskLifecycleRuntime,
 } from "../../tasks/task-runtime.test-helpers.js";
-import { withOpenClawTestState } from "../../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../../test-utils/nova-test-state.js";
 import { cronStoreKey } from "../store/key.js";
 import { readCronTaskRunHistoryPage } from "../task-run-history.js";
 import type { CronJob } from "../types.js";
@@ -32,8 +32,8 @@ afterEach(() => {
 
 describe("cron task run terminal records", () => {
   it("persists canonical history directly when a detached runtime is registered", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-core-ledger-runtime-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-core-ledger-runtime-" },
       async () => {
         resetTaskRegistryForTests();
         const customCreate = vi.fn(() => null);
@@ -147,8 +147,8 @@ describe("cron task run terminal records", () => {
   });
 
   it("creates an immediately terminal task row for a skipped-only event", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-skipped-task-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-skipped-task-" },
       async () => {
         resetTaskRegistryForTests();
         const startedAt = 1_000;
@@ -227,8 +227,8 @@ describe("cron task run terminal records", () => {
   });
 
   it("keeps same-millisecond cron executions as distinct task rows", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-distinct-task-runs-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-distinct-task-runs-" },
       async () => {
         resetTaskRegistryForTests();
         const startedAt = 1_500;
@@ -298,8 +298,8 @@ describe("cron task run terminal records", () => {
   });
 
   it("keeps operator cancellation while attaching terminal run history", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-cancelled-task-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-cancelled-task-" },
       async () => {
         resetTaskRegistryForTests();
         const startedAt = 2_000;
@@ -378,75 +378,72 @@ describe("cron task run terminal records", () => {
   });
 
   it("retries the original outcome after an empty finalization result", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-task-retry-" },
-      async () => {
-        resetTaskRegistryForTests();
-        const startedAt = 3_000;
-        const job: CronJob = {
-          id: "retry-job",
-          name: "retry job",
-          enabled: true,
-          createdAtMs: 100,
-          updatedAtMs: 100,
-          schedule: { kind: "every", everyMs: 60_000, anchorMs: 100 },
-          sessionTarget: "isolated",
-          wakeMode: "next-heartbeat",
-          payload: { kind: "agentTurn", message: "work" },
-          state: { nextRunAtMs: 60_000 },
-        };
-        const state = createCronServiceState({
-          storePath: "/tmp/jobs.json",
-          cronEnabled: true,
-          log: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
-          nowMs: () => startedAt + 100,
-          enqueueSystemEvent: vi.fn(),
-          requestHeartbeat: vi.fn(),
-          runIsolatedAgentJob: vi.fn(async () => ({ status: "ok" as const })),
-        });
-        const taskRunId = tryCreateCronTaskRun({ state, job, startedAt });
-        if (!taskRunId) {
-          throw new Error("expected cron task run id");
-        }
-        const finalize = taskExecutor.finalizeTaskRunByRunId;
-        vi.spyOn(taskExecutor, "finalizeTaskRunByRunId")
-          .mockReturnValueOnce([])
-          .mockImplementation((params) => finalize(params));
+    await withNovaTestState({ layout: "state-only", prefix: "nova-cron-task-retry-" }, async () => {
+      resetTaskRegistryForTests();
+      const startedAt = 3_000;
+      const job: CronJob = {
+        id: "retry-job",
+        name: "retry job",
+        enabled: true,
+        createdAtMs: 100,
+        updatedAtMs: 100,
+        schedule: { kind: "every", everyMs: 60_000, anchorMs: 100 },
+        sessionTarget: "isolated",
+        wakeMode: "next-heartbeat",
+        payload: { kind: "agentTurn", message: "work" },
+        state: { nextRunAtMs: 60_000 },
+      };
+      const state = createCronServiceState({
+        storePath: "/tmp/jobs.json",
+        cronEnabled: true,
+        log: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+        nowMs: () => startedAt + 100,
+        enqueueSystemEvent: vi.fn(),
+        requestHeartbeat: vi.fn(),
+        runIsolatedAgentJob: vi.fn(async () => ({ status: "ok" as const })),
+      });
+      const taskRunId = tryCreateCronTaskRun({ state, job, startedAt });
+      if (!taskRunId) {
+        throw new Error("expected cron task run id");
+      }
+      const finalize = taskExecutor.finalizeTaskRunByRunId;
+      vi.spyOn(taskExecutor, "finalizeTaskRunByRunId")
+        .mockReturnValueOnce([])
+        .mockImplementation((params) => finalize(params));
 
-        tryFinishCronTaskRun(state, {
-          taskRunId,
+      tryFinishCronTaskRun(state, {
+        taskRunId,
+        job,
+        event: {
+          jobId: job.id,
+          action: "finished",
           job,
-          event: {
-            jobId: job.id,
-            action: "finished",
-            job,
-            status: "ok",
-            summary: "done",
-            sessionKey: "agent:main:cron:retry-job:run:actual",
-            runAtMs: startedAt,
-            durationMs: 100,
-          },
-        });
+          status: "ok",
+          summary: "done",
+          sessionKey: "agent:main:cron:retry-job:run:actual",
+          runAtMs: startedAt,
+          durationMs: 100,
+        },
+      });
 
-        const rows = listTaskRegistryRecordsByRuntimeSourceIdFromSqlite({
-          runtime: "cron",
-          sourceId: job.id,
-        });
-        expect(rows).toHaveLength(1);
-        const [row] = rows;
-        expect(row).toMatchObject({
-          status: "succeeded",
-          childSessionKey: "agent:main:cron:retry-job:run:actual",
-          terminalSummary: "done",
-          detail: { kind: "cron-run", status: "ok" },
-        });
-      },
-    );
+      const rows = listTaskRegistryRecordsByRuntimeSourceIdFromSqlite({
+        runtime: "cron",
+        sourceId: job.id,
+      });
+      expect(rows).toHaveLength(1);
+      const [row] = rows;
+      expect(row).toMatchObject({
+        status: "succeeded",
+        childSessionKey: "agent:main:cron:retry-job:run:actual",
+        terminalSummary: "done",
+        detail: { kind: "cron-run", status: "ok" },
+      });
+    });
   });
 
   it("overwrites a lost canonical row with restart terminal history", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-task-lost-recovery-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-task-lost-recovery-" },
       async () => {
         resetTaskRegistryForTests();
         const startedAt = 4_000;
@@ -529,8 +526,8 @@ describe("cron task run terminal records", () => {
   });
 
   it("overwrites a provisional timeout with restart terminal history", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-task-timeout-recovery-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-task-timeout-recovery-" },
       async () => {
         resetTaskRegistryForTests();
         const startedAt = 5_000;
@@ -595,8 +592,8 @@ describe("cron task run terminal records", () => {
   });
 
   it("recovers pre-discriminator task rows written by older releases", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-task-legacy-runid-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-task-legacy-runid-" },
       async () => {
         resetTaskRegistryForTests();
         const startedAt = 7_000;
@@ -658,8 +655,8 @@ describe("cron task run terminal records", () => {
   });
 
   it("keeps suffixed recovery identities scoped to the current cron store", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-cron-task-store-recovery-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-cron-task-store-recovery-" },
       async (fixture) => {
         resetTaskRegistryForTests();
         const startedAt = 8_000;

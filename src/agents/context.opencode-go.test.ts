@@ -1,14 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { resolveMemoryFlushContextWindowTokens } from "../auto-reply/reply/memory-flush.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { refreshContextWindowCache, resetContextWindowCacheForTest } from "./context.js";
 
 describe("OpenCode Go context metadata", () => {
   let contextWindowTokens: number | undefined;
-  let configuredModels: OpenClawConfig["models"];
+  let configuredModels: NovaConfig["models"];
 
   beforeAll(async () => {
-    const cfg: OpenClawConfig = { plugins: { allow: ["opencode-go"] } };
+    const cfg: NovaConfig = { plugins: { allow: ["opencode-go"] } };
 
     await refreshContextWindowCache(cfg);
     contextWindowTokens = resolveMemoryFlushContextWindowTokens({

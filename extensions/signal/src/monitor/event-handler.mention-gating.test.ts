@@ -1,8 +1,8 @@
 // Signal tests cover event handler.mention gating plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import { buildDispatchInboundCaptureMock } from "openclaw/plugin-sdk/channel-contract-testing";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import { buildDispatchInboundCaptureMock } from "nova/plugin-sdk/channel-contract-testing";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { MsgContext } from "nova/plugin-sdk/reply-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type SignalMsgContext = Pick<MsgContext, "Body" | "WasMentioned"> & {
@@ -30,18 +30,18 @@ function getGroupHistoryEntries(
   return entries;
 }
 
-vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/reply-runtime")>(
-    "openclaw/plugin-sdk/reply-runtime",
+vi.mock("nova/plugin-sdk/reply-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/reply-runtime")>(
+    "nova/plugin-sdk/reply-runtime",
   );
   return buildDispatchInboundCaptureMock(actual, (ctx) => {
     capturedCtx = ctx as SignalMsgContext;
   });
 });
 
-vi.mock("openclaw/plugin-sdk/channel-inbound", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/channel-inbound")>(
-    "openclaw/plugin-sdk/channel-inbound",
+vi.mock("nova/plugin-sdk/channel-inbound", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/channel-inbound")>(
+    "nova/plugin-sdk/channel-inbound",
   );
   type RunParams = Parameters<typeof actual.runChannelInboundEvent>[0];
   return {
@@ -68,7 +68,7 @@ vi.mock("openclaw/plugin-sdk/channel-inbound", async () => {
         channel: resolved.channel,
         accountId: resolved.accountId,
         routeSessionKey: resolved.route.sessionKey,
-        storePath: "/tmp/openclaw/signal-sessions.json",
+        storePath: "/tmp/nova/signal-sessions.json",
         ctxPayload: resolved.ctxPayload,
         recordInboundSession: async () => {},
         afterRecord: resolved.afterRecord,
@@ -163,7 +163,7 @@ function createSignalConfig(params: { requireMention: boolean; mentionPattern?: 
         groups: { "*": { requireMention: params.requireMention } },
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as NovaConfig;
 }
 
 async function expectSkippedGroupHistory(opts: GroupEventOpts, expectedBody: string) {
@@ -217,7 +217,7 @@ describe("signal mention gating", () => {
               groups: { g1: {} },
             },
           },
-        } as unknown as OpenClawConfig,
+        } as unknown as NovaConfig,
         groupPolicy: "allowlist",
         groupAllowFrom: ["group:g1"],
       }),

@@ -1,4 +1,4 @@
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 // Matrix plugin module implements startup behavior.
 import type { RuntimeLogger } from "../../runtime-api.js";
 import type { CoreConfig, MatrixConfig } from "../../types.js";
@@ -107,9 +107,9 @@ export async function runMatrixStartupMaintenance(
     const deviceHealth = runtimeDeps.summarizeMatrixDeviceHealth(
       await params.client.listOwnDevices(),
     );
-    if (deviceHealth.staleOpenClawDevices.length > 0) {
+    if (deviceHealth.staleNovaDevices.length > 0) {
       params.logger.warn(
-        `matrix: stale Nova devices detected for ${params.auth.userId}: ${deviceHealth.staleOpenClawDevices.map((device) => device.deviceId).join(", ")}. Run 'openclaw matrix devices prune-stale --account ${params.effectiveAccountId}' to keep encrypted-room trust healthy.`,
+        `matrix: stale Nova devices detected for ${params.auth.userId}: ${deviceHealth.staleNovaDevices.map((device) => device.deviceId).join(", ")}. Run 'nova matrix devices prune-stale --account ${params.effectiveAccountId}' to keep encrypted-room trust healthy.`,
       );
     }
   } catch (err) {
@@ -139,7 +139,7 @@ export async function runMatrixStartupMaintenance(
       startupVerification.kind === "request-failed"
     ) {
       params.logger.info(
-        "matrix: device not verified — run 'openclaw matrix verify device <key>' to enable E2EE",
+        "matrix: device not verified — run 'nova matrix verify device <key>' to enable E2EE",
       );
       if (startupVerification.kind === "pending") {
         params.logger.info(

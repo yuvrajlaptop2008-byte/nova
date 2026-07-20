@@ -12,7 +12,7 @@ import {
   clearRuntimeConfigSnapshot,
   setRuntimeConfigSnapshot,
 } from "../config/runtime-snapshot.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   consumeGatewaySigusr1RestartIntent,
   isGatewaySigusr1RestartExternallyAllowed,
@@ -139,7 +139,7 @@ function startManagedGatewayConfigReloader(
 }
 
 type GmailWatcherRestartParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   log: {
     info: (msg: string) => void;
     warn: (msg: string) => void;
@@ -169,9 +169,9 @@ const hoisted = vi.hoisted(() => ({
   activeEmbeddedRunSessionIds: [] as string[],
   activeEmbeddedRunSessionKeys: [] as string[],
   markRestartAbortedMainSessions: vi.fn(async (_params: unknown) => ({ marked: 1, skipped: 0 })),
-  runtimeConfig: { value: { session: { store: "/tmp/active-sessions.json" } } as OpenClawConfig },
+  runtimeConfig: { value: { session: { store: "/tmp/active-sessions.json" } } as NovaConfig },
   reloadEvents: [] as string[],
-  loadModelCatalog: vi.fn(async (_params: { config: OpenClawConfig }) => []),
+  loadModelCatalog: vi.fn(async (_params: { config: NovaConfig }) => []),
   resetModelCatalogCache: vi.fn(() => {}),
   markPreparedModelRuntimeSnapshotsStale: vi.fn(
     (
@@ -182,10 +182,10 @@ const hoisted = vi.hoisted(() => ({
   rejectPendingPreparedModelRuntimeReplacement: vi.fn(
     (_gateId: symbol | undefined, _error: unknown) => {},
   ),
-  refreshPreparedModelRuntimeSnapshots: vi.fn(async (_cfg: OpenClawConfig) => {}),
-  refreshContextWindowCache: vi.fn(async (_cfg: OpenClawConfig) => {}),
+  refreshPreparedModelRuntimeSnapshots: vi.fn(async (_cfg: NovaConfig) => {}),
+  refreshContextWindowCache: vi.fn(async (_cfg: NovaConfig) => {}),
   clearCurrentProviderAuthState: vi.fn(() => {}),
-  warmCurrentProviderAuthStateOffMainThread: vi.fn(async (_cfg: OpenClawConfig) => {}),
+  warmCurrentProviderAuthStateOffMainThread: vi.fn(async (_cfg: NovaConfig) => {}),
   disposeAllSessionMcpRuntimes: vi.fn(async () => {}),
   buildGatewayCronService: vi.fn((_params?: { env?: NodeJS.ProcessEnv }) => ({
     cron: { start: vi.fn(async () => {}), stop: vi.fn() },
@@ -254,7 +254,7 @@ vi.mock("../config/config.js", async () => {
 });
 
 vi.mock("../agents/model-catalog.js", () => ({
-  loadModelCatalog: (params: { config: OpenClawConfig }) => {
+  loadModelCatalog: (params: { config: NovaConfig }) => {
     hoisted.reloadEvents.push("load-model-catalog");
     return hoisted.loadModelCatalog(params);
   },
@@ -274,14 +274,14 @@ vi.mock("../agents/prepared-model-runtime.js", () => ({
   },
   rejectPendingPreparedModelRuntimeReplacement: (gateId: symbol | undefined, error: unknown) =>
     hoisted.rejectPendingPreparedModelRuntimeReplacement(gateId, error),
-  refreshPreparedModelRuntimeSnapshots: (cfg: OpenClawConfig) => {
+  refreshPreparedModelRuntimeSnapshots: (cfg: NovaConfig) => {
     hoisted.reloadEvents.push("refresh-prepared-model-runtime");
     return hoisted.refreshPreparedModelRuntimeSnapshots(cfg);
   },
 }));
 
 vi.mock("../agents/context.js", () => ({
-  refreshContextWindowCache: async (cfg: OpenClawConfig) => {
+  refreshContextWindowCache: async (cfg: NovaConfig) => {
     hoisted.reloadEvents.push("refresh-context-window");
     await hoisted.refreshContextWindowCache(cfg);
   },
@@ -293,7 +293,7 @@ vi.mock("../agents/model-provider-auth.js", () => ({
     hoisted.clearCurrentProviderAuthState();
   },
   warmCurrentProviderAuthStateOffMainThread: async (
-    cfg: OpenClawConfig,
+    cfg: NovaConfig,
     options?: { isCancelled?: () => boolean },
   ) => {
     hoisted.reloadEvents.push("warm-provider-auth");
@@ -464,7 +464,7 @@ function createManagedRestartSequenceHarness(
       reload: {},
       terminal: { enabled: true },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   setRuntimeConfigSnapshot(initialConfig, initialConfig);
   activateSecretsRuntimeSnapshot({
     sourceConfig: initialConfig,
@@ -488,7 +488,7 @@ function createManagedRestartSequenceHarness(
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   const invalidConfig = {
     gateway: {
       ...deferredConfig.gateway,
@@ -502,7 +502,7 @@ function createManagedRestartSequenceHarness(
       },
       terminal: { enabled: false },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   const missingHotSecret = {
     source: "env" as const,
     provider: "default",
@@ -519,7 +519,7 @@ function createManagedRestartSequenceHarness(
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   const invalidNoopConfig = {
     ...deferredConfig,
     plugins: {
@@ -529,13 +529,13 @@ function createManagedRestartSequenceHarness(
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   const replacementConfig = {
     gateway: {
       ...deferredConfig.gateway,
       bind: "lan",
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   const terminalPolicy = createTerminalLaunchPolicy(initialConfig);
   const writeListenerRef: { current: ((event: ConfigWriteNotification) => void) | null } = {
     current: null,
@@ -566,7 +566,7 @@ function createManagedRestartSequenceHarness(
       recordReloadError = undefined;
     }),
   };
-  const activateRuntimeSecrets = vi.fn(async (config: OpenClawConfig, _params: unknown) => {
+  const activateRuntimeSecrets = vi.fn(async (config: NovaConfig, _params: unknown) => {
     const secretInputs = [
       config.gateway?.auth?.token,
       config.models?.providers?.test?.apiKey,
@@ -603,9 +603,9 @@ function createManagedRestartSequenceHarness(
     initialConfig,
     initialCompareConfig: initialConfig,
     initialInternalWriteHash: null,
-    watchPath: "/tmp/openclaw.json",
+    watchPath: "/tmp/nova.json",
     readSnapshot: vi.fn(async () => ({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: true,
       raw: "{}",
       parsed: snapshotConfig,
@@ -678,10 +678,10 @@ function createManagedRestartSequenceHarness(
     requestRecoveryRestart,
   });
   const writeConfig = (
-    config: OpenClawConfig,
+    config: NovaConfig,
     hash: string,
     revision: number,
-    runtimeConfig: OpenClawConfig = config,
+    runtimeConfig: NovaConfig = config,
   ) => {
     const listener = writeListenerRef.current;
     if (!listener) {
@@ -690,7 +690,7 @@ function createManagedRestartSequenceHarness(
     snapshotConfig = config;
     snapshotHash = hash;
     listener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       sourceConfig: config,
       runtimeConfig,
       persistedHash: hash,
@@ -789,7 +789,7 @@ async function runManagedOwnershipScenario(params: {
   const initialConfig = {
     gateway: { reload: { mode: "off" as const } },
     hooks: { enabled: true, token: "test-token", path: "/old" },
-  } satisfies OpenClawConfig;
+  } satisfies NovaConfig;
   const configA = {
     gateway: {
       reload: {
@@ -801,9 +801,9 @@ async function runManagedOwnershipScenario(params: {
       token: "test-token",
       path: params.kind === "noop" ? "/old" : "/a",
     },
-  } satisfies OpenClawConfig;
+  } satisfies NovaConfig;
   const configB = structuredClone(initialConfig);
-  const snapshot = (config: OpenClawConfig): PreparedSecretsRuntimeSnapshot => ({
+  const snapshot = (config: NovaConfig): PreparedSecretsRuntimeSnapshot => ({
     sourceConfig: config,
     config,
     authStores: [],
@@ -824,11 +824,11 @@ async function runManagedOwnershipScenario(params: {
   const reconcileTerminalSessions = vi.fn();
   const requestRecoveryRestart = vi.fn(() => ({ status: "emitted" as const }));
   let queuedB = false;
-  const activateRuntimeSecrets = vi.fn(async (config: OpenClawConfig) => {
+  const activateRuntimeSecrets = vi.fn(async (config: NovaConfig) => {
     if (params.queueRevert && !queuedB) {
       queuedB = true;
       writeListenerRef.current?.({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: configB,
         runtimeConfig: configB,
         persistedHash: "hash-b",
@@ -846,9 +846,9 @@ async function runManagedOwnershipScenario(params: {
     initialConfig,
     initialCompareConfig: initialConfig,
     initialInternalWriteHash: null,
-    watchPath: "/tmp/openclaw.json",
+    watchPath: "/tmp/nova.json",
     readSnapshot: vi.fn(async () => ({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -905,7 +905,7 @@ async function runManagedOwnershipScenario(params: {
     requestRecoveryRestart,
   });
   writeListenerRef.current?.({
-    configPath: "/tmp/openclaw.json",
+    configPath: "/tmp/nova.json",
     sourceConfig: configA,
     runtimeConfig: configA,
     persistedHash: "hash-a",
@@ -998,7 +998,7 @@ describe("gateway hot reload model state", () => {
         order.push("hook");
       },
     }));
-    const nextConfig = { cron: { enabled: true } } as OpenClawConfig;
+    const nextConfig = { cron: { enabled: true } } as NovaConfig;
 
     await withGatewayRestartSignal(async () => {
       await applyHotReload(createCronRestartPlan(), nextConfig);
@@ -1040,7 +1040,7 @@ describe("gateway hot reload model state", () => {
     };
     hoisted.buildGatewayCronService.mockReturnValueOnce(rebuiltCronState);
     const { applyHotReload, cronReconciliation } = createReloadHandlersForTest();
-    const nextConfig = { cron: { enabled: false } } as OpenClawConfig;
+    const nextConfig = { cron: { enabled: false } } as NovaConfig;
 
     await withGatewayRestartSignal(async () => {
       await applyHotReload(createCronRestartPlan(), nextConfig);
@@ -1083,7 +1083,7 @@ describe("gateway hot reload model state", () => {
       vi.fn(),
       false,
     );
-    const nextConfig = { agents: { defaults: { heartbeat: { every: "1h" } } } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: { heartbeat: { every: "1h" } } } } as NovaConfig;
 
     await expect(
       applyHotReload(createHotTailPlan({ restartHeartbeat: true }), nextConfig),
@@ -1115,7 +1115,7 @@ describe("gateway hot reload model state", () => {
       await expect(
         applyHotReload(
           createHotTailPlan({ restartHeartbeat: true }),
-          { agents: { defaults: { maxConcurrent: 1 } } } as OpenClawConfig,
+          { agents: { defaults: { maxConcurrent: 1 } } } as NovaConfig,
           { publish, isCurrent: () => true },
         ),
       ).rejects.toThrow("heartbeat update failed");
@@ -1287,7 +1287,7 @@ describe("gateway hot reload model state", () => {
       createHealthMonitor: () => null,
     });
 
-    const nextConfig = { plugins: { enabled: true } } as OpenClawConfig;
+    const nextConfig = { plugins: { enabled: true } } as NovaConfig;
     await applyHotReload(
       {
         changedPaths: ["plugins.enabled"],
@@ -1337,7 +1337,7 @@ describe("gateway hot reload model state", () => {
       undefined,
       vi.fn(),
     );
-    const nextConfig = { mcp: { servers: {} } } as OpenClawConfig;
+    const nextConfig = { mcp: { servers: {} } } as NovaConfig;
 
     await applyHotReload(
       {
@@ -1375,7 +1375,7 @@ describe("gateway hot reload model state", () => {
     );
     const nextConfig = {
       agents: { defaults: { workspace: "/tmp/next-workspace" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await applyHotReload(
       {
@@ -1415,7 +1415,7 @@ describe("gateway hot reload model state", () => {
           changedPaths: ["agents.defaults.workspace"],
           hotReasons: ["agents.defaults.workspace"],
         }),
-        { agents: { defaults: { workspace: "/tmp/next-workspace" } } } as OpenClawConfig,
+        { agents: { defaults: { workspace: "/tmp/next-workspace" } } } as NovaConfig,
       ),
     ).rejects.toThrow(
       "config reload requires a managed gateway restart owner for irreversible hot reload",
@@ -1440,8 +1440,8 @@ describe("gateway hot reload model state", () => {
     },
   ])("refreshes context metadata when a workspace change $label", async (testCase) => {
     const { applyHotReload } = createReloadHandlersForTest();
-    const previousConfig = testCase.previousConfig as OpenClawConfig;
-    const nextConfig = testCase.nextConfig as OpenClawConfig;
+    const previousConfig = testCase.previousConfig as NovaConfig;
+    const nextConfig = testCase.nextConfig as NovaConfig;
     const changedPaths = diffConfigPaths(previousConfig, nextConfig);
     expect(changedPaths).toEqual([testCase.expectedPath]);
 
@@ -1456,7 +1456,7 @@ describe("gateway hot reload superseded tail recovery", () => {
     vi.useFakeTimers();
     const requestRecoveryRestart = vi.fn(() => ({ status: "emitted" as const }));
     const prepareRuntimeConfig = vi.fn(
-      async (): Promise<OpenClawConfig> => ({ logging: { level: "debug" } }),
+      async (): Promise<NovaConfig> => ({ logging: { level: "debug" } }),
     );
     const handlers = createReloadHandlersForTest(
       undefined,
@@ -1507,8 +1507,8 @@ describe("gateway hot reload superseded tail recovery", () => {
       undefined,
       requestRecoveryRestart,
     );
-    const configA = { logging: { level: "info" as const } } satisfies OpenClawConfig;
-    const configC = { logging: { level: "debug" as const } } satisfies OpenClawConfig;
+    const configA = { logging: { level: "info" as const } } satisfies NovaConfig;
+    const configC = { logging: { level: "debug" as const } } satisfies NovaConfig;
     const prepareA = vi.fn(async () => configA);
     const prepareC = vi.fn(async () => configC);
     handlers.recordAcceptedRestartTarget({
@@ -1586,8 +1586,8 @@ describe("gateway hot reload superseded tail recovery", () => {
             },
           },
         },
-      } satisfies OpenClawConfig;
-      let pendingConfig: OpenClawConfig | null = null;
+      } satisfies NovaConfig;
+      let pendingConfig: NovaConfig | null = null;
       const isCurrent = () => pendingConfig === null;
       const requestRecoveryRestart = vi.fn(() => ({ status: "emitted" as const }));
       const startChannel = vi.fn(async () => {});
@@ -1645,7 +1645,7 @@ describe("gateway hot reload superseded tail recovery", () => {
       );
       const configA = {
         agents: { defaults: { workspace: "/tmp/a" } },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const reloadA = handlers.applyHotReload(plan, configA, {
         isCurrent,
         publish: async (commit) => await commit(),
@@ -1662,7 +1662,7 @@ describe("gateway hot reload superseded tail recovery", () => {
       );
       expect(hoisted.warmCurrentProviderAuthStateOffMainThread).not.toHaveBeenCalled();
 
-      const configC = { logging: { level: "debug" as const } } satisfies OpenClawConfig;
+      const configC = { logging: { level: "debug" as const } } satisfies NovaConfig;
       pendingConfig = configC;
       await handlers.applyHotReload(createHotTailPlan(), configC, {
         isCurrent: () => pendingConfig === configC,
@@ -1787,7 +1787,7 @@ describe("gateway hot reload commit policy", () => {
       }),
     });
 
-    await applyHotReload(createHotTailPlan({ restartHealthMonitor: true }), {} as OpenClawConfig);
+    await applyHotReload(createHotTailPlan({ restartHealthMonitor: true }), {} as NovaConfig);
 
     expect(events).toEqual(["setState", "stop", "waitForIdle", "create", "setState"]);
     expect(state.channelHealthMonitor).toBe(nextMonitor);
@@ -1997,11 +1997,11 @@ describe("gateway restart deferral preflight", () => {
       );
     const configA = {
       hooks: { enabled: true, token: "test-token", path: "/a" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const configB = {
       ...configA,
       logging: { level: "debug" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const forcedRestartPlan = {
       changedPaths: ["hooks.path"],
       restartGateway: true,
@@ -2108,15 +2108,15 @@ describe("gateway restart deferral preflight", () => {
     const configA = {
       channels: { discord: { token: "discord-token-a" } },
       logging: { level: "info" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const configC = {
       ...configA,
       logging: { level: "debug" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const configB = {
       ...configA,
       gateway: { port: 19_001 },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const plan = {
       changedPaths: ["channels.discord.token", "logging.level"],
       restartGateway: false,
@@ -2214,11 +2214,11 @@ describe("gateway restart deferral preflight", () => {
     );
     const configA = {
       channels: { discord: { token: "discord-token-a" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const configB = {
       ...configA,
       gateway: { port: 19_001 },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const recoveryPlan = {
       ...createHotTailPlan(),
       changedPaths: ["channels.discord.token"],
@@ -2960,7 +2960,7 @@ describe("gateway channel hot reload handlers", () => {
   async function withDiscordAccountResolver(
     listAccountIds: () => string[],
     run: () => Promise<void>,
-    resolveAccount: (cfg: OpenClawConfig, accountId?: string | null) => unknown = () => ({}),
+    resolveAccount: (cfg: NovaConfig, accountId?: string | null) => unknown = () => ({}),
   ) {
     const registry = createTestRegistry([
       {
@@ -3540,7 +3540,7 @@ describe("gateway Gmail hot reload handlers", () => {
     };
   }
 
-  function createGmailConfig(account: string): OpenClawConfig {
+  function createGmailConfig(account: string): NovaConfig {
     return {
       gateway: { reload: {} },
       hooks: { enabled: true, token: "test-token", gmail: { account } },
@@ -3697,15 +3697,15 @@ describe("gateway Gmail hot reload handlers", () => {
     const writeListenerRef: { current: ((event: ConfigWriteNotification) => void) | null } = {
       current: null,
     };
-    const initialConfig: OpenClawConfig = {
+    const initialConfig: NovaConfig = {
       gateway: { reload: {} },
       messages: { visibleReplies: "automatic" },
     };
-    const nextConfig: OpenClawConfig = {
+    const nextConfig: NovaConfig = {
       gateway: { reload: {} },
       messages: { visibleReplies: "message_tool" },
     };
-    const snapshot = (config: OpenClawConfig): PreparedSecretsRuntimeSnapshot => ({
+    const snapshot = (config: NovaConfig): PreparedSecretsRuntimeSnapshot => ({
       sourceConfig: config,
       config,
       authStores: [],
@@ -3716,10 +3716,7 @@ describe("gateway Gmail hot reload handlers", () => {
     const failurePublicationEligibility: boolean[] = [];
     let preparationAttempt = 0;
     const activateRuntimeSecrets = vi.fn(
-      async (
-        config: OpenClawConfig,
-        activation: { canPublishFailureAsDegraded?: () => boolean },
-      ) => {
+      async (config: NovaConfig, activation: { canPublishFailureAsDegraded?: () => boolean }) => {
         const attempt = preparationAttempt++;
         if (attempt === 0) {
           failurePublicationEligibility.push(activation.canPublishFailureAsDegraded?.() ?? false);
@@ -3743,9 +3740,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         exists: true,
         raw: "{}",
         parsed: {},
@@ -3809,7 +3806,7 @@ describe("gateway Gmail hot reload handlers", () => {
     }
 
     registeredWriteListener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       persistedHash: "hash-next",
@@ -3840,7 +3837,7 @@ describe("gateway Gmail hot reload handlers", () => {
 
   it("refreshes owner refs when only the resolved source snapshot changes", async () => {
     vi.useFakeTimers();
-    const authAgentDir = "/tmp/openclaw-source-only-auth-owner";
+    const authAgentDir = "/tmp/nova-source-only-auth-owner";
     const authProfileId = "openai:source-only";
     const authOwnerId = resolveAuthProfileSecretOwnerId({
       agentDir: authAgentDir,
@@ -3850,11 +3847,11 @@ describe("gateway Gmail hot reload handlers", () => {
     const secondRef = { source: "env" as const, provider: "default", id: "TTS_SECOND" };
     const thirdRef = { source: "env" as const, provider: "default", id: "TTS_THIRD" };
     const fourthRef = { source: "env" as const, provider: "default", id: "TTS_FOURTH" };
-    const sourceConfig = (ref: typeof firstRef): OpenClawConfig => ({
+    const sourceConfig = (ref: typeof firstRef): NovaConfig => ({
       gateway: { reload: {} },
       messages: { tts: { providers: { elevenlabs: { apiKey: ref } } } },
     });
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       gateway: { reload: {} },
       messages: { tts: { providers: { elevenlabs: { apiKey: String(42) } } } },
     };
@@ -3923,7 +3920,7 @@ describe("gateway Gmail hot reload handlers", () => {
     const writeListenerRef: { current: ((event: ConfigWriteNotification) => void) | null } = {
       current: null,
     };
-    const activateRuntimeSecrets = vi.fn(async (config: OpenClawConfig, _params: unknown) => ({
+    const activateRuntimeSecrets = vi.fn(async (config: NovaConfig, _params: unknown) => ({
       sourceConfig: config,
       config: runtimeConfig,
       authStores: [
@@ -3964,9 +3961,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig: runtimeConfig,
       initialCompareConfig: runtimeConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         exists: true,
         raw: "{}",
         parsed: nextSourceConfig,
@@ -4037,7 +4034,7 @@ describe("gateway Gmail hot reload handlers", () => {
         logging: { level: "info" as const },
       };
       listener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: unrelatedSourceConfig,
         runtimeConfig,
         persistedHash: "same-secrets-new-source",
@@ -4066,7 +4063,7 @@ describe("gateway Gmail hot reload handlers", () => {
       ]);
 
       listener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: nextSourceConfig,
         runtimeConfig,
         persistedHash: "same-runtime-next-source",
@@ -4112,7 +4109,7 @@ describe("gateway Gmail hot reload handlers", () => {
         }),
       ).toBe("stale");
 
-      activateRuntimeSecrets.mockImplementationOnce(async (config: OpenClawConfig) => ({
+      activateRuntimeSecrets.mockImplementationOnce(async (config: NovaConfig) => ({
         sourceConfig: config,
         config: { ...runtimeConfig, logging: { level: "debug" } },
         authStores: [],
@@ -4129,7 +4126,7 @@ describe("gateway Gmail hot reload handlers", () => {
         webTools: createEmptyRuntimeWebToolsMetadata(),
       }));
       listener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: sourceConfig(thirdRef),
         runtimeConfig,
         persistedHash: "changed-second-resolution",
@@ -4162,7 +4159,7 @@ describe("gateway Gmail hot reload handlers", () => {
       const preparationGate = new Promise<void>((resolve) => {
         releasePreparation = resolve;
       });
-      activateRuntimeSecrets.mockImplementationOnce(async (config: OpenClawConfig) => {
+      activateRuntimeSecrets.mockImplementationOnce(async (config: NovaConfig) => {
         markPreparationStarted?.();
         await preparationGate;
         return {
@@ -4183,7 +4180,7 @@ describe("gateway Gmail hot reload handlers", () => {
         };
       });
       listener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: sourceConfig(thirdRef),
         runtimeConfig,
         persistedHash: "superseded-source-owner",
@@ -4229,7 +4226,7 @@ describe("gateway Gmail hot reload handlers", () => {
 
   it("rejects ownerless irreversible plans but applies safe hot plans", async () => {
     vi.useFakeTimers();
-    const initialConfig: OpenClawConfig = {
+    const initialConfig: NovaConfig = {
       gateway: {
         port: 18789,
         reload: {},
@@ -4243,7 +4240,7 @@ describe("gateway Gmail hot reload handlers", () => {
       logging: { level: "info" },
     };
     const terminalPolicy = createTerminalLaunchPolicy(initialConfig);
-    const prepareTerminalConfig = vi.fn((plan: GatewayReloadPlan, nextConfig: OpenClawConfig) => {
+    const prepareTerminalConfig = vi.fn((plan: GatewayReloadPlan, nextConfig: NovaConfig) => {
       terminalPolicy.prepareConfig(nextConfig, { restartPending: plan.restartGateway });
     });
     const reconcileTerminalSessions = vi.fn();
@@ -4255,7 +4252,7 @@ describe("gateway Gmail hot reload handlers", () => {
     };
     let snapshotConfig = initialConfig;
     let snapshotHash = "initial";
-    const activateRuntimeSecrets = vi.fn(async (config: OpenClawConfig) => ({
+    const activateRuntimeSecrets = vi.fn(async (config: NovaConfig) => ({
       sourceConfig: config,
       config,
       authStores: [],
@@ -4268,9 +4265,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         exists: true,
         raw: "{}",
         parsed: snapshotConfig,
@@ -4327,7 +4324,7 @@ describe("gateway Gmail hot reload handlers", () => {
       restartRecoveryAvailable: false,
     });
     let revision = 0;
-    const writeConfig = (config: OpenClawConfig, hash: string) => {
+    const writeConfig = (config: NovaConfig, hash: string) => {
       const listener = writeListenerRef.current;
       if (!listener) {
         throw new Error("Expected config write listener to be registered");
@@ -4336,7 +4333,7 @@ describe("gateway Gmail hot reload handlers", () => {
       snapshotHash = hash;
       revision += 1;
       listener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: config,
         runtimeConfig: config,
         persistedHash: hash,
@@ -4375,7 +4372,7 @@ describe("gateway Gmail hot reload handlers", () => {
           },
           surface: "irreversible hot reload",
         },
-      ] satisfies Array<{ label: string; config: OpenClawConfig; surface: string }>;
+      ] satisfies Array<{ label: string; config: NovaConfig; surface: string }>;
 
       for (const testCase of rejectedConfigs) {
         writeConfig(testCase.config, `${testCase.label}-unsupported`);
@@ -4395,7 +4392,7 @@ describe("gateway Gmail hot reload handlers", () => {
         logReload.error.mockClear();
       }
 
-      const safeConfig: OpenClawConfig = {
+      const safeConfig: NovaConfig = {
         ...initialConfig,
         logging: { level: "debug" },
       };
@@ -4424,14 +4421,14 @@ describe("gateway Gmail hot reload handlers", () => {
         reload: {},
         terminal: { enabled: true },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const rejectedConfig = {
       gateway: {
         port: 18790,
         reload: {},
         terminal: { enabled: false },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const terminalPolicy = createTerminalLaunchPolicy(initialConfig);
     const expectedReloadError = "config reload failed: Error: restart secrets preflight failed";
     let recordReloadFailure: (() => void) | undefined;
@@ -4457,7 +4454,7 @@ describe("gateway Gmail hot reload handlers", () => {
         recordRestartRetired?.();
       }
     };
-    const activateRuntimeSecrets = vi.fn(async (config: OpenClawConfig) => {
+    const activateRuntimeSecrets = vi.fn(async (config: NovaConfig) => {
       if (config.gateway?.port === rejectedConfig.gateway?.port) {
         throw new Error("restart secrets preflight failed");
       }
@@ -4484,9 +4481,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         exists: true,
         raw: "{}",
         parsed: initialConfig,
@@ -4555,7 +4552,7 @@ describe("gateway Gmail hot reload handlers", () => {
 
     try {
       registeredWriteListener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: rejectedConfig,
         runtimeConfig: rejectedConfig,
         persistedHash: "rejected-restart",
@@ -4572,7 +4569,7 @@ describe("gateway Gmail hot reload handlers", () => {
       expect(requestRecoveryRestart).not.toHaveBeenCalled();
 
       registeredWriteListener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: initialConfig,
         runtimeConfig: initialConfig,
         persistedHash: "accepted-revert",
@@ -4661,7 +4658,7 @@ describe("gateway Gmail hot reload handlers", () => {
       const acceptedWithLogging = {
         ...harness.deferredConfig,
         logging: { level: "debug" },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const revertPromotion = harness.nextPromotion();
       harness.writeConfig(acceptedWithLogging, "accepted-a-plus-logging", 3);
       await vi.advanceTimersByTimeAsync(0);
@@ -4705,7 +4702,7 @@ describe("gateway Gmail hot reload handlers", () => {
     const preflightBlocked = new Promise<void>((resolve) => {
       releasePreflight = resolve;
     });
-    harness.activateRuntimeSecrets.mockImplementationOnce(async (config: OpenClawConfig) => {
+    harness.activateRuntimeSecrets.mockImplementationOnce(async (config: NovaConfig) => {
       markPreflightStarted?.();
       await preflightBlocked;
       return {
@@ -4779,7 +4776,7 @@ describe("gateway Gmail hot reload handlers", () => {
         const acceptedConfig = {
           ...harness.deferredConfig,
           logging: { level: "debug" },
-        } as OpenClawConfig;
+        } as NovaConfig;
         const acceptedPromotion = harness.nextPromotion();
         harness.writeConfig(acceptedConfig, `accepted-after-${_kind}`, 3);
         await vi.advanceTimersByTimeAsync(0);
@@ -4804,7 +4801,7 @@ describe("gateway Gmail hot reload handlers", () => {
         ...harness.deferredConfig.gateway,
         auth: { mode: "token" as const, token: "resolved-restart-token" },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     harness.setSecretUnavailable("RESTART_A_TOKEN");
 
     try {
@@ -5025,11 +5022,11 @@ describe("gateway Gmail hot reload handlers", () => {
     const initialConfig = {
       gateway: { reload: {} },
       hooks: { enabled: true, token: "test-token", path: "/old" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const nextConfig = {
       gateway: { reload: {} },
       hooks: { enabled: true, token: "test-token", path: "/next" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const initialSnapshot: PreparedSecretsRuntimeSnapshot = {
       sourceConfig: initialConfig,
       config: initialConfig,
@@ -5066,7 +5063,7 @@ describe("gateway Gmail hot reload handlers", () => {
     );
     let preparationCount = 0;
     const activateRuntimeSecrets = Object.assign(
-      vi.fn(async (config: OpenClawConfig) => {
+      vi.fn(async (config: NovaConfig) => {
         preparationCount += 1;
         if (preparationCount === 1) {
           expect(
@@ -5109,9 +5106,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         exists: true,
         raw: "{}",
         parsed: {},
@@ -5175,7 +5172,7 @@ describe("gateway Gmail hot reload handlers", () => {
     }
 
     registeredWriteListener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       persistedHash: "hot-reload-next",
@@ -5229,7 +5226,7 @@ describe("gateway Gmail hot reload handlers", () => {
     const initialConfig = createGmailConfig("old@example.com");
     const nextConfig = createGmailConfig("next@example.com");
     const readSnapshot = vi.fn(async () => ({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -5248,7 +5245,7 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: readSnapshot as never,
       promoteSnapshot: vi.fn(async () => true) as never,
       subscribeToWrites: ((listener: (event: ConfigWriteNotification) => void) => {
@@ -5286,7 +5283,7 @@ describe("gateway Gmail hot reload handlers", () => {
       logCron: { error: vi.fn() },
       logReload,
       channelManager: {} as never,
-      activateRuntimeSecrets: vi.fn(async (config: OpenClawConfig) => ({
+      activateRuntimeSecrets: vi.fn(async (config: NovaConfig) => ({
         sourceConfig: config,
         config,
         authStores: [],
@@ -5307,7 +5304,7 @@ describe("gateway Gmail hot reload handlers", () => {
     }
 
     registeredWriteListener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       persistedHash: "hash-next",
@@ -5330,7 +5327,7 @@ describe("gateway Gmail hot reload handlers", () => {
       current: null,
     };
     const initialConfig = createGmailConfig("old@example.com");
-    const nextConfig: OpenClawConfig = {
+    const nextConfig: NovaConfig = {
       ...createGmailConfig("next@example.com"),
       models: { providers: {} },
     };
@@ -5349,9 +5346,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         exists: true,
         raw: "{}",
         parsed: {},
@@ -5401,7 +5398,7 @@ describe("gateway Gmail hot reload handlers", () => {
       logCron: { error: vi.fn() },
       logReload,
       channelManager: {} as never,
-      activateRuntimeSecrets: vi.fn(async (config: OpenClawConfig) => ({
+      activateRuntimeSecrets: vi.fn(async (config: NovaConfig) => ({
         sourceConfig: config,
         config,
         authStores: [],
@@ -5422,7 +5419,7 @@ describe("gateway Gmail hot reload handlers", () => {
     }
 
     registeredWriteListener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       persistedHash: "hash-next",
@@ -5461,9 +5458,9 @@ describe("gateway Gmail hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         exists: true,
         raw: "{}",
         parsed: {},
@@ -5513,7 +5510,7 @@ describe("gateway Gmail hot reload handlers", () => {
       logCron: { error: vi.fn() },
       logReload: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
       channelManager: {} as never,
-      activateRuntimeSecrets: vi.fn(async (config: OpenClawConfig) => {
+      activateRuntimeSecrets: vi.fn(async (config: NovaConfig) => {
         secretsEntered?.();
         await releaseSecretsPromise;
         return {
@@ -5538,7 +5535,7 @@ describe("gateway Gmail hot reload handlers", () => {
     }
 
     registeredWriteListener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       persistedHash: "hash-next",
@@ -5567,7 +5564,7 @@ describe("gateway plugin hot reload handlers", () => {
     const previousValue = process.env[envKey];
     process.env[envKey] = "1";
     const targetEnv: NodeJS.ProcessEnv = { [envKey]: "1" };
-    const previousConfig = { env: { vars: { [envKey]: "1" } } } satisfies OpenClawConfig;
+    const previousConfig = { env: { vars: { [envKey]: "1" } } } satisfies NovaConfig;
     const runtimeEnv = prepareConfigRuntimeEnv({
       previousConfig,
       nextConfig: {},
@@ -5633,7 +5630,7 @@ describe("gateway plugin hot reload handlers", () => {
     const previousValue = process.env[envKey];
     delete process.env[envKey];
     const targetEnv: NodeJS.ProcessEnv = {};
-    const nextConfig = { env: { vars: { [envKey]: "1" } } } satisfies OpenClawConfig;
+    const nextConfig = { env: { vars: { [envKey]: "1" } } } satisfies NovaConfig;
     const runtimeEnv = prepareConfigRuntimeEnv({
       previousConfig: {},
       nextConfig,
@@ -5729,17 +5726,17 @@ describe("gateway plugin hot reload handlers", () => {
       cron: { enabled: false },
       plugins: { enabled: false },
       env: { vars: { [envKey]: "old" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const nextConfig = {
       ...initialConfig,
       cron: { enabled: true },
       plugins: { enabled: true },
       env: { vars: { [envKey]: "candidate" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const compareConfig = {
       ...nextConfig,
       env: initialConfig.env,
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const runtimeEnv = prepareConfigRuntimeEnv({
       previousConfig: initialConfig,
       nextConfig,
@@ -5785,7 +5782,7 @@ describe("gateway plugin hot reload handlers", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn() as never,
       promoteSnapshot: vi.fn(async () => true) as never,
       subscribeToWrites: ((listener: (event: ConfigWriteNotification) => void) => {
@@ -5818,7 +5815,7 @@ describe("gateway plugin hot reload handlers", () => {
       logCron: { error: vi.fn() },
       logReload: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
       channelManager: {} as never,
-      activateRuntimeSecrets: vi.fn(async (config: OpenClawConfig) => ({
+      activateRuntimeSecrets: vi.fn(async (config: NovaConfig) => ({
         sourceConfig: config,
         config,
         authStores: [],
@@ -5839,7 +5836,7 @@ describe("gateway plugin hot reload handlers", () => {
     }
 
     listener({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       sourceConfig: nextConfig,
       runtimeConfig: nextConfig,
       preparedCandidate: { runtimeConfig: nextConfig, compareConfig, runtimeEnv },
@@ -6801,11 +6798,11 @@ describe("deferred channel reload abort generation", () => {
     const initialConfig = {
       gateway: { reload: {} },
       channels: { whatsapp: { enabled: true, selfChatMode: false } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const nextConfig = {
       gateway: { reload: {} },
       channels: { whatsapp: { enabled: true, selfChatMode: true } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const whatsappPlugin = {
       ...createChannelTestPluginBase({ id: "whatsapp" }),
       reload: {
@@ -6832,7 +6829,7 @@ describe("deferred channel reload abort generation", () => {
       initialConfig,
       initialCompareConfig: initialConfig,
       initialInternalWriteHash: null,
-      watchPath: "/tmp/openclaw.json",
+      watchPath: "/tmp/nova.json",
       readSnapshot: vi.fn() as never,
       promoteSnapshot: promoteSnapshot as never,
       subscribeToWrites: ((listener: (event: ConfigWriteNotification) => void) => {
@@ -6870,7 +6867,7 @@ describe("deferred channel reload abort generation", () => {
       logCron: { error: vi.fn() },
       logReload,
       channelManager: {} as never,
-      activateRuntimeSecrets: vi.fn(async (config: OpenClawConfig) => ({
+      activateRuntimeSecrets: vi.fn(async (config: NovaConfig) => ({
         sourceConfig: config,
         config,
         authStores: [],
@@ -6899,7 +6896,7 @@ describe("deferred channel reload abort generation", () => {
 
     try {
       registeredWriteListener({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: nextConfig,
         runtimeConfig: nextConfig,
         persistedHash: "managed-abort-next",
@@ -6982,7 +6979,7 @@ describe("deferred channel reload abort generation", () => {
     let reloadWasCancelled = false;
     const reloadPlugins = vi.fn(
       async (params: {
-        nextConfig: OpenClawConfig;
+        nextConfig: NovaConfig;
         beforeReplace: (channels: ReadonlySet<ChannelKind>) => Promise<void>;
         isAborted?: () => boolean;
       }): Promise<GatewayPluginReloadResult> => {

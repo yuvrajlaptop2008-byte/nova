@@ -11,7 +11,7 @@ import {
   updateSessionStore,
 } from "../config/sessions/store.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { AGENT_HARNESS_SESSION_KEY_RESERVED_MESSAGE } from "../sessions/agent-harness-session-key.js";
 import type { Skill } from "../skills/loading/skill-contract.js";
 
@@ -120,7 +120,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
 
   beforeEach(async () => {
     note.mockClear();
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-doctor-session-snapshots-"));
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-doctor-session-snapshots-"));
     bundledSkillsDir = path.join(root, "current", "skills");
     await fs.mkdir(path.join(bundledSkillsDir, "doctor"), { recursive: true });
     await fs.writeFile(path.join(bundledSkillsDir, "doctor", "SKILL.md"), "# Doctor\n");
@@ -135,7 +135,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -144,7 +144,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       path.sep,
       "private",
       "tmp",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -188,7 +188,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -224,7 +224,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       path: storePath,
       target: stalePath,
       requirement: expect.stringContaining(bundledSkillsDir),
-      fixHint: expect.stringContaining("openclaw doctor --fix"),
+      fixHint: expect.stringContaining("nova doctor --fix"),
     });
     expect(sessionSnapshotIssueToRepairEffect(issue)).toEqual({
       kind: "file",
@@ -236,7 +236,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
 
   it("expands home-relative cached bundled skill locations before classifying them", () => {
     const homeDir = path.join(root, "home");
-    const stalePath = "~/old-runtime/node_modules/openclaw/skills/doctor/SKILL.md";
+    const stalePath = "~/old-runtime/node_modules/nova/skills/doctor/SKILL.md";
 
     const findings = scanSessionStoreForStaleRuntimeSnapshotPaths({
       bundledSkillsDir,
@@ -266,7 +266,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "imsg",
       "SKILL.md",
@@ -300,7 +300,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
   });
 
   it("repairs retired imsg paths even when cached under the current package skills root", async () => {
-    const packageSkillsDir = path.join(root, "node_modules", "openclaw", "skills");
+    const packageSkillsDir = path.join(root, "node_modules", "nova", "skills");
     const stalePath = path.join(packageSkillsDir, "imsg", "SKILL.md");
     const stateDir = path.join(root, "state");
     const pluginSkillPath = path.join(stateDir, "plugin-skills", "imsg", "SKILL.md");
@@ -334,17 +334,14 @@ describe("doctor session snapshot stale runtime metadata", () => {
     const packageRoot = path.join(root, "package");
     const distDir = path.join(packageRoot, "dist");
     await fs.mkdir(distDir, { recursive: true });
-    await fs.writeFile(
-      path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw" }),
-    );
+    await fs.writeFile(path.join(packageRoot, "package.json"), JSON.stringify({ name: "nova" }));
     const modulePath = path.join(distDir, "doctor-session-snapshots.js");
     await fs.writeFile(modulePath, "// stub\n");
 
     expect(
       resolveSessionSnapshotBundledSkillsDir({
         moduleUrl: pathToFileURL(modulePath).href,
-        argv1: path.join(packageRoot, "bin", "openclaw"),
+        argv1: path.join(packageRoot, "bin", "nova"),
         cwd: distDir,
       }),
     ).toBe(path.join(packageRoot, "skills"));
@@ -353,14 +350,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
   it("ignores current bundled locations and unrelated workspace skill locations", () => {
     const currentPath = path.join(bundledSkillsDir, "doctor", "SKILL.md");
     const workspacePath = path.join(root, "workspace", "skills", "doctor", "SKILL.md");
-    const openClawWorkspacePath = path.join(
-      root,
-      "projects",
-      "openclaw",
-      "skills",
-      "doctor",
-      "SKILL.md",
-    );
+    const novaWorkspacePath = path.join(root, "projects", "nova", "skills", "doctor", "SKILL.md");
     const findings = scanSessionStoreForStaleRuntimeSnapshotPaths({
       bundledSkillsDir,
       store: {
@@ -370,9 +360,9 @@ describe("doctor session snapshot stale runtime metadata", () => {
         "agent:workspace": sessionEntry({
           skillsSnapshot: { prompt: skillPrompt(workspacePath), skills: [{ name: "doctor" }] },
         }),
-        "agent:openclaw-workspace": sessionEntry({
+        "agent:nova-workspace": sessionEntry({
           skillsSnapshot: {
-            prompt: skillPrompt(openClawWorkspacePath),
+            prompt: skillPrompt(novaWorkspacePath),
             skills: [{ name: "doctor" }],
           },
         }),
@@ -388,10 +378,10 @@ describe("doctor session snapshot stale runtime metadata", () => {
       "C:\\",
       "Users",
       "alice",
-      ".openclaw",
+      ".nova",
       "lib",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
     );
     const currentPath = path.win32.join(windowsBundledSkillsDir, "doctor", "SKILL.md");
@@ -399,7 +389,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       "C:\\",
       "opt",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -433,7 +423,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -465,7 +455,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -495,7 +485,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -532,7 +522,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -551,7 +541,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
     });
 
     await noteSessionSnapshotHealth({
-      cfg: { session: { store: configuredStorePath } } as OpenClawConfig,
+      cfg: { session: { store: configuredStorePath } } as NovaConfig,
       bundledSkillsDir,
       env: { NOVA_STATE_DIR: stateDir },
     });
@@ -568,7 +558,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -588,7 +578,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
       cfg: {
         session: { store: templatedStore },
         agents: { list: [{ id: "main" }, { id: "ops" }] },
-      } as OpenClawConfig,
+      } as NovaConfig,
       bundledSkillsDir,
       env: { NOVA_STATE_DIR: path.join(root, "state") },
     });
@@ -607,7 +597,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
 
   beforeEach(async () => {
     note.mockClear();
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-doctor-repair-"));
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-doctor-repair-"));
     bundledSkillsDir = path.join(root, "current", "skills");
     await fs.mkdir(path.join(bundledSkillsDir, "doctor"), { recursive: true });
     await fs.writeFile(path.join(bundledSkillsDir, "doctor", "SKILL.md"), "# Doctor\n");
@@ -622,7 +612,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -657,7 +647,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -727,7 +717,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -772,7 +762,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -815,7 +805,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -850,7 +840,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -890,7 +880,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -932,7 +922,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -980,7 +970,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -1017,7 +1007,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",
@@ -1056,7 +1046,7 @@ describe("doctor session snapshot repair (shouldRepair)", () => {
       root,
       "old-runtime",
       "node_modules",
-      "openclaw",
+      "nova",
       "skills",
       "doctor",
       "SKILL.md",

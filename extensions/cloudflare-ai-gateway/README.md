@@ -1,12 +1,12 @@
-# OpenClaw Cloudflare AI Gateway Provider
+# Nova Cloudflare AI Gateway Provider
 
-Official OpenClaw provider plugin for Cloudflare AI Gateway.
+Official Nova provider plugin for Cloudflare AI Gateway.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/cloudflare-ai-gateway-provider
-openclaw gateway restart
+nova plugins install @nova/cloudflare-ai-gateway-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/cloudflare-ai-gateway> for setup and configuration.
+See <https://docs.nova.ai/providers/cloudflare-ai-gateway> for setup and configuration.

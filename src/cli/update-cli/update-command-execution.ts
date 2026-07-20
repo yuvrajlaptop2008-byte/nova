@@ -1,7 +1,7 @@
 import type { ResolvedGlobalInstallTarget } from "../../infra/update-global.js";
 import type { UpdateRunResult } from "../../infra/update-runner.js";
 import { defaultRuntime } from "../../runtime.js";
-import type { OpenClawSchemaVersions } from "../../state/openclaw-schema-versions.js";
+import type { NovaSchemaVersions } from "../../state/nova-schema-versions.js";
 import { replaceCliName, resolveCliName } from "../cli-name.js";
 import { formatCliCommand } from "../command-format.js";
 import { createUpdateProgress } from "./progress.js";
@@ -52,7 +52,7 @@ export async function executeMutableUpdate(params: {
   packageInstallSpec: string | null;
   packageInstallEnv?: NodeJS.ProcessEnv;
   packageInstallTarget?: ResolvedGlobalInstallTarget;
-  packageTargetSchemaVersions?: OpenClawSchemaVersions;
+  packageTargetSchemaVersions?: NovaSchemaVersions;
   packageUpdateNodeRunner?: string;
   managedServiceNodeRunner?: string;
   managedServiceRootRedirect: ManagedServiceRootRedirect | null;
@@ -121,7 +121,7 @@ export async function executeMutableUpdate(params: {
         [
           `${updateLabel} cannot run from inside the gateway service process.`,
           "That path replaces the active Nova dist tree while the live gateway may still lazy-load old chunks.",
-          `Run \`${replaceCliName(formatCliCommand("openclaw update"), CLI_NAME)}\` from a shell outside the gateway service, or stop the gateway service first and then update.`,
+          `Run \`${replaceCliName(formatCliCommand("nova update"), CLI_NAME)}\` from a shell outside the gateway service, or stop the gateway service first and then update.`,
         ].join("\n"),
       );
       defaultRuntime.exit(1);

@@ -62,7 +62,7 @@ describe("execFileUtf8Tail", () => {
   });
 
   it("returns a soft failure when command launch fails", async () => {
-    const command = `openclaw-missing-${process.pid}-${Date.now()}`;
+    const command = `nova-missing-${process.pid}-${Date.now()}`;
     const result = await execFileUtf8Tail(command, [], { maxBytes: 1024 });
     expect(result).toMatchObject({ code: 1, stdout: "", truncated: false });
     expect(result.stderr).toMatch(/ENOENT|not found/i);

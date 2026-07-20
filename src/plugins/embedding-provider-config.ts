@@ -1,15 +1,13 @@
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
-type ConfiguredModelProvider = NonNullable<
-  NonNullable<OpenClawConfig["models"]>["providers"]
->[string];
+type ConfiguredModelProvider = NonNullable<NonNullable<NovaConfig["models"]>["providers"]>[string];
 const OPENAI_COMPATIBLE_EMBEDDING_PROVIDER_ID = "openai-compatible";
 const OPENAI_COMPATIBLE_MODEL_APIS = new Set(["openai-completions", "openai-responses"]);
 
 function resolveConfiguredProviderConfig(
   providerId: string,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): ConfiguredModelProvider | undefined {
   const providers = cfg?.models?.providers;
   if (!providers) {
@@ -27,7 +25,7 @@ function resolveConfiguredProviderConfig(
 /** Reads a configured provider's backing API id when runtime lookup should follow an alias. */
 export function readConfiguredProviderApiId(params: {
   providerId: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   resolveApiProviderId?: (normalizedApiId: string) => string | undefined;
   resolveMissingApiProviderId?: (providerConfig: ConfiguredModelProvider) => string | undefined;
 }): string | undefined {
@@ -45,7 +43,7 @@ export function readConfiguredProviderApiId(params: {
 
 export function resolveConfiguredGenericEmbeddingProviderId(
   providerId: string,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): string | undefined {
   return readConfiguredProviderApiId({
     providerId,

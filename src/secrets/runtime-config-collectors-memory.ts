@@ -1,5 +1,5 @@
 /** Collects per-agent memory search secret refs from runtime config. */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";
 import { runtimeMemorySecretOwnerId } from "./runtime-memory-secret-owner.js";
 import {
@@ -12,7 +12,7 @@ import { isRecord } from "./shared.js";
 
 /** Collects memory-search SecretRefs once for every agent that can inherit them. */
 export function collectAgentMemorySearchAssignments(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {

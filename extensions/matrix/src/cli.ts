@@ -1,10 +1,10 @@
 // Matrix plugin module implements cli behavior.
 import type { Command } from "commander";
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { parseStrictInteger, timestampMsToIsoString } from "openclaw/plugin-sdk/number-runtime";
-import { readByteStreamWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import type { ChannelSetupInput } from "openclaw/plugin-sdk/setup";
+import { normalizeAccountId } from "nova/plugin-sdk/account-id";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { parseStrictInteger, timestampMsToIsoString } from "nova/plugin-sdk/number-runtime";
+import { readByteStreamWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import type { ChannelSetupInput } from "nova/plugin-sdk/setup";
 import { resolveMatrixAccount, resolveMatrixAccountConfig } from "./matrix/accounts.js";
 import { listMatrixOwnDevices, pruneMatrixStaleGatewayDevices } from "./matrix/actions/devices.js";
 import { updateMatrixOwnProfile } from "./matrix/actions/profile.js";
@@ -29,7 +29,7 @@ import { resolveMatrixRoomKeyBackupIssue } from "./matrix/backup-health.js";
 import { resolveMatrixAuthContext } from "./matrix/client.js";
 import { setMatrixSdkConsoleLogging, setMatrixSdkLogMode } from "./matrix/client/logging.js";
 import { resolveMatrixConfigPath, updateMatrixAccountConfig } from "./matrix/config-update.js";
-import { isOpenClawManagedMatrixDevice } from "./matrix/device-health.js";
+import { isNovaManagedMatrixDevice } from "./matrix/device-health.js";
 import type { MatrixDirectRoomCandidate } from "./matrix/direct-management.js";
 import { formatMatrixErrorMessage } from "./matrix/errors.js";
 import { applyMatrixProfileUpdate, type MatrixProfileUpdateResult } from "./profile-update.js";
@@ -166,7 +166,7 @@ function formatMatrixCliRecoveryKeyStdinCommand(command: string, accountId?: str
 
 function formatMatrixCliCommandParts(parts: string[], accountId?: string): string {
   const normalizedAccountId = normalizeAccountId(accountId);
-  const command = ["openclaw", "matrix", ...parts];
+  const command = ["nova", "matrix", ...parts];
   if (normalizedAccountId !== "default") {
     const optionTerminatorIndex = command.indexOf("--");
     if (optionTerminatorIndex >= 0) {
@@ -257,7 +257,7 @@ type MatrixCliAccountAddResult = {
   encryptionEnabled: boolean;
   deviceHealth: {
     currentDeviceId: string | null;
-    staleOpenClawDeviceIds: string[];
+    staleNovaDeviceIds: string[];
     error?: string;
   };
   verificationBootstrap: {
@@ -411,14 +411,14 @@ async function addMatrixAccount(params: {
     const addedDevices = await listMatrixOwnDevices({ accountId, cfg: updated });
     deviceHealth = {
       currentDeviceId: addedDevices.find((device) => device.current)?.deviceId ?? null,
-      staleOpenClawDeviceIds: addedDevices
-        .filter((device) => !device.current && isOpenClawManagedMatrixDevice(device.displayName))
+      staleNovaDeviceIds: addedDevices
+        .filter((device) => !device.current && isNovaManagedMatrixDevice(device.displayName))
         .map((device) => device.deviceId),
     };
   } catch (err) {
     deviceHealth = {
       currentDeviceId: null,
-      staleOpenClawDeviceIds: [],
+      staleNovaDeviceIds: [],
       error: toErrorMessage(err),
     };
   }
@@ -1395,7 +1395,7 @@ export function registerMatrixCli(params: { program: Command }): void {
   const root = params.program
     .command("matrix")
     .description("Matrix channel utilities")
-    .addHelpText("after", () => "\nDocs: https://docs.openclaw.ai/channels/matrix\n");
+    .addHelpText("after", () => "\nDocs: https://docs.nova.ai/channels/matrix\n");
 
   const account = root.command("account").description("Manage matrix channel accounts");
 
@@ -1491,8 +1491,8 @@ export function registerMatrixCli(params: { program: Command }): void {
               console.error(
                 `Matrix device health warning: ${formatMatrixCliText(result.deviceHealth.error)}`,
               );
-            } else if (result.deviceHealth.staleOpenClawDeviceIds.length > 0) {
-              const staleDeviceIds = result.deviceHealth.staleOpenClawDeviceIds
+            } else if (result.deviceHealth.staleNovaDeviceIds.length > 0) {
+              const staleDeviceIds = result.deviceHealth.staleNovaDeviceIds
                 .map((deviceId) => formatMatrixCliText(deviceId))
                 .join(", ");
               console.log(
@@ -1513,7 +1513,7 @@ export function registerMatrixCli(params: { program: Command }): void {
                 }
               }
             }
-            const bindHint = `openclaw agents bind --agent <id> --bind matrix:${result.accountId}`;
+            const bindHint = `nova agents bind --agent <id> --bind matrix:${result.accountId}`;
             console.log(`Bind this account to an agent: ${bindHint}`);
           },
           errorPrefix: "Account setup failed",

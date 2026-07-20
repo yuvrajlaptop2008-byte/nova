@@ -12,7 +12,7 @@ import {
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-extension-memory-build-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-extension-memory-build-"));
   tempRoots.push(root);
   mkdirSync(path.join(root, "scripts"), { recursive: true });
   writeFileSync(path.join(root, "scripts", "build-all.mjs"), "", "utf8");

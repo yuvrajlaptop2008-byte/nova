@@ -1,7 +1,7 @@
 // Video runtime types describe auth and provider execution dependencies.
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
 import type { FallbackAttempt } from "../agents/model-fallback.types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type {
   GeneratedVideoAsset,
   VideoGenerationIgnoredOverride,
@@ -11,7 +11,7 @@ import type {
 } from "./types.js";
 
 export type GenerateVideoParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   prompt: string;
   agentDir?: string;
   authStore?: AuthProfileStore;

@@ -1,7 +1,7 @@
 // Test environment tests validate shared env setup helpers.
 import fs from "node:fs";
 import path from "node:path";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { deleteTestEnvValue, setTestEnvValue } from "../src/test-utils/env.js";
 import { cleanupTempDirs, makeTempDir } from "./helpers/temp-dir.js";
@@ -33,7 +33,7 @@ function writeFile(targetPath: string, content: string): void {
 }
 
 function createTempHome(): string {
-  return makeTempDir(tempDirs, "openclaw-test-env-real-home-");
+  return makeTempDir(tempDirs, "nova-test-env-real-home-");
 }
 
 function requireRecord(
@@ -76,19 +76,19 @@ describe("installTestEnv", () => {
     const priorIsolatedHome = createTempHome();
     writeFile(path.join(realHome, ".profile"), "export TEST_PROFILE_ONLY=from-profile\n");
     writeFile(
-      path.join(realHome, "custom-openclaw.json5"),
+      path.join(realHome, "custom-nova.json5"),
       `{
         // Preserve provider config, strip host-bound paths.
         agents: {
           defaults: {
             workspace: "/Users/peter/Projects",
-            agentDir: "/Users/peter/.openclaw/agents/main/agent",
+            agentDir: "/Users/peter/.nova/agents/main/agent",
           },
           list: [
             {
               id: "dev",
               workspace: "/Users/peter/dev-workspace",
-              agentDir: "/Users/peter/.openclaw/agents/dev/agent",
+              agentDir: "/Users/peter/.nova/agents/dev/agent",
             },
           ],
         },
@@ -115,13 +115,13 @@ describe("installTestEnv", () => {
         },
       }`,
     );
-    writeFile(path.join(realHome, ".openclaw", "credentials", "token.txt"), "secret\n");
+    writeFile(path.join(realHome, ".nova", "credentials", "token.txt"), "secret\n");
     writeFile(
-      path.join(realHome, ".openclaw", "external-plugins", "glueclaw", "openclaw.plugin.json"),
+      path.join(realHome, ".nova", "external-plugins", "glueclaw", "nova.plugin.json"),
       '{"id":"glueclaw"}\n',
     );
     writeFile(
-      path.join(realHome, ".openclaw", "agents", "main", "agent", "auth-profiles.json"),
+      path.join(realHome, ".nova", "agents", "main", "agent", "auth-profiles.json"),
       JSON.stringify({ version: 1, profiles: { default: { provider: "openai" } } }, null, 2),
     );
     writeFile(path.join(realHome, ".claude", ".credentials.json"), '{"accessToken":"token"}\n');
@@ -167,9 +167,9 @@ describe("installTestEnv", () => {
     setTestEnvValue("USERPROFILE", realHome);
     setTestEnvValue("NOVA_LIVE_TEST", "1");
     setTestEnvValue("NOVA_LIVE_TEST_QUIET", "1");
-    setTestEnvValue("NOVA_CONFIG_PATH", "~/custom-openclaw.json5");
+    setTestEnvValue("NOVA_CONFIG_PATH", "~/custom-nova.json5");
     setTestEnvValue("NOVA_TEST_HOME", priorIsolatedHome);
-    setTestEnvValue("NOVA_STATE_DIR", path.join(priorIsolatedHome, ".openclaw"));
+    setTestEnvValue("NOVA_STATE_DIR", path.join(priorIsolatedHome, ".nova"));
 
     const testEnv = installTestEnv();
     cleanupFns.push(testEnv.cleanup);
@@ -179,7 +179,7 @@ describe("installTestEnv", () => {
     expect(process.env.NOVA_TEST_HOME).toBe(testEnv.tempHome);
     expect(process.env.TEST_PROFILE_ONLY).toBe("from-profile");
 
-    const copiedConfigPath = path.join(testEnv.tempHome, ".openclaw", "openclaw.json");
+    const copiedConfigPath = path.join(testEnv.tempHome, ".nova", "nova.json");
     const copiedConfig = JSON.parse(fs.readFileSync(copiedConfigPath, "utf8")) as {
       agents?: {
         defaults?: Record<string, unknown>;
@@ -215,23 +215,17 @@ describe("installTestEnv", () => {
       preview: { chunk: { minChars: 120 } },
     });
 
-    expect(
-      fs.existsSync(path.join(testEnv.tempHome, ".openclaw", "credentials", "token.txt")),
-    ).toBe(true);
+    expect(fs.existsSync(path.join(testEnv.tempHome, ".nova", "credentials", "token.txt"))).toBe(
+      true,
+    );
     expect(
       fs.existsSync(
-        path.join(
-          testEnv.tempHome,
-          ".openclaw",
-          "external-plugins",
-          "glueclaw",
-          "openclaw.plugin.json",
-        ),
+        path.join(testEnv.tempHome, ".nova", "external-plugins", "glueclaw", "nova.plugin.json"),
       ),
     ).toBe(true);
     expect(
       fs.existsSync(
-        path.join(testEnv.tempHome, ".openclaw", "agents", "main", "agent", "auth-profiles.json"),
+        path.join(testEnv.tempHome, ".nova", "agents", "main", "agent", "auth-profiles.json"),
       ),
     ).toBe(true);
     expect(fs.existsSync(path.join(testEnv.tempHome, ".claude", ".credentials.json"))).toBe(true);
@@ -285,8 +279,8 @@ describe("installTestEnv", () => {
   it("keeps hermetic mode isolated when live flags request the real HOME", () => {
     const realHome = createTempHome();
     writeFile(path.join(realHome, ".profile"), "export TEST_PROFILE_ONLY=from-profile\n");
-    writeFile(path.join(realHome, ".openclaw", "openclaw.json"), '{"live":true}\n');
-    writeFile(path.join(realHome, ".openclaw", "credentials", "token.txt"), "secret\n");
+    writeFile(path.join(realHome, ".nova", "nova.json"), '{"live":true}\n');
+    writeFile(path.join(realHome, ".nova", "credentials", "token.txt"), "secret\n");
 
     setTestEnvValue("HOME", realHome);
     setTestEnvValue("USERPROFILE", realHome);
@@ -315,10 +309,10 @@ describe("installTestEnv", () => {
     expect(process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR).toBe("1");
     expect(process.env.NOVA_DISABLE_BUNDLED_PLUGINS).toBeUndefined();
     expect(process.env.NOVA_HOME).toBeUndefined();
-    expect(fs.existsSync(path.join(testEnv.tempHome, ".openclaw", "openclaw.json"))).toBe(false);
-    expect(
-      fs.existsSync(path.join(testEnv.tempHome, ".openclaw", "credentials", "token.txt")),
-    ).toBe(false);
+    expect(fs.existsSync(path.join(testEnv.tempHome, ".nova", "nova.json"))).toBe(false);
+    expect(fs.existsSync(path.join(testEnv.tempHome, ".nova", "credentials", "token.txt"))).toBe(
+      false,
+    );
   });
 
   it("does not load ~/.profile for normal isolated test runs", () => {

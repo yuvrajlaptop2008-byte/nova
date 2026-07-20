@@ -1,11 +1,11 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { AuthProfileStore } from "../auth-profiles/types.js";
 import "./model-config.helpers.js";
 
 type ModelConfigHelpersTestApi = {
   hasDirectProviderApiKeyAuthForTool(params: {
     provider: string;
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     workspaceDir?: string;
     agentDir?: string;
     authStore?: AuthProfileStore;
@@ -15,7 +15,7 @@ type ModelConfigHelpersTestApi = {
 
 function getTestApi(): ModelConfigHelpersTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.modelConfigHelpersTestApi")
+    Symbol.for("nova.modelConfigHelpersTestApi")
   ] as ModelConfigHelpersTestApi;
 }
 

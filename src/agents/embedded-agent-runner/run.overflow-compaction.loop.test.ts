@@ -241,7 +241,7 @@ describe("overflow compaction in run loop", () => {
   it("persists the canonical user turn when the embedded runtime writes its prompt file", async () => {
     const persistedMessage = makeUserMessage();
     const persistApproved = vi.fn(async () => ({
-      sessionFile: "/tmp/openclaw-transcript.jsonl",
+      sessionFile: "/tmp/nova-transcript.jsonl",
       sessionEntry: undefined,
       messageId: "msg-user-1",
       message: persistedMessage,
@@ -334,7 +334,7 @@ describe("overflow compaction in run loop", () => {
   it("does not persist the original embedded prompt when before_agent_run writes a block marker", async () => {
     const blockedMessage = {
       ...makeUserMessage("[blocked by before_agent_run]"),
-      __openclaw: {
+      __nova: {
         beforeAgentRunBlocked: {
           blockedBy: "before_agent_run",
           blockedAt: 123,
@@ -342,13 +342,13 @@ describe("overflow compaction in run loop", () => {
       },
     };
     const persistBlocked = vi.fn(async (message: unknown) => ({
-      sessionFile: "/tmp/openclaw-transcript.jsonl",
+      sessionFile: "/tmp/nova-transcript.jsonl",
       sessionEntry: undefined,
       messageId: "msg-user-1",
       message: message as typeof blockedMessage,
     }));
     const persistApproved = vi.fn(async () => ({
-      sessionFile: "/tmp/openclaw-transcript.jsonl",
+      sessionFile: "/tmp/nova-transcript.jsonl",
       sessionEntry: undefined,
       messageId: "msg-user-1",
       message: makeUserMessage(),
@@ -517,7 +517,7 @@ describe("overflow compaction in run loop", () => {
     expect(mockedCompactDirect).not.toHaveBeenCalled();
 
     resolvePersistApproved?.({
-      sessionFile: "/tmp/openclaw-transcript.jsonl",
+      sessionFile: "/tmp/nova-transcript.jsonl",
       sessionEntry: undefined,
       messageId: "msg-user-delayed",
       message: persistedMessage,

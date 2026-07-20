@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleExecutable</key>
+    <string>Nova</string>
+    <key>CFBundleIdentifier</key>
+    <string>ai.nova.mac</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>Nova</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>2026.7.2</string>
+    <key>CFBundleVersion</key>
+    <string>2026070200</string>
+    <key>CFBundleIconFile</key>
+    <string>Nova</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>ai.nova.mac.deeplink</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>nova</string>
+            </array>
+        </dict>
+    </array>
+    <key>LSMinimumSystemVersion</key>
+    <string>15.0</string>
+    <key>LSUIElement</key>
+    <true/>
+
+    <key>NovaBuildTimestamp</key>
+    <string></string>
+    <key>NovaGitCommit</key>
+    <string></string>
+    <key>NovaPortGuardianStorageVersion</key>
+    <integer>2</integer>
+
+    <key>NSUserNotificationUsageDescription</key>
+    <string>Nova needs notification permission to show alerts for agent actions.</string>
+    <key>NSScreenCaptureDescription</key>
+    <string>Nova captures the screen when the agent needs screenshots for context.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Nova can capture photos or short video clips when requested by the agent.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Nova can share your location when requested by the agent.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Nova can share your location when requested by the agent.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Nova can share your location when requested by the agent.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Nova uses the local network to connect to your remote Nova gateway over LAN, Tailnet, or SSH.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Nova needs the mic for Voice Wake tests and agent audio capture.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Nova uses speech recognition to detect your Voice Wake trigger phrase.</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Nova needs Automation (AppleScript) permission to drive Terminal and other apps for agent actions.</string>
+    <key>NSRemindersUsageDescription</key>
+    <string>Nova can access Reminders when requested by the agent for the apple-reminders skill.</string>
+
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
+        <true/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>100.100.100.100</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+        </dict>
+    </dict>
+</dict>
+</plist>

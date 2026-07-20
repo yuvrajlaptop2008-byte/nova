@@ -2,13 +2,13 @@
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { resolveAgentDir, resolveDefaultAgentDir } from "../../agents/agent-scope.js";
 import { loadPreparedModelCatalogOwnerSnapshot } from "../../agents/prepared-model-catalog.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { Model } from "../../llm/types.js";
 import type { PluginMetadataSnapshot } from "../../plugins/plugin-metadata-snapshot.types.js";
 import { canonicalizeModelCatalogProviderAlias } from "./provider-aliases.js";
 
 type ProviderCatalogListParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   agentDir: string;
   env?: NodeJS.ProcessEnv;

@@ -7,7 +7,7 @@ import { HEARTBEAT_TOKEN } from "./tokens.js";
 
 /** Tool name used by heartbeat runs to report visible or silent progress. */
 export const HEARTBEAT_RESPONSE_TOOL_NAME = "heartbeat_respond";
-const HEARTBEAT_RESPONSE_CHANNEL_DATA_KEY = "openclawHeartbeatResponse";
+const HEARTBEAT_RESPONSE_CHANNEL_DATA_KEY = "novaHeartbeatResponse";
 
 /** Allowed heartbeat response outcomes. */
 export const HEARTBEAT_TOOL_OUTCOMES = [

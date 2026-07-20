@@ -1,11 +1,11 @@
-# OpenClaw Google Chat
+# Nova Google Chat
 
-Official OpenClaw channel plugin for Google Chat spaces and direct messages.
+Official Nova channel plugin for Google Chat spaces and direct messages.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/googlechat
+nova plugin add @nova/googlechat
 ```
 
-Configure the Google Chat app credentials and allowed spaces in OpenClaw. The plugin lets agents receive Google Chat events and reply through the configured app.
+Configure the Google Chat app credentials and allowed spaces in Nova. The plugin lets agents receive Google Chat events and reply through the configured app.

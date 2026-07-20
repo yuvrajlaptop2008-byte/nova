@@ -49,7 +49,7 @@ function identity(artifact: Uint8Array) {
 }
 
 function writeManifest(mode: "publish" | "configure-only", artifact: Uint8Array, runAttempt = "1") {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-clawhub-readback-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-clawhub-readback-"));
   tempDirs.push(root);
   const path = join(root, "manifest.json");
   const artifactIdentity = identity(artifact);
@@ -57,7 +57,7 @@ function writeManifest(mode: "publish" | "configure-only", artifact: Uint8Array,
     path,
     JSON.stringify({
       schemaVersion: 1,
-      repository: "openclaw/openclaw",
+      repository: "nova/nova",
       targetSha: "a".repeat(40),
       workflowSha: "b".repeat(40),
       runId: "123",
@@ -75,7 +75,7 @@ function writeManifest(mode: "publish" | "configure-only", artifact: Uint8Array,
           publishTag: "beta",
           bootstrapMode: mode,
           requiresManualOverride: mode === "configure-only",
-          artifactPath: "packages/meta/openclaw-meta-2026.7.1-beta.3.tgz",
+          artifactPath: "packages/meta/nova-meta-2026.7.1-beta.3.tgz",
           sha256: artifactIdentity.sha256,
           size: artifactIdentity.size,
         },
@@ -86,11 +86,11 @@ function writeManifest(mode: "publish" | "configure-only", artifact: Uint8Array,
 }
 
 function writeExpectedArtifact(artifact: Uint8Array) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-clawhub-oidc-readback-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-clawhub-oidc-readback-"));
   tempDirs.push(root);
   const artifactDir = join(root, "artifact");
   mkdirSync(artifactDir);
-  writeFileSync(join(artifactDir, "openclaw-meta-2026.7.1-beta.3.tgz"), artifact);
+  writeFileSync(join(artifactDir, "nova-meta-2026.7.1-beta.3.tgz"), artifact);
   return artifactDir;
 }
 
@@ -132,7 +132,7 @@ function registryFetch(artifact: Uint8Array) {
       return Response.json({
         trustedPublisher: {
           provider: "github-actions",
-          repository: "openclaw/openclaw",
+          repository: "nova/nova",
           workflowFilename: "plugin-clawhub-release.yml",
           environment: null,
         },
@@ -198,7 +198,7 @@ describe("ClawHub published artifact verification", () => {
         Response.json({
           trustedPublisher: {
             provider: "other",
-            repository: "openclaw/openclaw",
+            repository: "nova/nova",
             workflowFilename: "plugin-clawhub-release.yml",
             environment: null,
           },
@@ -233,7 +233,7 @@ describe("ClawHub published artifact verification", () => {
       }),
     ).rejects.toThrow("exactly one root .tgz regular file");
 
-    const root = mkdtempSync(join(tmpdir(), "openclaw-clawhub-oidc-symlink-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-clawhub-oidc-symlink-"));
     tempDirs.push(root);
     const artifactDir = join(root, "artifact");
     const target = join(root, "target.tgz");
@@ -354,7 +354,7 @@ describe("ClawHub published artifact verification", () => {
         return Response.json({
           trustedPublisher: {
             provider: "github-actions",
-            repository: "openclaw/openclaw",
+            repository: "nova/nova",
             workflowFilename: "plugin-clawhub-release.yml",
             environment: null,
           },

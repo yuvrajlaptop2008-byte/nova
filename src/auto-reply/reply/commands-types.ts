@@ -3,7 +3,7 @@ import type { FastMode } from "@nova/normalization-core/string-coerce";
 import type { BlockReplyChunking } from "../../agents/embedded-agent-block-chunker.js";
 import type { ChannelId } from "../../channels/plugins/types.public.js";
 import type { SessionEntry, SessionScope } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { SkillCommandSpec } from "../../skills/types.js";
 import type { MsgContext } from "../templating.js";
 import type {
@@ -44,7 +44,7 @@ export type CommandContext = {
 export type HandleCommandsParams = {
   ctx: MsgContext;
   rootCtx?: MsgContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   command: CommandContext;
   agentId?: string;
   agentDir?: string;

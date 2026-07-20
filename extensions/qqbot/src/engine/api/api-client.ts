@@ -9,12 +9,9 @@
  * - `redactBodyKeys` replaces the hardcoded `file_data` redaction.
  */
 
-import {
-  readProviderTextResponse,
-  readResponseTextLimited,
-} from "openclaw/plugin-sdk/provider-http";
-import { fetchWithSsrFGuard, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { readProviderTextResponse, readResponseTextLimited } from "nova/plugin-sdk/provider-http";
+import { fetchWithSsrFGuard, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { ApiError, type ApiClientConfig, type EngineLogger } from "../types.js";
 import { formatErrorMessage } from "../utils/format.js";
 

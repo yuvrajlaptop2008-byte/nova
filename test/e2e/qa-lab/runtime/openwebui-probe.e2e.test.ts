@@ -353,7 +353,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
 
       expect(result.error).toBeUndefined();
       expect(result.status).not.toBe(0);
-      expect(result.stderr).toContain("openclaw model missing from Open WebUI model list");
+      expect(result.stderr).toContain("nova model missing from Open WebUI model list");
     } finally {
       server.close();
     }
@@ -375,7 +375,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
         expect(request.headers.authorization).toBe("Bearer test-token");
         expect(request.headers.cookie).toContain("openwebui-session=test");
         response.writeHead(200, { "content-type": "application/json" });
-        response.end(JSON.stringify({ data: [{ id: "openclaw/default" }] }));
+        response.end(JSON.stringify({ data: [{ id: "nova/default" }] }));
         return;
       }
       response.writeHead(404).end();
@@ -390,7 +390,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
       expect(result.status).toBe(0);
       expect(JSON.parse(result.stdout)).toMatchObject({
         mode: "models",
-        model: "openclaw/default",
+        model: "nova/default",
         ok: true,
       });
     } finally {
@@ -411,7 +411,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
       }
       if (request.url === "/api/models") {
         response.writeHead(200, { "content-type": "application/json" });
-        response.end(JSON.stringify({ data: [{ id: "openclaw/default" }] }));
+        response.end(JSON.stringify({ data: [{ id: "nova/default" }] }));
         return;
       }
       if (request.url === "/api/chat/completions") {
@@ -434,14 +434,14 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
 
       expect(result.status).toBe(0);
       expect(JSON.parse(result.stdout)).toMatchObject({
-        model: "openclaw/default",
+        model: "nova/default",
         ok: true,
         reply: "Nova replied with nonce-123",
       });
       expect(chatRequests).toEqual([
         {
           messages: [{ content: "reply with nonce-123", role: "user" }],
-          model: "openclaw/default",
+          model: "nova/default",
         },
       ]);
     } finally {
@@ -461,7 +461,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
       }
       if (request.url === "/api/models") {
         response.writeHead(200, { "content-type": "application/json" });
-        response.end(JSON.stringify({ data: [{ id: "openclaw/default" }] }));
+        response.end(JSON.stringify({ data: [{ id: "nova/default" }] }));
         return;
       }
       if (request.url === "/api/chat/completions") {

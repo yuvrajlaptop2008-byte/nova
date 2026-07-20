@@ -45,7 +45,7 @@ import {
 import { resolveProviderIdForAuth } from "../../agents/provider-auth-aliases.js";
 import { resolveDefaultAgentWorkspaceDir } from "../../agents/workspace.js";
 import { getRuntimeConfigSourceSnapshot } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { loadPluginRegistrySnapshotWithMetadata } from "../../plugins/plugin-registry.js";
 import { resolveManifestProviderAuthChoices } from "../../plugins/provider-auth-choices.js";
 import type { GatewayAgentRuntime } from "../../shared/session-types.js";
@@ -95,7 +95,7 @@ function buildPublicModelProjection(entry: ModelCatalogEntry): ModelsListEntry {
 }
 
 function resolveModelChoiceAgentRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   entry: ModelCatalogEntry;
 }): GatewayAgentRuntime | undefined {
@@ -117,7 +117,7 @@ function resolveModelChoiceAgentRuntime(params: {
 }
 
 function listEnabledSyntheticAuthProviderRefs(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir: string;
 }): readonly string[] {
   const result = loadPluginRegistrySnapshotWithMetadata({
@@ -134,7 +134,7 @@ function listEnabledSyntheticAuthProviderRefs(params: {
 }
 
 function createModelsListAuthResolver(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   includeOpenAIExternalProfiles: boolean;
   workspaceDir: string;
@@ -163,7 +163,7 @@ function resolveLegacyEntryAvailability(params: {
   authResolver: ModelAuthAvailabilityResolver;
   entry: ModelCatalogEntry;
   primaryAvailability: ModelsListAvailability;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
 }): ModelsListAvailability {
   if (params.primaryAvailability === true) {
@@ -192,7 +192,7 @@ function resolveLegacyEntryAvailability(params: {
 }
 
 function createModelsListEntryEvaluator(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   authResolver: ModelAuthAvailabilityResolver;
   preferredProfileId?: string;
@@ -272,7 +272,7 @@ function resolveProviderConfigInventoryEntries(params: {
 
 /** Builds one per-agent, snapshot-scoped route projection for Gateway thinking metadata. */
 export function createGatewayAgentModelCatalogProjector(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   snapshot: ModelCatalogSnapshot;
   preferredProfileId?: string;
@@ -375,7 +375,7 @@ export function createGatewayAgentModelCatalogProjector(params: {
 
 async function buildPublicModelsListEntries(params: {
   catalog: ModelCatalogEntry[];
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   evaluateEntry(entry: ModelCatalogEntry): Promise<ModelsListEntryEvaluation>;
   includeInput?: boolean;
@@ -418,7 +418,7 @@ async function buildPublicModelsListEntries(params: {
 }
 
 function apiKeyProviderCapabilities(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir: string;
 }): ApiKeyProviderCapabilities {
   const capabilities = new Map<string, boolean>();

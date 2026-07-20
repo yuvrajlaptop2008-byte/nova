@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 
 vi.mock("../model-fallback.js", () => ({
   resolveModelCandidateChain: (params: { provider: string; model: string }) => [
@@ -19,7 +19,7 @@ vi.mock("./compact.queued.js", () => ({ compactEmbeddedAgentSession: vi.fn() }))
 vi.mock("../prepared-model-runtime.js", () => ({
   acquireAgentRunPreparedModelRuntime: vi.fn(
     async (input: {
-      config: OpenClawConfig;
+      config: NovaConfig;
       agentId?: string;
       agentDir: string;
       workspaceDir?: string;
@@ -48,7 +48,7 @@ const baseParams = {
   workspaceDir: "/tmp",
 };
 
-function configWithFallbacks(fallbacks: string[]): OpenClawConfig {
+function configWithFallbacks(fallbacks: string[]): NovaConfig {
   return {
     agents: {
       defaults: {
@@ -58,7 +58,7 @@ function configWithFallbacks(fallbacks: string[]): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 describe("compactEmbeddedAgentSessionDirect abortSignal threading", () => {

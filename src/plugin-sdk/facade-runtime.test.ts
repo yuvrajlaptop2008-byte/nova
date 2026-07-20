@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { clearRuntimeConfigSnapshot, setRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createPluginActivationSource, normalizePluginsConfig } from "../plugins/config-state.js";
 import {
   clearCurrentPluginMetadataSnapshot,
@@ -120,8 +120,8 @@ afterEach(() => {
 
 describe("plugin-sdk facade runtime", () => {
   it("honors trusted bundled plugin dir overrides", () => {
-    const overrideA = createBundledPluginDir("openclaw-facade-runtime-a-", "override-a");
-    const overrideB = createBundledPluginDir("openclaw-facade-runtime-b-", "override-b");
+    const overrideA = createBundledPluginDir("nova-facade-runtime-a-", "override-a");
+    const overrideB = createBundledPluginDir("nova-facade-runtime-b-", "override-b");
 
     useBundledPluginDirOverrideForTest(overrideA);
     const fromA = testing.resolveFacadeModuleLocation({
@@ -145,7 +145,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("falls back to package source surfaces when an override dir is partial", () => {
-    const overrideDir = createTrustedBundledFixtureRoot("openclaw-facade-runtime-empty-");
+    const overrideDir = createTrustedBundledFixtureRoot("nova-facade-runtime-empty-");
     useBundledPluginDirOverrideForTest(overrideDir);
 
     const resolved = testing.resolveFacadeModuleLocation({
@@ -175,7 +175,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("returns the same object identity on repeated calls (sentinel consistency)", () => {
-    const dir = createBundledPluginDir("openclaw-facade-identity-", "identity-check");
+    const dir = createBundledPluginDir("nova-facade-identity-", "identity-check");
     useBundledPluginDirOverrideForTest(dir);
     const location = {
       modulePath: path.join(dir, "demo", "api.js"),
@@ -200,7 +200,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("breaks circular facade re-entry during module evaluation", () => {
-    const dir = createBundledPluginDir("openclaw-facade-circular-", "circular-ok");
+    const dir = createBundledPluginDir("nova-facade-circular-", "circular-ok");
     const location = {
       modulePath: path.join(dir, "demo", "api.js"),
       boundaryRoot: dir,
@@ -228,7 +228,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("back-fills the sentinel before post-load facade tracking re-enters", () => {
-    const dir = createBundledPluginDir("openclaw-facade-post-load-", "post-load-ok");
+    const dir = createBundledPluginDir("nova-facade-post-load-", "post-load-ok");
     const location = {
       modulePath: path.join(dir, "demo", "api.js"),
       boundaryRoot: dir,
@@ -258,7 +258,7 @@ describe("plugin-sdk facade runtime", () => {
     expect(loader).toHaveBeenCalledTimes(1);
   });
   it("clears the cache on load failure so retries re-execute", () => {
-    const dir = createThrowingPluginDir("openclaw-facade-throw-");
+    const dir = createThrowingPluginDir("nova-facade-throw-");
     useBundledPluginDirOverrideForTest(dir);
 
     expect(() =>
@@ -314,7 +314,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("allows runtime-api facade loads when the bundled plugin is explicitly enabled", () => {
-    const dir = createTempDirSync("openclaw-facade-runtime-enabled-");
+    const dir = createTempDirSync("nova-facade-runtime-enabled-");
     fs.mkdirSync(path.join(dir, "discord"), { recursive: true });
     fs.writeFileSync(
       path.join(dir, "discord", "runtime-api.js"),
@@ -364,7 +364,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("rejects hardlinked artifacts under installed plugin roots", () => {
-    const installedDir = createTempDirSync("openclaw-facade-hardlink-");
+    const installedDir = createTempDirSync("nova-facade-hardlink-");
     const originalPath = path.join(installedDir, "original.js");
     fs.writeFileSync(originalPath, 'export const marker = "hardlinked";\n', "utf8");
     const artifactPath = path.join(installedDir, "runtime-api.js");
@@ -381,7 +381,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("keeps hardlinked artifacts loadable under core-shipped roots", () => {
-    const rootDir = createTrustedBundledFixtureRoot("openclaw-facade-hardlink-bundled-");
+    const rootDir = createTrustedBundledFixtureRoot("nova-facade-hardlink-bundled-");
     const pluginDir = path.join(rootDir, "demo");
     fs.mkdirSync(pluginDir, { recursive: true });
     const originalPath = path.join(pluginDir, "original.js");
@@ -399,7 +399,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("resolves a globally-installed plugin whose rootDir basename matches the dirName", () => {
-    const lineDir = createTempDirSync("openclaw-facade-global-line-");
+    const lineDir = createTempDirSync("nova-facade-global-line-");
     fs.mkdirSync(lineDir, { recursive: true });
     fs.writeFileSync(
       path.join(lineDir, "runtime-api.js"),
@@ -411,7 +411,7 @@ describe("plugin-sdk facade runtime", () => {
       JSON.stringify({
         name: "@nova/line",
         version: "0.0.0",
-        openclaw: {
+        nova: {
           extensions: ["./runtime-api.js"],
           channel: { id: "line" },
         },
@@ -419,7 +419,7 @@ describe("plugin-sdk facade runtime", () => {
       "utf8",
     );
     fs.writeFileSync(
-      path.join(lineDir, "openclaw.plugin.json"),
+      path.join(lineDir, "nova.plugin.json"),
       JSON.stringify({
         id: "line",
         channels: ["line"],
@@ -447,7 +447,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("resolves a globally-installed plugin public surface from package dist", () => {
-    const lineDir = createTempDirSync("openclaw-facade-global-line-dist-");
+    const lineDir = createTempDirSync("nova-facade-global-line-dist-");
     fs.mkdirSync(path.join(lineDir, "dist"), { recursive: true });
     fs.writeFileSync(
       path.join(lineDir, "dist", "runtime-api.js"),
@@ -460,7 +460,7 @@ describe("plugin-sdk facade runtime", () => {
         name: "@nova/line",
         version: "0.0.0",
         type: "module",
-        openclaw: {
+        nova: {
           extensions: ["./index.ts"],
           runtimeExtensions: ["./dist/index.js"],
           channel: { id: "line" },
@@ -469,7 +469,7 @@ describe("plugin-sdk facade runtime", () => {
       "utf8",
     );
     fs.writeFileSync(
-      path.join(lineDir, "openclaw.plugin.json"),
+      path.join(lineDir, "nova.plugin.json"),
       JSON.stringify({
         id: "line",
         channels: ["line"],
@@ -497,7 +497,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("resolves a globally-installed plugin with an encoded scoped rootDir basename", () => {
-    const encodedDir = createTempDirSync("openclaw-facade-encoded-line-");
+    const encodedDir = createTempDirSync("nova-facade-encoded-line-");
     fs.mkdirSync(encodedDir, { recursive: true });
     fs.writeFileSync(
       path.join(encodedDir, "runtime-api.js"),
@@ -509,7 +509,7 @@ describe("plugin-sdk facade runtime", () => {
       JSON.stringify({
         name: "@nova/line",
         version: "0.0.0",
-        openclaw: {
+        nova: {
           extensions: ["./runtime-api.js"],
           channel: { id: "line" },
         },
@@ -517,7 +517,7 @@ describe("plugin-sdk facade runtime", () => {
       "utf8",
     );
     fs.writeFileSync(
-      path.join(encodedDir, "openclaw.plugin.json"),
+      path.join(encodedDir, "nova.plugin.json"),
       JSON.stringify({
         id: "line",
         channels: ["line"],
@@ -581,7 +581,7 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("prefers the source runtime snapshot for facade activation checks", () => {
-    const dir = createTempDirSync("openclaw-facade-source-snapshot-");
+    const dir = createTempDirSync("nova-facade-source-snapshot-");
     fs.mkdirSync(path.join(dir, "demo"), { recursive: true });
     fs.writeFileSync(
       path.join(dir, "demo", "runtime-api.js"),
@@ -589,7 +589,7 @@ describe("plugin-sdk facade runtime", () => {
       "utf8",
     );
     fs.writeFileSync(
-      path.join(dir, "demo", "openclaw.plugin.json"),
+      path.join(dir, "demo", "nova.plugin.json"),
       JSON.stringify({
         id: "demo",
       }),
@@ -629,19 +629,19 @@ describe("plugin-sdk facade runtime", () => {
   });
 
   it("validates current snapshot against facade boundary config and ignores on mismatch", () => {
-    const dir = createTempDirSync("openclaw-facade-snapshot-validate-");
+    const dir = createTempDirSync("nova-facade-snapshot-validate-");
     fs.mkdirSync(path.join(dir, "demo"), { recursive: true });
     fs.writeFileSync(
       path.join(dir, "demo", "runtime-api.js"),
       'export const marker = "snapshot-validate";\n',
       "utf8",
     );
-    // Do NOT write openclaw.plugin.json on disk to force fallback to registry scan
+    // Do NOT write nova.plugin.json on disk to force fallback to registry scan
     useBundledPluginDirOverrideForTest(dir);
 
     function createTestSnapshot(
       params: {
-        config?: OpenClawConfig;
+        config?: NovaConfig;
         plugins?: SnapshotPluginRecord[];
       } = {},
     ): PluginMetadataSnapshot {
@@ -694,7 +694,7 @@ describe("plugin-sdk facade runtime", () => {
           demo: { enabled: true },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const matchedSnapshot = createTestSnapshot({
       config: configWithPaths,
       plugins: [
@@ -702,7 +702,7 @@ describe("plugin-sdk facade runtime", () => {
           id: "demo-snapshot",
           rootDir: path.join(dir, "demo"),
           source: path.join(dir, "demo", "runtime-api.js"),
-          manifestPath: path.join(dir, "demo", "openclaw.plugin.json"),
+          manifestPath: path.join(dir, "demo", "nova.plugin.json"),
           channels: ["demo"],
           providers: [],
           cliBackends: [],

@@ -2,13 +2,10 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type {
-  OpenClawPluginCommandDefinition,
-  PluginCommandContext,
-} from "openclaw/plugin-sdk/core";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import type { NovaPluginCommandDefinition, PluginCommandContext } from "nova/plugin-sdk/core";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawPluginApi } from "./api.js";
+import type { NovaPluginApi } from "./api.js";
 
 const pluginApiMocks = vi.hoisted(() => ({
   clearDeviceBootstrapTokens: vi.fn(async () => ({ removed: 2 })),
@@ -20,7 +17,7 @@ const pluginApiMocks = vi.hoisted(() => ({
   renderQrPngDataUrl: vi.fn(async () => "data:image/png;base64,ZmFrZXBuZw=="),
   resolveGatewayPort: vi.fn(() => 18789),
   resolveTailscaleServeGatewayUrlsWithRunner: vi.fn(async () => []),
-  resolvePreferredOpenClawTmpDir: vi.fn(() => path.join(os.tmpdir(), "openclaw-device-pair-tests")),
+  resolvePreferredNovaTmpDir: vi.fn(() => path.join(os.tmpdir(), "nova-device-pair-tests")),
   writeQrPngTempFile: vi.fn(async (dataValue: string, opts: { tmpRoot: string }) => {
     const dirPath = await fs.mkdtemp(path.join(opts.tmpRoot, "device-pair-qr-"));
     const filePath = path.join(dirPath, "pair-qr.png");
@@ -42,7 +39,7 @@ vi.mock("./api.js", () => {
     listDevicePairing: vi.fn(async () => ({ pending: [] })),
     renderQrPngDataUrl: pluginApiMocks.renderQrPngDataUrl,
     revokeDeviceBootstrapToken: pluginApiMocks.revokeDeviceBootstrapToken,
-    resolvePreferredOpenClawTmpDir: pluginApiMocks.resolvePreferredOpenClawTmpDir,
+    resolvePreferredNovaTmpDir: pluginApiMocks.resolvePreferredNovaTmpDir,
     resolveAdvertisedLanHost: vi.fn(async () => null),
     resolveGatewayBindUrl: vi.fn(),
     resolveGatewayPort: pluginApiMocks.resolveGatewayPort,
@@ -98,11 +95,11 @@ const INTERNAL_PAIRING_SCOPES = ["operator.write", "operator.pairing"];
 const INTERNAL_SETUP_SCOPES = [...INTERNAL_PAIRING_SCOPES, "operator.talk.secrets"];
 
 function createApi(params?: {
-  config?: OpenClawPluginApi["config"];
-  runtime?: OpenClawPluginApi["runtime"];
+  config?: NovaPluginApi["config"];
+  runtime?: NovaPluginApi["runtime"];
   pluginConfig?: Record<string, unknown>;
-  registerCommand?: (command: OpenClawPluginCommandDefinition) => void;
-}): OpenClawPluginApi {
+  registerCommand?: (command: NovaPluginCommandDefinition) => void;
+}): NovaPluginApi {
   return createTestPluginApi({
     id: "device-pair",
     name: "device-pair",
@@ -119,17 +116,17 @@ function createApi(params?: {
       publicUrl: "wss://gateway.example.test",
       ...params?.pluginConfig,
     },
-    runtime: (params?.runtime ?? {}) as OpenClawPluginApi["runtime"],
+    runtime: (params?.runtime ?? {}) as NovaPluginApi["runtime"],
     registerCommand: params?.registerCommand,
   });
 }
 
 function registerPairCommand(params?: {
-  config?: OpenClawPluginApi["config"];
-  runtime?: OpenClawPluginApi["runtime"];
+  config?: NovaPluginApi["config"];
+  runtime?: NovaPluginApi["runtime"];
   pluginConfig?: Record<string, unknown>;
-}): OpenClawPluginCommandDefinition {
-  let command: OpenClawPluginCommandDefinition | undefined;
+}): NovaPluginCommandDefinition {
+  let command: NovaPluginCommandDefinition | undefined;
   registerDevicePair.register(
     createApi({
       ...params,
@@ -162,7 +159,7 @@ function createChannelRuntime(
   runtimeKey: string,
   sendKey: string,
   sendMessage: (...args: unknown[]) => Promise<unknown>,
-): OpenClawPluginApi["runtime"] {
+): NovaPluginApi["runtime"] {
   return {
     channel: {
       outbound: {
@@ -177,7 +174,7 @@ function createChannelRuntime(
             : undefined,
       },
     },
-  } as unknown as OpenClawPluginApi["runtime"];
+  } as unknown as NovaPluginApi["runtime"];
 }
 
 function createCommandContext(params?: Partial<PluginCommandContext>): PluginCommandContext {
@@ -280,11 +277,11 @@ describe("device-pair /pair qr", () => {
       token: "boot-token",
       expiresAtMs: Date.now() + 10 * 60_000,
     });
-    await fs.mkdir(pluginApiMocks.resolvePreferredOpenClawTmpDir(), { recursive: true });
+    await fs.mkdir(pluginApiMocks.resolvePreferredNovaTmpDir(), { recursive: true });
   });
 
   afterEach(async () => {
-    await fs.rm(pluginApiMocks.resolvePreferredOpenClawTmpDir(), { recursive: true, force: true });
+    await fs.rm(pluginApiMocks.resolvePreferredNovaTmpDir(), { recursive: true, force: true });
   });
 
   it("returns an inline QR image for webchat surfaces", async () => {
@@ -320,7 +317,7 @@ describe("device-pair /pair qr", () => {
     });
     expect(text).toContain("Scan this QR code with the Nova iOS app:");
     expect(payload.mediaUrl).toBeUndefined();
-    expect(payload.channelData?.openclawPairingQr).toEqual({
+    expect(payload.channelData?.novaPairingQr).toEqual({
       setupCode: expect.any(String),
       expiresAtMs: expect.any(Number),
     });
@@ -615,7 +612,7 @@ describe("device-pair /pair qr", () => {
       const command = registerPairCommand({
         runtime: {
           channel: { outbound: { loadAdapter } },
-        } as unknown as OpenClawPluginApi["runtime"],
+        } as unknown as NovaPluginApi["runtime"],
       });
       const result = await command.handler(
         createCommandContext({
@@ -974,7 +971,7 @@ describe("device-pair /pair default setup code", () => {
   it("allows mdns cleartext setup urls", async () => {
     const command = registerPairCommand({
       pluginConfig: {
-        publicUrl: "ws://openclaw.local:18789",
+        publicUrl: "ws://nova.local:18789",
       },
     });
     const result = await command.handler(
@@ -987,7 +984,7 @@ describe("device-pair /pair default setup code", () => {
     );
 
     expect(pluginApiMocks.issueDeviceBootstrapToken).toHaveBeenCalledTimes(1);
-    expect(requireText(result)).toContain("Gateway: ws://openclaw.local:18789");
+    expect(requireText(result)).toContain("Gateway: ws://nova.local:18789");
   });
 
   it("uses the advertised LAN helper for bind-derived setup urls", async () => {

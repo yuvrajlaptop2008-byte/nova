@@ -1,9 +1,9 @@
 // Defines plugin middleware contracts for agent tool results.
 import type { AgentToolResult } from "../agents/runtime/index.js";
 
-export type OpenClawAgentToolResult<TResult = unknown> = AgentToolResult<TResult>;
+export type NovaAgentToolResult<TResult = unknown> = AgentToolResult<TResult>;
 
-export type AgentToolResultMiddlewareRuntime = "openclaw" | "codex";
+export type AgentToolResultMiddlewareRuntime = "nova" | "codex";
 
 export type AgentToolResultMiddlewareEvent = {
   threadId?: string;
@@ -13,7 +13,7 @@ export type AgentToolResultMiddlewareEvent = {
   args: Record<string, unknown>;
   cwd?: string;
   isError?: boolean;
-  result: OpenClawAgentToolResult;
+  result: NovaAgentToolResult;
 };
 
 export type AgentToolResultMiddlewareContext = {
@@ -25,7 +25,7 @@ export type AgentToolResultMiddlewareContext = {
 };
 
 export type AgentToolResultMiddlewareResult = {
-  result: OpenClawAgentToolResult;
+  result: NovaAgentToolResult;
 };
 
 export type AgentToolResultMiddleware = (

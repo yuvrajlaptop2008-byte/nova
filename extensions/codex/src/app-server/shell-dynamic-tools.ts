@@ -1,9 +1,9 @@
 import type { CodexPluginConfig } from "./config.js";
 import { normalizeCodexDynamicToolName } from "./dynamic-tool-profile.js";
 
-type OpenClawCodingToolsFactory =
-  (typeof import("openclaw/plugin-sdk/agent-harness"))["createOpenClawCodingTools"];
-type OpenClawDynamicTool = ReturnType<OpenClawCodingToolsFactory>[number];
+type NovaCodingToolsFactory =
+  (typeof import("nova/plugin-sdk/agent-harness"))["createNovaCodingTools"];
+type NovaDynamicTool = ReturnType<NovaCodingToolsFactory>[number];
 
 export const CODEX_NODE_EXEC_DYNAMIC_TOOL_NAME = "node_exec";
 export const CODEX_NODE_PROCESS_DYNAMIC_TOOL_NAME = "node_process";
@@ -21,9 +21,9 @@ export function isCodexDynamicToolExcluded(
 }
 
 export function createNodeExecDynamicTool(
-  execTool: OpenClawDynamicTool,
+  execTool: NovaDynamicTool,
   configuredNode: string | undefined,
-): OpenClawDynamicTool {
+): NovaDynamicTool {
   const pinnedNode = configuredNode?.trim();
   return {
     ...execTool,
@@ -58,9 +58,7 @@ export function createNodeExecDynamicTool(
   };
 }
 
-export function createNodeProcessDynamicTool(
-  processTool: OpenClawDynamicTool,
-): OpenClawDynamicTool {
+export function createNodeProcessDynamicTool(processTool: NovaDynamicTool): NovaDynamicTool {
   return {
     ...processTool,
     name: CODEX_NODE_PROCESS_DYNAMIC_TOOL_NAME,
@@ -84,7 +82,7 @@ function pinNodeExecDynamicToolArgs(args: unknown, configuredNode: string | unde
 }
 
 function hideNodeExecDynamicToolParameters(
-  parameters: OpenClawDynamicTool["parameters"],
+  parameters: NovaDynamicTool["parameters"],
   options: { hideNode: boolean },
 ) {
   if (!parameters || typeof parameters !== "object" || Array.isArray(parameters)) {

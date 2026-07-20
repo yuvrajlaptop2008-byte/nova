@@ -3,10 +3,7 @@
  */
 import fs from "node:fs/promises";
 import path from "node:path";
-import {
-  findExistingAncestor,
-  pathScope as sdkPathScope,
-} from "openclaw/plugin-sdk/security-runtime";
+import { findExistingAncestor, pathScope as sdkPathScope } from "nova/plugin-sdk/security-runtime";
 
 export {
   ensurePortAvailable,
@@ -23,8 +20,8 @@ export {
   SsrFBlockedError,
   writeExternalFileWithinRoot,
   wrapExternalContent,
-} from "openclaw/plugin-sdk/security-runtime";
-export type { LookupFn, SsrFPolicy } from "openclaw/plugin-sdk/security-runtime";
+} from "nova/plugin-sdk/security-runtime";
+export type { LookupFn, SsrFPolicy } from "nova/plugin-sdk/security-runtime";
 export { sdkPathScope as pathScope };
 
 /** Ensures an absolute directory exists without escaping its nearest existing ancestor. */

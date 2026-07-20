@@ -1,6 +1,6 @@
 import { formatCliCommand } from "../cli/command-format.js";
 import { formatConfigIssueLines } from "../config/issue-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { withConsoleSubsystemsSuppressed } from "../logging/console.js";
 import type { RuntimeEnv } from "../runtime.js";
 // Guided onboarding: detect AI access, live-test it, then persist only a working route.
@@ -43,7 +43,7 @@ export type GuidedOnboardingDeps = {
     acceptRisk: boolean,
   ) => Promise<void>;
   createPrompter?: () => WizardPrompter | Promise<WizardPrompter>;
-  persistRiskAcknowledgement?: (config: OpenClawConfig) => Promise<void>;
+  persistRiskAcknowledgement?: (config: NovaConfig) => Promise<void>;
   persistAccessMode?: (mode: GuidedAccessMode) => Promise<void>;
   listManualOptions?: typeof import("../system-agent/setup-inference.js").listManualSetupInferenceOptions;
   /**
@@ -90,7 +90,7 @@ async function openSystemAgentChat(
   await runChat(workspace, runtime, acceptRisk);
 }
 
-async function persistRiskAcknowledgement(config: OpenClawConfig): Promise<void> {
+async function persistRiskAcknowledgement(config: NovaConfig): Promise<void> {
   const securityAcknowledgedAt = config.wizard?.securityAcknowledgedAt;
   if (!securityAcknowledgedAt) {
     return;
@@ -134,8 +134,8 @@ async function runGuidedOnboardingFlow(
     );
     await prompter.outro(
       t("wizard.guided.invalidConfigRepair", {
-        fixCommand: formatCliCommand("openclaw doctor --fix"),
-        inspectCommand: formatCliCommand("openclaw config validate"),
+        fixCommand: formatCliCommand("nova doctor --fix"),
+        inspectCommand: formatCliCommand("nova config validate"),
       }),
     );
     runtime.exit(1);

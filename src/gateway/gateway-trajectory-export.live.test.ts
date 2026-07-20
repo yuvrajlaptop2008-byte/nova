@@ -5,7 +5,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { EventFrame } from "../../packages/gateway-protocol/src/index.js";
 import { isLiveTestEnabled } from "../agents/live-test-helpers.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { setTestEnvValue } from "../test-utils/env.js";
 import { loadSqliteTrajectoryRuntimeEvents } from "../trajectory/runtime-store.sqlite.js";
 import { GatewayClient } from "./client.js";
@@ -100,7 +100,7 @@ async function writeLiveGatewayConfig(params: {
   token: string;
   workspace: string;
 }): Promise<void> {
-  const cfg: OpenClawConfig = {
+  const cfg: NovaConfig = {
     gateway: {
       mode: "local",
       port: params.port,
@@ -458,7 +458,7 @@ describeLive("gateway live trajectory export", () => {
       const { startGatewayServer } = await import("./server.js");
 
       const previousEnv = snapshotEnv();
-      const tempDir = await fs.mkdtemp(path.join(process.cwd(), ".tmp-openclaw-trajectory-live-"));
+      const tempDir = await fs.mkdtemp(path.join(process.cwd(), ".tmp-nova-trajectory-live-"));
       cleanup.push(async () => {
         restoreEnv(previousEnv);
         clearRuntimeConfigSnapshot();
@@ -468,7 +468,7 @@ describeLive("gateway live trajectory export", () => {
       const stateDir = path.join(tempDir, "state");
       const trajectoryDir = path.join(tempDir, "runtime-traces");
       const { workspaceDir } = await createBootstrapWorkspace(tempDir);
-      const configPath = path.join(tempDir, "openclaw.json");
+      const configPath = path.join(tempDir, "nova.json");
       const token = `test-${randomUUID()}`;
       const port = await getFreeGatewayPort();
       const modelKey = process.env.NOVA_LIVE_CODEX_HARNESS_MODEL ?? DEFAULT_CODEX_MODEL;
@@ -549,7 +549,7 @@ describeLive("gateway live trajectory export", () => {
       });
       expect(runtimeEvents.length).toBeGreaterThan(0);
 
-      const bundleDir = path.join(workspaceDir, ".openclaw", "trajectory-exports", "bundle");
+      const bundleDir = path.join(workspaceDir, ".nova", "trajectory-exports", "bundle");
       const beforeExport = new Set(await listDirectoryNames(tempDir));
       const exportRunId = `chat-export-${randomUUID()}`;
       const exportEventStartIndex = gatewayEvents.length;

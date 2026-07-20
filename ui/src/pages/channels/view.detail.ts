@@ -173,7 +173,7 @@ export function renderChannelDetail(params: {
 }): TemplateResult {
   const body = renderChannelBody(params.channelId, params.props, params.data);
   return html`
-    <openclaw-modal-dialog label=${params.label} @modal-cancel=${() => params.onClose()}>
+    <nova-modal-dialog label=${params.label} @modal-cancel=${() => params.onClose()}>
       <div class="channels-detail">
         <div class="channels-detail__header">
           ${renderChannelArt(params.channelId, params.label, "cover")}
@@ -198,6 +198,6 @@ export function renderChannelDetail(params: {
           ${body}
         </div>
       </div>
-    </openclaw-modal-dialog>
+    </nova-modal-dialog>
   `;
 }

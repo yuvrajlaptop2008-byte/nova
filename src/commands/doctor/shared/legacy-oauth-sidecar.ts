@@ -109,7 +109,7 @@ function buildLegacyOAuthSecretAad(params: {
 function buildLegacyOAuthSecretKey(seed: string): Buffer {
   // Legacy #79006 compatibility: existing sidecars were encrypted with this
   // SHA-256 key derivation, so changing it would strand affected users.
-  return hash("sha256", `openclaw:auth-profile-oauth:${seed}`, "buffer");
+  return hash("sha256", `nova:auth-profile-oauth:${seed}`, "buffer");
 }
 
 function encryptLegacyOAuthMaterialForTest(params: {
@@ -162,7 +162,7 @@ function resolveLegacyOAuthSecretKeyFileCandidates(env: NodeJS.ProcessEnv): stri
     return uniquePaths([
       root ? path.join(root, "Nova", LEGACY_OAUTH_SECRET_KEY_FILE_NAME) : undefined,
       home
-        ? path.join(home, ".openclaw-auth-profile-secrets", LEGACY_OAUTH_SECRET_KEY_FILE_NAME)
+        ? path.join(home, ".nova-auth-profile-secrets", LEGACY_OAUTH_SECRET_KEY_FILE_NAME)
         : undefined,
     ]);
   }
@@ -180,7 +180,7 @@ function resolveLegacyOAuthSecretKeyFileCandidates(env: NodeJS.ProcessEnv): stri
           )
         : undefined,
       home
-        ? path.join(home, ".openclaw-auth-profile-secrets", LEGACY_OAUTH_SECRET_KEY_FILE_NAME)
+        ? path.join(home, ".nova-auth-profile-secrets", LEGACY_OAUTH_SECRET_KEY_FILE_NAME)
         : undefined,
     ]);
   }
@@ -188,9 +188,9 @@ function resolveLegacyOAuthSecretKeyFileCandidates(env: NodeJS.ProcessEnv): stri
   const home = env.HOME?.trim() || os.homedir();
   const root = env.XDG_CONFIG_HOME?.trim() || (home ? path.join(home, ".config") : undefined);
   return uniquePaths([
-    root ? path.join(root, "openclaw", LEGACY_OAUTH_SECRET_KEY_FILE_NAME) : undefined,
+    root ? path.join(root, "nova", LEGACY_OAUTH_SECRET_KEY_FILE_NAME) : undefined,
     home
-      ? path.join(home, ".openclaw-auth-profile-secrets", LEGACY_OAUTH_SECRET_KEY_FILE_NAME)
+      ? path.join(home, ".nova-auth-profile-secrets", LEGACY_OAUTH_SECRET_KEY_FILE_NAME)
       : undefined,
   ]);
 }
@@ -261,7 +261,7 @@ function resolveLegacyOAuthSecretKeySeeds(env: NodeJS.ProcessEnv): string[] {
   };
   addSeed(env[LEGACY_OAUTH_SECRET_KEY_ENV]);
   if (env.NODE_ENV === "test" && env.VITEST === "true") {
-    addSeed("openclaw-test-oauth-profile-secret-key");
+    addSeed("nova-test-oauth-profile-secret-key");
   }
   addSeed(readLegacyOAuthSecretKeyFile(env));
   return seeds;
@@ -342,7 +342,7 @@ function emitKeychainOnlyMigrationHintOnce(profileId: string): void {
   keychainOnlyMigrationHintEmitted = true;
   log.warn(
     "Legacy Codex OAuth credentials are stored only in macOS Keychain on this host. " +
-      "Headless paths cannot prompt for Keychain access; run `openclaw doctor --fix` " +
+      "Headless paths cannot prompt for Keychain access; run `nova doctor --fix` " +
       "from an interactive terminal to migrate them back to inline auth-profiles.json credentials.",
     { profileId },
   );
@@ -356,7 +356,7 @@ const legacyOAuthSidecarInternalTestUtils = {
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
   (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.legacyOAuthSidecarInternalTestApi")
+    Symbol.for("nova.legacyOAuthSidecarInternalTestApi")
   ] = legacyOAuthSidecarInternalTestUtils;
 }
 

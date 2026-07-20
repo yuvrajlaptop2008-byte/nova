@@ -1,21 +1,21 @@
 import {
   buildChannelInboundEventContext,
   resolveChannelInboundRouteEnvelope,
-} from "openclaw/plugin-sdk/channel-inbound";
+} from "nova/plugin-sdk/channel-inbound";
 // Qa Channel plugin module implements inbound behavior.
-import { resolveStableChannelMessageIngress } from "openclaw/plugin-sdk/channel-ingress-runtime";
-import { resolveNativeCommandSessionTargets } from "openclaw/plugin-sdk/command-auth-native";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { resolveStableChannelMessageIngress } from "nova/plugin-sdk/channel-ingress-runtime";
+import { resolveNativeCommandSessionTargets } from "nova/plugin-sdk/command-auth-native";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   buildAgentMediaPayload,
   saveMediaBuffer,
   saveMediaSource,
-} from "openclaw/plugin-sdk/media-runtime";
+} from "nova/plugin-sdk/media-runtime";
 import {
   sanitizeQaBusToolCallArguments,
   type QaBusToolCall,
-} from "openclaw/plugin-sdk/qa-channel-protocol";
+} from "nova/plugin-sdk/qa-channel-protocol";
 import {
   buildQaTarget,
   deleteQaBusMessage,
@@ -223,7 +223,7 @@ export async function handleQaInbound(params: {
     toolCalls,
   });
   const { route, buildEnvelope } = resolveChannelInboundRouteEnvelope({
-    cfg: params.config as OpenClawConfig,
+    cfg: params.config as NovaConfig,
     channel: params.channelId,
     accountId: params.account.accountId,
     peer: {
@@ -240,10 +240,7 @@ export async function handleQaInbound(params: {
   const wasMentioned = isGroup
     ? runtime.channel.mentions.matchesMentionPatterns(
         inbound.text,
-        runtime.channel.mentions.buildMentionRegexes(
-          params.config as OpenClawConfig,
-          route.agentId,
-        ),
+        runtime.channel.mentions.buildMentionRegexes(params.config as NovaConfig, route.agentId),
       )
     : undefined;
   const groupConfig = isGroup
@@ -359,7 +356,7 @@ export async function handleQaInbound(params: {
   });
 
   await runtime.channel.inbound.dispatch({
-    cfg: params.config as OpenClawConfig,
+    cfg: params.config as NovaConfig,
     channel: params.channelId,
     accountId: params.account.accountId,
     route: { agentId: route.agentId, dmScope: route.dmScope, sessionKey: route.sessionKey },

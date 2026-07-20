@@ -22,9 +22,7 @@ describe("gateway tool", () => {
     };
 
     expect(parameters.properties?.action?.enum).toEqual(["config.get", "config.schema.lookup"]);
-    expect(tool.description).toBe(
-      "Read gateway config + schema. Writes/restart: use openclaw tool.",
-    );
+    expect(tool.description).toBe("Read gateway config + schema. Writes/restart: use nova tool.");
   });
 
   it.each(["restart", "config.apply", "config.patch", "update.run"])(

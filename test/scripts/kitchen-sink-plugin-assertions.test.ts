@@ -78,15 +78,15 @@ function runAssertInstalled({
   inspectPayload?: ReturnType<typeof fullSurfaceInspectPayload>;
 } = {}) {
   const label = `diagnostics-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  const pluginId = "openclaw-kitchen-sink-fixture";
-  const home = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-home-"));
-  const installPath = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-install-"));
+  const pluginId = "nova-kitchen-sink-fixture";
+  const home = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-home-"));
+  const installPath = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-install-"));
   const scratchRoot = tmpdir();
   const pluginsJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-plugins.json`);
   const inspectJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect.json`);
   const inspectAllJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect-all.json`);
   const installPathMarker = path.join(scratchRoot, `kitchen-sink-${label}-install-path.txt`);
-  const installsPath = path.join(home, ".openclaw", "plugins", "installs.json");
+  const installsPath = path.join(home, ".nova", "plugins", "installs.json");
   const spawnEnv = { ...process.env };
   delete spawnEnv.KITCHEN_SINK_REQUIRE_ALL_DIAGNOSTICS;
 
@@ -116,7 +116,7 @@ function runAssertInstalled({
         ...spawnEnv,
         ...env,
         HOME: home,
-        NOVA_STATE_DIR: path.join(home, ".openclaw"),
+        NOVA_STATE_DIR: path.join(home, ".nova"),
         KITCHEN_SINK_ID: pluginId,
         KITCHEN_SINK_LABEL: label,
         KITCHEN_SINK_SOURCE: "npm",
@@ -143,19 +143,19 @@ function runAssertClawhubInstalled({
   installPathRelative?: string;
 } = {}) {
   const label = `clawhub-context-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  const pluginId = "openclaw-kitchen-sink-fixture";
-  const home = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-home-"));
+  const pluginId = "nova-kitchen-sink-fixture";
+  const home = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-home-"));
   const installPath = installPathRelative
     ? `${home}${path.sep}${installPathRelative}`
-    : path.join(home, ".openclaw", "extensions", pluginId);
+    : path.join(home, ".nova", "extensions", pluginId);
   const scratchRoot = tmpdir();
   const pluginsJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-plugins.json`);
   const inspectJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect.json`);
   const inspectAllJsonPath = path.join(scratchRoot, `kitchen-sink-${label}-inspect-all.json`);
   const installPathMarker = path.join(scratchRoot, `kitchen-sink-${label}-install-path.txt`);
-  const installsPath = path.join(home, ".openclaw", "plugins", "installs.json");
+  const installsPath = path.join(home, ".nova", "plugins", "installs.json");
   try {
-    mkdirSync(path.join(home, ".openclaw", "extensions"), { recursive: true });
+    mkdirSync(path.join(home, ".nova", "extensions"), { recursive: true });
     mkdirSync(installPath, { recursive: true });
     const inspectPayload = fullSurfaceInspectPayload(pluginId);
     inspectPayload.plugin.contextEngineIds = contextEngineIds;
@@ -189,7 +189,7 @@ function runAssertClawhubInstalled({
       env: {
         ...process.env,
         HOME: home,
-        NOVA_STATE_DIR: path.join(home, ".openclaw"),
+        NOVA_STATE_DIR: path.join(home, ".nova"),
         KITCHEN_SINK_ID: pluginId,
         KITCHEN_SINK_LABEL: label,
         KITCHEN_SINK_SOURCE: "clawhub",
@@ -270,7 +270,7 @@ function toGitBashPath(value: string) {
 
 describe("kitchen-sink plugin assertions", () => {
   it("bounds expected-failure output before matching failure diagnostics", () => {
-    const scratchRoot = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-failure-cap-"));
+    const scratchRoot = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-failure-cap-"));
     const outputPath = path.join(scratchRoot, "expected-failure.log");
     try {
       writeFileSync(outputPath, "x".repeat(128));
@@ -326,7 +326,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("fails kitchen-sink inspect-all diagnostics for the installed plugin", () => {
-    const inspectPayload = fullSurfaceInspectPayload("openclaw-kitchen-sink-fixture");
+    const inspectPayload = fullSurfaceInspectPayload("nova-kitchen-sink-fixture");
     const result = runAssertInstalled({
       allInspectPayload: [
         {
@@ -342,7 +342,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("requires the full kitchen-sink tool surface in full mode", () => {
-    const inspectPayload = fullSurfaceInspectPayload("openclaw-kitchen-sink-fixture");
+    const inspectPayload = fullSurfaceInspectPayload("nova-kitchen-sink-fixture");
     inspectPayload.tools = [{ names: ["kitchen_sink_text"] }];
     const result = runAssertInstalled({
       diagnostics: diagnosticErrors(REQUIRED_FULL_DIAGNOSTIC_CANARIES),
@@ -362,7 +362,7 @@ describe("kitchen-sink plugin assertions", () => {
 
   it("accepts ClawHub kitchen-sink fixtures with a context engine", () => {
     const result = runAssertClawhubInstalled({
-      contextEngineIds: ["openclaw-kitchen-sink-fixture"],
+      contextEngineIds: ["nova-kitchen-sink-fixture"],
     });
 
     expect(result.status).toBe(0);
@@ -370,8 +370,8 @@ describe("kitchen-sink plugin assertions", () => {
 
   it("rejects ClawHub kitchen-sink install paths that resolve outside managed extensions", () => {
     const result = runAssertClawhubInstalled({
-      contextEngineIds: ["openclaw-kitchen-sink-fixture"],
-      installPathRelative: [".openclaw", "extensions", "..", "escaped-kitchen-sink"].join(path.sep),
+      contextEngineIds: ["nova-kitchen-sink-fixture"],
+      installPathRelative: [".nova", "extensions", "..", "escaped-kitchen-sink"].join(path.sep),
     });
 
     expect(result.status).not.toBe(0);
@@ -391,7 +391,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("scans only the configured kitchen-sink scratch root", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     const siblingRoot = path.join(parent, "sibling");
@@ -413,15 +413,15 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("bounds irrelevant Nova home traversal during log scans", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
-      mkdirSync(path.join(home, ".openclaw"), { recursive: true });
+      mkdirSync(path.join(home, ".nova"), { recursive: true });
       mkdirSync(scratchRoot, { recursive: true });
       writeFileSync(path.join(scratchRoot, "scenario.log"), "0 errors\n");
       for (let index = 0; index < 20; index += 1) {
-        const dir = path.join(home, ".openclaw", `cache-${index}`);
+        const dir = path.join(home, ".nova", `cache-${index}`);
         mkdirSync(dir, { recursive: true });
         writeFileSync(path.join(dir, "state.txt"), "not a log\n");
       }
@@ -449,7 +449,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("does not allow dirty error lines just because they mention zero errors", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
@@ -471,7 +471,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("rejects kitchen-sink log scans that find no files", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
@@ -490,7 +490,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("bounds repeated kitchen-sink log scan findings", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
@@ -512,7 +512,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("bounds huge single-line kitchen-sink log findings", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
@@ -535,7 +535,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("detects kitchen-sink log errors split across scan segment boundaries", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
@@ -556,7 +556,7 @@ describe("kitchen-sink plugin assertions", () => {
   });
 
   it("rejects kitchen-sink log scans without an isolated scratch root", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-scan-"));
     try {
       const spawnEnv: NodeJS.ProcessEnv = { ...process.env, HOME: parent };
       delete spawnEnv.KITCHEN_SINK_TMP_DIR;
@@ -575,14 +575,14 @@ describe("kitchen-sink plugin assertions", () => {
   it("allocates an isolated scratch root by default", () => {
     const sweep = readFileSync(SWEEP_SCRIPT, "utf8");
 
-    expect(sweep).toContain('mktemp -d "/tmp/openclaw-kitchen-sink.XXXXXX"');
+    expect(sweep).toContain('mktemp -d "/tmp/nova-kitchen-sink.XXXXXX"');
     expect(sweep).toContain('mktemp -d "${KITCHEN_SINK_TMP_DIR}/clawhub.XXXXXX"');
     expect(sweep).not.toContain('KITCHEN_SINK_TMP_DIR="${KITCHEN_SINK_TMP_DIR:-/tmp}"');
-    expect(sweep).not.toContain('mktemp -d "/tmp/openclaw-kitchen-sink-clawhub.XXXXXX"');
+    expect(sweep).not.toContain('mktemp -d "/tmp/nova-kitchen-sink-clawhub.XXXXXX"');
   });
 
   it("cleans the default kitchen-sink scratch root", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-cleanup-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-cleanup-"));
     const marker = path.join(parent, "scratch-path.txt");
     try {
       const result = runSweepShell(
@@ -602,7 +602,7 @@ test ! -e "$KITCHEN_SINK_TMP_DIR"
       expect(result.stderr).toBe("");
       expect(result.status).toBe(0);
       const scratchRoot = readFileSync(marker, "utf8").trim();
-      expect(scratchRoot).toContain("/tmp/openclaw-kitchen-sink.");
+      expect(scratchRoot).toContain("/tmp/nova-kitchen-sink.");
       expect(existsSync(scratchRoot)).toBe(false);
     } finally {
       rmSync(parent, { force: true, recursive: true });
@@ -610,7 +610,7 @@ test ! -e "$KITCHEN_SINK_TMP_DIR"
   });
 
   it("preserves successful kitchen-sink CLI command logs for the final scan", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-log-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-log-"));
     const scratchRoot = path.join(parent, "scratch");
     const entry = path.join(parent, "entry.mjs");
     try {
@@ -624,7 +624,7 @@ export KITCHEN_SINK_SWEEP_SOURCE_ONLY=1
 export KITCHEN_SINK_TMP_DIR="$SCRATCH_ROOT"
 export NOVA_ENTRY="$ENTRY"
 source scripts/e2e/lib/kitchen-sink-plugin/sweep.sh
-run_kitchen_sink_openclaw_logged "install/log" plugins install demo
+run_kitchen_sink_nova_logged "install/log" plugins install demo
 test -f "$SCRATCH_ROOT/install_log.log"
 grep -q "cli transcript: plugins install demo" "$SCRATCH_ROOT/install_log.log"
 `,
@@ -642,7 +642,7 @@ grep -q "cli transcript: plugins install demo" "$SCRATCH_ROOT/install_log.log"
   });
 
   it("bounds printed kitchen-sink CLI command logs without truncating saved logs", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-log-print-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-log-print-"));
     const scratchRoot = path.join(parent, "scratch");
     const entry = path.join(parent, "entry.mjs");
     try {
@@ -660,7 +660,7 @@ export KITCHEN_SINK_TMP_DIR="$SCRATCH_ROOT"
 export NOVA_ENTRY="$ENTRY"
 export NOVA_DOCKER_E2E_LOG_PRINT_BYTES=64
 source scripts/e2e/lib/kitchen-sink-plugin/sweep.sh
-run_kitchen_sink_openclaw_logged "install/noisy" plugins install demo
+run_kitchen_sink_nova_logged "install/noisy" plugins install demo
 grep -q "prefix" "$SCRATCH_ROOT/install_noisy.log"
 `,
         {
@@ -679,7 +679,7 @@ grep -q "prefix" "$SCRATCH_ROOT/install_noisy.log"
   });
 
   it("rejects invalid kitchen-sink log byte limits before CLI setup", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-log-invalid-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-log-invalid-"));
     const scratchRoot = path.join(parent, "scratch");
     const entry = path.join(parent, "entry.mjs");
     try {
@@ -694,7 +694,7 @@ export KITCHEN_SINK_TMP_DIR="$SCRATCH_ROOT"
 export NOVA_ENTRY="$ENTRY"
 export NOVA_DOCKER_E2E_LOG_PRINT_BYTES=64kb
 source scripts/e2e/lib/kitchen-sink-plugin/sweep.sh
-run_kitchen_sink_openclaw_logged "install/log" plugins install demo
+run_kitchen_sink_nova_logged "install/log" plugins install demo
 `,
         {
           ENTRY: entry,
@@ -711,7 +711,7 @@ run_kitchen_sink_openclaw_logged "install/log" plugins install demo
   });
 
   it("includes expected-failure transcripts in the final kitchen-sink log scan", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-failure-log-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-failure-log-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");
     try {
@@ -745,7 +745,7 @@ scan_logs_for_unexpected_errors
   });
 
   it("cleans a ClawHub fixture server that times out before readiness", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-clawhub-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-clawhub-"));
     const fakeBin = path.join(parent, "bin");
     const scratchRoot = path.join(parent, "scratch");
     const fixtureDir = path.join(scratchRoot, "clawhub-fixture");
@@ -801,7 +801,7 @@ test -d "$SCRATCH_ROOT"
   });
 
   it("rejects invalid ClawHub fixture wait attempts before starting the server", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-clawhub-attempts-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-clawhub-attempts-"));
     const fakeBin = path.join(parent, "bin");
     const scratchRoot = path.join(parent, "scratch");
     const fixtureDir = path.join(scratchRoot, "clawhub-fixture");
@@ -843,7 +843,7 @@ exit "$status"
   });
 
   it("bounds ClawHub fixture server logs on startup timeout", () => {
-    const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-clawhub-log-"));
+    const parent = mkdtempSync(path.join(tmpdir(), "nova-kitchen-sink-clawhub-log-"));
     const fakeBin = path.join(parent, "bin");
     const scratchRoot = path.join(parent, "scratch");
     const fixtureDir = path.join(scratchRoot, "clawhub-fixture");

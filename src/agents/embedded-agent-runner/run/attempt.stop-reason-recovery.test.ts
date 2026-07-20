@@ -1,10 +1,6 @@
 // Coverage for converting sensitive/unhandled stop reasons into assistant errors.
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import {
-  createAssistantMessageEventStream,
-  type Context,
-  type Model,
-} from "openclaw/plugin-sdk/llm";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import { createAssistantMessageEventStream, type Context, type Model } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import { wrapStreamFnHandleSensitiveStopReason } from "./attempt.stop-reason-recovery.js";
 

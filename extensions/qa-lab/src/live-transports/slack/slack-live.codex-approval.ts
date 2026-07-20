@@ -16,7 +16,7 @@ import {
 } from "./slack-live.contracts.js";
 
 export function resolveCodexFileApprovalTargetPath(token: string) {
-  return path.join(os.homedir(), `.openclaw-qa-codex-file-approval-${token.toLowerCase()}.txt`);
+  return path.join(os.homedir(), `.nova-qa-codex-file-approval-${token.toLowerCase()}.txt`);
 }
 
 function buildCodexApprovalInstruction(params: {
@@ -174,7 +174,7 @@ function findPendingCodexPluginApprovalRecord(params: {
     }
     const request = asPlainRecord(record.request);
     if (
-      request.pluginId === "openclaw-codex-app-server" &&
+      request.pluginId === "nova-codex-app-server" &&
       request.title === expectedTitle &&
       request.toolName === expectedToolName &&
       request.sessionKey === params.sessionKey &&

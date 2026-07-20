@@ -2,12 +2,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {
-  initializeGlobalHookRunner,
-  resetGlobalHookRunner,
-} from "openclaw/plugin-sdk/hook-runtime";
-import { createMockPluginRegistry } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { castAgentMessage } from "openclaw/plugin-sdk/test-fixtures";
+import { initializeGlobalHookRunner, resetGlobalHookRunner } from "nova/plugin-sdk/hook-runtime";
+import { createMockPluginRegistry } from "nova/plugin-sdk/plugin-test-runtime";
+import { castAgentMessage } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it } from "vitest";
 import { runAgentHarnessBeforeMessageWriteHook } from "../agents/harness/hook-helpers.js";
 import { loadTranscriptEvents } from "../config/sessions/session-accessor.js";
@@ -76,7 +73,7 @@ describe("persistUserTurnTranscript", () => {
   }
 
   it("appends a structured user turn through the shared transcript writer", async () => {
-    const dir = createTempDir("openclaw-user-turn-append-");
+    const dir = createTempDir("nova-user-turn-append-");
     const target = createSqliteTranscriptTarget({ dir });
     const provenance = {
       kind: "inter_session" as const,
@@ -106,15 +103,15 @@ describe("persistUserTurnTranscript", () => {
         role: "user",
         content: "What is in this image?",
         MediaPath: "/tmp/image.png",
-        __openclaw: { senderIsOwner: true },
+        __nova: { senderIsOwner: true },
         provenance,
         MediaType: "image/png",
       }),
     ]);
   });
 
-  it("persists sender metadata as __openclaw envelope", async () => {
-    const dir = createTempDir("openclaw-user-turn-append-sender-");
+  it("persists sender metadata as __nova envelope", async () => {
+    const dir = createTempDir("nova-user-turn-append-sender-");
     const target = createSqliteTranscriptTarget({ dir });
 
     const appended = await persistUserTurnTranscript({
@@ -133,7 +130,7 @@ describe("persistUserTurnTranscript", () => {
     expect(appended?.message).toMatchObject({
       role: "user",
       content: "hello from group",
-      __openclaw: {
+      __nova: {
         senderId: "8489979671",
         senderName: "Ram Shenoy",
         senderUsername: "ram_s",
@@ -143,7 +140,7 @@ describe("persistUserTurnTranscript", () => {
       expect.objectContaining({
         role: "user",
         content: "hello from group",
-        __openclaw: {
+        __nova: {
           senderId: "8489979671",
           senderName: "Ram Shenoy",
           senderUsername: "ram_s",
@@ -152,8 +149,8 @@ describe("persistUserTurnTranscript", () => {
     ]);
   });
 
-  it("omits __openclaw when no sender metadata is provided", async () => {
-    const dir = createTempDir("openclaw-user-turn-append-nosender-");
+  it("omits __nova when no sender metadata is provided", async () => {
+    const dir = createTempDir("nova-user-turn-append-nosender-");
     const target = createSqliteTranscriptTarget({ dir });
 
     const appended = await persistUserTurnTranscript({
@@ -165,11 +162,11 @@ describe("persistUserTurnTranscript", () => {
       updateMode: "none",
     });
 
-    expect(appended?.message).not.toHaveProperty("__openclaw");
+    expect(appended?.message).not.toHaveProperty("__nova");
   });
 
   it("uses inline update mode by default", async () => {
-    const dir = createTempDir("openclaw-user-turn-append-inline-");
+    const dir = createTempDir("nova-user-turn-append-inline-");
     const target = createSqliteTranscriptTarget({ dir });
 
     const appended = await persistUserTurnTranscript({
@@ -194,7 +191,7 @@ describe("persistUserTurnTranscript", () => {
   });
 
   it("returns the existing user turn when the idempotency key was already persisted", async () => {
-    const dir = createTempDir("openclaw-user-turn-append-idempotent-");
+    const dir = createTempDir("nova-user-turn-append-idempotent-");
     const target = createSqliteTranscriptTarget({ dir });
 
     const first = await persistUserTurnTranscript({
@@ -247,7 +244,7 @@ describe("persistUserTurnTranscript", () => {
           handler: (event) => {
             hookCalls += 1;
             const message = (event as { message: Record<string, unknown> }).message;
-            const meta = message["__openclaw"] as {
+            const meta = message["__nova"] as {
               transport?: { conversationRef?: string; messageId?: string };
             };
             if (meta.transport) {
@@ -258,14 +255,14 @@ describe("persistUserTurnTranscript", () => {
               message: castAgentMessage({
                 role: "user",
                 content: "[redacted by hook]",
-                __openclaw: { hookOwned: true },
+                __nova: { hookOwned: true },
               }),
             };
           },
         },
       ]),
     );
-    const dir = createTempDir("openclaw-user-turn-redacted-idempotent-");
+    const dir = createTempDir("nova-user-turn-redacted-idempotent-");
     const target = createSqliteTranscriptTarget({ dir });
 
     await persistUserTurnTranscript({
@@ -309,7 +306,7 @@ describe("persistUserTurnTranscript", () => {
         content: "[redacted by hook]",
         idempotencyKey: "chat-run-1:user",
         provenance,
-        __openclaw: {
+        __nova: {
           hookOwned: true,
           senderIsOwner: true,
           transport: {

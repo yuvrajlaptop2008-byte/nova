@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/types.js";
+import type { NovaConfig } from "../../../config/types.js";
 import { resolveRegistryUpdateChannel } from "../../../infra/update-channels.js";
 import { CLAWHUB_INSTALL_ERROR_CODE } from "../../../plugins/clawhub-error-codes.js";
 import {
@@ -29,7 +29,7 @@ function expectedClawHubInstallSpec(spec: string): string {
   }).installSpec;
 }
 
-function currentOpenClawReleaseBase(): string {
+function currentNovaReleaseBase(): string {
   return VERSION.replace(/-(?:alpha|beta)\.[1-9]\d*$/u, "");
 }
 
@@ -61,9 +61,7 @@ const mocks = vi.hoisted(() => ({
   loadInstalledPluginIndex: vi.fn(),
   loadInstalledPluginIndexInstallRecords: vi.fn(),
   loadPluginMetadataSnapshot: vi.fn(),
-  getOfficialExternalPluginCatalogManifest: vi.fn(
-    (entry: { openclaw?: unknown }) => entry.openclaw,
-  ),
+  getOfficialExternalPluginCatalogManifest: vi.fn((entry: { nova?: unknown }) => entry.nova),
   resolveOfficialExternalPluginId: vi.fn((entry: { id?: string }) => entry.id),
   resolveOfficialExternalPluginInstall: vi.fn(
     (entry: { install?: unknown }) => entry.install ?? null,
@@ -88,7 +86,7 @@ const mocks = vi.hoisted(() => ({
                   baseUrl: "https://api.openai.com/v1",
                   authRequirement: "api-key",
                   requestTransportOverrides: requestTransportOverrides ?? "none",
-                  runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+                  runtimePolicy: { compatibleIds: ["nova", "codex"] },
                 },
               ],
               defaultRuntimeId: "codex",
@@ -96,15 +94,13 @@ const mocks = vi.hoisted(() => ({
           }
         : null,
   ),
-  resolveDefaultPluginExtensionsDir: vi.fn(() => "/tmp/openclaw-plugins"),
-  resolveDefaultPluginNpmDir: vi.fn(() => "/tmp/openclaw-npm"),
-  resolvePluginNpmProjectsDir: vi.fn((npmDir = "/tmp/openclaw-npm") =>
-    path.join(npmDir, "projects"),
-  ),
+  resolveDefaultPluginExtensionsDir: vi.fn(() => "/tmp/nova-plugins"),
+  resolveDefaultPluginNpmDir: vi.fn(() => "/tmp/nova-npm"),
+  resolvePluginNpmProjectsDir: vi.fn((npmDir = "/tmp/nova-npm") => path.join(npmDir, "projects")),
   resolvePluginNpmPackageDir: vi.fn(
     ({ npmDir, packageName }: { npmDir?: string; packageName: string }) =>
       path.join(
-        npmDir ?? "/tmp/openclaw-npm",
+        npmDir ?? "/tmp/nova-npm",
         "projects",
         packageName.replace(/[^a-zA-Z0-9._-]+/g, "-"),
         "node_modules",
@@ -112,7 +108,7 @@ const mocks = vi.hoisted(() => ({
       ),
   ),
   resolvePluginInstallDir: vi.fn(
-    (pluginId: string, extensionsDir = "/tmp/openclaw-plugins") => `${extensionsDir}/${pluginId}`,
+    (pluginId: string, extensionsDir = "/tmp/nova-plugins") => `${extensionsDir}/${pluginId}`,
   ),
   validatePluginId: vi.fn(() => null),
   resolveProviderInstallCatalogEntries: vi.fn(),
@@ -123,7 +119,7 @@ const mocks = vi.hoisted(() => ({
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-stub-repair-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-stub-repair-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -135,7 +131,7 @@ function writeLegacyNpmDeclarationStub(params: {
 }): void {
   fs.mkdirSync(params.pluginDir, { recursive: true });
   fs.writeFileSync(
-    path.join(params.pluginDir, "openclaw.extension.json"),
+    path.join(params.pluginDir, "nova.extension.json"),
     JSON.stringify({
       name: params.pluginId,
       type: "npm",
@@ -199,7 +195,7 @@ vi.mock("../../../plugins/doctor-contract-registry.js", async (importOriginal) =
   ...(await importOriginal<typeof import("../../../plugins/doctor-contract-registry.js")>()),
   // Plugin-owned compatibility is outside this install-repair suite. Avoid scanning
   // the real plugin registry when the legacy-config fixture reaches that follow-up pass.
-  applyPluginDoctorCompatibilityMigrations: (cfg: OpenClawConfig) => ({
+  applyPluginDoctorCompatibilityMigrations: (cfg: NovaConfig) => ({
     config: cfg,
     changes: [],
   }),
@@ -239,7 +235,7 @@ vi.mock("../../../plugins/doctor-contract-registry.js", async (importOriginal) =
     ...actual,
     // Plugin-owned compatibility discovery has its own coverage. Keep this
     // install-repair suite focused and avoid scanning every source plugin.
-    applyPluginDoctorCompatibilityMigrations: (cfg: OpenClawConfig) => ({
+    applyPluginDoctorCompatibilityMigrations: (cfg: NovaConfig) => ({
       config: cfg,
       changes: [],
     }),
@@ -275,8 +271,8 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.loadInstalledPluginIndexInstallRecords.mockResolvedValue({});
     mocks.listChannelPluginCatalogEntries.mockReturnValue([]);
     mocks.listOfficialExternalPluginCatalogEntries.mockReturnValue([]);
-    mocks.resolveDefaultPluginExtensionsDir.mockReturnValue("/tmp/openclaw-plugins");
-    mocks.resolveDefaultPluginNpmDir.mockReturnValue("/tmp/openclaw-npm");
+    mocks.resolveDefaultPluginExtensionsDir.mockReturnValue("/tmp/nova-plugins");
+    mocks.resolveDefaultPluginNpmDir.mockReturnValue("/tmp/nova-npm");
     mocks.resolveProviderInstallCatalogEntries.mockReturnValue([]);
     mocks.resolveOfficialExternalProviderPluginIdsForEnv.mockReturnValue([]);
     mocks.resolveOfficialExternalWebProviderContractPluginIdsForEnv.mockReturnValue([]);
@@ -295,13 +291,13 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           }
           const candidate = entry as {
             id?: string;
-            openclaw?: {
+            nova?: {
               plugin?: { id?: string };
               contracts?: Record<string, unknown>;
             };
           };
-          const pluginId = candidate.openclaw?.plugin?.id ?? candidate.id;
-          const ownedProviderIds = candidate.openclaw?.contracts?.[contract];
+          const pluginId = candidate.nova?.plugin?.id ?? candidate.id;
+          const ownedProviderIds = candidate.nova?.contracts?.[contract];
           if (
             !pluginId ||
             !Array.isArray(ownedProviderIds) ||
@@ -332,13 +328,13 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           }
           const candidate = entry as {
             id?: string;
-            openclaw?: {
+            nova?: {
               plugin?: { id?: string };
               providers?: Array<{ id?: string; aliases?: string[] }>;
             };
           };
-          const pluginId = candidate.openclaw?.plugin?.id ?? candidate.id;
-          const ownsConfiguredProvider = candidate.openclaw?.providers?.some((provider) =>
+          const pluginId = candidate.nova?.plugin?.id ?? candidate.id;
+          const ownsConfiguredProvider = candidate.nova?.providers?.some((provider) =>
             [provider.id, ...(provider.aliases ?? [])].some(
               (providerId) =>
                 typeof providerId === "string" &&
@@ -352,7 +348,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromClawHub.mockResolvedValue({
       ok: true,
       pluginId: "matrix",
-      targetDir: "/tmp/openclaw-plugins/matrix",
+      targetDir: "/tmp/nova-plugins/matrix",
       version: "1.2.3",
       clawhub: {
         source: "clawhub",
@@ -372,7 +368,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValue({
       ok: true,
       pluginId: "matrix",
-      targetDir: "/tmp/openclaw-plugins/matrix",
+      targetDir: "/tmp/nova-plugins/matrix",
       version: "1.2.3",
       npmResolution: {
         name: "@nova/plugin-matrix",
@@ -432,7 +428,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       checkId: "core/doctor/configured-plugin-installs",
       severity: "warning",
       target: "matrix",
-      fixHint: "Run `openclaw doctor --fix` to install @nova/plugin-matrix@1.2.3.",
+      fixHint: "Run `nova doctor --fix` to install @nova/plugin-matrix@1.2.3.",
     });
     expect(
       configuredPluginInstallIssueToRepairEffect(expectDefined(issue, "issue test invariant")),
@@ -587,7 +583,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expect(mocks.installPluginFromClawHub).not.toHaveBeenCalled();
     expectRecordFields(mockCallArg(mocks.installPluginFromNpmSpec), {
       spec: "@nova/plugin-matrix@1.2.3",
-      extensionsDir: "/tmp/openclaw-plugins",
+      extensionsDir: "/tmp/nova-plugins",
       expectedPluginId: "matrix",
       expectedIntegrity: "sha512-test",
       trustedSourceLinkedOfficialInstall: true,
@@ -596,7 +592,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields((records as Record<string, unknown>).matrix, {
       source: "npm",
       spec: "@nova/plugin-matrix@1.2.3",
-      installPath: "/tmp/openclaw-plugins/matrix",
+      installPath: "/tmp/nova-plugins/matrix",
       version: "1.2.3",
     });
     expect(mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords, 0, 1)).toEqual({
@@ -620,7 +616,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
         return {
           ok: true,
           pluginId: "matrix",
-          targetDir: "/tmp/openclaw-plugins/matrix",
+          targetDir: "/tmp/nova-plugins/matrix",
           version: "1.2.3",
           clawhub: {
             source: "clawhub",
@@ -707,7 +703,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     });
 
     expect(result.warnings[0]).toContain(
-      "openclaw plugins install clawhub:@nova/plugin-matrix@stable --acknowledge-clawhub-risk",
+      "nova plugins install clawhub:@nova/plugin-matrix@stable --acknowledge-clawhub-risk",
     );
   });
 
@@ -794,10 +790,10 @@ describe("repairMissingConfiguredPluginInstalls", () => {
 
     const warning = result.warnings[0] ?? "";
     expect(warning).toContain(
-      "openclaw plugins install 'clawhub:@nova/plugin-matrix\\n@stable;$(touch /tmp/pwned)' --acknowledge-clawhub-risk",
+      "nova plugins install 'clawhub:@nova/plugin-matrix\\n@stable;$(touch /tmp/pwned)' --acknowledge-clawhub-risk",
     );
     expect(warning).not.toContain(
-      "openclaw plugins install clawhub:@nova/plugin-matrix\\n@stable;$(touch /tmp/pwned) --acknowledge-clawhub-risk",
+      "nova plugins install clawhub:@nova/plugin-matrix\\n@stable;$(touch /tmp/pwned) --acknowledge-clawhub-risk",
     );
     expect(warning).not.toContain("\u001b");
     expect(warning).not.toContain("plugin-matrix\n");
@@ -807,7 +803,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "matrix",
-      targetDir: "/tmp/openclaw-plugins/matrix",
+      targetDir: "/tmp/nova-plugins/matrix",
       version: "1.2.3",
       npmResolution: {
         name: "@nova/plugin-matrix",
@@ -839,7 +835,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expect(mocks.installPluginFromClawHub).not.toHaveBeenCalled();
     expectRecordFields(mockCallArg(mocks.installPluginFromNpmSpec), {
       spec: "@nova/plugin-matrix@1.2.3",
-      extensionsDir: "/tmp/openclaw-plugins",
+      extensionsDir: "/tmp/nova-plugins",
       expectedPluginId: "matrix",
       trustedSourceLinkedOfficialInstall: true,
     });
@@ -847,7 +843,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields((records as Record<string, unknown>).matrix, {
       source: "npm",
       spec: "@nova/plugin-matrix@1.2.3",
-      installPath: "/tmp/openclaw-plugins/matrix",
+      installPath: "/tmp/nova-plugins/matrix",
     });
     expect(mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords, 0, 1)).toEqual({
       env: { MATRIX_HOMESERVER: "https://matrix.example.org" },
@@ -936,7 +932,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "twitch",
-      targetDir: "/tmp/openclaw-plugins/twitch",
+      targetDir: "/tmp/nova-plugins/twitch",
       version: "2026.5.2",
       npmResolution: {
         name: "@nova/twitch",
@@ -983,7 +979,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "diagnostics-otel",
-      targetDir: "/tmp/openclaw-plugins/diagnostics-otel",
+      targetDir: "/tmp/nova-plugins/diagnostics-otel",
       version: "2026.5.2",
       npmResolution: {
         name: "@nova/diagnostics-otel",
@@ -1032,7 +1028,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "diagnostics-otel",
-      targetDir: "/tmp/openclaw-plugins/diagnostics-otel",
+      targetDir: "/tmp/nova-plugins/diagnostics-otel",
       version: VERSION,
       npmResolution: {
         name: "@nova/diagnostics-otel",
@@ -1079,7 +1075,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "llama-cpp",
-      targetDir: "/tmp/openclaw-plugins/llama-cpp",
+      targetDir: "/tmp/nova-plugins/llama-cpp",
       version: "2026.6.2",
       npmResolution: {
         name: "@nova/llama-cpp-provider",
@@ -1093,7 +1089,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       {
         id: "llama-cpp",
         label: "llama.cpp Provider",
-        openclaw: {
+        nova: {
           plugin: { id: "llama-cpp", label: "llama.cpp Provider" },
           contracts: { embeddingProviders: ["local"] },
           install: {
@@ -1137,7 +1133,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "acpx",
-      targetDir: "/tmp/openclaw-plugins/acpx",
+      targetDir: "/tmp/nova-plugins/acpx",
       version: "2026.5.2-beta.2",
       npmResolution: {
         name: "@nova/acpx",
@@ -1427,7 +1423,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
         id: "google-meet",
         label: "Google Meet",
         install: { npmSpec: "@nova/google-meet" },
-        openclaw: {
+        nova: {
           id: "google-meet",
           install: { npmSpec: "@nova/google-meet" },
         },
@@ -1630,11 +1626,11 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expect(mocks.writePersistedInstalledPluginIndexInstallRecords).not.toHaveBeenCalled();
     expect(result).toEqual({
       changes: [
-        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "openclaw doctor --fix" after the update completes.',
+        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "nova doctor --fix" after the update completes.',
       ],
       warnings: [],
       deferredRepairDetails: [
-        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "openclaw doctor --fix" after the update completes.',
+        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "nova doctor --fix" after the update completes.',
       ],
       records,
     });
@@ -1642,7 +1638,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
 
   it("updates an existing npm target when stale baseline records miss an installed package", async () => {
     const npmRoot = makeTempDir();
-    const packageDir = path.join(npmRoot, "node_modules", "@openclaw", "discord");
+    const packageDir = path.join(npmRoot, "node_modules", "@nova", "discord");
     fs.mkdirSync(packageDir, { recursive: true });
     mocks.resolveDefaultPluginNpmDir.mockReturnValue(npmRoot);
     mocks.listChannelPluginCatalogEntries.mockReturnValue([
@@ -1703,7 +1699,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
 
   it("retries npm repair as an update when the install target appears stale", async () => {
     const npmRoot = makeTempDir();
-    const packageDir = path.join(npmRoot, "node_modules", "@openclaw", "discord");
+    const packageDir = path.join(npmRoot, "node_modules", "@nova", "discord");
     mocks.resolveDefaultPluginNpmDir.mockReturnValue(npmRoot);
     mocks.listChannelPluginCatalogEntries.mockReturnValue([
       {
@@ -1766,7 +1762,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
 
   it("prefers an existing npm payload over ClawHub during post-core repair", async () => {
     const npmRoot = makeTempDir();
-    const packageDir = path.join(npmRoot, "node_modules", "@openclaw", "matrix");
+    const packageDir = path.join(npmRoot, "node_modules", "@nova", "matrix");
     fs.mkdirSync(packageDir, { recursive: true });
     fs.writeFileSync(
       path.join(packageDir, "package.json"),
@@ -1851,7 +1847,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromClawHub.mockResolvedValue({
       ok: true,
       pluginId: "whatsapp",
-      targetDir: "/tmp/openclaw-plugins/whatsapp",
+      targetDir: "/tmp/nova-plugins/whatsapp",
       version: "1.2.3",
       clawhub: {
         source: "clawhub",
@@ -1901,7 +1897,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields(result.records.whatsapp, {
       source: "clawhub",
       spec: "clawhub:@nova/whatsapp",
-      installPath: "/tmp/openclaw-plugins/whatsapp",
+      installPath: "/tmp/nova-plugins/whatsapp",
       clawhubPackage: "@nova/whatsapp",
     });
   });
@@ -1999,11 +1995,11 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expect(mocks.writePersistedInstalledPluginIndexInstallRecords).not.toHaveBeenCalled();
     expect(result).toEqual({
       changes: [
-        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "openclaw doctor --fix" after the update completes.',
+        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "nova doctor --fix" after the update completes.',
       ],
       warnings: [],
       deferredRepairDetails: [
-        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "openclaw doctor --fix" after the update completes.',
+        'Skipped package-manager repair for configured plugin "discord" during package update; rerun "nova doctor --fix" after the update completes.',
       ],
       records,
     });
@@ -2046,7 +2042,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "discord",
-      targetDir: "/tmp/openclaw-plugins/discord",
+      targetDir: "/tmp/nova-plugins/discord",
       version: "2026.5.17",
       npmResolution: {
         name: "@nova/discord",
@@ -2086,7 +2082,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     ]);
     expectRecordFields(result.records.discord, {
       source: "npm",
-      installPath: "/tmp/openclaw-plugins/discord",
+      installPath: "/tmp/nova-plugins/discord",
     });
   });
 
@@ -2094,7 +2090,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "whatsapp",
-      targetDir: "/tmp/openclaw-plugins/whatsapp",
+      targetDir: "/tmp/nova-plugins/whatsapp",
       version: "2026.5.17",
       npmResolution: {
         name: "@nova/whatsapp",
@@ -2140,7 +2136,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     ]);
     expectRecordFields(result.records.whatsapp, {
       source: "npm",
-      installPath: "/tmp/openclaw-plugins/whatsapp",
+      installPath: "/tmp/nova-plugins/whatsapp",
     });
   });
 
@@ -2259,12 +2255,12 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "wecom",
-      targetDir: "/tmp/openclaw-plugins/wecom",
+      targetDir: "/tmp/nova-plugins/wecom",
       version: "2026.4.23",
       npmResolution: {
-        name: "@wecom/wecom-openclaw-plugin",
+        name: "@wecom/wecom-nova-plugin",
         version: "2026.4.23",
-        resolvedSpec: "@wecom/wecom-openclaw-plugin@2026.4.23",
+        resolvedSpec: "@wecom/wecom-nova-plugin@2026.4.23",
         integrity: "sha512-third-party",
         resolvedAt: "2026-05-01T00:00:00.000Z",
       },
@@ -2275,7 +2271,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
         pluginId: "wecom",
         meta: { label: "WeCom" },
         install: {
-          npmSpec: "@wecom/wecom-openclaw-plugin@2026.4.23",
+          npmSpec: "@wecom/wecom-nova-plugin@2026.4.23",
         },
       },
     ]);
@@ -2292,12 +2288,12 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expect(mocks.installPluginFromClawHub).not.toHaveBeenCalled();
     const installArg = mockCallArg(mocks.installPluginFromNpmSpec);
     expectRecordFields(installArg, {
-      spec: "@wecom/wecom-openclaw-plugin@2026.4.23",
+      spec: "@wecom/wecom-nova-plugin@2026.4.23",
       expectedPluginId: "wecom",
     });
     expect(installArg).not.toHaveProperty("trustedSourceLinkedOfficialInstall", true);
     expect(result.changes).toEqual([
-      'Installed missing configured plugin "wecom" from @wecom/wecom-openclaw-plugin@2026.4.23.',
+      'Installed missing configured plugin "wecom" from @wecom/wecom-nova-plugin@2026.4.23.',
     ]);
   });
 
@@ -2317,7 +2313,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
                   transport: "stdio-proxy",
                   command: "codex",
                   args: ["app-server", "--listen", "stdio://"],
-                  cwd: "/tmp/openclaw",
+                  cwd: "/tmp/nova",
                 },
               ],
               allowRawTranscripts: true,
@@ -2329,7 +2325,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     });
 
     expect(migration.next).not.toBeNull();
-    const cfg = migration.next as OpenClawConfig;
+    const cfg = migration.next as NovaConfig;
     expect(cfg.plugins?.allow).toEqual(["codex"]);
     expect(cfg.plugins?.entries?.codex).toEqual({
       enabled: true,
@@ -2343,7 +2339,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
               transport: "stdio-proxy",
               command: "codex",
               args: ["app-server", "--listen", "stdio://"],
-              cwd: "/tmp/openclaw",
+              cwd: "/tmp/nova",
             },
           ],
           allowRawTranscripts: true,
@@ -2362,7 +2358,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "codex",
-      targetDir: "/tmp/openclaw-plugins/codex",
+      targetDir: "/tmp/nova-plugins/codex",
       version: "2026.7.2",
       npmResolution: {
         name: "@nova/codex",
@@ -2401,7 +2397,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields((records as Record<string, unknown>).codex, {
       source: "npm",
       spec: "@nova/codex",
-      installPath: "/tmp/openclaw-plugins/codex",
+      installPath: "/tmp/nova-plugins/codex",
       version: "2026.7.2",
       resolvedName: "@nova/codex",
       resolvedSpec: "@nova/codex@2026.7.2",
@@ -2419,7 +2415,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "codex",
-      targetDir: "/tmp/openclaw-plugins/codex",
+      targetDir: "/tmp/nova-plugins/codex",
       version: "2026.5.2",
       npmResolution: {
         name: "@nova/codex",
@@ -2465,7 +2461,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields((records as Record<string, unknown>).codex, {
       source: "npm",
       spec: "@nova/codex",
-      installPath: "/tmp/openclaw-plugins/codex",
+      installPath: "/tmp/nova-plugins/codex",
       version: "2026.5.2",
     });
     expect(mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords, 0, 1)).toEqual({
@@ -2519,7 +2515,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "codex",
-      targetDir: "/tmp/openclaw-plugins/codex",
+      targetDir: "/tmp/nova-plugins/codex",
       version: VERSION,
       npmResolution: {
         name: "@nova/codex",
@@ -2567,7 +2563,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields(result.records.codex, {
       source: "npm",
       spec: "@nova/codex",
-      installPath: "/tmp/openclaw-plugins/codex",
+      installPath: "/tmp/nova-plugins/codex",
       version: VERSION,
       resolvedName: "@nova/codex",
       resolvedVersion: VERSION,
@@ -2576,7 +2572,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
   });
 
   it("does not refresh a converged beta Codex runtime plugin on the second doctor pass", async () => {
-    const codexBetaVersion = `${currentOpenClawReleaseBase()}-beta.4`;
+    const codexBetaVersion = `${currentNovaReleaseBase()}-beta.4`;
     const installDir = makeTempDir();
     fs.writeFileSync(
       path.join(installDir, "package.json"),
@@ -2840,7 +2836,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "codex",
-      targetDir: "/tmp/openclaw-plugins/codex",
+      targetDir: "/tmp/nova-plugins/codex",
       version: "2026.5.2",
       npmResolution: {
         name: "@nova/codex",
@@ -2877,7 +2873,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields((records as Record<string, unknown>).codex, {
       source: "npm",
       spec: "@nova/codex",
-      installPath: "/tmp/openclaw-plugins/codex",
+      installPath: "/tmp/nova-plugins/codex",
       version: "2026.5.2",
     });
     expect(mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords, 0, 1)).toEqual({
@@ -2891,7 +2887,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields(result.records.codex, {
       source: "npm",
       spec: "@nova/codex",
-      installPath: "/tmp/openclaw-plugins/codex",
+      installPath: "/tmp/nova-plugins/codex",
       version: "2026.5.2",
       resolvedName: "@nova/codex",
       resolvedSpec: "@nova/codex@2026.5.2",
@@ -2978,7 +2974,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.loadPluginMetadataSnapshot.mockReturnValue({
       plugins: [
         {
-          id: "openclaw-lark",
+          id: "nova-lark",
           origin: "config",
           channels: ["feishu"],
           channelConfigs: {
@@ -3010,7 +3006,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       cfg: {
         plugins: {
           entries: {
-            "openclaw-lark": {
+            "nova-lark": {
               enabled: true,
             },
           },
@@ -3036,7 +3032,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.loadPluginMetadataSnapshot.mockReturnValue({
       plugins: [
         {
-          id: "openclaw-lark",
+          id: "nova-lark",
           origin: "config",
           channels: ["feishu"],
           channelConfigs: {
@@ -3064,7 +3060,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "feishu",
-      targetDir: "/tmp/openclaw-plugins/feishu",
+      targetDir: "/tmp/nova-plugins/feishu",
       version: "2026.5.2",
       npmResolution: {
         name: "@nova/feishu",
@@ -3080,7 +3076,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
         plugins: {
           allow: ["some-other-plugin"],
           entries: {
-            "openclaw-lark": {
+            "nova-lark": {
               enabled: true,
             },
           },
@@ -3110,7 +3106,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.loadPluginMetadataSnapshot.mockReturnValue({
       plugins: [
         {
-          id: "openclaw-lark",
+          id: "nova-lark",
           origin: "config",
           channels: ["feishu"],
           channelConfigs: {
@@ -3138,7 +3134,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "feishu",
-      targetDir: "/tmp/openclaw-plugins/feishu",
+      targetDir: "/tmp/nova-plugins/feishu",
       version: "2026.5.2",
       npmResolution: {
         name: "@nova/feishu",
@@ -3156,7 +3152,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
             feishu: {
               enabled: true,
             },
-            "openclaw-lark": {
+            "nova-lark": {
               enabled: true,
             },
           },
@@ -3199,7 +3195,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
             demo: {
               source: "npm",
               spec: "@nova/plugin-demo@1.0.0",
-              installPath: "/tmp/openclaw-plugins/demo",
+              installPath: "/tmp/nova-plugins/demo",
             },
           },
         },
@@ -3233,7 +3229,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields(updateConfig.plugins, { installs: records });
     const persistedRecords = mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords);
     expectRecordFields((persistedRecords as Record<string, unknown>).demo, {
-      installPath: "/tmp/openclaw-plugins/demo",
+      installPath: "/tmp/nova-plugins/demo",
     });
     expect(mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords, 0, 1)).toEqual({
       env: {},
@@ -3260,7 +3256,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
             demo: {
               source: "clawhub",
               spec: "clawhub:@nova/plugin-demo@1.0.0",
-              installPath: "/tmp/openclaw-plugins/demo",
+              installPath: "/tmp/nova-plugins/demo",
             },
           },
         },
@@ -3308,7 +3304,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       },
     };
     const repairWarning =
-      'Could not repair openclaw peer link for "demo" at /tmp/openclaw-plugins/demo: permission denied';
+      'Could not repair nova peer link for "demo" at /tmp/nova-plugins/demo: permission denied';
     mocks.loadInstalledPluginIndexInstallRecords.mockResolvedValue(records);
     mocks.updateNpmInstalledPlugins.mockImplementationOnce(
       async (params: {
@@ -3324,7 +3320,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
                 demo: {
                   source: "npm",
                   spec: "@nova/plugin-demo@1.0.0",
-                  installPath: "/tmp/openclaw-plugins/demo",
+                  installPath: "/tmp/nova-plugins/demo",
                 },
               },
             },
@@ -3386,7 +3382,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
                 demo: {
                   source: "clawhub",
                   spec: "clawhub:@nova/plugin-demo@1.0.0",
-                  installPath: "/tmp/openclaw-plugins/demo",
+                  installPath: "/tmp/nova-plugins/demo",
                 },
               },
             },
@@ -3458,7 +3454,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     });
 
     expect(result.warnings[0]).toContain(
-      "openclaw plugins install clawhub:@nova/plugin-demo@1.0.0 --acknowledge-clawhub-risk",
+      "nova plugins install clawhub:@nova/plugin-demo@1.0.0 --acknowledge-clawhub-risk",
     );
   });
 
@@ -3499,7 +3495,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     });
 
     expect(result.warnings[0]).toContain(
-      "openclaw plugins install clawhub:@nova/plugin-demo --acknowledge-clawhub-risk",
+      "nova plugins install clawhub:@nova/plugin-demo --acknowledge-clawhub-risk",
     );
   });
 
@@ -3512,7 +3508,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
         resolvedSpec: "@nova/plugin-demo@1.0.0",
         resolvedVersion: "1.0.0",
         integrity: "sha512-demo",
-        installPath: "/tmp/openclaw-plugins/demo",
+        installPath: "/tmp/nova-plugins/demo",
       },
     };
     mocks.loadInstalledPluginIndexInstallRecords.mockResolvedValue(records);
@@ -3534,7 +3530,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
             demo: {
               source: "npm",
               spec: "@nova/plugin-demo@1.0.0",
-              installPath: "/tmp/openclaw-plugins/demo",
+              installPath: "/tmp/nova-plugins/demo",
             },
           },
         },
@@ -3563,7 +3559,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       source: "npm",
       spec: "@nova/plugin-demo@1.0.0",
       integrity: "sha512-demo",
-      installPath: "/tmp/openclaw-plugins/demo",
+      installPath: "/tmp/nova-plugins/demo",
     });
     expect(updateRecord.resolvedSpec).toBeUndefined();
     expect(updateRecord.resolvedVersion).toBeUndefined();
@@ -3575,7 +3571,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       discord: {
         source: "npm",
         spec: "@nova/discord",
-        installPath: "/tmp/openclaw-missing-discord-install-record",
+        installPath: "/tmp/nova-missing-discord-install-record",
       },
     };
     mocks.loadInstalledPluginIndexInstallRecords.mockResolvedValue(records);
@@ -3602,7 +3598,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "discord",
-      targetDir: "/tmp/openclaw-plugins/discord",
+      targetDir: "/tmp/nova-plugins/discord",
       version: "1.2.3",
       npmResolution: {
         name: "@nova/discord",
@@ -3657,7 +3653,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     const persistedRecords = mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords);
     expectRecordFields((persistedRecords as Record<string, unknown>).discord, {
       spec: "@nova/discord",
-      installPath: "/tmp/openclaw-plugins/discord",
+      installPath: "/tmp/nova-plugins/discord",
     });
     expect(mockCallArg(mocks.writePersistedInstalledPluginIndexInstallRecords, 0, 1)).toEqual({
       env: {},
@@ -3748,7 +3744,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       discord: {
         source: "npm",
         spec: "@nova/discord",
-        installPath: "/tmp/openclaw-plugins/discord",
+        installPath: "/tmp/nova-plugins/discord",
       },
     };
     mocks.loadInstalledPluginIndexInstallRecords.mockResolvedValue(records);
@@ -3774,7 +3770,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           level: "warn",
           pluginId: "discord",
           message:
-            "channel plugin manifest declares discord without channelConfigs metadata; add openclaw.plugin.json#channelConfigs so config schema and setup surfaces work before runtime loads",
+            "channel plugin manifest declares discord without channelConfigs metadata; add nova.plugin.json#channelConfigs so config schema and setup surfaces work before runtime loads",
         },
       ],
     });
@@ -3861,7 +3857,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -3964,7 +3960,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -3982,7 +3978,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "brave",
-      targetDir: "/tmp/openclaw-plugins/brave",
+      targetDir: "/tmp/nova-plugins/brave",
       version: "2026.5.12",
       npmResolution: {
         name: "@nova/brave-plugin",
@@ -4022,7 +4018,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields(persistedRecords.brave, {
       source: "npm",
       spec: "@nova/brave-plugin",
-      installPath: "/tmp/openclaw-plugins/brave",
+      installPath: "/tmp/nova-plugins/brave",
       version: "2026.5.12",
     });
     expect(result).toEqual({
@@ -4078,7 +4074,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "slack",
-      targetDir: "/tmp/openclaw-npm/node_modules/@nova/slack",
+      targetDir: "/tmp/nova-npm/node_modules/@nova/slack",
       version: "2026.5.12",
       npmResolution: {
         name: "@nova/slack",
@@ -4149,7 +4145,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -4167,7 +4163,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "brave",
-      targetDir: "/tmp/openclaw-plugins/brave",
+      targetDir: "/tmp/nova-plugins/brave",
       version: "2026.5.12",
       npmResolution: {
         name: "@nova/brave-plugin",
@@ -4233,7 +4229,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -4313,7 +4309,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -4363,7 +4359,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -4384,21 +4380,21 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       },
     ]);
     mocks.resolveOfficialExternalPluginId.mockImplementation(
-      (entry: { id?: string; openclaw?: { plugin?: { id?: string } } }) =>
-        entry.openclaw?.plugin?.id ?? entry.id,
+      (entry: { id?: string; nova?: { plugin?: { id?: string } } }) =>
+        entry.nova?.plugin?.id ?? entry.id,
     );
     mocks.resolveOfficialExternalPluginInstall.mockImplementation(
-      (entry: { install?: unknown; openclaw?: { install?: unknown } }) =>
-        entry.openclaw?.install ?? entry.install ?? null,
+      (entry: { install?: unknown; nova?: { install?: unknown } }) =>
+        entry.nova?.install ?? entry.install ?? null,
     );
     mocks.resolveOfficialExternalPluginLabel.mockImplementation(
-      (entry: { label?: string; openclaw?: { plugin?: { label?: string } } }) =>
-        entry.openclaw?.plugin?.label ?? entry.label ?? "plugin",
+      (entry: { label?: string; nova?: { plugin?: { label?: string } } }) =>
+        entry.nova?.plugin?.label ?? entry.label ?? "plugin",
     );
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "brave",
-      targetDir: "/tmp/openclaw-plugins/brave",
+      targetDir: "/tmp/nova-plugins/brave",
       version: "2026.5.2",
       npmResolution: {
         name: "@nova/brave-plugin",
@@ -4463,7 +4459,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
         ok: true,
         pluginId,
-        targetDir: `/tmp/openclaw-plugins/${pluginId}`,
+        targetDir: `/tmp/nova-plugins/${pluginId}`,
         version: "2026.6.8",
         npmResolution: {
           name: npmSpec,
@@ -4518,7 +4514,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/groq-provider",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "groq", label: "Groq" },
           providers: [{ id: "groq" }],
         },
@@ -4527,7 +4523,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "groq",
-      targetDir: "/tmp/openclaw-plugins/groq",
+      targetDir: "/tmp/nova-plugins/groq",
       version: "2026.6.8",
       npmResolution: {
         name: "@nova/groq-provider",
@@ -4568,7 +4564,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/groq-provider",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "groq", label: "Groq" },
           contracts: { mediaUnderstandingProviders: ["groq"] },
         },
@@ -4577,7 +4573,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "groq",
-      targetDir: "/tmp/openclaw-plugins/groq",
+      targetDir: "/tmp/nova-plugins/groq",
       version: "2026.6.8",
       npmResolution: {
         name: "@nova/groq-provider",
@@ -4620,7 +4616,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/gradium-speech",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "gradium", label: "Gradium" },
           contracts: { speechProviders: ["gradium"] },
         },
@@ -4629,7 +4625,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "gradium",
-      targetDir: "/tmp/openclaw-plugins/gradium",
+      targetDir: "/tmp/nova-plugins/gradium",
       version: "2026.6.8",
       npmResolution: {
         name: "@nova/gradium-speech",
@@ -4674,7 +4670,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec,
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id, label: id },
           webSearchProviders: [
             {
@@ -4693,7 +4689,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
         ok: true,
         pluginId,
-        targetDir: `/tmp/openclaw-plugins/${pluginId}`,
+        targetDir: `/tmp/nova-plugins/${pluginId}`,
         version: "2026.6.8",
         npmResolution: {
           name: npmSpec,
@@ -4736,7 +4732,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/groq-provider",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "groq", label: "Groq" },
         },
       },
@@ -4744,7 +4740,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "groq",
-      targetDir: "/tmp/openclaw-plugins/groq",
+      targetDir: "/tmp/nova-plugins/groq",
       version: "2026.6.8",
       npmResolution: {
         name: "@nova/groq-provider",
@@ -4781,7 +4777,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -4802,21 +4798,21 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       },
     ]);
     mocks.resolveOfficialExternalPluginId.mockImplementation(
-      (entry: { id?: string; openclaw?: { plugin?: { id?: string } } }) =>
-        entry.openclaw?.plugin?.id ?? entry.id,
+      (entry: { id?: string; nova?: { plugin?: { id?: string } } }) =>
+        entry.nova?.plugin?.id ?? entry.id,
     );
     mocks.resolveOfficialExternalPluginInstall.mockImplementation(
-      (entry: { install?: unknown; openclaw?: { install?: unknown } }) =>
-        entry.openclaw?.install ?? entry.install ?? null,
+      (entry: { install?: unknown; nova?: { install?: unknown } }) =>
+        entry.nova?.install ?? entry.install ?? null,
     );
     mocks.resolveOfficialExternalPluginLabel.mockImplementation(
-      (entry: { label?: string; openclaw?: { plugin?: { label?: string } } }) =>
-        entry.openclaw?.plugin?.label ?? entry.label ?? "plugin",
+      (entry: { label?: string; nova?: { plugin?: { label?: string } } }) =>
+        entry.nova?.plugin?.label ?? entry.label ?? "plugin",
     );
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "brave",
-      targetDir: "/tmp/openclaw-plugins/brave",
+      targetDir: "/tmp/nova-plugins/brave",
       version: "2026.5.4-beta.1",
       npmResolution: {
         name: "@nova/brave-plugin",
@@ -4871,7 +4867,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "guardrail-bridge",
-      targetDir: "/tmp/openclaw-plugins/guardrail-bridge",
+      targetDir: "/tmp/nova-plugins/guardrail-bridge",
       version: "1.0.0",
       npmResolution: {
         name: "@guardrail-bridge/guardrail-bridge",
@@ -4901,7 +4897,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields(mockCallArg(mocks.installPluginFromNpmSpec), {
       spec: "@guardrail-bridge/guardrail-bridge@1.0.0",
       expectedPluginId: "guardrail-bridge",
-      extensionsDir: "/tmp/openclaw-plugins",
+      extensionsDir: "/tmp/nova-plugins",
     });
     expect(mockCallArg(mocks.installPluginFromNpmSpec).trustedSourceLinkedOfficialInstall).toBe(
       undefined,
@@ -4910,7 +4906,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expectRecordFields((records as Record<string, unknown>)["guardrail-bridge"], {
       source: "npm",
       spec: "@guardrail-bridge/guardrail-bridge@1.0.0",
-      installPath: "/tmp/openclaw-plugins/guardrail-bridge",
+      installPath: "/tmp/nova-plugins/guardrail-bridge",
       version: "1.0.0",
       resolvedName: "@guardrail-bridge/guardrail-bridge",
     });
@@ -4930,7 +4926,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/firecrawl-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "firecrawl", label: "Firecrawl" },
         },
       },
@@ -4938,7 +4934,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "firecrawl",
-      targetDir: "/tmp/openclaw-plugins/firecrawl",
+      targetDir: "/tmp/nova-plugins/firecrawl",
       version: "2026.6.8",
       npmResolution: {
         name: "@nova/firecrawl-plugin",
@@ -4986,7 +4982,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
           npmSpec: "@nova/brave-plugin",
           defaultChoice: "npm",
         },
-        openclaw: {
+        nova: {
           plugin: { id: "brave", label: "Brave" },
           webSearchProviders: [
             {
@@ -5007,16 +5003,16 @@ describe("repairMissingConfiguredPluginInstalls", () => {
       },
     ]);
     mocks.resolveOfficialExternalPluginId.mockImplementation(
-      (entry: { id?: string; openclaw?: { plugin?: { id?: string } } }) =>
-        entry.openclaw?.plugin?.id ?? entry.id,
+      (entry: { id?: string; nova?: { plugin?: { id?: string } } }) =>
+        entry.nova?.plugin?.id ?? entry.id,
     );
     mocks.resolveOfficialExternalPluginInstall.mockImplementation(
-      (entry: { install?: unknown; openclaw?: { install?: unknown } }) =>
-        entry.openclaw?.install ?? entry.install ?? null,
+      (entry: { install?: unknown; nova?: { install?: unknown } }) =>
+        entry.nova?.install ?? entry.install ?? null,
     );
     mocks.resolveOfficialExternalPluginLabel.mockImplementation(
-      (entry: { label?: string; openclaw?: { plugin?: { label?: string } } }) =>
-        entry.openclaw?.plugin?.label ?? entry.label ?? "plugin",
+      (entry: { label?: string; nova?: { plugin?: { label?: string } } }) =>
+        entry.nova?.plugin?.label ?? entry.label ?? "plugin",
     );
 
     const { repairMissingConfiguredPluginInstalls } =

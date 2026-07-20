@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { withMockedWindowsPlatform } from "../test-utils/vitest-spies.js";
 
@@ -11,7 +11,7 @@ const originalBundledPluginsDir = process.env.NOVA_BUNDLED_PLUGINS_DIR;
 const originalTrustBundledPluginsDir = process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR;
 
 function createTempDir(): string {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-public-surface-loader-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-public-surface-loader-"));
   tempDirs.push(tempDir);
   return tempDir;
 }

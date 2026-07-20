@@ -24,6 +24,6 @@ export const page = definePage({
     import("./model-providers-page.ts").then(() => ({
       header: true,
       render: (data: ModelProvidersRouteData | undefined) =>
-        html`<openclaw-model-providers-page .routeData=${data}></openclaw-model-providers-page>`,
+        html`<nova-model-providers-page .routeData=${data}></nova-model-providers-page>`,
     })),
 });

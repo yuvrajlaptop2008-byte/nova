@@ -4,7 +4,7 @@ import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createWizardPrompter as buildWizardPrompter } from "../../test/helpers/wizard-prompter.js";
 import type * as AuthChoiceModelCheck from "../commands/auth-choice.model-check.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { PluginWebSearchProviderEntry } from "../plugins/types.js";
 import type { RuntimeEnv } from "../runtime.js";
 
@@ -80,16 +80,16 @@ const resolveSetupSecretInputString = vi.hoisted(() =>
   vi.fn<() => Promise<string | undefined>>(async () => undefined),
 );
 const resolveExistingKey = vi.hoisted(() =>
-  vi.fn<(config: OpenClawConfig, provider: string) => string | undefined>(() => undefined),
+  vi.fn<(config: NovaConfig, provider: string) => string | undefined>(() => undefined),
 );
 const hasExistingKey = vi.hoisted(() =>
-  vi.fn<(config: OpenClawConfig, provider: string) => boolean>(() => false),
+  vi.fn<(config: NovaConfig, provider: string) => boolean>(() => false),
 );
 const hasKeyInEnv = vi.hoisted(() =>
   vi.fn<(entry: Pick<PluginWebSearchProviderEntry, "envVars">) => boolean>(() => false),
 );
 const listConfiguredWebSearchProviders = vi.hoisted(() =>
-  vi.fn<(params?: { config?: OpenClawConfig }) => PluginWebSearchProviderEntry[]>(() => []),
+  vi.fn<(params?: { config?: NovaConfig }) => PluginWebSearchProviderEntry[]>(() => []),
 );
 const hasAuthProfileForProvider = vi.hoisted(() =>
   vi.fn<
@@ -145,7 +145,7 @@ vi.mock("../infra/windows-gateway-firewall-diagnostics.js", () => ({
   formatWindowsGatewayFirewallGuidance: (params: { bind?: string }) =>
     params.bind === "lan"
       ? [
-          "Windows firewall: if another device cannot connect to the LAN URL, run `openclaw gateway status --deep` from this Windows host.",
+          "Windows firewall: if another device cannot connect to the LAN URL, run `nova gateway status --deep` from this Windows host.",
         ]
       : [],
 }));
@@ -304,7 +304,7 @@ function expectFirstOnboardingInstallPlanCallOmitsToken() {
 }
 
 type AdvancedFinalizeArgs = {
-  nextConfig?: OpenClawConfig;
+  nextConfig?: NovaConfig;
   prompter?: ReturnType<typeof buildWizardPrompter>;
   runtime?: RuntimeEnv;
   installDaemon?: boolean;
@@ -312,7 +312,7 @@ type AdvancedFinalizeArgs = {
 
 function createModelAuthFinalizeArgs(params: {
   prompter: ReturnType<typeof buildWizardPrompter>;
-  nextConfig?: OpenClawConfig;
+  nextConfig?: NovaConfig;
 }) {
   return {
     flow: "quickstart" as const,
@@ -346,7 +346,7 @@ function createLaterPrompter() {
   });
 }
 
-function createEnabledFirecrawlSearchConfig(): OpenClawConfig {
+function createEnabledFirecrawlSearchConfig(): NovaConfig {
   return {
     tools: {
       web: {
@@ -725,7 +725,7 @@ describe("finalizeSetupWizard", () => {
         defaults: { model: "openai/gpt-5.4-nano" },
         list: [{ id: "main", agentDir: "/tmp/custom-agent" }],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     await finalizeSetupWizard(createModelAuthFinalizeArgs({ prompter, nextConfig }));
 
@@ -795,7 +795,7 @@ describe("finalizeSetupWizard", () => {
     expect(launchTuiCli).toHaveBeenCalledWith(expect.objectContaining({ message: undefined }), {});
     expectNoteTitleNotCalled(prompter, "Model auth missing");
     expectNoteNotContains(prompter, "No credentials are configured");
-    expectNoteNotContains(prompter, "openclaw configure --section model");
+    expectNoteNotContains(prompter, "nova configure --section model");
   });
 
   it("hatches without a seed and omits setup advice for an incompatible model route", async () => {
@@ -817,7 +817,7 @@ describe("finalizeSetupWizard", () => {
     expect(launchTuiCli).toHaveBeenCalledWith(expect.objectContaining({ message: undefined }), {});
     expectNoteTitleNotCalled(prompter, "Model auth missing");
     expectNoteNotContains(prompter, "No credentials are configured");
-    expectNoteNotContains(prompter, "openclaw configure --section model");
+    expectNoteNotContains(prompter, "nova configure --section model");
   });
 
   it("does not resend the bootstrap hatch message on setup reruns", async () => {
@@ -1445,7 +1445,7 @@ describe("finalizeSetupWizard", () => {
       json?: boolean;
       timeoutMs?: number;
       token?: string;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
     };
     expect(healthArgs.json).toBe(false);
     expect(healthArgs.timeoutMs).toBe(10_000);
@@ -1636,7 +1636,7 @@ describe("finalizeSetupWizard", () => {
       timeoutMs?: number;
       token?: string;
       password?: string;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
     };
     expect(healthArgs.json).toBe(false);
     expect(healthArgs.timeoutMs).toBe(10_000);

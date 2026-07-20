@@ -42,7 +42,7 @@ function validReview() {
 }
 
 function runValidation(review: ReturnType<typeof validReview>) {
-  const fixtureRoot = tempDirs.make("openclaw-pr-review-validation-");
+  const fixtureRoot = tempDirs.make("nova-pr-review-validation-");
   const localDir = join(fixtureRoot, ".local");
   mkdirSync(localDir);
   writeFileSync(join(localDir, "review.json"), `${JSON.stringify(review)}\n`);

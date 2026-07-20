@@ -1,21 +1,21 @@
 // Slack plugin module implements setup surface behavior.
-import { adaptScopedAccountAccessor } from "openclaw/plugin-sdk/channel-config-helpers";
+import { adaptScopedAccountAccessor } from "nova/plugin-sdk/channel-config-helpers";
 import {
   noteChannelLookupFailure,
   noteChannelLookupSummary,
   resolveEntriesWithOptionalToken,
   createSetupTranslator,
-  type OpenClawConfig,
+  type NovaConfig,
   parseMentionOrPrefixedId,
   promptLegacyChannelAllowFromForAccount,
   type WizardPrompter,
-} from "openclaw/plugin-sdk/setup-runtime";
+} from "nova/plugin-sdk/setup-runtime";
 import type {
   ChannelSetupWizard,
   ChannelSetupWizardAllowFromEntry,
-} from "openclaw/plugin-sdk/setup-runtime";
-import { formatDocsLink } from "openclaw/plugin-sdk/setup-tools";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/setup-runtime";
+import { formatDocsLink } from "nova/plugin-sdk/setup-tools";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
 import { inspectSlackAccount, type InspectedSlackAccount } from "./account-inspect.js";
 import { resolveDefaultSlackAccountId, resolveSlackAccountAllowFrom } from "./accounts.js";
 import { resolveSlackChannelAllowlist } from "./resolve-channels.js";
@@ -64,10 +64,10 @@ async function resolveSlackAllowFromEntries(params: {
 }
 
 async function promptSlackAllowFrom(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   prompter: WizardPrompter;
   accountId?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   const parseId = (value: string) =>
     parseMentionOrPrefixedId({
       value,
@@ -115,7 +115,7 @@ async function promptSlackAllowFrom(params: {
 }
 
 async function resolveSlackGroupAllowlist(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   credentialValues: SlackSetupCredentialValues;
   entries: string[];

@@ -7,7 +7,7 @@ import type { SandboxToolPolicy } from "./sandbox/types.js";
 
 /** Provenance marker for wildcard allowlists created from `alsoAllow`. */
 export const IMPLICIT_ALLOW_ALL_FROM_ALSO_ALLOW = Symbol.for(
-  "openclaw.toolPolicy.implicitAllowAllFromAlsoAllow",
+  "nova.toolPolicy.implicitAllowAllFromAlsoAllow",
 );
 
 type SandboxToolPolicyConfig = {

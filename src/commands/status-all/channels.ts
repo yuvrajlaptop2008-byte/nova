@@ -1,4 +1,4 @@
-// Builds channel status rows and account details for `openclaw status --all`.
+// Builds channel status rows and account details for `nova status --all`.
 // This layer stays plugin-generic: channel-specific auth rules live in plugin config/status hooks.
 
 import fs from "node:fs";
@@ -24,7 +24,7 @@ import {
   hasRuntimeCredentialAvailable,
   markConfiguredUnavailableCredentialStatusesAvailable,
 } from "../../channels/status/read-model.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { listExplicitConfiguredChannelIdsForConfig } from "../../plugins/channel-plugin-ids.js";
 import { resolveMissingOfficialExternalChannelPluginRepairHint } from "../../plugins/official-external-plugin-repair-hints.js";
 import {
@@ -48,8 +48,8 @@ type ChannelAccountRow = ChannelAccountTokenSummaryRow & {
 
 type ResolvedChannelAccountRowParams = {
   plugin: ChannelPlugin;
-  cfg: OpenClawConfig;
-  sourceConfig: OpenClawConfig;
+  cfg: NovaConfig;
+  sourceConfig: NovaConfig;
   accountId: string;
 };
 
@@ -97,7 +97,7 @@ const formatAccountLabel = (params: { accountId: string; name?: string }) => {
 
 const buildAccountNotes = (params: {
   plugin: ChannelPlugin;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: ChannelAccountRow;
   liveCredentialAvailable?: boolean;
   credentialResolutionSkipped?: boolean;
@@ -218,15 +218,15 @@ function formatLoadFailureDetail(message: string): string {
   const reason = isLikelyDependencyTreeCorruption(message)
     ? "dependency tree corrupted"
     : "registration failed";
-  return `plugin load failed: ${reason}; run openclaw doctor --fix`;
+  return `plugin load failed: ${reason}; run nova doctor --fix`;
 }
 
 /** Builds the `status --all` channel summary and per-account detail tables. */
 export async function buildChannelsTable(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   opts?: {
     showSecrets?: boolean;
-    sourceConfig?: OpenClawConfig;
+    sourceConfig?: NovaConfig;
     includeSetupFallbackPlugins?: boolean;
     liveChannelStatus?: unknown;
     credentialResolutionSkipped?: boolean;

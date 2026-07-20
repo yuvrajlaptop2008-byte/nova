@@ -21,13 +21,13 @@ import {
   type ProviderBatchOutputLine,
   uploadBatchJsonlFile,
   withRemoteHttpResponse,
-} from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+} from "nova/plugin-sdk/memory-core-host-engine-embeddings";
 import {
   assertOkOrThrowProviderError,
   readProviderJsonResponse,
-} from "openclaw/plugin-sdk/provider-http";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/provider-http";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
 import type { VoyageEmbeddingClient } from "./embedding-provider.js";
 
 /**
@@ -346,5 +346,5 @@ const testing = {
 } as const;
 
 if (process.env.VITEST === "true") {
-  Reflect.set(globalThis, Symbol.for("openclaw.voyageEmbeddingBatchTestApi"), testing);
+  Reflect.set(globalThis, Symbol.for("nova.voyageEmbeddingBatchTestApi"), testing);
 }

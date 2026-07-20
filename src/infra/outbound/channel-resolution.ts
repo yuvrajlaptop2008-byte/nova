@@ -4,7 +4,7 @@ import { normalizeOptionalLowercaseString } from "@nova/normalization-core/strin
 import type { ChannelMessageAdapterShape } from "../../channels/message/types.js";
 import { getChannelPlugin, getLoadedChannelPlugin } from "../../channels/plugins/index.js";
 import type { ChannelPlugin } from "../../channels/plugins/types.plugin.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { getActivePluginChannelRegistry, getActivePluginRegistry } from "../../plugins/runtime.js";
 import {
   INTERNAL_MESSAGE_CHANNEL,
@@ -27,14 +27,14 @@ export function normalizeDeliverableOutboundChannel(
 
 function maybeBootstrapChannelPlugin(params: {
   channel: DeliverableMessageChannel;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): void {
   bootstrapOutboundChannelPlugin(params);
 }
 
 function normalizeOutboundChannelForResolution(params: {
   channel: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   allowBootstrap?: boolean;
 }): { channel?: DeliverableMessageChannel; didBootstrap: boolean } {
   const normalized = normalizeMessageChannel(params.channel);
@@ -194,7 +194,7 @@ function resolveActivatedOutboundPluginFromRuntimeRegistries(
 /** Resolves a deliverable outbound channel plugin, optionally bootstrapping it. */
 export function resolveOutboundChannelPlugin(params: {
   channel: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   allowBootstrap?: boolean;
 }): ChannelPlugin | undefined {
   const { channel: normalized, didBootstrap } = normalizeOutboundChannelForResolution(params);
@@ -240,7 +240,7 @@ export function resolveOutboundChannelPlugin(params: {
 /** Resolves the message adapter for a deliverable outbound channel. */
 export function resolveOutboundChannelMessageAdapter(params: {
   channel: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   allowBootstrap?: boolean;
 }): ChannelMessageAdapterShape | undefined {
   const { channel: normalized, didBootstrap } = normalizeOutboundChannelForResolution(params);

@@ -1,7 +1,7 @@
 import { createHmac, randomBytes } from "node:crypto";
 import { safeEqualSecret } from "../security/secret-equal.js";
 
-export const BOARD_HTTP_PATH_PREFIX = "/__openclaw__/board/";
+export const BOARD_HTTP_PATH_PREFIX = "/__nova__/board/";
 export const BOARD_VIEW_TICKET_TTL_MS = 2 * 60_000;
 
 const BOARD_VIEW_TICKET_SCOPE = "board-widget-view";

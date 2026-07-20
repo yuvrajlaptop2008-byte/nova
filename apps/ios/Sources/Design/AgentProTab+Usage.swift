@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import NovaKit
+import NovaProtocol
 import SwiftUI
 
 extension AgentProTab {
@@ -8,11 +8,11 @@ extension AgentProTab {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text("Totals")
-                        .font(OpenClawType.headline)
+                        .font(NovaType.headline)
                     Spacer()
                     ProValuePill(
                         value: "\(self.overview?.usage?.days ?? 31)d",
-                        color: OpenClawBrand.accentForeground)
+                        color: NovaBrand.accentForeground)
                 }
                 HStack(spacing: 10) {
                     self.detailMetric(label: "Cost", value: self.usageValue)
@@ -21,7 +21,7 @@ extension AgentProTab {
                 }
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, NovaProMetric.pagePadding)
     }
 
     var usageTokenValue: String {
@@ -58,24 +58,24 @@ extension AgentProTab {
                     }
                 }
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, NovaProMetric.pagePadding)
         }
     }
 
     func usageDayRow(_ day: CostUsageDailyEntryLite) -> some View {
         HStack(spacing: 12) {
-            ProIconBadge(systemName: "calendar", color: OpenClawBrand.accent)
+            ProIconBadge(systemName: "calendar", color: NovaBrand.accent)
             VStack(alignment: .leading, spacing: 3) {
                 Text(day.date)
-                    .font(OpenClawType.subheadSemiBold)
+                    .font(NovaType.subheadSemiBold)
                 Text(verbatim: Self.tokenCountText(day.totalTokens ?? 0))
-                    .font(OpenClawType.caption)
+                    .font(NovaType.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer(minLength: 8)
             Text(Self.currency(day.totalCost ?? 0))
-                .font(OpenClawType.caption2SemiBold)
-                .foregroundStyle(OpenClawBrand.accent)
+                .font(NovaType.caption2SemiBold)
+                .foregroundStyle(NovaBrand.accent)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 14)

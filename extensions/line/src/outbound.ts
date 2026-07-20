@@ -3,15 +3,15 @@ import {
   defineChannelMessageAdapter,
   type ChannelMessageSendResult,
   type MessageReceiptPartKind,
-} from "openclaw/plugin-sdk/channel-outbound";
+} from "nova/plugin-sdk/channel-outbound";
 import {
   createAttachedChannelResultAdapter,
   createEmptyChannelResult,
-} from "openclaw/plugin-sdk/channel-send-result";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { resolveOutboundMediaUrls } from "openclaw/plugin-sdk/reply-payload";
-import { sanitizeAssistantVisibleText } from "openclaw/plugin-sdk/text-chunking";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/channel-send-result";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { resolveOutboundMediaUrls } from "nova/plugin-sdk/reply-payload";
+import { sanitizeAssistantVisibleText } from "nova/plugin-sdk/text-chunking";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import type { ChannelPlugin, ResolvedLineAccount } from "./channel-api.js";
 import {
   buildLineMediaMessage,

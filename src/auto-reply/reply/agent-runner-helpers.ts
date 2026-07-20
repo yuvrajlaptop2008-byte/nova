@@ -3,7 +3,7 @@ import { isAudioFileName } from "@nova/media-core/mime";
 import {
   hasOutboundReplyContent,
   resolveSendableOutboundReplyParts,
-} from "openclaw/plugin-sdk/reply-payload";
+} from "nova/plugin-sdk/reply-payload";
 import { loadSessionEntry } from "../../config/sessions/session-accessor.js";
 import { normalizeVerboseLevel, type VerboseLevel } from "../thinking.js";
 import type { ReplyPayload } from "../types.js";

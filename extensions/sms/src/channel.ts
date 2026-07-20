@@ -1,24 +1,24 @@
 // Sms plugin module implements channel behavior.
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/account-resolution";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/account-id";
+import type { NovaConfig } from "nova/plugin-sdk/account-resolution";
 import {
   createHybridChannelConfigAdapter,
   createScopedDmSecurityResolver,
-} from "openclaw/plugin-sdk/channel-config-helpers";
+} from "nova/plugin-sdk/channel-config-helpers";
 import {
   buildChannelOutboundSessionRoute,
   createChatChannelPlugin,
   type ChannelOutboundSessionRouteParams,
   type ChannelPlugin,
-} from "openclaw/plugin-sdk/channel-core";
+} from "nova/plugin-sdk/channel-core";
 import {
   createMessageReceiptFromOutboundResults,
   defineChannelMessageAdapter,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { createConditionalWarningCollector } from "openclaw/plugin-sdk/channel-policy";
-import { createEmptyChannelDirectoryAdapter } from "openclaw/plugin-sdk/directory-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/channel-outbound";
+import { createConditionalWarningCollector } from "nova/plugin-sdk/channel-policy";
+import { createEmptyChannelDirectoryAdapter } from "nova/plugin-sdk/directory-runtime";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
+import { chunkTextForOutbound } from "nova/plugin-sdk/text-chunking";
 import {
   inspectSmsAccount,
   isSmsAccountConfigured,
@@ -71,7 +71,7 @@ const resolveSmsDmPolicy = createScopedDmSecurityResolver<ResolvedSmsAccount>({
   resolveAllowFrom: (account) => account.allowFrom,
   policyPathSuffix: "dmPolicy",
   defaultPolicy: "pairing",
-  approveHint: "openclaw pairing approve sms <code>",
+  approveHint: "nova pairing approve sms <code>",
   normalizeEntry: normalizeSmsAllowFrom,
 });
 
@@ -106,10 +106,10 @@ function smsSetupPatch(input: Record<string, unknown>): Record<string, unknown> 
 }
 
 function applySmsAccountConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   input: Record<string, unknown>;
-}): OpenClawConfig {
+}): NovaConfig {
   const patch = smsSetupPatch(params.input);
   const channels = { ...params.cfg.channels };
   const current = { ...(channels[CHANNEL_ID] as Record<string, unknown> | undefined) };
@@ -157,7 +157,7 @@ function createSmsReceipt(params: {
 }
 
 function resolveSmsTextChunkLimit(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   fallbackLimit?: number;
 }): number {
@@ -167,7 +167,7 @@ function resolveSmsTextChunkLimit(params: {
 }
 
 async function sendSmsText(ctx: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   to: string;
   text: string;

@@ -9,7 +9,7 @@ import { repeat } from "lit/directives/repeat.js";
 import { icons } from "../../components/icons.ts";
 import { renderMcpServerForm, type McpServerForm } from "../../components/mcp-server-form.ts";
 import "../../components/modal-dialog.ts";
-import "../../components/openclaw-mascot.ts";
+import "../../components/nova-mascot.ts";
 import {
   renderSettingsEmpty,
   renderSettingsPage,
@@ -1049,9 +1049,9 @@ function renderDetailOverlay(props: PluginsViewProps) {
   const key = pluginRowKey(plugin.id);
   const busy = props.busy[key] ?? false;
   return html`
-    <openclaw-modal-dialog
+    <nova-modal-dialog
       label=${plugin.name}
-      style="--openclaw-modal-width: min(580px, calc(100vw - 32px));"
+      style="--nova-modal-width: min(580px, calc(100vw - 32px));"
       @modal-cancel=${() => props.onShowDetails(null)}
     >
       <section class="plugins-detail" data-detail-plugin-id=${plugin.id}>
@@ -1139,7 +1139,7 @@ function renderDetailOverlay(props: PluginsViewProps) {
           </div>
         </div>
       </section>
-    </openclaw-modal-dialog>
+    </nova-modal-dialog>
   `;
 }
 
@@ -1185,11 +1185,7 @@ function renderEmpty(title: string, body: string, mood?: "sleepy" | "curious") {
     <div class="plugins-empty">
       <!-- Sleepy marks truly empty inventory; curious marks a filter/search miss. -->
       ${mood
-        ? html`<openclaw-mascot
-            class="plugins-empty__mascot"
-            .mood=${mood}
-            .size=${84}
-          ></openclaw-mascot>`
+        ? html`<nova-mascot class="plugins-empty__mascot" .mood=${mood} .size=${84}></nova-mascot>`
         : html`<span class="plugins-empty__icon" aria-hidden="true">${icons.puzzle}</span>`}
       <h2>${title}</h2>
       <p>${body}</p>

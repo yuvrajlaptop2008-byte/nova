@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { AssistantMessage } from "openclaw/plugin-sdk/llm";
+import type { AssistantMessage } from "nova/plugin-sdk/llm";
 import { afterEach, describe, expect, test } from "vitest";
 import { replaceTranscriptEvents } from "../config/sessions/session-accessor.js";
 import { resolveSqliteTargetFromSessionStorePath } from "../config/sessions/session-sqlite-target.js";
@@ -13,9 +13,9 @@ import {
 } from "../config/sessions/transcript.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
 import { emitSessionTranscriptUpdate } from "../sessions/transcript-events.js";
-import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../shared/transcript-only-openclaw-assistant.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../state/openclaw-agent-db.generated.js";
-import { runOpenClawAgentWriteTransaction } from "../state/openclaw-agent-db.js";
+import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../shared/transcript-only-nova-assistant.js";
+import type { DB as NovaAgentKyselyDatabase } from "../state/nova-agent-db.generated.js";
+import { runNovaAgentWriteTransaction } from "../state/nova-agent-db.js";
 import { testState } from "./test-helpers.runtime-state.js";
 import {
   connectReq,
@@ -29,7 +29,7 @@ import {
 installGatewayTestHooks();
 
 const AUTH_HEADER = { Authorization: "Bearer test-gateway-token-1234567890" };
-const READ_SCOPE_HEADER = { "x-openclaw-scopes": "operator.read" };
+const READ_SCOPE_HEADER = { "x-nova-scopes": "operator.read" };
 const cleanupDirs: string[] = [];
 
 afterEach(async () => {
@@ -42,12 +42,12 @@ afterEach(async () => {
 
 const AGENT_ID = "main";
 type SessionHistoryTestDatabase = Pick<
-  OpenClawAgentKyselyDatabase,
+  NovaAgentKyselyDatabase,
   "session_entries" | "session_routes" | "sessions"
 >;
 
 async function createSessionStoreFile(): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-session-history-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-session-history-"));
   cleanupDirs.push(dir);
   const storePath = path.join(dir, "sessions.json");
   testState.sessionStorePath = storePath;
@@ -110,7 +110,7 @@ function seedRawSessionRows(params: {
   if (!databasePath) {
     throw new Error("expected SQLite session store path");
   }
-  runOpenClawAgentWriteTransaction(
+  runNovaAgentWriteTransaction(
     (database) => {
       const db = getNodeSqliteKysely<SessionHistoryTestDatabase>(database.db);
       for (const row of params.rows) {
@@ -211,7 +211,7 @@ function makeDeliveryMirrorAssistantMessage(
   return {
     ...makeTranscriptAssistantMessage({
       ...params,
-      provider: "openclaw",
+      provider: "nova",
       model: "delivery-mirror",
     }),
     api: NOVA_TRANSCRIPT_ARTIFACT_API,
@@ -294,7 +294,7 @@ async function withGatewayHarness<T>(
 
 type SessionHistoryMessage = {
   content?: Array<{ text?: string }>;
-  __openclaw?: { id?: string; seq?: number };
+  __nova?: { id?: string; seq?: number };
 };
 
 type SessionHistoryBody = {
@@ -361,7 +361,7 @@ type SessionHistorySseStream = {
   streamState: { buffer: string };
 };
 
-function expectOpenClawMetadata(
+function expectNovaMetadata(
   metadata: { id?: string; seq?: number } | undefined,
   expected: { id?: string; seq: number },
 ) {
@@ -435,10 +435,8 @@ async function expectMessageEventMatch(
   ).toBe(params.text);
   expect((event.data as { messageSeq?: number }).messageSeq).toBe(params.seq);
   if (params.id !== undefined) {
-    expectOpenClawMetadata(
-      (event.data as { message?: { __openclaw?: { id?: string; seq?: number } } }).message?.[
-        "__openclaw"
-      ],
+    expectNovaMetadata(
+      (event.data as { message?: { __nova?: { id?: string; seq?: number } } }).message?.["__nova"],
       {
         id: params.id,
         seq: params.seq,
@@ -473,7 +471,7 @@ describe("session history HTTP endpoints", () => {
       expect(body.sessionKey).toBe("agent:main:main");
       expect(body.messages).toHaveLength(1);
       expect(body.messages?.[0]?.content?.[0]?.text).toBe("hello from history");
-      expectOpenClawMetadata(body.messages?.[0]?.["__openclaw"], {
+      expectNovaMetadata(body.messages?.[0]?.["__nova"], {
         seq: 2,
       });
     });
@@ -515,7 +513,7 @@ describe("session history HTTP endpoints", () => {
       ]);
       expect(body.hasMore).toBe(true);
       expect(body.nextCursor).toBe("2");
-      expectOpenClawMetadata(body.messages?.[0]?.["__openclaw"], {
+      expectNovaMetadata(body.messages?.[0]?.["__nova"], {
         seq: 2,
       });
     });
@@ -691,7 +689,7 @@ describe("session history HTTP endpoints", () => {
         "second message",
         "third message",
       ]);
-      expect(firstBody.messages?.map((message) => message["__openclaw"]?.seq)).toEqual([3, 4]);
+      expect(firstBody.messages?.map((message) => message["__nova"]?.seq)).toEqual([3, 4]);
       expect(firstBody.hasMore).toBe(true);
       expect(firstBody.nextCursor).toBe("3");
 
@@ -703,7 +701,7 @@ describe("session history HTTP endpoints", () => {
       expect(secondBody.items?.map((message) => message.content?.[0]?.text)).toEqual([
         "first message",
       ]);
-      expect(secondBody.messages?.map((message) => message["__openclaw"]?.seq)).toEqual([2]);
+      expect(secondBody.messages?.map((message) => message["__nova"]?.seq)).toEqual([2]);
       expect(secondBody.hasMore).toBe(false);
       expect(secondBody.nextCursor).toBeUndefined();
     });
@@ -793,11 +791,11 @@ describe("session history HTTP endpoints", () => {
       const nextData = nextEvent.data as {
         messages?: Array<{
           content?: Array<{ text?: string }>;
-          __openclaw?: { id?: string; seq?: number };
+          __nova?: { id?: string; seq?: number };
         }>;
       };
       expect(nextData.messages?.[0]?.content?.[0]?.text).toBe("third message");
-      expectOpenClawMetadata(nextData.messages?.[0]?.["__openclaw"], {
+      expectNovaMetadata(nextData.messages?.[0]?.["__nova"], {
         id: thirdMessageId,
         seq: 4,
       });
@@ -822,10 +820,10 @@ describe("session history HTTP endpoints", () => {
       const refreshEvent = await readSseEvent(stream.reader, stream.streamState);
       expect(refreshEvent.event).toBe("history");
       const refreshData = refreshEvent.data as {
-        messages?: Array<{ content?: Array<{ text?: string }>; __openclaw?: { seq?: number } }>;
+        messages?: Array<{ content?: Array<{ text?: string }>; __nova?: { seq?: number } }>;
       };
       expect(refreshData.messages?.[0]?.content?.[0]?.text).toBe("second message");
-      expect(refreshData.messages?.[0]?.["__openclaw"]?.seq).toBe(3);
+      expect(refreshData.messages?.[0]?.["__nova"]?.seq).toBe(3);
 
       await stream.reader.cancel();
     });
@@ -881,13 +879,13 @@ describe("session history HTTP endpoints", () => {
         sessionKey?: string;
         messages?: Array<{
           content?: Array<{ text?: string }>;
-          __openclaw?: { id?: string; seq?: number };
+          __nova?: { id?: string; seq?: number };
         }>;
       };
       expect(body.sessionKey).toBe("agent:main:main");
       expect(body.messages).toHaveLength(1);
       expect(body.messages?.[0]?.content?.[0]?.text).toBe("Done.");
-      expectOpenClawMetadata(body.messages?.[0]?.["__openclaw"], {
+      expectNovaMetadata(body.messages?.[0]?.["__nova"], {
         id: visibleMessageId,
         seq: 3,
       });

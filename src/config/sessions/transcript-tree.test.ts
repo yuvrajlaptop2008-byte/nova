@@ -297,7 +297,7 @@ describe("session transcript tree helpers", () => {
         type: "custom",
         id: "bootstrap-context",
         parentId: "missing-stale-parent",
-        customType: "openclaw:bootstrap-context:full",
+        customType: "nova:bootstrap-context:full",
       },
     ];
 

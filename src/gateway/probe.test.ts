@@ -429,7 +429,7 @@ describe("probeGateway", () => {
   it("loads probe identity and cached device auth from the provided env", async () => {
     const env = {
       ...process.env,
-      NOVA_STATE_DIR: "/tmp/openclaw-probe-service-state",
+      NOVA_STATE_DIR: "/tmp/nova-probe-service-state",
     } as NodeJS.ProcessEnv;
 
     await runTokenProbe({ env });

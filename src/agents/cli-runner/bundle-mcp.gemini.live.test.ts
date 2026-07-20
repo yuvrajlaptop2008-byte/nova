@@ -27,8 +27,8 @@ async function startLocalStreamableHttpMcpServer(): Promise<{
 }> {
   // Real local MCP endpoint verifies Gemini consumes the generated settings
   // rather than just checking file shape.
-  const mcpServer = new McpServer({ name: "openclaw-gemini-live-probe", version: "1.0.0" });
-  mcpServer.tool("openclaw_live_probe", "Nova Gemini MCP live probe", async () => ({
+  const mcpServer = new McpServer({ name: "nova-gemini-live-probe", version: "1.0.0" });
+  mcpServer.tool("nova_live_probe", "Nova Gemini MCP live probe", async () => ({
     content: [{ type: "text", text: "ok" }],
   }));
 
@@ -82,7 +82,7 @@ describeLive("Gemini CLI MCP settings smoke", () => {
         plugins: { enabled: false },
         mcp: {
           servers: {
-            openclawLiveProbe: {
+            novaLiveProbe: {
               transport: "streamable-http",
               url: probeServer.url,
             },
@@ -101,7 +101,7 @@ describeLive("Gemini CLI MCP settings smoke", () => {
         maxBuffer: 1024 * 1024,
       });
       const output = `${result.stdout}\n${result.stderr}`;
-      expect(output).toContain("openclawLiveProbe");
+      expect(output).toContain("novaLiveProbe");
       expect(output).toMatch(/\(http\)|type:\s*http|http/i);
       expect(output).not.toContain("transport");
     } finally {

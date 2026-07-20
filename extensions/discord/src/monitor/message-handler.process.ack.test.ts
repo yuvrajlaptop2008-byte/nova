@@ -1,6 +1,6 @@
 // Discord message processing coverage split by cohesive behavior.
 import { expectDefined } from "@nova/normalization-core";
-import { DEFAULT_EMOJIS, DEFAULT_TIMING } from "openclaw/plugin-sdk/channel-feedback";
+import { DEFAULT_EMOJIS, DEFAULT_TIMING } from "nova/plugin-sdk/channel-feedback";
 import { describe, expect, it, vi } from "vitest";
 import {
   BASE_CHANNEL_ROUTE,
@@ -230,7 +230,7 @@ describe("processDiscordMessage ack reactions", () => {
         effectiveWasMentioned: false,
         cfg: {
           messages: { groupChat: { visibleReplies: "message_tool" } },
-          session: { store: "/tmp/openclaw-discord-process-test-sessions.json" },
+          session: { store: "/tmp/nova-discord-process-test-sessions.json" },
         },
         route: BASE_CHANNEL_ROUTE,
       });
@@ -391,7 +391,7 @@ describe("processDiscordMessage ack reactions", () => {
             timing: { debounceMs: 0 },
           },
         },
-        session: { store: "/tmp/openclaw-discord-process-test-sessions.json" },
+        session: { store: "/tmp/nova-discord-process-test-sessions.json" },
       },
     });
 
@@ -417,7 +417,7 @@ describe("processDiscordMessage ack reactions", () => {
             timing: { debounceMs: 0 },
           },
         },
-        session: { store: "/tmp/openclaw-discord-process-test-sessions.json" },
+        session: { store: "/tmp/nova-discord-process-test-sessions.json" },
       },
     });
 
@@ -448,7 +448,7 @@ describe("processDiscordMessage ack reactions", () => {
             timing: { debounceMs: 0 },
           },
         },
-        session: { store: "/tmp/openclaw-discord-process-test-sessions.json" },
+        session: { store: "/tmp/nova-discord-process-test-sessions.json" },
       },
     });
 
@@ -476,7 +476,7 @@ describe("processDiscordMessage ack reactions", () => {
           ackReaction: "👀",
           removeAckAfterReply: true,
         },
-        session: { store: "/tmp/openclaw-discord-process-test-sessions.json" },
+        session: { store: "/tmp/nova-discord-process-test-sessions.json" },
       },
     });
 
@@ -500,7 +500,7 @@ describe("processDiscordMessage ack reactions", () => {
             enabled: false,
           },
         },
-        session: { store: "/tmp/openclaw-discord-process-test-sessions.json" },
+        session: { store: "/tmp/nova-discord-process-test-sessions.json" },
       },
     });
 
@@ -554,7 +554,7 @@ describe("processDiscordMessage ack reactions", () => {
               timing: { [timingKey]: configuredHoldMs, debounceMs: 0 },
             },
           },
-          session: { store: "/tmp/openclaw-discord-process-test-sessions.json" },
+          session: { store: "/tmp/nova-discord-process-test-sessions.json" },
         },
       });
 

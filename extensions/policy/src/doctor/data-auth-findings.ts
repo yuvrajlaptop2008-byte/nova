@@ -1,5 +1,5 @@
-import type { HealthFinding } from "openclaw/plugin-sdk/health";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { HealthFinding } from "nova/plugin-sdk/health";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { PolicyDataHandlingEvidence, PolicyEvidence } from "../policy-state.js";
 import { CHECK_IDS } from "./check-ids.js";
 import {
@@ -203,7 +203,7 @@ function secretManagedProviderFindings(
         severity: "error",
         message: `SecretRef uses unmanaged provider '${secret.refProvider ?? "default"}'.`,
         source: "policy",
-        path: "openclaw config",
+        path: "nova config",
         ocPath: secret.source,
         target: secret.source,
         requirement: `oc://${policyDocName}/secrets/requireManagedProviders`,
@@ -234,7 +234,7 @@ function secretDeniedSourceFindings(
         severity: "error",
         message: `Secret ${secret.kind} '${secret.id}' uses denied source '${source}'.`,
         source: "policy",
-        path: "openclaw config",
+        path: "nova config",
         ocPath: secret.source,
         target: secret.source,
         requirement: `oc://${policyDocName}/secrets/denySources`,
@@ -259,7 +259,7 @@ function secretInsecureProviderFindings(
         severity: "error",
         message: `Secret provider '${secret.id}' enables insecure posture: ${(secret.insecure ?? []).join(", ")}.`,
         source: "policy",
-        path: "openclaw config",
+        path: "nova config",
         ocPath: secret.source,
         target: secret.source,
         requirement: `oc://${policyDocName}/secrets/allowInsecureProviders`,
@@ -290,7 +290,7 @@ function authProfileMetadataFindings(
         severity: "error",
         message: `Auth profile '${profile.id}' is missing required metadata: ${missing.join(", ")}.`,
         source: "policy",
-        path: "openclaw config",
+        path: "nova config",
         ocPath: profile.source,
         target: profile.source,
         requirement: `oc://${policyDocName}/auth/profiles/requireMetadata`,
@@ -317,7 +317,7 @@ function authProfileModeFindings(
         severity: "error",
         message: `Auth profile '${profile.id}' uses mode '${profile.mode}' outside the policy allowlist.`,
         source: "policy",
-        path: "openclaw config",
+        path: "nova config",
         ocPath: profile.source,
         target: profile.source,
         requirement: `oc://${policyDocName}/auth/profiles/allowModes`,

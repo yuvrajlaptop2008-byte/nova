@@ -3,8 +3,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import { WebSocket } from "ws";
 import {
   QA_EVIDENCE_FILENAME,
@@ -54,10 +54,10 @@ function createFixturePlugin(repoRoot: string, outputRoot: string) {
 }
 
 function withVoiceCallConfig(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginDir: string;
   servePort: number;
-}): OpenClawConfig {
+}): NovaConfig {
   const config = params.config;
   return {
     ...config,
@@ -167,7 +167,7 @@ async function openRealtimeMediaStream(params: {
 }
 
 async function runVoiceCallProof(options: ProducerOptions): Promise<string> {
-  const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-voice-call-gateway-"));
+  const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-voice-call-gateway-"));
   const fixture = createFixturePlugin(options.repoRoot, fixtureRoot);
   const mock = await startQaMockOpenAiServer();
   const servePort = await getFreePort();
@@ -260,7 +260,7 @@ async function runVoiceCallProof(options: ProducerOptions): Promise<string> {
       .map((line) => line.trim())
       .filter(Boolean)
       .map((line) => JSON.parse(line) as { tools?: string[] });
-    if (!bridgeCalls.some((call) => call.tools?.includes("openclaw_agent_consult"))) {
+    if (!bridgeCalls.some((call) => call.tools?.includes("nova_agent_consult"))) {
       throw new Error(
         `realtime bridge did not expose embedded consult: ${JSON.stringify(bridgeCalls)}`,
       );

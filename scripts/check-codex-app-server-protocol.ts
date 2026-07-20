@@ -134,7 +134,7 @@ async function main(): Promise<void> {
 async function checkMaintainedProtocolTypes(sourceRoot: string): Promise<void> {
   // Raw requests go to Codex; raw responses flow into Nova. Keep the
   // assignability direction explicit so the probe permits deliberate projections.
-  const probePath = path.join(sourceRoot, "openclaw-protocol-compatibility.ts");
+  const probePath = path.join(sourceRoot, "nova-protocol-compatibility.ts");
   const protocolPath = path.resolve(process.cwd(), "extensions/codex/src/app-server/protocol.ts");
   const protocolImport = relativeTypeScriptImport(probePath, protocolPath);
   const generatedImport = (file: string) =>
@@ -169,39 +169,39 @@ import type { TurnEnvironmentParams } from ${JSON.stringify(generatedImport("v2/
 import type { TurnInterruptParams } from ${JSON.stringify(generatedImport("v2/TurnInterruptParams.ts"))};
 import type { TurnStartParams } from ${JSON.stringify(generatedImport("v2/TurnStartParams.ts"))};
 
-declare const openClawDynamicToolSpec: CodexDynamicToolSpec;
-const generatedDynamicToolSpec: DynamicToolSpec = openClawDynamicToolSpec;
-declare const openClawTurnEnvironmentParams: CodexTurnEnvironmentParams;
-const generatedTurnEnvironmentParams: TurnEnvironmentParams = openClawTurnEnvironmentParams;
-declare const openClawThreadStartParams: CodexThreadStartParams;
-const generatedThreadStartParams: ThreadStartParams = openClawThreadStartParams;
-declare const openClawThreadResumeParams: CodexThreadResumeParams;
-const generatedThreadResumeParams: ThreadResumeParams = openClawThreadResumeParams;
-declare const openClawThreadForkParams: CodexThreadForkParams;
-const generatedThreadForkParams: ThreadForkParams = openClawThreadForkParams;
-declare const openClawTurnInterruptParams: CodexAppServerRequestParams<"turn/interrupt">;
-const generatedTurnInterruptParams: TurnInterruptParams = openClawTurnInterruptParams;
-declare const openClawTurnStartParams: CodexTurnStartParams;
-const generatedTurnStartParams: TurnStartParams = openClawTurnStartParams;
+declare const novaDynamicToolSpec: CodexDynamicToolSpec;
+const generatedDynamicToolSpec: DynamicToolSpec = novaDynamicToolSpec;
+declare const novaTurnEnvironmentParams: CodexTurnEnvironmentParams;
+const generatedTurnEnvironmentParams: TurnEnvironmentParams = novaTurnEnvironmentParams;
+declare const novaThreadStartParams: CodexThreadStartParams;
+const generatedThreadStartParams: ThreadStartParams = novaThreadStartParams;
+declare const novaThreadResumeParams: CodexThreadResumeParams;
+const generatedThreadResumeParams: ThreadResumeParams = novaThreadResumeParams;
+declare const novaThreadForkParams: CodexThreadForkParams;
+const generatedThreadForkParams: ThreadForkParams = novaThreadForkParams;
+declare const novaTurnInterruptParams: CodexAppServerRequestParams<"turn/interrupt">;
+const generatedTurnInterruptParams: TurnInterruptParams = novaTurnInterruptParams;
+declare const novaTurnStartParams: CodexTurnStartParams;
+const generatedTurnStartParams: TurnStartParams = novaTurnStartParams;
 
 declare const generatedDynamicToolCallParams: Omit<DynamicToolCallParams, "arguments">;
-const openClawDynamicToolCallParams: Omit<CodexDynamicToolCallParams, "arguments"> =
+const novaDynamicToolCallParams: Omit<CodexDynamicToolCallParams, "arguments"> =
   generatedDynamicToolCallParams;
 declare const generatedErrorNotification: ErrorNotification;
-const openClawErrorNotification: CodexErrorNotification = generatedErrorNotification;
+const novaErrorNotification: CodexErrorNotification = generatedErrorNotification;
 declare const generatedModelListResponse: ModelListResponse;
-const openClawModelListResponse: CodexModelListResponse = generatedModelListResponse;
+const novaModelListResponse: CodexModelListResponse = generatedModelListResponse;
 
 // Thread and turn bodies are normalized behind checked-in JSON schemas. Their
 // raw generated shapes must not be confused with the projector-facing types.
 declare const generatedThreadForkResponse: Omit<ThreadForkResponse, "thread">;
-const openClawThreadForkResponse: Omit<CodexThreadForkResponse, "thread"> =
+const novaThreadForkResponse: Omit<CodexThreadForkResponse, "thread"> =
   generatedThreadForkResponse;
 declare const generatedThreadResumeResponse: Omit<ThreadResumeResponse, "thread">;
-const openClawThreadResumeResponse: Omit<CodexThreadResumeResponse, "thread"> =
+const novaThreadResumeResponse: Omit<CodexThreadResumeResponse, "thread"> =
   generatedThreadResumeResponse;
 declare const generatedThreadStartResponse: Omit<ThreadStartResponse, "thread">;
-const openClawThreadStartResponse: Omit<CodexThreadStartResponse, "thread"> =
+const novaThreadStartResponse: Omit<CodexThreadStartResponse, "thread"> =
   generatedThreadStartResponse;
 
 export {};

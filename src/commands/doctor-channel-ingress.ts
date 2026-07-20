@@ -26,7 +26,7 @@ export function noteChannelIngressDeadLetters(
     lines.push(
       `- Inspect with ${formatCliCommand(
         [
-          "openclaw",
+          "nova",
           "channels",
           "dead-letters",
           "list",

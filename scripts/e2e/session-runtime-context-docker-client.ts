@@ -6,8 +6,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
-import { readSessionTranscriptEvents } from "openclaw/plugin-sdk/session-transcript-runtime";
+import { SessionManager } from "nova/plugin-sdk/agent-sessions";
+import { readSessionTranscriptEvents } from "nova/plugin-sdk/session-transcript-runtime";
 import {
   buildRuntimeContextCustomMessage,
   resolveRuntimeContextPromptParts,
@@ -51,7 +51,7 @@ function messageText(content: unknown): string {
 }
 
 async function verifyRuntimeContextTranscriptShape(root: string) {
-  const sessionFile = path.join(root, ".openclaw", "agents", "main", "sessions", "runtime.jsonl");
+  const sessionFile = path.join(root, ".nova", "agents", "main", "sessions", "runtime.jsonl");
   await fs.mkdir(path.dirname(sessionFile), { recursive: true });
   const sessionManager = SessionManager.open(sessionFile);
   const effectivePrompt = [
@@ -89,7 +89,7 @@ async function verifyRuntimeContextTranscriptShape(root: string) {
   const customEntry = entries.find((entry) => entry.type === "custom_message");
   assert(!customEntry, "runtime custom message should not be persisted without its user turn");
   assert(
-    runtimeContextMessage.customType === "openclaw.runtime-context",
+    runtimeContextMessage.customType === "nova.runtime-context",
     "unexpected custom message type",
   );
   assert(!runtimeContextMessage.display, "runtime custom message should be hidden");
@@ -179,8 +179,8 @@ async function seedBrokenSession(stateDir: string): Promise<string> {
 }
 
 async function verifyDoctorRepair(root: string) {
-  const stateDir = path.join(root, ".openclaw");
-  const configPath = path.join(stateDir, "openclaw.json");
+  const stateDir = path.join(root, ".nova");
+  const configPath = path.join(stateDir, "nova.json");
   const sessionFile = await seedBrokenSession(stateDir);
   await fs.mkdir(path.dirname(configPath), { recursive: true });
   await fs.writeFile(configPath, JSON.stringify({ plugins: { enabled: false } }, null, 2));
@@ -212,7 +212,7 @@ async function verifyDoctorRepair(root: string) {
     result.status === 0,
     `doctor --fix failed\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
   );
-  const databasePath = path.join(stateDir, "agents", "main", "agent", "openclaw-agent.sqlite");
+  const databasePath = path.join(stateDir, "agents", "main", "agent", "nova-agent.sqlite");
   const database = new DatabaseSync(databasePath, { readOnly: true });
   let migratedSessionId: string | undefined;
   try {
@@ -250,11 +250,11 @@ async function verifyDoctorRepair(root: string) {
 }
 
 async function main() {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-session-runtime-context-"));
-  const stateDir = path.join(root, ".openclaw");
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-session-runtime-context-"));
+  const stateDir = path.join(root, ".nova");
   setEnvValue("HOME", root);
   setEnvValue("NOVA_STATE_DIR", stateDir);
-  setEnvValue("NOVA_CONFIG_PATH", path.join(stateDir, "openclaw.json"));
+  setEnvValue("NOVA_CONFIG_PATH", path.join(stateDir, "nova.json"));
   try {
     await verifyRuntimeContextTranscriptShape(root);
     await verifyDoctorRepair(root);

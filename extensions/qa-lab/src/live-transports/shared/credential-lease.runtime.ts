@@ -1,9 +1,9 @@
 // Qa Lab plugin module implements credential lease behavior.
 import { randomUUID } from "node:crypto";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import { readProviderTextResponse } from "openclaw/plugin-sdk/provider-http";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import { readProviderTextResponse } from "nova/plugin-sdk/provider-http";
 import { z } from "zod";
 import {
   isQaCredentialTruthyOptIn,
@@ -27,7 +27,7 @@ const CHUNKED_PAYLOAD_MAX_CHUNKS_ENV = "NOVA_QA_CREDENTIAL_PAYLOAD_MAX_CHUNKS";
 const RETRY_BACKOFF_MS = [500, 1_000, 2_000, 4_000, 5_000] as const;
 const HEARTBEAT_RETRY_DELAYS_MS = [1_000, 3_000, 5_000] as const;
 const RETRYABLE_ACQUIRE_CODES = new Set(["POOL_EXHAUSTED", "NO_CREDENTIAL_AVAILABLE"]);
-const CHUNKED_PAYLOAD_MARKER = "__openclawQaCredentialPayloadChunksV1";
+const CHUNKED_PAYLOAD_MARKER = "__novaQaCredentialPayloadChunksV1";
 
 const convexAcquireSuccessSchema = z.object({
   status: z.literal("ok"),

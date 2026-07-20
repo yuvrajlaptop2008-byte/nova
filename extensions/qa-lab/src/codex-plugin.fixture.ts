@@ -10,7 +10,7 @@ export const CODEX_PLUGIN_ID = "codex";
 
 export const CODEX_PLUGIN_LIFECYCLE_MESSAGES = Object.freeze({
   missingPlugin:
-    'Codex plugin is required for Codex runtime. Run "openclaw doctor --fix" to install @nova/codex, then retry.',
+    'Codex plugin is required for Codex runtime. Run "nova doctor --fix" to install @nova/codex, then retry.',
 });
 
 export type CodexPluginFixtureVersion = "missing" | "current" | "head" | (string & {});
@@ -34,7 +34,7 @@ export type CodexPluginLifecycleResult = {
 type CodexPluginPackageJson = {
   name: "@nova/codex";
   version: string;
-  openclaw: {
+  nova: {
     install: {
       minHostVersion: string;
     };
@@ -59,7 +59,7 @@ function buildPackageJson(version: string): CodexPluginPackageJson {
   return {
     name: "@nova/codex",
     version,
-    openclaw: {
+    nova: {
       install: {
         minHostVersion: `>=${version === CODEX_PLUGIN_HEAD_VERSION ? CODEX_PLUGIN_CURRENT_VERSION : version}`,
       },
@@ -105,7 +105,7 @@ function compareCodexPluginVersions(left: ParsedSemver, right: ParsedSemver): nu
 }
 
 function formatPinnedOldRemediation(pluginVersion: string, hostVersion: string) {
-  return `Codex plugin version ${pluginVersion} is older than Nova ${hostVersion}. Run "openclaw plugins update codex" or unpin codex, then rerun "openclaw doctor --fix".`;
+  return `Codex plugin version ${pluginVersion} is older than Nova ${hostVersion}. Run "nova plugins update codex" or unpin codex, then rerun "nova doctor --fix".`;
 }
 
 function formatPinnedNewRemediation(pluginVersion: string, hostVersion: string) {
@@ -124,7 +124,7 @@ function collectStaleLegacyRuntimePins(config: unknown): string[] {
   };
   const markers = new Set<string>();
   const collectRuntimePin = (value: unknown) => {
-    if (value === "openclaw") {
+    if (value === "nova") {
       markers.add(`agentRuntime.id=${value}`);
     }
   };
@@ -153,7 +153,7 @@ export async function seedCodexPluginAt(
     "utf8",
   );
   await fs.writeFile(
-    path.join(targetDir, "openclaw.plugin.json"),
+    path.join(targetDir, "nova.plugin.json"),
     `${JSON.stringify({ id: CODEX_PLUGIN_ID, name: "Codex" }, null, 2)}\n`,
     "utf8",
   );

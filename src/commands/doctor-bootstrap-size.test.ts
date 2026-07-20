@@ -1,6 +1,6 @@
 // Doctor bootstrap-size tests cover prompt-context budget warnings and note rendering.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 
 const note = vi.hoisted(() => vi.fn());
 const resolveAgentWorkspaceDir = vi.hoisted(() => vi.fn(() => "/tmp/workspace"));
@@ -51,7 +51,7 @@ describe("noteBootstrapFileSize", () => {
       ],
       contextFiles: [{ path: "/tmp/workspace/AGENTS.md", content: "a".repeat(20_000) }],
     });
-    await noteBootstrapFileSize({} as OpenClawConfig);
+    await noteBootstrapFileSize({} as NovaConfig);
     expect(note).toHaveBeenCalledTimes(1);
     const [message, title] = note.mock.calls[0] ?? [];
     expect(title).toBe("Bootstrap file size");
@@ -73,7 +73,7 @@ describe("noteBootstrapFileSize", () => {
       bootstrapFiles: [],
       contextFiles: [],
     });
-    await noteBootstrapFileSize({} as OpenClawConfig);
+    await noteBootstrapFileSize({} as NovaConfig);
     expect(resolveBootstrapMaxChars).toHaveBeenCalledWith(expect.anything(), "custom-agent");
     expect(resolveBootstrapTotalMaxChars).toHaveBeenCalledWith(expect.anything(), "custom-agent");
     expect(resolveBootstrapContextForRun).toHaveBeenCalledWith(
@@ -93,7 +93,7 @@ describe("noteBootstrapFileSize", () => {
       ],
       contextFiles: [{ path: "/tmp/workspace/AGENTS.md", content: "a".repeat(1_000) }],
     });
-    await noteBootstrapFileSize({} as OpenClawConfig);
+    await noteBootstrapFileSize({} as NovaConfig);
     expect(note).not.toHaveBeenCalled();
   });
 });

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export HOME=/tmp/openclaw-docker-selected-plugins
-export NOVA_STATE_DIR="$HOME/.openclaw"
-export NOVA_CONFIG_PATH="$NOVA_STATE_DIR/openclaw.json"
+export HOME=/tmp/nova-docker-selected-plugins
+export NOVA_STATE_DIR="$HOME/.nova"
+export NOVA_CONFIG_PATH="$NOVA_STATE_DIR/nova.json"
 export NOVA_DISABLE_BUNDLED_SOURCE_OVERLAYS=1
 
 mkdir -p "$NOVA_STATE_DIR"
@@ -21,8 +21,8 @@ fs.writeFileSync(
 NODE
 
 for plugin_id in clickclack slack msteams clawrouter; do
-  node /app/openclaw.mjs plugins inspect "$plugin_id" --runtime --json \
-    >"/tmp/openclaw-${plugin_id}-inspect.json"
+  node /app/nova.mjs plugins inspect "$plugin_id" --runtime --json \
+    >"/tmp/nova-${plugin_id}-inspect.json"
 done
 
-node /openclaw-e2e/assertions.mjs
+node /nova-e2e/assertions.mjs

@@ -9,7 +9,7 @@ describe("xaiUserAgent", () => {
 
   it("prefers NOVA_VERSION env over the bundled package version", () => {
     vi.stubEnv("NOVA_VERSION", "2026.3.22");
-    expect(xaiUserAgent()).toBe("openclaw/2026.3.22");
+    expect(xaiUserAgent()).toBe("nova/2026.3.22");
   });
 
   it("falls back to NOVA_SERVICE_VERSION when NOVA_VERSION is unset", () => {
@@ -20,13 +20,13 @@ describe("xaiUserAgent", () => {
     // assert "unknown" here. We just lock the prefix to ensure the env-first
     // contract holds whenever the bundle resolves to 0.0.0/empty.
     const result = xaiUserAgent();
-    expect(result.startsWith("openclaw/")).toBe(true);
-    expect(result).not.toBe("openclaw/");
+    expect(result.startsWith("nova/")).toBe(true);
+    expect(result).not.toBe("nova/");
   });
 
-  it("returns the openclaw/<version> shape", () => {
+  it("returns the nova/<version> shape", () => {
     vi.stubEnv("NOVA_VERSION", "2026.5.16");
-    expect(xaiUserAgent()).toMatch(/^openclaw\/\d+\.\d+\.\d+$/u);
+    expect(xaiUserAgent()).toMatch(/^nova\/\d+\.\d+\.\d+$/u);
   });
 });
 
@@ -38,10 +38,10 @@ describe("xaiUserAgentHeaderFor", () => {
   it("emits User-Agent for the xAI-native host", () => {
     vi.stubEnv("NOVA_VERSION", "2026.3.22");
     expect(xaiUserAgentHeaderFor("https://api.x.ai/v1")).toEqual({
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "nova/2026.3.22",
     });
     expect(xaiUserAgentHeaderFor("https://api.x.ai/v1/tts")).toEqual({
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "nova/2026.3.22",
     });
   });
 

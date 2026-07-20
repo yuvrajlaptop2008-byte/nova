@@ -39,7 +39,7 @@ describeControlUiE2e("Control UI strict CSP E2E", () => {
     const context = await browser.newContext({ serviceWorkers: "block" });
     await context.addInitScript(() => {
       const violations: Array<{ blockedUri: string; effectiveDirective: string }> = [];
-      Object.assign(globalThis, { __openclawCspViolations: violations });
+      Object.assign(globalThis, { __novaCspViolations: violations });
       document.addEventListener("securitypolicyviolation", (event) => {
         violations.push({
           blockedUri: event.blockedURI,
@@ -76,12 +76,12 @@ describeControlUiE2e("Control UI strict CSP E2E", () => {
       const evalViolations = await page.evaluate(() => {
         const violations = (
           globalThis as typeof globalThis & {
-            __openclawCspViolations?: Array<{
+            __novaCspViolations?: Array<{
               blockedUri: string;
               effectiveDirective: string;
             }>;
           }
-        )["__openclawCspViolations"];
+        )["__novaCspViolations"];
         return (violations ?? []).filter(
           (violation) =>
             violation.blockedUri === "eval" &&

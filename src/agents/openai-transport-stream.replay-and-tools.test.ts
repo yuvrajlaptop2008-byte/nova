@@ -1,7 +1,7 @@
 import { SYSTEM_PROMPT_CACHE_BOUNDARY } from "@nova/ai/internal/shared";
 import { expectDefined } from "@nova/normalization-core";
+import type { Model } from "nova/plugin-sdk/llm";
 import OpenAI from "openai";
-import type { Model } from "openclaw/plugin-sdk/llm";
 import { describe, expect, it, vi } from "vitest";
 import { buildOpenAICompletionsParams } from "./openai-transport-stream.js";
 import {
@@ -350,13 +350,10 @@ describe("openai transport stream", () => {
                   id: "rs_prior",
                   encrypted_content: "ciphertext",
                 }),
-                openclawReasoningReplay: testing.buildOpenAIResponsesReasoningReplayMetadata(
-                  model,
-                  {
-                    authProfileId: "openai:oauth",
-                    sessionId: "session-123",
-                  },
-                ),
+                novaReasoningReplay: testing.buildOpenAIResponsesReasoningReplayMetadata(model, {
+                  authProfileId: "openai:oauth",
+                  sessionId: "session-123",
+                }),
               },
               {
                 type: "text",
@@ -398,7 +395,7 @@ describe("openai transport stream", () => {
       summary: [],
     });
     expect(reasoningItem?.id).toBeUndefined();
-    expect(reasoningItem).not.toHaveProperty("__openclaw_replay");
+    expect(reasoningItem).not.toHaveProperty("__nova_replay");
     const assistantMessage = params.input?.find(
       (item) => item.type === "message" && item.role === "assistant",
     );
@@ -571,13 +568,10 @@ describe("openai transport stream", () => {
                   id: "rs_prior",
                   encrypted_content: "ciphertext",
                 }),
-                openclawReasoningReplay: testing.buildOpenAIResponsesReasoningReplayMetadata(
-                  model,
-                  {
-                    authProfileId: "openai:oauth",
-                    sessionId: "different-session",
-                  },
-                ),
+                novaReasoningReplay: testing.buildOpenAIResponsesReasoningReplayMetadata(model, {
+                  authProfileId: "openai:oauth",
+                  sessionId: "different-session",
+                }),
               },
             ],
           },
@@ -640,13 +634,10 @@ describe("openai transport stream", () => {
                   id: "rs_prior",
                   encrypted_content: "ciphertext",
                 }),
-                openclawReasoningReplay: testing.buildOpenAIResponsesReasoningReplayMetadata(
-                  model,
-                  {
-                    authProfileId: "openai:old-oauth",
-                    sessionId: "session-123",
-                  },
-                ),
+                novaReasoningReplay: testing.buildOpenAIResponsesReasoningReplayMetadata(model, {
+                  authProfileId: "openai:old-oauth",
+                  sessionId: "session-123",
+                }),
               },
             ],
           },
@@ -741,7 +732,7 @@ describe("openai transport stream", () => {
       summary: [],
     });
     expect(reasoningItem?.id).toBeUndefined();
-    expect(reasoningItem).not.toHaveProperty("__openclaw_replay");
+    expect(reasoningItem).not.toHaveProperty("__nova_replay");
   });
 
   it("strips nested encrypted reasoning content from retry payloads without changing ids", () => {

@@ -1,6 +1,6 @@
 // Verifies CLI runtime alias resolution and runtime model-ref equivalence.
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { testing as cliBackendsTesting } from "./cli-backends.test-support.js";
 import {
   createModelPickerVisibleProviderPredicate,
@@ -14,8 +14,8 @@ import {
 
 function createAnthropicAuthConfig(params: {
   order?: string[];
-  models?: NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]>["models"];
-}): OpenClawConfig {
+  models?: NonNullable<NonNullable<NovaConfig["agents"]>["defaults"]>["models"];
+}): NovaConfig {
   // Auth order controls whether Anthropic execution is direct API or Claude
   // CLI-backed when no explicit runtime policy overrides it.
   return {
@@ -31,7 +31,7 @@ function createAnthropicAuthConfig(params: {
         models: params.models,
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 describe("resolveCliRuntimeExecutionProvider", () => {
@@ -111,7 +111,7 @@ describe("resolveCliRuntimeExecutionProvider", () => {
         cfg: createAnthropicAuthConfig({
           order: ["anthropic:claude-cli"],
           models: {
-            "anthropic/opus-4.7": { agentRuntime: { id: "openclaw" } },
+            "anthropic/opus-4.7": { agentRuntime: { id: "nova" } },
           },
         }),
         provider: "anthropic",
@@ -147,7 +147,7 @@ describe("resolveCliRuntimeExecutionProvider", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         provider: "",
         modelId: "anthropic/opus-4.7",
       }),

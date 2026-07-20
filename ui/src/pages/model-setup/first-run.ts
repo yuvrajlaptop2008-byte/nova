@@ -58,7 +58,7 @@ export function startModelSetupFirstRunRedirect(params: {
       !snapshot.connected ||
       !snapshot.client ||
       !hasOperatorAdminAccess(snapshot.hello?.auth ?? null) ||
-      isGatewayMethodAdvertised(snapshot, "openclaw.setup.detect") !== true
+      isGatewayMethodAdvertised(snapshot, "nova.setup.detect") !== true
     ) {
       return;
     }

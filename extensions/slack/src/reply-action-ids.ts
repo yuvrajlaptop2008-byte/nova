@@ -1,12 +1,12 @@
 // Slack plugin module implements reply action ids behavior.
-export const SLACK_REPLY_BUTTON_ACTION_ID = "openclaw:reply_button";
-export const SLACK_REPLY_LINK_ACTION_ID = "openclaw:reply_link";
-export const SLACK_REPLY_SELECT_ACTION_ID = "openclaw:reply_select";
-export const SLACK_CALLBACK_BUTTON_ACTION_ID = "openclaw:callback_button";
-export const SLACK_CALLBACK_SELECT_ACTION_ID = "openclaw:callback_select";
-export const SLACK_APPROVAL_BUTTON_ACTION_ID = "openclaw:approval_button";
-export const SLACK_APPROVAL_SELECT_ACTION_ID = "openclaw:approval_select";
-export const SLACK_QUESTION_BUTTON_ACTION_ID = "openclaw:question_button";
+export const SLACK_REPLY_BUTTON_ACTION_ID = "nova:reply_button";
+export const SLACK_REPLY_LINK_ACTION_ID = "nova:reply_link";
+export const SLACK_REPLY_SELECT_ACTION_ID = "nova:reply_select";
+export const SLACK_CALLBACK_BUTTON_ACTION_ID = "nova:callback_button";
+export const SLACK_CALLBACK_SELECT_ACTION_ID = "nova:callback_select";
+export const SLACK_APPROVAL_BUTTON_ACTION_ID = "nova:approval_button";
+export const SLACK_APPROVAL_SELECT_ACTION_ID = "nova:approval_select";
+export const SLACK_QUESTION_BUTTON_ACTION_ID = "nova:question_button";
 
 export function isSlackQuestionActionId(actionId: string): boolean {
   return (

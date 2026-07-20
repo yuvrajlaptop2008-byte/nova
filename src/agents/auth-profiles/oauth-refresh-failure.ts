@@ -223,18 +223,18 @@ export function buildOAuthRefreshFailureLoginCommand(
     // accessed via the CLI auth method. Refresh the local Claude CLI session
     // first, then re-register that auth method with Nova.
     const claudeLoginCommand = formatCliCommand("claude auth login");
-    const openclawLoginCommand = formatCliCommand(
+    const novaLoginCommand = formatCliCommand(
       sanitizedProfileId
-        ? `openclaw models auth login --provider anthropic --method cli --profile-id ${quoteShellArg(sanitizedProfileId)}`
-        : "openclaw models auth login --provider anthropic --method cli",
+        ? `nova models auth login --provider anthropic --method cli --profile-id ${quoteShellArg(sanitizedProfileId)}`
+        : "nova models auth login --provider anthropic --method cli",
     );
-    return `${claudeLoginCommand} && ${openclawLoginCommand}`;
+    return `${claudeLoginCommand} && ${novaLoginCommand}`;
   }
   return sanitizedProvider
     ? formatCliCommand(
         sanitizedProfileId
-          ? `openclaw models auth login --provider ${sanitizedProvider} --profile-id ${quoteShellArg(sanitizedProfileId)}`
-          : `openclaw models auth login --provider ${sanitizedProvider}`,
+          ? `nova models auth login --provider ${sanitizedProvider} --profile-id ${quoteShellArg(sanitizedProfileId)}`
+          : `nova models auth login --provider ${sanitizedProvider}`,
       )
-    : formatCliCommand("openclaw models auth login");
+    : formatCliCommand("nova models auth login");
 }

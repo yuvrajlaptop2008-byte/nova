@@ -3,12 +3,12 @@ import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { formatErrorMessage as formatQaErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { formatMemoryDreamingDay } from "openclaw/plugin-sdk/memory-core-host-status";
-import { resolveSessionTranscriptsDirForAgent } from "openclaw/plugin-sdk/memory-host-core";
-import { buildAgentSessionKey } from "openclaw/plugin-sdk/routing";
-import { createPluginStateSyncKeyedStore } from "openclaw/plugin-sdk/runtime-doctor";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { formatErrorMessage as formatQaErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { formatMemoryDreamingDay } from "nova/plugin-sdk/memory-core-host-status";
+import { resolveSessionTranscriptsDirForAgent } from "nova/plugin-sdk/memory-host-core";
+import { buildAgentSessionKey } from "nova/plugin-sdk/routing";
+import { createPluginStateSyncKeyedStore } from "nova/plugin-sdk/runtime-doctor";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   callQaBrowserRequest,
   qaBrowserAct,

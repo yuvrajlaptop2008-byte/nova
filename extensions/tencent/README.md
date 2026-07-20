@@ -1,13 +1,13 @@
-# Tencent Cloud OpenClaw provider
+# Tencent Cloud Nova provider
 
-Official OpenClaw provider plugin for Tencent Cloud.
+Official Nova provider plugin for Tencent Cloud.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/tencent-provider
+nova plugins install @nova/tencent-provider
 ```
 
 ## Docs
 
-See `docs/providers/tencent.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/providers/tencent`.
+See `docs/providers/tencent.md` in the Nova repository, or the published docs at `https://docs.nova.ai/providers/tencent`.

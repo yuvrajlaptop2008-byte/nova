@@ -298,8 +298,8 @@ function formatDiagnosticsExportSuccess(aggregated: string): string {
     if (typeof manifest.generatedAt === "string") {
       lines.push(`Generated at: ${manifest.generatedAt}`);
     }
-    if (typeof manifest.openclawVersion === "string") {
-      lines.push(`Nova version: ${manifest.openclawVersion}`);
+    if (typeof manifest.novaVersion === "string") {
+      lines.push(`Nova version: ${manifest.novaVersion}`);
     }
     const contents = formatDiagnosticsContents(manifest);
     if (contents.length > 0) {

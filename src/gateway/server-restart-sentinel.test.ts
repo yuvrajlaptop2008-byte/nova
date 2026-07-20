@@ -207,7 +207,7 @@ const mocks = vi.hoisted(() => {
       deferredBackoff: 0,
     })),
     resolveAgentConfig: vi.fn(() => undefined),
-    resolveAgentWorkspaceDir: vi.fn(() => "/tmp/openclaw-test-workspace"),
+    resolveAgentWorkspaceDir: vi.fn(() => "/tmp/nova-test-workspace"),
     resolveDefaultAgentId: vi.fn(() => "main"),
     normalizeSessionDeliveryFields: vi.fn((source?: Record<string, unknown>) => ({
       deliveryContext: source?.deliveryContext,

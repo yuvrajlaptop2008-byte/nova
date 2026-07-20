@@ -276,7 +276,7 @@ describe("post-compaction loop guard wired into runEmbeddedAgent", () => {
         ...baseParams,
         runId: "run-native-tool-heartbeat",
         timeoutMs: 1,
-        agentHarnessRuntimeOverride: "openclaw",
+        agentHarnessRuntimeOverride: "nova",
       });
       let settled = false;
       void run
@@ -322,7 +322,7 @@ describe("post-compaction loop guard wired into runEmbeddedAgent", () => {
         ...baseParams,
         runId: "run-native-timeout-lane-release",
         timeoutMs: 48 * 60 * 60 * 1000,
-        agentHarnessRuntimeOverride: "openclaw",
+        agentHarnessRuntimeOverride: "nova",
       });
       let settled = false;
       void run
@@ -368,7 +368,7 @@ describe("post-compaction loop guard wired into runEmbeddedAgent", () => {
         ...baseParams,
         runId: "run-native-abort-lane-release",
         timeoutMs: 48 * 60 * 60 * 1000,
-        agentHarnessRuntimeOverride: "openclaw",
+        agentHarnessRuntimeOverride: "nova",
       });
       let settled = false;
       void run

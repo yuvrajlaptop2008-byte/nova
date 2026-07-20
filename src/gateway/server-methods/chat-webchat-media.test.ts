@@ -23,7 +23,7 @@ describe("buildWebchatAudioContentBlocksFromReplyPayloads", () => {
   });
 
   function writeAudioFixture(bytes = [0xff, 0xfb, 0x90, 0x00], extension = ".mp3") {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-webchat-audio-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-webchat-audio-"));
     const audioPath = path.join(tmpDir, `clip${extension}`);
     fs.writeFileSync(audioPath, Buffer.from(bytes));
     return { audioPath, localRoot: tmpDir };
@@ -107,7 +107,7 @@ describe("buildWebchatAudioContentBlocksFromReplyPayloads", () => {
   });
 
   it("skips non-audio local files", async () => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-webchat-audio-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-webchat-audio-"));
     const imagePath = path.join(tmpDir, "clip.png");
     fs.writeFileSync(imagePath, Buffer.from([0x89, 0x50, 0x4e, 0x47]));
 
@@ -165,7 +165,7 @@ describe("buildWebchatAudioContentBlocksFromReplyPayloads", () => {
   });
 
   it("rejects a local audio file outside configured localRoots", async () => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-webchat-audio-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-webchat-audio-"));
     const allowedRoot = path.join(tmpDir, "allowed");
     const outsideRoot = path.join(tmpDir, "outside");
     fs.mkdirSync(allowedRoot, { recursive: true });
@@ -193,7 +193,7 @@ describe("buildWebchatAudioContentBlocksFromReplyPayloads", () => {
     }
 
     fs.mkdirSync(defaultRoot, { recursive: true });
-    tmpDir = fs.mkdtempSync(path.join(defaultRoot, "openclaw-webchat-audio-default-"));
+    tmpDir = fs.mkdtempSync(path.join(defaultRoot, "nova-webchat-audio-default-"));
     const audioPath = path.join(tmpDir, "clip.mp3");
     fs.writeFileSync(audioPath, Buffer.from([0x04]));
 

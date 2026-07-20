@@ -23,11 +23,11 @@ function writeLegacyIndex(root: string, text: string) {
 }
 
 function configPath(root: string) {
-  return path.join(root, "openclaw.json");
+  return path.join(root, "nova.json");
 }
 
 function writeSqliteIndex(root: string, installRecordsJson: string) {
-  const dbPath = path.join(root, "state", "openclaw.sqlite");
+  const dbPath = path.join(root, "state", "nova.sqlite");
   mkdirSync(path.dirname(dbPath), { recursive: true });
   const db = new DatabaseSync(dbPath);
   try {
@@ -79,7 +79,7 @@ function writeSqliteIndex(root: string, installRecordsJson: string) {
 
 describe("plugin index SQLite E2E helpers", () => {
   it("reads legacy install records when SQLite index state is absent", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-plugin-index-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-plugin-index-"));
     try {
       writeLegacyIndex(
         root,
@@ -97,7 +97,7 @@ describe("plugin index SQLite E2E helpers", () => {
   });
 
   it("keeps malformed legacy install JSON as an empty fallback", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-plugin-index-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-plugin-index-"));
     try {
       writeLegacyIndex(root, "{not-json");
 
@@ -112,7 +112,7 @@ describe("plugin index SQLite E2E helpers", () => {
   });
 
   it("rejects oversized legacy install JSON before parsing it", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-plugin-index-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-plugin-index-"));
     try {
       writeLegacyIndex(root, JSON.stringify({ records: {}, filler: "x".repeat(128) }));
 
@@ -129,7 +129,7 @@ describe("plugin index SQLite E2E helpers", () => {
   });
 
   it("rejects oversized SQLite install index JSON before parsing it", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-plugin-index-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-plugin-index-"));
     try {
       writeSqliteIndex(root, JSON.stringify({ filler: "x".repeat(128) }));
 

@@ -5,14 +5,14 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-build.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"
 
-IMAGE_NAME="${NOVA_DOCKER_SELECTED_PLUGINS_E2E_IMAGE:-openclaw-docker-selected-plugins-e2e:local}"
+IMAGE_NAME="${NOVA_DOCKER_SELECTED_PLUGINS_E2E_IMAGE:-nova-docker-selected-plugins-e2e:local}"
 DEPENDENCY_ONLY_IMAGE="${IMAGE_NAME}-dependency-only"
-CONTAINER_NAME="openclaw-docker-selected-plugins-e2e-$$"
+CONTAINER_NAME="nova-docker-selected-plugins-e2e-$$"
 SELECTED_PLUGINS="${NOVA_DOCKER_SELECTED_PLUGINS:-slack,msteams clickclack,slack}"
 BUILD_GIT_COMMIT="${NOVA_DOCKER_SELECTED_PLUGINS_E2E_GIT_COMMIT:-0123456789abcdef0123456789abcdef01234567}"
 BUILD_TIMESTAMP="${NOVA_DOCKER_SELECTED_PLUGINS_E2E_BUILD_TIMESTAMP:-2026-07-10T12:34:56.000Z}"
-UNKNOWN_LOG="$(mktemp -t openclaw-docker-selected-plugins-unknown.XXXXXX)"
-RUN_LOG="$(mktemp -t openclaw-docker-selected-plugins-run.XXXXXX)"
+UNKNOWN_LOG="$(mktemp -t nova-docker-selected-plugins-unknown.XXXXXX)"
+RUN_LOG="$(mktemp -t nova-docker-selected-plugins-run.XXXXXX)"
 DOCKER_COMMAND_TIMEOUT="${NOVA_DOCKER_SELECTED_PLUGINS_RUN_TIMEOUT:-900s}"
 DEPENDENCY_ONLY_IMAGE_BUILT=0
 
@@ -57,7 +57,7 @@ else
   docker_e2e_docker_run_cmd run --rm \
     --entrypoint sh \
     "$DEPENDENCY_ONLY_IMAGE" \
-    -c 'test -f /out/extensions/whatsapp/package.json && test -f /out/extensions/qqbot/package.json && test -f /out/extensions/kimi-coding/package.json && grep -qx kimi-coding /out/openclaw-selected-plugin-dirs'
+    -c 'test -f /out/extensions/whatsapp/package.json && test -f /out/extensions/qqbot/package.json && test -f /out/extensions/kimi-coding/package.json && grep -qx kimi-coding /out/nova-selected-plugin-dirs'
 
   echo "Building selected-plugin runtime image: $IMAGE_NAME"
   docker_build_run docker-selected-plugins-build \
@@ -75,9 +75,9 @@ if ! docker_e2e_docker_run_cmd run --rm \
   --entrypoint bash \
   -e "NOVA_E2E_EXPECTED_GIT_COMMIT=$BUILD_GIT_COMMIT" \
   -e "NOVA_E2E_EXPECTED_BUILD_TIMESTAMP=$BUILD_TIMESTAMP" \
-  -v "$ROOT_DIR/scripts/e2e/lib/docker-selected-plugins:/openclaw-e2e:ro" \
+  -v "$ROOT_DIR/scripts/e2e/lib/docker-selected-plugins:/nova-e2e:ro" \
   "$IMAGE_NAME" \
-  /openclaw-e2e/scenario.sh >"$RUN_LOG" 2>&1; then
+  /nova-e2e/scenario.sh >"$RUN_LOG" 2>&1; then
   echo "Selected-plugin Docker E2E failed" >&2
   docker_e2e_print_log "$RUN_LOG"
   exit 1

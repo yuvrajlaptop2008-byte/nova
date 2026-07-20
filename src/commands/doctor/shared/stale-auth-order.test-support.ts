@@ -1,19 +1,19 @@
 import type { AuthProfileStore } from "../../../agents/auth-profiles/types.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import "./stale-auth-order.js";
 
 type TestApi = {
   repairStaleConfiguredAuthOrders(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     stores: readonly AuthProfileStore[];
     activeStores?: readonly AuthProfileStore[];
     runtimeProfileIds?: ReadonlySet<string>;
-  }): { config: OpenClawConfig; changes: string[] };
+  }): { config: NovaConfig; changes: string[] };
 };
 
 function getTestApi(): TestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.staleAuthOrderTestApi")
+    Symbol.for("nova.staleAuthOrderTestApi")
   ] as TestApi;
 }
 

@@ -4,10 +4,10 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-build.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"
-IMAGE_NAME="${NOVA_INSTALL_E2E_IMAGE:-openclaw-install-e2e:local}"
-INSTALL_URL="${NOVA_INSTALL_URL:-https://openclaw.bot/install.sh}"
+IMAGE_NAME="${NOVA_INSTALL_E2E_IMAGE:-nova-install-e2e:local}"
+INSTALL_URL="${NOVA_INSTALL_URL:-https://nova.bot/install.sh}"
 DOCKER_COMMAND_TIMEOUT="${DOCKER_COMMAND_TIMEOUT:-${NOVA_INSTALL_E2E_DOCKER_TIMEOUT:-2700s}}"
-PROFILE_FILE="${NOVA_INSTALL_E2E_PROFILE_FILE:-${NOVA_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}}}"
+PROFILE_FILE="${NOVA_INSTALL_E2E_PROFILE_FILE:-${NOVA_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.nova-testbox-live.profile}}}"
 
 OPENAI_API_KEY="${OPENAI_API_KEY:-}"
 ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"

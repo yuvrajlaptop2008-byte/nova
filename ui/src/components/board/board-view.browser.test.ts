@@ -3,7 +3,7 @@ import { BOARD_GRID_GAP, BOARD_GRID_ROW_HEIGHT } from "../../lib/board/grid.ts";
 import type { BoardViewSnapshot } from "../../lib/board/view-types.ts";
 import "./board-view.ts";
 
-type OpenClawBoardView = HTMLElementTagNameMap["openclaw-board-view"];
+type NovaBoardView = HTMLElementTagNameMap["nova-board-view"];
 
 const hasBrowserLayout = !navigator.userAgent.toLowerCase().includes("jsdom");
 
@@ -40,8 +40,8 @@ const source: BoardViewSnapshot = {
   ],
 };
 
-async function mount(applyOps = vi.fn(async () => undefined)): Promise<OpenClawBoardView> {
-  const view = document.createElement("openclaw-board-view");
+async function mount(applyOps = vi.fn(async () => undefined)): Promise<NovaBoardView> {
+  const view = document.createElement("nova-board-view");
   view.snapshot = structuredClone(source);
   view.activeTabId = "main";
   view.widgetFrameUrl = () => "about:blank";
@@ -49,7 +49,7 @@ async function mount(applyOps = vi.fn(async () => undefined)): Promise<OpenClawB
   document.body.append(view);
   await view.updateComplete;
   await Promise.all(
-    [...view.querySelectorAll("openclaw-board-widget-cell")].map((cell) => cell.updateComplete),
+    [...view.querySelectorAll("nova-board-widget-cell")].map((cell) => cell.updateComplete),
   );
   return view;
 }
@@ -77,7 +77,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe.skipIf(!hasBrowserLayout)("openclaw-board-view browser layout", () => {
+describe.skipIf(!hasBrowserLayout)("nova-board-view browser layout", () => {
   it("lays out adjacent first-fit cells without pixel overlap", async () => {
     const view = await mount();
     const cells = [...view.querySelectorAll<HTMLElement>('[data-test-id="board-widget"]')];
@@ -230,7 +230,7 @@ describe.skipIf(!hasBrowserLayout)("openclaw-board-view browser layout", () => {
       widgets: source.widgets.map((widget) => ({ ...widget, sizeW: 12 })),
     };
     await view.updateComplete;
-    const cells = view.querySelectorAll("openclaw-board-widget-cell");
+    const cells = view.querySelectorAll("nova-board-widget-cell");
     await Promise.all([...cells].map((cell) => cell.updateComplete));
     const handle = view.querySelector<HTMLElement>(".board-widget__drag-handle");
     pointer(handle!, "pointerdown", 61, 100, 100);
@@ -253,7 +253,7 @@ describe.skipIf(!hasBrowserLayout)("openclaw-board-view browser layout", () => {
       widgets: [{ ...source.widgets[0]!, sizeH: 1, grantState: "pending" }],
     };
     await view.updateComplete;
-    const cell = view.querySelector("openclaw-board-widget-cell");
+    const cell = view.querySelector("nova-board-widget-cell");
     await cell?.updateComplete;
     const body = view.querySelector<HTMLElement>(".board-widget__body--scrollable");
     const allow = view.querySelector<HTMLButtonElement>('[data-test-id="board-grant-allow"]');
@@ -273,7 +273,7 @@ describe.skipIf(!hasBrowserLayout)("openclaw-board-view browser layout", () => {
       throw new Error("one-row resolver failed");
     };
     await view.updateComplete;
-    const cell = view.querySelector("openclaw-board-widget-cell");
+    const cell = view.querySelector("nova-board-widget-cell");
     await cell?.updateComplete;
     const body = view.querySelector<HTMLElement>(".board-widget__body--scrollable");
     expect(getComputedStyle(body!).overflowY).toBe("auto");

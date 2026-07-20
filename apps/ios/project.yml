@@ -1,6 +1,6 @@
-name: OpenClaw
+name: Nova
 options:
-  bundleIdPrefix: ai.openclawfoundation
+  bundleIdPrefix: ai.novafoundation
   deploymentTarget:
     iOS: "18.0"
   xcodeVersion: "26.0"
@@ -11,8 +11,8 @@ settings:
     ENABLE_APP_INTENTS_METADATA_GENERATION: NO
 
 packages:
-  OpenClawKit:
-    path: ../shared/OpenClawKit
+  NovaKit:
+    path: ../shared/NovaKit
   Swabble:
     path: ../swabble
   WebRTC:
@@ -20,39 +20,39 @@ packages:
     exactVersion: 147.0.0
 
 schemes:
-  OpenClaw:
+  Nova:
     shared: true
     build:
       targets:
-        OpenClaw: all
+        Nova: all
     test:
       targets:
-        - OpenClawTests
-        - OpenClawLogicTests
-  OpenClawLogicTests:
+        - NovaTests
+        - NovaLogicTests
+  NovaLogicTests:
     shared: true
     build:
       targets:
-        OpenClawLogicTests: all
+        NovaLogicTests: all
     test:
       targets:
-        - OpenClawLogicTests
-  OpenClawUITests:
+        - NovaLogicTests
+  NovaUITests:
     shared: true
     build:
       targets:
-        OpenClawUITests: all
+        NovaUITests: all
     test:
       targets:
-        - OpenClawUITests
-  OpenClawWatchApp:
+        - NovaUITests
+  NovaWatchApp:
     shared: true
     build:
       targets:
-        OpenClawWatchApp: all
+        NovaWatchApp: all
 
 targets:
-  OpenClaw:
+  Nova:
     type: application
     platform: iOS
     configFiles:
@@ -68,18 +68,18 @@ targets:
       - path: Resources/Localizable.xcstrings
         buildPhase: resources
     dependencies:
-      - target: OpenClawShareExtension
+      - target: NovaShareExtension
         embed: true
-      - target: OpenClawActivityWidget
+      - target: NovaActivityWidget
         embed: true
       # A companion watch application belongs in the standard Watch bundle location.
       # PlugIns is for extension products and breaks paired watch installation.
-      - target: OpenClawWatchApp
-      - package: OpenClawKit
-      - package: OpenClawKit
-        product: OpenClawChatUI
-      - package: OpenClawKit
-        product: OpenClawProtocol
+      - target: NovaWatchApp
+      - package: NovaKit
+      - package: NovaKit
+        product: NovaChatUI
+      - package: NovaKit
+        product: NovaProtocol
       - package: Swabble
         product: SwabbleKit
       - package: WebRTC
@@ -95,7 +95,7 @@ targets:
           export PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
           "$SRCROOT/../../scripts/check-swift-tools.sh" swiftformat
           swiftformat --lint --config "$SRCROOT/../../config/swiftformat" \
-            --unexclude "$SRCROOT/Sources,$SRCROOT/ShareExtension,$SRCROOT/ActivityWidget,$SRCROOT/WatchApp,$SRCROOT/../shared/OpenClawKit/Sources/OpenClawChatUI,$SRCROOT/../shared/OpenClawKit/Sources/OpenClawKit,$SRCROOT/../shared/OpenClawKit/Sources/OpenClawNativeState,$SRCROOT/../shared/OpenClawKit/Sources/OpenClawProtocol,$SRCROOT/../swabble/Sources/SwabbleKit" \
+            --unexclude "$SRCROOT/Sources,$SRCROOT/ShareExtension,$SRCROOT/ActivityWidget,$SRCROOT/WatchApp,$SRCROOT/../shared/NovaKit/Sources/NovaChatUI,$SRCROOT/../shared/NovaKit/Sources/NovaKit,$SRCROOT/../shared/NovaKit/Sources/NovaNativeState,$SRCROOT/../shared/NovaKit/Sources/NovaProtocol,$SRCROOT/../swabble/Sources/SwabbleKit" \
             --filelist "$SRCROOT/SwiftSources.input.xcfilelist"
       - name: SwiftLint
         basedOnDependencyAnalysis: false
@@ -114,8 +114,8 @@ targets:
         CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
         DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
         NOVA_ACTIVE_APP_GROUP_ID: "$(NOVA_APP_GROUP_ID)"
-        NOVA_APP_DISPLAY_NAME: OpenClaw
-        NOVA_URL_SCHEME: openclaw
+        NOVA_APP_DISPLAY_NAME: Nova
+        NOVA_URL_SCHEME: nova
         PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_APP_BUNDLE_ID)"
         PROVISIONING_PROFILE_SPECIFIER: "$(NOVA_APP_PROFILE)"
         TARGETED_DEVICE_FAMILY: "1,2"
@@ -129,16 +129,16 @@ targets:
           ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDebug
           CODE_SIGN_STYLE: Automatic
           NOVA_ACTIVE_APP_GROUP_ID: "$(NOVA_DEBUG_APP_GROUP_ID)"
-          NOVA_APP_DISPLAY_NAME: OpenClaw
-          NOVA_CODE_SIGN_ENTITLEMENTS: Sources/OpenClaw.entitlements
+          NOVA_APP_DISPLAY_NAME: Nova
+          NOVA_CODE_SIGN_ENTITLEMENTS: Sources/Nova.entitlements
           NOVA_APNS_ENTITLEMENT_ENVIRONMENT: development
-          NOVA_URL_SCHEME: openclaw-debug
+          NOVA_URL_SCHEME: nova-debug
           PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_APP_BUNDLE_ID)"
           PROVISIONING_PROFILE_SPECIFIER: ""
           NOVA_PUSH_MODE: localSandbox
           NOVA_PUSH_RELAY_BASE_URL: ""
         Release:
-          NOVA_CODE_SIGN_ENTITLEMENTS: Sources/OpenClaw.entitlements
+          NOVA_CODE_SIGN_ENTITLEMENTS: Sources/Nova.entitlements
           NOVA_APNS_ENTITLEMENT_ENVIRONMENT: production
           NOVA_PUSH_MODE: localProduction
           NOVA_PUSH_RELAY_BASE_URL: ""
@@ -148,14 +148,14 @@ targets:
         CFBundleDisplayName: "$(NOVA_APP_DISPLAY_NAME)"
         CFBundleIconName: "$(ASSETCATALOG_COMPILER_APPICON_NAME)"
         CFBundleURLTypes:
-          - CFBundleURLName: ai.openclawfoundation.app
+          - CFBundleURLName: ai.novafoundation.app
             CFBundleURLSchemes:
               - "$(NOVA_URL_SCHEME)"
         CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
-        OpenClawCanonicalVersion: "$(NOVA_IOS_VERSION)"
-        OpenClawGitCommit: "$(NOVA_GIT_COMMIT)"
-        OpenClawBuildTimestamp: "$(NOVA_BUILD_TIMESTAMP)"
-        OpenClawAppGroupIdentifier: "$(NOVA_ACTIVE_APP_GROUP_ID)"
+        NovaCanonicalVersion: "$(NOVA_IOS_VERSION)"
+        NovaGitCommit: "$(NOVA_GIT_COMMIT)"
+        NovaBuildTimestamp: "$(NOVA_BUILD_TIMESTAMP)"
+        NovaAppGroupIdentifier: "$(NOVA_ACTIVE_APP_GROUP_ID)"
         CFBundleVersion: "$(NOVA_BUILD_VERSION)"
         UILaunchScreen: {}
         UIApplicationSceneManifest:
@@ -166,27 +166,27 @@ targets:
           - remote-notification
         BGTaskSchedulerPermittedIdentifiers:
           - "$(PRODUCT_BUNDLE_IDENTIFIER).bgrefresh"
-        NSLocalNetworkUsageDescription: OpenClaw discovers and connects to your OpenClaw gateway on the local network.
+        NSLocalNetworkUsageDescription: Nova discovers and connects to your Nova gateway on the local network.
         NSAppTransportSecurity:
           NSAllowsArbitraryLoadsInWebContent: true
           NSAllowsLocalNetworking: true
         NSBonjourServices:
-          - _openclaw-gw._tcp
-        NSCameraUsageDescription: OpenClaw uses the camera when you scan a Gateway setup QR code or ask your paired Gateway or assistant to capture a photo or short video from this iPhone, for example to connect to your Gateway or show your assistant a document, device screen, or workspace.
-        NSCalendarsUsageDescription: OpenClaw uses your calendars to show events and scheduling context when you enable calendar access.
-        NSCalendarsFullAccessUsageDescription: OpenClaw uses your calendars to show events and scheduling context when you enable calendar access.
-        NSCalendarsWriteOnlyAccessUsageDescription: OpenClaw uses your calendars to add events when you enable calendar access.
-        NSContactsUsageDescription: OpenClaw uses your contacts so you can search and reference people while using the assistant.
-        NSLocationWhenInUseUsageDescription: OpenClaw uses your location when you allow location sharing.
-        NSLocationAlwaysAndWhenInUseUsageDescription: OpenClaw can share your location in the background when you enable Always.
-        NSMicrophoneUsageDescription: OpenClaw uses the microphone for realtime chat, voice wake, push-to-talk, and voice notes.
-        NSMotionUsageDescription: OpenClaw may use motion data to support device-aware interactions and automations.
-        NSHealthShareUsageDescription: OpenClaw reads your steps, sleep, resting heart rate, and workouts from the Apple Health app to create summaries you request and send them through your Gateway to your configured AI provider.
-        NSHealthUpdateUsageDescription: OpenClaw does not write to the Apple Health app. It uses read-only data to create summaries you request and send them through your Gateway to your configured AI provider.
-        NSPhotoLibraryUsageDescription: OpenClaw lets your assistant read photos you allow and lets you choose photos to share.
+          - _nova-gw._tcp
+        NSCameraUsageDescription: Nova uses the camera when you scan a Gateway setup QR code or ask your paired Gateway or assistant to capture a photo or short video from this iPhone, for example to connect to your Gateway or show your assistant a document, device screen, or workspace.
+        NSCalendarsUsageDescription: Nova uses your calendars to show events and scheduling context when you enable calendar access.
+        NSCalendarsFullAccessUsageDescription: Nova uses your calendars to show events and scheduling context when you enable calendar access.
+        NSCalendarsWriteOnlyAccessUsageDescription: Nova uses your calendars to add events when you enable calendar access.
+        NSContactsUsageDescription: Nova uses your contacts so you can search and reference people while using the assistant.
+        NSLocationWhenInUseUsageDescription: Nova uses your location when you allow location sharing.
+        NSLocationAlwaysAndWhenInUseUsageDescription: Nova can share your location in the background when you enable Always.
+        NSMicrophoneUsageDescription: Nova uses the microphone for realtime chat, voice wake, push-to-talk, and voice notes.
+        NSMotionUsageDescription: Nova may use motion data to support device-aware interactions and automations.
+        NSHealthShareUsageDescription: Nova reads your steps, sleep, resting heart rate, and workouts from the Apple Health app to create summaries you request and send them through your Gateway to your configured AI provider.
+        NSHealthUpdateUsageDescription: Nova does not write to the Apple Health app. It uses read-only data to create summaries you request and send them through your Gateway to your configured AI provider.
+        NSPhotoLibraryUsageDescription: Nova lets your assistant read photos you allow and lets you choose photos to share.
         PHPhotoLibraryPreventAutomaticLimitedAccessAlert: true
-        NSRemindersFullAccessUsageDescription: OpenClaw uses your reminders to list, add, and complete tasks when you enable reminders access.
-        NSSpeechRecognitionUsageDescription: OpenClaw uses on-device speech recognition for talk mode and voice wake.
+        NSRemindersFullAccessUsageDescription: Nova uses your reminders to list, add, and complete tasks when you enable reminders access.
+        NSSpeechRecognitionUsageDescription: Nova uses on-device speech recognition for talk mode and voice wake.
         NSSupportsLiveActivities: true
         ITSAppUsesNonExemptEncryption: false
         UIAppFonts:
@@ -196,14 +196,14 @@ targets:
           - JetBrainsMono-Regular.ttf
           - JetBrainsMono-Medium.ttf
           - JetBrainsMono-SemiBold.ttf
-        OpenClawPushMode: "$(NOVA_PUSH_MODE)"
-        OpenClawPushRelayBaseURL: "$(NOVA_PUSH_RELAY_BASE_URL)"
+        NovaPushMode: "$(NOVA_PUSH_MODE)"
+        NovaPushRelayBaseURL: "$(NOVA_PUSH_RELAY_BASE_URL)"
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-  OpenClawShareExtension:
+  NovaShareExtension:
     type: app-extension
     platform: iOS
     configFiles:
@@ -214,12 +214,12 @@ targets:
       - path: Resources/Localizable.xcstrings
         buildPhase: resources
     dependencies:
-      - package: OpenClawKit
+      - package: NovaKit
       - sdk: AppIntents.framework
     settings:
       base:
         CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
-        CODE_SIGN_ENTITLEMENTS: ShareExtension/OpenClawShareExtension.entitlements
+        CODE_SIGN_ENTITLEMENTS: ShareExtension/NovaShareExtension.entitlements
         CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
         DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
         ENABLE_APPINTENTS_METADATA: NO
@@ -239,9 +239,9 @@ targets:
     info:
       path: ShareExtension/Info.plist
       properties:
-        CFBundleDisplayName: OpenClaw Share
+        CFBundleDisplayName: Nova Share
         CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
-        OpenClawAppGroupIdentifier: "$(NOVA_ACTIVE_APP_GROUP_ID)"
+        NovaAppGroupIdentifier: "$(NOVA_ACTIVE_APP_GROUP_ID)"
         CFBundleVersion: "$(NOVA_BUILD_VERSION)"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
@@ -253,7 +253,7 @@ targets:
               NSExtensionActivationSupportsImageWithMaxCount: 10
               NSExtensionActivationSupportsMovieWithMaxCount: 1
 
-  OpenClawActivityWidget:
+  NovaActivityWidget:
     type: app-extension
     platform: iOS
     configFiles:
@@ -261,9 +261,9 @@ targets:
       Release: Signing.xcconfig
     sources:
       - path: ActivityWidget
-      - path: Sources/LiveActivity/OpenClawActivityAttributes.swift
+      - path: Sources/LiveActivity/NovaActivityAttributes.swift
       # Shared continuous avatar waveform; dependency-free for widget isolation.
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/TalkWaveformView.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/TalkWaveformView.swift
         group: Shared
       - path: Sources/Fonts
         buildPhase: resources
@@ -291,7 +291,7 @@ targets:
     info:
       path: ActivityWidget/Info.plist
       properties:
-        CFBundleDisplayName: OpenClaw Activity
+        CFBundleDisplayName: Nova Activity
         CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
         CFBundleVersion: "$(NOVA_BUILD_VERSION)"
         NSSupportsLiveActivities: true
@@ -305,7 +305,7 @@ targets:
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
-  OpenClawWatchApp:
+  NovaWatchApp:
     type: application
     platform: watchOS
     deploymentTarget: "11.0"
@@ -318,24 +318,24 @@ targets:
       - path: Sources/Services/ExactOpaqueIdentifier.swift
         group: Sources/Services
       # Universal talk waveform, compiled directly to keep the watch styling local.
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/TalkWaveformView.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/TalkWaveformView.swift
         group: Shared
       # Universal mascot, compiled directly to keep the watch styling local.
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/OpenClawMascotView.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/NovaMascotView.swift
         group: Shared
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/OpenClawMascotAnimator.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/NovaMascotAnimator.swift
         group: Shared
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/OpenClawMascotCanvas+Accessories.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/NovaMascotCanvas+Accessories.swift
         group: Shared
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/ChatTypography.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/ChatTypography.swift
         group: Shared
       - path: Sources/Fonts
         buildPhase: resources
       - path: Resources/Localizable.xcstrings
         buildPhase: resources
     dependencies:
-      - package: OpenClawKit
-        product: OpenClawKit
+      - package: NovaKit
+        product: NovaKit
       - sdk: AppIntents.framework
       - sdk: AVFAudio.framework
       - sdk: WatchConnectivity.framework
@@ -369,13 +369,13 @@ targets:
     info:
       path: WatchApp/Info.plist
       properties:
-        CFBundleDisplayName: OpenClaw
+        CFBundleDisplayName: Nova
         CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
         CFBundleVersion: "$(NOVA_BUILD_VERSION)"
         WKCompanionAppBundleIdentifier: "$(NOVA_COMPANION_APP_BUNDLE_ID)"
         WKApplication: true
         WKPrefersNetworkUponForeground: true
-        NSLocalNetworkUsageDescription: OpenClaw connects this Apple Watch directly to your Gateway on trusted local networks.
+        NSLocalNetworkUsageDescription: Nova connects this Apple Watch directly to your Gateway on trusted local networks.
         UIAppFonts:
           - RedHatDisplay[wght].ttf
           - Inter[opsz,wght].ttf
@@ -384,7 +384,7 @@ targets:
           - JetBrainsMono-Medium.ttf
           - JetBrainsMono-SemiBold.ttf
 
-  OpenClawTests:
+  NovaTests:
     type: bundle.unit-test
     platform: iOS
     configFiles:
@@ -397,7 +397,7 @@ targets:
       - path: WatchApp/Sources/WatchDeferredPayloadOrdering.swift
         group: WatchApp/Sources
     dependencies:
-      - target: OpenClaw
+      - target: Nova
       - package: Swabble
         product: SwabbleKit
       - sdk: AppIntents.framework
@@ -410,7 +410,7 @@ targets:
         ENABLE_APP_INTENTS_METADATA_GENERATION: NO
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/OpenClaw.app/OpenClaw"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Nova.app/Nova"
         BUNDLE_LOADER: "$(TEST_HOST)"
       configs:
         Debug:
@@ -418,11 +418,11 @@ targets:
     info:
       path: Tests/Info.plist
       properties:
-        CFBundleDisplayName: OpenClawTests
+        CFBundleDisplayName: NovaTests
         CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
         CFBundleVersion: "$(NOVA_BUILD_VERSION)"
 
-  OpenClawLogicTests:
+  NovaLogicTests:
     type: bundle.unit-test
     platform: iOS
     configFiles:
@@ -442,18 +442,18 @@ targets:
         group: WatchApp/Sources
       - path: WatchApp/Sources/WatchMascot.swift
         group: WatchApp/Sources
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/OpenClawMascotView.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/NovaMascotView.swift
         group: Shared
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/OpenClawMascotAnimator.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/NovaMascotAnimator.swift
         group: Shared
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/OpenClawMascotCanvas+Accessories.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/NovaMascotCanvas+Accessories.swift
         group: Shared
-      - path: ../shared/OpenClawKit/Sources/OpenClawChatUI/ChatTypography.swift
+      - path: ../shared/NovaKit/Sources/NovaChatUI/ChatTypography.swift
         group: Shared
       - path: Sources/Services/ExactOpaqueIdentifier.swift
         group: Sources/Services
     dependencies:
-      - package: OpenClawKit
+      - package: NovaKit
     settings:
       base:
         CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
@@ -470,11 +470,11 @@ targets:
     info:
       path: Tests/Info.plist
       properties:
-        CFBundleDisplayName: OpenClawLogicTests
+        CFBundleDisplayName: NovaLogicTests
         CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
         CFBundleVersion: "$(NOVA_BUILD_VERSION)"
 
-  OpenClawUITests:
+  NovaUITests:
     type: bundle.ui-testing
     platform: iOS
     configFiles:
@@ -483,7 +483,7 @@ targets:
     sources:
       - path: UITests
     dependencies:
-      - target: OpenClaw
+      - target: Nova
     settings:
       base:
         CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
@@ -494,7 +494,7 @@ targets:
         SUPPORTED_PLATFORMS: "iphonesimulator iphoneos"
         SUPPORTS_MACCATALYST: NO
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
-        TEST_TARGET_NAME: OpenClaw
+        TEST_TARGET_NAME: Nova
         SWIFT_VERSION: "5.0"
       configs:
         Debug:
@@ -502,6 +502,6 @@ targets:
     info:
       path: UITests/Info.plist
       properties:
-        CFBundleDisplayName: OpenClawUITests
+        CFBundleDisplayName: NovaUITests
         CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
         CFBundleVersion: "$(NOVA_BUILD_VERSION)"

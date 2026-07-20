@@ -55,7 +55,7 @@ describe("e2e shell tempfile hygiene", () => {
   });
 
   it("preserves wizard exit status when reporting failures", async () => {
-    const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-onboard-status-test-"));
+    const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-onboard-status-test-"));
     const fixturePath = path.join(tempRoot, "wizard-status.sh");
     await writeFile(
       fixturePath,
@@ -65,10 +65,10 @@ set -euo pipefail
 export NOVA_ONBOARD_SCENARIO_SOURCE_ONLY=1
 export NOVA_ONBOARD_E2E_TMPDIR=${JSON.stringify(tempRoot)}
 NOVA_ENTRY=node
-openclaw_test_state_create() { :; }
+nova_test_state_create() { :; }
 source scripts/e2e/lib/onboard/scenario.sh
 
-openclaw_e2e_run_script_with_pty() {
+nova_e2e_run_script_with_pty() {
   local _command="$1"
   local log_path="$2"
   printf 'fake wizard log\\n' >"$log_path"
@@ -97,7 +97,7 @@ run_wizard_cmd failing-wizard fake-state "node fake-wizard" send_noop false
   });
 
   it("does not wait for a skills prompt after the ready state renders", async () => {
-    const tempRoot = tempDirs.make("openclaw-onboard-skills-ready-");
+    const tempRoot = tempDirs.make("nova-onboard-skills-ready-");
     const fixturePath = path.join(tempRoot, "skills-ready.sh");
     const sentPath = path.join(tempRoot, "sent.txt");
     const wizardLogPath = path.join(tempRoot, "skills.log");
@@ -134,22 +134,20 @@ test ! -s ${JSON.stringify(sentPath)}
     const contents = await readFile("scripts/e2e/lib/onboard/scenario.sh", "utf8");
 
     expect(contents).toContain(
-      'ONBOARD_TMP_DIR="$(mktemp -d "$ONBOARD_TMP_ROOT/openclaw-onboard.XXXXXX")"',
+      'ONBOARD_TMP_DIR="$(mktemp -d "$ONBOARD_TMP_ROOT/nova-onboard.XXXXXX")"',
     );
     expect(contents).toContain('NOVA_E2E_LOG_DIR="$ONBOARD_TMP_DIR/logs"');
     expect(contents).toContain('GATEWAY_LOG_PATH="$ONBOARD_TMP_DIR/gateway-e2e.log"');
     expect(contents).not.toContain("/tmp/gateway-e2e.log");
     expect(contents).toContain('validate_local_basic_log "$NOVA_E2E_LAST_LOG_PATH"');
-    expect(contents).not.toContain(
-      "validate_local_basic_log /tmp/openclaw-onboard-local-basic.log",
-    );
+    expect(contents).not.toContain("validate_local_basic_log /tmp/nova-onboard-local-basic.log");
     expect(contents).toContain(
-      'openclaw_e2e_assert_log_not_contains "$log_path" "systemctl --user unavailable"',
+      'nova_e2e_assert_log_not_contains "$log_path" "systemctl --user unavailable"',
     );
   });
 
   it("probes onboarding gateway readiness through TCP", async () => {
-    const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-onboard-gateway-log-"));
+    const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-onboard-gateway-log-"));
     const fixturePath = path.join(tempRoot, "gateway-log.sh");
     await writeFile(
       fixturePath,
@@ -161,7 +159,7 @@ export NOVA_ONBOARD_E2E_TMPDIR=${JSON.stringify(tempRoot)}
 NOVA_ENTRY=node
 source scripts/e2e/lib/onboard/scenario.sh
 
-openclaw_e2e_probe_tcp() { return 0; }
+nova_e2e_probe_tcp() { return 0; }
 sleep 30 &
 GATEWAY_PID="$!"
 printf 'listening on ws://127.0.0.1:18789\\n' >"$GATEWAY_LOG_PATH"
@@ -188,7 +186,7 @@ test ! -e "$ONBOARD_TMP_DIR"
   });
 
   it("rejects onboarding gateway readiness when the TCP probe fails", async () => {
-    const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-onboard-gateway-tcp-"));
+    const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-onboard-gateway-tcp-"));
     const fixturePath = path.join(tempRoot, "gateway-tcp.sh");
     await writeFile(
       fixturePath,
@@ -202,7 +200,7 @@ export NOVA_ONBOARD_GATEWAY_WAIT_INTERVAL_S=0.1
 NOVA_ENTRY=node
 source scripts/e2e/lib/onboard/scenario.sh
 
-openclaw_e2e_probe_tcp() { return 1; }
+nova_e2e_probe_tcp() { return 1; }
 sleep 30 &
 GATEWAY_PID="$!"
 printf 'listening on ws://127.0.0.1:18789\\n' >"$GATEWAY_LOG_PATH"
@@ -231,7 +229,7 @@ test ! -e "$ONBOARD_TMP_DIR"
   });
 
   it("rejects invalid onboarding gateway wait attempts before probing", async () => {
-    const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-onboard-gateway-attempts-"));
+    const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-onboard-gateway-attempts-"));
     const fixturePath = path.join(tempRoot, "gateway-attempts.sh");
     await writeFile(
       fixturePath,
@@ -244,7 +242,7 @@ export NOVA_ONBOARD_GATEWAY_WAIT_ATTEMPTS=2x
 NOVA_ENTRY=node
 source scripts/e2e/lib/onboard/scenario.sh
 
-openclaw_e2e_probe_tcp() {
+nova_e2e_probe_tcp() {
   echo "probe should not run" >&2
   return 1
 }
@@ -272,7 +270,7 @@ exit "$status"
   });
 
   it("removes fallback ClawHub skill install HOME on failure", async () => {
-    const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-clawhub-home-test-"));
+    const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-clawhub-home-test-"));
     const fakeBin = path.join(tempRoot, "bin");
     const scratchRoot = path.join(tempRoot, "scratch");
     await mkdir(fakeBin, { recursive: true });
@@ -301,7 +299,7 @@ exit 42
       expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(42);
       const scratchEntries = await readdir(scratchRoot);
       expect(
-        scratchEntries.filter((entry) => entry.startsWith("openclaw-skill-install-home.")),
+        scratchEntries.filter((entry) => entry.startsWith("nova-skill-install-home.")),
       ).toEqual([]);
     } finally {
       await rm(tempRoot, { force: true, recursive: true });
@@ -309,12 +307,12 @@ exit 42
   });
 
   it("rejects ClawHub skill info paths that only share a resolved prefix", async () => {
-    const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-clawhub-info-path-"));
+    const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-clawhub-info-path-"));
     const workspaceDir = path.join(tempRoot, "workspace");
     const slug = "demo";
     const skillDir = path.join(workspaceDir, "skills", slug);
     const escapedInfoPath = path.join(workspaceDir, "skills", `${slug}-escape`, "SKILL.md");
-    const configPath = path.join(tempRoot, "openclaw.json");
+    const configPath = path.join(tempRoot, "nova.json");
     const originPath = path.join(skillDir, ".clawhub", "origin.json");
     const lockPath = path.join(workspaceDir, ".clawhub", "lock.json");
     const infoPath = path.join(tempRoot, "info.json");

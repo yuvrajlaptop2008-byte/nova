@@ -20,7 +20,7 @@ describe("shared/entry-status", () => {
       entry: {
         metadata: {
           emoji: "🦀",
-          homepage: "https://openclaw.ai",
+          homepage: "https://nova.ai",
           requires: {
             bins: ["bun"],
             anyBins: ["ffmpeg", "sox"],
@@ -31,7 +31,7 @@ describe("shared/entry-status", () => {
         },
         frontmatter: {
           emoji: "🙂",
-          homepage: "https://docs.openclaw.ai",
+          homepage: "https://docs.nova.ai",
         },
       },
       hasLocalBin: (bin) => bin === "bun",
@@ -44,7 +44,7 @@ describe("shared/entry-status", () => {
 
     expect(result).toEqual({
       emoji: "🦀",
-      homepage: "https://openclaw.ai",
+      homepage: "https://nova.ai",
       required: {
         bins: ["bun"],
         anyBins: ["ffmpeg", "sox"],
@@ -95,7 +95,7 @@ describe("shared/entry-status", () => {
           },
         },
         frontmatter: {
-          website: " https://docs.openclaw.ai ",
+          website: " https://docs.nova.ai ",
           emoji: "🙂",
         },
       },
@@ -106,7 +106,7 @@ describe("shared/entry-status", () => {
 
     expect(result).toEqual({
       emoji: "🙂",
-      homepage: "https://docs.openclaw.ai",
+      homepage: "https://docs.nova.ai",
       required: {
         bins: ["missing-bin"],
         anyBins: [],

@@ -1,8 +1,7 @@
 // Covers provider install catalog entries from plugin metadata.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-type LoadOpenClawProviderIndex =
-  typeof import("../model-catalog/index.js").loadOpenClawProviderIndex;
+type LoadNovaProviderIndex = typeof import("../model-catalog/index.js").loadNovaProviderIndex;
 type LoadPluginRegistrySnapshot = typeof import("./plugin-registry.js").loadPluginRegistrySnapshot;
 type ResolveManifestProviderAuthChoices =
   typeof import("./provider-auth-choices.js").resolveManifestProviderAuthChoices;
@@ -13,8 +12,8 @@ type InstalledPluginInstallRecordInfo =
   import("./installed-plugin-index.js").InstalledPluginInstallRecordInfo;
 type InstalledPluginIndexRecord = import("./installed-plugin-index.js").InstalledPluginIndexRecord;
 
-const loadOpenClawProviderIndex = vi.hoisted(() =>
-  vi.fn<LoadOpenClawProviderIndex>(() => ({ version: 1, providers: {} })),
+const loadNovaProviderIndex = vi.hoisted(() =>
+  vi.fn<LoadNovaProviderIndex>(() => ({ version: 1, providers: {} })),
 );
 vi.mock("../model-catalog/index.js", async () => {
   const actual = await vi.importActual<typeof import("../model-catalog/index.js")>(
@@ -22,7 +21,7 @@ vi.mock("../model-catalog/index.js", async () => {
   );
   return {
     ...actual,
-    loadOpenClawProviderIndex,
+    loadNovaProviderIndex,
   };
 });
 
@@ -92,9 +91,9 @@ function vllmPluginWithPackageInstall(): InstalledPluginIndexRecord {
   return {
     pluginId: "vllm",
     origin: "global",
-    manifestPath: "/Users/test/.openclaw/plugins/vllm/openclaw.plugin.json",
+    manifestPath: "/Users/test/.nova/plugins/vllm/nova.plugin.json",
     manifestHash: "hash",
-    rootDir: "/Users/test/.openclaw/plugins/vllm",
+    rootDir: "/Users/test/.nova/plugins/vllm",
     enabled: true,
     startup: {
       sidecar: false,
@@ -135,7 +134,7 @@ function mockVllmAuthChoice() {
 describe("provider install catalog", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    loadOpenClawProviderIndex.mockReturnValue({ version: 1, providers: {} });
+    loadNovaProviderIndex.mockReturnValue({ version: 1, providers: {} });
     loadPluginRegistrySnapshot.mockReturnValue({
       version: 1,
       hostContractVersion: "test",
@@ -164,7 +163,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "openai",
           origin: "bundled",
-          manifestPath: "/repo/extensions/openai/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/openai/nova.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/openai",
           enabled: true,
@@ -297,9 +296,9 @@ describe("provider install catalog", () => {
         installRecords: {
           vllm: {
             source: "clawhub",
-            spec: "clawhub:openclaw/vllm@2026.5.2",
+            spec: "clawhub:nova/vllm@2026.5.2",
             integrity: "sha256-clawpack",
-            clawhubPackage: "openclaw/vllm",
+            clawhubPackage: "nova/vllm",
           },
         },
         plugins: [vllmPluginWithPackageInstall()],
@@ -317,14 +316,14 @@ describe("provider install catalog", () => {
       label: "vLLM",
       origin: "global",
       install: {
-        clawhubSpec: "clawhub:openclaw/vllm@2026.5.2",
+        clawhubSpec: "clawhub:nova/vllm@2026.5.2",
         defaultChoice: "clawhub",
       },
       installSource: {
         defaultChoice: "clawhub",
         clawhub: {
-          spec: "clawhub:openclaw/vllm@2026.5.2",
-          packageName: "openclaw/vllm",
+          spec: "clawhub:nova/vllm@2026.5.2",
+          packageName: "nova/vllm",
           version: "2026.5.2",
           exactVersion: true,
         },
@@ -346,9 +345,9 @@ describe("provider install catalog", () => {
         {
           pluginId: "demo-provider",
           origin: "global",
-          manifestPath: "/Users/test/.openclaw/plugins/demo-provider/openclaw.plugin.json",
+          manifestPath: "/Users/test/.nova/plugins/demo-provider/nova.plugin.json",
           manifestHash: "hash",
-          rootDir: "/Users/test/.openclaw/plugins/demo-provider",
+          rootDir: "/Users/test/.nova/plugins/demo-provider",
           enabled: true,
           startup: {
             sidecar: false,
@@ -400,7 +399,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "openai",
           origin: "bundled",
-          manifestPath: "/repo/extensions/openai/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/openai/nova.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/openai",
           enabled: true,
@@ -453,7 +452,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "demo-provider",
           origin: "workspace",
-          manifestPath: "/repo/extensions/demo-provider/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/demo-provider/nova.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/demo-provider",
           enabled: false,
@@ -497,7 +496,7 @@ describe("provider install catalog", () => {
   });
 
   it("surfaces provider-index install metadata when the provider plugin is not installed", () => {
-    loadOpenClawProviderIndex.mockReturnValue({
+    loadNovaProviderIndex.mockReturnValue({
       version: 1,
       providers: {
         moonshot: {
@@ -564,7 +563,7 @@ describe("provider install catalog", () => {
         name: "@nova/codex",
         source: "official",
         kind: "provider",
-        openclaw: {
+        nova: {
           plugin: { id: "codex", label: "Codex" },
           providers: [
             {
@@ -627,7 +626,7 @@ describe("provider install catalog", () => {
         name: "@nova/gmi-provider",
         source: "official",
         kind: "provider",
-        openclaw: {
+        nova: {
           plugin: { id: "gmi", label: "GMI Cloud" },
           providers: [
             {
@@ -664,7 +663,7 @@ describe("provider install catalog", () => {
         name: "@nova/qwen-provider",
         source: "official",
         kind: "provider",
-        openclaw: {
+        nova: {
           plugin: { id: "qwen", label: "Qwen Cloud" },
           providers: [
             {
@@ -695,7 +694,7 @@ describe("provider install catalog", () => {
   });
 
   it("surfaces provider-index ClawHub install metadata as the preferred source", () => {
-    loadOpenClawProviderIndex.mockReturnValue({
+    loadNovaProviderIndex.mockReturnValue({
       version: 1,
       providers: {
         moonshot: {
@@ -705,7 +704,7 @@ describe("provider install catalog", () => {
             id: "moonshot",
             package: "@nova/plugin-moonshot",
             install: {
-              clawhubSpec: "clawhub:openclaw/moonshot@2026.5.2",
+              clawhubSpec: "clawhub:nova/moonshot@2026.5.2",
               npmSpec: "@nova/plugin-moonshot@2026.5.2",
               defaultChoice: "clawhub",
               expectedIntegrity: "sha512-moonshot",
@@ -735,7 +734,7 @@ describe("provider install catalog", () => {
       label: "Moonshot AI",
       origin: "bundled",
       install: {
-        clawhubSpec: "clawhub:openclaw/moonshot@2026.5.2",
+        clawhubSpec: "clawhub:nova/moonshot@2026.5.2",
         npmSpec: "@nova/plugin-moonshot@2026.5.2",
         defaultChoice: "clawhub",
         expectedIntegrity: "sha512-moonshot",
@@ -743,8 +742,8 @@ describe("provider install catalog", () => {
       installSource: {
         defaultChoice: "clawhub",
         clawhub: {
-          spec: "clawhub:openclaw/moonshot@2026.5.2",
-          packageName: "openclaw/moonshot",
+          spec: "clawhub:nova/moonshot@2026.5.2",
+          packageName: "nova/moonshot",
           version: "2026.5.2",
           exactVersion: true,
         },
@@ -775,7 +774,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "moonshot",
           origin: "bundled",
-          manifestPath: "/repo/extensions/moonshot/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/moonshot/nova.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/moonshot",
           enabled: true,
@@ -790,7 +789,7 @@ describe("provider install catalog", () => {
       ],
       diagnostics: [],
     });
-    loadOpenClawProviderIndex.mockReturnValue({
+    loadNovaProviderIndex.mockReturnValue({
       version: 1,
       providers: {
         moonshot: {
@@ -831,7 +830,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "moonshot",
           origin: "bundled",
-          manifestPath: "/repo/extensions/moonshot/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/moonshot/nova.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/moonshot",
           enabled: true,
@@ -846,7 +845,7 @@ describe("provider install catalog", () => {
       ],
       diagnostics: [],
     });
-    loadOpenClawProviderIndex.mockReturnValue({
+    loadNovaProviderIndex.mockReturnValue({
       version: 1,
       providers: {
         groq: {
@@ -875,7 +874,7 @@ describe("provider install catalog", () => {
             id: "moonshot",
             package: "@nova/plugin-moonshot",
             install: {
-              clawhubSpec: "clawhub:openclaw/moonshot@2026.5.2",
+              clawhubSpec: "clawhub:nova/moonshot@2026.5.2",
               npmSpec: "@nova/plugin-moonshot@2026.5.2",
               defaultChoice: "clawhub",
             },
@@ -895,7 +894,7 @@ describe("provider install catalog", () => {
             id: "vllm",
             package: "@nova/plugin-vllm",
             install: {
-              clawhubSpec: "clawhub:openclaw/vllm@2026.5.2",
+              clawhubSpec: "clawhub:nova/vllm@2026.5.2",
               npmSpec: "@nova/plugin-vllm@2026.5.2",
               defaultChoice: "clawhub",
             },
@@ -924,15 +923,15 @@ describe("provider install catalog", () => {
       label: "vLLM",
       origin: "bundled",
       install: {
-        clawhubSpec: "clawhub:openclaw/vllm@2026.5.2",
+        clawhubSpec: "clawhub:nova/vllm@2026.5.2",
         npmSpec: "@nova/plugin-vllm@2026.5.2",
         defaultChoice: "clawhub",
       },
       installSource: {
         defaultChoice: "clawhub",
         clawhub: {
-          spec: "clawhub:openclaw/vllm@2026.5.2",
-          packageName: "openclaw/vllm",
+          spec: "clawhub:nova/vllm@2026.5.2",
+          packageName: "nova/vllm",
           version: "2026.5.2",
           exactVersion: true,
         },

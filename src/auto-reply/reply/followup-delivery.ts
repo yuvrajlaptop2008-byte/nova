@@ -1,8 +1,8 @@
 /** Prepares queued follow-up payloads for source-channel delivery. */
-import { hasOutboundReplyContent } from "openclaw/plugin-sdk/reply-payload";
+import { hasOutboundReplyContent } from "nova/plugin-sdk/reply-payload";
 import type { MessagingToolSend } from "../../agents/embedded-agent-messaging.types.js";
 import type { ReplyToMode } from "../../config/types.base.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { stripHeartbeatToken } from "../heartbeat.js";
 import {
   copyReplyPayloadMetadata,
@@ -26,7 +26,7 @@ import { createReplyDeliveryContext, resolveReplyToMode } from "./reply-threadin
 
 /** Strips empty/heartbeat payloads, applies threading, and dedupes message-tool sends. */
 export function resolveFollowupDeliveryPayloads(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   payloads: ReplyPayload[];
   messageProvider?: string;
   originatingAccountId?: string;

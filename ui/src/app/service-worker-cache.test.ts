@@ -37,7 +37,7 @@ describe("Control UI service worker cache versioning", () => {
     expect(viteConfigSource).not.toContain(
       "NOVA_CONTROL_UI_BUILD_ID: JSON.stringify(controlUiBuildId)",
     );
-    expect(serviceWorkerSource).not.toContain('const CACHE_NAME = "openclaw-control-v1"');
+    expect(serviceWorkerSource).not.toContain('const CACHE_NAME = "nova-control-v1"');
   });
 
   it("broadcasts updated versions to uncontrolled window clients during activation", async () => {
@@ -53,10 +53,10 @@ describe("Control UI service worker cache versioning", () => {
     const caches = {
       delete: cacheDelete,
       keys: vi.fn(async () => [
-        "openclaw-control-oldest",
-        "openclaw-control-older",
-        "openclaw-control-previous",
-        "openclaw-control-new-build",
+        "nova-control-oldest",
+        "nova-control-older",
+        "nova-control-previous",
+        "nova-control-new-build",
         "other-cache",
       ]),
       open: vi.fn(),
@@ -102,7 +102,7 @@ describe("Control UI service worker cache versioning", () => {
 
     expect(clients.matchAll).toHaveBeenCalledWith({ type: "window", includeUncontrolled: true });
     expect(clients.claim).toHaveBeenCalled();
-    expect(cacheDelete).toHaveBeenCalledWith("openclaw-control-oldest");
+    expect(cacheDelete).toHaveBeenCalledWith("nova-control-oldest");
     expect(windowClient.postMessage).toHaveBeenCalledWith({
       type: "sw-updated",
       version: "new-build",

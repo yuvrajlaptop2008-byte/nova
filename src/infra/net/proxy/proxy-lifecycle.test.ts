@@ -141,7 +141,7 @@ describe("startProxy", () => {
   });
 
   function writeTempCa(contents = "proxy-ca"): string {
-    const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-proxy-lifecycle-ca-"));
+    const dir = mkdtempSync(path.join(os.tmpdir(), "nova-proxy-lifecycle-ca-"));
     tempDirs.push(dir);
     const caFile = path.join(dir, "proxy-ca.pem");
     writeFileSync(caFile, contents, "utf8");
@@ -246,7 +246,7 @@ describe("startProxy", () => {
   });
 
   it("does not load configured proxy CA files for plain HTTP proxy URLs", async () => {
-    const missingCaFile = path.join(os.tmpdir(), "openclaw-missing-http-proxy-ca.pem");
+    const missingCaFile = path.join(os.tmpdir(), "nova-missing-http-proxy-ca.pem");
 
     const handle = await startProxy({
       enabled: true,

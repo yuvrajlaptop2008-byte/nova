@@ -1,18 +1,18 @@
 // Qqbot tests cover secret contract plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   applyResolvedAssignments,
   createResolverContext,
   resolveSecretRefValues,
-} from "openclaw/plugin-sdk/secret-ref-runtime";
+} from "nova/plugin-sdk/secret-ref-runtime";
 import { describe, expect, it } from "vitest";
 import { collectRuntimeConfigAssignments } from "./secret-contract.js";
 
 async function resolveQqbotSecretAssignments(
-  sourceConfig: OpenClawConfig,
+  sourceConfig: NovaConfig,
   env: NodeJS.ProcessEnv,
-): Promise<OpenClawConfig> {
-  const resolvedConfig: OpenClawConfig = structuredClone(sourceConfig);
+): Promise<NovaConfig> {
+  const resolvedConfig: NovaConfig = structuredClone(sourceConfig);
   const context = createResolverContext({ sourceConfig, env });
 
   collectRuntimeConfigAssignments({
@@ -47,7 +47,7 @@ describe("qqbot secret contract", () => {
             clientSecretFile: "/ignored/by/runtime",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       { QQBOT_CLIENT_SECRET: "resolved-top-level-secret" },
     );
 
@@ -70,7 +70,7 @@ describe("qqbot secret contract", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       { QQBOT_BOT2_SECRET: "resolved-bot2-secret" },
     );
 
@@ -96,7 +96,7 @@ describe("qqbot secret contract", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         QQBOT_DEFAULT_SECRET: "resolved-default-secret",
         QQBOT_BOT2_SECRET: "resolved-bot2-secret",

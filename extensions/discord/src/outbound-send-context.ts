@@ -4,10 +4,10 @@ import {
   resolveOutboundSendDep,
   type OutboundSendDeps,
   type ReplyToResolution,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig, ReplyToMode } from "openclaw/plugin-sdk/config-contracts";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { normalizeOptionalStringifiedId } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/channel-outbound";
+import type { NovaConfig, ReplyToMode } from "nova/plugin-sdk/config-contracts";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { normalizeOptionalStringifiedId } from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveDiscordReplyReference } from "./reply-reference.js";
 
 type DiscordSendRuntime = typeof import("./send.js");
@@ -50,7 +50,7 @@ export function resolveDiscordFormattingOptions(ctx: {
 }
 
 export async function createDiscordPayloadSendContext(ctx: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   to: string;
   accountId?: string | null;
   deps?: OutboundSendDeps;

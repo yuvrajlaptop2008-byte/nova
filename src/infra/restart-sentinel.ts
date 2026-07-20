@@ -3,10 +3,7 @@ import { isRecord as isPlainRecord } from "@nova/normalization-core/record-coerc
 import { sliceUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { formatCliCommand } from "../cli/command-format.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { resolveRuntimeServiceVersion } from "../version.js";
 import { formatErrorMessage } from "./errors.js";
 import {
@@ -30,7 +27,7 @@ export function formatDoctorNonInteractiveHint(
   env: Record<string, string | undefined> = process.env as Record<string, string | undefined>,
 ): string {
   return `Recommended follow-up: run ${formatCliCommand(
-    "openclaw doctor --non-interactive",
+    "nova doctor --non-interactive",
     env,
   )} in a terminal or approvals-capable Nova surface.`;
 }
@@ -39,7 +36,7 @@ export async function writeRestartSentinel(
   payload: RestartSentinelPayload,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<RestartSentinel> {
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => writeRestartSentinelRowSync(db, payload),
     { env },
     { operationLabel: "restart-sentinel.write" },
@@ -54,7 +51,7 @@ async function rewriteRestartSentinel(
   rewrite: (payload: RestartSentinelPayload) => RestartSentinelPayload | null,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<RestartSentinel | null> {
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => {
       const current = readRestartSentinelRowSync(db);
       if (current.kind !== "valid") {
@@ -113,7 +110,7 @@ export async function markUpdateRestartSentinelFailure(
 }
 
 export async function clearRestartSentinel(env: NodeJS.ProcessEnv = process.env): Promise<boolean> {
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => deleteRestartSentinelRowSync(db),
     { env },
     { operationLabel: "restart-sentinel.clear" },
@@ -124,7 +121,7 @@ export async function clearRestartSentinelIfRevision(
   expectedRevision: number,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<boolean> {
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => deleteRestartSentinelRowSync(db, expectedRevision),
     { env },
     { operationLabel: "restart-sentinel.clear-if-revision" },
@@ -146,7 +143,7 @@ export async function readRestartSentinel(
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<RestartSentinel | null> {
   try {
-    const database = openOpenClawStateDatabase({ env });
+    const database = openNovaStateDatabase({ env });
     const current = readRestartSentinelRowSync(database.db);
     if (current.kind === "invalid") {
       sentinelLog.warn("Ignoring invalid typed restart sentinel row");
@@ -161,7 +158,7 @@ export async function readRestartSentinel(
 
 export async function hasRestartSentinel(env: NodeJS.ProcessEnv = process.env): Promise<boolean> {
   try {
-    const database = openOpenClawStateDatabase({ env });
+    const database = openNovaStateDatabase({ env });
     const current = readRestartSentinelRowSync(database.db);
     if (current.kind === "invalid") {
       sentinelLog.warn("Ignoring invalid typed restart sentinel row");

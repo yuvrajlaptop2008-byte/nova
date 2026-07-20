@@ -29,11 +29,11 @@ read_nonnegative_int_env() {
   printf "%s\n" "$((10#$value))"
 }
 
-INSTALL_URL="${NOVA_INSTALL_URL:-https://openclaw.bot/install.sh}"
+INSTALL_URL="${NOVA_INSTALL_URL:-https://nova.bot/install.sh}"
 SMOKE_MODE="${NOVA_INSTALL_SMOKE_MODE:-install}"
 SMOKE_PREVIOUS_VERSION="${NOVA_INSTALL_SMOKE_PREVIOUS:-}"
 SKIP_PREVIOUS="${NOVA_INSTALL_SMOKE_SKIP_PREVIOUS:-0}"
-DEFAULT_PACKAGE="openclaw"
+DEFAULT_PACKAGE="nova"
 PACKAGE_NAME="${NOVA_INSTALL_PACKAGE:-$DEFAULT_PACKAGE}"
 FRESH_VERSION="${NOVA_INSTALL_FRESH_VERSION:-}"
 FRESH_TAG_URL="${NOVA_INSTALL_FRESH_TAG_URL:-}"
@@ -101,7 +101,7 @@ print_install_audit() {
 
 verify_candidate_ai_runtime() {
   echo "==> Verify installed AI runtime"
-  NOVA_ALLOW_ROOT=1 openclaw infer image providers --json >/dev/null
+  NOVA_ALLOW_ROOT=1 nova infer image providers --json >/dev/null
 }
 
 run_with_heartbeat() {
@@ -149,9 +149,9 @@ run_with_heartbeat() {
 
 is_self_swapped_package_process_exit() {
   local stderr="$1"
-  [[ "$stderr" == *"[openclaw] Failed to start CLI:"* ]] &&
+  [[ "$stderr" == *"[nova] Failed to start CLI:"* ]] &&
     [[ "$stderr" == *"ERR_MODULE_NOT_FOUND"* ]] &&
-    [[ "$stderr" == *"/node_modules/openclaw/dist/"* ]]
+    [[ "$stderr" == *"/node_modules/nova/dist/"* ]]
 }
 
 is_version_before() {
@@ -376,7 +376,7 @@ run_update_smoke() {
   print_install_audit "baseline install"
   verify_installed_cli "$PACKAGE_NAME" "$UPDATE_BASELINE_VERSION"
 
-  echo "==> Run openclaw update from host-served tgz"
+  echo "==> Run nova update from host-served tgz"
   local update_status
   local update_stderr_file
   local update_stderr
@@ -392,9 +392,9 @@ run_update_smoke() {
   update_stderr_file="$(mktemp)"
   set +e
   UPDATE_JSON="$(
-    run_with_heartbeat "openclaw update" \
+    run_with_heartbeat "nova update" \
       "${update_env[@]}" \
-      openclaw update --tag "$UPDATE_TAG_URL" --yes --json 2>"$update_stderr_file"
+      nova update --tag "$UPDATE_TAG_URL" --yes --json 2>"$update_stderr_file"
   )"
   update_status=$?
   set -e
@@ -407,14 +407,14 @@ run_update_smoke() {
   if [[ "$update_stderr" == *"config was written by version"* ]] && allow_legacy_update_warning; then
     echo "WARN: legacy baseline emitted a self-update version-skew warning; fixed baselines must not" >&2
   elif [[ "$update_stderr" == *"config was written by version"* ]]; then
-    echo "ERROR: openclaw update emitted a self-update version-skew warning" >&2
+    echo "ERROR: nova update emitted a self-update version-skew warning" >&2
     return 1
   fi
   if [[ "$update_status" -ne 0 ]]; then
     if is_self_swapped_package_process_exit "$update_stderr"; then
       echo "WARN: legacy updater process exited after self-swap; validating update JSON and installed CLI" >&2
     else
-      echo "ERROR: openclaw update failed with exit code $update_status" >&2
+      echo "ERROR: nova update failed with exit code $update_status" >&2
       return "$update_status"
     fi
   fi
@@ -489,11 +489,11 @@ if (Number(updateStep.exitCode ?? 1) !== 0) {
 if (typeof updateStep.command !== "string" || !updateStep.command.includes(expectedUrl)) {
   throw new Error(`global update step missing expected tgz URL: ${JSON.stringify(updateStep)}`);
 }
-const doctorStep = steps.find((step) => step?.name === "openclaw doctor");
+const doctorStep = steps.find((step) => step?.name === "nova doctor");
 // Every baseline that passes verify_installed_cli implements this contract;
 // the sole earlier npm artifact has no CLI and cannot reach this parser.
 if (!doctorStep) {
-  throw new Error("missing openclaw doctor step in update JSON");
+  throw new Error("missing nova doctor step in update JSON");
 }
 // Exit 86 is the updater's explicit recoverable post-install doctor contract.
 const doctorSucceeded = doctorStep.exitCode === 0;
@@ -501,7 +501,7 @@ const doctorWasAdvisory =
   doctorStep.exitCode === 86 &&
   doctorStep.advisory?.kind === "package-post-install-doctor";
 if (!doctorSucceeded && !doctorWasAdvisory) {
-  throw new Error(`openclaw doctor step failed: ${JSON.stringify(doctorStep)}`);
+  throw new Error(`nova doctor step failed: ${JSON.stringify(doctorStep)}`);
 }
 NODE
 

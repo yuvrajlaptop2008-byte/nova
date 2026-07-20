@@ -103,7 +103,7 @@ export async function startNpmRegistryServer(input: {
     die("npm registry server requires at least one package");
   }
   const port = allocateHostPort();
-  const portFile = path.join(tmpdir(), `openclaw-npm-registry-${randomUUID()}.port`);
+  const portFile = path.join(tmpdir(), `nova-npm-registry-${randomUUID()}.port`);
   const packageArgs = input.packages.flatMap((pkg) => [pkg.name, pkg.version, pkg.tarballPath]);
   const child = spawn(
     process.execPath,

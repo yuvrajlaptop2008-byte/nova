@@ -1327,7 +1327,7 @@ export const th: TranslationMap = {
     autoSaveFailed: "บันทึกไม่สำเร็จ",
     autoSaveConflict: "การตั้งค่าถูกเปลี่ยนแปลงจากที่อื่น",
     retry: "ลองอีกครั้ง",
-    applyBannerText: "บันทึกลง openclaw.json แล้ว — รีสตาร์ท Gateway เพื่อนำไปใช้",
+    applyBannerText: "บันทึกลง nova.json แล้ว — รีสตาร์ท Gateway เพื่อนำไปใช้",
     applyBannerAction: "รีสตาร์ทและนำไปใช้",
     rawDiscard: "ละทิ้ง",
     rawDraftBlocksApply: "มีการแก้ไข Raw config ที่ยังไม่ได้บันทึก — บันทึกหรือยกเลิกในตัวแก้ไข Raw ก่อนรีสตาร์ท",
@@ -1711,7 +1711,7 @@ export const th: TranslationMap = {
     skillWorkshop: "ตรวจสอบ ปรับแต่ง และนำข้อเสนอไปใช้ก่อนที่จะกลายเป็น Skills ที่ใช้งานจริง",
     nodes: "อุปกรณ์ที่จับคู่และคำสั่ง",
     chat: "แชตเกตเวย์สำหรับการดำเนินการอย่างรวดเร็ว",
-    config: "แก้ไข openclaw.json",
+    config: "แก้ไข nova.json",
     profile: "สถิติ สตรีก และชีวิตในแนวปะการังของเอเจนต์คุณ",
     communications: "ช่องทาง ข้อความ และการตั้งค่าเสียง",
     appearance: "ธีม UI และการตั้งค่าตัวช่วยเริ่มต้น",
@@ -2409,7 +2409,7 @@ export const th: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3412,15 +3412,14 @@ export const th: TranslationMap = {
       authRequired: {
         title: "ต้องยืนยันตัวตน",
         summary: "เข้าถึง Gateway ได้ แต่ต้องมีโทเค็นหรือรหัสผ่านที่ตรงกันก่อนที่เบราว์เซอร์นี้จะเชื่อมต่อได้",
-        stepPaste: "วางโทเค็นจาก openclaw dashboard --no-open หรือป้อนรหัสผ่านที่ตั้งค่าไว้",
-        stepGenerate:
-          "ถ้ายังไม่ได้ตั้งค่าโทเค็น ให้รัน openclaw doctor --generate-gateway-token บนโฮสต์ Gateway",
+        stepPaste: "วางโทเค็นจาก nova dashboard --no-open หรือป้อนรหัสผ่านที่ตั้งค่าไว้",
+        stepGenerate: "ถ้ายังไม่ได้ตั้งค่าโทเค็น ให้รัน nova doctor --generate-gateway-token บนโฮสต์ Gateway",
         stepConnect: "คลิก Connect อีกครั้งหลังจากอัปเดตข้อมูลรับรอง",
       },
       authFailed: {
         title: "การยืนยันตัวตนไม่ตรงกัน",
         summary: "ข้อมูลรับรองที่ให้มาถูกปฏิเสธ สาเหตุที่พบบ่อยคือโทเค็นเก่าหรือโทเค็นที่คัดลอกจาก Gateway URL อื่น",
-        stepDashboard: "รัน openclaw dashboard --no-open แล้วเปิด URL ใหม่หรือวางโทเค็นของ URL นั้น",
+        stepDashboard: "รัน nova dashboard --no-open แล้วเปิด URL ใหม่หรือวางโทเค็นของ URL นั้น",
         stepReplace: "แทนที่ค่าโทเค็น/รหัสผ่านเก่า อย่าใช้โทเค็นจาก Gateway URL อื่นซ้ำ",
         stepMode:
           "ใช้โหมด auth ที่ตรงกันทีละโหมด: gateway token สำหรับโหมด token, รหัสผ่านสำหรับโหมด password",
@@ -3439,8 +3438,8 @@ export const th: TranslationMap = {
         metadataTitle: "การรีเฟรชอุปกรณ์รออนุมัติ",
         summary: "เบราว์เซอร์นี้ต้องได้รับการอนุมัติครั้งเดียวจากโฮสต์ Gateway ก่อนใช้ Control UI",
         upgradeSummary: "เบราว์เซอร์นี้เป็นที่รู้จักแล้ว แต่สิทธิ์ที่ขอเปลี่ยนไปและต้องอนุมัติใหม่",
-        stepList: "รัน openclaw devices list บนโฮสต์ Gateway",
-        stepApproveId: "อนุมัติคำขอนี้: openclaw devices approve {requestId}.",
+        stepList: "รัน nova devices list บนโฮสต์ Gateway",
+        stepApproveId: "อนุมัติคำขอนี้: nova devices approve {requestId}.",
         stepApprove: "อนุมัติคำขอเบราว์เซอร์/อุปกรณ์ที่รอดำเนินการจากรายการนั้น",
         stepReconnect: "เชื่อมต่อใหม่หลังการอนุมัติเสร็จสิ้น",
       },
@@ -3463,7 +3462,7 @@ export const th: TranslationMap = {
         title: "โปรโตคอลไม่ตรงกัน",
         summary: "Control UI ที่เสิร์ฟอยู่และ Gateway ที่ทำงานอยู่ไม่ตรงกันเรื่องโปรโตคอลการเชื่อมต่อที่รองรับ",
         stepDashboard:
-          "เปิด dashboard ที่เสิร์ฟอีกครั้งด้วย openclaw dashboard เพื่อให้ UI และ Gateway มาจากการติดตั้งเดียวกัน",
+          "เปิด dashboard ที่เสิร์ฟอีกครั้งด้วย nova dashboard เพื่อให้ UI และ Gateway มาจากการติดตั้งเดียวกัน",
         stepDevUi: "ถ้าใช้ pnpm ui:dev ให้ build ใหม่หรือรีสตาร์ท UI dev กับ checkout ปัจจุบัน",
         stepRestart: "รีสตาร์ท Gateway หลังอัปเดต Nova เพื่อให้เสิร์ฟโปรโตคอลปัจจุบัน",
       },
@@ -3471,10 +3470,10 @@ export const th: TranslationMap = {
         title: "เชื่อมต่อไม่ได้",
         summary:
           "เบราว์เซอร์ไม่สามารถเชื่อมต่อ Gateway ให้เสร็จสมบูรณ์ได้ ตรวจสอบเป้าหมายและ transport ก่อนลองข้อมูลรับรองอีกครั้ง",
-        stepGateway: "ยืนยันว่า Gateway กำลังทำงานด้วย openclaw status หรือ openclaw gateway run",
+        stepGateway: "ยืนยันว่า Gateway กำลังทำงานด้วย nova status หรือ nova gateway run",
         stepUrl: "ตรวจสอบ WebSocket URL และใช้ wss:// เมื่อ Gateway อยู่หลัง HTTPS/Tailscale Serve",
         stepDashboard:
-          "เปิด dashboard อีกครั้งด้วย openclaw dashboard --no-open เพื่อคัดลอก URL และรายละเอียด auth ปัจจุบันใหม่",
+          "เปิด dashboard อีกครั้งด้วย nova dashboard --no-open เพื่อคัดลอก URL และรายละเอียด auth ปัจจุบันใหม่",
       },
     },
   },

@@ -261,7 +261,7 @@ describe("scripts/measure-rpc-rtt.mjs", () => {
           exists: true,
           issues: [],
           legacyIssues: [],
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           resolved: {},
           runtimeConfig: {},
           sourceConfig: {},
@@ -304,7 +304,7 @@ describe("scripts/measure-rpc-rtt.mjs", () => {
 
     await expect(
       startGateway({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         env: { PATH: "/bin" },
         openImpl,
         port: 23456,
@@ -339,7 +339,7 @@ describe("scripts/measure-rpc-rtt.mjs", () => {
         detached: process.platform !== "win32",
         env: expect.objectContaining({
           HOME: path.join(tempRoot, "home"),
-          NOVA_CONFIG_PATH: "/tmp/openclaw.json",
+          NOVA_CONFIG_PATH: "/tmp/nova.json",
           NOVA_GATEWAY_TOKEN: "secret-token",
           NOVA_STATE_DIR: path.join(tempRoot, "state"),
           PATH: "/bin",

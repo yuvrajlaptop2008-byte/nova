@@ -1,11 +1,11 @@
 // Msteams plugin module implements sdk behavior.
 import * as fs from "node:fs";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import { normalizeBotFrameworkServiceUrl } from "./bot-framework-service-url.js";
 import type { MSTeamsCloudName } from "./cloud.js";
 import { MSTEAMS_REQUEST_TIMEOUT_MS } from "./request-timeout.js";
 import type { MSTeamsCredentials, MSTeamsFederatedCredentials } from "./token.js";
-import { buildOpenClawUserAgentFragment } from "./user-agent.js";
+import { buildNovaUserAgentFragment } from "./user-agent.js";
 
 type MSTeamsHttpServerAdapter =
   import("@microsoft/teams.apps/dist/http/adapter.js").IHttpServerAdapter;
@@ -272,7 +272,7 @@ async function createMSTeamsApp(
     : undefined;
   const appOptions: Record<string, unknown> = {
     client: options?.httpClient ?? {
-      headers: { "User-Agent": buildOpenClawUserAgentFragment() },
+      headers: { "User-Agent": buildNovaUserAgentFragment() },
       timeout: MSTEAMS_REQUEST_TIMEOUT_MS,
     },
     ...(options?.httpServerAdapter ? { httpServerAdapter: options.httpServerAdapter } : {}),

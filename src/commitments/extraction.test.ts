@@ -3,8 +3,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import type { NovaConfig } from "../config/config.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import {
   buildCommitmentExtractionPrompt,
@@ -21,7 +21,7 @@ describe("commitment extraction", () => {
   const nowMs = Date.parse("2026-04-29T16:00:00.000Z");
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
     stateDirEnvSnapshot?.restore();
@@ -30,8 +30,8 @@ describe("commitment extraction", () => {
     tmpDirs.length = 0;
   });
 
-  async function createConfig(): Promise<OpenClawConfig> {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-commitments-"));
+  async function createConfig(): Promise<NovaConfig> {
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-commitments-"));
     tmpDirs.push(tmpDir);
     stateDirEnvSnapshot ??= captureEnv(["NOVA_STATE_DIR"]);
     setTestEnvValue("NOVA_STATE_DIR", tmpDir);
@@ -155,7 +155,7 @@ describe("commitment extraction", () => {
   });
 
   it("rejects disabled, low-confidence, and non-future candidates", () => {
-    const cfg: OpenClawConfig = { commitments: { enabled: true } };
+    const cfg: NovaConfig = { commitments: { enabled: true } };
     const valid = validateCommitmentCandidates({
       cfg,
       items: [item()],

@@ -5,11 +5,8 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import { loadNodeHostConfig } from "../node-host/config.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { acquireGatewayLock } from "./gateway-lock.js";
 import {
   executeSqliteQuerySync,
@@ -21,19 +18,19 @@ import {
   migrateLegacyNodeHostConfig,
 } from "./state-migrations.node-host.js";
 
-type NodeHostConfigDatabase = Pick<OpenClawStateKyselyDatabase, "node_host_config">;
+type NodeHostConfigDatabase = Pick<NovaStateKyselyDatabase, "node_host_config">;
 const fixtureDigest = ["fixture", "digest"].join("-");
 
 describe("legacy node-host Doctor migration", () => {
   const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
     afterEach(() => {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       cleanup();
     });
   });
 
   function useStateDir(): { env: NodeJS.ProcessEnv; stateDir: string } {
-    const stateDir = tempDirs.make("openclaw-node-host-migration-");
+    const stateDir = tempDirs.make("nova-node-host-migration-");
     return { env: { ...process.env, NOVA_STATE_DIR: stateDir }, stateDir };
   }
 
@@ -48,7 +45,7 @@ describe("legacy node-host Doctor migration", () => {
         port: 18443,
         tls: false,
         tlsFingerprint: fixtureDigest,
-        contextPath: "/openclaw-gw",
+        contextPath: "/nova-gw",
       },
       ...overrides,
     };
@@ -71,7 +68,7 @@ describe("legacy node-host Doctor migration", () => {
     updatedAtMs: number;
     token?: string | null;
   }): void {
-    const database = openOpenClawStateDatabase({ env: params.env });
+    const database = openNovaStateDatabase({ env: params.env });
     executeSqliteQuerySync(
       database.db,
       getNodeSqliteKysely<NodeHostConfigDatabase>(database.db)
@@ -86,14 +83,14 @@ describe("legacy node-host Doctor migration", () => {
           gateway_port: 18443,
           gateway_tls: 0,
           gateway_tls_fingerprint: fixtureDigest,
-          gateway_context_path: "/openclaw-gw",
+          gateway_context_path: "/nova-gw",
           updated_at_ms: params.updatedAtMs,
         }),
     );
   }
 
   function readCanonicalRow(env: NodeJS.ProcessEnv) {
-    const database = openOpenClawStateDatabase({ env });
+    const database = openNovaStateDatabase({ env });
     return executeSqliteQueryTakeFirstSync(
       database.db,
       getNodeSqliteKysely<NodeHostConfigDatabase>(database.db)
@@ -137,7 +134,7 @@ describe("legacy node-host Doctor migration", () => {
         port: 18443,
         tls: false,
         tlsFingerprint: fixtureDigest,
-        contextPath: "/openclaw-gw",
+        contextPath: "/nova-gw",
       },
       installedAppsSharing: false,
     });
@@ -414,6 +411,6 @@ describe("legacy node-host Doctor migration", () => {
 
     expect(result.warnings[0]).toContain("source or Doctor claim remains after cleanup");
     expect(fs.existsSync(sourcePath)).toBe(true);
-    await expect(loadNodeHostConfig(env)).rejects.toThrow("openclaw doctor --fix");
+    await expect(loadNodeHostConfig(env)).rejects.toThrow("nova doctor --fix");
   });
 });

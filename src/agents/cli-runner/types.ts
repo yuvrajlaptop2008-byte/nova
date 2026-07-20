@@ -13,7 +13,7 @@ import type { InboundEventKind } from "../../channels/inbound-event/kind.js";
 import type { CliSessionBinding, SessionEntry } from "../../config/sessions.js";
 import type { SessionSystemPromptReport } from "../../config/sessions/types.js";
 import type { CliBackendConfig } from "../../config/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { ContextEngine } from "../../context-engine/types.js";
 import type { ImageContent } from "../../llm/types.js";
 import type { PromptImageOrderEntry } from "../../media/prompt-image-order.js";
@@ -55,7 +55,7 @@ export type RunCliAgentParams = {
   cwd?: string;
   /** Start a fresh CLI process so per-turn MCP authority is reloaded from this run. */
   disableCliLiveSession?: boolean;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   prompt: string;
   transcriptPrompt?: string;
   /** Undecorated current-turn prompt used to merge inline and offloaded images. */
@@ -258,7 +258,7 @@ export type PreparedCliRunContext = {
   /** Resume is safe only while the exact managed Claude stdio child still exists. */
   requiredClaudeLiveSessionGeneration?: string;
   hadSessionFile: boolean;
-  contextEngineConfig: OpenClawConfig;
+  contextEngineConfig: NovaConfig;
   contextEngine?: ContextEngine;
   contextEngineTurnPrompt?: string;
   contextEngineDeferredTurnMaintenance?: Promise<void>;
@@ -269,7 +269,7 @@ export type PreparedCliRunContext = {
   systemPromptReport: SessionSystemPromptReport;
   claudeSkillsPluginArgs?: string[] | undefined;
   bootstrapPromptWarningLines: string[];
-  openClawHistoryPrompt?: string;
+  novaHistoryPrompt?: string;
   heartbeatPrompt?: string;
   authEpoch?: string;
   /** Strict owner fingerprint captured for live inference verification only. */

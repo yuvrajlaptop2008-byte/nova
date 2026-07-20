@@ -15,7 +15,7 @@ const tempDirs: string[] = [];
 const LOAD_SENSITIVE_PROCESS_TIMEOUT_MS = process.env.CI ? 30_000 : 15_000;
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-upgrade-probe-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-upgrade-probe-"));
   tempDirs.push(dir);
   return dir;
 }

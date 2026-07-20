@@ -2,15 +2,15 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
-import { closeOpenClawAgentDatabasesForTest } from "openclaw/plugin-sdk/sqlite-runtime-testing";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
+import { closeNovaAgentDatabasesForTest } from "nova/plugin-sdk/sqlite-runtime-testing";
 import { afterEach, describe, expect, it } from "vitest";
 import { slackApprovalCapability } from "./approval-native.js";
 
 function buildConfig(
-  overrides?: Partial<NonNullable<NonNullable<OpenClawConfig["channels"]>["slack"]>>,
-): OpenClawConfig {
+  overrides?: Partial<NonNullable<NonNullable<NovaConfig["channels"]>["slack"]>>,
+): NovaConfig {
   return {
     channels: {
       slack: {
@@ -24,20 +24,20 @@ function buildConfig(
         ...overrides,
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 const tempDirs: string[] = [];
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
+  closeNovaAgentDatabasesForTest();
   for (const dir of tempDirs.splice(0)) {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
 function createTempStorePath(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-slack-approval-native-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-slack-approval-native-"));
   tempDirs.push(dir);
   return path.join(dir, "sessions.json");
 }
@@ -357,7 +357,7 @@ describe("slack native approval adapter", () => {
           targets: [{ channel: "slack", to: "U123OWNER" }],
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const request = {
       id: "plugin:req-1",
       request: {
@@ -427,7 +427,7 @@ describe("slack native approval adapter", () => {
           sessionFilter: ["slack:"],
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const request = {
       id: "plugin:req-open-session",
       request: {
@@ -507,7 +507,7 @@ describe("slack native approval adapter", () => {
           targets: [{ channel: "slack", accountId: "work", to: "user:U123OWNER" }],
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const request = {
       id: "plugin:req-transport",
       request: {
@@ -568,7 +568,7 @@ describe("slack native approval adapter", () => {
           targets: [{ channel: "slack", accountId: "work", to: "user:U123OWNER" }],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const request = {
       id: "plugin:req-http",
       request: {
@@ -632,7 +632,7 @@ describe("slack native approval adapter", () => {
           targets: [{ channel: "slack", accountId: "work", to: "user:U123OWNER" }],
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const request = {
       id: "plugin:req-http-secret-ref",
       request: {
@@ -681,7 +681,7 @@ describe("slack native approval adapter", () => {
           mode: "session",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const request = {
       id: "plugin:req-account-bound",
       request: {
@@ -1065,7 +1065,7 @@ describe("slack native approval adapter", () => {
           targets: [{ channel: "slack", to: "user:U123OWNER" }],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       shouldSuppress({
@@ -1107,7 +1107,7 @@ describe("slack native approval adapter", () => {
           targets: [{ channel: "slack", to: "U123OWNER" }],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       shouldSuppress({
@@ -1153,7 +1153,7 @@ describe("slack native approval adapter", () => {
           targets: [{ channel: "slack", to: "channel:CAPPROVALS" }],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       shouldSuppress({

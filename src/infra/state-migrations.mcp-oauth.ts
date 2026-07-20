@@ -4,11 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { root, type Root } from "@nova/fs-safe";
 import { parseMcpOAuthStoreJson } from "../agents/mcp-oauth-store.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { formatErrorMessage } from "./errors.js";
 import { acquireGatewayLock, GatewayLockError } from "./gateway-lock.js";
 import {
@@ -31,7 +28,7 @@ const LEGACY_STORE_NAME_RE = /^[A-Za-z][A-Za-z0-9_-]{0,29}-[0-9a-f]{16}\.json$/u
 const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
 
 type McpOAuthMigrationDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "mcp_oauth_stores" | "migration_runs" | "migration_sources"
 >;
 
@@ -179,7 +176,7 @@ function receiptSourceKey(sourcePath: string): string {
 
 function readMigrationReceipt(sourcePath: string, env: NodeJS.ProcessEnv): MigrationReceipt | null {
   const sourceKey = receiptSourceKey(sourcePath);
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const row = executeSqliteQueryTakeFirstSync(
     db,
     getNodeSqliteKysely<McpOAuthMigrationDatabase>(db)
@@ -199,7 +196,7 @@ function importAndRecordReceipt(params: {
   const storeKey = storeKeyForSource(params.sourcePath);
   const runId = `${sourceKey}:${params.snapshot.sha256.slice(0, 16)}`;
   const now = Date.now();
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => {
       const stateDb = getNodeSqliteKysely<McpOAuthMigrationDatabase>(db);
       const existingReceipt = executeSqliteQueryTakeFirstSync(
@@ -309,7 +306,7 @@ function importAndRecordReceipt(params: {
 }
 
 function markSourceRemoved(sourceKey: string, env: NodeJS.ProcessEnv): void {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       executeSqliteQuerySync(
         db,
@@ -582,7 +579,7 @@ export async function migrateLegacyMcpOAuthStores(params: {
     return {
       changes: [],
       warnings: [
-        `Failed migrating legacy MCP OAuth stores: ${detail}. Stop the Gateway and run \`openclaw doctor --fix\` again.`,
+        `Failed migrating legacy MCP OAuth stores: ${detail}. Stop the Gateway and run \`nova doctor --fix\` again.`,
       ],
     };
   }

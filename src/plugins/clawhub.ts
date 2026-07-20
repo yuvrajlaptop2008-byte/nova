@@ -197,9 +197,9 @@ function isTrustedSourceLinkedOfficialPackage(pkg: NonNullable<ClawHubPackageDet
     pkg.channel === "official" &&
     pkg.isOfficial &&
     pkg.verification?.tier === "source-linked" &&
-    (sourceRepo === "openclaw/openclaw" ||
-      sourceRepo === "github.com/openclaw/openclaw" ||
-      sourceRepo === "https://github.com/openclaw/openclaw")
+    (sourceRepo === "nova/nova" ||
+      sourceRepo === "github.com/nova/nova" ||
+      sourceRepo === "https://github.com/nova/nova")
   );
 }
 
@@ -1114,7 +1114,7 @@ function validateClawHubPluginPackage(params: {
   if (pkg.family === "skill") {
     const installRef = pkg.ownerHandle ? `@${pkg.ownerHandle}/${pkg.name}` : pkg.name;
     return buildClawHubInstallFailure(
-      `"${pkg.name}" is a skill. Use "openclaw skills install ${installRef}" instead.`,
+      `"${pkg.name}" is a skill. Use "nova skills install ${installRef}" instead.`,
       CLAWHUB_INSTALL_ERROR_CODE.SKILL_PACKAGE,
     );
   }
@@ -1428,7 +1428,7 @@ export async function installPluginFromClawHub(
       );
     }
     const clawhubRegistry = resolveClawHubBaseUrl(params.baseUrl);
-    const clawhubAuthority = isDefaultClawHubBaseUrl(params.baseUrl) ? "openclaw" : "third-party";
+    const clawhubAuthority = isDefaultClawHubBaseUrl(params.baseUrl) ? "nova" : "third-party";
     params.logger?.info?.(
       `Downloading ${detail.package?.family === "bundle-plugin" ? "bundle" : "plugin"} ${releaseLabel} from ClawHub…`,
     );

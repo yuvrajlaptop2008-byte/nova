@@ -1,11 +1,11 @@
-# OpenClaw Synology Chat
+# Nova Synology Chat
 
-Official OpenClaw channel plugin for Synology Chat conversations and direct messages.
+Official Nova channel plugin for Synology Chat conversations and direct messages.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/synology-chat
+nova plugin add @nova/synology-chat
 ```
 
-Configure Synology Chat credentials and allowed conversations in OpenClaw, then use the plugin to route messages between Synology Chat and OpenClaw agents.
+Configure Synology Chat credentials and allowed conversations in Nova, then use the plugin to route messages between Synology Chat and Nova agents.

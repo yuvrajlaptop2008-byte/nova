@@ -156,7 +156,7 @@ function createManifestBackedProviderSnapshot(
 }
 
 async function withDotEnvFixture(run: (fixture: DotEnvFixture) => Promise<void>) {
-  const base = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-dotenv-test-"));
+  const base = await fs.mkdtemp(path.join(os.tmpdir(), "nova-dotenv-test-"));
   const cwdDir = path.join(base, "cwd");
   const stateDir = path.join(base, "state");
   setTestEnvValue("NOVA_STATE_DIR", stateDir);
@@ -166,7 +166,7 @@ async function withDotEnvFixture(run: (fixture: DotEnvFixture) => Promise<void>)
 }
 
 describe("loadDotEnv", () => {
-  it("loads ~/.openclaw/.env as fallback without overriding CWD .env", async () => {
+  it("loads ~/.nova/.env as fallback without overriding CWD .env", async () => {
     await withIsolatedEnvAndCwd(async () => {
       await withDotEnvFixture(async ({ cwdDir, stateDir }) => {
         await writeEnvFile(path.join(stateDir, ".env"), "FOO=from-global\nBAR=1\n");
@@ -231,15 +231,15 @@ describe("loadDotEnv", () => {
     });
   });
 
-  it("loads the Ubuntu gateway.env compatibility fallback after ~/.openclaw/.env", async () => {
+  it("loads the Ubuntu gateway.env compatibility fallback after ~/.nova/.env", async () => {
     await withIsolatedEnvAndCwd(async () => {
       await withDotEnvFixture(async ({ base, cwdDir }) => {
         setTestEnvValue("HOME", base);
-        const defaultStateDir = path.join(base, ".openclaw");
+        const defaultStateDir = path.join(base, ".nova");
         setTestEnvValue("NOVA_STATE_DIR", defaultStateDir);
         await writeEnvFile(path.join(defaultStateDir, ".env"), "FOO=from-global\n");
         await writeEnvFile(
-          path.join(base, ".config", "openclaw", "gateway.env"),
+          path.join(base, ".config", "nova", "gateway.env"),
           ["FOO=from-gateway", "BAR=from-gateway"].join("\n"),
         );
 
@@ -268,10 +268,7 @@ describe("loadDotEnv", () => {
         setTestEnvValue("HOME", base);
         process.env.FOO = "from-shell";
         await writeEnvFile(path.join(stateDir, ".env"), "FOO=from-global\n");
-        await writeEnvFile(
-          path.join(base, ".config", "openclaw", "gateway.env"),
-          "FOO=from-gateway\n",
-        );
+        await writeEnvFile(path.join(base, ".config", "nova", "gateway.env"), "FOO=from-gateway\n");
 
         vi.spyOn(process, "cwd").mockReturnValue(cwdDir);
         loggerMocks.warn.mockClear();
@@ -701,13 +698,10 @@ describe("loadCliDotEnv", () => {
     await withIsolatedEnvAndCwd(async () => {
       await withDotEnvFixture(async ({ base, cwdDir }) => {
         setTestEnvValue("HOME", base);
-        const defaultStateDir = path.join(base, ".openclaw");
+        const defaultStateDir = path.join(base, ".nova");
         setTestEnvValue("NOVA_STATE_DIR", defaultStateDir);
         await writeEnvFile(path.join(defaultStateDir, ".env"), "FOO=from-global\n");
-        await writeEnvFile(
-          path.join(base, ".config", "openclaw", "gateway.env"),
-          "BAR=from-gateway\n",
-        );
+        await writeEnvFile(path.join(base, ".config", "nova", "gateway.env"), "BAR=from-gateway\n");
 
         vi.spyOn(process, "cwd").mockReturnValue(cwdDir);
         delete process.env.FOO;
@@ -725,14 +719,11 @@ describe("loadCliDotEnv", () => {
     await withIsolatedEnvAndCwd(async () => {
       await withDotEnvFixture(async ({ base, cwdDir }) => {
         setTestEnvValue("HOME", base);
-        const defaultStateDir = path.join(base, ".openclaw");
+        const defaultStateDir = path.join(base, ".nova");
         setTestEnvValue("NOVA_STATE_DIR", defaultStateDir);
         await writeEnvFile(path.join(cwdDir, ".env"), "BAZ=from-workspace\n");
         await writeEnvFile(path.join(defaultStateDir, ".env"), "FOO=from-global\n");
-        await writeEnvFile(
-          path.join(base, ".config", "openclaw", "gateway.env"),
-          "BAR=from-gateway\n",
-        );
+        await writeEnvFile(path.join(base, ".config", "nova", "gateway.env"), "BAR=from-gateway\n");
 
         vi.spyOn(process, "cwd").mockReturnValue(cwdDir);
         delete process.env.FOO;
@@ -770,10 +761,7 @@ describe("loadCliDotEnv", () => {
         const customStateDir = path.join(base, "custom-state");
         setTestEnvValue("HOME", base);
         setTestEnvValue("NOVA_STATE_DIR", customStateDir);
-        await writeEnvFile(
-          path.join(base, ".config", "openclaw", "gateway.env"),
-          "FOO=from-gateway\n",
-        );
+        await writeEnvFile(path.join(base, ".config", "nova", "gateway.env"), "FOO=from-gateway\n");
 
         vi.spyOn(process, "cwd").mockReturnValue(cwdDir);
         delete process.env.FOO;
@@ -789,7 +777,7 @@ describe("loadCliDotEnv", () => {
 
   it("keeps the legacy state-dir fallback for CLI dotenv loading", async () => {
     await withIsolatedEnvAndCwd(async () => {
-      const base = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-dotenv-legacy-"));
+      const base = await fs.mkdtemp(path.join(os.tmpdir(), "nova-dotenv-legacy-"));
       const cwdDir = path.join(base, "cwd");
       const legacyStateDir = path.join(base, ".clawdbot");
       setTestEnvValue("HOME", base);
@@ -893,7 +881,7 @@ describe("workspace .env blocklist completeness", () => {
           origin: "global",
           rootDir: "/plugins/runtime-cloud",
           source: "/plugins/runtime-cloud/index.js",
-          manifestPath: "/plugins/runtime-cloud/openclaw.plugin.json",
+          manifestPath: "/plugins/runtime-cloud/nova.plugin.json",
           setup: {
             providers: [{ id: "runtime-cloud", envVars: ["RUNTIME_CLOUD_API_KEY"] }],
           },
@@ -1038,7 +1026,7 @@ describe("workspace .env blocklist completeness", () => {
       await withDotEnvFixture(async ({ cwdDir }) => {
         await writeEnvFile(
           path.join(cwdDir, ".env"),
-          "MY_APP_KEY=user-value\nAPP_GITHUB_REPO=openclaw/openclaw\nDATABASE_URL_CUSTOM=pg://localhost\n",
+          "MY_APP_KEY=user-value\nAPP_GITHUB_REPO=nova/nova\nDATABASE_URL_CUSTOM=pg://localhost\n",
         );
 
         delete process.env.MY_APP_KEY;
@@ -1048,7 +1036,7 @@ describe("workspace .env blocklist completeness", () => {
         loadWorkspaceDotEnvFile(path.join(cwdDir, ".env"), { quiet: true });
 
         expect(process.env.MY_APP_KEY).toBe("user-value");
-        expect(process.env.APP_GITHUB_REPO).toBe("openclaw/openclaw");
+        expect(process.env.APP_GITHUB_REPO).toBe("nova/nova");
         expect(process.env.DATABASE_URL_CUSTOM).toBe("pg://localhost");
       });
     });

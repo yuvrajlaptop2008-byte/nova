@@ -6,13 +6,13 @@ import type { DatabaseSync, SQLInputValue } from "node:sqlite";
 import { pathToFileURL } from "node:url";
 import { expectDefined } from "../packages/normalization-core/src/expect.js";
 import {
-  openOpenClawAgentDatabase,
-  closeOpenClawAgentDatabasesForTest,
-} from "../src/state/openclaw-agent-db.js";
+  openNovaAgentDatabase,
+  closeNovaAgentDatabasesForTest,
+} from "../src/state/nova-agent-db.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../src/state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+} from "../src/state/nova-state-db.js";
 import { parseStrictIntegerOption } from "./lib/dev-tooling-safety.ts";
 import {
   CliUsageError,
@@ -507,14 +507,13 @@ function main(): void {
   }
   const { options } = cli;
   const config = applyScale(PROFILES[options.profile]);
-  const stateDir =
-    options.stateDir ?? fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sqlite-perf-"));
+  const stateDir = options.stateDir ?? fs.mkdtempSync(path.join(os.tmpdir(), "nova-sqlite-perf-"));
   const env = { NOVA_STATE_DIR: stateDir };
   const started = nowMs();
   try {
-    const stateDatabase = openOpenClawStateDatabase({ env });
+    const stateDatabase = openNovaStateDatabase({ env });
     const agentDatabases = Array.from({ length: config.agentCount }, (_, index) =>
-      openOpenClawAgentDatabase({ agentId: `perf-agent-${index}`, env }),
+      openNovaAgentDatabase({ agentId: `perf-agent-${index}`, env }),
     );
 
     const seedStarted = nowMs();
@@ -583,8 +582,8 @@ function main(): void {
     }
     printProofLines(report);
   } finally {
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     if (!options.stateDir) {
       fs.rmSync(stateDir, { recursive: true, force: true });
     }

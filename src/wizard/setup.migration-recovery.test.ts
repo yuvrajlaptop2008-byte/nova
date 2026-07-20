@@ -24,7 +24,7 @@ const CHANGED_HASH = "c".repeat(64);
 const SOURCE_HASH = "d".repeat(64);
 
 async function makeTempRoot(): Promise<string> {
-  return tempRoots.make("openclaw-setup-recovery-");
+  return tempRoots.make("nova-setup-recovery-");
 }
 
 function buildPlan(root: string): MigrationPlan {

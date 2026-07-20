@@ -1,5 +1,5 @@
 // Audits code paths for deep safety risks that require manual review.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createLazyRuntimeModule } from "../shared/lazy-runtime.js";
 import type { SecurityAuditFinding } from "./audit.types.js";
 
@@ -8,7 +8,7 @@ const loadAuditDeepModule = createLazyRuntimeModule(() => import("./audit.deep.r
 
 /** Collect plugin and installed-skill code safety findings when deep audit is enabled. */
 export async function collectDeepCodeSafetyFindings(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   stateDir: string;
   deep: boolean;
   summaryCache?: Map<string, Promise<unknown>>;

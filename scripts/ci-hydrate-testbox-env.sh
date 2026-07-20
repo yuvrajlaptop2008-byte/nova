@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-profile_path="${1:-$HOME/.openclaw-testbox-live.profile}"
-helper_path="${2:-$HOME/.local/bin/openclaw-testbox-env}"
+profile_path="${1:-$HOME/.nova-testbox-live.profile}"
+helper_path="${2:-$HOME/.local/bin/nova-testbox-env}"
 quoted_profile_path="$(printf "%q" "$profile_path")"
 
 mkdir -p "$(dirname "$helper_path")"

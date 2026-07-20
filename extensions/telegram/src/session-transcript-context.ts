@@ -1,4 +1,4 @@
-import { readRecentUserAssistantTextForSession } from "openclaw/plugin-sdk/session-store-runtime";
+import { readRecentUserAssistantTextForSession } from "nova/plugin-sdk/session-store-runtime";
 
 type BuildTelegramSessionTranscriptPromptMessagesParams = Parameters<
   typeof readRecentUserAssistantTextForSession

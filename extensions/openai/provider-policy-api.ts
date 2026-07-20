@@ -1,5 +1,5 @@
 // Openai API module exposes the plugin public contract.
-import type { ProviderDefaultThinkingPolicyContext } from "openclaw/plugin-sdk/core";
+import type { ProviderDefaultThinkingPolicyContext } from "nova/plugin-sdk/core";
 import type {
   ModelApi,
   ModelProviderConfig,
@@ -8,7 +8,7 @@ import type {
   ProviderModelRouteSource,
   ProviderNormalizeModelCatalogIdContext,
   ProviderResolveModelRoutesContext,
-} from "openclaw/plugin-sdk/provider-model-types";
+} from "nova/plugin-sdk/provider-model-types";
 import {
   classifyOpenAIBaseUrl,
   OPENAI_API_BASE_URL,
@@ -25,7 +25,7 @@ import { resolveUnifiedOpenAIThinkingProfile } from "./thinking-policy.js";
 const OPENAI_RESPONSES_API = "openai-responses";
 const OPENAI_COMPLETIONS_API = "openai-completions";
 const OPENAI_CHATGPT_RESPONSES_API = "openai-chatgpt-responses";
-const OPENAI_AGENT_RUNTIME_ID = "openclaw";
+const OPENAI_AGENT_RUNTIME_ID = "nova";
 const CODEX_AGENT_RUNTIME_ID = "codex";
 const NOVA_RUNTIME_COMPATIBLE_IDS = [OPENAI_AGENT_RUNTIME_ID] as const;
 const CODEX_RUNTIME_COMPATIBLE_IDS = [OPENAI_AGENT_RUNTIME_ID, CODEX_AGENT_RUNTIME_ID] as const;
@@ -527,7 +527,7 @@ export function resolveModelRoutes(
     kind: "routes",
     routes: routes as [ProviderModelRouteCandidate, ...ProviderModelRouteCandidate[]],
     defaultRuntimeId: resolutions.some(
-      (resolution) => resolution.kind === "routes" && resolution.defaultRuntimeId === "openclaw",
+      (resolution) => resolution.kind === "routes" && resolution.defaultRuntimeId === "nova",
     )
       ? OPENAI_AGENT_RUNTIME_ID
       : defaultRuntimeIdForRoute(firstRoute),

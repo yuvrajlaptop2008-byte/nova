@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { generateIdentity } from "../protocol/index.js";
 import { ReefChannelConfigSchema } from "./config-schema.js";
@@ -96,7 +96,7 @@ describe("ReefTrustStore", () => {
       safetyNumberChanged: false,
     });
     expect(reopened.list().map((entry) => entry.peer)).toEqual(["clawd"]);
-    expect(fs.existsSync(path.join(stateDir, "state", "openclaw.sqlite"))).toBe(true);
+    expect(fs.existsSync(path.join(stateDir, "state", "nova.sqlite"))).toBe(true);
   });
 
   it("isolates trust by relay identity instead of machine-specific key paths", () => {

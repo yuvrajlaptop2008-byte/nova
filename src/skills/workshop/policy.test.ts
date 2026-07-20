@@ -5,16 +5,13 @@ import {
   setRuntimeConfigSnapshot,
 } from "../../config/config.js";
 import { PLUGIN_APPROVAL_DESCRIPTION_MAX_LENGTH } from "../../infra/plugin-approvals.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../../test-utils/nova-test-state.js";
 import { createTrackedTempDirs } from "../../test-utils/tracked-temp-dirs.js";
 import { resolveSkillWorkshopToolApproval } from "./policy.js";
 import { proposeCreateSkill } from "./service.js";
 
 const tempDirs = createTrackedTempDirs();
-let testState: OpenClawTestState;
+let testState: NovaTestState;
 const pendingApprovalConfig = {
   skills: {
     workshop: {
@@ -24,9 +21,9 @@ const pendingApprovalConfig = {
 };
 
 beforeEach(async () => {
-  testState = await createOpenClawTestState({
+  testState = await createNovaTestState({
     layout: "state-only",
-    prefix: "openclaw-skill-workshop-policy-",
+    prefix: "nova-skill-workshop-policy-",
   });
 });
 
@@ -38,7 +35,7 @@ afterEach(async () => {
 
 describe("resolveSkillWorkshopToolApproval", () => {
   it("describes the target proposal and bounds the approval wait", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-policy-workspace-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-policy-workspace-");
     const description = "d".repeat(160);
     const proposal = await proposeCreateSkill({
       workspaceDir,
@@ -86,7 +83,7 @@ describe("resolveSkillWorkshopToolApproval", () => {
   });
 
   it("bounds approval metadata without splitting UTF-16 surrogates", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-policy-long-name-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-policy-long-name-");
     const description = "d".repeat(160);
     const content = "# Long name\n";
     const proposalIdLength = 60 + 1 + 8 + 1 + 10;
@@ -134,7 +131,7 @@ describe("resolveSkillWorkshopToolApproval", () => {
   });
 
   it("renders proposal-controlled fields without approval-line injection", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-policy-controls-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-policy-controls-");
     const proposal = await proposeCreateSkill({
       workspaceDir,
       name: "Line\nBreak\u202eSpoof",
@@ -163,7 +160,7 @@ describe("resolveSkillWorkshopToolApproval", () => {
   });
 
   it("falls back to the action description when the proposal cannot be resolved", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-policy-missing-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-policy-missing-");
 
     const result = await resolveSkillWorkshopToolApproval({
       toolName: "skill_workshop",

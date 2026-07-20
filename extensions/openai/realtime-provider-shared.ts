@@ -1,17 +1,17 @@
 // Openai provider module implements model/runtime integration.
-import { resolveExpiresAtMsFromEpochSeconds } from "openclaw/plugin-sdk/number-runtime";
+import { resolveExpiresAtMsFromEpochSeconds } from "nova/plugin-sdk/number-runtime";
 import {
   createProviderHttpError,
   readProviderJsonResponse,
   resolveProviderRequestHeaders,
-} from "openclaw/plugin-sdk/provider-http";
-import { captureWsEvent } from "openclaw/plugin-sdk/proxy-capture";
-import { fetchWithSsrFGuard, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/provider-http";
+import { captureWsEvent } from "nova/plugin-sdk/proxy-capture";
+import { fetchWithSsrFGuard, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 import {
   asFiniteNumber,
   asOptionalRecord as asObjectRecord,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 
 const OPENAI_REALTIME_API_BASE_URL = "https://api.openai.com/v1";
 const OPENAI_REALTIME_SSRF_POLICY = {

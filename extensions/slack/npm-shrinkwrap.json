@@ -17,10 +17,10 @@
         "zod": "4.4.3"
       },
       "peerDependencies": {
-        "openclaw": ">=2026.7.2"
+        "nova": ">=2026.7.2"
       },
       "peerDependenciesMeta": {
-        "openclaw": {
+        "nova": {
           "optional": true
         }
       }

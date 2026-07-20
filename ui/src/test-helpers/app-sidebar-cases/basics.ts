@@ -36,8 +36,8 @@ describe("AppSidebar update card wiring", () => {
 
     const footer = sidebar.querySelector(".sidebar-shell__footer");
     // Attention chips (when present) stack above the update card.
-    expect(footer?.firstElementChild?.localName).toBe("openclaw-sidebar-attention");
-    const card = footer?.querySelector("openclaw-sidebar-update-card");
+    expect(footer?.firstElementChild?.localName).toBe("nova-sidebar-attention");
+    const card = footer?.querySelector("nova-sidebar-update-card");
     expect(card).not.toBeNull();
     card?.querySelector<HTMLButtonElement>(".sidebar-update-card__action")?.click();
     expect(onUpdate).toHaveBeenCalledOnce();
@@ -74,7 +74,7 @@ describe("AppSidebar viewer presence", () => {
 
     await vi.waitFor(() => {
       const avatar = sidebar.querySelector<HTMLImageElement>(
-        ".sidebar-footer-bar__identity openclaw-viewer-avatar img",
+        ".sidebar-footer-bar__identity nova-viewer-avatar img",
       );
       expect(avatar?.getAttribute("src")).toBe("/api/users/00-self/avatar?v=7");
     });
@@ -147,10 +147,10 @@ describe("AppSidebar viewer presence", () => {
     await sidebar.updateComplete;
 
     const sessionFacepile = sidebar.querySelector<HTMLElement>(
-      '[data-session-key="agent:main:work"] openclaw-viewer-facepile',
+      '[data-session-key="agent:main:work"] nova-viewer-facepile',
     );
     const footerFacepile = sidebar.querySelector<HTMLElement>(
-      ".sidebar-footer-bar openclaw-viewer-facepile",
+      ".sidebar-footer-bar nova-viewer-facepile",
     );
     await Promise.all([
       (sessionFacepile as { updateComplete?: Promise<unknown> } | null)?.updateComplete,
@@ -167,7 +167,7 @@ describe("AppSidebar viewer presence", () => {
     expect(sessionFacepile?.querySelector(".viewer-avatar--overflow")?.textContent).toContain("+3");
     expect(sessionFacepile?.querySelector('[data-viewer-id="alice"] img')).not.toBeNull();
     expect(
-      [...(sessionFacepile?.querySelectorAll("openclaw-tooltip") ?? [])].map(
+      [...(sessionFacepile?.querySelectorAll("nova-tooltip") ?? [])].map(
         (tooltip) => (tooltip as HTMLElement & { content?: string }).content,
       ),
     ).toEqual(["Alice", "bob@example.test", "Carol", "Dave\nErin\nFrank"]);
@@ -188,7 +188,7 @@ describe("AppSidebar viewer presence", () => {
       hash: "#settings-profile-identity",
     });
 
-    const avatar = identityChip?.querySelector<HTMLImageElement>("openclaw-viewer-avatar img");
+    const avatar = identityChip?.querySelector<HTMLImageElement>("nova-viewer-avatar img");
     expect(avatar?.getAttribute("src")).toBe("/api/users/00-self/avatar?v=1");
     gatewayHarness.gateway.updateSelfUser?.({
       name: "Augusta Ada",

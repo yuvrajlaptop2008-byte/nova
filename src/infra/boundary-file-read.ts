@@ -17,7 +17,7 @@ export {
   type RootFileOpenResult,
 } from "@nova/fs-safe/advanced";
 
-function preserveOpenClawOverflowError(error: unknown, maxBytes: number): never {
+function preserveNovaOverflowError(error: unknown, maxBytes: number): never {
   if (error instanceof FsSafeError && error.code === "too-large") {
     throw new RangeError(`File exceeds ${maxBytes} bytes`, { cause: error });
   }
@@ -29,7 +29,7 @@ export async function readFileDescriptorBounded(fd: number, maxBytes: number): P
   try {
     return await readFileDescriptorBoundedFsSafe(fd, maxBytes);
   } catch (error) {
-    return preserveOpenClawOverflowError(error, maxBytes);
+    return preserveNovaOverflowError(error, maxBytes);
   }
 }
 
@@ -38,6 +38,6 @@ export function readFileDescriptorBoundedSync(fd: number, maxBytes: number): Buf
   try {
     return readFileDescriptorBoundedSyncFsSafe(fd, maxBytes);
   } catch (error) {
-    return preserveOpenClawOverflowError(error, maxBytes);
+    return preserveNovaOverflowError(error, maxBytes);
   }
 }

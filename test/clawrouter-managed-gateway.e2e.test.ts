@@ -4,10 +4,7 @@ import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { afterEach, describe, expect, it } from "vitest";
-import {
-  createOpenClawTestInstance,
-  type OpenClawTestInstance,
-} from "./helpers/openclaw-test-instance.js";
+import { createNovaTestInstance, type NovaTestInstance } from "./helpers/nova-test-instance.js";
 
 const API_KEY = "clawrouter-e2e-secret";
 const MODEL_ID = "openai/gpt-5.5";
@@ -28,7 +25,7 @@ type FakeClawRouter = {
   close: () => Promise<void>;
 };
 
-const instances: OpenClawTestInstance[] = [];
+const instances: NovaTestInstance[] = [];
 const routers: FakeClawRouter[] = [];
 
 afterEach(async () => {
@@ -40,7 +37,7 @@ describe("ClawRouter managed gateway contract", () => {
   it("boots from a SecretRef, reports truthful readiness, and routes an attributed agent turn", async () => {
     const router = await startFakeClawRouter();
     routers.push(router);
-    const instance = await createOpenClawTestInstance({
+    const instance = await createNovaTestInstance({
       name: "clawrouter-managed-gateway",
       env: {
         CLAWROUTER_API_KEY: API_KEY,
@@ -181,7 +178,7 @@ describe("ClawRouter managed gateway contract", () => {
       body: { model: MODEL_ID, stream: true },
       headers: {
         "x-clawrouter-agent-id": "main",
-        "x-clawrouter-client": "openclaw",
+        "x-clawrouter-client": "nova",
         "x-clawrouter-project-id": "fakeco-e2e",
       },
     });
@@ -224,7 +221,7 @@ describe("ClawRouter managed gateway contract", () => {
 });
 
 async function waitForGatewayReadiness(
-  instance: OpenClawTestInstance,
+  instance: NovaTestInstance,
 ): Promise<{ ready: boolean; failing: string[] }> {
   const url = `http://127.0.0.1:${instance.port}/readyz`;
   // Preserve the 10-second readiness budget while detecting startup sooner.

@@ -527,7 +527,7 @@ function resetRunConfigMocks(): void {
   resolveAllowedModelRefMock.mockReturnValue({ ref: { provider: "openai", model: "gpt-5.4" } });
   resolveHooksGmailModelMock.mockReturnValue(null);
   resolveThinkingDefaultMock.mockReturnValue("off");
-  resolveEffectiveAgentRuntimeMock.mockReturnValue("openclaw");
+  resolveEffectiveAgentRuntimeMock.mockReturnValue("nova");
   getModelRefStatusMock.mockReturnValue({ allowed: false });
   resolveCronStyleNowMock.mockReturnValue({
     formattedTime: "2026-02-10 12:00",

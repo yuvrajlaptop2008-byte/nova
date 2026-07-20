@@ -1,4 +1,4 @@
-import type { PluginHookToolResultPersistEvent } from "openclaw/plugin-sdk/types";
+import type { PluginHookToolResultPersistEvent } from "nova/plugin-sdk/types";
 import { describe, expect, it } from "vitest";
 import { redactPersistedOnePasswordResult } from "./tool.js";
 

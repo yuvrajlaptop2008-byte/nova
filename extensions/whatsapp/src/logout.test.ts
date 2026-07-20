@@ -19,7 +19,7 @@ describe("web logout", () => {
   let logoutWeb: typeof import("./auth-store.js").logoutWeb;
 
   beforeAll(async () => {
-    fixtureRoot = await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-test-web-logout-"));
+    fixtureRoot = await fsPromises.mkdtemp(path.join(os.tmpdir(), "nova-test-web-logout-"));
     previousOAuthDir = process.env.NOVA_OAUTH_DIR;
     process.env.NOVA_OAUTH_DIR = path.join(fixtureRoot, "oauth");
     ({ logoutWeb } = await import("./auth-store.js"));

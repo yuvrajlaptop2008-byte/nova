@@ -1,5 +1,5 @@
 // Qa Lab tests cover discord live plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { discordQaScenarioSupport } from "./discord-live.runtime.js";
 
@@ -105,7 +105,7 @@ describe("discord live qa runtime", () => {
   });
 
   it("injects a temporary Discord account into the QA gateway config", () => {
-    const baseCfg: OpenClawConfig = {
+    const baseCfg: NovaConfig = {
       plugins: {
         allow: ["memory-core", "qa-channel"],
         entries: {
@@ -117,7 +117,7 @@ describe("discord live qa runtime", () => {
         "qa-channel": {
           enabled: true,
           baseUrl: "http://127.0.0.1:43123",
-          botUserId: "openclaw",
+          botUserId: "nova",
           botDisplayName: "Nova QA",
           allowFrom: ["*"],
         },

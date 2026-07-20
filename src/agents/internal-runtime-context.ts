@@ -20,7 +20,7 @@ export const NOVA_NEXT_TURN_RUNTIME_CONTEXT_HEADER =
 /** Header for runtime events passed as prompt context. */
 export const NOVA_RUNTIME_EVENT_HEADER = "Nova runtime event.";
 /** Custom message type used for structured runtime-context messages. */
-export const NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE = "openclaw.runtime-context";
+export const NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE = "nova.runtime-context";
 
 const LEGACY_INTERNAL_CONTEXT_HEADER =
   ["Nova runtime context (internal):", NOVA_RUNTIME_CONTEXT_NOTICE, ""].join("\n") + "\n";
@@ -258,7 +258,7 @@ export function hasInternalRuntimeContext(text: string): boolean {
   );
 }
 
-function isOpenClawRuntimeContextCustomMessage(message: unknown): boolean {
+function isNovaRuntimeContextCustomMessage(message: unknown): boolean {
   if (!message || typeof message !== "object") {
     return false;
   }
@@ -268,10 +268,10 @@ function isOpenClawRuntimeContextCustomMessage(message: unknown): boolean {
 
 /** Remove all structured runtime-context custom messages. */
 export function stripRuntimeContextCustomMessages<T>(messages: T[]): T[] {
-  if (!messages.some(isOpenClawRuntimeContextCustomMessage)) {
+  if (!messages.some(isNovaRuntimeContextCustomMessage)) {
     return messages;
   }
-  return messages.filter((message) => !isOpenClawRuntimeContextCustomMessage(message));
+  return messages.filter((message) => !isNovaRuntimeContextCustomMessage(message));
 }
 
 function isUserMessage(message: unknown): boolean {
@@ -282,22 +282,22 @@ function isUserMessage(message: unknown): boolean {
 
 /** Keeps only current-turn runtime context positioned immediately before the active user. */
 export function stripHistoricalRuntimeContextCustomMessages<T>(messages: T[]): T[] {
-  if (!messages.some(isOpenClawRuntimeContextCustomMessage)) {
+  if (!messages.some(isNovaRuntimeContextCustomMessage)) {
     return messages;
   }
   const lastUserIndex = messages.findLastIndex(isUserMessage);
   if (lastUserIndex === -1) {
-    return messages.filter((message) => !isOpenClawRuntimeContextCustomMessage(message));
+    return messages.filter((message) => !isNovaRuntimeContextCustomMessage(message));
   }
   const currentRuntimeContextIndexes = new Set<number>();
   for (let index = lastUserIndex - 1; index >= 0; index -= 1) {
-    if (!isOpenClawRuntimeContextCustomMessage(messages[index])) {
+    if (!isNovaRuntimeContextCustomMessage(messages[index])) {
       break;
     }
     currentRuntimeContextIndexes.add(index);
   }
   return messages.filter((message, index) => {
-    if (!isOpenClawRuntimeContextCustomMessage(message)) {
+    if (!isNovaRuntimeContextCustomMessage(message)) {
       return true;
     }
     return currentRuntimeContextIndexes.has(index);
@@ -322,7 +322,7 @@ export function stripHistoricalRuntimeContextCustomMessages<T>(messages: T[]): T
  */
 export function relocateCurrentRuntimeContextCarrierToTail<T>(messages: T[]): T[] {
   const lastIndex = messages.length - 1;
-  if (lastIndex < 0 || !messages.some(isOpenClawRuntimeContextCustomMessage)) {
+  if (lastIndex < 0 || !messages.some(isNovaRuntimeContextCustomMessage)) {
     return messages;
   }
   // Already tail-placed (a contiguous carrier run ends the array): no-op so the
@@ -330,11 +330,11 @@ export function relocateCurrentRuntimeContextCarrierToTail<T>(messages: T[]): T[
   let firstNonCarrierFromEnd = lastIndex;
   while (
     firstNonCarrierFromEnd >= 0 &&
-    isOpenClawRuntimeContextCustomMessage(messages[firstNonCarrierFromEnd])
+    isNovaRuntimeContextCustomMessage(messages[firstNonCarrierFromEnd])
   ) {
     firstNonCarrierFromEnd -= 1;
   }
-  const rest = messages.filter((message) => !isOpenClawRuntimeContextCustomMessage(message));
+  const rest = messages.filter((message) => !isNovaRuntimeContextCustomMessage(message));
   // No active user turn to anchor after — leave placement to the strip pass.
   if (!rest.some(isUserMessage)) {
     return messages;
@@ -342,6 +342,6 @@ export function relocateCurrentRuntimeContextCarrierToTail<T>(messages: T[]): T[
   if (firstNonCarrierFromEnd === rest.length - 1) {
     return messages;
   }
-  const carriers = messages.filter(isOpenClawRuntimeContextCustomMessage);
+  const carriers = messages.filter(isNovaRuntimeContextCustomMessage);
   return [...rest, ...carriers];
 }

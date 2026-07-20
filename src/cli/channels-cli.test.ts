@@ -35,19 +35,19 @@ describe("registerChannelsCli", () => {
   });
 
   it("loads channel-specific add options only for channels add invocations", async () => {
-    process.argv = ["node", "openclaw", "channels"];
-    await registerChannelsCli(new Command().name("openclaw"));
+    process.argv = ["node", "nova", "channels"];
+    await registerChannelsCli(new Command().name("nova"));
 
     expect(listBundledPackageChannelMetadataMock).not.toHaveBeenCalled();
 
-    process.argv = ["node", "openclaw", "channels", "add", "--help"];
-    await registerChannelsCli(new Command().name("openclaw"));
+    process.argv = ["node", "nova", "channels", "add", "--help"];
+    await registerChannelsCli(new Command().name("nova"));
 
     expect(listBundledPackageChannelMetadataMock).toHaveBeenCalledTimes(1);
   });
 
   it("registers dead-letter inspection and resubmission commands", async () => {
-    const program = new Command().name("openclaw");
+    const program = new Command().name("nova");
 
     await registerChannelsCli(program);
 
@@ -70,8 +70,8 @@ describe("registerChannelsCli", () => {
         ],
       },
     ]);
-    process.argv = ["node", "openclaw", "channels", "add", "--help"];
-    const program = new Command().name("openclaw");
+    process.argv = ["node", "nova", "channels", "add", "--help"];
+    const program = new Command().name("nova");
 
     await registerChannelsCli(program);
 
@@ -80,11 +80,11 @@ describe("registerChannelsCli", () => {
   });
 
   it("uses caller argv instead of raw process argv for channel-specific add options", async () => {
-    process.argv = ["node", "openclaw", "channels"];
+    process.argv = ["node", "nova", "channels"];
 
-    await registerChannelsCli(new Command().name("openclaw"), [
+    await registerChannelsCli(new Command().name("nova"), [
       "node",
-      "openclaw",
+      "nova",
       "channels",
       "add",
       "--help",
@@ -100,8 +100,8 @@ describe("registerChannelsCli", () => {
         cliAddOptions: [{ flags: "--homeserver <url>", description: "Matrix homeserver URL" }],
       },
     ]);
-    process.argv = ["node", "openclaw", "completion", "--write-state"];
-    const program = new Command().name("openclaw");
+    process.argv = ["node", "nova", "completion", "--write-state"];
+    const program = new Command().name("nova");
 
     await registerChannelsCli(program, process.argv, { includeSetupOptions: true });
 
@@ -119,7 +119,7 @@ describe("registerChannelsCli", () => {
     mockProcessPlatform("win32");
     process.argv = [
       "C:\\Program Files\\nodejs\\node.exe",
-      "C:\\repo\\openclaw.js",
+      "C:\\repo\\nova.js",
       "C:\\Program Files\\nodejs\\node.exe",
       "channels",
       "add",
@@ -128,7 +128,7 @@ describe("registerChannelsCli", () => {
       "--homeserver",
       "https://matrix.example.org",
     ];
-    const program = new Command().name("openclaw");
+    const program = new Command().name("nova");
 
     await registerChannelsCli(program);
 

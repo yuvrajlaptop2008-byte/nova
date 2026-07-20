@@ -1,6 +1,6 @@
 // Hook update tests cover updating installed hook records and config.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { HookNpmIntegrityDriftParams } from "./install.js";
 
 const installHooksFromNpmSpecMock = vi.fn();
@@ -16,7 +16,7 @@ function createHookInstallConfig(params: {
   hookId: string;
   spec: string;
   integrity?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     hooks: {
       internal: {
@@ -30,7 +30,7 @@ function createHookInstallConfig(params: {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 describe("updateNpmInstalledHookPacks", () => {

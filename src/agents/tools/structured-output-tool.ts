@@ -106,6 +106,7 @@ const testing = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.structuredOutputToolTestApi")] =
-    { testing };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.structuredOutputToolTestApi")] = {
+    testing,
+  };
 }

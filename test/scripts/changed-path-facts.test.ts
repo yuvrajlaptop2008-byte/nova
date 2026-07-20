@@ -41,7 +41,7 @@ describe("changed path facts", () => {
       isTestOnly: true,
       isNativeOnly: false,
     });
-    expect(getChangedPathFacts("apps/shared/OpenClawKit/Sources/Foo.swift")).toMatchObject({
+    expect(getChangedPathFacts("apps/shared/NovaKit/Sources/Foo.swift")).toMatchObject({
       surface: "app",
       isChangedLaneTest: false,
       isTestOnly: false,

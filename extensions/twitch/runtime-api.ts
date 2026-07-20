@@ -14,9 +14,9 @@ export type {
   ChannelResolveKind,
   ChannelResolveResult,
   ChannelStatusAdapter,
-} from "openclaw/plugin-sdk/channel-contract";
-export type { ChannelPlugin } from "openclaw/plugin-sdk/channel-core";
-export type { OutboundDeliveryResult } from "openclaw/plugin-sdk/channel-send-result";
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export type { WizardPrompter } from "openclaw/plugin-sdk/setup";
+} from "nova/plugin-sdk/channel-contract";
+export type { ChannelPlugin } from "nova/plugin-sdk/channel-core";
+export type { OutboundDeliveryResult } from "nova/plugin-sdk/channel-send-result";
+export type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+export type { RuntimeEnv } from "nova/plugin-sdk/runtime";
+export type { WizardPrompter } from "nova/plugin-sdk/setup";

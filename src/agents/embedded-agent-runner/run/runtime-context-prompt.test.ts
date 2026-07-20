@@ -609,7 +609,7 @@ describe("runtime context prompt submission", () => {
   it("builds runtime context as prompt-local custom context before the current user prompt", () => {
     expect(buildRuntimeContextCustomMessage("secret runtime context")).toMatchObject({
       role: "custom",
-      customType: "openclaw.runtime-context",
+      customType: "nova.runtime-context",
       content: [
         "Nova runtime context for the immediately preceding user message.",
         "This context is runtime-generated, not user-authored. Keep internal details private.",
@@ -619,7 +619,7 @@ describe("runtime context prompt submission", () => {
         "<<<END_NOVA_INTERNAL_CONTEXT>>>",
       ].join("\n"),
       display: false,
-      details: { source: "openclaw-runtime-context" },
+      details: { source: "nova-runtime-context" },
     });
   });
 

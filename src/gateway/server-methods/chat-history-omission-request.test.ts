@@ -27,7 +27,7 @@ describe("chat.history request truncation diagnostic", () => {
     const messageCount = 70;
     const textBytes = 100_000;
     const budgetBytes = getMaxChatHistoryMessagesBytes();
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-chat-history-omit-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-chat-history-omit-"));
     const captured: DiagnosticPayloadLargeEvent[] = [];
     const unsubscribe = onDiagnosticEvent((event) => {
       if (event.type === "payload.large" && event.surface === "gateway.chat.history") {

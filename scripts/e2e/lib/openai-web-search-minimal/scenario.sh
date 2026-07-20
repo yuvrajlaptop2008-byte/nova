@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+source scripts/lib/nova-e2e-instance.sh
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 export NOVA_SKIP_CHANNELS=1
 export NOVA_SKIP_GMAIL_WATCHER=1
 export NOVA_SKIP_CRON=1
@@ -16,7 +16,7 @@ MOCK_PORT="${MOCK_PORT:?missing MOCK_PORT}"
 TOKEN="${NOVA_GATEWAY_TOKEN:?missing NOVA_GATEWAY_TOKEN}"
 SUCCESS_MARKER="NOVA_SCHEMA_E2E_OK"
 RAW_SCHEMA_ERROR="400 The following tools cannot be used with reasoning.effort 'minimal': web_search."
-scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-openai-web-search-minimal.XXXXXX")"
+scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/nova-openai-web-search-minimal.XXXXXX")"
 MOCK_REQUEST_LOG="$scenario_tmp/requests.jsonl"
 GATEWAY_LOG="$scenario_tmp/gateway.log"
 MOCK_LOG="$scenario_tmp/mock.log"
@@ -33,8 +33,8 @@ mock_pid=""
 gateway_pid=""
 
 cleanup() {
-  openclaw_e2e_terminate_gateways "${gateway_pid:-}"
-  openclaw_e2e_stop_process "${mock_pid:-}"
+  nova_e2e_terminate_gateways "${gateway_pid:-}"
+  nova_e2e_stop_process "${mock_pid:-}"
   rm -rf "$scenario_tmp"
 }
 trap cleanup EXIT
@@ -48,22 +48,22 @@ dump_debug_logs() {
     "$CLIENT_SUCCESS_LOG" \
     "$CLIENT_REJECT_LOG" \
     "$MOCK_REQUEST_LOG" \
-    "$NOVA_STATE_DIR/openclaw.json"; do
+    "$NOVA_STATE_DIR/nova.json"; do
     if [ -f "$file" ]; then
       echo "--- $file ---" >&2
-      openclaw_e2e_print_log "$file" >&2
+      nova_e2e_print_log "$file" >&2
     fi
   done
 }
 trap 'status=$?; dump_debug_logs "$status"; exit "$status"' ERR
 
-entry="$(openclaw_e2e_resolve_entrypoint)"
+entry="$(nova_e2e_resolve_entrypoint)"
 mkdir -p "$NOVA_STATE_DIR" "$TLS_DIR"
 
 node scripts/e2e/lib/fixture.mjs openai-web-search-minimal-config
 
 openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 1 \
-  -subj "/CN=OpenClaw E2E CA" \
+  -subj "/CN=Nova E2E CA" \
   -addext "basicConstraints=critical,CA:TRUE" \
   -addext "keyUsage=critical,keyCertSign,cRLSign" \
   -keyout "$TLS_CA_KEY" \
@@ -98,10 +98,10 @@ MOCK_PORT="$MOCK_PORT" \
   node scripts/e2e/lib/openai-web-search-minimal/mock-server.mjs >"$MOCK_LOG" 2>&1 &
 mock_pid="$!"
 
-openclaw_e2e_wait_mock_openai "$MOCK_PORT" 80 400 "https://api.openai.com:$MOCK_PORT"
+nova_e2e_wait_mock_openai "$MOCK_PORT" 80 400 "https://api.openai.com:$MOCK_PORT"
 
-gateway_pid="$(openclaw_e2e_start_gateway "$entry" "$PORT" "$GATEWAY_LOG")"
-openclaw_e2e_wait_gateway_ready "$gateway_pid" "$GATEWAY_LOG" 360 "$PORT"
+gateway_pid="$(nova_e2e_start_gateway "$entry" "$PORT" "$GATEWAY_LOG")"
+nova_e2e_wait_gateway_ready "$gateway_pid" "$GATEWAY_LOG" 360 "$PORT"
 node "$entry" gateway health \
   --url "ws://127.0.0.1:$PORT" \
   --token "$TOKEN" \

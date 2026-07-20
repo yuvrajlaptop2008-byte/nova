@@ -152,7 +152,7 @@ describe("happy path prompt snapshots", () => {
   });
 
   it("deletes stale generated snapshot artifacts", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-prompt-snapshot-stale-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-prompt-snapshot-stale-"));
     try {
       const snapshotDir = path.join(root, CODEX_RUNTIME_HAPPY_PATH_PROMPT_SNAPSHOT_DIR);
       fs.mkdirSync(snapshotDir, { recursive: true });
@@ -217,7 +217,7 @@ describe("happy path prompt snapshots", () => {
     expect(heartbeat).toContain('"collaborationMode": {');
     expect(heartbeat).toContain('"developer_instructions": "This is an Nova heartbeat turn.');
     expect(heartbeat).toContain(agentSoulHeading);
-    const openClawRuntimeInstructions = renderedPromptSection(
+    const novaRuntimeInstructions = renderedPromptSection(
       heartbeat,
       "### Developer: Nova Runtime Instructions",
       "### Developer: Codex Collaboration Mode Instructions",
@@ -228,12 +228,10 @@ describe("happy path prompt snapshots", () => {
       "### User: Turn Input Text",
     );
 
-    expect(openClawRuntimeInstructions).not.toContain(heartbeatPhrase);
+    expect(novaRuntimeInstructions).not.toContain(heartbeatPhrase);
     expect(collaborationModeInstructions).toContain(heartbeatPhrase);
     expect(collaborationModeInstructions).toContain("HEARTBEAT.md exists");
-    expect(collaborationModeInstructions).toContain(
-      "/tmp/openclaw-happy-path/workspace/HEARTBEAT.md",
-    );
+    expect(collaborationModeInstructions).toContain("/tmp/nova-happy-path/workspace/HEARTBEAT.md");
     expect(collaborationModeInstructions).not.toContain("<HEARTBEAT.md contents will be here>");
     expect(collaborationModeInstructions.split(heartbeatPhrase)).toHaveLength(2);
   });
@@ -284,7 +282,7 @@ describe("happy path prompt snapshots", () => {
   });
 
   it("finds the first available default Codex model catalog source", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-codex-catalog-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-codex-catalog-"));
     try {
       const cachePath = path.join(root, ".codex", "models_cache.json");
       fs.mkdirSync(path.dirname(cachePath), { recursive: true });
@@ -303,7 +301,7 @@ describe("happy path prompt snapshots", () => {
   });
 
   it("skips Codex model prompt fixture sync when no default catalog exists", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-codex-catalog-missing-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-codex-catalog-missing-"));
     const chunks: string[] = [];
     try {
       const result = await runCodexModelPromptFixtureSync([], {
@@ -324,7 +322,7 @@ describe("happy path prompt snapshots", () => {
   });
 
   it("writes Codex model prompt fixtures from an explicit catalog", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-codex-catalog-write-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-codex-catalog-write-"));
     try {
       const catalogPath = path.join(root, "models_cache.json");
       const outputDir = path.join(root, "out");

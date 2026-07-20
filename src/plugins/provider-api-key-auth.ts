@@ -3,7 +3,7 @@ import { normalizeOptionalString } from "@nova/normalization-core/string-coerce"
 import { normalizeUniqueStringEntries } from "@nova/normalization-core/string-normalization";
 import { upsertAuthProfileWithLock } from "../agents/auth-profiles/profiles.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { SecretInput } from "../config/types.secrets.js";
 import { createLazyRuntimeSurface } from "../shared/lazy-runtime.js";
 import { normalizeOptionalSecretInput } from "../utils/normalize-secret-input.js";
@@ -36,7 +36,7 @@ type ProviderApiKeyAuthMethodOptions = {
   metadata?: Record<string, string>;
   noteMessage?: string;
   noteTitle?: string;
-  applyConfig?: (cfg: OpenClawConfig) => OpenClawConfig;
+  applyConfig?: (cfg: NovaConfig) => NovaConfig;
 };
 
 type UpsertAuthProfileParams = Parameters<typeof upsertAuthProfileWithLock>[0];
@@ -81,7 +81,7 @@ async function applyApiKeyConfig(params: {
   profileIds: string[];
   defaultModel?: string;
   preserveExistingPrimary?: boolean;
-  applyConfig?: (cfg: OpenClawConfig) => OpenClawConfig;
+  applyConfig?: (cfg: NovaConfig) => NovaConfig;
 }) {
   const { applyAuthProfileConfig, applyPrimaryModel } = await loadProviderApiKeyAuthRuntime();
   let next = params.ctx.config;

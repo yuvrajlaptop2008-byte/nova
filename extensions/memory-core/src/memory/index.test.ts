@@ -4,20 +4,20 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
-import { clearMemoryEmbeddingProviders as clearRegistry } from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
-import { hashText } from "openclaw/plugin-sdk/memory-core-host-engine-storage";
-import { resolveSessionTranscriptsDirForAgent } from "openclaw/plugin-sdk/memory-core-host-runtime-core";
+import { clearMemoryEmbeddingProviders as clearRegistry } from "nova/plugin-sdk/memory-core-host-engine-embeddings";
+import { hashText } from "nova/plugin-sdk/memory-core-host-engine-storage";
+import { resolveSessionTranscriptsDirForAgent } from "nova/plugin-sdk/memory-core-host-runtime-core";
 import {
   formatSqliteSessionFileMarker,
   upsertSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { appendSessionTranscriptMessageByIdentity } from "openclaw/plugin-sdk/session-transcript-runtime";
-import { resolveOpenClawAgentSqlitePath } from "openclaw/plugin-sdk/sqlite-runtime";
+} from "nova/plugin-sdk/session-store-runtime";
+import { appendSessionTranscriptMessageByIdentity } from "nova/plugin-sdk/session-transcript-runtime";
+import { resolveNovaAgentSqlitePath } from "nova/plugin-sdk/sqlite-runtime";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawAgentDatabase,
-} from "openclaw/plugin-sdk/sqlite-runtime-testing";
+  closeNovaAgentDatabasesForTest,
+  closeNovaStateDatabaseForTest,
+  openNovaAgentDatabase,
+} from "nova/plugin-sdk/sqlite-runtime-testing";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import "./test-runtime-mocks.js";
 import type { MemoryIndexManager } from "./index.js";
@@ -278,7 +278,7 @@ describe("memory index", () => {
   const managersForCleanup = new Set<MemoryIndexManager>();
 
   beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mem-fixtures-"));
+    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-mem-fixtures-"));
     workspaceDir = path.join(fixtureRoot, "workspace");
     memoryDir = path.join(workspaceDir, "memory");
   });
@@ -292,8 +292,8 @@ describe("memory index", () => {
     vi.useRealTimers();
     await Promise.all(Array.from(managersForCleanup).map((manager) => manager.close()));
     await closeAllMemorySearchManagers();
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     clearRegistry();
     managersForCleanup.clear();
     restoreMemoryIndexStateDir();
@@ -645,12 +645,12 @@ describe("memory index", () => {
   it("reindexes memory tables in place without deleting unrelated agent rows", async () => {
     const stateDir = path.join(workspaceDir, "managed-memory-state");
     setMemoryIndexStateDir(stateDir);
-    const agentDbPath = resolveOpenClawAgentSqlitePath({ agentId: "main" });
-    const agentDb = openOpenClawAgentDatabase({ agentId: "main" });
+    const agentDbPath = resolveNovaAgentSqlitePath({ agentId: "main" });
+    const agentDb = openNovaAgentDatabase({ agentId: "main" });
     agentDb.db
       .prepare("INSERT INTO cache_entries (scope, key, value_json, updated_at) VALUES (?, ?, ?, ?)")
       .run("test", "keep-me", JSON.stringify({ value: "keep-me" }), 1);
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
 
     const manager = await getFreshManager(
       createCfg({
@@ -664,7 +664,7 @@ describe("memory index", () => {
       await manager.close?.();
     }
 
-    const reopened = openOpenClawAgentDatabase({ agentId: "main" });
+    const reopened = openNovaAgentDatabase({ agentId: "main" });
     expect(
       reopened.db
         .prepare("SELECT value_json FROM cache_entries WHERE scope = ? AND key = ?")
@@ -678,7 +678,7 @@ describe("memory index", () => {
     const manager = await getFreshManager(createCfg({}));
     await manager.close?.();
 
-    const agentDb = openOpenClawAgentDatabase({ agentId: "main" });
+    const agentDb = openNovaAgentDatabase({ agentId: "main" });
     expect(
       agentDb.db.prepare("SELECT role, agent_id FROM schema_meta WHERE meta_key = 'primary'").get(),
     ).toEqual({
@@ -2244,7 +2244,7 @@ describe("memory index", () => {
         embedQuery: vi.fn(async () => [1, 0, 0, 0]),
         embedBatch: vi.fn(async (texts: string[]) => texts.map(() => [1, 0, 0, 0])),
       };
-      Object.defineProperty(provider, Symbol.for("openclaw.localEmbeddingRuntimeFacts"), {
+      Object.defineProperty(provider, Symbol.for("nova.localEmbeddingRuntimeFacts"), {
         value: getRuntimeFacts,
       });
       const fields = manager as unknown as {
@@ -3018,7 +3018,7 @@ describe("memory index", () => {
   });
 
   it("status-purpose manager detects unindexed session transcripts as dirty", async () => {
-    // Regression test for #97814: plain openclaw memory status (purpose: status)
+    // Regression test for #97814: plain nova memory status (purpose: status)
     // must report dirty=true when session files exist without index rows.
     const cfg = createCfg({ sources: ["sessions"], sessionMemory: true });
     const stateDirName = ".state-status-dirty-test";

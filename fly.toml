@@ -30,5 +30,5 @@ size = "shared-cpu-2x"
 memory = "2048mb"
 
 [mounts]
-source = "openclaw_data"
+source = "nova_data"
 destination = "/data"

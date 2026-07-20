@@ -371,13 +371,13 @@ const MCP_AUTH_HEADERS = {
 } as const;
 
 const MCP_CAPTURE_HEADERS = {
-  "x-openclaw-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
+  "x-nova-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
 } as const;
 
 function createMcpServerConfig(port: number, headers: Record<string, string>) {
   return {
     mcpServers: {
-      openclaw: {
+      nova: {
         type: "http",
         url: `http://127.0.0.1:${port}/mcp`,
         alwaysLoad: true,

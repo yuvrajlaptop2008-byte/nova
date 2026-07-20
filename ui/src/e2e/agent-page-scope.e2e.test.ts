@@ -113,7 +113,7 @@ describeControlUiE2e("Control UI agent page scope", () => {
     try {
       await page.goto(`${server.baseUrl}usage`);
       await gateway.waitForRequest("agents.list");
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       await sidebar.getByRole("button", { name: /Switch agent/ }).click();
       await sidebar
         .locator("wa-dropdown.sidebar-agent-menu")

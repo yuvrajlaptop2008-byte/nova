@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import { CLI_OUTPUT_MAX_BUFFER } from "./defaults.constants.js";
 import { withAudioFixture } from "./runner.test-utils.js";
@@ -88,11 +88,11 @@ async function runAudioEntry(params: {
   args: string[];
 }): Promise<Awaited<ReturnType<typeof runCliEntry>>> {
   let result: Awaited<ReturnType<typeof runCliEntry>> = null;
-  await withAudioFixture(`openclaw-cli-${params.command}`, async ({ ctx, cache }) => {
+  await withAudioFixture(`nova-cli-${params.command}`, async ({ ctx, cache }) => {
     result = await runCliEntry({
       capability: "audio",
       entry: { type: "cli", command: params.command, args: params.args },
-      cfg: { tools: { media: { audio: {} } } } as OpenClawConfig,
+      cfg: { tools: { media: { audio: {} } } } as NovaConfig,
       ctx,
       attachmentIndex: 0,
       cache,
@@ -118,7 +118,7 @@ describe("media-understanding CLI audio entry", () => {
   it("applies per-request prompt and language overrides to CLI transcription templating", async () => {
     let mediaPath = "";
 
-    await withAudioFixture("openclaw-cli-audio", async ({ ctx, cache }) => {
+    await withAudioFixture("nova-cli-audio", async ({ ctx, cache }) => {
       mediaPath = await fs.realpath(ctx.MediaPath);
 
       await runCliEntry({
@@ -141,7 +141,7 @@ describe("media-understanding CLI audio entry", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         ctx,
         attachmentIndex: 0,
         cache,
@@ -287,7 +287,7 @@ describe("media-understanding CLI audio entry", () => {
       stderr: "",
     });
 
-    await withAudioFixture("openclaw-cli-audio-empty-sherpa", async ({ ctx, cache }) => {
+    await withAudioFixture("nova-cli-audio-empty-sherpa", async ({ ctx, cache }) => {
       const result = await runCliEntry({
         capability: "audio",
         entry: {
@@ -295,7 +295,7 @@ describe("media-understanding CLI audio entry", () => {
           command: "sherpa-onnx-offline",
           args: ["{{MediaPath}}"],
         },
-        cfg: { tools: { media: { audio: {} } } } as OpenClawConfig,
+        cfg: { tools: { media: { audio: {} } } } as NovaConfig,
         ctx,
         attachmentIndex: 0,
         cache,
@@ -312,7 +312,7 @@ describe("media-understanding CLI audio entry", () => {
       stderr: "",
     });
 
-    await withAudioFixture("openclaw-cli-audio-sherpa-json", async ({ ctx, cache }) => {
+    await withAudioFixture("nova-cli-audio-sherpa-json", async ({ ctx, cache }) => {
       const result = await runCliEntry({
         capability: "audio",
         entry: {
@@ -320,7 +320,7 @@ describe("media-understanding CLI audio entry", () => {
           command: "sherpa-onnx-offline",
           args: ["{{MediaPath}}"],
         },
-        cfg: { tools: { media: { audio: {} } } } as OpenClawConfig,
+        cfg: { tools: { media: { audio: {} } } } as NovaConfig,
         ctx,
         attachmentIndex: 0,
         cache,

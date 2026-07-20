@@ -1,6 +1,6 @@
-import OpenClawKit
+import NovaKit
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 struct GatewayStatusBuilderTests {
     @Test func `paused problem keeps error status`() {

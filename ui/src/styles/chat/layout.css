@@ -3,7 +3,7 @@
    ============================================= */
 
 /* Main chat card - flex column layout, transparent background */
-openclaw-chat-page {
+nova-chat-page {
   display: flex;
   flex: 1 1 0;
   min-width: 0;
@@ -2443,7 +2443,7 @@ openclaw-chat-page {
   flex: 0 0 auto;
 }
 
-.chat-talk-control > openclaw-tooltip {
+.chat-talk-control > nova-tooltip {
   display: inline-flex;
 }
 
@@ -4426,7 +4426,7 @@ openclaw-chat-page {
     height: 77px;
   }
 
-  .agent-chat__welcome-clawd openclaw-mascot {
+  .agent-chat__welcome-clawd nova-mascot {
     transform: scale(0.6875);
   }
 

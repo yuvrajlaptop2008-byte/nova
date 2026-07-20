@@ -3,13 +3,13 @@ import {
   type ProviderCatalogContext,
   type ConfiguredProviderCatalogEntry,
   readConfiguredProviderCatalogEntries,
-} from "openclaw/plugin-sdk/provider-catalog-shared";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-catalog-shared";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
+import { buildProviderReplayFamilyHooks } from "nova/plugin-sdk/provider-model-shared";
 import {
   createOpenRouterWrapper,
   isProxyReasoningUnsupported,
-} from "openclaw/plugin-sdk/provider-stream";
+} from "nova/plugin-sdk/provider-stream";
 import { createDeepInfraAnthropicCacheWrapper } from "./cache-wrapper.js";
 import { buildDeepInfraImageGenerationProvider } from "./image-generation-provider.js";
 import { buildDeepInfraMediaUnderstandingProvider } from "./media-understanding-provider.js";

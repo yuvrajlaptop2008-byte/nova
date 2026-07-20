@@ -9,9 +9,9 @@ import { resolvePluginApprovalTimeoutMs } from "../infra/plugin-approvals.js";
 import type { PluginRegistry } from "../plugins/registry-types.js";
 import { getActivePluginGatewayNodePolicyRegistry } from "../plugins/runtime.js";
 import type {
-  OpenClawPluginNodeInvokePolicyContext,
-  OpenClawPluginNodeInvokePolicyResult,
-  OpenClawPluginNodeInvokeTransportResult,
+  NovaPluginNodeInvokePolicyContext,
+  NovaPluginNodeInvokePolicyResult,
+  NovaPluginNodeInvokeTransportResult,
 } from "../plugins/types.js";
 import { isNodeCommandAllowed, resolveNodeCommandAllowlist } from "./node-command-policy.js";
 import type { NodeSession } from "./node-registry.js";
@@ -90,7 +90,7 @@ function createApprovalRuntime(params: {
   client: GatewayClient | null;
   pluginId: string;
   turnSource: Parameters<typeof resolveNodeInvokeTurnSourceFields>[0];
-}): OpenClawPluginNodeInvokePolicyContext["approvals"] | undefined {
+}): NovaPluginNodeInvokePolicyContext["approvals"] | undefined {
   const manager = params.context.pluginApprovalManager;
   if (!manager) {
     return undefined;
@@ -219,7 +219,7 @@ export async function applyPluginNodeInvokePolicy(params: {
   };
   timeoutMs?: number;
   idempotencyKey?: string;
-}): Promise<OpenClawPluginNodeInvokePolicyResult | null> {
+}): Promise<NovaPluginNodeInvokePolicyResult | null> {
   const registry = getActivePluginGatewayNodePolicyRegistry();
   // Route metadata is authority-bearing: only a signed agent-runtime caller may nominate it.
   const trustedTurnSource = params.client?.internal?.agentRuntimeIdentity
@@ -242,9 +242,9 @@ export async function applyPluginNodeInvokePolicy(params: {
   }
 
   let nodeCommandDispatched = false;
-  const invokeNode: OpenClawPluginNodeInvokePolicyContext["invokeNode"] = async (
+  const invokeNode: NovaPluginNodeInvokePolicyContext["invokeNode"] = async (
     override = {},
-  ): Promise<OpenClawPluginNodeInvokeTransportResult> => {
+  ): Promise<NovaPluginNodeInvokeTransportResult> => {
     // Policies invoke the real node through this narrowed transport wrapper so
     // they can retry/override params without getting direct registry access.
     const currentNode = params.context.nodeRegistry.get(params.nodeSession.nodeId);

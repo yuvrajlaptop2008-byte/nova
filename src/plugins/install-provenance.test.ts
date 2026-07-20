@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { BundledPluginSource } from "./bundled-sources.js";
-import { isOpenClawTrustedPluginInstallSpec } from "./install-provenance.js";
+import { isNovaTrustedPluginInstallSpec } from "./install-provenance.js";
 
 const bundledSources = new Map<string, BundledPluginSource>([
   [
     "discord",
     {
       pluginId: "discord",
-      localPath: "/opt/openclaw/extensions/discord",
+      localPath: "/opt/nova/extensions/discord",
       npmSpec: "@nova/discord",
     },
   ],
@@ -18,18 +18,18 @@ describe("plugin install provenance", () => {
     "discord",
     "@nova/discord",
     "npm:@nova/discord",
-    "/opt/openclaw/extensions/discord",
+    "/opt/nova/extensions/discord",
     "brave",
     "npm:@nova/brave-plugin",
-    "clawhub:openclaw-demo",
+    "clawhub:nova-demo",
   ])("trusts Nova-owned install source %s", (spec) => {
-    expect(isOpenClawTrustedPluginInstallSpec(spec, bundledSources)).toBe(true);
+    expect(isNovaTrustedPluginInstallSpec(spec, bundledSources)).toBe(true);
   });
 
   it.each(["npm:discord", "npm:@example/plugin", "/tmp/example-plugin"])(
     "keeps arbitrary install source %s untrusted",
     (spec) => {
-      expect(isOpenClawTrustedPluginInstallSpec(spec, bundledSources)).toBe(false);
+      expect(isNovaTrustedPluginInstallSpec(spec, bundledSources)).toBe(false);
     },
   );
 });

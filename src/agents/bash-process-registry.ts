@@ -358,8 +358,9 @@ function resetProcessRegistryForTests() {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.bashProcessRegistryTestApi")] =
-    { resetProcessRegistryForTests };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.bashProcessRegistryTestApi")] = {
+    resetProcessRegistryForTests,
+  };
 }
 
 /** Overrides finished-session retention TTL, clamped to supported bounds. */

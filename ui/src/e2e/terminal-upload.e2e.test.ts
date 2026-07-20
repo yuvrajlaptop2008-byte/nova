@@ -54,9 +54,9 @@ describeControlUiE2e("Control UI terminal file upload", () => {
         token: "test",
       };
     });
-    const stagedPath = "/tmp/openclaw-terminal-upload/sample file.pdf";
-    const stagedNotesPath = "/tmp/openclaw-terminal-upload/notes.txt";
-    const stagedDropPath = "/tmp/openclaw-terminal-upload/dropped.png";
+    const stagedPath = "/tmp/nova-terminal-upload/sample file.pdf";
+    const stagedNotesPath = "/tmp/nova-terminal-upload/notes.txt";
+    const stagedDropPath = "/tmp/nova-terminal-upload/dropped.png";
     const gateway = await installMockGateway(page, {
       deferredMethods: ["connect"],
       featureMethods: ["terminal.open", "terminal.upload"],
@@ -167,8 +167,8 @@ describeControlUiE2e("Control UI terminal file upload", () => {
       const pickedInput = (await gateway.getRequests("terminal.input"))[0]?.params as {
         data?: string;
       };
-      expect(pickedInput.data).toContain("'/tmp/openclaw-terminal-upload/sample file.pdf'");
-      expect(pickedInput.data).toContain("/tmp/openclaw-terminal-upload/notes.txt");
+      expect(pickedInput.data).toContain("'/tmp/nova-terminal-upload/sample file.pdf'");
+      expect(pickedInput.data).toContain("/tmp/nova-terminal-upload/notes.txt");
       expect(pickedInput.data).not.toMatch(/[\r\n]/);
 
       await gateway.setMethodResponse("terminal.upload", { path: stagedDropPath, size: 3 });
@@ -201,7 +201,7 @@ describeControlUiE2e("Control UI terminal file upload", () => {
       const droppedInput = (await gateway.getRequests("terminal.input")).at(-1)?.params as {
         data?: string;
       };
-      expect(droppedInput.data).toContain("/tmp/openclaw-terminal-upload/dropped.png");
+      expect(droppedInput.data).toContain("/tmp/nova-terminal-upload/dropped.png");
       expect(droppedInput.data).not.toMatch(/[\r\n]/);
 
       await gateway.deferNext("terminal.upload");
@@ -219,7 +219,7 @@ describeControlUiE2e("Control UI terminal file upload", () => {
       await page.getByRole("button", { name: "Cancel" }).click();
       await expect.poll(async () => await page.locator(".tp-upload-card").count()).toBe(0);
       await gateway.resolveDeferred("terminal.upload", {
-        path: "/tmp/openclaw-terminal-upload/cancelled.zip",
+        path: "/tmp/nova-terminal-upload/cancelled.zip",
         size: 3,
       });
       await page.waitForTimeout(100);

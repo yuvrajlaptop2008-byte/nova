@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { OpenClawConfig } from "../../../../src/config/types.openclaw.js";
+import type { NovaConfig } from "../../../../src/config/types.nova.js";
 import { formatErrorMessage } from "../../../../src/infra/errors.js";
 import { isWithinActiveHours } from "../../../../src/infra/heartbeat-active-hours.js";
 import { startHeartbeatRunner } from "../../../../src/infra/heartbeat-runner.js";
@@ -46,7 +46,7 @@ function parseOptions(argv: string[], repoRoot = process.cwd()): HeartbeatRuntim
   return { artifactBase, repoRoot, timeoutMs };
 }
 
-function heartbeatConfig(quietHours: boolean): OpenClawConfig {
+function heartbeatConfig(quietHours: boolean): NovaConfig {
   return {
     agents: {
       defaults: {

@@ -14,7 +14,7 @@ const APK_CERTIFICATE_SHA256 = "80dbc62315ea216dd6e8a7060735a866ddc464a48ed50fef
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-android-signing-"));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-android-signing-"));
   tempRoots.push(tempRoot);
   return tempRoot;
 }
@@ -91,7 +91,7 @@ function writeManifest(tempRoot: string, signingRepo: string): string {
       {
         signingRepo,
         signingBranch: "main",
-        assetPath: "android/openclaw",
+        assetPath: "android/nova",
         uploadKeystoreEncryptedFile: "upload-keystore.jks.enc",
         gradlePropertiesEncryptedFile: "gradle.properties.enc",
         apkCertificateSha256: APK_CERTIFICATE_SHA256,
@@ -118,7 +118,7 @@ function writeSigningSources(tempRoot: string) {
     propertiesPath,
     [
       `NOVA_ANDROID_STORE_PASSWORD=${STORE_PASSWORD}`,
-      "NOVA_ANDROID_KEY_ALIAS=openclaw-upload",
+      "NOVA_ANDROID_KEY_ALIAS=nova-upload",
       `NOVA_ANDROID_KEY_PASSWORD=${KEY_PASSWORD}`,
       "",
     ].join("\n"),
@@ -160,8 +160,8 @@ describe("scripts/android-release-signing.mjs", () => {
     const result = runNode(["--mode", "plan"]);
 
     expect(result.ok).toBe(true);
-    expect(result.stdout).toContain("Signing repo: git@github.com:openclaw/apps-signing.git");
-    expect(result.stdout).toContain("Signing assets: android/openclaw");
+    expect(result.stdout).toContain("Signing repo: git@github.com:nova/apps-signing.git");
+    expect(result.stdout).toContain("Signing assets: android/nova");
     expect(result.stdout).toContain(`Pinned APK certificate SHA-256: ${APK_CERTIFICATE_SHA256}`);
     expect(result.stdout).toContain("Materialized output: apps/android/build/release-signing");
     expect(result.stdout).toContain("ORG_GRADLE_PROJECT_*");
@@ -212,7 +212,7 @@ describe("scripts/android-release-signing.mjs", () => {
       const remoteCheck = path.join(tempRoot, "remote-check");
       runGit(["clone", signingRepo, remoteCheck], tempRoot);
       const encryptedProperties = fs.readFileSync(
-        path.join(remoteCheck, "android", "openclaw", "gradle.properties.enc"),
+        path.join(remoteCheck, "android", "nova", "gradle.properties.enc"),
         "utf8",
       );
       expect(encryptedProperties).not.toContain(STORE_PASSWORD);
@@ -252,7 +252,7 @@ describe("scripts/android-release-signing.mjs", () => {
         `NOVA_ANDROID_STORE_FILE=${path.join(materializedDir, "upload-keystore.jks")}`,
       );
       expect(materializedProperties).toContain(`NOVA_ANDROID_STORE_PASSWORD=${STORE_PASSWORD}`);
-      expect(materializedProperties).toContain("NOVA_ANDROID_KEY_ALIAS=openclaw-upload");
+      expect(materializedProperties).toContain("NOVA_ANDROID_KEY_ALIAS=nova-upload");
       expect(materializedProperties).toContain(`NOVA_ANDROID_KEY_PASSWORD=${KEY_PASSWORD}`);
       if (process.platform !== "win32") {
         expect(fs.statSync(path.join(materializedDir, "gradle.properties")).mode & 0o777).toBe(

@@ -41,14 +41,14 @@ describe("command-execution-startup", () => {
   it("resolves startup context from argv and mode", () => {
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "status", "--json"],
+        argv: ["node", "nova", "status", "--json"],
         jsonOutputMode: true,
         env: {},
         routeMode: true,
       }),
     ).toEqual({
       invocation: {
-        argv: ["node", "openclaw", "status", "--json"],
+        argv: ["node", "nova", "status", "--json"],
         commandPath: ["status"],
         primary: "status",
         hasHelpOrVersion: false,
@@ -72,13 +72,13 @@ describe("command-execution-startup", () => {
 
       expect(
         mod.resolveCliExecutionStartupContext({
-          argv: ["node", "openclaw", "status"],
+          argv: ["node", "nova", "status"],
           jsonOutputMode: false,
         }).startupPolicy.hideBanner,
       ).toBe(true);
       expect(
         mod.resolveCliExecutionStartupContext({
-          argv: ["node", "openclaw", "status"],
+          argv: ["node", "nova", "status"],
           jsonOutputMode: false,
           env: {},
         }).startupPolicy.hideBanner,
@@ -95,29 +95,19 @@ describe("command-execution-startup", () => {
   it("skips local plugin bootstrap for JSON gateway agent calls", () => {
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "agent", "--agent", "main", "--message", "hi", "--json"],
+        argv: ["node", "nova", "agent", "--agent", "main", "--message", "hi", "--json"],
         jsonOutputMode: true,
       }).startupPolicy.loadPlugins,
     ).toBe(false);
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: [
-          "node",
-          "openclaw",
-          "agent",
-          "--agent",
-          "main",
-          "--message",
-          "hi",
-          "--json",
-          "--local",
-        ],
+        argv: ["node", "nova", "agent", "--agent", "main", "--message", "hi", "--json", "--local"],
         jsonOutputMode: true,
       }).startupPolicy.loadPlugins,
     ).toBe(true);
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "agent", "--agent", "main", "--message", "hi"],
+        argv: ["node", "nova", "agent", "--agent", "main", "--message", "hi"],
         jsonOutputMode: false,
       }).startupPolicy.loadPlugins,
     ).toBe(true);
@@ -126,7 +116,7 @@ describe("command-execution-startup", () => {
   it("uses the resolved action command path for protocol startup policy", () => {
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "acp", "--token", "-secret"],
+        argv: ["node", "nova", "acp", "--token", "-secret"],
         protocolCommandPath: ["acp"],
         jsonOutputMode: false,
         env: {},
@@ -134,7 +124,7 @@ describe("command-execution-startup", () => {
     ).toBe(true);
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "acp", "--verbose", "client"],
+        argv: ["node", "nova", "acp", "--verbose", "client"],
         protocolCommandPath: ["acp", "client"],
         jsonOutputMode: false,
         env: {},
@@ -152,12 +142,12 @@ describe("command-execution-startup", () => {
         pluginRegistry: { scope: "all" },
       },
       version: "1.2.3",
-      argv: ["node", "openclaw", "status"],
+      argv: ["node", "nova", "status"],
     });
 
     expect(routeLogsToStderrMock).toHaveBeenCalledTimes(1);
     expect(emitCliBannerMock).toHaveBeenCalledWith("1.2.3", {
-      argv: ["node", "openclaw", "status"],
+      argv: ["node", "nova", "status"],
     });
 
     await mod.applyCliExecutionStartupPresentation({
@@ -185,7 +175,7 @@ describe("command-execution-startup", () => {
         pluginRegistry: { scope: "channels" },
       },
       version: "1.2.3",
-      argv: ["node", "openclaw", "status", "--json"],
+      argv: ["node", "nova", "status", "--json"],
     });
 
     expect(routeLogsToStderrMock).toHaveBeenCalledTimes(1);

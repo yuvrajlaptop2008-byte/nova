@@ -1,11 +1,11 @@
 import { getSessionEntry, resolveStorePath } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveAgentIdFromSessionKey } from "../../routing/session-key.js";
 import { beginSessionWorkAdmission } from "../../sessions/session-lifecycle-admission.js";
 
 /** Linearizes a host-scoped grant against reset/delete of its expected incarnation. */
 export async function runWithScopedSessionAccess<T>(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   expectedSessionId?: string;
   targetSessionKey: string;
   run: () => Promise<T>;

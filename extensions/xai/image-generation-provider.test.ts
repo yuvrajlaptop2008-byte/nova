@@ -27,8 +27,8 @@ const {
     // Stub mirroring the xAI attribution policy headers (real wire is locked in provider-attribution.test.ts).
     if (params.provider === "xai") {
       const version = process.env.NOVA_VERSION?.trim() || "unknown";
-      headers.set("User-Agent", `openclaw/${version}`);
-      headers.set("originator", "openclaw");
+      headers.set("User-Agent", `nova/${version}`);
+      headers.set("originator", "nova");
       headers.set("version", version);
     }
     return {
@@ -48,17 +48,17 @@ const {
   sanitizeConfiguredModelProviderRequestMock: vi.fn((request) => request),
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth-runtime", () => ({
+vi.mock("nova/plugin-sdk/provider-auth-runtime", () => ({
   resolveApiKeyForProvider: resolveApiKeyForProviderMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth", () => ({
+vi.mock("nova/plugin-sdk/provider-auth", () => ({
   isProviderApiKeyConfigured: isProviderApiKeyConfiguredMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-http", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/provider-http")>(
-    "openclaw/plugin-sdk/provider-http",
+vi.mock("nova/plugin-sdk/provider-http", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/provider-http")>(
+    "nova/plugin-sdk/provider-http",
   );
   return {
     assertOkOrThrowHttpError: assertOkOrThrowHttpErrorMock,
@@ -72,7 +72,7 @@ vi.mock("openclaw/plugin-sdk/provider-http", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/string-coerce-runtime", () => ({
+vi.mock("nova/plugin-sdk/string-coerce-runtime", () => ({
   normalizeOptionalString: (v: unknown) => (typeof v === "string" ? v.trim() : undefined),
   normalizeOptionalLowercaseString: (v: unknown) =>
     typeof v === "string" ? v.trim().toLowerCase() : undefined,
@@ -147,10 +147,10 @@ describe("xai image generation provider", () => {
     if (!isConfigured) {
       throw new Error("expected XAI image provider config predicate");
     }
-    expect(isConfigured({ agentDir: "/tmp/openclaw-xai-test" })).toBe(true);
+    expect(isConfigured({ agentDir: "/tmp/nova-xai-test" })).toBe(true);
     expect(isProviderApiKeyConfiguredMock).toHaveBeenCalledWith({
       provider: "xai",
-      agentDir: "/tmp/openclaw-xai-test",
+      agentDir: "/tmp/nova-xai-test",
     });
   });
 
@@ -267,8 +267,8 @@ describe("xai image generation provider", () => {
     } as GenerateImageParams);
 
     const request = requirePostJsonCall();
-    expect(request.headers?.get("user-agent")).toBe("openclaw/2026.3.22");
-    expect(request.headers?.get("originator")).toBe("openclaw");
+    expect(request.headers?.get("user-agent")).toBe("nova/2026.3.22");
+    expect(request.headers?.get("originator")).toBe("nova");
     expect(request.headers?.get("version")).toBe("2026.3.22");
     vi.unstubAllEnvs();
   });

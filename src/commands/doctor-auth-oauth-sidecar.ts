@@ -9,7 +9,7 @@ import { resolveAuthStorePath } from "../agents/auth-profiles/paths.js";
 import { clearRuntimeAuthProfileStoreSnapshots } from "../agents/auth-profiles/store.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { resolveOAuthDir, resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { loadJsonFile, saveJsonFile } from "../infra/json-file.js";
 import { shortenHomePath } from "../utils.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
@@ -84,7 +84,7 @@ function listExistingAgentDirsFromState(env: NodeJS.ProcessEnv): string[] {
 }
 
 function listAuthProfileRepairCandidates(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv,
 ): AuthProfileRepairCandidate[] {
   const candidates = new Map<string, AuthProfileRepairCandidate>();
@@ -194,7 +194,7 @@ function backupLegacyOAuthSidecarStore(authPath: string, now: () => number): str
  * profile are removed; unreferenced sidecars stay because unknown agent directories may use them.
  */
 export async function maybeRepairLegacyOAuthSidecarProfiles(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   prompter: Pick<DoctorPrompter, "confirmAutoFix">;
   now?: () => number;
   emitNotes?: boolean;
@@ -234,7 +234,7 @@ export async function maybeRepairLegacyOAuthSidecarProfiles(params: {
               `- Unreferenced sidecar files are left in place because external agent directories outside this scan may still reference them.`,
             ]
           : []),
-        `- ${formatCliCommand("openclaw doctor --fix")} migrates active profiles back to inline OAuth credentials and removes only sidecar files it successfully migrated.`,
+        `- ${formatCliCommand("nova doctor --fix")} migrates active profiles back to inline OAuth credentials and removes only sidecar files it successfully migrated.`,
       ].join("\n"),
       "Auth profiles",
     );
@@ -336,7 +336,6 @@ const testing = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.doctorAuthOAuthSidecarTestApi")
-  ] = testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.doctorAuthOAuthSidecarTestApi")] =
+    testing;
 }

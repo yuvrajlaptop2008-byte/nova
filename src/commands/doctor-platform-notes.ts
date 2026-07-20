@@ -5,9 +5,9 @@ import path from "node:path";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { note } from "../../packages/terminal-core/src/note.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { hasConfiguredSecretInput } from "../config/types.secrets.js";
-import { findStaleOpenClawUpdateLaunchdJobs } from "../daemon/launchd.js";
+import { findStaleNovaUpdateLaunchdJobs } from "../daemon/launchd.js";
 import { resolveGatewayService, type GatewayService } from "../daemon/service.js";
 import { runExec } from "../process/exec.js";
 import { shortenHomePath } from "../utils.js";
@@ -28,7 +28,7 @@ function collectMacLaunchAgentOverrideWarning(deps?: {
     return null;
   }
   const home = deps?.homeDir ?? resolveHomeDir();
-  const markerCandidates = [path.join(home, ".openclaw", "disable-launchagent")];
+  const markerCandidates = [path.join(home, ".nova", "disable-launchagent")];
   const exists = deps?.exists ?? fs.existsSync;
   const markerPath = markerCandidates.find((candidate) => exists(candidate));
   if (!markerPath) {
@@ -52,9 +52,9 @@ export async function noteMacLaunchAgentOverrides() {
 }
 
 /** Returns a warning for stale Nova updater launchd jobs left after interrupted updates. */
-async function collectMacStaleOpenClawUpdateLaunchdJobsWarning(deps?: {
+async function collectMacStaleNovaUpdateLaunchdJobsWarning(deps?: {
   platform?: NodeJS.Platform;
-  findJobs?: typeof findStaleOpenClawUpdateLaunchdJobs;
+  findJobs?: typeof findStaleNovaUpdateLaunchdJobs;
   env?: NodeJS.ProcessEnv;
 }): Promise<string | null> {
   const platform = deps?.platform ?? process.platform;
@@ -62,9 +62,7 @@ async function collectMacStaleOpenClawUpdateLaunchdJobsWarning(deps?: {
     return null;
   }
   const scanEnv = deps?.env ?? process.env;
-  const jobs = await (deps?.findJobs ?? findStaleOpenClawUpdateLaunchdJobs)(scanEnv).catch(
-    () => [],
-  );
+  const jobs = await (deps?.findJobs ?? findStaleNovaUpdateLaunchdJobs)(scanEnv).catch(() => []);
   if (jobs.length === 0) {
     return null;
   }
@@ -79,14 +77,14 @@ async function collectMacStaleOpenClawUpdateLaunchdJobsWarning(deps?: {
     }),
     "- Fix after confirming no update is running:",
     "  launchctl remove <label>",
-    `  ${formatCliCommand("openclaw gateway restart")}`,
+    `  ${formatCliCommand("nova gateway restart")}`,
   ].join("\n");
 }
 
 /** Emits stale updater launchd job notes using the gateway service environment when available. */
-export async function noteMacStaleOpenClawUpdateLaunchdJobs(deps?: {
+export async function noteMacStaleNovaUpdateLaunchdJobs(deps?: {
   platform?: NodeJS.Platform;
-  findJobs?: typeof findStaleOpenClawUpdateLaunchdJobs;
+  findJobs?: typeof findStaleNovaUpdateLaunchdJobs;
   env?: NodeJS.ProcessEnv;
   service?: Pick<GatewayService, "readCommand">;
   noteFn?: typeof note;
@@ -94,7 +92,7 @@ export async function noteMacStaleOpenClawUpdateLaunchdJobs(deps?: {
   const platform = deps?.platform ?? process.platform;
   const serviceEnv =
     platform === "darwin" ? await resolveGatewayServiceEnvForPlatformNotes(deps) : deps?.env;
-  const warning = await collectMacStaleOpenClawUpdateLaunchdJobsWarning({
+  const warning = await collectMacStaleNovaUpdateLaunchdJobsWarning({
     env: serviceEnv,
     findJobs: deps?.findJobs,
     platform,
@@ -117,7 +115,7 @@ async function launchctlGetenv(name: string): Promise<string | undefined> {
   }
 }
 
-function hasConfigGatewayCreds(cfg: OpenClawConfig): boolean {
+function hasConfigGatewayCreds(cfg: NovaConfig): boolean {
   const localPassword = cfg.gateway?.auth?.password;
   const remoteToken = cfg.gateway?.remote?.token;
   const remotePassword = cfg.gateway?.remote?.password;
@@ -131,7 +129,7 @@ function hasConfigGatewayCreds(cfg: OpenClawConfig): boolean {
 
 /** Returns a warning for host-wide launchctl gateway auth env overrides. */
 async function collectMacLaunchctlGatewayEnvOverrideWarning(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: {
     platform?: NodeJS.Platform;
     getenv?: (name: string) => Promise<string | undefined>;
@@ -179,7 +177,7 @@ async function collectMacLaunchctlGatewayEnvOverrideWarning(
 
 /** Emits macOS launchctl gateway auth override warnings. */
 export async function noteMacLaunchctlGatewayEnvOverrides(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: {
     platform?: NodeJS.Platform;
     getenv?: (name: string) => Promise<string | undefined>;
@@ -209,12 +207,12 @@ async function resolveGatewayServiceEnvForPlatformNotes(deps?: {
 
 /** Collects all macOS gateway platform warnings without emitting notes. */
 export async function collectMacGatewayPlatformWarnings(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: {
     platform?: NodeJS.Platform;
     env?: NodeJS.ProcessEnv;
     service?: Pick<GatewayService, "readCommand">;
-    findJobs?: typeof findStaleOpenClawUpdateLaunchdJobs;
+    findJobs?: typeof findStaleNovaUpdateLaunchdJobs;
   },
 ): Promise<readonly string[]> {
   const platform = deps?.platform ?? process.platform;
@@ -225,7 +223,7 @@ export async function collectMacGatewayPlatformWarnings(
   }
   const serviceEnv =
     platform === "darwin" ? await resolveGatewayServiceEnvForPlatformNotes(deps) : deps?.env;
-  const staleUpdateWarning = await collectMacStaleOpenClawUpdateLaunchdJobsWarning({
+  const staleUpdateWarning = await collectMacStaleNovaUpdateLaunchdJobsWarning({
     env: serviceEnv,
     findJobs: deps?.findJobs,
     platform,
@@ -310,8 +308,8 @@ export function noteStartupOptimizationHints(
 
   const suggestions = [
     "- Suggested env for low-power hosts:",
-    "  export NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache",
-    "  mkdir -p /var/tmp/openclaw-compile-cache",
+    "  export NODE_COMPILE_CACHE=/var/tmp/nova-compile-cache",
+    "  mkdir -p /var/tmp/nova-compile-cache",
     "  export NOVA_NO_RESPAWN=1",
     isTruthyEnvValue(disableCompileCache) ? "  unset NODE_DISABLE_COMPILE_CACHE" : undefined,
   ].filter((line): line is string => Boolean(line));

@@ -4,10 +4,10 @@ import { isRecord as isObjectRecord } from "@nova/normalization-core/record-coer
 import JSON5 from "json5";
 import { getCommandPathWithRootOptions } from "../cli/argv.js";
 import { resolveConfigPath } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 // Lightweight logging-config reader used before the full config runtime is safe to load.
-type LoggingConfig = OpenClawConfig["logging"];
+type LoggingConfig = NovaConfig["logging"];
 
 let cachedLoggingConfig:
   | {

@@ -11,9 +11,7 @@ type MediaStoreTestApi = {
 };
 
 function getTestApi(): MediaStoreTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.mediaStoreTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.mediaStoreTestApi")];
   if (!api) {
     throw new Error("media store test API is unavailable");
   }

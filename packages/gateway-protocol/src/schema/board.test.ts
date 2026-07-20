@@ -25,7 +25,7 @@ describe("BoardSnapshotSchema", () => {
           grantState: "none",
           revision: 1,
           declaredSummary: ["Network access: https://example.com"],
-          frameUrl: "/__openclaw__/board/agent%3Amain%3Amain/status/index.html?bt=ticket",
+          frameUrl: "/__nova__/board/agent%3Amain%3Amain/status/index.html?bt=ticket",
         },
       ],
     };

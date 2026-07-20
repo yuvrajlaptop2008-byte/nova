@@ -4,8 +4,8 @@
 import {
   applyAgentDefaultModelPrimary,
   applyProviderConfigWithModelCatalogPreset,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/provider-onboard";
+  type NovaConfig,
+} from "nova/plugin-sdk/provider-onboard";
 import {
   CHUTES_BASE_URL,
   CHUTES_DEFAULT_MODEL_REF,
@@ -19,7 +19,7 @@ export { CHUTES_DEFAULT_MODEL_REF };
  * Apply Chutes provider configuration without changing the default model.
  * Registers all catalog models and convenience aliases.
  */
-export function applyChutesProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function applyChutesProviderConfig(cfg: NovaConfig): NovaConfig {
   return applyProviderConfigWithModelCatalogPreset(cfg, {
     providerId: "chutes",
     api: "openai-completions",
@@ -39,7 +39,7 @@ export function applyChutesProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
 /**
  * Apply Chutes provider configuration AND set Chutes as the default model.
  */
-export function applyChutesConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function applyChutesConfig(cfg: NovaConfig): NovaConfig {
   const next = applyChutesProviderConfig(cfg);
   return {
     ...next,
@@ -61,6 +61,6 @@ export function applyChutesConfig(cfg: OpenClawConfig): OpenClawConfig {
 }
 
 /** Applies Chutes provider config and sets the default model for API-key auth. */
-export function applyChutesApiKeyConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function applyChutesApiKeyConfig(cfg: NovaConfig): NovaConfig {
   return applyAgentDefaultModelPrimary(applyChutesProviderConfig(cfg), CHUTES_DEFAULT_MODEL_REF);
 }

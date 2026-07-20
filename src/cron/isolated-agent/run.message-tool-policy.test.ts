@@ -1342,7 +1342,7 @@ describe("runCronIsolatedAgentTurn message tool policy", () => {
       makeMessageToolRunResult([
         {
           tool: "message",
-          provider: "openclaw-weixin",
+          provider: "nova-weixin",
           to: "user-123",
           text: "386502",
         },
@@ -1367,7 +1367,7 @@ describe("runCronIsolatedAgentTurn message tool policy", () => {
             verifiedTarget: false,
             target: {
               tool: "message",
-              provider: "openclaw-weixin",
+              provider: "nova-weixin",
               to: "user-123",
               text: "386502",
             },
@@ -1902,7 +1902,7 @@ describe("runCronIsolatedAgentTurn delivery instruction", () => {
   });
 
   it("does not instruct the agent to summarize when delivery is requested", async () => {
-    // Regression for https://github.com/openclaw/openclaw/issues/58535:
+    // Regression for https://github.com/nova/nova/issues/58535:
     // "summary" caused LLMs to condense structured output and drop fields
     // non-deterministically on every run.
     mockRunCronFallbackPassthrough();
@@ -1921,7 +1921,7 @@ describe("runCronIsolatedAgentTurn delivery instruction", () => {
   });
 
   it("keeps a successful isolated turn at status ok when post-run delivery fails", async () => {
-    // Regression for https://github.com/openclaw/openclaw/issues/94058:
+    // Regression for https://github.com/nova/nova/issues/94058:
     // a successful isolated session followed by a delivery-dispatch failure
     // must not collapse the execution status into `error`. Delivery failure is
     // recorded separately so the outer scheduled run keeps `status=ok` while

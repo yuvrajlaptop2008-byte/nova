@@ -4,17 +4,17 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   AgentHarnessSessionSupersededError,
   embeddedAgentLog,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   ensureAuthProfileStore,
   resolveDefaultAgentDir,
   resolveProviderIdForAuth,
   resolveSessionAgentIds,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { getSessionEntry, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { PluginStateSyncKeyedStore } from "nova/plugin-sdk/plugin-state-runtime";
+import { getSessionEntry, resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
 import { z } from "zod";
 import {
   CODEX_PLUGINS_MARKETPLACE_NAME,
@@ -62,7 +62,7 @@ export function sessionBindingIdentity(params: {
   sessionId: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Extract<CodexAppServerBindingIdentity, { kind: "session" }> {
   const { sessionAgentId } = resolveSessionAgentIds(params);
   const sessionKey = params.sessionKey?.trim();
@@ -534,7 +534,7 @@ export type CodexAppServerBindingStore = {
 export async function reclaimCurrentCodexSessionGeneration(params: {
   bindingStore: CodexAppServerBindingStore;
   identity: Extract<CodexAppServerBindingIdentity, { kind: "session" }>;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<boolean> {
   const sessionKey = params.identity.sessionKey?.trim();
   if (!sessionKey) {

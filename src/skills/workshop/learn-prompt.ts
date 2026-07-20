@@ -25,11 +25,11 @@ export function buildLearnPrompt(request: string): string {
     "Follow these Nova skill-authoring standards:",
     "- Choose a lowercase-hyphenated `name` using only lowercase letters, digits, and hyphens. It must match the intended skill directory name.",
     "- Set `description` to ONE short generic trigger phrase in double quotes: say what the skill does and when to use it; do not use marketing words or restate the skill name.",
-    "- Include optional `metadata.openclaw` fields such as `emoji` or `requires.bins` only when the gathered sources prove they are true and useful.",
+    "- Include optional `metadata.nova` fields such as `emoji` or `requires.bins` only when the gathered sources prove they are true and useful.",
     "- Write a tight operational body, about 100-200 lines, with clear steps and the exact commands and paths supported by the sources.",
     "- NEVER invent flags, commands, paths, APIs, or tool behavior. Omit or clearly qualify anything the sources do not establish.",
     "- Use relative references for proposal support files.",
     "",
-    "After the tool call, tell the user the proposal id, the skill name, and that it is pending review. Say that an operator can apply it through the Skill Workshop approval flow or with `openclaw skills workshop`.",
+    "After the tool call, tell the user the proposal id, the skill name, and that it is pending review. Say that an operator can apply it through the Skill Workshop approval flow or with `nova skills workshop`.",
   ].join("\n");
 }

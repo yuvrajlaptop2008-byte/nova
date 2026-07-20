@@ -73,8 +73,8 @@ describe("test-shell-completion script", () => {
   });
 
   it("uses --shell for check-only status instead of the detected shell", async () => {
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-shell-home-"));
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-shell-state-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-shell-home-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-shell-state-"));
     tempDirs.push(homeDir, stateDir);
 
     const result = spawnSync(

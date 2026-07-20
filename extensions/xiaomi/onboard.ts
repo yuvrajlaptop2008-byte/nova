@@ -1,8 +1,8 @@
 // Xiaomi setup module handles plugin onboarding behavior.
 import {
   createDefaultModelsPresetAppliers,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/provider-onboard";
+  type NovaConfig,
+} from "nova/plugin-sdk/provider-onboard";
 import {
   buildXiaomiProvider,
   buildXiaomiTokenPlanProvider,
@@ -19,7 +19,7 @@ export const XIAOMI_TOKEN_PLAN_DEFAULT_MODEL_REF = `${XIAOMI_TOKEN_PLAN_PROVIDER
 
 const xiaomiPresetAppliers = createDefaultModelsPresetAppliers({
   primaryModelRef: XIAOMI_DEFAULT_MODEL_REF,
-  resolveParams: (_cfg: OpenClawConfig) => {
+  resolveParams: (_cfg: NovaConfig) => {
     const defaultProvider = buildXiaomiProvider();
     return {
       providerId: XIAOMI_PROVIDER_ID,
@@ -34,7 +34,7 @@ const xiaomiPresetAppliers = createDefaultModelsPresetAppliers({
 
 const xiaomiTokenPlanPresetAppliers = createDefaultModelsPresetAppliers({
   primaryModelRef: XIAOMI_TOKEN_PLAN_DEFAULT_MODEL_REF,
-  resolveParams: (_cfg: OpenClawConfig) => {
+  resolveParams: (_cfg: NovaConfig) => {
     const defaultProvider = buildXiaomiTokenPlanProvider();
     return {
       providerId: XIAOMI_TOKEN_PLAN_PROVIDER_ID,
@@ -57,11 +57,7 @@ const xiaomiTokenPlanPresetAppliers = createDefaultModelsPresetAppliers({
   },
 });
 
-function withProviderBaseUrl(
-  cfg: OpenClawConfig,
-  providerId: string,
-  baseUrl: string,
-): OpenClawConfig {
+function withProviderBaseUrl(cfg: NovaConfig, providerId: string, baseUrl: string): NovaConfig {
   const providers: Record<string, unknown> = {
     ...cfg.models?.providers,
     [providerId]: {
@@ -75,21 +71,21 @@ function withProviderBaseUrl(
       ...cfg.models,
       providers,
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
-export function applyXiaomiProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function applyXiaomiProviderConfig(cfg: NovaConfig): NovaConfig {
   return xiaomiPresetAppliers.applyProviderConfig(cfg);
 }
 
-export function applyXiaomiConfig(cfg: OpenClawConfig): OpenClawConfig {
+export function applyXiaomiConfig(cfg: NovaConfig): NovaConfig {
   return xiaomiPresetAppliers.applyConfig(cfg);
 }
 
 export function applyXiaomiTokenPlanConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   region: XiaomiTokenPlanRegion,
-): OpenClawConfig {
+): NovaConfig {
   return withProviderBaseUrl(
     xiaomiTokenPlanPresetAppliers.applyConfig(cfg),
     XIAOMI_TOKEN_PLAN_PROVIDER_ID,

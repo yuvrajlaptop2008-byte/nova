@@ -2,7 +2,7 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { withTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome } from "nova/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 
 function runSourceCli(tempHome: string, args: string[], envOverrides: NodeJS.ProcessEnv = {}) {
@@ -53,7 +53,7 @@ describe("cli json stdout contract", () => {
         expect(stdout).not.toContain("Doctor changes");
         expect(stdout).not.toContain("Config invalid");
       },
-      { prefix: "openclaw-json-e2e-" },
+      { prefix: "nova-json-e2e-" },
     );
   });
 
@@ -72,14 +72,14 @@ describe("cli json stdout contract", () => {
         expect(result.stdout).not.toContain("possibly sensitive key found");
         expect(result.stderr).not.toContain("possibly sensitive key found");
       },
-      { prefix: "openclaw-config-schema-json-e2e-" },
+      { prefix: "nova-config-schema-json-e2e-" },
     );
   });
 
   it("keeps `config validate --json` stdout parseable at debug log level", async () => {
     await withTempHome(
       async (tempHome) => {
-        const configPath = path.join(tempHome, "openclaw.json");
+        const configPath = path.join(tempHome, "nova.json");
         await fs.writeFile(configPath, "{}", "utf8");
         const result = runSourceCli(tempHome, ["config", "validate", "--json"], {
           NOVA_CONFIG_PATH: configPath,
@@ -93,7 +93,7 @@ describe("cli json stdout contract", () => {
         });
         expect(result.stdout).not.toContain("possibly sensitive key found");
       },
-      { prefix: "openclaw-config-validate-json-e2e-" },
+      { prefix: "nova-config-validate-json-e2e-" },
     );
   });
 });

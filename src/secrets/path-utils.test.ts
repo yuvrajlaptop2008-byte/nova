@@ -1,6 +1,6 @@
 /** Tests dotted-path get/set/delete helpers used by secrets migration. */
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import {
   deletePathStrict,
   getPath,
@@ -8,11 +8,11 @@ import {
   setPathExistingStrict,
 } from "./path-utils.js";
 
-function asConfig(value: unknown): OpenClawConfig {
-  return value as OpenClawConfig;
+function asConfig(value: unknown): NovaConfig {
+  return value as NovaConfig;
 }
 
-function createAgentListConfig(): OpenClawConfig {
+function createAgentListConfig(): NovaConfig {
   return asConfig({
     agents: {
       list: [{ id: "a" }],
@@ -21,7 +21,7 @@ function createAgentListConfig(): OpenClawConfig {
 }
 
 const BLOCKED_PATH_SEGMENTS = ["__proto__", "constructor", "prototype"];
-const POLLUTION_PROBE = "openclawPathPollutionProbe";
+const POLLUTION_PROBE = "novaPathPollutionProbe";
 
 describe("secrets path utils", () => {
   it("deletePathStrict compacts arrays via splice", () => {

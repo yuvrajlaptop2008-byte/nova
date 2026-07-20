@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type {
   ProviderModelRouteCandidate,
   ProviderModelRouteResolution,
@@ -16,7 +16,7 @@ const platformRoute = {
   baseUrl: "https://api.openai.com/v1",
   authRequirement: "api-key",
   requestTransportOverrides: "none",
-  runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+  runtimePolicy: { compatibleIds: ["nova", "codex"] },
 } satisfies ProviderModelRouteCandidate;
 
 const subscriptionRoute = {
@@ -24,7 +24,7 @@ const subscriptionRoute = {
   baseUrl: "https://chatgpt.com/backend-api/codex",
   authRequirement: "subscription",
   requestTransportOverrides: "none",
-  runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+  runtimePolicy: { compatibleIds: ["nova", "codex"] },
 } satisfies ProviderModelRouteCandidate;
 
 const dualRoutes = {
@@ -49,7 +49,7 @@ function authStore(
 }
 
 function evaluate(params: {
-  cfg?: OpenClawConfig | Record<string, unknown>;
+  cfg?: NovaConfig | Record<string, unknown>;
   env?: NodeJS.ProcessEnv;
   ref?: ModelAuthAvailabilityRef;
   resolution?: ProviderModelRouteResolution | null;
@@ -57,7 +57,7 @@ function evaluate(params: {
   syntheticAuthProviderRefs?: readonly string[];
 }) {
   return createModelAuthAvailabilityResolver({
-    cfg: (params.cfg ?? {}) as OpenClawConfig,
+    cfg: (params.cfg ?? {}) as NovaConfig,
     authStore: params.store ?? authStore(),
     env: params.env ?? {},
     routeResolverFactory: routeResolverFactory(params.resolution ?? dualRoutes),
@@ -190,7 +190,7 @@ describe("createModelAuthAvailabilityResolver", () => {
       baseUrl: "https://openai-compatible.example/v1",
     } satisfies ProviderModelRouteCandidate;
     const result = evaluate({
-      resolution: { kind: "routes", defaultRuntimeId: "openclaw", routes: [customRoute] },
+      resolution: { kind: "routes", defaultRuntimeId: "nova", routes: [customRoute] },
       store: authStore({
         "openai:chatgpt": {
           type: "oauth",
@@ -229,7 +229,7 @@ describe("createModelAuthAvailabilityResolver", () => {
       const result = evaluate({
         cfg: {
           models: { providers: { openai: { auth, baseUrl: "", models: [] } } },
-        } as OpenClawConfig,
+        } as NovaConfig,
         store: authStore({ "openai:wrong-route": profile }),
       });
 
@@ -250,7 +250,7 @@ describe("createModelAuthAvailabilityResolver", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       evaluate({
@@ -290,7 +290,7 @@ describe("createModelAuthAvailabilityResolver", () => {
               openai: { apiKey: "openai:bound", baseUrl: "", models: [] },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         store: authStore({
           "openai:bound": {
             type: "api_key",
@@ -319,7 +319,7 @@ describe("createModelAuthAvailabilityResolver", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       evaluate({
@@ -468,7 +468,7 @@ describe("createModelAuthAvailabilityResolver", () => {
               openai: { apiKey: "configured-platform-key", baseUrl: "", models: [] },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         env: { OPENAI_API_KEY: "environment-key" },
       }),
     ).toMatchObject({
@@ -492,7 +492,7 @@ describe("createModelAuthAvailabilityResolver", () => {
       label: "OAuth environment after unavailable Platform auth",
       cfg: {
         models: { providers: { openai: { auth: "oauth", baseUrl: "", models: [] } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       env: { OPENAI_API_KEY: "environment-token" },
       profileId: "openai:platform-missing",
       profile: { type: "api_key" as const, provider: "openai", key: "" },
@@ -542,7 +542,7 @@ describe("createModelAuthAvailabilityResolver", () => {
             refresh: "",
             expires: 0,
             oauthRef: {
-              source: "openclaw-credentials",
+              source: "nova-credentials",
               provider: "openai-codex",
               id: "00000000000000000000000000000000",
             },
@@ -673,22 +673,22 @@ describe("createModelAuthAvailabilityResolver", () => {
   });
 
   it("does not let Codex synthetic auth own an Nova-only route", () => {
-    const openClawOnlyRoute = {
+    const novaOnlyRoute = {
       ...platformRoute,
-      runtimePolicy: { compatibleIds: ["openclaw"] },
+      runtimePolicy: { compatibleIds: ["nova"] },
     } satisfies ProviderModelRouteCandidate;
     expect(
       evaluate({
         resolution: {
           kind: "routes",
-          defaultRuntimeId: "openclaw",
-          routes: [openClawOnlyRoute],
+          defaultRuntimeId: "nova",
+          routes: [novaOnlyRoute],
         },
         syntheticAuthProviderRefs: ["codex"],
       }),
     ).toMatchObject({
       availability: false,
-      selectedRoute: openClawOnlyRoute,
+      selectedRoute: novaOnlyRoute,
     });
   });
 
@@ -706,7 +706,7 @@ describe("createModelAuthAvailabilityResolver", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     },
     { label: "implicit", cfg: {} },
   ])("keeps an $label Bedrock AWS SDK route ready", ({ cfg }) => {

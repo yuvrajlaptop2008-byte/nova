@@ -110,7 +110,7 @@ export async function prepareCandidate(params: {
 }
 
 export function resolvePackageCandidatePackCommand(sourceDir: string, packDir: string) {
-  const packageHelper = join(sourceDir, "scripts", "package-openclaw-for-docker.mjs");
+  const packageHelper = join(sourceDir, "scripts", "package-nova-for-docker.mjs");
   if (existsSync(packageHelper)) {
     return {
       args: [packageHelper, "--skip-build", "--output-dir", packDir],
@@ -141,7 +141,7 @@ function resolvePackedCandidateFromOutput(params: {
     const packedTarball = resolvePackDestinationTarball(
       packOutputLines.at(-1),
       params.packDir,
-      "package-openclaw-for-docker",
+      "package-nova-for-docker",
     );
     return {
       fileName: packedTarball.fileName,
@@ -582,7 +582,7 @@ export function shouldRunWindowsInstalledBrowserOverrideImportSmoke(platform = p
 }
 
 export function buildInstalledBrowserOverrideImportProbeScript(
-  runtimeModuleSpecifier = "openclaw/plugin-sdk/plugin-runtime",
+  runtimeModuleSpecifier = "nova/plugin-sdk/plugin-runtime",
 ) {
   return `
 import { existsSync } from "node:fs";
@@ -824,12 +824,12 @@ export function resolveInstalledPackageRootFromCliPath(
 
 function installedPackageRoot(prefixDir: string, platform = process.platform) {
   return platform === "win32"
-    ? join(prefixDir, "node_modules", "openclaw")
-    : join(prefixDir, "lib", "node_modules", "openclaw");
+    ? join(prefixDir, "node_modules", "nova")
+    : join(prefixDir, "lib", "node_modules", "nova");
 }
 
 export function installedEntryPath(prefixDir: string) {
-  return join(installedPackageRoot(prefixDir), "openclaw.mjs");
+  return join(installedPackageRoot(prefixDir), "nova.mjs");
 }
 
 function npmShimPath(prefixDir: string) {

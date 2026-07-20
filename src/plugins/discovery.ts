@@ -24,7 +24,7 @@ import {
   loadPluginManifest,
   type PluginManifest,
   resolvePackageExtensionEntries,
-  type OpenClawPackageManifest,
+  type NovaPackageManifest,
   type PackageExtensionResolution,
   type PackageManifest,
 } from "./manifest.js";
@@ -76,7 +76,7 @@ export type PluginCandidate = {
   packageVersion?: string;
   packageDescription?: string;
   packageDir?: string;
-  packageManifest?: OpenClawPackageManifest;
+  packageManifest?: NovaPackageManifest;
   packageDependencies?: PluginDependencySpecMap;
   packageOptionalDependencies?: PluginDependencySpecMap;
   bundledManifestId?: string;
@@ -701,7 +701,7 @@ function pushInvalidPackageExtensionDiagnostic(params: {
     params.diagnostics.push({
       level: "error",
       source: params.source,
-      message: "package.json openclaw.extensions is empty",
+      message: "package.json nova.extensions is empty",
     });
     return true;
   }
@@ -779,7 +779,7 @@ function addCandidate(params: {
     setupSource: params.setupSource,
     rootDir: resolvedRoot,
     origin: params.origin,
-    format: params.format ?? "openclaw",
+    format: params.format ?? "nova",
     bundleFormat: params.bundleFormat,
     workspaceDir: params.workspaceDir,
     packageName: normalizeOptionalString(manifest?.name),
@@ -872,7 +872,7 @@ function addLegacyNpmDeclarationDiagnostic(params: {
     level: "warn",
     pluginId: declaration.pluginId,
     source: declaration.source,
-    message: `legacy npm plugin declaration ignored for "${declaration.pluginId}"; run "openclaw doctor --fix" to install ${declaration.npmSpec} into the managed plugin root`,
+    message: `legacy npm plugin declaration ignored for "${declaration.pluginId}"; run "nova doctor --fix" to install ${declaration.npmSpec} into the managed plugin root`,
   });
   return true;
 }
@@ -1163,7 +1163,7 @@ function hasDiscoverablePluginTree(pluginsDir: string): boolean {
       const pluginDir = path.join(pluginsDir, entry.name);
       return (
         fs.existsSync(path.join(pluginDir, "package.json")) ||
-        fs.existsSync(path.join(pluginDir, "openclaw.plugin.json"))
+        fs.existsSync(path.join(pluginDir, "nova.plugin.json"))
       );
     });
   } catch {
@@ -1507,7 +1507,7 @@ export function discoverConfiguredPluginLoadPaths(params: {
   return result;
 }
 
-export function discoverOpenClawPlugins(params: {
+export function discoverNovaPlugins(params: {
   workspaceDir?: string;
   extraPaths?: string[];
   installRecords?: Record<string, PluginInstallRecord>;

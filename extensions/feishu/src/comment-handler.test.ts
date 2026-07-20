@@ -31,8 +31,8 @@ vi.mock("./drive.js", () => ({
   deliverCommentThreadText: deliverCommentThreadTextMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/reply-runtime", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("openclaw/plugin-sdk/reply-runtime")>()),
+vi.mock("nova/plugin-sdk/reply-runtime", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("nova/plugin-sdk/reply-runtime")>()),
   dispatchInboundMessage: dispatchInboundMessageMock,
 }));
 
@@ -470,7 +470,7 @@ describe("handleFeishuCommentEvent", () => {
         "",
         "Ask the bot owner to approve with:",
         "```",
-        "openclaw pairing approve feishu TESTCODE",
+        "nova pairing approve feishu TESTCODE",
         "```",
       ].join("\n"),
       is_whole_comment: false,

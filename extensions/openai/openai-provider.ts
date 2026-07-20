@@ -2,14 +2,14 @@
 import type {
   ProviderResolveDynamicModelContext,
   ProviderRuntimeModel,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
+} from "nova/plugin-sdk/plugin-entry";
+import { createProviderApiKeyAuthMethod } from "nova/plugin-sdk/provider-auth-api-key";
 import {
   buildLiveModelProviderConfig,
   getCachedLiveProviderModelRows,
   type LiveModelCatalogFetchGuard,
-} from "openclaw/plugin-sdk/provider-catalog-live-runtime";
-import { buildManifestModelProviderConfig } from "openclaw/plugin-sdk/provider-catalog-shared";
+} from "nova/plugin-sdk/provider-catalog-live-runtime";
+import { buildManifestModelProviderConfig } from "nova/plugin-sdk/provider-catalog-shared";
 import {
   DEFAULT_CONTEXT_TOKENS,
   normalizeModelCompat,
@@ -17,11 +17,11 @@ import {
   type ModelDefinitionConfig,
   type ModelProviderConfig,
   type ProviderPlugin,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { OPENAI_ACCOUNT_WIZARD_GROUP, OPENAI_API_KEY_LABEL } from "./auth-choice-copy.js";
 import {
   OPENAI_CODEX_RESPONSES_BASE_URL,
@@ -53,11 +53,11 @@ import {
   isOpenAISubscriptionOnlyRouteModelId,
   normalizeOpenAIModelRouteId,
 } from "./model-route-contract.js";
+import manifest from "./nova.plugin.json" with { type: "json" };
 import {
   buildOpenAIChatGPTAuthMethods,
   buildOpenAICodexProviderHooks,
 } from "./openai-chatgpt-provider.js";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
 import {
   buildOpenAIResponsesProviderHooks,
   buildOpenAISyntheticCatalogEntry,
@@ -701,7 +701,7 @@ function buildOpenAIUnknownModelHint(modelId: string): string | undefined {
   if (normalized !== OPENAI_GPT_53_CODEX_SPARK_MODEL_ID) {
     return undefined;
   }
-  return "gpt-5.3-codex-spark is available only through ChatGPT/Codex OAuth. Run `openclaw models auth login --provider openai` and use openai/gpt-5.3-codex-spark with that OAuth profile; OpenAI API-key auth cannot use this model.";
+  return "gpt-5.3-codex-spark is available only through ChatGPT/Codex OAuth. Run `nova models auth login --provider openai` and use openai/gpt-5.3-codex-spark with that OAuth profile; OpenAI API-key auth cannot use this model.";
 }
 
 function resolveOpenAIGptForwardCompatModel(ctx: ProviderResolveDynamicModelContext) {
@@ -884,7 +884,7 @@ export function buildOpenAIProvider(): ProviderPlugin {
         const auth = ctx.resolveProviderAuth(PROVIDER_ID);
         try {
           const { resolveApiKeyForProvider, resolveProviderAuthProfileMetadata } =
-            await import("openclaw/plugin-sdk/provider-auth-runtime");
+            await import("nova/plugin-sdk/provider-auth-runtime");
           const runtimeAuth = await resolveApiKeyForProvider({
             provider: PROVIDER_ID,
             cfg: ctx.config,

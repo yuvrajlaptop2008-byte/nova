@@ -1,10 +1,10 @@
 // Covers loader precedence between a plugin's flat project dir and newer
-// `__openclaw-generation__` dirs when reconciling persisted install records.
+// `__nova-generation__` dirs when reconciling persisted install records.
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import {
   resolvePluginNpmGenerationProjectDir,
   resolvePluginNpmProjectDir,
@@ -26,7 +26,7 @@ const PLUGIN_ID = "discord";
 const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
 function makeStateDir(): string {
-  return tempDirs.make("openclaw-plugin-generation-precedence-");
+  return tempDirs.make("nova-plugin-generation-precedence-");
 }
 
 function expectRecordFields(record: unknown, expected: Record<string, unknown>) {
@@ -40,7 +40,7 @@ function expectRecordFields(record: unknown, expected: Record<string, unknown>) 
   return actual;
 }
 
-/** Writes a managed plugin version into an `__openclaw-generation__` dir. */
+/** Writes a managed plugin version into an `__nova-generation__` dir. */
 function writeManagedGeneration(params: {
   stateDir: string;
   version: string;
@@ -95,7 +95,7 @@ function setInstallTimestamp(packageDir: string, timestampMs: number): void {
 
 afterEach(() => {
   vi.restoreAllMocks();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   clearLoadInstalledPluginIndexInstallRecordsCache();
 });
 
@@ -243,7 +243,7 @@ describe("managed npm generation-dir loader precedence", () => {
       expect.stringContaining("without an authoritative active path"),
       expect.objectContaining({
         code: "NOVA_PLUGIN_INSTALL_RECOVERY_FALLBACK",
-        type: "OpenClawPluginRecoveryWarning",
+        type: "NovaPluginRecoveryWarning",
       }),
     );
   });
@@ -366,7 +366,7 @@ describe("managed npm generation-dir loader precedence", () => {
     // A managed generation with a higher version exists on disk...
     writeManagedGeneration({ stateDir, version: "2.0.0", generationKey: "discord-managed" });
     // ...but the persisted record points at a custom install outside the npm root.
-    const customInstallPath = path.join(stateDir, "custom", "node_modules", "@openclaw", "discord");
+    const customInstallPath = path.join(stateDir, "custom", "node_modules", "@nova", "discord");
 
     await writePersistedInstalledPluginIndexInstallRecords(
       {

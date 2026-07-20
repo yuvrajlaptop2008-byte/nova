@@ -25,13 +25,11 @@ type TestRunnerInternals = {
   workerState: { evaluatedModules: unknown };
 };
 
-const SHARED_TEST_SETUP = Symbol.for("openclaw.sharedTestSetup");
-const EMBEDDED_RUN_STATE = Symbol.for("openclaw.embeddedRunState");
-const REPLY_RUN_REGISTRY = Symbol.for("openclaw.replyRunRegistry");
-const DIAGNOSTIC_EVENTS_STATE = Symbol.for("openclaw.diagnosticEvents.state.v1");
-const DIAGNOSTIC_EVENT_LISTENER_PRESENCE = Symbol.for(
-  "openclaw.diagnosticEventListenerPresence.v1",
-);
+const SHARED_TEST_SETUP = Symbol.for("nova.sharedTestSetup");
+const EMBEDDED_RUN_STATE = Symbol.for("nova.embeddedRunState");
+const REPLY_RUN_REGISTRY = Symbol.for("nova.replyRunRegistry");
+const DIAGNOSTIC_EVENTS_STATE = Symbol.for("nova.diagnosticEvents.state.v1");
+const DIAGNOSTIC_EVENT_LISTENER_PRESENCE = Symbol.for("nova.diagnosticEventListenerPresence.v1");
 const nativeTimerGlobals = {
   setTimeout: globalThis.setTimeout,
   clearTimeout: globalThis.clearTimeout,
@@ -163,7 +161,7 @@ function runCleanupActions(actions: CleanupAction[]): unknown {
   return firstError;
 }
 
-function resetOpenClawGlobalRunState(): void {
+function resetNovaGlobalRunState(): void {
   const cleanupActions: CleanupAction[] = [];
   const globalStore = globalThis as Record<PropertyKey, unknown>;
   const embeddedRunState = globalStore[EMBEDDED_RUN_STATE] as EmbeddedRunStateForTest | undefined;
@@ -224,7 +222,7 @@ function resetOpenClawGlobalRunState(): void {
   replyRunState?.waitersByKey?.clear();
 }
 
-function resetOpenClawGlobalDiagnosticState(): void {
+function resetNovaGlobalDiagnosticState(): void {
   const globalStore = globalThis as Record<PropertyKey, unknown>;
   const state = globalStore[DIAGNOSTIC_EVENTS_STATE] as DiagnosticEventsStateForTest | undefined;
   // The dispatcher intentionally survives module reloads. Mirror isolate mode
@@ -247,7 +245,7 @@ function resetOpenClawGlobalDiagnosticState(): void {
   }
 }
 
-const SERIALIZED_RESOLVE_MOCKS = Symbol.for("openclaw.serializedResolveMocks");
+const SERIALIZED_RESOLVE_MOCKS = Symbol.for("nova.serializedResolveMocks");
 
 // Vitest's BareModuleMocker.resolveMocks has no in-flight guard: pendingIds is
 // cleared only after all parallel resolveId RPCs settle, and every registration
@@ -305,7 +303,7 @@ export function serializeMockerResolveMocks(
   };
 }
 
-export default class OpenClawNonIsolatedRunner extends TestRunner {
+export default class NovaNonIsolatedRunner extends TestRunner {
   override onCollectStart(file: RunnerTestFile) {
     super.onCollectStart(file);
     const internals = this as unknown as TestRunnerInternals;
@@ -362,8 +360,8 @@ export default class OpenClawNonIsolatedRunner extends TestRunner {
     vi.unstubAllEnvs();
     restoreSharedTestHomeAfterEnvUnstub(testHome);
     vi.clearAllMocks();
-    resetOpenClawGlobalRunState();
-    resetOpenClawGlobalDiagnosticState();
+    resetNovaGlobalRunState();
+    resetNovaGlobalDiagnosticState();
     // Named plugin runtimes intentionally survive duplicate module evaluation in production.
     // Clear their shared slots here so one test file cannot lend a partial runtime to the next.
     clearNamedPluginRuntimeStoresForTest();

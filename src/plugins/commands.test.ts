@@ -130,7 +130,7 @@ beforeEach(() => {
     selection: {
       provider: "openai",
       modelId: "gpt-5.5",
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
     },
     model: {
       provider: "openai",
@@ -158,7 +158,7 @@ beforeEach(() => {
   completionMocks.resolveSimpleCompletionSelectionForAgent.mockReturnValue({
     provider: "openai",
     modelId: "gpt-5.5",
-    agentDir: "/tmp/openclaw-agent",
+    agentDir: "/tmp/nova-agent",
   });
   setActivePluginRegistry(
     createTestRegistry([
@@ -334,7 +334,7 @@ describe("registerPluginCommand", () => {
       expected: {
         ok: false,
         error:
-          "Agent prompt guidance 1 surface 1 must be one of: openclaw_main, pi_main, codex_app_server, cli_backend, acp_backend, subagent",
+          "Agent prompt guidance 1 surface 1 must be one of: nova_main, pi_main, codex_app_server, cli_backend, acp_backend, subagent",
       },
     },
     {
@@ -414,7 +414,7 @@ describe("registerPluginCommand", () => {
         "  Use /demo_cmd everywhere.  ",
         {
           text: "  Use /demo_cmd for main agent routing.  ",
-          surfaces: ["openclaw_main"],
+          surfaces: ["nova_main"],
         },
         {
           text: "Use /demo_cmd for subagents.",
@@ -430,7 +430,7 @@ describe("registerPluginCommand", () => {
       "Use /demo_cmd for main agent routing.",
       "Use /demo_cmd for subagents.",
     ]);
-    expect(listRegisteredPluginAgentPromptGuidance({ surface: "openclaw_main" })).toEqual([
+    expect(listRegisteredPluginAgentPromptGuidance({ surface: "nova_main" })).toEqual([
       "Use /demo_cmd everywhere.",
       "Use /demo_cmd for main agent routing.",
     ]);
@@ -1314,7 +1314,7 @@ describe("registerPluginCommand", () => {
       senderId: "U123",
       isAuthorizedSender: true,
       agentId: "codex",
-      sessionKey: "plugin-binding:openclaw-codex-app-server:dm",
+      sessionKey: "plugin-binding:nova-codex-app-server:dm",
       authProfileId: "openai:owner@example.com",
       commandBody: "/runtimecheck",
       config: {} as never,

@@ -5,25 +5,25 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import {
   resolveSessionTranscriptsDirForAgent,
-  type OpenClawConfig,
+  type NovaConfig,
   type ResolvedMemorySearchConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
-import { statSessionEntrySync } from "openclaw/plugin-sdk/memory-core-host-engine-qmd";
+} from "nova/plugin-sdk/memory-core-host-engine-foundation";
+import { statSessionEntrySync } from "nova/plugin-sdk/memory-core-host-engine-qmd";
 import type {
   MemorySource,
   MemorySyncParams,
   MemorySyncProgressUpdate,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
+} from "nova/plugin-sdk/memory-core-host-engine-storage";
 import {
   clearConfigCache,
   clearRuntimeConfigSnapshot,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
-import { appendSessionTranscriptMessageByIdentity } from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/runtime-config-snapshot";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
+import { appendSessionTranscriptMessageByIdentity } from "nova/plugin-sdk/session-transcript-runtime";
 import {
-  closeOpenClawAgentDatabasesForTest,
+  closeNovaAgentDatabasesForTest,
   formatSqliteSessionFileMarker,
-} from "openclaw/plugin-sdk/sqlite-runtime-testing";
+} from "nova/plugin-sdk/sqlite-runtime-testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryManagerSyncOps } from "./manager-sync-ops.js";
 
@@ -95,9 +95,9 @@ function emitSessionTranscriptUpdate(update: MemorySessionTranscriptUpdate): voi
 }
 
 class SessionStartupCatchupHarness extends MemoryManagerSyncOps {
-  protected readonly cfg = {} as OpenClawConfig;
+  protected readonly cfg = {} as NovaConfig;
   protected readonly agentId = "main";
-  protected readonly workspaceDir = "/tmp/openclaw-test-workspace";
+  protected readonly workspaceDir = "/tmp/nova-test-workspace";
   protected readonly settings = {
     chunking: {
       overlap: 0,
@@ -275,7 +275,7 @@ describe("session startup catch-up", () => {
   let stateDir = "";
 
   beforeEach(async () => {
-    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-session-startup-"));
+    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-session-startup-"));
     setStartupStateDir(stateDir);
     transcriptUpdateListener = undefined;
   });
@@ -287,7 +287,7 @@ describe("session startup catch-up", () => {
     restoreStartupEnv();
     clearRuntimeConfigSnapshot();
     clearConfigCache();
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   });
 
@@ -308,7 +308,7 @@ describe("session startup catch-up", () => {
   }
 
   async function configureTestSessionStore(storePath: string): Promise<void> {
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     await fs.mkdir(path.dirname(storePath), { recursive: true });
     await fs.writeFile(configPath, JSON.stringify({ session: { store: storePath } }), "utf-8");
     setStartupConfigPath(configPath);
@@ -637,7 +637,7 @@ describe("session startup catch-up", () => {
 
   it("keeps targeted SQLite corpus markers during archive-file sync", async () => {
     const storePath = path.join(stateDir, "agents", "main", "sessions", "sessions.json");
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     const sessionId = "sqlite-target";
     const sessionKey = "agent:main:chat:sqlite-target";
     const marker = formatSqliteSessionFileMarker({

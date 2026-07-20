@@ -2,7 +2,7 @@
   "name": "@nova/speech-core",
   "version": "2026.5.31",
   "private": true,
-  "description": "OpenClaw speech runtime package",
+  "description": "Nova speech runtime package",
   "type": "module",
   "main": "./dist/runtime-api.mjs",
   "types": "./dist/runtime-api.d.mts",
@@ -29,6 +29,6 @@
     }
   },
   "dependencies": {
-    "openclaw": "workspace:*"
+    "nova": "workspace:*"
   }
 }

@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { withTempHome } from "../../config/home-env.test-harness.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { expectObjectFields, mockFirstObjectArg } from "../../test-utils/mock-call-assertions.js";
 import { createCommandWorkspaceHarness } from "./commands-filesystem.test-support.js";
 import { handlePluginsCommand } from "./commands-plugins.js";
@@ -62,13 +62,13 @@ vi.mock("../../plugins/install-persistence.js", async (importOriginal) => ({
   persistPluginInstall: persistPluginInstallMock,
 }));
 
-const workspaceHarness = createCommandWorkspaceHarness("openclaw-command-plugins-install-");
+const workspaceHarness = createCommandWorkspaceHarness("nova-command-plugins-install-");
 
 function buildPluginsParams(
   commandBodyNormalized: string,
   workspaceDir: string,
   options: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     gatewayClientScopes?: string[];
     omitGatewayClientScopes?: boolean;
     senderIsOwner?: boolean;
@@ -101,8 +101,8 @@ function expectPersistedInstall(pluginId: string, expectedInstall: Record<string
   expectObjectFields(persisted.snapshot, {
     writeOptions: expect.objectContaining({
       assertConfigPathForWrite: expect.any(Function),
-      expectedConfigPath: expect.stringContaining("openclaw.json"),
-      ownedConfigPathForWrite: expect.stringContaining("openclaw.json"),
+      expectedConfigPath: expect.stringContaining("nova.json"),
+      ownedConfigPathForWrite: expect.stringContaining("nova.json"),
     }),
   });
   expect(writeOptions).not.toHaveProperty("basePluginMetadataSnapshot");
@@ -138,7 +138,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("rejects npm chat installs before package installer side effects", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams("/plugins install @acme/policy-plugin@1.0.0", workspaceDir);
 
@@ -155,7 +155,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("installs an arbitrary npm package after a trailing --force acknowledgement", async () => {
-    const policyConfig: OpenClawConfig = {
+    const policyConfig: NovaConfig = {
       commands: { text: true, plugins: true },
       plugins: { enabled: true },
       security: {
@@ -184,9 +184,9 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async (home) => {
+    await withTempHome("nova-command-plugins-home-", async (home) => {
       await fs.writeFile(
-        path.join(home, ".openclaw", "openclaw.json"),
+        path.join(home, ".nova", "nova.json"),
         `${JSON.stringify(policyConfig, null, 2)}\n`,
       );
       const workspaceDir = await workspaceHarness.createWorkspace();
@@ -218,7 +218,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("allows npm packages matched by the official catalog", async () => {
-    const policyConfig: OpenClawConfig = {
+    const policyConfig: NovaConfig = {
       commands: { text: true, plugins: true },
       plugins: { enabled: true },
       security: {
@@ -247,9 +247,9 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async (home) => {
+    await withTempHome("nova-command-plugins-home-", async (home) => {
       await fs.writeFile(
-        path.join(home, ".openclaw", "openclaw.json"),
+        path.join(home, ".nova", "nova.json"),
         `${JSON.stringify(policyConfig, null, 2)}\n`,
       );
       const workspaceDir = await workspaceHarness.createWorkspace();
@@ -290,7 +290,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams("/plugins install npm:@nova/discord", workspaceDir);
 
@@ -314,7 +314,7 @@ describe("handleCommands /plugins install", () => {
   it("installs bare bundled plugin ids from the bundled source without --force", async () => {
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams("/plugins install discord", workspaceDir);
 
@@ -336,41 +336,41 @@ describe("handleCommands /plugins install", () => {
   it("allows plugin ids matched by the official catalog", async () => {
     installPluginFromNpmSpecMock.mockResolvedValue({
       ok: true,
-      pluginId: "wecom-openclaw-plugin",
-      targetDir: "/tmp/wecom-openclaw-plugin",
+      pluginId: "wecom-nova-plugin",
+      targetDir: "/tmp/wecom-nova-plugin",
       version: "2026.5.7",
       extensions: ["index.js"],
       npmResolution: {
-        name: "@wecom/wecom-openclaw-plugin",
+        name: "@wecom/wecom-nova-plugin",
         version: "2026.5.7",
-        resolvedSpec: "@wecom/wecom-openclaw-plugin@2026.5.7",
+        resolvedSpec: "@wecom/wecom-nova-plugin@2026.5.7",
       },
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
-      const params = buildPluginsParams("/plugins install wecom-openclaw-plugin", workspaceDir);
+      const params = buildPluginsParams("/plugins install wecom-nova-plugin", workspaceDir);
 
       const result = await handlePluginsCommand(params, true);
 
-      expect(result?.reply?.text).toContain('Installed plugin "wecom-openclaw-plugin"');
+      expect(result?.reply?.text).toContain('Installed plugin "wecom-nova-plugin"');
       expectObjectFields(mockFirstObjectArg(installPluginFromNpmSpecMock), {
-        spec: "@wecom/wecom-openclaw-plugin@2026.5.7",
-        expectedPluginId: "wecom-openclaw-plugin",
+        spec: "@wecom/wecom-nova-plugin@2026.5.7",
+        expectedPluginId: "wecom-nova-plugin",
         trustedSourceLinkedOfficialInstall: true,
       });
-      expectPersistedInstall("wecom-openclaw-plugin", {
+      expectPersistedInstall("wecom-nova-plugin", {
         source: "npm",
-        spec: "@wecom/wecom-openclaw-plugin@2026.5.7",
-        installPath: "/tmp/wecom-openclaw-plugin",
+        spec: "@wecom/wecom-nova-plugin@2026.5.7",
+        installPath: "/tmp/wecom-nova-plugin",
         version: "2026.5.7",
       });
     });
   });
 
   it("does not treat an explicit npm package as an official plugin id", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams("/plugins install npm:brave", workspaceDir);
 
@@ -384,7 +384,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("rejects npm-pack chat installs before package installer side effects", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams("/plugins install npm-pack:/tmp/demo.tgz", workspaceDir);
 
@@ -419,7 +419,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const archivePath = "/tmp/packed-demo.tgz";
       const params = buildPluginsParams(
@@ -450,7 +450,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("rejects local path chat installs before package installer side effects", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const pluginDir = path.join(workspaceDir, "fixtures", "path-install-plugin");
       await fs.mkdir(pluginDir, { recursive: true });
@@ -477,7 +477,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const pluginDir = path.join(workspaceDir, "fixtures", "path-install-plugin");
       await fs.mkdir(pluginDir, { recursive: true });
@@ -516,7 +516,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(`/plugins install ${bundledPath}`, workspaceDir);
 
@@ -538,7 +538,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("rejects local archive chat installs before package installer side effects", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const pluginArchive = path.join(workspaceDir, "fixtures", "archive-install-plugin.tgz");
       await fs.mkdir(path.dirname(pluginArchive), { recursive: true });
@@ -566,7 +566,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const pluginArchive = path.join(workspaceDir, "fixtures", "archive-install-plugin.tgz");
       await fs.mkdir(path.dirname(pluginArchive), { recursive: true });
@@ -591,7 +591,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("blocks channel-authorized non-owner plugin installs before installer side effects", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const pluginDir = path.join(workspaceDir, "fixtures", "channel-installed-plugin");
       await fs.mkdir(pluginDir, { recursive: true });
@@ -617,7 +617,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("requires --force for non-ClawHub gateway client installs with operator.admin", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const pluginDir = path.join(workspaceDir, "fixtures", "gateway-admin-plugin");
       await fs.mkdir(pluginDir, { recursive: true });
@@ -650,7 +650,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const pluginDir = path.join(workspaceDir, "fixtures", "gateway-admin-plugin");
       await fs.mkdir(pluginDir, { recursive: true });
@@ -704,7 +704,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
         "/plugins install clawhub:@nova/clawhub-demo@1.2.3",
@@ -779,7 +779,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
         "/plugins install clawhub:@nova/clawhub-demo@1.2.3",
@@ -814,7 +814,7 @@ describe("handleCommands /plugins install", () => {
       warning,
     });
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
         "/plugins install clawhub:@nova/risky-demo@1.2.3 --force",
@@ -829,7 +829,7 @@ describe("handleCommands /plugins install", () => {
       expect(result.reply?.text).toContain("scan=suspicious");
       expect(result.reply?.text).toContain("payload_string");
       expect(result.reply?.text).toContain("--acknowledge-clawhub-risk");
-      expect(result.reply?.text).toContain("local openclaw plugins install command");
+      expect(result.reply?.text).toContain("local nova plugins install command");
       expect(result.reply?.text).toContain("trusted shell");
       const installParams = mockFirstObjectArg(installPluginFromClawHubMock);
       expectObjectFields(installParams, {
@@ -851,7 +851,7 @@ describe("handleCommands /plugins install", () => {
       warning,
     });
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
         "/plugins install clawhub:@nova/blocked-demo@1.2.3",
@@ -874,7 +874,7 @@ describe("handleCommands /plugins install", () => {
     const previousNixMode = process.env.NOVA_NIX_MODE;
     process.env.NOVA_NIX_MODE = "1";
     try {
-      await withTempHome("openclaw-command-plugins-home-", async () => {
+      await withTempHome("nova-command-plugins-home-", async () => {
         const workspaceDir = await workspaceHarness.createWorkspace();
         const params = buildPluginsParams("/plugins install @acme/demo", workspaceDir);
         const result = await handlePluginsCommand(params, true);
@@ -883,7 +883,7 @@ describe("handleCommands /plugins install", () => {
         }
 
         expect(result.reply?.text).toContain("NOVA_NIX_MODE=1");
-        expect(result.reply?.text).toContain("nix-openclaw#quick-start");
+        expect(result.reply?.text).toContain("nix-nova#quick-start");
         expect(installPluginFromNpmSpecMock).not.toHaveBeenCalled();
         expect(installPluginFromPathMock).not.toHaveBeenCalled();
         expect(installPluginFromClawHubMock).not.toHaveBeenCalled();
@@ -900,11 +900,11 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("refuses installs through a root include before package installer side effects", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async (home) => {
-      const sharedConfigPath = path.join(home, ".openclaw", "shared.json5");
+    await withTempHome("nova-command-plugins-home-", async (home) => {
+      const sharedConfigPath = path.join(home, ".nova", "shared.json5");
       await fs.writeFile(sharedConfigPath, `${JSON.stringify({ plugins: {} }, null, 2)}\n`);
       await fs.writeFile(
-        path.join(home, ".openclaw", "openclaw.json"),
+        path.join(home, ".nova", "nova.json"),
         `${JSON.stringify({ $include: "./shared.json5" }, null, 2)}\n`,
       );
       const workspaceDir = await workspaceHarness.createWorkspace();
@@ -925,7 +925,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("rejects explicit git: chat installs before installer side effects", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
         "/plugins install git:github.com/acme/git-demo@v1.2.3",
@@ -955,7 +955,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const spec = "git:github.com/acme/git-demo@v1.2.3";
       const params = buildPluginsParams(`/plugins install ${spec} --force`, workspaceDir);
@@ -981,7 +981,7 @@ describe("handleCommands /plugins install", () => {
   });
 
   it("rejects --force unless it is the final install argument", async () => {
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
         "/plugins install --force @acme/policy-plugin@1.0.0",
@@ -1020,7 +1020,7 @@ describe("handleCommands /plugins install", () => {
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams("/plugin add clawhub:@nova/alias-demo@1.0.0", workspaceDir);
       const result = await handlePluginsCommand(params, true);
@@ -1037,41 +1037,41 @@ describe("handleCommands /plugins install", () => {
   it("allows catalog npm package chat installs with alternate selectors", async () => {
     installPluginFromNpmSpecMock.mockResolvedValue({
       ok: true,
-      pluginId: "wecom-openclaw-plugin",
-      targetDir: "/tmp/wecom-openclaw-plugin",
+      pluginId: "wecom-nova-plugin",
+      targetDir: "/tmp/wecom-nova-plugin",
       version: "2026.5.7",
       extensions: ["index.js"],
       npmResolution: {
-        name: "@wecom/wecom-openclaw-plugin",
+        name: "@wecom/wecom-nova-plugin",
         version: "2026.5.7",
-        resolvedSpec: "@wecom/wecom-openclaw-plugin@2026.5.7",
+        resolvedSpec: "@wecom/wecom-nova-plugin@2026.5.7",
       },
     });
     persistPluginInstallMock.mockResolvedValue({});
 
-    await withTempHome("openclaw-command-plugins-home-", async () => {
+    await withTempHome("nova-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
-        "/plugins install @wecom/wecom-openclaw-plugin@latest",
+        "/plugins install @wecom/wecom-nova-plugin@latest",
         workspaceDir,
       );
       const result = await handlePluginsCommand(params, true);
       if (result === null) {
         throw new Error("expected plugin install result");
       }
-      expect(result.reply?.text).toContain('Installed plugin "wecom-openclaw-plugin"');
+      expect(result.reply?.text).toContain('Installed plugin "wecom-nova-plugin"');
       expectObjectFields(mockFirstObjectArg(installPluginFromNpmSpecMock), {
-        spec: "@wecom/wecom-openclaw-plugin@latest",
-        expectedPluginId: "wecom-openclaw-plugin",
+        spec: "@wecom/wecom-nova-plugin@latest",
+        expectedPluginId: "wecom-nova-plugin",
         expectedIntegrity: undefined,
         trustedSourceLinkedOfficialInstall: true,
       });
-      expectPersistedInstall("wecom-openclaw-plugin", {
+      expectPersistedInstall("wecom-nova-plugin", {
         source: "npm",
-        spec: "@wecom/wecom-openclaw-plugin@latest",
-        installPath: "/tmp/wecom-openclaw-plugin",
+        spec: "@wecom/wecom-nova-plugin@latest",
+        installPath: "/tmp/wecom-nova-plugin",
         version: "2026.5.7",
-        resolvedName: "@wecom/wecom-openclaw-plugin",
+        resolvedName: "@wecom/wecom-nova-plugin",
         resolvedVersion: "2026.5.7",
       });
     });

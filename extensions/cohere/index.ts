@@ -1,4 +1,4 @@
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
 import { isModernCohereModelId } from "./models.js";
 import { applyCohereConfig, COHERE_DEFAULT_MODEL_REF } from "./onboard.js";
 import { buildCohereProvider } from "./provider-catalog.js";

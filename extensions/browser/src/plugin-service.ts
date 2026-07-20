@@ -4,7 +4,7 @@
 import {
   startLazyPluginServiceModule,
   type LazyPluginServiceHandle,
-  type OpenClawPluginService,
+  type NovaPluginService,
 } from "./sdk-node-runtime.js";
 
 type BrowserControlHandle = LazyPluginServiceHandle | null;
@@ -24,7 +24,7 @@ function validateBrowserControlOverrideSpecifier(specifier: string): string {
 }
 
 /** Creates the Browser plugin service registered by the plugin entrypoint. */
-export function createBrowserPluginService(): OpenClawPluginService {
+export function createBrowserPluginService(): NovaPluginService {
   let handle: BrowserControlHandle = null;
 
   return {

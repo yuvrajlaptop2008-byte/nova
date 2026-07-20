@@ -38,15 +38,15 @@ export function createCleanupCommandRuntime() {
 export function resetCleanupCommandMocks() {
   vi.clearAllMocks();
   resolveCleanupPlanFromDisk.mockReturnValue({
-    stateDir: "/tmp/.openclaw",
-    configPath: "/tmp/.openclaw/openclaw.json",
-    oauthDir: "/tmp/.openclaw/credentials",
+    stateDir: "/tmp/.nova",
+    configPath: "/tmp/.nova/nova.json",
+    oauthDir: "/tmp/.nova/credentials",
     configInsideState: true,
     oauthInsideState: true,
-    workspaceDirs: ["/tmp/.openclaw/workspace"],
+    workspaceDirs: ["/tmp/.nova/workspace"],
   });
   removePath.mockResolvedValue({ ok: true });
-  listAgentSessionDirs.mockResolvedValue(["/tmp/.openclaw/agents/main/sessions"]);
+  listAgentSessionDirs.mockResolvedValue(["/tmp/.nova/agents/main/sessions"]);
   prepareLegacyWorkspaceStateReset.mockImplementation((workspaceDir: string) => ({ workspaceDir }));
   removeLegacyWorkspaceStateForReset.mockResolvedValue({ removedPaths: [], warnings: [] });
   removeStateAndLinkedPaths.mockResolvedValue(true);

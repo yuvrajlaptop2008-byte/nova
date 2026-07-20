@@ -7,7 +7,7 @@ import {
   type ParentForkedSessionTranscript,
 } from "../../config/sessions/session-accessor.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   isModelSelectionLocked,
   ModelSelectionLockedError,
@@ -29,7 +29,7 @@ type ParentForkDecision = SessionParentForkDecision;
 type ParentForkDecisionParams = {
   parentEntry: SessionEntry;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   storePath?: string;
 };
 
@@ -37,7 +37,7 @@ type ForkSessionFromParentParams = {
   parentSessionKey: string;
   parentEntry: SessionEntry;
   agentId: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionKey: string;
   storePath?: string;
 
@@ -90,7 +90,7 @@ type ForkSessionEntryFromParentParams = Omit<ForkSessionFromParentParams, "paren
 
 function resolveParentForkStorePath(params: {
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   storePath?: string;
 }): string {
   return (

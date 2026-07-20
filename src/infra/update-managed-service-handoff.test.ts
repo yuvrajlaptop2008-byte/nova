@@ -7,12 +7,9 @@ import os from "node:os";
 import path from "node:path";
 import { PassThrough } from "node:stream";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -62,7 +59,7 @@ vi.mock("../process/child-process-tree.js", async () => {
 });
 
 const tempDirs = new Set<string>();
-type GatewayRestartSentinelDatabase = Pick<OpenClawStateKyselyDatabase, "gateway_restart_sentinel">;
+type GatewayRestartSentinelDatabase = Pick<NovaStateKyselyDatabase, "gateway_restart_sentinel">;
 
 beforeEach(() => {
   forceKillChildProcessTreeMock.mockReset();
@@ -78,7 +75,7 @@ beforeEach(() => {
 
 afterEach(async () => {
   vi.useRealTimers();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   await Promise.all([...tempDirs].map((dir) => fs.rm(dir, { recursive: true, force: true })));
   tempDirs.clear();
   vi.resetModules();
@@ -94,7 +91,7 @@ async function pathExists(filePath: string): Promise<boolean> {
 }
 
 function writeRestartSentinelRow(env: NodeJS.ProcessEnv, sentinel: unknown): void {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const stateDb = getNodeSqliteKysely<GatewayRestartSentinelDatabase>(db);
   const payload =
     sentinel && typeof sentinel === "object" && (sentinel as { version?: unknown }).version === 1
@@ -148,7 +145,7 @@ function writeRestartSentinelRow(env: NodeJS.ProcessEnv, sentinel: unknown): voi
 }
 
 function replaceRestartSentinelRow(env: NodeJS.ProcessEnv, sentinel: unknown): void {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const stateDb = getNodeSqliteKysely<GatewayRestartSentinelDatabase>(db);
   executeSqliteQuerySync(
     db,
@@ -158,7 +155,7 @@ function replaceRestartSentinelRow(env: NodeJS.ProcessEnv, sentinel: unknown): v
 }
 
 function readRestartSentinelPayload(env: NodeJS.ProcessEnv, key = "current"): unknown {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const stateDb = getNodeSqliteKysely<GatewayRestartSentinelDatabase>(db);
   const row = executeSqliteQueryTakeFirstSync(
     db,
@@ -183,7 +180,7 @@ async function runHelperWithExistingSentinel(params: {
   const { execFile } =
     await vi.importActual<typeof import("node:child_process")>("node:child_process");
   const { startManagedServiceUpdateHandoff } = await import("./update-managed-service-handoff.js");
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-handoff-helper-test-"));
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-handoff-helper-test-"));
   tempDirs.add(tmpDir);
 
   await startManagedServiceUpdateHandoff({
@@ -193,7 +190,7 @@ async function runHelperWithExistingSentinel(params: {
     restartDelayMs: 500,
     parentPid: process.pid,
     execPath: "/usr/local/bin/node",
-    argv1: "/opt/openclaw/openclaw.mjs",
+    argv1: "/opt/nova/nova.mjs",
     ...(params.handoffId ? { handoffId: params.handoffId } : {}),
     env: {},
     meta: {
@@ -227,7 +224,7 @@ async function runHelperWithExistingSentinel(params: {
         ...helperParams,
         parentPid: process.pid,
         parentExitTimeoutMs: params.parentExitTimeoutMs ?? 1,
-        stateDatabasePath: resolveOpenClawStateSqlitePath(env),
+        stateDatabasePath: resolveNovaStateSqlitePath(env),
         logPath: path.join(tmpDir, "handoff.log"),
         sensitivePaths: [],
       },
@@ -255,7 +252,7 @@ async function runHelperWithExistingSentinel(params: {
 
 async function createLegacyRestartSentinelTable(env: NodeJS.ProcessEnv): Promise<void> {
   const sqlite = await import("node:sqlite");
-  const stateDatabasePath = resolveOpenClawStateSqlitePath(env);
+  const stateDatabasePath = resolveNovaStateSqlitePath(env);
   await fs.mkdir(path.dirname(stateDatabasePath), { recursive: true });
   const db = new sqlite.DatabaseSync(stateDatabasePath);
   try {
@@ -297,7 +294,7 @@ async function runHelperWithCommand(params: {
   const { execFile } =
     await vi.importActual<typeof import("node:child_process")>("node:child_process");
   const { startManagedServiceUpdateHandoff } = await import("./update-managed-service-handoff.js");
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-handoff-recovery-test-"));
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-handoff-recovery-test-"));
   tempDirs.add(tmpDir);
 
   await startManagedServiceUpdateHandoff({
@@ -307,7 +304,7 @@ async function runHelperWithCommand(params: {
     restartDelayMs: 0,
     parentPid: process.pid,
     execPath: "/usr/local/bin/node",
-    argv1: "/opt/openclaw/openclaw.mjs",
+    argv1: "/opt/nova/nova.mjs",
     env: {},
     meta: { sessionKey: "agent:test:webchat:dm:user-123" },
   });
@@ -331,7 +328,7 @@ async function runHelperWithCommand(params: {
           params.parentExitTimeoutMs === undefined ? 5000 : params.parentExitTimeoutMs,
         cwd: tmpDir,
         commandArgv: params.commandArgv,
-        stateDatabasePath: resolveOpenClawStateSqlitePath({ NOVA_STATE_DIR: tmpDir }),
+        stateDatabasePath: resolveNovaStateSqlitePath({ NOVA_STATE_DIR: tmpDir }),
         logPath: path.join(tmpDir, "handoff.log"),
         sensitivePaths: [],
         ...(params.serviceRecovery ? { serviceRecovery: params.serviceRecovery } : {}),
@@ -356,7 +353,7 @@ async function runHelperWithCommand(params: {
 }
 
 async function writeFakeSystemctl(): Promise<{ binDir: string; recordPath: string }> {
-  const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-recovery-bin-"));
+  const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-recovery-bin-"));
   tempDirs.add(binDir);
   const recordPath = path.join(binDir, "systemctl-calls.log");
   await fs.writeFile(
@@ -368,7 +365,7 @@ async function writeFakeSystemctl(): Promise<{ binDir: string; recordPath: strin
 }
 
 async function writeFakeLaunchctl(): Promise<{ binDir: string; recordPath: string }> {
-  const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-launchctl-bin-"));
+  const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-launchctl-bin-"));
   tempDirs.add(binDir);
   const recordPath = path.join(binDir, "launchctl-calls.log");
   const countPath = path.join(binDir, "launchctl-kickstart-count");
@@ -403,11 +400,11 @@ describe("managed service update handoff", () => {
       await import("./update-managed-service-handoff.js");
 
     const resultPromise = startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       restartDrainTimeoutMs: 300_000,
       parentPid: 12345,
-      execPath: "/definitely/missing/openclaw-node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      execPath: "/definitely/missing/nova-node",
+      argv1: "/opt/nova/nova.mjs",
       meta: { sessionKey: "agent:test:webchat:dm:user-123" },
     });
     await vi.waitFor(() => expect(spawnMock).toHaveBeenCalledTimes(1), FAST_WAIT_OPTS);
@@ -428,20 +425,20 @@ describe("managed service update handoff", () => {
   it("rejects a systemd-run launcher that exits before the helper is ready", async () => {
     const child = createSpawnMock();
     spawnMock.mockReturnValueOnce(child);
-    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-systemd-run-bin-"));
+    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-systemd-run-bin-"));
     tempDirs.add(binDir);
     await fs.writeFile(path.join(binDir, "systemd-run"), "#!/bin/sh\nexit 0\n", { mode: 0o755 });
     const { startManagedServiceUpdateHandoff } =
       await import("./update-managed-service-handoff.js");
 
     const resultPromise = startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       restartDrainTimeoutMs: 300_000,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       supervisor: "systemd",
-      env: { PATH: binDir, NOVA_SYSTEMD_UNIT: "openclaw-gateway.service" },
+      env: { PATH: binDir, NOVA_SYSTEMD_UNIT: "nova-gateway.service" },
       meta: {},
     });
     await vi.waitFor(() => expect(spawnMock).toHaveBeenCalledTimes(1), FAST_WAIT_OPTS);
@@ -469,11 +466,11 @@ describe("managed service update handoff", () => {
       await import("./update-managed-service-handoff.js");
 
     const resultPromise = startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       restartDrainTimeoutMs: undefined,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       meta: {},
     });
     const rejection = resultPromise.catch((err: unknown) => err);
@@ -499,8 +496,8 @@ describe("managed service update handoff", () => {
     const { startManagedServiceUpdateHandoff } =
       await import("./update-managed-service-handoff.js");
     const serviceIdentityEnv = {
-      NOVA_LAUNCHD_LABEL: "com.example.openclaw.test",
-      NOVA_SYSTEMD_UNIT: "openclaw-test.service",
+      NOVA_LAUNCHD_LABEL: "com.example.nova.test",
+      NOVA_SYSTEMD_UNIT: "nova-test.service",
       NOVA_WINDOWS_TASK_NAME: "Nova Test Gateway",
     } satisfies NodeJS.ProcessEnv;
     const supervisorEnv = Object.fromEntries(
@@ -508,13 +505,13 @@ describe("managed service update handoff", () => {
     ) as NodeJS.ProcessEnv;
 
     const result = await startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       timeoutMs: 1_800_000,
       restartDrainTimeoutMs: 300_000,
       restartDelayMs: 500,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       env: {
         ...supervisorEnv,
         ...serviceIdentityEnv,
@@ -553,25 +550,25 @@ describe("managed service update handoff", () => {
   it("launches systemd handoffs through a transient user scope", async () => {
     const { startManagedServiceUpdateHandoff } =
       await import("./update-managed-service-handoff.js");
-    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-systemd-run-bin-"));
+    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-systemd-run-bin-"));
     tempDirs.add(binDir);
     const systemdRunPath = path.join(binDir, "systemd-run");
     await fs.writeFile(systemdRunPath, "#!/bin/sh\nexit 0\n", { mode: 0o755 });
 
     const result = await startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       timeoutMs: 1_800_000,
       restartDrainTimeoutMs: 300_000,
       restartDelayMs: 500,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       handoffId: "handoff-123",
       channel: "beta",
       supervisor: "systemd",
       env: {
         PATH: binDir,
-        NOVA_SYSTEMD_UNIT: "openclaw-gateway.service",
+        NOVA_SYSTEMD_UNIT: "nova-gateway.service",
         INVOCATION_ID: "gateway-invocation",
         KEEP_ME: "1",
       },
@@ -594,7 +591,7 @@ describe("managed service update handoff", () => {
       "--user",
       "--scope",
       "--collect",
-      "--unit=openclaw-update-handoff-123.scope",
+      "--unit=nova-update-handoff-123.scope",
     ]);
     expect(args.slice(4, 7)).toEqual([
       "/usr/local/bin/node",
@@ -609,11 +606,11 @@ describe("managed service update handoff", () => {
     };
     expect(helperParams.serviceRecovery).toEqual({
       kind: "systemd",
-      unit: "openclaw-gateway.service",
+      unit: "nova-gateway.service",
     });
     expect(helperParams.commandArgv).toEqual([
       "/usr/local/bin/node",
-      "/opt/openclaw/openclaw.mjs",
+      "/opt/nova/nova.mjs",
       "update",
       "--yes",
       "--json",
@@ -624,7 +621,7 @@ describe("managed service update handoff", () => {
     ]);
     expect(helperParams.handoffId).toBe("handoff-123");
     expect(options.detached).toBe(true);
-    expect(options.env.NOVA_SYSTEMD_UNIT).toBe("openclaw-gateway.service");
+    expect(options.env.NOVA_SYSTEMD_UNIT).toBe("nova-gateway.service");
     expect(options.env.INVOCATION_ID).toBeUndefined();
     expect(options.env.KEEP_ME).toBe("1");
     expect(options.env.NOVA_UPDATE_RUN_HANDOFF).toBe("1");
@@ -635,12 +632,12 @@ describe("managed service update handoff", () => {
       await import("./update-managed-service-handoff.js");
 
     const result = await startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       restartDrainTimeoutMs: 300_000,
       channel: "extended-stable",
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       meta: {},
     });
 
@@ -656,7 +653,7 @@ describe("managed service update handoff", () => {
     };
     expect(helperParams.commandArgv).toEqual([
       "/usr/local/bin/node",
-      "/opt/openclaw/openclaw.mjs",
+      "/opt/nova/nova.mjs",
       "update",
       "--yes",
       "--json",
@@ -670,13 +667,13 @@ describe("managed service update handoff", () => {
     const { binDir, recordPath } = await writeFakeSystemctl();
     const result = await runHelperWithCommand({
       commandArgv: [process.execPath, "-e", "process.exit(7)"],
-      serviceRecovery: { kind: "systemd", unit: "openclaw-gateway.service" },
+      serviceRecovery: { kind: "systemd", unit: "nova-gateway.service" },
       pathPrepend: binDir,
     });
 
     expect(result.code).toBe(7);
     await expect(fs.readFile(recordPath, "utf-8")).resolves.toBe(
-      "--user start openclaw-gateway.service\n",
+      "--user start nova-gateway.service\n",
     );
   });
 
@@ -684,7 +681,7 @@ describe("managed service update handoff", () => {
     const { binDir, recordPath } = await writeFakeSystemctl();
     const result = await runHelperWithCommand({
       commandArgv: [process.execPath, "-e", "process.exit(0)"],
-      serviceRecovery: { kind: "systemd", unit: "openclaw-gateway.service" },
+      serviceRecovery: { kind: "systemd", unit: "nova-gateway.service" },
       pathPrepend: binDir,
     });
 
@@ -699,8 +696,8 @@ describe("managed service update handoff", () => {
       serviceRecovery: {
         kind: "launchd",
         uid: 501,
-        label: "com.example.openclaw",
-        plistPath: "/Users/test/Library/LaunchAgents/com.example.openclaw.plist",
+        label: "com.example.nova",
+        plistPath: "/Users/test/Library/LaunchAgents/com.example.nova.plist",
       },
       pathPrepend: binDir,
     });
@@ -708,10 +705,10 @@ describe("managed service update handoff", () => {
     expect(result.code).toBe(7);
     await expect(fs.readFile(recordPath, "utf-8")).resolves.toBe(
       [
-        "kickstart gui/501/com.example.openclaw",
-        "enable gui/501/com.example.openclaw",
-        "bootstrap gui/501 /Users/test/Library/LaunchAgents/com.example.openclaw.plist",
-        "kickstart gui/501/com.example.openclaw",
+        "kickstart gui/501/com.example.nova",
+        "enable gui/501/com.example.nova",
+        "bootstrap gui/501 /Users/test/Library/LaunchAgents/com.example.nova.plist",
+        "kickstart gui/501/com.example.nova",
         "",
       ].join("\n"),
     );
@@ -723,12 +720,12 @@ describe("managed service update handoff", () => {
     const cases = [
       {
         supervisor: "launchd" as const,
-        env: { NOVA_LAUNCHD_LABEL: "com.example.openclaw.test", HOME: "/Users/test" },
+        env: { NOVA_LAUNCHD_LABEL: "com.example.nova.test", HOME: "/Users/test" },
         expected: {
           kind: "launchd",
           uid: typeof process.getuid === "function" ? process.getuid() : 501,
-          label: "com.example.openclaw.test",
-          plistPath: "/Users/test/Library/LaunchAgents/com.example.openclaw.test.plist",
+          label: "com.example.nova.test",
+          plistPath: "/Users/test/Library/LaunchAgents/com.example.nova.test.plist",
         },
       },
       {
@@ -740,13 +737,13 @@ describe("managed service update handoff", () => {
 
     for (const testCase of cases) {
       const result = await startManagedServiceUpdateHandoff({
-        root: "/tmp/openclaw",
+        root: "/tmp/nova",
         timeoutMs: 1_800_000,
         restartDrainTimeoutMs: 300_000,
         restartDelayMs: 500,
         parentPid: 12345,
         execPath: "/usr/local/bin/node",
-        argv1: "/opt/openclaw/openclaw.mjs",
+        argv1: "/opt/nova/nova.mjs",
         supervisor: testCase.supervisor,
         env: testCase.env,
         meta: { sessionKey: "agent:test:webchat:dm:user-123" },
@@ -785,7 +782,7 @@ describe("managed service update handoff", () => {
       },
     });
     if (process.platform !== "win32") {
-      const mode = (await fs.stat(resolveOpenClawStateSqlitePath(env))).mode & 0o777;
+      const mode = (await fs.stat(resolveNovaStateSqlitePath(env))).mode & 0o777;
       expect(mode).toBe(0o600);
     }
   });
@@ -796,10 +793,10 @@ describe("managed service update handoff", () => {
       handoffId: "handoff-locked",
       metaHandoffId: "handoff-locked",
       prepareStateDatabase: async (stateEnv) => {
-        openOpenClawStateDatabase({ env: stateEnv });
-        closeOpenClawStateDatabaseForTest();
+        openNovaStateDatabase({ env: stateEnv });
+        closeNovaStateDatabaseForTest();
         const sqlite = await import("node:sqlite");
-        const lock = new sqlite.DatabaseSync(resolveOpenClawStateSqlitePath(stateEnv));
+        const lock = new sqlite.DatabaseSync(resolveNovaStateSqlitePath(stateEnv));
         lock.exec("BEGIN IMMEDIATE;");
         lockReleased = new Promise((resolve) => {
           setTimeout(() => {
@@ -957,11 +954,11 @@ describe("managed service update handoff", () => {
   });
 
   it("sweeps stale handoff temp directories while keeping fresh handoff logs", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-handoff-cleanup-test-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-handoff-cleanup-test-"));
     tempDirs.add(tmpDir);
     const staleDir = path.join(tmpDir, `${MANAGED_SERVICE_UPDATE_HANDOFF_TEMP_PREFIX}stale`);
     const freshDir = path.join(tmpDir, `${MANAGED_SERVICE_UPDATE_HANDOFF_TEMP_PREFIX}fresh`);
-    const unrelatedDir = path.join(tmpDir, "openclaw-other-temp");
+    const unrelatedDir = path.join(tmpDir, "nova-other-temp");
     await fs.mkdir(staleDir, { recursive: true });
     await fs.mkdir(freshDir, { recursive: true });
     await fs.mkdir(unrelatedDir, { recursive: true });
@@ -983,7 +980,7 @@ describe("managed service update handoff", () => {
   });
 
   it("waits for the configured restart drain and shutdown reserve (#99666)", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-handoff-timeout-test-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-handoff-timeout-test-"));
     tempDirs.add(tmpDir);
 
     const { startManagedServiceUpdateHandoff } =
@@ -995,7 +992,7 @@ describe("managed service update handoff", () => {
       restartDelayMs: 2_000,
       parentPid: process.pid,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       env: {},
       meta: { sessionKey: "agent:test:webchat:dm:user-123" },
     });
@@ -1010,9 +1007,7 @@ describe("managed service update handoff", () => {
   });
 
   it("waits indefinitely when restart draining has no deadline", async () => {
-    const tmpDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-handoff-default-timeout-test-"),
-    );
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-handoff-default-timeout-test-"));
     tempDirs.add(tmpDir);
 
     const { startManagedServiceUpdateHandoff } =
@@ -1023,7 +1018,7 @@ describe("managed service update handoff", () => {
       restartDelayMs: 0,
       parentPid: process.pid,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       env: {},
       meta: { sessionKey: "agent:test:webchat:dm:user-123" },
     });

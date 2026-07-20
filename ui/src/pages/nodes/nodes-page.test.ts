@@ -82,7 +82,7 @@ describe("NodesPage gateway lifecycle", () => {
     const client = null;
     const currentGateway = gateway(client);
     const preloadedNodes = [{ id: "preloaded" }];
-    const page = document.createElement("openclaw-nodes-page") as TestNodesPage;
+    const page = document.createElement("nova-nodes-page") as TestNodesPage;
     page.routeData = {
       gateway: currentGateway,
       gatewaySnapshot: currentGateway.snapshot,
@@ -112,7 +112,7 @@ describe("NodesPage gateway lifecycle", () => {
     const client = {} as GatewayBrowserClient;
     const currentGateway = gateway(client);
     const preloadedNodes = [{ id: "stale" }];
-    const page = document.createElement("openclaw-nodes-page") as TestNodesPage;
+    const page = document.createElement("nova-nodes-page") as TestNodesPage;
     page.ensureInitialData = vi.fn();
     page.routeData = {
       gateway: currentGateway,
@@ -138,7 +138,7 @@ describe("NodesPage gateway lifecycle", () => {
       .mockReturnValueOnce(first.promise)
       .mockReturnValueOnce(second.promise);
     const client = { request } as unknown as GatewayBrowserClient;
-    const page = document.createElement("openclaw-nodes-page") as TestNodesPage;
+    const page = document.createElement("nova-nodes-page") as TestNodesPage;
     page.client = client;
     page.connected = true;
     page.context = {
@@ -165,7 +165,7 @@ describe("NodesPage gateway lifecycle", () => {
 
   it("drops a pending removal prompt when the connection resets", () => {
     const client = { request: vi.fn() } as unknown as GatewayBrowserClient;
-    const page = document.createElement("openclaw-nodes-page") as TestNodesPage;
+    const page = document.createElement("nova-nodes-page") as TestNodesPage;
     page.client = client;
     page.connected = true;
     page.context = {

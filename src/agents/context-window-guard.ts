@@ -5,7 +5,7 @@
  * more actionable remediation text.
  */
 import { findNormalizedProviderValue } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveProviderEndpoint } from "./provider-attribution.js";
 
 export const CONTEXT_WINDOW_HARD_MIN_TOKENS = 4_000;
@@ -52,7 +52,7 @@ function modelIdMatchesProviderScope(params: {
 
 /** Resolve the effective context window and source for one provider/model. */
 export function resolveContextWindowInfo(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: NovaConfig | undefined;
   provider: string;
   modelId: string;
   modelContextTokens?: number;

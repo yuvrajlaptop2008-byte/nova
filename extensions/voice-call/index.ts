@@ -1,19 +1,12 @@
 // Voice Call plugin entrypoint registers its Nova integration.
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { ErrorCodes, errorShape } from "openclaw/plugin-sdk/gateway-runtime";
-import { timestampMsToIsoString } from "openclaw/plugin-sdk/number-runtime";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-import {
-  asOptionalRecord,
-  normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { jsonResult as json } from "openclaw/plugin-sdk/tool-results";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { ErrorCodes, errorShape } from "nova/plugin-sdk/gateway-runtime";
+import { timestampMsToIsoString } from "nova/plugin-sdk/number-runtime";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
+import { asOptionalRecord, normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import { jsonResult as json } from "nova/plugin-sdk/tool-results";
 import { Type } from "typebox";
-import {
-  definePluginEntry,
-  type GatewayRequestHandlerOptions,
-  type OpenClawPluginApi,
-} from "./api.js";
+import { definePluginEntry, type GatewayRequestHandlerOptions, type NovaPluginApi } from "./api.js";
 import { createVoiceCallRuntime, type VoiceCallRuntime } from "./runtime-entry.js";
 import { registerVoiceCallCli } from "./src/cli.js";
 import {
@@ -103,12 +96,12 @@ const voiceCallConfigSchema = {
     "realtime.instructions": { label: "Realtime Instructions", advanced: true },
     "realtime.toolPolicy": {
       label: "Realtime Tool Policy",
-      help: "Controls the shared openclaw_agent_consult tool.",
+      help: "Controls the shared nova_agent_consult tool.",
       advanced: true,
     },
     "realtime.consultPolicy": {
       label: "Realtime Consult Policy",
-      help: "Guides when the realtime voice model should call openclaw_agent_consult.",
+      help: "Guides when the realtime voice model should call nova_agent_consult.",
       advanced: true,
     },
     "realtime.fastContext.enabled": {
@@ -266,9 +259,9 @@ function toVoiceCallStatus(call: CallRecord): VoiceCallStatus {
   };
 }
 
-const VOICE_CALL_RUNTIME_KEY = Symbol.for("openclaw.voice-call.runtime");
-const VOICE_CALL_RUNTIME_PROMISE_KEY = Symbol.for("openclaw.voice-call.runtimePromise");
-const VOICE_CALL_RUNTIME_STOP_PROMISE_KEY = Symbol.for("openclaw.voice-call.runtimeStopPromise");
+const VOICE_CALL_RUNTIME_KEY = Symbol.for("nova.voice-call.runtime");
+const VOICE_CALL_RUNTIME_PROMISE_KEY = Symbol.for("nova.voice-call.runtimePromise");
+const VOICE_CALL_RUNTIME_STOP_PROMISE_KEY = Symbol.for("nova.voice-call.runtimeStopPromise");
 
 type VoiceCallRuntimeGlobalState = typeof globalThis & {
   [VOICE_CALL_RUNTIME_KEY]?: VoiceCallRuntime | null;
@@ -289,7 +282,7 @@ export default definePluginEntry({
   name: "Voice Call",
   description: "Voice-call plugin with Telnyx/Twilio/Plivo providers",
   configSchema: voiceCallConfigSchema,
-  register(api: OpenClawPluginApi) {
+  register(api: NovaPluginApi) {
     const config = resolveVoiceCallConfig(voiceCallConfigSchema.parse(api.pluginConfig));
     const validation = validateProviderConfig(config);
 

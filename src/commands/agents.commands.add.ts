@@ -1,4 +1,4 @@
-// Implements `openclaw agents add`, including config mutation, workspace setup, auth copy, and route binding setup.
+// Implements `nova agents add`, including config mutation, workspace setup, auth copy, and route binding setup.
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
@@ -109,14 +109,14 @@ export async function agentsAddCommand(
   if (nonInteractive) {
     if (!workspaceFlag) {
       runtime.error(
-        `Non-interactive agent creation requires --workspace. Re-run ${formatCliCommand("openclaw agents add <id> --workspace <path>")} or omit flags to use the wizard.`,
+        `Non-interactive agent creation requires --workspace. Re-run ${formatCliCommand("nova agents add <id> --workspace <path>")} or omit flags to use the wizard.`,
       );
       runtime.exit(1);
       return;
     }
     if (!nameInput) {
       runtime.error(
-        `Agent name is required in non-interactive mode. Run ${formatCliCommand("openclaw agents add <id> --workspace <path>")}.`,
+        `Agent name is required in non-interactive mode. Run ${formatCliCommand("nova agents add <id> --workspace <path>")}.`,
       );
       runtime.exit(1);
       return;
@@ -137,7 +137,7 @@ export async function agentsAddCommand(
     if (created.status === "error") {
       runtime.error(
         created.reason === "reserved-id"
-          ? `"${created.agentId}" is reserved. Choose another name, or run ${formatCliCommand("openclaw agents list")} to inspect configured agents.`
+          ? `"${created.agentId}" is reserved. Choose another name, or run ${formatCliCommand("nova agents list")} to inspect configured agents.`
           : created.reason === "already-exists"
             ? `Agent "${created.agentId}" already exists.`
             : created.message,
@@ -397,7 +397,7 @@ export async function agentsAddCommand(
         await prompter.note(
           [
             "Routing unchanged. Add bindings when you're ready.",
-            "Docs: https://docs.openclaw.ai/concepts/multi-agent",
+            "Docs: https://docs.nova.ai/concepts/multi-agent",
           ].join("\n"),
           "Routing",
         );

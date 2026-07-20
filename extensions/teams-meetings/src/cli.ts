@@ -1,9 +1,9 @@
 import type { Command } from "commander";
-import { callGatewayFromCli } from "openclaw/plugin-sdk/gateway-runtime";
+import { callGatewayFromCli } from "nova/plugin-sdk/gateway-runtime";
 import {
   addTimerTimeoutGraceMs,
   parseStrictNonNegativeInteger,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/number-runtime";
 import type { TeamsMeetingsConfig, TeamsMeetingsMode, TeamsMeetingsTransport } from "./config.js";
 import { resolveTeamsMeetingsGatewayOperationTimeoutMs } from "./config.js";
 

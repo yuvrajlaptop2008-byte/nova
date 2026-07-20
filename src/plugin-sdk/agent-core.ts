@@ -8,7 +8,7 @@ import type { CompleteSimpleFn, StreamFn } from "../../packages/llm-core/src/ind
 import { completeSimple, streamSimple } from "./llm.js";
 
 /** Runtime adapter that lets the package agent-core use Nova LLM helpers. */
-export const openClawAgentCoreRuntime = {
+export const novaAgentCoreRuntime = {
   completeSimple: completeSimple as unknown as CompleteSimpleFn,
   streamSimple: streamSimple as unknown as StreamFn,
 } satisfies AgentCoreRuntimeDeps;
@@ -16,7 +16,7 @@ export const openClawAgentCoreRuntime = {
 /** Agent-core class preconfigured with Nova runtime dependencies. */
 export class Agent extends CoreAgent {
   constructor(options: CoreAgentOptions = {}) {
-    super({ runtime: openClawAgentCoreRuntime, ...options });
+    super({ runtime: novaAgentCoreRuntime, ...options });
   }
 }
 

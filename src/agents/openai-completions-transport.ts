@@ -305,8 +305,8 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
           params = nextParams as typeof params;
         }
         if (
-          (options as { openclawCodeModeToolSurface?: unknown } | undefined)
-            ?.openclawCodeModeToolSurface === true
+          (options as { novaCodeModeToolSurface?: unknown } | undefined)
+            ?.novaCodeModeToolSurface === true
         ) {
           enforceCodeModeResponsesToolSurface(params);
           assertCodeModeResponsesToolSurface(params);
@@ -1930,10 +1930,10 @@ const completionsTesting = {
 };
 
 declare global {
-  var openclawOpenAICompletionsTransportTestApi: typeof completionsTesting | undefined;
+  var novaOpenAICompletionsTransportTestApi: typeof completionsTesting | undefined;
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  globalThis.openclawOpenAICompletionsTransportTestApi = completionsTesting;
+  globalThis.novaOpenAICompletionsTransportTestApi = completionsTesting;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

@@ -102,7 +102,7 @@ mark_pr_operation_side_effects_if_available() {
 pin_worktree_bundled_plugins_dir() {
   # Nested .worktrees/<pr> checkouts resolve vitest tooling from the primary
   # checkout's node_modules; pin bundled plugin discovery to this worktree so
-  # PR branches without the openclaw-root node_modules-boundary fix still test
+  # PR branches without the nova-root node_modules-boundary fix still test
   # their own extensions instead of the primary checkout's stale trees.
   export NOVA_BUNDLED_PLUGINS_DIR="${NOVA_BUNDLED_PLUGINS_DIR:-$PWD/extensions}"
 }
@@ -185,7 +185,7 @@ run_remote_testbox_full_test_gate() {
   run_quiet_logged "$label" "$log_file" \
     node scripts/crabbox-wrapper.mjs run \
     --provider blacksmith-testbox \
-    --blacksmith-org openclaw \
+    --blacksmith-org nova \
     --blacksmith-workflow .github/workflows/ci-check-testbox.yml \
     --blacksmith-job check \
     --blacksmith-ref main \
@@ -215,7 +215,7 @@ read_remote_testbox_gate_run_url() {
   local expected_repo="${pr_url#https://github.com/}"
   expected_repo="${expected_repo%%/pull/*}"
   if [ -z "$expected_repo" ] || [ "$expected_repo" = "$pr_url" ]; then
-    expected_repo="openclaw/openclaw"
+    expected_repo="nova/nova"
   fi
   local url_prefix="https://github.com/$expected_repo/actions/runs/"
   local marker="GitHub Actions run: $url_prefix"

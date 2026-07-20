@@ -1,5 +1,5 @@
 // Qa Lab plugin module implements Matrix live transport CLI behavior.
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   createLiveTransportQaAdapterFactory,
   createLazyCliRuntimeLoader,

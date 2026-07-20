@@ -1,13 +1,13 @@
 // Google tests cover oauth.http proxy-mode selection for the Gemini CLI OAuth
-// token-exchange/identity calls (issue openclaw#46184).
+// token-exchange/identity calls (issue nova#46184).
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TOKEN_URL } from "./oauth.shared.js";
 
 const fetchWithSsrFGuardMock = vi.fn();
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-    "openclaw/plugin-sdk/ssrf-runtime",
+vi.mock("nova/plugin-sdk/ssrf-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+    "nova/plugin-sdk/ssrf-runtime",
   );
   return {
     ...actual,

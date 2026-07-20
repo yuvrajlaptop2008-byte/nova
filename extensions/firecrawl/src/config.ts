@@ -1,8 +1,8 @@
 // Firecrawl helper module supports config behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { canResolveEnvSecretRefInReadOnlyPath } from "openclaw/plugin-sdk/extension-shared";
-import { resolvePositiveTimeoutSeconds } from "openclaw/plugin-sdk/provider-web-fetch";
-import { resolveSecretInputString, normalizeSecretInput } from "openclaw/plugin-sdk/secret-input";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { canResolveEnvSecretRefInReadOnlyPath } from "nova/plugin-sdk/extension-shared";
+import { resolvePositiveTimeoutSeconds } from "nova/plugin-sdk/provider-web-fetch";
+import { resolveSecretInputString, normalizeSecretInput } from "nova/plugin-sdk/secret-input";
 
 export const DEFAULT_FIRECRAWL_BASE_URL = "https://api.firecrawl.dev";
 const DEFAULT_FIRECRAWL_SEARCH_TIMEOUT_SECONDS = 30;
@@ -43,7 +43,7 @@ type FirecrawlFetchConfig =
     }
   | undefined;
 
-function resolveFirecrawlSearchConfig(cfg?: OpenClawConfig): FirecrawlSearchConfig {
+function resolveFirecrawlSearchConfig(cfg?: NovaConfig): FirecrawlSearchConfig {
   const pluginConfig = cfg?.plugins?.entries?.firecrawl?.config as PluginEntryConfig;
   const pluginWebSearch = pluginConfig?.webSearch;
   if (pluginWebSearch && typeof pluginWebSearch === "object" && !Array.isArray(pluginWebSearch)) {
@@ -52,7 +52,7 @@ function resolveFirecrawlSearchConfig(cfg?: OpenClawConfig): FirecrawlSearchConf
   return undefined;
 }
 
-function resolveFirecrawlFetchConfig(cfg?: OpenClawConfig): FirecrawlFetchConfig {
+function resolveFirecrawlFetchConfig(cfg?: NovaConfig): FirecrawlFetchConfig {
   const pluginConfig = cfg?.plugins?.entries?.firecrawl?.config as PluginEntryConfig;
   const pluginWebFetch = pluginConfig?.webFetch;
   if (pluginWebFetch && typeof pluginWebFetch === "object" && !Array.isArray(pluginWebFetch)) {
@@ -69,7 +69,7 @@ type ConfiguredSecretResolution =
 function resolveConfiguredSecret(
   value: unknown,
   path: string,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): ConfiguredSecretResolution {
   const resolved = resolveSecretInputString({
     value,
@@ -104,7 +104,7 @@ function resolveConfiguredSecret(
   return envValue ? { status: "available", value: envValue } : { status: "missing" };
 }
 
-export function resolveFirecrawlApiKey(cfg?: OpenClawConfig): string | undefined {
+export function resolveFirecrawlApiKey(cfg?: NovaConfig): string | undefined {
   const pluginConfig = cfg?.plugins?.entries?.firecrawl?.config as PluginEntryConfig;
   const search = resolveFirecrawlSearchConfig(cfg);
   const configuredCandidates: Array<{ value: unknown; path: string }> = [
@@ -133,7 +133,7 @@ export function resolveFirecrawlApiKey(cfg?: OpenClawConfig): string | undefined
   return normalizeSecretInput(process.env[FIRECRAWL_API_KEY_ENV_VAR]) || undefined;
 }
 
-export function resolveFirecrawlBaseUrl(cfg?: OpenClawConfig): string {
+export function resolveFirecrawlBaseUrl(cfg?: NovaConfig): string {
   const search = resolveFirecrawlSearchConfig(cfg);
   const fetch = resolveFirecrawlFetchConfig(cfg);
   const configured =
@@ -144,7 +144,7 @@ export function resolveFirecrawlBaseUrl(cfg?: OpenClawConfig): string {
   return configured || DEFAULT_FIRECRAWL_BASE_URL;
 }
 
-export function resolveFirecrawlOnlyMainContent(cfg?: OpenClawConfig, override?: boolean): boolean {
+export function resolveFirecrawlOnlyMainContent(cfg?: NovaConfig, override?: boolean): boolean {
   if (typeof override === "boolean") {
     return override;
   }
@@ -155,7 +155,7 @@ export function resolveFirecrawlOnlyMainContent(cfg?: OpenClawConfig, override?:
   return true;
 }
 
-export function resolveFirecrawlMaxAgeMs(cfg?: OpenClawConfig, override?: number): number {
+export function resolveFirecrawlMaxAgeMs(cfg?: NovaConfig, override?: number): number {
   if (typeof override === "number" && Number.isFinite(override) && override >= 0) {
     return Math.floor(override);
   }
@@ -170,10 +170,7 @@ export function resolveFirecrawlMaxAgeMs(cfg?: OpenClawConfig, override?: number
   return DEFAULT_FIRECRAWL_MAX_AGE_MS;
 }
 
-export function resolveFirecrawlScrapeTimeoutSeconds(
-  cfg?: OpenClawConfig,
-  override?: number,
-): number {
+export function resolveFirecrawlScrapeTimeoutSeconds(cfg?: NovaConfig, override?: number): number {
   const fetch = resolveFirecrawlFetchConfig(cfg);
   return resolvePositiveTimeoutSeconds(
     override,

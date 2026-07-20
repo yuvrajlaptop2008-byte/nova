@@ -15,7 +15,7 @@ import {
   resolveSessionFilePathOptions,
 } from "../../config/sessions/paths.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   createTimeZoneDayKeyFormatter,
   resolveTimezone,
@@ -136,9 +136,9 @@ function setCostUsageCache(cacheKey: string, entry: CostUsageCacheEntry): void {
 function resolveSessionUsageFileOrRespond(
   key: string,
   respond: RespondFn,
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   entry: SessionEntry | undefined;
   agentId: string | undefined;
   sessionId: string;
@@ -561,7 +561,7 @@ function buildStoreBySessionId(
 }
 
 function filterSessionStoreByAgent(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   store: Record<string, SessionEntry>;
   agentId: string;
 }): Record<string, SessionEntry> {
@@ -580,7 +580,7 @@ function filterSessionStoreByAgent(params: {
 }
 
 async function discoverAllSessionsForUsage(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId?: string;
   startMs: number;
   endMs: number;
@@ -893,7 +893,7 @@ async function loadCostUsageSummaryCached(params: {
   startMs: number;
   endMs: number;
   dayBucket?: UsageDailyBucket;
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId?: string;
   agentScope?: "all";
 }): Promise<CostUsageSummary> {
@@ -972,7 +972,7 @@ async function loadAllAgentCostUsageSummary(params: {
   startMs: number;
   endMs: number;
   dayBucket?: UsageDailyBucket;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): Promise<CostUsageSummary> {
   const agentIds = listGatewayAgentsBasic(params.config).agents.map((agent) =>
     normalizeAgentId(agent.id),

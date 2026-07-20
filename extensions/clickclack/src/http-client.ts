@@ -2,10 +2,7 @@
  * Thin ClickClack REST/websocket client used by gateway, resolver, and outbound
  * delivery code.
  */
-import {
-  readProviderJsonResponse,
-  readResponseTextLimited,
-} from "openclaw/plugin-sdk/provider-http";
+import { readProviderJsonResponse, readResponseTextLimited } from "nova/plugin-sdk/provider-http";
 import { WebSocket } from "ws";
 import type {
   ClickClackBotCommand,

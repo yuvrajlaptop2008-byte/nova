@@ -3,7 +3,7 @@
 
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { resolveGatewayPort } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.js";
+import type { NovaConfig } from "../../config/types.js";
 import { resolveControlUiLinks } from "../../gateway/control-ui-links.js";
 import { formatDurationPrecise } from "../../infra/format-time/format-duration.ts";
 import {
@@ -172,7 +172,7 @@ export function formatStatusServiceValue(params: {
 
 /** Returns the dashboard URL when the Control UI is enabled for the current gateway binding. */
 export function resolveStatusDashboardUrl(params: {
-  cfg: Pick<OpenClawConfig, "gateway">;
+  cfg: Pick<NovaConfig, "gateway">;
 }): string | null {
   if (!(params.cfg.gateway?.controlUi?.enabled ?? true)) {
     return null;
@@ -237,7 +237,7 @@ export function buildStatusOverviewRows(params: {
 
 /** Builds overview rows directly from raw scan/update/gateway inputs. */
 export function buildStatusOverviewSurfaceRows(params: {
-  cfg: Pick<OpenClawConfig, "update" | "gateway">;
+  cfg: Pick<NovaConfig, "update" | "gateway">;
   update: StatusUpdateLike;
   tailscaleMode: string;
   tailscaleDns?: string | null;
@@ -404,7 +404,7 @@ export function buildGatewayStatusSummaryParts(params: {
 
 /** Builds gateway/dashboard/service values for overview rows. */
 export function buildStatusGatewaySurfaceValues(params: {
-  cfg: Pick<OpenClawConfig, "gateway">;
+  cfg: Pick<NovaConfig, "gateway">;
   advertisedControlUiLinks?: { httpUrl: string; wsUrl: string };
   gatewayMode: "local" | "remote";
   remoteUrlMissing: boolean;
@@ -474,7 +474,7 @@ export function buildStatusGatewaySurfaceValues(params: {
   };
 }
 
-/** Builds the stable gateway object used by `openclaw status --json`. */
+/** Builds the stable gateway object used by `nova status --json`. */
 export function buildGatewayStatusJsonPayload(params: {
   gatewayMode: "local" | "remote";
   gatewayConnection: {

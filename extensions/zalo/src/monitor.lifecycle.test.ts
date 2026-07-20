@@ -2,18 +2,18 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/channel-test-helpers";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/channel-test-helpers";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import {
   createEmptyPluginRegistry,
   createRuntimeEnv,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig, PluginRuntime } from "../runtime-api.js";
+import type { NovaConfig, PluginRuntime } from "../runtime-api.js";
 import type { ResolvedZaloAccount } from "./accounts.js";
 
 const getWebhookInfoMock = vi.fn(async () => ({ ok: true, result: { url: "" } }));
@@ -42,7 +42,7 @@ const TEST_ACCOUNT = {
   config: {},
 } as unknown as ResolvedZaloAccount;
 
-const TEST_CONFIG = {} as OpenClawConfig;
+const TEST_CONFIG = {} as NovaConfig;
 let testStateDir: string | undefined;
 let previousStateDir: string | undefined;
 
@@ -78,7 +78,7 @@ async function startLifecycleMonitor(
 
 describe("monitorZaloProvider lifecycle", () => {
   beforeEach(async () => {
-    const createdDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-zalo-monitor-"));
+    const createdDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-zalo-monitor-"));
     testStateDir = await fs.realpath(createdDir);
     previousStateDir = process.env.NOVA_STATE_DIR;
     process.env.NOVA_STATE_DIR = testStateDir;
@@ -97,7 +97,7 @@ describe("monitorZaloProvider lifecycle", () => {
     getUpdatesMock.mockReset();
     getUpdatesMock.mockImplementation(() => new Promise(() => {}));
     setActivePluginRegistry(createEmptyPluginRegistry());
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     if (testStateDir) {
       await fs.rm(testStateDir, { recursive: true, force: true });
       testStateDir = undefined;

@@ -48,7 +48,7 @@ describe("acp prompt cwd prefix", () => {
     sessionStore.createSession({
       sessionId: TEST_SESSION_ID,
       sessionKey: TEST_SESSION_KEY,
-      cwd: options.cwd ?? path.join(os.homedir(), "openclaw-test"),
+      cwd: options.cwd ?? path.join(os.homedir(), "nova-test"),
     });
 
     const requestSpy = createStopAfterSendSpy();
@@ -80,16 +80,16 @@ describe("acp prompt cwd prefix", () => {
   }
 
   it("redacts home directory in prompt prefix", async () => {
-    const requestSpy = await runPromptWithCwd(path.join(os.homedir(), "openclaw-test"));
+    const requestSpy = await runPromptWithCwd(path.join(os.homedir(), "nova-test"));
     const payload = chatSendPayload(requestSpy);
     expect(typeof payload.message).toBe("string");
-    expect(payload.message).toMatch(/\[Working directory: ~[\\/]openclaw-test\]/);
+    expect(payload.message).toMatch(/\[Working directory: ~[\\/]nova-test\]/);
   });
 
   it("keeps backslash separators when cwd uses them", async () => {
-    const requestSpy = await runPromptWithCwd(`${os.homedir()}\\openclaw-test`);
+    const requestSpy = await runPromptWithCwd(`${os.homedir()}\\nova-test`);
     const payload = chatSendPayload(requestSpy);
-    expect(payload.message).toContain("[Working directory: ~\\openclaw-test]");
+    expect(payload.message).toContain("[Working directory: ~\\nova-test]");
   });
 
   it("injects system provenance metadata when enabled", async () => {
@@ -99,7 +99,7 @@ describe("acp prompt cwd prefix", () => {
       kind: "external_user",
       originSessionId: TEST_SESSION_ID,
       sourceChannel: "acp",
-      sourceTool: "openclaw_acp",
+      sourceTool: "nova_acp",
     });
     expect(payload.systemProvenanceReceipt).toBeUndefined();
   });
@@ -111,12 +111,12 @@ describe("acp prompt cwd prefix", () => {
       kind: "external_user",
       originSessionId: TEST_SESSION_ID,
       sourceChannel: "acp",
-      sourceTool: "openclaw_acp",
+      sourceTool: "nova_acp",
     });
     expect(typeof payload.systemProvenanceReceipt).toBe("string");
     const receipt = payload.systemProvenanceReceipt as string;
     expect(receipt).toContain("[Source Receipt]");
-    expect(receipt).toContain("bridge=openclaw-acp");
+    expect(receipt).toContain("bridge=nova-acp");
     expect(receipt).toContain(`originSessionId=${TEST_SESSION_ID}`);
     expect(receipt).toContain(`targetSession=${TEST_SESSION_KEY}`);
   });
@@ -143,7 +143,7 @@ describe("acp prompt cwd prefix", () => {
     sessionStore.createSession({
       sessionId: TEST_SESSION_ID,
       sessionKey: TEST_SESSION_KEY,
-      cwd: path.join(os.homedir(), "openclaw-test"),
+      cwd: path.join(os.homedir(), "nova-test"),
     });
     const agent = new AcpGatewayAgent(
       createAcpConnection(),
@@ -161,7 +161,7 @@ describe("acp prompt cwd prefix", () => {
       kind: "external_user",
       originSessionId: TEST_SESSION_ID,
       sourceChannel: "acp",
-      sourceTool: "openclaw_acp",
+      sourceTool: "nova_acp",
     });
     expect(firstPayload.systemProvenanceReceipt).toContain("[Source Receipt]");
 

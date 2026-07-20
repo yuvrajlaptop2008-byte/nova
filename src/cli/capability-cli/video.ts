@@ -9,7 +9,7 @@ import { resolveAgentDir, resolveDefaultAgentId } from "../../agents/agent-scope
 import { assertOkOrThrowHttpError } from "../../agents/provider-http-errors.js";
 import { getRuntimeConfig } from "../../config/config.js";
 import { resolveAgentModelPrimaryValue } from "../../config/model-input.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { readResponseWithLimit } from "../../infra/http-body.js";
 import { buildMediaUnderstandingRegistry } from "../../media-understanding/provider-registry.js";
 import { describeVideoFile } from "../../media-understanding/runtime.js";
@@ -61,7 +61,7 @@ function normalizeVideoResolution(raw: string | undefined): VideoGenerationResol
 }
 
 async function fetchGeneratedVideoDownload(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   url: string;
 }) {

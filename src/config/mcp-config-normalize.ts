@@ -2,9 +2,9 @@
 import { isRecord } from "../utils.js";
 
 type ConfigMcpServers = Record<string, Record<string, unknown>>;
-type OpenClawMcpHttpTransport = "sse" | "streamable-http";
+type NovaMcpHttpTransport = "sse" | "streamable-http";
 
-const CLI_MCP_TYPE_TO_NOVA_TRANSPORT: Record<string, OpenClawMcpHttpTransport | "stdio"> = {
+const CLI_MCP_TYPE_TO_NOVA_TRANSPORT: Record<string, NovaMcpHttpTransport | "stdio"> = {
   http: "streamable-http",
   "streamable-http": "streamable-http",
   sse: "sse",
@@ -16,9 +16,7 @@ function normalizeMcpString(value: unknown): string {
 }
 
 /** Maps CLI-native MCP type aliases to Nova HTTP transport names. */
-export function resolveOpenClawMcpTransportAlias(
-  value: unknown,
-): OpenClawMcpHttpTransport | undefined {
+export function resolveNovaMcpTransportAlias(value: unknown): NovaMcpHttpTransport | undefined {
   const mapped = CLI_MCP_TYPE_TO_NOVA_TRANSPORT[normalizeMcpString(value)];
   return mapped === "sse" || mapped === "streamable-http" ? mapped : undefined;
 }
@@ -38,7 +36,7 @@ export function canonicalizeConfiguredMcpServer(
   server: Record<string, unknown>,
 ): Record<string, unknown> {
   const next = { ...server };
-  const transportAlias = resolveOpenClawMcpTransportAlias(next.type);
+  const transportAlias = resolveNovaMcpTransportAlias(next.type);
   // `transport` is Nova's canonical field; legacy `type` only fills a gap.
   if (typeof next.transport !== "string" && transportAlias) {
     next.transport = transportAlias;

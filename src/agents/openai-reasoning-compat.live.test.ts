@@ -1,7 +1,7 @@
 // Live checks for OpenAI reasoning compatibility and repaired tool replay payloads.
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
+import { SessionManager } from "nova/plugin-sdk/agent-sessions";
+import type { Model } from "nova/plugin-sdk/llm";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import { getRuntimeConfig } from "../config/config.js";
@@ -17,7 +17,7 @@ import {
   resolveLiveCredentialPrecedence,
 } from "./live-test-helpers.js";
 import { getApiKeyForModel, requireApiKey } from "./model-auth.js";
-import { ensureOpenClawModelsJson } from "./models-config.js";
+import { ensureNovaModelsJson } from "./models-config.js";
 
 const LIVE = isLiveTestEnabled();
 const REQUIRE_PROFILE_KEYS = isLiveProfileKeyModeEnabled();
@@ -104,7 +104,7 @@ describeLive("openai reasoning compat live", () => {
     async () => {
       const { provider, modelId } = resolveTargetModelRef();
       const cfg = getRuntimeConfig();
-      await ensureOpenClawModelsJson(cfg);
+      await ensureNovaModelsJson(cfg);
 
       const agentDir = resolveDefaultAgentDir(cfg);
       const authStorage = discoverAuthStorage(agentDir);
@@ -164,7 +164,7 @@ describeLive("openai reasoning compat live", () => {
     async () => {
       const { provider, modelId } = resolveTargetModelRef();
       const cfg = getRuntimeConfig();
-      await ensureOpenClawModelsJson(cfg);
+      await ensureNovaModelsJson(cfg);
 
       const agentDir = resolveDefaultAgentDir(cfg);
       const authStorage = discoverAuthStorage(agentDir);

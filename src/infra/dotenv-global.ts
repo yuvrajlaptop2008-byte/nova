@@ -139,7 +139,7 @@ export function loadGlobalRuntimeDotEnvFiles(opts?: GlobalRuntimeDotEnvOptions) 
   const globalEnvPaths = [...new Set([stateEnvPath, ...(opts?.additionalEnvPaths ?? [])])];
   const defaultStateEnvPath = path.join(
     resolveRequiredHomeDir(process.env, os.homedir),
-    ".openclaw",
+    ".nova",
     ".env",
   );
   const hasExplicitNonDefaultStateDir =
@@ -156,7 +156,7 @@ export function loadGlobalRuntimeDotEnvFiles(opts?: GlobalRuntimeDotEnvOptions) 
       filePath: path.join(
         resolveRequiredHomeDir(process.env, os.homedir),
         ".config",
-        "openclaw",
+        "nova",
         "gateway.env",
       ),
       quiet,

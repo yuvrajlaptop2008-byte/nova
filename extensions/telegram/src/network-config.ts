@@ -1,9 +1,9 @@
 // Telegram helper module supports network config behavior.
 import * as dns from "node:dns";
 import process from "node:process";
-import type { TelegramNetworkConfig } from "openclaw/plugin-sdk/config-contracts";
-import { isTruthyEnvValue, isWSL2Sync } from "openclaw/plugin-sdk/runtime-env";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { TelegramNetworkConfig } from "nova/plugin-sdk/config-contracts";
+import { isTruthyEnvValue, isWSL2Sync } from "nova/plugin-sdk/runtime-env";
+import { normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 
 const TELEGRAM_DISABLE_AUTO_SELECT_FAMILY_ENV = "NOVA_TELEGRAM_DISABLE_AUTO_SELECT_FAMILY";
 const TELEGRAM_ENABLE_AUTO_SELECT_FAMILY_ENV = "NOVA_TELEGRAM_ENABLE_AUTO_SELECT_FAMILY";

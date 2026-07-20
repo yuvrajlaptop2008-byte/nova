@@ -6,11 +6,11 @@ import {
   type ModelCatalogEntry,
 } from "../agents/model-catalog.js";
 import { loadPreparedModelCatalogOwnerSnapshot } from "../agents/prepared-model-catalog.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 /** Loads committed catalog models for the user's preferred provider. */
 export async function loadPreferredProviderPickerCatalog(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   preferredProvider: string;
   agentDir?: string;
   workspaceDir?: string;

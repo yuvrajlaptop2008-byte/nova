@@ -1,9 +1,6 @@
 // Memory Core plugin module implements manager embedding cache behavior.
 import type { DatabaseSync, SQLInputValue } from "node:sqlite";
-import {
-  parseEmbedding,
-  type MemoryChunk,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
+import { parseEmbedding, type MemoryChunk } from "nova/plugin-sdk/memory-core-host-engine-storage";
 
 type EmbeddingCacheDb = Pick<DatabaseSync, "prepare">;
 

@@ -6,7 +6,7 @@ import { formatErrorMessage } from "../infra/errors.js";
 import { searchInstallablePluginPackages } from "../plugins/catalog-search.js";
 import { defaultRuntime, writeRuntimeJson, type RuntimeEnv } from "../runtime.js";
 
-/** Options accepted by `openclaw plugins search`. */
+/** Options accepted by `nova plugins search`. */
 type PluginsSearchOptions = {
   json?: boolean;
   limit?: number;
@@ -21,7 +21,7 @@ function formatPackageSearchLine(entry: ClawHubPackageSearchResult): string {
     pkg.latestVersion ? `v${pkg.latestVersion}` : undefined,
   ].filter(Boolean);
   const summary = pkg.summary ? theme.muted(` — ${pkg.summary}`) : "";
-  return `${pkg.name}  ${theme.muted(flags.join(" | "))}${summary}\n  ${theme.muted(`Install: openclaw plugins install clawhub:${pkg.name}`)}`;
+  return `${pkg.name}  ${theme.muted(flags.join(" | "))}${summary}\n  ${theme.muted(`Install: nova plugins install clawhub:${pkg.name}`)}`;
 }
 
 /** Search ClawHub for installable plugins and write JSON or terminal output. */
@@ -34,7 +34,7 @@ export async function runPluginsSearchCommand(
     Array.isArray(queryParts) ? queryParts.join(" ") : queryParts,
   );
   if (!query) {
-    runtime.error("Usage: openclaw plugins search <query>");
+    runtime.error("Usage: nova plugins search <query>");
     return runtime.exit(1);
   }
 

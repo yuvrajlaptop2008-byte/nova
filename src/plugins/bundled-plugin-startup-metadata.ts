@@ -32,7 +32,7 @@ export function inspectBundledPluginStartupMetadata(params: {
     return undefined;
   }
   const pluginRoot = path.join(bundledPluginsDir, params.pluginId);
-  const manifest = tryReadJsonSync(path.join(pluginRoot, "openclaw.plugin.json"));
+  const manifest = tryReadJsonSync(path.join(pluginRoot, "nova.plugin.json"));
   if (!isRecord(manifest) || manifest.id !== params.pluginId) {
     return undefined;
   }

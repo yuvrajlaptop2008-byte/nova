@@ -13,10 +13,10 @@ import { delimiter, join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  buildOpenClawReleaseClawHubPlan,
-  buildOpenClawReleaseClawHubRuntimeState,
-  parseOpenClawReleaseClawHubPlanArgs,
-} from "../scripts/lib/openclaw-release-clawhub-plan.ts";
+  buildNovaReleaseClawHubPlan,
+  buildNovaReleaseClawHubRuntimeState,
+  parseNovaReleaseClawHubPlanArgs,
+} from "../scripts/lib/nova-release-clawhub-plan.ts";
 import {
   collectClawHubPublishablePluginPackages,
   collectClawHubVersionGateErrors,
@@ -81,7 +81,7 @@ function createClawPackBytes(
   const packageJson = JSON.stringify({
     name: packageName,
     version,
-    openclaw: { release: { publishToClawHub: true } },
+    nova: { release: { publishToClawHub: true } },
   });
   const packageJsonEntries = options.duplicateNormalizedPackageJson
     ? [entry("package/package.json", packageJson), entry("package/package.json", packageJson)]
@@ -89,7 +89,7 @@ function createClawPackBytes(
   return gzipSync(
     Buffer.concat([
       ...packageJsonEntries,
-      entry("package/openclaw.plugin.json", JSON.stringify({ id: "demo-plugin" })),
+      entry("package/nova.plugin.json", JSON.stringify({ id: "demo-plugin" })),
       Buffer.alloc(1024),
     ]),
   );
@@ -132,7 +132,7 @@ describe("collectClawHubPublishablePluginPackages", () => {
     });
 
     expect(() => collectClawHubPublishablePluginPackages(repoDir)).toThrow(
-      "openclaw.compat.pluginApi is required for external code plugin packages.",
+      "nova.compat.pluginApi is required for external code plugin packages.",
     );
   });
 
@@ -156,7 +156,7 @@ describe("collectClawHubPublishablePluginPackages", () => {
         {
           name: "@nova/broken-plugin",
           version: "2026.4.1",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             release: {
               publishToClawHub: true,
@@ -254,7 +254,7 @@ describe("Nova dual-published plugin metadata", () => {
       const packageJson = JSON.parse(
         readFileSync(`extensions/${plugin.extensionId}/package.json`, "utf8"),
       ) as {
-        openclaw?: {
+        nova?: {
           install?: {
             clawhubSpec?: string;
             defaultChoice?: string;
@@ -268,8 +268,8 @@ describe("Nova dual-published plugin metadata", () => {
         };
       };
 
-      expect(packageJson.openclaw?.install).toEqual(plugin.install);
-      expect(packageJson.openclaw?.release).toEqual({
+      expect(packageJson.nova?.install).toEqual(plugin.install);
+      expect(packageJson.nova?.release).toEqual({
         publishToClawHub: true,
         publishToNpm: true,
       });
@@ -326,7 +326,7 @@ describe("collectClawHubVersionGateErrors", () => {
             type: "git",
             url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             compat: {
               pluginApi: ">=2026.4.1",
@@ -335,7 +335,7 @@ describe("collectClawHubVersionGateErrors", () => {
               npmSpec: "@nova/demo-plugin",
             },
             build: {
-              openclawVersion: "2026.4.1",
+              novaVersion: "2026.4.1",
             },
             release: {
               publishToClawHub: true,
@@ -448,7 +448,7 @@ describe("collectPluginClawHubReleasePlan", () => {
             status: 200,
             body: {
               trustedPublisher: {
-                repository: "openclaw/openclaw",
+                repository: "nova/nova",
                 workflowFilename: "plugin-clawhub-release.yml",
               },
             },
@@ -518,7 +518,7 @@ describe("collectPluginClawHubReleasePlan", () => {
           status: 200,
           body: {
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           },
@@ -578,7 +578,7 @@ describe("collectPluginClawHubReleasePlan", () => {
           status: 200,
           body: {
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           },
@@ -600,9 +600,9 @@ describe("collectPluginClawHubReleasePlan", () => {
     expect(plan.bootstrapCandidates).toStrictEqual([]);
     expect(plan.missingTrustedPublisher).toStrictEqual([]);
     expect(requests).toEqual([
-      "/api/v1/packages/%40openclaw%2Fdemo-plugin",
-      "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher",
-      "/api/v1/packages/%40openclaw%2Fdemo-plugin/versions/2026.4.1",
+      "/api/v1/packages/%40nova%2Fdemo-plugin",
+      "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher",
+      "/api/v1/packages/%40nova%2Fdemo-plugin/versions/2026.4.1",
     ]);
   });
 
@@ -614,7 +614,7 @@ describe("collectPluginClawHubReleasePlan", () => {
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       const url = new URL(requestUrl);
 
-      if (url.pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin") {
+      if (url.pathname === "/api/v1/packages/%40nova%2Fdemo-plugin") {
         return new Response(
           new ReadableStream<Uint8Array>({
             cancel() {
@@ -624,18 +624,18 @@ describe("collectPluginClawHubReleasePlan", () => {
           { status: 200 },
         );
       }
-      if (url.pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher") {
+      if (url.pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher") {
         return new Response(
           JSON.stringify({
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           }),
           { status: 200 },
         );
       }
-      if (url.pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/versions/2026.4.1") {
+      if (url.pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/versions/2026.4.1") {
         return new Response(
           new ReadableStream<Uint8Array>({
             cancel() {
@@ -668,10 +668,10 @@ describe("collectPluginClawHubReleasePlan", () => {
       const requestUrl =
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       const pathname = new URL(requestUrl).pathname;
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin") {
         return new Response("{}", { status: 200 });
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher") {
         trustedPublisherRequests += 1;
         if (trustedPublisherRequests === 1) {
           return new Response(
@@ -686,14 +686,14 @@ describe("collectPluginClawHubReleasePlan", () => {
         return new Response(
           JSON.stringify({
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           }),
           { status: 200 },
         );
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/versions/2026.4.1") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/versions/2026.4.1") {
         return new Response("", { status: 404 });
       }
       throw new Error(`Unexpected ClawHub request to ${pathname}`);
@@ -724,7 +724,7 @@ describe("collectPluginClawHubReleasePlan", () => {
       const requestUrl =
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       const pathname = new URL(requestUrl).pathname;
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin") {
         packageRequests += 1;
         if (packageRequests === 1) {
           return new Response(
@@ -741,18 +741,18 @@ describe("collectPluginClawHubReleasePlan", () => {
         }
         return new Response("{}", { status: 200 });
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher") {
         return new Response(
           JSON.stringify({
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           }),
           { status: 200 },
         );
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/versions/2026.4.1") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/versions/2026.4.1") {
         return new Response("", { status: 404 });
       }
       throw new Error(`Unexpected ClawHub request to ${pathname}`);
@@ -782,21 +782,21 @@ describe("collectPluginClawHubReleasePlan", () => {
       const requestUrl =
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       const pathname = new URL(requestUrl).pathname;
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin") {
         return new Response("{}", { status: 200 });
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher") {
         return new Response(
           JSON.stringify({
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           }),
           { status: 200 },
         );
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/versions/2026.4.1") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/versions/2026.4.1") {
         versionRequests += 1;
         if (versionRequests === 1) {
           throw new TypeError("fetch failed");
@@ -884,10 +884,10 @@ describe("collectPluginClawHubReleasePlan", () => {
       const requestUrl =
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       const pathname = new URL(requestUrl).pathname;
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin") {
         return new Response("{}", { status: 200 });
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher") {
         trustedPublisherRequests += 1;
         if (trustedPublisherRequests === 1) {
           return new Response("", { status: 429, headers: { "retry-after": retryAfter } });
@@ -895,14 +895,14 @@ describe("collectPluginClawHubReleasePlan", () => {
         return new Response(
           JSON.stringify({
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           }),
           { status: 200 },
         );
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/versions/2026.4.1") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/versions/2026.4.1") {
         return new Response("", { status: 404 });
       }
       throw new Error(`Unexpected ClawHub request to ${pathname}`);
@@ -934,10 +934,10 @@ describe("collectPluginClawHubReleasePlan", () => {
       const requestUrl =
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       const pathname = new URL(requestUrl).pathname;
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin") {
         return new Response("{}", { status: 200 });
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher") {
         trustedPublisherRequests += 1;
         if (trustedPublisherRequests === 1) {
           return new Response("", { status: 429, headers: { "retry-after": "999999999999" } });
@@ -945,14 +945,14 @@ describe("collectPluginClawHubReleasePlan", () => {
         return new Response(
           JSON.stringify({
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           }),
           { status: 200 },
         );
       }
-      if (pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/versions/2026.4.1") {
+      if (pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/versions/2026.4.1") {
         return new Response("", { status: 404 });
       }
       throw new Error(`Unexpected ClawHub request to ${pathname}`);
@@ -995,7 +995,7 @@ describe("collectPluginClawHubReleasePlan", () => {
     ]);
     expect(plan.bootstrapCandidates[0]).toMatchObject({
       alreadyPublished: false,
-      artifactName: "clawhub-package-openclaw-demo-plugin-2026.4.1",
+      artifactName: "clawhub-package-nova-demo-plugin-2026.4.1",
       packageName: "@nova/demo-plugin",
       version: "2026.4.1",
     });
@@ -1041,7 +1041,7 @@ describe("collectPluginClawHubReleasePlan", () => {
     ]);
     expect(plan.missingTrustedPublisher[0]).toMatchObject({
       alreadyPublished: false,
-      artifactName: "clawhub-package-openclaw-demo-plugin-2026.4.1",
+      artifactName: "clawhub-package-nova-demo-plugin-2026.4.1",
       packageName: "@nova/demo-plugin",
       version: "2026.4.1",
     });
@@ -1053,10 +1053,10 @@ describe("collectPluginClawHubReleasePlan", () => {
       const requestUrl =
         typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       const url = new URL(requestUrl);
-      if (url.pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin") {
+      if (url.pathname === "/api/v1/packages/%40nova%2Fdemo-plugin") {
         return new Response("{}", { status: 200 });
       }
-      if (url.pathname === "/api/v1/packages/%40openclaw%2Fdemo-plugin/trusted-publisher") {
+      if (url.pathname === "/api/v1/packages/%40nova%2Fdemo-plugin/trusted-publisher") {
         return new Response(new ReadableStream<Uint8Array>({ start() {} }), { status: 200 });
       }
       throw new Error(`Unexpected ClawHub request to ${url.pathname}`);
@@ -1090,7 +1090,7 @@ describe("collectPluginClawHubReleasePlan", () => {
           status: 200,
           body: {
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
               environment: "clawhub-plugin-release",
             },
@@ -1155,14 +1155,14 @@ describe("collectPluginClawHubReleasePlan", () => {
     ]);
     expect(plan.missingTrustedPublisher[0]).toMatchObject({
       alreadyPublished: true,
-      artifactName: "clawhub-package-openclaw-demo-plugin-2026.4.1",
+      artifactName: "clawhub-package-nova-demo-plugin-2026.4.1",
       packageName: "@nova/demo-plugin",
       version: "2026.4.1",
     });
     expect(plan.skippedPublished).toHaveLength(1);
     expect(plan.skippedPublished[0]).toEqual({
       alreadyPublished: true,
-      artifactName: "clawhub-package-openclaw-demo-plugin-2026.4.1",
+      artifactName: "clawhub-package-nova-demo-plugin-2026.4.1",
       channel: "stable",
       extensionId: "demo-plugin",
       packageDir: "extensions/demo-plugin",
@@ -1182,7 +1182,7 @@ describe("collectPluginClawHubReleasePlan", () => {
         {
           name: "@nova/broken-plugin",
           version: "2026.4.1",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             release: {
               publishToClawHub: true,
@@ -1212,7 +1212,7 @@ describe("collectPluginClawHubReleasePlan", () => {
             status: 200,
             body: {
               trustedPublisher: {
-                repository: "openclaw/openclaw",
+                repository: "nova/nova",
                 workflowFilename: "plugin-clawhub-release.yml",
               },
             },
@@ -1227,12 +1227,12 @@ describe("collectPluginClawHubReleasePlan", () => {
 
     expect(plan.candidates.map((plugin) => plugin.packageName)).toEqual(["@nova/demo-plugin"]);
     expect(plan.candidates.map((plugin) => plugin.artifactName)).toEqual([
-      "clawhub-package-openclaw-demo-plugin-2026.4.1",
+      "clawhub-package-nova-demo-plugin-2026.4.1",
     ]);
   });
 });
 
-describe("buildOpenClawReleaseClawHubPlan", () => {
+describe("buildNovaReleaseClawHubPlan", () => {
   it("emits a dispatch plan that keeps ClawHub children on the release tag", async () => {
     const repoDir = createTempPluginRepo({
       extraExtensionIds: ["demo-two", "demo-three"],
@@ -1262,7 +1262,7 @@ describe("buildOpenClawReleaseClawHubPlan", () => {
           status: 200,
           body: {
             trustedPublisher: {
-              repository: "openclaw/openclaw",
+              repository: "nova/nova",
               workflowFilename: "plugin-clawhub-release.yml",
             },
           },
@@ -1280,7 +1280,7 @@ describe("buildOpenClawReleaseClawHubPlan", () => {
       },
     });
 
-    const plan = await buildOpenClawReleaseClawHubPlan(
+    const plan = await buildNovaReleaseClawHubPlan(
       {
         bootstrapWorkflowRef: `release-publish/${"d".repeat(12)}-12345`,
         bootstrapWorkflowSha: "d".repeat(40),
@@ -1368,7 +1368,7 @@ describe("buildOpenClawReleaseClawHubPlan", () => {
       },
     });
 
-    const plan = await buildOpenClawReleaseClawHubPlan(
+    const plan = await buildNovaReleaseClawHubPlan(
       {
         bootstrapWorkflowRef: `release-publish/${"d".repeat(12)}-12345`,
         bootstrapWorkflowSha: "d".repeat(40),
@@ -1414,7 +1414,7 @@ describe("buildOpenClawReleaseClawHubPlan", () => {
 
   it("rejects incompatible all-publishable plugin selection args", () => {
     expect(() =>
-      parseOpenClawReleaseClawHubPlanArgs([
+      parseNovaReleaseClawHubPlanArgs([
         "--bootstrap-workflow-ref",
         `release-publish/${"d".repeat(12)}-12345`,
         "--bootstrap-workflow-sha",
@@ -1452,12 +1452,10 @@ describe("buildOpenClawReleaseClawHubPlan", () => {
       "--release-publish-run-id",
       "12345",
     ];
-    expect(() => parseOpenClawReleaseClawHubPlanArgs(baseArgs)).toThrow(
-      "--release-sha is required.",
+    expect(() => parseNovaReleaseClawHubPlanArgs(baseArgs)).toThrow("--release-sha is required.");
+    expect(() => parseNovaReleaseClawHubPlanArgs([...baseArgs, "--release-sha", "ABCDEF"])).toThrow(
+      "--release-sha must be a full 40-character lowercase commit SHA.",
     );
-    expect(() =>
-      parseOpenClawReleaseClawHubPlanArgs([...baseArgs, "--release-sha", "ABCDEF"]),
-    ).toThrow("--release-sha must be a full 40-character lowercase commit SHA.");
   });
 
   it("requires an exact parent release run attempt for bootstrap approval binding", () => {
@@ -1475,11 +1473,11 @@ describe("buildOpenClawReleaseClawHubPlan", () => {
       "--release-publish-run-id",
       "12345",
     ];
-    expect(() => parseOpenClawReleaseClawHubPlanArgs(args)).toThrow(
+    expect(() => parseNovaReleaseClawHubPlanArgs(args)).toThrow(
       "--release-publish-run-attempt is required.",
     );
     expect(() =>
-      parseOpenClawReleaseClawHubPlanArgs([...args, "--release-publish-run-attempt", "0"]),
+      parseNovaReleaseClawHubPlanArgs([...args, "--release-publish-run-attempt", "0"]),
     ).toThrow("--release-publish-run-attempt must be a positive integer.");
   });
 });
@@ -1536,10 +1534,10 @@ describe("runPluginClawHubReleaseCheck", () => {
   });
 });
 
-describe("buildOpenClawReleaseClawHubRuntimeState", () => {
+describe("buildNovaReleaseClawHubRuntimeState", () => {
   it("includes the normal ClawHub run in verifier args when the release waits for it", () => {
-    const state = buildOpenClawReleaseClawHubRuntimeState({
-      repository: "openclaw/openclaw",
+    const state = buildNovaReleaseClawHubRuntimeState({
+      repository: "nova/nova",
       waitForClawHub: true,
       forceSkipClawHub: false,
       normalRunId: "111",
@@ -1549,14 +1547,14 @@ describe("buildOpenClawReleaseClawHubRuntimeState", () => {
 
     expect(state.verifierArgs).toEqual(["--plugin-clawhub-run", "111"]);
     expect(state.proofLines.normal).toBe(
-      "- plugin ClawHub publish: https://github.com/openclaw/openclaw/actions/runs/111",
+      "- plugin ClawHub publish: https://github.com/nova/nova/actions/runs/111",
     );
     expect(state.proofLines.bootstrap).toBe("- plugin ClawHub bootstrap: not needed");
   });
 
   it("includes a completed bootstrap run even when there is no normal ClawHub run", () => {
-    const state = buildOpenClawReleaseClawHubRuntimeState({
-      repository: "openclaw/openclaw",
+    const state = buildNovaReleaseClawHubRuntimeState({
+      repository: "nova/nova",
       waitForClawHub: false,
       forceSkipClawHub: false,
       normalRunId: "",
@@ -1567,13 +1565,13 @@ describe("buildOpenClawReleaseClawHubRuntimeState", () => {
     expect(state.verifierArgs).toEqual(["--plugin-clawhub-bootstrap-run", "222"]);
     expect(state.proofLines.normal).toBe("- plugin ClawHub publish: no normal OIDC candidates");
     expect(state.proofLines.bootstrap).toBe(
-      "- plugin ClawHub bootstrap: https://github.com/openclaw/openclaw/actions/runs/222",
+      "- plugin ClawHub bootstrap: https://github.com/nova/nova/actions/runs/222",
     );
   });
 
   it("skips ClawHub verification for non-awaited incomplete runs while keeping proof links", () => {
-    const state = buildOpenClawReleaseClawHubRuntimeState({
-      repository: "openclaw/openclaw",
+    const state = buildNovaReleaseClawHubRuntimeState({
+      repository: "nova/nova",
       waitForClawHub: false,
       forceSkipClawHub: false,
       normalRunId: "111",
@@ -1583,16 +1581,16 @@ describe("buildOpenClawReleaseClawHubRuntimeState", () => {
 
     expect(state.verifierArgs).toEqual(["--skip-clawhub"]);
     expect(state.proofLines.normal).toBe(
-      "- plugin ClawHub publish: dispatched separately, not awaited by this proof: https://github.com/openclaw/openclaw/actions/runs/111",
+      "- plugin ClawHub publish: dispatched separately, not awaited by this proof: https://github.com/nova/nova/actions/runs/111",
     );
     expect(state.proofLines.bootstrap).toBe(
-      "- plugin ClawHub bootstrap: dispatched separately, not awaited by this proof: https://github.com/openclaw/openclaw/actions/runs/222",
+      "- plugin ClawHub bootstrap: dispatched separately, not awaited by this proof: https://github.com/nova/nova/actions/runs/222",
     );
   });
 
   it("keeps completed bootstrap run evidence when the normal ClawHub run is not awaited", () => {
-    const state = buildOpenClawReleaseClawHubRuntimeState({
-      repository: "openclaw/openclaw",
+    const state = buildNovaReleaseClawHubRuntimeState({
+      repository: "nova/nova",
       waitForClawHub: false,
       forceSkipClawHub: false,
       normalRunId: "111",
@@ -1602,16 +1600,16 @@ describe("buildOpenClawReleaseClawHubRuntimeState", () => {
 
     expect(state.verifierArgs).toEqual(["--skip-clawhub", "--plugin-clawhub-bootstrap-run", "222"]);
     expect(state.proofLines.normal).toBe(
-      "- plugin ClawHub publish: dispatched separately, not awaited by this proof: https://github.com/openclaw/openclaw/actions/runs/111",
+      "- plugin ClawHub publish: dispatched separately, not awaited by this proof: https://github.com/nova/nova/actions/runs/111",
     );
     expect(state.proofLines.bootstrap).toBe(
-      "- plugin ClawHub bootstrap: https://github.com/openclaw/openclaw/actions/runs/222",
+      "- plugin ClawHub bootstrap: https://github.com/nova/nova/actions/runs/222",
     );
   });
 
   it("forces skip-clawhub after a failed child run even if ClawHub runs completed", () => {
-    const state = buildOpenClawReleaseClawHubRuntimeState({
-      repository: "openclaw/openclaw",
+    const state = buildNovaReleaseClawHubRuntimeState({
+      repository: "nova/nova",
       waitForClawHub: true,
       forceSkipClawHub: true,
       normalRunId: "111",
@@ -1621,10 +1619,10 @@ describe("buildOpenClawReleaseClawHubRuntimeState", () => {
 
     expect(state.verifierArgs).toEqual(["--skip-clawhub"]);
     expect(state.proofLines.normal).toBe(
-      "- plugin ClawHub publish: https://github.com/openclaw/openclaw/actions/runs/111",
+      "- plugin ClawHub publish: https://github.com/nova/nova/actions/runs/111",
     );
     expect(state.proofLines.bootstrap).toBe(
-      "- plugin ClawHub bootstrap: https://github.com/openclaw/openclaw/actions/runs/222",
+      "- plugin ClawHub bootstrap: https://github.com/nova/nova/actions/runs/222",
     );
   });
 });
@@ -1723,7 +1721,7 @@ if [[ "\${1:-}" == "package" && "\${2:-}" == "pack" ]]; then
     esac
   done
   mkdir -p "$pack_destination"
-  pack_path="$pack_destination/openclaw-demo-plugin-2026.4.1.tgz"
+  pack_path="$pack_destination/nova-demo-plugin-2026.4.1.tgz"
   printf 'fake tgz\\n' > "$pack_path"
   printf '{"path":"%s","name":"@nova/demo-plugin","version":"2026.4.1"}\\n' "$pack_path"
 fi
@@ -1790,7 +1788,7 @@ if [[ "\${1:-}" == "package" && "\${2:-}" == "pack" ]]; then
     esac
   done
   mkdir -p "$pack_destination"
-  pack_path="$pack_destination/openclaw-demo-plugin-2026.4.1.tgz"
+  pack_path="$pack_destination/nova-demo-plugin-2026.4.1.tgz"
   printf 'fake tgz\\n' > "$pack_path"
   printf '{"path":"%s","name":"@nova/demo-plugin","version":"2026.4.1"}\\n' "$pack_path"
 fi
@@ -1854,7 +1852,7 @@ if [[ "\${1:-}" == "package" && "\${2:-}" == "pack" ]]; then
     esac
   done
   mkdir -p "$pack_destination"
-  pack_path="$pack_destination/openclaw-demo-plugin-2026.4.1.tgz"
+  pack_path="$pack_destination/nova-demo-plugin-2026.4.1.tgz"
   printf 'fake tgz\\n' > "$pack_path"
   printf '{"path":"%s","name":"@nova/demo-plugin","version":"2026.4.1"}\\n' "$pack_path"
 fi
@@ -1882,7 +1880,7 @@ exit 0
     );
 
     expect(output).toContain("Packed ClawPack:");
-    expect(existsSync(join(outputDir, "openclaw-demo-plugin-2026.4.1.tgz"))).toBe(true);
+    expect(existsSync(join(outputDir, "nova-demo-plugin-2026.4.1.tgz"))).toBe(true);
     const invocations = readFileSync(markerPath, "utf8");
     expect(invocations).toContain("package pack ");
     expect(invocations).not.toContain("package publish ");
@@ -2085,13 +2083,13 @@ function createTempPluginRepo(
     requiredLatestDependencyVersion?: string;
   } = {},
 ) {
-  const repoDir = makeTempRepoRoot(tempDirs, "openclaw-clawhub-release-");
+  const repoDir = makeTempRepoRoot(tempDirs, "nova-clawhub-release-");
   const extensionId = options.extensionId ?? "demo-plugin";
   const extensionIds = [extensionId, ...(options.extraExtensionIds ?? [])];
 
   writeFileSync(
     join(repoDir, "package.json"),
-    JSON.stringify({ name: "openclaw-test-root", type: "module" }, null, 2),
+    JSON.stringify({ name: "nova-test-root", type: "module" }, null, 2),
   );
   writeFileSync(join(repoDir, "pnpm-lock.yaml"), "lockfileVersion: '9.0'\n");
   for (const currentExtensionId of extensionIds) {
@@ -2114,7 +2112,7 @@ function createTempPluginRepo(
                 },
               }
             : {}),
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             ...(options.includeClawHubContract === false
               ? {}
@@ -2123,7 +2121,7 @@ function createTempPluginRepo(
                     pluginApi: ">=2026.4.1",
                   },
                   build: {
-                    openclawVersion: "2026.4.1",
+                    novaVersion: "2026.4.1",
                   },
                 }),
             install: {

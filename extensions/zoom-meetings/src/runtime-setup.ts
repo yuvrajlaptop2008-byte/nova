@@ -1,13 +1,13 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   addMeetingSetupCheck,
   createMeetingSetupStatus,
   resolveMeetingBrowserNodeInfo,
   type MeetingSetupStatus,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import type { ZoomMeetingsConfig, ZoomMeetingsMode, ZoomMeetingsTransport } from "./config.js";
 import { assertBlackHole2chAvailable } from "./transports/chrome.js";
 import { ZOOM_MEETINGS_BROWSER_NODE_ADAPTER } from "./transports/zoom-meetings-platform-constants.js";
@@ -32,7 +32,7 @@ async function commandExists(runtime: PluginRuntime, command: string): Promise<b
 
 export async function getZoomMeetingsSetupStatus(params: {
   config: ZoomMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   options?: { mode?: ZoomMeetingsMode; transport?: ZoomMeetingsTransport };
 }): Promise<MeetingSetupStatus> {

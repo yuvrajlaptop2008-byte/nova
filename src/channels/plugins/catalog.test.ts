@@ -19,21 +19,21 @@ beforeEach(() => {
 describe("channel plugin catalog", () => {
   it("keeps third-party channel ids mapped with catalog install trust", () => {
     const options = {
-      workspaceDir: "/tmp/openclaw-channel-catalog-empty-workspace",
+      workspaceDir: "/tmp/nova-channel-catalog-empty-workspace",
       env: {},
     };
 
     const wecom = getChannelPluginCatalogEntry("wecom", options);
     expect(wecom?.id).toBe("wecom");
-    expect(wecom?.pluginId).toBe("wecom-openclaw-plugin");
+    expect(wecom?.pluginId).toBe("wecom-nova-plugin");
     expect(wecom?.trustedSourceLinkedOfficialInstall).toBe(true);
-    expect(wecom?.install?.npmSpec).toBe("@wecom/wecom-openclaw-plugin@2026.5.7");
+    expect(wecom?.install?.npmSpec).toBe("@wecom/wecom-nova-plugin@2026.5.7");
 
     const yuanbao = getChannelPluginCatalogEntry("yuanbao", options);
     expect(yuanbao?.id).toBe("yuanbao");
-    expect(yuanbao?.pluginId).toBe("openclaw-plugin-yuanbao");
+    expect(yuanbao?.pluginId).toBe("nova-plugin-yuanbao");
     expect(yuanbao?.trustedSourceLinkedOfficialInstall).toBe(true);
-    expect(yuanbao?.install?.npmSpec).toBe("openclaw-plugin-yuanbao@2.15.0");
+    expect(yuanbao?.install?.npmSpec).toBe("nova-plugin-yuanbao@2.15.0");
   });
 
   it("excludes only the rejected origin/plugin pair when resolving fallback copies", () => {

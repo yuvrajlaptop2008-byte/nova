@@ -18,7 +18,7 @@ describe("fetchBrowserScreenshotDataUrl", () => {
 
     await expect(
       fetchBrowserScreenshotDataUrl({
-        basePath: "/openclaw/",
+        basePath: "/nova/",
         authToken: null,
         path: "/tmp/browser shot.png",
       }),
@@ -35,7 +35,7 @@ describe("fetchBrowserScreenshotDataUrl", () => {
 
     await expect(
       fetchBrowserScreenshotDataUrl({
-        basePath: "/openclaw",
+        basePath: "/nova",
         authToken: null,
         path: "/tmp/missing.png",
       }),
@@ -65,12 +65,12 @@ describe("fetchBrowserScreenshotDataUrl", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const request = fetchBrowserScreenshotDataUrl({
-      basePath: "/openclaw",
+      basePath: "/nova",
       authToken: null,
       path: "/tmp/browser shot.png",
     });
     const [url, init] = fetchMock.mock.calls[0] ?? [];
-    expect(url).toBe("/openclaw/__openclaw__/assistant-media?source=%2Ftmp%2Fbrowser+shot.png");
+    expect(url).toBe("/nova/__nova__/assistant-media?source=%2Ftmp%2Fbrowser+shot.png");
     expect(init?.signal?.aborted).toBe(false);
 
     const outcome = expect(request).rejects.toMatchObject({ name: "TimeoutError" });
@@ -108,7 +108,7 @@ describe("fetchBrowserScreenshotDataUrl", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const request = fetchBrowserScreenshotDataUrl({
-      basePath: "/openclaw",
+      basePath: "/nova",
       authToken: null,
       path: "/tmp/browser shot.png",
     });

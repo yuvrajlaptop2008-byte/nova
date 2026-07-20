@@ -6,7 +6,7 @@ import { applyConfigEnvVars } from "./config-env-vars.js";
 import { resolveConfigEnvVars } from "./env-substitution.js";
 import { readConfigIncludeFileWithGuards, resolveConfigIncludes } from "./includes.js";
 import { resolveConfigPath, resolveIncludeRoots } from "./paths.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { NovaConfig } from "./types.nova.js";
 
 const GATEWAY_DISPATCH_SHELL_ENV_EXPECTED_KEYS = [
   "NOVA_GATEWAY_TOKEN",
@@ -47,7 +47,7 @@ function cloneConfigValue(value: unknown): unknown {
   return out;
 }
 
-function projectGatewayDispatchConfig(value: unknown): OpenClawConfig {
+function projectGatewayDispatchConfig(value: unknown): NovaConfig {
   if (!isPlainRecord(value)) {
     return {};
   }
@@ -57,11 +57,11 @@ function projectGatewayDispatchConfig(value: unknown): OpenClawConfig {
       projected[key] = cloneConfigValue(value[key]);
     }
   }
-  return projected as OpenClawConfig;
+  return projected as NovaConfig;
 }
 
 // Main session keys are process-local; Gateway dispatch always sees the canonical main key.
-function applyGatewayDispatchSessionDefaults(config: OpenClawConfig): OpenClawConfig {
+function applyGatewayDispatchSessionDefaults(config: NovaConfig): NovaConfig {
   if (config.session?.mainKey === undefined) {
     return config;
   }
@@ -96,13 +96,13 @@ function resolveIncludesForGatewayDispatch(
 
 function resolveGatewayDispatchEnvVars(config: unknown, env: NodeJS.ProcessEnv): unknown {
   if (isPlainRecord(config) && Object.hasOwn(config, "env")) {
-    applyConfigEnvVars(config as OpenClawConfig, env);
+    applyConfigEnvVars(config as NovaConfig, env);
   }
   return resolveConfigEnvVars(config, env, { onMissing: () => undefined });
 }
 
 function readRawGatewayDispatchConfig(options: GatewayDispatchConfigReadOptions = {}): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   configPath: string;
 } {
   const env = options.env ?? process.env;
@@ -123,13 +123,13 @@ function readRawGatewayDispatchConfig(options: GatewayDispatchConfigReadOptions 
 
 export function readGatewayDispatchConfig(
   options: GatewayDispatchConfigReadOptions = {},
-): OpenClawConfig {
+): NovaConfig {
   return readRawGatewayDispatchConfig(options).config;
 }
 
 export async function readGatewayDispatchConfigWithShellEnvFallback(
   options: GatewayDispatchConfigReadOptions = {},
-): Promise<OpenClawConfig> {
+): Promise<NovaConfig> {
   const env = options.env ?? process.env;
   const firstRead = readRawGatewayDispatchConfig(options);
   const {

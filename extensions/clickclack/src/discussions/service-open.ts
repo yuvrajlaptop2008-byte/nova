@@ -1,5 +1,5 @@
-import type { PluginRuntime } from "openclaw/plugin-sdk/core";
-import { resolveAgentIdFromSessionKey } from "openclaw/plugin-sdk/routing";
+import type { PluginRuntime } from "nova/plugin-sdk/core";
+import { resolveAgentIdFromSessionKey } from "nova/plugin-sdk/routing";
 import {
   ClickClackHttpError,
   isClickClackChannelNameConflict,

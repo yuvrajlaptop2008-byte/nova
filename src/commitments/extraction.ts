@@ -2,7 +2,7 @@
 import { asFiniteNumber, timestampMsToIsoString } from "@nova/normalization-core/number-coercion";
 import { normalizeOptionalString as asString } from "@nova/normalization-core/string-coerce";
 import { resolveAgentConfig } from "../agents/agent-scope.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { parseAbsoluteTimeMs } from "../cron/parse.js";
 import { resolveHeartbeatIntervalMs } from "../infra/heartbeat-summary.js";
 import { isRecord } from "../utils.js";
@@ -159,7 +159,7 @@ export function parseCommitmentExtractionOutput(raw: string): CommitmentExtracti
 }
 
 export async function hydrateCommitmentExtractionItem(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   item: Omit<CommitmentExtractionItem, "existingPending">;
 }): Promise<CommitmentExtractionItem> {
   const existingPending = await listPendingCommitmentsForScope({
@@ -208,7 +208,7 @@ function formatExtractionNow(valueMs: unknown): string {
 }
 
 export function buildCommitmentExtractionPrompt(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   items: CommitmentExtractionItem[];
 }): string {
   const items = params.items.map((item) => ({
@@ -258,7 +258,7 @@ function parseDueMs(raw: string | undefined): number | undefined {
 }
 
 function resolveMinimumDueMs(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   item: CommitmentExtractionItem;
   nowMs: number;
 }): number {
@@ -271,7 +271,7 @@ function resolveMinimumDueMs(params: {
 }
 
 function validateCommitmentCandidates(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   items: CommitmentExtractionItem[];
   result: CommitmentExtractionBatchResult;
   nowMs?: number;
@@ -333,7 +333,7 @@ function validateCommitmentCandidates(params: {
 }
 
 export async function persistCommitmentExtractionResult(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   items: CommitmentExtractionItem[];
   result: CommitmentExtractionBatchResult;
   nowMs?: number;
@@ -369,6 +369,7 @@ export async function persistCommitmentExtractionResult(params: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.commitmentExtractionTestApi")] =
-    { validateCommitmentCandidates };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.commitmentExtractionTestApi")] = {
+    validateCommitmentCandidates,
+  };
 }

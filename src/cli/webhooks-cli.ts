@@ -32,7 +32,7 @@ export function registerWebhooksCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/webhooks", "docs.openclaw.ai/cli/webhooks")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/webhooks", "docs.nova.ai/cli/webhooks")}\n`,
     );
 
   const gmail = webhooks.command("gmail").description("Gmail Pub/Sub hooks (via gogcli)");
@@ -114,7 +114,7 @@ function parseGmailSetupOptions(raw: Record<string, unknown>): GmailSetupOptions
   const account = normalizeOptionalString(accountRaw) ?? "";
   if (!account) {
     throw new Error(
-      `--account is required. Example: ${formatCliCommand("openclaw webhooks gmail setup --account default")}.`,
+      `--account is required. Example: ${formatCliCommand("nova webhooks gmail setup --account default")}.`,
     );
   }
   const common = parseGmailCommonOptions(raw);

@@ -1,17 +1,17 @@
-import { resolveAllowlistMatchByCandidates } from "openclaw/plugin-sdk/allow-from";
+import { resolveAllowlistMatchByCandidates } from "nova/plugin-sdk/allow-from";
 import {
   implicitMentionKindWhen,
   resolveInboundMentionDecision,
-} from "openclaw/plugin-sdk/channel-inbound";
+} from "nova/plugin-sdk/channel-inbound";
 import {
   resolveChannelImplicitMentions,
   resolveStableChannelMessageIngress,
   type StableChannelIngressIdentityParams,
-} from "openclaw/plugin-sdk/channel-ingress-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage as sharedFormatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+} from "nova/plugin-sdk/channel-ingress-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage as sharedFormatErrorMessage } from "nova/plugin-sdk/error-runtime";
 // Tlon helper module supports utils behavior.
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
 import { normalizeShip } from "../targets.js";
 
 export interface ParsedCite {
@@ -185,7 +185,7 @@ export async function resolveTlonCommandAuthorizationWithIngress(params: {
 }
 
 export function resolveTlonGroupMentionDecision(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   wasMentioned: boolean;
   botParticipatedInThread: boolean;

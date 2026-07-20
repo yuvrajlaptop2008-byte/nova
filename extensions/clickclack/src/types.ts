@@ -1,7 +1,7 @@
 /**
  * Shared ClickClack config, runtime account, API object, and target types.
  */
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 
 /** Session-linked ClickClack discussion settings for one account. */
 type ClickClackDiscussionsConfig = {
@@ -43,8 +43,8 @@ type ClickClackConfig = ClickClackAccountConfig & {
 };
 
 /** Nova config narrowed to include ClickClack channel settings. */
-export type CoreConfig = OpenClawConfig & {
-  channels?: OpenClawConfig["channels"] & {
+export type CoreConfig = NovaConfig & {
+  channels?: NovaConfig["channels"] & {
     clickclack?: ClickClackConfig;
   };
 };

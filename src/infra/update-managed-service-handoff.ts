@@ -10,7 +10,7 @@ import {
   resolveGatewayWindowsTaskName,
 } from "../daemon/constants.js";
 import { forceKillChildProcessTree } from "../process/child-process-tree.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { SUPERVISOR_HINT_ENV_VARS, type RespawnSupervisor } from "./supervisor-markers.js";
 import type { UpdateChannel } from "./update-channels.js";
 import {
@@ -635,14 +635,14 @@ function resolveUpdateCliArgv(params: {
   if (execPath && !isNodeLikeRuntime(execPath)) {
     return [execPath, ...updateArgs];
   }
-  return ["openclaw", ...updateArgs];
+  return ["nova", ...updateArgs];
 }
 
 export function formatManagedServiceUpdateCommand(params?: {
   timeoutMs?: number;
   channel?: UpdateChannel;
 }): string {
-  const args = ["openclaw", "update", "--yes"];
+  const args = ["nova", "update", "--yes"];
   if (params?.channel) {
     args.push("--channel", params.channel);
   }
@@ -758,7 +758,7 @@ function buildSystemdHandoffUnitName(handoffId: string | undefined): string {
     sanitizeSystemdUnitFragment(handoffId) ||
     sanitizeSystemdUnitFragment(`${process.pid}-${Date.now()}`) ||
     "handoff";
-  return `openclaw-update-${suffix}.scope`;
+  return `nova-update-${suffix}.scope`;
 }
 
 async function waitForHandoffReady(child: HandoffChild): Promise<void> {
@@ -846,7 +846,7 @@ async function resolveHandoffSpawn(params: {
   );
   if (!systemdRunPath) {
     throw new Error(
-      "systemd-run is required to start the managed update handoff outside openclaw-gateway.service",
+      "systemd-run is required to start the managed update handoff outside nova-gateway.service",
     );
   }
 
@@ -903,7 +903,7 @@ async function spawnManagedServiceUpdateHandoff(
     handoffId: params.handoffId,
     logPath,
     metaPath,
-    stateDatabasePath: resolveOpenClawStateSqlitePath(params.env ?? process.env),
+    stateDatabasePath: resolveNovaStateSqlitePath(params.env ?? process.env),
     sensitivePaths: [scriptPath, paramsPath, metaPath],
     serviceRecovery: resolveGatewayServiceRecovery(params.supervisor, params.env ?? process.env),
   };

@@ -54,7 +54,7 @@ function createSessionContext(
 }
 
 function createTestChatPane(params: { client: GatewayBrowserClient; sessions: SessionCapability }) {
-  const pane = document.createElement("openclaw-chat-pane") as unknown as TestChatPane;
+  const pane = document.createElement("nova-chat-pane") as unknown as TestChatPane;
   Object.defineProperty(pane, "isConnected", {
     configurable: true,
     value: true,
@@ -99,12 +99,12 @@ function nativeHistoryMessage(seq: number, text = `message ${seq}`) {
   return {
     role: seq % 2 === 0 ? "assistant" : "user",
     content: [{ type: "text", text }],
-    __openclaw: { seq },
+    __nova: { seq },
   };
 }
 
 function nativeHistorySeq(message: unknown): number | undefined {
-  const metadata = (message as Record<string, unknown>)["__openclaw"] as
+  const metadata = (message as Record<string, unknown>)["__nova"] as
     | Record<string, unknown>
     | undefined;
   return typeof metadata?.seq === "number" ? metadata.seq : undefined;

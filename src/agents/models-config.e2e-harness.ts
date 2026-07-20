@@ -4,7 +4,7 @@
  */
 import { afterEach, beforeEach } from "vitest";
 import { clearConfigCache, clearRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { withTempHome as withTempHomeBase } from "../plugin-sdk/test-helpers/temp-home.js";
 import { resetPluginLoaderTestStateForTest } from "../plugins/loader.test-fixtures.js";
 import { resetModelsJsonReadyCacheForTest } from "./models-config-state.test-support.js";
@@ -14,7 +14,7 @@ export function withModelsTempHome<T>(fn: (home: string) => Promise<T>): Promise
   // Models-config tests do not exercise session persistence; skip draining
   // unrelated session lock state during temp-home teardown.
   return withTempHomeBase(fn, {
-    prefix: "openclaw-models-",
+    prefix: "nova-models-",
     skipSessionCleanup: true,
   });
 }
@@ -25,13 +25,13 @@ export function installModelsConfigTestHooks(opts?: {
   resetPluginLoaderState?: boolean;
 }) {
   let previousHome: string | undefined;
-  let previousOpenClawAgentDir: string | undefined;
+  let previousNovaAgentDir: string | undefined;
   const originalFetch = globalThis.fetch;
   const shouldResetPluginLoaderState = opts?.resetPluginLoaderState !== false;
 
   beforeEach(() => {
     previousHome = process.env.HOME;
-    previousOpenClawAgentDir = process.env.NOVA_AGENT_DIR;
+    previousNovaAgentDir = process.env.NOVA_AGENT_DIR;
     delete process.env.NOVA_AGENT_DIR;
     clearRuntimeConfigSnapshot();
     clearConfigCache();
@@ -43,10 +43,10 @@ export function installModelsConfigTestHooks(opts?: {
 
   afterEach(() => {
     process.env.HOME = previousHome;
-    if (previousOpenClawAgentDir === undefined) {
+    if (previousNovaAgentDir === undefined) {
       delete process.env.NOVA_AGENT_DIR;
     } else {
-      process.env.NOVA_AGENT_DIR = previousOpenClawAgentDir;
+      process.env.NOVA_AGENT_DIR = previousNovaAgentDir;
     }
     clearRuntimeConfigSnapshot();
     clearConfigCache();
@@ -149,7 +149,7 @@ export const MODELS_CONFIG_IMPLICIT_ENV_VARS = [
 ];
 
 /** Canonical custom proxy provider config used by models-config tests. */
-export const CUSTOM_PROXY_MODELS_CONFIG: OpenClawConfig = {
+export const CUSTOM_PROXY_MODELS_CONFIG: NovaConfig = {
   models: {
     providers: {
       "custom-proxy": {

@@ -8,11 +8,11 @@ import {
   createPluginStateKeyedStoreForTests,
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import type {
   OpenKeyedStoreOptions,
   PluginDoctorStateMigrationContext,
-} from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/runtime-doctor";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { resolveSessionStoreAgentIds, stateMigrations } from "./doctor-contract-api.js";
 import {
@@ -67,7 +67,7 @@ describe("voice-call doctor state migration", () => {
 
   beforeAll(async () => {
     resetPluginStateStoreForTests();
-    const warmStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-voice-call-doctor-"));
+    const warmStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-voice-call-doctor-"));
     const warmStorePath = createTestStorePath();
     const warmEnv = {
       ...process.env,
@@ -120,7 +120,7 @@ describe("voice-call doctor state migration", () => {
 
   beforeEach(async () => {
     resetPluginStateStoreForTests();
-    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-voice-call-doctor-"));
+    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-voice-call-doctor-"));
     storePath = createTestStorePath();
     env = { ...process.env, HOME: stateDir, NOVA_STATE_DIR: stateDir };
     installStateRuntime();
@@ -271,7 +271,7 @@ describe("voice-call doctor state migration", () => {
   });
 
   it("repairs the plugin-local SQLite schema without a legacy call log", async () => {
-    const databasePath = path.join(storePath, "state", "openclaw.sqlite");
+    const databasePath = path.join(storePath, "state", "nova.sqlite");
     await fs.mkdir(path.dirname(databasePath), { recursive: true });
     const db = new DatabaseSync(databasePath);
     try {

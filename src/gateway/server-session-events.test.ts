@@ -11,7 +11,7 @@ const sessionRow = vi.hoisted(() => ({
   thinkingLevels: [{ id: "ultra", label: "ultra" }],
   thinkingOptions: ["ultra"],
   thinkingDefault: "medium",
-  agentRuntime: { id: "openclaw", source: "model" },
+  agentRuntime: { id: "nova", source: "model" },
 }));
 const isEmbeddedAgentRunActiveMock = vi.hoisted(() => vi.fn());
 
@@ -20,7 +20,7 @@ vi.mock("./chat-display-projection.js", () => ({
   projectChatDisplayMessage: (message: unknown) => message,
 }));
 vi.mock("./session-utils.js", () => ({
-  attachOpenClawTranscriptMeta: (message: unknown) => message,
+  attachNovaTranscriptMeta: (message: unknown) => message,
   loadGatewaySessionRow: () => sessionRow,
   loadSessionEntry: () => ({ entry: undefined, storePath: "" }),
   readSessionMessageCountAsync: vi.fn(),
@@ -100,7 +100,7 @@ describe("createTranscriptUpdateBroadcastHandler", () => {
     expect(payload).toMatchObject({
       session: {
         thinkingLevel: "ultra",
-        agentRuntime: { id: "openclaw" },
+        agentRuntime: { id: "nova" },
       },
     });
     expect(payload).not.toHaveProperty("thinkingLevels");
@@ -147,7 +147,7 @@ describe("createTranscriptUpdateBroadcastHandler", () => {
       }),
     ).resolves.toMatchObject({
       message: {
-        __openclaw: {
+        __nova: {
           id: "message-1",
           idempotencyKey: "client-turn-3",
           seq: 1,
@@ -161,7 +161,7 @@ describe("createTranscriptUpdateBroadcastHandler", () => {
       emitAssistantTranscriptUpdate(false, {
         role: "user",
         content: [{ type: "text", text: "Owner turn" }],
-        __openclaw: { senderIsOwner: true },
+        __nova: { senderIsOwner: true },
       }),
     ).resolves.toMatchObject({
       senderIsOwner: true,

@@ -13,7 +13,7 @@ export {
   generateBranchSummary,
   generateSummary,
   getLastAssistantUsage,
-  openClawAgentCoreRuntime,
+  novaAgentCoreRuntime,
   prepareBranchEntries,
   prepareCompaction,
   runAgentLoop,

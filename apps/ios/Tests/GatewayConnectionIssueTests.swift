@@ -1,6 +1,6 @@
-import OpenClawKit
+import NovaKit
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 @Suite(.serialized) struct GatewayConnectionIssueTests {
     @Test func `detects token missing`() {

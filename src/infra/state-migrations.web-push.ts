@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { root, type Root } from "@nova/fs-safe";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import { runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { formatErrorMessage } from "./errors.js";
 import { acquireGatewayLock, GatewayLockError } from "./gateway-lock.js";
 import {
@@ -285,7 +285,7 @@ function migrateIntoDatabase(params: {
 }): { importedSubscriptions: number; importedVapidKeys: boolean } {
   let importedSubscriptions = 0;
   let importedVapidKeys = false;
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       const webPushDb = getNodeSqliteKysely<WebPushDatabase>(db);
       const expectedSubscriptions = new Map<string, WebPushSubscription>();
@@ -594,7 +594,7 @@ export async function migrateLegacyWebPush(params: {
     return {
       changes: [],
       warnings: [
-        `Failed migrating legacy Web Push state: ${detail}. Stop the Gateway and run \`openclaw doctor --fix\` again.`,
+        `Failed migrating legacy Web Push state: ${detail}. Stop the Gateway and run \`nova doctor --fix\` again.`,
       ],
     };
   }

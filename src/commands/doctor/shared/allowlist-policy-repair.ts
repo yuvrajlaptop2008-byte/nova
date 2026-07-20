@@ -3,7 +3,7 @@ import { normalizeOptionalLowercaseString } from "@nova/normalization-core/strin
 import { normalizeUniqueStringEntries } from "@nova/normalization-core/string-normalization";
 import { normalizeChatChannelId } from "../../../channels/ids.js";
 import { setCanonicalDmAllowFrom } from "../../../channels/plugins/dm-access.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { readChannelAllowFromStore } from "../../../pairing/pairing-store.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import { resolveAllowFromMode, type AllowFromMode } from "./allow-from-mode.js";
@@ -11,8 +11,8 @@ import { hasAllowFromEntries } from "./allowlist.js";
 import { asObjectRecord } from "./object.js";
 
 /** Restore missing allowFrom entries for allowlist DM policies from persisted pairing stores. */
-export async function maybeRepairAllowlistPolicyAllowFrom(cfg: OpenClawConfig): Promise<{
-  config: OpenClawConfig;
+export async function maybeRepairAllowlistPolicyAllowFrom(cfg: NovaConfig): Promise<{
+  config: NovaConfig;
   changes: string[];
 }> {
   const channels = cfg.channels;

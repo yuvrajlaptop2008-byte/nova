@@ -1,11 +1,11 @@
 # Contributing
 
-The `fs-safe` repo lives at [github.com/openclaw/fs-safe](https://github.com/openclaw/fs-safe). Contributions welcome — issues, bug reports, focused PRs.
+The `fs-safe` repo lives at [github.com/nova/fs-safe](https://github.com/nova/fs-safe). Contributions welcome — issues, bug reports, focused PRs.
 
 ## Local setup
 
 ```bash
-git clone https://github.com/openclaw/fs-safe.git
+git clone https://github.com/nova/fs-safe.git
 cd fs-safe
 pnpm install
 ```
@@ -73,8 +73,8 @@ Release process lives in the maintainer's runbook. External contributors don't n
 
 ## Reporting security issues
 
-Suspected security issues belong in private disclosure first. See [`SECURITY.md`](https://github.com/openclaw/fs-safe/blob/main/SECURITY.md) in the repo for the current contact path. Don't open a public issue for a credential-stealing or sandbox-escape bug — coordinate the disclosure first.
+Suspected security issues belong in private disclosure first. See [`SECURITY.md`](https://github.com/nova/fs-safe/blob/main/SECURITY.md) in the repo for the current contact path. Don't open a public issue for a credential-stealing or sandbox-escape bug — coordinate the disclosure first.
 
 ## License
 
-By contributing you agree that your contributions are licensed under the project's [MIT license](https://github.com/openclaw/fs-safe/blob/main/LICENSE).
+By contributing you agree that your contributions are licensed under the project's [MIT license](https://github.com/nova/fs-safe/blob/main/LICENSE).

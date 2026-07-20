@@ -3,16 +3,13 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -34,8 +31,8 @@ const {
   >(async () => ({
     status: "started" as const,
     pid: 12345,
-    command: "openclaw update --yes --channel beta --timeout 2700",
-    logPath: "/tmp/openclaw-handoff.log",
+    command: "nova update --yes --channel beta --timeout 2700",
+    logPath: "/tmp/nova-handoff.log",
   })),
 }));
 
@@ -43,11 +40,11 @@ vi.mock("../config/config.js", () => ({
   getRuntimeConfig: getRuntimeConfigMock,
 }));
 
-vi.mock("./openclaw-root.js", async () => {
-  const actual = await vi.importActual<typeof import("./openclaw-root.js")>("./openclaw-root.js");
+vi.mock("./nova-root.js", async () => {
+  const actual = await vi.importActual<typeof import("./nova-root.js")>("./nova-root.js");
   return {
     ...actual,
-    resolveOpenClawPackageRoot: vi.fn(),
+    resolveNovaPackageRoot: vi.fn(),
   };
 });
 
@@ -106,7 +103,7 @@ vi.mock("./update-managed-service-handoff.js", () => ({
 
 const UPDATE_CHECK_STATE_KEY = "default";
 
-type UpdateCheckStateDatabase = Pick<OpenClawStateKyselyDatabase, "update_check_state">;
+type UpdateCheckStateDatabase = Pick<NovaStateKyselyDatabase, "update_check_state">;
 type PersistedUpdateCheckState = {
   lastCheckedAt?: string;
   lastNotifiedVersion?: string;
@@ -129,9 +126,9 @@ function presentString(value: string | null): string | undefined {
 
 describe("update-startup", () => {
   let tempDir: string;
-  let testState: OpenClawTestState;
+  let testState: NovaTestState;
 
-  let resolveOpenClawPackageRoot: (typeof import("./openclaw-root.js"))["resolveOpenClawPackageRoot"];
+  let resolveNovaPackageRoot: (typeof import("./nova-root.js"))["resolveNovaPackageRoot"];
   let checkUpdateStatus: (typeof import("./update-check.js"))["checkUpdateStatus"];
   let resolveNpmChannelTag: (typeof import("./update-check.js"))["resolveNpmChannelTag"];
   let runCommandWithTimeout: (typeof import("../process/exec.js"))["runCommandWithTimeout"];
@@ -150,7 +147,7 @@ describe("update-startup", () => {
   }
 
   function readPersistedUpdateCheckState(): PersistedUpdateCheckState | null {
-    const { db } = openOpenClawStateDatabase();
+    const { db } = openNovaStateDatabase();
     const stateDb = getNodeSqliteKysely<UpdateCheckStateDatabase>(db);
     const row = executeSqliteQueryTakeFirstSync(
       db,
@@ -180,7 +177,7 @@ describe("update-startup", () => {
   }
 
   function writePersistedUpdateCheckState(state: PersistedUpdateCheckState): void {
-    runOpenClawStateWriteTransaction(({ db }) => {
+    runNovaStateWriteTransaction(({ db }) => {
       const stateDb = getNodeSqliteKysely<UpdateCheckStateDatabase>(db);
       executeSqliteQuerySync(
         db,
@@ -212,9 +209,9 @@ describe("update-startup", () => {
   beforeEach(async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-17T10:00:00Z"));
-    testState = await createOpenClawTestState({
+    testState = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-update-check-suite-",
+      prefix: "nova-update-check-suite-",
       env: {
         NOVA_NO_AUTO_UPDATE: undefined,
         NOVA_SUPERVISOR_MODE: undefined,
@@ -233,7 +230,7 @@ describe("update-startup", () => {
 
     // Perf: load mocked modules once (after timers/env are set up).
     if (!loaded) {
-      ({ resolveOpenClawPackageRoot } = await import("./openclaw-root.js"));
+      ({ resolveNovaPackageRoot } = await import("./nova-root.js"));
       ({ checkUpdateStatus, resolveNpmChannelTag } = await import("./update-check.js"));
       ({ runCommandWithTimeout } = await import("../process/exec.js"));
       ({
@@ -244,7 +241,7 @@ describe("update-startup", () => {
       } = await import("./update-startup.js"));
       loaded = true;
     }
-    vi.mocked(resolveOpenClawPackageRoot).mockClear();
+    vi.mocked(resolveNovaPackageRoot).mockClear();
     vi.mocked(checkUpdateStatus).mockClear();
     vi.mocked(resolveNpmChannelTag).mockClear();
     vi.mocked(runCommandWithTimeout).mockClear();
@@ -257,15 +254,15 @@ describe("update-startup", () => {
     startManagedServiceUpdateHandoffMock.mockResolvedValue({
       status: "started",
       pid: 12345,
-      command: "openclaw update --yes --channel beta --timeout 2700",
-      logPath: "/tmp/openclaw-handoff.log",
+      command: "nova update --yes --channel beta --timeout 2700",
+      logPath: "/tmp/nova-handoff.log",
     });
     resetUpdateAvailableStateForTest();
   });
 
   afterEach(async () => {
     vi.useRealTimers();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await testState.cleanup();
     resetUpdateAvailableStateForTest();
   });
@@ -276,9 +273,9 @@ describe("update-startup", () => {
   }
 
   function mockPackageInstallStatus() {
-    vi.mocked(resolveOpenClawPackageRoot).mockResolvedValue("/opt/openclaw");
+    vi.mocked(resolveNovaPackageRoot).mockResolvedValue("/opt/nova");
     vi.mocked(checkUpdateStatus).mockResolvedValue({
-      root: "/opt/openclaw",
+      root: "/opt/nova",
       installKind: "package",
       packageManager: "npm",
     } satisfies UpdateCheckResult);
@@ -444,7 +441,7 @@ describe("update-startup", () => {
     const { log, parsed } = await runUpdateCheckAndReadState(channel);
 
     expect(log.info).toHaveBeenCalledWith(
-      `update available (latest): v2.0.0 (current v1.0.0). Run: ${formatCliCommand("openclaw update")}`,
+      `update available (latest): v2.0.0 (current v1.0.0). Run: ${formatCliCommand("nova update")}`,
     );
     expect(parsed?.lastNotifiedVersion).toBe("2.0.0");
     expect(parsed?.lastAvailableVersion).toBe("2.0.0");
@@ -723,7 +720,7 @@ describe("update-startup", () => {
     });
     expect(log.info).toHaveBeenCalledTimes(1);
     expect(log.info).toHaveBeenCalledWith(
-      `update available (extended-stable): v2.0.0 (current v1.0.0). Run: ${formatCliCommand("openclaw update")}`,
+      `update available (extended-stable): v2.0.0 (current v1.0.0). Run: ${formatCliCommand("nova update")}`,
     );
     expect(onUpdateAvailableChange).toHaveBeenCalledTimes(1);
     expect(onUpdateAvailableChange).toHaveBeenCalledWith({
@@ -750,7 +747,7 @@ describe("update-startup", () => {
 
   it("does no extended-stable hint or auto work when checkOnStart is false", async () => {
     await seedExtendedStableAvailability();
-    vi.mocked(resolveOpenClawPackageRoot).mockClear();
+    vi.mocked(resolveNovaPackageRoot).mockClear();
     vi.mocked(checkUpdateStatus).mockClear();
     vi.mocked(resolveNpmChannelTag).mockClear();
     const onUpdateAvailableChange = vi.fn();
@@ -762,7 +759,7 @@ describe("update-startup", () => {
       runAutoUpdate,
     });
 
-    expect(resolveOpenClawPackageRoot).not.toHaveBeenCalled();
+    expect(resolveNovaPackageRoot).not.toHaveBeenCalled();
     expect(checkUpdateStatus).not.toHaveBeenCalled();
     expect(resolveNpmChannelTag).not.toHaveBeenCalled();
     expect(runAutoUpdate).not.toHaveBeenCalled();
@@ -863,12 +860,12 @@ describe("update-startup", () => {
     await seedExtendedStableAvailability();
     seedStableAutoRolloutState();
     resetUpdateAvailableStateForTest();
-    vi.mocked(resolveOpenClawPackageRoot).mockClear();
+    vi.mocked(resolveNovaPackageRoot).mockClear();
     vi.mocked(checkUpdateStatus).mockClear();
     vi.mocked(resolveNpmChannelTag).mockClear();
-    vi.mocked(resolveOpenClawPackageRoot).mockResolvedValue("/opt/openclaw");
+    vi.mocked(resolveNovaPackageRoot).mockResolvedValue("/opt/nova");
     vi.mocked(checkUpdateStatus).mockResolvedValue({
-      root: "/opt/openclaw",
+      root: "/opt/nova",
       installKind: "git",
       packageManager: "unknown",
     } satisfies UpdateCheckResult);
@@ -894,7 +891,7 @@ describe("update-startup", () => {
 
     await runExtendedStableUpdateCheck({ isNixMode: true, runAutoUpdate });
 
-    expect(resolveOpenClawPackageRoot).not.toHaveBeenCalled();
+    expect(resolveNovaPackageRoot).not.toHaveBeenCalled();
     expect(checkUpdateStatus).not.toHaveBeenCalled();
     expect(resolveNpmChannelTag).not.toHaveBeenCalled();
     expect(runAutoUpdate).not.toHaveBeenCalled();
@@ -940,7 +937,7 @@ describe("update-startup", () => {
       channel: "stable",
       timeoutMs: 45 * 60 * 1000,
       restartDrainTimeoutMs: 300_000,
-      root: "/opt/openclaw",
+      root: "/opt/nova",
     });
   });
 
@@ -957,7 +954,7 @@ describe("update-startup", () => {
       channel: "beta",
       timeoutMs: 45 * 60 * 1000,
       restartDrainTimeoutMs: 300_000,
-      root: "/opt/openclaw",
+      root: "/opt/nova",
     });
   });
 
@@ -1035,7 +1032,7 @@ describe("update-startup", () => {
     });
 
     const originalArgv = process.argv.slice();
-    process.argv = [process.execPath, "/opt/openclaw/dist/entry.js"];
+    process.argv = [process.execPath, "/opt/nova/dist/entry.js"];
     try {
       await runAutoUpdateCheckWithDefaults({
         cfg: createBetaAutoUpdateConfig(),
@@ -1048,12 +1045,12 @@ describe("update-startup", () => {
     expect(startManagedServiceUpdateHandoffMock).not.toHaveBeenCalled();
     expect(scheduleGatewaySigusr1RestartMock).not.toHaveBeenCalled();
     expect(detectRespawnSupervisorMock).toHaveBeenCalledWith(process.env, process.platform, {
-      includeLinuxOpenClawGatewayServiceMarker: true,
+      includeLinuxNovaGatewayServiceMarker: true,
     });
     const [argv, options] = requireFirstRunCommandCall();
     expect(argv).toEqual([
       process.execPath,
-      "/opt/openclaw/dist/entry.js",
+      "/opt/nova/dist/entry.js",
       "update",
       "--yes",
       "--channel",
@@ -1084,7 +1081,7 @@ describe("update-startup", () => {
     expect(runCommandWithTimeout).not.toHaveBeenCalled();
     expect(startManagedServiceUpdateHandoffMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        root: "/opt/openclaw",
+        root: "/opt/nova",
         timeoutMs: 45 * 60 * 1000,
         restartDrainTimeoutMs: 300_000,
         channel: "beta",
@@ -1117,8 +1114,8 @@ describe("update-startup", () => {
       channel: "beta",
       version: "2.0.0-beta.1",
       tag: "beta",
-      command: "openclaw update --yes --channel beta --timeout 2700",
-      logPath: "/tmp/openclaw-handoff.log",
+      command: "nova update --yes --channel beta --timeout 2700",
+      logPath: "/tmp/nova-handoff.log",
     });
   });
 
@@ -1154,8 +1151,8 @@ describe("update-startup", () => {
     startManagedServiceUpdateHandoffMock.mockResolvedValueOnce({
       status: "joined",
       pid: 12345,
-      command: "openclaw update --yes --channel beta --timeout 2700",
-      logPath: "/tmp/openclaw-handoff.log",
+      command: "nova update --yes --channel beta --timeout 2700",
+      logPath: "/tmp/nova-handoff.log",
       handoffId: "handoff-existing",
     });
 
@@ -1177,11 +1174,11 @@ describe("update-startup", () => {
 
     expect(runCommandWithTimeout).not.toHaveBeenCalled();
     expect(detectRespawnSupervisorMock).toHaveBeenCalledWith(process.env, process.platform, {
-      includeLinuxOpenClawGatewayServiceMarker: true,
+      includeLinuxNovaGatewayServiceMarker: true,
     });
     expect(startManagedServiceUpdateHandoffMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        root: "/opt/openclaw",
+        root: "/opt/nova",
         timeoutMs: 45 * 60 * 1000,
         channel: "beta",
         restartDelayMs: 2000,
@@ -1242,7 +1239,7 @@ describe("update-startup", () => {
 
     await vi.advanceTimersByTimeAsync(48 * 60 * 60 * 1000);
 
-    expect(resolveOpenClawPackageRoot).not.toHaveBeenCalled();
+    expect(resolveNovaPackageRoot).not.toHaveBeenCalled();
     expect(checkUpdateStatus).not.toHaveBeenCalled();
     expect(resolveNpmChannelTag).not.toHaveBeenCalled();
     stop();

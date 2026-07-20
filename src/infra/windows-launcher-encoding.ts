@@ -25,8 +25,8 @@ const WHATWG_VERIFIABLE_ENCODINGS = new Set(["gbk", "big5", "shift_jis", "window
 // readback never has to guess: some code-page byte sequences are also valid
 // UTF-8 (GBK "隆" is C2 A1, which UTF-8 reads as "¡"), so content sniffing
 // silently corrupts paths.
-const LAUNCHER_ENCODING_MARKER_PREFIX = "@rem openclaw-launcher-encoding=";
-const LAUNCHER_ENCODING_MARKER_RE = /^@rem openclaw-launcher-encoding=(\S+)\s*$/;
+const LAUNCHER_ENCODING_MARKER_PREFIX = "@rem nova-launcher-encoding=";
+const LAUNCHER_ENCODING_MARKER_RE = /^@rem nova-launcher-encoding=(\S+)\s*$/;
 const LAUNCHER_CODEPAGE_PREAMBLE_RE = /^@chcp \d+ >nul\s*$/;
 
 function isAsciiOnly(value: string): boolean {

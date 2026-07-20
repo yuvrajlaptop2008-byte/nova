@@ -1,11 +1,11 @@
 // Onboard config tests cover workspace, bootstrap, and local setup config mutations.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { applyLocalSetupWorkspaceConfig } from "./onboard-config.js";
 
 describe("applyLocalSetupWorkspaceConfig", () => {
   it("leaves dmScope unset when not configured", () => {
-    const baseConfig: OpenClawConfig = {};
+    const baseConfig: NovaConfig = {};
     const result = applyLocalSetupWorkspaceConfig(baseConfig, "/tmp/workspace");
 
     expect(result.session?.dmScope).toBeUndefined();
@@ -16,7 +16,7 @@ describe("applyLocalSetupWorkspaceConfig", () => {
   });
 
   it("preserves existing dmScope when already configured", () => {
-    const baseConfig: OpenClawConfig = {
+    const baseConfig: NovaConfig = {
       session: {
         dmScope: "main",
       },
@@ -27,7 +27,7 @@ describe("applyLocalSetupWorkspaceConfig", () => {
   });
 
   it("preserves explicit non-main dmScope values", () => {
-    const baseConfig: OpenClawConfig = {
+    const baseConfig: NovaConfig = {
       session: {
         dmScope: "per-account-channel-peer",
       },
@@ -38,7 +38,7 @@ describe("applyLocalSetupWorkspaceConfig", () => {
   });
 
   it("preserves an explicit tools.profile when already configured", () => {
-    const baseConfig: OpenClawConfig = {
+    const baseConfig: NovaConfig = {
       tools: {
         profile: "full",
       },
@@ -48,8 +48,8 @@ describe("applyLocalSetupWorkspaceConfig", () => {
     expect(result.tools?.profile).toBe("full");
   });
 
-  it("preserves agents.list and bindings on onboard rerun (openclaw#84692)", () => {
-    const baseConfig: OpenClawConfig = {
+  it("preserves agents.list and bindings on onboard rerun (nova#84692)", () => {
+    const baseConfig: NovaConfig = {
       agents: {
         list: [
           { id: "alpha", model: "anthropic/claude-3-5-sonnet" },
@@ -63,7 +63,7 @@ describe("applyLocalSetupWorkspaceConfig", () => {
           match: { channel: "discord", peer: { kind: "direct", id: "user-1" } },
         },
       ],
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = applyLocalSetupWorkspaceConfig(baseConfig, "/tmp/workspace");
 

@@ -259,9 +259,9 @@ describe("package manager build policy", () => {
       const packageJson = readJson(packageJsonPath) as {
         name?: string;
         version?: string;
-        openclaw?: { release?: { publishToNpm?: boolean } };
+        nova?: { release?: { publishToNpm?: boolean } };
       };
-      if (packageJson.openclaw?.release?.publishToNpm !== true) {
+      if (packageJson.nova?.release?.publishToNpm !== true) {
         continue;
       }
 

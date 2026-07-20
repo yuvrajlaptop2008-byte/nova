@@ -18,13 +18,13 @@ fi
 
 IMAGE_NAME="$(
   docker_e2e_resolve_image \
-    "openclaw-update-run-package-self-upgrade-e2e" \
+    "nova-update-run-package-self-upgrade-e2e" \
     NOVA_UPDATE_RUN_SELF_UPGRADE_E2E_IMAGE
 )"
 SKIP_BUILD="${NOVA_UPDATE_RUN_SELF_UPGRADE_E2E_SKIP_BUILD:-0}"
 DOCKER_RUN_TIMEOUT="${NOVA_UPDATE_RUN_SELF_UPGRADE_DOCKER_RUN_TIMEOUT:-1800s}"
 ARTIFACT_DIR="${NOVA_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR:-$ROOT_DIR/.artifacts/update-run-package-self-upgrade}"
-QA_CHANNEL_FIXTURE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-update-run-qa-channel.XXXXXX")"
+QA_CHANNEL_FIXTURE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/nova-update-run-qa-channel.XXXXXX")"
 
 cleanup() {
   rm -rf "$QA_CHANNEL_FIXTURE_ROOT"
@@ -47,7 +47,7 @@ prepare_qa_channel_fixture() {
       --filter=blob:none \
       --single-branch \
       --branch "$SOURCE_TAG" \
-      https://github.com/openclaw/openclaw.git \
+      https://github.com/nova/nova.git \
       "$clone_root"
     source_repo="$clone_root"
     source_ref="HEAD"
@@ -96,7 +96,7 @@ prepare_qa_channel_fixture() {
   ) >>"$ARTIFACT_DIR/historical-qa-channel-build.log" 2>&1
 
   local compiled_plugin="$checkout_root/dist/extensions/qa-channel"
-  for required_file in package.json openclaw.plugin.json index.js setup-entry.js; do
+  for required_file in package.json nova.plugin.json index.js setup-entry.js; do
     if [ ! -f "$compiled_plugin/$required_file" ]; then
       echo "shipped build omitted QA channel artifact $required_file" >&2
       return 1
@@ -120,10 +120,10 @@ echo "Running Gateway update.run package self-upgrade Docker E2E..."
 docker_e2e_run_with_harness \
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
   -e NOVA_QA_ALLOW_UPDATE_RUN_SELF=1 \
-  -e NOVA_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR=/tmp/openclaw-update-run-artifacts \
+  -e NOVA_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR=/tmp/nova-update-run-artifacts \
   -e NOVA_UPDATE_RUN_SELF_UPGRADE_SOURCE_VERSION="$SOURCE_VERSION" \
-  -v "$ARTIFACT_DIR:/tmp/openclaw-update-run-artifacts" \
-  -v "$QA_CHANNEL_FIXTURE_ROOT/checkout:/tmp/openclaw-update-run-build:ro" \
+  -v "$ARTIFACT_DIR:/tmp/nova-update-run-artifacts" \
+  -v "$QA_CHANNEL_FIXTURE_ROOT/checkout:/tmp/nova-update-run-build:ro" \
   "$IMAGE_NAME" \
   timeout --kill-after=30s "$DOCKER_RUN_TIMEOUT" \
   bash scripts/e2e/lib/upgrade-survivor/update-run-package-self-upgrade.sh

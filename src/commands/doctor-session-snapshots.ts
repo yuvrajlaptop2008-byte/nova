@@ -8,11 +8,11 @@ import { hydrateSessionStoreSkillPromptRefs } from "../config/sessions/skill-pro
 import { updateSessionStore } from "../config/sessions/store.js";
 import { resolveAllAgentSessionStoreTargetsSync } from "../config/sessions/targets.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { HealthFinding, HealthRepairEffect } from "../flows/health-checks.js";
 import { expandHomePrefix } from "../infra/home-dir.js";
 import { writeTextAtomic } from "../infra/json-files.js";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../infra/nova-root.js";
 import { resolveBundledSkillsDir } from "../skills/loading/bundled-dir.js";
 import { resolveConfigDir, shortenHomePath } from "../utils.js";
 
@@ -59,7 +59,7 @@ function resolveSessionSnapshotBundledSkillsDir(params?: {
   if (resolved) {
     return resolved;
   }
-  const packageRoot = resolveOpenClawPackageRootSync({
+  const packageRoot = resolveNovaPackageRootSync({
     argv1: params?.argv1 ?? process.argv[1],
     moduleUrl: params?.moduleUrl ?? import.meta.url,
     cwd: params?.cwd ?? process.cwd(),
@@ -161,13 +161,13 @@ function isWindowsAbsolutePath(value: string): boolean {
     (/^[a-z]:/i.test(value) && ["/", "\\"].includes(value.slice(2, 3))) || value.startsWith("\\\\")
   );
 }
-function isTempBackedOpenClawRoot(segments: readonly string[]): boolean {
+function isTempBackedNovaRoot(segments: readonly string[]): boolean {
   const lower = segments.map((segment) => segment.toLowerCase());
-  const openclawIndex = lower.lastIndexOf("openclaw");
-  if (openclawIndex < 1) {
+  const novaIndex = lower.lastIndexOf("nova");
+  if (novaIndex < 1) {
     return false;
   }
-  return lower[openclawIndex - 1] === "tmp" || lower[openclawIndex - 1] === "temp";
+  return lower[novaIndex - 1] === "tmp" || lower[novaIndex - 1] === "temp";
 }
 
 function isBundledRuntimeSkillsPath(cachedPath: string, skillRootIndex: number): boolean {
@@ -176,8 +176,8 @@ function isBundledRuntimeSkillsPath(cachedPath: string, skillRootIndex: number):
   return (
     lower.some(
       (segment) =>
-        segment === "dist-runtime" || segment === "node_modules" || segment.startsWith("openclaw@"),
-    ) || isTempBackedOpenClawRoot(beforeSkillRoot)
+        segment === "dist-runtime" || segment === "node_modules" || segment.startsWith("nova@"),
+    ) || isTempBackedNovaRoot(beforeSkillRoot)
   );
 }
 function extractBundledSkillRelativeSegments(cachedPath: string): string[] | undefined {
@@ -320,7 +320,7 @@ async function listSessionStorePaths(stateDir: string): Promise<string[]> {
 }
 
 function resolveSessionStorePaths(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
 }): string[] | undefined {
   if (!params.cfg) {
@@ -345,7 +345,7 @@ function loadSessionStoreForSnapshotScan(storePath: string): Record<string, Sess
 export async function detectSessionSnapshotHealthIssues(params?: {
   storePaths?: string[];
   bundledSkillsDir?: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
 }): Promise<SessionSnapshotHealthIssue[]> {
   const bundledSkillsDir = resolveSessionSnapshotBundledSkillsDir({
@@ -395,7 +395,7 @@ export function sessionSnapshotIssueToHealthFinding(
     target: issue.cachedPath,
     requirement: `Current bundled skill path: ${issue.expectedPath}`,
     fixHint:
-      "To clean up the advisory artifact, run `openclaw doctor --fix` to rewrite stale cached session metadata paths, or start a fresh session after confirming history can be retired.",
+      "To clean up the advisory artifact, run `nova doctor --fix` to rewrite stale cached session metadata paths, or start a fresh session after confirming history can be retired.",
   };
 }
 
@@ -509,7 +509,7 @@ function repairFreshSessionSnapshotPaths(params: {
 export async function noteSessionSnapshotHealth(params?: {
   storePaths?: string[];
   bundledSkillsDir?: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   shouldRepair?: boolean;
 }) {
@@ -657,9 +657,7 @@ export async function noteSessionSnapshotHealth(params?: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.doctorSessionSnapshotsTestApi")
-  ] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.doctorSessionSnapshotsTestApi")] = {
     resolveSessionSnapshotBundledSkillsDir,
     scanSessionStoreForStaleRuntimeSnapshotPaths,
   };

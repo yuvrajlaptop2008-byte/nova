@@ -1,10 +1,7 @@
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
 // Stores config health fingerprints in shared SQLite state.
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 
 export type ConfigHealthFingerprint = {
   hash: string;
@@ -32,7 +29,7 @@ export type ConfigHealthState = {
   entries?: Record<string, ConfigHealthEntry>;
 };
 
-type ConfigHealthDatabase = Pick<OpenClawStateKyselyDatabase, "config_health_entries">;
+type ConfigHealthDatabase = Pick<NovaStateKyselyDatabase, "config_health_entries">;
 
 type ConfigHealthStateDeps = {
   env: NodeJS.ProcessEnv;
@@ -71,7 +68,7 @@ function formatConfigHealthStateError(error: unknown): string {
 
 export function readConfigHealthStateFromStore(deps: ConfigHealthStateDeps): ConfigHealthState {
   try {
-    const database = openOpenClawStateDatabase({ env: resolveConfigHealthStateEnv(deps) });
+    const database = openNovaStateDatabase({ env: resolveConfigHealthStateEnv(deps) });
     const healthDb = getNodeSqliteKysely<ConfigHealthDatabase>(database.db);
     const rows = executeSqliteQuerySync(
       database.db,
@@ -112,7 +109,7 @@ export function writeConfigHealthStateToStore(
       return;
     }
     const updatedAtMs = Date.now();
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const healthDb = getNodeSqliteKysely<ConfigHealthDatabase>(db);
         executeSqliteQuerySync(

@@ -597,7 +597,7 @@ describe("getReplyFromConfig message hooks", () => {
   it("stages remote iMessage media before media understanding", async () => {
     const order: string[] = [];
     const remotePath = "/Users/demo/Library/Messages/Attachments/ab/cd/photo.jpg";
-    const stagedPath = "/tmp/openclaw-remote-cache/photo.jpg";
+    const stagedPath = "/tmp/nova-remote-cache/photo.jpg";
     vi.mocked(stageSandboxMediaMock).mockImplementationOnce(async (params) => {
       order.push("stage");
       params.ctx.MediaPath = stagedPath;
@@ -775,7 +775,7 @@ describe("getReplyFromConfig message hooks", () => {
 
   it("continues dispatching when media understanding fails before reply routing", async () => {
     mocks.applyMediaUnderstanding.mockRejectedValueOnce(
-      new Error("Cannot find module '/tmp/openclaw/dist/media-understanding/apply.runtime-old.js'"),
+      new Error("Cannot find module '/tmp/nova/dist/media-understanding/apply.runtime-old.js'"),
     );
 
     const reply = await getReplyFromConfig(buildCtx(), undefined, withFastReplyConfig({}));
@@ -799,7 +799,7 @@ describe("getReplyFromConfig message hooks", () => {
 
   it("continues dispatching URL messages when link understanding fails before reply routing", async () => {
     mocks.applyLinkUnderstanding.mockRejectedValueOnce(
-      new Error("Cannot find module '/tmp/openclaw/dist/link-understanding/apply.runtime-old.js'"),
+      new Error("Cannot find module '/tmp/nova/dist/link-understanding/apply.runtime-old.js'"),
     );
 
     const reply = await getReplyFromConfig(

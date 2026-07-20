@@ -108,7 +108,7 @@ vi.mock("../utils/message-channel.js", () => ({
 }));
 
 async function withTaskExecutorStateDir(run: (stateDir: string) => Promise<void>): Promise<void> {
-  await withStateDirEnv("openclaw-task-executor-", async ({ stateDir }) => {
+  await withStateDirEnv("nova-task-executor-", async ({ stateDir }) => {
     resetDetachedTaskLifecycleRuntimeForTests();
     resetSystemEventsForTest();
     resetAgentEventsForTest();

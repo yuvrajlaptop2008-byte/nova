@@ -5,8 +5,8 @@ import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test-support.js";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/config.js";
-import { resolveOpenClawUserDataDir } from "./chrome.js";
+import type { NovaConfig } from "../config/config.js";
+import { resolveNovaUserDataDir } from "./chrome.js";
 import type { BrowserRouteContext, BrowserServerState } from "./server-context.js";
 import {
   enqueueProfileStart,
@@ -19,18 +19,18 @@ import { movePathToTrash } from "./trash.js";
 const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
 const configMocks = vi.hoisted(() => ({
-  getRuntimeConfig: vi.fn<() => OpenClawConfig>(),
-  getRuntimeConfigSourceSnapshot: vi.fn<() => OpenClawConfig | null>(() => null),
-  writeConfigFile: vi.fn<(cfg: OpenClawConfig) => Promise<void>>(async (_cfg) => {}),
+  getRuntimeConfig: vi.fn<() => NovaConfig>(),
+  getRuntimeConfigSourceSnapshot: vi.fn<() => NovaConfig | null>(() => null),
+  writeConfigFile: vi.fn<(cfg: NovaConfig) => Promise<void>>(async (_cfg) => {}),
   mutateConfigFile: vi.fn(
     async (params: {
       mutate: (
-        draft: OpenClawConfig,
+        draft: NovaConfig,
         context: {
           snapshot: {
             path: string;
-            runtimeConfig: OpenClawConfig;
-            sourceConfig: OpenClawConfig;
+            runtimeConfig: NovaConfig;
+            sourceConfig: NovaConfig;
           };
         },
       ) => unknown;
@@ -39,17 +39,17 @@ const configMocks = vi.hoisted(() => ({
       const draft = structuredClone(currentConfig);
       const result = await params.mutate(draft, {
         snapshot: {
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           runtimeConfig: currentConfig,
           sourceConfig: currentConfig,
         },
       });
       await configMocks.writeConfigFile(draft);
       return {
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         previousHash: "test-hash",
         persistedHash: "test-hash",
-        snapshot: { path: "/tmp/openclaw.json" },
+        snapshot: { path: "/tmp/nova.json" },
         nextConfig: draft,
         result,
         attempts: 1,
@@ -62,14 +62,14 @@ const configMocks = vi.hoisted(() => ({
 const writeConfigFile = configMocks.writeConfigFile;
 const lifecycleMocks = vi.hoisted(() => ({
   closeChromeMcpSession: vi.fn(async () => false),
-  stopOpenClawChrome: vi.fn(async () => {}),
+  stopNovaChrome: vi.fn(async () => {}),
 }));
 
 vi.mock("../config/config.js", async () => {
   const actual = await vi.importActual<typeof import("../config/config.js")>("../config/config.js");
   return {
     ...actual,
-    replaceConfigFile: vi.fn(async ({ nextConfig }: { nextConfig: OpenClawConfig }) => {
+    replaceConfigFile: vi.fn(async ({ nextConfig }: { nextConfig: NovaConfig }) => {
       await configMocks.writeConfigFile(nextConfig);
     }),
     mutateConfigFile: configMocks.mutateConfigFile,
@@ -94,8 +94,8 @@ vi.mock("./pw-ai-module.js", () => ({
 }));
 
 vi.mock("./chrome.js", () => ({
-  resolveOpenClawUserDataDir: vi.fn(() => "/tmp/openclaw-test/openclaw/user-data"),
-  stopOpenClawChrome: lifecycleMocks.stopOpenClawChrome,
+  resolveNovaUserDataDir: vi.fn(() => "/tmp/nova-test/nova/user-data"),
+  stopNovaChrome: lifecycleMocks.stopNovaChrome,
 }));
 
 const [{ resolveBrowserConfig, resolveProfile }, { createBrowserProfilesService }] =
@@ -159,10 +159,8 @@ describe("BrowserProfilesService", () => {
     configMocks.getRuntimeConfigSourceSnapshot.mockReset().mockReturnValue(null);
     configMocks.writeConfigFile.mockReset().mockResolvedValue(undefined);
     lifecycleMocks.closeChromeMcpSession.mockReset().mockResolvedValue(false);
-    lifecycleMocks.stopOpenClawChrome.mockReset().mockResolvedValue(undefined);
-    vi.mocked(resolveOpenClawUserDataDir)
-      .mockReset()
-      .mockReturnValue("/tmp/openclaw-test/openclaw/user-data");
+    lifecycleMocks.stopNovaChrome.mockReset().mockResolvedValue(undefined);
+    vi.mocked(resolveNovaUserDataDir).mockReset().mockReturnValue("/tmp/nova-test/nova/user-data");
     vi.mocked(movePathToTrash)
       .mockReset()
       .mockImplementation(async (targetPath) => targetPath);
@@ -202,7 +200,7 @@ describe("BrowserProfilesService", () => {
       const createdProfile = expectDefined(createdProfiles[profileName], "created browser profile");
       vi.mocked(getRuntimeConfig).mockReturnValue({
         browser: {
-          defaultProfile: "openclaw",
+          defaultProfile: "nova",
           profiles: { [profileName]: createdProfile },
         },
       });
@@ -305,13 +303,13 @@ describe("BrowserProfilesService", () => {
         browser: {
           profiles: {},
         },
-      } as OpenClawConfig)
+      } as NovaConfig)
       .mockReturnValue({
         browser: {
           cdpPortRangeEnd: 18801,
           profiles: {},
         },
-      } as unknown as OpenClawConfig);
+      } as unknown as NovaConfig);
 
     const service = createBrowserProfilesService(ctx);
     const result = await service.createProfile({ name: "work" });
@@ -473,7 +471,7 @@ describe("BrowserProfilesService", () => {
     const { ctx, state } = createCtx(resolved);
     vi.mocked(getRuntimeConfig).mockReturnValue({ browser: { profiles: {} } });
 
-    const tempDir = tempDirs.make("openclaw-profile-");
+    const tempDir = tempDirs.make("nova-profile-");
     const userDataDir = path.join(tempDir, "BraveSoftware", "Brave-Browser");
     fs.mkdirSync(userDataDir, { recursive: true });
 
@@ -498,7 +496,7 @@ describe("BrowserProfilesService", () => {
     const { ctx } = createCtx(resolved);
     vi.mocked(getRuntimeConfig).mockReturnValue({ browser: { profiles: {} } });
 
-    const tempDir = tempDirs.make("openclaw-profile-");
+    const tempDir = tempDirs.make("nova-profile-");
     const userDataDir = path.join(tempDir, "BraveSoftware", "Brave-Browser");
     fs.mkdirSync(userDataDir, { recursive: true });
 
@@ -522,9 +520,9 @@ describe("BrowserProfilesService", () => {
 
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           remote: { cdpUrl: "http://10.0.0.42:9222", color: "#0066CC" },
         },
       },
@@ -549,9 +547,9 @@ describe("BrowserProfilesService", () => {
     vi.mocked(getRuntimeConfig)
       .mockReturnValueOnce({
         browser: {
-          defaultProfile: "openclaw",
+          defaultProfile: "nova",
           profiles: {
-            openclaw: { cdpPort: 18800, color: "#FF4500" },
+            nova: { cdpPort: 18800, color: "#FF4500" },
             work: { cdpUrl: "http://10.0.0.42:9222", color: "#0066CC" },
           },
         },
@@ -560,7 +558,7 @@ describe("BrowserProfilesService", () => {
         browser: {
           defaultProfile: "work",
           profiles: {
-            openclaw: { cdpPort: 18800, color: "#FF4500" },
+            nova: { cdpPort: 18800, color: "#FF4500" },
             work: { cdpUrl: "http://10.0.0.42:9222", color: "#0066CC" },
           },
         },
@@ -588,18 +586,18 @@ describe("BrowserProfilesService", () => {
 
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           work: { cdpPort: 18801, color: "#0066CC" },
         },
       },
     });
 
-    const tempDir = tempDirs.make("openclaw-profile-");
+    const tempDir = tempDirs.make("nova-profile-");
     const userDataDir = path.join(tempDir, "work", "user-data");
     fs.mkdirSync(path.dirname(userDataDir), { recursive: true });
-    vi.mocked(resolveOpenClawUserDataDir).mockReturnValue(userDataDir);
+    vi.mocked(resolveNovaUserDataDir).mockReturnValue(userDataDir);
 
     const service = createBrowserProfilesService(ctx);
     const result = await service.deleteProfile("work");
@@ -615,17 +613,17 @@ describe("BrowserProfilesService", () => {
     const { ctx, state } = createCtx(resolved);
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           work: { cdpPort: 18801, color: "#0066CC" },
         },
       },
     });
-    const tempDir = tempDirs.make("openclaw-trash-failure-");
+    const tempDir = tempDirs.make("nova-trash-failure-");
     const userDataDir = path.join(tempDir, "work", "user-data");
     fs.mkdirSync(path.dirname(userDataDir), { recursive: true });
-    vi.mocked(resolveOpenClawUserDataDir).mockReturnValue(userDataDir);
+    vi.mocked(resolveNovaUserDataDir).mockReturnValue(userDataDir);
     vi.mocked(movePathToTrash).mockRejectedValueOnce(new Error("Trash unavailable"));
 
     const result = await createBrowserProfilesService(ctx).deleteProfile("work");
@@ -644,7 +642,7 @@ describe("BrowserProfilesService", () => {
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           work: { cdpPort: 18801, color: "#0066CC" },
         },
       },
@@ -654,10 +652,10 @@ describe("BrowserProfilesService", () => {
       throw new Error("Expected work profile");
     }
     const runtime = getOrCreateProfileRuntime(state, profile);
-    const tempDir = tempDirs.make("openclaw-delete-race-");
+    const tempDir = tempDirs.make("nova-delete-race-");
     const userDataDir = path.join(tempDir, "work", "user-data");
     fs.mkdirSync(userDataDir, { recursive: true });
-    vi.mocked(resolveOpenClawUserDataDir).mockReturnValue(userDataDir);
+    vi.mocked(resolveNovaUserDataDir).mockReturnValue(userDataDir);
     const launch = deferred();
     const entered = deferred();
     const running = {
@@ -683,7 +681,7 @@ describe("BrowserProfilesService", () => {
     const startExpectation = expect(starting).rejects.toThrow(/deletion|lifecycle changed/i);
     await entered.promise;
     const order: string[] = [];
-    lifecycleMocks.stopOpenClawChrome.mockImplementationOnce(async () => {
+    lifecycleMocks.stopNovaChrome.mockImplementationOnce(async () => {
       order.push("stop");
     });
     configMocks.writeConfigFile.mockImplementationOnce(async () => {
@@ -710,7 +708,7 @@ describe("BrowserProfilesService", () => {
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           work: { cdpPort: 18801, color: "#0066CC" },
         },
       },
@@ -756,9 +754,9 @@ describe("BrowserProfilesService", () => {
 
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           "chrome-live": {
             cdpPort: 18801,
             color: "#0066CC",
@@ -777,7 +775,7 @@ describe("BrowserProfilesService", () => {
     expect(movePathToTrash).not.toHaveBeenCalled();
   });
 
-  it("deletes attach-only openclaw profiles without touching local browser data", async () => {
+  it("deletes attach-only nova profiles without touching local browser data", async () => {
     const resolved = resolveBrowserConfig({
       profiles: {
         work: {
@@ -789,13 +787,13 @@ describe("BrowserProfilesService", () => {
     const { ctx } = createCtx(resolved);
     vi.mocked(getRuntimeConfig).mockReturnValue({
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           work: {
             cdpPort: 18801,
             color: "#0066CC",
-            driver: "openclaw",
+            driver: "nova",
             attachOnly: true,
           },
         },
@@ -805,17 +803,17 @@ describe("BrowserProfilesService", () => {
     const result = await createBrowserProfilesService(ctx).deleteProfile("work");
 
     expect(result.deleted).toBe(false);
-    expect(resolveOpenClawUserDataDir).not.toHaveBeenCalled();
+    expect(resolveNovaUserDataDir).not.toHaveBeenCalled();
     expect(movePathToTrash).not.toHaveBeenCalled();
   });
 
   it("preserves a same-name replacement config that appears during lifecycle drain", async () => {
     const originalProfile = { cdpPort: 18801, color: "#0066CC" };
-    let currentConfig: OpenClawConfig = {
+    let currentConfig: NovaConfig = {
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           work: originalProfile,
         },
       },
@@ -850,9 +848,9 @@ describe("BrowserProfilesService", () => {
     );
     currentConfig = {
       browser: {
-        defaultProfile: "openclaw",
+        defaultProfile: "nova",
         profiles: {
-          openclaw: { cdpPort: 18800, color: "#FF4500" },
+          nova: { cdpPort: 18800, color: "#FF4500" },
           work: { cdpPort: 18802, color: "#00AA00" },
         },
       },

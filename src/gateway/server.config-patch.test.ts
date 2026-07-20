@@ -45,7 +45,7 @@ function requireConfigObject(value: unknown, label: string): Record<string, unkn
 }
 
 beforeAll(async () => {
-  sharedTempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-sessions-config-"));
+  sharedTempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-sessions-config-"));
   startedServer = await startServerWithClient(undefined, { controlUiEnabled: true });
   await connectOk(requireWs());
 });
@@ -357,7 +357,7 @@ describe("gateway config methods", () => {
         models: {
           providers: {
             openai: {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "nova" },
             },
           },
         },
@@ -403,7 +403,7 @@ describe("gateway config methods", () => {
         models: {
           providers: {
             openai: {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "nova" },
             },
           },
         },
@@ -440,7 +440,7 @@ describe("gateway config methods", () => {
         models: {
           providers: {
             openai: {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "nova" },
               models: [],
             },
           },

@@ -10,13 +10,13 @@ import {
 import { isRestartEnabled } from "../../config/commands.flags.js";
 import { readConfigFileSnapshot } from "../../config/config.js";
 import { extractDeliveryInfo } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { GATEWAY_SERVICE_KIND, GATEWAY_SERVICE_MARKER } from "../../daemon/constants.js";
 import {
   EXTERNAL_SUPERVISOR_UPDATE_REQUIRED_REASON,
   isGatewayExternallySupervised,
 } from "../../infra/gateway-supervision.js";
-import { resolveOpenClawPackageRoot } from "../../infra/openclaw-root.js";
+import { resolveNovaPackageRoot } from "../../infra/nova-root.js";
 import { readPackageVersion } from "../../infra/package-json.js";
 import { type RestartSentinelPayload, writeRestartSentinel } from "../../infra/restart-sentinel.js";
 import {
@@ -79,7 +79,7 @@ async function readPreUpdateConfigForPostCoreFinalize(): Promise<
   return {
     sourceConfig: snapshot.sourceConfig,
     authoredConfig: isRecord(snapshot.parsed)
-      ? (snapshot.parsed as OpenClawConfig)
+      ? (snapshot.parsed as NovaConfig)
       : snapshot.sourceConfig,
   };
 }
@@ -186,7 +186,7 @@ export const updateHandlers: GatewayRequestHandlers = {
       const configChannel = normalizeUpdateChannel(config.update?.channel);
       const invocationCwd = tryResolveProcessCwd();
       const root =
-        (await resolveOpenClawPackageRoot({
+        (await resolveNovaPackageRoot({
           moduleUrl: import.meta.url,
           argv1: process.argv[1],
           ...(invocationCwd ? { cwd: invocationCwd } : {}),
@@ -380,7 +380,7 @@ export const updateHandlers: GatewayRequestHandlers = {
           allowGatewayServiceRepair: false,
           allowGatewayActivation: false,
         });
-        // The CLI `openclaw update` resumes post-core plugin convergence after a
+        // The CLI `nova update` resumes post-core plugin convergence after a
         // git/source core update; the RPC path did not, leaving official managed
         // plugins stale on the new core. Run the finalizer here to match.
         const finalizeOutcome = await runPostCoreFinalizeAfterGatewayUpdate({

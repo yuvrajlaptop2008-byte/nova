@@ -358,7 +358,7 @@ export function installModelPromptTransform(params: {
  * Turns with attachments (image / document blocks) must remain as arrays and
  * are NOT collapsed.
  *
- * @see https://github.com/openclaw/openclaw/issues/3658
+ * @see https://github.com/nova/nova/issues/3658
  */
 function canonicalizeTextOnlyUserContent(content: unknown): unknown {
   if (!Array.isArray(content)) {
@@ -581,11 +581,11 @@ function stripHistoricalInboundMetadataFromUserMessages(
 function stripUnsafeBlockedRunMetadata(messages: AgentMessage[]): AgentMessage[] {
   let changed = false;
   const nextMessages = messages.map((message) => {
-    const openclaw = (message as unknown as Record<string, unknown>)["__openclaw"];
-    if (!openclaw || typeof openclaw !== "object") {
+    const nova = (message as unknown as Record<string, unknown>)["__nova"];
+    if (!nova || typeof nova !== "object") {
       return message;
     }
-    const beforeAgentRunBlocked = (openclaw as { beforeAgentRunBlocked?: unknown })
+    const beforeAgentRunBlocked = (nova as { beforeAgentRunBlocked?: unknown })
       .beforeAgentRunBlocked;
     if (!beforeAgentRunBlocked || typeof beforeAgentRunBlocked !== "object") {
       return message;
@@ -599,13 +599,13 @@ function stripUnsafeBlockedRunMetadata(messages: AgentMessage[]): AgentMessage[]
       safeBlocked.blockedAt = blocked.blockedAt;
     }
     const nextNova = {
-      ...(openclaw as Record<string, unknown>),
+      ...(nova as Record<string, unknown>),
       beforeAgentRunBlocked: safeBlocked,
     };
     changed = true;
     return {
       ...(message as unknown as Record<string, unknown>),
-      __openclaw: nextNova,
+      __nova: nextNova,
     } as unknown as AgentMessage;
   });
   return changed ? nextMessages : messages;

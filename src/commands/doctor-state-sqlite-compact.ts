@@ -1,13 +1,13 @@
 /** Explicit doctor maintenance for the canonical shared state SQLite database. */
 import fs from "node:fs";
-import { clearOpenClawDatabaseQuarantine } from "../state/openclaw-quarantine-store.js";
+import { clearNovaDatabaseQuarantine } from "../state/nova-quarantine-store.js";
 import {
-  assertOpenClawStateDatabaseForMaintenance,
-  clearOpenClawStateDatabaseOpenFailure,
-  ensureOpenClawStatePermissions,
-  isOpenClawStateDatabaseOpen,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+  assertNovaStateDatabaseForMaintenance,
+  clearNovaStateDatabaseOpenFailure,
+  ensureNovaStatePermissions,
+  isNovaStateDatabaseOpen,
+} from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import {
   compactDoctorSqliteFile,
   type DoctorSqliteCompactSnapshot,
@@ -46,7 +46,7 @@ export async function runDoctorStateSqliteCompact(
   deps: DoctorStateSqliteCompactDeps = {},
 ): Promise<DoctorStateSqliteCompactReport> {
   const env = options.env ?? process.env;
-  const sqlitePath = resolveOpenClawStateSqlitePath(env);
+  const sqlitePath = resolveNovaStateSqlitePath(env);
   const stat = readCanonicalStateDatabaseStat(sqlitePath);
   if (!stat) {
     return {
@@ -64,7 +64,7 @@ export async function runDoctorStateSqliteCompact(
     env,
     operation: "state SQLite compaction",
     run: () => {
-      if (isOpenClawStateDatabaseOpen()) {
+      if (isNovaStateDatabaseOpen()) {
         throw new Error(
           "The shared Nova state database is already open in this process. Stop Nova and retry.",
         );
@@ -72,18 +72,18 @@ export async function runDoctorStateSqliteCompact(
 
       const compact = compactDoctorSqliteFile({
         afterMutation: () => {
-          if (!clearOpenClawDatabaseQuarantine(sqlitePath, { env })) {
+          if (!clearNovaDatabaseQuarantine(sqlitePath, { env })) {
             throw new Error(
-              `Nova state database ${sqlitePath} was compacted, but its persisted quarantine record could not be cleared. Rerun openclaw doctor --fix so the database is not refused again.`,
+              `Nova state database ${sqlitePath} was compacted, but its persisted quarantine record could not be cleared. Rerun nova doctor --fix so the database is not refused again.`,
             );
           }
-          clearOpenClawStateDatabaseOpenFailure(sqlitePath);
-          ensureOpenClawStatePermissions(sqlitePath, env);
+          clearNovaStateDatabaseOpenFailure(sqlitePath);
+          ensureNovaStatePermissions(sqlitePath, env);
         },
         ...(deps.busyTimeoutMs !== undefined ? { busyTimeoutMs: deps.busyTimeoutMs } : {}),
         sqlitePath,
         validateBeforeMutation: (database) =>
-          assertOpenClawStateDatabaseForMaintenance(database, { pathname: sqlitePath }),
+          assertNovaStateDatabaseForMaintenance(database, { pathname: sqlitePath }),
       });
       return {
         ...compact,

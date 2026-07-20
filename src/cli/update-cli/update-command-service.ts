@@ -14,7 +14,7 @@ import {
 import { doctorCommand } from "../../commands/doctor.js";
 import { UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE_ENV } from "../../commands/doctor/shared/update-phase.js";
 import { resolveGatewayPort } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   GATEWAY_SERVICE_KIND,
   GATEWAY_SERVICE_MARKER,
@@ -216,15 +216,9 @@ async function hasLoadedLaunchdKeepAliveSupervisor(params: {
 }
 
 function formatPostUpdateGatewayRecoveryLine(platform: NodeJS.Platform): string {
-  const restartCommand = replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME);
-  const installCommand = replaceCliName(
-    formatCliCommand("openclaw gateway install --force"),
-    CLI_NAME,
-  );
-  const statusCommand = replaceCliName(
-    formatCliCommand("openclaw gateway status --deep"),
-    CLI_NAME,
-  );
+  const restartCommand = replaceCliName(formatCliCommand("nova gateway restart"), CLI_NAME);
+  const installCommand = replaceCliName(formatCliCommand("nova gateway install --force"), CLI_NAME);
+  const statusCommand = replaceCliName(formatCliCommand("nova gateway status --deep"), CLI_NAME);
   if (platform === "darwin") {
     return `Recovery: run \`${restartCommand}\`; if the LaunchAgent is installed but not loaded, run \`${installCommand}\` from the logged-in macOS user session, then rerun \`${statusCommand}\`.`;
   }
@@ -245,21 +239,20 @@ function formatPostUpdateGatewayRecoveryInstructions(
   const beforeVersion = normalizeOptionalString(result.before?.version);
   if (isPackageManagerUpdateMode(result.mode) && beforeVersion) {
     lines.push(
-      `Rollback: reinstall Nova ${beforeVersion} with the same package manager, then rerun \`${replaceCliName(formatCliCommand("openclaw gateway install --force"), CLI_NAME)}\`.`,
+      `Rollback: reinstall Nova ${beforeVersion} with the same package manager, then rerun \`${replaceCliName(formatCliCommand("nova gateway install --force"), CLI_NAME)}\`.`,
     );
   }
   return lines;
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.updateCommandServiceTestApi")] =
-    {
-      formatPostUpdateGatewayRecoveryInstructions,
-      recoverInstalledLaunchAgentAfterUpdate,
-      recoverLaunchAgentAndRecheckGatewayHealth,
-      hasLoadedLaunchdKeepAliveSupervisor,
-      shouldUseLegacyProcessRestartAfterUpdate,
-    };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.updateCommandServiceTestApi")] = {
+    formatPostUpdateGatewayRecoveryInstructions,
+    recoverInstalledLaunchAgentAfterUpdate,
+    recoverLaunchAgentAndRecheckGatewayHealth,
+    hasLoadedLaunchdKeepAliveSupervisor,
+    shouldUseLegacyProcessRestartAfterUpdate,
+  };
 }
 
 export type PreManagedServiceStop = {
@@ -286,7 +279,7 @@ export type UpdateCommandRecoveryState = {
 
 export class UpdateCommandAbort extends Error {
   constructor() {
-    super("openclaw-update-abort");
+    super("nova-update-abort");
     this.name = "UpdateCommandAbort";
   }
 }
@@ -306,9 +299,9 @@ export type ManagedServiceRootRedirect = {
 };
 
 function formatGatewayAncestryBlockMessage(pid: number): string {
-  return `openclaw update detected it is running inside the gateway process tree.
+  return `nova update detected it is running inside the gateway process tree.
 Gateway PID ${pid} is an ancestor of this process, so this updater cannot safely stop or restart the gateway that owns it.
-Run \`${replaceCliName(formatCliCommand("openclaw update"), CLI_NAME)}\` from a shell outside the gateway service, or stop the gateway service first and then update.`;
+Run \`${replaceCliName(formatCliCommand("nova update"), CLI_NAME)}\` from a shell outside the gateway service, or stop the gateway service first and then update.`;
 }
 
 function parsePositivePid(value: unknown): number | null {
@@ -810,13 +803,13 @@ export async function resolvePackageRuntimePreflight(params: {
     : `Node ${runtime.version ?? "unknown"}`;
   return resultError(
     [
-      `${runtimeLabel} is too old for openclaw@${targetVersion}.`,
+      `${runtimeLabel} is too old for nova@${targetVersion}.`,
       `The requested package requires ${status.nodeEngine}.`,
       runtime.nodeRunner
-        ? "Upgrade the Node runtime that owns the managed Gateway service, then rerun `openclaw update`."
-        : "Upgrade to Node 22.22.3+, Node 24.15.0+, or Node 25.9.0+, then rerun `openclaw update`.",
-      "Bare `npm i -g openclaw` can silently install an older compatible release.",
-      "After upgrading Node, use `npm i -g openclaw@latest`.",
+        ? "Upgrade the Node runtime that owns the managed Gateway service, then rerun `nova update`."
+        : "Upgrade to Node 22.22.3+, Node 24.15.0+, or Node 25.9.0+, then rerun `nova update`.",
+      "Bare `npm i -g nova` can silently install an older compatible release.",
+      "After upgrading Node, use `npm i -g nova@latest`.",
     ].join("\n"),
   );
 }
@@ -905,7 +898,7 @@ export function resolvePostInstallDoctorEnv(params?: {
 }
 
 export function resolveUpdatedGatewayRestartPort(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   processEnv?: NodeJS.ProcessEnv;
   serviceEnv?: NodeJS.ProcessEnv;
 }): number {
@@ -1044,7 +1037,7 @@ export async function tryInstallShellCompletion(opts: {
       if (!opts.skipPrompt) {
         defaultRuntime.log(
           theme.muted(
-            `Skipped. Run \`${replaceCliName(formatCliCommand("openclaw completion --install"), CLI_NAME)}\` later to enable.`,
+            `Skipped. Run \`${replaceCliName(formatCliCommand("nova completion --install"), CLI_NAME)}\` later to enable.`,
           ),
         );
       }
@@ -1298,7 +1291,7 @@ export async function maybeRestartService(params: {
           ]
         : []),
       `Restart log: ${resolveGatewayRestartLogPath(params.serviceEnv ?? process.env)}`,
-      `Run \`${replaceCliName(formatCliCommand("openclaw gateway status --deep"), CLI_NAME)}\` for details.`,
+      `Run \`${replaceCliName(formatCliCommand("nova gateway status --deep"), CLI_NAME)}\` for details.`,
       ...formatPostUpdateGatewayRecoveryInstructions(params.result),
     ];
     if (params.opts.json) {
@@ -1467,7 +1460,7 @@ export async function maybeRestartService(params: {
         defaultRuntime.log(theme.warn(`Gateway: restart failed: ${String(err)}`));
         defaultRuntime.log(
           theme.muted(
-            `You may need to restart the service manually: ${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}`,
+            `You may need to restart the service manually: ${replaceCliName(formatCliCommand("nova gateway restart"), CLI_NAME)}`,
           ),
         );
       }
@@ -1487,13 +1480,13 @@ export async function maybeRestartService(params: {
     if (params.result.mode === "npm" || params.result.mode === "pnpm") {
       defaultRuntime.log(
         theme.muted(
-          `Tip: Run \`${replaceCliName(formatCliCommand("openclaw doctor"), CLI_NAME)}\`, then \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\` to apply updates to a running gateway.`,
+          `Tip: Run \`${replaceCliName(formatCliCommand("nova doctor"), CLI_NAME)}\`, then \`${replaceCliName(formatCliCommand("nova gateway restart"), CLI_NAME)}\` to apply updates to a running gateway.`,
         ),
       );
     } else {
       defaultRuntime.log(
         theme.muted(
-          `Tip: Run \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\` to apply updates to a running gateway.`,
+          `Tip: Run \`${replaceCliName(formatCliCommand("nova gateway restart"), CLI_NAME)}\` to apply updates to a running gateway.`,
         ),
       );
     }

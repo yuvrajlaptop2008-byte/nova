@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import officialExternalPluginCatalog from "../../scripts/lib/official-external-plugin-catalog.json" with { type: "json" };
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { createSqliteHostedOfficialExternalPluginCatalogSnapshotStore } from "./official-external-plugin-catalog-snapshot-store.js";
 import {
   type HostedOfficialExternalPluginCatalogSnapshot,
@@ -32,7 +32,7 @@ function expectCatalogEntry(id: string): OfficialExternalPluginCatalogEntry {
   return entry;
 }
 
-const HOSTED_CATALOG_PAYLOAD_TYPE = "openclaw.official-external-plugin-catalog-feed.v1";
+const HOSTED_CATALOG_PAYLOAD_TYPE = "nova.official-external-plugin-catalog-feed.v1";
 
 type HostedCatalogConfig = NonNullable<
   NonNullable<
@@ -80,14 +80,14 @@ function hostedCatalogFeed(params: {
   const pluginId = params.pluginName.replace(/^@[^/]+\//u, "");
   return {
     schemaVersion: 1,
-    id: "openclaw-official-external-plugins",
+    id: "nova-official-external-plugins",
     generatedAt: `2026-06-22T00:00:${String(params.sequence).padStart(2, "0")}.000Z`,
     sequence: params.sequence,
     entries: [
       {
         name: params.pluginName,
         kind: "plugin",
-        openclaw: {
+        nova: {
           plugin: { id: pluginId },
           install: { sourceRef: "acme-npm", npmSpec: params.pluginName },
         },
@@ -146,7 +146,7 @@ function signedCatalogConfig(publicKeyPem: string): HostedCatalogConfig {
   return {
     feeds: {
       acme: {
-        url: "https://packages.acme.example/openclaw/feed",
+        url: "https://packages.acme.example/nova/feed",
         verification: {
           mode: "signed",
           keys: [{ keyId: "acme-root", publicKey: publicKeyPem }],
@@ -168,7 +168,7 @@ function signedHostedCatalogSnapshot(params: {
   return {
     body: params.body,
     metadata: {
-      url: "https://packages.acme.example/openclaw/feed",
+      url: "https://packages.acme.example/nova/feed",
       status: 200,
       checksum: `sha256:${crypto.createHash("sha256").update(params.body).digest("hex")}`,
     },
@@ -206,7 +206,7 @@ describe("official external plugin catalog", () => {
     expect(isOfficialExternalPluginCatalogFeed(officialExternalPluginCatalog)).toBe(true);
     expect(officialExternalPluginCatalog).toMatchObject({
       schemaVersion: 1,
-      id: "openclaw-official-external-plugins",
+      id: "nova-official-external-plugins",
       sequence: 1,
     });
     expect(officialExternalPluginCatalog.entries.length).toBeGreaterThan(0);
@@ -259,7 +259,7 @@ describe("official external plugin catalog", () => {
     expect(
       isOfficialExternalPluginCatalogFeed({
         schemaVersion: 2,
-        id: "openclaw-official-external-plugins",
+        id: "nova-official-external-plugins",
         generatedAt: "2026-06-22T00:00:00.000Z",
         sequence: 1,
         entries: [],
@@ -268,7 +268,7 @@ describe("official external plugin catalog", () => {
     expect(
       isOfficialExternalPluginCatalogFeed({
         schemaVersion: 3,
-        id: "openclaw-official-external-plugins",
+        id: "nova-official-external-plugins",
         generatedAt: "2026-06-22T00:00:00.000Z",
         sequence: 1,
         entries: [],
@@ -282,7 +282,7 @@ describe("official external plugin catalog", () => {
       expect(
         isOfficialExternalPluginCatalogFeed({
           schemaVersion: 1,
-          id: "openclaw-official-external-plugins",
+          id: "nova-official-external-plugins",
           generatedAt,
           sequence: 2,
           entries: [],
@@ -293,7 +293,7 @@ describe("official external plugin catalog", () => {
       expect(
         isOfficialExternalPluginCatalogFeed({
           schemaVersion: 1,
-          id: "openclaw-official-external-plugins",
+          id: "nova-official-external-plugins",
           generatedAt: "2026-06-22T00:00:00.000Z",
           sequence,
           entries: [],
@@ -311,7 +311,7 @@ describe("official external plugin catalog", () => {
       expect(
         isOfficialExternalPluginCatalogFeed({
           schemaVersion: 1,
-          id: "openclaw-official-external-plugins",
+          id: "nova-official-external-plugins",
           generatedAt,
           sequence: 2,
           entries: [],
@@ -420,7 +420,7 @@ describe("official external plugin catalog", () => {
   });
 
   it("reads and updates hosted catalog snapshots in the SQLite store", async () => {
-    const stateDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-hosted-store-"));
+    const stateDir = mkdtempSync(path.join(os.tmpdir(), "nova-hosted-store-"));
     try {
       const store = createSqliteHostedOfficialExternalPluginCatalogSnapshotStore({ stateDir });
       const url = "https://clawhub.ai/v1/feeds/plugins";
@@ -475,14 +475,14 @@ describe("official external plugin catalog", () => {
         },
       });
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       rmSync(stateDir, { recursive: true, force: true });
     }
   });
 
   it("keeps signed SQLite snapshot writes monotonic when writes compete", async () => {
-    const stateDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-signed-snapshot-race-"));
-    const url = "https://packages.acme.example/openclaw/feed";
+    const stateDir = mkdtempSync(path.join(os.tmpdir(), "nova-signed-snapshot-race-"));
+    const url = "https://packages.acme.example/nova/feed";
     const newer = signedHostedCatalogFeed({
       feed: hostedCatalogFeed({ sequence: 10, pluginName: "@nova/signed-v10" }),
     });
@@ -528,14 +528,14 @@ describe("official external plugin catalog", () => {
       });
       await expect(snapshotStore.read(url)).resolves.toMatchObject({ body: newer.body });
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       rmSync(stateDir, { recursive: true, force: true });
     }
   });
 
   it("replaces malformed signed SQLite snapshot metadata with a valid snapshot", async () => {
-    const stateDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-signed-snapshot-repair-"));
-    const url = "https://packages.acme.example/openclaw/feed";
+    const stateDir = mkdtempSync(path.join(os.tmpdir(), "nova-signed-snapshot-repair-"));
+    const url = "https://packages.acme.example/nova/feed";
     const malformed = signedHostedCatalogFeed({
       feed: {
         ...hostedCatalogFeed({ sequence: 10, pluginName: "@nova/malformed-current" }),
@@ -592,16 +592,16 @@ describe("official external plugin catalog", () => {
 
       await expect(snapshotStore.read(url)).resolves.toMatchObject({ body: valid.body });
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       rmSync(stateDir, { recursive: true, force: true });
     }
   });
 
   it("ignores an invalid recovered sequence when repairing a signed SQLite snapshot", async () => {
-    const stateDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-signed-snapshot-sequence-"));
-    const url = "https://packages.acme.example/openclaw/feed";
+    const stateDir = mkdtempSync(path.join(os.tmpdir(), "nova-signed-snapshot-sequence-"));
+    const url = "https://packages.acme.example/nova/feed";
     const malformedBody =
-      '{"schemaVersion":1,"id":"openclaw-official-external-plugins","generatedAt":"not-a-date","sequence":1e999,"entries":[]}';
+      '{"schemaVersion":1,"id":"nova-official-external-plugins","generatedAt":"not-a-date","sequence":1e999,"entries":[]}';
     const validFeed = hostedCatalogFeed({
       sequence: 10,
       pluginName: "@nova/repaired-sequence",
@@ -630,7 +630,7 @@ describe("official external plugin catalog", () => {
 
       await expect(snapshotStore.read(url)).resolves.toMatchObject({ body: valid.body });
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       rmSync(stateDir, { recursive: true, force: true });
     }
   });
@@ -718,7 +718,7 @@ describe("official external plugin catalog", () => {
       feed: hostedCatalogFeed({ sequence: 9, pluginName: "@nova/lower-current" }),
       privateKeyPem: malformed.privateKeyPem,
     });
-    const url = "https://packages.acme.example/openclaw/feed";
+    const url = "https://packages.acme.example/nova/feed";
     const snapshotStore = createInMemoryHostedCatalogSnapshotStore([
       signedHostedCatalogSnapshot({ body: malformed.body }),
     ]);
@@ -752,7 +752,7 @@ describe("official external plugin catalog", () => {
     const candidate = signedHostedCatalogFeed({
       feed: hostedCatalogFeed({ sequence: 9, pluginName: "@nova/new-key" }),
     });
-    const url = "https://packages.acme.example/openclaw/feed";
+    const url = "https://packages.acme.example/nova/feed";
     const snapshotStore = createInMemoryHostedCatalogSnapshotStore([
       signedHostedCatalogSnapshot({ body: current.body }),
     ]);
@@ -815,7 +815,7 @@ describe("official external plugin catalog", () => {
       {
         body: unsignedBody,
         metadata: {
-          url: "https://packages.acme.example/openclaw/feed",
+          url: "https://packages.acme.example/nova/feed",
           status: 200,
           checksum: `sha256:${crypto.createHash("sha256").update(unsignedBody).digest("hex")}`,
         },
@@ -836,11 +836,7 @@ describe("official external plugin catalog", () => {
   });
 
   it.each([
-    [
-      "off-allowlist hosts",
-      "https://packages.acme.example/openclaw/feed",
-      "hostname is not allowed",
-    ],
+    ["off-allowlist hosts", "https://packages.acme.example/nova/feed", "hostname is not allowed"],
     [
       "credential-bearing URLs",
       "https://user:test-auth-token@clawhub.ai/v1/feeds/plugins",
@@ -891,14 +887,14 @@ describe("official external plugin catalog", () => {
   it("filters hosted entries that reference unknown source profiles", async () => {
     const body = JSON.stringify({
       schemaVersion: 1,
-      id: "openclaw-official-external-plugins",
+      id: "nova-official-external-plugins",
       generatedAt: "2026-06-22T00:00:10.000Z",
       sequence: 10,
       entries: [
         {
           name: "@acme/known-source",
           kind: "plugin",
-          openclaw: {
+          nova: {
             plugin: { id: "known-source" },
             install: { sourceRef: "acme-npm", npmSpec: "@acme/known-source" },
           },
@@ -906,7 +902,7 @@ describe("official external plugin catalog", () => {
         {
           name: "@acme/unknown-source",
           kind: "plugin",
-          openclaw: {
+          nova: {
             plugin: { id: "unknown-source" },
             install: { sourceRef: "attacker-npm", npmSpec: "@acme/unknown-source" },
           },
@@ -916,7 +912,7 @@ describe("official external plugin catalog", () => {
     const result = await loadHostedCatalog({
       feedProfile: "acme",
       catalogConfig: {
-        feeds: { acme: { url: "https://packages.acme.example/openclaw/feed" } },
+        feeds: { acme: { url: "https://packages.acme.example/nova/feed" } },
         sources: {
           "acme-npm": { type: "npm", registry: "https://packages.acme.example/npm/" },
         },
@@ -932,7 +928,7 @@ describe("official external plugin catalog", () => {
   it("enforces hosted checksum and response-size limits", async () => {
     const validBody = JSON.stringify({
       schemaVersion: 1,
-      id: "openclaw-official-external-plugins",
+      id: "nova-official-external-plugins",
       generatedAt: "2026-06-22T00:00:01.000Z",
       sequence: 1,
       entries: [],
@@ -983,7 +979,7 @@ describe("official external plugin catalog", () => {
     const snapshotStore = createInMemoryHostedCatalogSnapshotStore();
     const body = JSON.stringify({
       schemaVersion: 1,
-      id: "openclaw-official-external-plugins",
+      id: "nova-official-external-plugins",
       generatedAt: "2026-06-22T00:00:01.000Z",
       sequence: 1,
       entries: [],
@@ -1020,7 +1016,7 @@ describe("official external plugin catalog", () => {
         name: "@legacy/plain-package",
         kind: "plugin",
         state: "available",
-        publisher: { id: "openclaw", trust: "official" },
+        publisher: { id: "nova", trust: "official" },
         install: {
           candidates: [
             {
@@ -1031,7 +1027,7 @@ describe("official external plugin catalog", () => {
             },
           ],
         },
-        openclaw: {
+        nova: {
           plugin: { id: "candidate-package" },
           install: {
             npmSpec: "@legacy/plain-package",
@@ -1213,17 +1209,17 @@ describe("official external plugin catalog", () => {
 
   it("resolves third-party channel lookup aliases to published plugin ids", () => {
     const wecomByChannel = expectCatalogEntry("wecom");
-    const wecomByPlugin = expectCatalogEntry("wecom-openclaw-plugin");
+    const wecomByPlugin = expectCatalogEntry("wecom-nova-plugin");
     const yuanbaoByChannel = expectCatalogEntry("yuanbao");
 
-    expect(resolveOfficialExternalPluginId(wecomByChannel)).toBe("wecom-openclaw-plugin");
-    expect(resolveOfficialExternalPluginId(wecomByPlugin)).toBe("wecom-openclaw-plugin");
+    expect(resolveOfficialExternalPluginId(wecomByChannel)).toBe("wecom-nova-plugin");
+    expect(resolveOfficialExternalPluginId(wecomByPlugin)).toBe("wecom-nova-plugin");
     expect(resolveOfficialExternalPluginInstall(wecomByChannel)?.npmSpec).toBe(
-      "@wecom/wecom-openclaw-plugin@2026.5.7",
+      "@wecom/wecom-nova-plugin@2026.5.7",
     );
-    expect(resolveOfficialExternalPluginId(yuanbaoByChannel)).toBe("openclaw-plugin-yuanbao");
+    expect(resolveOfficialExternalPluginId(yuanbaoByChannel)).toBe("nova-plugin-yuanbao");
     expect(resolveOfficialExternalPluginInstall(yuanbaoByChannel)?.npmSpec).toBe(
-      "openclaw-plugin-yuanbao@2.15.0",
+      "nova-plugin-yuanbao@2.15.0",
     );
   });
 
@@ -1401,10 +1397,10 @@ describe("official external plugin catalog", () => {
 
   it("keeps Tencent auth choices available through the cold-install auth catalog", () => {
     const tencent = expectCatalogEntry("tencent");
-    const tokenHub = tencent.openclaw?.providers?.find(
+    const tokenHub = tencent.nova?.providers?.find(
       (provider) => provider.id === "tencent-tokenhub",
     );
-    const tokenPlan = tencent.openclaw?.providers?.find(
+    const tokenPlan = tencent.nova?.providers?.find(
       (provider) => provider.id === "tencent-tokenplan",
     );
 
@@ -1426,7 +1422,7 @@ describe("official external plugin catalog", () => {
 
   it("keeps Groq available through the cold-install auth catalog", () => {
     const groq = expectCatalogEntry("groq");
-    const authChoice = groq.openclaw?.providers?.find((provider) => provider.id === "groq")
+    const authChoice = groq.nova?.providers?.find((provider) => provider.id === "groq")
       ?.authChoices?.[0];
 
     expect(authChoice).toMatchObject({

@@ -72,6 +72,6 @@ await fs.remove("notes/archive/today.txt");
 
 ## Status
 
-Currently `0.x` — APIs are stable in shape but may be tightened before `1.0`. The [CHANGELOG](https://github.com/openclaw/fs-safe/blob/main/CHANGELOG.md) tracks visible changes. Issues and PRs at the [GitHub repo](https://github.com/openclaw/fs-safe).
+Currently `0.x` — APIs are stable in shape but may be tightened before `1.0`. The [CHANGELOG](https://github.com/nova/fs-safe/blob/main/CHANGELOG.md) tracks visible changes. Issues and PRs at the [GitHub repo](https://github.com/nova/fs-safe).
 
-Released under the [MIT license](https://github.com/openclaw/fs-safe/blob/main/LICENSE).
+Released under the [MIT license](https://github.com/nova/fs-safe/blob/main/LICENSE).

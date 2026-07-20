@@ -1,9 +1,9 @@
-import type { MemorySearchRuntimeDebug } from "openclaw/plugin-sdk/memory-core-host-runtime-files";
+import type { MemorySearchRuntimeDebug } from "nova/plugin-sdk/memory-core-host-runtime-files";
 // Memory Core tests cover tools plugin behavior.
 import {
   clearMemoryPluginState,
   registerMemoryCorpusSupplement,
-} from "openclaw/plugin-sdk/memory-host-core";
+} from "nova/plugin-sdk/memory-host-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getMemoryCloseMockCalls,
@@ -30,7 +30,7 @@ import {
   MemorySearchSchema,
 } from "./tools.shared.js";
 import {
-  asOpenClawConfig,
+  asNovaConfig,
   createMemorySearchToolOrThrow,
   expectUnavailableMemorySearchDetails,
 } from "./tools.test-helpers.js";
@@ -54,7 +54,7 @@ const QMD_SEARCH_TIMEOUT_MS = 45_000;
 
 function createQmdTimeoutSearchTool(options?: { oneShotCliRun?: boolean }) {
   return createMemorySearchToolOrThrow({
-    config: asOpenClawConfig({
+    config: asNovaConfig({
       agents: { list: [{ id: "main", default: true }] },
       memory: {
         backend: "qmd",
@@ -95,9 +95,8 @@ function createTestSearchManager(params: {
   };
 }
 
-vi.mock("openclaw/plugin-sdk/session-transcript-hit", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/session-transcript-hit")>();
+vi.mock("nova/plugin-sdk/session-transcript-hit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/session-transcript-hit")>();
   return {
     ...actual,
     loadCombinedSessionStoreForGateway: vi.fn(() => ({
@@ -250,7 +249,7 @@ describe("memory_search unavailable payloads", () => {
   it("passes the host local-service hook to tool memory managers", async () => {
     const acquireLocalService = vi.fn(async () => undefined);
     const tool = createMemorySearchTool({
-      config: asOpenClawConfig({
+      config: asNovaConfig({
         agents: { list: [{ id: "main", default: true }] },
       }),
       acquireLocalService,
@@ -269,7 +268,7 @@ describe("memory_search unavailable payloads", () => {
   it("passes the host SQLite lease hook to tool memory managers", async () => {
     const withLease = vi.fn();
     const tool = createMemorySearchTool({
-      config: asOpenClawConfig({
+      config: asNovaConfig({
         agents: { list: [{ id: "main", default: true }] },
       }),
       withLease,
@@ -1087,8 +1086,7 @@ describe("memory_search unavailable payloads", () => {
       error: reason,
       warning:
         "Tell the user: memory search is paused because the memory index was built with a different embedding provider/model/settings.",
-      action:
-        "Tell the user to run: openclaw memory status --index or openclaw memory index --force.",
+      action: "Tell the user to run: nova memory status --index or nova memory index --force.",
     });
     expect(searchCalls).toBe(1);
     expect(getMemorySyncMockCalls()).toBe(0);
@@ -1274,7 +1272,7 @@ describe("memory_search corpus labels", () => {
 
   it("uses explicit plugin context agent over synthetic active-memory session keys", async () => {
     const tool = createMemorySearchToolOrThrow({
-      config: asOpenClawConfig({
+      config: asNovaConfig({
         agents: {
           list: [
             { id: "main", default: true, memorySearch: { enabled: false } },
@@ -1292,7 +1290,7 @@ describe("memory_search corpus labels", () => {
   });
 
   it("re-resolves config when executing a previously created tool", async () => {
-    const startupConfig = asOpenClawConfig({
+    const startupConfig = asNovaConfig({
       agents: {
         defaults: {
           memorySearch: {
@@ -1306,7 +1304,7 @@ describe("memory_search corpus labels", () => {
         backend: "builtin",
       },
     });
-    const patchedConfig = asOpenClawConfig({
+    const patchedConfig = asNovaConfig({
       agents: {
         defaults: {
           memorySearch: {

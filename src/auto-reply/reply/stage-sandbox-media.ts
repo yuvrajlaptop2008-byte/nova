@@ -9,11 +9,11 @@ import { sliceUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { assertSandboxPath } from "../../agents/sandbox-paths.js";
 import { ensureSandboxWorkspaceForSession } from "../../agents/sandbox.js";
 import { slugifySessionKey } from "../../agents/sandbox/shared.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { root as fsRoot, FsSafeError } from "../../infra/fs-safe.js";
 import { normalizeScpRemoteHost, normalizeScpRemotePath } from "../../infra/scp-host.js";
-import { resolvePreferredOpenClawTmpDir } from "../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../../infra/tmp-nova-dir.js";
 import { resolveChannelRemoteInboundAttachmentRoots } from "../../media/channel-inbound-roots.js";
 import { resolveInboundMediaReference } from "../../media/media-reference.js";
 import { getMediaDir, MEDIA_MAX_BYTES } from "../../media/store.js";
@@ -46,7 +46,7 @@ type StageableMediaSource = {
 export async function stageSandboxMedia(params: {
   ctx: MsgContext;
   sessionCtx: TemplateContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey?: string;
   workspaceDir: string;
   remoteMediaMode?: "sandbox-or-cache" | "cache";
@@ -67,7 +67,7 @@ export async function stageSandboxMedia(params: {
         workspaceDir,
       });
 
-  // For remote attachments without sandbox, use ~/.openclaw/media (not agent workspace for privacy).
+  // For remote attachments without sandbox, use ~/.nova/media (not agent workspace for privacy).
   // Managed local inbound refs are already in Nova's media store; when no sandbox is
   // active, copy them into the runner workspace so host-mode shell/doc readers get a path.
   const remoteMediaCacheDir = ctx.MediaRemoteHost
@@ -87,7 +87,7 @@ export async function stageSandboxMedia(params: {
   const staged = new Map<string, string>(); // original/resolved source -> runner-visible path
   const hostWorkspaceStagingDir =
     !sandbox && !ctx.MediaRemoteHost
-      ? path.join("media", "inbound", `openclaw-staged-${crypto.randomUUID()}`)
+      ? path.join("media", "inbound", `nova-staged-${crypto.randomUUID()}`)
       : undefined;
 
   for (const raw of rawPaths) {
@@ -212,7 +212,7 @@ async function stageRemoteFileIntoRoot(params: {
   relativeDestPath: string;
   maxBytes?: number;
 }): Promise<void> {
-  const tmpRoot = resolvePreferredOpenClawTmpDir();
+  const tmpRoot = resolvePreferredNovaTmpDir();
   await fs.mkdir(tmpRoot, { recursive: true });
   const tmpDir = await fs.mkdtemp(path.join(tmpRoot, "stage-sandbox-media-"));
   const tmpPath = path.join(tmpDir, "download");
@@ -408,7 +408,7 @@ function appendScpStderrTail(
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.stageSandboxMediaTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.stageSandboxMediaTestApi")] = {
     scpFile,
   };
 }

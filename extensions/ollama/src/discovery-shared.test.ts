@@ -1,6 +1,6 @@
 // Ollama tests cover discovery shared plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import type { ModelProviderConfig } from "openclaw/plugin-sdk/provider-model-shared";
+import type { ModelProviderConfig } from "nova/plugin-sdk/provider-model-shared";
 import { describe, expect, it } from "vitest";
 import { isLocalOllamaBaseUrl, resolveOllamaDiscoveryResult } from "./discovery-shared.js";
 

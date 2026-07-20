@@ -217,9 +217,9 @@ export async function runZaiFallbackRepro(deps: RunZaiFallbackReproDeps = {}): P
     return 1;
   }
 
-  const baseDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zai-fallback-"));
+  const baseDir = await mkdtemp(path.join(os.tmpdir(), "nova-zai-fallback-"));
   const stateDir = path.join(baseDir, "state");
-  const configPath = path.join(baseDir, "openclaw.json");
+  const configPath = path.join(baseDir, "nova.json");
   try {
     await mkdir(stateDir, { recursive: true });
 
@@ -268,7 +268,7 @@ export async function runZaiFallbackRepro(deps: RunZaiFallbackReproDeps = {}): P
       "Then use the read tool to display the file contents. Reply with just the file contents.";
     const run1 = await run(
       "run1",
-      ["openclaw", "agent", "--local", "--session-id", sessionId, "--message", toolPrompt],
+      ["nova", "agent", "--local", "--session-id", sessionId, "--message", toolPrompt],
       envValidAnthropic,
     );
     if (run1.code !== 0) {
@@ -286,7 +286,7 @@ export async function runZaiFallbackRepro(deps: RunZaiFallbackReproDeps = {}): P
       "What is the content of zai-fallback-tool.txt? Reply with just the contents.";
     const run2 = await run(
       "run2",
-      ["openclaw", "agent", "--local", "--session-id", sessionId, "--message", followupPrompt],
+      ["nova", "agent", "--local", "--session-id", sessionId, "--message", followupPrompt],
       envInvalidAnthropic,
     );
 

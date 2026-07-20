@@ -14,11 +14,11 @@ pub(crate) const PROGRESS_EVENT: &str = "updater://progress";
 pub(crate) const READY_EVENT: &str = "updater://ready";
 pub(crate) const ERROR_EVENT: &str = "updater://error";
 
-const RELEASE_URL: &str = "https://github.com/openclaw/openclaw/releases/latest";
+const RELEASE_URL: &str = "https://github.com/nova/nova/releases/latest";
 #[cfg(any(target_os = "macos", target_os = "windows"))]
 // Test desktop builds need a channel that Linux-only releases never replace.
 const DESKTOP_TEST_UPDATE_ENDPOINT: &str =
-    "https://github.com/openclaw/openclaw/releases/download/desktop-test/latest-desktop-test.json";
+    "https://github.com/nova/nova/releases/download/desktop-test/latest-desktop-test.json";
 const AUTO_CHECK_DELAY: Duration = Duration::from_secs(3);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -221,7 +221,7 @@ async fn run_check(app: AppHandle, manual: bool) {
             },
         );
         if main_window(&app).is_some_and(|window| matches!(window.is_focused(), Ok(false))) {
-            crate::notify::notify(&app, "OpenClaw", &manual_notification_body(&version));
+            crate::notify::notify(&app, "Nova", &manual_notification_body(&version));
         }
         return;
     }
@@ -253,7 +253,7 @@ async fn run_check(app: AppHandle, manual: bool) {
             }
             let _ = window.emit(READY_EVENT, info);
             if matches!(window.is_focused(), Ok(false)) {
-                crate::notify::notify(&app, "OpenClaw", &ready_notification_body(&version));
+                crate::notify::notify(&app, "Nova", &ready_notification_body(&version));
             }
         }
         Err(error) => emit_error(&app, error),
@@ -331,7 +331,7 @@ fn emit_error(app: &AppHandle, error: impl std::fmt::Display) {
 }
 
 fn ready_notification_body(version: &str) -> String {
-    format!("Update ready — restart OpenClaw to install v{version}")
+    format!("Update ready — restart Nova to install v{version}")
 }
 
 fn manual_notification_body(version: &str) -> String {
@@ -350,7 +350,7 @@ mod tests {
         );
         assert_eq!(
             install_kind_from_appimage_env(
-                Some(OsString::from("/tmp/OpenClaw.AppImage")),
+                Some(OsString::from("/tmp/Nova.AppImage")),
                 Platform::Linux,
             ),
             InstallKind::SelfInstall
@@ -379,7 +379,7 @@ mod tests {
     fn notification_copy_includes_update_version() {
         assert_eq!(
             ready_notification_body("2026.7.16"),
-            "Update ready — restart OpenClaw to install v2026.7.16"
+            "Update ready — restart Nova to install v2026.7.16"
         );
         assert_eq!(
             manual_notification_body("2026.7.16"),

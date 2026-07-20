@@ -1356,7 +1356,7 @@ export const fr: TranslationMap = {
     autoSaveFailed: "Échec de l'enregistrement",
     autoSaveConflict: "Paramètres modifiés ailleurs",
     retry: "Réessayer",
-    applyBannerText: "Enregistré dans openclaw.json — redémarrez le gateway pour appliquer.",
+    applyBannerText: "Enregistré dans nova.json — redémarrez le gateway pour appliquer.",
     applyBannerAction: "Redémarrer et appliquer",
     rawDiscard: "Abandonner",
     rawDraftBlocksApply:
@@ -1752,7 +1752,7 @@ export const fr: TranslationMap = {
       "Examinez, affinez et appliquez les propositions avant qu’elles ne deviennent des skills actives.",
     nodes: "Appareils appairés et commandes.",
     chat: "Chat Gateway pour les interventions rapides.",
-    config: "Modifier openclaw.json.",
+    config: "Modifier nova.json.",
     profile: "Les statistiques, les séries et la vie dans le récif de votre agent.",
     communications: "Canaux, messages et paramètres audio.",
     appearance: "Thème, UI et paramètres de l’assistant de configuration.",
@@ -2493,7 +2493,7 @@ export const fr: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3520,9 +3520,9 @@ export const fr: TranslationMap = {
         summary:
           "Le Gateway est joignable, mais il lui faut un jeton ou un mot de passe correspondant avant que ce navigateur puisse se connecter.",
         stepPaste:
-          "Collez le jeton de openclaw dashboard --no-open ou saisissez le mot de passe configuré.",
+          "Collez le jeton de nova dashboard --no-open ou saisissez le mot de passe configuré.",
         stepGenerate:
-          "Si aucun jeton n’est configuré, exécutez openclaw doctor --generate-gateway-token sur l’hôte Gateway.",
+          "Si aucun jeton n’est configuré, exécutez nova doctor --generate-gateway-token sur l’hôte Gateway.",
         stepConnect: "Cliquez de nouveau sur Connect après avoir mis à jour l’identifiant.",
       },
       authFailed: {
@@ -3530,7 +3530,7 @@ export const fr: TranslationMap = {
         summary:
           "L’identifiant fourni a été refusé. La cause la plus courante est un jeton obsolète ou copié depuis une autre URL Gateway.",
         stepDashboard:
-          "Exécutez openclaw dashboard --no-open et ouvrez la nouvelle URL ou collez son jeton.",
+          "Exécutez nova dashboard --no-open et ouvrez la nouvelle URL ou collez son jeton.",
         stepReplace:
           "Remplacez les valeurs de jeton/mot de passe obsolètes ; ne réutilisez pas un jeton provenant d’une autre URL Gateway.",
         stepMode:
@@ -3555,8 +3555,8 @@ export const fr: TranslationMap = {
           "Ce navigateur nécessite une approbation unique de l’hôte Gateway avant de pouvoir utiliser Control UI.",
         upgradeSummary:
           "Ce navigateur est déjà connu, mais l’accès demandé a changé et nécessite une nouvelle approbation.",
-        stepList: "Exécutez openclaw devices list sur l’hôte Gateway.",
-        stepApproveId: "Approuvez cette demande : openclaw devices approve {requestId}.",
+        stepList: "Exécutez nova devices list sur l’hôte Gateway.",
+        stepApproveId: "Approuvez cette demande : nova devices approve {requestId}.",
         stepApprove: "Approuvez la demande navigateur/appareil en attente depuis cette liste.",
         stepReconnect: "Reconnectez-vous après la fin de l’approbation.",
       },
@@ -3587,7 +3587,7 @@ export const fr: TranslationMap = {
         summary:
           "La Control UI servie et le Gateway en cours d’exécution ne sont pas d’accord sur le protocole de connexion pris en charge.",
         stepDashboard:
-          "Rouvrez le dashboard servi avec openclaw dashboard afin que l’UI et le Gateway viennent de la même installation.",
+          "Rouvrez le dashboard servi avec nova dashboard afin que l’UI et le Gateway viennent de la même installation.",
         stepDevUi:
           "Si vous utilisez pnpm ui:dev, reconstruisez ou redémarrez l’UI de développement avec le checkout actuel.",
         stepRestart:
@@ -3597,12 +3597,11 @@ export const fr: TranslationMap = {
         title: "Connexion impossible",
         summary:
           "Le navigateur n’a pas pu terminer la connexion au Gateway. Vérifiez la cible et le transport avant de réessayer les identifiants.",
-        stepGateway:
-          "Confirmez que le Gateway fonctionne avec openclaw status ou openclaw gateway run.",
+        stepGateway: "Confirmez que le Gateway fonctionne avec nova status ou nova gateway run.",
         stepUrl:
           "Vérifiez l’URL WebSocket et utilisez wss:// lorsque le Gateway est derrière HTTPS/Tailscale Serve.",
         stepDashboard:
-          "Rouvrez le dashboard avec openclaw dashboard --no-open pour recopier l’URL actuelle et les détails d’authentification.",
+          "Rouvrez le dashboard avec nova dashboard --no-open pour recopier l’URL actuelle et les détails d’authentification.",
       },
     },
   },

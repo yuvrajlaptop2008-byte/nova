@@ -1,10 +1,10 @@
 // Openai plugin module implements native web search behavior.
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { streamSimple } from "openclaw/plugin-sdk/llm";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
-import { streamWithPayloadPatch } from "openclaw/plugin-sdk/provider-stream-shared";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { streamSimple } from "nova/plugin-sdk/llm";
+import { normalizeProviderId } from "nova/plugin-sdk/provider-model-shared";
+import { streamWithPayloadPatch } from "nova/plugin-sdk/provider-stream-shared";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { isOpenAIApiBaseUrl } from "./base-url.js";
 
 const OPENAI_WEB_SEARCH_TOOL = { type: "web_search" } as const;
@@ -27,7 +27,7 @@ function isOpenAINativeWebSearchEligibleModel(model: {
   return !baseUrl || isOpenAIApiBaseUrl(baseUrl);
 }
 
-function shouldUseOpenAINativeWebSearchProvider(config: OpenClawConfig | undefined): boolean {
+function shouldUseOpenAINativeWebSearchProvider(config: NovaConfig | undefined): boolean {
   const provider = config?.tools?.web?.search?.provider;
   if (typeof provider !== "string") {
     return true;
@@ -37,7 +37,7 @@ function shouldUseOpenAINativeWebSearchProvider(config: OpenClawConfig | undefin
 }
 
 function shouldEnableOpenAINativeWebSearch(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   model: { api?: unknown; provider?: unknown; baseUrl?: unknown };
 }): boolean {
   return (
@@ -86,7 +86,7 @@ function patchOpenAINativeWebSearchPayload(payload: unknown): OpenAINativeWebSea
 export function createOpenAINativeWebSearchWrapper(
   baseStreamFn: StreamFn | undefined,
   params: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     agentId?: string;
     nativeWebSearchAllowedByToolPolicy?: boolean;
   },

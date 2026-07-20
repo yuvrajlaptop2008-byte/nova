@@ -6,22 +6,22 @@ import { i18n } from "../../i18n/index.ts";
 import { renderApps } from "./view.ts";
 
 const EXPECTED_EXTERNAL_HREFS = [
-  "https://apps.apple.com/app/openclaw-ai-that-does-things/id6780396132",
-  "https://docs.openclaw.ai/platforms/ios",
-  "https://play.google.com/store/apps/details?id=ai.openclaw.app",
-  "https://docs.openclaw.ai/platforms/android",
-  "https://docs.openclaw.ai/platforms/ios",
-  "https://docs.openclaw.ai/platforms/android",
-  "https://github.com/openclaw/openclaw/releases",
-  "https://docs.openclaw.ai/platforms/macos",
-  "https://github.com/openclaw/openclaw-windows-node/releases/latest",
-  "https://docs.openclaw.ai/platforms/windows",
-  "https://github.com/openclaw/openclaw/releases",
-  "https://docs.openclaw.ai/platforms/linux",
-  "https://docs.openclaw.ai/tools/chrome-extension",
+  "https://apps.apple.com/app/nova-ai-that-does-things/id6780396132",
+  "https://docs.nova.ai/platforms/ios",
+  "https://play.google.com/store/apps/details?id=ai.nova.app",
+  "https://docs.nova.ai/platforms/android",
+  "https://docs.nova.ai/platforms/ios",
+  "https://docs.nova.ai/platforms/android",
+  "https://github.com/nova/nova/releases",
+  "https://docs.nova.ai/platforms/macos",
+  "https://github.com/nova/nova-windows-node/releases/latest",
+  "https://docs.nova.ai/platforms/windows",
+  "https://github.com/nova/nova/releases",
+  "https://docs.nova.ai/platforms/linux",
+  "https://docs.nova.ai/tools/chrome-extension",
   "https://clawhub.ai",
   "https://discord.gg/clawd",
-  "https://docs.openclaw.ai",
+  "https://docs.nova.ai",
 ];
 
 describe("renderApps", () => {

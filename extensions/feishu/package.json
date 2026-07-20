@@ -1,10 +1,10 @@
 {
   "name": "@nova/feishu",
   "version": "2026.7.2",
-  "description": "OpenClaw Feishu/Lark channel plugin for chats and workplace tools (community maintained by @m1heng).",
+  "description": "Nova Feishu/Lark channel plugin for chats and workplace tools (community maintained by @m1heng).",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/nova/nova"
   },
   "type": "module",
   "dependencies": {
@@ -17,17 +17,17 @@
   },
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "nova": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.7.2"
+    "nova": ">=2026.7.2"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "nova": {
       "optional": true
     }
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ],
@@ -64,7 +64,7 @@
       "pluginApi": ">=2026.7.2"
     },
     "build": {
-      "openclawVersion": "2026.7.2"
+      "novaVersion": "2026.7.2"
     },
     "release": {
       "publishToClawHub": true,

@@ -2,7 +2,7 @@
 import { asNullableRecord } from "@nova/normalization-core/record-coerce";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { getRuntimeConfig } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { PLUGIN_APPROVAL_DESCRIPTION_MAX_LENGTH } from "../../infra/plugin-approvals.js";
 import type { PluginHookBeforeToolCallResult } from "../../plugins/hook-before-tool-call-result.js";
 import { resolveSkillWorkshopConfig } from "./config.js";
@@ -137,12 +137,12 @@ function lifecycleApprovalTimeoutReason(proposalId?: string): string {
   return [
     "The Skill Workshop approval request expired without a decision.",
     `This lifecycle call left ${proposal} unchanged and pending; check its current status in case another operator acted on it.`,
-    "Decide in the Skill Workshop UI or run `openclaw skills workshop apply|reject|quarantine <id>`.",
+    "Decide in the Skill Workshop UI or run `nova skills workshop apply|reject|quarantine <id>`.",
     "Do not retry this tool call in a loop.",
   ].join(" ");
 }
 
-function resolveApprovalConfig(config?: OpenClawConfig): OpenClawConfig | undefined {
+function resolveApprovalConfig(config?: NovaConfig): NovaConfig | undefined {
   if (config) {
     return config;
   }
@@ -159,7 +159,7 @@ function resolveApprovalConfig(config?: OpenClawConfig): OpenClawConfig | undefi
 export async function resolveSkillWorkshopToolApproval(params: {
   toolName: string;
   toolParams: unknown;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }): Promise<PluginHookBeforeToolCallResult | undefined> {
   if (params.toolName !== "skill_workshop") {

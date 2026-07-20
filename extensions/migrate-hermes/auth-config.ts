@@ -1,6 +1,6 @@
 // Migrate Hermes helper module supports auth config behavior.
-import type { MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
-import { applyAuthProfileConfig, type OpenClawConfig } from "openclaw/plugin-sdk/provider-auth";
+import type { MigrationProviderContext } from "nova/plugin-sdk/plugin-entry";
+import { applyAuthProfileConfig, type NovaConfig } from "nova/plugin-sdk/provider-auth";
 
 export type HermesAuthProfileConfig = {
   profileId: string;
@@ -15,7 +15,7 @@ type HermesAuthConfigApplyResult = "configured" | "conflict" | "unavailable";
 class HermesAuthConfigConflict extends Error {}
 
 function existingProfileIsCompatible(
-  existing: NonNullable<NonNullable<OpenClawConfig["auth"]>["profiles"]>[string],
+  existing: NonNullable<NonNullable<NovaConfig["auth"]>["profiles"]>[string],
   profile: HermesAuthProfileConfig,
 ): boolean {
   if (existing.provider !== profile.provider || existing.mode !== profile.mode) {
@@ -28,7 +28,7 @@ function existingProfileIsCompatible(
 }
 
 export function hasAuthProfileConfigConflict(
-  config: OpenClawConfig,
+  config: NovaConfig,
   profile: HermesAuthProfileConfig,
   overwrite: boolean,
 ): boolean {
@@ -39,8 +39,8 @@ export function hasAuthProfileConfigConflict(
   return Boolean(existing && !existingProfileIsCompatible(existing, profile));
 }
 
-function replaceConfigDraft(draft: OpenClawConfig, next: OpenClawConfig): void {
-  for (const key of Object.keys(draft) as Array<keyof OpenClawConfig>) {
+function replaceConfigDraft(draft: NovaConfig, next: NovaConfig): void {
+  for (const key of Object.keys(draft) as Array<keyof NovaConfig>) {
     delete draft[key];
   }
   Object.assign(draft, next);
@@ -52,7 +52,7 @@ export function hasCurrentAuthProfileConfigConflict(
 ): boolean {
   let config = ctx.config;
   try {
-    config = (ctx.runtime?.config?.current?.() as OpenClawConfig | undefined) ?? config;
+    config = (ctx.runtime?.config?.current?.() as NovaConfig | undefined) ?? config;
   } catch {
     // Fall back to the planning snapshot; apply still rechecks inside mutate.
   }
@@ -62,7 +62,7 @@ export function hasCurrentAuthProfileConfigConflict(
 export async function applyAuthProfileConfigWithConflictCheck(params: {
   ctx: MigrationProviderContext;
   profile: HermesAuthProfileConfig;
-  applyConfigPatch?: (config: OpenClawConfig) => OpenClawConfig;
+  applyConfigPatch?: (config: NovaConfig) => NovaConfig;
 }): Promise<HermesAuthConfigApplyResult> {
   const configApi = params.ctx.runtime?.config;
   if (!configApi?.current || !configApi.mutateConfigFile) {

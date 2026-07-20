@@ -5,10 +5,10 @@ import { normalizeAgentPromptSurfaceKind } from "./agent-prompt-surface-kind.js"
 import type {
   AgentPromptGuidance,
   AgentPromptSurfaceKind,
-  OpenClawPluginCommandDefinition,
+  NovaPluginCommandDefinition,
 } from "./types.js";
 
-export type RegisteredPluginCommand = OpenClawPluginCommandDefinition & {
+export type RegisteredPluginCommand = NovaPluginCommandDefinition & {
   pluginId: string;
   pluginName?: string;
   pluginRoot?: string;
@@ -20,7 +20,7 @@ type PluginCommandState = {
   registryLocked: boolean;
 };
 
-const PLUGIN_COMMAND_STATE_KEY = Symbol.for("openclaw.pluginCommandsState");
+const PLUGIN_COMMAND_STATE_KEY = Symbol.for("nova.pluginCommandsState");
 
 const getState = () =>
   resolveGlobalSingleton<PluginCommandState>(PLUGIN_COMMAND_STATE_KEY, () => ({

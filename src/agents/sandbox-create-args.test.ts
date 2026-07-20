@@ -13,8 +13,8 @@ describe("buildSandboxCreateArgs", () => {
   ): SandboxDockerConfig {
     // Baseline config keeps each Docker argument case focused on one override.
     return {
-      image: "openclaw-sandbox:bookworm-slim",
-      containerPrefix: "openclaw-sbx-",
+      image: "nova-sandbox:bookworm-slim",
+      containerPrefix: "nova-sbx-",
       workdir: "/workspace",
       readOnlyRoot: false,
       tmpfs: [],
@@ -65,8 +65,8 @@ describe("buildSandboxCreateArgs", () => {
 
   it("includes hardening and resource flags", () => {
     const cfg: SandboxDockerConfig = {
-      image: "openclaw-sandbox:bookworm-slim",
-      containerPrefix: "openclaw-sbx-",
+      image: "nova-sandbox:bookworm-slim",
+      containerPrefix: "nova-sbx-",
       workdir: "/workspace",
       readOnlyRoot: true,
       tmpfs: ["/tmp"],
@@ -84,27 +84,27 @@ describe("buildSandboxCreateArgs", () => {
         core: "0",
       },
       seccompProfile: "/tmp/seccomp.json",
-      apparmorProfile: "openclaw-sandbox",
+      apparmorProfile: "nova-sandbox",
       dns: ["1.1.1.1"],
       extraHosts: ["internal.service:10.0.0.5"],
     };
 
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-test",
+      name: "nova-sbx-test",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
-      labels: { "openclaw.sandboxBrowser": "1" },
+      labels: { "nova.sandboxBrowser": "1" },
     });
 
     expect(args[0]).toBe("create");
-    expectFlagValues(args, "--name", ["openclaw-sbx-test"]);
+    expectFlagValues(args, "--name", ["nova-sbx-test"]);
     expectFlagValues(args, "--label", [
-      "openclaw.sandbox=1",
-      "openclaw.sessionKey=main",
-      "openclaw.createdAtMs=1700000000000",
-      `openclaw.createArgsEpoch=${SANDBOX_DOCKER_CREATE_ARGS_EPOCH}`,
-      "openclaw.sandboxBrowser=1",
+      "nova.sandbox=1",
+      "nova.sessionKey=main",
+      "nova.createdAtMs=1700000000000",
+      `nova.createArgsEpoch=${SANDBOX_DOCKER_CREATE_ARGS_EPOCH}`,
+      "nova.sandboxBrowser=1",
     ]);
     expect(args).toContain("--read-only");
     expectFlagValues(args, "--tmpfs", ["/tmp"]);
@@ -114,7 +114,7 @@ describe("buildSandboxCreateArgs", () => {
     expectFlagValues(args, "--security-opt", [
       "no-new-privileges",
       "seccomp=/tmp/seccomp.json",
-      "apparmor=openclaw-sandbox",
+      "apparmor=nova-sandbox",
     ]);
     expectFlagValues(args, "--dns", ["1.1.1.1"]);
     expectFlagValues(args, "--add-host", ["internal.service:10.0.0.5"]);
@@ -145,7 +145,7 @@ describe("buildSandboxCreateArgs", () => {
     });
 
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-non-finite-limits",
+      name: "nova-sbx-non-finite-limits",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -175,7 +175,7 @@ describe("buildSandboxCreateArgs", () => {
     });
 
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-marker",
+      name: "nova-sbx-marker",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -201,7 +201,7 @@ describe("buildSandboxCreateArgs", () => {
     });
 
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-gpu",
+      name: "nova-sbx-gpu",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -212,8 +212,8 @@ describe("buildSandboxCreateArgs", () => {
 
   it("emits -v flags for safe custom binds", () => {
     const cfg: SandboxDockerConfig = {
-      image: "openclaw-sandbox:bookworm-slim",
-      containerPrefix: "openclaw-sbx-",
+      image: "nova-sandbox:bookworm-slim",
+      containerPrefix: "nova-sbx-",
       workdir: "/workspace",
       readOnlyRoot: false,
       tmpfs: [],
@@ -223,7 +223,7 @@ describe("buildSandboxCreateArgs", () => {
     };
 
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-binds",
+      name: "nova-sbx-binds",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -246,43 +246,43 @@ describe("buildSandboxCreateArgs", () => {
   it.each([
     {
       name: "dangerous Docker socket bind mounts",
-      containerName: "openclaw-sbx-dangerous",
+      containerName: "nova-sbx-dangerous",
       cfg: createSandboxConfig({}, ["/var/run/docker.sock:/var/run/docker.sock"]),
       expected: /blocked path/,
     },
     {
       name: "dangerous parent bind mounts",
-      containerName: "openclaw-sbx-dangerous-parent",
+      containerName: "nova-sbx-dangerous-parent",
       cfg: createSandboxConfig({}, ["/run:/run"]),
       expected: /blocked path/,
     },
     {
       name: "bind source covering Docker socket directory",
-      containerName: "openclaw-sbx-covers-docker-socket-dir",
+      containerName: "nova-sbx-covers-docker-socket-dir",
       cfg: createSandboxConfig({}, ["/var:/var"]),
       expected: /covers blocked path/,
     },
     {
       name: "network host mode",
-      containerName: "openclaw-sbx-host",
+      containerName: "nova-sbx-host",
       cfg: createSandboxConfig({ network: "host" }),
       expected: /network mode "host" is blocked/,
     },
     {
       name: "network container namespace join",
-      containerName: "openclaw-sbx-container-network",
+      containerName: "nova-sbx-container-network",
       cfg: createSandboxConfig({ network: "container:peer" }),
       expected: /network mode "container:peer" is blocked by default/,
     },
     {
       name: "seccomp unconfined",
-      containerName: "openclaw-sbx-seccomp",
+      containerName: "nova-sbx-seccomp",
       cfg: createSandboxConfig({ seccompProfile: "unconfined" }),
       expected: /seccomp profile "unconfined" is blocked/,
     },
     {
       name: "apparmor unconfined",
-      containerName: "openclaw-sbx-apparmor",
+      containerName: "nova-sbx-apparmor",
       cfg: createSandboxConfig({ apparmorProfile: "unconfined" }),
       expected: /apparmor profile "unconfined" is blocked/,
     },
@@ -292,8 +292,8 @@ describe("buildSandboxCreateArgs", () => {
 
   it("omits -v flags when binds is empty or undefined", () => {
     const cfg: SandboxDockerConfig = {
-      image: "openclaw-sandbox:bookworm-slim",
-      containerPrefix: "openclaw-sbx-",
+      image: "nova-sandbox:bookworm-slim",
+      containerPrefix: "nova-sbx-",
       workdir: "/workspace",
       readOnlyRoot: false,
       tmpfs: [],
@@ -303,7 +303,7 @@ describe("buildSandboxCreateArgs", () => {
     };
 
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-no-binds",
+      name: "nova-sbx-no-binds",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -326,7 +326,7 @@ describe("buildSandboxCreateArgs", () => {
     const cfg = createSandboxConfig({}, ["/opt/external:/data:rw"]);
     expect(() =>
       buildSandboxCreateArgs({
-        name: "openclaw-sbx-outside-roots",
+        name: "nova-sbx-outside-roots",
         cfg,
         scopeKey: "main",
         createdAtMs: 1700000000000,
@@ -338,7 +338,7 @@ describe("buildSandboxCreateArgs", () => {
   it("allows bind sources outside runtime allowlist with explicit override", () => {
     const cfg = createSandboxConfig({}, ["/opt/external:/data:rw"]);
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-outside-roots-override",
+      name: "nova-sbx-outside-roots-override",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -350,13 +350,13 @@ describe("buildSandboxCreateArgs", () => {
 
   it("blocks reserved /workspace target bind mounts by default", () => {
     const cfg = createSandboxConfig({}, ["/tmp/override:/workspace:rw"]);
-    expectBuildToThrow("openclaw-sbx-reserved-target", cfg, /reserved container path/);
+    expectBuildToThrow("nova-sbx-reserved-target", cfg, /reserved container path/);
   });
 
   it("allows reserved /workspace target bind mounts with explicit dangerous override", () => {
     const cfg = createSandboxConfig({}, ["/tmp/override:/workspace:rw"]);
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-reserved-target-override",
+      name: "nova-sbx-reserved-target-override",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -371,7 +371,7 @@ describe("buildSandboxCreateArgs", () => {
       dangerouslyAllowContainerNamespaceJoin: true,
     });
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-container-network-override",
+      name: "nova-sbx-container-network-override",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,
@@ -382,7 +382,7 @@ describe("buildSandboxCreateArgs", () => {
   it("passes one --init flag so Docker reaps orphaned processes", () => {
     const cfg = createSandboxConfig();
     const args = buildSandboxCreateArgs({
-      name: "openclaw-sbx-init",
+      name: "nova-sbx-init",
       cfg,
       scopeKey: "main",
       createdAtMs: 1700000000000,

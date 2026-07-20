@@ -11,7 +11,7 @@ import {
   resetTaskRegistryForTests,
 } from "../tasks/task-runtime.test-helpers.js";
 import { captureEnv } from "../test-utils/env.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import { flowsCancelCommand, flowsListCommand, flowsShowCommand } from "./flows.js";
 
 vi.mock("../config/config.js", () => ({
@@ -61,10 +61,10 @@ function createRuntime(): TestRuntime {
 }
 
 async function withTaskFlowCommandStateDir(run: (root: string) => Promise<void>): Promise<void> {
-  await withOpenClawTestState(
+  await withNovaTestState(
     {
       layout: "state-only",
-      prefix: "openclaw-flows-command-",
+      prefix: "nova-flows-command-",
     },
     async (state) => {
       resetTaskRegistryDeliveryRuntimeForTests();

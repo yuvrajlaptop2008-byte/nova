@@ -18,7 +18,7 @@ function expectedMcpServerArgs(params: { sourceEntry: string; distEntry: string 
 
 describe("embedded acpx plugin config", () => {
   it("resolves workspace stateDir and cwd by default", () => {
-    const workspaceDir = path.resolve("/tmp/openclaw-acpx");
+    const workspaceDir = path.resolve("/tmp/nova-acpx");
     const resolved = resolveAcpxPluginConfig({
       rawConfig: undefined,
       workspaceDir,
@@ -38,7 +38,7 @@ describe("embedded acpx plugin config", () => {
       rawConfig: {
         timeoutSeconds: 300,
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
     expect(resolved.timeoutSeconds).toBe(300);
@@ -52,7 +52,7 @@ describe("embedded acpx plugin config", () => {
           codex: { command: "codex custom-acp" },
         },
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
     expect(resolved.agents).toEqual({
@@ -75,7 +75,7 @@ describe("embedded acpx plugin config", () => {
           },
         },
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
     expect(resolved.agents).toEqual({
@@ -94,7 +94,7 @@ describe("embedded acpx plugin config", () => {
           },
         },
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
     expect(resolved.agents).toEqual({
@@ -109,7 +109,7 @@ describe("embedded acpx plugin config", () => {
           simple: { command: "simple-acp" },
         },
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
     expect(resolved.agents).toEqual({
@@ -122,7 +122,7 @@ describe("embedded acpx plugin config", () => {
       rawConfig: {
         probeAgent: "  OpenCode  ",
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
     expect(resolved.probeAgent).toBe("OpenCode");
@@ -134,7 +134,7 @@ describe("embedded acpx plugin config", () => {
         rawConfig: {
           probeAgent: "",
         },
-        workspaceDir: "/tmp/openclaw-acpx",
+        workspaceDir: "/tmp/nova-acpx",
       }),
     ).toThrow(/probeAgent must be a non-empty string/);
   });
@@ -144,10 +144,10 @@ describe("embedded acpx plugin config", () => {
       rawConfig: {
         pluginToolsMcpBridge: true,
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
-    const server = resolved.mcpServers["openclaw-plugin-tools"];
+    const server = resolved.mcpServers["nova-plugin-tools"];
     expect(server).toEqual({
       command: process.execPath,
       args: expectedMcpServerArgs({
@@ -160,17 +160,17 @@ describe("embedded acpx plugin config", () => {
   it("injects the built-in Nova tools MCP server only when explicitly enabled", () => {
     const resolved = resolveAcpxPluginConfig({
       rawConfig: {
-        openClawToolsMcpBridge: true,
+        novaToolsMcpBridge: true,
       },
-      workspaceDir: "/tmp/openclaw-acpx",
+      workspaceDir: "/tmp/nova-acpx",
     });
 
-    const server = resolved.mcpServers["openclaw-tools"];
+    const server = resolved.mcpServers["nova-tools"];
     expect(server).toEqual({
       command: process.execPath,
       args: expectedMcpServerArgs({
-        sourceEntry: "src/mcp/openclaw-tools-serve.ts",
-        distEntry: "dist/mcp/openclaw-tools-serve.js",
+        sourceEntry: "src/mcp/nova-tools-serve.ts",
+        distEntry: "dist/mcp/nova-tools-serve.js",
       }),
     });
   });
@@ -185,7 +185,7 @@ describe("embedded acpx plugin config", () => {
   it("keeps the runtime json schema in sync with the manifest config schema", () => {
     const pluginRoot = resolveAcpxPluginRoot();
     const manifest = JSON.parse(
-      fs.readFileSync(path.join(pluginRoot, "openclaw.plugin.json"), "utf8"),
+      fs.readFileSync(path.join(pluginRoot, "nova.plugin.json"), "utf8"),
     ) as { configSchema?: unknown };
 
     expect(manifest.configSchema).toStrictEqual({
@@ -211,7 +211,7 @@ describe("embedded acpx plugin config", () => {
         pluginToolsMcpBridge: {
           type: "boolean",
         },
-        openClawToolsMcpBridge: {
+        novaToolsMcpBridge: {
           type: "boolean",
         },
         strictWindowsCmdWrapper: {

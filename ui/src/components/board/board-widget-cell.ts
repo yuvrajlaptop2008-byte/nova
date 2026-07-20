@@ -13,7 +13,7 @@ import type {
   BoardWidgetFrameUrl,
 } from "../../lib/board/view-types.ts";
 import { getBuiltinWidgetRenderer } from "../../lib/board/widgets/index.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import "../web-awesome.ts";
 
 const BOARD_SIZE_PRESETS = {
@@ -41,7 +41,7 @@ export type BoardWidgetCellCallbacks = {
   refreshWidgetAppView: (name: string, revision: number) => Promise<BoardWidgetAppViewState>;
 };
 
-class OpenClawBoardWidgetCell extends OpenClawLightDomElement {
+class NovaBoardWidgetCell extends NovaLightDomElement {
   @property({ attribute: false }) widget?: BoardViewWidget;
   @property({ attribute: false }) rect?: BoardGridRect;
   @property({ attribute: false }) tabs: readonly BoardTab[] = [];
@@ -387,7 +387,7 @@ class OpenClawBoardWidgetCell extends OpenClawLightDomElement {
   ): void {
     const frame = event.currentTarget;
     const src = frame instanceof HTMLIFrameElement ? (frame.getAttribute("src") ?? "") : "";
-    if (!src.startsWith("/__openclaw__/board/")) {
+    if (!src.startsWith("/__nova__/board/")) {
       return;
     }
     const probeGeneration = this.frameProbeGeneration + 1;
@@ -497,7 +497,7 @@ class OpenClawBoardWidgetCell extends OpenClawLightDomElement {
               .viewId=${appView.viewId}
               .height=${Math.max(160, (this.rect?.h ?? 4) * 56 - 38)}
               .title=${widget.title || widget.name}
-              @openclaw-mcp-app-view-expired=${() => void this.loadAppView(widget, callbacks, true)}
+              @nova-mcp-app-view-expired=${() => void this.loadAppView(widget, callbacks, true)}
             ></mcp-app-view>`;
     return html`<div class="board-widget__mcp-app">${accessNotice}${view}</div>`;
   }
@@ -666,12 +666,12 @@ class OpenClawBoardWidgetCell extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-board-widget-cell")) {
-  customElements.define("openclaw-board-widget-cell", OpenClawBoardWidgetCell);
+if (!customElements.get("nova-board-widget-cell")) {
+  customElements.define("nova-board-widget-cell", NovaBoardWidgetCell);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-board-widget-cell": OpenClawBoardWidgetCell;
+    "nova-board-widget-cell": NovaBoardWidgetCell;
   }
 }

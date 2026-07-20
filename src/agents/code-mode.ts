@@ -15,7 +15,7 @@ import type { Result } from "@nova/normalization-core/result";
 import { uniqueValues } from "@nova/normalization-core/string-normalization";
 import { Type } from "typebox";
 import { getAgentToolExecutionContext } from "../../packages/agent-core/src/tool-execution-context.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { emitSessionLifecycleEvent } from "../sessions/session-lifecycle-events.js";
 import { createLazyPromiseLoader } from "../shared/lazy-runtime.js";
 import { clampNumber } from "../utils.js";
@@ -228,7 +228,7 @@ function normalizeCodeModeRawConfig(value: unknown): Record<string, unknown> | u
   return isRecord(codeMode) ? codeMode : undefined;
 }
 
-function readCodeModeRawConfig(config?: OpenClawConfig, agentId?: string): Record<string, unknown> {
+function readCodeModeRawConfig(config?: NovaConfig, agentId?: string): Record<string, unknown> {
   const tools = isRecord(config?.tools) ? config.tools : undefined;
   const globalRaw = normalizeCodeModeRawConfig(tools?.codeMode) ?? {};
   const agentRaw =
@@ -257,7 +257,7 @@ function readLanguages(value: unknown): CodeModeLanguage[] {
 }
 
 /** Resolves Code Mode runtime limits and language support from config. */
-export function resolveCodeModeConfig(config?: OpenClawConfig, agentId?: string): CodeModeConfig {
+export function resolveCodeModeConfig(config?: NovaConfig, agentId?: string): CodeModeConfig {
   const raw = readCodeModeRawConfig(config, agentId);
   const maxSearchLimit = clampNumber(
     readPositiveInteger(raw.maxSearchLimit, DEFAULT_MAX_SEARCH_LIMIT),
@@ -715,7 +715,7 @@ async function runAgentSpawnBridge(params: {
   const agentId = readOptionalStringOption(options, "agentId");
   const spawnEntry = params.runtime
     .namespaceEntries()
-    .find((entry) => entry.source === "openclaw" && entry.name === "sessions_spawn");
+    .find((entry) => entry.source === "nova" && entry.name === "sessions_spawn");
   if (!spawnEntry) {
     throw new ToolInputError("agents.run requires the sessions_spawn tool.");
   }
@@ -1653,7 +1653,7 @@ function renderCodeModeCatalogIndex(lines: readonly string[], total: number): st
 
 function formatCodeModeCatalogIndex(catalog: readonly ToolSearchCatalogEntry[]): string {
   const lines = catalog
-    .filter((entry) => entry.source === "openclaw")
+    .filter((entry) => entry.source === "nova")
     .map((entry) => compactToolSearchCatalogEntry(entry))
     // Declared-output entries sort first so byte truncation drops `-> ?`
     // lines, which stay fully discoverable through ALL_TOOLS, before it drops
@@ -2269,7 +2269,7 @@ export function createCodeModeTools(ctx: CodeModeToolContext): AnyAgentTool[] {
 /** Compact normal tools behind Code Mode exec/wait controls. */
 export function applyCodeModeCatalog(params: {
   tools: AnyAgentTool[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
@@ -2327,7 +2327,7 @@ export function applyCodeModeCatalog(params: {
 /** Move client-side tool definitions into the active Code Mode catalog. */
 export function addClientToolsToCodeModeCatalog(params: {
   tools: ToolDefinition[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
@@ -2365,6 +2365,6 @@ const testing = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.codeModeTestApi")] = testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.codeModeTestApi")] = testing;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

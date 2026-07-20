@@ -10,8 +10,8 @@
  * @module @nova/oc-path/oc-path
  */
 
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { OcEmitSentinelError, REDACTED_SENTINEL } from "./sentinel.js";
 
 const OC_SCHEME = "oc://";

@@ -3,14 +3,14 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { createMatrixQaClient } from "../substrate/client.js";
 import {
-  createMatrixQaOpenClawCliRuntime,
+  createMatrixQaNovaCliRuntime,
   formatMatrixQaCliCommand,
   redactMatrixQaCliOutput,
   type MatrixQaCliRunResult,
 } from "./scenario-runtime-cli.js";
 import type { MatrixQaScenarioContext } from "./scenario-runtime-shared.js";
 
-export type MatrixQaCliRuntime = Awaited<ReturnType<typeof createMatrixQaOpenClawCliRuntime>>;
+export type MatrixQaCliRuntime = Awaited<ReturnType<typeof createMatrixQaNovaCliRuntime>>;
 
 export type MatrixQaCliBackupStatus = {
   backup?: {
@@ -75,7 +75,7 @@ export async function createMatrixQaRecoveryCliRuntime(params: {
   label: string;
   userId: string;
 }) {
-  return await createMatrixQaOpenClawCliRuntime({
+  return await createMatrixQaNovaCliRuntime({
     accountId: params.accountId,
     accessToken: params.accessToken,
     artifactLabel: params.label,

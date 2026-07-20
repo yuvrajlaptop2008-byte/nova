@@ -202,7 +202,7 @@ describe("memory-host-core helpers", () => {
         );
         const externalOwner = path.join(
           path.dirname(externalExport),
-          ".openclaw-memory-host-events-owner.json",
+          ".nova-memory-host-events-owner.json",
         );
         await fs.mkdir(path.dirname(externalExport), { recursive: true });
         await fs.writeFile(externalExport, '{"type":"external"}\n', "utf8");
@@ -297,7 +297,7 @@ describe("memory-host-core helpers", () => {
         .slice(0, 32);
       const exportDir = path.join(workspaceDir, "memory", "events", stateHash);
       const exportPath = path.join(exportDir, "memory-host-events.jsonl");
-      const ownerPath = path.join(exportDir, ".openclaw-memory-host-events-owner.json");
+      const ownerPath = path.join(exportDir, ".nova-memory-host-events-owner.json");
       const expectedContent = `${JSON.stringify({
         type: "memory.recall.recorded",
         timestamp: "2026-05-18T12:00:00.000Z",
@@ -310,7 +310,7 @@ describe("memory-host-core helpers", () => {
         ownerPath,
         `${JSON.stringify({
           schemaVersion: 3,
-          kind: "openclaw-memory-host-events-export",
+          kind: "nova-memory-host-events-export",
           stateHash,
           workspaceHash,
           pendingContentSha256: createHash("sha256").update(expectedContent).digest("hex"),
@@ -366,7 +366,7 @@ describe("memory-host-core helpers", () => {
         if (typeof target === "string" && path.resolve(target) === path.resolve(exportPath)) {
           exportOpenCount += 1;
           if (exportOpenCount === 4) {
-            await fs.rename(exportPath, `${exportPath}.openclaw-created`);
+            await fs.rename(exportPath, `${exportPath}.nova-created`);
             const replacement = await originalOpen(exportPath, "wx", 0o600);
             try {
               await replacement.writeFile(expectedContent, "utf8");
@@ -417,7 +417,7 @@ describe("memory-host-core helpers", () => {
         .slice(0, 32);
       const exportDir = path.join(workspaceDir, "memory", "events", stateHash);
       const exportPath = path.join(exportDir, "memory-host-events.jsonl");
-      const ownerPath = path.join(exportDir, ".openclaw-memory-host-events-owner.json");
+      const ownerPath = path.join(exportDir, ".nova-memory-host-events-owner.json");
       const pendingContent = `${JSON.stringify(firstEvent)}\n`;
       await fs.mkdir(exportDir, { recursive: true });
       await fs.writeFile(exportPath, pendingContent, "utf8");
@@ -425,7 +425,7 @@ describe("memory-host-core helpers", () => {
         ownerPath,
         `${JSON.stringify({
           schemaVersion: 3,
-          kind: "openclaw-memory-host-events-export",
+          kind: "nova-memory-host-events-export",
           stateHash,
           workspaceHash,
           pendingContentSha256: createHash("sha256").update(pendingContent).digest("hex"),
@@ -583,7 +583,7 @@ describe("memory-host-core helpers", () => {
       const exportStat = await fs.stat(eventExportPath);
       const exportOwner = JSON.parse(
         await fs.readFile(
-          path.join(path.dirname(eventExportPath), ".openclaw-memory-host-events-owner.json"),
+          path.join(path.dirname(eventExportPath), ".nova-memory-host-events-owner.json"),
           "utf8",
         ),
       ) as { fileDev?: string; fileIno?: string };
@@ -757,7 +757,7 @@ describe("memory-host-core helpers", () => {
         if (typeof target === "string" && path.resolve(target) === expectedExportPath) {
           exportOpenCount += 1;
           if (exportOpenCount === 2) {
-            await fs.rename(expectedExportPath, `${expectedExportPath}.openclaw-owned`);
+            await fs.rename(expectedExportPath, `${expectedExportPath}.nova-owned`);
             await fs.writeFile(expectedExportPath, replacement, "utf8");
           }
         }

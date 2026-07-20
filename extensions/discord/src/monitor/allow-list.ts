@@ -1,19 +1,16 @@
 // Discord plugin module implements allow list behavior.
-import {
-  type AllowlistMatch,
-  resolveAllowlistMatchByCandidates,
-} from "openclaw/plugin-sdk/allow-from";
+import { type AllowlistMatch, resolveAllowlistMatchByCandidates } from "nova/plugin-sdk/allow-from";
 import {
   buildChannelKeyCandidates,
   resolveChannelEntryMatchWithFallback,
   resolveChannelMatchConfig,
   type ChannelMatchSource,
-} from "openclaw/plugin-sdk/channel-targets";
-import type { DiscordGuildEntry, OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "nova/plugin-sdk/channel-targets";
+import type { DiscordGuildEntry, NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import type { Guild, User } from "../internal/discord.js";
 import { formatDiscordUserTag } from "./format.js";
 
@@ -311,7 +308,7 @@ export function resolveDiscordOwnerAccess(params: {
   return { ownerAllowList, ownerAllowed };
 }
 
-export function resolveDiscordCommandOwnerAllowFrom(cfg: OpenClawConfig): string[] | undefined {
+export function resolveDiscordCommandOwnerAllowFrom(cfg: NovaConfig): string[] | undefined {
   const raw = cfg.commands?.ownerAllowFrom;
   if (!Array.isArray(raw) || raw.length === 0) {
     return undefined;

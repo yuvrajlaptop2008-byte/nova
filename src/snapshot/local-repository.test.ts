@@ -6,10 +6,10 @@ import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { createPrivateSqliteDirectory } from "../infra/sqlite-snapshot.js";
 import { runExec } from "../process/exec.js";
-import { NOVA_AGENT_SCHEMA_VERSION } from "../state/openclaw-agent-db.js";
-import { NOVA_AGENT_SCHEMA_SQL } from "../state/openclaw-agent-schema.generated.js";
-import { NOVA_STATE_SCHEMA_VERSION } from "../state/openclaw-state-db.js";
-import { NOVA_STATE_SCHEMA_SQL } from "../state/openclaw-state-schema.generated.js";
+import { NOVA_AGENT_SCHEMA_VERSION } from "../state/nova-agent-db.js";
+import { NOVA_AGENT_SCHEMA_SQL } from "../state/nova-agent-schema.generated.js";
+import { NOVA_STATE_SCHEMA_VERSION } from "../state/nova-state-db.js";
+import { NOVA_STATE_SCHEMA_SQL } from "../state/nova-state-schema.generated.js";
 import { createLocalSqliteSnapshotProvider } from "./local-repository.js";
 import { hashSnapshotArtifact, readSnapshotManifest } from "./manifest.js";
 import {
@@ -25,7 +25,7 @@ const DURABLE_PLUGIN_BLOB_MARKER = "durable-plugin-blob-control";
 const STATE_LEASE_MARKER = "snapshot-must-not-retain-active-lease";
 
 async function createTempDir(): Promise<string> {
-  const tempDir = tempDirs.make("openclaw-snapshot-repository-");
+  const tempDir = tempDirs.make("nova-snapshot-repository-");
   if (process.platform === "win32") {
     const privateTempDir = path.join(tempDir, "private");
     await createPrivateSqliteDirectory(privateTempDir);
@@ -1099,7 +1099,7 @@ describe("local SQLite snapshot repository", () => {
 
   it("sanitizes transient global rows and enforces the global owner", async () => {
     const tempDir = await createTempDir();
-    const sourcePath = path.join(tempDir, "openclaw.sqlite");
+    const sourcePath = path.join(tempDir, "nova.sqlite");
     const repositoryPath = path.join(tempDir, "snapshots");
     createGlobalDatabase(sourcePath);
     seedGlobalPluginBlobSnapshotFixtures(sourcePath);
@@ -1169,7 +1169,7 @@ describe("local SQLite snapshot repository", () => {
 
   it("sanitizes transient leases from agent snapshots without touching the source", async () => {
     const tempDir = await createTempDir();
-    const sourcePath = path.join(tempDir, "openclaw-agent.sqlite");
+    const sourcePath = path.join(tempDir, "nova-agent.sqlite");
     const repositoryPath = path.join(tempDir, "snapshots");
     createAgentDatabase(sourcePath, "worker-1");
     seedStateLease(sourcePath);
@@ -1200,7 +1200,7 @@ describe("local SQLite snapshot repository", () => {
 
   it("enforces the exact agent owner and canonical agent id", async () => {
     const tempDir = await createTempDir();
-    const sourcePath = path.join(tempDir, "openclaw-agent.sqlite");
+    const sourcePath = path.join(tempDir, "nova-agent.sqlite");
     const repositoryPath = path.join(tempDir, "snapshots");
     createAgentDatabase(sourcePath, "worker-1");
     const provider = createLocalSqliteSnapshotProvider({ repositoryPath });
@@ -1726,7 +1726,7 @@ describe("snapshot manifest parser", () => {
     database: {
       role: "agent",
       agentId: "worker-1",
-      basename: "openclaw-agent.sqlite",
+      basename: "nova-agent.sqlite",
       userVersion: NOVA_AGENT_SCHEMA_VERSION,
     },
     artifact: {

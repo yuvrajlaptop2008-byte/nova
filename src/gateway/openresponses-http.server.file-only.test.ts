@@ -50,7 +50,7 @@ async function postResponses(body: unknown) {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-openclaw-scopes": "operator.write",
+      "x-nova-scopes": "operator.write",
     },
     body: JSON.stringify(body),
   });
@@ -68,7 +68,7 @@ describe("OpenResponses file-only input that renders to images", () => {
     agentCommand.mockResolvedValueOnce({ payloads: [{ text: "ok" }] } as never);
 
     const res = await postResponses({
-      model: "openclaw",
+      model: "nova",
       instructions: "Describe the attached scan.",
       input: [
         {
@@ -106,7 +106,7 @@ describe("OpenResponses file-only input that renders to images", () => {
     agentCommand.mockResolvedValueOnce({ payloads: [{ text: "ok" }] } as never);
 
     const res = await postResponses({
-      model: "openclaw",
+      model: "nova",
       input: [
         {
           type: "message",

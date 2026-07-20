@@ -38,7 +38,7 @@ type NativeAliasEntry = {
 };
 
 /** Resolver install options for CJS `_resolveFilename` and modern ESM loader hooks. */
-type InstallOpenClawPluginSdkNativeResolverOptions = {
+type InstallNovaPluginSdkNativeResolverOptions = {
   modulePath?: string;
   pluginModulePath?: string;
   allowedParentRoots?: readonly string[];
@@ -50,7 +50,7 @@ type InstallOpenClawPluginSdkNativeResolverOptions = {
 
 const moduleWithResolver = Module as ModuleWithResolver;
 const nodeResolveFilenameProperty = "_resolveFilename" as const;
-const PLUGIN_SDK_PACKAGE_PREFIXES = ["openclaw/plugin-sdk", "@nova/plugin-sdk"] as const;
+const PLUGIN_SDK_PACKAGE_PREFIXES = ["nova/plugin-sdk", "@nova/plugin-sdk"] as const;
 const INTERNAL_CORE_PACKAGE_ALIASES = [
   {
     packageName: "@nova/markdown-core",
@@ -119,7 +119,7 @@ const pluginSdkNativeAliases = new Map<string, NativeAliasEntry[]>();
 let installed = false;
 let previousResolveFilename: ResolveFilename | undefined;
 
-function resolveLoaderModulePath(options: InstallOpenClawPluginSdkNativeResolverOptions): string {
+function resolveLoaderModulePath(options: InstallNovaPluginSdkNativeResolverOptions): string {
   return options.modulePath ?? fileURLToPath(options.moduleUrl ?? import.meta.url);
 }
 
@@ -189,10 +189,10 @@ function resolveLoaderPackageRootFromModulePath(modulePath: string): string {
           name?: unknown;
         };
         if (
-          packageJson.name === "openclaw" ||
+          packageJson.name === "nova" ||
           (typeof packageJson.bin === "object" &&
             packageJson.bin !== null &&
-            typeof (packageJson.bin as { openclaw?: unknown }).openclaw === "string")
+            typeof (packageJson.bin as { nova?: unknown }).nova === "string")
         ) {
           return cursor;
         }
@@ -213,9 +213,7 @@ function resolveAllowedParentRoot(modulePath: string): string {
   return findBundledPluginRoot(modulePath) ?? findNearestPackageRoot(modulePath);
 }
 
-function resolveAllowedParentRoots(
-  options: InstallOpenClawPluginSdkNativeResolverOptions,
-): string[] {
+function resolveAllowedParentRoots(options: InstallNovaPluginSdkNativeResolverOptions): string[] {
   const roots = new Set<string>();
   if (options.pluginModulePath) {
     roots.add(normalizePathForBoundary(resolveAllowedParentRoot(options.pluginModulePath)));
@@ -264,7 +262,7 @@ function resolveAliasTargetForParentPath(
 }
 
 function listPluginSdkNativeAliases(
-  options: InstallOpenClawPluginSdkNativeResolverOptions,
+  options: InstallNovaPluginSdkNativeResolverOptions,
 ): Array<readonly [string, string]> {
   const modulePath = options.pluginModulePath ?? resolveLoaderModulePath(options);
   return Object.entries(
@@ -292,7 +290,7 @@ function listPluginSdkNativeAliases(
 }
 
 function listInternalCorePackageNativeAliases(
-  options: InstallOpenClawPluginSdkNativeResolverOptions,
+  options: InstallNovaPluginSdkNativeResolverOptions,
 ): Array<{
   request: string;
   target: string;
@@ -397,8 +395,8 @@ function clearNativeAliasesForParentRoots(parentRoots: readonly string[]): void 
   }
 }
 
-export function installOpenClawPluginSdkNativeResolver(
-  options: InstallOpenClawPluginSdkNativeResolverOptions = {},
+export function installNovaPluginSdkNativeResolver(
+  options: InstallNovaPluginSdkNativeResolverOptions = {},
 ): string[] {
   const parentRoots = resolveAllowedParentRoots(options);
   clearNativeAliasesForParentRoots(parentRoots);
@@ -412,8 +410,8 @@ export function installOpenClawPluginSdkNativeResolver(
   return [...pluginSdkNativeAliases.keys()].toSorted();
 }
 
-export function installOpenClawInternalCorePackageNativeResolver(
-  options: Pick<InstallOpenClawPluginSdkNativeResolverOptions, "moduleUrl"> = {},
+export function installNovaInternalCorePackageNativeResolver(
+  options: Pick<InstallNovaPluginSdkNativeResolverOptions, "moduleUrl"> = {},
 ): string[] {
   for (const alias of listInternalCorePackageNativeAliases(options)) {
     registerNativeAlias(alias);

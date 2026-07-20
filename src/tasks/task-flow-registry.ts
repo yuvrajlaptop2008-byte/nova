@@ -823,7 +823,7 @@ function resetTaskFlowRegistryForTests(opts?: { persist?: boolean }) {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.taskFlowRegistryTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.taskFlowRegistryTestApi")] = {
     createFlowRecord,
     resetTaskFlowRegistryForTests,
   };

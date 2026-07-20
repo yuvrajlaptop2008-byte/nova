@@ -27,11 +27,9 @@ import {
   subtractShippedPullRequests,
   validateReleaseProvenanceOverrides,
   withoutExcludedContributionRecords,
-} from "../../.agents/skills/openclaw-changelog-update/scripts/verify-release-notes.mjs";
+} from "../../.agents/skills/nova-changelog-update/scripts/verify-release-notes.mjs";
 
-const verifier = resolve(
-  ".agents/skills/openclaw-changelog-update/scripts/verify-release-notes.mjs",
-);
+const verifier = resolve(".agents/skills/nova-changelog-update/scripts/verify-release-notes.mjs");
 
 function git(cwd: string, args: string[]): string {
   return execFileSync("git", args, {
@@ -40,9 +38,9 @@ function git(cwd: string, args: string[]): string {
     env: {
       ...process.env,
       GIT_AUTHOR_NAME: "Nova Test",
-      GIT_AUTHOR_EMAIL: "test@openclaw.invalid",
+      GIT_AUTHOR_EMAIL: "test@nova.invalid",
       GIT_COMMITTER_NAME: "Nova Test",
-      GIT_COMMITTER_EMAIL: "test@openclaw.invalid",
+      GIT_COMMITTER_EMAIL: "test@nova.invalid",
     },
   }).trim();
 }
@@ -189,11 +187,11 @@ describe("release-note verification", () => {
   });
 
   it("stores default GitHub snapshots in the shared Git common directory", () => {
-    const commonDir = resolve("/tmp/openclaw-shared-git");
+    const commonDir = resolve("/tmp/nova-shared-git");
     expect(defaultGithubSnapshotPath("a".repeat(40), "b".repeat(40), commonDir)).toBe(
       join(
         commonDir,
-        "openclaw-release-cache",
+        "nova-release-cache",
         `verify-release-notes-${"a".repeat(40)}-${"b".repeat(40)}.json`,
       ),
     );
@@ -425,7 +423,7 @@ describe("release-note verification", () => {
   });
 
   it("reuses exact-range GitHub GraphQL snapshots without caching REST reads", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-snapshot-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-snapshot-"));
     try {
       const filePath = join(cwd, "snapshot.json");
       let fetches = 0;
@@ -445,11 +443,9 @@ describe("release-note verification", () => {
           fetches: 1,
         },
       });
-      expect(
-        githubApiWithSnapshot(["repos/openclaw/openclaw/releases/tags/v1"], fetchApi, first),
-      ).toEqual({
+      expect(githubApiWithSnapshot(["repos/nova/nova/releases/tags/v1"], fetchApi, first)).toEqual({
         data: {
-          request: ["repos/openclaw/openclaw/releases/tags/v1"],
+          request: ["repos/nova/nova/releases/tags/v1"],
           fetches: 2,
         },
       });
@@ -475,7 +471,7 @@ describe("release-note verification", () => {
   });
 
   it("checkpoints successful GraphQL responses during long verification runs", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-snapshot-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-snapshot-"));
     try {
       const filePath = join(cwd, "snapshot.json");
       const state = createGithubSnapshotState({
@@ -502,7 +498,7 @@ describe("release-note verification", () => {
   });
 
   it("does not cache transient GraphQL errors", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-snapshot-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-snapshot-"));
     try {
       const filePath = join(cwd, "snapshot.json");
       const state = createGithubSnapshotState({
@@ -535,7 +531,7 @@ describe("release-note verification", () => {
   });
 
   it("rejects a snapshot bound to a different release target", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-snapshot-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-snapshot-"));
     try {
       const filePath = join(cwd, "snapshot.json");
       const state = createGithubSnapshotState({
@@ -777,7 +773,7 @@ describe("release-note verification", () => {
   });
 
   it("records a canonical target SHA when --target is symbolic", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-"));
     try {
       git(cwd, ["init", "-q"]);
       writeFileSync(
@@ -834,7 +830,7 @@ describe("release-note verification", () => {
   });
 
   it("accepts a release-only base that shares history with canonical main", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-"));
     try {
       git(cwd, ["init", "-q"]);
       writeFileSync(
@@ -897,7 +893,7 @@ describe("release-note verification", () => {
   });
 
   it("leaves CHANGELOG.md untouched when the rendered ledger fails validation", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-"));
     try {
       git(cwd, ["init", "-q"]);
       const changelog = [
@@ -948,7 +944,7 @@ describe("release-note verification", () => {
   });
 
   it("rejects a release base that is not an ancestor of the target", () => {
-    const cwd = mkdtempSync(join(tmpdir(), "openclaw-release-notes-"));
+    const cwd = mkdtempSync(join(tmpdir(), "nova-release-notes-"));
     try {
       git(cwd, ["init", "-q"]);
       writeFileSync(

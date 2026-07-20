@@ -1,9 +1,9 @@
 // Qa Lab plugin module implements Matrix live transport adapter behavior.
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { buildQaTarget } from "openclaw/plugin-sdk/qa-channel-protocol";
-import type { QaRunnerCliRegistration } from "openclaw/plugin-sdk/qa-runner-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { buildQaTarget } from "nova/plugin-sdk/qa-channel-protocol";
+import type { QaRunnerCliRegistration } from "nova/plugin-sdk/qa-runner-runtime";
 import { readQaScenarioExecutionConfig } from "../../scenario-catalog.js";
 import { createMatrixQaScenarioEnvironment } from "./scenarios/scenario-environment.js";
 import { createMatrixQaClient, provisionMatrixQaRoom } from "./substrate/client.js";
@@ -294,8 +294,8 @@ export async function createMatrixQaTransportAdapter(
       });
       const actor = input.senderId === "observer" ? provisioning.observer : provisioning.driver;
       const actorClient = input.senderId === "observer" ? observerClient : driverClient;
-      const hasPortableMention = input.text.includes("@openclaw");
-      const body = input.text.replaceAll("@openclaw", provisioning.sut.userId);
+      const hasPortableMention = input.text.includes("@nova");
+      const body = input.text.replaceAll("@nova", provisioning.sut.userId);
       const mentionUserIds = hasPortableMention ? [provisioning.sut.userId] : undefined;
       const replyToEventId = input.replyToId ? nativeEventIds.get(input.replyToId) : undefined;
       const threadRootEventId = input.threadId ? nativeEventIds.get(input.threadId) : undefined;
@@ -346,7 +346,7 @@ export async function createMatrixQaTransportAdapter(
       busMessageIds.clear();
     },
     createGatewayConfig: () =>
-      buildMatrixQaConfig({} as OpenClawConfig, {
+      buildMatrixQaConfig({} as NovaConfig, {
         driverAccessToken: provisioning.driver.accessToken,
         driverUserId: provisioning.driver.userId,
         homeserver: harness.baseUrl,

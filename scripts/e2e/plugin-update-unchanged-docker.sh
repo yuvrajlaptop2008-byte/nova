@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verifies `openclaw plugins update` is a no-op for an already-current plugin.
+# Verifies `nova plugins update` is a no-op for an already-current plugin.
 # The CLI under test is installed from the prepared npm tarball in a bare runner.
 set -euo pipefail
 
@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-plugin-update-e2e" NOVA_PLUGIN_UPDATE_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-plugin-update-e2e" NOVA_PLUGIN_UPDATE_E2E_IMAGE)"
 SKIP_BUILD="${NOVA_PLUGIN_UPDATE_E2E_SKIP_BUILD:-0}"
 cleanup() {
   docker_e2e_cleanup_package_tgz "${PACKAGE_TGZ:-}"

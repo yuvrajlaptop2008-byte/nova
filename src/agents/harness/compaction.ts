@@ -1,4 +1,4 @@
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 /**
  * Routes compaction through selected native agent harnesses when supported.
  */
@@ -436,7 +436,7 @@ export async function maybeCompactAgentHarnessSession(
     return undefined;
   }
   if (!options.nativeCompactionRequest && !harness.compact) {
-    if (harness.id !== "openclaw") {
+    if (harness.id !== "nova") {
       return {
         ok: false,
         compacted: false,
@@ -478,7 +478,7 @@ export async function maybeCompactAgentHarnessSession(
     return undefined;
   }
   if (!options.nativeCompactionRequest && !harness.compact) {
-    if (harness.id !== "openclaw") {
+    if (harness.id !== "nova") {
       return {
         ok: false,
         compacted: false,

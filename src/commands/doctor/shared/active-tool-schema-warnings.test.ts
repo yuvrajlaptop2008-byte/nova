@@ -1,6 +1,6 @@
 // Active tool schema warning tests cover doctor warnings for active tool schema drift.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { createOpenClawCodingTools } from "../../../agents/agent-tools.js";
+import type { createNovaCodingTools } from "../../../agents/agent-tools.js";
 import type { AnyAgentTool } from "../../../agents/tools/common.js";
 
 const toolState = vi.hoisted(() => ({
@@ -17,7 +17,7 @@ const toolState = vi.hoisted(() => ({
   } | null,
   resolveModelError: null as Error | null,
   resolveModel: vi.fn(),
-  createTools: vi.fn<typeof createOpenClawCodingTools>(),
+  createTools: vi.fn<typeof createNovaCodingTools>(),
   normalizeTools: vi.fn(
     (options: { tools: AnyAgentTool[]; modelApi?: string; model?: unknown }) => options.tools,
   ),
@@ -28,7 +28,7 @@ vi.mock("../../../agents/embedded-agent-runner/model.js", () => ({
 }));
 
 vi.mock("../../../agents/agent-tools.js", () => ({
-  createOpenClawCodingTools: (options?: Parameters<typeof createOpenClawCodingTools>[0]) => {
+  createNovaCodingTools: (options?: Parameters<typeof createNovaCodingTools>[0]) => {
     toolState.createTools(options);
     if (toolState.throwError) {
       throw toolState.throwError;
@@ -99,7 +99,7 @@ describe("active tool schema doctor warnings", () => {
             },
           },
         },
-        env: { HOME: "/tmp/openclaw-test" },
+        env: { HOME: "/tmp/nova-test" },
       }),
     ).toEqual([
       '- agents.main: active tool "fuzzplugin_move_angles" from plugin "fuzzplugin" has unsupported runtime input schema (fuzzplugin_move_angles.parameters.type must be "object"). Nova will quarantine this tool at runtime; fix or disable the plugin, or remove the tool from active allowlists.',
@@ -129,7 +129,7 @@ describe("active tool schema doctor warnings", () => {
     expect(
       collectActiveToolSchemaProjectionWarnings({
         cfg: {},
-        env: { HOME: "/tmp/openclaw-test" },
+        env: { HOME: "/tmp/nova-test" },
       }),
     ).toEqual([
       '- agents.main: active tool "tool[0]" has unsupported runtime input schema (tool[0] is unreadable). Nova will quarantine this tool at runtime; fix or disable the plugin, or remove the tool from active allowlists.',
@@ -145,7 +145,7 @@ describe("active tool schema doctor warnings", () => {
     expect(
       collectActiveToolSchemaProjectionWarnings({
         cfg: { plugins: { enabled: false } },
-        env: { HOME: "/tmp/openclaw-test" },
+        env: { HOME: "/tmp/nova-test" },
       }),
     ).toEqual([]);
     expect(toolState.createTools).not.toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe("active tool schema doctor warnings", () => {
             },
           },
         },
-        env: { HOME: "/tmp/openclaw-test" },
+        env: { HOME: "/tmp/nova-test" },
       }),
     ).toEqual([
       '- agents.main: active tool "fuzzplugin_move_angles" from plugin "fuzzplugin" has unsupported runtime input schema (fuzzplugin_move_angles.parameters.properties.target.$dynamicRef). Nova will quarantine this tool at runtime; fix or disable the plugin, or remove the tool from active allowlists.',
@@ -228,7 +228,7 @@ describe("active tool schema doctor warnings", () => {
     expect(
       collectActiveToolSchemaProjectionWarnings({
         cfg: {},
-        env: { HOME: "/tmp/openclaw-test" },
+        env: { HOME: "/tmp/nova-test" },
       }),
     ).toEqual([
       "- agents.main: active tool schema validation could not normalize the runtime tool set (provider schema hook failed). Fix provider/plugin loading errors before relying on assistant tool startup.",
@@ -242,7 +242,7 @@ describe("active tool schema doctor warnings", () => {
     expect(
       collectActiveToolSchemaProjectionWarnings({
         cfg: {},
-        env: { HOME: "/tmp/openclaw-test" },
+        env: { HOME: "/tmp/nova-test" },
       }),
     ).toEqual([
       "- agents.main: active tool schema validation could not resolve the runtime model context (provider model hook failed). Fix provider/model loading errors before relying on assistant tool startup.",
@@ -257,7 +257,7 @@ describe("active tool schema doctor warnings", () => {
     expect(
       collectActiveToolSchemaProjectionWarnings({
         cfg: { plugins: { entries: { fuzzplugin: { enabled: true } } } },
-        env: { HOME: "/tmp/openclaw-test" },
+        env: { HOME: "/tmp/nova-test" },
       }),
     ).toEqual([
       "- agents.main: active tool schema validation could not load the runtime tool set (plugin startup failed). Fix plugin loading errors before relying on assistant tool startup.",

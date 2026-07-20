@@ -1,13 +1,13 @@
 // Lobster plugin entrypoint registers its Nova integration.
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import type { AnyAgentTool, OpenClawPluginApi, OpenClawPluginToolFactory } from "./runtime-api.js";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
+import type { AnyAgentTool, NovaPluginApi, NovaPluginToolFactory } from "./runtime-api.js";
 import { createLobsterTool } from "./src/lobster-tool.js";
 
 export default definePluginEntry({
   id: "lobster",
   name: "Lobster",
   description: "Optional local shell helper tools",
-  register(api: OpenClawPluginApi) {
+  register(api: NovaPluginApi) {
     api.registerTool(
       ((ctx) => {
         if (ctx.sandboxed) {
@@ -18,7 +18,7 @@ export default definePluginEntry({
             ? api.runtime.tasks.managedFlows.fromToolContext(ctx)
             : undefined;
         return createLobsterTool(api, { taskFlow }) as AnyAgentTool;
-      }) as OpenClawPluginToolFactory,
+      }) as NovaPluginToolFactory,
       { optional: true },
     );
   },

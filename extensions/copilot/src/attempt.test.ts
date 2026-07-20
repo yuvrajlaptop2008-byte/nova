@@ -10,13 +10,10 @@ import {
   queueAgentHarnessMessage,
   type AgentHarnessAttemptParams,
   type AgentHarnessAttemptResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { SandboxContext } from "openclaw/plugin-sdk/agent-harness-runtime";
-import {
-  initializeGlobalHookRunner,
-  resetGlobalHookRunner,
-} from "openclaw/plugin-sdk/hook-runtime";
-import { createMockPluginRegistry } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import type { SandboxContext } from "nova/plugin-sdk/agent-harness-runtime";
+import { initializeGlobalHookRunner, resetGlobalHookRunner } from "nova/plugin-sdk/hook-runtime";
+import { createMockPluginRegistry } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runCopilotAttempt } from "./attempt.js";
 import type { CopilotClientPool } from "./runtime.js";
@@ -28,8 +25,8 @@ const gatewayQuestionMock = vi.hoisted(() => ({
   warn: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/agent-harness-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/agent-harness-runtime")>();
+vi.mock("nova/plugin-sdk/agent-harness-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/agent-harness-runtime")>();
   return {
     ...actual,
     embeddedAgentLog: { ...actual.embeddedAgentLog, warn: gatewayQuestionMock.warn },
@@ -83,7 +80,7 @@ const dualWriteMock = vi.hoisted(() => ({
     const record = message as unknown as Record<string, unknown>;
     return {
       ...record,
-      __openclaw: { ...(record["__openclaw"] as object | undefined), mirrorIdentity: identity },
+      __nova: { ...(record["__nova"] as object | undefined), mirrorIdentity: identity },
     } as unknown as T;
   },
 }));
@@ -336,7 +333,7 @@ function makeParams(
     sessionTarget: {
       sessionId: "session-1",
       sessionKey: "agent:main:session-1",
-      storePath: "openclaw-agent.sqlite",
+      storePath: "nova-agent.sqlite",
     },
     timeoutMs: 5000,
     workspaceDir: "C:\\workspace",
@@ -2771,7 +2768,7 @@ describe("runCopilotAttempt", () => {
 
       // No env tokens, no contract token, no explicit token: falls
       // through to default useLoggedInUser mode.
-      const prevOpenclaw = process.env.NOVA_GITHUB_TOKEN;
+      const prevnova = process.env.NOVA_GITHUB_TOKEN;
       const prevGithub = process.env.GITHUB_TOKEN;
       delete process.env.NOVA_GITHUB_TOKEN;
       delete process.env.GITHUB_TOKEN;
@@ -2780,8 +2777,8 @@ describe("runCopilotAttempt", () => {
         const cfg = requireCreateSessionConfig(sdk);
         expect("gitHubToken" in cfg).toBe(false);
       } finally {
-        if (prevOpenclaw !== undefined) {
-          process.env.NOVA_GITHUB_TOKEN = prevOpenclaw;
+        if (prevnova !== undefined) {
+          process.env.NOVA_GITHUB_TOKEN = prevnova;
         }
         if (prevGithub !== undefined) {
           process.env.GITHUB_TOKEN = prevGithub;
@@ -2865,7 +2862,7 @@ describe("runCopilotAttempt", () => {
         messages: Array<{
           role: string;
           idempotencyKey?: string;
-          __openclaw?: { mirrorIdentity?: string };
+          __nova?: { mirrorIdentity?: string };
         }>;
       };
       for (const [index, message] of args.messages.entries()) {
@@ -2876,7 +2873,7 @@ describe("runCopilotAttempt", () => {
         ) {
           continue;
         }
-        const identity = message["__openclaw"]?.mirrorIdentity ?? "";
+        const identity = message["__nova"]?.mirrorIdentity ?? "";
         // The current user and terminal assistant carry turn-stable identities.
         // Caller-passed history without an identity falls through to
         // the positional `${scope}:role:idx`.
@@ -2939,16 +2936,16 @@ describe("runCopilotAttempt", () => {
           role: string;
           content: unknown;
           idempotencyKey?: string;
-          __openclaw?: { mirrorIdentity?: string };
+          __nova?: { mirrorIdentity?: string };
         }>;
       };
       expect(args.messages.length).toBe(2);
       expect(args.messages[0]?.role).toBe("user");
       expect(args.messages[0]?.content).toBe("what's my name?");
       expect(args.messages[0]?.idempotencyKey).toBe("run-A:user");
-      expect(args.messages[0]?.["__openclaw"]?.mirrorIdentity).toBe("run-A:prompt");
+      expect(args.messages[0]?.["__nova"]?.mirrorIdentity).toBe("run-A:prompt");
       expect(args.messages[1]?.role).toBe("assistant");
-      expect(args.messages[1]?.["__openclaw"]?.mirrorIdentity).toBe("run-A:assistant:final");
+      expect(args.messages[1]?.["__nova"]?.mirrorIdentity).toBe("run-A:assistant:final");
     });
 
     it("does not duplicate synthetic user when caller passed the same prompt as the messages tail", async () => {
@@ -3035,19 +3032,19 @@ describe("runCopilotAttempt", () => {
       const calls = dualWriteMock.dualWriteCopilotTranscriptBestEffort.mock.calls;
       expect(calls.length).toBe(2);
       const turn1 = calls[0]?.[0] as {
-        messages: Array<{ role: string; __openclaw?: { mirrorIdentity?: string } }>;
+        messages: Array<{ role: string; __nova?: { mirrorIdentity?: string } }>;
       };
       const turn2 = calls[1]?.[0] as {
-        messages: Array<{ role: string; __openclaw?: { mirrorIdentity?: string } }>;
+        messages: Array<{ role: string; __nova?: { mirrorIdentity?: string } }>;
       };
       const turn1User = turn1.messages.find((m) => m.role === "user");
       const turn2User = turn2.messages.find((m) => m.role === "user");
       const turn1Assistant = turn1.messages.find((m) => m.role === "assistant");
       const turn2Assistant = turn2.messages.find((m) => m.role === "assistant");
-      expect(turn1User?.["__openclaw"]?.mirrorIdentity).toBe("run-1:prompt");
-      expect(turn2User?.["__openclaw"]?.mirrorIdentity).toBe("run-2:prompt");
-      expect(turn1Assistant?.["__openclaw"]?.mirrorIdentity).toBe("run-1:assistant:final");
-      expect(turn2Assistant?.["__openclaw"]?.mirrorIdentity).toBe("run-2:assistant:final");
+      expect(turn1User?.["__nova"]?.mirrorIdentity).toBe("run-1:prompt");
+      expect(turn2User?.["__nova"]?.mirrorIdentity).toBe("run-2:prompt");
+      expect(turn1Assistant?.["__nova"]?.mirrorIdentity).toBe("run-1:assistant:final");
+      expect(turn2Assistant?.["__nova"]?.mirrorIdentity).toBe("run-2:assistant:final");
     });
 
     it("two attempts with identical prompts but different runIds remain distinct (no content-fingerprint collapse)", async () => {
@@ -3081,14 +3078,14 @@ describe("runCopilotAttempt", () => {
       const secondCall = expectDefined(calls[1], "second Copilot transcript mirror call");
       const id1 = (
         firstCall[0] as {
-          messages: Array<{ role: string; __openclaw?: { mirrorIdentity?: string } }>;
+          messages: Array<{ role: string; __nova?: { mirrorIdentity?: string } }>;
         }
-      ).messages.find((m) => m.role === "user")?.["__openclaw"]?.mirrorIdentity;
+      ).messages.find((m) => m.role === "user")?.["__nova"]?.mirrorIdentity;
       const id2 = (
         secondCall[0] as {
-          messages: Array<{ role: string; __openclaw?: { mirrorIdentity?: string } }>;
+          messages: Array<{ role: string; __nova?: { mirrorIdentity?: string } }>;
         }
-      ).messages.find((m) => m.role === "user")?.["__openclaw"]?.mirrorIdentity;
+      ).messages.find((m) => m.role === "user")?.["__nova"]?.mirrorIdentity;
       expect(id1).toBe("run-X:prompt");
       expect(id2).toBe("run-Y:prompt");
       expect(id1).not.toBe(id2);
@@ -3538,16 +3535,16 @@ describe("runCopilotAttempt", () => {
     it("keeps a host-scoped Nova create-session surface ring-zero", async () => {
       const sdk = makeFakeSdk();
       const pool = makeFakePool(sdk);
-      const sdkTools = [makeFakeSdkTool("openclaw")];
+      const sdkTools = [makeFakeSdkTool("nova")];
       const createToolBridge = vi.fn(async () => ({ sdkTools, sourceTools: [] }));
 
-      await runCopilotAttempt(makeParams({ toolsAllow: ["openclaw"] }), {
+      await runCopilotAttempt(makeParams({ toolsAllow: ["nova"] }), {
         createToolBridge,
-        isHostScopedToolActive: (toolName) => toolName === "openclaw",
+        isHostScopedToolActive: (toolName) => toolName === "nova",
         pool,
       });
 
-      expect(readAvailableTools(sdk.createSession.mock.calls[0])).toEqual(["openclaw"]);
+      expect(readAvailableTools(sdk.createSession.mock.calls[0])).toEqual(["nova"]);
     });
 
     it("forwards `[]` to the SDK when the bridge returns no tools (disable / raw / fully filtered)", async () => {
@@ -3625,24 +3622,24 @@ describe("runCopilotAttempt", () => {
         },
       });
       const pool = makeFakePool(sdk);
-      const sdkTools = [makeFakeSdkTool("openclaw")];
+      const sdkTools = [makeFakeSdkTool("nova")];
       const createToolBridge = vi.fn(async () => ({ sdkTools, sourceTools: [] }));
 
       await runCopilotAttempt(
         makeParams({
-          initialReplayState: { sdkSessionId: "sess-openclaw" },
-          toolsAllow: ["openclaw"],
+          initialReplayState: { sdkSessionId: "sess-nova" },
+          toolsAllow: ["nova"],
         } as never),
         {
           createToolBridge,
-          isHostScopedToolActive: (toolName) => toolName === "openclaw",
+          isHostScopedToolActive: (toolName) => toolName === "nova",
           pool,
         },
       );
 
       const resumeCall = sdk.resumeSession.mock.calls[0] as unknown[] | undefined;
       const resumeCfg = resumeCall?.[1] as { availableTools?: string[] };
-      expect(resumeCfg?.availableTools).toEqual(["openclaw"]);
+      expect(resumeCfg?.availableTools).toEqual(["nova"]);
     });
 
     it("forwards `[]` to resumeSession when the bridge returns no tools", async () => {

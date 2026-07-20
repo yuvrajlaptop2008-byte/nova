@@ -45,7 +45,7 @@ function metadataSnapshot(params: {
     origin: params.origin ?? "bundled",
     rootDir: `/tmp/${id}`,
     source: `/tmp/${id}/index.ts`,
-    manifestPath: `/tmp/${id}/openclaw.plugin.json`,
+    manifestPath: `/tmp/${id}/nova.plugin.json`,
   };
   return {
     index: {
@@ -104,7 +104,7 @@ function hostedFeedEntry(params: {
     state: "available",
     ...(params.featured === undefined ? {} : { featured: params.featured }),
     ...(params.featuredAt === undefined ? {} : { featuredAt: params.featuredAt }),
-    publisher: { id: "openclaw", trust: "official" },
+    publisher: { id: "nova", trust: "official" },
     install: {
       candidates: [
         {
@@ -117,7 +117,7 @@ function hostedFeedEntry(params: {
     },
     ...(params.pluginId
       ? {
-          openclaw: {
+          nova: {
             plugin: { id: params.pluginId, label: params.title },
             catalog: {
               ...(params.catalogFeatured === undefined ? {} : { featured: params.catalogFeatured }),
@@ -148,10 +148,10 @@ describe("plugin management Featured authority", () => {
     const officialCatalog = {
       entries: [
         hostedFeedEntry({
-          packageName: "@expediagroup/expedia-openclaw",
+          packageName: "@expediagroup/expedia-nova",
           title: "Expedia Travel",
           featured: true,
-          pluginId: "@expediagroup/expedia-openclaw",
+          pluginId: "@expediagroup/expedia-nova",
           order: 10,
           description: "Search flights, stays, and travel options.",
           icon,
@@ -164,12 +164,12 @@ describe("plugin management Featured authority", () => {
     const resolved = await resolveManagedPluginIconUrl({
       config: {},
       env: {},
-      pluginId: "@expediagroup/expedia-openclaw",
+      pluginId: "@expediagroup/expedia-nova",
       officialCatalog,
     });
 
     expect(catalog.plugins[0]).toMatchObject({
-      id: "@expediagroup/expedia-openclaw",
+      id: "@expediagroup/expedia-nova",
       name: "Expedia Travel",
       description: "Search flights, stays, and travel options.",
       featured: true,

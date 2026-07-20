@@ -38,7 +38,7 @@ function createEnv(
     DOCKER_STUB_LOG: sandbox.logPath,
     NOVA_GATEWAY_TOKEN: "test-token",
     NOVA_CONFIG_DIR: join(sandbox.rootDir, "config"),
-    NOVA_WORKSPACE_DIR: join(sandbox.rootDir, "openclaw"),
+    NOVA_WORKSPACE_DIR: join(sandbox.rootDir, "nova"),
     NOVA_AUTH_PROFILE_SECRET_DIR: join(sandbox.rootDir, "auth-profile-secrets"),
   };
 
@@ -112,7 +112,7 @@ describe("scripts/docker/setup.sh", () => {
       GIT_COMMIT: buildCommit,
       NOVA_DOCKER_APT_PACKAGES: "curl wget",
       NOVA_EXTRA_MOUNTS: undefined,
-      NOVA_HOME_VOLUME: "openclaw-home",
+      NOVA_HOME_VOLUME: "nova-home",
     });
     expect(result.status).toBe(0);
     const envFile = await readFile(join(activeSandbox.rootDir, ".env"), "utf8");
@@ -121,7 +121,7 @@ describe("scripts/docker/setup.sh", () => {
     expect(envFile).toContain("NOVA_DOCKER_BUILD_TSDOWN_MAX_OLD_SPACE_MB=");
     expect(envFile).toContain("NOVA_DOCKER_BUILD_SKIP_DTS=1");
     expect(envFile).toContain("NOVA_EXTRA_MOUNTS=");
-    expect(envFile).toContain("NOVA_HOME_VOLUME=openclaw-home"); // pragma: allowlist secret
+    expect(envFile).toContain("NOVA_HOME_VOLUME=nova-home"); // pragma: allowlist secret
     expect(envFile).toContain("NOVA_DISABLE_BONJOUR=");
     expect(envFile).toContain(
       `NOVA_AUTH_PROFILE_SECRET_DIR=${join(activeSandbox.rootDir, "auth-profile-secrets")}`,
@@ -130,12 +130,12 @@ describe("scripts/docker/setup.sh", () => {
       join(activeSandbox.rootDir, "docker-compose.extra.yml"),
       "utf8",
     );
-    expect(extraCompose).toContain("openclaw-home:/home/node");
+    expect(extraCompose).toContain("nova-home:/home/node");
     expect(extraCompose).toContain(
-      `${join(activeSandbox.rootDir, "auth-profile-secrets")}:/home/node/.config/openclaw`,
+      `${join(activeSandbox.rootDir, "auth-profile-secrets")}:/home/node/.config/nova`,
     );
     expect(extraCompose).toContain("volumes:");
-    expect(extraCompose).toContain("openclaw-home:");
+    expect(extraCompose).toContain("nova-home:");
     const log = await readDockerLog(activeSandbox);
     expect(log).toContain("--build-arg NOVA_IMAGE_APT_PACKAGES=curl wget");
     expect(log).toContain("--build-arg NOVA_DOCKER_BUILD_NODE_OPTIONS=--max-old-space-size=8192");
@@ -146,19 +146,19 @@ describe("scripts/docker/setup.sh", () => {
     );
     expect(log).toContain(`--build-arg GIT_COMMIT=${buildCommit}`);
     expect(log).toContain(
-      `run --rm --no-deps ${prestartContainerEnvFlags} --entrypoint node openclaw-gateway dist/index.js onboard --mode local --no-install-daemon --gateway-auth token --gateway-token-ref-env NOVA_GATEWAY_TOKEN --skip-ui --suppress-gateway-token-output`,
+      `run --rm --no-deps ${prestartContainerEnvFlags} --entrypoint node nova-gateway dist/index.js onboard --mode local --no-install-daemon --gateway-auth token --gateway-token-ref-env NOVA_GATEWAY_TOKEN --skip-ui --suppress-gateway-token-output`,
     );
     expect(result.stdout).toContain("Gateway token: stored in Docker environment/config");
     expect(result.stdout).toContain("Gateway running with host port mapping.");
     expect(result.stdout).toContain("Access from tailnet devices via the host's tailnet IP.");
     expect(result.stdout).toContain("Commands:");
-    expect(result.stdout).toContain("logs -f openclaw-gateway");
+    expect(result.stdout).toContain("logs -f nova-gateway");
     expect(result.stdout).not.toContain("test-token");
     expect(result.stdout).not.toContain("#token=");
     expect(log).toContain(
-      `run --rm --no-deps ${prestartContainerEnvFlags} --entrypoint node openclaw-gateway dist/index.js config set --batch-json [{"path":"gateway.mode","value":"local"},{"path":"gateway.bind","value":"lan"},{"path":"gateway.controlUi.allowedOrigins","value":["http://localhost:18789","http://127.0.0.1:18789"]}]`,
+      `run --rm --no-deps ${prestartContainerEnvFlags} --entrypoint node nova-gateway dist/index.js config set --batch-json [{"path":"gateway.mode","value":"local"},{"path":"gateway.bind","value":"lan"},{"path":"gateway.controlUi.allowedOrigins","value":["http://localhost:18789","http://127.0.0.1:18789"]}]`,
     );
-    expect(log).not.toContain("run --rm openclaw-cli onboard --mode local --no-install-daemon");
+    expect(log).not.toContain("run --rm nova-cli onboard --mode local --no-install-daemon");
   });
 
   it("allows ordinary spaces in host persistence paths and quotes generated mounts", async () => {
@@ -190,9 +190,9 @@ describe("scripts/docker/setup.sh", () => {
       "utf8",
     );
     expect(extraCompose).toContain(`"${homeVolumeDir}:/home/node"`);
-    expect(extraCompose).toContain(`"${configDir}:/home/node/.openclaw"`);
-    expect(extraCompose).toContain(`"${workspaceDir}:/home/node/.openclaw/workspace"`);
-    expect(extraCompose).toContain(`"${authProfileSecretDir}:/home/node/.config/openclaw"`);
+    expect(extraCompose).toContain(`"${configDir}:/home/node/.nova"`);
+    expect(extraCompose).toContain(`"${workspaceDir}:/home/node/.nova/workspace"`);
+    expect(extraCompose).toContain(`"${authProfileSecretDir}:/home/node/.config/nova"`);
     expect(extraCompose).toContain(`"${extraMountSource}:/mnt/extra data:ro"`);
   });
 
@@ -263,7 +263,7 @@ describe("scripts/docker/setup.sh", () => {
     expect(log).not.toContain("--build-arg NOVA_IMAGE_APT_PACKAGES=curl wget");
   });
 
-  it("avoids shared-network openclaw-cli before the gateway is started", async () => {
+  it("avoids shared-network nova-cli before the gateway is started", async () => {
     const activeSandbox = requireSandbox(sandbox);
 
     await resetDockerLog(activeSandbox);
@@ -276,7 +276,7 @@ describe("scripts/docker/setup.sh", () => {
 
     const prestartLines = lines.slice(0, gatewayStartIdx);
     const prestartCliRunLines = collectMatchingLines(prestartLines, (line) =>
-      /\bcompose\b.*\brun\b.*\bopenclaw-cli\b/.test(line),
+      /\bcompose\b.*\brun\b.*\bnova-cli\b/.test(line),
     );
     expect(prestartCliRunLines).toStrictEqual([]);
   });
@@ -287,8 +287,8 @@ describe("scripts/docker/setup.sh", () => {
     await resetDockerLog(activeSandbox);
     const result = runDockerSetup(activeSandbox, {
       NOVA_HOME: "/mnt/c/Users/Trevor",
-      NOVA_STATE_DIR: "/mnt/c/Users/Trevor/.openclaw",
-      NOVA_CONFIG_PATH: "/mnt/c/Users/Trevor/.openclaw/openclaw.json",
+      NOVA_STATE_DIR: "/mnt/c/Users/Trevor/.nova",
+      NOVA_CONFIG_PATH: "/mnt/c/Users/Trevor/.nova/nova.json",
       NOVA_SKIP_ONBOARDING: "1",
     });
     expect(result.status).toBe(0);
@@ -343,20 +343,18 @@ describe("scripts/docker/setup.sh", () => {
     const result = runDockerSetup(
       activeSandbox,
       {
-        NOVA_IMAGE: "ghcr.io/openclaw/openclaw:latest",
+        NOVA_IMAGE: "ghcr.io/nova/nova:latest",
         NOVA_SKIP_ONBOARDING: "1",
       },
       ["--offline"],
     );
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain(
-      "Using preloaded Docker image: ghcr.io/openclaw/openclaw:latest",
-    );
+    expect(result.stdout).toContain("Using preloaded Docker image: ghcr.io/nova/nova:latest");
 
     const lines = await readDockerLogLines(activeSandbox);
     const log = lines.join("\n");
-    expect(log).toContain("image inspect ghcr.io/openclaw/openclaw:latest");
+    expect(log).toContain("image inspect ghcr.io/nova/nova:latest");
     expect(log).not.toMatch(/^build /m);
     expect(log).not.toMatch(/^pull /m);
     expect(log).toContain("config set --batch-json");
@@ -370,22 +368,22 @@ describe("scripts/docker/setup.sh", () => {
     const result = runDockerSetup(
       activeSandbox,
       {
-        NOVA_IMAGE: "ghcr.io/openclaw/openclaw:offline",
-        DOCKER_STUB_MISSING_IMAGES: "ghcr.io/openclaw/openclaw:offline",
+        NOVA_IMAGE: "ghcr.io/nova/nova:offline",
+        DOCKER_STUB_MISSING_IMAGES: "ghcr.io/nova/nova:offline",
       },
       ["--offline"],
     );
 
     expect(result.status).not.toBe(0);
     expect(result.stderr).toContain(
-      "Offline Docker setup requires preloaded image ghcr.io/openclaw/openclaw:offline",
+      "Offline Docker setup requires preloaded image ghcr.io/nova/nova:offline",
     );
 
     const log = await readDockerLog(activeSandbox);
-    expect(log).toContain("image inspect ghcr.io/openclaw/openclaw:offline");
+    expect(log).toContain("image inspect ghcr.io/nova/nova:offline");
     expect(log).not.toMatch(/^build /m);
     expect(log).not.toMatch(/^pull /m);
-    expect(log).not.toContain("up -d openclaw-gateway");
+    expect(log).not.toContain("up -d nova-gateway");
   });
 
   it("offline sandbox stays disabled when its configured image is missing", async () => {
@@ -399,8 +397,8 @@ describe("scripts/docker/setup.sh", () => {
     const socketPath = join(activeSandbox.rootDir, "sb.sock");
 
     await withUnixSocket(socketPath, async () => {
-      const defaultImage = "registry.example/openclaw-sandbox:approved";
-      const agentImage = " registry.example/openclaw-sandbox:agent ";
+      const defaultImage = "registry.example/nova-sandbox:approved";
+      const agentImage = " registry.example/nova-sandbox:agent ";
       const result = runDockerSetup(
         activeSandbox,
         {
@@ -425,10 +423,10 @@ describe("scripts/docker/setup.sh", () => {
 
       const lines = await readDockerLogLines(activeSandbox);
       const log = lines.join("\n");
-      expect(log).toContain("image inspect openclaw:local");
+      expect(log).toContain("image inspect nova:local");
       expect(log).not.toContain(`image inspect ${defaultImage}`);
       expect(log).toContain(`image inspect ${agentImage} host=unix://${socketPath}`);
-      expect(log).not.toContain("image inspect openclaw-sandbox:bookworm-slim");
+      expect(log).not.toContain("image inspect nova-sandbox:bookworm-slim");
       expect(log).not.toMatch(/^build /m);
       expect(log).not.toMatch(/^pull /m);
       expect(log).not.toContain("config set agents.defaults.sandbox.mode off");
@@ -443,14 +441,14 @@ describe("scripts/docker/setup.sh", () => {
     const socketPath = join(activeSandbox.rootDir, "eff.sock");
 
     await withUnixSocket(socketPath, async () => {
-      const defaultImage = "registry.example/openclaw-sandbox:default";
-      const browserImage = "registry.example/openclaw-sandbox-browser:default";
+      const defaultImage = "registry.example/nova-sandbox:default";
+      const browserImage = "registry.example/nova-sandbox-browser:default";
       const ignoredImages = [
-        "registry.example/openclaw-sandbox:ssh",
-        "registry.example/openclaw-sandbox:shared-agent",
-        "registry.example/openclaw-sandbox-browser:shared-agent",
-        "registry.example/openclaw-sandbox:off",
-        "registry.example/openclaw-sandbox-browser:denied",
+        "registry.example/nova-sandbox:ssh",
+        "registry.example/nova-sandbox:shared-agent",
+        "registry.example/nova-sandbox-browser:shared-agent",
+        "registry.example/nova-sandbox:off",
+        "registry.example/nova-sandbox-browser:denied",
       ];
       const result = runDockerSetup(
         activeSandbox,
@@ -513,7 +511,7 @@ describe("scripts/docker/setup.sh", () => {
     const socketPath = join(activeSandbox.rootDir, "br.sock");
 
     await withUnixSocket(socketPath, async () => {
-      const browserImage = "registry.example/openclaw-sandbox-browser:stale";
+      const browserImage = "registry.example/nova-sandbox-browser:stale";
       const result = runDockerSetup(
         activeSandbox,
         {
@@ -593,23 +591,23 @@ describe("scripts/docker/setup.sh", () => {
     const log = await readDockerLog(activeSandbox);
     const chownIdx = log.indexOf("--user root");
     const safePathIdx = log.indexOf(`${prestartSafePath}; export PATH`);
-    const stateRepairIdx = log.indexOf(noFollowOwnershipRepair("/home/node/.openclaw"));
+    const stateRepairIdx = log.indexOf(noFollowOwnershipRepair("/home/node/.nova"));
     const onboardIdx = log.indexOf("onboard");
     expect(chownIdx).toBeGreaterThanOrEqual(0);
     expect(safePathIdx).toBeGreaterThan(chownIdx);
     expect(stateRepairIdx).toBeGreaterThan(safePathIdx);
     expect(onboardIdx).toBeGreaterThan(chownIdx);
-    expect(log).toContain("run --rm --no-deps --user root --entrypoint sh openclaw-gateway -c");
+    expect(log).toContain("run --rm --no-deps --user root --entrypoint sh nova-gateway -c");
     expect(log).toContain("/usr/bin/chown -h node:node /home/node/.config");
-    expect(log).toContain(noFollowOwnershipRepair("/home/node/.openclaw"));
-    expect(log).toContain(noFollowOwnershipRepair("/home/node/.config/openclaw"));
-    expect(log).toContain("[ ! -L /home/node/.openclaw/workspace/.openclaw ]");
-    expect(log).toContain(noFollowOwnershipRepair("/home/node/.openclaw/workspace/.openclaw"));
+    expect(log).toContain(noFollowOwnershipRepair("/home/node/.nova"));
+    expect(log).toContain(noFollowOwnershipRepair("/home/node/.config/nova"));
+    expect(log).toContain("[ ! -L /home/node/.nova/workspace/.nova ]");
+    expect(log).toContain(noFollowOwnershipRepair("/home/node/.nova/workspace/.nova"));
     expect(log).toContain("fi || true");
     expect(log).not.toContain("-type d -o -type f");
     expect(log).not.toContain("-exec chown");
     expect(log).not.toContain(" chown node:node");
-    expect(log).not.toContain("chown -R node:node /home/node/.openclaw/workspace/.openclaw");
+    expect(log).not.toContain("chown -R node:node /home/node/.nova/workspace/.nova");
   });
 
   it("precreates auth profile secret key dir outside the mounted state dir", async () => {
@@ -630,7 +628,7 @@ describe("scripts/docker/setup.sh", () => {
     expect(secretDir.startsWith(`${configDir}/`)).toBe(false);
 
     const log = await readDockerLog(activeSandbox);
-    expect(log).toContain(noFollowOwnershipRepair("/home/node/.config/openclaw"));
+    expect(log).toContain(noFollowOwnershipRepair("/home/node/.config/nova"));
   });
 
   it("reuses existing config token when NOVA_GATEWAY_TOKEN is unset", async () => {
@@ -640,7 +638,7 @@ describe("scripts/docker/setup.sh", () => {
       "token-reuse",
       async (configDir) => {
         await writeFile(
-          join(configDir, "openclaw.json"),
+          join(configDir, "nova.json"),
           JSON.stringify({ gateway: { auth: { mode: "token", token: "config-token-123" } } }),
         );
       },
@@ -710,7 +708,7 @@ describe("scripts/docker/setup.sh", () => {
     await resetDockerLog(activeSandbox);
     await writeFile(
       join(activeSandbox.rootDir, "docker-compose.sandbox.yml"),
-      "services:\n  openclaw-gateway:\n    volumes:\n      - /var/run/docker.sock:/var/run/docker.sock\n",
+      "services:\n  nova-gateway:\n    volumes:\n      - /var/run/docker.sock:/var/run/docker.sock\n",
     );
     const socketPath = join(activeSandbox.rootDir, "missing-cli.sock");
 
@@ -718,7 +716,7 @@ describe("scripts/docker/setup.sh", () => {
       const result = runDockerSetup(activeSandbox, {
         NOVA_SANDBOX: "1",
         NOVA_DOCKER_SOCKET: socketPath,
-        DOCKER_STUB_FAIL_MATCH: "--entrypoint docker openclaw-gateway --version",
+        DOCKER_STUB_FAIL_MATCH: "--entrypoint docker nova-gateway --version",
       });
 
       expect(result.status).toBe(0);
@@ -754,19 +752,17 @@ describe("scripts/docker/setup.sh", () => {
       const gatewayStarts = collectMatchingLines(lines, (line) => isGatewayStartLine(line));
       expect(gatewayStarts).toHaveLength(2);
       expect(log).toContain(
-        "run --pull never --rm --no-deps openclaw-cli config set agents.defaults.sandbox.mode non-main",
+        "run --pull never --rm --no-deps nova-cli config set agents.defaults.sandbox.mode non-main",
       );
       expect(log).toContain("config set agents.defaults.sandbox.mode off");
       const forceRecreateLine = log
         .split("\n")
-        .find((line) => line.includes("--force-recreate openclaw-gateway"));
+        .find((line) => line.includes("--force-recreate nova-gateway"));
       expect(forceRecreateLine).toBe(
-        `compose compose -f ${join(activeSandbox.rootDir, "docker-compose.yml")} up -d --pull never --no-build --force-recreate openclaw-gateway`,
+        `compose compose -f ${join(activeSandbox.rootDir, "docker-compose.yml")} up -d --pull never --no-build --force-recreate nova-gateway`,
       );
       expect(forceRecreateLine).not.toContain("docker-compose.sandbox.yml");
-      expect(log).toContain(
-        `image inspect openclaw-sandbox:bookworm-slim host=unix://${socketPath}`,
-      );
+      expect(log).toContain(`image inspect nova-sandbox:bookworm-slim host=unix://${socketPath}`);
       expectOfflineComposePolicy(lines);
       await expectMissingPath(join(activeSandbox.rootDir, "docker-compose.sandbox.yml"));
     });
@@ -895,8 +891,8 @@ describe("scripts/docker/setup.sh", () => {
 
   it("keeps docker-compose CLI network namespace settings in sync", async () => {
     const compose = await readFile(join(repoRoot, "docker-compose.yml"), "utf8");
-    expect(compose).toContain('network_mode: "service:openclaw-gateway"');
-    expect(compose).toContain("depends_on:\n      - openclaw-gateway");
+    expect(compose).toContain('network_mode: "service:nova-gateway"');
+    expect(compose).toContain("depends_on:\n      - nova-gateway");
   });
 
   it("keeps docker-compose gateway token env defaults aligned across services", async () => {
@@ -908,7 +904,7 @@ describe("scripts/docker/setup.sh", () => {
     const compose = await readFile(join(repoRoot, "docker-compose.yml"), "utf8");
     expect(
       compose.split(
-        '"${NOVA_AUTH_PROFILE_SECRET_DIR:-${HOME:-/tmp}/.openclaw-auth-profile-secrets}:/home/node/.config/openclaw"',
+        '"${NOVA_AUTH_PROFILE_SECRET_DIR:-${HOME:-/tmp}/.nova-auth-profile-secrets}:/home/node/.config/nova"',
       ),
     ).toHaveLength(3);
   });
@@ -929,14 +925,10 @@ describe("scripts/docker/setup.sh", () => {
     // canonical container paths so host-style paths written to `.env` cannot
     // reach runtime code inside Linux Docker.
     expect(compose.match(/NOVA_HOME: \/home\/node$/gm)).toHaveLength(2);
-    expect(compose.match(/NOVA_STATE_DIR: \/home\/node\/\.openclaw$/gm)).toHaveLength(2);
-    expect(
-      compose.match(/NOVA_CONFIG_PATH: \/home\/node\/\.openclaw\/openclaw\.json$/gm),
-    ).toHaveLength(2);
-    expect(compose.match(/NOVA_CONFIG_DIR: \/home\/node\/\.openclaw$/gm)).toHaveLength(2);
-    expect(
-      compose.match(/NOVA_WORKSPACE_DIR: \/home\/node\/\.openclaw\/workspace$/gm),
-    ).toHaveLength(2);
+    expect(compose.match(/NOVA_STATE_DIR: \/home\/node\/\.nova$/gm)).toHaveLength(2);
+    expect(compose.match(/NOVA_CONFIG_PATH: \/home\/node\/\.nova\/nova\.json$/gm)).toHaveLength(2);
+    expect(compose.match(/NOVA_CONFIG_DIR: \/home\/node\/\.nova$/gm)).toHaveLength(2);
+    expect(compose.match(/NOVA_WORKSPACE_DIR: \/home\/node\/\.nova\/workspace$/gm)).toHaveLength(2);
   });
 
   it("Dockerfile ARG NOVA_IMAGE_APT_PACKAGES must not have a default value", async () => {

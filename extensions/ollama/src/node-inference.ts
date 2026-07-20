@@ -1,22 +1,19 @@
-import { jsonResult } from "openclaw/plugin-sdk/channel-actions";
+import { jsonResult } from "nova/plugin-sdk/channel-actions";
 // Ollama node inference exposes local models to agents through paired node hosts.
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
 import {
   readFiniteNumberParam,
   readPositiveIntegerParam,
   readStringParam,
-} from "openclaw/plugin-sdk/param-readers";
+} from "nova/plugin-sdk/param-readers";
 import type {
   AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeInvokePolicy,
-} from "openclaw/plugin-sdk/plugin-entry";
-import {
-  readProviderJsonResponse,
-  readResponseTextLimited,
-} from "openclaw/plugin-sdk/provider-http";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+  NovaPluginApi,
+  NovaPluginNodeHostCommand,
+  NovaPluginNodeInvokePolicy,
+} from "nova/plugin-sdk/plugin-entry";
+import { readProviderJsonResponse, readResponseTextLimited } from "nova/plugin-sdk/provider-http";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 import { Type } from "typebox";
 import { OLLAMA_DEFAULT_BASE_URL } from "./defaults.js";
 import {
@@ -73,9 +70,7 @@ type OllamaChatPayload = {
   };
 };
 
-type NodeSummary = Awaited<
-  ReturnType<OpenClawPluginApi["runtime"]["nodes"]["list"]>
->["nodes"][number];
+type NodeSummary = Awaited<ReturnType<NovaPluginApi["runtime"]["nodes"]["list"]>>["nodes"][number];
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value)
@@ -316,7 +311,7 @@ async function runOllamaNodeChat(params: {
 
 export function createOllamaNodeHostCommands(options?: {
   baseUrl?: string;
-}): OpenClawPluginNodeHostCommand[] {
+}): NovaPluginNodeHostCommand[] {
   const baseUrl = options?.baseUrl ?? OLLAMA_DEFAULT_BASE_URL;
   return [
     {
@@ -369,7 +364,7 @@ export function createOllamaNodeHostCommands(options?: {
   ];
 }
 
-export function createOllamaNodeInvokePolicy(): OpenClawPluginNodeInvokePolicy {
+export function createOllamaNodeInvokePolicy(): NovaPluginNodeInvokePolicy {
   return {
     commands: [...OLLAMA_NODE_INFERENCE_COMMANDS],
     defaultPlatforms: ["macos", "linux", "windows"],
@@ -405,7 +400,7 @@ function parseInvokePayload(raw: unknown): Record<string, unknown> {
 }
 
 async function invokeNode(
-  api: OpenClawPluginApi,
+  api: NovaPluginApi,
   nodeId: string,
   command: string,
   params: Record<string, unknown>,
@@ -445,7 +440,7 @@ const ollamaNodeInferenceToolDefinition = {
   ),
 } as const;
 
-export function createOllamaNodeInferenceTool(api: OpenClawPluginApi): AnyAgentTool {
+export function createOllamaNodeInferenceTool(api: NovaPluginApi): AnyAgentTool {
   return {
     ...ollamaNodeInferenceToolDefinition,
     execute: async (_toolCallId, args) => {
@@ -490,7 +485,7 @@ export function createOllamaNodeInferenceTool(api: OpenClawPluginApi): AnyAgentT
         return jsonResult({
           nodes,
           ...(modelNodes.length === 0 && {
-            hint: "No connected node advertises Ollama inference. Start Ollama and `openclaw node run` on the target machine, then approve any request shown by `openclaw nodes pending`.",
+            hint: "No connected node advertises Ollama inference. Start Ollama and `nova node run` on the target machine, then approve any request shown by `nova nodes pending`.",
           }),
         });
       }

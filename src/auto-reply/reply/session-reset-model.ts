@@ -14,7 +14,7 @@ import {
   SESSION_MODEL_OVERRIDE_TRANSACTION_FIELDS,
   sessionModelOverrideChangesApplied,
 } from "../../config/sessions/session-snapshot-merge.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { applyModelOverrideToSessionEntry } from "../../sessions/model-overrides.js";
 import type { MsgContext, TemplateContext } from "../templating.js";
 import {
@@ -43,7 +43,7 @@ function splitBody(body: string) {
 }
 
 async function loadResetModelCatalog(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   agentDir?: string;
   workspaceDir?: string;
@@ -59,7 +59,7 @@ async function loadResetModelCatalog(params: {
 }
 
 async function resolveResetFallbackModels(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   agentDir?: string;
   workspaceDir?: string;
@@ -75,7 +75,7 @@ async function resolveResetFallbackModels(params: {
 }
 
 async function buildResetAllowedModelKeys(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   catalog: ModelCatalogEntry[];
   defaultProvider: string;
   defaultModel?: string;
@@ -172,7 +172,7 @@ async function applySelectionToSession(params: {
 /** Applies a model override embedded in a reset command body. */
 /** Applies a valid reset model override to session state and returns the cleaned body. */
 export async function applyResetModelOverride(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   agentDir?: string;
   workspaceDir?: string;

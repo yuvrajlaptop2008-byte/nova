@@ -20,7 +20,7 @@ function writeRepoFile(repoRoot: string, relativePath: string, value: string): v
 }
 
 function makeSkipInventoryFixture(): string {
-  const repoRoot = createTempDir("openclaw-test-skip-inventory-");
+  const repoRoot = createTempDir("nova-test-skip-inventory-");
   writeRepoFile(
     repoRoot,
     "src/runtime.ts",
@@ -285,7 +285,7 @@ describe("collectTestSkipInventoryReport", () => {
         "--limit",
         "1e3",
         "--repo-root",
-        createTempDir("openclaw-skip-limit-"),
+        createTempDir("nova-skip-limit-"),
       ]),
     ).toThrow("--limit expects a non-negative integer");
   });

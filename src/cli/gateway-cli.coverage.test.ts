@@ -4,10 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { Command } from "commander";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
+import { SessionManager } from "nova/plugin-sdk/agent-sessions";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { withEnvOverride } from "../config/test-helpers.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { testApi as usageTestApi, usageHandlers } from "../gateway/server-methods/usage.js";
 import { GatewayLockError } from "../infra/gateway-lock.js";
 import { registerGatewayCli } from "./gateway-cli.js";
@@ -299,13 +299,13 @@ describe("gateway-cli coverage", () => {
   });
 
   it("waits for real all-agent usage caches before printing totals", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-cost-cli-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-usage-cost-cli-"));
     const config = {
       agents: {
         list: [{ id: "main", default: true }, { id: "dev" }],
       },
       session: {},
-    } as OpenClawConfig;
+    } as NovaConfig;
     const seedUsage = (agentId: string, totalTokens: number, totalCost: number) => {
       const sessionsDir = path.join(stateDir, "agents", agentId, "sessions");
       fs.mkdirSync(sessionsDir, { recursive: true });
@@ -492,12 +492,12 @@ describe("gateway-cli coverage", () => {
 
   it("prints the latest stability bundle without calling Gateway", async () => {
     callGateway.mockClear();
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-cli-bundle-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-cli-bundle-"));
     try {
       const bundleDir = path.join(tempDir, "logs", "stability");
       const bundlePath = path.join(
         bundleDir,
-        "openclaw-stability-2026-04-22T12-00-00-000Z-123-test.json",
+        "nova-stability-2026-04-22T12-00-00-000Z-123-test.json",
       );
       const bundle = {
         version: 1,
@@ -600,7 +600,7 @@ describe("gateway-cli coverage", () => {
 
   it("writes gateway diagnostics export with a best-effort health snapshot", async () => {
     callGateway.mockClear();
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-cli-support-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-cli-support-"));
     try {
       const outputPath = path.join(tempDir, "diagnostics.zip");
       await withEnvOverride(
@@ -649,8 +649,8 @@ describe("gateway-cli coverage", () => {
       {
         instanceName: "Studio (Nova)",
         displayName: "Studio",
-        domain: "openclaw.internal.",
-        host: "studio.openclaw.internal",
+        domain: "nova.internal.",
+        host: "studio.nova.internal",
         port: 18789,
         lanHost: "studio.local",
         tailnetDns: "studio.tailnet.ts.net",
@@ -784,7 +784,7 @@ describe("gateway-cli coverage", () => {
     runtimeErrors.length = 0;
     serviceIsLoaded.mockResolvedValue(true);
     startGatewayServer.mockRejectedValueOnce(
-      new GatewayLockError("failed to acquire gateway lock at /tmp/openclaw/gateway.lock"),
+      new GatewayLockError("failed to acquire gateway lock at /tmp/nova/gateway.lock"),
     );
 
     await expectGatewayExit(["gateway", "--token", "test-token", "--allow-unconfigured"]);

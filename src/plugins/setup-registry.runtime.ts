@@ -1,6 +1,6 @@
 /** Metadata lookup helpers for plugin setup CLI backend descriptors. */
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isInstalledPluginEnabled } from "./installed-plugin-index.js";
 import {
   resolvePluginMetadataSnapshot,
@@ -17,7 +17,7 @@ type SetupCliBackendDescriptorEntry = {
 
 type SetupCliBackendDescriptorLookupParams = {
   backend: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 };

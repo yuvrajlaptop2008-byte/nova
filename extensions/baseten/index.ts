@@ -1,7 +1,7 @@
 /** Baseten provider plugin entrypoint. */
-import type { ProviderCatalogContext } from "openclaw/plugin-sdk/provider-catalog-shared";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
+import type { ProviderCatalogContext } from "nova/plugin-sdk/provider-catalog-shared";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
+import { buildProviderReplayFamilyHooks } from "nova/plugin-sdk/provider-model-shared";
 import { BASETEN_DEFAULT_MODEL_REF, resolveBasetenDynamicModel } from "./models.js";
 import { applyBasetenConfig } from "./onboard.js";
 import { buildBasetenProvider, buildStaticBasetenProvider } from "./provider-catalog.js";

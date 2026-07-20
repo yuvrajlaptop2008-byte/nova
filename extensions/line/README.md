@@ -1,11 +1,11 @@
-# OpenClaw LINE
+# Nova LINE
 
-Official OpenClaw channel plugin for LINE Bot API chats.
+Official Nova channel plugin for LINE Bot API chats.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/line
+nova plugin add @nova/line
 ```
 
-Configure LINE channel credentials in OpenClaw, then connect the bot to the chats where agents should receive and send messages.
+Configure LINE channel credentials in Nova, then connect the bot to the chats where agents should receive and send messages.

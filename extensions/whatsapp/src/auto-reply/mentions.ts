@@ -1,9 +1,6 @@
 // Whatsapp plugin module implements mentions behavior.
-import {
-  buildMentionRegexes,
-  normalizeMentionText,
-} from "openclaw/plugin-sdk/channel-mention-gating";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { buildMentionRegexes, normalizeMentionText } from "nova/plugin-sdk/channel-mention-gating";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   getComparableIdentityValues,
   getMentionIdentities,
@@ -27,7 +24,7 @@ type MentionTargets = {
 };
 
 export function buildMentionConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId?: string,
   options?: Parameters<typeof buildMentionRegexes>[2],
 ): MentionConfig {

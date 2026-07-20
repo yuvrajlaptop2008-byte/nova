@@ -1,5 +1,5 @@
 // Telegram tests cover probe plugin behavior.
-import { withFetchPreconnect } from "openclaw/plugin-sdk/test-env";
+import { withFetchPreconnect } from "nova/plugin-sdk/test-env";
 import { afterEach, describe, expect, it, vi, type Mock } from "vitest";
 import { probeTelegram, resetTelegramProbeFetcherCacheForTests } from "./probe.js";
 
@@ -18,9 +18,8 @@ vi.mock("./proxy.js", () => ({
 
 // readResponseWithLimit requires a real Response body; pass-through so existing plain-object
 // fetch mocks continue to work. The size-cap behavior is verified by the proof script.
-vi.mock("openclaw/plugin-sdk/response-limit-runtime", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/response-limit-runtime")>();
+vi.mock("nova/plugin-sdk/response-limit-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/response-limit-runtime")>();
   return {
     ...actual,
     readResponseWithLimit: async (response: Response) => {

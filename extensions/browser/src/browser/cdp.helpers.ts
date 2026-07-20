@@ -5,10 +5,10 @@
  * redaction/headers, and request/response correlation over WebSocket.
  */
 import { createHash } from "node:crypto";
-import { parseBrowserHttpUrl, redactCdpUrl } from "openclaw/plugin-sdk/browser-config";
-import { readProviderJsonResponse } from "openclaw/plugin-sdk/provider-http";
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import { parseBrowserHttpUrl, redactCdpUrl } from "nova/plugin-sdk/browser-config";
+import { readProviderJsonResponse } from "nova/plugin-sdk/provider-http";
+import { sleep } from "nova/plugin-sdk/runtime-env";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 import WebSocket from "ws";
 import { isLoopbackHost } from "../gateway/net.js";
 import {

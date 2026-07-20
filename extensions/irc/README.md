@@ -1,13 +1,13 @@
-# IRC OpenClaw channel
+# IRC Nova channel
 
-Official OpenClaw channel plugin for IRC.
+Official Nova channel plugin for IRC.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/irc
+nova plugins install @nova/irc
 ```
 
 ## Docs
 
-See `docs/channels/irc.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/channels/irc`.
+See `docs/channels/irc.md` in the Nova repository, or the published docs at `https://docs.nova.ai/channels/irc`.

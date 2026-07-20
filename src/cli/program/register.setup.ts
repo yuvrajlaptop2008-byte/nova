@@ -180,13 +180,13 @@ export function registerSetupCommand(program: Command): void {
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n` +
-        `  ${theme.command("openclaw setup")}\n` +
+        `  ${theme.command("nova setup")}\n` +
         `    ${theme.muted("Chat with Nova, or onboard when setup is incomplete.")}\n` +
-        `  ${theme.command('openclaw setup -m "status"')}\n` +
+        `  ${theme.command('nova setup -m "status"')}\n` +
         `    ${theme.muted("Run one system-agent request.")}\n` +
-        `  ${theme.command("openclaw setup --wizard")}\n` +
+        `  ${theme.command("nova setup --wizard")}\n` +
         `    ${theme.muted("Run full onboarding.")}\n\n` +
-        `${theme.muted("Docs:")} ${formatDocsLink("/cli/setup", "docs.openclaw.ai/cli/setup")}\n`,
+        `${theme.muted("Docs:")} ${formatDocsLink("/cli/setup", "docs.nova.ai/cli/setup")}\n`,
     )
     .option(
       "--workspace <dir>",
@@ -274,7 +274,7 @@ export function registerSetupCommand(program: Command): void {
   addSystemAgentOptions(
     program
       .command("crestodian", { hidden: true }) // hidden alias
-      .description("Deprecated: use openclaw setup"),
+      .description("Deprecated: use nova setup"),
   ).action(async (options) => {
     const { defaultRuntime } = await import("../../runtime.js");
     await runCommandWithRuntime(defaultRuntime, async () => {

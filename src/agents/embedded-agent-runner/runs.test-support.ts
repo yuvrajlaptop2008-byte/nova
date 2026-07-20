@@ -5,9 +5,7 @@ type EmbeddedRunsTestApi = {
 };
 
 function getTestApi(): EmbeddedRunsTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.embeddedRunsTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.embeddedRunsTestApi")];
   if (!api) {
     throw new Error("embedded runs test API is unavailable");
   }

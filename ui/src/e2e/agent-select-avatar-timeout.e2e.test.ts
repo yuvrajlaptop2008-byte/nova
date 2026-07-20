@@ -90,7 +90,7 @@ describeControlUiE2e("Control UI agent picker avatar timeout", () => {
       expect(response?.status()).toBe(200);
       await gateway.waitForRequest("agent.identity.get");
       await expect.poll(() => avatarRequestCount).toBe(1);
-      const picker = page.locator("openclaw-agent-select");
+      const picker = page.locator("nova-agent-select");
       await expect
         .poll(() => picker.locator(".agent-select__avatar--text").first().textContent())
         .toBe("O");

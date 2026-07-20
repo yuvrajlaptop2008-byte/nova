@@ -9,7 +9,7 @@ const envSnapshot = captureEnv(["HOME", "NOVA_HOME", "NOVA_STATE_DIR"]);
 const tempHomes: string[] = [];
 
 function useTempHome(): string {
-  const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-agent-runtime-"));
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-agent-runtime-"));
   tempHomes.push(home);
   setTestEnvValue("HOME", home);
   setTestEnvValue("NOVA_HOME", home);
@@ -18,7 +18,7 @@ function useTempHome(): string {
 }
 
 function execApprovalsPath(home: string): string {
-  return path.join(home, ".openclaw", "exec-approvals.json");
+  return path.join(home, ".nova", "exec-approvals.json");
 }
 
 function readExecApprovals(home: string): {

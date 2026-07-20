@@ -1,7 +1,7 @@
 // Codex skill plan items resolve naming collisions before workspace writes.
 import path from "node:path";
-import { createMigrationItem, MIGRATION_REASON_TARGET_EXISTS } from "openclaw/plugin-sdk/migration";
-import type { MigrationItem } from "openclaw/plugin-sdk/plugin-entry";
+import { createMigrationItem, MIGRATION_REASON_TARGET_EXISTS } from "nova/plugin-sdk/migration";
+import type { MigrationItem } from "nova/plugin-sdk/plugin-entry";
 import { exists, sanitizeName } from "./helpers.js";
 import type { CodexSkillSource } from "./source-files.js";
 

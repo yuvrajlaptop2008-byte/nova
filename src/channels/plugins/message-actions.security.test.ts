@@ -1,7 +1,7 @@
 // Message action security tests cover channel message action authorization and validation.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { jsonResult } from "../../agents/tools/common.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
 import {
   createChannelTestPluginBase,
@@ -49,7 +49,7 @@ describe("dispatchChannelMessageAction trusted sender guard", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "kick",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { guildId: "g1", userId: "u1" },
         toolContext: { currentChannelProvider: "discord" },
       }),
@@ -61,7 +61,7 @@ describe("dispatchChannelMessageAction trusted sender guard", () => {
     await dispatchChannelMessageAction({
       channel: "discord",
       action: "kick",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { guildId: "g1", userId: "u1" },
       requesterSenderId: "trusted-user",
       toolContext: { currentChannelProvider: "discord" },
@@ -74,7 +74,7 @@ describe("dispatchChannelMessageAction trusted sender guard", () => {
     await dispatchChannelMessageAction({
       channel: "discord",
       action: "kick",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { guildId: "g1", userId: "u1" },
     });
 
@@ -153,7 +153,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "discord",
       action: "read",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { channelId: "channel:current" },
       accountId: "Work",
       requesterAccountId: "work",
@@ -179,7 +179,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
         dispatchChannelMessageAction({
           channel: "discord",
           action: "read",
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: {
             channelId: "other",
             conversationReadOrigin: "direct-operator",
@@ -208,7 +208,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     const result = await dispatchChannelMessageAction({
       channel: "discord",
       action: "forged-read" as never,
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { channelId: "other" },
       conversationReadOrigin: "direct-operator",
     });
@@ -225,7 +225,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "discord",
       action: "read",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: {
         target: "current",
         channelId: "current",
@@ -294,7 +294,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: testCase.params,
         accountId: testCase.accountId,
         requesterAccountId: testCase.requesterAccountId,
@@ -317,7 +317,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "discord",
       action: "read",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { channelId: "other" },
       conversationReadOrigin: "direct-operator",
     });
@@ -332,7 +332,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { channelId: "channel:123" },
         accountId: "default",
         requesterAccountId: "default",
@@ -353,7 +353,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { channelId: "CHANNEL:CURRENT" },
         accountId: "default",
         requesterAccountId: "default",
@@ -374,7 +374,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { channelId: "current" },
         requesterAccountId: "work",
         conversationReadOrigin: "delegated",
@@ -394,7 +394,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { target: "user:123" },
         accountId: "default",
         requesterAccountId: "default",
@@ -415,7 +415,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "channel:123",
           channelId: "123",
@@ -440,7 +440,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "123",
         },
@@ -464,7 +464,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           channelId: "current",
           target: "channel:other",
@@ -487,7 +487,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "discord",
       action: "send",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { to: "other" },
       conversationReadOrigin: "delegated",
     });
@@ -501,7 +501,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "discord",
       action: "read",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { channelId: "configured" },
       conversationReadOrigin: "delegated",
     });
@@ -516,7 +516,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "telegram",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { channelId: "configured" },
         accountId: "default",
         requesterAccountId: "default",
@@ -548,7 +548,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "nextcloud-talk",
       action: "read",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { to: "nc:room:Current" },
       accountId: "default",
       requesterAccountId: "default",
@@ -575,7 +575,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { channelId: "other" },
         accountId: "default",
         requesterAccountId: "default",
@@ -604,7 +604,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       await dispatchChannelMessageAction({
         channel: "nextcloud-talk",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target,
           to: "nextcloud-talk:current",
@@ -636,7 +636,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "nextcloud-talk",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "user:current",
           to: "nextcloud-talk:current",
@@ -664,7 +664,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "nextcloud-talk",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "room:current",
         },
@@ -691,7 +691,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "nextcloud-talk",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "group:current",
           to: "nextcloud-talk:current",
@@ -725,7 +725,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "imessage",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "malformed-target",
           to: "chat_guid:iMessage;+;current",
@@ -764,7 +764,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "imessage",
       action: "read",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { chatGuid: "iMessage;+;current" },
       accountId: "default",
       requesterAccountId: "default",
@@ -801,7 +801,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "imessage",
       action: "react",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { chatId: 42, messageId: "current-message" },
       accountId: "default",
       requesterAccountId: "default",
@@ -835,7 +835,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "imessage",
       action: "react",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { chatId: 42, messageId: "current-message" },
       accountId: "Work",
       requesterAccountId: "work",
@@ -878,7 +878,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "imessage",
       action: "react",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: {
         target: normalizedAliasTarget,
         to: normalizedAliasTarget,
@@ -918,7 +918,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "imessage",
         action: "react",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { chatId: 42, messageId: "current-message" },
         accountId: "default",
         requesterAccountId: "default",
@@ -953,7 +953,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "imessage",
         action: "react",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { chatId: 42, messageId: "current-message" },
         accountId: "default",
         requesterAccountId: "default",
@@ -988,7 +988,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "imessage",
         action: "react",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "other-handle",
           chatId: 42,
@@ -1027,7 +1027,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "imessage",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           to: "chat_guid:iMessage;+;current",
           chatGuid: "iMessage;+;other",
@@ -1066,7 +1066,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
         dispatchChannelMessageAction({
           channel: "imessage",
           action: testCase.action,
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: testCase.params,
           accountId: "work",
           requesterAccountId: "work",
@@ -1096,7 +1096,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "imessage",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: {
           target: "chat_guid:iMessage;+;other",
           messageId: "current-message",
@@ -1130,7 +1130,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "imessage",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { messageId: "current-message" },
         accountId: "default",
         requesterAccountId: "default",
@@ -1151,7 +1151,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
     await dispatchChannelMessageAction({
       channel: "telegram",
       action: "sticker-search",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       params: { query: "party", limit: 5 },
       accountId: "work",
       requesterAccountId: "work",
@@ -1199,7 +1199,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "telegram",
         action: "sticker-search",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { query: "party", limit: 5 },
         accountId: testCase.accountId,
         requesterAccountId: testCase.requesterAccountId,
@@ -1223,7 +1223,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
       dispatchChannelMessageAction({
         channel: "discord",
         action: "read",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         params: { channelId: "configured" },
         accountId: "default",
         requesterAccountId: "default",
@@ -1246,7 +1246,7 @@ describe("dispatchChannelMessageAction conversation-read provenance", () => {
         dispatchChannelMessageAction({
           channel: "discord",
           action: "read",
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           params: { channelId: "configured" },
           accountId: "default",
           requesterAccountId: "default",

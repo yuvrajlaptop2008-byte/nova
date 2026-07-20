@@ -5,7 +5,7 @@ import {
 } from "@nova/acp-core/runtime/session-identity";
 import type { AcpRuntime, AcpRuntimeHandle } from "@nova/acp-core/runtime/types";
 import { resolveRuntimeConfigCacheKey } from "../../config/runtime-snapshot.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
 import { AcpRuntimeError, withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
@@ -29,7 +29,7 @@ export async function runManagerInitializeSession(params: {
   sessionKey: string;
   deps: Pick<AcpSessionManagerDeps, "requireRuntimeBackend">;
   runtimeHandles: ManagerRuntimeHandleCache;
-  enforceConcurrentSessionLimit: (params: { cfg: OpenClawConfig; sessionKey: string }) => void;
+  enforceConcurrentSessionLimit: (params: { cfg: NovaConfig; sessionKey: string }) => void;
   writeSessionMeta: WriteManagerSessionMeta;
 }): Promise<{
   runtime: AcpRuntime;
@@ -148,7 +148,7 @@ function resolveEffectiveSessionModel(params: {
 }
 
 async function persistInitializedSessionMeta(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   meta: SessionAcpMeta;
   runtime: AcpRuntime;

@@ -1,13 +1,13 @@
 {
   "entries": [
     {
-      "name": "@wecom/wecom-openclaw-plugin",
-      "description": "OpenClaw WeCom channel plugin by the Tencent WeCom team.",
+      "name": "@wecom/wecom-nova-plugin",
+      "description": "Nova WeCom channel plugin by the Tencent WeCom team.",
       "source": "external",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "plugin": {
-          "id": "wecom-openclaw-plugin",
+          "id": "wecom-nova-plugin",
           "label": "WeCom"
         },
         "contracts": {
@@ -35,20 +35,20 @@
           }
         },
         "install": {
-          "npmSpec": "@wecom/wecom-openclaw-plugin@2026.5.7",
+          "npmSpec": "@wecom/wecom-nova-plugin@2026.5.7",
           "defaultChoice": "npm",
           "expectedIntegrity": "sha512-TCkP9as00WfEhgFWG8YL/rcmaWGIshAki2HQh83nTRccGfVBCoGjrEboTTqq3yDmK9koWTV11zi8u8A4dNtvug=="
         }
       }
     },
     {
-      "name": "openclaw-plugin-yuanbao",
-      "description": "OpenClaw Yuanbao channel plugin by the Tencent Yuanbao team.",
+      "name": "nova-plugin-yuanbao",
+      "description": "Nova Yuanbao channel plugin by the Tencent Yuanbao team.",
       "source": "external",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "plugin": {
-          "id": "openclaw-plugin-yuanbao",
+          "id": "nova-plugin-yuanbao",
           "label": "Yuanbao"
         },
         "contracts": {
@@ -76,24 +76,24 @@
           }
         },
         "install": {
-          "npmSpec": "openclaw-plugin-yuanbao@2.15.0",
+          "npmSpec": "nova-plugin-yuanbao@2.15.0",
           "defaultChoice": "npm",
           "expectedIntegrity": "sha512-3GD+mf3EjTSUTOAREjTHAyp/deXdpgqB+q+xE0b19Qtat4ADhUV1mHDwFkVCRqTCBY5ATFKtKcipoDejqFj/+w=="
         }
       }
     },
     {
-      "name": "@tencent-weixin/openclaw-weixin",
-      "description": "OpenClaw Weixin channel plugin by the Tencent Weixin team.",
+      "name": "@tencent-weixin/nova-weixin",
+      "description": "Nova Weixin channel plugin by the Tencent Weixin team.",
       "source": "external",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "plugin": {
-          "id": "openclaw-weixin",
+          "id": "nova-weixin",
           "label": "Weixin"
         },
         "channel": {
-          "id": "openclaw-weixin",
+          "id": "nova-weixin",
           "label": "Weixin",
           "selectionLabel": "Weixin（微信）",
           "detailLabel": "Weixin",
@@ -104,7 +104,7 @@
           "order": 75
         },
         "channelConfigs": {
-          "openclaw-weixin": {
+          "nova-weixin": {
             "label": "Weixin",
             "description": "Personal WeChat conversation channel.",
             "schema": {
@@ -114,7 +114,7 @@
           }
         },
         "install": {
-          "npmSpec": "@tencent-weixin/openclaw-weixin@2.4.6",
+          "npmSpec": "@tencent-weixin/nova-weixin@2.4.6",
           "defaultChoice": "npm",
           "expectedIntegrity": "sha512-qw9k3PLTiMWGNjjsknHgcTManH1w4j+Ji1ArWIaYLKCq3aFRsVwcqnPi127bvOoVMJGW4dbyJ8NECEMgoO+iRw==",
           "minHostVersion": ">=2026.5.12"
@@ -122,17 +122,17 @@
       }
     },
     {
-      "name": "@zalo-platforms/openclaw-zaloclawbot",
-      "description": "OpenClaw Zalo ClawBot channel plugin by the Zalo Platforms team.",
+      "name": "@zalo-platforms/nova-zaloclawbot",
+      "description": "Nova Zalo ClawBot channel plugin by the Zalo Platforms team.",
       "source": "external",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "plugin": {
-          "id": "openclaw-zaloclawbot",
+          "id": "nova-zaloclawbot",
           "label": "Zalo ClawBot"
         },
         "channel": {
-          "id": "openclaw-zaloclawbot",
+          "id": "nova-zaloclawbot",
           "label": "Zalo ClawBot",
           "selectionLabel": "Zalo ClawBot (QR)",
           "detailLabel": "Zalo ClawBot",
@@ -143,7 +143,7 @@
           "order": 82
         },
         "channelConfigs": {
-          "openclaw-zaloclawbot": {
+          "nova-zaloclawbot": {
             "label": "Zalo ClawBot",
             "description": "Personal Zalo assistant — QR-onboarded, owner-bound.",
             "schema": {
@@ -153,7 +153,7 @@
           }
         },
         "install": {
-          "npmSpec": "@zalo-platforms/openclaw-zaloclawbot@0.1.4",
+          "npmSpec": "@zalo-platforms/nova-zaloclawbot@0.1.4",
           "defaultChoice": "npm",
           "expectedIntegrity": "sha512-5IxZriHJYACLLGqkCPPsTP9tas62kXEOFqTFAFMdunAM3SPhIJwVFRp0WvoP/m7L2PX85weD0g8LOtxM93VDYg==",
           "minHostVersion": ">=2026.4.10"
@@ -162,10 +162,10 @@
     },
     {
       "name": "@nova/clickclack",
-      "description": "OpenClaw ClickClack channel plugin",
+      "description": "Nova ClickClack channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "clickclack",
           "label": "ClickClack",
@@ -197,10 +197,10 @@
     },
     {
       "name": "@nova/discord",
-      "description": "OpenClaw Discord channel plugin",
+      "description": "Nova Discord channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "discord",
           "label": "Discord",
@@ -223,10 +223,10 @@
     },
     {
       "name": "@nova/feishu",
-      "description": "OpenClaw Feishu/Lark channel plugin",
+      "description": "Nova Feishu/Lark channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "feishu",
           "label": "Feishu",
@@ -247,10 +247,10 @@
     },
     {
       "name": "@nova/googlechat",
-      "description": "OpenClaw Google Chat channel plugin",
+      "description": "Nova Google Chat channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "googlechat",
           "label": "Google Chat",
@@ -297,10 +297,10 @@
     },
     {
       "name": "@nova/irc",
-      "description": "OpenClaw IRC channel plugin",
+      "description": "Nova IRC channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "irc",
           "label": "IRC",
@@ -337,10 +337,10 @@
     },
     {
       "name": "@nova/line",
-      "description": "OpenClaw LINE channel plugin",
+      "description": "Nova LINE channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "line",
           "label": "LINE",
@@ -362,10 +362,10 @@
     },
     {
       "name": "@nova/mattermost",
-      "description": "OpenClaw Mattermost channel plugin",
+      "description": "Nova Mattermost channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "mattermost",
           "label": "Mattermost",
@@ -390,10 +390,10 @@
     },
     {
       "name": "@nova/matrix",
-      "description": "OpenClaw Matrix channel plugin",
+      "description": "Nova Matrix channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "matrix",
           "label": "Matrix",
@@ -444,10 +444,10 @@
     },
     {
       "name": "@nova/msteams",
-      "description": "OpenClaw Microsoft Teams channel plugin",
+      "description": "Nova Microsoft Teams channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "msteams",
           "label": "Microsoft Teams",
@@ -467,10 +467,10 @@
     },
     {
       "name": "@nova/nextcloud-talk",
-      "description": "OpenClaw Nextcloud Talk channel plugin",
+      "description": "Nova Nextcloud Talk channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "nextcloud-talk",
           "label": "Nextcloud Talk",
@@ -491,10 +491,10 @@
     },
     {
       "name": "@nova/nostr",
-      "description": "OpenClaw Nostr channel plugin for NIP-04 encrypted DMs",
+      "description": "Nova Nostr channel plugin for NIP-04 encrypted DMs",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "nostr",
           "label": "Nostr",
@@ -514,10 +514,10 @@
     },
     {
       "name": "@nova/qqbot",
-      "description": "OpenClaw QQ Bot channel plugin",
+      "description": "Nova QQ Bot channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "qqbot",
           "label": "QQ Bot",
@@ -537,10 +537,10 @@
     },
     {
       "name": "@nova/signal",
-      "description": "OpenClaw Signal channel plugin",
+      "description": "Nova Signal channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "signal",
           "label": "Signal",
@@ -577,10 +577,10 @@
     },
     {
       "name": "@nova/slack",
-      "description": "OpenClaw Slack channel plugin",
+      "description": "Nova Slack channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "slack",
           "label": "Slack",
@@ -612,10 +612,10 @@
     },
     {
       "name": "@nova/sms",
-      "description": "OpenClaw SMS channel plugin for Twilio text messages.",
+      "description": "Nova SMS channel plugin for Twilio text messages.",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "sms",
           "label": "SMS",
@@ -648,17 +648,17 @@
     },
     {
       "name": "@nova/synology-chat",
-      "description": "Synology Chat channel plugin for OpenClaw",
+      "description": "Synology Chat channel plugin for Nova",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "synology-chat",
           "label": "Synology Chat",
           "selectionLabel": "Synology Chat (Webhook)",
           "docsPath": "/channels/synology-chat",
           "docsLabel": "synology-chat",
-          "blurb": "Connect your Synology NAS Chat to OpenClaw with full agent capabilities.",
+          "blurb": "Connect your Synology NAS Chat to Nova with full agent capabilities.",
           "order": 90
         },
         "install": {
@@ -670,10 +670,10 @@
     },
     {
       "name": "@nova/raft",
-      "description": "OpenClaw Raft channel plugin",
+      "description": "Nova Raft channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "raft",
           "label": "Raft",
@@ -720,10 +720,10 @@
     },
     {
       "name": "@nova/tlon",
-      "description": "OpenClaw Tlon/Urbit channel plugin",
+      "description": "Nova Tlon/Urbit channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "tlon",
           "label": "Tlon",
@@ -743,10 +743,10 @@
     },
     {
       "name": "@nova/twitch",
-      "description": "OpenClaw Twitch channel plugin",
+      "description": "Nova Twitch channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "twitch",
           "label": "Twitch",
@@ -764,10 +764,10 @@
     },
     {
       "name": "@nova/whatsapp",
-      "description": "OpenClaw WhatsApp channel plugin",
+      "description": "Nova WhatsApp channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "whatsapp",
           "label": "WhatsApp",
@@ -788,10 +788,10 @@
     },
     {
       "name": "@nova/zalo",
-      "description": "OpenClaw Zalo channel plugin",
+      "description": "Nova Zalo channel plugin",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "zalo",
           "label": "Zalo",
@@ -812,10 +812,10 @@
     },
     {
       "name": "@nova/zalouser",
-      "description": "OpenClaw Zalo Personal Account plugin via native zca-js integration",
+      "description": "Nova Zalo Personal Account plugin via native zca-js integration",
       "source": "official",
       "kind": "channel",
-      "openclaw": {
+      "nova": {
         "channel": {
           "id": "zalouser",
           "label": "Zalo Personal",

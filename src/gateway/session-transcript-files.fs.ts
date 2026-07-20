@@ -170,7 +170,7 @@ export function resolveSessionTranscriptCandidates(
   // Keep the legacy global sessions directory as a final candidate so tagged
   // upgrades can still find transcripts created before per-agent paths.
   const home = resolveRequiredHomeDir(process.env, os.homedir);
-  const legacyDir = path.join(home, ".openclaw", "sessions");
+  const legacyDir = path.join(home, ".nova", "sessions");
   pushCandidate(() => resolveSessionTranscriptPathInDir(sessionId, legacyDir));
 
   return uniqueStrings(candidates);

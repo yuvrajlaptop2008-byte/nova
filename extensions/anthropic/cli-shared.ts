@@ -5,8 +5,8 @@ import type {
   CliBackendConfig,
   CliBackendNormalizeConfigContext,
   CliBackendResolveExecutionArgsContext,
-} from "openclaw/plugin-sdk/cli-backend";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/cli-backend";
+import { normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 import { CLAUDE_CLI_BACKEND_ID } from "./cli-constants.js";
 export {
   CLAUDE_CLI_BACKEND_ID,
@@ -93,7 +93,7 @@ const CLAUDE_BYPASS_PERMISSION_MODE = "bypassPermissions";
 const CLAUDE_DEFAULT_PERMISSION_MODE = "default";
 const CLAUDE_NO_TOOLS_VALUE = "";
 const CLAUDE_DENY_MCP_TOOLS_VALUE = "mcp__*";
-const CLAUDE_SYSTEM_AGENT_MCP_TOOL = "mcp__openclaw__openclaw";
+const CLAUDE_SYSTEM_AGENT_MCP_TOOL = "mcp__nova__nova";
 const CLAUDE_SYSTEM_AGENT_SETTINGS =
   '{"disableAllHooks":true,"enabledPlugins":{},"autoMemoryEnabled":false,"claudeMdExcludes":["**/CLAUDE.md","**/CLAUDE.local.md","**/.claude/rules/**"]}';
 
@@ -130,7 +130,7 @@ export function resolveClaudeCliAutoCompactEnv(
   };
 }
 
-function isOpenClawRequestedYolo(context?: CliBackendNormalizeConfigContext): boolean {
+function isNovaRequestedYolo(context?: CliBackendNormalizeConfigContext): boolean {
   const agentExec = context?.agentId
     ? context.config?.agents?.list?.find((agent) => agent.id === context.agentId)?.tools?.exec
     : undefined;
@@ -145,7 +145,7 @@ function resolveClaudePermissionMode(context?: CliBackendNormalizeConfigContext)
   mode?: string;
   overrideExisting: boolean;
 } {
-  return isOpenClawRequestedYolo(context)
+  return isNovaRequestedYolo(context)
     ? { mode: CLAUDE_BYPASS_PERMISSION_MODE, overrideExisting: false }
     : { overrideExisting: false };
 }

@@ -63,7 +63,7 @@ function capturedGatewayCall(): CallGatewayOptions {
 
 describe("gateway tool defaults", () => {
   const envSnapshot = {
-    openclaw: process.env.NOVA_GATEWAY_TOKEN,
+    nova: process.env.NOVA_GATEWAY_TOKEN,
     gatewayUrl: process.env.NOVA_GATEWAY_URL,
   };
 
@@ -78,10 +78,10 @@ describe("gateway tool defaults", () => {
   });
 
   afterAll(() => {
-    if (envSnapshot.openclaw === undefined) {
+    if (envSnapshot.nova === undefined) {
       delete process.env.NOVA_GATEWAY_TOKEN;
     } else {
-      process.env.NOVA_GATEWAY_TOKEN = envSnapshot.openclaw;
+      process.env.NOVA_GATEWAY_TOKEN = envSnapshot.nova;
     }
     if (envSnapshot.gatewayUrl === undefined) {
       delete process.env.NOVA_GATEWAY_URL;
@@ -471,7 +471,7 @@ describe("gateway tool defaults", () => {
         },
       ),
     ).rejects.toThrow(
-      "The running Gateway is from an older Nova build and rejected current agent runtime connection metadata. Restart the Gateway with `openclaw gateway restart`, then retry.",
+      "The running Gateway is from an older Nova build and rejected current agent runtime connection metadata. Restart the Gateway with `nova gateway restart`, then retry.",
     );
 
     const call = capturedGatewayCall();
@@ -493,7 +493,7 @@ describe("gateway tool defaults", () => {
         },
       ),
     ).rejects.toThrow(
-      "The running Gateway is from an older Nova build and rejected current agent runtime connection metadata. Restart the Gateway with `openclaw gateway restart`, then retry.",
+      "The running Gateway is from an older Nova build and rejected current agent runtime connection metadata. Restart the Gateway with `nova gateway restart`, then retry.",
     );
 
     const call = capturedGatewayCall();

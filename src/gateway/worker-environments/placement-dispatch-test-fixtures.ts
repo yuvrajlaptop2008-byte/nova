@@ -85,7 +85,7 @@ export function createDispatchEnvironmentFixtures() {
   const profileSnapshot: WorkerProfile = { settings: { region: "test" } };
   const bootstrapReceipt: WorkerAdmissionHandshake = {
     bundleHash: BUNDLE_HASH,
-    openclawVersion: "2026.7.2",
+    novaVersion: "2026.7.2",
     protocolFeatures: [],
   };
   const sshEndpoint: WorkerSshEndpoint = {

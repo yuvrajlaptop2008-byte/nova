@@ -4,7 +4,7 @@ import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text
 import { listChatChannels } from "../channels/chat-meta.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { CONFIG_PATH } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isBlockedObjectKey } from "../infra/prototype-keys.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { shortenHomePath } from "../utils.js";
@@ -29,9 +29,7 @@ type ChannelRemovalDoneOption = Extract<ChannelRemovalOption, { value: { kind: "
 const RESERVED_CHANNEL_CONFIG_KEYS = new Set(["defaults", "modelByChannel"]);
 const DONE_VALUE: Extract<ChannelRemovalSelectValue, { kind: "done" }> = { kind: "done" };
 
-function listConfiguredChannelRemovalChoices(
-  cfg: OpenClawConfig,
-): ConfiguredChannelRemovalChoice[] {
+function listConfiguredChannelRemovalChoices(cfg: NovaConfig): ConfiguredChannelRemovalChoice[] {
   const channels = cfg.channels;
   if (!channels) {
     return [];
@@ -67,11 +65,11 @@ function compareChannelRemovalChoices(
   );
 }
 
-/** Prompt for configured channel sections to remove from openclaw.json. */
+/** Prompt for configured channel sections to remove from nova.json. */
 export async function removeChannelConfigWizard(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   runtime: RuntimeEnv,
-): Promise<OpenClawConfig> {
+): Promise<NovaConfig> {
   const next = { ...cfg };
 
   while (true) {
@@ -79,8 +77,8 @@ export async function removeChannelConfigWizard(
     if (configured.length === 0) {
       note(
         [
-          "No channel config found in openclaw.json.",
-          `Tip: \`${formatCliCommand("openclaw channels status")}\` shows what is configured and enabled.`,
+          "No channel config found in nova.json.",
+          `Tip: \`${formatCliCommand("nova channels status")}\` shows what is configured and enabled.`,
         ].join("\n"),
         "Remove channel",
       );
@@ -122,7 +120,7 @@ export async function removeChannelConfigWizard(
     const nextChannels: Record<string, unknown> = { ...next.channels };
     delete nextChannels[channel];
     if (Object.keys(nextChannels).length) {
-      next.channels = nextChannels as OpenClawConfig["channels"];
+      next.channels = nextChannels as NovaConfig["channels"];
     } else {
       delete next.channels;
     }

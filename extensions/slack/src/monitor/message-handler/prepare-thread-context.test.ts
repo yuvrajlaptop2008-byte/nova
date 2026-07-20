@@ -1,7 +1,7 @@
 // Slack tests cover prepare thread context plugin behavior.
 import type { App } from "@slack/bolt";
-import { resolveEnvelopeFormatOptions } from "openclaw/plugin-sdk/channel-inbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { resolveEnvelopeFormatOptions } from "nova/plugin-sdk/channel-inbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { SlackMessageEvent } from "../../types.js";
 import * as mediaModule from "../media.js";
@@ -13,7 +13,7 @@ import {
 } from "./prepare.test-helpers.js";
 
 describe("resolveSlackThreadContextData", () => {
-  const storeFixture = createSlackSessionStoreFixture("openclaw-slack-thread-context-");
+  const storeFixture = createSlackSessionStoreFixture("nova-slack-thread-context-");
 
   beforeAll(() => {
     storeFixture.setup();
@@ -31,7 +31,7 @@ describe("resolveSlackThreadContextData", () => {
     return createInboundSlackTestContext({
       cfg: {
         channels: { slack: { enabled: true, replyToMode: "all", groupPolicy: "open" } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       appClient: { conversations: { replies: params.replies } } as App["client"],
       defaultRequireMention: false,
       replyToMode: "all",
@@ -96,7 +96,7 @@ describe("resolveSlackThreadContextData", () => {
       allowFromLower: params.allowFromLower,
       allowNameMatching: params.allowNameMatching,
       contextVisibilityMode: "allowlist",
-      envelopeOptions: resolveEnvelopeFormatOptions({} as OpenClawConfig),
+      envelopeOptions: resolveEnvelopeFormatOptions({} as NovaConfig),
       effectiveDirectMedia: null,
     });
 
@@ -298,7 +298,7 @@ describe("resolveSlackThreadContextData", () => {
       allowFromLower: ["u1"],
       allowNameMatching: false,
       contextVisibilityMode: "allowlist",
-      envelopeOptions: resolveEnvelopeFormatOptions({} as OpenClawConfig),
+      envelopeOptions: resolveEnvelopeFormatOptions({} as NovaConfig),
       effectiveDirectMedia: null,
     });
 
@@ -344,7 +344,7 @@ describe("resolveSlackThreadContextData", () => {
       allowFromLower: ["u1"],
       allowNameMatching: false,
       contextVisibilityMode: "allowlist",
-      envelopeOptions: resolveEnvelopeFormatOptions({} as OpenClawConfig),
+      envelopeOptions: resolveEnvelopeFormatOptions({} as NovaConfig),
       effectiveDirectMedia: null,
     });
 
@@ -468,7 +468,7 @@ describe("resolveSlackThreadContextData", () => {
       allowFromLower: [],
       allowNameMatching: false,
       contextVisibilityMode: "all",
-      envelopeOptions: resolveEnvelopeFormatOptions({} as OpenClawConfig),
+      envelopeOptions: resolveEnvelopeFormatOptions({} as NovaConfig),
       effectiveDirectMedia: null,
     });
 

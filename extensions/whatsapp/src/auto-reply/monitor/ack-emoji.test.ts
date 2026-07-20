@@ -1,21 +1,21 @@
 // Whatsapp tests cover ack emoji plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { resolveWhatsAppAckEmoji } from "./ack-emoji.js";
 
 function createConfig(
   ackReaction?: NonNullable<
-    NonNullable<NonNullable<OpenClawConfig["channels"]>["whatsapp"]>["ackReaction"]
+    NonNullable<NonNullable<NovaConfig["channels"]>["whatsapp"]>["ackReaction"]
   >,
-): OpenClawConfig {
-  const cfg: OpenClawConfig = {
+): NovaConfig {
+  const cfg: NovaConfig = {
     agents: {
       list: [{ id: "agent", identity: { emoji: "🔥" } }],
     },
     channels: {
       whatsapp: {},
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   if (ackReaction !== undefined) {
     cfg.channels!.whatsapp!.ackReaction = ackReaction;
   }
@@ -70,7 +70,7 @@ describe("resolveWhatsAppAckEmoji", () => {
   });
 
   it("uses normalized agent ids for the identity fallback", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         list: [{ id: "Agent", identity: { emoji: "🔥" } }],
       },
@@ -79,7 +79,7 @@ describe("resolveWhatsAppAckEmoji", () => {
           ackReaction: { direct: true, group: "mentions" },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveWhatsAppAckEmoji({
@@ -91,13 +91,13 @@ describe("resolveWhatsAppAckEmoji", () => {
   });
 
   it("uses the default ack emoji when configured without an emoji or agent identity", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         whatsapp: {
           ackReaction: { direct: true, group: "mentions" },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveWhatsAppAckEmoji({

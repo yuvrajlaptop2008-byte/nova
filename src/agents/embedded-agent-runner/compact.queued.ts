@@ -411,7 +411,7 @@ async function compactResolvedContextEngine(
           modelId: policyModelId,
         });
   const lockedNativeHarness =
-    params.modelSelectionLocked === true && selectedHarnessRuntime !== "openclaw";
+    params.modelSelectionLocked === true && selectedHarnessRuntime !== "nova";
   const resolvedCompactionTarget = resolveEmbeddedCompactionTarget({
     config: params.config,
     provider: params.provider,
@@ -1005,7 +1005,7 @@ function shouldAttemptNativeHarnessCompaction(params: {
   selectedHarnessRuntime?: string | null;
 }): boolean {
   const selectedRuntime = normalizeOptionalAgentRuntimeId(params.selectedHarnessRuntime);
-  if (!selectedRuntime || selectedRuntime === "auto" || selectedRuntime === "openclaw") {
+  if (!selectedRuntime || selectedRuntime === "auto" || selectedRuntime === "nova") {
     return false;
   }
   return isOpenAIProvider(params.provider) ? params.nativeHarnessCompaction === true : true;

@@ -5,7 +5,7 @@
  */
 import { resolve, isAbsolute } from "node:path";
 import { Type } from "typebox";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { MediaUnderstandingModelConfig } from "../../config/types.tools.js";
 import {
   DEFAULT_TIMEOUT_SECONDS,
@@ -127,7 +127,7 @@ const resolveModelAsyncDefault: ResolveModelAsync = async (...args) => {
 
 function resolveRegisteredMediaUnderstandingProvider(params: {
   providerId: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): MediaUnderstandingProvider | undefined {
   return resolvePluginCapabilityProvider({
     key: "mediaUnderstandingProviders",
@@ -150,7 +150,7 @@ const imageToolProviderDeps = {
   loadImageWebMediaRuntime,
 };
 
-function hasExplicitDefaultPrimaryModel(cfg?: OpenClawConfig): boolean {
+function hasExplicitDefaultPrimaryModel(cfg?: NovaConfig): boolean {
   const model = cfg?.agents?.defaults?.model;
   if (typeof model === "string") {
     return model.trim().length > 0;
@@ -259,7 +259,7 @@ function resolveImageToolMaxTokens(modelMaxTokens: number | undefined, requested
  *   - fall back to OpenAI/Anthropic when available
  */
 function resolveImageModelConfigForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir: string;
   workspaceDir?: string;
   authStore?: AuthProfileStore;
@@ -395,14 +395,14 @@ function resolveImageModelConfigForTool(params: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.imageToolTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.imageToolTestApi")] = {
     ...testing,
     resolveImageModelConfigForTool,
   };
 }
 
 function resolveImageModelConfigForOverride(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   modelOverride?: string;
 }): ImageModelConfig | null {
   const model = params.modelOverride?.trim();
@@ -415,7 +415,7 @@ function resolveImageModelConfigForOverride(params: {
   });
 }
 
-function pickMaxBytes(cfg?: OpenClawConfig, maxBytesMb?: number): number | undefined {
+function pickMaxBytes(cfg?: NovaConfig, maxBytesMb?: number): number | undefined {
   if (typeof maxBytesMb === "number" && Number.isFinite(maxBytesMb) && maxBytesMb > 0) {
     return Math.floor(maxBytesMb * 1024 * 1024);
   }
@@ -427,7 +427,7 @@ function pickMaxBytes(cfg?: OpenClawConfig, maxBytesMb?: number): number | undef
 }
 
 function resolveCompressionModelCandidates(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   imageModelConfig?: ImageModelConfig | null;
   modelOverride?: string;
 }): Array<{ provider: string; model: string }> {
@@ -466,7 +466,7 @@ function mergeImageCompressionPolicies(params: {
 }
 
 function resolveBundledStaticCompressionModelPolicy(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider: string;
   model: string;
   workspaceDir?: string;
@@ -482,7 +482,7 @@ function resolveBundledStaticCompressionModelPolicy(params: {
 }
 
 function providerUsesRuntimeModelAugment(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider: string;
   workspaceDir?: string;
 }): boolean {
@@ -522,7 +522,7 @@ function providerUsesRuntimeModelAugment(params: {
 }
 
 async function resolveCompressionModelPolicyWithHooks(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider: string;
   model: string;
   agentDir?: string;
@@ -549,7 +549,7 @@ async function resolveCompressionModelPolicyWithHooks(params: {
 }
 
 async function resolveCompressionModelPolicy(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider: string;
   model: string;
   agentDir?: string;
@@ -581,7 +581,7 @@ async function resolveCompressionModelPolicy(params: {
 }
 
 async function resolveImageCompressionPolicy(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   imageModelConfig?: ImageModelConfig | null;
   modelOverride?: string;
   imageCount: number;
@@ -642,7 +642,7 @@ function matchesImageTimeoutEntry(params: {
 }
 
 function resolveImageToolTimeoutMs(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
   providerRegistry: Map<string, MediaUnderstandingProvider>;
@@ -678,7 +678,7 @@ type ImageSandboxConfig = {
 };
 
 async function runImagePrompt(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string;
   agentDir: string;
   authStore?: AuthProfileStore;
@@ -695,7 +695,7 @@ async function runImagePrompt(params: {
   attempts: Array<{ provider: string; model: string; error: string }>;
 }> {
   const effectiveCfg = applyImageModelConfigDefaults(params.cfg, params.imageModelConfig);
-  const providerCfg: OpenClawConfig = effectiveCfg ?? {};
+  const providerCfg: NovaConfig = effectiveCfg ?? {};
   const providerRegistry = imageToolProviderDeps.buildProviderRegistry(undefined, providerCfg);
 
   const result = await runWithImageModelFallback({
@@ -811,7 +811,7 @@ async function runImagePrompt(params: {
 }
 
 export function createImageTool(options?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   agentDir?: string;
   authProfileStore?: AuthProfileStore;

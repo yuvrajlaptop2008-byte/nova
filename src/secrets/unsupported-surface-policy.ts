@@ -37,7 +37,7 @@ const unsupportedSecretRefSurfacePatterns = [
   ...bundledChannelUnsupportedSecretRefSurfacePatterns,
 ];
 
-// Candidate scanning only sees openclaw.json; auth-profile-only surfaces are audited elsewhere.
+// Candidate scanning only sees nova.json; auth-profile-only surfaces are audited elsewhere.
 const unsupportedSecretRefConfigCandidatePatterns = [
   ...CORE_UNSUPPORTED_SECRETREF_CONFIG_CANDIDATE_PATTERNS,
   ...bundledChannelUnsupportedSecretRefSurfacePatterns,
@@ -163,7 +163,7 @@ function listUnsupportedSecretRefSurfacePatterns(): string[] {
 }
 
 /**
- * Concrete unsupported config value discovered from an openclaw.json-like object.
+ * Concrete unsupported config value discovered from an nova.json-like object.
  */
 type UnsupportedSecretRefConfigCandidate = {
   path: string;
@@ -171,7 +171,7 @@ type UnsupportedSecretRefConfigCandidate = {
 };
 
 /**
- * Finds configured openclaw.json values whose surfaces currently reject SecretRef objects.
+ * Finds configured nova.json values whose surfaces currently reject SecretRef objects.
  */
 function collectUnsupportedSecretRefConfigCandidates(
   raw: unknown,

@@ -117,9 +117,8 @@ function resolveUpdateStatusBanner(params: {
       dirty: "Commit or stash changes, then retry.",
       "no-upstream": "Set an upstream branch, then retry.",
       "not-git-install":
-        "Not a git checkout. Run `openclaw update` from the CLI for a global reinstall.",
-      "not-openclaw-root":
-        "Run the update from an Nova checkout or use the CLI global reinstall path.",
+        "Not a git checkout. Run `nova update` from the CLI for a global reinstall.",
+      "not-nova-root": "Run the update from an Nova checkout or use the CLI global reinstall path.",
       "deps-install-failed": "Dependency install failed. Fix the install error and retry.",
       "build-failed": "Build failed. Fix the build error and retry.",
       "ui-build-failed": "The control UI rebuild failed. Fix the UI build error and retry.",
@@ -133,7 +132,7 @@ function resolveUpdateStatusBanner(params: {
         "The replacement process never became healthy. The previous process stayed up so you can recover.",
       "managed-service-handoff-already-running":
         "Another managed update is already running. Wait for it to complete, then refresh update status.",
-      "doctor-failed": "Doctor repair failed. Run `openclaw doctor --non-interactive` and retry.",
+      "doctor-failed": "Doctor repair failed. Run `nova doctor --non-interactive` and retry.",
     }[reason] ?? "See the gateway logs for the exact failure and retry once the cause is fixed.";
   return {
     tone: status === "skipped" ? "warn" : "danger",
@@ -171,7 +170,7 @@ function resolvePostRestartUpdateBanner(
 function resolvePendingUpdateHandoffTimeoutBanner(): ApplicationStatusBanner {
   return {
     tone: "danger",
-    text: "Update handoff started, but completion was not reported after reconnect. Run `openclaw update status` for the final result.",
+    text: "Update handoff started, but completion was not reported after reconnect. Run `nova update status` for the final result.",
   };
 }
 
@@ -520,7 +519,7 @@ export function createApplicationOverlays(
     if (
       event.event === "exec.approval.resolved" ||
       event.event === "plugin.approval.resolved" ||
-      event.event === "openclaw.approval.resolved"
+      event.event === "nova.approval.resolved"
     ) {
       const resolved = parseExecApprovalResolved(event.payload);
       if (resolved) {

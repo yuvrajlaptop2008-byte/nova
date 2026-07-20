@@ -1,4 +1,4 @@
-import { normalizeUsage } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { normalizeUsage } from "nova/plugin-sdk/agent-harness-runtime";
 import { readNonNegativeInteger, readNumber } from "./event-projector-values.js";
 import { isJsonObject, type JsonObject } from "./protocol.js";
 

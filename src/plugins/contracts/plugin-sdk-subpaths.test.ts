@@ -15,17 +15,17 @@ import type {
   ChannelStatusIssue as ContractChannelStatusIssue,
   ChannelThreadingContext as ContractChannelThreadingContext,
   ChannelThreadingToolContext as ContractChannelThreadingToolContext,
-} from "openclaw/plugin-sdk/channel-contract";
+} from "nova/plugin-sdk/channel-contract";
 import type {
   ChannelMessageActionContext as CoreChannelMessageActionContext,
-  OpenClawPluginApi as CoreOpenClawPluginApi,
+  NovaPluginApi as CoreNovaPluginApi,
   PluginRuntime as CorePluginRuntime,
-} from "openclaw/plugin-sdk/core";
+} from "nova/plugin-sdk/core";
 import type {
   GetReplyOptions as ReplyRuntimeGetReplyOptions,
   ReplyDispatchBeforeDeliverOptions as ReplyRuntimeBeforeDeliverOptions,
   ReplyDispatcher as ReplyRuntimeDispatcher,
-} from "openclaw/plugin-sdk/reply-runtime";
+} from "nova/plugin-sdk/reply-runtime";
 import ts from "typescript";
 import { beforeAll, describe, expect, expectTypeOf, it } from "vitest";
 import type { ChannelMessageActionContext } from "../../channels/plugins/types.public.js";
@@ -46,7 +46,7 @@ import * as channelActionsDirectSdk from "../../plugin-sdk/channel-actions.js";
 import * as channelLifecycleDirectSdk from "../../plugin-sdk/channel-lifecycle.js";
 import type {
   ChannelMessageActionContext as SharedChannelMessageActionContext,
-  OpenClawPluginApi as SharedOpenClawPluginApi,
+  NovaPluginApi as SharedNovaPluginApi,
   PluginRuntime as SharedPluginRuntime,
 } from "../../plugin-sdk/channel-plugin-common.js";
 import * as channelReplyPipelineDirectSdk from "../../plugin-sdk/channel-reply-pipeline.js";
@@ -55,7 +55,7 @@ import { publicPluginSdkSubpaths as pluginSdkSubpaths } from "../../plugin-sdk/e
 import { expectNoReaddirSyncDuring } from "../../test-utils/fs-scan-assertions.js";
 import { listGitTrackedFiles, toRepoRelativePath } from "../../test-utils/repo-files.js";
 import type { PluginRuntime } from "../runtime/types.js";
-import type { OpenClawPluginApi } from "../types.js";
+import type { NovaPluginApi } from "../types.js";
 
 const SRC_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const REPO_ROOT = resolve(SRC_ROOT, "..");
@@ -495,7 +495,7 @@ describe("plugin-sdk subpath exports", () => {
         resolve(REPO_ROOT, "test"),
       ],
       pattern:
-        /(?:from\s+|import\s+(?:type\s+)?|import\s*\(\s*)["']openclaw\/plugin-sdk\/channel-runtime(?=["'])/u,
+        /(?:from\s+|import\s+(?:type\s+)?|import\s*\(\s*)["']nova\/plugin-sdk\/channel-runtime(?=["'])/u,
       exclude: ["src/plugins/compat/registry.ts", "src/plugins/sdk-alias.test.ts"],
     });
   });
@@ -1298,10 +1298,10 @@ describe("plugin-sdk subpath exports", () => {
     expectTypeOf<ContractChannelStatusIssue>().toMatchTypeOf<ChannelStatusIssue>();
     expectTypeOf<ContractChannelThreadingContext>().toMatchTypeOf<ChannelThreadingContext>();
     expectTypeOf<ContractChannelThreadingToolContext>().toMatchTypeOf<ChannelThreadingToolContext>();
-    expectTypeOf<CoreOpenClawPluginApi>().toMatchTypeOf<OpenClawPluginApi>();
+    expectTypeOf<CoreNovaPluginApi>().toMatchTypeOf<NovaPluginApi>();
     expectTypeOf<CorePluginRuntime>().toMatchTypeOf<PluginRuntime>();
     expectTypeOf<CoreChannelMessageActionContext>().toMatchTypeOf<ChannelMessageActionContext>();
-    expectTypeOf<CoreOpenClawPluginApi>().toMatchTypeOf<SharedOpenClawPluginApi>();
+    expectTypeOf<CoreNovaPluginApi>().toMatchTypeOf<SharedNovaPluginApi>();
     expectTypeOf<CorePluginRuntime>().toMatchTypeOf<SharedPluginRuntime>();
     expectTypeOf<CoreChannelMessageActionContext>().toMatchTypeOf<SharedChannelMessageActionContext>();
     type PrivateResumeOptionKeys = Extract<
@@ -1318,23 +1318,23 @@ describe("plugin-sdk subpath exports", () => {
   });
 
   it("keeps runtime entry subpaths importable", async () => {
-    const coreSdk = await importResolvedPluginSdkSubpath("openclaw/plugin-sdk/core");
+    const coreSdk = await importResolvedPluginSdkSubpath("nova/plugin-sdk/core");
     const channelActionsSdk = await importResolvedPluginSdkSubpath(
-      "openclaw/plugin-sdk/channel-actions",
+      "nova/plugin-sdk/channel-actions",
     );
-    const pluginEntrySdk = await importResolvedPluginSdkSubpath("openclaw/plugin-sdk/plugin-entry");
+    const pluginEntrySdk = await importResolvedPluginSdkSubpath("nova/plugin-sdk/plugin-entry");
     const channelLifecycleSdk = await importResolvedPluginSdkSubpath(
-      "openclaw/plugin-sdk/channel-lifecycle",
+      "nova/plugin-sdk/channel-lifecycle",
     );
     const channelPairingSdk = await importResolvedPluginSdkSubpath(
-      "openclaw/plugin-sdk/channel-pairing",
+      "nova/plugin-sdk/channel-pairing",
     );
     const channelReplyPipelineSdk = await importResolvedPluginSdkSubpath(
-      "openclaw/plugin-sdk/channel-reply-pipeline",
+      "nova/plugin-sdk/channel-reply-pipeline",
     );
     const representativeModules = [];
     for (const id of representativeRuntimeSmokeSubpaths) {
-      representativeModules.push(await importResolvedPluginSdkSubpath(`openclaw/plugin-sdk/${id}`));
+      representativeModules.push(await importResolvedPluginSdkSubpath(`nova/plugin-sdk/${id}`));
     }
 
     expect(coreSdk.definePluginEntry).toBe(pluginEntrySdk.definePluginEntry);
@@ -1408,9 +1408,7 @@ describe("plugin-sdk subpath exports", () => {
   });
 
   it("keeps repeated silent-token semantics visible through the reply-chunking subpath", async () => {
-    const replyChunkingSdk = await importResolvedPluginSdkSubpath(
-      "openclaw/plugin-sdk/reply-chunking",
-    );
+    const replyChunkingSdk = await importResolvedPluginSdkSubpath("nova/plugin-sdk/reply-chunking");
 
     expect(replyChunkingSdk.isSilentReplyText("NO_REPLY\n\nNO_REPLY")).toBe(true);
     expect(replyChunkingSdk.isSilentReplyPayloadText("NO_REPLY\n\nNO_REPLY")).toBe(true);

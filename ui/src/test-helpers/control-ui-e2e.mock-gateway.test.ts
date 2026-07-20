@@ -137,7 +137,7 @@ describe("mock gateway stateful config", () => {
     });
     window.sessionStorage.clear();
     window.sessionStorage.setItem(
-      "openclaw.control-ui-e2e.configState",
+      "nova.control-ui-e2e.configState",
       JSON.stringify({ raw, revision: 2 }),
     );
     // oxlint-disable-next-line typescript/no-implied-eval -- Executes the generated init script standalone, proving it captures no module closures.

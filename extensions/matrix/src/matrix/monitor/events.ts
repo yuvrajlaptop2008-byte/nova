@@ -1,5 +1,5 @@
 // Matrix plugin module implements events behavior.
-import { normalizeOptionalString, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeOptionalString, uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import type { PluginRuntime, RuntimeLogger } from "../../runtime-api.js";
 import type { CoreConfig } from "../../types.js";
 import type { MatrixAuth } from "../client.js";
@@ -26,7 +26,7 @@ function formatMatrixPostHealthySyncDecryptionHint(accountId: string): string {
   return (
     "matrix: repeated fresh encrypted messages are still failing to decrypt after Matrix resumed healthy sync. " +
     "This device may still be missing new room keys. " +
-    `Check 'openclaw matrix verify status --verbose --account ${accountId}' and 'openclaw matrix devices list --account ${accountId}'.`
+    `Check 'nova matrix verify status --verbose --account ${accountId}' and 'nova matrix devices list --account ${accountId}'.`
   );
 }
 
@@ -148,7 +148,7 @@ function formatMatrixSelfDecryptionHint(accountId: string): string {
   return (
     "matrix: failed to decrypt a message from this same Matrix user. " +
     "This usually means another Matrix device did not share the room key, or another Nova runtime is using the same account. " +
-    `Check 'openclaw matrix verify status --verbose --account ${accountId}' and 'openclaw matrix devices list --account ${accountId}'.`
+    `Check 'nova matrix verify status --verbose --account ${accountId}' and 'nova matrix devices list --account ${accountId}'.`
   );
 }
 

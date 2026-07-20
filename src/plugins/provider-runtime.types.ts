@@ -3,7 +3,7 @@ import type { ProviderSystemPromptContribution } from "../agents/system-prompt-c
 import type { ReplyPayload } from "../auto-reply/reply-payload.js";
 import type { ThinkLevel } from "../auto-reply/thinking.shared.js";
 import type { ModelProviderConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ModelRegistry } from "../llm/model-registry.js";
 import type { ProviderSystemPromptContributionContext } from "./provider-authentication.types.js";
 import type { ProviderRuntimeModel } from "./provider-runtime-model.types.js";
@@ -28,7 +28,7 @@ type ProviderRuntimeProviderConfig = {
  * belong in `prepareDynamicModel`.
  */
 export type ProviderResolveDynamicModelContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   agentRuntimeId?: string;
@@ -50,7 +50,7 @@ export type ProviderResolveDynamicModelContext = {
 export type ProviderPrepareDynamicModelContext = ProviderResolveDynamicModelContext;
 
 export type ProviderPreferRuntimeResolvedModelContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -65,7 +65,7 @@ export type ProviderPreferRuntimeResolvedModelContext = {
  * patch provider-specific compat bits.
  */
 export type ProviderNormalizeResolvedModelContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -92,7 +92,7 @@ export type ProviderNormalizeModelIdContext = {
  * plugin-owned transport family.
  */
 export type ProviderNormalizeTransportContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   provider: string;
   modelId?: string;
@@ -107,7 +107,7 @@ export type ProviderNormalizeTransportContext = {
  * for the request.
  */
 export type ProviderPrepareRuntimeAuthContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -151,7 +151,7 @@ export type ProviderPreparedRuntimeAuth = {
  * token blob, read a legacy credential file, or pick between aliases).
  */
 export type ProviderResolveUsageAuthContext = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -201,7 +201,7 @@ export type ProviderResolvedUsageAuth = ProviderUsageAuthToken | { handled: true
  * owns the provider-specific HTTP request + response normalization.
  */
 export type ProviderFetchUsageSnapshotContext = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
@@ -226,7 +226,7 @@ export type ProviderFetchUsageSnapshotContext = {
  * migrations or other provider-owned auth-store cleanup guidance.
  */
 export type ProviderAuthDoctorHintContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   store: AuthProfileStore;
   provider: string;
   profileId?: string;
@@ -243,7 +243,7 @@ export type ProviderAuthDoctorHintContext = {
 type ProviderTransportThinkingLevel = Exclude<ThinkLevel, "ultra">;
 
 export type ProviderPrepareExtraParamsContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   agentId?: string;
@@ -273,7 +273,7 @@ export type ProviderResolvePromptOverlayContext = ProviderSystemPromptContributi
 };
 
 export type ProviderFollowupFallbackRouteContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;
@@ -291,7 +291,7 @@ export type ProviderFollowupFallbackRouteResult = {
 };
 
 export type ProviderResolveAuthProfileIdContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   provider: string;

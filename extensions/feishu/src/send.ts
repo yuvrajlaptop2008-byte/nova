@@ -1,11 +1,8 @@
 // Feishu plugin module implements send behavior.
-import { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
-import { parseStrictNonNegativeInteger } from "openclaw/plugin-sdk/number-runtime";
-import {
-  isRecord,
-  normalizeLowercaseStringOrEmpty,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { convertMarkdownTables } from "openclaw/plugin-sdk/text-chunking";
+import { resolveMarkdownTableMode } from "nova/plugin-sdk/markdown-table-runtime";
+import { parseStrictNonNegativeInteger } from "nova/plugin-sdk/number-runtime";
+import { isRecord, normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
+import { convertMarkdownTables } from "nova/plugin-sdk/text-chunking";
 import type { ClawdbotConfig } from "../runtime-api.js";
 import { resolveFeishuRuntimeAccount } from "./accounts.js";
 import { createFeishuClient } from "./client.js";

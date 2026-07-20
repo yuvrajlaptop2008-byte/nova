@@ -9,8 +9,8 @@ import type {
 import { applyBoardFixtureOps } from "../../test-helpers/board-fixture.ts";
 import "./board-view.ts";
 
-type OpenClawBoardView = HTMLElementTagNameMap["openclaw-board-view"];
-type OpenClawBoardWidgetCell = HTMLElementTagNameMap["openclaw-board-widget-cell"];
+type NovaBoardView = HTMLElementTagNameMap["nova-board-view"];
+type NovaBoardWidgetCell = HTMLElementTagNameMap["nova-board-widget-cell"];
 
 function boardWidget(overrides: Partial<BoardWidget> = {}): BoardWidget {
   return {
@@ -89,9 +89,9 @@ function deferredValue<T>(): {
   return { promise, resolve };
 }
 
-async function settleCells(view: OpenClawBoardView): Promise<OpenClawBoardWidgetCell[]> {
+async function settleCells(view: NovaBoardView): Promise<NovaBoardWidgetCell[]> {
   await view.updateComplete;
-  const cells = [...view.querySelectorAll("openclaw-board-widget-cell")];
+  const cells = [...view.querySelectorAll("nova-board-widget-cell")];
   await Promise.all(cells.map((cell) => cell.updateComplete));
   return cells;
 }
@@ -104,8 +104,8 @@ async function mount(
     widgetFrameUrl?: (name: string, revision: number) => string;
     sessions?: readonly GatewaySessionRow[];
   } = {},
-): Promise<OpenClawBoardView> {
-  const view = document.createElement("openclaw-board-view");
+): Promise<NovaBoardView> {
+  const view = document.createElement("nova-board-view");
   view.snapshot = options.snapshot ?? snapshot();
   view.activeTabId = options.activeTabId ?? "main";
   view.widgetFrameUrl = options.widgetFrameUrl ?? (() => "about:blank");
@@ -122,7 +122,7 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe("openclaw-board-view", () => {
+describe("nova-board-view", () => {
   it("renders only the active tab widgets with sandboxed frames", async () => {
     const view = await mount();
     const cells = view.querySelectorAll('[data-test-id="board-widget"]');
@@ -187,7 +187,7 @@ describe("openclaw-board-view", () => {
     const view = await mount({
       callbacks: callbacks({ frameLoadFailed }),
       snapshot: snapshot({ widgets: [boardWidget()] }),
-      widgetFrameUrl: () => "/__openclaw__/board/session/status/index.html?bt=expired",
+      widgetFrameUrl: () => "/__nova__/board/session/status/index.html?bt=expired",
     });
     const frame = view.querySelector("iframe");
 
@@ -195,16 +195,15 @@ describe("openclaw-board-view", () => {
     await vi.waitFor(() => expect(frameLoadFailed).toHaveBeenCalledTimes(1));
     frame?.dispatchEvent(new Event("load"));
     await vi.waitFor(() => expect(frameLoadFailed).toHaveBeenCalledTimes(2));
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/__openclaw__/board/session/status/index.html?bt=expired",
-      { cache: "no-store" },
-    );
+    expect(fetchMock).toHaveBeenCalledWith("/__nova__/board/session/status/index.html?bt=expired", {
+      cache: "no-store",
+    });
   });
 
   it("bounds repeated frame ticket refreshes after persistent 401 responses", async () => {
     const frameLoadFailed = vi.fn(async () => undefined);
     let frameStatus = 401;
-    let frameUrl = "/__openclaw__/board/session/status/index.html?bt=expired";
+    let frameUrl = "/__nova__/board/session/status/index.html?bt=expired";
     vi.stubGlobal(
       "fetch",
       vi.fn(
@@ -231,7 +230,7 @@ describe("openclaw-board-view", () => {
     );
 
     frameStatus = 200;
-    frameUrl = "/__openclaw__/board/session/status/index.html?bt=fresh";
+    frameUrl = "/__nova__/board/session/status/index.html?bt=fresh";
     view.snapshot = snapshot({ revision: 2, widgets: [boardWidget()] });
     await settleCells(view);
     const freshFrame = view.querySelector("iframe");
@@ -257,7 +256,7 @@ describe("openclaw-board-view", () => {
       callbacks: callbacks({ frameLoadFailed }),
       snapshot: snapshot({ widgets: [boardWidget()] }),
       widgetFrameUrl: (_name, revision) =>
-        `/__openclaw__/board/session/status/index.html?revision=${revision}`,
+        `/__nova__/board/session/status/index.html?revision=${revision}`,
     });
     const frame = view.querySelector("iframe");
     frame?.dispatchEvent(new Event("load"));
@@ -277,7 +276,7 @@ describe("openclaw-board-view", () => {
 
   it("preserves each widget cell and iframe identity when order changes", async () => {
     const view = await mount();
-    const before = [...view.querySelectorAll("openclaw-board-widget-cell")].find(
+    const before = [...view.querySelectorAll("nova-board-widget-cell")].find(
       (cell) => cell.widget?.name === "alpha",
     );
     const frame = before?.querySelector("iframe");
@@ -347,7 +346,7 @@ describe("openclaw-board-view", () => {
   it("calls applyOps from the kebab remove action", async () => {
     const applyOps = vi.fn(async () => undefined);
     const view = await mount({ callbacks: callbacks({ applyOps }) });
-    const firstCell = view.querySelector("openclaw-board-widget-cell");
+    const firstCell = view.querySelector("nova-board-widget-cell");
     firstCell?.querySelector<HTMLButtonElement>(".board-widget__menu-danger")?.click();
     await vi.waitFor(() => {
       expect(applyOps).toHaveBeenCalledWith([{ kind: "widget_remove", name: "alpha" }]);
@@ -377,7 +376,7 @@ describe("openclaw-board-view", () => {
     const pending = deferred();
     const applyOps = vi.fn(() => pending.promise);
     const view = await mount({ callbacks: callbacks({ applyOps }) });
-    const cells = [...view.querySelectorAll("openclaw-board-widget-cell")];
+    const cells = [...view.querySelectorAll("nova-board-widget-cell")];
     cells[0]?.querySelector<HTMLButtonElement>(".board-widget__menu-danger")?.click();
     await vi.waitFor(() => expect(applyOps).toHaveBeenCalledTimes(1));
     await settleCells(view);
@@ -454,7 +453,7 @@ describe("openclaw-board-view", () => {
     expect(view.querySelector('[data-test-id="board-pending"]')).not.toBeNull();
     expect(view.querySelector("iframe")).toBeNull();
     app?.dispatchEvent(
-      new CustomEvent("openclaw-mcp-app-view-expired", { bubbles: true, composed: true }),
+      new CustomEvent("nova-mcp-app-view-expired", { bubbles: true, composed: true }),
     );
     await vi.waitFor(() =>
       expect(view.querySelector<HTMLElement & { viewId: string }>("mcp-app-view")?.viewId).toBe(
@@ -626,7 +625,7 @@ describe("openclaw-board-view", () => {
     allow?.click();
     reject?.click();
     expect(grant).toHaveBeenCalledTimes(1);
-    const cell = view.querySelector("openclaw-board-widget-cell");
+    const cell = view.querySelector("nova-board-widget-cell");
     await cell?.updateComplete;
     expect(allow?.disabled).toBe(true);
     expect(reject?.disabled).toBe(true);
@@ -763,7 +762,7 @@ describe("openclaw-board-view", () => {
     await vi.waitFor(() => expect(applyOps).toHaveBeenCalledTimes(1));
     await view.updateComplete;
     const firstAnnouncement = view.querySelector(".board-announcer > span");
-    const cell = secondCell?.closest("openclaw-board-widget-cell");
+    const cell = secondCell?.closest("nova-board-widget-cell");
     await vi.waitFor(() => expect(Reflect.get(cell ?? {}, "actionPending")).toBe(false));
 
     move();

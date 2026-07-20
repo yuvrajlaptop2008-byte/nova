@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { runWithGatewayIndependentRootWorkContinuation } from "../../process/gateway-work-admission.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
 import { stripInlineDirectiveTagsForDisplay } from "../../utils/directive-tags.js";
@@ -31,13 +31,13 @@ export function resolveWebchatPromptCacheKey(params: {
     )
     .digest("hex")
     .slice(0, 32);
-  return `openclaw-webchat-${digest}`;
+  return `nova-webchat-${digest}`;
 }
 
 export function scheduleChatDashboardSessionTitle(params: {
   admittedSessionId: string;
   agentId: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   context: GatewayRequestContext;
   entry: ReturnType<typeof loadSessionEntry>["entry"];
   rawMessage: string;

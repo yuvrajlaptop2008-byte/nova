@@ -2,18 +2,18 @@
 import { readStringValue } from "@nova/normalization-core/string-coerce";
 import { parseFrontmatterBlock } from "../../packages/markdown-core/src/frontmatter.js";
 import {
-  applyOpenClawManifestInstallCommonFields,
+  applyNovaManifestInstallCommonFields,
   getFrontmatterString,
   normalizeStringList,
-  parseOpenClawManifestInstallBase,
+  parseNovaManifestInstallBase,
   parseFrontmatterBool,
-  resolveOpenClawManifestBlock,
-  resolveOpenClawManifestInstall,
-  resolveOpenClawManifestOs,
-  resolveOpenClawManifestRequires,
+  resolveNovaManifestBlock,
+  resolveNovaManifestInstall,
+  resolveNovaManifestOs,
+  resolveNovaManifestRequires,
 } from "../shared/frontmatter.js";
 import type {
-  OpenClawHookMetadata,
+  NovaHookMetadata,
   HookEntry,
   HookInstallSpec,
   HookInvocationPolicy,
@@ -26,12 +26,12 @@ export function parseFrontmatter(content: string): ParsedHookFrontmatter {
 }
 
 function parseInstallSpec(input: unknown): HookInstallSpec | undefined {
-  const parsed = parseOpenClawManifestInstallBase(input, ["bundled", "npm", "git"]);
+  const parsed = parseNovaManifestInstallBase(input, ["bundled", "npm", "git"]);
   if (!parsed) {
     return undefined;
   }
   const { raw } = parsed;
-  const spec = applyOpenClawManifestInstallCommonFields<HookInstallSpec>(
+  const spec = applyNovaManifestInstallCommonFields<HookInstallSpec>(
     {
       kind: parsed.kind as HookInstallSpec["kind"],
     },
@@ -48,16 +48,16 @@ function parseInstallSpec(input: unknown): HookInstallSpec | undefined {
 }
 
 /** Resolve Nova hook metadata from the manifest block in HOOK.md frontmatter. */
-export function resolveOpenClawMetadata(
+export function resolveNovaMetadata(
   frontmatter: ParsedHookFrontmatter,
-): OpenClawHookMetadata | undefined {
-  const metadataObj = resolveOpenClawManifestBlock({ frontmatter });
+): NovaHookMetadata | undefined {
+  const metadataObj = resolveNovaManifestBlock({ frontmatter });
   if (!metadataObj) {
     return undefined;
   }
-  const requires = resolveOpenClawManifestRequires(metadataObj);
-  const install = resolveOpenClawManifestInstall(metadataObj, parseInstallSpec);
-  const osRaw = resolveOpenClawManifestOs(metadataObj);
+  const requires = resolveNovaManifestRequires(metadataObj);
+  const install = resolveNovaManifestInstall(metadataObj, parseInstallSpec);
+  const osRaw = resolveNovaManifestOs(metadataObj);
   const eventsRaw = normalizeStringList(metadataObj.events);
   return {
     always: typeof metadataObj.always === "boolean" ? metadataObj.always : undefined,

@@ -9,7 +9,7 @@ import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import type { AgentModelEntryConfig } from "../config/types.agent-defaults.js";
 import type { AgentRuntimePolicyConfig } from "../config/types.agents-shared.js";
 import type { ModelDefinitionConfig, ModelProviderConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { listAgentEntries, resolveSessionAgentIds } from "./agent-scope.js";
 
@@ -39,7 +39,7 @@ function hasRuntimePolicy(value: AgentRuntimePolicyConfig | undefined): boolean 
 }
 
 function resolveProviderConfig(
-  config: OpenClawConfig | undefined,
+  config: NovaConfig | undefined,
   provider: string | undefined,
 ): ModelProviderConfig | undefined {
   if (!config?.models?.providers || !provider?.trim()) {
@@ -179,7 +179,7 @@ function modelKeyIsProviderWildcard(params: {
 }
 
 function resolveAgentModelEntryRuntimePolicy(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   provider?: string;
   modelId?: string;
   agentId?: string;
@@ -241,7 +241,7 @@ function resolveModelConfig(params: {
 
 /** Resolves the effective runtime policy for an agent/model/provider selection. */
 export function resolveModelRuntimePolicy(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   provider?: string;
   modelId?: string;
   agentId?: string;
@@ -252,7 +252,7 @@ export function resolveModelRuntimePolicy(params: {
   const inferredMatchedProvider = callerProvider ? undefined : effectiveProvider;
   if (process.env.NOVA_BUILD_PRIVATE_QA === "1") {
     const forcedRuntime = process.env.NOVA_QA_FORCE_RUNTIME?.trim().toLowerCase();
-    if (forcedRuntime === "openclaw" || forcedRuntime === "codex") {
+    if (forcedRuntime === "nova" || forcedRuntime === "codex") {
       return { policy: { id: forcedRuntime }, source: "model" };
     }
   }

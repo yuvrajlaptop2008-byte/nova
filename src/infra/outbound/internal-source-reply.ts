@@ -5,14 +5,14 @@ import {
 } from "@nova/normalization-core/string-coerce";
 import type { SourceReplyDeliveryMode } from "../../auto-reply/get-reply-options.types.js";
 import type { ChannelThreadingToolContext } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { parseSessionDeliveryRoute } from "../../routing/session-key.js";
 import { INTERNAL_MESSAGE_CHANNEL, normalizeMessageChannel } from "../../utils/message-channel.js";
 import { resolveOutboundChannelPlugin } from "./channel-resolution.js";
 import { isConfiguredChannel, listConfiguredMessageChannels } from "./channel-selection.js";
 
 type InternalSourceReplySinkInput = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   action: string;
   toolContext?: ChannelThreadingToolContext;
   sessionKey?: string;

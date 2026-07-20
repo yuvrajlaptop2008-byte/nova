@@ -45,8 +45,8 @@ vi.mock("../config/config.js", async () => {
 });
 
 vi.mock("../daemon/constants.js", () => ({
-  resolveGatewayLaunchAgentLabel: vi.fn(() => "ai.openclaw.gateway"),
-  resolveNodeLaunchAgentLabel: vi.fn(() => "ai.openclaw.node"),
+  resolveGatewayLaunchAgentLabel: vi.fn(() => "ai.nova.gateway"),
+  resolveNodeLaunchAgentLabel: vi.fn(() => "ai.nova.node"),
 }));
 
 vi.mock("../daemon/diagnostics.js", () => ({
@@ -294,8 +294,8 @@ describe("maybeRepairGatewayDaemon", () => {
     service.readCommand.mockResolvedValueOnce({
       programArguments: ["/bin/node", "cli", "gateway"],
       environment: {
-        NOVA_STATE_DIR: "/tmp/openclaw-service",
-        NOVA_CONFIG_PATH: "/tmp/openclaw-service/openclaw.json",
+        NOVA_STATE_DIR: "/tmp/nova-service",
+        NOVA_CONFIG_PATH: "/tmp/nova-service/nova.json",
       },
     });
     readGatewayRestartHandoffSync.mockReturnValueOnce({
@@ -327,8 +327,8 @@ describe("maybeRepairGatewayDaemon", () => {
     const [handoffEnv] = readGatewayRestartHandoffSync.mock.calls[0] as unknown as [
       { NOVA_STATE_DIR?: string; NOVA_CONFIG_PATH?: string },
     ];
-    expect(handoffEnv?.NOVA_STATE_DIR).toBe("/tmp/openclaw-service");
-    expect(handoffEnv?.NOVA_CONFIG_PATH).toBe("/tmp/openclaw-service/openclaw.json");
+    expect(handoffEnv?.NOVA_STATE_DIR).toBe("/tmp/nova-service");
+    expect(handoffEnv?.NOVA_CONFIG_PATH).toBe("/tmp/nova-service/nova.json");
     expect(note).toHaveBeenCalledWith(
       "Recent restart handoff: full-process via systemd; source=plugin-change; reason=plugin source changed; pid=12345; age=30s; expiresIn=30s",
       "Gateway",
@@ -413,7 +413,7 @@ describe("maybeRepairGatewayDaemon", () => {
         {
           pid: 4242,
           command: "node",
-          commandLine: "/tmp/newer-openclaw/bin/openclaw logs --follow",
+          commandLine: "/tmp/newer-nova/bin/nova logs --follow",
           address: "TCP 127.0.0.1:50123->127.0.0.1:18789 (ESTABLISHED)",
           direction: "client",
         },
@@ -445,7 +445,7 @@ describe("maybeRepairGatewayDaemon", () => {
         {
           pid: 5151,
           command: "node",
-          commandLine: "/tmp/newer-openclaw/bin/openclaw logs --follow",
+          commandLine: "/tmp/newer-nova/bin/nova logs --follow",
           address: "TCP 127.0.0.1:50123->127.0.0.1:18789 (ESTABLISHED)",
           direction: "client",
         },
@@ -472,7 +472,7 @@ describe("maybeRepairGatewayDaemon", () => {
 
   it("suppresses busy-port note for expected Gateway listeners", async () => {
     setPlatform("linux");
-    const listeners = [{ pid: 5001, commandLine: "openclaw-gateway", address: "0.0.0.0:18789" }];
+    const listeners = [{ pid: 5001, commandLine: "nova-gateway", address: "0.0.0.0:18789" }];
     inspectPortUsage.mockResolvedValue({
       port: 18789,
       status: "busy",
@@ -494,8 +494,8 @@ describe("maybeRepairGatewayDaemon", () => {
       port: 18789,
       status: "busy",
       listeners: [
-        { pid: 5001, commandLine: "openclaw-gateway", address: "0.0.0.0:18789" },
-        { pid: 5002, commandLine: "openclaw-gateway", address: "127.0.0.1:18789" },
+        { pid: 5001, commandLine: "nova-gateway", address: "0.0.0.0:18789" },
+        { pid: 5002, commandLine: "nova-gateway", address: "127.0.0.1:18789" },
       ],
       hints: ["Multiple listeners detected"],
     });
@@ -529,7 +529,7 @@ describe("maybeRepairGatewayDaemon", () => {
     expect(service.install).not.toHaveBeenCalled();
     expect(service.restart).not.toHaveBeenCalled();
     expect(note).toHaveBeenCalledWith(
-      `Run ${formatCliCommand("openclaw gateway install")} when you want to install the gateway service.`,
+      `Run ${formatCliCommand("nova gateway install")} when you want to install the gateway service.`,
       "Gateway",
     );
   });
@@ -594,10 +594,10 @@ describe("maybeRepairGatewayDaemon", () => {
     findSystemGatewayServices.mockResolvedValue([
       {
         platform: "linux",
-        label: "openclaw-gateway.service",
-        detail: "unit: /etc/systemd/system/openclaw-gateway.service",
+        label: "nova-gateway.service",
+        detail: "unit: /etc/systemd/system/nova-gateway.service",
         scope: "system",
-        marker: "openclaw",
+        marker: "nova",
         legacy: false,
       },
     ]);
@@ -610,9 +610,9 @@ describe("maybeRepairGatewayDaemon", () => {
     expect(note).toHaveBeenCalledWith(
       [
         "System-level Nova gateway service detected while the user gateway service is not installed.",
-        "- openclaw-gateway.service (unit: /etc/systemd/system/openclaw-gateway.service)",
+        "- nova-gateway.service (unit: /etc/systemd/system/nova-gateway.service)",
         "Nova will not install a second user-level gateway service automatically.",
-        "Run `openclaw gateway status --deep` or `openclaw doctor --deep` to inspect duplicate services.",
+        "Run `nova gateway status --deep` or `nova doctor --deep` to inspect duplicate services.",
         `Set ${SERVICE_REPAIR_POLICY_ENV}=external if a system supervisor owns the gateway lifecycle.`,
       ].join("\n"),
       "Gateway",

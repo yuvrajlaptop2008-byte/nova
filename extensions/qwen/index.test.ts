@@ -1,11 +1,11 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 // Qwen tests cover index plugin behavior.
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { ProviderCatalogResult } from "openclaw/plugin-sdk/provider-catalog-shared";
-import type { ModelProviderConfig } from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import type { ProviderCatalogResult } from "nova/plugin-sdk/provider-catalog-shared";
+import type { ModelProviderConfig } from "nova/plugin-sdk/provider-model-shared";
 import { describe, expect, it, vi } from "vitest";
 import {
   QWEN_36_FLASH_MODEL_ID,
@@ -19,8 +19,8 @@ import {
   QWEN_TOKEN_PLAN_PROVIDER_ID,
 } from "./api.js";
 import qwenPlugin from "./index.js";
+import manifest from "./nova.plugin.json" with { type: "json" };
 import { applyQwenTokenPlanConfig } from "./onboard.js";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
 import { wrapQwenProviderStream } from "./stream.js";
 
 function requireCatalogProvider(result: ProviderCatalogResult): ModelProviderConfig {
@@ -260,7 +260,7 @@ describe("qwen provider plugin", () => {
       contextWindow: 8192,
       maxTokens: 2048,
     });
-    const global: OpenClawConfig = {
+    const global: NovaConfig = {
       ...initialGlobal,
       models: {
         ...initialGlobal.models,
@@ -276,9 +276,9 @@ describe("qwen provider plugin", () => {
     const cnFromGlobal = applyQwenTokenPlanConfig(global, "cn");
     const globalAgain = applyQwenTokenPlanConfig(cnFromGlobal, "global");
 
-    const tokenPlanProvider = (config: OpenClawConfig) =>
+    const tokenPlanProvider = (config: NovaConfig) =>
       config.models?.providers?.[QWEN_TOKEN_PLAN_PROVIDER_ID];
-    const glmContext = (config: OpenClawConfig) =>
+    const glmContext = (config: NovaConfig) =>
       tokenPlanProvider(config)?.models?.find((model) => model.id === "glm-5.2")?.contextWindow;
     expect(glmContext(global)).toBe(1_000_000);
     expect(glmContext(cnFromGlobal)).toBe(1_000_000);

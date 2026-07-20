@@ -5,7 +5,7 @@
  */
 import http from "node:http";
 import { streamAnthropic } from "@nova/ai/internal/anthropic";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import { createAnthropicMessagesTransportStreamFn } from "./anthropic-transport-stream.js";
 import { isLiveTestEnabled } from "./live-test-helpers.js";

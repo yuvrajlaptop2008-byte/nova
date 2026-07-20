@@ -3,7 +3,7 @@
 ![fs-safe banner](docs/assets/readme-banner.jpg)
 
 [![npm](https://img.shields.io/npm/v/@nova/fs-safe.svg?color=10b981&label=npm)](https://www.npmjs.com/package/@nova/fs-safe)
-[![ci](https://github.com/openclaw/fs-safe/actions/workflows/ci.yml/badge.svg)](https://github.com/openclaw/fs-safe/actions/workflows/ci.yml)
+[![ci](https://github.com/nova/fs-safe/actions/workflows/ci.yml/badge.svg)](https://github.com/nova/fs-safe/actions/workflows/ci.yml)
 [![node](https://img.shields.io/node/v/@nova/fs-safe.svg?color=10b981)](https://nodejs.org)
 [![license](https://img.shields.io/npm/l/@nova/fs-safe.svg?color=10b981)](LICENSE)
 [![docs](https://img.shields.io/badge/docs-fs--safe.io-10b981)](https://fs-safe.io)
@@ -176,7 +176,7 @@ await locked.write(".env", "token"); // FsSafeError code "denied-path"
 
 The main entry point is intentionally small: `root`, the root option/result
 types, and `FsSafeError`. Use subpaths for everything else. Low-level helpers
-that OpenClaw needs to compose higher-level APIs are grouped under
+that Nova needs to compose higher-level APIs are grouped under
 `@nova/fs-safe/advanced` instead of being separate public leaf contracts.
 
 | Subpath                     | Contents                                                                                                                                                                                                                                                                                       |

@@ -72,7 +72,7 @@ describe("security audit config basics", () => {
   });
 
   it("flags per-agent skill allowlists combined with host exec and a global mcporter registry", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-audit-mcporter-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-"));
     try {
       await fs.mkdir(path.join(stateDir, "skills", "config"), { recursive: true });
       await fs.writeFile(
@@ -125,7 +125,7 @@ describe("security audit config basics", () => {
   });
 
   it("warns when an oversized global mcporter registry cannot be inspected", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-audit-mcporter-oversized-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-oversized-"));
     try {
       await fs.mkdir(path.join(stateDir, "skills", "config"), { recursive: true });
       await fs.writeFile(
@@ -168,7 +168,7 @@ describe("security audit config basics", () => {
   });
 
   it("does not flag mcporter registry inspection when the registry is missing", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-audit-mcporter-missing-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-missing-"));
     try {
       const report = await runSecurityAudit({
         config: {
@@ -198,7 +198,7 @@ describe("security audit config basics", () => {
   });
 
   it("warns when a malformed global mcporter registry cannot be inspected", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-audit-mcporter-malformed-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-malformed-"));
     try {
       await fs.mkdir(path.join(stateDir, "skills", "config"), { recursive: true });
       await fs.writeFile(
@@ -235,7 +235,7 @@ describe("security audit config basics", () => {
   });
 
   it("does not inspect a malformed mcporter registry without relevant agent skill scopes", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-audit-mcporter-unused-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-unused-"));
     try {
       await fs.mkdir(path.join(stateDir, "skills", "config"), { recursive: true });
       await fs.writeFile(
@@ -262,9 +262,7 @@ describe("security audit config basics", () => {
   });
 
   it("warns when the global mcporter registry path is not a regular file", async () => {
-    const stateDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-audit-mcporter-non-regular-"),
-    );
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-non-regular-"));
     try {
       await fs.mkdir(path.join(stateDir, "skills", "config", "mcporter.json"), {
         recursive: true,
@@ -300,9 +298,7 @@ describe("security audit config basics", () => {
   it.runIf(process.platform !== "win32")(
     "warns for a named-pipe mcporter registry without blocking",
     async () => {
-      const stateDir = await fs.mkdtemp(
-        path.join(os.tmpdir(), "openclaw-audit-mcporter-named-pipe-"),
-      );
+      const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-named-pipe-"));
       try {
         const configDir = path.join(stateDir, "skills", "config");
         await fs.mkdir(configDir, { recursive: true });
@@ -337,7 +333,7 @@ describe("security audit config basics", () => {
   );
 
   it("accepts a valid symlinked global mcporter registry", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-audit-mcporter-symlink-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-symlink-"));
     try {
       const configDir = path.join(stateDir, "skills", "config");
       await fs.mkdir(configDir, { recursive: true });
@@ -385,7 +381,7 @@ describe("security audit config basics", () => {
 
   it("warns when an oversized symlinked global mcporter registry cannot be inspected", async () => {
     const stateDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-audit-mcporter-symlink-oversized-"),
+      path.join(os.tmpdir(), "nova-audit-mcporter-symlink-oversized-"),
     );
     try {
       const configDir = path.join(stateDir, "skills", "config");
@@ -422,7 +418,7 @@ describe("security audit config basics", () => {
   });
 
   it("does not flag per-agent skill allowlists when matching agents deny exec", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-audit-mcporter-deny-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-audit-mcporter-deny-"));
     try {
       const report = await runSecurityAudit({
         config: {

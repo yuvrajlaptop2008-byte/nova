@@ -26,7 +26,7 @@ describe("backupCreateCommand atomic archive write", () => {
   let tempHome: TempHomeEnv;
 
   beforeAll(async () => {
-    tempHome = await createTempHomeEnv("openclaw-backup-atomic-test-");
+    tempHome = await createTempHomeEnv("nova-backup-atomic-test-");
   });
 
   beforeEach(async () => {
@@ -48,9 +48,9 @@ describe("backupCreateCommand atomic archive write", () => {
     archivePrefix: string;
     outputName?: string;
   }) {
-    const stateDir = path.join(tempHome.home, ".openclaw");
+    const stateDir = path.join(tempHome.home, ".nova");
     const archiveDir = await fs.mkdtemp(path.join(os.tmpdir(), params.archivePrefix));
-    await fs.writeFile(path.join(stateDir, "openclaw.json"), JSON.stringify({}), "utf8");
+    await fs.writeFile(path.join(stateDir, "nova.json"), JSON.stringify({}), "utf8");
     await fs.writeFile(path.join(stateDir, "state.txt"), "state\n", "utf8");
 
     const runtime = createBackupTestRuntime();
@@ -76,7 +76,7 @@ describe("backupCreateCommand atomic archive write", () => {
 
   it("does not leave a partial final archive behind when tar creation fails", async () => {
     const { archiveDir, outputPath, runtime } = await prepareAtomicBackupScenario({
-      archivePrefix: "openclaw-backup-failure-",
+      archivePrefix: "nova-backup-failure-",
     });
     try {
       tarCreateMock.mockReturnValueOnce(createMockTarStream({ error: new Error("disk full") }));
@@ -97,7 +97,7 @@ describe("backupCreateCommand atomic archive write", () => {
 
   it("cleans intermediate retry temp archives after cleanup races", async () => {
     const { archiveDir, outputPath, runtime } = await prepareAtomicBackupScenario({
-      archivePrefix: "openclaw-backup-retry-cleanup-",
+      archivePrefix: "nova-backup-retry-cleanup-",
     });
     const realRm = fs.rm.bind(fs);
     const rmAttempts = new Map<string, number>();
@@ -126,7 +126,7 @@ describe("backupCreateCommand atomic archive write", () => {
           ...(tarAttempt < 3
             ? {
                 error: Object.assign(new Error("did not encounter expected EOF"), {
-                  path: path.join(tempHome.home, ".openclaw", "state.txt"),
+                  path: path.join(tempHome.home, ".nova", "state.txt"),
                 }),
               }
             : {}),
@@ -156,7 +156,7 @@ describe("backupCreateCommand atomic archive write", () => {
 
   it("does not overwrite an archive created after readiness checks complete", async () => {
     const { archiveDir, outputPath, runtime } = await prepareAtomicBackupScenario({
-      archivePrefix: "openclaw-backup-race-",
+      archivePrefix: "nova-backup-race-",
     });
     const realLink = fs.link.bind(fs);
     const linkSpy = vi.spyOn(fs, "link");
@@ -182,7 +182,7 @@ describe("backupCreateCommand atomic archive write", () => {
 
   it("falls back to exclusive copy when hard-link publication is unsupported", async () => {
     const { archiveDir, outputPath, runtime } = await prepareAtomicBackupScenario({
-      archivePrefix: "openclaw-backup-copy-fallback-",
+      archivePrefix: "nova-backup-copy-fallback-",
     });
     const linkSpy = vi.spyOn(fs, "link");
     try {

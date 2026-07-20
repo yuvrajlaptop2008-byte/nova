@@ -99,7 +99,7 @@ describe("plugin compatibility registry", () => {
         });
         expect(record.replacement).toBe(replacement);
         expect(record.docsPath).toBe("/plugins/sdk-migration");
-        expect(record.surfaces).toEqual([expect.stringMatching(/^openclaw\/plugin-sdk\//u)]);
+        expect(record.surfaces).toEqual([expect.stringMatching(/^nova\/plugin-sdk\//u)]);
         expect(record.releaseNote).toMatch(releaseNote);
       }
     },

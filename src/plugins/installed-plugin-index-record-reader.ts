@@ -7,7 +7,7 @@ import { tryReadJsonSync } from "../infra/json-files.js";
 import { isPrereleaseResolutionAllowed, parseRegistryNpmSpec } from "../infra/npm-registry-spec.js";
 import { isNotFoundPathError, normalizeWindowsPathForComparison } from "../infra/path-guards.js";
 import { compareValidSemver } from "../infra/semver.js";
-import { withOpenClawStateDatabaseReadOnly } from "../state/openclaw-state-db-readonly.js";
+import { withNovaStateDatabaseReadOnly } from "../state/nova-state-db-readonly.js";
 import {
   resolveDefaultPluginNpmDir,
   resolvePluginNpmProjectsDir,
@@ -85,16 +85,16 @@ function readStringRecord(value: unknown): Record<string, string> {
 }
 
 function hasPackagePluginMetadata(manifest: Record<string, unknown>): boolean {
-  const openclaw = manifest.openclaw;
-  if (!isRecord(openclaw)) {
+  const nova = manifest.nova;
+  if (!isRecord(nova)) {
     return false;
   }
-  const extensions = openclaw.extensions;
+  const extensions = nova.extensions;
   return Array.isArray(extensions) && extensions.some((entry) => typeof entry === "string");
 }
 
 function readManifestPluginId(packageDir: string): string | undefined {
-  const manifest = readJsonObjectFileSync(path.join(packageDir, "openclaw.plugin.json"));
+  const manifest = readJsonObjectFileSync(path.join(packageDir, "nova.plugin.json"));
   const id = typeof manifest?.id === "string" ? manifest.id.trim() : "";
   return id || undefined;
 }
@@ -255,10 +255,10 @@ function emitManagedNpmRecoveryFallbackWarning(params: {
   candidates: readonly RecoveredManagedNpmInstallCandidate[];
 }): void {
   process.emitWarning(
-    `Managed npm recovery found ${params.candidates.length} installs for plugin "${params.pluginId}" without an authoritative active path; selected the most recently installed candidate. Run \`openclaw doctor --fix\` to persist and retire stale generations.`,
+    `Managed npm recovery found ${params.candidates.length} installs for plugin "${params.pluginId}" without an authoritative active path; selected the most recently installed candidate. Run \`nova doctor --fix\` to persist and retire stale generations.`,
     {
       code: "NOVA_PLUGIN_INSTALL_RECOVERY_FALLBACK",
-      type: "OpenClawPluginRecoveryWarning",
+      type: "NovaPluginRecoveryWarning",
       detail: JSON.stringify({
         pluginId: params.pluginId,
         selectedInstallPath: params.selected.installRecord.installPath,
@@ -472,7 +472,7 @@ function readPersistedInstalledPluginIndexForRecords(
     return tryReadJsonSync(options.filePath);
   }
   try {
-    return withOpenClawStateDatabaseReadOnly(({ db }) => {
+    return withNovaStateDatabaseReadOnly(({ db }) => {
       const row = db
         .prepare(
           `

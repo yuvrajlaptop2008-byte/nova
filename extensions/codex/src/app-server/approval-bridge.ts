@@ -14,9 +14,9 @@ import {
   type NativeHookRelayProcessResponse,
   type NativeHookRelayRegistrationHandle,
   runBeforeToolCallHook,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { normalizeTrimmedStringList } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { sliceUtf16Safe, truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { normalizeTrimmedStringList } from "nova/plugin-sdk/string-coerce-runtime";
+import { sliceUtf16Safe, truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { formatCodexDisplayText } from "../command-formatters.js";
 import { resolveCodexToolAbortTerminalReason } from "./dynamic-tool-execution.js";
 import {
@@ -97,7 +97,7 @@ export async function handleCodexAppServerApprovalRequest(params: {
   });
 
   try {
-    const policyOutcome = await runOpenClawToolPolicyForApprovalRequest({
+    const policyOutcome = await runNovaToolPolicyForApprovalRequest({
       method: params.method,
       requestParams,
       paramsForRun: params.paramsForRun,
@@ -398,7 +398,7 @@ type ApprovalPolicyOutcome =
   | { outcome: "approved-once" | "approved-session" }
   | { outcome: "no-decision" };
 
-async function runOpenClawToolPolicyForApprovalRequest(params: {
+async function runNovaToolPolicyForApprovalRequest(params: {
   method: string;
   requestParams: JsonObject | undefined;
   paramsForRun: EmbeddedRunAttemptParams;
@@ -410,7 +410,7 @@ async function runOpenClawToolPolicyForApprovalRequest(params: {
   autoApprove?: boolean;
   signal?: AbortSignal;
 }): Promise<ApprovalPolicyOutcome | undefined> {
-  const policyRequest = buildOpenClawToolPolicyRequest(params.method, params.requestParams);
+  const policyRequest = buildNovaToolPolicyRequest(params.method, params.requestParams);
   if (!policyRequest) {
     return undefined;
   }
@@ -637,7 +637,7 @@ function buildNativeRelayPreToolUsePayload(params: {
   const turnId = readString(params.requestParams, "turnId");
   return {
     hook_event_name: "PreToolUse",
-    openclaw_approval_mode: "report",
+    nova_approval_mode: "report",
     tool_name: "exec_command",
     ...(params.context.approvalId ? { tool_use_id: params.context.approvalId } : {}),
     ...(params.cwd ? { cwd: params.cwd } : {}),
@@ -707,7 +707,7 @@ function sanitizeRelayDecisionReason(value: string | undefined): string | undefi
   return preview.text;
 }
 
-function buildOpenClawToolPolicyRequest(
+function buildNovaToolPolicyRequest(
   method: string,
   requestParams: JsonObject | undefined,
 ): { toolName: string; params: JsonObject } | undefined {

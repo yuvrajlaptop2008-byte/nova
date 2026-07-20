@@ -3,12 +3,12 @@ import { normalizeOptionalString } from "@nova/normalization-core/string-coerce"
 import { loadChannelOutboundAdapter } from "../../channels/plugins/outbound/load.js";
 import type { ChannelId } from "../../channels/plugins/types.public.js";
 import { getRuntimeConfig } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { OutboundDeliveryFormattingOptions } from "../../infra/outbound/formatting.js";
 import type { OutboundMediaAccess } from "../../media/load-options.js";
 
 type RuntimeSendOpts = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   blocks?: unknown;
   mediaUrl?: string;
   mediaAccess?: OutboundMediaAccess;

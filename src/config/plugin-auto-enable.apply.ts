@@ -11,7 +11,7 @@ import type {
   PluginAutoEnableResult,
 } from "./plugin-auto-enable.types.js";
 import { hashRuntimeConfigValue } from "./runtime-snapshot.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { NovaConfig } from "./types.nova.js";
 
 type PluginAutoEnableCacheEntry = {
   configFingerprint: string;
@@ -70,7 +70,7 @@ function stableFingerprintValue(value: unknown): string {
 }
 
 /** Fingerprints mutable config inputs used by plugin auto-enable detection. */
-export function fingerprintPluginAutoEnableConfig(config: OpenClawConfig): string {
+export function fingerprintPluginAutoEnableConfig(config: NovaConfig): string {
   return hashRuntimeConfigValue(config);
 }
 
@@ -80,7 +80,7 @@ export function fingerprintPluginAutoEnableEnv(env: NodeJS.ProcessEnv): string {
 }
 
 function createPluginAutoEnableCacheEntry(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   discovery: PluginDiscoveryResult;
   env: NodeJS.ProcessEnv;
   manifestRegistry: PluginManifestRegistry;
@@ -97,7 +97,7 @@ function createPluginAutoEnableCacheEntry(params: {
 
 function isPluginAutoEnableCacheEntryFresh(params: {
   entry: PluginAutoEnableCacheEntry;
-  config: OpenClawConfig;
+  config: NovaConfig;
   discovery: PluginDiscoveryResult;
   env: NodeJS.ProcessEnv;
   manifestRegistry: PluginManifestRegistry;
@@ -112,7 +112,7 @@ function isPluginAutoEnableCacheEntryFresh(params: {
 
 /** Applies already detected plugin auto-enable candidates to config. */
 export function materializePluginAutoEnableCandidates(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   candidates: readonly PluginAutoEnableCandidate[];
   env?: NodeJS.ProcessEnv;
   manifestRegistry?: PluginManifestRegistry;
@@ -142,7 +142,7 @@ export function materializePluginAutoEnableCandidates(params: {
 }
 
 export function applyPluginAutoEnable(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   manifestRegistry?: PluginManifestRegistry;
   discovery?: PluginDiscoveryResult;

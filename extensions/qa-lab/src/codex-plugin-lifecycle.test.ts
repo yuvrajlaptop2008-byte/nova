@@ -93,7 +93,7 @@ describe("codex plugin lifecycle: pinned-old codex plugin with new Nova", () => 
 
     expect(result.status).toBe("blocked");
     expect(result.remediation).toBe(
-      'Codex plugin version 2026.5.19 is older than Nova 2026.5.21. Run "openclaw plugins update codex" or unpin codex, then rerun "openclaw doctor --fix".',
+      'Codex plugin version 2026.5.19 is older than Nova 2026.5.21. Run "nova plugins update codex" or unpin codex, then rerun "nova doctor --fix".',
     );
   });
 
@@ -162,14 +162,14 @@ describe("codex plugin lifecycle: doctor migration safety matrix", () => {
     {
       name: "mixed profile with defaults Nova pin",
       profileShape: "mixed" as const,
-      config: { agents: { defaults: { agentRuntime: { id: "openclaw" } } } },
-      expectedRemovedRuntimePins: ["agentRuntime.id=openclaw"],
+      config: { agents: { defaults: { agentRuntime: { id: "nova" } } } },
+      expectedRemovedRuntimePins: ["agentRuntime.id=nova"],
     },
     {
       name: "mixed profile with main-agent Nova pin",
       profileShape: "mixed" as const,
-      config: { agents: { list: { main: { agentRuntime: { id: "openclaw" } } } } },
-      expectedRemovedRuntimePins: ["agentRuntime.id=openclaw"],
+      config: { agents: { list: { main: { agentRuntime: { id: "nova" } } } } },
+      expectedRemovedRuntimePins: ["agentRuntime.id=nova"],
     },
   ])(
     "keeps codex auth and strips stale Nova runtime pins for $name",

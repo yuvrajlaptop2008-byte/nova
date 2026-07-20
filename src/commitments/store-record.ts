@@ -2,10 +2,10 @@ import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 // Maps commitment records to the canonical shared SQLite table.
 import type { Insertable, Selectable, Updateable } from "kysely";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import type { CommitmentRecord } from "./types.js";
 
-export type CommitmentsDatabase = Pick<OpenClawStateKyselyDatabase, "commitments">;
+export type CommitmentsDatabase = Pick<NovaStateKyselyDatabase, "commitments">;
 export type CommitmentRow = Selectable<CommitmentsDatabase["commitments"]>;
 type CommitmentRowInsert = Insertable<CommitmentsDatabase["commitments"]>;
 type CommitmentRowUpdate = Updateable<CommitmentsDatabase["commitments"]>;

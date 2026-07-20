@@ -1,7 +1,7 @@
 // Happy path prompt snapshot helper reads expected prompt snapshot files.
 import fs from "node:fs";
 import path from "node:path";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { resolveHeartbeatPromptForResponseTool } from "../../../src/auto-reply/heartbeat.js";
 import {
   buildDirectChatContext,
@@ -16,13 +16,13 @@ import { buildReplyPromptEnvelope } from "../../../src/auto-reply/reply/prompt-p
 import type { TemplateContext } from "../../../src/auto-reply/templating.js";
 import { SILENT_REPLY_TOKEN } from "../../../src/auto-reply/tokens.js";
 import { normalizeChatType } from "../../../src/channels/chat-type.js";
-import type { OpenClawConfig } from "../../../src/config/types.openclaw.js";
+import type { NovaConfig } from "../../../src/config/types.nova.js";
 import type {
   AnyAgentTool,
   EmbeddedRunAttemptParams,
 } from "../../../src/plugin-sdk/agent-harness-runtime.js";
 import { normalizeAgentRuntimeTools } from "../../../src/plugin-sdk/agent-harness-runtime.js";
-import { createOpenClawCodingTools } from "../../../src/plugin-sdk/agent-harness.js";
+import { createNovaCodingTools } from "../../../src/plugin-sdk/agent-harness.js";
 import type { PluginRegistry } from "../../../src/plugins/registry.js";
 import {
   getActivePluginRegistry,
@@ -40,9 +40,9 @@ import {
 
 export { CODEX_RUNTIME_HAPPY_PATH_PROMPT_SNAPSHOT_DIR };
 
-const WORKSPACE_DIR = "/tmp/openclaw-happy-path/workspace";
-const AGENT_DIR = "/tmp/openclaw-happy-path/agent";
-const SESSION_FILE = "/tmp/openclaw-happy-path/session.jsonl";
+const WORKSPACE_DIR = "/tmp/nova-happy-path/workspace";
+const AGENT_DIR = "/tmp/nova-happy-path/agent";
+const SESSION_FILE = "/tmp/nova-happy-path/session.jsonl";
 const MODEL_ID = "gpt-5.5";
 const CODEX_PROMPT_PERSONALITY = "pragmatic";
 const CODEX_MODEL_PROMPT_FIXTURE_PATH = path.join(
@@ -326,7 +326,7 @@ const CODEX_PROMPT_SNAPSHOT_THREAD_CONFIG = {
   "features.code_mode_only": false,
 };
 
-const baseConfig: OpenClawConfig = {
+const baseConfig: NovaConfig = {
   messages: {
     groupChat: {
       visibleReplies: "message_tool",
@@ -341,7 +341,7 @@ const baseConfig: OpenClawConfig = {
   },
 };
 
-const dynamicToolsConfig: OpenClawConfig = {
+const dynamicToolsConfig: NovaConfig = {
   ...baseConfig,
   plugins: {
     enabled: true,
@@ -481,7 +481,7 @@ function createDynamicTools(params: {
   ctx: TemplateContext;
   trigger: "user" | "heartbeat";
 }): CodexDynamicToolSpec[] {
-  const tools = createOpenClawCodingTools({
+  const tools = createNovaCodingTools({
     agentId: "main",
     workspaceDir: WORKSPACE_DIR,
     agentDir: AGENT_DIR,
@@ -514,7 +514,7 @@ function createDynamicTools(params: {
       includeBaseCodingTools: false,
       includeShellTools: false,
       includeChannelTools: false,
-      includeOpenClawTools: true,
+      includeNovaTools: true,
       includePluginTools: false,
     },
   });
@@ -749,7 +749,7 @@ function renderModelBoundPromptLayers(params: {
     typeof params.codexSnapshot.threadStartParams.config.instructions === "string"
       ? params.codexSnapshot.threadStartParams.config.instructions
       : "";
-  const openClawDeveloperInstructions = params.codexSnapshot.developerInstructions;
+  const novaDeveloperInstructions = params.codexSnapshot.developerInstructions;
   const codexCollaborationModeInstructions =
     typeof params.codexSnapshot.turnStartParams.collaborationMode?.settings
       ?.developer_instructions === "string"
@@ -760,7 +760,7 @@ function renderModelBoundPromptLayers(params: {
     codexModelInstructions,
     CODEX_YOLO_PERMISSION_INSTRUCTIONS,
     codexConfigInstructions,
-    openClawDeveloperInstructions,
+    novaDeveloperInstructions,
     codexCollaborationModeInstructions,
     turnInputText,
   ]
@@ -787,7 +787,7 @@ function renderModelBoundPromptLayers(params: {
           approvalPolicy: "never",
           networkAccess: "enabled",
         },
-        openClawRuntime: {
+        novaRuntime: {
           configInstructionsFrom: "extensions/codex app-server thread/start config.instructions",
           workspaceBootstrapContextFrom:
             "extensions/codex app-server turn/start input Nova runtime context",
@@ -813,7 +813,7 @@ function renderModelBoundPromptLayers(params: {
         codexModelInstructions: textStats(codexModelInstructions),
         codexPermissionDeveloperInstructions: textStats(CODEX_YOLO_PERMISSION_INSTRUCTIONS),
         codexWorkspaceBootstrapConfigInstructions: textStats(codexConfigInstructions),
-        openClawDeveloperInstructions: textStats(openClawDeveloperInstructions),
+        novaDeveloperInstructions: textStats(novaDeveloperInstructions),
         codexCollaborationModeDeveloperInstructions: textStats(codexCollaborationModeInstructions),
         userInputText: textStats(turnInputText),
         dynamicToolsJson: textStats(params.dynamicToolsJson),
@@ -836,7 +836,7 @@ function renderModelBoundPromptLayers(params: {
     "",
     "### Developer: Nova Runtime Instructions",
     "",
-    markdownFence("text", openClawDeveloperInstructions),
+    markdownFence("text", novaDeveloperInstructions),
     "",
     "### Developer: Codex Collaboration Mode Instructions",
     "",
@@ -869,7 +869,7 @@ function readCodexTurnInputText(turnStartParams: { input?: unknown }): string {
   return firstText?.text ?? "";
 }
 
-function buildCodexOpenClawRuntimeContext(): string {
+function buildCodexNovaRuntimeContext(): string {
   return [
     "Nova runtime context for this turn:",
     "Treat this Nova-provided context as supporting project/user reference for the current request.",
@@ -880,8 +880,8 @@ function buildCodexOpenClawRuntimeContext(): string {
   ].join("\n");
 }
 
-function prependCodexOpenClawRuntimeContext(prompt: string): string {
-  return [buildCodexOpenClawRuntimeContext(), "", "Current user request:", prompt].join("\n");
+function prependCodexNovaRuntimeContext(prompt: string): string {
+  return [buildCodexNovaRuntimeContext(), "", "Current user request:", prompt].join("\n");
 }
 
 function renderScenarioSnapshot(
@@ -893,7 +893,7 @@ function renderScenarioSnapshot(
     sessionKey: scenario.ctx.SessionKey ?? `agent:main:${scenario.id}`,
   });
   const appServer = codexApi.resolveCodexPromptSnapshotAppServerOptions();
-  const codexTurnPromptText = prependCodexOpenClawRuntimeContext(scenario.prompt);
+  const codexTurnPromptText = prependCodexNovaRuntimeContext(scenario.prompt);
   const codexSnapshot = codexApi.buildCodexHarnessPromptSnapshot({
     attempt,
     cwd: WORKSPACE_DIR,

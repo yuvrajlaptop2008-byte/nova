@@ -1,13 +1,13 @@
 # @nova/memory-lancedb
 
-Official LanceDB-backed long-term memory plugin for OpenClaw.
+Official LanceDB-backed long-term memory plugin for Nova.
 
 This plugin adds persistent memory tools backed by LanceDB, vector search, auto-recall, and auto-capture.
 
 ## Install
 
 ```bash
-openclaw plugins install @nova/memory-lancedb
+nova plugins install @nova/memory-lancedb
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -23,10 +23,10 @@ Restart the Gateway after installing or updating the plugin.
 
 Use the memory plugin docs for embedding provider setup, storage paths, indexing, and recall behavior:
 
-- https://docs.openclaw.ai/plugins/memory-lancedb
+- https://docs.nova.ai/plugins/memory-lancedb
 
 ## Package
 
 - Plugin id: `memory-lancedb`
 - Package: `@nova/memory-lancedb`
-- Minimum OpenClaw host: `2026.4.10`
+- Minimum Nova host: `2026.4.10`

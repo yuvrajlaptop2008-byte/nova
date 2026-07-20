@@ -160,7 +160,7 @@ function isRenderableAssistantAttachment(url: string): boolean {
   return (
     /^https?:\/\//i.test(trimmed) ||
     /^data:(?:image|audio|video)\//i.test(trimmed) ||
-    /^\/(?:__openclaw__|media)\//.test(trimmed) ||
+    /^\/(?:__nova__|media)\//.test(trimmed) ||
     trimmed.startsWith("file://") ||
     trimmed.startsWith("~") ||
     trimmed.startsWith("/") ||
@@ -176,7 +176,7 @@ function shouldPreserveRelativeAssistantAttachment(url: string): boolean {
   return (
     !/^https?:\/\//i.test(trimmed) &&
     !/^data:(?:image|audio|video)\//i.test(trimmed) &&
-    !/^\/(?:__openclaw__|media)\//.test(trimmed) &&
+    !/^\/(?:__nova__|media)\//.test(trimmed) &&
     !trimmed.startsWith("file://") &&
     !trimmed.startsWith("~") &&
     !trimmed.startsWith("/") &&
@@ -548,16 +548,16 @@ export function normalizeMessage(message: unknown): NormalizedMessage {
 
   const timestamp = typeof m.timestamp === "number" ? m.timestamp : Date.now();
   const id = typeof m.id === "string" ? m.id : undefined;
-  const rawOpenClawMeta = m["__openclaw"];
-  const openClawMeta =
-    rawOpenClawMeta && typeof rawOpenClawMeta === "object" && !Array.isArray(rawOpenClawMeta)
-      ? (rawOpenClawMeta as Record<string, unknown>)
+  const rawNovaMeta = m["__nova"];
+  const novaMeta =
+    rawNovaMeta && typeof rawNovaMeta === "object" && !Array.isArray(rawNovaMeta)
+      ? (rawNovaMeta as Record<string, unknown>)
       : undefined;
   const metaSender = normalizeSenderIdentity({
-    id: openClawMeta?.senderId,
-    name: openClawMeta?.senderName,
-    username: openClawMeta?.senderUsername,
-    profileAvatarUrl: openClawMeta?.senderProfileAvatarUrl,
+    id: novaMeta?.senderId,
+    name: novaMeta?.senderName,
+    username: novaMeta?.senderUsername,
+    profileAvatarUrl: novaMeta?.senderProfileAvatarUrl,
   });
   const rawLabel = typeof m.senderLabel === "string" ? m.senderLabel.trim() : "";
   const legacyLabelIdentity = rawLabel ? splitOpaqueIdLabel(rawLabel) : null;

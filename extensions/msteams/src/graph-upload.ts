@@ -8,7 +8,7 @@
  * - Getting chat members for per-user sharing
  */
 
-import { readProviderJsonResponse } from "openclaw/plugin-sdk/provider-http";
+import { readProviderJsonResponse } from "nova/plugin-sdk/provider-http";
 import type { MSTeamsAccessTokenProvider } from "./attachments/types.js";
 import { createMSTeamsHttpError } from "./http-error.js";
 import {
@@ -73,8 +73,8 @@ async function uploadToSharePoint(params: {
 }): Promise<DriveUploadResult> {
   const fetchFn = params.fetchFn ?? fetch;
 
-  // Use "OpenClawShared" folder to organize bot-uploaded files
-  const uploadPath = `/OpenClawShared/${encodeURIComponent(params.filename)}`;
+  // Use "NovaShared" folder to organize bot-uploaded files
+  const uploadPath = `/NovaShared/${encodeURIComponent(params.filename)}`;
 
   const data = await withMSTeamsAbortableRequestTimeout({
     label: SHAREPOINT_UPLOAD_TIMEOUT_LABEL,

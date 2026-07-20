@@ -107,8 +107,8 @@ const OPENAI_CODEX_RESPONSES_EMPTY_INPUT_TEXT = " ";
 const OPENAI_CODEX_RESPONSES_DEFAULT_INSTRUCTIONS = "Follow the user request.";
 const AZURE_RESPONSES_FIRST_EVENT_TIMEOUT_MS = 30_000;
 const RESPONSE_FAILED_NO_DETAILS_MESSAGE = "Unknown error (no error details in response)";
-const OPENAI_RESPONSES_REASONING_REPLAY_META_KEY = "__openclaw_replay";
-const OPENAI_RESPONSES_REASONING_REPLAY_BLOCK_META_KEY = "openclawReasoningReplay";
+const OPENAI_RESPONSES_REASONING_REPLAY_META_KEY = "__nova_replay";
+const OPENAI_RESPONSES_REASONING_REPLAY_BLOCK_META_KEY = "novaReasoningReplay";
 const OPENAI_RESPONSES_REPLAY_ITEM_ID_MAX_LENGTH = 64;
 
 type ReplayableResponseOutputMessage = Omit<ResponseOutputMessage, "id"> & { id?: string };
@@ -1880,8 +1880,8 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         ) as typeof params;
         params = sanitizeResponsesImagePayload(params as Record<string, unknown>) as typeof params;
         if (
-          (options as { openclawCodeModeToolSurface?: unknown } | undefined)
-            ?.openclawCodeModeToolSurface === true
+          (options as { novaCodeModeToolSurface?: unknown } | undefined)
+            ?.novaCodeModeToolSurface === true
         ) {
           enforceCodeModeResponsesToolSurface(params);
           assertCodeModeResponsesToolSurface(params);
@@ -2281,8 +2281,8 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         ) as typeof params;
         params = sanitizeResponsesImagePayload(params as Record<string, unknown>) as typeof params;
         if (
-          (options as { openclawCodeModeToolSurface?: unknown } | undefined)
-            ?.openclawCodeModeToolSurface === true
+          (options as { novaCodeModeToolSurface?: unknown } | undefined)
+            ?.novaCodeModeToolSurface === true
         ) {
           enforceCodeModeResponsesToolSurface(params);
           assertCodeModeResponsesToolSurface(params);
@@ -2445,10 +2445,10 @@ const responsesTesting = {
 };
 
 declare global {
-  var openclawOpenAIResponsesTransportTestApi: typeof responsesTesting | undefined;
+  var novaOpenAIResponsesTransportTestApi: typeof responsesTesting | undefined;
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  globalThis.openclawOpenAIResponsesTransportTestApi = responsesTesting;
+  globalThis.novaOpenAIResponsesTransportTestApi = responsesTesting;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

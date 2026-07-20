@@ -112,7 +112,7 @@ async function main() {
   const gatewayUrl = process.env.GW_URL?.trim();
   const gatewayToken = process.env.GW_TOKEN?.trim();
   const stateDir = process.env.NOVA_STATE_DIR?.trim();
-  const model = process.env.NOVA_MCP_CODE_MODE_MODEL?.trim() || "openclaw/main";
+  const model = process.env.NOVA_MCP_CODE_MODE_MODEL?.trim() || "nova/main";
   assert(gatewayUrl, "missing GW_URL");
   assert(gatewayToken, "missing GW_TOKEN");
   assert(stateDir, "missing NOVA_STATE_DIR");
@@ -122,8 +122,8 @@ async function main() {
     headers: {
       authorization: `Bearer ${gatewayToken}`,
       "content-type": "application/json",
-      "x-openclaw-agent": "main",
-      "x-openclaw-scopes": "operator.write",
+      "x-nova-agent": "main",
+      "x-nova-scopes": "operator.write",
     },
     body: JSON.stringify({
       model,

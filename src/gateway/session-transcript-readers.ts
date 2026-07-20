@@ -22,7 +22,7 @@ import type {
   SessionTranscriptUsageSnapshot,
 } from "./session-utils.fs.js";
 import {
-  attachOpenClawTranscriptMeta,
+  attachNovaTranscriptMeta,
   buildSessionPreviewItems,
   readLatestSessionUsageFromTranscriptAsync as readLatestSessionUsageFromTranscriptAsyncFile,
   readRecentSessionMessagesAsync as readRecentSessionMessagesAsyncFile,
@@ -41,7 +41,7 @@ import {
 import type { SessionPreviewItem } from "./session-utils.types.js";
 
 export type { ReadSessionMessagesAsyncOptions };
-export { attachOpenClawTranscriptMeta, capArrayByJsonBytes } from "./session-utils.fs.js";
+export { attachNovaTranscriptMeta, capArrayByJsonBytes } from "./session-utils.fs.js";
 
 export type { SessionTranscriptReadScope };
 
@@ -217,7 +217,7 @@ function sqliteRecordMessageWithSeq(record: {
   recordTimestampMs?: number;
   seq: number;
 }): unknown {
-  return attachOpenClawTranscriptMeta(record.message, {
+  return attachNovaTranscriptMeta(record.message, {
     ...(record.id ? { id: record.id } : {}),
     ...(record.recordTimestampMs !== undefined
       ? { recordTimestampMs: record.recordTimestampMs }
@@ -310,7 +310,7 @@ function extractSqliteUsageSnapshot(message: unknown): SessionTranscriptUsageSna
     hasNonzeroUsage(usage) ||
     typeof totalTokens === "number" ||
     (typeof costUsd === "number" && Number.isFinite(costUsd) && costUsd > 0);
-  const isDeliveryMirror = modelProvider === "openclaw" && model === "delivery-mirror";
+  const isDeliveryMirror = modelProvider === "nova" && model === "delivery-mirror";
   if (!hasMeaningfulUsage && !modelProvider && !model) {
     return null;
   }

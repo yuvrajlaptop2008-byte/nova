@@ -42,7 +42,7 @@ describe("fetchNpmRegistryPackumentWithRetry", () => {
 
     const result = await fetchNpmRegistryPackumentWithRetry({
       packageName: "@nova/meta-provider",
-      packageUrl: "https://registry.npmjs.org/%40openclaw%2Fmeta-provider",
+      packageUrl: "https://registry.npmjs.org/%40nova%2Fmeta-provider",
       fetchImpl: async () => {
         fetchCalls += 1;
         return registryResponse(
@@ -76,7 +76,7 @@ describe("fetchNpmRegistryPackumentWithRetry", () => {
     await expect(
       fetchNpmRegistryPackumentWithRetry({
         packageName: "@nova/meta-provider",
-        packageUrl: "https://registry.npmjs.org/%40openclaw%2Fmeta-provider",
+        packageUrl: "https://registry.npmjs.org/%40nova%2Fmeta-provider",
         fetchImpl: async () => {
           fetchCalls += 1;
           return registryResponse({
@@ -106,7 +106,7 @@ describe("fetchNpmRegistryPackumentWithRetry", () => {
 
     const result = await fetchNpmRegistryPackumentWithRetry({
       packageName: "@nova/meta-provider",
-      packageUrl: "https://registry.npmjs.org/%40openclaw%2Fmeta-provider",
+      packageUrl: "https://registry.npmjs.org/%40nova%2Fmeta-provider",
       fetchImpl: async () => {
         fetchCalls += 1;
         return registryResponse(
@@ -140,7 +140,7 @@ describe("fetchNpmRegistryPackumentWithRetry", () => {
     await expect(
       fetchNpmRegistryPackumentWithRetry({
         packageName: "@nova/meta-provider",
-        packageUrl: "https://registry.npmjs.org/%40openclaw%2Fmeta-provider",
+        packageUrl: "https://registry.npmjs.org/%40nova%2Fmeta-provider",
         fetchImpl: async () => {
           fetchCalls += 1;
           return registryResponse({
@@ -168,7 +168,7 @@ describe("fetchNpmRegistryPackumentWithRetry", () => {
 
     const result = await fetchNpmRegistryPackumentWithRetry({
       packageName: "@nova/meta-provider",
-      packageUrl: "https://registry.npmjs.org/%40openclaw%2Fmeta-provider",
+      packageUrl: "https://registry.npmjs.org/%40nova%2Fmeta-provider",
       fetchImpl: async () => {
         fetchCalls += 1;
         return registryResponse({

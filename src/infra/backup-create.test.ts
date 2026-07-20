@@ -10,17 +10,14 @@ import { saveAuthProfileStore } from "../agents/auth-profiles/store.js";
 import { backupVerifyCommand } from "../commands/backup-verify.js";
 import { CONFIG_AUDIT_MAX_ENTRIES, CONFIG_AUDIT_SCOPE } from "../config/io.audit.js";
 import type { RuntimeEnv } from "../runtime.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabase, openNovaStateDatabase } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import {
-  closeOpenClawStateDatabase,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
-import {
-  sanitizeOpenClawGlobalStateSnapshot,
-  sanitizeOpenClawStateLeaseRows,
-} from "../state/openclaw-state-snapshot-sanitizer.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+  sanitizeNovaGlobalStateSnapshot,
+  sanitizeNovaStateLeaseRows,
+} from "../state/nova-state-snapshot-sanitizer.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import {
   createBackupArchive,
   formatBackupCreateSummary,
@@ -36,8 +33,8 @@ import { detectLegacyAuditLogs, migrateLegacyAuditLogs } from "./state-migration
 function makeResult(overrides: Partial<BackupCreateResult> = {}): BackupCreateResult {
   return {
     createdAt: "2026-01-01T00:00:00.000Z",
-    archiveRoot: "openclaw-backup-2026-01-01",
-    archivePath: "/tmp/openclaw-backup.tar.gz",
+    archiveRoot: "nova-backup-2026-01-01",
+    archivePath: "/tmp/nova-backup.tar.gz",
     dryRun: false,
     includeWorkspace: true,
     onlyConfig: false,
@@ -112,7 +109,7 @@ function createUnsafeIndexDrift(sqlitePath: string): void {
 }
 
 describe("formatBackupCreateSummary", () => {
-  const backupArchiveLine = "Backup archive: /tmp/openclaw-backup.tar.gz";
+  const backupArchiveLine = "Backup archive: /tmp/nova-backup.tar.gz";
 
   it.each([
     {
@@ -124,26 +121,26 @@ describe("formatBackupCreateSummary", () => {
             kind: "state",
             sourcePath: "/state",
             archivePath: "archive/state",
-            displayPath: "~/.openclaw",
+            displayPath: "~/.nova",
           },
         ],
         skipped: [
           {
             kind: "workspace",
             sourcePath: "/workspace",
-            displayPath: "~/Projects/openclaw",
+            displayPath: "~/Projects/nova",
             reason: "covered",
-            coveredBy: "~/.openclaw",
+            coveredBy: "~/.nova",
           },
         ],
       }),
       expected: [
         backupArchiveLine,
         "Included 1 path:",
-        "- state: ~/.openclaw",
+        "- state: ~/.nova",
         "Skipped 1 path:",
-        "- workspace: ~/Projects/openclaw (covered by ~/.openclaw)",
-        "Created /tmp/openclaw-backup.tar.gz",
+        "- workspace: ~/Projects/nova (covered by ~/.nova)",
+        "Created /tmp/nova-backup.tar.gz",
         "Archive verification: passed",
       ],
     },
@@ -156,21 +153,21 @@ describe("formatBackupCreateSummary", () => {
             kind: "config",
             sourcePath: "/config",
             archivePath: "archive/config",
-            displayPath: "~/.openclaw/config.json",
+            displayPath: "~/.nova/config.json",
           },
           {
             kind: "credentials",
             sourcePath: "/oauth",
             archivePath: "archive/oauth",
-            displayPath: "~/.openclaw/oauth",
+            displayPath: "~/.nova/oauth",
           },
         ],
       }),
       expected: [
         backupArchiveLine,
         "Included 2 paths:",
-        "- config: ~/.openclaw/config.json",
-        "- credentials: ~/.openclaw/oauth",
+        "- config: ~/.nova/config.json",
+        "- credentials: ~/.nova/oauth",
         "Dry run only; archive was not written.",
       ],
     },
@@ -187,28 +184,28 @@ describe("formatBackupCreateSummary", () => {
               kind: "state",
               sourcePath: "/state",
               archivePath: "archive/state",
-              displayPath: "~/.openclaw",
+              displayPath: "~/.nova",
             },
           ],
           skippedVolatileCount: 3,
         }),
       ),
     ).toEqual([
-      "Backup archive: /tmp/openclaw-backup.tar.gz",
+      "Backup archive: /tmp/nova-backup.tar.gz",
       "Included 1 path:",
-      "- state: ~/.openclaw",
-      "Created /tmp/openclaw-backup.tar.gz",
+      "- state: ~/.nova",
+      "Created /tmp/nova-backup.tar.gz",
       "Skipped 3 volatile files (live sessions, cron logs, queues, sockets, pid/tmp).",
     ]);
   });
 });
 
-describe("sanitizeOpenClawGlobalStateSnapshot", () => {
+describe("sanitizeNovaGlobalStateSnapshot", () => {
   it("tolerates legacy databases without current transient tables", () => {
     const sqlite = requireNodeSqlite();
     const database = new sqlite.DatabaseSync(":memory:");
     try {
-      expect(() => sanitizeOpenClawGlobalStateSnapshot(database)).not.toThrow();
+      expect(() => sanitizeNovaGlobalStateSnapshot(database)).not.toThrow();
     } finally {
       database.close();
     }
@@ -227,7 +224,7 @@ describe("sanitizeOpenClawGlobalStateSnapshot", () => {
         INSERT INTO plugin_blob_entries VALUES ('keep', 1);
       `);
 
-      sanitizeOpenClawStateLeaseRows(database);
+      sanitizeNovaStateLeaseRows(database);
 
       expect(database.prepare("SELECT COUNT(*) AS count FROM state_leases").get()).toEqual({
         count: 0,
@@ -253,7 +250,7 @@ describe("sanitizeOpenClawGlobalStateSnapshot", () => {
         INSERT INTO diagnostic_events VALUES ('system-agent.audit');
       `);
 
-      sanitizeOpenClawGlobalStateSnapshot(database);
+      sanitizeNovaGlobalStateSnapshot(database);
 
       expect(database.prepare("SELECT scope FROM diagnostic_events").all()).toEqual([
         { scope: "migration.legacy-audit-raw" },
@@ -474,10 +471,10 @@ describe("writeTarArchiveWithRetry", () => {
 
 describe("createBackupVolatileStatCache", () => {
   it("lets tar filter a volatile file that disappears before lstat", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-volatile-stat-cache-",
+        prefix: "nova-backup-volatile-stat-cache-",
         scenario: "minimal",
       },
       async (state) => {
@@ -520,10 +517,10 @@ describe("createBackupVolatileStatCache", () => {
 
 describe("createBackupArchive", () => {
   it("falls back when injected nowMs is outside Date range", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-invalid-now-",
+        prefix: "nova-backup-invalid-now-",
         scenario: "minimal",
       },
       async (state) => {
@@ -540,7 +537,7 @@ describe("createBackupArchive", () => {
           });
 
           expect(result.createdAt).toBe("2026-05-30T12:00:00.000Z");
-          expect(path.basename(result.archivePath)).toContain("openclaw-backup.tar.gz");
+          expect(path.basename(result.archivePath)).toContain("nova-backup.tar.gz");
           expect(path.basename(result.archivePath)).not.toContain("NaN");
         } finally {
           dateNowSpy.mockRestore();
@@ -550,10 +547,10 @@ describe("createBackupArchive", () => {
   });
 
   it("falls back to epoch when injected nowMs and Date.now are outside Date range", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-invalid-fallback-now-",
+        prefix: "nova-backup-invalid-fallback-now-",
         scenario: "minimal",
       },
       async (state) => {
@@ -570,7 +567,7 @@ describe("createBackupArchive", () => {
           });
 
           expect(result.createdAt).toBe("1970-01-01T00:00:00.000Z");
-          expect(path.basename(result.archivePath)).toContain("openclaw-backup.tar.gz");
+          expect(path.basename(result.archivePath)).toContain("nova-backup.tar.gz");
           expect(path.basename(result.archivePath)).not.toContain("NaN");
         } finally {
           dateNowSpy.mockRestore();
@@ -580,10 +577,10 @@ describe("createBackupArchive", () => {
   });
 
   it("skips current live volatile state files while preserving workspace locks", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "split",
-        prefix: "openclaw-backup-volatile-",
+        prefix: "nova-backup-volatile-",
         scenario: "minimal",
       },
       async (state) => {
@@ -646,10 +643,10 @@ describe("createBackupArchive", () => {
   });
 
   it("replaces legacy audit raw archives with sanitized restorable snapshots", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-audit-raw-",
+        prefix: "nova-backup-audit-raw-",
         scenario: "minimal",
       },
       async (state) => {
@@ -665,11 +662,11 @@ describe("createBackupArchive", () => {
             ts: "2026-07-01T00:00:00.000Z",
             source: "config-io",
             event: "config.write",
-            argv: ["openclaw", "config", "set", "token", marker],
+            argv: ["nova", "config", "set", "token", marker],
             execArgv: [],
           })}\n`,
         );
-        const { db } = openOpenClawStateDatabase({ env: state.env });
+        const { db } = openNovaStateDatabase({ env: state.env });
         db.prepare(
           `
             INSERT INTO diagnostic_events (
@@ -690,7 +687,7 @@ describe("createBackupArchive", () => {
             "sanitized raw archive entry",
           );
           const databaseEntry = expectDefined(
-            entries.find((entry) => entry.endsWith("/state/state/openclaw.sqlite")),
+            entries.find((entry) => entry.endsWith("/state/state/nova.sqlite")),
             "global state database entry",
           );
           expect(entries.some((entry) => entry.endsWith(".doctor-scrub-restore"))).toBe(false);
@@ -699,7 +696,7 @@ describe("createBackupArchive", () => {
           const archivedRaw = await fs.readFile(path.join(extractDir, rawEntry), "utf8");
           expect(archivedRaw).not.toContain(marker);
           expect(JSON.parse(archivedRaw.trim())).toMatchObject({
-            argv: ["openclaw", "config", "set", "token", "***"],
+            argv: ["nova", "config", "set", "token", "***"],
           });
           const sqlite = requireNodeSqlite();
           const archivedDb = new sqlite.DatabaseSync(path.join(extractDir, databaseEntry), {
@@ -717,17 +714,17 @@ describe("createBackupArchive", () => {
             archivedDb.close();
           }
         } finally {
-          closeOpenClawStateDatabase();
+          closeNovaStateDatabase();
         }
       },
     );
   });
 
   it("omits completed blank audit append pads when dropping their checkpoints", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-completed-audit-pad-",
+        prefix: "nova-backup-completed-audit-pad-",
         scenario: "minimal",
       },
       async (state) => {
@@ -744,7 +741,7 @@ describe("createBackupArchive", () => {
             ts: "2026-07-01T00:00:00.000Z",
             source: "config-io",
             event: "config.write",
-            argv: ["openclaw", "config", "set", "safe", "value"],
+            argv: ["nova", "config", "set", "safe", "value"],
             execArgv: [],
           })}\n`,
         );
@@ -761,7 +758,7 @@ describe("createBackupArchive", () => {
             doctorOnlyStateMigrations: true,
           }).hasLegacy,
         ).toBe(false);
-        const { db } = openOpenClawStateDatabase({ env: state.env });
+        const { db } = openNovaStateDatabase({ env: state.env });
         expect(
           db
             .prepare(
@@ -779,7 +776,7 @@ describe("createBackupArchive", () => {
           const entries = await listArchiveEntries(result.archivePath);
           expect(entries.some((entry) => entry.endsWith(`/state/${rawRelativePath}`))).toBe(false);
           const databaseEntry = expectDefined(
-            entries.find((entry) => entry.endsWith("/state/state/openclaw.sqlite")),
+            entries.find((entry) => entry.endsWith("/state/state/nova.sqlite")),
             "global state database entry",
           );
           await tar.x({ file: result.archivePath, gzip: true, cwd: extractDir });
@@ -799,17 +796,17 @@ describe("createBackupArchive", () => {
             archivedDb.close();
           }
         } finally {
-          closeOpenClawStateDatabase();
+          closeNovaStateDatabase();
         }
       },
     );
   });
 
   it("preserves audit ordinals for identical later appends across backup restore", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-audit-ordinal-",
+        prefix: "nova-backup-audit-ordinal-",
         scenario: "minimal",
       },
       async (state) => {
@@ -821,7 +818,7 @@ describe("createBackupArchive", () => {
           ts: "2026-07-01T00:00:00.000Z",
           source: "config-io",
           event: "config.write",
-          argv: ["openclaw", "config", "set", "safe", "same"],
+          argv: ["nova", "config", "set", "safe", "same"],
           execArgv: [],
         };
         await fs.mkdir(outputDir, { recursive: true });
@@ -844,11 +841,11 @@ describe("createBackupArchive", () => {
         });
         const entries = await listArchiveEntries(result.archivePath);
         const databaseEntry = expectDefined(
-          entries.find((entry) => entry.endsWith("/state/state/openclaw.sqlite")),
+          entries.find((entry) => entry.endsWith("/state/state/nova.sqlite")),
           "global state database entry",
         );
         await tar.x({ file: result.archivePath, gzip: true, cwd: extractDir });
-        closeOpenClawStateDatabase();
+        closeNovaStateDatabase();
 
         const restoredDatabasePath = path.join(extractDir, databaseEntry);
         const restoredStateDir = path.dirname(path.dirname(restoredDatabasePath));
@@ -869,16 +866,16 @@ describe("createBackupArchive", () => {
         expect(restoredEntries).toHaveLength(2);
         expect(new Set(restoredEntries.map((entry) => entry.key)).size).toBe(2);
         expect(restoredEntries.map((entry) => entry.value)).toEqual([record, record]);
-        closeOpenClawStateDatabase();
+        closeNovaStateDatabase();
       },
     );
   });
 
   it("scrubs transient SQLite queue and plugin blob rows from archive snapshots", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-sqlite-queue-",
+        prefix: "nova-backup-sqlite-queue-",
         scenario: "minimal",
       },
       async (state) => {
@@ -886,7 +883,7 @@ describe("createBackupArchive", () => {
         const extractDir = state.path("extract");
         await fs.mkdir(outputDir, { recursive: true });
         await fs.mkdir(extractDir, { recursive: true });
-        const { db } = openOpenClawStateDatabase({ env: state.env });
+        const { db } = openNovaStateDatabase({ env: state.env });
         db.prepare(
           `
             INSERT INTO delivery_queue_entries (
@@ -938,10 +935,10 @@ describe("createBackupArchive", () => {
           });
           const entries = await listArchiveEntries(result.archivePath);
           const archivedDbEntry = entries.find((entry) =>
-            entry.endsWith("/state/state/openclaw.sqlite"),
+            entry.endsWith("/state/state/nova.sqlite"),
           );
           expect(archivedDbEntry).toBeDefined();
-          expect(entries.some((entry) => entry.endsWith("/state/state/openclaw.sqlite-wal"))).toBe(
+          expect(entries.some((entry) => entry.endsWith("/state/state/nova.sqlite-wal"))).toBe(
             false,
           );
 
@@ -988,25 +985,25 @@ describe("createBackupArchive", () => {
             count: 1,
           });
         } finally {
-          closeOpenClawStateDatabase();
+          closeNovaStateDatabase();
         }
       },
     );
   });
 
   it("rejects stale secondary indexes before creating a backup archive", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-unsafe-index-",
+        prefix: "nova-backup-unsafe-index-",
         scenario: "minimal",
       },
       async (state) => {
         const outputDir = state.path("backups");
         await fs.mkdir(outputDir, { recursive: true });
-        openOpenClawStateDatabase({ env: state.env });
-        closeOpenClawStateDatabase();
-        createUnsafeIndexDrift(resolveOpenClawStateSqlitePath(state.env));
+        openNovaStateDatabase({ env: state.env });
+        closeNovaStateDatabase();
+        createUnsafeIndexDrift(resolveNovaStateSqlitePath(state.env));
 
         await expect(
           createBackupArchive({
@@ -1023,20 +1020,20 @@ describe("createBackupArchive", () => {
   });
 
   it("rejects foreign-key violations before creating a backup archive", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-foreign-key-",
+        prefix: "nova-backup-foreign-key-",
         scenario: "minimal",
       },
       async (state) => {
         const outputDir = state.path("backups");
         await fs.mkdir(outputDir, { recursive: true });
-        openOpenClawStateDatabase({ env: state.env });
-        closeOpenClawStateDatabase();
+        openNovaStateDatabase({ env: state.env });
+        closeNovaStateDatabase();
 
         const sqlite = requireNodeSqlite();
-        const database = new sqlite.DatabaseSync(resolveOpenClawStateSqlitePath(state.env));
+        const database = new sqlite.DatabaseSync(resolveNovaStateSqlitePath(state.env));
         try {
           database.exec("PRAGMA foreign_keys = OFF;");
           database
@@ -1065,10 +1062,10 @@ describe("createBackupArchive", () => {
   });
 
   it("snapshots per-agent SQLite auth stores without deleted secret pages", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-agent-sqlite-",
+        prefix: "nova-backup-agent-sqlite-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1090,9 +1087,9 @@ describe("createBackupArchive", () => {
           state.agentDir(),
           { syncExternalCli: false },
         );
-        closeOpenClawAgentDatabasesForTest();
+        closeNovaAgentDatabasesForTest();
         const sqlite = requireNodeSqlite();
-        const liveDbPath = path.join(state.agentDir(), "openclaw-agent.sqlite");
+        const liveDbPath = path.join(state.agentDir(), "nova-agent.sqlite");
         const deletedSecretMarker = "NOVA_DELETED_SECRET_PAGE_MARKER";
         const deletedSecret = `${deletedSecretMarker}-${"x".repeat(16_384)}`;
         const liveDb = new sqlite.DatabaseSync(liveDbPath);
@@ -1128,13 +1125,11 @@ describe("createBackupArchive", () => {
         });
         const entries = await listArchiveEntries(result.archivePath);
         const archivedDbEntry = entries.find((entry) =>
-          entry.endsWith("/state/agents/main/agent/openclaw-agent.sqlite"),
+          entry.endsWith("/state/agents/main/agent/nova-agent.sqlite"),
         );
         expect(archivedDbEntry).toBeDefined();
         expect(
-          entries.some((entry) =>
-            entry.endsWith("/state/agents/main/agent/openclaw-agent.sqlite-wal"),
-          ),
+          entries.some((entry) => entry.endsWith("/state/agents/main/agent/nova-agent.sqlite-wal")),
         ).toBe(false);
 
         await tar.x({ file: result.archivePath, gzip: true, cwd: extractDir });
@@ -1174,16 +1169,16 @@ describe("createBackupArchive", () => {
   });
 
   it("snapshots and verifies a canonical agent database when the agent id is node_modules", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-agent-node-modules-",
+        prefix: "nova-backup-agent-node-modules-",
         scenario: "minimal",
       },
       async (state) => {
         const outputDir = state.path("backups");
         const extractDir = state.path("extract");
-        const dbPath = state.statePath("agents", "node_modules", "agent", "openclaw-agent.sqlite");
+        const dbPath = state.statePath("agents", "node_modules", "agent", "nova-agent.sqlite");
         await fs.mkdir(path.dirname(dbPath), { recursive: true });
         await fs.mkdir(outputDir, { recursive: true });
         await fs.mkdir(extractDir, { recursive: true });
@@ -1211,12 +1206,12 @@ describe("createBackupArchive", () => {
           });
           const entries = await listArchiveEntries(result.archivePath);
           const archivedDbEntry = entries.find((entry) =>
-            entry.endsWith("/state/agents/node_modules/agent/openclaw-agent.sqlite"),
+            entry.endsWith("/state/agents/node_modules/agent/nova-agent.sqlite"),
           );
           expect(archivedDbEntry).toBeDefined();
           expect(
             entries.some((entry) =>
-              entry.endsWith("/state/agents/node_modules/agent/openclaw-agent.sqlite-wal"),
+              entry.endsWith("/state/agents/node_modules/agent/nova-agent.sqlite-wal"),
             ),
           ).toBe(false);
 
@@ -1244,10 +1239,10 @@ describe("createBackupArchive", () => {
   });
 
   it("snapshots nested live SQLite databases with transaction continuity", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-nested-sqlite-",
+        prefix: "nova-backup-nested-sqlite-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1351,10 +1346,10 @@ describe("createBackupArchive", () => {
   });
 
   it("fails closed when a plugin SQLite schema cannot be compacted safely", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-plugin-capability-",
+        prefix: "nova-backup-plugin-capability-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1384,10 +1379,10 @@ describe("createBackupArchive", () => {
   });
 
   it("scrubs deleted plugin SQLite bytes from archive snapshots", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-plugin-deleted-bytes-",
+        prefix: "nova-backup-plugin-deleted-bytes-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1435,10 +1430,10 @@ describe("createBackupArchive", () => {
   });
 
   it("fails instead of raw-copying malformed nested SQLite databases", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-malformed-sqlite-",
+        prefix: "nova-backup-malformed-sqlite-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1462,10 +1457,10 @@ describe("createBackupArchive", () => {
   it.each(["late.sqlite", "late.sqlite-wal"])(
     "fails when SQLite-looking state appears after snapshot discovery: %s",
     async (lateName) => {
-      await withOpenClawTestState(
+      await withNovaTestState(
         {
           layout: "state-only",
-          prefix: "openclaw-backup-late-sqlite-",
+          prefix: "nova-backup-late-sqlite-",
           scenario: "minimal",
         },
         async (state) => {
@@ -1510,10 +1505,10 @@ describe("createBackupArchive", () => {
   );
 
   it("omits pre-existing orphan SQLite sidecars without failing backup", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-orphan-sqlite-sidecars-",
+        prefix: "nova-backup-orphan-sqlite-sidecars-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1544,10 +1539,10 @@ describe("createBackupArchive", () => {
   });
 
   it("omits transient memory reindex databases and sidecars", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-memory-reindex-lock-",
+        prefix: "nova-backup-memory-reindex-lock-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1597,10 +1592,10 @@ describe("createBackupArchive", () => {
       return;
     }
 
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-symlinked-sqlite-",
+        prefix: "nova-backup-symlinked-sqlite-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1634,17 +1629,17 @@ describe("createBackupArchive", () => {
       return;
     }
 
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-global-sqlite-symlink-",
+        prefix: "nova-backup-global-sqlite-symlink-",
         scenario: "minimal",
       },
       async (state) => {
         const outputDir = state.path("backups");
         const extractDir = state.path("extract");
         const backingDbPath = state.statePath("state", "backing-global.sqlite");
-        const linkedDbPath = state.statePath("state", "openclaw.sqlite");
+        const linkedDbPath = state.statePath("state", "nova.sqlite");
         const hardlinkedDbPath = state.statePath("state", "hardlinked-global.sqlite");
         await state.writeConfig({
           agents: {
@@ -1713,7 +1708,7 @@ describe("createBackupArchive", () => {
           const entries = await listArchiveEntryDetails(result.archivePath);
           const archivedDbEntries = entries.filter(
             (entry) =>
-              entry.path.endsWith("/state/state/openclaw.sqlite") ||
+              entry.path.endsWith("/state/state/nova.sqlite") ||
               entry.path.endsWith("/state/state/backing-global.sqlite") ||
               entry.path.endsWith("/state/state/hardlinked-global.sqlite"),
           );
@@ -1767,10 +1762,10 @@ describe("createBackupArchive", () => {
       return;
     }
 
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-agent-sqlite-alias-",
+        prefix: "nova-backup-agent-sqlite-alias-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1778,7 +1773,7 @@ describe("createBackupArchive", () => {
         const extractDir = state.path("extract");
         const agentDir = state.statePath("agents", "main", "agent");
         const backingDbPath = path.join(agentDir, "backing-agent.sqlite");
-        const linkedDbPath = path.join(agentDir, "openclaw-agent.sqlite");
+        const linkedDbPath = path.join(agentDir, "nova-agent.sqlite");
         const hardlinkedDbPath = state.statePath("plugins", "dedicated", "agent-alias.sqlite");
         await fs.mkdir(agentDir, { recursive: true });
         await fs.mkdir(path.dirname(hardlinkedDbPath), { recursive: true });
@@ -1821,7 +1816,7 @@ describe("createBackupArchive", () => {
           const entries = await listArchiveEntryDetails(result.archivePath);
           const archivedDbEntries = entries.filter(
             (entry) =>
-              entry.path.endsWith("/state/agents/main/agent/openclaw-agent.sqlite") ||
+              entry.path.endsWith("/state/agents/main/agent/nova-agent.sqlite") ||
               entry.path.endsWith("/state/agents/main/agent/backing-agent.sqlite") ||
               entry.path.endsWith("/state/plugins/dedicated/agent-alias.sqlite"),
           );
@@ -1863,15 +1858,15 @@ describe("createBackupArchive", () => {
   });
 
   it("fails when the canonical global SQLite path is not a file", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-global-sqlite-directory-",
+        prefix: "nova-backup-global-sqlite-directory-",
         scenario: "minimal",
       },
       async (state) => {
         const outputDir = state.path("backups");
-        const globalDbPath = state.statePath("state", "openclaw.sqlite");
+        const globalDbPath = state.statePath("state", "nova.sqlite");
         await fs.mkdir(globalDbPath, { recursive: true });
         await fs.mkdir(outputDir, { recursive: true });
 
@@ -1888,10 +1883,10 @@ describe("createBackupArchive", () => {
   });
 
   it("omits reinstallable runtime trees and plugin dependencies while keeping plugin files", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-plugin-deps-",
+        prefix: "nova-backup-plugin-deps-",
         scenario: "minimal",
       },
       async (state) => {
@@ -1914,7 +1909,7 @@ describe("createBackupArchive", () => {
           );
         }
         await fs.writeFile(
-          path.join(stateDir, "extensions", "demo", "openclaw.plugin.json"),
+          path.join(stateDir, "extensions", "demo", "nova.plugin.json"),
           '{"id":"demo"}\n',
           "utf8",
         );
@@ -1958,7 +1953,7 @@ describe("createBackupArchive", () => {
         const entries = await listArchiveEntries(result.archivePath);
 
         const entrySuffixes = entries.map((entry) => entry.replace(/^.*\/state\//, "/state/"));
-        expect(entrySuffixes).toContain("/state/extensions/demo/openclaw.plugin.json");
+        expect(entrySuffixes).toContain("/state/extensions/demo/nova.plugin.json");
         expect(entrySuffixes).toContain("/state/extensions/demo/src/index.js");
         expect(entrySuffixes).toContain("/state/node_modules/root-dep/index.js");
         expect(entrySuffixes).toContain("/state/node_modules/root-dep/fixture.sqlite");
@@ -1984,18 +1979,18 @@ describe("createBackupArchive", () => {
   });
 
   it("preserves configured state paths nested under managed runtime roots", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-managed-root-workspace-",
+        prefix: "nova-backup-managed-root-workspace-",
         scenario: "minimal",
         env: { NOVA_OAUTH_DIR: undefined },
       },
       async (state) => {
         const stateDir = state.stateDir;
         const workspaceDir = path.join(stateDir, "dev", "workspace");
-        const runtimeDir = path.join(stateDir, "dev", "openclaw");
-        const configPath = path.join(stateDir, "git", "config", "openclaw.json");
+        const runtimeDir = path.join(stateDir, "dev", "nova");
+        const configPath = path.join(stateDir, "git", "config", "nova.json");
         const oauthDir = path.join(stateDir, "tools", "oauth");
         const toolRuntimeDir = path.join(stateDir, "tools", "runtime");
         const workspaceDbPath = path.join(workspaceDir, "workspace.sqlite");
@@ -2045,13 +2040,11 @@ describe("createBackupArchive", () => {
         expect(
           entries.some((entry) => entry.endsWith("/state/dev/workspace/workspace.sqlite")),
         ).toBe(true);
-        expect(entries.some((entry) => entry.endsWith("/state/git/config/openclaw.json"))).toBe(
-          true,
-        );
+        expect(entries.some((entry) => entry.endsWith("/state/git/config/nova.json"))).toBe(true);
         expect(entries.some((entry) => entry.endsWith("/state/tools/oauth/credentials.json"))).toBe(
           true,
         );
-        expect(entries.some((entry) => entry.includes("/state/dev/openclaw/"))).toBe(false);
+        expect(entries.some((entry) => entry.includes("/state/dev/nova/"))).toBe(false);
         expect(entries.some((entry) => entry.includes("/state/tools/runtime/"))).toBe(false);
 
         const runtime: RuntimeEnv = { log: vi.fn(), error: vi.fn(), exit: vi.fn() };
@@ -2063,16 +2056,16 @@ describe("createBackupArchive", () => {
   });
 
   it("dereferences hardlinks instead of emitting restore-hostile Link entries", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-hardlink-",
+        prefix: "nova-backup-hardlink-",
         scenario: "minimal",
       },
       async (state) => {
         const stateDir = state.stateDir;
         const outputDir = state.path("backups");
-        const sourcePath = path.join(stateDir, "workspace-adx", "openclaw-src", "node_modules");
+        const sourcePath = path.join(stateDir, "workspace-adx", "nova-src", "node_modules");
         const targetPath = path.join(sourcePath, "esbuild", "bin", "esbuild");
         const hardlinkPath = path.join(sourcePath, "@esbuild", "darwin-arm64", "bin", "esbuild");
         await fs.mkdir(path.dirname(targetPath), { recursive: true });
@@ -2102,10 +2095,10 @@ describe("createBackupArchive", () => {
   });
 
   it("does not duplicate the root manifest when the system tempdir lives inside the state dir", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-tmp-overlap-",
+        prefix: "nova-backup-tmp-overlap-",
         scenario: "minimal",
       },
       async (state) => {
@@ -2139,10 +2132,10 @@ describe("createBackupArchive", () => {
   });
 
   it("does not duplicate the root manifest when the system tempdir is the state dir itself", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-backup-tmp-equals-state-",
+        prefix: "nova-backup-tmp-equals-state-",
         scenario: "minimal",
       },
       async (state) => {
@@ -2170,7 +2163,7 @@ describe("createBackupArchive", () => {
             entry.endsWith("/state/plugins/dedicated/empty.sqlite"),
           );
           expect(emptyDbEntries).toHaveLength(1);
-          expect(entries.some((entry) => entry.includes("/openclaw-state-db-"))).toBe(false);
+          expect(entries.some((entry) => entry.includes("/nova-state-db-"))).toBe(false);
 
           await tar.x({ file: result.archivePath, gzip: true, cwd: extractDir });
           const sqlite = requireNodeSqlite();
@@ -2214,10 +2207,10 @@ describe("createBackupArchive", () => {
             )
         : undefined;
       try {
-        await withOpenClawTestState(
+        await withNovaTestState(
           {
             layout: "state-only",
-            prefix: "openclaw-backup-mode-",
+            prefix: "nova-backup-mode-",
             scenario: "minimal",
           },
           async (state) => {

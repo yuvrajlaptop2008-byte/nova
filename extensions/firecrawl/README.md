@@ -1,12 +1,12 @@
-# OpenClaw Firecrawl Plugin
+# Nova Firecrawl Plugin
 
-Official OpenClaw plugin for Firecrawl.
+Official Nova plugin for Firecrawl.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/firecrawl-plugin
-openclaw gateway restart
+nova plugins install @nova/firecrawl-plugin
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/tools/firecrawl> for setup and configuration.
+See <https://docs.nova.ai/tools/firecrawl> for setup and configuration.

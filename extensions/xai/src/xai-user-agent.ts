@@ -1,8 +1,8 @@
-// Shared User-Agent for xAI sidecar HTTP/WS requests; mirrors `formatOpenClawUserAgent`.
+// Shared User-Agent for xAI sidecar HTTP/WS requests; mirrors `formatNovaUserAgent`.
 
-import { NOVA_VERSION as PACKAGE_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { NOVA_VERSION as PACKAGE_VERSION } from "nova/plugin-sdk/agent-harness-runtime";
 
-const ORIGINATOR = "openclaw";
+const ORIGINATOR = "nova";
 const UNUSABLE_PACKAGE_VERSION = "0.0.0";
 const FALLBACK_VERSION = "unknown";
 
@@ -36,7 +36,7 @@ const XAI_NATIVE_API_HOSTS = new Set(["api.x.ai"]);
 
 // Returns a `User-Agent` header entry only when the resolved baseUrl points
 // at a verified xAI-native API host. User-configured proxy baseUrls produce
-// an empty record so the openclaw identity is not forwarded to the proxy.
+// an empty record so the nova identity is not forwarded to the proxy.
 export function xaiUserAgentHeaderFor(baseUrl: string | undefined): Record<string, string> {
   if (!baseUrl) {
     return {};

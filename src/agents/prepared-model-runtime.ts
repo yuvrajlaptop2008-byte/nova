@@ -1,5 +1,5 @@
 /** Lifecycle-owned auth/model discovery snapshots for agent runs. */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { registerRuntimeAuthProfileStoreMutationListener } from "./auth-profiles/runtime-snapshots.js";
 import {
@@ -466,7 +466,7 @@ export function rejectPendingPreparedModelRuntimeReplacement(
 
 /** Rebuilds active owners after config/plugin runtime publication. */
 async function refreshPreparedModelRuntimeSnapshotsNow(
-  config: OpenClawConfig,
+  config: NovaConfig,
   options: { gatewayLifecycle?: boolean; defaultWorkspaceDir?: string } = {},
 ): Promise<void> {
   if (options.gatewayLifecycle) {
@@ -583,7 +583,7 @@ async function refreshPreparedModelRuntimeSnapshotsNow(
 
 /** Serializes config/plugin publications so only the latest completed refresh retires owners. */
 export function refreshPreparedModelRuntimeSnapshots(
-  config: OpenClawConfig,
+  config: NovaConfig,
   options: { gatewayLifecycle?: boolean; defaultWorkspaceDir?: string } = {},
 ): Promise<void> {
   // Stale synchronously. Queued publication must never leave the prior generation request-visible.
@@ -736,11 +736,10 @@ function resetPreparedModelRuntimeSnapshotsForTest(): void {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.preparedModelRuntimeTestApi")] =
-    {
-      resetPreparedModelRuntimeSnapshotsForTest,
-      setModelRuntimeBuildTimeoutMsForTest: (timeoutMs: number) => {
-        modelRuntimeBuildTimeoutMs = timeoutMs;
-      },
-    };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.preparedModelRuntimeTestApi")] = {
+    resetPreparedModelRuntimeSnapshotsForTest,
+    setModelRuntimeBuildTimeoutMsForTest: (timeoutMs: number) => {
+      modelRuntimeBuildTimeoutMs = timeoutMs;
+    },
+  };
 }

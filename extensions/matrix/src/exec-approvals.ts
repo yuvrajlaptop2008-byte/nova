@@ -1,21 +1,18 @@
 // Matrix plugin module implements exec approvals behavior.
-import { resolveApprovalApprovers } from "openclaw/plugin-sdk/approval-auth-runtime";
+import { resolveApprovalApprovers } from "nova/plugin-sdk/approval-auth-runtime";
 import {
   createChannelExecApprovalProfile,
   getExecApprovalReplyMetadata,
   isChannelExecApprovalClientEnabledFromConfig,
   isChannelExecApprovalTargetRecipient,
   matchesApprovalRequestFilters,
-} from "openclaw/plugin-sdk/approval-client-runtime";
-import { resolveApprovalRequestChannelAccountId } from "openclaw/plugin-sdk/approval-native-runtime";
-import type {
-  ExecApprovalRequest,
-  PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import { normalizeAccountId } from "openclaw/plugin-sdk/routing";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/approval-client-runtime";
+import { resolveApprovalRequestChannelAccountId } from "nova/plugin-sdk/approval-native-runtime";
+import type { ExecApprovalRequest, PluginApprovalRequest } from "nova/plugin-sdk/approval-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
+import { normalizeAccountId } from "nova/plugin-sdk/routing";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import { getMatrixApprovalAuthApprovers } from "./approval-auth.js";
 import { normalizeMatrixApproverId } from "./approval-ids.js";
 import { listMatrixAccountIds, resolveMatrixAccount } from "./matrix/accounts.js";
@@ -29,10 +26,7 @@ function normalizeMatrixExecApproverId(value: string | number): string | undefin
   return normalized === "*" ? undefined : normalized;
 }
 
-function resolveMatrixExecApprovalConfig(params: {
-  cfg: OpenClawConfig;
-  accountId?: string | null;
-}) {
+function resolveMatrixExecApprovalConfig(params: { cfg: NovaConfig; accountId?: string | null }) {
   const account = resolveMatrixAccount(params);
   const config = account.config.execApprovals;
   if (!config) {
@@ -45,7 +39,7 @@ function resolveMatrixExecApprovalConfig(params: {
 }
 
 function countMatrixExecApprovalEligibleAccounts(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   request: ApprovalRequest;
   approvalKind: ApprovalKind;
 }): number {
@@ -86,7 +80,7 @@ function countMatrixExecApprovalEligibleAccounts(params: {
 }
 
 function matchesMatrixRequestAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   request: ApprovalRequest;
   approvalKind: ApprovalKind;
@@ -116,7 +110,7 @@ function matchesMatrixRequestAccount(params: {
 }
 
 export function getMatrixExecApprovalApprovers(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): string[] {
   const account = resolveMatrixAccount(params).config;
@@ -128,7 +122,7 @@ export function getMatrixExecApprovalApprovers(params: {
 }
 
 export function getMatrixApprovalApprovers(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   approvalKind: ApprovalKind;
 }): string[] {
@@ -142,7 +136,7 @@ export function getMatrixApprovalApprovers(params: {
 }
 
 function isMatrixExecApprovalTargetRecipient(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   senderId?: string | null;
   accountId?: string | null;
 }): boolean {
@@ -172,7 +166,7 @@ export const isMatrixExecApprovalAuthorizedSender = matrixExecApprovalProfile.is
 export const resolveMatrixExecApprovalTarget = matrixExecApprovalProfile.resolveTarget;
 
 export function isMatrixApprovalClientEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   approvalKind: ApprovalKind;
 }): boolean {
@@ -187,7 +181,7 @@ export function isMatrixApprovalClientEnabled(params: {
 }
 
 export function isMatrixAnyApprovalClientEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): boolean {
   return (
@@ -203,7 +197,7 @@ export function isMatrixAnyApprovalClientEnabled(params: {
 }
 
 export function shouldHandleMatrixApprovalRequest(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   approvalKind: ApprovalKind;
   request: ApprovalRequest;
@@ -267,7 +261,7 @@ function buildFilterCheckRequest(params: {
 }
 
 export function shouldSuppressLocalMatrixExecApprovalPrompt(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   payload: ReplyPayload;
 }): boolean {

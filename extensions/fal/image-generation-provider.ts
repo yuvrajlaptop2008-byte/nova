@@ -3,12 +3,9 @@ import type {
   GeneratedImageAsset,
   ImageGenerationProvider,
   ImageGenerationSourceImage,
-} from "openclaw/plugin-sdk/image-generation";
-import {
-  imageFileExtensionForMimeType,
-  toImageDataUrl,
-} from "openclaw/plugin-sdk/image-generation";
-import { isProviderApiKeyConfigured } from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/image-generation";
+import { imageFileExtensionForMimeType, toImageDataUrl } from "nova/plugin-sdk/image-generation";
+import { isProviderApiKeyConfigured } from "nova/plugin-sdk/provider-auth";
 import {
   assertOkOrThrowHttpError,
   assertOkOrThrowProviderError,
@@ -16,20 +13,20 @@ import {
   readProviderJsonResponse,
   resolveProviderOperationTimeoutMs,
   type ProviderOperationDeadline,
-} from "openclaw/plugin-sdk/provider-http";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
+} from "nova/plugin-sdk/provider-http";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
 import {
   buildHostnameAllowlistPolicyFromSuffixAllowlist,
   fetchWithSsrFGuard,
   mergeSsrFPolicies,
   type SsrFPolicy,
   ssrfPolicyFromDangerouslyAllowPrivateNetwork,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/ssrf-runtime";
 import {
   isRecord,
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveFalHttpRequestConfig } from "./http-config.js";
 
 const DEFAULT_FAL_IMAGE_MODEL = "fal-ai/flux/dev";
@@ -160,7 +157,7 @@ function setFalFetchGuardForTesting(impl: typeof fetchWithSsrFGuard | null): voi
 }
 
 if (process.env.VITEST === "true") {
-  const key = Symbol.for("openclaw.falTestApi");
+  const key = Symbol.for("nova.falTestApi");
   const api = (Reflect.get(globalThis, key) as Record<string, unknown> | undefined) ?? {};
   Reflect.set(globalThis, key, { ...api, setImageFetchGuard: setFalFetchGuardForTesting });
 }

@@ -5,8 +5,8 @@ import {
   loadTranscriptEventsSync,
   parseSqliteSessionFileMarker,
   upsertSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { appendSessionTranscriptMessageByIdentity } from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/session-store-runtime";
+import { appendSessionTranscriptMessageByIdentity } from "nova/plugin-sdk/session-transcript-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createSession,
@@ -293,7 +293,7 @@ describe("qa suite runtime agent session helpers", () => {
     ]);
 
     await expect(
-      fs.stat(path.join(tempRoot, "state", "agents", "qa", "agent", "openclaw-agent.sqlite")),
+      fs.stat(path.join(tempRoot, "state", "agents", "qa", "agent", "nova-agent.sqlite")),
     ).resolves.toBeDefined();
     await expect(
       fs.stat(path.join(tempRoot, "state", "agents", "qa", "sessions", "sessions.json")),
@@ -452,7 +452,7 @@ describe("qa suite runtime agent session helpers", () => {
       message: {
         role: "assistant",
         content: "Codex plan:\n- inspect\n- build",
-        __openclaw: { mirrorIdentity: "turn-123:plan" },
+        __nova: { mirrorIdentity: "turn-123:plan" },
       },
     });
 
@@ -561,7 +561,7 @@ describe("qa suite runtime agent session helpers", () => {
       {
         role: "assistant",
         content: "same visible reply",
-        __openclaw: { mirrorIdentity: "old-turn:assistant" },
+        __nova: { mirrorIdentity: "old-turn:assistant" },
       },
     ]) {
       await appendQaTranscriptMessage({ tempRoot, sessionKey, sessionId, message });
@@ -577,7 +577,7 @@ describe("qa suite runtime agent session helpers", () => {
       message: {
         role: "assistant",
         content: "same visible reply",
-        __openclaw: { mirrorIdentity: "current-turn:assistant" },
+        __nova: { mirrorIdentity: "current-turn:assistant" },
       },
     });
 

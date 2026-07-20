@@ -5,12 +5,12 @@ import { FILE_TYPE_SNIFF_MAX_BYTES } from "@nova/media-core/mime";
 import {
   createPluginRegistryFixture,
   registerTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "nova/plugin-sdk/plugin-test-contracts";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionEntry } from "../../config/sessions.js";
 import { replaceSessionEntry } from "../../config/sessions/session-accessor.js";
 import { withTempConfig } from "../../gateway/test-temp-config.js";
-import { resolvePreferredOpenClawTmpDir } from "../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../../infra/tmp-nova-dir.js";
 import { createOutboundTestPlugin, createTestRegistry } from "../../test-utils/channel-plugins.js";
 import { sendPluginSessionAttachment } from "../host-hook-attachments.js";
 import { clearPluginLoaderCache } from "../loader.test-fixtures.js";
@@ -28,7 +28,7 @@ import {
 } from "../runtime.js";
 import type { PluginRuntime } from "../runtime/types.js";
 import { createPluginRecord } from "../status.test-helpers.js";
-import type { OpenClawPluginApi } from "../types.js";
+import type { NovaPluginApi } from "../types.js";
 
 const workflowMocks = vi.hoisted(() => ({
   getChannelPlugin: vi.fn(),
@@ -69,7 +69,7 @@ async function withSessionStore(
   run: (params: { stateDir: string; storePath: string; filePath: string }) => Promise<void>,
 ) {
   const stateDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-session-attachments-"),
+    path.join(resolvePreferredNovaTmpDir(), "nova-session-attachments-"),
   );
   const storePath = path.join(stateDir, "sessions.json");
   const filePath = path.join(stateDir, "x.txt");
@@ -150,7 +150,7 @@ describe("plugin session attachments", () => {
     releasePinnedPluginSessionExtensionRegistry();
     resetPluginRuntimeStateForTest();
     clearPluginLoaderCache();
-    delete (globalThis as { proofAttachmentApi?: OpenClawPluginApi }).proofAttachmentApi;
+    delete (globalThis as { proofAttachmentApi?: NovaPluginApi }).proofAttachmentApi;
     delete (globalThis as { proofAttachmentLog?: unknown[] }).proofAttachmentLog;
   });
 
@@ -496,7 +496,7 @@ describe("plugin session attachments", () => {
       mockSuccessfulAttachmentDelivery();
 
       const { config, registry } = createPluginRegistryFixture({ session: { store: storePath } });
-      let capturedApi: OpenClawPluginApi | undefined;
+      let capturedApi: NovaPluginApi | undefined;
       registerTestPlugin({
         registry,
         config,
@@ -555,7 +555,7 @@ describe("plugin session attachments", () => {
           },
         } as unknown as PluginRuntime,
       });
-      let capturedApi: OpenClawPluginApi | undefined;
+      let capturedApi: NovaPluginApi | undefined;
       registerTestPlugin({
         registry,
         config: registrationConfig,
@@ -595,7 +595,7 @@ describe("plugin session attachments", () => {
           },
         } as unknown as PluginRuntime,
       });
-      let capturedApi: OpenClawPluginApi | undefined;
+      let capturedApi: NovaPluginApi | undefined;
       registerTestPlugin({
         registry,
         config: registrationConfig,

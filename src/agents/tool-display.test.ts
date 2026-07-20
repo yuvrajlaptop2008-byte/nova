@@ -28,10 +28,10 @@ describe("tool display details", () => {
   it("summarizes tool-search code targets from described tool ids", () => {
     expect(
       resolveToolSearchCodeDisplayTarget({
-        code: "const tool = await openclaw.tools.describe('openclaw:core:exec'); return await openclaw.tools.call(tool.id, { command: 'echo hi' });",
+        code: "const tool = await nova.tools.describe('nova:core:exec'); return await nova.tools.call(tool.id, { command: 'echo hi' });",
       }),
     ).toEqual({
-      toolName: "openclaw:core:exec",
+      toolName: "nova:core:exec",
       displayToolName: "exec",
       displayArgs: { command: "echo hi" },
       detail: "echo hi",
@@ -42,10 +42,10 @@ describe("tool display details", () => {
   it("normalizes direct tool-search catalog ids to native display names and args", () => {
     expect(
       resolveToolSearchCodeDisplayTarget({
-        code: 'return await openclaw.tools.call("openclaw:core:exec", { command: "echo hi" });',
+        code: 'return await nova.tools.call("nova:core:exec", { command: "echo hi" });',
       }),
     ).toEqual({
-      toolName: "openclaw:core:exec",
+      toolName: "nova:core:exec",
       displayToolName: "exec",
       displayArgs: { command: "echo hi" },
       detail: "echo hi",
@@ -56,7 +56,7 @@ describe("tool display details", () => {
   it("preserves JS numeric literals in tool-search call args", () => {
     expect(
       resolveToolSearchCodeDisplayTarget({
-        code: 'return await openclaw.tools.call("web_search", { query: "Nova", count: 1e3, limit: +3, threshold: .5 });',
+        code: 'return await nova.tools.call("web_search", { query: "Nova", count: 1e3, limit: +3, threshold: .5 });',
       })?.displayArgs,
     ).toEqual({
       query: "Nova",
@@ -186,14 +186,12 @@ describe("tool display details", () => {
           name: "web_search",
           args: {
             objective: "Find the Nova repository on GitHub",
-            search_queries: ["openclaw github", "openclaw repository"],
+            search_queries: ["nova github", "nova repository"],
             count: 5,
           },
         }),
       ),
-    ).toBe(
-      'for "Find the Nova repository on GitHub", "openclaw github", "openclaw repository" (top 5)',
-    );
+    ).toBe('for "Find the Nova repository on GitHub", "nova github", "nova repository" (top 5)');
   });
 
   it("summarizes exec commands with context", () => {
@@ -202,8 +200,8 @@ describe("tool display details", () => {
         name: "exec",
         args: {
           command:
-            "set -euo pipefail\ngit -C /Users/adityasingh/.openclaw/workspace status --short | head -n 3",
-          workdir: "/Users/adityasingh/.openclaw/workspace",
+            "set -euo pipefail\ngit -C /Users/adityasingh/.nova/workspace status --short | head -n 3",
+          workdir: "/Users/adityasingh/.nova/workspace",
         },
       }),
     );
@@ -252,7 +250,7 @@ describe("tool display details", () => {
       formatToolDetail(
         resolveToolDisplay({
           name: "bash",
-          args: { command: "git fetch", workdir: "/Users/peter/mantis-workspace/openclaw" },
+          args: { command: "git fetch", workdir: "/Users/peter/mantis-workspace/nova" },
           detailMode: "explain",
         }),
       ),
@@ -262,7 +260,7 @@ describe("tool display details", () => {
       formatToolDetail(
         resolveToolDisplay({
           name: "bash",
-          args: { command: "git status", workdir: "/Users/peter/Projects/openclaw" },
+          args: { command: "git status", workdir: "/Users/peter/Projects/nova" },
           detailMode: "explain",
         }),
       ),
@@ -274,7 +272,7 @@ describe("tool display details", () => {
           name: "bash",
           args: {
             command: "command -v discrawl",
-            workdir: "/root/.openclaw/sandboxes/agent-clawsweeper-sandbox-discor-766423d0",
+            workdir: "/root/.nova/sandboxes/agent-clawsweeper-sandbox-discor-766423d0",
           },
           detailMode: "explain",
         }),
@@ -287,7 +285,7 @@ describe("tool display details", () => {
       formatToolSummary(
         resolveToolDisplay({
           name: "bash",
-          args: { command: "git fetch", workdir: "/Users/peter/mantis-workspace/openclaw" },
+          args: { command: "git fetch", workdir: "/Users/peter/mantis-workspace/nova" },
           detailMode: "explain",
         }),
       ),
@@ -453,7 +451,7 @@ describe("tool display details", () => {
         name: "exec",
         args: {
           command: "python3 <<PY\nprint('x')\nPY",
-          workdir: "/Users/adityasingh/.openclaw/workspace",
+          workdir: "/Users/adityasingh/.nova/workspace",
         },
       }),
     );
@@ -462,7 +460,7 @@ describe("tool display details", () => {
         name: "exec",
         args: {
           command: "node --check /tmp/test.js",
-          workdir: "/Users/adityasingh/.openclaw/workspace",
+          workdir: "/Users/adityasingh/.nova/workspace",
         },
       }),
     );
@@ -471,7 +469,7 @@ describe("tool display details", () => {
         name: "exec",
         args: {
           command: "node -c /tmp/test.js",
-          workdir: "/Users/adityasingh/.openclaw/workspace",
+          workdir: "/Users/adityasingh/.nova/workspace",
         },
       }),
     );
@@ -495,7 +493,7 @@ describe("tool display details", () => {
             "YAML",
             "PY",
           ].join("\n"),
-          workdir: "/Users/example/.openclaw/workspace",
+          workdir: "/Users/example/.nova/workspace",
         },
         detailMode: "explain",
       }),
@@ -539,8 +537,8 @@ describe("tool display details", () => {
   it("keeps heredoc body separators out of top-level stage splitting", () => {
     const stages = splitTopLevelStages(
       [
-        "mkdir -p .openclaw/tmp/farm-notices",
-        "cat > .openclaw/tmp/farm-notices/ventura.txt <<'EOF'",
+        "mkdir -p .nova/tmp/farm-notices",
+        "cat > .nova/tmp/farm-notices/ventura.txt <<'EOF'",
         "Buenos dias equipo; se ajusta la orden A1251718:",
         "sc-carwhi(100) && sc-cardoc(100) || sc-carwhi(100)",
         "Gracias.",
@@ -551,8 +549,8 @@ describe("tool display details", () => {
 
     expect(stages).toEqual([
       [
-        "mkdir -p .openclaw/tmp/farm-notices",
-        "cat > .openclaw/tmp/farm-notices/ventura.txt <<'EOF'",
+        "mkdir -p .nova/tmp/farm-notices",
+        "cat > .nova/tmp/farm-notices/ventura.txt <<'EOF'",
         "Buenos dias equipo; se ajusta la orden A1251718:",
         "sc-carwhi(100) && sc-cardoc(100) || sc-carwhi(100)",
         "Gracias.",
@@ -661,7 +659,7 @@ describe("tool display details", () => {
         name: "exec",
         args: {
           command: [
-            "cat > .openclaw/tmp/farm-notices/ventura.txt <<-'EOF'",
+            "cat > .nova/tmp/farm-notices/ventura.txt <<-'EOF'",
             "\tBuenos dias equipo; se ajusta la orden A1251718:",
             "\tsc-carwhi(100) && sc-cardoc(100) || sc-carwhi(100)",
             "\tGracias.",

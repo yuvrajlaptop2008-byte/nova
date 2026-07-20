@@ -15,7 +15,7 @@ const {
   const nodePath = require("node:path");
   const { mkdtempSync } = require("node:fs");
   const { tmpdir } = require("node:os");
-  const baseDir = mkdtempSync(nodePath.join(tmpdir(), "openclaw-sandbox-registry-"));
+  const baseDir = mkdtempSync(nodePath.join(tmpdir(), "nova-sandbox-registry-"));
   const previousStateDir = process.env.NOVA_STATE_DIR;
   Reflect.set(process.env, "NOVA_STATE_DIR", baseDir);
 
@@ -37,7 +37,7 @@ vi.mock("./constants.js", () => ({
   SANDBOX_BROWSERS_DIR,
 }));
 
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import { deleteTestEnvValue, setTestEnvValue } from "../../test-utils/env.js";
 import { hashTextSha256 } from "./hash.js";
 import {
@@ -64,7 +64,7 @@ async function seedMalformedBrowserRegistry(payload: string) {
 }
 
 afterEach(async () => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   await fs.rm(path.join(TEST_STATE_DIR, "state"), { recursive: true, force: true });
   await fs.rm(SANDBOX_CONTAINERS_DIR, { recursive: true, force: true });
   await fs.rm(SANDBOX_BROWSERS_DIR, { recursive: true, force: true });
@@ -75,7 +75,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   await fs.rm(TEST_STATE_DIR, { recursive: true, force: true });
   if (PREVIOUS_NOVA_STATE_DIR === undefined) {
     deleteTestEnvValue("NOVA_STATE_DIR");
@@ -92,7 +92,7 @@ function browserEntry(
     sessionKey: "agent:main",
     createdAtMs: 1,
     lastUsedAtMs: 1,
-    image: "openclaw-browser:test",
+    image: "nova-browser:test",
     cdpPort: 9222,
     ...overrides,
   };
@@ -104,7 +104,7 @@ function containerEntry(overrides: Partial<SandboxRegistryEntry> = {}): SandboxR
     sessionKey: "agent:main",
     createdAtMs: 1,
     lastUsedAtMs: 1,
-    image: "openclaw-sandbox:test",
+    image: "nova-sandbox:test",
     ...overrides,
   };
 }
@@ -181,7 +181,7 @@ describe("registry race safety", () => {
     await expect(readRegistry()).resolves.toEqual({ entries: [] });
     await expect(readRegistryEntry("legacy-container")).resolves.toBeNull();
     await expect(fs.access(SANDBOX_REGISTRY_PATH)).resolves.toBeUndefined();
-    await expectPathMissing(path.join(TEST_STATE_DIR, "state", "openclaw.sqlite"));
+    await expectPathMissing(path.join(TEST_STATE_DIR, "state", "nova.sqlite"));
   });
 
   it("normalizes legacy registry entries after explicit migration", async () => {
@@ -191,7 +191,7 @@ describe("registry race safety", () => {
         sessionKey: "agent:main",
         createdAtMs: 1,
         lastUsedAtMs: 1,
-        image: "openclaw-sandbox:test",
+        image: "nova-sandbox:test",
       },
     ]);
 

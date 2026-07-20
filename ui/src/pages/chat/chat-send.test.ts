@@ -874,7 +874,7 @@ describe("refreshChatAvatar", () => {
     );
     const fetchMock = vi.fn((input: string | URL | Request) => {
       const url = requestUrl(input);
-      if (url === "/openclaw/avatar/main?meta=1") {
+      if (url === "/nova/avatar/main?meta=1") {
         return Promise.resolve({
           ok: true,
           json: async () => ({ avatarUrl: "/avatar/main" }),
@@ -891,7 +891,7 @@ describe("refreshChatAvatar", () => {
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
 
     const host = makeHost({
-      basePath: "/openclaw/",
+      basePath: "/nova/",
       sessionKey: "agent:main",
       settings: { token: "session-token" },
       password: "shared-password",
@@ -899,9 +899,7 @@ describe("refreshChatAvatar", () => {
     });
     await refreshChatAvatar(host);
 
-    expect(fetchUrl(fetchMock as unknown as MockCallSource, 0)).toBe(
-      "/openclaw/avatar/main?meta=1",
-    );
+    expect(fetchUrl(fetchMock as unknown as MockCallSource, 0)).toBe("/nova/avatar/main?meta=1");
     expect(fetchInit(fetchMock as unknown as MockCallSource, 0).method).toBe("GET");
     expect(fetchInit(fetchMock as unknown as MockCallSource, 0).headers).toEqual({
       Authorization: "Bearer device-token",
@@ -928,7 +926,7 @@ describe("refreshChatAvatar", () => {
     );
     const fetchMock = vi.fn((input: string | URL | Request) => {
       const url = requestUrl(input);
-      if (url === "/openclaw/avatar/main?meta=1") {
+      if (url === "/nova/avatar/main?meta=1") {
         return Promise.resolve({
           ok: true,
           json: async () => ({ avatarUrl: "/avatar/main" }),
@@ -945,15 +943,13 @@ describe("refreshChatAvatar", () => {
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
 
     const host = makeHost({
-      basePath: "/openclaw/",
+      basePath: "/nova/",
       sessionKey: "agent:main",
       settings: { token: "session-token" },
     });
     await refreshChatAvatar(host);
 
-    expect(fetchUrl(fetchMock as unknown as MockCallSource, 0)).toBe(
-      "/openclaw/avatar/main?meta=1",
-    );
+    expect(fetchUrl(fetchMock as unknown as MockCallSource, 0)).toBe("/nova/avatar/main?meta=1");
     expect(fetchInit(fetchMock as unknown as MockCallSource, 0).method).toBe("GET");
     expect(fetchInit(fetchMock as unknown as MockCallSource, 0).headers).toEqual({
       Authorization: "Bearer session-token",
@@ -975,10 +971,10 @@ describe("refreshChatAvatar", () => {
     });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
 
-    const host = makeHost({ basePath: "/openclaw/", sessionKey: "agent:ops:main" });
+    const host = makeHost({ basePath: "/nova/", sessionKey: "agent:ops:main" });
     await refreshChatAvatar(host);
 
-    expect(fetchUrl(fetchMock as unknown as MockCallSource, 0)).toBe("/openclaw/avatar/ops?meta=1");
+    expect(fetchUrl(fetchMock as unknown as MockCallSource, 0)).toBe("/nova/avatar/ops?meta=1");
     expect(fetchInit(fetchMock as unknown as MockCallSource, 0).method).toBe("GET");
     expect(host.chatAvatarUrl).toBeNull();
   });
@@ -4328,7 +4324,7 @@ describe("handleSendChat", () => {
     ).toEqual(["user", "assistant"]);
     expect(
       inactiveCached.filter((message) => {
-        const marker = requireRecord(message, "cached terminal transcript")["__openclaw"];
+        const marker = requireRecord(message, "cached terminal transcript")["__nova"];
         return (
           marker &&
           typeof marker === "object" &&
@@ -6259,7 +6255,7 @@ describe("handleSendChat", () => {
           messages: [
             {
               role: "user",
-              __openclaw: { idempotencyKey: "ambiguous-run:user" },
+              __nova: { idempotencyKey: "ambiguous-run:user" },
             },
           ],
           sessionInfo: row("agent:main", { hasActiveRun: false, status: "done" }),
@@ -6302,7 +6298,7 @@ describe("handleSendChat", () => {
               : [
                   {
                     role: "user",
-                    __openclaw: { idempotencyKey: "late-history-proof:user" },
+                    __nova: { idempotencyKey: "late-history-proof:user" },
                   },
                 ],
           sessionInfo: row("agent:main", { hasActiveRun: false, status: "done" }),
@@ -6404,7 +6400,7 @@ describe("handleSendChat", () => {
           messages: [
             {
               role: "user",
-              __openclaw: { idempotencyKey: "delivered-removal-failure:user" },
+              __nova: { idempotencyKey: "delivered-removal-failure:user" },
             },
           ],
           sessionInfo: row("agent:main", { hasActiveRun: false, status: "done" }),
@@ -7210,7 +7206,7 @@ describe("handleSendChat", () => {
     expect(host.chatMessages).toEqual([
       expect.objectContaining({
         role: "user",
-        __openclaw: { idempotencyKey: "completed-steer-run:user" },
+        __nova: { idempotencyKey: "completed-steer-run:user" },
       }),
     ]);
     expect(JSON.stringify(host.chatMessages[0])).toContain(original.text);
@@ -7235,7 +7231,7 @@ describe("handleSendChat", () => {
     const historyUser = {
       role: "user",
       content: [{ type: "text", text: "history-owned steer" }],
-      __openclaw: { idempotencyKey: "history-steer:user", seq: 1 },
+      __nova: { idempotencyKey: "history-steer:user", seq: 1 },
     };
     const host = makeHost({
       client: {
@@ -7277,7 +7273,7 @@ describe("handleSendChat", () => {
                   role: "user",
                   content: [{ type: "text", text: "cross-run steer" }],
                   idempotencyKey: "cross-run-steer",
-                  __openclaw: { seq: 1 },
+                  __nova: { seq: 1 },
                 },
               ],
             };
@@ -7323,7 +7319,7 @@ describe("handleSendChat", () => {
                 {
                   role: "user",
                   content: [{ type: "text", text: inflight.text }],
-                  __openclaw: { idempotencyKey: "inflight-steer:user", seq: 1 },
+                  __nova: { idempotencyKey: "inflight-steer:user", seq: 1 },
                 },
               ],
             };
@@ -7553,7 +7549,7 @@ describe("handleSendChat", () => {
     expect(host.chatMessages).toHaveLength(2);
     expect(host.chatMessages[0]).toMatchObject({
       role: "user",
-      __openclaw: { idempotencyKey: "steer-send-run:user" },
+      __nova: { idempotencyKey: "steer-send-run:user" },
     });
     expect(JSON.stringify(host.chatMessages[0])).toContain("keep this visible");
   });
@@ -7563,7 +7559,7 @@ describe("handleSendChat", () => {
       role: "assistant",
       content: [{ type: "text", text: "assistant reply for the same run" }],
       timestamp: 1,
-      __openclaw: { idempotencyKey: "steer-send-run" },
+      __nova: { idempotencyKey: "steer-send-run" },
     };
     const host = makeHost({
       chatRunId: "active-run",
@@ -7605,7 +7601,7 @@ describe("handleSendChat", () => {
     );
     expect(userTurn).toMatchObject({
       role: "user",
-      __openclaw: { idempotencyKey: "steer-send-run:user" },
+      __nova: { idempotencyKey: "steer-send-run:user" },
     });
     expect(JSON.stringify(userTurn)).toContain("user turn must still appear");
   });
@@ -7663,7 +7659,7 @@ describe("handleSendChat", () => {
     expect(host.chatQueue).toEqual([]);
     expect(host.chatMessages[0]).toMatchObject({
       role: "user",
-      __openclaw: { idempotencyKey: "steer-att-run:user" },
+      __nova: { idempotencyKey: "steer-att-run:user" },
     });
     // Inline data-URL images render as a labeled placeholder block; the point
     // is the turn materializes with content instead of vanishing.
@@ -7717,7 +7713,7 @@ describe("handleSendChat", () => {
     expect(listStoredChatOutboxes(host)).toEqual([]);
     expect(host.chatQueue).toEqual([]);
     const idempotencyKeys = host.chatMessages.map((message) => {
-      const marker = (message as { __openclaw?: { idempotencyKey?: string } })["__openclaw"];
+      const marker = (message as { __nova?: { idempotencyKey?: string } })["__nova"];
       return marker?.idempotencyKey;
     });
     expect(idempotencyKeys.slice(0, 2)).toEqual(["active-run:user", "steer-send-run:user"]);

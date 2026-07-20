@@ -1,13 +1,13 @@
 // Lobster API module exposes the plugin public contract.
-export { definePluginEntry } from "openclaw/plugin-sdk/core";
+export { definePluginEntry } from "nova/plugin-sdk/core";
 export type {
   AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
-} from "openclaw/plugin-sdk/core";
+  NovaPluginApi,
+  NovaPluginToolContext,
+  NovaPluginToolFactory,
+} from "nova/plugin-sdk/core";
 export {
   applyWindowsSpawnProgramPolicy,
   materializeWindowsSpawnProgram,
   resolveWindowsSpawnProgramCandidate,
-} from "openclaw/plugin-sdk/windows-spawn";
+} from "nova/plugin-sdk/windows-spawn";

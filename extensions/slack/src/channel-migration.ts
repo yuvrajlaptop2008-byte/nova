@@ -1,8 +1,8 @@
 // Slack plugin module implements channel migration behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { SlackChannelConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeAccountId } from "openclaw/plugin-sdk/routing";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { SlackChannelConfig } from "nova/plugin-sdk/config-contracts";
+import { normalizeAccountId } from "nova/plugin-sdk/routing";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 
 type SlackChannels = Record<string, SlackChannelConfig>;
 
@@ -15,7 +15,7 @@ type SlackChannelMigrationResult = {
 };
 
 function resolveAccountChannels(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId?: string | null,
 ): { channels?: SlackChannels } {
   if (!accountId) {
@@ -63,7 +63,7 @@ function migrateSlackChannelsInPlace(
 }
 
 export function migrateSlackChannelConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   oldChannelId: string;
   newChannelId: string;

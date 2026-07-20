@@ -45,7 +45,7 @@ import {
   formatSqliteSessionFileMarker,
   parseSqliteSessionFileMarker,
 } from "../../config/sessions/sqlite-marker.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { readSessionMessagesAsync } from "../../gateway/session-utils.fs.js";
 import { logVerbose } from "../../globals.js";
 import { isAbortError } from "../../infra/abort-signal.js";
@@ -188,7 +188,7 @@ function setAgentRunnerMemoryTestDeps(overrides?: Partial<typeof memoryDeps>): v
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.agentRunnerMemoryTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.agentRunnerMemoryTestApi")] = {
     setAgentRunnerMemoryTestDeps,
   };
 }
@@ -264,7 +264,7 @@ function resolveMemoryFlushModelFallbackOptions(
 }
 
 function followupUsesCliRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   followupRun: FollowupRun;
   sessionEntry?: Pick<
     SessionEntry,
@@ -283,7 +283,7 @@ function followupUsesCliRuntime(params: {
 }
 
 function resolveFollowupContextConfigProvider(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   followupRun: FollowupRun;
   sessionEntry?: SessionEntry;
   sessionKey?: string;
@@ -298,7 +298,7 @@ function resolveFollowupContextConfigProvider(params: {
 }
 
 function resolveFollowupAgentRuntimeId(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   followupRun: FollowupRun;
   sessionEntry?: SessionEntry;
   sessionKey?: string;
@@ -323,7 +323,7 @@ function resolveFollowupAgentRuntimeId(params: {
 }
 
 function followupUsesCodexRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   followupRun: FollowupRun;
   sessionEntry?: SessionEntry;
   sessionKey?: string;
@@ -485,7 +485,7 @@ type SessionLogSnapshot = {
 };
 
 async function appendPostCompactionRefreshPrompt(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   followupRun: FollowupRun;
 }): Promise<void> {
   const refreshPrompt = await readPostCompactionContext(params.followupRun.run.workspaceDir, {
@@ -739,7 +739,7 @@ async function estimatePromptTokensFromSessionTranscript(params: {
 
 /** Runs preflight compaction when session state exceeds configured thresholds. */
 export async function runPreflightCompactionIfNeeded(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   followupRun: FollowupRun;
   promptForEstimate?: string;
   defaultModel: string;
@@ -1079,7 +1079,7 @@ type MemoryFlushResult = {
 
 /** Runs pre-compaction memory flush when transcript state warrants it. */
 export async function runMemoryFlushIfNeeded(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   followupRun: FollowupRun;
   promptForEstimate?: string;
   sessionCtx: TemplateContext;

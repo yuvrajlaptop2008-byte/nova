@@ -10,7 +10,7 @@ afterEach(() => {
 
 function installBridge() {
   const postMessage = vi.fn();
-  vi.stubGlobal("webkit", { messageHandlers: { openclawWindowDrag: { postMessage } } });
+  vi.stubGlobal("webkit", { messageHandlers: { novaWindowDrag: { postMessage } } });
   return postMessage;
 }
 

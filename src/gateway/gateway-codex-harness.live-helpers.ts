@@ -348,10 +348,10 @@ export const EXPECTED_CODEX_STATUS_COMMAND_TEXT = [
 /** Returns true when text matches a known healthy Codex status response shape. */
 export function isExpectedCodexStatusCommandText(text: string): boolean {
   const normalized = text.toLowerCase();
-  const mentionsOpenClawStatus =
-    normalized.includes("openclaw is running on") ||
-    /openclaw\s+\S+\s+is running on/u.test(normalized) ||
-    normalized.includes("openclaw status:") ||
+  const mentionsNovaStatus =
+    normalized.includes("nova is running on") ||
+    /nova\s+\S+\s+is running on/u.test(normalized) ||
+    normalized.includes("nova status:") ||
     normalized.includes("status: running on") ||
     normalized.includes("session status: running on");
   const mentionsHarnessSession =
@@ -402,7 +402,7 @@ export function isExpectedCodexStatusCommandText(text: string): boolean {
     isIdleReadyStatus ||
     isReadyStatus ||
     isOnlineIdleStatus ||
-    (mentionsOpenClawStatus && mentionsHarnessSession && mentionsModel)
+    (mentionsNovaStatus && mentionsHarnessSession && mentionsModel)
   );
 }
 
@@ -459,7 +459,7 @@ export function isExpectedCodexModelsCommandText(text: string): boolean {
   const mentionsSessionModel =
     normalized.includes("current session is using") ||
     normalized.includes("current session model") ||
-    normalized.includes("current session model from openclaw status") ||
+    normalized.includes("current session model from nova status") ||
     normalized.includes("visible session model") ||
     normalized.includes("the current session is using");
   const mentionsConfigSummary =
@@ -468,7 +468,7 @@ export function isExpectedCodexModelsCommandText(text: string): boolean {
     normalized.includes("registered models") ||
     normalized.includes("only listed model") ||
     normalized.includes("single codex model") ||
-    normalized.includes("live openclaw config shows") ||
+    normalized.includes("live nova config shows") ||
     normalized.includes("current gateway config");
   const isSessionConfigFallback =
     mentionsModelIdentifier &&

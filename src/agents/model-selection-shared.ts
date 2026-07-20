@@ -12,7 +12,7 @@ import {
   hasExplicitModelPolicyAllow,
 } from "../config/model-policy-allowlist-migration.js";
 import { parseModelPolicyWildcardRef } from "../config/model-policy-ref.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { getCurrentPluginMetadataSnapshot } from "../plugins/current-plugin-metadata-snapshot.js";
 import { loadManifestMetadataSnapshot } from "../plugins/manifest-contract-eligibility.js";
@@ -81,7 +81,7 @@ function hasSlashFormModelRef(raw: string): boolean {
 }
 
 function resolveManifestPluginsForModelIdNormalization(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   manifestPlugins?: ModelManifestPlugins;
   allowManifestNormalization?: boolean;
@@ -111,7 +111,7 @@ function resolveManifestPluginsForModelIdNormalization(params: {
 }
 
 function createModelManifestPluginContext(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   manifestPlugins?: ModelManifestPlugins;
   allowManifestNormalization?: boolean;
@@ -133,7 +133,7 @@ function createModelManifestPluginContext(params: {
   };
 }
 
-function listModelAliasCandidates(cfg: OpenClawConfig, agentId?: string): ModelAliasCandidate[] {
+function listModelAliasCandidates(cfg: NovaConfig, agentId?: string): ModelAliasCandidate[] {
   const modelMaps = [cfg.agents?.defaults?.models];
   if (agentId) {
     const normalizedAgentId = normalizeAgentId(agentId);
@@ -154,10 +154,7 @@ function listModelAliasCandidates(cfg: OpenClawConfig, agentId?: string): ModelA
   );
 }
 
-function findModelAliasCandidate(
-  cfg: OpenClawConfig,
-  raw: string,
-): ModelAliasCandidate | undefined {
+function findModelAliasCandidate(cfg: NovaConfig, raw: string): ModelAliasCandidate | undefined {
   const aliasKey = normalizeLowercaseStringOrEmpty(raw);
   let match: ModelAliasCandidate | undefined;
   for (const candidate of listModelAliasCandidates(cfg)) {
@@ -204,7 +201,7 @@ function mergeModelCatalogEntries(params: {
 /** Infer a unique provider for a bare model from configured model rows. */
 export function inferUniqueProviderFromConfiguredModels(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     model: string;
     allowManifestNormalization?: boolean;
   } & ModelManifestNormalizationContext,
@@ -314,7 +311,7 @@ export function inferUniqueProviderFromCatalog(params: {
 /** Resolve the provider used when a model string omits provider/id syntax. */
 export function resolveBareModelDefaultProvider(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     catalog: readonly ModelCatalogEntry[];
     model: string;
     defaultProvider: string;
@@ -337,7 +334,7 @@ function isConcreteOpenRouterFreeModelRef(ref: ModelRef): boolean {
 
 function resolveConfiguredOpenRouterCompatFreeRef(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     defaultProvider: string;
     allowManifestNormalization?: boolean;
     allowPluginNormalization?: boolean;
@@ -380,7 +377,7 @@ function resolveConfiguredOpenRouterCompatFreeRef(
 /** Resolve OpenRouter compatibility aliases such as openrouter:auto/free. */
 export function resolveConfiguredOpenRouterCompatAlias(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     raw: string;
     defaultProvider: string;
     allowManifestNormalization?: boolean;
@@ -409,7 +406,7 @@ export function resolveConfiguredOpenRouterCompatAlias(
 
 function parseModelRefWithCompatAlias(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     raw: string;
     defaultProvider: string;
     allowManifestNormalization?: boolean;
@@ -436,7 +433,7 @@ function parseModelRefWithCompatAlias(
 }
 
 function findExactConfiguredProviderRefParts(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   raw: string;
 }): ExactConfiguredProviderRefParts | null {
   const slash = params.raw.indexOf("/");
@@ -491,7 +488,7 @@ function normalizeExactConfiguredProviderRef(
 
 function resolveExactConfiguredProviderRef(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     raw: string;
     allowManifestNormalization?: boolean;
     allowPluginNormalization?: boolean;
@@ -510,7 +507,7 @@ function resolveExactConfiguredProviderRef(
 /** Normalize a configured allowlist entry into the canonical provider/model key. */
 export function resolveAllowlistModelKey(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     raw: string;
     defaultProvider: string;
     aliasIndex?: ModelAliasIndex;
@@ -536,7 +533,7 @@ export function resolveAllowlistModelKey(
 /** Build the exact configured model keys that constrain model visibility. */
 export function buildConfiguredAllowlistKeys(
   params: {
-    cfg: OpenClawConfig | undefined;
+    cfg: NovaConfig | undefined;
     defaultProvider: string;
     agentId?: string;
     allowManifestNormalization?: boolean;
@@ -578,7 +575,7 @@ export function buildConfiguredAllowlistKeys(
 }
 
 type BuildModelAliasIndexParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   defaultProvider: string;
   agentId?: string;
   allowManifestNormalization?: boolean;
@@ -647,7 +644,7 @@ type ModelCatalogMetadata = {
 
 function buildModelCatalogMetadata(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     defaultProvider: string;
     allowManifestNormalization?: boolean;
     allowPluginNormalization?: boolean;
@@ -754,7 +751,7 @@ function buildSyntheticAllowedCatalogEntry(params: {
 
 export function resolveModelRefFromString(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     raw: string;
     defaultProvider: string;
     aliasIndex?: ModelAliasIndex;
@@ -797,7 +794,7 @@ export function resolveModelRefFromString(
 /** Resolve the default configured model ref, including aliases and fallback provider rows. */
 export function resolveConfiguredModelRef(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     defaultProvider: string;
     defaultModel: string;
     allowManifestNormalization?: boolean;
@@ -966,7 +963,7 @@ export function resolveConfiguredModelRef(
 /** Build explicit override authorization plus configured automatic fallback keys. */
 export function buildAllowedModelSetWithFallbacks(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     catalog: ModelCatalogEntry[];
     defaultProvider: string;
     defaultModel?: string;
@@ -1221,7 +1218,7 @@ function getModelRefStatusFromAllowedSet(params: {
 
 export function getModelRefStatusWithFallbackModels(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     catalog: ModelCatalogEntry[];
     ref: ModelRef;
     defaultProvider: string;
@@ -1249,7 +1246,7 @@ export function getModelRefStatusWithFallbackModels(
 /** Resolve a requested model string only if it is allowed by the supplied status check. */
 export function resolveAllowedModelRefFromAliasIndex(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     raw: string;
     defaultProvider: string;
     aliasIndex: ModelAliasIndex;
@@ -1289,7 +1286,7 @@ export function resolveAllowedModelRefFromAliasIndex(
 }
 
 /** True when config contains provider model rows that should seed catalogs. */
-export function hasConfiguredProviderModelRows(cfg: OpenClawConfig): boolean {
+export function hasConfiguredProviderModelRows(cfg: NovaConfig): boolean {
   const providers = cfg.models?.providers;
   if (!providers || typeof providers !== "object") {
     return false;
@@ -1297,7 +1294,7 @@ export function hasConfiguredProviderModelRows(cfg: OpenClawConfig): boolean {
   return Object.values(providers).some((provider) => Array.isArray(provider?.models));
 }
 
-function hasConfiguredProviderRowsNeedingManifestLookup(cfg: OpenClawConfig): boolean {
+function hasConfiguredProviderRowsNeedingManifestLookup(cfg: NovaConfig): boolean {
   const providers = cfg.models?.providers;
   if (!providers || typeof providers !== "object") {
     return false;
@@ -1309,7 +1306,7 @@ function hasConfiguredProviderRowsNeedingManifestLookup(cfg: OpenClawConfig): bo
 }
 
 function hasConfiguredModelRefsNeedingManifestLookup(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   defaultProvider: string,
 ): boolean {
   const configuredModels = cfg.agents?.defaults?.models;
@@ -1331,10 +1328,7 @@ function hasConfiguredModelRefsNeedingManifestLookup(
   });
 }
 
-function hasConfiguredRowsNeedingManifestLookup(
-  cfg: OpenClawConfig,
-  defaultProvider: string,
-): boolean {
+function hasConfiguredRowsNeedingManifestLookup(cfg: NovaConfig, defaultProvider: string): boolean {
   return (
     hasConfiguredProviderRowsNeedingManifestLookup(cfg) ||
     hasConfiguredModelRefsNeedingManifestLookup(cfg, defaultProvider)
@@ -1342,7 +1336,7 @@ function hasConfiguredRowsNeedingManifestLookup(
 }
 
 function resolveConfiguredModelManifestPlugins(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   manifestPlugins?: ModelManifestPlugins;
 }): ModelManifestPlugins {
@@ -1370,7 +1364,7 @@ function resolveConfiguredModelManifestPlugins(params: {
 
 /** Build catalog entries from configured provider model rows. */
 export function buildConfiguredModelCatalog(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   manifestPlugins?: ModelManifestPlugins;
 }): ModelCatalogEntry[] {
@@ -1446,7 +1440,7 @@ function isVllmQwenThinkingCompat(
 
 export function resolveHooksGmailModel(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     defaultProvider: string;
   } & ModelManifestNormalizationContext,
 ): ModelRef | null {
@@ -1497,10 +1491,11 @@ function resolvePolicyAliasAgentId(
   return configPath === AGENT_MODEL_POLICY_ALLOW_CONFIG_PATH ? agentId : undefined;
 }
 
-export function resolveConfiguredModelPolicyAllow(params: {
-  cfg?: OpenClawConfig;
-  agentId?: string;
-}): { refs: readonly string[]; configPath: string | null; repairConfigPath: string } {
+export function resolveConfiguredModelPolicyAllow(params: { cfg?: NovaConfig; agentId?: string }): {
+  refs: readonly string[];
+  configPath: string | null;
+  repairConfigPath: string;
+} {
   const defaults = params.cfg?.agents?.defaults;
   if (params.agentId) {
     const normalizedAgentId = normalizeAgentId(params.agentId);
@@ -1539,7 +1534,7 @@ export function resolveConfiguredModelPolicyAllow(params: {
 }
 
 export function parseConfiguredModelVisibilityEntries(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string;
 }): {
   exactModelRefs: string[];
@@ -1575,7 +1570,7 @@ export function parseConfiguredModelVisibilityEntries(params: {
 }
 
 function resolveConfiguredWildcardModelKeys(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string;
 }): Set<string> {
   const wildcardModelKeys = new Set<string>();
@@ -1614,7 +1609,7 @@ export function isModelKeyAllowedBySet(allowedKeys: ReadonlySet<string>, key: st
 
 function resolveAllowedModelSelection(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     provider: string;
     model: string;
     allowAny: boolean;
@@ -1702,7 +1697,7 @@ export function dedupeModelCatalogEntries(
 
 export function createModelVisibilityPolicyWithFallbacks(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     catalog: ModelCatalogEntry[];
     defaultProvider: string;
     defaultModel?: string;

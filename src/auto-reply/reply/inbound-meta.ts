@@ -9,7 +9,7 @@ import type { ChannelPlugin } from "../../channels/plugins/types.plugin.js";
 import { normalizeAnyChannelId } from "../../channels/registry.js";
 import { resolveSessionGoalDisplayState } from "../../config/sessions/goals.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { sliceUtf16Safe, truncateUtf16Safe } from "../../utils.js";
 import type { EnvelopeFormatOptions } from "../envelope.js";
 import { formatEnvelopeTimestamp } from "../envelope.js";
@@ -546,7 +546,7 @@ function resolveInboundSourceModality(ctx: TemplateContext): string | undefined 
 
 function resolveInboundFormattingHints(
   ctx: TemplateContext,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ):
   | {
       text_markup: string;
@@ -569,7 +569,7 @@ function resolveInboundFormattingHints(
 /** Builds trusted system metadata for the inbound channel and formatting hints. */
 export function buildInboundMetaSystemPrompt(
   ctx: TemplateContext,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options?: { includeFormattingHints?: boolean; formattingHintsCtx?: TemplateContext },
 ): string {
   const chatType = normalizeChatType(ctx.ChatType);
@@ -587,7 +587,7 @@ export function buildInboundMetaSystemPrompt(
   const channelValue = resolveInboundChannel(ctx);
 
   const payload = {
-    schema: "openclaw.inbound_meta.v2",
+    schema: "nova.inbound_meta.v2",
     account_id: normalizePromptMetadataString(ctx.AccountId),
     channel: channelValue,
     provider: normalizePromptMetadataString(ctx.Provider),

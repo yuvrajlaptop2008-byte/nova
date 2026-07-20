@@ -154,7 +154,7 @@ describe("gateway agent handler", () => {
   });
 
   it("terminalizes successful async gateway agent runs in the shared task registry", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -180,7 +180,7 @@ describe("gateway agent handler", () => {
   });
 
   it("tracks plugin SDK subagent agent runs through the subagent registry only", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-plugin-subagent-task-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-plugin-subagent-task-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       resetSubagentRegistryForTests({ persist: false });
@@ -322,90 +322,87 @@ describe("gateway agent handler", () => {
   });
 
   it("keeps plugin SDK subagent runs best-effort when registry persistence fails", async () => {
-    await withTempDir(
-      { prefix: "openclaw-gateway-plugin-subagent-registry-fail-" },
-      async (root) => {
-        useTestStateDir(root);
-        resetTaskRegistryForTests();
-        resetSubagentRegistryForTests({ persist: false });
-        // Route through the harness helper so the ensureRuntimePluginsLoaded
-        // pin survives this wholesale deps override.
-        applyGatewaySubagentRegistryTestDeps({
-          persistSubagentRunsToDiskOrThrow: () => {
-            throw new Error("disk full");
-          },
-        });
-        const runId = "plugin-subagent-registry-fail";
-        const childSessionKey = "agent:main:subagent:registry-fail";
-        const cfg = {
-          session: { mainKey: "main", scope: "per-sender" },
-        };
-        mocks.loadConfigReturn = cfg;
-        mocks.loadSessionEntry.mockReturnValue({
-          cfg,
-          storePath: "/tmp/sessions.json",
-          entry: {
+    await withTempDir({ prefix: "nova-gateway-plugin-subagent-registry-fail-" }, async (root) => {
+      useTestStateDir(root);
+      resetTaskRegistryForTests();
+      resetSubagentRegistryForTests({ persist: false });
+      // Route through the harness helper so the ensureRuntimePluginsLoaded
+      // pin survives this wholesale deps override.
+      applyGatewaySubagentRegistryTestDeps({
+        persistSubagentRunsToDiskOrThrow: () => {
+          throw new Error("disk full");
+        },
+      });
+      const runId = "plugin-subagent-registry-fail";
+      const childSessionKey = "agent:main:subagent:registry-fail";
+      const cfg = {
+        session: { mainKey: "main", scope: "per-sender" },
+      };
+      mocks.loadConfigReturn = cfg;
+      mocks.loadSessionEntry.mockReturnValue({
+        cfg,
+        storePath: "/tmp/sessions.json",
+        entry: {
+          sessionId: "plugin-subagent-registry-fail-session",
+          updatedAt: Date.now(),
+        },
+        canonicalKey: childSessionKey,
+      });
+      mocks.updateSessionStore.mockImplementation(async (_path, updater) => {
+        const store: Record<string, unknown> = {
+          [childSessionKey]: {
             sessionId: "plugin-subagent-registry-fail-session",
             updatedAt: Date.now(),
           },
-          canonicalKey: childSessionKey,
-        });
-        mocks.updateSessionStore.mockImplementation(async (_path, updater) => {
-          const store: Record<string, unknown> = {
-            [childSessionKey]: {
-              sessionId: "plugin-subagent-registry-fail-session",
-              updatedAt: Date.now(),
-            },
-          };
-          return await updater(store);
-        });
-        mocks.agentCommand.mockResolvedValue({
-          payloads: [{ text: "ok" }],
-          meta: { durationMs: 100 },
-        });
-        const context = makeContext();
-        const baseClient = requireValue(backendGatewayClient(), "expected backend client");
-        const commandCallCount = mocks.agentCommand.mock.calls.length;
+        };
+        return await updater(store);
+      });
+      mocks.agentCommand.mockResolvedValue({
+        payloads: [{ text: "ok" }],
+        meta: { durationMs: 100 },
+      });
+      const context = makeContext();
+      const baseClient = requireValue(backendGatewayClient(), "expected backend client");
+      const commandCallCount = mocks.agentCommand.mock.calls.length;
 
-        await invokeAgent(
-          {
-            message: "background plugin subagent task",
-            sessionKey: childSessionKey,
-            idempotencyKey: runId,
-          },
-          {
-            context,
-            reqId: runId,
-            client: {
-              connect: baseClient.connect,
-              internal: {
-                ...baseClient.internal,
-                agentRunTracking: "plugin_subagent",
-                pluginRuntimeOwnerId: "memory-core",
-              },
+      await invokeAgent(
+        {
+          message: "background plugin subagent task",
+          sessionKey: childSessionKey,
+          idempotencyKey: runId,
+        },
+        {
+          context,
+          reqId: runId,
+          client: {
+            connect: baseClient.connect,
+            internal: {
+              ...baseClient.internal,
+              agentRunTracking: "plugin_subagent",
+              pluginRuntimeOwnerId: "memory-core",
             },
           },
-        );
+        },
+      );
 
-        expect(mocks.agentCommand).toHaveBeenCalledTimes(commandCallCount + 1);
-        await waitForAssertion(() => {
-          const task = requireValue(findTaskByRunId(runId), "expected fallback cli task");
-          expectRecordFields(task, {
-            runtime: "cli",
-            childSessionKey,
-            status: "succeeded",
-            terminalSummary: "completed",
-          });
+      expect(mocks.agentCommand).toHaveBeenCalledTimes(commandCallCount + 1);
+      await waitForAssertion(() => {
+        const task = requireValue(findTaskByRunId(runId), "expected fallback cli task");
+        expectRecordFields(task, {
+          runtime: "cli",
+          childSessionKey,
+          status: "succeeded",
+          terminalSummary: "completed",
         });
-        expect(context.logGateway.warn).toHaveBeenCalledWith(
-          expect.stringContaining("falling back to cli task tracking"),
-        );
-      },
-    );
+      });
+      expect(context.logGateway.warn).toHaveBeenCalledWith(
+        expect.stringContaining("falling back to cli task tracking"),
+      );
+    });
   });
 
   it("terminalizes failed async gateway agent runs in the shared task registry", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-error-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-error-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -432,7 +429,7 @@ describe("gateway agent handler", () => {
   });
 
   it("preserves aborted async gateway agent runs as cancelled", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-aborted-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-aborted-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -468,7 +465,7 @@ describe("gateway agent handler", () => {
   });
 
   it("classifies RPC-aborted async gateway agent rejections as cancelled", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-abort-error-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-abort-error-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -514,7 +511,7 @@ describe("gateway agent handler", () => {
   });
 
   it("preserves restart ownership for aborted async gateway agent rejections", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-restart-abort-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-restart-abort-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -555,7 +552,7 @@ describe("gateway agent handler", () => {
   });
 
   it("classifies timeout async gateway agent rejections as timed out", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-timeout-error-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-timeout-error-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -602,7 +599,7 @@ describe("gateway agent handler", () => {
 
   it("classifies wrapped rejections after gateway timeout as timed out", async () => {
     await withTempDir(
-      { prefix: "openclaw-gateway-agent-task-wrapped-timeout-error-" },
+      { prefix: "nova-gateway-agent-task-wrapped-timeout-error-" },
       async (root) => {
         useTestStateDir(root);
         resetTaskRegistryForTests();
@@ -652,7 +649,7 @@ describe("gateway agent handler", () => {
   });
 
   it("does not hide provider timeout async gateway agent rejections", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-provider-timeout-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-provider-timeout-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -729,7 +726,7 @@ describe("gateway agent handler", () => {
   });
 
   it("does not overwrite operator-cancelled async gateway agent tasks after late completion", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-task-cancelled-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-task-cancelled-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -837,7 +834,7 @@ describe("gateway agent handler", () => {
   });
 
   it("uses an agent-scoped to value as the gateway session selector", async () => {
-    const sessionKey = "agent:main:openclaw-weixin:direct:o9cq802hhmfc@im.wechat";
+    const sessionKey = "agent:main:nova-weixin:direct:o9cq802hhmfc@im.wechat";
     mocks.resolveExplicitAgentSessionKey.mockReturnValue("agent:main:main");
     mocks.loadSessionEntry.mockImplementation((key: string) => ({
       cfg: {},
@@ -1807,7 +1804,7 @@ describe("gateway agent handler", () => {
   });
 
   it("dispatches async gateway agent task creation through the detached task runtime seam", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-seam-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-seam-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();
@@ -1905,7 +1902,7 @@ describe("gateway agent handler", () => {
     };
 
     it("suppresses the gateway CLI task row for confirmed ACP manual-spawn child turns", async () => {
-      await withTempDir({ prefix: "openclaw-gateway-acp-suppress-" }, async (root) => {
+      await withTempDir({ prefix: "nova-gateway-acp-suppress-" }, async (root) => {
         useTestStateDir(root);
         resetTaskRegistryForTests();
         const childSessionKey = "agent:main:acp:child-confirmed";
@@ -1930,7 +1927,7 @@ describe("gateway agent handler", () => {
     });
 
     it("keeps CLI tracking when a non-backend operator-write caller sets acpTurnSource", async () => {
-      await withTempDir({ prefix: "openclaw-gateway-acp-operator-write-" }, async (root) => {
+      await withTempDir({ prefix: "nova-gateway-acp-operator-write-" }, async (root) => {
         useTestStateDir(root);
         resetTaskRegistryForTests();
         const childSessionKey = "agent:main:acp:child-operator-write";
@@ -1970,7 +1967,7 @@ describe("gateway agent handler", () => {
     });
 
     it("keeps CLI tracking for ACP-shaped manual-spawn turns without persisted ACP metadata", async () => {
-      await withTempDir({ prefix: "openclaw-gateway-acp-no-meta-" }, async (root) => {
+      await withTempDir({ prefix: "nova-gateway-acp-no-meta-" }, async (root) => {
         useTestStateDir(root);
         resetTaskRegistryForTests();
         const childSessionKey = "agent:main:acp:child-missing-meta";
@@ -2005,7 +2002,7 @@ describe("gateway agent handler", () => {
     });
 
     it("keeps dispatch and CLI tracking when ACP metadata read fails", async () => {
-      await withTempDir({ prefix: "openclaw-gateway-acp-meta-throw-" }, async (root) => {
+      await withTempDir({ prefix: "nova-gateway-acp-meta-throw-" }, async (root) => {
         useTestStateDir(root);
         resetTaskRegistryForTests();
         const childSessionKey = "agent:main:acp:child-meta-throw";
@@ -2056,7 +2053,7 @@ describe("gateway agent handler", () => {
     });
 
     it("keeps CLI tracking for ACP-shaped turns that are not manual spawns", async () => {
-      await withTempDir({ prefix: "openclaw-gateway-acp-not-manual-spawn-" }, async (root) => {
+      await withTempDir({ prefix: "nova-gateway-acp-not-manual-spawn-" }, async (root) => {
         useTestStateDir(root);
         resetTaskRegistryForTests();
         const childSessionKey = "agent:main:acp:child-not-spawn";
@@ -2086,7 +2083,7 @@ describe("gateway agent handler", () => {
     });
 
     it("does not affect plugin-subagent tracking for confirmed ACP conditions", async () => {
-      await withTempDir({ prefix: "openclaw-gateway-acp-plugin-subagent-" }, async (root) => {
+      await withTempDir({ prefix: "nova-gateway-acp-plugin-subagent-" }, async (root) => {
         useTestStateDir(root);
         resetTaskRegistryForTests();
         resetSubagentRegistryForTests({ persist: false });
@@ -2139,7 +2136,7 @@ describe("gateway agent handler", () => {
   });
 
   it("logs a swallowed finalize error without blocking the background run", async () => {
-    await withTempDir({ prefix: "openclaw-gateway-agent-finalize-throw-" }, async (root) => {
+    await withTempDir({ prefix: "nova-gateway-agent-finalize-throw-" }, async (root) => {
       useTestStateDir(root);
       resetTaskRegistryForTests();
       primeMainAgentRun();

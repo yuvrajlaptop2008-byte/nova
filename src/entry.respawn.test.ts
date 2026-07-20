@@ -31,7 +31,7 @@ describe("buildCliRespawnPlan", () => {
   it("returns null when respawn policy skips the argv", () => {
     expect(
       buildCliRespawnPlan({
-        argv: ["node", "openclaw", "--help"],
+        argv: ["node", "nova", "--help"],
         env: {},
         execArgv: [],
         autoNodeExtraCaCerts: "/etc/ssl/certs/ca-certificates.crt",
@@ -41,7 +41,7 @@ describe("buildCliRespawnPlan", () => {
 
   it("adds NODE_EXTRA_CA_CERTS and warning suppression in one respawn", () => {
     const plan = buildCliRespawnPlan({
-      argv: ["node", "openclaw", "status"],
+      argv: ["node", "nova", "status"],
       env: {},
       execArgv: [],
       autoNodeExtraCaCerts: "/etc/ssl/certs/ca-certificates.crt",
@@ -61,7 +61,7 @@ describe("buildCliRespawnPlan", () => {
     "preserves NODE_EXTRA_CA_CERTS respawn for interactive %s",
     (command) => {
       const plan = buildCliRespawnPlan({
-        argv: ["node", "openclaw", command],
+        argv: ["node", "nova", command],
         env: {},
         execArgv: [],
         autoNodeExtraCaCerts: "/etc/ssl/certs/ca-certificates.crt",
@@ -69,7 +69,7 @@ describe("buildCliRespawnPlan", () => {
       });
 
       const respawnPlan = expectCliRespawnPlan(plan);
-      expect(respawnPlan.argv).toEqual(["openclaw", command]);
+      expect(respawnPlan.argv).toEqual(["nova", command]);
       expect(respawnPlan.env.NODE_EXTRA_CA_CERTS).toBe("/etc/ssl/certs/ca-certificates.crt");
       expect(respawnPlan.env[NOVA_NODE_EXTRA_CA_CERTS_READY]).toBe("1");
       expect(respawnPlan.env[NOVA_NODE_OPTIONS_READY]).toBeUndefined();
@@ -79,7 +79,7 @@ describe("buildCliRespawnPlan", () => {
 
   it("keeps bare-root startup respawns attached to the terminal", () => {
     const plan = buildCliRespawnPlan({
-      argv: ["node", "openclaw"],
+      argv: ["node", "nova"],
       env: {},
       execArgv: [],
       autoNodeExtraCaCerts: "/etc/ssl/certs/ca-certificates.crt",
@@ -87,13 +87,13 @@ describe("buildCliRespawnPlan", () => {
     });
 
     const respawnPlan = expectCliRespawnPlan(plan);
-    expect(respawnPlan.argv).toEqual([EXPERIMENTAL_WARNING_FLAG, "openclaw"]);
+    expect(respawnPlan.argv).toEqual([EXPERIMENTAL_WARNING_FLAG, "nova"]);
     expect(respawnPlan.detachForProcessTree).toBe(false);
   });
 
   it("uses the file-backed CA store for one-shot macOS commands", () => {
     const plan = buildCliRespawnPlan({
-      argv: ["node", "openclaw", "cron", "list", "--json"],
+      argv: ["node", "nova", "cron", "list", "--json"],
       env: { NODE_USE_SYSTEM_CA: "1" },
       execArgv: [],
       autoNodeExtraCaCerts: undefined,
@@ -104,7 +104,7 @@ describe("buildCliRespawnPlan", () => {
     expect(respawnPlan.argv).toEqual([
       EXPERIMENTAL_WARNING_FLAG,
       OPENSSL_CA_FLAG,
-      "openclaw",
+      "nova",
       "cron",
       "list",
       "--json",
@@ -113,8 +113,8 @@ describe("buildCliRespawnPlan", () => {
   });
 
   it.each([
-    ["interactive commands", ["node", "openclaw", "tui"]],
-    ["the foreground Gateway", ["node", "openclaw", "gateway", "run"]],
+    ["interactive commands", ["node", "nova", "tui"]],
+    ["the foreground Gateway", ["node", "nova", "gateway", "run"]],
   ] as const)("keeps macOS system CA loading for %s", (_label, argv) => {
     expect(
       buildCliRespawnPlan({
@@ -136,7 +136,7 @@ describe("buildCliRespawnPlan", () => {
     "keeps an explicit macOS system CA runtime flag from %s",
     (_label, execArgv, nodeOptions) => {
       const plan = buildCliRespawnPlan({
-        argv: ["node", "openclaw", "cron", "list", "--json"],
+        argv: ["node", "nova", "cron", "list", "--json"],
         env: { NODE_OPTIONS: nodeOptions, NODE_USE_SYSTEM_CA: "1" },
         execArgv: [...execArgv],
         autoNodeExtraCaCerts: undefined,
@@ -157,7 +157,7 @@ describe("buildCliRespawnPlan", () => {
     "preserves an explicit bundled CA selection from %s",
     (_label, execArgv, nodeOptions) => {
       const plan = buildCliRespawnPlan({
-        argv: ["node", "openclaw", "cron", "list", "--json"],
+        argv: ["node", "nova", "cron", "list", "--json"],
         env: { NODE_OPTIONS: nodeOptions, NODE_USE_SYSTEM_CA: "1" },
         execArgv: [...execArgv],
         autoNodeExtraCaCerts: undefined,
@@ -173,7 +173,7 @@ describe("buildCliRespawnPlan", () => {
   it("does not respawn again after selecting the macOS file-backed CA store", () => {
     expect(
       buildCliRespawnPlan({
-        argv: ["node", "openclaw", "cron", "list", "--json"],
+        argv: ["node", "nova", "cron", "list", "--json"],
         env: {
           NODE_USE_SYSTEM_CA: "1",
           [NOVA_NODE_OPTIONS_READY]: "1",
@@ -188,7 +188,7 @@ describe("buildCliRespawnPlan", () => {
   it("does not respawn interactive commands for warning suppression only", () => {
     expect(
       buildCliRespawnPlan({
-        argv: ["node", "openclaw", "tui"],
+        argv: ["node", "nova", "tui"],
         env: { [NOVA_NODE_EXTRA_CA_CERTS_READY]: "1" },
         execArgv: [],
         autoNodeExtraCaCerts: undefined,
@@ -199,7 +199,7 @@ describe("buildCliRespawnPlan", () => {
 
   it("does not overwrite an existing NODE_EXTRA_CA_CERTS value", () => {
     const plan = buildCliRespawnPlan({
-      argv: ["node", "openclaw", "status"],
+      argv: ["node", "nova", "status"],
       env: { NODE_EXTRA_CA_CERTS: "/custom/ca.pem" },
       execArgv: [],
       autoNodeExtraCaCerts: "/etc/ssl/certs/ca-certificates.crt",
@@ -213,7 +213,7 @@ describe("buildCliRespawnPlan", () => {
   it("returns null when both respawn guards are already satisfied", () => {
     expect(
       buildCliRespawnPlan({
-        argv: ["node", "openclaw", "status"],
+        argv: ["node", "nova", "status"],
         env: {
           [NOVA_NODE_EXTRA_CA_CERTS_READY]: "1",
           [NOVA_NODE_OPTIONS_READY]: "1",
@@ -229,7 +229,7 @@ describe("buildCliRespawnPlan", () => {
     const plan = buildCliRespawnPlan({
       argv: [
         "node",
-        "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\openclaw\\openclaw.mjs",
+        "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\nova\\nova.mjs",
         "dashboard",
       ],
       env: {},
@@ -241,7 +241,7 @@ describe("buildCliRespawnPlan", () => {
     const respawnPlan = expectCliRespawnPlan(plan);
     expect(respawnPlan.argv).toEqual([
       "--stack-size=8192",
-      "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\openclaw\\openclaw.mjs",
+      "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\nova\\nova.mjs",
       "dashboard",
     ]);
     expect(respawnPlan.env.NODE_EXTRA_CA_CERTS).toBeUndefined();
@@ -251,8 +251,7 @@ describe("buildCliRespawnPlan", () => {
   });
 
   it("normalizes duplicated Windows node.exe argv before respawning", () => {
-    const scriptPath =
-      "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\openclaw\\openclaw.mjs";
+    const scriptPath = "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\nova\\nova.mjs";
     const plan = buildCliRespawnPlan({
       argv: [
         "C:\\Program Files\\nodejs\\node.exe",
@@ -277,7 +276,7 @@ describe("buildCliRespawnPlan", () => {
       buildCliRespawnPlan({
         argv: [
           "node",
-          "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\openclaw\\openclaw.mjs",
+          "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\nova\\nova.mjs",
           "dashboard",
         ],
         env: {},
@@ -293,7 +292,7 @@ describe("buildCliRespawnPlan", () => {
       buildCliRespawnPlan({
         argv: [
           "node",
-          "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\openclaw\\openclaw.mjs",
+          "C:\\Users\\alice\\AppData\\Roaming\\npm\\node_modules\\nova\\nova.mjs",
           "dashboard",
         ],
         env: {},
@@ -306,7 +305,7 @@ describe("buildCliRespawnPlan", () => {
 
   it("respawns Volta shims through node so the shim is not called directly", () => {
     const plan = buildCliRespawnPlan({
-      argv: ["/home/alice/.volta/bin/volta-shim", "/usr/local/bin/openclaw", "status"],
+      argv: ["/home/alice/.volta/bin/volta-shim", "/usr/local/bin/nova", "status"],
       env: { PATH: "/home/alice/.volta/bin:/usr/bin:/bin" },
       execArgv: [],
       execPath: "/home/alice/.volta/bin/volta-shim",
@@ -316,11 +315,7 @@ describe("buildCliRespawnPlan", () => {
 
     const respawnPlan = expectCliRespawnPlan(plan);
     expect(respawnPlan.command).toBe("node");
-    expect(respawnPlan.argv).toEqual([
-      EXPERIMENTAL_WARNING_FLAG,
-      "/usr/local/bin/openclaw",
-      "status",
-    ]);
+    expect(respawnPlan.argv).toEqual([EXPERIMENTAL_WARNING_FLAG, "/usr/local/bin/nova", "status"]);
     expect(respawnPlan.detachForProcessTree).toBe(true);
   });
 });
@@ -336,7 +331,7 @@ describe("runCliRespawnPlan", () => {
     runCliRespawnPlan(
       {
         command: "/usr/bin/node",
-        argv: ["/repo/openclaw/dist/entry.js", "status"],
+        argv: ["/repo/nova/dist/entry.js", "status"],
         env: { NOVA_NODE_OPTIONS_READY: "1" },
         detachForProcessTree: true,
       },
@@ -348,15 +343,11 @@ describe("runCliRespawnPlan", () => {
       },
     );
 
-    expect(spawn).toHaveBeenCalledWith(
-      "/usr/bin/node",
-      ["/repo/openclaw/dist/entry.js", "status"],
-      {
-        stdio: "inherit",
-        env: { NOVA_NODE_OPTIONS_READY: "1" },
-        detached: process.platform !== "win32" && !(process.stdin.isTTY || process.stdout.isTTY),
-      },
-    );
+    expect(spawn).toHaveBeenCalledWith("/usr/bin/node", ["/repo/nova/dist/entry.js", "status"], {
+      stdio: "inherit",
+      env: { NOVA_NODE_OPTIONS_READY: "1" },
+      detached: process.platform !== "win32" && !(process.stdin.isTTY || process.stdout.isTTY),
+    });
     const [bridgeChild, bridgeOptions] = requireFirstMockCall(
       attachChildProcessBridge,
       "child process bridge attach",
@@ -383,7 +374,7 @@ describe("runCliRespawnPlan", () => {
       runCliRespawnPlan(
         {
           command: "/usr/bin/node",
-          argv: ["/repo/openclaw/dist/entry.js", "tui"],
+          argv: ["/repo/nova/dist/entry.js", "tui"],
           env: {},
           detachForProcessTree: false,
         },

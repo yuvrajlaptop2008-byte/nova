@@ -4,8 +4,8 @@ import path from "node:path";
 import {
   replaceManagedMarkdownBlock,
   withTrailingNewline,
-} from "openclaw/plugin-sdk/memory-host-markdown";
-import { FsSafeError, pathExists, root as fsRoot } from "openclaw/plugin-sdk/security-runtime";
+} from "nova/plugin-sdk/memory-host-markdown";
+import { FsSafeError, pathExists, root as fsRoot } from "nova/plugin-sdk/security-runtime";
 import {
   activateMemoryWikiCompiledCacheOwner,
   invalidateMemoryWikiCompiledCache,
@@ -28,10 +28,10 @@ const WIKI_VAULT_DIRECTORIES = [
   "reports",
   "_attachments",
   "_views",
-  ".openclaw-wiki",
+  ".nova-wiki",
 ] as const;
 
-const WIKI_VAULT_SCAFFOLD = ["AGENTS.md", "WIKI.md", "index.md", ".openclaw-wiki/log.jsonl"];
+const WIKI_VAULT_SCAFFOLD = ["AGENTS.md", "WIKI.md", "index.md", ".nova-wiki/log.jsonl"];
 
 type InitializeMemoryWikiVaultResult = {
   rootDir: string;
@@ -45,8 +45,8 @@ function buildIndexMarkdown(): string {
     replaceManagedMarkdownBlock({
       original: "# Wiki Index\n",
       heading: "## Generated",
-      startMarker: "<!-- openclaw:wiki:index:start -->",
-      endMarker: "<!-- openclaw:wiki:index:end -->",
+      startMarker: "<!-- nova:wiki:index:start -->",
+      endMarker: "<!-- nova:wiki:index:end -->",
       body: "- No compiled pages yet.",
     }),
   );
@@ -81,8 +81,8 @@ This vault is maintained by the Nova memory-wiki plugin.
 - Compiled query and prompt snapshots live in Nova plugin state, not vault files.
 
 ## Notes
-<!-- openclaw:human:start -->
-<!-- openclaw:human:end -->
+<!-- nova:human:start -->
+<!-- nova:human:end -->
 `);
 }
 
@@ -144,7 +144,7 @@ export async function initializeMemoryWikiVault(
     withTrailingNewline("# Inbox\n\nDrop raw ideas, questions, and source links here.\n"),
     createdFiles,
   );
-  await writeFileIfMissing(rootDir, ".openclaw-wiki/log.jsonl", "", createdFiles);
+  await writeFileIfMissing(rootDir, ".nova-wiki/log.jsonl", "", createdFiles);
 
   if (createdDirectories.length > 0 || createdFiles.length > 0) {
     await appendMemoryWikiLog(rootDir, {

@@ -2,16 +2,16 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { listDevicePairing as listDevicePairingFn } from "openclaw/plugin-sdk/device-bootstrap";
+import type { listDevicePairing as listDevicePairingFn } from "nova/plugin-sdk/device-bootstrap";
 import type {
   OpenKeyedStoreOptions,
   PluginStateKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEVICE_PAIR_NOTIFY_SUBSCRIBER_MAX_ENTRIES,
@@ -24,15 +24,15 @@ const listDevicePairingMock = vi.hoisted(() =>
   vi.fn<typeof listDevicePairingFn>(async () => ({ pending: [], paired: [] })),
 );
 
-vi.mock("openclaw/plugin-sdk/device-bootstrap", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("openclaw/plugin-sdk/device-bootstrap")>()),
+vi.mock("nova/plugin-sdk/device-bootstrap", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("nova/plugin-sdk/device-bootstrap")>()),
   listDevicePairing: listDevicePairingMock,
 }));
 
 import { createPairingNotifierService, handleNotifyCommand } from "./notify.js";
 
 afterAll(() => {
-  vi.doUnmock("openclaw/plugin-sdk/device-bootstrap");
+  vi.doUnmock("nova/plugin-sdk/device-bootstrap");
   vi.resetModules();
 });
 

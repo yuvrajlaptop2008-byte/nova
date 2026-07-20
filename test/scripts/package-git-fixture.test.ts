@@ -9,8 +9,8 @@ describe("package git fixture", () => {
   const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
   it("stages bundled ai runtime as a local file dependency", async () => {
-    const root = tempDirs.make("openclaw-package-git-fixture-");
-    mkdirSync(path.join(root, "node_modules", "@openclaw", "ai"), { recursive: true });
+    const root = tempDirs.make("nova-package-git-fixture-");
+    mkdirSync(path.join(root, "node_modules", "@nova", "ai"), { recursive: true });
     writeFileSync(
       path.join(root, "package.json"),
       `${JSON.stringify(
@@ -24,7 +24,7 @@ describe("package git fixture", () => {
     );
     writeFileSync(path.join(root, "npm-shrinkwrap.json"), "{}\n");
     writeFileSync(
-      path.join(root, "node_modules", "@openclaw", "ai", "package.json"),
+      path.join(root, "node_modules", "@nova", "ai", "package.json"),
       `${JSON.stringify({ name: "@nova/ai", version: "2026.6.11" })}\n`,
     );
 
@@ -36,15 +36,12 @@ describe("package git fixture", () => {
 
     expect(result.status, `${result.stdout}\n${result.stderr}`).toBe(0);
     const packageJson = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
-    expect(packageJson.dependencies["@nova/ai"]).toBe("file:.openclaw-fixture/packages/ai");
+    expect(packageJson.dependencies["@nova/ai"]).toBe("file:.nova-fixture/packages/ai");
     expect(packageJson.bundleDependencies).toEqual(["chalk"]);
     expect(() => readFileSync(path.join(root, "npm-shrinkwrap.json"), "utf8")).toThrow();
     expect(
       JSON.parse(
-        readFileSync(
-          path.join(root, ".openclaw-fixture", "packages", "ai", "package.json"),
-          "utf8",
-        ),
+        readFileSync(path.join(root, ".nova-fixture", "packages", "ai", "package.json"), "utf8"),
       ).name,
     ).toBe("@nova/ai");
   });

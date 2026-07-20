@@ -1,4 +1,4 @@
-import OpenClawKit
+import NovaKit
 import SwiftUI
 
 enum OnboardingStep: Int, CaseIterable {

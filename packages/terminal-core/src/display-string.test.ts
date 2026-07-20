@@ -3,10 +3,10 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { displayString } from "./display-string.js";
 
-function stubHome(home: string, openclawHome = ""): void {
+function stubHome(home: string, novaHome = ""): void {
   vi.stubEnv("HOME", home);
   vi.stubEnv("USERPROFILE", "");
-  vi.stubEnv("NOVA_HOME", openclawHome);
+  vi.stubEnv("NOVA_HOME", novaHome);
 }
 
 describe("displayString", () => {
@@ -37,11 +37,11 @@ describe("displayString", () => {
 
   it("uses NOVA_HOME as the display prefix", () => {
     const home = path.resolve("test-home", "alice");
-    const openclawHome = path.resolve("test-openclaw-home");
-    stubHome(home, openclawHome);
+    const novaHome = path.resolve("test-nova-home");
+    stubHome(home, novaHome);
 
-    expect(displayString(openclawHome)).toBe("$NOVA_HOME");
-    expect(displayString(`${openclawHome}/state`)).toBe("$NOVA_HOME/state");
-    expect(displayString(`${openclawHome}2/state`)).toBe(`${openclawHome}2/state`);
+    expect(displayString(novaHome)).toBe("$NOVA_HOME");
+    expect(displayString(`${novaHome}/state`)).toBe("$NOVA_HOME/state");
+    expect(displayString(`${novaHome}2/state`)).toBe(`${novaHome}2/state`);
   });
 });

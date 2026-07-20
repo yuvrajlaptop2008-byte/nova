@@ -2,8 +2,8 @@
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { isLiveTestEnabled } from "openclaw/plugin-sdk/test-live";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import { isLiveTestEnabled } from "nova/plugin-sdk/test-live";
 import { describe, expect, it } from "vitest";
 import plugin from "./index.js";
 
@@ -13,7 +13,7 @@ const ENABLE_VYDRA_VIDEO_LIVE = process.env.NOVA_LIVE_VYDRA_VIDEO === "1";
 const LIVE_IMAGE_MODEL = process.env.NOVA_LIVE_VYDRA_IMAGE_MODEL?.trim() || "grok-imagine";
 const LIVE_VIDEO_MODEL = process.env.NOVA_LIVE_VYDRA_VIDEO_MODEL?.trim() || "veo3";
 const DEFAULT_LIVE_KLING_IMAGE_URL =
-  "https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/showcase/roof-camera-sky.jpg";
+  "https://raw.githubusercontent.com/nova/nova/main/docs/assets/showcase/roof-camera-sky.jpg";
 const LIVE_KLING_IMAGE_URL =
   process.env.NOVA_LIVE_VYDRA_KLING_IMAGE_URL?.trim() || DEFAULT_LIVE_KLING_IMAGE_URL;
 const VYDRA_KLING_TIMEOUT_MS = 12 * 60_000;
@@ -50,7 +50,7 @@ describe.skipIf(!LIVE || !VYDRA_API_KEY)("vydra live", () => {
       model: LIVE_IMAGE_MODEL,
       prompt: "Create a minimal flat orange square centered on a white background.",
       cfg: { plugins: { enabled: true } } as never,
-      agentDir: "/tmp/openclaw-live-vydra-image",
+      agentDir: "/tmp/nova-live-vydra-image",
     });
 
     expect(result.images.length).toBeGreaterThan(0);
@@ -87,7 +87,7 @@ describe.skipIf(!LIVE || !VYDRA_API_KEY)("vydra live", () => {
         prompt:
           "A tiny paper diorama city at sunrise with slow cinematic camera motion and no text.",
         cfg: { plugins: { enabled: true } } as never,
-        agentDir: "/tmp/openclaw-live-vydra-video",
+        agentDir: "/tmp/nova-live-vydra-video",
       });
 
       expect(result.videos.length).toBeGreaterThan(0);
@@ -107,7 +107,7 @@ describe.skipIf(!LIVE || !VYDRA_API_KEY)("vydra live", () => {
         model: "kling",
         prompt: "Animate the scene with subtle camera drift and soft cloud motion.",
         cfg: { plugins: { enabled: true } } as never,
-        agentDir: "/tmp/openclaw-live-vydra-kling",
+        agentDir: "/tmp/nova-live-vydra-kling",
         inputImages: [{ url: LIVE_KLING_IMAGE_URL }],
         timeoutMs: VYDRA_KLING_TIMEOUT_MS,
       });

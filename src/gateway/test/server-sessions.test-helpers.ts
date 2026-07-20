@@ -6,7 +6,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import type { AssistantMessage, UserMessage } from "openclaw/plugin-sdk/llm";
+import type { AssistantMessage, UserMessage } from "nova/plugin-sdk/llm";
 import { afterAll, beforeAll, beforeEach, expect, vi } from "vitest";
 import type { InternalSessionEntry as SessionEntry } from "../../config/sessions.js";
 import {
@@ -318,7 +318,7 @@ export function setupGatewaySessionsTestHarness() {
 
   beforeAll(async () => {
     harness = await startGatewayServerHarness();
-    sharedSessionStoreDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-sessions-"));
+    sharedSessionStoreDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-sessions-"));
   });
 
   afterAll(async () => {

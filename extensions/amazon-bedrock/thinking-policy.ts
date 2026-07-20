@@ -2,16 +2,13 @@
  * Thinking-level policy for Claude models on Amazon Bedrock. It maps Bedrock
  * model ids to the provider SDK thinking levels that are actually supported.
  */
-import type {
-  ProviderRuntimeModel,
-  ProviderThinkingProfile,
-} from "openclaw/plugin-sdk/plugin-entry";
+import type { ProviderRuntimeModel, ProviderThinkingProfile } from "nova/plugin-sdk/plugin-entry";
 import {
   resolveClaudeFable5ModelIdentity,
   resolveClaudeModelIdentity,
   resolveClaudeMythos5ModelIdentity,
   resolveClaudeSonnet5ModelIdentity,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 
 const BASE_CLAUDE_THINKING_LEVELS = [
   { id: "off" },

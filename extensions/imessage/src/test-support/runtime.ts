@@ -4,22 +4,22 @@ import path from "node:path";
 import type {
   OpenKeyedStoreOptions,
   PluginStateSyncKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
   createPluginStateKeyedStoreForTests,
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import type { PluginRuntime } from "openclaw/plugin-sdk/runtime-store";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/runtime-store";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { vi } from "vitest";
 import { setIMessageRuntime } from "../runtime.js";
 
 function createIMessageTestEnv(): NodeJS.ProcessEnv & { NOVA_STATE_DIR: string } {
   const stateDir = fs.realpathSync(
-    fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-imessage-state-")),
+    fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-imessage-state-")),
   );
   return { ...process.env, NOVA_STATE_DIR: stateDir };
 }
@@ -36,7 +36,7 @@ export function createIMessagePluginStateSyncStoreForTest<T>(
 }
 
 export function installIMessageStateRuntimeForTest(): void {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   imessageTestEnv = createIMessageTestEnv();
   resetPluginStateStoreForTests();
   setIMessageRuntime({
@@ -76,7 +76,7 @@ export async function loadFreshIMessageReplyCacheForTest(options?: {
   preservePersistentState?: boolean;
 }): Promise<typeof import("../monitor-reply-cache.js")> {
   if (!options?.preservePersistentState) {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     imessageTestEnv = createIMessageTestEnv();
   }
   resetPluginStateStoreForTests();
@@ -117,7 +117,7 @@ export async function loadFreshIMessageReplyCacheForTest(options?: {
 }
 
 export function installIMessageFailingStateRuntimeForTest(): void {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   imessageTestEnv = createIMessageTestEnv();
   setIMessageRuntime({
     state: {

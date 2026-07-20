@@ -7,7 +7,7 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
 } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   parseAgentSessionKey,
   normalizeAgentId,
@@ -19,7 +19,7 @@ import { resolveDefaultAgentId } from "./agent-scope.js";
  * Resolve the trusted active agent bound to a host-owned session reference.
  */
 export function resolveBoundAgentIdForSession(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionKey?: string;
   agentId?: string;
 }): string | undefined {

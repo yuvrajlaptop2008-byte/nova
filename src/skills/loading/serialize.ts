@@ -1,5 +1,5 @@
 // Skill serialization helpers compact skill metadata and coordinate sync queue updates.
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 
 const skillsSyncQueue = new KeyedAsyncQueue();
 

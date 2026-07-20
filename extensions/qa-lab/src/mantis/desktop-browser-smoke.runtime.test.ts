@@ -62,7 +62,7 @@ describe("mantis desktop browser smoke runtime", () => {
     );
 
     const result = await runMantisDesktopBrowserSmoke({
-      browserUrl: "https://openclaw.ai/docs",
+      browserUrl: "https://nova.ai/docs",
       commandRunner: runner,
       crabboxBin: "/tmp/crabbox",
       env: runtimeEnv,
@@ -87,7 +87,7 @@ describe("mantis desktop browser smoke runtime", () => {
     expect(excludeIndex).toBeGreaterThanOrEqual(0);
     expect(rsyncArgs[excludeIndex + 1]).toBe("chrome-profile/**");
     expect(rsyncArgs).toContain(
-      "crabbox@203.0.113.10:/tmp/openclaw-mantis-desktop-2026-05-04T12-00-00-000Z/",
+      "crabbox@203.0.113.10:/tmp/nova-mantis-desktop-2026-05-04T12-00-00-000Z/",
     );
     const remoteScript = commands
       .find((entry) => entry.command === "/tmp/crabbox" && entry.args[0] === "run")
@@ -165,7 +165,7 @@ describe("mantis desktop browser smoke runtime", () => {
 
     const result = await runMantisDesktopBrowserSmoke({
       browserProfileArchiveEnv: "MANTIS_DISCORD_VIEWER_CHROME_PROFILE_TGZ_B64",
-      browserProfileDir: "$HOME/.config/openclaw-mantis/discord-viewer-chrome-profile",
+      browserProfileDir: "$HOME/.config/nova-mantis/discord-viewer-chrome-profile",
       commandRunner: runner,
       crabboxBin: "/tmp/crabbox",
       leaseId: "cbx_existing",
@@ -181,7 +181,7 @@ describe("mantis desktop browser smoke runtime", () => {
       ?.args.at(-1);
     expect(remoteScript).toContain("${MANTIS_DISCORD_VIEWER_CHROME_PROFILE_TGZ_B64:-}");
     expect(remoteScript).toContain(
-      "profile='$HOME/.config/openclaw-mantis/discord-viewer-chrome-profile'",
+      "profile='$HOME/.config/nova-mantis/discord-viewer-chrome-profile'",
     );
     expect(remoteScript).toContain("temporary_profile=false");
     expect(remoteScript).toContain('tar -xzf "$profile_archive" -C "$profile"');

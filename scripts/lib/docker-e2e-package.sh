@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Shared package helpers for Docker E2E scripts.
-# Builds or resolves one OpenClaw npm tarball and exposes mount/build-context
+# Builds or resolves one Nova npm tarball and exposes mount/build-context
 # helpers so Docker lanes test the package artifact instead of repo sources.
 
 DOCKER_E2E_PACKAGE_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -300,7 +300,7 @@ docker_e2e_prepare_package_tgz() {
 
   if [ -n "$package_tgz" ]; then
     if [ ! -f "$package_tgz" ]; then
-      echo "OpenClaw package tarball does not exist: $package_tgz" >&2
+      echo "Nova package tarball does not exist: $package_tgz" >&2
       return 1
     fi
     docker_e2e_abs_path "$package_tgz"
@@ -308,35 +308,35 @@ docker_e2e_prepare_package_tgz() {
   fi
 
   local pack_dir
-  pack_dir="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-docker-e2e-pack.XXXXXX")"
+  pack_dir="$(mktemp -d "${TMPDIR:-/tmp}/nova-docker-e2e-pack.XXXXXX")"
   local pack_status=0
   package_tgz="$(
-    node "$ROOT_DIR/scripts/package-openclaw-for-docker.mjs" \
+    node "$ROOT_DIR/scripts/package-nova-for-docker.mjs" \
       --allow-unreleased-changelog \
       --output-dir "$pack_dir" \
-      --output-name openclaw-current.tgz
+      --output-name nova-current.tgz
   )" || pack_status="$?"
   if [ "$pack_status" -ne 0 ]; then
     rm -rf "$pack_dir"
     return "$pack_status"
   fi
   if [ -z "$package_tgz" ]; then
-    echo "missing packed OpenClaw tarball" >&2
+    echo "missing packed Nova tarball" >&2
     rm -rf "$pack_dir"
     return 1
   fi
-  touch "$pack_dir/.openclaw-docker-e2e-generated-package"
+  touch "$pack_dir/.nova-docker-e2e-generated-package"
   docker_e2e_abs_path "$package_tgz"
 }
 
 docker_e2e_prepare_package_context() {
   local package_tgz="$1"
   local context_dir
-  context_dir="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-docker-e2e-package-context.XXXXXX")"
+  context_dir="$(mktemp -d "${TMPDIR:-/tmp}/nova-docker-e2e-package-context.XXXXXX")"
   # BuildKit named contexts must be directories, so expose the tarball as a
   # stable filename inside a tiny temporary context.
   local copy_status=0
-  cp "$package_tgz" "$context_dir/openclaw-current.tgz" || copy_status="$?"
+  cp "$package_tgz" "$context_dir/nova-current.tgz" || copy_status="$?"
   if [ "$copy_status" -ne 0 ]; then
     rm -rf "$context_dir"
     return "$copy_status"
@@ -346,7 +346,7 @@ docker_e2e_prepare_package_context() {
 
 docker_e2e_package_mount_args() {
   local package_tgz="$1"
-  local target="${2:-/tmp/openclaw-current.tgz}"
+  local target="${2:-/tmp/nova-current.tgz}"
   DOCKER_E2E_PACKAGE_ARGS=(-v "$package_tgz:$target:ro" -e "NOVA_CURRENT_PACKAGE_TGZ=$target")
   if [ -n "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-}" ]; then
     DOCKER_E2E_PACKAGE_ARGS+=(-e "NOVA_E2E_NPM_INSTALL_TIMEOUT=$NOVA_E2E_NPM_INSTALL_TIMEOUT")
@@ -359,11 +359,11 @@ docker_e2e_package_mount_args() {
 docker_e2e_cleanup_package_tgz() {
   local package_tgz="${1:-}"
   [ -n "$package_tgz" ] || return 0
-  [ "$(basename "$package_tgz")" = "openclaw-current.tgz" ] || return 0
+  [ "$(basename "$package_tgz")" = "nova-current.tgz" ] || return 0
 
   local pack_dir
   pack_dir="$(dirname "$package_tgz")"
-  if [ -f "$pack_dir/.openclaw-docker-e2e-generated-package" ]; then
+  if [ -f "$pack_dir/.nova-docker-e2e-generated-package" ]; then
     rm -rf "$pack_dir"
   fi
 }
@@ -418,7 +418,7 @@ docker_e2e_run_with_harness() {
   local previous_int_trap
   local previous_term_trap
   local previous_hup_trap
-  cid_dir="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-docker-e2e-container.XXXXXX")"
+  cid_dir="$(mktemp -d "${TMPDIR:-/tmp}/nova-docker-e2e-container.XXXXXX")"
   cidfile="$cid_dir/container.cid"
   previous_int_trap="$(trap -p INT || true)"
   previous_term_trap="$(trap -p TERM || true)"

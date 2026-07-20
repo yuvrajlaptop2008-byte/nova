@@ -7,7 +7,7 @@ import { createReleaseWorkflowMatrixPlan } from "../../scripts/plan-release-work
 
 function workflow(): WorkflowDocument {
   return parse(
-    readFileSync(".github/workflows/openclaw-live-and-e2e-checks-reusable.yml", "utf8"),
+    readFileSync(".github/workflows/nova-live-and-e2e-checks-reusable.yml", "utf8"),
   ) as WorkflowDocument;
 }
 

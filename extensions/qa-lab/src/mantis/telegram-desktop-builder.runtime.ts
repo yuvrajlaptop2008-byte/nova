@@ -1,8 +1,8 @@
 // Qa Lab plugin module implements telegram desktop builder behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { pathExists } from "openclaw/plugin-sdk/security-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { pathExists } from "nova/plugin-sdk/security-runtime";
 import { ensureRepoBoundDirectory, resolveRepoRelativeOutputDir } from "../cli-paths.js";
 import {
   acquireQaCredentialLease,
@@ -324,7 +324,7 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
   sudo apt-get update -y >>"$out/apt.log" 2>&1 || true
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg >>"$out/apt.log" 2>&1 || true
 fi
-telegram_root="$HOME/.local/share/openclaw-mantis/telegram-desktop-bin"
+telegram_root="$HOME/.local/share/nova-mantis/telegram-desktop-bin"
 telegram_bin="$telegram_root/Telegram/Telegram"
 if [ ! -x "$telegram_bin" ]; then
   mkdir -p "$telegram_root"
@@ -404,7 +404,7 @@ process.stdout.write(JSON.stringify({ ok: body.ok, id: body.result?.id, username
 if (!body.ok || !body.result?.id) process.exit(1);
 MANTIS_TELEGRAM_GETME
 node --input-type=module -e 'import fs from "node:fs"; const value = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); process.stdout.write(String(value.id || ""));' "$out/telegram-driver-getme.json")"
-    export NOVA_HOME="$HOME/.openclaw-mantis/telegram-openclaw"
+    export NOVA_HOME="$HOME/.nova-mantis/telegram-nova"
     mkdir -p "$NOVA_HOME"
     cat >"$out/telegram.patch.json5" <<MANTIS_TELEGRAM_PATCH
 {
@@ -429,8 +429,8 @@ node --input-type=module -e 'import fs from "node:fs"; const value = JSON.parse(
   },
 }
 MANTIS_TELEGRAM_PATCH
-    pnpm openclaw config patch --file "$out/telegram.patch.json5" --dry-run
-    pnpm openclaw config patch --file "$out/telegram.patch.json5"
+    pnpm nova config patch --file "$out/telegram.patch.json5" --dry-run
+    pnpm nova config patch --file "$out/telegram.patch.json5"
     node --input-type=module >"$out/telegram-ready-message.json" 2>"$out/telegram-ready-message.err" <<'MANTIS_TELEGRAM_READY'
 const token = process.env.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN;
 const chatId = process.env.NOVA_MANTIS_TELEGRAM_GROUP_ID;
@@ -445,9 +445,9 @@ const body = await response.json();
 process.stdout.write(JSON.stringify({ ok: body.ok, message_id: body.result?.message_id }));
 if (!body.ok) process.exit(1);
 MANTIS_TELEGRAM_READY
-    nohup pnpm openclaw gateway run --dev --allow-unconfigured --port 38974 --cli-backend-logs </dev/null >"$out/openclaw-gateway.log" 2>&1 &
+    nohup pnpm nova gateway run --dev --allow-unconfigured --port 38974 --cli-backend-logs </dev/null >"$out/nova-gateway.log" 2>&1 &
     gateway_pid="$!"
-    echo "$gateway_pid" >"$out/openclaw-gateway.pid"
+    echo "$gateway_pid" >"$out/nova-gateway.pid"
     sleep 12
     if ! kill -0 "$gateway_pid" >/dev/null 2>&1; then
       echo "Nova gateway exited during startup." >&2
@@ -470,8 +470,8 @@ cat >"$out/remote-metadata.json" <<MANTIS_REMOTE_METADATA
   "telegramProfileDir": "$telegram_profile_dir",
   "telegramProfileRestored": $telegram_profile_restored,
   "gatewaySetup": $setup_gateway,
-  "gatewayAlive": $(if [ "$setup_gateway" = "1" ] && [ -f "$out/openclaw-gateway.pid" ] && kill -0 "$(cat "$out/openclaw-gateway.pid")" >/dev/null 2>&1; then echo true; else echo false; fi),
-  "gatewayPid": "$(if [ -f "$out/openclaw-gateway.pid" ]; then cat "$out/openclaw-gateway.pid"; fi)",
+  "gatewayAlive": $(if [ "$setup_gateway" = "1" ] && [ -f "$out/nova-gateway.pid" ] && kill -0 "$(cat "$out/nova-gateway.pid")" >/dev/null 2>&1; then echo true; else echo false; fi),
+  "gatewayPid": "$(if [ -f "$out/nova-gateway.pid" ]; then cat "$out/nova-gateway.pid"; fi)",
   "gatewayPort": 38974,
   "qaExitCode": $qa_status,
   "credentialSource": "$credential_source",
@@ -529,7 +529,7 @@ function renderReport(summary: MantisTelegramDesktopBuilderSummary) {
     "- Remote metadata: `remote-metadata.json`",
     "- Remote command log: `telegram-desktop-builder-command.log`",
     "- Telegram Desktop log: `telegram-desktop.log`",
-    "- Nova gateway log: `openclaw-gateway.log`",
+    "- Nova gateway log: `nova-gateway.log`",
     summary.error ? `- Error: ${summary.error}` : undefined,
     "",
   ].filter((line) => line !== undefined);
@@ -613,7 +613,7 @@ export async function runMantisTelegramDesktopBuilder(
   const explicitLeaseId = trimToValue(opts.leaseId) ?? trimToValue(env[CRABBOX_LEASE_ID_ENV]);
   const keepLease = opts.keepLease ?? (gatewaySetup || isTruthyOptIn(env[CRABBOX_KEEP_ENV]));
   const createdLease = explicitLeaseId === undefined;
-  const remoteOutputDir = `/tmp/openclaw-mantis-telegram-desktop-${startedAt
+  const remoteOutputDir = `/tmp/nova-mantis-telegram-desktop-${startedAt
     .toISOString()
     .replace(/[^0-9A-Za-z]/gu, "-")}`;
   let credentialLease: TelegramGatewayCredentialLease | undefined;

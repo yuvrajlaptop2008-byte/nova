@@ -7,7 +7,7 @@
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

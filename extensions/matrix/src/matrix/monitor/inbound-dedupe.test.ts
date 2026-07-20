@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LogService } from "../sdk/logger.js";
 import { createMatrixInboundEventDeduper } from "./inbound-dedupe.js";
@@ -19,7 +19,7 @@ describe("Matrix inbound event dedupe", () => {
   });
 
   function createStateEnv(): NodeJS.ProcessEnv {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-matrix-inbound-dedupe-"));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-matrix-inbound-dedupe-"));
     tempDirs.push(dir);
     return { ...process.env, NOVA_STATE_DIR: dir };
   }

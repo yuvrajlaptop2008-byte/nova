@@ -137,15 +137,14 @@ function updateState(state) {
     case "needs-pairing":
       setGate({
         title: "Pair the extension first",
-        detail:
-          "Open the Nova toolbar popup and paste the output of openclaw browser extension pair.",
+        detail: "Open the Nova toolbar popup and paste the output of nova browser extension pair.",
       });
       break;
     case "approval":
       setGate({
         title: "Approve this copilot device",
         detail:
-          "On the Gateway, run openclaw devices list, inspect this dedicated browser identity, then approve its current request.",
+          "On the Gateway, run nova devices list, inspect this dedicated browser identity, then approve its current request.",
       });
       break;
     case "denied":
@@ -200,7 +199,7 @@ function connectPanelPort() {
   }
   let nextPort;
   try {
-    nextPort = chrome.runtime.connect({ name: "openclaw-copilot-panel" });
+    nextPort = chrome.runtime.connect({ name: "nova-copilot-panel" });
   } catch {
     schedulePortReconnect();
     return;

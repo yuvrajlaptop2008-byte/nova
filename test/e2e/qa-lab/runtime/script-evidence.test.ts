@@ -12,7 +12,7 @@ import {
 const tempRoots: string[] = [];
 
 async function makeWriter(params: { maxDetailsBytes?: number; maxLogBytes?: number } = {}) {
-  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-script-evidence-"));
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-script-evidence-"));
   tempRoots.push(repoRoot);
   return {
     artifactBase: path.join(repoRoot, ".artifacts", "qa-e2e", "script"),
@@ -135,7 +135,7 @@ describe("QA script evidence writer", () => {
       maxDetailsBytes: 4096,
       maxLogBytes: 4096,
     });
-    const configPath = path.join(repoRoot, "openclaw.json");
+    const configPath = path.join(repoRoot, "nova.json");
     await fs.writeFile(
       configPath,
       `${JSON.stringify({ logging: { redactPatterns: ["/internal-\\d+/g"] } })}\n`,

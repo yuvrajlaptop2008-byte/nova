@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openclaw/proxyline.git"
+    "url": "git+https://github.com/nova/proxyline.git"
   },
   "bugs": {
-    "url": "https://github.com/openclaw/proxyline/issues"
+    "url": "https://github.com/nova/proxyline/issues"
   },
   "homepage": "https://proxyline.dev",
   "packageManager": "pnpm@11.1.2",

@@ -7,10 +7,8 @@ import { normalizeAccountId } from "../../routing/account-id.js";
 import { isInternalMessageChannel } from "../../utils/message-channel.js";
 
 const CHANNEL_SOURCE_TURN_ID_PREFIX = "channel-user:v1:";
-const CHANNEL_SOURCE_TURN_ID = Symbol("openclaw.channelSourceTurnId");
-const CHANNEL_SOURCE_TURN_SAME_THREAD_REQUIRED = Symbol(
-  "openclaw.channelSourceTurnSameThreadRequired",
-);
+const CHANNEL_SOURCE_TURN_ID = Symbol("nova.channelSourceTurnId");
+const CHANNEL_SOURCE_TURN_SAME_THREAD_REQUIRED = Symbol("nova.channelSourceTurnSameThreadRequired");
 
 type ChannelSourceTurnContext = object & {
   [CHANNEL_SOURCE_TURN_ID]?: string;

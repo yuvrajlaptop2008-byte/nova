@@ -13,9 +13,9 @@ import {
   NOVA_DELIVERY_MIRROR_MODEL,
   NOVA_TRANSCRIPT_ARTIFACT_API,
   NOVA_TRANSCRIPT_ARTIFACT_PROVIDER,
-  isTranscriptOnlyOpenClawAssistantModel,
-} from "../../shared/transcript-only-openclaw-assistant.js";
-import type { OpenClawConfig } from "../types.openclaw.js";
+  isTranscriptOnlyNovaAssistantModel,
+} from "../../shared/transcript-only-nova-assistant.js";
+import type { NovaConfig } from "../types.nova.js";
 import {
   resolveDefaultSessionStorePath,
   resolveSessionFilePath,
@@ -120,7 +120,7 @@ export { resolveSessionTranscriptFile } from "./transcript-file-resolve.js";
 
 function parseAssistantTranscriptText(
   line: string,
-  options?: { excludeTranscriptOnlyOpenClawAssistant?: boolean },
+  options?: { excludeTranscriptOnlyNovaAssistant?: boolean },
 ): AssistantTranscriptText | undefined {
   const parsed = JSON.parse(line) as {
     id?: unknown;
@@ -133,8 +133,8 @@ function parseAssistantTranscriptText(
     return undefined;
   }
   if (
-    options?.excludeTranscriptOnlyOpenClawAssistant &&
-    isTranscriptOnlyOpenClawAssistantMessage(message)
+    options?.excludeTranscriptOnlyNovaAssistant &&
+    isTranscriptOnlyNovaAssistantMessage(message)
   ) {
     return undefined;
   }
@@ -151,11 +151,11 @@ function parseAssistantTranscriptText(
   };
 }
 
-function isTranscriptOnlyOpenClawAssistantMessage(message: {
+function isTranscriptOnlyNovaAssistantMessage(message: {
   provider?: unknown;
   model?: unknown;
 }): boolean {
-  return isTranscriptOnlyOpenClawAssistantModel(message.provider, message.model);
+  return isTranscriptOnlyNovaAssistantModel(message.provider, message.model);
 }
 
 type SessionConversationTranscriptTarget = {
@@ -178,7 +178,7 @@ function parseRecentConversationText(
         provenance?: unknown;
         provider?: unknown;
         model?: unknown;
-        __openclaw?: unknown;
+        __nova?: unknown;
       }
     | undefined;
   if (
@@ -188,7 +188,7 @@ function parseRecentConversationText(
   ) {
     return undefined;
   }
-  if (message.role === "assistant" && isTranscriptOnlyOpenClawAssistantMessage(message)) {
+  if (message.role === "assistant" && isTranscriptOnlyNovaAssistantMessage(message)) {
     return undefined;
   }
   const upstreamUserText =
@@ -349,7 +349,7 @@ export async function readLatestAssistantTextFromSessionTranscript(
   for await (const line of streamSessionTranscriptLinesReverse(sessionFile)) {
     try {
       const assistantText = parseAssistantTranscriptText(line, {
-        excludeTranscriptOnlyOpenClawAssistant: true,
+        excludeTranscriptOnlyNovaAssistant: true,
       });
       if (assistantText) {
         return assistantText;
@@ -363,7 +363,7 @@ export async function readLatestAssistantTextFromSessionTranscript(
 
 export async function readTailAssistantTextFromSessionTranscript(
   sessionFile: string | undefined,
-  options?: { excludeTranscriptOnlyOpenClawAssistant?: boolean },
+  options?: { excludeTranscriptOnlyNovaAssistant?: boolean },
 ): Promise<TailAssistantTranscriptText | undefined> {
   const sqliteMarker = parseSqliteSessionFileMarker(sessionFile);
   if (sqliteMarker) {
@@ -381,15 +381,14 @@ export async function readTailAssistantTextFromSessionTranscript(
         return undefined;
       }
       const assistantText = parseAssistantTranscriptText(JSON.stringify(event), {
-        excludeTranscriptOnlyOpenClawAssistant:
-          options?.excludeTranscriptOnlyOpenClawAssistant === true,
+        excludeTranscriptOnlyNovaAssistant: options?.excludeTranscriptOnlyNovaAssistant === true,
       });
       if (assistantText) {
         return assistantText;
       }
       if (
-        options?.excludeTranscriptOnlyOpenClawAssistant !== true ||
-        !isTranscriptOnlyOpenClawAssistantMessage(parsed.message)
+        options?.excludeTranscriptOnlyNovaAssistant !== true ||
+        !isTranscriptOnlyNovaAssistantMessage(parsed.message)
       ) {
         return undefined;
       }
@@ -403,7 +402,7 @@ export async function readTailAssistantTextFromSessionTranscript(
   for await (const line of streamSessionTranscriptLinesReverse(sessionFile)) {
     try {
       const parsed = JSON.parse(line) as { message?: unknown };
-      // Skip non-message entries (e.g. `openclaw.cache-ttl` custom events) so
+      // Skip non-message entries (e.g. `nova.cache-ttl` custom events) so
       // a metadata line emitted after the canonical assistant turn doesn't
       // make the tail reader fall through to "no assistant tail" and cause
       // persistTextTurnTranscript to append a duplicate. Stop at any real
@@ -417,8 +416,8 @@ export async function readTailAssistantTextFromSessionTranscript(
         return assistantText;
       }
       if (
-        options?.excludeTranscriptOnlyOpenClawAssistant === true &&
-        isTranscriptOnlyOpenClawAssistantMessage(parsed.message)
+        options?.excludeTranscriptOnlyNovaAssistant === true &&
+        isTranscriptOnlyNovaAssistantMessage(parsed.message)
       ) {
         continue;
       }
@@ -444,7 +443,7 @@ export async function appendAssistantMessageToSessionTranscript(params: {
   /** Optional override for store path (mostly for tests). */
   storePath?: string;
   updateMode?: SessionTranscriptUpdateMode;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   beforeMessageWrite?: AssistantBeforeMessageWrite;
 }): Promise<SessionTranscriptAppendResult> {
   const sessionKey = params.sessionKey.trim();
@@ -498,7 +497,7 @@ export async function appendAssistantMessageToSessionTranscript(params: {
       },
       stopReason: "stop" as const,
       timestamp: Date.now(),
-      ...(params.deliveryMirror ? { openclawDeliveryMirror: params.deliveryMirror } : {}),
+      ...(params.deliveryMirror ? { novaDeliveryMirror: params.deliveryMirror } : {}),
     } as SessionTranscriptAssistantMessage,
   });
 }
@@ -514,7 +513,7 @@ export async function appendExactAssistantMessageToSessionTranscript(params: {
   idempotencyKey?: string;
   storePath?: string;
   updateMode?: SessionTranscriptUpdateMode;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   beforeMessageWrite?: AssistantBeforeMessageWrite;
 }): Promise<SessionTranscriptAppendResult> {
   const sessionKey = params.sessionKey.trim();
@@ -763,8 +762,8 @@ async function readLatestVisibleTranscriptMessage(scope: {
 }
 
 function isIdentifiedDeliveryMirror(message: SessionTranscriptAssistantMessage): boolean {
-  const marker = (message as { openclawDeliveryMirror?: InternalSessionTranscriptDeliveryMirror })
-    .openclawDeliveryMirror;
+  const marker = (message as { novaDeliveryMirror?: InternalSessionTranscriptDeliveryMirror })
+    .novaDeliveryMirror;
   return (
     isRedundantDeliveryMirror(message) &&
     (marker?.kind === "channel-final" ||
@@ -795,7 +794,7 @@ function extractAssistantMessageText(message: SessionTranscriptAssistantMessage)
 async function findLatestEquivalentAssistantMessageId(
   target: SessionTranscriptTurnWriteContext,
   message: SessionTranscriptAssistantMessage,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
 ): Promise<string | undefined> {
   const expectedText = extractAssistantMessageText(
     redactTranscriptMessage(message, config) as unknown as SessionTranscriptAssistantMessage,

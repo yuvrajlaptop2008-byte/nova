@@ -5,7 +5,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createChannelIngressQueue } from "../../channels/message/ingress-queue.js";
 import type { RuntimeEnv } from "../../runtime.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import {
   channelsDeadLettersListCommand,
   channelsDeadLettersResubmitCommand,
@@ -14,12 +14,12 @@ import {
 const originalStateDir = process.env.NOVA_STATE_DIR;
 
 async function withTempState(run: (stateDir: string) => Promise<void>): Promise<void> {
-  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-channel-dead-letters-"));
+  const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-channel-dead-letters-"));
   process.env.NOVA_STATE_DIR = stateDir;
   try {
     await run(stateDir);
   } finally {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   }
 }
@@ -34,7 +34,7 @@ function createRuntime() {
 
 describe("channel dead-letter commands", () => {
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     if (originalStateDir === undefined) {
       delete process.env.NOVA_STATE_DIR;
     } else {

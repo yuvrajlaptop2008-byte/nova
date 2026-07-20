@@ -1,6 +1,6 @@
 // QA Lab Slack live domain contracts and wire schemas.
 import type { WebClient } from "@slack/web-api";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { z } from "zod";
 import type { startQaGatewayChild } from "../../gateway-child.js";
 import { splitQaModelRef } from "../../model-selection.js";
@@ -106,7 +106,7 @@ export type SlackQaScenarioId =
 
 export type SlackQaApprovalKind = "exec" | "plugin";
 export type SlackQaApprovalDecision = "allow-always" | "allow-once" | "deny";
-export const SLACK_QA_APPROVAL_ACTION_PREFIX = "openclaw:approval:v1:";
+export const SLACK_QA_APPROVAL_ACTION_PREFIX = "nova:approval:v1:";
 export const SlackQaApprovalActionValueSchema = z
   .object({
     approvalId: z.string().min(1),
@@ -153,7 +153,7 @@ type SlackQaDirectTransportScenarioRun = {
 };
 
 export type SlackQaDirectTransportScenarioContext = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelId: string;
   sutAccountId: string;
   sutIdentity: SlackAuthIdentity;

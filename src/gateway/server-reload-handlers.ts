@@ -24,7 +24,7 @@ import {
   getRuntimeConfigSourceSnapshot,
   setRuntimeConfigAppliedHash,
 } from "../config/config.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/types.openclaw.js";
+import type { ConfigFileSnapshot, NovaConfig } from "../config/types.nova.js";
 import { isSecretRef } from "../config/types.secrets.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { formatErrorMessage } from "../infra/errors.js";
@@ -143,7 +143,7 @@ async function activateSecretsRuntimeSnapshotIfCurrent(
   options?: {
     canActivate?: () => boolean;
     onActivated?: () => void;
-    runtimeSourceConfig?: OpenClawConfig;
+    runtimeSourceConfig?: NovaConfig;
   },
 ): Promise<boolean> {
   const runtime = await import("../secrets/runtime.js");
@@ -165,7 +165,7 @@ async function restoreSecretsRuntimeSnapshotIfCurrent(
   snapshot: PreparedSecretsRuntimeSnapshot,
   expectedRevision: number,
   ownedSnapshot: PreparedSecretsRuntimeSnapshot,
-  options?: { onActivated?: () => void; runtimeSourceConfig?: OpenClawConfig },
+  options?: { onActivated?: () => void; runtimeSourceConfig?: NovaConfig },
 ): Promise<boolean> {
   const runtime = await import("../secrets/runtime.js");
   if (
@@ -193,9 +193,9 @@ type GatewayGmailRestartAbortController = {
 type GatewayHotReloadPublication = {
   publish: (commit: () => Promise<void>, isCommitted: () => boolean) => Promise<void>;
   isCurrent: () => boolean;
-  prepareRestartRuntimeConfig?: () => Promise<OpenClawConfig>;
+  prepareRestartRuntimeConfig?: () => Promise<NovaConfig>;
   runtimeEnv?: NodeJS.ProcessEnv;
-  sourceConfig?: OpenClawConfig;
+  sourceConfig?: NovaConfig;
 };
 
 type GatewayRestartTransactionState = "pending" | "committed" | "rejected";
@@ -207,14 +207,14 @@ type GatewayRestartTransactionResult = {
 
 type GatewayRestartRequestOptions = {
   retainDebtAcrossConfigChanges?: boolean;
-  prepareRuntimeConfig?: () => Promise<OpenClawConfig>;
-  debtConfig?: OpenClawConfig;
+  prepareRuntimeConfig?: () => Promise<NovaConfig>;
+  debtConfig?: NovaConfig;
 };
 
 type AcceptedRestartTarget = {
-  runtimeConfig: OpenClawConfig;
-  sourceConfig: OpenClawConfig;
-  prepareRuntimeConfig: () => Promise<OpenClawConfig>;
+  runtimeConfig: NovaConfig;
+  sourceConfig: NovaConfig;
+  prepareRuntimeConfig: () => Promise<NovaConfig>;
 };
 
 type AcceptedRestartTargetOwnership = {
@@ -292,10 +292,10 @@ function projectCanonicalSecretRefsOntoRuntime(
 }
 
 function restoreCanonicalSecretRefs(
-  runtimeConfig: OpenClawConfig,
-  sourceConfig: OpenClawConfig,
-): OpenClawConfig {
-  return projectCanonicalSecretRefsOntoRuntime(sourceConfig, runtimeConfig) as OpenClawConfig;
+  runtimeConfig: NovaConfig,
+  sourceConfig: NovaConfig,
+): NovaConfig {
+  return projectCanonicalSecretRefsOntoRuntime(sourceConfig, runtimeConfig) as NovaConfig;
 }
 
 function resetPreparedModelRuntimeStateForHotReload(): void {
@@ -374,7 +374,7 @@ type GatewayReloadHandlerParams = {
   getChannelAutostartSuppression?: GatewayChannelManager["getAutostartSuppression"];
   stopPostReadySidecars?: () => Promise<void> | void;
   reloadPlugins: (params: {
-    nextConfig: OpenClawConfig;
+    nextConfig: NovaConfig;
     changedPaths: readonly string[];
     beforeReplace: (channels: ReadonlySet<ChannelKind>) => Promise<void>;
     commitRuntime: () => Promise<void>;
@@ -390,7 +390,7 @@ type GatewayReloadHandlerParams = {
   logCron: { error: (msg: string) => void };
   logReload: GatewayReloadLog;
   cronReconciliation: GatewayCronReconciliation;
-  createHealthMonitor: (config: OpenClawConfig) => ChannelHealthMonitor | null;
+  createHealthMonitor: (config: NovaConfig) => ChannelHealthMonitor | null;
   createGmailRestartAbortController?: () => GatewayGmailRestartAbortController;
   clearGmailRestartAbortController?: (controller: GatewayGmailRestartAbortController) => void;
   onCronRestart?: () => void;
@@ -403,8 +403,8 @@ type ManagedGatewayConfigReloaderParams = Omit<
   "createHealthMonitor" | "logReload"
 > & {
   minimalTestGateway: boolean;
-  initialConfig: OpenClawConfig;
-  initialCompareConfig?: OpenClawConfig;
+  initialConfig: NovaConfig;
+  initialCompareConfig?: NovaConfig;
   initialSnapshotRawHash: string | null;
   initialAuthoredConfig: unknown;
   initialIncludedPaths?: readonly string[];
@@ -421,23 +421,20 @@ type ManagedGatewayConfigReloaderParams = Omit<
   channelManager: GatewayChannelManager;
   activateRuntimeSecrets: ActivateRuntimeSecrets;
   /** Applies one immutable effective config/compare snapshot before reload planning. */
-  prepareConfigCandidate?: (params: {
-    runtimeConfig: OpenClawConfig;
-    sourceConfig: OpenClawConfig;
-  }) => {
-    runtimeConfig: OpenClawConfig;
-    compareConfig: OpenClawConfig;
-    reapplyRuntimeOverlays?: (config: OpenClawConfig) => OpenClawConfig;
-    reapplyCompareOverlays?: (config: OpenClawConfig) => OpenClawConfig;
+  prepareConfigCandidate?: (params: { runtimeConfig: NovaConfig; sourceConfig: NovaConfig }) => {
+    runtimeConfig: NovaConfig;
+    compareConfig: NovaConfig;
+    reapplyRuntimeOverlays?: (config: NovaConfig) => NovaConfig;
+    reapplyCompareOverlays?: (config: NovaConfig) => NovaConfig;
   };
   /** Reapplies fixed process-lifetime overlays before secrets preparation. */
-  applyRuntimeConfigOverrides?: (config: OpenClawConfig) => OpenClawConfig;
-  resolveSharedGatewaySessionGenerationForConfig: (config: OpenClawConfig) => string | undefined;
+  applyRuntimeConfigOverrides?: (config: NovaConfig) => NovaConfig;
+  resolveSharedGatewaySessionGenerationForConfig: (config: NovaConfig) => string | undefined;
   sharedGatewaySessionGenerationState: SharedGatewaySessionGenerationState;
   clients: Iterable<SharedGatewayAuthClient>;
-  prepareTerminalConfig: (plan: GatewayReloadPlan, nextConfig: OpenClawConfig) => void;
-  reconcileTerminalSessions: (plan: GatewayReloadPlan, nextConfig: OpenClawConfig) => void;
-  commitTerminalConfig: (nextConfig: OpenClawConfig) => void;
+  prepareTerminalConfig: (plan: GatewayReloadPlan, nextConfig: NovaConfig) => void;
+  reconcileTerminalSessions: (plan: GatewayReloadPlan, nextConfig: NovaConfig) => void;
+  commitTerminalConfig: (nextConfig: NovaConfig) => void;
   acceptTerminalConfig: (options: { retireRejectedRestart: boolean }) => void;
 };
 
@@ -566,7 +563,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
 
   const applyHotReload = async (
     plan: GatewayReloadPlan,
-    nextConfig: OpenClawConfig,
+    nextConfig: NovaConfig,
     publication?: GatewayHotReloadPublication,
   ): Promise<void> => {
     assertIrreversibleReloadPlanHasRecoveryOwner(plan, restartRecoveryAvailable);
@@ -1186,7 +1183,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
   let restartEmissionSettled = false;
   type RestartRequestDetails = {
     plan: GatewayReloadPlan;
-    nextConfig: OpenClawConfig;
+    nextConfig: NovaConfig;
     restartOwnedPaths: string[];
     retainDebtAcrossConfigChanges: boolean;
   };
@@ -1238,7 +1235,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
 
   const createRestartRequestDetails = (
     plan: GatewayReloadPlan,
-    nextConfig: OpenClawConfig,
+    nextConfig: NovaConfig,
     options?: GatewayRestartRequestOptions,
   ): RestartRequestDetails => {
     const explicitRestartPaths = plan.restartReasons.filter((path) =>
@@ -1255,7 +1252,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
 
   const deferGatewayRestartDebt = (
     plan: GatewayReloadPlan,
-    nextConfig: OpenClawConfig,
+    nextConfig: NovaConfig,
     options?: GatewayRestartRequestOptions,
   ) => {
     const details = createRestartRequestDetails(plan, nextConfig, options);
@@ -1372,7 +1369,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
     restartRetryTimer.unref?.();
   };
 
-  const acceptRestartConfig = (acceptedConfig?: OpenClawConfig) => {
+  const acceptRestartConfig = (acceptedConfig?: NovaConfig) => {
     if (restartRequestTransaction?.state !== "rejected") {
       return { retireRejectedRestart: false };
     }
@@ -1443,7 +1440,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
 
   const requestGatewayRestartForGeneration = (
     plan: GatewayReloadPlan,
-    nextConfig: OpenClawConfig,
+    nextConfig: NovaConfig,
     requestGeneration: number,
     options?: GatewayRestartRequestOptions,
   ): boolean => {
@@ -1618,7 +1615,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
 
   const requestGatewayRestart = (
     plan: GatewayReloadPlan,
-    nextConfig: OpenClawConfig,
+    nextConfig: NovaConfig,
     options?: GatewayRestartRequestOptions,
   ): GatewayRestartTransactionResult => {
     if (restartRetryStopped) {
@@ -1670,22 +1667,22 @@ export function startManagedGatewayConfigReloader(
   }
 
   const prepareRuntimeCandidate = (
-    runtimeConfig: OpenClawConfig,
-    sourceConfig: OpenClawConfig,
+    runtimeConfig: NovaConfig,
+    sourceConfig: NovaConfig,
     ownership?: GatewayConfigReloadTransactionOwnership,
-  ): OpenClawConfig => {
+  ): NovaConfig => {
     const canonicalConfig = restoreCanonicalSecretRefs(runtimeConfig, sourceConfig);
     const candidateConfig = ownership?.reapplyRuntimeOverlays(canonicalConfig) ?? canonicalConfig;
     return params.applyRuntimeConfigOverrides?.(candidateConfig) ?? candidateConfig;
   };
-  const applyRuntimeConfigOverrides = (config: OpenClawConfig): OpenClawConfig =>
+  const applyRuntimeConfigOverrides = (config: NovaConfig): NovaConfig =>
     params.applyRuntimeConfigOverrides?.(config) ?? config;
   const restartRecoveryAvailable =
     params.restartRecoveryAvailable !== false && params.requestRecoveryRestart !== undefined;
 
   let stopped = false;
   const tryPrepareRuntimeSecrets = async (
-    config: OpenClawConfig,
+    config: NovaConfig,
     transactionOwnership: GatewayConfigReloadTransactionOwnership,
     activationParams: RuntimeSecretsPreflightParams,
   ): Promise<CurrentRuntimeSecretsPreparation | null> => {
@@ -1778,9 +1775,9 @@ export function startManagedGatewayConfigReloader(
   });
   const runManagedRestart = async (
     plan: GatewayReloadPlan,
-    nextConfig: OpenClawConfig,
+    nextConfig: NovaConfig,
     transactionOwnership: GatewayConfigReloadTransactionOwnership,
-    sourceConfig: OpenClawConfig,
+    sourceConfig: NovaConfig,
     restartOptions?: GatewayRestartRequestOptions,
     beforeRestartRequest?: () => Promise<void>,
   ) => {
@@ -1798,7 +1795,7 @@ export function startManagedGatewayConfigReloader(
           previousRequired: string | undefined | null;
           previousCurrent: string | undefined;
           nextGeneration: string | undefined;
-          runtimeConfig: OpenClawConfig;
+          runtimeConfig: NovaConfig;
         }
       | undefined;
     try {

@@ -230,7 +230,7 @@ describeControlUiE2e("Control UI profile page mocked Gateway E2E", () => {
         ],
       });
 
-      const profileAvatar = page.locator("#settings-profile-identity openclaw-viewer-avatar img");
+      const profileAvatar = page.locator("#settings-profile-identity nova-viewer-avatar img");
       await profileAvatar.waitFor({ timeout: 10_000 });
       // profile-page derives the src from userProfileAvatarUrl(id, updatedAt);
       // the gateway origin may absolutize it, so match the canonical path suffix.

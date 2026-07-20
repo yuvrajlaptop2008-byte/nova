@@ -5,7 +5,7 @@ import {
   type ConfigAuditRecord,
 } from "../../config/io.audit.js";
 import { createSqliteAuditRecordStore } from "../../infra/sqlite-audit-record-store.js";
-import { closeOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabase } from "../../state/nova-state-db.js";
 import {
   SYSTEM_AGENT_AUDIT_MAX_ENTRIES,
   SYSTEM_AGENT_AUDIT_SCOPE,
@@ -30,13 +30,13 @@ function configRecord(
   } as unknown as ConfigAuditRecord;
 }
 
-describe("openclaw.changes.list", () => {
+describe("nova.changes.list", () => {
   afterEach(() => {
-    closeOpenClawStateDatabase();
+    closeNovaStateDatabase();
   });
 
   it("merges journals, collapses matching writes, and skips non-history records", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const systemStore = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
         scope: SYSTEM_AGENT_AUDIT_SCOPE,
@@ -159,7 +159,7 @@ describe("openclaw.changes.list", () => {
   });
 
   it("classifies legacy redacted argv when origin is absent", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-argv-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-argv-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const store = createSqliteAuditRecordStore<ConfigAuditRecord>({
         scope: CONFIG_AUDIT_SCOPE,
@@ -170,7 +170,7 @@ describe("openclaw.changes.list", () => {
         "doctor",
         configRecord({
           ts: "2026-07-18T12:00:03.000Z",
-          argv: ["node", "openclaw", "doctor", "--fix"],
+          argv: ["node", "nova", "doctor", "--fix"],
           previousHash: "a",
           nextHash: "b",
         }),
@@ -179,7 +179,7 @@ describe("openclaw.changes.list", () => {
         "config",
         configRecord({
           ts: "2026-07-18T12:00:02.000Z",
-          argv: ["node", "openclaw", "config", "set", "profile.name", "doctor"],
+          argv: ["node", "nova", "config", "set", "profile.name", "doctor"],
           previousHash: "b",
           nextHash: "c",
         }),
@@ -188,7 +188,7 @@ describe("openclaw.changes.list", () => {
         "unknown",
         configRecord({
           ts: "2026-07-18T12:00:01.000Z",
-          argv: ["node", "openclaw", "onboard"],
+          argv: ["node", "nova", "onboard"],
           previousHash: "c",
           nextHash: "d",
         }),
@@ -203,7 +203,7 @@ describe("openclaw.changes.list", () => {
   });
 
   it("keeps pages newest-first while suppressing an older collapse partner", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-collapse-cursor-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-collapse-cursor-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const systemStore = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
         scope: SYSTEM_AGENT_AUDIT_SCOPE,
@@ -288,7 +288,7 @@ describe("openclaw.changes.list", () => {
   });
 
   it("keeps an outside-window repeated transition on a later page", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-pending-window-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-pending-window-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const systemStore = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
         scope: SYSTEM_AGENT_AUDIT_SCOPE,
@@ -367,7 +367,7 @@ describe("openclaw.changes.list", () => {
   });
 
   it("does not collapse a repeated transition outside the operation window", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-collapse-window-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-collapse-window-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const systemStore = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
         scope: SYSTEM_AGENT_AUDIT_SCOPE,
@@ -411,84 +411,81 @@ describe("openclaw.changes.list", () => {
   });
 
   it("prefers an in-window match over an older repeated transition", async () => {
-    await withTempDir(
-      { prefix: "openclaw-system-changes-repeated-transition-" },
-      async (stateDir) => {
-        const env = { ...process.env, NOVA_STATE_DIR: stateDir };
-        const systemStore = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
-          scope: SYSTEM_AGENT_AUDIT_SCOPE,
-          maxEntries: SYSTEM_AGENT_AUDIT_MAX_ENTRIES,
-          env,
-        });
-        const configStore = createSqliteAuditRecordStore<ConfigAuditRecord>({
-          scope: CONFIG_AUDIT_SCOPE,
-          maxEntries: CONFIG_AUDIT_MAX_ENTRIES,
-          env,
-        });
-        configStore.register(
-          "old-transition",
-          configRecord({
-            ts: "2026-07-18T12:00:01.000Z",
-            origin: "system-agent",
-            previousHash: "a",
-            nextHash: "b",
-            changedPaths: ["old.path"],
-          }),
-          1_000,
-        );
-        configStore.register(
-          "current-transition",
-          configRecord({
-            ts: "2026-07-18T12:00:02.000Z",
-            origin: "system-agent",
-            previousHash: "a",
-            nextHash: "b",
-            changedPaths: ["current.path"],
-          }),
-          2_000,
-        );
-        configStore.register(
-          "newer-cli-write",
-          configRecord({
-            ts: "2026-07-18T12:00:03.000Z",
-            origin: "cli",
-            previousHash: "b",
-            nextHash: "c",
-            changedPaths: ["gateway.bind"],
-          }),
-          3_000,
-        );
-        systemStore.register(
-          "operation",
-          {
-            timestamp: "2026-07-18T12:00:04.000Z",
-            operation: "config.set",
-            summary: "Set current path",
-            configHashBefore: "a",
-            configHashAfter: "b",
-          },
-          4_000,
-        );
+    await withTempDir({ prefix: "nova-system-changes-repeated-transition-" }, async (stateDir) => {
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
+      const systemStore = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
+        scope: SYSTEM_AGENT_AUDIT_SCOPE,
+        maxEntries: SYSTEM_AGENT_AUDIT_MAX_ENTRIES,
+        env,
+      });
+      const configStore = createSqliteAuditRecordStore<ConfigAuditRecord>({
+        scope: CONFIG_AUDIT_SCOPE,
+        maxEntries: CONFIG_AUDIT_MAX_ENTRIES,
+        env,
+      });
+      configStore.register(
+        "old-transition",
+        configRecord({
+          ts: "2026-07-18T12:00:01.000Z",
+          origin: "system-agent",
+          previousHash: "a",
+          nextHash: "b",
+          changedPaths: ["old.path"],
+        }),
+        1_000,
+      );
+      configStore.register(
+        "current-transition",
+        configRecord({
+          ts: "2026-07-18T12:00:02.000Z",
+          origin: "system-agent",
+          previousHash: "a",
+          nextHash: "b",
+          changedPaths: ["current.path"],
+        }),
+        2_000,
+      );
+      configStore.register(
+        "newer-cli-write",
+        configRecord({
+          ts: "2026-07-18T12:00:03.000Z",
+          origin: "cli",
+          previousHash: "b",
+          nextHash: "c",
+          changedPaths: ["gateway.bind"],
+        }),
+        3_000,
+      );
+      systemStore.register(
+        "operation",
+        {
+          timestamp: "2026-07-18T12:00:04.000Z",
+          operation: "config.set",
+          summary: "Set current path",
+          configHashBefore: "a",
+          configHashAfter: "b",
+        },
+        4_000,
+      );
 
-        const first = listSystemChanges({ limit: 1 }, { env });
-        expect(first.entries).toEqual([
-          expect.objectContaining({ kind: "operation", changedPaths: ["current.path"] }),
-        ]);
-        const second = listSystemChanges({ limit: 1, beforeCursor: first.nextCursor }, { env });
-        expect(second.entries).toEqual([
-          expect.objectContaining({ source: "cli", changedPaths: ["gateway.bind"] }),
-        ]);
-        const third = listSystemChanges({ limit: 1, beforeCursor: second.nextCursor }, { env });
-        expect(third.entries).toEqual([
-          expect.objectContaining({ kind: "config-write", changedPaths: ["old.path"] }),
-        ]);
-        expect(third.nextCursor).toBeUndefined();
-      },
-    );
+      const first = listSystemChanges({ limit: 1 }, { env });
+      expect(first.entries).toEqual([
+        expect.objectContaining({ kind: "operation", changedPaths: ["current.path"] }),
+      ]);
+      const second = listSystemChanges({ limit: 1, beforeCursor: first.nextCursor }, { env });
+      expect(second.entries).toEqual([
+        expect.objectContaining({ source: "cli", changedPaths: ["gateway.bind"] }),
+      ]);
+      const third = listSystemChanges({ limit: 1, beforeCursor: second.nextCursor }, { env });
+      expect(third.entries).toEqual([
+        expect.objectContaining({ kind: "config-write", changedPaths: ["old.path"] }),
+      ]);
+      expect(third.nextCursor).toBeUndefined();
+    });
   });
 
   it("paginates equal timestamps by per-scope sequence and freezes the scope heads", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-cursor-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-cursor-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const store = createSqliteAuditRecordStore<ConfigAuditRecord>({
         scope: CONFIG_AUDIT_SCOPE,
@@ -535,7 +532,7 @@ describe("openclaw.changes.list", () => {
   });
 
   it("freezes an untouched scope before the first page is emitted", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-frozen-heads-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-frozen-heads-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const systemStore = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
         scope: SYSTEM_AGENT_AUDIT_SCOPE,
@@ -598,7 +595,7 @@ describe("openclaw.changes.list", () => {
   });
 
   it("uses store insertion order when a producer clock moves backwards", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-insertion-order-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-insertion-order-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const store = createSqliteAuditRecordStore<ConfigAuditRecord>({
         scope: CONFIG_AUDIT_SCOPE,
@@ -645,7 +642,7 @@ describe("openclaw.changes.list", () => {
   });
 
   it("bounds filtered journal scans and resumes from the scanned frontier", async () => {
-    await withTempDir({ prefix: "openclaw-system-changes-scan-budget-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-system-changes-scan-budget-" }, async (stateDir) => {
       const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const configStore = createSqliteAuditRecordStore<ConfigAuditRecord>({
         scope: CONFIG_AUDIT_SCOPE,

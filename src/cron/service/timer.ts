@@ -1366,7 +1366,7 @@ async function onAdmittedTimer(state: CronServiceState) {
     // We use MAX_TIMER_DELAY_MS as a fixed re-check interval to avoid a
     // zero-delay hot-loop when past-due jobs are waiting for the current
     // execution to finish.
-    // See: https://github.com/openclaw/openclaw/issues/12025
+    // See: https://github.com/nova/nova/issues/12025
     armRunningRecheckTimer(state);
     return;
   }
@@ -2945,7 +2945,7 @@ export function stopTimer(state: CronServiceState) {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.cronTimerTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.cronTimerTestApi")] = {
     executeJobCore,
     onTimer,
   };

@@ -1,7 +1,7 @@
 // Msteams helper module supports monitor handler helpers behavior.
-import type { PreparedInboundReply } from "openclaw/plugin-sdk/channel-inbound";
+import type { PreparedInboundReply } from "nova/plugin-sdk/channel-inbound";
 import { vi } from "vitest";
-import type { OpenClawConfig, PluginRuntime, RuntimeEnv } from "../runtime-api.js";
+import type { NovaConfig, PluginRuntime, RuntimeEnv } from "../runtime-api.js";
 import type { MSTeamsConversationStore } from "./conversation-store.js";
 import type { MSTeamsActivityHandler } from "./monitor-handler.js";
 import type { MSTeamsMessageHandlerDeps } from "./monitor-handler.types.js";
@@ -197,7 +197,7 @@ export function createActivityHandler(
 }
 
 export function createMSTeamsMessageHandlerDeps(params?: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   runtime?: RuntimeEnv;
 }): MSTeamsMessageHandlerDeps {
   const app = {

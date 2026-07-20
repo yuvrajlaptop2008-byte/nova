@@ -17,9 +17,9 @@ import {
   isChromeCdpOwnedByPid,
   isChromeCdpReady,
   isChromeReachable,
-  launchOpenClawChrome,
+  launchNovaChrome,
   ManagedChromeCleanupError,
-  stopOpenClawChrome,
+  stopNovaChrome,
 } from "./chrome.js";
 import type { ResolvedBrowserProfile } from "./config.js";
 import { BROWSER_ERROR_REASONS, BrowserProfileUnavailableError } from "./errors.js";
@@ -251,7 +251,7 @@ export function createProfileAvailability({
     running: NonNullable<ProfileRuntimeState["running"]>,
   ) => {
     try {
-      await stopOpenClawChrome(running);
+      await stopNovaChrome(running);
       releaseProfileHandle(profileState, running);
     } catch (err) {
       getProfileLifecycle(profileState).blockedReason = "managed Chrome cleanup failed";
@@ -298,7 +298,7 @@ export function createProfileAvailability({
       return (
         `Chrome MCP existing-session attach for profile "${profile.name}" could not connect to Chrome. ` +
         "Enable remote debugging in the browser inspect page, keep the browser open, approve the attach prompt, and retry. " +
-        'If you do not need your signed-in browser session, use the managed "openclaw" profile instead.' +
+        'If you do not need your signed-in browser session, use the managed "nova" profile instead.' +
         detail
       );
     }
@@ -336,7 +336,7 @@ export function createProfileAvailability({
     signal: AbortSignal,
     running: NonNullable<ProfileRuntimeState["running"]>,
   ): Promise<void> => {
-    // launchOpenClawChrome() can return before Chrome is fully ready to serve /json/version + CDP WS.
+    // launchNovaChrome() can return before Chrome is fully ready to serve /json/version + CDP WS.
     // If a follow-up call races ahead, we can hit PortInUseError trying to launch again on the same port.
     const deadlineMs =
       Date.now() + (state().resolved.localCdpReadyTimeoutMs ?? CDP_READY_AFTER_LAUNCH_WINDOW_MS);
@@ -397,7 +397,7 @@ export function createProfileAvailability({
   ) => {
     assertManagedLaunchNotCoolingDown(profile.name, profileState);
     try {
-      return await launchOpenClawChrome(current.resolved, profile, {
+      return await launchNovaChrome(current.resolved, profile, {
         ...launchOptions,
         signal,
       });
@@ -542,7 +542,7 @@ export function createProfileAvailability({
     if (!runtime.running) {
       const detail = await describeCdpFailure(PROFILE_ATTACH_RETRY_TIMEOUT_MS);
       throw new BrowserProfileUnavailableError(
-        `Port ${profile.cdpPort} is in use for profile "${profile.name}" but not by openclaw. ` +
+        `Port ${profile.cdpPort} is in use for profile "${profile.name}" but not by nova. ` +
           `${formatLocalPortOwnershipHint(profile)} ${detail}`,
       );
     }

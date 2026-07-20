@@ -8,7 +8,7 @@ import { asFiniteNumber } from "@nova/normalization-core/number-coercion";
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { normalizeTrimmedStringList } from "@nova/normalization-core/string-normalization";
-import type { OpenClawAgentDatabase } from "../../state/openclaw-agent-db.js";
+import type { NovaAgentDatabase } from "../../state/nova-agent-db.js";
 import { AUTH_STORE_VERSION } from "./constants.js";
 import { readPersistedAuthProfileStateRaw } from "./sqlite.js";
 import type {
@@ -193,7 +193,7 @@ export function mergeAuthProfileState(
 /** Loads persisted auth profile runtime state from SQLite. */
 export function loadPersistedAuthProfileState(
   agentDir?: string,
-  database?: OpenClawAgentDatabase,
+  database?: NovaAgentDatabase,
 ): AuthProfileState {
   return coerceAuthProfileState(readPersistedAuthProfileStateRaw(agentDir, database));
 }

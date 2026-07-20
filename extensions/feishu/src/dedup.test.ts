@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { feishuDedupeState } from "./dedup-state.js";
 import {
@@ -17,7 +17,7 @@ let previousStateDir: string | undefined;
 
 beforeEach(() => {
   previousStateDir = process.env.NOVA_STATE_DIR;
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-feishu-dedup-"));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-feishu-dedup-"));
   process.env.NOVA_STATE_DIR = tempDir;
   feishuDedupeState.reset();
 });

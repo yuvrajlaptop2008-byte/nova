@@ -20,7 +20,7 @@ import {
 
 describe("ensureDir", () => {
   it("creates nested directory", async () => {
-    await withTempDir({ prefix: "openclaw-test-" }, async (tmp) => {
+    await withTempDir({ prefix: "nova-test-" }, async (tmp) => {
       const target = path.join(tmp, "nested", "dir");
       await ensureDir(target);
       expect(fs.existsSync(target)).toBe(true);
@@ -71,9 +71,9 @@ describe("normalizeE164", () => {
 });
 
 describe("resolveConfigDir", () => {
-  it("prefers ~/.openclaw when legacy dir is missing", async () => {
-    await withTempDir({ prefix: "openclaw-config-dir-" }, async (root) => {
-      const newDir = path.join(root, ".openclaw");
+  it("prefers ~/.nova when legacy dir is missing", async () => {
+    await withTempDir({ prefix: "nova-config-dir-" }, async (root) => {
+      const newDir = path.join(root, ".nova");
       await fs.promises.mkdir(newDir, { recursive: true });
       const resolved = resolveConfigDir({} as NodeJS.ProcessEnv, () => root);
       expect(resolved).toBe(newDir);
@@ -82,25 +82,25 @@ describe("resolveConfigDir", () => {
 
   it("expands NOVA_STATE_DIR using the provided env", () => {
     const env = {
-      HOME: "/tmp/openclaw-home",
+      HOME: "/tmp/nova-home",
       NOVA_STATE_DIR: "~/state",
     } as NodeJS.ProcessEnv;
 
-    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/openclaw-home", "state"));
+    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/nova-home", "state"));
   });
 
   it("falls back to the config file directory when only NOVA_CONFIG_PATH is set", () => {
     const env = {
-      HOME: "/tmp/openclaw-home",
-      NOVA_CONFIG_PATH: "~/profiles/dev/openclaw.json",
+      HOME: "/tmp/nova-home",
+      NOVA_CONFIG_PATH: "~/profiles/dev/nova.json",
     } as NodeJS.ProcessEnv;
 
-    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/openclaw-home", "profiles", "dev"));
+    expect(resolveConfigDir(env)).toBe(path.resolve("/tmp/nova-home", "profiles", "dev"));
   });
 
   it("re-pins the exported configuration root after startup environment selection", () => {
     const originalConfigDir = CONFIG_DIR;
-    const selectedConfigDir = path.resolve("/tmp/openclaw-selected-config-root");
+    const selectedConfigDir = path.resolve("/tmp/nova-selected-config-root");
     try {
       expect(
         pinConfigDir({
@@ -120,17 +120,17 @@ describe("resolveConfigDir", () => {
 
 describe("resolveHomeDir", () => {
   it("prefers NOVA_HOME over HOME", () => {
-    withEnv({ NOVA_HOME: "/srv/openclaw-home", HOME: "/home/other" }, () => {
-      expect(resolveHomeDir()).toBe(path.resolve("/srv/openclaw-home"));
+    withEnv({ NOVA_HOME: "/srv/nova-home", HOME: "/home/other" }, () => {
+      expect(resolveHomeDir()).toBe(path.resolve("/srv/nova-home"));
     });
   });
 });
 
 describe("shortenHomePath", () => {
   it("uses $NOVA_HOME prefix when NOVA_HOME is set", () => {
-    withEnv({ NOVA_HOME: "/srv/openclaw-home", HOME: "/home/other" }, () => {
-      expect(shortenHomePath(`${path.resolve("/srv/openclaw-home")}/.openclaw/openclaw.json`)).toBe(
-        "$NOVA_HOME/.openclaw/openclaw.json",
+    withEnv({ NOVA_HOME: "/srv/nova-home", HOME: "/home/other" }, () => {
+      expect(shortenHomePath(`${path.resolve("/srv/nova-home")}/.nova/nova.json`)).toBe(
+        "$NOVA_HOME/.nova/nova.json",
       );
     });
   });
@@ -138,12 +138,10 @@ describe("shortenHomePath", () => {
 
 describe("shortenHomeInString", () => {
   it("uses $NOVA_HOME replacement when NOVA_HOME is set", () => {
-    withEnv({ NOVA_HOME: "/srv/openclaw-home", HOME: "/home/other" }, () => {
-      expect(
-        shortenHomeInString(
-          `config: ${path.resolve("/srv/openclaw-home")}/.openclaw/openclaw.json`,
-        ),
-      ).toBe("config: $NOVA_HOME/.openclaw/openclaw.json");
+    withEnv({ NOVA_HOME: "/srv/nova-home", HOME: "/home/other" }, () => {
+      expect(shortenHomeInString(`config: ${path.resolve("/srv/nova-home")}/.nova/nova.json`)).toBe(
+        "config: $NOVA_HOME/.nova/nova.json",
+      );
     });
   });
 });
@@ -154,8 +152,8 @@ describe("resolveUserPath", () => {
   });
 
   it("expands ~/ to home dir", () => {
-    expect(resolveUserPath("~/openclaw", {}, () => "/Users/thoffman")).toBe(
-      path.resolve("/Users/thoffman", "openclaw"),
+    expect(resolveUserPath("~/nova", {}, () => "/Users/thoffman")).toBe(
+      path.resolve("/Users/thoffman", "nova"),
     );
   });
 
@@ -164,18 +162,18 @@ describe("resolveUserPath", () => {
   });
 
   it("prefers NOVA_HOME for tilde expansion", () => {
-    withEnv({ NOVA_HOME: "/srv/openclaw-home", HOME: "/home/other" }, () => {
-      expect(resolveUserPath("~/openclaw")).toBe(path.resolve("/srv/openclaw-home", "openclaw"));
+    withEnv({ NOVA_HOME: "/srv/nova-home", HOME: "/home/other" }, () => {
+      expect(resolveUserPath("~/nova")).toBe(path.resolve("/srv/nova-home", "nova"));
     });
   });
 
   it("uses the provided env for tilde expansion", () => {
     const env = {
-      HOME: "/tmp/openclaw-home",
-      NOVA_HOME: "/srv/openclaw-home",
+      HOME: "/tmp/nova-home",
+      NOVA_HOME: "/srv/nova-home",
     } as NodeJS.ProcessEnv;
 
-    expect(resolveUserPath("~/openclaw", env)).toBe(path.resolve("/srv/openclaw-home", "openclaw"));
+    expect(resolveUserPath("~/nova", env)).toBe(path.resolve("/srv/nova-home", "nova"));
   });
 
   it("keeps blank paths blank", () => {

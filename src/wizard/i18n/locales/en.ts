@@ -99,7 +99,7 @@ export const en = {
       websocketUrl: "Gateway WebSocket URL",
     },
     gatewayTailscale: {
-      docsNote: "Docs:\nhttps://docs.openclaw.ai/gateway/tailscale\nhttps://docs.openclaw.ai/web",
+      docsNote: "Docs:\nhttps://docs.nova.ai/gateway/tailscale\nhttps://docs.nova.ai/web",
       funnel: "Funnel",
       funnelHint: "Public HTTPS via Tailscale Funnel (internet)",
       missingBinNote:
@@ -122,7 +122,7 @@ export const en = {
       apply: "Apply this migration now?",
       appliedTitle: "Migration applied",
       cancelled: "migration cancelled",
-      complete: "Migration complete. Run `openclaw doctor` next.",
+      complete: "Migration complete. Run `nova doctor` next.",
       continuing: "Migration complete. Continuing setup.",
       importFrom: "Import from {source}",
       includeCredentials: "Import supported auth credentials too?",
@@ -200,7 +200,7 @@ export const en = {
       arrayPromptSuffix: " (comma-separated, empty to clear)",
       arrayPlaceholder: "value1, value2",
       sensitiveField:
-        '"{label}" is sensitive. Set it via:\n  openclaw config set plugins.entries.{plugin}.config.{field} <value>\nor use the Web UI Settings page.',
+        '"{label}" is sensitive. Set it via:\n  nova config set plugins.entries.{plugin}.config.{field} <value>\nor use the Web UI Settings page.',
       sensitiveTitle: "Sensitive field",
       skipConfigHint: "Continue without configuring plugins",
       useLocalPluginPath: "Use local plugin path",
@@ -291,7 +291,7 @@ export const en = {
       failedOptionLine: "{label}: {reason}",
       failedOptionsIntro: "These didn't work just now:",
       findMeLater:
-        "You can always find me later — run `openclaw` in a terminal, or open Settings in the dashboard.",
+        "You can always find me later — run `nova` in a terminal, or open Settings in the dashboard.",
       hatchingNow: "Hatching your agent now…",
       keepingCurrent: "Keeping the working AI you already have.",
       lookAroundManual: "No — I'll configure it manually",
@@ -313,7 +313,7 @@ export const en = {
       enterApiKey: "Enter API key — {label}",
       existingModelKept:
         "Your configured default model was kept unchanged. Choose how to continue below — retry it, connect another provider, or exit. The check runs outside your workspace, so a workspace-plugin model can fail here while still working in the agent.",
-      escapeHatches: "For the full step-by-step wizard, run `openclaw onboard --classic`.",
+      escapeHatches: "For the full step-by-step wizard, run `nova onboard --classic`.",
       failureAuth: "Authentication failed. Sign in again or check the key.",
       failureBilling: "Billing is not active for this model or account.",
       failureFormat: "The model did not return a usable reply.",
@@ -331,9 +331,9 @@ export const en = {
       invalidConfigUnknown: "- The config could not be parsed.",
       manualChoice: "How would you like to connect AI?",
       nextSteps:
-        "Workspace: {workspace}\nAdd a channel: `openclaw channels add`\nPrefer chatting? Run `openclaw setup` and say `connect telegram` (or `connect slack`).\nOpen the dashboard: `openclaw dashboard`\nChat later: `openclaw`",
+        "Workspace: {workspace}\nAdd a channel: `nova channels add`\nPrefer chatting? Run `nova setup` and say `connect telegram` (or `connect slack`).\nOpen the dashboard: `nova dashboard`\nChat later: `nova`",
       nextStepsWithoutAi:
-        "Workspace: {workspace}\nAdd AI later: re-run `openclaw onboard`\nAfter AI connects, add a channel: `openclaw channels add`\nOpen the dashboard: `openclaw dashboard`",
+        "Workspace: {workspace}\nAdd AI later: re-run `nova onboard`\nAfter AI connects, add a channel: `nova channels add`\nOpen the dashboard: `nova dashboard`",
       nextStepsTitle: "Next steps",
       noInferenceOptions:
         "No inference option is available yet. Sign in to Claude Code or Codex, or configure an API-key provider, then run onboarding again.",
@@ -350,7 +350,7 @@ export const en = {
       testingManualProvider: "Testing {label} — real completion, not a ping…",
       tryCandidate: "Try {label} ({detail})",
       ttyRequired:
-        "Onboarding needs an interactive TTY. Use `openclaw onboard --non-interactive --accept-risk ...` for automation.",
+        "Onboarding needs an interactive TTY. Use `nova onboard --non-interactive --accept-risk ...` for automation.",
       welcomeTitle: "Setup choices",
     },
     setup: {
@@ -451,7 +451,7 @@ export const en = {
       containerBrewManual:
         "Use a custom image with Homebrew preinstalled or install those dependencies manually.",
       containerInstallsTitle: "Container skill installs",
-      docsLine: "Docs: https://docs.openclaw.ai/skills",
+      docsLine: "Docs: https://docs.nova.ai/skills",
       enterEnv: "Enter {env}",
       homebrewCommand: "Show Homebrew install command?",
       homebrewInstallTitle: "Homebrew install",
@@ -463,7 +463,7 @@ export const en = {
       installedWithWarnings: "Installed {name} (with warnings)",
       installing: "Installing {name}...",
       manualPrereqsDoctorHint:
-        "Install those tools first, then run `openclaw doctor` to review skills + requirements.",
+        "Install those tools first, then run `nova doctor` to review skills + requirements.",
       manualPrereqsIntro: "Skipped optional skill installs that need local tools first:",
       manualPrereqsTitle: "Manual skill prerequisites",
       nodeManager: "Preferred node manager for skill installs",
@@ -857,7 +857,7 @@ export const en = {
       helpRecommendedTls: "Recommended: TLS on port 6697.",
       multipleEntries: "Multiple entries: comma-separated.",
       nextRestartGateway: "Next: restart gateway and verify status.",
-      nextStatusCommand: "Command: openclaw channels status --probe",
+      nextStatusCommand: "Command: nova channels status --probe",
       nextStepsTitle: "IRC next steps",
       nickPrompt: "IRC nick",
       nickServConfigurePrompt: "Configure NickServ identify/register?",
@@ -1060,7 +1060,7 @@ export const en = {
       credentialRequired: "{label} required",
       chooseProvider: "Choose a provider. Some providers need an API key, and some work key-free.",
       configured: "configured",
-      configureLaterHint: "Configure later with openclaw configure --section web",
+      configureLaterHint: "Configure later with nova configure --section web",
       docsLine: "Docs: {url}",
       intro: "Web search lets your agent look things up online.",
       keyFree: "key-free",
@@ -1078,7 +1078,7 @@ export const en = {
       codexNativeSearchOnly: "Used only for Codex-capable models.",
       codexNativeSearchTitle: "Codex native search",
       controlUiTitle: "Control UI",
-      controlUiDocs: "Docs: https://docs.openclaw.ai/web/control-ui",
+      controlUiDocs: "Docs: https://docs.nova.ai/web/control-ui",
       dashboardCopyPaste: "Copy/paste this URL in a browser on this machine to control Nova.",
       dashboardLinkWithToken: "Dashboard link (with token): {url}",
       dashboardOpened: "Opened in your browser. Keep that tab to control Nova.",
@@ -1115,7 +1115,7 @@ export const en = {
       gatewayTokenGenerate: "Generate token: {command}",
       gatewayTokenShared: "Gateway token: shared auth for the Gateway + Control UI.",
       gatewayTokenStored:
-        "Stored in: $NOVA_CONFIG_PATH (default: ~/.openclaw/openclaw.json) under gateway.auth.token, or in NOVA_GATEWAY_TOKEN.",
+        "Stored in: $NOVA_CONFIG_PATH (default: ~/.nova/nova.json) under gateway.auth.token, or in NOVA_GATEWAY_TOKEN.",
       gatewayTokenView: "View token: {command}",
       gatewayWsUrl: "Gateway WS: {url}",
       hatchLater: "Hatch later",
@@ -1147,7 +1147,7 @@ export const en = {
       containerSystemdUnavailable:
         "Systemd user services are not available inside this container. Nova is skipping only the background service install; run the Gateway in the foreground or use your container supervisor.",
       securityReminder:
-        "Running agents on your computer is risky — harden your setup: https://docs.openclaw.ai/security",
+        "Running agents on your computer is risky — harden your setup: https://docs.nova.ai/security",
       secretRefAuthFailed: "Could not resolve {field} SecretRef for setup auth.",
       skipHealthNextTime: "Or skip this probe next time: {command}",
       skipControlUi: "Skipping Control UI/TUI prompts.",
@@ -1162,7 +1162,7 @@ export const en = {
       sessionGatewayStarted: "Session Gateway started.",
       sessionGatewayStartFailed: "Session Gateway failed to start.",
       terminalHatch: "Hatch in Terminal (recommended)",
-      webDocs: "Docs: https://docs.openclaw.ai/tools/web",
+      webDocs: "Docs: https://docs.nova.ai/tools/web",
       webSearchAutoDetected: "Web search is available via {provider} (auto-detected).",
       webSearchDisabled: "Web search ({provider}) is configured but disabled.",
       webSearchEnabled:
@@ -1186,10 +1186,10 @@ export const en = {
         "web_search will not work until the provider is re-enabled or a different provider is selected.",
       webUiUrl: "Web UI: {url}",
       webUiWithTokenUrl: "Web UI (with token): {url}",
-      whatNow: 'What now: https://openclaw.ai/showcase ("What People Are Building").',
+      whatNow: 'What now: https://nova.ai/showcase ("What People Are Building").',
       whatNowTitle: "What now",
       workspaceBackupTitle: "Workspace backup",
-      workspaceDocs: "Docs: https://docs.openclaw.ai/concepts/agent-workspace",
+      workspaceDocs: "Docs: https://docs.nova.ai/concepts/agent-workspace",
       workspaceReady: "Your workspace is ready.",
     },
     gatewayNotes: {

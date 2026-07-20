@@ -55,10 +55,10 @@ describeControlUiE2e("Control UI initial connect splash E2E", () => {
     await page.goto(`${server.baseUrl}#token=e2e-shared-token`);
     await gateway.waitForRequest("connect");
     await page.locator(".connect-splash").waitFor();
-    expect(await page.locator("openclaw-login-gate").count()).toBe(0);
+    expect(await page.locator("nova-login-gate").count()).toBe(0);
 
     await gateway.resolveDeferred("connect");
-    await page.locator("openclaw-app-shell").waitFor();
+    await page.locator("nova-app-shell").waitFor();
     expect(await page.locator(".connect-splash").count()).toBe(0);
   });
 
@@ -68,7 +68,7 @@ describeControlUiE2e("Control UI initial connect splash E2E", () => {
 
     await page.goto(server.baseUrl);
     await gateway.waitForRequest("connect");
-    await page.locator("openclaw-login-gate").waitFor();
+    await page.locator("nova-login-gate").waitFor();
     expect(await page.locator(".connect-splash").count()).toBe(0);
   });
 
@@ -85,7 +85,7 @@ describeControlUiE2e("Control UI initial connect splash E2E", () => {
       message: "unauthorized: gateway token mismatch",
       details: { code: ConnectErrorDetailCodes.AUTH_TOKEN_MISMATCH },
     });
-    await page.locator("openclaw-login-gate").waitFor();
+    await page.locator("nova-login-gate").waitFor();
     expect(await page.locator(".connect-splash").count()).toBe(0);
   });
 
@@ -96,18 +96,18 @@ describeControlUiE2e("Control UI initial connect splash E2E", () => {
     // First visit has no credentials: the login gate owns the pending connect.
     await page.goto(server.baseUrl);
     await gateway.waitForRequest("connect");
-    await page.locator("openclaw-login-gate").waitFor();
+    await page.locator("nova-login-gate").waitFor();
     await gateway.resolveDeferred("connect");
-    await page.locator("openclaw-app-shell").waitFor();
+    await page.locator("nova-app-shell").waitFor();
 
     // The hello stored a device token, so the reload connect is authenticated
     // and must paint the splash instead of flashing the gate.
     await page.reload();
     await gateway.waitForRequest("connect");
     await page.locator(".connect-splash").waitFor();
-    expect(await page.locator("openclaw-login-gate").count()).toBe(0);
+    expect(await page.locator("nova-login-gate").count()).toBe(0);
 
     await gateway.resolveDeferred("connect");
-    await page.locator("openclaw-app-shell").waitFor();
+    await page.locator("nova-app-shell").waitFor();
   });
 });

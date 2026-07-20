@@ -4,11 +4,11 @@ import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import type { SessionCatalogProvider } from "openclaw/plugin-sdk/session-catalog";
-import { resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import type { SessionCatalogProvider } from "nova/plugin-sdk/session-catalog";
+import { resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CodexThread } from "./app-server/protocol.js";
 import { sessionBindingIdentity } from "./app-server/session-binding.js";
@@ -78,8 +78,8 @@ vi.mock("./app-server/shared-client.js", () => ({
 vi.mock("./app-server/transcript-mirror.js", () => ({
   importCodexThreadHistoryToTranscript: transcriptMirrorMocks.importCodexThreadHistoryToTranscript,
 }));
-vi.mock("openclaw/plugin-sdk/node-host", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/node-host")>();
+vi.mock("nova/plugin-sdk/node-host", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/node-host")>();
   return {
     ...actual,
     runNodePtyCommand: nodeHostMocks.runNodePtyCommand,
@@ -115,7 +115,7 @@ type SessionEntrySummary = ReturnType<
   PluginRuntime["agent"]["session"]["listSessionEntries"]
 >[number];
 
-const config = {} as OpenClawConfig;
+const config = {} as NovaConfig;
 
 function idleThread(overrides: Partial<CodexThread> = {}): CodexThread {
   return {
@@ -155,7 +155,7 @@ function createEligibleControl(overrides: Partial<CodexSessionCatalogControl> = 
 
 function adoptedEntry(params: { sourceThreadId: string; sessionId?: string }) {
   return {
-    sessionId: params.sessionId ?? "openclaw-session-existing",
+    sessionId: params.sessionId ?? "nova-session-existing",
     updatedAt: 1,
     agentHarnessId: "codex",
     modelSelectionLocked: true,
@@ -270,7 +270,7 @@ function createRuntime(
       summary = existing;
     } else {
       sessionSequence += 1;
-      const sessionId = `openclaw-session-${sessionSequence}`;
+      const sessionId = `nova-session-${sessionSequence}`;
       const entry = {
         sessionId,
         sessionFile: `/tmp/${sessionId}.jsonl`,
@@ -367,7 +367,7 @@ function createGatewayApi(runtime: PluginRuntime) {
   const api = {
     runtime,
     registerSessionCatalog,
-  } as unknown as OpenClawPluginApi;
+  } as unknown as NovaPluginApi;
   return { api, getProvider: () => provider, registerSessionCatalog };
 }
 
@@ -1130,7 +1130,7 @@ describe("Codex supervision catalog", () => {
 
   it("resolves node terminal eligibility and cwd from the node-owned catalog record", async () => {
     const threadId = "123e4567-e89b-12d3-a456-426614174000";
-    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-node-terminal-"));
+    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-node-terminal-"));
     tempDirs.push(binDir);
     const executable = path.join(binDir, process.platform === "win32" ? "codex.cmd" : "codex");
     await fs.writeFile(executable, process.platform === "win32" ? "@echo off\r\n" : "#!/bin/sh\n");
@@ -1342,7 +1342,7 @@ describe("Codex supervision catalog", () => {
       invoke,
     });
     const sessionKey = supervisionSessionKey("source-thread");
-    const sessionId = "openclaw-session-existing";
+    const sessionId = "nova-session-existing";
     entries.push({
       sessionKey,
       entry: adoptedEntry({
@@ -1384,7 +1384,7 @@ describe("Codex supervision catalog", () => {
     });
     const { runtime, entries } = createRuntime();
     const sessionKey = supervisionSessionKey("source-thread");
-    const sessionId = "openclaw-session-pending";
+    const sessionId = "nova-session-pending";
     entries.push({
       sessionKey,
       entry: {
@@ -1416,7 +1416,7 @@ describe("Codex supervision catalog", () => {
       })),
     });
     const sessionKey = supervisionSessionKey("source-thread");
-    const sessionId = "openclaw-session-forged-marker";
+    const sessionId = "nova-session-forged-marker";
     const { runtime, entries } = createRuntime({
       entries: [
         {
@@ -1453,12 +1453,12 @@ describe("Codex supervision catalog", () => {
     const sources = [
       {
         threadId: "unlocked-thread",
-        sessionId: "openclaw-session-unlocked",
+        sessionId: "nova-session-unlocked",
         entryPatch: { modelSelectionLocked: false },
       },
       {
         threadId: "wrong-harness-thread",
-        sessionId: "openclaw-session-wrong-harness",
+        sessionId: "nova-session-wrong-harness",
         entryPatch: { agentHarnessId: "other-harness" },
       },
     ];
@@ -1598,7 +1598,7 @@ describe("Codex supervision actions", () => {
     expect(transcriptMirrorMocks.importCodexThreadHistoryToTranscript).toHaveBeenCalledWith({
       thread: sourceThread,
       storePath: resolveStorePath(undefined, { agentId: "main" }),
-      sessionId: "openclaw-session-1",
+      sessionId: "nova-session-1",
       sessionKey: first.sessionKey,
       agentId: "main",
       cwd: "/workspace/project",
@@ -1609,7 +1609,7 @@ describe("Codex supervision actions", () => {
     await expect(
       bindingStore.read(
         sessionBindingIdentity({
-          sessionId: "openclaw-session-1",
+          sessionId: "nova-session-1",
           sessionKey: first.sessionKey,
           config,
         }),
@@ -1636,7 +1636,7 @@ describe("Codex supervision actions", () => {
 
   it("baselines a re-continued adoption from its bound canonical thread", async () => {
     const sessionKey = supervisionSessionKey("thread-1");
-    const sessionId = "openclaw-session-existing";
+    const sessionId = "nova-session-existing";
     const canonicalTurn = {
       id: "turn-canonical",
       status: "completed",
@@ -1699,10 +1699,10 @@ describe("Codex supervision actions", () => {
   it("keeps adopted sessions discoverable when the configured default agent changes", async () => {
     const originalConfig = {
       agents: { list: [{ id: "alpha", default: true }, { id: "beta" }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const changedConfig = {
       agents: { list: [{ id: "alpha" }, { id: "beta", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const { runtime, createSessionEntry } = createRuntime();
     const { api } = createGatewayApi(runtime);
     const bindingStore = createCodexTestBindingStore();
@@ -1802,7 +1802,7 @@ describe("Codex supervision actions", () => {
           sessionKey,
           entry: interruptedAdoptionEntry({
             sourceThreadId: "thread-1",
-            sessionId: "openclaw-session-initializing",
+            sessionId: "nova-session-initializing",
           }),
         },
       ],
@@ -1835,7 +1835,7 @@ describe("Codex supervision actions", () => {
     expect(control.archiveThread).not.toHaveBeenCalled();
 
     const identity = sessionBindingIdentity({
-      sessionId: "openclaw-session-1",
+      sessionId: "nova-session-1",
       sessionKey: continued.sessionKey,
       config,
     });
@@ -1915,7 +1915,7 @@ describe("Codex supervision actions", () => {
 
   it("recovers the same pending session after a restart before binding commit", async () => {
     const sessionKey = supervisionSessionKey("thread-1");
-    const sessionId = "openclaw-interrupted-before-binding";
+    const sessionId = "nova-interrupted-before-binding";
     const crashedRuntime = createRuntime();
     crashedRuntime.entries.push({
       sessionKey,
@@ -1974,7 +1974,7 @@ describe("Codex supervision actions", () => {
 
   it("recovers the same pending session after a restart following binding commit", async () => {
     const sessionKey = supervisionSessionKey("thread-1");
-    const sessionId = "openclaw-interrupted-after-binding";
+    const sessionId = "nova-interrupted-after-binding";
     const crashedRuntime = createRuntime();
     crashedRuntime.entries.push({
       sessionKey,
@@ -2041,7 +2041,7 @@ describe("Codex supervision actions", () => {
     "pending cleanup artifacts",
   ] as const)("rejects recovery against %s in a same-thread binding", async (invalidState) => {
     const sessionKey = supervisionSessionKey("thread-1");
-    const sessionId = "openclaw-interrupted-invalid-binding";
+    const sessionId = "nova-interrupted-invalid-binding";
     const crashedRuntime = createRuntime();
     crashedRuntime.entries.push({
       sessionKey,
@@ -2121,7 +2121,7 @@ describe("Codex supervision actions", () => {
     await expect(
       bindingStore.read(
         sessionBindingIdentity({
-          sessionId: "openclaw-session-1",
+          sessionId: "nova-session-1",
           sessionKey: result.sessionKey,
           config,
         }),
@@ -2133,7 +2133,7 @@ describe("Codex supervision actions", () => {
     });
     const binding = await bindingStore.read(
       sessionBindingIdentity({
-        sessionId: "openclaw-session-1",
+        sessionId: "nova-session-1",
         sessionKey: result.sessionKey,
         config,
       }),
@@ -2145,7 +2145,7 @@ describe("Codex supervision actions", () => {
     const { runtime, entries, createSessionEntry, patchSessionEntry } = createRuntime();
     const { api } = createGatewayApi(runtime);
     const sessionKey = supervisionSessionKey("thread-1");
-    const sessionId = "openclaw-session-archived";
+    const sessionId = "nova-session-archived";
     entries.push({
       sessionKey,
       entry: {
@@ -2209,7 +2209,7 @@ describe("Codex supervision actions", () => {
       ),
     });
     const sessionKey = supervisionSessionKey("thread-1");
-    const sessionId = "openclaw-session-existing";
+    const sessionId = "nova-session-existing";
     entries.push({
       sessionKey,
       entry: adoptedEntry({ sourceThreadId: "thread-1", sessionId }),
@@ -2250,7 +2250,7 @@ describe("Codex supervision actions", () => {
       const bindingStore = createCodexTestBindingStore();
       if (mapped) {
         const sessionKey = supervisionSessionKey("thread-1");
-        const sessionId = "openclaw-session-existing";
+        const sessionId = "nova-session-existing";
         entries.push({
           sessionKey,
           entry: adoptedEntry({ sourceThreadId: "thread-1", sessionId }),
@@ -2290,7 +2290,7 @@ describe("Codex supervision actions", () => {
     const { runtime, entries, createSessionEntry, patchSessionEntry } = createRuntime();
     const { api } = createGatewayApi(runtime);
     const sessionKey = supervisionSessionKey("thread-1");
-    const sessionId = "openclaw-session-stale";
+    const sessionId = "nova-session-stale";
     entries.push({
       sessionKey,
       entry: {
@@ -2311,7 +2311,7 @@ describe("Codex supervision actions", () => {
         if (!entry) {
           throw new Error("missing mapped session");
         }
-        entry.sessionId = "openclaw-session-replacement";
+        entry.sessionId = "nova-session-replacement";
         return idleThread({ id: "thread-1-branch" });
       }),
     });
@@ -2379,7 +2379,7 @@ describe("Codex supervision actions", () => {
     await expect(
       bindingStore.read(
         sessionBindingIdentity({
-          sessionId: "openclaw-session-1",
+          sessionId: "nova-session-1",
           sessionKey: supervisionSessionKey("thread-1"),
           config,
         }),
@@ -2430,7 +2430,7 @@ describe("Codex supervision actions", () => {
     await expect(
       bindingStore.read(
         sessionBindingIdentity({
-          sessionId: "openclaw-session-1",
+          sessionId: "nova-session-1",
           sessionKey: supervisionSessionKey("thread-1"),
           config,
         }),
@@ -2611,7 +2611,7 @@ describe("Codex supervision actions", () => {
       appServer: { command: "codex-archive-a" },
       supervision: { enabled: true },
     };
-    let runtimeConfig = { agents: { defaults: { workspace: "/workspace/a" } } } as OpenClawConfig;
+    let runtimeConfig = { agents: { defaults: { workspace: "/workspace/a" } } } as NovaConfig;
     pinnedConnectionMocks.request.mockImplementation(
       async (request: { method: string; requestParams?: Record<string, unknown> }) => {
         if (
@@ -2624,7 +2624,7 @@ describe("Codex supervision actions", () => {
           };
           runtimeConfig = {
             agents: { defaults: { workspace: "/workspace/b" } },
-          } as OpenClawConfig;
+          } as NovaConfig;
           return {
             data: [idleThread({ source: "cli" })],
           };
@@ -2999,7 +2999,7 @@ describe("Codex supervision actions", () => {
   it("adopts a paired-node session with bounded history and an executable binding", async () => {
     let runtimeConfig = {
       agents: { list: [{ id: "alpha", default: true }, { id: "beta" }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const invoke = vi.fn<PluginRuntime["nodes"]["invoke"]>(async ({ command }) => {
       if (command === CODEX_APP_SERVER_THREADS_LIST_COMMAND) {
         return {
@@ -3066,7 +3066,7 @@ describe("Codex supervision actions", () => {
     await first?.afterConversationBound?.();
     runtimeConfig = {
       agents: { list: [{ id: "alpha" }, { id: "beta", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const second = await provider?.continueSession?.({
       hostId: "node:devbox",
       threadId: "thread-remote",
@@ -3270,7 +3270,7 @@ describe("Codex supervision actions", () => {
 
   it("builds local and paired-node terminal plans from verified catalog records", async () => {
     const threadId = "123e4567-e89b-12d3-a456-426614174000";
-    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-terminal-"));
+    const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-terminal-"));
     tempDirs.push(binDir);
     process.env.PATH = binDir;
     const executable = path.join(binDir, process.platform === "win32" ? "codex.cmd" : "codex");

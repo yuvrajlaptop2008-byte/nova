@@ -33,11 +33,11 @@ export function installDebugProxyTestResetHooks() {
   let priorProxyEnv = originalProxyEnv;
 
   afterEach(async () => {
-    const { closeDebugProxyCaptureStore } = await import("openclaw/plugin-sdk/proxy-capture");
-    const { closeOpenClawStateDatabaseForTest } =
-      await import("openclaw/plugin-sdk/sqlite-runtime-testing");
+    const { closeDebugProxyCaptureStore } = await import("nova/plugin-sdk/proxy-capture");
+    const { closeNovaStateDatabaseForTest } =
+      await import("nova/plugin-sdk/sqlite-runtime-testing");
     closeDebugProxyCaptureStore();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     globalThis.fetch = originalFetch;
     vi.restoreAllMocks();
     restoreDebugProxyEnv(priorProxyEnv);

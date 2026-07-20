@@ -1,8 +1,8 @@
 // File Transfer plugin module implements file fetch behavior.
 import crypto from "node:crypto";
 import path from "node:path";
-import { detectMime } from "openclaw/plugin-sdk/media-mime";
-import { root } from "openclaw/plugin-sdk/security-runtime";
+import { detectMime } from "nova/plugin-sdk/media-mime";
+import { root } from "nova/plugin-sdk/security-runtime";
 import {
   classifyFsSafeReadError,
   readAbsolutePath,

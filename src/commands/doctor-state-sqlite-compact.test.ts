@@ -5,21 +5,21 @@ import { afterEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import {
-  readOpenClawDatabaseQuarantine,
-  recordOpenClawDatabaseQuarantine,
-} from "../state/openclaw-quarantine-store.js";
+  readNovaDatabaseQuarantine,
+  recordNovaDatabaseQuarantine,
+} from "../state/nova-quarantine-store.js";
 import {
-  closeOpenClawStateDatabase,
-  openOpenClawStateDatabase,
+  closeNovaStateDatabase,
+  openNovaStateDatabase,
   NOVA_STATE_SCHEMA_VERSION,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
-import { NOVA_STATE_SCHEMA_SQL } from "../state/openclaw-state-schema.generated.js";
+} from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
+import { NOVA_STATE_SCHEMA_SQL } from "../state/nova-state-schema.generated.js";
 import { runDoctorStateSqliteCompact } from "./doctor-state-sqlite-compact.js";
 
 const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
   afterEach(() => {
-    closeOpenClawStateDatabase();
+    closeNovaStateDatabase();
     cleanup();
   });
 });
@@ -30,7 +30,7 @@ type CompletedStateSqliteCompactReport = Extract<
 >;
 
 function createStateEnv(): NodeJS.ProcessEnv {
-  const stateDir = tempDirs.make("openclaw-state-compact-");
+  const stateDir = tempDirs.make("nova-state-compact-");
   return { ...process.env, NOVA_STATE_DIR: stateDir };
 }
 
@@ -40,7 +40,7 @@ function seedStateDatabase(params: {
   schemaVersion?: number;
   withBloat?: boolean;
 }): string {
-  const sqlitePath = resolveOpenClawStateSqlitePath(params.env);
+  const sqlitePath = resolveNovaStateSqlitePath(params.env);
   fs.mkdirSync(path.dirname(sqlitePath), { recursive: true });
   const sqlite = requireNodeSqlite();
   const database = new sqlite.DatabaseSync(sqlitePath);
@@ -145,7 +145,7 @@ describe("runDoctorStateSqliteCompact", () => {
 
     await expect(runDoctorStateSqliteCompact({ env })).resolves.toEqual({
       mode: "compact",
-      path: resolveOpenClawStateSqlitePath(env),
+      path: resolveNovaStateSqlitePath(env),
       reason: "missing",
       skipped: true,
     });
@@ -174,7 +174,7 @@ describe("runDoctorStateSqliteCompact", () => {
     const env = createStateEnv();
     const sqlitePath = seedStateDatabase({ env, withBloat: true });
     expect(
-      recordOpenClawDatabaseQuarantine({
+      recordNovaDatabaseQuarantine({
         env,
         kind: "state",
         path: sqlitePath,
@@ -184,8 +184,8 @@ describe("runDoctorStateSqliteCompact", () => {
 
     await runDoctorStateSqliteCompact({ env });
 
-    expect(readOpenClawDatabaseQuarantine(sqlitePath, { env })).toBeUndefined();
-    expect(openOpenClawStateDatabase({ env }).db.isOpen).toBe(true);
+    expect(readNovaDatabaseQuarantine(sqlitePath, { env })).toBeUndefined();
+    expect(openNovaStateDatabase({ env }).db.isOpen).toBe(true);
   });
 
   it.skipIf(process.platform === "win32")("reapplies owner-only SQLite permissions", async () => {
@@ -238,7 +238,7 @@ describe("runDoctorStateSqliteCompact", () => {
     "refuses a symlink at the canonical database path",
     async () => {
       const env = createStateEnv();
-      const canonicalPath = resolveOpenClawStateSqlitePath(env);
+      const canonicalPath = resolveNovaStateSqlitePath(env);
       const externalEnv = createStateEnv();
       const externalPath = seedStateDatabase({ env: externalEnv });
       fs.mkdirSync(path.dirname(canonicalPath), { recursive: true });
@@ -250,7 +250,7 @@ describe("runDoctorStateSqliteCompact", () => {
 
   it("refuses compaction while this process owns an open shared-state handle", async () => {
     const env = createStateEnv();
-    openOpenClawStateDatabase({ env });
+    openNovaStateDatabase({ env });
 
     await expect(runDoctorStateSqliteCompact({ env })).rejects.toThrow(
       /already open in this process/,

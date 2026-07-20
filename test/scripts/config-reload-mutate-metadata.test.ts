@@ -24,8 +24,8 @@ function runMutateMetadata(configPath: string) {
 
 describe("config reload metadata mutator", () => {
   it("updates config display metadata without dropping existing config", () => {
-    const root = makeTempDir(tempDirs, "openclaw-config-reload-metadata-");
-    const configPath = path.join(root, "openclaw.json");
+    const root = makeTempDir(tempDirs, "nova-config-reload-metadata-");
+    const configPath = path.join(root, "nova.json");
     writeFileSync(
       configPath,
       `${JSON.stringify(

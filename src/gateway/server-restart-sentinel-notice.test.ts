@@ -5,7 +5,7 @@ import { getDeliveryQueueEntryStatus } from "../infra/delivery-queue-sqlite.js";
 import { PlatformMessageNotDispatchedError } from "../infra/outbound/deliver-types.js";
 import { loadPendingDelivery } from "../infra/outbound/delivery-queue-storage.js";
 import { markDeliveryPlatformSendAttemptStarted } from "../infra/outbound/delivery-queue.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 
 const mocks = vi.hoisted(() => ({
@@ -39,7 +39,7 @@ describe("restart sentinel notice recovery", () => {
   let stateDir = "";
   const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
     afterEach(() => {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       envSnapshot?.restore();
       envSnapshot = undefined;
       cleanup();
@@ -47,8 +47,8 @@ describe("restart sentinel notice recovery", () => {
   });
 
   beforeEach(() => {
-    closeOpenClawStateDatabaseForTest();
-    stateDir = tempDirs.make("openclaw-restart-notice-");
+    closeNovaStateDatabaseForTest();
+    stateDir = tempDirs.make("nova-restart-notice-");
     envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     mocks.sendDurableMessageBatch.mockReset();

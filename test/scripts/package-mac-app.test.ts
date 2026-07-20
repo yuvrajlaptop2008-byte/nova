@@ -9,7 +9,7 @@ const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 const scriptPath = "scripts/package-mac-app.sh";
 
 function makePlist(): string {
-  const dir = tempDirs.make("openclaw-plistbuddy-");
+  const dir = tempDirs.make("nova-plistbuddy-");
   const plist = path.join(dir, "Info.plist");
   writeFileSync(
     plist,
@@ -103,8 +103,8 @@ function getSwiftCompatibilityBlock(): string {
 }
 
 function runStopPackagedAppHarness(killZeroStatus: 0 | 1) {
-  const root = tempDirs.make("openclaw-package-stop-root-");
-  const toolsDir = tempDirs.make("openclaw-package-stop-tools-");
+  const root = tempDirs.make("nova-package-stop-root-");
+  const toolsDir = tempDirs.make("nova-package-stop-tools-");
 
   const appRoot = path.join(root, "dist", "Nova.app");
   const appBinary = path.join(appRoot, "Contents", "MacOS", "Nova");
@@ -140,8 +140,8 @@ function runStopPackagedAppHarness(killZeroStatus: 0 | 1) {
 }
 
 function runSwiftCompatibilityHarness(buildConfig: "debug" | "release") {
-  const root = tempDirs.make("openclaw-package-swift-root-");
-  const toolsDir = tempDirs.make("openclaw-package-swift-tools-");
+  const root = tempDirs.make("nova-package-swift-root-");
+  const toolsDir = tempDirs.make("nova-package-swift-tools-");
   const developerDir = path.join(root, "Xcode.app", "Contents", "Developer");
   const appRoot = path.join(root, "Nova.app");
   const xcodeSelectPath = path.join(toolsDir, "xcode-select");
@@ -164,8 +164,8 @@ function runSwiftCompatibilityHarness(buildConfig: "debug" | "release") {
 }
 
 function runSwiftPackageResolutionHarness(mutateLockfile: boolean) {
-  const root = tempDirs.make("openclaw-swift-resolve-root-");
-  const toolsDir = tempDirs.make("openclaw-swift-resolve-tools-");
+  const root = tempDirs.make("nova-swift-resolve-root-");
+  const toolsDir = tempDirs.make("nova-swift-resolve-tools-");
   const resolvedFile = path.join(root, "apps", "macos", "Package.resolved");
   const swiftPath = path.join(toolsDir, "swift");
 
@@ -200,48 +200,48 @@ describe("package-mac-app plist stamping", () => {
       node() { echo "unexpected Node invocation" >&2; return 97; }
       GIT_COMMIT=${JSON.stringify(commit)}
       NOVA_BUILD_TIMESTAMP=2026-07-10T12:34:56.7Z
-      printf '%s\n%s\n' "$(openclaw_resolve_git_commit "$PWD")" "$(openclaw_resolve_build_timestamp)"
+      printf '%s\n%s\n' "$(nova_resolve_git_commit "$PWD")" "$(nova_resolve_build_timestamp)"
     `);
     const invalidCommit = runHelper(`
       source scripts/lib/build-metadata.sh
       GIT_COMMIT=abc123
-      openclaw_resolve_git_commit "$PWD"
+      nova_resolve_git_commit "$PWD"
     `);
     const validAlias = runHelper(`
       source scripts/lib/build-metadata.sh
       unset GIT_COMMIT GITHUB_SHA
       GIT_SHA=${JSON.stringify(commit)}
-      openclaw_resolve_git_commit "$PWD"
+      nova_resolve_git_commit "$PWD"
     `);
     const invalidTimestamp = runHelper(`
       source scripts/lib/build-metadata.sh
       NOVA_BUILD_TIMESTAMP=2026-99-99T12:34:56Z
-      openclaw_resolve_build_timestamp
+      nova_resolve_build_timestamp
     `);
     const missingLocalCommit = runHelper(`
       source scripts/lib/build-metadata.sh
       unset GIT_COMMIT GIT_SHA GITHUB_SHA
       empty_root="$(mktemp -d)"
-      openclaw_resolve_git_commit "$empty_root"
+      nova_resolve_git_commit "$empty_root"
     `);
     const missingReleaseCommit = runHelper(`
       source scripts/lib/build-metadata.sh
       unset GIT_COMMIT GIT_SHA GITHUB_SHA
       empty_root="$(mktemp -d)"
-      NOVA_REQUIRE_BUILD_METADATA=1 openclaw_resolve_git_commit "$empty_root"
+      NOVA_REQUIRE_BUILD_METADATA=1 nova_resolve_git_commit "$empty_root"
     `);
     const ambientGithubCommit = runHelper(`
       source scripts/lib/build-metadata.sh
       unset GIT_COMMIT GIT_SHA
       GITHUB_SHA=${JSON.stringify("a".repeat(40))}
-      openclaw_resolve_git_commit "$PWD"
+      nova_resolve_git_commit "$PWD"
     `);
     const invalidGithubFallback = runHelper(`
       source scripts/lib/build-metadata.sh
       unset GIT_COMMIT GIT_SHA
       GITHUB_SHA=bad
       empty_root="$(mktemp -d)"
-      openclaw_resolve_git_commit "$empty_root"
+      nova_resolve_git_commit "$empty_root"
     `);
     const checkedOutCommit = spawnSync("git", ["rev-parse", "HEAD"], {
       cwd: process.cwd(),
@@ -281,7 +281,7 @@ describe("package-mac-app plist stamping", () => {
         2000-02-29T23:59:59.7Z \
         2024-02-29T12:34:56.78Z \
         2026-07-10T12:34:56.789Z; do
-        NOVA_BUILD_TIMESTAMP="$value" openclaw_resolve_build_timestamp
+        NOVA_BUILD_TIMESTAMP="$value" nova_resolve_build_timestamp
         printf '\n'
       done
       for value in \
@@ -293,12 +293,12 @@ describe("package-mac-app plist stamping", () => {
         2026-01-01T00:60:00Z \
         2026-01-01T00:00:60Z \
         2026-01-01T00:00:00+00:00; do
-        if NOVA_BUILD_TIMESTAMP="$value" openclaw_resolve_build_timestamp >/dev/null 2>&1; then
+        if NOVA_BUILD_TIMESTAMP="$value" nova_resolve_build_timestamp >/dev/null 2>&1; then
           exit 1
         fi
       done
       unset NOVA_BUILD_TIMESTAMP
-      generated="$(openclaw_resolve_build_timestamp)"
+      generated="$(nova_resolve_build_timestamp)"
       [[ "$generated" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]000Z$ ]]
     `);
 
@@ -319,8 +319,8 @@ describe("package-mac-app plist stamping", () => {
     const script = readFileSync(scriptPath, "utf8");
 
     expect(script).toContain('source "$ROOT_DIR/scripts/lib/build-metadata.sh"');
-    expect(script).toContain('BUILD_GIT_COMMIT="$(openclaw_resolve_git_commit "$ROOT_DIR")"');
-    expect(script).toContain('BUILD_TS="$(openclaw_resolve_build_timestamp)"');
+    expect(script).toContain('BUILD_GIT_COMMIT="$(nova_resolve_git_commit "$ROOT_DIR")"');
+    expect(script).toContain('BUILD_TS="$(nova_resolve_build_timestamp)"');
     expect(script).toContain('export NOVA_BUILD_TIMESTAMP="$BUILD_TS"');
     expect(script).toContain('export GIT_COMMIT="$BUILD_GIT_COMMIT"');
     expect(script).not.toContain("git rev-parse --short HEAD");
@@ -331,7 +331,7 @@ describe("package-mac-app plist stamping", () => {
     const sourceCheck = script.indexOf('bash "$ROOT_DIR/scripts/apple-release-source-check.sh"');
     const build = script.indexOf('cd "$ROOT_DIR/apps/macos"');
     const embeddedRead = script.indexOf(
-      'plist_print_required "$APP_ROOT/Contents/Info.plist" OpenClawGitCommit',
+      'plist_print_required "$APP_ROOT/Contents/Info.plist" NovaGitCommit',
     );
     const signing = script.indexOf('"$ROOT_DIR/scripts/codesign-mac-app.sh"');
     const releaseBranch = script.lastIndexOf(
@@ -385,8 +385,8 @@ describe("package-mac-app plist stamping", () => {
 
   it("falls back to corepack pnpm when the pnpm shim is absent", () => {
     const helperBlock = getPackageManagerHelperBlock();
-    const tempRoot = tempDirs.make("openclaw-package-pnpm-root-");
-    const toolsDir = tempDirs.make("openclaw-package-pnpm-tools-");
+    const tempRoot = tempDirs.make("nova-package-pnpm-root-");
+    const toolsDir = tempDirs.make("nova-package-pnpm-tools-");
     const logPath = path.join(tempRoot, "corepack.log");
 
     const corepackPath = path.join(toolsDir, "corepack");
@@ -426,9 +426,9 @@ describe("package-mac-app plist stamping", () => {
 
   it("prefers repo Corepack pnpm over a global pnpm shim", () => {
     const helperBlock = getPackageManagerHelperBlock();
-    const tempRoot = tempDirs.make("openclaw-package-pnpm-root-");
-    const outerRoot = tempDirs.make("openclaw-package-pnpm-outer-");
-    const toolsDir = tempDirs.make("openclaw-package-pnpm-tools-");
+    const tempRoot = tempDirs.make("nova-package-pnpm-root-");
+    const outerRoot = tempDirs.make("nova-package-pnpm-outer-");
+    const toolsDir = tempDirs.make("nova-package-pnpm-tools-");
     const logPath = path.join(tempRoot, "pnpm.log");
 
     writeFileSync(
@@ -487,8 +487,8 @@ describe("package-mac-app plist stamping", () => {
 
   it("fails with an actionable error when neither pnpm nor corepack pnpm is available", () => {
     const helperBlock = getPackageManagerHelperBlock();
-    const tempRoot = tempDirs.make("openclaw-package-pnpm-root-");
-    const toolsDir = tempDirs.make("openclaw-package-pnpm-tools-");
+    const tempRoot = tempDirs.make("nova-package-pnpm-root-");
+    const toolsDir = tempDirs.make("nova-package-pnpm-tools-");
 
     const result = runHelper(`
       set -euo pipefail
@@ -513,7 +513,7 @@ describe("package-mac-app plist stamping", () => {
 
   it("fails with an actionable error when Swift tools are too old", () => {
     const helperBlock = getSwiftToolchainBlock();
-    const toolsDir = tempDirs.make("openclaw-package-swift-tools-");
+    const toolsDir = tempDirs.make("nova-package-swift-tools-");
 
     const swiftPath = path.join(toolsDir, "swift");
     writeFileSync(
@@ -541,7 +541,7 @@ describe("package-mac-app plist stamping", () => {
 
   it("accepts Swift tools 6.2 or newer", () => {
     const helperBlock = getSwiftToolchainBlock();
-    const toolsDir = tempDirs.make("openclaw-package-swift-tools-");
+    const toolsDir = tempDirs.make("nova-package-swift-tools-");
 
     const swiftPath = path.join(toolsDir, "swift");
     writeFileSync(
@@ -568,8 +568,8 @@ describe("package-mac-app plist stamping", () => {
 
   it("runs Sparkle build metadata derivation from the repository root", () => {
     const helperBlock = getSparkleBuildHelperBlock();
-    const tempRoot = tempDirs.make("openclaw-package-sparkle-root-");
-    const toolsDir = tempDirs.make("openclaw-package-sparkle-tools-");
+    const tempRoot = tempDirs.make("nova-package-sparkle-root-");
+    const toolsDir = tempDirs.make("nova-package-sparkle-tools-");
 
     const nodePath = path.join(toolsDir, "node");
     writeFileSync(
@@ -663,9 +663,9 @@ describe("package-mac-app plist stamping", () => {
 
   it("fails closed when required Swift resources are missing", () => {
     const script = readFileSync(scriptPath, "utf8");
-    const openClawKitBlock = script.slice(
+    const novaKitBlock = script.slice(
       script.indexOf(
-        'OPENCLAWKIT_BUNDLE="$(build_path_for_arch "$PRIMARY_ARCH")/$BUILD_CONFIG/OpenClawKit_OpenClawKit.bundle"',
+        'novaKIT_BUNDLE="$(build_path_for_arch "$PRIMARY_ARCH")/$BUILD_CONFIG/NovaKit_NovaKit.bundle"',
       ),
       script.indexOf('echo "⌨️  Copying KeyboardShortcuts resources"'),
     );
@@ -678,10 +678,10 @@ describe("package-mac-app plist stamping", () => {
       'node --import tsx "$ROOT_DIR/scripts/apple-app-i18n.ts" compile-macos',
     );
     expect(script).toContain('--output "$APP_ROOT/Contents/Resources"');
-    expect(openClawKitBlock).toContain("ERROR: OpenClawKit resource bundle not found");
-    expect(openClawKitBlock).toContain("exit 1");
-    expect(openClawKitBlock).not.toContain("WARN:");
-    expect(openClawKitBlock).not.toContain("continuing");
+    expect(novaKitBlock).toContain("ERROR: NovaKit resource bundle not found");
+    expect(novaKitBlock).toContain("exit 1");
+    expect(novaKitBlock).not.toContain("WARN:");
+    expect(novaKitBlock).not.toContain("continuing");
     expect(keyboardShortcutsBlock).toContain("KeyboardShortcuts_KeyboardShortcuts.bundle");
     expect(keyboardShortcutsBlock).toContain(
       'cp -R "$KEYBOARD_SHORTCUTS_BUNDLE" "$APP_ROOT/Contents/Resources/KeyboardShortcuts_KeyboardShortcuts.bundle"',
@@ -786,14 +786,14 @@ describe("package-mac-app plist stamping", () => {
       const result = runHelper(`
         set -euo pipefail
         source scripts/lib/plistbuddy.sh
-        plist_set_string_required ${JSON.stringify(plist)} CFBundleIdentifier 'ai.openclaw.test'
+        plist_set_string_required ${JSON.stringify(plist)} CFBundleIdentifier 'ai.nova.test'
         /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' ${JSON.stringify(plist)}
         broken="$(mktemp -d)"
         plist_set_string_required "$broken" CFBundleIdentifier broken
       `);
 
       expect(result.status).toBe(1);
-      expect(result.stdout).toContain("ai.openclaw.test");
+      expect(result.stdout).toContain("ai.nova.test");
       expect(result.stderr).toContain("Error Reading File");
     },
   );

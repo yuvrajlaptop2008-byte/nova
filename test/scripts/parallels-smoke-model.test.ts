@@ -23,7 +23,7 @@ import {
 } from "@nova/normalization-core/number-coercion";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  extractLastOpenClawVersionFromLog,
+  extractLastNovaVersionFromLog,
   isLikelyMacosDesktopHome,
   modelProviderConfigBatchJson,
   parseProvider,
@@ -245,12 +245,12 @@ describe("Parallels smoke model selection", () => {
   });
 
   it("extracts the last Nova version from a bounded log tail", async () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-log-tail-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-log-tail-"));
     const logPath = join(tempDir, "phase.log");
     try {
       writeFileSync(logPath, ["Nova 0.0.1", "x".repeat(4096), "Nova 2026.6.7"].join("\n"));
 
-      await expect(extractLastOpenClawVersionFromLog(logPath, undefined, 128)).resolves.toBe(
+      await expect(extractLastNovaVersionFromLog(logPath, undefined, 128)).resolves.toBe(
         "2026.6.7",
       );
     } finally {
@@ -277,12 +277,12 @@ describe("Parallels smoke model selection", () => {
     const controller = readFileSync(WINDOWS_PREPARE_WRAPPER, "utf8");
     expect(controller).toContain("ensure_wsl_features");
     expect(controller).toContain("resolve_winget_manifest");
-    expect(controller).toContain("pre-openclaw-native-e2e-");
+    expect(controller).toContain("pre-nova-native-e2e-");
     expect(controller).toContain('prlctl stop "$VM_NAME" --acpi');
     expect(controller).toContain("HypervisorPresent");
     expect(controller).toContain("git --version && node --version && npm --version");
     expect(controller).toContain("NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY");
-    expect(controller).not.toContain("openclaw-windows-node");
+    expect(controller).not.toContain("nova-windows-node");
   });
 
   it("preserves caller arguments when loaded as the Windows controller library", () => {
@@ -327,7 +327,7 @@ describe("Parallels smoke model selection", () => {
     expect(controller).toContain("for attempt in 1 2 3");
     expect(controller).not.toContain("--retry 2");
 
-    const tempDir = makeTempDir(tempDirs, "openclaw-windows-metadata-retry-");
+    const tempDir = makeTempDir(tempDirs, "nova-windows-metadata-retry-");
     const callCount = join(tempDir, "curl-calls");
     writeFileSync(callCount, "0\n");
     const retryResult = spawnSync(
@@ -372,18 +372,18 @@ fetch_host_metadata "https://example.test/metadata"`,
         "http://192.0.2.2:48123",
       );
     }
-    expect(parseNpmUpdateSmokeArgs(["--", "--package-spec", "openclaw@2026.5.1"]).packageSpec).toBe(
-      "openclaw@2026.5.1",
+    expect(parseNpmUpdateSmokeArgs(["--", "--package-spec", "nova@2026.5.1"]).packageSpec).toBe(
+      "nova@2026.5.1",
     );
     expect(
       parseNpmUpdateSmokeArgs([
         "--package-spec",
-        "openclaw@2026.5.1",
+        "nova@2026.5.1",
         "--",
         "--package-spec",
-        "openclaw@latest",
+        "nova@latest",
       ]).packageSpec,
-    ).toBe("openclaw@2026.5.1");
+    ).toBe("nova@2026.5.1");
     expect(parseNpmUpdateSmokeArgs(["--macos-vm", "macOS"]).macosVm).toBe("macOS");
     expect(parseWindowsSmokeArgs(["--", "--upgrade-from-packed-main"]).upgradeFromPackedMain).toBe(
       true,
@@ -446,8 +446,8 @@ fetch_host_metadata "https://example.test/metadata"`,
     });
 
     expect(script).toContain("[guid]::NewGuid().ToString('N')");
-    expect(script).toContain("openclaw-parallels-plugin-isolation-");
-    expect(script).not.toContain("'openclaw-parallels-plugin-isolation.cjs'");
+    expect(script).toContain("nova-parallels-plugin-isolation-");
+    expect(script).not.toContain("'nova-parallels-plugin-isolation.cjs'");
     expect(script).toContain("try {");
     expect(script).toContain("} finally {");
     expect(script).toContain(
@@ -486,7 +486,7 @@ fetch_host_metadata "https://example.test/metadata"`,
     );
     expect(packageArtifactExports).toContain("packNova");
     expect(packageArtifactExports).toContain("packageVersionFromTgz");
-    expect(packageArtifactExports).toContain("resolveOpenClawRegistryVersion");
+    expect(packageArtifactExports).toContain("resolveNovaRegistryVersion");
     expect(common).not.toContain('export * from "./package-artifact.ts"');
     expect(common).toContain('export * from "./parallels-vm.ts"');
     expect(common).toContain('export * from "./snapshots.ts"');
@@ -535,19 +535,17 @@ fetch_host_metadata "https://example.test/metadata"`,
 
   it("accepts npm 10/11 array and npm 12 workspace result shapes", () => {
     expect(
-      packageArtifactTesting.resolveNpmPackTarballFilename([
-        { filename: "openclaw-2026.6.11.tgz" },
-      ]),
-    ).toBe("openclaw-2026.6.11.tgz");
+      packageArtifactTesting.resolveNpmPackTarballFilename([{ filename: "nova-2026.6.11.tgz" }]),
+    ).toBe("nova-2026.6.11.tgz");
     expect(
       packageArtifactTesting.resolveNpmPackTarballFilename({
-        openclaw: { filename: "openclaw-2026.6.11.tgz" },
+        nova: { filename: "nova-2026.6.11.tgz" },
       }),
-    ).toBe("openclaw-2026.6.11.tgz");
+    ).toBe("nova-2026.6.11.tgz");
   });
 
   it("keeps fresh package locks with malformed owner pids", async () => {
-    const lockDir = makeTempDir(tempDirs, "openclaw-parallels-package-lock-");
+    const lockDir = makeTempDir(tempDirs, "nova-parallels-package-lock-");
     mkdirSync(lockDir, { recursive: true });
     writeFileSync(join(lockDir, "owner.json"), '{"pid":-1,"token":"stale"}\n');
 
@@ -562,7 +560,7 @@ fetch_host_metadata "https://example.test/metadata"`,
   });
 
   it("reclaims stale package locks with malformed owner pids", async () => {
-    const lockDir = makeTempDir(tempDirs, "openclaw-parallels-package-lock-");
+    const lockDir = makeTempDir(tempDirs, "nova-parallels-package-lock-");
     mkdirSync(lockDir, { recursive: true });
     writeFileSync(join(lockDir, "owner.json"), '{"pid":-1,"token":"stale"}\n');
 
@@ -572,7 +570,7 @@ fetch_host_metadata "https://example.test/metadata"`,
   });
 
   it("removes a just-created package lock when owner writing fails", async () => {
-    const parentDir = makeTempDir(tempDirs, "openclaw-parallels-package-lock-parent-");
+    const parentDir = makeTempDir(tempDirs, "nova-parallels-package-lock-parent-");
     const lockDir = join(parentDir, "package.lock");
     const error = new Error("failed to write owner");
 
@@ -643,18 +641,18 @@ fetch_host_metadata "https://example.test/metadata"`,
   });
 
   it("uses a temporary npmrc file and cleans it after resolving the latest package version", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-parallels-version-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "nova-parallels-version-"));
     let userConfigPath = "";
     try {
       const version = resolveLatestVersion("", {
         createTempDir: (prefix) => {
-          expect(prefix).toBe(join(tmpdir(), "openclaw-npm-"));
+          expect(prefix).toBe(join(tmpdir(), "nova-npm-"));
           return mkdtempSync(join(tempRoot, "npm-"));
         },
         runCommand: (command, args, options) => {
           userConfigPath = args.at(-1) ?? "";
           expect(command).toBe("npm");
-          expect(args).toEqual(["view", "openclaw", "version", "--userconfig", userConfigPath]);
+          expect(args).toEqual(["view", "nova", "version", "--userconfig", userConfigPath]);
           expect(options).toEqual({ quiet: true });
           expect(statSync(userConfigPath).isFile()).toBe(true);
           return { status: 0, stderr: "", stdout: "2026.6.1\n" };
@@ -672,7 +670,7 @@ fetch_host_metadata "https://example.test/metadata"`,
   it.runIf(process.platform !== "win32")(
     "reports only the bounded host artifact server stderr tail",
     async () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-host-server-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-host-server-"));
       const fakePython = join(tempDir, "python3");
       writeFileSync(
         fakePython,
@@ -715,7 +713,7 @@ exit 42
   it.runIf(process.platform !== "win32")(
     "reports signaled host artifact server startup exits immediately",
     async () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-host-server-signal-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-host-server-signal-"));
       const fakePython = join(tempDir, "python3");
       writeFileSync(
         fakePython,
@@ -749,7 +747,7 @@ kill -TERM "$$"
   );
 
   it("quotes shell args and resolves fuzzy snapshot hints through the shared TypeScript helper", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-helper-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -798,7 +796,7 @@ if (isPrlctl) {
   });
 
   it("resolves a latest snapshot hint to the matching version before older LATEST labels", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-snapshot-latest-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-snapshot-latest-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -864,7 +862,7 @@ if (isPrlctl) {
   });
 
   it("uses one Ubuntu VM fallback resolver for Linux lanes", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-vm-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-vm-helper-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -913,7 +911,7 @@ if (isPrlctl) {
   });
 
   it("skips unsafe Ubuntu version names in fallback resolver", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-vm-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-vm-helper-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -956,7 +954,7 @@ if (isPrlctl) {
   });
 
   it("uses the only macOS VM when the default name is unavailable", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-macos-vm-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-macos-vm-helper-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -991,7 +989,7 @@ if (isPrlctl) {
   });
 
   it("does not infer destructive macOS smoke targets from arbitrary names", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-macos-vm-guard-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-macos-vm-guard-"));
     writeFakePrlctl(
       tempDir,
       `#!/usr/bin/env bash
@@ -1030,7 +1028,7 @@ if (isPrlctl) {
   });
 
   it("resumes suspended Parallels VMs", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-vm-resume-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-vm-resume-"));
     const statePath = join(tempDir, "state");
     writeFileSync(statePath, "suspended");
     writeFakePrlctl(
@@ -1099,7 +1097,7 @@ if (isPrlctl) {
     const script = readFileSync(TS_PATHS.linux, "utf8");
 
     expect(script).toContain('BAD_PLUGIN_DIAGNOSTIC_MIN_VERSION = "2026.5.7"');
-    expect(script).toContain("parseOpenClawPackageVersion");
+    expect(script).toContain("parseNovaPackageVersion");
     expect(script).toContain("maybeInjectBadPluginFixture");
     expect(script).toContain("maybeVerifyBadPluginDiagnostic");
     expect(script).toContain("Skipping bad plugin diagnostic fixture");
@@ -1260,7 +1258,7 @@ if (isPrlctl) {
   });
 
   it("cleans POSIX guest scripts after the phase deadline is exhausted", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-posix-cleanup-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-posix-cleanup-"));
     const logPath = join(tempDir, "prlctl.log");
     writeFakePrlctl(
       tempDir,
@@ -1269,14 +1267,14 @@ set -euo pipefail
 log_path=${JSON.stringify(logPath)}
 printf '%s\\n' "$*" >>"$log_path"
 args=" $* "
-if [[ "$args" == *" dd of=/tmp/openclaw-parallels-"* || "$args" == *" /bin/dd of=/tmp/openclaw-parallels-"* ]]; then
+if [[ "$args" == *" dd of=/tmp/nova-parallels-"* || "$args" == *" /bin/dd of=/tmp/nova-parallels-"* ]]; then
   cat >/dev/null
   exit 0
 fi
-if [[ "$args" == *" bash /tmp/openclaw-parallels-"* || "$args" == *" /bin/bash /tmp/openclaw-parallels-"* ]]; then
+if [[ "$args" == *" bash /tmp/nova-parallels-"* || "$args" == *" /bin/bash /tmp/nova-parallels-"* ]]; then
   exit 1
 fi
-if [[ "$args" == *" /bin/rm -f /tmp/openclaw-parallels-"* ]]; then
+if [[ "$args" == *" /bin/rm -f /tmp/nova-parallels-"* ]]; then
   printf 'cleanup\\n' >>"$log_path"
   exit 0
 fi
@@ -1326,7 +1324,7 @@ if (isPrlctl) {
   });
 
   it("rejects Parallels macOS guest session false-success output", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-session-unavailable-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-session-unavailable-"));
     tempDirs.push(tempDir);
     writeFakePrlctl(
       tempDir,
@@ -1360,7 +1358,7 @@ exit 0
   });
 
   it("streams full phase logs to disk while bounding the failure tail", async () => {
-    const runDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-phase-"));
+    const runDir = mkdtempSync(join(tmpdir(), "nova-parallels-phase-"));
     const phaseRunner = new PhaseRunner(runDir, 128);
     const writes: string[] = [];
     const stderrWrite = vi.spyOn(process.stderr, "write").mockImplementation((chunk) => {
@@ -1391,7 +1389,7 @@ exit 0
   });
 
   it("clamps oversized phase timers before scheduling", async () => {
-    const runDir = makeTempDir(tempDirs, "openclaw-parallels-phase-timeout-");
+    const runDir = makeTempDir(tempDirs, "nova-parallels-phase-timeout-");
     const phaseRunner = new PhaseRunner(runDir, 128);
     const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
 
@@ -1541,15 +1539,15 @@ exit 0
     const macos = readFileSync(TS_PATHS.macos, "utf8");
 
     expect(macos).toContain("/usr/local/bin:/usr/local/sbin");
-    expect(macos).toContain('const guestNova = "openclaw"');
+    expect(macos).toContain('const guestNova = "nova"');
     expect(macos).toContain('const guestNode = "node"');
     expect(macos).toContain('const guestNpm = "npm"');
-    expect(macos).toContain("$(npm root -g)/openclaw/openclaw.mjs");
-    expect(macos).toContain("guestOpenClawEntryExec");
-    expect(macos).not.toContain('const guestNova = "/opt/homebrew/bin/openclaw"');
+    expect(macos).toContain("$(npm root -g)/nova/nova.mjs");
+    expect(macos).toContain("guestNovaEntryExec");
+    expect(macos).not.toContain('const guestNova = "/opt/homebrew/bin/nova"');
     expect(macos).not.toContain('const guestNode = "/opt/homebrew/bin/node"');
     expect(macos).not.toContain('const guestNpm = "/opt/homebrew/bin/npm"');
-    expect(macos).not.toContain("/opt/homebrew/lib/node_modules/openclaw/openclaw.mjs");
+    expect(macos).not.toContain("/opt/homebrew/lib/node_modules/nova/nova.mjs");
   });
 
   it("keeps Windows gateway reachability on a real deadline with start recovery", () => {
@@ -1567,7 +1565,7 @@ exit 0
 
     expect(script).toContain("guestPowerShellBackground");
     expect(script).toContain("runWindowsBackgroundPowerShell");
-    expect(transports).toContain("Join-Path (Join-Path $env:WINDIR 'Temp\\\\openclaw-parallels')");
+    expect(transports).toContain("Join-Path (Join-Path $env:WINDIR 'Temp\\\\nova-parallels')");
     expect(transports).toContain("icacls.exe $runDir /inheritance:r");
     expect(transports).toContain("__NOVA_BACKGROUND_DONE__");
     expect(transports).toContain("__NOVA_BACKGROUND_EXIT__");
@@ -1576,7 +1574,7 @@ exit 0
     expect(transports).toContain('if exist "${windowsDonePath}"');
     expect(transports).toContain('type "%WINDIR%\\\\Temp\\\\${guestRunDir}\\\\run.log"');
     expect(transports).toContain("WINDOWS_BACKGROUND_LOG_MAX_BYTES");
-    expect(transports).toContain("Write-OpenClawUtf8File $pidPath ([string]$PID)");
+    expect(transports).toContain("Write-NovaUtf8File $pidPath ([string]$PID)");
     expect(transports).toContain('launch.stdout.includes("started")');
     expect(transports).toContain("waitForWindowsBackgroundMaterialized");
   });
@@ -1660,7 +1658,7 @@ exit 0
   it.runIf(process.platform !== "win32")(
     "lets timed host command descendants drain before force kill",
     () => {
-      const tempDir = makeTempDir(tempDirs, "openclaw-parallels-host-command-drain-");
+      const tempDir = makeTempDir(tempDirs, "nova-parallels-host-command-drain-");
       const readyFile = join(tempDir, "ready");
       const drainFile = join(tempDir, "drained");
       const descendantScript = [
@@ -1724,7 +1722,7 @@ exit 0
   it.runIf(process.platform !== "win32")(
     "kills timed-out host command process groups",
     async () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-host-command-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-host-command-"));
       const scriptPath = join(tempDir, "spawn-grandchild.mjs");
       const grandchildPidPath = join(tempDir, "grandchild.pid");
       let grandchildPid = 0;
@@ -1767,7 +1765,7 @@ setInterval(() => {}, 1000);
   it.runIf(process.platform !== "win32")(
     "reaps externally signaled timed host command descendants",
     async () => {
-      const tempDir = makeTempDir(tempDirs, "openclaw-parallels-host-command-signal-");
+      const tempDir = makeTempDir(tempDirs, "nova-parallels-host-command-signal-");
       const runnerPath = join(tempDir, "runner.mjs");
       const readyPath = join(tempDir, "ready");
       const grandchildPidPath = join(tempDir, "grandchild.pid");
@@ -1838,7 +1836,7 @@ setInterval(() => {}, 1000);
 
   it.runIf(process.platform !== "win32")("preserves timed host command spawn errors", () => {
     expect(() =>
-      run("openclaw-definitely-missing-host-command", [], {
+      run("nova-definitely-missing-host-command", [], {
         check: false,
         quiet: true,
         timeoutMs: 50,
@@ -1847,7 +1845,7 @@ setInterval(() => {}, 1000);
   });
 
   it("rejects streaming host commands when log writes fail", async () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-host-command-log-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-host-command-log-"));
     try {
       await expect(
         runStreaming(process.execPath, ["-e", "process.stdout.write('ok')"], {
@@ -1864,7 +1862,7 @@ setInterval(() => {}, 1000);
     vi.useFakeTimers();
     try {
       await expect(
-        runStreaming("openclaw-definitely-missing-host-command", [], {
+        runStreaming("nova-definitely-missing-host-command", [], {
           quiet: true,
           timeoutMs: 60 * 60 * 1000,
         }),
@@ -1893,7 +1891,7 @@ setInterval(() => {}, 1000);
   it.runIf(process.platform !== "win32")(
     "lets timed streaming host command descendants drain before force kill",
     async () => {
-      const tempDir = makeTempDir(tempDirs, "openclaw-parallels-streaming-host-command-drain-");
+      const tempDir = makeTempDir(tempDirs, "nova-parallels-streaming-host-command-drain-");
       const readyFile = join(tempDir, "ready");
       const drainFile = join(tempDir, "drained");
       const logPath = join(tempDir, "stream.log");
@@ -1939,7 +1937,7 @@ setInterval(() => {}, 1000);
   it.runIf(process.platform !== "win32")(
     "reaps externally signaled streaming host command descendants before re-raising",
     async () => {
-      const tempDir = makeTempDir(tempDirs, "openclaw-parallels-streaming-host-command-signal-");
+      const tempDir = makeTempDir(tempDirs, "nova-parallels-streaming-host-command-signal-");
       const runnerPath = join(tempDir, "runner.mjs");
       const readyPath = join(tempDir, "ready");
       const grandchildPidPath = join(tempDir, "grandchild.pid");
@@ -2018,7 +2016,7 @@ setInterval(() => {}, 1000);
     expect(runStreamingBlock).not.toContain("log += text");
     expect(runStreamingBlock).not.toContain("writeFile(options.logPath, log");
 
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-host-command-log-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-parallels-host-command-log-"));
     const logPath = join(tempDir, "stream.log");
     try {
       const status = await runStreaming(
@@ -2105,14 +2103,14 @@ setInterval(() => {}, 1000);
     const execPath = "C:\\nodejs\\node.exe";
     const npmCmdPath = win32.resolve(win32.dirname(execPath), "npm.cmd");
     expect(
-      resolveHostCommandInvocation("npm", ["view", "openclaw", "version"], {
+      resolveHostCommandInvocation("npm", ["view", "nova", "version"], {
         env: { ComSpec: comSpec },
         execPath,
         existsSync: (candidate) => candidate === npmCmdPath,
         platform: "win32",
       }),
     ).toEqual({
-      args: ["/d", "/s", "/c", `${npmCmdPath} view openclaw version`],
+      args: ["/d", "/s", "/c", `${npmCmdPath} view nova version`],
       command: comSpec,
       shell: false,
       windowsVerbatimArguments: true,
@@ -2272,7 +2270,7 @@ setInterval(() => {}, 1000);
     expect(windows).toContain(
       "Invoke-WithScopedEnv @{ NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS",
     );
-    expect(windows).toContain("$script:OpenClawUpdateExit = $LASTEXITCODE");
+    expect(windows).toContain("$script:NovaUpdateExit = $LASTEXITCODE");
     expect(windows).not.toContain("$env:NOVA_DISABLE_BUNDLED_PLUGINS = '1'");
   });
 
@@ -2290,18 +2288,18 @@ setInterval(() => {}, 1000);
     const powershell = readFileSync(TS_PATHS.powershell, "utf8");
     const windows = readFileSync(TS_PATHS.windows, "utf8");
 
-    expect(powershell).toContain("windowsOpenClawResolver");
+    expect(powershell).toContain("windowsNovaResolver");
     expect(powershell).toContain("NOVA_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED");
     expect(powershell).toContain("Programs\\nodejs");
-    expect(powershell).toContain('selectedModelEntry.agentRuntime = { id: "openclaw" }');
+    expect(powershell).toContain('selectedModelEntry.agentRuntime = { id: "nova" }');
     expect(powershell).toContain("delete selectedModelEntry.agentRuntime");
     expect(powershell).toContain("delete providerEntry.agentRuntime");
-    expect(powershell).toContain("Resolve-OpenClawCommand");
-    expect(powershell).toContain("npm\\node_modules\\openclaw\\openclaw.mjs");
+    expect(powershell).toContain("Resolve-NovaCommand");
+    expect(powershell).toContain("npm\\node_modules\\nova\\nova.mjs");
     expect(powershell).toContain("$ErrorActionPreference = 'Continue'");
     expect(powershell).toContain("$PSNativeCommandUseErrorActionPreference = $false");
-    expect(windows).toContain("windowsOpenClawResolver");
+    expect(windows).toContain("windowsNovaResolver");
     expect(windows).toContain("Invoke-Nova gateway");
-    expect(windows).not.toContain("Join-Path $env:APPDATA 'npm\\\\openclaw.cmd'");
+    expect(windows).not.toContain("Join-Path $env:APPDATA 'npm\\\\nova.cmd'");
   });
 });

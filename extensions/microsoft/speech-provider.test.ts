@@ -2,19 +2,19 @@
 import { mkdtempSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   finalizeDebugProxyCapture,
   getDebugProxyCaptureStore,
   initializeDebugProxyCapture,
-} from "openclaw/plugin-sdk/proxy-capture";
+} from "nova/plugin-sdk/proxy-capture";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { installDebugProxyTestResetHooks } from "../test-support/debug-proxy-env-test-helpers.js";
 
 const fetchWithSsrFGuardMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/ssrf-runtime")>();
+vi.mock("nova/plugin-sdk/ssrf-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/ssrf-runtime")>();
   return {
     ...actual,
     fetchWithSsrFGuard: (...args: Parameters<typeof actual.fetchWithSsrFGuard>) => {
@@ -33,7 +33,7 @@ vi.mock("node-edge-tts", () => ({
 import { buildMicrosoftSpeechProvider } from "./speech-provider.js";
 import * as ttsModule from "./tts.js";
 
-const TEST_CFG = {} as OpenClawConfig;
+const TEST_CFG = {} as NovaConfig;
 
 async function listVoicesThroughProvider() {
   const listVoices = buildMicrosoftSpeechProvider().listVoices;
@@ -149,8 +149,8 @@ describe("listMicrosoftVoices", () => {
       id: "ms-voices-session",
       startedAt: Date.now(),
       mode: "test",
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "nova",
+      sourceProcess: "nova",
     });
 
     await listVoicesThroughProvider();
@@ -186,8 +186,8 @@ describe("listMicrosoftVoices", () => {
       id: "ms-voices-global-session",
       startedAt: Date.now(),
       mode: "test",
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "nova",
+      sourceProcess: "nova",
     });
     initializeDebugProxyCapture("test");
 

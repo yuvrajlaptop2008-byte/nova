@@ -97,7 +97,7 @@ describe("OCM npm workspace dependency adapter", () => {
           "--omit=dev",
           "--no-save",
           "--package-lock=false",
-          "openclaw.tgz",
+          "nova.tgz",
         ],
         ["/repo/packages/ai"],
         "/repo",
@@ -112,25 +112,23 @@ describe("OCM npm workspace dependency adapter", () => {
         "--package-lock=false",
       ],
       prefixDir: "/repo/runtime",
-      rootArchive: "/repo/openclaw.tgz",
+      rootArchive: "/repo/nova.tgz",
     });
   });
 
   it("keeps normal npm commands unchanged", () => {
     expect(resolveWorkspaceInstallPlan(["pack", "--silent"], ["/repo/packages/ai"])).toBeNull();
-    expect(resolveWorkspaceInstallPlan(["install", "openclaw.tgz"], [])).toBeNull();
+    expect(resolveWorkspaceInstallPlan(["install", "nova.tgz"], [])).toBeNull();
   });
 
   it("builds a manifest with the root and local workspace tarballs", () => {
     expect(
-      buildInstallManifest("/tmp/openclaw.tgz", [
-        { name: "@nova/ai", tarball: "/tmp/openclaw-ai.tgz" },
-      ]),
+      buildInstallManifest("/tmp/nova.tgz", [{ name: "@nova/ai", tarball: "/tmp/nova-ai.tgz" }]),
     ).toEqual({
       private: true,
       dependencies: {
-        "@nova/ai": "file:///tmp/openclaw-ai.tgz",
-        openclaw: "file:///tmp/openclaw.tgz",
+        "@nova/ai": "file:///tmp/nova-ai.tgz",
+        nova: "file:///tmp/nova.tgz",
       },
     });
   });
@@ -148,7 +146,7 @@ describe("OCM npm workspace dependency adapter", () => {
         {
           name: "@nova/ai",
           version: "2026.7.1-beta.3",
-          tarball: "/tmp/openclaw-ai.tgz",
+          tarball: "/tmp/nova-ai.tgz",
         },
       ]),
     ).toBe(1);
@@ -159,19 +157,19 @@ describe("OCM npm workspace dependency adapter", () => {
   });
 
   it("installs a packed root with a local workspace dependency", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-ocm-adapter-test-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-ocm-adapter-test-"));
     try {
       const archiveRoot = join(root, "archive");
       const packagedRoot = join(archiveRoot, "package");
       const workspaceDir = join(root, "ai");
       const installDir = join(root, "install");
-      const rootArchive = join(root, "openclaw.tgz");
+      const rootArchive = join(root, "nova.tgz");
       mkdirSync(packagedRoot, { recursive: true });
       mkdirSync(workspaceDir, { recursive: true });
       writeFileSync(
         join(packagedRoot, "package.json"),
         `${JSON.stringify({
-          name: "openclaw",
+          name: "nova",
           version: "1.0.0",
           dependencies: { "@nova/ai": "workspace:*" },
         })}\n`,
@@ -213,7 +211,7 @@ describe("OCM npm workspace dependency adapter", () => {
       );
 
       expect(
-        JSON.parse(readFileSync(join(installDir, "node_modules/openclaw/package.json"), "utf8"))
+        JSON.parse(readFileSync(join(installDir, "node_modules/nova/package.json"), "utf8"))
           .version,
       ).toBe("1.0.0");
       expect(

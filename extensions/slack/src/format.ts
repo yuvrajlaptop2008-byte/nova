@@ -1,12 +1,12 @@
 // Slack helper module supports format behavior.
-import type { MarkdownTableMode } from "openclaw/plugin-sdk/config-contracts";
+import type { MarkdownTableMode } from "nova/plugin-sdk/config-contracts";
 import {
   chunkTextForOutbound,
   markdownToIR,
   type MarkdownLinkSpan,
   renderMarkdownIRChunksWithinLimit,
-} from "openclaw/plugin-sdk/text-chunking";
-import { renderMarkdownWithMarkers } from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/text-chunking";
+import { renderMarkdownWithMarkers } from "nova/plugin-sdk/text-chunking";
 
 // Escape special characters for Slack mrkdwn format.
 // Preserve Slack's angle-bracket tokens so mentions and links stay intact.

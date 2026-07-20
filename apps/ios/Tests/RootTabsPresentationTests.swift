@@ -1,9 +1,9 @@
-import OpenClawChatUI
-import OpenClawProtocol
+import NovaChatUI
+import NovaProtocol
 import SwiftUI
 import Testing
 import UIKit
-@testable import OpenClaw
+@testable import Nova
 
 @MainActor
 struct RootTabsPresentationTests {
@@ -21,7 +21,7 @@ struct RootTabsPresentationTests {
     @Test func `dashboard deep link requests overview navigation`() async throws {
         let appModel = NodeAppModel()
         let initialRequestID = appModel.dashboardNavigationRequestID
-        let url = try #require(URL(string: "openclaw://dashboard"))
+        let url = try #require(URL(string: "nova://dashboard"))
 
         await appModel.handleDeepLink(url: url)
 
@@ -211,37 +211,37 @@ struct RootTabsPresentationTests {
     }
 
     @Test func `app launch defaults to chat destination`() {
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw"]) == .chat)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab"]) == .chat)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "unknown"]) == .chat)
+        #expect(RootTabs.initialDestination(arguments: ["Nova"]) == .chat)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab"]) == .chat)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "unknown"]) == .chat)
     }
 
     @Test func `app launch uses requested destination before chat fallback`() {
         #expect(RootTabs
-            .initialDestination(arguments: ["OpenClaw", "--openclaw-initial-destination", "overview"]) == .overview)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-destination", "chat"]) == .chat)
+            .initialDestination(arguments: ["Nova", "--nova-initial-destination", "overview"]) == .overview)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-destination", "chat"]) == .chat)
         #expect(RootTabs
-            .initialDestination(arguments: ["OpenClaw", "--openclaw-initial-destination", "agents"]) == .agents)
+            .initialDestination(arguments: ["Nova", "--nova-initial-destination", "agents"]) == .agents)
         #expect(RootTabs
-            .initialDestination(arguments: ["OpenClaw", "--openclaw-initial-destination", "gateway"]) == .gateway)
+            .initialDestination(arguments: ["Nova", "--nova-initial-destination", "gateway"]) == .gateway)
         #expect(
             RootTabs.initialDestination(arguments: [
-                "OpenClaw",
-                "--openclaw-initial-tab",
+                "Nova",
+                "--nova-initial-tab",
                 "unknown",
-                "--openclaw-initial-destination",
+                "--nova-initial-destination",
                 "activity",
             ]) == .activity)
     }
 
     @Test func `legacy initial tab aliases map directly to sidebar destinations`() {
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "control"]) == .overview)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "overview"]) == .overview)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "chat"]) == .chat)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "talk"]) == .chat)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "voice"]) == .chat)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "agents"]) == .agents)
-        #expect(RootTabs.initialDestination(arguments: ["OpenClaw", "--openclaw-initial-tab", "settings"]) == .settings)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "control"]) == .overview)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "overview"]) == .overview)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "chat"]) == .chat)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "talk"]) == .chat)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "voice"]) == .chat)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "agents"]) == .agents)
+        #expect(RootTabs.initialDestination(arguments: ["Nova", "--nova-initial-tab", "settings"]) == .settings)
     }
 
     @Test func `skill workshop mutations require admin scope`() {
@@ -395,8 +395,8 @@ struct RootTabsPresentationTests {
         #expect(!routed.showsAgentBadge)
         #expect(!routed.ownsNavigationStack)
         #expect(routed.openSettings != nil)
-        #expect(ChatProTab.defaultHeaderTitle(showsAgentBadge: true, agentDisplayName: "OpenClaw") == "OpenClaw")
-        #expect(ChatProTab.defaultHeaderTitle(showsAgentBadge: false, agentDisplayName: "OpenClaw") == "Chat")
+        #expect(ChatProTab.defaultHeaderTitle(showsAgentBadge: true, agentDisplayName: "Nova") == "Nova")
+        #expect(ChatProTab.defaultHeaderTitle(showsAgentBadge: false, agentDisplayName: "Nova") == "Chat")
     }
 
     @Test func `chat transport identity distinguishes unresolved and resolved agents`() {
@@ -544,20 +544,20 @@ struct RootTabsPresentationTests {
     @Test func `initial sidebar visibility parses launch argument`() {
         #expect(
             RootTabs.requestedInitialSidebarVisibility(arguments: [
-                "OpenClaw",
-                "--openclaw-sidebar-visibility",
+                "Nova",
+                "--nova-sidebar-visibility",
                 "hidden",
             ]) == false)
         #expect(
             RootTabs.requestedInitialSidebarVisibility(arguments: [
-                "OpenClaw",
-                "--openclaw-sidebar-visibility",
+                "Nova",
+                "--nova-sidebar-visibility",
                 "visible",
             ]) == true)
         #expect(
             RootTabs.requestedInitialSidebarVisibility(arguments: [
-                "OpenClaw",
-                "--openclaw-sidebar-visibility",
+                "Nova",
+                "--nova-sidebar-visibility",
                 "unknown",
             ]) == nil)
     }
@@ -583,15 +583,15 @@ struct RootTabsPresentationTests {
     }
 
     @Test func `session work subtitle mirrors the web repo and branch line`() {
-        func entry(repoRoot: String?, branch: String?) -> OpenClawChatSessionEntry {
+        func entry(repoRoot: String?, branch: String?) -> NovaChatSessionEntry {
             Self.sessionEntry(
                 key: "agent:main:w1",
-                worktree: OpenClawChatSessionWorktree(id: "w1", branch: branch, repoRoot: repoRoot))
+                worktree: NovaChatSessionWorktree(id: "w1", branch: branch, repoRoot: repoRoot))
         }
         #expect(ChatSessionSidebarModel.workSubtitle(
-            for: entry(repoRoot: "/Users/dev/openclaw", branch: "openclaw/fix-thing")) == "openclaw \u{2387} fix-thing")
+            for: entry(repoRoot: "/Users/dev/nova", branch: "nova/fix-thing")) == "nova \u{2387} fix-thing")
         #expect(ChatSessionSidebarModel.workSubtitle(
-            for: entry(repoRoot: "/Users/dev/openclaw", branch: nil)) == "openclaw")
+            for: entry(repoRoot: "/Users/dev/nova", branch: nil)) == "nova")
         #expect(ChatSessionSidebarModel.workSubtitle(for: entry(repoRoot: nil, branch: "main")) == nil)
         #expect(ChatSessionSidebarModel.workSubtitle(for: Self.sessionEntry(key: "plain")) == nil)
     }
@@ -744,9 +744,9 @@ struct RootTabsPresentationTests {
         totalTokens: Int? = nil,
         totalTokensFresh: Bool? = nil,
         contextTokens: Int? = nil,
-        worktree: OpenClawChatSessionWorktree? = nil) -> OpenClawChatSessionEntry
+        worktree: NovaChatSessionWorktree? = nil) -> NovaChatSessionEntry
     {
-        OpenClawChatSessionEntry(
+        NovaChatSessionEntry(
             key: key,
             kind: nil,
             displayName: nil,

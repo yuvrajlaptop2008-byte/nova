@@ -10,7 +10,7 @@ import {
 import { collectChangedPaths } from "../config/io.write-prepare.js";
 import { resolveIsNixMode } from "../config/paths.js";
 import { ensurePluginAllowlisted } from "../config/plugins-allowlist.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import { parseClawHubPluginSpec } from "../infra/clawhub-spec.js";
 import { formatErrorMessage } from "../infra/errors.js";
@@ -136,7 +136,7 @@ let officialCatalogCache:
   | { key: string; result: Promise<HostedOfficialExternalPluginCatalogLoadResult> }
   | undefined;
 
-function officialCatalogCacheKey(config: OpenClawConfig): string {
+function officialCatalogCacheKey(config: NovaConfig): string {
   return JSON.stringify(config.marketplaces ?? null);
 }
 
@@ -275,7 +275,7 @@ function overlayBundledOfficialPluginCatalogMetadata(
   });
 }
 
-async function loadOfficialCatalog(config: OpenClawConfig): Promise<OfficialCatalogResult> {
+async function loadOfficialCatalog(config: NovaConfig): Promise<OfficialCatalogResult> {
   const key = officialCatalogCacheKey(config);
   if (officialCatalogCache?.key !== key) {
     officialCatalogCache = {
@@ -325,7 +325,7 @@ function normalizeFeaturedAt(value: unknown): number | undefined {
 }
 
 function resolveCatalogInstallAction(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   entry: OfficialExternalPluginCatalogEntry;
   pluginId: string;
 }): ManagedPluginCatalogEntry["install"] {
@@ -551,7 +551,7 @@ function resolvePluginIconUrlFromCatalogFacts(params: {
 
 /** Resolve the current manifest/catalog icon URL without accepting a caller-provided URL. */
 export async function resolveManagedPluginIconUrl(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginId: string;
   env?: NodeJS.ProcessEnv;
   officialCatalog?: OfficialCatalogResult;
@@ -584,7 +584,7 @@ function normalizeManagedCatalogIconUrl(value: unknown): string | undefined {
 
 /** Resolve only URLs currently owned by a manifest or bundled presentation catalog. */
 export function resolveManagedSetupCatalogIconUrl(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   iconUrl: string;
   env?: NodeJS.ProcessEnv;
 }): string | undefined {
@@ -609,7 +609,7 @@ export function resolveManagedSetupCatalogIconUrl(params: {
 
 /** Build cold installed state merged with the hosted official catalog and bundled curation. */
 export async function listManagedPlugins(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env?: NodeJS.ProcessEnv;
   officialCatalog?: OfficialCatalogResult;
 }): Promise<ManagedPluginCatalog> {
@@ -770,7 +770,7 @@ function assertValidConfigSnapshot(
   const { snapshot, writeOptions } = prepared;
   if (!snapshot.valid) {
     throw new ManagedPluginLifecycleError(
-      "Config invalid; run `openclaw doctor --fix` before managing plugins.",
+      "Config invalid; run `nova doctor --fix` before managing plugins.",
     );
   }
   const mutationWriteOptions = selectInstallMutationWriteOptions(writeOptions);
@@ -838,7 +838,7 @@ function resolveDeclaredOfficialPluginId(
 
 function resolveOfficialEntryByClawHubPackage(
   entries: readonly OfficialExternalPluginCatalogEntry[],
-  config: OpenClawConfig,
+  config: NovaConfig,
   packageName: string,
 ): OfficialExternalPluginCatalogEntry | undefined {
   // Bundled identities remain the local trust anchor when a hosted feed omits
@@ -853,7 +853,7 @@ function resolveOfficialEntryByClawHubPackage(
 
 function resolveHostedOfficialEntryByClawHubPackage(
   entries: readonly OfficialExternalPluginCatalogEntry[],
-  config: OpenClawConfig,
+  config: NovaConfig,
   packageName: string,
 ): OfficialExternalPluginCatalogEntry | undefined {
   return entries.find((entry) => {
@@ -979,7 +979,7 @@ async function persistManagedPluginInstall(params: {
   install: PluginInstallRecord;
   targetDir: string;
   extensionsDir: string;
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   try {
     return await persistPluginInstall({
       snapshot: params.snapshot,
@@ -1006,7 +1006,7 @@ async function installFromClawHub(params: {
   env: NodeJS.ProcessEnv;
   warnings: string[];
   expectedIntegrity?: string;
-}): Promise<{ pluginId: string; config: OpenClawConfig }> {
+}): Promise<{ pluginId: string; config: NovaConfig }> {
   const packageName = params.request.packageName.trim();
   const official = resolveOfficialEntryByClawHubPackage(
     params.officialEntries,
@@ -1075,7 +1075,7 @@ async function installFromOfficialCatalog(params: {
   officialEntries: readonly OfficialExternalPluginCatalogEntry[];
   env: NodeJS.ProcessEnv;
   warnings: string[];
-}): Promise<{ pluginId: string; config: OpenClawConfig }> {
+}): Promise<{ pluginId: string; config: NovaConfig }> {
   const entry = resolveOfficialEntryById(params.officialEntries, params.request.pluginId);
   if (!entry) {
     throw new ManagedPluginLifecycleError(

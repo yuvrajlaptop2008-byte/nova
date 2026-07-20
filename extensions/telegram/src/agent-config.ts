@@ -1,5 +1,5 @@
 // Telegram helper module supports agent config behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 
 type ReasoningDefault = "on" | "stream" | "off";
 
@@ -11,7 +11,7 @@ function normalizeAgentId(value: string | undefined | null): string {
 }
 
 export function resolveTelegramConfigReasoningDefault(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId: string,
 ): ReasoningDefault {
   const id = normalizeAgentId(agentId);

@@ -1,6 +1,6 @@
-# OpenClaw iOS Versioning
+# Nova iOS Versioning
 
-OpenClaw iOS release uploads use an explicit CalVer release version. The
+Nova iOS release uploads use an explicit CalVer release version. The
 committed repo no longer has an iOS-only version manifest; release commands must
 name the App Store train they are uploading to.
 
@@ -144,18 +144,18 @@ Successful App Store Connect uploads create a non-tag Git ref that records the
 source commit for the uploaded store build:
 
 ```text
-refs/openclaw/mobile-releases/ios/<CFBundleShortVersionString>-<CFBundleVersion>
+refs/nova/mobile-releases/ios/<CFBundleShortVersionString>-<CFBundleVersion>
 ```
 
 Example:
 
 ```text
-refs/openclaw/mobile-releases/ios/2026.6.11-3
+refs/nova/mobile-releases/ios/2026.6.11-3
 ```
 
 These refs are intentionally outside `refs/tags/*` and `refs/heads/*`. They do
 not appear on GitHub release or tag pages, and they do not participate in the
-core OpenClaw release machinery.
+core Nova release machinery.
 
 `pnpm ios:release:upload` checks the ref before archive/upload work and records
 it only after the App Store Connect upload succeeds. Existing refs are

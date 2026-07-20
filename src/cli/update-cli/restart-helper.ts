@@ -83,33 +83,33 @@ export async function prepareRestartScript(
       const unitName = resolveSystemdUnit(env);
       const escaped = shellEscape(unitName);
       const logSetup = renderPosixRestartLogSetup({ ...process.env, ...env });
-      filename = `openclaw-restart-${timestamp}.sh`;
+      filename = `nova-restart-${timestamp}.sh`;
       scriptContent = `#!/bin/sh
 # Standalone restart script — survives parent process termination.
 # Wait briefly to ensure file locks are released after update.
 sleep 1
 exec 3>&2
 ${logSetup}
-printf '[%s] openclaw restart attempt source=update target=%s\\n' "$(date -u +%FT%TZ)" '${escaped}' >&2
+printf '[%s] nova restart attempt source=update target=%s\\n' "$(date -u +%FT%TZ)" '${escaped}' >&2
 if systemctl --user is-active --quiet '${escaped}' || systemctl --user is-enabled --quiet '${escaped}'; then
   if systemctl --user restart '${escaped}'; then
     status=0
-    printf '[%s] openclaw restart done source=update\\n' "$(date -u +%FT%TZ)" >&2
+    printf '[%s] nova restart done source=update\\n' "$(date -u +%FT%TZ)" >&2
   else
     status=$?
-    printf '[%s] openclaw restart failed source=update status=%s\\n' "$(date -u +%FT%TZ)" "$status" >&2
+    printf '[%s] nova restart failed source=update status=%s\\n' "$(date -u +%FT%TZ)" "$status" >&2
   fi
 elif systemctl is-active --quiet '${escaped}' || systemctl is-enabled --quiet '${escaped}'; then
   status=78
-  printf '[%s] system-scoped openclaw gateway unit detected; update cannot restart it without sudo. Run: sudo systemctl restart %s\\n' "$(date -u +%FT%TZ)" '${escaped}' >&2
-  printf '[%s] system-scoped openclaw gateway unit detected; update cannot restart it without sudo. Run: sudo systemctl restart %s\\n' "$(date -u +%FT%TZ)" '${escaped}' >&3 2>/dev/null || true
+  printf '[%s] system-scoped nova gateway unit detected; update cannot restart it without sudo. Run: sudo systemctl restart %s\\n' "$(date -u +%FT%TZ)" '${escaped}' >&2
+  printf '[%s] system-scoped nova gateway unit detected; update cannot restart it without sudo. Run: sudo systemctl restart %s\\n' "$(date -u +%FT%TZ)" '${escaped}' >&3 2>/dev/null || true
 else
   if systemctl --user restart '${escaped}'; then
     status=0
-    printf '[%s] openclaw restart done source=update\\n' "$(date -u +%FT%TZ)" >&2
+    printf '[%s] nova restart done source=update\\n' "$(date -u +%FT%TZ)" >&2
   else
     status=$?
-    printf '[%s] openclaw restart failed source=update status=%s\\n' "$(date -u +%FT%TZ)" "$status" >&2
+    printf '[%s] nova restart failed source=update status=%s\\n' "$(date -u +%FT%TZ)" "$status" >&2
   fi
 fi
 # Self-cleanup
@@ -130,7 +130,7 @@ exit "$status"
       const plistPath = path.join(home, "Library", "LaunchAgents", `${label}.plist`);
       const escapedPlistPath = shellEscape(plistPath);
       const logSetup = renderPosixRestartLogSetup({ ...process.env, ...env });
-      filename = `openclaw-restart-${timestamp}.sh`;
+      filename = `nova-restart-${timestamp}.sh`;
       scriptContent = `#!/bin/sh
 # Standalone restart script — survives parent process termination.
 # Wait briefly to ensure file locks are released after update.
@@ -139,7 +139,7 @@ sleep 1
 # audit trail. Log setup is best-effort: restart must still run if the log path
 # is temporarily unavailable.
 ${logSetup}
-printf '[%s] openclaw restart attempt source=update target=%s\\n' "$(date -u +%FT%TZ)" '${shellEscapeRestartLogValue(label)}' >&2
+printf '[%s] nova restart attempt source=update target=%s\\n' "$(date -u +%FT%TZ)" '${shellEscapeRestartLogValue(label)}' >&2
 # Try kickstart first (works when the service is still registered).
 # If it fails (e.g. after bootout), clear any persisted disabled state,
 # then re-register via bootstrap. Bootstrap loads RunAtLoad agents, so the
@@ -157,9 +157,9 @@ if ! launchctl kickstart -k 'gui/${uid}/${escaped}'; then
   fi
 fi
 if [ "$status" -eq 0 ]; then
-  printf '[%s] openclaw restart done source=update\\n' "$(date -u +%FT%TZ)" >&2
+  printf '[%s] nova restart done source=update\\n' "$(date -u +%FT%TZ)" >&2
 else
-  printf '[%s] openclaw restart failed source=update status=%s\\n' "$(date -u +%FT%TZ)" "$status" >&2
+  printf '[%s] nova restart failed source=update status=%s\\n' "$(date -u +%FT%TZ)" "$status" >&2
 fi
 # Self-cleanup (log is retained under the Nova state logs directory).
 script_dir=$(dirname "$0")
@@ -180,7 +180,7 @@ exit "$status"
       const gatewayScriptPath = resolveGatewayTaskScriptPath({ ...process.env, ...env });
       const quotedGatewayScriptPath = powerShellSingleQuote(gatewayScriptPath);
       const expectedGatewayArgv = windowsGatewayArgv.map(powerShellSingleQuote).join(", ");
-      filename = `openclaw-restart-${timestamp}.cmd`;
+      filename = `nova-restart-${timestamp}.cmd`;
       scriptContent = `@echo off
 REM Standalone restart script - survives parent process termination.
 REM Keep this as a cmd wrapper so Group Policy script execution policies
@@ -202,7 +202,7 @@ $logPath = ${quotedLogPath}
 try {
   $logDir = Split-Path -Parent $logPath
   New-Item -ItemType Directory -Path $logDir -Force | Out-Null
-  Add-Content -LiteralPath $logPath -Value "[$(Get-Date -Format o)] openclaw restart log initialized"
+  Add-Content -LiteralPath $logPath -Value "[$(Get-Date -Format o)] nova restart log initialized"
 } catch {
   # Restart should still run if log setup is unavailable.
 }
@@ -215,7 +215,7 @@ function Write-RestartLog {
   }
 }
 
-function Join-OpenClawProcessArguments {
+function Join-NovaProcessArguments {
   param([string[]]$Arguments)
   ($Arguments | ForEach-Object {
     if ($_ -match "\\s") {
@@ -226,7 +226,7 @@ function Join-OpenClawProcessArguments {
   }) -join " "
 }
 
-function Invoke-OpenClawSchtasksWithTimeout {
+function Invoke-NovaSchtasksWithTimeout {
   param(
     [string[]]$Arguments,
     [int]$TimeoutSeconds
@@ -235,7 +235,7 @@ function Invoke-OpenClawSchtasksWithTimeout {
   try {
     $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
     $startInfo.FileName = "schtasks.exe"
-    $startInfo.Arguments = Join-OpenClawProcessArguments -Arguments $Arguments
+    $startInfo.Arguments = Join-NovaProcessArguments -Arguments $Arguments
     $startInfo.UseShellExecute = $false
     $startInfo.RedirectStandardOutput = $true
     $startInfo.RedirectStandardError = $true
@@ -245,7 +245,7 @@ function Invoke-OpenClawSchtasksWithTimeout {
         $process.Kill()
       } catch {
       }
-      Write-RestartLog "openclaw restart schtasks timeout source=update args=$($Arguments -join ' ')"
+      Write-RestartLog "nova restart schtasks timeout source=update args=$($Arguments -join ' ')"
       return 124
     }
     $stdout = $process.StandardOutput.ReadToEnd()
@@ -258,12 +258,12 @@ function Invoke-OpenClawSchtasksWithTimeout {
     }
     return $process.ExitCode
   } catch {
-    Write-RestartLog "openclaw restart schtasks failed source=update args=$($Arguments -join ' ') error=$($_.Exception.Message)"
+    Write-RestartLog "nova restart schtasks failed source=update args=$($Arguments -join ' ') error=$($_.Exception.Message)"
     return 1
   }
 }
 
-function Get-OpenClawScheduledTaskState {
+function Get-NovaScheduledTaskState {
   param([string]$TaskName)
   try {
     $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction Stop
@@ -400,11 +400,11 @@ namespace Nova.Restart {
 try {
   Add-Type -TypeDefinition $nativeSource -Language CSharp -ErrorAction Stop
 } catch {
-  Write-RestartLog "openclaw restart native ownership helper unavailable source=update error=$($_.Exception.Message)"
+  Write-RestartLog "nova restart native ownership helper unavailable source=update error=$($_.Exception.Message)"
 }
 
 # NOVA_RESTART_KILL_POLICY_BEGIN
-function Get-OpenClawListenerSnapshot {
+function Get-NovaListenerSnapshot {
   param([int]$Port)
 
   try {
@@ -418,7 +418,7 @@ function Get-OpenClawListenerSnapshot {
       return [pscustomobject]@{ Known = $true; Pids = $listenerPids }
     }
   } catch {
-    Write-RestartLog "openclaw restart Get-NetTCPConnection query failed source=update error=$($_.Exception.Message)"
+    Write-RestartLog "nova restart Get-NetTCPConnection query failed source=update error=$($_.Exception.Message)"
   }
 
   try {
@@ -449,12 +449,12 @@ function Get-OpenClawListenerSnapshot {
       Pids = @($listenerPids | Sort-Object -Unique)
     }
   } catch {
-    Write-RestartLog "openclaw restart netstat query failed source=update error=$($_.Exception.Message)"
+    Write-RestartLog "nova restart netstat query failed source=update error=$($_.Exception.Message)"
     return [pscustomobject]@{ Known = $false; Pids = @() }
   }
 }
 
-function Get-OpenClawProcessFacts {
+function Get-NovaProcessFacts {
   param([int]$ProcessId)
 
   try {
@@ -475,12 +475,12 @@ function Get-OpenClawProcessFacts {
       Argv = @([Nova.Restart.NativeMethods]::ParseCommandLine([string]$process.CommandLine))
     }
   } catch {
-    Write-RestartLog "openclaw restart process query failed source=update pid=$ProcessId error=$($_.Exception.Message)"
+    Write-RestartLog "nova restart process query failed source=update pid=$ProcessId error=$($_.Exception.Message)"
     return $null
   }
 }
 
-function Test-OpenClawArgvEqual {
+function Test-NovaArgvEqual {
   param([string[]]$Actual, [string[]]$Expected)
   if ($Actual.Count -ne $Expected.Count) {
     return $false
@@ -506,17 +506,17 @@ function Test-OpenClawArgvEqual {
   return $true
 }
 
-function Test-OpenClawSameProcess {
+function Test-NovaSameProcess {
   param($Expected, $Actual)
   return (
     $null -ne $Actual -and
     $Actual.ProcessId -eq $Expected.ProcessId -and
     $Actual.CreationTimeFileTime -eq $Expected.CreationTimeFileTime -and
-    (Test-OpenClawArgvEqual -Actual $Actual.Argv -Expected $Expected.Argv)
+    (Test-NovaArgvEqual -Actual $Actual.Argv -Expected $Expected.Argv)
   )
 }
 
-function Get-OpenClawListenerKillDecision {
+function Get-NovaListenerKillDecision {
   param(
     [int]$CandidatePid,
     [string[]]$ExpectedArgv,
@@ -531,7 +531,7 @@ function Get-OpenClawListenerKillDecision {
   if ($null -eq $ObservedProcess -or $ObservedProcess.ProcessId -ne $CandidatePid) {
     return "process-unavailable"
   }
-  if (-not (Test-OpenClawArgvEqual -Actual $ObservedProcess.Argv -Expected $ExpectedArgv)) {
+  if (-not (Test-NovaArgvEqual -Actual $ObservedProcess.Argv -Expected $ExpectedArgv)) {
     return "command-mismatch"
   }
   if ($HeldProcessCreationTimeFileTime -ne $ObservedProcess.CreationTimeFileTime) {
@@ -543,33 +543,33 @@ function Get-OpenClawListenerKillDecision {
   if ($RecheckedListeners.Pids -notcontains $CandidatePid) {
     return "no-longer-listening"
   }
-  if (-not (Test-OpenClawSameProcess -Expected $ObservedProcess -Actual $RecheckedProcess)) {
+  if (-not (Test-NovaSameProcess -Expected $ObservedProcess -Actual $RecheckedProcess)) {
     return "process-replaced"
   }
   return "kill"
 }
 
-function Invoke-OpenClawVerifiedListenerKill {
+function Invoke-NovaVerifiedListenerKill {
   param(
     [int]$ProcessId,
     [int]$Port,
     [string[]]$ExpectedArgv,
-    [scriptblock]$ProcessQuery = { param([int]$QueryPid) Get-OpenClawProcessFacts -ProcessId $QueryPid },
-    [scriptblock]$ListenerQuery = { param([int]$QueryPort) Get-OpenClawListenerSnapshot -Port $QueryPort },
+    [scriptblock]$ProcessQuery = { param([int]$QueryPid) Get-NovaProcessFacts -ProcessId $QueryPid },
+    [scriptblock]$ListenerQuery = { param([int]$QueryPort) Get-NovaListenerSnapshot -Port $QueryPort },
     [scriptblock]$ProcessOpen = { param([int]$QueryPid) [Nova.Restart.NativeMethods]::TryOpenProcess($QueryPid) }
   )
 
   $observedProcess = & $ProcessQuery $ProcessId
   if ($null -eq $observedProcess) {
-    Write-RestartLog "openclaw restart skipped listener source=update pid=$ProcessId decision=process-unavailable"
+    Write-RestartLog "nova restart skipped listener source=update pid=$ProcessId decision=process-unavailable"
     return
   }
   if ($ExpectedArgv.Count -eq 0) {
-    Write-RestartLog "openclaw restart skipped listener source=update pid=$ProcessId decision=expected-command-unavailable"
+    Write-RestartLog "nova restart skipped listener source=update pid=$ProcessId decision=expected-command-unavailable"
     return
   }
-  if (-not (Test-OpenClawArgvEqual -Actual $observedProcess.Argv -Expected $ExpectedArgv)) {
-    Write-RestartLog "openclaw restart skipped listener source=update pid=$ProcessId decision=command-mismatch"
+  if (-not (Test-NovaArgvEqual -Actual $observedProcess.Argv -Expected $ExpectedArgv)) {
+    Write-RestartLog "nova restart skipped listener source=update pid=$ProcessId decision=command-mismatch"
     return
   }
 
@@ -577,7 +577,7 @@ function Invoke-OpenClawVerifiedListenerKill {
   try {
     $lease = & $ProcessOpen $ProcessId
     if ($null -eq $lease) {
-      Write-RestartLog "openclaw restart skipped listener source=update pid=$ProcessId decision=process-handle-unavailable"
+      Write-RestartLog "nova restart skipped listener source=update pid=$ProcessId decision=process-handle-unavailable"
       return
     }
 
@@ -591,19 +591,19 @@ function Invoke-OpenClawVerifiedListenerKill {
       RecheckedListeners = $recheckedListeners
       RecheckedProcess = $recheckedProcess
     }
-    $decision = Get-OpenClawListenerKillDecision @decisionParams
+    $decision = Get-NovaListenerKillDecision @decisionParams
     if ($decision -ne "kill") {
-      Write-RestartLog "openclaw restart skipped listener source=update pid=$ProcessId decision=$decision"
+      Write-RestartLog "nova restart skipped listener source=update pid=$ProcessId decision=$decision"
       return
     }
 
     if ($lease.Terminate()) {
-      Write-RestartLog "openclaw restart killed stale listener source=update pid=$ProcessId"
+      Write-RestartLog "nova restart killed stale listener source=update pid=$ProcessId"
     } else {
-      Write-RestartLog "openclaw restart failed to kill stale listener source=update pid=$ProcessId"
+      Write-RestartLog "nova restart failed to kill stale listener source=update pid=$ProcessId"
     }
   } catch {
-    Write-RestartLog "openclaw restart ownership verification failed source=update pid=$ProcessId error=$($_.Exception.Message)"
+    Write-RestartLog "nova restart ownership verification failed source=update pid=$ProcessId error=$($_.Exception.Message)"
   } finally {
     if ($null -ne $lease) {
       $lease.Dispose()
@@ -612,20 +612,20 @@ function Invoke-OpenClawVerifiedListenerKill {
 }
 # NOVA_RESTART_KILL_POLICY_END
 
-function Invoke-OpenClawStartupLauncher {
+function Invoke-NovaStartupLauncher {
   param([string]$LauncherPath)
   $launcherPath = $LauncherPath
   if (-not (Test-Path -LiteralPath $launcherPath)) {
-    Write-RestartLog "openclaw restart startup launcher missing source=update path=$launcherPath"
+    Write-RestartLog "nova restart startup launcher missing source=update path=$launcherPath"
     return 1
   }
 
   try {
     Start-Process -FilePath $launcherPath -WindowStyle Hidden | Out-Null
-    Write-RestartLog "openclaw restart launched startup fallback source=update path=$launcherPath"
+    Write-RestartLog "nova restart launched startup fallback source=update path=$launcherPath"
     return 0
   } catch {
-    Write-RestartLog "openclaw restart startup fallback failed source=update error=$($_.Exception.Message)"
+    Write-RestartLog "nova restart startup fallback failed source=update error=$($_.Exception.Message)"
     return 1
   }
 }
@@ -634,23 +634,23 @@ $taskName = ${quotedTaskName}
 $port = ${port}
 $gatewayScriptPath = ${quotedGatewayScriptPath}
 $expectedGatewayArgv = @(${expectedGatewayArgv})
-Write-RestartLog "openclaw restart attempt source=update target=$taskName"
+Write-RestartLog "nova restart attempt source=update target=$taskName"
 
-$taskState = Get-OpenClawScheduledTaskState -TaskName $taskName
+$taskState = Get-NovaScheduledTaskState -TaskName $taskName
 if ($taskState -eq "Running") {
-  $endStatus = Invoke-OpenClawSchtasksWithTimeout -Arguments @("/End", "/TN", $taskName) -TimeoutSeconds 10
+  $endStatus = Invoke-NovaSchtasksWithTimeout -Arguments @("/End", "/TN", $taskName) -TimeoutSeconds 10
   if ($endStatus -ne 0) {
-    Write-RestartLog "openclaw restart schtasks end did not complete cleanly source=update status=$endStatus"
+    Write-RestartLog "nova restart schtasks end did not complete cleanly source=update status=$endStatus"
   }
 } else {
-  Write-RestartLog "openclaw restart skipped schtasks end source=update state=$taskState"
+  Write-RestartLog "nova restart skipped schtasks end source=update state=$taskState"
 }
 
 for ($attempt = 1; $attempt -le 10; $attempt++) {
-  $listenerSnapshot = Get-OpenClawListenerSnapshot -Port $port
+  $listenerSnapshot = Get-NovaListenerSnapshot -Port $port
   if (-not $listenerSnapshot.Known) {
     if ($attempt -eq 10) {
-      Write-RestartLog "openclaw restart listener ownership unavailable source=update; refusing force-kill"
+      Write-RestartLog "nova restart listener ownership unavailable source=update; refusing force-kill"
       break
     }
     Start-Sleep -Seconds 1
@@ -664,7 +664,7 @@ for ($attempt = 1; $attempt -le 10; $attempt++) {
 
   if ($attempt -eq 10) {
     foreach ($listenerPid in $listeners) {
-      Invoke-OpenClawVerifiedListenerKill -ProcessId $listenerPid -Port $port -ExpectedArgv $expectedGatewayArgv
+      Invoke-NovaVerifiedListenerKill -ProcessId $listenerPid -Port $port -ExpectedArgv $expectedGatewayArgv
     }
     break
   }
@@ -672,14 +672,14 @@ for ($attempt = 1; $attempt -le 10; $attempt++) {
   Start-Sleep -Seconds 1
 }
 
-$status = Invoke-OpenClawSchtasksWithTimeout -Arguments @("/Run", "/TN", $taskName) -TimeoutSeconds 30
+$status = Invoke-NovaSchtasksWithTimeout -Arguments @("/Run", "/TN", $taskName) -TimeoutSeconds 30
 if ($status -ne 0) {
-  $status = Invoke-OpenClawStartupLauncher -LauncherPath $gatewayScriptPath
+  $status = Invoke-NovaStartupLauncher -LauncherPath $gatewayScriptPath
 }
 if ($status -eq 0) {
-  Write-RestartLog "openclaw restart done source=update"
+  Write-RestartLog "nova restart done source=update"
 } else {
-  Write-RestartLog "openclaw restart failed source=update status=$status"
+  Write-RestartLog "nova restart failed source=update status=$status"
 }
 
 exit $status
@@ -688,7 +688,7 @@ exit $status
       return null;
     }
 
-    const scriptDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-restart-"));
+    const scriptDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-restart-"));
     const scriptPath = path.join(scriptDir, filename);
     try {
       await fs.writeFile(scriptPath, scriptContent, { mode: 0o755, flag: "wx" });

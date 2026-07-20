@@ -27,17 +27,17 @@ describe("renderQrTerminal", () => {
   });
 
   it("delegates terminal rendering to qrcode", async () => {
-    await expect(renderQrTerminal("openclaw")).resolves.toBe("ASCII-QR");
-    expect(toString).toHaveBeenCalledWith("openclaw", {
+    await expect(renderQrTerminal("nova")).resolves.toBe("ASCII-QR");
+    expect(toString).toHaveBeenCalledWith("nova", {
       small: false,
       type: "terminal",
     });
   });
 
   it("renders compact QR output without qrcode terminal small mode", async () => {
-    const rendered = await renderQrTerminal("openclaw", { small: true });
+    const rendered = await renderQrTerminal("nova", { small: true });
     expect(rendered).toContain("▄");
-    expect(create).toHaveBeenCalledWith("openclaw");
+    expect(create).toHaveBeenCalledWith("nova");
     expect(toString).not.toHaveBeenCalled();
   });
 });

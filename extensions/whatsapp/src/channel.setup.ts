@@ -1,5 +1,5 @@
 // Whatsapp plugin module implements channel.setup behavior.
-import type { ChannelPlugin } from "openclaw/plugin-sdk/core";
+import type { ChannelPlugin } from "nova/plugin-sdk/core";
 import type { ResolvedWhatsAppAccount } from "./accounts.js";
 import { isWhatsAppAuthConfigured } from "./channel-runtime-loader.js";
 import {

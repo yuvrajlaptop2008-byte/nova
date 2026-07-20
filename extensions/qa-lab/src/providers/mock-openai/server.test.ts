@@ -192,26 +192,26 @@ const SLACK_CHART_PROMPT = [
 const WHATSAPP_AGENT_REACT_PROMPT =
   "React to this WhatsApp message with thumbs up for QA action check WHATSAPP_QA_AGENT_REACT_TEST.";
 const WHATSAPP_GROUP_AGENT_REACT_PROMPT =
-  "openclawqa react to this WhatsApp group message with thumbs up for QA action check WHATSAPP_QA_GROUP_AGENT_REACT_TEST.";
+  "novaqa react to this WhatsApp group message with thumbs up for QA action check WHATSAPP_QA_GROUP_AGENT_REACT_TEST.";
 const WHATSAPP_AGENT_UPLOAD_TOKEN = "WHATSAPP_QA_AGENT_UPLOAD_TEST";
 const WHATSAPP_GROUP_AGENT_UPLOAD_TOKEN = "WHATSAPP_QA_GROUP_AGENT_UPLOAD_TEST";
 const WHATSAPP_AGENT_UPLOAD_PROMPT =
   `Use the WhatsApp message tool upload-file action to send a PNG with caption ${WHATSAPP_AGENT_UPLOAD_TOKEN}. ` +
   "Do not send any visible text reply after the upload.";
 const WHATSAPP_GROUP_AGENT_UPLOAD_PROMPT =
-  `openclawqa use the WhatsApp message tool upload-file action to send a PNG with caption ${WHATSAPP_GROUP_AGENT_UPLOAD_TOKEN}. ` +
+  `novaqa use the WhatsApp message tool upload-file action to send a PNG with caption ${WHATSAPP_GROUP_AGENT_UPLOAD_TOKEN}. ` +
   "Do not send any visible text reply after the upload.";
 const WHATSAPP_PENDING_HISTORY_QUIET_MARKER = "WHATSAPP_QA_PENDING_HISTORY_QUIET_TEST";
 const WHATSAPP_PENDING_HISTORY_CONTEXT_SENTINEL = "WHATSAPP_QA_PENDING_HISTORY_CONTEXT_ONLY_TEST";
 const WHATSAPP_PENDING_HISTORY_TRIGGER_MARKER = "WHATSAPP_QA_PENDING_HISTORY_TRIGGER_TEST";
 const WHATSAPP_PENDING_HISTORY_OK_MARKER = "WHATSAPP_QA_PENDING_HISTORY_OK_TEST";
 const WHATSAPP_PENDING_HISTORY_TRIGGER_PROMPT = [
-  "openclawqa pending history context check",
+  "novaqa pending history context check",
   WHATSAPP_PENDING_HISTORY_TRIGGER_MARKER,
   `Return ${WHATSAPP_PENDING_HISTORY_OK_MARKER} only if prior group context contains ${WHATSAPP_PENDING_HISTORY_CONTEXT_SENTINEL}.`,
 ].join(" ");
 const WHATSAPP_BROADCAST_TOKEN = "WHATSAPP_QA_BROADCAST_TOKEN_TEST";
-const WHATSAPP_BROADCAST_PROMPT = `openclawqa broadcast fanout check ${WHATSAPP_BROADCAST_TOKEN}`;
+const WHATSAPP_BROADCAST_PROMPT = `novaqa broadcast fanout check ${WHATSAPP_BROADCAST_TOKEN}`;
 const WHATSAPP_ACTIVATION_ALWAYS_MARKER = "WHATSAPP_QA_ACTIVATION_ALWAYS_TEST";
 const WHATSAPP_ACTIVATION_ALWAYS_PROMPT = `Group activation visible behavior marker ${WHATSAPP_ACTIVATION_ALWAYS_MARKER}`;
 const WHATSAPP_REPLY_TO_BOT_SEED_MARKER = "WHATSAPP_QA_REPLY_TO_BOT_SEED_TEST";
@@ -1599,7 +1599,7 @@ describe("qa mock openai server", () => {
   it("answers WhatsApp pending-history prompts only with injected prior group context", async () => {
     const server = await startMockServer();
     const currentTriggerPrompt = [
-      "openclawqa pending history context check",
+      "novaqa pending history context check",
       WHATSAPP_PENDING_HISTORY_TRIGGER_MARKER,
       `Return ${WHATSAPP_PENDING_HISTORY_OK_MARKER} only if prior group context contains the context-only sentinel.`,
     ].join(" ");
@@ -1672,7 +1672,7 @@ describe("qa mock openai server", () => {
       model: "gpt-5.6-luna",
       input: [
         makeUserInput(
-          [historyContext, "openclawqa pending history context check without current trigger"].join(
+          [historyContext, "novaqa pending history context check without current trigger"].join(
             "\n",
           ),
         ),
@@ -1756,7 +1756,7 @@ describe("qa mock openai server", () => {
       input: [makeUserInput("Quoted implicit reply trigger marker WHATSAPP_QA_UNRELATED_TEST")],
     });
 
-    expect(WHATSAPP_REPLY_TO_BOT_TRIGGER_PROMPT).not.toMatch(/\bopenclawqa\b/iu);
+    expect(WHATSAPP_REPLY_TO_BOT_TRIGGER_PROMPT).not.toMatch(/\bnovaqa\b/iu);
     expect(outputText(seedPayload)).toBe(WHATSAPP_REPLY_TO_BOT_SEED_MARKER);
     expect(outputText(triggerPayload)).toBe(WHATSAPP_REPLY_TO_BOT_TRIGGER_MARKER);
     expect(outputText(unrelatedPayload)).not.toBe(WHATSAPP_REPLY_TO_BOT_TRIGGER_MARKER);
@@ -2737,7 +2737,7 @@ describe("qa mock openai server", () => {
       body: JSON.stringify({
         stream: true,
         instructions:
-          "@openclaw Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
+          "@nova Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
         input: [
           {
             role: "user",
@@ -2764,7 +2764,7 @@ describe("qa mock openai server", () => {
       body: JSON.stringify({
         stream: false,
         instructions:
-          "@openclaw Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
+          "@nova Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
         input: [
           {
             type: "function_call_output",
@@ -2795,7 +2795,7 @@ describe("qa mock openai server", () => {
       body: JSON.stringify({
         stream: false,
         instructions:
-          "@openclaw Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
+          "@nova Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
         input: [
           {
             type: "function_call_output",
@@ -2832,7 +2832,7 @@ describe("qa mock openai server", () => {
               "Available tools include sessions_spawn.\n## /workspace/MEMORY.md\nThread-hidden codename: ORBIT-22.",
           },
           makeUserInput(
-            "@openclaw Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
+            "@nova Thread memory check: what is the hidden thread codename stored only in memory? Use memory tools first and reply only in this thread.",
           ),
           {
             type: "function_call_output",
@@ -4537,8 +4537,8 @@ describe("qa mock openai server", () => {
             ok: true,
             value: {
               tool: {
-                id: `openclaw:tool-search-e2e-fixture:${targetTool}`,
-                source: "openclaw",
+                id: `nova:tool-search-e2e-fixture:${targetTool}`,
+                source: "nova",
                 sourceName: "tool-search-e2e-fixture",
                 name: targetTool,
                 description: "x".repeat(260),
@@ -5269,7 +5269,7 @@ describe("qa mock openai server", () => {
 
     expect(triggered.status).toBe(200);
     await expect(triggered.json()).resolves.toEqual({
-      text: "openclawqa reply with only this exact marker after group audio preflight: WHATSAPP_QA_GROUP_AUDIO_TRANSCRIPT_OK",
+      text: "novaqa reply with only this exact marker after group audio preflight: WHATSAPP_QA_GROUP_AUDIO_TRANSCRIPT_OK",
     });
     expect(quiet.status).toBe(200);
     await expect(quiet.json()).resolves.toEqual({

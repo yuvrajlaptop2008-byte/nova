@@ -8,14 +8,11 @@
  * validation, fetch, and structured response formatting.
  */
 
-import { resolveChannelGroupPolicy } from "openclaw/plugin-sdk/channel-policy";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import {
-  readProviderTextResponse,
-  readResponseTextLimited,
-} from "openclaw/plugin-sdk/provider-http";
-import { fetchWithSsrFGuard, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
-import { jsonResult as json } from "openclaw/plugin-sdk/tool-results";
+import { resolveChannelGroupPolicy } from "nova/plugin-sdk/channel-policy";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { readProviderTextResponse, readResponseTextLimited } from "nova/plugin-sdk/provider-http";
+import { fetchWithSsrFGuard, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
+import { jsonResult as json } from "nova/plugin-sdk/tool-results";
 import { formatErrorMessage } from "../utils/format.js";
 import { debugLog, debugError } from "../utils/log.js";
 
@@ -248,7 +245,7 @@ function validateDeleteConfirmation(params: ChannelApiParams): string | null {
  */
 interface ChannelApiExecuteOptions {
   accessToken: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   accountId?: string | null;
 }
 

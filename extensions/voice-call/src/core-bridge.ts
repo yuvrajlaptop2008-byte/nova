@@ -1,5 +1,5 @@
 // Voice Call plugin module implements core bridge behavior.
-import type { OpenClawPluginApi } from "../api.js";
+import type { NovaPluginApi } from "../api.js";
 import type { VoiceCallCoreSessionConfig, VoiceCallTtsConfig } from "./config.js";
 
 // Narrow core runtime/config contracts consumed by the voice-call plugin.
@@ -14,4 +14,4 @@ export type CoreConfig = {
 };
 
 /** Agent runtime API subset exposed through the plugin SDK. */
-export type CoreAgentDeps = OpenClawPluginApi["runtime"]["agent"];
+export type CoreAgentDeps = NovaPluginApi["runtime"]["agent"];

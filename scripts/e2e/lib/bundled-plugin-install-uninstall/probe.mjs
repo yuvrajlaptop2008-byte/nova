@@ -43,7 +43,7 @@ function resolveStateDir() {
   if (process.env.NOVA_STATE_DIR) {
     return process.env.NOVA_STATE_DIR;
   }
-  return path.join(process.env.HOME || os.homedir(), ".openclaw");
+  return path.join(process.env.HOME || os.homedir(), ".nova");
 }
 
 function pathReferencesBundledRuntime(value, pluginDir) {
@@ -60,7 +60,7 @@ function pathsEqualForProbe(actual, expected) {
   return normalizePathForProbe(actual) === normalizePathForProbe(expected);
 }
 
-function resolveOpenClawEntry() {
+function resolveNovaEntry() {
   if (process.env.NOVA_ENTRY) {
     return process.env.NOVA_ENTRY;
   }
@@ -73,7 +73,7 @@ function resolveOpenClawEntry() {
 }
 
 function readPluginsList() {
-  const entry = resolveOpenClawEntry();
+  const entry = resolveNovaEntry();
   const timeoutMs = readPositiveIntEnv(
     "NOVA_BUNDLED_PLUGIN_LIST_TIMEOUT_MS",
     DEFAULT_PLUGIN_LIST_TIMEOUT_MS,
@@ -141,7 +141,7 @@ function parseJsonValue(text) {
 }
 
 function pluginRequiresConfig(pluginDir) {
-  const manifestPath = path.join(pluginDir, "openclaw.plugin.json");
+  const manifestPath = path.join(pluginDir, "nova.plugin.json");
   if (!fs.existsSync(manifestPath)) {
     throw new Error(`missing bundled plugin manifest: ${manifestPath}`);
   }
@@ -213,7 +213,7 @@ async function selectedManifestEntries() {
 
 function assertInstalled(pluginId, pluginDir, requiresConfig, selectedPluginRoot = "") {
   const stateDir = resolveStateDir();
-  const configPath = path.join(stateDir, "openclaw.json");
+  const configPath = path.join(stateDir, "nova.json");
   const config = readJson(configPath);
   const records = readPluginInstallRecords({ stateDir, configPath });
   const record = records[pluginId];
@@ -266,7 +266,7 @@ function assertInstalled(pluginId, pluginDir, requiresConfig, selectedPluginRoot
 
 function assertUninstalled(pluginId, pluginDir) {
   const stateDir = resolveStateDir();
-  const configPath = path.join(stateDir, "openclaw.json");
+  const configPath = path.join(stateDir, "nova.json");
   const config = fs.existsSync(configPath) ? readJson(configPath) : {};
   const records = readPluginInstallRecords({ stateDir, configPath });
   if (records[pluginId]) {

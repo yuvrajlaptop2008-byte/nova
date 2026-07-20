@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nova Plugin Pre-Release Testing"
+  short_description: "Plan plugin release validation"
+  default_prompt: "Use $release-nova-plugin-testing to plan or run pre-release Nova plugin validation across package, lifecycle, doctor, gateway, SDK, and live-ish proof."

@@ -1,16 +1,16 @@
-import { logTypingFailure } from "openclaw/plugin-sdk/channel-feedback";
+import { logTypingFailure } from "nova/plugin-sdk/channel-feedback";
 import {
   runChannelInboundEvent,
   type ChannelInboundTurnPlan,
-} from "openclaw/plugin-sdk/channel-inbound";
+} from "nova/plugin-sdk/channel-inbound";
 // Telegram plugin module wires inbound turn execution to Telegram delivery controllers.
 import {
   createChannelMessageReplyPipeline,
   resolveChannelStreamingPreviewToolProgress,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig, TelegramAccountConfig } from "openclaw/plugin-sdk/config-contracts";
-import { isFastModeAutoProgressPayload } from "openclaw/plugin-sdk/reply-payload";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/channel-outbound";
+import type { NovaConfig, TelegramAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { isFastModeAutoProgressPayload } from "nova/plugin-sdk/reply-payload";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
 import type { TelegramBotDeps } from "./bot-deps.js";
 import type { TelegramMessageContext } from "./bot-message-context.js";
 import type { TelegramDeliveryController } from "./bot-message-dispatch-delivery.js";
@@ -24,7 +24,7 @@ import { beginTelegramInboundEventDeliveryCorrelation } from "./inbound-event-de
 const TELEGRAM_MAX_CONSECUTIVE_TYPING_FAILURES = 5;
 
 export async function runTelegramDispatchTurn(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   context: TelegramMessageContext;
   delivery: TelegramDeliveryController;
   draft: TelegramDraftController;

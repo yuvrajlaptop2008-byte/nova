@@ -2,7 +2,7 @@
  * Filters provider/model refs for model picker visibility.
  */
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { listCliRuntimeProviderIds } from "./cli-backends.js";
 
 // Retired provider ids and CLI runtime aliases are implementation surfaces, not
@@ -16,7 +16,7 @@ export function isRetiredModelPickerProvider(provider: string): boolean {
 
 /** Creates a provider visibility predicate for model picker rendering. */
 export function createModelPickerVisibleProviderPredicate(
-  params: { config?: OpenClawConfig; env?: NodeJS.ProcessEnv; includeSetupRegistry?: boolean } = {},
+  params: { config?: NovaConfig; env?: NodeJS.ProcessEnv; includeSetupRegistry?: boolean } = {},
 ): (provider: string) => boolean {
   const cliRuntimeProviders = new Set(
     listCliRuntimeProviderIds({

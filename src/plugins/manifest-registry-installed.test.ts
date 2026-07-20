@@ -23,7 +23,7 @@ afterEach(() => {
 });
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-installed-manifest-registry", tempDirs);
+  return makeTrackedTempDir("nova-installed-manifest-registry", tempDirs);
 }
 
 function writePlugin(rootDir: string, pluginId: string, modelPrefix: string) {
@@ -33,7 +33,7 @@ function writePlugin(rootDir: string, pluginId: string, modelPrefix: string) {
     "utf8",
   );
   fs.writeFileSync(
-    path.join(rootDir, "openclaw.plugin.json"),
+    path.join(rootDir, "nova.plugin.json"),
     JSON.stringify({
       id: pluginId,
       configSchema: { type: "object" },
@@ -58,7 +58,7 @@ function createIndex(rootDir: string): InstalledPluginIndex {
     plugins: [
       {
         pluginId: "installed",
-        manifestPath: path.join(rootDir, "openclaw.plugin.json"),
+        manifestPath: path.join(rootDir, "nova.plugin.json"),
         manifestHash: "manifest-hash",
         source: path.join(rootDir, "index.ts"),
         rootDir,
@@ -122,7 +122,7 @@ function writePackageManifest(rootDir: string, channelLabel: string) {
       dependencies: {
         "runtime-dep": "1.0.0",
       },
-      openclaw: {
+      nova: {
         channel: {
           id: "installed",
           label: channelLabel,
@@ -176,7 +176,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     writePlugin(rootDir, "installed", "installed-");
     const index = deepFreeze(createIndexWithFileSignatures(rootDir));
     const first = resolveInstalledManifestRegistryIndexFingerprint(index);
-    const manifestPath = path.join(rootDir, "openclaw.plugin.json");
+    const manifestPath = path.join(rootDir, "nova.plugin.json");
     const nextMtime = new Date(Date.now() + 5000);
     fs.utimesSync(manifestPath, nextMtime, nextMtime);
     const second = resolveInstalledManifestRegistryIndexFingerprint(index);
@@ -318,7 +318,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     const index = deepFreeze(createIndex(rootDir));
     const first = resolveInstalledManifestRegistryIndexFingerprint(index);
 
-    const manifestPath = path.join(rootDir, "openclaw.plugin.json");
+    const manifestPath = path.join(rootDir, "nova.plugin.json");
     const nextMtime = new Date(Date.now() + 5000);
     fs.utimesSync(manifestPath, nextMtime, nextMtime);
     const second = resolveInstalledManifestRegistryIndexFingerprint(index);
@@ -328,7 +328,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
 
   it("reconstructs installed-index manifest registries when manifest files change", () => {
     const rootDir = makeTempDir();
-    const manifestPath = path.join(rootDir, "openclaw.plugin.json");
+    const manifestPath = path.join(rootDir, "nova.plugin.json");
     writePlugin(rootDir, "installed", "installed-");
     const index = createIndex(rootDir);
     const env = {
@@ -499,7 +499,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     fs.writeFileSync(
       path.join(rootDir, "package.json"),
       JSON.stringify({
-        openclaw: {
+        nova: {
           channel: {
             id: "installed",
             label: "Installed",
@@ -551,7 +551,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     fs.writeFileSync(
       path.join(rootDir, "..meta", "package.json"),
       JSON.stringify({
-        openclaw: {
+        nova: {
           channel: {
             id: "installed",
             label: "Installed",
@@ -603,7 +603,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
       fs.writeFileSync(
         outsidePackageJsonPath,
         JSON.stringify({
-          openclaw: {
+          nova: {
             channel: {
               id: "installed",
               label: "Installed",

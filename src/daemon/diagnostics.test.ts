@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 function makeTempStateDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-daemon-diagnostics-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-daemon-diagnostics-"));
   tempDirs.push(dir);
   return dir;
 }

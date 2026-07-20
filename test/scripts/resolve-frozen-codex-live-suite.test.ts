@@ -18,7 +18,7 @@ function runResolver(params: {
   selectedSha?: string;
   suiteId: string;
 }) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-frozen-codex-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-frozen-codex-"));
   tempRoots.push(root);
   const catalogDir = join(root, "extensions/codex");
   mkdirSync(catalogDir, { recursive: true });

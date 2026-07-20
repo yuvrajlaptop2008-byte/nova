@@ -12,14 +12,14 @@ import {
 } from "./qa-runtime.test-helpers.js";
 
 const loadBundledPluginPublicSurfaceModuleSync = vi.hoisted(() => vi.fn());
-const resolveOpenClawPackageRootSync = vi.hoisted(() => vi.fn());
+const resolveNovaPackageRootSync = vi.hoisted(() => vi.fn());
 
 vi.mock("./facade-runtime.js", () => ({
   loadBundledPluginPublicSurfaceModuleSync,
 }));
 
-vi.mock("../infra/openclaw-root.js", () => ({
-  resolveOpenClawPackageRootSync,
+vi.mock("../infra/nova-root.js", () => ({
+  resolveNovaPackageRootSync,
 }));
 
 describe("plugin-sdk qa-runtime", () => {
@@ -30,7 +30,7 @@ describe("plugin-sdk qa-runtime", () => {
   beforeEach(() => {
     vi.resetModules();
     loadBundledPluginPublicSurfaceModuleSync.mockReset();
-    resolveOpenClawPackageRootSync.mockReset().mockReturnValue(null);
+    resolveNovaPackageRootSync.mockReset().mockReturnValue(null);
     delete process.env.NOVA_ENABLE_PRIVATE_QA_CLI;
     delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
   });
@@ -104,7 +104,7 @@ describe("plugin-sdk qa-runtime", () => {
       tempDirs,
       importRuntime: () => import("./qa-runtime.js"),
       loadBundledPluginPublicSurfaceModuleSync,
-      resolveOpenClawPackageRootSync,
+      resolveNovaPackageRootSync,
     });
   });
 
@@ -175,7 +175,7 @@ describe("plugin-sdk qa-runtime", () => {
 
     await qa.parseAsync([
       "node",
-      "openclaw",
+      "nova",
       "telegram",
       "--repo-root",
       "/tmp/repo",

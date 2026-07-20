@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 
-const IGNORED_INSTALLED_PLUGIN_DIR_NAMES = new Set(["node_modules", ".openclaw-install-backups"]);
+const IGNORED_INSTALLED_PLUGIN_DIR_NAMES = new Set(["node_modules", ".nova-install-backups"]);
 
 /**
  * Decide whether an installed-plugin directory should be skipped by security audits.

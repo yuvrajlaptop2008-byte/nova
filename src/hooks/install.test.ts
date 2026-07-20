@@ -36,7 +36,7 @@ const { HOOK_INSTALL_ERROR_CODE, installHooksFromNpmSpec, installHooksFromPath }
   await import("./install.js");
 const hookInstallRuntime = await import("./install.runtime.js");
 
-const fixtureRoot = path.join(process.cwd(), ".tmp", `openclaw-hook-install-${randomUUID()}`);
+const fixtureRoot = path.join(process.cwd(), ".tmp", `nova-hook-install-${randomUUID()}`);
 const sharedArchiveDir = path.join(fixtureRoot, "_archives");
 let tempDirIndex = 0;
 const sharedArchivePathByName = new Map<string, string>();
@@ -128,7 +128,7 @@ function writeHookPackManifest(params: {
     JSON.stringify({
       name: "@nova/test-hooks",
       version: "0.0.1",
-      openclaw: {
+      nova: {
         hooks: params.hooks,
         ...(params.extensions ? { extensions: params.extensions } : {}),
       },
@@ -165,7 +165,7 @@ function writeHookPackFiles(params: {
       "---",
       `name: ${params.hookName}`,
       `description: ${params.hookDescription}`,
-      'metadata: {"openclaw":{"events":["command:new"]}}',
+      'metadata: {"nova":{"events":["command:new"]}}',
       "---",
       "",
       `# ${params.heading}`,
@@ -189,7 +189,7 @@ async function createZipHookPackBuffer(params: {
   const packageJson = JSON.stringify({
     name: params.packageName,
     version: "0.0.1",
-    openclaw: { hooks: [`./hooks/${params.hookName}`] },
+    nova: { hooks: [`./hooks/${params.hookName}`] },
   });
   return createZipBuffer([
     { path: "package/package.json", contents: packageJson },
@@ -199,7 +199,7 @@ async function createZipHookPackBuffer(params: {
         "---",
         `name: ${params.hookName}`,
         `description: ${params.hookDescription}`,
-        'metadata: {"openclaw":{"events":["command:new"]}}',
+        'metadata: {"nova":{"events":["command:new"]}}',
         "---",
         "",
         `# ${params.heading}`,
@@ -323,20 +323,20 @@ describe("installHooksFromPath archives", () => {
 describe("installHooksFromPath", () => {
   it.each([
     {
-      openclaw: {},
-      error: "package.json missing openclaw.hooks",
+      nova: {},
+      error: "package.json missing nova.hooks",
       code: HOOK_INSTALL_ERROR_CODE.MISSING_NOVA_HOOKS,
     },
     {
-      openclaw: { hooks: [] },
-      error: "package.json openclaw.hooks is empty",
+      nova: { hooks: [] },
+      error: "package.json nova.hooks is empty",
       code: HOOK_INSTALL_ERROR_CODE.EMPTY_NOVA_HOOKS,
     },
-  ])("returns a stable code for $error", async ({ openclaw, error, code }) => {
+  ])("returns a stable code for $error", async ({ nova, error, code }) => {
     const pkgDir = makeTempDir();
     fs.writeFileSync(
       path.join(pkgDir, "package.json"),
-      JSON.stringify({ name: "@nova/test-hooks", openclaw }),
+      JSON.stringify({ name: "@nova/test-hooks", nova }),
     );
 
     const result = await installHooksFromPath({ path: pkgDir, hooksDir: makeTempDir() });
@@ -360,7 +360,7 @@ describe("installHooksFromPath", () => {
         "---",
         "name: one-hook",
         "description: One hook",
-        'metadata: {"openclaw":{"events":["command:new"]}}',
+        'metadata: {"nova":{"events":["command:new"]}}',
         "---",
         "",
         "# One Hook",
@@ -395,7 +395,7 @@ describe("installHooksFromPath", () => {
         "---",
         "name: my-hook",
         "description: My hook",
-        'metadata: {"openclaw":{"events":["command:new"]}}',
+        'metadata: {"nova":{"events":["command:new"]}}',
         "---",
         "",
         "# My Hook",
@@ -457,7 +457,7 @@ describe("installHooksFromPath", () => {
     const scanCall = scanInstalledPackageDependencyTreeMock.mock.calls[0]?.[0] as {
       packageDir?: string;
     };
-    expect(scanCall.packageDir).toContain(".openclaw-install-stage-");
+    expect(scanCall.packageDir).toContain(".nova-install-stage-");
     expect(fs.existsSync(path.join(hooksDir, "my-hook"))).toBe(false);
   });
 
@@ -515,7 +515,7 @@ describe("installHooksFromPath", () => {
     expect(result.packageKind).toBe("plugin-capable");
   });
 
-  it.each([".codex-plugin/plugin.json", "hooks/hooks.json", "openclaw.plugin.json"])(
+  it.each([".codex-plugin/plugin.json", "hooks/hooks.json", "nova.plugin.json"])(
     "classifies hook packages with bundle marker %s as plugin-capable",
     async (bundleMarker) => {
       const stateDir = makeTempDir();
@@ -819,7 +819,7 @@ describe("installHooksFromPath", () => {
     const scanCall = scanInstalledPackageDependencyTreeMock.mock.calls[0]?.[0] as {
       packageDir?: string;
     };
-    expect(scanCall.packageDir).toContain(".openclaw-install-stage-");
+    expect(scanCall.packageDir).toContain(".nova-install-stage-");
     expect(fs.existsSync(path.join(hooksDir, "canonical-hooks"))).toBe(false);
   });
 
@@ -828,12 +828,12 @@ describe("installHooksFromPath", () => {
       {
         hooks: ["../outside"],
         setupLink: false,
-        expected: "openclaw.hooks entry escapes package directory",
+        expected: "nova.hooks entry escapes package directory",
       },
       {
         hooks: ["./linked"],
         setupLink: true,
-        expected: "openclaw.hooks entry resolves outside package directory",
+        expected: "nova.hooks entry resolves outside package directory",
       },
     ] as const;
 

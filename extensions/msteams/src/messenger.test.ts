@@ -1,9 +1,9 @@
 // Msteams tests cover messenger plugin behavior.
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { SILENT_REPLY_TOKEN } from "openclaw/plugin-sdk/reply-chunking";
-import type { PluginRuntime } from "openclaw/plugin-sdk/runtime-store";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { SILENT_REPLY_TOKEN } from "nova/plugin-sdk/reply-chunking";
+import type { PluginRuntime } from "nova/plugin-sdk/runtime-store";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { StoredConversationReference } from "./conversation-store.js";
 const graphUploadMockState = vi.hoisted(() => ({
@@ -354,7 +354,7 @@ describe("msteams messenger", () => {
     });
 
     it("requires SharePoint storage for channel files", async () => {
-      const tmpDir = await mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "msteams-storage-"));
+      const tmpDir = await mkdtemp(path.join(resolvePreferredNovaTmpDir(), "msteams-storage-"));
       const localFile = path.join(tmpDir, "note.txt");
       await writeFile(localFile, "hello");
 
@@ -404,7 +404,7 @@ describe("msteams messenger", () => {
     });
 
     it("retries full activity preparation when media upload fails transiently", async () => {
-      const tmpDir = await mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "msteams-retry-"));
+      const tmpDir = await mkdtemp(path.join(resolvePreferredNovaTmpDir(), "msteams-retry-"));
       const localFile = path.join(tmpDir, "retry.txt");
       await writeFile(localFile, "hello");
 

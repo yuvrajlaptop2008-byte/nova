@@ -14,7 +14,7 @@ import {
 import { DEFAULT_SUBAGENT_MAX_SPAWN_DEPTH } from "../config/agent-limits.js";
 import { resolveStorePath } from "../config/sessions.js";
 import { listSessionEntries } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   isAcpSessionKey,
   isSubagentSessionKey,
@@ -124,7 +124,7 @@ function findEntryBySessionId(
 
 function resolveSessionCapabilityEntry(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   store?: SessionCapabilityStore;
 }): SessionCapabilityEntry | undefined {
   if (params.store) {
@@ -146,7 +146,7 @@ function resolveSessionCapabilityEntry(params: {
 export function resolveSubagentCapabilityStore(
   sessionKey: string | undefined | null,
   opts?: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     store?: SessionCapabilityStore;
   },
 ): SessionCapabilityStore | undefined {
@@ -206,7 +206,7 @@ export function resolveSubagentCapabilities(params: { depth: number; maxSpawnDep
 function isStoredSubagentEnvelopeSession(
   params: {
     sessionKey: string;
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     store?: SessionCapabilityStore;
     entry?: SessionCapabilityEntry;
   },
@@ -262,7 +262,7 @@ function isStoredSubagentEnvelopeSession(
 export function isSubagentEnvelopeSession(
   sessionKey: string | undefined | null,
   opts?: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     store?: SessionCapabilityStore;
     entry?: SessionCapabilityEntry;
   },
@@ -293,7 +293,7 @@ export function isSubagentEnvelopeSession(
 export function resolveStoredSubagentCapabilities(
   sessionKey: string | undefined | null,
   opts?: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     store?: SessionCapabilityStore;
   },
 ) {
@@ -346,7 +346,7 @@ export function resolveStoredSubagentCapabilities(
 export function resolveStoredSubagentInheritedToolDenylist(
   sessionKey: string | undefined | null,
   opts?: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     store?: SessionCapabilityStore;
   },
 ): string[] {
@@ -367,7 +367,7 @@ export function resolveStoredSubagentInheritedToolDenylist(
 export function resolveStoredSubagentInheritedToolAllowlist(
   sessionKey: string | undefined | null,
   opts?: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     store?: SessionCapabilityStore;
   },
 ): string[] {

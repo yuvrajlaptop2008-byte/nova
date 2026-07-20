@@ -1,11 +1,11 @@
 // Agent scope tests cover which per-agent fields may flatten into runtime defaults.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveAgentConfig } from "./agent-scope-config.js";
 
 describe("resolveAgentConfig model policy", () => {
   it("keeps an empty per-agent policy inherited instead of flattening it", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: { modelPolicy: { allow: ["openai/gpt-5.5"] } },
         list: [{ id: "main", modelPolicy: {} }],
@@ -16,7 +16,7 @@ describe("resolveAgentConfig model policy", () => {
   });
 
   it("returns an explicit per-agent allowlist override", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: { modelPolicy: { allow: ["openai/gpt-5.5"] } },
         list: [{ id: "main", modelPolicy: { allow: ["openai/gpt-5.6-sol"] } }],

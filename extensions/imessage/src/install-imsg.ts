@@ -1,10 +1,10 @@
 // iMessage plugin module implements imsg CLI install behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { runPluginCommandWithTimeout } from "openclaw/plugin-sdk/run-command";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { resolveBrewExecutable } from "openclaw/plugin-sdk/setup-tools";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { runPluginCommandWithTimeout } from "nova/plugin-sdk/run-command";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import { resolveBrewExecutable } from "nova/plugin-sdk/setup-tools";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { IMESSAGE_INSTALL_COMMAND } from "./setup-core.js";
 
 type IMessageInstallResult = {

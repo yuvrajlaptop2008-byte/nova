@@ -351,7 +351,7 @@ async function startRateLimitedTokenServerWithPairedDeviceToken() {
   const { server, ws, port, prevToken } = await startServerWithClient(undefined, {
     controlUiEnabled: true,
   });
-  const deviceIdentityPath = nextAuthIdentityPath("openclaw-auth-rate-limit");
+  const deviceIdentityPath = nextAuthIdentityPath("nova-auth-rate-limit");
   try {
     const initial = await connectReq(ws, { token: "secret", deviceIdentityPath });
     if (!initial.ok) {
@@ -374,7 +374,7 @@ async function ensurePairedDeviceTokenForCurrentIdentity(ws: WebSocket): Promise
   deviceToken: string;
   deviceIdentityPath: string;
 }> {
-  const deviceIdentityPath = nextAuthIdentityPath("openclaw-auth-device");
+  const deviceIdentityPath = nextAuthIdentityPath("nova-auth-device");
 
   const res = await connectReq(ws, { token: "secret", deviceIdentityPath });
   if (!res.ok) {

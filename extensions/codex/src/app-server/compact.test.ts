@@ -5,7 +5,7 @@ import path from "node:path";
 import {
   embeddedAgentLog,
   type HarnessContextEngine as ContextEngine,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CodexAppServerRpcError, type CodexAppServerClient } from "./client.js";
 import { maybeCompactCodexAppServerSession as maybeCompactCodexAppServerSessionImpl } from "./compact.js";
@@ -171,7 +171,7 @@ async function expectExternalMutationBlockedDuringNativeRequest(params: {
 describe("maybeCompactCodexAppServerSession", () => {
   beforeEach(async () => {
     resetCodexTestBindingStore();
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-compact-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-compact-"));
   });
 
   afterEach(async () => {

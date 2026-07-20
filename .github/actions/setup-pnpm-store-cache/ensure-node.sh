@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-openclaw_node_version_matches() {
+nova_node_version_matches() {
   local actual="$1"
   local requested="$2"
   if [[ -z "$requested" ]]; then
@@ -10,11 +10,11 @@ openclaw_node_version_matches() {
     *x)
       [[ "${actual%%.*}" == "${requested%%.*}" ]] || return 1
       if [[ "${requested%%.*}" == "22" ]]; then
-        openclaw_node_version_at_least "$actual" "22.22.3"
+        nova_node_version_at_least "$actual" "22.22.3"
       elif [[ "${requested%%.*}" == "24" ]]; then
-        openclaw_node_version_at_least "$actual" "24.15.0"
+        nova_node_version_at_least "$actual" "24.15.0"
       elif [[ "${requested%%.*}" == "25" ]]; then
-        openclaw_node_version_at_least "$actual" "25.9.0"
+        nova_node_version_at_least "$actual" "25.9.0"
       fi
       ;;
     *.*.*)
@@ -29,7 +29,7 @@ openclaw_node_version_matches() {
   esac
 }
 
-openclaw_node_version_at_least() {
+nova_node_version_at_least() {
   local actual="$1"
   local minimum="$2"
   local actual_major actual_minor actual_patch minimum_major minimum_minor minimum_patch
@@ -51,11 +51,11 @@ openclaw_node_version_at_least() {
   (( actual_patch >= minimum_patch ))
 }
 
-openclaw_active_node_version() {
+nova_active_node_version() {
   node -p 'process.versions.node' 2>/dev/null || true
 }
 
-openclaw_prepend_node_bin() {
+nova_prepend_node_bin() {
   local node_bin_dir="$1"
   local github_path_dir="${2:-$node_bin_dir}"
   local shell_node_bin_dir="$node_bin_dir"
@@ -74,7 +74,7 @@ openclaw_prepend_node_bin() {
   hash -r
 }
 
-openclaw_find_toolcache_node() {
+nova_find_toolcache_node() {
   local requested_node="$1"
   local roots=()
   local root
@@ -102,7 +102,7 @@ openclaw_find_toolcache_node() {
   for node_root in ${roots[@]+"${roots[@]}"}; do
     while IFS= read -r candidate; do
       candidate_version="$("$candidate" -p 'process.versions.node' 2>/dev/null || true)"
-      if openclaw_node_version_matches "$candidate_version" "$requested_node"; then
+      if nova_node_version_matches "$candidate_version" "$requested_node"; then
         printf '%s\n' "$candidate"
         return 0
       fi
@@ -111,7 +111,7 @@ openclaw_find_toolcache_node() {
   return 1
 }
 
-openclaw_resolve_node_download_version() {
+nova_resolve_node_download_version() {
   local requested_node="$1"
   if [[ "$requested_node" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     [[ "$requested_node" == v* ]] && printf '%s\n' "$requested_node" || printf 'v%s\n' "$requested_node"
@@ -134,7 +134,7 @@ for item in json.load(sys.stdin):
 '
 }
 
-openclaw_node_download_platform() {
+nova_node_download_platform() {
   local os_name arch_name
   os_name="$(uname -s)"
   arch_name="$(uname -m)"
@@ -153,16 +153,16 @@ openclaw_node_download_platform() {
   esac
 }
 
-openclaw_download_node() {
+nova_download_node() {
   local requested_node="$1"
   local version platform archive_url archive_path install_root temp_root
-  version="$(openclaw_resolve_node_download_version "$requested_node")"
-  platform="$(openclaw_node_download_platform)" || return 1
+  version="$(nova_resolve_node_download_version "$requested_node")"
+  platform="$(nova_node_download_platform)" || return 1
   temp_root="${RUNNER_TEMP:-/tmp}"
   if command -v cygpath >/dev/null 2>&1; then
     temp_root="$(cygpath -u "$temp_root" 2>/dev/null || printf '%s\n' "$temp_root")"
   fi
-  install_root="${temp_root}/openclaw-node-${version}-${platform}"
+  install_root="${temp_root}/nova-node-${version}-${platform}"
   if [[ "$platform" == win-* ]]; then
     local ps_archive_path ps_install_root ps_bin_dir node_bin_dir
     archive_path="${temp_root}/node-${version}-${platform}.zip"
@@ -182,13 +182,13 @@ openclaw_download_node() {
     node_bin_dir="$install_root/node-${version}-${platform}"
     if command -v pwsh >/dev/null 2>&1; then
       pwsh -NoLogo -NoProfile -Command "Expand-Archive -LiteralPath '${ps_archive_path}' -DestinationPath '${ps_install_root}' -Force"
-      openclaw_prepend_node_bin "$node_bin_dir" "$ps_bin_dir"
+      nova_prepend_node_bin "$node_bin_dir" "$ps_bin_dir"
     elif command -v powershell.exe >/dev/null 2>&1; then
       powershell.exe -NoLogo -NoProfile -Command "Expand-Archive -LiteralPath '${ps_archive_path}' -DestinationPath '${ps_install_root}' -Force"
-      openclaw_prepend_node_bin "$node_bin_dir" "$ps_bin_dir"
+      nova_prepend_node_bin "$node_bin_dir" "$ps_bin_dir"
     else
       unzip -q "$archive_path" -d "$install_root"
-      openclaw_prepend_node_bin "$node_bin_dir"
+      nova_prepend_node_bin "$node_bin_dir"
     fi
   else
     archive_url="https://nodejs.org/dist/${version}/node-${version}-${platform}.tar.xz"
@@ -206,11 +206,11 @@ openclaw_download_node() {
       return 1
     fi
     rm -f "$archive_path"
-    openclaw_prepend_node_bin "$install_root/bin"
+    nova_prepend_node_bin "$install_root/bin"
   fi
 }
 
-openclaw_ensure_node() {
+nova_ensure_node() {
   local requested_node="${1:-}"
   requested_node="${requested_node#v}"
   if [[ -z "$requested_node" ]]; then
@@ -218,22 +218,22 @@ openclaw_ensure_node() {
   fi
 
   local active_node_version node_bin
-  active_node_version="$(openclaw_active_node_version)"
-  if openclaw_node_version_matches "$active_node_version" "$requested_node"; then
+  active_node_version="$(nova_active_node_version)"
+  if nova_node_version_matches "$active_node_version" "$requested_node"; then
     echo "Using active Node ${active_node_version} at $(command -v node)"
     return 0
   fi
 
-  node_bin="$(openclaw_find_toolcache_node "$requested_node" || true)"
+  node_bin="$(nova_find_toolcache_node "$requested_node" || true)"
   if [[ -n "$node_bin" ]]; then
     echo "Using Node $("$node_bin" -p 'process.versions.node') from $node_bin"
-    openclaw_prepend_node_bin "$(dirname "$node_bin")"
+    nova_prepend_node_bin "$(dirname "$node_bin")"
   else
-    openclaw_download_node "$requested_node" || true
+    nova_download_node "$requested_node" || true
   fi
 
-  active_node_version="$(openclaw_active_node_version)"
-  if ! openclaw_node_version_matches "$active_node_version" "$requested_node"; then
+  active_node_version="$(nova_active_node_version)"
+  if ! nova_node_version_matches "$active_node_version" "$requested_node"; then
     echo "::error::Expected Node '${requested_node}', but active node is '${active_node_version:-missing}' at $(command -v node || true)"
     return 1
   fi

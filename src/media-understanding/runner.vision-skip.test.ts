@@ -3,7 +3,7 @@
 import path from "node:path";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { MsgContext } from "../auto-reply/templating.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import {
   withBundledPluginEnablementCompat,
   withBundledPluginVitestCompat,
@@ -74,7 +74,7 @@ let runCapability: typeof import("./runner.js").runCapability;
 
 function setCompatibleActiveMediaUnderstandingRegistry(
   pluginRegistry: ReturnType<typeof createEmptyPluginRegistry>,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ) {
   const pluginIds = loadPluginManifestRegistry({
     config: cfg,
@@ -140,7 +140,7 @@ describe("runCapability image skip", () => {
     const ctx: MsgContext = { MediaPath: "/tmp/image.png", MediaType: "image/png" };
     const media = normalizeMediaAttachments(ctx);
     const cache = createMediaAttachmentCache(media);
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
 
     try {
       const result = await runCapability({
@@ -177,7 +177,7 @@ describe("runCapability image skip", () => {
   it("skips agents.defaults.imageModel fallback when the active model supports vision", async () => {
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-default-model-native-skip",
+        filePrefix: "nova-image-default-model-native-skip",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -192,7 +192,7 @@ describe("runCapability image skip", () => {
               imageModel: { primary: "minimax/MiniMax-M3" },
             },
           },
-        } as unknown as OpenClawConfig;
+        } as unknown as NovaConfig;
 
         const result = await applyMediaUnderstanding({
           ctx: msgCtx,
@@ -237,7 +237,7 @@ describe("runCapability image skip", () => {
 
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-default-model-minimax-m3-native-skip",
+        filePrefix: "nova-image-default-model-minimax-m3-native-skip",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -252,7 +252,7 @@ describe("runCapability image skip", () => {
               imageModel: { primary: "minimax/MiniMax-M3" },
             },
           },
-        } as unknown as OpenClawConfig;
+        } as unknown as NovaConfig;
 
         const result = await applyMediaUnderstanding({
           ctx: msgCtx,
@@ -287,7 +287,7 @@ describe("runCapability image skip", () => {
   it("uses explicit media image models even when the active model supports vision", async () => {
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-explicit-model-no-native-skip",
+        filePrefix: "nova-image-explicit-model-no-native-skip",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -304,7 +304,7 @@ describe("runCapability image skip", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig;
+        } as unknown as NovaConfig;
 
         const result = await applyMediaUnderstanding({
           ctx: msgCtx,
@@ -336,13 +336,13 @@ describe("runCapability image skip", () => {
   it("uses explicit media image models instead of native vision skip", async () => {
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-explicit-vision",
+        filePrefix: "nova-image-explicit-vision",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
       },
       async ({ ctx, media, cache }) => {
-        const cfg = {} as OpenClawConfig;
+        const cfg = {} as NovaConfig;
 
         const result = await runCapability({
           capability: "image",
@@ -382,14 +382,14 @@ describe("runCapability image skip", () => {
   it("lets per-request image prompts override entry prompts", async () => {
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-request-prompt",
+        filePrefix: "nova-image-request-prompt",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
       },
       async ({ ctx, media, cache }) => {
         let seenPrompt: string | undefined;
-        const cfg = {} as OpenClawConfig;
+        const cfg = {} as NovaConfig;
 
         const result = await runCapability({
           capability: "image",
@@ -437,7 +437,7 @@ describe("runCapability image skip", () => {
           imageModel: { primary: "openrouter/google/gemini-2.5-flash" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     await expect(
       resolveAutoImageModel({
@@ -453,7 +453,7 @@ describe("runCapability image skip", () => {
   it("runs providerless configured imageModel fallbacks on the unique configured provider", async () => {
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-providerless-fallbacks",
+        filePrefix: "nova-image-providerless-fallbacks",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -484,7 +484,7 @@ describe("runCapability image skip", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig;
+        } as unknown as NovaConfig;
 
         const result = await runCapability({
           capability: "image",
@@ -566,7 +566,7 @@ describe("runCapability image skip", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const pluginRegistry = createEmptyPluginRegistry();
     pluginRegistry.mediaUnderstandingProviders.push({
       pluginId: "minimax",
@@ -620,7 +620,7 @@ describe("runCapability image skip", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const pluginRegistry = createEmptyPluginRegistry();
     pluginRegistry.mediaUnderstandingProviders.push({
       pluginId: "minimax",
@@ -638,7 +638,7 @@ describe("runCapability image skip", () => {
     try {
       await withMediaFixture(
         {
-          filePrefix: "openclaw-minimax-vlm-no-native-skip",
+          filePrefix: "nova-minimax-vlm-no-native-skip",
           extension: "png",
           mediaType: "image/png",
           fileContents: Buffer.from("image"),
@@ -683,7 +683,7 @@ describe("runCapability image skip", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const pluginRegistry = createEmptyPluginRegistry();
     pluginRegistry.mediaUnderstandingProviders.push({
       pluginId: "minimax",
@@ -704,7 +704,7 @@ describe("runCapability image skip", () => {
     try {
       await withMediaFixture(
         {
-          filePrefix: "openclaw-minimax-cn-provider",
+          filePrefix: "nova-minimax-cn-provider",
           extension: "png",
           mediaType: "image/png",
           fileContents: Buffer.from("image"),
@@ -741,7 +741,7 @@ describe("runCapability image skip", () => {
     let seenModel: string | undefined;
     await withMediaFixture(
       {
-        filePrefix: "openclaw-minimax-vlm-default",
+        filePrefix: "nova-minimax-vlm-default",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -767,7 +767,7 @@ describe("runCapability image skip", () => {
               },
             },
           },
-        } as OpenClawConfig;
+        } as NovaConfig;
 
         const result = await runCapability({
           capability: "image",
@@ -812,7 +812,7 @@ describe("runCapability image skip", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const providerRegistry = new Map<string, MediaUnderstandingProvider>([
       [
         "google",
@@ -829,7 +829,7 @@ describe("runCapability image skip", () => {
 
     await withMediaFixture(
       {
-        filePrefix: "openclaw-gemini-media-alias",
+        filePrefix: "nova-gemini-media-alias",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -860,7 +860,7 @@ describe("runCapability image skip", () => {
 
   it("canonicalizes non-MiniMax active media aliases for auto image resolution", async () => {
     vi.stubEnv("GEMINI_API_KEY", "test-gemini-key");
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const pluginRegistry = createEmptyPluginRegistry();
     pluginRegistry.mediaUnderstandingProviders.push({
       pluginId: "google",
@@ -893,7 +893,7 @@ describe("runCapability image skip", () => {
 
   it("uses active OpenRouter image models for auto image resolution", async () => {
     vi.stubEnv("OPENROUTER_API_KEY", "test-openrouter-key");
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const pluginRegistry = createEmptyPluginRegistry();
     pluginRegistry.mediaUnderstandingProviders.push({
       pluginId: "openrouter",
@@ -927,13 +927,13 @@ describe("runCapability image skip", () => {
     const hasAvailableAuthForProvider = vi.mocked(modelAuth.hasAvailableAuthForProvider);
     hasAvailableAuthForProvider.mockClear();
     hasAvailableAuthForProvider.mockImplementation(
-      async (params) => params.workspaceDir === "/tmp/openclaw-workspace",
+      async (params) => params.workspaceDir === "/tmp/nova-workspace",
     );
 
     try {
       await withMediaFixture(
         {
-          filePrefix: "openclaw-image-workspace-auth",
+          filePrefix: "nova-image-workspace-auth",
           extension: "png",
           mediaType: "image/png",
           fileContents: Buffer.from("image"),
@@ -941,12 +941,12 @@ describe("runCapability image skip", () => {
         async ({ ctx, media, cache }) => {
           const result = await runCapability({
             capability: "image",
-            cfg: {} as OpenClawConfig,
+            cfg: {} as NovaConfig,
             ctx,
             attachments: cache,
             media,
-            agentDir: "/tmp/openclaw-agent",
-            workspaceDir: "/tmp/openclaw-workspace",
+            agentDir: "/tmp/nova-agent",
+            workspaceDir: "/tmp/nova-workspace",
             providerRegistry: new Map([
               [
                 "workspace-vision",
@@ -972,8 +972,8 @@ describe("runCapability image skip", () => {
           expect(hasAvailableAuthForProvider).toHaveBeenCalledWith(
             expect.objectContaining({
               provider: "workspace-vision",
-              agentDir: "/tmp/openclaw-agent",
-              workspaceDir: "/tmp/openclaw-workspace",
+              agentDir: "/tmp/nova-agent",
+              workspaceDir: "/tmp/nova-workspace",
             }),
           );
         },
@@ -987,7 +987,7 @@ describe("runCapability image skip", () => {
     let seenModel: string | undefined;
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-openrouter",
+        filePrefix: "nova-image-openrouter",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -1002,7 +1002,7 @@ describe("runCapability image skip", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig;
+        } as unknown as NovaConfig;
 
         const result = await runCapability({
           capability: "image",
@@ -1039,7 +1039,7 @@ describe("runCapability image skip", () => {
   it("skips configured image providers without an auto-resolvable model", async () => {
     await withMediaFixture(
       {
-        filePrefix: "openclaw-image-custom-skip",
+        filePrefix: "nova-image-custom-skip",
         extension: "png",
         mediaType: "image/png",
         fileContents: Buffer.from("image"),
@@ -1054,7 +1054,7 @@ describe("runCapability image skip", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig;
+        } as unknown as NovaConfig;
 
         const result = await runCapability({
           capability: "image",

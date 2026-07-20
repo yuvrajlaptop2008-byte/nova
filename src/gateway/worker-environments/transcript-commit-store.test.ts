@@ -2,10 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../../state/nova-state-db.js";
 import {
   createWorkerTranscriptCommitStore,
   type WorkerTranscriptCommitInput,
@@ -35,14 +32,14 @@ describe("worker transcript commit store", () => {
   let store: WorkerTranscriptCommitStore;
 
   beforeEach(async () => {
-    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-worker-commit-"));
+    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "nova-worker-commit-"));
     nowMs = 1_000;
-    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    const database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerTranscriptCommitStore({ database, now: () => nowMs });
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(root, { recursive: true, force: true });
   });
 
@@ -54,8 +51,8 @@ describe("worker transcript commit store", () => {
     expect(store.complete({ ...BASE_INPUT, outcome: SUCCESS_OUTCOME })).toEqual(SUCCESS_OUTCOME);
     expect(store.begin(BASE_INPUT)).toEqual({ kind: "replay", outcome: SUCCESS_OUTCOME });
 
-    closeOpenClawStateDatabaseForTest();
-    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    closeNovaStateDatabaseForTest();
+    const database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerTranscriptCommitStore({ database, now: () => nowMs });
     expect(store.begin(BASE_INPUT)).toEqual({ kind: "replay", outcome: SUCCESS_OUTCOME });
   });

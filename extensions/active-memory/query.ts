@@ -3,9 +3,9 @@ import {
   parseModelRef,
   resolveAgentEffectiveModelPrimary,
   resolveDefaultModelForAgent,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   ACTIVE_MEMORY_CLOSE_TAG,
   ACTIVE_MEMORY_OPEN_TAG,
@@ -291,7 +291,7 @@ function parseModelCandidate(modelRef: string | undefined, defaultProvider = DEF
 }
 
 function getModelRef(
-  runtimeConfig: OpenClawConfig,
+  runtimeConfig: NovaConfig,
   agentId: string,
   config: ResolvedActiveRecallPluginConfig,
   ctx?: {

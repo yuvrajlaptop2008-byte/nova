@@ -1,4 +1,4 @@
 // Slack plugin module implements media behavior.
-export { fetchWithRuntimeDispatcher } from "openclaw/plugin-sdk/runtime-fetch";
-export type { FetchLike } from "openclaw/plugin-sdk/media-runtime";
-export { saveRemoteMedia } from "openclaw/plugin-sdk/media-runtime";
+export { fetchWithRuntimeDispatcher } from "nova/plugin-sdk/runtime-fetch";
+export type { FetchLike } from "nova/plugin-sdk/media-runtime";
+export { saveRemoteMedia } from "nova/plugin-sdk/media-runtime";

@@ -1,4 +1,4 @@
-import type { OpenClawPluginNodeHostCommand } from "openclaw/plugin-sdk/plugin-entry";
+import type { NovaPluginNodeHostCommand } from "nova/plugin-sdk/plugin-entry";
 import {
   clamp,
   formatToolError,
@@ -93,9 +93,7 @@ function parseLocationOutput(
   return null;
 }
 
-export function createLinuxLocationCommand(
-  deps: LocationCommandDeps,
-): OpenClawPluginNodeHostCommand {
+export function createLinuxLocationCommand(deps: LocationCommandDeps): NovaPluginNodeHostCommand {
   const findWhereAmI = (env = deps.env) =>
     deps.resolveExecutable("where-am-i", env, GEOCLUE_DEMO_PATHS);
   return {

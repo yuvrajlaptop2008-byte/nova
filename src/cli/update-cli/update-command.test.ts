@@ -29,7 +29,7 @@ import {
 
 describe("resolveGatewayInstallEntrypoint", () => {
   it("prefers dist/index.js over dist/entry.js when both exist", async () => {
-    const root = "/tmp/openclaw-root";
+    const root = "/tmp/nova-root";
     const indexPath = path.join(root, "dist", "index.js");
     const entryPath = path.join(root, "dist", "entry.js");
 
@@ -42,7 +42,7 @@ describe("resolveGatewayInstallEntrypoint", () => {
   });
 
   it("falls back to dist/entry.js when index.js is missing", async () => {
-    const root = "/tmp/openclaw-root";
+    const root = "/tmp/nova-root";
     const entryPath = path.join(root, "dist", "entry.js");
 
     await expect(
@@ -147,11 +147,11 @@ describe("resolvePostUpdateServiceStateReadEnv", () => {
   it("keeps package restart preparation anchored to the pre-update service env", () => {
     const processEnv = {
       NOVA_STATE_DIR: "/source/state",
-      NOVA_CONFIG_PATH: "/source/openclaw.json",
+      NOVA_CONFIG_PATH: "/source/nova.json",
     } as NodeJS.ProcessEnv;
     const prePackageServiceEnv = {
       NOVA_STATE_DIR: "/managed/state",
-      NOVA_CONFIG_PATH: "/managed/openclaw.json",
+      NOVA_CONFIG_PATH: "/managed/nova.json",
     } as NodeJS.ProcessEnv;
 
     expect(
@@ -193,24 +193,24 @@ describe("resolvePostUpdateServiceStateReadEnv", () => {
 describe("resolvePostInstallDoctorEnv", () => {
   it("uses the managed service profile paths for post-install doctor", () => {
     const env = resolvePostInstallDoctorEnv({
-      invocationCwd: "/srv/openclaw",
+      invocationCwd: "/srv/nova",
       baseEnv: {
         PATH: "/bin",
         NOVA_STATE_DIR: "/wrong/state",
-        NOVA_CONFIG_PATH: "/wrong/openclaw.json",
+        NOVA_CONFIG_PATH: "/wrong/nova.json",
         NOVA_PROFILE: "wrong",
       },
       serviceEnv: {
         NOVA_STATE_DIR: "daemon-state",
-        NOVA_CONFIG_PATH: "daemon-state/openclaw.json",
+        NOVA_CONFIG_PATH: "daemon-state/nova.json",
         NOVA_PROFILE: "work",
       },
     });
 
     expect(env.PATH).toBe("/bin");
     expect(env.NODE_DISABLE_COMPILE_CACHE).toBe("1");
-    expect(env.NOVA_STATE_DIR).toBe(path.join("/srv/openclaw", "daemon-state"));
-    expect(env.NOVA_CONFIG_PATH).toBe(path.join("/srv/openclaw", "daemon-state", "openclaw.json"));
+    expect(env.NOVA_STATE_DIR).toBe(path.join("/srv/nova", "daemon-state"));
+    expect(env.NOVA_CONFIG_PATH).toBe(path.join("/srv/nova", "daemon-state", "nova.json"));
     expect(env.NOVA_PROFILE).toBe("work");
   });
 
@@ -232,15 +232,15 @@ describe("resolvePostInstallDoctorEnv", () => {
 
 describe("collectMissingPluginInstallPayloads", () => {
   it("reports tracked npm install records whose package payload is absent", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
-    const presentDir = path.join(tmpDir, "state", "npm", "node_modules", "@openclaw", "present");
-    const missingDir = path.join(tmpDir, "state", "npm", "node_modules", "@openclaw", "missing");
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
+    const presentDir = path.join(tmpDir, "state", "npm", "node_modules", "@nova", "present");
+    const missingDir = path.join(tmpDir, "state", "npm", "node_modules", "@nova", "missing");
     const noPackageJsonDir = path.join(
       tmpDir,
       "state",
       "npm",
       "node_modules",
-      "@openclaw",
+      "@nova",
       "no-package-json",
     );
     try {
@@ -300,7 +300,7 @@ describe("collectMissingPluginInstallPayloads", () => {
   });
 
   it("accepts tracked bundle records validated by the shared bundle loader", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
     const bundleDir = path.join(tmpDir, "state", "clawhub", "cursor-bundle");
     try {
       await fs.mkdir(path.join(bundleDir, ".cursor-plugin"), { recursive: true });
@@ -327,7 +327,7 @@ describe("collectMissingPluginInstallPayloads", () => {
   });
 
   it("accepts persisted marketplace bundle records without transient format metadata", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
     const bundleDir = path.join(tmpDir, "state", "marketplace", "cursor-bundle");
     try {
       await fs.mkdir(path.join(bundleDir, ".cursor-plugin"), { recursive: true });
@@ -356,7 +356,7 @@ describe("collectMissingPluginInstallPayloads", () => {
   });
 
   it("keeps dual-format bundle records on the native package payload path", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
     const bundleDir = path.join(tmpDir, "state", "clawhub", "dual-format-bundle");
     try {
       await fs.mkdir(path.join(bundleDir, ".codex-plugin"), { recursive: true });
@@ -369,7 +369,7 @@ describe("collectMissingPluginInstallPayloads", () => {
         path.join(bundleDir, "package.json"),
         JSON.stringify({
           name: "dual-format-bundle",
-          openclaw: { extensions: ["./missing-extension.js"] },
+          nova: { extensions: ["./missing-extension.js"] },
         }),
         "utf8",
       );
@@ -391,7 +391,7 @@ describe("collectMissingPluginInstallPayloads", () => {
   });
 
   it("keeps corrupt tracked bundle records eligible for payload repair", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
     const bundleDir = path.join(tmpDir, "state", "clawhub", "bad-bundle");
     try {
       await fs.mkdir(path.join(bundleDir, ".codex-plugin"), { recursive: true });
@@ -420,8 +420,8 @@ describe("collectMissingPluginInstallPayloads", () => {
   });
 
   it("skips disabled tracked records when requested", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
-    const missingDir = path.join(tmpDir, "state", "npm", "node_modules", "@openclaw", "missing");
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
+    const missingDir = path.join(tmpDir, "state", "npm", "node_modules", "@nova", "missing");
     try {
       await expect(
         collectMissingPluginInstallPayloads({
@@ -451,8 +451,8 @@ describe("collectMissingPluginInstallPayloads", () => {
   });
 
   it("keeps disabled trusted official npm records eligible for payload repair when requested", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
-    const missingDir = path.join(tmpDir, "state", "npm", "node_modules", "@openclaw", "codex");
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
+    const missingDir = path.join(tmpDir, "state", "npm", "node_modules", "@nova", "codex");
     try {
       await expect(
         collectMissingPluginInstallPayloads({
@@ -491,7 +491,7 @@ describe("collectMissingPluginInstallPayloads", () => {
   });
 
   it("keeps disabled trusted official ClawHub records eligible for payload repair when requested", async () => {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-plugin-payload-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-plugin-payload-"));
     const missingDir = path.join(tmpDir, "state", "clawhub", "diagnostics-otel");
     try {
       await expect(
@@ -566,9 +566,9 @@ describe("formatPostUpdateGatewayRecoveryInstructions", () => {
     const [line] = formatPostUpdateGatewayRecoveryInstructions(result, "linux");
 
     expect(line).toContain("the systemd user service");
-    expect(line).toContain("openclaw gateway restart");
-    expect(line).toContain("openclaw gateway install --force");
-    expect(line).toContain("openclaw gateway status --deep");
+    expect(line).toContain("nova gateway restart");
+    expect(line).toContain("nova gateway install --force");
+    expect(line).toContain("nova gateway status --deep");
     expect(line).not.toContain("Linux reports");
     expect(line).not.toContain("macOS");
     expect(line).not.toContain("LaunchAgent");
@@ -833,7 +833,7 @@ describe("resolvePostCoreUpdateChildStdio", () => {
   it('returns "pipe" on Windows so the child never inherits the parent console handles', () => {
     // On Windows, stdio:"inherit" passes the parent's console HANDLE to the child process.
     // PowerShell/CMD will not return the prompt until every holder of those handles exits,
-    // causing the terminal to hang after `openclaw update` completes (#78445).
+    // causing the terminal to hang after `nova update` completes (#78445).
     expect(resolvePostCoreUpdateChildStdio("win32")).toBe("pipe");
   });
 
@@ -851,7 +851,7 @@ describe("updatePluginsAfterCoreUpdate (invalid config end-to-end)", () => {
     // config is sufficient to prove the gate fires end-to-end. We pass
     // `json: true` to suppress logging side-effects without mocking.
     const result = await updatePluginsAfterCoreUpdate({
-      root: "/tmp/openclaw-test",
+      root: "/tmp/nova-test",
       channel: "stable",
       configSnapshot: {
         valid: false,
@@ -872,8 +872,8 @@ describe("updatePluginsAfterCoreUpdate (invalid config end-to-end)", () => {
         message:
           "Plugin post-update convergence skipped because the config is invalid; refusing to restart the gateway with an unverified plugin set.",
         guidance: [
-          "Run `openclaw doctor` to inspect the config validation errors.",
-          "Once the config parses, rerun `openclaw update repair`.",
+          "Run `nova doctor` to inspect the config validation errors.",
+          "Once the config parses, rerun `nova update repair`.",
         ],
       },
     ]);
@@ -891,8 +891,8 @@ describe("buildInvalidConfigPostCoreUpdateResult", () => {
   it("surfaces actionable repair guidance in both the structural warnings and the message string", () => {
     const built = buildInvalidConfigPostCoreUpdateResult();
     expect(built.guidance).toStrictEqual([
-      "Run `openclaw doctor` to inspect the config validation errors.",
-      "Once the config parses, rerun `openclaw update repair`.",
+      "Run `nova doctor` to inspect the config validation errors.",
+      "Once the config parses, rerun `nova update repair`.",
     ]);
     expect(built.result.warnings).toStrictEqual([
       {

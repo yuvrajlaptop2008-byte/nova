@@ -5,12 +5,12 @@ import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { createLocalSqliteSnapshotProvider } from "../snapshot/local-repository.js";
-import { NOVA_AGENT_SCHEMA_VERSION } from "../state/openclaw-agent-db.js";
-import { resolveOpenClawAgentSqlitePath } from "../state/openclaw-agent-db.paths.js";
-import { NOVA_AGENT_SCHEMA_SQL } from "../state/openclaw-agent-schema.generated.js";
-import { NOVA_STATE_SCHEMA_VERSION } from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
-import { NOVA_STATE_SCHEMA_SQL } from "../state/openclaw-state-schema.generated.js";
+import { NOVA_AGENT_SCHEMA_VERSION } from "../state/nova-agent-db.js";
+import { resolveNovaAgentSqlitePath } from "../state/nova-agent-db.paths.js";
+import { NOVA_AGENT_SCHEMA_SQL } from "../state/nova-agent-schema.generated.js";
+import { NOVA_STATE_SCHEMA_VERSION } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
+import { NOVA_STATE_SCHEMA_SQL } from "../state/nova-state-schema.generated.js";
 import {
   backupSqliteCreateCommand,
   backupSqliteListCommand,
@@ -119,13 +119,13 @@ function createAgentDatabase(databasePath: string, agentId: string): void {
 
 describe("SQLite backup commands", () => {
   it("creates, lists, verifies, and fresh-restores the global database", async () => {
-    const tempDir = tempDirs.make("openclaw-backup-sqlite-");
+    const tempDir = tempDirs.make("nova-backup-sqlite-");
     const stateDir = path.join(tempDir, "state");
     const repositoryPath = path.join(tempDir, "snapshots");
     const scratchPath = path.join(tempDir, "scratch");
-    const restorePath = path.join(tempDir, "restore", "openclaw.sqlite");
+    const restorePath = path.join(tempDir, "restore", "nova.sqlite");
     process.env.NOVA_STATE_DIR = stateDir;
-    const databasePath = resolveOpenClawStateSqlitePath();
+    const databasePath = resolveNovaStateSqlitePath();
     await fs.mkdir(path.dirname(databasePath), { recursive: true });
     await fs.mkdir(scratchPath, { mode: 0o700 });
     await fs.chmod(scratchPath, 0o700);
@@ -139,7 +139,7 @@ describe("SQLite backup commands", () => {
     });
     expect(created.manifest.database).toMatchObject({
       role: "global",
-      basename: "openclaw.sqlite",
+      basename: "nova.sqlite",
       userVersion: NOVA_STATE_SCHEMA_VERSION,
     });
     expect(JSON.parse(runtime.logs.shift() ?? "{}")).toEqual(created);
@@ -184,11 +184,11 @@ describe("SQLite backup commands", () => {
   });
 
   it("creates a snapshot for a normalized per-agent database", async () => {
-    const tempDir = tempDirs.make("openclaw-backup-sqlite-");
+    const tempDir = tempDirs.make("nova-backup-sqlite-");
     const stateDir = path.join(tempDir, "state");
     const repositoryPath = path.join(tempDir, "snapshots");
     process.env.NOVA_STATE_DIR = stateDir;
-    const databasePath = resolveOpenClawAgentSqlitePath({ agentId: "ops-team" });
+    const databasePath = resolveNovaAgentSqlitePath({ agentId: "ops-team" });
     await fs.mkdir(path.dirname(databasePath), { recursive: true });
     createAgentDatabase(databasePath, "ops-team");
     const runtime = createRuntimeCapture();
@@ -201,7 +201,7 @@ describe("SQLite backup commands", () => {
     expect(created.manifest.database).toEqual({
       role: "agent",
       agentId: "ops-team",
-      basename: "openclaw-agent.sqlite",
+      basename: "nova-agent.sqlite",
       userVersion: NOVA_AGENT_SCHEMA_VERSION,
     });
     expect(runtime.logs).toEqual([expect.stringContaining("Database: agent:ops-team")]);
@@ -238,7 +238,7 @@ describe("SQLite backup commands", () => {
   });
 
   it("rejects generic provider artifacts before verify or restore", async () => {
-    const tempDir = tempDirs.make("openclaw-backup-sqlite-");
+    const tempDir = tempDirs.make("nova-backup-sqlite-");
     const databasePath = path.join(tempDir, "generic.sqlite");
     const repositoryPath = path.join(tempDir, "snapshots");
     const restorePath = path.join(tempDir, "restore", "generic.sqlite");

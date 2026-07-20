@@ -1,15 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 // Zalo tests cover outbound media plugin behavior.
-import { createPluginStateKeyedStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { createPluginStateKeyedStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { PluginRuntime } from "../runtime-api.js";
 
 const loadWebMediaMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/web-media", () => {
+vi.mock("nova/plugin-sdk/web-media", () => {
   return {
     loadWebMedia: (...args: unknown[]) => loadWebMediaMock(...args),
   };
@@ -24,9 +24,7 @@ import { setZaloRuntime } from "./runtime.js";
 
 const testStateEnv: NodeJS.ProcessEnv = {
   ...process.env,
-  NOVA_STATE_DIR: fs.mkdtempSync(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-zalo-media-"),
-  ),
+  NOVA_STATE_DIR: fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-zalo-media-")),
 };
 
 function openTestStore<T>(options: OpenKeyedStoreOptions) {

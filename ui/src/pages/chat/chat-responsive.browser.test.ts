@@ -1028,7 +1028,7 @@ describeBrowserLayout.concurrent("chat responsive browser layout", () => {
                 <div class="chat-group-messages">
                   <div class="chat-bubble">
                     <div class="chat-text">
-                      <p><code>openclaw_message_send_channel_webchat_target_example_com_thread_very_long_identifier_without_spaces_1234567890abcdefghijklmnopqrstuvwxyz</code></p>
+                      <p><code>nova_message_send_channel_webchat_target_example_com_thread_very_long_identifier_without_spaces_1234567890abcdefghijklmnopqrstuvwxyz</code></p>
                     </div>
                   </div>
                 </div>
@@ -1625,7 +1625,7 @@ describeBrowserLayout.concurrent("chat responsive browser layout", () => {
                   <strong>Workspace</strong>
                 </div>
               </div>
-              <div class="chat-workspace-rail__path">/Users/steipete/.openclaw/workspace</div>
+              <div class="chat-workspace-rail__path">/Users/steipete/.nova/workspace</div>
               <div class="chat-workspace-rail__summary">
                 <span>0 changed</span><span>0 read</span><span>0 artifacts</span><span>15 shown</span>
               </div>

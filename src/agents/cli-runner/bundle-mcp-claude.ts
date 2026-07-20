@@ -77,11 +77,11 @@ export async function writeClaudeMcpCaptureConfig(params: {
     throw new Error("Claude MCP capture requires an object config");
   }
   const mcpServers = isRecord(raw.mcpServers) ? raw.mcpServers : {};
-  const openclaw = isRecord(mcpServers.openclaw) ? mcpServers.openclaw : undefined;
-  if (!openclaw) {
-    throw new Error("Claude MCP capture requires an openclaw server config");
+  const nova = isRecord(mcpServers.nova) ? mcpServers.nova : undefined;
+  if (!nova) {
+    throw new Error("Claude MCP capture requires an nova server config");
   }
-  const headers = isRecord(openclaw.headers) ? openclaw.headers : {};
+  const headers = isRecord(nova.headers) ? nova.headers : {};
   await fs.writeFile(
     params.mcpConfigPath,
     `${JSON.stringify(
@@ -89,11 +89,11 @@ export async function writeClaudeMcpCaptureConfig(params: {
         ...raw,
         mcpServers: {
           ...mcpServers,
-          openclaw: {
-            ...openclaw,
+          nova: {
+            ...nova,
             headers: {
               ...headers,
-              "x-openclaw-cli-capture-key": params.captureKey,
+              "x-nova-cli-capture-key": params.captureKey,
             },
           },
         },

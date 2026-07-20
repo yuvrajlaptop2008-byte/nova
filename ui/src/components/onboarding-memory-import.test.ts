@@ -16,7 +16,7 @@ function waitForOnboardingMemoryImport(assertion: () => void) {
   return vi.waitFor(assertion, { interval: 1 });
 }
 
-const guardKey = "openclaw.onboarding.memory-import";
+const guardKey = "nova.onboarding.memory-import";
 
 function createProvider(providerId: string, fingerprint: string) {
   return {
@@ -25,7 +25,7 @@ function createProvider(providerId: string, fingerprint: string) {
     planFingerprint: fingerprint,
     found: true,
     source: `/tmp/${providerId}`,
-    target: "/tmp/openclaw-research",
+    target: "/tmp/nova-research",
     summary: {
       total: 2,
       planned: 1,
@@ -53,7 +53,7 @@ function createProvider(providerId: string, fingerprint: string) {
 function createPlan(providerIds = ["codex"]) {
   return {
     agentId: "research",
-    workspace: "/tmp/openclaw-research",
+    workspace: "/tmp/nova-research",
     providers: providerIds.map((providerId, index) =>
       createProvider(providerId, String.fromCharCode(97 + index).repeat(64)),
     ),
@@ -133,7 +133,7 @@ async function mount(
   active = true,
 ): Promise<OnboardingMemoryImportElement> {
   const element = document.createElement(
-    "openclaw-onboarding-memory-import",
+    "nova-onboarding-memory-import",
   ) as OnboardingMemoryImportElement;
   element.context = context;
   element.active = active;
@@ -158,7 +158,7 @@ describe("OnboardingMemoryImport", () => {
     const element = await mount(createContext(request, { connected, admin }), active);
 
     await Promise.resolve();
-    expect(element.querySelector("openclaw-modal-dialog")).toBeNull();
+    expect(element.querySelector("nova-modal-dialog")).toBeNull();
     expect(request).not.toHaveBeenCalled();
   });
 
@@ -184,7 +184,7 @@ describe("OnboardingMemoryImport", () => {
       agentId: "research",
       overwrite: false,
     });
-    expect(element.querySelector("openclaw-modal-dialog")).toBeNull();
+    expect(element.querySelector("nova-modal-dialog")).toBeNull();
   });
 
   it("keeps planning errors silent and unguarded", async () => {
@@ -195,7 +195,7 @@ describe("OnboardingMemoryImport", () => {
 
     await waitForOnboardingMemoryImport(() => expect(request).toHaveBeenCalledTimes(1));
     await element.updateComplete;
-    expect(element.querySelector("openclaw-modal-dialog")).toBeNull();
+    expect(element.querySelector("nova-modal-dialog")).toBeNull();
     expect(sessionStorage.getItem(guardKey)).toBeNull();
   });
 
@@ -217,7 +217,7 @@ describe("OnboardingMemoryImport", () => {
 
     await waitForOnboardingMemoryImport(() => expect(request).toHaveBeenCalledTimes(1));
     await element.updateComplete;
-    expect(element.querySelector("openclaw-modal-dialog")).toBeNull();
+    expect(element.querySelector("nova-modal-dialog")).toBeNull();
     expect(sessionStorage.getItem(guardKey)).toBeNull();
   });
 
@@ -238,7 +238,7 @@ describe("OnboardingMemoryImport", () => {
 
     await Promise.resolve();
     await element.updateComplete;
-    expect(element.querySelector("openclaw-modal-dialog")).toBeNull();
+    expect(element.querySelector("nova-modal-dialog")).toBeNull();
     expect(sessionStorage.getItem(guardKey)).toBeNull();
   });
 
@@ -383,7 +383,7 @@ describe("OnboardingMemoryImport", () => {
 
     await element.updateComplete;
     expect(sessionStorage.getItem(guardKey)).toBe("done");
-    expect(element.querySelector("openclaw-modal-dialog")).toBeNull();
+    expect(element.querySelector("nova-modal-dialog")).toBeNull();
   });
 
   it("continues with later providers after a provider error", async () => {

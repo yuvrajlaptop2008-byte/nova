@@ -272,7 +272,7 @@ describe("Zoom meeting platform adapter", () => {
         URL: globalThis.URL,
         document,
         location: new globalThis.URL("https://app.zoom.us/wc?ref_from=waffle_zwa"),
-        window: { __openclawZoomMeeting: state },
+        window: { __novaZoomMeeting: state },
       },
     );
 
@@ -307,7 +307,7 @@ describe("Zoom meeting platform adapter", () => {
         document,
         location: new globalThis.URL("https://app.zoom.us/wc"),
         window: {
-          __openclawZoomMeeting: {
+          __novaZoomMeeting: {
             identity: "zoom:12345678901",
             inCallControl: leave,
             inCallUrl: "https://app.zoom.us/wc",
@@ -356,7 +356,7 @@ describe("Zoom meeting platform adapter", () => {
     expect(JSON.parse(result)).toMatchObject({ leaveAction: "leave", urlMatched: true });
     expect(leave.click).toHaveBeenCalledOnce();
     expect(window).toMatchObject({
-      __openclawZoomMeeting: { identity: "zoom:12345678901", sessionId: "session-1" },
+      __novaZoomMeeting: { identity: "zoom:12345678901", sessionId: "session-1" },
     });
   });
 
@@ -437,7 +437,7 @@ describe("Zoom meeting platform adapter", () => {
       manualActionRequired: false,
       micMuted: true,
     });
-    expect(window["__openclawZoomMeeting"]).toMatchObject({ devicesDisabled: true });
+    expect(window["__novaZoomMeeting"]).toMatchObject({ devicesDisabled: true });
   });
 
   it("re-mutes an observe-only session after admission", async () => {
@@ -519,7 +519,7 @@ describe("Zoom meeting platform adapter", () => {
       currentUrl: "https://app.zoom.us/wc",
       document: statusDocument({ bodyText: "" }),
       window: {
-        __openclawZoomMeeting: {
+        __novaZoomMeeting: {
           identity: "zoom:12345678901",
           inCallControl: { isConnected: false },
           inCallControlLostAt: Date.now() - 6_000,
@@ -544,7 +544,7 @@ describe("Zoom meeting platform adapter", () => {
       }),
       readOnly: true,
       window: {
-        __openclawZoomMeeting: {
+        __novaZoomMeeting: {
           identity: "zoom:12345678901",
           inCallControl: { isConnected: false },
           inCallUrl: "https://app.zoom.us/wc/12345678901/join",
@@ -579,7 +579,7 @@ describe("Zoom meeting platform adapter", () => {
         },
       },
       readOnly: true,
-      window: { __openclawZoomMeeting: meetingState },
+      window: { __novaZoomMeeting: meetingState },
     });
 
     expect(result).toMatchObject({
@@ -596,7 +596,7 @@ describe("Zoom meeting platform adapter", () => {
       document: statusDocument({ bodyText: "The host will let you in soon" }),
       window,
     });
-    const marker = window["__openclawZoomMeeting"] as Record<string, unknown>;
+    const marker = window["__novaZoomMeeting"] as Record<string, unknown>;
     marker.verifiedAt = 0;
 
     const admitted = await runStatusFixture({
@@ -614,7 +614,7 @@ describe("Zoom meeting platform adapter", () => {
       manualActionReason: "zoom-admission-required",
     });
     expect(admitted).toMatchObject({ inCall: true, micMuted: true });
-    expect(window["__openclawZoomMeeting"]).toMatchObject({
+    expect(window["__novaZoomMeeting"]).toMatchObject({
       awaitingAdmission: false,
       identity: "zoom:12345678901",
       sessionId: "session-1",

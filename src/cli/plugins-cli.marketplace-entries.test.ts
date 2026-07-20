@@ -42,7 +42,7 @@ vi.mock("../plugins/official-external-plugin-catalog.js", async (importOriginal)
 });
 
 async function createTimelinePath(): Promise<string> {
-  const dir = await mkdtemp(path.join(tmpdir(), "openclaw-marketplace-entries-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "nova-marketplace-entries-"));
   return path.join(dir, "timeline.jsonl");
 }
 
@@ -72,7 +72,7 @@ describe("plugins marketplace entries", () => {
   it("lists entries from the configured marketplace feed as JSON", async () => {
     const config = {
       marketplaces: {
-        feeds: { acme: { url: "https://packages.acme.example/openclaw/feed" } },
+        feeds: { acme: { url: "https://packages.acme.example/nova/feed" } },
         sources: { "acme-npm": { type: "npm" as const } },
       },
     };
@@ -89,7 +89,7 @@ describe("plugins marketplace entries", () => {
           install: {
             candidates: [{ sourceRef: "acme-npm", package: "@acme/calendar", version: "1.2.3" }],
           },
-          openclaw: {
+          nova: {
             plugin: { id: "acme-calendar", label: "Acme Calendar" },
           },
         },
@@ -102,14 +102,14 @@ describe("plugins marketplace entries", () => {
         entries: [],
       },
       metadata: {
-        url: "https://packages.acme.example/openclaw/feed",
+        url: "https://packages.acme.example/nova/feed",
         status: 200,
         checksum: "feed-sha",
       },
       snapshot: {
         body: "{}",
         metadata: {
-          url: "https://packages.acme.example/openclaw/feed",
+          url: "https://packages.acme.example/nova/feed",
           status: 200,
           checksum: "feed-sha",
         },
@@ -202,7 +202,7 @@ describe("plugins marketplace entries", () => {
       entries: [
         {
           name: "@nova/acpx",
-          openclaw: {
+          nova: {
             plugin: { id: "acpx", label: "ACP" },
             install: {
               clawhubSpec: "clawhub:@nova/acpx",
@@ -240,14 +240,14 @@ describe("plugins marketplace entries", () => {
         entries: [],
       },
       metadata: {
-        url: "https://packages.acme.example/openclaw/feed",
+        url: "https://packages.acme.example/nova/feed",
         status: 200,
         checksum: "feed-sha",
       },
       snapshot: {
         body: "{}",
         metadata: {
-          url: "https://packages.acme.example/openclaw/feed",
+          url: "https://packages.acme.example/nova/feed",
           status: 200,
           checksum: "feed-sha",
         },
@@ -284,7 +284,7 @@ describe("plugins marketplace entries", () => {
       entries: [
         {
           name: "@acme/calendar",
-          openclaw: { plugin: { id: "acme-calendar", label: "Acme Calendar" } },
+          nova: { plugin: { id: "acme-calendar", label: "Acme Calendar" } },
         },
       ],
       feed: {
@@ -295,14 +295,14 @@ describe("plugins marketplace entries", () => {
         entries: [],
       },
       metadata: {
-        url: "https://user:secret@packages.acme.example/openclaw/feed?token=leak#frag",
+        url: "https://user:secret@packages.acme.example/nova/feed?token=leak#frag",
         status: 200,
         checksum: "feed-sha",
       },
       snapshot: {
         body: "{}",
         metadata: {
-          url: "https://user:secret@packages.acme.example/openclaw/feed?token=leak#frag",
+          url: "https://user:secret@packages.acme.example/nova/feed?token=leak#frag",
           status: 200,
           checksum: "feed-sha",
         },

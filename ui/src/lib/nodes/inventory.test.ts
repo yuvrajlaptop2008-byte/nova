@@ -114,16 +114,16 @@ describe("buildNodesInventory", () => {
           deviceId: "dev-label",
           operatorLabel: "Kitchen Mac",
           displayName: "MacBook Pro",
-          clientId: "openclaw-macos",
+          clientId: "nova-macos",
         }),
         device({
           deviceId: "dev-display",
           displayName: "Living Room iPad",
-          clientId: "openclaw-ios",
+          clientId: "nova-ios",
         }),
         device({
           deviceId: "dev-client",
-          clientId: "openclaw-control-ui",
+          clientId: "nova-control-ui",
         }),
         device({
           deviceId: "dev-id-only",
@@ -137,7 +137,7 @@ describe("buildNodesInventory", () => {
     );
     expect(namesById["dev-label"]).toBe("Kitchen Mac");
     expect(namesById["dev-display"]).toBe("Living Room iPad");
-    expect(namesById["dev-client"]).toBe("openclaw-control-ui");
+    expect(namesById["dev-client"]).toBe("nova-control-ui");
     expect(namesById["dev-id-only"]).toBe("dev-id-only");
   });
 

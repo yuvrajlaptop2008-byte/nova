@@ -3,7 +3,7 @@ import {
   asObject,
   createOpenAiCompatibleSpeechProvider,
   type SpeechProviderPlugin,
-} from "openclaw/plugin-sdk/speech";
+} from "nova/plugin-sdk/speech";
 import { OPENROUTER_BASE_URL } from "./provider-catalog.js";
 
 const DEFAULT_OPENROUTER_TTS_MODEL = "hexgrad/kokoro-82m";
@@ -36,7 +36,7 @@ export function buildOpenRouterSpeechProvider(): SpeechProviderPlugin {
     voiceCompatibleResponseFormats: ["mp3"],
     baseUrlPolicy: { kind: "canonical", aliases: ["https://openrouter.ai/v1"] },
     extraHeaders: {
-      "HTTP-Referer": "https://openclaw.ai",
+      "HTTP-Referer": "https://nova.ai",
       "X-OpenRouter-Title": "Nova",
     },
     apiErrorLabel: "OpenRouter TTS API error",

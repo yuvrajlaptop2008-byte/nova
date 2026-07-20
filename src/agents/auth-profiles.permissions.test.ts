@@ -32,21 +32,21 @@ const {
   saveAuthProfileStore,
   saveAuthProfileStoreIfPersistenceSnapshotMatches,
 } = await import("./auth-profiles/store.js");
-const { closeOpenClawAgentDatabasesForTest } = await import("../state/openclaw-agent-db.js");
-const { closeOpenClawStateDatabaseForTest } = await import("../state/openclaw-state-db.js");
+const { closeNovaAgentDatabasesForTest } = await import("../state/nova-agent-db.js");
+const { closeNovaStateDatabaseForTest } = await import("../state/nova-state-db.js");
 const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
 describe("auth-profile database permission repair", () => {
   afterEach(() => {
     chmodFailHook.error = undefined;
     clearRuntimeAuthProfileStoreSnapshots();
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     vi.unstubAllEnvs();
   });
 
   it("keeps captured auth rows when pre-commit permission repair fails", () => {
-    const stateDir = tempDirs.make("openclaw-auth-chmod-");
+    const stateDir = tempDirs.make("nova-auth-chmod-");
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
     const agentDir = join(stateDir, "agents", "main", "agent");
     const initial: AuthProfileStore = {
@@ -93,7 +93,7 @@ describe("auth-profile database permission repair", () => {
   });
 
   it("does not publish a caller-owned save before permission repair commits", () => {
-    const stateDir = tempDirs.make("openclaw-auth-overload-chmod-");
+    const stateDir = tempDirs.make("nova-auth-overload-chmod-");
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
     const agentDir = join(stateDir, "agents", "main", "agent");
     const initial: AuthProfileStore = {

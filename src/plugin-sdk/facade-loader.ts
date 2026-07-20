@@ -19,18 +19,18 @@ const moduleLoaders: PluginModuleLoaderCache = new Map();
 const loadedFacadeModules = new Map<string, unknown>();
 const loadedFacadePluginIds = new Set<string>();
 let facadeLoaderSourceTransformFactory: PluginModuleLoaderFactory | undefined;
-let cachedOpenClawPackageRoot: string | undefined;
+let cachedNovaPackageRoot: string | undefined;
 
-function getOpenClawPackageRoot() {
-  if (cachedOpenClawPackageRoot) {
-    return cachedOpenClawPackageRoot;
+function getNovaPackageRoot() {
+  if (cachedNovaPackageRoot) {
+    return cachedNovaPackageRoot;
   }
-  cachedOpenClawPackageRoot =
+  cachedNovaPackageRoot =
     resolveLoaderPackageRoot({
       modulePath: fileURLToPath(import.meta.url),
       moduleUrl: import.meta.url,
     }) ?? fileURLToPath(new URL("../..", import.meta.url));
-  return cachedOpenClawPackageRoot;
+  return cachedNovaPackageRoot;
 }
 
 function resolveFacadeModuleLocation(params: {
@@ -42,7 +42,7 @@ function resolveFacadeModuleLocation(params: {
   return resolveBundledFacadeModuleLocation({
     ...params,
     currentModulePath: CURRENT_MODULE_PATH,
-    packageRoot: getOpenClawPackageRoot(),
+    packageRoot: getNovaPackageRoot(),
     bundledPluginsDir,
   });
 }
@@ -143,7 +143,7 @@ function resolveFacadeBoundaryOpenParams(boundaryRoot: string): {
   boundaryLabel: string;
   rejectHardlinks: boolean;
 } {
-  if (isPathAtOrInside(boundaryRoot, getOpenClawPackageRoot())) {
+  if (isPathAtOrInside(boundaryRoot, getNovaPackageRoot())) {
     return { boundaryLabel: "Nova package root", rejectHardlinks: false };
   }
   const bundledDir = resolveBundledPluginsDir();
@@ -280,7 +280,7 @@ export function resetFacadeLoaderStateForTest(): void {
   loadedFacadePluginIds.clear();
   moduleLoaders.clear();
   facadeLoaderSourceTransformFactory = undefined;
-  cachedOpenClawPackageRoot = undefined;
+  cachedNovaPackageRoot = undefined;
 }
 
 /** Override source transform loader creation for facade-loader tests. */

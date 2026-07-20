@@ -1,6 +1,6 @@
-import OpenClawChatUI
+import NovaChatUI
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 @MainActor
 struct GatewayQuickSetupSheetMoodTests {

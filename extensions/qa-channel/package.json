@@ -2,7 +2,7 @@
   "name": "@nova/qa-channel",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw QA synthetic channel plugin",
+  "description": "Nova QA synthetic channel plugin",
   "type": "module",
   "exports": {
     ".": "./index.ts",
@@ -16,17 +16,17 @@
   },
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "nova": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.7.2"
+    "nova": ">=2026.7.2"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "nova": {
       "optional": true
     }
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ],
@@ -38,7 +38,7 @@
       "detailLabel": "QA Channel",
       "docsPath": "/channels/qa-channel",
       "docsLabel": "qa-channel",
-      "blurb": "Synthetic Slack-class transport for automated OpenClaw QA scenarios.",
+      "blurb": "Synthetic Slack-class transport for automated Nova QA scenarios.",
       "systemImage": "checklist",
       "order": 999,
       "exposure": {

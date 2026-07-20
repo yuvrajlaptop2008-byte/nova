@@ -1,7 +1,7 @@
 // Coverage for normalizing tool calls before and during model replay.
 
 import { expectDefined } from "@nova/normalization-core";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
 import { describe, expect, it, vi } from "vitest";
 import {
   sanitizeOpenAIResponsesReplayForStream,

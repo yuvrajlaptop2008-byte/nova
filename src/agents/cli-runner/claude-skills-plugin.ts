@@ -5,12 +5,12 @@ import { accessSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
-import { resolvePreferredOpenClawTmpDir } from "../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../../infra/tmp-nova-dir.js";
 import type { SkillSnapshot } from "../../skills/types.js";
 import { cliBackendLog } from "./log.js";
 
 const CLAUDE_CLI_BACKEND_ID = "claude-cli";
-const NOVA_CLAUDE_PLUGIN_NAME = "openclaw-skills";
+const NOVA_CLAUDE_PLUGIN_NAME = "nova-skills";
 
 type MaterializedSkill = {
   name: string;
@@ -103,9 +103,7 @@ export async function prepareClaudeCliSkillsPlugin(params: {
     return { args: [], cleanup: async () => {} };
   }
 
-  const tempDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-claude-skills-"),
-  );
+  const tempDir = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-claude-skills-"));
   const pluginDir = path.join(tempDir, NOVA_CLAUDE_PLUGIN_NAME);
   const manifestDir = path.join(pluginDir, ".claude-plugin");
   const skillsDir = path.join(pluginDir, "skills");

@@ -1,11 +1,11 @@
 // Discord tests cover send.creates thread plugin behavior.
 import { ChannelType, MessageFlags, Routes } from "discord-api-types/v10";
-import { loadWebMediaRaw } from "openclaw/plugin-sdk/web-media";
+import { loadWebMediaRaw } from "nova/plugin-sdk/web-media";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { RateLimitError } from "./internal/discord.js";
 import { makeDiscordRest } from "./send.test-harness.js";
 
-vi.mock("openclaw/plugin-sdk/web-media", async () => {
+vi.mock("nova/plugin-sdk/web-media", async () => {
   const { discordWebMediaMockFactory } = await import("./send.test-harness.js");
   return discordWebMediaMockFactory();
 });
@@ -126,7 +126,7 @@ afterEach(() => {
 });
 
 afterAll(() => {
-  vi.doUnmock("openclaw/plugin-sdk/web-media");
+  vi.doUnmock("nova/plugin-sdk/web-media");
 });
 
 describe("sendMessageDiscord", () => {
@@ -487,7 +487,7 @@ describe("uploadStickerDiscord", () => {
     await uploadStickerDiscord(
       {
         guildId: "g1",
-        name: "openclaw_wave",
+        name: "nova_wave",
         description: "Nova waving",
         tags: "👋",
         mediaUrl: "file:///tmp/wave.png",
@@ -496,7 +496,7 @@ describe("uploadStickerDiscord", () => {
     );
     expect(requestPath(postMock as unknown as MockCallSource)).toBe(Routes.guildStickers("g1"));
     const stickerBody = requestBody(postMock as unknown as MockCallSource);
-    expect(stickerBody.name).toBe("openclaw_wave");
+    expect(stickerBody.name).toBe("nova_wave");
     expect(stickerBody.description).toBe("Nova waving");
     expect(stickerBody.tags).toBe("👋");
     const files = stickerBody.files as Array<{ name?: string; contentType?: string }>;

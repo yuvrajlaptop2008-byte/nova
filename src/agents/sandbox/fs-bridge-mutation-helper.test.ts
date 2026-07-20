@@ -48,7 +48,7 @@ function runWritePlan(args: string[], input?: string) {
     mkdir: args[4] === "1",
   });
 
-  return spawnSync("/bin/sh", ["-c", plan.script, "openclaw-sandbox-fs", ...(plan.args ?? [])], {
+  return spawnSync("/bin/sh", ["-c", plan.script, "nova-sandbox-fs", ...(plan.args ?? [])], {
     input,
     encoding: "utf8",
     stdio: ["pipe", "pipe", "pipe"],
@@ -110,7 +110,7 @@ const FORCED_EXDEV_WITH_SOURCE_REPLACEMENT_MUTATION_PYTHON = FORCED_EXDEV_MUTATI
 
 describe("sandbox pinned mutation helper", () => {
   it("writes through a pinned directory fd", async () => {
-    await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+    await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
       const workspace = path.join(root, "workspace");
       await fs.mkdir(workspace, { recursive: true });
 
@@ -126,7 +126,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "preserves existing target file mode while writing",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const workspace = path.join(root, "workspace");
         const filePath = path.join(workspace, "note.txt");
         await fs.mkdir(workspace, { recursive: true });
@@ -146,7 +146,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "keeps restrictive existing target file mode while writing",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const workspace = path.join(root, "workspace");
         const filePath = path.join(workspace, "secret.txt");
         await fs.mkdir(workspace, { recursive: true });
@@ -166,7 +166,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "reads through a pinned directory fd and rejects hardlinked files",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const workspace = path.join(root, "workspace");
         const nested = path.join(workspace, "nested");
         await fs.mkdir(nested, { recursive: true });
@@ -187,7 +187,7 @@ describe("sandbox pinned mutation helper", () => {
   );
 
   it.runIf(process.platform !== "win32")("rejects non-regular files while reading", async () => {
-    await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+    await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
       const workspace = path.join(root, "workspace");
       await fs.mkdir(workspace, { recursive: true });
       await fs.mkdir(path.join(workspace, "folder"), { recursive: true });
@@ -202,7 +202,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "preserves stdin payload bytes when the pinned write plan runs through sh",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const workspace = path.join(root, "workspace");
         await fs.mkdir(workspace, { recursive: true });
 
@@ -224,7 +224,7 @@ describe("sandbox pinned mutation helper", () => {
     async () => {
       // The helper must fail before creating temp files when a parent path is a
       // symlink to another host directory.
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const workspace = path.join(root, "workspace");
         const outside = path.join(root, "outside");
         await fs.mkdir(workspace, { recursive: true });
@@ -240,7 +240,7 @@ describe("sandbox pinned mutation helper", () => {
   );
 
   it.runIf(process.platform !== "win32")("rejects symlink segments during mkdirp", async () => {
-    await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+    await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
       const workspace = path.join(root, "workspace");
       const outside = path.join(root, "outside");
       await fs.mkdir(workspace, { recursive: true });
@@ -255,7 +255,7 @@ describe("sandbox pinned mutation helper", () => {
   });
 
   it.runIf(process.platform !== "win32")("remove unlinks the symlink itself", async () => {
-    await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+    await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
       const workspace = path.join(root, "workspace");
       const outside = path.join(root, "outside");
       await fs.mkdir(workspace, { recursive: true });
@@ -276,7 +276,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "rejects symlink destination parents during rename",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const workspace = path.join(root, "workspace");
         const outside = path.join(root, "outside");
         await fs.mkdir(workspace, { recursive: true });
@@ -307,7 +307,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "copies directories across different mount roots during rename fallback",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const sourceRoot = path.join(root, "source");
         const destRoot = path.join(root, "dest");
         await fs.mkdir(path.join(sourceRoot, "dir", "nested"), { recursive: true });
@@ -337,7 +337,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "rejects hardlinked files during rename EXDEV fallback",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const sourceRoot = path.join(root, "source");
         const destRoot = path.join(root, "dest");
         const outsideRoot = path.join(root, "outside");
@@ -373,7 +373,7 @@ describe("sandbox pinned mutation helper", () => {
     async () => {
       // EXDEV fallback copies first and removes only after validation; failures
       // must not delete or partially replace the source tree.
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const sourceRoot = path.join(root, "source");
         const destRoot = path.join(root, "dest");
         const outsideRoot = path.join(root, "outside");
@@ -415,7 +415,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "preserves source entries created after the directory rename fallback copy phase",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const sourceRoot = path.join(root, "source");
         const destRoot = path.join(root, "dest");
         await fs.mkdir(path.join(sourceRoot, "dir", "nested"), { recursive: true });
@@ -450,7 +450,7 @@ describe("sandbox pinned mutation helper", () => {
   it.runIf(process.platform !== "win32")(
     "preserves source entries replaced after the directory rename fallback copy phase",
     async () => {
-      await withTempDir({ prefix: "openclaw-mutation-helper-" }, async (root) => {
+      await withTempDir({ prefix: "nova-mutation-helper-" }, async (root) => {
         const sourceRoot = path.join(root, "source");
         const destRoot = path.join(root, "dest");
         await fs.mkdir(path.join(sourceRoot, "dir", "nested"), { recursive: true });

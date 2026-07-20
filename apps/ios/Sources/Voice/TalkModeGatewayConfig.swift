@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawKit
+import NovaKit
 
 enum TalkModeExecutionMode: Equatable {
     case native

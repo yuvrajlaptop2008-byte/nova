@@ -1,6 +1,6 @@
 import CoreLocation
 import Foundation
-import OpenClawKit
+import NovaKit
 import UIKit
 
 @MainActor
@@ -36,7 +36,7 @@ final class LocationService: NSObject, CLLocationManagerDelegate, ConcurrentLoca
         self.configureLocationManager()
     }
 
-    func ensureAuthorization(mode: OpenClawLocationMode) async -> CLAuthorizationStatus {
+    func ensureAuthorization(mode: NovaLocationMode) async -> CLAuthorizationStatus {
         guard CLLocationManager.locationServicesEnabled() else { return .denied }
 
         let status = self.manager.authorizationStatus
@@ -61,8 +61,8 @@ final class LocationService: NSObject, CLLocationManagerDelegate, ConcurrentLoca
     }
 
     func currentLocation(
-        params: OpenClawLocationGetParams,
-        desiredAccuracy: OpenClawLocationAccuracy,
+        params: NovaLocationGetParams,
+        desiredAccuracy: NovaLocationAccuracy,
         maxAgeMs: Int?,
         timeoutMs: Int?) async throws -> CLLocation
     {

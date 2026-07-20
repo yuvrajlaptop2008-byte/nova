@@ -34,18 +34,15 @@ afterEach(() => {
 });
 
 function fixture() {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-clawhub-bootstrap-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-clawhub-bootstrap-"));
   tempDirs.push(root);
   const artifactRoot = join(root, "artifact");
   const packageRoot = join(artifactRoot, "packages", "meta");
   const existingPackageRoot = join(artifactRoot, "packages", "existing");
   mkdirSync(packageRoot, { recursive: true });
   mkdirSync(existingPackageRoot, { recursive: true });
-  writeFileSync(join(packageRoot, "openclaw-meta-2026.7.1-beta.3.tgz"), "packed meta");
-  writeFileSync(
-    join(existingPackageRoot, "openclaw-existing-2026.7.1-beta.3.tgz"),
-    "packed existing",
-  );
+  writeFileSync(join(packageRoot, "nova-meta-2026.7.1-beta.3.tgz"), "packed meta");
+  writeFileSync(join(existingPackageRoot, "nova-existing-2026.7.1-beta.3.tgz"), "packed existing");
   const matrixPath = join(root, "matrix.json");
   writeFileSync(
     matrixPath,
@@ -83,7 +80,7 @@ function common(paths: ReturnType<typeof fixture>) {
     clawhubToolchainSha256,
     clawhubToolchainVersion,
     plugins: "@nova/meta,@nova/existing",
-    repository: "openclaw/openclaw",
+    repository: "nova/nova",
     runAttempt: "2",
     runId: "123",
     targetSha,
@@ -141,7 +138,7 @@ function writeClawPack(
     type?: "0" | "5";
   }>,
 ) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-clawhub-packed-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-clawhub-packed-"));
   tempDirs.push(root);
   const bytes = gzipSync(
     Buffer.concat([
@@ -170,7 +167,7 @@ describe("ClawHub bootstrap artifact manifest", () => {
     });
     const meta = created.entries.find((entry) => entry.packageName === "@nova/meta");
     expect(meta).toMatchObject({
-      artifactPath: "packages/meta/openclaw-meta-2026.7.1-beta.3.tgz",
+      artifactPath: "packages/meta/nova-meta-2026.7.1-beta.3.tgz",
       size: 11,
     });
     expect(meta?.sha256).toMatch(/^[a-f0-9]{64}$/u);
@@ -194,7 +191,7 @@ describe("ClawHub bootstrap artifact manifest", () => {
       outputPath: paths.manifestPath,
     });
     writeFileSync(
-      join(paths.artifactRoot, "packages", "meta", "openclaw-meta-2026.7.1-beta.3.tgz"),
+      join(paths.artifactRoot, "packages", "meta", "nova-meta-2026.7.1-beta.3.tgz"),
       "changed",
     );
     await expect(
@@ -206,7 +203,7 @@ describe("ClawHub bootstrap artifact manifest", () => {
 
     const manifest = JSON.parse(readFileSync(paths.manifestPath, "utf8"));
     writeFileSync(
-      join(paths.artifactRoot, "packages", "meta", "openclaw-meta-2026.7.1-beta.3.tgz"),
+      join(paths.artifactRoot, "packages", "meta", "nova-meta-2026.7.1-beta.3.tgz"),
       "packed meta",
     );
     writeFileSync(join(paths.artifactRoot, "unexpected.txt"), "unexpected");
@@ -276,7 +273,7 @@ describe("ClawHub bootstrap artifact manifest", () => {
     });
     const existing = manifest.entries.find((entry) => entry.packageName === "@nova/existing");
     expect(existing).toMatchObject({
-      artifactPath: "packages/existing/openclaw-existing-2026.7.1-beta.3.tgz",
+      artifactPath: "packages/existing/nova-existing-2026.7.1-beta.3.tgz",
       size: 15,
     });
     expect(existing?.sha256).toMatch(/^[a-f0-9]{64}$/u);
@@ -295,7 +292,7 @@ describe("ClawHub bootstrap artifact manifest", () => {
       clawhubToolchainSha256,
       clawhubToolchainVersion,
       consumerRunAttempt: "2",
-      repository: "openclaw/openclaw",
+      repository: "nova/nova",
       producerJobName: "Pack immutable ClawHub bootstrap artifacts",
       runAttempt: "2",
       runId: "123",
@@ -361,7 +358,7 @@ describe("ClawHub packed artifact identity", () => {
         contents: JSON.stringify({
           name: "@nova/meta-provider",
           version: "2026.7.1-beta.3",
-          openclaw: {
+          nova: {
             release: {
               publishToClawHub: true,
               publishToNpm: true,
@@ -370,7 +367,7 @@ describe("ClawHub packed artifact identity", () => {
         }),
       },
       {
-        name: "openclaw.plugin.json",
+        name: "nova.plugin.json",
         prefix: "package",
         contents: JSON.stringify({ id: "meta" }),
       },
@@ -411,7 +408,7 @@ describe("ClawHub packed artifact identity", () => {
         }),
       },
       {
-        name: "package/openclaw.plugin.json",
+        name: "package/nova.plugin.json",
         contents: JSON.stringify({ id: "meta" }),
       },
     ]);
@@ -458,7 +455,7 @@ describe("ClawHub packed artifact identity", () => {
   });
 
   it("rejects a compressed artifact above the ClawHub package limit before reading it", async () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-clawhub-packed-limit-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-clawhub-packed-limit-"));
     tempDirs.push(root);
     const artifactPath = join(root, "oversized.tgz");
     writeFileSync(artifactPath, "");
@@ -475,7 +472,7 @@ describe("ClawHub packed artifact identity", () => {
   });
 
   it("bounds expanded tar bytes", async () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-clawhub-expanded-limit-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-clawhub-expanded-limit-"));
     tempDirs.push(root);
     const artifactPath = join(root, "expanded.tgz");
     const bytes = gzipSync(Buffer.alloc(64 * 1024 * 1024 + 1));

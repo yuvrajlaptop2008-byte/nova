@@ -1,8 +1,8 @@
 // Coverage for Google prompt-cache creation, reuse, and request rewriting.
 import crypto from "node:crypto";
 import { expectDefined } from "@nova/normalization-core";
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import type { Model } from "nova/plugin-sdk/llm";
 import { describe, expect, it, vi } from "vitest";
 import { isSecretValueRegisteredForRedaction } from "../../logging/secret-redaction-registry.js";
 import { mintSecretSentinel, resolveSecretSentinel } from "../../secrets/sentinel.js";
@@ -300,7 +300,7 @@ describe("google prompt cache", () => {
     expect(createInit.method).toBe("POST");
     const createHeaders = createInit.headers as Record<string, string>;
     expect(createHeaders["x-goog-api-key"]).toBe("gemini-api-key");
-    expect(createHeaders["x-goog-api-client"]).toMatch(/^openclaw\//u);
+    expect(createHeaders["x-goog-api-client"]).toMatch(/^nova\//u);
     expect(createHeaders["X-Provider"]).toBe("google");
     expect(typeof createInit.body).toBe("string");
     const createBody = JSON.parse(createInit.body as string) as Record<string, unknown>;
@@ -339,7 +339,7 @@ describe("google prompt cache", () => {
         id: "entry-1",
         parentId: null,
         timestamp: new Date(1_000).toISOString(),
-        customType: "openclaw.google-prompt-cache",
+        customType: "nova.google-prompt-cache",
         data: {
           status: "ready",
           timestamp: now,
@@ -482,7 +482,7 @@ describe("google prompt cache", () => {
         parentId: null,
         timestamp: new Date(now - 5_000).toISOString(),
         type: "custom",
-        customType: "openclaw.google-prompt-cache",
+        customType: "nova.google-prompt-cache",
         data: {
           status: "ready",
           timestamp: now - 5_000,
@@ -539,7 +539,7 @@ describe("google prompt cache", () => {
         parentId: null,
         timestamp: new Date(now - 5_000).toISOString(),
         type: "custom",
-        customType: "openclaw.google-prompt-cache",
+        customType: "nova.google-prompt-cache",
         data: {
           status: "ready",
           timestamp: now - 5_000,
@@ -588,7 +588,7 @@ describe("google prompt cache", () => {
         parentId: null,
         timestamp: new Date(1_000).toISOString(),
         type: "custom",
-        customType: "openclaw.google-prompt-cache",
+        customType: "nova.google-prompt-cache",
         data: {
           status: "failed",
           timestamp: 1_000,
@@ -695,7 +695,7 @@ describe("google prompt cache", () => {
         parentId: null,
         timestamp: new Date(now - 5_000).toISOString(),
         type: "custom",
-        customType: "openclaw.google-prompt-cache",
+        customType: "nova.google-prompt-cache",
         data: {
           status: "ready",
           timestamp: now - 5_000,

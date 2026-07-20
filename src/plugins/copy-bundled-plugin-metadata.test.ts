@@ -31,14 +31,14 @@ function createPlugin(
 ) {
   const pluginDir = path.join(repoRoot, "extensions", params.id);
   fs.mkdirSync(pluginDir, { recursive: true });
-  writeJson(path.join(pluginDir, "openclaw.plugin.json"), {
+  writeJson(path.join(pluginDir, "nova.plugin.json"), {
     id: params.id,
     configSchema: { type: "object" },
     ...params.manifest,
   });
   writeJson(path.join(pluginDir, "package.json"), {
     name: params.packageName,
-    ...(params.packageNova ? { openclaw: params.packageNova } : {}),
+    ...(params.packageNova ? { nova: params.packageNova } : {}),
   });
   return pluginDir;
 }
@@ -46,7 +46,7 @@ function createPlugin(
 function readBundledManifest(repoRoot: string, pluginId: string): Record<string, unknown> {
   return JSON.parse(
     fs.readFileSync(
-      path.join(repoRoot, "dist", "extensions", pluginId, "openclaw.plugin.json"),
+      path.join(repoRoot, "dist", "extensions", pluginId, "nova.plugin.json"),
       "utf8",
     ),
   ) as Record<string, unknown>;
@@ -55,7 +55,7 @@ function readBundledManifest(repoRoot: string, pluginId: string): Record<string,
 function readBundledPackageJson(repoRoot: string, pluginId: string) {
   return JSON.parse(
     fs.readFileSync(path.join(repoRoot, "dist", "extensions", pluginId, "package.json"), "utf8"),
-  ) as { openclaw?: { extensions?: string[] } };
+  ) as { nova?: { extensions?: string[] } };
 }
 
 function bundledPluginDir(repoRoot: string, pluginId: string) {
@@ -85,7 +85,7 @@ afterEach(() => {
 
 describe("copyBundledPluginMetadata", () => {
   it("copies plugin manifests, package metadata, and local skill directories", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-meta-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-meta-");
     const pluginDir = createPlugin(repoRoot, {
       id: "acpx",
       packageName: "@nova/acpx",
@@ -102,7 +102,7 @@ describe("copyBundledPluginMetadata", () => {
     copyBundledPluginMetadata({ repoRoot });
 
     expect(
-      fs.existsSync(path.join(repoRoot, "dist", "extensions", "acpx", "openclaw.plugin.json")),
+      fs.existsSync(path.join(repoRoot, "dist", "extensions", "acpx", "nova.plugin.json")),
     ).toBe(true);
     expect(
       fs.readFileSync(
@@ -112,11 +112,11 @@ describe("copyBundledPluginMetadata", () => {
     ).toContain("ACP Router");
     expectBundledSkills(repoRoot, "acpx", ["./skills"]);
     const packageJson = readBundledPackageJson(repoRoot, "acpx");
-    expect(packageJson.openclaw?.extensions).toEqual(["./index.js"]);
+    expect(packageJson.nova?.extensions).toEqual(["./index.js"]);
   });
 
   it("copies generated bundled channel config schemas into dist manifests", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-channel-config-meta-");
+    const repoRoot = makeRepoRoot("nova-bundled-channel-config-meta-");
     createPlugin(repoRoot, {
       id: "telegram",
       packageName: "@nova/telegram",
@@ -180,7 +180,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("relocates node_modules-backed skill paths into bundled-skills and rewrites the manifest", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-node-modules-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-node-modules-");
     const pluginDir = createTlonSkillPlugin(repoRoot);
     const storeSkillDir = path.join(
       repoRoot,
@@ -230,7 +230,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("falls back to repo-root hoisted node_modules skill paths", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-hoisted-skill-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-hoisted-skill-");
     const pluginDir = createTlonSkillPlugin(repoRoot);
     const hoistedSkillDir = path.join(repoRoot, "node_modules", "@tloncorp", "tlon-skill");
     fs.mkdirSync(hoistedSkillDir, { recursive: true });
@@ -249,7 +249,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("omits missing declared skill paths and removes stale generated outputs", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-missing-skill-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-missing-skill-");
     createTlonSkillPlugin(repoRoot);
     const staleBundledSkillDir = path.join(
       bundledPluginDir(repoRoot, "tlon"),
@@ -272,7 +272,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("retries transient skill copy races from concurrent runtime postbuilds", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-retry-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-retry-");
     const pluginDir = createPlugin(repoRoot, {
       id: "diffs",
       packageName: "@nova/diffs",
@@ -309,7 +309,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("removes generated outputs for plugins no longer present in source", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-removed-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-removed-");
     const staleBundledSkillDir = path.join(
       repoRoot,
       "dist",
@@ -334,7 +334,7 @@ describe("copyBundledPluginMetadata", () => {
       "export default {}\n",
       "utf8",
     );
-    writeJson(path.join(repoRoot, "dist", "extensions", "removed-plugin", "openclaw.plugin.json"), {
+    writeJson(path.join(repoRoot, "dist", "extensions", "removed-plugin", "nova.plugin.json"), {
       id: "removed-plugin",
       configSchema: { type: "object" },
       skills: ["./bundled-skills/@scope/skill"],
@@ -350,13 +350,13 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("removes stale dist outputs when a source extension directory no longer has a manifest", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-manifestless-source-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-manifestless-source-");
     const sourcePluginDir = path.join(repoRoot, "extensions", "google-gemini-cli-auth");
     fs.mkdirSync(path.join(sourcePluginDir, "node_modules"), { recursive: true });
     const staleDistDir = path.join(repoRoot, "dist", "extensions", "google-gemini-cli-auth");
     fs.mkdirSync(staleDistDir, { recursive: true });
     fs.writeFileSync(path.join(staleDistDir, "index.js"), "export default {}\n", "utf8");
-    writeJson(path.join(staleDistDir, "openclaw.plugin.json"), {
+    writeJson(path.join(staleDistDir, "nova.plugin.json"), {
       id: "google-gemini-cli-auth",
       configSchema: { type: "object" },
     });
@@ -370,7 +370,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("removes non-packaged private QA plugin metadata unless private QA build is enabled", () => {
-    const repoRoot = makeRepoRoot("openclaw-private-qa-metadata-");
+    const repoRoot = makeRepoRoot("nova-private-qa-metadata-");
     createPlugin(repoRoot, {
       id: "qa-lab",
       packageName: "@nova/qa-lab",
@@ -389,7 +389,7 @@ describe("copyBundledPluginMetadata", () => {
       env: { NOVA_BUILD_PRIVATE_QA: "1" } as NodeJS.ProcessEnv,
     });
 
-    expect(fs.existsSync(path.join(staleDistDir, "openclaw.plugin.json"))).toBe(true);
+    expect(fs.existsSync(path.join(staleDistDir, "nova.plugin.json"))).toBe(true);
     expect(fs.existsSync(path.join(staleDistDir, "package.json"))).toBe(true);
   });
 
@@ -414,7 +414,7 @@ describe("copyBundledPluginMetadata", () => {
       expectedExists: false,
     },
   ] as const)("$name", ({ pluginId, packageName, packageNova, env, expectedExists }) => {
-    const repoRoot = makeRepoRoot(`openclaw-bundled-plugin-${pluginId}-`);
+    const repoRoot = makeRepoRoot(`nova-bundled-plugin-${pluginId}-`);
     createPlugin(repoRoot, {
       id: pluginId,
       packageName,
@@ -427,7 +427,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("removes build-excluded bundled plugin metadata", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-plugin-excluded-meta-");
+    const repoRoot = makeRepoRoot("nova-bundled-plugin-excluded-meta-");
     createPlugin(repoRoot, {
       id: "qqbot",
       packageName: "@nova/qqbot",
@@ -446,7 +446,7 @@ describe("copyBundledPluginMetadata", () => {
   });
 
   it("preserves manifest-less runtime support package outputs and copies package metadata", () => {
-    const repoRoot = makeRepoRoot("openclaw-bundled-runtime-support-");
+    const repoRoot = makeRepoRoot("nova-bundled-runtime-support-");
     const pluginDir = path.join(repoRoot, "extensions", "image-generation-core");
     fs.mkdirSync(pluginDir, { recursive: true });
     writeJson(path.join(pluginDir, "package.json"), {
@@ -477,7 +477,7 @@ describe("copyBundledPluginMetadata", () => {
     ).toBe(true);
     expect(
       fs.existsSync(
-        path.join(repoRoot, "dist", "extensions", "image-generation-core", "openclaw.plugin.json"),
+        path.join(repoRoot, "dist", "extensions", "image-generation-core", "nova.plugin.json"),
       ),
     ).toBe(false);
     expect(

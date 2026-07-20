@@ -3,10 +3,10 @@ import { resolveSessionModelRef } from "../../agents/session-model-ref.js";
 import { resolvePersistedSessionRuntimeId } from "../../agents/session-runtime-compat.js";
 import { resolveEffectiveAgentRuntime } from "../../agents/thinking-runtime.js";
 import type { SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 
 export function resolveWorkerPlacementSessionRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: SessionEntry;
   agentId: string;
   sessionKey: string;

@@ -52,12 +52,12 @@ const TRACKED_ENV_KEYS = new Set([
   "XDG_STATE_HOME",
 ]);
 const DEFAULT_ALLOWED_FILES = new Map([
-  ["src/test-utils/openclaw-test-state.ts", "canonical Nova test state helper"],
+  ["src/test-utils/nova-test-state.ts", "canonical Nova test state helper"],
   ["test/non-isolated-runner.ts", "shared Vitest runner restores global env between files"],
   ["test/setup.extensions.ts", "global extension-test setup owns process env isolation"],
   ["test/setup.shared.ts", "global shared-test setup owns process env isolation"],
   ["test/setup.ts", "global test setup owns process env isolation"],
-  ["test/setup-openclaw-runtime.ts", "global runtime-test setup owns process env isolation"],
+  ["test/setup-nova-runtime.ts", "global runtime-test setup owns process env isolation"],
   [
     "test/helpers/auto-reply/trigger-handling-test-harness.ts",
     "auto-reply harness owns a suite-scoped temporary home",

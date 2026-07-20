@@ -1,4 +1,4 @@
-// Shared Nova banner: the pixel lobster mascot beside the OPENCLAW
+// Shared Nova banner: the pixel lobster mascot beside the nova
 // wordmark, with a short startup animation on rich interactive terminals.
 // Used by the wizard flows (doctor/onboard/configure) and the foreground
 // gateway run; non-TTY and CI paths always get the plain static banner.
@@ -91,7 +91,7 @@ function staticBannerLines(): string[] {
 
 function plainTitleLine(): string {
   const icon = decorativeEmoji("🦞");
-  return supportsDecorativeEmoji() && icon ? `${icon} OPENCLAW ${icon}` : "OPENCLAW";
+  return supportsDecorativeEmoji() && icon ? `${icon} nova ${icon}` : "nova";
 }
 
 const defaultSleep = (ms: number) =>

@@ -1,7 +1,7 @@
 // Memory Host SDK module implements embeddings remote client behavior.
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import type { EmbeddingProviderOptions } from "./embeddings.types.js";
-import { requireApiKey, resolveApiKeyForProvider } from "./openclaw-runtime-auth.js";
+import { requireApiKey, resolveApiKeyForProvider } from "./nova-runtime-auth.js";
 import { buildRemoteBaseUrlPolicy } from "./remote-http.js";
 import { resolveMemorySecretInputString } from "./secret-input.js";
 import type { SsrFPolicy } from "./ssrf-policy.js";
@@ -12,12 +12,12 @@ import type { SsrFPolicy } from "./ssrf-policy.js";
 export type RemoteEmbeddingProviderId = string;
 
 /** Attribution headers for native OpenAI embedding calls. */
-function resolveOpenClawAttributionHeaders(): Record<string, string> {
+function resolveNovaAttributionHeaders(): Record<string, string> {
   const version = typeof process !== "undefined" ? process.env.NOVA_VERSION?.trim() : undefined;
   return {
-    originator: "openclaw",
+    originator: "nova",
     ...(version ? { version } : {}),
-    "User-Agent": version ? `openclaw/${version}` : "openclaw",
+    "User-Agent": version ? `nova/${version}` : "nova",
   };
 }
 
@@ -65,7 +65,7 @@ export async function resolveRemoteEmbeddingBearerClient(params: {
     ...headerOverrides,
   };
   if (isNativeOpenAIEmbeddingRoute(params.provider, baseUrl)) {
-    Object.assign(headers, resolveOpenClawAttributionHeaders());
+    Object.assign(headers, resolveNovaAttributionHeaders());
   }
   return { baseUrl, headers, ssrfPolicy: buildRemoteBaseUrlPolicy(baseUrl) };
 }

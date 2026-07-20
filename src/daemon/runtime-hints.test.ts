@@ -9,16 +9,16 @@ describe("buildPlatformRuntimeLogHints", () => {
         platform: "darwin",
         env: {
           HOME: "/Users/test",
-          NOVA_STATE_DIR: "/tmp/openclaw-state",
+          NOVA_STATE_DIR: "/tmp/nova-state",
           NOVA_LOG_PREFIX: "gateway",
         },
-        systemdServiceName: "openclaw-gateway",
+        systemdServiceName: "nova-gateway",
         windowsTaskName: "Nova Gateway",
       }),
     ).toEqual([
-      "Launchd stdout (if installed): /Users/test/Library/Logs/openclaw/gateway.log",
+      "Launchd stdout (if installed): /Users/test/Library/Logs/nova/gateway.log",
       "Launchd stderr (if installed): suppressed",
-      "Restart attempts: /tmp/openclaw-state/logs/gateway-restart.log",
+      "Restart attempts: /tmp/nova-state/logs/gateway-restart.log",
     ]);
   });
 
@@ -27,27 +27,27 @@ describe("buildPlatformRuntimeLogHints", () => {
       buildPlatformRuntimeLogHints({
         platform: "linux",
         env: {
-          NOVA_STATE_DIR: "/tmp/openclaw-state",
+          NOVA_STATE_DIR: "/tmp/nova-state",
         },
-        systemdServiceName: "openclaw-gateway",
+        systemdServiceName: "nova-gateway",
         windowsTaskName: "Nova Gateway",
       }),
     ).toEqual([
-      "Logs: journalctl --user -u openclaw-gateway.service -n 200 --no-pager",
-      "Restart attempts: /tmp/openclaw-state/logs/gateway-restart.log",
+      "Logs: journalctl --user -u nova-gateway.service -n 200 --no-pager",
+      "Restart attempts: /tmp/nova-state/logs/gateway-restart.log",
     ]);
     expect(
       buildPlatformRuntimeLogHints({
         platform: "win32",
         env: {
-          NOVA_STATE_DIR: "/tmp/openclaw-state",
+          NOVA_STATE_DIR: "/tmp/nova-state",
         },
-        systemdServiceName: "openclaw-gateway",
+        systemdServiceName: "nova-gateway",
         windowsTaskName: "Nova Gateway",
       }),
     ).toEqual([
       'Logs: schtasks /Query /TN "Nova Gateway" /V /FO LIST',
-      "Restart attempts: /tmp/openclaw-state/logs/gateway-restart.log",
+      "Restart attempts: /tmp/nova-state/logs/gateway-restart.log",
     ]);
   });
 });
@@ -57,30 +57,30 @@ describe("buildPlatformServiceStartHints", () => {
     expect(
       buildPlatformServiceStartHints({
         platform: "darwin",
-        installCommand: "openclaw gateway install",
-        startCommand: "openclaw gateway",
-        launchAgentPlistPath: "~/Library/LaunchAgents/com.openclaw.gateway.plist",
-        systemdServiceName: "openclaw-gateway",
+        installCommand: "nova gateway install",
+        startCommand: "nova gateway",
+        launchAgentPlistPath: "~/Library/LaunchAgents/com.nova.gateway.plist",
+        systemdServiceName: "nova-gateway",
         windowsTaskName: "Nova Gateway",
       }),
     ).toEqual([
-      "openclaw gateway install",
-      "openclaw gateway",
-      "launchctl bootstrap gui/$UID ~/Library/LaunchAgents/com.openclaw.gateway.plist",
+      "nova gateway install",
+      "nova gateway",
+      "launchctl bootstrap gui/$UID ~/Library/LaunchAgents/com.nova.gateway.plist",
     ]);
     expect(
       buildPlatformServiceStartHints({
         platform: "linux",
-        installCommand: "openclaw gateway install",
-        startCommand: "openclaw gateway",
-        launchAgentPlistPath: "~/Library/LaunchAgents/com.openclaw.gateway.plist",
-        systemdServiceName: "openclaw-gateway",
+        installCommand: "nova gateway install",
+        startCommand: "nova gateway",
+        launchAgentPlistPath: "~/Library/LaunchAgents/com.nova.gateway.plist",
+        systemdServiceName: "nova-gateway",
         windowsTaskName: "Nova Gateway",
       }),
     ).toEqual([
-      "openclaw gateway install",
-      "openclaw gateway",
-      "systemctl --user start openclaw-gateway.service",
+      "nova gateway install",
+      "nova gateway",
+      "systemctl --user start nova-gateway.service",
     ]);
   });
 });

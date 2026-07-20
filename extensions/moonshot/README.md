@@ -1,13 +1,13 @@
-# Moonshot OpenClaw provider
+# Moonshot Nova provider
 
-Official OpenClaw provider plugin for Moonshot.
+Official Nova provider plugin for Moonshot.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/moonshot-provider
+nova plugins install @nova/moonshot-provider
 ```
 
 ## Docs
 
-See `docs/providers/moonshot.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/providers/moonshot`.
+See `docs/providers/moonshot.md` in the Nova repository, or the published docs at `https://docs.nova.ai/providers/moonshot`.

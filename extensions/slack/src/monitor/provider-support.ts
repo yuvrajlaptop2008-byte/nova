@@ -1,5 +1,5 @@
 // Slack provider module implements model/runtime integration.
-import { asOptionalRecord as asRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { asOptionalRecord as asRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { SlackChannelResolution } from "../resolve-channels.js";
 import type { SlackUserResolution } from "../resolve-users.js";
 import type { SlackIdentityHealth } from "./enterprise-install.js";
@@ -23,7 +23,7 @@ type SlackSocketDisconnect = Awaited<ReturnType<typeof waitForSlackSocketDisconn
 
 const NOVA_SLACK_CLIENT_PING_TIMEOUT_MS = 15_000;
 const NOVA_SLACK_SOCKET_START_FAILED_EVENT = "unable_to_socket_mode_start";
-const NOVA_SLACK_NATIVE_RECONNECT_OBSERVER_KEY = "__openclawNativeReconnectFailureObserver";
+const NOVA_SLACK_NATIVE_RECONNECT_OBSERVER_KEY = "__novaNativeReconnectFailureObserver";
 const SLACK_SOCKET_PONG_TIMEOUT_WARNING_PREFIX = "A pong wasn't received from the server";
 const SLACK_SOCKET_PING_TIMEOUT_WARNING_PREFIX = "A ping wasn't received from the server";
 const SLACK_SOCKET_LOG_LEVEL_IGNORED_WARNING_RE =
@@ -278,7 +278,7 @@ function createSlackSocketModeLogger(
   };
 }
 
-function shouldSkipOpenClawSlackSelfEvent(args: SlackSelfFilterArgs): boolean {
+function shouldSkipNovaSlackSelfEvent(args: SlackSelfFilterArgs): boolean {
   const botId = args.context?.botId;
   const botUserId = args.context?.botUserId;
   const message = asRecord(args.message);
@@ -363,7 +363,7 @@ export function createSlackBoltApp(params: {
     ...(appReceiver ? { receiver: appReceiver } : {}),
   });
   app.use(async (args) => {
-    if (shouldSkipOpenClawSlackSelfEvent(args)) {
+    if (shouldSkipNovaSlackSelfEvent(args)) {
       return;
     }
     await args.next();

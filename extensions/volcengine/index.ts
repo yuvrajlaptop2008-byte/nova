@@ -1,7 +1,7 @@
 // Volcengine plugin entrypoint registers its Nova integration.
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
-import { ensureModelAllowlistEntry } from "openclaw/plugin-sdk/provider-onboard";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
+import { createProviderApiKeyAuthMethod } from "nova/plugin-sdk/provider-auth-api-key";
+import { ensureModelAllowlistEntry } from "nova/plugin-sdk/provider-onboard";
 import { applyVolcengineToolSchemaCompat } from "./api.js";
 import { VOLCENGINE_PROVIDER_CATALOG_ENTRIES } from "./provider-catalog.js";
 import { buildVolcengineSpeechProvider } from "./speech-provider.js";

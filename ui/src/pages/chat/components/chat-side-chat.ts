@@ -100,7 +100,7 @@ export function renderSideChatPanel(props: SideChatPanelProps): TemplateResult |
           <span class="chat-side-chat__meta">${t("chat.sideChat.notSaved")}</span>
         </div>
         <div class="chat-side-chat__actions">
-          <openclaw-tooltip .content=${t("chat.sideChat.clear")}>
+          <nova-tooltip .content=${t("chat.sideChat.clear")}>
             <button
               class="btn btn--ghost btn--icon chat-icon-btn"
               type="button"
@@ -109,8 +109,8 @@ export function renderSideChatPanel(props: SideChatPanelProps): TemplateResult |
             >
               ${icons.trash}
             </button>
-          </openclaw-tooltip>
-          <openclaw-tooltip .content=${t("chat.sideChat.close")}>
+          </nova-tooltip>
+          <nova-tooltip .content=${t("chat.sideChat.close")}>
             <button
               class="btn btn--ghost btn--icon chat-icon-btn"
               type="button"
@@ -119,7 +119,7 @@ export function renderSideChatPanel(props: SideChatPanelProps): TemplateResult |
             >
               ${icons.x}
             </button>
-          </openclaw-tooltip>
+          </nova-tooltip>
         </div>
       </header>
       <div class="chat-side-chat__scroll" aria-live="polite" ${ref(syncScroll)}>

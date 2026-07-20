@@ -6,18 +6,18 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { inspect } from "node:util";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { finiteSecondsToTimerSafeMilliseconds } from "openclaw/plugin-sdk/number-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { finiteSecondsToTimerSafeMilliseconds } from "nova/plugin-sdk/number-runtime";
 import type {
   OpenKeyedStoreOptions,
   PluginStateKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import type {
   AcpRuntime,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
+  NovaPluginService,
+  NovaPluginServiceContext,
   PluginLogger,
 } from "../runtime-api.js";
 import { registerAcpRuntimeBackend, unregisterAcpRuntimeBackend } from "../runtime-api.js";
@@ -34,8 +34,8 @@ import {
   type AcpxProcessLeaseStore,
 } from "./process-lease.js";
 import {
-  cleanupOpenClawOwnedAcpxProcessTree,
-  reapStaleOpenClawOwnedAcpxOrphans,
+  cleanupNovaOwnedAcpxProcessTree,
+  reapStaleNovaOwnedAcpxOrphans,
   type AcpxProcessCleanupDeps,
 } from "./process-reaper.js";
 import { createLazyAcpRuntimeProxy } from "./runtime-proxy.js";
@@ -96,9 +96,9 @@ function createLazyDefaultRuntime(params: AcpxRuntimeFactoryParams): AcpxRuntime
     runtimePromise ??= loadRuntimeModule().then((module) => {
       runtime = new module.AcpxRuntime({
         cwd: params.pluginConfig.cwd,
-        openclawGatewayInstanceId: params.gatewayInstanceId,
-        openclawProcessLeaseStore: params.processLeaseStore,
-        openclawWrapperRoot: params.wrapperRoot,
+        novaGatewayInstanceId: params.gatewayInstanceId,
+        novaProcessLeaseStore: params.processLeaseStore,
+        novaWrapperRoot: params.wrapperRoot,
         sessionStore: module.createFileSessionStore({
           stateDir: params.pluginConfig.stateDir,
         }),
@@ -108,7 +108,7 @@ function createLazyDefaultRuntime(params: AcpxRuntimeFactoryParams): AcpxRuntime
         probeAgent: params.pluginConfig.probeAgent,
         mcpServers: toAcpMcpServers(params.pluginConfig.mcpServers),
         pluginToolsMcpBridgeEnabled: params.pluginConfig.pluginToolsMcpBridge,
-        openclawToolsMcpBridgeEnabled: params.pluginConfig.openClawToolsMcpBridge,
+        novaToolsMcpBridgeEnabled: params.pluginConfig.novaToolsMcpBridge,
         permissionMode: params.pluginConfig.permissionMode,
         nonInteractivePermissions: params.pluginConfig.nonInteractivePermissions,
         timeoutMs: resolveAcpxTimerTimeoutMs(params.pluginConfig.timeoutSeconds),
@@ -181,7 +181,7 @@ function formatDoctorFailureMessage(report: { message: string; details?: unknown
   return detailText ? `${report.message} (${detailText})` : report.message;
 }
 
-function resolveAllowedAgentsProbeAgent(ctx: OpenClawPluginServiceContext): string | undefined {
+function resolveAllowedAgentsProbeAgent(ctx: NovaPluginServiceContext): string | undefined {
   for (const agent of ctx.config.acp?.allowedAgents ?? []) {
     const normalized = normalizeLowercaseStringOrEmpty(agent);
     if (normalized) {
@@ -192,7 +192,7 @@ function resolveAllowedAgentsProbeAgent(ctx: OpenClawPluginServiceContext): stri
 }
 
 async function measureAcpxStartup<T>(
-  ctx: OpenClawPluginServiceContext,
+  ctx: NovaPluginServiceContext,
   name: string,
   run: () => T | Promise<T>,
 ): Promise<T> {
@@ -200,7 +200,7 @@ async function measureAcpxStartup<T>(
 }
 
 function detailAcpxStartup(
-  ctx: OpenClawPluginServiceContext,
+  ctx: NovaPluginServiceContext,
   name: string,
   metrics: ReadonlyArray<readonly [string, number | string]>,
 ): void {
@@ -286,7 +286,7 @@ async function reapOpenAcpxProcessLeases(params: {
       await params.leaseStore.markState(lease.leaseId, "closing");
       let result = pendingLeaseRootResults.get(lease.wrapperRoot);
       if (!result) {
-        result = await reapStaleOpenClawOwnedAcpxOrphans({
+        result = await reapStaleNovaOwnedAcpxOrphans({
           wrapperRoot: lease.wrapperRoot,
           deps: params.deps,
         });
@@ -301,7 +301,7 @@ async function reapOpenAcpxProcessLeases(params: {
       continue;
     }
     await params.leaseStore.markState(lease.leaseId, "closing");
-    const result = await cleanupOpenClawOwnedAcpxProcessTree({
+    const result = await cleanupNovaOwnedAcpxProcessTree({
       rootPid: lease.rootPid,
       expectedLeaseId: lease.leaseId,
       expectedGatewayInstanceId: lease.gatewayInstanceId,
@@ -321,13 +321,13 @@ async function reapOpenAcpxProcessLeases(params: {
 /** Create the ACPX plugin service that owns runtime registration and cleanup. */
 export function createAcpxRuntimeService(
   params: CreateAcpxRuntimeServiceParams = {},
-): OpenClawPluginService {
+): NovaPluginService {
   let runtime: AcpxRuntimeLike | null = null;
   let lifecycleRevision = 0;
 
   return {
     id: "acpx-runtime",
-    async start(ctx: OpenClawPluginServiceContext): Promise<void> {
+    async start(ctx: NovaPluginServiceContext): Promise<void> {
       if (process.env.NOVA_SKIP_ACPX_RUNTIME === "1") {
         ctx.logger.info("skipping embedded acpx runtime backend (NOVA_SKIP_ACPX_RUNTIME=1)");
         return;
@@ -454,7 +454,7 @@ export function createAcpxRuntimeService(
         ctx.logger.warn(`embedded acpx runtime setup failed: ${formatErrorMessage(err)}`);
       }
     },
-    async stop(_ctx: OpenClawPluginServiceContext): Promise<void> {
+    async stop(_ctx: NovaPluginServiceContext): Promise<void> {
       lifecycleRevision += 1;
       unregisterAcpRuntimeBackend(ACPX_BACKEND_ID);
       runtime = null;

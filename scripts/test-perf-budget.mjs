@@ -83,7 +83,7 @@ function main() {
   const startedAt = process.hrtime.bigint();
   const reportPath = runVitestJsonReport({
     config: opts.config,
-    prefix: "openclaw-vitest-perf",
+    prefix: "nova-vitest-perf",
   });
   const elapsedMs = Number.parseFloat(String(process.hrtime.bigint() - startedAt)) / 1_000_000;
 

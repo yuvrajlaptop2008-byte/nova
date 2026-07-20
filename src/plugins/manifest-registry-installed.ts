@@ -4,7 +4,7 @@ import path from "node:path";
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { normalizeOptionalTrimmedStringList } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { tryReadJsonSync } from "../infra/json-files.js";
 import type { PluginCandidate } from "./discovery.js";
 import { hashJson } from "./installed-plugin-index-hash.js";
@@ -17,7 +17,7 @@ import {
   DEFAULT_PLUGIN_ENTRY_CANDIDATES,
   getPackageManifestMetadata,
   normalizeManifestChannelCommandDefaults,
-  type OpenClawPackageManifest,
+  type NovaPackageManifest,
   type PackageManifest,
   type PluginPackageChannel,
 } from "./manifest.js";
@@ -40,7 +40,7 @@ const MAX_INSTALLED_PACKAGE_METADATA_CACHE_ENTRIES = 256;
 const MAX_INSTALLED_MANIFEST_REGISTRY_REALPATH_CACHE_ENTRIES = 512;
 
 type InstalledPackageMetadata = {
-  packageManifest?: OpenClawPackageManifest;
+  packageManifest?: NovaPackageManifest;
   packageDependencies?: PluginDependencySpecMap;
   packageOptionalDependencies?: PluginDependencySpecMap;
 };
@@ -594,7 +594,7 @@ function toPluginCandidate(
 
 export function loadPluginManifestRegistryForInstalledIndex(params: {
   index: InstalledPluginIndex;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];

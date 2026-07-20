@@ -44,7 +44,7 @@ describe("managed proxy undici TLS options", () => {
   });
 
   function writeTempCa(contents: string): string {
-    const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-managed-proxy-ca-"));
+    const dir = mkdtempSync(path.join(os.tmpdir(), "nova-managed-proxy-ca-"));
     tempDirs.push(dir);
     const caFile = path.join(dir, "proxy-ca.pem");
     writeFileSync(caFile, contents, "utf8");

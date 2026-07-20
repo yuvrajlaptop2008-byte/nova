@@ -1,5 +1,5 @@
+import type { Api, Model } from "nova/plugin-sdk/llm";
 import type { ChatCompletionChunk } from "openai/resources/chat/completions.js";
-import type { Api, Model } from "openclaw/plugin-sdk/llm";
 import { describe, expect, it, vi } from "vitest";
 import {
   resolveAzureOpenAIApiVersion,
@@ -20,7 +20,7 @@ import { attachModelProviderRequestTransport } from "./provider-request-config.j
 import {
   buildTransportAwareSimpleStreamFn,
   createBoundaryAwareStreamFnForModel,
-  createOpenClawTransportStreamFnForModel,
+  createNovaTransportStreamFnForModel,
   prepareTransportAwareSimpleModel,
   resolveTransportAwareSimpleApi,
 } from "./provider-transport-stream.js";
@@ -278,7 +278,7 @@ describe("openai transport stream", () => {
     });
     const thinkingBlock = output.content[0] as {
       thinkingSignature?: string;
-      openclawReasoningReplay?: unknown;
+      novaReasoningReplay?: unknown;
     };
     const replayItem = JSON.parse(thinkingBlock.thinkingSignature ?? "{}") as Record<
       string,
@@ -289,8 +289,8 @@ describe("openai transport stream", () => {
       id: "rs_123",
       encrypted_content: "ciphertext",
     });
-    expect(replayItem).not.toHaveProperty("__openclaw_replay");
-    expect(thinkingBlock.openclawReasoningReplay).toEqual(expectedReplayMetadata);
+    expect(replayItem).not.toHaveProperty("__nova_replay");
+    expect(thinkingBlock.novaReasoningReplay).toEqual(expectedReplayMetadata);
   });
 
   it("clamps Responses cached prompt usage at zero", async () => {
@@ -1032,23 +1032,23 @@ describe("openai transport stream", () => {
         id: "gpt-5.4",
         name: "GPT-5.4",
         headers: {
-          originator: "openclaw",
-          "User-Agent": "openclaw",
+          originator: "nova",
+          "User-Agent": "nova",
           "X-Provider": "model",
         },
       }),
       { systemPrompt: "", messages: [] } as never,
       {
-        originator: "openclaw",
-        "User-Agent": "openclaw",
+        originator: "nova",
+        "User-Agent": "nova",
         "X-Caller": "request",
       },
     );
 
     expectRecordFields(headers, {
-      originator: "openclaw",
+      originator: "nova",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "nova/2026.3.22",
       "X-Provider": "model",
       "X-Caller": "request",
     });
@@ -1063,17 +1063,17 @@ describe("openai transport stream", () => {
         api: "openai-chatgpt-responses",
         baseUrl: "https://chatgpt.com/backend-api",
         headers: {
-          originator: "openclaw",
-          "User-Agent": "openclaw",
+          originator: "nova",
+          "User-Agent": "nova",
         },
       }),
       { systemPrompt: "", messages: [] } as never,
     );
 
     expectRecordFields(headers, {
-      originator: "openclaw",
+      originator: "nova",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "nova/2026.3.22",
     });
     expect(headers.Accept).toBeUndefined();
     expect(headers.accept).toBeUndefined();
@@ -1176,7 +1176,7 @@ describe("openai transport stream", () => {
     });
     const transportAliasModel = {
       ...codexModel,
-      api: "openclaw-openai-responses-transport" as Api,
+      api: "nova-openai-responses-transport" as Api,
     } satisfies Model;
     const nonNativeChatGPTModel = makeResponsesModel({
       ...codexModel,
@@ -1278,7 +1278,7 @@ describe("openai transport stream", () => {
       ),
     ).toBeTypeOf("function");
     expect(
-      createOpenClawTransportStreamFnForModel(
+      createNovaTransportStreamFnForModel(
         makeResponsesModel({
           id: "gpt-5.4",
           name: "GPT-5.4",
@@ -1326,9 +1326,9 @@ describe("openai transport stream", () => {
 
     const prepared = prepareTransportAwareSimpleModel(model);
 
-    expect(resolveTransportAwareSimpleApi(model.api)).toBe("openclaw-openai-responses-transport");
+    expect(resolveTransportAwareSimpleApi(model.api)).toBe("nova-openai-responses-transport");
     expectRecordFields(prepared, {
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
       provider: "openai",
       id: "gpt-5.4",
     });
@@ -1352,9 +1352,9 @@ describe("openai transport stream", () => {
 
     const prepared = prepareTransportAwareSimpleModel(model);
 
-    expect(resolveTransportAwareSimpleApi(model.api)).toBe("openclaw-openai-responses-transport");
+    expect(resolveTransportAwareSimpleApi(model.api)).toBe("nova-openai-responses-transport");
     expectRecordFields(prepared, {
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
       provider: "openai",
       id: "codex-mini-latest",
     });
@@ -1385,9 +1385,9 @@ describe("openai transport stream", () => {
 
     const prepared = prepareTransportAwareSimpleModel(model);
 
-    expect(resolveTransportAwareSimpleApi(model.api)).toBe("openclaw-anthropic-messages-transport");
+    expect(resolveTransportAwareSimpleApi(model.api)).toBe("nova-anthropic-messages-transport");
     expectRecordFields(prepared, {
-      api: "openclaw-anthropic-messages-transport",
+      api: "nova-anthropic-messages-transport",
       provider: "anthropic",
       id: "claude-sonnet-4-6",
     });
@@ -1416,9 +1416,7 @@ describe("openai transport stream", () => {
       },
     );
 
-    expect(resolveTransportAwareSimpleApi(model.api)).toBe(
-      "openclaw-google-generative-ai-transport",
-    );
+    expect(resolveTransportAwareSimpleApi(model.api)).toBe("nova-google-generative-ai-transport");
   });
 
   it("keeps github-copilot OpenAI-family models on the shared transport seam", () => {
@@ -1438,9 +1436,9 @@ describe("openai transport stream", () => {
       },
     );
 
-    expect(resolveTransportAwareSimpleApi(model.api)).toBe("openclaw-openai-responses-transport");
+    expect(resolveTransportAwareSimpleApi(model.api)).toBe("nova-openai-responses-transport");
     expectRecordFields(prepareTransportAwareSimpleModel(model), {
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
       provider: "github-copilot",
       id: "gpt-5.4",
     });
@@ -1469,9 +1467,9 @@ describe("openai transport stream", () => {
       },
     );
 
-    expect(resolveTransportAwareSimpleApi(model.api)).toBe("openclaw-anthropic-messages-transport");
+    expect(resolveTransportAwareSimpleApi(model.api)).toBe("nova-anthropic-messages-transport");
     expectRecordFields(prepareTransportAwareSimpleModel(model), {
-      api: "openclaw-anthropic-messages-transport",
+      api: "nova-anthropic-messages-transport",
       provider: "github-copilot",
       id: "claude-sonnet-4.6",
     });

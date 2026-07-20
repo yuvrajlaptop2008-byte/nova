@@ -29,7 +29,7 @@ describe("browser doctor readiness", () => {
       {
         browser: {
           profiles: {
-            openclaw: { color: "#FF4500" },
+            nova: { color: "#FF4500" },
           },
         },
       },
@@ -50,7 +50,7 @@ describe("browser doctor readiness", () => {
       {
         browser: {
           profiles: {
-            openclaw: { color: "#FF4500" },
+            nova: { color: "#FF4500" },
           },
         },
       },
@@ -65,7 +65,7 @@ describe("browser doctor readiness", () => {
 
     expect(noteFn).toHaveBeenCalledWith(
       [
-        "- Nova-managed browser profile(s) are configured: openclaw.",
+        "- Nova-managed browser profile(s) are configured: nova.",
         "- No Chromium-based browser executable was found on this host for Nova-managed launch.",
         "- Install Chrome, Chromium, Brave, Edge, or set browser.executablePath explicitly.",
       ].join("\n"),
@@ -81,7 +81,7 @@ describe("browser doctor readiness", () => {
           headless: false,
           noSandbox: false,
           profiles: {
-            openclaw: { color: "#FF4500" },
+            nova: { color: "#FF4500" },
           },
         },
       },
@@ -96,7 +96,7 @@ describe("browser doctor readiness", () => {
 
     expect(noteFn).toHaveBeenCalledWith(
       [
-        "- Nova-managed browser profile(s) are configured: openclaw.",
+        "- Nova-managed browser profile(s) are configured: nova.",
         "- No DISPLAY or WAYLAND_DISPLAY is set, and browser.headless is false. Managed browser launch needs a desktop session, Xvfb, or browser.headless: true.",
         "- The Gateway is running as root and browser.noSandbox is false. Chromium commonly requires browser.noSandbox: true in container/root runtimes.",
       ].join("\n"),
@@ -106,13 +106,13 @@ describe("browser doctor readiness", () => {
 
   it("warns about legacy clawd managed browser profile residue", async () => {
     const noteFn = vi.fn();
-    const configDir = "/tmp/openclaw-home";
+    const configDir = "/tmp/nova-home";
 
     await noteChromeMcpBrowserReadiness(
       {
         browser: {
           profiles: {
-            openclaw: { color: "#FF4500" },
+            nova: { color: "#FF4500" },
           },
         },
       },
@@ -130,9 +130,9 @@ describe("browser doctor readiness", () => {
     expect(noteFn).toHaveBeenCalledTimes(1);
     const note = requireFirstNoteText(noteFn);
     expect(note).toContain("Legacy managed browser profile residue");
-    expect(note).toContain("/tmp/openclaw-home/browser/clawd");
-    expect(note).toContain("/tmp/openclaw-home/browser/openclaw/user-data");
-    expect(note).toContain("openclaw doctor --fix");
+    expect(note).toContain("/tmp/nova-home/browser/clawd");
+    expect(note).toContain("/tmp/nova-home/browser/nova/user-data");
+    expect(note).toContain("nova doctor --fix");
   });
 
   it("does not warn when clawd is still configured as a browser profile", async () => {
@@ -143,7 +143,7 @@ describe("browser doctor readiness", () => {
         browser: {
           profiles: {
             clawd: { color: "#FF4500" },
-            openclaw: { color: "#00AA00" },
+            nova: { color: "#00AA00" },
           },
         },
       },
@@ -152,7 +152,7 @@ describe("browser doctor readiness", () => {
         platform: "linux",
         env: { DISPLAY: ":99" },
         getUid: () => 1000,
-        configDir: "/tmp/openclaw-home",
+        configDir: "/tmp/nova-home",
         pathExists: () => true,
         resolveManagedExecutable: () => ({ kind: "chrome", path: "/usr/bin/google-chrome" }),
       },
@@ -172,7 +172,7 @@ describe("browser doctor readiness", () => {
       {
         noteFn,
         platform: "darwin",
-        homeDir: "/__openclaw_browser_doctor_missing_home__",
+        homeDir: "/__nova_browser_doctor_missing_home__",
         resolveChromeExecutable: () => null,
       },
     );
@@ -269,29 +269,29 @@ describe("browser doctor readiness", () => {
 
 describe("legacy clawd browser profile cleanup", () => {
   it("archives stale clawd residue with the safe trash mover", async () => {
-    const movePathToTrash = vi.fn(async () => "/tmp/openclaw-home/browser/.trash/clawd");
+    const movePathToTrash = vi.fn(async () => "/tmp/nova-home/browser/.trash/clawd");
 
     const result = await maybeArchiveLegacyClawdBrowserProfileResidue(
       {
         browser: {
           profiles: {
-            openclaw: { color: "#FF4500" },
+            nova: { color: "#FF4500" },
           },
         },
       },
       {
-        configDir: "/tmp/openclaw-home",
+        configDir: "/tmp/nova-home",
         pathExists: (targetPath) => targetPath.endsWith("/browser/clawd/user-data"),
         movePathToTrash,
       },
     );
 
-    expect(movePathToTrash).toHaveBeenCalledWith("/tmp/openclaw-home/browser/clawd");
+    expect(movePathToTrash).toHaveBeenCalledWith("/tmp/nova-home/browser/clawd");
     expect(result.warnings).toStrictEqual([]);
     expect(result.changes.join("\n")).toContain(
       "Archived legacy clawd managed browser profile residue.",
     );
-    expect(result.changes.join("\n")).toContain("/tmp/openclaw-home/browser/openclaw/user-data");
+    expect(result.changes.join("\n")).toContain("/tmp/nova-home/browser/nova/user-data");
   });
 
   it("does not archive a configured clawd browser profile", async () => {
@@ -307,7 +307,7 @@ describe("legacy clawd browser profile cleanup", () => {
         },
       },
       {
-        configDir: "/tmp/openclaw-home",
+        configDir: "/tmp/nova-home",
         pathExists: () => true,
         movePathToTrash,
       },

@@ -1,11 +1,11 @@
-import type { ScopeTree } from "openclaw/plugin-sdk/channel-policy";
+import type { ScopeTree } from "nova/plugin-sdk/channel-policy";
 // Telegram helper module supports group config helpers behavior.
 import type {
   TelegramAccountConfig,
   TelegramDirectConfig,
   TelegramGroupConfig,
   TelegramTopicConfig,
-} from "openclaw/plugin-sdk/config-contracts";
+} from "nova/plugin-sdk/config-contracts";
 import { firstDefined } from "./bot-access.js";
 
 export function resolveTelegramScopedGroupConfig(

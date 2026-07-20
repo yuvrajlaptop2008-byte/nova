@@ -2,9 +2,9 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { ChunkMode } from "openclaw/plugin-sdk/reply-runtime";
+import type { ChunkMode } from "nova/plugin-sdk/reply-runtime";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig, PluginRuntime } from "../../runtime-api.js";
+import type { NovaConfig, PluginRuntime } from "../../runtime-api.js";
 import {
   createMattermostReplyDeliveryBarrier,
   deliverMattermostReplyPayload,
@@ -28,7 +28,7 @@ function createReplyDeliveryCore(): DeliverMattermostReplyPayloadParams["core"] 
         resolveChunkMode: vi.fn<() => ChunkMode>(() => "length"),
         resolveTextChunkLimit: vi.fn(
           (
-            _cfg?: OpenClawConfig,
+            _cfg?: NovaConfig,
             _provider?: string,
             _accountId?: string | null,
             opts?: { fallbackLimit?: number },
@@ -106,7 +106,7 @@ describe("createMattermostReplyDeliveryBarrier", () => {
 describe("deliverMattermostReplyPayload", () => {
   it("suppresses payloads flagged as reasoning", async () => {
     const sendMessage = vi.fn(async () => undefined);
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
     const core = createReplyDeliveryCore();
 
     const outcome = await deliverMattermostReplyPayload({
@@ -128,7 +128,7 @@ describe("deliverMattermostReplyPayload", () => {
 
   it("returns 'empty' for substantive text that produced no send (regression: #80501)", async () => {
     const sendMessage = vi.fn(async () => undefined);
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
     const core = createReplyDeliveryCore();
     // Make the markdown table converter strip the text to empty so
     // deliverTextOrMediaReply sees an empty chunked text and returns "empty".
@@ -154,7 +154,7 @@ describe("deliverMattermostReplyPayload", () => {
 
   it("suppresses reasoning-prefixed payloads even without an explicit flag", async () => {
     const sendMessage = vi.fn(async () => undefined);
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
     const core = createReplyDeliveryCore();
 
     await deliverMattermostReplyPayload({
@@ -175,7 +175,7 @@ describe("deliverMattermostReplyPayload", () => {
 
   it("suppresses reasoning payloads formatted as a Mattermost blockquote", async () => {
     const sendMessage = vi.fn(async () => undefined);
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
     const core = createReplyDeliveryCore();
 
     await deliverMattermostReplyPayload({
@@ -196,7 +196,7 @@ describe("deliverMattermostReplyPayload", () => {
 
   it("does not suppress messages that mention Reasoning: mid-text", async () => {
     const sendMessage = vi.fn(async () => undefined);
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
     const core = createReplyDeliveryCore();
 
     await deliverMattermostReplyPayload({
@@ -226,7 +226,7 @@ describe("deliverMattermostReplyPayload", () => {
 
   it("passes agent-scoped mediaLocalRoots when sending media paths", async () => {
     const previousStateDir = process.env.NOVA_STATE_DIR;
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mm-state-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-mm-state-"));
     process.env.NOVA_STATE_DIR = stateDir;
 
     try {
@@ -235,7 +235,7 @@ describe("deliverMattermostReplyPayload", () => {
 
       const agentId = "agent-1";
       const mediaUrl = `file://${path.join(stateDir, `workspace-${agentId}`, "photo.png")}`;
-      const cfg = {} satisfies OpenClawConfig;
+      const cfg = {} satisfies NovaConfig;
 
       await deliverMattermostReplyPayload({
         core,
@@ -280,7 +280,7 @@ describe("deliverMattermostReplyPayload", () => {
 
   it("forwards replyToId for text-only chunked replies", async () => {
     const sendMessage = vi.fn(async () => undefined);
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
     const core = createReplyDeliveryCore();
     core.channel.text.chunkMarkdownTextWithMode = vi.fn(() => ["hello"]);
 

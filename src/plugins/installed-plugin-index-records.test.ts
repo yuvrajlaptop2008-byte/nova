@@ -6,9 +6,9 @@ import { expectDefined } from "@nova/normalization-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
 import { withMockedWindowsPlatform } from "../test-utils/vitest-spies.js";
 import type { PluginCandidate } from "./discovery.js";
 import {
@@ -33,7 +33,7 @@ import { writeManagedNpmPlugin } from "./test-helpers/managed-npm-plugin.js";
 const tempDirs: string[] = [];
 
 function makeStateDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-index-records-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-index-records-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -44,7 +44,7 @@ function createPluginCandidate(stateDir: string, pluginId: string): PluginCandid
   const source = path.join(rootDir, "index.ts");
   fs.writeFileSync(source, "export function register() {}\n", "utf8");
   fs.writeFileSync(
-    path.join(rootDir, "openclaw.plugin.json"),
+    path.join(rootDir, "nova.plugin.json"),
     JSON.stringify({
       id: pluginId,
       configSchema: { type: "object" },
@@ -74,7 +74,7 @@ function updatePersistedInstallRecordsWithoutClearingCache(
   stateDir: string,
   records: Record<string, PluginInstallRecord>,
 ) {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       db.prepare(
         `
@@ -90,7 +90,7 @@ function updatePersistedInstallRecordsWithoutClearingCache(
 }
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   vi.doUnmock("./installed-plugin-index-store.js");
   clearLoadInstalledPluginIndexInstallRecordsCache();
   for (const dir of tempDirs.splice(0)) {
@@ -119,7 +119,7 @@ describe("plugin index install records store", () => {
     );
 
     const indexPath = resolveInstalledPluginIndexRecordsStorePath({ stateDir });
-    expect(indexPath).toBe(path.join(stateDir, "state", "openclaw.sqlite"));
+    expect(indexPath).toBe(path.join(stateDir, "state", "nova.sqlite"));
     const persisted = await readPersistedInstalledPluginIndex({ stateDir });
     if (!persisted) {
       throw new Error("Expected persisted plugin index");
@@ -390,7 +390,7 @@ describe("plugin index install records store", () => {
 
   it("keeps persisted install record metadata over recovered npm records", async () => {
     const stateDir = makeStateDir();
-    const customInstallPath = path.join(stateDir, "custom", "node_modules", "@openclaw", "discord");
+    const customInstallPath = path.join(stateDir, "custom", "node_modules", "@nova", "discord");
     writeManagedNpmPlugin({
       stateDir,
       packageName: "@nova/discord",

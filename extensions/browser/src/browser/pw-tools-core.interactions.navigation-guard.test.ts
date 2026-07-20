@@ -1366,7 +1366,7 @@ describe("pw-tools-core interaction navigation guard", () => {
       {
         url: "https://example.com/report.pdf",
         suggestedFilename: "report.pdf",
-        path: "/tmp/openclaw/downloads/report.pdf",
+        path: "/tmp/nova/downloads/report.pdf",
       },
     ]);
     const dispose = vi.fn();
@@ -1390,7 +1390,7 @@ describe("pw-tools-core interaction navigation guard", () => {
       {
         url: "https://example.com/report.pdf",
         suggestedFilename: "report.pdf",
-        path: "/tmp/openclaw/downloads/report.pdf",
+        path: "/tmp/nova/downloads/report.pdf",
       },
     ]);
     expect(drain).toHaveBeenCalledWith({
@@ -1709,7 +1709,7 @@ describe("pw-tools-core interaction navigation guard", () => {
       {
         url: "https://example.com/report.pdf",
         suggestedFilename: "report.pdf",
-        path: "/tmp/openclaw/downloads/report.pdf",
+        path: "/tmp/nova/downloads/report.pdf",
       },
     ]);
     const dispose = vi.fn();

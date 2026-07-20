@@ -42,7 +42,7 @@ describe("resolveAmbientNodeProxyAgent", () => {
   });
 
   function writeTempCa(contents: string): string {
-    const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-extension-shared-proxy-ca-"));
+    const dir = mkdtempSync(path.join(os.tmpdir(), "nova-extension-shared-proxy-ca-"));
     tempDirs.push(dir);
     const caFile = path.join(dir, "proxy-ca.pem");
     writeFileSync(caFile, contents, "utf8");

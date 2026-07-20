@@ -284,9 +284,9 @@ describe("irc client fallback nick", () => {
     expect(nick).toMatch(/^mybot_\d*$/);
   });
 
-  it("falls back to openclaw when a colliding nick is entirely special characters", async () => {
+  it("falls back to nova when a colliding nick is entirely special characters", async () => {
     const nick = await connectAfterNickCollision("!!!");
-    expect(nick).toMatch(/^openclaw_\d*$/);
+    expect(nick).toMatch(/^nova_\d*$/);
   });
 
   it("truncates a long fallback nick to 30 characters", async () => {

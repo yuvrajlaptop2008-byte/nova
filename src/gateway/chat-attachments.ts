@@ -5,7 +5,7 @@ import { MAX_IMAGE_BYTES } from "@nova/media-core/constants";
 import { extensionForMime, mimeTypeFromFilePath } from "@nova/media-core/mime";
 import { expectDefined } from "@nova/normalization-core";
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import type { PromptImageOrderEntry } from "../media/prompt-image-order.js";
 import { sniffMimeFromBase64 } from "../media/sniff-mime-from-base64.js";
@@ -114,7 +114,7 @@ export async function persistInboundImagesForTranscript(params: {
 }
 
 /** Resolve the maximum decoded attachment size accepted for chat image inputs. */
-export function resolveChatAttachmentMaxBytes(cfg: OpenClawConfig): number {
+export function resolveChatAttachmentMaxBytes(cfg: NovaConfig): number {
   const configured = cfg.agents?.defaults?.mediaMaxMb;
   const mb =
     typeof configured === "number" && Number.isFinite(configured) && configured > 0

@@ -29,10 +29,10 @@ describe("detectGhConfigDirMismatch", () => {
   it("returns 'explicit-gh-config-dir-set' when GH_CONFIG_DIR is already set", () => {
     const result = detectGhConfigDirMismatch(
       makeInput({
-        env: { HOME: "/agent/home", GH_CONFIG_DIR: "/etc/openclaw/gh" },
+        env: { HOME: "/agent/home", GH_CONFIG_DIR: "/etc/nova/gh" },
       }),
     );
-    expect(result).toEqual({ kind: "explicit-gh-config-dir-set", ghConfigDir: "/etc/openclaw/gh" });
+    expect(result).toEqual({ kind: "explicit-gh-config-dir-set", ghConfigDir: "/etc/nova/gh" });
   });
 
   it("returns 'no-process-home' when HOME and XDG and APPDATA are missing", () => {
@@ -56,13 +56,13 @@ describe("detectGhConfigDirMismatch", () => {
   it("flags a mismatch when /root/.config/gh has hosts.yml but the agent HOME does not", () => {
     const result = detectGhConfigDirMismatch(
       makeInput({
-        env: { HOME: "/root/.openclaw/agents/main/agent/codex-home/home" },
+        env: { HOME: "/root/.nova/agents/main/agent/codex-home/home" },
         fileExists: fileSet("/root/.config/gh/hosts.yml"),
       }),
     );
     expect(result).toEqual({
       kind: "mismatch",
-      effectiveConfigDir: "/root/.openclaw/agents/main/agent/codex-home/home/.config/gh",
+      effectiveConfigDir: "/root/.nova/agents/main/agent/codex-home/home/.config/gh",
       alternateConfigDir: "/root/.config/gh",
       alternateHostsFile: "/root/.config/gh/hosts.yml",
       alternateHomeHint: "/root",
@@ -73,13 +73,13 @@ describe("detectGhConfigDirMismatch", () => {
   it("uses SUDO_USER home as a candidate when set", () => {
     const result = detectGhConfigDirMismatch(
       makeInput({
-        env: { HOME: "/var/lib/openclaw/agent", SUDO_USER: "alice" },
+        env: { HOME: "/var/lib/nova/agent", SUDO_USER: "alice" },
         fileExists: fileSet("/home/alice/.config/gh/hosts.yml"),
       }),
     );
     expect(result).toEqual({
       kind: "mismatch",
-      effectiveConfigDir: "/var/lib/openclaw/agent/.config/gh",
+      effectiveConfigDir: "/var/lib/nova/agent/.config/gh",
       alternateConfigDir: "/home/alice/.config/gh",
       alternateHostsFile: "/home/alice/.config/gh/hosts.yml",
       alternateHomeHint: "/home/alice",
@@ -90,13 +90,13 @@ describe("detectGhConfigDirMismatch", () => {
   it("uses USER home as a fallback candidate when SUDO_USER is missing", () => {
     const result = detectGhConfigDirMismatch(
       makeInput({
-        env: { HOME: "/var/lib/openclaw/agent", USER: "ops" },
+        env: { HOME: "/var/lib/nova/agent", USER: "ops" },
         fileExists: fileSet("/home/ops/.config/gh/hosts.yml"),
       }),
     );
     expect(result).toEqual({
       kind: "mismatch",
-      effectiveConfigDir: "/var/lib/openclaw/agent/.config/gh",
+      effectiveConfigDir: "/var/lib/nova/agent/.config/gh",
       alternateConfigDir: "/home/ops/.config/gh",
       alternateHostsFile: "/home/ops/.config/gh/hosts.yml",
       alternateHomeHint: "/home/ops",

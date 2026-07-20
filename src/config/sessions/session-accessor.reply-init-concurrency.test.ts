@@ -458,7 +458,7 @@ describe("session accessor cross-process concurrency", () => {
   });
 
   it("commits after same-session activity from another process", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-reply-init-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-reply-init-"));
     const storePath = path.join(tempDir, "sessions.json");
     try {
       await upsertSessionEntry(
@@ -513,7 +513,7 @@ describe("session accessor cross-process concurrency", () => {
   }, 15_000);
 
   it("rejects a transcript rewrite after another process commits an append", async () => {
-    const tempDir = tempDirs.make("openclaw-transcript-rewrite-");
+    const tempDir = tempDirs.make("nova-transcript-rewrite-");
     const storePath = path.join(tempDir, "sessions.json");
     const sessionId = "cross-process-transcript";
     const scope = {
@@ -583,7 +583,7 @@ describe("session accessor cross-process concurrency", () => {
   }, 15_000);
 
   it("preserves locked replaceEvents without a prior readEvents call", async () => {
-    const tempDir = tempDirs.make("openclaw-transcript-replace-");
+    const tempDir = tempDirs.make("nova-transcript-replace-");
     const storePath = path.join(tempDir, "sessions.json");
     const sessionId = "replace-without-read";
     const scope = {
@@ -615,7 +615,7 @@ describe("session accessor cross-process concurrency", () => {
   });
 
   it("guards a second replace after replacing without a prior read", async () => {
-    const tempDir = tempDirs.make("openclaw-transcript-double-replace-");
+    const tempDir = tempDirs.make("nova-transcript-double-replace-");
     const storePath = path.join(tempDir, "sessions.json");
     const sessionId = "double-replace-without-read";
     const scope = {
@@ -675,7 +675,7 @@ describe("session accessor cross-process concurrency", () => {
   }, 15_000);
 
   it("refreshes a read snapshot after an append in the same locked callback", async () => {
-    const tempDir = tempDirs.make("openclaw-transcript-self-append-");
+    const tempDir = tempDirs.make("nova-transcript-self-append-");
     const storePath = path.join(tempDir, "sessions.json");
     const sessionId = "rewrite-after-own-append";
     const scope = {

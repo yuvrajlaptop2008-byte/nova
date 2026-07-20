@@ -4,16 +4,16 @@
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Duplex } from "node:stream";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import type {
   AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginService,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
-} from "openclaw/plugin-sdk/plugin-entry";
+  NovaPluginApi,
+  NovaPluginNodeHostCommand,
+  NovaPluginSecurityAuditCollector,
+  NovaPluginService,
+  NovaPluginToolContext,
+  NovaPluginToolFactory,
+} from "nova/plugin-sdk/plugin-entry";
 import {
   BROWSER_REQUEST_GATEWAY_METHOD,
   BROWSER_REQUEST_GATEWAY_SCOPE,
@@ -101,7 +101,7 @@ function createLazyBrowserTool(opts?: {
   };
 }
 
-function createBrowserToolOptions(ctx: OpenClawPluginToolContext): {
+function createBrowserToolOptions(ctx: NovaPluginToolContext): {
   sandboxBridgeUrl?: string;
   allowHostControl?: boolean;
   agentSessionKey?: string;
@@ -158,7 +158,7 @@ export const browserPluginReload = {
 };
 
 /** Node-host command descriptors exposed by the Browser plugin. */
-export const browserPluginNodeHostCommands: OpenClawPluginNodeHostCommand[] = [
+export const browserPluginNodeHostCommands: NovaPluginNodeHostCommand[] = [
   {
     command: "browser.proxy",
     cap: "browser",
@@ -172,15 +172,15 @@ export const browserPluginNodeHostCommands: OpenClawPluginNodeHostCommand[] = [
 ];
 
 /** Security audit collectors contributed by the Browser plugin. */
-export const browserSecurityAuditCollectors: OpenClawPluginSecurityAuditCollector[] = [
+export const browserSecurityAuditCollectors: NovaPluginSecurityAuditCollector[] = [
   async (ctx) => {
     const { collectBrowserSecurityAuditFindings } = await loadBrowserRegistrationRuntimeModule();
     return collectBrowserSecurityAuditFindings(ctx);
   },
 ];
 
-function createLazyBrowserPluginService(): OpenClawPluginService {
-  let service: OpenClawPluginService | null = null;
+function createLazyBrowserPluginService(): NovaPluginService {
+  let service: NovaPluginService | null = null;
   const loadService = async () => {
     if (!service) {
       const { createBrowserPluginService } = await loadBrowserRegistrationRuntimeModule();
@@ -209,7 +209,7 @@ function createLazyBrowserPluginService(): OpenClawPluginService {
 }
 
 /** Register Browser tool factories, CLI, gateway methods, services, and audits. */
-export function registerBrowserPlugin(api: OpenClawPluginApi) {
+export function registerBrowserPlugin(api: NovaPluginApi) {
   initializeBrowserSessionTabStore(api.runtime);
   configureSystemProfileImportStateStore(
     api.runtime.state.openKeyedStore<SystemProfileImportState>({
@@ -217,8 +217,8 @@ export function registerBrowserPlugin(api: OpenClawPluginApi) {
       maxEntries: 1,
     }),
   );
-  api.registerTool(((ctx: OpenClawPluginToolContext) =>
-    createLazyBrowserTool(createBrowserToolOptions(ctx))) as OpenClawPluginToolFactory);
+  api.registerTool(((ctx: NovaPluginToolContext) =>
+    createLazyBrowserTool(createBrowserToolOptions(ctx))) as NovaPluginToolFactory);
   api.registerCli(
     async ({ program }) => {
       const { registerBrowserCli } = await import("./src/cli/browser-cli.js");

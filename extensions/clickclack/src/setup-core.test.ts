@@ -1,7 +1,7 @@
 // ClickClack tests cover non-interactive setup validation and config writes.
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createNonExitingRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/account-id";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { createNonExitingRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const claimClickClackSetupCode = vi.hoisted(() => vi.fn());
@@ -27,7 +27,7 @@ function makeClaimError(status: number, detail: string): Error {
 }
 
 function validate(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   accountId?: string;
   input: Parameters<NonNullable<typeof clickClackSetupAdapter.validateInput>>[0]["input"];
 }) {
@@ -68,7 +68,7 @@ describe("ClickClack setup adapter", () => {
   it("claims a full setup URL and prepares the token, workspace, and defaults", async () => {
     claimClickClackSetupCode.mockResolvedValue({
       token: "test-token",
-      bot: { id: "usr_bot", handle: "openclaw", display_name: "Nova" },
+      bot: { id: "usr_bot", handle: "nova", display_name: "Nova" },
       workspace: {
         id: "wsp_1",
         route_id: "clickclack",
@@ -105,7 +105,7 @@ describe("ClickClack setup adapter", () => {
   it("claims a bare setup code with an explicit HTTPS base URL", async () => {
     claimClickClackSetupCode.mockResolvedValue({
       token: "test-token",
-      bot: { id: "usr_bot", handle: "openclaw", display_name: "Nova" },
+      bot: { id: "usr_bot", handle: "nova", display_name: "Nova" },
       workspace: {
         id: "wsp_1",
         route_id: "clickclack",
@@ -134,7 +134,7 @@ describe("ClickClack setup adapter", () => {
   it("accepts setup-code URLs for local HTTP installations", async () => {
     claimClickClackSetupCode.mockResolvedValue({
       token: "test-token",
-      bot: { id: "usr_bot", handle: "openclaw", display_name: "Nova" },
+      bot: { id: "usr_bot", handle: "nova", display_name: "Nova" },
       workspace: {
         id: "wsp_1",
         route_id: "clickclack",
@@ -276,7 +276,7 @@ describe("ClickClack setup adapter", () => {
               workspace: "default",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         input: { useEnv: true },
       }),
     ).toBeNull();
@@ -289,7 +289,7 @@ describe("ClickClack setup adapter", () => {
               workspace: "default",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         input: { useEnv: true },
       }),
     ).toBe("ClickClack base URL must be a valid http(s) URL.");
@@ -333,7 +333,7 @@ describe("ClickClack setup adapter", () => {
 
     expect(
       clickClackSetupAdapter.applyAccountConfig({
-        cfg: { channels: { clickclack: { name: "Legacy" } } } as OpenClawConfig,
+        cfg: { channels: { clickclack: { name: "Legacy" } } } as NovaConfig,
         accountId: "Work Team",
         input: {
           name: "Work",
@@ -391,7 +391,7 @@ describe("ClickClack setup adapter", () => {
           workspace: "default",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const withToken = clickClackSetupAdapter.applyAccountConfig({
       cfg: {
@@ -401,7 +401,7 @@ describe("ClickClack setup adapter", () => {
             tokenFile: "/run/secrets/old-token",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: DEFAULT_ACCOUNT_ID,
       input: {
         token: "ccb_new",
@@ -420,7 +420,7 @@ describe("ClickClack setup adapter", () => {
             token: "ccb_old",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: DEFAULT_ACCOUNT_ID,
       input: {
         tokenFile: "/run/secrets/new-token",
@@ -443,7 +443,7 @@ describe("ClickClack setup adapter", () => {
             tokenFile: "/run/secrets/old-token",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: DEFAULT_ACCOUNT_ID,
       input: { useEnv: true },
     });
@@ -463,7 +463,7 @@ describe("ClickClack setup adapter", () => {
             tokenFile: "/run/secrets/default-token",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: "work",
       input: {
         token: "ccb_work",
@@ -486,7 +486,7 @@ describe("ClickClack setup adapter", () => {
           tokenFile: "/run/secrets/clickclack",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       applyClickClackCredentialConfig({
@@ -508,7 +508,7 @@ describe("ClickClack setup adapter", () => {
           workspace: "default",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtime = createNonExitingRuntimeEnv();
 
     await clickClackSetupAdapter.afterAccountConfigWritten?.({

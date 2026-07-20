@@ -1,15 +1,15 @@
 // Qqbot plugin module implements activation behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   normalizeGroupActivation,
   type GroupActivationMode,
-} from "openclaw/plugin-sdk/group-activation";
-import { getSessionEntry, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/group-activation";
+import { getSessionEntry, resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
 
-export type { GroupActivationMode } from "openclaw/plugin-sdk/group-activation";
+export type { GroupActivationMode } from "nova/plugin-sdk/group-activation";
 
 export function resolveGroupActivation(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   sessionKey: string;
   configRequireMention: boolean;

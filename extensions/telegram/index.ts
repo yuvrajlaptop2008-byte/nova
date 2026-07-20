@@ -1,5 +1,5 @@
 // Telegram plugin entrypoint registers its Nova integration.
-import { defineBundledChannelEntry } from "openclaw/plugin-sdk/channel-entry-contract";
+import { defineBundledChannelEntry } from "nova/plugin-sdk/channel-entry-contract";
 import { registerTelegramMiniApp } from "./miniapp-api.js";
 
 export default defineBundledChannelEntry({

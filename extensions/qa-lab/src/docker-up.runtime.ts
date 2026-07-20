@@ -1,7 +1,7 @@
 // Qa Lab plugin module implements docker up behavior.
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import { writeQaDockerHarnessFiles } from "./docker-harness.js";
 import {
   execCommand,
@@ -166,17 +166,11 @@ export async function runQaDockerUp(
     sleepImpl,
     composeFile,
   });
-  await waitForDockerServiceHealth(
-    "openclaw-qa-gateway",
-    composeFile,
-    repoRoot,
-    runCommand,
-    sleepImpl,
-  );
+  await waitForDockerServiceHealth("nova-qa-gateway", composeFile, repoRoot, runCommand, sleepImpl);
   let gatewayUrl = hostGatewayUrl;
   if (!(await isQaLabDockerHealthReachable(`${hostGatewayUrl}healthz`, fetchImpl))) {
     const containerGatewayUrl = await resolveComposeServiceUrl(
-      "openclaw-qa-gateway",
+      "nova-qa-gateway",
       18789,
       composeFile,
       repoRoot,

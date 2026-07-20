@@ -2,12 +2,12 @@
 import fs from "node:fs";
 import { createServer } from "node:http";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   acquireDebugProxyCaptureStore,
   resolveDebugProxySettings,
-} from "openclaw/plugin-sdk/proxy-capture";
+} from "nova/plugin-sdk/proxy-capture";
 import {
   closeQaHttpServer,
   handleQaBusRequest,
@@ -206,7 +206,7 @@ function sanitizeControlUiPublicUrl(url: string | null): string | null {
   return stripSensitiveQueryParams(withoutFragment);
 }
 
-function createQaLabConfig(baseUrl: string): OpenClawConfig {
+function createQaLabConfig(baseUrl: string): NovaConfig {
   return createQaChannelGatewayConfig({ baseUrl });
 }
 
@@ -247,7 +247,7 @@ function detectQaEvidenceArtifactContentType(filePath: string): string {
 }
 
 async function startQaGatewayLoop(params: { state: QaBusState; baseUrl: string }) {
-  const { qaChannelPlugin, setQaChannelRuntime } = await import("openclaw/plugin-sdk/qa-channel");
+  const { qaChannelPlugin, setQaChannelRuntime } = await import("nova/plugin-sdk/qa-channel");
   const runtime = createQaRunnerRuntime();
   setQaChannelRuntime(runtime);
   const cfg = createQaLabConfig(params.baseUrl);
@@ -312,7 +312,7 @@ export async function startQaLabServer(
   let controlUiUrl = sanitizeControlUiPublicUrl(params?.controlUiUrl?.trim() || null);
   let gateway:
     | {
-        cfg: OpenClawConfig;
+        cfg: NovaConfig;
         stop: () => Promise<void>;
       }
     | undefined;

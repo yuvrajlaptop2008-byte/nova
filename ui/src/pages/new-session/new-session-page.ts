@@ -13,7 +13,7 @@ import { t } from "../../i18n/index.ts";
 import { searchForSession } from "../../lib/sessions/index.ts";
 import { buildAgentMainSessionKey, normalizeAgentId } from "../../lib/sessions/session-key.ts";
 import { normalizeOptionalString } from "../../lib/string-coerce.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import "../../styles/chat.css";
 import "../../styles/new-session.css";
@@ -51,7 +51,7 @@ function renderDraftError(message: string) {
   `;
 }
 
-class NewSessionPage extends OpenClawLightDomElement {
+class NewSessionPage extends NovaLightDomElement {
   @property({ attribute: false }) data: NewSessionRouteData | undefined;
 
   @consume({ context: applicationContext, subscribe: true })
@@ -594,8 +594,8 @@ class NewSessionPage extends OpenClawLightDomElement {
       agent: this.selectedAgent(),
       context: this.context,
     });
-    return runtime && runtime !== "openclaw"
-      ? t("newSession.cloudRequiresOpenClawRuntime", { runtime })
+    return runtime && runtime !== "nova"
+      ? t("newSession.cloudRequiresNovaRuntime", { runtime })
       : undefined;
   }
 
@@ -1376,8 +1376,8 @@ class NewSessionPage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-new-session-page")) {
-  customElements.define("openclaw-new-session-page", NewSessionPage);
+if (!customElements.get("nova-new-session-page")) {
+  customElements.define("nova-new-session-page", NewSessionPage);
 }
 
 export type { NewSessionPage };

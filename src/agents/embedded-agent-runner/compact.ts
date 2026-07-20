@@ -9,7 +9,7 @@ import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import { resolveAgentModelFallbackValues } from "../../config/model-input.js";
 import { parseSqliteSessionFileMarker } from "../../config/sessions/sqlite-marker.js";
 import { acquireOwnedSessionTranscriptWriteLock } from "../../config/sessions/transcript-write-context.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   createFileBackedCompactionCheckpointStore,
   readSessionLeafStateFromTranscriptAsync,
@@ -74,7 +74,7 @@ import {
   applyAgentCompactionSettingsFromConfig,
   isSilentOverflowProneModel,
 } from "../agent-settings.js";
-import { createOpenClawCodingTools, resolveProcessToolScopeKey } from "../agent-tools.js";
+import { createNovaCodingTools, resolveProcessToolScopeKey } from "../agent-tools.js";
 import { listActiveProcessSessionReferences } from "../bash-process-references.js";
 import {
   makeBootstrapWarn,
@@ -94,7 +94,7 @@ import { resolveContextWindowInfo } from "../context-window-guard.js";
 import { resolveConversationCapabilityProfile } from "../conversation-capability-profile.js";
 import { formatUserTime, resolveUserTimeFormat, resolveUserTimezone } from "../date-time.js";
 import { DEFAULT_CONTEXT_TOKENS, DEFAULT_MODEL, DEFAULT_PROVIDER } from "../defaults.js";
-import { resolveOpenClawReferencePaths } from "../docs-path.js";
+import { resolveNovaReferencePaths } from "../docs-path.js";
 import { ensureSessionHeader } from "../embedded-agent-helpers.js";
 import { pickFallbackThinkingLevel } from "../embedded-agent-helpers.js";
 import { coerceToFailoverError, describeFailoverError } from "../failover-error.js";
@@ -265,7 +265,7 @@ function createCompactionDiagId(): string {
 
 function resolveCompactionProviderStream(params: {
   effectiveModel: ProviderRuntimeModel;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir: string;
   effectiveWorkspace: string;
   apiRegistry: ApiRegistry;
@@ -441,7 +441,7 @@ export async function compactEmbeddedAgentSessionDirect(
 ): Promise<EmbeddedAgentCompactResult> {
   const paramsBase = applyAgentRunSessionTargetIdentity(paramsInput);
   const lockedHarnessRuntime = normalizeOptionalAgentRuntimeId(paramsBase.agentHarnessId);
-  if (paramsBase.modelSelectionLocked === true && lockedHarnessRuntime !== "openclaw") {
+  if (paramsBase.modelSelectionLocked === true && lockedHarnessRuntime !== "nova") {
     return {
       ok: false,
       compacted: false,
@@ -1125,7 +1125,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
     });
     const toolsEnabled = supportsModelTools(effectiveModel);
     const toolsRaw = toolsEnabled
-      ? createOpenClawCodingTools({
+      ? createNovaCodingTools({
           exec: {
             ...params.execOverrides,
             config: params.config,
@@ -1348,7 +1348,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
     const nativeCommandGuidanceLines = listRegisteredPluginAgentPromptGuidance({
       surface: promptSurface,
     });
-    const openClawReferences = await resolveOpenClawReferencePaths({
+    const novaReferences = await resolveNovaReferencePaths({
       workspaceDir: effectiveWorkspace,
       argv1: process.argv[1],
       cwd: effectiveCwd,
@@ -1393,8 +1393,8 @@ async function compactEmbeddedAgentSessionDirectOnce(
           defaultAgentId,
         }),
         skillsPrompt,
-        docsPath: openClawReferences.docsPath ?? undefined,
-        sourcePath: openClawReferences.sourcePath ?? undefined,
+        docsPath: novaReferences.docsPath ?? undefined,
+        sourcePath: novaReferences.sourcePath ?? undefined,
         promptMode,
         promptSurface,
         sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
@@ -1507,7 +1507,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
       await resourceLoader.reload();
       // DefaultResourceLoader.reload() rehydrates settings from disk and can drop Nova
       // compaction overrides applied in createPreparedEmbeddedAgentSettingsManager — same
-      // rehydration also restores Nova runtime's auto-compaction (openclaw#75799), so re-apply
+      // rehydration also restores Nova runtime's auto-compaction (nova#75799), so re-apply
       // both guards. effectiveModel.baseUrl matches the surrounding scope so
       // auth-profile-injected baseUrls reach the endpoint-class detector.
       applyAgentCompactionSettingsFromConfig({

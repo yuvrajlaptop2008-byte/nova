@@ -29,7 +29,7 @@ struct OnboardingPermissionsStep: View {
                 .padding(.top, 30)
 
                 Text("You can change any of these later in Settings.")
-                    .font(OpenClawType.caption)
+                    .font(NovaType.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
@@ -41,9 +41,9 @@ struct OnboardingPermissionsStep: View {
                     self.onContinue()
                 } label: {
                     Text("Continue")
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                 }
-                .buttonStyle(OpenClawPrimaryActionButtonStyle())
+                .buttonStyle(NovaPrimaryActionButtonStyle())
                 .padding(.top, 22)
             }
         }

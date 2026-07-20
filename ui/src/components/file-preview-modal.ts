@@ -2,7 +2,7 @@
 import { css, html, type PropertyValues } from "lit";
 import { property, query } from "lit/decorators.js";
 import { t } from "../i18n/index.ts";
-import { OpenClawLitElement } from "../lit/openclaw-element.ts";
+import { NovaLitElement } from "../lit/nova-element.ts";
 import { renderCopyButton } from "./copy-button.ts";
 import { icons } from "./icons.ts";
 import "./modal-dialog.ts";
@@ -13,7 +13,7 @@ type FilePreviewModalFile = {
   contents: string;
 };
 
-export class OpenClawFilePreviewModal extends OpenClawLitElement {
+export class NovaFilePreviewModal extends NovaLitElement {
   @property({ attribute: false }) files: FilePreviewModalFile[] = [];
   @property() activePath = "";
   @property() query = "";
@@ -477,9 +477,9 @@ export class OpenClawFilePreviewModal extends OpenClawLitElement {
     const searchPlaceholder = this.searchPlaceholder || t("filePreview.searchPlaceholder");
 
     return html`
-      <openclaw-modal-dialog
+      <nova-modal-dialog
         label=${label}
-        style="--openclaw-modal-width: min(1100px, 92vw); --openclaw-modal-max-height: 86vh;"
+        style="--nova-modal-width: min(1100px, 92vw); --nova-modal-max-height: 86vh;"
         @modal-cancel=${this.emitClose}
         @keydown=${this.handleKeydown}
       >
@@ -524,7 +524,7 @@ export class OpenClawFilePreviewModal extends OpenClawLitElement {
             </button>
           </footer>
         </div>
-      </openclaw-modal-dialog>
+      </nova-modal-dialog>
     `;
   }
 
@@ -758,6 +758,6 @@ function iconForFile(path: string) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-file-preview-modal": OpenClawFilePreviewModal;
+    "nova-file-preview-modal": NovaFilePreviewModal;
   }
 }

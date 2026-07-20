@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { manualTranscriptSourceProvider } from "../../transcripts/manual-source.js";
 import { getTranscriptSourceProvider } from "../../transcripts/provider-registry.js";
 import type {
@@ -15,7 +15,7 @@ export type TranscriptsLogger = {
 };
 
 export type TranscriptsRuntimeContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   stateDir: string;
   logger: TranscriptsLogger;
 };

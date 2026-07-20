@@ -1,11 +1,11 @@
 // Discord plugin module implements model picker.state behavior.
 import { createHash } from "node:crypto";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import type { ModelsProviderData } from "openclaw/plugin-sdk/models-provider-runtime";
-import { parseStrictInteger, parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import type { ModelsProviderData } from "nova/plugin-sdk/models-provider-runtime";
+import { parseStrictInteger, parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
+import { normalizeProviderId } from "nova/plugin-sdk/provider-model-shared";
 import { decodeCustomIdComponent, encodeCustomIdComponent } from "../custom-id-codec.js";
 import type { ComponentData } from "../internal/discord.js";
 
@@ -116,7 +116,7 @@ export type DiscordModelPickerModelPage = DiscordModelPickerPage<string> & {
 };
 
 const loadModelsProviderRuntime = createLazyRuntimeModule(
-  () => import("openclaw/plugin-sdk/models-provider-runtime"),
+  () => import("nova/plugin-sdk/models-provider-runtime"),
 );
 
 function isValidCommandContext(value: string): value is DiscordModelPickerCommandContext {
@@ -190,7 +190,7 @@ function paginateItems<T>(params: {
 }
 
 export async function loadDiscordModelPickerData(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId?: string,
 ): Promise<ModelsProviderData> {
   const { buildModelsProviderData } = await loadModelsProviderRuntime();

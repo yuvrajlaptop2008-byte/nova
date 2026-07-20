@@ -2,7 +2,7 @@
 import { isDeepStrictEqual } from "node:util";
 import type { GatewayAuthChoice, OnboardOptions } from "../commands/onboard-types.js";
 import { createConfigIO, replaceConfigFile, resolveGatewayPort } from "../config/config.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/types.openclaw.js";
+import type { ConfigFileSnapshot, NovaConfig } from "../config/types.nova.js";
 import {
   commitConfigWriteWithPendingPluginInstalls,
   hasPendingPluginInstallRecords,
@@ -41,11 +41,11 @@ function mergeWizardConfigValueOntoLatest(current: unknown, base: unknown, next:
 
 /** Preserve concurrent edits while applying only changes made by an interactive wizard. */
 export function mergeWizardConfigOntoLatest(
-  current: OpenClawConfig,
-  base: OpenClawConfig,
-  next: OpenClawConfig,
-): OpenClawConfig {
-  return mergeWizardConfigValueOntoLatest(current, base, next) as OpenClawConfig;
+  current: NovaConfig,
+  base: NovaConfig,
+  next: NovaConfig,
+): NovaConfig {
+  return mergeWizardConfigValueOntoLatest(current, base, next) as NovaConfig;
 }
 
 /**
@@ -53,17 +53,17 @@ export function mergeWizardConfigOntoLatest(
  * flows never drop install records that a concurrent migration already staged.
  */
 export async function writeWizardConfigFile(
-  configInput: OpenClawConfig,
+  configInput: NovaConfig,
   opts: {
     allowConfigSizeDrop?: boolean;
     /** Reject the write if config changed after the caller's verified snapshot. */
     baseHash?: string;
     /** Preserve an absent-file precondition that cannot be represented by baseHash. */
     baseSnapshot?: ConfigFileSnapshot;
-    migrationBaseConfig?: OpenClawConfig;
+    migrationBaseConfig?: NovaConfig;
     onPendingPluginInstallMigration?: () => void;
   } = {},
-): Promise<OpenClawConfig> {
+): Promise<NovaConfig> {
   let config = configInput;
   let baseHash = opts.baseHash;
   let baseSnapshot = opts.baseSnapshot;
@@ -121,10 +121,10 @@ export async function readSetupConfigFileSnapshot() {
   return await createConfigIO({ pluginValidation: "skip" }).readConfigFileSnapshot();
 }
 
-export async function readValidSetupConfigFile(): Promise<OpenClawConfig> {
+export async function readValidSetupConfigFile(): Promise<NovaConfig> {
   const snapshot = await readSetupConfigFileSnapshot();
   if (!snapshot.valid) {
-    throw new Error("Migration target config became invalid. Run `openclaw doctor`.");
+    throw new Error("Migration target config became invalid. Run `nova doctor`.");
   }
   return snapshot.exists ? (snapshot.sourceConfig ?? snapshot.config) : {};
 }
@@ -133,8 +133,8 @@ export async function readValidSetupConfigFile(): Promise<OpenClawConfig> {
 export async function requireRiskAcknowledgement(params: {
   opts: OnboardOptions;
   prompter: WizardPrompter;
-  config: OpenClawConfig;
-}): Promise<OpenClawConfig> {
+  config: NovaConfig;
+}): Promise<NovaConfig> {
   if (params.config.wizard?.securityAcknowledgedAt) {
     return params.config;
   }
@@ -155,7 +155,7 @@ export async function requireRiskAcknowledgement(params: {
   return applySecurityAcknowledgement(params.config);
 }
 
-function applySecurityAcknowledgement(config: OpenClawConfig): OpenClawConfig {
+function applySecurityAcknowledgement(config: NovaConfig): NovaConfig {
   if (config.wizard?.securityAcknowledgedAt) {
     return config;
   }
@@ -170,7 +170,7 @@ function applySecurityAcknowledgement(config: OpenClawConfig): OpenClawConfig {
 
 /** Derive quickstart gateway defaults, preserving any existing gateway settings. */
 export function resolveQuickstartGatewayDefaults(
-  baseConfig: OpenClawConfig,
+  baseConfig: NovaConfig,
 ): QuickstartGatewayDefaults {
   const hasExisting =
     typeof baseConfig.gateway?.port === "number" ||

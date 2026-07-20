@@ -1099,7 +1099,6 @@ const testing = {
 } as const;
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.nodeHostInvokeTestApi")] =
-    testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.nodeHostInvokeTestApi")] = testing;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

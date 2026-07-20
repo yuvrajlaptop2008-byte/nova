@@ -1,11 +1,11 @@
 // Provider-index normalization tests cover preview catalogs, install metadata, auth choices, and malformed input.
 import { describe, expect, it } from "vitest";
-import { loadOpenClawProviderIndex } from "./index.js";
-import { normalizeOpenClawProviderIndex } from "./normalize.js";
+import { loadNovaProviderIndex } from "./index.js";
+import { normalizeNovaProviderIndex } from "./normalize.js";
 
 describe("Nova provider index", () => {
   it("normalizes provider preview catalog rows through model catalog validation", () => {
-    const index = normalizeOpenClawProviderIndex({
+    const index = normalizeNovaProviderIndex({
       version: 1,
       providers: {
         Moonshot: {
@@ -15,7 +15,7 @@ describe("Nova provider index", () => {
             id: "moonshot",
             package: " @nova/plugin-moonshot ",
             install: {
-              clawhubSpec: " clawhub:openclaw/moonshot@2026.5.2 ",
+              clawhubSpec: " clawhub:nova/moonshot@2026.5.2 ",
               npmSpec: " @nova/plugin-moonshot@1.2.3 ",
               defaultChoice: "clawhub",
               expectedIntegrity: " sha512-moonshot ",
@@ -66,7 +66,7 @@ describe("Nova provider index", () => {
             id: "moonshot",
             package: "@nova/plugin-moonshot",
             install: {
-              clawhubSpec: "clawhub:openclaw/moonshot@2026.5.2",
+              clawhubSpec: "clawhub:nova/moonshot@2026.5.2",
               npmSpec: "@nova/plugin-moonshot@1.2.3",
               defaultChoice: "clawhub",
               expectedIntegrity: "sha512-moonshot",
@@ -105,7 +105,7 @@ describe("Nova provider index", () => {
   });
 
   it("drops unsafe providers and malformed preview catalog rows", () => {
-    const index = normalizeOpenClawProviderIndex({
+    const index = normalizeNovaProviderIndex({
       version: 1,
       providers: {
         ["__proto__"]: {
@@ -142,7 +142,7 @@ describe("Nova provider index", () => {
   });
 
   it("loads the bundled provider index without runtime plugin loading", () => {
-    const index = loadOpenClawProviderIndex();
+    const index = loadNovaProviderIndex();
 
     expect(index.providers.moonshot?.previewCatalog).not.toHaveProperty("api");
     expect(index.providers.moonshot?.previewCatalog).not.toHaveProperty("baseUrl");

@@ -8,7 +8,7 @@ import {
   type AgentRunTerminalOutcome,
 } from "../agents/agent-run-terminal-outcome.js";
 import { shouldRouteCompletionThroughRequesterSession } from "../auto-reply/reply/completion-delivery-policy.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { onAgentEvent } from "../infra/agent-events.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { requestHeartbeat } from "../infra/heartbeat-wake.js";
@@ -99,10 +99,10 @@ type TaskRegistryDeliveryRuntime = Pick<
   "sendMessage"
 >;
 const TASK_REGISTRY_DELIVERY_RUNTIME_OVERRIDE_KEY = Symbol.for(
-  "openclaw.taskRegistry.deliveryRuntimeOverride",
+  "nova.taskRegistry.deliveryRuntimeOverride",
 );
 const TASK_REGISTRY_CONTROL_RUNTIME_OVERRIDE_KEY = Symbol.for(
-  "openclaw.taskRegistry.controlRuntimeOverride",
+  "nova.taskRegistry.controlRuntimeOverride",
 );
 const require = createRequire(import.meta.url);
 const TASK_REGISTRY_CONTROL_RUNTIME_CANDIDATES = [
@@ -2300,7 +2300,7 @@ export function linkTaskToFlowById(params: { taskId: string; flowId: string }): 
 }
 
 export async function cancelTaskById(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   taskId: string;
   reason?: string;
 }): Promise<{ found: boolean; cancelled: boolean; reason?: string; task?: TaskRecord }> {
@@ -2795,7 +2795,7 @@ function setTaskRegistryControlRuntimeForTests(runtime: TaskRegistryControlRunti
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.taskRegistryTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.taskRegistryTestApi")] = {
     maybeDeliverTaskStateChangeUpdate,
     resetTaskRegistryControlRuntimeForTests,
     resetTaskRegistryDeliveryRuntimeForTests,

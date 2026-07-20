@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-codex-media-path-e2e" NOVA_CODEX_MEDIA_PATH_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-codex-media-path-e2e" NOVA_CODEX_MEDIA_PATH_E2E_IMAGE)"
 PORT="$(docker_e2e_read_tcp_port_env NOVA_CODEX_MEDIA_PATH_PORT 18790)"
 TIMEOUT_SECONDS="$(docker_e2e_read_positive_int_env NOVA_CODEX_MEDIA_PATH_TIMEOUT_SECONDS 180)"
 LOG_TAIL_MAX_BYTES="$(docker_e2e_read_positive_int_env NOVA_CODEX_MEDIA_PATH_LOG_TAIL_MAX_BYTES 2097152)"

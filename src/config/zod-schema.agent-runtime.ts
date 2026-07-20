@@ -343,7 +343,7 @@ const CodexUserLocationSchema = z
   })
   .optional();
 
-const BLOCKED_WEB_SEARCH_KEYS_ISSUE_FIELD = "__openclawBlockedWebSearchKeys";
+const BLOCKED_WEB_SEARCH_KEYS_ISSUE_FIELD = "__novaBlockedWebSearchKeys";
 
 const ToolsWebSearchSchema = z
   .preprocess(

@@ -5,7 +5,7 @@
  */
 import type { cleanupBrowserSessionsForLifecycleEnd } from "../browser-lifecycle-cleanup.js";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ResolveContextEngineOptions } from "../context-engine/registry.js";
 import type { ContextEngine, SubagentEndReason } from "../context-engine/types.js";
 import { callGateway } from "../gateway/call.js";
@@ -156,7 +156,7 @@ type SubagentRegistryDeps = {
     params: Parameters<typeof ensureRuntimePluginsLoadedFn>[0],
   ) => void | Promise<void>;
   resolveContextEngine?: (
-    cfg?: OpenClawConfig,
+    cfg?: NovaConfig,
     options?: ResolveContextEngineOptions,
   ) => Promise<ContextEngine>;
 };
@@ -210,7 +210,7 @@ type ContextEngineInitModule = Pick<
 type ContextEngineRegistryModule = Pick<
   {
     resolveContextEngine: (
-      cfg?: OpenClawConfig,
+      cfg?: NovaConfig,
       options?: ResolveContextEngineOptions,
     ) => Promise<ContextEngine>;
   },
@@ -285,7 +285,7 @@ function loadRuntimePluginsModule(): Promise<RuntimePluginsModule> {
 }
 
 async function ensureSubagentRegistryPluginRuntimeLoaded(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   workspaceDir?: string;
   allowGatewaySubagentBinding?: boolean;
 }) {
@@ -298,7 +298,7 @@ async function ensureSubagentRegistryPluginRuntimeLoaded(params: {
 }
 
 async function resolveSubagentRegistryContextEngine(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options?: ResolveContextEngineOptions,
 ) {
   const initModule = await loadContextEngineInitModule();
@@ -1264,7 +1264,7 @@ async function failAndCleanupRestoredQueuedRun(
   return true;
 }
 
-function resolveSubagentWaitTimeoutMs(cfg: OpenClawConfig, runTimeoutSeconds?: number) {
+function resolveSubagentWaitTimeoutMs(cfg: NovaConfig, runTimeoutSeconds?: number) {
   return subagentRegistryDeps.resolveAgentTimeoutMs({
     cfg,
     overrideSeconds: runTimeoutSeconds ?? 0,
@@ -2636,7 +2636,7 @@ export function markRequesterTurnYielded(params: {
   });
 }
 
-const SUBAGENT_REGISTRY_TEST_HANDLE = Symbol.for("openclaw.subagentRegistryTestApi");
+const SUBAGENT_REGISTRY_TEST_HANDLE = Symbol.for("nova.subagentRegistryTestApi");
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
   (globalThis as Record<PropertyKey, unknown>)[SUBAGENT_REGISTRY_TEST_HANDLE] = {
     addSubagentRunForTests,

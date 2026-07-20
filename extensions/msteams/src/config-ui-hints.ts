@@ -1,5 +1,5 @@
 // Msteams helper module supports config ui hints behavior.
-import type { ChannelConfigUiHint } from "openclaw/plugin-sdk/channel-core";
+import type { ChannelConfigUiHint } from "nova/plugin-sdk/channel-core";
 
 export const msTeamsChannelConfigUiHints = {
   "": {

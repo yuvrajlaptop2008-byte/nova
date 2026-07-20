@@ -5,25 +5,25 @@ import path from "node:path";
 import type {
   OpenKeyedStoreOptions,
   PluginStateKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import registerPhoneControl from "./index.js";
 import type {
-  OpenClawPluginApi,
-  OpenClawPluginCommandDefinition,
-  OpenClawPluginService,
+  NovaPluginApi,
+  NovaPluginCommandDefinition,
+  NovaPluginService,
   PluginCommandContext,
 } from "./runtime-api.js";
 
-type RegisteredNodeInvokePolicy = Parameters<OpenClawPluginApi["registerNodeInvokePolicy"]>[0];
+type RegisteredNodeInvokePolicy = Parameters<NovaPluginApi["registerNodeInvokePolicy"]>[0];
 type NodeInvokePolicyContext = Parameters<RegisteredNodeInvokePolicy["handle"]>[0];
 
-const PHONE_CONTROL_STATE_PREFIX = "openclaw-phone-control-test-";
+const PHONE_CONTROL_STATE_PREFIX = "nova-phone-control-test-";
 const WRITE_COMMANDS = ["calendar.add", "contacts.add", "reminders.add", "sms.send"] as const;
 const FRESH_SETUP_DENY_COMMANDS = [
   "calendar.add",
@@ -37,12 +37,12 @@ function createApi(params: {
   stateDir: string;
   getConfig: () => Record<string, unknown>;
   writeConfig: (next: Record<string, unknown>) => Promise<void>;
-  registerCommand: (command: OpenClawPluginCommandDefinition) => void;
-  registerNodeInvokePolicy?: OpenClawPluginApi["registerNodeInvokePolicy"];
-  registerService?: (service: OpenClawPluginService) => void;
-  openKeyedStore?: OpenClawPluginApi["runtime"]["state"]["openKeyedStore"];
+  registerCommand: (command: NovaPluginCommandDefinition) => void;
+  registerNodeInvokePolicy?: NovaPluginApi["registerNodeInvokePolicy"];
+  registerService?: (service: NovaPluginService) => void;
+  openKeyedStore?: NovaPluginApi["runtime"]["state"]["openKeyedStore"];
   beforeMutateConfig?: (draft: Record<string, unknown>) => void | Promise<void>;
-}): OpenClawPluginApi {
+}): NovaPluginApi {
   return createTestPluginApi({
     id: "phone-control",
     name: "phone-control",
@@ -72,7 +72,7 @@ function createApi(params: {
           await mutate(nextConfig);
           await params.writeConfig(nextConfig);
           return {
-            path: "/tmp/openclaw.json",
+            path: "/tmp/nova.json",
             previousHash: null,
             persistedHash: null,
             snapshot: {},
@@ -85,7 +85,7 @@ function createApi(params: {
         replaceConfigFile: ({ nextConfig }: { nextConfig: unknown }) =>
           params.writeConfig(nextConfig as Record<string, unknown>),
       },
-    } as unknown as OpenClawPluginApi["runtime"],
+    } as unknown as NovaPluginApi["runtime"],
     registerCommand: params.registerCommand,
     ...(params.registerNodeInvokePolicy
       ? { registerNodeInvokePolicy: params.registerNodeInvokePolicy }
@@ -124,7 +124,7 @@ function createPhoneControlConfig(): Record<string, unknown> {
 function createMockOpenKeyedStore(params: {
   lookup: (key: string) => Promise<unknown>;
   delete?: (key: string) => Promise<boolean>;
-}): OpenClawPluginApi["runtime"]["state"]["openKeyedStore"] {
+}): NovaPluginApi["runtime"]["state"]["openKeyedStore"] {
   return <T>() => {
     const lookup = params.lookup as (key: string) => Promise<T | undefined>;
     const remove = params.delete ?? (async () => true);
@@ -184,7 +184,7 @@ function createInMemoryArmStore(
     values.delete(key);
     return structuredClone(value);
   });
-  const openKeyedStore: OpenClawPluginApi["runtime"]["state"]["openKeyedStore"] = <T>() =>
+  const openKeyedStore: NovaPluginApi["runtime"]["state"]["openKeyedStore"] = <T>() =>
     ({
       register,
       registerIfAbsent: vi.fn(async () => true),
@@ -229,16 +229,16 @@ function createDeferred() {
 
 async function withRegisteredPhoneControl(
   run: (params: {
-    command: OpenClawPluginCommandDefinition;
+    command: NovaPluginCommandDefinition;
     policy: RegisteredNodeInvokePolicy;
-    service: OpenClawPluginService;
+    service: NovaPluginService;
     writeConfigFile: ReturnType<typeof vi.fn>;
     getConfig: () => Record<string, unknown>;
     stateDir: string;
   }) => Promise<void>,
   options: {
     initialConfig?: Record<string, unknown>;
-    openKeyedStore?: OpenClawPluginApi["runtime"]["state"]["openKeyedStore"];
+    openKeyedStore?: NovaPluginApi["runtime"]["state"]["openKeyedStore"];
     beforeWriteConfig?: (next: Record<string, unknown>) => Promise<void>;
     beforeMutateConfig?: (draft: Record<string, unknown>) => void | Promise<void>;
   } = {},
@@ -251,9 +251,9 @@ async function withRegisteredPhoneControl(
       config = next;
     });
 
-    let command: OpenClawPluginCommandDefinition | undefined;
+    let command: NovaPluginCommandDefinition | undefined;
     let policy: RegisteredNodeInvokePolicy | undefined;
-    let service: OpenClawPluginService | undefined;
+    let service: NovaPluginService | undefined;
     registerPhoneControl.register(
       createApi({
         stateDir,
@@ -1056,7 +1056,7 @@ describe("phone-control plugin", () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), PHONE_CONTROL_STATE_PREFIX));
     try {
       const lookup = vi.fn(async () => undefined);
-      let service: OpenClawPluginService | undefined;
+      let service: NovaPluginService | undefined;
 
       registerPhoneControl.register(
         createApi({
@@ -1123,7 +1123,7 @@ describe("phone-control plugin", () => {
         removedFromDeny: [...WRITE_COMMANDS],
       }));
       const removeState = vi.fn(async () => true);
-      let service: OpenClawPluginService | undefined;
+      let service: NovaPluginService | undefined;
 
       registerPhoneControl.register(
         createApi({

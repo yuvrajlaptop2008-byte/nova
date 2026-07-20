@@ -9,14 +9,14 @@ import { encodePluginInstallDirName, validatePluginId } from "./install-paths.js
 import {
   defaultLogger,
   emitSuccessfulPluginInstallSecurityEvent,
-  ensureOpenClawExtensions,
+  ensureNovaExtensions,
   installPluginDirectoryIntoExtensions,
   loadPluginInstallRuntime,
   readOptionalPackageManifest,
   resolvePreparedDirectoryInstallTarget,
   runInstallSourceScan,
   sourceFamilyForInstallPolicyKind,
-  validateOpenClawPackageInstallCompatibility,
+  validateNovaPackageInstallCompatibility,
   type PreparedInstallTarget,
 } from "./install-shared.js";
 import {
@@ -30,7 +30,7 @@ import {
 
 const PLUGIN_ARCHIVE_ROOT_MARKERS = [
   "package.json",
-  "openclaw.plugin.json",
+  "nova.plugin.json",
   ".codex-plugin/plugin.json",
   ".claude-plugin/plugin.json",
   ".cursor-plugin/plugin.json",
@@ -128,7 +128,7 @@ async function installBundleFromSourceDir(
   const packageMetadata = packageManifestResult.manifest
     ? runtime.getPackageManifestMetadata(packageManifestResult.manifest)
     : undefined;
-  const compatibilityError = validateOpenClawPackageInstallCompatibility({
+  const compatibilityError = validateNovaPackageInstallCompatibility({
     runtime,
     pluginId,
     packageMetadata,
@@ -223,7 +223,7 @@ async function detectNativePackageInstallSource(packageDir: string): Promise<boo
 
   try {
     const manifest = await runtime.readJsonFile<PackageManifest>(manifestPath);
-    return ensureOpenClawExtensions({ manifest }).ok;
+    return ensureNovaExtensions({ manifest }).ok;
   } catch {
     return false;
   }
@@ -347,7 +347,7 @@ export async function installPluginFromArchive(
 
   const result = await runtime.withExtractedArchiveRoot({
     archivePath,
-    tempDirPrefix: "openclaw-plugin-",
+    tempDirPrefix: "nova-plugin-",
     timeoutMs,
     logger,
     rootMarkers: PLUGIN_ARCHIVE_ROOT_MARKERS,
@@ -455,6 +455,6 @@ export async function installPluginFromPath(
     ok: false,
     code: PLUGIN_INSTALL_ERROR_CODE.UNSUPPORTED_PLAIN_FILE_PLUGIN,
     error:
-      "Plain file plugin installs are not supported. Install a plugin directory or archive that contains openclaw.plugin.json, or list standalone plugin files in plugins.load.paths.",
+      "Plain file plugin installs are not supported. Install a plugin directory or archive that contains nova.plugin.json, or list standalone plugin files in plugins.load.paths.",
   };
 }

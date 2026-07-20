@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { extractAssistantVisibleText } from "../../shared/chat-message-content.js";
 import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
+  openNovaAgentDatabase,
+  runNovaAgentWriteTransaction,
+  type NovaAgentDatabase,
+} from "../../state/nova-agent-db.js";
 import type { TranscriptEvent } from "./session-accessor.sqlite-contract.js";
 import {
   collectSessionEntryLookupKeys,
@@ -70,7 +70,7 @@ export async function listSqliteSessionBranches(
     ...(params.storePath ? { storePath: params.storePath } : {}),
   });
   try {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const currentEntry = readSessionEntryRow(database, sourceKey)?.entry;
     if (!currentEntry?.sessionId) {
       return { status: "missing-session" };
@@ -133,7 +133,7 @@ async function mutateSqliteSessionAtMessage(
     let result: SessionTranscriptMutationResult = { status: "failed" };
     let previousIdentity = new Map<string, SessionEntry>();
     let currentIdentity = new Map<string, SessionEntry>();
-    runOpenClawAgentWriteTransaction((database) => {
+    runNovaAgentWriteTransaction((database) => {
       const identityKeys = uniqueStrings([
         ...collectSessionEntryLookupKeys(database, sourceKey),
         ...collectSessionEntryLookupKeys(database, targetKey),
@@ -154,7 +154,7 @@ async function mutateSqliteSessionAtMessage(
 }
 
 function mutateSqliteSessionAtMessageInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   resolved: ResolvedSqliteScope,
   params: {
     canonicalSourceKey: string;

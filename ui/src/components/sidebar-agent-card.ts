@@ -1,14 +1,14 @@
 import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { t } from "../i18n/index.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import { icons } from "./icons.ts";
 import "./tooltip.ts";
 
 /** Sidebar identity row: who you're talking to. The whole body opens the
     agent menu (switcher + utilities) — the conversation itself lives on the
     Home page row, so this row carries profile semantics only. */
-class SidebarAgentCard extends OpenClawLightDomContentsElement {
+class SidebarAgentCard extends NovaLightDomContentsElement {
   @property({ attribute: false }) agentName = "";
   @property({ attribute: false }) avatarUrl: string | null = null;
   @property({ attribute: false }) avatarText = "";
@@ -96,6 +96,6 @@ class SidebarAgentCard extends OpenClawLightDomContentsElement {
   }
 }
 
-if (!customElements.get("openclaw-sidebar-agent-card")) {
-  customElements.define("openclaw-sidebar-agent-card", SidebarAgentCard);
+if (!customElements.get("nova-sidebar-agent-card")) {
+  customElements.define("nova-sidebar-agent-card", SidebarAgentCard);
 }

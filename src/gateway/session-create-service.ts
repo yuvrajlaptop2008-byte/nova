@@ -29,7 +29,7 @@ import {
   resolveSessionEntryAccessTarget,
 } from "../config/sessions/session-accessor.js";
 import { inheritSessionSelection } from "../config/sessions/session-entry-selection.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   createInternalHookEvent,
   hasInternalHookListeners,
@@ -72,7 +72,7 @@ type RequestedSessionAgentIdResolution =
   | { ok: false; error: ErrorShape };
 
 export function resolveRequestedSessionAgentId(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   key: string,
   explicitAgentId?: string,
 ): RequestedSessionAgentIdResolution {
@@ -156,7 +156,7 @@ type CreateGatewaySessionResult =
   | { ok: false; error: ErrorShape };
 
 export async function createGatewaySession(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key?: string;
   agentId?: string;
   label?: string;

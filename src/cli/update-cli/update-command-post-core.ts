@@ -15,7 +15,7 @@ import {
   assertConfigWriteAllowedInCurrentMode,
   readConfigFileSnapshot,
 } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
 import { resolveGatewayInstallEntrypoint } from "../../daemon/gateway-entrypoint.js";
 import { readJsonIfExists, writeJson } from "../../infra/json-files.js";
@@ -176,7 +176,7 @@ export async function updateFinalizeCommand(opts: UpdateFinalizeOptions): Promis
       ? {
           sourceConfig: configSnapshot.sourceConfig,
           authoredConfig: isRecord(configSnapshot.parsed)
-            ? (configSnapshot.parsed as OpenClawConfig)
+            ? (configSnapshot.parsed as NovaConfig)
             : configSnapshot.sourceConfig,
         }
       : undefined);
@@ -495,7 +495,7 @@ export async function continuePostCoreUpdateInFreshProcess(params: {
   if (params.opts.timeout) {
     argv.push("--timeout", params.opts.timeout);
   }
-  const resultDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-post-core-"));
+  const resultDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-post-core-"));
   const resultPath = path.join(resultDir, "plugins.json");
   const installRecordsPath = path.join(resultDir, "plugin-install-records.json");
   const sourceConfigPath = path.join(resultDir, "source-config.json");

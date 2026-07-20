@@ -1,7 +1,7 @@
 import {
   MAX_DATE_TIMESTAMP_MS,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/number-runtime";
 
 export const POSITION_STEP = 1000;
 export const MAX_CARDS = 2000;

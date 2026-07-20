@@ -17,7 +17,7 @@ afterEach(() => {
 });
 
 it("uses the shared resolver and rejects cross-origin presence avatar metadata", async () => {
-  const avatar = document.createElement("openclaw-viewer-avatar") as ViewerAvatarElement;
+  const avatar = document.createElement("nova-viewer-avatar") as ViewerAvatarElement;
   avatar.user = {
     id: "profile-mallory",
     name: "Mallory",
@@ -34,7 +34,7 @@ it("uses the shared resolver and rejects cross-origin presence avatar metadata",
 });
 
 it("renders trusted presence avatar routes directly", async () => {
-  const avatar = document.createElement("openclaw-viewer-avatar") as ViewerAvatarElement;
+  const avatar = document.createElement("nova-viewer-avatar") as ViewerAvatarElement;
   avatar.user = {
     id: "profile-ada",
     name: "Ada Lovelace",
@@ -57,7 +57,7 @@ type ViewerFacepileElement = HTMLElement & {
 };
 
 function mountFooterFacepile() {
-  const facepile = document.createElement("openclaw-viewer-facepile") as ViewerFacepileElement;
+  const facepile = document.createElement("nova-viewer-facepile") as ViewerFacepileElement;
   facepile.variant = "footer";
   facepile.selfInstanceId = "self-instance";
   facepile.presencePayload = {
@@ -117,11 +117,11 @@ it("opens a who's-online roster from the footer facepile", async () => {
   );
   expect(rows[2]?.querySelector(".presence-roster-menu__email")).toBeNull();
   // Each row carries the shared avatar element.
-  expect(rows[1]?.querySelector("openclaw-viewer-avatar")).not.toBeNull();
+  expect(rows[1]?.querySelector("nova-viewer-avatar")).not.toBeNull();
 });
 
 it("keeps session facepiles as plain non-interactive avatar clusters", async () => {
-  const facepile = document.createElement("openclaw-viewer-facepile") as ViewerFacepileElement;
+  const facepile = document.createElement("nova-viewer-facepile") as ViewerFacepileElement;
   facepile.variant = "session";
   facepile.presencePayload = {
     presence: [

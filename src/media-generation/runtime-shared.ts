@@ -14,7 +14,7 @@ import {
   resolveAgentModelPrimaryValue,
 } from "../config/model-input.js";
 import type { AgentModelConfig } from "../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { formatErrorMessage, toErrorObject } from "../infra/errors.js";
 import { getProviderEnvVars as getDefaultProviderEnvVars } from "../secrets/provider-env-vars.js";
 
@@ -70,7 +70,7 @@ type CapabilityProviderCandidate = {
   aliases?: readonly string[];
   defaultModel?: string | null;
   models?: readonly string[];
-  isConfigured?: (ctx: { cfg?: OpenClawConfig; agentDir?: string }) => boolean;
+  isConfigured?: (ctx: { cfg?: NovaConfig; agentDir?: string }) => boolean;
 };
 
 type ParsedAspectRatio = {
@@ -86,7 +86,7 @@ type ParsedSize = {
   area: number;
 };
 
-function resolveCurrentDefaultProviderId(cfg?: OpenClawConfig): string {
+function resolveCurrentDefaultProviderId(cfg?: NovaConfig): string {
   const configured = resolveAgentModelPrimaryValue(cfg?.agents?.defaults?.model);
   const trimmed = normalizeOptionalString(configured);
   if (!trimmed) {
@@ -102,7 +102,7 @@ function resolveCurrentDefaultProviderId(cfg?: OpenClawConfig): string {
 
 function isCapabilityProviderConfigured(params: {
   provider: CapabilityProviderCandidate;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
 }): boolean {
   if (params.provider.isConfigured) {
@@ -125,9 +125,9 @@ function isCapabilityProviderConfigured(params: {
 }
 
 function resolveAutoCapabilityFallbackRefs(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir?: string;
-  listProviders: (cfg?: OpenClawConfig) => CapabilityProviderCandidate[];
+  listProviders: (cfg?: NovaConfig) => CapabilityProviderCandidate[];
 }): string[] {
   const providerDefaults = new Map<string, { ref: string; aliases: string[] }>();
   for (const provider of params.listProviders(params.cfg)) {
@@ -172,12 +172,12 @@ function resolveAutoCapabilityFallbackRefs(params: {
 
 /** Builds ordered provider/model candidates for one media capability request. */
 export function resolveCapabilityModelCandidates(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelConfig: AgentModelConfig | undefined;
   modelOverride?: string;
   parseModelRef: (raw: string | undefined) => ParsedProviderModelRef | null;
   agentDir?: string;
-  listProviders?: (cfg?: OpenClawConfig) => CapabilityProviderCandidate[];
+  listProviders?: (cfg?: NovaConfig) => CapabilityProviderCandidate[];
   autoProviderFallback?: boolean;
 }): ParsedProviderModelRef[] {
   const candidates: ParsedProviderModelRef[] = [];

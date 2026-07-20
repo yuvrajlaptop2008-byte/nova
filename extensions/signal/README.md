@@ -1,13 +1,13 @@
-# Signal OpenClaw channel
+# Signal Nova channel
 
-Official OpenClaw channel plugin for Signal.
+Official Nova channel plugin for Signal.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/signal
+nova plugins install @nova/signal
 ```
 
 ## Docs
 
-See `docs/channels/signal.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/channels/signal`.
+See `docs/channels/signal.md` in the Nova repository, or the published docs at `https://docs.nova.ai/channels/signal`.

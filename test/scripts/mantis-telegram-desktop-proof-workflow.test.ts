@@ -183,8 +183,8 @@ describe("Mantis Telegram Desktop proof workflow", () => {
   it("uses the Nova Mantis mention as the comment trigger", () => {
     const workflow = readFileSync(WORKFLOW, "utf8");
     const liveWorkflow = readFileSync(LIVE_WORKFLOW, "utf8");
-    expect(workflow).toContain("@openclaw-mantis");
-    expect(workflow).toContain("/openclaw-mantis");
+    expect(workflow).toContain("@nova-mantis");
+    expect(workflow).toContain("/nova-mantis");
     expect(workflow).toContain("mantis: telegram-visible-proof");
     expect(workflow).toContain('setOutput("should_run", "false")');
     expect(workflow).toContain('normalized.includes("telegram desktop")');
@@ -292,7 +292,7 @@ describe("Mantis Telegram Desktop proof workflow", () => {
   it("installs local proof tools before the Codex agent runs", () => {
     const install = workflowStep("Install local proof tools");
     expect(install.run).toContain("test -f scripts/e2e/telegram-user-driver.py");
-    expect(install.run).toContain("/usr/local/bin/openclaw-telegram-user-crabbox-proof");
+    expect(install.run).toContain("/usr/local/bin/nova-telegram-user-crabbox-proof");
     expect(install.run).toContain(
       'exec node --import tsx "${GITHUB_WORKSPACE}/scripts/e2e/telegram-user-crabbox-proof.ts" "$@"',
     );
@@ -307,7 +307,7 @@ describe("Mantis Telegram Desktop proof workflow", () => {
       "${{ github.workspace }}/scripts/e2e/telegram-user-driver.py",
     );
     expect(agent.env?.NOVA_TELEGRAM_USER_PROOF_CMD).toBe(
-      "/usr/local/bin/openclaw-telegram-user-crabbox-proof",
+      "/usr/local/bin/nova-telegram-user-crabbox-proof",
     );
     expect(agent.env?.NOVA_TELEGRAM_USER_CRABBOX_BIN).toBe("/usr/local/bin/crabbox");
     expect(agent.env?.CRABBOX_COORDINATOR).toContain(

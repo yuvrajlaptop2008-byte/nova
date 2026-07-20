@@ -2,16 +2,16 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
+import type { NovaConfig } from "nova/plugin-sdk/plugin-entry";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
 import {
   archiveLegacyStateSource,
-  detectOpenClawStateDatabaseSchemaMigrations,
+  detectNovaStateDatabaseSchemaMigrations,
   type PluginDoctorStateMigration,
   type PluginStateKeyedStore,
-  repairOpenClawStateDatabaseSchema,
-  type OpenClawStateDatabaseSchemaMigration,
-} from "openclaw/plugin-sdk/runtime-doctor";
+  repairNovaStateDatabaseSchema,
+  type NovaStateDatabaseSchemaMigration,
+} from "nova/plugin-sdk/runtime-doctor";
 import {
   buildVoiceCallLegacyJsonlEventKey,
   CALL_RECORD_CHUNK_MAX_ENTRIES,
@@ -95,7 +95,7 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
 }
 
 /** Return Voice Call agents whose templated core session stores need migration. */
-export function resolveSessionStoreAgentIds(params: { cfg: OpenClawConfig }): string[] {
+export function resolveSessionStoreAgentIds(params: { cfg: NovaConfig }): string[] {
   const agentIds = new Set<string>();
   for (const pluginId of ["voice-call", "@nova/voice-call"]) {
     const entry = params.cfg.plugins?.entries?.[pluginId];
@@ -139,7 +139,7 @@ function resolveVoiceCallStateDatabaseEnv(
   };
 }
 
-function describeVoiceCallSchemaMigration(migration: OpenClawStateDatabaseSchemaMigration): string {
+function describeVoiceCallSchemaMigration(migration: NovaStateDatabaseSchemaMigration): string {
   switch (migration.kind) {
     case "agent-databases-composite-primary-key":
       return "agent database registry primary key -> agent_id,path";
@@ -306,7 +306,7 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
       const storePath = resolveVoiceCallStorePath(params);
       const filePath = resolveVoiceCallLegacyCallLogPath(storePath);
       const { entries } = await readLegacyCallRecords(filePath);
-      const schemaMigrations = detectOpenClawStateDatabaseSchemaMigrations({
+      const schemaMigrations = detectNovaStateDatabaseSchemaMigrations({
         env: resolveVoiceCallStateDatabaseEnv(params),
       });
       if (entries.length === 0 && schemaMigrations.length === 0) {
@@ -334,11 +334,11 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
       const { entries, warnings: readWarnings } = await readLegacyCallRecords(filePath);
       warnings.push(...readWarnings);
       const stateDatabaseEnv = resolveVoiceCallStateDatabaseEnv(params);
-      const schemaMigrations = detectOpenClawStateDatabaseSchemaMigrations({
+      const schemaMigrations = detectNovaStateDatabaseSchemaMigrations({
         env: stateDatabaseEnv,
       });
       if (schemaMigrations.length > 0) {
-        const repaired = repairOpenClawStateDatabaseSchema({ env: stateDatabaseEnv });
+        const repaired = repairNovaStateDatabaseSchema({ env: stateDatabaseEnv });
         warnings.push(...repaired.warnings);
         if (repaired.warnings.length > 0) {
           return { changes, warnings };

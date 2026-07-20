@@ -2,7 +2,7 @@
   "name": "@nova/telegram",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw Telegram channel plugin",
+  "description": "Nova Telegram channel plugin",
   "type": "module",
   "dependencies": {
     "@grammyjs/runner": "2.0.3",
@@ -14,7 +14,7 @@
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ],
@@ -43,7 +43,7 @@
       "selectionDocsPrefix": "",
       "selectionDocsOmitLabel": true,
       "selectionExtras": [
-        "https://openclaw.ai"
+        "https://nova.ai"
       ],
       "markdownCapable": true,
       "commands": {

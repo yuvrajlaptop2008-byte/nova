@@ -583,7 +583,7 @@ describe("createPluginApprovalHandlers", () => {
       const handlers = createPluginApprovalHandlers(manager);
       const reviewerClient = createClient({
         connId: "conn-tui-reviewer",
-        clientId: "openclaw-tui",
+        clientId: "nova-tui",
         deviceId: "device-tui-reviewer",
         scopes: ["operator.approvals"],
       });

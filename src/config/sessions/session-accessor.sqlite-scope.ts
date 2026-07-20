@@ -8,11 +8,11 @@ import {
   resolveAgentIdFromSessionKey,
 } from "../../routing/session-key.js";
 import { runQueuedStoreWrite, type StoreWriterQueue } from "../../shared/store-writer-queue.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../../state/openclaw-agent-db.generated.js";
+import type { DB as NovaAgentKyselyDatabase } from "../../state/nova-agent-db.generated.js";
 import {
-  resolveOpenClawAgentSqlitePath,
-  type OpenClawAgentDatabaseOptions,
-} from "../../state/openclaw-agent-db.js";
+  resolveNovaAgentSqlitePath,
+  type NovaAgentDatabaseOptions,
+} from "../../state/nova-agent-db.js";
 import type {
   SessionAccessScope,
   SessionTranscriptReadScope,
@@ -24,7 +24,7 @@ import { normalizeStoreSessionKey } from "./store-entry.js";
 import type { SessionEntry } from "./types.js";
 
 type SessionSqliteDatabase = Pick<
-  OpenClawAgentKyselyDatabase,
+  NovaAgentKyselyDatabase,
   | "conversation_deliveries"
   | "conversations"
   | "session_conversations"
@@ -71,7 +71,7 @@ export async function runExclusiveSqliteSessionWrite<T>(
   fn: () => Promise<T>,
 ): Promise<T> {
   const databaseOptions = toDatabaseOptions(scope);
-  const storePath = resolveOpenClawAgentSqlitePath(databaseOptions);
+  const storePath = resolveNovaAgentSqlitePath(databaseOptions);
   const startedAt = Date.now();
   try {
     const result = await runQueuedStoreWrite({
@@ -195,7 +195,7 @@ function resolveSqliteAgentId(params: {
 export function resolveSqliteTranscriptArchiveDirectory(
   scope: Pick<ResolvedSqliteReadScope, "agentId" | "env" | "path">,
 ): string {
-  const databasePath = resolveOpenClawAgentSqlitePath(toDatabaseOptions(scope));
+  const databasePath = resolveNovaAgentSqlitePath(toDatabaseOptions(scope));
   const databaseDir = path.dirname(databasePath);
   if (path.basename(databaseDir) !== "agent") {
     return databaseDir;
@@ -239,7 +239,7 @@ export function resolveSqliteTranscriptReadScope(
 
 export function toDatabaseOptions(
   scope: Pick<ResolvedSqliteReadScope, "agentId" | "env" | "path">,
-): OpenClawAgentDatabaseOptions {
+): NovaAgentDatabaseOptions {
   return {
     agentId: scope.agentId,
     ...(scope.env ? { env: scope.env } : {}),
@@ -259,6 +259,6 @@ export function formatSqliteSessionMarkerForScope(scope: ResolvedTranscriptScope
   return formatSqliteSessionFileMarker({
     agentId: scope.agentId,
     sessionId: scope.sessionId,
-    storePath: scope.path ?? resolveOpenClawAgentSqlitePath(toDatabaseOptions(scope)),
+    storePath: scope.path ?? resolveNovaAgentSqlitePath(toDatabaseOptions(scope)),
   });
 }

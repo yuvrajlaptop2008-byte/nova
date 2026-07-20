@@ -288,7 +288,7 @@ export async function modelsScanCommand(
   const toolOk = results.filter((entry) => entry.tool.ok);
   if (toolOk.length === 0) {
     throw new Error(
-      `No tool-capable OpenRouter free models found. Try ${formatCliCommand("openclaw models scan --no-probe")} to inspect metadata-only candidates, or configure OPENROUTER_API_KEY before probing.`,
+      `No tool-capable OpenRouter free models found. Try ${formatCliCommand("nova models scan --no-probe")} to inspect metadata-only candidates, or configure OPENROUTER_API_KEY before probing.`,
     );
   }
 

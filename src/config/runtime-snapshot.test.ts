@@ -20,7 +20,7 @@ import {
   setRuntimeConfigAppliedHash,
   setRuntimeConfigSnapshotRefreshHandler,
 } from "./runtime-snapshot.js";
-import type { OpenClawConfig } from "./types.js";
+import type { NovaConfig } from "./types.js";
 
 function resetRuntimeConfigState(): void {
   setRuntimeConfigSnapshotRefreshHandler(null);
@@ -35,7 +35,7 @@ describe("runtime snapshot state", () => {
   it("pins the first successful load in memory until the snapshot is cleared", () => {
     let freshPort = 18789;
     let loadCount = 0;
-    const loadFresh = (): OpenClawConfig => {
+    const loadFresh = (): NovaConfig => {
       loadCount += 1;
       return { gateway: { port: freshPort } };
     };
@@ -53,7 +53,7 @@ describe("runtime snapshot state", () => {
   });
 
   it("returns the source snapshot when runtime snapshot is active", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       models: {
         providers: {
           openai: {
@@ -64,7 +64,7 @@ describe("runtime snapshot state", () => {
         },
       },
     };
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       models: {
         providers: {
           openai: {
@@ -81,8 +81,8 @@ describe("runtime snapshot state", () => {
   });
 
   it("tracks snapshot metadata and cache keys across runtime refreshes", () => {
-    const firstConfig: OpenClawConfig = { gateway: { port: 18789 } };
-    const secondConfig: OpenClawConfig = { gateway: { port: 19001 } };
+    const firstConfig: NovaConfig = { gateway: { port: 18789 } };
+    const secondConfig: NovaConfig = { gateway: { port: 19001 } };
 
     setRuntimeConfigSnapshot(firstConfig);
     const firstMetadata = getRuntimeConfigSnapshotMetadata();
@@ -120,7 +120,7 @@ describe("runtime snapshot state", () => {
   });
 
   it("selects runtime config only when input still matches the runtime source", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       models: {
         providers: {
           openai: {
@@ -131,7 +131,7 @@ describe("runtime snapshot state", () => {
         },
       },
     };
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       models: {
         providers: {
           openai: {
@@ -142,7 +142,7 @@ describe("runtime snapshot state", () => {
         },
       },
     };
-    const scopedResolvedConfig: OpenClawConfig = {
+    const scopedResolvedConfig: NovaConfig = {
       ...runtimeConfig,
       tools: {
         experimental: {
@@ -177,10 +177,10 @@ describe("runtime snapshot state", () => {
 
   it("refreshes both snapshots from disk after a write when source + runtime snapshots exist", async () => {
     const notifyCommittedWrite = vi.fn();
-    const loadFreshConfig = vi.fn<() => OpenClawConfig>(() => ({
+    const loadFreshConfig = vi.fn<() => NovaConfig>(() => ({
       gateway: { auth: { mode: "token" } },
     }));
-    const nextSourceConfig: OpenClawConfig = {
+    const nextSourceConfig: NovaConfig = {
       gateway: { auth: { mode: "token" } },
       models: {
         providers: {
@@ -248,7 +248,7 @@ describe("runtime snapshot state", () => {
 
   it("keeps the last-known-good runtime snapshot active while specialized refresh is pending", async () => {
     const notifyCommittedWrite = vi.fn();
-    const loadFreshConfig = vi.fn<() => OpenClawConfig>(() => ({
+    const loadFreshConfig = vi.fn<() => NovaConfig>(() => ({
       gateway: { auth: { mode: "token" } },
     }));
     let releaseRefresh: (() => void) | undefined;
@@ -323,7 +323,7 @@ describe("runtime snapshot state", () => {
   });
 
   it("notifies registered write listeners with committed runtime snapshots", () => {
-    const seen: Array<{ configPath: string; runtimeConfig: OpenClawConfig }> = [];
+    const seen: Array<{ configPath: string; runtimeConfig: NovaConfig }> = [];
     const unsubscribe = registerRuntimeConfigWriteListener((event) => {
       seen.push({
         configPath: event.configPath,
@@ -333,7 +333,7 @@ describe("runtime snapshot state", () => {
 
     try {
       notifyRuntimeConfigWriteListeners({
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         sourceConfig: { gateway: { port: 18789 } },
         runtimeConfig: { gateway: { port: 19003 } },
         persistedHash: "abc123",
@@ -348,7 +348,7 @@ describe("runtime snapshot state", () => {
 
     expect(seen).toEqual([
       {
-        configPath: "/tmp/openclaw.json",
+        configPath: "/tmp/nova.json",
         runtimeConfig: { gateway: { port: 19003 } },
       },
     ]);
@@ -371,8 +371,8 @@ describe("runtime snapshot state", () => {
   });
 
   it("keeps prepared candidates scoped to each managed owner", async () => {
-    const runtimeConfigA: OpenClawConfig = { gateway: { port: 19001 } };
-    const runtimeConfigB: OpenClawConfig = { gateway: { port: 19002 } };
+    const runtimeConfigA: NovaConfig = { gateway: { port: 19001 } };
+    const runtimeConfigB: NovaConfig = { gateway: { port: 19002 } };
     const candidateA = { runtimeConfig: runtimeConfigA, compareConfig: {} };
     const candidateB = { runtimeConfig: runtimeConfigB, compareConfig: {} };
     const releaseA = registerManagedRuntimeConfigWriteOwner(
@@ -395,7 +395,7 @@ describe("runtime snapshot state", () => {
   });
 
   it("defers raw runtime activation to a managed write owner", async () => {
-    const activeConfig: OpenClawConfig = { gateway: { port: 18789 } };
+    const activeConfig: NovaConfig = { gateway: { port: 18789 } };
     setRuntimeConfigSnapshot(activeConfig);
     const notifyCommittedWrite = vi.fn();
     const refresh = vi.fn(async () => true);

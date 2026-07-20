@@ -5,7 +5,7 @@ import { SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
 import {
   clearRuntimeConfigSnapshot,
   setRuntimeConfigSnapshot,
-  type OpenClawConfig,
+  type NovaConfig,
 } from "../config/config.js";
 import * as configSessions from "../config/sessions.js";
 import * as sessionAccessor from "../config/sessions/session-accessor.js";
@@ -205,7 +205,7 @@ const chatHistoryMock = vi.fn(async (_sessionKey?: string) => ({
   messages: [] as Array<unknown>,
 }));
 let sessionStore: SessionStoreFixture = {};
-let configOverride: OpenClawConfig = {
+let configOverride: NovaConfig = {
   session: {
     mainKey: "main",
     scope: "per-sender",
@@ -283,7 +283,7 @@ const announceFormatChannelPlugins = [
   },
 ];
 
-function setConfigOverride(next: OpenClawConfig): void {
+function setConfigOverride(next: NovaConfig): void {
   configOverride = next;
   setRuntimeConfigSnapshot(configOverride);
 }
@@ -339,7 +339,7 @@ describe("subagent announce formatting", () => {
     // Set FAST_TEST_MODE before importing the module to ensure the module-level
     // constant picks it up. This fixes flaky Windows CI failures where the test
     // timeout budget is too tight without fast mode enabled.
-    // See: https://github.com/openclaw/openclaw/issues/31298
+    // See: https://github.com/nova/nova/issues/31298
     previousFastTestEnv = process.env.NOVA_TEST_FAST;
     process.env.NOVA_TEST_FAST = "1";
     ({ runSubagentAnnounceFlow, testing: subagentAnnounceTesting } =

@@ -390,7 +390,7 @@ describe("executeCronRun sourceDelivery mapping", () => {
   it("forwards an explicit Nova runtime override to cron execution", async () => {
     mockRunCronFallbackPassthrough();
     const cronSession = makeCronSession() as MutableCronSession;
-    cronSession.sessionEntry.agentRuntimeOverride = "openclaw";
+    cronSession.sessionEntry.agentRuntimeOverride = "nova";
     cronSession.sessionEntry.agentHarnessId = "codex";
     const executor = makeExecutor({
       cfgWithAgentDefaults: {
@@ -414,7 +414,7 @@ describe("executeCronRun sourceDelivery mapping", () => {
         provider: "openai",
         model: "gpt-5.6-luna",
         thinkLevel: "ultra",
-        agentHarnessRuntimeOverride: "openclaw",
+        agentHarnessRuntimeOverride: "nova",
       }),
     );
     expect(getEmbeddedRunArg()).not.toHaveProperty("agentHarnessId");

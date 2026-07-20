@@ -89,7 +89,7 @@ vi.mock("./media.js", () => ({
   sendMediaFeishu: sendMediaFeishuMock,
   shouldSuppressFeishuTextForVoiceMedia: shouldSuppressFeishuTextForVoiceMediaMock,
 }));
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async (importOriginal) => {
+vi.mock("nova/plugin-sdk/ssrf-runtime", async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,
@@ -142,7 +142,7 @@ afterAll(() => {
   vi.doUnmock("./targets.js");
   vi.doUnmock("./typing.js");
   vi.doUnmock("./streaming-card.js");
-  vi.doUnmock("openclaw/plugin-sdk/ssrf-runtime");
+  vi.doUnmock("nova/plugin-sdk/ssrf-runtime");
   vi.resetModules();
 });
 
@@ -1557,7 +1557,7 @@ describe("createFeishuReplyDispatcher streaming behavior", () => {
   });
 
   it("does not leak local media paths in the upload failure fallback", async () => {
-    const mediaPath = path.join(os.tmpdir(), "openclaw-feishu-reply-local-voice.mp3");
+    const mediaPath = path.join(os.tmpdir(), "nova-feishu-reply-local-voice.mp3");
     sendMediaFeishuMock.mockRejectedValueOnce(new Error("media failed"));
 
     const { options } = createDispatcherHarness();

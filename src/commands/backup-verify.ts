@@ -421,16 +421,14 @@ function assertCanonicalSqlitePathCasing(relativePath: string, archivePath: stri
   const segments = relativePath.split("/");
   const portablePath = resolvePortableArchivePathKey(relativePath);
   const isGlobalAlias =
-    portablePath === "state/openclaw.sqlite" && relativePath !== "state/openclaw.sqlite";
+    portablePath === "state/nova.sqlite" && relativePath !== "state/nova.sqlite";
   const isAgentAlias =
     segments.length === 4 &&
     segments[0]?.toLowerCase() === "agents" &&
     Boolean(segments[1]) &&
     segments[2]?.toLowerCase() === "agent" &&
-    segments[3]?.toLowerCase() === "openclaw-agent.sqlite" &&
-    (segments[0] !== "agents" ||
-      segments[2] !== "agent" ||
-      segments[3] !== "openclaw-agent.sqlite");
+    segments[3]?.toLowerCase() === "nova-agent.sqlite" &&
+    (segments[0] !== "agents" || segments[2] !== "agent" || segments[3] !== "nova-agent.sqlite");
   if (isGlobalAlias || isAgentAlias) {
     throw new Error(`Backup contains a case-mangled canonical SQLite path: ${archivePath}`);
   }
@@ -516,7 +514,7 @@ function resolveExpectedSqliteRole(entry: SqliteSnapshotEntry): ExpectedSqliteRo
 function resolveExpectedSqliteRoleFromRelativePath(
   relativePath: string,
 ): ExpectedSqliteRole | undefined {
-  if (relativePath === "state/openclaw.sqlite") {
+  if (relativePath === "state/nova.sqlite") {
     return "global";
   }
   const segments = relativePath.split("/");
@@ -525,7 +523,7 @@ function resolveExpectedSqliteRoleFromRelativePath(
     segments[0] === "agents" &&
     segments[1] &&
     segments[2] === "agent" &&
-    segments[3] === "openclaw-agent.sqlite"
+    segments[3] === "nova-agent.sqlite"
   ) {
     return "agent";
   }
@@ -647,7 +645,7 @@ async function verifySqliteSnapshots(params: {
 
   const tempRoot = os.tmpdir();
   assertSqliteExtractionBudget({ entries: sqliteEntries, tempRoot });
-  const tempDir = await fs.mkdtemp(path.join(tempRoot, "openclaw-backup-verify-sqlite-"));
+  const tempDir = await fs.mkdtemp(path.join(tempRoot, "nova-backup-verify-sqlite-"));
   try {
     const sqliteEntriesByRawPath = new Map(sqliteEntries.map((entry) => [entry.raw, entry]));
     await tar.x({

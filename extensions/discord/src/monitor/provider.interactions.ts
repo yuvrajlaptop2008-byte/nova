@@ -1,10 +1,10 @@
 // Discord provider module implements model/runtime integration.
-import { CHANNEL_APPROVAL_NATIVE_RUNTIME_CONTEXT_CAPABILITY } from "openclaw/plugin-sdk/approval-handler-adapter-runtime";
-import type { ChannelRuntimeSurface } from "openclaw/plugin-sdk/channel-contract";
-import { registerChannelRuntimeContext } from "openclaw/plugin-sdk/channel-runtime-context";
-import type { NativeCommandSpec } from "openclaw/plugin-sdk/command-auth-native";
-import type { DiscordAccountConfig, OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import { CHANNEL_APPROVAL_NATIVE_RUNTIME_CONTEXT_CAPABILITY } from "nova/plugin-sdk/approval-handler-adapter-runtime";
+import type { ChannelRuntimeSurface } from "nova/plugin-sdk/channel-contract";
+import { registerChannelRuntimeContext } from "nova/plugin-sdk/channel-runtime-context";
+import type { NativeCommandSpec } from "nova/plugin-sdk/command-auth-native";
+import type { DiscordAccountConfig, NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import { createDiscordActivityButton } from "../activities/interaction.js";
 import {
   getDiscordExecApprovalApprovers,
@@ -33,7 +33,7 @@ import type { ThreadBindingManager } from "./thread-bindings.types.js";
 type DiscordVoiceManager = import("../voice/manager.js").DiscordVoiceManager;
 
 export function createDiscordProviderInteractionSurface(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   discordConfig: DiscordAccountConfig;
   accountId: string;
   applicationId?: string;

@@ -3,10 +3,10 @@ import { isDeepStrictEqual } from "node:util";
 import type {
   ChannelDoctorConfigMutation,
   ChannelDoctorLegacyConfigRule,
-} from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { mergeDeep } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { asObjectRecord, defineChannelAliasMigration } from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { mergeDeep } from "nova/plugin-sdk/plugin-config-runtime";
+import { asObjectRecord, defineChannelAliasMigration } from "nova/plugin-sdk/runtime-doctor";
 import { normalizeCompatibilityConfig as normalizeAckReactionConfig } from "./doctor.js";
 
 // WhatsApp's nested streaming schema is delivery-only ({chunkMode, block});
@@ -27,18 +27,17 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
   ...streamingAliasMigration.legacyConfigRules,
   {
     path: ["channels", "whatsapp", "exposeErrorText"],
-    message:
-      'channels.whatsapp.exposeErrorText is retired and ignored. Run "openclaw doctor --fix".',
+    message: 'channels.whatsapp.exposeErrorText is retired and ignored. Run "nova doctor --fix".',
   },
   {
     path: ["channels", "whatsapp", "accounts"],
     message:
-      'channels.whatsapp.accounts.<id>.exposeErrorText is retired and ignored. Run "openclaw doctor --fix".',
+      'channels.whatsapp.accounts.<id>.exposeErrorText is retired and ignored. Run "nova doctor --fix".',
     match: (value) => Object.values(asObjectRecord(value) ?? {}).some(hasExposeErrorText),
   },
 ];
 
-function removeExposeErrorText(cfg: OpenClawConfig, changes: string[]): OpenClawConfig {
+function removeExposeErrorText(cfg: NovaConfig, changes: string[]): NovaConfig {
   const channels = cfg.channels as Record<string, unknown> | undefined;
   const entry = asObjectRecord(channels?.whatsapp);
   if (!entry) {
@@ -67,7 +66,7 @@ function removeExposeErrorText(cfg: OpenClawConfig, changes: string[]): OpenClaw
     }
     next.accounts = nextAccounts;
   }
-  return changed ? ({ ...cfg, channels: { ...channels, whatsapp: next } } as OpenClawConfig) : cfg;
+  return changed ? ({ ...cfg, channels: { ...channels, whatsapp: next } } as NovaConfig) : cfg;
 }
 
 // The runtime merge replaces `streaming` wholesale per layer (named account >
@@ -76,10 +75,10 @@ function removeExposeErrorText(cfg: OpenClawConfig, changes: string[]): OpenClaw
 // the settings the account previously inherited, or `doctor --fix` silently
 // changes effective delivery behavior for that account.
 function materializeMigratedAccountStreaming(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountsBefore: Record<string, unknown> | null;
   changes: string[];
-}): OpenClawConfig {
+}): NovaConfig {
   const channels = params.cfg.channels as Record<string, unknown> | undefined;
   const entry = asObjectRecord(channels?.whatsapp);
   const accounts = asObjectRecord(entry?.accounts);
@@ -141,13 +140,13 @@ function materializeMigratedAccountStreaming(params: {
       ...channels,
       whatsapp: { ...entry, accounts: nextAccounts },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 export function normalizeCompatibilityConfig({
   cfg,
 }: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): ChannelDoctorConfigMutation {
   const ackReaction = normalizeAckReactionConfig({ cfg });
   const retiredConfig = removeExposeErrorText(ackReaction.config, ackReaction.changes);

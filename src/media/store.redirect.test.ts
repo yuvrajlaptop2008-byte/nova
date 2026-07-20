@@ -4,10 +4,7 @@ import path from "node:path";
 import { PassThrough } from "node:stream";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createPinnedLookup } from "../infra/net/ssrf.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import { saveMediaSource } from "./store.js";
 import { setMediaStoreNetworkDepsForTest } from "./store.test-support.js";
 
@@ -119,12 +116,12 @@ async function expectRedirectSaveFailure(expectedMessage: string) {
 }
 
 describe("media store redirects", () => {
-  let testState: OpenClawTestState;
+  let testState: NovaTestState;
 
   beforeAll(async () => {
-    testState = await createOpenClawTestState({
+    testState = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-media-store-redirect-",
+      prefix: "nova-media-store-redirect-",
     });
   });
 

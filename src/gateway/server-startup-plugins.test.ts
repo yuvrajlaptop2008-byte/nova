@@ -2,7 +2,7 @@
  * Gateway startup plugin bootstrap tests.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginManifestRegistry } from "../plugins/manifest-registry.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.js";
 
@@ -100,7 +100,7 @@ const loadPluginLookUpTable = vi.hoisted(() =>
     metrics: pluginLookUpTableMetrics,
   })),
 );
-const resolveOpenClawPackageRootSync = vi.hoisted(() => vi.fn((_params: unknown) => "/package"));
+const resolveNovaPackageRootSync = vi.hoisted(() => vi.fn((_params: unknown) => "/package"));
 const runChannelPluginStartupMaintenance = vi.hoisted(() =>
   vi.fn(async (_params: unknown) => undefined),
 );
@@ -123,8 +123,8 @@ vi.mock("../config/plugin-auto-enable.js", () => ({
   applyPluginAutoEnable: (params: { config: unknown }) => applyPluginAutoEnable(params),
 }));
 
-vi.mock("../infra/openclaw-root.js", () => ({
-  resolveOpenClawPackageRootSync: (params: unknown) => resolveOpenClawPackageRootSync(params),
+vi.mock("../infra/nova-root.js", () => ({
+  resolveNovaPackageRootSync: (params: unknown) => resolveNovaPackageRootSync(params),
 }));
 
 vi.mock("../plugins/plugin-lookup-table.js", () => ({
@@ -192,16 +192,16 @@ function mockDeferredSlackStartupPlugins(): void {
   });
 }
 
-function slackConfig(): OpenClawConfig {
+function slackConfig(): NovaConfig {
   return {
     channels: {
       slack: { enabled: true, token: "token" },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 async function prepareBootstrapWithRuntimeConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options: {
     loadRuntimePlugins?: boolean;
     loadSetupRuntimePlugins?: boolean;
@@ -250,7 +250,7 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
       },
       metrics: pluginLookUpTableMetrics,
     });
-    resolveOpenClawPackageRootSync.mockClear().mockReturnValue("/package");
+    resolveNovaPackageRootSync.mockClear().mockReturnValue("/package");
     runChannelPluginStartupMaintenance.mockClear();
     runStartupSessionMigration.mockClear();
   });
@@ -264,7 +264,7 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
       plugins: {
         allow: ["bench-plugin"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const activationConfig = {
       channels: {
         telegram: {
@@ -280,7 +280,7 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtimeConfig = {
       channels: {
         telegram: {
@@ -306,7 +306,7 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     applyPluginAutoEnable.mockReturnValueOnce({
       config: activationConfig,
       changes: [],
@@ -330,9 +330,9 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
       manifestRegistry: pluginManifestRegistry,
     });
     const lookupInput = firstCallArg<{
-      activationSourceConfig?: OpenClawConfig;
+      activationSourceConfig?: NovaConfig;
       metadataSnapshot?: PluginMetadataSnapshot;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
     }>(loadPluginLookUpTable);
     expect(lookupInput.activationSourceConfig).toBe(sourceConfig);
     expect(lookupInput.metadataSnapshot).toBe(pluginMetadataSnapshot);
@@ -349,8 +349,8 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
     });
 
     const startupInput = firstCallArg<{
-      activationSourceConfig?: OpenClawConfig;
-      cfg?: OpenClawConfig;
+      activationSourceConfig?: NovaConfig;
+      cfg?: NovaConfig;
       baseMethods?: string[];
       coreGatewayMethodNames?: string[];
     }>(loadGatewayStartupPlugins);
@@ -400,7 +400,7 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
   });
 
   it("threads durable worker provider ids into startup lookup planning", async () => {
-    await prepareBootstrapWithRuntimeConfig({ channels: {} } as OpenClawConfig, {
+    await prepareBootstrapWithRuntimeConfig({ channels: {} } as NovaConfig, {
       workerProviderIds: ["static-ssh"],
     });
 
@@ -424,7 +424,7 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
           telegram: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await prepareBootstrapWithRuntimeConfig(cfg, {
       workerProviderIds: ["static-ssh"],
@@ -436,7 +436,7 @@ describe("prepareGatewayPluginBootstrap startup plugins", () => {
 
     expect(loadPluginLookUpTable).not.toHaveBeenCalled();
     const startupInput = firstCallArg<{
-      cfg?: OpenClawConfig;
+      cfg?: NovaConfig;
       pluginIds?: string[];
       pluginLookUpTable?: unknown;
       preferSetupRuntimeForChannelPlugins?: boolean;
@@ -471,7 +471,7 @@ describe("loadGatewayStartupPluginRuntime", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       workspaceDir: "/workspace",
       log,
       baseMethods: ["ping"],
@@ -496,7 +496,7 @@ describe("loadGatewayStartupPluginRuntime", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       workspaceDir: "/workspace",
       log,
       baseMethods: ["ping"],
@@ -523,7 +523,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
     warnUnregisteredConfiguredMemoryEmbeddingProviders({
       config: {
         agents: { defaults: { memorySearch: { provider: "openai" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([]),
       log,
     });
@@ -538,7 +538,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
     warnUnregisteredConfiguredMemoryEmbeddingProviders({
       config: {
         agents: { defaults: { memorySearch: { provider: "openai" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry(["openai"]),
       log,
     });
@@ -552,7 +552,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
     warnUnregisteredConfiguredMemoryEmbeddingProviders({
       config: {
         agents: { defaults: { memorySearch: { provider: "openai", fallback: "ollama" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry(["openai"]),
       log,
     });
@@ -567,7 +567,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
     warnUnregisteredConfiguredMemoryEmbeddingProviders({
       config: {
         agents: { defaults: { memorySearch: { provider: "openai", fallback: "ollama" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry(["openai", "ollama"]),
       log,
     });
@@ -581,7 +581,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
     warnUnregisteredConfiguredMemoryEmbeddingProviders({
       config: {
         agents: { defaults: { memorySearch: { provider: "generic-embed" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([], { embeddingProviderIds: ["generic-embed"] }),
       log,
     });
@@ -595,7 +595,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
     warnUnregisteredConfiguredMemoryEmbeddingProviders({
       config: {
         agents: { defaults: { memorySearch: { provider: "openai-compatible" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([]),
       log,
     });
@@ -618,7 +618,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([]),
       log,
     });
@@ -632,7 +632,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
     warnUnregisteredConfiguredMemoryEmbeddingProviders({
       config: {
         agents: { defaults: { memorySearch: { provider: "none", fallback: "openai" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([]),
       log,
     });
@@ -647,14 +647,14 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
       config: {
         agents: { defaults: { memorySearch: { provider: "openai", fallback: "ollama" } } },
         plugins: { slots: { memory: "none" } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([]),
       log,
     });
     expect(log.warn).not.toHaveBeenCalled();
   });
 
-  function customOllamaConfig(source: "provider" | "fallback" = "provider"): OpenClawConfig {
+  function customOllamaConfig(source: "provider" | "fallback" = "provider"): NovaConfig {
     const memorySearch =
       source === "provider"
         ? { provider: "ollama-5080" }
@@ -670,7 +670,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   it.each([
@@ -732,7 +732,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
             },
           ],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([]),
       log,
     });
@@ -754,7 +754,7 @@ describe("warnUnregisteredConfiguredMemoryEmbeddingProviders", () => {
             },
           ],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginRegistry: registry([]),
       log,
     });

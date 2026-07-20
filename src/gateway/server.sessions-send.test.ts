@@ -10,7 +10,7 @@ import {
   loadSessionEntry,
   persistSessionTranscriptTurn,
 } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { emitAgentEvent } from "../infra/agent-events.js";
 import { createOutboundTestPlugin, createTestRegistry } from "../test-utils/channel-plugins.js";
 import { captureEnv } from "../test-utils/env.js";
@@ -24,7 +24,7 @@ import {
   writeSessionStore,
 } from "./test-helpers.js";
 
-const { createOpenClawTools } = await import("../agents/openclaw-tools.js");
+const { createNovaTools } = await import("../agents/nova-tools.js");
 
 installGatewayTestHooks({ scope: "suite" });
 
@@ -33,7 +33,7 @@ let gatewayPort: number;
 const gatewayToken = "test-gateway-token-1234567890";
 let envSnapshot: ReturnType<typeof captureEnv>;
 
-type SessionSendTool = ReturnType<typeof createOpenClawTools>[number];
+type SessionSendTool = ReturnType<typeof createNovaTools>[number];
 const SESSION_SEND_E2E_TIMEOUT_MS = 10_000;
 let cachedSessionsSendTool: SessionSendTool | null = null;
 
@@ -41,7 +41,7 @@ function getSessionsSendTool(): SessionSendTool {
   if (cachedSessionsSendTool) {
     return cachedSessionsSendTool;
   }
-  const tool = createOpenClawTools().find((candidate) => candidate.name === "sessions_send");
+  const tool = createNovaTools().find((candidate) => candidate.name === "sessions_send");
   if (!tool) {
     throw new Error("missing sessions_send tool");
   }
@@ -124,7 +124,7 @@ beforeAll(async () => {
   const pending = await requestDevicePairing({
     deviceId: identity.deviceId,
     publicKey: publicKeyRawBase64UrlFromPem(identity.publicKeyPem),
-    clientId: "openclaw-cli",
+    clientId: "nova-cli",
     clientMode: "cli",
     role: "operator",
     scopes: ["operator.admin", "operator.read", "operator.write", "operator.approvals"],
@@ -191,7 +191,7 @@ describe("sessions_send gateway loopback", () => {
     "announces through gateway send using external deliveryContext over stale webchat session fields",
     { timeout: SESSION_SEND_E2E_TIMEOUT_MS },
     async () => {
-      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-sessions-send-route-"));
+      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-sessions-send-route-"));
       const sendCalls: Array<{
         to?: string;
         text?: string;
@@ -299,7 +299,7 @@ describe("sessions_send gateway loopback", () => {
     "does not re-announce a trailing message-tool delivery mirror after a waited A2A run",
     { timeout: SESSION_SEND_E2E_TIMEOUT_MS },
     async () => {
-      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-sessions-send-mirror-"));
+      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-sessions-send-mirror-"));
       const sessionKey = "agent:main:whatsapp:direct:peer-1";
       const sessionId = "sess-whatsapp-mirror";
       const runId = `run-message-tool-mirror-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -405,7 +405,7 @@ describe("sessions_send gateway loopback", () => {
               {
                 message: {
                   role: "assistant",
-                  provider: "openclaw",
+                  provider: "nova",
                   model: "delivery-mirror",
                   content: [{ type: "text", text: deliveredReply }],
                   timestamp: 4,
@@ -428,7 +428,7 @@ describe("sessions_send gateway loopback", () => {
               content: expect.arrayContaining([
                 expect.objectContaining({ type: "text", text: deliveredReply }),
               ]),
-              openclawMessageToolMirror: expect.objectContaining({
+              novaMessageToolMirror: expect.objectContaining({
                 toolName: "message",
                 toolCallId: "call-message-duplicate-proof",
               }),
@@ -507,7 +507,7 @@ describe("sessions_send label lookup", () => {
         timeoutMs: 5000,
       });
 
-      const tool = createOpenClawTools({
+      const tool = createNovaTools({
         config: {
           tools: {
             sessions: {
@@ -543,8 +543,8 @@ describe("sessions_send agent targeting", () => {
       if (!configPath) {
         throw new Error("NOVA_CONFIG_PATH missing in gateway test environment");
       }
-      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-sessions-send-agent-"));
-      const config: OpenClawConfig = {
+      const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-sessions-send-agent-"));
+      const config: NovaConfig = {
         tools: {
           sessions: {
             visibility: "all",
@@ -582,7 +582,7 @@ describe("sessions_send agent targeting", () => {
         );
         spy.mockClear();
 
-        const tool = createOpenClawTools({
+        const tool = createNovaTools({
           agentSessionKey: "agent:main:main",
           config,
         }).find((candidate) => candidate.name === "sessions_send");

@@ -10,7 +10,7 @@ import {
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { getChannelPlugin, normalizeChannelId } from "../channels/plugins/index.js";
 import type { ChannelMessageActionName } from "../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeTargetForProvider } from "../infra/outbound/target-normalization.js";
 import {
   normalizeLegacyInteractiveReply,
@@ -662,9 +662,9 @@ function isToolResultMediaTrusted(
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.embeddedSubscribeToolsTestApi")
-  ] = { isToolResultMediaTrusted };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.embeddedSubscribeToolsTestApi")] = {
+    isToolResultMediaTrusted,
+  };
 }
 
 function isTrustedOwnedTtsLocalMedia(
@@ -946,7 +946,7 @@ function resolveMessagingToolThreadEvidence(params: {
   allowImplicitThread: boolean;
   threadSuppressed: boolean;
   options?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     currentChannelId?: string;
     currentMessagingTarget?: string;
     currentThreadId?: string;
@@ -1015,7 +1015,7 @@ export function extractMessagingToolSend(
   toolName: string,
   args: Record<string, unknown>,
   options?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     currentChannelId?: string;
     currentMessagingTarget?: string;
     currentThreadId?: string;

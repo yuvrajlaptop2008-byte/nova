@@ -65,7 +65,7 @@ describe("image ops Rastermill adapter", () => {
         outputPixels: MAX_IMAGE_INPUT_PIXELS,
       },
       temp: expect.objectContaining({
-        prefix: "openclaw-img-",
+        prefix: "nova-img-",
       }),
       commandResolver: expect.any(Function),
     });

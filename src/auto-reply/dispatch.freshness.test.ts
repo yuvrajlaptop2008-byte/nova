@@ -1,6 +1,6 @@
 /** Tests foreground reply freshness fencing for buffered inbound dispatch. */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { OutboundDeliveryError } from "../infra/outbound/deliver-types.js";
 import { resetGlobalHookRunner } from "../plugins/hook-runner-global.js";
 import { getReplyPayloadMetadata } from "./reply-payload.js";
@@ -74,7 +74,7 @@ function dispatchWithDeliveries(
 ) {
   return dispatchInboundMessageWithBufferedDispatcher({
     ctx,
-    cfg: {} as OpenClawConfig,
+    cfg: {} as NovaConfig,
     dispatcherOptions: {
       ...dispatcherOptions,
       deliver:

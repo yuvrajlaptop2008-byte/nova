@@ -1,5 +1,5 @@
 // Slack tests cover action runtime plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SlackActionContext } from "./action-runtime.js";
 import { handleSlackAction, slackActionRuntime } from "./action-runtime.js";
@@ -24,7 +24,7 @@ const resolveSlackConversationName = vi.fn(
 );
 const resolveSlackConversationInfo = vi.fn(
   async (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     channelId: string;
     requireFreshName?: boolean;
   }): Promise<{ type: "channel" | "group" | "dm" | "unknown"; name?: string; user?: string }> => {
@@ -52,7 +52,7 @@ const sendSlackMessage = vi.fn(async (..._args: unknown[]) => ({ channelId: "C12
 const unpinSlackMessage = vi.fn(async (..._args: unknown[]) => ({}));
 
 describe("handleSlackAction", () => {
-  function slackConfig(overrides?: Record<string, unknown>): OpenClawConfig {
+  function slackConfig(overrides?: Record<string, unknown>): NovaConfig {
     return {
       channels: {
         slack: {
@@ -60,7 +60,7 @@ describe("handleSlackAction", () => {
           ...overrides,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   it("rejects all actions before Slack API work for an enterprise org account", async () => {
@@ -83,7 +83,7 @@ describe("handleSlackAction", () => {
   }
 
   function createReplyToFirstScenario() {
-    const cfg = { channels: { slack: { botToken: "tok" } } } as OpenClawConfig;
+    const cfg = { channels: { slack: { botToken: "tok" } } } as NovaConfig;
     sendSlackMessage.mockClear();
     const hasRepliedRef = { value: false };
     const context = createReplyToFirstContext(hasRepliedRef);
@@ -165,7 +165,7 @@ describe("handleSlackAction", () => {
     return requireRecord(options, "Slack send options");
   }
 
-  function expectLastSlackSend(content: string, cfg: OpenClawConfig, threadTs?: string) {
+  function expectLastSlackSend(content: string, cfg: NovaConfig, threadTs?: string) {
     expectSlackSendCall(sendSlackMessage.mock.calls.length - 1, "channel:C123", content, {
       cfg,
       mediaUrl: undefined,
@@ -179,7 +179,7 @@ describe("handleSlackAction", () => {
   }
 
   async function sendSecondMessageAndExpectNoThread(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     context: SlackActionContext;
   }) {
     await handleSlackAction(
@@ -248,7 +248,7 @@ describe("handleSlackAction", () => {
     expect(sendSlackMessage).toHaveBeenCalledOnce();
   });
 
-  async function resolveReadToken(cfg: OpenClawConfig): Promise<string | undefined> {
+  async function resolveReadToken(cfg: NovaConfig): Promise<string | undefined> {
     readSlackMessages.mockClear();
     readSlackMessages.mockResolvedValueOnce({ messages: [], hasMore: false });
     await handleSlackAction({ action: "readMessages", channelId: "C1" }, cfg);
@@ -256,7 +256,7 @@ describe("handleSlackAction", () => {
     return typeof token === "string" ? token : undefined;
   }
 
-  async function resolveSendToken(cfg: OpenClawConfig): Promise<string | undefined> {
+  async function resolveSendToken(cfg: NovaConfig): Promise<string | undefined> {
     sendSlackMessage.mockClear();
     await handleSlackAction({ action: "sendMessage", to: "channel:C1", content: "Hello" }, cfg);
     const token = requireRecordArg(sendSlackMessage, "sendSlackMessage", 0, 2).token;
@@ -494,7 +494,7 @@ describe("handleSlackAction", () => {
 
   it("returns non-image downloadFile results as file metadata instead of image content", async () => {
     downloadSlackFile.mockResolvedValueOnce({
-      path: "/tmp/openclaw-media/report.pdf",
+      path: "/tmp/nova-media/report.pdf",
       contentType: "application/pdf",
       placeholder: "[Slack file: report.pdf (fileId: F123)]",
     });
@@ -511,17 +511,17 @@ describe("handleSlackAction", () => {
     expect(result.content).toHaveLength(1);
     const firstContent = requireRecord(result.content[0], "first content item");
     expect(firstContent.type).toBe("text");
-    expect(String(firstContent.text)).toContain("/tmp/openclaw-media/report.pdf");
+    expect(String(firstContent.text)).toContain("/tmp/nova-media/report.pdf");
     expect(result.content.map((entry) => entry.type)).not.toContain("image");
     const details = requireDetails(result);
     expectRecordFields(details, {
       ok: true,
       fileId: "F123",
-      path: "/tmp/openclaw-media/report.pdf",
+      path: "/tmp/nova-media/report.pdf",
       contentType: "application/pdf",
     });
     expect(details.media).toEqual({
-      mediaUrl: "/tmp/openclaw-media/report.pdf",
+      mediaUrl: "/tmp/nova-media/report.pdf",
       outbound: false,
       contentType: "application/pdf",
     });
@@ -1489,7 +1489,7 @@ describe("handleSlackAction", () => {
   });
 
   it("fails closed for read-like Slack actions when provider config is missing", async () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
 
     await expect(
       handleSlackAction({ action: "readMessages", channelId: "C1" }, cfg),
@@ -1631,7 +1631,7 @@ describe("handleSlackAction", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
     expect(token).toBe("xoxp-user");
   });
 
@@ -1643,7 +1643,7 @@ describe("handleSlackAction", () => {
           userToken: "test-user-token",
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(token).toBe("test-user-token");
   });
@@ -1657,7 +1657,7 @@ describe("handleSlackAction", () => {
             botToken: "test-bot-token",
           },
         },
-      } as OpenClawConfig),
+      } as NovaConfig),
     ).rejects.toThrow('Slack operation token missing for account "default".');
     expect(sendSlackMessage).not.toHaveBeenCalled();
   });

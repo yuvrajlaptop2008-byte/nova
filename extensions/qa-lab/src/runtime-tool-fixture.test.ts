@@ -2,8 +2,8 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
-import { appendSessionTranscriptMessageByIdentity } from "openclaw/plugin-sdk/session-transcript-runtime";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
+import { appendSessionTranscriptMessageByIdentity } from "nova/plugin-sdk/session-transcript-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { runRuntimeToolFixture } from "./runtime-tool-fixture.js";
 import { readRawQaSessionStore } from "./suite-runtime-agent-session.js";
@@ -150,8 +150,8 @@ async function runMockRuntimeToolFixtureWithOutputs(params: {
     {
       toolName: params.toolName,
       toolCoverage: {
-        bucket: "openclaw-dynamic-integration",
-        expectedLayer: "openclaw-dynamic",
+        bucket: "nova-dynamic-integration",
+        expectedLayer: "nova-dynamic",
       },
       promptSnippet,
       failurePromptSnippet,
@@ -191,8 +191,8 @@ describe("runtime tool fixture", () => {
       {
         toolName: "read",
         toolCoverage: {
-          bucket: "openclaw-dynamic-integration",
-          expectedLayer: "openclaw-dynamic",
+          bucket: "nova-dynamic-integration",
+          expectedLayer: "nova-dynamic",
         },
       },
       {
@@ -235,8 +235,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
         },
         {
@@ -259,8 +259,8 @@ describe("runtime tool fixture", () => {
       {
         toolName: "read",
         toolCoverage: {
-          bucket: "openclaw-dynamic-integration",
-          expectedLayer: "openclaw-dynamic",
+          bucket: "nova-dynamic-integration",
+          expectedLayer: "nova-dynamic",
         },
       },
       {
@@ -317,8 +317,8 @@ describe("runtime tool fixture", () => {
       {
         toolName: "image_generate",
         toolCoverage: {
-          bucket: "openclaw-dynamic-integration",
-          expectedLayer: "openclaw-dynamic",
+          bucket: "nova-dynamic-integration",
+          expectedLayer: "nova-dynamic",
         },
         happyPathOutputRequired: false,
       },
@@ -369,8 +369,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "image_generate",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
           happyPathOutputRequired: false,
         },
@@ -432,8 +432,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
         },
         {
@@ -496,8 +496,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
         },
         {
@@ -656,8 +656,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
           promptSnippet: "target=read",
           failurePromptSnippet: "failure target=read",
@@ -705,8 +705,8 @@ describe("runtime tool fixture", () => {
       {
         toolName: "image_generate",
         toolCoverage: {
-          bucket: "openclaw-dynamic-integration",
-          expectedLayer: "openclaw-dynamic",
+          bucket: "nova-dynamic-integration",
+          expectedLayer: "nova-dynamic",
         },
         promptSnippet: "target=image_generate",
         failurePromptSnippet: "failure target=image_generate",
@@ -765,8 +765,8 @@ describe("runtime tool fixture", () => {
       {
         toolName: "read",
         toolCoverage: {
-          bucket: "openclaw-dynamic-integration",
-          expectedLayer: "openclaw-dynamic",
+          bucket: "nova-dynamic-integration",
+          expectedLayer: "nova-dynamic",
         },
         promptSnippet: "target=read",
         failurePromptSnippet: "failure target=read",
@@ -811,8 +811,8 @@ describe("runtime tool fixture", () => {
       {
         toolName: "image_generate",
         toolCoverage: {
-          bucket: "openclaw-dynamic-integration",
-          expectedLayer: "openclaw-dynamic",
+          bucket: "nova-dynamic-integration",
+          expectedLayer: "nova-dynamic",
           required: false,
           action: "optional runtime parity gate with async image completion coverage",
         },
@@ -866,8 +866,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "image_generate",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
             required: false,
             action: "optional runtime parity gate with async image completion coverage",
           },
@@ -918,8 +918,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "image_generate",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
             required: false,
             action: "optional runtime parity gate with async image completion coverage",
           },
@@ -965,8 +965,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "image_generate",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
             required: false,
             action: "optional runtime parity gate with async image completion coverage",
           },
@@ -1012,8 +1012,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "image_generate",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
             required: false,
             action: "optional runtime parity gate with async image completion coverage",
           },
@@ -1069,8 +1069,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
           promptSnippet: "target=read",
           failurePromptSnippet: "failure target=read",
@@ -1124,8 +1124,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
           promptSnippet: "target=read",
           failurePromptSnippet: "failure target=read",
@@ -1231,8 +1231,8 @@ describe("runtime tool fixture", () => {
       {
         toolName: "read",
         toolCoverage: {
-          bucket: "openclaw-dynamic-integration",
-          expectedLayer: "openclaw-dynamic",
+          bucket: "nova-dynamic-integration",
+          expectedLayer: "nova-dynamic",
         },
         promptSnippet: "target=read",
         failurePromptSnippet: "failure target=read",
@@ -1287,8 +1287,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
           promptSnippet: "target=read",
           failurePromptSnippet: "failure target=read",
@@ -1339,8 +1339,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "read",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
           promptSnippet: "target=read",
           failurePromptSnippet: "failure target=read",
@@ -1365,8 +1365,8 @@ describe("runtime tool fixture", () => {
         {
           toolName: "web_search",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
           },
         },
         {

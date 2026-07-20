@@ -61,7 +61,7 @@ describe("shared/node-match", () => {
           {
             nodeId: "current-mac",
             displayName: "Peter’s Mac Studio",
-            clientId: "openclaw-macos",
+            clientId: "nova-macos",
             connected: false,
           },
         ],
@@ -119,20 +119,20 @@ describe("shared/node-match", () => {
           {
             nodeId: "other-mac",
             displayName: "Peter’s Mac Studio",
-            clientId: "openclaw-macos",
+            clientId: "nova-macos",
             connected: true,
           },
           {
             nodeId: "third-mac",
             displayName: "Peter’s Mac Studio",
-            clientId: "openclaw-macos",
+            clientId: "nova-macos",
             connected: true,
           },
         ],
         "Peter's Mac Studio",
       ),
     ).toThrow(
-      /ambiguous node: Peter's Mac Studio.*node=other-mac.*client=openclaw-macos.*node=third-mac.*client=openclaw-macos/,
+      /ambiguous node: Peter's Mac Studio.*node=other-mac.*client=nova-macos.*node=third-mac.*client=nova-macos/,
     );
   });
 

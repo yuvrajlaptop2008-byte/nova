@@ -1,11 +1,11 @@
-# OpenClaw Matrix
+# Nova Matrix
 
-Official OpenClaw channel plugin for Matrix rooms and direct messages.
+Official Nova channel plugin for Matrix rooms and direct messages.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/matrix
+nova plugin add @nova/matrix
 ```
 
-Configure the Matrix homeserver and bot credentials in OpenClaw. The plugin lets agents join configured rooms, receive messages, and reply through Matrix.
+Configure the Matrix homeserver and bot credentials in Nova. The plugin lets agents join configured rooms, receive messages, and reply through Matrix.

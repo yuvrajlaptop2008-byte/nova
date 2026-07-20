@@ -37,7 +37,7 @@ const PUBLISH_GENERATED_PR_ACTION = ".github/actions/publish-generated-pr/action
 const SETUP_ANDROID_TOOLCHAIN_ACTION = ".github/actions/setup-android-toolchain/action.yml";
 const MATURITY_SCORECARD_WORKFLOW = ".github/workflows/maturity-scorecard.yml";
 const MATURITY_SCORECARD_WORKFLOW_REF =
-  "openclaw/openclaw/.github/workflows/maturity-scorecard.yml@refs/heads/main";
+  "nova/nova/.github/workflows/maturity-scorecard.yml@refs/heads/main";
 const OIDC_BOUND_MAIN_REUSABLE_WORKFLOWS = new Set<string>();
 const MATURITY_GENERATED_PR_PATHS = [
   "qa/maturity-scores.yaml",
@@ -91,7 +91,7 @@ function runCiManifestFixture(options: {
   nodeFastCiRouting?: boolean;
   runNode?: boolean;
 }) {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-ci-manifest-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-ci-manifest-"));
   try {
     const scriptsDir = path.join(root, "scripts", "lib");
     mkdirSync(scriptsDir, { recursive: true });
@@ -228,7 +228,7 @@ function runCiManifestFixture(options: {
             : "false",
         NOVA_CI_RELEASE_CANDIDATE_TARGET:
           options.releaseCandidateCompatibility === true ? "true" : "false",
-        NOVA_CI_REPOSITORY: "openclaw/openclaw",
+        NOVA_CI_REPOSITORY: "nova/nova",
         NOVA_CI_RUN_ANDROID: "true",
         NOVA_CI_RUN_CONTROL_UI_I18N: "true",
         NOVA_CI_RUN_IOS_BUILD: "true",
@@ -303,7 +303,7 @@ function runMaturityInvocationScenario(options: {
       CALLER_WORKFLOW_REF: options.callerWorkflowRef,
       JOB_WORKFLOW_FILE_PATH: MATURITY_SCORECARD_WORKFLOW,
       JOB_WORKFLOW_REF: options.jobWorkflowRef ?? MATURITY_SCORECARD_WORKFLOW_REF,
-      JOB_WORKFLOW_REPOSITORY: "openclaw/openclaw",
+      JOB_WORKFLOW_REPOSITORY: "nova/nova",
       PATH: process.env.PATH ?? "",
       PUBLISH_PULL_REQUEST: String(options.publishPullRequest),
     },
@@ -321,7 +321,7 @@ function runMaturityArtifactCopyScenario(
   const copyStep = workflow.jobs.publish_generated_pr.steps.find(
     (step: { name?: string }) => step.name === "Validate and copy generated PR files",
   );
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-maturity-copy-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-maturity-copy-"));
   const staging = path.join(root, "staging");
   try {
     for (const generatedPath of MATURITY_GENERATED_PR_PATHS) {
@@ -374,7 +374,7 @@ function readQaProfileEvidenceWorkflow() {
 }
 
 function readReleaseChecksWorkflow() {
-  return parse(readFileSync(".github/workflows/openclaw-release-checks.yml", "utf8"));
+  return parse(readFileSync(".github/workflows/nova-release-checks.yml", "utf8"));
 }
 
 function readCriticalQualityWorkflow() {
@@ -458,7 +458,7 @@ function runDependencyCheckFixture(options: { historicalTarget: boolean; scripts
   output: string;
   status: number | null;
 } {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-ci-deadcode-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-ci-deadcode-"));
   try {
     const fakeBin = path.join(root, "bin");
     const callsPath = path.join(root, "pnpm-calls.txt");
@@ -518,7 +518,7 @@ function runGeneratedPublisherScenario(
     updateSource?: boolean;
   } = {},
 ) {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-generated-pr-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-generated-pr-"));
   try {
     const origin = path.join(root, "origin.git");
     const updater = path.join(root, "updater");
@@ -630,12 +630,12 @@ function runGeneratedPublisherScenario(
       "      else",
       '        head="$(git --git-dir="$FAKE_ORIGIN" rev-parse refs/heads/automation/locale)"',
       "      fi",
-      '      printf "https://github.com/openclaw/openclaw/pull/1\\t%s\\n" "$head"',
+      '      printf "https://github.com/nova/nova/pull/1\\t%s\\n" "$head"',
       "    fi",
       "    ;;",
       "  pr:create)",
       '    : > "$FAKE_PR_STATE"',
-      '    printf "%s\\n" "https://github.com/openclaw/openclaw/pull/1"',
+      '    printf "%s\\n" "https://github.com/nova/nova/pull/1"',
       "    ;;",
       "  pr:edit) exit 0 ;;",
       "  pr:view)",
@@ -680,8 +680,8 @@ function runGeneratedPublisherScenario(
         OVERLAP_POLICY: options.overlapPolicy ?? "defer",
         CONTENTS_TOKEN: "contents-token",
         GH_TOKEN: "test-token",
-        GITHUB_REPOSITORY: "openclaw/openclaw",
-        GITHUB_REPOSITORY_OWNER: "openclaw",
+        GITHUB_REPOSITORY: "nova/nova",
+        GITHUB_REPOSITORY_OWNER: "nova",
         GITHUB_STEP_SUMMARY: summary,
         HEAD_BRANCH: "automation/locale",
         PATH: `${fakeBin}:${process.env.PATH ?? ""}`,
@@ -963,12 +963,12 @@ describe("ci workflow guards", () => {
     expect(nativeResolveBase.if).not.toContain("chore(i18n): refresh native locales");
     const controlResolveCondition = controlUiResolveBase.if.replace(/\s+/gu, " ");
     expect(controlResolveCondition).toBe(
-      "github.repository == 'openclaw/openclaw' && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')",
+      "github.repository == 'nova/nova' && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')",
     );
     expect(controlResolveCondition).not.toContain("inputs.token_preflight_only");
     expect(controlResolveCondition).not.toContain("github.ref_type");
     expect(nativeResolveBase.if).toBe(
-      "github.repository == 'openclaw/openclaw' && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')",
+      "github.repository == 'nova/nova' && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')",
     );
     expect(controlUiWorkflow.on.workflow_dispatch.inputs.token_preflight_only).toEqual({
       description: "Verify generated PR App permissions without running locale generation.",
@@ -1005,7 +1005,7 @@ describe("ci workflow guards", () => {
     expect(nativePublishStep.with["generated-paths"].trim().split("\n")).toEqual([
       "apps/.i18n/native",
       "apps/.i18n/apple-translation-contradictions.json",
-      "apps/android/app/src/main/java/ai/openclaw/app/i18n/NativeStringResources.kt",
+      "apps/android/app/src/main/java/ai/nova/app/i18n/NativeStringResources.kt",
       "apps/android/app/src/main/res/values*/assistant.xml",
       "apps/android/app/src/main/res/values*/strings.xml",
       "apps/ios/Resources/Localizable.xcstrings",
@@ -1404,7 +1404,7 @@ describe("ci workflow guards", () => {
       const result = runGeneratedPublisherScenario(null, { autoMerge: true });
 
       expect(result.branchExists).toBe(true);
-      expect(result.mergeCalls).toContain("pr merge https://github.com/openclaw/openclaw/pull/1");
+      expect(result.mergeCalls).toContain("pr merge https://github.com/nova/nova/pull/1");
       expect(result.mergeCalls).toContain("--auto --squash --match-head-commit");
       expect(result.summary).toContain("Enabled squash auto-merge for exact generated head");
     },
@@ -1560,7 +1560,7 @@ describe("ci workflow guards", () => {
 
       expect(result.branchExists).toBe(true);
       expect(result.generatedA).toBe("desired-a");
-      expect(result.summary).toContain("https://github.com/openclaw/openclaw/pull/1");
+      expect(result.summary).toContain("https://github.com/nova/nova/pull/1");
     },
   );
 
@@ -1936,11 +1936,11 @@ describe("ci workflow guards", () => {
       const cacheCondition = stepWith["use-actions-cache"];
       expect(stickyCondition, jobName).toContain("github.event_name != 'workflow_dispatch'");
       expect(stickyCondition, jobName).toContain(
-        "github.event.pull_request.head.repo.full_name == 'openclaw/openclaw'",
+        "github.event.pull_request.head.repo.full_name == 'nova/nova'",
       );
       expect(cacheCondition, jobName).toContain("github.event_name != 'workflow_dispatch'");
       expect(cacheCondition, jobName).toContain(
-        "github.event.pull_request.head.repo.full_name == 'openclaw/openclaw'",
+        "github.event.pull_request.head.repo.full_name == 'nova/nova'",
       );
       expect(cacheCondition, jobName).toContain("&& 'false' || 'true'");
     }
@@ -1962,7 +1962,7 @@ describe("ci workflow guards", () => {
       (step: WorkflowStep) => step.name === "Maintain sticky dependency store budget",
     )!;
     expect(refreshStep.if).toContain("github.event_name == 'push'");
-    expect(refreshStep.if).toContain("github.repository == 'openclaw/openclaw'");
+    expect(refreshStep.if).toContain("github.repository == 'nova/nova'");
     expect(refreshStep.if).toContain("github.ref == 'refs/heads/main'");
     expect(refreshStep.if).toContain("steps.manifest.outputs.run_node == 'true'");
     expect(maintainStep.if).toBe(refreshStep.if);
@@ -1972,9 +1972,7 @@ describe("ci workflow guards", () => {
     expect(maintainStep.run).toContain('PNPM_CONFIG_STORE_DIR="$store_dir" pnpm store prune');
     expect(maintainStep.run).toContain('>> "$GITHUB_STEP_SUMMARY"');
     expect(workflow.jobs["pnpm-store-warmup"].if).toContain("github.ref == 'refs/heads/main'");
-    expect(workflow.jobs["pnpm-store-warmup"].if).toContain(
-      "github.repository == 'openclaw/openclaw'",
-    );
+    expect(workflow.jobs["pnpm-store-warmup"].if).toContain("github.repository == 'nova/nova'");
     // Current sticky consumers all use the single supported Node line. A
     // planner-provided version would silently create a writerless disk.
     for (const { jobName, stepWith } of stickyConsumers) {
@@ -2026,7 +2024,7 @@ describe("ci workflow guards", () => {
         (job as { "runs-on": string })["runs-on"],
         `${jobName} must route fork pull requests to GitHub-hosted runners`,
       ).toContain(
-        "github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == 'openclaw/openclaw'",
+        "github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == 'nova/nova'",
       );
     }
     expect(action.inputs["sticky-disk"].default).toBe("false");
@@ -2049,7 +2047,7 @@ describe("ci workflow guards", () => {
       if: "inputs.sticky-disk == 'true'",
       uses: "useblacksmith/stickydisk@6d373c96a74cbde0c99fedc5ea5d3a7ba66ba494",
       with: {
-        path: "/var/tmp/openclaw-node-deps",
+        path: "/var/tmp/nova-node-deps",
       },
     });
     // Bounded disks: Blacksmith caps sticky disks per installation, and the old
@@ -2091,11 +2089,11 @@ describe("ci workflow guards", () => {
     );
     expect(installStep.env).toMatchObject({
       STICKY_DISK: "${{ inputs.sticky-disk }}",
-      STICKY_ROOT: "/var/tmp/openclaw-node-deps",
+      STICKY_ROOT: "/var/tmp/nova-node-deps",
       STICKY_WRITER:
         "${{ inputs.save-sticky-disk == 'true' && github.event_name != 'pull_request' && 'true' || 'false' }}",
     });
-    expect(installStep.run).toContain('sticky_marker="$STICKY_ROOT/.openclaw-deps-fingerprint"');
+    expect(installStep.run).toContain('sticky_marker="$STICKY_ROOT/.nova-deps-fingerprint"');
     expect(installStep.run).toContain(
       '[ "$sticky_fingerprint" = "${NOVA_STICKY_DEPS_FINGERPRINT:?}" ]',
     );
@@ -2105,7 +2103,7 @@ describe("ci workflow guards", () => {
     );
     expect(installStep.run).toContain('[ "$STICKY_WRITER" != "true" ]');
     expect(installStep.run).toContain('sudo umount "$GITHUB_WORKSPACE/node_modules"');
-    expect(installStep.run).toContain('ephemeral_store="${RUNNER_TEMP:?}/openclaw-pnpm-store"');
+    expect(installStep.run).toContain('ephemeral_store="${RUNNER_TEMP:?}/nova-pnpm-store"');
     expect(installStep.run).toContain(
       "Sticky dependency snapshot is unusable; using runner-local storage for this read-only run",
     );
@@ -2232,7 +2230,7 @@ describe("ci workflow guards", () => {
       },
     });
     expect(uploadStep).toMatchObject({
-      if: "success() && github.repository == 'openclaw/openclaw' && github.ref == 'refs/heads/main'",
+      if: "success() && github.repository == 'nova/nova' && github.ref == 'refs/heads/main'",
       uses: UPLOAD_ARTIFACT_V7,
       with: {
         "if-no-files-found": "error",
@@ -2245,7 +2243,7 @@ describe("ci workflow guards", () => {
   });
 
   it("restores importer-local node_modules from sticky snapshots", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-sticky-importers-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-sticky-importers-"));
     try {
       const workspace = path.join(root, "workspace");
       const stickyRoot = path.join(root, "sticky");
@@ -2333,7 +2331,7 @@ describe("ci workflow guards", () => {
         JSON.parse(readFileSync(path.join(importerDependency, "package.json"), "utf8")),
       ).toMatchObject({ version: "2.4.0" });
       expect(readFileSync(path.join(rootModules, "root-sentinel"), "utf8")).toBe("after");
-      expect(readFileSync(path.join(stickyRoot, ".openclaw-deps-fingerprint"), "utf8")).toBe(
+      expect(readFileSync(path.join(stickyRoot, ".nova-deps-fingerprint"), "utf8")).toBe(
         "fingerprint-a\n",
       );
 
@@ -2347,7 +2345,7 @@ describe("ci workflow guards", () => {
       const archiveChecksum = createHash("sha256").update(readFileSync(archive)).digest("hex");
       const manifestChecksum = createHash("sha256").update(readFileSync(manifest)).digest("hex");
       writeFileSync(
-        path.join(stickyRoot, ".openclaw-importer-archive.sha256"),
+        path.join(stickyRoot, ".nova-importer-archive.sha256"),
         `${archiveChecksum}\n${manifestChecksum}\n`,
         "utf8",
       );
@@ -2375,7 +2373,7 @@ describe("ci workflow guards", () => {
   });
 
   it("fingerprints dependency install inputs without ordinary script churn", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-dependency-fingerprint-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-dependency-fingerprint-"));
     try {
       const helper = path.resolve(".github/actions/setup-node-env/dependency-fingerprint.mjs");
       const writeManifest = (manifest: Record<string, unknown>) => {
@@ -2567,7 +2565,7 @@ describe("ci workflow guards", () => {
     expect(readerStep.with.key).toContain("!**/node_modules/**");
     expect(configureStep.env.CACHE_GENERATION).toContain("!**/node_modules/**");
     expect(configureStep.run).toContain("NOVA_VITEST_FS_MODULE_CACHE_PATH=$cache_root");
-    expect(configureStep.run).toContain(".openclaw-transform-generation");
+    expect(configureStep.run).toContain(".nova-transform-generation");
     expect(configureStep.run).not.toContain("protected Vitest transform seed");
     expect(configureStep.env.CACHE_WRITER).toBe(
       "${{ inputs.save-vitest-fs-cache == 'true' && '1' || '0' }}",
@@ -2631,7 +2629,7 @@ describe("ci workflow guards", () => {
     expect(warmer.concurrency.group).toBe("vitest-cache-warm");
     expect(warmer.on.workflow_dispatch).toBeUndefined();
     expect(warmer.on.repository_dispatch.types).toEqual(["vitest-cache-warm"]);
-    expect(warmer.jobs.warm.if).toContain("github.repository == 'openclaw/openclaw'");
+    expect(warmer.jobs.warm.if).toContain("github.repository == 'nova/nova'");
     expect(warmer.on).not.toHaveProperty("workflow_run");
     expect(checkoutStep.with).toBeUndefined();
     expect(warmerSource).toContain('cron: "17 8 * * *"');
@@ -2655,7 +2653,7 @@ describe("ci workflow guards", () => {
     expect(maintainStoreStep).toBeUndefined();
     expect(maintainStickyStoreStep.env.NOVA_PNPM_STORE_MAX_KIB).toBe("8388608");
 
-    const maintenanceRoot = mkdtempSync(path.join(tmpdir(), "openclaw-pnpm-maintenance-"));
+    const maintenanceRoot = mkdtempSync(path.join(tmpdir(), "nova-pnpm-maintenance-"));
     try {
       const storeDir = path.join(maintenanceRoot, "store");
       const summaryPath = path.join(maintenanceRoot, "summary.md");
@@ -2807,7 +2805,7 @@ describe("ci workflow guards", () => {
     expect(pointEnv.GRADLE_DEPS_FINGERPRINT).toContain("hashFiles(");
     expect(pointEnv.GRADLE_DEPS_FINGERPRINT).toContain("apps/android/gradle/libs.versions.toml");
     expect(pointEnv.STICKY_WRITER).toContain("github.event_name != 'pull_request'");
-    expect(pointStep.run).toContain(".openclaw-gradle-deps-fingerprint");
+    expect(pointStep.run).toContain(".nova-gradle-deps-fingerprint");
     expect(pointStep.run).toContain('rm -rf "$sticky_root/gradle-user-home"');
   });
 
@@ -2907,7 +2905,7 @@ describe("ci workflow guards", () => {
         BLACKSMITH_ENV: "production-amd64",
         BLACKSMITH_REGION: "us-test-1",
         RETIRED_ARCHITECTURE: "amd64",
-        RETIRED_KEY: "openclaw/openclaw-not-retired",
+        RETIRED_KEY: "nova/nova-not-retired",
         RETIRED_REGION: "us-test-1",
       },
     });
@@ -2920,7 +2918,7 @@ describe("ci workflow guards", () => {
         BLACKSMITH_ENV: "production-amd64",
         BLACKSMITH_REGION: "us-test-1",
         RETIRED_ARCHITECTURE: "amd64",
-        RETIRED_KEY: " openclaw/openclaw-active-key ",
+        RETIRED_KEY: " nova/nova-active-key ",
         RETIRED_REGION: "us-test-1",
       },
     });
@@ -3405,7 +3403,7 @@ describe("ci workflow guards", () => {
     )?.[0];
     expect(discoveryBlock).toBeTruthy();
 
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-mantis-runner-ip-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-mantis-runner-ip-"));
     try {
       const fakeBin = path.join(root, "bin");
       const callCount = path.join(root, "curl-calls");
@@ -4449,7 +4447,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
     ];
 
     expect(workflow.on.pull_request).not.toHaveProperty("paths-ignore");
-    expect(gate.name).toBe("openclaw/ci-gate");
+    expect(gate.name).toBe("nova/ci-gate");
     expect(gate.needs).toEqual([...requiredJobs, ...selectedJobs]);
     expect(gate.needs.toSorted()).toEqual(
       Object.keys(workflow.jobs)
@@ -4667,7 +4665,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
       `github.workflow_ref == '${MATURITY_SCORECARD_WORKFLOW_REF}' &&`,
       `needs.validate_selected_ref.outputs.workflow_file_path == '${MATURITY_SCORECARD_WORKFLOW}' &&`,
       `needs.validate_selected_ref.outputs.workflow_ref == '${MATURITY_SCORECARD_WORKFLOW_REF}' &&`,
-      "needs.validate_selected_ref.outputs.workflow_repository == 'openclaw/openclaw' }}",
+      "needs.validate_selected_ref.outputs.workflow_repository == 'nova/nova' }}",
     ].join(" ");
     expect(publisherPreflight.needs).toBe("validate_selected_ref");
     expect(publisherPreflight.if).toBe("${{ inputs.publish_pull_request }}");
@@ -4877,7 +4875,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
     "keeps a reusable maturity call artifact-only even when its caller was dispatched",
     () => {
       const callerWorkflowRef =
-        "openclaw/openclaw/.github/workflows/openclaw-release-checks.yml@refs/heads/main";
+        "nova/nova/.github/workflows/nova-release-checks.yml@refs/heads/main";
       const artifactOnly = runMaturityInvocationScenario({
         callerEventName: "workflow_dispatch",
         callerWorkflowRef,
@@ -5058,9 +5056,9 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
     );
     expect(smokeDockerCacheStep.if).toContain("matrix.docker_cache == true");
     expect(smokeDockerCacheStep.if).toContain("github.event_name != 'workflow_dispatch'");
-    expect(smokeDockerCacheStep.if).toContain("github.repository == 'openclaw/openclaw'");
+    expect(smokeDockerCacheStep.if).toContain("github.repository == 'nova/nova'");
     expect(smokeDockerCacheStep.if).toContain(
-      "github.event.pull_request.head.repo.full_name == 'openclaw/openclaw'",
+      "github.event.pull_request.head.repo.full_name == 'nova/nova'",
     );
     expect(smokeDockerCacheStep.with["max-cache-size-mb"]).toBe(800000);
     expect(smokeRunStep.run).toContain("createQaSmokeCiPart");
@@ -5083,10 +5081,10 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
       "console.log(`[skip] ${partId} is not declared by this checkout's smoke plan`)",
     );
     expect(smokeRunStep.run).toContain("No QA smoke runs assigned");
-    expect(smokeRunStep.run).toContain("node openclaw.mjs qa run");
-    expect(smokeRunStep.run).not.toContain("pnpm openclaw qa run");
+    expect(smokeRunStep.run).toContain("node nova.mjs qa run");
+    expect(smokeRunStep.run).not.toContain("pnpm nova qa run");
     expect(smokeRunStep.run).toContain(
-      "timeout --signal=TERM --kill-after=15s 10m node openclaw.mjs qa run",
+      "timeout --signal=TERM --kill-after=15s 10m node nova.mjs qa run",
     );
     expect(smokeRunStep.run).toContain("--qa-profile smoke-ci");
     expect(smokeRunStep.run).toContain("--concurrency 10");
@@ -5094,7 +5092,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
       "github.event_name != 'workflow_dispatch'",
     );
     expect(smokeRunStep.env.NOVA_QA_SUITE_WORKER_START_STAGGER_MS).toContain(
-      "github.repository == 'openclaw/openclaw'",
+      "github.repository == 'nova/nova'",
     );
     expect(smokeRunStep.env.NOVA_QA_SUITE_WORKER_START_STAGGER_MS).toContain("'0'");
     expect(smokeRunStep.env.NOVA_QA_SUITE_WORKER_START_STAGGER_MS).toContain("'1500'");
@@ -5124,7 +5122,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
   it("keeps push docs validation ClawHub-backed", () => {
     const workflow = readFileSync(".github/workflows/docs.yml", "utf8");
 
-    expect(workflow).toContain("repository: openclaw/clawhub");
+    expect(workflow).toContain("repository: nova/clawhub");
     expect(workflow).toContain("path: clawhub-source");
     expect(workflow).toContain(
       "NOVA_DOCS_SYNC_CLAWHUB_REPO: ${{ github.workspace }}/clawhub-source",
@@ -5138,7 +5136,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
       "utf8",
     );
     const rawSocketQuery = readFileSync(
-      ".github/codeql/openclaw-boundary/queries/raw-socket-callsite-classification.ql",
+      ".github/codeql/nova-boundary/queries/raw-socket-callsite-classification.ql",
       "utf8",
     );
     const networkSelector = workflow.slice(
@@ -5172,7 +5170,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
       'codex_transport="extensions/codex/src/app-server/transport-websocket.ts"',
     );
     expect(workflow).toContain(
-      "network_codeql_contract_pattern='^\\.github/codeql/(codeql-network-runtime-boundary-critical-quality\\.yml|openclaw-boundary/queries/(raw-socket-callsite-classification|managed-proxy-runtime-mutation)\\.ql)$'",
+      "network_codeql_contract_pattern='^\\.github/codeql/(codeql-network-runtime-boundary-critical-quality\\.yml|nova-boundary/queries/(raw-socket-callsite-classification|managed-proxy-runtime-mutation)\\.ql)$'",
     );
     expect(workflow).toContain(
       'if grep -Eq "$network_codeql_contract_pattern" "$changed_files" ||',

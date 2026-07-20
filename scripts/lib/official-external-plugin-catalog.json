@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "openclaw-official-external-plugins",
+  "id": "nova-official-external-plugins",
   "generatedAt": "2026-06-22T00:00:00.000Z",
   "sequence": 1,
-  "description": "Bundled fallback feed for official external OpenClaw plugins.",
+  "description": "Bundled fallback feed for official external Nova plugins.",
   "entries": [
     {
       "name": "@nova/acpx",
-      "description": "OpenClaw ACP runtime backend",
+      "description": "Nova ACP runtime backend",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "acpx",
           "label": "ACPX Runtime"
@@ -24,10 +24,10 @@
     },
     {
       "name": "@nova/brave-plugin",
-      "description": "OpenClaw Brave plugin",
+      "description": "Nova Brave plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "brave",
           "label": "Brave"
@@ -42,7 +42,7 @@
             "envVars": ["BRAVE_API_KEY"],
             "placeholder": "BSA...",
             "signupUrl": "https://api-dashboard.search.brave.com/app/keys",
-            "docsUrl": "https://docs.openclaw.ai/tools/brave-search",
+            "docsUrl": "https://docs.nova.ai/tools/brave-search",
             "credentialPath": "plugins.entries.brave.config.webSearch.apiKey",
             "autoDetectOrder": 10
           }
@@ -57,10 +57,10 @@
     },
     {
       "name": "@nova/codex",
-      "description": "OpenClaw Codex app-server harness and native session catalog",
+      "description": "Nova Codex app-server harness and native session catalog",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "codex",
           "label": "Codex"
@@ -77,10 +77,10 @@
     },
     {
       "name": "@nova/copilot",
-      "description": "OpenClaw GitHub Copilot agent runtime plugin",
+      "description": "Nova GitHub Copilot agent runtime plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "copilot",
           "label": "GitHub Copilot agent runtime"
@@ -95,10 +95,10 @@
     },
     {
       "name": "@nova/diagnostics-otel",
-      "description": "OpenClaw diagnostics OpenTelemetry exporter",
+      "description": "Nova diagnostics OpenTelemetry exporter",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "diagnostics-otel",
           "label": "Diagnostics OpenTelemetry"
@@ -113,10 +113,10 @@
     },
     {
       "name": "@nova/diagnostics-prometheus",
-      "description": "OpenClaw diagnostics Prometheus exporter",
+      "description": "Nova diagnostics Prometheus exporter",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "diagnostics-prometheus",
           "label": "Diagnostics Prometheus"
@@ -131,10 +131,10 @@
     },
     {
       "name": "@nova/diffs",
-      "description": "OpenClaw diff viewer plugin",
+      "description": "Nova diff viewer plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "diffs",
           "label": "Diffs"
@@ -153,10 +153,10 @@
     },
     {
       "name": "@nova/diffs-language-pack",
-      "description": "OpenClaw diffs viewer syntax highlighting language pack",
+      "description": "Nova diffs viewer syntax highlighting language pack",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "diffs-language-pack",
           "label": "Diff Viewer Language Pack"
@@ -171,10 +171,10 @@
     },
     {
       "name": "@nova/exa-plugin",
-      "description": "OpenClaw Exa plugin.",
+      "description": "Nova Exa plugin.",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "exa",
           "label": "Exa"
@@ -198,7 +198,7 @@
             ],
             "placeholder": "exa-...",
             "signupUrl": "https://exa.ai/",
-            "docsUrl": "https://docs.openclaw.ai/tools/web",
+            "docsUrl": "https://docs.nova.ai/tools/web",
             "credentialPath": "plugins.entries.exa.config.webSearch.apiKey",
             "autoDetectOrder": 65
           }
@@ -213,10 +213,10 @@
     },
     {
       "name": "@nova/firecrawl-plugin",
-      "description": "OpenClaw Firecrawl plugin.",
+      "description": "Nova Firecrawl plugin.",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "firecrawl",
           "label": "Firecrawl"
@@ -248,7 +248,7 @@
             ],
             "placeholder": "fc-...",
             "signupUrl": "https://www.firecrawl.dev/",
-            "docsUrl": "https://docs.openclaw.ai/tools/firecrawl",
+            "docsUrl": "https://docs.nova.ai/tools/firecrawl",
             "credentialPath": "plugins.entries.firecrawl.config.webSearch.apiKey",
             "autoDetectOrder": 60
           },
@@ -263,7 +263,7 @@
             "envVars": [],
             "placeholder": "(no key needed)",
             "signupUrl": "https://www.firecrawl.dev/",
-            "docsUrl": "https://docs.openclaw.ai/tools/firecrawl",
+            "docsUrl": "https://docs.nova.ai/tools/firecrawl",
             "credentialPath": ""
           }
         ],
@@ -277,10 +277,10 @@
     },
     {
       "name": "@nova/google-meet",
-      "description": "OpenClaw Google Meet participant plugin",
+      "description": "Nova Google Meet participant plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "google-meet",
           "label": "Google Meet"
@@ -294,10 +294,10 @@
     },
     {
       "name": "@nova/gradium-speech",
-      "description": "OpenClaw Gradium speech plugin.",
+      "description": "Nova Gradium speech plugin.",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "gradium",
           "label": "Gradium"
@@ -317,10 +317,10 @@
     },
     {
       "name": "@nova/inworld-speech",
-      "description": "OpenClaw Inworld speech plugin.",
+      "description": "Nova Inworld speech plugin.",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "inworld",
           "label": "Inworld"
@@ -343,7 +343,7 @@
       "description": "Lobster workflow tool plugin (typed pipelines + resumable approvals)",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "lobster",
           "label": "Lobster"
@@ -362,10 +362,10 @@
     },
     {
       "name": "@nova/memory-lancedb",
-      "description": "OpenClaw LanceDB-backed long-term memory plugin with auto-recall/capture",
+      "description": "Nova LanceDB-backed long-term memory plugin with auto-recall/capture",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "memory-lancedb",
           "label": "Memory LanceDB"
@@ -384,10 +384,10 @@
     },
     {
       "name": "@nova/llama-cpp-provider",
-      "description": "OpenClaw llama.cpp embedding provider plugin",
+      "description": "Nova llama.cpp embedding provider plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "llama-cpp",
           "label": "llama.cpp Provider"
@@ -404,10 +404,10 @@
     },
     {
       "name": "@nova/openshell-sandbox",
-      "description": "OpenClaw OpenShell sandbox backend",
+      "description": "Nova OpenShell sandbox backend",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "openshell",
           "label": "OpenShell Sandbox"
@@ -421,10 +421,10 @@
     },
     {
       "name": "@nova/parallel-plugin",
-      "description": "OpenClaw Parallel web search plugin.",
+      "description": "Nova Parallel web search plugin.",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "parallel",
           "label": "Parallel"
@@ -449,7 +449,7 @@
             ],
             "placeholder": "par-...",
             "signupUrl": "https://platform.parallel.ai",
-            "docsUrl": "https://docs.openclaw.ai/tools/parallel-search",
+            "docsUrl": "https://docs.nova.ai/tools/parallel-search",
             "credentialPath": "plugins.entries.parallel.config.webSearch.apiKey",
             "autoDetectOrder": 75
           },
@@ -464,7 +464,7 @@
             "envVars": [],
             "placeholder": "(no key needed)",
             "signupUrl": "https://parallel.ai",
-            "docsUrl": "https://docs.openclaw.ai/tools/parallel-search",
+            "docsUrl": "https://docs.nova.ai/tools/parallel-search",
             "credentialPath": ""
           }
         ],
@@ -478,10 +478,10 @@
     },
     {
       "name": "@nova/perplexity-plugin",
-      "description": "OpenClaw Perplexity plugin.",
+      "description": "Nova Perplexity plugin.",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "perplexity",
           "label": "Perplexity"
@@ -506,7 +506,7 @@
             ],
             "placeholder": "pplx-...",
             "signupUrl": "https://www.perplexity.ai/settings/api",
-            "docsUrl": "https://docs.openclaw.ai/perplexity",
+            "docsUrl": "https://docs.nova.ai/perplexity",
             "credentialPath": "plugins.entries.perplexity.config.webSearch.apiKey",
             "autoDetectOrder": 50
           }
@@ -521,10 +521,10 @@
     },
     {
       "name": "@nova/pixverse-provider",
-      "description": "OpenClaw PixVerse video generation provider plugin",
+      "description": "Nova PixVerse video generation provider plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "pixverse",
           "label": "PixVerse"
@@ -539,10 +539,10 @@
     },
     {
       "name": "@nova/searxng-plugin",
-      "description": "OpenClaw SearXNG plugin",
+      "description": "Nova SearXNG plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "searxng",
           "label": "SearXNG"
@@ -567,7 +567,7 @@
             ],
             "placeholder": "http://localhost:8080",
             "signupUrl": "https://docs.searxng.org/",
-            "docsUrl": "https://docs.openclaw.ai/tools/searxng-search",
+            "docsUrl": "https://docs.nova.ai/tools/searxng-search",
             "credentialPath": "plugins.entries.searxng.config.webSearch.baseUrl",
             "autoDetectOrder": 200
           }
@@ -583,10 +583,10 @@
     },
     {
       "name": "@nova/tavily-plugin",
-      "description": "OpenClaw Tavily plugin",
+      "description": "Nova Tavily plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "tavily",
           "label": "Tavily"
@@ -614,7 +614,7 @@
             ],
             "placeholder": "tvly-...",
             "signupUrl": "https://tavily.com/",
-            "docsUrl": "https://docs.openclaw.ai/tools/tavily",
+            "docsUrl": "https://docs.nova.ai/tools/tavily",
             "credentialPath": "plugins.entries.tavily.config.webSearch.apiKey",
             "autoDetectOrder": 70
           }
@@ -630,10 +630,10 @@
     },
     {
       "name": "@nova/tokenjuice",
-      "description": "OpenClaw tokenjuice exec output compaction plugin",
+      "description": "Nova tokenjuice exec output compaction plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "tokenjuice",
           "label": "Tokenjuice"
@@ -652,10 +652,10 @@
     },
     {
       "name": "@nova/voice-call",
-      "description": "OpenClaw voice-call plugin",
+      "description": "Nova voice-call plugin",
       "source": "official",
       "kind": "plugin",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "voice-call",
           "label": "Voice Call"

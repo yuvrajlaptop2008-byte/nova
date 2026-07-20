@@ -287,16 +287,16 @@ describe("Control UI Vite config", () => {
       (alias) =>
         alias.find instanceof RegExp && alias.replacement.includes("packages/net-policy/src/$1"),
     );
-    const broadOpenClawWildcardIndex = aliases.findIndex(
+    const broadNovaWildcardIndex = aliases.findIndex(
       (alias) => alias.find instanceof RegExp && alias.replacement.includes("extensions/$1"),
     );
 
     expect(netPolicyIpIndex).toBeGreaterThanOrEqual(0);
     expect(netPolicyWildcardIndex).toBeGreaterThanOrEqual(0);
     expect(netPolicyPackageIndex).toBeGreaterThanOrEqual(0);
-    expect(broadOpenClawWildcardIndex).toBeGreaterThanOrEqual(0);
+    expect(broadNovaWildcardIndex).toBeGreaterThanOrEqual(0);
     expect(netPolicyIpIndex).toBeLessThan(netPolicyPackageIndex);
-    expect(netPolicyWildcardIndex).toBeLessThan(broadOpenClawWildcardIndex);
+    expect(netPolicyWildcardIndex).toBeLessThan(broadNovaWildcardIndex);
   });
 
   it("uses a browser-safe redactor for shared tool display imports", async () => {

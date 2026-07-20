@@ -18,7 +18,7 @@ import {
   resolveMainSessionKey,
 } from "../../config/sessions/main-session.js";
 import { resolveMirroredTranscriptText } from "../../config/sessions/transcript-mirror.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { TtsAutoMode } from "../../config/types.tts.js";
 import { isSuppressedControlReplyText } from "../../gateway/control-reply-text.js";
 import { sleepWithAbort } from "../../infra/backoff.js";
@@ -109,8 +109,8 @@ export function resolveCronDeliveryBestEffort(job: CronJob): boolean {
 type SuccessfulDeliveryTarget = Extract<DeliveryTargetResolution, { ok: true }>;
 
 type DispatchCronDeliveryParams = {
-  cfg: OpenClawConfig;
-  cfgWithAgentDefaults: OpenClawConfig;
+  cfg: NovaConfig;
+  cfgWithAgentDefaults: NovaConfig;
   deps: CliDeps;
   job: CronJob;
   agentId: string;
@@ -152,7 +152,7 @@ type DirectCronTranscriptMirror = {
   mediaUrls?: string[];
   storePath?: string;
   idempotencyKey: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
 };
 
 /** Mutable delivery-dispatch accumulator returned to the isolated cron runner. */
@@ -357,7 +357,7 @@ function getCompletedDirectCronDelivery(
 }
 
 async function maybeApplyTtsToCronPayloads(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   payloads: ReplyPayload[];
   delivery: SuccessfulDeliveryTarget;
   agentId: string;
@@ -421,10 +421,7 @@ function shouldQueueCronAwareness(params: {
   );
 }
 
-function resolveCronAwarenessMainSessionKey(params: {
-  cfg: OpenClawConfig;
-  agentId: string;
-}): string {
+function resolveCronAwarenessMainSessionKey(params: { cfg: NovaConfig; agentId: string }): string {
   return params.cfg.session?.scope === "global"
     ? resolveMainSessionKey(params.cfg)
     : resolveAgentMainSessionKey({ cfg: params.cfg, agentId: params.agentId });
@@ -483,7 +480,7 @@ function formatTargetCronDeliveryFailureAwarenessText(params: {
 }
 
 async function queueCronAwarenessSystemEvent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   jobId: string;
   agentId: string;
   deliveryIdempotencyKey: string;
@@ -606,7 +603,7 @@ function projectDeliveredDirectCronPayloadsForMirror(
 }
 
 function canonicalizeDirectCronRouteSessionKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   sessionKey: string;
 }): string {
@@ -637,7 +634,7 @@ function canonicalizeDirectCronRouteSessionKey(params: {
 // Resolves the session for a concrete visible delivery target and ensures the
 // outbound session exists before cron awareness or transcript code references it.
 async function resolveCronDeliveryRouteSessionKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   jobId: string;
   agentId: string;
   agentSessionKey: string;
@@ -698,7 +695,7 @@ async function resolveCronDeliveryRouteSessionKey(params: {
 
 /** Resolves the transcript mirror session for direct cron delivery. */
 async function resolveDirectCronDeliverySessionKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   job: CronJob;
   agentId: string;
   agentSessionKey: string;
@@ -770,7 +767,7 @@ function resolveCronMessageToolAwarenessTarget(params: {
 
 /** Queues target-session context awareness for cron deliveries made via message tool. */
 export async function queueCronMessageToolDeliveryAwareness(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   job: CronJob;
   agentId: string;
   agentSessionKey: string;
@@ -925,11 +922,10 @@ function getCompletedDirectCronDeliveriesCountForTests(): number {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.cronDeliveryDispatchTestApi")] =
-    {
-      resetCompletedDirectCronDeliveriesForTests,
-      getCompletedDirectCronDeliveriesCountForTests,
-    };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.cronDeliveryDispatchTestApi")] = {
+    resetCompletedDirectCronDeliveriesForTests,
+    getCompletedDirectCronDeliveriesCountForTests,
+  };
 }
 
 function summarizeDirectCronDeliveryError(error: unknown): string {
@@ -1236,7 +1232,7 @@ export async function dispatchCronDelivery(
           // Keep all attempts out of the write-ahead delivery queue so a
           // late-successful first send cannot leave behind a failed queue
           // entry that replays on the next restart.
-          // See: https://github.com/openclaw/openclaw/issues/40545
+          // See: https://github.com/nova/nova/issues/40545
           skipQueue: true,
         });
         // No durable id is still ambiguous: the adapter was already invoked.

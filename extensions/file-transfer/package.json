@@ -1,7 +1,7 @@
 {
   "name": "@nova/file-transfer",
   "version": "2026.7.2",
-  "description": "OpenClaw file transfer plugin (file_fetch, dir_list, dir_fetch, file_write)",
+  "description": "Nova file transfer plugin (file_fetch, dir_list, dir_fetch, file_write)",
   "type": "module",
   "dependencies": {
     "minimatch": "10.2.5",
@@ -10,7 +10,7 @@
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

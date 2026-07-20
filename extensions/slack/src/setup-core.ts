@@ -1,5 +1,5 @@
-import type { ChannelSetupInput } from "openclaw/plugin-sdk/channel-setup";
-import { normalizeSecretInputString } from "openclaw/plugin-sdk/secret-input";
+import type { ChannelSetupInput } from "nova/plugin-sdk/channel-setup";
+import { normalizeSecretInputString } from "nova/plugin-sdk/secret-input";
 // Slack plugin module implements setup core behavior.
 import {
   createAccountScopedAllowFromSection,
@@ -17,14 +17,14 @@ import {
   type ChannelSetupAdapter,
   type ChannelSetupDmPolicy,
   type ChannelSetupWizard,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/setup-runtime";
-import { formatDocsLink } from "openclaw/plugin-sdk/setup-tools";
+  type NovaConfig,
+} from "nova/plugin-sdk/setup-runtime";
+import { formatDocsLink } from "nova/plugin-sdk/setup-tools";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { inspectSlackAccount } from "./account-inspect.js";
 import {
   buildSlackManifest,
@@ -35,7 +35,7 @@ import {
 
 const t = createSetupTranslator();
 
-function enableSlackAccount(cfg: OpenClawConfig, accountId: string): OpenClawConfig {
+function enableSlackAccount(cfg: NovaConfig, accountId: string): NovaConfig {
   return patchChannelConfigForAccount({
     cfg,
     channel,
@@ -45,10 +45,10 @@ function enableSlackAccount(cfg: OpenClawConfig, accountId: string): OpenClawCon
 }
 
 function setSlackSetupIdentity(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   identity: "bot" | "user";
-}): OpenClawConfig {
+}): NovaConfig {
   const next = patchChannelConfigForAccount({
     cfg: params.cfg,
     channel,
@@ -74,7 +74,7 @@ function setSlackSetupIdentity(params: {
         ...next.channels,
         slack: nextSlack,
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   const account = slack.accounts?.[params.accountId];
@@ -101,10 +101,10 @@ function setSlackSetupIdentity(params: {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
-function hasSlackInteractiveRepliesConfig(cfg: OpenClawConfig, accountId: string): boolean {
+function hasSlackInteractiveRepliesConfig(cfg: NovaConfig, accountId: string): boolean {
   const capabilities = inspectSlackAccount({ cfg, accountId }).config.capabilities;
   if (Array.isArray(capabilities)) {
     return capabilities.some(
@@ -118,10 +118,10 @@ function hasSlackInteractiveRepliesConfig(cfg: OpenClawConfig, accountId: string
 }
 
 function setSlackInteractiveReplies(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId: string,
   interactiveReplies: boolean,
-): OpenClawConfig {
+): NovaConfig {
   const capabilities = inspectSlackAccount({ cfg, accountId }).config.capabilities;
   const nextCapabilities = Array.isArray(capabilities)
     ? interactiveReplies
@@ -433,13 +433,13 @@ export function createSlackSetupWizardBase(handlers: {
       channel,
       label: t("wizard.slack.channelsLabel"),
       placeholder: "#general, #private, C123",
-      currentPolicy: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId: string }) =>
+      currentPolicy: ({ cfg, accountId }: { cfg: NovaConfig; accountId: string }) =>
         inspectSlackAccount({ cfg, accountId }).config.groupPolicy ?? "allowlist",
-      currentEntries: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId: string }) =>
+      currentEntries: ({ cfg, accountId }: { cfg: NovaConfig; accountId: string }) =>
         Object.entries(inspectSlackAccount({ cfg, accountId }).config.channels ?? {})
           .filter(([, value]) => value?.enabled !== false)
           .map(([key]) => key),
-      updatePrompt: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId: string }) =>
+      updatePrompt: ({ cfg, accountId }: { cfg: NovaConfig; accountId: string }) =>
         Boolean(inspectSlackAccount({ cfg, accountId }).config.channels),
       resolveAllowlist: handlers.resolveGroupAllowlist,
       fallbackResolved: (entries) => entries,
@@ -448,7 +448,7 @@ export function createSlackSetupWizardBase(handlers: {
         accountId,
         resolved,
       }: {
-        cfg: OpenClawConfig;
+        cfg: NovaConfig;
         accountId: string;
         resolved: unknown;
       }) => setSlackChannelAllowlist(cfg, accountId, resolved as string[]),
@@ -470,7 +470,7 @@ export function createSlackSetupWizardBase(handlers: {
         cfg: setSlackInteractiveReplies(cfg, accountId, enableInteractiveReplies),
       };
     },
-    disable: (cfg: OpenClawConfig) => setSetupChannelEnabled(cfg, channel, false),
+    disable: (cfg: NovaConfig) => setSetupChannelEnabled(cfg, channel, false),
   } satisfies ChannelSetupWizard;
 }
 export function createSlackSetupWizardProxy(

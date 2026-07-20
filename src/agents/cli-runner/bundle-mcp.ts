@@ -7,14 +7,14 @@ import os from "node:os";
 import path from "node:path";
 import { applyMergePatch } from "../../config/merge-patch.js";
 import type { CliBackendConfig } from "../../config/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { tryReadJson } from "../../infra/json-files.js";
 import {
   NOVA_TOOLS_MCP_SYSTEM_AGENT_APPROVAL_ARMED_ENV,
   NOVA_TOOLS_MCP_SYSTEM_AGENT_PROPOSAL_ENV,
   NOVA_TOOLS_MCP_TOOLS_ENV,
-} from "../../mcp/openclaw-tools-serve-config.js";
+} from "../../mcp/nova-tools-serve-config.js";
 import { extractMcpServerMap, type BundleMcpConfig } from "../../plugins/bundle-mcp.js";
 import type { CliBundleMcpMode } from "../../plugins/types.js";
 import { loadMergedBundleMcpConfig, toCliBundleMcpServerConfig } from "../bundle-mcp-config.js";
@@ -60,19 +60,19 @@ function sortJsonValue(value: unknown): unknown {
   );
 }
 
-function normalizeOpenClawLoopbackUrl(value: string): string {
+function normalizeNovaLoopbackUrl(value: string): string {
   const match =
     /^(http:\/\/(?:127\.0\.0\.1|localhost|\[::1\])):\d+(\/mcp)$/.exec(value.trim()) ?? undefined;
   if (!match) {
     return value;
   }
-  return `${match[1]}:<openclaw-loopback>${match[2]}`;
+  return `${match[1]}:<nova-loopback>${match[2]}`;
 }
 
 function canonicalizeSystemAgentTurnStateForResume(
   server: BundleMcpConfig["mcpServers"][string],
 ): BundleMcpConfig["mcpServers"][string] {
-  if (!isRecord(server.env) || server.env[NOVA_TOOLS_MCP_TOOLS_ENV] !== "openclaw") {
+  if (!isRecord(server.env) || server.env[NOVA_TOOLS_MCP_TOOLS_ENV] !== "nova") {
     return server;
   }
   // The host reissues approval authority through a fresh stdio server each turn.
@@ -81,8 +81,8 @@ function canonicalizeSystemAgentTurnStateForResume(
     ...server,
     env: {
       ...server.env,
-      [NOVA_TOOLS_MCP_SYSTEM_AGENT_APPROVAL_ARMED_ENV]: "<openclaw-turn-state>",
-      [NOVA_TOOLS_MCP_SYSTEM_AGENT_PROPOSAL_ENV]: "<openclaw-turn-state>",
+      [NOVA_TOOLS_MCP_SYSTEM_AGENT_APPROVAL_ARMED_ENV]: "<nova-turn-state>",
+      [NOVA_TOOLS_MCP_SYSTEM_AGENT_PROPOSAL_ENV]: "<nova-turn-state>",
     },
   };
 }
@@ -93,14 +93,14 @@ function canonicalizeBundleMcpConfigForResume(config: BundleMcpConfig): BundleMc
   const canonicalServers = Object.fromEntries(
     Object.entries(config.mcpServers).map(([name, server]) => {
       const canonicalServer = canonicalizeSystemAgentTurnStateForResume(server);
-      if (name !== "openclaw" || typeof canonicalServer.url !== "string") {
+      if (name !== "nova" || typeof canonicalServer.url !== "string") {
         return [name, sortJsonValue(canonicalServer)];
       }
       return [
         name,
         sortJsonValue({
           ...canonicalServer,
-          url: normalizeOpenClawLoopbackUrl(canonicalServer.url),
+          url: normalizeNovaLoopbackUrl(canonicalServer.url),
         }),
       ];
     }),
@@ -112,7 +112,7 @@ function canonicalizeBundleMcpConfigForResume(config: BundleMcpConfig): BundleMc
 
 const NOVA_MCP_ENV_TEMPLATE_PATTERN = /\$\{(NOVA_MCP_[A-Z0-9_]+)\}/g;
 
-function resolveOpenClawMcpEnvTemplates(value: unknown, env?: Record<string, string>): unknown {
+function resolveNovaMcpEnvTemplates(value: unknown, env?: Record<string, string>): unknown {
   if (!env) {
     return value;
   }
@@ -123,13 +123,13 @@ function resolveOpenClawMcpEnvTemplates(value: unknown, env?: Record<string, str
     });
   }
   if (Array.isArray(value)) {
-    return value.map((entry) => resolveOpenClawMcpEnvTemplates(entry, env));
+    return value.map((entry) => resolveNovaMcpEnvTemplates(entry, env));
   }
   if (!isRecord(value)) {
     return value;
   }
   return Object.fromEntries(
-    Object.entries(value).map(([key, entry]) => [key, resolveOpenClawMcpEnvTemplates(entry, env)]),
+    Object.entries(value).map(([key, entry]) => [key, resolveNovaMcpEnvTemplates(entry, env)]),
   );
 }
 
@@ -175,9 +175,9 @@ async function prepareModeSpecificBundleMcpConfig(params: {
     };
   }
 
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-cli-mcp-"));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-cli-mcp-"));
   const mcpConfigPath = path.join(tempDir, "mcp.json");
-  const runtimeConfig = resolveOpenClawMcpEnvTemplates(
+  const runtimeConfig = resolveNovaMcpEnvTemplates(
     params.mergedConfig,
     params.env,
   ) as BundleMcpConfig;
@@ -207,13 +207,13 @@ export async function prepareCliBundleMcpConfig(params: {
   mode?: CliBundleMcpMode;
   backend: CliBackendConfig;
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   additionalConfig?: BundleMcpConfig;
   /**
    * Serve exactly these servers, skipping user/plugin/additional merges.
    * Ring-zero Nova runs use this so the CLI harness sees only the
-   * openclaw MCP server instead of the normal openclaw tool surface.
+   * nova MCP server instead of the normal nova tool surface.
    */
   exclusiveConfig?: BundleMcpConfig;
   env?: Record<string, string>;

@@ -2,7 +2,7 @@
   "name": "@nova/oc-path",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw oc:// workspace path plugin",
+  "description": "Nova oc:// workspace path plugin",
   "type": "module",
   "dependencies": {
     "jsonc-parser": "3.3.1",
@@ -11,17 +11,17 @@
   },
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "nova": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.7.2"
+    "nova": ">=2026.7.2"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "nova": {
       "optional": true
     }
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

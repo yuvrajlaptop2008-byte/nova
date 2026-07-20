@@ -2,7 +2,7 @@
 import path from "node:path";
 import { hashRuntimeConfigValue } from "../config/runtime-snapshot.js";
 import { MODEL_APIS } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { withTimeout } from "../node-host/with-timeout.js";
 import { resolvePluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.types.js";
@@ -18,7 +18,7 @@ import {
 import { loadBundledProviderStaticCatalogContextModels } from "./embedded-agent-runner/model.static-catalog.js";
 import { buildPreparedModelCatalogSnapshot, type ModelCatalogEntry } from "./model-catalog.js";
 import type { ModelCatalogSnapshot } from "./model-catalog.types.js";
-import { ensureOpenClawModelsJson } from "./models-config.js";
+import { ensureNovaModelsJson } from "./models-config.js";
 import { ensureRuntimePluginsLoaded } from "./runtime-plugins.js";
 import { AuthStorage } from "./sessions/auth-storage.js";
 import type { ModelRegistry } from "./sessions/model-registry.js";
@@ -30,7 +30,7 @@ export type PreparedModelRuntimeSnapshot = Readonly<{
   agentDir: string;
   inheritedAuthDir?: string;
   workspaceDir?: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   metadataSnapshot: PluginMetadataSnapshot;
   modelCatalog: ModelCatalogSnapshot;
   createStores: () => PreparedModelRuntimeStores;
@@ -50,7 +50,7 @@ export type PreparedModelRuntimeInput = {
   readOnly?: boolean;
   skipCredentials?: boolean;
   env?: NodeJS.ProcessEnv;
-  config: OpenClawConfig;
+  config: NovaConfig;
 };
 
 export type PreparedModelRuntimeLease = Readonly<{
@@ -117,7 +117,7 @@ export function rebindInputToCommittedConfiguredOwner(
   const owner = candidates[0]!;
   const preserveWorkspaceDir =
     input.preserveWorkspaceDirOnRefresh === true && input.workspaceDir !== undefined;
-  // Reserved execution identities (for example setup's `openclaw` agent) intentionally borrow a
+  // Reserved execution identities (for example setup's `nova` agent) intentionally borrow a
   // configured agent directory. Rebase their lifecycle inputs without erasing that run identity.
   const agentId = input.agentId ?? owner.input.agentId;
   return normalizePreparedModelRuntimeInput({
@@ -133,10 +133,7 @@ export function rebindInputToCommittedConfiguredOwner(
 }
 
 /** Accepts canonical config clones without weakening projected-config isolation. */
-export function preparedModelRuntimeConfigsMatch(
-  left: OpenClawConfig,
-  right: OpenClawConfig,
-): boolean {
+export function preparedModelRuntimeConfigsMatch(left: NovaConfig, right: NovaConfig): boolean {
   if (left === right) {
     return true;
   }
@@ -286,7 +283,7 @@ export function createPreparedModelRuntimeReplacement(): PreparedModelRuntimeRep
 }
 
 export function listConfiguredOwnerInputs(
-  config: OpenClawConfig,
+  config: NovaConfig,
   defaultWorkspaceDir?: string,
 ): PreparedModelRuntimeInput[] {
   const inheritedAuthDir = resolveDefaultAgentDir(config);
@@ -327,7 +324,7 @@ async function buildSnapshot(
     ...(input.workspaceDir ? { workspaceDir: input.workspaceDir } : {}),
   });
   if (!input.readOnly) {
-    await ensureOpenClawModelsJson(input.config, input.agentDir, {
+    await ensureNovaModelsJson(input.config, input.agentDir, {
       ...(input.workspaceDir ? { workspaceDir: input.workspaceDir } : {}),
       ...(input.env ? { env } : {}),
       providerDiscoveryTimeoutMs: MODEL_RUNTIME_PROVIDER_DISCOVERY_TIMEOUT_MS,

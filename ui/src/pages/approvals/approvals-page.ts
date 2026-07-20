@@ -21,7 +21,7 @@ import {
 import { renderSettingsPage } from "../../components/settings-ui.ts";
 import { renderSettingsWorkspace } from "../../components/settings-workspace.ts";
 import { i18n, t } from "../../i18n/index.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 
 const APPROVAL_HISTORY_PAGE_SIZE = 50;
@@ -113,7 +113,7 @@ function resolverLabel(item: TerminalApprovalSnapshot): string {
   return item.resolver.id ? `${item.resolver.kind} · ${item.resolver.id}` : item.resolver.kind;
 }
 
-class ApprovalsPage extends OpenClawLightDomElement {
+class ApprovalsPage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -335,6 +335,6 @@ class ApprovalsPage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-approvals-page")) {
-  customElements.define("openclaw-approvals-page", ApprovalsPage);
+if (!customElements.get("nova-approvals-page")) {
+  customElements.define("nova-approvals-page", ApprovalsPage);
 }

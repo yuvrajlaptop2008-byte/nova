@@ -1,9 +1,9 @@
 // Signal plugin module tracks native-reply quote authors for durable sends.
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/account-id";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { normalizeSignalMessagingTarget } from "./normalize.js";
 import { signalReplyAuthorState, type SignalReplyContextRecord } from "./reply-authors-state.js";
 import { getOptionalSignalRuntime } from "./runtime.js";

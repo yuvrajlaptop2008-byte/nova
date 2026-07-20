@@ -1,6 +1,6 @@
 // Flat-key compatibility resolvers and warn-once state. This module keeps the
 // test-only reset and warning helpers off the public SDK wildcard surface
-// (openclaw/plugin-sdk/channel-outbound re-exports all of streaming.ts) and
+// (nova/plugin-sdk/channel-outbound re-exports all of streaming.ts) and
 // bounds the deletion scope when the fallback window closes next release train.
 import type {
   BlockStreamingChunkConfig,

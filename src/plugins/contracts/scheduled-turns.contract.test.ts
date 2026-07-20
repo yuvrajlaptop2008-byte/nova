@@ -3,7 +3,7 @@ import { MAX_DATE_TIMESTAMP_MS } from "@nova/normalization-core/number-coercion"
 import {
   createPluginRegistryFixture,
   registerTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "nova/plugin-sdk/plugin-test-contracts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CronServiceContract } from "../../cron/service-contract.js";
 import type { CronJob, CronJobCreate } from "../../cron/types.js";
@@ -22,7 +22,7 @@ import {
   schedulePluginSessionTurn,
   unschedulePluginSessionTurnsByTag,
 } from "../host-hook-scheduled-turns.js";
-import { loadOpenClawPlugins } from "../loader.js";
+import { loadNovaPlugins } from "../loader.js";
 import { clearPluginLoaderCache, makeTempDir, writePlugin } from "../loader.test-fixtures.js";
 import { createEmptyPluginRegistry } from "../registry-empty.js";
 import {
@@ -36,7 +36,7 @@ import {
   setActivePluginRegistry,
 } from "../runtime.js";
 import { createPluginRecord } from "../status.test-helpers.js";
-import type { OpenClawPluginApi } from "../types.js";
+import type { NovaPluginApi } from "../types.js";
 
 const workflowMocks = vi.hoisted(() => ({
   cronAdd: vi.fn(),
@@ -99,9 +99,9 @@ function createMockCronService(): CronServiceContract {
     stop: vi.fn(),
     status: vi.fn(async () => ({
       enabled: true,
-      storePath: "/tmp/openclaw-test-cron.json",
+      storePath: "/tmp/nova-test-cron.json",
       storage: "sqlite" as const,
-      sqlitePath: "/tmp/openclaw-test-state/state/openclaw.sqlite",
+      sqlitePath: "/tmp/nova-test-state/state/nova.sqlite",
       jobs: 0,
       nextWakeAtMs: null,
     })),
@@ -532,7 +532,7 @@ describe("plugin scheduled turns", () => {
         NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
-        loadOpenClawPlugins({
+        loadNovaPlugins({
           cache: false,
           hostServices: { cron },
           config: {
@@ -670,7 +670,7 @@ describe("plugin scheduled turns", () => {
         NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
-        loadOpenClawPlugins({
+        loadNovaPlugins({
           cache: false,
           hostServices: { cron },
           config: {
@@ -1120,7 +1120,7 @@ describe("plugin scheduled turns", () => {
       makeCronJob({ id: scheduledIds.shift() ?? "unexpected-job" }),
     );
     const { config, registry } = createPluginRegistryFixture({}, { hostServices: { cron } });
-    let capturedApi: OpenClawPluginApi | undefined;
+    let capturedApi: NovaPluginApi | undefined;
     registerTestPlugin({
       registry,
       config,
@@ -1224,7 +1224,7 @@ describe("plugin scheduled turns", () => {
       },
     };
     const { config, registry } = createPluginRegistryFixture({}, { hostServices });
-    let capturedApi: OpenClawPluginApi | undefined;
+    let capturedApi: NovaPluginApi | undefined;
     registerTestPlugin({
       registry,
       config,

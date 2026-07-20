@@ -9,7 +9,7 @@ import type {
   ChannelMessageActionName,
   ChannelPlugin,
 } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import {
   normalizeMessagePresentation,
   renderMessagePresentationFallbackText,
@@ -413,7 +413,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "pin",
         params: {
           channel: "actionhub",
@@ -435,7 +435,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "list-pins",
         params: {
           channel: "actionhub",
@@ -484,7 +484,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "edit",
         params: {
           channel: "actionhub",
@@ -522,7 +522,7 @@ describe("runMessageAction plugin dispatch", () => {
                 enabled: true,
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           action: "react",
           params: {
             channel: "actionhub",
@@ -538,7 +538,7 @@ describe("runMessageAction plugin dispatch", () => {
     });
 
     it("routes execution context ids into plugin handleAction", async () => {
-      const stateDir = path.join("/tmp", "openclaw-plugin-dispatch-media-roots");
+      const stateDir = path.join("/tmp", "nova-plugin-dispatch-media-roots");
       const expectedWorkspaceRoot = path.resolve(stateDir, "workspace-alpha");
 
       await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
@@ -549,7 +549,7 @@ describe("runMessageAction plugin dispatch", () => {
                 enabled: true,
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           action: "pin",
           params: {
             channel: "actionhub",
@@ -610,7 +610,7 @@ describe("runMessageAction plugin dispatch", () => {
             enabled: true,
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       await expect(
         runMessageAction({
@@ -686,7 +686,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "channel-info",
         params: {
           channel: "actionhub",
@@ -722,7 +722,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "pin",
         params: {
           channel: "actionhub",
@@ -791,7 +791,7 @@ describe("runMessageAction plugin dispatch", () => {
             enabled: true,
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       setActivePluginRegistry(
         createTestRegistry([
@@ -905,7 +905,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "react",
         params: {
           channel: "gatewaychat",
@@ -1008,7 +1008,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "react",
         params: {
           channel: "gatewaychat",
@@ -1073,7 +1073,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "react",
         params: {
           channel: "gatewaychat",
@@ -1157,7 +1157,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "react",
         params: {
           channel: "gatewaychat",
@@ -1225,7 +1225,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         conversationReadOrigin: "direct-operator",
         sourceReplyDeliveryMode: "message_tool_only",
@@ -1327,7 +1327,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "gatewaychat",
@@ -1397,7 +1397,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "gatewaychat",
@@ -1476,7 +1476,7 @@ describe("runMessageAction plugin dispatch", () => {
       });
 
       await runMessageAction({
-        cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+        cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
         action: "send",
         params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
         sourceReplyFinal: true,
@@ -1524,7 +1524,7 @@ describe("runMessageAction plugin dispatch", () => {
 
       await expect(
         runMessageAction({
-          cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+          cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
           action: "send",
           params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
           sourceReplyFinal: true,
@@ -1571,7 +1571,7 @@ describe("runMessageAction plugin dispatch", () => {
 
       await expect(
         runMessageAction({
-          cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+          cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
           action: "send",
           params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
           sourceReplyFinal: true,
@@ -1615,7 +1615,7 @@ describe("runMessageAction plugin dispatch", () => {
 
       await expect(
         runMessageAction({
-          cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+          cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
           action: "send",
           params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
           sourceReplyFinal: true,
@@ -1667,7 +1667,7 @@ describe("runMessageAction plugin dispatch", () => {
 
       await expect(
         runMessageAction({
-          cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+          cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
           action: "send",
           params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
           sourceReplyFinal: true,
@@ -1716,7 +1716,7 @@ describe("runMessageAction plugin dispatch", () => {
         .mockResolvedValueOnce(failedPayload);
 
       await runMessageAction({
-        cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+        cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
         action: "send",
         params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
         sourceReplyFinal: true,
@@ -1758,7 +1758,7 @@ describe("runMessageAction plugin dispatch", () => {
 
       await expect(
         runMessageAction({
-          cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+          cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
           action: "send",
           params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
           sourceReplyFinal: true,
@@ -1801,7 +1801,7 @@ describe("runMessageAction plugin dispatch", () => {
 
       await expect(
         runMessageAction({
-          cfg: { channels: { gatewaychat: { enabled: true } } } as OpenClawConfig,
+          cfg: { channels: { gatewaychat: { enabled: true } } } as NovaConfig,
           action: "send",
           params: { channel: "gatewaychat", target: "user-123", message: "terminal answer" },
           sourceReplyFinal: true,
@@ -1857,7 +1857,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "gatewaychat",
@@ -1980,7 +1980,7 @@ describe("runMessageAction plugin dispatch", () => {
                 enabled: true,
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           action: "send",
           params: {
             channel: "gatewaychat",
@@ -2034,7 +2034,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "broadcast",
         params: {
           channel: "gatewaychat",
@@ -2099,7 +2099,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "broadcast",
         params: {
           channel: "gatewaychat",
@@ -2162,7 +2162,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "gatewaychat",
@@ -2244,7 +2244,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "gatewaydeliver",
@@ -2300,7 +2300,7 @@ describe("runMessageAction plugin dispatch", () => {
         messageId: "gw-send-tts",
       });
       mocks.maybeApplyTtsToPayload.mockResolvedValueOnce({
-        mediaUrl: "file:///tmp/openclaw-voice.ogg",
+        mediaUrl: "file:///tmp/nova-voice.ogg",
         audioAsVoice: true,
         spokenText: "hello there",
       });
@@ -2317,7 +2317,7 @@ describe("runMessageAction plugin dispatch", () => {
               auto: "tagged",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "gatewaychat",
@@ -2340,8 +2340,8 @@ describe("runMessageAction plugin dispatch", () => {
         readRecordField(gatewayParams, "params", "gateway message params"),
         {
           message: "",
-          media: "file:///tmp/openclaw-voice.ogg",
-          mediaUrl: "file:///tmp/openclaw-voice.ogg",
+          media: "file:///tmp/nova-voice.ogg",
+          mediaUrl: "file:///tmp/nova-voice.ogg",
           asVoice: true,
           audioAsVoice: true,
         },
@@ -2377,7 +2377,7 @@ describe("runMessageAction plugin dispatch", () => {
         ]),
       );
       mocks.maybeApplyTtsToPayload.mockResolvedValueOnce({
-        mediaUrl: "file:///tmp/openclaw-voice.ogg",
+        mediaUrl: "file:///tmp/nova-voice.ogg",
         audioAsVoice: true,
         spokenText: "hello there",
       });
@@ -2394,7 +2394,7 @@ describe("runMessageAction plugin dispatch", () => {
               auto: "tagged",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "localchat",
@@ -2409,8 +2409,8 @@ describe("runMessageAction plugin dispatch", () => {
         readRecordField(call, "params", "local plugin params"),
         {
           message: "",
-          media: "file:///tmp/openclaw-voice.ogg",
-          mediaUrl: "file:///tmp/openclaw-voice.ogg",
+          media: "file:///tmp/nova-voice.ogg",
+          mediaUrl: "file:///tmp/nova-voice.ogg",
           asVoice: true,
           audioAsVoice: true,
         },
@@ -2477,7 +2477,7 @@ describe("runMessageAction plugin dispatch", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "policydest",
@@ -2553,7 +2553,7 @@ describe("runMessageAction plugin dispatch", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "policydest",
@@ -2644,7 +2644,7 @@ describe("runMessageAction plugin dispatch", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "policydest",
@@ -2726,7 +2726,7 @@ describe("runMessageAction plugin dispatch", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "policychat",
@@ -2751,7 +2751,7 @@ describe("runMessageAction plugin dispatch", () => {
     const handleAction = vi.fn(async ({ params }: { params: Record<string, unknown> }) =>
       jsonResult({ ok: true, params }),
     );
-    const cfg = { channels: { forumchat: { enabled: true } } } as OpenClawConfig;
+    const cfg = { channels: { forumchat: { enabled: true } } } as NovaConfig;
     const threading: ChannelPlugin["threading"] = {
       resolveAutoThreadId: ({ toolContext, to }) =>
         toolContext?.currentChannelId === to ? toolContext.currentThreadTs : undefined,
@@ -2833,7 +2833,7 @@ describe("runMessageAction plugin dispatch", () => {
 
   describe("presentation send routing", () => {
     const handleAction = vi.fn(
-      async ({ cfg, params }: { cfg: OpenClawConfig; params: Record<string, unknown> }) => {
+      async ({ cfg, params }: { cfg: NovaConfig; params: Record<string, unknown> }) => {
         const message = typeof params.message === "string" ? params.message : "";
         const responsePrefix = cfg.messages?.responsePrefix;
         const rawMessage =
@@ -2899,7 +2899,7 @@ describe("runMessageAction plugin dispatch", () => {
             enabled: true,
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const presentation = {
         blocks: [{ type: "text", text: "Presentation-only payload" }],
@@ -2974,7 +2974,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "cardchat",
@@ -3062,7 +3062,7 @@ describe("runMessageAction plugin dispatch", () => {
               enabled: true,
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "cardchat",
@@ -3109,7 +3109,7 @@ describe("runMessageAction plugin dispatch", () => {
             },
           },
           messages: { responsePrefix: "[Nexus]" },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "send",
         params: {
           channel: "cardchat",
@@ -3182,7 +3182,7 @@ describe("runMessageAction plugin dispatch", () => {
               botToken: "tok",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "poll",
         params: {
           channel: "pollchat",
@@ -3271,7 +3271,7 @@ describe("runMessageAction plugin dispatch", () => {
               botToken: "tok",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "poll",
         params: {
           channel: "pollchat",
@@ -3380,7 +3380,7 @@ describe("runMessageAction plugin dispatch", () => {
               token: "tok",
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         action: "poll",
         params: {
           channel: "guildchat",
@@ -3467,7 +3467,7 @@ describe("runMessageAction plugin dispatch", () => {
         blocks: [{ type: "buttons", buttons: [{ label: "A", value: "a" }] }],
       };
       const result = await runMessageAction({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         action: "send",
         params: {
           channel: "componentchat",
@@ -3493,7 +3493,7 @@ describe("runMessageAction plugin dispatch", () => {
     it("throws on invalid presentation JSON strings", async () => {
       await expect(
         runMessageAction({
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           action: "send",
           params: {
             channel: "componentchat",
@@ -3553,7 +3553,7 @@ describe("runMessageAction plugin dispatch", () => {
       {
         name: "uses defaultAccountId override",
         args: {
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           defaultAccountId: "ops",
         },
         expectedAccountId: "ops",
@@ -3565,7 +3565,7 @@ describe("runMessageAction plugin dispatch", () => {
             bindings: [
               { agentId: "agent-b", match: { channel: "accountchat", accountId: "account-b" } },
             ],
-          } as OpenClawConfig,
+          } as NovaConfig,
           agentId: "agent-b",
         },
         expectedAccountId: "account-b",
@@ -3596,7 +3596,7 @@ describe("runMessageAction plugin dispatch", () => {
                 match: { channel: "accountchat", accountId: "agent-fallback" },
               },
             ],
-          } as OpenClawConfig,
+          } as NovaConfig,
           agentId: "agent-b",
           target: "channel:C_TARGET",
         },

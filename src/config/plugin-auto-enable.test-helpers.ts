@@ -7,7 +7,7 @@ import { clearPluginMetadataLifecycleCaches } from "../plugins/plugin-metadata-l
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.js";
 import type { PluginOrigin } from "../plugins/plugin-origin.types.js";
 import { cleanupTrackedTempDirs, makeTrackedTempDir } from "../plugins/test-helpers/fs-fixtures.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { NovaConfig } from "./types.nova.js";
 
 const tempDirs: string[] = [];
 
@@ -19,7 +19,7 @@ export function resetPluginAutoEnableTestState(): void {
 }
 
 export function makeTempDir(): string {
-  return makeTrackedTempDir("openclaw-plugin-auto-enable", tempDirs);
+  return makeTrackedTempDir("nova-plugin-auto-enable", tempDirs);
 }
 
 export function makeIsolatedEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
@@ -74,14 +74,14 @@ export function makeRegistry(
       origin: plugin.origin ?? "config",
       rootDir: `/fake/${plugin.id}`,
       source: `/fake/${plugin.id}/index.js`,
-      manifestPath: `/fake/${plugin.id}/openclaw.plugin.json`,
+      manifestPath: `/fake/${plugin.id}/nova.plugin.json`,
     })),
     diagnostics: [],
   };
 }
 
 export function createPluginMetadataSnapshot(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   manifestRegistry: PluginManifestRegistry;
   workspaceDir?: string;
 }): PluginMetadataSnapshot {

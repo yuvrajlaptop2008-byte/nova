@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import os from "node:os";
 import { join } from "node:path";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { afterAll, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig, OpenClawPluginApi, OpenClawPluginToolContext } from "../api.js";
+import type { NovaConfig, NovaPluginApi, NovaPluginToolContext } from "../api.js";
 import { registerDiffsPlugin } from "./plugin.js";
 
 const { createDiffsToolMock } = vi.hoisted(() => ({
@@ -24,22 +24,20 @@ describe("diffs plugin language-pack discovery", () => {
     "requires both the sibling manifest and generated runtime asset in %s",
     (assetDir) => {
       type RegisteredTool = { name?: string };
-      const root = fs.mkdtempSync(join(os.tmpdir(), "openclaw-diffs-language-pack-"));
+      const root = fs.mkdtempSync(join(os.tmpdir(), "nova-diffs-language-pack-"));
       try {
         const diffsRoot = join(root, "diffs");
         const languagePackRoot = join(root, "diffs-language-pack");
         fs.mkdirSync(diffsRoot, { recursive: true });
         fs.mkdirSync(languagePackRoot, { recursive: true });
         fs.writeFileSync(
-          join(languagePackRoot, "openclaw.plugin.json"),
+          join(languagePackRoot, "nova.plugin.json"),
           '{"id":"diffs-language-pack"}\n',
         );
-        const config = { plugins: {} } as OpenClawConfig;
+        const config = { plugins: {} } as NovaConfig;
         const openBlobStore = vi.fn(() => createBlobStoreStub());
         let registeredToolFactory:
-          | ((
-              ctx: OpenClawPluginToolContext,
-            ) => RegisteredTool | RegisteredTool[] | null | undefined)
+          | ((ctx: NovaPluginToolContext) => RegisteredTool | RegisteredTool[] | null | undefined)
           | undefined;
         const api = createTestPluginApi({
           rootDir: diffsRoot,
@@ -48,7 +46,7 @@ describe("diffs plugin language-pack discovery", () => {
             config: { current: () => config },
             state: { openBlobStore },
           } as never,
-          registerTool(tool: Parameters<OpenClawPluginApi["registerTool"]>[0]) {
+          registerTool(tool: Parameters<NovaPluginApi["registerTool"]>[0]) {
             registeredToolFactory = typeof tool === "function" ? tool : () => tool;
           },
         });
@@ -66,7 +64,7 @@ describe("diffs plugin language-pack discovery", () => {
           sessionId: "session-1",
           messageChannel: "test",
           agentAccountId: "default",
-        } satisfies OpenClawPluginToolContext;
+        } satisfies NovaPluginToolContext;
 
         registeredToolFactory?.(context);
         expect(createDiffsToolMock).toHaveBeenLastCalledWith(

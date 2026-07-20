@@ -14,13 +14,13 @@ describe("scripts/test-live-gateway-models-docker.sh", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      'LIVE_GATEWAY_MAX_MODELS="$(openclaw_live_read_positive_int_env NOVA_LIVE_GATEWAY_MAX_MODELS 8)"',
+      'LIVE_GATEWAY_MAX_MODELS="$(nova_live_read_positive_int_env NOVA_LIVE_GATEWAY_MAX_MODELS 8)"',
     );
     expect(script).toContain(
-      'LIVE_GATEWAY_STEP_TIMEOUT_MS="$(openclaw_live_read_positive_int_env NOVA_LIVE_GATEWAY_STEP_TIMEOUT_MS 45000)"',
+      'LIVE_GATEWAY_STEP_TIMEOUT_MS="$(nova_live_read_positive_int_env NOVA_LIVE_GATEWAY_STEP_TIMEOUT_MS 45000)"',
     );
     expect(script).toContain(
-      'LIVE_GATEWAY_MODEL_TIMEOUT_MS="$(openclaw_live_read_positive_int_env NOVA_LIVE_GATEWAY_MODEL_TIMEOUT_MS 90000)"',
+      'LIVE_GATEWAY_MODEL_TIMEOUT_MS="$(nova_live_read_positive_int_env NOVA_LIVE_GATEWAY_MODEL_TIMEOUT_MS 90000)"',
     );
     expect(script).toContain('-e NOVA_LIVE_GATEWAY_MAX_MODELS="$LIVE_GATEWAY_MAX_MODELS"');
     expect(script).toContain(

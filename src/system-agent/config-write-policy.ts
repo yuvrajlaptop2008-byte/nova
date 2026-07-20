@@ -14,12 +14,11 @@
  * config-write-parity contract test enforces that classification.
  */
 export const SYSTEM_AGENT_CONFIG_WRITE_DENYLIST: Readonly<Record<string, string>> = {
-  $include: "alternate-config inclusion; edit openclaw.json in a trusted shell",
-  auth: "provider auth; exit Nova and run `openclaw onboard`",
-  env: "environment/credential injection; edit openclaw.json in a trusted shell",
-  models:
-    "provider/catalog definitions feed routing; use `set_default_model` or `openclaw onboard`",
-  secrets: "secret providers; edit openclaw.json in a trusted shell",
+  $include: "alternate-config inclusion; edit nova.json in a trusted shell",
+  auth: "provider auth; exit Nova and run `nova onboard`",
+  env: "environment/credential injection; edit nova.json in a trusted shell",
+  models: "provider/catalog definitions feed routing; use `set_default_model` or `nova onboard`",
+  secrets: "secret providers; edit nova.json in a trusted shell",
 };
 
 export type InferenceRoutePathVerdict = "allowed" | "blocked" | "agent-route" | "plugin-entry";

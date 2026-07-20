@@ -15,7 +15,7 @@ import { resolveArchiveKind } from "./archive.js";
 import { pathExists } from "./fs-safe.js";
 import { applyNpmFreshnessBypassEnv, type NpmProjectInstallEnvOptions } from "./npm-install-env.js";
 import { withTempWorkspace } from "./private-temp-workspace.js";
-import { resolvePreferredOpenClawTmpDir } from "./tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "./tmp-nova-dir.js";
 
 /** Metadata npm reports when resolving a registry spec or packed archive. */
 export type NpmSpecResolution = {
@@ -114,7 +114,7 @@ function normalizeNpmViewMetadata(value: unknown, spec: string): NpmSpecResoluti
     integrity:
       normalizeOptionalString(rec["dist.integrity"]) ?? normalizeOptionalString(dist.integrity),
     shasum: normalizeOptionalString(rec["dist.shasum"]) ?? normalizeOptionalString(dist.shasum),
-    ...(isRecord(rec.openclaw) ? { packageNova: rec.openclaw } : {}),
+    ...(isRecord(rec.nova) ? { packageNova: rec.nova } : {}),
   };
 }
 
@@ -141,7 +141,7 @@ export async function resolveNpmSpecMetadata(params: { spec: string; timeoutMs?:
       "version",
       "dist.integrity",
       "dist.shasum",
-      "openclaw",
+      "nova",
       "--json",
     ],
     {
@@ -154,7 +154,7 @@ export async function resolveNpmSpecMetadata(params: { spec: string; timeoutMs?:
     if (/E404|is not in this registry/i.test(raw)) {
       return {
         ok: false,
-        error: `Package not found on npm: ${params.spec}. See https://docs.openclaw.ai/tools/plugin for installable plugins.`,
+        error: `Package not found on npm: ${params.spec}. See https://docs.nova.ai/tools/plugin for installable plugins.`,
       };
     }
     return { ok: false, error: `npm view failed: ${raw}`, category: "metadata-env" };
@@ -195,7 +195,7 @@ export async function withTempDir<T>(
   fn: (tmpDir: string) => Promise<T>,
   options?: { rootDir?: string },
 ): Promise<T> {
-  const rootDir = options?.rootDir ?? resolvePreferredOpenClawTmpDir();
+  const rootDir = options?.rootDir ?? resolvePreferredNovaTmpDir();
   return await withTempWorkspace({ rootDir, prefix }, async (tmp) => fn(tmp.dir));
 }
 
@@ -367,7 +367,7 @@ export async function packNpmSpecToArchive(params: {
     if (/E404|is not in this registry/i.test(raw)) {
       return {
         ok: false,
-        error: `Package not found on npm: ${params.spec}. See https://docs.openclaw.ai/tools/plugin for installable plugins.`,
+        error: `Package not found on npm: ${params.spec}. See https://docs.nova.ai/tools/plugin for installable plugins.`,
       };
     }
     return { ok: false, error: `npm pack failed: ${raw}` };

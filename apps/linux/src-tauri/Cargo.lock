@@ -2770,7 +2770,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "openclaw-desktop-linux"
+name = "nova-desktop-linux"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",

@@ -13,15 +13,15 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const smokeEntryPath = path.join(repoRoot, "dist", "plugins", "build-smoke-entry.js");
 assert.ok(fs.existsSync(smokeEntryPath), `missing build output: ${smokeEntryPath}`);
 
-const { clearPluginCommands, getPluginCommandSpecs, loadOpenClawPlugins, matchPluginCommand } =
+const { clearPluginCommands, getPluginCommandSpecs, loadNovaPlugins, matchPluginCommand } =
   await import(pathToFileURL(smokeEntryPath).href);
 
-assert.equal(typeof loadOpenClawPlugins, "function", "built loader export missing");
+assert.equal(typeof loadNovaPlugins, "function", "built loader export missing");
 assert.equal(typeof clearPluginCommands, "function", "clearPluginCommands missing");
 assert.equal(typeof getPluginCommandSpecs, "function", "getPluginCommandSpecs missing");
 assert.equal(typeof matchPluginCommand, "function", "matchPluginCommand missing");
 
-const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-build-smoke-"));
+const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-build-smoke-"));
 const pluginId = "build-smoke-plugin";
 const distPluginDir = path.join(repoRoot, "dist", "extensions", pluginId);
 const runtimePluginDir = path.join(repoRoot, "dist-runtime", "extensions", pluginId);
@@ -50,7 +50,7 @@ fs.writeFileSync(
     {
       name: "@nova/build-smoke-plugin",
       type: "module",
-      openclaw: {
+      nova: {
         extensions: ["./index.js"],
       },
     },
@@ -60,7 +60,7 @@ fs.writeFileSync(
   "utf8",
 );
 fs.writeFileSync(
-  path.join(distPluginDir, "openclaw.plugin.json"),
+  path.join(distPluginDir, "nova.plugin.json"),
   JSON.stringify(
     {
       id: pluginId,
@@ -78,7 +78,7 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(distPluginDir, "index.js"),
   [
-    "import { emptyPluginConfigSchema } from 'openclaw/plugin-sdk/plugin-entry';",
+    "import { emptyPluginConfigSchema } from 'nova/plugin-sdk/plugin-entry';",
     "",
     "export default {",
     `  id: ${JSON.stringify(pluginId)},`,
@@ -112,7 +112,7 @@ assert.equal(
 
 clearPluginCommands();
 
-const registry = loadOpenClawPlugins({
+const registry = loadNovaPlugins({
   cache: false,
   workspaceDir: tempRoot,
   env: {

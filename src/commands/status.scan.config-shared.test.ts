@@ -1,6 +1,6 @@
 // Status scan config tests cover scan command config loading and cold-start resolution.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { loadStatusScanCommandConfig } from "./status.scan.config-shared.js";
 
 const mocks = vi.hoisted(() => ({
@@ -15,7 +15,7 @@ describe("status.scan.config-shared", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.resolveConfigPath.mockReturnValue(
-      `/tmp/openclaw-status-scan-config-shared-missing-${process.pid}.json`,
+      `/tmp/nova-status-scan-config-shared-missing-${process.pid}.json`,
     );
   });
 
@@ -87,7 +87,7 @@ describe("status.scan.config-shared", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const sourceConfig = {
       models: {
         providers: {
@@ -97,7 +97,7 @@ describe("status.scan.config-shared", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const resolvedConfig = structuredClone(loadedConfig);
     const resolveConfig = vi.fn(async () => ({ resolvedConfig, diagnostics: [] }));
 
@@ -134,7 +134,7 @@ describe("status.scan.config-shared", () => {
     });
 
     expect(result.secretDiagnostics).toEqual([
-      "NOVA_GATEWAY_TOKEN conflicts with gateway.auth.token: Remove NOVA_GATEWAY_TOKEN from the shell, ~/.openclaw/.env, or launchctl env if gateway.auth.token is intended, or point gateway.auth.token at ${NOVA_GATEWAY_TOKEN} if the env var should be canonical.",
+      "NOVA_GATEWAY_TOKEN conflicts with gateway.auth.token: Remove NOVA_GATEWAY_TOKEN from the shell, ~/.nova/.env, or launchctl env if gateway.auth.token is intended, or point gateway.auth.token at ${NOVA_GATEWAY_TOKEN} if the env var should be canonical.",
     ]);
   });
 

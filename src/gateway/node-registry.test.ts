@@ -73,7 +73,7 @@ function makeClient(
       minProtocol: 1,
       maxProtocol: 1,
       client: {
-        id: opts.clientId ?? "openclaw-macos",
+        id: opts.clientId ?? "nova-macos",
         version: opts.version ?? "1.0.0",
         platform: opts.platform ?? "darwin",
         mode: "node",
@@ -182,7 +182,7 @@ function nodeSkill(name: string, body = "# Instructions") {
 
 function registerLinuxNode(registry: NodeRegistry) {
   return registerNode(registry, {
-    clientId: "openclaw-node-host",
+    clientId: "nova-node-host",
     platform: "linux",
   });
 }

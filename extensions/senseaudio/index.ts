@@ -1,5 +1,5 @@
 // Senseaudio plugin entrypoint registers its Nova integration.
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
 import { senseaudioMediaUnderstandingProvider } from "./media-understanding-provider.js";
 
 export default definePluginEntry({

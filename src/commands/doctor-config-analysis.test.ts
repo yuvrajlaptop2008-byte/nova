@@ -1,8 +1,8 @@
 // Doctor config analysis tests cover schema analysis, model fallback values, and issue generation.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveAgentModelFallbackValues } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { OpenClawSchema } from "../config/zod-schema.js";
+import type { NovaConfig } from "../config/types.nova.js";
+import { NovaSchema } from "../config/zod-schema.js";
 import {
   formatConfigPath,
   noteImplicitFallbackClobberWarnings,
@@ -14,7 +14,7 @@ const noteMock = vi.hoisted(() => vi.fn());
 
 vi.mock("../../packages/terminal-core/src/note.js", () => ({ note: noteMock }));
 
-function collectImplicitFallbackClobberWarnings(cfg: OpenClawConfig): string[] {
+function collectImplicitFallbackClobberWarnings(cfg: NovaConfig): string[] {
   noteMock.mockClear();
   noteImplicitFallbackClobberWarnings(cfg);
   const body = noteMock.mock.calls.at(-1)?.[0];
@@ -72,7 +72,7 @@ describe("doctor config analysis helpers", () => {
     expect(result.removed).toContain("defaultModel");
     expect(result.removed).not.toContain("agents.list[0].description");
     expect(result.removed).not.toContain("agents.list[1].description");
-    expect(OpenClawSchema.safeParse({ defaultModel: "minimax/MiniMax-M2.7" }).success).toBe(false);
+    expect(NovaSchema.safeParse({ defaultModel: "minimax/MiniMax-M2.7" }).success).toBe(false);
     expect(result.config).toMatchObject({
       mcp: {
         servers: {
@@ -160,13 +160,13 @@ describe("doctor config analysis helpers", () => {
 });
 
 describe("collectImplicitFallbackClobberWarnings", () => {
-  function buildConfig(overrides: { defaults?: unknown; list?: unknown[] }): OpenClawConfig {
+  function buildConfig(overrides: { defaults?: unknown; list?: unknown[] }): NovaConfig {
     return {
       agents: {
         defaults: { model: overrides.defaults },
         list: overrides.list,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
   }
 
   it("returns empty when defaults has no fallbacks", () => {
@@ -221,7 +221,7 @@ describe("collectImplicitFallbackClobberWarnings", () => {
         defaults: { model: { primary: "openai/gpt-5.5", fallbacks: ["openai/gpt-5.4"] } },
         list: { ops: { id: "ops", model: "openai/gpt-5.3" } },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(collectImplicitFallbackClobberWarnings(cfg)).toEqual([]);
   });

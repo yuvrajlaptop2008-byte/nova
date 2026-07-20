@@ -2,17 +2,17 @@
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { getLoadedChannelPlugin } from "../channels/plugins/index.js";
 import { resolveReadOnlyChannelCommandDefaults } from "../channels/plugins/read-only-command-defaults.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { pluginCommandSupportsChannel } from "./command-registration.js";
 import { pluginCommands } from "./command-registry-state.js";
 import type { PluginCommandRegistration } from "./registry-types.js";
-import type { OpenClawPluginCommandDefinition } from "./types.js";
+import type { NovaPluginCommandDefinition } from "./types.js";
 
 type PluginCommandSpecOptions = {
   env?: NodeJS.ProcessEnv;
   stateDir?: string;
   workspaceDir?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 };
 
 type PluginCommandEntrySpec = {
@@ -22,10 +22,7 @@ type PluginCommandEntrySpec = {
   nativeName?: string;
 };
 
-function resolvePluginNativeName(
-  command: OpenClawPluginCommandDefinition,
-  provider?: string,
-): string {
+function resolvePluginNativeName(command: NovaPluginCommandDefinition, provider?: string): string {
   const providerName = normalizeOptionalLowercaseString(provider);
   const providerOverride = providerName ? command.nativeNames?.[providerName] : undefined;
   if (typeof providerOverride === "string" && providerOverride.trim()) {
@@ -39,7 +36,7 @@ function resolvePluginNativeName(
   return fallbackName || command.name;
 }
 
-function resolvePluginTextName(command: OpenClawPluginCommandDefinition): string {
+function resolvePluginTextName(command: NovaPluginCommandDefinition): string {
   const name = command.name.trim();
   return name || command.name;
 }
@@ -117,7 +114,7 @@ export function listProviderPluginCommandSpecs(provider?: string): Array<{
 }
 
 function serializePluginCommandSpec(
-  cmd: OpenClawPluginCommandDefinition,
+  cmd: NovaPluginCommandDefinition,
   provider?: string,
 ): {
   name: string;
@@ -142,7 +139,7 @@ function serializePluginCommandSpec(
 }
 
 function serializePluginCommandEntrySpec(
-  cmd: OpenClawPluginCommandDefinition,
+  cmd: NovaPluginCommandDefinition,
   provider: string | undefined,
   nativeCommandsEnabled: boolean,
 ): PluginCommandEntrySpec | null {

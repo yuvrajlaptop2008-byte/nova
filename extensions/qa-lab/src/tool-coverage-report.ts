@@ -1,9 +1,9 @@
 // Qa Lab plugin module implements tool coverage report behavior.
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
 import {
   isRecord,
   normalizeOptionalString as readString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import {
   isRuntimeParityCellPassable,
   type RuntimeId,
@@ -47,10 +47,10 @@ type QaToolCoverageRow = {
   fixtureCount: number;
   scenarios: string[];
   sourcePaths: string[];
-  openclaw: QaToolCoverageStatus;
+  nova: QaToolCoverageStatus;
   codex: QaToolCoverageStatus;
   drift: QaToolCoverageDrift;
-  openclawToolCalls: number;
+  novaToolCalls: number;
   codexToolCalls: number;
   tracking?: string;
   codexDefaultImpact?: string;
@@ -91,7 +91,7 @@ function normalizeRuntimePair(
   if (pair?.[0] && pair?.[1]) {
     return pair;
   }
-  return ["openclaw", "codex"];
+  return ["nova", "codex"];
 }
 
 function cellStatus(cell: RuntimeParityCell | undefined): QaToolCoverageStatus {
@@ -191,7 +191,7 @@ function countRuntimeToolCalls(
   if (!result || !toolName) {
     return 0;
   }
-  const cell = runtime === "openclaw" ? result.cells.openclaw : result.cells.codex;
+  const cell = runtime === "nova" ? result.cells.nova : result.cells.codex;
   return cell.toolCalls.filter((call) => call.tool === toolName).length;
 }
 
@@ -221,10 +221,10 @@ function buildRow(params: {
     fixtureCount: params.group.scenarios.length,
     scenarios: params.group.scenarios.map((scenario) => scenario.id),
     sourcePaths: params.group.scenarios.map((scenario) => scenario.sourcePath),
-    openclaw: result ? cellStatus(result.cells.openclaw) : "not-run",
+    nova: result ? cellStatus(result.cells.nova) : "not-run",
     codex: result ? cellStatus(result.cells.codex) : "not-run",
     drift: result?.drift ?? "not-run",
-    openclawToolCalls: countRuntimeToolCalls(result, "openclaw", runtimeToolName),
+    novaToolCalls: countRuntimeToolCalls(result, "nova", runtimeToolName),
     codexToolCalls: countRuntimeToolCalls(result, "codex", runtimeToolName),
     ...(tracking ? { tracking } : {}),
     ...(rowMetadata.codexDefaultImpact
@@ -243,14 +243,14 @@ function coverageFailureForRow(row: QaToolCoverageRow): string | undefined {
   if (row.drift === "not-run") {
     return `${row.tool} drift=not-run`;
   }
-  if (row.openclaw !== "pass" || row.codex !== "pass") {
-    return `${row.tool} status openclaw=${row.openclaw} codex=${row.codex}`;
+  if (row.nova !== "pass" || row.codex !== "pass") {
+    return `${row.tool} status nova=${row.nova} codex=${row.codex}`;
   }
   if (row.drift === "failure-mode") {
     return `${row.tool} drift=failure-mode${row.details ? ` (${row.details})` : ""}`;
   }
-  if (row.runtimeToolName && row.openclawToolCalls === 0) {
-    return `${row.tool} missing openclaw tool call ${row.runtimeToolName}`;
+  if (row.runtimeToolName && row.novaToolCalls === 0) {
+    return `${row.tool} missing nova tool call ${row.runtimeToolName}`;
   }
   if (row.runtimeToolName && row.codexToolCalls === 0) {
     return `${row.tool} missing codex tool call ${row.runtimeToolName}`;
@@ -284,18 +284,16 @@ export function buildQaToolCoverageReport(params: {
     reportOnlyTools: rows.filter((row) => !row.required || Boolean(row.tracking)).length,
     trackedTools: rows.filter((row) => Boolean(row.tracking)).length,
     nativeWorkspaceTools: rows.filter((row) => row.bucket === "codex-native-workspace").length,
-    dynamicIntegrationTools: rows.filter((row) => row.bucket === "openclaw-dynamic-integration")
+    dynamicIntegrationTools: rows.filter((row) => row.bucket === "nova-dynamic-integration").length,
+    searchableDynamicTools: rows.filter((row) => row.capabilityLayer === "nova-dynamic-searchable")
       .length,
-    searchableDynamicTools: rows.filter(
-      (row) => row.capabilityLayer === "openclaw-dynamic-searchable",
-    ).length,
     optionalTools: rows.filter((row) => row.bucket === "optional-profile-or-plugin").length,
     passingTools: evaluated
       ? rows.filter(
           (row) =>
             row.required &&
             !row.tracking &&
-            row.openclaw === "pass" &&
+            row.nova === "pass" &&
             row.codex === "pass" &&
             (isPassingToolCoverageDrift(row.drift, true) || !coverageFailureForRow(row)),
         ).length
@@ -337,7 +335,7 @@ export function renderQaToolCoverageMarkdownReport(report: QaToolCoverageReport)
       row.capabilityLayer,
       row.required ? "yes" : "no",
       row.fixtureCount.toString(),
-      row.openclaw,
+      row.nova,
       row.codex,
       row.drift,
       row.codexDefaultImpact ?? "",

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import type { ChannelAutostartSuppression } from "./server-channels.js";
 
@@ -9,11 +9,11 @@ type GatewaySecretsActivationReason = "startup" | "reload" | "restart-check";
  * surface that is safe to resolve during crash-loop recovery.
  */
 export function resolveGatewayStartupSecretProjection(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   reason: GatewaySecretsActivationReason;
   channelAutostartSuppression?: ChannelAutostartSuppression | null;
   env?: NodeJS.ProcessEnv;
-}): { sourceConfig: OpenClawConfig; assignmentConfig?: OpenClawConfig } {
+}): { sourceConfig: NovaConfig; assignmentConfig?: NovaConfig } {
   const sourceConfig = resolveGatewayStartupSourceConfig(params.config, params.env ?? process.env);
   if (
     params.reason !== "startup" ||
@@ -32,9 +32,9 @@ export function resolveGatewayStartupSecretProjection(params: {
 }
 
 export function resolveGatewayStartupSourceConfig(
-  config: OpenClawConfig,
+  config: NovaConfig,
   env: NodeJS.ProcessEnv,
-): OpenClawConfig {
+): NovaConfig {
   const skipChannels =
     isTruthyEnvValue(env.NOVA_SKIP_CHANNELS) || isTruthyEnvValue(env.NOVA_SKIP_PROVIDERS);
   if (!skipChannels || !config.channels) {

@@ -1,7 +1,7 @@
 // Kilocode plugin entrypoint registers its Nova integration.
-import { readConfiguredProviderCatalogEntries } from "openclaw/plugin-sdk/provider-catalog-shared";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
+import { readConfiguredProviderCatalogEntries } from "nova/plugin-sdk/provider-catalog-shared";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
+import { buildProviderReplayFamilyHooks } from "nova/plugin-sdk/provider-model-shared";
 import { applyKilocodeConfig, KILOCODE_DEFAULT_MODEL_REF } from "./onboard.js";
 import { buildKilocodeProvider, buildKilocodeProviderWithDiscovery } from "./provider-catalog.js";
 import { wrapKilocodeProviderStream } from "./stream.js";

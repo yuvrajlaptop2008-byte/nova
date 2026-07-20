@@ -30,7 +30,7 @@ import {
   type RestartSentinelPayload,
   writeRestartSentinel,
 } from "../../infra/restart-sentinel.js";
-import { scheduleGatewaySigusr1Restart, triggerOpenClawRestart } from "../../infra/restart.js";
+import { scheduleGatewaySigusr1Restart, triggerNovaRestart } from "../../infra/restart.js";
 import { loadCostUsageSummary, loadSessionCostSummary } from "../../infra/session-cost-usage.js";
 import {
   asDateTimestampMs,
@@ -800,7 +800,7 @@ export const handleRestartCommand: CommandHandler = async (params, allowTextComm
       },
     };
   }
-  const restartMethod = triggerOpenClawRestart();
+  const restartMethod = triggerNovaRestart();
   if (!restartMethod.ok) {
     if (sentinelWritten) {
       await clearRestartSentinel();

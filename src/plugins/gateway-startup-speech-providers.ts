@@ -1,7 +1,7 @@
 // Collects startup speech provider metadata from plugin manifests.
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveEffectiveTtsConfig } from "../tts/tts-config.js";
 
 const TTS_PROVIDER_CONFIG_RESERVED_KEYS = new Set([
@@ -142,7 +142,7 @@ function addConfiguredTtsProviderIds(target: Set<string>, value: unknown): void 
 }
 
 /** Collects TTS provider ids referenced by root, agent, channel, account, and plugin config. */
-export function collectConfiguredSpeechProviderIds(config: OpenClawConfig): ReadonlySet<string> {
+export function collectConfiguredSpeechProviderIds(config: NovaConfig): ReadonlySet<string> {
   const configured = new Set<string>();
   addConfiguredTtsProviderIds(configured, resolveEffectiveTtsConfig(config));
 

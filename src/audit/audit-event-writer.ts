@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { Worker } from "node:worker_threads";
 import { resolveStateDir } from "../config/paths.js";
-import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "../state/openclaw-state-db.js";
+import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "../state/nova-state-db.js";
 import type { AuditEventInput } from "./audit-event-types.js";
 
 const MAX_PENDING_AUDIT_EVENTS = 4_096;

@@ -18,7 +18,7 @@ const mocks = vi.hoisted(() => ({
   readConfigFileSnapshot: vi.fn(async () => ({
     exists: true,
     valid: true,
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     hash: "h",
     config: {},
     sourceConfig: {},
@@ -48,7 +48,7 @@ function toolText(result: unknown): string {
     .join("\n");
 }
 
-describe("openclaw tool", () => {
+describe("nova tool", () => {
   it("stays directly callable instead of entering tool catalogs", () => {
     const tool = createSystemAgentTool({ surface: "cli" });
     expect(tool.catalogMode).toBe("direct-only");
@@ -325,7 +325,7 @@ describe("openclaw tool", () => {
     expect(toolText(configureModel)).toContain(
       "active inference route cannot be changed inside Nova",
     );
-    expect(toolText(configureModel)).toContain("openclaw onboard");
+    expect(toolText(configureModel)).toContain("nova onboard");
     expect(directiveRef.current).toEqual({ kind: "model-setup", workspace: "/tmp/work" });
 
     const open = await tool.execute("t7", { action: "open_agent", agentId: "work" });
@@ -349,7 +349,7 @@ describe("openclaw tool", () => {
       target: "guided",
     });
     expect(toolText(guidedSetup)).toContain("cannot run inside Nova");
-    expect(toolText(guidedSetup)).toContain("openclaw onboard");
+    expect(toolText(guidedSetup)).toContain("nova onboard");
     expect(directiveRef.current).toEqual({ kind: "open-setup", target: "guided" });
 
     // Directives are host handoffs, never operation executions.
@@ -387,13 +387,13 @@ describe("openclaw tool", () => {
       resolveSystemAgentDirectiveTransition({
         args: { action: "configure_model_provider", workspace: "/tmp/work" },
         resultText:
-          "directive: the active inference route cannot be changed inside Nova; run openclaw onboard.",
+          "directive: the active inference route cannot be changed inside Nova; run nova onboard.",
       }),
     ).toEqual({ kind: "model-setup", workspace: "/tmp/work" });
     expect(
       resolveSystemAgentDirectiveTransition({
         args: { action: "open_setup", target: "classic" },
-        resultText: "directive: classic setup cannot run inside Nova; run openclaw onboard.",
+        resultText: "directive: classic setup cannot run inside Nova; run nova onboard.",
       }),
     ).toEqual({ kind: "open-setup", target: "classic" });
     // Non-directive results and other actions never mirror.

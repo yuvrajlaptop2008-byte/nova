@@ -4,12 +4,12 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { writePersistedInstalledPluginIndexSync } from "./installed-plugin-index-store.js";
-import { listOpenClawPluginManifestMetadata } from "./manifest-metadata-scan.js";
+import { listNovaPluginManifestMetadata } from "./manifest-metadata-scan.js";
 
 const tempRoots: string[] = [];
 
 function createTempRoot(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-manifest-metadata-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-manifest-metadata-"));
   tempRoots.push(root);
   return root;
 }
@@ -19,7 +19,7 @@ function writeJson(filePath: string, value: unknown): void {
   fs.writeFileSync(filePath, JSON.stringify(value, null, 2), "utf8");
 }
 
-describe("listOpenClawPluginManifestMetadata", () => {
+describe("listNovaPluginManifestMetadata", () => {
   afterEach(() => {
     for (const root of tempRoots.splice(0)) {
       fs.rmSync(root, { recursive: true, force: true });
@@ -32,11 +32,11 @@ describe("listOpenClawPluginManifestMetadata", () => {
     const bundledRoot = path.join(root, "extensions");
     const staleBundledRoot = path.join(root, "stale", "extensions");
 
-    writeJson(path.join(bundledRoot, "openai", "openclaw.plugin.json"), {
+    writeJson(path.join(bundledRoot, "openai", "nova.plugin.json"), {
       id: "openai",
       providerEndpoints: [{ endpointClass: "openai-public", hosts: ["api.openai.com"] }],
     });
-    writeJson(path.join(staleBundledRoot, "openai", "openclaw.plugin.json"), {
+    writeJson(path.join(staleBundledRoot, "openai", "nova.plugin.json"), {
       id: "openai",
       providers: ["openai"],
     });
@@ -52,7 +52,7 @@ describe("listOpenClawPluginManifestMetadata", () => {
         plugins: [
           {
             pluginId: "openai",
-            manifestPath: path.join(staleBundledRoot, "openai", "openclaw.plugin.json"),
+            manifestPath: path.join(staleBundledRoot, "openai", "nova.plugin.json"),
             manifestHash: "stale-openai",
             rootDir: path.join(staleBundledRoot, "openai"),
             origin: "bundled",
@@ -68,10 +68,10 @@ describe("listOpenClawPluginManifestMetadata", () => {
         ],
         diagnostics: [],
       },
-      { stateDir: path.join(home, ".openclaw") },
+      { stateDir: path.join(home, ".nova") },
     );
 
-    const records = listOpenClawPluginManifestMetadata({
+    const records = listNovaPluginManifestMetadata({
       NOVA_HOME: home,
       NOVA_BUNDLED_PLUGINS_DIR: bundledRoot,
     });
@@ -88,12 +88,12 @@ describe("listOpenClawPluginManifestMetadata", () => {
     const home = path.join(root, "home");
     const partialBundledRoot = path.join(root, "dist", "extensions");
 
-    writeJson(path.join(partialBundledRoot, "qa-lab", "openclaw.plugin.json"), {
+    writeJson(path.join(partialBundledRoot, "qa-lab", "nova.plugin.json"), {
       id: "qa-lab",
       providers: ["qa-lab"],
     });
 
-    const records = listOpenClawPluginManifestMetadata({
+    const records = listNovaPluginManifestMetadata({
       NOVA_HOME: home,
       NOVA_BUNDLED_PLUGINS_DIR: partialBundledRoot,
     });
@@ -111,10 +111,10 @@ describe("listOpenClawPluginManifestMetadata", () => {
   it("falls through a blank Nova home when scanning global manifests", () => {
     const root = createTempRoot();
     const home = path.join(root, "home");
-    const pluginDir = path.join(home, ".openclaw", "extensions", "example");
-    writeJson(path.join(pluginDir, "openclaw.plugin.json"), { id: "example" });
+    const pluginDir = path.join(home, ".nova", "extensions", "example");
+    writeJson(path.join(pluginDir, "nova.plugin.json"), { id: "example" });
 
-    const records = listOpenClawPluginManifestMetadata({
+    const records = listNovaPluginManifestMetadata({
       NOVA_HOME: "   ",
       HOME: home,
       NOVA_BUNDLED_PLUGINS_DIR: path.join(root, "bundled"),
@@ -131,11 +131,11 @@ describe("listOpenClawPluginManifestMetadata", () => {
     const root = createTempRoot();
     const home = path.join(root, "home");
 
-    const goodPluginDir = path.join(home, ".openclaw", "extensions", "good-plugin");
-    writeJson(path.join(goodPluginDir, "openclaw.plugin.json"), { id: "good-plugin" });
+    const goodPluginDir = path.join(home, ".nova", "extensions", "good-plugin");
+    writeJson(path.join(goodPluginDir, "nova.plugin.json"), { id: "good-plugin" });
 
-    const oversizedDir = path.join(home, ".openclaw", "extensions", "big-plugin");
-    const oversizedPath = path.join(oversizedDir, "openclaw.plugin.json");
+    const oversizedDir = path.join(home, ".nova", "extensions", "big-plugin");
+    const oversizedPath = path.join(oversizedDir, "nova.plugin.json");
     fs.mkdirSync(oversizedDir, { recursive: true });
     fs.writeFileSync(
       oversizedPath,
@@ -144,7 +144,7 @@ describe("listOpenClawPluginManifestMetadata", () => {
     );
     expect(fs.statSync(oversizedPath).size).toBeGreaterThan(256 * 1024);
 
-    const records = listOpenClawPluginManifestMetadata({
+    const records = listNovaPluginManifestMetadata({
       NOVA_HOME: home,
       NOVA_BUNDLED_PLUGINS_DIR: path.join(root, "empty-bundled"),
     });
@@ -158,11 +158,11 @@ describe("listOpenClawPluginManifestMetadata", () => {
     const root = createTempRoot();
     const home = path.join(root, "home");
 
-    const exactDir = path.join(home, ".openclaw", "extensions", "exact-plugin");
+    const exactDir = path.join(home, ".nova", "extensions", "exact-plugin");
     fs.mkdirSync(exactDir, { recursive: true });
 
     // Write a compact JSON manifest padded to exactly the byte limit.
-    const exactPath = path.join(exactDir, "openclaw.plugin.json");
+    const exactPath = path.join(exactDir, "nova.plugin.json");
     const exactManifest = { id: "exact-plugin", pad: "" };
     const compactJson = JSON.stringify(exactManifest);
     const requiredPadding = 256 * 1024 - Buffer.byteLength(compactJson, "utf8");
@@ -170,7 +170,7 @@ describe("listOpenClawPluginManifestMetadata", () => {
     fs.writeFileSync(exactPath, JSON.stringify(exactManifest), "utf8");
     expect(Buffer.byteLength(fs.readFileSync(exactPath), "utf8")).toBe(256 * 1024);
 
-    const records = listOpenClawPluginManifestMetadata({
+    const records = listNovaPluginManifestMetadata({
       NOVA_HOME: home,
       NOVA_BUNDLED_PLUGINS_DIR: path.join(root, "empty-bundled"),
     });

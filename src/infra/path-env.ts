@@ -10,7 +10,7 @@ import { resolveBrewPathDirs } from "./brew.js";
 import { isTruthyEnvValue } from "./env.js";
 import { tryProcessCwd } from "./safe-cwd.js";
 
-type EnsureOpenClawPathOpts = {
+type EnsureNovaPathOpts = {
   /** Executable whose directory should stay first for shebang-compatible child processes. */
   execPath?: string;
   /** Working directory used only when project-local bin fallback is explicitly enabled. */
@@ -144,7 +144,7 @@ function mergePath(params: { existing: string; prepend?: string[]; append?: stri
 }
 
 function candidateBinDirs(
-  opts: EnsureOpenClawPathOpts,
+  opts: EnsureNovaPathOpts,
   existingPathParts: ReadonlySet<string>,
 ): { prepend: string[]; append: string[] } {
   const execPath = opts.execPath ?? process.execPath;
@@ -166,10 +166,10 @@ function candidateBinDirs(
     // ignore
   }
 
-  // Bundled macOS app: `openclaw` lives next to the executable (process.execPath).
+  // Bundled macOS app: `nova` lives next to the executable (process.execPath).
   try {
     const execDir = path.dirname(execPath);
-    const siblingCli = path.join(execDir, "openclaw");
+    const siblingCli = path.join(execDir, "nova");
     if (isExecutable(siblingCli)) {
       prepend.push(execDir);
     }
@@ -184,7 +184,7 @@ function candidateBinDirs(
     isTruthyEnvValue(process.env.NOVA_ALLOW_PROJECT_LOCAL_BIN);
   if (allowProjectLocalBin && cwd) {
     const localBinDir = path.join(cwd, "node_modules", ".bin");
-    if (isExecutable(path.join(localBinDir, "openclaw"))) {
+    if (isExecutable(path.join(localBinDir, "nova"))) {
       append.push(localBinDir);
     }
   }
@@ -195,7 +195,7 @@ function candidateBinDirs(
 
   // User-writable / package-manager directories are appended so they never
   // shadow trusted OS binaries.
-  // This includes Brew/Homebrew dirs, which are useful for finding `openclaw`
+  // This includes Brew/Homebrew dirs, which are useful for finding `nova`
   // in launchd/minimal environments but must not be treated as trusted.
   append.push(...resolvePathBootstrapBrewDirs({ homeDir, platform, existingPathParts }));
   const pnpmHome = normalizeTrustedPackageManagerRoot({
@@ -241,10 +241,10 @@ function candidateBinDirs(
 }
 
 /**
- * Best-effort PATH bootstrap so skills that require the `openclaw` CLI can run
+ * Best-effort PATH bootstrap so skills that require the `nova` CLI can run
  * under launchd/minimal environments (and inside the macOS app bundle).
  */
-export function ensureOpenClawCliOnPath(opts: EnsureOpenClawPathOpts = {}) {
+export function ensureNovaCliOnPath(opts: EnsureNovaPathOpts = {}) {
   if (isTruthyEnvValue(process.env.NOVA_PATH_BOOTSTRAPPED)) {
     return;
   }

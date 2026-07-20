@@ -16,7 +16,7 @@ async function expectPackageMeta(params: {
 
 describe("package-json helpers", () => {
   it("reads package version and trims package name", async () => {
-    await withTempDir({ prefix: "openclaw-package-json-" }, async (root) => {
+    await withTempDir({ prefix: "nova-package-json-" }, async (root) => {
       await fs.writeFile(
         path.join(root, "package.json"),
         JSON.stringify({
@@ -78,7 +78,7 @@ describe("package-json helpers", () => {
   ])(
     "returns normalized nulls for $name",
     async ({ writePackageJson, expectedVersion, expectedName }) => {
-      await withTempDir({ prefix: "openclaw-package-json-" }, async (root) => {
+      await withTempDir({ prefix: "nova-package-json-" }, async (root) => {
         await writePackageJson(root);
         await expectPackageMeta({
           root,

@@ -562,49 +562,49 @@ export function loadPluginRegistrySnapshotWithMetadata(
           level: "warn",
           code: "persisted-registry-stale-policy",
           message:
-            "Persisted plugin registry policy does not match current config; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry policy does not match current config; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else if (hasMissingPersistedPluginSource(persistedIndex)) {
         diagnostics.push({
           level: "warn",
           code: "persisted-registry-stale-source",
           message:
-            "Persisted plugin registry points at missing plugin files; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry points at missing plugin files; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else if (hasMismatchedPersistedBundledPluginRoot(persistedIndex, env)) {
         diagnostics.push({
           level: "warn",
           code: "persisted-registry-stale-source",
           message:
-            "Persisted plugin registry points at a different bundled plugin tree; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry points at a different bundled plugin tree; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else if (hasMismatchedPersistedConfigPathPlugins(persistedIndex, params, env)) {
         diagnostics.push({
           level: "warn",
           code: "persisted-registry-stale-source",
           message:
-            "Persisted plugin registry does not match configured load-path plugins; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry does not match configured load-path plugins; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else if (hasStalePersistedPluginDiagnostics(persistedIndex)) {
         diagnostics.push({
           level: "warn",
           code: "persisted-registry-stale-source",
           message:
-            "Persisted plugin registry contains diagnostics referencing missing paths; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry contains diagnostics referencing missing paths; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else if (hasMissingConfigPathActivationMetadata(persistedIndex)) {
         diagnostics.push({
           level: "warn",
           code: "persisted-registry-stale-source",
           message:
-            "Persisted plugin registry is missing config-path startup metadata; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry is missing config-path startup metadata; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else if (hasStalePersistedPluginMetadata(persistedIndex)) {
         diagnostics.push({
           level: "warn",
           code: "persisted-registry-stale-source",
           message:
-            "Persisted plugin registry metadata no longer matches plugin manifest or package files; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry metadata no longer matches plugin manifest or package files; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else if (
         hasRecoveredInstallRecordsMissingFromPersistedIndex(
@@ -617,7 +617,7 @@ export function loadPluginRegistrySnapshotWithMetadata(
           level: "warn",
           code: "persisted-registry-stale-source",
           message:
-            "Persisted plugin registry is missing recoverable managed npm plugins; using derived plugin index. Run `openclaw plugins registry --refresh` to update the persisted registry.",
+            "Persisted plugin registry is missing recoverable managed npm plugins; using derived plugin index. Run `nova plugins registry --refresh` to update the persisted registry.",
         });
       } else {
         const persistedResult: PluginRegistrySnapshotResult = {

@@ -11,7 +11,7 @@ import {
   normalizeOptionalString,
 } from "@nova/normalization-core/string-coerce";
 import { normalizeTrimmedStringList } from "@nova/normalization-core/string-normalization";
-import { listOpenClawPluginManifestMetadata } from "../plugins/manifest-metadata-scan.js";
+import { listNovaPluginManifestMetadata } from "../plugins/manifest-metadata-scan.js";
 import { listOfficialExternalProviderEndpointManifests } from "../plugins/official-external-provider-endpoints.js";
 import { asBoolean } from "../utils/boolean.js";
 import type { RuntimeVersionEnv } from "../version.js";
@@ -144,7 +144,7 @@ function readCompatBoolean(
 }
 
 const NOVA_ATTRIBUTION_PRODUCT = "Nova";
-const NOVA_ATTRIBUTION_ORIGINATOR = "openclaw";
+const NOVA_ATTRIBUTION_ORIGINATOR = "nova";
 const OPENROUTER_ATTRIBUTION_CATEGORIES =
   "cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent";
 
@@ -195,7 +195,7 @@ type ManifestProviderRequestCacheEntry = {
 let manifestProviderEndpointCache: ManifestProviderEndpointCacheEntry[] | null = null;
 let manifestProviderRequestCache: Map<string, ManifestProviderRequestCacheEntry> | null = null;
 
-function formatOpenClawUserAgent(version: string): string {
+function formatNovaUserAgent(version: string): string {
   return `${NOVA_ATTRIBUTION_ORIGINATOR}/${version}`;
 }
 
@@ -333,7 +333,7 @@ function readManifestProviderRequests(
 
 function collectManifestProviderEndpoints(): ManifestProviderEndpointCacheEntry[] {
   const entries: ManifestProviderEndpointCacheEntry[] = [];
-  for (const { manifest } of listOpenClawPluginManifestMetadata()) {
+  for (const { manifest } of listNovaPluginManifestMetadata()) {
     entries.push(...readManifestProviderEndpoints(manifest));
   }
   // Externalized official provider plugins are excluded from dist builds, so
@@ -349,7 +349,7 @@ function collectManifestProviderEndpoints(): ManifestProviderEndpointCacheEntry[
 
 function collectManifestProviderRequests(): Map<string, ManifestProviderRequestCacheEntry> {
   const entries = new Map<string, ManifestProviderRequestCacheEntry>();
-  for (const { manifest } of listOpenClawPluginManifestMetadata()) {
+  for (const { manifest } of listNovaPluginManifestMetadata()) {
     for (const [provider, request] of readManifestProviderRequests(manifest)) {
       entries.set(provider, request);
     }
@@ -499,7 +499,7 @@ function buildOpenRouterAttributionPolicy(
     reviewNote: "Documented app attribution headers. Verified in Nova runtime wrapper.",
     ...identity,
     headers: {
-      "HTTP-Referer": "https://openclaw.ai",
+      "HTTP-Referer": "https://nova.ai",
       "X-OpenRouter-Title": identity.product,
       "X-OpenRouter-Categories": OPENROUTER_ATTRIBUTION_CATEGORIES,
     },
@@ -557,7 +557,7 @@ function buildOpenAIAttributionPolicy(
     headers: {
       originator: NOVA_ATTRIBUTION_ORIGINATOR,
       version: identity.version,
-      "User-Agent": formatOpenClawUserAgent(identity.version),
+      "User-Agent": formatNovaUserAgent(identity.version),
     },
   };
 }
@@ -572,12 +572,12 @@ function buildXaiAttributionPolicy(
     verification: "vendor-hidden-api-spec",
     hook: "request-headers",
     reviewNote:
-      "xAI api.x.ai accepts a standard openclaw User-Agent. Companion originator/version headers mirror the OpenAI attribution shape for consistency; they are not validated against an xAI-specific spec and are expected to be ignored by xAI's OpenAI-compatible surface.",
+      "xAI api.x.ai accepts a standard nova User-Agent. Companion originator/version headers mirror the OpenAI attribution shape for consistency; they are not validated against an xAI-specific spec and are expected to be ignored by xAI's OpenAI-compatible surface.",
     ...identity,
     headers: {
       originator: NOVA_ATTRIBUTION_ORIGINATOR,
       version: identity.version,
-      "User-Agent": formatOpenClawUserAgent(identity.version),
+      "User-Agent": formatNovaUserAgent(identity.version),
     },
   };
 }

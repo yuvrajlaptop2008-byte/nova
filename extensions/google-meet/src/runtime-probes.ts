@@ -1,4 +1,4 @@
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
+import { sleep } from "nova/plugin-sdk/runtime-env";
 import type { GoogleMeetConfig, GoogleMeetMode, GoogleMeetTransport } from "./config.js";
 import { normalizeMeetUrl } from "./meet-url.js";
 import type {

@@ -5,7 +5,7 @@
  */
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { normalizeLowercaseStringOrEmpty } from "../../packages/normalization-core/src/string-coerce.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { getCurrentPluginMetadataSnapshotState } from "../plugins/current-plugin-metadata-state.js";
 import { buildManifestBuiltInModelSuppressionResolver } from "../plugins/manifest-model-suppression.js";
 import { resolvePluginControlPlaneFingerprint } from "../plugins/plugin-control-plane-context.js";
@@ -15,7 +15,7 @@ import { resolvePluginMetadataSnapshotMemoEnvFingerprint } from "../plugins/plug
 type ManifestSuppressionResolver = ReturnType<typeof buildManifestBuiltInModelSuppressionResolver>;
 
 type CachedManifestSuppressionResolver = {
-  config: OpenClawConfig | undefined;
+  config: NovaConfig | undefined;
   controlPlaneFingerprint: string;
   cwd: string;
   envFingerprint: string;
@@ -34,7 +34,7 @@ function clearModelSuppressionResolverCache(): void {
 registerPluginMetadataProcessMemoLifecycleClear(clearModelSuppressionResolverCache);
 
 function resolveCachedManifestSuppressionResolver(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env: NodeJS.ProcessEnv;
   workspaceDir?: string;
 }): ManifestSuppressionResolver {
@@ -79,7 +79,7 @@ function resolveBuiltInModelSuppressionFromManifest(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   unconditionalOnly?: boolean;
   workspaceDir?: string;
 }) {
@@ -106,7 +106,7 @@ function resolveBuiltInModelSuppression(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }) {
   const manifestResult = resolveBuiltInModelSuppressionFromManifest(params);
@@ -126,7 +126,7 @@ export function shouldSuppressBuiltInModelFromManifest(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }) {
   return resolveBuiltInModelSuppressionFromManifest(params)?.suppress ?? false;
@@ -137,7 +137,7 @@ export function shouldSuppressBuiltInModel(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }) {
   return resolveBuiltInModelSuppression(params)?.suppress ?? false;
@@ -151,7 +151,7 @@ export function shouldSuppressBuiltInModel(params: {
 export function shouldUnconditionallySuppress(params: {
   provider?: string | null;
   id?: string | null;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }): boolean {
   return (
@@ -165,7 +165,7 @@ export function buildSuppressedBuiltInModelError(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }): string | undefined {
   return resolveBuiltInModelSuppression(params)?.errorMessage;
@@ -173,7 +173,7 @@ export function buildSuppressedBuiltInModelError(params: {
 
 /** Build a reusable suppression predicate for repeated catalog filtering. */
 export function buildShouldSuppressBuiltInModel(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }): (input: { provider?: string | null; id?: string | null; baseUrl?: string | null }) => boolean {
   const resolver = buildManifestBuiltInModelSuppressionResolver({

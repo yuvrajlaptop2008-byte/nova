@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { createCodexWebSearchProvider as createContractCodexWebSearchProvider } from "../web-search-contract-api.js";
 import type { CodexAppServerClient } from "./app-server/client.js";
@@ -47,7 +47,7 @@ function threadStartResult() {
       updatedAt: 1,
       status: { type: "idle" },
       path: null,
-      cwd: "/tmp/openclaw-agent",
+      cwd: "/tmp/nova-agent",
       cliVersion: "0.125.0",
       source: "unknown",
       agentNickname: null,
@@ -59,7 +59,7 @@ function threadStartResult() {
     model: "gpt-5.5",
     modelProvider: "openai",
     serviceTier: null,
-    cwd: "/tmp/openclaw-agent",
+    cwd: "/tmp/nova-agent",
     instructionSources: [],
     approvalPolicy: "on-request",
     approvalsReviewer: "user",
@@ -155,7 +155,7 @@ function createFakeClient(options?: {
   return { client, requests };
 }
 
-function createConfig(): OpenClawConfig {
+function createConfig(): NovaConfig {
   return {
     tools: {
       web: {
@@ -223,7 +223,7 @@ describe("codex web search provider", () => {
     const tool = provider.createTool({
       config,
       searchConfig: config.tools?.web?.search,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
     });
 
     await expect(tool?.execute({ query: "plumbers in Edmonton Alberta" })).rejects.toThrow(
@@ -256,7 +256,7 @@ describe("codex web search provider", () => {
     const tool = provider.createTool({
       config,
       searchConfig: config.tools?.web?.search,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
     });
 
     const result = await tool?.execute({ query: "plumbers in Edmonton Alberta" });
@@ -310,7 +310,7 @@ describe("codex web search provider", () => {
     });
     const threadStartCwd = (requests[1]?.params as { cwd?: string } | undefined)?.cwd;
     const isolatedCodexHome = isolatedStartOptions?.env?.CODEX_HOME;
-    expect(threadStartCwd).not.toBe("/tmp/openclaw-agent");
+    expect(threadStartCwd).not.toBe("/tmp/nova-agent");
     expect(isolatedStartOptions?.args).toEqual(["app-server", "--listen", "stdio://"]);
     expect(isolatedStartOptions?.clearEnv).toEqual(["KEEP_CLEARED", "NOVA_CODEX_APP_SERVER_ARGS"]);
     expect(isolatedCodexHome).toEqual(expect.any(String));
@@ -334,7 +334,7 @@ describe("codex web search provider", () => {
     const tool = provider.createTool({
       config,
       searchConfig: config.tools?.web?.search,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
     });
 
     const result = await tool?.execute({ query: "plumbers in Edmonton Alberta" });
@@ -359,7 +359,7 @@ describe("codex web search provider", () => {
     const tool = provider.createTool({
       config,
       searchConfig: config.tools?.web?.search,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
     });
 
     await expect(tool?.execute({ query: "plumbers in Edmonton Alberta" })).rejects.toThrow(
@@ -377,7 +377,7 @@ describe("codex web search provider", () => {
     const tool = provider.createTool({
       config,
       searchConfig: config.tools?.web?.search,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
     });
 
     await expect(tool?.execute({ query: "plumbers in Edmonton Alberta" })).rejects.toThrow(

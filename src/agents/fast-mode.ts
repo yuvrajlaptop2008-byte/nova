@@ -4,7 +4,7 @@
 import type { FastMode } from "@nova/normalization-core/string-coerce";
 import { normalizeFastMode } from "../auto-reply/thinking.shared.js";
 import type { SessionEntry } from "../config/sessions.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   type FastModeSource,
   resolveFastModeModelAutoOnSeconds,
@@ -34,7 +34,7 @@ type FastModeState = {
 };
 
 function resolveConfiguredFastModeRaw(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: NovaConfig | undefined;
   provider: string;
   model: string;
 }): unknown {
@@ -44,7 +44,7 @@ function resolveConfiguredFastModeRaw(params: {
 
 /** Resolve the effective fast-mode setting and its source. */
 export function resolveFastModeState(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: NovaConfig | undefined;
   provider: string;
   model: string;
   agentId?: string;

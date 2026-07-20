@@ -1,5 +1,5 @@
 // Defines plugin metadata snapshot types used by gateway and diagnostics.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginDiscoveryResult } from "./discovery.js";
 import type { InstalledPluginIndex } from "./installed-plugin-index-types.js";
 import type { PluginManifestRecord, PluginManifestRegistry } from "./manifest-registry.js";
@@ -63,7 +63,7 @@ export type PluginMetadataRegistryView = Pick<PluginMetadataSnapshot, "index" | 
 export type PluginMetadataManifestView = Pick<PluginMetadataSnapshot, "index" | "plugins">;
 
 export type LoadPluginMetadataSnapshotParams = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   stateDir?: string;
   env?: NodeJS.ProcessEnv;

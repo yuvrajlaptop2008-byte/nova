@@ -1,6 +1,6 @@
 // Hermes provider config collection and migration planning.
-import { createMigrationManualItem } from "openclaw/plugin-sdk/migration";
-import type { MigrationItem } from "openclaw/plugin-sdk/plugin-entry";
+import { createMigrationManualItem } from "nova/plugin-sdk/migration";
+import type { MigrationItem } from "nova/plugin-sdk/plugin-entry";
 import {
   HERMES_TRANSPORTS,
   collectProviderModels,

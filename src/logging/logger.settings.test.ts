@@ -4,11 +4,11 @@ import { testApi } from "./logger.js";
 
 describe("shouldSkipMutatingLoggingConfigRead", () => {
   it("matches config schema and validate invocations", () => {
+    expect(testApi.shouldSkipMutatingLoggingConfigRead(["node", "nova", "config", "schema"])).toBe(
+      true,
+    );
     expect(
-      testApi.shouldSkipMutatingLoggingConfigRead(["node", "openclaw", "config", "schema"]),
-    ).toBe(true);
-    expect(
-      testApi.shouldSkipMutatingLoggingConfigRead(["node", "openclaw", "config", "validate"]),
+      testApi.shouldSkipMutatingLoggingConfigRead(["node", "nova", "config", "validate"]),
     ).toBe(true);
   });
 
@@ -16,7 +16,7 @@ describe("shouldSkipMutatingLoggingConfigRead", () => {
     expect(
       testApi.shouldSkipMutatingLoggingConfigRead([
         "node",
-        "openclaw",
+        "nova",
         "--profile",
         "work",
         "--no-color",
@@ -29,8 +29,8 @@ describe("shouldSkipMutatingLoggingConfigRead", () => {
 
   it("does not match other commands", () => {
     expect(
-      testApi.shouldSkipMutatingLoggingConfigRead(["node", "openclaw", "config", "get", "foo"]),
+      testApi.shouldSkipMutatingLoggingConfigRead(["node", "nova", "config", "get", "foo"]),
     ).toBe(false);
-    expect(testApi.shouldSkipMutatingLoggingConfigRead(["node", "openclaw", "status"])).toBe(false);
+    expect(testApi.shouldSkipMutatingLoggingConfigRead(["node", "nova", "status"])).toBe(false);
   });
 });

@@ -53,7 +53,7 @@ vi.mock("../infra/runtime-guard.js", () => ({
 }));
 
 vi.mock("../infra/path-env.js", () => ({
-  ensureOpenClawCliOnPath: vi.fn(),
+  ensureNovaCliOnPath: vi.fn(),
 }));
 
 vi.mock("./route.js", () => ({
@@ -109,7 +109,7 @@ describe("runCli profile env bootstrap", () => {
 
   it("applies --profile before dotenv loading", async () => {
     fileState.hasCliDotEnv = true;
-    await runCli(["node", "openclaw", "--profile", "rawdog", "status"]);
+    await runCli(["node", "nova", "--profile", "rawdog", "status"]);
 
     expect(dotenvState.loadDotEnv).toHaveBeenCalledOnce();
     expect(dotenvState.state.profileAtDotenvLoad).toBe("rawdog");
@@ -118,7 +118,7 @@ describe("runCli profile env bootstrap", () => {
 
   it("rejects --container combined with --profile", async () => {
     await expect(
-      runCli(["node", "openclaw", "--container", "demo", "--profile", "rawdog", "status"]),
+      runCli(["node", "nova", "--container", "demo", "--profile", "rawdog", "status"]),
     ).rejects.toThrow("--container cannot be combined with --profile/--dev");
 
     expect(dotenvState.loadDotEnv).not.toHaveBeenCalled();
@@ -127,13 +127,13 @@ describe("runCli profile env bootstrap", () => {
 
   it("rejects --container combined with interleaved --profile", async () => {
     await expect(
-      runCli(["node", "openclaw", "status", "--container", "demo", "--profile", "rawdog"]),
+      runCli(["node", "nova", "status", "--container", "demo", "--profile", "rawdog"]),
     ).rejects.toThrow("--container cannot be combined with --profile/--dev");
   });
 
   it("rejects --container combined with interleaved --dev", async () => {
     await expect(
-      runCli(["node", "openclaw", "status", "--container", "demo", "--dev"]),
+      runCli(["node", "nova", "status", "--container", "demo", "--dev"]),
     ).rejects.toThrow("--container cannot be combined with --profile/--dev");
   });
 
@@ -145,15 +145,15 @@ describe("runCli profile env bootstrap", () => {
       dotenvState.state.containerAtDotenvLoad = process.env.NOVA_CONTAINER;
     });
 
-    await runCli(["node", "openclaw", "status"]);
+    await runCli(["node", "nova", "status"]);
 
     expect(dotenvState.loadDotEnv).toHaveBeenCalledOnce();
     expect(process.env.NOVA_CONTAINER).toBe("demo");
     expect(dotenvState.state.containerAtDotenvLoad).toBe("demo");
-    expect(maybeRunCliInContainerMock).toHaveBeenCalledWith(["node", "openclaw", "status"]);
+    expect(maybeRunCliInContainerMock).toHaveBeenCalledWith(["node", "nova", "status"]);
     expect(maybeRunCliInContainerMock).toHaveReturnedWith({
       handled: false,
-      argv: ["node", "openclaw", "status"],
+      argv: ["node", "nova", "status"],
     });
   });
 
@@ -161,7 +161,7 @@ describe("runCli profile env bootstrap", () => {
     setTestEnvValue("NOVA_PROFILE", "work");
 
     await expect(
-      runCli(["node", "openclaw", "--container", "demo", "status"]),
+      runCli(["node", "nova", "--container", "demo", "status"]),
     ).resolves.toBeUndefined();
   });
 
@@ -174,23 +174,23 @@ describe("runCli profile env bootstrap", () => {
     setTestEnvValue(key, value);
 
     await expect(
-      runCli(["node", "openclaw", "--container", "demo", "status"]),
+      runCli(["node", "nova", "--container", "demo", "status"]),
     ).resolves.toBeUndefined();
   });
 
   it("allows container mode when only NOVA_STATE_DIR is set in env", async () => {
-    setTestEnvValue("NOVA_STATE_DIR", "/tmp/openclaw-host-state");
+    setTestEnvValue("NOVA_STATE_DIR", "/tmp/nova-host-state");
 
     await expect(
-      runCli(["node", "openclaw", "--container", "demo", "status"]),
+      runCli(["node", "nova", "--container", "demo", "status"]),
     ).resolves.toBeUndefined();
   });
 
   it("allows container mode when only NOVA_CONFIG_PATH is set in env", async () => {
-    setTestEnvValue("NOVA_CONFIG_PATH", "/tmp/openclaw-host-state/openclaw.json");
+    setTestEnvValue("NOVA_CONFIG_PATH", "/tmp/nova-host-state/nova.json");
 
     await expect(
-      runCli(["node", "openclaw", "--container", "demo", "status"]),
+      runCli(["node", "nova", "--container", "demo", "status"]),
     ).resolves.toBeUndefined();
   });
 });

@@ -133,14 +133,14 @@ function resolvePostinstallTildePath(input, homeDir) {
   return input;
 }
 
-function resolvePostinstallOpenClawHomeDir(env, getHomedir = homedir) {
+function resolvePostinstallNovaHomeDir(env, getHomedir = homedir) {
   const osHome = resolvePostinstallOsHomeDir(env, getHomedir);
   const override = env?.NOVA_HOME?.trim();
   return override ? pathResolve(resolvePostinstallTildePath(override, osHome)) : osHome;
 }
 
-function resolvePostinstallUserPath(input, openClawHome) {
-  return pathResolve(resolvePostinstallTildePath(input, openClawHome));
+function resolvePostinstallUserPath(input, novaHome) {
+  return pathResolve(resolvePostinstallTildePath(input, novaHome));
 }
 
 function readInstalledDistInventory(params = {}) {
@@ -349,7 +349,7 @@ function pruneEmptyDistDirectories(params = {}) {
 }
 
 function isLegacyInstalledPluginDependencyDirName(name) {
-  return name === "node_modules" || /^\.openclaw-install-stage(?:-[^/]+)?$/iu.test(name);
+  return name === "node_modules" || /^\.nova-install-stage(?:-[^/]+)?$/iu.test(name);
 }
 
 function pruneLegacyInstalledPluginDependencyDirs(params) {
@@ -410,7 +410,7 @@ const pathDelimiter = process.platform === "win32" ? ";" : ":";
 export function collectLegacyPluginRuntimeDepsStateRoots(params = {}) {
   const env = params.env ?? process.env;
   const getHomedir = params.homedir ?? homedir;
-  const openClawHome = resolvePostinstallOpenClawHomeDir(env, getHomedir);
+  const novaHome = resolvePostinstallNovaHomeDir(env, getHomedir);
   const stateRoots = [];
   const addStateRoot = (root) => {
     if (root) {
@@ -420,17 +420,17 @@ export function collectLegacyPluginRuntimeDepsStateRoots(params = {}) {
 
   const stateOverride = env?.NOVA_STATE_DIR?.trim();
   if (stateOverride) {
-    addStateRoot(resolvePostinstallUserPath(stateOverride, openClawHome));
+    addStateRoot(resolvePostinstallUserPath(stateOverride, novaHome));
   }
   const configPath = env?.NOVA_CONFIG_PATH?.trim();
   if (configPath) {
-    addStateRoot(dirname(resolvePostinstallUserPath(configPath, openClawHome)));
+    addStateRoot(dirname(resolvePostinstallUserPath(configPath, novaHome)));
   }
-  addStateRoot(join(openClawHome, ".openclaw"));
-  addStateRoot(join(openClawHome, ".clawdbot"));
+  addStateRoot(join(novaHome, ".nova"));
+  addStateRoot(join(novaHome, ".clawdbot"));
 
   for (const entry of splitPostinstallPathList(env?.STATE_DIRECTORY)) {
-    addStateRoot(resolvePostinstallUserPath(entry, openClawHome));
+    addStateRoot(resolvePostinstallUserPath(entry, novaHome));
   }
 
   return [...new Set(stateRoots.map((root) => pathResolve(root)))].toSorted((left, right) =>
@@ -651,7 +651,7 @@ export function applyBaileysEncryptedStreamFinishHotfix(params = {}) {
     ((unsafeTargetPath) =>
       join(
         dirname(unsafeTargetPath),
-        `.${basename(unsafeTargetPath)}.openclaw-hotfix-${randomUUID()}`,
+        `.${basename(unsafeTargetPath)}.nova-hotfix-${randomUUID()}`,
       ));
   const writeFile =
     params.writeFileSync ?? ((filePath, value) => writeFileSync(filePath, value, "utf8"));
@@ -909,7 +909,7 @@ function isCompileCachePrunePermissionDenied(error) {
   return error?.code === "EACCES" || error?.code === "EPERM";
 }
 
-export function pruneOpenClawCompileCache(params = {}) {
+export function pruneNovaCompileCache(params = {}) {
   const env = params.env ?? process.env;
   const pathExists = params.existsSync ?? existsSync;
   const readDir = params.readdirSync ?? readdirSync;
@@ -961,7 +961,7 @@ export function runBundledPluginPostinstall(params = {}) {
   if (env?.[DISABLE_POSTINSTALL_ENV]?.trim()) {
     return;
   }
-  pruneOpenClawCompileCache({
+  pruneNovaCompileCache({
     env,
     existsSync: pathExists,
     rmSync: params.rmSync,

@@ -164,7 +164,7 @@ function buildContainerExecArgs(params: {
     "NOVA_CLI_CONTAINER_BYPASS=1",
     ...proxyEnvArgs,
     params.containerName,
-    "openclaw",
+    "nova",
     ...params.argv,
   ];
 }
@@ -243,7 +243,7 @@ function buildContainerExecEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
 }
 
 function isBlockedContainerCommand(argv: string[]): boolean {
-  if (resolveCliArgvInvocation(["node", "openclaw", ...argv]).primary === "update") {
+  if (resolveCliArgvInvocation(["node", "nova", ...argv]).primary === "update") {
     return true;
   }
   for (let i = 0; i < argv.length; i += 1) {
@@ -291,7 +291,7 @@ export function maybeRunCliInContainer(
   }
   if (isBlockedContainerCommand(parsed.argv.slice(2))) {
     throw new Error(
-      "openclaw update is not supported with --container; rebuild or restart the container image instead.",
+      "nova update is not supported with --container; rebuild or restart the container image instead.",
     );
   }
 

@@ -1,7 +1,7 @@
 /** Resolves command-scoped secrets, including web provider override credentials. */
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
 import { resolveManifestContractOwnerPluginId } from "../plugins/plugin-registry.js";
 import {
@@ -34,9 +34,9 @@ function hasProviderOverrides(overrides: CommandSecretProviderOverrides | undefi
 }
 
 function applyProviderOverridesToConfig(
-  config: OpenClawConfig,
+  config: NovaConfig,
   overrides: CommandSecretProviderOverrides | undefined,
-): OpenClawConfig {
+): NovaConfig {
   if (!hasProviderOverrides(overrides)) {
     return config;
   }
@@ -65,7 +65,7 @@ function isWebCommandSecretPath(path: string): boolean {
 }
 
 function isProviderOverridePath(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   path: string;
   providerOverrides: CommandSecretProviderOverrides | undefined;
 }): boolean {
@@ -109,8 +109,8 @@ function isProviderOverridePath(params: {
 }
 
 function restoreInactiveWebCommandSecretTargets(params: {
-  sourceConfig: OpenClawConfig;
-  resolvedConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
+  resolvedConfig: NovaConfig;
   targetIds: ReadonlySet<string>;
   inactiveRefPaths: string[];
   providerOverrides: CommandSecretProviderOverrides | undefined;
@@ -162,7 +162,7 @@ function restoreInactiveWebCommandSecretTargets(params: {
 }
 
 function filterInactiveRefPaths(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   inactiveRefPaths: readonly string[];
   providerOverrides: CommandSecretProviderOverrides | undefined;
   allowedPaths?: ReadonlySet<string>;
@@ -188,8 +188,8 @@ function filterInactiveRefPaths(params: {
 }
 
 async function resolveForcedActiveCommandSecretTargets(params: {
-  sourceConfig: OpenClawConfig;
-  resolvedConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
+  resolvedConfig: NovaConfig;
   targetIds: ReadonlySet<string>;
   allowedPaths?: ReadonlySet<string>;
   forcedActivePaths?: ReadonlySet<string>;

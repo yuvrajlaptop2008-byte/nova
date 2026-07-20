@@ -2,8 +2,8 @@
  * Blocks direct Codex app-server requests that would bypass Nova sandbox or
  * node-exec routing guarantees.
  */
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveSandboxRuntimeStatus } from "openclaw/plugin-sdk/sandbox";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolveSandboxRuntimeStatus } from "nova/plugin-sdk/sandbox";
 import {
   formatCodexNativeNodeExecBlock,
   resolveCodexNativeExecutionPolicy,
@@ -12,7 +12,7 @@ import {
 type DirectMethodPolicy =
   | "allowed-control-plane"
   | "blocked-native-bypass"
-  | "requires-openclaw-environment";
+  | "requires-nova-environment";
 
 const DIRECT_METHOD_POLICIES = new Map<string, DirectMethodPolicy>([
   ["account/rateLimits/read", "allowed-control-plane"],
@@ -40,7 +40,7 @@ const DIRECT_METHOD_POLICIES = new Map<string, DirectMethodPolicy>([
   ["thread/name/set", "allowed-control-plane"],
   ["thread/read", "allowed-control-plane"],
   ["thread/rollback", "allowed-control-plane"],
-  ["thread/start", "requires-openclaw-environment"],
+  ["thread/start", "requires-nova-environment"],
   ["thread/unarchive", "allowed-control-plane"],
   ["thread/unsubscribe", "allowed-control-plane"],
   ["turn/interrupt", "allowed-control-plane"],
@@ -75,7 +75,7 @@ const NODE_EXEC_BLOCKED_CONTROL_PLANE_METHODS = new Set<string>([
 export function resolveCodexAppServerDirectSandboxBypassBlock(params: {
   method: string;
   requestParams?: unknown;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionKey?: string;
   sessionId?: string;
 }): string | undefined {
@@ -116,8 +116,8 @@ export function resolveCodexAppServerDirectSandboxBypassBlock(params: {
     return undefined;
   }
   if (
-    policy === "requires-openclaw-environment" &&
-    hasOpenClawSandboxEnvironmentSelection(params.requestParams)
+    policy === "requires-nova-environment" &&
+    hasNovaSandboxEnvironmentSelection(params.requestParams)
   ) {
     return undefined;
   }
@@ -126,7 +126,7 @@ export function resolveCodexAppServerDirectSandboxBypassBlock(params: {
 
 /** Resolves the generic native-execution block for sandboxed or node-hosted sessions. */
 export function resolveCodexNativeExecutionBlock(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionKey?: string;
   sessionId?: string;
   agentId?: string;
@@ -137,7 +137,7 @@ export function resolveCodexNativeExecutionBlock(params: {
 
 /** Returns a block message when native Codex execution cannot honor active sandboxing. */
 export function resolveCodexNativeSandboxBlock(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionKey?: string;
   sessionId?: string;
   surface: string;
@@ -167,7 +167,7 @@ function resolveDirectMethodPolicy(method: string): DirectMethodPolicy {
   return "blocked-native-bypass";
 }
 
-function hasOpenClawSandboxEnvironmentSelection(value: unknown): boolean {
+function hasNovaSandboxEnvironmentSelection(value: unknown): boolean {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return false;
   }
@@ -182,7 +182,7 @@ function hasOpenClawSandboxEnvironmentSelection(value: unknown): boolean {
       const environment = entry as { environmentId?: unknown; cwd?: unknown };
       return (
         typeof environment.environmentId === "string" &&
-        environment.environmentId.startsWith("openclaw-sandbox-") &&
+        environment.environmentId.startsWith("nova-sandbox-") &&
         typeof environment.cwd === "string" &&
         environment.cwd.trim().length > 0
       );
@@ -199,7 +199,7 @@ function formatCodexNativeSandboxBlock(params: { surface: string }): string {
 }
 
 function resolveCodexNativeNodeExecBlock(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionKey?: string;
   sessionId?: string;
   agentId?: string;

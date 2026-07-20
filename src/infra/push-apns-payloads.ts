@@ -31,7 +31,7 @@ export function createApnsAlertPayload(params: {
       },
       sound: "default",
     },
-    openclaw: toPushMetadata({
+    nova: toPushMetadata({
       kind: "push.test",
       nodeId: params.nodeId,
     }),
@@ -46,7 +46,7 @@ export function createApnsBackgroundPayload(params: {
     aps: {
       "content-available": 1,
     },
-    openclaw: toPushMetadata({
+    nova: toPushMetadata({
       kind: "node.wake",
       reason: params.wakeReason ?? "node.invoke",
       nodeId: params.nodeId,
@@ -76,7 +76,7 @@ export function createApnsApprovalAlertPayload(params: {
       category: params.category,
       "content-available": 1,
     },
-    openclaw: {
+    nova: {
       kind: `${params.kind}.approval.requested`,
       approvalId: params.approvalId,
       gatewayDeviceId: params.gatewayDeviceId,
@@ -102,7 +102,7 @@ export function createApnsApprovalResolvedPayload(params: {
     aps: {
       "content-available": 1,
     },
-    openclaw: {
+    nova: {
       kind: `${params.kind}.approval.resolved`,
       approvalId: params.approvalId,
       gatewayDeviceId: params.gatewayDeviceId,

@@ -11,7 +11,7 @@ import {
  * Each value is a lazily-loaded send function for that channel.
  */
 export const CLI_OUTBOUND_SEND_FACTORY: unique symbol = Symbol.for(
-  "openclaw.cliOutboundSendFactory",
+  "nova.cliOutboundSendFactory",
 ) as never;
 
 type CliOutboundSendFactory = (channelId: string) => unknown;

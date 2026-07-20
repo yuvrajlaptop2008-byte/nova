@@ -9,9 +9,9 @@ import {
   normalizeAgentId,
   parseAgentSessionKey,
 } from "../../routing/session-key.js";
-import { withOpenClawAgentDatabaseReadOnly } from "../../state/openclaw-agent-db-readonly.js";
+import { withNovaAgentDatabaseReadOnly } from "../../state/nova-agent-db-readonly.js";
 import { resolveStateDir } from "../paths.js";
-import type { OpenClawConfig } from "../types.openclaw.js";
+import type { NovaConfig } from "../types.nova.js";
 import { resolveAgentsDirFromSessionStorePath, resolveStorePath } from "./paths.js";
 import { readSqliteSessionEntryKeys } from "./session-accessor.sqlite-entry-store.js";
 import { resolveSqliteTargetFromSessionStorePath } from "./session-sqlite-target.js";
@@ -116,7 +116,7 @@ function resolveValidatedManagedFilePathSync(params: {
 }
 
 /** Lists agent ids whose session stores should be considered configured. */
-export function listConfiguredSessionStoreAgentIds(cfg: OpenClawConfig): string[] {
+export function listConfiguredSessionStoreAgentIds(cfg: NovaConfig): string[] {
   const ids = new Set(listAgentIds(cfg).map((agentId) => normalizeAgentId(agentId)));
   const addAcpAgentId = (agentId: string | undefined) => {
     const raw = agentId?.trim() ?? "";
@@ -142,7 +142,7 @@ export function listConfiguredSessionStoreAgentIds(cfg: OpenClawConfig): string[
 }
 
 /** Checks whether an agent is configured to own a session store. */
-export function isConfiguredSessionStoreAgentId(cfg: OpenClawConfig, agentId: string): boolean {
+export function isConfiguredSessionStoreAgentId(cfg: NovaConfig, agentId: string): boolean {
   const normalizedAgentId = normalizeAgentId(agentId);
   return listConfiguredSessionStoreAgentIds(cfg).includes(normalizedAgentId);
 }
@@ -236,7 +236,7 @@ function isValidatedRecoveryCandidateSessionsDir(params: {
 }
 
 function resolveSessionStoreDiscoveryState(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv,
 ): {
   configuredTargets: SessionStoreTarget[];
@@ -293,7 +293,7 @@ function resolveExplicitSessionStoreTarget(params: {
 
 /** Resolves all configured and discoverable agent session stores synchronously. */
 export function resolveAllAgentSessionStoreTargetsSync(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   params: { env?: NodeJS.ProcessEnv } = {},
 ): SessionStoreTarget[] {
   const env = params.env ?? process.env;
@@ -362,7 +362,7 @@ export function resolveAllAgentSessionStoreTargetsSync(
 
 /** Resolves only already-existing stores for one configured, retired, or manual agent. */
 export function resolveExistingAgentSessionStoreTargetsSync(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId: string,
   params: { env?: NodeJS.ProcessEnv } = {},
 ): SessionStoreTarget[] {
@@ -379,7 +379,7 @@ export function resolveExistingAgentSessionStoreTargetsSync(
     }).path;
     if (sqlitePath && fsSync.existsSync(sqlitePath)) {
       try {
-        const result = withOpenClawAgentDatabaseReadOnly(
+        const result = withNovaAgentDatabaseReadOnly(
           (database) =>
             readSqliteSessionEntryKeys(database).some((sessionKey) => {
               const parsed = parseAgentSessionKey(sessionKey);
@@ -419,7 +419,7 @@ export function resolveExistingAgentSessionStoreTargetsSync(
  * Callers must validate the selected artifact before performing filesystem mutations.
  */
 export function resolveAllAgentSessionStoreCandidateTargetsSync(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   params: { env?: NodeJS.ProcessEnv } = {},
 ): SessionStoreTarget[] {
   const env = params.env ?? process.env;
@@ -492,7 +492,7 @@ export function resolveAllAgentSessionStoreCandidateTargetsSync(
 
 /** Resolves session store targets for one agent, including retired/manual stores. */
 export function resolveAgentSessionStoreTargetsSync(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId: string,
   params: { env?: NodeJS.ProcessEnv } = {},
 ): SessionStoreTarget[] {
@@ -578,7 +578,7 @@ export function resolveAgentSessionStoreTargetsSync(
 
 /** Resolves session store targets from explicit CLI-style selection options. */
 export function resolveSessionStoreTargets(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   opts: SessionStoreSelectionOptions,
   params: { env?: NodeJS.ProcessEnv } = {},
 ): SessionStoreTarget[] {
@@ -610,7 +610,7 @@ export function resolveSessionStoreTargets(
     const requested = normalizeAgentId(opts.agent ?? "");
     if (!knownAgents.includes(requested)) {
       throw new Error(
-        `Unknown agent id "${opts.agent}". Use "openclaw agents list" to see configured agents.`,
+        `Unknown agent id "${opts.agent}". Use "nova agents list" to see configured agents.`,
       );
     }
     return [

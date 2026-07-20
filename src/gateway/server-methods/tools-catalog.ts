@@ -19,7 +19,7 @@ import {
   resolveCoreToolProfiles,
 } from "../../agents/tool-catalog.js";
 import { summarizeToolDescriptionText } from "../../agents/tool-description-summary.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PluginRegistry } from "../../plugins/registry-types.js";
 import { getActivePluginRegistry } from "../../plugins/runtime.js";
 import {
@@ -51,7 +51,7 @@ type ToolCatalogGroup = {
   tools: ToolCatalogEntry[];
 };
 
-function buildCoreGroups(params: { cfg: OpenClawConfig; agentId: string }): ToolCatalogGroup[] {
+function buildCoreGroups(params: { cfg: NovaConfig; agentId: string }): ToolCatalogGroup[] {
   // Core catalog rows come from static tool sections so profile chips remain
   // stable even before any runtime agent session exists.
   const swarmEnabled = resolveSwarmConfig(params.cfg, params.agentId).enabled;
@@ -70,7 +70,7 @@ function buildCoreGroups(params: { cfg: OpenClawConfig; agentId: string }): Tool
 }
 
 function buildPluginGroups(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   existingToolNames: Set<string>;
 }): ToolCatalogGroup[] {
@@ -197,7 +197,7 @@ function buildPluginGroups(params: {
 
 /** Build the merged core/plugin tool catalog for one agent. */
 function buildToolsCatalogResult(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   includePlugins?: boolean;
 }): ToolsCatalogResult {

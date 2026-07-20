@@ -23,7 +23,7 @@ import { buildAgentRuntimeAuthPlan } from "../../agents/runtime-plan/auth.js";
 import { resolveSessionRuntimeOverrideForProvider } from "../../agents/session-runtime-compat.js";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import type { SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { shortenHomePath } from "../../utils.js";
 import { resolveSelectedAndActiveModel } from "../model-runtime.js";
 import type { ReplyPayload } from "../types.js";
@@ -47,7 +47,7 @@ function resolveStatusHarnessRuntime(params: {
   sessionEntry?: Pick<SessionEntry, "agentHarnessId" | "agentRuntimeOverride">;
   defaultRuntime: string;
   provider: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): string {
   const sessionRuntime = resolveSessionRuntimeOverrideForProvider({
     provider: params.provider,
@@ -73,7 +73,7 @@ function resolveStatusAcceptedProfileTypes(params: {
 async function resolveStatusAuthLabel(params: {
   provider: string;
   modelId: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelsPath: string;
   agentDir: string;
   activeAgentId: string;
@@ -163,7 +163,7 @@ function pushUniqueCatalogEntry(params: {
 }
 
 function buildModelPickerCatalog(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   defaultProvider: string;
   defaultModel: string;
   agentId: string;
@@ -328,7 +328,7 @@ function buildModelPickerCatalog(params: {
 }
 
 function filterMissingAuthNestedProviderDuplicates(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entries: ModelPickerCatalogEntry[];
   authByProvider: Map<string, string>;
 }): ModelPickerCatalogEntry[] {
@@ -369,7 +369,7 @@ function filterMissingAuthNestedProviderDuplicates(params: {
 
 export async function maybeHandleModelDirectiveInfo(params: {
   directives: InlineDirectives;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir: string;
   activeAgentId: string;
   provider: string;

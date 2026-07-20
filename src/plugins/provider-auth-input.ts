@@ -6,7 +6,7 @@ import {
 } from "@nova/normalization-core/string-coerce";
 import { isMalformedApiKeyInput } from "../agents/auth-profiles/credential-state.js";
 import { resolveEnvApiKey } from "../agents/model-auth-env.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import type { SecretInput } from "../config/types.secrets.js";
 import { normalizeSecretInput } from "../utils/normalize-secret-input.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
@@ -133,7 +133,7 @@ export async function ensureApiKeyFromOptionEnvOrPrompt(params: {
   token: string | undefined;
   tokenProvider: string | undefined;
   secretInputMode?: SecretInputMode;
-  config: OpenClawConfig;
+  config: NovaConfig;
   env?: NodeJS.ProcessEnv;
   expectedProviders: string[];
   provider: string;
@@ -179,7 +179,7 @@ export async function ensureApiKeyFromOptionEnvOrPrompt(params: {
 
 /** Resolves an API key from environment or interactive prompt and records the chosen secret mode. */
 export async function ensureApiKeyFromEnvOrPrompt(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env?: NodeJS.ProcessEnv;
   provider: string;
   envLabel: string;

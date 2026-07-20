@@ -1,7 +1,7 @@
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { theme } from "../../../packages/terminal-core/src/theme.js";
 import { readConfigFileSnapshot } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { readGatewayServiceState, resolveGatewayService } from "../../daemon/service.js";
 import type { UpdateChannel } from "../../infra/update-channels.js";
 import { compareSemverStrings } from "../../infra/update-check.js";
@@ -135,18 +135,18 @@ export async function finishUpdate(params: {
         ),
       );
       defaultRuntime.log(
-        theme.muted("Commit, stash, or discard the local changes, then rerun `openclaw update`."),
+        theme.muted("Commit, stash, or discard the local changes, then rerun `nova update`."),
       );
     }
     if (params.result.reason === "not-git-install") {
       defaultRuntime.log(
         theme.warn(
-          `Skipped: this Nova install isn't a git checkout, and the package manager couldn't be detected. Update via your package manager, then run \`${replaceCliName(formatCliCommand("openclaw doctor"), CLI_NAME)}\` and \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\`.`,
+          `Skipped: this Nova install isn't a git checkout, and the package manager couldn't be detected. Update via your package manager, then run \`${replaceCliName(formatCliCommand("nova doctor"), CLI_NAME)}\` and \`${replaceCliName(formatCliCommand("nova gateway restart"), CLI_NAME)}\`.`,
         ),
       );
       defaultRuntime.log(
         theme.muted(
-          `Examples: \`${replaceCliName("npm i -g openclaw@latest", CLI_NAME)}\` or \`${replaceCliName("pnpm add -g openclaw@latest", CLI_NAME)}\``,
+          `Examples: \`${replaceCliName("npm i -g nova@latest", CLI_NAME)}\` or \`${replaceCliName("pnpm add -g nova@latest", CLI_NAME)}\``,
         ),
       );
     }
@@ -204,7 +204,7 @@ export async function finishUpdate(params: {
         ? {
             sourceConfig: params.configSnapshot.sourceConfig,
             authoredConfig: isRecord(params.configSnapshot.parsed)
-              ? (params.configSnapshot.parsed as OpenClawConfig)
+              ? (params.configSnapshot.parsed as NovaConfig)
               : params.configSnapshot.sourceConfig,
           }
         : undefined,
@@ -233,7 +233,7 @@ export async function finishUpdate(params: {
         ? {
             sourceConfig: params.configSnapshot.sourceConfig,
             authoredConfig: isRecord(params.configSnapshot.parsed)
-              ? (params.configSnapshot.parsed as OpenClawConfig)
+              ? (params.configSnapshot.parsed as NovaConfig)
               : params.configSnapshot.sourceConfig,
           }
         : undefined,

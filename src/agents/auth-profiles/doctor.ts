@@ -4,13 +4,13 @@
  * to provider plugin doctor copy.
  */
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { isSupportedGithubCopilotDomain } from "../../plugin-sdk/github-copilot-domain.js";
 import { buildProviderAuthDoctorHintWithPlugin } from "../../plugins/provider-runtime.runtime.js";
 import type { AuthProfileStore } from "./types.js";
 
 const QWEN_PORTAL_OAUTH_MIGRATION_HINT =
-  "Legacy Qwen Portal OAuth profiles are not refreshable. Re-authenticate with a current Qwen API key: openclaw onboard --auth-choice qwen-api-key.";
+  "Legacy Qwen Portal OAuth profiles are not refreshable. Re-authenticate with a current Qwen API key: nova onboard --auth-choice qwen-api-key.";
 
 function hasUnsupportedGithubCopilotEnterpriseDomain(
   store: AuthProfileStore,
@@ -36,7 +36,7 @@ function hasLegacyQwenPortalOAuthProfile(store: AuthProfileStore, profileId?: st
 }
 
 type FormatAuthDoctorHintParams = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   store: AuthProfileStore;
   provider: string;
   profileId?: string;
@@ -59,7 +59,7 @@ async function formatAuthDoctorHintWithPluginBuilder(
     normalizedProvider === "github-copilot" &&
     hasUnsupportedGithubCopilotEnterpriseDomain(params.store, params.profileId)
   ) {
-    return "This GitHub Copilot OAuth profile has an unsupported enterprise domain and can no longer refresh. Remove the legacy profile before re-authenticating with a supported host (github.com or a *.ghe.com tenant): openclaw models auth login --provider github-copilot --force.";
+    return "This GitHub Copilot OAuth profile has an unsupported enterprise domain and can no longer refresh. Remove the legacy profile before re-authenticating with a supported host (github.com or a *.ghe.com tenant): nova models auth login --provider github-copilot --force.";
   }
 
   const pluginHint = await buildPluginHint({

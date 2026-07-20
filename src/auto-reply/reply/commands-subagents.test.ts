@@ -18,7 +18,7 @@ import {
   resetSubagentRegistryForTests,
 } from "../../agents/subagent-registry.test-helpers.js";
 import type { SubagentRunRecord } from "../../agents/subagent-registry.types.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { failTaskRunByRunId } from "../../tasks/task-executor.js";
 import { createTaskRecord } from "../../tasks/task-registry.js";
 import { resetTaskRegistryForTests } from "../../tasks/task-runtime.test-helpers.js";
@@ -151,10 +151,10 @@ describe("subagents status", () => {
 describe("subagents info", () => {
   const TEST_SESSION_STORE_PATH = path.join(
     os.tmpdir(),
-    `openclaw-commands-subagents-info-${process.pid}.json`,
+    `nova-commands-subagents-info-${process.pid}.json`,
   );
 
-  function buildCommandTestConfig(): OpenClawConfig {
+  function buildCommandTestConfig(): NovaConfig {
     return {
       ...baseCommandTestConfig,
       session: {
@@ -164,7 +164,7 @@ describe("subagents info", () => {
     };
   }
 
-  function buildInfoContext(params: { cfg: OpenClawConfig; runs: object[]; restTokens: string[] }) {
+  function buildInfoContext(params: { cfg: NovaConfig; runs: object[]; restTokens: string[] }) {
     return {
       params: {
         cfg: params.cfg,
@@ -187,7 +187,7 @@ describe("subagents info", () => {
     const cfg = {
       commands: { text: true },
       channels: { quietchat: { allowFrom: ["*"] } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = handleSubagentsInfoAction(buildInfoContext({ cfg, runs: [], restTokens: [] }));
     expect(result.shouldContinue).toBe(false);
     expect(result.reply?.text).toContain("/subagents info <id|#>");
@@ -358,7 +358,7 @@ describe("subagents info", () => {
       commands: { text: true },
       channels: { quietchat: { allowFrom: ["*"] } },
       session: { mainKey: "main", scope: "per-sender", store: TEST_SESSION_STORE_PATH },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = handleSubagentsInfoAction({
       params: {
         cfg,
@@ -395,7 +395,7 @@ describe("subagents log", () => {
   function buildLogContext(restTokens: string[], runs: SubagentRunRecord[]) {
     return {
       params: {
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         sessionKey: "agent:main:main",
       },
       handledPrefix: "/subagents",

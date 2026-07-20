@@ -23,7 +23,7 @@ afterEach(async () => {
 });
 
 async function fixture() {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-quiescence-test-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-quiescence-test-"));
   roots.push(root);
   const home = path.join(root, "home");
   let workspace = path.join(root, "workspace");
@@ -64,7 +64,7 @@ async function quiesce(input: Awaited<ReturnType<typeof fixture>>) {
 
 function leasePath(home: string, workspace: string, nonce: string) {
   const key = createHash("sha256").update(workspace).digest("hex");
-  return path.join(home, ".openclaw-worker", "quiescence", `${key}.${nonce}.json`);
+  return path.join(home, ".nova-worker", "quiescence", `${key}.${nonce}.json`);
 }
 
 async function resume(input: Awaited<ReturnType<typeof fixture>>, nonce: string) {
@@ -191,7 +191,7 @@ describe("remote workspace quiescence scripts", () => {
 
 describe("remote workspace manifest script", () => {
   it("atomically applies and rolls back accepted workspace paths", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-accepted-paths-test-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-accepted-paths-test-"));
     roots.push(root);
     const home = path.join(root, "home");
     const workspace = path.join(root, "workspace");
@@ -260,9 +260,7 @@ describe("remote workspace manifest script", () => {
     const committedTransaction = path.dirname(committedStaging);
     const interruptedCleanup = path.join(
       path.dirname(committedTransaction),
-      path
-        .basename(committedTransaction)
-        .replace(".openclaw-accepted-", ".openclaw-accepted-cleanup-"),
+      path.basename(committedTransaction).replace(".nova-accepted-", ".nova-accepted-cleanup-"),
     );
     await fs.rename(committedTransaction, interruptedCleanup);
 
@@ -340,7 +338,7 @@ describe("remote workspace manifest script", () => {
   });
 
   it("keeps the gateway's canonical manifest available across a second turn", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-manifest-lifecycle-test-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-manifest-lifecycle-test-"));
     roots.push(root);
     const home = path.join(root, "home");
     const workspace = path.join(root, "workspace");
@@ -353,7 +351,7 @@ describe("remote workspace manifest script", () => {
         "-c",
         "user.name=Nova Test",
         "-c",
-        "user.email=test@openclaw.invalid",
+        "user.email=test@nova.invalid",
         "commit",
         "--quiet",
         "-m",
@@ -398,7 +396,7 @@ describe("remote workspace manifest script", () => {
     expect(firstTurn.code).toBe(0);
     const firstTurnRef = firstTurn.stdout.trim();
     const firstTurnDigest = firstTurnRef.slice("sha256:".length);
-    const manifestRoot = path.join(home, ".openclaw-worker", "manifests");
+    const manifestRoot = path.join(home, ".nova-worker", "manifests");
     const firstTurnPath = path.join(manifestRoot, `${firstTurnDigest}.json`);
     const firstTurnRaw = await fs.readFile(firstTurnPath, "utf8");
     const firstTurnManifest = parseWorkerWorkspaceManifest(firstTurnRaw, firstTurnRef);
@@ -497,7 +495,7 @@ describe("remote workspace manifest script", () => {
   });
 
   it("drops derived artifacts from the worker manifest", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-manifest-derived-test-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-manifest-derived-test-"));
     roots.push(root);
     const home = path.join(root, "home");
     const workspace = path.join(root, "workspace");
@@ -529,7 +527,7 @@ describe("remote workspace manifest script", () => {
     expect(result.code).toBe(0);
     const digest = result.stdout.trim().slice("sha256:".length);
     const manifest = JSON.parse(
-      await fs.readFile(path.join(home, ".openclaw-worker", "manifests", `${digest}.json`), "utf8"),
+      await fs.readFile(path.join(home, ".nova-worker", "manifests", `${digest}.json`), "utf8"),
     ) as { entries: Array<{ path: string }> };
     const manifestPaths = manifest.entries.map((entry) => entry.path);
     expect(manifestPaths).toContain("keep.ts");
@@ -539,7 +537,7 @@ describe("remote workspace manifest script", () => {
   });
 
   it("keeps base tombstones in the final ignored-path verification", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-manifest-tombstone-test-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-manifest-tombstone-test-"));
     roots.push(root);
     const home = path.join(root, "home");
     const workspace = path.join(root, "workspace");
@@ -553,7 +551,7 @@ describe("remote workspace manifest script", () => {
         "-c",
         "user.name=Nova Test",
         "-c",
-        "user.email=test@openclaw.invalid",
+        "user.email=test@nova.invalid",
         "commit",
         "--quiet",
         "-m",
@@ -618,7 +616,7 @@ describe("remote workspace manifest script", () => {
   });
 
   it("drops stale descendants when a tracked directory becomes a file", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-manifest-test-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-manifest-test-"));
     roots.push(root);
     const home = path.join(root, "home");
     const workspace = path.join(root, "workspace");
@@ -632,7 +630,7 @@ describe("remote workspace manifest script", () => {
         "-c",
         "user.name=Nova Test",
         "-c",
-        "user.email=test@openclaw.invalid",
+        "user.email=test@nova.invalid",
         "commit",
         "--quiet",
         "-m",
@@ -682,7 +680,7 @@ describe("remote workspace manifest script", () => {
       await fs.readFile(
         path.join(
           home,
-          ".openclaw-worker",
+          ".nova-worker",
           "manifests",
           current.stdout.trim().slice("sha256:".length) + ".json",
         ),

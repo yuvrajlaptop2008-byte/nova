@@ -269,7 +269,7 @@ describe("controlRealtimeVoiceAgentRun", () => {
         mode: "realtime",
         transport: "gateway-relay",
         brain: "agent-consult",
-        payload: { name: "openclaw_agent_control", phase: "status" },
+        payload: { name: "nova_agent_control", phase: "status" },
       } satisfies TalkEvent,
     ];
 
@@ -315,7 +315,7 @@ describe("controlRealtimeVoiceAgentRun", () => {
         mode: "realtime",
         transport: "gateway-relay",
         brain: "agent-consult",
-        payload: { name: "openclaw_agent_control", phase: "status" },
+        payload: { name: "nova_agent_control", phase: "status" },
       },
     ] satisfies TalkEvent[];
 

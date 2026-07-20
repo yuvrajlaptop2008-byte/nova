@@ -13,10 +13,7 @@ export {
   type DiagnosticEventPayload,
   type DiagnosticEventPrivateData,
   type DiagnosticTraceContext,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-export { emptyPluginConfigSchema, type OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-export type {
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
-} from "openclaw/plugin-sdk/plugin-entry";
-export { redactSensitiveText } from "openclaw/plugin-sdk/security-runtime";
+} from "nova/plugin-sdk/diagnostic-runtime";
+export { emptyPluginConfigSchema, type NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+export type { NovaPluginService, NovaPluginServiceContext } from "nova/plugin-sdk/plugin-entry";
+export { redactSensitiveText } from "nova/plugin-sdk/security-runtime";

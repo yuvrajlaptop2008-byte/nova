@@ -1,6 +1,6 @@
 /** Gateway startup coverage for active and inactive web-provider SecretRefs. */
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { setActiveDegradedSecretOwners } from "../secrets/runtime-degraded-state.js";
 import { getActiveSecretsRuntimeSnapshot } from "../secrets/runtime.js";
 import { withEnvAsync } from "../test-utils/env.js";
@@ -25,7 +25,7 @@ const { webSearchProviders } = vi.hoisted(() => {
         setCredentialValue: (config: { apiKey?: unknown }, value: unknown) => {
           config.apiKey = value;
         },
-        getConfiguredCredentialValue: (config: OpenClawConfig | undefined) => {
+        getConfiguredCredentialValue: (config: NovaConfig | undefined) => {
           const pluginConfig = config?.plugins?.entries?.google?.config;
           return pluginConfig && typeof pluginConfig === "object"
             ? (pluginConfig as { webSearch?: { apiKey?: unknown } }).webSearch?.apiKey
@@ -79,7 +79,7 @@ const SECRET_PATH = "plugins.entries.google.config.webSearch.apiKey";
 
 installGatewayTestHooks({ scope: "suite" });
 
-function buildConfig(params: { enabled: boolean; envVar: string }): OpenClawConfig {
+function buildConfig(params: { enabled: boolean; envVar: string }): NovaConfig {
   return {
     gateway: {
       mode: "local",
@@ -116,10 +116,10 @@ function buildConfig(params: { enabled: boolean; envVar: string }): OpenClawConf
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
-async function writeConfig(config: OpenClawConfig): Promise<void> {
+async function writeConfig(config: NovaConfig): Promise<void> {
   const { writeConfigFile } = await import("../config/config.js");
   await writeConfigFile(config);
 }

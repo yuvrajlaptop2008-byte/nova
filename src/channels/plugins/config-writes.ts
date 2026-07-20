@@ -4,7 +4,7 @@
  * Applies shared config write authorization to concrete Nova channel config.
  */
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   authorizeConfigWriteShared,
   canBypassConfigWritePolicyShared,
@@ -40,7 +40,7 @@ function isInternalConfigWriteMessageChannel(channel?: string | null): boolean {
  * Authorizes a channel config write under origin and target policy.
  */
 export function authorizeConfigWrite(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   origin?: ConfigWriteScope;
   target?: ConfigWriteTarget;
   allowBypass?: boolean;

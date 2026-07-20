@@ -3,13 +3,13 @@ import { property } from "lit/decorators.js";
 import { beginNativeWindowDrag } from "../app/native-window-drag.ts";
 import { controlUiPublicAssetPath } from "../app/public-assets.ts";
 import { t } from "../i18n/index.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import { icons } from "./icons.ts";
 import "./tooltip.ts";
 
 /** Narrow-viewport header: drawer toggle, brand, and command-palette search.
  * Desktop hides it entirely (layout.css) — the sidebar owns navigation there. */
-class AppTopbar extends OpenClawLightDomContentsElement {
+class AppTopbar extends NovaLightDomContentsElement {
   @property({ attribute: false }) navDrawerOpen = false;
   @property({ attribute: false }) onboarding = false;
   @property({ attribute: false }) basePath = "";
@@ -26,7 +26,7 @@ class AppTopbar extends OpenClawLightDomContentsElement {
         aria-hidden=${this.onboarding ? "true" : nothing}
       >
         <div class="topnav-shell">
-          <openclaw-tooltip .content=${drawerLabel}>
+          <nova-tooltip .content=${drawerLabel}>
             <button
               type="button"
               class="topbar-icon-btn topbar-nav-toggle"
@@ -37,7 +37,7 @@ class AppTopbar extends OpenClawLightDomContentsElement {
             >
               <span class="nav-collapse-toggle__icon" aria-hidden="true">${icons.menu}</span>
             </button>
-          </openclaw-tooltip>
+          </nova-tooltip>
           <!-- The Mac app used to float a native drag strip over this brand
                row; the web now asks the host to move the window itself. -->
           <div class="topnav-shell__content" @mousedown=${beginNativeWindowDrag}>
@@ -52,7 +52,7 @@ class AppTopbar extends OpenClawLightDomContentsElement {
             </div>
           </div>
           <div class="topnav-shell__actions">
-            <openclaw-tooltip .content=${t("chat.commandPaletteTitle")}>
+            <nova-tooltip .content=${t("chat.commandPaletteTitle")}>
               <button
                 class="topbar-search"
                 ?disabled=${this.searchDisabled || !this.onOpenPalette}
@@ -61,7 +61,7 @@ class AppTopbar extends OpenClawLightDomContentsElement {
               >
                 ${icons.search}
               </button>
-            </openclaw-tooltip>
+            </nova-tooltip>
           </div>
         </div>
       </header>
@@ -69,6 +69,6 @@ class AppTopbar extends OpenClawLightDomContentsElement {
   }
 }
 
-if (!customElements.get("openclaw-app-topbar")) {
-  customElements.define("openclaw-app-topbar", AppTopbar);
+if (!customElements.get("nova-app-topbar")) {
+  customElements.define("nova-app-topbar", AppTopbar);
 }

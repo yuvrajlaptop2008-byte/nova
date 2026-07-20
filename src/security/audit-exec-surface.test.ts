@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { saveExecApprovals } from "../infra/exec-approvals.js";
 import { captureEnv } from "../test-utils/env.js";
 import { collectSecurityAuditFindings } from "./audit.test-support.js";
@@ -37,20 +37,20 @@ function requireFinding(
 describe("security audit exec surface findings", () => {
   // Redirect the Nova home (NOVA_HOME wins over HOME/USERPROFILE in
   // `resolveRawHomeDir`) to a per-test tempdir so `saveExecApprovals` never
-  // touches the real `~/.openclaw/exec-approvals.json` on the host running
+  // touches the real `~/.nova/exec-approvals.json` on the host running
   // the suite.
   let envSnapshot: ReturnType<typeof captureEnv> | undefined;
   let tempRoot = "";
   let tempCaseIndex = 0;
 
   beforeAll(async () => {
-    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-exec-approvals-"));
+    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-exec-approvals-"));
   });
 
   beforeEach(async () => {
     envSnapshot = captureEnv(["NOVA_HOME", "HOME", "USERPROFILE"]);
     const tempDir = path.join(tempRoot, `case-${++tempCaseIndex}`);
-    await fs.mkdir(path.join(tempDir, ".openclaw"), { recursive: true });
+    await fs.mkdir(path.join(tempDir, ".nova"), { recursive: true });
     // NOVA_HOME takes precedence over HOME/USERPROFILE in resolveRawHomeDir,
     // so all three must point at the tempdir to neutralize whichever the host
     // happens to have set.
@@ -103,7 +103,7 @@ describe("security audit exec surface findings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     const finding = findings.find(
       (entry) => entry.checkId === "agents.claude_cli.permission_mode_overridden_by_yolo",
@@ -131,7 +131,7 @@ describe("security audit exec surface findings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(
       hasFinding("agents.claude_cli.permission_mode_overridden_by_yolo", "warn", findings),
@@ -154,7 +154,7 @@ describe("security audit exec surface findings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(
       hasFinding("agents.claude_cli.permission_mode_overridden_by_yolo", "warn", findings),
@@ -174,7 +174,7 @@ describe("security audit exec surface findings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(
       hasFinding("agents.claude_cli.permission_mode_overridden_by_yolo", "warn", findings),
@@ -194,7 +194,7 @@ describe("security audit exec surface findings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(
       hasFinding("agents.claude_cli.permission_mode_overridden_by_yolo", "warn", findings),
@@ -215,7 +215,7 @@ describe("security audit exec surface findings", () => {
           },
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(
       hasFinding("agents.claude_cli.permission_mode_overridden_by_yolo", "warn", findings),
@@ -243,7 +243,7 @@ describe("security audit exec surface findings", () => {
           agents: {
             list: [{ id: "ops" }],
           },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ),
     ).toBe(true);
   });
@@ -268,7 +268,7 @@ describe("security audit exec surface findings", () => {
               strictInlineEval: true,
             },
           },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ),
     ).toBe(false);
   });
@@ -286,7 +286,7 @@ describe("security audit exec surface findings", () => {
           host: "gateway",
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(hasFinding("security.exposure.open_channels_with_exec", "warn", findings)).toBe(true);
   });
@@ -303,7 +303,7 @@ describe("security audit exec surface findings", () => {
           security: "full",
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(hasFinding("tools.exec.security_full_configured", "critical", findings)).toBe(true);
     expect(hasFinding("security.exposure.open_channels_with_exec", "critical", findings)).toBe(
@@ -317,7 +317,7 @@ describe("security audit exec surface findings", () => {
         allow: ["read", "exec", "process"],
         deny: ["write", "edit", "apply_patch"],
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     const finding = requireFinding("tools.exec.fs_tools_disabled_but_exec_enabled", findings);
     expect(finding.severity).toBe("warn");
@@ -340,7 +340,7 @@ describe("security audit exec surface findings", () => {
         allow: ["read", "exec", "process"],
         deny: ["write", "edit", "apply_patch"],
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     expect(hasFinding("tools.exec.fs_tools_disabled_but_exec_enabled", "warn", findings)).toBe(
       false,

@@ -34,8 +34,8 @@ function previewPayload(overrides: Record<string, unknown> = {}): Record<string,
     state: "closed",
     title: "fix(agents): derive conversation scope from trusted group facts",
     updated_at: "2026-07-04T09:53:55Z",
-    base: { repo: { url: "https://api.github.com/repos/openclaw/openclaw" } },
-    repository_url: "https://api.github.com/repos/openclaw/openclaw",
+    base: { repo: { url: "https://api.github.com/repos/nova/nova" } },
+    repository_url: "https://api.github.com/repos/nova/nova",
     user: {
       avatar_url: "https://avatars.githubusercontent.com/u/58493?v=4",
       login: "steipete",
@@ -49,10 +49,10 @@ describe("parseControlUiGitHubPreviewTarget", () => {
     const target = parseControlUiGitHubPreviewTarget({
       kind: "pull",
       number: 99816,
-      owner: "openclaw",
-      repo: "openclaw",
+      owner: "nova",
+      repo: "nova",
     });
-    expect(target).toEqual({ kind: "pull", number: 99816, owner: "openclaw", repo: "openclaw" });
+    expect(target).toEqual({ kind: "pull", number: 99816, owner: "nova", repo: "nova" });
     expect(
       parseControlUiGitHubPreviewTarget({
         kind: "issue",
@@ -74,10 +74,10 @@ describe("parseControlUiGitHubPreviewTarget", () => {
         parseControlUiGitHubPreviewTarget({
           kind: "issue",
           number: 1,
-          owner: "openclaw",
+          owner: "nova",
           repo,
         }),
-      ).toEqual({ kind: "issue", number: 1, owner: "openclaw", repo });
+      ).toEqual({ kind: "issue", number: 1, owner: "nova", repo });
     }
   });
 
@@ -86,15 +86,15 @@ describe("parseControlUiGitHubPreviewTarget", () => {
       parseControlUiGitHubPreviewTarget({
         kind: "issue",
         number: 1,
-        owner: "openclaw/evil",
-        repo: "openclaw",
+        owner: "nova/evil",
+        repo: "nova",
       }),
     ).toBeNull();
     expect(
       parseControlUiGitHubPreviewTarget({
         kind: "issue",
         number: 0,
-        owner: "openclaw",
+        owner: "nova",
         repo: "..",
       }),
     ).toBeNull();
@@ -103,7 +103,7 @@ describe("parseControlUiGitHubPreviewTarget", () => {
         parseControlUiGitHubPreviewTarget({
           kind: "issue",
           number: 1,
-          owner: "openclaw",
+          owner: "nova",
           repo,
         }),
       ).toBeNull();
@@ -130,7 +130,7 @@ describe("loadControlUiGitHubPreview", () => {
           headers: { "Content-Type": "image/png" },
         }),
       );
-    const target = { kind: "pull" as const, number: 99816, owner: "openclaw", repo: "openclaw" };
+    const target = { kind: "pull" as const, number: 99816, owner: "nova", repo: "nova" };
 
     const first = await loadControlUiGitHubPreview(target, fetchMock);
     const second = await loadControlUiGitHubPreview(target, fetchMock);
@@ -144,14 +144,12 @@ describe("loadControlUiGitHubPreview", () => {
       login: "steipete",
       mergedAt: "2026-07-04T09:53:52Z",
       number: 99816,
-      owner: "openclaw",
-      repo: "openclaw",
+      owner: "nova",
+      repo: "nova",
     });
     expect(second).toEqual(first);
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      "https://api.github.com/repos/openclaw/openclaw/pulls/99816",
-    );
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("https://api.github.com/repos/nova/nova/pulls/99816");
     const avatarRequest = fetchMock.mock.calls[1]?.[0];
     expect(avatarRequest).toBeInstanceOf(URL);
     expect(avatarRequest instanceof URL ? avatarRequest.href : "").toContain(
@@ -189,7 +187,7 @@ describe("loadControlUiGitHubPreview", () => {
     );
 
     const preview = await loadControlUiGitHubPreview(
-      { kind: "issue", number, owner: "openclaw", repo },
+      { kind: "issue", number, owner: "nova", repo },
       fetchMock,
     );
 
@@ -207,7 +205,7 @@ describe("loadControlUiGitHubPreview", () => {
       .mockResolvedValueOnce(avatarResponse);
 
     const preview = await loadControlUiGitHubPreview(
-      { kind: "pull", number: 70009, owner: "openclaw", repo: "bad-avatar" },
+      { kind: "pull", number: 70009, owner: "nova", repo: "bad-avatar" },
       fetchMock,
     );
 
@@ -223,22 +221,22 @@ describe("loadControlUiGitHubPreview", () => {
       .mockResolvedValueOnce(
         githubJson(
           previewPayload({
-            repository_url: "https://api.github.com/repos/openclaw/public",
+            repository_url: "https://api.github.com/repos/nova/public",
             user: { login: "octocat" },
           }),
         ),
       )
       .mockResolvedValueOnce(githubJson({ private: false }));
-    const target = { kind: "issue" as const, number: 70003, owner: "openclaw", repo: "public" };
+    const target = { kind: "issue" as const, number: 70003, owner: "nova", repo: "public" };
 
     await loadControlUiGitHubPreview(target, fetchMock);
 
     expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("https://api.github.com/repos/openclaw/public");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("https://api.github.com/repos/nova/public");
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      "https://api.github.com/repos/openclaw/public/issues/70003",
+      "https://api.github.com/repos/nova/public/issues/70003",
     );
-    expect(fetchMock.mock.calls[2]?.[0]).toBe("https://api.github.com/repos/openclaw/public");
+    expect(fetchMock.mock.calls[2]?.[0]).toBe("https://api.github.com/repos/nova/public");
     for (const call of fetchMock.mock.calls) {
       expect(call[1]?.headers).toHaveProperty("Authorization", "Bearer github-test-token");
     }
@@ -252,14 +250,14 @@ describe("loadControlUiGitHubPreview", () => {
       .mockResolvedValueOnce(
         new Response(null, {
           status: 301,
-          headers: { Location: "/repos/openclaw/renamed/issues/70007" },
+          headers: { Location: "/repos/nova/renamed/issues/70007" },
         }),
       )
       .mockResolvedValueOnce(githubJson({ private: false }))
       .mockResolvedValueOnce(
         githubJson(
           previewPayload({
-            repository_url: "https://api.github.com/repos/openclaw/renamed",
+            repository_url: "https://api.github.com/repos/nova/renamed",
             user: { login: "octocat" },
           }),
         ),
@@ -267,17 +265,17 @@ describe("loadControlUiGitHubPreview", () => {
       .mockResolvedValueOnce(githubJson({ private: false }));
 
     const preview = await loadControlUiGitHubPreview(
-      { kind: "issue", number: 70007, owner: "openclaw", repo: "old-name" },
+      { kind: "issue", number: 70007, owner: "nova", repo: "old-name" },
       fetchMock,
     );
 
     expect(preview.login).toBe("octocat");
     expect(fetchMock).toHaveBeenCalledTimes(5);
     expect(requestUrl(fetchMock.mock.calls[3]?.[0])).toBe(
-      "https://api.github.com/repos/openclaw/renamed/issues/70007",
+      "https://api.github.com/repos/nova/renamed/issues/70007",
     );
     expect(requestUrl(fetchMock.mock.calls[4]?.[0])).toBe(
-      "https://api.github.com/repos/openclaw/renamed",
+      "https://api.github.com/repos/nova/renamed",
     );
     for (const call of fetchMock.mock.calls) {
       expect(new URL(requestUrl(call[0])).origin).toBe("https://api.github.com");
@@ -291,7 +289,7 @@ describe("loadControlUiGitHubPreview", () => {
     vi.stubEnv("GH_TOKEN", "github-test-token");
     const redirectResponse = new Response("discard me", {
       status: 301,
-      headers: { Location: "https://example.com/repos/openclaw/private" },
+      headers: { Location: "https://example.com/repos/nova/private" },
     });
     const fetchMock = vi
       .fn<typeof fetch>()
@@ -300,7 +298,7 @@ describe("loadControlUiGitHubPreview", () => {
 
     await expect(
       loadControlUiGitHubPreview(
-        { kind: "pull", number: 70008, owner: "openclaw", repo: "unsafe-redirect" },
+        { kind: "pull", number: 70008, owner: "nova", repo: "unsafe-redirect" },
         fetchMock,
       ),
     ).rejects.toMatchObject({ statusCode: 502 } satisfies Partial<ControlUiGitHubError>);
@@ -321,14 +319,14 @@ describe("loadControlUiGitHubPreview", () => {
       ["missing", 70011],
     ] as const) {
       await expect(
-        loadControlUiGitHubPreview({ kind: "issue", number, owner: "openclaw", repo }, fetchMock),
+        loadControlUiGitHubPreview({ kind: "issue", number, owner: "nova", repo }, fetchMock),
       ).rejects.toMatchObject({ statusCode: 404 } satisfies Partial<ControlUiGitHubError>);
     }
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock.mock.calls.map((call) => requestUrl(call[0]))).toEqual([
-      "https://api.github.com/repos/openclaw/private",
-      "https://api.github.com/repos/openclaw/missing",
+      "https://api.github.com/repos/nova/private",
+      "https://api.github.com/repos/nova/missing",
     ]);
   });
 
@@ -340,14 +338,14 @@ describe("loadControlUiGitHubPreview", () => {
       .mockResolvedValueOnce(
         new Response(null, {
           status: 301,
-          headers: { Location: "/repos/openclaw/private/issues/70004" },
+          headers: { Location: "/repos/nova/private/issues/70004" },
         }),
       )
       .mockResolvedValueOnce(githubJson({ private: true }));
 
     await expect(
       loadControlUiGitHubPreview(
-        { kind: "issue", number: 70004, owner: "openclaw", repo: "public-source" },
+        { kind: "issue", number: 70004, owner: "nova", repo: "public-source" },
         fetchMock,
       ),
     ).rejects.toMatchObject({ statusCode: 404 } satisfies Partial<ControlUiGitHubError>);
@@ -370,7 +368,7 @@ describe("loadControlUiGitHubPreview", () => {
       .mockResolvedValueOnce(
         githubJson(
           previewPayload({
-            repository_url: "https://api.github.com/repos/openclaw/visibility-change",
+            repository_url: "https://api.github.com/repos/nova/visibility-change",
             user: { login: "octocat" },
           }),
         ),
@@ -379,12 +377,12 @@ describe("loadControlUiGitHubPreview", () => {
       .mockResolvedValueOnce(githubJson({ private: true }));
 
     await loadControlUiGitHubPreview(
-      { kind: "issue", number: 70005, owner: "openclaw", repo: "visibility-change" },
+      { kind: "issue", number: 70005, owner: "nova", repo: "visibility-change" },
       fetchMock,
     );
     await expect(
       loadControlUiGitHubPreview(
-        { kind: "issue", number: 70006, owner: "openclaw", repo: "visibility-change" },
+        { kind: "issue", number: 70006, owner: "nova", repo: "visibility-change" },
         fetchMock,
       ),
     ).rejects.toMatchObject({ statusCode: 404 } satisfies Partial<ControlUiGitHubError>);
@@ -397,7 +395,7 @@ describe("loadControlUiGitHubPreview", () => {
 
     await expect(
       loadControlUiGitHubPreview(
-        { kind: "issue", number: 70002, owner: "openclaw", repo: "missing-preview" },
+        { kind: "issue", number: 70002, owner: "nova", repo: "missing-preview" },
         fetchMock,
       ),
     ).rejects.toMatchObject({ statusCode: 404 } satisfies Partial<ControlUiGitHubError>);

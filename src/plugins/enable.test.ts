@@ -1,10 +1,10 @@
 // Covers plugin enablement decisions and disabled-state handling.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { enableExplicitlySelectedPluginInConfig, enablePluginInConfig } from "./enable.js";
 
 function expectEnableResult(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   pluginId: string,
   params: {
     enabled: boolean;
@@ -42,7 +42,7 @@ describe("enablePluginInConfig", () => {
   it.each([
     {
       name: "enables a plugin entry",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       pluginId: "google",
       expectedEnabled: true,
       assert: (result: ReturnType<typeof enablePluginInConfig>) => {
@@ -55,7 +55,7 @@ describe("enablePluginInConfig", () => {
         plugins: {
           allow: ["memory-core"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginId: "google",
       expectedEnabled: false,
       assert: (result: ReturnType<typeof enablePluginInConfig>) => {
@@ -69,7 +69,7 @@ describe("enablePluginInConfig", () => {
         plugins: {
           allow: ["google"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginId: "google",
       expectedEnabled: true,
       assert: (result: ReturnType<typeof enablePluginInConfig>) => {
@@ -83,7 +83,7 @@ describe("enablePluginInConfig", () => {
         plugins: {
           deny: ["google"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginId: "google",
       expectedEnabled: false,
       assert: (result: ReturnType<typeof enablePluginInConfig>) => {
@@ -92,7 +92,7 @@ describe("enablePluginInConfig", () => {
     },
     {
       name: "writes built-in channels to channels.<id>.enabled and plugins.entries",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       pluginId: "telegram",
       expectedEnabled: true,
       assert: expectBuiltInChannelEnabled,
@@ -103,7 +103,7 @@ describe("enablePluginInConfig", () => {
         plugins: {
           allow: ["memory-core"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginId: "telegram",
       expectedEnabled: false,
       assert: (result: ReturnType<typeof enablePluginInConfig>) => {
@@ -118,7 +118,7 @@ describe("enablePluginInConfig", () => {
         plugins: {
           allow: ["telegram"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginId: "telegram",
       expectedEnabled: true,
       assert: (result: ReturnType<typeof enablePluginInConfig>) => {
@@ -140,7 +140,7 @@ describe("enablePluginInConfig", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginId: "telegram",
       expectedEnabled: true,
       assert: expectBuiltInChannelEnabledWithAllowlist,
@@ -153,7 +153,7 @@ describe("enablePluginInConfig", () => {
   });
 
   it("can enable a built-in channel plugin entry without mutating channel config", () => {
-    const result = enablePluginInConfig({} as OpenClawConfig, "twitch", {
+    const result = enablePluginInConfig({} as NovaConfig, "twitch", {
       updateChannelConfig: false,
     });
 
@@ -170,7 +170,7 @@ describe("enableExplicitlySelectedPluginInConfig", () => {
         plugins: {
           allow: ["memory-core"],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       "clickclack",
     );
 
@@ -185,7 +185,7 @@ describe("enableExplicitlySelectedPluginInConfig", () => {
       plugins: {
         allow: ["memory-core"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = enableExplicitlySelectedPluginInConfig(cfg, "google");
 
@@ -203,7 +203,7 @@ describe("enableExplicitlySelectedPluginInConfig", () => {
         allow: ["memory-core"],
         deny: ["clickclack"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = enableExplicitlySelectedPluginInConfig(cfg, "clickclack");
 

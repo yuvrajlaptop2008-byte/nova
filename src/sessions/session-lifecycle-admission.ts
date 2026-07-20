@@ -43,7 +43,7 @@ type SessionLifecycleMutationKind = "compaction";
 // Runtime chunks can load separate module instances while still coordinating
 // the same sessions. One shared state keeps every lock and admission visible.
 const SESSION_LIFECYCLE_ADMISSION_STATE = resolveGlobalSingleton(
-  Symbol.for("openclaw.sessionLifecycleAdmissionState"),
+  Symbol.for("nova.sessionLifecycleAdmissionState"),
   (): SessionLifecycleAdmissionState => ({
     lifecycleQueues: new Map(),
     mutationQueues: new Map(),
@@ -542,6 +542,6 @@ export async function interruptSessionWorkAdmissions(params: {
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
   (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.sessionLifecycleAdmissionTestApi")
+    Symbol.for("nova.sessionLifecycleAdmissionTestApi")
   ] = { runExclusiveSessionLifecycle };
 }

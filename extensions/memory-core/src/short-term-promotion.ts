@@ -2,23 +2,23 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
-import type { MemorySearchResult } from "openclaw/plugin-sdk/memory-core-host-runtime-files";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
+import type { MemorySearchResult } from "nova/plugin-sdk/memory-core-host-runtime-files";
 import {
   DEFAULT_MEMORY_DEEP_DREAMING_MAX_PROMOTED_SNIPPET_TOKENS,
   formatMemoryDreamingDay,
   isSameMemoryDreamingDay,
-} from "openclaw/plugin-sdk/memory-core-host-status";
-import { appendMemoryHostEvent } from "openclaw/plugin-sdk/memory-host-events";
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
-import { replaceFileAtomic } from "openclaw/plugin-sdk/security-runtime";
+} from "nova/plugin-sdk/memory-core-host-status";
+import { appendMemoryHostEvent } from "nova/plugin-sdk/memory-host-events";
+import { sleep } from "nova/plugin-sdk/runtime-env";
+import { replaceFileAtomic } from "nova/plugin-sdk/security-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeStringEntries,
   uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import pLimit from "p-limit";
 import {
   deriveConceptTags,
@@ -53,7 +53,7 @@ const DEFAULT_RECENCY_HALF_LIFE_DAYS = 14;
 export const DEFAULT_PROMOTION_MIN_SCORE = 0.75;
 export const DEFAULT_PROMOTION_MIN_RECALL_COUNT = 3;
 export const DEFAULT_PROMOTION_MIN_UNIQUE_QUERIES = 2;
-const PROMOTION_MARKER_PREFIX = "openclaw-memory-promotion:";
+const PROMOTION_MARKER_PREFIX = "nova-memory-promotion:";
 const PROMOTED_SNIPPET_CHARS_PER_TOKEN_ESTIMATE = 4;
 const MAX_QUERY_HASHES = 32;
 const MAX_RECALL_DAYS = 16;
@@ -428,7 +428,7 @@ function isContaminatedDreamingSnippet(
     return false;
   }
   if (
-    /<!--\s*openclaw-memory-promotion:/i.test(snippet) ||
+    /<!--\s*nova-memory-promotion:/i.test(snippet) ||
     DREAMING_TRANSCRIPT_PROMPT_LINE_RE.test(snippet) ||
     RAW_SESSION_METADATA_RE.test(snippet) ||
     RAW_CONVERSATION_SUMMARY_RE.test(snippet) ||
@@ -2267,8 +2267,8 @@ function relocateCandidateRange(
   };
 }
 
-const DREAMING_FENCE_START_RE = /<!--\s*openclaw:dreaming:[a-z][a-z0-9-]*:start\s*-->/i;
-const DREAMING_FENCE_END_RE = /<!--\s*openclaw:dreaming:[a-z][a-z0-9-]*:end\s*-->/i;
+const DREAMING_FENCE_START_RE = /<!--\s*nova:dreaming:[a-z][a-z0-9-]*:start\s*-->/i;
+const DREAMING_FENCE_END_RE = /<!--\s*nova:dreaming:[a-z][a-z0-9-]*:end\s*-->/i;
 
 function lineRangeOverlapsDreamingFence(
   lines: string[],
@@ -2288,7 +2288,7 @@ function lineRangeOverlapsDreamingFence(
     const isEnd = DREAMING_FENCE_END_RE.test(line);
     if (isStart || isEnd) {
       // The marker line itself is managed-block content. A relocated range
-      // that includes a `<!-- openclaw:dreaming:*:start/end -->` marker would
+      // that includes a `<!-- nova:dreaming:*:start/end -->` marker would
       // build its snippet from raw lines that contain that marker text and
       // leak it into MEMORY.md alongside any adjacent fenced content captured
       // by the same window. (#80613)
@@ -2327,7 +2327,7 @@ async function rehydratePromotionCandidate(
       continue;
     }
     // Managed dreaming blocks in daily memory files are scratchwork, not durable
-    // content. If rehydration lands inside an openclaw:dreaming fence (for example
+    // content. If rehydration lands inside an nova:dreaming fence (for example
     // because file edits shifted lines between ranking and apply), refuse the
     // candidate so dream artifacts cannot be promoted into MEMORY.md.
     if (lineRangeOverlapsDreamingFence(lines, relocated.startLine, relocated.endLine)) {
@@ -2474,7 +2474,7 @@ function extractPromotionMarkers(memoryText: string): Set<string> {
   // Marker keys include source paths, so spaces are valid. Capture until the
   // comment close; otherwise a path like "memory/project alpha/..." is missed
   // and the same candidate can be appended again.
-  const matches = memoryText.matchAll(/<!--\s*openclaw-memory-promotion:([^\n]*?)\s*-->/gi);
+  const matches = memoryText.matchAll(/<!--\s*nova-memory-promotion:([^\n]*?)\s*-->/gi);
   for (const match of matches) {
     const key = match[1]?.trim();
     if (key) {

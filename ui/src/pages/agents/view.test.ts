@@ -181,7 +181,7 @@ describe("renderAgents", () => {
     const tabs = [...container.querySelectorAll(".agent-tab")].map((tab) => directText(tab));
     expect(tabs.slice(-2)).toEqual([t("agents.tabs.cronJobs"), t("agents.tabs.memory")]);
     const panel = container.querySelector<HTMLElement & { agentId: string }>(
-      "openclaw-agent-memory-panel",
+      "nova-agent-memory-panel",
     );
     expect(panel?.agentId).toBe("beta");
   });
@@ -192,7 +192,7 @@ describe("renderAgents", () => {
 
     try {
       render(renderAgents(createProps()), container);
-      const select = container.querySelector("openclaw-agent-select") as
+      const select = container.querySelector("nova-agent-select") as
         | (HTMLElement & {
             agents: Array<{ id: string }>;
             updateComplete: Promise<boolean>;
@@ -648,7 +648,7 @@ describe("renderAgentFiles", () => {
       container,
     );
 
-    const dialog = container.querySelector("openclaw-modal-dialog");
+    const dialog = container.querySelector("nova-modal-dialog");
     const panel = container.querySelector<HTMLElement>(".md-preview-dialog__panel");
     const expandButton = container.querySelector<HTMLButtonElement>(".md-preview-expand-btn");
 

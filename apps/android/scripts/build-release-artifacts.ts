@@ -118,8 +118,8 @@ export function resolveAndroidBuildMetadata(
 
 export function androidBuildMetadataGradleArgs(metadata: AndroidBuildMetadata): string[] {
   return [
-    `-PopenclawBuildCommit=${metadata.commit}`,
-    `-PopenclawBuildTimestamp=${metadata.timestamp}`,
+    `-PnovaBuildCommit=${metadata.commit}`,
+    `-PnovaBuildTimestamp=${metadata.timestamp}`,
   ];
 }
 
@@ -254,7 +254,7 @@ function releaseArtifacts(versionName: string): ReleaseArtifact[] {
         "apk",
         "thirdParty",
         "release",
-        `openclaw-${versionName}-thirdParty-release.apk`,
+        `nova-${versionName}-thirdParty-release.apk`,
       ),
     },
   ];
@@ -429,7 +429,7 @@ function main() {
   for (const artifact of artifacts) {
     const outputPath = join(
       releaseOutputDir,
-      `openclaw-${version.canonicalVersion}-${artifact.flavorName}-release.${artifact.kind}`,
+      `nova-${version.canonicalVersion}-${artifact.flavorName}-release.${artifact.kind}`,
     );
 
     copyArtifact(artifact.sourcePath, outputPath);

@@ -14,7 +14,7 @@ import { isSilentReplyPayloadText, SILENT_REPLY_TOKEN } from "../auto-reply/toke
 import { getLoadedChannelPluginForRead } from "../channels/plugins/registry-loaded.js";
 import type { ChannelId } from "../channels/plugins/types.public.js";
 import { routeFromConversationRef, routeToDeliveryFields } from "../channels/route-projection.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isOutboundDeliveryError } from "../infra/outbound/deliver-types.js";
 import type { ConversationRef } from "../infra/outbound/session-binding-service.js";
 import { sourceDeliveryTargetsMatch } from "../infra/outbound/source-delivery-plan.js";
@@ -357,7 +357,7 @@ async function resolveActiveWakeWithRetries(
   return outcome;
 }
 
-export function resolveSubagentAnnounceTimeoutMs(cfg: OpenClawConfig): number {
+export function resolveSubagentAnnounceTimeoutMs(cfg: NovaConfig): number {
   const configured = cfg.agents?.defaults?.subagents?.announceTimeoutMs;
   return clampTimerTimeoutMs(configured) ?? DEFAULT_SUBAGENT_ANNOUNCE_TIMEOUT_MS;
 }
@@ -1014,7 +1014,7 @@ function resolveGeneratedMediaFailureNotice(params: {
 }
 
 async function deliverGeneratedMediaCompletionDirect(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   requesterSessionKey: string;
   directIdempotencyKey: string;
   deliveryTarget: {
@@ -1172,7 +1172,7 @@ function hasFailedSubagentNoOutputCompletion(events: readonly AgentInternalEvent
 }
 
 async function deliverTextCompletionDirect(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   requesterSessionKey: string;
   directIdempotencyKey: string;
   deliveryTarget: {
@@ -2369,8 +2369,7 @@ const testing = {
   isSessionFileChangedAnnounceError,
 };
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.subagentAnnounceDeliveryTestApi")
-  ] = testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.subagentAnnounceDeliveryTestApi")] =
+    testing;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

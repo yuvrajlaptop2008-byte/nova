@@ -1,5 +1,5 @@
 // Coverage for embedded run auth initialization and runtime credential refresh.
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { isSecretValueRegisteredForRedaction } from "../../../logging/secret-redaction-registry.js";
 import { SecretSurfaceUnavailableError } from "../../../secrets/runtime-degraded-state.js";

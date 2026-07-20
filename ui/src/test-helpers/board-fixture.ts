@@ -1,7 +1,7 @@
 import { html } from "lit";
 import { state } from "lit/decorators.js";
 import type { BoardOp, BoardSnapshot } from "../lib/board/types.ts";
-import { OpenClawLightDomElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../lit/nova-element.ts";
 import "../components/board/board-view.ts";
 
 const initialSnapshot: BoardSnapshot = {
@@ -174,7 +174,7 @@ export function applyBoardFixtureOps(
   return { ...next, revision: next.revision + 1 };
 }
 
-class BoardFixture extends OpenClawLightDomElement {
+class BoardFixture extends NovaLightDomElement {
   @state() private snapshot = structuredClone(initialSnapshot);
   @state() private activeTabId = "overview";
 
@@ -202,7 +202,7 @@ class BoardFixture extends OpenClawLightDomElement {
           </div>
           <div class="board-fixture-status"><i></i> fixture online</div>
         </header>
-        <openclaw-board-view
+        <nova-board-view
           .snapshot=${this.snapshot}
           .activeTabId=${this.activeTabId}
           .widgetFrameUrl=${frameUrl}
@@ -213,14 +213,14 @@ class BoardFixture extends OpenClawLightDomElement {
               this.activeTabId = tabId;
             },
           }}
-        ></openclaw-board-view>
+        ></nova-board-view>
       </main>
     `;
   }
 }
 
-if (!customElements.get("openclaw-board-fixture")) {
-  customElements.define("openclaw-board-fixture", BoardFixture);
+if (!customElements.get("nova-board-fixture")) {
+  customElements.define("nova-board-fixture", BoardFixture);
 }
 
-document.querySelector("#app")?.append(document.createElement("openclaw-board-fixture"));
+document.querySelector("#app")?.append(document.createElement("nova-board-fixture"));

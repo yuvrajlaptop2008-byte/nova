@@ -2,29 +2,29 @@
  * Anthropic provider runtime registration. It owns API-key/setup-token/Claude
  * CLI auth, dynamic model normalization, usage auth, media, and stream wrappers.
  */
-import { formatCliCommand, parseDurationMs } from "openclaw/plugin-sdk/cli-runtime";
-import { resolveExpiresAtMsFromDurationMs } from "openclaw/plugin-sdk/number-runtime";
+import { formatCliCommand, parseDurationMs } from "nova/plugin-sdk/cli-runtime";
+import { resolveExpiresAtMsFromDurationMs } from "nova/plugin-sdk/number-runtime";
 import type {
-  OpenClawPluginApi,
+  NovaPluginApi,
   ProviderAuthContext,
   ProviderAuthMethod,
   ProviderAuthMethodNonInteractiveContext,
   ProviderResolveDynamicModelContext,
   ProviderNormalizeResolvedModelContext,
   ProviderRuntimeModel,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-entry";
 import {
   applyAuthProfileConfig,
   type AuthProfileStore,
   buildTokenProfileId,
   createProviderApiKeyAuthMethod,
   listProfilesForProvider,
-  type OpenClawConfig as ProviderAuthConfig,
+  type NovaConfig as ProviderAuthConfig,
   type ProviderAuthResult,
   suggestOAuthProfileIdForLegacyDefault,
   upsertAuthProfileWithLock,
   validateAnthropicSetupToken,
-} from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/provider-auth";
 import {
   buildProviderReplayFamilyHooks,
   cloneFirstTemplateModel,
@@ -38,8 +38,8 @@ import {
   supportsClaudeAdaptiveThinking,
   supportsClaudeNativeMaxEffort,
   supportsClaudeNativeXhighEffort,
-} from "openclaw/plugin-sdk/provider-model-shared";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/provider-model-shared";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import * as claudeCliAuth from "./cli-auth-seam.js";
 import { buildAnthropicCliBackend } from "./cli-backend.js";
 import { buildClaudeCliCatalogEntries } from "./cli-catalog.js";
@@ -112,7 +112,7 @@ const ANTHROPIC_SETUP_TOKEN_NOTE_LINES = [
   "Anthropic setup-token auth is supported in Nova.",
   "Nova prefers Claude CLI reuse when it is available on the host.",
   "Anthropic staff told us this Nova path is allowed again.",
-  `If you want a direct API billing path instead, use ${formatCliCommand("openclaw models auth login --provider anthropic --method api-key --set-default")} or ${formatCliCommand("openclaw models auth login --provider anthropic --method cli --set-default")}.`,
+  `If you want a direct API billing path instead, use ${formatCliCommand("nova models auth login --provider anthropic --method api-key --set-default")} or ${formatCliCommand("nova models auth login --provider anthropic --method cli --set-default")}.`,
 ] as const;
 
 function resolveAnthropicSonnet5Cost(nowMs: number = Date.now()) {
@@ -742,7 +742,7 @@ function buildAnthropicAuthDoctorHint(params: {
     }`,
     `- auth store oauth profiles: ${storeOauthProfiles || "(none)"}`,
     `- suggested profile: ${suggested}`,
-    `Fix: run "${formatCliCommand("openclaw doctor --yes")}"`,
+    `Fix: run "${formatCliCommand("nova doctor --yes")}"`,
   ].join("\n");
 }
 
@@ -949,7 +949,7 @@ export function buildAnthropicProvider(): ProviderPlugin {
 }
 
 /** Register Anthropic provider, Claude CLI backend, and media understanding provider. */
-export function registerAnthropicPlugin(api: OpenClawPluginApi): void {
+export function registerAnthropicPlugin(api: NovaPluginApi): void {
   api.registerCliBackend(buildAnthropicCliBackend());
   api.registerProvider(buildAnthropicProvider());
   api.registerMediaUnderstandingProvider(anthropicMediaUnderstandingProvider);

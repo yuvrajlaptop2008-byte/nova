@@ -6,17 +6,17 @@ import {
   resolveSessionAgentIds,
   resolveUserPath,
   type FastModeAutoProgressState,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resolveAgentDir } from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { resolveAgentDir } from "nova/plugin-sdk/agent-runtime";
 import {
   createDiagnosticTraceContextFromActiveScope,
   freezeDiagnosticTraceContext,
   resolveDiagnosticModelContentCapturePolicy,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-import { loadExecApprovals } from "openclaw/plugin-sdk/exec-approvals-runtime";
+} from "nova/plugin-sdk/diagnostic-runtime";
+import { loadExecApprovals } from "nova/plugin-sdk/exec-approvals-runtime";
 import {
   resolveCodexAppServerForModelProvider,
-  resolveCodexAppServerForOpenClawToolPolicy,
+  resolveCodexAppServerForNovaToolPolicy,
 } from "./app-server-policy.js";
 import {
   resolveCodexAppServerAuthProfileId,
@@ -29,7 +29,7 @@ import {
   readCodexPluginConfig,
   resolveCodexComputerUseConfig,
   resolveCodexModelBackedReviewerPolicyContext,
-  resolveOpenClawExecPolicyForCodexAppServer,
+  resolveNovaExecPolicyForCodexAppServer,
 } from "./config.js";
 import { createCodexDynamicToolBuildStageTracker } from "./dynamic-tool-build.js";
 import { resolveCodexNativeHookRelayEvents } from "./native-hook-relay.js";
@@ -109,7 +109,7 @@ export async function prepareCodexAttemptConnection({ params, options }: CodexRu
     workspaceDir: resolvedWorkspace,
   });
   preDynamicStartupStages.mark("sandbox");
-  const execPolicy = resolveOpenClawExecPolicyForCodexAppServer({
+  const execPolicy = resolveNovaExecPolicyForCodexAppServer({
     execOverrides: params.execOverrides,
     approvals: loadExecApprovals(),
     config: params.config,
@@ -161,7 +161,7 @@ export async function prepareCodexAttemptConnection({ params, options }: CodexRu
         model: selection.model,
         config: params.config,
         agentDir,
-        openClawSandboxActive: sandbox?.enabled === true,
+        novaSandboxActive: sandbox?.enabled === true,
       }).appServer,
       binding: startupBinding,
       execPolicyTouched: execPolicy.touched,
@@ -246,7 +246,7 @@ export async function prepareCodexAttemptConnection({ params, options }: CodexRu
   await ensureCodexWorkspaceDirOnce(effectiveWorkspace);
   preDynamicStartupStages.mark("effective-workspace");
   const resolvePolicyAppServer = () =>
-    resolveCodexAppServerForOpenClawToolPolicy({
+    resolveCodexAppServerForNovaToolPolicy({
       appServer: configuredAppServer,
       pluginConfig,
       env: process.env,
@@ -357,7 +357,7 @@ export async function prepareCodexAttemptConnection({ params, options }: CodexRu
         model: selection.model,
         config: params.config,
         agentDir,
-        openClawSandboxActive: sandbox?.enabled === true,
+        novaSandboxActive: sandbox?.enabled === true,
       }).appServer,
       binding: mutable.startupBinding,
       execPolicyTouched: execPolicy.touched,

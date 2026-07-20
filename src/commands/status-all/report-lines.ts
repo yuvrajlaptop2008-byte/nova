@@ -1,4 +1,4 @@
-// Renders `openclaw status --all` report data into terminal lines.
+// Renders `nova status --all` report data into terminal lines.
 // Styling is applied here so data builders remain color/theme agnostic.
 
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";

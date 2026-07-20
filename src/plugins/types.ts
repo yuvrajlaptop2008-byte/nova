@@ -80,16 +80,16 @@ export type {
   ProviderThinkingProfile,
 } from "./provider-thinking.types.js";
 export type {
-  OpenClawPluginActiveModelContext,
-  OpenClawPluginHookOptions,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
-  OpenClawPluginToolOptions,
+  NovaPluginActiveModelContext,
+  NovaPluginHookOptions,
+  NovaPluginToolContext,
+  NovaPluginToolFactory,
+  NovaPluginToolOptions,
 } from "./tool-types.js";
 export type {
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeHostCommandAvailabilityContext,
-  OpenClawPluginNodeHostCommandIo,
+  NovaPluginNodeHostCommand,
+  NovaPluginNodeHostCommandAvailabilityContext,
+  NovaPluginNodeHostCommandIo,
 } from "./types.node-host.js";
 export type {
   PluginWebFetchProviderEntry,
@@ -145,26 +145,26 @@ export type {
   MigrationProviderPlugin,
   MigrationSummary,
 } from "./migration-provider.types.js";
-export type { OpenClawPluginApi } from "./plugin-api.types.js";
+export type { NovaPluginApi } from "./plugin-api.types.js";
 export type {
   AgentPromptGuidance,
   AgentPromptGuidanceEntry,
   AgentPromptSurfaceKind,
-  OpenClawPluginCommandDefinition,
+  NovaPluginCommandDefinition,
   PluginCommandContext,
   PluginCommandResult,
 } from "./plugin-command.types.js";
-export type { OpenClawPluginConfigSchema } from "./plugin-config-schema.types.js";
-export type { OpenClawPluginDefinition } from "./plugin-definition.types.js";
+export type { NovaPluginConfigSchema } from "./plugin-config-schema.types.js";
+export type { NovaPluginDefinition } from "./plugin-definition.types.js";
 export type {
-  OpenClawGatewayDiscoveryService,
-  OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginNodeInvokePolicyContext,
-  OpenClawPluginNodeInvokePolicyResult,
-  OpenClawPluginReloadRegistration,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
+  NovaGatewayDiscoveryService,
+  NovaPluginNodeInvokePolicy,
+  NovaPluginNodeInvokePolicyContext,
+  NovaPluginNodeInvokePolicyResult,
+  NovaPluginReloadRegistration,
+  NovaPluginSecurityAuditCollector,
+  NovaPluginService,
+  NovaPluginServiceContext,
 } from "./plugin-registration.types.js";
 export type {
   ProviderAuthContext,
@@ -221,9 +221,9 @@ export type {
   ProviderWrapStreamFnContext,
 } from "./provider-transport.types.js";
 export type {
-  OpenClawGatewayDiscoveryAdvertiseContext,
-  OpenClawPluginHttpRouteHandler,
-  OpenClawPluginSecurityAuditContext,
+  NovaGatewayDiscoveryAdvertiseContext,
+  NovaPluginHttpRouteHandler,
+  NovaPluginSecurityAuditContext,
 } from "./plugin-registration.types.js";
 export type { ProviderUsageAuthToken } from "./provider-runtime.types.js";
 export type { WorkerSshIdentityRequest } from "./capability-provider.types.js";
@@ -234,13 +234,13 @@ export type {
   VideoGenerationProviderPlugin,
 } from "./capability-provider.types.js";
 export type {
-  OpenClawPluginCliCommandDescriptor,
-  OpenClawPluginCliRegistrar,
-  OpenClawPluginGatewayRuntimeScopeSurface,
-  OpenClawPluginHostedMediaResolver,
-  OpenClawPluginHttpRouteAuth,
-  OpenClawPluginHttpRouteMatch,
-  OpenClawPluginHttpRouteUpgradeHandler,
+  NovaPluginCliCommandDescriptor,
+  NovaPluginCliRegistrar,
+  NovaPluginGatewayRuntimeScopeSurface,
+  NovaPluginHostedMediaResolver,
+  NovaPluginHttpRouteAuth,
+  NovaPluginHttpRouteMatch,
+  NovaPluginHttpRouteUpgradeHandler,
   PluginInteractiveHandlerRegistration,
   PluginRegistrationMode,
 } from "./plugin-registration.types.js";

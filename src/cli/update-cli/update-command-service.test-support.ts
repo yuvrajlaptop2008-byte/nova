@@ -62,7 +62,7 @@ type UpdateCommandServiceTestApi = {
 
 function getTestApi(): UpdateCommandServiceTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.updateCommandServiceTestApi")
+    Symbol.for("nova.updateCommandServiceTestApi")
   ] as UpdateCommandServiceTestApi;
 }
 

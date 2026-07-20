@@ -6,7 +6,7 @@ import type { ChannelOutboundTargetMode } from "../../channels/plugins/types.pub
 import type { ChannelId } from "../../channels/plugins/types.public.js";
 import { listRouteBindings } from "../../config/bindings.js";
 import type { SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { normalizeRouteBindingChannelId } from "../../routing/binding-scope.js";
 import { resolveAgentRoute } from "../../routing/resolve-route.js";
 import { buildAgentMainSessionKey, normalizeAgentId } from "../../routing/session-key.js";
@@ -72,7 +72,7 @@ function resolveAgentDeliveryPlan(params: {
    * overrides session-level `lastChannel` to prevent cross-channel reply
    * routing in shared sessions (dmScope="main").
    *
-   * @see https://github.com/openclaw/openclaw/issues/24152
+   * @see https://github.com/nova/nova/issues/24152
    */
   turnSourceChannel?: string;
   /** Turn-source `to` — paired with `turnSourceChannel`. */
@@ -166,7 +166,7 @@ function resolveAgentDeliveryPlan(params: {
 
 export async function resolveAgentDeliveryPlanWithSessionRoute(
   params: Parameters<typeof resolveAgentDeliveryPlan>[0] & {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     agentId: string;
     currentSessionKey?: string;
     sessionRouteMode?: "plugin-only" | "allow-fallback";
@@ -358,7 +358,7 @@ export async function resolveAgentDeliveryPlanWithSessionRoute(
 
 /** Resolves an explicit recipient into its canonical or stable provider-owned session. */
 export async function resolveAgentExplicitRecipientSession(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   channel: string;
   to: string;
@@ -398,7 +398,7 @@ export async function resolveAgentExplicitRecipientSession(params: {
 }
 
 export function resolveAgentOutboundTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   plan: AgentDeliveryPlan;
   targetMode?: ChannelOutboundTargetMode;
   validateExplicitTarget?: boolean;

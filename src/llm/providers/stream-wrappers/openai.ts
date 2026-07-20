@@ -31,7 +31,7 @@ import { resolveProviderRequestPolicyConfig } from "../../../agents/provider-req
 import type { StreamFn } from "../../../agents/runtime/index.js";
 import type { SandboxToolPolicy } from "../../../agents/sandbox.js";
 import type { ThinkLevel } from "../../../auto-reply/thinking.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { createSubsystemLogger } from "../../../logging/subsystem.js";
 import { streamSimple } from "../../stream.js";
 import type { SimpleStreamOptions } from "../../types.js";
@@ -42,8 +42,8 @@ const log = createSubsystemLogger("llm/providers/stream-wrappers");
 
 type OpenAIServiceTier = "auto" | "default" | "flex" | "priority";
 type DynamicFastMode = boolean | (() => boolean | undefined);
-type OpenClawSimpleStreamOptions = SimpleStreamOptions & {
-  openclawCodeModeToolSurface?: boolean;
+type NovaSimpleStreamOptions = SimpleStreamOptions & {
+  novaCodeModeToolSurface?: boolean;
 };
 type OpenAIResponsesReplayOptions = Parameters<StreamFn>[2] & {
   replayResponsesItemIds?: boolean;
@@ -113,7 +113,7 @@ function shouldApplyOpenAIServiceTier(model: {
   return resolveOpenAIResponsesPayloadPolicy(model, { storeMode: "disable" }).allowsServiceTier;
 }
 
-function isCodeModeEnabled(config?: OpenClawConfig): boolean {
+function isCodeModeEnabled(config?: NovaConfig): boolean {
   const tools = config?.tools;
   if (!tools || typeof tools !== "object") {
     return false;
@@ -677,7 +677,7 @@ export function createOpenAITextVerbosityWrapper(
 export function createCodexNativeWebSearchWrapper(
   baseStreamFn: StreamFn | undefined,
   params: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     agentDir?: string;
     agentId?: string;
     sessionKey?: string;
@@ -709,9 +709,9 @@ export function createCodexNativeWebSearchWrapper(
         }/${model.id ?? "unknown"}`,
       );
       const originalOnPayload = options?.onPayload;
-      const codeModeOptions: OpenClawSimpleStreamOptions = {
+      const codeModeOptions: NovaSimpleStreamOptions = {
         ...options,
-        openclawCodeModeToolSurface: true,
+        novaCodeModeToolSurface: true,
         onPayload: (payload) => {
           filterCodeModePayloadTools(payload);
           const nextPayload = originalOnPayload?.(payload, model);

@@ -5,7 +5,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { resolveCanvasNodeCapability } from "../canvas/constants.js";
 import { createCanvasDocument } from "../canvas/documents.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import type { ResolvedGatewayAuth } from "./auth.js";
 import { createGatewayHttpServer } from "./server-http.js";
@@ -22,10 +22,10 @@ afterEach(async () => {
 });
 
 async function requestHostedDocument(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   skipHost?: string;
 }): Promise<Response> {
-  const stateDir = await mkdtemp(path.join(tmpdir(), "openclaw-canvas-gateway-"));
+  const stateDir = await mkdtemp(path.join(tmpdir(), "nova-canvas-gateway-"));
   tempDirs.push(stateDir);
   const document = await createCanvasDocument(
     {

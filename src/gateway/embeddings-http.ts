@@ -10,7 +10,7 @@ import { resolveAgentDir } from "../agents/agent-scope.js";
 import { resolveMemorySearchConfig } from "../agents/memory-search.js";
 import { createConfiguredProviderLocalServiceAcquirer } from "../agents/provider-local-service.js";
 import { getRuntimeConfig } from "../config/io.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { logWarn } from "../logger.js";
 import {
@@ -120,7 +120,7 @@ function resolveEmbeddingProviderRemoteConfig(remote: MemorySearchEmbeddingConfi
 }
 
 async function createConfiguredEmbeddingProvider(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir: string;
   provider: EmbeddingProviderRequest;
   model: string;
@@ -280,7 +280,7 @@ export async function handleOpenAiEmbeddingsHttpRequest(
   if (requestModel !== NOVA_MODEL_ID && !resolveAgentIdFromModel(requestModel, cfg)) {
     sendJson(res, 400, {
       error: {
-        message: "Invalid `model`. Use `openclaw` or `openclaw/<agentId>`.",
+        message: "Invalid `model`. Use `nova` or `nova/<agentId>`.",
         type: "invalid_request_error",
       },
     });
@@ -321,7 +321,7 @@ export async function handleOpenAiEmbeddingsHttpRequest(
   const memorySearch = resolveMemorySearchConfig(cfg, agentId);
   const configuredProvider = memorySearch?.provider ?? "openai";
   const overrideModel =
-    normalizeOptionalString(getHeader(req, "x-openclaw-model")) ||
+    normalizeOptionalString(getHeader(req, "x-nova-model")) ||
     normalizeOptionalString(memorySearch?.model) ||
     "";
   const target = resolveEmbeddingsTarget({

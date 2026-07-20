@@ -2,10 +2,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { GatewayEvent, GatewayOp } from "./constants.js";
 
 export type QQBotTestIngressPayload = {
@@ -59,9 +59,7 @@ export async function withQQBotIngressQueue<T>(
     queue: ReturnType<typeof createChannelIngressQueueForTests<QQBotTestIngressPayload>>,
   ) => Promise<T>,
 ): Promise<T> {
-  const created = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-qqbot-ingress-"),
-  );
+  const created = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-qqbot-ingress-"));
   const stateDir = await fs.realpath(created);
   const queue = createChannelIngressQueueForTests<QQBotTestIngressPayload>({
     channelId: "qqbot",
@@ -71,7 +69,7 @@ export async function withQQBotIngressQueue<T>(
   try {
     return await run(queue);
   } finally {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   }
 }

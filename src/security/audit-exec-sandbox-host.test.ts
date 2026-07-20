@@ -1,6 +1,6 @@
 // Covers exec sandbox host audit findings.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { collectSecurityAuditFindings } from "./audit.test-support.js";
 import type { SecurityAuditFinding } from "./audit.types.js";
 
@@ -30,7 +30,7 @@ describe("security audit exec sandbox host findings", () => {
             },
           },
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       checkId: "tools.exec.host_sandbox_no_sandbox_defaults" as const,
     },
     {
@@ -58,7 +58,7 @@ describe("security audit exec sandbox host findings", () => {
             },
           ],
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       checkId: "tools.exec.host_sandbox_no_sandbox_agents" as const,
     },
   ])("$name", async ({ cfg, checkId }) => {

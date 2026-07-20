@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 const resolverPath = fileURLToPath(new URL("../vault-secret-ref-resolver.js", import.meta.url));
 const secretIdHelperPath = fileURLToPath(new URL("../vault-secret-id.js", import.meta.url));
-const manifestPath = fileURLToPath(new URL("../openclaw.plugin.json", import.meta.url));
+const manifestPath = fileURLToPath(new URL("../nova.plugin.json", import.meta.url));
 const packagePath = fileURLToPath(new URL("../package.json", import.meta.url));
 
 function runResolver(params: {
@@ -73,7 +73,7 @@ afterEach(async () => {
 });
 
 async function writeTempFile(name: string, value: string): Promise<string> {
-  const dir = await mkdtemp(path.join(tmpdir(), "openclaw-vault-test-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "nova-vault-test-"));
   tempDirs.push(dir);
   const filePath = path.join(dir, name);
   await writeFile(filePath, value, "utf8");
@@ -357,7 +357,7 @@ describe("plugin manifest", () => {
       secretProviderIntegrations?: Record<string, Record<string, unknown>>;
     };
     const packageJson = JSON.parse(readFileSync(packagePath, "utf8")) as {
-      openclaw?: {
+      nova?: {
         build?: {
           staticAssets?: Array<{ source?: string; output?: string }>;
         };
@@ -393,14 +393,14 @@ describe("plugin manifest", () => {
     );
     expect(manifest.secretProviderIntegrations?.vault?.allowInsecurePath).toBeUndefined();
     expect(resolverSource).toContain("#!/usr/bin/env node");
-    const pluginSdkRootImport = ["openclaw", "plugin-sdk"].join("/");
+    const pluginSdkRootImport = ["nova", "plugin-sdk"].join("/");
     expect(resolverSource).not.toContain(pluginSdkRootImport);
     expect(resolverSource).toContain("@nova/fs-safe/secret");
-    expect(packageJson.openclaw?.build?.staticAssets).toContainEqual({
+    expect(packageJson.nova?.build?.staticAssets).toContainEqual({
       source: "./vault-secret-ref-resolver.js",
       output: "vault-secret-ref-resolver.js",
     });
-    expect(packageJson.openclaw?.build?.staticAssets).toContainEqual({
+    expect(packageJson.nova?.build?.staticAssets).toContainEqual({
       source: "./vault-secret-id.js",
       output: "vault-secret-id.js",
     });
@@ -602,7 +602,7 @@ describe("vault SecretRef resolver", () => {
         VAULT_NAMESPACE: "team-a",
         NOVA_VAULT_AUTH_METHOD: "jwt",
         NOVA_VAULT_AUTH_MOUNT: "keycloak",
-        NOVA_VAULT_AUTH_ROLE: "openclaw",
+        NOVA_VAULT_AUTH_ROLE: "nova",
         NOVA_VAULT_JWT_FILE: jwtFile,
       },
     });
@@ -622,7 +622,7 @@ describe("vault SecretRef resolver", () => {
         token: undefined,
         namespace: "team-a",
         body: {
-          role: "openclaw",
+          role: "nova",
           jwt: "not-a-real-workload-jwt",
         },
       },
@@ -650,7 +650,7 @@ describe("vault SecretRef resolver", () => {
         env: {
           VAULT_ADDR: fixture.vaultAddr,
           NOVA_VAULT_AUTH_METHOD: authMethod,
-          NOVA_VAULT_AUTH_ROLE: "openclaw",
+          NOVA_VAULT_AUTH_ROLE: "nova",
           NOVA_VAULT_JWT_FILE: jwtFile,
         },
       });
@@ -681,7 +681,7 @@ describe("vault SecretRef resolver", () => {
       env: {
         VAULT_ADDR: fixture.vaultAddr,
         NOVA_VAULT_AUTH_METHOD: "kubernetes",
-        NOVA_VAULT_AUTH_ROLE: "openclaw",
+        NOVA_VAULT_AUTH_ROLE: "nova",
         NOVA_VAULT_JWT_FILE: jwtFile,
       },
     });
@@ -701,7 +701,7 @@ describe("vault SecretRef resolver", () => {
         token: undefined,
         namespace: undefined,
         body: {
-          role: "openclaw",
+          role: "nova",
           jwt: "not-a-real-k8s-jwt",
         },
       },
@@ -966,7 +966,7 @@ describe("vault SecretRef resolver", () => {
       env: {
         VAULT_ADDR: fixture.vaultAddr,
         NOVA_VAULT_AUTH_METHOD: "jwt",
-        NOVA_VAULT_AUTH_ROLE: "openclaw",
+        NOVA_VAULT_AUTH_ROLE: "nova",
         NOVA_VAULT_JWT_FILE: jwtFile,
       },
     });

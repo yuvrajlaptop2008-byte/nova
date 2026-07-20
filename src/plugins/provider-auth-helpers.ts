@@ -7,7 +7,7 @@ import { buildAuthProfileId } from "../agents/auth-profiles/identity.js";
 import { upsertAuthProfile, upsertAuthProfileWithLock } from "../agents/auth-profiles/profiles.js";
 import { resolveProviderIdForAuth } from "../agents/provider-auth-aliases.js";
 import { resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   coerceSecretRef,
   DEFAULT_SECRET_PROVIDER_ALIAS,
@@ -23,12 +23,12 @@ import type { SecretInputMode } from "./provider-auth-types.js";
 
 type UpsertAuthProfileParams = Parameters<typeof upsertAuthProfileWithLock>[0];
 
-const resolveAuthAgentDir = (agentDir?: string, config?: OpenClawConfig) =>
+const resolveAuthAgentDir = (agentDir?: string, config?: NovaConfig) =>
   agentDir ?? resolveDefaultAgentDir(config ?? {});
 
 export type ApiKeyStorageOptions = {
   secretInputMode?: SecretInputMode;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 };
 
 export type WriteOAuthCredentialsOptions = {
@@ -41,7 +41,7 @@ function buildEnvSecretRef(id: string): SecretRef {
   return { source: "env", provider: DEFAULT_SECRET_PROVIDER_ALIAS, id };
 }
 
-function resolveProviderDefaultEnvSecretRef(provider: string, config?: OpenClawConfig): SecretRef {
+function resolveProviderDefaultEnvSecretRef(provider: string, config?: NovaConfig): SecretRef {
   const envVars = getProviderEnvVars(provider, {
     ...(config ? { config } : {}),
     includeUntrustedWorkspacePlugins: false,
@@ -149,7 +149,7 @@ async function upsertAuthProfileWithLockOrThrow(params: UpsertAuthProfileParams)
 }
 
 export function applyAuthProfileConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   params: {
     profileId: string;
     provider: string;
@@ -158,7 +158,7 @@ export function applyAuthProfileConfig(
     displayName?: string;
     preferProfileFirst?: boolean;
   },
-): OpenClawConfig {
+): NovaConfig {
   const normalizedProvider = resolveProviderIdForAuth(params.provider, { config: cfg });
   const profiles = {
     ...cfg.auth?.profiles,

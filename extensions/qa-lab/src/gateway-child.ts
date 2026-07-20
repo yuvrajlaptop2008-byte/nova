@@ -13,19 +13,19 @@ import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import type { ModelProviderConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import type { ModelProviderConfig } from "nova/plugin-sdk/provider-model-shared";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 import {
   isRecord,
   normalizeOptionalString,
   normalizeStringEntries,
   uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { sliceUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
+import { sliceUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   createQaBundledPluginsDir,
   resolveQaBundledPluginSourceDir,
@@ -1008,13 +1008,13 @@ export async function startQaGatewayChild(params: {
   forwardHostHome?: boolean;
   mockAuthAgentIds?: readonly string[];
   onListening?: (context: QaGatewayChildListeningContext) => Promise<void> | void;
-  mutateConfig?: (cfg: OpenClawConfig) => OpenClawConfig;
+  mutateConfig?: (cfg: NovaConfig) => NovaConfig;
   runtimeEnvPatch?: NodeJS.ProcessEnv;
 }) {
   // Verified launchers may require every runtime artifact to stay inside their
   // prepared root; carry that root forward instead of rediscovering host temp policy.
-  const tempParentDir = params.command?.tempParentDir ?? resolvePreferredOpenClawTmpDir();
-  const tempRoot = await fs.mkdtemp(path.join(tempParentDir, "openclaw-qa-suite-"));
+  const tempParentDir = params.command?.tempParentDir ?? resolvePreferredNovaTmpDir();
+  const tempRoot = await fs.mkdtemp(path.join(tempParentDir, "nova-qa-suite-"));
   const runtimeCwd = tempRoot;
   const distEntryPath = path.join(params.repoRoot, "dist", "index.js");
   const gatewayCommand =
@@ -1030,7 +1030,7 @@ export async function startQaGatewayChild(params: {
   const xdgConfigHome = path.join(tempRoot, "xdg-config");
   const xdgDataHome = path.join(tempRoot, "xdg-data");
   const xdgCacheHome = path.join(tempRoot, "xdg-cache");
-  const configPath = path.join(tempRoot, "openclaw.json");
+  const configPath = path.join(tempRoot, "nova.json");
   const gatewayToken = `qa-suite-${randomUUID()}`;
   const transport = params.transport ?? createQaGatewayEmptyTransport();
   await seedQaAgentWorkspace({
@@ -1133,7 +1133,7 @@ export async function startQaGatewayChild(params: {
   let processBoundaryController: Awaited<
     ReturnType<typeof createQaGatewayProcessBoundaryController>
   > | null = null;
-  let cfg!: OpenClawConfig;
+  let cfg!: NovaConfig;
   let rpcClient: Awaited<ReturnType<typeof startQaGatewayRpcClient>> | null = null;
   let getChildFailure: (() => QaChildFailure | null) | null = null;
   let stagedBundledPluginsRoot: string | null = null;

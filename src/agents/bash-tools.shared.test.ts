@@ -10,7 +10,7 @@ describe("readEnvInt", () => {
     vi.unstubAllEnvs();
   });
 
-  it("reads deprecated PI env integer aliases behind OPENCLAW env names", () => {
+  it("reads deprecated PI env integer aliases behind nova env names", () => {
     vi.stubEnv("PI_BASH_YIELD_MS", "250");
 
     expect(readEnvInt("NOVA_BASH_YIELD_MS", "PI_BASH_YIELD_MS")).toBe(250);

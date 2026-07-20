@@ -1,6 +1,6 @@
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 // Matrix plugin module implements client bootstrap behavior.
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
+import { requireRuntimeConfig } from "nova/plugin-sdk/plugin-config-runtime";
 import type { CoreConfig } from "../types.js";
 import { getActiveMatrixClient } from "./active-client.js";
 import { isBunRuntime } from "./client/runtime.js";

@@ -33,7 +33,7 @@ describe("entry root version fast path", () => {
     }));
 
     expect(
-      tryHandleRootVersionFastPath(["node", "openclaw", "--version"], {
+      tryHandleRootVersionFastPath(["node", "nova", "--version"], {
         output,
         exit,
         resolveVersion,
@@ -51,7 +51,7 @@ describe("entry root version fast path", () => {
     });
 
     expect(
-      tryHandleRootVersionFastPath(["node", "openclaw", "--version"], {
+      tryHandleRootVersionFastPath(["node", "nova", "--version"], {
         output,
         exit,
         resolveVersion,
@@ -64,7 +64,7 @@ describe("entry root version fast path", () => {
     output.mockClear();
     exit.mockClear();
     expect(
-      tryHandleRootVersionFastPath(["node", "openclaw", "--container", "demo", "--version"], {
+      tryHandleRootVersionFastPath(["node", "nova", "--container", "demo", "--version"], {
         output,
         exit,
         resolveVersion,
@@ -75,7 +75,7 @@ describe("entry root version fast path", () => {
     expect(exit).not.toHaveBeenCalled();
 
     expect(
-      tryHandleRootVersionFastPath(["node", "openclaw", "--version"], {
+      tryHandleRootVersionFastPath(["node", "nova", "--version"], {
         env: { NOVA_CONTAINER: "demo" },
         output,
         exit,
@@ -92,7 +92,7 @@ describe("entry root version fast path", () => {
       .mockRejectedValue(new Error("version resolution failed"));
 
     expect(
-      tryHandleRootVersionFastPath(["node", "openclaw", "--version"], {
+      tryHandleRootVersionFastPath(["node", "nova", "--version"], {
         output,
         exit,
         resolveVersion,
@@ -113,7 +113,7 @@ describe("entry root version fast path", () => {
       .mockRejectedValue(new Error("version resolution failed"));
 
     expect(
-      tryHandleRootVersionFastPath(["node", "openclaw", "--version"], {
+      tryHandleRootVersionFastPath(["node", "nova", "--version"], {
         exit,
         onError,
         resolveVersion,

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { normalizeAgentId } from "../routing/session-key.js";
-import { OpenClawSchemaShape } from "./zod-schema.root-shape.js";
+import { NovaSchemaShape } from "./zod-schema.root-shape.js";
 
 // zod@4 ships "sideEffects": false, so bundlers tree-shake the classic entry's
 // implicit config(en()) locale registration (zod/v4/classic/external.js) and a
@@ -12,7 +12,7 @@ function installZodDefaultLocale(): void {
 }
 installZodDefaultLocale();
 
-export const OpenClawSchema = z.strictObject(OpenClawSchemaShape).superRefine((cfg, ctx) => {
+export const NovaSchema = z.strictObject(NovaSchemaShape).superRefine((cfg, ctx) => {
   const agents = cfg.agents?.list ?? [];
   if (agents.length === 0) {
     return;

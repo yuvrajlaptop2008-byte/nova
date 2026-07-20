@@ -7,7 +7,7 @@
  *   3. Otherwise → id-only placeholder so the pipeline still knows it's a reply
  */
 
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   formatMessageReferenceForAgent,
   type AttachmentProcessor,

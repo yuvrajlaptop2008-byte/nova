@@ -17,7 +17,7 @@ import {
   type AgentPromptGuidance,
   type AgentPromptGuidanceEntry,
   type AgentPromptSurfaceKind,
-  type OpenClawPluginCommandDefinition,
+  type NovaPluginCommandDefinition,
 } from "./types.js";
 
 /**
@@ -118,7 +118,7 @@ function validateCommandName(
  * Shared by both the global registration path and snapshot (non-activating) loads.
  */
 export function validatePluginCommandDefinition(
-  command: OpenClawPluginCommandDefinition,
+  command: NovaPluginCommandDefinition,
   opts?: { allowReservedCommandNames?: boolean },
 ): string | null {
   if (typeof command.handler !== "function") {
@@ -281,7 +281,7 @@ function normalizeAgentPromptGuidance(
   });
 }
 
-export function listPluginInvocationKeys(command: OpenClawPluginCommandDefinition): string[] {
+export function listPluginInvocationKeys(command: NovaPluginCommandDefinition): string[] {
   const keys = new Set<string>();
   const push = (value: string | undefined) => {
     const normalized = normalizeOptionalLowercaseString(value);
@@ -302,7 +302,7 @@ export function listPluginInvocationKeys(command: OpenClawPluginCommandDefinitio
 }
 
 export function pluginCommandSupportsChannel(
-  command: OpenClawPluginCommandDefinition,
+  command: NovaPluginCommandDefinition,
   channel?: string,
 ): boolean {
   if (!command.channels || command.channels.length === 0 || !channel) {
@@ -316,7 +316,7 @@ export function pluginCommandSupportsChannel(
 
 export function registerPluginCommand(
   pluginId: string,
-  command: OpenClawPluginCommandDefinition,
+  command: NovaPluginCommandDefinition,
   opts?: {
     pluginName?: string;
     pluginRoot?: string;

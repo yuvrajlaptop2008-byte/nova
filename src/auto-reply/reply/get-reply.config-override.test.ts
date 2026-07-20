@@ -1,6 +1,6 @@
 // Tests get-reply config override handling for a single inbound turn.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import {
   buildGetReplyCtx,
   createGetReplySessionState,
@@ -53,7 +53,7 @@ describe("getReplyFromConfig configOverride", () => {
           userTimezone: "UTC",
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     await getReplyFromConfig(buildGetReplyCtx(), undefined, {
       agents: {
@@ -61,7 +61,7 @@ describe("getReplyFromConfig configOverride", () => {
           userTimezone: "America/New_York",
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expectResolvedTelegramTimezone(mocks.resolveReplyDirectives);
   });
@@ -86,7 +86,7 @@ describe("getReplyFromConfig configOverride", () => {
             userTimezone: "America/New_York",
           },
         },
-      } satisfies OpenClawConfig),
+      } satisfies NovaConfig),
     );
 
     expect(loadConfigMock).not.toHaveBeenCalled();
@@ -98,7 +98,7 @@ describe("getReplyFromConfig configOverride", () => {
     const cfg = Object.freeze({
       agents: { defaults: { userTimezone: "America/New_York" } },
       channels: { telegram: { botToken: "resolved-telegram-token" } },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
     const ownKeys = Reflect.ownKeys(cfg);
     vi.mocked(loadConfigMock).mockImplementation(() => {
       throw new Error("getRuntimeConfig should not be called for complete runtime config");

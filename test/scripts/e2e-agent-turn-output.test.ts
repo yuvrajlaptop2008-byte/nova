@@ -61,7 +61,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("does not accept markers that only appear outside reply payloads", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-agent-output-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-agent-output-"));
     try {
       const outputPath = join(dir, "agent.log");
       writeFileSync(
@@ -81,7 +81,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("does not accept reply-shaped JSON embedded in diagnostic lines", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-agent-output-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-agent-output-"));
     try {
       const outputPath = join(dir, "agent.log");
       writeFileSync(
@@ -101,7 +101,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("does not accept markers that only appear in error payload text", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-agent-output-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-agent-output-"));
     try {
       const outputPath = join(dir, "agent.log");
       writeFileSync(
@@ -123,7 +123,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("does not accept markers that only appear in failed result meta text", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-agent-output-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-agent-output-"));
     try {
       const outputPath = join(dir, "agent.log");
       writeFileSync(
@@ -185,7 +185,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("ignores stale reply markers outside the recent output tail", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-agent-output-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-agent-output-"));
     try {
       const outputPath = join(dir, "agent.log");
       writeFileSync(
@@ -206,7 +206,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("bounds missing marker diagnostics to the recent output tail", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-agent-output-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-agent-output-"));
     try {
       const outputPath = join(dir, "agent.log");
       writeFileSync(
@@ -235,7 +235,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("bounds large reply payload diagnostics", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-agent-output-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-agent-output-"));
     try {
       const outputPath = join(dir, "agent.log");
       writeFileSync(
@@ -265,7 +265,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("checks that the mock OpenAI endpoint was actually hit", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-request-log-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-request-log-"));
     try {
       mkdirSync(dir, { recursive: true });
       const logPath = join(dir, "requests.jsonl");
@@ -280,7 +280,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("finds OpenAI request paths split across large log scan chunks", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-request-log-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-request-log-"));
     try {
       const logPath = join(dir, "requests.jsonl");
       const pathPrefix = "/v1/res";
@@ -293,7 +293,7 @@ describe("scripts/e2e/lib/agent-turn-output", () => {
   });
 
   it("bounds missing OpenAI request diagnostics to the recent log tail", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-e2e-request-log-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-e2e-request-log-"));
     try {
       const logPath = join(dir, "requests.jsonl");
       writeFileSync(

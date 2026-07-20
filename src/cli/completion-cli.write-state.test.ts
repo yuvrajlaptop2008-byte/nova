@@ -71,23 +71,23 @@ describe("completion-cli write-state", () => {
 
   it("keeps completion cache generation alive when a subcli fails to register", async () => {
     const { registerCompletionCli } = await import("./completion-cli.js");
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-state-"));
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-home-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-completion-state-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-completion-home-"));
 
     try {
       await withEnvAsync({ HOME: homeDir, NOVA_STATE_DIR: stateDir }, async () => {
         const program = new Command();
-        program.name("openclaw");
+        program.name("nova");
         registerCompletionCli(program);
 
         await program.parseAsync(["completion", "--write-state"], { from: "user" });
 
         const cacheDir = path.join(stateDir, "completions");
         expect((await fs.readdir(cacheDir)).toSorted()).toEqual([
-          "openclaw.bash",
-          "openclaw.fish",
-          "openclaw.ps1",
-          "openclaw.zsh",
+          "nova.bash",
+          "nova.fish",
+          "nova.ps1",
+          "nova.zsh",
         ]);
         expect(registerSubCliByNameMock.mock.calls).toEqual([
           [program, "qa", process.argv, { purpose: "completion" }],
@@ -110,8 +110,8 @@ describe("completion-cli write-state", () => {
       import("./completion-runtime.js"),
       import("./completion-cli.js"),
     ]);
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-state-"));
-    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-home-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-completion-state-"));
+    const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-completion-home-"));
 
     try {
       await withEnvAsync(
@@ -122,7 +122,7 @@ describe("completion-cli write-state", () => {
         },
         async () => {
           const program = new Command();
-          program.name("openclaw");
+          program.name("nova");
           registerCompletionCli(program);
 
           await program.parseAsync(["completion", "--write-state"], { from: "user" });
@@ -132,10 +132,10 @@ describe("completion-cli write-state", () => {
           ]);
           expect(registerPluginCliCommandsFromValidatedConfigMock).not.toHaveBeenCalled();
           expect((await fs.readdir(path.join(stateDir, "completions"))).toSorted()).toEqual([
-            "openclaw.bash",
-            "openclaw.fish",
-            "openclaw.ps1",
-            "openclaw.zsh",
+            "nova.bash",
+            "nova.fish",
+            "nova.ps1",
+            "nova.zsh",
           ]);
         },
       );

@@ -25,7 +25,7 @@ function makeTempDir(prefix: string): string {
 }
 
 function entitlementTemps(dir: string): string[] {
-  return readdirSync(dir).filter((name) => name.startsWith("openclaw-entitlements"));
+  return readdirSync(dir).filter((name) => name.startsWith("nova-entitlements"));
 }
 
 function runCodesign(args: string[], tempRoot: string) {
@@ -101,7 +101,7 @@ describe("codesign-mac-app temp file hygiene", () => {
   });
 
   it("does not allocate entitlement temp files for help output", () => {
-    const tempRoot = makeTempDir("openclaw-codesign-help-");
+    const tempRoot = makeTempDir("nova-codesign-help-");
     const result = runCodesign(["--help"], tempRoot);
 
     expect(result.status).toBe(0);
@@ -110,7 +110,7 @@ describe("codesign-mac-app temp file hygiene", () => {
   });
 
   it("does not allocate entitlement temp files before app validation", () => {
-    const tempRoot = makeTempDir("openclaw-codesign-missing-");
+    const tempRoot = makeTempDir("nova-codesign-missing-");
     const missingApp = path.join(tempRoot, "Missing.app");
     const result = runCodesign([missingApp], tempRoot);
 
@@ -120,7 +120,7 @@ describe("codesign-mac-app temp file hygiene", () => {
   });
 
   it("rejects unknown options before app validation", () => {
-    const tempRoot = makeTempDir("openclaw-codesign-unknown-");
+    const tempRoot = makeTempDir("nova-codesign-unknown-");
     const result = runCodesign(["--wat"], tempRoot);
 
     expect(result.status).toBe(1);
@@ -129,7 +129,7 @@ describe("codesign-mac-app temp file hygiene", () => {
   });
 
   it("rejects extra app bundle arguments before signing", () => {
-    const tempRoot = makeTempDir("openclaw-codesign-extra-");
+    const tempRoot = makeTempDir("nova-codesign-extra-");
     const app = path.join(tempRoot, "Fake.app");
     mkdirSync(path.join(app, "Contents", "MacOS"), { recursive: true });
     const result = runCodesign([app, "extra"], tempRoot);
@@ -140,7 +140,7 @@ describe("codesign-mac-app temp file hygiene", () => {
   });
 
   it("cleans entitlement temp files when signing fails", () => {
-    const tempRoot = makeTempDir("openclaw-codesign-fail-");
+    const tempRoot = makeTempDir("nova-codesign-fail-");
     const app = path.join(tempRoot, "Fake.app");
     mkdirSync(path.join(app, "Contents", "MacOS"), { recursive: true });
 
@@ -159,7 +159,7 @@ describe("codesign-mac-app temp file hygiene", () => {
   });
 
   it("passes generated app entitlements to signing commands and cleans them", () => {
-    const tempRoot = makeTempDir("openclaw-codesign-success-");
+    const tempRoot = makeTempDir("nova-codesign-success-");
     const app = path.join(tempRoot, "Fake.app");
     const binDir = path.join(tempRoot, "bin");
     const captureDir = path.join(tempRoot, "capture");
@@ -167,7 +167,7 @@ describe("codesign-mac-app temp file hygiene", () => {
     mkdirSync(path.join(app, "Contents", "MacOS"), { recursive: true });
     mkdirSync(binDir);
     mkdirSync(captureDir);
-    writeFileSync(path.join(app, "Contents", "MacOS", "openclaw-mlx-tts"), "#!/bin/sh\n");
+    writeFileSync(path.join(app, "Contents", "MacOS", "nova-mlx-tts"), "#!/bin/sh\n");
     writeFileSync(path.join(app, "Contents", "MacOS", "Nova"), "#!/bin/sh\n");
     installFakeCodesign(binDir);
 
@@ -190,7 +190,7 @@ describe("codesign-mac-app temp file hygiene", () => {
 
     const signLines = readFileSync(logPath, "utf8").trim().split("\n");
     expect(signLines).toHaveLength(3);
-    expect(signLines[0]).toContain(`${path.join(app, "Contents", "MacOS", "openclaw-mlx-tts")}\t`);
+    expect(signLines[0]).toContain(`${path.join(app, "Contents", "MacOS", "nova-mlx-tts")}\t`);
     expect(signLines[1]).toContain(`${path.join(app, "Contents", "MacOS", "Nova")}\t`);
     expect(signLines[2]).toContain(`${app}\t`);
     for (const line of signLines) {
@@ -201,7 +201,7 @@ describe("codesign-mac-app temp file hygiene", () => {
         "copied codesign entitlement path",
       );
       const copiedEntitlements = readFileSync(copiedEntitlementSource, "utf8");
-      expect(entitlementSource).toContain("openclaw-entitlements");
+      expect(entitlementSource).toContain("nova-entitlements");
       expect(existsSync(entitlementSource)).toBe(false);
       expect(copiedEntitlements).toContain("com.apple.security.automation.apple-events");
       expect(copiedEntitlements).toContain("com.apple.security.device.camera");

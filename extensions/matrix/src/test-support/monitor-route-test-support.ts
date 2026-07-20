@@ -1,11 +1,5 @@
 // Matrix plugin module implements monitor route test support behavior.
-export {
-  registerSessionBindingAdapter,
-  testing,
-} from "openclaw/plugin-sdk/session-binding-runtime";
-export { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-export {
-  createTestRegistry,
-  setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+export { registerSessionBindingAdapter, testing } from "nova/plugin-sdk/session-binding-runtime";
+export { resolveAgentRoute } from "nova/plugin-sdk/routing";
+export { createTestRegistry, setActivePluginRegistry } from "nova/plugin-sdk/plugin-test-runtime";
+export type { NovaConfig } from "nova/plugin-sdk/config-contracts";

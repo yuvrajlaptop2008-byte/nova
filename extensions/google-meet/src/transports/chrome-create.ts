@@ -1,6 +1,6 @@
 // Google Meet plugin module implements chrome create behavior.
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { sleep } from "nova/plugin-sdk/runtime-env";
 import type { GoogleMeetConfig } from "../config.js";
 import {
   asBrowserTabs,

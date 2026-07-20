@@ -2,18 +2,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { App } from "@slack/bolt";
-import type { ChannelRuntimeSurface } from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import type { ChannelRuntimeSurface } from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import type { ResolvedSlackAccount } from "../../accounts.js";
 import type { SlackChannelConfigEntries } from "../channel-config.js";
 import { createSlackMonitorContext } from "../context.js";
 
 export function createInboundSlackTestContext(params: {
   app?: App;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   appClient?: App["client"];
   defaultRequireMention?: boolean;
   replyToMode?: "off" | "all" | "first" | "batched";
@@ -54,7 +54,7 @@ export function createInboundSlackTestContext(params: {
     threadInheritParent: false,
     slashCommand: {
       enabled: false,
-      name: "openclaw",
+      name: "nova",
       sessionPrefix: "slack:slash",
       ephemeral: true,
     },
@@ -89,7 +89,7 @@ export function createSlackSessionStoreFixture(prefix: string) {
 
   return {
     setup() {
-      fixtureRoot = fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), prefix));
+      fixtureRoot = fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), prefix));
     },
     cleanup() {
       if (!fixtureRoot) {

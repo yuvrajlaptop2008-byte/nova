@@ -3,7 +3,7 @@ import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { asOptionalRecord as asMutableRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalLowercaseString as normalizeString } from "@nova/normalization-core/string-coerce";
 import { resolveModelRuntimePolicy } from "../../../agents/model-runtime-policy.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { normalizeAgentId } from "../../../routing/session-key.js";
 import {
   canonicalOpenAIModelUsesCodexRuntime,
@@ -42,7 +42,7 @@ function agentExplicitlyReferencesCanonicalModel(agent: unknown, modelRef: strin
 }
 
 function resolveCurrentRuntimeIdForCanonicalModel(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelRef: string;
   agentId: string;
   env?: NodeJS.ProcessEnv;
@@ -102,7 +102,7 @@ function setModelRuntimePolicy(params: {
 }
 
 function shieldExplicitListedAgentRefsFromDefaultPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelRef: string;
   targetRuntimeId: string;
   changes: string[];
@@ -185,7 +185,7 @@ function modelIdMatchesProviderModelEntry(params: {
 }
 
 function providerModelExplicitNonDefaultRuntimeId(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   modelId: string;
 }): string | undefined {
@@ -219,7 +219,7 @@ function providerModelExplicitNonDefaultRuntimeId(params: {
 }
 
 function agentModelMapExactRuntimeIdForLegacyRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   legacyModelRef: string;
   agentId?: string;
 }): string | undefined {
@@ -258,7 +258,7 @@ function agentModelMapExactRuntimeIdForLegacyRef(params: {
 }
 
 function preRepairLegacyModelPolicyExplicitNonDefaultRuntimePin(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   legacyModelRef?: string;
   agentId?: string;
 }): PreRepairRuntimePin | undefined {
@@ -298,14 +298,14 @@ function preRepairLegacyModelPolicyExplicitNonDefaultRuntimePin(params: {
 }
 
 export function ensureCodexRuntimePolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agent: MutableRecord;
   agentPath: string;
   agentId?: string;
   modelRef: string;
   legacyModelRef?: string;
   isDefaults?: boolean;
-  preRepairCfg?: OpenClawConfig;
+  preRepairCfg?: NovaConfig;
   changes: string[];
   env?: NodeJS.ProcessEnv;
 }): void {
@@ -369,7 +369,7 @@ export function ensureCodexRuntimePolicy(params: {
 }
 
 export function rewriteStringModelSlotIfCanonicalCodexRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   hits: CodexRouteHit[];
   container: MutableRecord | undefined;
@@ -404,7 +404,7 @@ export function rewriteStringModelSlotIfCanonicalCodexRuntime(params: {
 }
 
 export function rewriteModelConfigSlotIfCanonicalCodexRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   hits: CodexRouteHit[];
   container: MutableRecord | undefined;
@@ -461,7 +461,7 @@ export function rewriteModelConfigSlotIfCanonicalCodexRuntime(params: {
   }
 }
 
-export function clearConfigLegacyAgentRuntimePolicies(cfg: OpenClawConfig): string[] {
+export function clearConfigLegacyAgentRuntimePolicies(cfg: NovaConfig): string[] {
   const changes: string[] = [];
   clearLegacyAgentRuntimePolicy(asMutableRecord(cfg.agents?.defaults), "agents.defaults", changes);
   const agents = Array.isArray(cfg.agents?.list) ? cfg.agents.list : [];

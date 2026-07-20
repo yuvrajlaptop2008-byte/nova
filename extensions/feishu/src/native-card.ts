@@ -1,8 +1,5 @@
 // Feishu native interactive card helpers shared by action and outbound delivery.
-import {
-  isRecord,
-  normalizeOptionalLowercaseString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+import { isRecord, normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 
 const FEISHU_CARD_TEMPLATES = new Set([
   "blue",

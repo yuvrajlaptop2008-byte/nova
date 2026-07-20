@@ -16,7 +16,7 @@ import {
   die,
   ensureValue,
   extractPackageJsonFromTgz,
-  extractLastOpenClawVersionFromLog,
+  extractLastNovaVersionFromLog,
   isLikelyMacosDesktopHome,
   makeTempDir,
   packNova,
@@ -28,7 +28,7 @@ import {
   repoRoot,
   resolveHostIp,
   resolveLatestVersion,
-  resolveOpenClawRegistryVersion,
+  resolveNovaRegistryVersion,
   resolveProviderAuth,
   resolveWindowsProviderAuth,
   run,
@@ -375,8 +375,8 @@ function usage(): string {
   return `Usage: bash scripts/e2e/parallels-npm-update-smoke.sh [options]
 
 Options:
-  --package-spec <npm-spec>  Baseline npm package spec. Default: openclaw@latest
-  --update-target <target>    Target passed to guest 'openclaw update --tag'.
+  --package-spec <npm-spec>  Baseline npm package spec. Default: nova@latest
+  --update-target <target>    Target passed to guest 'nova update --tag'.
                              Default: host-served tgz packed from current checkout.
   --target-tarball <path>     Host-serve this prepared tgz for update and fresh install.
   --dependency-tarball <path> Companion package tgz required by the target. Repeatable.
@@ -518,16 +518,16 @@ function readHarnessCheckoutVersion(): string {
   return typeof pkg.version === "string" ? pkg.version : "";
 }
 
-function openClawVersionFamily(version: string): string {
+function novaVersionFamily(version: string): string {
   return /^(\d{4}\.\d{1,2}\.\d{1,2})(?:[-.]|$)/u.exec(version.trim())?.[1] ?? "";
 }
 
-function parseOpenClawPackageSpecVersion(spec: string): string {
+function parseNovaPackageSpecVersion(spec: string): string {
   const value = spec.trim();
   if (!value) {
     return "";
   }
-  return resolveOpenClawRegistryVersion(value) || "";
+  return resolveNovaRegistryVersion(value) || "";
 }
 
 function readString(value: unknown): string {
@@ -614,8 +614,8 @@ export class NpmUpdateSmoke {
 
   async run(): Promise<void> {
     this.startedAt = Date.now();
-    this.runDir = await this.makeRunTempDir("openclaw-parallels-npm-update.");
-    this.tgzDir = await this.makeRunTempDir("openclaw-parallels-npm-update-tgz.");
+    this.runDir = await this.makeRunTempDir("nova-parallels-npm-update.");
+    this.tgzDir = await this.makeRunTempDir("nova-parallels-npm-update-tgz.");
     try {
       await this.runSteps();
     } finally {
@@ -631,7 +631,7 @@ export class NpmUpdateSmoke {
 
   protected async runSteps(): Promise<void> {
     this.latestVersion = resolveLatestVersion();
-    this.packageSpec = this.options.packageSpec || `openclaw@${this.latestVersion}`;
+    this.packageSpec = this.options.packageSpec || `nova@${this.latestVersion}`;
     this.currentHead = run("git", ["rev-parse", "HEAD"], { quiet: true }).stdout.trim();
     this.currentHeadShort = run("git", ["rev-parse", "--short=7", "HEAD"], {
       quiet: true,
@@ -658,7 +658,7 @@ export class NpmUpdateSmoke {
     await this.runFreshBaselines();
 
     await this.prepareUpdateTarget();
-    say(`Run same-guest openclaw update to ${this.updateTargetEffective}`);
+    say(`Run same-guest nova update to ${this.updateTargetEffective}`);
     await this.runSameGuestUpdates();
 
     if (this.freshTargetSpec) {
@@ -854,7 +854,7 @@ export class NpmUpdateSmoke {
           hostIp: this.hostIp,
           packages: [
             {
-              name: "openclaw",
+              name: "nova",
               version: this.targetTarballVersion,
               tarballPath: hostedTarballPath,
             },
@@ -862,7 +862,7 @@ export class NpmUpdateSmoke {
           ],
         });
         this.targetRegistryUrl = this.registryServer.url;
-        this.updateTargetTarball = `${this.registryServer.url}/openclaw/-/${path.basename(
+        this.updateTargetTarball = `${this.registryServer.url}/nova/-/${path.basename(
           hostedTarballPath,
         )}`;
         this.updateTargetEffective = this.targetTarballVersion;
@@ -911,7 +911,7 @@ export class NpmUpdateSmoke {
     this.updateTargetEffective = this.options.updateTarget;
     this.updateExpectedNeedle = this.isExplicitPackageTarget(this.updateTargetEffective)
       ? ""
-      : resolveOpenClawRegistryVersion(this.updateTargetEffective) || this.updateTargetEffective;
+      : resolveNovaRegistryVersion(this.updateTargetEffective) || this.updateTargetEffective;
     const metadata = this.resolveRegistryPackageMetadata(this.updateTargetEffective);
     this.updateTargetPackageVersion = metadata.version;
     this.updateTargetBuildCommit =
@@ -956,7 +956,7 @@ export class NpmUpdateSmoke {
     if (this.isExplicitPackageTarget(target)) {
       return { gitHead: "", tarball: "", version: "" };
     }
-    const spec = target.startsWith("openclaw@") ? target : `openclaw@${target}`;
+    const spec = target.startsWith("nova@") ? target : `nova@${target}`;
     const output = run("npm", ["view", spec, "version", "dist.tarball", "gitHead", "--json"], {
       check: false,
       quiet: true,
@@ -1117,7 +1117,7 @@ export class NpmUpdateSmoke {
     const scriptPath = this.writeGuestScript(
       this.macosVm,
       script,
-      "openclaw-parallels-npm-update-macos",
+      "nova-parallels-npm-update-macos",
     );
     const macosExecArgs = this.resolveMacosUpdateExecArgs(ctx);
     const sudoUserArgIndex = macosExecArgs.indexOf("-u");
@@ -1253,7 +1253,7 @@ export class NpmUpdateSmoke {
     const scriptPath = this.writeGuestScript(
       this.linuxVm,
       script,
-      "openclaw-parallels-npm-update-linux",
+      "nova-parallels-npm-update-linux",
     );
     try {
       const status = await this.runStreamingToJobLog(
@@ -1414,11 +1414,11 @@ export class NpmUpdateSmoke {
     ) {
       return;
     }
-    const baseline = resolveOpenClawRegistryVersion(this.packageSpec);
-    const target = resolveOpenClawRegistryVersion(this.options.updateTarget);
+    const baseline = resolveNovaRegistryVersion(this.packageSpec);
+    const target = resolveNovaRegistryVersion(this.options.updateTarget);
     if (baseline && target && baseline === target) {
       die(
-        `--update-target ${this.options.updateTarget} resolves to openclaw@${target}, same as baseline ${this.packageSpec}; publish or choose a newer --update-target before running VM update coverage`,
+        `--update-target ${this.options.updateTarget} resolves to nova@${target}, same as baseline ${this.packageSpec}; publish or choose a newer --update-target before running VM update coverage`,
       );
     }
   }
@@ -1431,7 +1431,7 @@ export class NpmUpdateSmoke {
   }
 
   private async extractLastVersion(logPath: string): Promise<string> {
-    return await extractLastOpenClawVersionFromLog(logPath);
+    return await extractLastNovaVersionFromLog(logPath);
   }
 
   private dumpLogTail(logPath: string): void {
@@ -1480,7 +1480,7 @@ export class NpmUpdateSmoke {
           }>(tarballPath, "package/package.json");
           const name = dependencyPackage.name ?? "";
           const version = dependencyPackage.version ?? "";
-          if (!name || !version || name === "openclaw") {
+          if (!name || !version || name === "nova") {
             throw new Error(`dependency tarball has invalid package metadata: ${tarballPath}`);
           }
           if (targetPackageJson.dependencies?.[name] !== version) {
@@ -1503,27 +1503,27 @@ export class NpmUpdateSmoke {
       return;
     }
     if (this.options.betaValidation) {
-      const version = resolveOpenClawRegistryVersion(this.options.betaValidation);
+      const version = resolveNovaRegistryVersion(this.options.betaValidation);
       if (!version) {
         die(`could not resolve beta validation target: ${this.options.betaValidation}`);
       }
       this.options.updateTarget = version;
-      this.options.freshTargetSpec = `openclaw@${version}`;
-      say(`Beta validation target: openclaw@${version}`);
+      this.options.freshTargetSpec = `nova@${version}`;
+      say(`Beta validation target: nova@${version}`);
     } else if (
       this.options.updateTarget &&
       this.options.updateTarget !== "local-main" &&
       !this.isExplicitPackageTarget(this.options.updateTarget)
     ) {
-      const version = resolveOpenClawRegistryVersion(this.options.updateTarget);
+      const version = resolveNovaRegistryVersion(this.options.updateTarget);
       if (version) {
         this.options.updateTarget = version;
       }
     }
 
     if (this.options.freshTargetSpec) {
-      const version = resolveOpenClawRegistryVersion(this.options.freshTargetSpec);
-      this.freshTargetSpec = version ? `openclaw@${version}` : this.options.freshTargetSpec;
+      const version = resolveNovaRegistryVersion(this.options.freshTargetSpec);
+      this.freshTargetSpec = version ? `nova@${version}` : this.options.freshTargetSpec;
     }
   }
 
@@ -1534,14 +1534,14 @@ export class NpmUpdateSmoke {
     const candidateVersion =
       this.targetTarballVersion ||
       (this.freshTargetSpec
-        ? parseOpenClawPackageSpecVersion(this.freshTargetSpec)
-        : parseOpenClawPackageSpecVersion(this.options.updateTarget));
-    const targetFamily = openClawVersionFamily(candidateVersion);
+        ? parseNovaPackageSpecVersion(this.freshTargetSpec)
+        : parseNovaPackageSpecVersion(this.options.updateTarget));
+    const targetFamily = novaVersionFamily(candidateVersion);
     if (!targetFamily) {
       return;
     }
     this.harnessTargetFamily = targetFamily;
-    const checkoutFamily = openClawVersionFamily(this.harnessCheckoutVersion);
+    const checkoutFamily = novaVersionFamily(this.harnessCheckoutVersion);
     if (checkoutFamily === targetFamily) {
       return;
     }

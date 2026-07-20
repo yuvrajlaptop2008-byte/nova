@@ -89,7 +89,7 @@ describe("reply exec overrides", () => {
         sessionEntry: createSessionEntry({
           execHost: "node",
           execNode: "macbook",
-          execCwd: "/Users/peter/Projects/openclaw",
+          execCwd: "/Users/peter/Projects/nova",
         }),
       }),
     ).toEqual({
@@ -97,7 +97,7 @@ describe("reply exec overrides", () => {
       security: undefined,
       ask: undefined,
       node: "macbook",
-      nodeCwd: "/Users/peter/Projects/openclaw",
+      nodeCwd: "/Users/peter/Projects/nova",
     });
   });
 
@@ -108,7 +108,7 @@ describe("reply exec overrides", () => {
         sessionEntry: createSessionEntry({
           execHost: "node",
           execNode: "macbook",
-          execCwd: "/Users/peter/Projects/openclaw",
+          execCwd: "/Users/peter/Projects/nova",
         }),
       }),
     ).toEqual({

@@ -6,7 +6,7 @@ import {
   type SemVer,
   valid as validSemver,
 } from "semver";
-import { compareOpenClawSemver, isOpenClawCorrectionSemver } from "./semver.js";
+import { compareNovaSemver, isNovaCorrectionSemver } from "./semver.js";
 
 const NOVA_RELEASE_PREFIX_RE = /^\d{4}\./;
 const DIST_TAG_RE = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
@@ -89,8 +89,7 @@ function parseRegistryNpmSpecInternal(
         selector,
         selectorKind: "exact-version",
         selectorIsPrerelease:
-          parseSemverPrerelease(exactVersion) !== null &&
-          !isOpenClawStableCorrectionVersion(selector),
+          parseSemverPrerelease(exactVersion) !== null && !isNovaStableCorrectionVersion(selector),
       },
     };
   }
@@ -119,7 +118,7 @@ export function parseRegistryNpmSpec(rawSpec: string): ParsedRegistryNpmSpec | n
 }
 
 /** Returns whether a user-provided npm spec resolves to the official Nova npm scope. */
-export function isOpenClawOrgNpmSpec(rawSpec: string | undefined): boolean {
+export function isNovaOrgNpmSpec(rawSpec: string | undefined): boolean {
   const parsed = rawSpec ? parseRegistryNpmSpec(rawSpec) : null;
   return parsed?.name.startsWith("@nova/") === true;
 }
@@ -136,7 +135,7 @@ export function isExactSemverVersion(value: string): boolean {
 }
 
 /** Parses Nova's monthly patch stable/alpha/beta/correction version format. */
-function parseOpenClawReleaseVersion(value: string): SemVer | null {
+function parseNovaReleaseVersion(value: string): SemVer | null {
   const trimmed = value.trim();
   const parsed = NOVA_RELEASE_PREFIX_RE.test(trimmed) ? parseSemver(trimmed) : null;
   if (!parsed || parsed.build.length > 0) {
@@ -148,7 +147,7 @@ function parseOpenClawReleaseVersion(value: string): SemVer | null {
 
   const [label, sequence] = parsed.prerelease;
   const isStable = parsed.prerelease.length === 0;
-  const isCorrection = isOpenClawCorrectionSemver(parsed) && typeof label === "number" && label > 0;
+  const isCorrection = isNovaCorrectionSemver(parsed) && typeof label === "number" && label > 0;
   const isAlpha =
     parsed.prerelease.length === 2 &&
     label === "alpha" &&
@@ -166,22 +165,22 @@ function parseOpenClawReleaseVersion(value: string): SemVer | null {
 }
 
 /** Returns whether a version is an Nova monthly patch stable correction release. */
-function isOpenClawStableCorrectionVersion(value: string): boolean {
-  const parsed = parseOpenClawReleaseVersion(value);
-  return parsed !== null && isOpenClawCorrectionSemver(parsed);
+function isNovaStableCorrectionVersion(value: string): boolean {
+  const parsed = parseNovaReleaseVersion(value);
+  return parsed !== null && isNovaCorrectionSemver(parsed);
 }
 
 /** Compares Nova monthly patch release versions across alpha, beta, stable, and corrections. */
-export function compareOpenClawReleaseVersions(left: string, right: string): number | null {
-  const parsedLeft = parseOpenClawReleaseVersion(left);
-  const parsedRight = parseOpenClawReleaseVersion(right);
-  return parsedLeft && parsedRight ? compareOpenClawSemver(parsedLeft, parsedRight) : null;
+export function compareNovaReleaseVersions(left: string, right: string): number | null {
+  const parsedLeft = parseNovaReleaseVersion(left);
+  const parsedRight = parseNovaReleaseVersion(right);
+  return parsedLeft && parsedRight ? compareNovaSemver(parsedLeft, parsedRight) : null;
 }
 
 /** Returns whether an exact semver value is a prerelease, excluding stable correction releases. */
 export function isPrereleaseSemverVersion(value: string): boolean {
   const trimmed = value.trim();
-  return parseSemverPrerelease(trimmed) !== null && !isOpenClawStableCorrectionVersion(trimmed);
+  return parseSemverPrerelease(trimmed) !== null && !isNovaStableCorrectionVersion(trimmed);
 }
 
 /**

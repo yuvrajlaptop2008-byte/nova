@@ -3,7 +3,7 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
 } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { consumeRootOptionToken, FLAG_TERMINATOR } from "../infra/cli-root-options.js";
 import {
   resolveManifestCommandAliasOwnerInRegistry,
@@ -131,22 +131,22 @@ export function shouldStartProxyForCli(argv: string[]): boolean {
 
 export function resolveMissingPluginCommandMessage(
   pluginId: string,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
   options?: {
     registry?: PluginManifestCommandAliasRegistry;
     resolveCommandAliasOwner?: (params: {
       command: string | undefined;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
       registry?: PluginManifestCommandAliasRegistry;
     }) => PluginManifestCommandAliasRecord | undefined;
     resolveToolOwner?: (params: {
       toolName: string | undefined;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
       registry?: PluginManifestCommandAliasRegistry;
     }) => PluginManifestToolOwnerRecord | undefined;
     resolveCliCommandSurfaceOwner?: (params: {
       command: string | undefined;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
       registry?: PluginManifestCommandAliasRegistry;
     }) => string | undefined;
   },
@@ -177,7 +177,7 @@ export function resolveMissingPluginCommandMessage(
     if (allow.length > 0 && !allow.includes(parentPluginId)) {
       if (parentPluginId === normalizedPluginId) {
         return (
-          `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+          `The \`nova ${normalizedPluginId}\` command is unavailable because ` +
           `\`plugins.allow\` excludes "${normalizedPluginId}". Add "${normalizedPluginId}" to ` +
           `\`plugins.allow\` if you want that bundled plugin CLI surface.`
         );
@@ -190,7 +190,7 @@ export function resolveMissingPluginCommandMessage(
     }
     if (config?.plugins?.entries?.[parentPluginId]?.enabled === false) {
       return (
-        `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+        `The \`nova ${normalizedPluginId}\` command is unavailable because ` +
         `\`plugins.entries.${parentPluginId}.enabled=false\`. Re-enable that entry if you want ` +
         "the bundled plugin command surface."
       );
@@ -201,14 +201,14 @@ export function resolveMissingPluginCommandMessage(
       config?.plugins?.entries?.[parentPluginId]?.enabled !== true
     ) {
       return (
-        `The \`openclaw ${normalizedPluginId}\` command is provided by the ` +
+        `The \`nova ${normalizedPluginId}\` command is provided by the ` +
         `"${parentPluginId}" plugin, but that bundled plugin is disabled by default. Run ` +
-        `\`openclaw plugins enable ${parentPluginId}\` to enable that CLI surface.`
+        `\`nova plugins enable ${parentPluginId}\` to enable that CLI surface.`
       );
     }
     if (commandAlias.kind === "runtime-slash") {
       const cliHint = commandAlias.cliCommand
-        ? `Use \`openclaw ${commandAlias.cliCommand}\` for related CLI operations, or `
+        ? `Use \`nova ${commandAlias.cliCommand}\` for related CLI operations, or `
         : "Use ";
       return (
         `"${normalizedPluginId}" is a runtime slash command (/${normalizedPluginId}), not a CLI command. ` +
@@ -252,13 +252,13 @@ export function resolveMissingPluginCommandMessage(
         return (
           `"${normalizedPluginId}" may be provided by the "${toolOwner.pluginId}" plugin ` +
           `as an agent tool, not a CLI subcommand. ` +
-          "Run `openclaw --help` to see available CLI subcommands."
+          "Run `nova --help` to see available CLI subcommands."
         );
       }
       return (
         `"${normalizedPluginId}" is an agent tool available from the "${toolOwner.pluginId}" plugin, ` +
         `not a CLI subcommand. Use it from an agent turn (model tool-use), not the CLI. ` +
-        "Run `openclaw --help` to see available CLI subcommands."
+        "Run `nova --help` to see available CLI subcommands."
       );
     }
   }
@@ -295,14 +295,14 @@ export function resolveMissingPluginCommandMessage(
       );
     }
     return (
-      `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+      `The \`nova ${normalizedPluginId}\` command is unavailable because ` +
       `\`plugins.allow\` excludes "${normalizedPluginId}". Add "${normalizedPluginId}" to ` +
       `\`plugins.allow\` if you want that bundled plugin CLI surface.`
     );
   }
   if (config?.plugins?.entries?.[normalizedPluginId]?.enabled === false) {
     return (
-      `The \`openclaw ${normalizedPluginId}\` command is unavailable because ` +
+      `The \`nova ${normalizedPluginId}\` command is unavailable because ` +
       `\`plugins.entries.${normalizedPluginId}.enabled=false\`. Re-enable that entry if you want ` +
       "the bundled plugin CLI surface."
     );

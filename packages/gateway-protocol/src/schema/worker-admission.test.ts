@@ -28,7 +28,7 @@ import {
 const bundleHash = "a".repeat(64);
 const handshake: WorkerAdmissionHandshake = {
   bundleHash,
-  openclawVersion: "2026.7.11",
+  novaVersion: "2026.7.11",
   protocolFeatures: [],
 };
 const credential = ["worker", "credential", "fixture"].join("-");
@@ -172,7 +172,7 @@ describe("worker admission handshake schema", () => {
   it.each([
     { ...handshake, bundleHash: "short" },
     { ...handshake, bundleHash: "A".repeat(64) },
-    { ...handshake, openclawVersion: "" },
+    { ...handshake, novaVersion: "" },
     { ...handshake, protocolFeatures: [""] },
     { ...handshake, protocolFeatures: ["run-v1", "run-v1"] },
     { ...handshake, unexpected: true },

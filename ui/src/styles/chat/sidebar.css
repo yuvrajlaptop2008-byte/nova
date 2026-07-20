@@ -781,7 +781,7 @@
   stroke-width: 1.8px;
 }
 
-/* openclaw-tooltip is display:contents, so the title span itself is the flex
+/* nova-tooltip is display:contents, so the title span itself is the flex
    item; growing it pins the stop button to the card's right edge even for
    short titles. */
 .chat-tasks-rail__task-title {
@@ -1040,7 +1040,7 @@
   min-height: 0;
 }
 
-openclaw-session-discussion {
+nova-session-discussion {
   display: flex;
   height: 100%;
   min-height: 0;

@@ -90,13 +90,13 @@ export async function planSystemAgentCommandWithConfiguredModel(params: {
   const tempDir = await (params.deps?.createTempDir ?? createTempPlannerDir)();
   let plan: SystemAgentAssistantPlan | null;
   try {
-    const runId = `openclaw-planner-${randomUUID()}`;
+    const runId = `nova-planner-${randomUUID()}`;
     const timeoutMs = (
       params.deps?.resolveAssistantTimeoutMs ?? resolveSystemAgentAssistantTimeoutMs
     )(route);
     const shared = {
       sessionId: `${runId}-session`,
-      agentId: "openclaw",
+      agentId: "nova",
       trigger: "manual" as const,
       sessionFile: path.join(tempDir, "session.jsonl"),
       workspaceDir: tempDir,
@@ -111,8 +111,8 @@ export async function planSystemAgentCommandWithConfiguredModel(params: {
       runId,
       extraSystemPrompt: SYSTEM_AGENT_ASSISTANT_SYSTEM_PROMPT,
       extraSystemPromptStatic: SYSTEM_AGENT_ASSISTANT_SYSTEM_PROMPT,
-      messageChannel: "openclaw",
-      messageProvider: "openclaw",
+      messageChannel: "nova",
+      messageProvider: "nova",
       disableTools: true,
       disableTrajectory: true,
       ...(route.authProfileId ? { authProfileId: route.authProfileId } : {}),
@@ -174,7 +174,7 @@ async function requireVerifiedPlannerRoute(
 }
 
 async function createTempPlannerDir(): Promise<string> {
-  return await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-planner-"));
+  return await fs.mkdtemp(path.join(os.tmpdir(), "nova-planner-"));
 }
 
 async function removeTempPlannerDir(dir: string): Promise<void> {

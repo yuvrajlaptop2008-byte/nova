@@ -48,7 +48,7 @@ function containsBrokenSurrogate(value: string): boolean {
 
 async function openBuildDetails(page: Page) {
   const buildLink = page
-    .locator("openclaw-app-sidebar")
+    .locator("nova-app-sidebar")
     .getByRole("link", { name: "Control UI build details", exact: true });
   await buildLink.waitFor();
   const compactText = (await buildLink.textContent()) ?? "";

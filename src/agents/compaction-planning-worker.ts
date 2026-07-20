@@ -369,7 +369,6 @@ const compactionPlanningWorkerTesting = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.compactionPlanningWorkerTestApi")
-  ] = compactionPlanningWorkerTesting;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.compactionPlanningWorkerTestApi")] =
+    compactionPlanningWorkerTesting;
 }

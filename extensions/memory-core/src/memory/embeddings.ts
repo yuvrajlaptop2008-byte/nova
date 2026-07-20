@@ -4,14 +4,14 @@ import {
   type EmbeddingProviderAdapter,
   type EmbeddingProvider as GenericEmbeddingProvider,
   type EmbeddingProviderRuntime as GenericEmbeddingProviderRuntime,
-} from "openclaw/plugin-sdk/embedding-providers";
+} from "nova/plugin-sdk/embedding-providers";
 import {
   getMemoryEmbeddingProvider as getLegacyMemoryEmbeddingProvider,
   type MemoryEmbeddingProvider,
   type MemoryEmbeddingProviderAdapter,
   type MemoryEmbeddingProviderCreateOptions,
   type MemoryEmbeddingProviderRuntime,
-} from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+} from "nova/plugin-sdk/memory-core-host-engine-embeddings";
 import { formatErrorMessage } from "../dreaming-shared.js";
 import type { MemoryCoreAcquireLocalService } from "./embedding-local-service.js";
 
@@ -38,15 +38,15 @@ type CreateEmbeddingProviderOptions = MemoryEmbeddingProviderCreateOptions & {
 
 const DEFAULT_MEMORY_EMBEDDING_PROVIDER = "openai";
 const LOCAL_LLAMA_CPP_PROVIDER_ID = "local";
-const LOCAL_EMBEDDING_RUNTIME_FACTS = Symbol.for("openclaw.localEmbeddingRuntimeFacts");
+const LOCAL_EMBEDDING_RUNTIME_FACTS = Symbol.for("nova.localEmbeddingRuntimeFacts");
 
 function createMissingLlamaCppProviderError(): Error {
   return new Error(
     [
       "Unknown memory embedding provider: local.",
       "Local GGUF embeddings are provided by the official llama.cpp provider plugin.",
-      "Install it with: openclaw plugins install @nova/llama-cpp-provider",
-      "Then restart Nova and retry: openclaw memory status --deep",
+      "Install it with: nova plugins install @nova/llama-cpp-provider",
+      "Then restart Nova and retry: nova memory status --deep",
     ].join("\n"),
   );
 }

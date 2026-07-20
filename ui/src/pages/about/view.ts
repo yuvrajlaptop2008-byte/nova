@@ -37,10 +37,10 @@ const SHORT_COMMIT_LENGTH = 12;
 // Docs-first where a docs page exists; GitHub/Discord match the native
 // macOS/iOS About screens (AboutSettings.swift, SettingsProTabSections.swift).
 const ABOUT_LINKS: ReadonlyArray<{ href: string; icon: TemplateResult; label: () => string }> = [
-  { href: "https://openclaw.ai", icon: icons.globe, label: () => t("aboutPage.linkWebsite") },
-  { href: "https://docs.openclaw.ai", icon: icons.book, label: () => t("aboutPage.linkDocs") },
+  { href: "https://nova.ai", icon: icons.globe, label: () => t("aboutPage.linkWebsite") },
+  { href: "https://docs.nova.ai", icon: icons.book, label: () => t("aboutPage.linkDocs") },
   {
-    href: "https://github.com/openclaw/openclaw",
+    href: "https://github.com/nova/nova",
     icon: brandIcons.github,
     label: () => t("aboutPage.linkGitHub"),
   },
@@ -50,12 +50,12 @@ const ABOUT_LINKS: ReadonlyArray<{ href: string; icon: TemplateResult; label: ()
     label: () => t("aboutPage.linkDiscord"),
   },
   {
-    href: "https://x.com/openclaw",
+    href: "https://x.com/nova",
     icon: brandIcons.x,
     label: () => t("aboutPage.linkX"),
   },
   {
-    href: "https://docs.openclaw.ai/releases",
+    href: "https://docs.nova.ai/releases",
     icon: icons.scrollText,
     label: () => t("aboutPage.linkChangelog"),
   },
@@ -133,7 +133,7 @@ function renderCommit(props: AboutProps) {
   return html`
     <span class="about-commit">
       <code dir="ltr" title=${commit}>${commit.slice(0, SHORT_COMMIT_LENGTH)}</code>
-      <openclaw-tooltip .content=${label}>
+      <nova-tooltip .content=${label}>
         <button
           type="button"
           class="about-commit__copy"
@@ -144,7 +144,7 @@ function renderCommit(props: AboutProps) {
         >
           <span aria-hidden="true">${props.copyState === "copied" ? icons.check : icons.copy}</span>
         </button>
-      </openclaw-tooltip>
+      </nova-tooltip>
       ${renderCommitAge(props.buildInfo.commitAt)}
       <span class="about-sr-only" role="status" aria-live="polite"
         >${copyStatus(props.copyState)}</span

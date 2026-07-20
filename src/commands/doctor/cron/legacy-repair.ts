@@ -1,7 +1,7 @@
 // Doctor cron storage repair mechanics for legacy stores, run logs, payloads, and Codex refs.
 import { normalizeOptionalString } from "../../../../packages/normalization-core/src/string-coerce.js";
 import { formatCliCommand } from "../../../cli/command-format.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import {
   loadCronJobsStoreWithConfigJobs,
   loadCronJobsStoreWithConfigJobsReadOnly,
@@ -79,7 +79,7 @@ function errorMessage(err: unknown): string {
 }
 
 export async function loadLegacyCronRepairState(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   onlyIfLegacyDetected?: boolean;
   readOnly?: boolean;
 }): Promise<LegacyCronRepairState | null> {
@@ -148,7 +148,7 @@ export async function loadLegacyCronRepairState(params: {
 }
 
 export async function applyLegacyCronStoreRepair(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   state: LegacyCronRepairState;
   normalized?: ReturnType<typeof normalizeStoredCronJobs>;
   migrateCodexModelRefs?: boolean;
@@ -269,7 +269,7 @@ export async function applyLegacyCronStoreRepair(params: {
       // claiming a finished migration; doctor re-detects the leftover and retries.
       for (const failure of archiveResult.failures) {
         warnings.push(
-          `Migrated cron jobs to SQLite but could not archive the legacy cron file at ${shortenHomePath(failure.path)}: ${failure.reason}. Remove it manually or rerun ${formatCliCommand("openclaw doctor --fix")} to retry.`,
+          `Migrated cron jobs to SQLite but could not archive the legacy cron file at ${shortenHomePath(failure.path)}: ${failure.reason}. Remove it manually or rerun ${formatCliCommand("nova doctor --fix")} to retry.`,
         );
       }
     }
@@ -294,7 +294,7 @@ export async function applyLegacyCronStoreRepair(params: {
 }
 
 export async function repairLegacyCronStoreWithoutPrompt(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   migrateCodexModelRefs?: boolean;
   blockedModelIdentities?: ReadonlySet<LegacyCodexModelIdentity>;
 }): Promise<LegacyCronRepairResult> {
@@ -321,7 +321,7 @@ export async function repairLegacyCronStoreWithoutPrompt(params: {
 
 /** Read legacy Codex cron targets without changing either cron storage or config. */
 export async function collectCronCodexRuntimePolicyTargetsReadOnly(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): Promise<{ targets: CronCodexRuntimePolicyTarget[]; warnings: string[] }> {
   const storePath = resolveCronJobsStorePath(normalizeOptionalString(params.cfg.cron?.store));
   try {
@@ -342,7 +342,7 @@ export async function collectCronCodexRuntimePolicyTargetsReadOnly(params: {
 
 /** Commit Codex cron refs only after their model-scoped config policy is durable. */
 export async function repairCronCodexModelRefsAfterConfigWrite(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   blockedModelIdentities?: ReadonlySet<LegacyCodexModelIdentity>;
 }): Promise<LegacyCronRepairResult> {
   const storePath = resolveCronJobsStorePath(normalizeOptionalString(params.cfg.cron?.store));

@@ -1,6 +1,6 @@
 import os from "node:os";
 import path from "node:path";
-import type { AssistantMessageEvent, Context, Model } from "openclaw/plugin-sdk/llm";
+import type { AssistantMessageEvent, Context, Model } from "nova/plugin-sdk/llm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => {
@@ -58,9 +58,7 @@ const {
   clearLlamaCppInferenceCacheForTests,
   mapContextToLlamaChatHistory,
   mapToolsToLlamaFunctions,
-} = (globalThis as Record<PropertyKey, unknown>)[
-  Symbol.for("openclaw.llamaCppInferenceTestApi")
-] as {
+} = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.llamaCppInferenceTestApi")] as {
   clearLlamaCppInferenceCacheForTests: () => Promise<void>;
   mapContextToLlamaChatHistory: (context: Context) => unknown[];
   mapToolsToLlamaFunctions: (context: Context) => Record<string, unknown> | undefined;

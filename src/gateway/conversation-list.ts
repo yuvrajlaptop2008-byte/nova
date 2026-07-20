@@ -14,7 +14,7 @@ import {
   type ConversationRegistryScope,
 } from "../config/sessions/conversation-registry.js";
 import { resolveStorePath } from "../config/sessions/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { resolveOutboundChannelPlugin } from "../infra/outbound/channel-resolution.js";
 import { resolveOutboundSessionRoute } from "../infra/outbound/outbound-session.js";
@@ -39,7 +39,7 @@ const defaultDeps: ConversationListDeps = {
 
 function resolveConversationScope(params: {
   agentId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): ConversationRegistryScope {
   const configuredStore = params.config.session?.store;
   return {
@@ -84,7 +84,7 @@ async function listLiveDirectoryEntries(params: {
 }
 
 async function listDirectoryEntries(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   accountId: string;
   query?: string;
   limit: number;
@@ -130,7 +130,7 @@ async function listDirectoryEntries(params: {
 }
 
 async function discoverChannelAddresses(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId: string;
   channel: string;
   query?: string;
@@ -225,7 +225,7 @@ function matchesConversationQuery(conversation: ConversationRecord, rawQuery: st
 /** Lists persisted and channel-directory addresses from the Gateway's live plugin runtime. */
 export async function runGatewayConversationList(
   params: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     agentId: string;
     channel?: string;
     query?: string;

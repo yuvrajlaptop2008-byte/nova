@@ -1,39 +1,39 @@
 // Imessage plugin module implements approval native behavior.
-import { createChannelApprovalCapability } from "openclaw/plugin-sdk/approval-delivery-runtime";
-import { createLazyChannelApprovalNativeRuntimeAdapter } from "openclaw/plugin-sdk/approval-handler-adapter-runtime";
-import type { ChannelApprovalNativeRuntimeAdapter } from "openclaw/plugin-sdk/approval-handler-runtime";
+import { createChannelApprovalCapability } from "nova/plugin-sdk/approval-delivery-runtime";
+import { createLazyChannelApprovalNativeRuntimeAdapter } from "nova/plugin-sdk/approval-handler-adapter-runtime";
+import type { ChannelApprovalNativeRuntimeAdapter } from "nova/plugin-sdk/approval-handler-runtime";
 import {
   createChannelApproverDmTargetResolver,
   createChannelNativeOriginTargetResolver,
   createNativeApprovalChannelRouteGates,
   createNativeApprovalForwardingFallbackSuppressor,
   shouldSuppressLocalNativeExecApprovalPrompt,
-} from "openclaw/plugin-sdk/approval-native-runtime";
+} from "nova/plugin-sdk/approval-native-runtime";
 import {
   buildTypedExecApprovalPendingReplyPayload,
   buildTypedPluginApprovalPendingReplyPayload,
-} from "openclaw/plugin-sdk/approval-reply-runtime";
+} from "nova/plugin-sdk/approval-reply-runtime";
 import {
   getExecApprovalReplyMetadata,
   resolveExecApprovalCommandDisplay,
   resolveExecApprovalRequestAllowedDecisions,
-} from "openclaw/plugin-sdk/approval-runtime";
+} from "nova/plugin-sdk/approval-runtime";
 import type {
   ExecApprovalRequest,
   ExecApprovalReplyDecision,
   PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
+} from "nova/plugin-sdk/approval-runtime";
 import type {
   ChannelApprovalCapability,
   ChannelOutboundPayloadHint,
-} from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import { normalizeAccountId, parseAgentSessionKey } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
+import { normalizeAccountId, parseAgentSessionKey } from "nova/plugin-sdk/routing";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import {
   listIMessageAccountIds,
   resolveDefaultIMessageAccountId,
@@ -46,7 +46,7 @@ import { normalizeIMessageMessagingTarget } from "./normalize.js";
 import { inferIMessageTargetChatType } from "./targets.js";
 
 type ApprovalRequest = ExecApprovalRequest | PluginApprovalRequest;
-type ApprovalForwardingConfig = NonNullable<NonNullable<OpenClawConfig["approvals"]>["exec"]>;
+type ApprovalForwardingConfig = NonNullable<NonNullable<NovaConfig["approvals"]>["exec"]>;
 type ApprovalForwardingMode = NonNullable<ApprovalForwardingConfig["mode"]>;
 type ChannelApprovalForwardTarget = Parameters<
   NonNullable<
@@ -67,7 +67,7 @@ const DEFAULT_PLUGIN_APPROVAL_DECISIONS: readonly ExecApprovalReplyDecision[] = 
 ];
 
 function isIMessageApprovalTransportEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): boolean {
   return resolveIMessageAccount({ cfg: params.cfg, accountId: params.accountId }).enabled;
@@ -172,7 +172,7 @@ function resolveIMessageSessionTargetFromSessionKey(
 }
 
 export function shouldSuppressLocalIMessageExecApprovalPrompt(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   payload: ReplyPayload;
   hint?: ChannelOutboundPayloadHint;
@@ -241,7 +241,7 @@ const resolveIMessageOriginTargetBase = createChannelNativeOriginTargetResolver(
 });
 
 function resolveIMessageOriginTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   approvalKind?: "exec" | "plugin";
   request: ApprovalRequest;

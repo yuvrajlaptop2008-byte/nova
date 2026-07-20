@@ -4,11 +4,11 @@
  * advertises native search support.
  */
 import { describe, expect, it, vi } from "vitest";
-import { createOpenClawCodingTools } from "./agent-tools.js";
+import { createNovaCodingTools } from "./agent-tools.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
 
-vi.mock("./openclaw-plugin-tools.js", () => ({
-  resolveOpenClawPluginToolsForOptions: () => [{ name: "browser" }],
+vi.mock("./nova-plugin-tools.js", () => ({
+  resolveNovaPluginToolsForOptions: () => [{ name: "browser" }],
 }));
 
 const HTML_ENTITY_TOOL_CALL_ARGUMENTS_ENCODING = "html-entities";
@@ -23,17 +23,17 @@ const baseTools = [
 const testing = {
   applyModelProviderToolPolicy(
     requestedTools: AnyAgentTool[],
-    options?: NonNullable<Parameters<typeof createOpenClawCodingTools>[0]>,
+    options?: NonNullable<Parameters<typeof createNovaCodingTools>[0]>,
   ): AnyAgentTool[] {
-    const actualTools = createOpenClawCodingTools({
+    const actualTools = createNovaCodingTools({
       ...options,
-      cwd: "/tmp/openclaw-agent-tools-policy-test",
-      workspaceDir: "/tmp/openclaw-agent-tools-policy-test",
+      cwd: "/tmp/nova-agent-tools-policy-test",
+      workspaceDir: "/tmp/nova-agent-tools-policy-test",
       toolConstructionPlan: {
         includeBaseCodingTools: true,
         includeShellTools: true,
         includeChannelTools: false,
-        includeOpenClawTools: true,
+        includeNovaTools: true,
         includePluginTools: true,
       },
     });

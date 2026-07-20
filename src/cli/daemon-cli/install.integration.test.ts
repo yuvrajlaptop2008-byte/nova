@@ -50,8 +50,8 @@ describe("runDaemonInstall integration", () => {
       "NOVA_GATEWAY_TOKEN",
       "NOVA_GATEWAY_PASSWORD",
     ]);
-    tempHome = await makeTempWorkspace("openclaw-daemon-install-int-");
-    configPath = path.join(tempHome, "openclaw.json");
+    tempHome = await makeTempWorkspace("nova-daemon-install-int-");
+    configPath = path.join(tempHome, "nova.json");
     process.env.HOME = tempHome;
     process.env.NOVA_STATE_DIR = tempHome;
     process.env.NOVA_CONFIG_PATH = configPath;

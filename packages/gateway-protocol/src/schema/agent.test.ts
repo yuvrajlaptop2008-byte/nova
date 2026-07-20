@@ -58,12 +58,12 @@ const musicCompletionEvent: AgentInternalEvent = {
   attachments: [
     {
       type: "audio",
-      path: "/tmp/openclaw/generated-release-anthem.mp3",
+      path: "/tmp/nova/generated-release-anthem.mp3",
       mimeType: "audio/mpeg",
       name: "generated-release-anthem.mp3",
     },
   ],
-  mediaUrls: ["/tmp/openclaw/generated-release-anthem.mp3"],
+  mediaUrls: ["/tmp/nova/generated-release-anthem.mp3"],
   replyInstruction: "Deliver the generated music.",
 };
 

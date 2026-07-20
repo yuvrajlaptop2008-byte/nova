@@ -17,7 +17,7 @@ describe("registerUsersCli", () => {
 
     await program.parseAsync([
       "node",
-      "openclaw",
+      "nova",
       "users",
       "link-email",
       "Ada@example.com",
@@ -41,7 +41,7 @@ describe("registerUsersCli", () => {
 
     await program.parseAsync([
       "node",
-      "openclaw",
+      "nova",
       "users",
       "link-email",
       "Ada@example.com",

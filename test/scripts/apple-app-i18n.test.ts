@@ -280,7 +280,7 @@ describe("Apple app i18n catalogs", () => {
   });
 
   it("keeps custom component text on explicit localized or verbatim paths", async () => {
-    const design = await readFile("apps/ios/Sources/Design/OpenClawProComponents.swift", "utf8");
+    const design = await readFile("apps/ios/Sources/Design/NovaProComponents.swift", "utf8");
     const agentOverview = await readFile(
       "apps/ios/Sources/Design/AgentProTab+Overview.swift",
       "utf8",
@@ -304,7 +304,7 @@ describe("Apple app i18n catalogs", () => {
     const watchDirect = await readFile("apps/ios/WatchApp/Sources/WatchDirectNode.swift", "utf8");
 
     expect(design).toContain(
-      "struct ProStatusRow: View {\n    let icon: String\n    let title: OpenClawTextValue\n    let detail: OpenClawTextValue",
+      "struct ProStatusRow: View {\n    let icon: String\n    let title: NovaTextValue\n    let detail: NovaTextValue",
     );
     expect(design).not.toContain(
       "struct ProStatusRow: View {\n    let icon: String\n    let title: String",
@@ -317,18 +317,18 @@ describe("Apple app i18n catalogs", () => {
     expect(watch).toContain("accessory: .verbatim(self.store.talkSummaryText)");
     expect(watch).toContain("title: .verbatim(record.approval.commandPreview");
     expect(settings).toContain(
-      "let title: OpenClawTextValue\n    let detail: OpenClawTextValue\n    let priority: OpenClawTextValue",
+      "let title: NovaTextValue\n    let detail: NovaTextValue\n    let priority: NovaTextValue",
     );
     expect(settings).toContain(
-      "struct SettingsDetailRow: View {\n    let label: LocalizedStringKey\n    let value: OpenClawTextValue",
+      "struct SettingsDetailRow: View {\n    let label: LocalizedStringKey\n    let value: NovaTextValue",
     );
     expect(settings).toContain("self.value.text");
     expect(settings).not.toContain("Text(self.item.title)");
     expect(agentOverview).toContain(
-      "func metricTile(\n        icon: String,\n        title: OpenClawTextValue,\n        value: String,\n        detail: OpenClawTextValue",
+      "func metricTile(\n        icon: String,\n        title: NovaTextValue,\n        value: String,\n        detail: NovaTextValue",
     );
     expect(settingsActions).toContain(
-      "func diagnosticCheckRow(\n        icon: String,\n        title: OpenClawTextValue,\n        detail: OpenClawTextValue,\n        value: OpenClawTextValue",
+      "func diagnosticCheckRow(\n        icon: String,\n        title: NovaTextValue,\n        detail: NovaTextValue,\n        value: NovaTextValue",
     );
     expect(settingsSections).toContain("func settingsToggle(\n        _ title: LocalizedStringKey");
     expect(settingsSections).toContain(
@@ -451,7 +451,7 @@ describe("Apple app i18n catalogs", () => {
   });
 
   it("compiles macOS catalogs into app-bundle localization directories", async () => {
-    const outputDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-apple-i18n-"));
+    const outputDir = await mkdtemp(path.join(os.tmpdir(), "nova-apple-i18n-"));
     try {
       await compileMacosLocalizations(outputDir);
       const swedish = await readFile(

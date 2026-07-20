@@ -3,7 +3,7 @@ import { formatCliCommand } from "../cli/command-format.js";
 import type { GatewayAuthChoice, OnboardMode, OnboardOptions } from "../commands/onboard-types.js";
 import { resolveGatewayPort } from "../config/config.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeSecretInputString } from "../config/types.secrets.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { withConsoleSubsystemsSuppressed } from "../logging/console.js";
@@ -42,18 +42,18 @@ const loadOnboardConfigModule = createLazyRuntimeModule(
   () => import("../commands/onboard-config.js"),
 );
 
-function hasConfiguredDefaultModel(config: OpenClawConfig): boolean {
+function hasConfiguredDefaultModel(config: NovaConfig): boolean {
   return resolveAgentModelPrimaryValue(config.agents?.defaults?.model) !== undefined;
 }
 
 async function offerLiveModelVerification(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   opts: OnboardOptions;
   prompter: WizardPrompter;
   runtime: RuntimeEnv;
   workspaceDir: string;
-  writeConfig: (config: OpenClawConfig) => Promise<OpenClawConfig>;
-}): Promise<{ config: OpenClawConfig; verified: boolean }> {
+  writeConfig: (config: NovaConfig) => Promise<NovaConfig>;
+}): Promise<{ config: NovaConfig; verified: boolean }> {
   const shouldTest = await params.prompter.confirm({
     message: t("wizard.setup.testAiAccess"),
     initialValue: true,
@@ -161,7 +161,7 @@ async function runSetupWizardOnce(
   await prompter.intro(t("wizard.setup.intro"));
 
   const snapshot = await readSetupConfigFileSnapshot();
-  let baseConfig: OpenClawConfig = snapshot.valid
+  let baseConfig: NovaConfig = snapshot.valid
     ? snapshot.exists
       ? (snapshot.sourceConfig ?? snapshot.config)
       : {}
@@ -169,10 +169,10 @@ async function runSetupWizardOnce(
   baseConfig = await requireRiskAcknowledgement({ opts, prompter, config: baseConfig });
   // Ordinary onboard reruns must preserve existing agents.list / bindings. Only
   // explicit reset or import flows are allowed to shrink the config — see issue
-  // openclaw#84692.
-  let pendingPluginInstallMigrationBaseConfig: OpenClawConfig | undefined = baseConfig;
+  // nova#84692.
+  let pendingPluginInstallMigrationBaseConfig: NovaConfig | undefined = baseConfig;
   const writeSetupConfigFile = async (
-    config: OpenClawConfig,
+    config: NovaConfig,
     optsLocal: { allowConfigSizeDrop?: boolean } = {},
   ) =>
     await writeWizardConfigFile(config, {
@@ -193,13 +193,13 @@ async function runSetupWizardOnce(
         [
           ...snapshot.issues.map((iss) => `- ${iss.path}: ${iss.message}`),
           "",
-          "Docs: https://docs.openclaw.ai/gateway/configuration",
+          "Docs: https://docs.nova.ai/gateway/configuration",
         ].join("\n"),
         "Config issues",
       );
     }
     await prompter.outro(
-      `Config invalid. Run \`${formatCliCommand("openclaw doctor")}\` to repair it, then re-run setup.`,
+      `Config invalid. Run \`${formatCliCommand("nova doctor")}\` to repair it, then re-run setup.`,
     );
     runtime.exit(1);
     return;
@@ -219,15 +219,15 @@ async function runSetupWizardOnce(
           ? [`- ... +${compatibilityNotices.length - 4} more`]
           : []),
         "",
-        `Review: ${formatCliCommand("openclaw doctor")}`,
-        `Inspect: ${formatCliCommand("openclaw plugins inspect --all")}`,
+        `Review: ${formatCliCommand("nova doctor")}`,
+        `Inspect: ${formatCliCommand("nova plugins inspect --all")}`,
       ].join("\n"),
       t("wizard.setup.pluginCompatibilityTitle"),
     );
   }
 
   const quickstartHint = t("wizard.setup.flowQuickstartHint", {
-    command: formatCliCommand("openclaw configure"),
+    command: formatCliCommand("nova configure"),
   });
   const manualHint = t("wizard.setup.flowAdvancedHint");
   const hasExistingModelConfig = hasConfiguredDefaultModel(baseConfig);
@@ -255,7 +255,7 @@ async function runSetupWizardOnce(
     normalizedExplicitFlow !== "import"
   ) {
     runtime.error(
-      "Invalid --flow. Use quickstart, manual, advanced, or import. Example: openclaw onboard --flow quickstart",
+      "Invalid --flow. Use quickstart, manual, advanced, or import. Example: nova onboard --flow quickstart",
     );
     runtime.exit(1);
     return;
@@ -330,7 +330,7 @@ async function runSetupWizardOnce(
     });
     const migratedSnapshot = await readSetupConfigFileSnapshot();
     if (!migratedSnapshot.valid) {
-      throw new Error("Migration produced an invalid Nova config. Run `openclaw doctor`.");
+      throw new Error("Migration produced an invalid Nova config. Run `nova doctor`.");
     }
     baseConfig = migratedSnapshot.sourceConfig ?? migratedSnapshot.config;
     pendingPluginInstallMigrationBaseConfig = baseConfig;
@@ -451,7 +451,7 @@ async function runSetupWizardOnce(
   const storedRemoteUrl = normalizeOptionalString(baseConfig.gateway?.remote?.url);
   const optionRemoteUrl = normalizeOptionalString(opts.remoteUrl);
   const remoteUrlChanged = opts.remoteUrl !== undefined && optionRemoteUrl !== storedRemoteUrl;
-  const remoteSeedConfig: OpenClawConfig =
+  const remoteSeedConfig: NovaConfig =
     opts.remoteUrl === undefined && opts.remoteToken === undefined
       ? baseConfig
       : {
@@ -563,7 +563,7 @@ async function runSetupWizardOnce(
 
   const { applyLocalSetupWorkspaceConfig, applySkipBootstrapConfig } =
     await loadOnboardConfigModule();
-  let nextConfig: OpenClawConfig = applyLocalSetupWorkspaceConfig(baseConfig, workspaceDir);
+  let nextConfig: NovaConfig = applyLocalSetupWorkspaceConfig(baseConfig, workspaceDir);
   if (opts.skipBootstrap) {
     nextConfig = applySkipBootstrapConfig(nextConfig);
   }

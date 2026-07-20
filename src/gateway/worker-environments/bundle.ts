@@ -5,8 +5,8 @@ import os from "node:os";
 import path from "node:path";
 import * as tar from "tar";
 import { resolveStateDir } from "../../config/paths.js";
+import { resolveNovaPackageRootSync } from "../../infra/nova-root.js";
 import { isExactSemverVersion } from "../../infra/npm-registry-spec.js";
-import { resolveOpenClawPackageRootSync } from "../../infra/openclaw-root.js";
 import { runCommandWithTimeout } from "../../process/exec.js";
 import { VERSION } from "../../version.js";
 import {
@@ -15,13 +15,13 @@ import {
   type WorkerBundleManifestEntry,
 } from "./bundle-staging.js";
 
-export const WORKER_BUNDLE_MANIFEST_VERSION = "openclaw-worker-bundle-v1";
+export const WORKER_BUNDLE_MANIFEST_VERSION = "nova-worker-bundle-v1";
 const NOVA_NPM_REGISTRY = "https://registry.npmjs.org/";
 const NPM_RELEASE_PROOF_TIMEOUT_MS = 60_000;
 const NPM_SHA512_INTEGRITY_PATTERN = /^sha512-[A-Za-z0-9+/]{86}==$/u;
 type WorkerInstallationArtifactBase = {
   bundleHash: string;
-  openclawVersion: string;
+  novaVersion: string;
   protocolFeatures: readonly string[];
 };
 
@@ -46,7 +46,7 @@ export type WorkerBundleProducer = {
 type WorkerBundleProducerOptions = {
   packageRoot?: string;
   cacheDir?: string;
-  openclawVersion?: string;
+  novaVersion?: string;
   protocolFeatures?: readonly string[];
 };
 
@@ -69,7 +69,7 @@ function resolvePackageRoot(packageRoot: string | undefined): string {
   if (packageRoot) {
     return path.resolve(packageRoot);
   }
-  const resolved = resolveOpenClawPackageRootSync({
+  const resolved = resolveNovaPackageRootSync({
     moduleUrl: import.meta.url,
     argv1: process.argv[1],
     cwd: process.cwd(),
@@ -172,14 +172,14 @@ async function verifyPublishedNpmRelease(params: {
   runCommand?: WorkerNpmProofCommandRunner;
 }): Promise<string> {
   const runCommand = params.runCommand ?? runCommandWithTimeout;
-  const temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-worker-npm-proof-"));
+  const temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-worker-npm-proof-"));
   try {
     const published = parseNpmPackageIdentity(
       await runNpmProofCommand({
         argv: [
           "npm",
           "view",
-          `openclaw@${params.version}`,
+          `nova@${params.version}`,
           "name",
           "version",
           "dist.integrity",
@@ -192,19 +192,19 @@ async function verifyPublishedNpmRelease(params: {
       }),
     );
     if (
-      published?.name !== "openclaw" ||
+      published?.name !== "nova" ||
       published.version !== params.version ||
       !NPM_SHA512_INTEGRITY_PATTERN.test(published.integrity)
     ) {
       throw new Error(
-        `Cannot verify exact public npm release openclaw@${params.version}; use the worker bundle install`,
+        `Cannot verify exact public npm release nova@${params.version}; use the worker bundle install`,
       );
     }
     const packedValue = await runNpmProofCommand({
       argv: [
         "npm",
         "pack",
-        `openclaw@${params.version}`,
+        `nova@${params.version}`,
         "--pack-destination",
         temporaryRoot,
         "--ignore-scripts",
@@ -248,7 +248,7 @@ async function verifyPublishedNpmRelease(params: {
     const packedBundle = await prepareWorkerBundle({
       packageRoot: extractedRoot,
       cacheDir: path.join(temporaryRoot, "bundle-cache"),
-      openclawVersion: params.version,
+      novaVersion: params.version,
     });
     if (packedBundle.bundleHash !== params.bundleHash) {
       throw new Error(
@@ -429,8 +429,8 @@ async function prepareWorkerBundle(
   const cacheDir = options.cacheDir
     ? path.resolve(options.cacheDir)
     : path.join(resolveStateDir(), "cache", "worker-bundles");
-  const openclawVersion = (options.openclawVersion ?? VERSION).trim();
-  if (!openclawVersion) {
+  const novaVersion = (options.novaVersion ?? VERSION).trim();
+  if (!novaVersion) {
     throw new Error("Worker bundle requires a non-empty Nova version");
   }
   const protocolFeatures = normalizeProtocolFeatures(options.protocolFeatures ?? []);
@@ -448,7 +448,7 @@ async function prepareWorkerBundle(
     return {
       install: "bundle",
       bundleHash,
-      openclawVersion,
+      novaVersion,
       protocolFeatures,
       tarballSha256: await hashWorkerBundleTarball(tarballPath),
       tarballPath,
@@ -489,7 +489,7 @@ export async function resolveWorkerNpmInstallationArtifact(params: {
   isPackageInstall?: WorkerNpmPackageInstallCheck;
   verifyRelease?: WorkerNpmReleaseVerifier;
 }): Promise<WorkerNpmArtifact> {
-  const version = params.bundle.openclawVersion.trim();
+  const version = params.bundle.novaVersion.trim();
   if (!isExactSemverVersion(version)) {
     throw new Error(
       `Worker npm install requires the exact published gateway version; expected ${version}`,
@@ -511,9 +511,9 @@ export async function resolveWorkerNpmInstallationArtifact(params: {
   return {
     install: "npm",
     bundleHash: params.bundle.bundleHash,
-    openclawVersion: version,
+    novaVersion: version,
     packageIntegrity,
     protocolFeatures: params.bundle.protocolFeatures,
-    packageSpec: `openclaw@${version}`,
+    packageSpec: `nova@${version}`,
   };
 }

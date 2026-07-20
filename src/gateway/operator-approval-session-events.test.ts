@@ -4,9 +4,9 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildApprovalResolutionRef } from "../infra/approval-resolution-ref.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  type OpenClawStateDatabaseOptions,
-} from "../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  type NovaStateDatabaseOptions,
+} from "../state/nova-state-db.js";
 import { ExecApprovalManager } from "./exec-approval-manager.js";
 import { createOperatorApprovalSessionEventRuntime } from "./operator-approval-session-events.js";
 import {
@@ -24,8 +24,8 @@ const SIBLING_SESSION_KEY = "agent:main:parent:sibling";
 const tempDirs: string[] = [];
 type NewOperatorApproval = Parameters<typeof insertOperatorApproval>[0]["approval"];
 
-function createDatabaseOptions(): OpenClawStateDatabaseOptions {
-  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-approval-events-"));
+function createDatabaseOptions(): NovaStateDatabaseOptions {
+  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-approval-events-"));
   tempDirs.push(stateDir);
   return { env: { ...process.env, NOVA_STATE_DIR: stateDir } };
 }
@@ -119,7 +119,7 @@ function createTerminalRecord(
 
 function createRuntime(params: {
   clients: GatewayClient[];
-  databaseOptions?: OpenClawStateDatabaseOptions;
+  databaseOptions?: NovaStateDatabaseOptions;
   now?: () => number;
   controlUiBasePath?: string;
   reconcileTerminal?: Parameters<
@@ -141,7 +141,7 @@ function createRuntime(params: {
 }
 
 function insertPendingApproval(params: {
-  databaseOptions: OpenClawStateDatabaseOptions;
+  databaseOptions: NovaStateDatabaseOptions;
   id: string;
   audienceSessionKeys: string[];
   createdAtMs: number;
@@ -172,7 +172,7 @@ describe("operator approval session events", () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     for (const dir of tempDirs.splice(0)) {
       fs.rmSync(dir, { force: true, recursive: true });
     }

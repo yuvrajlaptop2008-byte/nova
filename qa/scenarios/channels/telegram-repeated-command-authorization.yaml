@@ -52,7 +52,7 @@ flow:
                   conversation: { id: telegram-command-room, kind: channel }
                   senderId: qa-command-operator
                   senderName: QA Command Operator
-                  text: /status@openclaw
+                  text: /status@nova
               - waitForOutbound:
                   conversation: { id: telegram-command-room, kind: channel }
                   textIncludes: You are not authorized to use this command.
@@ -71,7 +71,7 @@ flow:
             conversation: { id: telegram-command-room, kind: channel }
             senderId: qa-command-operator
             senderName: QA Command Operator
-            text: /status@openclaw
+            text: /status@nova
         - waitForOutbound:
             conversation: { id: telegram-command-room, kind: channel }
             textIncludes: "Session:"
@@ -80,7 +80,7 @@ flow:
             conversation: { id: telegram-command-room, kind: channel }
             senderId: qa-command-operator
             senderName: QA Command Operator
-            text: /help@openclaw
+            text: /help@nova
         - waitForOutbound:
             conversation: { id: telegram-command-room, kind: channel }
             textIncludes: /commands for full list
@@ -89,7 +89,7 @@ flow:
             conversation: { id: telegram-command-room, kind: channel }
             senderId: qa-command-operator
             senderName: QA Command Operator
-            text: /commands@openclaw
+            text: /commands@nova
         - waitForOutbound:
             conversation: { id: telegram-command-room, kind: channel }
             textIncludes: /stop

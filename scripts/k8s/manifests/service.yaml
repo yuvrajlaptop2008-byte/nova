@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openclaw
+  name: nova
   labels:
-    app: openclaw
+    app: nova
 spec:
   type: ClusterIP
   selector:
-    app: openclaw
+    app: nova
   ports:
     - name: gateway
       port: 18789

@@ -5,7 +5,7 @@ const browserClientMocks = vi.hoisted(() => ({
   browserCloseTab: vi.fn(async (..._args: unknown[]) => ({})),
   browserDoctor: vi.fn(async (..._args: unknown[]) => ({
     ok: true,
-    profile: "openclaw",
+    profile: "nova",
     transport: "cdp",
     checks: [],
     status: {
@@ -74,7 +74,7 @@ const browserActionsMocks = vi.hoisted(() => ({
     ok: true,
     targetId: "tab-1",
     download: {
-      path: "/tmp/openclaw/downloads/report.pdf",
+      path: "/tmp/nova/downloads/report.pdf",
       suggestedFilename: "report.pdf",
       url: "https://example.com/report.pdf",
     },
@@ -85,7 +85,7 @@ const browserActionsMocks = vi.hoisted(() => ({
     ok: true,
     targetId: "tab-1",
     download: {
-      path: "/tmp/openclaw/downloads/export.csv",
+      path: "/tmp/nova/downloads/export.csv",
       suggestedFilename: "export.csv",
       url: "https://example.com/export.csv",
     },
@@ -98,7 +98,7 @@ const browserConfigMocks = vi.hoisted(() => ({
     enabled: true,
     controlPort: 18791,
     profiles: {},
-    defaultProfile: "openclaw",
+    defaultProfile: "nova",
     actionTimeoutMs: 60_000,
   })),
   resolveProfile: vi.fn((resolved: Record<string, unknown>, name: string) => {
@@ -108,7 +108,7 @@ const browserConfigMocks = vi.hoisted(() => ({
     if (!profile) {
       return null;
     }
-    const driver = profile.driver === "existing-session" ? "existing-session" : "openclaw";
+    const driver = profile.driver === "existing-session" ? "existing-session" : "nova";
     if (driver === "existing-session") {
       return {
         name,
@@ -157,10 +157,10 @@ const configMocks = vi.hoisted(() => ({
     }
   >(() => ({ browser: {} })),
 }));
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
-  const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/runtime-config-snapshot")
-  >("openclaw/plugin-sdk/runtime-config-snapshot");
+vi.mock("nova/plugin-sdk/runtime-config-snapshot", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-config-snapshot")>(
+    "nova/plugin-sdk/runtime-config-snapshot",
+  );
   return {
     ...actual,
     getRuntimeConfig: configMocks.loadConfig,
@@ -196,8 +196,8 @@ const toolCommonMocks = vi.hoisted(() => ({
   imageResultFromFile: vi.fn(),
   describeImageFile: vi.fn(async () => ({ text: undefined, decision: { outcome: "skipped" } })),
   normalizeBrowserScreenshot: vi.fn(async (buffer: Buffer) => ({ buffer })),
-  saveMediaBuffer: vi.fn(async () => ({ path: "/tmp/openclaw-media/resized.jpg" })),
-  stageBrowserScreenshotForSharing: vi.fn(async () => "/tmp/openclaw-media/outbound/share.png"),
+  saveMediaBuffer: vi.fn(async () => ({ path: "/tmp/nova-media/resized.jpg" })),
+  stageBrowserScreenshotForSharing: vi.fn(async () => "/tmp/nova-media/outbound/share.png"),
 }));
 vi.mock("./sdk-setup-tools.js", async () => {
   const actual =
@@ -232,7 +232,7 @@ vi.mock("./browser-tool.runtime.js", () => {
 
   return {
     DEFAULT_AI_SNAPSHOT_MAX_CHARS: 40_000,
-    DEFAULT_UPLOAD_DIR: "/tmp/openclaw-browser-uploads",
+    DEFAULT_UPLOAD_DIR: "/tmp/nova-browser-uploads",
     BrowserToolSchema: {},
     ...browserActionsMocks,
     ...browserClientMocks,
@@ -323,7 +323,7 @@ function resetBrowserToolMocks() {
     enabled: true,
     controlPort: 18791,
     profiles: {},
-    defaultProfile: "openclaw",
+    defaultProfile: "nova",
     actionTimeoutMs: 60_000,
   });
   nodesUtilsMocks.listNodes.mockResolvedValue([]);
@@ -334,9 +334,9 @@ function resetBrowserToolMocks() {
   toolCommonMocks.normalizeBrowserScreenshot.mockImplementation(async (buffer: Buffer) => ({
     buffer,
   }));
-  toolCommonMocks.saveMediaBuffer.mockResolvedValue({ path: "/tmp/openclaw-media/resized.jpg" });
+  toolCommonMocks.saveMediaBuffer.mockResolvedValue({ path: "/tmp/nova-media/resized.jpg" });
   toolCommonMocks.stageBrowserScreenshotForSharing.mockResolvedValue(
-    "/tmp/openclaw-media/outbound/share.png",
+    "/tmp/nova-media/outbound/share.png",
   );
   toolCommonMocks.fetchBrowserJson.mockResolvedValue({
     ok: true,
@@ -347,7 +347,7 @@ function resetBrowserToolMocks() {
 
 function setResolvedBrowserProfiles(
   profiles: Record<string, Record<string, unknown>>,
-  defaultProfile = "openclaw",
+  defaultProfile = "nova",
 ) {
   browserConfigMocks.resolveBrowserConfig.mockReturnValue({
     enabled: true,
@@ -512,7 +512,7 @@ describe("browser tool download actions", () => {
     const result = await tool.execute?.("call-1", {
       action: "download",
       target: "host",
-      profile: "openclaw",
+      profile: "nova",
       ref: "e12",
       path: "report.pdf",
       targetId: "tab-1",
@@ -524,10 +524,10 @@ describe("browser tool download actions", () => {
       path: "report.pdf",
       targetId: "tab-1",
       timeoutMs: 30_000,
-      profile: "openclaw",
+      profile: "nova",
     });
     expect(result?.details).toMatchObject({
-      download: { path: "/tmp/openclaw/downloads/report.pdf" },
+      download: { path: "/tmp/nova/downloads/report.pdf" },
     });
     expect(sessionTabRegistryMocks.touchSessionBrowserTab).toHaveBeenCalledWith(
       expect.objectContaining({ sessionKey: "agent:main:main", targetId: "tab-1" }),
@@ -559,7 +559,7 @@ describe("browser tool download actions", () => {
         result: {
           ok: true,
           targetId: "tab-1",
-          download: { path: "/tmp/openclaw/downloads/export.csv" },
+          download: { path: "/tmp/nova/downloads/export.csv" },
         },
       },
     });
@@ -592,7 +592,7 @@ describe("browser tool download actions", () => {
         result: {
           ok: true,
           targetId: "tab-1",
-          download: { path: "/tmp/openclaw/downloads/report.pdf" },
+          download: { path: "/tmp/nova/downloads/report.pdf" },
         },
       },
     });
@@ -1062,7 +1062,7 @@ describe("browser tool snapshot maxChars", () => {
       targetId: "host-tab-opened",
       baseUrl: undefined,
       profile: "host-actual",
-      profileAliases: ["openclaw"],
+      profileAliases: ["nova"],
       ownership: {
         status: "durable",
         nativeTargetId: "HOST-NATIVE-7",
@@ -1135,7 +1135,7 @@ describe("browser tool snapshot maxChars", () => {
       sessionKey: "agent:main:main",
       targetId: "host-tab-used",
       baseUrl: undefined,
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 
@@ -1153,7 +1153,7 @@ describe("browser tool snapshot maxChars", () => {
       sessionKey: "agent:main:main",
       targetId: "host-tab-closed",
       baseUrl: undefined,
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 
@@ -1244,7 +1244,7 @@ describe("browser tool snapshot maxChars", () => {
             error: "headed mode needs a display",
             reason: "no_display_for_headed_profile",
             details: {
-              profile: "openclaw",
+              profile: "nova",
               requestedHeadless: false,
               headlessSource: "config",
               displayPresent: false,
@@ -1258,7 +1258,7 @@ describe("browser tool snapshot maxChars", () => {
     const error = await tool.execute!("call-1", {
       action: "start",
       target: "node",
-      profile: "openclaw",
+      profile: "nova",
     }).catch((err: unknown) => err);
 
     expect(error).toMatchObject({
@@ -1267,7 +1267,7 @@ describe("browser tool snapshot maxChars", () => {
       status: 409,
       reason: "no_display_for_headed_profile",
       details: {
-        profile: "openclaw",
+        profile: "nova",
         requestedHeadless: false,
         headlessSource: "config",
         displayPresent: false,
@@ -1295,7 +1295,7 @@ describe("browser tool snapshot maxChars", () => {
     const error = await tool.execute!("call-1", {
       action: "start",
       target: "node",
-      profile: "openclaw",
+      profile: "nova",
     }).catch((err: unknown) => err);
 
     expect(error).toMatchObject({
@@ -1386,9 +1386,7 @@ describe("browser tool snapshot maxChars", () => {
       details?: { media?: { outbound?: boolean } };
     }>(toolCommonMocks.imageResultFromFile, 0);
     expect(imageParams.imageSanitization).toEqual({ maxDimensionPx: 2000 });
-    expect(imageParams.extraText).toContain(
-      JSON.stringify("/tmp/openclaw-media/outbound/share.png"),
-    );
+    expect(imageParams.extraText).toContain(JSON.stringify("/tmp/nova-media/outbound/share.png"));
     expect(imageParams.extraText).toContain("message tool");
     expect(imageParams.details?.media).toEqual({ outbound: false });
     expect(toolCommonMocks.stageBrowserScreenshotForSharing).toHaveBeenCalledWith(
@@ -1426,7 +1424,7 @@ describe("browser tool snapshot maxChars", () => {
     const joined = textBlocks.map((entry) => entry.text).join("\n");
     expect(joined).toContain("[neutralized] MEDIA:/tmp/secret.png");
     expect(joined).toContain("/tmp/secret.png");
-    expect(joined).toContain(JSON.stringify("/tmp/openclaw-media/outbound/share.png"));
+    expect(joined).toContain(JSON.stringify("/tmp/nova-media/outbound/share.png"));
     expect(joined).toContain("message tool");
     // The vision-success path must not surface raw screenshot media via
     // details.media so channel auto-delivery cannot grab the screenshot.
@@ -1468,9 +1466,7 @@ describe("browser tool snapshot maxChars", () => {
     expect(imageParams.path).toBe("/tmp/screen.png");
     expect(imageParams.extraText).toContain("[neutralized] MEDIA:/tmp/secret.png");
     expect(imageParams.extraText).toContain("/tmp/secret.png");
-    expect(imageParams.extraText).toContain(
-      JSON.stringify("/tmp/openclaw-media/outbound/share.png"),
-    );
+    expect(imageParams.extraText).toContain(JSON.stringify("/tmp/nova-media/outbound/share.png"));
     expect(imageParams.extraText).toContain("message tool");
     expect(imageParams.details?.media).toEqual({ outbound: false });
   });
@@ -1816,7 +1812,7 @@ describe("browser tool url alias support", () => {
       targetId: "tab-123",
       baseUrl: undefined,
       profile: "hot-profile",
-      profileAliases: ["openclaw"],
+      profileAliases: ["nova"],
       ownership: {
         status: "durable",
         nativeTargetId: "NATIVE-123",
@@ -1847,7 +1843,7 @@ describe("browser tool url alias support", () => {
       expect.objectContaining({
         sessionKey: "agent:main:main",
         targetId: "tab-volatile",
-        profile: "openclaw",
+        profile: "nova",
         ownership: {
           status: "non-durable",
           reason: "browser-identity-lookup-failed",
@@ -1910,7 +1906,7 @@ describe("browser tool url alias support", () => {
     expect(sessionTabRegistryMocks.trackSessionBrowserTab).toHaveBeenCalledWith(
       expect.objectContaining({
         targetId: "legacy-tab",
-        profile: "openclaw",
+        profile: "nova",
         ownership: undefined,
       }),
     );
@@ -1953,7 +1949,7 @@ describe("browser tool url alias support", () => {
     const closeError = new Error("close failed");
     browserClientMocks.browserOpenTab.mockResolvedValueOnce({
       targetId: "tab-leaked",
-      resolvedProfile: "openclaw",
+      resolvedProfile: "nova",
       title: "Example",
       url: "https://example.com",
       ownership: {
@@ -2110,7 +2106,7 @@ describe("browser tool url alias support", () => {
       sessionKey: "agent:main:main",
       targetId: "RAW-LIVE",
       baseUrl: undefined,
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 
@@ -2131,7 +2127,7 @@ describe("browser tool url alias support", () => {
       sessionKey: "agent:main:main",
       targetId: "RAW-CONSOLE",
       baseUrl: undefined,
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 
@@ -2156,7 +2152,7 @@ describe("browser tool url alias support", () => {
       sessionKey: "agent:main:main",
       targetId: "RAW-DIALOG",
       baseUrl: undefined,
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 
@@ -2220,7 +2216,7 @@ describe("browser tool url alias support", () => {
       sessionKey: "agent:main:main",
       targetId: "docs",
       baseUrl: undefined,
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 
@@ -2799,7 +2795,7 @@ describe("browser tool upload inbound media fallback (#83544)", () => {
   afterEach(() => vi.restoreAllMocks());
 
   it("resolves upload paths before arming the file chooser", async () => {
-    const inboundPath = "/home/user/.openclaw/media/inbound/report.pdf";
+    const inboundPath = "/home/user/.nova/media/inbound/report.pdf";
     pathValidationMocks.resolveExistingUploadPaths.mockResolvedValue({
       ok: true,
       paths: [inboundPath],

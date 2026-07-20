@@ -1,6 +1,6 @@
 import AVFAudio
-import OpenClawChatUI
-import OpenClawProtocol
+import NovaChatUI
+import NovaProtocol
 import SwiftUI
 
 private struct ChatScrollEdgeTreatment: ViewModifier {
@@ -28,9 +28,9 @@ struct ChatProTab: View {
     }
 
     @Environment(NodeAppModel.self) private var appModel
-    @AppStorage("openclaw.webchat.showAssistantTrace")
+    @AppStorage("nova.webchat.showAssistantTrace")
     private var showsAssistantTrace = true
-    @State private var viewModel: OpenClawChatViewModel?
+    @State private var viewModel: NovaChatViewModel?
     @State private var viewModelOwnerID = ""
     @State private var transcriptShareItem: TranscriptShareItem?
     @State private var showsTranscriptExportError = false
@@ -45,16 +45,16 @@ struct ChatProTab: View {
     @State private var viewModelPresentationAgentName = "Main"
     @State private var viewModelPresentationAgentBadge = "M"
     @State private var viewModelHasVerifiedOfflineRoutingIdentity = false
-    @State private var speech: OpenClawChatSpeechController?
+    @State private var speech: NovaChatSpeechController?
     @State private var isGatewayStatusManuallyExpanded = false
-    let headerSidebarAction: OpenClawSidebarHeaderAction?
+    let headerSidebarAction: NovaSidebarHeaderAction?
     let headerTitle: String?
     let showsAgentBadge: Bool
     let ownsNavigationStack: Bool
     let openSettings: (() -> Void)?
 
     init(
-        headerSidebarAction: OpenClawSidebarHeaderAction? = nil,
+        headerSidebarAction: NovaSidebarHeaderAction? = nil,
         headerTitle: String? = nil,
         showsAgentBadge: Bool = true,
         ownsNavigationStack: Bool = true,
@@ -85,7 +85,7 @@ struct ChatProTab: View {
             await self.handleNewChatRequest(self.appModel.newChatRequestID)
             if self.speech == nil {
                 let gateway = self.appModel.operatorSession
-                self.speech = OpenClawChatSpeechController { text in
+                self.speech = NovaChatSpeechController { text in
                     try await ChatMessageSpeechClient.synthesize(text: text, gateway: gateway)
                 }
             }
@@ -139,7 +139,7 @@ struct ChatProTab: View {
             .toolbar {
                 if let headerSidebarAction {
                     ToolbarItem(placement: .topBarLeading) {
-                        OpenClawSidebarRevealButton(action: headerSidebarAction)
+                        NovaSidebarRevealButton(action: headerSidebarAction)
                     }
                 }
                 if self.showsAgentBadge {
@@ -188,18 +188,18 @@ struct ChatProTab: View {
             {
                 Button(role: .cancel) {} label: {
                     Text("OK")
-                        .font(OpenClawType.body)
+                        .font(NovaType.body)
                 }
             } message: {
-                Text("OpenClaw could not prepare the Markdown file.")
-                    .font(OpenClawType.body)
+                Text("Nova could not prepare the Markdown file.")
+                    .font(NovaType.body)
             }
     }
 
     @ViewBuilder
     private var chatSurface: some View {
         if let viewModel {
-            OpenClawChatView(
+            NovaChatView(
                 viewModel: viewModel,
                 drawsBackground: true,
                 showsSessionSwitcher: false,
@@ -207,7 +207,7 @@ struct ChatProTab: View {
                 showsAssistantTrace: self.showsAssistantTrace,
                 assistantName: self.agentDisplayName,
                 assistantAvatarText: self.agentBadge,
-                assistantAvatarTint: OpenClawBrand.accent,
+                assistantAvatarTint: NovaBrand.accent,
                 showsAssistantAvatars: false,
                 composerChrome: .clean,
                 isComposerEnabled: self.gatewayConnected || self.canQueueOffline,
@@ -226,7 +226,7 @@ struct ChatProTab: View {
                 voiceNoteControl: self.voiceNoteControl,
                 speech: self.speech)
                 // iMessage-style grey bubbles for agent replies in the clean chrome.
-                    .environment(\.openClawAssistantBubblesInCleanChrome, true)
+                    .environment(\.novaAssistantBubblesInCleanChrome, true)
                     .id(ObjectIdentifier(viewModel))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         } else {
@@ -234,7 +234,7 @@ struct ChatProTab: View {
                 "Preparing Chat",
                 systemImage: "bubble.left.and.bubble.right",
                 description: Text("The session attaches once the gateway is ready.")
-                    .font(OpenClawType.body))
+                    .font(NovaType.body))
         }
     }
 
@@ -243,17 +243,17 @@ struct ChatProTab: View {
     private var headerIdentityBadge: some View {
         TalkAvatarWaveformView(
             phase: self.voiceAvatarPhase,
-            palette: .openClawBrand,
+            palette: .novaBrand,
             diameter: 38,
             avatarDiameter: 28)
         {
             Text(self.agentBadge)
-                .font(OpenClawType.avatar(size: self.agentBadge.count > 2 ? 12 : 16))
+                .font(NovaType.avatar(size: self.agentBadge.count > 2 ? 12 : 16))
                 .foregroundStyle(.white)
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
                 .frame(width: 28, height: 28)
-                .background(Circle().fill(OpenClawBrand.carapaceElevated))
+                .background(Circle().fill(NovaBrand.carapaceElevated))
         }
         .overlay(alignment: .topTrailing) {
             self.gatewayAvatarStatusDot
@@ -340,7 +340,7 @@ struct ChatProTab: View {
                     .transition(.opacity.combined(with: .move(edge: .leading)))
             } else {
                 Text(self.agentDisplayName)
-                    .font(OpenClawType.headline)
+                    .font(NovaType.headline)
                     .lineLimit(1)
                     .transition(.opacity)
             }
@@ -369,7 +369,7 @@ struct ChatProTab: View {
 
     private var expandedGatewayStatusLabel: some View {
         Text(Self.gatewayStatusTitle(state: self.gatewayDisplayState, isGatewayUsable: self.gatewayConnected))
-            .font(OpenClawType.subheadMedium)
+            .font(NovaType.subheadMedium)
             .foregroundStyle(.primary)
             .lineLimit(1)
             .fixedSize(horizontal: true, vertical: false)
@@ -475,12 +475,12 @@ struct ChatProTab: View {
         self.viewModelHasVerifiedOfflineRoutingIdentity = self.appModel.hasVerifiedChatOfflineRoutingIdentity
     }
 
-    private func makeChatViewModel(sessionKey: String) -> OpenClawChatViewModel {
+    private func makeChatViewModel(sessionKey: String) -> NovaChatViewModel {
         // One gateway facade backs both seams while routing cache and outbox
         // operations to their separate installation-wide databases.
         let offlineStore = self.appModel.makeChatOfflineStore()
         let voiceNoteRecorder = self.appModel.voiceNoteRecorder
-        return OpenClawChatViewModel(
+        return NovaChatViewModel(
             sessionKey: sessionKey,
             // Bind durable rows and their transport lease to the exact same
             // gateway owner even if app state switches between these calls.
@@ -510,8 +510,8 @@ struct ChatProTab: View {
             })
     }
 
-    private var talkControl: OpenClawChatTalkControl {
-        OpenClawChatTalkControl(
+    private var talkControl: NovaChatTalkControl {
+        NovaChatTalkControl(
             isEnabled: self.appModel.talkMode.isEnabled,
             isListening: self.appModel.talkMode.isListening,
             isSpeaking: self.appModel.talkMode.isSpeaking,
@@ -534,9 +534,9 @@ struct ChatProTab: View {
             })
     }
 
-    private var talkInputDevices: [OpenClawChatAudioInputDevice] {
+    private var talkInputDevices: [NovaChatAudioInputDevice] {
         (AVAudioSession.sharedInstance().availableInputs ?? []).map { input in
-            OpenClawChatAudioInputDevice(id: input.uid, name: input.portName)
+            NovaChatAudioInputDevice(id: input.uid, name: input.portName)
         }
     }
 
@@ -547,8 +547,8 @@ struct ChatProTab: View {
         return preferredID
     }
 
-    private var dictationControl: OpenClawChatDictationControl {
-        OpenClawChatDictationControl(
+    private var dictationControl: NovaChatDictationControl {
+        NovaChatDictationControl(
             isActive: self.appModel.isChatDictationActive,
             isAvailable: !self.appModel.isTalkCaptureActive || self.appModel.isChatDictationActive,
             start: {
@@ -572,8 +572,8 @@ struct ChatProTab: View {
         return 0
     }
 
-    private var voiceNoteControl: OpenClawChatVoiceNoteControl {
-        OpenClawChatVoiceNoteControl(
+    private var voiceNoteControl: NovaChatVoiceNoteControl {
+        NovaChatVoiceNoteControl(
             recorder: self.appModel.voiceNoteRecorder,
             isTalkActive: self.appModel.isTalkCaptureActive)
     }
@@ -585,7 +585,7 @@ struct ChatProTab: View {
             } label: {
                 Label {
                     Text("New Chat")
-                        .font(OpenClawType.body)
+                        .font(NovaType.body)
                 } icon: {
                     Image(systemName: "plus.bubble")
                 }
@@ -598,7 +598,7 @@ struct ChatProTab: View {
                 } label: {
                     Label {
                         Text("New Chat in Worktree")
-                            .font(OpenClawType.body)
+                            .font(NovaType.body)
                     } icon: {
                         Image(systemName: "arrow.triangle.branch")
                     }
@@ -611,7 +611,7 @@ struct ChatProTab: View {
             } label: {
                 Label {
                     Text("New Session Options…")
-                        .font(OpenClawType.body)
+                        .font(NovaType.body)
                 } icon: {
                     Image(systemName: "slider.horizontal.3")
                 }
@@ -623,7 +623,7 @@ struct ChatProTab: View {
             } label: {
                 Label {
                     Text(String(localized: "Sessions…"))
-                        .font(OpenClawType.body)
+                        .font(NovaType.body)
                 } icon: {
                     Image(systemName: "rectangle.stack")
                 }
@@ -641,7 +641,7 @@ struct ChatProTab: View {
             } label: {
                 Label {
                     Text("Background Tasks")
-                        .font(OpenClawType.body)
+                        .font(NovaType.body)
                 } icon: {
                     Image(systemName: "clock.arrow.circlepath")
                 }
@@ -653,7 +653,7 @@ struct ChatProTab: View {
             } label: {
                 Label {
                     Text("Export Transcript")
-                        .font(OpenClawType.body)
+                        .font(NovaType.body)
                 } icon: {
                     Image(systemName: "square.and.arrow.up")
                 }
@@ -666,7 +666,7 @@ struct ChatProTab: View {
                 Button(action: openSettings) {
                     Label {
                         Text("Gateway Settings")
-                            .font(OpenClawType.body)
+                            .font(NovaType.body)
                     } icon: {
                         Image(systemName: "network")
                     }
@@ -677,7 +677,7 @@ struct ChatProTab: View {
             Toggle(isOn: self.$showsAssistantTrace) {
                 Label {
                     Text(String(localized: "Show reasoning & tool activity"))
-                        .font(OpenClawType.body)
+                        .font(NovaType.body)
                 } icon: {
                     Image(systemName: "brain.head.profile")
                 }
@@ -695,7 +695,7 @@ struct ChatProTab: View {
             sessionTitle: title,
             sessionKey: viewModel.sessionKey)
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("OpenClawTranscripts", isDirectory: true)
+            .appendingPathComponent("NovaTranscripts", isDirectory: true)
         let fileURL = directory.appendingPathComponent(filename, isDirectory: false)
 
         do {
@@ -752,11 +752,11 @@ struct ChatProTab: View {
             isGatewayUsable: self.gatewayConnected)
         {
         case .success:
-            OpenClawBrand.statusSuccess
+            NovaBrand.statusSuccess
         case .warning:
-            OpenClawBrand.statusWarning
+            NovaBrand.statusWarning
         case .error:
-            OpenClawBrand.statusError
+            NovaBrand.statusError
         }
     }
 
@@ -828,7 +828,7 @@ struct ChatProTab: View {
     }
 
     private var chatUserAccent: Color {
-        OpenClawBrand.accent
+        NovaBrand.accent
     }
 
     private var isAttachmentOwnerPinned: Bool {
@@ -894,16 +894,16 @@ struct ChatProTab: View {
         currentOwnerID != nextOwnerID || currentTransportAgentID != nextTransportAgentID
     }
 
-    nonisolated static let emptyAssistantPrompts: [OpenClawChatView.StarterPrompt] = [
-        OpenClawChatView.StarterPrompt(
+    nonisolated static let emptyAssistantPrompts: [NovaChatView.StarterPrompt] = [
+        NovaChatView.StarterPrompt(
             id: "summarize-status",
-            title: String(localized: "Check OpenClaw status"),
-            prompt: String(localized: "Summarize the current OpenClaw status and tell me what needs attention.")),
-        OpenClawChatView.StarterPrompt(
+            title: String(localized: "Check Nova status"),
+            prompt: String(localized: "Summarize the current Nova status and tell me what needs attention.")),
+        NovaChatView.StarterPrompt(
             id: "show-controls",
             title: String(localized: "What can I control here?"),
             prompt: String(localized: "Show me which phone controls and device capabilities are available right now.")),
-        OpenClawChatView.StarterPrompt(
+        NovaChatView.StarterPrompt(
             id: "start-voice",
             title: String(localized: "Help me start voice chat"),
             prompt: String(localized: "Help me start a realtime voice session from this phone.")),

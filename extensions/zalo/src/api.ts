@@ -3,9 +3,9 @@
  * @see https://bot.zaloplatforms.com/docs
  */
 
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import { readProviderJsonResponse } from "openclaw/plugin-sdk/provider-http";
-import { resolvePinnedHostnameWithPolicy, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+import { resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import { readProviderJsonResponse } from "nova/plugin-sdk/provider-http";
+import { resolvePinnedHostnameWithPolicy, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 
 const ZALO_API_BASE = "https://bot-api.zaloplatforms.com";
 const ZALO_API_URL_ENV = "ZALO_API_URL";

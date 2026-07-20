@@ -2,7 +2,7 @@
   "name": "@nova/browser-plugin",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw browser tool plugin",
+  "description": "Nova browser tool plugin",
   "type": "module",
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
@@ -18,7 +18,7 @@
     "@nova/plugin-sdk": "workspace:*",
     "undici": "8.6.0"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ],

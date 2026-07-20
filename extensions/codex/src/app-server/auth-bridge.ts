@@ -19,8 +19,8 @@ import {
   type AuthProfileCredential,
   type AuthProfileStore,
   type OAuthCredential,
-} from "openclaw/plugin-sdk/agent-runtime";
-import { hasUsableOAuthCredential } from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/agent-runtime";
+import { hasUsableOAuthCredential } from "nova/plugin-sdk/provider-auth";
 import { resolveCodexAppServerHomeDir, withEphemeralCodexAuthStore } from "./auth-start-options.js";
 import type { CodexAppServerClient } from "./client.js";
 import { ensureCodexComputerUseSharedPluginCache } from "./computer-use-cache.js";
@@ -367,7 +367,7 @@ function resolveCodexAppServerEnvApiKeyCacheKey(params: {
     return undefined;
   }
   const hash = createHash("sha256");
-  hash.update("openclaw:codex:app-server-env-api-key:v1");
+  hash.update("nova:codex:app-server-env-api-key:v1");
   hash.update("\0");
   hash.update(apiKey.key);
   hash.update("\0");
@@ -399,7 +399,7 @@ export function resolveCodexAppServerPreparedApiKeyCacheKey(
 
 function fingerprintApiKeyAuthProfileCacheKey(apiKey: string): string {
   const hash = createHash("sha256");
-  hash.update("openclaw:codex:app-server-auth-profile-api-key:v1");
+  hash.update("nova:codex:app-server-auth-profile-api-key:v1");
   hash.update("\0");
   hash.update(apiKey);
   return `api_key:sha256:${hash.digest("hex")}`;
@@ -407,7 +407,7 @@ function fingerprintApiKeyAuthProfileCacheKey(apiKey: string): string {
 
 function fingerprintTokenAuthProfileCacheKey(accessToken: string): string {
   const hash = createHash("sha256");
-  hash.update("openclaw:codex:app-server-auth-profile-token:v1");
+  hash.update("nova:codex:app-server-auth-profile-token:v1");
   hash.update("\0");
   hash.update(accessToken);
   return `token:sha256:${hash.digest("hex")}`;
@@ -415,7 +415,7 @@ function fingerprintTokenAuthProfileCacheKey(accessToken: string): string {
 
 function fingerprintCodexCliAuthFileApiKeyCacheKey(apiKey: string): string {
   const hash = createHash("sha256");
-  hash.update("openclaw:codex:app-server-cli-auth-json-api-key:v1");
+  hash.update("nova:codex:app-server-cli-auth-json-api-key:v1");
   hash.update("\0");
   hash.update(apiKey);
   return `CODEX_AUTH_JSON:sha256:${hash.digest("hex")}`;

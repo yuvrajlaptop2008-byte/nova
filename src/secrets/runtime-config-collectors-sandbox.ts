@@ -1,7 +1,7 @@
 /** Collects agent-scoped sandbox SSH SecretRefs during runtime preparation. */
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { resolveSandboxScope } from "../agents/sandbox/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";
 import { runtimeSandboxSecretOwnerId } from "./runtime-sandbox-secret-owner.js";
 import {
@@ -53,7 +53,7 @@ function collectAssignment(params: {
 
 /** Collects SSH material once for every agent whose current backend can manage it. */
 export function collectAgentSandboxAssignments(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   defaults: SecretDefaults | undefined;
   context: ResolverContext;
 }): void {

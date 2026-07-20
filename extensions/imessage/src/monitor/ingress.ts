@@ -4,10 +4,10 @@ import {
   type ChannelIngressQueue,
   type ChannelIngressMonitorDeliveryResult,
   type ChannelIngressMonitorLifecycle,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { collectErrorGraphCandidates, formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/channel-outbound";
+import { collectErrorGraphCandidates, formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import { getIMessageRuntime } from "../runtime.js";
 import { parseIMessageNotification } from "./parse-notification.js";
 import type { IMessagePayload } from "./types.js";

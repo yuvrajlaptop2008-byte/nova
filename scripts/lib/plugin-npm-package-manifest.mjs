@@ -322,7 +322,7 @@ function installMissingOptionalBundledDependencies(params) {
 }
 
 function packageOptsOutOfBundledRuntimeDependencies(packageJson) {
-  return packageJson?.openclaw?.release?.bundleRuntimeDependencies === false;
+  return packageJson?.nova?.release?.bundleRuntimeDependencies === false;
 }
 
 function shouldBundleDependencies(value, packageJson) {
@@ -447,8 +447,8 @@ export function resolveAugmentedPluginNpmPackageJson(params) {
     files: plan.packageFiles,
     peerDependencies: plan.packagePeerMetadata.peerDependencies,
     peerDependenciesMeta: plan.packagePeerMetadata.peerDependenciesMeta,
-    openclaw: {
-      ...plan.packageJson.openclaw,
+    nova: {
+      ...plan.packageJson.nova,
       runtimeExtensions: plan.runtimeExtensions,
       ...(plan.runtimeSetupEntry
         ? {
@@ -584,7 +584,7 @@ export function mergeGeneratedChannelConfigs(manifest, generatedChannelConfigs) 
 export function resolveAugmentedPluginNpmManifest(params) {
   const repoRoot = path.resolve(params.repoRoot ?? ".");
   const packageDir = resolvePackageDir(repoRoot, params.packageDir);
-  const manifestPath = path.join(packageDir, "openclaw.plugin.json");
+  const manifestPath = path.join(packageDir, "nova.plugin.json");
   if (!fs.existsSync(manifestPath)) {
     return {
       manifestPath,

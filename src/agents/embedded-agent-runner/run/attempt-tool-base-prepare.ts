@@ -2,7 +2,7 @@ import type { DiagnosticTraceContext } from "../../../infra/diagnostic-trace-con
 import { extractModelCompat } from "../../../plugins/provider-model-compat.js";
 import { getPluginToolMeta } from "../../../plugins/tools.js";
 import { isSubagentSessionKey } from "../../../routing/session-key.js";
-import { createOpenClawCodingTools } from "../../agent-tools.js";
+import { createNovaCodingTools } from "../../agent-tools.js";
 import { getActiveAgentRingZeroTools } from "../../agent-tools.ring-zero-context.js";
 import { getChannelAgentToolMeta } from "../../channel-tools.js";
 import { resolveCodeModeConfig } from "../../code-mode.js";
@@ -36,8 +36,8 @@ import { buildEmbeddedAttemptToolRunContext } from "./attempt.tool-run-context.j
 import { TOOL_SEARCH_CONTROL_ALLOWLIST_NAMES } from "./attempt.tool-search-run-plan.js";
 import type { EmbeddedRunAttemptParams } from "./types.js";
 
-type OpenClawCodingToolsOptions = NonNullable<Parameters<typeof createOpenClawCodingTools>[0]>;
-type SkillUsagePaths = OpenClawCodingToolsOptions["skillUsagePaths"];
+type NovaCodingToolsOptions = NonNullable<Parameters<typeof createNovaCodingTools>[0]>;
+type SkillUsagePaths = NovaCodingToolsOptions["skillUsagePaths"];
 
 export function prepareEmbeddedAttemptToolBase(params: {
   agentDir: string;
@@ -45,7 +45,7 @@ export function prepareEmbeddedAttemptToolBase(params: {
   effectiveCwd: string;
   effectiveWorkspace: string;
   markCoreToolStage: (name: string) => void;
-  onYield: NonNullable<OpenClawCodingToolsOptions["onYield"]>;
+  onYield: NonNullable<NovaCodingToolsOptions["onYield"]>;
   resolvedWorkspace: string;
   runAbortController: AbortController;
   runTrace: DiagnosticTraceContext;
@@ -202,7 +202,7 @@ export function prepareEmbeddedAttemptToolBase(params: {
   const constructedToolsRaw = !shouldConstructTools
     ? []
     : (() => {
-        const allTools = createOpenClawCodingTools({
+        const allTools = createNovaCodingTools({
           agentId: params.sessionAgentId,
           ...buildEmbeddedAttemptToolRunContext({ ...attempt, trace: params.runTrace }),
           messageChannel: attempt.messageChannel,
@@ -309,7 +309,7 @@ export function prepareEmbeddedAttemptToolBase(params: {
           conversationCapabilityProfile: runtimeCapabilityProfile,
           onYield: params.onYield,
         });
-        params.markCoreToolStage("attempt:create-openclaw-coding-tools");
+        params.markCoreToolStage("attempt:create-nova-coding-tools");
         const filteredTools = applyEmbeddedAttemptToolsAllow(allTools, effectiveToolsAllow, {
           toolMeta: (tool) => getPluginToolMeta(tool),
         });

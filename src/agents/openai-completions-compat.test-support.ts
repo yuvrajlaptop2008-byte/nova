@@ -21,7 +21,7 @@ type OpenAICompletionsCompatTestApi = {
 
 function getTestApi(): OpenAICompletionsCompatTestApi {
   const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.openAICompletionsCompatTestApi")
+    Symbol.for("nova.openAICompletionsCompatTestApi")
   ];
   if (!api) {
     throw new Error("OpenAI completions compat test API is unavailable");

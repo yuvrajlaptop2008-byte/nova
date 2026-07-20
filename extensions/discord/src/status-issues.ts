@@ -1,15 +1,12 @@
 // Discord plugin module implements status issues behavior.
-import type {
-  ChannelAccountSnapshot,
-  ChannelStatusIssue,
-} from "openclaw/plugin-sdk/channel-contract";
+import type { ChannelAccountSnapshot, ChannelStatusIssue } from "nova/plugin-sdk/channel-contract";
 import {
   appendMatchMetadata,
   asString,
   isRecord,
   readAccountStatusSnapshot,
   resolveEnabledConfiguredAccountId,
-} from "openclaw/plugin-sdk/status-helpers";
+} from "nova/plugin-sdk/status-helpers";
 
 type DiscordIntentSummary = {
   messageContent?: "enabled" | "limited" | "disabled";

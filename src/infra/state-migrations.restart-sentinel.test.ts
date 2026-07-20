@@ -4,11 +4,8 @@ import fsp from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { acquireGatewayLock } from "./gateway-lock.js";
 import {
   executeSqliteQuerySync,
@@ -27,20 +24,20 @@ import {
 } from "./state-migrations.restart-sentinel.js";
 
 type MigrationDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "gateway_restart_sentinel" | "migration_sources"
 >;
 
 describe("legacy restart sentinel migration", () => {
   const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
     afterEach(() => {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       cleanup();
     });
   });
 
   function useStateDir(): { env: NodeJS.ProcessEnv; stateDir: string } {
-    const stateDir = tempDirs.make("openclaw-restart-sentinel-migration-");
+    const stateDir = tempDirs.make("nova-restart-sentinel-migration-");
     return { env: { ...process.env, NOVA_STATE_DIR: stateDir }, stateDir };
   }
 
@@ -92,7 +89,7 @@ describe("legacy restart sentinel migration", () => {
   }
 
   function database(env: NodeJS.ProcessEnv) {
-    return openOpenClawStateDatabase({ env }).db;
+    return openNovaStateDatabase({ env }).db;
   }
 
   function receipt(env: NodeJS.ProcessEnv) {
@@ -340,7 +337,7 @@ describe("legacy restart sentinel migration", () => {
   it("rejects symlinks, hardlinks, and oversized sources without deleting them", async () => {
     const cases = ["symlink", "hardlink", "oversized"] as const;
     for (const sourceKind of cases) {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       const { env, stateDir } = useStateDir();
       const sourcePath = path.join(stateDir, "restart-sentinel.json");
       if (sourceKind === "oversized") {

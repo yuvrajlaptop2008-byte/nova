@@ -6,7 +6,7 @@
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { parseStrictNonNegativeInteger } from "@nova/normalization-core/number-coercion";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveProviderModernModelRef } from "../plugins/provider-runtime.js";
 import { liveProvidersShareOwningPlugin } from "./live-provider-owner.js";
 
@@ -264,7 +264,7 @@ export function shouldExcludeProviderFromDefaultHighSignalLiveSweep(params: {
   provider?: string | null;
   useExplicitModels: boolean;
   providerFilter?: ReadonlySet<string> | null;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   resolveProviderOwners?: (provider: string) => readonly string[] | undefined;

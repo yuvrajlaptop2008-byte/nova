@@ -55,7 +55,7 @@ function isNodeVersionAffectedByCompileCacheDeadlock(nodeVersion: string | undef
   return minor < MIN_COMPILE_CACHE_NODE_24_MINOR;
 }
 
-function shouldEnableOpenClawCompileCache(params: {
+function shouldEnableNovaCompileCache(params: {
   env?: NodeJS.ProcessEnv;
   installRoot: string;
   nodeVersion?: string;
@@ -96,7 +96,7 @@ function readPackageVersion(packageJsonPath: string): string {
   return "unknown";
 }
 
-function resolveOpenClawCompileCacheDirectory(params: {
+function resolveNovaCompileCacheDirectory(params: {
   env?: NodeJS.ProcessEnv;
   installRoot: string;
 }): string {
@@ -114,26 +114,21 @@ function resolveOpenClawCompileCacheDirectory(params: {
     env.NODE_COMPILE_CACHE && !isNodeCompileCacheDisabled(env)
       ? env.NODE_COMPILE_CACHE
       : path.join(os.tmpdir(), "node-compile-cache");
-  return path.join(
-    baseDirectory,
-    "openclaw",
-    version,
-    sanitizeCompileCachePathSegment(installMarker),
-  );
+  return path.join(baseDirectory, "nova", version, sanitizeCompileCachePathSegment(installMarker));
 }
 
-type OpenClawCompileCacheRespawnPlan = {
+type NovaCompileCacheRespawnPlan = {
   command: string;
   args: string[];
   env: NodeJS.ProcessEnv;
   detachForProcessTree: boolean;
 };
 
-type OpenClawCompileCacheRespawnRuntime = RespawnChildRuntime & {
+type NovaCompileCacheRespawnRuntime = RespawnChildRuntime & {
   writeError: (message: string) => void;
 };
 
-function buildOpenClawCompileCacheRespawnPlan(params: {
+function buildNovaCompileCacheRespawnPlan(params: {
   currentFile: string;
   env?: NodeJS.ProcessEnv;
   execArgv?: string[];
@@ -143,7 +138,7 @@ function buildOpenClawCompileCacheRespawnPlan(params: {
   compileCacheDir?: string;
   nodeVersion?: string;
   platform?: NodeJS.Platform;
-}): OpenClawCompileCacheRespawnPlan | undefined {
+}): NovaCompileCacheRespawnPlan | undefined {
   const env = params.env ?? process.env;
   const needsDisabledCompileCacheRespawn =
     isSourceCheckoutInstallRoot(params.installRoot) ||
@@ -178,11 +173,11 @@ function buildOpenClawCompileCacheRespawnPlan(params: {
   };
 }
 
-export function respawnWithoutOpenClawCompileCacheIfNeeded(params: {
+export function respawnWithoutNovaCompileCacheIfNeeded(params: {
   currentFile: string;
   installRoot: string;
 }): boolean {
-  const plan = buildOpenClawCompileCacheRespawnPlan({
+  const plan = buildNovaCompileCacheRespawnPlan({
     currentFile: params.currentFile,
     installRoot: params.installRoot,
     compileCacheDir: getCompileCacheDir?.(),
@@ -190,13 +185,13 @@ export function respawnWithoutOpenClawCompileCacheIfNeeded(params: {
   if (!plan) {
     return false;
   }
-  runOpenClawCompileCacheRespawnPlan(plan);
+  runNovaCompileCacheRespawnPlan(plan);
   return true;
 }
 
-function runOpenClawCompileCacheRespawnPlan(
-  plan: OpenClawCompileCacheRespawnPlan,
-  runtime: OpenClawCompileCacheRespawnRuntime = {
+function runNovaCompileCacheRespawnPlan(
+  plan: NovaCompileCacheRespawnPlan,
+  runtime: NovaCompileCacheRespawnRuntime = {
     spawn,
     attachChildProcessBridge,
     exit: process.exit.bind(process) as (code?: number) => never,
@@ -211,7 +206,7 @@ function runOpenClawCompileCacheRespawnPlan(
     runtime,
     onError: (error) => {
       runtime.writeError(
-        `[openclaw] Failed to respawn CLI without compile cache: ${
+        `[nova] Failed to respawn CLI without compile cache: ${
           error instanceof Error ? (error.stack ?? error.message) : String(error)
         }\n`,
       );
@@ -219,27 +214,27 @@ function runOpenClawCompileCacheRespawnPlan(
   });
 }
 
-export function enableOpenClawCompileCache(params: {
+export function enableNovaCompileCache(params: {
   env?: NodeJS.ProcessEnv;
   installRoot: string;
 }): void {
-  if (!shouldEnableOpenClawCompileCache(params)) {
+  if (!shouldEnableNovaCompileCache(params)) {
     return;
   }
   try {
-    enableCompileCache(resolveOpenClawCompileCacheDirectory(params));
+    enableCompileCache(resolveNovaCompileCacheDirectory(params));
   } catch {
     // Best-effort only; never block startup.
   }
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.entryCompileCacheTestApi")] = {
-    buildOpenClawCompileCacheRespawnPlan,
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.entryCompileCacheTestApi")] = {
+    buildNovaCompileCacheRespawnPlan,
     isNodeVersionAffectedByCompileCacheDeadlock,
     isSourceCheckoutInstallRoot,
-    resolveOpenClawCompileCacheDirectory,
-    runOpenClawCompileCacheRespawnPlan,
-    shouldEnableOpenClawCompileCache,
+    resolveNovaCompileCacheDirectory,
+    runNovaCompileCacheRespawnPlan,
+    shouldEnableNovaCompileCache,
   };
 }

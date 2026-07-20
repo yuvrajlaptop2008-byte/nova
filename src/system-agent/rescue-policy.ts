@@ -1,5 +1,5 @@
 // Nova rescue policy gates remote writes by owner, DM, sandbox, and YOLO posture.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 
 /**
@@ -29,7 +29,7 @@ type SystemAgentRescueDecision =
     };
 
 type SystemAgentRescuePolicyInput = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   senderIsOwner: boolean;
   isDirectMessage: boolean;
@@ -39,7 +39,7 @@ function resolvePendingTtlMinutes(value: unknown): number {
   return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 15;
 }
 
-function resolveAgentEntry(cfg: OpenClawConfig, agentId?: string) {
+function resolveAgentEntry(cfg: NovaConfig, agentId?: string) {
   if (!agentId) {
     return undefined;
   }
@@ -49,20 +49,17 @@ function resolveAgentEntry(cfg: OpenClawConfig, agentId?: string) {
   );
 }
 
-function resolveScopedExecConfig(cfg: OpenClawConfig, agentId?: string) {
+function resolveScopedExecConfig(cfg: NovaConfig, agentId?: string) {
   return resolveAgentEntry(cfg, agentId)?.tools?.exec;
 }
 
-function resolveScopedSandboxMode(
-  cfg: OpenClawConfig,
-  agentId?: string,
-): "off" | "non-main" | "all" {
+function resolveScopedSandboxMode(cfg: NovaConfig, agentId?: string): "off" | "non-main" | "all" {
   return (
     resolveAgentEntry(cfg, agentId)?.sandbox?.mode ?? cfg.agents?.defaults?.sandbox?.mode ?? "off"
   );
 }
 
-function isYoloHostPosture(cfg: OpenClawConfig, agentId?: string): boolean {
+function isYoloHostPosture(cfg: NovaConfig, agentId?: string): boolean {
   const scopedExec = resolveScopedExecConfig(cfg, agentId);
   const globalExec = cfg.tools?.exec;
   const security = scopedExec?.security ?? globalExec?.security ?? "full";

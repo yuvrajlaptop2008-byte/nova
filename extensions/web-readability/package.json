@@ -2,7 +2,7 @@
   "name": "@nova/web-readability-plugin",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw local Readability web extraction plugin",
+  "description": "Nova local Readability web extraction plugin",
   "type": "module",
   "dependencies": {
     "@mozilla/readability": "0.6.0",
@@ -11,7 +11,7 @@
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

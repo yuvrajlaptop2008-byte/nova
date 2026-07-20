@@ -184,9 +184,9 @@ describe("memory index schema", () => {
   });
 
   it("does not import a legacy sidecar memory database during schema startup", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-memory-sidecar-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-memory-sidecar-"));
     const legacyPath = path.join(rootDir, "memory", "main.sqlite");
-    const agentPath = path.join(rootDir, "agents", "main", "agent", "openclaw-agent.sqlite");
+    const agentPath = path.join(rootDir, "agents", "main", "agent", "nova-agent.sqlite");
     fs.mkdirSync(path.dirname(legacyPath), { recursive: true });
     fs.mkdirSync(path.dirname(agentPath), { recursive: true });
     const legacyDb = new DatabaseSync(legacyPath);
@@ -373,7 +373,7 @@ describe("memory index schema", () => {
   });
 
   it("keeps source and path FTS identities stable across VACUUM", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-memory-vacuum-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-memory-vacuum-"));
     const db = new DatabaseSync(path.join(rootDir, "memory.sqlite"));
     try {
       ensureMemoryIndexSchema({ db, cacheEnabled: false, ftsEnabled: true });

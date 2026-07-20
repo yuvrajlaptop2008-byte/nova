@@ -13,7 +13,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
 use zeroize::{Zeroize, Zeroizing};
 
-pub(crate) const CLIENT_ID: &str = "openclaw-linux";
+pub(crate) const CLIENT_ID: &str = "nova-linux";
 pub(crate) const CLIENT_MODE: &str = "ui";
 pub(crate) const CLIENT_PLATFORM: &str = "linux";
 pub(crate) const CLIENT_DEVICE_FAMILY: &str = "desktop";
@@ -423,14 +423,14 @@ mod tests {
 
         assert_eq!(
             payload.as_bytes(),
-            b"v3|dev-1|openclaw-linux|ui|operator|operator.admin,operator.read|1800000000000|test-token|nonce-abc|linux|desktop"
+            b"v3|dev-1|nova-linux|ui|operator|operator.admin,operator.read|1800000000000|test-token|nonce-abc|linux|desktop"
         );
     }
 
     #[test]
     fn identity_persistence_round_trip_keeps_keypair_token_and_private_mode() {
         let directory = std::env::temp_dir().join(format!(
-            "openclaw-linux-gateway-identity-test-{}",
+            "nova-linux-gateway-identity-test-{}",
             Uuid::new_v4()
         ));
         let path = directory.join("quickchat-gateway-device.json");
@@ -517,7 +517,7 @@ mod tests {
     #[test]
     fn stale_device_token_can_be_cleared_without_rotating_the_identity() {
         let directory = std::env::temp_dir().join(format!(
-            "openclaw-linux-gateway-stale-token-test-{}",
+            "nova-linux-gateway-stale-token-test-{}",
             Uuid::new_v4()
         ));
         let path = directory.join("quickchat-gateway-device.json");

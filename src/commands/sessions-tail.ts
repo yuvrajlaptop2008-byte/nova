@@ -112,7 +112,7 @@ function setSessionsTailFollowIntervalMsForTests(intervalMs?: number): void {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.sessionsTailTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.sessionsTailTestApi")] = {
     setSessionsTailFollowIntervalMsForTests,
   };
 }
@@ -135,7 +135,7 @@ function toOptionalString(value: unknown): string | undefined {
 function isTrajectoryEvent(value: unknown): value is TrajectoryEvent {
   return (
     isRecord(value) &&
-    value.traceSchema === "openclaw-trajectory" &&
+    value.traceSchema === "nova-trajectory" &&
     value.schemaVersion === 1 &&
     typeof value.type === "string" &&
     typeof value.ts === "string" &&

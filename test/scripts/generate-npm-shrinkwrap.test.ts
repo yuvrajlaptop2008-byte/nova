@@ -79,11 +79,11 @@ describe("generate-npm-shrinkwrap", () => {
   it("normalizes pnpm scoped override selectors for npm shrinkwrap", () => {
     expect(
       normalizeOverrides({
-        "openclaw@2026.5.28>undici": "8.5.0",
+        "nova@2026.5.28>undici": "8.5.0",
         tar: 7.5,
       }),
     ).toEqual({
-      "openclaw@2026.5.28": {
+      "nova@2026.5.28": {
         undici: "8.5.0",
       },
       tar: "7.5",
@@ -435,8 +435,8 @@ describe("generate-npm-shrinkwrap", () => {
     expect(
       shouldUseLegacyPeerDepsForShrinkwrap({
         dependencies: { zod: "4.4.3" },
-        peerDependencies: { openclaw: ">=2026.5.30" },
-        peerDependenciesMeta: { openclaw: { optional: true } },
+        peerDependencies: { nova: ">=2026.5.30" },
+        peerDependenciesMeta: { nova: { optional: true } },
       }),
     ).toBe(true);
   });

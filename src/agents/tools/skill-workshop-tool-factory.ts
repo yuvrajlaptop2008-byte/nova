@@ -1,11 +1,11 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { SkillProposalOrigin, SkillWorkshopRunOptions } from "../../skills/workshop/types.js";
 import { createSkillWorkshopTool } from "./skill-workshop-tool.js";
 
 export function createConfiguredSkillWorkshopTool(params: {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId: string;
   sessionKey?: string;
   runId?: string;

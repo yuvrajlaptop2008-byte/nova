@@ -1,6 +1,6 @@
 // Exercises agent harness registration, ownership metadata, and selection handoff.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   clearAgentHarnesses,
   disposeRegisteredAgentHarnesses,
@@ -51,18 +51,18 @@ function makeHarness(
   };
 }
 
-function providerRuntimeConfig(provider: string, runtime: string): OpenClawConfig {
+function providerRuntimeConfig(provider: string, runtime: string): NovaConfig {
   return {
     models: {
       providers: {
         [provider]: {
-          baseUrl: "https://api.openclaw.test/v1",
+          baseUrl: "https://api.nova.test/v1",
           agentRuntime: { id: runtime },
           models: [],
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 describe("agent harness registry", () => {
@@ -130,9 +130,7 @@ describe("agent harness registry", () => {
     // plugin has registered its harness in this process.
     process.env.NOVA_AGENT_RUNTIME = "auto";
 
-    expect(selectAgentHarness({ provider: "plugin-models", modelId: "custom-1" }).id).toBe(
-      "openclaw",
-    );
+    expect(selectAgentHarness({ provider: "plugin-models", modelId: "custom-1" }).id).toBe("nova");
 
     registerAgentHarness(makeHarness("custom", { providers: ["plugin-models"] }), {
       ownerPluginId: "plugin-a",
@@ -146,9 +144,7 @@ describe("agent harness registry", () => {
   it("falls back to Nova for other models", () => {
     process.env.NOVA_AGENT_RUNTIME = "auto";
 
-    expect(selectAgentHarness({ provider: "anthropic", modelId: "sonnet-4.6" }).id).toBe(
-      "openclaw",
-    );
+    expect(selectAgentHarness({ provider: "anthropic", modelId: "sonnet-4.6" }).id).toBe("nova");
   });
 
   it("lets a plugin harness win in auto mode by priority", () => {
@@ -169,9 +165,9 @@ describe("agent harness registry", () => {
       selectAgentHarness({
         provider: "codex",
         modelId: "gpt-5.4",
-        config: providerRuntimeConfig("codex", "openclaw"),
+        config: providerRuntimeConfig("codex", "nova"),
       }).id,
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it("honors explicit provider plugin runtime policy when the plugin harness is registered", () => {

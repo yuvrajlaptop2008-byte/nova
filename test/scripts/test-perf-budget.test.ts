@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { testing } from "../../scripts/test-perf-budget.mjs";
 
 function withReport(payload: unknown, run: (reportPath: string) => void) {
-  const reportPath = path.join(os.tmpdir(), `openclaw-test-perf-budget-${Date.now()}.json`);
+  const reportPath = path.join(os.tmpdir(), `nova-test-perf-budget-${Date.now()}.json`);
   fs.writeFileSync(
     reportPath,
     typeof payload === "string" ? payload : `${JSON.stringify(payload)}\n`,

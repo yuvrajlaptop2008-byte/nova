@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs a prepared OpenClaw npm tarball in Docker, runs non-interactive
+# Installs a prepared Nova npm tarball in Docker, runs non-interactive
 # onboarding for a channel, and verifies one mocked model turn through Gateway.
 set -euo pipefail
 
@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-npm-onboard-channel-agent-e2e" NOVA_NPM_ONBOARD_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-npm-onboard-channel-agent-e2e" NOVA_NPM_ONBOARD_E2E_IMAGE)"
 DOCKER_TARGET="${NOVA_NPM_ONBOARD_DOCKER_TARGET:-bare}"
 HOST_BUILD="${NOVA_NPM_ONBOARD_HOST_BUILD:-1}"
 PACKAGE_TGZ="${NOVA_CURRENT_PACKAGE_TGZ:-}"
@@ -69,38 +69,38 @@ if ! docker_e2e_run_with_harness \
   -i "$IMAGE_NAME" bash -s >"$run_log" 2>&1 <<'EOF'; then
 set -Eeuo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+source scripts/lib/nova-e2e-instance.sh
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export OPENAI_API_KEY="sk-openclaw-npm-onboard-e2e"
+export OPENAI_API_KEY="sk-nova-npm-onboard-e2e"
 export NOVA_GATEWAY_TOKEN="npm-onboard-channel-agent-token"
 
 CHANNEL="${NOVA_NPM_ONBOARD_CHANNEL:?missing NOVA_NPM_ONBOARD_CHANNEL}"
 PORT="18789"
 MOCK_PORT="44080"
 SUCCESS_MARKER="NOVA_AGENT_E2E_OK_ASSISTANT"
-scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-npm-onboard-channel-agent.XXXXXX")"
+scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/nova-npm-onboard-channel-agent.XXXXXX")"
 MOCK_REQUEST_LOG="$scenario_tmp/mock-openai-requests.jsonl"
 export SUCCESS_MARKER MOCK_REQUEST_LOG
 mock_pid=""
 
 case "$CHANNEL" in
   telegram)
-    CHANNEL_TOKEN="123456:openclaw-npm-onboard-token"
+    CHANNEL_TOKEN="123456:nova-npm-onboard-token"
     DEP_SENTINEL="grammy"
     CHANNEL_ADD_ARGS=(--token "$CHANNEL_TOKEN")
     CHANNEL_CONFIG_TOKENS=("$CHANNEL_TOKEN")
     ;;
   discord)
-    CHANNEL_TOKEN="openclaw-npm-onboard-discord-token"
+    CHANNEL_TOKEN="nova-npm-onboard-discord-token"
     DEP_SENTINEL="discord-api-types"
     CHANNEL_ADD_ARGS=(--token "$CHANNEL_TOKEN")
     CHANNEL_CONFIG_TOKENS=("$CHANNEL_TOKEN")
     ;;
   slack)
-    SLACK_BOT_TOKEN="xoxb-openclaw-npm-onboard-slack-token"
-    SLACK_APP_TOKEN="xapp-openclaw-npm-onboard-slack-token"
+    SLACK_BOT_TOKEN="xoxb-nova-npm-onboard-slack-token"
+    SLACK_APP_TOKEN="xapp-nova-npm-onboard-slack-token"
     DEP_SENTINEL="@slack/bolt"
     CHANNEL_ADD_ARGS=(--bot-token "$SLACK_BOT_TOKEN" --app-token "$SLACK_APP_TOKEN")
     CHANNEL_CONFIG_TOKENS=("$SLACK_BOT_TOKEN" "$SLACK_APP_TOKEN")
@@ -112,7 +112,7 @@ case "$CHANNEL" in
 esac
 
 cleanup() {
-  openclaw_e2e_stop_process "${mock_pid:-}"
+  nova_e2e_stop_process "${mock_pid:-}"
   rm -rf "$scenario_tmp"
 }
 trap cleanup EXIT
@@ -120,42 +120,42 @@ trap cleanup EXIT
 dump_debug_logs() {
   local status="$1"
   echo "npm onboard/channel/agent scenario failed with exit code $status" >&2
-  openclaw_e2e_dump_logs \
-    /tmp/openclaw-install.log \
-    /tmp/openclaw-onboard.json \
-    /tmp/openclaw-channel-add.log \
-    /tmp/openclaw-channels-status.json \
-    /tmp/openclaw-channels-status.err \
-    /tmp/openclaw-status.txt \
-    /tmp/openclaw-status.err \
-    /tmp/openclaw-doctor.log \
-    /tmp/openclaw-agent.combined \
-    /tmp/openclaw-agent.err \
-    /tmp/openclaw-agent.json \
-    /tmp/openclaw-mock-openai.log \
+  nova_e2e_dump_logs \
+    /tmp/nova-install.log \
+    /tmp/nova-onboard.json \
+    /tmp/nova-channel-add.log \
+    /tmp/nova-channels-status.json \
+    /tmp/nova-channels-status.err \
+    /tmp/nova-status.txt \
+    /tmp/nova-status.err \
+    /tmp/nova-doctor.log \
+    /tmp/nova-agent.combined \
+    /tmp/nova-agent.err \
+    /tmp/nova-agent.json \
+    /tmp/nova-mock-openai.log \
     "$MOCK_REQUEST_LOG" \
-    "$NOVA_HOME/.openclaw/openclaw.json" \
-    "$NOVA_HOME/.openclaw/agents/main/agent/auth-profiles.json"
+    "$NOVA_HOME/.nova/nova.json" \
+    "$NOVA_HOME/.nova/agents/main/agent/auth-profiles.json"
 }
 trap 'status=$?; dump_debug_logs "$status"; exit "$status"' ERR
 
-openclaw_e2e_install_package /tmp/openclaw-install.log
+nova_e2e_install_package /tmp/nova-install.log
 
-command -v openclaw >/dev/null
-openclaw_e2e_enable_openclaw_cli_timeout
-package_root="$(openclaw_e2e_package_root)"
+command -v nova >/dev/null
+nova_e2e_enable_nova_cli_timeout
+package_root="$(nova_e2e_package_root)"
 if [ -d "$package_root/dist/extensions/$CHANNEL" ]; then
   CHANNEL_PACKAGE_MODE="bundled"
 else
   CHANNEL_PACKAGE_MODE="external"
-  echo "$CHANNEL is not packaged with core OpenClaw; expecting channel selection to install it on demand."
+  echo "$CHANNEL is not packaged with core Nova; expecting channel selection to install it on demand."
 fi
 
-mock_pid="$(openclaw_e2e_start_mock_openai "$MOCK_PORT" /tmp/openclaw-mock-openai.log)"
-openclaw_e2e_wait_mock_openai "$MOCK_PORT"
+mock_pid="$(nova_e2e_start_mock_openai "$MOCK_PORT" /tmp/nova-mock-openai.log)"
+nova_e2e_wait_mock_openai "$MOCK_PORT"
 
 echo "Running non-interactive onboarding..."
-openclaw onboard --non-interactive --accept-risk \
+nova onboard --non-interactive --accept-risk \
   --mode local \
   --auth-choice openai-api-key \
   --secret-input-mode ref \
@@ -165,39 +165,39 @@ openclaw onboard --non-interactive --accept-risk \
   --skip-ui \
   --skip-skills \
   --skip-health \
-  --json >/tmp/openclaw-onboard.json
+  --json >/tmp/nova-onboard.json
 
 node scripts/e2e/lib/npm-onboard-channel-agent/assertions.mjs assert-onboard-state "$HOME"
 
-openclaw_e2e_assert_dep_absent "$DEP_SENTINEL" "$HOME/.openclaw"
+nova_e2e_assert_dep_absent "$DEP_SENTINEL" "$HOME/.nova"
 
 echo "Configuring $CHANNEL..."
-openclaw channels add --channel "$CHANNEL" "${CHANNEL_ADD_ARGS[@]}" >/tmp/openclaw-channel-add.log 2>&1
+nova channels add --channel "$CHANNEL" "${CHANNEL_ADD_ARGS[@]}" >/tmp/nova-channel-add.log 2>&1
 node scripts/e2e/lib/npm-onboard-channel-agent/assertions.mjs assert-channel-config "$CHANNEL" "${CHANNEL_CONFIG_TOKENS[@]}"
 
 echo "Checking status surfaces for $CHANNEL..."
-openclaw channels status --json >/tmp/openclaw-channels-status.json 2>/tmp/openclaw-channels-status.err
-openclaw status >/tmp/openclaw-status.txt 2>/tmp/openclaw-status.err
-node scripts/e2e/lib/npm-onboard-channel-agent/assertions.mjs assert-status-surfaces "$CHANNEL" /tmp/openclaw-channels-status.json /tmp/openclaw-status.txt
+nova channels status --json >/tmp/nova-channels-status.json 2>/tmp/nova-channels-status.err
+nova status >/tmp/nova-status.txt 2>/tmp/nova-status.err
+node scripts/e2e/lib/npm-onboard-channel-agent/assertions.mjs assert-status-surfaces "$CHANNEL" /tmp/nova-channels-status.json /tmp/nova-status.txt
 
 echo "Running doctor after channel activation..."
-openclaw doctor --repair --non-interactive >/tmp/openclaw-doctor.log 2>&1
+nova doctor --repair --non-interactive >/tmp/nova-doctor.log 2>&1
 if [ "$CHANNEL_PACKAGE_MODE" = "external" ]; then
-  openclaw_e2e_assert_dep_present "$DEP_SENTINEL" "$HOME/.openclaw"
+  nova_e2e_assert_dep_present "$DEP_SENTINEL" "$HOME/.nova"
 else
-  openclaw_e2e_assert_dep_absent "$DEP_SENTINEL" "$HOME/.openclaw"
+  nova_e2e_assert_dep_absent "$DEP_SENTINEL" "$HOME/.nova"
 fi
 
 node scripts/e2e/lib/npm-onboard-channel-agent/assertions.mjs configure-mock-model "$MOCK_PORT"
 node scripts/e2e/lib/npm-onboard-channel-agent/assertions.mjs assert-mock-model-config "$MOCK_PORT"
 
 echo "Running local agent turn against mocked OpenAI..."
-if openclaw agent --local \
+if nova agent --local \
   --agent main \
   --session-id npm-onboard-channel-agent \
   --message "Return the success marker from the test server." \
   --thinking off \
-  --json >/tmp/openclaw-agent.combined 2>&1; then
+  --json >/tmp/nova-agent.combined 2>&1; then
   agent_status=0
 else
   agent_status=$?

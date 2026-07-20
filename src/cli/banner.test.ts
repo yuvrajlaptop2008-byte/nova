@@ -103,7 +103,7 @@ describe("emitCliBanner", () => {
     const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 
     emitCliBanner("2026.3.7", {
-      argv: ["node", "openclaw"],
+      argv: ["node", "nova"],
       commit: "abc1234",
       isTty: false,
       mode: "off",
@@ -120,7 +120,7 @@ describe("emitCliBanner", () => {
     const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 
     emitCliBanner("2026.3.7", {
-      argv: ["node", "openclaw"],
+      argv: ["node", "nova"],
       commit: "abc1234",
       env: { LANG: "en_US.UTF-8" },
       isTty: true,
@@ -139,7 +139,7 @@ describe("emitCliBanner", () => {
     const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 
     emitCliBanner("2026.3.7", {
-      argv: ["node", "openclaw"],
+      argv: ["node", "nova"],
       commit: "abc1234",
       env: { LANG: "en_US.UTF-8" },
       isTty: true,
@@ -158,7 +158,7 @@ describe("emitCliBanner", () => {
     setStdoutIsTty(true);
     const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
     const base = {
-      argv: ["node", "openclaw"],
+      argv: ["node", "nova"],
       commit: "abc1234",
       env: { LANG: "en_US.UTF-8" },
       isTty: true,
@@ -180,7 +180,7 @@ describe("emitCliBanner", () => {
     const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 
     const options = {
-      argv: ["node", "openclaw"],
+      argv: ["node", "nova"],
       commit: "abc1234",
       env: { LANG: "en_US.UTF-8" },
       isTty: true,

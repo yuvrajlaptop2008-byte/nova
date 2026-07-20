@@ -1,6 +1,6 @@
 // Hermes-native auth discovery and reauthentication planning.
-import { createMigrationManualItem } from "openclaw/plugin-sdk/migration";
-import type { MigrationItem } from "openclaw/plugin-sdk/plugin-entry";
+import { createMigrationManualItem } from "nova/plugin-sdk/migration";
+import type { MigrationItem } from "nova/plugin-sdk/plugin-entry";
 import { isRecord, readString, readText } from "./helpers.js";
 import type { HermesSource } from "./source.js";
 
@@ -173,7 +173,7 @@ export async function buildReauthenticationItems(source: HermesSource): Promise<
         message: `Hermes ${sourceProvider} credentials cannot be reused safely by Nova.`,
         recommendation:
           targetProvider === "qwen"
-            ? "Authenticate qwen with an API key after migration: openclaw onboard --auth-choice qwen-api-key."
+            ? "Authenticate qwen with an API key after migration: nova onboard --auth-choice qwen-api-key."
             : `Authenticate ${targetProvider} in Nova after migration.`,
       }),
     ];

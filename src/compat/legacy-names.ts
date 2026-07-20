@@ -1,6 +1,6 @@
 // Product/package naming constants that bridge current Nova manifests with
 // legacy Clawdbot keys still seen in older configs and packages.
-const PROJECT_NAME = "openclaw" as const;
+const PROJECT_NAME = "nova" as const;
 
 const LEGACY_PROJECT_NAMES = ["clawdbot"] as const;
 

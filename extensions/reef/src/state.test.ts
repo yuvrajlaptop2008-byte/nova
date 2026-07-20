@@ -4,12 +4,12 @@ import path from "node:path";
 import type {
   OpenKeyedStoreOptions,
   PluginStateSyncKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   base64url,
@@ -65,7 +65,7 @@ describe("Reef SQLite state", () => {
 
   beforeEach(() => {
     resetPluginStateStoreForTests();
-    stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-reef-state-"));
+    stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-reef-state-"));
   });
 
   afterEach(() => {
@@ -234,7 +234,7 @@ describe("Reef SQLite state", () => {
     expect(loadReefSetupSession(createRuntime(stateDir))?.session).toBe("setup-secret");
     clearReefSetupSession(runtime);
     expect(loadReefSetupSession(runtime)).toBeUndefined();
-    expect(fs.existsSync(path.join(stateDir, "state", "openclaw.sqlite"))).toBe(true);
+    expect(fs.existsSync(path.join(stateDir, "state", "nova.sqlite"))).toBe(true);
     expect(fs.existsSync(path.join(stateDir, "data", "reef"))).toBe(false);
   });
 

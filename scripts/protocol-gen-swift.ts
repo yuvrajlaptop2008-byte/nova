@@ -30,9 +30,9 @@ const outPaths = [
     repoRoot,
     "apps",
     "shared",
-    "OpenClawKit",
+    "NovaKit",
     "Sources",
-    "OpenClawProtocol",
+    "NovaProtocol",
     "GatewayModels.swift",
   ),
 ];

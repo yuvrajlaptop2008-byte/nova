@@ -3,7 +3,7 @@ import type {
   MeetingBrowserTab,
   MeetingSessionRecord,
   MeetingTranscriptSnapshot,
-} from "openclaw/plugin-sdk/meeting-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
 import type { ZoomMeetingsMode, ZoomMeetingsTransport } from "../config.js";
 
 export type ZoomMeetingsTranscriptSnapshot = MeetingTranscriptSnapshot;

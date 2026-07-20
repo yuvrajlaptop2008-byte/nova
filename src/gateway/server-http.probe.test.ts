@@ -120,7 +120,7 @@ describe("gateway probe endpoints", () => {
           });
 
           const blockedBoard = await sendGatewayRequest(server, {
-            path: "/__openclaw__/board/agent%3Amain%3Amain/status/index.html?bt=garbage",
+            path: "/__nova__/board/agent%3Amain%3Amain/status/index.html?bt=garbage",
           });
           expect(blockedBoard.res.statusCode).toBe(503);
           expect(JSON.parse(blockedBoard.getBody())).toMatchObject({

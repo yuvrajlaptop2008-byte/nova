@@ -6,7 +6,7 @@
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import type { ChatType } from "../channels/chat-type.js";
 import { normalizeChatType } from "../channels/chat-type.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { RuntimePluginToolGrant } from "../plugins/runtime/tool-grant.js";
 import type { SkillSnapshot } from "../skills/types.js";
 import { INTERNAL_MESSAGE_CHANNEL } from "../utils/message-channel-constants.js";
@@ -37,7 +37,7 @@ import { resolveWorkspaceRoot } from "./workspace-dir.js";
 type ConversationCapabilityScope = "direct" | "shared" | "unknown";
 
 export type ConversationCapabilityProfileParams = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionKey?: string;
   /** Live conversation key when a sandbox/policy key is used for tool filtering. */
   runSessionKey?: string;

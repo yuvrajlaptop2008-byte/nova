@@ -1,15 +1,15 @@
-import { createMeetingBrowserNodeInvokePolicy } from "openclaw/plugin-sdk/meeting-runtime";
+import { createMeetingBrowserNodeInvokePolicy } from "nova/plugin-sdk/meeting-runtime";
 import type {
-  OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginNodeInvokePolicyContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+  NovaPluginNodeInvokePolicy,
+  NovaPluginNodeInvokePolicyContext,
+} from "nova/plugin-sdk/plugin-entry";
 import type { TeamsMeetingsConfig } from "./config.js";
 import { TEAMS_MEETINGS_PLATFORM_ADAPTER } from "./transports/teams-meetings-platform-adapter.js";
 import { TEAMS_MEETINGS_NODE_COMMAND } from "./transports/teams-meetings-platform-constants.js";
 
 export function createTeamsMeetingsNodeInvokePolicy(
   config: TeamsMeetingsConfig,
-): OpenClawPluginNodeInvokePolicy {
+): NovaPluginNodeInvokePolicy {
   const base = createMeetingBrowserNodeInvokePolicy({
     commandName: TEAMS_MEETINGS_NODE_COMMAND,
     displayName: "Microsoft Teams meetings",
@@ -20,7 +20,7 @@ export function createTeamsMeetingsNodeInvokePolicy(
   });
   return {
     ...base,
-    async handle(ctx: OpenClawPluginNodeInvokePolicyContext) {
+    async handle(ctx: NovaPluginNodeInvokePolicyContext) {
       const params =
         ctx.params && typeof ctx.params === "object" && !Array.isArray(ctx.params)
           ? (ctx.params as Record<string, unknown>)

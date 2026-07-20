@@ -12,11 +12,11 @@ import {
   resetSubagentRegistryForTests,
 } from "../agents/subagent-registry.test-helpers.js";
 import type { SubagentRunRecord } from "../agents/subagent-registry.types.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { SessionEntry } from "../config/sessions.js";
 import { replaceSessionEntry } from "../config/sessions/session-accessor.js";
 import { registerAgentRunContext, resetAgentEventsForTest } from "../infra/agent-events.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { withStateDirEnv } from "../test-helpers/state-dir-env.js";
 import { withEnv } from "../test-utils/env.js";
 import {
@@ -36,7 +36,7 @@ async function seedSessionEntry(
 describe("listSessionsFromStore subagent metadata", () => {
   afterEach(() => {
     resetAgentEventsForTest({ preserveListeners: true });
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     resetSubagentRegistryForTests({ persist: false });
   });
   beforeEach(() => {
@@ -47,7 +47,7 @@ describe("listSessionsFromStore subagent metadata", () => {
   const cfg = {
     session: { mainKey: "main" },
     agents: { list: [{ id: "main", default: true }] },
-  } as OpenClawConfig;
+  } as NovaConfig;
 
   test("searches channel-derived display names before row enrichment", () => {
     const result = listSessionsFromStore({
@@ -720,7 +720,7 @@ describe("listSessionsFromStore subagent metadata", () => {
   });
 
   test("prefers persisted terminal session state when only stale active subagent snapshots remain", () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-session-utils-subagent-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-session-utils-subagent-"));
     const stateDir = path.join(tempRoot, "state");
     fs.mkdirSync(stateDir, { recursive: true });
     try {
@@ -790,15 +790,13 @@ describe("listSessionsFromStore subagent metadata", () => {
       expect(row?.endedAt).toBe(now - 1_800);
       expect(row?.runtimeMs).toBe(100);
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       fs.rmSync(tempRoot, { recursive: true, force: true });
     }
   });
 
   test("reuses one SQLite registry snapshot across sessions.list filtering and row enrichment", () => {
-    const tempRoot = fs.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-session-utils-subagent-cache-"),
-    );
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-session-utils-subagent-cache-"));
     const stateDir = path.join(tempRoot, "state");
     const registryPath = path.join(stateDir, "subagents", "runs.json");
     const now = Date.now();
@@ -871,14 +869,14 @@ describe("listSessionsFromStore subagent metadata", () => {
       expect(registryStatCount).toBe(0);
     } finally {
       statSpy.mockRestore();
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       fs.rmSync(tempRoot, { recursive: true, force: true });
     }
   });
 
   test("does not read the subagent registry when raw filters drop every session", () => {
     const tempRoot = fs.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-session-utils-subagent-cache-empty-"),
+      path.join(os.tmpdir(), "nova-session-utils-subagent-cache-empty-"),
     );
     const stateDir = path.join(tempRoot, "state");
     const registryPath = path.join(stateDir, "subagents", "runs.json");
@@ -911,7 +909,7 @@ describe("listSessionsFromStore subagent metadata", () => {
       expect(registryStatCount).toBe(0);
     } finally {
       statSpy.mockRestore();
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       fs.rmSync(tempRoot, { recursive: true, force: true });
     }
   });
@@ -1245,7 +1243,7 @@ describe("listSessionsFromStore subagent metadata", () => {
 
 describe("loadCombinedSessionStoreForGateway includes disk-only agents (#32804)", () => {
   test("ACP agent sessions are visible even when agents.list is configured", async () => {
-    await withStateDirEnv("openclaw-acp-vis-", async ({ stateDir }) => {
+    await withStateDirEnv("nova-acp-vis-", async ({ stateDir }) => {
       const customRoot = path.join(stateDir, "custom-state");
       const agentsDir = path.join(customRoot, "agents");
       const mainDir = path.join(agentsDir, "main", "sessions");
@@ -1270,7 +1268,7 @@ describe("loadCombinedSessionStoreForGateway includes disk-only agents (#32804)"
         agents: {
           list: [{ id: "main", default: true }],
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const { store } = loadCombinedSessionStoreForGateway(cfg);
       expect(store["agent:main:main"]?.sessionId).toBe("s-main");
@@ -1279,7 +1277,7 @@ describe("loadCombinedSessionStoreForGateway includes disk-only agents (#32804)"
   });
 
   test("agent-scoped loads read only matching agent stores", async () => {
-    await withStateDirEnv("openclaw-acp-scoped-", async ({ stateDir }) => {
+    await withStateDirEnv("nova-acp-scoped-", async ({ stateDir }) => {
       const customRoot = path.join(stateDir, "custom-state");
       const agentsDir = path.join(customRoot, "agents");
       const mainDir = path.join(agentsDir, "main", "sessions");
@@ -1306,7 +1304,7 @@ describe("loadCombinedSessionStoreForGateway includes disk-only agents (#32804)"
         agents: {
           list: [{ id: "main", default: true }],
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const { store, storePath } = loadCombinedSessionStoreForGateway(cfg, { agentId: "codex" });
 

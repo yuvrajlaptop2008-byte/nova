@@ -1,5 +1,5 @@
 // Qa Lab plugin module implements auth behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   applyAuthProfileConfig,
   coerceSecretRef,
@@ -9,8 +9,8 @@ import {
   readCodexCliCredentialsCached,
   resolveEnvApiKey,
   validateAnthropicSetupToken,
-} from "openclaw/plugin-sdk/provider-auth";
-import { normalizeStringEntries, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/provider-auth";
+import { normalizeStringEntries, uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveQaAgentAuthDir, writeQaAuthProfiles } from "../shared/auth-store.js";
 
 export const QA_LIVE_ANTHROPIC_SETUP_TOKEN_ENV = "NOVA_QA_LIVE_ANTHROPIC_SETUP_TOKEN";
@@ -52,14 +52,14 @@ function isQaLiveOfficialOpenAiBaseUrl(baseUrl: unknown): boolean {
   }
 }
 
-function qaLiveOpenAiUsesCodexByDefault(cfg: OpenClawConfig): boolean {
+function qaLiveOpenAiUsesCodexByDefault(cfg: NovaConfig): boolean {
   return isQaLiveOfficialOpenAiBaseUrl(
     resolveQaLiveProviderConfig({ cfg, providerId: "openai" })?.baseUrl,
   );
 }
 
 function expandQaLiveApiKeyProviderIds(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   providerIds: readonly string[];
 }) {
   const expanded = new Set(normalizeQaLiveProviderIds(params.providerIds));
@@ -72,7 +72,7 @@ function expandQaLiveApiKeyProviderIds(params: {
 function resolveQaLiveEnvApiKey(params: {
   providerId: string;
   env: NodeJS.ProcessEnv;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }) {
   const resolved = resolveEnvApiKey(params.providerId, params.env, { config: params.cfg });
   if (resolved?.apiKey) {
@@ -90,7 +90,7 @@ function resolveQaLiveEnvApiKey(params: {
 function resolveQaLiveConfiguredApiKey(params: {
   providerId: string;
   env: NodeJS.ProcessEnv;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }) {
   const providerConfig = resolveQaLiveProviderConfig(params);
   const apiKey = providerConfig?.apiKey;
@@ -124,12 +124,12 @@ function resolveQaLiveConfiguredApiKey(params: {
 function resolveQaLiveApiKey(params: {
   providerId: string;
   env: NodeJS.ProcessEnv;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }) {
   return resolveQaLiveEnvApiKey(params) ?? resolveQaLiveConfiguredApiKey(params);
 }
 
-function resolveQaLiveProviderConfig(params: { cfg: OpenClawConfig; providerId: string }) {
+function resolveQaLiveProviderConfig(params: { cfg: NovaConfig; providerId: string }) {
   const providers = params.cfg.models?.providers;
   if (!providers) {
     return undefined;
@@ -140,12 +140,12 @@ function resolveQaLiveProviderConfig(params: { cfg: OpenClawConfig; providerId: 
   );
 }
 
-function hasQaLiveStagedApiKeyProfile(params: { cfg: OpenClawConfig; providerId: string }) {
+function hasQaLiveStagedApiKeyProfile(params: { cfg: NovaConfig; providerId: string }) {
   return Boolean(params.cfg.auth?.profiles?.[buildQaLiveApiKeyProfileId(params.providerId)]);
 }
 
 function qaLiveRequiresCodexAuth(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   providerIds: readonly string[];
   env: NodeJS.ProcessEnv;
 }) {
@@ -154,7 +154,7 @@ function qaLiveRequiresCodexAuth(params: {
     return false;
   }
   const forcedRuntime = params.env.NOVA_QA_FORCE_RUNTIME?.trim().toLowerCase();
-  if (forcedRuntime === "openclaw") {
+  if (forcedRuntime === "nova") {
     return false;
   }
   if (forcedRuntime === "codex") {
@@ -183,10 +183,10 @@ function resolveQaLiveAnthropicSetupToken(env: NodeJS.ProcessEnv = process.env) 
 }
 
 export async function stageQaLiveAnthropicSetupToken(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   stateDir: string;
   env?: NodeJS.ProcessEnv;
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   const resolved = resolveQaLiveAnthropicSetupToken(params.env);
   if (!resolved) {
     return params.cfg;
@@ -210,12 +210,12 @@ export async function stageQaLiveAnthropicSetupToken(params: {
 }
 
 export async function stageQaLiveApiKeyProfiles(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   stateDir: string;
   providerIds: readonly string[];
   env?: NodeJS.ProcessEnv;
   agentIds?: readonly string[];
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   const env = params.env ?? process.env;
   const providerIds = uniqueStrings(normalizeStringEntries(params.providerIds)).toSorted();
   const profiles: Record<
@@ -264,7 +264,7 @@ export async function stageQaLiveApiKeyProfiles(params: {
 }
 
 export function assertQaLiveCodexAuthAvailable(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   providerIds: readonly string[];
   env?: NodeJS.ProcessEnv;
   readCodexCredentials?: typeof readCodexCliCredentialsCached;

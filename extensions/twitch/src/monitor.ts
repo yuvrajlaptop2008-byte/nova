@@ -5,11 +5,11 @@
  * resolves agent routes, and handles replies.
  */
 
-import { createChannelInboundEnvelopeBuilder } from "openclaw/plugin-sdk/channel-inbound";
-import type { MarkdownTableMode, OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { createChannelInboundEnvelopeBuilder } from "nova/plugin-sdk/channel-inbound";
+import type { MarkdownTableMode, NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import { checkTwitchAccessControl } from "./access-control.js";
 import { getOrCreateClientManager } from "./client-manager-registry.js";
 import { getTwitchRuntime } from "./runtime.js";
@@ -25,7 +25,7 @@ type TwitchRuntimeEnv = {
 type TwitchMonitorOptions = {
   account: TwitchAccountConfig;
   accountId: string;
-  config: unknown; // OpenClawConfig
+  config: unknown; // NovaConfig
   runtime: TwitchRuntimeEnv;
   abortSignal: AbortSignal;
   statusSink?: (patch: { lastInboundAt?: number; lastOutboundAt?: number }) => void;
@@ -53,7 +53,7 @@ async function processTwitchMessage(params: {
 }): Promise<void> {
   const { message, account, accountId, config, runtime, core, turnAdoptionLifecycle, statusSink } =
     params;
-  const cfg = config as OpenClawConfig;
+  const cfg = config as NovaConfig;
 
   await core.channel.inbound.run({
     channel: "twitch",

@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 const fixturePath = path.resolve("scripts/e2e/lib/fixture.mjs");
 
 function makeTempRoot(): string {
-  return mkdtempSync(path.join(tmpdir(), "openclaw-fixture-config-"));
+  return mkdtempSync(path.join(tmpdir(), "nova-fixture-config-"));
 }
 
 function runFixture(
@@ -22,7 +22,7 @@ function runFixture(
     env: {
       ...process.env,
       NOVA_CONFIG_BATCH_PATH: path.join(root, "batch.json"),
-      NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+      NOVA_CONFIG_PATH: path.join(root, "nova.json"),
       NOVA_GATEWAY_TOKEN: "test-token",
       NOVA_OPENWEBUI_MODEL: "openai/gpt-5.4-mini",
       NOVA_STATE_DIR: root,
@@ -62,7 +62,7 @@ describe("scripts/e2e/lib/fixture.mjs config commands", () => {
       const result = runFixture(root, "browser-cdp", [], { CDP_PORT: "19223", PORT: "19000" });
 
       expect(result.status).toBe(0);
-      const config = JSON.parse(readFileSync(path.join(root, "openclaw.json"), "utf8"));
+      const config = JSON.parse(readFileSync(path.join(root, "nova.json"), "utf8"));
       expect(config.gateway.port).toBe(19000);
       expect(config.browser.noSandbox).toBe(true);
       expect(config.browser.extraArgs).toEqual([
@@ -138,7 +138,7 @@ describe("scripts/e2e/lib/fixture.mjs config commands", () => {
       const result = runFixture(root, "openai-web-search-minimal-config");
 
       expect(result.status).toBe(0);
-      const config = JSON.parse(readFileSync(path.join(root, "openclaw.json"), "utf8"));
+      const config = JSON.parse(readFileSync(path.join(root, "nova.json"), "utf8"));
       expect(config.agents.defaults.model.primary).toBe("openai/gpt-5");
       expect(config.models.providers.openai).toMatchObject({
         api: "openai-responses",

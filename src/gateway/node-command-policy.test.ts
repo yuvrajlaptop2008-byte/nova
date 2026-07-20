@@ -6,7 +6,7 @@ import {
   GATEWAY_CLIENT_IDS,
   GATEWAY_CLIENT_MODES,
 } from "../../packages/gateway-protocol/src/client-info.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
 import {
   pinActivePluginChannelRegistry,
@@ -57,7 +57,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("allows declared push-to-talk commands on trusted talk-capable nodes", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     for (const platform of ["ios", "android", "macos", "other"]) {
       const allowlist = resolveNodeCommandAllowlist(cfg, { platform, caps: ["talk"] });
       expect(allowlist.has("talk.ptt.start")).toBe(true);
@@ -75,7 +75,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("does not allow push-to-talk commands from platform label alone", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const allowlist = resolveNodeCommandAllowlist(cfg, {
       platform: "android",
       caps: ["device"],
@@ -86,7 +86,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("allows push-to-talk commands when the node declares talk command support", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const allowlist = resolveNodeCommandAllowlist(cfg, {
       platform: "custom",
       commands: ["talk.ptt.start"],
@@ -96,7 +96,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("keeps canvas commands out of core defaults when the canvas plugin is not active", () => {
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "windows",
       deviceFamily: "Windows",
     });
@@ -107,7 +107,7 @@ describe("gateway/node-command-policy", () => {
   it("adds canvas commands from the active canvas plugin node policy", () => {
     installCanvasPluginDefaults();
 
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "windows",
       deviceFamily: "Windows",
     });
@@ -195,7 +195,7 @@ describe("gateway/node-command-policy", () => {
     });
     setActivePluginRegistry(transientRegistry);
 
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "macos",
       deviceFamily: "Mac",
     });
@@ -256,7 +256,7 @@ describe("gateway/node-command-policy", () => {
     );
     setActivePluginRegistry(registry);
 
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "linux",
       deviceFamily: "Linux",
     });
@@ -273,7 +273,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("does not allow connected node plugin tools without a registry default or config allowlist", () => {
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "macos",
       deviceFamily: "Mac",
       commands: ["remote.echo"],
@@ -290,7 +290,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("does not grant host command defaults for platform prefix aliases", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const cases = [
       { platform: "darwin", deviceFamily: "iPhone" },
       { platform: "darwin", deviceFamily: "Mac" },
@@ -331,7 +331,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("allows exec approval commands only through desktop node pairing approval", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const desktopNode = { platform: "windows", deviceFamily: "Windows" };
 
     const pairingAllowlist = resolveNodePairingCommandAllowlist(cfg, desktopNode);
@@ -351,7 +351,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("keeps defaults for first-party native platform labels with matching families", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
 
     const iosAllowlist = resolveNodeCommandAllowlist(cfg, {
       platform: "iOS 18.4.0",
@@ -396,7 +396,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("requires matching watchOS platform and device-family metadata", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const mismatch = resolveNodeCommandAllowlist(cfg, {
       platform: "watchOS 11.5.0",
       deviceFamily: "iPhone",
@@ -411,7 +411,7 @@ describe("gateway/node-command-policy", () => {
   it("keeps plugin defaults out of the fixed watchOS command surface", () => {
     installCanvasPluginDefaults();
 
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "watchOS 11.5.0",
       deviceFamily: "Apple Watch",
     });
@@ -422,7 +422,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("keeps explicitly approved host commands for desktop platforms", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const cases = [
       { platform: "macos", deviceFamily: "Mac" },
       { platform: "windows", deviceFamily: "Windows" },
@@ -440,7 +440,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("keeps approved host commands on live desktop node sessions", () => {
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       nodeId: "node-1",
       connId: "conn-1",
       platform: "linux",
@@ -458,12 +458,10 @@ describe("gateway/node-command-policy", () => {
       deviceFamily: "Mac",
       commands: ["device.apps"],
     };
-    expect(resolveNodeCommandAllowlist({} as OpenClawConfig, macNode).has("device.apps")).toBe(
-      true,
-    );
+    expect(resolveNodeCommandAllowlist({} as NovaConfig, macNode).has("device.apps")).toBe(true);
     expect(
       resolveNodeCommandAllowlist(
-        { wizard: { appRecommendations: false } } as OpenClawConfig,
+        { wizard: { appRecommendations: false } } as NovaConfig,
         macNode,
       ).has("device.apps"),
     ).toBe(false);
@@ -476,9 +474,9 @@ describe("gateway/node-command-policy", () => {
       commands: ["mcp.tools.call.v1"],
       approvedCommands: ["mcp.tools.call.v1"],
     };
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, node);
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, node);
     expect(
-      resolveNodePairingCommandAllowlist({} as OpenClawConfig, node).has("mcp.tools.call.v1"),
+      resolveNodePairingCommandAllowlist({} as NovaConfig, node).has("mcp.tools.call.v1"),
     ).toBe(true);
     expect(allowlist.has("mcp.tools.call.v1")).toBe(true);
     expect(
@@ -490,14 +488,14 @@ describe("gateway/node-command-policy", () => {
     ).toEqual({ ok: true });
 
     const denied = resolveNodeCommandAllowlist(
-      { gateway: { nodes: { denyCommands: ["mcp.tools.call.v1"] } } } as OpenClawConfig,
+      { gateway: { nodes: { denyCommands: ["mcp.tools.call.v1"] } } } as NovaConfig,
       node,
     );
     expect(denied.has("mcp.tools.call.v1")).toBe(false);
   });
 
   it("does not treat unconnected declared host commands as approved", () => {
-    const allowlist = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const allowlist = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "linux",
       deviceFamily: "Linux",
       commands: ["browser.proxy", "system.run"],
@@ -508,7 +506,7 @@ describe("gateway/node-command-policy", () => {
   });
 
   it("does not grandfather approved non-default commands after config removal", () => {
-    const staleApproval = resolveNodeCommandAllowlist({} as OpenClawConfig, {
+    const staleApproval = resolveNodeCommandAllowlist({} as NovaConfig, {
       platform: "macos",
       deviceFamily: "Mac",
       approvedCommands: ["screen.record"],
@@ -522,7 +520,7 @@ describe("gateway/node-command-policy", () => {
             allowCommands: ["screen.record"],
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         platform: "macos",
         deviceFamily: "Mac",
@@ -538,17 +536,17 @@ describe("gateway/node-command-policy", () => {
       deviceFamily: "Mac",
       commands: ["computer.act", "screen.snapshot"],
     };
-    const unarmed = resolveNodeCommandAllowlist({} as OpenClawConfig, macNode);
+    const unarmed = resolveNodeCommandAllowlist({} as NovaConfig, macNode);
     expect(unarmed.has("computer.act")).toBe(false);
     expect(
-      resolveNodeCommandAllowlist({} as OpenClawConfig, {
+      resolveNodeCommandAllowlist({} as NovaConfig, {
         ...macNode,
         approvedCommands: ["computer.act"],
       }).has("computer.act"),
     ).toBe(false);
 
     const armed = resolveNodeCommandAllowlist(
-      { gateway: { nodes: { allowCommands: ["computer.act"] } } } as OpenClawConfig,
+      { gateway: { nodes: { allowCommands: ["computer.act"] } } } as NovaConfig,
       macNode,
     );
     expect(armed.has("computer.act")).toBe(true);
@@ -556,21 +554,21 @@ describe("gateway/node-command-policy", () => {
     const denied = resolveNodeCommandAllowlist(
       {
         gateway: { nodes: { allowCommands: ["computer.act"], denyCommands: ["computer.act"] } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       macNode,
     );
     expect(denied.has("computer.act")).toBe(false);
   });
 
   it("keeps computer.act declarable through the macOS pairing allowlist only", () => {
-    const pairing = resolveNodePairingCommandAllowlist({} as OpenClawConfig, {
+    const pairing = resolveNodePairingCommandAllowlist({} as NovaConfig, {
       platform: "macos",
       deviceFamily: "Mac",
       commands: ["computer.act"],
     });
     expect(pairing.has("computer.act")).toBe(true);
 
-    const windowsPairing = resolveNodePairingCommandAllowlist({} as OpenClawConfig, {
+    const windowsPairing = resolveNodePairingCommandAllowlist({} as NovaConfig, {
       platform: "windows",
       deviceFamily: "Windows",
       commands: ["computer.act"],
@@ -587,7 +585,7 @@ describe("gateway/node-command-policy", () => {
     // the node can be armed later; invoke-time policy still blocks it at runtime.
     const cfg = {
       gateway: { nodes: { denyCommands: ["computer.act", "screen.record", "camera.snap"] } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const macNode = { platform: "macos", deviceFamily: "Mac", commands: ["computer.act"] };
     expect(resolveNodePairingCommandAllowlist(cfg, macNode).has("computer.act")).toBe(true);
     // Runtime allowlist still gates it until armed via allowCommands.
@@ -595,7 +593,7 @@ describe("gateway/node-command-policy", () => {
     // Arming (allowCommands opt-in) makes it runtime-invocable.
     const armedCfg = {
       gateway: { nodes: { allowCommands: ["computer.act"] } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveNodeCommandAllowlist(armedCfg, macNode).has("computer.act")).toBe(true);
   });
 
@@ -605,13 +603,11 @@ describe("gateway/node-command-policy", () => {
       deviceFamily: "iPhone",
       commands: ["health.summary"],
     };
-    expect(resolveNodeCommandAllowlist({} as OpenClawConfig, node).has("health.summary")).toBe(
-      false,
-    );
+    expect(resolveNodeCommandAllowlist({} as NovaConfig, node).has("health.summary")).toBe(false);
 
     const armed = {
       gateway: { nodes: { allowCommands: ["health.summary"] } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveNodePairingCommandAllowlist(armed, node).has("health.summary")).toBe(true);
     expect(resolveNodeCommandAllowlist(armed, node).has("health.summary")).toBe(true);
 
@@ -622,7 +618,7 @@ describe("gateway/node-command-policy", () => {
           denyCommands: ["health.summary"],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveNodeCommandAllowlist(denied, node).has("health.summary")).toBe(false);
   });
 

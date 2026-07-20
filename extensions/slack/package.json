@@ -1,10 +1,10 @@
 {
   "name": "@nova/slack",
   "version": "2026.7.2",
-  "description": "OpenClaw Slack channel plugin for channels, DMs, commands, and app events.",
+  "description": "Nova Slack channel plugin for channels, DMs, commands, and app events.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/nova/nova"
   },
   "type": "module",
   "dependencies": {
@@ -18,17 +18,17 @@
   },
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "nova": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.7.2"
+    "nova": ">=2026.7.2"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "nova": {
       "optional": true
     }
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ],
@@ -71,7 +71,7 @@
       "deferConfiguredChannelFullLoadUntilAfterListen": true
     },
     "build": {
-      "openclawVersion": "2026.7.2",
+      "novaVersion": "2026.7.2",
       "bundledDist": false
     },
     "release": {

@@ -13,7 +13,7 @@ import {
 import { resolveConversationCapabilityProfile } from "../../../../dist/agents/conversation-capability-profile.js";
 import { applyFinalEffectiveToolPolicy } from "../../../../dist/agents/embedded-agent-runner/effective-tool-policy.js";
 import { splitSdkTools } from "../../../../dist/agents/embedded-agent-runner/tool-split.js";
-import type { OpenClawConfig } from "../../../../dist/config/types.openclaw.js";
+import type { NovaConfig } from "../../../../dist/config/types.nova.js";
 import { getPluginToolMeta } from "../../../../dist/plugins/tools.js";
 import { createE2eStateDir } from "../../../../scripts/e2e/lib/temp-state-dir.ts";
 
@@ -66,7 +66,7 @@ await server.connect(new StdioServerTransport());
 
 function applyPolicy(params: {
   tools: Awaited<ReturnType<typeof materializeBundleMcpToolsForRun>>["tools"];
-  config: OpenClawConfig;
+  config: NovaConfig;
 }) {
   const warnings: string[] = [];
   return {
@@ -87,7 +87,7 @@ function applyPolicy(params: {
 }
 
 async function main() {
-  const tempState = await createE2eStateDir("openclaw-agent-bundle-mcp-");
+  const tempState = await createE2eStateDir("nova-agent-bundle-mcp-");
   tempState.registerExitCleanup();
   const stateDir = tempState.stateDir;
   const probeDir = path.join(stateDir, "agent-bundle-mcp-tools");
@@ -95,7 +95,7 @@ async function main() {
   await fs.mkdir(probeDir, { recursive: true });
   await writeProbeServer(serverPath);
 
-  const cfg: OpenClawConfig = {
+  const cfg: NovaConfig = {
     tools: {
       profile: "coding",
     },

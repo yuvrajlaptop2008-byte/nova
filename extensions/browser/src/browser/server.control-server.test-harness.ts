@@ -1,4 +1,4 @@
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 /**
  * Shared Browser control-server test harness with mocked Chrome, CDP,
  * Playwright, Chrome MCP, config, and media dependencies.
@@ -25,7 +25,7 @@ type HarnessState = {
       cdpPort?: number;
       cdpUrl?: string;
       color: string;
-      driver?: "openclaw" | "existing-session";
+      driver?: "nova" | "existing-session";
       attachOnly?: boolean;
     }
   >;
@@ -43,7 +43,7 @@ const state: HarnessState = {
   cfgEvaluateEnabled: true,
   cfgExtraArgs: [],
   cfgSsrfPolicy: undefined,
-  cfgDefaultProfile: "openclaw",
+  cfgDefaultProfile: "nova",
   cfgProfiles: {},
   tabUrl: "https://example.com",
   prevGatewayPort: undefined,
@@ -97,7 +97,7 @@ export function setBrowserControlServerTabUrl(url: string): void {
 /** Sets mocked Browser profiles and default profile for config reload tests. */
 export function setBrowserControlServerProfiles(
   profiles: HarnessState["cfgProfiles"],
-  defaultProfile = Object.keys(profiles)[0] ?? "openclaw",
+  defaultProfile = Object.keys(profiles)[0] ?? "nova",
 ): void {
   state.cfgProfiles = profiles;
   state.cfgDefaultProfile = defaultProfile;
@@ -413,7 +413,7 @@ const chromeMcpMocks = vi.hoisted(() => ({
   uploadChromeMcpFile: vi.fn(async () => {}),
 }));
 
-const chromeUserDataDir = vi.hoisted(() => ({ dir: "/tmp/openclaw" }));
+const chromeUserDataDir = vi.hoisted(() => ({ dir: "/tmp/nova" }));
 installChromeUserDataDirHooks(chromeUserDataDir);
 
 function makeProc(pid = 123) {
@@ -445,7 +445,7 @@ function defaultBrowserCdpPortForState(testPort: number): number {
 
 function defaultProfilesForState(testPort: number): HarnessState["cfgProfiles"] {
   return {
-    openclaw: { cdpPort: defaultBrowserCdpPortForState(testPort), color: "#FF4500" },
+    nova: { cdpPort: defaultBrowserCdpPortForState(testPort), color: "#FF4500" },
   };
 }
 
@@ -478,13 +478,13 @@ vi.mock("../config/config.js", async () => {
       ) => unknown;
     }) => {
       const draft = structuredClone(loadConfig());
-      const result = await params.mutate(draft, { snapshot: { path: "/tmp/openclaw.json" } });
+      const result = await params.mutate(draft, { snapshot: { path: "/tmp/nova.json" } });
       await writeConfigFile(draft);
       return {
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         previousHash: "test-hash",
         persistedHash: "test-hash",
-        snapshot: { path: "/tmp/openclaw.json" },
+        snapshot: { path: "/tmp/nova.json" },
         nextConfig: draft,
         result,
         attempts: 1,
@@ -513,7 +513,7 @@ vi.mock("./chrome.js", () => ({
   isChromeCdpOwnedByPid: vi.fn(async () => true),
   isChromeCdpReady: vi.fn(async () => state.reachable),
   isChromeReachable: vi.fn(async () => state.reachable),
-  launchOpenClawChrome: vi.fn(async (_resolved: unknown, profile: { cdpPort: number }) => {
+  launchNovaChrome: vi.fn(async (_resolved: unknown, profile: { cdpPort: number }) => {
     launchCalls.push({ port: profile.cdpPort });
     state.reachable = true;
     return {
@@ -525,8 +525,8 @@ vi.mock("./chrome.js", () => ({
       proc,
     };
   }),
-  resolveOpenClawUserDataDir: vi.fn(() => chromeUserDataDir.dir),
-  stopOpenClawChrome: vi.fn(async () => {
+  resolveNovaUserDataDir: vi.fn(() => chromeUserDataDir.dir),
+  stopNovaChrome: vi.fn(async () => {
     state.reachable = false;
   }),
 }));
@@ -601,7 +601,7 @@ export async function resetBrowserControlServerTestContext(): Promise<void> {
   state.cfgEvaluateEnabled = true;
   state.cfgExtraArgs = [];
   state.cfgSsrfPolicy = undefined;
-  state.cfgDefaultProfile = "openclaw";
+  state.cfgDefaultProfile = "nova";
   state.cfgProfiles = defaultProfilesForState(state.testPort);
   state.tabUrl = "https://example.com";
 

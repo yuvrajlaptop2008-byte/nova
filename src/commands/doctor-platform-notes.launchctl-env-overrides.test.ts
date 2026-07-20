@@ -1,7 +1,7 @@
 // Doctor launchctl environment tests cover macOS gateway platform warnings for env overrides.
 import fs from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 
 const processMocks = vi.hoisted(() => ({
   runExec: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock("../process/exec.js", () => ({
 import {
   collectMacGatewayPlatformWarnings,
   noteMacLaunchctlGatewayEnvOverrides,
-  noteMacStaleOpenClawUpdateLaunchdJobs,
+  noteMacStaleNovaUpdateLaunchdJobs,
 } from "./doctor-platform-notes.js";
 
 function requireNoteCall(noteFn: { mock: { calls: unknown[][] } }, index = 0): unknown[] {
@@ -41,7 +41,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           token: "config-token",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", getenv, noteFn });
     const [warning] = requireNoteCall(noteFn);
@@ -63,7 +63,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           token: "config-token",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", getenv, noteFn });
 
@@ -82,7 +82,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
   it("does nothing when config has no gateway credentials", async () => {
     const noteFn = vi.fn();
     const getenv = vi.fn(async () => "launchctl-token");
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", getenv, noteFn });
 
@@ -106,7 +106,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           default: { source: "env" },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", getenv, noteFn });
 
@@ -124,7 +124,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           token: "config-token",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "linux", getenv, noteFn });
 
@@ -141,7 +141,7 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
           token: "config-token",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await noteMacLaunchctlGatewayEnvOverrides(cfg, { platform: "darwin", noteFn });
 
@@ -161,11 +161,11 @@ describe("noteMacLaunchctlGatewayEnvOverrides", () => {
   });
 });
 
-describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
+describe("noteMacStaleNovaUpdateLaunchdJobs", () => {
   it("uses service env for gateway platform stale updater warnings", async () => {
     const serviceEnv = {
-      NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-      NOVA_LAUNCHD_LABEL: "ai.openclaw.manual-update.gateway",
+      NOVA_STATE_DIR: "/tmp/nova-daemon",
+      NOVA_LAUNCHD_LABEL: "ai.nova.manual-update.gateway",
     };
     const service = {
       readCommand: vi.fn(async () => ({
@@ -175,7 +175,7 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     };
     const findJobs = vi.fn(async () => []);
 
-    await collectMacGatewayPlatformWarnings({} as OpenClawConfig, {
+    await collectMacGatewayPlatformWarnings({} as NovaConfig, {
       platform: "darwin",
       service,
       findJobs,
@@ -184,16 +184,16 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     expect(service.readCommand).toHaveBeenCalledTimes(1);
     expect(findJobs).toHaveBeenCalledWith(
       expect.objectContaining({
-        NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-        NOVA_LAUNCHD_LABEL: "ai.openclaw.manual-update.gateway",
+        NOVA_STATE_DIR: "/tmp/nova-daemon",
+        NOVA_LAUNCHD_LABEL: "ai.nova.manual-update.gateway",
       }),
     );
   });
 
   it("uses service env for doctor stale updater notes", async () => {
     const serviceEnv = {
-      NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-      NOVA_LAUNCHD_LABEL: "ai.openclaw.manual-update.gateway",
+      NOVA_STATE_DIR: "/tmp/nova-daemon",
+      NOVA_LAUNCHD_LABEL: "ai.nova.manual-update.gateway",
     };
     const service = {
       readCommand: vi.fn(async () => ({
@@ -203,7 +203,7 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     };
     const findJobs = vi.fn(async () => []);
 
-    await noteMacStaleOpenClawUpdateLaunchdJobs({
+    await noteMacStaleNovaUpdateLaunchdJobs({
       platform: "darwin",
       service,
       findJobs,
@@ -212,8 +212,8 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     expect(service.readCommand).toHaveBeenCalledTimes(1);
     expect(findJobs).toHaveBeenCalledWith(
       expect.objectContaining({
-        NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-        NOVA_LAUNCHD_LABEL: "ai.openclaw.manual-update.gateway",
+        NOVA_STATE_DIR: "/tmp/nova-daemon",
+        NOVA_LAUNCHD_LABEL: "ai.nova.manual-update.gateway",
       }),
     );
   });
@@ -225,16 +225,16 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     };
     const findJobs = vi.fn(async () => [
       {
-        label: "ai.openclaw.update.2026.5.12",
+        label: "ai.nova.update.2026.5.12",
         lastExitStatus: 127,
       },
       {
-        label: "ai.openclaw.manual-update.1717168800",
+        label: "ai.nova.manual-update.1717168800",
         lastExitStatus: 0,
       },
     ]);
 
-    await noteMacStaleOpenClawUpdateLaunchdJobs({
+    await noteMacStaleNovaUpdateLaunchdJobs({
       platform: "darwin",
       service,
       findJobs,
@@ -245,10 +245,10 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     const [message, title] = requireNoteCall(noteFn);
     expect(title).toBe("Gateway (macOS)");
     expect(message).toContain("Stale Nova updater launchd job(s) detected");
-    expect(message).toContain("ai.openclaw.update.2026.5.12");
-    expect(message).toContain("ai.openclaw.manual-update.1717168800");
+    expect(message).toContain("ai.nova.update.2026.5.12");
+    expect(message).toContain("ai.nova.manual-update.1717168800");
     expect(message).toContain("launchctl remove <label>");
-    expect(message).toContain("openclaw gateway restart");
+    expect(message).toContain("nova gateway restart");
   });
 
   it("does nothing when no stale updater jobs exist", async () => {
@@ -258,7 +258,7 @@ describe("noteMacStaleOpenClawUpdateLaunchdJobs", () => {
     };
     const findJobs = vi.fn(async () => []);
 
-    await noteMacStaleOpenClawUpdateLaunchdJobs({
+    await noteMacStaleNovaUpdateLaunchdJobs({
       platform: "darwin",
       service,
       findJobs,
@@ -275,7 +275,7 @@ describe("collectMacGatewayPlatformWarnings", () => {
       .spyOn(fs, "existsSync")
       .mockImplementation((candidate) => String(candidate).includes("disable-launchagent"));
     try {
-      const warnings = await collectMacGatewayPlatformWarnings({} as OpenClawConfig, {
+      const warnings = await collectMacGatewayPlatformWarnings({} as NovaConfig, {
         platform: "darwin",
         service: { readCommand: vi.fn(async () => null) },
         findJobs: vi.fn(async () => []),
@@ -292,7 +292,7 @@ describe("collectMacGatewayPlatformWarnings", () => {
     const exists = vi.spyOn(fs, "existsSync").mockReturnValue(false);
     try {
       await expect(
-        collectMacGatewayPlatformWarnings({} as OpenClawConfig, {
+        collectMacGatewayPlatformWarnings({} as NovaConfig, {
           platform: "darwin",
           service: { readCommand: vi.fn(async () => null) },
           findJobs: vi.fn(async () => []),

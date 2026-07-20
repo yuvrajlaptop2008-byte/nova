@@ -7,8 +7,8 @@ import {
   readSessionTranscriptMessageEvents,
   replaceSessionEntry,
 } from "../../config/sessions/session-accessor.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import {
   authorizeClientVoiceConfirmation,
   resolveClientVoiceToolConfirmationPolicy,
@@ -51,9 +51,7 @@ async function invokeClose(params: Record<string, unknown>) {
 
 describe("talk.client.transcript", () => {
   beforeEach(async () => {
-    tempDir = await fs.realpath(
-      await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-talk-transcript-")),
-    );
+    tempDir = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "nova-talk-transcript-")));
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     await replaceSessionEntry(
       { agentId: "main", sessionKey },
@@ -65,8 +63,8 @@ describe("talk.client.transcript", () => {
     clientVoiceSessionTesting.reset();
     resetClientVoiceConfirmationStateForTest();
     vi.useRealTimers();
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     envSnapshot.restore();
     await fs.rm(tempDir, { recursive: true, force: true });
   });

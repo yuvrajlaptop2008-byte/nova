@@ -7,7 +7,7 @@ source "$ROOT_DIR/scripts/lib/build-metadata.sh"
 source "$ROOT_DIR/scripts/lib/host-timeout.sh"
 COMPOSE_FILE="$ROOT_DIR/docker-compose.yml"
 EXTRA_COMPOSE_FILE="$ROOT_DIR/docker-compose.extra.yml"
-IMAGE_NAME="${NOVA_IMAGE:-openclaw:local}"
+IMAGE_NAME="${NOVA_IMAGE:-nova:local}"
 EXTRA_MOUNTS="${NOVA_EXTRA_MOUNTS:-}"
 HOME_VOLUME_NAME="${NOVA_HOME_VOLUME:-}"
 RAW_SANDBOX_SETTING="${NOVA_SANDBOX:-}"
@@ -18,8 +18,8 @@ RAW_SKIP_ONBOARDING="${NOVA_SKIP_ONBOARDING:-}"
 SKIP_ONBOARDING=""
 DOCKER_PULL_TIMEOUT="${NOVA_DOCKER_SETUP_PULL_TIMEOUT:-600s}"
 OFFLINE_MODE=""
-DEFAULT_SANDBOX_IMAGE="openclaw-sandbox:bookworm-slim"
-DEFAULT_SANDBOX_BROWSER_IMAGE="openclaw-sandbox-browser:bookworm-slim"
+DEFAULT_SANDBOX_IMAGE="nova-sandbox:bookworm-slim"
+DEFAULT_SANDBOX_BROWSER_IMAGE="nova-sandbox-browser:bookworm-slim"
 SANDBOX_BROWSER_IMAGE_CONTRACT_EPOCH="2026-05-12-cdp-relay-auth"
 
 fail() {
@@ -54,7 +54,7 @@ run_docker_build() {
 
 run_docker_pull() {
   local image="$1"
-  openclaw_host_timeout_cmd "$DOCKER_PULL_TIMEOUT" docker pull "$image"
+  nova_host_timeout_cmd "$DOCKER_PULL_TIMEOUT" docker pull "$image"
 }
 
 require_local_docker_image() {
@@ -75,7 +75,7 @@ is_truthy_value() {
 }
 
 read_config_gateway_token() {
-  local config_path="$NOVA_CONFIG_DIR/openclaw.json"
+  local config_path="$NOVA_CONFIG_DIR/nova.json"
   if [[ ! -f "$config_path" ]]; then
     return 0
   fi
@@ -185,7 +185,7 @@ run_prestart_gateway() {
 }
 
 run_prestart_cli() {
-  # During setup, avoid the shared-network openclaw-cli service because it
+  # During setup, avoid the shared-network nova-cli service because it
   # requires the gateway container's network namespace to already exist. That
   # creates a circular dependency for config writes that are needed before the
   # gateway can start cleanly.
@@ -194,11 +194,11 @@ run_prestart_cli() {
   run_prestart_gateway \
     -e HOME=/home/node \
     -e NOVA_HOME=/home/node \
-    -e NOVA_STATE_DIR=/home/node/.openclaw \
-    -e NOVA_CONFIG_PATH=/home/node/.openclaw/openclaw.json \
-    -e NOVA_CONFIG_DIR=/home/node/.openclaw \
-    -e NOVA_WORKSPACE_DIR=/home/node/.openclaw/workspace \
-    --entrypoint node openclaw-gateway \
+    -e NOVA_STATE_DIR=/home/node/.nova \
+    -e NOVA_CONFIG_PATH=/home/node/.nova/nova.json \
+    -e NOVA_CONFIG_DIR=/home/node/.nova \
+    -e NOVA_WORKSPACE_DIR=/home/node/.nova/workspace \
+    --entrypoint node nova-gateway \
     dist/index.js "$@"
 }
 
@@ -226,7 +226,7 @@ run_runtime_cli() {
     *) fail "Unknown runtime CLI deps mode: $deps_mode" ;;
   esac
 
-  docker compose "${compose_args[@]}" "${run_args[@]}" openclaw-cli "$@"
+  docker compose "${compose_args[@]}" "${run_args[@]}" nova-cli "$@"
 }
 
 run_gateway_up() {
@@ -247,7 +247,7 @@ run_gateway_up() {
   fi
   up_args+=("$@")
 
-  docker compose "${compose_args[@]}" "${up_args[@]}" openclaw-gateway
+  docker compose "${compose_args[@]}" "${up_args[@]}" nova-gateway
 }
 
 resolve_offline_sandbox_images() {
@@ -264,7 +264,7 @@ resolve_offline_sandbox_images() {
   fi
 
   printf '%s' "$agents_json" | run_prestart_gateway \
-    -T --entrypoint node openclaw-gateway -e '
+    -T --entrypoint node nova-gateway -e '
 const fs = require("node:fs");
 const agents = JSON.parse(fs.readFileSync(0, "utf8") || "{}");
 const globalToolPolicy = JSON.parse(process.argv[3] || "{}");
@@ -279,7 +279,7 @@ const entries = configuredEntries.length > 0 ? configuredEntries : [{ sandbox: {
 
 const matchesBrowser = (rawPattern) => {
   const pattern = String(rawPattern ?? "").trim().toLowerCase();
-  if (pattern === "group:openclaw" || pattern === "group:ui") {
+  if (pattern === "group:nova" || pattern === "group:ui") {
     return true;
   }
   if (!pattern) {
@@ -366,7 +366,7 @@ validate_offline_sandbox_prerequisites() {
       browser)
         if ! browser_contract="$(
           docker --host "unix://$DOCKER_SOCKET_PATH" image inspect \
-            -f '{{ index .Config.Labels "org.openclaw.sandbox-browser.contract" }}' \
+            -f '{{ index .Config.Labels "org.nova.sandbox-browser.contract" }}' \
             "$sandbox_image" 2>/dev/null
         )"; then
           sandbox_image_errors+=("$sandbox_image (missing)")
@@ -399,7 +399,7 @@ validate_offline_sandbox_prerequisites() {
     fi
   done <<<"$sandbox_images"
 
-  if ! run_compose_one_off --rm --entrypoint docker openclaw-gateway --version >/dev/null 2>&1; then
+  if ! run_compose_one_off --rm --entrypoint docker nova-gateway --version >/dev/null 2>&1; then
     fail "Offline sandbox setup requires Docker CLI in $IMAGE_NAME."
   fi
 }
@@ -470,9 +470,9 @@ if is_truthy_value "$RAW_SKIP_ONBOARDING"; then
   SKIP_ONBOARDING="1"
 fi
 
-NOVA_CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.openclaw}"
-NOVA_WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.openclaw/workspace}"
-NOVA_AUTH_PROFILE_SECRET_DIR="${NOVA_AUTH_PROFILE_SECRET_DIR:-$HOME/.openclaw-auth-profile-secrets}"
+NOVA_CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.nova}"
+NOVA_WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.nova/workspace}"
+NOVA_AUTH_PROFILE_SECRET_DIR="${NOVA_AUTH_PROFILE_SECRET_DIR:-$HOME/.nova-auth-profile-secrets}"
 
 validate_mount_path_value "NOVA_CONFIG_DIR" "$NOVA_CONFIG_DIR"
 validate_mount_path_value "NOVA_WORKSPACE_DIR" "$NOVA_WORKSPACE_DIR"
@@ -554,7 +554,7 @@ if [[ -z "${NOVA_GATEWAY_TOKEN:-}" ]]; then
   EXISTING_CONFIG_TOKEN="$(read_config_gateway_token || true)"
   if [[ -n "$EXISTING_CONFIG_TOKEN" ]]; then
     NOVA_GATEWAY_TOKEN="$EXISTING_CONFIG_TOKEN"
-    echo "Reusing gateway token from $NOVA_CONFIG_DIR/openclaw.json"
+    echo "Reusing gateway token from $NOVA_CONFIG_DIR/nova.json"
   else
     DOTENV_GATEWAY_TOKEN="$(read_env_gateway_token "$ROOT_DIR/.env" || true)"
     if [[ -n "$DOTENV_GATEWAY_TOKEN" ]]; then
@@ -587,15 +587,15 @@ write_extra_compose() {
 
   cat >"$EXTRA_COMPOSE_FILE" <<'YAML'
 services:
-  openclaw-gateway:
+  nova-gateway:
     volumes:
 YAML
 
   if [[ -n "$home_volume" ]]; then
     gateway_home_mount="${home_volume}:/home/node"
-    gateway_config_mount="${NOVA_CONFIG_DIR}:/home/node/.openclaw"
-    gateway_workspace_mount="${NOVA_WORKSPACE_DIR}:/home/node/.openclaw/workspace"
-    gateway_auth_profile_secret_mount="${NOVA_AUTH_PROFILE_SECRET_DIR}:/home/node/.config/openclaw"
+    gateway_config_mount="${NOVA_CONFIG_DIR}:/home/node/.nova"
+    gateway_workspace_mount="${NOVA_WORKSPACE_DIR}:/home/node/.nova/workspace"
+    gateway_auth_profile_secret_mount="${NOVA_AUTH_PROFILE_SECRET_DIR}:/home/node/.config/nova"
     validate_mount_spec "$gateway_home_mount"
     validate_mount_spec "$gateway_config_mount"
     validate_mount_spec "$gateway_workspace_mount"
@@ -612,7 +612,7 @@ YAML
   done
 
   cat >>"$EXTRA_COMPOSE_FILE" <<'YAML'
-  openclaw-cli:
+  nova-cli:
     volumes:
 YAML
 
@@ -753,10 +753,10 @@ upsert_env "$ENV_FILE" \
 if [[ -n "$OFFLINE_MODE" ]]; then
   require_local_docker_image "$IMAGE_NAME"
   echo "==> Using preloaded Docker image: $IMAGE_NAME"
-elif [[ "$IMAGE_NAME" == "openclaw:local" ]]; then
+elif [[ "$IMAGE_NAME" == "nova:local" ]]; then
   echo "==> Building Docker image: $IMAGE_NAME"
-  BUILD_GIT_COMMIT="$(openclaw_resolve_git_commit "$ROOT_DIR")"
-  BUILD_TIMESTAMP="$(openclaw_resolve_build_timestamp)"
+  BUILD_GIT_COMMIT="$(nova_resolve_git_commit "$ROOT_DIR")"
+  BUILD_TIMESTAMP="$(nova_resolve_build_timestamp)"
   PROVENANCE_BUILD_ARGS=(--build-arg "NOVA_BUILD_TIMESTAMP=${BUILD_TIMESTAMP}")
   if [[ "$BUILD_GIT_COMMIT" =~ ^[0-9a-fA-F]{40}$ ]]; then
     PROVENANCE_BUILD_ARGS+=(--build-arg "GIT_COMMIT=${BUILD_GIT_COMMIT}")
@@ -795,15 +795,15 @@ echo "==> Fixing data-directory permissions"
 # Run a no-dereference chown from each entry's directory. This keeps ownership
 # repair for sockets/FIFOs while preventing a swapped symlink leaf from
 # redirecting the root operation outside the mounted tree.
-# After fixing the config dir, only the OpenClaw metadata subdirectory
-# (.openclaw/) inside the workspace gets chowned, not the user's project files.
-run_prestart_gateway --user root --entrypoint sh openclaw-gateway -c \
+# After fixing the config dir, only the Nova metadata subdirectory
+# (.nova/) inside the workspace gets chowned, not the user's project files.
+run_prestart_gateway --user root --entrypoint sh nova-gateway -c \
   'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin; export PATH; \
-   /usr/bin/find -P /home/node/.openclaw -xdev -execdir /usr/bin/chown -h node:node {} +; \
+   /usr/bin/find -P /home/node/.nova -xdev -execdir /usr/bin/chown -h node:node {} +; \
    /usr/bin/chown -h node:node /home/node/.config; \
-   /usr/bin/find -P /home/node/.config/openclaw -xdev -execdir /usr/bin/chown -h node:node {} +; \
-   if [ -d /home/node/.openclaw/workspace/.openclaw ] && [ ! -L /home/node/.openclaw/workspace/.openclaw ]; then \
-     /usr/bin/find -P /home/node/.openclaw/workspace/.openclaw -xdev -execdir /usr/bin/chown -h node:node {} +; \
+   /usr/bin/find -P /home/node/.config/nova -xdev -execdir /usr/bin/chown -h node:node {} +; \
+   if [ -d /home/node/.nova/workspace/.nova ] && [ ! -L /home/node/.nova/workspace/.nova ]; then \
+     /usr/bin/find -P /home/node/.nova/workspace/.nova -xdev -execdir /usr/bin/chown -h node:node {} +; \
    fi || true'
 
 echo ""
@@ -841,12 +841,12 @@ sync_gateway_config
 echo ""
 echo "==> Provider setup (optional)"
 echo "WhatsApp (QR):"
-echo "  ${COMPOSE_HINT} run --rm openclaw-cli channels login"
+echo "  ${COMPOSE_HINT} run --rm nova-cli channels login"
 echo "Telegram (bot token):"
-echo "  ${COMPOSE_HINT} run --rm openclaw-cli channels add --channel telegram --token <token>"
+echo "  ${COMPOSE_HINT} run --rm nova-cli channels add --channel telegram --token <token>"
 echo "Discord (bot token):"
-echo "  ${COMPOSE_HINT} run --rm openclaw-cli channels add --channel discord --token <token>"
-echo "Docs: https://docs.openclaw.ai/channels"
+echo "  ${COMPOSE_HINT} run --rm nova-cli channels add --channel discord --token <token>"
+echo "Docs: https://docs.nova.ai/channels"
 
 if [[ -n "$SANDBOX_ENABLED" && -n "$OFFLINE_MODE" ]]; then
   echo ""
@@ -886,10 +886,10 @@ if [[ -n "$SANDBOX_ENABLED" ]]; then
   # sandbox. This avoids claiming sandbox is enabled when the image cannot
   # launch sandbox containers.
   if [[ -n "$SANDBOX_ENABLED" && -z "$OFFLINE_MODE" ]] &&
-    ! run_compose_one_off --rm --entrypoint docker openclaw-gateway --version >/dev/null 2>&1; then
+    ! run_compose_one_off --rm --entrypoint docker nova-gateway --version >/dev/null 2>&1; then
     echo "WARNING: Docker CLI not found inside the container image." >&2
     echo "  Sandbox requires Docker CLI. Rebuild with --build-arg NOVA_INSTALL_DOCKER_CLI=1" >&2
-    echo "  or use a local build (NOVA_IMAGE=openclaw:local). Skipping sandbox setup." >&2
+    echo "  or use a local build (NOVA_IMAGE=nova:local). Skipping sandbox setup." >&2
     SANDBOX_ENABLED=""
   fi
 fi
@@ -902,7 +902,7 @@ if [[ -n "$SANDBOX_ENABLED" ]]; then
   SANDBOX_COMPOSE_FILE="$ROOT_DIR/docker-compose.sandbox.yml"
   cat >"$SANDBOX_COMPOSE_FILE" <<YAML
 services:
-  openclaw-gateway:
+  nova-gateway:
     volumes:
       - $(quote_yaml_string "${DOCKER_SOCKET_PATH}:/var/run/docker.sock")
 YAML
@@ -917,7 +917,7 @@ YAML
 fi
 
 if [[ -n "$SANDBOX_ENABLED" ]]; then
-  # Enable sandbox in OpenClaw config.
+  # Enable sandbox in Nova config.
   sandbox_config_ok=true
   if ! run_runtime_cli current no-deps \
     config set agents.defaults.sandbox.mode "non-main" >/dev/null; then
@@ -937,7 +937,7 @@ if [[ -n "$SANDBOX_ENABLED" ]]; then
 
   if [[ "$sandbox_config_ok" == true ]]; then
     echo "Sandbox enabled: mode=non-main, scope=agent, workspaceAccess=none"
-    echo "Docs: https://docs.openclaw.ai/gateway/sandboxing"
+    echo "Docs: https://docs.nova.ai/gateway/sandboxing"
     # Restart gateway with sandbox compose overlay to pick up socket mount + config.
     run_gateway_up current
   else
@@ -976,5 +976,5 @@ echo "Workspace: $NOVA_WORKSPACE_DIR"
 echo "Token: stored in Docker environment/config (not printed)."
 echo ""
 echo "Commands:"
-echo "  ${COMPOSE_HINT} logs -f openclaw-gateway"
-echo "  ${COMPOSE_HINT} exec openclaw-gateway sh -lc 'node dist/index.js health --token \"\$NOVA_GATEWAY_TOKEN\"'"
+echo "  ${COMPOSE_HINT} logs -f nova-gateway"
+echo "  ${COMPOSE_HINT} exec nova-gateway sh -lc 'node dist/index.js health --token \"\$NOVA_GATEWAY_TOKEN\"'"

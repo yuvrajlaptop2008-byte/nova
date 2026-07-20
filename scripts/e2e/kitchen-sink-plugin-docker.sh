@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-kitchen-sink-plugin-e2e" NOVA_KITCHEN_SINK_PLUGIN_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-kitchen-sink-plugin-e2e" NOVA_KITCHEN_SINK_PLUGIN_E2E_IMAGE)"
 NOVA_DOCKER_E2E_LOG_PRINT_BYTES="$(
   docker_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536
 )"
@@ -17,13 +17,13 @@ KITCHEN_SINK_NPM_MISSING_SPEC="${NOVA_KITCHEN_SINK_NPM_MISSING_SPEC:-npm:@nova/k
 
 DEFAULT_KITCHEN_SINK_SCENARIOS="$(
   cat <<SCENARIOS
-npm-latest-full|${KITCHEN_SINK_NPM_SPEC}|openclaw-kitchen-sink-fixture|npm|success|full
-npm-latest-conformance|${KITCHEN_SINK_NPM_SPEC}|openclaw-kitchen-sink-fixture|npm|success|conformance|conformance
-npm-latest-adversarial|${KITCHEN_SINK_NPM_SPEC}|openclaw-kitchen-sink-fixture|npm|success|adversarial|adversarial
-npm-beta|${KITCHEN_SINK_NPM_MISSING_SPEC}|openclaw-kitchen-sink-fixture|npm|failure|none
-clawhub-latest|clawhub:@nova/kitchen-sink@latest|openclaw-kitchen-sink-fixture|clawhub|success|basic
-clawhub-beta|clawhub:@nova/kitchen-sink@beta|openclaw-kitchen-sink-fixture|clawhub|failure|none
-npm-to-clawhub|clawhub:@nova/kitchen-sink@latest|openclaw-kitchen-sink-fixture|clawhub|success|basic||${KITCHEN_SINK_NPM_SPEC}
+npm-latest-full|${KITCHEN_SINK_NPM_SPEC}|nova-kitchen-sink-fixture|npm|success|full
+npm-latest-conformance|${KITCHEN_SINK_NPM_SPEC}|nova-kitchen-sink-fixture|npm|success|conformance|conformance
+npm-latest-adversarial|${KITCHEN_SINK_NPM_SPEC}|nova-kitchen-sink-fixture|npm|success|adversarial|adversarial
+npm-beta|${KITCHEN_SINK_NPM_MISSING_SPEC}|nova-kitchen-sink-fixture|npm|failure|none
+clawhub-latest|clawhub:@nova/kitchen-sink@latest|nova-kitchen-sink-fixture|clawhub|success|basic
+clawhub-beta|clawhub:@nova/kitchen-sink@beta|nova-kitchen-sink-fixture|clawhub|failure|none
+npm-to-clawhub|clawhub:@nova/kitchen-sink@latest|nova-kitchen-sink-fixture|clawhub|success|basic||${KITCHEN_SINK_NPM_SPEC}
 SCENARIOS
 )"
 KITCHEN_SINK_SCENARIOS="${NOVA_KITCHEN_SINK_PLUGIN_SCENARIOS:-$DEFAULT_KITCHEN_SINK_SCENARIOS}"
@@ -37,9 +37,9 @@ MAX_MEMORY_MIB="$(
 MAX_CPU_PERCENT="$(docker_e2e_read_nonnegative_decimal_env NOVA_KITCHEN_SINK_MAX_CPU_PERCENT 1200)"
 DOCKER_RUN_TIMEOUT="${NOVA_KITCHEN_SINK_PLUGIN_DOCKER_RUN_TIMEOUT:-1200s}"
 KITCHEN_SINK_CLI_TIMEOUT="${NOVA_KITCHEN_SINK_PLUGIN_CLI_TIMEOUT:-${KITCHEN_SINK_CLI_TIMEOUT:-180s}}"
-CONTAINER_NAME="openclaw-kitchen-sink-plugin-e2e-$$"
-RUN_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-kitchen-sink-plugin.XXXXXX")"
-STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-kitchen-sink-plugin-stats.XXXXXX")"
+CONTAINER_NAME="nova-kitchen-sink-plugin-e2e-$$"
+RUN_LOG="$(mktemp "${TMPDIR:-/tmp}/nova-kitchen-sink-plugin.XXXXXX")"
+STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/nova-kitchen-sink-plugin-stats.XXXXXX")"
 
 cleanup() {
   docker_e2e_docker_cmd rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true

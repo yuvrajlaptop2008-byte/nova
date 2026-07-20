@@ -1,7 +1,7 @@
 // Tracks image attachments that belong to the current reply turn.
 import { mimeTypeFromFilePath } from "@nova/media-core/mime";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import type { ImageContent } from "../../llm/types.js";
@@ -163,7 +163,7 @@ function resolveMergedTurnImages(entries: OrderedTurnImage[]): {
 /** Resolves current-turn image attachments that were not already described by media understanding. */
 export async function resolveCurrentTurnImages(params: {
   ctx: MsgContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   images?: ImageContent[];
   imageOrder?: PromptImageOrderEntry[];
   extractedFileImages?: ExtractedFileImage[];

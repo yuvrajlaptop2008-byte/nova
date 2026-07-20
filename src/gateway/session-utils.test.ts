@@ -6,7 +6,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { writeAcpSessionMetaForMigration } from "../acp/runtime/session-meta.js";
 import { resetConfigRuntimeState, setRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { SessionEntry } from "../config/sessions.js";
 import {
   appendTranscriptMessageSync,
@@ -15,8 +15,8 @@ import {
 import type { CronJob } from "../cron/types.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../plugins/runtime.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { withStateDirEnv as withRawStateDirEnv } from "../test-helpers/state-dir-env.js";
 import { registerSessionAutomationSource } from "./session-automation-index.js";
 import { buildGatewaySessionEventFields } from "./session-event-payload.js";
@@ -52,8 +52,8 @@ vi.mock("../plugins/provider-public-artifacts.js", () => ({
 }));
 
 function closeSessionSqliteDatabasesForTest(): void {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
 }
 
 async function withStateDirEnv<T>(
@@ -111,20 +111,20 @@ function createSymlinkOrSkip(targetPath: string, linkPath: string): boolean {
   }
 }
 
-function createSingleAgentAvatarConfig(workspace: string): OpenClawConfig {
+function createSingleAgentAvatarConfig(workspace: string): NovaConfig {
   return {
     session: { mainKey: "main" },
     agents: {
       list: [{ id: "main", default: true, workspace, identity: { avatar: "avatar-link.png" } }],
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function createModelDefaultsConfig(params: {
   primary: string;
   models?: Record<string, { agentRuntime?: { id: string } }>;
   agentRuntime?: { id: string };
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     agents: {
       defaults: {
@@ -137,7 +137,7 @@ function createModelDefaultsConfig(params: {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function requireString(value: string | undefined, label: string): string {
@@ -364,12 +364,12 @@ describe("gateway session utils", () => {
   });
 
   test("session list search includes direct-session origin display labels", () => {
-    const cfg = { agents: { list: [{ id: "main", default: true }] } } as OpenClawConfig;
+    const cfg = { agents: { list: [{ id: "main", default: true }] } } as NovaConfig;
     const store = {
       "agent:main:telegram:direct:42": {
         chatType: "direct",
         channel: "telegram",
-        origin: { label: "openclaw-tui" },
+        origin: { label: "nova-tui" },
         updatedAt: 2,
       } as SessionEntry,
       "agent:main:telegram:direct:99": {
@@ -384,13 +384,13 @@ describe("gateway session utils", () => {
       cfg,
       storePath: "",
       store,
-      opts: { search: "openclaw-tui" },
+      opts: { search: "nova-tui" },
     });
 
     expect(listed.sessions.map((session) => session.key)).toEqual([
       "agent:main:telegram:direct:42",
     ]);
-    expect(listed.sessions[0]?.displayName).toBe("openclaw-tui");
+    expect(listed.sessions[0]?.displayName).toBe("nova-tui");
   });
 
   test("session lists mark the final offset page without hasMore", () => {
@@ -829,7 +829,7 @@ describe("gateway session utils", () => {
           { id: "xhigh" },
           { id: "max" },
           ...(modelId.startsWith("gpt-5.6") &&
-          (agentRuntime === "openclaw" || !modelId.startsWith("gpt-5.6-luna"))
+          (agentRuntime === "nova" || !modelId.startsWith("gpt-5.6-luna"))
             ? [{ id: "ultra" as const }]
             : []),
         ],
@@ -844,7 +844,7 @@ describe("gateway session utils", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const defaults = getSessionDefaults(cfg);
     const row = (entry: SessionEntry) =>
       buildGatewaySessionRow({
@@ -856,29 +856,29 @@ describe("gateway session utils", () => {
       });
 
     const codex = row({ sessionId: "codex", thinkingLevel: "ultra" } as SessionEntry);
-    const openClawOverride = row({
-      sessionId: "openclaw",
+    const novaOverride = row({
+      sessionId: "nova",
       thinkingLevel: "ultra",
-      agentRuntimeOverride: "openclaw",
+      agentRuntimeOverride: "nova",
     } as SessionEntry);
     const legacyObservedNova = row({
-      sessionId: "legacy-observed-openclaw",
+      sessionId: "legacy-observed-nova",
       thinkingLevel: "ultra",
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
     } as SessionEntry);
     const lockedCodex = row({
       sessionId: "locked-codex",
       thinkingLevel: "ultra",
       agentHarnessId: "codex",
-      agentRuntimeOverride: "openclaw",
+      agentRuntimeOverride: "nova",
       modelSelectionLocked: true,
     } as SessionEntry);
 
     expect(defaults.agentRuntime?.id).toBe("codex");
     expect(codex.thinkingLevel).toBe("ultra");
     expect(codex.thinkingLevels?.map((level) => level.id)).not.toContain("ultra");
-    expect(openClawOverride.thinkingLevel).toBe("ultra");
-    expect(openClawOverride.agentRuntime?.id).toBe("openclaw");
+    expect(novaOverride.thinkingLevel).toBe("ultra");
+    expect(novaOverride.agentRuntime?.id).toBe("nova");
     expect(legacyObservedNova.thinkingLevel).toBe("ultra");
     expect(legacyObservedNova.agentRuntime?.id).toBe("codex");
     expect(legacyObservedNova.thinkingLevels?.map((level) => level.id)).not.toContain("ultra");
@@ -893,11 +893,11 @@ describe("gateway session utils", () => {
         defaults: {
           model: { primary: "openai/gpt-5.6-sol" },
           models: {
-            "openai/gpt-5.6-sol": { agentRuntime: { id: "openclaw" } },
+            "openai/gpt-5.6-sol": { agentRuntime: { id: "nova" } },
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const row = buildGatewaySessionRow({
       cfg,
@@ -937,7 +937,7 @@ describe("gateway session utils", () => {
           thinkingDefault: "high",
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expectFields(defaults, {
       modelProvider: "openai",
@@ -954,7 +954,7 @@ describe("gateway session utils", () => {
       key: "agent:main:main",
       entry: {
         sessionId: "session-1",
-        sessionFile: "/tmp/openclaw/agents/main/sessions/session-1.jsonl",
+        sessionFile: "/tmp/nova/agents/main/sessions/session-1.jsonl",
         updatedAt: 1,
         contextBudgetStatus: {
           schemaVersion: 1,
@@ -990,7 +990,7 @@ describe("gateway session utils", () => {
 
   test("session rows preserve fresh zero-token usage", () => {
     const row = buildGatewaySessionRow({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       storePath: "",
       store: {},
       key: "agent:main:main",
@@ -1035,7 +1035,7 @@ describe("gateway session utils", () => {
       const row = buildGatewaySessionRow({
         cfg: {
           agents: { list: [{ id: "main", default: true }, { id: "work" }] },
-        } as OpenClawConfig,
+        } as NovaConfig,
         storePath: "",
         store: {},
         key: "global",
@@ -1067,7 +1067,7 @@ describe("gateway session utils", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const row = buildGatewaySessionRow({
       cfg,
@@ -1096,7 +1096,7 @@ describe("gateway session utils", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const row = buildGatewaySessionRow({
       cfg,
@@ -1130,11 +1130,11 @@ describe("gateway session utils", () => {
   });
 
   test("buildGatewaySessionRow displayName falls through to origin label for direct sessions", () => {
-    const cfg = { agents: { list: [{ id: "main", default: true }] } } as OpenClawConfig;
+    const cfg = { agents: { list: [{ id: "main", default: true }] } } as NovaConfig;
     const entry = {
       chatType: "direct",
       channel: "telegram",
-      origin: { label: "openclaw-tui" },
+      origin: { label: "nova-tui" },
     } as SessionEntry;
     const row = buildGatewaySessionRow({
       cfg,
@@ -1143,11 +1143,11 @@ describe("gateway session utils", () => {
       key: "agent:main:telegram:direct:42",
       entry,
     });
-    expect(row.displayName).toBe("openclaw-tui");
+    expect(row.displayName).toBe("nova-tui");
   });
 
   test("buildGatewaySessionRow keeps dashboard sender identity out of the session title", () => {
-    const cfg = { agents: { list: [{ id: "main", default: true }] } } as OpenClawConfig;
+    const cfg = { agents: { list: [{ id: "main", default: true }] } } as NovaConfig;
     const entry = {
       chatType: "direct",
       channel: "webchat",
@@ -1174,12 +1174,12 @@ describe("gateway session utils", () => {
   });
 
   test("buildGatewaySessionRow displayName prefers the human chat title for group sessions", () => {
-    const cfg = { agents: { list: [{ id: "main", default: true }] } } as OpenClawConfig;
+    const cfg = { agents: { list: [{ id: "main", default: true }] } } as NovaConfig;
     const entry = {
       chatType: "group",
       channel: "telegram",
       subject: "Engineering",
-      origin: { label: "openclaw-tui" },
+      origin: { label: "nova-tui" },
     } as SessionEntry;
     const row = buildGatewaySessionRow({
       cfg,
@@ -1192,7 +1192,7 @@ describe("gateway session utils", () => {
   });
 
   test("buildGatewaySessionRow group displayName prefers #channel and falls back to the token", () => {
-    const cfg = { agents: { list: [{ id: "main", default: true }] } } as OpenClawConfig;
+    const cfg = { agents: { list: [{ id: "main", default: true }] } } as NovaConfig;
     const channelEntry = {
       chatType: "channel",
       channel: "slack",
@@ -1230,14 +1230,14 @@ describe("gateway session utils", () => {
   });
 
   test("buildGatewaySessionRow projects worktree and execNode bindings", () => {
-    const cfg = { agents: { list: [{ id: "main", default: true }] } } as OpenClawConfig;
+    const cfg = { agents: { list: [{ id: "main", default: true }] } } as NovaConfig;
     const entry = {
       sessionId: "s1",
       updatedAt: 1,
       spawnedCwd: "/state/worktrees/abc/wt-1234",
-      worktree: { id: "wt-id", branch: "openclaw/wt-1234", repoRoot: "/repo" },
+      worktree: { id: "wt-id", branch: "nova/wt-1234", repoRoot: "/repo" },
       execNode: "macbook",
-      execCwd: "/Users/peter/Projects/openclaw",
+      execCwd: "/Users/peter/Projects/nova",
     } as SessionEntry;
     const row = buildGatewaySessionRow({
       cfg,
@@ -1246,18 +1246,18 @@ describe("gateway session utils", () => {
       key: "agent:main:dashboard:x",
       entry,
     });
-    expect(row.worktree).toEqual({ id: "wt-id", branch: "openclaw/wt-1234", repoRoot: "/repo" });
+    expect(row.worktree).toEqual({ id: "wt-id", branch: "nova/wt-1234", repoRoot: "/repo" });
     expect(row.execNode).toBe("macbook");
-    expect(row.execCwd).toBe("/Users/peter/Projects/openclaw");
+    expect(row.execCwd).toBe("/Users/peter/Projects/nova");
   });
 
   test("buildGatewaySessionRow prefers entry.label over origin.label for direct sessions", () => {
-    const cfg = { agents: { list: [{ id: "main", default: true }] } } as OpenClawConfig;
+    const cfg = { agents: { list: [{ id: "main", default: true }] } } as NovaConfig;
     const entry = {
       chatType: "direct",
       channel: "telegram",
       label: "Alice",
-      origin: { label: "openclaw-tui" },
+      origin: { label: "nova-tui" },
     } as SessionEntry;
     const row = buildGatewaySessionRow({
       cfg,
@@ -1273,7 +1273,7 @@ describe("gateway session utils", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
       messages: { responseUsage: "tokens" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const entry = { sessionId: "s1", updatedAt: 1 } as SessionEntry;
     const row = buildGatewaySessionRow({
       cfg,
@@ -1293,7 +1293,7 @@ describe("gateway session utils", () => {
       messages: {
         responseUsage: { default: "off", discord: "full", telegram: "tokens" },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const discordEntry = { sessionId: "d1", updatedAt: 1, channel: "discord" } as SessionEntry;
     const discordRow = buildGatewaySessionRow({
       cfg,
@@ -1330,7 +1330,7 @@ describe("gateway session utils", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
       messages: { responseUsage: { default: "full", discord: "full" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const entry = {
       sessionId: "d1",
       updatedAt: 1,
@@ -1353,7 +1353,7 @@ describe("gateway session utils", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
       messages: { queue: { mode: "interrupt", byChannel: { webchat: "collect" } } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const inheritedEntry = { sessionId: "s1", updatedAt: 1 } as SessionEntry;
     const inheritedRow = buildGatewaySessionRow({
       cfg,
@@ -1385,7 +1385,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("agent:ops:work");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "work" })).toBe("agent:ops:work");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "agent:ops:main" })).toBe("agent:ops:work");
@@ -1399,7 +1399,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "agent:main:discord:direct:u1" })).toBe(
       "agent:main:discord:direct:u1",
     );
@@ -1409,7 +1409,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const legacyMainAlias = resolveSessionStoreKey({ cfg, sessionKey: "agent:main:main" });
 
     expect(legacyMainAlias).toBe("agent:ops:work");
@@ -1423,7 +1423,7 @@ describe("gateway session utils", () => {
   test("resolveDeletedAgentIdFromSessionKey ignores confirmed ACP runtime session keys", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const acpEntry = (agent: string, runtimeSessionName: string) =>
       ({
         acp: {
@@ -1448,7 +1448,7 @@ describe("gateway session utils", () => {
   test("resolveDeletedAgentIdFromSessionKey rejects ACP-shaped bridge keys without ACP metadata", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveDeletedAgentIdFromSessionKey(cfg, "agent:main:acp:configured-bridge-without-meta", {
@@ -1496,7 +1496,7 @@ describe("gateway session utils", () => {
           store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
         },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       expect(
         resolveDeletedAgentIdFromSessionKey(cfg, acpKey, entry, {
@@ -1509,7 +1509,7 @@ describe("gateway session utils", () => {
   test("resolveDeletedAgentIdFromSessionKey rejects deleted configured ACP binding owners", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveDeletedAgentIdFromSessionKey(
@@ -1526,7 +1526,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "discord:group:123" })).toBe(
       "agent:ops:discord:group:123",
     );
@@ -1539,7 +1539,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "ops" }, { id: "review" }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("agent:ops:main");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "discord:group:123" })).toBe(
       "agent:ops:discord:group:123",
@@ -1549,7 +1549,7 @@ describe("gateway session utils", () => {
   test("resolveSessionStoreKey falls back to main when agents.list is missing", () => {
     const cfg = {
       session: { mainKey: "work" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("agent:main:work");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "thread-1" })).toBe("agent:main:thread-1");
   });
@@ -1558,7 +1558,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "CoP" })).toBe(
       resolveSessionStoreKey({ cfg, sessionKey: "cop" }),
     );
@@ -1573,7 +1573,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const mixedGroupId = "VWATodkf2hc8zdOS76q9Tb0+5Bi522E03qLdaQ/9ypg=";
     expect(resolveSessionStoreKey({ cfg, sessionKey: `Signal:Group:${mixedGroupId}` })).toBe(
       `agent:ops:signal:group:${mixedGroupId}`,
@@ -1586,7 +1586,7 @@ describe("gateway session utils", () => {
   test("canonicalizeSpawnedByForAgent preserves Signal group ids", () => {
     const cfg = {
       session: { mainKey: "main" },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const mixedGroupId = "VWATodkf2hc8zdOS76q9Tb0+5Bi522E03qLdaQ/9ypg=";
 
     expect(canonicalizeSpawnedByForAgent(cfg, "ops", `Signal:Group:${mixedGroupId}`)).toBe(
@@ -1601,7 +1601,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { scope: "global", mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("global");
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "main" });
     expect(target.canonicalKey).toBe("global");
@@ -1611,14 +1611,14 @@ describe("gateway session utils", () => {
   test("resolveGatewaySessionStoreTarget uses canonical key for main alias", () => {
     const storeTemplate = path.join(
       os.tmpdir(),
-      "openclaw-session-utils",
+      "nova-session-utils",
       "{agentId}",
       "sessions.json",
     );
     const cfg = {
       session: { mainKey: "main", store: storeTemplate },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "main" });
     expect(target.canonicalKey).toBe("agent:ops:main");
     expect(target.storeKeys).toContain("agent:ops:main");
@@ -1637,7 +1637,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work", store: storePath },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:ops:main" });
     expect(target.canonicalKey).toBe("agent:ops:work");
     expect(target.storeKeys).toContain("agent:ops:main");
@@ -1656,7 +1656,7 @@ describe("gateway session utils", () => {
       const cfg = {
         session: { mainKey: "main", store: fixedStorePath },
         agents: { list: [{ id: "ops", default: true }] },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const target = resolveGatewaySessionStoreTargetWithStore({
         cfg,
@@ -1683,7 +1683,7 @@ describe("gateway session utils", () => {
           store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
         },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:retired-agent:main" });
 
@@ -1705,7 +1705,7 @@ describe("gateway session utils", () => {
           store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
         },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const fallbackStore = {
         "agent:retired-agent:main": { sessionId: "sess-fallback", updatedAt: 99 },
       };
@@ -1740,7 +1740,7 @@ describe("gateway session utils", () => {
           store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
         },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const target = resolveGatewaySessionStoreTargetWithStore({
         cfg,
@@ -1769,7 +1769,7 @@ describe("gateway session utils", () => {
             store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
           },
           agents: { list: [{ id: "main", default: true }] },
-        } as OpenClawConfig;
+        } as NovaConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:retired-agent:main");
@@ -1798,7 +1798,7 @@ describe("gateway session utils", () => {
             store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
           },
           agents: { list: [{ id: "main", default: true }] },
-        } as OpenClawConfig;
+        } as NovaConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:main:main", { clone: false });
@@ -1820,7 +1820,7 @@ describe("gateway session utils", () => {
             store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
           },
           agents: { list: [{ id: "main", default: true }] },
-        } as OpenClawConfig;
+        } as NovaConfig;
         const store: Record<string, SessionEntry> = {
           "agent:main:main": { sessionId: "sess-main", updatedAt: 7 },
         };
@@ -1865,7 +1865,7 @@ describe("gateway session utils", () => {
         const cfg = {
           session: { mainKey: "main", store: storeTemplate },
           agents: { list: [{ id: "ops", default: true }] },
-        } as OpenClawConfig;
+        } as NovaConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:main:main" });
@@ -1908,7 +1908,7 @@ describe("gateway session utils", () => {
         const cfg = {
           session: { mainKey: "work", store: storeTemplate },
           agents: { list: [{ id: "ops", default: true }] },
-        } as OpenClawConfig;
+        } as NovaConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:main:work");
@@ -1944,7 +1944,7 @@ describe("gateway session utils", () => {
             store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
           },
           agents: { list: [{ id: "main", default: true }] },
-        } as OpenClawConfig;
+        } as NovaConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:main:main");
@@ -1960,7 +1960,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const store: Record<string, SessionEntry> = {
       "agent:ops:work": {
         sessionId: "sess-stale",
@@ -2026,7 +2026,7 @@ describe("gateway session utils", () => {
       agents: {
         list: [{ id: "main", default: true, identity: { name: "开发助手" } }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg);
 
@@ -2050,7 +2050,7 @@ describe("gateway session utils", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg);
 
@@ -2067,7 +2067,7 @@ describe("gateway session utils", () => {
       agents: {
         list: [{ id: "main", default: true, identity: {} }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg);
 
@@ -2079,14 +2079,14 @@ describe("gateway session utils", () => {
   });
 
   test("listAgentsForGateway keeps explicit agents.list scope over disk-only agents (scope boundary)", async () => {
-    await withStateDirEnv("openclaw-agent-list-scope-", async ({ stateDir }) => {
+    await withStateDirEnv("nova-agent-list-scope-", async ({ stateDir }) => {
       fs.mkdirSync(path.join(stateDir, "agents", "main"), { recursive: true });
       fs.mkdirSync(path.join(stateDir, "agents", "codex"), { recursive: true });
 
       const cfg = {
         session: { mainKey: "main" },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const { agents } = listAgentsForGateway(cfg);
       expect(agents.map((agent) => agent.id)).toEqual(["main"]);
@@ -2106,7 +2106,7 @@ describe("gateway session utils", () => {
         },
         list: [{ id: "main", default: true }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg);
     expectFields(result.agents[0], {
@@ -2124,7 +2124,7 @@ describe("gateway session utils", () => {
   });
 
   test("listAgentsForGateway reports whether each workspace is a git checkout", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-agent-workspace-git-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-agent-workspace-git-"));
     const gitWorkspace = path.join(root, "git");
     const plainWorkspace = path.join(root, "plain");
     fs.mkdirSync(path.join(gitWorkspace, ".git"), { recursive: true });
@@ -2136,7 +2136,7 @@ describe("gateway session utils", () => {
           { id: "plain", workspace: plainWorkspace },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     try {
       const result = listAgentsForGateway(cfg);
 
@@ -2167,7 +2167,7 @@ describe("gateway session utils", () => {
         },
         list: [{ id: "main", default: true }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg);
     expectFields(result.agents[0], {
@@ -2200,7 +2200,7 @@ describe("gateway session utils", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg);
     const ops = result.agents.find((agent) => agent.id === "ops");
@@ -2263,7 +2263,7 @@ describe("gateway session utils", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg);
     const agent = result.agents.find((row) => row.id === "investment-master");
@@ -2291,7 +2291,7 @@ describe("gateway session utils", () => {
         },
         list: [{ id: "main", default: true }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listAgentsForGateway(cfg, [
       { provider: "local", id: "custom-reasoner", name: "Custom Reasoner", reasoning: true },
@@ -2439,7 +2439,7 @@ describe("resolveSessionModelRef", () => {
 
 describe("listSessionsFromStore selected model display", () => {
   test("async list yields during bulk transcript title and last-message hydration", async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sessions-list-yield-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-sessions-list-yield-"));
     try {
       const storePath = path.join(tmpDir, "sessions.json");
       const store: Record<string, SessionEntry> = {};
@@ -2510,7 +2510,7 @@ describe("listSessionsFromStore selected model display", () => {
   });
 
   test("caps transcript title and last-message hydration for bulk list responses", async () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sessions-list-cap-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-sessions-list-cap-"));
     try {
       const storePath = path.join(tmpDir, "sessions.json");
       const store: Record<string, SessionEntry> = {};
@@ -2597,7 +2597,7 @@ describe("listSessionsFromStore selected model display", () => {
             { id: "work", model: { primary: "anthropic/claude-opus-4-6" } },
           ],
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       storePath: "/tmp/sessions.json",
       store: {
         global: { sessionId: "global", updatedAt: now } as SessionEntry,
@@ -2727,7 +2727,7 @@ describe("listSessionsFromStore selected model display", () => {
           { id: "alias", model: { primary: "anthropic/sonnet-4.6" } },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listSessionsFromStore({
       cfg,
@@ -2764,7 +2764,7 @@ describe("listSessionsFromStore selected model display", () => {
         defaults: { model: { primary: "openai/gpt-5.4" } },
         list: [{ id: "main", model: { primary: "anthropic/claude-sonnet-4-6" } }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listSessionsFromStore({
       cfg,
@@ -2790,7 +2790,7 @@ describe("listSessionsFromStore selected model display", () => {
         defaults: { model: { primary: "openai/gpt-5.4" } },
         list: [{ id: "main", model: { primary: "anthropic/claude-sonnet-4-6" } }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = listSessionsFromStore({
       cfg,

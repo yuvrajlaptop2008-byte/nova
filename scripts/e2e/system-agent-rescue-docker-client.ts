@@ -5,7 +5,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { handleSystemAgentCommand } from "../../dist/auto-reply/reply/commands-system-agent.js";
 import { clearConfigCache } from "../../dist/config/config.js";
-import type { OpenClawConfig } from "../../dist/config/types.openclaw.js";
+import type { NovaConfig } from "../../dist/config/types.nova.js";
 import { runSystemAgentRescueMessage } from "../../dist/system-agent/rescue-message.js";
 import { createE2eStateDir } from "./lib/temp-state-dir.ts";
 
@@ -17,7 +17,7 @@ function assert(condition: unknown, message: string): asserts condition {
   }
 }
 
-function makeParams(commandBody: string, cfg: OpenClawConfig, isGroup = false) {
+function makeParams(commandBody: string, cfg: NovaConfig, isGroup = false) {
   return {
     cfg,
     command: {
@@ -39,7 +39,7 @@ function makeParams(commandBody: string, cfg: OpenClawConfig, isGroup = false) {
   } as Parameters<typeof handleSystemAgentCommand>[0];
 }
 
-async function invoke(commandBody: string, cfg: OpenClawConfig, isGroup = false): Promise<string> {
+async function invoke(commandBody: string, cfg: NovaConfig, isGroup = false): Promise<string> {
   const result: CommandResult = await handleSystemAgentCommand(
     makeParams(commandBody, cfg, isGroup),
     true,
@@ -53,7 +53,7 @@ async function invoke(commandBody: string, cfg: OpenClawConfig, isGroup = false)
 
 async function invokeWithDeps(
   commandBody: string,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps: NonNullable<Parameters<typeof runSystemAgentRescueMessage>[0]["deps"]>,
 ): Promise<string> {
   const result = await runSystemAgentRescueMessage({
@@ -69,10 +69,10 @@ async function invokeWithDeps(
 }
 
 async function main() {
-  const tempState = await createE2eStateDir("openclaw-openclaw-");
+  const tempState = await createE2eStateDir("nova-nova-");
   tempState.registerExitCleanup();
   const stateDir = tempState.stateDir;
-  const configPath = process.env.NOVA_CONFIG_PATH ?? path.join(stateDir, "openclaw.json");
+  const configPath = process.env.NOVA_CONFIG_PATH ?? path.join(stateDir, "nova.json");
   process.env.NOVA_STATE_DIR = stateDir;
   process.env.NOVA_CONFIG_PATH = configPath;
   await fs.mkdir(stateDir, { recursive: true });
@@ -89,13 +89,13 @@ async function main() {
   );
   clearConfigCache();
 
-  const denied = await invoke("/openclaw status", {
+  const denied = await invoke("/nova status", {
     systemAgent: { rescue: { enabled: true } },
     agents: { defaults: { sandbox: { mode: "all" } } },
   });
   assert(denied.includes("sandboxing is active"), "sandboxed rescue was not denied");
 
-  const cfg: OpenClawConfig = {};
+  const cfg: NovaConfig = {};
   const deterministicInference = {
     verifyInferenceConfig: async () => ({
       ok: true as const,
@@ -103,7 +103,7 @@ async function main() {
       latencyMs: 1,
     }),
   };
-  const refusedTui = await invoke("/openclaw talk to agent", cfg);
+  const refusedTui = await invoke("/nova talk to agent", cfg);
   assert(
     refusedTui.includes("cannot open the local TUI"),
     "remote rescue TUI handoff was not refused",
@@ -111,62 +111,53 @@ async function main() {
 
   // This packaged smoke verifies rescue persistence, not live provider credentials.
   const plan = await invokeWithDeps(
-    "/openclaw set default model openai/gpt-5.2",
+    "/nova set default model openai/gpt-5.2",
     cfg,
     deterministicInference,
   );
-  assert(
-    plan.includes("Reply /openclaw yes to apply"),
-    "persistent change did not require approval",
-  );
-  const applied = await invokeWithDeps("/openclaw yes", cfg, deterministicInference);
+  assert(plan.includes("Reply /nova yes to apply"), "persistent change did not require approval");
+  const applied = await invokeWithDeps("/nova yes", cfg, deterministicInference);
   assert(applied.includes("Default model: openai/gpt-5.2"), "approved change did not apply");
 
-  const configValid = await invoke("/openclaw validate config", cfg);
+  const configValid = await invoke("/nova validate config", cfg);
   assert(configValid.includes("Config valid:"), "config validation did not report valid config");
 
-  const configSetPlan = await invoke("/openclaw config set gateway.port 19001", cfg);
+  const configSetPlan = await invoke("/nova config set gateway.port 19001", cfg);
   assert(
-    configSetPlan.includes("Reply /openclaw yes to apply"),
+    configSetPlan.includes("Reply /nova yes to apply"),
     "generic config set did not require approval",
   );
-  const configSetApplied = await invoke("/openclaw yes", cfg);
-  assert(configSetApplied.includes("[openclaw] done: config.set"), "generic config set failed");
+  const configSetApplied = await invoke("/nova yes", cfg);
+  assert(configSetApplied.includes("[nova] done: config.set"), "generic config set failed");
 
   const refPlan = await invoke(
-    "/openclaw config set-ref gateway.auth.token env NOVA_GATEWAY_TOKEN",
+    "/nova config set-ref gateway.auth.token env NOVA_GATEWAY_TOKEN",
     cfg,
   );
-  assert(
-    refPlan.includes("Reply /openclaw yes to apply"),
-    "SecretRef set did not require approval",
-  );
-  const refApplied = await invoke("/openclaw yes", cfg);
-  assert(refApplied.includes("[openclaw] done: config.setRef"), "SecretRef set failed");
+  assert(refPlan.includes("Reply /nova yes to apply"), "SecretRef set did not require approval");
+  const refApplied = await invoke("/nova yes", cfg);
+  assert(refApplied.includes("[nova] done: config.setRef"), "SecretRef set failed");
 
-  const agentPlan = await invoke("/openclaw create agent work workspace /tmp/openclaw-work", cfg);
-  assert(
-    agentPlan.includes("Reply /openclaw yes to apply"),
-    "agent creation did not require approval",
-  );
-  const agentApplied = await invoke("/openclaw yes", cfg);
-  assert(agentApplied.includes("[openclaw] done: agents.create"), "agent creation did not apply");
+  const agentPlan = await invoke("/nova create agent work workspace /tmp/nova-work", cfg);
+  assert(agentPlan.includes("Reply /nova yes to apply"), "agent creation did not require approval");
+  const agentApplied = await invoke("/nova yes", cfg);
+  assert(agentApplied.includes("[nova] done: agents.create"), "agent creation did not apply");
 
   const setupPlan = await invokeWithDeps(
-    "/openclaw setup workspace /tmp/openclaw-setup model openai/gpt-5.2",
+    "/nova setup workspace /tmp/nova-setup model openai/gpt-5.2",
     cfg,
     deterministicInference,
   );
-  assert(setupPlan.includes("Reply /openclaw yes to apply"), "setup did not require approval");
-  const setupApplied = await invokeWithDeps("/openclaw yes", cfg, deterministicInference);
-  assert(setupApplied.includes("[openclaw] done: openclaw.setup"), "setup did not apply");
+  assert(setupPlan.includes("Reply /nova yes to apply"), "setup did not require approval");
+  const setupApplied = await invokeWithDeps("/nova yes", cfg, deterministicInference);
+  assert(setupApplied.includes("[nova] done: nova.setup"), "setup did not apply");
 
   const gatewayRestarts: string[] = [];
-  const gatewayCommand = makeParams("/openclaw restart gateway", cfg).command;
+  const gatewayCommand = makeParams("/nova restart gateway", cfg).command;
   const gatewayPlan = await runSystemAgentRescueMessage({
     cfg,
     command: gatewayCommand,
-    commandBody: "/openclaw restart gateway",
+    commandBody: "/nova restart gateway",
     agentId: "default",
     isGroup: false,
     deps: {
@@ -176,13 +167,13 @@ async function main() {
     },
   });
   assert(
-    gatewayPlan?.includes("Reply /openclaw yes to apply"),
+    gatewayPlan?.includes("Reply /nova yes to apply"),
     "gateway restart did not require approval",
   );
   const pluginList = await runSystemAgentRescueMessage({
     cfg,
     command: gatewayCommand,
-    commandBody: "/openclaw plugins list",
+    commandBody: "/nova plugins list",
     agentId: "default",
     isGroup: false,
     deps: {
@@ -193,7 +184,7 @@ async function main() {
   const revokedApproval = await runSystemAgentRescueMessage({
     cfg,
     command: gatewayCommand,
-    commandBody: "/openclaw yes",
+    commandBody: "/nova yes",
     agentId: "default",
     isGroup: false,
     deps: {
@@ -210,14 +201,14 @@ async function main() {
   await runSystemAgentRescueMessage({
     cfg,
     command: gatewayCommand,
-    commandBody: "/openclaw restart gateway",
+    commandBody: "/nova restart gateway",
     agentId: "default",
     isGroup: false,
   });
   const gatewayApplied = await runSystemAgentRescueMessage({
     cfg,
     command: gatewayCommand,
-    commandBody: "/openclaw yes",
+    commandBody: "/nova yes",
     agentId: "default",
     isGroup: false,
     deps: {
@@ -226,18 +217,15 @@ async function main() {
       },
     },
   });
-  assert(
-    gatewayApplied?.includes("[openclaw] done: gateway.restart"),
-    "gateway restart did not apply",
-  );
+  assert(gatewayApplied?.includes("[nova] done: gateway.restart"), "gateway restart did not apply");
   assert(gatewayRestarts.length === 1, "gateway restart dependency was not invoked once");
 
   const doctorRuns: string[] = [];
-  const doctorCommand = makeParams("/openclaw doctor fix", cfg).command;
+  const doctorCommand = makeParams("/nova doctor fix", cfg).command;
   const doctorReply = await runSystemAgentRescueMessage({
     cfg,
     command: doctorCommand,
-    commandBody: "/openclaw doctor fix",
+    commandBody: "/nova doctor fix",
     agentId: "default",
     isGroup: false,
     deps: {
@@ -247,12 +235,12 @@ async function main() {
     },
   });
   assert(
-    doctorReply?.includes("openclaw doctor --fix"),
+    doctorReply?.includes("nova doctor --fix"),
     "remote doctor fix did not point to the local repair command",
   );
   assert(doctorRuns.length === 0, "remote rescue must not invoke doctor repair");
 
-  const updatedConfig = JSON.parse(await fs.readFile(configPath, "utf8")) as OpenClawConfig;
+  const updatedConfig = JSON.parse(await fs.readFile(configPath, "utf8")) as NovaConfig;
   const updatedModel = updatedConfig.agents?.defaults?.model;
   assert(
     (typeof updatedModel === "string" ? updatedModel : updatedModel?.primary) === "openai/gpt-5.2",
@@ -267,12 +255,12 @@ async function main() {
     "SecretRef set did not update gateway.auth.token",
   );
   assert(
-    updatedConfig.agents?.defaults?.workspace === "/tmp/openclaw-setup",
+    updatedConfig.agents?.defaults?.workspace === "/tmp/nova-setup",
     "setup did not update default workspace",
   );
   assert(
     updatedConfig.agents?.list?.some(
-      (agent) => agent.id === "work" && agent.workspace === "/tmp/openclaw-work",
+      (agent) => agent.id === "work" && agent.workspace === "/tmp/nova-work",
     ),
     "agent config was not updated",
   );
@@ -294,7 +282,7 @@ async function main() {
     "SecretRef config audit missing",
   );
   assert(
-    audits.some((audit) => audit.operation === "openclaw.setup"),
+    audits.some((audit) => audit.operation === "nova.setup"),
     "setup audit missing",
   );
   const agentAudit = audits.find((audit) => audit.operation === "agents.create");

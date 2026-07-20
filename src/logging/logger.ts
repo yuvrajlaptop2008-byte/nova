@@ -5,7 +5,7 @@ import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { Logger as TsLogger } from "tslog";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import {
   emitDiagnosticEvent,
   emitDiagnosticEventWithTrustedTraceContext,
@@ -20,7 +20,7 @@ import {
 import { expandHomePrefix } from "../infra/home-dir.js";
 import { isBlockedObjectKey } from "../infra/prototype-keys.js";
 import { appendRegularFileSync } from "../infra/regular-file.js";
-import { POSIX_NOVA_TMP_DIR, resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { POSIX_NOVA_TMP_DIR, resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
 import { readLoggingConfig, shouldSkipMutatingLoggingConfigRead } from "./config.js";
 import { resolveEnvLogLevelOverride } from "./env-log-level.js";
 import { type LogLevel, levelToMinLevel, normalizeLogLevel } from "./levels.js";
@@ -32,13 +32,11 @@ import type { LoggerSettings } from "./types.js";
 export type { LoggerSettings } from "./types.js";
 
 function resolveDefaultLogDir(): string {
-  return canUseNodeFs() ? resolvePreferredOpenClawTmpDir() : POSIX_NOVA_TMP_DIR;
+  return canUseNodeFs() ? resolvePreferredNovaTmpDir() : POSIX_NOVA_TMP_DIR;
 }
 
 function resolveDefaultLogFile(defaultLogDir: string): string {
-  return canUseNodeFs()
-    ? path.join(defaultLogDir, "openclaw.log")
-    : `${POSIX_NOVA_TMP_DIR}/openclaw.log`;
+  return canUseNodeFs() ? path.join(defaultLogDir, "nova.log") : `${POSIX_NOVA_TMP_DIR}/nova.log`;
 }
 
 export const DEFAULT_LOG_DIR = resolveDefaultLogDir();
@@ -57,7 +55,7 @@ type ResolvedSettings = {
 };
 export type LoggerResolvedSettings = ResolvedSettings;
 type TsLogRecord = Record<string, unknown>;
-type LoggerConfigLoader = () => OpenClawConfig["logging"] | undefined;
+type LoggerConfigLoader = () => NovaConfig["logging"] | undefined;
 type HostnameResolver = () => string;
 
 type DiagnosticLogCode = {
@@ -532,7 +530,7 @@ function resolveSettings(): ResolvedSettings {
     };
   }
 
-  const cfg: OpenClawConfig["logging"] | undefined =
+  const cfg: NovaConfig["logging"] | undefined =
     (loggingState.overrideSettings as LoggerSettings | null) ?? loadLoggerConfig();
   const defaultLevel =
     process.env.VITEST === "true" && process.env.NOVA_TEST_FILE_LOG !== "1" ? "silent" : "info";
@@ -566,7 +564,7 @@ export function isFileLogLevelEnabled(level: LogLevel): boolean {
 
 function buildLogger(settings: ResolvedSettings): TsLogger<LogObj> {
   const logger = new TsLogger<LogObj>({
-    name: "openclaw",
+    name: "nova",
     // Custom structured redaction runs at each transport boundary; avoid tslog pre-masking divergent records.
     maskValuesOfKeys: [],
     minLevel: levelToMinLevel(settings.level),
@@ -624,7 +622,7 @@ function buildLogger(settings: ResolvedSettings): TsLogger<LogObj> {
         } else if (!warnedAboutRotationFailure) {
           warnedAboutRotationFailure = true;
           process.stderr.write(
-            `[openclaw] log file rotation failed; continuing writes file=${activeFile} maxFileBytes=${settings.maxFileBytes}\n`,
+            `[nova] log file rotation failed; continuing writes file=${activeFile} maxFileBytes=${settings.maxFileBytes}\n`,
           );
         }
       }

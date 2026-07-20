@@ -6,8 +6,8 @@ import {
   formatSqliteSessionFileMarker,
   resolveStorePath,
   upsertSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { appendSessionTranscriptMessageByIdentity } from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/session-store-runtime";
+import { appendSessionTranscriptMessageByIdentity } from "nova/plugin-sdk/session-transcript-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   captureRuntimeParityCell,
@@ -32,7 +32,7 @@ async function seedRuntimeParityTranscript(params: {
   sessionId: string;
   sessionKey: string;
 }) {
-  const tempRoot = await tempDirs.makeTempDir("openclaw-qa-runtime-parity-");
+  const tempRoot = await tempDirs.makeTempDir("nova-qa-runtime-parity-");
   const env = { ...process.env, NOVA_STATE_DIR: path.join(tempRoot, "state") };
   const storePath = resolveStorePath(undefined, { agentId: "qa", env });
   await upsertSessionEntry({
@@ -95,7 +95,7 @@ async function captureRuntimeParityWithMockRequests(params: {
   const address = server.address() as AddressInfo;
   try {
     return await captureRuntimeParityCell({
-      runtime: "openclaw",
+      runtime: "nova",
       gateway: { tempRoot },
       mockBaseUrl: `http://127.0.0.1:${address.port}`,
       scenarioResult: params.scenarioResult ?? { status: "pass" },
@@ -149,7 +149,7 @@ describe("runtime parity", () => {
     );
 
     const cell = await captureRuntimeParityCell({
-      runtime: "openclaw",
+      runtime: "nova",
       gateway: { tempRoot },
       mockBaseUrl: "http://127.0.0.1:43123",
       scenarioResult: { status: "pass" },
@@ -190,7 +190,7 @@ describe("runtime parity", () => {
     });
 
     const cell = await captureRuntimeParityCell({
-      runtime: "openclaw",
+      runtime: "nova",
       gateway: { tempRoot },
       scenarioResult: { status: "pass" },
       wallClockMs: 10,
@@ -204,9 +204,9 @@ describe("runtime parity", () => {
 
   it("keeps a retry pass diagnostic from failing the captured cell", async () => {
     const cell = await captureRuntimeParityCell({
-      runtime: "openclaw",
+      runtime: "nova",
       gateway: {
-        tempRoot: `/tmp/openclaw-qa-runtime-parity-missing-${process.pid}`,
+        tempRoot: `/tmp/nova-qa-runtime-parity-missing-${process.pid}`,
       },
       scenarioResult: {
         status: "pass",
@@ -220,9 +220,9 @@ describe("runtime parity", () => {
 
   it("still classifies terminal scenario failure diagnostics", async () => {
     const cell = await captureRuntimeParityCell({
-      runtime: "openclaw",
+      runtime: "nova",
       gateway: {
-        tempRoot: `/tmp/openclaw-qa-runtime-parity-missing-${process.pid}`,
+        tempRoot: `/tmp/nova-qa-runtime-parity-missing-${process.pid}`,
       },
       scenarioResult: {
         status: "fail",
@@ -328,7 +328,7 @@ describe("runtime parity", () => {
             {
               tool: "web_search",
               argsHash: "same-args",
-              resultHash: runtime === "openclaw" ? "validation-error" : "provider-error",
+              resultHash: runtime === "nova" ? "validation-error" : "provider-error",
               errorClass: "tool-result-error",
             },
           ]),

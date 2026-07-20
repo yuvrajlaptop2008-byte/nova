@@ -240,7 +240,7 @@ describe("pathForRoute", () => {
 
   it("prepends base path", () => {
     expect(pathForRoute("chat", "/ui")).toBe("/ui/chat");
-    expect(pathForRoute("sessions", "/apps/openclaw")).toBe("/apps/openclaw/sessions");
+    expect(pathForRoute("sessions", "/apps/nova")).toBe("/apps/nova/sessions");
   });
 });
 
@@ -249,7 +249,7 @@ describe("route path normalization", () => {
     expect(normalizeBasePath("")).toBe("");
     expect(normalizeBasePath("/")).toBe("");
     expect(normalizeBasePath("ui")).toBe("/ui");
-    expect(normalizeBasePath("/apps/openclaw/")).toBe("/apps/openclaw");
+    expect(normalizeBasePath("/apps/nova/")).toBe("/apps/nova");
     expect(routeIdFromPath("/chat/")).toBe("chat");
     expect(routeIdFromPath("/ui/chat/", "/ui/")).toBe("chat");
   });
@@ -284,13 +284,13 @@ describe("routeIdFromPath", () => {
 
   it("handles base paths", () => {
     expect(routeIdFromPath("/ui/chat", "/ui")).toBe("chat");
-    expect(routeIdFromPath("/apps/openclaw/sessions", "/apps/openclaw")).toBe("sessions");
+    expect(routeIdFromPath("/apps/nova/sessions", "/apps/nova")).toBe("sessions");
     expect(routeIdFromPath("/ui/settings/plugins", "/ui")).toBe("plugins");
   });
 
   it("rejects route-shaped paths outside the configured base path", () => {
     expect(routeIdFromPath("/xx/chat", "/ui")).toBeNull();
-    expect(routeIdFromPath("/other/sessions", "/apps/openclaw")).toBeNull();
+    expect(routeIdFromPath("/other/sessions", "/apps/nova")).toBeNull();
   });
 
   it("returns null for unknown path", () => {
@@ -339,9 +339,9 @@ describe("inferBasePathFromPathname", () => {
     expect(inferBasePathFromPathname("/custodian")).toBe("");
     expect(inferBasePathFromPathname("/settings/connection")).toBe("");
     expect(inferBasePathFromPathname("/ui/chat")).toBe("/ui");
-    expect(inferBasePathFromPathname("/apps/openclaw/sessions")).toBe("/apps/openclaw");
-    expect(inferBasePathFromPathname("/__openclaw__/")).toBe("/__openclaw__");
-    expect(inferBasePathFromPathname("/apps/openclaw/")).toBe("/apps/openclaw");
+    expect(inferBasePathFromPathname("/apps/nova/sessions")).toBe("/apps/nova");
+    expect(inferBasePathFromPathname("/__nova__/")).toBe("/__nova__");
+    expect(inferBasePathFromPathname("/apps/nova/")).toBe("/apps/nova");
     expect(inferBasePathFromPathname("/typo")).toBe("");
     expect(inferBasePathFromPathname("/index.html")).toBe("");
     expect(inferBasePathFromPathname("/ui/index.html")).toBe("/ui");

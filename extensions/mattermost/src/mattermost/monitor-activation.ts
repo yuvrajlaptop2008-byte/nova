@@ -2,12 +2,12 @@
 import {
   resolveInboundMentionDecision,
   type InboundImplicitMentionKind,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { resolveChannelImplicitMentions } from "openclaw/plugin-sdk/channel-ingress-runtime";
-import type { ChatType, OpenClawConfig } from "./runtime-api.js";
+} from "nova/plugin-sdk/channel-inbound";
+import { resolveChannelImplicitMentions } from "nova/plugin-sdk/channel-ingress-runtime";
+import type { ChatType, NovaConfig } from "./runtime-api.js";
 
 export function resolveMattermostInboundMentionDecision(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   kind: ChatType;
   requireMention: boolean;

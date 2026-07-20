@@ -11,14 +11,14 @@ if [[ -z "$TRUSTED_HARNESS_DIR" || ! -d "$TRUSTED_HARNESS_DIR" ]]; then
 fi
 TRUSTED_HARNESS_DIR="$(cd "$TRUSTED_HARNESS_DIR" && pwd)"
 source "$TRUSTED_HARNESS_DIR/scripts/lib/live-docker-auth.sh"
-IMAGE_NAME="${NOVA_IMAGE:-openclaw:local}"
+IMAGE_NAME="${NOVA_IMAGE:-nova:local}"
 LIVE_IMAGE_NAME="${NOVA_LIVE_IMAGE:-${IMAGE_NAME}-live}"
-CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.openclaw}"
-WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.openclaw/workspace}"
-PROFILE_FILE="$(openclaw_live_default_profile_file)"
+CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.nova}"
+WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.nova/workspace}"
+PROFILE_FILE="$(nova_live_default_profile_file)"
 ACP_AGENT_LIST_RAW="${NOVA_LIVE_ACP_BIND_AGENTS:-${NOVA_LIVE_ACP_BIND_AGENT:-claude,codex,gemini}}"
 ACP_CLAUDE_AUTH_MODE="${NOVA_LIVE_ACP_BIND_CLAUDE_AUTH:-auto}"
-ACP_SETUP_TIMEOUT_SECONDS="$(openclaw_live_read_positive_int_env NOVA_LIVE_ACP_BIND_SETUP_TIMEOUT_SECONDS 180)"
+ACP_SETUP_TIMEOUT_SECONDS="$(nova_live_read_positive_int_env NOVA_LIVE_ACP_BIND_SETUP_TIMEOUT_SECONDS 180)"
 TEMP_DIRS=()
 DOCKER_USER="${NOVA_DOCKER_USER:-node}"
 DOCKER_HOME_MOUNT=()
@@ -26,7 +26,7 @@ DOCKER_AUTH_PRESTAGED=0
 DOCKER_TRUSTED_HARNESS_CONTAINER_DIR="/trusted-harness"
 DOCKER_TRUSTED_HARNESS_MOUNT=(-v "$TRUSTED_HARNESS_DIR":"$DOCKER_TRUSTED_HARNESS_CONTAINER_DIR":ro)
 
-openclaw_live_acp_bind_append_build_extension() {
+nova_live_acp_bind_append_build_extension() {
   local extension="${1:?extension required}"
   local current="${NOVA_DOCKER_BUILD_EXTENSIONS:-${NOVA_EXTENSIONS:-}}"
   case " $current " in
@@ -38,7 +38,7 @@ openclaw_live_acp_bind_append_build_extension() {
   esac
 }
 
-openclaw_live_acp_bind_resolve_auth_provider() {
+nova_live_acp_bind_resolve_auth_provider() {
   case "${1:-}" in
     claude) printf '%s\n' "claude-cli" ;;
     codex) printf '%s\n' "codex-cli" ;;
@@ -52,7 +52,7 @@ openclaw_live_acp_bind_resolve_auth_provider() {
   esac
 }
 
-openclaw_live_acp_bind_resolve_agent_command() {
+nova_live_acp_bind_resolve_agent_command() {
   case "${1:-}" in
     claude) printf '%s' "${NOVA_LIVE_ACP_BIND_AGENT_COMMAND_CLAUDE:-${NOVA_LIVE_ACP_BIND_AGENT_COMMAND:-}}" ;;
     codex) printf '%s' "${NOVA_LIVE_ACP_BIND_AGENT_COMMAND_CODEX:-${NOVA_LIVE_ACP_BIND_AGENT_COMMAND:-}}" ;;
@@ -81,24 +81,24 @@ trap cleanup_temp_dirs EXIT
 
 if [[ -n "${NOVA_DOCKER_CLI_TOOLS_DIR:-}" ]]; then
   CLI_TOOLS_DIR="${NOVA_DOCKER_CLI_TOOLS_DIR}"
-elif openclaw_live_is_ci; then
-  CLI_TOOLS_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-cli-tools.XXXXXX")"
+elif nova_live_is_ci; then
+  CLI_TOOLS_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-cli-tools.XXXXXX")"
   TEMP_DIRS+=("$CLI_TOOLS_DIR")
 else
-  CLI_TOOLS_DIR="$HOME/.cache/openclaw/docker-cli-tools"
+  CLI_TOOLS_DIR="$HOME/.cache/nova/docker-cli-tools"
 fi
 if [[ -n "${NOVA_DOCKER_CACHE_HOME_DIR:-}" ]]; then
   CACHE_HOME_DIR="${NOVA_DOCKER_CACHE_HOME_DIR}"
-elif openclaw_live_is_ci; then
-  CACHE_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-cache.XXXXXX")"
+elif nova_live_is_ci; then
+  CACHE_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-cache.XXXXXX")"
   TEMP_DIRS+=("$CACHE_HOME_DIR")
 else
-  CACHE_HOME_DIR="$HOME/.cache/openclaw/docker-cache"
+  CACHE_HOME_DIR="$HOME/.cache/nova/docker-cache"
 fi
 
-openclaw_live_prepare_bind_dir_for_container_user "$CLI_TOOLS_DIR"
-openclaw_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"
-if openclaw_live_uses_managed_bind_dirs; then
+nova_live_prepare_bind_dir_for_container_user "$CLI_TOOLS_DIR"
+nova_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"
+if nova_live_uses_managed_bind_dirs; then
   DOCKER_USER="$(id -u):$(id -g)"
 fi
 
@@ -108,7 +108,7 @@ if [[ -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]]; then
   PROFILE_STATUS="$PROFILE_FILE"
 fi
 
-openclaw_live_acp_bind_load_factory_api_key_from_profile() {
+nova_live_acp_bind_load_factory_api_key_from_profile() {
   [[ -z "${FACTORY_API_KEY:-}" ]] || return 0
   [[ -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]] || return 0
   [[ "$PROFILE_FILE" != "$HOME/.profile" ]] || return 0
@@ -299,25 +299,25 @@ esac
 tmp_dir="$(mktemp -d)"
 trusted_scripts_dir="${NOVA_LIVE_DOCKER_SCRIPTS_DIR:-/src/scripts}"
 source "$trusted_scripts_dir/lib/live-docker-stage.sh"
-openclaw_live_stage_source_tree "$tmp_dir"
-openclaw_live_stage_node_modules "$tmp_dir"
-openclaw_live_link_runtime_tree "$tmp_dir"
-openclaw_live_stage_state_dir "$tmp_dir/.openclaw-state"
-openclaw_live_prepare_staged_config
+nova_live_stage_source_tree "$tmp_dir"
+nova_live_stage_node_modules "$tmp_dir"
+nova_live_link_runtime_tree "$tmp_dir"
+nova_live_stage_state_dir "$tmp_dir/.nova-state"
+nova_live_prepare_staged_config
 cd "$tmp_dir"
 export NOVA_LIVE_ACP_BIND_AGENT_COMMAND="${NOVA_LIVE_ACP_BIND_AGENT_COMMAND:-}"
 node scripts/test-live.mjs -- ${NOVA_LIVE_ACP_BIND_TEST_FILES:-src/gateway/gateway-acp-bind.live.test.ts}
 EOF
 
-openclaw_live_acp_bind_append_build_extension acpx
+nova_live_acp_bind_append_build_extension acpx
 NOVA_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR" "$TRUSTED_HARNESS_DIR/scripts/test-live-build-docker.sh"
 
 IFS=',' read -r -a ACP_AGENT_TOKENS <<<"$ACP_AGENT_LIST_RAW"
 ACP_AGENTS=()
 for token in "${ACP_AGENT_TOKENS[@]}"; do
-  agent="$(openclaw_live_trim "$token")"
+  agent="$(nova_live_trim "$token")"
   [[ -n "$agent" ]] || continue
-  openclaw_live_acp_bind_resolve_auth_provider "$agent" >/dev/null
+  nova_live_acp_bind_resolve_auth_provider "$agent" >/dev/null
   ACP_AGENTS+=("$agent")
 done
 
@@ -327,8 +327,8 @@ if ((${#ACP_AGENTS[@]} == 0)); then
 fi
 
 for ACP_AGENT in "${ACP_AGENTS[@]}"; do
-  AUTH_PROVIDER="$(openclaw_live_acp_bind_resolve_auth_provider "$ACP_AGENT")"
-  AGENT_COMMAND="$(openclaw_live_acp_bind_resolve_agent_command "$ACP_AGENT")"
+  AUTH_PROVIDER="$(nova_live_acp_bind_resolve_auth_provider "$ACP_AGENT")"
+  AGENT_COMMAND="$(nova_live_acp_bind_resolve_agent_command "$ACP_AGENT")"
 
   AUTH_DIRS=()
   AUTH_FILES=()
@@ -336,52 +336,52 @@ for ACP_AGENT in "${ACP_AGENTS[@]}"; do
     while IFS= read -r auth_dir; do
       [[ -n "$auth_dir" ]] || continue
       AUTH_DIRS+=("$auth_dir")
-    done < <(openclaw_live_collect_auth_dirs)
+    done < <(nova_live_collect_auth_dirs)
     while IFS= read -r auth_file; do
       [[ -n "$auth_file" ]] || continue
       AUTH_FILES+=("$auth_file")
-    done < <(openclaw_live_collect_auth_files)
+    done < <(nova_live_collect_auth_files)
   else
     while IFS= read -r auth_dir; do
       [[ -n "$auth_dir" ]] || continue
       AUTH_DIRS+=("$auth_dir")
-    done < <(openclaw_live_collect_auth_dirs_from_csv "$AUTH_PROVIDER")
+    done < <(nova_live_collect_auth_dirs_from_csv "$AUTH_PROVIDER")
     while IFS= read -r auth_file; do
       [[ -n "$auth_file" ]] || continue
       AUTH_FILES+=("$auth_file")
-    done < <(openclaw_live_collect_auth_files_from_csv "$AUTH_PROVIDER")
+    done < <(nova_live_collect_auth_files_from_csv "$AUTH_PROVIDER")
   fi
 
   AUTH_DIRS_CSV=""
   if ((${#AUTH_DIRS[@]} > 0)); then
-    AUTH_DIRS_CSV="$(openclaw_live_join_csv "${AUTH_DIRS[@]}")"
+    AUTH_DIRS_CSV="$(nova_live_join_csv "${AUTH_DIRS[@]}")"
   fi
   AUTH_FILES_CSV=""
   if ((${#AUTH_FILES[@]} > 0)); then
-    AUTH_FILES_CSV="$(openclaw_live_join_csv "${AUTH_FILES[@]}")"
+    AUTH_FILES_CSV="$(nova_live_join_csv "${AUTH_FILES[@]}")"
   fi
 
   DOCKER_HOME_MOUNT=()
   DOCKER_AUTH_PRESTAGED=0
-  if openclaw_live_uses_managed_bind_dirs; then
-    DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-home.XXXXXX")"
+  if nova_live_uses_managed_bind_dirs; then
+    DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-home.XXXXXX")"
     TEMP_DIRS+=("$DOCKER_HOME_DIR")
-    openclaw_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
+    nova_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
     DOCKER_HOME_MOUNT=(-v "$DOCKER_HOME_DIR":/home/node)
     if [[ -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]]; then
-      openclaw_live_stage_profile_into_home "$DOCKER_HOME_DIR" "$PROFILE_FILE"
+      nova_live_stage_profile_into_home "$DOCKER_HOME_DIR" "$PROFILE_FILE"
     fi
   elif [[ -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]]; then
     PROFILE_MOUNT=(-v "$PROFILE_FILE":/home/node/.profile:ro)
   fi
 
   if [[ -n "${DOCKER_HOME_DIR:-}" ]]; then
-    openclaw_live_stage_auth_into_home "$DOCKER_HOME_DIR" "${AUTH_DIRS[@]}" --files "${AUTH_FILES[@]}"
+    nova_live_stage_auth_into_home "$DOCKER_HOME_DIR" "${AUTH_DIRS[@]}" --files "${AUTH_FILES[@]}"
     DOCKER_AUTH_PRESTAGED=1
   fi
 
   if [[ "$ACP_AGENT" == "droid" ]]; then
-    openclaw_live_acp_bind_load_factory_api_key_from_profile
+    nova_live_acp_bind_load_factory_api_key_from_profile
   fi
   if [[ "$ACP_AGENT" == "droid" && -z "${FACTORY_API_KEY:-}" ]]; then
     echo "==> Run ACP bind live test in Docker"
@@ -404,7 +404,7 @@ for ACP_AGENT in "${ACP_AGENTS[@]}"; do
   EXTERNAL_AUTH_MOUNTS=()
   if ((${#AUTH_DIRS[@]} > 0)); then
     for auth_dir in "${AUTH_DIRS[@]}"; do
-      auth_dir="$(openclaw_live_validate_relative_home_path "$auth_dir")"
+      auth_dir="$(nova_live_validate_relative_home_path "$auth_dir")"
       host_path="$HOME/$auth_dir"
       if [[ -d "$host_path" ]]; then
         EXTERNAL_AUTH_MOUNTS+=(-v "$host_path":/host-auth/"$auth_dir":ro)
@@ -413,7 +413,7 @@ for ACP_AGENT in "${ACP_AGENTS[@]}"; do
   fi
   if ((${#AUTH_FILES[@]} > 0)); then
     for auth_file in "${AUTH_FILES[@]}"; do
-      auth_file="$(openclaw_live_validate_relative_home_path "$auth_file")"
+      auth_file="$(nova_live_validate_relative_home_path "$auth_file")"
       host_path="$HOME/$auth_file"
       if [[ -f "$host_path" ]]; then
         EXTERNAL_AUTH_MOUNTS+=(-v "$host_path":/host-auth-files/"$auth_file":ro)
@@ -430,8 +430,8 @@ for ACP_AGENT in "${ACP_AGENTS[@]}"; do
   if [[ "$ACP_AGENT" == "claude" ]]; then
     echo "==> Claude auth mode: $CLAUDE_AUTH_MODE"
   fi
-  if openclaw_live_uses_managed_bind_dirs; then
-    openclaw_live_chown_bind_dirs_for_container_user \
+  if nova_live_uses_managed_bind_dirs; then
+    nova_live_chown_bind_dirs_for_container_user \
       "$LIVE_IMAGE_NAME" \
       "$DOCKER_USER" \
       "$CLI_TOOLS_DIR" \
@@ -439,7 +439,7 @@ for ACP_AGENT in "${ACP_AGENTS[@]}"; do
       "${DOCKER_HOME_DIR:-}"
   fi
   DOCKER_RUN_ARGS=()
-  openclaw_live_init_docker_run_args DOCKER_RUN_ARGS "${NOVA_LIVE_ACP_BIND_DOCKER_RUN_TIMEOUT:-2700s}"
+  nova_live_init_docker_run_args DOCKER_RUN_ARGS "${NOVA_LIVE_ACP_BIND_DOCKER_RUN_TIMEOUT:-2700s}"
   DOCKER_AUTH_ENV=()
   if [[ "$ACP_AGENT" == "claude" && "$CLAUDE_AUTH_MODE" == "subscription" ]]; then
     DOCKER_AUTH_ENV+=(
@@ -470,7 +470,7 @@ for ACP_AGENT in "${ACP_AGENTS[@]}"; do
     -e OPENCODE_CONFIG_CONTENT \
     -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     -e HOME=/home/node \
-    -e NODE_OPTIONS="$(openclaw_live_container_node_options)" \
+    -e NODE_OPTIONS="$(nova_live_container_node_options)" \
     -e NOVA_SKIP_CHANNELS=1 \
     -e NOVA_VITEST_FS_MODULE_CACHE=0 \
     -e NOVA_DOCKER_AUTH_PRESTAGED="$DOCKER_AUTH_PRESTAGED" \
@@ -493,17 +493,17 @@ for ACP_AGENT in "${ACP_AGENTS[@]}"; do
     -e NOVA_LIVE_ACP_SPAWN_DEFAULTS_THINKING="${NOVA_LIVE_ACP_SPAWN_DEFAULTS_THINKING:-}" \
     -e NOVA_LIVE_ACP_SPAWN_DEFAULTS_TIMEOUT_MS="${NOVA_LIVE_ACP_SPAWN_DEFAULTS_TIMEOUT_MS:-}" \
     -e NOVA_LIVE_ACP_BIND_AGENT_COMMAND="$AGENT_COMMAND")
-  openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_AUTH_ENV
-  openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_HOME_MOUNT
-  openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT
+  nova_live_append_array DOCKER_RUN_ARGS DOCKER_AUTH_ENV
+  nova_live_append_array DOCKER_RUN_ARGS DOCKER_HOME_MOUNT
+  nova_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT
   DOCKER_RUN_ARGS+=(\
     -v "$CACHE_HOME_DIR":/home/node/.cache \
     -v "$ROOT_DIR":/src:ro \
-    -v "$CONFIG_DIR":/home/node/.openclaw \
-    -v "$WORKSPACE_DIR":/home/node/.openclaw/workspace \
+    -v "$CONFIG_DIR":/home/node/.nova \
+    -v "$WORKSPACE_DIR":/home/node/.nova/workspace \
     -v "$CLI_TOOLS_DIR":/home/node/.npm-global)
-  openclaw_live_append_array DOCKER_RUN_ARGS EXTERNAL_AUTH_MOUNTS
-  openclaw_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT
+  nova_live_append_array DOCKER_RUN_ARGS EXTERNAL_AUTH_MOUNTS
+  nova_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT
   DOCKER_RUN_ARGS+=(\
     "$LIVE_IMAGE_NAME" \
     -lc "$LIVE_TEST_CMD")

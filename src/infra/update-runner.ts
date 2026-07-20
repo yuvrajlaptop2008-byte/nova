@@ -52,7 +52,7 @@ export async function runGatewayUpdate(opts: UpdateRunnerOptions = {}): Promise<
       status: "error",
       mode: "unknown",
       root: gitRoot,
-      reason: "not-openclaw-root",
+      reason: "not-nova-root",
       steps: [],
       durationMs: Date.now() - startedAt,
     };
@@ -71,7 +71,7 @@ export async function runGatewayUpdate(opts: UpdateRunnerOptions = {}): Promise<
     return {
       status: "error",
       mode: "unknown",
-      reason: "not-openclaw-root",
+      reason: "not-nova-root",
       steps: [],
       durationMs: Date.now() - startedAt,
     };

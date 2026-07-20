@@ -16,7 +16,7 @@ const bundleTestDeps = await vi.hoisted(async () => {
   const loadBundleRegistry = (params: { workspaceDir?: string }) => {
     const rootDir = pathModule.join(
       params.workspaceDir ?? "",
-      ".openclaw",
+      ".nova",
       "extensions",
       "claude-bundle",
     );
@@ -42,12 +42,7 @@ const bundleTestDeps = await vi.hoisted(async () => {
     workspaceDir: string;
     cfg?: { mcp?: { servers?: Record<string, unknown> } };
   }) => {
-    const pluginRoot = pathModule.join(
-      params.workspaceDir,
-      ".openclaw",
-      "extensions",
-      "claude-bundle",
-    );
+    const pluginRoot = pathModule.join(params.workspaceDir, ".nova", "extensions", "claude-bundle");
     const mcpPath = pathModule.join(pluginRoot, ".mcp.json");
     let bundleServers: Record<string, unknown> = {};
     if (fsSync.existsSync(mcpPath)) {
@@ -138,7 +133,7 @@ async function createWorkspaceBundle(params: {
   pluginId?: string;
 }): Promise<string> {
   const pluginId = params.pluginId ?? "claude-bundle";
-  const pluginRoot = path.join(params.workspaceDir, ".openclaw", "extensions", pluginId);
+  const pluginRoot = path.join(params.workspaceDir, ".nova", "extensions", pluginId);
   await fs.mkdir(path.join(pluginRoot, ".claude-plugin"), { recursive: true });
   await fs.writeFile(
     path.join(pluginRoot, ".claude-plugin", "plugin.json"),
@@ -152,7 +147,7 @@ async function createWorkspaceBundle(params: {
 
 describe("loadEnabledBundleAgentSettingsSnapshot", () => {
   it("reuses a compatible plugin metadata snapshot without loading a fresh one", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("nova-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     const resolvedPluginRoot = await fs.realpath(pluginRoot);
     await fs.writeFile(
@@ -199,7 +194,7 @@ describe("loadEnabledBundleAgentSettingsSnapshot", () => {
   });
 
   it("falls back to a fresh plugin metadata load for an incompatible snapshot", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("nova-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     await fs.writeFile(
       path.join(pluginRoot, "settings.json"),
@@ -233,7 +228,7 @@ describe("loadEnabledBundleAgentSettingsSnapshot", () => {
   });
 
   it("reuses the current plugin metadata snapshot for bundle settings", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("nova-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     const resolvedPluginRoot = await fs.realpath(pluginRoot);
     await fs.writeFile(
@@ -276,7 +271,7 @@ describe("loadEnabledBundleAgentSettingsSnapshot", () => {
   });
 
   it("does not reuse an unscoped current snapshot when plugin load paths change", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("nova-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     await fs.writeFile(
       path.join(pluginRoot, "settings.json"),
@@ -312,7 +307,7 @@ describe("loadEnabledBundleAgentSettingsSnapshot", () => {
   });
 
   it("does not reuse a load-path current snapshot for a config with default load paths", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("nova-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     const resolvedPluginRoot = await fs.realpath(pluginRoot);
     await fs.writeFile(
@@ -370,7 +365,7 @@ describe("loadEnabledBundleAgentSettingsSnapshot", () => {
   });
 
   it("loads sanitized settings and MCP defaults from enabled bundle plugins", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("nova-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     const resolvedPluginRoot = await fs.realpath(pluginRoot);
     await fs.mkdir(path.join(pluginRoot, "servers"), { recursive: true });
@@ -459,7 +454,7 @@ describe("loadEnabledBundleAgentSettingsSnapshot", () => {
   });
 
   it("ignores disabled bundle plugins", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("nova-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     await fs.writeFile(
       path.join(pluginRoot, "settings.json"),

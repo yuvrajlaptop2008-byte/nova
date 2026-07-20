@@ -61,27 +61,27 @@ mktempfile() {
     printf -v "$output_var" '%s' "$f"
 }
 
-resolve_openclaw_effective_home() {
-    local openclaw_home="${NOVA_HOME:-}"
-    if [[ -z "$openclaw_home" ]]; then
+resolve_nova_effective_home() {
+    local nova_home="${NOVA_HOME:-}"
+    if [[ -z "$nova_home" ]]; then
         echo "$HOME"
         return
     fi
-    if [[ "$openclaw_home" == "~" ]]; then
+    if [[ "$nova_home" == "~" ]]; then
         echo "$HOME"
         return
     fi
-    if [[ "$openclaw_home" == \~/* ]]; then
-        echo "${HOME}${openclaw_home:1}"
+    if [[ "$nova_home" == \~/* ]]; then
+        echo "${HOME}${nova_home:1}"
         return
     fi
-    echo "$openclaw_home"
+    echo "$nova_home"
 }
 
-resolve_openclaw_user_path() {
+resolve_nova_user_path() {
     local input="$1"
     local effective_home
-    effective_home="$(resolve_openclaw_effective_home)"
+    effective_home="$(resolve_nova_effective_home)"
     if [[ "$input" == "~" ]]; then
         echo "$effective_home"
     elif [[ "$input" == \~/* ]]; then
@@ -655,16 +655,16 @@ cleanup_legacy_submodules() {
     fi
 }
 
-cleanup_npm_openclaw_paths() {
+cleanup_npm_nova_paths() {
     local npm_root=""
     npm_root="$(npm root -g 2>/dev/null || true)"
     if [[ -z "$npm_root" || "$npm_root" != *node_modules* ]]; then
         return 1
     fi
-    rm -rf "$npm_root"/.openclaw-* "$npm_root"/openclaw 2>/dev/null || true
+    rm -rf "$npm_root"/.nova-* "$npm_root"/nova 2>/dev/null || true
 }
 
-extract_openclaw_conflict_path() {
+extract_nova_conflict_path() {
     local log="$1"
     local path=""
     path="$(sed -n 's/.*File exists: //p' "$log" | head -n1)"
@@ -678,16 +678,16 @@ extract_openclaw_conflict_path() {
     return 1
 }
 
-cleanup_openclaw_bin_conflict() {
+cleanup_nova_bin_conflict() {
     local bin_path="$1"
     if [[ -z "$bin_path" || ( ! -e "$bin_path" && ! -L "$bin_path" ) ]]; then
         return 1
     fi
     local npm_bin=""
     npm_bin="$(npm_global_bin_dir 2>/dev/null || true)"
-    if [[ -n "$npm_bin" && "$bin_path" != "$npm_bin/openclaw" ]]; then
+    if [[ -n "$npm_bin" && "$bin_path" != "$npm_bin/nova" ]]; then
         case "$bin_path" in
-            "/opt/homebrew/bin/openclaw"|"/usr/local/bin/openclaw")
+            "/opt/homebrew/bin/nova"|"/usr/local/bin/nova")
                 ;;
             *)
                 return 1
@@ -697,9 +697,9 @@ cleanup_openclaw_bin_conflict() {
     if [[ -L "$bin_path" ]]; then
         local target=""
         target="$(readlink "$bin_path" 2>/dev/null || true)"
-        if [[ "$target" == *"/node_modules/openclaw/"* ]]; then
+        if [[ "$target" == *"/node_modules/nova/"* ]]; then
             rm -f "$bin_path"
-            ui_info "Removed stale openclaw symlink at ${bin_path}"
+            ui_info "Removed stale nova symlink at ${bin_path}"
             return 0
         fi
         return 1
@@ -707,7 +707,7 @@ cleanup_openclaw_bin_conflict() {
     local backup=""
     backup="${bin_path}.bak-$(date +%Y%m%d-%H%M%S)"
     if mv "$bin_path" "$backup"; then
-        ui_info "Moved existing openclaw binary to ${backup}"
+        ui_info "Moved existing nova binary to ${backup}"
         return 0
     fi
     return 1
@@ -1081,7 +1081,7 @@ print_npm_failure_diagnostics() {
     fi
 }
 
-install_openclaw_npm() {
+install_nova_npm() {
     local spec="$1"
     local log
     mktempfile log
@@ -1107,9 +1107,9 @@ install_openclaw_npm() {
             tail -n 80 "$log" >&2 || true
         fi
 
-        if grep -q "ENOTEMPTY: directory not empty, rename .*openclaw" "$log"; then
+        if grep -q "ENOTEMPTY: directory not empty, rename .*nova" "$log"; then
             ui_warn "npm left stale directory; cleaning and retrying"
-            cleanup_npm_openclaw_paths
+            cleanup_npm_nova_paths
             if run_npm_global_install "$spec" "$log"; then
                 ui_success "Nova npm package installed"
                 return 0
@@ -1118,15 +1118,15 @@ install_openclaw_npm() {
         fi
         if grep -q "EEXIST" "$log"; then
             local conflict=""
-            conflict="$(extract_openclaw_conflict_path "$log" || true)"
-            if [[ -n "$conflict" ]] && cleanup_openclaw_bin_conflict "$conflict"; then
+            conflict="$(extract_nova_conflict_path "$log" || true)"
+            if [[ -n "$conflict" ]] && cleanup_nova_bin_conflict "$conflict"; then
                 if run_npm_global_install "$spec" "$log"; then
                     ui_success "Nova npm package installed"
                     return 0
                 fi
                 return 1
             fi
-            ui_error "npm failed because an openclaw binary already exists"
+            ui_error "npm failed because an nova binary already exists"
             if [[ -n "$conflict" ]]; then
                 ui_info "Remove or move ${conflict}, then retry"
             fi
@@ -1256,7 +1256,7 @@ DRY_RUN=${NOVA_DRY_RUN:-0}
 INSTALL_METHOD=${NOVA_INSTALL_METHOD:-}
 NOVA_VERSION=${NOVA_VERSION:-latest}
 USE_BETA=${NOVA_BETA:-0}
-GIT_DIR_DEFAULT="$(resolve_openclaw_effective_home)/openclaw"
+GIT_DIR_DEFAULT="$(resolve_nova_effective_home)/nova"
 GIT_DIR=${NOVA_GIT_DIR:-$GIT_DIR_DEFAULT}
 GIT_UPDATE=${NOVA_GIT_UPDATE:-1}
 NPM_LOGLEVEL="${NOVA_NPM_LOGLEVEL:-error}"
@@ -1269,7 +1269,7 @@ HELP=0
 
 print_usage() {
     cat <<EOF
-OpenClaw installer (macOS + Linux)
+Nova installer (macOS + Linux)
 
 Usage:
   curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- [options]
@@ -1280,7 +1280,7 @@ Options:
   --git, --github                     Shortcut for --install-method git
   --version <version|dist-tag|spec>    npm install target (default: latest)
   --beta                               Use beta if available, else latest
-  --git-dir, --dir <path>             Checkout directory (default: ~/openclaw)
+  --git-dir, --dir <path>             Checkout directory (default: ~/nova)
   --no-git-update                      Skip git pull for existing checkout
   --no-onboard                          Skip onboarding (non-interactive)
   --no-prompt                           Disable prompts (required in CI/automation)
@@ -1430,7 +1430,7 @@ choose_install_method_interactive() {
 
     if [[ -n "$GUM" ]] && gum_is_tty; then
         local header selection
-        header="Detected OpenClaw checkout in: ${detected_checkout}
+        header="Detected Nova checkout in: ${detected_checkout}
 Choose install method"
         selection="$("$GUM" choose \
             --header "$header" \
@@ -1453,7 +1453,7 @@ Choose install method"
 
     local choice=""
     choice="$(prompt_choice "$(cat <<EOF
-${WARN}→${NC} Detected a OpenClaw source checkout in: ${INFO}${detected_checkout}${NC}
+${WARN}→${NC} Detected a Nova source checkout in: ${INFO}${detected_checkout}${NC}
 Choose install method:
   1) Update this checkout (git) and use it
   2) Install global via npm (migrate away from git)
@@ -1475,7 +1475,7 @@ EOF
     return 1
 }
 
-detect_openclaw_checkout() {
+detect_nova_checkout() {
     local dir="$1"
     if [[ ! -f "$dir/package.json" ]]; then
         return 1
@@ -1483,7 +1483,7 @@ detect_openclaw_checkout() {
     if [[ ! -f "$dir/pnpm-workspace.yaml" ]]; then
         return 1
     fi
-    if ! grep -q '"name"[[:space:]]*:[[:space:]]*"openclaw"' "$dir/package.json" 2>/dev/null; then
+    if ! grep -q '"name"[[:space:]]*:[[:space:]]*"nova"' "$dir/package.json" 2>/dev/null; then
         return 1
     fi
     echo "$dir"
@@ -1702,7 +1702,7 @@ persist_shell_path_prepend() {
     for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
         if [[ -f "$rc" ]]; then
             if [[ "$(sed -n '1p' "$rc")" != "$path_line" ]]; then
-                local tmp_rc="${rc}.openclaw-tmp"
+                local tmp_rc="${rc}.nova-tmp"
                 {
                     printf '%s\n' "$path_line"
                     grep -Fvx "$path_line" "$rc" || true
@@ -2135,10 +2135,10 @@ fix_npm_permissions() {
     ui_success "npm configured for user installs"
 }
 
-ensure_openclaw_bin_link() {
+ensure_nova_bin_link() {
     local npm_root=""
     npm_root="$(npm root -g 2>/dev/null || true)"
-    if [[ -z "$npm_root" || ! -d "$npm_root/openclaw" ]]; then
+    if [[ -z "$npm_root" || ! -d "$npm_root/nova" ]]; then
         return 1
     fi
     local npm_bin=""
@@ -2147,17 +2147,17 @@ ensure_openclaw_bin_link() {
         return 1
     fi
     mkdir -p "$npm_bin"
-    if [[ ! -x "${npm_bin}/openclaw" ]]; then
-        ln -sf "$npm_root/openclaw/dist/entry.js" "${npm_bin}/openclaw"
-        ui_info "Created openclaw bin link at ${npm_bin}/openclaw"
+    if [[ ! -x "${npm_bin}/nova" ]]; then
+        ln -sf "$npm_root/nova/dist/entry.js" "${npm_bin}/nova"
+        ui_info "Created nova bin link at ${npm_bin}/nova"
     fi
     return 0
 }
 
-# Check for existing OpenClaw installation
-check_existing_openclaw() {
-    if [[ -n "$(type -P openclaw 2>/dev/null || true)" ]]; then
-        ui_info "Existing OpenClaw installation detected, upgrading"
+# Check for existing Nova installation
+check_existing_nova() {
+    if [[ -n "$(type -P nova 2>/dev/null || true)" ]]; then
+        ui_info "Existing Nova installation detected, upgrading"
         return 0
     fi
     return 1
@@ -2286,13 +2286,13 @@ run_pnpm() {
     "${PNPM_CMD[@]}" "$@"
 }
 
-resolve_git_openclaw_ref() {
+resolve_git_nova_ref() {
     local requested="${NOVA_VERSION:-latest}"
     local resolved_version=""
 
     case "$requested" in
         ""|latest)
-            resolved_version="$(npm view "openclaw" "dist-tags.${requested:-latest}" 2>/dev/null || true)"
+            resolved_version="$(npm view "nova" "dist-tags.${requested:-latest}" 2>/dev/null || true)"
             if [[ -n "$resolved_version" ]]; then
                 echo "v${resolved_version}"
                 return 0
@@ -2301,7 +2301,7 @@ resolve_git_openclaw_ref() {
             return 0
             ;;
         next|beta)
-            resolved_version="$(npm view "openclaw" "dist-tags.${requested:-latest}" 2>/dev/null || true)"
+            resolved_version="$(npm view "nova" "dist-tags.${requested:-latest}" 2>/dev/null || true)"
             if [[ -n "$resolved_version" ]]; then
                 echo "v${resolved_version}"
                 return 0
@@ -2328,7 +2328,7 @@ resolve_git_openclaw_ref() {
     esac
 }
 
-checkout_git_openclaw_ref() {
+checkout_git_nova_ref() {
     local repo_dir="$1"
     local ref="$2"
 
@@ -2464,7 +2464,7 @@ canonicalize_dir() {
     (cd "$dir" 2>/dev/null && pwd -P) || return 1
 }
 
-openclaw_package_version() {
+nova_package_version() {
     local package_json="$1"
     if [[ ! -f "$package_json" ]]; then
         echo "unknown"
@@ -2488,7 +2488,7 @@ emit_npm_root_candidate() {
     fi
 }
 
-collect_openclaw_npm_root_candidates() {
+collect_nova_npm_root_candidates() {
     local root=""
     root="$(npm root -g 2>/dev/null || true)"
     emit_npm_root_candidate "$root"
@@ -2536,12 +2536,12 @@ collect_openclaw_npm_root_candidates() {
     done
 }
 
-find_openclaw_global_installs() {
+find_nova_global_installs() {
     local seen="|"
     local npm_root=""
     while IFS= read -r npm_root; do
         [[ -n "$npm_root" ]] || continue
-        local package_dir="${npm_root%/}/openclaw"
+        local package_dir="${npm_root%/}/nova"
         local package_json="${package_dir}/package.json"
         [[ -f "$package_json" ]] || continue
 
@@ -2554,35 +2554,35 @@ find_openclaw_global_installs() {
         seen="${seen}${real_package_dir}|"
 
         local version=""
-        version="$(openclaw_package_version "$package_json")"
+        version="$(nova_package_version "$package_json")"
         printf '%s\t%s\t%s\n' "$version" "$real_package_dir" "$npm_root"
-    done < <(collect_openclaw_npm_root_candidates)
+    done < <(collect_nova_npm_root_candidates)
 }
 
-warn_duplicate_openclaw_global_installs() {
+warn_duplicate_nova_global_installs() {
     local installs=()
     local line=""
     while IFS= read -r line; do
         [[ -n "$line" ]] && installs+=("$line")
-    done < <(find_openclaw_global_installs)
+    done < <(find_nova_global_installs)
 
     if [[ "${#installs[@]}" -le 1 ]]; then
         return 0
     fi
 
-    ui_warn "Multiple OpenClaw global installs detected"
-    echo "  Different Node/npm environments can run different OpenClaw versions."
+    ui_warn "Multiple Nova global installs detected"
+    echo "  Different Node/npm environments can run different Nova versions."
 
-    local active_node active_npm active_openclaw
+    local active_node active_npm active_nova
     active_node="$(command -v node 2>/dev/null || true)"
     active_npm="$(command -v npm 2>/dev/null || true)"
-    active_openclaw="${NOVA_BIN:-}"
-    if [[ -z "$active_openclaw" ]]; then
-        active_openclaw="$(type -P openclaw 2>/dev/null || true)"
+    active_nova="${NOVA_BIN:-}"
+    if [[ -z "$active_nova" ]]; then
+        active_nova="$(type -P nova 2>/dev/null || true)"
     fi
     echo -e "  Active node: ${INFO}${active_node:-none}${NC}"
     echo -e "  Active npm: ${INFO}${active_npm:-none}${NC}"
-    echo -e "  Active openclaw: ${INFO}${active_openclaw:-none}${NC}"
+    echo -e "  Active nova: ${INFO}${active_nova:-none}${NC}"
     echo ""
     echo "  Found installs:"
 
@@ -2640,22 +2640,22 @@ warn_shell_path_missing_dir() {
 
     echo ""
     ui_warn "PATH missing ${label}: ${dir}"
-    echo "  This can make openclaw show as \"command not found\" in new terminals."
+    echo "  This can make nova show as \"command not found\" in new terminals."
     echo "  Fix (zsh: ~/.zshrc, bash: ~/.bashrc):"
     echo "    export PATH=\"${dir}:\$PATH\""
 }
 
-openclaw_command_for_user() {
+nova_command_for_user() {
     local claw="${1:-}"
     if [[ -z "$claw" ]]; then
-        echo "openclaw"
+        echo "nova"
         return 0
     fi
 
     local original_claw=""
-    original_claw="$(PATH="$ORIGINAL_PATH" type -P openclaw 2>/dev/null || true)"
+    original_claw="$(PATH="$ORIGINAL_PATH" type -P nova 2>/dev/null || true)"
     if [[ "$original_claw" == "$claw" ]]; then
-        echo "openclaw"
+        echo "nova"
         return 0
     fi
 
@@ -2723,13 +2723,13 @@ bounded_probe_output() {
     return 1
 }
 
-warn_openclaw_not_found() {
-    ui_warn "Installed, but openclaw is not discoverable on PATH in this shell"
+warn_nova_not_found() {
+    ui_warn "Installed, but nova is not discoverable on PATH in this shell"
     echo "  Try: hash -r (bash) or rehash (zsh), then retry."
     local t=""
-    t="$(type -t openclaw 2>/dev/null || true)"
+    t="$(type -t nova 2>/dev/null || true)"
     if [[ "$t" == "alias" || "$t" == "function" ]]; then
-        ui_warn "Found a shell ${t} named openclaw; it may shadow the real binary"
+        ui_warn "Found a shell ${t} named nova; it may shadow the real binary"
     fi
     if command -v nodenv &> /dev/null; then
         echo -e "Using nodenv? Run: ${INFO}nodenv rehash${NC}"
@@ -2748,10 +2748,10 @@ warn_openclaw_not_found() {
     fi
 }
 
-resolve_openclaw_bin() {
+resolve_nova_bin() {
     refresh_shell_command_cache
     local resolved=""
-    resolved="$(type -P openclaw 2>/dev/null || true)"
+    resolved="$(type -P nova 2>/dev/null || true)"
     if [[ -n "$resolved" && -x "$resolved" ]]; then
         echo "$resolved"
         return 0
@@ -2759,7 +2759,7 @@ resolve_openclaw_bin() {
 
     ensure_npm_global_bin_on_path
     refresh_shell_command_cache
-    resolved="$(type -P openclaw 2>/dev/null || true)"
+    resolved="$(type -P nova 2>/dev/null || true)"
     if [[ -n "$resolved" && -x "$resolved" ]]; then
         echo "$resolved"
         return 0
@@ -2767,21 +2767,21 @@ resolve_openclaw_bin() {
 
     local npm_bin=""
     npm_bin="$(npm_global_bin_dir || true)"
-    if [[ -n "$npm_bin" && -x "${npm_bin}/openclaw" ]]; then
-        echo "${npm_bin}/openclaw"
+    if [[ -n "$npm_bin" && -x "${npm_bin}/nova" ]]; then
+        echo "${npm_bin}/nova"
         return 0
     fi
 
     maybe_nodenv_rehash
     refresh_shell_command_cache
-    resolved="$(type -P openclaw 2>/dev/null || true)"
+    resolved="$(type -P nova 2>/dev/null || true)"
     if [[ -n "$resolved" && -x "$resolved" ]]; then
         echo "$resolved"
         return 0
     fi
 
-    if [[ -n "$npm_bin" && -x "${npm_bin}/openclaw" ]]; then
-        echo "${npm_bin}/openclaw"
+    if [[ -n "$npm_bin" && -x "${npm_bin}/nova" ]]; then
+        echo "${npm_bin}/nova"
         return 0
     fi
 
@@ -2789,15 +2789,15 @@ resolve_openclaw_bin() {
     return 1
 }
 
-resolve_installed_openclaw_bin() {
+resolve_installed_nova_bin() {
     local installed_bin=""
     if [[ "$INSTALL_METHOD" == "git" ]]; then
-        installed_bin="$HOME/.local/bin/openclaw"
+        installed_bin="$HOME/.local/bin/nova"
     elif [[ "$INSTALL_METHOD" == "npm" ]]; then
         local npm_bin=""
         npm_bin="$(npm_global_bin_dir || true)"
         if [[ -n "$npm_bin" ]]; then
-            installed_bin="${npm_bin}/openclaw"
+            installed_bin="${npm_bin}/nova"
         fi
     fi
 
@@ -2805,17 +2805,17 @@ resolve_installed_openclaw_bin() {
         echo "$installed_bin"
         return 0
     fi
-    resolve_openclaw_bin
+    resolve_nova_bin
 }
 
-install_openclaw_from_git() {
+install_nova_from_git() {
     local repo_dir="$1"
-    local repo_url="https://github.com/openclaw/openclaw.git"
+    local repo_url="https://github.com/nova/nova.git"
 
     if [[ -d "$repo_dir/.git" ]]; then
-        ui_info "Installing OpenClaw from git checkout: ${repo_dir}"
+        ui_info "Installing Nova from git checkout: ${repo_dir}"
     else
-        ui_info "Installing OpenClaw from GitHub (${repo_url})"
+        ui_info "Installing Nova from GitHub (${repo_url})"
     fi
 
     if ! check_git; then
@@ -2827,14 +2827,14 @@ install_openclaw_from_git() {
 
     if [[ ! -d "$repo_dir" ]]; then
         mkdir -p "$(dirname "$repo_dir")"
-        run_quiet_step "Cloning OpenClaw" git clone "$repo_url" "$repo_dir"
+        run_quiet_step "Cloning Nova" git clone "$repo_url" "$repo_dir"
     fi
 
     local git_ref
-    git_ref="$(resolve_git_openclaw_ref)"
+    git_ref="$(resolve_git_nova_ref)"
     if [[ -z "$(git -C "$repo_dir" status --porcelain 2>/dev/null || true)" ]]; then
         ui_info "Using git ref: ${git_ref}"
-        checkout_git_openclaw_ref "$repo_dir" "$git_ref"
+        checkout_git_nova_ref "$repo_dir" "$git_ref"
     else
         ui_info "Repo has local changes; skipping git checkout/update"
     fi
@@ -2849,7 +2849,7 @@ install_openclaw_from_git() {
     if ! run_quiet_step "Building UI" run_pnpm -C "$repo_dir" ui:build; then
         ui_warn "UI build failed; continuing (CLI may still work)"
     fi
-    run_quiet_step "Building OpenClaw" run_pnpm -C "$repo_dir" build
+    run_quiet_step "Building Nova" run_pnpm -C "$repo_dir" build
 
     ensure_user_local_bin_on_path
 
@@ -2869,20 +2869,20 @@ install_openclaw_from_git() {
     printf -v node_bin_quoted "%q" "$node_bin"
     printf -v entry_path_quoted "%q" "${repo_dir}/dist/entry.js"
 
-    cat > "$HOME/.local/bin/openclaw" <<EOF
+    cat > "$HOME/.local/bin/nova" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 exec ${node_bin_quoted} ${entry_path_quoted} "\$@"
 EOF
-    chmod +x "$HOME/.local/bin/openclaw"
-    ui_success "OpenClaw wrapper installed to \$HOME/.local/bin/openclaw"
+    chmod +x "$HOME/.local/bin/nova"
+    ui_success "Nova wrapper installed to \$HOME/.local/bin/nova"
     ui_info "This checkout uses pnpm — run pnpm install (or corepack pnpm install) for deps"
 }
 
-# Install OpenClaw
+# Install Nova
 resolve_beta_version() {
     local beta=""
-    beta="$(npm view openclaw dist-tags.beta 2>/dev/null || true)"
+    beta="$(npm view nova dist-tags.beta 2>/dev/null || true)"
     if [[ -z "$beta" || "$beta" == "undefined" || "$beta" == "null" ]]; then
         return 1
     fi
@@ -2899,20 +2899,20 @@ is_explicit_package_install_spec() {
     [[ "$value" == *"://"* || "$value" == *"#"* || "$value" =~ ^(file|github|git\+ssh|git\+https|git\+http|git\+file|npm): ]]
 }
 
-is_openclaw_source_package_install_spec() {
+is_nova_source_package_install_spec() {
     local value="${1:-}"
     local normalized_value=""
     normalized_value="$(to_lowercase_ascii "$value")"
-    normalized_value="${normalized_value#openclaw@}"
+    normalized_value="${normalized_value#nova@}"
 
     [[ "$normalized_value" == "main" ]] && return 0
     [[ "$normalized_value" =~ ^github:yuvrajlaptop2008-byte/nova($|[#/]) ]] && return 0
 
     normalized_value="${normalized_value#git+}"
-    [[ "$normalized_value" =~ ^https?://github\.com/openclaw/openclaw(\.git)?($|[?#]) ]] && return 0
-    [[ "$normalized_value" =~ ^ssh://git@github\.com[:/]openclaw/openclaw(\.git)?($|[?#]) ]] && return 0
-    [[ "$normalized_value" =~ ^git://github\.com/openclaw/openclaw(\.git)?($|[?#]) ]] && return 0
-    [[ "$normalized_value" =~ ^git@github\.com:openclaw/openclaw(\.git)?($|[?#]) ]] && return 0
+    [[ "$normalized_value" =~ ^https?://github\.com/nova/nova(\.git)?($|[?#]) ]] && return 0
+    [[ "$normalized_value" =~ ^ssh://git@github\.com[:/]nova/nova(\.git)?($|[?#]) ]] && return 0
+    [[ "$normalized_value" =~ ^git://github\.com/nova/nova(\.git)?($|[?#]) ]] && return 0
+    [[ "$normalized_value" =~ ^git@github\.com:nova/nova(\.git)?($|[?#]) ]] && return 0
     return 1
 }
 
@@ -2952,7 +2952,7 @@ resolve_package_install_spec() {
     echo "${package_name}@${value}"
 }
 
-install_openclaw() {
+install_nova() {
     local package_name="nova"
     if [[ "$USE_BETA" == "1" ]]; then
         local beta_version=""
@@ -2971,8 +2971,8 @@ install_openclaw() {
         NOVA_VERSION="latest"
     fi
 
-    if is_openclaw_source_package_install_spec "${NOVA_VERSION}"; then
-        ui_error "npm installs do not support OpenClaw GitHub source targets like '${NOVA_VERSION}'."
+    if is_nova_source_package_install_spec "${NOVA_VERSION}"; then
+        ui_error "npm installs do not support Nova GitHub source targets like '${NOVA_VERSION}'."
         ui_info "Use --install-method git --version main for the moving main checkout, or use latest, beta, an exact version, or a built .tgz package."
         return 1
     fi
@@ -2982,30 +2982,30 @@ install_openclaw() {
         resolved_version="$(npm view "${package_name}@${NOVA_VERSION}" version 2>/dev/null || true)"
     fi
     if [[ -n "$resolved_version" ]]; then
-        ui_info "Installing OpenClaw v${resolved_version}"
+        ui_info "Installing Nova v${resolved_version}"
     else
-        ui_info "Installing OpenClaw (${NOVA_VERSION})"
+        ui_info "Installing Nova (${NOVA_VERSION})"
     fi
     local install_spec=""
     install_spec="$(resolve_package_install_spec "${package_name}" "${NOVA_VERSION}")"
 
-    if ! install_openclaw_npm "${install_spec}"; then
+    if ! install_nova_npm "${install_spec}"; then
         ui_warn "npm install failed; retrying"
-        cleanup_npm_openclaw_paths
-        install_openclaw_npm "${install_spec}"
+        cleanup_npm_nova_paths
+        install_nova_npm "${install_spec}"
     fi
 
-    if [[ "${NOVA_VERSION}" == "latest" && "${package_name}" == "openclaw" ]]; then
-        if ! resolve_openclaw_bin &> /dev/null; then
-            ui_warn "npm install openclaw@latest failed; retrying openclaw@next"
-            cleanup_npm_openclaw_paths
-            install_openclaw_npm "openclaw@next"
+    if [[ "${NOVA_VERSION}" == "latest" && "${package_name}" == "nova" ]]; then
+        if ! resolve_nova_bin &> /dev/null; then
+            ui_warn "npm install nova@latest failed; retrying nova@next"
+            cleanup_npm_nova_paths
+            install_nova_npm "nova@next"
         fi
     fi
 
-    ensure_openclaw_bin_link || true
+    ensure_nova_bin_link || true
 
-    ui_success "OpenClaw installed"
+    ui_success "Nova installed"
 }
 
 # Run doctor for migrations (safe, non-interactive)
@@ -3013,11 +3013,11 @@ run_doctor() {
     ui_info "Running doctor to migrate settings"
     local claw="${NOVA_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_nova_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
-        ui_info "Skipping doctor (openclaw not on PATH yet)"
-        warn_openclaw_not_found
+        ui_info "Skipping doctor (nova not on PATH yet)"
+        warn_nova_not_found
         return 0
     fi
     local doctor_exit=0
@@ -3034,7 +3034,7 @@ run_doctor() {
 maybe_open_dashboard() {
     local claw="${NOVA_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_nova_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
         return 0
@@ -3045,28 +3045,28 @@ maybe_open_dashboard() {
     run_with_safe_stdin "$claw" dashboard || true
 }
 
-has_openclaw_config() {
+has_nova_config() {
     local effective_home
-    effective_home="$(resolve_openclaw_effective_home)"
+    effective_home="$(resolve_nova_effective_home)"
     if [[ -n "${NOVA_CONFIG_PATH:-}" ]]; then
         local config_path
-        config_path="$(resolve_openclaw_user_path "$NOVA_CONFIG_PATH")"
+        config_path="$(resolve_nova_user_path "$NOVA_CONFIG_PATH")"
         [[ -f "$config_path" ]]
         return
     fi
 
     if [[ -n "${NOVA_STATE_DIR:-}" ]]; then
         local state_dir
-        state_dir="$(resolve_openclaw_user_path "$NOVA_STATE_DIR")"
-        if [[ -f "$state_dir/openclaw.json" || -f "$state_dir/clawdbot.json" ]]; then
+        state_dir="$(resolve_nova_user_path "$NOVA_STATE_DIR")"
+        if [[ -f "$state_dir/nova.json" || -f "$state_dir/clawdbot.json" ]]; then
             return 0
         fi
         return 1
     fi
 
-    if [[ -f "$effective_home/.openclaw/openclaw.json" ||
-        -f "$effective_home/.openclaw/clawdbot.json" ||
-        -f "$effective_home/.clawdbot/openclaw.json" ||
+    if [[ -f "$effective_home/.nova/nova.json" ||
+        -f "$effective_home/.nova/clawdbot.json" ||
+        -f "$effective_home/.clawdbot/nova.json" ||
         -f "$effective_home/.clawdbot/clawdbot.json" ]]; then
         return 0
     fi
@@ -3095,9 +3095,9 @@ load_install_version_helpers() {
 
 load_install_version_helpers
 
-if ! declare -F extract_openclaw_semver >/dev/null 2>&1; then
+if ! declare -F extract_nova_semver >/dev/null 2>&1; then
 # Inline fallback when version-parse.sh could not be sourced (for example, stdin install).
-extract_openclaw_semver() {
+extract_nova_semver() {
     local raw="${1:-}"
     raw="${raw//$'\r'/}"
     if [[ "$raw" =~ v?([0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?(\+[0-9A-Za-z.-]+)?) ]]; then
@@ -3106,18 +3106,18 @@ extract_openclaw_semver() {
 }
 fi
 
-resolve_openclaw_version() {
+resolve_nova_version() {
     local version=""
     local raw_version_output=""
     local claw="${NOVA_BIN:-}"
-    if [[ -z "$claw" ]] && command -v openclaw &> /dev/null; then
-        claw="$(command -v openclaw)"
+    if [[ -z "$claw" ]] && command -v nova &> /dev/null; then
+        claw="$(command -v nova)"
     fi
     if [[ -n "$claw" ]]; then
         raw_version_output=$("$claw" --version 2>/dev/null || true)
         raw_version_output="${raw_version_output%%$'\n'*}"
         raw_version_output="${raw_version_output//$'\r'/}"
-        version="$(extract_openclaw_semver "$raw_version_output")"
+        version="$(extract_nova_semver "$raw_version_output")"
         if [[ -z "$version" ]]; then
             version="$raw_version_output"
         fi
@@ -3125,8 +3125,8 @@ resolve_openclaw_version() {
     if [[ -z "$version" ]]; then
         local npm_root=""
         npm_root=$(npm root -g 2>/dev/null || true)
-        if [[ -n "$npm_root" && -f "$npm_root/openclaw/package.json" ]]; then
-            version=$(node -e "console.log(require('${npm_root}/openclaw/package.json').version)" 2>/dev/null || true)
+        if [[ -n "$npm_root" && -f "$npm_root/nova/package.json" ]]; then
+            version=$(node -e "console.log(require('${npm_root}/nova/package.json').version)" 2>/dev/null || true)
         fi
     fi
     echo "$version"
@@ -3139,7 +3139,7 @@ is_gateway_daemon_loaded() {
     fi
 
     local status_json=""
-    status_json="$(bounded_probe_output "openclaw daemon status --json" "$claw" daemon status --json || true)"
+    status_json="$(bounded_probe_output "nova daemon status --json" "$claw" daemon status --json || true)"
     if [[ -z "$status_json" ]]; then
         return 1
     fi
@@ -3160,7 +3160,7 @@ try {
 refresh_gateway_service_if_loaded() {
     local claw="${NOVA_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_nova_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
         return 0
@@ -3182,7 +3182,7 @@ refresh_gateway_service_if_loaded() {
         ui_success "Gateway service restarted"
     else
         local user_claw
-        user_claw="$(openclaw_command_for_user "$claw")"
+        user_claw="$(nova_command_for_user "$claw")"
         ui_warn "Gateway service restart failed; continuing. Run: ${user_claw} gateway restart"
         return 0
     fi
@@ -3199,22 +3199,22 @@ verify_installation() {
     ui_stage "Verifying installation"
     local claw="${NOVA_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_nova_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
-        ui_error "Install verify failed: openclaw not on PATH yet"
-        warn_openclaw_not_found
+        ui_error "Install verify failed: nova not on PATH yet"
+        warn_nova_not_found
         return 1
     fi
 
-    run_quiet_step "Checking OpenClaw version" "$claw" --version || return 1
+    run_quiet_step "Checking Nova version" "$claw" --version || return 1
 
     if [[ "$verify_gateway" != "true" ]]; then
         ui_info "Setup not complete; skipping gateway service check"
     elif is_gateway_daemon_loaded "$claw"; then
         run_quiet_step "Checking gateway service" "$claw" gateway status --deep || {
             local user_claw
-            user_claw="$(openclaw_command_for_user "$claw")"
+            user_claw="$(nova_command_for_user "$claw")"
             ui_error "Install verify failed: gateway service unhealthy"
             ui_info "Run: ${user_claw} gateway status --deep"
             return 1
@@ -3246,11 +3246,11 @@ main() {
     fi
 
     local detected_checkout=""
-    detected_checkout="$(detect_openclaw_checkout "$PWD" || true)"
+    detected_checkout="$(detect_nova_checkout "$PWD" || true)"
 
     if [[ -z "$INSTALL_METHOD" && -n "$detected_checkout" ]]; then
         if ! is_promptable; then
-            ui_info "Found OpenClaw checkout but no TTY; defaulting to npm install"
+            ui_info "Found Nova checkout but no TTY; defaulting to npm install"
             INSTALL_METHOD="npm"
         else
             local selected_method=""
@@ -3287,7 +3287,7 @@ main() {
 
     # Check for existing installation
     local is_upgrade=false
-    if check_existing_openclaw; then
+    if check_existing_nova; then
         is_upgrade=true
     fi
     local should_open_dashboard=false
@@ -3306,12 +3306,12 @@ main() {
         exit 1
     fi
 
-    ui_stage "Installing OpenClaw"
+    ui_stage "Installing Nova"
 
     local final_git_dir=""
     if [[ "$INSTALL_METHOD" == "git" ]]; then
         # Clean up npm global install if switching to git
-        if npm list -g openclaw &>/dev/null; then
+        if npm list -g nova &>/dev/null; then
             ui_info "Removing npm global install (switching to git)"
             npm uninstall -g nova 2>/dev/null || true
             ui_success "npm global install removed"
@@ -3322,12 +3322,12 @@ main() {
             repo_dir="$detected_checkout"
         fi
         final_git_dir="$repo_dir"
-        install_openclaw_from_git "$repo_dir"
+        install_nova_from_git "$repo_dir"
     else
         # Clean up git wrapper if switching to npm
-        if [[ -x "$HOME/.local/bin/openclaw" ]]; then
+        if [[ -x "$HOME/.local/bin/nova" ]]; then
             ui_info "Removing git wrapper (switching to npm)"
-            rm -f "$HOME/.local/bin/openclaw"
+            rm -f "$HOME/.local/bin/nova"
             ui_success "git wrapper removed"
         fi
 
@@ -3339,14 +3339,14 @@ main() {
         # Step 4: npm permissions (Linux)
         fix_npm_permissions
 
-        # Step 5: OpenClaw
-        install_openclaw
+        # Step 5: Nova
+        install_nova
     fi
 
     ui_stage "Finalizing setup"
 
-    NOVA_BIN="$(resolve_installed_openclaw_bin || true)"
-    warn_duplicate_openclaw_global_installs || true
+    NOVA_BIN="$(resolve_installed_nova_bin || true)"
+    warn_duplicate_nova_global_installs || true
 
     # PATH warning: installs can succeed while the user's login shell still lacks npm's global bin dir.
     local npm_bin=""
@@ -3355,19 +3355,19 @@ main() {
         warn_shell_path_missing_dir "$npm_bin" "npm global bin dir"
     fi
     if [[ "$INSTALL_METHOD" == "git" ]]; then
-        if [[ -x "$HOME/.local/bin/openclaw" ]]; then
+        if [[ -x "$HOME/.local/bin/nova" ]]; then
             warn_shell_path_missing_dir "$HOME/.local/bin" "user-local bin dir (~/.local/bin)"
         fi
     fi
 
     local config_present=false
-    if has_openclaw_config; then
+    if has_nova_config; then
         config_present=true
         refresh_gateway_service_if_loaded
     fi
 
     local installed_version
-    installed_version=$(resolve_openclaw_version)
+    installed_version=$(resolve_nova_version)
 
     echo ""
     if [[ -n "$installed_version" ]]; then
@@ -3422,10 +3422,10 @@ main() {
 
     if [[ "$INSTALL_METHOD" == "git" && -n "$final_git_dir" ]]; then
         local user_claw
-        user_claw="$(openclaw_command_for_user "${NOVA_BIN:-}")"
+        user_claw="$(nova_command_for_user "${NOVA_BIN:-}")"
         ui_section "Source install details"
         ui_kv "Checkout" "$final_git_dir"
-        ui_kv "Wrapper" "$HOME/.local/bin/openclaw"
+        ui_kv "Wrapper" "$HOME/.local/bin/nova"
         ui_kv "Update command" "${user_claw} update"
         ui_kv "Switch to npm" "curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/scripts/install.sh | bash -s -- --install-method npm"
     fi
@@ -3433,7 +3433,7 @@ main() {
     if [[ "$config_present" != "true" ]]; then
         if [[ "$NO_ONBOARD" == "1" ]]; then
             local user_claw
-            user_claw="$(openclaw_command_for_user "${NOVA_BIN:-}")"
+            user_claw="$(nova_command_for_user "${NOVA_BIN:-}")"
             ui_info "Skipping onboard (requested); run ${user_claw} onboard later"
         else
             ui_info "Starting setup"
@@ -3441,18 +3441,18 @@ main() {
             if is_promptable; then
                 local claw="${NOVA_BIN:-}"
                 if [[ -z "$claw" ]]; then
-                    claw="$(resolve_installed_openclaw_bin || true)"
+                    claw="$(resolve_installed_nova_bin || true)"
                 fi
                 if [[ -z "$claw" ]]; then
-                    ui_info "Skipping onboarding (openclaw not on PATH yet)"
-                    warn_openclaw_not_found
+                    ui_info "Skipping onboarding (nova not on PATH yet)"
+                    warn_nova_not_found
                     return 0
                 fi
                 exec </dev/tty
                 exec "$claw" onboard
             fi
             local user_claw
-            user_claw="$(openclaw_command_for_user "${NOVA_BIN:-}")"
+            user_claw="$(nova_command_for_user "${NOVA_BIN:-}")"
             ui_info "No TTY; run ${user_claw} onboard to finish setup"
         fi
     elif [[ "$is_upgrade" == "true" ]]; then
@@ -3460,18 +3460,18 @@ main() {
         if has_controlling_tty || [[ "$NO_ONBOARD" == "1" || "$NO_PROMPT" == "1" ]]; then
             local claw="${NOVA_BIN:-}"
             if [[ -z "$claw" ]]; then
-                claw="$(resolve_installed_openclaw_bin || true)"
+                claw="$(resolve_installed_nova_bin || true)"
             fi
             if [[ -z "$claw" ]]; then
-                ui_info "Skipping doctor (openclaw not on PATH yet)"
-                warn_openclaw_not_found
+                ui_info "Skipping doctor (nova not on PATH yet)"
+                warn_nova_not_found
                 return 0
             fi
             local -a doctor_args=()
             if [[ "$NO_ONBOARD" == "1" || "$NO_PROMPT" == "1" ]]; then
                 doctor_args+=("--non-interactive")
             fi
-            ui_info "Running openclaw doctor"
+            ui_info "Running nova doctor"
             local doctor_ok=0
             local doctor_exit=0
             if (( ${#doctor_args[@]} )); then
@@ -3502,7 +3502,7 @@ main() {
                 should_open_dashboard=true
             fi
             local user_claw
-            user_claw="$(openclaw_command_for_user "${NOVA_BIN:-}")"
+            user_claw="$(nova_command_for_user "${NOVA_BIN:-}")"
             ui_info "No TTY; run ${user_claw} plugins update --all manually"
         fi
     else
@@ -3516,11 +3516,11 @@ main() {
     if [[ "$config_present" == "true" ]]; then
         local claw="${NOVA_BIN:-}"
         if [[ -z "$claw" ]]; then
-            claw="$(resolve_installed_openclaw_bin || true)"
+            claw="$(resolve_installed_nova_bin || true)"
         fi
         if [[ -n "$claw" ]] && is_gateway_daemon_loaded "$claw"; then
             local user_claw
-            user_claw="$(openclaw_command_for_user "$claw")"
+            user_claw="$(nova_command_for_user "$claw")"
             if [[ "$DRY_RUN" == "1" ]]; then
                 ui_info "Gateway daemon detected; would restart (${user_claw} daemon restart)"
             else

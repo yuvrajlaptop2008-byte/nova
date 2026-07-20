@@ -6,15 +6,15 @@ import {
   type AudioTranscriptionRequest,
   type AudioTranscriptionResult,
   type MediaUnderstandingProvider,
-} from "openclaw/plugin-sdk/media-understanding";
+} from "nova/plugin-sdk/media-understanding";
 import {
   assertOkOrThrowHttpError,
   postJsonRequest,
   readProviderJsonResponse,
   requireTranscriptionText,
   resolveProviderHttpRequestConfig,
-} from "openclaw/plugin-sdk/provider-http";
-import { asFiniteNumber } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/provider-http";
+import { asFiniteNumber } from "nova/plugin-sdk/string-coerce-runtime";
 import { OPENROUTER_BASE_URL } from "./provider-catalog.js";
 
 const DEFAULT_OPENROUTER_AUDIO_TRANSCRIPTION_MODEL = "openai/whisper-large-v3-turbo";
@@ -118,7 +118,7 @@ async function transcribeOpenRouterAudio(
       defaultHeaders: {
         Authorization: `Bearer ${params.apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://openclaw.ai",
+        "HTTP-Referer": "https://nova.ai",
         "X-OpenRouter-Title": "Nova",
       },
       provider: "openrouter",

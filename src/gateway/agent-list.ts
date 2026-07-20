@@ -6,7 +6,7 @@ import { normalizeOptionalString } from "@nova/normalization-core/string-coerce"
 import { resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { resolveStateDir } from "../config/paths.js";
 import type { SessionScope } from "../config/sessions.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId, normalizeMainKey } from "../routing/session-key.js";
 import { isReservedSystemAgentId } from "../system-agent/agent-id.js";
 
@@ -29,7 +29,7 @@ function listExistingAgentIdsFromDisk(): string[] {
   }
 }
 
-export function listGatewayAgentIds(cfg: OpenClawConfig): string[] {
+export function listGatewayAgentIds(cfg: NovaConfig): string[] {
   const ids = new Set<string>();
   const defaultId = normalizeAgentId(resolveDefaultAgentId(cfg));
   ids.add(defaultId);
@@ -54,7 +54,7 @@ export function listGatewayAgentIds(cfg: OpenClawConfig): string[] {
 }
 
 /** Lists gateway-visible agent ids with default/main session metadata. */
-export function listGatewayAgentsBasic(cfg: OpenClawConfig): {
+export function listGatewayAgentsBasic(cfg: NovaConfig): {
   defaultId: string;
   mainKey: string;
   scope: SessionScope;

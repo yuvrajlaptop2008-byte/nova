@@ -43,7 +43,7 @@ const connectionOwnerMocks = vi.hoisted(() => ({
   release: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/channel-runtime-context", () => {
+vi.mock("nova/plugin-sdk/channel-runtime-context", () => {
   return {
     getChannelRuntimeContext: vi.fn(),
     registerChannelRuntimeContext: runtimeContextMocks.register,

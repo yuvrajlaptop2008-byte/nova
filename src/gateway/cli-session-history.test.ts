@@ -37,7 +37,7 @@ function readRecord(value: unknown): Record<string, unknown> {
 }
 
 function expectCliSessionMarker(message: unknown, sessionId: string): void {
-  expectFields(readRecord(message)["__openclaw"], { cliSessionId: sessionId });
+  expectFields(readRecord(message)["__nova"], { cliSessionId: sessionId });
 }
 
 function augmentBoundClaudeHistory(params: {
@@ -48,7 +48,7 @@ function augmentBoundClaudeHistory(params: {
 }) {
   return augmentChatHistoryWithCliSessionImports({
     entry: {
-      sessionId: "openclaw-session",
+      sessionId: "nova-session",
       updatedAt: Date.now(),
       cliSessionBindings: {
         "claude-cli": {
@@ -93,7 +93,7 @@ function createClaudeHistoryLines(sessionId: string) {
       message: {
         role: "user",
         content:
-          'Sender (untrusted metadata):\n```json\n{"label":"openclaw-control-ui"}\n```\n\n[Thu 2026-03-26 16:29 GMT] hi',
+          'Sender (untrusted metadata):\n```json\n{"label":"nova-control-ui"}\n```\n\n[Thu 2026-03-26 16:29 GMT] hi',
       },
     }),
     JSON.stringify({
@@ -158,7 +158,7 @@ function createClaudeHistoryLines(sessionId: string) {
 async function withClaudeProjectsDir<T>(
   run: (params: { homeDir: string; sessionId: string; filePath: string }) => Promise<T>,
 ): Promise<T> {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-claude-history-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-claude-history-"));
   const homeDir = path.join(root, "home");
   const sessionId = "5b8b202c-f6bb-4046-9475-d2f15fd07530";
   const projectsDir = path.join(homeDir, ".claude", "projects", "demo-workspace");
@@ -181,7 +181,7 @@ describe("cli session history", () => {
         role: "user",
       });
       expect(String(messages[0]?.content)).toContain("[Thu 2026-03-26 16:29 GMT] hi");
-      expectFields(messages[0]?.["__openclaw"], {
+      expectFields(messages[0]?.["__nova"], {
         id: "user-1",
         importedFrom: "claude-cli",
         externalId: "user-1",
@@ -198,7 +198,7 @@ describe("cli session history", () => {
         output: 7,
         cacheRead: 22,
       });
-      expectFields(messages[1]?.["__openclaw"], {
+      expectFields(messages[1]?.["__nova"], {
         id: "assistant-1",
         importedFrom: "claude-cli",
         externalId: "assistant-1",
@@ -239,7 +239,7 @@ describe("cli session history", () => {
       );
 
       const importedId = (message: Record<string, unknown> | undefined) =>
-        (message?.["__openclaw"] as { id?: string } | undefined)?.id;
+        (message?.["__nova"] as { id?: string } | undefined)?.id;
       const first = readClaudeCliSessionMessages({ cliSessionId: sessionId, homeDir });
       const second = readClaudeCliSessionMessages({ cliSessionId: sessionId, homeDir });
       expect(importedId(first[0])).toBe(`claude-cli:${sessionId}:line:1`);
@@ -329,11 +329,11 @@ describe("cli session history", () => {
       const messages = readClaudeCliSessionMessages({
         cliSessionId: sessionId,
         homeDir,
-        localSessionId: "openclaw-session",
+        localSessionId: "nova-session",
         reseedReceipt: {
           version: 1,
           promptHash: hashCliReseedPrompt(transformedPrompt),
-          localSessionId: "openclaw-session",
+          localSessionId: "nova-session",
           userTurnDisposition: "omitted",
         },
       });
@@ -369,11 +369,11 @@ describe("cli session history", () => {
       const messages = readClaudeCliSessionMessages({
         cliSessionId: sessionId,
         homeDir,
-        localSessionId: "openclaw-session",
+        localSessionId: "nova-session",
         reseedReceipt: {
           version: 1,
           promptHash: hashCliReseedPrompt(transformedPrompt),
-          localSessionId: "openclaw-session",
+          localSessionId: "nova-session",
           userTurnDisposition: "persisted",
         },
       });
@@ -399,11 +399,11 @@ describe("cli session history", () => {
       const messages = readClaudeCliSessionMessages({
         cliSessionId: sessionId,
         homeDir,
-        localSessionId: "new-openclaw-session",
+        localSessionId: "new-nova-session",
         reseedReceipt: {
           version: 1,
           promptHash: hashCliReseedPrompt(transformedPrompt),
-          localSessionId: "old-openclaw-session",
+          localSessionId: "old-nova-session",
           userTurnDisposition: "persisted",
         },
       });
@@ -469,11 +469,11 @@ describe("cli session history", () => {
       const messages = readClaudeCliSessionMessages({
         cliSessionId: sessionId,
         homeDir,
-        localSessionId: "openclaw-session",
+        localSessionId: "nova-session",
         reseedReceipt: {
           version: 1,
           promptHash: hashCliReseedPrompt(transformedPrompt),
-          localSessionId: "openclaw-session",
+          localSessionId: "nova-session",
           userTurnDisposition: "persisted",
         },
       });
@@ -514,11 +514,11 @@ describe("cli session history", () => {
       const messages = readClaudeCliSessionMessages({
         cliSessionId: sessionId,
         homeDir,
-        localSessionId: "openclaw-session",
+        localSessionId: "nova-session",
         reseedReceipt: {
           version: 1,
           promptHash: hashCliReseedPrompt(transformedPrompt),
-          localSessionId: "openclaw-session",
+          localSessionId: "nova-session",
           userTurnDisposition: "persisted",
         },
       });
@@ -561,11 +561,11 @@ describe("cli session history", () => {
       const messages = readClaudeCliSessionMessages({
         cliSessionId: sessionId,
         homeDir,
-        localSessionId: "openclaw-session",
+        localSessionId: "nova-session",
         reseedReceipt: {
           version: 1,
           promptHash: hashCliReseedPrompt(transformedPrompt),
-          localSessionId: "openclaw-session",
+          localSessionId: "nova-session",
           userTurnDisposition: "persisted",
         },
       });
@@ -710,11 +710,11 @@ describe("cli session history", () => {
       const messages = readClaudeCliSessionMessages({
         cliSessionId: sessionId,
         homeDir,
-        localSessionId: "openclaw-session",
+        localSessionId: "nova-session",
         reseedReceipt: {
           version: 1,
           promptHash: hashCliReseedPrompt(expectedPrompt),
-          localSessionId: "openclaw-session",
+          localSessionId: "nova-session",
           userTurnDisposition: "persisted",
         },
       });
@@ -764,9 +764,9 @@ describe("cli session history", () => {
       {
         role: "user",
         content:
-          'Sender (untrusted metadata):\n```json\n{"label":"openclaw-control-ui"}\n```\n\n[Thu 2026-03-26 16:29 GMT] hi',
+          'Sender (untrusted metadata):\n```json\n{"label":"nova-control-ui"}\n```\n\n[Thu 2026-03-26 16:29 GMT] hi',
         timestamp: Date.parse("2026-03-26T16:29:54.800Z"),
-        __openclaw: {
+        __nova: {
           importedFrom: "claude-cli",
           externalId: "user-1",
           cliSessionId: "session-1",
@@ -776,7 +776,7 @@ describe("cli session history", () => {
         role: "assistant",
         content: [{ type: "text", text: "hello from Claude" }],
         timestamp: Date.parse("2026-03-26T16:29:55.500Z"),
-        __openclaw: {
+        __nova: {
           importedFrom: "claude-cli",
           externalId: "assistant-1",
           cliSessionId: "session-1",
@@ -786,7 +786,7 @@ describe("cli session history", () => {
         role: "user",
         content: "[Thu 2026-03-26 16:31 GMT] follow-up",
         timestamp: Date.parse("2026-03-26T16:31:00.000Z"),
-        __openclaw: {
+        __nova: {
           importedFrom: "claude-cli",
           externalId: "user-2",
           cliSessionId: "session-1",
@@ -799,7 +799,7 @@ describe("cli session history", () => {
     expectFields(merged[2], {
       role: "user",
     });
-    expectFields(readRecord(merged[2])["__openclaw"], {
+    expectFields(readRecord(merged[2])["__nova"], {
       importedFrom: "claude-cli",
       externalId: "user-2",
     });
@@ -810,7 +810,7 @@ describe("cli session history", () => {
       {
         role: "user",
         content: "hello from first session",
-        __openclaw: {
+        __nova: {
           importedFrom: "claude-cli",
           externalId: "same-id",
           cliSessionId: "session-1",
@@ -821,7 +821,7 @@ describe("cli session history", () => {
       {
         role: "user",
         content: "hello from second session",
-        __openclaw: {
+        __nova: {
           importedFrom: "claude-cli",
           externalId: "same-id",
           cliSessionId: "session-2",
@@ -885,7 +885,7 @@ describe("cli session history", () => {
 
       const messages = augmentChatHistoryWithCliSessionImports({
         entry: {
-          sessionId: "openclaw-session",
+          sessionId: "nova-session",
           updatedAt: Date.now(),
           cliSessionBindings: {
             "claude-cli": {
@@ -893,7 +893,7 @@ describe("cli session history", () => {
               reseedReceipt: {
                 version: 1,
                 promptHash: hashCliReseedPrompt(syntheticPrompt),
-                localSessionId: "openclaw-session",
+                localSessionId: "nova-session",
                 userTurnDisposition: "persisted",
               },
             },
@@ -904,7 +904,7 @@ describe("cli session history", () => {
           {
             role: "user",
             content: "current recovered ask",
-            __openclaw: { id: "local-user-1" },
+            __nova: { id: "local-user-1" },
           },
         ],
         homeDir,
@@ -942,8 +942,7 @@ describe("cli session history", () => {
         const record = readRecord(message);
         return (
           record.role === "user" &&
-          (record["__openclaw"] as { cliSessionId?: unknown } | undefined)?.cliSessionId ===
-            sessionId
+          (record["__nova"] as { cliSessionId?: unknown } | undefined)?.cliSessionId === sessionId
         );
       });
       if (!importedUser) {
@@ -977,7 +976,7 @@ describe("cli session history", () => {
       const localMessages = readClaudeCliSessionMessages({ cliSessionId: sessionId, homeDir });
       const result = resolveChatHistoryWithCliSessionImports({
         entry: {
-          sessionId: "openclaw-session",
+          sessionId: "nova-session",
           updatedAt: Date.now(),
           cliSessionBindings: { "claude-cli": { sessionId } },
         },
@@ -995,7 +994,7 @@ describe("cli session history", () => {
     await withClaudeProjectsDir(async ({ homeDir, sessionId }) => {
       const messages = augmentChatHistoryWithCliSessionImports({
         entry: {
-          sessionId: "openclaw-session",
+          sessionId: "nova-session",
           updatedAt: Date.now(),
           cliSessionIds: {
             "claude-cli": sessionId,
@@ -1017,7 +1016,7 @@ describe("cli session history", () => {
     await withClaudeProjectsDir(async ({ homeDir, sessionId }) => {
       const messages = augmentChatHistoryWithCliSessionImports({
         entry: {
-          sessionId: "openclaw-session",
+          sessionId: "nova-session",
           updatedAt: Date.now(),
           claudeCliSessionId: sessionId,
         },
@@ -1041,7 +1040,7 @@ describe("readClaudeCliFallbackSeed", () => {
   const SESSION_ID = "fallback-seed-session";
 
   beforeEach(async () => {
-    tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fallback-seed-"));
+    tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fallback-seed-"));
     homeDir = path.join(tmpRoot, "home");
     projectsDir = path.join(homeDir, ".claude", "projects", "demo-workspace");
     await fs.mkdir(projectsDir, { recursive: true });

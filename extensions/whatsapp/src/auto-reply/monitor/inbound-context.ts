@@ -2,8 +2,8 @@
 import {
   filterChannelInboundQuoteContext,
   resolveInboundSupplementalSenderAllowed,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { filterSupplementalContextItems } from "openclaw/plugin-sdk/security-runtime";
+} from "nova/plugin-sdk/channel-inbound";
+import { filterSupplementalContextItems } from "nova/plugin-sdk/security-runtime";
 import {
   getComparableIdentityValues,
   getReplyContext,

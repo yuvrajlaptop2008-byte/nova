@@ -5,11 +5,11 @@ import {
 } from "@nova/workboard-contract";
 // Workboard plugin module implements cli behavior.
 import type { Command } from "commander";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { addGatewayClientOptions, callGatewayFromCli } from "openclaw/plugin-sdk/gateway-runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { addGatewayClientOptions, callGatewayFromCli } from "nova/plugin-sdk/gateway-runtime";
+import { parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
+import { getRuntimeConfig } from "nova/plugin-sdk/runtime-config-snapshot";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveWorkboardCardByIdOrPrefix } from "./card-lookup.js";
 import type { WorkboardDispatchResult, WorkboardStore } from "./store.js";
 

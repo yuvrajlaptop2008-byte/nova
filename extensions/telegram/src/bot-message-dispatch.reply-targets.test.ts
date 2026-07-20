@@ -479,7 +479,7 @@ describeTelegramDispatch("dispatchTelegramMessage reply-targets", () => {
       deliveredText: undefined,
     },
   ])("correlates $name after MEDIA directive normalization", async (testCase) => {
-    const storePath = `/tmp/openclaw-telegram-direct-media-${process.pid}-${testCase.name}.json`;
+    const storePath = `/tmp/nova-telegram-direct-media-${process.pid}-${testCase.name}.json`;
     const context = createContext({
       ctxPayload: {
         MessageSid: "1001",

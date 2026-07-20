@@ -4,15 +4,15 @@
 import {
   getCachedLiveProviderModelRows,
   type LiveModelCatalogFetchGuard,
-} from "openclaw/plugin-sdk/provider-catalog-live-runtime";
-import { buildManifestModelProviderConfig } from "openclaw/plugin-sdk/provider-catalog-shared";
+} from "nova/plugin-sdk/provider-catalog-live-runtime";
+import { buildManifestModelProviderConfig } from "nova/plugin-sdk/provider-catalog-shared";
 import type {
   ModelCompatConfig,
   ModelDefinitionConfig,
-} from "openclaw/plugin-sdk/provider-model-shared";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import { ssrfPolicyFromHttpBaseUrlAllowedHostname } from "openclaw/plugin-sdk/ssrf-runtime";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
+} from "nova/plugin-sdk/provider-model-shared";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
+import { ssrfPolicyFromHttpBaseUrlAllowedHostname } from "nova/plugin-sdk/ssrf-runtime";
+import manifest from "./nova.plugin.json" with { type: "json" };
 
 const log = createSubsystemLogger("baseten-models");
 const BASETEN_MANIFEST_CATALOG = manifest.modelCatalog.providers.baseten;

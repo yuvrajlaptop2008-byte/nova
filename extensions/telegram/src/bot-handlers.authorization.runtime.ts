@@ -1,11 +1,7 @@
 // Telegram sender authorization shared by message, reaction, and callback handlers.
 import type { Message } from "grammy/types";
-import type {
-  DmPolicy,
-  OpenClawConfig,
-  TelegramAccountConfig,
-} from "openclaw/plugin-sdk/config-contracts";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
+import type { DmPolicy, NovaConfig, TelegramAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
 import { expandTelegramAllowFromWithAccessGroups } from "./access-groups.js";
 import { resolveTelegramAccount } from "./accounts.js";
 import {
@@ -47,7 +43,7 @@ export function createTelegramHandlerAuthorizationRuntime({
 
   type TelegramGroupAllowContext = Awaited<ReturnType<typeof resolveTelegramGroupAllowFromContext>>;
   type TelegramEventAuthorizationContextValue = TelegramGroupAllowContext & {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     telegramCfg: TelegramAccountConfig;
     allowFrom: ReturnType<typeof resolveTelegramMessageTurnSettings>["allowFrom"];
     dmPolicy: DmPolicy;
@@ -92,7 +88,7 @@ export function createTelegramHandlerAuthorizationRuntime({
   // Authorization owns one ingress snapshot. The agent turn intentionally
   // captures again after batching so reloads during debounce apply to execution.
   const resolveTelegramEventAuthorizationContext = async (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     chatId: number;
     isGroup: boolean;
     isForum: boolean;

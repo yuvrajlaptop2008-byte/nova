@@ -132,7 +132,7 @@ beforeEach(async () => {
   runtimePluginMocks.findRestartRecoveryUnsafeReplyHook.mockReturnValue(undefined);
   resetAgentEventsForTest();
   resetGatewayWorkAdmission();
-  tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-main-restart-recovery-"));
+  tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-main-restart-recovery-"));
 });
 
 afterEach(async () => {
@@ -2961,7 +2961,7 @@ describe("main-session-restart-recovery", () => {
         role: "assistant",
         content: [{ type: "text", text: "delivered answer" }],
         stopReason: "stop",
-        openclawDeliveryMirror: {
+        novaDeliveryMirror: {
           kind: "message-tool-source-reply",
           final: true,
           sourceTurnId: "discord-message-1",
@@ -4345,7 +4345,7 @@ describe("main-session-restart-recovery", () => {
         role: "assistant",
         content: [{ type: "text", text: "not this turn's terminal answer" }],
         stopReason: "stop",
-        openclawDeliveryMirror: {
+        novaDeliveryMirror: {
           kind: "message-tool-source-reply",
           final,
           sourceTurnId,

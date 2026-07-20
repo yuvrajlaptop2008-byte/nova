@@ -14,7 +14,7 @@ const resolveLsofCommandSyncMock = vi.hoisted(() => vi.fn());
 const resolveGatewayPortMock = vi.hoisted(() => vi.fn());
 
 vi.mock("node:child_process", async () => {
-  const { mockNodeBuiltinModule } = await import("openclaw/plugin-sdk/test-node-mocks");
+  const { mockNodeBuiltinModule } = await import("nova/plugin-sdk/test-node-mocks");
   return mockNodeBuiltinModule(
     () => vi.importActual<typeof import("node:child_process")>("node:child_process"),
     {
@@ -31,12 +31,12 @@ vi.mock("./ports-lsof.js", () => ({
 vi.mock("../config/paths.js", () => ({
   resolveGatewayPort: (...args: unknown[]) => resolveGatewayPortMock(...args),
   resolveStateDir: (env: NodeJS.ProcessEnv = process.env) =>
-    env.NOVA_STATE_DIR ?? "/tmp/openclaw-state",
+    env.NOVA_STATE_DIR ?? "/tmp/nova-state",
 }));
 
 const { cleanStaleGatewayProcessesSync, findGatewayPidsOnPortSync } =
   await import("./restart-stale-pids.js");
-const { triggerOpenClawRestart } = await import("./restart.js");
+const { triggerNovaRestart } = await import("./restart.js");
 
 const envSnapshot = captureFullEnv();
 
@@ -68,7 +68,7 @@ function requireFirstSpawnSyncCall(): [unknown, unknown, unknown] {
 }
 
 describe.runIf(process.platform !== "win32")("findGatewayPidsOnPortSync", () => {
-  it("parses lsof output and filters non-openclaw/current processes", () => {
+  it("parses lsof output and filters non-nova/current processes", () => {
     const gatewayPidA = process.pid + 1000;
     const gatewayPidB = process.pid + 2000;
     const foreignPid = process.pid + 3000;
@@ -77,9 +77,9 @@ describe.runIf(process.platform !== "win32")("findGatewayPidsOnPortSync", () => 
       status: 0,
       stdout: [
         `p${process.pid}`,
-        "copenclaw",
+        "cnova",
         `p${gatewayPidA}`,
-        "copenclaw-gateway",
+        "cnova-gateway",
         `p${foreignPid}`,
         "cnode",
         `p${gatewayPidB}`,
@@ -125,7 +125,7 @@ describe.runIf(process.platform !== "win32")("cleanStaleGatewayProcessesSync", (
       .mockReturnValueOnce({
         error: undefined,
         status: 0,
-        stdout: [`p${stalePidA}`, "copenclaw", `p${stalePidB}`, "copenclaw-gateway"].join("\n"),
+        stdout: [`p${stalePidA}`, "cnova", `p${stalePidB}`, "cnova-gateway"].join("\n"),
       })
       .mockReturnValue({
         error: undefined,
@@ -150,7 +150,7 @@ describe.runIf(process.platform !== "win32")("cleanStaleGatewayProcessesSync", (
       .mockReturnValueOnce({
         error: undefined,
         status: 0,
-        stdout: [`p${stalePid}`, "copenclaw"].join("\n"),
+        stdout: [`p${stalePid}`, "cnova"].join("\n"),
       })
       .mockReturnValue({
         error: undefined,
@@ -191,7 +191,7 @@ describe.runIf(process.platform !== "win32")("cleanStaleGatewayProcessesSync", (
   });
 });
 
-describe("triggerOpenClawRestart", () => {
+describe("triggerNovaRestart", () => {
   it("does not kickstart after bootstrap registers an unloaded LaunchAgent", () => {
     setPlatform("darwin");
     withEnv(
@@ -211,14 +211,14 @@ describe("triggerOpenClawRestart", () => {
           return { error: undefined, status: 1, stdout: "" };
         });
 
-        const result = triggerOpenClawRestart();
+        const result = triggerNovaRestart();
 
         expect(result).toEqual({
           ok: true,
           method: "launchctl",
           tried: [
-            `launchctl kickstart -k gui/${uid}/ai.openclaw.gateway`,
-            `launchctl bootstrap gui/${uid} /Users/test/Library/LaunchAgents/ai.openclaw.gateway.plist`,
+            `launchctl kickstart -k gui/${uid}/ai.nova.gateway`,
+            `launchctl bootstrap gui/${uid} /Users/test/Library/LaunchAgents/ai.nova.gateway.plist`,
           ],
         });
       },
@@ -247,15 +247,15 @@ describe("triggerOpenClawRestart", () => {
           return { error: undefined, status: 1, stdout: "" };
         });
 
-        const result = triggerOpenClawRestart();
+        const result = triggerNovaRestart();
 
         expect(result).toEqual({
           ok: true,
           method: "launchctl",
           tried: [
-            `launchctl kickstart -k gui/${uid}/ai.openclaw.gateway`,
-            `launchctl bootstrap gui/${uid} /Users/test/Library/LaunchAgents/ai.openclaw.gateway.plist`,
-            `launchctl kickstart gui/${uid}/ai.openclaw.gateway`,
+            `launchctl kickstart -k gui/${uid}/ai.nova.gateway`,
+            `launchctl bootstrap gui/${uid} /Users/test/Library/LaunchAgents/ai.nova.gateway.plist`,
+            `launchctl kickstart gui/${uid}/ai.nova.gateway`,
           ],
         });
       },

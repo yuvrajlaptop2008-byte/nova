@@ -20,13 +20,13 @@ const qaTempPathState = vi.hoisted(() => ({
   preferredTmpDir: process.env.TMPDIR || "/tmp",
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("nova/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchWithSsrFGuardMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/temp-path", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("openclaw/plugin-sdk/temp-path")>()),
-  resolvePreferredOpenClawTmpDir: () => qaTempPathState.preferredTmpDir,
+vi.mock("nova/plugin-sdk/temp-path", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("nova/plugin-sdk/temp-path")>()),
+  resolvePreferredNovaTmpDir: () => qaTempPathState.preferredTmpDir,
 }));
 
 vi.mock("./node-exec.js", () => ({
@@ -48,16 +48,16 @@ afterEach(async () => {
 
 function createParams(baseEnv?: NodeJS.ProcessEnv) {
   return {
-    configPath: "/tmp/openclaw-qa/openclaw.json",
+    configPath: "/tmp/nova-qa/nova.json",
     gatewayToken: "qa-token",
-    homeDir: "/tmp/openclaw-qa/home",
-    stateDir: "/tmp/openclaw-qa/state",
-    tempRoot: "/tmp/openclaw-qa",
-    xdgConfigHome: "/tmp/openclaw-qa/xdg-config",
-    xdgDataHome: "/tmp/openclaw-qa/xdg-data",
-    xdgCacheHome: "/tmp/openclaw-qa/xdg-cache",
-    bundledPluginsDir: "/tmp/openclaw-qa/bundled-plugins",
-    stagedBundledPluginsRoot: "/repo/.artifacts/qa-runtime/openclaw-qa-suite-test",
+    homeDir: "/tmp/nova-qa/home",
+    stateDir: "/tmp/nova-qa/state",
+    tempRoot: "/tmp/nova-qa",
+    xdgConfigHome: "/tmp/nova-qa/xdg-config",
+    xdgDataHome: "/tmp/nova-qa/xdg-data",
+    xdgCacheHome: "/tmp/nova-qa/xdg-cache",
+    bundledPluginsDir: "/tmp/nova-qa/bundled-plugins",
+    stagedBundledPluginsRoot: "/repo/.artifacts/qa-runtime/nova-qa-suite-test",
     compatibilityHostVersion: "2026.4.8",
     baseEnv,
   };
@@ -285,7 +285,7 @@ describe("buildQaRuntimeEnv", () => {
       await rm(commandTempParent, { recursive: true, force: true });
     });
     qaTempPathState.preferredTmpDir = preferredTempParent;
-    const missingExecutable = path.join(commandTempParent, "missing-openclaw-node");
+    const missingExecutable = path.join(commandTempParent, "missing-nova-node");
 
     await expect(
       startQaGatewayChild({
@@ -317,13 +317,11 @@ describe("buildQaRuntimeEnv", () => {
     expect(env.NOVA_SKIP_STARTUP_MODEL_PREWARM).toBe("1");
     expect(env.NOVA_EMBEDDED_ABORT_SETTLE_TIMEOUT_MS).toBe("2000");
     expect(env.NOVA_QA_PARENT_PID).toBe(String(process.pid));
-    expect(env.NOVA_QA_TEMP_ROOT).toBe("/tmp/openclaw-qa");
-    expect(env.NOVA_QA_STAGED_RUNTIME_ROOT).toBe(
-      "/repo/.artifacts/qa-runtime/openclaw-qa-suite-test",
-    );
+    expect(env.NOVA_QA_TEMP_ROOT).toBe("/tmp/nova-qa");
+    expect(env.NOVA_QA_STAGED_RUNTIME_ROOT).toBe("/repo/.artifacts/qa-runtime/nova-qa-suite-test");
     expect(env.NOVA_QA_ALLOW_LOCAL_IMAGE_PROVIDER).toBe("1");
     expect(env.NOVA_ALLOW_SLOW_REPLY_TESTS).toBe("1");
-    expect(env.NOVA_BUNDLED_PLUGINS_DIR).toBe("/tmp/openclaw-qa/bundled-plugins");
+    expect(env.NOVA_BUNDLED_PLUGINS_DIR).toBe("/tmp/nova-qa/bundled-plugins");
     expect(env.NOVA_COMPATIBILITY_HOST_VERSION).toBe("2026.4.8");
   });
 
@@ -374,8 +372,8 @@ describe("buildQaRuntimeEnv", () => {
       providerMode: "live-frontier",
     });
 
-    expect(env.HOME).toBe("/tmp/openclaw-qa/home");
-    expect(env.NOVA_HOME).toBe("/tmp/openclaw-qa/home");
+    expect(env.HOME).toBe("/tmp/nova-qa/home");
+    expect(env.NOVA_HOME).toBe("/tmp/nova-qa/home");
     expect(env.CODEX_HOME).toBe(codexHome);
   });
 
@@ -394,8 +392,8 @@ describe("buildQaRuntimeEnv", () => {
     });
 
     expect(env.HOME).toBe(hostHome);
-    expect(env.NOVA_HOME).toBe("/tmp/openclaw-qa/home");
-    expect(env.NOVA_STATE_DIR).toBe("/tmp/openclaw-qa/state");
+    expect(env.NOVA_HOME).toBe("/tmp/nova-qa/home");
+    expect(env.NOVA_STATE_DIR).toBe("/tmp/nova-qa/state");
   });
 
   it("can forward host HOME for browser-backed QA runs while keeping Nova home sandboxed", async () => {
@@ -413,8 +411,8 @@ describe("buildQaRuntimeEnv", () => {
     });
 
     expect(env.HOME).toBe(hostHome);
-    expect(env.NOVA_HOME).toBe("/tmp/openclaw-qa/home");
-    expect(env.NOVA_STATE_DIR).toBe("/tmp/openclaw-qa/state");
+    expect(env.NOVA_HOME).toBe("/tmp/nova-qa/home");
+    expect(env.NOVA_STATE_DIR).toBe("/tmp/nova-qa/state");
   });
 
   it("preserves the live Anthropic key for live Claude CLI runs without writing it into config", async () => {
@@ -859,7 +857,7 @@ describe("buildQaRuntimeEnv", () => {
         cfg: {},
         providerIds: ["openai"],
         env: {
-          CODEX_HOME: path.join(os.tmpdir(), "missing-openclaw-codex-home"),
+          CODEX_HOME: path.join(os.tmpdir(), "missing-nova-codex-home"),
         },
         readCodexCredentials: () => null,
       }),
@@ -872,7 +870,7 @@ describe("buildQaRuntimeEnv", () => {
         cfg: {},
         providerIds: ["openai"],
         env: {
-          CODEX_HOME: path.join(os.tmpdir(), "missing-openclaw-codex-home"),
+          CODEX_HOME: path.join(os.tmpdir(), "missing-nova-codex-home"),
         },
         readCodexCredentials: () => null,
       }),
@@ -894,7 +892,7 @@ describe("buildQaRuntimeEnv", () => {
         },
         providerIds: ["openai"],
         env: {
-          CODEX_HOME: path.join(os.tmpdir(), "missing-openclaw-codex-home"),
+          CODEX_HOME: path.join(os.tmpdir(), "missing-nova-codex-home"),
         },
         readCodexCredentials: () => null,
       }),
@@ -907,7 +905,7 @@ describe("buildQaRuntimeEnv", () => {
         cfg: {},
         providerIds: ["openai"],
         env: {
-          CODEX_HOME: path.join(os.tmpdir(), "missing-openclaw-codex-home"),
+          CODEX_HOME: path.join(os.tmpdir(), "missing-nova-codex-home"),
           NOVA_QA_FORCE_RUNTIME: "codex",
         },
         readCodexCredentials: () => null,
@@ -1530,7 +1528,7 @@ describe("buildQaRuntimeEnv", () => {
 
   it("rejects preserved gateway artifacts outside the repo root", async () => {
     await expect(
-      testing.assertQaArtifactDirWithinRepo("/tmp/openclaw-repo", "/tmp/outside"),
+      testing.assertQaArtifactDirWithinRepo("/tmp/nova-repo", "/tmp/outside"),
     ).rejects.toThrow("QA gateway artifact directory must stay within the repo root.");
   });
 
@@ -1560,7 +1558,7 @@ describe("buildQaRuntimeEnv", () => {
       await rm(stagedRoot, { recursive: true, force: true });
     });
 
-    await writeFile(path.join(tempRoot, "openclaw.json"), "{}", "utf8");
+    await writeFile(path.join(tempRoot, "nova.json"), "{}", "utf8");
     await writeFile(path.join(stagedRoot, "marker.txt"), "x", "utf8");
 
     await testing.cleanupQaGatewayTempRoots({
@@ -1655,7 +1653,7 @@ describe("qa bundled plugin dir", () => {
       recursive: true,
     });
     await writeFile(
-      path.join(repoRoot, "dist", "extensions", "kimi-coding", "openclaw.plugin.json"),
+      path.join(repoRoot, "dist", "extensions", "kimi-coding", "nova.plugin.json"),
       JSON.stringify({ id: "kimi", providers: ["kimi"] }),
       "utf8",
     );
@@ -1685,14 +1683,14 @@ describe("qa bundled plugin dir", () => {
       "utf8",
     );
     await writeFile(
-      path.join(repoRoot, "dist", "extensions", "memory-core", "openclaw.plugin.json"),
+      path.join(repoRoot, "dist", "extensions", "memory-core", "nova.plugin.json"),
       JSON.stringify({ id: "memory-core", kind: "memory" }),
       "utf8",
     );
     await mkdir(path.join(repoRoot, "extensions", "memory-core"), { recursive: true });
     await writeFile(path.join(repoRoot, "extensions", "memory-core", "package.json"), "{}", "utf8");
     await writeFile(
-      path.join(repoRoot, "extensions", "memory-core", "openclaw.plugin.json"),
+      path.join(repoRoot, "extensions", "memory-core", "nova.plugin.json"),
       JSON.stringify({ id: "memory-core", kind: "memory" }),
       "utf8",
     );
@@ -1719,7 +1717,7 @@ describe("qa bundled plugin dir", () => {
       path.join(repoRoot, "package.json"),
       JSON.stringify(
         {
-          name: "openclaw",
+          name: "nova",
           type: "module",
           exports: {
             "./plugin-sdk/account-id": {
@@ -1752,7 +1750,7 @@ describe("qa bundled plugin dir", () => {
     await writeFile(
       path.join(repoRoot, "dist", "extensions", "qa-channel", "index.js"),
       [
-        'import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";',
+        'import { normalizeAccountId } from "nova/plugin-sdk/account-id";',
         'export const accountId = normalizeAccountId("QA");',
         "",
       ].join("\n"),
@@ -1760,7 +1758,7 @@ describe("qa bundled plugin dir", () => {
     );
     await mkdir(path.join(repoRoot, "extensions", "qa-channel"), { recursive: true });
     await writeFile(
-      path.join(repoRoot, "extensions", "qa-channel", "openclaw.plugin.json"),
+      path.join(repoRoot, "extensions", "qa-channel", "nova.plugin.json"),
       JSON.stringify({
         id: "qa-channel",
         toolMetadata: { qa_read: { replaySafe: true } },
@@ -1798,14 +1796,14 @@ describe("qa bundled plugin dir", () => {
       path.join(repoRoot, ".artifacts", "qa-runtime", path.basename(tempRoot)),
     );
     await expect(readFile(path.join(stagedRoot, "package.json"), "utf8")).resolves.toContain(
-      '"name": "openclaw"',
+      '"name": "nova"',
     );
     const qaChannel = (await import(
       `${pathToFileURL(path.join(bundledPluginsDir, "qa-channel", "index.js")).href}?t=${Date.now()}`
     )) as { accountId: string };
     expect(qaChannel.accountId).toBe("qa");
     await expect(
-      readFile(path.join(bundledPluginsDir, "qa-channel", "openclaw.plugin.json"), "utf8"),
+      readFile(path.join(bundledPluginsDir, "qa-channel", "nova.plugin.json"), "utf8"),
     ).resolves.toContain('"replaySafe":true');
     expect((await lstat(path.join(bundledPluginsDir, "qa-channel"))).isDirectory()).toBe(true);
     expect((await lstat(path.join(bundledPluginsDir, "memory-core"))).isDirectory()).toBe(true);
@@ -1836,7 +1834,7 @@ describe("qa bundled plugin dir", () => {
     });
     await writeFile(
       path.join(repoRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", type: "module" }, null, 2),
+      JSON.stringify({ name: "nova", type: "module" }, null, 2),
       "utf8",
     );
     await mkdir(path.join(repoRoot, "dist"), { recursive: true });
@@ -1912,7 +1910,7 @@ describe("qa bundled plugin dir", () => {
     });
     await writeFile(
       path.join(repoRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", type: "module" }, null, 2),
+      JSON.stringify({ name: "nova", type: "module" }, null, 2),
       "utf8",
     );
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "qa-bundled-invalid-target-"));
@@ -1933,7 +1931,7 @@ describe("qa bundled plugin dir", () => {
     const repoRoot = await tempDirs.makeTempDir("qa-bundled-external-id-");
     await writeFile(
       path.join(repoRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", type: "module" }, null, 2),
+      JSON.stringify({ name: "nova", type: "module" }, null, 2),
       "utf8",
     );
     const tempRoot = await tempDirs.makeTempDir("qa-bundled-external-target-");
@@ -1960,7 +1958,7 @@ describe("qa bundled plugin dir", () => {
       path.join(repoRoot, "package.json"),
       JSON.stringify(
         {
-          name: "openclaw",
+          name: "nova",
           type: "module",
           exports: {
             "./plugin-sdk/account-id": {
@@ -1988,7 +1986,7 @@ describe("qa bundled plugin dir", () => {
     await writeFile(
       path.join(repoRoot, "extensions", "qa-channel", "index.ts"),
       [
-        'import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";',
+        'import { normalizeAccountId } from "nova/plugin-sdk/account-id";',
         'import { marker } from "fake-dep";',
         'export const accountId = `${normalizeAccountId("QA")}:${marker}`;',
         "",
@@ -2054,7 +2052,7 @@ describe("qa bundled plugin dir", () => {
     });
     await mkdir(path.join(repoRoot, "dist", "extensions", "openai"), { recursive: true });
     await writeFile(
-      path.join(repoRoot, "dist", "extensions", "openai", "openclaw.plugin.json"),
+      path.join(repoRoot, "dist", "extensions", "openai", "nova.plugin.json"),
       JSON.stringify({
         id: "openai",
         providers: ["openai", "openai"],
@@ -2078,7 +2076,7 @@ describe("qa bundled plugin dir", () => {
     });
     await mkdir(path.join(repoRoot, "dist", "extensions", "openai"), { recursive: true });
     await writeFile(
-      path.join(repoRoot, "dist", "extensions", "openai", "openclaw.plugin.json"),
+      path.join(repoRoot, "dist", "extensions", "openai", "nova.plugin.json"),
       JSON.stringify({
         id: "openai",
         providers: ["openai"],
@@ -2116,7 +2114,7 @@ describe("qa bundled plugin dir", () => {
   it("copies selected live provider configs from the host config", async () => {
     const configPath = path.join(
       await mkdtemp(path.join(os.tmpdir(), "qa-provider-config-")),
-      "openclaw.json",
+      "nova.json",
     );
     cleanups.push(async () => {
       await rm(path.dirname(configPath), { recursive: true, force: true });
@@ -2165,7 +2163,7 @@ describe("qa bundled plugin dir", () => {
   it("copies OpenAI auth-only live provider configs for default OpenAI runs", async () => {
     const configPath = path.join(
       await mkdtemp(path.join(os.tmpdir(), "qa-provider-config-")),
-      "openclaw.json",
+      "nova.json",
     );
     cleanups.push(async () => {
       await rm(path.dirname(configPath), { recursive: true, force: true });
@@ -2203,7 +2201,7 @@ describe("qa bundled plugin dir", () => {
   it("omits empty base URLs without dropping provider configs that inherit auth", async () => {
     const configPath = path.join(
       await mkdtemp(path.join(os.tmpdir(), "qa-provider-config-")),
-      "openclaw.json",
+      "nova.json",
     );
     cleanups.push(async () => {
       await rm(path.dirname(configPath), { recursive: true, force: true });
@@ -2236,7 +2234,7 @@ describe("qa bundled plugin dir", () => {
   it("does not copy OpenAI provider configs for custom OpenAI-compatible runs", async () => {
     const configPath = path.join(
       await mkdtemp(path.join(os.tmpdir(), "qa-provider-config-")),
-      "openclaw.json",
+      "nova.json",
     );
     cleanups.push(async () => {
       await rm(path.dirname(configPath), { recursive: true, force: true });
@@ -2282,14 +2280,14 @@ describe("qa bundled plugin dir", () => {
     await mkdir(path.join(bundledRoot, "qa-channel"), { recursive: true });
     await writeFile(
       path.join(bundledRoot, "qa-channel", "package.json"),
-      JSON.stringify({ openclaw: { install: { minHostVersion: ">=2026.4.8" } } }),
+      JSON.stringify({ nova: { install: { minHostVersion: ">=2026.4.8" } } }),
       "utf8",
     );
 
     await mkdir(path.join(bundledRoot, "memory-core"), { recursive: true });
     await writeFile(
       path.join(bundledRoot, "memory-core", "package.json"),
-      JSON.stringify({ openclaw: { install: { minHostVersion: ">=2026.4.7" } } }),
+      JSON.stringify({ nova: { install: { minHostVersion: ">=2026.4.7" } } }),
       "utf8",
     );
 
@@ -2315,13 +2313,13 @@ describe("qa bundled plugin dir", () => {
     await mkdir(path.join(bundledRoot, "qa-channel"), { recursive: true });
     await writeFile(
       path.join(bundledRoot, "qa-channel", "package.json"),
-      JSON.stringify({ openclaw: { install: { minHostVersion: ">=2026.4.8" } } }),
+      JSON.stringify({ nova: { install: { minHostVersion: ">=2026.4.8" } } }),
       "utf8",
     );
     await mkdir(path.join(bundledRoot, "image-generation-core"), { recursive: true });
     await writeFile(
       path.join(bundledRoot, "image-generation-core", "package.json"),
-      JSON.stringify({ openclaw: { install: { minHostVersion: ">=2026.4.9" } } }),
+      JSON.stringify({ nova: { install: { minHostVersion: ">=2026.4.9" } } }),
       "utf8",
     );
 

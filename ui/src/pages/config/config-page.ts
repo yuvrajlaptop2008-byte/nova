@@ -32,7 +32,7 @@ import { renderSettingsWorkspace } from "../../components/settings-workspace.ts"
 import { i18n, isSupportedLocale, t, type Locale } from "../../i18n/index.ts";
 import { resolveControlUiServerQueueMode } from "../../lib/chat/follow-up-mode.ts";
 import { isMissingOperatorReadScopeError } from "../../lib/gateway-errors.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { PollController } from "../../lit/poll-controller.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import {
@@ -222,7 +222,7 @@ function applyTextScale(value: unknown) {
   );
 }
 
-export class ConfigPage extends OpenClawLightDomElement {
+export class ConfigPage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -1046,7 +1046,7 @@ export class ConfigPage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-config-page")) {
-  customElements.define("openclaw-config-page", ConfigPage);
+if (!customElements.get("nova-config-page")) {
+  customElements.define("nova-config-page", ConfigPage);
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

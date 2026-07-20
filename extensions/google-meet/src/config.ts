@@ -1,20 +1,20 @@
 // Google Meet helper module supports config behavior.
-import { buildMeetingSoxAudioCommands } from "openclaw/plugin-sdk/meeting-runtime";
+import { buildMeetingSoxAudioCommands } from "nova/plugin-sdk/meeting-runtime";
 import {
   addTimerTimeoutGraceMs,
   resolvePositiveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/number-runtime";
 import {
   REALTIME_VOICE_AGENT_CONSULT_TOOL_NAME,
   resolveRealtimeVoiceAgentConsultToolPolicy,
   type RealtimeVoiceAgentConsultToolPolicy,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "nova/plugin-sdk/realtime-voice";
 import {
   asRecord,
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
   normalizeOptionalTrimmedStringList,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 
 export type GoogleMeetTransport = "chrome" | "chrome-node" | "twilio";
 export type GoogleMeetMode = "agent" | "bidi" | "transcribe";

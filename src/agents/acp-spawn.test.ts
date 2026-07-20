@@ -6,7 +6,7 @@ import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AcpInitializeSessionInput } from "../acp/control-plane/manager.types.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   testing as sessionBindingServiceTesting,
   registerSessionBindingAdapter,
@@ -18,7 +18,7 @@ import { resolveThinkingDefault } from "./model-selection.js";
 
 type SessionBindingAdapterCapabilities = NonNullable<SessionBindingAdapter["capabilities"]>;
 
-function createDefaultSpawnConfig(): OpenClawConfig {
+function createDefaultSpawnConfig(): NovaConfig {
   return {
     acp: {
       enabled: true,
@@ -255,7 +255,7 @@ type CrossAgentWorkspaceFixture = {
   targetWorkspace: string;
 };
 
-function replaceSpawnConfig(next: OpenClawConfig): void {
+function replaceSpawnConfig(next: NovaConfig): void {
   const current = hoisted.state.cfg as Record<string, unknown>;
   for (const key of Object.keys(current)) {
     delete current[key];
@@ -338,7 +338,7 @@ async function createCrossAgentWorkspaceFixture(options?: {
   targetDirName?: string;
   createTargetWorkspace?: boolean;
 }): Promise<CrossAgentWorkspaceFixture> {
-  const workspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acp-spawn-"));
+  const workspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acp-spawn-"));
   const mainWorkspace = path.join(workspaceRoot, "main");
   const targetWorkspace = path.join(workspaceRoot, options?.targetDirName?.trim() || "claude-code");
   await fs.mkdir(mainWorkspace, { recursive: true });

@@ -25,7 +25,7 @@ function readJson(file: string) {
 
 describe("plugin fixture commands", () => {
   it("writes plugin fixtures with manifest and package metadata", () => {
-    const root = makeTempDir(tempDirs, "openclaw-fixture-plugin-");
+    const root = makeTempDir(tempDirs, "nova-fixture-plugin-");
     const pluginRoot = path.join(root, "demo");
 
     const result = runFixture("plugin", [
@@ -40,9 +40,9 @@ describe("plugin fixture commands", () => {
     expect(readJson(path.join(pluginRoot, "package.json"))).toMatchObject({
       name: "@nova/demo-plugin",
       version: "0.1.0",
-      openclaw: { extensions: ["./index.js"] },
+      nova: { extensions: ["./index.js"] },
     });
-    expect(readJson(path.join(pluginRoot, "openclaw.plugin.json"))).toMatchObject({
+    expect(readJson(path.join(pluginRoot, "nova.plugin.json"))).toMatchObject({
       id: "demo-plugin",
       configSchema: { type: "object", properties: {} },
     });
@@ -50,7 +50,7 @@ describe("plugin fixture commands", () => {
   });
 
   it("writes CLI plugin fixtures with local dependency metadata", () => {
-    const root = makeTempDir(tempDirs, "openclaw-fixture-plugin-cli-");
+    const root = makeTempDir(tempDirs, "nova-fixture-plugin-cli-");
     const pluginRoot = path.join(root, "cli-demo");
 
     const result = runFixture("plugin-cli", [
@@ -77,7 +77,7 @@ describe("plugin fixture commands", () => {
   });
 
   it("rejects plugin fixture commands with missing required args", () => {
-    const root = makeTempDir(tempDirs, "openclaw-fixture-plugin-missing-");
+    const root = makeTempDir(tempDirs, "nova-fixture-plugin-missing-");
 
     const result = runFixture("plugin", [path.join(root, "missing"), "demo-plugin"]);
 

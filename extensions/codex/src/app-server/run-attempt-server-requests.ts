@@ -1,4 +1,4 @@
-import { onInternalDiagnosticEvent } from "openclaw/plugin-sdk/diagnostic-runtime";
+import { onInternalDiagnosticEvent } from "nova/plugin-sdk/diagnostic-runtime";
 import { isCodexAppServerApprovalRequest } from "./client.js";
 import { shouldAutoApproveCodexAppServerApprovals } from "./config.js";
 import {
@@ -53,8 +53,8 @@ export function createCodexAttemptServerRequestController(
     state,
     turnIdRef,
     userInputBridgeRef,
-    openClawDynamicToolExecutions,
-    pendingOpenClawDynamicToolCompletionIds,
+    novaDynamicToolExecutions,
+    pendingNovaDynamicToolCompletionIds,
     postToolRawAssistantCompletionIdleTimeoutMs,
     turnWatches,
   } = turnRuntime;
@@ -134,7 +134,7 @@ export function createCodexAttemptServerRequestController(
       if (!call || call.threadId !== resourceState.thread.threadId || call.turnId !== turnId) {
         return undefined;
       }
-      const replayedExecution = openClawDynamicToolExecutions.get(call);
+      const replayedExecution = novaDynamicToolExecutions.get(call);
       if (replayedExecution) {
         armCompletionWatchOnResponse = true;
         markCurrentTurnRequestProgress();
@@ -145,7 +145,7 @@ export function createCodexAttemptServerRequestController(
       armCompletionWatchOnResponse = true;
       markCurrentTurnRequestProgress();
       state.turnCrossedToolHandoff = true;
-      pendingOpenClawDynamicToolCompletionIds.add(call.callId);
+      pendingNovaDynamicToolCompletionIds.add(call.callId);
       trajectoryRecorder?.recordEvent("tool.call", {
         threadId: call.threadId,
         turnId: call.turnId,
@@ -206,7 +206,7 @@ export function createCodexAttemptServerRequestController(
         }
       });
       try {
-        const { execution } = openClawDynamicToolExecutions.claim(call, () =>
+        const { execution } = novaDynamicToolExecutions.claim(call, () =>
           handleDynamicToolCallWithTimeout({
             call,
             toolBridge,
@@ -288,7 +288,7 @@ export function createCodexAttemptServerRequestController(
             durationMs: toolDurationMs,
           });
         }
-        pendingOpenClawDynamicToolCompletionIds.delete(call.callId);
+        pendingNovaDynamicToolCompletionIds.delete(call.callId);
         if (response.terminate === true && response.success) {
           scheduleTurnReleaseAfterTerminalDynamicTool({
             call,
@@ -303,7 +303,7 @@ export function createCodexAttemptServerRequestController(
         }
         return protocolResponse as JsonValue;
       } catch (error) {
-        pendingOpenClawDynamicToolCompletionIds.delete(call.callId);
+        pendingNovaDynamicToolCompletionIds.delete(call.callId);
         if (
           !terminalDiagnosticObserved &&
           !hasPendingDynamicToolTerminalDiagnostic({

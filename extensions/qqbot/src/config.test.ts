@@ -1,10 +1,10 @@
 // Qqbot tests cover config plugin behavior.
 import fs from "node:fs";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   type JsonSchemaObject,
   validateJsonSchemaValue,
-} from "openclaw/plugin-sdk/json-schema-runtime";
+} from "nova/plugin-sdk/json-schema-runtime";
 import { describe, expect, it } from "vitest";
 import { qqbotSetupAdapterShared } from "./bridge/config-shared.js";
 import {
@@ -43,7 +43,7 @@ describe("qqbot config", () => {
 
   it("accepts top-level speech overrides in the manifest schema", () => {
     const manifest = JSON.parse(
-      fs.readFileSync(new URL("../openclaw.plugin.json", import.meta.url), "utf-8"),
+      fs.readFileSync(new URL("../nova.plugin.json", import.meta.url), "utf-8"),
     ) as { configSchema: JsonSchemaObject };
 
     const result = validateJsonSchemaValue({
@@ -64,7 +64,7 @@ describe("qqbot config", () => {
 
   it("accepts defaultAccount in the manifest schema", () => {
     const manifest = JSON.parse(
-      fs.readFileSync(new URL("../openclaw.plugin.json", import.meta.url), "utf-8"),
+      fs.readFileSync(new URL("../nova.plugin.json", import.meta.url), "utf-8"),
     ) as { configSchema: JsonSchemaObject };
 
     const result = validateJsonSchemaValue({
@@ -95,7 +95,7 @@ describe("qqbot config", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(resolveDefaultQQBotAccountId(cfg)).toBe("bot2");
   });
@@ -116,7 +116,7 @@ describe("qqbot config", () => {
         transcodeEnabled: false,
       },
       urlDirectUpload: false,
-      upgradeUrl: "https://docs.openclaw.ai/channels/qqbot",
+      upgradeUrl: "https://docs.nova.ai/channels/qqbot",
       upgradeMode: "doc",
       accounts: {
         bot2: {
@@ -197,11 +197,11 @@ describe("qqbot config", () => {
             transcodeEnabled: false,
           },
           urlDirectUpload: false,
-          upgradeUrl: "https://docs.openclaw.ai/channels/qqbot",
+          upgradeUrl: "https://docs.nova.ai/channels/qqbot",
           upgradeMode: "hot-reload",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const resolved = resolveQQBotAccount(cfg, DEFAULT_ACCOUNT_ID);
 
@@ -212,7 +212,7 @@ describe("qqbot config", () => {
       transcodeEnabled: false,
     });
     expect(resolved.config.urlDirectUpload).toBe(false);
-    expect(resolved.config.upgradeUrl).toBe("https://docs.openclaw.ai/channels/qqbot");
+    expect(resolved.config.upgradeUrl).toBe("https://docs.nova.ai/channels/qqbot");
     expect(resolved.config.upgradeMode).toBe("hot-reload");
   });
 
@@ -230,7 +230,7 @@ describe("qqbot config", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const resolved = resolveQQBotAccount(cfg);
 
@@ -271,7 +271,7 @@ describe("qqbot config", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(() => resolveQQBotAccount(cfg, DEFAULT_ACCOUNT_ID)).toThrow(
       'channels.qqbot.clientSecret: unresolved SecretRef "file:default:/qqbot/clientSecret"',
@@ -286,7 +286,7 @@ describe("qqbot config", () => {
           clientSecret: "secretref:/QQBOT_CLIENT_SECRET",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(() => resolveQQBotAccount(cfg, DEFAULT_ACCOUNT_ID)).toThrow(
       "channels.qqbot.clientSecret: legacy SecretRef marker strings are not valid QQ Bot clientSecret values; use a structured SecretRef object instead.",
@@ -321,7 +321,7 @@ describe("qqbot config", () => {
     const setup = requireQQBotSetup();
 
     const next = setup.applyAccountConfig?.({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       accountId: inputAccountId,
       input: {
         token: "102905186:Oi2Mg1Mh2Ni3:Pl7TpBXuHe1OmAYwKi7W",
@@ -352,28 +352,28 @@ describe("qqbot config", () => {
 
     expect(
       runtimeSetup.validateInput?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: DEFAULT_ACCOUNT_ID,
         input,
       } as never),
     ).toBe("QQBot --token must be in appId:clientSecret format");
     expect(
       lightweightSetup.validateInput?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: DEFAULT_ACCOUNT_ID,
         input,
       } as never),
     ).toBe("QQBot --token must be in appId:clientSecret format");
     expect(
       runtimeSetup.applyAccountConfig?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: DEFAULT_ACCOUNT_ID,
         input,
       } as never),
     ).toStrictEqual({});
     expect(
       lightweightSetup.applyAccountConfig?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: DEFAULT_ACCOUNT_ID,
         input,
       } as never),
@@ -388,7 +388,7 @@ describe("qqbot config", () => {
 
     expect(
       runtimeSetup.applyAccountConfig?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: DEFAULT_ACCOUNT_ID,
         input,
       } as never),
@@ -403,7 +403,7 @@ describe("qqbot config", () => {
     });
     expect(
       lightweightSetup.applyAccountConfig?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: DEFAULT_ACCOUNT_ID,
         input,
       } as never),
@@ -437,28 +437,28 @@ describe("qqbot config", () => {
 
     expect(
       runtimeSetup.validateInput?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: "bot2",
         input,
       } as never),
     ).toBe("QQBot --use-env only supports the default account");
     expect(
       lightweightSetup.validateInput?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: "bot2",
         input,
       } as never),
     ).toBe("QQBot --use-env only supports the default account");
     expect(
       runtimeSetup.applyAccountConfig?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: "bot2",
         input,
       } as never),
     ).toStrictEqual({});
     expect(
       lightweightSetup.applyAccountConfig?.({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         accountId: "bot2",
         input,
       } as never),

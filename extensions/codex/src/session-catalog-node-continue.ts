@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
 import type { CodexThread } from "./app-server/protocol.js";
 import { withTimeout } from "./app-server/timeout.js";
 import { createCodexCliNodeConversationBindingData } from "./conversation-binding-data.js";
@@ -256,8 +256,8 @@ async function readNodeCodexHistory(params: {
 }
 
 async function continueNodeCodexSessionInner(params: {
-  api: OpenClawPluginApi;
-  config: OpenClawConfig;
+  api: NovaPluginApi;
+  config: NovaConfig;
   hostId: string;
   threadId: string;
   clientScopes?: readonly string[];
@@ -337,8 +337,8 @@ async function continueNodeCodexSessionInner(params: {
 }
 
 export async function continueNodeCodexSession(params: {
-  api: OpenClawPluginApi;
-  config: OpenClawConfig;
+  api: NovaPluginApi;
+  config: NovaConfig;
   hostId: string;
   threadId: string;
   clientScopes?: readonly string[];

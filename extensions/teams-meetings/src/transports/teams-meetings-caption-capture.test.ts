@@ -77,7 +77,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       sessionMatched: true,
       urlMatched: true,
     });
-    expect(window["__openclawTeamsCaptions"]).toMatchObject({
+    expect(window["__novaTeamsCaptions"]).toMatchObject({
       identity: "teams-work:19:meeting_test@thread.v2",
     });
   });
@@ -103,7 +103,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [captionRow("Nova QA", "Retry captions")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
       priorMeeting: first.window[MEETING_STATE_KEY] as Record<string, unknown>,
     });
     expect(second.captionButton.clicks).toBe(1);
@@ -137,7 +137,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
-    const state = window["__openclawTeamsCaptions"] as {
+    const state = window["__novaTeamsCaptions"] as {
       droppedLines: number;
       lines: unknown[];
       visible: unknown[];
@@ -174,7 +174,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [captionRow("Nova QA", "Yes")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
       priorMeeting: first.window[MEETING_STATE_KEY] as Record<string, unknown>,
     });
 
@@ -202,7 +202,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [row],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.lastCaptionText).toBe("We should leave");
@@ -229,7 +229,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [row],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.transcriptLines).toBe(1);
@@ -248,7 +248,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [captionRow("Nova QA", "Logical row replacement", "8")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.transcriptLines).toBe(1);
@@ -270,7 +270,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [captionRow("Nova QA", "Late logical correction", "9")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.transcriptLines).toBe(1);
@@ -292,14 +292,14 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
     const returned = await runStatusScript({
       allowMicrophone: false,
       captionRows: [captionRow("Nova QA", "Virtual row return", "13")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: missing.window["__openclawTeamsCaptions"],
+      priorCaptions: missing.window["__novaTeamsCaptions"],
     });
 
     expect(returned.result.transcriptLines).toBe(1);
@@ -321,7 +321,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
     await vi.advanceTimersByTimeAsync(1_000);
     const caption = row.querySelector('[data-tid="closed-caption-text"]');
@@ -334,7 +334,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [row],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: disappeared.window["__openclawTeamsCaptions"],
+      priorCaptions: disappeared.window["__novaTeamsCaptions"],
       priorMeeting: first.window[MEETING_STATE_KEY] as Record<string, unknown>,
     });
 
@@ -364,7 +364,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [row],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.transcriptLines).toBe(2);
@@ -389,7 +389,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
     await vi.advanceTimersByTimeAsync(1_000);
     const caption = row.querySelector('[data-tid="closed-caption-text"]');
@@ -402,7 +402,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [row],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: disappeared.window["__openclawTeamsCaptions"],
+      priorCaptions: disappeared.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.recentTranscript).toMatchObject([
@@ -428,7 +428,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [firstRow, secondRow],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
     await vi.advanceTimersByTimeAsync(1_000);
     const third = await runStatusScript({
@@ -436,7 +436,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [firstRow, secondRow],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: second.window["__openclawTeamsCaptions"],
+      priorCaptions: second.window["__novaTeamsCaptions"],
     });
 
     expect(third.result.transcriptLines).toBe(2);
@@ -464,7 +464,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [row],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.transcriptLines).toBe(1);
@@ -485,7 +485,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captionRows: [captionRow("Nova QA", "Stable speaker correction", "10")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
-      priorCaptions: first.window["__openclawTeamsCaptions"],
+      priorCaptions: first.window["__novaTeamsCaptions"],
     });
 
     expect(second.result.transcriptLines).toBe(1);
@@ -507,7 +507,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     });
 
     expect(disconnects).toBe(1);
-    expect(window).not.toHaveProperty("__openclawTeamsCaptions");
+    expect(window).not.toHaveProperty("__novaTeamsCaptions");
   });
 
   it("does not clear captions owned by another tab or meeting session", async () => {
@@ -534,8 +534,8 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     });
 
     expect(disconnects).toBe(0);
-    expect(wrongTab.window["__openclawTeamsCaptions"]).toBe(active);
-    expect(wrongSession.window["__openclawTeamsCaptions"]).toBe(active);
+    expect(wrongTab.window["__novaTeamsCaptions"]).toBe(active);
+    expect(wrongSession.window["__novaTeamsCaptions"]).toBe(active);
   });
 
   it("finalizes requested-session capture after a confirmed SPA meeting transition", async () => {
@@ -591,7 +591,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
         ],
       },
     });
-    const captions = window["__openclawTeamsCaptions"] as Record<string, unknown>;
+    const captions = window["__novaTeamsCaptions"] as Record<string, unknown>;
     const readTranscript = runInNewContext(
       `(${teamsMeetingTranscriptScript(URL, "session-1", true)})`,
       {
@@ -610,7 +610,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     expect(JSON.parse(readTranscript())).toMatchObject({
       lines: [{ text: "Preserve call-end captions" }],
     });
-    expect(window["__openclawTeamsCaptions"]).toBe(captions);
+    expect(window["__novaTeamsCaptions"]).toBe(captions);
   });
 
   it("finalizes caption capture before an SPA navigation can mix meetings", async () => {
@@ -625,7 +625,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     params.captionRows = [captionRow("Nova QA", "Meeting B caption")];
     page.triggerCaptionMutation(CONSUMER_URL);
 
-    const captions = page.window["__openclawTeamsCaptions"] as {
+    const captions = page.window["__novaTeamsCaptions"] as {
       finalized?: boolean;
       lines?: Array<{ text: string }>;
       visible?: Array<{ text: string }>;
@@ -639,7 +639,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
   it("returns finalized captions after the tab navigates into another meeting", () => {
     const window = {
-      __openclawTeamsCaptions: {
+      __novaTeamsCaptions: {
         droppedLines: 0,
         finalized: true,
         identity: "teams-work:19:meeting_test@thread.v2",
@@ -647,7 +647,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
         sessionId: "session-1",
         visible: [],
       },
-      __openclawTeamsMeeting: {
+      __novaTeamsMeeting: {
         identity: "teams-consumer:9326458712345:abc",
         sessionId: "session-2",
       },
@@ -670,7 +670,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     expect(JSON.parse(readTranscript())).toMatchObject({
       lines: [{ text: "Finalized before navigation" }],
     });
-    expect(window["__openclawTeamsCaptions"]).toBeDefined();
+    expect(window["__novaTeamsCaptions"]).toBeDefined();
   });
 
   it("preserves same-session captions during the in-call rerender window", async () => {
@@ -702,7 +702,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     });
 
     expect(disconnects).toBe(0);
-    expect(window["__openclawTeamsCaptions"]).toBe(active);
+    expect(window["__novaTeamsCaptions"]).toBe(active);
   });
 
   it("keeps the live caption observer during a bounded in-call control rerender", async () => {
@@ -727,7 +727,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     page.triggerCaptionMutation();
 
     expect(page.captionObserverDisconnects()).toBe(0);
-    expect(page.window["__openclawTeamsCaptions"]).not.toMatchObject({ finalized: true });
+    expect(page.window["__novaTeamsCaptions"]).not.toMatchObject({ finalized: true });
   });
 
   it("replaces finalized captions for a new verified session", async () => {
@@ -747,7 +747,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       leave: control({ label: "Leave" }),
       priorCaptions: old,
     });
-    const current = window["__openclawTeamsCaptions"] as Record<string, unknown>;
+    const current = window["__novaTeamsCaptions"] as Record<string, unknown>;
 
     expect(current).not.toBe(old);
     expect(current.sessionId).toBe("session-1");
@@ -787,7 +787,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       manualActionRequired: true,
     });
     expect(window[MEETING_STATE_KEY]).toBe(priorMeeting);
-    expect(window["__openclawTeamsCaptions"]).toBe(priorCaptions);
+    expect(window["__novaTeamsCaptions"]).toBe(priorCaptions);
     expect(disconnects).toBe(0);
   });
 
@@ -825,7 +825,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       manualActionRequired: true,
     });
     expect(window[MEETING_STATE_KEY]).toBe(priorMeeting);
-    expect(window["__openclawTeamsCaptions"]).toBe(priorCaptions);
+    expect(window["__novaTeamsCaptions"]).toBe(priorCaptions);
     expect(disconnects).toBe(0);
   });
 
@@ -854,7 +854,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     expect(result.manualActionRequired).toBe(false);
     expect(disconnects).toBe(1);
     expect(staleCaptions).toMatchObject({ finalized: true });
-    expect(window["__openclawTeamsCaptions"]).toMatchObject({ sessionId: "session-1" });
+    expect(window["__novaTeamsCaptions"]).toMatchObject({ sessionId: "session-1" });
   });
 
   it("disconnects caption capture when finalizing a transcript", async () => {
@@ -865,7 +865,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       leave: control({ label: "Leave" }),
     });
     let disconnects = 0;
-    const captions = first.window["__openclawTeamsCaptions"] as Record<string, unknown>;
+    const captions = first.window["__novaTeamsCaptions"] as Record<string, unknown>;
     captions.observer = { disconnect: () => (disconnects += 1) };
     captions.observerInstalled = true;
     const finalize = runInNewContext(`(${teamsMeetingTranscriptScript(URL, "session-1", true)})`, {
@@ -889,7 +889,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       leave: control({ label: "Leave" }),
       priorCaptions: captions,
     });
-    expect(refreshed.window["__openclawTeamsCaptions"]).toBe(captions);
+    expect(refreshed.window["__novaTeamsCaptions"]).toBe(captions);
     expect(captions.observerInstalled).toBe(false);
     expect(captions.lines).toMatchObject([{ text: "Final caption" }]);
   });

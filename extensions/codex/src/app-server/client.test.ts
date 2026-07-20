@@ -1,5 +1,5 @@
 // Codex tests cover client plugin behavior.
-import { embeddedAgentLog, NOVA_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { embeddedAgentLog, NOVA_VERSION } from "nova/plugin-sdk/agent-harness-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CodexAppServerClient,
@@ -299,7 +299,7 @@ describe("CodexAppServerClient", () => {
     const { harness, initializing, outbound } = startInitialize();
     harness.send({
       id: outbound.id,
-      result: { userAgent: "openclaw/0.143.0 (macOS; test)" },
+      result: { userAgent: "nova/0.143.0 (macOS; test)" },
     });
 
     await expect(initializing).resolves.toBeUndefined();
@@ -308,7 +308,7 @@ describe("CodexAppServerClient", () => {
       method: "initialize",
       params: {
         clientInfo: {
-          name: "openclaw",
+          name: "nova",
           title: "Nova",
           version: NOVA_VERSION,
         },
@@ -325,7 +325,7 @@ describe("CodexAppServerClient", () => {
     const { harness, initializing, outbound } = startInitialize();
     harness.send({
       id: outbound.id,
-      result: { userAgent: "openclaw/0.124.9 (macOS; test)" },
+      result: { userAgent: "nova/0.124.9 (macOS; test)" },
     });
 
     await expect(initializing).rejects.toThrow(
@@ -338,7 +338,7 @@ describe("CodexAppServerClient", () => {
     const { harness, initializing, outbound } = startInitialize();
     harness.send({
       id: outbound.id,
-      result: { userAgent: "openclaw/0.143.0-alpha.2 (macOS; test)" },
+      result: { userAgent: "nova/0.143.0-alpha.2 (macOS; test)" },
     });
 
     await expect(initializing).rejects.toThrow(
@@ -351,7 +351,7 @@ describe("CodexAppServerClient", () => {
     const { harness, initializing, outbound } = startInitialize();
     harness.send({
       id: outbound.id,
-      result: { userAgent: "openclaw/0.143.0+alpha.2 (macOS; test)" },
+      result: { userAgent: "nova/0.143.0+alpha.2 (macOS; test)" },
     });
 
     await expect(initializing).rejects.toThrow(
@@ -364,7 +364,7 @@ describe("CodexAppServerClient", () => {
     const { harness, initializing, outbound } = startInitialize();
     harness.send({
       id: outbound.id,
-      result: { userAgent: "openclaw/0.144.0-alpha.1 (macOS; test)" },
+      result: { userAgent: "nova/0.144.0-alpha.1 (macOS; test)" },
     });
 
     await expect(initializing).rejects.toThrow(
@@ -377,7 +377,7 @@ describe("CodexAppServerClient", () => {
     const { harness, initializing, outbound } = startInitialize();
     harness.send({
       id: outbound.id,
-      result: { userAgent: "openclaw/0.144.0+custom (macOS; test)" },
+      result: { userAgent: "nova/0.144.0+custom (macOS; test)" },
     });
 
     await expect(initializing).rejects.toThrow(
@@ -390,7 +390,7 @@ describe("CodexAppServerClient", () => {
     const { harness, initializing, outbound } = startInitialize();
     harness.send({
       id: outbound.id,
-      result: { userAgent: "openclaw/0.145.0 (macOS; test)" },
+      result: { userAgent: "nova/0.145.0 (macOS; test)" },
     });
 
     await expect(initializing).rejects.toThrow(

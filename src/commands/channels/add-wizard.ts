@@ -1,11 +1,11 @@
-// Guided channel-setup wizard flow shared by `openclaw channels add` (clack
+// Guided channel-setup wizard flow shared by `nova channels add` (clack
 // prompter) and the gateway `wizard.start {flow:"channels"}` RPC (session
 // prompter driving the Control UI / native clients).
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { getLoadedChannelPlugin } from "../../channels/plugins/index.js";
 import type { ChannelSetupPlugin } from "../../channels/plugins/setup-wizard-types.js";
-import { readConfigFileSnapshot, type OpenClawConfig } from "../../config/config.js";
+import { readConfigFileSnapshot, type NovaConfig } from "../../config/config.js";
 import { commitConfigWithPendingPluginInstalls } from "../../plugins/install-record-commit.js";
 import { refreshPluginRegistryAfterConfigMutation } from "../../plugins/registry-refresh.js";
 import { DEFAULT_ACCOUNT_ID } from "../../routing/session-key.js";
@@ -24,7 +24,7 @@ async function loadOnboardChannels(): Promise<OnboardChannelsModule> {
 /** Resolve a raw channel name/alias against the installed setup entries. */
 export async function resolveInitialWizardChannel(
   raw: string,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ): Promise<ChannelChoice | undefined> {
   const normalized = normalizeOptionalLowercaseString(raw);
   if (!normalized) {
@@ -49,7 +49,7 @@ export async function resolveInitialWizardChannel(
 }
 
 type ChannelsAddWizardFlowParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   baseHash?: string;
   runtime: RuntimeEnv;
   prompter: WizardPrompter;
@@ -102,7 +102,7 @@ export async function runChannelsAddWizardFlow(params: ChannelsAddWizardFlowPara
       resolvedPlugins.set(channel, plugin);
     },
   });
-  const commitWizardConfig = async (config: OpenClawConfig) => {
+  const commitWizardConfig = async (config: NovaConfig) => {
     await params.beforePersistentEffect?.();
     const committed = await commitConfigWithPendingPluginInstalls({
       nextConfig: config,
@@ -253,11 +253,9 @@ export async function runChannelsSetupWizard(
 ): Promise<void> {
   const snapshot = await readConfigFileSnapshot();
   if (snapshot.exists && !snapshot.valid) {
-    throw new Error(
-      "Nova config is invalid; run `openclaw doctor --fix`, then retry channel setup.",
-    );
+    throw new Error("Nova config is invalid; run `nova doctor --fix`, then retry channel setup.");
   }
-  const cfg = (snapshot.sourceConfig ?? snapshot.config) as OpenClawConfig;
+  const cfg = (snapshot.sourceConfig ?? snapshot.config) as NovaConfig;
   const initialChannel = opts.channel
     ? await resolveInitialWizardChannel(opts.channel, cfg)
     : undefined;

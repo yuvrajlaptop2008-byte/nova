@@ -1,26 +1,23 @@
 // Slack plugin module implements context behavior.
 import type { App } from "@slack/bolt";
-import { resolveDefaultAgentId } from "openclaw/plugin-sdk/agent-runtime";
-import { formatAllowlistMatchMeta } from "openclaw/plugin-sdk/allow-from";
-import type { ChannelRuntimeSurface } from "openclaw/plugin-sdk/channel-contract";
-import type {
-  OpenClawConfig,
-  SlackReactionNotificationMode,
-} from "openclaw/plugin-sdk/config-contracts";
-import type { SessionScope } from "openclaw/plugin-sdk/config-contracts";
-import type { DmPolicy, GroupPolicy } from "openclaw/plugin-sdk/config-contracts";
-import { resolveRuntimeConversationBindingRoute } from "openclaw/plugin-sdk/conversation-runtime";
-import { createDedupeCache } from "openclaw/plugin-sdk/dedupe-runtime";
-import type { HistoryEntry } from "openclaw/plugin-sdk/reply-history";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { resolveThreadSessionKeys } from "openclaw/plugin-sdk/routing";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { getChildLogger } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import { resolveDefaultAgentId } from "nova/plugin-sdk/agent-runtime";
+import { formatAllowlistMatchMeta } from "nova/plugin-sdk/allow-from";
+import type { ChannelRuntimeSurface } from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig, SlackReactionNotificationMode } from "nova/plugin-sdk/config-contracts";
+import type { SessionScope } from "nova/plugin-sdk/config-contracts";
+import type { DmPolicy, GroupPolicy } from "nova/plugin-sdk/config-contracts";
+import { resolveRuntimeConversationBindingRoute } from "nova/plugin-sdk/conversation-runtime";
+import { createDedupeCache } from "nova/plugin-sdk/dedupe-runtime";
+import type { HistoryEntry } from "nova/plugin-sdk/reply-history";
+import { resolveAgentRoute } from "nova/plugin-sdk/routing";
+import { resolveThreadSessionKeys } from "nova/plugin-sdk/routing";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
+import { getChildLogger } from "nova/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { formatSlackError } from "../errors.js";
 import type { SlackMessageEvent } from "../types.js";
 import { normalizeAllowList, normalizeAllowListLower, normalizeSlackSlug } from "./allow-list.js";
@@ -112,7 +109,7 @@ export function parseSlackAssistantThreadMetadata(value: unknown) {
 }
 
 export type SlackMonitorContext = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   botToken: string;
   app: App;
@@ -147,7 +144,7 @@ export type SlackMonitorContext = {
   replyToMode: "off" | "first" | "all" | "batched";
   threadHistoryScope: "thread" | "channel";
   threadInheritParent: boolean;
-  slashCommand: Required<import("openclaw/plugin-sdk/config-contracts").SlackSlashCommandConfig>;
+  slashCommand: Required<import("nova/plugin-sdk/config-contracts").SlackSlashCommandConfig>;
   textLimit: number;
   ackReactionScope: string;
   typingReaction: string;
@@ -211,7 +208,7 @@ const SLACK_ASSISTANT_CONTEXT_TTL_MS = 24 * 60 * 60 * 1000;
 const SLACK_ASSISTANT_CONTEXT_CLEANUP_INTERVAL_MS = 10 * 60 * 1000;
 
 export function createSlackMonitorContext(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   botToken: string;
   app: App;

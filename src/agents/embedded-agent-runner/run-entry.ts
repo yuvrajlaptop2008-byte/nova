@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { buildAgentRunTerminalOutcome } from "../agent-run-terminal-outcome.js";
 import { ensureSelectedAgentHarnessPlugin } from "../harness/runtime-plugin.js";
 import type { ModelFallbackStepFields } from "../model-fallback-observation.js";
@@ -66,7 +66,7 @@ type EmbeddedAgentRunEntryResult<T extends EmbeddedAgentRunResult> = {
 
 type EmbeddedAgentRunEntryParams<T extends EmbeddedAgentRunResult> = {
   selection: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     provider: string;
     model: string;
     fallbacksOverride?: string[];

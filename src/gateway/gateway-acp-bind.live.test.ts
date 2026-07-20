@@ -32,7 +32,7 @@ import {
   assertLiveImageProbeReply,
   buildLiveCronProbeMessage,
   createLiveCronProbeSpec,
-  runOpenClawCliJson,
+  runNovaCliJson,
   shouldRunLiveImageProbe,
 } from "./live-agent-probes.js";
 import { restoreLiveEnv, snapshotLiveEnv, type LiveEnvSnapshot } from "./live-env-test-helpers.js";
@@ -580,9 +580,9 @@ describeLive("gateway live (ACP bind)", () => {
       const liveAgent = normalizeAcpAgent(process.env.NOVA_LIVE_ACP_BIND_AGENT);
       const agentCommandOverride =
         process.env.NOVA_LIVE_ACP_BIND_AGENT_COMMAND?.trim() || undefined;
-      const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-acp-bind-"));
+      const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-acp-bind-"));
       const tempStateDir = path.join(tempRoot, "state");
-      const tempConfigPath = path.join(tempRoot, "openclaw.json");
+      const tempConfigPath = path.join(tempRoot, "nova.json");
       const port = await getFreeGatewayPort();
       const token = `test-${randomUUID()}`;
       const parentModel = resolveLiveParentModel();
@@ -667,7 +667,7 @@ describeLive("gateway live (ACP bind)", () => {
                 probeAgent: liveAgent,
                 permissionMode: "approve-all",
                 nonInteractivePermissions: "deny",
-                openClawToolsMcpBridge: true,
+                novaToolsMcpBridge: true,
                 ...(agentCommandOverride
                   ? {
                       agents: {
@@ -1071,7 +1071,7 @@ describeLive("gateway live (ACP bind)", () => {
           }
           throw new Error(`acp cron cli verify did not create job ${lastCronProbeName}`);
         }
-        await runOpenClawCliJson(
+        await runNovaCliJson(
           ["cron", "rm", cronJobId, "--json", "--url", `ws://127.0.0.1:${port}`, "--token", token],
           process.env,
         );

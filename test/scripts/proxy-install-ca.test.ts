@@ -25,7 +25,7 @@ function runProxyInstallCa(args: string[], certDir: string) {
 
 describe("scripts/proxy-install-ca.mjs", () => {
   it("rejects unknown arguments before creating the debug proxy CA", () => {
-    const root = makeTempDir(tempDirs, "openclaw-proxy-install-ca-");
+    const root = makeTempDir(tempDirs, "nova-proxy-install-ca-");
     const certDir = join(root, "certs");
     const result = runProxyInstallCa(["--print-onli"], certDir);
 
@@ -39,7 +39,7 @@ describe("scripts/proxy-install-ca.mjs", () => {
   });
 
   it("prints usage without creating the debug proxy CA", () => {
-    const root = makeTempDir(tempDirs, "openclaw-proxy-install-ca-");
+    const root = makeTempDir(tempDirs, "nova-proxy-install-ca-");
     const certDir = join(root, "certs");
     const result = runProxyInstallCa(["--help"], certDir);
 

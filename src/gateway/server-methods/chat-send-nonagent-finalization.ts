@@ -228,7 +228,7 @@ export async function finalizeChatSendNonAgentReplies(params: {
             : {}),
         ...(fallbackText ? { text: fallbackText } : {}),
         timestamp: Date.now(),
-        ...(ttsSupplementMarker ? { openclawTtsSupplement: ttsSupplementMarker } : {}),
+        ...(ttsSupplementMarker ? { novaTtsSupplement: ttsSupplementMarker } : {}),
         // Keep compatible with runner stopReason enums when transcript persistence fails.
         stopReason: "stop",
         usage: { input: 0, output: 0, totalTokens: 0 },

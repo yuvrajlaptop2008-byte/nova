@@ -175,7 +175,7 @@ async function captureSessionAccessibilityProof(page: Page, name: string): Promi
     return;
   }
   await mkdir(sessionAccessibilityProofDir, { recursive: true });
-  const sidebar = page.locator("openclaw-app-sidebar");
+  const sidebar = page.locator("nova-app-sidebar");
   await page.screenshot({
     fullPage: true,
     path: path.join(sessionAccessibilityProofDir, `${name}.png`),
@@ -307,7 +307,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await expect.poll(() => splitEntry.isVisible()).toBe(true);
       await expect.poll(() => page.locator(".chat-pane__header").count()).toBe(1);
       await page.evaluate(() => {
-        document.documentElement.classList.add("openclaw-native-macos");
+        document.documentElement.classList.add("nova-native-macos");
         document.querySelector(".shell")?.classList.add("shell--nav-collapsed");
       });
       await expect
@@ -318,7 +318,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
         )
         .toBe("90px");
       await page.evaluate(() => {
-        document.documentElement.classList.remove("openclaw-native-macos");
+        document.documentElement.classList.remove("nova-native-macos");
         document.querySelector(".shell")?.classList.remove("shell--nav-collapsed");
       });
       await page.setViewportSize({ height: 900, width: 1100 });
@@ -329,7 +329,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
           splitEntry.evaluate((node) => node.closest(".agent-chat__composer-shell") == null),
         )
         .toBe(true);
-      await page.locator("openclaw-chat-pane").evaluate((pane) => {
+      await page.locator("nova-chat-pane").evaluate((pane) => {
         (
           globalThis as typeof globalThis & {
             classicChatPane?: Element;
@@ -344,7 +344,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
         .toBeGreaterThan(startupRequestsBeforeSplit);
 
       // Each pane owns the same in-flow header in classic and split layouts.
-      const panes = page.locator("openclaw-chat-pane.chat-split-view__pane");
+      const panes = page.locator("nova-chat-pane.chat-split-view__pane");
       const headers = page.locator(".chat-pane__header");
       await expect.poll(() => panes.count()).toBe(2);
       await panes.last().getByText("Split toolbar proof.").waitFor();
@@ -387,7 +387,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await expect
         .poll(() =>
           targetHeader.evaluate((header) => {
-            const owner = header.closest("openclaw-chat-pane");
+            const owner = header.closest("nova-chat-pane");
             return (
               owner === header.parentElement && owner?.classList.contains("chat-split-view__pane")
             );
@@ -523,7 +523,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       const finalText = "One authoritative final response.";
       const messageId = "assistant-authoritative-final";
       const authoritative = {
-        __openclaw: { id: messageId, seq: 2 },
+        __nova: { id: messageId, seq: 2 },
         content: [{ text: finalText, type: "text" }],
         role: "assistant",
         timestamp: Date.now(),
@@ -542,7 +542,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await page.locator(".chat-bubble.streaming", { hasText: finalText }).waitFor();
       await gateway.setHistoryMessages([
         {
-          __openclaw: { id: "user-reconcile", seq: 1 },
+          __nova: { id: "user-reconcile", seq: 1 },
           content: [{ text: "reconcile the terminal event ordering", type: "text" }],
           role: "user",
           timestamp: Date.now() - 1,
@@ -775,11 +775,11 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       viewport: { height: 900, width: 1280 },
     });
     const page = await context.newPage();
-    const source = "/tmp/openclaw/测试 report.pdf";
-    const mediaUrl = `/__openclaw__/assistant-media?source=${encodeURIComponent(source)}&mediaTicket=ticket-download`;
+    const source = "/tmp/nova/测试 report.pdf";
+    const mediaUrl = `/__nova__/assistant-media?source=${encodeURIComponent(source)}&mediaTicket=ticket-download`;
     const requestedUrls: URL[] = [];
     // The document opens in a new tab, so intercept at the context boundary.
-    await context.route("**/__openclaw__/assistant-media?**", async (route) => {
+    await context.route("**/__nova__/assistant-media?**", async (route) => {
       const url = new URL(route.request().url());
       requestedUrls.push(url);
       await route.fulfill({
@@ -870,7 +870,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
     });
     const page = await context.newPage();
     const requestedMediaUrls: URL[] = [];
-    await page.route("**/__openclaw__/assistant-media?**", async (route) => {
+    await page.route("**/__nova__/assistant-media?**", async (route) => {
       const request = route.request();
       const url = new URL(request.url());
       requestedMediaUrls.push(url);
@@ -973,7 +973,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       fetchedMedia.push({
         authorization: request.headers().authorization,
         pathname: url.pathname,
-        requesterSessionKey: request.headers()["x-openclaw-requester-session-key"],
+        requesterSessionKey: request.headers()["x-nova-requester-session-key"],
       });
       await route.fulfill({
         body: '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90"><rect width="160" height="90" rx="12" fill="#0f766e"/><text x="80" y="50" text-anchor="middle" fill="white" font-family="sans-serif" font-size="14">managed preview</text></svg>',
@@ -1888,7 +1888,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
 
     try {
       await page.goto(`${server.baseUrl}chat`);
-      const newSessionButton = page.locator("openclaw-app-sidebar .sidebar-brand__new-thread");
+      const newSessionButton = page.locator("nova-app-sidebar .sidebar-brand__new-thread");
       await newSessionButton.waitFor({ state: "visible", timeout: 10_000 });
       await newSessionButton.click();
 
@@ -2183,7 +2183,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
           .waitFor({ timeout: 10_000 });
 
         const gatewayErrorText =
-          "⚠️ Model login expired on the gateway for openai. Send `/login codex` from a private chat or Web UI session to pair a new Codex login, or re-auth with `openclaw models auth login --provider openai` in a terminal, then try again.";
+          "⚠️ Model login expired on the gateway for openai. Send `/login codex` from a private chat or Web UI session to pair a new Codex login, or re-auth with `nova models auth login --provider openai` in a terminal, then try again.";
         const errorText = gatewayErrorText.replace(/^⚠️\s*/u, "");
         await gateway.emitGatewayEvent("chat", {
           errorMessage: gatewayErrorText,
@@ -2272,7 +2272,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       }
       const pendingLayout = await pendingRow.evaluate((row) => {
         const rect = row.getBoundingClientRect();
-        Reflect.set(window, "__openclawPendingWorkingRow", row);
+        Reflect.set(window, "__novaPendingWorkingRow", row);
         return {
           height: rect.height,
           key: row.getAttribute("data-virtual-row-key"),
@@ -2287,10 +2287,10 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
           sameRow: boolean;
           top: number | null;
         }> = [];
-        Reflect.set(window, "__openclawWorkingRowSamples", samples);
+        Reflect.set(window, "__novaWorkingRowSamples", samples);
         let remaining = 20;
         const sample = () => {
-          const originalRow = Reflect.get(window, "__openclawPendingWorkingRow");
+          const originalRow = Reflect.get(window, "__novaPendingWorkingRow");
           const currentRow = document
             .querySelector(".chat-reading-indicator")
             ?.closest<HTMLElement>(".chat-virtual-row");
@@ -2324,7 +2324,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
             }>
           >((resolve) => {
             const read = () => {
-              const current = Reflect.get(window, "__openclawWorkingRowSamples");
+              const current = Reflect.get(window, "__novaWorkingRowSamples");
               if (Array.isArray(current) && current.length >= 20) {
                 resolve(current);
                 return;
@@ -2875,7 +2875,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
     });
     const page = await context.newPage();
     const historyMessage = (seq: number, label: string) => ({
-      __openclaw: { id: `history-${seq}`, seq },
+      __nova: { id: `history-${seq}`, seq },
       content: [
         {
           text: `${label} ${seq}\n${"retained transcript detail\n".repeat(3)}`,
@@ -2953,7 +2953,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await expect
         .poll(() =>
           page
-            .locator("openclaw-chat-pane")
+            .locator("nova-chat-pane")
             .evaluate(
               (element) =>
                 (element as HTMLElement & { state: { chatMessages: unknown[] } }).state.chatMessages
@@ -2985,7 +2985,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
         ).chatSessionReturnSamples = samples;
         const deadline = performance.now() + 750;
         const sample = () => {
-          const pane = document.querySelector("openclaw-chat-pane") as
+          const pane = document.querySelector("nova-chat-pane") as
             | (HTMLElement & {
                 state?: { chatMessages?: unknown[]; sessionKey?: string };
               })
@@ -3158,7 +3158,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await composer.waitFor({ state: "visible", timeout: 10_000 });
 
       await gateway.setOnline(false);
-      await page.locator("openclaw-connection-banner").waitFor({ timeout: 10_000 });
+      await page.locator("nova-connection-banner").waitFor({ timeout: 10_000 });
 
       const prompt = "send this when the Gateway returns";
       const attachmentName = "offline-proof.txt";
@@ -3191,7 +3191,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
         page.evaluate(
           ({ expectedAttachmentName, expectedAttachmentDataUrl, expectedPrompt }) => {
             const storedValues = Object.entries(sessionStorage)
-              .filter(([key]) => key.startsWith("openclaw.control.chatComposer.v2:"))
+              .filter(([key]) => key.startsWith("nova.control.chatComposer.v2:"))
               .map(([, value]) => value);
             const stored = storedValues.join("\n");
             let runId: string | null = null;
@@ -3265,7 +3265,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       expect(await gateway.getRequests("chat.send")).toHaveLength(0);
 
       await gateway.setOnline(true);
-      await page.locator("openclaw-chat-pane").waitFor({ state: "attached", timeout: 10_000 });
+      await page.locator("nova-chat-pane").waitFor({ state: "attached", timeout: 10_000 });
 
       const request = await gateway.waitForRequest("chat.send");
       const params = requireRecord(request.params);
@@ -3290,7 +3290,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await gateway.setHistoryMessages([
         {
           role: "user",
-          __openclaw: { idempotencyKey: `${runId}:user` },
+          __nova: { idempotencyKey: `${runId}:user` },
         },
       ]);
       await gateway.emitChatFinal({ runId, text: "Delivered after reconnect." });
@@ -3301,7 +3301,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
           return proof.attachment || proof.prompt || proof.runId === runId;
         })
         .toBe(false);
-      await page.locator("openclaw-connection-banner").waitFor({ state: "detached" });
+      await page.locator("nova-connection-banner").waitFor({ state: "detached" });
       await expectRequestCountStable(gateway, "chat.send", 1);
       if (artifactDir) {
         await page.screenshot({ path: `${artifactDir}/03-online-delivered.png`, fullPage: true });
@@ -3855,9 +3855,8 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await page.goto(`${server.baseUrl}chat`);
       const documentMarker = await page.evaluate(() => {
         const marker = crypto.randomUUID();
-        (window as Window & { __openclawAvatarTestDocument?: string })[
-          "__openclawAvatarTestDocument"
-        ] = marker;
+        (window as Window & { __novaAvatarTestDocument?: string })["__novaAvatarTestDocument"] =
+          marker;
         return marker;
       });
       const avatar = page.locator("img.agent-chat__welcome-avatar");
@@ -3893,9 +3892,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       expect(
         await page.evaluate(
           () =>
-            (window as Window & { __openclawAvatarTestDocument?: string })[
-              "__openclawAvatarTestDocument"
-            ],
+            (window as Window & { __novaAvatarTestDocument?: string })["__novaAvatarTestDocument"],
         ),
       ).toBe(documentMarker);
     } finally {
@@ -4176,7 +4173,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       });
       await gateway.setHistoryMessages([
         {
-          __openclaw: { idempotencyKey: `${runId}:user` },
+          __nova: { idempotencyKey: `${runId}:user` },
           content: [{ text: prompt, type: "text" }],
           role: "user",
           timestamp: Date.now(),

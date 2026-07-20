@@ -1,19 +1,15 @@
 // WhatsApp plugin tool places requester-bound calls through the MeowCaller companion CLI.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { normalizeE164 } from "openclaw/plugin-sdk/account-resolution";
-import { createActionGate, stringEnum } from "openclaw/plugin-sdk/channel-actions";
-import type {
-  AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginToolContext,
-} from "openclaw/plugin-sdk/core";
-import { mulawToPcm } from "openclaw/plugin-sdk/realtime-voice";
-import { detectBinary } from "openclaw/plugin-sdk/setup-tools";
-import { resolveOAuthDir } from "openclaw/plugin-sdk/state-paths";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { jsonResult } from "openclaw/plugin-sdk/tool-results";
+import { normalizeAccountId } from "nova/plugin-sdk/account-id";
+import { normalizeE164 } from "nova/plugin-sdk/account-resolution";
+import { createActionGate, stringEnum } from "nova/plugin-sdk/channel-actions";
+import type { AnyAgentTool, NovaPluginApi, NovaPluginToolContext } from "nova/plugin-sdk/core";
+import { mulawToPcm } from "nova/plugin-sdk/realtime-voice";
+import { detectBinary } from "nova/plugin-sdk/setup-tools";
+import { resolveOAuthDir } from "nova/plugin-sdk/state-paths";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
+import { jsonResult } from "nova/plugin-sdk/tool-results";
 import { Type } from "typebox";
 import { resolveWhatsAppAccount } from "./accounts.js";
 import { getWhatsAppConnectionController } from "./connection-controller-runtime-context.js";
@@ -143,7 +139,7 @@ function resolveCallWindowMs(pcmBytes: number, sampleRate: number): number {
 
 async function resolveRequesterE164(params: {
   accountId: string;
-  cfg: NonNullable<OpenClawPluginToolContext["config"]>;
+  cfg: NonNullable<NovaPluginToolContext["config"]>;
   requesterSenderId: string;
 }): Promise<string | null> {
   const senderId = params.requesterSenderId.trim();
@@ -163,7 +159,7 @@ async function resolveRequesterE164(params: {
 
 async function resolveLinkedWhatsAppSelfE164(params: {
   accountId: string;
-  cfg: NonNullable<OpenClawPluginToolContext["config"]>;
+  cfg: NonNullable<NovaPluginToolContext["config"]>;
 }): Promise<string | null> {
   const controller = getWhatsAppConnectionController(params.accountId);
   if (!controller) {
@@ -184,13 +180,13 @@ async function resolveLinkedWhatsAppSelfE164(params: {
   });
 }
 
-function resolveRuntimeConfig(api: OpenClawPluginApi, context: OpenClawPluginToolContext) {
+function resolveRuntimeConfig(api: NovaPluginApi, context: NovaPluginToolContext) {
   return context.getRuntimeConfig?.() ?? context.runtimeConfig ?? context.config ?? api.config;
 }
 
 function createWhatsAppCallToolWithDependencies(
-  api: OpenClawPluginApi,
-  context: OpenClawPluginToolContext,
+  api: NovaPluginApi,
+  context: NovaPluginToolContext,
   dependencies: WhatsAppCallToolDependencies,
 ): AnyAgentTool | null {
   const cfg = resolveRuntimeConfig(api, context);
@@ -275,7 +271,7 @@ function createWhatsAppCallToolWithDependencies(
         const pcm = normalizeTelephonyPcm(speech.audioBuffer, speech.outputFormat);
         const callWindowMs = resolveCallWindowMs(pcm.length, speech.sampleRate);
         const tempDir = await fs.mkdtemp(
-          path.join(resolvePreferredOpenClawTmpDir(), "openclaw-whatsapp-call-"),
+          path.join(resolvePreferredNovaTmpDir(), "nova-whatsapp-call-"),
         );
         const audioPath = path.join(tempDir, "message.wav");
         try {
@@ -333,13 +329,13 @@ function createWhatsAppCallToolWithDependencies(
 }
 
 function createWhatsAppCallTool(
-  api: OpenClawPluginApi,
-  context: OpenClawPluginToolContext,
+  api: NovaPluginApi,
+  context: NovaPluginToolContext,
 ): AnyAgentTool | null {
   return createWhatsAppCallToolWithDependencies(api, context, defaultDependencies);
 }
 
-export function registerWhatsAppCallTool(api: OpenClawPluginApi): void {
+export function registerWhatsAppCallTool(api: NovaPluginApi): void {
   api.registerTool((context) => createWhatsAppCallTool(api, context), {
     name: "whatsapp_call",
   });

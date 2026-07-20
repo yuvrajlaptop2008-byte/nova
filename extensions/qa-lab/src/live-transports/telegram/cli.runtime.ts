@@ -1,7 +1,7 @@
 import { constants as fsConstants } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { LiveTransportQaCommandOptions } from "openclaw/plugin-sdk/qa-runtime";
+import type { LiveTransportQaCommandOptions } from "nova/plugin-sdk/qa-runtime";
 import type { QaGatewayChildCommand } from "../../gateway-child.js";
 import { runQaFlowSuiteFromRuntime } from "../../suite-launch.runtime.js";
 import type { QaSuiteRoundTripProbe } from "../../suite-round-trip.js";
@@ -74,7 +74,7 @@ async function resolveRegularPath(params: {
   return value;
 }
 
-async function resolveTelegramQaSutOpenClawCommand(
+async function resolveTelegramQaSutNovaCommand(
   repoRoot: string,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<QaGatewayChildCommand | undefined> {
@@ -138,7 +138,7 @@ async function resolveTelegramQaSutOpenClawCommand(
 type TelegramQaSuiteOptions = LiveTransportQaCommandOptions & {
   resolvedScenarioIds?: readonly string[];
   roundTripProbe?: QaSuiteRoundTripProbe;
-  sutOpenClawCommand?: QaGatewayChildCommand;
+  sutNovaCommand?: QaGatewayChildCommand;
 };
 
 export async function runQaTelegramSuite(opts: TelegramQaSuiteOptions) {
@@ -187,7 +187,7 @@ export async function runQaTelegramSuite(opts: TelegramQaSuiteOptions) {
     repoRoot: runOptions.repoRoot,
     roundTripProbe: opts.roundTripProbe,
     scenarioIds,
-    sutOpenClawCommand: opts.sutOpenClawCommand,
+    sutNovaCommand: opts.sutNovaCommand,
   });
   printLiveTransportQaArtifacts("Telegram QA", {
     report: result.reportPath,
@@ -212,10 +212,10 @@ export async function runQaTelegramCommand(opts: LiveTransportQaCommandOptions) 
     providerMode: runOptions.providerMode,
     scenarioIds: runOptions.scenarioIds,
   });
-  const sutOpenClawCommand = await resolveTelegramQaSutOpenClawCommand(runOptions.repoRoot);
+  const sutNovaCommand = await resolveTelegramQaSutNovaCommand(runOptions.repoRoot);
   return await runQaTelegramSuite({
     ...opts,
     resolvedScenarioIds,
-    ...(sutOpenClawCommand ? { sutOpenClawCommand } : {}),
+    ...(sutNovaCommand ? { sutNovaCommand } : {}),
   });
 }

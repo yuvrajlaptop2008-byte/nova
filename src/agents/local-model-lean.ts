@@ -3,7 +3,7 @@
  * Removes high-latency or channel-dependent tools for local models while
  * preserving explicitly required delivery tools.
  */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId, parseAgentSessionKey } from "../routing/session-key.js";
 import { resolveAgentConfig, resolveDefaultAgentId } from "./agent-scope-config.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
@@ -54,7 +54,7 @@ export function resolveLocalModelLeanPreserveToolNames(params?: {
 // Agent id may arrive explicitly, through the session key, or via config default.
 // Resolve once so default/agent experimental flags use the same scope.
 function resolveLocalModelLeanAgentId(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
 }): string | undefined {
@@ -74,7 +74,7 @@ function resolveLocalModelLeanAgentId(params: {
 
 /** Returns true when local-model lean mode is enabled for the selected agent. */
 export function isLocalModelLeanEnabled(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
 }): boolean {
@@ -90,7 +90,7 @@ export function isLocalModelLeanEnabled(params: {
 /** Filters tools for local-model lean mode while preserving required delivery tools. */
 export function filterLocalModelLeanTools(params: {
   tools: AnyAgentTool[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
   preserveToolNames?: Iterable<string>;
@@ -115,10 +115,10 @@ export function shouldCatalogToolForLocalModelLean(tool: AnyAgentTool): boolean 
 }
 
 export function applyLocalModelLeanToolSearchDefaults(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
-}): OpenClawConfig | undefined {
+}): NovaConfig | undefined {
   if (!params.config || !isLocalModelLeanEnabled(params)) {
     return params.config;
   }

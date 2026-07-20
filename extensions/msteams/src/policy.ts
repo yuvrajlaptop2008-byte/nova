@@ -1,9 +1,5 @@
 // Msteams plugin module implements policy behavior.
-import {
-  resolveScopeToolsPolicy,
-  scopeKey,
-  type ScopeTree,
-} from "openclaw/plugin-sdk/channel-policy";
+import { resolveScopeToolsPolicy, scopeKey, type ScopeTree } from "nova/plugin-sdk/channel-policy";
 import type {
   AllowlistMatch,
   ChannelGroupContext,

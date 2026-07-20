@@ -37,9 +37,8 @@ function setAgentRunnerSessionResetTestDeps(overrides?: Partial<typeof deps>): v
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.agentRunnerSessionResetTestApi")
-  ] = { setAgentRunnerSessionResetTestDeps };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.agentRunnerSessionResetTestApi")] =
+    { setAgentRunnerSessionResetTestDeps };
 }
 
 export async function resetReplyRunSession(params: {

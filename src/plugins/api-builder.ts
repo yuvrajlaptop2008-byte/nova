@@ -1,8 +1,8 @@
 // Builds plugin API objects from config, registries, and runtime helpers.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { attachPluginApiFacades, type OpenClawPluginApiWithoutFacades } from "./api-facades.js";
+import type { NovaConfig } from "../config/types.nova.js";
+import { attachPluginApiFacades, type NovaPluginApiWithoutFacades } from "./api-facades.js";
 import type { PluginRuntime } from "./runtime/types.js";
-import type { OpenClawPluginApi, PluginLogger } from "./types.js";
+import type { NovaPluginApi, PluginLogger } from "./types.js";
 
 type BuildPluginApiParams = {
   id: string;
@@ -11,15 +11,15 @@ type BuildPluginApiParams = {
   description?: string;
   source: string;
   rootDir?: string;
-  registrationMode: OpenClawPluginApi["registrationMode"];
-  config: OpenClawConfig;
+  registrationMode: NovaPluginApi["registrationMode"];
+  config: NovaConfig;
   pluginConfig?: Record<string, unknown>;
   runtime: PluginRuntime;
   logger: PluginLogger;
   resolvePath: (input: string) => string;
   handlers?: Partial<
     Pick<
-      OpenClawPluginApi,
+      NovaPluginApi,
       | "registerTool"
       | "registerHook"
       | "registerHttpRoute"
@@ -89,105 +89,104 @@ type BuildPluginApiParams = {
   >;
 };
 
-const noopRegisterTool: OpenClawPluginApi["registerTool"] = () => {};
-const noopRegisterHook: OpenClawPluginApi["registerHook"] = () => {};
-const noopRegisterHttpRoute: OpenClawPluginApi["registerHttpRoute"] = () => {};
-const noopRegisterHostedMediaResolver: OpenClawPluginApi["registerHostedMediaResolver"] = () => {};
-const noopRegisterMcpServerConnectionResolver: OpenClawPluginApi["registerMcpServerConnectionResolver"] =
+const noopRegisterTool: NovaPluginApi["registerTool"] = () => {};
+const noopRegisterHook: NovaPluginApi["registerHook"] = () => {};
+const noopRegisterHttpRoute: NovaPluginApi["registerHttpRoute"] = () => {};
+const noopRegisterHostedMediaResolver: NovaPluginApi["registerHostedMediaResolver"] = () => {};
+const noopRegisterMcpServerConnectionResolver: NovaPluginApi["registerMcpServerConnectionResolver"] =
   () => {};
-const noopRegisterChannel: OpenClawPluginApi["registerChannel"] = () => {};
-const noopRegisterGatewayMethod: OpenClawPluginApi["registerGatewayMethod"] = () => {};
-const noopRegisterSessionCatalog: OpenClawPluginApi["registerSessionCatalog"] = () => {};
-const noopRegisterCli: OpenClawPluginApi["registerCli"] = () => {};
-const noopRegisterReload: OpenClawPluginApi["registerReload"] = () => {};
-const noopRegisterNodeHostCommand: OpenClawPluginApi["registerNodeHostCommand"] = () => {};
-const noopRegisterNodeInvokePolicy: OpenClawPluginApi["registerNodeInvokePolicy"] = () => {};
-const noopRegisterSecurityAuditCollector: OpenClawPluginApi["registerSecurityAuditCollector"] =
+const noopRegisterChannel: NovaPluginApi["registerChannel"] = () => {};
+const noopRegisterGatewayMethod: NovaPluginApi["registerGatewayMethod"] = () => {};
+const noopRegisterSessionCatalog: NovaPluginApi["registerSessionCatalog"] = () => {};
+const noopRegisterCli: NovaPluginApi["registerCli"] = () => {};
+const noopRegisterReload: NovaPluginApi["registerReload"] = () => {};
+const noopRegisterNodeHostCommand: NovaPluginApi["registerNodeHostCommand"] = () => {};
+const noopRegisterNodeInvokePolicy: NovaPluginApi["registerNodeInvokePolicy"] = () => {};
+const noopRegisterSecurityAuditCollector: NovaPluginApi["registerSecurityAuditCollector"] =
   () => {};
-const noopRegisterService: OpenClawPluginApi["registerService"] = () => {};
-const noopRegisterGatewayDiscoveryService: OpenClawPluginApi["registerGatewayDiscoveryService"] =
+const noopRegisterService: NovaPluginApi["registerService"] = () => {};
+const noopRegisterGatewayDiscoveryService: NovaPluginApi["registerGatewayDiscoveryService"] =
   () => {};
-const noopRegisterCliBackend: OpenClawPluginApi["registerCliBackend"] = () => {};
-const noopRegisterTextTransforms: OpenClawPluginApi["registerTextTransforms"] = () => {};
-const noopRegisterConfigMigration: OpenClawPluginApi["registerConfigMigration"] = () => {};
-const noopRegisterMigrationProvider: OpenClawPluginApi["registerMigrationProvider"] = () => {};
-const noopRegisterAutoEnableProbe: OpenClawPluginApi["registerAutoEnableProbe"] = () => {};
-const noopRegisterProvider: OpenClawPluginApi["registerProvider"] = () => {};
-const noopRegisterWorkerProvider: OpenClawPluginApi["registerWorkerProvider"] = () => {};
-const noopRegisterModelCatalogProvider: OpenClawPluginApi["registerModelCatalogProvider"] =
+const noopRegisterCliBackend: NovaPluginApi["registerCliBackend"] = () => {};
+const noopRegisterTextTransforms: NovaPluginApi["registerTextTransforms"] = () => {};
+const noopRegisterConfigMigration: NovaPluginApi["registerConfigMigration"] = () => {};
+const noopRegisterMigrationProvider: NovaPluginApi["registerMigrationProvider"] = () => {};
+const noopRegisterAutoEnableProbe: NovaPluginApi["registerAutoEnableProbe"] = () => {};
+const noopRegisterProvider: NovaPluginApi["registerProvider"] = () => {};
+const noopRegisterWorkerProvider: NovaPluginApi["registerWorkerProvider"] = () => {};
+const noopRegisterModelCatalogProvider: NovaPluginApi["registerModelCatalogProvider"] = () => {};
+const noopRegisterEmbeddingProvider: NovaPluginApi["registerEmbeddingProvider"] = () => {};
+const noopRegisterSpeechProvider: NovaPluginApi["registerSpeechProvider"] = () => {};
+const noopRegisterRealtimeTranscriptionProvider: NovaPluginApi["registerRealtimeTranscriptionProvider"] =
   () => {};
-const noopRegisterEmbeddingProvider: OpenClawPluginApi["registerEmbeddingProvider"] = () => {};
-const noopRegisterSpeechProvider: OpenClawPluginApi["registerSpeechProvider"] = () => {};
-const noopRegisterRealtimeTranscriptionProvider: OpenClawPluginApi["registerRealtimeTranscriptionProvider"] =
+const noopRegisterRealtimeVoiceProvider: NovaPluginApi["registerRealtimeVoiceProvider"] = () => {};
+const noopRegisterMediaUnderstandingProvider: NovaPluginApi["registerMediaUnderstandingProvider"] =
   () => {};
-const noopRegisterRealtimeVoiceProvider: OpenClawPluginApi["registerRealtimeVoiceProvider"] =
+const noopRegisterTranscriptsSourceProvider: NovaPluginApi["registerTranscriptSourceProvider"] =
   () => {};
-const noopRegisterMediaUnderstandingProvider: OpenClawPluginApi["registerMediaUnderstandingProvider"] =
+const noopRegisterImageGenerationProvider: NovaPluginApi["registerImageGenerationProvider"] =
   () => {};
-const noopRegisterTranscriptsSourceProvider: OpenClawPluginApi["registerTranscriptSourceProvider"] =
+const noopRegisterVideoGenerationProvider: NovaPluginApi["registerVideoGenerationProvider"] =
   () => {};
-const noopRegisterImageGenerationProvider: OpenClawPluginApi["registerImageGenerationProvider"] =
+const noopRegisterMusicGenerationProvider: NovaPluginApi["registerMusicGenerationProvider"] =
   () => {};
-const noopRegisterVideoGenerationProvider: OpenClawPluginApi["registerVideoGenerationProvider"] =
+const noopRegisterWebFetchProvider: NovaPluginApi["registerWebFetchProvider"] = () => {};
+const noopRegisterWebSearchProvider: NovaPluginApi["registerWebSearchProvider"] = () => {};
+const noopRegisterInteractiveHandler: NovaPluginApi["registerInteractiveHandler"] = () => {};
+const noopOnConversationBindingResolved: NovaPluginApi["onConversationBindingResolved"] = () => {};
+const noopRegisterCommand: NovaPluginApi["registerCommand"] = () => {};
+const noopRegisterContextEngine: NovaPluginApi["registerContextEngine"] = () => {};
+const noopRegisterCompactionProvider: NovaPluginApi["registerCompactionProvider"] = () => {};
+const noopRegisterAgentHarness: NovaPluginApi["registerAgentHarness"] = () => {};
+const noopRegisterCodexAppServerExtensionFactory: NovaPluginApi["registerCodexAppServerExtensionFactory"] =
   () => {};
-const noopRegisterMusicGenerationProvider: OpenClawPluginApi["registerMusicGenerationProvider"] =
+const noopRegisterAgentToolResultMiddleware: NovaPluginApi["registerAgentToolResultMiddleware"] =
   () => {};
-const noopRegisterWebFetchProvider: OpenClawPluginApi["registerWebFetchProvider"] = () => {};
-const noopRegisterWebSearchProvider: OpenClawPluginApi["registerWebSearchProvider"] = () => {};
-const noopRegisterInteractiveHandler: OpenClawPluginApi["registerInteractiveHandler"] = () => {};
-const noopOnConversationBindingResolved: OpenClawPluginApi["onConversationBindingResolved"] =
-  () => {};
-const noopRegisterCommand: OpenClawPluginApi["registerCommand"] = () => {};
-const noopRegisterContextEngine: OpenClawPluginApi["registerContextEngine"] = () => {};
-const noopRegisterCompactionProvider: OpenClawPluginApi["registerCompactionProvider"] = () => {};
-const noopRegisterAgentHarness: OpenClawPluginApi["registerAgentHarness"] = () => {};
-const noopRegisterCodexAppServerExtensionFactory: OpenClawPluginApi["registerCodexAppServerExtensionFactory"] =
-  () => {};
-const noopRegisterAgentToolResultMiddleware: OpenClawPluginApi["registerAgentToolResultMiddleware"] =
-  () => {};
-const noopRegisterSessionExtension: OpenClawPluginApi["registerSessionExtension"] = () => {};
-const noopEnqueueNextTurnInjection: OpenClawPluginApi["enqueueNextTurnInjection"] = async (
+const noopRegisterSessionExtension: NovaPluginApi["registerSessionExtension"] = () => {};
+const noopEnqueueNextTurnInjection: NovaPluginApi["enqueueNextTurnInjection"] = async (
   injection,
 ) => ({ enqueued: false, id: "", sessionKey: injection.sessionKey });
-const noopRegisterTrustedToolPolicy: OpenClawPluginApi["registerTrustedToolPolicy"] = () => {};
-const noopRegisterToolMetadata: OpenClawPluginApi["registerToolMetadata"] = () => {};
-const noopRegisterControlUiDescriptor: OpenClawPluginApi["registerControlUiDescriptor"] = () => {};
-const noopRegisterRuntimeLifecycle: OpenClawPluginApi["registerRuntimeLifecycle"] = () => {};
-const noopRegisterAgentEventSubscription: OpenClawPluginApi["registerAgentEventSubscription"] =
+const noopRegisterTrustedToolPolicy: NovaPluginApi["registerTrustedToolPolicy"] = () => {};
+const noopRegisterToolMetadata: NovaPluginApi["registerToolMetadata"] = () => {};
+const noopRegisterControlUiDescriptor: NovaPluginApi["registerControlUiDescriptor"] = () => {};
+const noopRegisterRuntimeLifecycle: NovaPluginApi["registerRuntimeLifecycle"] = () => {};
+const noopRegisterAgentEventSubscription: NovaPluginApi["registerAgentEventSubscription"] =
   () => {};
-const noopEmitAgentEvent: OpenClawPluginApi["emitAgentEvent"] = () => ({
+const noopEmitAgentEvent: NovaPluginApi["emitAgentEvent"] = () => ({
   emitted: false,
   reason: "not wired",
 });
-const noopSetRunContext: OpenClawPluginApi["setRunContext"] = () => false;
-const noopGetRunContext: OpenClawPluginApi["getRunContext"] = () => undefined;
-const noopClearRunContext: OpenClawPluginApi["clearRunContext"] = () => {};
-const noopRegisterSessionSchedulerJob: OpenClawPluginApi["registerSessionSchedulerJob"] = () =>
+const noopSetRunContext: NovaPluginApi["setRunContext"] = () => false;
+const noopGetRunContext: NovaPluginApi["getRunContext"] = () => undefined;
+const noopClearRunContext: NovaPluginApi["clearRunContext"] = () => {};
+const noopRegisterSessionSchedulerJob: NovaPluginApi["registerSessionSchedulerJob"] = () =>
   undefined;
-const noopRegisterSessionAction: OpenClawPluginApi["registerSessionAction"] = () => {};
-const noopSendSessionAttachment: OpenClawPluginApi["sendSessionAttachment"] = async () => ({
+const noopRegisterSessionAction: NovaPluginApi["registerSessionAction"] = () => {};
+const noopSendSessionAttachment: NovaPluginApi["sendSessionAttachment"] = async () => ({
   ok: false,
   error: "not wired",
 });
-const noopScheduleSessionTurn: OpenClawPluginApi["scheduleSessionTurn"] = async () => undefined;
-const noopUnscheduleSessionTurnsByTag: OpenClawPluginApi["unscheduleSessionTurnsByTag"] =
-  async () => ({ removed: 0, failed: 0 });
-const noopRegisterDetachedTaskRuntime: OpenClawPluginApi["registerDetachedTaskRuntime"] = () => {};
-const noopRegisterMemoryCapability: OpenClawPluginApi["registerMemoryCapability"] = () => {};
-const noopRegisterMemoryPromptSupplement: OpenClawPluginApi["registerMemoryPromptSupplement"] =
+const noopScheduleSessionTurn: NovaPluginApi["scheduleSessionTurn"] = async () => undefined;
+const noopUnscheduleSessionTurnsByTag: NovaPluginApi["unscheduleSessionTurnsByTag"] = async () => ({
+  removed: 0,
+  failed: 0,
+});
+const noopRegisterDetachedTaskRuntime: NovaPluginApi["registerDetachedTaskRuntime"] = () => {};
+const noopRegisterMemoryCapability: NovaPluginApi["registerMemoryCapability"] = () => {};
+const noopRegisterMemoryPromptSupplement: NovaPluginApi["registerMemoryPromptSupplement"] =
   () => {};
-const noopRegisterMemoryPromptPreparation: OpenClawPluginApi["registerMemoryPromptPreparation"] =
+const noopRegisterMemoryPromptPreparation: NovaPluginApi["registerMemoryPromptPreparation"] =
   () => {};
-const noopRegisterMemoryCorpusSupplement: OpenClawPluginApi["registerMemoryCorpusSupplement"] =
+const noopRegisterMemoryCorpusSupplement: NovaPluginApi["registerMemoryCorpusSupplement"] =
   () => {};
-const noopRegisterMemoryEmbeddingProvider: OpenClawPluginApi["registerMemoryEmbeddingProvider"] =
+const noopRegisterMemoryEmbeddingProvider: NovaPluginApi["registerMemoryEmbeddingProvider"] =
   () => {};
-const noopOn: OpenClawPluginApi["on"] = () => {};
+const noopOn: NovaPluginApi["on"] = () => {};
 
-export function buildPluginApi(params: BuildPluginApiParams): OpenClawPluginApi {
+export function buildPluginApi(params: BuildPluginApiParams): NovaPluginApi {
   const handlers = params.handlers ?? {};
   const registerCli = handlers.registerCli ?? noopRegisterCli;
-  const api: OpenClawPluginApiWithoutFacades = {
+  const api: NovaPluginApiWithoutFacades = {
     id: params.id,
     name: params.name,
     version: params.version,

@@ -3,7 +3,7 @@ import type { Command } from "commander";
 import { formatDocsLink } from "../../packages/terminal-core/src/links.js";
 import { theme } from "../../packages/terminal-core/src/theme.js";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { hasConfiguredSecretInput } from "../config/types.secrets.js";
 import { trimToUndefined } from "../gateway/credentials.js";
 import { resolveRequiredConfiguredSecretRefInputString } from "../gateway/resolve-configured-secret-input-string.js";
@@ -33,7 +33,7 @@ const LIMITED_TRANSPORT_WARNING =
 function renderQrAscii(data: string): Promise<string> {
   return renderQrTerminal(data);
 }
-function readDevicePairPublicUrlFromConfig(cfg: OpenClawConfig): string | undefined {
+function readDevicePairPublicUrlFromConfig(cfg: NovaConfig): string | undefined {
   const value = cfg.plugins?.entries?.["device-pair"]?.config?.["publicUrl"];
   if (typeof value !== "string") {
     return undefined;
@@ -42,10 +42,7 @@ function readDevicePairPublicUrlFromConfig(cfg: OpenClawConfig): string | undefi
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
-function shouldResolveLocalGatewayPasswordSecret(
-  cfg: OpenClawConfig,
-  env: NodeJS.ProcessEnv,
-): boolean {
+function shouldResolveLocalGatewayPasswordSecret(cfg: NovaConfig, env: NodeJS.ProcessEnv): boolean {
   // Default/implicit password auth may require resolving a local SecretRef before encoding setup.
   if (trimToUndefined(env.NOVA_GATEWAY_PASSWORD)) {
     return false;
@@ -65,7 +62,7 @@ function shouldResolveLocalGatewayPasswordSecret(
   return !envToken && !configTokenConfigured;
 }
 
-async function resolveLocalGatewayPasswordSecretIfNeeded(cfg: OpenClawConfig): Promise<void> {
+async function resolveLocalGatewayPasswordSecretIfNeeded(cfg: NovaConfig): Promise<void> {
   const resolvedPassword = await resolveRequiredConfiguredSecretRefInputString({
     config: cfg,
     env: process.env,
@@ -102,7 +99,7 @@ export function registerQrCli(program: Command) {
     .description("Generate a mobile pairing QR code and setup code")
     .addHelpText(
       "after",
-      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/qr", "docs.openclaw.ai/cli/qr")}\n`,
+      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/qr", "docs.nova.ai/cli/qr")}\n`,
     )
     .option(
       "--remote",
@@ -261,8 +258,8 @@ export function registerQrCli(program: Command) {
           `${theme.muted("Source:")} ${resolved.urlSource}`,
           "",
           "Approve after scan with:",
-          `  ${theme.command("openclaw devices list")}`,
-          `  ${theme.command("openclaw devices approve <requestId>")}`,
+          `  ${theme.command("nova devices list")}`,
+          `  ${theme.command("nova devices approve <requestId>")}`,
         );
 
         defaultRuntime.log(lines.join("\n"));

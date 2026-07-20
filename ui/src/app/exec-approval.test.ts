@@ -17,7 +17,7 @@ const parseExecApprovalRequested = (payload: unknown) =>
 const parsePluginApprovalRequested = (payload: unknown) =>
   parseApprovalRequestedEvent("plugin.approval.requested", payload);
 const parseSystemAgentApprovalRequested = (payload: unknown) =>
-  parseApprovalRequestedEvent("openclaw.approval.requested", payload);
+  parseApprovalRequestedEvent("nova.approval.requested", payload);
 
 type RequestFn = (method: string, params?: unknown) => Promise<unknown>;
 

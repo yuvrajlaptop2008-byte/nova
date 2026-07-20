@@ -1,4 +1,4 @@
-import { logError } from "openclaw/plugin-sdk/logging-core";
+import { logError } from "nova/plugin-sdk/logging-core";
 import {
   buildDiscordActivityCustomId,
   parseDiscordActivityCustomIdForInteraction,

@@ -11,7 +11,7 @@ const DEFAULT_GITHUB_API_TIMEOUT_MS = 30_000;
 const GITHUB_API_RESPONSE_BODY_MAX_BYTES = 1024 * 1024;
 
 const CLAWSWEEPER_PROOF_VERDICT_STATUS = "clawsweeper_exact_head_pass";
-const CLAWSWEEPER_BOT_LOGINS = new Set(["clawsweeper[bot]", "openclaw-clawsweeper[bot]"]);
+const CLAWSWEEPER_BOT_LOGINS = new Set(["clawsweeper[bot]", "nova-clawsweeper[bot]"]);
 
 const privilegedAuthorAssociations = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 

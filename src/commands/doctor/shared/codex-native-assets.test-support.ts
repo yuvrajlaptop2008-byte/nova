@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import "./codex-native-assets.js";
 
 type CodexNativeAssetHit = {
@@ -8,14 +8,14 @@ type CodexNativeAssetHit = {
 
 type TestApi = {
   scanCodexNativeAssets(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     env?: NodeJS.ProcessEnv;
   }): Promise<CodexNativeAssetHit[]>;
 };
 
 function getTestApi(): TestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.codexNativeAssetsTestApi")
+    Symbol.for("nova.codexNativeAssetsTestApi")
   ] as TestApi;
 }
 

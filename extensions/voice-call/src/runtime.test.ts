@@ -1,5 +1,5 @@
 // Voice Call tests cover runtime plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
+import type { NovaConfig } from "nova/plugin-sdk/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { VoiceCallConfig } from "./config.js";
 import type { CoreConfig } from "./core-bridge.js";
@@ -219,7 +219,7 @@ function requireRealtimeConsultToolHandler(): RealtimeConsultToolHandler {
     mocks.realtimeHandlerRegisterToolHandler.mock.calls,
     "realtime tool handler registration",
   );
-  expect(registeredToolHandler[0]).toBe("openclaw_agent_consult");
+  expect(registeredToolHandler[0]).toBe("nova_agent_consult");
   if (typeof registeredToolHandler[1] !== "function") {
     throw new Error("expected realtime tool handler callback");
   }
@@ -310,7 +310,7 @@ describe("createVoiceCallRuntime lifecycle", () => {
           openai: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await createVoiceCallRuntime({
       config: createBaseConfig(),
@@ -335,8 +335,8 @@ describe("createVoiceCallRuntime lifecycle", () => {
     };
     const fullConfig = {
       agents: { list: [{ id: "main" }, { id: "support" }] },
-    } as OpenClawConfig;
-    const resolveAgentIdentity = vi.fn((_cfg: OpenClawConfig, agentId: string) => ({
+    } as NovaConfig;
+    const resolveAgentIdentity = vi.fn((_cfg: NovaConfig, agentId: string) => ({
       name: agentId === "support" ? "Support Voice" : "Main Voice",
     }));
 
@@ -506,7 +506,7 @@ describe("createVoiceCallRuntime lifecycle", () => {
       throw new Error("expected realtime handler tools to be an array");
     }
     expect(tools.map((tool) => requireRecord(tool, "realtime tool").name)).toEqual([
-      "openclaw_agent_consult",
+      "nova_agent_consult",
       "custom_tool",
     ]);
     const handler = requireRealtimeConsultToolHandler();

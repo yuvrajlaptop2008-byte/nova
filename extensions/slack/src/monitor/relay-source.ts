@@ -1,13 +1,8 @@
 // Slack plugin module implements relay-backed inbound event transport.
 import { Buffer } from "node:buffer";
 import { isIP } from "node:net";
-import {
-  computeBackoff,
-  sleepWithAbort,
-  warn,
-  type RuntimeEnv,
-} from "openclaw/plugin-sdk/runtime-env";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { computeBackoff, sleepWithAbort, warn, type RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import WebSocket, { type ClientOptions, type RawData } from "ws";
 import type { SlackSendIdentity } from "../send.js";
 import type { SlackMessageEvent } from "../types.js";

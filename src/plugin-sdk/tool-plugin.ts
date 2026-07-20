@@ -8,19 +8,19 @@ import {
   buildJsonPluginConfigSchema,
   definePluginEntry,
   type AnyAgentTool,
-  type OpenClawPluginApi,
-  type OpenClawPluginToolContext,
+  type NovaPluginApi,
+  type NovaPluginToolContext,
 } from "./plugin-entry.js";
 
 const EMPTY_TOOL_PLUGIN_CONFIG_SCHEMA = Type.Object({}, { additionalProperties: false });
 
 /** Non-enumerable metadata symbol attached to entries created by `defineToolPlugin`. */
-export const toolPluginMetadataSymbol = Symbol.for("openclaw.plugin-sdk.tool-plugin.metadata");
+export const toolPluginMetadataSymbol = Symbol.for("nova.plugin-sdk.tool-plugin.metadata");
 
 /** Runtime context supplied to a concrete tool plugin execution handler. */
 export type ToolPluginExecutionContext = {
   /** Plugin runtime API for tool implementations that need Nova services. */
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   /** Abort signal for the current tool call. */
   signal?: AbortSignal;
   /** Stable id of the current model tool call. */
@@ -40,11 +40,11 @@ type ToolPluginToolFactory<TConfig> = <TParamsSchema extends TSchema>(
 /** Context passed to a tool factory that builds runtime-specific tool definitions. */
 export type ToolPluginFactoryContext<TConfig> = {
   /** Plugin runtime API passed to context-sensitive tool factories. */
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   /** Resolved plugin config typed from the declared config schema. */
   config: TConfig;
   /** Runtime tool context, including sandbox/capability information. */
-  toolContext: OpenClawPluginToolContext;
+  toolContext: NovaPluginToolContext;
 };
 
 type ToolPluginToolDefinitionBase<TParamsSchema extends TSchema> = {

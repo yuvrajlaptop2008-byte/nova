@@ -193,7 +193,7 @@ describe("requestCodexAppServerJson sandbox guard", () => {
     sharedClientMocks.getSharedCodexAppServerClient.mockResolvedValue({ request });
     const params = {
       cwd: "/workspace",
-      environments: [{ environmentId: "openclaw-sandbox-abc123", cwd: "/workspace" }],
+      environments: [{ environmentId: "nova-sandbox-abc123", cwd: "/workspace" }],
     };
 
     await expect(
@@ -335,7 +335,7 @@ describe("requestCodexAppServerJson sandbox guard", () => {
   it("blocks thread starts with sandbox environments when exec host=node is active", async () => {
     const params = {
       cwd: "/workspace",
-      environments: [{ environmentId: "openclaw-sandbox-abc123", cwd: "/workspace" }],
+      environments: [{ environmentId: "nova-sandbox-abc123", cwd: "/workspace" }],
     };
 
     await expect(

@@ -271,7 +271,7 @@ describe("status-runtime-shared", () => {
           defaults: {
             model: { primary: "openai/gpt-5.5" },
             models: {
-              "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+              "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
             },
           },
         },

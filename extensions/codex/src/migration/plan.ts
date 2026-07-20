@@ -7,13 +7,13 @@ import {
   MIGRATION_REASON_TARGET_EXISTS,
   readMigrationConfigPath,
   summarizeMigrationItems,
-} from "openclaw/plugin-sdk/migration";
+} from "nova/plugin-sdk/migration";
 import type {
   MigrationItem,
   MigrationPlan,
   MigrationProviderContext,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { asBoolean, isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/plugin-entry";
+import { asBoolean, isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { CODEX_PLUGINS_MARKETPLACE_NAME } from "../app-server/config.js";
 import { buildCodexAuthItems } from "./auth.js";
 import { sanitizeName } from "./helpers.js";
@@ -233,7 +233,7 @@ function buildPluginItems(
           plugin.message ??
           `Codex native plugin "${plugin.name}" was found but not activated automatically.`,
         recommendation:
-          "Review the plugin bundle first, then install trusted compatible plugins with openclaw plugins install <path> --force.",
+          "Review the plugin bundle first, then install trusted compatible plugins with nova plugins install <path> --force.",
       }),
     );
   }
@@ -523,7 +523,7 @@ export async function buildCodexMigrationPlan(
     nextSteps: memoryOnly
       ? []
       : [
-          "Run openclaw doctor after applying the migration.",
+          "Run nova doctor after applying the migration.",
           "Review skipped or auth-required Codex plugin/config/hook items before exposing them in Nova sessions.",
         ],
     metadata: {

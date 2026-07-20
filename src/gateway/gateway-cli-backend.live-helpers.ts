@@ -132,7 +132,7 @@ export function resolveCliBackendLiveModelSelection(params: {
     cliModelKey: modelKey,
     configModelKey: modelKey,
     configModelSwitchTarget: params.modelSwitchTarget,
-    agentRuntime: { id: "openclaw" },
+    agentRuntime: { id: "nova" },
   };
 }
 
@@ -302,7 +302,7 @@ export function resolveImportedClaudeCliSessionId(messages: unknown[]): string |
   for (const message of messages) {
     const metadata =
       typeof message === "object" && message !== null
-        ? (message as Record<string, unknown>)["__openclaw"]
+        ? (message as Record<string, unknown>)["__nova"]
         : undefined;
     if (typeof metadata !== "object" || metadata === null) {
       continue;

@@ -5,7 +5,7 @@ import { safePathSegmentHashed } from "../infra/install-safe-path.js";
 import { resolveDefaultPluginNpmDir, resolvePluginNpmProjectsDir } from "./install-paths.js";
 import { listManagedPluginNpmRootsSync } from "./npm-project-roots.js";
 
-const RETAINED_MANAGED_NPM_INSTALL_MARKER_DIR = ".openclaw-retained-npm-installs";
+const RETAINED_MANAGED_NPM_INSTALL_MARKER_DIR = ".nova-retained-npm-installs";
 
 export function resolveRetainedManagedNpmInstallPackageInfo(packageDir: string): {
   packageName: string;

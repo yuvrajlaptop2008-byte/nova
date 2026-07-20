@@ -1,8 +1,8 @@
 // Whatsapp plugin module implements connection controller behavior.
 import type { GroupMetadata, WASocket, WAMessageKey, proto } from "baileys";
-import { registerChannelRuntimeContext } from "openclaw/plugin-sdk/channel-runtime-context";
-import { info } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import { registerChannelRuntimeContext } from "nova/plugin-sdk/channel-runtime-context";
+import { info } from "nova/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import {
   WHATSAPP_CONNECTION_CONTROLLER_CAPABILITY,
   WHATSAPP_CONNECTION_OWNER_PENDING_CAPABILITY,
@@ -39,7 +39,7 @@ const WHATSAPP_LOGIN_RESTART_MESSAGE =
 const WHATSAPP_LOGIN_TIMEOUT_RESTART_MESSAGE =
   "WhatsApp connection timed out before login; retrying with a fresh socket…";
 const WHATSAPP_LOGGED_OUT_RELINK_MESSAGE =
-  "WhatsApp reported the session is logged out. Cleared cached web session; please rerun openclaw channels login and scan the QR again.";
+  "WhatsApp reported the session is logged out. Cleared cached web session; please rerun nova channels login and scan the QR again.";
 const WHATSAPP_LOGIN_AUTH_UNSTABLE_MESSAGE =
   "WhatsApp connected, but saving the linked credentials has not settled on disk yet. Retry login in a moment.";
 const WHATSAPP_LOGIN_AUTH_NOT_PERSISTED_MESSAGE =

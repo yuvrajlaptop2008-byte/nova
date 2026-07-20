@@ -45,11 +45,11 @@ async function resolveDeferredAndDrain(
     async ({ targetMethod, responsePayload }) => {
       const gateway = (
         window as Window & {
-          openclawControlUiE2eGateway?: {
+          novaControlUiE2eGateway?: {
             resolveDeferred: (method: string, payload?: unknown) => void;
           };
         }
-      ).openclawControlUiE2eGateway;
+      ).novaControlUiE2eGateway;
       if (!gateway) {
         throw new Error("Mock Gateway is not installed");
       }

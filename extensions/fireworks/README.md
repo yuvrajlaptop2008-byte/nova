@@ -1,13 +1,13 @@
-# Fireworks OpenClaw provider
+# Fireworks Nova provider
 
-Official OpenClaw provider plugin for Fireworks.
+Official Nova provider plugin for Fireworks.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/fireworks-provider
+nova plugins install @nova/fireworks-provider
 ```
 
 ## Docs
 
-See `docs/providers/fireworks.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/providers/fireworks`.
+See `docs/providers/fireworks.md` in the Nova repository, or the published docs at `https://docs.nova.ai/providers/fireworks`.

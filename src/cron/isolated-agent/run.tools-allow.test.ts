@@ -17,7 +17,7 @@ import {
 } from "./run.test-harness.js";
 
 const MISSING_WEB_SEARCH_PROVIDER_DIAGNOSTIC_MESSAGE =
-  "web_search tool requested in toolsAllow but no web search provider is selected. Configure one with: openclaw configure --section web, or set tools.web.search.provider.";
+  "web_search tool requested in toolsAllow but no web search provider is selected. Configure one with: nova configure --section web, or set tools.web.search.provider.";
 
 const RUN_TOOLS_ALLOW_TIMEOUT_MS = 300_000;
 

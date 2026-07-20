@@ -1,14 +1,14 @@
 import { html } from "lit";
 import { property } from "lit/decorators.js";
 import { t } from "../i18n/index.ts";
-import { OpenClawLightDomElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../lit/nova-element.ts";
 import { icons } from "./icons.ts";
 import { promoteToPopoverTopLayer } from "./menu-surface.ts";
 import "./web-awesome.ts";
 
 export type CatalogSessionMenuAction = "viewer" | "terminal";
 
-class CatalogSessionMenu extends OpenClawLightDomElement {
+class CatalogSessionMenu extends NovaLightDomElement {
   @property({ attribute: false }) x = 0;
   @property({ attribute: false }) y = 0;
   @property({ attribute: false }) trigger: HTMLElement | null = null;
@@ -117,6 +117,6 @@ class CatalogSessionMenu extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-catalog-session-menu")) {
-  customElements.define("openclaw-catalog-session-menu", CatalogSessionMenu);
+if (!customElements.get("nova-catalog-session-menu")) {
+  customElements.define("nova-catalog-session-menu", CatalogSessionMenu);
 }

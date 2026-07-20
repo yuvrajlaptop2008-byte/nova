@@ -2,7 +2,7 @@
   "name": "@nova/qa-lab",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw QA lab plugin with private debugger UI and scenario runner",
+  "description": "Nova QA lab plugin with private debugger UI and scenario runner",
   "type": "module",
   "dependencies": {
     "@nova/crabline": "0.1.11",
@@ -22,18 +22,18 @@
     "@nova/plugin-sdk": "workspace:*",
     "@nova/slack": "workspace:*",
     "@nova/whatsapp": "workspace:*",
-    "openclaw": "workspace:*",
+    "nova": "workspace:*",
     "vite": "8.1.3"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.7.2"
+    "nova": ">=2026.7.2"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "nova": {
       "optional": true
     }
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ],

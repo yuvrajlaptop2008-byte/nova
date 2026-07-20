@@ -1,6 +1,6 @@
 // Matrix plugin module implements auth presence behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createPluginStateSyncKeyedStore } from "openclaw/plugin-sdk/runtime-doctor";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { createPluginStateSyncKeyedStore } from "nova/plugin-sdk/runtime-doctor";
 import {
   MATRIX_CREDENTIALS_MAX_ENTRIES,
   MATRIX_CREDENTIALS_NAMESPACE,
@@ -10,10 +10,10 @@ import {
 
 type MatrixAuthPresenceParams =
   | {
-      cfg: OpenClawConfig;
+      cfg: NovaConfig;
       env?: NodeJS.ProcessEnv;
     }
-  | OpenClawConfig;
+  | NovaConfig;
 
 export function hasAnyMatrixAuth(
   params: MatrixAuthPresenceParams,

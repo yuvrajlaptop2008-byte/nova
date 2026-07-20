@@ -1,11 +1,11 @@
 // Discord plugin module implements reply safety behavior.
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-dispatch-runtime";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-dispatch-runtime";
+import { resolveSendableOutboundReplyParts } from "nova/plugin-sdk/reply-payload";
 import {
   sanitizeAssistantVisibleText,
   sanitizeAssistantVisibleTextWithProfile,
-} from "openclaw/plugin-sdk/text-chunking";
-import { stripPlainTextToolCallBlocks } from "openclaw/plugin-sdk/tool-payload";
+} from "nova/plugin-sdk/text-chunking";
+import { stripPlainTextToolCallBlocks } from "nova/plugin-sdk/tool-payload";
 
 const DISCORD_INTERNAL_CHANNEL_LINE_RE =
   /^(?:>\s*)?(?:analysis|commentary|thinking|reasoning)\s*[:=]/i;

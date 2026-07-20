@@ -31,7 +31,7 @@ type Testing = {
 
 function getTesting(): Testing {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.subagentAnnounceDeliveryTestApi")
+    Symbol.for("nova.subagentAnnounceDeliveryTestApi")
   ] as Testing;
 }
 

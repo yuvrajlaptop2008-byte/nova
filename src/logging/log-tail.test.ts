@@ -45,8 +45,8 @@ describe("readConfiguredLogTail", () => {
 
   it("applies redaction once per request across all returned lines", async () => {
     const { readConfiguredLogTail } = await import("./log-tail.js");
-    const tempDir = tempDirs.make("openclaw-log-tail-");
-    const file = path.join(tempDir, "openclaw-2026-01-22.log");
+    const tempDir = tempDirs.make("nova-log-tail-");
+    const file = path.join(tempDir, "nova-2026-01-22.log");
 
     await fs.writeFile(file, "custom-secret-abcdefghijklmnopqrstuvwxyz\nsecond line\n");
     setLoggerOverride({ file });
@@ -64,8 +64,8 @@ describe("readConfiguredLogTail", () => {
 
   it("fills short positional reads before splitting log lines", async () => {
     const { readConfiguredLogTail } = await import("./log-tail.js");
-    const tempDir = tempDirs.make("openclaw-log-tail-");
-    const file = path.join(tempDir, "openclaw-2026-01-22.log");
+    const tempDir = tempDirs.make("nova-log-tail-");
+    const file = path.join(tempDir, "nova-2026-01-22.log");
     const realOpen = fs.open.bind(fs);
     vi.spyOn(fs, "open").mockImplementation(async (...args) => {
       const handle = await realOpen(...args);

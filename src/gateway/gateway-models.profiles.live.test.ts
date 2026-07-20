@@ -17,7 +17,7 @@ import {
   type Api,
   type Model,
   type ModelThinkingLevel,
-} from "openclaw/plugin-sdk/llm";
+} from "nova/plugin-sdk/llm";
 import { afterEach, describe, expect, it } from "vitest";
 import { renderCatNoncePngBase64 } from "../../test/helpers/live-image-probe.js";
 import { discoverAuthStorage, discoverModels } from "../agents/agent-model-discovery.js";
@@ -54,10 +54,10 @@ import {
 import { getApiKeyForModel, resolveEnvApiKey } from "../agents/model-auth.js";
 import { normalizeProviderId } from "../agents/model-selection.js";
 import { shouldSuppressBuiltInModel } from "../agents/model-suppression.js";
-import { ensureOpenClawModelsJson } from "../agents/models-config.js";
+import { ensureNovaModelsJson } from "../agents/models-config.js";
 import { STREAM_ERROR_FALLBACK_TEXT } from "../agents/stream-message-shared.js";
 import { clearRuntimeConfigSnapshot, getRuntimeConfig } from "../config/io.js";
-import type { ModelsConfig, ModelProviderConfig, OpenClawConfig } from "../config/types.js";
+import type { ModelsConfig, ModelProviderConfig, NovaConfig } from "../config/types.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import type { ModelRegistry } from "../llm/model-registry.js";
 import { normalizeGoogleModelId } from "../plugin-sdk/google-model-id.js";
@@ -138,11 +138,8 @@ const GATEWAY_LIVE_STRIP_SCAFFOLDING_MODEL_KEYS = new Set([
   "openai/gpt-5.4-pro",
 ]);
 const GATEWAY_LIVE_AGENT_ID = "dev";
-const GATEWAY_LIVE_CONFIG_TEST_WORKSPACE = path.join(os.tmpdir(), "openclaw-live-config-test");
-const GATEWAY_LIVE_CONFIG_TEST_AGENT_DIR = path.join(
-  os.tmpdir(),
-  "openclaw-live-config-test-agent",
-);
+const GATEWAY_LIVE_CONFIG_TEST_WORKSPACE = path.join(os.tmpdir(), "nova-live-config-test");
+const GATEWAY_LIVE_CONFIG_TEST_AGENT_DIR = path.join(os.tmpdir(), "nova-live-config-test-agent");
 const GATEWAY_LIVE_EXEC_READ_NONCE_MISS_SKIP_MODEL_KEYS = new Set([
   "fireworks/accounts/fireworks/models/glm-5",
   "fireworks/accounts/fireworks/models/kimi-k2p5",
@@ -1232,7 +1229,7 @@ function resolveExplicitLiveFallbackApi(provider: string): Api {
 
 function resolveDefaultBedrockLiveBaseUrl(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     env?: NodeJS.ProcessEnv;
   } = {},
 ): string {
@@ -1246,7 +1243,7 @@ function resolveDefaultBedrockLiveBaseUrl(
   return `https://bedrock-runtime.${region}.amazonaws.com`;
 }
 
-function resolveBedrockDiscoveryRegion(cfg: OpenClawConfig | undefined): string | undefined {
+function resolveBedrockDiscoveryRegion(cfg: NovaConfig | undefined): string | undefined {
   const pluginConfig = cfg?.plugins?.entries?.["amazon-bedrock"]?.config;
   if (!isRecord(pluginConfig)) {
     return undefined;
@@ -1835,7 +1832,7 @@ describe("buildLiveGatewayConfig", () => {
     });
 
     expect(cfg.agents?.defaults?.models?.["openai/gpt-5.5"]).toEqual({
-      agentRuntime: { id: "openclaw" },
+      agentRuntime: { id: "nova" },
     });
   });
 
@@ -1973,7 +1970,7 @@ describe("buildLiveGatewayConfig", () => {
       deleteTestEnvValue("AWS_PROFILE");
       deleteTestEnvValue("AWS_CONFIG_FILE");
       deleteTestEnvValue("AWS_SHARED_CREDENTIALS_FILE");
-      setTestEnvValue("HOME", path.join(os.tmpdir(), `openclaw-empty-aws-home-${randomUUID()}`));
+      setTestEnvValue("HOME", path.join(os.tmpdir(), `nova-empty-aws-home-${randomUUID()}`));
 
       const cfg = buildLiveGatewayConfig({
         cfg: {},
@@ -2146,7 +2143,7 @@ describe("buildLiveGatewayConfig", () => {
       awsSharedCredentialsFile: process.env.AWS_SHARED_CREDENTIALS_FILE,
       home: process.env.HOME,
     };
-    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-bedrock-aws-home-"));
+    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-bedrock-aws-home-"));
     try {
       const awsDir = path.join(tempHome, ".aws");
       await fs.mkdir(awsDir, { recursive: true });
@@ -2194,7 +2191,7 @@ describe("buildLiveGatewayConfig", () => {
       awsSharedCredentialsFile: process.env.AWS_SHARED_CREDENTIALS_FILE,
       home: process.env.HOME,
     };
-    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-bedrock-aws-home-"));
+    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-bedrock-aws-home-"));
     try {
       const awsDir = path.join(tempHome, ".aws");
       await fs.mkdir(awsDir, { recursive: true });
@@ -2242,7 +2239,7 @@ describe("buildLiveGatewayConfig", () => {
       awsSharedCredentialsFile: process.env.AWS_SHARED_CREDENTIALS_FILE,
       home: process.env.HOME,
     };
-    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-bedrock-aws-home-"));
+    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-bedrock-aws-home-"));
     try {
       const awsDir = path.join(tempHome, ".aws");
       await fs.mkdir(awsDir, { recursive: true });
@@ -3555,7 +3552,7 @@ async function requestGatewayAgentText(params: {
 
 type GatewayModelSuiteParams = {
   label: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   candidates: Array<Model>;
   allowNotFoundSkip: boolean;
   extraToolProbes: boolean;
@@ -3847,7 +3844,7 @@ describe("OpenAI Ultra wire capture", () => {
 function buildOpenAIUltraWireProviderOverride(params: {
   baseUrl: string;
   candidates: Array<Model>;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): ModelProviderConfig {
   const discovered = buildLiveProviderConfigs({
     candidates: params.candidates,
@@ -3998,7 +3995,7 @@ function createStaticLiveModelRegistry(models: Array<Model>): LiveModelRegistry 
 
 async function loadAuthBackedLiveModelRegistry(params: {
   agentDir: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   providerList: string[] | undefined;
 }): Promise<{
   authProfileStore: AuthProfileStore;
@@ -4093,7 +4090,7 @@ function mergeLiveProviderConfig(params: {
 
 function buildLiveProviderConfigs(params: {
   candidates: Array<Model>;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): Record<string, ModelProviderConfig> {
   const providers: Record<string, ModelProviderConfig> = {};
   for (const model of params.candidates) {
@@ -4108,10 +4105,7 @@ function buildLiveProviderConfigs(params: {
   return providers;
 }
 
-function buildLiveProviderConfig(params: {
-  model: Model;
-  cfg: OpenClawConfig;
-}): ModelProviderConfig {
+function buildLiveProviderConfig(params: { model: Model; cfg: NovaConfig }): ModelProviderConfig {
   const { model } = params;
   const provider = normalizeProviderId(model.provider);
   const config: ModelProviderConfig = {
@@ -4193,7 +4187,7 @@ function resolveExplicitLiveModelCandidates(params: {
 }
 
 function resolveGatewayLiveModelThinkingLevel(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   model: Model;
   requestedLevel: string;
 }): string {
@@ -4208,7 +4202,7 @@ function resolveGatewayLiveModelThinkingLevel(params: {
     context: {
       provider: model.provider,
       modelId: model.id,
-      agentRuntime: "openclaw",
+      agentRuntime: "nova",
       reasoning: model.reasoning,
       compat: getProviderThinkingModelCompat(model),
     },
@@ -4325,12 +4319,12 @@ function isGatewayLiveThinkingLevel(value: string): value is GatewayLiveThinking
 }
 
 function buildLiveGatewayConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   candidates: Array<Model>;
   liveAgentDir: string;
   liveAgentWorkspaceDir: string;
   providerOverrides?: Record<string, ModelProviderConfig>;
-}): OpenClawConfig {
+}): NovaConfig {
   const providerOverrides = params.providerOverrides ?? {};
   const lmstudioProvider = params.cfg.models?.providers?.lmstudio;
   const baseProviders = params.cfg.models?.providers ?? {};
@@ -4366,7 +4360,7 @@ function buildLiveGatewayConfig(params: {
       workspace: params.liveAgentWorkspaceDir,
       sandbox: { mode: "off" },
     },
-  ] satisfies NonNullable<OpenClawConfig["agents"]>["list"];
+  ] satisfies NonNullable<NovaConfig["agents"]>["list"];
   const baseModels = params.cfg.models;
   return {
     ...params.cfg,
@@ -4386,7 +4380,7 @@ function buildLiveGatewayConfig(params: {
         models: Object.fromEntries(
           params.candidates.map((m) => [
             `${m.provider}/${m.id}`,
-            { agentRuntime: { id: "openclaw" as const } },
+            { agentRuntime: { id: "nova" as const } },
           ]),
         ),
       },
@@ -4399,9 +4393,9 @@ function buildLiveGatewayConfig(params: {
 }
 
 async function sanitizeAuthConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir: string;
-}): Promise<OpenClawConfig["auth"] | undefined> {
+}): Promise<NovaConfig["auth"] | undefined> {
   const auth = params.cfg.auth;
   if (!auth) {
     return auth;
@@ -4410,7 +4404,7 @@ async function sanitizeAuthConfig(params: {
     allowKeychainPrompt: false,
   });
 
-  let profiles: NonNullable<OpenClawConfig["auth"]>["profiles"] | undefined;
+  let profiles: NonNullable<NovaConfig["auth"]>["profiles"] | undefined;
   if (auth.profiles) {
     profiles = {};
     for (const [profileId, profile] of Object.entries(auth.profiles)) {
@@ -4450,7 +4444,7 @@ async function sanitizeAuthConfig(params: {
 }
 
 function buildMinimaxProviderOverride(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   api: "openai-completions" | "anthropic-messages";
   baseUrl: string;
 }): ModelProviderConfig | null {
@@ -4536,7 +4530,7 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
       lastGood: hostStore.lastGood ? { ...hostStore.lastGood } : undefined,
       usageStats: hostStore.usageStats ? { ...hostStore.usageStats } : undefined,
     });
-    const tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-state-"));
+    const tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-state-"));
     cleanupTempStateDir = tempStateDir;
     setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
     const tempAgentDir: string | undefined = path.join(
@@ -4555,9 +4549,9 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
 
     const workspaceDir = path.join(tempStateDir, "workspace-dev");
     await fs.mkdir(workspaceDir, { recursive: true });
-    await fs.mkdir(path.join(workspaceDir, ".openclaw"), { recursive: true });
+    await fs.mkdir(path.join(workspaceDir, ".nova"), { recursive: true });
     await fs.writeFile(
-      path.join(workspaceDir, ".openclaw", "workspace-state.json"),
+      path.join(workspaceDir, ".nova", "workspace-state.json"),
       `${JSON.stringify(
         {
           version: 1,
@@ -4572,12 +4566,12 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
     const nonceB = randomUUID();
     // Keep probe values out of the path: weak tool callers may echo the filename
     // instead of reading the file, turning nonceA into a false duplicate answer.
-    const toolProbePath = path.join(workspaceDir, ".openclaw-live-tool-probe.txt");
+    const toolProbePath = path.join(workspaceDir, ".nova-live-tool-probe.txt");
     cleanupToolProbePath = toolProbePath;
     await fs.writeFile(toolProbePath, `nonceA=${nonceA}\nnonceB=${nonceB}\n`);
 
     const agentDir = resolveDefaultAgentDir(params.cfg);
-    const sanitizedCfg: OpenClawConfig = {
+    const sanitizedCfg: NovaConfig = {
       ...params.cfg,
       auth: await sanitizeAuthConfig({ cfg: params.cfg, agentDir }),
     };
@@ -4603,9 +4597,9 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
       liveAgentWorkspaceDir: workspaceDir,
       providerOverrides,
     });
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-"));
     cleanupTempDir = tempDir;
-    const tempConfigPath = path.join(tempDir, "openclaw.json");
+    const tempConfigPath = path.join(tempDir, "nova.json");
     await fs.writeFile(tempConfigPath, `${JSON.stringify(nextCfg, null, 2)}\n`);
     setTestEnvValue("NOVA_CONFIG_PATH", tempConfigPath);
 
@@ -5441,7 +5435,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
         const workspaceDir = resolveAgentWorkspaceDir(cfg, DEFAULT_AGENT_ID);
         logProgress("[all-models] preparing models.json");
         const modelsJsonResult = await withGatewayLiveSetupTimeout(
-          ensureOpenClawModelsJson(cfg, undefined, {
+          ensureNovaModelsJson(cfg, undefined, {
             workspaceDir,
             ...(providerList ? { providerDiscoveryProviderIds: providerList } : {}),
           }),
@@ -5701,7 +5695,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
     let tempStateDir: string | undefined;
     try {
       const cfg = getRuntimeConfig();
-      await ensureOpenClawModelsJson(cfg);
+      await ensureNovaModelsJson(cfg);
 
       const agentDir = resolveDefaultAgentDir(cfg);
       const hostStore = ensureAuthProfileStore(agentDir, {
@@ -5731,13 +5725,13 @@ describeLive("gateway live (dev agent, profile keys)", () => {
       }
 
       const agentId = GATEWAY_LIVE_AGENT_ID;
-      tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-zai-state-"));
+      tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-zai-state-"));
       setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
       const workspaceDir = path.join(tempStateDir, "workspace-dev");
       await fs.mkdir(workspaceDir, { recursive: true });
-      await fs.mkdir(path.join(workspaceDir, ".openclaw"), { recursive: true });
+      await fs.mkdir(path.join(workspaceDir, ".nova"), { recursive: true });
       await fs.writeFile(
-        path.join(workspaceDir, ".openclaw", "workspace-state.json"),
+        path.join(workspaceDir, ".nova", "workspace-state.json"),
         `${JSON.stringify(
           {
             version: 1,
@@ -5750,7 +5744,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
       const nonceA = randomUUID();
       const nonceB = randomUUID();
       // Match the broad probe: the filename must not reveal either expected value.
-      toolProbePath = path.join(workspaceDir, ".openclaw-live-zai-fallback.txt");
+      toolProbePath = path.join(workspaceDir, ".nova-live-zai-fallback.txt");
       await fs.writeFile(toolProbePath, `nonceA=${nonceA}\nnonceB=${nonceB}\n`);
 
       const sanitizedStore = sanitizeAuthProfileStoreForLiveGateway({
@@ -5764,7 +5758,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
       saveAuthProfileStore(sanitizedStore, tempAgentDir);
       setTestEnvValue("NOVA_AGENT_DIR", tempAgentDir);
 
-      const sanitizedCfg: OpenClawConfig = {
+      const sanitizedCfg: NovaConfig = {
         ...cfg,
         auth: await sanitizeAuthConfig({ cfg, agentDir }),
       };
@@ -5774,8 +5768,8 @@ describeLive("gateway live (dev agent, profile keys)", () => {
         liveAgentDir: tempAgentDir,
         liveAgentWorkspaceDir: workspaceDir,
       });
-      tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-zai-"));
-      const tempConfigPath = path.join(tempDir, "openclaw.json");
+      tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-zai-"));
+      const tempConfigPath = path.join(tempDir, "nova.json");
       await fs.writeFile(tempConfigPath, `${JSON.stringify(nextCfg, null, 2)}\n`);
       setTestEnvValue("NOVA_CONFIG_PATH", tempConfigPath);
       clearRuntimeConfigSnapshot();

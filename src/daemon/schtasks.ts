@@ -198,7 +198,7 @@ function buildScheduledTaskXml(params: {
 }
 
 async function writeTaskXmlTempFile(xml: string): Promise<string> {
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-task-xml-"));
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-task-xml-"));
   const xmlPath = path.join(tmpDir, "task.xml");
   // schtasks /XML expects UTF-16 LE with BOM; Node's "utf16le" Buffer plus a
   // manual FFFE BOM matches what Task Scheduler import accepts on all locales.

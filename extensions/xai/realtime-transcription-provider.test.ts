@@ -13,11 +13,11 @@ const { isProviderAuthProfileConfiguredMock, resolveApiKeyForProviderMock } = vi
   ),
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth", () => ({
+vi.mock("nova/plugin-sdk/provider-auth", () => ({
   isProviderAuthProfileConfigured: isProviderAuthProfileConfiguredMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth-runtime", () => ({
+vi.mock("nova/plugin-sdk/provider-auth-runtime", () => ({
   resolveApiKeyForProvider: resolveApiKeyForProviderMock,
 }));
 
@@ -66,7 +66,7 @@ async function createRealtimeSttServer(params?: {
           ws.send(
             JSON.stringify({
               type: "transcript.partial",
-              text: "hello openclaw",
+              text: "hello nova",
               is_final: false,
               speech_final: false,
             }),
@@ -74,7 +74,7 @@ async function createRealtimeSttServer(params?: {
           ws.send(
             JSON.stringify({
               type: "transcript.partial",
-              text: "hello openclaw final",
+              text: "hello nova final",
               is_final: true,
               speech_final: true,
             }),
@@ -83,7 +83,7 @@ async function createRealtimeSttServer(params?: {
         }
         const event = JSON.parse(buffer.toString()) as { type?: string };
         if (event.type === "audio.done") {
-          ws.send(JSON.stringify({ type: "transcript.done", text: "hello openclaw final" }));
+          ws.send(JSON.stringify({ type: "transcript.done", text: "hello nova final" }));
           done();
           resolveDone?.();
         }
@@ -168,7 +168,7 @@ describe("xai realtime transcription provider", () => {
       resolveFinalTranscript = resolve;
     });
     const onTranscript = vi.fn((text: string) => {
-      if (text === "hello openclaw final") {
+      if (text === "hello nova final") {
         resolveFinalTranscript?.();
       }
     });
@@ -204,7 +204,7 @@ describe("xai realtime transcription provider", () => {
     expect(Buffer.concat(binaryFrames).toString()).toContain("queued-before-ready");
     expect(Buffer.concat(binaryFrames).toString()).toContain("after-ready");
     expect(onSpeechStart).toHaveBeenCalled();
-    expect(onPartial).toHaveBeenCalledWith("hello openclaw");
+    expect(onPartial).toHaveBeenCalledWith("hello nova");
     vi.unstubAllEnvs();
   });
 

@@ -7,7 +7,7 @@ import {
   releasePinnedPluginChannelRegistry,
   setActivePluginRegistry,
 } from "../../plugins/runtime.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import { createTestRegistry } from "../../test-utils/channel-plugins.js";
 import { createTrackedTempDirs } from "../../test-utils/tracked-temp-dirs.js";
 import {
@@ -129,7 +129,7 @@ describe("session binding service", () => {
 
   beforeEach(async () => {
     previousStateDir = process.env.NOVA_STATE_DIR;
-    testStateDir = await tempDirs.make("openclaw-session-binding-");
+    testStateDir = await tempDirs.make("nova-session-binding-");
     process.env.NOVA_STATE_DIR = testStateDir;
     testing.resetSessionBindingAdaptersForTests();
     setMinimalCurrentConversationRegistry();
@@ -137,7 +137,7 @@ describe("session binding service", () => {
 
   afterEach(async () => {
     testing.resetSessionBindingAdaptersForTests();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     if (previousStateDir == null) {
       delete process.env.NOVA_STATE_DIR;
     } else {

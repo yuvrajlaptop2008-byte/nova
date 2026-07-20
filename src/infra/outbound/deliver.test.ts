@@ -14,7 +14,7 @@ import type {
   ChannelMessageSendTextContext,
 } from "../../channels/message/types.js";
 import type { ChannelOutboundAdapter } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { SessionTranscriptAppendResult } from "../../config/sessions/transcript.js";
 import * as mediaCapabilityModule from "../../media/read-capability.js";
 import { createHookRunner } from "../../plugins/hooks.js";
@@ -38,7 +38,7 @@ import {
   type DiagnosticEventPayload,
 } from "../diagnostic-events.js";
 import { retryAsync } from "../retry.js";
-import { resolvePreferredOpenClawTmpDir } from "../tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../tmp-nova-dir.js";
 import { PlatformMessageNotDispatchedError } from "./deliver-types.js";
 
 const mocks = vi.hoisted(() => ({
@@ -149,11 +149,11 @@ let deliverOutboundPayloads: DeliverModule["deliverOutboundPayloads"];
 let deliverOutboundPayloadsInternal: DeliverModule["deliverOutboundPayloadsInternal"];
 let resolveOutboundDurableFinalDeliverySupport: DeliverModule["resolveOutboundDurableFinalDeliverySupport"];
 
-const matrixChunkConfig: OpenClawConfig = {
-  channels: { matrix: { textChunkLimit: 4000 } } as OpenClawConfig["channels"],
+const matrixChunkConfig: NovaConfig = {
+  channels: { matrix: { textChunkLimit: 4000 } } as NovaConfig["channels"],
 };
 
-const expectedPreferredTmpRoot = resolvePreferredOpenClawTmpDir();
+const expectedPreferredTmpRoot = resolvePreferredNovaTmpDir();
 
 type DeliverOutboundArgs = Parameters<DeliverModule["deliverOutboundPayloads"]>[0];
 type DeliverOutboundPayload = DeliverOutboundArgs["payloads"][number];
@@ -246,7 +246,7 @@ const matrixOutboundForTest: ChannelOutboundAdapter = {
 async function deliverMatrixPayload(params: {
   sendMatrix: MatrixSendFn;
   payload: DeliverOutboundPayload;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }) {
   return deliverOutboundPayloads({
     cfg: params.cfg ?? matrixChunkConfig,
@@ -264,8 +264,8 @@ async function runChunkedMatrixDelivery(params?: {
     .fn()
     .mockResolvedValueOnce({ messageId: "m1", roomId: "!room:example" })
     .mockResolvedValueOnce({ messageId: "m2", roomId: "!room:example" });
-  const cfg: OpenClawConfig = {
-    channels: { matrix: { textChunkLimit: 2 } } as OpenClawConfig["channels"],
+  const cfg: NovaConfig = {
+    channels: { matrix: { textChunkLimit: 2 } } as NovaConfig["channels"],
   };
   const results = await deliverOutboundPayloads({
     cfg,
@@ -302,7 +302,7 @@ async function runBestEffortPartialFailureDelivery(params?: { onError?: boolean 
     .mockRejectedValueOnce(new Error("fail"))
     .mockResolvedValueOnce({ messageId: "m2", roomId: "!room:example" });
   const onError = vi.fn();
-  const cfg: OpenClawConfig = {};
+  const cfg: NovaConfig = {};
   const results = await deliverOutboundPayloads({
     cfg,
     channel: "matrix",
@@ -900,7 +900,7 @@ describe("deliverOutboundPayloads", () => {
       .mockResolvedValueOnce({ messageId: "chunk-2" });
 
     await deliverOutboundPayloads({
-      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as OpenClawConfig,
+      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as NovaConfig,
       channel: "matrix",
       to: "!room:example",
       payloads: [{ text: "abcd" }],
@@ -2620,7 +2620,7 @@ describe("deliverOutboundPayloads", () => {
               },
             },
           },
-        } as OpenClawConfig["channels"],
+        } as NovaConfig["channels"],
       },
       channel: "matrix",
       to: "!room:example",
@@ -2829,7 +2829,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     const results = await deliverOutboundPayloads({
-      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as OpenClawConfig,
+      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as NovaConfig,
       channel: "matrix",
       to: "!room",
       accountId: "default",
@@ -2869,7 +2869,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     await deliverOutboundPayloads({
-      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as OpenClawConfig,
+      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as NovaConfig,
       channel: "matrix",
       to: "!room",
       payloads: [{ text: "abcd" }],
@@ -2916,7 +2916,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     await deliverOutboundPayloads({
-      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as OpenClawConfig,
+      cfg: { channels: { matrix: { textChunkLimit: 2 } } } as NovaConfig,
       channel: "matrix",
       to: "!room",
       payloads: [{ text: "abcd" }],
@@ -3243,7 +3243,7 @@ describe("deliverOutboundPayloads", () => {
       messageId: "context",
       roomId: "!room",
     });
-    const cfg = { channels: { matrix: { enabled: true } } } as unknown as OpenClawConfig;
+    const cfg = { channels: { matrix: { enabled: true } } } as unknown as NovaConfig;
     setActivePluginRegistry(
       createTestRegistry([
         {
@@ -3617,7 +3617,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     const textResults = await deliverOutboundPayloads({
-      cfg: { channels: { line: {} } } as OpenClawConfig,
+      cfg: { channels: { line: {} } } as NovaConfig,
       channel: "line",
       to: "U123",
       accountId: "default",
@@ -3637,7 +3637,7 @@ describe("deliverOutboundPayloads", () => {
       "fmt:hello **boss**:2",
     ]);
 
-    const cfg = { channels: { line: {} } } as OpenClawConfig;
+    const cfg = { channels: { line: {} } } as NovaConfig;
     await deliverOutboundPayloads({
       cfg,
       channel: "line",
@@ -3656,7 +3656,7 @@ describe("deliverOutboundPayloads", () => {
     expect(sendFormattedMediaCall?.mediaLocalRoots).toContain(expectedPreferredTmpRoot);
     expect(
       sendFormattedMediaCall?.mediaLocalRoots?.some((root) =>
-        root.endsWith(path.join(".openclaw", "workspace-work")),
+        root.endsWith(path.join(".nova", "workspace-work")),
       ),
     ).toBe(true);
     expect(sendMedia).not.toHaveBeenCalled();
@@ -3936,7 +3936,7 @@ describe("deliverOutboundPayloads", () => {
     const sendMatrix = vi.fn().mockResolvedValue({ messageId: "m-media", roomId: "!room" });
 
     await deliverOutboundPayloads({
-      cfg: { channels: { matrix: {} } } as OpenClawConfig,
+      cfg: { channels: { matrix: {} } } as NovaConfig,
       channel: "matrix",
       to: "!room:example",
       payloads: [{ text: "hi", mediaUrl: "https://example.com/x.png" }],
@@ -3975,7 +3975,7 @@ describe("deliverOutboundPayloads", () => {
           matrix: {
             allowFrom: ["111", "222", "333"],
           },
-        } as OpenClawConfig["channels"],
+        } as NovaConfig["channels"],
       },
       channel: "matrix",
       to: "!explicit:example",
@@ -4030,7 +4030,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     await deliverOutboundPayloads({
-      cfg: { channels: { matrix: {} } } as OpenClawConfig,
+      cfg: { channels: { matrix: {} } } as NovaConfig,
       channel: "matrix",
       to: "room:!room:example",
       payloads: [{ text: "voice caption", mediaUrl: "file:///tmp/clip.mp3", audioAsVoice: true }],
@@ -4075,7 +4075,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     await deliverOutboundPayloads({
-      cfg: { channels: { matrix: {} } } as OpenClawConfig,
+      cfg: { channels: { matrix: {} } } as NovaConfig,
       channel: "matrix",
       to: "room:!room:example",
       payloads: [
@@ -4118,10 +4118,10 @@ describe("deliverOutboundPayloads", () => {
 
   it("respects newline chunk mode for plugin text without splitting short messages", async () => {
     const sendMatrix = vi.fn().mockResolvedValue({ messageId: "m1", roomId: "!room:example" });
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         matrix: { textChunkLimit: 4000, chunkMode: "newline" },
-      } as OpenClawConfig["channels"],
+      } as NovaConfig["channels"],
     };
 
     await deliverOutboundPayloads({
@@ -4144,10 +4144,10 @@ describe("deliverOutboundPayloads", () => {
       .fn()
       .mockResolvedValueOnce({ messageId: "m1", roomId: "!room:example" })
       .mockResolvedValueOnce({ messageId: "m2", roomId: "!room:example" });
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         matrix: { textChunkLimit: 14, chunkMode: "newline" },
-      } as OpenClawConfig["channels"],
+      } as NovaConfig["channels"],
     };
 
     await deliverOutboundPayloads({
@@ -4200,7 +4200,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     await deliverOutboundPayloads({
-      cfg: { channels: { matrix: { textChunkLimit: 4000 } } } as OpenClawConfig,
+      cfg: { channels: { matrix: { textChunkLimit: 4000 } } } as NovaConfig,
       channel: "matrix",
       to: "!room",
       payloads: [{ text: "abcd" }],
@@ -4246,7 +4246,7 @@ describe("deliverOutboundPayloads", () => {
     );
 
     await deliverOutboundPayloadsInternal({
-      cfg: { channels: { matrix: { textChunkLimit: 4000 } } } as OpenClawConfig,
+      cfg: { channels: { matrix: { textChunkLimit: 4000 } } } as NovaConfig,
       channel: "matrix",
       to: "!room",
       payloads: [{ text: "line one\nline two" }],
@@ -4362,7 +4362,7 @@ describe("deliverOutboundPayloads", () => {
       ]),
     );
 
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: { matrix: { textChunkLimit: 4000, chunkMode: "newline" } },
     };
     const text = "```js\nconst a = 1;\nconst b = 2;\n```\nAfter";
@@ -4429,7 +4429,7 @@ describe("deliverOutboundPayloads", () => {
         },
       ]),
     );
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: { defaults: { mediaMaxMb: 3 } },
     };
 
@@ -4922,10 +4922,10 @@ describe("deliverOutboundPayloads", () => {
     // same capability the live send resolves, so a fabricated localRoots here
     // would hide whether the two gates agree.
     const sourceDir = await fsPromises.realpath(
-      await fsPromises.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "deliver-spool-")),
+      await fsPromises.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "deliver-spool-")),
     );
     const stateDir = await fsPromises.realpath(
-      await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-deliver-spool-state-")),
+      await fsPromises.mkdtemp(path.join(os.tmpdir(), "nova-deliver-spool-state-")),
     );
     const previousStateDir = process.env.NOVA_STATE_DIR;
     // Real MPEG-1 Layer III frames: host-local media sends are buffer-verified,
@@ -4988,12 +4988,12 @@ describe("deliverOutboundPayloads", () => {
     const workspaceOnlyConfig = {
       ...matrixChunkConfig,
       tools: { fs: { workspaceOnly: true } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     // Deliberately outside the Nova temp root: that root is itself a default
     // media root, so a state dir inside it would admit the source by containment
     // and hide whether the agent-scoped capability is what grants access.
     const stateDir = await fsPromises.realpath(
-      await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-deliver-ws-")),
+      await fsPromises.mkdtemp(path.join(os.tmpdir(), "nova-deliver-ws-")),
     );
     const previousStateDir = process.env.NOVA_STATE_DIR;
     const workspaceDir = path.join(stateDir, "workspace-proofagent");
@@ -5116,7 +5116,7 @@ describe("deliverOutboundPayloads", () => {
 
   it("suppresses direct silent replies from the outbound session", async () => {
     const sendMatrix = vi.fn().mockResolvedValue({ messageId: "m-silent", roomId: "!room" });
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           silentReply: {
@@ -5160,7 +5160,7 @@ describe("deliverOutboundPayloads", () => {
   });
 
   it("bails out without sending when a concurrent drain already claimed the queue entry", async () => {
-    // Regression for openclaw/openclaw#70386: if a reconnect or startup drain
+    // Regression for nova/nova#70386: if a reconnect or startup drain
     // observes the newly enqueued entry and claims it before the live send
     // path claims it, the live path must not send. The drain already owns
     // ack/fail for that id; sending here would duplicate the outbound and
@@ -5188,7 +5188,7 @@ describe("deliverOutboundPayloads", () => {
     const sendMatrix = vi.fn().mockResolvedValue({ messageId: "m1", roomId: "!room:example" });
     const abortController = new AbortController();
     abortController.abort();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
 
     await expect(
       deliverOutboundPayloads({
@@ -5209,7 +5209,7 @@ describe("deliverOutboundPayloads", () => {
   it("passes normalized payload to onError", async () => {
     const sendMatrix = vi.fn().mockRejectedValue(new Error("boom"));
     const onError = vi.fn();
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
 
     await deliverOutboundPayloads({
       cfg,
@@ -5249,7 +5249,7 @@ describe("deliverOutboundPayloads", () => {
     );
     mocks.appendAssistantMessageToSessionTranscript.mockClear();
 
-    const cfg = { channels: { line: {} } } as OpenClawConfig;
+    const cfg = { channels: { line: {} } } as NovaConfig;
     await deliverOutboundPayloads({
       cfg,
       channel: "line",

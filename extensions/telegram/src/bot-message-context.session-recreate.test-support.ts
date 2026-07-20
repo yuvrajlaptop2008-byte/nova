@@ -4,13 +4,13 @@ import path from "node:path";
 import {
   clearRuntimeConfigSnapshot,
   setRuntimeConfigSnapshot,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
+} from "nova/plugin-sdk/runtime-config-snapshot";
 import {
   deleteSessionEntry,
   getSessionEntry,
   upsertSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/session-store-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { buildTelegramMessageContextForTest } from "./bot-message-context.test-harness.js";
 
@@ -21,7 +21,7 @@ function createSuiteTempRootTracker(params: { prefix: string }) {
   const children: string[] = [];
   return {
     async setup() {
-      root = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), params.prefix));
+      root = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), params.prefix));
     },
     async make(name: string) {
       if (!root) {
@@ -46,7 +46,7 @@ function createSuiteTempRootTracker(params: { prefix: string }) {
 
 describe("Telegram direct session recreation after delete", () => {
   const suiteRootTracker = createSuiteTempRootTracker({
-    prefix: "openclaw-telegram-context-recreate-",
+    prefix: "nova-telegram-context-recreate-",
   });
 
   beforeAll(async () => {
@@ -68,7 +68,7 @@ describe("Telegram direct session recreation after delete", () => {
       agents: {
         defaults: {
           model: "openai/gpt-5.4",
-          workspace: "/tmp/openclaw",
+          workspace: "/tmp/nova",
         },
       },
       channels: { telegram: {} },

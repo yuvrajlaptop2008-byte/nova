@@ -2,12 +2,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
 import { createTrackedTempDirs } from "../test-utils/tracked-temp-dirs.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "./kysely-sync.js";
 import {
@@ -21,10 +21,10 @@ const tempDirs = createTrackedTempDirs();
 const APNS_DEVICE_FIELD = "token";
 const APNS_DEVICE_IDENTIFIER = "ABCD1234ABCD1234ABCD1234ABCD1234";
 
-type TestDatabase = Pick<OpenClawStateKyselyDatabase, "apns_registrations">;
+type TestDatabase = Pick<NovaStateKyselyDatabase, "apns_registrations">;
 
 async function makeTempDir(): Promise<string> {
-  return await tempDirs.make("openclaw-push-apns-store-test-");
+  return await tempDirs.make("nova-push-apns-store-test-");
 }
 
 async function registerDirectApnsRegistration(params: {
@@ -36,7 +36,7 @@ async function registerDirectApnsRegistration(params: {
 }) {
   return await registerApnsRegistration({
     [APNS_DEVICE_FIELD]: APNS_DEVICE_IDENTIFIER,
-    topic: "ai.openclaw.ios",
+    topic: "ai.nova.ios",
     ...params,
     transport: "direct",
   });
@@ -48,7 +48,7 @@ function databaseEnv(baseDir: string): NodeJS.ProcessEnv {
 
 afterEach(async () => {
   vi.useRealTimers();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   await tempDirs.cleanup();
 });
 
@@ -78,7 +78,7 @@ describe("push APNs registration store", () => {
           "legacy-node": {
             nodeId: "legacy-node",
             [APNS_DEVICE_FIELD]: APNS_DEVICE_IDENTIFIER,
-            topic: "ai.openclaw.ios",
+            topic: "ai.nova.ios",
             environment: "sandbox",
             updatedAtMs: 1,
           },
@@ -99,17 +99,17 @@ describe("push APNs registration store", () => {
       relayHandle: "relay-handle-123",
       sendGrant: "send-grant-123",
       installationId: "install-123",
-      topic: "ai.openclaw.ios",
+      topic: "ai.nova.ios",
       environment: "sandbox",
       distribution: "official",
-      relayOrigin: "https://ios-push-relay-sandbox.openclaw.ai/",
+      relayOrigin: "https://ios-push-relay-sandbox.nova.ai/",
       tokenDebugSuffix: " abcd-1234 ",
       baseDir,
     });
 
     await expect(loadApnsRegistration("ios-node-relay", baseDir)).resolves.toEqual({
       ...relay,
-      relayOrigin: "https://ios-push-relay-sandbox.openclaw.ai",
+      relayOrigin: "https://ios-push-relay-sandbox.nova.ai",
       tokenDebugSuffix: "abcd1234",
     });
   });
@@ -123,7 +123,7 @@ describe("push APNs registration store", () => {
       relayHandle: "relay-handle-123",
       sendGrant: "send-grant-123",
       installationId: "install-123",
-      topic: "ai.openclaw.ios",
+      topic: "ai.nova.ios",
       environment: "production",
       distribution: "official",
       baseDir,
@@ -137,7 +137,7 @@ describe("push APNs registration store", () => {
       throw new Error("expected direct APNs registration");
     }
 
-    const database = openOpenClawStateDatabase({ env: databaseEnv(baseDir) });
+    const database = openNovaStateDatabase({ env: databaseEnv(baseDir) });
     const row = database.db
       .prepare("SELECT * FROM apns_registrations WHERE node_id = ?")
       .get("ios-node-switch") as Record<string, unknown>;
@@ -156,7 +156,7 @@ describe("push APNs registration store", () => {
   it("preserves request order, duplicates, and batches above the SQLite bind chunk", async () => {
     const baseDir = await makeTempDir();
     const env = databaseEnv(baseDir);
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<TestDatabase>(db);
         for (let index = 0; index < 505; index += 1) {
@@ -171,7 +171,7 @@ describe("push APNs registration store", () => {
               send_grant: null,
               installation_id: null,
               relay_origin: null,
-              topic: "ai.openclaw.ios",
+              topic: "ai.nova.ios",
               environment: "sandbox",
               distribution: null,
               token_debug_suffix: null,
@@ -218,7 +218,7 @@ describe("push APNs registration store", () => {
         baseDir,
       }),
     ).resolves.toBe(true);
-    const database = openOpenClawStateDatabase({ env: databaseEnv(baseDir) });
+    const database = openNovaStateDatabase({ env: databaseEnv(baseDir) });
     expect(
       database.db
         .prepare(
@@ -268,7 +268,7 @@ describe("push APNs registration store", () => {
         relayHandle: "relay-handle-123",
         sendGrant: "send-grant-123",
         installationId: "install-123",
-        topic: "ai.openclaw.ios",
+        topic: "ai.nova.ios",
         environment: "staging",
         distribution: "official",
         baseDir,
@@ -281,7 +281,7 @@ describe("push APNs registration store", () => {
         relayHandle: oversized,
         sendGrant: "send-grant-123",
         installationId: "install-123",
-        topic: "ai.openclaw.ios",
+        topic: "ai.nova.ios",
         environment: "production",
         distribution: "official",
         baseDir,
@@ -292,13 +292,13 @@ describe("push APNs registration store", () => {
   it("fails loudly for a malformed canonical row", async () => {
     const baseDir = await makeTempDir();
     const env = databaseEnv(baseDir);
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         db.prepare(
           `INSERT INTO apns_registrations (
              node_id, transport, topic, environment, updated_at_ms
            ) VALUES (?, ?, ?, ?, ?)`,
-        ).run("corrupt-node", "unknown", "ai.openclaw.ios", "sandbox", 1);
+        ).run("corrupt-node", "unknown", "ai.nova.ios", "sandbox", 1);
       },
       { env },
     );

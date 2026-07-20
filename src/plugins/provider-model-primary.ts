@@ -3,10 +3,10 @@ import {
   normalizeAgentModelMapForConfig,
   normalizeAgentModelRefForConfig,
 } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 /** Applies a primary model to agent defaults while preserving model fallback metadata. */
-export function applyPrimaryModel(cfg: OpenClawConfig, model: string): OpenClawConfig {
+export function applyPrimaryModel(cfg: NovaConfig, model: string): NovaConfig {
   const normalizedModel = normalizeAgentModelRefForConfig(model);
   const defaults = cfg.agents?.defaults;
   const existingModel = defaults?.model;

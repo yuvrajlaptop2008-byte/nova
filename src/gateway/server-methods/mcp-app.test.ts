@@ -121,7 +121,7 @@ describe("MCP App gateway bridge", () => {
     mocks.restoreMcpAppView.mockReset().mockResolvedValue(undefined);
     mocks.createMcpAppStandaloneTicket.mockReset().mockReturnValue({
       ticket: "ticket",
-      url: "/__openclaw__/mcp-app#ticket",
+      url: "/__nova__/mcp-app#ticket",
       expiresAtMs: 1_800_000_120_000,
     });
   });
@@ -139,7 +139,7 @@ describe("MCP App gateway bridge", () => {
         sandboxOrigin: "https://apps.example.com",
         html: "<html>demo</html>",
         toolInput: { city: "Paris" },
-        standaloneUrl: "/__openclaw__/mcp-app#ticket",
+        standaloneUrl: "/__nova__/mcp-app#ticket",
         standaloneExpiresAtMs: 1_800_000_120_000,
         messageSupported: true,
         updateModelContextSupported: true,

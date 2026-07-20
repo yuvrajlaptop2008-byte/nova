@@ -91,12 +91,12 @@ describe("AppSidebar agent chip", () => {
     expect(childRows.every((row) => row.querySelector(".session-row-actions") === null)).toBe(true);
     expect(sidebar.querySelector('[aria-label="Done"]')).not.toBeNull();
     const runtimeStartMs = (
-      sidebar.querySelector('[data-session-key="agent:main:child-one"] openclaw-elapsed-time') as
+      sidebar.querySelector('[data-session-key="agent:main:child-one"] nova-elapsed-time') as
         | (HTMLElement & { startMs: number })
         | null
     )?.startMs;
     const childTrail = childRows[0]?.querySelector<HTMLElement>(".session-row-trail");
-    expect(childTrail?.querySelector("openclaw-elapsed-time")).not.toBeNull();
+    expect(childTrail?.querySelector("nova-elapsed-time")).not.toBeNull();
     expect(childRows[0]?.querySelector("a")?.getAttribute("aria-describedby")).toBe(childTrail?.id);
     expect(runtimeStartMs).toBeGreaterThan(Date.now() - 31_000);
     expect(runtimeStartMs).toBeLessThan(Date.now() - 29_000);

@@ -5,7 +5,7 @@ import {
   loadBundledPluginManifestRegistry,
   loadPluginManifestRegistry,
 } from "../plugins/manifest-registry.js";
-import type { OpenClawConfig } from "./config-contracts.js";
+import type { NovaConfig } from "./config-contracts.js";
 import {
   loadBundledPluginPublicSurfaceModuleSync,
   tryLoadActivatedBundledPluginPublicSurfaceModuleSync,
@@ -95,9 +95,7 @@ type QaRunnerTransportAdapterDefinition = {
     events: Array<{ cursor: number; kind: "sent" | "edited" | "deleted"; message: QaBusMessage }>;
     final: QaBusMessage;
   }>;
-  createGatewayConfig: (params: {
-    baseUrl: string;
-  }) => Pick<OpenClawConfig, "channels" | "messages">;
+  createGatewayConfig: (params: { baseUrl: string }) => Pick<NovaConfig, "channels" | "messages">;
   waitReady: (params: {
     gateway: {
       call: (
@@ -122,7 +120,7 @@ type QaRunnerTransportAdapterDefinition = {
   handleAction: (params: {
     action: "delete" | "edit" | "react" | "thread-create";
     args: Record<string, unknown>;
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId?: string | null;
   }) => Promise<unknown>;
   createReportNotes: (params: {
@@ -328,7 +326,7 @@ export function listQaRunnerCliContributions(): readonly QaRunnerCliContribution
       }
       if (!registration) {
         throw new Error(
-          `QA runner plugin "${plugin.id}" declared "${runner.commandName}" in openclaw.plugin.json but did not export a matching CLI registration`,
+          `QA runner plugin "${plugin.id}" declared "${runner.commandName}" in nova.plugin.json but did not export a matching CLI registration`,
         );
       }
       const adapterFactory = registration.adapterFactory;
@@ -354,7 +352,7 @@ export function listQaRunnerCliContributions(): readonly QaRunnerCliContribution
     for (const commandName of runtimeRegistrationByCommandName?.keys() ?? []) {
       if (!declaredCommandNames.has(commandName)) {
         throw new Error(
-          `QA runner plugin "${plugin.id}" exported "${commandName}" from runtime-api.js but did not declare it in openclaw.plugin.json`,
+          `QA runner plugin "${plugin.id}" exported "${commandName}" from runtime-api.js but did not declare it in nova.plugin.json`,
         );
       }
     }

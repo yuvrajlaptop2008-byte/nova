@@ -5,12 +5,12 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+} from "../../state/nova-state-db.js";
 import { createTestRegistry } from "../../test-utils/channel-plugins.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../kysely-sync.js";
 import {
@@ -25,7 +25,7 @@ import {
 import type { SessionBindingRecord } from "./session-binding.types.js";
 
 type CurrentConversationBindingDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "current_conversation_bindings"
 >;
 
@@ -64,7 +64,7 @@ function buildConversationKey(ref: SessionBindingRecord["conversation"]): string
 }
 
 function seedPersistedBinding(record: SessionBindingRecord): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runNovaStateWriteTransaction(({ db }) => {
     const bindingDb = getNodeSqliteKysely<CurrentConversationBindingDatabase>(db);
     executeSqliteQuerySync(
       db,
@@ -132,7 +132,7 @@ function setMinimalCurrentConversationRegistry(): void {
 }
 
 async function withReadOnlyStateDatabase<T>(run: () => T | Promise<T>): Promise<T> {
-  const { db } = openOpenClawStateDatabase();
+  const { db } = openNovaStateDatabase();
   db.exec("PRAGMA query_only = ON");
   try {
     return await run();
@@ -176,7 +176,7 @@ describe("generic current-conversation bindings", () => {
 
   beforeEach(async () => {
     previousStateDir = process.env.NOVA_STATE_DIR;
-    testStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-current-bindings-"));
+    testStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-current-bindings-"));
     process.env.NOVA_STATE_DIR = testStateDir;
     setMinimalCurrentConversationRegistry();
     testing.resetCurrentConversationBindingsForTests({
@@ -189,7 +189,7 @@ describe("generic current-conversation bindings", () => {
     testing.resetCurrentConversationBindingsForTests({
       deletePersistedFile: true,
     });
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     if (previousStateDir == null) {
       delete process.env.NOVA_STATE_DIR;
     } else {
@@ -555,7 +555,7 @@ describe("generic current-conversation bindings", () => {
         "agent:codex:acp:session-a",
       );
       testing.resetCurrentConversationBindingsForTests();
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       expect(resolveWorkspaceConversation("user:U1")?.targetSessionKey).toBe(
         "agent:codex:acp:session-a",
       );

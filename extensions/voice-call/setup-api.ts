@@ -1,14 +1,14 @@
 // Voice Call API module exposes the plugin public contract.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/plugin-entry";
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { migrateVoiceCallLegacyConfigInput } from "./src/config-migration.js";
 
 // Setup-time entrypoint for voice-call config migrations.
 
 /** Migrate voice-call plugin config inside the full Nova config object. */
-function migrateVoiceCallPluginConfig(config: OpenClawConfig): {
-  config: OpenClawConfig;
+function migrateVoiceCallPluginConfig(config: NovaConfig): {
+  config: NovaConfig;
   changes: string[];
 } | null {
   const rawVoiceCallConfig = config.plugins?.entries?.["voice-call"]?.config;

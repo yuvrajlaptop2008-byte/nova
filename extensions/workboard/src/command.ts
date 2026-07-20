@@ -4,7 +4,7 @@ import {
   type WorkboardStatus,
 } from "@nova/workboard-contract";
 // Workboard plugin module implements command behavior.
-import type { OpenClawPluginApi } from "../api.js";
+import type { NovaPluginApi } from "../api.js";
 import { resolveWorkboardCardByIdOrPrefix } from "./card-lookup.js";
 import {
   dispatchAndStartWorkboardCards,
@@ -211,7 +211,7 @@ async function handleWorkboardCommand(params: {
 }
 
 export function registerWorkboardCommand(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   store: WorkboardStore;
 }): void {
   params.api.registerCommand({

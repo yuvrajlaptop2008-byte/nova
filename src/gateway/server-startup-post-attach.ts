@@ -4,14 +4,14 @@ import pMap from "p-map";
 import type { CliDeps } from "../cli/deps.types.js";
 import { resolveStateDir } from "../config/paths.js";
 import type { GatewayTailscaleMode } from "../config/types.gateway.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { hasConfiguredInternalHooks } from "../hooks/configured.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { hasRestartSentinel } from "../infra/restart-sentinel.js";
 import type { scheduleGatewayUpdateCheck } from "../infra/update-startup.js";
 import type { getGlobalHookRunner } from "../plugins/hook-runner-global.js";
 import type { PluginHookGatewayCronService } from "../plugins/hook-types.js";
-import type { loadOpenClawPlugins } from "../plugins/loader.js";
+import type { loadNovaPlugins } from "../plugins/loader.js";
 import { getPluginModuleLoaderStats } from "../plugins/plugin-module-loader-cache.js";
 import type { PluginRegistry } from "../plugins/registry.js";
 import type { PluginServicesHandle } from "../plugins/services.js";
@@ -131,7 +131,7 @@ function shouldSkipStartupModelPrewarm(env: NodeJS.ProcessEnv = process.env): bo
   return raw === "1" || raw === "true" || raw === "yes" || raw === "on";
 }
 
-function resolveGatewayMemoryStartupPolicy(cfg: OpenClawConfig): GatewayMemoryStartupPolicy {
+function resolveGatewayMemoryStartupPolicy(cfg: NovaConfig): GatewayMemoryStartupPolicy {
   if (cfg.memory?.backend !== "qmd") {
     return { mode: "off" };
   }
@@ -151,7 +151,7 @@ function resolveGatewayMemoryStartupPolicy(cfg: OpenClawConfig): GatewayMemorySt
 }
 
 function scheduleGatewayMemoryBackend(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   log: { warn: (msg: string) => void };
   policy: GatewayMemoryStartupPolicy;
 }): void {
@@ -194,7 +194,7 @@ function schedulePostAttachUpdateSentinelRefresh(params: {
 }
 
 function scheduleProviderAuthStatePrewarm(params: {
-  getConfig: () => OpenClawConfig;
+  getConfig: () => NovaConfig;
   log: {
     info: (msg: string) => void;
     warn: (msg: string) => void;
@@ -321,7 +321,7 @@ function scheduleProviderAuthStatePrewarm(params: {
 }
 
 function scheduleAgentRuntimePluginPrewarm(params: {
-  getConfig: () => OpenClawConfig;
+  getConfig: () => NovaConfig;
   workspaceDir: string;
   startupTrace?: GatewayStartupTrace;
   log: {
@@ -431,7 +431,7 @@ type MarkRestartAbortedMainSessionsFromLocks =
 
 async function cleanupStaleSessionLocks(params: {
   sessionDirs: readonly string[];
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   log: { warn: (msg: string) => void };
   isStopped: () => boolean;
   cleanStaleLockFiles: CleanStaleLockFiles;
@@ -478,7 +478,7 @@ async function cleanupStaleSessionLocks(params: {
 }
 
 function scheduleTranscriptsAutoStartSidecar(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   startupTrace?: GatewayStartupTrace;
   log: { warn: (msg: string) => void };
 }): GatewayPostReadySidecarHandle {
@@ -520,7 +520,7 @@ async function refreshLatestUpdateRestartSentinelIfPresent(): Promise<Awaited<
   return await (await loadGatewayRestartSentinelModule()).refreshLatestUpdateRestartSentinel();
 }
 
-function hasGatewayStartHooks(pluginRegistry: ReturnType<typeof loadOpenClawPlugins>): boolean {
+function hasGatewayStartHooks(pluginRegistry: ReturnType<typeof loadNovaPlugins>): boolean {
   return pluginRegistry.typedHooks.some((hook) => hook.hookName === "gateway_start");
 }
 
@@ -557,7 +557,7 @@ async function waitForAcpRuntimeBackendReady(params: {
 }
 
 async function prewarmConfiguredPrimaryModel(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   log: { warn: (msg: string) => void };
 }): Promise<void> {
@@ -565,7 +565,7 @@ async function prewarmConfiguredPrimaryModel(params: {
 }
 
 async function publishConfiguredModelRuntimeSnapshots(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   log: { warn: (msg: string) => void };
 }): Promise<void> {
@@ -579,7 +579,7 @@ async function publishConfiguredModelRuntimeSnapshots(params: {
 
 async function publishStartupModelRuntime(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     workspaceDir?: string;
     log: { warn: (msg: string) => void };
   },
@@ -593,8 +593,8 @@ async function publishStartupModelRuntime(
 
 /** Start post-ready sidecars such as channels, hooks, plugin services, and cleanup tasks. */
 export async function startGatewaySidecars(params: {
-  cfg: OpenClawConfig;
-  pluginRegistry: ReturnType<typeof loadOpenClawPlugins>;
+  cfg: NovaConfig;
+  pluginRegistry: ReturnType<typeof loadNovaPlugins>;
   defaultWorkspaceDir: string;
   deps: CliDeps;
   startChannels: () => Promise<void>;
@@ -933,7 +933,7 @@ const defaultGatewayPostAttachRuntimeDeps: GatewayPostAttachRuntimeDeps = {
 function createDeferredGatewayUpdateCheck(params: {
   startupTrace?: GatewayStartupTrace;
   runtimeDeps: GatewayPostAttachRuntimeDeps;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   log: {
     info: (msg: string) => void;
     warn: (msg: string) => void;
@@ -999,7 +999,7 @@ function createDeferredGatewayUpdateCheck(params: {
 export async function startGatewayPostAttachRuntime(
   params: {
     minimalTestGateway: boolean;
-    cfgAtStart: OpenClawConfig;
+    cfgAtStart: NovaConfig;
     bindHost: string;
     bindHosts: string[];
     port: number;
@@ -1023,9 +1023,9 @@ export async function startGatewayPostAttachRuntime(
       error: (msg: string) => void;
       debug?: (msg: string) => void;
     };
-    gatewayPluginConfigAtStart: OpenClawConfig;
-    activationSourceConfig: OpenClawConfig;
-    pluginRegistry: ReturnType<typeof loadOpenClawPlugins>;
+    gatewayPluginConfigAtStart: NovaConfig;
+    activationSourceConfig: NovaConfig;
+    pluginRegistry: ReturnType<typeof loadNovaPlugins>;
     defaultWorkspaceDir: string;
     deps: CliDeps;
     startChannels: () => Promise<void>;
@@ -1059,12 +1059,12 @@ export async function startGatewayPostAttachRuntime(
     providerAuthPrewarm?: {
       enabled?: boolean;
       delayMs?: number;
-      getConfig?: () => OpenClawConfig;
+      getConfig?: () => NovaConfig;
     };
     agentRuntimePluginPrewarm?: {
       enabled?: boolean;
       delayMs?: number;
-      getConfig?: () => OpenClawConfig;
+      getConfig?: () => NovaConfig;
     };
   },
   runtimeDeps: GatewayPostAttachRuntimeDeps = defaultGatewayPostAttachRuntimeDeps,

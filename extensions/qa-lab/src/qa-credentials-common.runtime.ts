@@ -1,6 +1,6 @@
 // Qa Lab plugin module implements qa credentials common behavior.
-import { isLoopbackHost } from "openclaw/plugin-sdk/gateway-runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
+import { isLoopbackHost } from "nova/plugin-sdk/gateway-runtime";
+import { parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
 
 export const QA_CREDENTIALS_DEFAULT_ENDPOINT_PREFIX = "/qa-credentials/v1";
 const QA_CREDENTIALS_ALLOW_INSECURE_HTTP_ENV_KEY = "NOVA_QA_ALLOW_INSECURE_HTTP";

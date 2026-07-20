@@ -6,7 +6,7 @@ import path from "node:path";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createMSTeamsConversationStoreState } from "./conversation-store-state.js";
 import type { StoredConversationReference } from "./conversation-store.js";
@@ -24,7 +24,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("filters expired SQLite entries while preserving entries without lastSeenAt", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-msteams-store-"));
     const env: NodeJS.ProcessEnv = {
       ...process.env,
       NOVA_STATE_DIR: stateDir,
@@ -77,12 +77,12 @@ describe("msteams conversation store (plugin state)", () => {
       "19:new@thread.tacv2",
     ]);
     await expect(
-      fs.promises.access(path.join(stateDir, "state", "openclaw.sqlite")),
+      fs.promises.access(path.join(stateDir, "state", "nova.sqlite")),
     ).resolves.toBeUndefined();
   });
 
   it("ignores a stale legacy JSON file at runtime", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-msteams-store-"));
     const env: NodeJS.ProcessEnv = {
       ...process.env,
       NOVA_STATE_DIR: stateDir,
@@ -123,7 +123,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("hashes external conversation ids before using plugin-state keys", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-msteams-store-"));
     const longConversationId = `a:${"x".repeat(900)}`;
     const store = createMSTeamsConversationStoreState({ stateDir });
 
@@ -140,7 +140,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("serializes concurrent upserts so sparse activities preserve independent fields", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-msteams-store-"));
     const store = createMSTeamsConversationStoreState({ stateDir });
 
     await store.upsert("conv-race", {
@@ -174,7 +174,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("keeps newest conversations by lastSeenAt at the row cap", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-msteams-store-"));
     const env: NodeJS.ProcessEnv = { ...process.env, NOVA_STATE_DIR: stateDir };
     const sqliteStore = createPluginStateKeyedStoreForTests<StoredConversationReference>(
       "msteams",
@@ -208,7 +208,7 @@ describe("msteams conversation store (plugin state)", () => {
   });
 
   it("treats timestamp-less conversations as oldest during later cap pruning", async () => {
-    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-store-"));
+    const stateDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-msteams-store-"));
     const env: NodeJS.ProcessEnv = { ...process.env, NOVA_STATE_DIR: stateDir };
     const sqliteStore = createPluginStateKeyedStoreForTests<StoredConversationReference>(
       "msteams",

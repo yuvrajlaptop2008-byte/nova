@@ -1,7 +1,7 @@
 /** Factory for image providers with OpenAI-compatible generation/edit endpoints. */
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { isProviderApiKeyConfigured } from "openclaw/plugin-sdk/provider-auth";
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/provider-auth-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { isProviderApiKeyConfigured } from "nova/plugin-sdk/provider-auth";
+import { resolveApiKeyForProvider } from "nova/plugin-sdk/provider-auth-runtime";
 import {
   assertOkOrThrowHttpError,
   createProviderOperationDeadline,
@@ -11,8 +11,8 @@ import {
   resolveProviderHttpRequestConfig,
   resolveProviderOperationTimeoutMs,
   sanitizeConfiguredModelProviderRequest,
-} from "openclaw/plugin-sdk/provider-http";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/provider-http";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveGeneratedMediaMaxBytes } from "../media/configured-max-bytes.js";
 import {
   parseOpenAiCompatibleImageResponse,
@@ -28,7 +28,7 @@ import type {
 
 // Factory for providers that expose OpenAI-style /images/generations and
 // /images/edits endpoints while still allowing provider-specific bodies.
-type ModelProviderConfig = NonNullable<NonNullable<OpenClawConfig["models"]>["providers"]>[string];
+type ModelProviderConfig = NonNullable<NonNullable<NovaConfig["models"]>["providers"]>[string];
 
 /** OpenAI-compatible image endpoint mode. */
 export type OpenAiCompatibleImageRequestMode = "generate" | "edit";
@@ -92,7 +92,7 @@ export type OpenAiCompatibleImageProviderOptions = {
 };
 
 function readProviderConfig(
-  cfg: OpenClawConfig | undefined,
+  cfg: NovaConfig | undefined,
   providerConfigKey: string,
 ): ModelProviderConfig | undefined {
   return cfg?.models?.providers?.[providerConfigKey];

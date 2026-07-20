@@ -2,13 +2,13 @@
  * Arcee AI provider plugin entry. It supports direct Arcee auth and OpenRouter
  * routing while normalizing OpenRouter model ids and base URLs.
  */
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
+import { createProviderApiKeyAuthMethod } from "nova/plugin-sdk/provider-auth-api-key";
 import {
   readConfiguredProviderCatalogEntries,
   type ProviderCatalogContext,
-} from "openclaw/plugin-sdk/provider-catalog-shared";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-catalog-shared";
+import { buildProviderReplayFamilyHooks } from "nova/plugin-sdk/provider-model-shared";
 import {
   applyArceeConfig,
   applyArceeOpenRouterConfig,

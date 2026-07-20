@@ -1,7 +1,7 @@
 // Utility-model resolution tests cover explicit/disabled/auto settings and
 // provider-declared default derivation.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.types.js";
 import { readUtilityModelSetting, resolveUtilityModelRefForAgent } from "./utility-model.js";
 
@@ -19,22 +19,19 @@ function snapshotWithDefaults(defaults: Record<string, string>): PluginMetadataS
 
 describe("readUtilityModelSetting", () => {
   it("distinguishes unset, explicit, and empty-string disable", () => {
-    expect(readUtilityModelSetting({} as OpenClawConfig, "main")).toEqual({ kind: "auto" });
+    expect(readUtilityModelSetting({} as NovaConfig, "main")).toEqual({ kind: "auto" });
     expect(
       readUtilityModelSetting(
-        { agents: { defaults: { utilityModel: " openai/gpt-5.4-mini " } } } as OpenClawConfig,
+        { agents: { defaults: { utilityModel: " openai/gpt-5.4-mini " } } } as NovaConfig,
         "main",
       ),
     ).toEqual({ kind: "explicit", modelRef: "openai/gpt-5.4-mini" });
     expect(
-      readUtilityModelSetting(
-        { agents: { defaults: { utilityModel: "" } } } as OpenClawConfig,
-        "main",
-      ),
+      readUtilityModelSetting({ agents: { defaults: { utilityModel: "" } } } as NovaConfig, "main"),
     ).toEqual({ kind: "disabled" });
     expect(
       readUtilityModelSetting(
-        { agents: { defaults: { utilityModel: "   " } } } as OpenClawConfig,
+        { agents: { defaults: { utilityModel: "   " } } } as NovaConfig,
         "main",
       ),
     ).toEqual({ kind: "disabled" });
@@ -46,7 +43,7 @@ describe("readUtilityModelSetting", () => {
         defaults: { utilityModel: "openai/gpt-5.4-mini" },
         list: [{ id: "ops", utilityModel: "" }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(readUtilityModelSetting(cfg, "ops")).toEqual({ kind: "disabled" });
     expect(readUtilityModelSetting(cfg, "main")).toEqual({
@@ -65,7 +62,7 @@ describe("resolveUtilityModelRefForAgent", () => {
   it("passes explicit config through untouched", () => {
     const cfg = {
       agents: { defaults: { utilityModel: "openrouter/mistralai/mistral-small" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(resolveUtilityModelRefForAgent({ cfg, agentId: "main", metadataSnapshot })).toBe(
       "openrouter/mistralai/mistral-small",
@@ -73,7 +70,7 @@ describe("resolveUtilityModelRefForAgent", () => {
   });
 
   it("returns undefined when utility routing is disabled", () => {
-    const cfg = { agents: { defaults: { utilityModel: "" } } } as OpenClawConfig;
+    const cfg = { agents: { defaults: { utilityModel: "" } } } as NovaConfig;
 
     expect(
       resolveUtilityModelRefForAgent({ cfg, agentId: "main", metadataSnapshot }),
@@ -83,7 +80,7 @@ describe("resolveUtilityModelRefForAgent", () => {
   it("derives the provider default from the agent's primary model", () => {
     const cfg = {
       agents: { defaults: { model: "anthropic/claude-fable-5" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(resolveUtilityModelRefForAgent({ cfg, agentId: "main", metadataSnapshot })).toBe(
       "anthropic/claude-haiku-4-5",
@@ -93,7 +90,7 @@ describe("resolveUtilityModelRefForAgent", () => {
   it("carries the primary model's auth profile onto the derived default", () => {
     const cfg = {
       agents: { defaults: { model: "openai/gpt-5.5@work" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(resolveUtilityModelRefForAgent({ cfg, agentId: "main", metadataSnapshot })).toBe(
       "openai/gpt-5.6-luna@work",
@@ -103,7 +100,7 @@ describe("resolveUtilityModelRefForAgent", () => {
   it("prefers a caller-resolved primary provider over re-derivation", () => {
     expect(
       resolveUtilityModelRefForAgent({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         agentId: "main",
         primaryProvider: "OpenAI",
         metadataSnapshot,
@@ -114,7 +111,7 @@ describe("resolveUtilityModelRefForAgent", () => {
   it("returns undefined for providers without a declared default", () => {
     const cfg = {
       agents: { defaults: { model: "ollama/llama-4-70b" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveUtilityModelRefForAgent({ cfg, agentId: "main", metadataSnapshot }),

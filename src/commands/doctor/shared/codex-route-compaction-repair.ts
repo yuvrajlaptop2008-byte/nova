@@ -1,6 +1,6 @@
 import { asOptionalRecord as asMutableRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalLowercaseString as normalizeString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import {
   canAutoMigrateLegacyLosslessCompaction,
   collectLegacyLosslessCompactionConfigs,
@@ -31,8 +31,8 @@ import type {
 } from "./codex-route-types.js";
 
 export function rewriteAgentCompactionRefs(params: {
-  cfg: OpenClawConfig;
-  preRepairCfg: OpenClawConfig;
+  cfg: NovaConfig;
+  preRepairCfg: NovaConfig;
   hits: CodexRouteHit[];
   agent: MutableRecord;
   path: string;
@@ -223,7 +223,7 @@ function removeUnsupportedCodexCompactionOverrides(params: {
 }
 
 export function maybeMigrateLegacyLosslessCompactionConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   ignoreLegacyAgentRuntimePins?: boolean;
   env?: NodeJS.ProcessEnv;
 }): string[] {
@@ -308,7 +308,7 @@ export function maybeMigrateLegacyLosslessCompactionConfig(params: {
 }
 
 function preserveMigratedLosslessCodexRuntimePolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   hits: readonly LegacyLosslessCompactionConfig[];
   summaryModel: string | undefined;
   changes: string[];
@@ -374,7 +374,7 @@ function ensureLosslessLlmPolicy(params: {
 }
 
 function removeMigratedLosslessCompactionKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   path: string;
   key: CompactionOverrideKey;
   changes: string[];
@@ -399,10 +399,7 @@ function removeMigratedLosslessCompactionKey(params: {
   }
 }
 
-function readCompactionOwnerForPath(
-  cfg: OpenClawConfig,
-  ownerPath: string,
-): MutableRecord | undefined {
+function readCompactionOwnerForPath(cfg: NovaConfig, ownerPath: string): MutableRecord | undefined {
   if (ownerPath === "agents.defaults") {
     return asMutableRecord(cfg.agents?.defaults);
   }

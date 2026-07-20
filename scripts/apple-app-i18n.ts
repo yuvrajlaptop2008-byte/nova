@@ -42,8 +42,8 @@ const NATIVE_SOURCE_PATH = "apps/.i18n/native-source.json";
 const NATIVE_TRANSLATIONS_DIR = "apps/.i18n/native";
 const IOS_SOURCE_PREFIXES = [
   "apps/ios/",
-  "apps/shared/OpenClawKit/Sources/OpenClawChatUI/",
-  "apps/shared/OpenClawKit/Sources/OpenClawKit/",
+  "apps/shared/NovaKit/Sources/NovaChatUI/",
+  "apps/shared/NovaKit/Sources/NovaKit/",
 ] as const;
 const IOS_CATALOG_KINDS = new Set([
   "conditional-branch",
@@ -143,21 +143,21 @@ const APPLE_LOCALE_DIRECTORIES: Record<string, string> = {
   "zh-TW": "zh-Hant",
 };
 const LOCALIZED_WRAPPER_CONTRACTS: Record<string, readonly string[]> = {
-  "apps/ios/Sources/Design/OpenClawProComponents.swift": [
-    "enum OpenClawTextValue: ExpressibleByStringLiteral",
-    "struct ProSectionHeader: View {\n    let title: OpenClawTextValue",
-    "struct OpenClawNoticeBanner: View {\n    let icon: String\n    let title: OpenClawTextValue\n    let message: OpenClawTextValue",
-    "struct OpenClawAdaptiveHeaderRow<Leading: View, Accessory: View>: View {\n    let title: OpenClawTextValue\n    let subtitle: OpenClawTextValue?",
-    "struct OpenClawStatusBadge: View {\n    @Environment(\\.colorScheme) private var colorScheme\n    let label: OpenClawTextValue",
-    "struct ProMetricTile: View {\n    @Environment(\\.colorScheme) private var colorScheme\n    let title: OpenClawTextValue",
-    "struct ProPanelHeader: View {\n    let title: OpenClawTextValue",
-    "struct ProStatusRow: View {\n    let icon: String\n    let title: OpenClawTextValue\n    let detail: OpenClawTextValue",
+  "apps/ios/Sources/Design/NovaProComponents.swift": [
+    "enum NovaTextValue: ExpressibleByStringLiteral",
+    "struct ProSectionHeader: View {\n    let title: NovaTextValue",
+    "struct NovaNoticeBanner: View {\n    let icon: String\n    let title: NovaTextValue\n    let message: NovaTextValue",
+    "struct NovaAdaptiveHeaderRow<Leading: View, Accessory: View>: View {\n    let title: NovaTextValue\n    let subtitle: NovaTextValue?",
+    "struct NovaStatusBadge: View {\n    @Environment(\\.colorScheme) private var colorScheme\n    let label: NovaTextValue",
+    "struct ProMetricTile: View {\n    @Environment(\\.colorScheme) private var colorScheme\n    let title: NovaTextValue",
+    "struct ProPanelHeader: View {\n    let title: NovaTextValue",
+    "struct ProStatusRow: View {\n    let icon: String\n    let title: NovaTextValue\n    let detail: NovaTextValue",
   ],
   "apps/ios/Sources/Design/SettingsProTabSupport.swift": [
-    "struct SettingsDetailRow: View {\n    let label: LocalizedStringKey\n    let value: OpenClawTextValue",
-    "init(_ label: LocalizedStringKey, value: OpenClawTextValue)",
+    "struct SettingsDetailRow: View {\n    let label: LocalizedStringKey\n    let value: NovaTextValue",
+    "init(_ label: LocalizedStringKey, value: NovaTextValue)",
     "self.value.text",
-    "struct SettingsApprovalItem: Identifiable {\n    let id: String\n    let icon: String\n    let title: OpenClawTextValue\n    let detail: OpenClawTextValue\n    let priority: OpenClawTextValue",
+    "struct SettingsApprovalItem: Identifiable {\n    let id: String\n    let icon: String\n    let title: NovaTextValue\n    let detail: NovaTextValue\n    let priority: NovaTextValue",
     "self.item.title.text",
     "self.item.detail.text",
     "self.item.priority.text",
@@ -170,9 +170,9 @@ const LOCALIZED_WRAPPER_CONTRACTS: Record<string, readonly string[]> = {
     "Text(verbatim: account.detailText)",
   ],
   "apps/ios/Sources/Design/SettingsProTabActions.swift": [
-    "func detailStatusCard(\n        icon: String,\n        title: OpenClawTextValue,\n        detail: OpenClawTextValue,\n        value: OpenClawTextValue",
-    "func diagnosticCheckRow(\n        icon: String,\n        title: OpenClawTextValue,\n        detail: OpenClawTextValue,\n        value: OpenClawTextValue",
-    "pendingApproval.commandPreview.map(OpenClawTextValue.verbatim)",
+    "func detailStatusCard(\n        icon: String,\n        title: NovaTextValue,\n        detail: NovaTextValue,\n        value: NovaTextValue",
+    "func diagnosticCheckRow(\n        icon: String,\n        title: NovaTextValue,\n        detail: NovaTextValue,\n        value: NovaTextValue",
+    "pendingApproval.commandPreview.map(NovaTextValue.verbatim)",
     'format: String(localized: "Agent: %@")',
   ],
   "apps/ios/Sources/Design/SettingsProTabSections.swift": [
@@ -209,21 +209,21 @@ const LOCALIZED_WRAPPER_CONTRACTS: Record<string, readonly string[]> = {
   "apps/ios/Sources/Design/AgentProTab+Overview.swift": [
     "subtitle: .verbatim(self.agentTotalText)",
     'AttributedString(localized: "^[\\(count) agent](inflect: true) total")',
-    "func agentMenuRow(\n        icon: String,\n        title: OpenClawTextValue,\n        detail: OpenClawTextValue",
-    "func metricTile(\n        icon: String,\n        title: OpenClawTextValue,\n        value: String,\n        detail: OpenClawTextValue",
+    "func agentMenuRow(\n        icon: String,\n        title: NovaTextValue,\n        detail: NovaTextValue",
+    "func metricTile(\n        icon: String,\n        title: NovaTextValue,\n        value: String,\n        detail: NovaTextValue",
   ],
   "apps/ios/Sources/Design/AgentProNodesDestination.swift": [
-    "private func nodeDetailRow(\n        _ title: OpenClawTextValue,\n        copyLabel: LocalizedStringKey",
-    "private func nodeListCard(title: OpenClawTextValue, values: [String])",
-    "private func detailMetric(label: OpenClawTextValue, value: String)",
-    "title: OpenClawTextValue,\n        detail: OpenClawTextValue",
+    "private func nodeDetailRow(\n        _ title: NovaTextValue,\n        copyLabel: LocalizedStringKey",
+    "private func nodeListCard(title: NovaTextValue, values: [String])",
+    "private func detailMetric(label: NovaTextValue, value: String)",
+    "title: NovaTextValue,\n        detail: NovaTextValue",
   ],
   "apps/ios/Sources/Design/CommandCenterSupport.swift": [
     "Text(verbatim: self.item.title)",
     "Text(verbatim: self.item.trailing)",
     "Text(verbatim: self.item.detail)",
-    "struct CommandEmptyStateRow: View {\n    let icon: String\n    let title: OpenClawTextValue\n    let detail: OpenClawTextValue",
-    "private func actionButton(\n        _ title: OpenClawTextValue",
+    "struct CommandEmptyStateRow: View {\n    let icon: String\n    let title: NovaTextValue\n    let detail: NovaTextValue",
+    "private func actionButton(\n        _ title: NovaTextValue",
     "self.actionButton(.verbatim(category)",
   ],
   "apps/ios/Sources/Design/IPadSkillWorkshopScreen.swift": [

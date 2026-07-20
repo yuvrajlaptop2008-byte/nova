@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 // Nova gateway methods host the setup/repair conversation for clients.
 import {
   buildSystemAgentSessionInvalidatedErrorDetails,
@@ -44,8 +44,8 @@ import type { GatewayClient, GatewayRequestContext, GatewayRequestHandlers } fro
 import { assertValidParams } from "./validation.js";
 
 /**
- * `openclaw.chat` lets clients (macOS app onboarding, future UIs) run the
- * same conversational setup as `openclaw setup`. Structured setup owns
+ * `nova.chat` lets clients (macOS app onboarding, future UIs) run the
+ * same conversational setup as `nova setup`. Structured setup owns
  * the pre-inference phase; a new chat session starts only after a live model
  * turn succeeds.
  *
@@ -215,7 +215,7 @@ function queueDelegatedApproval(params: {
     decisionPromise,
     respond: () => undefined,
     context: params.context,
-    requestEventName: "openclaw.approval.requested",
+    requestEventName: "nova.approval.requested",
     requestEvent,
     twoPhase: true,
     deliverRequest: () => false,
@@ -236,7 +236,7 @@ function queueDelegatedApproval(params: {
 }
 
 export const systemAgentHandlers: GatewayRequestHandlers = {
-  "openclaw.approval.list": async ({ respond, client, context }) => {
+  "nova.approval.list": async ({ respond, client, context }) => {
     const manager = context.systemAgentApprovalManager;
     respond(
       true,
@@ -244,14 +244,9 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
       undefined,
     );
   },
-  "openclaw.chat.history": ({ params, respond }) => {
+  "nova.chat.history": ({ params, respond }) => {
     if (
-      !assertValidParams(
-        params,
-        validateSystemAgentChatHistoryParams,
-        "openclaw.chat.history",
-        respond,
-      )
+      !assertValidParams(params, validateSystemAgentChatHistoryParams, "nova.chat.history", respond)
     ) {
       return;
     }
@@ -262,14 +257,9 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
     );
   },
   /** Structured onboarding: list reusable AI access on this host. */
-  "openclaw.setup.detect": async ({ params, respond }) => {
+  "nova.setup.detect": async ({ params, respond }) => {
     if (
-      !assertValidParams(
-        params,
-        validateSystemAgentSetupDetectParams,
-        "openclaw.setup.detect",
-        respond,
-      )
+      !assertValidParams(params, validateSystemAgentSetupDetectParams, "nova.setup.detect", respond)
     ) {
       return;
     }
@@ -280,14 +270,9 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
     respond(true, await detectSetupInferenceIsolated(), undefined);
   },
   /** Re-run the exact current default-agent inference route without mutating setup. */
-  "openclaw.setup.verify": async ({ params, respond }) => {
+  "nova.setup.verify": async ({ params, respond }) => {
     if (
-      !assertValidParams(
-        params,
-        validateSystemAgentSetupVerifyParams,
-        "openclaw.setup.verify",
-        respond,
-      )
+      !assertValidParams(params, validateSystemAgentSetupVerifyParams, "nova.setup.verify", respond)
     ) {
       return;
     }
@@ -297,12 +282,12 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
     });
   },
   /** Start one provider-owned OAuth/device-code login over the shared wizard transport. */
-  "openclaw.setup.auth.start": async ({ params, respond, context }) => {
+  "nova.setup.auth.start": async ({ params, respond, context }) => {
     if (
       !assertValidParams(
         params,
         validateSystemAgentSetupAuthStartParams,
-        "openclaw.setup.auth.start",
+        "nova.setup.auth.start",
         respond,
       )
     ) {
@@ -351,12 +336,12 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
     respond(true, { sessionId, done: false, status: "running" }, undefined);
   },
   /** Run one provider-owned prepare flow over the shared wizard transport. */
-  "openclaw.setup.prepare.start": async ({ params, respond, context }) => {
+  "nova.setup.prepare.start": async ({ params, respond, context }) => {
     if (
       !assertValidParams(
         params,
         validateSystemAgentSetupAuthStartParams,
-        "openclaw.setup.prepare.start",
+        "nova.setup.prepare.start",
         respond,
       )
     ) {
@@ -377,10 +362,10 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
             ]);
             const snapshot = await setupShared.readSetupConfigFileSnapshot();
             if (!snapshot.valid) {
-              throw new Error("Config is invalid. Run `openclaw doctor` before preparing a model.");
+              throw new Error("Config is invalid. Run `nova doctor` before preparing a model.");
             }
             // Match the classic wizard: mutate the authored shape, not runtimeConfig,
-            // so setup never writes resolved runtime defaults into openclaw.json.
+            // so setup never writes resolved runtime defaults into nova.json.
             const baseConfig = snapshot.exists ? snapshot.sourceConfig : {};
             const workspaceDir = params.workspace?.trim()
               ? resolveUserPath(params.workspace.trim())
@@ -431,12 +416,12 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
    * queueing work that could outlive their RPC timeout. A failed attempt never
    * commits a broken model, managed plugin install, or setup state.
    */
-  "openclaw.setup.activate": async ({ params, respond }) => {
+  "nova.setup.activate": async ({ params, respond }) => {
     if (
       !assertValidParams(
         params,
         validateSystemAgentSetupActivateParams,
-        "openclaw.setup.activate",
+        "nova.setup.activate",
         respond,
       )
     ) {
@@ -477,8 +462,8 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
       );
     }
   },
-  "openclaw.chat": async ({ params, respond, client, context }) => {
-    if (!assertValidParams(params, validateSystemAgentChatParams, "openclaw.chat", respond)) {
+  "nova.chat": async ({ params, respond, client, context }) => {
+    if (!assertValidParams(params, validateSystemAgentChatParams, "nova.chat", respond)) {
       return;
     }
     await runSystemAgentGatewayTask(async () => {

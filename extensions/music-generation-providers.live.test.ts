@@ -1,14 +1,11 @@
 // Music Generation Providers.Live.Test.Ts tests cover music generation providers plugin behavior.
-import {
-  resolveApiKeyForProvider,
-  resolveDefaultAgentDir,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { resolveApiKeyForProvider, resolveDefaultAgentDir } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import { getRuntimeConfig } from "nova/plugin-sdk/runtime-config-snapshot";
 import {
   isAuthErrorMessage,
   isBillingErrorMessage,
@@ -19,8 +16,8 @@ import {
   isServerErrorMessage,
   isTimeoutErrorMessage,
   isTruthyEnvValue,
-} from "openclaw/plugin-sdk/test-live";
-import { collectProviderApiKeys, getShellEnvAppliedKeys } from "openclaw/plugin-sdk/test-live-auth";
+} from "nova/plugin-sdk/test-live";
+import { collectProviderApiKeys, getShellEnvAppliedKeys } from "nova/plugin-sdk/test-live-auth";
 import {
   DEFAULT_LIVE_MUSIC_MODELS,
   encodePngRgba,
@@ -30,7 +27,7 @@ import {
   redactLiveApiKey,
   resolveConfiguredLiveMusicModels,
   resolveLiveMusicAuthStore,
-} from "openclaw/plugin-sdk/test-media-generation";
+} from "nova/plugin-sdk/test-media-generation";
 import { describe, expect, it } from "vitest";
 import falPlugin from "./fal/index.js";
 import googlePlugin from "./google/index.js";
@@ -81,7 +78,7 @@ const CASES: LiveProviderCase[] = [
   .filter((entry) => (providerFilter ? providerFilter.has(entry.providerId) : true))
   .toSorted((left, right) => left.providerId.localeCompare(right.providerId));
 
-function withPluginsEnabled(cfg: OpenClawConfig): OpenClawConfig {
+function withPluginsEnabled(cfg: NovaConfig): NovaConfig {
   return {
     ...cfg,
     plugins: {

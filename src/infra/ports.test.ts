@@ -120,7 +120,7 @@ describe("ports helpers", () => {
     };
 
     await handlePortError(
-      new PortInUseError(18789, "node dist/index.js openclaw gateway"),
+      new PortInUseError(18789, "node dist/index.js nova gateway"),
       18789,
       "gateway start",
       runtime,
@@ -182,7 +182,7 @@ describeUnix("inspectPortUsage", () => {
       if (command === "ps") {
         if (argv.includes("command=")) {
           return {
-            stdout: "node /tmp/openclaw/dist/index.js gateway --port 18789\n",
+            stdout: "node /tmp/nova/dist/index.js gateway --port 18789\n",
             stderr: "",
             code: 0,
           };
@@ -210,7 +210,7 @@ describeUnix("inspectPortUsage", () => {
       expect(result.status).toBe("busy");
       expect(result.listeners.length).toBeGreaterThan(0);
       expect(result.listeners[0]?.pid).toBe(process.pid);
-      expect(result.listeners[0]?.commandLine).toContain("openclaw");
+      expect(result.listeners[0]?.commandLine).toContain("nova");
       expect(result.errors).toBeUndefined();
     } finally {
       await new Promise<void>((resolve) => {
@@ -230,7 +230,7 @@ describeUnix("inspectPortUsage", () => {
       }
       if (command === "ss") {
         return {
-          stdout: 'LISTEN 0 4096 127.0.0.1:18789 0.0.0.0:* users:(("openclaw",pid=123,fd=12))',
+          stdout: 'LISTEN 0 4096 127.0.0.1:18789 0.0.0.0:* users:(("nova",pid=123,fd=12))',
           stderr: "",
           code: 0,
         };
@@ -256,7 +256,7 @@ describeUnix("inspectPortUsage", () => {
         return {
           stdout: [
             'LISTEN 0 4096 127.0.0.1:8080 0.0.0.0:* users:(("app",pid=100,fd=3))',
-            'LISTEN 0 4096 127.0.0.1:18789 0.0.0.0:* users:(("openclaw",pid=123,fd=12))',
+            'LISTEN 0 4096 127.0.0.1:18789 0.0.0.0:* users:(("nova",pid=123,fd=12))',
             'LISTEN 0 4096 127.0.0.1:18790 0.0.0.0:* users:(("other",pid=456,fd=7))',
           ].join("\n"),
           stderr: "",
@@ -300,9 +300,9 @@ describeUnix("inspectPortUsage", () => {
           return {
             stdout:
               pid === "111"
-                ? "node /tmp/newer-openclaw/dist/index.js logs --follow\n"
+                ? "node /tmp/newer-nova/dist/index.js logs --follow\n"
                 : pid === "222"
-                  ? "node /tmp/older-openclaw/dist/index.js gateway run\n"
+                  ? "node /tmp/older-nova/dist/index.js gateway run\n"
                   : "browser https://example.invalid/\n",
             stderr: "",
             code: 0,
@@ -324,7 +324,7 @@ describeUnix("inspectPortUsage", () => {
     expect(result.connections[0]).toMatchObject({
       pid: 111,
       direction: "client",
-      commandLine: "node /tmp/newer-openclaw/dist/index.js logs --follow",
+      commandLine: "node /tmp/newer-nova/dist/index.js logs --follow",
     });
     expect(result.connections[1]).toMatchObject({
       pid: 222,
@@ -352,7 +352,7 @@ describeUnix("inspectPortUsage", () => {
       if (command === "ps") {
         if (argv.includes("command=")) {
           return {
-            stdout: "node /tmp/openclaw/dist/index.js gateway run\n",
+            stdout: "node /tmp/nova/dist/index.js gateway run\n",
             stderr: "",
             code: 0,
           };
@@ -392,7 +392,7 @@ describeUnix("inspectPortUsage", () => {
       if (command === "ps") {
         if (argv.includes("command=")) {
           return {
-            stdout: "bun /tmp/openclaw/dist/index.js gateway run\n",
+            stdout: "bun /tmp/nova/dist/index.js gateway run\n",
             stderr: "",
             code: 0,
           };
@@ -472,7 +472,7 @@ describeUnix("inspectPortUsage", () => {
       if (command === "ps") {
         if (argv.includes("command=")) {
           return {
-            stdout: "node /tmp/newer-openclaw/dist/index.js logs --follow\n",
+            stdout: "node /tmp/newer-nova/dist/index.js logs --follow\n",
             stderr: "",
             code: 0,
           };
@@ -528,7 +528,7 @@ describeUnix("inspectPortUsage", () => {
           return {
             stdout:
               pid === "111"
-                ? "node /tmp/newer-openclaw/dist/index.js logs --follow\n"
+                ? "node /tmp/newer-nova/dist/index.js logs --follow\n"
                 : "browser https://example.invalid/\n",
             stderr: "",
             code: 0,
@@ -550,7 +550,7 @@ describeUnix("inspectPortUsage", () => {
     expect(result.connections[0]).toMatchObject({
       pid: 111,
       direction: "client",
-      commandLine: "node /tmp/newer-openclaw/dist/index.js logs --follow",
+      commandLine: "node /tmp/newer-nova/dist/index.js logs --follow",
     });
   });
 });
@@ -575,7 +575,7 @@ describe("inspectPortUsage on Windows", () => {
       if (command === getWindowsPowerShellExePath()) {
         return {
           stdout:
-            '"C:\\Program Files\\nodejs\\node.exe" C:\\Users\\me\\AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\index.js logs --follow\r\n',
+            '"C:\\Program Files\\nodejs\\node.exe" C:\\Users\\me\\AppData\\Roaming\\npm\\node_modules\\nova\\dist\\index.js logs --follow\r\n',
           stderr: "",
           code: 0,
         };
@@ -591,7 +591,7 @@ describe("inspectPortUsage on Windows", () => {
       command: "node.exe",
       direction: "client",
     });
-    expect(result.connections[0]?.commandLine).toContain("openclaw");
+    expect(result.connections[0]?.commandLine).toContain("nova");
   });
 
   it("uses PowerShell process command lines to classify Nova listeners", async () => {
@@ -611,7 +611,7 @@ describe("inspectPortUsage on Windows", () => {
       if (command === getWindowsPowerShellExePath()) {
         return {
           stdout:
-            '"C:\\Program Files\\nodejs\\node.exe" C:\\Users\\me\\AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\index.js gateway run\r\n',
+            '"C:\\Program Files\\nodejs\\node.exe" C:\\Users\\me\\AppData\\Roaming\\npm\\node_modules\\nova\\dist\\index.js gateway run\r\n',
           stderr: "",
           code: 0,
         };
@@ -624,7 +624,7 @@ describe("inspectPortUsage on Windows", () => {
     expect(result.status).toBe("busy");
     expect(result.listeners).toHaveLength(1);
     expect(result.listeners[0]?.command).toBe("node.exe");
-    expect(result.listeners[0]?.commandLine).toContain("openclaw");
+    expect(result.listeners[0]?.commandLine).toContain("nova");
     expect(result.hints.some((hint) => hint.includes("Gateway already running locally"))).toBe(
       false,
     );
@@ -650,7 +650,7 @@ describe("inspectPortUsage on Windows", () => {
       }
       if (command === getWindowsPowerShellExePath()) {
         return {
-          stdout: "node.exe C:\\openclaw\\dist\\index.js gateway run\r\n",
+          stdout: "node.exe C:\\nova\\dist\\index.js gateway run\r\n",
           stderr: "",
           code: 0,
         };
@@ -708,7 +708,7 @@ describe("inspectPortUsage on Windows", () => {
       }
       if (command === getWindowsWmicExePath()) {
         return {
-          stdout: "CommandLine=node.exe C:\\openclaw\\dist\\index.js gateway run\r\n",
+          stdout: "CommandLine=node.exe C:\\nova\\dist\\index.js gateway run\r\n",
           stderr: "",
           code: 0,
         };
@@ -718,7 +718,7 @@ describe("inspectPortUsage on Windows", () => {
 
     const result = await inspectPortUsage(18789);
 
-    expect(result.listeners[0]?.commandLine).toContain("openclaw");
+    expect(result.listeners[0]?.commandLine).toContain("nova");
     const commandNames = runCommandWithTimeoutMock.mock.calls.map(([argv]) => argv[0]);
     expect(commandNames).toContain(getWindowsWmicExePath());
   });

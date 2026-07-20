@@ -9,7 +9,7 @@ scenario:
     secondary:
       - channels.qa-channel
       - tools.message
-  objective: Prove #85714 retry exhaustion is fail-closed and visible. If the one stranded-final recovery retry also omits message(action=send), OpenClaw must deliver only a sanitized diagnostic and must not leak the original private final text.
+  objective: Prove #85714 retry exhaustion is fail-closed and visible. If the one stranded-final recovery retry also omits message(action=send), Nova must deliver only a sanitized diagnostic and must not leak the original private final text.
   gatewayConfigPatch:
     messages:
       visibleReplies: message_tool

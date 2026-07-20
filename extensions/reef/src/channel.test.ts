@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { defaultRuntime } from "openclaw/plugin-sdk/runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
+import { defaultRuntime } from "nova/plugin-sdk/runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { generateIdentity } from "../protocol/index.js";
 import { runReefChannelLifecycle } from "./channel-lifecycle.js";
@@ -73,7 +73,7 @@ describe("Reef conversation directory", () => {
 
   beforeEach(() => {
     resetPluginStateStoreForTests();
-    // openclaw-temp-dir: allow Reef directory tests need an on-disk state root; afterEach removes it.
+    // nova-temp-dir: allow Reef directory tests need an on-disk state root; afterEach removes it.
     stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "reef-directory-"));
     const runtime = createPluginRuntimeMock();
     runtime.state.openSyncKeyedStore = <T>(options: OpenKeyedStoreOptions) =>

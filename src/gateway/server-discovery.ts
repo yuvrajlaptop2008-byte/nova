@@ -19,7 +19,7 @@ export function formatBonjourInstanceName(displayName: string) {
   if (!trimmed) {
     return "Nova";
   }
-  if (/openclaw/i.test(trimmed)) {
+  if (/nova/i.test(trimmed)) {
     return trimmed;
   }
   return `${trimmed} (Nova)`;
@@ -44,7 +44,7 @@ export function resolveBonjourCliPath(opts: ResolveBonjourCliPathOptions = {}): 
 
   const execPath = opts.execPath ?? process.execPath;
   const execDir = path.dirname(execPath);
-  const siblingCli = path.join(execDir, "openclaw");
+  const siblingCli = path.join(execDir, "nova");
   if (isFile(siblingCli)) {
     return siblingCli;
   }
@@ -60,7 +60,7 @@ export function resolveBonjourCliPath(opts: ResolveBonjourCliPathOptions = {}): 
   if (isFile(distCli)) {
     return distCli;
   }
-  const binCli = path.join(cwd, "bin", "openclaw");
+  const binCli = path.join(cwd, "bin", "nova");
   if (isFile(binCli)) {
     return binCli;
   }

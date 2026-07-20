@@ -7,14 +7,9 @@ import { VERSION } from "../version.js";
 import { createConfigIO } from "./io.js";
 import { normalizeExecSafeBinProfilesInConfig } from "./normalize-exec-safe-bin.js";
 import { withTempHome } from "./test-helpers.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { NovaConfig } from "./types.nova.js";
 
-async function writeConfig(
-  home: string,
-  dirname: ".openclaw",
-  port: number,
-  filename = "openclaw.json",
-) {
+async function writeConfig(home: string, dirname: ".nova", port: number, filename = "nova.json") {
   const dir = path.join(home, dirname);
   await fs.mkdir(dir, { recursive: true });
   const configPath = path.join(dir, filename);
@@ -49,22 +44,22 @@ describe("config io paths", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
     whatsappSharedAccessDefaults = migrated.config.channels?.whatsapp?.accounts?.default;
   });
 
-  it("uses ~/.openclaw/openclaw.json when config exists", async () => {
+  it("uses ~/.nova/nova.json when config exists", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeConfig(home, ".openclaw", 19001);
+      const configPath = await writeConfig(home, ".nova", 19001);
       const io = createIoForHome(home);
       expect(io.configPath).toBe(configPath);
     });
   });
 
-  it("defaults to ~/.openclaw/openclaw.json when config is missing", async () => {
+  it("defaults to ~/.nova/nova.json when config is missing", async () => {
     await withTempHome(async (home) => {
       const io = createIoForHome(home);
-      expect(io.configPath).toBe(path.join(home, ".openclaw", "openclaw.json"));
+      expect(io.configPath).toBe(path.join(home, ".nova", "nova.json"));
     });
   });
 
@@ -74,13 +69,13 @@ describe("config io paths", () => {
         env: { NOVA_HOME: path.join(home, "svc-home") } as NodeJS.ProcessEnv,
         homedir: () => path.join(home, "ignored-home"),
       });
-      expect(io.configPath).toBe(path.join(home, "svc-home", ".openclaw", "openclaw.json"));
+      expect(io.configPath).toBe(path.join(home, "svc-home", ".nova", "nova.json"));
     });
   });
 
   it("honors explicit NOVA_CONFIG_PATH override", async () => {
     await withTempHome(async (home) => {
-      const customPath = await writeConfig(home, ".openclaw", 20002, "custom.json");
+      const customPath = await writeConfig(home, ".nova", 20002, "custom.json");
       const io = createIoForHome(home, { NOVA_CONFIG_PATH: customPath } as NodeJS.ProcessEnv);
       expect(io.configPath).toBe(customPath);
     });
@@ -88,7 +83,7 @@ describe("config io paths", () => {
 
   it("logs validation warnings with real line breaks", async () => {
     await withTempHome(async (home) => {
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
+      const configPath = path.join(home, ".nova", "nova.json");
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(
         configPath,
@@ -129,7 +124,7 @@ describe("config io paths", () => {
 
   it("logs each warning payload once until warnings clear", async () => {
     await withTempHome(async (home) => {
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
+      const configPath = path.join(home, ".nova", "nova.json");
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       const logger = {
         error: vi.fn(),
@@ -196,7 +191,7 @@ describe("config io paths", () => {
 
   it("explains what to check when config was written by a newer Nova", async () => {
     await withTempHome(async (home) => {
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
+      const configPath = path.join(home, ".nova", "nova.json");
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(
         configPath,
@@ -225,8 +220,8 @@ describe("config io paths", () => {
       expect(logger.warn).toHaveBeenCalledWith(
         [
           `Your Nova config was written by version 9999.1.1, but this command is running ${VERSION}.`,
-          "Check: `openclaw --version`, `which openclaw`, and `openclaw gateway status --deep`.",
-          "If unexpected, update PATH so `openclaw` points to the version you want, or reinstall the Gateway service from that same Nova install.",
+          "Check: `nova --version`, `which nova`, and `nova gateway status --deep`.",
+          "If unexpected, update PATH so `nova` points to the version you want, or reinstall the Gateway service from that same Nova install.",
         ].join("\n"),
       );
     });
@@ -234,7 +229,7 @@ describe("config io paths", () => {
 
   it("does not warn about newer config during internal update handoff reads", async () => {
     await withTempHome(async (home) => {
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
+      const configPath = path.join(home, ".nova", "nova.json");
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(
         configPath,

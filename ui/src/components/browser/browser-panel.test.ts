@@ -14,8 +14,8 @@ describe("normalizeBrowserUrlDraft", () => {
   });
   it("prefixes bare hosts with https", () => {
     expect(normalizeBrowserUrlDraft("example.com")).toBe("https://example.com/");
-    expect(normalizeBrowserUrlDraft("  github.com/openclaw/openclaw ")).toBe(
-      "https://github.com/openclaw/openclaw",
+    expect(normalizeBrowserUrlDraft("  github.com/nova/nova ")).toBe(
+      "https://github.com/nova/nova",
     );
   });
 
@@ -37,7 +37,7 @@ describe("normalizeBrowserUrlDraft", () => {
 
   it("restores persisted open state when a mounted tag upgrades lazily", async () => {
     localStorage.setItem(
-      "openclaw.browser.panel.v1",
+      "nova.browser.panel.v1",
       JSON.stringify({ open: true, dock: "right", height: 420, width: 560 }),
     );
     const tagName = `test-lazy-browser-panel-${crypto.randomUUID()}`;
@@ -45,7 +45,7 @@ describe("normalizeBrowserUrlDraft", () => {
     element.available = true;
     document.body.append(element);
 
-    const BrowserPanel = customElements.get("openclaw-browser-panel");
+    const BrowserPanel = customElements.get("nova-browser-panel");
     if (!BrowserPanel) {
       throw new Error("expected browser panel registration");
     }
@@ -57,7 +57,7 @@ describe("normalizeBrowserUrlDraft", () => {
   });
 
   it("keeps an already closed panel closed for an explicit close request", () => {
-    const panel = document.createElement("openclaw-browser-panel") as unknown as HTMLElement & {
+    const panel = document.createElement("nova-browser-panel") as unknown as HTMLElement & {
       available: boolean;
       open: boolean;
       handleToggleRequest: (event: Event) => void;
@@ -65,9 +65,7 @@ describe("normalizeBrowserUrlDraft", () => {
     panel.available = true;
     document.body.append(panel);
 
-    panel.handleToggleRequest(
-      new CustomEvent("openclaw:browser-toggle", { detail: { open: false } }),
-    );
+    panel.handleToggleRequest(new CustomEvent("nova:browser-toggle", { detail: { open: false } }));
 
     expect(panel.open).toBe(false);
   });

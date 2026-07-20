@@ -20,10 +20,10 @@ import {
   type SessionStoreTarget,
 } from "../config/sessions/targets.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveStoredSessionOwnerAgentId } from "../gateway/session-store-key.js";
 import { normalizeAgentId } from "../routing/session-key.js";
-import { closeOpenClawAgentDatabaseByPath } from "../state/openclaw-agent-db.js";
+import { closeNovaAgentDatabaseByPath } from "../state/nova-agent-db.js";
 import { compactDoctorSessionSqliteTarget } from "./doctor-session-sqlite-compact.js";
 import {
   assertSafeSessionSqliteMigrationDirectory,
@@ -149,7 +149,7 @@ export async function runDoctorSessionSqlite(
 }
 
 // Direct store migrations are scoped by path; broader agent discovery needs runtime config.
-function resolveDoctorSessionSqliteConfig(options: DoctorSessionSqliteOptions): OpenClawConfig {
+function resolveDoctorSessionSqliteConfig(options: DoctorSessionSqliteOptions): NovaConfig {
   if (options.cfg) {
     return options.cfg;
   }
@@ -159,7 +159,7 @@ function resolveDoctorSessionSqliteConfig(options: DoctorSessionSqliteOptions): 
 function resolveDoctorSessionSqliteTargets(params: {
   allAgents?: boolean;
   agent?: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   mode: DoctorSessionSqliteMode;
   store?: string;
@@ -210,7 +210,7 @@ function filterLegacySessionStoreTargets(
 async function inspectOrMigrateTarget(params: {
   activeRun?: ActiveSessionSqliteMigrationRun;
   archiveImportedArtifacts?: boolean;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   mode: Exclude<DoctorSessionSqliteMode, "restore" | "recover">;
   target: SessionStoreTarget;
@@ -312,7 +312,7 @@ async function inspectOrMigrateTarget(params: {
 }
 
 function resolveFullyCoveredLegacyStorePaths(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   targets: readonly SessionStoreTarget[],
 ): Set<string> {
   const covered = new Set<string>();
@@ -392,7 +392,7 @@ function readLegacySessionRecords(
 }
 
 function isLegacySessionRecordOwnedByTarget(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   target: SessionStoreTarget,
   sessionKey: string,
 ): boolean {
@@ -991,7 +991,7 @@ function compactSqliteDatabase(
 ): void {
   try {
     if (options.closeImportedHandle) {
-      closeOpenClawAgentDatabaseByPath(resolveTargetSqlitePath(target));
+      closeNovaAgentDatabaseByPath(resolveTargetSqlitePath(target));
     }
     report.compact = options.migrateOlderSchema
       ? compactDoctorSessionSqliteTarget(target, {

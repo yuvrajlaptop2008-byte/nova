@@ -142,10 +142,10 @@ const internalFacadeImportPatterns = [
 
 // Maps any import form (package specifier or relative path) to an extension-less
 // repo module path so banned facades cannot be reached through any spelling.
-// tsconfig aliases both openclaw/plugin-sdk/* and @nova/plugin-sdk/* to src/plugin-sdk/*.
+// tsconfig aliases both nova/plugin-sdk/* and @nova/plugin-sdk/* to src/plugin-sdk/*.
 function resolveInternalFacadeModulePath(repoPath, specifier) {
   const stripped = specifier.replace(/\.[cm]?[jt]sx?$/u, "");
-  const packageSubpath = stripped.replace(/^@?openclaw\/plugin-sdk\//u, "");
+  const packageSubpath = stripped.replace(/^@?nova\/plugin-sdk\//u, "");
   if (packageSubpath !== stripped) {
     return `src/plugin-sdk/${packageSubpath}`;
   }

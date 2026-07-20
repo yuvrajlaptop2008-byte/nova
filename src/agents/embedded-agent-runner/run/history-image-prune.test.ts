@@ -1,7 +1,7 @@
 // History image prune tests keep provider replay compact by replacing stale
 // image bytes and media references while preserving recent user context.
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { ImageContent } from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
+import type { ImageContent } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import { castAgentMessage } from "../../test-helpers/agent-message-fixtures.js";
 import {
@@ -175,7 +175,7 @@ describe("pruneProcessedHistoryImages", () => {
     const markedString = castAgentMessage({
       ...fields,
       content: "",
-      __openclaw: { lateMedia: true },
+      __nova: { lateMedia: true },
     });
     const legacyString = castAgentMessage({
       ...fields,
@@ -184,7 +184,7 @@ describe("pruneProcessedHistoryImages", () => {
     const markedArray = castAgentMessage({
       ...fields,
       content: [{ ...image }],
-      __openclaw: { lateMedia: true },
+      __nova: { lateMedia: true },
     });
     const legacyArray = castAgentMessage({
       ...fields,
@@ -213,7 +213,7 @@ describe("pruneProcessedHistoryImages", () => {
       content: "resolved subtitle",
       MediaPath: "media://inbound/stale-image.png",
       MediaPaths: ["media://inbound/stale-image.png"],
-      __openclaw: { lateMedia: true },
+      __nova: { lateMedia: true },
     });
 
     expect(pruneProcessedHistoryImages([message, ...oldEnoughTail()])).toBeNull();

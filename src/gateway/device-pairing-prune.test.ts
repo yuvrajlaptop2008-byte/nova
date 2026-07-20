@@ -9,7 +9,7 @@ import { approveNodePairing, listNodePairing, requestNodePairing } from "../infr
 import { createSuiteTempRootTracker } from "../test-helpers/temp-dir.js";
 import { pruneSupersededSilentPairingsAfterApproval } from "./device-pairing-prune.js";
 
-const suiteRootTracker = createSuiteTempRootTracker({ prefix: "openclaw-gateway-pairing-prune-" });
+const suiteRootTracker = createSuiteTempRootTracker({ prefix: "nova-gateway-pairing-prune-" });
 
 type BroadcastCall = { event: string; payload: Record<string, unknown> };
 type PruneContext = Parameters<typeof pruneSupersededSilentPairingsAfterApproval>[0]["context"];

@@ -1,6 +1,6 @@
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness-runtime";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-import { asOptionalRecord as readRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { EmbeddedRunAttemptParams } from "nova/plugin-sdk/agent-harness-runtime";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
+import { asOptionalRecord as readRecord } from "nova/plugin-sdk/string-coerce-runtime";
 
 /** Resolves an agent override before falling back to the configured default. */
 export function resolveAgentContextLimitValue(params: {

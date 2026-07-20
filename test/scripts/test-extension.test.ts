@@ -5,7 +5,7 @@ import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
-import { bundledPluginFile, bundledPluginRoot } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledPluginFile, bundledPluginRoot } from "nova/plugin-sdk/test-fixtures";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import {
   detectChangedExtensionIds,
@@ -389,7 +389,7 @@ describe("scripts/test-extension.mjs", () => {
 
   it("can fail safe to all extensions when the base revision is unavailable", () => {
     const extensionIds = listChangedExtensionIds({
-      base: "refs/heads/openclaw-test-missing-base",
+      base: "refs/heads/nova-test-missing-base",
       unavailableBaseBehavior: "all",
     });
 
@@ -798,7 +798,7 @@ describe("scripts/test-extension.mjs", () => {
   });
 
   posixIt("relativizes single-extension Vitest paths from extension cwd", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-test-extension-args-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-test-extension-args-"));
     const fakePnpmPath = path.join(root, "pnpm");
     const argsPath = path.join(root, "args.json");
     const extensionCwd = path.join(process.cwd(), "extensions", "codex");
@@ -843,7 +843,7 @@ describe("scripts/test-extension.mjs", () => {
   });
 
   posixIt("runs every single-extension Matrix chunk after an earlier chunk fails", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-test-extension-chunks-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-test-extension-chunks-"));
     const fakePnpmPath = path.join(root, "pnpm");
     const countPath = path.join(root, "count");
 
@@ -870,7 +870,7 @@ describe("scripts/test-extension.mjs", () => {
   posixIt(
     "preserves wrapper termination when the pnpm child exits cleanly after SIGTERM",
     async () => {
-      const root = mkdtempSync(path.join(tmpdir(), "openclaw-test-extension-signal-"));
+      const root = mkdtempSync(path.join(tmpdir(), "nova-test-extension-signal-"));
       const fakePnpmPath = path.join(root, "pnpm");
       const childPidPath = path.join(root, "child.pid");
       const descendantPidPath = path.join(root, "descendant.pid");

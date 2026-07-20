@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { resolveRequiredHomeDir } from "./home-dir.js";
 import {
   executeSqliteQuerySync,
@@ -18,21 +18,21 @@ import type { LegacyStateDetection } from "./state-migrations.types.js";
 import { normalizeVoiceWakeRoutingConfig } from "./voicewake-routing.js";
 
 type LegacyVoiceWakeImportDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "voicewake_routing_config" | "voicewake_routing_routes" | "voicewake_triggers"
 >;
-type LegacyConfigHealthImportDatabase = Pick<OpenClawStateKyselyDatabase, "config_health_entries">;
+type LegacyConfigHealthImportDatabase = Pick<NovaStateKyselyDatabase, "config_health_entries">;
 type LegacyPluginBindingApprovalsImportDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "plugin_binding_approvals"
 >;
 type LegacyCurrentConversationBindingsImportDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "current_conversation_bindings"
 >;
 
 const VOICEWAKE_CONFIG_KEY = "default";
-const DEFAULT_VOICEWAKE_TRIGGERS = ["openclaw", "claude", "computer"];
+const DEFAULT_VOICEWAKE_TRIGGERS = ["nova", "claude", "computer"];
 
 export function resolveLegacyVoiceWakeTriggersPath(stateDir: string): string {
   return path.join(stateDir, "settings", "voicewake.json");
@@ -157,7 +157,7 @@ export function migrateLegacyVoiceWakeSettings(params: {
       let imported = false;
       let shouldArchive = false;
       try {
-        runOpenClawStateWriteTransaction(
+        runNovaStateWriteTransaction(
           ({ db }) => {
             const stateDb = getNodeSqliteKysely<LegacyVoiceWakeImportDatabase>(db);
             const existing = executeSqliteQuerySync(
@@ -229,7 +229,7 @@ export function migrateLegacyVoiceWakeSettings(params: {
       let imported = false;
       let shouldArchive = false;
       try {
-        runOpenClawStateWriteTransaction(
+        runNovaStateWriteTransaction(
           ({ db }) => {
             const stateDb = getNodeSqliteKysely<LegacyVoiceWakeImportDatabase>(db);
             const existing = executeSqliteQueryTakeFirstSync(
@@ -449,7 +449,7 @@ export function migrateLegacyConfigHealth(params: {
   let reconciledCount = 0;
   let shouldArchive = false;
   try {
-    const result = runOpenClawStateWriteTransaction(
+    const result = runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<LegacyConfigHealthImportDatabase>(db);
         const existing = executeSqliteQuerySync(
@@ -554,11 +554,7 @@ export function resolveLegacyPluginBindingApprovalsPath(
   env: NodeJS.ProcessEnv,
   homedir: () => string,
 ): string {
-  return path.join(
-    resolveRequiredHomeDir(env, homedir),
-    ".openclaw",
-    "plugin-binding-approvals.json",
-  );
+  return path.join(resolveRequiredHomeDir(env, homedir), ".nova", "plugin-binding-approvals.json");
 }
 
 function pluginBindingApprovalScopeKey(entry: {
@@ -669,7 +665,7 @@ export function migrateLegacyPluginBindingApprovals(params: {
   let importedCount = 0;
   let shouldArchive = approvals.length === 0;
   try {
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<LegacyPluginBindingApprovalsImportDatabase>(db);
         const existing = executeSqliteQuerySync(
@@ -893,7 +889,7 @@ export function migrateLegacyCurrentConversationBindings(params: {
   let importedCount = 0;
   let shouldArchive = records.length === 0;
   try {
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<LegacyCurrentConversationBindingsImportDatabase>(db);
         const existing = executeSqliteQuerySync(

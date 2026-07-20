@@ -4,7 +4,7 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import * as preparedModelCatalog from "../agents/prepared-model-catalog.js";
 import type { CliDeps } from "../cli/deps.types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { getPluginRuntimeGatewayRequestScope } from "../plugins/runtime/gateway-request-scope.js";
 import { withLocalGatewayRequestScope } from "./local-request-context.js";
 import { dispatchGatewayMethodInProcessRaw } from "./server-plugins.js";
@@ -17,7 +17,7 @@ describe("local gateway request context", () => {
       agents: {
         defaults: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     response = await withLocalGatewayRequestScope(
       {
@@ -37,7 +37,7 @@ describe("local gateway request context", () => {
   });
 
   it("defaults local model catalog snapshot reads to read-only", async () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const loadSnapshot = vi
       .spyOn(preparedModelCatalog, "loadPreparedModelCatalogSnapshot")
       .mockResolvedValue({ entries: [], routeVariants: [] });

@@ -11,14 +11,14 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../../src/infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../../src/state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../../src/state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../../src/state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+} from "../../src/state/nova-state-db.js";
 import { registerStopChildBehaviorTests } from "./bench-gateway-child-test-support.js";
 
-type GatewayRestartIntentDatabase = Pick<OpenClawStateKyselyDatabase, "gateway_restart_intent">;
+type GatewayRestartIntentDatabase = Pick<NovaStateKyselyDatabase, "gateway_restart_intent">;
 
 type BenchCliResult = {
   status: number | null;
@@ -53,7 +53,7 @@ function runBenchCli(args: string[]): Promise<BenchCliResult> {
 }
 
 function readRestartIntentRow(env: NodeJS.ProcessEnv) {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const stateDb = getNodeSqliteKysely<GatewayRestartIntentDatabase>(db);
   return executeSqliteQueryTakeFirstSync(
     db,
@@ -245,7 +245,7 @@ node    1234 user   12u  IPv4    0t0      TCP localhost:1234
   });
 
   it("enables both startup and restart trace in the child gateway environment", () => {
-    const env = testing.sanitizedEnv("/tmp/openclaw-bench", "/tmp/openclaw-bench/config.json", {
+    const env = testing.sanitizedEnv("/tmp/nova-bench", "/tmp/nova-bench/config.json", {
       config: {},
       id: "skipChannels",
       name: "gateway restart, skip channels",
@@ -258,16 +258,12 @@ node    1234 user   12u  IPv4    0t0      TCP localhost:1234
   });
 
   it("can pin ACPX startup probe policy per benchmark case", () => {
-    const probeOffEnv = testing.sanitizedEnv(
-      "/tmp/openclaw-bench",
-      "/tmp/openclaw-bench/config.json",
-      {
-        config: {},
-        env: { NOVA_ACPX_RUNTIME_STARTUP_PROBE: "0" },
-        id: "skipChannelsNoAcpxProbe",
-        name: "gateway restart, skip channels, ACPX startup probe off",
-      },
-    );
+    const probeOffEnv = testing.sanitizedEnv("/tmp/nova-bench", "/tmp/nova-bench/config.json", {
+      config: {},
+      env: { NOVA_ACPX_RUNTIME_STARTUP_PROBE: "0" },
+      id: "skipChannelsNoAcpxProbe",
+      name: "gateway restart, skip channels, ACPX startup probe off",
+    });
 
     expect(probeOffEnv.NOVA_ACPX_RUNTIME_STARTUP_PROBE).toBe("0");
   });
@@ -710,7 +706,7 @@ node    1234 user   12u  IPv4    0t0      TCP localhost:1234
   });
 
   it("writes restart intent files for the target gateway pid", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-restart-bench-test-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-restart-bench-test-"));
     try {
       const env = { NOVA_STATE_DIR: path.join(root, "state") };
 
@@ -724,7 +720,7 @@ node    1234 user   12u  IPv4    0t0      TCP localhost:1234
         reason: "gateway-restart-bench",
       });
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       fs.rmSync(root, { force: true, recursive: true });
     }
   });
@@ -808,7 +804,7 @@ node    1234 user   12u  IPv4    0t0      TCP localhost:1234
   });
 
   it("writes plugin fixtures as a parent load path with explicit startup activation", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-restart-bench-config-test-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-restart-bench-config-test-"));
     try {
       const configPath = testing.writeConfig(root, {
         config: {},
@@ -824,10 +820,7 @@ node    1234 user   12u  IPv4    0t0      TCP localhost:1234
       expect(config.plugins?.load?.paths).toEqual([path.join(root, "plugins")]);
       expect(config.plugins?.allow).toEqual(["bench-plugin-01", "bench-plugin-02"]);
       const manifest = JSON.parse(
-        fs.readFileSync(
-          path.join(root, "plugins", "bench-plugin-01", "openclaw.plugin.json"),
-          "utf8",
-        ),
+        fs.readFileSync(path.join(root, "plugins", "bench-plugin-01", "nova.plugin.json"), "utf8"),
       ) as { activation?: { onStartup?: boolean } };
       expect(manifest.activation?.onStartup).toBe(true);
     } finally {

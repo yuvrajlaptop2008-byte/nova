@@ -1,7 +1,7 @@
 // Sandbox tool policy tests cover effective allow/deny merging and blocked-tool
 // guidance for sandboxed agent sessions.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { resolveSandboxConfigForAgent } from "./config.js";
 import {
   formatSandboxToolPolicyBlockedMessage,
@@ -11,7 +11,7 @@ import { isToolAllowed, resolveSandboxToolPolicyForAgent } from "./tool-policy.j
 
 describe("sandbox/tool-policy", () => {
   it("merges sandbox alsoAllow into the default sandbox allowlist", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -41,7 +41,7 @@ describe("sandbox/tool-policy", () => {
   });
 
   it("lets explicit sandbox allow remove entries from the default sandbox denylist", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -73,7 +73,7 @@ describe("sandbox/tool-policy", () => {
   it("preserves allow-all semantics for allow: [] plus alsoAllow", () => {
     // An empty allowlist means allow all except denies; alsoAllow should only
     // remove matching default denies, not turn allow-all into allow-some.
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -123,7 +123,7 @@ describe("sandbox/tool-policy", () => {
   });
 
   it("keeps canonical sandbox config and runtime status aligned with the effective resolver", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -167,7 +167,7 @@ describe("sandbox/tool-policy", () => {
   });
 
   it("treats channel direct sessions as sandboxed in non-main mode", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "non-main", scope: "agent" },
@@ -191,7 +191,7 @@ describe("sandbox/tool-policy", () => {
   });
 
   it("keeps the agent main session sandboxed in all mode", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -209,7 +209,7 @@ describe("sandbox/tool-policy", () => {
   });
 
   it("keeps explicit sandbox deny precedence over allow and alsoAllow", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -250,7 +250,7 @@ describe("sandbox/tool-policy", () => {
   });
 
   it("uses the effective sandbox policy when formatting blocked-tool guidance", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -285,7 +285,7 @@ describe("sandbox/tool-policy", () => {
     // The guidance embeds a copy-paste command; quote the real session key while
     // keeping the displayed session line compact and terminal-safe.
     const sessionKey = "agent:main:weird session;rm -rf /";
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -310,9 +310,7 @@ describe("sandbox/tool-policy", () => {
     expect(message).toContain("tools.sandbox.tools.deny");
     expect(message).not.toContain(`Session: ${sessionKey}`);
     expect(message).toContain("Session: agent:… -rf /");
-    expect(message).toContain(
-      "openclaw sandbox explain --session 'agent:main:weird session;rm -rf /'",
-    );
+    expect(message).toContain("nova sandbox explain --session 'agent:main:weird session;rm -rf /'");
   });
 
   it.each([
@@ -334,7 +332,7 @@ describe("sandbox/tool-policy", () => {
   ])(
     "keeps redacted session keys UTF-16 safe at the $boundary boundary",
     ({ sessionKey, expectedLabel }) => {
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: {
             sandbox: { mode: "all", scope: "agent" },
@@ -362,13 +360,13 @@ describe("sandbox/tool-policy", () => {
       expect(sessionLabel).not.toMatch(
         /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/u,
       );
-      expect(message).toContain(`openclaw sandbox explain --session '${sessionKey}'`);
+      expect(message).toContain(`nova sandbox explain --session '${sessionKey}'`);
     },
   );
 
   it("avoids terminal injection for control-character session keys", () => {
     const sessionKey = "agent:main:abcde\n12345";
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           sandbox: { mode: "all", scope: "agent" },
@@ -393,7 +391,7 @@ describe("sandbox/tool-policy", () => {
     expect(sessionLine).toBe("Session: agent:…\\n12345");
     expect(sessionLine).not.toContain(sessionKey);
     expect(sessionLine).toContain("\\n");
-    expect(message).toContain("openclaw sandbox explain --agent main");
+    expect(message).toContain("nova sandbox explain --agent main");
     expect(message).not.toContain("--session");
   });
 });

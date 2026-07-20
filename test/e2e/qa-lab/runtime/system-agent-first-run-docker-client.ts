@@ -6,7 +6,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { shouldStartOnboardingForFreshInstall } from "../../../../dist/cli/run-main.js";
 import { clearConfigCache } from "../../../../dist/config/config.js";
-import type { OpenClawConfig } from "../../../../dist/config/types.openclaw.js";
+import type { NovaConfig } from "../../../../dist/config/types.nova.js";
 import { createSqliteAuditRecordStore } from "../../../../dist/infra/sqlite-audit-record-store.js";
 import type { RuntimeEnv } from "../../../../dist/runtime.js";
 import {
@@ -81,7 +81,7 @@ const FAKE_PLANNER_REPLY = "Fake Claude planner selected an inference-backed typ
 const PACKAGED_CLI_TIMEOUT_MS = 60_000;
 const INFERENCE_PROBE_PROMPT = "Reply with the single word OK";
 const DISCORD_CREDENTIAL_ENV = ["DISCORD", "BOT", "TOKEN"].join("_");
-const DISCORD_CREDENTIAL_FIXTURE = ["openclaw", "discord", "fixture"].join("-");
+const DISCORD_CREDENTIAL_FIXTURE = ["nova", "discord", "fixture"].join("-");
 
 type PackagedCommandResult = {
   code: number | null;
@@ -99,7 +99,7 @@ function countInferencePrompts(lines: string[]): number {
   return lines.filter((line) => line.includes(INFERENCE_PROBE_PROMPT)).length;
 }
 
-function resolveDefaultModel(config: OpenClawConfig): string | undefined {
+function resolveDefaultModel(config: NovaConfig): string | undefined {
   const model = config.agents?.defaults?.model;
   return typeof model === "string" ? model : model?.primary;
 }
@@ -154,7 +154,7 @@ async function installFakeClaudeCli(
 }
 
 async function runPackagedCli(args: string[]): Promise<PackagedCommandResult> {
-  const child = spawn("openclaw", args, {
+  const child = spawn("nova", args, {
     env: process.env,
     stdio: ["ignore", "pipe", "pipe"],
   });
@@ -184,7 +184,7 @@ async function runPackagedCli(args: string[]): Promise<PackagedCommandResult> {
   }
   if (timedOut) {
     throw new Error(
-      `Packaged CLI timed out after ${PACKAGED_CLI_TIMEOUT_MS}ms: openclaw ${args.join(" ")}\n${stdout}\n${stderr}`,
+      `Packaged CLI timed out after ${PACKAGED_CLI_TIMEOUT_MS}ms: nova ${args.join(" ")}\n${stdout}\n${stderr}`,
     );
   }
   return { code, stdout, stderr };
@@ -211,10 +211,10 @@ async function runPackagedOneShot(
 
 async function main() {
   const spec = await readFirstRunSpec();
-  const tempState = await createE2eStateDir("openclaw-system-agent-first-run-");
+  const tempState = await createE2eStateDir("nova-system-agent-first-run-");
   tempState.registerExitCleanup();
   const stateDir = tempState.stateDir;
-  const configPath = process.env.NOVA_CONFIG_PATH ?? path.join(stateDir, "openclaw.json");
+  const configPath = process.env.NOVA_CONFIG_PATH ?? path.join(stateDir, "nova.json");
   // Keep mutable logs/config outside the hashed package tree. Every file below
   // this root is part of the durable CLI owner checked before persistent setup.
   const fakeBinDir = path.join(stateDir, "fake-claude-package", "bin");
@@ -229,14 +229,14 @@ async function main() {
 
   clearConfigCache();
   assert(
-    await shouldStartOnboardingForFreshInstall(["node", "openclaw"]),
+    await shouldStartOnboardingForFreshInstall(["node", "nova"]),
     "fresh bare Nova invocation did not route to onboarding",
   );
 
   const blocked = await runPackagedCli(["setup", "--message", "overview"]);
   assert(blocked.code === 1, "Nova did not fail closed without inference");
   assert(
-    `${blocked.stdout}\n${blocked.stderr}`.includes("openclaw onboard"),
+    `${blocked.stdout}\n${blocked.stderr}`.includes("nova onboard"),
     "blocked Nova did not direct the user to inference onboarding",
   );
 
@@ -254,7 +254,7 @@ async function main() {
     activation.modelRef === "claude-cli/claude-opus-4-8",
     `activation selected the wrong model: ${activation.modelRef}`,
   );
-  const inferenceConfig = JSON.parse(await fs.readFile(configPath, "utf8")) as OpenClawConfig;
+  const inferenceConfig = JSON.parse(await fs.readFile(configPath, "utf8")) as NovaConfig;
   assert(
     resolveDefaultModel(inferenceConfig) === activation.modelRef,
     "activation did not persist the verified inference route",
@@ -306,9 +306,9 @@ async function main() {
     );
     if (command.planner) {
       assert(
-        output.includes(`[openclaw] planner: ${spec.model}`) &&
+        output.includes(`[nova] planner: ${spec.model}`) &&
           output.includes(FAKE_PLANNER_REPLY) &&
-          output.includes(`[openclaw] interpreted: ${plannerCommand}`),
+          output.includes(`[nova] interpreted: ${plannerCommand}`),
         `Nova first-run command ${command.id} did not use the verified planner: ${output}`,
       );
     }
@@ -339,7 +339,7 @@ async function main() {
     `unexpected fake Claude prompt count: ${probeLines.length}`,
   );
 
-  const config = JSON.parse(await fs.readFile(configPath, "utf8")) as OpenClawConfig;
+  const config = JSON.parse(await fs.readFile(configPath, "utf8")) as NovaConfig;
   assert(
     config.agents?.defaults?.workspace === spec.dockerDefaultWorkspace,
     "first-run setup did not write default workspace",

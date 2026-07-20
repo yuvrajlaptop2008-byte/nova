@@ -7,13 +7,13 @@ import {
   queueAgentHarnessMessage,
   resetAgentEventsForTest,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { clearRuntimeAuthProfileStoreSnapshots } from "openclaw/plugin-sdk/agent-runtime";
-import { resetDiagnosticEventsForTest } from "openclaw/plugin-sdk/diagnostic-runtime";
-import { clearInternalHooks, resetGlobalHookRunner } from "openclaw/plugin-sdk/hook-runtime";
-import { clearMemoryPluginState } from "openclaw/plugin-sdk/memory-core-host-runtime-core";
-import { clearPluginCommands } from "openclaw/plugin-sdk/plugin-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { clearRuntimeAuthProfileStoreSnapshots } from "nova/plugin-sdk/agent-runtime";
+import { resetDiagnosticEventsForTest } from "nova/plugin-sdk/diagnostic-runtime";
+import { clearInternalHooks, resetGlobalHookRunner } from "nova/plugin-sdk/hook-runtime";
+import { clearMemoryPluginState } from "nova/plugin-sdk/memory-core-host-runtime-core";
+import { clearPluginCommands } from "nova/plugin-sdk/plugin-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { afterEach, beforeEach, expect, vi } from "vitest";
 import { defaultCodexAppInventoryCache } from "./app-inventory-cache.js";
 import type { CodexAppServerClient } from "./client.js";
@@ -300,7 +300,7 @@ export function threadStartResult(threadId = "thread-1") {
       updatedAt: 1,
       status: { type: "idle" },
       path: null,
-      cwd: tempDir || "/tmp/openclaw-codex-test",
+      cwd: tempDir || "/tmp/nova-codex-test",
       cliVersion: "0.125.0",
       source: "unknown",
       agentNickname: null,
@@ -312,7 +312,7 @@ export function threadStartResult(threadId = "thread-1") {
     model: "gpt-5.4-codex",
     modelProvider: "openai",
     serviceTier: null,
-    cwd: tempDir || "/tmp/openclaw-codex-test",
+    cwd: tempDir || "/tmp/nova-codex-test",
     instructionSources: [],
     approvalPolicy: "never",
     approvalsReviewer: "user",
@@ -616,7 +616,7 @@ export function setupRunAttemptTestHooks(): void {
     vi.stubEnv("NOVA_TRAJECTORY", "0");
     vi.stubEnv("CODEX_API_KEY", "");
     vi.stubEnv("OPENAI_API_KEY", "");
-    tempDir = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-codex-run-"));
+    tempDir = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-codex-run-"));
   });
 
   afterEach(async () => {
@@ -624,7 +624,7 @@ export function setupRunAttemptTestHooks(): void {
     await sandboxExecServerRegistry.closeAll();
     resetCodexAppServerClientFactoryForTest();
     clearRuntimeAuthProfileStoreSnapshots();
-    dynamicToolBuildState.openClawCodingToolsFactory = undefined;
+    dynamicToolBuildState.novaCodingToolsFactory = undefined;
     codexWorkspaceDirCache.clear();
     nativeHookRelayUnregisterQueue.clear();
     nativeHookRelayTesting.clearNativeHookRelaysForTests();

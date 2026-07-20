@@ -365,9 +365,9 @@ describe("qa scenario catalog", () => {
     expect(readQaScenarioExecutionConfig(webSearch.id)).toMatchObject({
       toolName: "web_search",
       toolCoverage: {
-        bucket: "openclaw-dynamic-integration",
-        expectedLayer: "openclaw-dynamic",
-        capabilityLayer: "openclaw-dynamic-direct",
+        bucket: "nova-dynamic-integration",
+        expectedLayer: "nova-dynamic",
+        capabilityLayer: "nova-dynamic-direct",
         required: true,
       },
     });
@@ -395,9 +395,9 @@ describe("qa scenario catalog", () => {
       requiredProviderMode: "mock-openai",
       toolName: "image_generate",
       toolCoverage: {
-        bucket: "openclaw-dynamic-integration",
-        expectedLayer: "openclaw-dynamic",
-        capabilityLayer: "openclaw-dynamic-direct",
+        bucket: "nova-dynamic-integration",
+        expectedLayer: "nova-dynamic",
+        capabilityLayer: "nova-dynamic-direct",
         required: false,
       },
     });
@@ -541,9 +541,7 @@ describe("qa scenario catalog", () => {
   });
 
   it("accepts the update.run producer's blocked evidence without destructive opt-in", async () => {
-    const outputDir = await fs.promises.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-update-run-blocked-"),
-    );
+    const outputDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-update-run-blocked-"));
     try {
       const result = await runQaTestFileScenarios({
         repoRoot: process.cwd(),
@@ -731,7 +729,7 @@ describe("qa scenario catalog", () => {
     expect(config?.requiredProvider).toBe("openai");
     expect(config?.pluginSpec).toBe("npm:@nova/kitchen-sink@latest");
     expect(JSON.stringify(scenario.execution.flow)).toContain('"--force"');
-    expect(config?.pluginId).toBe("openclaw-kitchen-sink-fixture");
+    expect(config?.pluginId).toBe("nova-kitchen-sink-fixture");
     expect(config?.pluginPersonality).toBe("conformance");
     expect(config?.adversarialPersonality).toBe("adversarial");
     expect(config?.expectedSurfaceIds?.webSearchProviderIds).toContain(

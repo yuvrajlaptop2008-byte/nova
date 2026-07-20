@@ -1,6 +1,6 @@
 // Discord provider module implements model/runtime integration.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import type { Mock } from "vitest";
 import { expect, vi } from "vitest";
 
@@ -23,12 +23,10 @@ type ProviderMonitorTestMocks = {
   clientConstructorOptionsMock: Mock<(options?: unknown) => void>;
   createDiscordAutoPresenceControllerMock: Mock<() => unknown>;
   createDiscordExecApprovalButtonContextMock: Mock<
-    (params?: {
-      cfg?: OpenClawConfig;
-      accountId?: string;
-      config?: unknown;
-      gatewayUrl?: string;
-    }) => { getApprovers: () => string[]; resolveApproval: () => Promise<boolean> }
+    (params?: { cfg?: NovaConfig; accountId?: string; config?: unknown; gatewayUrl?: string }) => {
+      getApprovers: () => string[];
+      resolveApproval: () => Promise<boolean>;
+    }
   >;
   createExecApprovalButtonMock: Mock<(ctx?: unknown) => unknown>;
   createDiscordNativeCommandMock: Mock<(params?: { command?: { name?: string } }) => unknown>;
@@ -39,7 +37,7 @@ type ProviderMonitorTestMocks = {
   createdBindingManagers: Array<{ stop: ReturnType<typeof vi.fn> }>;
   getAcpSessionStatusMock: Mock<
     (params: {
-      cfg: OpenClawConfig;
+      cfg: NovaConfig;
       sessionKey: string;
       signal?: AbortSignal;
     }) => Promise<{ state: string }>
@@ -126,7 +124,7 @@ const providerMonitorTestMocks: ProviderMonitorTestMocks = vi.hoisted(() => {
     })),
     createdBindingManagers,
     getAcpSessionStatusMock: vi.fn(
-      async (_params: { cfg: OpenClawConfig; sessionKey: string; signal?: AbortSignal }) => ({
+      async (_params: { cfg: NovaConfig; sessionKey: string; signal?: AbortSignal }) => ({
         state: "idle",
       }),
     ),
@@ -277,7 +275,7 @@ export const baseRuntime = (): RuntimeEnv => ({
   exit: vi.fn(),
 });
 
-export const baseConfig = (): OpenClawConfig =>
+export const baseConfig = (): NovaConfig =>
   ({
     channels: {
       discord: {
@@ -288,7 +286,7 @@ export const baseConfig = (): OpenClawConfig =>
         },
       },
     },
-  }) as OpenClawConfig;
+  }) as NovaConfig;
 
 vi.mock("../internal/discord.js", async () => {
   const actual =
@@ -352,9 +350,9 @@ vi.mock("../internal/voice.js", () => ({
   VoicePlugin: function VoicePlugin() {},
 }));
 
-vi.mock("openclaw/plugin-sdk/acp-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/acp-runtime")>(
-    "openclaw/plugin-sdk/acp-runtime",
+vi.mock("nova/plugin-sdk/acp-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/acp-runtime")>(
+    "nova/plugin-sdk/acp-runtime",
   );
   return {
     ...actual,
@@ -366,9 +364,9 @@ vi.mock("openclaw/plugin-sdk/acp-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/command-auth-native", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/command-auth-native")>(
-    "openclaw/plugin-sdk/command-auth-native",
+vi.mock("nova/plugin-sdk/command-auth-native", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/command-auth-native")>(
+    "nova/plugin-sdk/command-auth-native",
   );
   return {
     ...actual,
@@ -376,9 +374,9 @@ vi.mock("openclaw/plugin-sdk/command-auth-native", async () => {
     listSkillCommandsForAgents: listSkillCommandsForAgentsMock,
   };
 });
-vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/reply-runtime")>(
-    "openclaw/plugin-sdk/reply-runtime",
+vi.mock("nova/plugin-sdk/reply-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/reply-runtime")>(
+    "nova/plugin-sdk/reply-runtime",
   );
   return {
     ...actual,
@@ -386,10 +384,10 @@ vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/native-command-config-runtime", async () => {
+vi.mock("nova/plugin-sdk/native-command-config-runtime", async () => {
   const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/native-command-config-runtime")
-  >("openclaw/plugin-sdk/native-command-config-runtime");
+    typeof import("nova/plugin-sdk/native-command-config-runtime")
+  >("nova/plugin-sdk/native-command-config-runtime");
   return {
     ...actual,
     isNativeCommandsExplicitlyDisabled: isNativeCommandsExplicitlyDisabledMock,
@@ -398,19 +396,19 @@ vi.mock("openclaw/plugin-sdk/native-command-config-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
-  const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/runtime-config-snapshot")
-  >("openclaw/plugin-sdk/runtime-config-snapshot");
+vi.mock("nova/plugin-sdk/runtime-config-snapshot", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-config-snapshot")>(
+    "nova/plugin-sdk/runtime-config-snapshot",
+  );
   return {
     ...actual,
     getRuntimeConfig: () => ({}),
   };
 });
 
-vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/runtime-env")>(
-    "openclaw/plugin-sdk/runtime-env",
+vi.mock("nova/plugin-sdk/runtime-env", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-env")>(
+    "nova/plugin-sdk/runtime-env",
   );
   return {
     ...actual,
@@ -433,9 +431,9 @@ vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/error-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/error-runtime")>(
-    "openclaw/plugin-sdk/error-runtime",
+vi.mock("nova/plugin-sdk/error-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/error-runtime")>(
+    "nova/plugin-sdk/error-runtime",
   );
   return {
     ...actual,

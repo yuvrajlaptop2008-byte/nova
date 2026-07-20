@@ -2,8 +2,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import type { CiaoService } from "@homebridge/ciao";
-import type { PluginLogger } from "openclaw/plugin-sdk/plugin-entry";
-import { isTruthyEnvValue } from "openclaw/plugin-sdk/runtime-env";
+import type { PluginLogger } from "nova/plugin-sdk/plugin-entry";
+import { isTruthyEnvValue } from "nova/plugin-sdk/runtime-env";
 import { classifyCiaoProcessError } from "./ciao.js";
 import { formatBonjourError } from "./errors.js";
 
@@ -238,12 +238,12 @@ export async function startGatewayBonjourAdvertiser(
     cleanupUncaughtException = deps.registerUncaughtExceptionHandler(handleCiaoProcessError);
 
     const hostnameRaw =
-      process.env.NOVA_MDNS_HOSTNAME?.trim() || resolveSystemMdnsHostname() || "openclaw";
+      process.env.NOVA_MDNS_HOSTNAME?.trim() || resolveSystemMdnsHostname() || "nova";
     const hostnameWithoutLocal = hostnameRaw.replace(/\.local$/i, "");
     const dotIndex = hostnameWithoutLocal.indexOf(".");
     const labelEnd = dotIndex === -1 ? hostnameWithoutLocal.length : dotIndex;
-    const hostnameLabel = hostnameWithoutLocal.slice(0, labelEnd).trim() || "openclaw";
-    const hostname = truncateToDnsLabel(hostnameLabel, "openclaw");
+    const hostnameLabel = hostnameWithoutLocal.slice(0, labelEnd).trim() || "nova";
+    const hostname = truncateToDnsLabel(hostnameLabel, "nova");
     const instanceName =
       typeof opts.instanceName === "string" && opts.instanceName.trim()
         ? opts.instanceName.trim()
@@ -290,7 +290,7 @@ export async function startGatewayBonjourAdvertiser(
 
       const gateway = responder.createService({
         name: safeServiceName(instanceName),
-        type: "openclaw-gw",
+        type: "nova-gw",
         port: opts.gatewayPort,
         domain: "local",
         hostname,

@@ -51,7 +51,7 @@ async function buildPairingQrAssistantContentBlock(
     renderQrTerminal(qr.setupCode, { small: true }),
   ]);
   return {
-    type: "openclaw_pairing_qr",
+    type: "nova_pairing_qr",
     image_url: imageUrl,
     terminalText,
     alt: "Nova pairing QR code",

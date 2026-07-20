@@ -2,19 +2,13 @@
 import type { DatabaseSync } from "node:sqlite";
 import { afterAll, afterEach, describe, expect, it } from "vitest";
 import { cleanupTempDirs, makeTempDir } from "../../test/helpers/temp-dir.js";
-import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "./openclaw-agent-db.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "./openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest, openNovaAgentDatabase } from "./nova-agent-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "./nova-state-db.js";
 
 const planTempDirs: string[] = [];
 
 function createTempStateDir(): string {
-  return makeTempDir(planTempDirs, "openclaw-sqlite-plan-");
+  return makeTempDir(planTempDirs, "nova-sqlite-plan-");
 }
 
 function explainQueryPlan(
@@ -53,14 +47,14 @@ afterAll(() => {
 });
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 describe("sqlite hot query plans", () => {
   it("uses shared state indexes for list and queue queries", () => {
     const stateDir = createTempStateDir();
-    const database = openOpenClawStateDatabase({
+    const database = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: stateDir },
     });
 
@@ -140,7 +134,7 @@ describe("sqlite hot query plans", () => {
 
   it("uses per-agent cache indexes for session metadata and expiry scans", () => {
     const stateDir = createTempStateDir();
-    const database = openOpenClawAgentDatabase({
+    const database = openNovaAgentDatabase({
       agentId: "worker-1",
       env: { NOVA_STATE_DIR: stateDir },
     });

@@ -52,7 +52,7 @@ async function mountPage(sourceConfig: Record<string, unknown>): Promise<{
     runtimeConfig,
   } as unknown as ApplicationContext;
   const provider = createApplicationContextProvider(context);
-  const page = document.createElement("openclaw-labs-page") as LabsPageElement;
+  const page = document.createElement("nova-labs-page") as LabsPageElement;
   provider.append(page);
   document.body.append(provider);
   await page.updateComplete;
@@ -95,8 +95,8 @@ describe("LabsPage", () => {
 
     const docs = [...page.querySelectorAll<HTMLAnchorElement>(".settings-row__desc a")];
     expect(docs.map((link) => link.href)).toEqual([
-      "https://docs.openclaw.ai/tools/code-mode",
-      "https://docs.openclaw.ai/tools/swarm",
+      "https://docs.nova.ai/tools/code-mode",
+      "https://docs.nova.ai/tools/swarm",
     ]);
     expect(docs.every((link) => link.target === "_blank")).toBe(true);
     expect(docs.every((link) => link.rel.includes("noopener"))).toBe(true);

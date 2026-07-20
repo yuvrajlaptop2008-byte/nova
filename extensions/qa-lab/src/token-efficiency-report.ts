@@ -12,7 +12,7 @@ type TokenEfficiencyRuntimeUsage = {
 type TokenEfficiencyRow = {
   scenarioId: string;
   usageSource: "live-usage" | "mock-estimate";
-  openclaw: TokenEfficiencyRuntimeUsage;
+  nova: TokenEfficiencyRuntimeUsage;
   codex: TokenEfficiencyRuntimeUsage;
   deltaPercent: number;
   classification: "regression" | "savings" | "neutral";
@@ -29,7 +29,7 @@ type TokenEfficiencyReport = {
   rows: TokenEfficiencyRow[];
   notApplicableScenarios: Array<{ scenarioId: string; reason: string }>;
   aggregate: {
-    openclaw: { totalTokens: number; p50PerScenario: number; p90PerScenario: number };
+    nova: { totalTokens: number; p50PerScenario: number; p90PerScenario: number };
     codex: { totalTokens: number; p50PerScenario: number; p90PerScenario: number };
     deltaPercent: number;
     flaggedScenarios: string[];
@@ -61,7 +61,7 @@ type BuildTokenEfficiencyReportParams = {
 
 const DEFAULT_THRESHOLD_PERCENT = 15;
 const ZERO_AGGREGATE: TokenEfficiencyReport["aggregate"] = {
-  openclaw: { totalTokens: 0, p50PerScenario: 0, p90PerScenario: 0 },
+  nova: { totalTokens: 0, p50PerScenario: 0, p90PerScenario: 0 },
   codex: { totalTokens: 0, p50PerScenario: 0, p90PerScenario: 0 },
   deltaPercent: 0,
   flaggedScenarios: [],
@@ -74,18 +74,18 @@ function normalizeRuntimePair(
   if (pair?.[0] && pair?.[1]) {
     return pair;
   }
-  return ["openclaw", "codex"];
+  return ["nova", "codex"];
 }
 
 function normalizeTokenCount(value: number): number {
   return Number.isFinite(value) ? Math.max(0, value) : 0;
 }
 
-function deltaPercent(openclawTotalTokens: number, codexTotalTokens: number): number {
-  if (openclawTotalTokens === 0) {
+function deltaPercent(novaTotalTokens: number, codexTotalTokens: number): number {
+  if (novaTotalTokens === 0) {
     return codexTotalTokens === 0 ? 0 : 100;
   }
-  return ((codexTotalTokens - openclawTotalTokens) / openclawTotalTokens) * 100;
+  return ((codexTotalTokens - novaTotalTokens) / novaTotalTokens) * 100;
 }
 
 function percentile(values: readonly number[], p: number): number {
@@ -115,10 +115,10 @@ function runtimeUsage(cell: RuntimeParityCell): TokenEfficiencyRuntimeUsage {
   };
 }
 
-function toolNamesForCells(openclaw: RuntimeParityCell, codex: RuntimeParityCell): string[] {
-  return [
-    ...new Set([...openclaw.toolCalls, ...codex.toolCalls].map((call) => call.tool)),
-  ].toSorted((left, right) => left.localeCompare(right));
+function toolNamesForCells(nova: RuntimeParityCell, codex: RuntimeParityCell): string[] {
+  return [...new Set([...nova.toolCalls, ...codex.toolCalls].map((call) => call.tool))].toSorted(
+    (left, right) => left.localeCompare(right),
+  );
 }
 
 function buildRow(params: {
@@ -126,9 +126,9 @@ function buildRow(params: {
   thresholdPercent: number;
   usageSource: TokenEfficiencyRow["usageSource"];
 }): TokenEfficiencyRow {
-  const openclaw = runtimeUsage(params.result.cells.openclaw);
+  const nova = runtimeUsage(params.result.cells.nova);
   const codex = runtimeUsage(params.result.cells.codex);
-  const delta = deltaPercent(openclaw.totalTokens, codex.totalTokens);
+  const delta = deltaPercent(nova.totalTokens, codex.totalTokens);
   const flagged = params.usageSource === "live-usage" && delta > params.thresholdPercent;
   const classification =
     delta > params.thresholdPercent
@@ -139,32 +139,32 @@ function buildRow(params: {
   return {
     scenarioId: params.result.scenarioId,
     usageSource: params.usageSource,
-    openclaw,
+    nova,
     codex,
     deltaPercent: delta,
     classification,
     flagged,
-    toolsUsed: toolNamesForCells(params.result.cells.openclaw, params.result.cells.codex),
+    toolsUsed: toolNamesForCells(params.result.cells.nova, params.result.cells.codex),
   };
 }
 
 function buildAggregate(rows: readonly TokenEfficiencyRow[]): TokenEfficiencyReport["aggregate"] {
-  const openclawTotals = rows.map((row) => row.openclaw.totalTokens);
+  const novaTotals = rows.map((row) => row.nova.totalTokens);
   const codexTotals = rows.map((row) => row.codex.totalTokens);
-  const openclawTotalTokens = openclawTotals.reduce((sum, value) => sum + value, 0);
+  const novaTotalTokens = novaTotals.reduce((sum, value) => sum + value, 0);
   const codexTotalTokens = codexTotals.reduce((sum, value) => sum + value, 0);
   return {
-    openclaw: {
-      totalTokens: openclawTotalTokens,
-      p50PerScenario: percentile(openclawTotals, 50),
-      p90PerScenario: percentile(openclawTotals, 90),
+    nova: {
+      totalTokens: novaTotalTokens,
+      p50PerScenario: percentile(novaTotals, 50),
+      p90PerScenario: percentile(novaTotals, 90),
     },
     codex: {
       totalTokens: codexTotalTokens,
       p50PerScenario: percentile(codexTotals, 50),
       p90PerScenario: percentile(codexTotals, 90),
     },
-    deltaPercent: deltaPercent(openclawTotalTokens, codexTotalTokens),
+    deltaPercent: deltaPercent(novaTotalTokens, codexTotalTokens),
     flaggedScenarios: rows.filter((row) => row.flagged).map((row) => row.scenarioId),
     savingsScenarios: rows
       .filter((row) => row.classification === "savings")
@@ -174,8 +174,8 @@ function buildAggregate(rows: readonly TokenEfficiencyRow[]): TokenEfficiencyRep
 
 function liveEvidenceFailures(row: TokenEfficiencyRow): string[] {
   const failures: string[] = [];
-  if (row.openclaw.totalTokens <= 0) {
-    failures.push(`${row.scenarioId} openclaw live usage totalTokens=${row.openclaw.totalTokens}`);
+  if (row.nova.totalTokens <= 0) {
+    failures.push(`${row.scenarioId} nova live usage totalTokens=${row.nova.totalTokens}`);
   }
   if (row.codex.totalTokens <= 0) {
     failures.push(`${row.scenarioId} codex live usage totalTokens=${row.codex.totalTokens}`);
@@ -276,7 +276,7 @@ export function buildTokenEfficiencyReport(
     const rowFailures =
       liveUsage && result
         ? [
-            ...liveUsageShapeFailures(row.scenarioId, "openclaw", result.cells.openclaw.usage),
+            ...liveUsageShapeFailures(row.scenarioId, "nova", result.cells.nova.usage),
             ...liveUsageShapeFailures(row.scenarioId, "codex", result.cells.codex.usage),
             ...liveEvidenceFailures(row),
           ]
@@ -331,7 +331,7 @@ export function renderTokenEfficiencyMarkdownReport(report: TokenEfficiencyRepor
     "",
     "| Runtime | Total tokens | p50 per scenario | p90 per scenario |",
     "| --- | ---: | ---: | ---: |",
-    `| openclaw | ${report.aggregate.openclaw.totalTokens} | ${report.aggregate.openclaw.p50PerScenario} | ${report.aggregate.openclaw.p90PerScenario} |`,
+    `| nova | ${report.aggregate.nova.totalTokens} | ${report.aggregate.nova.p50PerScenario} | ${report.aggregate.nova.p90PerScenario} |`,
     `| codex | ${report.aggregate.codex.totalTokens} | ${report.aggregate.codex.p50PerScenario} | ${report.aggregate.codex.p90PerScenario} |`,
     `| delta | ${formatPercent(report.aggregate.deltaPercent)} |  |  |`,
     "",
@@ -346,7 +346,7 @@ export function renderTokenEfficiencyMarkdownReport(report: TokenEfficiencyRepor
     );
     for (const row of report.rows) {
       lines.push(
-        `| ${row.scenarioId} | ${row.usageSource} | ${row.openclaw.inputTokens}/${row.openclaw.outputTokens}/${row.openclaw.totalTokens}/${row.openclaw.toolCallCount} | ${row.codex.inputTokens}/${row.codex.outputTokens}/${row.codex.totalTokens}/${row.codex.toolCallCount} | ${formatPercent(row.deltaPercent)} | ${row.classification} | ${row.flagged ? "yes" : "no"} | ${row.toolsUsed.join(", ")} |`,
+        `| ${row.scenarioId} | ${row.usageSource} | ${row.nova.inputTokens}/${row.nova.outputTokens}/${row.nova.totalTokens}/${row.nova.toolCallCount} | ${row.codex.inputTokens}/${row.codex.outputTokens}/${row.codex.totalTokens}/${row.codex.toolCallCount} | ${formatPercent(row.deltaPercent)} | ${row.classification} | ${row.flagged ? "yes" : "no"} | ${row.toolsUsed.join(", ")} |`,
       );
     }
     lines.push("");

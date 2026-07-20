@@ -1,8 +1,8 @@
 // Qa Lab plugin module implements slack desktop smoke behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { pathExists } from "openclaw/plugin-sdk/security-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { pathExists } from "nova/plugin-sdk/security-runtime";
 import { ensureRepoBoundDirectory, resolveRepoRelativeOutputDir } from "../cli-paths.js";
 import {
   acquireQaCredentialLease,
@@ -634,7 +634,7 @@ slack_url="$slack_url_override"
 if [ -z "$slack_url" ] && [ -n "$team_id" ] && [ -n "\${NOVA_QA_SLACK_CHANNEL_ID:-}" ]; then
   slack_url="https://app.slack.com/client/$team_id/$NOVA_QA_SLACK_CHANNEL_ID"
 fi
-profile="\${NOVA_MANTIS_SLACK_BROWSER_PROFILE_DIR:-$HOME/.config/openclaw-mantis/slack-chrome-profile}"
+profile="\${NOVA_MANTIS_SLACK_BROWSER_PROFILE_DIR:-$HOME/.config/nova-mantis/slack-chrome-profile}"
 mkdir -p "$profile"
 if [ "$setup_gateway" = "1" ]; then
   export SLACK_BOT_TOKEN="\${NOVA_MANTIS_SLACK_BOT_TOKEN:-\${SLACK_BOT_TOKEN:-}}"
@@ -721,7 +721,7 @@ run_mantis_remote_body() {
         exit 3
         ;;
     esac
-    node_root="$HOME/.cache/openclaw-mantis/node-v$node_version-linux-$node_arch"
+    node_root="$HOME/.cache/nova-mantis/node-v$node_version-linux-$node_arch"
     if [ ! -x "$node_root/bin/node" ]; then
       node_tmp="$(mktemp -d)"
       node_archive="node-v$node_version-linux-$node_arch.tar.xz"
@@ -809,7 +809,7 @@ console.log(match[1] + " " + match[2]);
     exit 3
   fi
   if [ "$setup_gateway" = "1" ]; then
-    export NOVA_HOME="$HOME/.openclaw-mantis/slack-openclaw"
+    export NOVA_HOME="$HOME/.nova-mantis/slack-nova"
     mkdir -p "$NOVA_HOME"
     cat >"$out/slack.socket.patch.json5" <<MANTIS_SLACK_PATCH
 {
@@ -838,11 +838,11 @@ console.log(match[1] + " " + match[2]);
   },
 }
 MANTIS_SLACK_PATCH
-    pnpm openclaw config patch --file "$out/slack.socket.patch.json5" --dry-run
-    pnpm openclaw config patch --file "$out/slack.socket.patch.json5"
-    nohup pnpm openclaw gateway run --dev --allow-unconfigured --port 38973 --cli-backend-logs </dev/null >"$out/openclaw-gateway.log" 2>&1 &
+    pnpm nova config patch --file "$out/slack.socket.patch.json5" --dry-run
+    pnpm nova config patch --file "$out/slack.socket.patch.json5"
+    nohup pnpm nova gateway run --dev --allow-unconfigured --port 38973 --cli-backend-logs </dev/null >"$out/nova-gateway.log" 2>&1 &
     gateway_pid="$!"
-    echo "$gateway_pid" >"$out/openclaw-gateway.pid"
+    echo "$gateway_pid" >"$out/nova-gateway.pid"
     sleep 12
     if ! kill -0 "$gateway_pid" >/dev/null 2>&1; then
       echo "Nova gateway exited during startup." >&2
@@ -861,7 +861,7 @@ MANTIS_SLACK_PATCH
         cp -a "$slack_qa_output_dir"/. "$out/slack-qa"/
       fi
     }
-    qa_args=(openclaw qa slack --repo-root . --output-dir "$slack_qa_output_dir" --provider-mode "$provider_mode" --model "$primary_model" --alt-model "$alternate_model" --credential-source "$credential_source" --credential-role "$credential_role")
+    qa_args=(nova qa slack --repo-root . --output-dir "$slack_qa_output_dir" --provider-mode "$provider_mode" --model "$primary_model" --alt-model "$alternate_model" --credential-source "$credential_source" --credential-role "$credential_role")
     if [ "$fast_mode" = "1" ]; then
       qa_args+=(--fast)
     fi
@@ -980,7 +980,7 @@ async function waitForCheckpoint(filePath) {
 	    "</style></head><body><main class='wrap'>" +
 	    '<div class="channel"># Slack native approval checkpoint</div>' +
 	    '<section class="message"><div class="avatar">OC</div><div class="content">' +
-	    '<div class="meta"><span class="name">openclaw</span><span class="app">APP</span><span class="state">' +
+	    '<div class="meta"><span class="name">nova</span><span class="app">APP</span><span class="state">' +
 	    htmlEscape(stateLabel) +
 	    "</span></div>" +
 	    '<h1 class="title">' + htmlEscape(title) + "</h1>" +
@@ -1146,8 +1146,8 @@ cat >"$out/remote-metadata.json" <<MANTIS_REMOTE_METADATA
   "openedUrl": "$slack_url",
   "gatewaySetup": $setup_gateway,
   "approvalCheckpoints": $approval_checkpoints,
-  "gatewayAlive": $(if [ "$setup_gateway" = "1" ] && [ -f "$out/openclaw-gateway.pid" ] && kill -0 "$(cat "$out/openclaw-gateway.pid")" >/dev/null 2>&1; then echo true; else echo false; fi),
-  "gatewayPid": "$(if [ -f "$out/openclaw-gateway.pid" ]; then cat "$out/openclaw-gateway.pid"; fi)",
+  "gatewayAlive": $(if [ "$setup_gateway" = "1" ] && [ -f "$out/nova-gateway.pid" ] && kill -0 "$(cat "$out/nova-gateway.pid")" >/dev/null 2>&1; then echo true; else echo false; fi),
+  "gatewayPid": "$(if [ -f "$out/nova-gateway.pid" ]; then cat "$out/nova-gateway.pid"; fi)",
   "gatewayPort": 38973,
   "qaExitCode": $qa_status,
   "credentialSource": "$credential_source",
@@ -1338,7 +1338,7 @@ export async function runMantisSlackDesktopSmoke(
   const explicitLeaseId = trimToValue(opts.leaseId) ?? trimToValue(env[CRABBOX_LEASE_ID_ENV]);
   const keepLease = opts.keepLease ?? (gatewaySetup || isTruthyOptIn(env[CRABBOX_KEEP_ENV]));
   const createdLease = explicitLeaseId === undefined;
-  const remoteOutputDir = `/tmp/openclaw-mantis-slack-desktop-${startedAt
+  const remoteOutputDir = `/tmp/nova-mantis-slack-desktop-${startedAt
     .toISOString()
     .replace(/[^0-9A-Za-z]/gu, "-")}`;
   let credentialLease: SlackGatewayCredentialLease | undefined;

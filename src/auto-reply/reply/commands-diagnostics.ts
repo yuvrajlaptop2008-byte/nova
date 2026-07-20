@@ -15,10 +15,7 @@ import { executePluginCommand, matchPluginCommand } from "../../plugins/commands
 import type { PluginCommandDiagnosticsSession, PluginCommandResult } from "../../plugins/types.js";
 import type { ReplyPayload } from "../types.js";
 import { rejectNonOwnerCommand } from "./command-gates.js";
-import {
-  buildCurrentOpenClawCliCommand,
-  buildCurrentOpenClawCliExecEnv,
-} from "./commands-openclaw-cli.js";
+import { buildCurrentNovaCliCommand, buildCurrentNovaCliExecEnv } from "./commands-nova-cli.js";
 import {
   deliverPrivateCommandReply,
   readCommandDeliveryTarget,
@@ -32,8 +29,8 @@ import type { CommandHandler, HandleCommandsParams } from "./commands-types.js";
 
 const DIAGNOSTICS_COMMAND = "/diagnostics";
 const CODEX_DIAGNOSTICS_COMMAND = "/codex diagnostics";
-const DIAGNOSTICS_DOCS_URL = "https://docs.openclaw.ai/gateway/diagnostics";
-const GATEWAY_DIAGNOSTICS_EXPORT_JSON_LABEL = "openclaw gateway diagnostics export --json";
+const DIAGNOSTICS_DOCS_URL = "https://docs.nova.ai/gateway/diagnostics";
+const GATEWAY_DIAGNOSTICS_EXPORT_JSON_LABEL = "nova gateway diagnostics export --json";
 const DIAGNOSTICS_EXEC_SCOPE_KEY = "chat:diagnostics";
 const DIAGNOSTICS_PRIVATE_ROUTE_UNAVAILABLE =
   "I couldn't find a private owner approval route for diagnostics. Run /diagnostics from an owner DM so the sensitive diagnostics details are not posted in this chat.";
@@ -254,7 +251,7 @@ function buildDiagnosticsApprovalRequest(params: HandleCommandsParams): ExecAppr
 }
 
 function buildGatewayDiagnosticsExportJsonCommand(): string {
-  return buildCurrentOpenClawCliCommand(["gateway", "diagnostics", "export", "--json"]);
+  return buildCurrentNovaCliCommand(["gateway", "diagnostics", "export", "--json"]);
 }
 
 async function deliverPrivateDiagnosticsReply(params: {
@@ -305,7 +302,7 @@ async function requestGatewayDiagnosticsExportApproval(
     });
     const result = await execTool.execute("chat-diagnostics-gateway-export", {
       command,
-      env: buildCurrentOpenClawCliExecEnv(),
+      env: buildCurrentNovaCliExecEnv(),
       security: "allowlist",
       ask: "always",
       background: true,

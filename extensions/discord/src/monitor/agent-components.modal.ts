@@ -1,5 +1,5 @@
 // Discord plugin module implements agent components.modal behavior.
-import { logError } from "openclaw/plugin-sdk/logging-core";
+import { logError } from "nova/plugin-sdk/logging-core";
 import { parseDiscordModalCustomIdForInteraction } from "../component-custom-id.js";
 import { resolveDiscordModalEntryWithPersistence } from "../components-registry.js";
 import { Modal, type ComponentData, type ModalInteraction } from "../internal/discord.js";
@@ -17,7 +17,7 @@ import { dispatchPluginDiscordInteractiveEvent } from "./agent-components.plugin
 
 export class DiscordComponentModal extends Modal {
   override title = "Nova form";
-  override customId = "__openclaw_discord_component_modal_wildcard__";
+  override customId = "__nova_discord_component_modal_wildcard__";
   override components = [];
   override customIdParser = parseDiscordModalCustomIdForInteraction;
   private ctx: AgentComponentContext;

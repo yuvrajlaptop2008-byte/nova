@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: openclaw
+    name: nova
     runtime: docker
     plan: starter
     healthCheckPath: /health
@@ -8,12 +8,12 @@ services:
       - key: NOVA_GATEWAY_PORT
         value: "8080"
       - key: NOVA_STATE_DIR
-        value: /data/.openclaw
+        value: /data/.nova
       - key: NOVA_WORKSPACE_DIR
         value: /data/workspace
       - key: NOVA_GATEWAY_TOKEN
         generateValue: true
     disk:
-      name: openclaw-data
+      name: nova-data
       mountPath: /data
       sizeGB: 1

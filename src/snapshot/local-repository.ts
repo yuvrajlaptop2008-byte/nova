@@ -28,12 +28,12 @@ import {
 import { readSqliteUserVersion } from "../infra/sqlite-user-version.js";
 import { runExec } from "../process/exec.js";
 import { isValidAgentId, normalizeAgentId } from "../routing/session-key.js";
-import { assertOpenClawAgentDatabaseForMaintenance } from "../state/openclaw-agent-db.js";
-import { assertOpenClawStateDatabaseForMaintenance } from "../state/openclaw-state-db.js";
+import { assertNovaAgentDatabaseForMaintenance } from "../state/nova-agent-db.js";
+import { assertNovaStateDatabaseForMaintenance } from "../state/nova-state-db.js";
 import {
-  sanitizeOpenClawGlobalStateSnapshot,
-  sanitizeOpenClawStateLeaseRows,
-} from "../state/openclaw-state-snapshot-sanitizer.js";
+  sanitizeNovaGlobalStateSnapshot,
+  sanitizeNovaStateLeaseRows,
+} from "../state/nova-state-snapshot-sanitizer.js";
 import {
   containsAsciiControlCharacter,
   copySnapshotArtifact,
@@ -277,9 +277,9 @@ class LocalSqliteSnapshotProvider implements SqliteSnapshotProvider {
         targetPath: artifactPath,
         transform:
           identity.role === "global"
-            ? sanitizeOpenClawGlobalStateSnapshot
+            ? sanitizeNovaGlobalStateSnapshot
             : identity.role === "agent"
-              ? sanitizeOpenClawStateLeaseRows
+              ? sanitizeNovaStateLeaseRows
               : undefined,
         validate: buildDatabaseValidator(identity),
       });
@@ -717,12 +717,11 @@ function buildDatabaseValidator(
   identity: SnapshotDatabaseIdentity | SnapshotDatabaseManifest,
 ): SqliteSnapshotValidator {
   if (identity.role === "global") {
-    return (database, pathname) =>
-      assertOpenClawStateDatabaseForMaintenance(database, { pathname });
+    return (database, pathname) => assertNovaStateDatabaseForMaintenance(database, { pathname });
   }
   if (identity.role === "agent") {
     return (database, pathname) =>
-      assertOpenClawAgentDatabaseForMaintenance(database, {
+      assertNovaAgentDatabaseForMaintenance(database, {
         agentId: identity.agentId,
         pathname,
       });

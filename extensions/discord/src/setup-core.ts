@@ -1,14 +1,14 @@
 // Discord plugin module implements setup core behavior.
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
-import type { DiscordGuildEntry, OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { ChannelSetupDmPolicy, ChannelSetupWizard } from "openclaw/plugin-sdk/setup-runtime";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/account-id";
+import type { DiscordGuildEntry, NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { ChannelSetupDmPolicy, ChannelSetupWizard } from "nova/plugin-sdk/setup-runtime";
 import {
   createSetupTranslator,
   createStandardChannelSetupStatus,
   defineTokenCredential,
-} from "openclaw/plugin-sdk/setup-runtime";
-import { formatDocsLink } from "openclaw/plugin-sdk/setup-tools";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/setup-runtime";
+import { formatDocsLink } from "nova/plugin-sdk/setup-tools";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   inspectDiscordSetupAccount,
   resolveDiscordSetupAccountConfig,
@@ -68,10 +68,10 @@ function mapDiscordSetupAllowlistEntries(resolved: unknown): DiscordGuildChannel
 }
 
 function setDiscordGuildChannelAllowlist(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId: string,
   entries: DiscordGuildChannelAllowlistEntry[],
-): OpenClawConfig {
+): NovaConfig {
   const baseGuilds =
     accountId === DEFAULT_ACCOUNT_ID
       ? (cfg.channels?.discord?.guilds ?? {})
@@ -160,9 +160,9 @@ export function createDiscordSetupWizardBase(handlers: {
       channel,
       label: t("wizard.discord.channelsLabel"),
       placeholder: "My Server/#general, guildId/channelId, #support",
-      currentPolicy: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId: string }) =>
+      currentPolicy: ({ cfg, accountId }: { cfg: NovaConfig; accountId: string }) =>
         resolveDiscordSetupAccountConfig({ cfg, accountId }).config.groupPolicy ?? "allowlist",
-      currentEntries: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId: string }) =>
+      currentEntries: ({ cfg, accountId }: { cfg: NovaConfig; accountId: string }) =>
         Object.entries(
           resolveDiscordSetupAccountConfig({ cfg, accountId }).config.guilds ?? {},
         ).flatMap(([guildKey, value]) => {
@@ -174,7 +174,7 @@ export function createDiscordSetupWizardBase(handlers: {
           }
           return channelKeys.map((channelKey) => `${guildKey}/${channelKey}`);
         }),
-      updatePrompt: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId: string }) =>
+      updatePrompt: ({ cfg, accountId }: { cfg: NovaConfig; accountId: string }) =>
         Boolean(resolveDiscordSetupAccountConfig({ cfg, accountId }).config.guilds),
       resolveAllowlist: handlers.resolveGroupAllowlist,
       fallbackResolved: (entries) => entries.map((input) => ({ input, resolved: false })),
@@ -183,7 +183,7 @@ export function createDiscordSetupWizardBase(handlers: {
         accountId,
         resolved,
       }: {
-        cfg: OpenClawConfig;
+        cfg: NovaConfig;
         accountId: string;
         resolved: unknown;
       }) =>
@@ -209,6 +209,6 @@ export function createDiscordSetupWizardBase(handlers: {
       resolveEntries: handlers.resolveAllowFromEntries,
     }),
     dmPolicy: discordDmPolicy,
-    disable: (cfg: OpenClawConfig) => setSetupChannelEnabled(cfg, channel, false),
+    disable: (cfg: NovaConfig) => setSetupChannelEnabled(cfg, channel, false),
   } satisfies ChannelSetupWizard;
 }

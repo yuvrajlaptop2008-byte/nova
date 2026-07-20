@@ -10,9 +10,9 @@ import {
   withTempDir,
 } from "./install-source-utils.js";
 
-const execFileSyncMock = vi.hoisted(() => vi.fn(() => "/tmp/openclaw-test-global-npmrc\n"));
+const execFileSyncMock = vi.hoisted(() => vi.fn(() => "/tmp/nova-test-global-npmrc\n"));
 const runCommandWithTimeoutMock = vi.fn();
-const TEMP_DIR_PREFIX = "openclaw-install-source-utils-";
+const TEMP_DIR_PREFIX = "nova-install-source-utils-";
 const tempDirs = createTrackedTempDirs();
 
 vi.mock("node:child_process", async (importOriginal) => {
@@ -88,8 +88,8 @@ async function expectPackFallsBackToDetectedArchive(params: {
   stdout: string;
   expectedMetadata?: Record<string, unknown>;
 }) {
-  const cwd = await createTempDir("openclaw-install-source-utils-");
-  const archivePath = path.join(cwd, "openclaw-plugin-1.2.3.tgz");
+  const cwd = await createTempDir("nova-install-source-utils-");
+  const archivePath = path.join(cwd, "nova-plugin-1.2.3.tgz");
   await fs.writeFile(archivePath, "", "utf-8");
   runCommandWithTimeoutMock.mockResolvedValue({
     stdout: params.stdout,
@@ -100,7 +100,7 @@ async function expectPackFallsBackToDetectedArchive(params: {
   });
 
   const result = await packNpmSpecToArchive({
-    spec: "openclaw-plugin@1.2.3",
+    spec: "nova-plugin@1.2.3",
     timeoutMs: 5000,
     cwd,
   });
@@ -136,7 +136,7 @@ describe("withTempDir", () => {
     let observedDir = "";
     const markerFile = "marker.txt";
 
-    const value = await withTempDir("openclaw-install-source-utils-", async (tmpDir) => {
+    const value = await withTempDir("nova-install-source-utils-", async (tmpDir) => {
       observedDir = tmpDir;
       await fs.writeFile(path.join(tmpDir, markerFile), "ok", "utf-8");
       await expect(fs.readFile(path.join(tmpDir, markerFile), "utf8")).resolves.toBe("ok");
@@ -152,7 +152,7 @@ describe("resolveArchiveSourcePath", () => {
   it.each([
     {
       name: "returns not found error for missing archive paths",
-      path: async () => "/tmp/does-not-exist-openclaw-archive.tgz",
+      path: async () => "/tmp/does-not-exist-nova-archive.tgz",
       expected: "archive not found",
     },
     {
@@ -190,7 +190,7 @@ describe("resolveNpmSpecMetadata", () => {
     version: "2026.6.11",
     "dist.integrity": "placeholder",
     "dist.shasum": "placeholder",
-    openclaw: {
+    nova: {
       extensions: ["./index.ts"],
     },
   };
@@ -330,8 +330,8 @@ describe("resolveNpmSpecMetadata", () => {
     });
   });
 
-  it("accepts metadata without an openclaw block", async () => {
-    const { openclaw: _openclaw, ...withoutNova } = npmViewMetadata;
+  it("accepts metadata without an nova block", async () => {
+    const { nova: _nova, ...withoutNova } = npmViewMetadata;
     mockPackCommandResult({ stdout: JSON.stringify(withoutNova) });
 
     const result = await resolveNpmSpecMetadata({ spec: "@nova/codex" });
@@ -362,36 +362,36 @@ describe("resolveNpmSpecMetadata", () => {
 describe("packNpmSpecToArchive", () => {
   it("packs spec and returns archive path using JSON output metadata", async () => {
     const cwd = await createFixtureDir();
-    const archivePath = path.join(cwd, "openclaw-plugin-1.2.3.tgz");
+    const archivePath = path.join(cwd, "nova-plugin-1.2.3.tgz");
     await fs.writeFile(archivePath, "", "utf-8");
     mockPackCommandResult({
       stdout: JSON.stringify([
         {
-          id: "openclaw-plugin@1.2.3",
-          name: "openclaw-plugin",
+          id: "nova-plugin@1.2.3",
+          name: "nova-plugin",
           version: "1.2.3",
-          filename: "openclaw-plugin-1.2.3.tgz",
+          filename: "nova-plugin-1.2.3.tgz",
           integrity: "sha512-test-integrity",
           shasum: "abc123",
         },
       ]),
     });
 
-    const result = await runPack("openclaw-plugin@1.2.3", cwd);
+    const result = await runPack("nova-plugin@1.2.3", cwd);
 
     expect(result).toEqual({
       ok: true,
       archivePath,
       metadata: {
-        name: "openclaw-plugin",
+        name: "nova-plugin",
         version: "1.2.3",
-        resolvedSpec: "openclaw-plugin@1.2.3",
+        resolvedSpec: "nova-plugin@1.2.3",
         integrity: "sha512-test-integrity",
         shasum: "abc123",
       },
     });
     expect(runCommandWithTimeoutMock).toHaveBeenCalledWith(
-      ["npm", "pack", "openclaw-plugin@1.2.3", "--ignore-scripts", "--json"],
+      ["npm", "pack", "nova-plugin@1.2.3", "--ignore-scripts", "--json"],
       {
         cwd,
         timeoutMs: 300_000,
@@ -411,13 +411,13 @@ describe("packNpmSpecToArchive", () => {
 
   it("falls back to parsing final stdout line when npm json output is unavailable", async () => {
     const cwd = await createFixtureDir();
-    const expectedArchivePath = path.join(cwd, "openclaw-plugin-1.2.3.tgz");
+    const expectedArchivePath = path.join(cwd, "nova-plugin-1.2.3.tgz");
     await fs.writeFile(expectedArchivePath, "", "utf-8");
     mockPackCommandResult({
-      stdout: "npm notice created package\nopenclaw-plugin-1.2.3.tgz\n",
+      stdout: "npm notice created package\nnova-plugin-1.2.3.tgz\n",
     });
 
-    const result = await runPack("openclaw-plugin@1.2.3", cwd);
+    const result = await runPack("nova-plugin@1.2.3", cwd);
 
     expect(result).toEqual({
       ok: true,
@@ -450,11 +450,11 @@ describe("packNpmSpecToArchive", () => {
     {
       name: "falls back to cwd archive when logged JSON metadata omits filename",
       stdout:
-        'npm notice using cache\n[{"id":"openclaw-plugin@1.2.3","name":"openclaw-plugin","version":"1.2.3","integrity":"sha512-test-integrity","shasum":"abc123"}]\n',
+        'npm notice using cache\n[{"id":"nova-plugin@1.2.3","name":"nova-plugin","version":"1.2.3","integrity":"sha512-test-integrity","shasum":"abc123"}]\n',
       expectedMetadata: {
-        name: "openclaw-plugin",
+        name: "nova-plugin",
         version: "1.2.3",
-        resolvedSpec: "openclaw-plugin@1.2.3",
+        resolvedSpec: "nova-plugin@1.2.3",
         integrity: "sha512-test-integrity",
         shasum: "abc123",
       },
@@ -475,7 +475,7 @@ describe("packNpmSpecToArchive", () => {
     expectPackError(result, [
       "Package not found on npm",
       "@nova/whatsapp",
-      "docs.openclaw.ai/tools/plugin",
+      "docs.nova.ai/tools/plugin",
     ]);
   });
 
@@ -485,7 +485,7 @@ describe("packNpmSpecToArchive", () => {
       stdout: " \n\n",
     });
 
-    const result = await runPack("openclaw-plugin@1.2.3", cwd, 5000);
+    const result = await runPack("nova-plugin@1.2.3", cwd, 5000);
 
     expect(result).toEqual({
       ok: false,
@@ -495,14 +495,14 @@ describe("packNpmSpecToArchive", () => {
 
   it("parses scoped metadata from id-only json output even with npm notice prefix", async () => {
     const cwd = await createFixtureDir();
-    await fs.writeFile(path.join(cwd, "openclaw-plugin-demo-2.0.0.tgz"), "", "utf-8");
+    await fs.writeFile(path.join(cwd, "nova-plugin-demo-2.0.0.tgz"), "", "utf-8");
     mockPackCommandResult({
       stdout:
         "npm notice creating package\n" +
         JSON.stringify([
           {
             id: "@nova/plugin-demo@2.0.0",
-            filename: "openclaw-plugin-demo-2.0.0.tgz",
+            filename: "nova-plugin-demo-2.0.0.tgz",
           },
         ]),
     });
@@ -510,7 +510,7 @@ describe("packNpmSpecToArchive", () => {
     const result = await runPack("@nova/plugin-demo@2.0.0", cwd);
     expect(result).toEqual({
       ok: true,
-      archivePath: path.join(cwd, "openclaw-plugin-demo-2.0.0.tgz"),
+      archivePath: path.join(cwd, "nova-plugin-demo-2.0.0.tgz"),
       metadata: {
         resolvedSpec: "@nova/plugin-demo@2.0.0",
       },

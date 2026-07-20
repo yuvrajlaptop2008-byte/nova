@@ -2,7 +2,7 @@
 
 import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import * as manifestRegistry from "../../../plugins/manifest-registry.js";
 import {
   channelPluginBlockerHitToHealthFinding,
@@ -184,7 +184,7 @@ describe("channel plugin blockers", () => {
           enabled: true,
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(hits).toEqual([
       {
@@ -843,7 +843,7 @@ describe("channel plugin blockers", () => {
       diagnostics: [],
     } as unknown as ReturnType<typeof manifestRegistry.loadPluginManifestRegistry>);
 
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       channels: {
         discord: {
           enabled: true,
@@ -884,7 +884,7 @@ describe("channel plugin blockers", () => {
       diagnostics: [],
     } as unknown as ReturnType<typeof manifestRegistry.loadPluginManifestRegistry>);
 
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       channels: {
         "workspace-chat": {
           enabled: true,
@@ -1185,7 +1185,7 @@ describe("channel plugin blockers", () => {
           enabledByDefault: true,
         },
         {
-          id: "openclaw-lark",
+          id: "nova-lark",
           origin: "config",
           channels: ["feishu"],
           enabledByDefault: false,
@@ -1207,7 +1207,7 @@ describe("channel plugin blockers", () => {
           feishu: {
             enabled: false,
           },
-          "openclaw-lark": {
+          "nova-lark": {
             enabled: true,
           },
         },
@@ -1234,7 +1234,7 @@ describe("channel plugin blockers", () => {
           enabledByDefault: true,
         },
         {
-          id: "openclaw-lark",
+          id: "nova-lark",
           origin: "config",
           channels: ["feishu"],
           enabledByDefault: false,
@@ -1275,7 +1275,7 @@ describe("channel plugin blockers", () => {
       },
       {
         channelId: "feishu",
-        pluginId: "openclaw-lark",
+        pluginId: "nova-lark",
         reason: "missing explicit enablement",
       },
     ]);

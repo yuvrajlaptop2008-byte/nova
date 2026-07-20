@@ -1,23 +1,23 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# OpenClaw Auth Widget for Termux
+# Nova Auth Widget for Termux
 # Place in ~/.shortcuts/ for Termux:Widget
 #
 # This widget checks auth status and helps with re-auth if needed.
 # It's designed for quick one-tap checking from phone home screen.
 
 # Server hostname (via Tailscale or SSH config)
-SERVER="${NOVA_SERVER:-openclaw-host}"
+SERVER="${NOVA_SERVER:-nova-host}"
 
 # Check auth status
-termux-toast "Checking OpenClaw auth..."
+termux-toast "Checking Nova auth..."
 
-STATUS=$(ssh "$SERVER" '$HOME/openclaw/scripts/claude-auth-status.sh simple' 2>&1)
+STATUS=$(ssh "$SERVER" '$HOME/nova/scripts/claude-auth-status.sh simple' 2>&1)
 EXIT_CODE=$?
 
 case "$STATUS" in
     OK)
         # Get remaining time
-        DETAILS=$(ssh "$SERVER" '$HOME/openclaw/scripts/claude-auth-status.sh json' 2>&1)
+        DETAILS=$(ssh "$SERVER" '$HOME/nova/scripts/claude-auth-status.sh json' 2>&1)
         HOURS=$(echo "$DETAILS" | jq -r '.claude_code.status' | grep -oP '\d+(?=h)' || echo "?")
 
         termux-vibrate -d 50
@@ -43,7 +43,7 @@ case "$STATUS" in
 
                 # Open terminal to server
                 am start -n com.termux/com.termux.app.TermuxActivity -a android.intent.action.MAIN
-                termux-toast "Run: ssh $SERVER '$HOME/openclaw/scripts/mobile-reauth.sh'"
+                termux-toast "Run: ssh $SERVER '$HOME/nova/scripts/mobile-reauth.sh'"
                 ;;
             *)
                 termux-toast "Reminder: Auth expires soon"
@@ -66,10 +66,10 @@ case "$STATUS" in
 2. Return here and tap OK to SSH"
 
                 am start -n com.termux/com.termux.app.TermuxActivity -a android.intent.action.MAIN
-                termux-toast "Run: ssh $SERVER '$HOME/openclaw/scripts/mobile-reauth.sh'"
+                termux-toast "Run: ssh $SERVER '$HOME/nova/scripts/mobile-reauth.sh'"
                 ;;
             *)
-                termux-toast "Warning: OpenClaw won't work until re-auth"
+                termux-toast "Warning: Nova won't work until re-auth"
                 ;;
         esac
         ;;

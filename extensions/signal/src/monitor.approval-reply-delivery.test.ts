@@ -1,6 +1,6 @@
-import { buildExecApprovalPendingReplyPayload } from "openclaw/plugin-sdk/approval-reply-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
+import { buildExecApprovalPendingReplyPayload } from "nova/plugin-sdk/approval-reply-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearSignalApprovalReactionTargetsForTest,
@@ -37,12 +37,12 @@ const cfg = {
       targets: [{ channel: "signal", to: approver }],
     },
   },
-} as OpenClawConfig;
+} as NovaConfig;
 
 async function deliverReplyPayload(
   payload: ReplyPayload,
   options: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     account?: string;
     accountUuid?: string;
     accountId?: string;
@@ -241,7 +241,7 @@ describe("Signal monitor reply delivery", () => {
         },
       },
       approvals: cfg.approvals,
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await deliverReplyPayload(payload, {
       config: uuidOnlyConfig,

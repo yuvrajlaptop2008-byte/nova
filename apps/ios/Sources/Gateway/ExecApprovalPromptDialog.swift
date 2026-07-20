@@ -101,7 +101,7 @@ private struct ExecApprovalPromptCard: View {
                 .padding(18)
                 .accessibilityIdentifier("exec-approval-actions")
         }
-        .proPanelSurface(tint: OpenClawBrand.accentHot, radius: 20, isProminent: true)
+        .proPanelSurface(tint: NovaBrand.accentHot, radius: 20, isProminent: true)
     }
 
     private var reviewContent: some View {
@@ -109,39 +109,39 @@ private struct ExecApprovalPromptCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 if self.isPluginApproval {
                     Text(verbatim: self.prompt.commandText)
-                        .font(OpenClawType.headline)
+                        .font(NovaType.headline)
                     if let description = self.normalized(self.prompt.descriptionText) {
                         Text(verbatim: description)
-                            .font(OpenClawType.subhead)
+                            .font(NovaType.subhead)
                             .foregroundStyle(.secondary)
                     }
                 } else {
                     Text("Exec approval required")
-                        .font(OpenClawType.headline)
+                        .font(NovaType.headline)
                     Text("Review this exec request before continuing. Your decision will be sent back to the gateway.")
-                        .font(OpenClawType.subhead)
+                        .font(NovaType.subhead)
                         .foregroundStyle(.secondary)
                 }
             }
 
             if !self.isPluginApproval {
                 Text(self.prompt.commandText)
-                    .font(OpenClawType.mono)
+                    .font(NovaType.mono)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(10)
                     .background(
                         .black.opacity(0.14),
-                        in: RoundedRectangle(cornerRadius: OpenClawRadius.md, style: .continuous))
+                        in: RoundedRectangle(cornerRadius: NovaRadius.md, style: .continuous))
             }
 
             if let warningText = self.normalized(self.prompt.warningText) {
                 Label {
                     Text(warningText)
-                        .font(OpenClawType.footnote)
+                        .font(NovaType.footnote)
                 } icon: {
                     Image(systemName: "exclamationmark.triangle.fill")
                 }
-                .foregroundStyle(OpenClawBrand.warn)
+                .foregroundStyle(NovaBrand.warn)
                 .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -174,13 +174,13 @@ private struct ExecApprovalPromptCard: View {
 
             if let errorText = self.normalized(self.errorText) {
                 Text(errorText)
-                    .font(OpenClawType.footnote)
-                    .foregroundStyle(OpenClawBrand.danger)
+                    .font(NovaType.footnote)
+                    .foregroundStyle(NovaBrand.danger)
             }
 
             if let resolvedText = self.normalized(self.resolvedText) {
                 Text(resolvedText)
-                    .font(OpenClawType.footnote)
+                    .font(NovaType.footnote)
                     .foregroundStyle(self.resolvedColor)
             }
 
@@ -189,7 +189,7 @@ private struct ExecApprovalPromptCard: View {
                     ProgressView()
                         .progressViewStyle(.circular)
                     Text("Resolving…")
-                        .font(OpenClawType.footnote)
+                        .font(NovaType.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -208,7 +208,7 @@ private struct ExecApprovalPromptCard: View {
                         self.onAllowOnce()
                     } label: {
                         Text("Allow Once")
-                            .font(OpenClawType.subheadSemiBold)
+                            .font(NovaType.subheadSemiBold)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
@@ -220,7 +220,7 @@ private struct ExecApprovalPromptCard: View {
                         self.onAllowAlways()
                     } label: {
                         Text("Allow Always")
-                            .font(OpenClawType.subheadSemiBold)
+                            .font(NovaType.subheadSemiBold)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
@@ -247,7 +247,7 @@ private struct ExecApprovalPromptCard: View {
                     self.onCancel()
                 } label: {
                     Text("Dismiss")
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -262,7 +262,7 @@ private struct ExecApprovalPromptCard: View {
             self.onDeny()
         } label: {
             Text("Deny")
-                .font(OpenClawType.subheadSemiBold)
+                .font(NovaType.subheadSemiBold)
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
@@ -274,7 +274,7 @@ private struct ExecApprovalPromptCard: View {
             self.onCancel()
         } label: {
             Text("Cancel")
-                .font(OpenClawType.subheadSemiBold)
+                .font(NovaType.subheadSemiBold)
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
@@ -289,11 +289,11 @@ private struct ExecApprovalPromptCard: View {
     private var resolvedColor: Color {
         switch self.resolvedTone {
         case .success:
-            OpenClawBrand.ok
+            NovaBrand.ok
         case .danger:
-            OpenClawBrand.danger
+            NovaBrand.danger
         case .warning:
-            OpenClawBrand.warn
+            NovaBrand.warn
         case .neutral, nil:
             .secondary
         }
@@ -330,10 +330,10 @@ private struct ExecApprovalPromptMetadataRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(self.label)
-                .font(OpenClawType.caption)
+                .font(NovaType.caption)
                 .foregroundStyle(.secondary)
             Text(verbatim: self.value)
-                .font(OpenClawType.footnote)
+                .font(NovaType.footnote)
                 .textSelection(.enabled)
         }
     }

@@ -37,7 +37,7 @@ type GatewayRunTestApi = {
 
 function getTestApi(): GatewayRunTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.gatewayRunTestApi")
+    Symbol.for("nova.gatewayRunTestApi")
   ] as GatewayRunTestApi;
 }
 

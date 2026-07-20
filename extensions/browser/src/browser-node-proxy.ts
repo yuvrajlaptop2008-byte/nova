@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
 import { isBrowserControlHostUnavailableError } from "./browser-node-fallback.js";
 import {
   BROWSER_PROXY_ERROR_ENVELOPE,

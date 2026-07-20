@@ -48,7 +48,7 @@ async function buildGitHubSkillZip(): Promise<Buffer> {
   return await zip.generateAsync({ type: "nodebuffer" });
 }
 
-describe("openclaw skills install ClawHub GitHub-backed E2E", () => {
+describe("nova skills install ClawHub GitHub-backed E2E", () => {
   it("installs from the install resolver and reports install telemetry", async () => {
     const commit = "c".repeat(40);
     const telemetryBodies: unknown[] = [];
@@ -106,14 +106,14 @@ describe("openclaw skills install ClawHub GitHub-backed E2E", () => {
     });
 
     const registry = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-clawhub-cli-e2e-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-clawhub-cli-e2e-"));
     try {
       const result = await spawnNova(["skills", "install", "@demo-owner/aiq-deploy", "--global"], {
         cwd: process.cwd(),
         env: {
           ...process.env,
           NOVA_STATE_DIR: stateDir,
-          NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+          NOVA_CONFIG_PATH: path.join(stateDir, "nova.json"),
           NOVA_CLAWHUB_URL: registry,
           CLAWHUB_TOKEN: "test-token",
           CLAWHUB_GITHUB_CODELOAD_BASE_URL: registry,

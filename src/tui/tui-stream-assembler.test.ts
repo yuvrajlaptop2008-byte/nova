@@ -5,8 +5,7 @@ import { TuiStreamAssembler } from "./tui-stream-assembler.js";
 const text = (value: string) => ({ type: "text", text: value }) as const;
 const thinking = (value: string) => ({ type: "thinking", thinking: value }) as const;
 const toolUse = () => ({ type: "tool_use", name: "search" }) as const;
-const pairingQr = (terminalText: string) =>
-  ({ type: "openclaw_pairing_qr", terminalText }) as const;
+const pairingQr = (terminalText: string) => ({ type: "nova_pairing_qr", terminalText }) as const;
 
 const messageWithContent = (content: readonly Record<string, unknown>[]) =>
   ({

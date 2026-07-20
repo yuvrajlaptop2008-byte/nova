@@ -1,8 +1,8 @@
 // Qqbot helper module supports config behavior.
 import fs from "node:fs";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveDefaultSecretProviderAlias } from "openclaw/plugin-sdk/provider-auth";
-import { coerceSecretRef, normalizeSecretInputString } from "openclaw/plugin-sdk/secret-input";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolveDefaultSecretProviderAlias } from "nova/plugin-sdk/provider-auth";
+import { coerceSecretRef, normalizeSecretInputString } from "nova/plugin-sdk/secret-input";
 import { getPlatformAdapter } from "../engine/adapter/index.js";
 import {
   DEFAULT_ACCOUNT_ID as ENGINE_DEFAULT_ACCOUNT_ID,
@@ -31,7 +31,7 @@ function assertNotLegacySecretRefMarker(value: unknown, path: string): void {
 }
 
 function resolveEnvSecretRefValue(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   value: unknown;
   env?: NodeJS.ProcessEnv;
 }): string | undefined {
@@ -62,7 +62,7 @@ function resolveEnvSecretRefValue(params: {
 }
 
 function resolveQQBotClientSecretInput(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   value: unknown;
   path: string;
 }): string | undefined {
@@ -83,18 +83,18 @@ function resolveQQBotClientSecretInput(params: {
 }
 
 /** List all configured QQBot account IDs. */
-export function listQQBotAccountIds(cfg: OpenClawConfig): string[] {
+export function listQQBotAccountIds(cfg: NovaConfig): string[] {
   return listAccountIds(cfg as unknown as Record<string, unknown>);
 }
 
 /** Resolve the default QQBot account ID. */
-export function resolveDefaultQQBotAccountId(cfg: OpenClawConfig): string {
+export function resolveDefaultQQBotAccountId(cfg: NovaConfig): string {
   return resolveDefaultAccountId(cfg as unknown as Record<string, unknown>);
 }
 
 /** Resolve QQBot account config for runtime or setup flows. */
 export function resolveQQBotAccount(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId?: string | null,
   opts?: { allowUnresolvedSecretRef?: boolean },
 ): ResolvedQQBotAccount {
@@ -160,7 +160,7 @@ export function resolveQQBotAccount(
 
 /** Apply account config updates back into the Nova config object. */
 export function applyQQBotAccountConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId: string,
   input: {
     appId?: string;
@@ -168,10 +168,10 @@ export function applyQQBotAccountConfig(
     clientSecretFile?: string;
     name?: string;
   },
-): OpenClawConfig {
+): NovaConfig {
   return applyAccountConfig(
     cfg as unknown as Record<string, unknown>,
     accountId,
     input,
-  ) as OpenClawConfig;
+  ) as NovaConfig;
 }

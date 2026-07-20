@@ -1,6 +1,6 @@
 import path from "node:path";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { packageNameMatchesId } from "../infra/install-safe-path.js";
 import type { InstallPolicySource } from "../security/install-policy.js";
 import { matchesExpectedPluginId, validatePluginId } from "./install-paths.js";
@@ -8,14 +8,14 @@ import {
   buildDirectoryInstallResult,
   defaultLogger,
   emitSuccessfulPluginInstallSecurityEvent,
-  ensureOpenClawExtensions,
-  formatUnresolvedOpenClawPeerLinkError,
+  ensureNovaExtensions,
+  formatUnresolvedNovaPeerLinkError,
   hasPackageRuntimeDependencies,
   loadPluginInstallRuntime,
   runInstallSourceScan,
   sourceFamilyForInstallPolicyKind,
   sourceFamilyForInstallPolicySource,
-  validateOpenClawPackageInstallCompatibility,
+  validateNovaPackageInstallCompatibility,
 } from "./install-shared.js";
 import {
   PLUGIN_INSTALL_ERROR_CODE,
@@ -27,7 +27,7 @@ import {
   type PluginInstallPolicyRequest,
 } from "./install-types.js";
 import { validatePackageExtensionEntriesForInstall } from "./package-entry-resolution.js";
-import { linkOpenClawPeerDependencies } from "./plugin-peer-link.js";
+import { linkNovaPeerDependencies } from "./plugin-peer-link.js";
 
 type ValidatedPackagePlugin = {
   manifest: PackageManifest;
@@ -47,7 +47,7 @@ export async function validatePackagePluginInstallSource(params: {
   allowSourceTypeScriptEntries?: boolean;
   dangerouslyForceUnsafeInstall?: boolean;
   trustedSourceLinkedOfficialInstall?: boolean;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   installPolicyRequest?: PluginInstallPolicyRequest;
   logger: PluginInstallLogger;
   mode: "install" | "update";
@@ -77,7 +77,7 @@ export async function validatePackagePluginInstallSource(params: {
   if (!ocManifestResult.ok && params.requirePluginManifest) {
     return {
       ok: false,
-      error: `package missing valid openclaw.plugin.json: ${ocManifestResult.error}`,
+      error: `package missing valid nova.plugin.json: ${ocManifestResult.error}`,
       code: PLUGIN_INSTALL_ERROR_CODE.MISSING_PLUGIN_MANIFEST,
     };
   }
@@ -113,7 +113,7 @@ export async function validatePackagePluginInstallSource(params: {
   }
 
   const packageMetadata = params.runtime.getPackageManifestMetadata(manifest);
-  const compatibilityError = validateOpenClawPackageInstallCompatibility({
+  const compatibilityError = validateNovaPackageInstallCompatibility({
     runtime: params.runtime,
     pluginId,
     packageMetadata,
@@ -122,7 +122,7 @@ export async function validatePackagePluginInstallSource(params: {
     return compatibilityError;
   }
 
-  const extensionsResult = ensureOpenClawExtensions({
+  const extensionsResult = ensureNovaExtensions({
     manifest,
   });
   if (!extensionsResult.ok) {
@@ -208,7 +208,7 @@ export async function scanAndLinkInstalledPackage(params: {
   mode?: "install" | "update";
   requestKind?: PluginInstallPolicyRequest["kind"];
   requestedSpecifier?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   source?: InstallPolicySource;
   logger: PluginInstallLogger;
 }): Promise<Extract<InstallPluginResult, { ok: false }> | null> {
@@ -244,7 +244,7 @@ export async function scanAndLinkInstalledPackage(params: {
   if (scanResult) {
     return scanResult;
   }
-  const peerLinkRepair = await linkOpenClawPeerDependencies({
+  const peerLinkRepair = await linkNovaPeerDependencies({
     installedDir: params.installedDir,
     peerDependencies: params.peerDependencies,
     logger: params.logger,
@@ -252,7 +252,7 @@ export async function scanAndLinkInstalledPackage(params: {
   if (peerLinkRepair.skipped > 0) {
     return {
       ok: false,
-      error: formatUnresolvedOpenClawPeerLinkError(params.pluginId),
+      error: formatUnresolvedNovaPeerLinkError(params.pluginId),
     };
   }
   return null;

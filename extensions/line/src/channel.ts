@@ -2,15 +2,15 @@
 import {
   buildDmGroupAccountAllowlistAdapter,
   createFlatAllowlistOverrideResolver,
-} from "openclaw/plugin-sdk/allowlist-config-edit";
+} from "nova/plugin-sdk/allowlist-config-edit";
 import {
   buildChannelOutboundSessionRoute,
   createChatChannelPlugin,
-} from "openclaw/plugin-sdk/channel-core";
-import { createPairingPrefixStripper } from "openclaw/plugin-sdk/channel-pairing";
-import { createRestrictSendersChannelSecurity } from "openclaw/plugin-sdk/channel-policy";
-import { createEmptyChannelDirectoryAdapter } from "openclaw/plugin-sdk/directory-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+} from "nova/plugin-sdk/channel-core";
+import { createPairingPrefixStripper } from "nova/plugin-sdk/channel-pairing";
+import { createRestrictSendersChannelSecurity } from "nova/plugin-sdk/channel-policy";
+import { createEmptyChannelDirectoryAdapter } from "nova/plugin-sdk/directory-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import { resolveLineAccount } from "./accounts.js";
 import { lineBindingsAdapter } from "./bindings.js";
 import type { ChannelPlugin, ResolvedLineAccount } from "./channel-api.js";
@@ -39,7 +39,7 @@ const lineSecurityAdapter = createRestrictSendersChannelSecurity<ResolvedLineAcc
   groupAllowFromPath: "channels.line.groupAllowFrom",
   mentionGated: false,
   policyPathSuffix: "dmPolicy",
-  approveHint: "openclaw pairing approve line <code>",
+  approveHint: "nova pairing approve line <code>",
   normalizeDmEntry: (raw) => raw.replace(/^line:(?:user:)?/i, ""),
 });
 

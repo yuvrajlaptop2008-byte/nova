@@ -1,6 +1,6 @@
 /** Auto-reply dispatch orchestration, hook composition, and foreground delivery fencing. */
 import { normalizeChatType } from "../channels/chat-type.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   deriveInboundMessageHookContext,
   toPluginMessageContext,
@@ -316,7 +316,7 @@ function endForegroundReplyFence(snapshot: ForegroundReplyFenceSnapshot): void {
 
 function resolveDispatcherSilentReplyContext(
   ctx: MsgContext | FinalizedMsgContext,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ) {
   const finalized = finalizeInboundContext(ctx);
   const commandTargetSessionKey = resolveCommandTurnTargetSessionKey(finalized);
@@ -512,7 +512,7 @@ function finalizeDispatchResult(
 /** Dispatches one finalized inbound message through reply resolution and queued delivery. */
 export async function dispatchInboundMessage(params: {
   ctx: MsgContext | FinalizedMsgContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   dispatcher: ReplyDispatcher;
   toolsAllow?: string[];
   replyOptions?: InternalDispatchReplyOptions;
@@ -573,7 +573,7 @@ export async function dispatchInboundMessage(params: {
 /** Creates a buffered dispatcher with typing, hooks, and stale foreground delivery suppression. */
 export async function dispatchInboundMessageWithBufferedDispatcher(params: {
   ctx: MsgContext | FinalizedMsgContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   dispatcherOptions: ReplyDispatcherWithTypingOptions;
   toolsAllow?: string[];
   replyOptions?: InternalDispatchReplyOptions;
@@ -701,7 +701,7 @@ export async function dispatchInboundMessageWithBufferedDispatcher(params: {
 /** Creates a plain dispatcher, installs global send hooks, and dispatches the inbound message. */
 export async function dispatchInboundMessageWithDispatcher(params: {
   ctx: MsgContext | FinalizedMsgContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   dispatcherOptions: ReplyDispatcherOptions;
   toolsAllow?: string[];
   replyOptions?: InternalDispatchReplyOptions;

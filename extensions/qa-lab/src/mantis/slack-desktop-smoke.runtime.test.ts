@@ -164,7 +164,7 @@ describe("mantis Slack desktop smoke runtime", () => {
       commandRunner: runner,
       crabboxBin: "/tmp/crabbox",
       env: runtimeEnv,
-      freshPr: "openclaw/openclaw#85141",
+      freshPr: "nova/nova#85141",
       now: () => new Date("2026-05-04T13:00:00.000Z"),
       outputDir: ".artifacts/qa-e2e/mantis/slack-desktop-test",
       primaryModel: "openai/gpt-5.4",
@@ -190,7 +190,7 @@ describe("mantis Slack desktop smoke runtime", () => {
     )?.args;
     expect(runArgs).toContain("--no-hydrate");
     expect(runArgs).toContain("--fresh-pr");
-    expect(runArgs).toContain("openclaw/openclaw#85141");
+    expect(runArgs).toContain("nova/nova#85141");
     expect(runArgs).not.toContain("--no-sync");
     const remoteScript = runArgs?.at(-1);
     expect(remoteScript).toContain("hydrate_mode='source'");
@@ -234,7 +234,7 @@ describe("mantis Slack desktop smoke runtime", () => {
     expect(remoteScript).toContain('sudo apt-get update -y >>"$out/apt.log" 2>&1 || true');
     expect(remoteScript).toContain("slack-desktop-smoke.mp4");
     expect(remoteScript).not.toContain("-video_size");
-    expect(remoteScript).toContain("openclaw qa slack");
+    expect(remoteScript).toContain("nova qa slack");
     expect(remoteScript).toContain("--scenario 'slack-canary'");
     expect(remoteScript).toContain(
       'slack_qa_output_dir=".artifacts/qa-e2e/mantis/$(basename "$out")/slack-qa"',
@@ -268,10 +268,10 @@ describe("mantis Slack desktop smoke runtime", () => {
       .flatMap((entry) => entry.args);
     expect(rsyncArgs).not.toContain("--delete");
     expect(rsyncArgs).toContain(
-      "crabbox@203.0.113.10:/tmp/openclaw-mantis-slack-desktop-2026-05-04T13-00-00-000Z/",
+      "crabbox@203.0.113.10:/tmp/nova-mantis-slack-desktop-2026-05-04T13-00-00-000Z/",
     );
     expect(rsyncArgs).toContain(
-      "crabbox@203.0.113.10:/tmp/openclaw-mantis-slack-desktop-2026-05-04T13-00-00-000Z/slack-qa/",
+      "crabbox@203.0.113.10:/tmp/nova-mantis-slack-desktop-2026-05-04T13-00-00-000Z/slack-qa/",
     );
     await expect(fs.readFile(result.screenshotPath ?? "", "utf8")).resolves.toBe("png");
     await expect(fs.readFile(result.videoPath ?? "", "utf8")).resolves.toBe("mp4");
@@ -729,8 +729,8 @@ describe("mantis Slack desktop smoke runtime", () => {
     expect(runCommand?.env?.NOVA_QA_SLACK_SUT_BOT_TOKEN).toBe("xoxb-leased");
     const remoteScript = runCommand?.args.at(-1);
     expect(remoteScript).toContain("setup_gateway=1");
-    expect(remoteScript).toContain("openclaw gateway run");
-    expect(remoteScript).toContain('</dev/null >"$out/openclaw-gateway.log"');
+    expect(remoteScript).toContain("nova gateway run");
+    expect(remoteScript).toContain('</dev/null >"$out/nova-gateway.log"');
     expect(remoteScript).toContain('kill -0 "$gateway_pid"');
     expect(remoteScript).toContain('disown "$gateway_pid"');
     expect(fetchMock.mock.calls.map(([url]) => describeFetchInput(url))).toEqual([
@@ -1111,7 +1111,7 @@ describe("mantis Slack desktop smoke runtime", () => {
 
     await qa.parseAsync([
       "node",
-      "openclaw",
+      "nova",
       "mantis",
       "slack-desktop-smoke",
       "--approval-checkpoints",
@@ -1142,7 +1142,7 @@ describe("mantis Slack desktop smoke runtime", () => {
     await expect(
       qa.parseAsync([
         "node",
-        "openclaw",
+        "nova",
         "mantis",
         "slack-desktop-smoke",
         "--approval-checkpoints",

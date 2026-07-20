@@ -69,11 +69,11 @@ type QaRuntimeParityScenarioReport = {
   runtimeParityUsage: RuntimeParityUsagePolicy;
   drift: RuntimeParityDrift | "missing";
   driftDetails?: string;
-  openclawStatus: "pass" | "fail" | "missing";
+  novaStatus: "pass" | "fail" | "missing";
   codexStatus: "pass" | "fail" | "missing";
-  openclawTokens: number;
+  novaTokens: number;
   codexTokens: number;
-  openclawToolCalls: number;
+  novaToolCalls: number;
   codexToolCalls: number;
 };
 
@@ -189,7 +189,7 @@ function scenarioHasRuntimeToolCallEvidence(scenario: QaParityReportScenario): b
   return (
     scenario.status === "pass" &&
     isRuntimeParityResultPass(parity) &&
-    parity.cells.openclaw.toolCalls.length > 0 &&
+    parity.cells.nova.toolCalls.length > 0 &&
     parity.cells.codex.toolCalls.length > 0
   );
 }
@@ -278,9 +278,9 @@ function isLiveProviderMode(providerMode: string | undefined) {
 
 function describeLiveUsageFailure(scenarioName: string, scenario: QaRuntimeParityScenarioReport) {
   const missing = [
-    scenario.openclawTokens > 0
+    scenario.novaTokens > 0
       ? undefined
-      : `${scenario.openclawStatus === "pass" ? "openclaw" : "openclaw failed"}=0`,
+      : `${scenario.novaStatus === "pass" ? "nova" : "nova failed"}=0`,
     scenario.codexTokens > 0
       ? undefined
       : `${scenario.codexStatus === "pass" ? "codex" : "codex failed"}=0`,
@@ -297,7 +297,7 @@ function normalizeRuntimePair(
   if (pair?.[0] && pair?.[1]) {
     return pair;
   }
-  return ["openclaw", "codex"];
+  return ["nova", "codex"];
 }
 
 function requiredCoverageStatus(
@@ -662,18 +662,18 @@ export function buildQaRuntimeParityReport(params: {
         runtimeParityUsage: resolveRuntimeParityUsagePolicy(undefined),
         drift: "missing",
         driftDetails: scenario.details,
-        openclawStatus: "missing",
+        novaStatus: "missing",
         codexStatus: "missing",
-        openclawTokens: 0,
+        novaTokens: 0,
         codexTokens: 0,
-        openclawToolCalls: 0,
+        novaToolCalls: 0,
         codexToolCalls: 0,
       } satisfies QaRuntimeParityScenarioReport;
     }
     driftCounts[parity.drift] += 1;
-    const openclawCell = parity.cells.openclaw;
+    const novaCell = parity.cells.nova;
     const codexCell = parity.cells.codex;
-    const openclawStatus = runtimeParityCellStatus(openclawCell);
+    const novaStatus = runtimeParityCellStatus(novaCell);
     const codexStatus = runtimeParityCellStatus(codexCell);
     const parityStatus = isRuntimeParityResultPass(parity) ? "pass" : "fail";
     const runtimeParityUsage = resolveRuntimeParityUsagePolicy(parity.runtimeParityUsage);
@@ -683,11 +683,11 @@ export function buildQaRuntimeParityReport(params: {
       runtimeParityUsage,
       drift: parity.drift,
       driftDetails: parity.driftDetails,
-      openclawStatus,
+      novaStatus,
       codexStatus,
-      openclawTokens: openclawCell.usage.totalTokens,
+      novaTokens: novaCell.usage.totalTokens,
       codexTokens: codexCell.usage.totalTokens,
-      openclawToolCalls: openclawCell.toolCalls.length,
+      novaToolCalls: novaCell.toolCalls.length,
       codexToolCalls: codexCell.toolCalls.length,
     } satisfies QaRuntimeParityScenarioReport;
     if (parityStatus === "fail") {
@@ -768,13 +768,13 @@ export function renderQaRuntimeParityMarkdownReport(report: QaRuntimeParityRepor
   lines.push("## Scenario Comparison", "");
   for (const scenario of report.scenarios) {
     const usageNotApplicable = scenario.runtimeParityUsage.expectation === "not-applicable";
-    const openclawTokens = usageNotApplicable ? "N/A" : String(scenario.openclawTokens);
+    const novaTokens = usageNotApplicable ? "N/A" : String(scenario.novaTokens);
     const codexTokens = usageNotApplicable ? "N/A" : String(scenario.codexTokens);
     lines.push(`### ${scenario.name}`, "");
     lines.push(`- status: ${scenario.status}`);
     lines.push(`- drift: ${scenario.drift}`);
     lines.push(
-      `- openclaw: ${scenario.openclawStatus} (${scenario.openclawToolCalls} tool calls, ${openclawTokens} tokens)`,
+      `- nova: ${scenario.novaStatus} (${scenario.novaToolCalls} tool calls, ${novaTokens} tokens)`,
     );
     lines.push(
       `- codex: ${scenario.codexStatus} (${scenario.codexToolCalls} tool calls, ${codexTokens} tokens)`,

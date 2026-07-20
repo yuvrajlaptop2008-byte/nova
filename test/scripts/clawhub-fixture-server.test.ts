@@ -45,7 +45,7 @@ async function stopServer(child: FixtureServerChild) {
 }
 
 async function startFixtureServer(profile: string) {
-  const root = makeTempDir(tempDirs, "openclaw-clawhub-fixture-server-");
+  const root = makeTempDir(tempDirs, "nova-clawhub-fixture-server-");
   const portFile = path.join(root, "port");
   const child = spawn(process.execPath, [SCRIPT_PATH, profile, portFile], {
     cwd: process.cwd(),

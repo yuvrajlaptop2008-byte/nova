@@ -92,7 +92,7 @@ describe("attempt execution prompt materialization", () => {
 
 describe("persistSessionEntry", () => {
   it("clears stale local entries when guarded persistence sees no persisted entry", async () => {
-    const dir = tempDirs.make("openclaw-session-store-");
+    const dir = tempDirs.make("nova-session-store-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const sessionStore = {
@@ -135,7 +135,7 @@ describe("persistSessionEntry", () => {
       expected: { label: undefined, pinnedAt: 300 },
     },
   ])("preserves a concurrent $name", async ({ current, expected }) => {
-    const dir = tempDirs.make("openclaw-session-store-");
+    const dir = tempDirs.make("nova-session-store-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const staleEntry: SessionEntry = {
@@ -184,7 +184,7 @@ describe("persistSessionEntry", () => {
   });
 
   it("does not restore policy fields revoked during an active turn", async () => {
-    const dir = tempDirs.make("openclaw-session-store-");
+    const dir = tempDirs.make("nova-session-store-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const initialEntry: SessionEntry = {
@@ -233,7 +233,7 @@ describe("persistSessionEntry", () => {
   });
 
   it("does not recreate a deleted persisted entry from stale local memory", async () => {
-    const dir = tempDirs.make("openclaw-session-store-");
+    const dir = tempDirs.make("nova-session-store-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const staleEntry: SessionEntry = {
@@ -264,7 +264,7 @@ describe("persistSessionEntry", () => {
   });
 
   it("keeps rejecting repeated stale writes after clearing local memory", async () => {
-    const dir = tempDirs.make("openclaw-session-store-");
+    const dir = tempDirs.make("nova-session-store-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const staleEntry: SessionEntry = {
@@ -305,7 +305,7 @@ describe("persistSessionEntry", () => {
   });
 
   it("allows an explicit create-on-missing persistence predicate", async () => {
-    const dir = tempDirs.make("openclaw-session-store-");
+    const dir = tempDirs.make("nova-session-store-");
     try {
       const storePath = path.join(dir, "sessions.json");
       const sessionStore: Record<string, SessionEntry> = {};

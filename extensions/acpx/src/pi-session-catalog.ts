@@ -3,9 +3,9 @@ import type {
   SessionCatalogSession,
   SessionCatalogTranscriptItem,
   SessionsCatalogReadResult,
-} from "openclaw/plugin-sdk/session-catalog";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/session-catalog";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { listPiSummaryPage, readPiSessionById } from "./pi-session-store.js";
 
 const LOCAL_HOST_ID = "gateway";

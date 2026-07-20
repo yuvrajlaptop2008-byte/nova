@@ -6,7 +6,7 @@ import type {
   ChannelOutboundAdapter,
   ChannelOutboundContext,
 } from "../../channels/plugins/types.adapters.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { createEmptyPluginRegistry } from "../../plugins/registry.js";
 import {
   releasePinnedPluginChannelRegistry,
@@ -24,7 +24,7 @@ import {
 
 let deliverOutboundPayloads: typeof import("./deliver.js").deliverOutboundPayloads;
 
-const cfg = {} as OpenClawConfig;
+const cfg = {} as NovaConfig;
 
 function installMatrixAdapter(outbound: ChannelOutboundAdapter): void {
   setActivePluginRegistry(

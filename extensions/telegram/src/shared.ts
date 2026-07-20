@@ -1,15 +1,15 @@
 // Telegram plugin module implements shared behavior.
-import { resolveNormalizedAccountEntry } from "openclaw/plugin-sdk/account-core";
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { formatAllowFromLowercase } from "openclaw/plugin-sdk/allow-from";
+import { resolveNormalizedAccountEntry } from "nova/plugin-sdk/account-core";
+import { normalizeAccountId } from "nova/plugin-sdk/account-id";
+import { formatAllowFromLowercase } from "nova/plugin-sdk/allow-from";
 import {
   adaptScopedAccountAccessor,
   createScopedChannelConfigAdapter,
-} from "openclaw/plugin-sdk/channel-config-helpers";
-import { createChannelPluginBase, type ChannelPlugin } from "openclaw/plugin-sdk/channel-core";
-import { getChatChannelMeta } from "openclaw/plugin-sdk/channel-plugin-common";
-import type { OpenClawConfig, TelegramAccountConfig } from "openclaw/plugin-sdk/config-contracts";
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/channel-config-helpers";
+import { createChannelPluginBase, type ChannelPlugin } from "nova/plugin-sdk/channel-core";
+import { getChatChannelMeta } from "nova/plugin-sdk/channel-plugin-common";
+import type { NovaConfig, TelegramAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/routing";
 import { inspectTelegramAccount } from "./account-inspect.js";
 import {
   listTelegramAccountIds,
@@ -39,7 +39,7 @@ type TelegramConfigAccessorAccount = {
 };
 
 export function findTelegramTokenOwnerAccountId(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
 }): string | null {
   const normalizedAccountId = normalizeAccountId(params.accountId);
@@ -84,9 +84,9 @@ export function formatDuplicateTelegramTokenReason(params: {
  *   2. The config has an explicit `accounts` section with entries, AND
  *   3. The accountId is not found in that `accounts` section.
  *
- * See: https://github.com/openclaw/openclaw/issues/53876
+ * See: https://github.com/nova/nova/issues/53876
  */
-function isBlockedByMultiBotGuard(cfg: OpenClawConfig, accountId: string): boolean {
+function isBlockedByMultiBotGuard(cfg: NovaConfig, accountId: string): boolean {
   if (normalizeAccountId(accountId) === DEFAULT_ACCOUNT_ID) {
     return false;
   }
@@ -106,7 +106,7 @@ function isBlockedByMultiBotGuard(cfg: OpenClawConfig, accountId: string): boole
 }
 
 function resolveTelegramConfigAccessorAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): TelegramConfigAccessorAccount {
   const accountId = normalizeAccountId(
@@ -194,7 +194,7 @@ export function createTelegramPluginBase(params: {
         // channel-level fallback paths not available in resolveTelegramAccount.
         // This ensures binding-created accountIds that inherit the channel-level
         // token are correctly detected as configured.
-        // See: https://github.com/openclaw/openclaw/issues/53876
+        // See: https://github.com/nova/nova/issues/53876
         if (isBlockedByMultiBotGuard(cfg, account.accountId)) {
           return false;
         }

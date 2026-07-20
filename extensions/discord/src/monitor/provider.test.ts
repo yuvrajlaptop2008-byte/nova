@@ -1,8 +1,8 @@
 // Discord tests cover provider plugin behavior.
 import { EventEmitter } from "node:events";
-import type { ChannelRuntimeSurface } from "openclaw/plugin-sdk/channel-contract";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/channel-test-helpers";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { ChannelRuntimeSurface } from "nova/plugin-sdk/channel-contract";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/channel-test-helpers";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { RateLimitError } from "../internal/discord.js";
 import {
@@ -97,7 +97,7 @@ function createRateLimitError(
   return new RateLimitErrorCtor(response, body, fallbackRequest);
 }
 
-function createConfigWithDiscordAccount(overrides: Record<string, unknown> = {}): OpenClawConfig {
+function createConfigWithDiscordAccount(overrides: Record<string, unknown> = {}): NovaConfig {
   return {
     channels: {
       discord: {
@@ -109,7 +109,7 @@ function createConfigWithDiscordAccount(overrides: Record<string, unknown> = {})
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 type MockCallReader = { mock: { calls: unknown[][] } };
@@ -158,7 +158,7 @@ vi.mock("../voice/manager.runtime.js", () => {
 });
 describe("monitorDiscordProvider", () => {
   type ReconcileHealthProbeParams = {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId: string;
     sessionKey: string;
     binding: unknown;
@@ -166,7 +166,7 @@ describe("monitorDiscordProvider", () => {
   };
 
   type ReconcileStartupParams = {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     healthProbe?: (
       params: ReconcileHealthProbeParams,
     ) => Promise<{ status: string; reason?: string }>;
@@ -208,7 +208,7 @@ describe("monitorDiscordProvider", () => {
   };
 
   beforeAll(async () => {
-    vi.doMock("openclaw/plugin-sdk/plugin-runtime", () => ({
+    vi.doMock("nova/plugin-sdk/plugin-runtime", () => ({
       getPluginCommandSpecs: getPluginCommandSpecsMock,
     }));
     vi.doMock("../accounts.js", () => ({

@@ -220,11 +220,11 @@ async function main() {
     maxProtocol: PROTOCOL_VERSION,
     client: {
       id: "cli",
-      displayName: "openclaw ios node e2e",
+      displayName: "nova ios node e2e",
       version: "dev",
       platform: "dev",
       mode: "cli",
-      instanceId: "openclaw-dev-ios-node-e2e",
+      instanceId: "nova-dev-ios-node-e2e",
     },
     locale: "en-US",
     userAgent: "ios-node-e2e",

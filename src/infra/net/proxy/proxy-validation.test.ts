@@ -22,7 +22,7 @@ describe("proxy validation", () => {
   });
 
   function writeTempCa(contents = "proxy-ca"): string {
-    const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-proxy-validation-ca-"));
+    const dir = mkdtempSync(path.join(os.tmpdir(), "nova-proxy-validation-ca-"));
     tempDirs.push(dir);
     const caFile = path.join(dir, "proxy-ca.pem");
     writeFileSync(caFile, contents, "utf8");
@@ -534,7 +534,7 @@ describe("proxy validation", () => {
   });
 
   it("does not load proxy CA files for plain HTTP proxy validation", async () => {
-    const missingCaFile = path.join(os.tmpdir(), "openclaw-missing-http-proxy-validation-ca.pem");
+    const missingCaFile = path.join(os.tmpdir(), "nova-missing-http-proxy-validation-ca.pem");
     const fetchCheck = vi.fn().mockResolvedValue({ ok: true, status: 200 });
 
     const result = await runProxyValidation({
@@ -578,7 +578,7 @@ describe("proxy validation", () => {
   });
 
   it("fails closed before probing when proxy CA file cannot be loaded", async () => {
-    const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-proxy-validation-missing-ca-"));
+    const dir = mkdtempSync(path.join(os.tmpdir(), "nova-proxy-validation-missing-ca-"));
     tempDirs.push(dir);
     const fetchCheck = vi.fn();
 

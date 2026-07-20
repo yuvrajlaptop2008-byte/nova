@@ -160,7 +160,7 @@ function getBlockedReasonForSourcePath(
 function getBlockedHostPaths(): string[] {
   const cacheKey = JSON.stringify({
     home: process.env.HOME,
-    openclawHome: process.env.NOVA_HOME,
+    novaHome: process.env.NOVA_HOME,
     osHome: os.homedir(),
     userProfile: process.env.USERPROFILE,
   });

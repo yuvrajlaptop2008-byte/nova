@@ -1,5 +1,5 @@
 import { isRecord } from "@nova/normalization-core/record-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { BundledPluginSource } from "./bundled-sources.js";
 import {
@@ -33,10 +33,7 @@ function hasValidBundledPluginConfig(params: {
   }).ok;
 }
 
-function prepareConfigForDisabledBundledInstall(
-  config: OpenClawConfig,
-  pluginId: string,
-): OpenClawConfig {
+function prepareConfigForDisabledBundledInstall(config: NovaConfig, pluginId: string): NovaConfig {
   const entries = config.plugins?.entries ?? {};
   const { [pluginId]: _removedEntry, ...nextEntries } = entries;
   return {
@@ -67,7 +64,7 @@ export async function installBundledPluginSource(params: {
     : prepareConfigForDisabledBundledInstall(params.snapshot.config, params.bundledSource.pluginId);
   const configWarning = shouldEnable
     ? undefined
-    : `Installed bundled plugin "${params.bundledSource.pluginId}" without enabling it because it requires configuration first. Configure it, then run \`openclaw plugins enable ${params.bundledSource.pluginId}\`.`;
+    : `Installed bundled plugin "${params.bundledSource.pluginId}" without enabling it because it requires configuration first. Configure it, then run \`nova plugins enable ${params.bundledSource.pluginId}\`.`;
   const warnings = [params.warning, configWarning].filter((warning): warning is string =>
     Boolean(warning),
   );

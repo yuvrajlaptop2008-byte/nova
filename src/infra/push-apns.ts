@@ -74,8 +74,8 @@ type ApnsPushResult = {
 type ApnsPushAlertResult = ApnsPushResult;
 type ApnsPushWakeResult = ApnsPushResult;
 
-const EXEC_APPROVAL_NOTIFICATION_CATEGORY = "openclaw.exec-approval";
-const PLUGIN_APPROVAL_NOTIFICATION_CATEGORY = "openclaw.plugin-approval";
+const EXEC_APPROVAL_NOTIFICATION_CATEGORY = "nova.exec-approval";
+const PLUGIN_APPROVAL_NOTIFICATION_CATEGORY = "nova.plugin-approval";
 
 type ApnsPushType = "alert" | "background";
 

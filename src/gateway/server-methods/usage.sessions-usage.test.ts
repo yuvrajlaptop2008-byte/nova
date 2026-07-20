@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { withEnvAsync } from "../../test-utils/env.js";
 
 vi.mock("../../config/config.js", () => {
@@ -113,7 +113,7 @@ const TEST_RUNTIME_CONFIG = {
 
 async function runSessionsUsage(
   params: Record<string, unknown>,
-  config: OpenClawConfig = TEST_RUNTIME_CONFIG,
+  config: NovaConfig = TEST_RUNTIME_CONFIG,
 ) {
   const respond = vi.fn();
   await expectDefined(
@@ -185,7 +185,7 @@ function expectSuccessfulSessionsUsage(
 async function withUsageState(
   run: (writeSessionFile: (fileName: string) => string) => Promise<void>,
 ) {
-  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-usage-test-"));
+  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-usage-test-"));
   const agentSessionsDir = path.join(stateDir, "agents", "opus", "sessions");
   const writeSessionFile = (fileName: string) => {
     const sessionFile = path.join(agentSessionsDir, fileName);
@@ -541,7 +541,7 @@ describe("sessions.usage", () => {
   });
 
   it("keeps global session entries in requested-agent usage lookups", async () => {
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       agents: {
         list: [{ id: "main", default: true }, { id: "opus" }],
       },

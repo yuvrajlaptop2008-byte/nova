@@ -1,19 +1,19 @@
 import {
   readNonNegativeIntegerParam,
   readPositiveIntegerParam,
-} from "openclaw/plugin-sdk/channel-actions";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+} from "nova/plugin-sdk/channel-actions";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   callGatewayFromCli,
   ErrorCodes,
   errorShape,
   type GatewayRequestHandlerOptions,
-} from "openclaw/plugin-sdk/gateway-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { definePluginEntry, type OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeAgentId, parseAgentSessionKey } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { jsonResult as json } from "openclaw/plugin-sdk/tool-results";
+} from "nova/plugin-sdk/gateway-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { definePluginEntry, type NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import { normalizeAgentId, parseAgentSessionKey } from "nova/plugin-sdk/routing";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import { jsonResult as json } from "nova/plugin-sdk/tool-results";
 import { Type } from "typebox";
 import {
   resolveTeamsMeetingsConfig,
@@ -180,7 +180,7 @@ async function callGatewayFromTool(params: {
   action: ToolAction;
   config: TeamsMeetingsConfig;
   raw: Record<string, unknown>;
-  runtime?: OpenClawPluginApi["runtime"];
+  runtime?: NovaPluginApi["runtime"];
 }) {
   try {
     if (params.runtime) {
@@ -212,7 +212,7 @@ export default definePluginEntry({
   name: "Microsoft Teams meetings",
   description: "Join Microsoft Teams meetings as a Chrome browser guest",
   configSchema: teamsMeetingsConfigSchema,
-  register(api: OpenClawPluginApi) {
+  register(api: NovaPluginApi) {
     const config = teamsMeetingsConfigSchema.parse(api.pluginConfig);
     let runtime: TeamsMeetingsRuntime | undefined;
 

@@ -32,7 +32,7 @@ describe("plugin runtime symlink health findings", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-plugin-runtime-symlinks-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-plugin-runtime-symlinks-"));
   });
 
   afterEach(async () => {
@@ -44,16 +44,10 @@ describe("plugin runtime symlink health findings", () => {
       return;
     }
 
-    const packageRoot = path.join(tempDir, "prefix", "lib", "node_modules", "openclaw");
+    const packageRoot = path.join(tempDir, "prefix", "lib", "node_modules", "nova");
     const nodeModulesRoot = path.dirname(packageRoot);
     const legacyRoot = path.join(tempDir, "state", "plugin-runtime-deps");
-    const missingTarget = path.join(
-      legacyRoot,
-      "openclaw-slack",
-      "node_modules",
-      "@slack",
-      "web-api",
-    );
+    const missingTarget = path.join(legacyRoot, "nova-slack", "node_modules", "@slack", "web-api");
     const scopeRoot = path.join(nodeModulesRoot, "@slack");
     const staleLink = path.join(scopeRoot, "web-api");
     const liveTarget = path.join(tempDir, "live", "@slack", "bolt");
@@ -73,7 +67,7 @@ describe("plugin runtime symlink health findings", () => {
         path: staleLink,
         target: staleLink,
         requirement: "stale-plugin-runtime-symlink-removed",
-        fixHint: "Run `openclaw doctor --fix` to remove stale plugin-runtime symlinks.",
+        fixHint: "Run `nova doctor --fix` to remove stale plugin-runtime symlinks.",
       },
     ]);
     await expectSymlinkPresent(staleLink);
@@ -85,10 +79,10 @@ describe("plugin runtime symlink health findings", () => {
       return;
     }
 
-    const packageRoot = path.join(tempDir, "prefix", "lib", "node_modules", "openclaw");
+    const packageRoot = path.join(tempDir, "prefix", "lib", "node_modules", "nova");
     const nodeModulesRoot = path.dirname(packageRoot);
     const legacyRoot = path.join(tempDir, "state", "plugin-runtime-deps");
-    const existingTarget = path.join(legacyRoot, "openclaw-demo", "node_modules", "left-pad");
+    const existingTarget = path.join(legacyRoot, "nova-demo", "node_modules", "left-pad");
     const staleLink = path.join(nodeModulesRoot, "left-pad");
 
     await fs.mkdir(packageRoot, { recursive: true });

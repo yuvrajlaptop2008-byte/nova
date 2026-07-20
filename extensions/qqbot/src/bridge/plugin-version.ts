@@ -13,7 +13,7 @@
  *     as the source layout changes, which is what caused the previous
  *     `vunknown` regression.
  *   - A `name` guard prevents accidentally reading the parent
- *     `openclaw/package.json` (the framework root) when the plugin
+ *     `nova/package.json` (the framework root) when the plugin
  *     lives inside the monorepo.
  *
  * The lookup is performed only once per process at startup, so the

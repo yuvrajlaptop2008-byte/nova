@@ -5,12 +5,12 @@ import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-syn
 import { assertSqliteTableIntegrity } from "../infra/sqlite-integrity.js";
 import { normalizeSqliteNumber } from "../infra/sqlite-number.js";
 import { runSqliteDeferredTransactionSync } from "../infra/sqlite-transaction.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabase,
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  closeNovaStateDatabase,
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
 import { parseDeliveryContextJson } from "./task-registry.sqlite.shared.js";
 import type { TaskRegistryStoreSnapshot } from "./task-registry.store.types.js";
 import {
@@ -26,12 +26,9 @@ import {
   type TaskRuntime,
 } from "./task-registry.types.js";
 
-type TaskRunsTable = OpenClawStateKyselyDatabase["task_runs"];
-type TaskDeliveryStateTable = OpenClawStateKyselyDatabase["task_delivery_state"];
-type TaskRegistryStoreDatabase = Pick<
-  OpenClawStateKyselyDatabase,
-  "task_delivery_state" | "task_runs"
->;
+type TaskRunsTable = NovaStateKyselyDatabase["task_runs"];
+type TaskDeliveryStateTable = NovaStateKyselyDatabase["task_delivery_state"];
+type TaskRegistryStoreDatabase = Pick<NovaStateKyselyDatabase, "task_delivery_state" | "task_runs">;
 
 type TaskRegistryRow = Selectable<TaskRunsTable> & {
   runtime: string;
@@ -49,7 +46,7 @@ type TaskRegistryDatabase = {
   path: string;
 };
 
-// SQLite-backed task store mirrors task records and delivery state into openclaw-state.db.
+// SQLite-backed task store mirrors task records and delivery state into nova-state.db.
 const TASK_RUN_SELECT_COLUMNS = [
   "task_id",
   "runtime",
@@ -312,7 +309,7 @@ function deleteTaskRowsWithDeliveryState(db: DatabaseSync, taskId: string): void
 }
 
 function openTaskRegistryDatabase(): TaskRegistryDatabase {
-  const database = openOpenClawStateDatabase();
+  const database = openNovaStateDatabase();
   const pathname = database.path;
   if (cachedDatabase && cachedDatabase.path === pathname && cachedDatabase.db.isOpen) {
     return cachedDatabase;
@@ -329,7 +326,7 @@ function openTaskRegistryDatabase(): TaskRegistryDatabase {
 
 function withWriteTransaction(write: (database: TaskRegistryDatabase) => void) {
   const database = openTaskRegistryDatabase();
-  runOpenClawStateWriteTransaction(() => {
+  runNovaStateWriteTransaction(() => {
     write(database);
   });
 }
@@ -385,7 +382,7 @@ export function saveTaskRegistryStateToSqlite(snapshot: TaskRegistryStoreSnapsho
       db,
       tableName: "task_runs",
       columnName: "task_id",
-      tempTableName: "openclaw_live_task_run_ids",
+      tempTableName: "nova_live_task_run_ids",
       ids: taskIds,
     });
     const deliveryTaskIds = [...snapshot.deliveryStates.keys()];
@@ -396,7 +393,7 @@ export function saveTaskRegistryStateToSqlite(snapshot: TaskRegistryStoreSnapsho
         db,
         tableName: "task_delivery_state",
         columnName: "task_id",
-        tempTableName: "openclaw_live_task_delivery_ids",
+        tempTableName: "nova_live_task_delivery_ids",
         ids: deliveryTaskIds,
       });
     }
@@ -463,5 +460,5 @@ export function deleteTaskDeliveryStateFromSqlite(taskId: string) {
 
 export function closeTaskRegistryDatabase() {
   cachedDatabase = null;
-  closeOpenClawStateDatabase();
+  closeNovaStateDatabase();
 }

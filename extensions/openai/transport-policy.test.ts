@@ -1,5 +1,5 @@
 // Openai tests cover transport policy plugin behavior.
-import type { ProviderRuntimeModel } from "openclaw/plugin-sdk/plugin-entry";
+import type { ProviderRuntimeModel } from "nova/plugin-sdk/plugin-entry";
 import { describe, expect, it } from "vitest";
 import {
   resolveOpenAITransportTurnState,
@@ -38,13 +38,13 @@ describe("openai transport policy", () => {
       transport: "websocket",
     });
     expect(state?.headers?.["x-client-request-id"]).toBe("session-123");
-    expect(state?.headers?.["x-openclaw-session-id"]).toBe("session-123");
-    expect(state?.headers?.["x-openclaw-turn-id"]).toBe("turn-123");
-    expect(state?.headers?.["x-openclaw-turn-attempt"]).toBe("2");
-    expect(state?.metadata?.openclaw_session_id).toBe("session-123");
-    expect(state?.metadata?.openclaw_turn_id).toBe("turn-123");
-    expect(state?.metadata?.openclaw_turn_attempt).toBe("2");
-    expect(state?.metadata?.openclaw_transport).toBe("websocket");
+    expect(state?.headers?.["x-nova-session-id"]).toBe("session-123");
+    expect(state?.headers?.["x-nova-turn-id"]).toBe("turn-123");
+    expect(state?.headers?.["x-nova-turn-attempt"]).toBe("2");
+    expect(state?.metadata?.nova_session_id).toBe("session-123");
+    expect(state?.metadata?.nova_turn_id).toBe("turn-123");
+    expect(state?.metadata?.nova_turn_attempt).toBe("2");
+    expect(state?.metadata?.nova_transport).toBe("websocket");
   });
 
   it("skips turn state for proxy-like OpenAI routes", () => {
@@ -77,9 +77,9 @@ describe("openai transport policy", () => {
       transport: "stream",
     });
     expect(state?.headers?.["x-client-request-id"]).toBe("session-123");
-    expect(state?.headers?.["x-openclaw-session-id"]).toBe("session-123");
-    expect(state?.headers?.["x-openclaw-turn-id"]).toBe("turn-123");
-    expect(state?.headers?.["x-openclaw-turn-attempt"]).toBe("2");
+    expect(state?.headers?.["x-nova-session-id"]).toBe("session-123");
+    expect(state?.headers?.["x-nova-turn-id"]).toBe("turn-123");
+    expect(state?.headers?.["x-nova-turn-attempt"]).toBe("2");
   });
 
   it("returns websocket session headers and cooldown for native routes", () => {
@@ -90,7 +90,7 @@ describe("openai transport policy", () => {
       sessionId: "session-123",
     });
     expect(policy?.headers?.["x-client-request-id"]).toBe("session-123");
-    expect(policy?.headers?.["x-openclaw-session-id"]).toBe("session-123");
+    expect(policy?.headers?.["x-nova-session-id"]).toBe("session-123");
     expect(policy?.degradeCooldownMs).toBe(60_000);
   });
 
@@ -106,7 +106,7 @@ describe("openai transport policy", () => {
       sessionId: "session-123",
     });
     expect(policy?.headers?.["x-client-request-id"]).toBe("session-123");
-    expect(policy?.headers?.["x-openclaw-session-id"]).toBe("session-123");
+    expect(policy?.headers?.["x-nova-session-id"]).toBe("session-123");
     expect(policy?.degradeCooldownMs).toBe(60_000);
   });
 
@@ -123,7 +123,7 @@ describe("openai transport policy", () => {
       sessionId: "session-123",
     });
     expect(policy?.headers?.["x-client-request-id"]).toBe("session-123");
-    expect(policy?.headers?.["x-openclaw-session-id"]).toBe("session-123");
+    expect(policy?.headers?.["x-nova-session-id"]).toBe("session-123");
     expect(policy?.degradeCooldownMs).toBe(60_000);
   });
 });

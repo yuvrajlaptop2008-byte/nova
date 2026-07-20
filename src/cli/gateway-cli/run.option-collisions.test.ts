@@ -91,8 +91,8 @@ const readConfigFileSnapshotWithPluginMetadata = vi.fn(
 );
 const writeDiagnosticStabilityBundleForFailureSync = vi.fn((_reason: string, _error: unknown) => ({
   status: "written" as const,
-  message: "wrote stability bundle: /tmp/openclaw-stability.json",
-  path: "/tmp/openclaw-stability.json",
+  message: "wrote stability bundle: /tmp/nova-stability.json",
+  path: "/tmp/nova-stability.json",
 }));
 const bootLifecycle = vi.hoisted(() => ({
   decisions: [] as Array<{
@@ -140,7 +140,7 @@ const serviceEnvSnapshot = captureEnv([
 ]);
 
 vi.mock("../../config/config.js", () => ({
-  getConfigPath: () => "/tmp/openclaw-test-missing-config.json",
+  getConfigPath: () => "/tmp/nova-test-missing-config.json",
   readBestEffortConfig: () => readBestEffortConfig(),
   readConfigFileSnapshot: async () => configState.snapshot,
   readConfigFileSnapshotWithPluginMetadata: (options?: ConfigSnapshotReadOptionsStub) =>
@@ -155,10 +155,10 @@ vi.mock("../../commands/doctor/shared/pristine-startup-state.js", () => ({
 }));
 
 vi.mock("../../config/paths.js", () => ({
-  CONFIG_PATH: "/tmp/openclaw-test-missing-config.json",
+  CONFIG_PATH: "/tmp/nova-test-missing-config.json",
   normalizeStateDirEnv: (env?: NodeJS.ProcessEnv) => normalizeStateDirEnv(env),
   pinRuntimePaths: (env?: NodeJS.ProcessEnv) => pinRuntimePaths(env),
-  resolveConfigPath: () => "/tmp/openclaw-test-missing-config.json",
+  resolveConfigPath: () => "/tmp/nova-test-missing-config.json",
   resolveStateDir: () => "/tmp",
   resolveGatewayPort: (cfg?: { gateway?: { port?: number } }) => cfg?.gateway?.port ?? 18789,
 }));
@@ -329,7 +329,7 @@ vi.mock("../command-format.js", () => ({
 vi.mock("../terminal-interactivity.js", () => ({
   isTerminalInteractive: () => isTerminalInteractive(),
   NON_INTERACTIVE_GATEWAY_RUN_FORCE_MESSAGE:
-    "Refusing to kill the operator's running gateway service from a non-interactive shell. Use an isolated dev gateway (openclaw gateway run --dev, or --profile <name> with a free port) for testing.",
+    "Refusing to kill the operator's running gateway service from a non-interactive shell. Use an isolated dev gateway (nova gateway run --dev, or --profile <name> with a free port) for testing.",
 }));
 
 vi.mock("../invalid-config-recovery.js", () => ({
@@ -483,7 +483,7 @@ describe("gateway run option collisions", () => {
       exists: true,
       hash: "initial",
       parsed: initialConfig,
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       sourceConfig: initialConfig,
       valid: true,
     };
@@ -507,7 +507,7 @@ describe("gateway run option collisions", () => {
       exists: true,
       hash: "recovered",
       parsed: recoveredConfig,
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       sourceConfig: recoveredConfig,
       valid: true,
     };
@@ -525,7 +525,7 @@ describe("gateway run option collisions", () => {
     configState.snapshot = {
       exists: true,
       valid: true,
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       config: finalConfig,
       parsed: finalConfig,
       sourceConfig: finalConfig,
@@ -559,7 +559,7 @@ describe("gateway run option collisions", () => {
       configState.snapshot = {
         exists: true,
         valid: true,
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         config: finalConfig,
         parsed: finalConfig,
         sourceConfig: finalConfig,
@@ -641,7 +641,7 @@ describe("gateway run option collisions", () => {
         config: finalConfig,
         exists: true,
         parsed: finalConfig,
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         sourceConfig: finalConfig,
         valid: true,
       };
@@ -673,7 +673,7 @@ describe("gateway run option collisions", () => {
         config,
         exists: true,
         parsed: config,
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         sourceConfig: config,
         valid: true,
       });
@@ -726,7 +726,7 @@ describe("gateway run option collisions", () => {
           config: finalConfig,
           exists: true,
           parsed: finalConfig,
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           sourceConfig: finalConfig,
           valid: true,
         };
@@ -768,7 +768,7 @@ describe("gateway run option collisions", () => {
           config: finalConfig,
           exists: true,
           parsed: finalConfig,
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           sourceConfig: finalConfig,
           valid: true,
         };
@@ -805,7 +805,7 @@ describe("gateway run option collisions", () => {
           exists: true,
           issues: [{ path: "gateway", message: "invalid" }],
           parsed: invalidConfig,
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           sourceConfig: invalidConfig,
           valid: false,
         };
@@ -825,7 +825,7 @@ describe("gateway run option collisions", () => {
   });
 
   it("rejects an invalid final config after a prepared config selected runtime paths", async () => {
-    const selectedStateDir = "/tmp/openclaw-prepared-selected-state";
+    const selectedStateDir = "/tmp/nova-prepared-selected-state";
     await withEnvAsync({ NOVA_STATE_DIR: undefined }, async () => {
       const selectedConfig = {
         env: { vars: { NOVA_STATE_DIR: selectedStateDir } },
@@ -835,7 +835,7 @@ describe("gateway run option collisions", () => {
         config: selectedConfig,
         exists: true,
         parsed: selectedConfig,
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         sourceConfig: selectedConfig,
         valid: true,
       };
@@ -892,7 +892,7 @@ describe("gateway run option collisions", () => {
           config: oldConfig,
           exists: true,
           hash: "old",
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           sourceConfig: oldConfig,
           valid: true,
         };
@@ -909,7 +909,7 @@ describe("gateway run option collisions", () => {
           config: newConfig,
           exists: true,
           hash: "new",
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           sourceConfig: newConfig,
           valid: true,
         };
@@ -973,14 +973,14 @@ describe("gateway run option collisions", () => {
     expect(findVerifiedGatewayListenerPidsOnPortSync).toHaveBeenCalledWith(18789);
     expect(forceFreePortAndWait).toHaveBeenCalledTimes(1);
     expect(startGatewayServer).not.toHaveBeenCalled();
-    expect(runtimeErrors.join("\n")).toContain("openclaw gateway run --dev");
+    expect(runtimeErrors.join("\n")).toContain("nova gateway run --dev");
     expect(runtimeErrors.join("\n")).toContain("--profile <name> with a free port");
   });
 
   it("marks service-mode gateway descendants with the live gateway pid", async () => {
     await withEnvAsync(
       {
-        NOVA_SERVICE_MARKER: "openclaw",
+        NOVA_SERVICE_MARKER: "nova",
         [GATEWAY_SERVICE_RUNTIME_PID_ENV]: undefined,
       },
       async () => {
@@ -995,7 +995,7 @@ describe("gateway run option collisions", () => {
   it("protects the inherited service pid before replacing it", async () => {
     await withEnvAsync(
       {
-        NOVA_SERVICE_MARKER: "openclaw",
+        NOVA_SERVICE_MARKER: "nova",
         [GATEWAY_SERVICE_RUNTIME_PID_ENV]: "4242",
       },
       async () => {
@@ -1017,20 +1017,20 @@ describe("gateway run option collisions", () => {
       },
       async () => {
         const finalConfig = {
-          env: { vars: { NOVA_SERVICE_MARKER: "openclaw" } },
+          env: { vars: { NOVA_SERVICE_MARKER: "nova" } },
           gateway: { mode: "local" },
         };
         configState.snapshot = {
           config: finalConfig,
           exists: true,
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           sourceConfig: finalConfig,
           valid: true,
         };
 
         await runGatewayCli(["gateway"]);
 
-        expect(process.env.NOVA_SERVICE_MARKER).toBe("openclaw");
+        expect(process.env.NOVA_SERVICE_MARKER).toBe("nova");
         expect(process.env[GATEWAY_SERVICE_RUNTIME_PID_ENV]).toBe(String(process.pid));
       },
     );
@@ -1044,7 +1044,7 @@ describe("gateway run option collisions", () => {
       },
       async () => {
         const finalConfig = {
-          env: { vars: { NOVA_SERVICE_MARKER: "openclaw" } },
+          env: { vars: { NOVA_SERVICE_MARKER: "nova" } },
           gateway: { mode: "local" },
           meta: { lastTouchedVersion: "9999.1.1" },
         };
@@ -1052,7 +1052,7 @@ describe("gateway run option collisions", () => {
         configState.snapshot = {
           config: finalConfig,
           exists: true,
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           sourceConfig: finalConfig,
           valid: true,
         };
@@ -1163,10 +1163,10 @@ describe("gateway run option collisions", () => {
           sourceConfig: {
             env: {
               vars: {
-                NOVA_CONFIG_PATH: "/tmp/openclaw-reset/openclaw.json",
+                NOVA_CONFIG_PATH: "/tmp/nova-reset/nova.json",
                 NOVA_GATEWAY_TOKEN: "old-token",
-                NOVA_HOME: "/tmp/openclaw-reset-home",
-                NOVA_STATE_DIR: "/tmp/openclaw-reset",
+                NOVA_HOME: "/tmp/nova-reset-home",
+                NOVA_STATE_DIR: "/tmp/nova-reset",
               },
             },
             gateway: { mode: "local" },
@@ -1178,7 +1178,7 @@ describe("gateway run option collisions", () => {
           expect(process.env.NOVA_PROFILE).toBe("dev");
           expect(process.env.NOVA_STATE_DIR).toBeUndefined();
           expect(process.env.NOVA_GATEWAY_TOKEN).toBeUndefined();
-          expect(process.env.NOVA_WORKSPACE_DIR).toBe("/tmp/openclaw-reset-workspace");
+          expect(process.env.NOVA_WORKSPACE_DIR).toBe("/tmp/nova-reset-workspace");
           configState.snapshot = {
             exists: true,
             valid: true,
@@ -1190,7 +1190,7 @@ describe("gateway run option collisions", () => {
           process.env.NOVA_GATEWAY_TOKEN ??= "trusted-token";
           process.env.NOVA_PROFILE ??= "dev";
           if (process.env.NOVA_WORKSPACE_DIR === undefined) {
-            setTestEnvValue("NOVA_WORKSPACE_DIR", "/tmp/openclaw-reset-workspace");
+            setTestEnvValue("NOVA_WORKSPACE_DIR", "/tmp/nova-reset-workspace");
           }
         });
 
@@ -1205,17 +1205,17 @@ describe("gateway run option collisions", () => {
   });
 
   it("refuses dev reset if trusted dotenv retargets after pre-bootstrap", async () => {
-    await withEnvAsync({ NOVA_STATE_DIR: "/tmp/openclaw-reset-original" }, async () => {
+    await withEnvAsync({ NOVA_STATE_DIR: "/tmp/nova-reset-original" }, async () => {
       configState.snapshot = {
         config: { gateway: { mode: "local" } },
         exists: true,
-        path: "/tmp/openclaw-reset-original/openclaw.json",
+        path: "/tmp/nova-reset-original/nova.json",
         sourceConfig: { gateway: { mode: "local" } },
         valid: true,
       };
       await prepareGatewayReset();
       loadGlobalRuntimeDotEnvFiles.mockImplementation(() => {
-        setTestEnvValue("NOVA_STATE_DIR", "/tmp/openclaw-reset-retargeted");
+        setTestEnvValue("NOVA_STATE_DIR", "/tmp/nova-reset-retargeted");
         return {
           gatewayEnvAppliedKeys: [],
           stateEnvAppliedKeys: ["NOVA_STATE_DIR"],
@@ -1227,7 +1227,7 @@ describe("gateway run option collisions", () => {
       ).rejects.toThrow("__exit__:1");
 
       expect(ensureDevGatewayConfig).not.toHaveBeenCalled();
-      expect(process.env.NOVA_STATE_DIR).toBe("/tmp/openclaw-reset-original");
+      expect(process.env.NOVA_STATE_DIR).toBe("/tmp/nova-reset-original");
       expect(runtimeErrors.join("\n")).toContain(
         "selected config or state target changed during startup",
       );
@@ -1245,9 +1245,9 @@ describe("gateway run option collisions", () => {
     "NOVA_WORKSPACE_DIR",
     "PI_CODING_AGENT_DIR",
   ])("blocks trusted dotenv selector drift for %s after startup mutations", async (selector) => {
-    await withEnvAsync({ [selector]: "/tmp/openclaw-reset-value" }, async () => {
+    await withEnvAsync({ [selector]: "/tmp/nova-reset-value" }, async () => {
       loadGlobalRuntimeDotEnvFiles.mockImplementation(() => {
-        setTestEnvValue(selector, "/tmp/openclaw-reset-retargeted");
+        setTestEnvValue(selector, "/tmp/nova-reset-retargeted");
       });
       const { reloadTrustedGatewayRunEnvironment } = await import("./pre-bootstrap.js");
 
@@ -1255,7 +1255,7 @@ describe("gateway run option collisions", () => {
         "__exit__:1",
       );
 
-      expect(process.env[selector]).toBe("/tmp/openclaw-reset-value");
+      expect(process.env[selector]).toBe("/tmp/nova-reset-value");
       expect(runtimeErrors.join("\n")).toContain(
         "trusted dotenv reload after startup mutations changed config or state selection",
       );
@@ -1342,7 +1342,7 @@ describe("gateway run option collisions", () => {
         valid: true,
         config: { gateway: { mode: "local" } },
         sourceConfig: {
-          env: { vars: { NOVA_STATE_DIR: "/tmp/openclaw-late-selection" } },
+          env: { vars: { NOVA_STATE_DIR: "/tmp/nova-late-selection" } },
           gateway: { mode: "local" },
         },
       };
@@ -1360,14 +1360,14 @@ describe("gateway run option collisions", () => {
   it("blocks a final startup snapshot that changes an already-selected config selector", async () => {
     await withEnvAsync({ NOVA_STATE_DIR: undefined }, async () => {
       const guardedConfig = {
-        env: { vars: { NOVA_STATE_DIR: "/tmp/openclaw-guarded-state" } },
+        env: { vars: { NOVA_STATE_DIR: "/tmp/nova-guarded-state" } },
         gateway: { mode: "local" },
       };
       configState.snapshot = {
         config: guardedConfig,
         exists: true,
         hash: "guarded",
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         sourceConfig: guardedConfig,
         valid: true,
       };
@@ -1375,24 +1375,24 @@ describe("gateway run option collisions", () => {
         await import("./pre-bootstrap.js");
       await selectGatewayRunEnvironment({ opts: {}, runtime: defaultRuntime });
       await prepareGatewayRunBootstrap({ opts: {}, runtime: defaultRuntime });
-      expect(process.env.NOVA_STATE_DIR).toBe("/tmp/openclaw-guarded-state");
+      expect(process.env.NOVA_STATE_DIR).toBe("/tmp/nova-guarded-state");
 
       const finalConfig = {
-        env: { vars: { NOVA_STATE_DIR: "/tmp/openclaw-final-state" } },
+        env: { vars: { NOVA_STATE_DIR: "/tmp/nova-final-state" } },
         gateway: { mode: "local" },
       };
       configState.snapshot = {
         config: finalConfig,
         exists: true,
         hash: "final",
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         sourceConfig: finalConfig,
         valid: true,
       };
 
       await expect(runGatewayCli(["gateway", "run"])).rejects.toThrow("__exit__:1");
 
-      expect(process.env.NOVA_STATE_DIR).toBe("/tmp/openclaw-guarded-state");
+      expect(process.env.NOVA_STATE_DIR).toBe("/tmp/nova-guarded-state");
       expect(startGatewayServer).not.toHaveBeenCalled();
       expect(runtimeErrors.join("\n")).toContain(
         "final config read changed config or state selection",
@@ -1587,7 +1587,7 @@ describe("gateway run option collisions", () => {
     await expect(runGatewayCli(["gateway", "run"])).rejects.toThrow("__exit__:78");
 
     expect(runtimeErrors).toContain(
-      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `openclaw onboard --mode local` or `openclaw setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
+      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `nova onboard --mode local` or `nova setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
     );
     expect(runtimeErrors).toContain(`Config write audit: ${CONFIG_AUDIT_STORE_LABEL}`);
     expect(startGatewayServer).not.toHaveBeenCalled();
@@ -1599,7 +1599,7 @@ describe("gateway run option collisions", () => {
     configState.snapshot = {
       exists: true,
       valid: false,
-      path: "/tmp/openclaw-test-missing-config.json",
+      path: "/tmp/nova-test-missing-config.json",
       config: {},
       parsed: null,
       issues: [{ path: "<root>", message: "JSON5 parse failed" }],
@@ -1609,7 +1609,7 @@ describe("gateway run option collisions", () => {
     await expect(runGatewayCli(["gateway", "run"])).rejects.toThrow("__exit__:78");
 
     expect(runtimeErrors).toContain(
-      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `openclaw onboard --mode local` or `openclaw setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
+      "Gateway start blocked: existing config is missing gateway.mode. Treat this as suspicious or clobbered config. Re-run `nova onboard --mode local` or `nova setup`, set gateway.mode=local manually, or pass --allow-unconfigured.",
     );
     expect(runtimeErrors).toContain(`Config write audit: ${CONFIG_AUDIT_STORE_LABEL}`);
     expect(readConfigFileSnapshotWithPluginMetadata).toHaveBeenCalledOnce();
@@ -1620,7 +1620,7 @@ describe("gateway run option collisions", () => {
     configState.snapshot = {
       exists: true,
       valid: false,
-      path: "/tmp/openclaw-test-missing-config.json",
+      path: "/tmp/nova-test-missing-config.json",
       config: {},
       parsed: null,
       issues: [{ path: "<root>", message: "JSON5 parse failed" }],
@@ -1638,7 +1638,7 @@ describe("gateway run option collisions", () => {
     configState.snapshot = {
       exists: true,
       valid: false,
-      path: "/tmp/openclaw-test-missing-config.json",
+      path: "/tmp/nova-test-missing-config.json",
       config: {},
       parsed: null,
       issues: [{ path: "<root>", message: "JSON5 parse failed" }],
@@ -1655,7 +1655,7 @@ describe("gateway run option collisions", () => {
   it("does not offer doctor repair after --allow-unconfigured reaches startup", async () => {
     const { createInvalidConfigError } = await import("../../config/io.invalid-config.js");
     startGatewayServer.mockRejectedValueOnce(
-      createInvalidConfigError("/tmp/openclaw.json", "gateway.mode: invalid"),
+      createInvalidConfigError("/tmp/nova.json", "gateway.mode: invalid"),
     );
 
     await expect(runGatewayCli(["gateway", "run", "--allow-unconfigured"])).rejects.toThrow(
@@ -1710,7 +1710,7 @@ describe("gateway run option collisions", () => {
 
   it("reads gateway password from --password-file", async () => {
     await withTempSecretFiles(
-      "openclaw-gateway-run-",
+      "nova-gateway-run-",
       { password: "pw_from_file\n" },
       async ({ passwordFile }) => {
         await runGatewayCli([
@@ -1751,7 +1751,7 @@ describe("gateway run option collisions", () => {
 
   it("rejects using both --password and --password-file", async () => {
     await withTempSecretFiles(
-      "openclaw-gateway-run-",
+      "nova-gateway-run-",
       { password: "pw_from_file\n" },
       async ({ passwordFile }) => {
         await expect(

@@ -58,11 +58,11 @@ async function collectStreamEvents<T>(stream: AsyncIterable<T>): Promise<T[]> {
   return events;
 }
 
-async function withTempOpenClawState<T>(run: (paths: { root: string }) => Promise<T>): Promise<T> {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-ollama-cli-live-"));
+async function withTempNovaState<T>(run: (paths: { root: string }) => Promise<T>): Promise<T> {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-ollama-cli-live-"));
   try {
     await fs.writeFile(
-      path.join(root, "openclaw.json"),
+      path.join(root, "nova.json"),
       JSON.stringify(
         {
           models: {
@@ -86,15 +86,15 @@ async function withTempOpenClawState<T>(run: (paths: { root: string }) => Promis
   }
 }
 
-async function runOpenClawCli(args: string[], env: NodeJS.ProcessEnv) {
+async function runNovaCli(args: string[], env: NodeJS.ProcessEnv) {
   const hasBuiltEntry = ["entry.js", "entry.mjs"].some((entry) =>
     fsSync.existsSync(path.join(process.cwd(), "dist", entry)),
   );
   const sourceRunnerAvailable = !hasBuiltEntry;
   const commandArgs = sourceRunnerAvailable
     ? ["scripts/run-node.mjs", ...args]
-    : ["openclaw.mjs", ...args];
-  const outputRoot = fsSync.mkdtempSync(path.join(os.tmpdir(), "openclaw-ollama-cli-output-"));
+    : ["nova.mjs", ...args];
+  const outputRoot = fsSync.mkdtempSync(path.join(os.tmpdir(), "nova-ollama-cli-output-"));
   const stdoutPath = path.join(outputRoot, "stdout.txt");
   const stderrPath = path.join(outputRoot, "stderr.txt");
   const stdoutFd = fsSync.openSync(stdoutPath, "w");
@@ -148,7 +148,7 @@ function buildCliEnv(root: string): NodeJS.ProcessEnv {
     NOVA_LIVE_OLLAMA: "1",
     NOVA_LIVE_OLLAMA_WEB_SEARCH: "0",
     NOVA_STATE_DIR: path.join(root, "state"),
-    NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+    NOVA_CONFIG_PATH: path.join(root, "nova.json"),
     NOVA_NO_RESPAWN: "1",
     NOVA_TEST_FAST: "1",
     PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
@@ -159,8 +159,8 @@ function buildCliEnv(root: string): NodeJS.ProcessEnv {
 
 describe.skipIf(!LIVE)("ollama live", () => {
   it("runs infer model run through the local CLI path without static model discovery", async () => {
-    await withTempOpenClawState(async ({ root }) => {
-      const result = await runOpenClawCli(
+    await withTempNovaState(async ({ root }) => {
+      const result = await runNovaCli(
         [
           "infer",
           "model",

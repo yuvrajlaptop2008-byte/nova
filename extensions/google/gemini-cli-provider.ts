@@ -1,13 +1,13 @@
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 // Google provider module implements model/runtime integration.
 import type {
-  OpenClawPluginApi,
+  NovaPluginApi,
   ProviderAuthContext,
   ProviderFetchUsageSnapshotContext,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { buildOauthProviderAuthResult } from "openclaw/plugin-sdk/provider-auth-result";
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-model-shared";
-import { fetchGeminiUsage } from "openclaw/plugin-sdk/provider-usage";
+} from "nova/plugin-sdk/plugin-entry";
+import { buildOauthProviderAuthResult } from "nova/plugin-sdk/provider-auth-result";
+import type { ProviderPlugin } from "nova/plugin-sdk/provider-model-shared";
+import { fetchGeminiUsage } from "nova/plugin-sdk/provider-usage";
 import { GOOGLE_GEMINI_CLI_PROVIDER_ID } from "./gemini-cli-auth-home.js";
 import { formatGoogleOauthApiKey, parseGoogleUsageToken } from "./oauth-token-shared.js";
 import { GOOGLE_GEMINI_PROVIDER_HOOKS } from "./provider-hooks.js";
@@ -145,6 +145,6 @@ export function buildGoogleGeminiCliProvider(): ProviderPlugin {
   };
 }
 
-export function registerGoogleGeminiCliProvider(api: OpenClawPluginApi) {
+export function registerGoogleGeminiCliProvider(api: NovaPluginApi) {
   api.registerProvider(buildGoogleGeminiCliProvider());
 }

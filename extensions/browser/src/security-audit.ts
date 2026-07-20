@@ -1,11 +1,11 @@
 /**
  * Browser plugin security audit checks for auth and remote CDP exposure.
  */
-import type { OpenClawPluginSecurityAuditContext } from "openclaw/plugin-sdk/plugin-entry";
-import { hasConfiguredSecretInput } from "openclaw/plugin-sdk/secret-input";
-import { formatCliCommand } from "openclaw/plugin-sdk/setup-tools";
-import { isPrivateNetworkOptInEnabled, isPrivateIpAddress } from "openclaw/plugin-sdk/ssrf-policy";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaPluginSecurityAuditContext } from "nova/plugin-sdk/plugin-entry";
+import { hasConfiguredSecretInput } from "nova/plugin-sdk/secret-input";
+import { formatCliCommand } from "nova/plugin-sdk/setup-tools";
+import { isPrivateNetworkOptInEnabled, isPrivateIpAddress } from "nova/plugin-sdk/ssrf-policy";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import { redactCdpUrl, resolveBrowserConfig, resolveProfile } from "./browser/config.js";
 import { resolveBrowserControlAuth } from "./browser/control-auth.js";
 import { hasNonEmptyString } from "./record-shared.js";
@@ -22,7 +22,7 @@ function isTrustedPrivateHostname(hostname: string): boolean {
 }
 
 /** Collects Browser plugin security audit findings for the current config/env. */
-export function collectBrowserSecurityAuditFindings(ctx: OpenClawPluginSecurityAuditContext) {
+export function collectBrowserSecurityAuditFindings(ctx: NovaPluginSecurityAuditContext) {
   const findings: Array<{
     checkId: string;
     severity: "warn" | "critical";
@@ -40,7 +40,7 @@ export function collectBrowserSecurityAuditFindings(ctx: OpenClawPluginSecurityA
       severity: "warn" as const,
       title: "Browser control config looks invalid",
       detail: String(err),
-      remediation: `Fix browser.cdpUrl in ${ctx.configPath} and re-run "${formatCliCommand("openclaw security audit --deep")}".`,
+      remediation: `Fix browser.cdpUrl in ${ctx.configPath} and re-run "${formatCliCommand("nova security audit --deep")}".`,
     });
     return findings;
   }

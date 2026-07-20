@@ -63,7 +63,7 @@ function createFixture(
 
 function manifest(status: SkillWorkshopProposal["status"] = "pending") {
   return {
-    schema: "openclaw.skill-workshop.proposals-manifest.v1",
+    schema: "nova.skill-workshop.proposals-manifest.v1",
     updatedAt: ISO_NOW,
     proposals: [
       {

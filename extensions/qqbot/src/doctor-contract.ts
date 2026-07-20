@@ -2,10 +2,10 @@
 import type {
   ChannelDoctorConfigMutation,
   ChannelDoctorLegacyConfigRule,
-} from "openclaw/plugin-sdk/channel-contract";
-import type { GroupToolPolicyConfig } from "openclaw/plugin-sdk/channel-policy";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { asObjectRecord } from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/channel-contract";
+import type { GroupToolPolicyConfig } from "nova/plugin-sdk/channel-policy";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { asObjectRecord } from "nova/plugin-sdk/runtime-doctor";
 
 const RESTRICTED_GROUP_TOOLS: GroupToolPolicyConfig = {
   deny: ["exec", "read", "write"],
@@ -144,25 +144,25 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
   {
     path: ["channels", "qqbot"],
     message:
-      'channels.qqbot.streaming (boolean) and channels.qqbot.streaming.c2cStreamApi are legacy; use channels.qqbot.streaming.{mode,nativeTransport}. Run "openclaw doctor --fix".',
+      'channels.qqbot.streaming (boolean) and channels.qqbot.streaming.c2cStreamApi are legacy; use channels.qqbot.streaming.{mode,nativeTransport}. Run "nova doctor --fix".',
     match: hasLegacyStreamingValue,
   },
   {
     path: ["channels", "qqbot", "accounts"],
     message:
-      'channels.qqbot.accounts.<id>.streaming (boolean) and streaming.c2cStreamApi are legacy; use channels.qqbot.accounts.<id>.streaming.{mode,nativeTransport}. Run "openclaw doctor --fix".',
+      'channels.qqbot.accounts.<id>.streaming (boolean) and streaming.c2cStreamApi are legacy; use channels.qqbot.accounts.<id>.streaming.{mode,nativeTransport}. Run "nova doctor --fix".',
     match: hasLegacyAccountStreamingValues,
   },
   {
     path: ["channels", "qqbot", "groups"],
     message:
-      'channels.qqbot.groups.<id>.toolPolicy is legacy and was ignored by QQBot group tool enforcement; use channels.qqbot.groups.<id>.tools instead. Run "openclaw doctor --fix".',
+      'channels.qqbot.groups.<id>.toolPolicy is legacy and was ignored by QQBot group tool enforcement; use channels.qqbot.groups.<id>.tools instead. Run "nova doctor --fix".',
     match: hasLegacyGroupToolPolicy,
   },
   {
     path: ["channels", "qqbot", "accounts"],
     message:
-      'channels.qqbot.accounts.<id>.groups.<groupId>.toolPolicy is legacy and was ignored by QQBot group tool enforcement; use channels.qqbot.accounts.<id>.groups.<groupId>.tools instead. Run "openclaw doctor --fix".',
+      'channels.qqbot.accounts.<id>.groups.<groupId>.toolPolicy is legacy and was ignored by QQBot group tool enforcement; use channels.qqbot.accounts.<id>.groups.<groupId>.tools instead. Run "nova doctor --fix".',
     match: hasLegacyAccountGroupToolPolicy,
   },
 ];
@@ -170,7 +170,7 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
 export function normalizeCompatibilityConfig({
   cfg,
 }: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): ChannelDoctorConfigMutation {
   const rawEntry = asObjectRecord((cfg.channels as Record<string, unknown> | undefined)?.qqbot);
   if (!rawEntry) {
@@ -251,8 +251,8 @@ export function normalizeCompatibilityConfig({
       ...cfg,
       channels: {
         ...cfg.channels,
-        qqbot: updated as unknown as NonNullable<OpenClawConfig["channels"]>["qqbot"],
-      } as OpenClawConfig["channels"],
+        qqbot: updated as unknown as NonNullable<NovaConfig["channels"]>["qqbot"],
+      } as NovaConfig["channels"],
     },
     changes,
   };

@@ -5,7 +5,7 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+import { resolveSendableOutboundReplyParts } from "nova/plugin-sdk/reply-payload";
 import { createInlineCodeState } from "../../packages/markdown-core/src/code-spans.js";
 import {
   parseReplyDirectives,
@@ -56,21 +56,21 @@ function shouldSuppressAssistantVisibleOutput(message: AgentMessage | undefined)
   return resolveAssistantMessagePhase(message) === "commentary";
 }
 
-function isTranscriptOnlyOpenClawAssistantMessage(message: AgentMessage | undefined): boolean {
+function isTranscriptOnlyNovaAssistantMessage(message: AgentMessage | undefined): boolean {
   if (!message || message.role !== "assistant") {
     return false;
   }
   const provider = normalizeOptionalString(message.provider) ?? "";
   const model = normalizeOptionalString(message.model) ?? "";
-  return provider === "openclaw" && (model === "delivery-mirror" || model === "gateway-injected");
+  return provider === "nova" && (model === "delivery-mirror" || model === "gateway-injected");
 }
 
 const RESPONSES_API_IDS = new Set([
   "openai-responses",
   "openai-chatgpt-responses",
   "azure-openai-responses",
-  "openclaw-openai-responses-transport",
-  "openclaw-azure-openai-responses-transport",
+  "nova-openai-responses-transport",
+  "nova-azure-openai-responses-transport",
 ]);
 
 function isResponsesApiAssistantMessage(message: AgentMessage | undefined): boolean {
@@ -94,14 +94,14 @@ function isOpenAiCompletionsAssistantMessage(message: AgentMessage | undefined):
     return false;
   }
   const api = normalizeOptionalString((message as { api?: unknown }).api) ?? "";
-  return api === "openai-completions" || api === "openclaw-openai-completions-transport";
+  return api === "openai-completions" || api === "nova-openai-completions-transport";
 }
 
 export function preservePendingAssistantUsage(
   message: AssistantMessage,
   pendingUsage: NormalizedUsage | undefined,
 ): AssistantMessage {
-  if (isTranscriptOnlyOpenClawAssistantMessage(message) || !hasNonzeroUsage(pendingUsage)) {
+  if (isTranscriptOnlyNovaAssistantMessage(message) || !hasNonzeroUsage(pendingUsage)) {
     return message;
   }
   const messageUsage = normalizeUsage((message as { usage?: UsageLike }).usage);
@@ -135,7 +135,7 @@ export function capturePendingAssistantUsage(
   evt: AgentEvent & { message: AgentMessage; assistantMessageEvent?: unknown },
 ): void {
   const msg = evt.message;
-  if (msg?.role !== "assistant" || isTranscriptOnlyOpenClawAssistantMessage(msg)) {
+  if (msg?.role !== "assistant" || isTranscriptOnlyNovaAssistantMessage(msg)) {
     return;
   }
   const assistantRecord =
@@ -152,7 +152,7 @@ export function resetPendingAssistantUsage(
   ctx: EmbeddedAgentSubscribeContext,
   message: AgentMessage,
 ): void {
-  if (message?.role !== "assistant" || isTranscriptOnlyOpenClawAssistantMessage(message)) {
+  if (message?.role !== "assistant" || isTranscriptOnlyNovaAssistantMessage(message)) {
     return;
   }
   ctx.state.pendingAssistantUsage = undefined;
@@ -699,7 +699,7 @@ export function handleMessageStart(
   evt: AgentEvent & { message: AgentMessage },
 ) {
   const msg = evt.message;
-  if (msg?.role !== "assistant" || isTranscriptOnlyOpenClawAssistantMessage(msg)) {
+  if (msg?.role !== "assistant" || isTranscriptOnlyNovaAssistantMessage(msg)) {
     return;
   }
 
@@ -719,7 +719,7 @@ export function handleMessageUpdate(
   evt: AgentEvent & { message: AgentMessage; assistantMessageEvent?: unknown },
 ) {
   const msg = evt.message;
-  if (msg?.role !== "assistant" || isTranscriptOnlyOpenClawAssistantMessage(msg)) {
+  if (msg?.role !== "assistant" || isTranscriptOnlyNovaAssistantMessage(msg)) {
     return;
   }
 
@@ -1135,7 +1135,7 @@ export function handleMessageUpdate(
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
   (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.embeddedSubscribeMessagesTestApi")
+    Symbol.for("nova.embeddedSubscribeMessagesTestApi")
   ] = {
     buildAssistantStreamData,
     recordPendingAssistantReplyDirectives,
@@ -1149,7 +1149,7 @@ export function handleMessageEnd(
   evt: AgentEvent & { message: AgentMessage },
 ): void | Promise<void> {
   const msg = evt.message;
-  if (msg?.role !== "assistant" || isTranscriptOnlyOpenClawAssistantMessage(msg)) {
+  if (msg?.role !== "assistant" || isTranscriptOnlyNovaAssistantMessage(msg)) {
     return;
   }
 

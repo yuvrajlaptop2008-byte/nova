@@ -21,7 +21,7 @@ function runAgentsDeleteAssert(root: string, outputPath: string, env: Record<str
 
 describe("workspace fixture assertions", () => {
   it("rejects oversized agents delete output before parsing it", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-fixture-workspace-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-fixture-workspace-"));
     const outputPath = path.join(root, "agents-delete.json");
     try {
       mkdirSync(root, { recursive: true });
@@ -45,7 +45,7 @@ describe("workspace fixture assertions", () => {
   });
 
   it("bounds invalid agents delete JSON diagnostics", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-fixture-workspace-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-fixture-workspace-"));
     const outputPath = path.join(root, "agents-delete.json");
     try {
       mkdirSync(root, { recursive: true });

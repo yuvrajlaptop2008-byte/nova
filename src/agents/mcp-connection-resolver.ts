@@ -4,20 +4,20 @@
  */
 import crypto from "node:crypto";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import { resolveOpenClawMcpTransportAlias } from "../config/mcp-config-normalize.js";
+import { resolveNovaMcpTransportAlias } from "../config/mcp-config-normalize.js";
 import { logWarn } from "../logger.js";
 import { registerSecretValueForRedaction } from "../logging/secret-redaction-registry.js";
 import { getActivePluginRegistry } from "../plugins/runtime.js";
 import type {
   McpServerConnectionResolved,
   McpServerConnectionResolveContext,
-  OpenClawPluginMcpServerConnectionResolver,
+  NovaPluginMcpServerConnectionResolver,
 } from "../plugins/types.js";
 import { isMcpConfigRecord } from "./mcp-config-shared.js";
 
 export type { McpServerConnectionResolved };
 
-type McpServerConnectionResolverEntry = OpenClawPluginMcpServerConnectionResolver & {
+type McpServerConnectionResolverEntry = NovaPluginMcpServerConnectionResolver & {
   pluginId: string;
 };
 
@@ -30,7 +30,7 @@ const MCP_CONNECTION_RESOLVER_TIMEOUT_MS = 10_000;
 const MCP_CONNECTION_REVALIDATE_MS = 5 * 60 * 1000;
 
 const MCP_CONNECTION_RESOLVER_TEST_STATE_KEY = Symbol.for(
-  "openclaw.mcpServerConnectionResolverTestState",
+  "nova.mcpServerConnectionResolverTestState",
 );
 
 type McpConnectionResolverTestState = {
@@ -302,10 +302,8 @@ export function applyMcpConnectionOverride(
   // Resolve effective transport with the same alias mapping as config canonicalize
   // BEFORE stripping `type`, so SSE-only servers keep sse (including case variants).
   const fromTransport =
-    typeof base.transport === "string"
-      ? resolveOpenClawMcpTransportAlias(base.transport)
-      : undefined;
-  const fromType = resolveOpenClawMcpTransportAlias(base.type);
+    typeof base.transport === "string" ? resolveNovaMcpTransportAlias(base.transport) : undefined;
+  const fromType = resolveNovaMcpTransportAlias(base.type);
   base.transport = fromTransport ?? fromType ?? "streamable-http";
   // Resolver-supplied headers are the auth surface; strip static OAuth so the
   // transport layer does not drop Authorization from overrides.
@@ -370,7 +368,7 @@ export function buildMcpRequesterRuntimeCacheKey(params: {
 
 export const testing = {
   setMcpServerConnectionResolversForTest(
-    resolvers?: Iterable<OpenClawPluginMcpServerConnectionResolver & { pluginId?: string }> | null,
+    resolvers?: Iterable<NovaPluginMcpServerConnectionResolver & { pluginId?: string }> | null,
   ): void {
     if (!resolvers) {
       getTestState().resolversByServerName = undefined;

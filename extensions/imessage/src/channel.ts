@@ -1,22 +1,22 @@
 // Imessage plugin module implements channel behavior.
-import { buildDmGroupAccountAllowlistAdapter } from "openclaw/plugin-sdk/allowlist-config-edit";
-import { createChatChannelPlugin } from "openclaw/plugin-sdk/channel-core";
+import { buildDmGroupAccountAllowlistAdapter } from "nova/plugin-sdk/allowlist-config-edit";
+import { createChatChannelPlugin } from "nova/plugin-sdk/channel-core";
 import {
   createMessageReceiptFromOutboundResults,
   defineChannelMessageAdapter,
   type ChannelMessageSendResult,
   type MessageReceiptPartKind,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { sanitizeForPlainText } from "openclaw/plugin-sdk/channel-outbound";
-import type { ChannelOutboundAdapter } from "openclaw/plugin-sdk/channel-send-result";
-import { buildPassiveProbedChannelStatusSummary } from "openclaw/plugin-sdk/extension-shared";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { questionGatewayRuntime } from "openclaw/plugin-sdk/question-gateway-runtime";
-import { buildOutboundBaseSessionKey, type RoutePeer } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/channel-outbound";
+import { sanitizeForPlainText } from "nova/plugin-sdk/channel-outbound";
+import type { ChannelOutboundAdapter } from "nova/plugin-sdk/channel-send-result";
+import { buildPassiveProbedChannelStatusSummary } from "nova/plugin-sdk/extension-shared";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { questionGatewayRuntime } from "nova/plugin-sdk/question-gateway-runtime";
+import { buildOutboundBaseSessionKey, type RoutePeer } from "nova/plugin-sdk/routing";
 import {
   createComputedAccountStatusAdapter,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/status-helpers";
+} from "nova/plugin-sdk/status-helpers";
 import { resolveIMessageAccount, type ResolvedIMessageAccount } from "./accounts.js";
 import { imessageMessageActions } from "./actions.js";
 import {

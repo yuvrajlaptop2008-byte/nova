@@ -10,7 +10,7 @@ import {
   NOVA_DELIVERY_MIRROR_MODEL,
   NOVA_TRANSCRIPT_ARTIFACT_API,
   NOVA_TRANSCRIPT_ARTIFACT_PROVIDER,
-} from "../../shared/transcript-only-openclaw-assistant.js";
+} from "../../shared/transcript-only-nova-assistant.js";
 import { deleteTestEnvValue, setTestEnvValue } from "../../test-utils/env.js";
 import { resolveSessionTranscriptPathInDir } from "./paths.js";
 import {
@@ -569,7 +569,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
     expect(event?.messageId).toBeTypeOf("string");
     expect(message?.role).toBe("assistant");
     expect(message?.api).toBe(NOVA_TRANSCRIPT_ARTIFACT_API);
-    expect(message?.provider).toBe("openclaw");
+    expect(message?.provider).toBe("nova");
     expect(message?.model).toBe("delivery-mirror");
     expect(message?.content).toEqual([{ type: "text", text: "Hello from delivery mirror!" }]);
     emitSpy.mockRestore();
@@ -800,9 +800,9 @@ describe("appendAssistantMessageToSessionTranscript", () => {
       expect(nextTurn.messageId).not.toBe(first.messageId);
       const messages = (await loadFixtureMessages()).flatMap((entry) =>
         entry.message ? [entry.message] : [],
-      ) as Array<{ openclawDeliveryMirror?: unknown }>;
+      ) as Array<{ novaDeliveryMirror?: unknown }>;
       expect(messages).toHaveLength(2);
-      expect(messages[0]?.openclawDeliveryMirror).toEqual({
+      expect(messages[0]?.novaDeliveryMirror).toEqual({
         kind: "channel-final",
         sourceMessageId: "message-1",
       });
@@ -892,20 +892,20 @@ describe("appendAssistantMessageToSessionTranscript", () => {
       const mirrors = events
         .map((event) => (event as { message?: Record<string, unknown> }).message)
         .filter((message): message is Record<string, unknown> =>
-          Boolean(message?.openclawDeliveryMirror),
+          Boolean(message?.novaDeliveryMirror),
         );
       expect(mirrors).toHaveLength(2);
       expect(mirrors[0]).toMatchObject({
         api: NOVA_TRANSCRIPT_ARTIFACT_API,
         provider: NOVA_TRANSCRIPT_ARTIFACT_PROVIDER,
         model: NOVA_DELIVERY_MIRROR_MODEL,
-        openclawDeliveryMirror: {
+        novaDeliveryMirror: {
           kind: "channel-final-suppressed",
           reason: "stale-foreground",
           sourceMessageId: "message-1",
         },
       });
-      expect(mirrors[1]?.openclawDeliveryMirror).toEqual({
+      expect(mirrors[1]?.novaDeliveryMirror).toEqual({
         kind: "channel-final-suppressed",
         reason: "stale-foreground",
         sourceMessageId: "message-2",
@@ -1160,7 +1160,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
       storePath: fixture.storePath(),
       message: createExactAssistantMessage({
         text: "Injected transcript text",
-        provider: "openclaw",
+        provider: "nova",
         model: "gateway-injected",
       }),
     });
@@ -1211,8 +1211,8 @@ describe("appendAssistantMessageToSessionTranscript", () => {
     expect(tailAssistantText?.text).toBe("Tail delivery mirror");
   });
 
-  it("scans past trailing non-assistant entries (e.g. openclaw.cache-ttl) to find the latest assistant text", async () => {
-    // Regression for openclaw/openclaw#83427: the cache-ttl custom entry was
+  it("scans past trailing non-assistant entries (e.g. nova.cache-ttl) to find the latest assistant text", async () => {
+    // Regression for nova/nova#83427: the cache-ttl custom entry was
     // emitted after the canonical assistant turn, and the tail reader returned
     // undefined on the first non-assistant line, so the gap-fill check in
     // persistTextTurnTranscript wrote a duplicate `api: "cli"` assistant
@@ -1235,7 +1235,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
 
     const cacheTtlEntry = `${JSON.stringify({
       type: "custom",
-      customType: "openclaw.cache-ttl",
+      customType: "nova.cache-ttl",
       timestamp: new Date().toISOString(),
       data: {
         provider: "anthropic",
@@ -1341,7 +1341,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
 
     await expect(
       readTailAssistantTextFromSessionTranscript(toolOnlyResult.sessionFile, {
-        excludeTranscriptOnlyOpenClawAssistant: true,
+        excludeTranscriptOnlyNovaAssistant: true,
       }),
     ).resolves.toBeUndefined();
   });
@@ -1361,7 +1361,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
           id: "delivery-mirror",
           message: {
             ...createExactAssistantMessage({
-              provider: "openclaw",
+              provider: "nova",
               model: "delivery-mirror",
               text: "delivery mirror text",
             }),
@@ -1375,7 +1375,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
 
     await expect(
       readTailAssistantTextFromSessionTranscript(transcriptPath, {
-        excludeTranscriptOnlyOpenClawAssistant: true,
+        excludeTranscriptOnlyNovaAssistant: true,
       }),
     ).resolves.toMatchObject({
       id: "real-assistant",
@@ -1421,7 +1421,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
       }>;
       expect(messages).toHaveLength(3);
       expect(messages[2]?.api).toBe(NOVA_TRANSCRIPT_ARTIFACT_API);
-      expect(messages[2]?.provider).toBe("openclaw");
+      expect(messages[2]?.provider).toBe("nova");
       expect(messages[2]?.model).toBe("delivery-mirror");
       expect(messages[2]?.content?.[0]?.text).toBe("Repeated answer");
     }
@@ -1621,7 +1621,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
             textSignature: JSON.stringify({ v: 1, id: "item_final", phase: "final_answer" }),
           },
         ],
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
       }),
     });
@@ -1869,7 +1869,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
           updateMode: "none",
           message: createExactAssistantMessage({
             text: "Mirrored reply",
-            provider: "openclaw",
+            provider: "nova",
             model: "delivery-mirror",
           }),
         }),
@@ -1901,7 +1901,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
       updateMode: "file-only",
       message: createExactAssistantMessage({
         text: "Done.",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
       }),
     });
@@ -2322,7 +2322,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
       transcriptPath: sessionFile,
       message: {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         content: "second side delivery",
       },
@@ -2422,7 +2422,7 @@ describe("appendAssistantMessageToSessionTranscript", () => {
       transcriptPath: sessionFile,
       message: {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         content: "second side delivery",
       },

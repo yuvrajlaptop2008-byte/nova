@@ -55,11 +55,11 @@ export type ResolvedGlobalInstallTarget = ResolvedGlobalInstallCommand & {
   directNodeModulesRoot?: boolean;
 };
 
-const PRIMARY_PACKAGE_NAME = "openclaw";
+const PRIMARY_PACKAGE_NAME = "nova";
 const ALL_PACKAGE_NAMES = [PRIMARY_PACKAGE_NAME] as const;
 const GLOBAL_RENAME_PREFIX = ".";
 /** npm-compatible spec used when the user asks to install the moving main branch. */
-const NOVA_MAIN_PACKAGE_SPEC = "github:openclaw/openclaw#main";
+const NOVA_MAIN_PACKAGE_SPEC = "github:nova/nova#main";
 const COREPACK_ENABLE_DOWNLOAD_PROMPT_DEFAULT = "0";
 const NPM_GLOBAL_INSTALL_QUIET_FLAGS = ["--no-fund", "--no-audit", "--loglevel=error"] as const;
 const PNPM_NOVA_BUILD_ALLOWLIST_FLAG = `--allow-build=${PRIMARY_PACKAGE_NAME}`;
@@ -186,7 +186,7 @@ function stripPrimaryPackageAlias(spec: string): string {
 }
 
 /**
- * Extracts a pinned installed version from package specs like `openclaw@1.2.3`.
+ * Extracts a pinned installed version from package specs like `nova@1.2.3`.
  * Moving tags, URLs, git refs, and aliases return null because they cannot be
  * compared reliably after install.
  */
@@ -345,7 +345,7 @@ async function collectCriticalInstalledPackageDistPaths(packageRoot: string): Pr
       }
       if (
         (await pathExists(path.join(packageRoot, pluginRoot, "package.json"))) ||
-        (await pathExists(path.join(packageRoot, pluginRoot, "openclaw.plugin.json")))
+        (await pathExists(path.join(packageRoot, pluginRoot, "nova.plugin.json")))
       ) {
         expectedFiles.add(relativePath);
       }
@@ -961,7 +961,7 @@ function resolveBunGlobalInstallSpec(spec: string): string {
   const hasScheme = /^[a-z][a-z0-9+.-]*:/iu.test(trimmed) && !isWindowsAbsolutePath;
   const target = /\.(?:tgz|tar\.gz)$/iu.test(trimmed) && !hasScheme ? `file:${trimmed}` : trimmed;
   // Bun needs an alias to replace the existing global dependency. A bare
-  // tarball is added beside it and can form an openclaw dependency loop.
+  // tarball is added beside it and can form an nova dependency loop.
   return `${PRIMARY_PACKAGE_NAME}@${target}`;
 }
 

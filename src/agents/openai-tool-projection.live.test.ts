@@ -190,7 +190,7 @@ describeLive("OpenAI tool projection live", () => {
       maxTokens: 128,
       reasoning: "low",
       toolChoice: { type: "function", name: "exec" },
-      openclawCodeModeToolSurface: true,
+      novaCodeModeToolSurface: true,
       onPayload(payload: unknown) {
         const record = payload as Record<string, unknown>;
         const tools = record.tools;
@@ -212,7 +212,7 @@ describeLive("OpenAI tool projection live", () => {
     } satisfies Parameters<typeof streamFn>[2] & {
       reasoning: "low";
       toolChoice: { type: "function"; name: string };
-      openclawCodeModeToolSurface: true;
+      novaCodeModeToolSurface: true;
     };
     const stream = await Promise.resolve(streamFn(model, codeModeContext, streamOptions));
 

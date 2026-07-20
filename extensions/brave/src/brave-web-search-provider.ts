@@ -2,18 +2,18 @@
  * Brave web-search provider factory. It builds the agent tool definition and
  * lazy-loads HTTP execution only when a search is run.
  */
-import { isDiagnosticFlagEnabled } from "openclaw/plugin-sdk/diagnostic-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { isDiagnosticFlagEnabled } from "nova/plugin-sdk/diagnostic-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import type {
   SearchConfigRecord,
   WebSearchProviderPlugin,
   WebSearchProviderToolDefinition,
-} from "openclaw/plugin-sdk/provider-web-search";
+} from "nova/plugin-sdk/provider-web-search";
 import {
   mergeScopedSearchConfig,
   resolveProviderWebSearchPluginConfig,
-} from "openclaw/plugin-sdk/provider-web-search-config-contract";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/provider-web-search-config-contract";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { buildBraveWebSearchProviderBase } from "../web-search-shared.js";
 
 const loadBraveWebSearchRuntime = createLazyRuntimeModule(

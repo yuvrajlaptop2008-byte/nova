@@ -9,7 +9,7 @@ import {
   fingerprintResolvedAuthProfileCredential,
   fingerprintResolvedProviderAuth,
 } from "../agents/execution-auth-binding.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginOrigin } from "../plugins/types.js";
 import { resolveSystemAgentConfiguredRouteFromConfig } from "./inference-route.js";
 import { resolvePersistentApplyInference } from "./setup-inference.js";
@@ -99,7 +99,7 @@ function pluginRecord(
     pluginId,
     origin: "global",
     rootDir,
-    manifestPath: `${rootDir}/openclaw.plugin.json`,
+    manifestPath: `${rootDir}/nova.plugin.json`,
     manifestHash: `${pluginId}-manifest-v1`,
     source: `${rootDir}/index.js`,
     packageName: `@nova/${pluginId}`,
@@ -178,7 +178,7 @@ const codexRuntimeArtifactAuth = {
   runtimeArtifactId: "codex-app-server",
 } as const;
 
-function config(model = "openai/gpt-5.5@openai:verified"): OpenClawConfig {
+function config(model = "openai/gpt-5.5@openai:verified"): NovaConfig {
   return {
     agents: { defaults: { model } },
     auth: {
@@ -190,7 +190,7 @@ function config(model = "openai/gpt-5.5@openai:verified"): OpenClawConfig {
 }
 
 async function bindingFor(
-  baseConfig: OpenClawConfig,
+  baseConfig: NovaConfig,
   deps: SystemAgentVerifiedInferenceDeps = { ...authDeps(), ...pluginArtifactDeps() },
 ) {
   const route = await resolveSystemAgentConfiguredRouteFromConfig(baseConfig);
@@ -207,7 +207,7 @@ async function bindingFor(
   const agentHarnessId =
     route.runner === "embedded"
       ? route.agentHarnessRuntimeOverride === "auto"
-        ? "openclaw"
+        ? "nova"
         : route.agentHarnessRuntimeOverride
       : undefined;
   return await createSystemAgentVerifiedInferenceBinding({
@@ -219,7 +219,7 @@ async function bindingFor(
       ...(agentHarnessId
         ? {
             agentHarnessId,
-            ...(agentHarnessId === "openclaw"
+            ...(agentHarnessId === "nova"
               ? {}
               : {
                   runtimeOwnerKind: "plugin-harness" as const,
@@ -238,7 +238,7 @@ describe("verified Nova inference binding", () => {
     const oauthConfig = {
       agents: { defaults: { model: "anthropic/claude-opus-4-8@anthropic:oauth" } },
       auth: { profiles: { "anthropic:oauth": { provider: "anthropic", mode: "oauth" } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(oauthConfig);
     if (!route) {
       throw new Error("missing test OAuth route");
@@ -263,7 +263,7 @@ describe("verified Nova inference binding", () => {
       auth: {
         authProfileId: "anthropic:oauth",
         authFingerprint,
-        agentHarnessId: "openclaw",
+        agentHarnessId: "nova",
       },
       deps: {
         ...pluginArtifactDeps(),
@@ -336,7 +336,7 @@ describe("verified Nova inference binding", () => {
   it("accepts and revalidates an opaque CLI owner emitted after a successful turn", async () => {
     const cliConfig = {
       agents: { defaults: { model: "claude-cli/claude-opus-4-8" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(cliConfig);
     if (!route || route.runner !== "cli") {
       throw new Error("missing test CLI route");
@@ -396,7 +396,7 @@ describe("verified Nova inference binding", () => {
           cliBackends: { "claude-cli": { command: "claude" } },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const changedConfig = {
       agents: {
         defaults: {
@@ -404,7 +404,7 @@ describe("verified Nova inference binding", () => {
           cliBackends: { "claude-cli": { command: "/opt/other/claude" } },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(cliConfig);
     if (!route || route.runner !== "cli") {
       throw new Error("missing test CLI route");
@@ -440,7 +440,7 @@ describe("verified Nova inference binding", () => {
   it("invalidates a strict CLI credential when its package artifact changes", async () => {
     const cliConfig = {
       agents: { defaults: { model: "claude-cli/claude-opus-4-8" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(cliConfig);
     if (!route || route.runner !== "cli") {
       throw new Error("missing test CLI route");
@@ -488,7 +488,7 @@ describe("verified Nova inference binding", () => {
         ],
       },
       auth: { profiles: { [profileId]: { provider: "claude-cli", mode: "api_key" } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(cliConfig);
     if (!route || route.runner !== "cli" || route.authProfileId !== profileId) {
       throw new Error("missing test CLI SecretRef route");
@@ -574,7 +574,7 @@ describe("verified Nova inference binding", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!route || route.runner !== "embedded" || route.agentHarnessRuntimeOverride !== "codex") {
       throw new Error("missing test plugin harness route");
@@ -627,7 +627,7 @@ describe("verified Nova inference binding", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!route || route.runner !== "embedded") {
       throw new Error("missing test plugin harness route");
@@ -682,7 +682,7 @@ describe("verified Nova inference binding", () => {
       auth: {
         profiles: { "openai:verified": { provider: "openai", mode: "api_key" } },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!route || route.runner !== "embedded") {
       throw new Error("missing test plugin harness route");
@@ -754,7 +754,7 @@ describe("verified Nova inference binding", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const resolved = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!resolved || resolved.runner !== "embedded") {
       throw new Error("missing test plugin harness route");
@@ -797,13 +797,13 @@ describe("verified Nova inference binding", () => {
       agents: {
         defaults: {
           model: "openai/gpt-5.5@openai:verified",
-          models: { "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } } },
+          models: { "openai/gpt-5.5": { agentRuntime: { id: "nova" } } },
         },
       },
       auth: {
         profiles: { "openai:verified": { provider: "openai", mode: "api_key" } },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const resolved = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!resolved || resolved.runner !== "embedded") {
       throw new Error("missing test embedded route");
@@ -837,13 +837,13 @@ describe("verified Nova inference binding", () => {
       auth: {
         authProfileId: "openai:verified",
         authFingerprint,
-        agentHarnessId: "openclaw",
+        agentHarnessId: "nova",
       },
       deps: { ...authDeps(), ...pluginArtifactDeps() },
     });
 
-    expect(binding.execution).toMatchObject({ agentHarnessRuntimeOverride: "openclaw" });
-    expect(binding.auth.agentHarnessId).toBe("openclaw");
+    expect(binding.execution).toMatchObject({ agentHarnessRuntimeOverride: "nova" });
+    expect(binding.auth.agentHarnessId).toBe("nova");
   });
 
   it("rejects an opaque harness with no trusted manifest owner", async () => {
@@ -858,7 +858,7 @@ describe("verified Nova inference binding", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const resolved = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!resolved || resolved.runner !== "embedded") {
       throw new Error("missing test plugin harness route");
@@ -909,7 +909,7 @@ describe("verified Nova inference binding", () => {
         ],
       },
       plugins: { entries: { codex: { config: { appServer: { command: "codex" } } } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!route || route.runner !== "embedded" || route.agentHarnessRuntimeOverride !== "codex") {
       throw new Error("missing test plugin harness route");
@@ -964,7 +964,7 @@ describe("verified Nova inference binding", () => {
         ],
       },
       auth: { profiles: { "openai:verified": { provider: "openai", mode: "api_key" } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!route || route.runner !== "embedded") {
       throw new Error("missing test plugin harness route");
@@ -1042,7 +1042,7 @@ describe("verified Nova inference binding", () => {
         ],
       },
       auth: { profiles: { "openai:work": { provider: "openai", mode: "api_key" } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(harnessConfig);
     if (!route || route.runner !== "embedded" || route.authProfileId !== "openai:work") {
       throw new Error("missing test plugin harness profile route");
@@ -1149,7 +1149,7 @@ describe("verified Nova inference binding", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const route = await resolveSystemAgentConfiguredRouteFromConfig(bedrockConfig);
     if (!route || route.runner !== "embedded") {
       throw new Error("missing test AWS route");
@@ -1257,7 +1257,7 @@ describe("verified Nova inference binding", () => {
       replacement: {
         rootDir: "/replacement/provider-owner",
         source: "/replacement/provider-owner/index.js",
-        manifestPath: "/replacement/provider-owner/openclaw.plugin.json",
+        manifestPath: "/replacement/provider-owner/nova.plugin.json",
       },
     },
     {
@@ -1303,11 +1303,11 @@ describe("verified Nova inference binding", () => {
   ])(
     "invalidates a strict credential after an in-place $name change with stable registry identity",
     async ({ origin, sourcePath, runtimePath, installRecordHash }) => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-openclaw-plugin-"));
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-nova-plugin-"));
       try {
         const rootDir = path.join(tempDir, "provider-owner");
         const source = path.join(rootDir, sourcePath);
-        const manifestPath = path.join(rootDir, "openclaw.plugin.json");
+        const manifestPath = path.join(rootDir, "nova.plugin.json");
         const packageJsonPath = path.join(rootDir, "package.json");
         fs.mkdirSync(path.dirname(source), { recursive: true });
         fs.writeFileSync(source, "export const sourceRevision = 1;\n", "utf8");
@@ -1327,7 +1327,7 @@ describe("verified Nova inference binding", () => {
         });
         const codexRootDir = path.join(tempDir, "codex");
         const codexSource = path.join(codexRootDir, "index.js");
-        const codexManifestPath = path.join(codexRootDir, "openclaw.plugin.json");
+        const codexManifestPath = path.join(codexRootDir, "nova.plugin.json");
         const codexPackageJsonPath = path.join(codexRootDir, "package.json");
         fs.mkdirSync(codexRootDir, { recursive: true });
         fs.writeFileSync(codexSource, "export const runtime = 'codex';\n", "utf8");
@@ -1391,7 +1391,7 @@ describe("verified Nova inference binding", () => {
       ...baseConfig,
       channels: { discord: { enabled: true } },
       plugins: { entries: { discord: { enabled: true } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const route = await resolveSystemAgentVerifiedInferenceRoute(binding, {
       readConfigFileSnapshot: vi.fn(async () => ({
@@ -1459,9 +1459,9 @@ describe("verified Nova inference binding", () => {
       remainsValid: false,
     },
   ])("projects the provider-owner policy when $name", async ({ plugins, remainsValid }) => {
-    const baseConfig = { ...config(), plugins: { allow: [] } } satisfies OpenClawConfig;
+    const baseConfig = { ...config(), plugins: { allow: [] } } satisfies NovaConfig;
     const binding = await bindingFor(baseConfig);
-    const changed = { ...config(), plugins } satisfies OpenClawConfig;
+    const changed = { ...config(), plugins } satisfies NovaConfig;
 
     const route = await resolveSystemAgentVerifiedInferenceRoute(binding, {
       readConfigFileSnapshot: vi.fn(async () => ({

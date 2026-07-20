@@ -43,7 +43,7 @@ import { loadWorkspaceSkillEntries } from "../../skills/loading/workspace.js";
 import { getRemoteSkillEligibility } from "../../skills/runtime/remote.js";
 import {
   collectClawHubVerdictTargets,
-  fetchOpenClawSkillSecurityVerdicts,
+  fetchNovaSkillSecurityVerdicts,
 } from "../../skills/security/clawhub-verdicts.js";
 import {
   getSkillCuratorStatus,
@@ -214,11 +214,11 @@ export const skillsHandlers: GatewayRequestHandlers = {
       const report = buildRemoteAwareWorkspaceSkillStatus(resolved);
       const targets = collectClawHubVerdictTargets(report);
       if (targets.length === 0) {
-        respond(true, { schema: "openclaw.skills.security-verdicts.v1", items: [] }, undefined);
+        respond(true, { schema: "nova.skills.security-verdicts.v1", items: [] }, undefined);
         return;
       }
-      const items = await fetchOpenClawSkillSecurityVerdicts(targets);
-      respond(true, { schema: "openclaw.skills.security-verdicts.v1", items }, undefined);
+      const items = await fetchNovaSkillSecurityVerdicts(targets);
+      respond(true, { schema: "nova.skills.security-verdicts.v1", items }, undefined);
     } catch (err) {
       respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, formatErrorMessage(err)));
     }
@@ -257,7 +257,7 @@ export const skillsHandlers: GatewayRequestHandlers = {
     respond(
       true,
       {
-        schema: "openclaw.skills.skill-card.v1",
+        schema: "nova.skills.skill-card.v1",
         skillKey: skill.skillKey,
         path: skill.skillCard.path,
         sizeBytes: skill.skillCard.sizeBytes,

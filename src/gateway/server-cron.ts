@@ -14,7 +14,7 @@ import {
 } from "../config/sessions.js";
 import { resolveStorePath } from "../config/sessions/paths.js";
 import type { AgentDefaultsConfig } from "../config/types.agent-defaults.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   buildCronCommandSummary,
   redactCronCommandSummaryForExternalDelivery,
@@ -199,7 +199,7 @@ function isCommandCronJob(job: CronJob | null | undefined): boolean {
 
 /** Build the cron service state used by Gateway startup and lazy cron loading. */
 export function buildGatewayCronService(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   deps: CliDeps;
   broadcast: (event: string, payload: unknown, opts?: { dropIfSlow?: boolean }) => void;
   env?: NodeJS.ProcessEnv;
@@ -209,7 +209,7 @@ export function buildGatewayCronService(params: {
   const storePath = resolveCronJobsStorePath(params.cfg.cron?.store, env);
   const cronEnabled = env.NOVA_SKIP_CRON !== "1" && params.cfg.cron?.enabled !== false;
 
-  const findAgentEntry = (cfg: OpenClawConfig, agentId: string) =>
+  const findAgentEntry = (cfg: NovaConfig, agentId: string) =>
     Array.isArray(cfg.agents?.list)
       ? cfg.agents.list.find(
           (entry) =>
@@ -217,10 +217,10 @@ export function buildGatewayCronService(params: {
         )
       : undefined;
 
-  const hasConfiguredAgent = (cfg: OpenClawConfig, agentId: string) =>
+  const hasConfiguredAgent = (cfg: NovaConfig, agentId: string) =>
     Boolean(findAgentEntry(cfg, agentId));
 
-  const mergeRuntimeAgentConfig = (runtimeConfig: OpenClawConfig, requestedAgentId: string) => {
+  const mergeRuntimeAgentConfig = (runtimeConfig: NovaConfig, requestedAgentId: string) => {
     if (hasConfiguredAgent(runtimeConfig, requestedAgentId)) {
       return runtimeConfig;
     }
@@ -258,7 +258,7 @@ export function buildGatewayCronService(params: {
   };
 
   const resolveCronSessionKey = (paramsValue: {
-    runtimeConfig: OpenClawConfig;
+    runtimeConfig: NovaConfig;
     agentId: string;
     requestedSessionKey?: string | null;
   }) => {
@@ -341,7 +341,7 @@ export function buildGatewayCronService(params: {
   };
 
   const resolveCronHeartbeatOverride = (paramsLocal: {
-    runtimeConfig: OpenClawConfig;
+    runtimeConfig: NovaConfig;
     agentId?: string;
     heartbeat?: AgentDefaultsConfig["heartbeat"];
   }) => {

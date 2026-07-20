@@ -4,7 +4,7 @@ import {
   resolveOptionalIntegerOption,
 } from "@nova/normalization-core/number-coercion";
 import type { InboundDebounceByProvider } from "../config/types.messages.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 const resolveMs = (value: unknown): number | undefined =>
   resolveOptionalIntegerOption(value, { min: 0 });
@@ -21,7 +21,7 @@ const resolveChannelOverride = (params: {
 
 /** Resolve effective inbound debounce milliseconds from explicit, channel, and global config. */
 export function resolveInboundDebounceMs(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: string;
   overrideMs?: number;
 }): number {

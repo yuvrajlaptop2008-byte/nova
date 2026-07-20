@@ -286,7 +286,7 @@ async function signalGatewayRestart(
   }
   if (pids.length > 1) {
     throw new Error(
-      `multiple gateway processes are listening on port ${port}: ${formatGatewayPidList(pids)}; use "openclaw gateway status --deep" before retrying restart`,
+      `multiple gateway processes are listening on port ${port}: ${formatGatewayPidList(pids)}; use "nova gateway status --deep" before retrying restart`,
     );
   }
   const pid = expectDefined(pids[0], "pids entry at 0");
@@ -672,7 +672,7 @@ export async function runDaemonRestart(opts: DaemonLifecycleOptions = {}): Promi
 
         fail(
           `Gateway restart timed out after ${unmanagedRestartWaitSeconds}s waiting for health checks.`,
-          [formatCliCommand("openclaw gateway status --deep"), formatCliCommand("openclaw doctor")],
+          [formatCliCommand("nova gateway status --deep"), formatCliCommand("nova doctor")],
         );
         throw new Error("unreachable after gateway restart health failure");
       }
@@ -749,8 +749,8 @@ export async function runDaemonRestart(opts: DaemonLifecycleOptions = {}): Promi
       }
 
       fail(failure.failMessage, [
-        formatCliCommand("openclaw gateway status --deep"),
-        formatCliCommand("openclaw doctor"),
+        formatCliCommand("nova gateway status --deep"),
+        formatCliCommand("nova doctor"),
       ]);
       throw new Error("unreachable after gateway restart failure");
     },

@@ -1,15 +1,15 @@
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/sandbox";
-import { resolveLocalPathFromRootsSync } from "openclaw/plugin-sdk/security-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/sandbox";
+import { resolveLocalPathFromRootsSync } from "nova/plugin-sdk/security-runtime";
 import { resolveQQBotPayloadLocalFilePath } from "../utils/platform.js";
 
 // The temp root is process-stable, so resolve it once. Only the success value is
 // cached: a transient provisioning failure returns null without poisoning later
 // calls.
 let cachedTrustedTmpRoot: string | undefined;
-function trustedOpenClawTmpRoot(): string | null {
+function trustedNovaTmpRoot(): string | null {
   if (cachedTrustedTmpRoot === undefined) {
     try {
-      cachedTrustedTmpRoot = resolvePreferredOpenClawTmpDir();
+      cachedTrustedTmpRoot = resolvePreferredNovaTmpDir();
     } catch {
       return null;
     }
@@ -44,7 +44,7 @@ export function resolveTrustedOutboundMediaPath(
     return storageRootPath;
   }
 
-  const tmpRoot = trustedOpenClawTmpRoot();
+  const tmpRoot = trustedNovaTmpRoot();
   if (!tmpRoot) {
     return null;
   }

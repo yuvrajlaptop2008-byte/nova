@@ -52,7 +52,7 @@ function resolveEmbeddedStreamRuntime(owner: EmbeddedStreamRuntimeOwner): LlmRun
   return runtime;
 }
 
-function isDefaultOpenClawStreamFnForModel(
+function isDefaultNovaStreamFnForModel(
   model: EmbeddedRunAttemptParams["model"],
   streamFn: StreamFn | undefined,
   llmRuntime: LlmRuntime,
@@ -76,7 +76,7 @@ function isOpenAICodexResponsesModel(model: EmbeddedRunAttemptParams["model"]): 
   return model.provider === "openai" && model.api === "openai-chatgpt-responses";
 }
 
-function resolveOpenClawNativeCodexResponsesStreamFn(params: {
+function resolveNovaNativeCodexResponsesStreamFn(params: {
   model: EmbeddedRunAttemptParams["model"];
   currentStreamFn: StreamFn | undefined;
   llmRuntime: LlmRuntime;
@@ -84,7 +84,7 @@ function resolveOpenClawNativeCodexResponsesStreamFn(params: {
   if (!isOpenAICodexResponsesModel(params.model)) {
     return undefined;
   }
-  if (!isDefaultOpenClawStreamFnForModel(params.model, params.currentStreamFn, params.llmRuntime)) {
+  if (!isDefaultNovaStreamFnForModel(params.model, params.currentStreamFn, params.llmRuntime)) {
     return undefined;
   }
   return params.currentStreamFn ?? params.llmRuntime.streamSimple;
@@ -105,15 +105,15 @@ export function describeEmbeddedAgentStreamStrategy(
     return "anthropic-vertex";
   }
   if (
-    resolveOpenClawNativeCodexResponsesStreamFn({
+    resolveNovaNativeCodexResponsesStreamFn({
       model: params.model,
       currentStreamFn: params.currentStreamFn,
       llmRuntime,
     })
   ) {
-    return "openclaw-native-codex-responses";
+    return "nova-native-codex-responses";
   }
-  if (isDefaultOpenClawStreamFnForModel(params.model, params.currentStreamFn, llmRuntime)) {
+  if (isDefaultNovaStreamFnForModel(params.model, params.currentStreamFn, llmRuntime)) {
     return createBoundaryAwareStreamFnForModel(params.model)
       ? `boundary-aware:${params.model.api}`
       : "stream-simple";
@@ -176,13 +176,13 @@ export function resolveEmbeddedAgentStreamFn(
     return createAnthropicVertexStreamFnForModel(params.model);
   }
 
-  const openClawNativeCodexResponsesStreamFn = resolveOpenClawNativeCodexResponsesStreamFn({
+  const novaNativeCodexResponsesStreamFn = resolveNovaNativeCodexResponsesStreamFn({
     model: params.model,
     currentStreamFn: params.currentStreamFn,
     llmRuntime,
   });
-  if (openClawNativeCodexResponsesStreamFn) {
-    return wrapEmbeddedAgentStreamFn(openClawNativeCodexResponsesStreamFn, {
+  if (novaNativeCodexResponsesStreamFn) {
+    return wrapEmbeddedAgentStreamFn(novaNativeCodexResponsesStreamFn, {
       runSignal: params.signal,
       resolvedApiKey: params.resolvedApiKey,
       authProfileId: params.authProfileId,
@@ -201,7 +201,7 @@ export function resolveEmbeddedAgentStreamFn(
   }
 
   if (
-    isDefaultOpenClawStreamFnForModel(params.model, params.currentStreamFn, llmRuntime) ||
+    isDefaultNovaStreamFnForModel(params.model, params.currentStreamFn, llmRuntime) ||
     hasResolvedRuntimeApiKey(params.resolvedApiKey) ||
     params.transportAuthAvailable ||
     // Proxied anthropic-messages providers (provider !== "anthropic", e.g. pioneer)

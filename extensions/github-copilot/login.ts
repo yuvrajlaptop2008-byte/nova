@@ -1,22 +1,22 @@
 // Github Copilot plugin module implements login behavior.
 import { intro, note, outro, spinner } from "@clack/prompts";
-import { stylePromptTitle } from "openclaw/plugin-sdk/cli-runtime";
-import { logConfigUpdated, updateConfig } from "openclaw/plugin-sdk/config-mutation";
+import { stylePromptTitle } from "nova/plugin-sdk/cli-runtime";
+import { logConfigUpdated, updateConfig } from "nova/plugin-sdk/config-mutation";
 import {
   resolveExpiresAtMsFromDurationMs,
   nonNegativeSecondsToSafeMilliseconds,
   positiveSecondsToSafeMilliseconds,
   resolveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/number-runtime";
 import {
   applyAuthProfileConfig,
   ensureAuthProfileStore,
   normalizeGithubCopilotDomain,
   upsertAuthProfileWithLock,
-} from "openclaw/plugin-sdk/provider-auth";
-import { readProviderJsonResponse } from "openclaw/plugin-sdk/provider-http";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-import { fetchWithSsrFGuard, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/provider-auth";
+import { readProviderJsonResponse } from "nova/plugin-sdk/provider-http";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime";
+import { fetchWithSsrFGuard, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 import {
   PUBLIC_GITHUB_COPILOT_DOMAIN,
   resolveGithubCopilotDomain,

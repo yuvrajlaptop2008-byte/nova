@@ -2,7 +2,7 @@
 
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { CliBackendConfig } from "../config/types.js";
 import type { CliBackendRuntimeArtifactPolicy } from "../plugins/cli-backend.types.js";
 import type {
@@ -112,7 +112,7 @@ function requireCliBackendConfig(...args: Parameters<typeof resolveCliBackendCon
   return resolved;
 }
 
-function createClaudeCliOverrideConfig(config: CliBackendConfig): OpenClawConfig {
+function createClaudeCliOverrideConfig(config: CliBackendConfig): NovaConfig {
   return {
     agents: {
       defaults: {
@@ -121,7 +121,7 @@ function createClaudeCliOverrideConfig(config: CliBackendConfig): OpenClawConfig
         },
       },
     },
-  } satisfies OpenClawConfig;
+  } satisfies NovaConfig;
 }
 
 const NORMALIZED_CLAUDE_FALLBACK_ARGS = [
@@ -287,7 +287,7 @@ beforeEach(() => {
           "--setting-sources",
           "user",
           "--allowedTools",
-          "mcp__openclaw__*",
+          "mcp__nova__*",
         ],
         resumeArgs: [
           "stream-json",
@@ -296,7 +296,7 @@ beforeEach(() => {
           "--setting-sources",
           "user",
           "--allowedTools",
-          "mcp__openclaw__*",
+          "mcp__nova__*",
           "--resume",
           "{sessionId}",
         ],
@@ -542,7 +542,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
     expect(resolved?.config.args).toContain("--setting-sources");
     expect(resolved?.config.args).toContain("user");
     expect(resolved?.config.args).toContain("--allowedTools");
-    expect(resolved?.config.args).toContain("mcp__openclaw__*");
+    expect(resolved?.config.args).toContain("mcp__nova__*");
     expect(resolved?.config.args).toContain("--permission-mode");
     expect(resolved?.config.args).toContain("bypassPermissions");
     expect(resolved?.config.args).not.toContain("--dangerously-skip-permissions");
@@ -555,7 +555,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
     expect(resolved?.config.resumeArgs).toContain("--setting-sources");
     expect(resolved?.config.resumeArgs).toContain("user");
     expect(resolved?.config.resumeArgs).toContain("--allowedTools");
-    expect(resolved?.config.resumeArgs).toContain("mcp__openclaw__*");
+    expect(resolved?.config.resumeArgs).toContain("mcp__nova__*");
     expect(resolved?.config.resumeArgs).toContain("--permission-mode");
     expect(resolved?.config.resumeArgs).toContain("bypassPermissions");
     expect(resolved?.config.resumeArgs).not.toContain("--dangerously-skip-permissions");
@@ -592,7 +592,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const reviewer = resolveCliBackendConfig("claude-cli", cfg, { agentId: "reviewer" });
     const builder = resolveCliBackendConfig("claude-cli", cfg, { agentId: "builder" });
@@ -652,7 +652,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -699,7 +699,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
         },
       },
       tools: { exec: { security: "allowlist", ask: "on-miss" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -728,7 +728,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -772,7 +772,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -800,7 +800,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
         resumeArgs: ["-p", "--setting-sources", "--resume", "{sessionId}"],
       }),
       tools: { exec: { security: "allowlist", ask: "on-miss" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -816,7 +816,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
         resumeArgs: ["-p", "--permission-mode=--resume", "--resume", "{sessionId}"],
       }),
       tools: { exec: { security: "allowlist", ask: "on-miss" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -845,7 +845,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
         },
       },
       tools: { exec: { security: "allowlist", ask: "on-miss" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -873,7 +873,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -907,7 +907,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("claude-cli", cfg);
 
@@ -1000,7 +1000,7 @@ describe("resolveCliBackendConfig google-gemini-cli defaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("google-gemini-cli", cfg);
 
@@ -1036,7 +1036,7 @@ describe("resolveCliBackendConfig google-gemini-cli defaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("google-gemini-cli", cfg);
 
@@ -1111,7 +1111,7 @@ describe("resolveCliBackendConfig alias precedence", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const resolved = requireCliBackendConfig("kimi", cfg);
 

@@ -1,11 +1,11 @@
 // Slack plugin module implements interactive replies behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeStringEntries,
   normalizeStringEntriesLower,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveDefaultSlackAccountId, resolveSlackAccount } from "./accounts.js";
 
 const SLACK_BUTTON_MAX_ITEMS = 5;
@@ -196,7 +196,7 @@ function resolveInteractiveRepliesFromCapabilities(capabilities: unknown): boole
  * @deprecated Only needed for legacy Slack reply directives. New producers should emit presentation payloads.
  */
 export function isSlackInteractiveRepliesEnabled(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): boolean {
   const account = resolveSlackAccount({

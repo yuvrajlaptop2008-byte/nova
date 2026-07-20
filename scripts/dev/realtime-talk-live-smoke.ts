@@ -53,7 +53,7 @@ type OpenAIRealtimeBrowserResponseReader = (
 ) => Promise<string>;
 
 type OpenAIWebRtcSmokeGlobal = typeof globalThis & {
-  openclawReadBoundedRealtimeResponseText?: OpenAIRealtimeBrowserResponseReader;
+  novaReadBoundedRealtimeResponseText?: OpenAIRealtimeBrowserResponseReader;
 };
 
 class CliArgumentError extends Error {
@@ -212,7 +212,7 @@ async function readOpenAIRealtimeBrowserResponseText(
 }
 
 function openAIRealtimeBrowserResponseReaderInitScript(): string {
-  return `globalThis.openclawReadBoundedRealtimeResponseText = ${readOpenAIRealtimeBrowserResponseText.toString()};`;
+  return `globalThis.novaReadBoundedRealtimeResponseText = ${readOpenAIRealtimeBrowserResponseText.toString()};`;
 }
 
 async function createOpenAIClientSecret(
@@ -326,7 +326,7 @@ async function smokeOpenAIWebRtc(browser: Browser, apiKey: string): Promise<Smok
       const result = await page.evaluate(
         async ({ clientSecret: secret, sdpAnswerMaxBytes, timeoutMs }) => {
           const readBoundedTextLocal = (globalThis as OpenAIWebRtcSmokeGlobal)
-            .openclawReadBoundedRealtimeResponseText;
+            .novaReadBoundedRealtimeResponseText;
           if (!readBoundedTextLocal) {
             throw new Error("OpenAI Realtime bounded response reader was not installed");
           }
@@ -643,7 +643,7 @@ async function smokeGoogleLiveBrowserWs(browser: Browser, apiKey: string): Promi
 
 async function smokeGatewayRelayBrowser(browser: Browser): Promise<SmokeResult> {
   let server: ViteDevServer | undefined;
-  const dir = await mkdtemp(path.join(tmpdir(), "openclaw-realtime-talk-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "nova-realtime-talk-"));
   try {
     const { createServer } = await import("vite");
     const repoRoot = process.cwd().replaceAll("\\", "/");
@@ -744,7 +744,7 @@ try {
       relaySessionId: "relay-live-smoke",
       type: "toolCall",
       callId: "call-smoke",
-      name: "openclaw_agent_consult",
+      name: "nova_agent_consult",
       args: { question: "confirm relay consult path" },
     },
   });

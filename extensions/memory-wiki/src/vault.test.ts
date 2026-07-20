@@ -38,15 +38,11 @@ describe("initializeMemoryWikiVault", () => {
     await expect(fs.readFile(path.join(rootDir, "WIKI.md"), "utf8")).resolves.toContain(
       "snapshots live in Nova plugin state",
     );
-    await expect(fs.access(path.join(rootDir, ".openclaw-wiki", "cache"))).rejects.toThrow(
+    await expect(fs.access(path.join(rootDir, ".nova-wiki", "cache"))).rejects.toThrow(/ENOENT/);
+    await expect(fs.access(path.join(rootDir, ".nova-wiki", "state.json"))).rejects.toThrow(
       /ENOENT/,
     );
-    await expect(fs.access(path.join(rootDir, ".openclaw-wiki", "state.json"))).rejects.toThrow(
-      /ENOENT/,
-    );
-    await expect(fs.access(path.join(rootDir, ".openclaw-wiki", "locks"))).rejects.toThrow(
-      /ENOENT/,
-    );
+    await expect(fs.access(path.join(rootDir, ".nova-wiki", "locks"))).rejects.toThrow(/ENOENT/);
   });
 
   it("is idempotent when the vault already exists", async () => {

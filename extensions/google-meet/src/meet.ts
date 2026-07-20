@@ -1,7 +1,7 @@
-import { readProviderJsonResponse } from "openclaw/plugin-sdk/provider-http";
+import { readProviderJsonResponse } from "nova/plugin-sdk/provider-http";
 // Google Meet plugin module implements meet behavior.
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
+import { uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import { exportGoogleDriveDocumentText, extractGoogleDriveDocumentId } from "./drive.js";
 import { googleApiError } from "./google-api-errors.js";
 

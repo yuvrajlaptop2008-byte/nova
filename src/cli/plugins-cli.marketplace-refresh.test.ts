@@ -37,7 +37,7 @@ vi.mock("../plugins/official-external-plugin-catalog.js", () => ({
 }));
 
 async function createTimelinePath(): Promise<string> {
-  const dir = await mkdtemp(path.join(tmpdir(), "openclaw-marketplace-refresh-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "nova-marketplace-refresh-"));
   return path.join(dir, "timeline.jsonl");
 }
 
@@ -67,7 +67,7 @@ describe("plugins marketplace refresh", () => {
   it("refreshes the configured marketplace feed and prints JSON", async () => {
     const config = {
       marketplaces: {
-        feeds: { acme: { url: "https://packages.acme.example/openclaw/feed" } },
+        feeds: { acme: { url: "https://packages.acme.example/nova/feed" } },
       },
     };
     mocks.getRuntimeConfig.mockReturnValue(config);
@@ -82,7 +82,7 @@ describe("plugins marketplace refresh", () => {
         entries: [],
       },
       metadata: {
-        url: "https://packages.acme.example/openclaw/feed",
+        url: "https://packages.acme.example/nova/feed",
         status: 200,
         checksum: "feed-sha",
         etag: '"abc"',
@@ -116,7 +116,7 @@ describe("plugins marketplace refresh", () => {
         sequence: 7,
       },
       metadata: {
-        url: "https://packages.acme.example/openclaw/feed",
+        url: "https://packages.acme.example/nova/feed",
         status: 200,
         checksum: "feed-sha",
         etag: '"abc"',
@@ -144,7 +144,7 @@ describe("plugins marketplace refresh", () => {
         entries: [],
       },
       metadata: {
-        url: "https://packages.acme.example/openclaw/feed",
+        url: "https://packages.acme.example/nova/feed",
         status: 200,
         checksum: "feed-sha",
       },
@@ -171,7 +171,7 @@ describe("plugins marketplace refresh", () => {
   it("normalizes bare SHA-256 pins before refreshing", async () => {
     const config = {
       marketplaces: {
-        feeds: { acme: { url: "https://packages.acme.example/openclaw/feed" } },
+        feeds: { acme: { url: "https://packages.acme.example/nova/feed" } },
       },
     };
     mocks.getRuntimeConfig.mockReturnValue(config);
@@ -186,7 +186,7 @@ describe("plugins marketplace refresh", () => {
         entries: [],
       },
       metadata: {
-        url: "https://packages.acme.example/openclaw/feed",
+        url: "https://packages.acme.example/nova/feed",
         status: 200,
         checksum: "sha256:abcdef",
       },
@@ -319,7 +319,7 @@ describe("plugins marketplace refresh", () => {
     const config = {
       diagnostics: { flags: ["timeline"] },
       marketplaces: {
-        feeds: { acme: { url: "https://packages.acme.example/openclaw/feed" } },
+        feeds: { acme: { url: "https://packages.acme.example/nova/feed" } },
       },
     };
     mocks.getRuntimeConfig.mockReturnValue(config);
@@ -334,7 +334,7 @@ describe("plugins marketplace refresh", () => {
         entries: [],
       },
       metadata: {
-        url: "https://user:secret@packages.acme.example/openclaw/feed?token=leak#frag",
+        url: "https://user:secret@packages.acme.example/nova/feed?token=leak#frag",
         status: 200,
         checksum: "feed-sha",
         etag: '"abc"',
@@ -352,14 +352,14 @@ describe("plugins marketplace refresh", () => {
     await runPluginMarketplaceRefreshCommand({
       expectedSha256: "feed-sha",
       feedProfile: "acme",
-      feedUrl: "https://override.example/openclaw/feed?token=override-leak",
+      feedUrl: "https://override.example/nova/feed?token=override-leak",
     });
 
     const [event] = await readTimeline(timelinePath);
     expect(mocks.loadConfiguredHostedOfficialExternalPluginCatalogEntries).toHaveBeenCalledWith(
       config,
       expect.objectContaining({
-        feedUrl: "https://override.example/openclaw/feed?token=override-leak",
+        feedUrl: "https://override.example/nova/feed?token=override-leak",
       }),
     );
     expect(event?.name).toBe("plugins.marketplace.feed.refresh");

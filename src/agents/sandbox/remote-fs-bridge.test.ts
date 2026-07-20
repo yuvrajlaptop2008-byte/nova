@@ -58,7 +58,7 @@ function createLocalRemoteRuntime(params: {
             encoding: "buffer",
             stdio: ["pipe", "pipe", "pipe"],
           })
-        : spawnSync("sh", ["-c", command.script, "openclaw-sandbox-fs", ...(command.args ?? [])], {
+        : spawnSync("sh", ["-c", command.script, "nova-sandbox-fs", ...(command.args ?? [])], {
             input: command.stdin,
             encoding: "buffer",
             stdio: ["pipe", "pipe", "pipe"],
@@ -103,7 +103,7 @@ describe("remote sandbox fs bridge", () => {
   it.runIf(process.platform !== "win32")(
     "reads files with the pinned mutation helper",
     async () => {
-      await withTempDir("openclaw-remote-fs-bridge-", async (stateDir) => {
+      await withTempDir("nova-remote-fs-bridge-", async (stateDir) => {
         const workspaceDir = path.join(stateDir, "workspace");
         await fs.mkdir(workspaceDir, { recursive: true });
         await fs.writeFile(path.join(workspaceDir, "note.txt"), "hello", "utf8");
@@ -135,7 +135,7 @@ describe("remote sandbox fs bridge", () => {
   it.runIf(process.platform !== "win32")(
     "rejects mount-root reads before invoking the mutation helper",
     async () => {
-      await withTempDir("openclaw-remote-fs-bridge-", async (stateDir) => {
+      await withTempDir("nova-remote-fs-bridge-", async (stateDir) => {
         const workspaceDir = path.join(stateDir, "workspace");
         await fs.mkdir(workspaceDir, { recursive: true });
 
@@ -162,7 +162,7 @@ describe("remote sandbox fs bridge", () => {
   it.runIf(process.platform !== "win32")(
     "reads dot-dot-prefixed filenames inside the workspace",
     async () => {
-      await withTempDir("openclaw-remote-fs-bridge-", async (stateDir) => {
+      await withTempDir("nova-remote-fs-bridge-", async (stateDir) => {
         const workspaceDir = path.join(stateDir, "workspace");
         await fs.mkdir(workspaceDir, { recursive: true });
         await fs.writeFile(path.join(workspaceDir, "..note.txt"), "hidden", "utf8");
@@ -183,7 +183,7 @@ describe("remote sandbox fs bridge", () => {
   it.runIf(process.platform !== "win32")("rejects symlink escapes while reading", async () => {
     // The remote helper uses no-follow file opens; symlinked final components
     // must fail even when the local caller cannot inspect the remote inode.
-    await withTempDir("openclaw-remote-fs-bridge-", async (stateDir) => {
+    await withTempDir("nova-remote-fs-bridge-", async (stateDir) => {
       const workspaceDir = path.join(stateDir, "workspace");
       const outsideDir = path.join(stateDir, "outside");
       await fs.mkdir(workspaceDir, { recursive: true });
@@ -202,7 +202,7 @@ describe("remote sandbox fs bridge", () => {
   it.runIf(process.platform !== "win32")(
     "rejects final-component symlinks even when they stay inside the workspace",
     async () => {
-      await withTempDir("openclaw-remote-fs-bridge-", async (stateDir) => {
+      await withTempDir("nova-remote-fs-bridge-", async (stateDir) => {
         const workspaceDir = path.join(stateDir, "workspace");
         await fs.mkdir(workspaceDir, { recursive: true });
         await fs.writeFile(path.join(workspaceDir, "note.txt"), "hello", "utf8");
@@ -220,7 +220,7 @@ describe("remote sandbox fs bridge", () => {
   it("normalizes stat output locale and saturates unsafe sizes", async () => {
     // Remote stat output is untrusted shell text; unsafe numeric fields should
     // clamp to deterministic values instead of leaking NaN into callers.
-    await withTempDir("openclaw-remote-fs-bridge-stat-", async (stateDir) => {
+    await withTempDir("nova-remote-fs-bridge-stat-", async (stateDir) => {
       const workspaceDir = path.join(stateDir, "workspace");
       await fs.mkdir(workspaceDir, { recursive: true });
       const runtime = createStatRuntime(workspaceDir, {
@@ -245,7 +245,7 @@ describe("remote sandbox fs bridge", () => {
   });
 
   it("rejects hardlinked files under localized remote shells", async () => {
-    await withTempDir("openclaw-remote-fs-bridge-hardlink-locale-", async (stateDir) => {
+    await withTempDir("nova-remote-fs-bridge-hardlink-locale-", async (stateDir) => {
       const workspaceDir = path.join(stateDir, "workspace");
       await fs.mkdir(workspaceDir, { recursive: true });
       const runtime = createStatRuntime(workspaceDir, {
@@ -266,7 +266,7 @@ describe("remote sandbox fs bridge", () => {
   });
 
   it("does not reject malformed non-decimal hardlink counts", async () => {
-    await withTempDir("openclaw-remote-fs-bridge-hardlink-", async (stateDir) => {
+    await withTempDir("nova-remote-fs-bridge-hardlink-", async (stateDir) => {
       const workspaceDir = path.join(stateDir, "workspace");
       await fs.mkdir(workspaceDir, { recursive: true });
       const runtime = createStatRuntime(workspaceDir, {

@@ -793,7 +793,7 @@ export function renderSessionWorkspaceToggle(
   const label = expanded ? t("chat.workspaceFiles.collapse") : t("chat.workspaceFiles.showFiles");
   const modifiedCount = sessionWorkspaceModifiedCount(sessionWorkspace);
   return html`
-    <openclaw-tooltip .content=${`${label} (⇧⌘B)`}>
+    <nova-tooltip .content=${`${label} (⇧⌘B)`}>
       <button
         class="btn btn--ghost btn--icon chat-icon-btn chat-workspace-toggle"
         type="button"
@@ -809,7 +809,7 @@ export function renderSessionWorkspaceToggle(
             >`
           : nothing}
       </button>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
 }
 
@@ -823,7 +823,7 @@ export function renderSessionDiffToggle(
   }
   const label = t("chat.sessionDiff.show");
   return html`
-    <openclaw-tooltip .content=${label}>
+    <nova-tooltip .content=${label}>
       <button
         class="btn btn--ghost btn--icon chat-icon-btn chat-session-diff-toggle"
         type="button"
@@ -832,7 +832,7 @@ export function renderSessionDiffToggle(
       >
         ${icons.gitBranch}
       </button>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
 }
 
@@ -849,7 +849,7 @@ export function renderSessionWorkspaceRail(
   const dock = sessionWorkspace.narrowLayout ? "bottom" : sessionWorkspace.dock;
   const terminalButton = sessionWorkspace.onToggleTerminal
     ? html`
-        <openclaw-tooltip .content=${t("terminal.toggle")}>
+        <nova-tooltip .content=${t("terminal.toggle")}>
           <button
             type="button"
             class="chat-workspace-rail__terminal"
@@ -858,12 +858,12 @@ export function renderSessionWorkspaceRail(
           >
             ${icons.terminal}
           </button>
-        </openclaw-tooltip>
+        </nova-tooltip>
       `
     : nothing;
   const browserButton = sessionWorkspace.onToggleBrowser
     ? html`
-        <openclaw-tooltip .content=${t("browser.toggle")}>
+        <nova-tooltip .content=${t("browser.toggle")}>
           <button
             type="button"
             class="chat-workspace-rail__terminal"
@@ -872,12 +872,12 @@ export function renderSessionWorkspaceRail(
           >
             ${icons.globe}
           </button>
-        </openclaw-tooltip>
+        </nova-tooltip>
       `
     : nothing;
   const diffButton = sessionWorkspace.onOpenDiff
     ? html`
-        <openclaw-tooltip .content=${t("chat.sessionDiff.show")}>
+        <nova-tooltip .content=${t("chat.sessionDiff.show")}>
           <button
             type="button"
             class="chat-workspace-rail__terminal chat-session-diff-toggle"
@@ -886,7 +886,7 @@ export function renderSessionWorkspaceRail(
           >
             ${icons.gitBranch}
           </button>
-        </openclaw-tooltip>
+        </nova-tooltip>
       `
     : nothing;
   const files = sessionWorkspace.list?.files ?? [];
@@ -903,7 +903,7 @@ export function renderSessionWorkspaceRail(
       role="group"
       aria-label=${t("chat.workspaceFiles.actions")}
     >
-      <openclaw-tooltip .content=${t("chat.workspaceFiles.preview")}>
+      <nova-tooltip .content=${t("chat.workspaceFiles.preview")}>
         <button
           class="chat-workspace-rail__row-action"
           type="button"
@@ -915,8 +915,8 @@ export function renderSessionWorkspaceRail(
         >
           ${icons.eye}
         </button>
-      </openclaw-tooltip>
-      <openclaw-tooltip .content=${t("chat.workspaceFiles.copyPath")}>
+      </nova-tooltip>
+      <nova-tooltip .content=${t("chat.workspaceFiles.copyPath")}>
         <button
           class="chat-workspace-rail__row-action"
           type="button"
@@ -928,7 +928,7 @@ export function renderSessionWorkspaceRail(
         >
           ${icons.copy}
         </button>
-      </openclaw-tooltip>
+      </nova-tooltip>
     </span>
   `;
   const renderSessionSummary = (): TemplateResult | typeof nothing => {
@@ -970,11 +970,11 @@ export function renderSessionWorkspaceRail(
                   >
                     <span class="chat-workspace-rail__file-icon">${icons.fileText}</span>
                     <span class="chat-workspace-rail__file-main">
-                      <openclaw-tooltip .content=${file.path || file.name}>
+                      <nova-tooltip .content=${file.path || file.name}>
                         <span class="chat-workspace-rail__file-name"
                           >${file.path || file.name}</span
                         >
-                      </openclaw-tooltip>
+                      </nova-tooltip>
                       ${size
                         ? html`<span class="chat-workspace-rail__file-meta">${size}</span>`
                         : nothing}
@@ -1082,9 +1082,9 @@ export function renderSessionWorkspaceRail(
                         >${entry.kind === "directory" ? icons.folder : icons.fileText}</span
                       >
                       <span class="chat-workspace-rail__file-main">
-                        <openclaw-tooltip .content=${entry.path || entry.name}>
+                        <nova-tooltip .content=${entry.path || entry.name}>
                           <span class="chat-workspace-rail__file-name">${entry.name}</span>
-                        </openclaw-tooltip>
+                        </nova-tooltip>
                         <span class="chat-workspace-rail__file-meta">
                           ${entry.kind === "directory"
                             ? entry.path || t("chat.workspaceFiles.root")
@@ -1132,9 +1132,9 @@ export function renderSessionWorkspaceRail(
                       >${isImage ? icons.image : icons.paperclip}</span
                     >
                     <span class="chat-workspace-rail__file-main">
-                      <openclaw-tooltip .content=${artifact.title}>
+                      <nova-tooltip .content=${artifact.title}>
                         <span class="chat-workspace-rail__file-name">${artifact.title}</span>
-                      </openclaw-tooltip>
+                      </nova-tooltip>
                       ${size || artifact.mimeType
                         ? html`<span class="chat-workspace-rail__file-meta"
                             >${[artifact.mimeType, size].filter(Boolean).join(" / ")}</span
@@ -1143,7 +1143,7 @@ export function renderSessionWorkspaceRail(
                     </span>
                   </button>
                   <span class="chat-workspace-rail__row-actions">
-                    <openclaw-tooltip .content=${t("chat.workspaceFiles.preview")}>
+                    <nova-tooltip .content=${t("chat.workspaceFiles.preview")}>
                       <button
                         class="chat-workspace-rail__row-action"
                         type="button"
@@ -1155,7 +1155,7 @@ export function renderSessionWorkspaceRail(
                       >
                         ${icons.eye}
                       </button>
-                    </openclaw-tooltip>
+                    </nova-tooltip>
                   </span>
                 </div>
               `;
@@ -1182,7 +1182,7 @@ export function renderSessionWorkspaceRail(
           ${sessionWorkspace.narrowLayout
             ? nothing
             : html`
-                <openclaw-tooltip
+                <nova-tooltip
                   .content=${dock === "bottom"
                     ? t("chat.workspaceFiles.dockRight")
                     : t("chat.workspaceFiles.dockBottom")}
@@ -1198,9 +1198,9 @@ export function renderSessionWorkspaceRail(
                   >
                     ${dock === "bottom" ? icons.panelRightOpen : icons.panelBottomOpen}
                   </button>
-                </openclaw-tooltip>
+                </nova-tooltip>
               `}
-          <openclaw-tooltip .content=${t("chat.workspaceFiles.refresh")}>
+          <nova-tooltip .content=${t("chat.workspaceFiles.refresh")}>
             <button
               class="btn btn--ghost btn--sm chat-workspace-rail__refresh"
               type="button"
@@ -1210,8 +1210,8 @@ export function renderSessionWorkspaceRail(
             >
               ${icons.refresh}
             </button>
-          </openclaw-tooltip>
-          <openclaw-tooltip .content=${`${t("chat.workspaceFiles.collapse")} (⇧⌘B)`}>
+          </nova-tooltip>
+          <nova-tooltip .content=${`${t("chat.workspaceFiles.collapse")} (⇧⌘B)`}>
             <button
               type="button"
               class="nav-collapse-toggle chat-workspace-rail__collapse-toggle"
@@ -1224,14 +1224,14 @@ export function renderSessionWorkspaceRail(
                 >${dock === "bottom" ? icons.panelBottomClose : icons.panelRightClose}</span
               >
             </button>
-          </openclaw-tooltip>
+          </nova-tooltip>
         </div>
       </div>
       ${sessionWorkspace.list?.root
         ? html`
-            <openclaw-tooltip .content=${sessionWorkspace.list.root}>
+            <nova-tooltip .content=${sessionWorkspace.list.root}>
               <div class="chat-workspace-rail__path">${sessionWorkspace.list.root}</div>
-            </openclaw-tooltip>
+            </nova-tooltip>
           `
         : nothing}
       ${renderSessionSummary()}

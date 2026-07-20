@@ -2,9 +2,9 @@
  * Gateway loop for polling ClickClack backlog events, opening the realtime
  * websocket, and dispatching user messages into Nova.
  */
-import type { ChannelGatewayContext } from "openclaw/plugin-sdk/channel-contract";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
+import type { ChannelGatewayContext } from "nova/plugin-sdk/channel-contract";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { sleepWithAbort } from "nova/plugin-sdk/runtime-env";
 import type { RawData } from "ws";
 import { resolveClickClackInboundAccess } from "./access.js";
 import { resolveClickClackAccount } from "./accounts.js";

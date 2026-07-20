@@ -1,5 +1,5 @@
 // Codex plugin module implements conversation control behavior.
-import { ModelSelectionLockedError } from "openclaw/plugin-sdk/model-session-runtime";
+import { ModelSelectionLockedError } from "nova/plugin-sdk/model-session-runtime";
 import { resolveCodexBindingAppServerConnection } from "./app-server/binding-connection.js";
 import { CODEX_CONTROL_METHODS } from "./app-server/capabilities.js";
 import type { CodexAppServerClient } from "./app-server/client.js";
@@ -44,7 +44,7 @@ type CodexAppServerBindingLookup = Omit<CodexAppServerAuthProfileLookup, "authPr
 
 type PermissionsMode = "default" | "yolo";
 
-const CODEX_CONVERSATION_CONTROL_STATE = Symbol.for("openclaw.codex.conversationControl");
+const CODEX_CONVERSATION_CONTROL_STATE = Symbol.for("nova.codex.conversationControl");
 
 function getActiveTurns(): Map<string, ActiveTurn> {
   const globalState = globalThis as typeof globalThis & {

@@ -194,7 +194,7 @@ vi.mock("./start-repair.js", () => ({
 vi.mock("../terminal-interactivity.js", () => ({
   isTerminalInteractive: () => isTerminalInteractive(),
   NON_INTERACTIVE_GATEWAY_STOP_MESSAGE:
-    "This stops the operator's running gateway service. Use an isolated dev gateway (openclaw gateway run --dev, or --profile <name> with a free port) for testing, or re-run with --force if you really mean it.",
+    "This stops the operator's running gateway service. Use an isolated dev gateway (nova gateway run --dev, or --profile <name> with a free port) for testing, or re-run with --force if you really mean it.",
 }));
 
 vi.mock("./lifecycle-audit.js", () => ({
@@ -307,7 +307,7 @@ describe("runDaemonRestart health checks", () => {
     createGatewayLifecycleMutationAudit.mockClear();
 
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway", "--port", "18789"],
+      programArguments: ["nova", "gateway", "--port", "18789"],
       environment: {},
     });
     service.restart.mockResolvedValue({ outcome: "completed" });
@@ -417,13 +417,13 @@ describe("runDaemonRestart health checks", () => {
   });
 
   it("uses the installed service environment for managed restart health", async () => {
-    process.env.NOVA_STATE_DIR = "/tmp/openclaw-caller-state";
-    process.env.NOVA_SYSTEMD_UNIT = "openclaw-gateway-maintenance.service";
+    process.env.NOVA_STATE_DIR = "/tmp/nova-caller-state";
+    process.env.NOVA_SYSTEMD_UNIT = "nova-gateway-maintenance.service";
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway", "--port", "18789"],
+      programArguments: ["nova", "gateway", "--port", "18789"],
       environment: {
-        NOVA_STATE_DIR: "/tmp/openclaw-service-state",
-        NOVA_SYSTEMD_UNIT: "openclaw-gateway.service",
+        NOVA_STATE_DIR: "/tmp/nova-service-state",
+        NOVA_SYSTEMD_UNIT: "nova-gateway.service",
       },
     });
 
@@ -433,8 +433,8 @@ describe("runDaemonRestart health checks", () => {
       waitForGatewayHealthyRestart,
       "waitForGatewayHealthyRestart",
     ) as { env?: NodeJS.ProcessEnv };
-    expect(waitParams.env?.NOVA_STATE_DIR).toBe("/tmp/openclaw-service-state");
-    expect(waitParams.env?.NOVA_SYSTEMD_UNIT).toBe("openclaw-gateway-maintenance.service");
+    expect(waitParams.env?.NOVA_STATE_DIR).toBe("/tmp/nova-service-state");
+    expect(waitParams.env?.NOVA_SYSTEMD_UNIT).toBe("nova-gateway-maintenance.service");
   });
 
   it("carries launchd KeepAlive supervision into managed restart health", async () => {
@@ -450,12 +450,12 @@ describe("runDaemonRestart health checks", () => {
   it("re-reads the installed service environment after restart repair", async () => {
     service.readCommand
       .mockResolvedValueOnce({
-        programArguments: ["openclaw", "gateway", "--port", "18789"],
-        environment: { NOVA_STATE_DIR: "/tmp/openclaw-stale-state" },
+        programArguments: ["nova", "gateway", "--port", "18789"],
+        environment: { NOVA_STATE_DIR: "/tmp/nova-stale-state" },
       })
       .mockResolvedValue({
-        programArguments: ["openclaw", "gateway", "--port", "19001"],
-        environment: { NOVA_STATE_DIR: "/tmp/openclaw-repaired-state" },
+        programArguments: ["nova", "gateway", "--port", "19001"],
+        environment: { NOVA_STATE_DIR: "/tmp/nova-repaired-state" },
       });
     repairLoadedGatewayServiceForStart.mockResolvedValue({
       result: "restarted",
@@ -486,7 +486,7 @@ describe("runDaemonRestart health checks", () => {
       expect.objectContaining({
         port: 19_001,
         env: expect.objectContaining({
-          NOVA_STATE_DIR: "/tmp/openclaw-repaired-state",
+          NOVA_STATE_DIR: "/tmp/nova-repaired-state",
         }),
       }),
     );
@@ -648,8 +648,8 @@ describe("runDaemonRestart health checks", () => {
     const error = await expectRestartError(runDaemonRestart({ json: true }));
     expect(error.message).toBe("Gateway restart timed out after 60s waiting for health checks.");
     expect(error.hints).toEqual([
-      formatCliCommand("openclaw gateway status --deep"),
-      formatCliCommand("openclaw doctor"),
+      formatCliCommand("nova gateway status --deep"),
+      formatCliCommand("nova doctor"),
     ]);
     expect(terminateStaleGatewayPids).not.toHaveBeenCalled();
     expect(renderRestartDiagnostics).toHaveBeenCalledTimes(1);
@@ -712,8 +712,8 @@ describe("runDaemonRestart health checks", () => {
       "Gateway restart failed after 13s: service stayed stopped and health checks never came up.",
     );
     expect(error.hints).toEqual([
-      formatCliCommand("openclaw gateway status --deep"),
-      formatCliCommand("openclaw doctor"),
+      formatCliCommand("nova gateway status --deep"),
+      formatCliCommand("nova doctor"),
     ]);
     expect(terminateStaleGatewayPids).not.toHaveBeenCalled();
     expect(renderRestartDiagnostics).toHaveBeenCalledTimes(1);
@@ -749,7 +749,7 @@ describe("runDaemonRestart health checks", () => {
     expect(writeJson).toHaveBeenCalledWith(
       expect.objectContaining({
         ok: false,
-        error: expect.stringContaining("openclaw gateway run --dev"),
+        error: expect.stringContaining("nova gateway run --dev"),
       }),
     );
     expect(runServiceStop).not.toHaveBeenCalled();
@@ -980,7 +980,7 @@ describe("runDaemonRestart health checks", () => {
   it("does not fall back to unmanaged restart when launchd repair reports headless GUI bootstrap failure", async () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("darwin");
     recoverInstalledLaunchAgent.mockRejectedValue(
-      new Error("LaunchAgent openclaw gateway restart requires a logged-in macOS GUI session"),
+      new Error("LaunchAgent nova gateway restart requires a logged-in macOS GUI session"),
     );
     findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4200]);
     mockUnmanagedRestart();
@@ -1046,12 +1046,12 @@ describe("runDaemonRestart health checks", () => {
     );
   });
 
-  it("delegates system-scope restart to systemctl without unmanaged signaling when root (openclaw#87577)", async () => {
+  it("delegates system-scope restart to systemctl without unmanaged signaling when root (nova#87577)", async () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("linux");
     findInstalledSystemdGatewayScope.mockResolvedValue({
       scope: "system",
-      unitName: "openclaw.service",
-      unitPath: "/etc/systemd/system/openclaw.service",
+      unitName: "nova.service",
+      unitPath: "/etc/systemd/system/nova.service",
     });
     restartSystemdService.mockResolvedValue({ outcome: "completed" });
     findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4200]);
@@ -1064,35 +1064,35 @@ describe("runDaemonRestart health checks", () => {
     expect(probeGateway).not.toHaveBeenCalled();
   });
 
-  it("surfaces systemd sudo guidance and never signals when restarting a system-scope unit as non-root (openclaw#87577)", async () => {
+  it("surfaces systemd sudo guidance and never signals when restarting a system-scope unit as non-root (nova#87577)", async () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("linux");
     findInstalledSystemdGatewayScope.mockResolvedValue({
       scope: "system",
-      unitName: "openclaw.service",
-      unitPath: "/etc/systemd/system/openclaw.service",
+      unitName: "nova.service",
+      unitPath: "/etc/systemd/system/nova.service",
     });
     restartSystemdService.mockRejectedValue(
       new Error(
-        "openclaw.service is a system-scope unit (/etc/systemd/system/openclaw.service); run `sudo systemctl restart openclaw.service` to restart it",
+        "nova.service is a system-scope unit (/etc/systemd/system/nova.service); run `sudo systemctl restart nova.service` to restart it",
       ),
     );
     findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4200]);
     mockUnmanagedRestart();
 
     await expect(runDaemonRestart({ json: true })).rejects.toThrow(
-      /sudo systemctl restart openclaw\.service/,
+      /sudo systemctl restart nova\.service/,
     );
 
     expect(signalVerifiedGatewayPidSync).not.toHaveBeenCalled();
     expect(probeGateway).not.toHaveBeenCalled();
   });
 
-  it("delegates system-scope stop to systemctl without unmanaged signaling when root (openclaw#87577)", async () => {
+  it("delegates system-scope stop to systemctl without unmanaged signaling when root (nova#87577)", async () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("linux");
     findInstalledSystemdGatewayScope.mockResolvedValue({
       scope: "system",
-      unitName: "openclaw-gateway.service",
-      unitPath: "/etc/systemd/system/openclaw-gateway.service",
+      unitName: "nova-gateway.service",
+      unitPath: "/etc/systemd/system/nova-gateway.service",
     });
     stopSystemdService.mockResolvedValue(undefined);
     findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4200]);
@@ -1103,22 +1103,20 @@ describe("runDaemonRestart health checks", () => {
     expect(signalVerifiedGatewayPidSync).not.toHaveBeenCalled();
   });
 
-  it("surfaces systemd sudo guidance and never signals when stopping a system-scope unit as non-root (openclaw#87577)", async () => {
+  it("surfaces systemd sudo guidance and never signals when stopping a system-scope unit as non-root (nova#87577)", async () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("linux");
     findInstalledSystemdGatewayScope.mockResolvedValue({
       scope: "system",
-      unitName: "openclaw-gateway.service",
-      unitPath: "/etc/systemd/system/openclaw-gateway.service",
+      unitName: "nova-gateway.service",
+      unitPath: "/etc/systemd/system/nova-gateway.service",
     });
     stopSystemdService.mockRejectedValue(
       new Error(
-        "openclaw-gateway.service is a system-scope unit (/etc/systemd/system/openclaw-gateway.service); run `sudo systemctl stop openclaw-gateway.service` to stop it",
+        "nova-gateway.service is a system-scope unit (/etc/systemd/system/nova-gateway.service); run `sudo systemctl stop nova-gateway.service` to stop it",
       ),
     );
     findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4200]);
-    await expect(runUnmanagedStop()).rejects.toThrow(
-      /sudo systemctl stop openclaw-gateway\.service/,
-    );
+    await expect(runUnmanagedStop()).rejects.toThrow(/sudo systemctl stop nova-gateway\.service/);
     expect(stopSystemdService).toHaveBeenCalled();
     expect(signalVerifiedGatewayPidSync).not.toHaveBeenCalled();
   });

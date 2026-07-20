@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import path from "node:path";
 import { sanitizeSurrogates } from "@nova/ai/internal/shared";
 import { resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveUserPath } from "../utils.js";
 import { parseBooleanValue } from "../utils/boolean.js";
 import { safeJsonStringify } from "../utils/safe-json.js";
@@ -62,7 +62,7 @@ type CacheTrace = {
 };
 
 type CacheTraceInit = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   runId?: string;
   sessionId?: string;

@@ -1,10 +1,10 @@
 // Voice Call plugin module implements realtime fast context behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   resolveRealtimeVoiceFastContextConsult,
   type RealtimeVoiceFastContextConsultResult,
   type RealtimeVoiceFastContextConfig,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "nova/plugin-sdk/realtime-voice";
 
 type Logger = {
   debug?: (message: string) => void;
@@ -14,7 +14,7 @@ type Logger = {
 
 /** Resolve fast-context consult data using caller-oriented labels. */
 export async function resolveRealtimeFastContextConsult(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   sessionKey: string;
   config: RealtimeVoiceFastContextConfig;

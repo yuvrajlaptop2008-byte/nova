@@ -1,16 +1,16 @@
 // Discord plugin module implements send.outbound behavior.
 import type { APIChannel, APIGuildForumChannel, APIGuildMediaChannel } from "discord-api-types/v10";
 import { ChannelType } from "discord-api-types/v10";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import type { MarkdownTableMode, OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
-import type { OutboundMediaAccess, PollInput } from "openclaw/plugin-sdk/media-runtime";
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { resolveChunkMode, type ChunkMode } from "openclaw/plugin-sdk/reply-chunking";
-import type { RetryConfig } from "openclaw/plugin-sdk/retry-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { convertMarkdownTables } from "openclaw/plugin-sdk/text-chunking";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { recordChannelActivity } from "nova/plugin-sdk/channel-activity-runtime";
+import type { MarkdownTableMode, NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolveMarkdownTableMode } from "nova/plugin-sdk/markdown-table-runtime";
+import type { OutboundMediaAccess, PollInput } from "nova/plugin-sdk/media-runtime";
+import { requireRuntimeConfig } from "nova/plugin-sdk/plugin-config-runtime";
+import { resolveChunkMode, type ChunkMode } from "nova/plugin-sdk/reply-chunking";
+import type { RetryConfig } from "nova/plugin-sdk/retry-runtime";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import { convertMarkdownTables } from "nova/plugin-sdk/text-chunking";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { resolveDiscordAccount } from "./accounts.js";
 import { createChannelMessage, createThread, type RequestClient } from "./internal/discord.js";
 import { rewriteDiscordKnownMentions } from "./mentions.js";
@@ -42,7 +42,7 @@ import {
 } from "./send.shared.js";
 import type { DiscordSendResult } from "./send.types.js";
 type DiscordSendOpts = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   token?: string;
   accountId?: string;
   mediaUrl?: string;

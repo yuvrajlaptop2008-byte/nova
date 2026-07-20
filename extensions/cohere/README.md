@@ -1,13 +1,13 @@
-# OpenClaw Cohere Provider
+# Nova Cohere Provider
 
-Official OpenClaw provider plugin for Cohere's OpenAI-compatible Compatibility
+Official Nova provider plugin for Cohere's OpenAI-compatible Compatibility
 API.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/cohere-provider
-openclaw gateway restart
+nova plugins install @nova/cohere-provider
+nova gateway restart
 ```
 
 Configure a Cohere API key, then select `cohere/command-a-plus-05-2026`,

@@ -14,7 +14,7 @@ describe("removed Workspaces state doctor check", () => {
   async function createStateDir(
     fingerprint: "sqlite" | "widgets-data" = "sqlite",
   ): Promise<string> {
-    root = await fs.mkdtemp(join(tmpdir(), "openclaw-workspaces-state-"));
+    root = await fs.mkdtemp(join(tmpdir(), "nova-workspaces-state-"));
     const staleDir = join(root, "workspaces");
     await fs.mkdir(staleDir, { recursive: true });
     if (fingerprint === "sqlite") {
@@ -113,7 +113,7 @@ describe("removed Workspaces state doctor check", () => {
   });
 
   it("ignores a plain user directory without plugin fingerprints", async () => {
-    root = await fs.mkdtemp(join(tmpdir(), "openclaw-workspaces-state-"));
+    root = await fs.mkdtemp(join(tmpdir(), "nova-workspaces-state-"));
     const userDir = join(root, "workspaces");
     await fs.mkdir(userDir, { recursive: true });
     await fs.writeFile(join(userDir, "notes.md"), "personal", "utf8");

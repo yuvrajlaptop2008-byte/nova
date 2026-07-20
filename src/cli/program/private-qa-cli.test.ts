@@ -22,7 +22,7 @@ describe("private-qa-cli", () => {
 
   it("loads the private QA CLI from a source checkout path", async () => {
     process.env.NOVA_ENABLE_PRIVATE_QA_CLI = "1";
-    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-private-qa-source-"));
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-private-qa-source-"));
     tempDirs.push(repoRoot);
     const expectedPaths = new Set([
       path.join(repoRoot, ".git"),
@@ -54,7 +54,7 @@ describe("private-qa-cli", () => {
 
   it("loads the private QA CLI from a raw synced source checkout path", async () => {
     process.env.NOVA_ENABLE_PRIVATE_QA_CLI = "1";
-    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-private-qa-raw-source-"));
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-private-qa-raw-source-"));
     tempDirs.push(repoRoot);
     const expectedPaths = new Set([
       path.join(repoRoot, "pnpm-workspace.yaml"),
@@ -81,9 +81,9 @@ describe("private-qa-cli", () => {
 
   it("rejects non-source package roots even when private QA is enabled", () => {
     process.env.NOVA_ENABLE_PRIVATE_QA_CLI = "1";
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-private-qa-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-private-qa-"));
     tempDirs.push(root);
-    fs.writeFileSync(path.join(root, "package.json"), JSON.stringify({ name: "openclaw" }), "utf8");
+    fs.writeFileSync(path.join(root, "package.json"), JSON.stringify({ name: "nova" }), "utf8");
     const importModule = vi.fn(async () => ({}));
 
     expect(() =>

@@ -43,7 +43,7 @@ export function windowsAgentTurnConfigPatchScript(modelId: string): string {
     pluginId,
   });
   return `$agentTurnConfigPatchPath = $env:NOVA_CONFIG_PATH
-if (-not $agentTurnConfigPatchPath) { $agentTurnConfigPatchPath = Join-Path $env:USERPROFILE '.openclaw\\openclaw.json' }
+if (-not $agentTurnConfigPatchPath) { $agentTurnConfigPatchPath = Join-Path $env:USERPROFILE '.nova\\nova.json' }
 $agentTurnVersionText = Invoke-Nova --version 2>$null | Out-String
 $agentTurnRuntimePolicySupported = $false
 if ($agentTurnVersionText -match 'Nova\\s+(\\d{4})\\.(\\d{1,2})\\.(\\d{1,2})') {
@@ -57,7 +57,7 @@ ${payloadJson}
 '@
 $env:NOVA_PARALLELS_AGENT_CONFIG_PATH = $agentTurnConfigPatchPath
 $env:NOVA_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED = if ($agentTurnRuntimePolicySupported) { '1' } else { '0' }
-$agentTurnConfigPatchScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) 'openclaw-agent-turn-config-patch.cjs'
+$agentTurnConfigPatchScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) 'nova-agent-turn-config-patch.cjs'
 @'
 const fs = require("node:fs");
 const path = require("node:path");
@@ -80,7 +80,7 @@ cfg.plugins = cfg.plugins && typeof cfg.plugins === "object" && !Array.isArray(c
 cfg.plugins.entries = { [payload.pluginId]: { enabled: true } };
 cfg.plugins.allow = [payload.pluginId];
 const stateDir = path.dirname(configPath);
-fs.rmSync(path.join(stateDir, "npm", "node_modules", "@openclaw", "codex"), { recursive: true, force: true });
+fs.rmSync(path.join(stateDir, "npm", "node_modules", "@nova", "codex"), { recursive: true, force: true });
 for (const op of payload.operations || []) {
   const segments = String(op.path || "").match(/(?:[^.[\\]]+)|(?:\\["((?:\\\\.|[^"\\\\])*)"\\])/g) || [];
   let cursor = cfg;
@@ -99,7 +99,7 @@ for (const op of payload.operations || []) {
 const selectedModelEntry = cfg.agents.defaults.models[payload.modelId];
 if (selectedModelEntry && typeof selectedModelEntry === "object" && !Array.isArray(selectedModelEntry)) {
   if (canWriteAgentRuntime) {
-    selectedModelEntry.agentRuntime = { id: "openclaw" };
+    selectedModelEntry.agentRuntime = { id: "nova" };
   } else {
     delete selectedModelEntry.agentRuntime;
   }
@@ -129,18 +129,18 @@ Remove-Item Env:NOVA_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED -Force -ErrorActio
 if ($agentTurnConfigPatchExit -ne 0) { throw "agent turn config patch failed" }`;
 }
 
-export const windowsOpenClawResolver = String.raw`$portableNode = if ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA 'Programs\nodejs' } else { $null }
+export const windowsNovaResolver = String.raw`$portableNode = if ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA 'Programs\nodejs' } else { $null }
 if ($portableNode -and (Test-Path (Join-Path $portableNode 'node.exe'))) {
   $env:PATH = "$portableNode;$env:PATH"
 }
-function Resolve-OpenClawCommand {
-  if ($script:OpenClawResolvedCommand) { return $script:OpenClawResolvedCommand }
+function Resolve-NovaCommand {
+  if ($script:NovaResolvedCommand) { return $script:NovaResolvedCommand }
   $shimCandidates = @()
   if ($env:APPDATA) {
-    $shimCandidates += Join-Path $env:APPDATA 'npm\openclaw.cmd'
-    $shimCandidates += Join-Path $env:APPDATA 'npm\openclaw.ps1'
+    $shimCandidates += Join-Path $env:APPDATA 'npm\nova.cmd'
+    $shimCandidates += Join-Path $env:APPDATA 'npm\nova.ps1'
   }
-  foreach ($name in @('openclaw.cmd', 'openclaw.ps1', 'openclaw')) {
+  foreach ($name in @('nova.cmd', 'nova.ps1', 'nova')) {
     $command = Get-Command $name -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($command -and $command.Source) { $shimCandidates += $command.Source }
   }
@@ -149,42 +149,42 @@ function Resolve-OpenClawCommand {
     $npmPrefix = (& npm.cmd prefix -g 2>$null | Select-Object -First 1)
   } catch {}
   if ($npmPrefix) {
-    $shimCandidates += Join-Path $npmPrefix 'openclaw.cmd'
-    $shimCandidates += Join-Path $npmPrefix 'openclaw.ps1'
+    $shimCandidates += Join-Path $npmPrefix 'nova.cmd'
+    $shimCandidates += Join-Path $npmPrefix 'nova.ps1'
   }
   foreach ($candidate in $shimCandidates) {
     if ($candidate -and (Test-Path $candidate)) {
-      $script:OpenClawResolvedCommand = @{ Kind = 'shim'; Path = $candidate }
-      return $script:OpenClawResolvedCommand
+      $script:NovaResolvedCommand = @{ Kind = 'shim'; Path = $candidate }
+      return $script:NovaResolvedCommand
     }
   }
   $entryCandidates = @()
   if ($env:APPDATA) {
-    $entryCandidates += Join-Path $env:APPDATA 'npm\node_modules\openclaw\openclaw.mjs'
+    $entryCandidates += Join-Path $env:APPDATA 'npm\node_modules\nova\nova.mjs'
   }
   if ($npmPrefix) {
-    $entryCandidates += Join-Path $npmPrefix 'node_modules\openclaw\openclaw.mjs'
+    $entryCandidates += Join-Path $npmPrefix 'node_modules\nova\nova.mjs'
   }
   foreach ($candidate in $entryCandidates) {
     if ($candidate -and (Test-Path $candidate)) {
-      $script:OpenClawResolvedCommand = @{ Kind = 'node'; Path = $candidate }
-      return $script:OpenClawResolvedCommand
+      $script:NovaResolvedCommand = @{ Kind = 'node'; Path = $candidate }
+      return $script:NovaResolvedCommand
     }
   }
-  throw 'openclaw command not found in PATH, APPDATA npm, or npm global prefix'
+  throw 'nova command not found in PATH, APPDATA npm, or npm global prefix'
 }
 function Invoke-Nova {
-  param([Parameter(ValueFromRemainingArguments = $true)][string[]] $OpenClawArgs)
-  $command = Resolve-OpenClawCommand
+  param([Parameter(ValueFromRemainingArguments = $true)][string[]] $NovaArgs)
+  $command = Resolve-NovaCommand
   $previousErrorActionPreference = $ErrorActionPreference
   $previousNativeErrorActionPreference = $PSNativeCommandUseErrorActionPreference
   $ErrorActionPreference = 'Continue'
   $PSNativeCommandUseErrorActionPreference = $false
   try {
     if ($command.Kind -eq 'node') {
-      & node.exe $command.Path @OpenClawArgs
+      & node.exe $command.Path @NovaArgs
     } else {
-      & $command.Path @OpenClawArgs
+      & $command.Path @NovaArgs
     }
   } finally {
     $ErrorActionPreference = $previousErrorActionPreference

@@ -135,11 +135,11 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/discord",
           version: "2026.5.2",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "index.ts"],
+        files: ["package.json", "nova.plugin.json", "index.ts"],
       }),
     ).toEqual([
       "@nova/discord@2026.5.2 requires compiled runtime output for TypeScript entry ./index.ts: expected ./dist/index.js, ./dist/index.mjs, ./dist/index.cjs, ./index.js, ./index.mjs, ./index.cjs",
@@ -152,12 +152,12 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/zalo",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "index.ts", "dist/index.js"],
+        files: ["package.json", "nova.plugin.json", "index.ts", "dist/index.js"],
       }),
     ).toStrictEqual([]);
   });
@@ -168,16 +168,14 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/searxng-plugin",
           version: "2026.6.11",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
           },
         },
         files: ["package.json", "dist/index.js"],
       }),
-    ).toEqual([
-      "@nova/searxng-plugin@2026.6.11 plugin npm package must include openclaw.plugin.json",
-    ]);
+    ).toEqual(["@nova/searxng-plugin@2026.6.11 plugin npm package must include nova.plugin.json"]);
   });
 
   it("flags reservation packages before they can pass plugin runtime verification", () => {
@@ -190,7 +188,7 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         },
         files: ["package.json", "README.md"],
       }),
-    ).toEqual(["@nova/tavily-plugin@0.0.0 plugin npm package must include openclaw.plugin.json"]);
+    ).toEqual(["@nova/tavily-plugin@0.0.0 plugin npm package must include nova.plugin.json"]);
   });
 
   it("flags missing explicit runtimeExtensions outputs", () => {
@@ -199,12 +197,12 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/line",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./src/index.ts"],
             runtimeExtensions: ["./dist/index.js"],
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "src/index.ts"],
+        files: ["package.json", "nova.plugin.json", "src/index.ts"],
       }),
     ).toEqual(["@nova/line@2026.5.3 runtime extension entry not found: ./dist/index.js"]);
   });
@@ -215,15 +213,15 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/acpx",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts", "./tools.ts"],
             runtimeExtensions: ["./dist/index.js"],
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "dist/index.js"],
+        files: ["package.json", "nova.plugin.json", "dist/index.js"],
       }),
     ).toEqual([
-      "@nova/acpx@2026.5.3 package.json openclaw.runtimeExtensions length (1) must match openclaw.extensions length (2)",
+      "@nova/acpx@2026.5.3 package.json nova.runtimeExtensions length (1) must match nova.extensions length (2)",
     ]);
   });
 
@@ -233,15 +231,15 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/whatsapp",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./src/index.ts"],
             runtimeExtensions: [" "],
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "src/index.ts", "dist/index.js"],
+        files: ["package.json", "nova.plugin.json", "src/index.ts", "dist/index.js"],
       }),
     ).toEqual([
-      "@nova/whatsapp@2026.5.3 package.json openclaw.runtimeExtensions[0] must be a non-empty string",
+      "@nova/whatsapp@2026.5.3 package.json nova.runtimeExtensions[0] must be a non-empty string",
     ]);
   });
 
@@ -251,19 +249,13 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/line",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             setupEntry: "./setup-entry.ts",
           },
         },
-        files: [
-          "package.json",
-          "openclaw.plugin.json",
-          "index.ts",
-          "dist/index.js",
-          "setup-entry.ts",
-        ],
+        files: ["package.json", "nova.plugin.json", "index.ts", "dist/index.js", "setup-entry.ts"],
       }),
     ).toEqual([
       "@nova/line@2026.5.3 requires compiled runtime output for TypeScript entry ./setup-entry.ts: expected ./dist/setup-entry.js, ./dist/setup-entry.mjs, ./dist/setup-entry.cjs, ./setup-entry.js, ./setup-entry.mjs, ./setup-entry.cjs",
@@ -276,14 +268,14 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/qqbot",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             setupEntry: "./setup-entry.ts",
             runtimeSetupEntry: "./dist/setup-entry.js",
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "dist/index.js", "dist/setup-entry.js"],
+        files: ["package.json", "nova.plugin.json", "dist/index.js", "dist/setup-entry.js"],
       }),
     ).toStrictEqual([]);
   });
@@ -294,14 +286,14 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/matrix",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             setupEntry: "./setup-entry.ts",
             runtimeSetupEntry: "./dist/setup-entry.js",
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "dist/index.js"],
+        files: ["package.json", "nova.plugin.json", "dist/index.js"],
       }),
     ).toEqual(["@nova/matrix@2026.5.3 runtime setup entry not found: ./dist/setup-entry.js"]);
   });
@@ -312,16 +304,16 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
         packageJson: {
           name: "@nova/twitch",
           version: "2026.5.3",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             runtimeExtensions: ["./dist/index.js"],
             runtimeSetupEntry: "./dist/setup-entry.js",
           },
         },
-        files: ["package.json", "openclaw.plugin.json", "dist/index.js", "dist/setup-entry.js"],
+        files: ["package.json", "nova.plugin.json", "dist/index.js", "dist/setup-entry.js"],
       }),
     ).toEqual([
-      "@nova/twitch@2026.5.3 package.json openclaw.runtimeSetupEntry requires openclaw.setupEntry",
+      "@nova/twitch@2026.5.3 package.json nova.runtimeSetupEntry requires nova.setupEntry",
     ]);
   });
 });
@@ -331,21 +323,21 @@ describe("resolveNpmPackFilename", () => {
     const noisyOutput = [
       "npm notice",
       "npm notice package: @nova/msteams@2026.5.24-beta.1",
-      "openclaw-msteams-2026.5.24-beta.1.tgz",
+      "nova-msteams-2026.5.24-beta.1.tgz",
       "",
     ].join("\n");
 
-    expect(resolveNpmPackFilename(noisyOutput)).toBe("openclaw-msteams-2026.5.24-beta.1.tgz");
+    expect(resolveNpmPackFilename(noisyOutput)).toBe("nova-msteams-2026.5.24-beta.1.tgz");
   });
 
   it("rejects path-like tarball output instead of reading outside the pack directory", () => {
     const unsafeOutputs = [
-      "../openclaw-msteams.tgz",
-      "nested/openclaw-msteams.tgz",
-      "nested\\openclaw-msteams.tgz",
-      "/tmp/openclaw-msteams.tgz",
-      "C:\\temp\\openclaw-msteams.tgz",
-      "openclaw-msteams\u0000.tgz",
+      "../nova-msteams.tgz",
+      "nested/nova-msteams.tgz",
+      "nested\\nova-msteams.tgz",
+      "/tmp/nova-msteams.tgz",
+      "C:\\temp\\nova-msteams.tgz",
+      "nova-msteams\u0000.tgz",
     ];
 
     for (const output of unsafeOutputs) {

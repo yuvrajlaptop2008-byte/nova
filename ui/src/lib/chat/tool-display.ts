@@ -1,5 +1,5 @@
 // Control UI module implements tool display behavior.
-import SHARED_TOOL_DISPLAY_JSON from "../../../../apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json" with { type: "json" };
+import SHARED_TOOL_DISPLAY_JSON from "../../../../apps/shared/NovaKit/Sources/NovaKit/Resources/tool-display.json" with { type: "json" };
 import {
   defaultTitle,
   formatToolDetailText,
@@ -11,9 +11,9 @@ import type { ToolDetailMode } from "../../../../src/agents/tool-display-exec.js
 import type { ControlUiEmbedSandboxMode } from "../../../../src/gateway/control-ui-contract.js";
 import { normalizeLowercaseStringOrEmpty } from "../string-coerce.ts";
 
-const A2UI_PATH = "/__openclaw__/a2ui";
-const CANVAS_HOST_PATH = "/__openclaw__/canvas";
-const CANVAS_CAPABILITY_PATH_PREFIX = "/__openclaw__/cap";
+const A2UI_PATH = "/__nova__/a2ui";
+const CANVAS_HOST_PATH = "/__nova__/canvas";
+const CANVAS_CAPABILITY_PATH_PREFIX = "/__nova__/cap";
 
 type ToolDisplaySpec = ToolDisplaySpecBase & {
   icon?: string;

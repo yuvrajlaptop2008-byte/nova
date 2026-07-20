@@ -4,15 +4,15 @@ import {
   readProviderJsonResponse,
   readResponseTextLimited,
   resolveProviderOperationTimeoutMs,
-} from "openclaw/plugin-sdk/provider-http";
+} from "nova/plugin-sdk/provider-http";
 import {
   fetchWithSsrFGuard,
   isPrivateOrLoopbackHost,
   resolvePinnedHostnameWithPolicy,
   ssrfPolicyFromHttpBaseUrlAllowedHostname,
   type LookupFn,
-} from "openclaw/plugin-sdk/ssrf-runtime";
-import { withTimeout } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/ssrf-runtime";
+import { withTimeout } from "nova/plugin-sdk/text-utility-runtime";
 import type { ClickClackSetupCodeClaim } from "./types.js";
 
 const CLICKCLACK_ERROR_BODY_LIMIT_BYTES = 8 * 1024;

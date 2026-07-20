@@ -1,5 +1,5 @@
 // Research autocapture helpers coordinate replay-safe capture and suggestion state.
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 import { resolveStorePath } from "../../config/sessions/paths.js";
 import {
   claimSessionSkillCaptureSignals,
@@ -8,7 +8,7 @@ import {
   recordSessionSkillSuggestion,
   releaseSessionSkillCaptureSignals,
 } from "../../config/sessions/skill-suggestions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { sha256Hex } from "../../infra/crypto-digest.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { readWorkspaceSkillFile } from "../lifecycle/workspace-skill-write.js";
@@ -213,7 +213,7 @@ function buildProposalOrigin(ctx: SkillResearchAgentContext) {
 export async function runSkillResearchAutoCapture(params: {
   event: SkillResearchAgentEndEvent;
   ctx: SkillResearchAgentContext;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<void> {
   const workshopConfig = resolveSkillWorkshopConfig(params.config);
   const workspaceDir = params.ctx.workspaceDir;

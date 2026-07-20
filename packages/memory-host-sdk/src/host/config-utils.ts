@@ -12,7 +12,7 @@ import {
   uniqueStrings,
 } from "@nova/normalization-core/string-normalization";
 export { normalizeAgentId };
-export { splitShellArgs } from "./openclaw-runtime-io.js";
+export { splitShellArgs } from "./nova-runtime-io.js";
 
 // Shared Nova config helpers used by memory host, QMD, and agent context code.
 
@@ -148,7 +148,7 @@ type AgentConfig = {
 };
 
 /** Narrow Nova config shape consumed by memory host utilities. */
-export type OpenClawConfig = {
+export type NovaConfig = {
   agents?: {
     defaults?: {
       workspace?: string;
@@ -174,7 +174,7 @@ export type OpenClawConfig = {
   };
 };
 
-export function resolveRememberAcrossConversations(cfg: OpenClawConfig, agentId: string): boolean {
+export function resolveRememberAcrossConversations(cfg: NovaConfig, agentId: string): boolean {
   const defaults = cfg.agents?.defaults?.memorySearch;
   const overrides = resolveAgentConfig(cfg, agentId)?.memorySearch;
   const explicit = overrides?.rememberAcrossConversations ?? defaults?.rememberAcrossConversations;
@@ -204,7 +204,7 @@ export const MEMORY_HOST_ROOT_FILENAME = "MEMORY.md";
 
 const DEFAULT_AGENT_ID = "main";
 const LEGACY_STATE_DIRNAMES = [".clawdbot"] as const;
-const NEW_STATE_DIRNAME = ".openclaw";
+const NEW_STATE_DIRNAME = ".nova";
 /** Treat shell-placeholder home values as absent. */
 function normalizeHomeValue(value: string | undefined): string | undefined {
   const trimmed = normalizeOptionalString(value);
@@ -270,7 +270,7 @@ function resolveStateDir(
   if (env.NOVA_TEST_FAST === "1" || fs.existsSync(nextDir)) {
     return nextDir;
   }
-  // Existing legacy state remains authoritative until an explicit migration creates .openclaw.
+  // Existing legacy state remains authoritative until an explicit migration creates .nova.
   const existingLegacy = legacyStateDirs(effectiveHome).find((dir) => {
     try {
       return fs.existsSync(dir);
@@ -286,20 +286,20 @@ function resolveDefaultAgentWorkspaceDir(env: NodeJS.ProcessEnv = process.env): 
   const home = resolveRequiredHomeDir(env, os.homedir);
   const profile = env.NOVA_PROFILE?.trim();
   if (profile && normalizeLowercaseStringOrEmpty(profile) !== "default") {
-    return path.join(home, ".openclaw", `workspace-${profile}`);
+    return path.join(home, ".nova", `workspace-${profile}`);
   }
-  return path.join(home, ".openclaw", "workspace");
+  return path.join(home, ".nova", "workspace");
 }
 
 /** Return configured agent entries after dropping nullish placeholders. */
-function listAgentEntries(cfg: OpenClawConfig): AgentConfig[] {
+function listAgentEntries(cfg: NovaConfig): AgentConfig[] {
   return Array.isArray(cfg.agents?.list)
     ? cfg.agents.list.filter((entry): entry is AgentConfig => Boolean(entry))
     : [];
 }
 
 /** Resolve the default agent id from explicit default marker or first agent entry. */
-function resolveDefaultAgentId(cfg: OpenClawConfig): string {
+function resolveDefaultAgentId(cfg: NovaConfig): string {
   const agents = listAgentEntries(cfg);
   if (agents.length === 0) {
     return DEFAULT_AGENT_ID;
@@ -309,7 +309,7 @@ function resolveDefaultAgentId(cfg: OpenClawConfig): string {
 }
 
 /** Find one agent config by canonical id. */
-function resolveAgentConfig(cfg: OpenClawConfig, agentId: string): AgentConfig | undefined {
+function resolveAgentConfig(cfg: NovaConfig, agentId: string): AgentConfig | undefined {
   const id = normalizeAgentId(agentId);
   return listAgentEntries(cfg).find((entry) => normalizeAgentId(entry.id) === id);
 }
@@ -321,7 +321,7 @@ function stripNullBytes(value: string): string {
 
 /** Resolve the workspace directory for an agent id and config defaults. */
 export function resolveMemoryHostAgentWorkspaceDir(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId: string,
   env: NodeJS.ProcessEnv = process.env,
 ): string {
@@ -344,7 +344,7 @@ export function resolveMemoryHostAgentWorkspaceDir(
 
 /** Resolve context limits for an agent with defaults fallback. */
 export function resolveMemoryHostAgentContextLimits(
-  cfg: OpenClawConfig | undefined,
+  cfg: NovaConfig | undefined,
   agentId?: string | null,
 ): AgentContextLimitsConfig | undefined {
   const defaults = cfg?.agents?.defaults?.contextLimits;
@@ -356,7 +356,7 @@ export function resolveMemoryHostAgentContextLimits(
 
 /** Resolve enabled memory search config plus deduplicated extra paths for an agent. */
 export function resolveMemoryHostSearchPathConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId: string,
 ): { enabled: boolean; rememberAcrossConversations: boolean; extraPaths: string[] } | null {
   const defaults = cfg.agents?.defaults?.memorySearch;

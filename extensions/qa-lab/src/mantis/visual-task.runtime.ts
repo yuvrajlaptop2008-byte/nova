@@ -1,8 +1,8 @@
 // Qa Lab plugin module implements visual task behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { pathExists, writeExternalFileWithinRoot } from "openclaw/plugin-sdk/security-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { pathExists, writeExternalFileWithinRoot } from "nova/plugin-sdk/security-runtime";
 import { ensureRepoBoundDirectory, resolveRepoRelativeOutputDir } from "../cli-paths.js";
 import { isTruthyOptIn, trimToValue } from "../mantis-options.runtime.js";
 import {
@@ -254,7 +254,7 @@ function buildVisualDriverArgs(params: {
   const args = [
     "--dir",
     params.repoRoot,
-    "openclaw",
+    "nova",
     "qa",
     "mantis",
     "visual-driver",
@@ -392,7 +392,7 @@ function evaluateVisualExpectation(text: string | undefined, expectText: string 
 function browserLaunchScript() {
   return [
     'browser="${BROWSER:-${CHROME_BIN:-google-chrome}}"',
-    'profile="${TMPDIR:-/tmp}/openclaw-mantis-visual-chrome-profile"',
+    'profile="${TMPDIR:-/tmp}/nova-mantis-visual-chrome-profile"',
     'mkdir -p "$profile"',
     'exec "$browser" --user-data-dir="$profile" --no-first-run --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --window-size=1280,900 --window-position=0,0 "$0"',
   ].join("; ");
@@ -539,7 +539,7 @@ export async function runMantisVisualDriver(
     let visionText: string | undefined;
     if (visionMode === "image-describe") {
       const imageArgs = [
-        "openclaw",
+        "nova",
         "infer",
         "image",
         "describe",

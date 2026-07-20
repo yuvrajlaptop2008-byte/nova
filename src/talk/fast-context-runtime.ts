@@ -7,7 +7,7 @@
  */
 import { resolveTimerTimeoutMs } from "@nova/normalization-core/number-coercion";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { getActiveMemorySearchManager } from "../plugins/memory-runtime.js";
 import { withTimeout } from "../utils/with-timeout.js";
@@ -115,7 +115,7 @@ function buildMissText(query: string, labels: RealtimeVoiceFastContextLabels): s
 }
 
 async function lookupFastContext(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   sessionKey: string;
   config: RealtimeVoiceFastContextConfig;
@@ -143,7 +143,7 @@ async function lookupFastContext(params: {
 
 /** Try to answer a realtime consult from fast memory/session context. */
 export async function resolveRealtimeVoiceFastContextConsult(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   sessionKey: string;
   config: RealtimeVoiceFastContextConfig;

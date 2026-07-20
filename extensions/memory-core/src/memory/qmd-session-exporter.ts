@@ -4,7 +4,7 @@ import {
   createSubsystemLogger,
   isPathInside,
   root,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+} from "nova/plugin-sdk/memory-core-host-engine-foundation";
 import {
   buildSessionEntry,
   isSessionArchiveArtifactName,
@@ -12,10 +12,10 @@ import {
   resolveSessionIdentityForTranscriptFile,
   type SessionFileEntry,
   type SessionTranscriptCorpusEntry,
-} from "openclaw/plugin-sdk/memory-core-host-engine-qmd";
-import type { ResolvedQmdConfig } from "openclaw/plugin-sdk/memory-core-host-engine-storage";
-import type { PluginStateLeaseContext } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { formatSessionTranscriptMemoryHitKey } from "openclaw/plugin-sdk/session-transcript-hit";
+} from "nova/plugin-sdk/memory-core-host-engine-qmd";
+import type { ResolvedQmdConfig } from "nova/plugin-sdk/memory-core-host-engine-storage";
+import type { PluginStateLeaseContext } from "nova/plugin-sdk/plugin-state-runtime";
+import { formatSessionTranscriptMemoryHitKey } from "nova/plugin-sdk/session-transcript-hit";
 import {
   refreshQmdSessionArtifactDocIds,
   replaceQmdSessionArtifactMappings,

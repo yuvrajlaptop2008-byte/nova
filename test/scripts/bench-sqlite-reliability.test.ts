@@ -11,7 +11,7 @@ import { monitorSqliteWalDuring } from "../../scripts/lib/sqlite-reliability-wal
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sqlite-reliability-test-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-sqlite-reliability-test-"));
   tempDirs.push(tempDir);
   return tempDir;
 }
@@ -215,9 +215,7 @@ describe("scripts/bench-sqlite-reliability", () => {
     const database = new DatabaseSync(firstReport.paths.sourceDatabase);
     try {
       database
-        .prepare(
-          "INSERT INTO openclaw_reliability_entries (batch, ordinal, payload) VALUES (?, ?, ?)",
-        )
+        .prepare("INSERT INTO nova_reliability_entries (batch, ordinal, payload) VALUES (?, ?, ?)")
         .run(999_999, 0, "stale-profile-row");
     } finally {
       database.close();

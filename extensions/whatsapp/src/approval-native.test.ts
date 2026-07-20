@@ -1,20 +1,17 @@
 // Whatsapp tests cover approval native plugin behavior.
-import type {
-  ExecApprovalRequest,
-  PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { ExecApprovalRequest, PluginApprovalRequest } from "nova/plugin-sdk/approval-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { whatsappApprovalCapability } from "./approval-native.js";
 
-type WhatsAppConfig = NonNullable<NonNullable<OpenClawConfig["channels"]>["whatsapp"]>;
+type WhatsAppConfig = NonNullable<NonNullable<NovaConfig["channels"]>["whatsapp"]>;
 
 function buildConfig(
   params: {
     whatsapp?: Partial<WhatsAppConfig>;
-    approvals?: OpenClawConfig["approvals"];
+    approvals?: NovaConfig["approvals"];
   } = {},
-): OpenClawConfig {
+): NovaConfig {
   return {
     channels: {
       whatsapp: {
@@ -23,7 +20,7 @@ function buildConfig(
       },
     },
     approvals: params.approvals,
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function buildExecRequest(
@@ -68,7 +65,7 @@ function buildPluginRequest(
 }
 
 function nativeShouldHandle(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   approvalKind: "exec" | "plugin";
   request: ExecApprovalRequest | PluginApprovalRequest;
   accountId?: string | null;

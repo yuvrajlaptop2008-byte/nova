@@ -5,7 +5,7 @@ import { note } from "../../packages/terminal-core/src/note.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { resolveWorkspaceTemplateDir } from "../agents/workspace-templates.js";
 import { DEFAULT_HEARTBEAT_FILENAME } from "../agents/workspace.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { HealthFinding } from "../flows/health-checks.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { writeTextAtomic } from "../infra/json-files.js";
@@ -148,13 +148,13 @@ function heartbeatTemplateAnalysisToHealthFinding(
     message: "HEARTBEAT.md contains an older heartbeat documentation template.",
     path: heartbeatPath,
     requirement: "legacy-template",
-    fixHint: 'Run "openclaw doctor --fix" to replace it with the clean heartbeat template.',
+    fixHint: 'Run "nova doctor --fix" to replace it with the clean heartbeat template.',
   };
 }
 
 /** Collects read-only structured findings for legacy HEARTBEAT.md template wrappers. */
 export async function collectHeartbeatTemplateHealthFindings(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: {
     readFile?: (filePath: string) => Promise<string>;
   },
@@ -190,7 +190,7 @@ export async function collectHeartbeatTemplateHealthFindings(
 
 /** Replaces known dirty heartbeat templates with the clean runtime template when repair is enabled. */
 export async function maybeRepairHeartbeatTemplate(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   shouldRepair: boolean;
 }): Promise<void> {
   const workspaceDir = resolveAgentWorkspaceDir(params.cfg, resolveDefaultAgentId(params.cfg));
@@ -227,7 +227,7 @@ export async function maybeRepairHeartbeatTemplate(params: {
     note(
       [
         `${shortenHomePath(heartbeatPath)} contains an older heartbeat documentation template.`,
-        'Run "openclaw doctor --fix" to replace it with the clean heartbeat template.',
+        'Run "nova doctor --fix" to replace it with the clean heartbeat template.',
       ].join("\n"),
       "Heartbeat template",
     );

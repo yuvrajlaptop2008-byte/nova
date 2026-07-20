@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import "./runtime.js";
 import type { CommitmentExtractionBatchResult, CommitmentExtractionItem } from "./types.js";
 
@@ -6,10 +6,10 @@ type TimerHandle = ReturnType<typeof setTimeout>;
 
 type CommitmentExtractionRuntime = {
   extractBatch?: (params: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     items: CommitmentExtractionItem[];
   }) => Promise<CommitmentExtractionBatchResult>;
-  resolveDefaultModel?: (params: { cfg: OpenClawConfig; agentId?: string }) => {
+  resolveDefaultModel?: (params: { cfg: NovaConfig; agentId?: string }) => {
     provider: string;
     model: string;
   };
@@ -26,7 +26,7 @@ type CommitmentRuntimeTestApi = {
 
 function getTestApi(): CommitmentRuntimeTestApi {
   const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.commitmentRuntimeTestApi")
+    Symbol.for("nova.commitmentRuntimeTestApi")
   ];
   if (!api) {
     throw new Error("commitment runtime test API is unavailable");

@@ -1338,8 +1338,7 @@ export const fa: TranslationMap = {
     autoSaveFailed: "ذخیره ناموفق بود",
     autoSaveConflict: "تنظیمات در جای دیگری تغییر کرده است",
     retry: "تلاش مجدد",
-    applyBannerText:
-      "در openclaw.json ذخیره شد — برای اعمال تغییرات، Gateway را مجدداً راه‌اندازی کنید.",
+    applyBannerText: "در nova.json ذخیره شد — برای اعمال تغییرات، Gateway را مجدداً راه‌اندازی کنید.",
     applyBannerAction: "راه‌اندازی مجدد و اعمال",
     rawDiscard: "نادیده گرفتن",
     rawDraftBlocksApply:
@@ -1729,7 +1728,7 @@ export const fa: TranslationMap = {
     skillWorkshop: "پیشنهادها را پیش از تبدیل‌شدن به مهارت‌های فعال، بررسی، اصلاح و اعمال کنید.",
     nodes: "دستگاه‌های جفت‌شده و فرمان‌ها.",
     chat: "چت Gateway برای مداخله‌های سریع.",
-    config: "ویرایش openclaw.json.",
+    config: "ویرایش nova.json.",
     profile: "آمار، زنجیره‌ها، و زندگی عامل شما در صخره.",
     communications: "کانال‌ها، پیام‌ها و تنظیمات صوتی.",
     appearance: "تنظیمات پوسته، UI و جادوگر راه‌اندازی.",
@@ -2442,7 +2441,7 @@ export const fa: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3456,9 +3455,9 @@ export const fa: TranslationMap = {
         summary:
           "Gateway در دسترس است، اما قبل از اتصال این مرورگر به یک توکن یا گذرواژه منطبق نیاز دارد.",
         stepPaste:
-          "توکن openclaw dashboard --no-open را جای گذاری کنید یا گذرواژه پیکربندی شده را وارد کنید.",
+          "توکن nova dashboard --no-open را جای گذاری کنید یا گذرواژه پیکربندی شده را وارد کنید.",
         stepGenerate:
-          "اگر توکنی پیکربندی نشده است، openclaw doctor --generate-gateway-token را روی میزبان Gateway اجرا کنید.",
+          "اگر توکنی پیکربندی نشده است، nova doctor --generate-gateway-token را روی میزبان Gateway اجرا کنید.",
         stepConnect: "پس از به روز کردن اعتبارنامه، دوباره روی Connect کلیک کنید.",
       },
       authFailed: {
@@ -3466,7 +3465,7 @@ export const fa: TranslationMap = {
         summary:
           "اعتبارنامه ارائه شده رد شد. رایج ترین علت، توکن قدیمی یا توکنی است که از URL یک Gateway دیگر کپی شده است.",
         stepDashboard:
-          "openclaw dashboard --no-open را اجرا کنید و URL تازه را باز کنید یا توکن آن را جای گذاری کنید.",
+          "nova dashboard --no-open را اجرا کنید و URL تازه را باز کنید یا توکن آن را جای گذاری کنید.",
         stepReplace:
           "مقادیر قدیمی توکن/گذرواژه را جایگزین کنید؛ از توکن URL یک Gateway دیگر دوباره استفاده نکنید.",
         stepMode:
@@ -3490,8 +3489,8 @@ export const fa: TranslationMap = {
           "این مرورگر قبل از استفاده از Control UI به تأیید یک باره از میزبان Gateway نیاز دارد.",
         upgradeSummary:
           "این مرورگر از قبل شناخته شده است، اما دسترسی درخواستی تغییر کرده و به تأیید تازه نیاز دارد.",
-        stepList: "openclaw devices list را روی میزبان Gateway اجرا کنید.",
-        stepApproveId: "این درخواست را تأیید کنید: openclaw devices approve {requestId}.",
+        stepList: "nova devices list را روی میزبان Gateway اجرا کنید.",
+        stepApproveId: "این درخواست را تأیید کنید: nova devices approve {requestId}.",
         stepApprove: "درخواست در انتظار مرورگر/دستگاه را از آن فهرست تأیید کنید.",
         stepReconnect: "پس از تکمیل تأیید، دوباره وصل شوید.",
       },
@@ -3519,7 +3518,7 @@ export const fa: TranslationMap = {
         summary:
           "Control UI سرو شده و Gateway در حال اجرا درباره پروتکل اتصال پشتیبانی شده توافق ندارند.",
         stepDashboard:
-          "داشبورد سرو شده را با openclaw dashboard دوباره باز کنید تا UI و Gateway از همان نصب باشند.",
+          "داشبورد سرو شده را با nova dashboard دوباره باز کنید تا UI و Gateway از همان نصب باشند.",
         stepDevUi:
           "اگر از pnpm ui:dev استفاده می کنید، UI توسعه را بر اساس checkout فعلی دوباره بسازید یا راه اندازی کنید.",
         stepRestart:
@@ -3529,12 +3528,11 @@ export const fa: TranslationMap = {
         title: "اتصال برقرار نشد",
         summary:
           "مرورگر نتوانست اتصال Gateway را کامل کند. پیش از تلاش دوباره با اعتبارنامه ها، هدف و انتقال را بررسی کنید.",
-        stepGateway:
-          "با openclaw status یا openclaw gateway run تأیید کنید که Gateway در حال اجرا است.",
+        stepGateway: "با nova status یا nova gateway run تأیید کنید که Gateway در حال اجرا است.",
         stepUrl:
           "URL WebSocket را بررسی کنید و وقتی Gateway پشت HTTPS/Tailscale Serve است از wss:// استفاده کنید.",
         stepDashboard:
-          "داشبورد را با openclaw dashboard --no-open دوباره باز کنید تا URL و جزئیات احراز هویت فعلی را دوباره کپی کنید.",
+          "داشبورد را با nova dashboard --no-open دوباره باز کنید تا URL و جزئیات احراز هویت فعلی را دوباره کپی کنید.",
       },
     },
   },

@@ -9,7 +9,7 @@ import {
   resolveAgentModelPrimaryValue,
 } from "../../config/model-input.js";
 import type { AgentModelConfig } from "../../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 
 /** Provider/profile ids that may need external CLI auth discovery. */
 export type ExternalCliAuthScope = {
@@ -82,7 +82,7 @@ function addExternalCliRuntimeScopeFromModelMap(
 
 /** Resolves external CLI auth discovery scope from configured auth/model surfaces. */
 export function resolveExternalCliAuthScopeFromConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ): ExternalCliAuthScope | undefined {
   const providerIds = new Set<string>();
   const profileIds = new Set<string>();

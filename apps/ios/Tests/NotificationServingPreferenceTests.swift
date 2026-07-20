@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 struct NotificationServingPreferenceTests {
     @Test func `defaults to enabled`() throws {

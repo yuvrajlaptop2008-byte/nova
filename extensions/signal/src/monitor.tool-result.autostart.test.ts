@@ -1,5 +1,5 @@
 // Signal tests cover monitor.tool result.autostart plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it, vi } from "vitest";
 import type { SignalDaemonHandle } from "./daemon.js";
 import {
@@ -46,7 +46,7 @@ function createAutoAbortController() {
 
 async function runMonitorWithMocks(opts: MonitorSignalProviderOptions) {
   return monitorSignalProvider({
-    config: config as OpenClawConfig,
+    config: config as NovaConfig,
     waitForTransportReady:
       waitForTransportReadyMock as MonitorSignalProviderOptions["waitForTransportReady"],
     ...opts,
@@ -117,7 +117,7 @@ describe("monitorSignalProvider autostart", () => {
 
   it("passes channels.signal.configPath to signal-cli daemon startup", async () => {
     const runtime = createMonitorRuntime();
-    setSignalAutoStartConfig({ configPath: "~/.openclaw/signal-cli" });
+    setSignalAutoStartConfig({ configPath: "~/.nova/signal-cli" });
     const abortController = createAutoAbortController();
 
     await runMonitorWithMocks({
@@ -129,7 +129,7 @@ describe("monitorSignalProvider autostart", () => {
 
     expect(spawnSignalDaemonMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        configPath: "~/.openclaw/signal-cli",
+        configPath: "~/.nova/signal-cli",
       }),
     );
   });

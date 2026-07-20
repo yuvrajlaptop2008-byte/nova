@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Installs an OpenClaw package candidate in Docker, performs Telegram
+# Installs an Nova package candidate in Docker, performs Telegram
 # onboarding/doctor recovery, then runs the Telegram QA live harness.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-npm-telegram-live-e2e" NOVA_NPM_TELEGRAM_LIVE_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-npm-telegram-live-e2e" NOVA_NPM_TELEGRAM_LIVE_E2E_IMAGE)"
 DOCKER_TARGET="${NOVA_NPM_TELEGRAM_DOCKER_TARGET:-build}"
-PACKAGE_SPEC="${NOVA_NPM_TELEGRAM_PACKAGE_SPEC:-openclaw@beta}"
+PACKAGE_SPEC="${NOVA_NPM_TELEGRAM_PACKAGE_SPEC:-nova@beta}"
 PACKAGE_TGZ="${NOVA_NPM_TELEGRAM_PACKAGE_TGZ:-${NOVA_CURRENT_PACKAGE_TGZ:-}}"
 PACKAGE_DIR="${NOVA_NPM_TELEGRAM_PACKAGE_DIR:-}"
 PACKAGE_LABEL="${NOVA_NPM_TELEGRAM_PACKAGE_LABEL:-}"
@@ -47,12 +47,12 @@ resolve_credential_role() {
   fi
 }
 
-validate_openclaw_package_spec() {
+validate_nova_package_spec() {
   local spec="$1"
-  if [[ "$spec" =~ ^openclaw@(alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
+  if [[ "$spec" =~ ^nova@(alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
     return 0
   fi
-  echo "NOVA_NPM_TELEGRAM_PACKAGE_SPEC must be openclaw@alpha, openclaw@beta, openclaw@latest, or an exact OpenClaw release version; got: $spec" >&2
+  echo "NOVA_NPM_TELEGRAM_PACKAGE_SPEC must be nova@alpha, nova@beta, nova@latest, or an exact Nova release version; got: $spec" >&2
   exit 1
 }
 
@@ -124,19 +124,19 @@ if [ -n "$resolved_package_dir" ]; then
       exit 1
       ;;
   esac
-  package_install_source="openclaw@$(read_package_version "$resolved_package_tgz")"
+  package_install_source="nova@$(read_package_version "$resolved_package_tgz")"
   package_source_kind="prepared-package-set"
   package_mount_args=(-v "$resolved_package_dir:/package-under-test:ro")
   registry_helper_mount_args=(
-    -v "$ROOT_DIR/scripts/e2e/lib/bounded-response-text.mjs:/tmp/openclaw-e2e/lib/bounded-response-text.mjs:ro"
-    -v "$ROOT_DIR/scripts/e2e/lib/plugins/npm-registry-server.mjs:/tmp/openclaw-e2e/lib/plugins/npm-registry-server.mjs:ro"
+    -v "$ROOT_DIR/scripts/e2e/lib/bounded-response-text.mjs:/tmp/nova-e2e/lib/bounded-response-text.mjs:ro"
+    -v "$ROOT_DIR/scripts/e2e/lib/plugins/npm-registry-server.mjs:/tmp/nova-e2e/lib/plugins/npm-registry-server.mjs:ro"
   )
 elif [ -n "$resolved_package_tgz" ]; then
   package_install_source="/package-under-test/$(basename "$resolved_package_tgz")"
   package_source_kind="packed-tarball"
   package_mount_args=(-v "$resolved_package_tgz:$package_install_source:ro")
 else
-  validate_openclaw_package_spec "$PACKAGE_SPEC"
+  validate_nova_package_spec "$PACKAGE_SPEC"
 fi
 if [ -z "$PACKAGE_LABEL" ]; then
   if [ -n "$resolved_package_tgz" ]; then
@@ -302,7 +302,7 @@ run_logged_print_heartbeat "npm-telegram-package-install" 60 docker_e2e_docker_r
   -i "$IMAGE_NAME" bash -s <<'EOF'
 set -euo pipefail
 
-export HOME="$(mktemp -d "/tmp/openclaw-npm-telegram-install.XXXXXX")"
+export HOME="$(mktemp -d "/tmp/nova-npm-telegram-install.XXXXXX")"
 export NPM_CONFIG_PREFIX="/npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
 
@@ -353,7 +353,7 @@ process.stdin.on("end", () => {
   registry_port_file="$(mktemp)"
   registry_log="$(mktemp)"
   NOVA_NPM_REGISTRY_UPSTREAM=https://registry.npmjs.org \
-    node /tmp/openclaw-e2e/lib/plugins/npm-registry-server.mjs \
+    node /tmp/nova-e2e/lib/plugins/npm-registry-server.mjs \
     "$registry_port_file" \
     "${registry_args[@]}" >"$registry_log" 2>&1 &
   registry_pid=$!
@@ -404,8 +404,8 @@ run_npm_install() {
 }
 run_npm_install
 
-command -v openclaw
-openclaw --version
+command -v nova
+nova --version
 EOF
 
 # Mount only QA harness source; the SUT itself, including bundled plugin runtime,
@@ -419,9 +419,9 @@ run_logged_print_heartbeat "npm-telegram-live-suite" 60 docker_e2e_run_with_harn
   -v "$npm_prefix_host:/npm-global" \
   -i "$IMAGE_NAME" bash -s <<'EOF'
 set -euo pipefail
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/nova-e2e-instance.sh
 
-runtime_home="$(mktemp -d "/tmp/openclaw-npm-telegram-runtime.XXXXXX")"
+runtime_home="$(mktemp -d "/tmp/nova-npm-telegram-runtime.XXXXXX")"
 export HOME="$runtime_home"
 export NPM_CONFIG_PREFIX="/npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
@@ -431,39 +431,39 @@ dump_hotpath_logs() {
   local status="$1"
   echo "installed-package onboarding recovery hot path failed with exit code $status" >&2
   for file in \
-    /tmp/openclaw-npm-telegram-onboard.json \
-    /tmp/openclaw-npm-telegram-channel-add.log \
-    /tmp/openclaw-npm-telegram-doctor-fix.log \
-    /tmp/openclaw-npm-telegram-doctor-check.log; do
+    /tmp/nova-npm-telegram-onboard.json \
+    /tmp/nova-npm-telegram-channel-add.log \
+    /tmp/nova-npm-telegram-doctor-fix.log \
+    /tmp/nova-npm-telegram-doctor-check.log; do
     if [ -f "$file" ]; then
       echo "--- $file ---" >&2
-      openclaw_e2e_print_log "$file" >&2
+      nova_e2e_print_log "$file" >&2
     fi
   done
 }
 trap 'status=$?; dump_hotpath_logs "$status"; exit "$status"' ERR
 
-command -v openclaw
-openclaw_e2e_run_command openclaw --version
+command -v nova
+nova_e2e_run_command nova --version
 mkdir -p /app/node_modules
-openclaw_package_dir="/npm-global/lib/node_modules/openclaw"
-# The mounted QA harness imports openclaw/plugin-sdk and package dependencies;
+nova_package_dir="/npm-global/lib/node_modules/nova"
+# The mounted QA harness imports nova/plugin-sdk and package dependencies;
 # point those imports at the installed package without copying source plugins into the test image.
-rm -rf /app/node_modules/openclaw
-ln -sfnT "$openclaw_package_dir" /app/node_modules/openclaw
+rm -rf /app/node_modules/nova
+ln -sfnT "$nova_package_dir" /app/node_modules/nova
 rm -rf /app/dist
-ln -sfnT "$openclaw_package_dir/dist" /app/dist
-cp "$openclaw_package_dir/package.json" /app/package.json
+ln -sfnT "$nova_package_dir/dist" /app/dist
+cp "$nova_package_dir/package.json" /app/package.json
 node scripts/e2e/lib/npm-telegram-live/prepare-package.mjs \
   /app/package.json \
-  /app/node_modules/openclaw/package.json
-for deps_dir in "$openclaw_package_dir/node_modules" /npm-global/lib/node_modules; do
+  /app/node_modules/nova/package.json
+for deps_dir in "$nova_package_dir/node_modules" /npm-global/lib/node_modules; do
   [ -d "$deps_dir" ] || continue
   for dependency_dir in "$deps_dir"/*; do
     [ -e "$dependency_dir" ] || continue
     dependency_name="$(basename "$dependency_dir")"
     case "$dependency_name" in
-      .bin | openclaw)
+      .bin | nova)
         continue
         ;;
       @*)
@@ -486,7 +486,7 @@ done
 
 link_installed_package_dependency() {
   local name="$1"
-  local source="/npm-global/lib/node_modules/openclaw/node_modules/$name"
+  local source="/npm-global/lib/node_modules/nova/node_modules/$name"
   local target="/app/node_modules/$name"
   if [ ! -e "$source" ]; then
     echo "Installed package dependency is missing: $name" >&2
@@ -506,16 +506,16 @@ for dependency in \
 done
 
 if [ "${NOVA_NPM_TELEGRAM_SKIP_HOTPATH:-0}" != "1" ]; then
-  hotpath_home="$(mktemp -d "/tmp/openclaw-npm-telegram-hotpath.XXXXXX")"
+  hotpath_home="$(mktemp -d "/tmp/nova-npm-telegram-hotpath.XXXXXX")"
   export HOME="$hotpath_home"
   echo "Running installed-package onboarding recovery hot path..."
-  hotpath_placeholder="openclaw-npm-telegram-hotpath"
+  hotpath_placeholder="nova-npm-telegram-hotpath"
   hotpath_model_value="$(printf '%s%s' s "k-$hotpath_placeholder")"
   if [ -n "${OPENAI_API_KEY:-}" ]; then
     hotpath_model_value="$OPENAI_API_KEY"
   fi
   hotpath_channel_value="$(printf '%s:%s' 123456 "$hotpath_placeholder")"
-  OPENAI_API_KEY="$hotpath_model_value" openclaw_e2e_run_command openclaw onboard \
+  OPENAI_API_KEY="$hotpath_model_value" nova_e2e_run_command nova onboard \
     --non-interactive --accept-risk \
     --mode local \
     --auth-choice openai-api-key \
@@ -526,15 +526,15 @@ if [ "${NOVA_NPM_TELEGRAM_SKIP_HOTPATH:-0}" != "1" ]; then
     --skip-ui \
     --skip-skills \
     --skip-health \
-    --json >/tmp/openclaw-npm-telegram-onboard.json </dev/null
+    --json >/tmp/nova-npm-telegram-onboard.json </dev/null
 
-  openclaw_e2e_run_command openclaw channels add --channel telegram --token "$hotpath_channel_value" >/tmp/openclaw-npm-telegram-channel-add.log 2>&1 </dev/null
-  openclaw_e2e_run_command openclaw doctor --fix --non-interactive >/tmp/openclaw-npm-telegram-doctor-fix.log 2>&1 </dev/null
-  openclaw_e2e_run_command openclaw doctor --non-interactive >/tmp/openclaw-npm-telegram-doctor-check.log 2>&1 </dev/null
+  nova_e2e_run_command nova channels add --channel telegram --token "$hotpath_channel_value" >/tmp/nova-npm-telegram-channel-add.log 2>&1 </dev/null
+  nova_e2e_run_command nova doctor --fix --non-interactive >/tmp/nova-npm-telegram-doctor-fix.log 2>&1 </dev/null
+  nova_e2e_run_command nova doctor --non-interactive >/tmp/nova-npm-telegram-doctor-check.log 2>&1 </dev/null
   export HOME="$runtime_home"
 fi
 
-export NOVA_NPM_TELEGRAM_SUT_COMMAND="$(command -v openclaw)"
+export NOVA_NPM_TELEGRAM_SUT_COMMAND="$(command -v nova)"
 trap - ERR
 tsx scripts/e2e/npm-telegram-live-runner.ts
 EOF

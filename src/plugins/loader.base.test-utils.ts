@@ -22,7 +22,7 @@ import {
   clearPluginInteractiveHandlers,
   resolvePluginInteractiveNamespaceMatch,
 } from "./interactive-registry.js";
-import { loadOpenClawPlugins, resolveRuntimePluginRegistry } from "./loader.js";
+import { loadNovaPlugins, resolveRuntimePluginRegistry } from "./loader.js";
 import {
   EMPTY_PLUGIN_SCHEMA,
   makeTempDir,
@@ -62,7 +62,7 @@ import {
 afterEach(globalAfterEach0);
 afterAll(globalAfterAll1);
 
-describe("loadOpenClawPlugins", () => {
+describe("loadNovaPlugins", () => {
   it("emits loader startup trace timings for normal plugin load and register", () => {
     useNoBundledPlugins();
     const plugin = writePlugin({
@@ -175,7 +175,7 @@ describe("loadOpenClawPlugins", () => {
     // Case 3: config.env.vars participates in the same effective env as config IO.
     delete probe.envConfigProbeResult;
     withEnv({ ENV_CONFIG_PROBE_SECRET: undefined }, () => {
-      loadOpenClawPlugins({
+      loadNovaPlugins({
         cache: false,
         workspaceDir: plugin.dir,
         config: {
@@ -233,7 +233,7 @@ describe("loadOpenClawPlugins", () => {
     });
     const { details, startupTrace } = createStartupTraceRecorder();
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -429,9 +429,9 @@ describe("loadOpenClawPlugins", () => {
       },
     };
     const manifestRegistry = loadPluginManifestRegistry({ config });
-    fs.rmSync(path.join(plugin.dir, "openclaw.plugin.json"));
+    fs.rmSync(path.join(plugin.dir, "nova.plugin.json"));
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config,
       manifestRegistry,
@@ -462,7 +462,7 @@ describe("loadOpenClawPlugins", () => {
     );
 
     const registry = withEnv({ NOVA_STATE_DIR: stateDir }, () =>
-      loadOpenClawPlugins({
+      loadNovaPlugins({
         cache: false,
         config: {
           plugins: {
@@ -490,7 +490,7 @@ describe("loadOpenClawPlugins", () => {
     });
     process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -511,7 +511,7 @@ describe("loadOpenClawPlugins", () => {
     fs.mkdirSync(pluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.22", type: "module" }),
+      JSON.stringify({ name: "nova", version: "2026.4.22", type: "module" }),
       "utf-8",
     );
     fs.writeFileSync(
@@ -519,13 +519,13 @@ describe("loadOpenClawPlugins", () => {
       "export const normalizeLowercaseStringOrEmpty = (value) => String(value).toLowerCase();\n",
       "utf-8",
     );
-    const aliasRoot = path.join(bundledDir, "node_modules", "openclaw");
+    const aliasRoot = path.join(bundledDir, "node_modules", "nova");
     const aliasPluginSdkDir = path.join(aliasRoot, "plugin-sdk");
     fs.mkdirSync(aliasPluginSdkDir, { recursive: true });
     fs.writeFileSync(
       path.join(aliasRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "nova",
         type: "module",
         exports: {
           "./plugin-sdk/string-coerce-runtime": "./plugin-sdk/string-coerce-runtime.js",
@@ -541,7 +541,7 @@ describe("loadOpenClawPlugins", () => {
     fs.writeFileSync(
       path.join(pluginRoot, "index.js"),
       [
-        `import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";`,
+        `import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";`,
         `export default {`,
         `  id: "discord",`,
         `  register(api) {`,
@@ -559,7 +559,7 @@ describe("loadOpenClawPlugins", () => {
           name: "@nova/discord",
           version: "1.0.0",
           type: "module",
-          openclaw: { extensions: ["./index.js"] },
+          nova: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -567,7 +567,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginRoot, "openclaw.plugin.json"),
+      path.join(pluginRoot, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "discord",
@@ -581,7 +581,7 @@ describe("loadOpenClawPlugins", () => {
     );
     process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -637,7 +637,7 @@ describe("loadOpenClawPlugins", () => {
     fs.writeFileSync(alpha, `module.exports = { id: "alpha", register() {} };`, "utf-8");
     fs.writeFileSync(beta, `module.exports = { id: "beta", register() {} };`, "utf-8");
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -666,7 +666,7 @@ describe("loadOpenClawPlugins", () => {
           },
         },
       } satisfies PluginLoadConfig,
-      assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+      assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
         expectTelegramLoaded(registry);
       },
     },
@@ -682,7 +682,7 @@ describe("loadOpenClawPlugins", () => {
           enabled: true,
         },
       } satisfies PluginLoadConfig,
-      assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+      assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
         expectTelegramLoaded(registry);
       },
     },
@@ -698,7 +698,7 @@ describe("loadOpenClawPlugins", () => {
           allow: ["browser"],
         },
       } satisfies PluginLoadConfig,
-      assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+      assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
         const telegram = registry.plugins.find((entry) => entry.id === "telegram");
         expect(telegram?.status).toBe("loaded");
         expect(telegram?.error).toBeUndefined();
@@ -719,7 +719,7 @@ describe("loadOpenClawPlugins", () => {
           },
         },
       } satisfies PluginLoadConfig,
-      assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+      assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
         const telegram = registry.plugins.find((entry) => entry.id === "telegram");
         expect(telegram?.status).toBe("disabled");
         expect(telegram?.error).toBe("disabled in config");
@@ -729,7 +729,7 @@ describe("loadOpenClawPlugins", () => {
     "handles bundled telegram plugin enablement and override rules: $name",
     ({ config, assert }) => {
       setupBundledTelegramPlugin();
-      const registry = loadOpenClawPlugins({
+      const registry = loadNovaPlugins({
         cache: false,
         workspaceDir: cachedBundledTelegramDir,
         config,
@@ -755,7 +755,7 @@ describe("loadOpenClawPlugins", () => {
       env: {},
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: cachedBundledTelegramDir,
       config: autoEnabled.config,
@@ -787,7 +787,7 @@ describe("loadOpenClawPlugins", () => {
       env: {},
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: cachedBundledTelegramDir,
       config: autoEnabled.config,
@@ -818,7 +818,7 @@ describe("loadOpenClawPlugins", () => {
       },
     } satisfies PluginLoadConfig;
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: cachedBundledTelegramDir,
       config: {
@@ -859,7 +859,7 @@ describe("loadOpenClawPlugins", () => {
       },
     } satisfies PluginLoadConfig;
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: bundledDir,
       config,
@@ -907,7 +907,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           workspaceDir: plugin.dir,
           config: {
@@ -944,7 +944,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           workspaceDir: plugin.dir,
           config: {
@@ -985,7 +985,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           workspaceDir: plugin.dir,
           config: {
@@ -1027,7 +1027,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           workspaceDir: plugin.dir,
           config: {
@@ -1061,7 +1061,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           workspaceDir: plugin.dir,
           coreGatewayMethodNames: ["config.openFile"],
@@ -1098,7 +1098,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           config: {
             plugins: {
@@ -1132,7 +1132,7 @@ describe("loadOpenClawPlugins", () => {
   module.exports = { id: "skipped-scoped-only", register() { throw new Error("skipped plugin should not load"); } };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           config: {
             plugins: {
@@ -1159,7 +1159,7 @@ describe("loadOpenClawPlugins", () => {
   module.exports = { id: "manifest-only-plugin", register() { throw new Error("manifest-only snapshot should not register"); } };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           activate: false,
           loadModules: false,
@@ -1191,7 +1191,7 @@ describe("loadOpenClawPlugins", () => {
   module.exports = { id: "manifest-surfaces-plugin", register() { throw new Error("manifest-only snapshot should not register"); } };`,
         });
         fs.writeFileSync(
-          path.join(plugin.dir, "openclaw.plugin.json"),
+          path.join(plugin.dir, "nova.plugin.json"),
           JSON.stringify(
             {
               id: "manifest-surfaces-plugin",
@@ -1208,7 +1208,7 @@ describe("loadOpenClawPlugins", () => {
           "utf-8",
         );
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           activate: false,
           loadModules: false,
@@ -1248,7 +1248,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
         fs.writeFileSync(
-          path.join(memoryPlugin.dir, "openclaw.plugin.json"),
+          path.join(memoryPlugin.dir, "nova.plugin.json"),
           JSON.stringify(
             {
               id: "memory-demo",
@@ -1261,7 +1261,7 @@ describe("loadOpenClawPlugins", () => {
           "utf-8",
         );
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           activate: false,
           loadModules: false,
@@ -1289,7 +1289,7 @@ describe("loadOpenClawPlugins", () => {
       label: "tracks plugins as imported when module evaluation throws after top-level execution",
       run: () => {
         useNoBundledPlugins();
-        const importMarker = "__openclaw_loader_import_throw_marker";
+        const importMarker = "__nova_loader_import_throw_marker";
         Reflect.deleteProperty(globalThis, importMarker);
 
         const plugin = writePlugin({
@@ -1300,7 +1300,7 @@ describe("loadOpenClawPlugins", () => {
   module.exports = { id: "throws-after-import", register() {} };`,
         });
 
-        const registry = loadOpenClawPlugins({
+        const registry = loadNovaPlugins({
           cache: false,
           activate: false,
           config: {
@@ -1325,13 +1325,11 @@ describe("loadOpenClawPlugins", () => {
       label: "fails loudly when a plugin reenters the same snapshot load during register",
       run: () => {
         useNoBundledPlugins();
-        const marker = "__openclaw_loader_reentry_error";
-        const reenterFnMarker = "__openclaw_loader_reentry_fn";
+        const marker = "__nova_loader_reentry_error";
+        const reenterFnMarker = "__nova_loader_reentry_fn";
         Reflect.deleteProperty(globalThis, marker);
-        Reflect.set(
-          globalThis,
-          reenterFnMarker,
-          (options: Parameters<typeof loadOpenClawPlugins>[0]) => loadOpenClawPlugins(options),
+        Reflect.set(globalThis, reenterFnMarker, (options: Parameters<typeof loadNovaPlugins>[0]) =>
+          loadNovaPlugins(options),
         );
         const pluginDir = makeTempDir();
         const pluginFile = path.join(pluginDir, "reentrant-snapshot.cjs");
@@ -1345,7 +1343,7 @@ describe("loadOpenClawPlugins", () => {
               allow: ["reentrant-snapshot"],
             },
           },
-        } satisfies Parameters<typeof loadOpenClawPlugins>[0];
+        } satisfies Parameters<typeof loadNovaPlugins>[0];
         writePlugin({
           id: "reentrant-snapshot",
           dir: pluginDir,
@@ -1366,7 +1364,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins(nestedOptions);
+        const registry = loadNovaPlugins(nestedOptions);
 
         try {
           const reentryError = Reflect.get(globalThis, marker) as
@@ -1388,8 +1386,8 @@ describe("loadOpenClawPlugins", () => {
       label: "lets resolveRuntimePluginRegistry short-circuit during same snapshot load",
       run: () => {
         useNoBundledPlugins();
-        const marker = "__openclaw_runtime_registry_reentry_marker";
-        const resolverMarker = "__openclaw_runtime_registry_reentry_fn";
+        const marker = "__nova_runtime_registry_reentry_marker";
+        const resolverMarker = "__nova_runtime_registry_reentry_fn";
         Reflect.deleteProperty(globalThis, marker);
         Reflect.set(
           globalThis,
@@ -1409,7 +1407,7 @@ describe("loadOpenClawPlugins", () => {
               allow: ["runtime-registry-reentry"],
             },
           },
-        } satisfies Parameters<typeof loadOpenClawPlugins>[0];
+        } satisfies Parameters<typeof loadNovaPlugins>[0];
         writePlugin({
           id: "runtime-registry-reentry",
           dir: pluginDir,
@@ -1423,7 +1421,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
         });
 
-        const registry = loadOpenClawPlugins(nestedOptions);
+        const registry = loadNovaPlugins(nestedOptions);
 
         try {
           expect(Reflect.get(globalThis, marker)).toBe("undefined");
@@ -1458,12 +1456,12 @@ describe("loadOpenClawPlugins", () => {
           },
         };
 
-        const full = loadOpenClawPlugins(options);
-        const scoped = loadOpenClawPlugins({
+        const full = loadNovaPlugins(options);
+        const scoped = loadNovaPlugins({
           ...options,
           onlyPluginIds: ["allowed-cache-scope"],
         });
-        const scopedAgain = loadOpenClawPlugins({
+        const scopedAgain = loadNovaPlugins({
           ...options,
           onlyPluginIds: ["allowed-cache-scope"],
         });
@@ -1490,7 +1488,7 @@ describe("loadOpenClawPlugins", () => {
         setActivePluginRegistry(previousRegistry, "existing-registry");
         resetGlobalHookRunner();
 
-        const scoped = loadOpenClawPlugins({
+        const scoped = loadNovaPlugins({
           cache: false,
           activate: false,
           workspaceDir: plugin.dir,
@@ -1526,7 +1524,7 @@ describe("loadOpenClawPlugins", () => {
       body: `module.exports = { id: "extra-empty-scope", register() {} };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       activate: false,
       config: {
@@ -1551,10 +1549,10 @@ describe("loadOpenClawPlugins", () => {
 
     const discovery = await import("./discovery.js");
     const manifestRegistry = await import("./manifest-registry.js");
-    const discoverySpy = vi.spyOn(discovery, "discoverOpenClawPlugins");
+    const discoverySpy = vi.spyOn(discovery, "discoverNovaPlugins");
     const manifestSpy = vi.spyOn(manifestRegistry, "loadPluginManifestRegistry");
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       activate: false,
       config: {
@@ -1599,7 +1597,7 @@ describe("loadOpenClawPlugins", () => {
     clearPluginCommands();
     clearPluginInteractiveHandlers();
 
-    const scoped = loadOpenClawPlugins({
+    const scoped = loadNovaPlugins({
       cache: false,
       activate: false,
       workspaceDir: plugin.dir,
@@ -1624,7 +1622,7 @@ describe("loadOpenClawPlugins", () => {
     expect(getPluginCommandSpecs("telegram")).toStrictEqual([]);
     expect(resolvePluginInteractiveNamespaceMatch("telegram", "pair:device")).toBeNull();
 
-    const active = loadOpenClawPlugins({
+    const active = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -1674,7 +1672,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -1687,7 +1685,7 @@ describe("loadOpenClawPlugins", () => {
     });
     expect(listRegisteredAgentHarnessIdsForTest()).toEqual(["codex"]);
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir: makeTempDir(),
       config: {
@@ -1725,7 +1723,7 @@ describe("loadOpenClawPlugins", () => {
             auth: [],
           });
           api.registerAgentToolResultMiddleware(() => undefined, {
-            runtimes: ["openclaw"],
+            runtimes: ["nova"],
           });
           api.on("gateway_stop", async () => {});
         },
@@ -1733,7 +1731,7 @@ describe("loadOpenClawPlugins", () => {
     });
     updatePluginManifest(plugin, {
       providers: ["rollback-provider"],
-      contracts: { agentToolResultMiddleware: ["openclaw"] },
+      contracts: { agentToolResultMiddleware: ["nova"] },
     });
 
     const loadOptions = {
@@ -1748,7 +1746,7 @@ describe("loadOpenClawPlugins", () => {
       onlyPluginIds: ["reload-rollback"],
     };
 
-    const activeRegistry = loadOpenClawPlugins(loadOptions);
+    const activeRegistry = loadNovaPlugins(loadOptions);
     const expectRegistrationsIntact = () => {
       expect(getActivePluginRegistry()).toBe(activeRegistry);
       expect(getRegisteredAgentHarness("codex")).toBeDefined();
@@ -1769,7 +1767,7 @@ describe("loadOpenClawPlugins", () => {
       });
 
     try {
-      expect(() => loadOpenClawPlugins(loadOptions)).toThrow("corrupt plugin manifest");
+      expect(() => loadNovaPlugins(loadOptions)).toThrow("corrupt plugin manifest");
       expectRegistrationsIntact();
     } finally {
       manifestSpy.mockRestore();
@@ -1784,7 +1782,7 @@ describe("loadOpenClawPlugins", () => {
       };`,
     });
     expect(() =>
-      loadOpenClawPlugins({
+      loadNovaPlugins({
         ...loadOptions,
         throwOnLoadError: true,
         config: {
@@ -1815,7 +1813,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {
@@ -1853,7 +1851,7 @@ describe("loadOpenClawPlugins", () => {
     });
 
     clearInternalHooks();
-    const scoped = loadOpenClawPlugins({
+    const scoped = loadNovaPlugins({
       cache: false,
       activate: false,
       workspaceDir: plugin.dir,
@@ -1908,8 +1906,8 @@ describe("loadOpenClawPlugins", () => {
       onlyPluginIds: ["internal-hook-reload"],
     };
 
-    loadOpenClawPlugins(loadOptions);
-    loadOpenClawPlugins(loadOptions);
+    loadNovaPlugins(loadOptions);
+    loadNovaPlugins(loadOptions);
 
     const event = createInternalHookEvent("gateway", "startup", "gateway:startup");
     await triggerInternalHook(event);
@@ -1937,7 +1935,7 @@ describe("loadOpenClawPlugins", () => {
         };`,
     });
     fs.writeFileSync(
-      path.join(plugin.dir, "openclaw.plugin.json"),
+      path.join(plugin.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "hook-config-context",
@@ -1951,7 +1949,7 @@ describe("loadOpenClawPlugins", () => {
 
     clearInternalHooks();
 
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {

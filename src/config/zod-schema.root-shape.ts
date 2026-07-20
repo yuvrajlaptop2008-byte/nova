@@ -34,7 +34,7 @@ import {
 import { sensitive } from "./zod-schema.sensitive.js";
 import { CommandsSchema, MessagesSchema, SessionSchema } from "./zod-schema.session.js";
 
-export const OpenClawSchemaShape = {
+export const NovaSchemaShape = {
   $schema: z.string().optional(),
   meta: z
     .strictObject({
@@ -219,7 +219,7 @@ export const OpenClawSchemaShape = {
               mcpArgs: z.array(z.string()).optional(),
               driver: z
                 .union([
-                  z.literal("openclaw"),
+                  z.literal("nova"),
                   z.literal("clawd"),
                   z.literal("existing-session"),
                   z.literal("extension"),

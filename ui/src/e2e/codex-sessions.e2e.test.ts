@@ -19,8 +19,8 @@ const suite = available || !allowMissing ? describe : describe.skip;
 let browser: Browser;
 let server: ControlUiE2eServer;
 const captureUiProofEnabled = process.env.NOVA_CAPTURE_UI_PROOF === "1";
-const catalogGroupingStorageKey = "openclaw:sidebar:sessions:catalog-grouping";
-const collapsedSessionSectionsStorageKey = "openclaw:sidebar:sessions:collapsed-sections";
+const catalogGroupingStorageKey = "nova:sidebar:sessions:catalog-grouping";
+const collapsedSessionSectionsStorageKey = "nova:sidebar:sessions:collapsed-sections";
 const uiProofArtifactDir = path.join(
   process.cwd(),
   ".artifacts",
@@ -187,7 +187,7 @@ suite("Codex native session catalog", () => {
                     {
                       threadId: "thread-local",
                       name: "Local planning session",
-                      cwd: "/Users/dev/openclaw",
+                      cwd: "/Users/dev/nova",
                       status: "idle",
                       archived: false,
                       canContinue: true,
@@ -196,7 +196,7 @@ suite("Codex native session catalog", () => {
                     {
                       threadId: "thread-worktree",
                       name: "Worktree fix session",
-                      cwd: "/Users/dev/openclaw/.claude/worktrees/fix-1",
+                      cwd: "/Users/dev/nova/.claude/worktrees/fix-1",
                       status: "idle",
                       archived: false,
                       canContinue: true,
@@ -264,14 +264,12 @@ suite("Codex native session catalog", () => {
       expect(await section.getByText("Offline Laptop", { exact: true }).count()).toBe(0);
       const projectHeads = section.locator("[data-session-catalog-project]");
       await expect.poll(() => projectHeads.count()).toBe(2);
-      const openclawProject = section.locator(
-        '[data-session-catalog-project="/Users/dev/openclaw"]',
-      );
+      const novaProject = section.locator('[data-session-catalog-project="/Users/dev/nova"]');
       expect(
-        await openclawProject.locator(".sidebar-session-catalog-project__label").textContent(),
-      ).toBe("openclaw");
+        await novaProject.locator(".sidebar-session-catalog-project__label").textContent(),
+      ).toBe("nova");
       expect(
-        await openclawProject.locator(".sidebar-session-catalog-project__count").textContent(),
+        await novaProject.locator(".sidebar-session-catalog-project__count").textContent(),
       ).toBe("2");
       expect(
         await section
@@ -306,24 +304,24 @@ suite("Codex native session catalog", () => {
         await page.evaluate((key) => localStorage.getItem(key), catalogGroupingStorageKey),
       ).toBe("project");
 
-      await openclawProject.click();
-      await expect.poll(() => openclawProject.getAttribute("aria-expanded")).toBe("false");
+      await novaProject.click();
+      await expect.poll(() => novaProject.getAttribute("aria-expanded")).toBe("false");
       expect(await section.getByText("Local planning session", { exact: true }).count()).toBe(0);
       expect(await section.getByText("Worktree fix session", { exact: true }).count()).toBe(0);
       expect(await section.getByText("Other project session", { exact: true }).count()).toBe(1);
-      expect(await openclawProject.count()).toBe(1);
+      expect(await novaProject.count()).toBe(1);
       expect(
-        await openclawProject.locator(".sidebar-session-catalog-project__count").textContent(),
+        await novaProject.locator(".sidebar-session-catalog-project__count").textContent(),
       ).toBe("2");
       expect(
         await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key) ?? "[]"),
           collapsedSessionSectionsStorageKey,
         ),
-      ).toContain("catalog-project:codex:gateway:local:/Users/dev/openclaw");
+      ).toContain("catalog-project:codex:gateway:local:/Users/dev/nova");
 
-      await openclawProject.click();
-      await expect.poll(() => openclawProject.getAttribute("aria-expanded")).toBe("true");
+      await novaProject.click();
+      await expect.poll(() => novaProject.getAttribute("aria-expanded")).toBe("true");
       expect(await section.getByText("Local planning session", { exact: true }).count()).toBe(1);
       expect(await section.getByText("Worktree fix session", { exact: true }).count()).toBe(1);
       expect(
@@ -331,7 +329,7 @@ suite("Codex native session catalog", () => {
           (key) => JSON.parse(localStorage.getItem(key) ?? "[]"),
           collapsedSessionSectionsStorageKey,
         ),
-      ).not.toContain("catalog-project:codex:gateway:local:/Users/dev/openclaw");
+      ).not.toContain("catalog-project:codex:gateway:local:/Users/dev/nova");
 
       if (captureUiProofEnabled) {
         await mkdir(uiProofArtifactDir, { recursive: true });

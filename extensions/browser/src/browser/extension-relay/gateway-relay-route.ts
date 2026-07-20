@@ -16,7 +16,7 @@
  */
 import type { IncomingMessage } from "node:http";
 import type { Duplex } from "node:stream";
-import { safeEqualSecret } from "openclaw/plugin-sdk/security-runtime";
+import { safeEqualSecret } from "nova/plugin-sdk/security-runtime";
 import { WebSocketServer } from "ws";
 import {
   getBrowserControlState,

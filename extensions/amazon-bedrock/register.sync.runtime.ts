@@ -3,13 +3,13 @@
  * model discovery, thinking policy, guardrails, and embedding integration.
  */
 import type { BedrockClient } from "@aws-sdk/client-bedrock";
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolvePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolvePluginConfigObject } from "nova/plugin-sdk/plugin-config-runtime";
 import type {
-  OpenClawPluginApi,
+  NovaPluginApi,
   ProviderNormalizeResolvedModelContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-entry";
 import {
   buildProviderReplayFamilyHooks,
   normalizeProviderId,
@@ -17,8 +17,8 @@ import {
   resolveClaudeModelIdentity,
   resolveClaudeMythos5ModelIdentity,
   resolveClaudeSonnet5ModelIdentity,
-} from "openclaw/plugin-sdk/provider-model-shared";
-import { streamWithPayloadPatch } from "openclaw/plugin-sdk/provider-stream-shared";
+} from "nova/plugin-sdk/provider-model-shared";
+import { streamWithPayloadPatch } from "nova/plugin-sdk/provider-stream-shared";
 import { refreshAwsSharedConfigCacheForBedrock } from "./aws-credential-refresh.js";
 import { supportsBedrockPromptCaching } from "./bedrock-options.js";
 import { loadBedrockControlPlaneSdk, runBedrockControlPlaneRequest } from "./control-plane.js";
@@ -370,7 +370,7 @@ function patchMaxThinkingEffort(payload: Record<string, unknown>): void {
 }
 
 /** Register Amazon Bedrock provider, discovery catalog, stream wrappers, and embeddings. */
-export function registerAmazonBedrockPlugin(api: OpenClawPluginApi): void {
+export function registerAmazonBedrockPlugin(api: NovaPluginApi): void {
   // Keep registration-local constants inside the function so partial module
   // initialization during test bootstrap cannot trip TDZ reads.
   const providerId = "amazon-bedrock";
@@ -390,7 +390,7 @@ export function registerAmazonBedrockPlugin(api: OpenClawPluginApi): void {
   const startupPluginConfig = (api.pluginConfig ?? {}) as AmazonBedrockPluginConfig;
 
   function resolveCurrentPluginConfig(
-    config: OpenClawConfig | undefined,
+    config: NovaConfig | undefined,
   ): AmazonBedrockPluginConfig | undefined {
     const runtimePluginConfig = resolvePluginConfigObject(config, providerId);
     return (

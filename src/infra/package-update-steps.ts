@@ -78,8 +78,8 @@ type NpmBinShimBackup = {
 };
 
 const NPM_PACK_QUIET_FLAGS = ["--json", "--loglevel=error"] as const;
-const PACKAGE_INSTALL_GUARD_PATH = path.join("dist", "openclaw-install-guard");
-const PACKAGE_LIFECYCLE_PENDING_PATH = ".openclaw-lifecycle-pending";
+const PACKAGE_INSTALL_GUARD_PATH = path.join("dist", "nova-install-guard");
+const PACKAGE_LIFECYCLE_PENDING_PATH = ".nova-lifecycle-pending";
 const PACKAGE_PREINSTALL_SCRIPT_PATH = path.join(
   "scripts",
   "preinstall-package-manager-warning.mjs",
@@ -496,7 +496,7 @@ async function createStagedNpmInstall(
     return null;
   }
   await fs.mkdir(targetLayout.globalRoot, { recursive: true });
-  const prefix = await fs.mkdtemp(path.join(targetLayout.globalRoot, ".openclaw-update-stage-"));
+  const prefix = await fs.mkdtemp(path.join(targetLayout.globalRoot, ".nova-update-stage-"));
   const layout = resolveNpmGlobalPrefixLayoutFromPrefix(prefix);
   const command = installTarget.manager === "npm" ? installTarget.command : "npm";
   return {
@@ -549,7 +549,7 @@ async function prepareNpmGitSourceInstallSpec(params: {
     };
   }
 
-  const packDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-pack-"));
+  const packDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-update-pack-"));
   const packStep = await params.runStep({
     name: "global update pack",
     argv: [
@@ -676,7 +676,7 @@ async function replaceNpmBinShims(params: {
     return;
   }
 
-  const names = new Set([params.packageName, "openclaw"]);
+  const names = new Set([params.packageName, "nova"]);
   const shimEntries = entries.filter((entry) => {
     const parsed = path.parse(entry);
     return names.has(entry) || names.has(parsed.name);
@@ -686,9 +686,7 @@ async function replaceNpmBinShims(params: {
   }
 
   const backup: NpmBinShimBackup = {
-    backupDir: await fs.mkdtemp(
-      path.join(params.targetLayout.globalRoot, ".openclaw-shim-backup-"),
-    ),
+    backupDir: await fs.mkdtemp(path.join(params.targetLayout.globalRoot, ".nova-shim-backup-")),
     targetBinDir: params.targetLayout.binDir,
     entries: [],
   };
@@ -751,7 +749,7 @@ async function swapStagedNpmInstall(params: {
     };
   }
 
-  const backupRoot = path.join(targetLayout.globalRoot, `.openclaw-${process.pid}-${Date.now()}`);
+  const backupRoot = path.join(targetLayout.globalRoot, `.nova-${process.pid}-${Date.now()}`);
   let movedExisting = false;
   let movedStaged = false;
   let removedBackup = true;

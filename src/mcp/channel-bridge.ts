@@ -7,7 +7,7 @@ import {
   normalizeOptionalLowercaseString,
 } from "@nova/normalization-core/string-coerce";
 import type { EventFrame } from "../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { GatewayClient } from "../gateway/client.js";
 import { extractFirstTextBlock } from "../shared/chat-message-content.js";
 import { VERSION } from "../version.js";
@@ -59,7 +59,7 @@ const PENDING_APPROVAL_DEFAULT_TTL_MS = 30 * 60 * 1_000;
 const PENDING_SWEEP_INTERVAL_MS = 5 * 60 * 1_000;
 
 /** Connects the MCP server surface to a Gateway client and queues channel events for polling. */
-export class OpenClawChannelBridge {
+export class NovaChannelBridge {
   private gateway: GatewayClient | null = null;
   private readonly verbose: boolean;
   private readonly claudeChannelMode: ClaudeChannelMode;
@@ -80,7 +80,7 @@ export class OpenClawChannelBridge {
   private readySettled = false;
 
   constructor(
-    private readonly cfg: OpenClawConfig,
+    private readonly cfg: NovaConfig,
     private readonly params: {
       gatewayUrl?: string;
       gatewayToken?: string;
@@ -373,7 +373,7 @@ export class OpenClawChannelBridge {
       inputPreview: params.inputPreview,
     });
     if (this.verbose) {
-      process.stderr.write(`openclaw mcp: pending Claude permission ${params.requestId}\n`);
+      process.stderr.write(`nova mcp: pending Claude permission ${params.requestId}\n`);
     }
   }
 
@@ -399,10 +399,10 @@ export class OpenClawChannelBridge {
       }
       // Always surface a single low-noise record so swallowed delivery failures
       // remain observable; the spammy error detail stays behind --verbose.
-      process.stderr.write(`openclaw mcp: notification ${notification.method} failed\n`);
+      process.stderr.write(`nova mcp: notification ${notification.method} failed\n`);
       if (this.verbose) {
         process.stderr.write(
-          `openclaw mcp: notification ${notification.method} error: ${String(error)}\n`,
+          `nova mcp: notification ${notification.method} error: ${String(error)}\n`,
         );
       }
     }
@@ -528,11 +528,9 @@ export class OpenClawChannelBridge {
     } catch (error) {
       // Always surface a single low-noise record so swallowed gateway event
       // failures remain observable; the spammy error detail stays behind --verbose.
-      process.stderr.write(`openclaw mcp: gateway event ${event.event} failed\n`);
+      process.stderr.write(`nova mcp: gateway event ${event.event} failed\n`);
       if (this.verbose) {
-        process.stderr.write(
-          `openclaw mcp: gateway event ${event.event} error: ${String(error)}\n`,
-        );
+        process.stderr.write(`nova mcp: gateway event ${event.event} error: ${String(error)}\n`);
       }
     }
   }

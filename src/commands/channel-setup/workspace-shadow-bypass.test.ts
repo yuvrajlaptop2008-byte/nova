@@ -53,7 +53,7 @@ vi.mock("../../config/plugin-auto-enable.js", () => ({
   applyPluginAutoEnable: (a: unknown) => applyPluginAutoEnable(a as { config: unknown }),
 }));
 vi.mock("../../plugins/loader.js", () => ({
-  loadOpenClawPlugins: vi.fn(),
+  loadNovaPlugins: vi.fn(),
 }));
 
 import { resolveChannelSetupEntries } from "./discovery.js";
@@ -111,9 +111,9 @@ function createManifestChannelPlugin(id: string, channels: string[]): PluginMani
     skills: [],
     hooks: [],
     origin: "workspace",
-    rootDir: `/tmp/openclaw-test/${id}`,
-    source: `/tmp/openclaw-test/${id}/index.ts`,
-    manifestPath: `/tmp/openclaw-test/${id}/openclaw.plugin.json`,
+    rootDir: `/tmp/nova-test/${id}`,
+    source: `/tmp/nova-test/${id}/index.ts`,
+    manifestPath: `/tmp/nova-test/${id}/nova.plugin.json`,
   };
 }
 

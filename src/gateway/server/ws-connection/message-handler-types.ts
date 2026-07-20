@@ -5,7 +5,7 @@ import type {
   RequestFrame,
   errorShape,
 } from "../../../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import type { DeviceAuthToken } from "../../../infra/device-pairing.types.js";
 import type { createSubsystemLogger } from "../../../logging/subsystem.js";
 import type { DeviceBootstrapProfile } from "../../../shared/device-bootstrap-profile.js";
@@ -80,7 +80,7 @@ export type GatewayConnectPhaseContext = {
   handler: GatewayWsMessageHandlerParams;
   frame: RequestFrame;
   connectParams: ConnectParams;
-  configSnapshot: OpenClawConfig;
+  configSnapshot: NovaConfig;
   trustedProxies: string[];
   allowRealIpFallback: boolean;
   peerLabel: string;

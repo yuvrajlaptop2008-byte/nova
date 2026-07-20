@@ -1,6 +1,6 @@
 // Imported by dispatch-from-config.test.ts to keep its mocked suite in one Vitest module graph.
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { MsgContext } from "../templating.js";
 import type { GetReplyOptions, ReplyPayload } from "../types.js";
 import {
@@ -54,7 +54,7 @@ describe("dispatchReplyFromConfig", () => {
           rules: [{ action: "deny", match: { channel: "telegram" } }],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "exec-event",
@@ -293,11 +293,8 @@ describe("dispatchReplyFromConfig", () => {
       OriginatingTo: "imessage:+15550001111",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      _opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => ({ text: "hi" }) satisfies ReplyPayload;
+    const replyResolver = async (_ctx: MsgContext, _opts?: GetReplyOptions, _cfg?: NovaConfig) =>
+      ({ text: "hi" }) satisfies ReplyPayload;
     await dispatchReplyFromConfig({ ctx, cfg, dispatcher, replyResolver });
 
     expect(mocks.routeReply).not.toHaveBeenCalled();
@@ -318,11 +315,8 @@ describe("dispatchReplyFromConfig", () => {
       ExplicitDeliverRoute: true,
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      _opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => ({ text: "hi" }) satisfies ReplyPayload;
+    const replyResolver = async (_ctx: MsgContext, _opts?: GetReplyOptions, _cfg?: NovaConfig) =>
+      ({ text: "hi" }) satisfies ReplyPayload;
     await dispatchReplyFromConfig({ ctx, cfg, dispatcher, replyResolver });
 
     expect(dispatcher.sendFinalReply).not.toHaveBeenCalled();
@@ -348,11 +342,7 @@ describe("dispatchReplyFromConfig", () => {
       OriginatingTo: "telegram:999",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({
         text: "NO_REPLY",
@@ -381,18 +371,14 @@ describe("dispatchReplyFromConfig", () => {
     const cfg = {
       ...emptyConfig,
       agents: { defaults: { verboseDefault: "on" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "telegram",
       ChatType: "direct",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({ text: "tool output" });
       return { text: "hi" } satisfies ReplyPayload;
@@ -411,11 +397,7 @@ describe("dispatchReplyFromConfig", () => {
     } satisfies ReplyPayload;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({ Provider: "telegram", ChatType: "direct" });
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await requireToolResultHandler(opts?.onToolResult)(payload);
       return undefined;
     };
@@ -440,11 +422,7 @@ describe("dispatchReplyFromConfig", () => {
     } satisfies ReplyPayload;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({ Provider: "telegram", ChatType: "direct" });
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await requireToolResultHandler(opts?.onToolResult)(payload);
       return undefined;
     };
@@ -467,11 +445,7 @@ describe("dispatchReplyFromConfig", () => {
       ChatType: "direct",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({ text: "tool output" });
       return { text: "done" } satisfies ReplyPayload;
@@ -498,11 +472,7 @@ describe("dispatchReplyFromConfig", () => {
     });
     let lateToolResult: NonNullable<GetReplyOptions["onToolResult"]> | undefined;
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       lateToolResult = requireToolResultHandler(opts?.onToolResult);
       return { text: "done" } satisfies ReplyPayload;
     };
@@ -523,11 +493,7 @@ describe("dispatchReplyFromConfig", () => {
       ChatType: "group",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({ text: "🔧 exec: ls" });
       await onToolResult({
@@ -564,11 +530,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:123@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({ text: "🔧 exec: ls" });
       return { text: "hi" } satisfies ReplyPayload;
@@ -595,11 +557,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:123@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({ text: "🔧 exec: ls" });
       return { text: "hi" } satisfies ReplyPayload;
@@ -621,7 +579,7 @@ describe("dispatchReplyFromConfig", () => {
           verboseDefault: "on",
         },
       },
-    } as const satisfies OpenClawConfig;
+    } as const satisfies NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "matrix",
@@ -630,11 +588,7 @@ describe("dispatchReplyFromConfig", () => {
       From: "matrix:group:!room:example.org",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({ text: "🔧 exec: pwd" });
       return { text: "hi" } satisfies ReplyPayload;
@@ -659,7 +613,7 @@ describe("dispatchReplyFromConfig", () => {
           verboseDefault: "on",
         },
       },
-    } as const satisfies OpenClawConfig;
+    } as const satisfies NovaConfig;
     const dispatcher = createDispatcher();
     const ctx = buildTestCtx({
       Provider: "whatsapp",
@@ -669,11 +623,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:456@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       await onToolResult({ text: "🔧 exec: date" });
       return { text: "hi" } satisfies ReplyPayload;
@@ -706,11 +656,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:789@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       sessionStoreMocks.currentEntry = {
         verboseLevel: "on",
@@ -748,11 +694,7 @@ describe("dispatchReplyFromConfig", () => {
     });
     let receivedOptions: GetReplyOptions | undefined;
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       receivedOptions = opts;
       const onToolResult = requireToolResultHandler(opts?.onToolResult);
       sessionStoreMocks.currentEntry = {
@@ -800,11 +742,7 @@ describe("dispatchReplyFromConfig", () => {
     const onCompactionEnd = vi.fn();
     const onToolResult = vi.fn();
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onToolStart?.({ name: "exec", phase: "start" });
       await opts?.onItemEvent?.({ itemId: "1", kind: "tool", progressText: "running exec" });
       await opts?.onPlanUpdate?.({
@@ -884,11 +822,7 @@ describe("dispatchReplyFromConfig", () => {
     const onCompactionStart = vi.fn();
     const onCompactionEnd = vi.fn();
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onToolStart?.({ name: "exec", phase: "start" });
       await opts?.onItemEvent?.({ itemId: "1", kind: "tool", progressText: "running exec" });
       await opts?.onCommandOutput?.({ phase: "end", name: "exec", status: "ok", exitCode: 0 });
@@ -934,11 +868,7 @@ describe("dispatchReplyFromConfig", () => {
     const onCompactionStart = vi.fn();
     const onCompactionEnd = vi.fn();
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onCompactionStart?.();
       await opts?.onCompactionEnd?.();
       return { text: "done" } satisfies ReplyPayload;
@@ -976,11 +906,7 @@ describe("dispatchReplyFromConfig", () => {
     });
 
     let commentaryEnabled: boolean | undefined;
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       commentaryEnabled = opts?.commentaryProgressEnabled;
       await opts?.onItemEvent?.({
         itemId: "c1",
@@ -1061,11 +987,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:123@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onItemEvent?.({
         itemId: "c1",
         kind: "preamble",
@@ -1103,11 +1025,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:123@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onItemEvent?.({ itemId: "c1", kind: "preamble", progressText: "drafting" });
       await opts?.onItemEvent?.({
         itemId: "c1",
@@ -1141,11 +1059,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:123@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onItemEvent?.({ itemId: "c1", kind: "preamble", progressText: "first block" });
       await opts?.onItemEvent?.({ itemId: "c2", kind: "preamble", progressText: "second block" });
       return { text: "done" } satisfies ReplyPayload;
@@ -1178,11 +1092,7 @@ describe("dispatchReplyFromConfig", () => {
       SessionKey: "agent:main:whatsapp:group:123@g.us",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       await opts?.onItemEvent?.({ itemId: "c1", kind: "preamble", progressText: "scratch that" });
       await opts?.onItemEvent?.({ itemId: "c1", kind: "preamble", progressText: "" });
       return { text: "done" } satisfies ReplyPayload;
@@ -1211,11 +1121,7 @@ describe("dispatchReplyFromConfig", () => {
     const onItemEvent = vi.fn();
 
     let commentaryEnabled: boolean | undefined = false;
-    const replyResolver = async (
-      _ctx: MsgContext,
-      opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => {
+    const replyResolver = async (_ctx: MsgContext, opts?: GetReplyOptions, _cfg?: NovaConfig) => {
       commentaryEnabled = opts?.commentaryProgressEnabled;
       await opts?.onItemEvent?.({
         itemId: "c1",

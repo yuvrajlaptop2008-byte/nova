@@ -8,7 +8,7 @@ import {
 } from "./bundled-plugin-build-entries.mjs";
 import { parsePositiveInt } from "./numeric-options.mjs";
 
-const MANIFEST_NAMES = ["openclaw.plugin.json", "openclaw.plugin.json5"];
+const MANIFEST_NAMES = ["nova.plugin.json", "nova.plugin.json5"];
 const ANSI_PATTERN = new RegExp(String.raw`\u001B\[[0-9;]*m`, "gu");
 const QA_SUMMARY_MAX_BYTES_ENV = "NOVA_PLUGIN_GATEWAY_GAUNTLET_QA_SUMMARY_MAX_BYTES";
 const DEFAULT_QA_SUMMARY_MAX_BYTES = 2 * 1024 * 1024;

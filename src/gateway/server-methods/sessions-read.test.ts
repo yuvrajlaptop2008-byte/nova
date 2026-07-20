@@ -4,11 +4,11 @@ import { afterEach, beforeEach, expect, test } from "vitest";
 import { replaceSessionEntry } from "../../config/sessions/session-accessor.js";
 import { resolveSqliteTargetFromSessionStorePath } from "../../config/sessions/session-sqlite-target.js";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  listOpenClawRegisteredAgentDatabases,
-  resolveOpenClawAgentSqlitePath,
-} from "../../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+  closeNovaAgentDatabasesForTest,
+  listNovaRegisteredAgentDatabases,
+  resolveNovaAgentSqlitePath,
+} from "../../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import { testState } from "../test-helpers.js";
 import {
   getGatewayConfigModule,
@@ -35,8 +35,8 @@ function requireStateDir(): string {
 function expectAgentStoreAbsent(agentId: string): void {
   const env = { NOVA_STATE_DIR: requireStateDir() };
   expect(fs.existsSync(path.join(env.NOVA_STATE_DIR, "agents", agentId))).toBe(false);
-  expect(fs.existsSync(resolveOpenClawAgentSqlitePath({ agentId, env }))).toBe(false);
-  expect(listOpenClawRegisteredAgentDatabases({ env }).map((entry) => entry.agentId)).not.toContain(
+  expect(fs.existsSync(resolveNovaAgentSqlitePath({ agentId, env }))).toBe(false);
+  expect(listNovaRegisteredAgentDatabases({ env }).map((entry) => entry.agentId)).not.toContain(
     agentId,
   );
 }
@@ -78,8 +78,8 @@ beforeEach(async () => {
 afterEach(() => {
   testState.sessionStorePath = undefined;
   testState.sessionConfig = undefined;
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 async function configureFixedSessionStore(label = "default"): Promise<string> {
@@ -138,7 +138,7 @@ test("sessions.describe reads a pre-existing store after its agent is removed fr
     { sessionId: "session-ghost", updatedAt: 42 },
   );
   await setAgentsConfig({ list: [{ id: "main", default: true }] });
-  const registeredBefore = listOpenClawRegisteredAgentDatabases({
+  const registeredBefore = listNovaRegisteredAgentDatabases({
     env: { NOVA_STATE_DIR: requireStateDir() },
   });
 
@@ -153,7 +153,7 @@ test("sessions.describe reads a pre-existing store after its agent is removed fr
   });
   expect(await listAgentIdsViaRpc()).toEqual(["main"]);
   expect(
-    listOpenClawRegisteredAgentDatabases({
+    listNovaRegisteredAgentDatabases({
       env: { NOVA_STATE_DIR: requireStateDir() },
     }),
   ).toEqual(registeredBefore);
@@ -322,7 +322,7 @@ test("session reads still open stores for the default and configured agents", as
     expect(result).toMatchObject({ ok: true, payload: { session: null } });
     expect(
       fs.existsSync(
-        resolveOpenClawAgentSqlitePath({
+        resolveNovaAgentSqlitePath({
           agentId,
           env: { NOVA_STATE_DIR: requireStateDir() },
         }),
@@ -331,7 +331,7 @@ test("session reads still open stores for the default and configured agents", as
   }
 
   expect(
-    listOpenClawRegisteredAgentDatabases({
+    listNovaRegisteredAgentDatabases({
       env: { NOVA_STATE_DIR: requireStateDir() },
     }).map((entry) => entry.agentId),
   ).toEqual(expect.arrayContaining(["main", "work"]));

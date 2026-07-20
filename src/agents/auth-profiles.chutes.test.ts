@@ -4,7 +4,7 @@
  * while preserving the shared auth-profile store contracts.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import type { AuthProfileStore } from "./auth-profiles.js";
 
 const CHUTES_TOKEN_ENDPOINT = "https://api.chutes.ai/idp/token";
@@ -49,10 +49,10 @@ describe("auth-profiles (chutes)", () => {
   });
 
   it("refreshes expired Chutes OAuth credentials", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-chutes-",
+        prefix: "nova-chutes-",
         agentEnv: "main",
         env: {
           CHUTES_CLIENT_ID: undefined,

@@ -4,7 +4,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   parseBrowserMajorVersion,
   readBrowserVersion,
@@ -14,7 +14,7 @@ import {
 import { DEFAULT_NOVA_BROWSER_PROFILE_NAME, resolveBrowserConfig } from "./browser/config.js";
 import { listSystemProfiles } from "./browser/system-profiles.js";
 import { movePathToTrash } from "./browser/trash.js";
-import type { OpenClawConfig } from "./config/config.js";
+import type { NovaConfig } from "./config/config.js";
 import { asRecord } from "./record-shared.js";
 import { formatCliCommand, note } from "./sdk-setup-tools.js";
 import { CONFIG_DIR, resolveUserPath } from "./utils.js";
@@ -49,7 +49,7 @@ type BrowserDoctorFilesystemDeps = {
   movePathToTrash?: (targetPath: string) => Promise<string>;
 };
 
-function collectChromeMcpProfiles(cfg: OpenClawConfig): ExistingSessionProfile[] {
+function collectChromeMcpProfiles(cfg: NovaConfig): ExistingSessionProfile[] {
   const browser = asRecord(cfg.browser);
   if (!browser) {
     return [];
@@ -80,7 +80,7 @@ function collectChromeMcpProfiles(cfg: OpenClawConfig): ExistingSessionProfile[]
   return [...profiles.values()].toSorted((a, b) => a.name.localeCompare(b.name));
 }
 
-function collectManagedProfiles(cfg: OpenClawConfig): ManagedProfile[] {
+function collectManagedProfiles(cfg: NovaConfig): ManagedProfile[] {
   const browser = asRecord(cfg.browser);
   if (!browser) {
     return [];
@@ -99,7 +99,7 @@ function collectManagedProfiles(cfg: OpenClawConfig): ManagedProfile[] {
 
   for (const [profileName, rawProfile] of Object.entries(configuredProfiles)) {
     const profile = asRecord(rawProfile);
-    const driver = normalizeOptionalString(profile?.driver) ?? "openclaw";
+    const driver = normalizeOptionalString(profile?.driver) ?? "nova";
     if (driver !== "existing-session") {
       profiles.set(profileName, { name: profileName });
     }
@@ -126,7 +126,7 @@ function isSameOrChildPath(candidatePath: string, parentPath: string): boolean {
   return candidate === parent || candidate.startsWith(`${parent}${path.sep}`);
 }
 
-function isLegacyClawdProfileConfigured(cfg: OpenClawConfig, legacyProfileDir: string): boolean {
+function isLegacyClawdProfileConfigured(cfg: NovaConfig, legacyProfileDir: string): boolean {
   const browser = asRecord(cfg.browser);
   if (!browser) {
     return false;
@@ -155,7 +155,7 @@ function isLegacyClawdProfileConfigured(cfg: OpenClawConfig, legacyProfileDir: s
 
 /** Detects unmanaged legacy clawd browser profile residue on disk. */
 export function detectLegacyClawdBrowserProfileResidue(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: BrowserDoctorFilesystemDeps,
 ): LegacyClawdBrowserProfileResidue | null {
   const configDir = deps?.configDir ?? CONFIG_DIR;
@@ -201,13 +201,13 @@ function formatLegacyClawdBrowserProfileResidueNote(
   return [
     `- Legacy managed browser profile residue was found at ${residue.legacyProfileDir}.`,
     `- The canonical Nova-managed browser profile is ${residue.canonicalUserDataDir}.`,
-    `- If no browser is using the legacy profile, run ${formatCliCommand("openclaw doctor --fix")} to archive it safely instead of deleting it in place.`,
+    `- If no browser is using the legacy profile, run ${formatCliCommand("nova doctor --fix")} to archive it safely instead of deleting it in place.`,
   ].join("\n");
 }
 
 /** Emits Browser doctor notes for Chrome MCP, managed Chrome, and legacy residue readiness. */
 export async function noteChromeMcpBrowserReadiness(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: {
     platform?: NodeJS.Platform;
     noteFn?: typeof note;
@@ -378,7 +378,7 @@ export async function noteChromeMcpBrowserReadiness(
 
 /** Archives legacy clawd browser profile residue when doctor --fix is requested. */
 export async function maybeArchiveLegacyClawdBrowserProfileResidue(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   deps?: BrowserDoctorFilesystemDeps,
 ): Promise<{ changes: string[]; warnings: string[] }> {
   const residue = detectLegacyClawdBrowserProfileResidue(cfg, deps);

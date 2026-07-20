@@ -1,5 +1,5 @@
 // Msteams plugin module implements message handler behavior.
-import { formatAllowlistMatchMeta } from "openclaw/plugin-sdk/allow-from";
+import { formatAllowlistMatchMeta } from "nova/plugin-sdk/allow-from";
 import {
   buildChannelInboundEventContext,
   createChannelInboundEnvelopeBuilder,
@@ -8,22 +8,22 @@ import {
   resolveInboundMentionDecision,
   resolveInboundSupplementalSenderAllowed,
   toInboundMediaFacts,
-} from "openclaw/plugin-sdk/channel-inbound";
+} from "nova/plugin-sdk/channel-inbound";
 import {
   hasFinalInboundReplyDispatch,
   resolveInboundReplyDispatchCounts,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { bindIngressLifecycleToReplyOptions } from "openclaw/plugin-sdk/channel-outbound";
+} from "nova/plugin-sdk/channel-inbound";
+import { bindIngressLifecycleToReplyOptions } from "nova/plugin-sdk/channel-outbound";
 import {
   filterSupplementalContextItems,
   resolveChannelContextVisibilityMode,
-} from "openclaw/plugin-sdk/context-visibility-runtime";
+} from "nova/plugin-sdk/context-visibility-runtime";
 import {
   DEFAULT_GROUP_HISTORY_LIMIT,
   createChannelHistoryWindow,
   type HistoryEntry,
-} from "openclaw/plugin-sdk/reply-history";
-import { sliceUtf16Safe, truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/reply-history";
+import { sliceUtf16Safe, truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { serializeMSTeamsAdaptiveCardActionValue } from "../adaptive-card-submit.js";
 import {
   resolveMSTeamsAdvertisedMedia,

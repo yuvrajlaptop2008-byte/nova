@@ -35,7 +35,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("does not require unrelated fixture cases for a narrowed preset", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-budget-test-"));
     try {
       const baselinePath = path.join(tmpDir, "baseline.json");
       const reportPath = path.join(tmpDir, "current.json");
@@ -105,7 +105,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("rejects narrowed preset reports with no matching current cases", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-empty-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-budget-empty-test-"));
     try {
       const baselinePath = path.join(tmpDir, "baseline.json");
       const reportPath = path.join(tmpDir, "current.json");
@@ -154,7 +154,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("rejects narrowed preset reports with unrelated current cases when baseline checks run", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-overlap-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-budget-overlap-test-"));
     try {
       const baselinePath = path.join(tmpDir, "baseline.json");
       const reportPath = path.join(tmpDir, "current.json");
@@ -209,7 +209,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("allows skip-baseline reports without fixture case overlap", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-skip-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-budget-skip-test-"));
     try {
       const baselinePath = path.join(tmpDir, "baseline.json");
       const reportPath = path.join(tmpDir, "current.json");
@@ -256,7 +256,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("skips x64 startup budgets on noncanonical architectures", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-arch-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-budget-arch-test-"));
     try {
       const archShimPath = path.join(tmpDir, "arch-shim.mjs");
       const baselinePath = path.join(tmpDir, "baseline.json");
@@ -368,7 +368,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("fails reused reports with timed-out samples", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-timeout-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-budget-timeout-test-"));
     try {
       const baselinePath = path.join(tmpDir, "baseline.json");
       const reportPath = path.join(tmpDir, "current.json");
@@ -422,7 +422,7 @@ describe("CLI startup benchmark script spawners", () => {
   });
 
   it("fails reused reports with missing RSS samples", () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bench-budget-rss-test-"));
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-bench-budget-rss-test-"));
     try {
       const baselinePath = path.join(tmpDir, "baseline.json");
       const reportPath = path.join(tmpDir, "current.json");

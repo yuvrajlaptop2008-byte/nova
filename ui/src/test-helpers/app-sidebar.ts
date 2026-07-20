@@ -291,9 +291,7 @@ export async function mountSidebar(
 ) {
   const context = createContext(gateway, sessions, agentsList, approvalQueue);
   const provider = createApplicationContextProvider(context);
-  const sidebar = document.createElement(
-    "openclaw-app-sidebar",
-  ) as unknown as SidebarLifecycleState;
+  const sidebar = document.createElement("nova-app-sidebar") as unknown as SidebarLifecycleState;
   sidebar.variant = variant;
   provider.append(sidebar);
   document.body.append(provider);
@@ -380,7 +378,7 @@ export function setupSidebarTest() {
     });
     // The Coding zone defaults to collapsed on first run; most cases assert its
     // contents, so start expanded. Collapse-specific tests override this value.
-    localStorage.setItem("openclaw:sidebar:sessions:collapsed-sections", JSON.stringify([]));
+    localStorage.setItem("nova:sidebar:sessions:collapsed-sections", JSON.stringify([]));
   });
 
   afterEach(() => {

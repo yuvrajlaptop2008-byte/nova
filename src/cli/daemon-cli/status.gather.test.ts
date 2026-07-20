@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { StaleOpenClawUpdateLaunchdJob } from "../../daemon/launchd.js";
+import type { StaleNovaUpdateLaunchdJob } from "../../daemon/launchd.js";
 import { createMockGatewayService } from "../../daemon/service.test-helpers.js";
 import type { PortListener, PortUsageStatus } from "../../infra/ports.js";
 import type { GatewayRestartHandoff } from "../../infra/restart-handoff.js";
@@ -37,8 +37,8 @@ const loadGatewayTlsRuntime = vi.fn(async (_cfg?: unknown) => ({
   fingerprintSha256: "sha256:11:22:33:44",
 }));
 const findExtraGatewayServices = vi.fn(async (_env?: unknown, _opts?: unknown) => []);
-const findStaleOpenClawUpdateLaunchdJobs = vi.fn<
-  (env?: NodeJS.ProcessEnv) => Promise<StaleOpenClawUpdateLaunchdJob[]>
+const findStaleNovaUpdateLaunchdJobs = vi.fn<
+  (env?: NodeJS.ProcessEnv) => Promise<StaleNovaUpdateLaunchdJob[]>
 >(async () => []);
 type PortUsageTestSummary = {
   port: number;
@@ -102,8 +102,8 @@ const serviceReadCommand = vi.fn<
 >(async (_env?: NodeJS.ProcessEnv) => ({
   programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
   environment: {
-    NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-    NOVA_CONFIG_PATH: "/tmp/openclaw-daemon/openclaw.json",
+    NOVA_STATE_DIR: "/tmp/nova-daemon",
+    NOVA_CONFIG_PATH: "/tmp/nova-daemon/nova.json",
   },
 }));
 const resolveGatewayBindHost = vi.fn(
@@ -115,11 +115,9 @@ const resolveAdvertisedControlUiLinks = vi.fn(async (_opts?: unknown) => ({
 }));
 const pickPrimaryTailnetIPv4 = vi.fn(() => "100.64.0.9");
 const resolveGatewayPort = vi.fn((_cfg?: unknown, _env?: unknown) => 18789);
-const resolveStateDir = vi.fn(
-  (env: NodeJS.ProcessEnv) => env.NOVA_STATE_DIR ?? "/tmp/openclaw-cli",
-);
+const resolveStateDir = vi.fn((env: NodeJS.ProcessEnv) => env.NOVA_STATE_DIR ?? "/tmp/nova-cli");
 const resolveConfigPath = vi.fn((env: NodeJS.ProcessEnv, stateDir: string) => {
-  return env.NOVA_CONFIG_PATH ?? `${stateDir}/openclaw.json`;
+  return env.NOVA_CONFIG_PATH ?? `${stateDir}/nova.json`;
 });
 const createConfigIOCalls = vi.fn((configPath: string, pluginValidation?: "full" | "skip") => ({
   configPath,
@@ -150,7 +148,7 @@ vi.mock("../../config/config.js", () => ({
     configPath: string;
     pluginValidation?: "full" | "skip";
   }) => {
-    const isDaemon = configPath.includes("/openclaw-daemon/");
+    const isDaemon = configPath.includes("/nova-daemon/");
     const runtimeConfig = isDaemon ? daemonLoadedConfig : cliLoadedConfig;
     const warnings = isDaemon ? daemonConfigWarnings : cliConfigWarnings;
     createConfigIOCalls(configPath, pluginValidation);
@@ -190,8 +188,7 @@ vi.mock("../../daemon/inspect.js", () => ({
 }));
 
 vi.mock("../../daemon/launchd.js", () => ({
-  findStaleOpenClawUpdateLaunchdJobs: (env?: NodeJS.ProcessEnv) =>
-    findStaleOpenClawUpdateLaunchdJobs(env),
+  findStaleNovaUpdateLaunchdJobs: (env?: NodeJS.ProcessEnv) => findStaleNovaUpdateLaunchdJobs(env),
 }));
 
 vi.mock("../../daemon/service-audit.js", () => ({
@@ -287,8 +284,8 @@ describe("gatherDaemonStatus", () => {
       "DAEMON_GATEWAY_TOKEN",
       "DAEMON_GATEWAY_PASSWORD",
     ]);
-    setTestEnvValue("NOVA_STATE_DIR", "/tmp/openclaw-cli");
-    setTestEnvValue("NOVA_CONFIG_PATH", "/tmp/openclaw-cli/openclaw.json");
+    setTestEnvValue("NOVA_STATE_DIR", "/tmp/nova-cli");
+    setTestEnvValue("NOVA_CONFIG_PATH", "/tmp/nova-cli/nova.json");
     deleteTestEnvValue("NOVA_GATEWAY_TOKEN");
     deleteTestEnvValue("NOVA_GATEWAY_PASSWORD");
     deleteTestEnvValue("DAEMON_GATEWAY_TOKEN");
@@ -301,8 +298,8 @@ describe("gatherDaemonStatus", () => {
     });
     resolveGatewayProbeAuthSafeWithSecretInputsCalls.mockClear();
     createConfigIOCalls.mockClear();
-    findStaleOpenClawUpdateLaunchdJobs.mockReset();
-    findStaleOpenClawUpdateLaunchdJobs.mockResolvedValue([]);
+    findStaleNovaUpdateLaunchdJobs.mockReset();
+    findStaleNovaUpdateLaunchdJobs.mockResolvedValue([]);
     loadInstalledPluginIndexInstallRecords.mockClear();
     loadInstalledPluginIndexInstallRecords.mockResolvedValue({});
     loadGatewayTlsRuntime.mockClear();
@@ -386,8 +383,8 @@ describe("gatherDaemonStatus", () => {
     serviceReadCommand.mockResolvedValueOnce({
       programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
       environment: {
-        NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-        NOVA_CONFIG_PATH: "/tmp/openclaw-daemon/openclaw.json",
+        NOVA_STATE_DIR: "/tmp/nova-daemon",
+        NOVA_CONFIG_PATH: "/tmp/nova-daemon/nova.json",
         NODE_OPTIONS: "--max-old-space-size=6144",
       },
     });
@@ -458,7 +455,7 @@ describe("gatherDaemonStatus", () => {
       configPath?: string;
     };
     expect(probeInput.requireRpc).toBe(true);
-    expect(probeInput.configPath).toBe("/tmp/openclaw-daemon/openclaw.json");
+    expect(probeInput.configPath).toBe("/tmp/nova-daemon/nova.json");
   });
 
   it("reuses the shared CLI config snapshot when the daemon uses the same config path", async () => {
@@ -473,7 +470,7 @@ describe("gatherDaemonStatus", () => {
     });
 
     expect(readConfigFileSnapshotCalls).toHaveBeenCalledTimes(1);
-    expect(readConfigFileSnapshotCalls).toHaveBeenCalledWith("/tmp/openclaw-cli/openclaw.json");
+    expect(readConfigFileSnapshotCalls).toHaveBeenCalledWith("/tmp/nova-cli/nova.json");
     expect(loadConfigCalls).not.toHaveBeenCalled();
   });
 
@@ -548,8 +545,8 @@ describe("gatherDaemonStatus", () => {
       programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
       environment: {
         NOVA_GATEWAY_PORT: "19001",
-        NOVA_CONFIG_PATH: "/tmp/openclaw-daemon/openclaw.json",
-        NOVA_STATE_DIR: "/tmp/openclaw-daemon",
+        NOVA_CONFIG_PATH: "/tmp/nova-daemon/nova.json",
+        NOVA_STATE_DIR: "/tmp/nova-daemon",
       } as Record<string, string>,
     });
     serviceReadRuntime.mockImplementationOnce(async (env?: NodeJS.ProcessEnv) => ({
@@ -614,8 +611,8 @@ describe("gatherDaemonStatus", () => {
     });
 
     const handoffInput = callArg(readGatewayRestartHandoffSync) as NodeJS.ProcessEnv;
-    expect(handoffInput.NOVA_STATE_DIR).toBe("/tmp/openclaw-daemon");
-    expect(handoffInput.NOVA_CONFIG_PATH).toBe("/tmp/openclaw-daemon/openclaw.json");
+    expect(handoffInput.NOVA_STATE_DIR).toBe("/tmp/nova-daemon");
+    expect(handoffInput.NOVA_CONFIG_PATH).toBe("/tmp/nova-daemon/nova.json");
     expect(status.service.restartHandoff?.reason).toBe("plugin source changed");
     expect(status.service.restartHandoff?.restartKind).toBe("full-process");
     expect(status.service.restartHandoff?.supervisorMode).toBe("launchd");
@@ -627,18 +624,18 @@ describe("gatherDaemonStatus", () => {
       serviceReadCommand.mockResolvedValueOnce({
         programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
         environment: {
-          NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-          NOVA_CONFIG_PATH: "/tmp/openclaw-daemon/openclaw.json",
-          NOVA_LAUNCHD_LABEL: "ai.openclaw.manual-update.gateway",
+          NOVA_STATE_DIR: "/tmp/nova-daemon",
+          NOVA_CONFIG_PATH: "/tmp/nova-daemon/nova.json",
+          NOVA_LAUNCHD_LABEL: "ai.nova.manual-update.gateway",
         },
       });
-      findStaleOpenClawUpdateLaunchdJobs.mockResolvedValueOnce([
+      findStaleNovaUpdateLaunchdJobs.mockResolvedValueOnce([
         {
-          label: "ai.openclaw.update.2026.5.12",
+          label: "ai.nova.update.2026.5.12",
           lastExitStatus: 127,
         },
         {
-          label: "ai.openclaw.manual-update.1717168800",
+          label: "ai.nova.manual-update.1717168800",
           lastExitStatus: 0,
         },
       ]);
@@ -649,17 +646,17 @@ describe("gatherDaemonStatus", () => {
         deep: true,
       });
 
-      const staleScanEnv = findStaleOpenClawUpdateLaunchdJobs.mock.calls[0]?.[0];
-      expect(staleScanEnv?.NOVA_STATE_DIR).toBe("/tmp/openclaw-daemon");
-      expect(staleScanEnv?.NOVA_CONFIG_PATH).toBe("/tmp/openclaw-daemon/openclaw.json");
-      expect(staleScanEnv?.NOVA_LAUNCHD_LABEL).toBe("ai.openclaw.manual-update.gateway");
+      const staleScanEnv = findStaleNovaUpdateLaunchdJobs.mock.calls[0]?.[0];
+      expect(staleScanEnv?.NOVA_STATE_DIR).toBe("/tmp/nova-daemon");
+      expect(staleScanEnv?.NOVA_CONFIG_PATH).toBe("/tmp/nova-daemon/nova.json");
+      expect(staleScanEnv?.NOVA_LAUNCHD_LABEL).toBe("ai.nova.manual-update.gateway");
       expect(status.service.staleUpdateLaunchdJobs).toEqual([
         {
-          label: "ai.openclaw.update.2026.5.12",
+          label: "ai.nova.update.2026.5.12",
           lastExitStatus: 127,
         },
         {
-          label: "ai.openclaw.manual-update.1717168800",
+          label: "ai.nova.manual-update.1717168800",
           lastExitStatus: 0,
         },
       ]);
@@ -674,7 +671,7 @@ describe("gatherDaemonStatus", () => {
     });
 
     expect(readGatewayRestartHandoffSync).not.toHaveBeenCalled();
-    expect(findStaleOpenClawUpdateLaunchdJobs).not.toHaveBeenCalled();
+    expect(findStaleNovaUpdateLaunchdJobs).not.toHaveBeenCalled();
     expect(inspectPortConnections).not.toHaveBeenCalled();
   });
 
@@ -686,7 +683,7 @@ describe("gatherDaemonStatus", () => {
           pid: 4242,
           ppid: 1,
           command: "node",
-          commandLine: "node /tmp/newer-openclaw/dist/index.js logs --follow",
+          commandLine: "node /tmp/newer-nova/dist/index.js logs --follow",
           address: "TCP 127.0.0.1:50123->127.0.0.1:19001 (ESTABLISHED)",
           direction: "client",
         },
@@ -705,7 +702,7 @@ describe("gatherDaemonStatus", () => {
         pid: 4242,
         ppid: 1,
         command: "node",
-        commandLine: "node /tmp/newer-openclaw/dist/index.js logs --follow",
+        commandLine: "node /tmp/newer-nova/dist/index.js logs --follow",
         address: "TCP 127.0.0.1:50123->127.0.0.1:19001 (ESTABLISHED)",
         direction: "client",
       },
@@ -735,8 +732,8 @@ describe("gatherDaemonStatus", () => {
   });
 
   it("uses the fast config path for plain same-file status reads", async () => {
-    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-status-config-"));
-    const configPath = path.join(tmp, "openclaw.json");
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "nova-status-config-"));
+    const configPath = path.join(tmp, "nova.json");
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -779,8 +776,8 @@ describe("gatherDaemonStatus", () => {
   });
 
   it("uses full plugin-aware config validation for deep status", async () => {
-    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-status-config-"));
-    const configPath = path.join(tmp, "openclaw.json");
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "nova-status-config-"));
+    const configPath = path.join(tmp, "nova.json");
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -1128,7 +1125,7 @@ describe("gatherDaemonStatus", () => {
       portUsage: {
         port: 19001,
         status: "busy",
-        listeners: [{ pid: 9000, ppid: 8999, commandLine: "openclaw-gateway" }],
+        listeners: [{ pid: 9000, ppid: 8999, commandLine: "nova-gateway" }],
         hints: [],
       },
       healthy: false,
@@ -1152,7 +1149,7 @@ describe("gatherDaemonStatus", () => {
     inspectPortUsage.mockResolvedValueOnce({
       port: 19001,
       status: "busy",
-      listeners: [{ pid: 8000, ppid: 1, commandLine: "openclaw gateway" }],
+      listeners: [{ pid: 8000, ppid: 1, commandLine: "nova gateway" }],
       hints: [],
     });
     callGatewayStatusProbe.mockResolvedValueOnce({
@@ -1172,8 +1169,8 @@ describe("gatherDaemonStatus", () => {
 
     expect(readLastGatewayErrorLine).toHaveBeenCalledWith(
       expect.objectContaining({
-        NOVA_STATE_DIR: "/tmp/openclaw-daemon",
-        NOVA_CONFIG_PATH: "/tmp/openclaw-daemon/openclaw.json",
+        NOVA_STATE_DIR: "/tmp/nova-daemon",
+        NOVA_CONFIG_PATH: "/tmp/nova-daemon/nova.json",
       }),
       { requirePatternMatch: true },
     );
@@ -1188,7 +1185,7 @@ describe("gatherDaemonStatus", () => {
     inspectPortUsage.mockResolvedValueOnce({
       port: 19001,
       status: "busy",
-      listeners: [{ pid: 8000, ppid: 1, commandLine: "openclaw gateway" }],
+      listeners: [{ pid: 8000, ppid: 1, commandLine: "nova gateway" }],
       hints: [],
     });
     callGatewayStatusProbe.mockResolvedValueOnce({
@@ -1218,7 +1215,7 @@ describe("gatherDaemonStatus", () => {
     inspectPortUsage.mockResolvedValueOnce({
       port: 19001,
       status: "busy",
-      listeners: [{ pid: 8000, ppid: 1, commandLine: "openclaw gateway" }],
+      listeners: [{ pid: 8000, ppid: 1, commandLine: "nova gateway" }],
       hints: [],
     });
     callGatewayStatusProbe.mockResolvedValueOnce({
@@ -1297,13 +1294,13 @@ describe("gatherDaemonStatus", () => {
       deep: true,
     });
 
-    // The mock daemon service command sets NOVA_STATE_DIR=/tmp/openclaw-daemon,
-    // distinct from the CLI process NOVA_STATE_DIR=/tmp/openclaw-cli. Drift
+    // The mock daemon service command sets NOVA_STATE_DIR=/tmp/nova-daemon,
+    // distinct from the CLI process NOVA_STATE_DIR=/tmp/nova-cli. Drift
     // detection must inspect the daemon profile's install records.
     expect(loadInstalledPluginIndexInstallRecords).toHaveBeenCalledWith(
       expect.objectContaining({
         env: expect.objectContaining({
-          NOVA_STATE_DIR: "/tmp/openclaw-daemon",
+          NOVA_STATE_DIR: "/tmp/nova-daemon",
         }),
       }),
     );
@@ -1327,7 +1324,7 @@ describe("gatherDaemonStatus", () => {
     expect(loadInstalledPluginIndexInstallRecords).toHaveBeenCalledWith(
       expect.objectContaining({
         env: expect.objectContaining({
-          NOVA_STATE_DIR: "/tmp/openclaw-daemon",
+          NOVA_STATE_DIR: "/tmp/nova-daemon",
         }),
       }),
     );

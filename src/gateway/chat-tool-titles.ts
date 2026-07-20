@@ -25,15 +25,12 @@ import {
   prepareSimpleCompletionModelForAgent,
 } from "../agents/simple-completion-runtime.js";
 import { resolveUtilityModelRefForAgent } from "../agents/utility-model.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { logVerbose } from "../globals.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
 import { redactToolPayloadText } from "../logging/redact.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../state/openclaw-agent-db.generated.js";
-import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-} from "../state/openclaw-agent-db.js";
+import type { DB as NovaAgentKyselyDatabase } from "../state/nova-agent-db.generated.js";
+import { openNovaAgentDatabase, runNovaAgentWriteTransaction } from "../state/nova-agent-db.js";
 
 const TOOL_TITLE_CACHE_SCOPE = "tool-call-titles";
 const TOOL_TITLES_MAX_ITEMS = 24;
@@ -54,7 +51,7 @@ const TOOL_TITLES_SYSTEM_PROMPT = [
 
 type ToolTitleRequestItem = { id: string; name: string; input: string };
 
-type AgentCacheDatabase = Pick<OpenClawAgentKyselyDatabase, "cache_entries">;
+type AgentCacheDatabase = Pick<NovaAgentKyselyDatabase, "cache_entries">;
 
 function cacheKeyFor(item: ToolTitleRequestItem): string {
   return createHash("sha256").update(`${item.name}\0${item.input}`).digest("hex");
@@ -126,7 +123,7 @@ function readCachedTitles(agentId: string, keysByItemId: Map<string, string>): M
     return cached;
   }
   try {
-    const database = openOpenClawAgentDatabase({ agentId });
+    const database = openNovaAgentDatabase({ agentId });
     const kysely = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
     const keys = [...new Set(keysByItemId.values())];
     const rows = executeSqliteQuerySync(
@@ -168,7 +165,7 @@ function writeCachedTitles(agentId: string, entries: Map<string, string>): void 
     return;
   }
   try {
-    runOpenClawAgentWriteTransaction(
+    runNovaAgentWriteTransaction(
       (database) => {
         const kysely = getNodeSqliteKysely<AgentCacheDatabase>(database.db);
         const now = Date.now();
@@ -201,7 +198,7 @@ function writeCachedTitles(agentId: string, entries: Map<string, string>): void 
 }
 
 async function generateMissingTitles(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   modelRef: string;
   sessionAuthProfile?: string;
@@ -292,7 +289,7 @@ async function generateMissingTitles(params: {
 
 /** Resolve purpose titles for tool calls: cache first, one batched cheap-model call for misses. */
 export async function generateToolCallTitles(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   /** Provider of the session's effective model (honors per-session overrides). */
   sessionPrimaryProvider?: string;

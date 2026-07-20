@@ -30,7 +30,7 @@ function shortenOpaqueIdRuns(text: string): string {
   return text.replace(OPAQUE_ID_RUN_RE, (match) => `…${match.slice(-4)}`);
 }
 
-const WORKTREE_BRANCH_PREFIX = "openclaw/";
+const WORKTREE_BRANCH_PREFIX = "nova/";
 
 const CHANNEL_SESSION_KEY_RE = /^agent:[^:]+:([^:]+)(?::[^:]+)?:(?:direct|group|channel|thread):/;
 const PEER_SESSION_KEY_RE = /:(?:direct|group|channel|thread):/;

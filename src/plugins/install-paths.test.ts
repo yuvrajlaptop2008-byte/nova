@@ -17,22 +17,20 @@ describe("managed npm plugin install paths", () => {
       "codexshasum",
     ].join("\n");
     const projectDir = resolvePluginNpmGenerationProjectDir({
-      npmDir: String.raw`C:\Users\Administrator\.openclaw\npm`,
+      npmDir: String.raw`C:\Users\Administrator\.nova\npm`,
       packageName,
       generationKey,
     });
     const projectName = path.basename(projectDir);
 
-    expect(projectName).toMatch(
-      /^openclaw-codex-[a-f0-9]{10}__openclaw-generation__g-[a-f0-9]{16}$/u,
-    );
+    expect(projectName).toMatch(/^nova-codex-[a-f0-9]{10}__nova-generation__g-[a-f0-9]{16}$/u);
     expect(projectName.length).toBeLessThanOrEqual(66);
 
     const nestedCodexBinaryPath = path.win32.join(
-      String.raw`C:\Users\Administrator\.openclaw\npm\projects`,
+      String.raw`C:\Users\Administrator\.nova\npm\projects`,
       projectName,
       "node_modules",
-      "@openclaw",
+      "@nova",
       "codex",
       "node_modules",
       "@openai",
@@ -48,7 +46,7 @@ describe("managed npm plugin install paths", () => {
   it("keeps generation project names under the recoverable package prefix", () => {
     const packageName = "@nova/codex";
     const projectDir = resolvePluginNpmGenerationProjectDir({
-      npmDir: "/tmp/openclaw/npm",
+      npmDir: "/tmp/nova/npm",
       packageName,
       generationKey: "codex-v2",
     });

@@ -10,7 +10,7 @@ import { SessionManager } from "./session-manager.js";
 const tempPaths: string[] = [];
 
 async function makeTempDir(): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-tool-result-replay-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-tool-result-replay-"));
   tempPaths.push(dir);
   return dir;
 }

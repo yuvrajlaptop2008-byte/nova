@@ -13,7 +13,7 @@ import {
   normalizeOptionalString,
 } from "@nova/normalization-core/string-coerce";
 import { resolveGatewayPort } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { normalizeSecretInputString, resolveSecretInputRef } from "../config/types.secrets.js";
 import { materializeGatewayAuthSecretRefs } from "../gateway/auth-config-utils.js";
 import { assertExplicitGatewayAuthModeWhenBothConfigured } from "../gateway/auth-mode-policy.js";
@@ -246,7 +246,7 @@ function parseNormalizedGatewayUrl(raw: string): string | null {
 }
 
 function resolveScheme(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   opts?: {
     forceSecure?: boolean;
   },
@@ -280,7 +280,7 @@ function pickTailnetIPv4(
 }
 
 function resolvePairingSetupAuthLabel(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv,
 ): ResolveAuthLabelResult {
   const mode = cfg.gateway?.auth?.mode;
@@ -323,7 +323,7 @@ function resolvePairingSetupAuthLabel(
 }
 
 async function resolveGatewayUrl(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   opts: {
     env: NodeJS.ProcessEnv;
     publicUrl?: string;
@@ -410,7 +410,7 @@ export function encodePairingSetupCode(payload: PairingSetupPayload): string {
 }
 
 export async function resolvePairingSetupFromConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options: ResolvePairingSetupOptions = {},
 ): Promise<PairingSetupResolution> {
   assertExplicitGatewayAuthModeWhenBothConfigured(cfg);

@@ -248,7 +248,7 @@ describe("statusSummaryRuntime.resolveSessionRuntimeLabel", () => {
           agents: {
             defaults: {
               models: {
-                "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+                "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
               },
             },
             list: [
@@ -280,7 +280,7 @@ describe("statusSummaryRuntime.resolveSessionRuntimeLabel", () => {
           agents: {
             defaults: {
               models: {
-                "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+                "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
               },
             },
           },
@@ -289,7 +289,7 @@ describe("statusSummaryRuntime.resolveSessionRuntimeLabel", () => {
           sessionId: "locked-codex-session",
           updatedAt: 0,
           agentHarnessId: "codex",
-          agentRuntimeOverride: "openclaw",
+          agentRuntimeOverride: "nova",
           modelSelectionLocked: true,
         },
         provider: "openai",

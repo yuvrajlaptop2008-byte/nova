@@ -81,7 +81,7 @@ export type BrowserTabOwnership =
 export type BrowserStatus = {
   enabled: boolean;
   profile?: string;
-  driver?: "openclaw" | "existing-session" | "extension";
+  driver?: "nova" | "existing-session" | "extension";
   transport?: BrowserTransport;
   running: boolean;
   cdpReady?: boolean;

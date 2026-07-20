@@ -16,7 +16,7 @@ export const EXTENSION_PACKAGE_BOUNDARY_EXCLUDE = [
 
 const privateLocalOnlyPluginSdkPackageDtsPaths = Object.fromEntries(
   privateLocalOnlyPluginSdkEntrypoints.map((entrypoint) => [
-    `openclaw/plugin-sdk/${entrypoint}`,
+    `nova/plugin-sdk/${entrypoint}`,
     [`../packages/plugin-sdk/dist/src/plugin-sdk/${entrypoint}.d.ts`],
   ]),
 ) as Record<string, readonly string[]>;
@@ -54,21 +54,21 @@ function buildPackageBoundaryDtsPaths(params: {
 }
 
 export const EXTENSION_PACKAGE_BOUNDARY_BASE_PATHS = {
-  "openclaw/plugin-sdk/*": ["../dist/plugin-sdk/*.d.ts"],
+  "nova/plugin-sdk/*": ["../dist/plugin-sdk/*.d.ts"],
   ...privateLocalOnlyPluginSdkPackageDtsPaths,
-  "openclaw/plugin-sdk/account-id": ["../dist/plugin-sdk/account-id.d.ts"],
-  "openclaw/plugin-sdk/channel-entry-contract": ["../dist/plugin-sdk/channel-entry-contract.d.ts"],
-  "openclaw/plugin-sdk/browser-maintenance": [
+  "nova/plugin-sdk/account-id": ["../dist/plugin-sdk/account-id.d.ts"],
+  "nova/plugin-sdk/channel-entry-contract": ["../dist/plugin-sdk/channel-entry-contract.d.ts"],
+  "nova/plugin-sdk/browser-maintenance": [
     "../packages/plugin-sdk/dist/extensions/browser/browser-maintenance.d.ts",
   ],
-  "openclaw/plugin-sdk/channel-secret-basic-runtime": [
+  "nova/plugin-sdk/channel-secret-basic-runtime": [
     "../dist/plugin-sdk/channel-secret-basic-runtime.d.ts",
   ],
-  "openclaw/plugin-sdk/channel-secret-runtime": ["../dist/plugin-sdk/channel-secret-runtime.d.ts"],
-  "openclaw/plugin-sdk/channel-streaming": ["../dist/plugin-sdk/channel-streaming.d.ts"],
-  "openclaw/plugin-sdk/error-runtime": ["../dist/plugin-sdk/error-runtime.d.ts"],
-  "openclaw/plugin-sdk/secret-ref-runtime": ["../dist/plugin-sdk/secret-ref-runtime.d.ts"],
-  "openclaw/plugin-sdk/ssrf-runtime": ["../dist/plugin-sdk/ssrf-runtime.d.ts"],
+  "nova/plugin-sdk/channel-secret-runtime": ["../dist/plugin-sdk/channel-secret-runtime.d.ts"],
+  "nova/plugin-sdk/channel-streaming": ["../dist/plugin-sdk/channel-streaming.d.ts"],
+  "nova/plugin-sdk/error-runtime": ["../dist/plugin-sdk/error-runtime.d.ts"],
+  "nova/plugin-sdk/secret-ref-runtime": ["../dist/plugin-sdk/secret-ref-runtime.d.ts"],
+  "nova/plugin-sdk/ssrf-runtime": ["../dist/plugin-sdk/ssrf-runtime.d.ts"],
   "@nova/qa-channel/api.js": ["../dist/plugin-sdk/extensions/qa-channel/api.d.ts"],
   "@nova/matrix/test-api.js": ["../dist/plugin-sdk/extensions/matrix/test-api.d.ts"],
   "@nova/discord/api.js": ["../dist/plugin-sdk/extensions/discord/api.d.ts"],
@@ -219,11 +219,11 @@ export const EXTENSION_PACKAGE_BOUNDARY_BASE_PATHS = {
   "@nova/terminal-core/*": ["../dist/plugin-sdk/packages/terminal-core/src/*.d.ts"],
   "@nova/*.js": ["../packages/plugin-sdk/dist/extensions/*.d.ts", "../extensions/*"],
   "@nova/*": ["../packages/plugin-sdk/dist/extensions/*", "../extensions/*"],
-  "openclaw/plugin-sdk/qa-channel": ["../dist/plugin-sdk/src/plugin-sdk/qa-channel.d.ts"],
-  "openclaw/plugin-sdk/qa-channel-protocol": [
+  "nova/plugin-sdk/qa-channel": ["../dist/plugin-sdk/src/plugin-sdk/qa-channel.d.ts"],
+  "nova/plugin-sdk/qa-channel-protocol": [
     "../dist/plugin-sdk/src/plugin-sdk/qa-channel-protocol.d.ts",
   ],
-  "openclaw/plugin-sdk/qa-runtime": ["../dist/plugin-sdk/src/plugin-sdk/qa-runtime.d.ts"],
+  "nova/plugin-sdk/qa-runtime": ["../dist/plugin-sdk/src/plugin-sdk/qa-runtime.d.ts"],
   "@nova/plugin-sdk/*": ["../dist/plugin-sdk/*.d.ts"],
 } as const;
 
@@ -250,8 +250,8 @@ function omitExtensionPackageBoundaryPaths(
 export const EXTENSION_PACKAGE_BOUNDARY_XAI_PATHS = {
   ...prefixExtensionPackageBoundaryPaths(
     omitExtensionPackageBoundaryPaths(EXTENSION_PACKAGE_BOUNDARY_BASE_PATHS, [
-      "openclaw/plugin-sdk/channel-secret-basic-runtime",
-      "openclaw/plugin-sdk/channel-secret-tts-runtime",
+      "nova/plugin-sdk/channel-secret-basic-runtime",
+      "nova/plugin-sdk/channel-secret-tts-runtime",
       "@nova/matrix/test-api.js",
       "@nova/discord/api.js",
       "@nova/slack/api.js",
@@ -260,10 +260,8 @@ export const EXTENSION_PACKAGE_BOUNDARY_XAI_PATHS = {
     ]),
     "../",
   ),
-  "openclaw/plugin-sdk/channel-entry-contract": [
-    "../../dist/plugin-sdk/channel-entry-contract.d.ts",
-  ],
-  "openclaw/plugin-sdk/browser-maintenance": [
+  "nova/plugin-sdk/channel-entry-contract": ["../../dist/plugin-sdk/channel-entry-contract.d.ts"],
+  "nova/plugin-sdk/browser-maintenance": [
     "../../dist/plugin-sdk/src/plugin-sdk/browser-maintenance.d.ts",
   ],
   "@nova/qa-channel/api.js": ["../../dist/plugin-sdk/extensions/qa-channel/api.d.ts"],

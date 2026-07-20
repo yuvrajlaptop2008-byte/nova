@@ -46,7 +46,7 @@ import {
   type RuntimeConfigSnapshotRefreshOptions,
   type RuntimeConfigWritePreparedCandidate,
 } from "./runtime-snapshot.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "./types.js";
+import type { ConfigFileSnapshot, NovaConfig } from "./types.js";
 
 export function clearConfigCache(): void {
   // Compat shim: runtime snapshot is the only in-process cache now.
@@ -57,7 +57,7 @@ export function registerConfigWriteListener(
   options: {
     ownsRuntimeActivationFor?: string;
     preCommitRuntimePreflight?: (
-      sourceConfig: OpenClawConfig,
+      sourceConfig: NovaConfig,
       refreshOptions?: RuntimeConfigSnapshotRefreshOptions,
     ) => Promise<RuntimeConfigWritePreparedCandidate>;
   } = {},
@@ -89,7 +89,7 @@ export function loadConfig(options?: {
   skipPluginValidation?: boolean;
   pin?: boolean;
   skipShellEnvFallback?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   const loadFresh = () =>
     createConfigIO({
       ...(options?.skipPluginValidation ? { pluginValidation: "skip" as const } : {}),
@@ -102,7 +102,7 @@ export function getRuntimeConfig(options?: {
   skipPluginValidation?: boolean;
   pin?: boolean;
   skipShellEnvFallback?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   return loadConfig(options);
 }
 
@@ -110,7 +110,7 @@ export async function readBestEffortConfig(options?: {
   isolateEnv?: boolean;
   observe?: boolean;
   skipPluginValidation?: boolean;
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   return await createConfigIO({
     ...(options?.isolateEnv ? { env: cloneEnvWithPlatformSemantics(process.env) } : {}),
     ...(options?.observe === false ? { observe: false } : {}),
@@ -128,7 +128,7 @@ export async function readBestEffortConfigSnapshot(options?: {
   }).readBestEffortConfigSnapshot();
 }
 
-export async function readSourceConfigBestEffort(): Promise<OpenClawConfig> {
+export async function readSourceConfigBestEffort(): Promise<NovaConfig> {
   return await createConfigIO().readSourceConfigBestEffort();
 }
 
@@ -203,7 +203,7 @@ export async function readSourceConfigSnapshot(): Promise<ConfigFileSnapshot> {
 }
 
 export async function readConfigFileSnapshotForRuntimeTransaction(
-  activeSourceConfig: OpenClawConfig,
+  activeSourceConfig: NovaConfig,
 ): Promise<ConfigFileSnapshot> {
   return await createConfigIO({
     env: createConfigRuntimeEnvBase(activeSourceConfig, process.env, {
@@ -239,7 +239,7 @@ export async function readSourceConfigSnapshotForWrite(): Promise<ReadConfigFile
 }
 
 export async function writeConfigFile(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options: ConfigWriteOptions = {},
 ): Promise<ConfigWriteResult> {
   options.assertConfigPathForWrite?.();
@@ -348,7 +348,7 @@ export async function writeConfigFile(
 async function finalizeCommittedConfigWrite(params: {
   io: ReturnType<typeof createConfigIO>;
   options: ConfigWriteOptions;
-  nextCfg: OpenClawConfig;
+  nextCfg: NovaConfig;
   writeResult: Awaited<ReturnType<ReturnType<typeof createConfigIO>["writeConfigFile"]>>;
   baseSnapshot: ConfigFileSnapshot;
   hadRuntimeSnapshot: boolean;

@@ -222,7 +222,7 @@ describe("resolveCodexNativeSearchActivation", () => {
     const sessionKey = `agent:${agentId}:subagent:limited`;
     const storePath = path.join(
       os.tmpdir(),
-      `openclaw-native-inherited-deny-${agentId}`,
+      `nova-native-inherited-deny-${agentId}`,
       "agents",
       agentId,
       "sessions",

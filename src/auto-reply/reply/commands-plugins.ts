@@ -2,7 +2,7 @@
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { readConfigFileSnapshot, readConfigFileSnapshotForWrite } from "../../config/config.js";
 import { assertConfigWriteAllowedInCurrentMode } from "../../config/nix-mode-write-guard.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import {
@@ -38,7 +38,7 @@ function renderJsonBlock(label: string, value: unknown): string {
 
 function buildPluginInspectJson(params: {
   id: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   installRecords: Record<string, PluginInstallRecord>;
   report: PluginStatusReport;
 }): {
@@ -70,7 +70,7 @@ function buildPluginInspectJson(params: {
 }
 
 function buildAllPluginInspectJson(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   installRecords: Record<string, PluginInstallRecord>;
   report: PluginStatusReport;
 }): Array<{
@@ -113,8 +113,8 @@ function formatPluginsList(report: PluginStatusReport): string {
     `🔌 Plugins (${loaded}/${report.plugins.length} loaded)`,
     ...report.plugins.map((plugin) => {
       const format = plugin.bundleFormat
-        ? `${plugin.format ?? "openclaw"}/${plugin.bundleFormat}`
-        : (plugin.format ?? "openclaw");
+        ? `${plugin.format ?? "nova"}/${plugin.bundleFormat}`
+        : (plugin.format ?? "nova");
       return `- ${formatPluginLabel(plugin)} [${plugin.status}] ${format}`;
     }),
   ];
@@ -163,7 +163,7 @@ async function loadPluginCommandState(
   | {
       ok: true;
       path: string;
-      config: OpenClawConfig;
+      config: NovaConfig;
       report: PluginStatusReport;
     }
   | { ok: false; path: string; error: string }
@@ -372,7 +372,7 @@ export const handlePluginsCommand: CommandHandler = async (params, allowTextComm
     };
   }
 
-  let committedConfig: OpenClawConfig;
+  let committedConfig: NovaConfig;
   try {
     committedConfig = await setPluginEnabledFromCommand({
       pluginId: plugin.id,

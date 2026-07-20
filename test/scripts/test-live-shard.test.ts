@@ -453,7 +453,7 @@ describe("scripts/test-live-shard", () => {
   });
 
   it("removes stale live shard reports before running a shard", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-shard-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-shard-"));
     const reportPath = path.join(root, "stale.vitest.json");
     writeFileSync(reportPath, JSON.stringify({ numPassedTests: 1, numTotalTests: 1 }), "utf8");
 
@@ -483,7 +483,7 @@ describe("scripts/test-live-shard", () => {
   it.skipIf(process.platform === "win32")(
     "cleans live shard descendants before forwarding parent SIGTERM",
     async () => {
-      const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-shard-signal-"));
+      const root = mkdtempSync(path.join(tmpdir(), "nova-live-shard-signal-"));
       const fakePnpmPath = path.join(root, "pnpm");
       const childPidPath = path.join(root, "child.pid");
       const descendantPidPath = path.join(root, "descendant.pid");

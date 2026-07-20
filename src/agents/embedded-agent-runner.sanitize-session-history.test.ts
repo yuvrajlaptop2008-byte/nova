@@ -1,13 +1,8 @@
 // Behavior coverage for replay-history sanitization across provider policies.
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type {
-  AssistantMessage,
-  ThinkingContent,
-  UserMessage,
-  Usage,
-} from "openclaw/plugin-sdk/llm";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
+import type { AssistantMessage, ThinkingContent, UserMessage, Usage } from "nova/plugin-sdk/llm";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../shared/transcript-only-openclaw-assistant.js";
+import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../shared/transcript-only-nova-assistant.js";
 import {
   expectOpenAIResponsesStrictSanitizeCall,
   loadSanitizeSessionHistoryWithCleanMocks,
@@ -937,7 +932,7 @@ describe("sanitizeSessionHistory", () => {
       ),
       castAgentMessage({
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         api: NOVA_TRANSCRIPT_ARTIFACT_API,
         content: [{ type: "text", text: "visible reply" }],

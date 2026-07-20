@@ -17,7 +17,7 @@ afterEach(async () => {
 });
 
 async function createTempWorkspaceDir() {
-  const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-status-"));
+  const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-status-"));
   tempDirs.push(workspaceDir);
   return workspaceDir;
 }
@@ -45,7 +45,7 @@ function makeEntry(params: {
       description: `desc:${params.name}`,
       filePath,
       baseDir,
-      source: params.source ?? "openclaw-workspace",
+      source: params.source ?? "nova-workspace",
     }),
     frontmatter: {},
     metadata: {
@@ -177,7 +177,7 @@ describe("buildWorkspaceSkillStatus", () => {
   it("marks bundled skills blocked by allowlist", () => {
     const entry = makeEntry({
       name: "peekaboo",
-      source: "openclaw-bundled",
+      source: "nova-bundled",
     });
 
     const report = buildWorkspaceSkillStatus("/tmp/ws", {
@@ -251,7 +251,7 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("does not mark an overridden workspace skill as bundled by bundled name alone", async () => {
-    const bundledDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-bundled-"));
+    const bundledDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-bundled-"));
     tempDirs.push(bundledDir);
     await writeSkill({
       dir: path.join(bundledDir, "peekaboo"),
@@ -264,14 +264,14 @@ describe("buildWorkspaceSkillStatus", () => {
         entries: [
           makeEntry({
             name: "peekaboo",
-            source: "openclaw-workspace",
+            source: "nova-workspace",
           }),
         ],
         config: { skills: { allowBundled: ["other-skill"] } },
       });
       const skill = requireReportedSkill(report, "peekaboo");
 
-      expect(skill.source).toBe("openclaw-workspace");
+      expect(skill.source).toBe("nova-workspace");
       expect(skill.bundled).toBe(false);
       expect(skill.blockedByAllowlist).toBe(false);
       expect(skill.eligible).toBe(true);

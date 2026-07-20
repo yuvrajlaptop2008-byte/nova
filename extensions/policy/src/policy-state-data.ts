@@ -1,11 +1,11 @@
 // Policy plugin data, secret, and auth evidence.
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-import { coerceSecretRef } from "openclaw/plugin-sdk/secret-input";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
+import { coerceSecretRef } from "nova/plugin-sdk/secret-input";
 import {
   isRecord,
   asBoolean as readBoolean,
   normalizeOptionalString as readString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { ocPathSegment } from "./policy-state-helpers.js";
 import type {
   PolicyAuthProfileEvidence,
@@ -37,7 +37,7 @@ export function scanPolicyAuthProfiles(
         mode?: string;
       } = {
         id,
-        source: `oc://openclaw.config/auth/profiles/${ocPathSegment(id)}`,
+        source: `oc://nova.config/auth/profiles/${ocPathSegment(id)}`,
         validMetadata: isValidAuthProfileMetadata(value),
       };
       if (isRecord(value)) {
@@ -60,7 +60,7 @@ export function scanPolicyDataHandling(
   entries.push({
     id: "logging-redaction",
     kind: "sensitiveLoggingRedaction",
-    source: "oc://openclaw.config/logging/redactSensitive",
+    source: "oc://nova.config/logging/redactSensitive",
     scope: "global",
     value: logging.redactSensitive !== "off",
     explicit: logging.redactSensitive !== undefined,
@@ -80,7 +80,7 @@ export function scanPolicyDataHandling(
   entries.push({
     id: "diagnostics-otel-content-capture",
     kind: "telemetryContentCapture",
-    source: "oc://openclaw.config/diagnostics/otel/captureContent",
+    source: "oc://nova.config/diagnostics/otel/captureContent",
     scope: "global",
     value: captureContent,
     explicit: otel.captureContent !== undefined,
@@ -92,7 +92,7 @@ export function scanPolicyDataHandling(
   entries.push({
     id: "session-maintenance-mode",
     kind: "sessionRetentionMode",
-    source: "oc://openclaw.config/session/maintenance/mode",
+    source: "oc://nova.config/session/maintenance/mode",
     scope: "global",
     value: retentionMode,
     explicit: maintenance.mode !== undefined,
@@ -139,7 +139,7 @@ function pushMemorySessionTranscriptIndexing(
     entries.push({
       id: "memory-qmd-session-transcripts",
       kind: "memorySessionTranscriptIndexing",
-      source: "oc://openclaw.config/memory/qmd/sessions/enabled",
+      source: "oc://nova.config/memory/qmd/sessions/enabled",
       scope: "global",
       value: memory.backend === "qmd" && readBoolean(qmdSessions.enabled) === true,
       explicit: true,
@@ -154,7 +154,7 @@ function pushMemorySessionTranscriptIndexing(
     entries.push({
       id: "agents-defaults-memory-session-transcripts",
       kind: "memorySessionTranscriptIndexing",
-      source: "oc://openclaw.config/agents/defaults/memorySearch/experimental/sessionMemory",
+      source: "oc://nova.config/agents/defaults/memorySearch/experimental/sessionMemory",
       scope: "global",
       value: defaultSessionMemory,
       explicit: true,
@@ -186,8 +186,8 @@ function pushMemorySessionTranscriptIndexing(
       id: `${agentId}-memory-session-transcripts`,
       kind: "memorySessionTranscriptIndexing",
       source: explicit
-        ? `oc://openclaw.config/agents/list/#${index}/memorySearch/experimental/sessionMemory`
-        : "oc://openclaw.config/agents/defaults/memorySearch/experimental/sessionMemory",
+        ? `oc://nova.config/agents/list/#${index}/memorySearch/experimental/sessionMemory`
+        : "oc://nova.config/agents/defaults/memorySearch/experimental/sessionMemory",
       scope: "agent",
       agentId: normalizeAgentId(agentId),
       value: agentSessionMemory,
@@ -262,7 +262,7 @@ function scanPolicySecretProviders(cfg: Record<string, unknown>): readonly Polic
     } = {
       id,
       kind: "provider",
-      source: `oc://openclaw.config/secrets/providers/${ocPathSegment(id)}`,
+      source: `oc://nova.config/secrets/providers/${ocPathSegment(id)}`,
     };
     if (isRecord(value) && typeof value.source === "string") {
       entry.providerSource = value.source;
@@ -317,7 +317,7 @@ function collectSecretInputs(
 }
 
 function configPathSource(path: readonly string[]): string {
-  return `oc://openclaw.config/${path.map(ocPathSegment).join("/")}`;
+  return `oc://nova.config/${path.map(ocPathSegment).join("/")}`;
 }
 
 function isSecretInputPath(path: readonly string[]): boolean {

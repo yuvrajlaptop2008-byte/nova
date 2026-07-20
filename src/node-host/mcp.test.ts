@@ -4,7 +4,7 @@ import { ErrorCode, type CallToolResult, type Tool } from "@modelcontextprotocol
 import { expectDefined } from "@nova/normalization-core";
 import { MAX_TIMER_TIMEOUT_MS } from "@nova/normalization-core/number-coercion";
 import { describe, expect, it, vi } from "vitest";
-import { OpenClawSchema } from "../config/zod-schema.js";
+import { NovaSchema } from "../config/zod-schema.js";
 import { startNodeHostMcpManager } from "./mcp.js";
 
 function tool(name: string, description?: string): Tool {
@@ -100,7 +100,7 @@ describe("node host MCP manager", () => {
   });
 
   it("parses nodeHost.mcp config, isolates failures, filters tools, and shuts down", async () => {
-    const parsed = OpenClawSchema.parse({
+    const parsed = NovaSchema.parse({
       nodeHost: {
         mcp: {
           servers: {

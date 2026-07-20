@@ -3,7 +3,7 @@ import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { expectDefined } from "@nova/normalization-core";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import type { ModelProviderConfig } from "../../config/types.models.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { fetchWithSsrFGuard } from "../../infra/net/fetch-guard.js";
 import type { SsrFPolicy } from "../../infra/net/ssrf.js";
 
@@ -38,10 +38,7 @@ type CachedEndpointPreflightResult = {
 
 const preflightCache = new Map<string, CachedEndpointPreflightResult>();
 
-function resolveProviderConfig(
-  cfg: OpenClawConfig,
-  provider: string,
-): ModelProviderConfig | undefined {
+function resolveProviderConfig(cfg: NovaConfig, provider: string): ModelProviderConfig | undefined {
   const providers = cfg.models?.providers;
   if (!providers) {
     return undefined;
@@ -187,7 +184,7 @@ async function probeLocalProviderEndpoint(params: {
 
 /** Checks local model-provider reachability before a scheduled cron run starts. */
 export async function preflightCronModelProvider(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
   nowMs?: number;

@@ -54,8 +54,8 @@ export type InstallHooksResult =
     };
 
 export const HOOK_INSTALL_ERROR_CODE = {
-  MISSING_NOVA_HOOKS: "missing_openclaw_hooks",
-  EMPTY_NOVA_HOOKS: "empty_openclaw_hooks",
+  MISSING_NOVA_HOOKS: "missing_nova_hooks",
+  EMPTY_NOVA_HOOKS: "empty_nova_hooks",
 } as const;
 
 type HookInstallErrorCode = (typeof HOOK_INSTALL_ERROR_CODE)[keyof typeof HOOK_INSTALL_ERROR_CODE];
@@ -231,14 +231,14 @@ export function resolveHookInstallDir(hookId: string, hooksDir?: string): string
   return targetDirResult.path;
 }
 
-function resolveOpenClawHooks(
+function resolveNovaHooks(
   manifest: HookPackageManifest,
 ): { ok: true; entries: string[] } | { ok: false; error: string; code: HookInstallErrorCode } {
   const hooks = manifest[MANIFEST_KEY]?.hooks;
   if (!Array.isArray(hooks)) {
     return {
       ok: false,
-      error: "package.json missing openclaw.hooks",
+      error: "package.json missing nova.hooks",
       code: HOOK_INSTALL_ERROR_CODE.MISSING_NOVA_HOOKS,
     };
   }
@@ -246,7 +246,7 @@ function resolveOpenClawHooks(
   if (list.length === 0) {
     return {
       ok: false,
-      error: "package.json openclaw.hooks is empty",
+      error: "package.json nova.hooks is empty",
       code: HOOK_INSTALL_ERROR_CODE.EMPTY_NOVA_HOOKS,
     };
   }
@@ -408,7 +408,7 @@ async function installHookPackageFromDir(
     return { ok: false, error: `invalid package.json: ${String(err)}` };
   }
 
-  const hookManifest = resolveOpenClawHooks(manifest);
+  const hookManifest = resolveNovaHooks(manifest);
   if (!hookManifest.ok) {
     return hookManifest;
   }
@@ -442,7 +442,7 @@ async function installHookPackageFromDir(
     if (!runtime.isPathInside(params.packageDir, hookDir)) {
       return {
         ok: false,
-        error: `openclaw.hooks entry escapes package directory: ${entry}`,
+        error: `nova.hooks entry escapes package directory: ${entry}`,
       };
     }
     await validateHookDir(hookDir);
@@ -453,7 +453,7 @@ async function installHookPackageFromDir(
     ) {
       return {
         ok: false,
-        error: `openclaw.hooks entry resolves outside package directory: ${entry}`,
+        error: `nova.hooks entry resolves outside package directory: ${entry}`,
       };
     }
     const hookName = await resolveHookNameFromDir(hookDir);
@@ -675,7 +675,7 @@ async function installHooksFromArchive(
 
   return await runtime.withExtractedArchiveRoot({
     archivePath,
-    tempDirPrefix: "openclaw-hook-",
+    tempDirPrefix: "nova-hook-",
     timeoutMs,
     logger,
     onExtracted: async (rootDir) =>
@@ -716,7 +716,7 @@ export async function installHooksFromNpmSpec(
 
   logger.info?.(`Downloading ${spec.trim()}…`);
   return await runtime.installFromValidatedNpmSpecArchive({
-    tempDirPrefix: "openclaw-hook-pack-",
+    tempDirPrefix: "nova-hook-pack-",
     spec,
     timeoutMs,
     expectedIntegrity: params.expectedIntegrity,

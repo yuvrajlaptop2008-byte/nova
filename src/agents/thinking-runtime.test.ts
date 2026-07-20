@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   clearAgentHarnesses,
   listRegisteredAgentHarnesses,
@@ -9,7 +9,7 @@ import {
 import type { AgentHarness } from "./harness/types.js";
 import { resolveCandidateThinkingLevel, resolveEffectiveAgentRuntime } from "./thinking-runtime.js";
 
-function openAIConfig(runtime: string): OpenClawConfig {
+function openAIConfig(runtime: string): NovaConfig {
   return {
     agents: {
       defaults: {
@@ -62,7 +62,7 @@ describe("resolveEffectiveAgentRuntime", () => {
         provider: "openai",
         modelId: "gpt-5.6-luna",
       }),
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it("uses static auto-selection facts before resolving provider routes", () => {
@@ -83,7 +83,7 @@ describe("resolveEffectiveAgentRuntime", () => {
         provider: "deepseek",
         modelId: "deepseek-v4-pro",
       }),
-    ).toBe("openclaw");
+    ).toBe("nova");
     expect(supports).not.toHaveBeenCalled();
   });
 
@@ -116,24 +116,24 @@ describe("resolveEffectiveAgentRuntime", () => {
         provider: "openai",
         modelId: "gpt-5.6-luna",
       }),
-    ).toBe("openclaw");
+    ).toBe("nova");
     expect(supports).not.toHaveBeenCalled();
   });
 
   it("prefers explicit session overrides", () => {
-    const cfg = openAIConfig("openclaw");
+    const cfg = openAIConfig("nova");
     expect(
       resolveEffectiveAgentRuntime({
         cfg,
         provider: "openai",
         modelId: "gpt-5.6-luna",
-        sessionEntry: { agentRuntimeOverride: "codex", agentHarnessId: "openclaw" },
+        sessionEntry: { agentRuntimeOverride: "codex", agentHarnessId: "nova" },
       }),
     ).toBe("codex");
   });
 
   it("ignores legacy harness ids when choosing a runtime", () => {
-    const cfg = openAIConfig("openclaw");
+    const cfg = openAIConfig("nova");
     expect(
       resolveEffectiveAgentRuntime({
         cfg,
@@ -141,18 +141,18 @@ describe("resolveEffectiveAgentRuntime", () => {
         modelId: "gpt-5.6-luna",
         sessionEntry: { agentHarnessId: "codex" },
       }),
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it("uses configured runtime policy without session hints", () => {
-    const cfg = openAIConfig("openclaw");
+    const cfg = openAIConfig("nova");
     expect(
       resolveEffectiveAgentRuntime({
         cfg,
         provider: "openai",
         modelId: "gpt-5.6-luna",
       }),
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it("lets an explicit Nova override replace configured Codex policy", () => {
@@ -161,9 +161,9 @@ describe("resolveEffectiveAgentRuntime", () => {
         cfg: openAIConfig("codex"),
         provider: "openai",
         modelId: "gpt-5.6-luna",
-        sessionEntry: { agentRuntimeOverride: "openclaw", agentHarnessId: "codex" },
+        sessionEntry: { agentRuntimeOverride: "nova", agentHarnessId: "codex" },
       }),
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it("keeps a supported candidate level unchanged", () => {
@@ -192,7 +192,7 @@ describe("resolveEffectiveAgentRuntime", () => {
   });
 
   it("re-evaluates every candidate from the immutable request so later support can upgrade", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           models: {

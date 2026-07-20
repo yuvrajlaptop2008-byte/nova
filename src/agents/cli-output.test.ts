@@ -504,7 +504,7 @@ describe("parseCliJsonl", () => {
         JSON.stringify({
           type: "tool_use",
           timestamp: "2026-06-16T19:36:47.000Z",
-          tool_name: "mcp_openclaw_create_goal",
+          tool_name: "mcp_nova_create_goal",
           tool_id: "tool-1",
           parameters: { objective: "Update files" },
         }),
@@ -974,11 +974,11 @@ describe("parseCliJsonl", () => {
     expect(
       formatCliOutputError(result!, {
         runId: "run-max-turns",
-        sessionId: "openclaw-session-max-turns",
+        sessionId: "nova-session-max-turns",
       }),
     ).toBe(
       "Claude CLI stopped after reaching the maximum number of turns (limit: 1). " +
-        "Nova run: run-max-turns. Nova session: openclaw-session-max-turns. " +
+        "Nova run: run-max-turns. Nova session: nova-session-max-turns. " +
         "Claude session: session-max-turns. Tool actions may already have run; verify their effects before retrying. " +
         "Retry with a higher --max-turns value or a narrower task.",
     );
@@ -1782,7 +1782,7 @@ describe("createCliJsonlStreamingParser", () => {
         JSON.stringify({
           type: "tool_use",
           timestamp: "2026-06-16T19:36:48.000Z",
-          tool_name: "mcp_openclaw_create_goal",
+          tool_name: "mcp_nova_create_goal",
           tool_id: "tool-1",
           parameters: { objective: "Update files" },
         }),
@@ -1827,13 +1827,13 @@ describe("createCliJsonlStreamingParser", () => {
     expect(starts).toEqual([
       {
         toolCallId: "tool-1",
-        name: "mcp_openclaw_create_goal",
+        name: "mcp_nova_create_goal",
         kind: "tool_use",
         args: { objective: "Update files" },
       },
     ]);
     expect(results).toEqual([
-      { toolCallId: "tool-1", name: "mcp_openclaw_create_goal", isError: false, result: "created" },
+      { toolCallId: "tool-1", name: "mcp_nova_create_goal", isError: false, result: "created" },
     ]);
     expect(parser.getOutput()).toEqual({
       text: "Checking tools. Done.",
@@ -2177,7 +2177,7 @@ describe("createCliJsonlStreamingParser", () => {
           event: {
             type: "content_block_delta",
             index: 0,
-            delta: { type: "input_json_delta", partial_json: '{"query":"openclaw"}' },
+            delta: { type: "input_json_delta", partial_json: '{"query":"nova"}' },
           },
         }),
         JSON.stringify({
@@ -2193,7 +2193,7 @@ describe("createCliJsonlStreamingParser", () => {
         toolCallId: "toolu_hosted",
         name: "web_search",
         kind: type,
-        args: { query: "openclaw" },
+        args: { query: "nova" },
       },
     ]);
   });
@@ -2204,7 +2204,7 @@ describe("createCliJsonlStreamingParser", () => {
       resultType: "web_search_tool_result",
       toolCallId: "srvtoolu_1",
       name: "web_search",
-      input: { query: "openclaw" },
+      input: { query: "nova" },
       result: [{ type: "web_search_result", title: "Nova", url: "https://example.com" }],
       isError: false,
     },

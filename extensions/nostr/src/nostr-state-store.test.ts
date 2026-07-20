@@ -2,11 +2,11 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { describe, expect, it } from "vitest";
 import type { PluginRuntime } from "../runtime-api.js";
 import {
@@ -20,7 +20,7 @@ import { setNostrRuntime } from "./runtime.js";
 
 async function withTempStateDir<T>(fn: (dir: string) => Promise<T>) {
   const previous = process.env.NOVA_STATE_DIR;
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-nostr-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-nostr-"));
   process.env.NOVA_STATE_DIR = dir;
   resetPluginStateStoreForTests();
   setNostrRuntime({
@@ -37,7 +37,7 @@ async function withTempStateDir<T>(fn: (dir: string) => Promise<T>) {
           return override;
         }
         const resolveHome = homedir ?? os.homedir;
-        return path.join(resolveHome(), ".openclaw");
+        return path.join(resolveHome(), ".nova");
       },
     },
   } as PluginRuntime);

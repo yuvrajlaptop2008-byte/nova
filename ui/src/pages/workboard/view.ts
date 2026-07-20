@@ -460,7 +460,7 @@ function engineBlockedByRuntime(
     return null;
   }
   const normalized = runtime.toLowerCase();
-  if (normalized === "openclaw" || normalized === "pi") {
+  if (normalized === "nova" || normalized === "pi") {
     return null;
   }
   return t("workboard.engineDisabledRuntime", {
@@ -632,7 +632,7 @@ function renderCardActionButton(params: {
     </button>
   `;
   return params.iconOnly
-    ? html`<openclaw-tooltip .content=${params.label}>${button}</openclaw-tooltip>`
+    ? html`<nova-tooltip .content=${params.label}>${button}</nova-tooltip>`
     : button;
 }
 
@@ -861,10 +861,10 @@ function renderCardModal(props: WorkboardProps) {
     return true;
   };
   return html`
-    <openclaw-modal-dialog
+    <nova-modal-dialog
       label=${editing ? t("workboard.editCard") : t("workboard.newCard")}
       description=${editing ? t("workboard.editCardHelp") : t("workboard.newCardHelp")}
-      style="--openclaw-modal-width: min(1120px, calc(100vw - 56px)); --openclaw-modal-max-height: calc(100dvh - 56px);"
+      style="--nova-modal-width: min(1120px, calc(100vw - 56px)); --nova-modal-max-height: calc(100dvh - 56px);"
       @modal-cancel=${(event: Event) => {
         if (!dismissDraft()) {
           event.preventDefault();
@@ -898,7 +898,7 @@ function renderCardModal(props: WorkboardProps) {
               ${editing ? t("workboard.editCardHelp") : t("workboard.newCardHelp")}
             </p>
           </div>
-          <openclaw-tooltip .content=${t("common.cancel")}>
+          <nova-tooltip .content=${t("common.cancel")}>
             <button
               class="btn btn--icon workboard-card__icon"
               type="button"
@@ -912,7 +912,7 @@ function renderCardModal(props: WorkboardProps) {
             >
               ${icons.x}
             </button>
-          </openclaw-tooltip>
+          </nova-tooltip>
         </div>
         <div class="workboard-draft__body">
           ${!editing
@@ -1087,7 +1087,7 @@ function renderCardModal(props: WorkboardProps) {
           </button>
         </div>
       </form>
-    </openclaw-modal-dialog>
+    </nova-modal-dialog>
   `;
 }
 
@@ -1366,9 +1366,7 @@ function renderStartExecutionButton(
             : html`<span>${t("workboard.start")}</span>`}`}
     </button>
   `;
-  return options.iconOnly
-    ? html`<openclaw-tooltip .content=${title}>${button}</openclaw-tooltip>`
-    : button;
+  return options.iconOnly ? html`<nova-tooltip .content=${title}>${button}</nova-tooltip>` : button;
 }
 
 function renderStartExecutionControls(props: WorkboardProps, card: WorkboardCard) {
@@ -1449,13 +1447,13 @@ function renderCardDetailsPanel(props: WorkboardProps) {
   const events = (card.events ?? []).slice(-6).toReversed();
   const dependencies = getWorkboardDependencyState(card, state.cards);
   return html`
-    <openclaw-modal-dialog
+    <nova-modal-dialog
       class="drawer"
       label=${card.title}
       description=${task && taskIsAuthoritative
         ? taskDetail(task)
         : (lifecycle.session?.displayName ?? formatted.detail)}
-      style="--openclaw-modal-width: min(460px, 100vw); --openclaw-modal-max-height: 100dvh;"
+      style="--nova-modal-width: min(460px, 100vw); --nova-modal-max-height: 100dvh;"
       @modal-cancel=${() => {
         closeCardDetails(state);
         props.onRequestUpdate?.();
@@ -1470,7 +1468,7 @@ function renderCardDetailsPanel(props: WorkboardProps) {
                 <span class="workboard-sr-only">${t("workboard.detailTitle")}: </span>${card.title}
               </h2>
             </div>
-            <openclaw-tooltip .content=${t("common.cancel")}>
+            <nova-tooltip .content=${t("common.cancel")}>
               <button
                 class="btn btn--icon workboard-card__icon"
                 type="button"
@@ -1482,7 +1480,7 @@ function renderCardDetailsPanel(props: WorkboardProps) {
               >
                 ${icons.x}
               </button>
-            </openclaw-tooltip>
+            </nova-tooltip>
           </header>
 
           <section class="workboard-detail__section">
@@ -1665,7 +1663,7 @@ function renderCardDetailsPanel(props: WorkboardProps) {
           </div>
         </div>
       </aside>
-    </openclaw-modal-dialog>
+    </nova-modal-dialog>
   `;
 }
 
@@ -1801,7 +1799,7 @@ function renderCard(props: WorkboardProps, card: WorkboardCard) {
     ? renderArchiveCardAction(props, card, busy, archived, { iconOnly: true })
     : nothing;
   const detailAction = html`
-    <openclaw-tooltip .content=${t("workboard.viewDetails")}>
+    <nova-tooltip .content=${t("workboard.viewDetails")}>
       <button
         class="btn btn--icon workboard-card__icon"
         aria-label=${t("workboard.viewDetails")}
@@ -1815,7 +1813,7 @@ function renderCard(props: WorkboardProps, card: WorkboardCard) {
       >
         ${icons.panelRightOpen}
       </button>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
   const sessionAction = renderOpenSessionCardAction(props, linkedSessionKey, { iconOnly: true });
   const stopAction =
@@ -2165,7 +2163,7 @@ export function renderWorkboard(props: WorkboardProps) {
             </button>
             <div class="workboard-layout-controls">
               <div class="workboard-layout-toggle" role="group" aria-label=${t("workboard.layout")}>
-                <openclaw-tooltip .content=${t("workboard.layoutCompact")}>
+                <nova-tooltip .content=${t("workboard.layoutCompact")}>
                   <button
                     class="btn btn--icon ${state.layout === "compact" ? "active" : ""}"
                     type="button"
@@ -2178,8 +2176,8 @@ export function renderWorkboard(props: WorkboardProps) {
                   >
                     ${icons.layoutCompact}
                   </button>
-                </openclaw-tooltip>
-                <openclaw-tooltip .content=${t("workboard.layoutComfortable")}>
+                </nova-tooltip>
+                <nova-tooltip .content=${t("workboard.layoutComfortable")}>
                   <button
                     class="btn btn--icon ${state.layout === "comfortable" ? "active" : ""}"
                     type="button"
@@ -2192,7 +2190,7 @@ export function renderWorkboard(props: WorkboardProps) {
                   >
                     ${icons.layoutComfortable}
                   </button>
-                </openclaw-tooltip>
+                </nova-tooltip>
               </div>
               ${renderRefreshStatus(state)}
             </div>

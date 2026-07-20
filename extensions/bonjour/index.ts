@@ -2,14 +2,14 @@
  * Bonjour gateway-discovery plugin entry. It advertises the local gateway over
  * mDNS and lazily loads the ciao-based advertiser.
  */
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
 
 function formatBonjourInstanceName(displayName: string) {
   const trimmed = displayName.trim();
   if (!trimmed) {
     return "Nova";
   }
-  if (/openclaw/i.test(trimmed)) {
+  if (/nova/i.test(trimmed)) {
     return trimmed;
   }
   return `${trimmed} (Nova)`;
@@ -27,10 +27,7 @@ export default definePluginEntry({
         const [
           { startGatewayBonjourAdvertiser },
           { registerUncaughtExceptionHandler, registerUnhandledRejectionHandler },
-        ] = await Promise.all([
-          import("./src/advertiser.js"),
-          import("openclaw/plugin-sdk/runtime"),
-        ]);
+        ] = await Promise.all([import("./src/advertiser.js"), import("nova/plugin-sdk/runtime")]);
         const advertiser = await startGatewayBonjourAdvertiser(
           {
             instanceName: formatBonjourInstanceName(ctx.machineDisplayName),

@@ -1,13 +1,13 @@
 // Telegram Mini App published URL resolution.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   resolveTailnetHostWithRunner,
   resolveTailscalePublishedHost,
   type TailscaleStatusCommandRunner,
-} from "openclaw/plugin-sdk/core";
-import { runCommandWithTimeout } from "openclaw/plugin-sdk/process-runtime";
+} from "nova/plugin-sdk/core";
+import { runCommandWithTimeout } from "nova/plugin-sdk/process-runtime";
 
-export const TELEGRAM_MINIAPP_PATH_PREFIX = "/__openclaw_tg_miniapp/";
+export const TELEGRAM_MINIAPP_PATH_PREFIX = "/__nova_tg_miniapp/";
 export const TELEGRAM_MINIAPP_URL_ERROR =
   "Mini App needs an HTTPS gateway URL. Set `gateway.tailscale.mode: serve` or `funnel`, then retry.";
 
@@ -18,7 +18,7 @@ type TelegramMiniAppUrls = {
 };
 
 export async function resolveTelegramMiniAppUrls(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runCommand?: TailscaleStatusCommandRunner;
 }): Promise<TelegramMiniAppUrls> {
   const mode = params.cfg.gateway?.tailscale?.mode ?? "off";

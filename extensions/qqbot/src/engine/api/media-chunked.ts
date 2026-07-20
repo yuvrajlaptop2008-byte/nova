@@ -36,10 +36,10 @@
 
 import * as crypto from "node:crypto";
 import type { FileHandle } from "node:fs/promises";
-import { readResponseTextLimited } from "openclaw/plugin-sdk/provider-http";
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { readResponseTextLimited } from "nova/plugin-sdk/provider-http";
+import { sleep } from "nova/plugin-sdk/runtime-env";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import pMap from "p-map";
 import type { MediaSource, OpenedLocalFile } from "../messaging/media-source.js";
 import { openLocalFile } from "../messaging/media-source.js";

@@ -5,36 +5,33 @@ export type {
   ChannelDirectoryEntry,
   ChatType,
   HistoryEntry,
-  OpenClawConfig,
-  OpenClawPluginApi,
+  NovaConfig,
+  NovaPluginApi,
   ReplyPayload,
-} from "openclaw/plugin-sdk/core";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export { resolveAllowlistMatchSimple } from "openclaw/plugin-sdk/allow-from";
-export { logInboundDrop } from "openclaw/plugin-sdk/channel-inbound";
-export { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-export { createChannelMessageReplyPipeline } from "openclaw/plugin-sdk/channel-outbound";
-export { logTypingFailure } from "openclaw/plugin-sdk/channel-feedback";
-export { listSkillCommandsForAgents } from "openclaw/plugin-sdk/command-auth-native";
-export { buildModelsProviderData } from "openclaw/plugin-sdk/models-provider-runtime";
-export { isDangerousNameMatchingEnabled } from "openclaw/plugin-sdk/dangerous-name-runtime";
+} from "nova/plugin-sdk/core";
+export type { RuntimeEnv } from "nova/plugin-sdk/runtime";
+export { resolveAllowlistMatchSimple } from "nova/plugin-sdk/allow-from";
+export { logInboundDrop } from "nova/plugin-sdk/channel-inbound";
+export { createChannelPairingController } from "nova/plugin-sdk/channel-pairing";
+export { createChannelMessageReplyPipeline } from "nova/plugin-sdk/channel-outbound";
+export { logTypingFailure } from "nova/plugin-sdk/channel-feedback";
+export { listSkillCommandsForAgents } from "nova/plugin-sdk/command-auth-native";
+export { buildModelsProviderData } from "nova/plugin-sdk/models-provider-runtime";
+export { isDangerousNameMatchingEnabled } from "nova/plugin-sdk/dangerous-name-runtime";
 export {
   resolveAllowlistProviderRuntimeGroupPolicy,
   resolveDefaultGroupPolicy,
   warnMissingProviderGroupPolicyFallbackOnce,
-} from "openclaw/plugin-sdk/runtime-group-policy";
-export { resolveChannelMediaMaxBytes } from "openclaw/plugin-sdk/media-runtime";
-export { loadOutboundMediaFromUrl } from "openclaw/plugin-sdk/outbound-media";
+} from "nova/plugin-sdk/runtime-group-policy";
+export { resolveChannelMediaMaxBytes } from "nova/plugin-sdk/media-runtime";
+export { loadOutboundMediaFromUrl } from "nova/plugin-sdk/outbound-media";
 // Legacy map-helper exports stay for older plugin consumers. New message-turn
 // code should use createChannelHistoryWindow.
 export {
   DEFAULT_GROUP_HISTORY_LIMIT,
   createChannelHistoryWindow,
-} from "openclaw/plugin-sdk/reply-history";
-export { registerPluginHttpRoute } from "openclaw/plugin-sdk/webhook-targets";
-export {
-  isRequestBodyLimitError,
-  readRequestBodyWithLimit,
-} from "openclaw/plugin-sdk/webhook-ingress";
-export { isTrustedProxyAddress, resolveClientIp } from "openclaw/plugin-sdk/core";
-export { parseTcpPort } from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/reply-history";
+export { registerPluginHttpRoute } from "nova/plugin-sdk/webhook-targets";
+export { isRequestBodyLimitError, readRequestBodyWithLimit } from "nova/plugin-sdk/webhook-ingress";
+export { isTrustedProxyAddress, resolveClientIp } from "nova/plugin-sdk/core";
+export { parseTcpPort } from "nova/plugin-sdk/number-runtime";

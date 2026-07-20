@@ -1,11 +1,11 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { DiscordAccountConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { DiscordAccountConfig } from "nova/plugin-sdk/config-contracts";
 // Discord plugin module implements manager behavior.
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { formatErrorMessage } from "openclaw/plugin-sdk/ssrf-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { resolveAgentRoute } from "nova/plugin-sdk/routing";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "nova/plugin-sdk/ssrf-runtime";
 import {
   type APIVoiceState,
   type Client,
@@ -203,11 +203,11 @@ function isFatalAutoJoinFailure(message: string): boolean {
 }
 
 function resolveVoiceConnectionGroup(accountId: string): string {
-  return `openclaw:${accountId}`;
+  return `nova:${accountId}`;
 }
 
 function resolveDiscordVoiceAgentRoute(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   guildId: string;
   sessionChannelId: string;
@@ -284,7 +284,7 @@ export class DiscordVoiceManager {
   constructor(
     private params: {
       client: Client;
-      cfg: OpenClawConfig;
+      cfg: NovaConfig;
       discordConfig: DiscordAccountConfig;
       accountId: string;
       runtime: RuntimeEnv;

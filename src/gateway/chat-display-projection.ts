@@ -21,7 +21,7 @@ import {
   parseAssistantTextSignature,
   resolveAssistantMessagePhase,
 } from "../shared/chat-message-content.js";
-import { isOpenClawDeliveryMirrorAssistantMessage } from "../shared/transcript-only-openclaw-assistant.js";
+import { isNovaDeliveryMirrorAssistantMessage } from "../shared/transcript-only-nova-assistant.js";
 import { stripInlineDirectiveTagsForDisplay } from "../utils/directive-tags.js";
 import { stripEnvelopeFromMessages } from "./chat-sanitize.js";
 import {
@@ -426,8 +426,8 @@ function sanitizeChatHistoryContentBlock(
     delete entry.thinkingSignature;
     changed = true;
   }
-  if ("openclawReasoningReplay" in entry) {
-    delete entry.openclawReasoningReplay;
+  if ("novaReasoningReplay" in entry) {
+    delete entry.novaReasoningReplay;
     changed = true;
   }
   const type = typeof entry.type === "string" ? entry.type : "";
@@ -1203,11 +1203,11 @@ function readMessageToolSourceReplySink(
 function buildMessageToolVisibleReplyMirror(
   pending: PendingMessageToolVisibleReply,
 ): Record<string, unknown> {
-  const sourceMessageSeq = asPositiveSafeInteger(readRecord(pending.anchor["__openclaw"])?.seq);
+  const sourceMessageSeq = asPositiveSafeInteger(readRecord(pending.anchor["__nova"])?.seq);
   const mirror: Record<string, unknown> = {
     role: "assistant",
     content: [{ type: "text", text: pending.text }],
-    openclawMessageToolMirror: {
+    novaMessageToolMirror: {
       toolName: "message",
       ...(pending.toolCallId ? { toolCallId: pending.toolCallId } : {}),
       ...(pending.sourceReplySink ? { sourceReplySink: pending.sourceReplySink } : {}),
@@ -1219,9 +1219,9 @@ function buildMessageToolVisibleReplyMirror(
       mirror[field] = pending.anchor[field];
     }
   }
-  const transcriptMeta = readRecord((pending.completionAnchor ?? pending.anchor)["__openclaw"]);
+  const transcriptMeta = readRecord((pending.completionAnchor ?? pending.anchor)["__nova"]);
   if (transcriptMeta) {
-    mirror["__openclaw"] = { ...transcriptMeta };
+    mirror["__nova"] = { ...transcriptMeta };
   }
   return mirror;
 }
@@ -1230,7 +1230,7 @@ function readMessageToolDeliveryMirrorText(message: Record<string, unknown>): st
   // Delivery mirrors can arrive between a successful message-tool result and
   // the final NO_REPLY. The pending mirror is the display row; the raw mirror
   // would duplicate that same send.
-  if (!isOpenClawDeliveryMirrorAssistantMessage(message)) {
+  if (!isNovaDeliveryMirrorAssistantMessage(message)) {
     return undefined;
   }
   return displayTextForDuplicateCheck(message);
@@ -1495,7 +1495,7 @@ function digestTtsSupplementText(text: string): string {
 function readTtsSupplementMarker(
   message: Record<string, unknown>,
 ): { textSha256?: string; spokenText?: string } | undefined {
-  const marker = message.openclawTtsSupplement;
+  const marker = message.novaTtsSupplement;
   if (!marker || typeof marker !== "object" || Array.isArray(marker)) {
     return undefined;
   }
@@ -1637,7 +1637,7 @@ function isSubagentAnnounceInterSessionUserMessage(message: Record<string, unkno
 }
 
 function readChatHistoryRecordTimestampMs(message: unknown): number | undefined {
-  const meta = readRecord(readRecord(message)?.["__openclaw"]);
+  const meta = readRecord(readRecord(message)?.["__nova"]);
   const value = meta?.recordTimestampMs;
   if (typeof value === "number" && Number.isFinite(value)) {
     return value;
@@ -1765,13 +1765,13 @@ export function isHeartbeatHistoryTurnBoundaryMessage(message: unknown): boolean
 }
 
 function attachProjectedTurnBoundary(message: Record<string, unknown>): Record<string, unknown> {
-  const metadata = readRecord(message["__openclaw"]);
+  const metadata = readRecord(message["__nova"]);
   if (metadata?.turnBoundary === true) {
     return message;
   }
   return {
     ...message,
-    __openclaw: {
+    __nova: {
       ...metadata,
       turnBoundary: true,
     },
@@ -1782,9 +1782,9 @@ function canCarryProjectedTurnBoundary(message: RoleContentMessage | null): bool
   return Boolean(message && message.role !== "system" && message.role !== "custom");
 }
 
-function openclawAssistantModel(message: Record<string, unknown>): string | undefined {
+function novaAssistantModel(message: Record<string, unknown>): string | undefined {
   return message.role === "assistant" &&
-    message.provider === "openclaw" &&
+    message.provider === "nova" &&
     typeof message.model === "string"
     ? message.model
     : undefined;
@@ -1803,8 +1803,8 @@ function isDuplicateAcpGatewayInjectedMessage(
     return false;
   }
   if (
-    openclawAssistantModel(previousVisible) !== "acp-runtime" ||
-    openclawAssistantModel(current) !== "gateway-injected"
+    novaAssistantModel(previousVisible) !== "acp-runtime" ||
+    novaAssistantModel(current) !== "gateway-injected"
   ) {
     return false;
   }
@@ -1820,23 +1820,23 @@ function isDuplicateChannelFinalDeliveryMirror(
   current: Record<string, unknown>,
   previousVisible: Record<string, unknown> | undefined,
 ): boolean {
-  if (!previousVisible || !isOpenClawDeliveryMirrorAssistantMessage(current)) {
+  if (!previousVisible || !isNovaDeliveryMirrorAssistantMessage(current)) {
     return false;
   }
-  const deliveryMirror = readRecord(current.openclawDeliveryMirror);
+  const deliveryMirror = readRecord(current.novaDeliveryMirror);
   if (deliveryMirror?.kind !== "channel-final") {
     return false;
   }
   if (asRoleContentMessage(previousVisible)?.role !== "assistant") {
     return false;
   }
-  if (isOpenClawDeliveryMirrorAssistantMessage(previousVisible)) {
+  if (isNovaDeliveryMirrorAssistantMessage(previousVisible)) {
     return false;
   }
   if (isProjectedSessionsSendForwardedMessage(previousVisible)) {
     return false;
   }
-  const previousMeta = readRecord(previousVisible["__openclaw"]);
+  const previousMeta = readRecord(previousVisible["__nova"]);
   if (typeof previousMeta?.mirrorIdentity !== "string" || !previousMeta.mirrorIdentity.trim()) {
     return false;
   }

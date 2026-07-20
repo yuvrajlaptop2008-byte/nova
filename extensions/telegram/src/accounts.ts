@@ -5,15 +5,12 @@ import {
   normalizeAccountId,
   normalizeOptionalAccountId,
   resolveAccountWithDefaultFallback,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/account-core";
-import type {
-  TelegramAccountConfig,
-  TelegramActionConfig,
-} from "openclaw/plugin-sdk/config-contracts";
-import { formatSetExplicitDefaultInstruction } from "openclaw/plugin-sdk/routing";
-import { createSubsystemLogger, isTruthyEnvValue } from "openclaw/plugin-sdk/runtime-env";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+  type NovaConfig,
+} from "nova/plugin-sdk/account-core";
+import type { TelegramAccountConfig, TelegramActionConfig } from "nova/plugin-sdk/config-contracts";
+import { formatSetExplicitDefaultInstruction } from "nova/plugin-sdk/routing";
+import { createSubsystemLogger, isTruthyEnvValue } from "nova/plugin-sdk/runtime-env";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import { mergeTelegramAccountConfig, resolveTelegramAccountConfig } from "./account-config.js";
 import {
   listTelegramAccountIds as listSelectedTelegramAccountIds,
@@ -73,7 +70,7 @@ export type TelegramMediaRuntimeOptions = {
   dangerouslyAllowPrivateNetwork?: boolean;
 };
 
-export function listTelegramAccountIds(cfg: OpenClawConfig): string[] {
+export function listTelegramAccountIds(cfg: NovaConfig): string[] {
   const ids = listSelectedTelegramAccountIds(cfg);
   debugAccounts("listTelegramAccountIds", ids);
   return ids;
@@ -86,7 +83,7 @@ export function resetMissingDefaultWarnFlag(): void {
   emittedMissingDefaultWarn = false;
 }
 
-export function resolveDefaultTelegramAccountId(cfg: OpenClawConfig): string {
+export function resolveDefaultTelegramAccountId(cfg: NovaConfig): string {
   const selection = resolveDefaultTelegramAccountSelection(cfg);
   if (selection.shouldWarnMissingDefault && !emittedMissingDefaultWarn) {
     emittedMissingDefaultWarn = true;
@@ -99,7 +96,7 @@ export function resolveDefaultTelegramAccountId(cfg: OpenClawConfig): string {
 }
 
 export function createTelegramActionGate(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): (key: keyof TelegramActionConfig, defaultValue?: boolean) => boolean {
   const accountId = normalizeAccountId(
@@ -112,7 +109,7 @@ export function createTelegramActionGate(params: {
 }
 
 export function resolveTelegramMediaRuntimeOptions(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   token: string;
   transport?: TelegramTransport;
@@ -149,7 +146,7 @@ export function resolveTelegramPollActionGateState(
 }
 
 export function resolveTelegramAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): ResolvedTelegramAccount {
   const baseEnabled = params.cfg.channels?.telegram?.enabled !== false;
@@ -192,7 +189,7 @@ export function resolveTelegramAccount(params: {
   });
 }
 
-export function listEnabledTelegramAccounts(cfg: OpenClawConfig): ResolvedTelegramAccount[] {
+export function listEnabledTelegramAccounts(cfg: NovaConfig): ResolvedTelegramAccount[] {
   const baseEnabled = cfg.channels?.telegram?.enabled !== false;
   if (!baseEnabled) {
     return [];

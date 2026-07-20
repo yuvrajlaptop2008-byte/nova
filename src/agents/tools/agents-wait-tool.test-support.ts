@@ -23,7 +23,7 @@ type AgentsWaitToolTestApi = {
 
 function getTestApi(): AgentsWaitToolTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.agentsWaitToolTestApi")
+    Symbol.for("nova.agentsWaitToolTestApi")
   ] as AgentsWaitToolTestApi;
 }
 

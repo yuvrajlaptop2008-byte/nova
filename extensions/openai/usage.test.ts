@@ -146,7 +146,7 @@ describe("OpenAI provider usage", () => {
       resolveOAuthToken: async () => ({ token: "oauth-token" }),
     });
     expect(result).toEqual({
-      token: 'openclaw:openai-admin:v1:{"token":"sk-admin-explicit"}',
+      token: 'nova:openai-admin:v1:{"token":"sk-admin-explicit"}',
     });
   });
 

@@ -1,4 +1,4 @@
-import { readProviderTextResponse } from "openclaw/plugin-sdk/provider-http";
+import { readProviderTextResponse } from "nova/plugin-sdk/provider-http";
 import {
   admitGuardAdapter,
   assertPinnedModel,

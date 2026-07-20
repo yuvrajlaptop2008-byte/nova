@@ -2,12 +2,12 @@
   "name": "@nova/anthropic-provider",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw Anthropic provider, Claude CLI, and native session catalog plugin",
+  "description": "Nova Anthropic provider, Claude CLI, and native session catalog plugin",
   "type": "module",
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

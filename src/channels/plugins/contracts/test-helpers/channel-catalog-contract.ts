@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { resolvePreferredOpenClawTmpDir } from "../../../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../../../../infra/tmp-nova-dir.js";
 import { getChannelPluginCatalogEntry, listRawChannelPluginCatalogEntries } from "../../catalog.js";
 
 type CatalogEntryMeta = {
@@ -65,20 +65,20 @@ export function describeBundledMetadataOnlyChannelCatalogContract(params: {
   describe(`${params.pluginId} bundled metadata-only channel catalog contract`, () => {
     it("includes the bundled metadata-only channel entry when the runtime entrypoint is omitted", () => {
       const workspaceDir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-bundled-catalog-"),
+        path.join(resolvePreferredNovaTmpDir(), "nova-bundled-catalog-"),
       );
-      const bundledDir = path.join(workspaceDir, ".openclaw", "extensions", params.pluginId);
+      const bundledDir = path.join(workspaceDir, ".nova", "extensions", params.pluginId);
       fs.mkdirSync(bundledDir, { recursive: true });
       fs.writeFileSync(
         path.join(workspaceDir, "package.json"),
-        JSON.stringify({ name: "openclaw" }),
+        JSON.stringify({ name: "nova" }),
         "utf8",
       );
       fs.writeFileSync(
         path.join(bundledDir, "package.json"),
         JSON.stringify({
           name: params.packageName,
-          openclaw: {
+          nova: {
             extensions: ["./index.js"],
             channel: params.meta,
             install: {
@@ -91,7 +91,7 @@ export function describeBundledMetadataOnlyChannelCatalogContract(params: {
       );
       fs.writeFileSync(path.join(bundledDir, "index.js"), "export default {};\n", "utf8");
       fs.writeFileSync(
-        path.join(bundledDir, "openclaw.plugin.json"),
+        path.join(bundledDir, "nova.plugin.json"),
         JSON.stringify({ id: params.pluginId, channels: [params.meta.id], configSchema: {} }),
         "utf8",
       );
@@ -119,9 +119,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
 }) {
   describe(`${params.channelId} official fallback channel catalog contract`, () => {
     it("includes shipped official channel catalog entries when bundled metadata is omitted", () => {
-      const dir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-official-catalog-"),
-      );
+      const dir = fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-official-catalog-"));
       const catalogPath = path.join(dir, "channel-catalog.json");
       fs.writeFileSync(
         catalogPath,
@@ -129,7 +127,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.packageName,
-              openclaw: {
+              nova: {
                 channel: params.meta,
                 install: {
                   npmSpec: params.npmSpec,
@@ -152,9 +150,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
     });
 
     it("lets external catalogs override shipped fallback channel metadata", () => {
-      const dir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-fallback-catalog-"),
-      );
+      const dir = fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-fallback-catalog-"));
       const bundledDir = path.join(dir, "dist", "extensions", params.pluginId);
       const officialCatalogPath = path.join(dir, "channel-catalog.json");
       const externalCatalogPath = path.join(dir, "catalog.json");
@@ -163,7 +159,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
         path.join(bundledDir, "package.json"),
         JSON.stringify({
           name: params.packageName,
-          openclaw: {
+          nova: {
             channel: {
               ...params.meta,
               label: `${params.meta.label} Bundled`,
@@ -181,7 +177,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.packageName,
-              openclaw: {
+              nova: {
                 channel: {
                   ...params.meta,
                   label: `${params.meta.label} Official`,
@@ -201,7 +197,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.externalNpmSpec,
-              openclaw: {
+              nova: {
                 channel: {
                   ...params.meta,
                   label: params.externalLabel,
@@ -229,9 +225,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
     });
 
     it("surfaces package-name drift in external channel catalog install metadata", () => {
-      const dir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-drifted-catalog-"),
-      );
+      const dir = fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-drifted-catalog-"));
       const catalogPath = path.join(dir, "catalog.json");
       fs.writeFileSync(
         catalogPath,
@@ -239,7 +233,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.packageName,
-              openclaw: {
+              nova: {
                 channel: params.meta,
                 install: {
                   npmSpec: `${params.packageName}-fork@1.2.3`,

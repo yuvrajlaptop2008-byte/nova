@@ -11,7 +11,7 @@ import type {
   SessionEntryPatchContext,
   SessionEntryPatchOptions,
 } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { AgentEventPayload } from "../infra/agent-events.js";
 import {
   getActiveGatewayRootWorkCount,
@@ -110,7 +110,7 @@ const mocks = vi.hoisted(() => ({
   callGateway: vi.fn<(request: { method?: string }) => Promise<Record<string, unknown>>>(),
   onAgentEvent: vi.fn<(_handler: (event: AgentEventPayload) => void) => typeof noop>(() => noop),
   getAgentRunContext: vi.fn<(_runId: string) => unknown>(() => undefined),
-  getRuntimeConfig: vi.fn<() => OpenClawConfig>(() => ({
+  getRuntimeConfig: vi.fn<() => NovaConfig>(() => ({
     agents: { defaults: { subagents: { archiveAfterMinutes: 0 } } },
     session: { mainKey: "main", scope: "per-sender" as const },
   })),
@@ -474,7 +474,7 @@ describe("subagent registry seam flow", () => {
   });
 
   it("keeps collector records when attachment cleanup cannot prove a safe path", async () => {
-    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-swarm-archive-"));
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-swarm-archive-"));
     const attachmentsRootDir = path.join(tempRoot, "root");
     const attachmentsDir = path.join(tempRoot, "outside");
     await fs.mkdir(attachmentsRootDir);
@@ -4526,7 +4526,7 @@ describe("subagent registry seam flow", () => {
       runSubagentEnded: mocks.runSubagentEnded,
     } as never);
     const attachmentsRootDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-old-tombstone-attachments-"),
+      path.join(os.tmpdir(), "nova-old-tombstone-attachments-"),
     );
     const attachmentsDir = path.join(attachmentsRootDir, "child");
     await fs.mkdir(attachmentsDir, { recursive: true });
@@ -6288,9 +6288,7 @@ describe("subagent registry seam flow", () => {
   });
 
   it("removes attachments for killed delete-mode runs", async () => {
-    const attachmentsRootDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-kill-attachments-"),
-    );
+    const attachmentsRootDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-kill-attachments-"));
     const attachmentsDir = path.join(attachmentsRootDir, "child");
     await fs.mkdir(attachmentsDir, { recursive: true });
     await fs.writeFile(path.join(attachmentsDir, "artifact.txt"), "artifact");
@@ -6508,7 +6506,7 @@ describe("subagent registry seam flow", () => {
 
   it("removes attachments for released delete-mode runs", async () => {
     const attachmentsRootDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-release-attachments-"),
+      path.join(os.tmpdir(), "nova-release-attachments-"),
     );
     const attachmentsDir = path.join(attachmentsRootDir, "child");
     await fs.mkdir(attachmentsDir, { recursive: true });

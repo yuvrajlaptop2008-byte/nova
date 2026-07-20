@@ -102,7 +102,7 @@ async function installTalkBrowserFixtures(page: Page) {
       configurable: true,
       value: MockAudioContext,
     });
-    Object.defineProperty(window, "openclawTalkE2eState", {
+    Object.defineProperty(window, "novaTalkE2eState", {
       configurable: true,
       value: state,
     });
@@ -232,9 +232,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
             () =>
               (
                 window as Window & {
-                  openclawTalkE2eState?: { constraints: unknown[] };
+                  novaTalkE2eState?: { constraints: unknown[] };
                 }
-              ).openclawTalkE2eState?.constraints,
+              ).novaTalkE2eState?.constraints,
           ),
         )
         .toEqual([
@@ -301,7 +301,7 @@ describeControlUiE2e("Control UI browser Talk", () => {
       await page.evaluate(() => {
         const state = (
           window as Window & {
-            openclawTalkE2eState?: {
+            novaTalkE2eState?: {
               inputProcessor?: {
                 onaudioprocess?: (event: {
                   inputBuffer: { getChannelData: () => Float32Array };
@@ -310,7 +310,7 @@ describeControlUiE2e("Control UI browser Talk", () => {
               meterLevel?: number;
             };
           }
-        ).openclawTalkE2eState;
+        ).novaTalkE2eState;
         if (state) {
           state.meterLevel = 0.25;
         }
@@ -342,9 +342,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
           page.evaluate(() => {
             const state = (
               window as Window & {
-                openclawTalkE2eState?: { audioContextsClosed: number; tracksStopped: number };
+                novaTalkE2eState?: { audioContextsClosed: number; tracksStopped: number };
               }
-            ).openclawTalkE2eState;
+            ).novaTalkE2eState;
             return state
               ? {
                   audioContextsClosed: state.audioContextsClosed,
@@ -402,7 +402,7 @@ describeControlUiE2e("Control UI browser Talk", () => {
       await page.evaluate(() => {
         const state = (
           window as Window & {
-            openclawTalkE2eState?: {
+            novaTalkE2eState?: {
               inputProcessor?: {
                 onaudioprocess?: (event: {
                   inputBuffer: { getChannelData: () => Float32Array };
@@ -411,7 +411,7 @@ describeControlUiE2e("Control UI browser Talk", () => {
               meterLevel?: number;
             };
           }
-        ).openclawTalkE2eState;
+        ).novaTalkE2eState;
         if (state) {
           state.meterLevel = 0.25;
         }
@@ -505,11 +505,11 @@ describeControlUiE2e("Control UI browser Talk", () => {
           const stream = await getUserMedia(constraints);
           (
             window as Window & {
-              openclawVideoTalkTracks?: MediaStreamTrack[];
+              novaVideoTalkTracks?: MediaStreamTrack[];
             }
-          ).openclawVideoTalkTracks = [
-            ...((window as Window & { openclawVideoTalkTracks?: MediaStreamTrack[] })
-              .openclawVideoTalkTracks ?? []),
+          ).novaVideoTalkTracks = [
+            ...((window as Window & { novaVideoTalkTracks?: MediaStreamTrack[] })
+              .novaVideoTalkTracks ?? []),
             ...stream.getTracks(),
           ];
           return stream;
@@ -538,12 +538,12 @@ describeControlUiE2e("Control UI browser Talk", () => {
           super();
           (
             window as Window & {
-              openclawVideoTalkE2e?: {
+              novaVideoTalkE2e?: {
                 dataChannelCreated: boolean;
                 peer: FakePeerConnection;
               };
             }
-          ).openclawVideoTalkE2e = { dataChannelCreated: false, peer: this };
+          ).novaVideoTalkE2e = { dataChannelCreated: false, peer: this };
         }
 
         addTrack() {}
@@ -551,9 +551,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
         createDataChannel() {
           const harness = (
             window as Window & {
-              openclawVideoTalkE2e?: { dataChannelCreated: boolean };
+              novaVideoTalkE2e?: { dataChannelCreated: boolean };
             }
-          ).openclawVideoTalkE2e;
+          ).novaVideoTalkE2e;
           if (harness) {
             harness.dataChannelCreated = true;
           }
@@ -603,9 +603,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
             Boolean(
               (
                 window as Window & {
-                  openclawVideoTalkE2e?: { dataChannelCreated: boolean };
+                  novaVideoTalkE2e?: { dataChannelCreated: boolean };
                 }
-              ).openclawVideoTalkE2e?.dataChannelCreated,
+              ).novaVideoTalkE2e?.dataChannelCreated,
             ),
           ),
         )
@@ -613,9 +613,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
       await page.evaluate(() => {
         const channel = (
           window as Window & {
-            openclawVideoTalkE2e?: { peer: { channel: EventTarget } };
+            novaVideoTalkE2e?: { peer: { channel: EventTarget } };
           }
-        ).openclawVideoTalkE2e?.peer.channel;
+        ).novaVideoTalkE2e?.peer.channel;
         channel?.dispatchEvent(new Event("open"));
       });
       const turnCameraOn = page.getByRole("button", { name: "Turn camera on" });
@@ -640,9 +640,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
       await page.evaluate(() => {
         const channel = (
           window as Window & {
-            openclawVideoTalkE2e?: { peer: { channel: EventTarget } };
+            novaVideoTalkE2e?: { peer: { channel: EventTarget } };
           }
-        ).openclawVideoTalkE2e?.peer.channel;
+        ).novaVideoTalkE2e?.peer.channel;
         channel?.dispatchEvent(
           new MessageEvent("message", {
             data: JSON.stringify({
@@ -660,9 +660,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
           page.evaluate(() => {
             const sent = (
               window as Window & {
-                openclawVideoTalkE2e?: { peer: { channel: { sent: unknown[] } } };
+                novaVideoTalkE2e?: { peer: { channel: { sent: unknown[] } } };
               }
-            ).openclawVideoTalkE2e?.peer.channel.sent;
+            ).novaVideoTalkE2e?.peer.channel.sent;
             return {
               image: sent?.some(
                 (event) =>
@@ -696,9 +696,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
       const trackStates = await page.evaluate(() =>
         (
           window as Window & {
-            openclawVideoTalkTracks?: MediaStreamTrack[];
+            novaVideoTalkTracks?: MediaStreamTrack[];
           }
-        ).openclawVideoTalkTracks?.map((track) => track.readyState),
+        ).novaVideoTalkTracks?.map((track) => track.readyState),
       );
       expect(trackStates).toHaveLength(2);
       expect(trackStates?.every((state) => state === "ended")).toBe(true);
@@ -765,11 +765,11 @@ describeControlUiE2e("Control UI browser Talk", () => {
           const stream = await getUserMedia(constraints);
           (
             window as Window & {
-              openclawGeminiVideoTalkTracks?: MediaStreamTrack[];
+              novaGeminiVideoTalkTracks?: MediaStreamTrack[];
             }
-          ).openclawGeminiVideoTalkTracks = [
-            ...((window as Window & { openclawGeminiVideoTalkTracks?: MediaStreamTrack[] })
-              .openclawGeminiVideoTalkTracks ?? []),
+          ).novaGeminiVideoTalkTracks = [
+            ...((window as Window & { novaGeminiVideoTalkTracks?: MediaStreamTrack[] })
+              .novaGeminiVideoTalkTracks ?? []),
             ...stream.getTracks(),
           ];
           return stream;
@@ -842,9 +842,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
       const trackStates = await page.evaluate(() =>
         (
           window as Window & {
-            openclawGeminiVideoTalkTracks?: MediaStreamTrack[];
+            novaGeminiVideoTalkTracks?: MediaStreamTrack[];
           }
-        ).openclawGeminiVideoTalkTracks?.map((track) => track.readyState),
+        ).novaGeminiVideoTalkTracks?.map((track) => track.readyState),
       );
       expect(trackStates).toHaveLength(2);
       expect(trackStates?.every((state) => state === "ended")).toBe(true);
@@ -947,9 +947,9 @@ describeControlUiE2e("Control UI browser Talk", () => {
             () =>
               (
                 window as Window & {
-                  openclawTalkE2eState?: { constraints: unknown[] };
+                  novaTalkE2eState?: { constraints: unknown[] };
                 }
-              ).openclawTalkE2eState?.constraints.length,
+              ).novaTalkE2eState?.constraints.length,
           ),
         )
         .toBe(1);

@@ -14,7 +14,7 @@ import {
 import { normalizeProviderConfigForConfigDefaults } from "../config/provider-policy.js";
 import type { AgentModelConfig } from "../config/types.agents-shared.js";
 import type { ModelProviderConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ProviderAuthMethod, ProviderPlugin } from "./types.js";
 
 export function resolveProviderMatch(
@@ -180,9 +180,9 @@ function normalizeProviderCatalogModelIdsForWrite(
 }
 
 function normalizeModelProviderConfigsForWrite(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   providerConfigNormalizer: typeof normalizeProviderConfigForConfigDefaults,
-): OpenClawConfig {
+): NovaConfig {
   const providers = cfg.models?.providers;
   if (!providers) {
     return cfg;
@@ -258,9 +258,9 @@ function normalizeAgentListForWrite(value: unknown): unknown {
 }
 
 function normalizeConfigModelRefsForWrite(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   providerConfigNormalizer: typeof normalizeProviderConfigForConfigDefaults,
-): OpenClawConfig {
+): NovaConfig {
   const providerNormalized = normalizeModelProviderConfigsForWrite(cfg, providerConfigNormalizer);
   const defaults = providerNormalized.agents?.defaults;
   const agentsList = providerNormalized.agents?.list;
@@ -301,13 +301,13 @@ function normalizeConfigModelRefsForWrite(
 }
 
 export function applyProviderAuthConfigPatch(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   patch: unknown,
   options?: {
     replaceDefaultModels?: boolean;
     providerConfigNormalizer?: typeof normalizeProviderConfigForConfigDefaults;
   },
-): OpenClawConfig {
+): NovaConfig {
   const providerConfigNormalizer =
     options?.providerConfigNormalizer ?? normalizeProviderConfigForConfigDefaults;
   const merged = normalizeConfigModelRefsForWrite(
@@ -333,7 +333,7 @@ export function applyProviderAuthConfigPatch(
           ...merged.agents?.defaults,
           // Opt-in replacement for migrations that rename/remove model keys.
           models: sanitizeConfigPatchValue(patchModels) as NonNullable<
-            NonNullable<OpenClawConfig["agents"]>["defaults"]
+            NonNullable<NovaConfig["agents"]>["defaults"]
           >["models"],
         },
       },
@@ -347,10 +347,10 @@ export function applyProviderAuthConfigPatch(
  * `--set-default`, so `applyConfig` patches cannot replace the primary without an explicit opt-in.
  */
 export function restorePriorAgentsDefaultsModelUnlessOptIn(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   priorAgentsDefaultsModel?: AgentModelConfig;
   setDefault?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   if (params.setDefault || params.priorAgentsDefaultsModel === undefined) {
     return params.cfg;
   }
@@ -367,10 +367,10 @@ export function restorePriorAgentsDefaultsModelUnlessOptIn(params: {
 }
 
 export function applyDefaultModel(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   model: string,
   opts?: { preserveExistingPrimary?: boolean },
-): OpenClawConfig {
+): NovaConfig {
   const normalizedModel = normalizeAgentModelRefForConfig(model);
   const models = {
     ...normalizeAgentModelMapForConfig(cfg.agents?.defaults?.models ?? {}),

@@ -12,7 +12,7 @@ import { HEARTBEAT_RESPONSE_TOOL_NAME } from "../auto-reply/heartbeat-tool-respo
 import type { ChatType } from "../channels/chat-type.js";
 import type { InboundEventKind } from "../channels/inbound-event/kind.js";
 import type { ModelCompatConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import { resolveEventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import { applyExecPolicyLayer } from "../infra/exec-policy.js";
@@ -40,7 +40,7 @@ import { filterToolsByMessageProvider } from "./agent-tools.message-provider-pol
 import {
   createHostWorkspaceEditTool,
   createHostWorkspaceWriteTool,
-  createOpenClawReadTool,
+  createNovaReadTool,
   createSandboxedEditTool,
   createSandboxedReadTool,
   createSandboxedWriteTool,
@@ -69,7 +69,7 @@ import {
   type ResolvedConversationCapabilityProfile,
 } from "./conversation-capability-profile.js";
 import type { ConversationRecallContext } from "./conversation-recall.types.js";
-import type { OpenClawCodingToolConstructionPlan } from "./core-tool-factory-descriptors.js";
+import type { NovaCodingToolConstructionPlan } from "./core-tool-factory-descriptors.js";
 import { applyDelegationCapability, type DelegationCapability } from "./delegation-capability.js";
 import { resolveImageSanitizationLimits } from "./image-sanitization.js";
 import { createLazyExecTool, resolveExecToolConfig } from "./lazy-exec-tool.js";
@@ -78,8 +78,8 @@ import {
   resolveLocalModelLeanPreserveToolNames,
 } from "./local-model-lean.js";
 import type { ModelAuthMode } from "./model-auth.js";
-import { resolveOpenClawPluginToolsForOptions } from "./openclaw-plugin-tools.js";
-import { createOpenClawTools, filterToolsByClientCaps } from "./openclaw-tools.js";
+import { resolveNovaPluginToolsForOptions } from "./nova-plugin-tools.js";
+import { createNovaTools, filterToolsByClientCaps } from "./nova-tools.js";
 import type { PreparedModelRuntimeSnapshot } from "./prepared-model-runtime.js";
 import type { SandboxContext } from "./sandbox.js";
 import { SANDBOX_AGENT_WORKSPACE_MOUNT } from "./sandbox/constants.js";
@@ -235,7 +235,7 @@ export function resolveProcessToolScopeKey(params: {
 function applyModelProviderToolPolicy(
   toolsInput: AnyAgentTool[],
   params?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     modelProvider?: string;
     modelApi?: string;
     modelId?: string;
@@ -278,7 +278,7 @@ function applyModelProviderToolPolicy(
 export { resolveToolLoopDetectionConfig } from "./tool-loop-detection-config.js";
 
 /** Public options for building one plugin-owned agent tool surface. */
-type OpenClawCodingToolsOptions = {
+type NovaCodingToolsOptions = {
   agentId?: string;
   exec?: ExecToolDefaults & ProcessToolDefaults;
   messageProvider?: string;
@@ -340,7 +340,7 @@ type OpenClawCodingToolsOptions = {
    * Defaults to workspaceDir when not set.
    */
   spawnWorkspaceDir?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   abortSignal?: AbortSignal;
   /** Disable hook-owned diagnostics when an outer runtime owns tool diagnostics. */
   emitBeforeToolCallDiagnostics?: boolean;
@@ -440,7 +440,7 @@ type OpenClawCodingToolsOptions = {
   /** Runtime-local Tool Search catalog ref shared with attempt compaction. */
   toolSearchCatalogRef?: ToolSearchCatalogRef;
   /** Limits which tool families are materialized before the shared policy pipeline runs. */
-  toolConstructionPlan?: OpenClawCodingToolConstructionPlan;
+  toolConstructionPlan?: NovaCodingToolConstructionPlan;
   /** Ring-zero Nova tool; set only by the Nova agent runner. */
   systemAgentTool?: import("./tools/system-agent-tool.js").SystemAgentToolOptions;
   /** Trusted sender identity bit for command/channel-action auth and owner-gated plugin tools. */
@@ -465,7 +465,7 @@ type OpenClawCodingToolsOptions = {
   conversationCapabilityProfile?: ResolvedConversationCapabilityProfile;
 };
 
-function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions): AnyAgentTool[] {
+function createNovaCodingToolsInternal(options?: NovaCodingToolsOptions): AnyAgentTool[] {
   const execToolName = "exec";
   const sandbox = options?.sandbox?.enabled ? options.sandbox : undefined;
   const isMemoryFlushRun = options?.trigger === "memory";
@@ -636,12 +636,12 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
     includeBaseCodingTools: includeCoreTools,
     includeShellTools: includeCoreTools,
     includeChannelTools: includeCoreTools,
-    includeOpenClawTools: includeCoreTools,
+    includeNovaTools: includeCoreTools,
     includePluginTools: true,
   };
   const includeBaseCodingTools = includeCoreTools && toolConstructionPlan.includeBaseCodingTools;
   const includeShellTools = includeCoreTools && toolConstructionPlan.includeShellTools;
-  const includeOpenClawTools = includeCoreTools && toolConstructionPlan.includeOpenClawTools;
+  const includeNovaTools = includeCoreTools && toolConstructionPlan.includeNovaTools;
   const includeChannelTools = toolConstructionPlan.includeChannelTools;
   const includePluginTools = toolConstructionPlan.includePluginTools;
   const workspaceOnly = fsPolicy.workspaceOnly;
@@ -690,7 +690,7 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
           continue;
         }
         const freshReadTool = createReadTool(codingRoot);
-        const wrapped = createOpenClawReadTool(freshReadTool, {
+        const wrapped = createNovaReadTool(freshReadTool, {
           modelContextWindowTokens: options?.modelContextWindowTokens,
           imageSanitization,
         });
@@ -838,7 +838,7 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
   const shouldCaptureCronCreatorToolAllowlist = toolPolicyInheritanceSources.some(
     (policy) => hasRestrictiveAllowPolicy(policy) || hasExplicitDenyPolicy(policy),
   );
-  // Plugin-only plans bypass createOpenClawTools, so the capability gate must
+  // Plugin-only plans bypass createNovaTools, so the capability gate must
   // apply here too or narrow allowlists leak gated tools onto capless surfaces.
   const pluginToolCallerIdentity =
     agentId && options?.sessionKey?.trim()
@@ -855,9 +855,9 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
         }
       : undefined;
   const pluginToolsOnly = filterToolsByClientCaps(
-    includeOpenClawTools || !includePluginTools
+    includeNovaTools || !includePluginTools
       ? []
-      : resolveOpenClawPluginToolsForOptions({
+      : resolveNovaPluginToolsForOptions({
           options: {
             agentSessionKey: options?.sessionKey,
             agentChannel: resolveGatewayMessageChannel(
@@ -900,7 +900,7 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
         }),
     options?.clientCaps,
   ).map((tool) => wrapToolWithGatewayCallerIdentity(tool, pluginToolCallerIdentity));
-  const ringZeroTools = includeOpenClawTools ? getActiveAgentRingZeroTools() : [];
+  const ringZeroTools = includeNovaTools ? getActiveAgentRingZeroTools() : [];
   const toolSearchTools =
     toolSearchControlsEnabled && ringZeroTools.length === 0
       ? createToolSearchTools({
@@ -946,10 +946,10 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...(includeChannelTools ? listChannelAgentTools({ cfg: options?.config }) : []),
-    ...(includeOpenClawTools
+    ...(includeNovaTools
       ? mergeAgentRingZeroTools(
           ringZeroTools,
-          createOpenClawTools({
+          createNovaTools({
             ...(options?.systemAgentTool ? { systemAgentTool: options.systemAgentTool } : {}),
             sandboxBrowserBridgeUrl: sandbox?.browser?.bridgeUrl,
             allowHostBrowserControl: sandbox ? sandbox.browserAllowHostControl : true,
@@ -1032,7 +1032,7 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
       : pluginToolsOnly),
     ...toolSearchTools,
   ];
-  options?.recordToolPrepStage?.("openclaw-tools");
+  options?.recordToolPrepStage?.("nova-tools");
   const swarmStructuredOutputTool =
     options?.swarmCollector && options.swarmOutputSchema
       ? tools.find((tool) => tool.name === "structured_output")
@@ -1232,7 +1232,7 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
 }
 
 /** Build the runtime tool list exposed through the public agent harness SDK. */
-export function createOpenClawCodingTools(options?: OpenClawCodingToolsOptions): AnyAgentTool[] {
-  return createOpenClawCodingToolsInternal(options);
+export function createNovaCodingTools(options?: NovaCodingToolsOptions): AnyAgentTool[] {
+  return createNovaCodingToolsInternal(options);
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

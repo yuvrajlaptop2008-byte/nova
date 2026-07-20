@@ -18,7 +18,7 @@ let stateDir = "";
 beforeEach(async () => {
   resetPluginStateStoreForTests();
   stateDir = await fs.realpath(
-    await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-ingress-effect-once-")),
+    await fs.mkdtemp(path.join(os.tmpdir(), "nova-ingress-effect-once-")),
   );
   vi.stubEnv("NOVA_STATE_DIR", stateDir);
 });

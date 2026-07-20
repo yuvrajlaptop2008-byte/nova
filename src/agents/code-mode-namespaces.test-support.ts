@@ -6,7 +6,7 @@ type CodeModeNamespacesTestApi = {
 };
 
 const testing = (globalThis as Record<PropertyKey, unknown>)[
-  Symbol.for("openclaw.codeModeNamespacesTestApi")
+  Symbol.for("nova.codeModeNamespacesTestApi")
 ] as CodeModeNamespacesTestApi;
 
 export function clearCodeModeNamespacesForTest(): void {

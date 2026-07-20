@@ -16,7 +16,7 @@ try {
       {
         env: {
           ...process.env,
-          NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+          NOVA_CONFIG_PATH: path.join(root, "nova.json"),
         },
       },
       9,
@@ -29,7 +29,7 @@ try {
       {
         env: {
           ...process.env,
-          NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+          NOVA_CONFIG_PATH: path.join(root, "nova.json"),
         },
       },
       9,

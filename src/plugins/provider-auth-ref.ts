@@ -3,7 +3,7 @@ import {
   normalizeOptionalString,
   normalizeStringifiedOptionalString,
 } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { isValidEnvSecretRefId, type SecretRef } from "../config/types.secrets.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { encodeJsonPointerToken } from "../secrets/json-pointer.js";
@@ -45,10 +45,7 @@ export function extractEnvVarFromSourceLabel(source: string): string | undefined
   return match?.[1];
 }
 
-function resolveDefaultProviderEnvVar(
-  provider: string,
-  config?: OpenClawConfig,
-): string | undefined {
+function resolveDefaultProviderEnvVar(provider: string, config?: NovaConfig): string | undefined {
   const envVars = getProviderEnvVars(provider, {
     ...(config ? { config } : {}),
     includeUntrustedWorkspacePlugins: false,
@@ -61,7 +58,7 @@ function resolveDefaultFilePointerId(provider: string): string {
 }
 
 export function resolveRefFallbackInput(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   provider: string;
   preferredEnvVar?: string;
   env?: NodeJS.ProcessEnv;
@@ -98,7 +95,7 @@ export function resolveRefFallbackInput(params: {
 
 async function promptEnvSecretRefForSetup(params: {
   provider: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   prompter: WizardPrompter;
   defaultEnvVar: string;
   copy?: SecretRefSetupPromptCopy;
@@ -155,7 +152,7 @@ async function promptEnvSecretRefForSetup(params: {
 
 async function promptProviderSecretRefForSetup(params: {
   provider: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   prompter: WizardPrompter;
   defaultFilePointer: string;
   copy?: SecretRefSetupPromptCopy;
@@ -269,7 +266,7 @@ async function promptProviderSecretRefForSetup(params: {
 
 export async function promptSecretRefForSetup(params: {
   provider: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   prompter: WizardPrompter;
   preferredEnvVar?: string;
   copy?: SecretRefSetupPromptCopy;

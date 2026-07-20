@@ -9,7 +9,7 @@ import {
   resolveRestartRecoveryChannelAuthority,
 } from "../config/sessions/restart-recovery-state.js";
 import { applySessionEntryReplacements } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isTrustedMessageActionTurnIngress } from "../gateway/message-action-turn-capability.js";
 import type { GatewayRecoveryRuntime } from "../gateway/server-instance-runtime.types.js";
 import { getAgentEventLifecycleGeneration } from "../infra/agent-events.js";
@@ -73,7 +73,7 @@ export function requiresRestartRecoveryMessageActionAuthority(entry: SessionEntr
 }
 
 export function resolveRestartRecoveryResumeBlockReason(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   entry: SessionEntry;
   sessionKey: string;
 }): string | undefined {
@@ -127,7 +127,7 @@ function buildResumeMessage(pendingFinalDeliveryText?: string | null): string {
 }
 
 export function resolveRestartRecoveryDeliveryContext(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   entry: SessionEntry;
   includeSessionDeliveryFallback?: boolean;
   sessionKey: string;
@@ -338,7 +338,7 @@ function scheduleRestartRecoveryReservationRollback(
 
 export async function resumeMainSession(params: {
   canonicalSessionKey?: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   entry: SessionEntry;
   observation: MainSessionRecoveryObservation;
   recoveryAttempt: number;

@@ -8,7 +8,7 @@ import {
   archiveLegacyCronStoreForMigration,
   loadLegacyCronStoreForMigration,
 } from "../commands/doctor/cron/legacy-store-migration.js";
-import { openOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import { openNovaStateDatabase } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import {
   loadCronJobsStoreWithConfigJobs,
@@ -26,7 +26,7 @@ let fixtureRoot = "";
 let caseId = 0;
 
 beforeAll(async () => {
-  fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-cron-store-"));
+  fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-cron-store-"));
 });
 
 afterAll(async () => {
@@ -89,11 +89,11 @@ describe("resolveCronStorePath", () => {
   });
 
   it("uses NOVA_HOME for tilde expansion", () => {
-    setTestEnvValue("NOVA_HOME", "/srv/openclaw-home");
+    setTestEnvValue("NOVA_HOME", "/srv/nova-home");
     setTestEnvValue("HOME", "/home/other");
 
     const result = resolveCronStorePath("~/cron/jobs.json");
-    expect(result).toBe(path.resolve("/srv/openclaw-home", "cron", "jobs.json"));
+    expect(result).toBe(path.resolve("/srv/nova-home", "cron", "jobs.json"));
   });
 });
 
@@ -510,7 +510,7 @@ describe("cron store", () => {
 
     await saveCronStore(store.storePath, payload);
 
-    const queuedRow = openOpenClawStateDatabase()
+    const queuedRow = openNovaStateDatabase()
       .db.prepare("SELECT running_at_ms, state_json FROM cron_jobs WHERE job_id = ?")
       .get(job.id) as { running_at_ms: number | null; state_json: string };
     expect(queuedRow.running_at_ms).toBeNull();
@@ -801,7 +801,7 @@ describe("cron store", () => {
     };
 
     await saveCronStore(storePath, { version: 1, jobs: [job] });
-    openOpenClawStateDatabase()
+    openNovaStateDatabase()
       .db.prepare("UPDATE cron_jobs SET delivery_thread_id = NULL WHERE job_id = ?")
       .run(job.id);
 
@@ -823,7 +823,7 @@ describe("cron store", () => {
     };
 
     await saveCronStore(storePath, { version: 1, jobs: [job] });
-    openOpenClawStateDatabase()
+    openNovaStateDatabase()
       .db.prepare("UPDATE cron_jobs SET delivery_thread_id = ? WHERE job_id = ?")
       .run("replacement", job.id);
 

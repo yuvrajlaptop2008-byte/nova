@@ -17,7 +17,7 @@ import {
 import {
   getPackageManifestMetadata,
   loadPluginManifest,
-  type OpenClawPackageManifest,
+  type NovaPackageManifest,
   type PackageManifest,
   type PluginManifest,
 } from "./manifest.js";
@@ -49,7 +49,7 @@ type BundledPluginMetadata = {
   packageName?: string;
   packageVersion?: string;
   packageDescription?: string;
-  packageManifest?: OpenClawPackageManifest;
+  packageManifest?: NovaPackageManifest;
   manifest: PluginManifest;
 };
 

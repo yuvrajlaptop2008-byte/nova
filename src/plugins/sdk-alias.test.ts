@@ -7,7 +7,7 @@ import {
   bundledDistPluginFile,
   bundledPluginFile,
   bundledPluginRoot,
-} from "openclaw/plugin-sdk/test-fixtures";
+} from "nova/plugin-sdk/test-fixtures";
 import { afterAll, describe, expect, it, vi } from "vitest";
 import { withEnv } from "../test-utils/env.js";
 import {
@@ -36,7 +36,7 @@ async function getCreateJiti() {
 }
 
 const fixtureTempDirs: string[] = [];
-const fixtureRoot = makeTrackedTempDir("openclaw-sdk-alias-root", fixtureTempDirs);
+const fixtureRoot = makeTrackedTempDir("nova-sdk-alias-root", fixtureTempDirs);
 let tempDirIndex = 0;
 
 function makeTempDir() {
@@ -45,16 +45,16 @@ function makeTempDir() {
   return dir;
 }
 
-function createTrustedOpenClawPackageFixture(version: string) {
+function createTrustedNovaPackageFixture(version: string) {
   const root = makeTempDir();
-  fs.writeFileSync(path.join(root, "openclaw.mjs"), "export {};\n", "utf-8");
+  fs.writeFileSync(path.join(root, "nova.mjs"), "export {};\n", "utf-8");
   fs.writeFileSync(
     path.join(root, "package.json"),
     JSON.stringify(
       {
-        name: "openclaw",
+        name: "nova",
         version,
-        bin: { openclaw: "openclaw.mjs" },
+        bin: { nova: "nova.mjs" },
         exports: { "./plugin-sdk/core": { default: "./dist/plugin-sdk/core.js" } },
       },
       null,
@@ -93,12 +93,12 @@ function createPluginSdkAliasFixture(params?: {
     params?.trustedRootIndicatorMode ??
     (params?.trustedRootIndicators === false ? "none" : "bin+marker");
   const packageJson: Record<string, unknown> = {
-    name: "openclaw",
+    name: "nova",
     type: "module",
   };
   if (trustedRootIndicatorMode === "bin+marker") {
     packageJson.bin = {
-      openclaw: "openclaw.mjs",
+      nova: "nova.mjs",
     };
   }
   if (params?.packageExports || trustedRootIndicatorMode === "cli-entry-only") {
@@ -114,7 +114,7 @@ function createPluginSdkAliasFixture(params?: {
   }
   fs.writeFileSync(path.join(root, "package.json"), JSON.stringify(packageJson, null, 2), "utf-8");
   if (trustedRootIndicatorMode === "bin+marker") {
-    fs.writeFileSync(path.join(root, "openclaw.mjs"), "export {};\n", "utf-8");
+    fs.writeFileSync(path.join(root, "nova.mjs"), "export {};\n", "utf-8");
   }
   mkdirSafeDir(path.join(root, "scripts", "lib"));
   fs.writeFileSync(
@@ -163,7 +163,7 @@ function createPluginRuntimeAliasFixture(params?: { srcBody?: string; distBody?:
   mkdirSafeDir(path.dirname(distFile));
   fs.writeFileSync(
     path.join(root, "package.json"),
-    JSON.stringify({ name: "openclaw", type: "module" }, null, 2),
+    JSON.stringify({ name: "nova", type: "module" }, null, 2),
     "utf-8",
   );
   fs.writeFileSync(
@@ -295,13 +295,13 @@ function writeInstalledPluginEntry(params: {
 function createUserInstalledPluginSdkAliasFixture() {
   const { fixture, sourcePluginEntryPath, sourceChannelRuntimePath } =
     createPluginSdkAliasTargetFixture();
-  const externalPluginRoot = path.join(makeTempDir(), ".openclaw", "extensions", "demo");
+  const externalPluginRoot = path.join(makeTempDir(), ".nova", "extensions", "demo");
   const externalPluginEntry = path.join(externalPluginRoot, "index.ts");
   mkdirSafeDir(externalPluginRoot);
   fs.writeFileSync(
     externalPluginEntry,
     [
-      'import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";',
+      'import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";',
       'export default definePluginEntry({ id: "demo", register() {} });',
       "",
     ].join("\n"),
@@ -351,7 +351,7 @@ function expectPluginSdkAliasTargets(
   },
 ) {
   if (params.channelRuntimePath) {
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
       fs.realpathSync(params.channelRuntimePath),
     );
     expect(fs.realpathSync(aliases["@nova/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
@@ -359,7 +359,7 @@ function expectPluginSdkAliasTargets(
     );
   }
   if (params.pluginEntryPath) {
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/plugin-entry"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/plugin-entry"] ?? "")).toBe(
       fs.realpathSync(params.pluginEntryPath),
     );
     expect(fs.realpathSync(aliases["@nova/plugin-sdk/plugin-entry"] ?? "")).toBe(
@@ -384,8 +384,8 @@ function listPluginSdkExportedSubpaths(params: {
       params.devSourceRoot,
     ),
   )
-    .filter((key) => key.startsWith("openclaw/plugin-sdk/"))
-    .map((key) => key.slice("openclaw/plugin-sdk/".length))
+    .filter((key) => key.startsWith("nova/plugin-sdk/"))
+    .map((key) => key.slice("nova/plugin-sdk/".length))
     .toSorted();
 }
 
@@ -408,8 +408,8 @@ function expectCwdFallbackPluginSdkAliasResolution(params: {
     withEnv(
       { NODE_ENV: undefined },
       () =>
-        buildPluginLoaderAliasMap("/tmp/tsx-cache/openclaw-loader.js", "")[
-          "openclaw/plugin-sdk/channel-runtime-context"
+        buildPluginLoaderAliasMap("/tmp/tsx-cache/nova-loader.js", "")[
+          "nova/plugin-sdk/channel-runtime-context"
         ] ?? null,
     ),
   );
@@ -517,10 +517,10 @@ describe("plugin sdk alias helpers", () => {
     );
 
     expect(subpaths).toEqual(["core", "qa-runner-runtime"]);
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/qa-runner-runtime"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/qa-runner-runtime"] ?? "")).toBe(
       fs.realpathSync(sourceQaRunnerPath),
     );
-    expect(aliases["openclaw/plugin-sdk/qa-runtime"]).toBeUndefined();
+    expect(aliases["nova/plugin-sdk/qa-runtime"]).toBeUndefined();
   });
 
   it("adds non-QA private Codex helper subpaths only for trusted Codex plugins", () => {
@@ -559,15 +559,15 @@ describe("plugin sdk alias helpers", () => {
     );
     const { packageRoot: installedCodexRoot, pluginEntry: installedCodexEntry } =
       writeInstalledPluginEntry({
-        installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
+        installRoot: path.join(makeTempDir(), ".nova", "npm"),
         packageName: "@nova/codex",
       });
     const { packageRoot: installedOtherRoot, pluginEntry: installedOtherEntry } =
       writeInstalledPluginEntry({
-        installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
+        installRoot: path.join(makeTempDir(), ".nova", "npm"),
         packageName: "@nova/demo",
       });
-    const shadowCodexRoot = path.join(makeTempDir(), ".openclaw", "extensions", "codex-shadow");
+    const shadowCodexRoot = path.join(makeTempDir(), ".nova", "extensions", "codex-shadow");
     const shadowCodexEntry = path.join(shadowCodexRoot, "dist", "index.js");
     mkdirSafeDir(path.dirname(shadowCodexEntry));
     fs.writeFileSync(
@@ -591,7 +591,7 @@ describe("plugin sdk alias helpers", () => {
       withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined }, () =>
         listPluginSdkExportedSubpaths({
           modulePath: installedCodexEntry,
-          argv1: path.join(fixture.root, "openclaw.mjs"),
+          argv1: path.join(fixture.root, "nova.mjs"),
         }),
       ),
     );
@@ -599,7 +599,7 @@ describe("plugin sdk alias helpers", () => {
       withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined }, () =>
         listPluginSdkExportedSubpaths({
           modulePath: installedOtherEntry,
-          argv1: path.join(fixture.root, "openclaw.mjs"),
+          argv1: path.join(fixture.root, "nova.mjs"),
         }),
       ),
     );
@@ -607,7 +607,7 @@ describe("plugin sdk alias helpers", () => {
       withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined }, () =>
         listPluginSdkExportedSubpaths({
           modulePath: shadowCodexEntry,
-          argv1: path.join(fixture.root, "openclaw.mjs"),
+          argv1: path.join(fixture.root, "nova.mjs"),
         }),
       ),
     );
@@ -706,7 +706,7 @@ describe("plugin sdk alias helpers", () => {
     expectExportedSubpaths({
       fixture,
       cwd: fixture.root,
-      modulePath: "/tmp/tsx-cache/openclaw-loader.js",
+      modulePath: "/tmp/tsx-cache/nova-loader.js",
       expected,
     });
   });
@@ -771,16 +771,16 @@ describe("plugin sdk alias helpers", () => {
       buildPluginLoaderAliasMap(sourcePluginEntry),
     );
 
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/qa-runtime"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/qa-runtime"] ?? "")).toBe(
       fs.realpathSync(sourceQaRuntimePath),
     );
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/qa-channel"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/qa-channel"] ?? "")).toBe(
       fs.realpathSync(sourceQaChannelPath),
     );
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/qa-channel-protocol"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/qa-channel-protocol"] ?? "")).toBe(
       fs.realpathSync(sourceQaChannelProtocolPath),
     );
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/qa-lab"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/qa-lab"] ?? "")).toBe(
       fs.realpathSync(distQaLabPath),
     );
   });
@@ -883,15 +883,15 @@ describe("plugin sdk alias helpers", () => {
     );
     const { packageRoot: installedCodexRoot, pluginEntry: installedCodexEntry } =
       writeInstalledPluginEntry({
-        installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
+        installRoot: path.join(makeTempDir(), ".nova", "npm"),
         packageName: "@nova/codex",
       });
     const { packageRoot: installedOtherRoot, pluginEntry: installedOtherEntry } =
       writeInstalledPluginEntry({
-        installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
+        installRoot: path.join(makeTempDir(), ".nova", "npm"),
         packageName: "@nova/demo",
       });
-    const shadowCodexRoot = path.join(makeTempDir(), ".openclaw", "extensions", "codex-shadow");
+    const shadowCodexRoot = path.join(makeTempDir(), ".nova", "extensions", "codex-shadow");
     const shadowCodexEntry = path.join(shadowCodexRoot, "dist", "index.js");
     mkdirSafeDir(path.dirname(shadowCodexEntry));
     fs.writeFileSync(
@@ -913,7 +913,7 @@ describe("plugin sdk alias helpers", () => {
       () =>
         buildPluginLoaderAliasMap(
           distCodexEntry,
-          path.join(fixture.root, "openclaw.mjs"),
+          path.join(fixture.root, "nova.mjs"),
           undefined,
           "dist",
           devFixture.root,
@@ -923,7 +923,7 @@ describe("plugin sdk alias helpers", () => {
       withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined, NODE_ENV: undefined }, () =>
         buildPluginLoaderAliasMap(
           installedCodexEntry,
-          path.join(fixture.root, "openclaw.mjs"),
+          path.join(fixture.root, "nova.mjs"),
           undefined,
           "dist",
         ),
@@ -933,7 +933,7 @@ describe("plugin sdk alias helpers", () => {
       withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined, NODE_ENV: undefined }, () =>
         buildPluginLoaderAliasMap(
           shadowCodexEntry,
-          path.join(fixture.root, "openclaw.mjs"),
+          path.join(fixture.root, "nova.mjs"),
           undefined,
           "dist",
         ),
@@ -943,38 +943,38 @@ describe("plugin sdk alias helpers", () => {
       withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined, NODE_ENV: undefined }, () =>
         buildPluginLoaderAliasMap(
           installedOtherEntry,
-          path.join(fixture.root, "openclaw.mjs"),
+          path.join(fixture.root, "nova.mjs"),
           undefined,
           "dist",
         ),
       ),
     );
 
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/codex-mcp-projection"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/codex-mcp-projection"] ?? "")).toBe(
       fs.realpathSync(sourceCodexMcpProjectionPath),
     );
-    expect(fs.realpathSync(aliases["openclaw/plugin-sdk/codex-native-task-runtime"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["nova/plugin-sdk/codex-native-task-runtime"] ?? "")).toBe(
       fs.realpathSync(sourceCodexNativeTaskRuntimePath),
     );
-    expect(
-      fs.realpathSync(installedAliases["openclaw/plugin-sdk/codex-mcp-projection"] ?? ""),
-    ).toBe(fs.realpathSync(distCodexMcpProjectionPath));
-    expect(
-      fs.realpathSync(installedAliases["openclaw/plugin-sdk/codex-native-task-runtime"] ?? ""),
-    ).toBe(fs.realpathSync(distCodexNativeTaskRuntimePath));
-    expect(fs.realpathSync(devRootAliases["openclaw/plugin-sdk/codex-mcp-projection"] ?? "")).toBe(
-      fs.realpathSync(devCodexMcpProjectionPath),
+    expect(fs.realpathSync(installedAliases["nova/plugin-sdk/codex-mcp-projection"] ?? "")).toBe(
+      fs.realpathSync(distCodexMcpProjectionPath),
     );
     expect(
-      fs.realpathSync(devRootAliases["openclaw/plugin-sdk/codex-native-task-runtime"] ?? ""),
-    ).toBe(fs.realpathSync(devCodexNativeTaskRuntimePath));
-    expect(aliases["openclaw/plugin-sdk/qa-runtime"]).toBeUndefined();
-    expect(otherAliases["openclaw/plugin-sdk/codex-mcp-projection"]).toBeUndefined();
-    expect(otherAliases["openclaw/plugin-sdk/codex-native-task-runtime"]).toBeUndefined();
-    expect(installedOtherAliases["openclaw/plugin-sdk/codex-mcp-projection"]).toBeUndefined();
-    expect(installedOtherAliases["openclaw/plugin-sdk/codex-native-task-runtime"]).toBeUndefined();
-    expect(shadowCodexAliases["openclaw/plugin-sdk/codex-mcp-projection"]).toBeUndefined();
-    expect(shadowCodexAliases["openclaw/plugin-sdk/codex-native-task-runtime"]).toBeUndefined();
+      fs.realpathSync(installedAliases["nova/plugin-sdk/codex-native-task-runtime"] ?? ""),
+    ).toBe(fs.realpathSync(distCodexNativeTaskRuntimePath));
+    expect(fs.realpathSync(devRootAliases["nova/plugin-sdk/codex-mcp-projection"] ?? "")).toBe(
+      fs.realpathSync(devCodexMcpProjectionPath),
+    );
+    expect(fs.realpathSync(devRootAliases["nova/plugin-sdk/codex-native-task-runtime"] ?? "")).toBe(
+      fs.realpathSync(devCodexNativeTaskRuntimePath),
+    );
+    expect(aliases["nova/plugin-sdk/qa-runtime"]).toBeUndefined();
+    expect(otherAliases["nova/plugin-sdk/codex-mcp-projection"]).toBeUndefined();
+    expect(otherAliases["nova/plugin-sdk/codex-native-task-runtime"]).toBeUndefined();
+    expect(installedOtherAliases["nova/plugin-sdk/codex-mcp-projection"]).toBeUndefined();
+    expect(installedOtherAliases["nova/plugin-sdk/codex-native-task-runtime"]).toBeUndefined();
+    expect(shadowCodexAliases["nova/plugin-sdk/codex-mcp-projection"]).toBeUndefined();
+    expect(shadowCodexAliases["nova/plugin-sdk/codex-native-task-runtime"]).toBeUndefined();
   });
 
   it("aliases the SSRF internal helper only for bundled local IPC owner plugins", async () => {
@@ -1012,7 +1012,7 @@ describe("plugin sdk alias helpers", () => {
       bundledPluginFile("demo", "index.ts"),
     );
     const entryBody = [
-      'import { ssrfInternal } from "openclaw/plugin-sdk/ssrf-runtime-internal";',
+      'import { ssrfInternal } from "nova/plugin-sdk/ssrf-runtime-internal";',
       "export const loadedSsrFInternal = ssrfInternal;",
       "",
     ].join("\n");
@@ -1041,7 +1041,7 @@ describe("plugin sdk alias helpers", () => {
     fs.writeFileSync(distRuntimeBrowserEntry, entryBody, "utf-8");
     const { packageRoot: installedOllamaRoot, pluginEntry: installedOllamaEntry } =
       writeInstalledPluginEntry({
-        installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
+        installRoot: path.join(makeTempDir(), ".nova", "npm"),
         packageName: "@nova/ollama",
       });
 
@@ -1096,7 +1096,7 @@ describe("plugin sdk alias helpers", () => {
       withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined, NODE_ENV: undefined }, () =>
         buildPluginLoaderAliasMap(
           installedOllamaEntry,
-          path.join(fixture.root, "openclaw.mjs"),
+          path.join(fixture.root, "nova.mjs"),
           undefined,
           "dist",
         ),
@@ -1106,27 +1106,27 @@ describe("plugin sdk alias helpers", () => {
     expect(sourceSubpaths).toEqual(["core", "ssrf-runtime-internal"]);
     expect(sourceBrowserSubpaths).toEqual(["core", "ssrf-runtime-internal"]);
     expect(privateQaOtherSubpaths).toEqual(["core"]);
-    expect(fs.realpathSync(sourceAliases["openclaw/plugin-sdk/ssrf-runtime-internal"] ?? "")).toBe(
+    expect(fs.realpathSync(sourceAliases["nova/plugin-sdk/ssrf-runtime-internal"] ?? "")).toBe(
       fs.realpathSync(sourceSsrFInternalPath),
     );
     expect(
-      fs.realpathSync(sourceBrowserAliases["openclaw/plugin-sdk/ssrf-runtime-internal"] ?? ""),
+      fs.realpathSync(sourceBrowserAliases["nova/plugin-sdk/ssrf-runtime-internal"] ?? ""),
     ).toBe(fs.realpathSync(sourceSsrFInternalPath));
-    expect(fs.realpathSync(distAliases["openclaw/plugin-sdk/ssrf-runtime-internal"] ?? "")).toBe(
+    expect(fs.realpathSync(distAliases["nova/plugin-sdk/ssrf-runtime-internal"] ?? "")).toBe(
+      fs.realpathSync(distSsrFInternalPath),
+    );
+    expect(fs.realpathSync(distBrowserAliases["nova/plugin-sdk/ssrf-runtime-internal"] ?? "")).toBe(
+      fs.realpathSync(distSsrFInternalPath),
+    );
+    expect(fs.realpathSync(distRuntimeAliases["nova/plugin-sdk/ssrf-runtime-internal"] ?? "")).toBe(
       fs.realpathSync(distSsrFInternalPath),
     );
     expect(
-      fs.realpathSync(distBrowserAliases["openclaw/plugin-sdk/ssrf-runtime-internal"] ?? ""),
+      fs.realpathSync(distRuntimeBrowserAliases["nova/plugin-sdk/ssrf-runtime-internal"] ?? ""),
     ).toBe(fs.realpathSync(distSsrFInternalPath));
-    expect(
-      fs.realpathSync(distRuntimeAliases["openclaw/plugin-sdk/ssrf-runtime-internal"] ?? ""),
-    ).toBe(fs.realpathSync(distSsrFInternalPath));
-    expect(
-      fs.realpathSync(distRuntimeBrowserAliases["openclaw/plugin-sdk/ssrf-runtime-internal"] ?? ""),
-    ).toBe(fs.realpathSync(distSsrFInternalPath));
-    expect(otherAliases["openclaw/plugin-sdk/ssrf-runtime-internal"]).toBeUndefined();
-    expect(privateQaOtherAliases["openclaw/plugin-sdk/ssrf-runtime-internal"]).toBeUndefined();
-    expect(installedAliases["openclaw/plugin-sdk/ssrf-runtime-internal"]).toBeUndefined();
+    expect(otherAliases["nova/plugin-sdk/ssrf-runtime-internal"]).toBeUndefined();
+    expect(privateQaOtherAliases["nova/plugin-sdk/ssrf-runtime-internal"]).toBeUndefined();
+    expect(installedAliases["nova/plugin-sdk/ssrf-runtime-internal"]).toBeUndefined();
 
     const createJiti = await getCreateJiti();
     const sourceLoaderBaseUrl = pathToFileURL(
@@ -1613,9 +1613,9 @@ describe("plugin sdk alias helpers", () => {
     );
     mkdirSafeDir(path.dirname(normalizationAgentId));
     fs.writeFileSync(normalizationAgentId, "export {};\n", "utf-8");
-    const cwdWithoutOpenClawPackage = makeTempDir();
+    const cwdWithoutNovaPackage = makeTempDir();
 
-    const aliases = withCwd(cwdWithoutOpenClawPackage, () =>
+    const aliases = withCwd(cwdWithoutNovaPackage, () =>
       withEnv({ NODE_ENV: undefined }, () =>
         buildPluginLoaderAliasMap(sourcePluginEntry, undefined, undefined, "dist"),
       ),
@@ -1709,7 +1709,7 @@ describe("plugin sdk alias helpers", () => {
       buildPluginLoaderAliasMap(sourcePluginEntry, undefined, undefined, "dist"),
     );
 
-    expect(fs.realpathSync(distAliases["openclaw/plugin-sdk/provider-entry"] ?? "")).toBe(
+    expect(fs.realpathSync(distAliases["nova/plugin-sdk/provider-entry"] ?? "")).toBe(
       fs.realpathSync(sourceProviderEntryPath),
     );
   });
@@ -1732,7 +1732,7 @@ describe("plugin sdk alias helpers", () => {
     });
   });
 
-  it("resolves plugin-sdk aliases for user-installed plugins via the running openclaw argv hint", () => {
+  it("resolves plugin-sdk aliases for user-installed plugins via the running nova argv hint", () => {
     const {
       externalPluginEntry,
       externalPluginRoot,
@@ -1743,7 +1743,7 @@ describe("plugin sdk alias helpers", () => {
 
     const aliases = withCwd(externalPluginRoot, () =>
       withEnv({ NODE_ENV: undefined }, () =>
-        buildPluginLoaderAliasMap(externalPluginEntry, path.join(fixture.root, "openclaw.mjs")),
+        buildPluginLoaderAliasMap(externalPluginEntry, path.join(fixture.root, "nova.mjs")),
       ),
     );
 
@@ -1763,18 +1763,18 @@ describe("plugin sdk alias helpers", () => {
     } = createUserInstalledPluginSdkAliasFixture();
 
     // Simulate loader.ts passing its own import.meta.url as the moduleUrl hint.
-    // This covers installations where argv1 does not resolve to the openclaw root
+    // This covers installations where argv1 does not resolve to the nova root
     // (e.g. single-binary distributions or custom process launchers).
-    // Use openclaw.mjs which is created by createPluginSdkAliasFixture (bin+marker mode).
+    // Use nova.mjs which is created by createPluginSdkAliasFixture (bin+marker mode).
     // Use fixture.root as cwd so process.cwd() fallback also resolves to fixture, not the
-    // real openclaw repo root in the test runner environment.
-    const loaderModuleUrl = pathToFileURL(path.join(fixture.root, "openclaw.mjs")).href;
+    // real nova repo root in the test runner environment.
+    const loaderModuleUrl = pathToFileURL(path.join(fixture.root, "nova.mjs")).href;
 
     // Use externalPluginRoot as cwd so process.cwd() fallback cannot accidentally
     // resolve to the fixture root — only the moduleUrl hint can bridge the gap.
     // Pass "" for argv1: undefined would trigger the STARTUP_ARGV1 default (the vitest
-    // runner binary, inside the openclaw repo), which resolves before moduleUrl is checked.
-    // An empty string is falsy so resolveTrustedOpenClawRootFromArgvHint returns null,
+    // runner binary, inside the nova repo), which resolves before moduleUrl is checked.
+    // An empty string is falsy so resolveTrustedNovaRootFromArgvHint returns null,
     // meaning only the moduleUrl hint can bridge the gap.
     const aliases = withCwd(externalPluginRoot, () =>
       withEnv({ NODE_ENV: undefined }, () =>
@@ -1820,20 +1820,19 @@ describe("plugin sdk alias helpers", () => {
     const options = buildPluginLoaderJitiOptions({});
 
     expect(options.tryNative).toBe(true);
-    expect(options.nativeModules).toEqual(["openclaw"]);
+    expect(options.nativeModules).toEqual(["nova"]);
     expect(options.interopDefault).toBe(true);
     expect(options.extensions).toContain(".js");
     expect(options.extensions).toContain(".ts");
     expect("alias" in options).toBe(false);
   });
 
-  it("preserves configured jiti native modules while adding openclaw", () => {
-    const options = withEnv(
-      { JITI_NATIVE_MODULES: JSON.stringify(["native-addon", "openclaw"]) },
-      () => buildPluginLoaderJitiOptions({}),
+  it("preserves configured jiti native modules while adding nova", () => {
+    const options = withEnv({ JITI_NATIVE_MODULES: JSON.stringify(["native-addon", "nova"]) }, () =>
+      buildPluginLoaderJitiOptions({}),
     );
 
-    expect(options.nativeModules).toEqual(["native-addon", "openclaw"]);
+    expect(options.nativeModules).toEqual(["native-addon", "nova"]);
   });
 
   it("uses transpiled module loads for source TypeScript plugin entries", () => {
@@ -1959,13 +1958,13 @@ describe("plugin sdk alias helpers", () => {
   it("returns plugin loader module config with stable cache keys", () => {
     const first = resolvePluginLoaderModuleConfig({
       modulePath: `/repo/${bundledDistPluginFile("browser", "index.js")}`,
-      argv1: "/repo/openclaw.mjs",
+      argv1: "/repo/nova.mjs",
       moduleUrl: "file:///repo/src/plugins/public-surface-loader.ts",
       preferBuiltDist: true,
     });
     const second = resolvePluginLoaderModuleConfig({
       modulePath: `/repo/${bundledDistPluginFile("browser", "index.js")}`,
-      argv1: "/repo/openclaw.mjs",
+      argv1: "/repo/nova.mjs",
       moduleUrl: "file:///repo/src/plugins/public-surface-loader.ts",
       preferBuiltDist: true,
     });
@@ -1984,19 +1983,19 @@ describe("plugin sdk alias helpers", () => {
     const { auto, dist, distAgain } = withEnv({ NODE_ENV: undefined }, () => ({
       auto: resolvePluginLoaderModuleConfig({
         modulePath: sourcePluginEntry,
-        argv1: path.join(fixture.root, "openclaw.mjs"),
+        argv1: path.join(fixture.root, "nova.mjs"),
         moduleUrl: pathToFileURL(path.join(fixture.root, "src/plugins/loader.ts")).href,
         pluginSdkResolution: "auto",
       }),
       dist: resolvePluginLoaderModuleConfig({
         modulePath: sourcePluginEntry,
-        argv1: path.join(fixture.root, "openclaw.mjs"),
+        argv1: path.join(fixture.root, "nova.mjs"),
         moduleUrl: pathToFileURL(path.join(fixture.root, "src/plugins/loader.ts")).href,
         pluginSdkResolution: "dist",
       }),
       distAgain: resolvePluginLoaderModuleConfig({
         modulePath: sourcePluginEntry,
-        argv1: path.join(fixture.root, "openclaw.mjs"),
+        argv1: path.join(fixture.root, "nova.mjs"),
         moduleUrl: pathToFileURL(path.join(fixture.root, "src/plugins/loader.ts")).href,
         pluginSdkResolution: "dist",
       }),
@@ -2004,12 +2003,12 @@ describe("plugin sdk alias helpers", () => {
 
     expect(distAgain).toBe(dist);
     expect(auto).not.toBe(dist);
-    expect(
-      fs.realpathSync(auto.aliasMap["openclaw/plugin-sdk/channel-runtime-context"] ?? ""),
-    ).toBe(fs.realpathSync(sourceChannelRuntimePath));
-    expect(
-      fs.realpathSync(dist.aliasMap["openclaw/plugin-sdk/channel-runtime-context"] ?? ""),
-    ).toBe(fs.realpathSync(distChannelRuntimePath));
+    expect(fs.realpathSync(auto.aliasMap["nova/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
+      fs.realpathSync(sourceChannelRuntimePath),
+    );
+    expect(fs.realpathSync(dist.aliasMap["nova/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
+      fs.realpathSync(distChannelRuntimePath),
+    );
   });
 
   it("loads source runtime shims through the non-native module loading boundary", async () => {
@@ -2058,7 +2057,7 @@ export const syntheticRuntimeMarker = {
 
     const withAlias = createJiti(sourceLoaderBaseUrl, {
       ...buildPluginLoaderJitiOptions({
-        "openclaw/plugin-sdk/channel-outbound": copiedChannelRuntimeShim,
+        "nova/plugin-sdk/channel-outbound": copiedChannelRuntimeShim,
         "@nova/plugin-sdk/channel-outbound": copiedChannelRuntimeShim,
       }),
       tryNative: false,
@@ -2077,8 +2076,8 @@ export const syntheticRuntimeMarker = {
     },
     {
       name: "resolves plugin runtime module from package root when loader runs from transpiler cache path",
-      modulePath: () => "/tmp/tsx-cache/openclaw-loader.js",
-      argv1: (root: string) => path.join(root, "openclaw.mjs"),
+      modulePath: () => "/tmp/tsx-cache/nova-loader.js",
+      argv1: (root: string) => path.join(root, "nova.mjs"),
       env: { NODE_ENV: undefined },
       expected: "src" as const,
     },
@@ -2116,7 +2115,7 @@ export const syntheticRuntimeMarker = {
   it("falls back to ancestor runtime candidates when package-root markers are unavailable", () => {
     const root = makeTempDir();
     const distFile = path.join(root, "dist", "plugins", "runtime", "index.js");
-    const loaderCachePath = path.join(root, ".cache", "tsx", "openclaw-loader.js");
+    const loaderCachePath = path.join(root, ".cache", "tsx", "nova-loader.js");
     mkdirSafeDir(path.dirname(distFile));
     mkdirSafeDir(path.dirname(loaderCachePath));
     fs.writeFileSync(distFile, "export const createPluginRuntime = () => ({});\n", "utf-8");
@@ -2125,7 +2124,7 @@ export const syntheticRuntimeMarker = {
     expect(
       resolvePluginRuntimeModule({
         modulePath: loaderCachePath,
-        argv1: path.join(root, "bin", "openclaw"),
+        argv1: path.join(root, "bin", "nova"),
         pluginSdkResolution: "dist",
       }),
     ).toBe(distFile);
@@ -2135,7 +2134,7 @@ export const syntheticRuntimeMarker = {
     const root = makeTempDir();
     const distFile = path.join(root, "dist", "plugins", "runtime", "index.js");
     const loaderCacheRoot = makeTempDir();
-    const loaderCachePath = path.join(loaderCacheRoot, "tsx", "openclaw-loader.js");
+    const loaderCachePath = path.join(loaderCacheRoot, "tsx", "nova-loader.js");
     const originalArgv1 = process.argv[1];
     mkdirSafeDir(path.dirname(distFile));
     mkdirSafeDir(path.dirname(loaderCachePath));
@@ -2143,7 +2142,7 @@ export const syntheticRuntimeMarker = {
     fs.writeFileSync(distFile, "export const createPluginRuntime = () => ({});\n", "utf-8");
     fs.writeFileSync(loaderCachePath, "export {};\n", "utf-8");
 
-    process.argv[1] = path.join(root, "bin", "openclaw");
+    process.argv[1] = path.join(root, "bin", "nova");
     try {
       expect(
         resolvePluginRuntimeModule({
@@ -2165,7 +2164,7 @@ export const syntheticRuntimeMarker = {
     const distFile = path.join(root, "dist", "plugins", "runtime", "index.js");
     const loaderCacheRoot = makeTempDir();
     const cacheDistFile = path.join(loaderCacheRoot, "dist", "plugins", "runtime", "index.js");
-    const loaderCachePath = path.join(loaderCacheRoot, "tsx", "openclaw-loader.js");
+    const loaderCachePath = path.join(loaderCacheRoot, "tsx", "nova-loader.js");
     mkdirSafeDir(path.dirname(distFile));
     mkdirSafeDir(path.dirname(cacheDistFile));
     mkdirSafeDir(path.dirname(loaderCachePath));
@@ -2177,7 +2176,7 @@ export const syntheticRuntimeMarker = {
     expect(
       resolvePluginRuntimeModule({
         modulePath: loaderCachePath,
-        argv1: path.join(root, "bin", "openclaw"),
+        argv1: path.join(root, "bin", "nova"),
         pluginSdkResolution: "dist",
       }),
     ).toBe(distFile);
@@ -2186,10 +2185,10 @@ export const syntheticRuntimeMarker = {
   it("resolves runtime fallback through symlinked startup argv", () => {
     const root = makeTempDir();
     const distFile = path.join(root, "dist", "plugins", "runtime", "index.js");
-    const binFile = path.join(root, "bin", "openclaw");
+    const binFile = path.join(root, "bin", "nova");
     const shimRoot = makeTempDir();
-    const shimFile = path.join(shimRoot, "bin", "openclaw");
-    const loaderCachePath = path.join(makeTempDir(), "tsx", "openclaw-loader.js");
+    const shimFile = path.join(shimRoot, "bin", "nova");
+    const loaderCachePath = path.join(makeTempDir(), "tsx", "nova-loader.js");
     mkdirSafeDir(path.dirname(distFile));
     mkdirSafeDir(path.dirname(binFile));
     mkdirSafeDir(path.dirname(shimFile));
@@ -2210,11 +2209,11 @@ export const syntheticRuntimeMarker = {
 
   it("resolves runtime fallback through npm .bin startup argv", () => {
     const root = makeTempDir();
-    const packageRoot = path.join(root, "node_modules", "openclaw");
+    const packageRoot = path.join(root, "node_modules", "nova");
     const distFile = path.join(packageRoot, "dist", "plugins", "runtime", "index.js");
     const projectDistFile = path.join(root, "dist", "plugins", "runtime", "index.js");
-    const binFile = path.join(root, "node_modules", ".bin", "openclaw");
-    const loaderCachePath = path.join(makeTempDir(), "tsx", "openclaw-loader.js");
+    const binFile = path.join(root, "node_modules", ".bin", "nova");
+    const loaderCachePath = path.join(makeTempDir(), "tsx", "nova-loader.js");
     mkdirSafeDir(path.dirname(distFile));
     mkdirSafeDir(path.dirname(projectDistFile));
     mkdirSafeDir(path.dirname(binFile));
@@ -2238,7 +2237,7 @@ export const syntheticRuntimeMarker = {
     const modulePath = path.join(root, "dist", "plugins", "loader.js");
     fs.writeFileSync(
       path.join(root, "package.json"),
-      JSON.stringify({ name: "openclaw", type: "module" }, null, 2),
+      JSON.stringify({ name: "nova", type: "module" }, null, 2),
       "utf-8",
     );
     mkdirSafeDir(path.dirname(modulePath));
@@ -2346,8 +2345,8 @@ describe("buildPluginLoaderAliasMap memoization", () => {
     );
 
     expect(publicAliases).not.toBe(privateAliases);
-    expect(publicAliases["openclaw/plugin-sdk/qa-runtime"]).toBeUndefined();
-    expect(fs.realpathSync(privateAliases["openclaw/plugin-sdk/qa-runtime"] ?? "")).toBe(
+    expect(publicAliases["nova/plugin-sdk/qa-runtime"]).toBeUndefined();
+    expect(fs.realpathSync(privateAliases["nova/plugin-sdk/qa-runtime"] ?? "")).toBe(
       fs.realpathSync(sourceQaRuntimePath),
     );
   });
@@ -2384,23 +2383,23 @@ describe("buildPluginLoaderAliasMap memoization", () => {
 
 describe("buildPluginLoaderJitiOptions", () => {
   it("adds the versioned fs cache directory to plugin loader jiti options", () => {
-    const root = createTrustedOpenClawPackageFixture("2.0.0");
+    const root = createTrustedNovaPackageFixture("2.0.0");
     const tmpDir = path.join(root, "tmp");
 
     const options = withEnv({ TMPDIR: tmpDir }, () =>
       buildPluginLoaderJitiOptions(
-        { "openclaw/plugin-sdk/core": path.join(root, "dist", "plugin-sdk", "core.js") },
+        { "nova/plugin-sdk/core": path.join(root, "dist", "plugin-sdk", "core.js") },
         { modulePath: path.join(root, "dist", "plugins", "loader.js") },
       ),
     );
 
-    expect(options.fsCache).toContain(path.join(tmpDir, "jiti", "openclaw", "2.0.0"));
+    expect(options.fsCache).toContain(path.join(tmpDir, "jiti", "nova", "2.0.0"));
   });
 
   it("pre-normalizes and marks alias maps for source transforms", () => {
     const marker = Symbol.for("pathe:normalizedAlias");
     const aliasMap = {
-      "openclaw/plugin-sdk/core": "/repo/src/plugin-sdk/core.ts",
+      "nova/plugin-sdk/core": "/repo/src/plugin-sdk/core.ts",
       "@nova/plugin-sdk/core": "/repo/src/plugin-sdk/core.ts",
     };
 

@@ -39,7 +39,7 @@ function normalizeModelId(modelId?: string): string {
 
 function normalizeApi(api?: string): string {
   const normalized = normalizeLowercaseStringOrEmpty(api);
-  return normalized === "openclaw-anthropic-messages-transport" ? "anthropic-messages" : normalized;
+  return normalized === "nova-anthropic-messages-transport" ? "anthropic-messages" : normalized;
 }
 
 function hasConcreteResponseModel(ref: ReplayModelRef): boolean {

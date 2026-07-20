@@ -738,10 +738,10 @@ export async function runDevUpdateSuite(
 }
 
 function createLaneState(name: string): LaneState {
-  const rootDir = mkdtempSync(join(tmpdir(), `openclaw-${name}-`));
+  const rootDir = mkdtempSync(join(tmpdir(), `nova-${name}-`));
   const prefixDir = join(rootDir, "prefix");
   const homeDir = join(rootDir, "home");
-  const stateDir = join(homeDir, ".openclaw");
+  const stateDir = join(homeDir, ".nova");
   const appDataDir = process.platform === "win32" ? join(homeDir, "AppData", "Roaming") : stateDir;
   mkdirSync(prefixDir, { recursive: true });
   mkdirSync(homeDir, { recursive: true });
@@ -777,7 +777,7 @@ function buildLaneEnv(
     LOCALAPPDATA: join(lane.homeDir, "AppData", "Local"),
     NOVA_HOME: lane.homeDir,
     NOVA_STATE_DIR: lane.stateDir,
-    NOVA_CONFIG_PATH: join(lane.stateDir, "openclaw.json"),
+    NOVA_CONFIG_PATH: join(lane.stateDir, "nova.json"),
     NOVA_DISABLE_BONJOUR: "1",
     NOVA_DISABLE_BUNDLED_PLUGIN_POSTINSTALL: "1",
     NPM_CONFIG_PREFIX: lane.prefixDir,
@@ -801,7 +801,7 @@ function buildInstallerEnv(
     LOCALAPPDATA: localAppData,
     NOVA_HOME: lane.homeDir,
     NOVA_STATE_DIR: lane.stateDir,
-    NOVA_CONFIG_PATH: join(lane.stateDir, "openclaw.json"),
+    NOVA_CONFIG_PATH: join(lane.stateDir, "nova.json"),
     NOVA_DISABLE_BONJOUR: "1",
     NOVA_NO_ONBOARD: "1",
     NOVA_NO_PROMPT: "1",

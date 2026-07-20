@@ -55,28 +55,28 @@ describe("managed service update handoff single-flight", () => {
     const { startManagedServiceUpdateHandoff } =
       await import("./update-managed-service-handoff.js");
     const first = startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       timeoutMs: 1_800_000,
       restartDrainTimeoutMs: 300_000,
       restartDelayMs: 500,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       supervisor: "launchd",
-      env: { NOVA_LAUNCHD_LABEL: "com.example.openclaw.test" },
+      env: { NOVA_LAUNCHD_LABEL: "com.example.nova.test" },
       handoffId: "handoff-first",
       meta: { handoffId: "handoff-first" },
     });
     const second = startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       timeoutMs: 1_800_000,
       restartDrainTimeoutMs: 300_000,
       restartDelayMs: 500,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       supervisor: "launchd",
-      env: { NOVA_LAUNCHD_LABEL: "com.example.openclaw.test" },
+      env: { NOVA_LAUNCHD_LABEL: "com.example.nova.test" },
       handoffId: "handoff-second",
       meta: { handoffId: "handoff-second" },
     });
@@ -98,11 +98,11 @@ describe("managed service update handoff single-flight", () => {
     const nextChild = createSpawnMock();
     spawnMock.mockReturnValueOnce(nextChild);
     const next = startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       restartDrainTimeoutMs: 300_000,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       handoffId: "handoff-next",
       meta: { handoffId: "handoff-next" },
     });
@@ -121,11 +121,11 @@ describe("managed service update handoff single-flight", () => {
       await import("./update-managed-service-handoff.js");
 
     const resultPromise = startManagedServiceUpdateHandoff({
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       restartDrainTimeoutMs: 300_000,
       parentPid: 12345,
       execPath: "/usr/local/bin/node",
-      argv1: "/opt/openclaw/openclaw.mjs",
+      argv1: "/opt/nova/nova.mjs",
       meta: {},
     });
     await vi.waitFor(() => expect(spawnMock).toHaveBeenCalledTimes(1), FAST_WAIT_OPTS);

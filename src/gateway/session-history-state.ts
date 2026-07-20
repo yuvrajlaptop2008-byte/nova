@@ -8,7 +8,7 @@ import {
 } from "./chat-display-projection.js";
 import { resolveTranscriptPathForComparison } from "./session-transcript-path.js";
 import {
-  attachOpenClawTranscriptMeta,
+  attachNovaTranscriptMeta,
   readRecentSessionMessagesWithStatsAsync,
   readSessionMessagesWithSourceAsync,
 } from "./session-transcript-readers.js";
@@ -23,7 +23,7 @@ type SessionHistoryTranscriptMeta = {
 };
 
 type SessionHistoryMessage = Record<string, unknown> & {
-  __openclaw?: SessionHistoryTranscriptMeta;
+  __nova?: SessionHistoryTranscriptMeta;
 };
 
 type PaginatedSessionHistory = {
@@ -114,11 +114,11 @@ function buildPaginatedSessionHistory(params: {
 }
 
 function resolveMessageSeq(message: SessionHistoryMessage | undefined): number | undefined {
-  return asPositiveSafeInteger(message?.["__openclaw"]?.seq);
+  return asPositiveSafeInteger(message?.["__nova"]?.seq);
 }
 
 function isMessageToolMirrorMessage(message: SessionHistoryMessage): boolean {
-  return message.openclawMessageToolMirror !== undefined;
+  return message.novaMessageToolMirror !== undefined;
 }
 
 function paginateSessionMessages(
@@ -273,7 +273,7 @@ export class SessionHistorySseState {
       this.rawTranscriptSeq += 1;
     }
     const idempotencyKey = readMessageIdempotencyKey(update.message);
-    const nextMessage = attachOpenClawTranscriptMeta(update.message, {
+    const nextMessage = attachNovaTranscriptMeta(update.message, {
       ...(typeof update.messageId === "string" ? { id: update.messageId } : {}),
       ...(idempotencyKey ? { idempotencyKey } : {}),
       seq: this.rawTranscriptSeq,
@@ -295,7 +295,7 @@ export class SessionHistorySseState {
     if (projectedMessages.length > this.sentHistory.messages.length) {
       const addedMessages = projectedMessages.slice(this.sentHistory.messages.length);
       if (hadPendingTurnBoundary && !this.turnBoundaryPending && addedMessages[0]) {
-        const firstAdded = attachOpenClawTranscriptMeta(addedMessages[0], {
+        const firstAdded = attachNovaTranscriptMeta(addedMessages[0], {
           turnBoundary: true,
         }) as SessionHistoryMessage;
         addedMessages[0] = firstAdded;
@@ -313,7 +313,7 @@ export class SessionHistorySseState {
         const emittedMessage: SessionHistoryMessage =
           isMessageToolMirrorMessage(projectedMessage) ||
           resolveMessageSeq(projectedMessage) === undefined
-            ? (attachOpenClawTranscriptMeta(projectedMessage, {
+            ? (attachNovaTranscriptMeta(projectedMessage, {
                 seq: this.rawTranscriptSeq,
               }) as SessionHistoryMessage)
             : projectedMessage;

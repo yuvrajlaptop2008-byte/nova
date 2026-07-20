@@ -1,13 +1,13 @@
-# SearXNG OpenClaw plugin
+# SearXNG Nova plugin
 
-Official OpenClaw plugin for SearXNG.
+Official Nova plugin for SearXNG.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/searxng-plugin
+nova plugins install @nova/searxng-plugin
 ```
 
 ## Docs
 
-See `docs/tools/searxng-search.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/tools/searxng-search`.
+See `docs/tools/searxng-search.md` in the Nova repository, or the published docs at `https://docs.nova.ai/tools/searxng-search`.

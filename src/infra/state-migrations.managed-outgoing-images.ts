@@ -12,10 +12,7 @@ import {
   type ManagedImageRecordDatabase,
 } from "../gateway/managed-image-record-store.js";
 import { getMediaDir } from "../media/store.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -363,7 +360,7 @@ function rollbackImportedRecords(params: {
   stateDir: string;
 }): string | null {
   try {
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(db);
         for (const parsed of params.records) {
@@ -448,7 +445,7 @@ export function migrateLegacyManagedOutgoingImages(params: {
   }
 
   try {
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(db);
         for (const parsed of parsedRecords) {
@@ -491,7 +488,7 @@ export function migrateLegacyManagedOutgoingImages(params: {
 
   try {
     params.beforeVerify?.();
-    const database = openOpenClawStateDatabase({
+    const database = openNovaStateDatabase({
       env: { ...process.env, NOVA_STATE_DIR: params.stateDir },
     });
     const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(database.db);

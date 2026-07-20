@@ -13,7 +13,7 @@ import { isCoreCanvasHostEnabled } from "../canvas/config.js";
 import { isCanvasDocumentHttpPath } from "../canvas/constants.js";
 import { resolveBundledChannelGatewayAuthBypassPaths } from "../channels/plugins/gateway-auth-bypass.js";
 import { getRuntimeConfig } from "../config/io.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   createDiagnosticTraceContext,
   runWithDiagnosticTraceContext,
@@ -152,13 +152,10 @@ function isControlUiCatalogIconRequest(pathname: string, basePath: string): bool
   );
 }
 
-const pluginGatewayAuthBypassPathsCache = new WeakMap<
-  OpenClawConfig,
-  Promise<ReadonlySet<string>>
->();
+const pluginGatewayAuthBypassPathsCache = new WeakMap<NovaConfig, Promise<ReadonlySet<string>>>();
 
 async function resolvePluginGatewayAuthBypassPaths(
-  configSnapshot: OpenClawConfig,
+  configSnapshot: NovaConfig,
 ): Promise<Set<string>> {
   const paths = new Set<string>();
   const configuredChannels = configSnapshot.channels;
@@ -177,7 +174,7 @@ async function resolvePluginGatewayAuthBypassPaths(
 }
 
 function getCachedPluginGatewayAuthBypassPaths(
-  configSnapshot: OpenClawConfig,
+  configSnapshot: NovaConfig,
 ): Promise<ReadonlySet<string>> {
   const cached = pluginGatewayAuthBypassPathsCache.get(configSnapshot);
   if (cached) {
@@ -196,11 +193,11 @@ function isOpenAiModelsPath(pathname: string): boolean {
 }
 
 function isMcpAppStandalonePath(pathname: string): boolean {
-  return pathname === "/__openclaw__/mcp-app" || pathname === "/__openclaw__/mcp-app/view";
+  return pathname === "/__nova__/mcp-app" || pathname === "/__nova__/mcp-app/view";
 }
 
 function isBoardWidgetPath(pathname: string): boolean {
-  return pathname.startsWith("/__openclaw__/board/");
+  return pathname.startsWith("/__nova__/board/");
 }
 
 function isEmbeddingsPath(pathname: string): boolean {
@@ -494,7 +491,7 @@ export function createGatewayHttpServer(opts: {
   /** Optional rate limiter for auth brute-force protection. */
   rateLimiter?: AuthRateLimiter;
   getReadiness?: ReadinessChecker;
-  getRuntimeConfig?: () => OpenClawConfig;
+  getRuntimeConfig?: () => NovaConfig;
   isTerminalEnabled?: () => boolean;
   tlsOptions?: TlsOptions;
 }): HttpServer {
@@ -1104,17 +1101,17 @@ export function attachGatewayUpgradeHandler(opts: {
         wss.handleUpgrade(req, socket, head, (ws) => {
           (
             ws as unknown as import("ws").WebSocket & {
-              __openclawPreauthBudgetClaimed?: boolean;
-              __openclawPreauthBudgetKey?: string;
+              __novaPreauthBudgetClaimed?: boolean;
+              __novaPreauthBudgetKey?: string;
             }
-          )["__openclawPreauthBudgetKey"] = preauthBudgetKey;
+          )["__novaPreauthBudgetKey"] = preauthBudgetKey;
           wss.emit("connection", ws, req);
           const budgetClaimed = Boolean(
             (
               ws as unknown as import("ws").WebSocket & {
-                __openclawPreauthBudgetClaimed?: boolean;
+                __novaPreauthBudgetClaimed?: boolean;
               }
-            )["__openclawPreauthBudgetClaimed"],
+            )["__novaPreauthBudgetClaimed"],
           );
           if (budgetClaimed) {
             budgetTransferred = true;
@@ -1173,9 +1170,9 @@ export function attachWorkerGatewayUpgradeHandler(params: {
         const workerSocket = ws as GatewayIngressWebSocket;
         workerSocket[GATEWAY_WS_CONNECTION_KIND_PROPERTY] = "worker";
         workerSocket[GATEWAY_WS_PREAUTH_BUDGET_PROPERTY] = params.preauthConnectionBudget;
-        workerSocket["__openclawPreauthBudgetKey"] = preauthBudgetKey;
+        workerSocket["__novaPreauthBudgetKey"] = preauthBudgetKey;
         params.wss.emit("connection", ws, req);
-        if (workerSocket["__openclawPreauthBudgetClaimed"]) {
+        if (workerSocket["__novaPreauthBudgetClaimed"]) {
           budgetTransferred = true;
           socket.off("close", releaseUpgradeBudget);
         }

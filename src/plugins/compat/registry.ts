@@ -1,7 +1,7 @@
 // Plugin compatibility registry exposes known plugin compatibility metadata to doctor/update flows.
 import type { PluginCompatRecord } from "./types.js";
 
-const CHANNEL_RUNTIME_SDK_SURFACE = ["openclaw/plugin-sdk/channel", "runtime"].join("-");
+const CHANNEL_RUNTIME_SDK_SURFACE = ["nova/plugin-sdk/channel", "runtime"].join("-");
 
 type DeprecatedPluginSdkSubpathSeed = Pick<
   PluginCompatRecord,
@@ -16,35 +16,35 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     subpath: "self-hosted-provider-setup",
     owner: "provider",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/provider-setup`",
+    replacement: "`nova/plugin-sdk/provider-setup`",
   },
   {
     code: "plugin-sdk-runtime-logger-subpath",
     subpath: "runtime-logger",
     owner: "sdk",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/runtime`",
+    replacement: "`nova/plugin-sdk/runtime`",
   },
   {
     code: "plugin-sdk-runtime-secret-resolution-subpath",
     subpath: "runtime-secret-resolution",
     owner: "sdk",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/runtime` and `openclaw/plugin-sdk/secret-ref-runtime`",
+    replacement: "`nova/plugin-sdk/runtime` and `nova/plugin-sdk/secret-ref-runtime`",
   },
   {
     code: "plugin-sdk-setup-adapter-runtime-subpath",
     subpath: "setup-adapter-runtime",
     owner: "setup",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/setup-runtime`",
+    replacement: "`nova/plugin-sdk/setup-runtime`",
   },
   {
     code: "plugin-sdk-channel-streaming-subpath",
     subpath: "channel-streaming",
     owner: "channel",
     removeAfter: "2026-08-15",
-    replacement: "`openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-config-runtime-subpath",
@@ -52,14 +52,14 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "config",
     removeAfter: "2026-09-01",
     replacement:
-      "`api.pluginConfig`, `openclaw/plugin-sdk/config-mutation`, `openclaw/plugin-sdk/runtime-config-snapshot`, and `openclaw/plugin-sdk/config-contracts`",
+      "`api.pluginConfig`, `nova/plugin-sdk/config-mutation`, `nova/plugin-sdk/runtime-config-snapshot`, and `nova/plugin-sdk/config-contracts`",
   },
   {
     code: "plugin-sdk-config-types-subpath",
     subpath: "config-types",
     owner: "config",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/config-contracts`",
+    replacement: "`nova/plugin-sdk/config-contracts`",
   },
   {
     code: "plugin-sdk-config-schema-subpath",
@@ -67,49 +67,49 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "config",
     removeAfter: "2026-07-30",
     replacement:
-      "plugin-local schemas with `openclaw/plugin-sdk/json-schema-runtime` for JSON Schema validation",
+      "plugin-local schemas with `nova/plugin-sdk/json-schema-runtime` for JSON Schema validation",
   },
   {
     code: "plugin-sdk-reply-dedupe-subpath",
     subpath: "reply-dedupe",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/reply-runtime`",
+    replacement: "`nova/plugin-sdk/reply-runtime`",
   },
   {
     code: "plugin-sdk-inbound-reply-dispatch-subpath",
     subpath: "inbound-reply-dispatch",
     owner: "channel",
     removeAfter: "2026-08-15",
-    replacement: "`openclaw/plugin-sdk/channel-inbound` and `openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-inbound` and `nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-channel-reply-pipeline-subpath",
     subpath: "channel-reply-pipeline",
     owner: "channel",
     removeAfter: "2026-09-01",
-    replacement: "`openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-channel-reply-options-runtime-subpath",
     subpath: "channel-reply-options-runtime",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-outbound-send-deps-subpath",
     subpath: "outbound-send-deps",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-outbound-runtime-subpath",
     subpath: "outbound-runtime",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-infra-runtime-subpath",
@@ -117,7 +117,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "sdk",
     removeAfter: "2026-09-01",
     replacement:
-      "focused subpaths including `openclaw/plugin-sdk/delivery-queue-runtime`, `openclaw/plugin-sdk/diagnostic-runtime`, `openclaw/plugin-sdk/error-runtime`, `openclaw/plugin-sdk/exec-approvals-runtime`, `openclaw/plugin-sdk/fetch-runtime`, and `openclaw/plugin-sdk/ssrf-runtime`",
+      "focused subpaths including `nova/plugin-sdk/delivery-queue-runtime`, `nova/plugin-sdk/diagnostic-runtime`, `nova/plugin-sdk/error-runtime`, `nova/plugin-sdk/exec-approvals-runtime`, `nova/plugin-sdk/fetch-runtime`, and `nova/plugin-sdk/ssrf-runtime`",
   },
   {
     code: "plugin-sdk-text-runtime-subpath",
@@ -125,7 +125,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "sdk",
     removeAfter: "2026-08-15",
     replacement:
-      "`openclaw/plugin-sdk/logging-core`, `openclaw/plugin-sdk/text-chunking`, `openclaw/plugin-sdk/text-utility-runtime`, and `openclaw/plugin-sdk/string-coerce-runtime`",
+      "`nova/plugin-sdk/logging-core`, `nova/plugin-sdk/text-chunking`, `nova/plugin-sdk/text-utility-runtime`, and `nova/plugin-sdk/string-coerce-runtime`",
   },
   {
     code: "plugin-sdk-channel-secret-runtime-subpath",
@@ -133,28 +133,28 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "channel",
     removeAfter: "2026-08-15",
     replacement:
-      "`openclaw/plugin-sdk/channel-secret-basic-runtime` and `openclaw/plugin-sdk/channel-secret-tts-runtime`",
+      "`nova/plugin-sdk/channel-secret-basic-runtime` and `nova/plugin-sdk/channel-secret-tts-runtime`",
   },
   {
     code: "plugin-sdk-agent-config-primitives-subpath",
     subpath: "agent-config-primitives",
     owner: "config",
     removeAfter: "2026-08-15",
-    replacement: "`openclaw/plugin-sdk/channel-config-schema`",
+    replacement: "`nova/plugin-sdk/channel-config-schema`",
   },
   {
     code: "plugin-sdk-direct-dm-subpath",
     subpath: "direct-dm",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-inbound`",
+    replacement: "`nova/plugin-sdk/channel-inbound`",
   },
   {
     code: "plugin-sdk-direct-dm-access-subpath",
     subpath: "direct-dm-access",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-inbound`",
+    replacement: "`nova/plugin-sdk/channel-inbound`",
   },
   {
     code: "plugin-sdk-mattermost-subpath",
@@ -162,84 +162,84 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "channel",
     removeAfter: "2026-07-30",
     replacement:
-      "`openclaw/plugin-sdk/command-auth`, `openclaw/plugin-sdk/channel-plugin-common`, and `openclaw/plugin-sdk/reply-history`",
+      "`nova/plugin-sdk/command-auth`, `nova/plugin-sdk/channel-plugin-common`, and `nova/plugin-sdk/reply-history`",
   },
   {
     code: "plugin-sdk-matrix-subpath",
     subpath: "matrix",
     owner: "channel",
     removeAfter: "2026-08-15",
-    replacement: "`openclaw/plugin-sdk/run-command`",
+    replacement: "`nova/plugin-sdk/run-command`",
   },
   {
     code: "plugin-sdk-channel-envelope-subpath",
     subpath: "channel-envelope",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-inbound`",
+    replacement: "`nova/plugin-sdk/channel-inbound`",
   },
   {
     code: "plugin-sdk-channel-inbound-roots-subpath",
     subpath: "channel-inbound-roots",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-inbound`",
+    replacement: "`nova/plugin-sdk/channel-inbound`",
   },
   {
     code: "plugin-sdk-channel-logging-subpath",
     subpath: "channel-logging",
     owner: "channel",
     removeAfter: "2026-08-15",
-    replacement: "`openclaw/plugin-sdk/channel-inbound` and `openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-inbound` and `nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-channel-location-subpath",
     subpath: "channel-location",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-inbound`",
+    replacement: "`nova/plugin-sdk/channel-inbound`",
   },
   {
     code: "plugin-sdk-channel-lifecycle-subpath",
     subpath: "channel-lifecycle",
     owner: "channel",
     removeAfter: "2026-09-01",
-    replacement: "`openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-channel-message-subpath",
     subpath: "channel-message",
     owner: "channel",
     removeAfter: "2026-09-01",
-    replacement: "`openclaw/plugin-sdk/channel-outbound` and `openclaw/plugin-sdk/channel-inbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound` and `nova/plugin-sdk/channel-inbound`",
   },
   {
     code: "plugin-sdk-channel-message-runtime-subpath",
     subpath: "channel-message-runtime",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-outbound`",
+    replacement: "`nova/plugin-sdk/channel-outbound`",
   },
   {
     code: "plugin-sdk-channel-pairing-paths-subpath",
     subpath: "channel-pairing-paths",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/channel-pairing`",
+    replacement: "`nova/plugin-sdk/channel-pairing`",
   },
   {
     code: "plugin-sdk-group-access-subpath",
     subpath: "group-access",
     owner: "channel",
     removeAfter: "2026-08-15",
-    replacement: "`openclaw/plugin-sdk/channel-ingress-runtime`",
+    replacement: "`nova/plugin-sdk/channel-ingress-runtime`",
   },
   {
     code: "plugin-sdk-media-generation-runtime-shared-subpath",
     subpath: "media-generation-runtime-shared",
     owner: "provider",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/media-generation-runtime`",
+    replacement: "`nova/plugin-sdk/media-generation-runtime`",
   },
   {
     code: "plugin-sdk-music-generation-core-subpath",
@@ -247,7 +247,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "provider",
     removeAfter: "2026-07-30",
     replacement:
-      "`openclaw/plugin-sdk/music-generation` for public types and assets; plugin-owned provider runtime helpers for provider registration",
+      "`nova/plugin-sdk/music-generation` for public types and assets; plugin-owned provider runtime helpers for provider registration",
   },
   {
     code: "plugin-sdk-memory-core-subpath",
@@ -255,7 +255,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "sdk",
     removeAfter: "2026-07-30",
     replacement:
-      "memory capability registration through the injected plugin API and host-prepared prompts from `openclaw/plugin-sdk/core`",
+      "memory capability registration through the injected plugin API and host-prepared prompts from `nova/plugin-sdk/core`",
   },
   {
     code: "plugin-sdk-memory-core-engine-runtime-subpath",
@@ -263,49 +263,49 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "sdk",
     removeAfter: "2026-07-30",
     replacement:
-      "`openclaw/plugin-sdk/memory-host-search` for active search-manager lifecycle operations",
+      "`nova/plugin-sdk/memory-host-search` for active search-manager lifecycle operations",
   },
   {
     code: "plugin-sdk-memory-core-host-multimodal-subpath",
     subpath: "memory-core-host-multimodal",
     owner: "sdk",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/memory-core-host-engine-embeddings`",
+    replacement: "`nova/plugin-sdk/memory-core-host-engine-embeddings`",
   },
   {
     code: "plugin-sdk-memory-core-host-query-subpath",
     subpath: "memory-core-host-query",
     owner: "sdk",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/memory-core-host-engine-qmd`",
+    replacement: "`nova/plugin-sdk/memory-core-host-engine-qmd`",
   },
   {
     code: "plugin-sdk-memory-core-host-events-subpath",
     subpath: "memory-core-host-events",
     owner: "sdk",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/memory-host-events`",
+    replacement: "`nova/plugin-sdk/memory-host-events`",
   },
   {
     code: "plugin-sdk-memory-host-files-subpath",
     subpath: "memory-host-files",
     owner: "sdk",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/memory-core-host-runtime-files`",
+    replacement: "`nova/plugin-sdk/memory-core-host-runtime-files`",
   },
   {
     code: "plugin-sdk-memory-host-status-subpath",
     subpath: "memory-host-status",
     owner: "sdk",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/memory-core-host-status`",
+    replacement: "`nova/plugin-sdk/memory-core-host-status`",
   },
   {
     code: "plugin-sdk-provider-auth-login-subpath",
     subpath: "provider-auth-login",
     owner: "provider",
     removeAfter: "2026-07-30",
-    replacement: "provider auth hooks built with `openclaw/plugin-sdk/provider-auth`",
+    replacement: "provider auth hooks built with `nova/plugin-sdk/provider-auth`",
   },
   {
     code: "plugin-sdk-provider-zai-endpoint-subpath",
@@ -313,7 +313,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "provider",
     removeAfter: "2026-07-30",
     replacement:
-      "plugin-owned endpoint detection using `openclaw/plugin-sdk/provider-http` for generic transport helpers",
+      "plugin-owned endpoint detection using `nova/plugin-sdk/provider-http` for generic transport helpers",
   },
   {
     code: "plugin-sdk-telegram-command-config-subpath",
@@ -327,14 +327,14 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     subpath: "webhook-path",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/webhook-ingress`",
+    replacement: "`nova/plugin-sdk/webhook-ingress`",
   },
   {
     code: "plugin-sdk-zalouser-subpath",
     subpath: "zalouser",
     owner: "channel",
     removeAfter: "2026-07-30",
-    replacement: "`openclaw/plugin-sdk/command-auth`",
+    replacement: "`nova/plugin-sdk/command-auth`",
   },
   {
     code: "plugin-sdk-zod-subpath",
@@ -349,7 +349,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_SEEDS = [
     owner: "agent-runtime",
     removeAfter: "2026-07-30",
     replacement:
-      "`resolveAgentDir` or `resolveDefaultAgentDir` from `openclaw/plugin-sdk/agent-harness-runtime`",
+      "`resolveAgentDir` or `resolveDefaultAgentDir` from `nova/plugin-sdk/agent-harness-runtime`",
   },
 ] as const satisfies readonly DeprecatedPluginSdkSubpathSeed[];
 
@@ -365,7 +365,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_RECORDS = DEPRECATED_PLUGIN_SDK_SUBPATH_SEED
       removeAfter,
       replacement,
       docsPath: "/plugins/sdk-migration",
-      surfaces: [`openclaw/plugin-sdk/${subpath}`],
+      surfaces: [`nova/plugin-sdk/${subpath}`],
       diagnostics: [
         "repository deprecated API usage guard for core and bundled plugins; no external runtime import warning",
       ],
@@ -373,7 +373,7 @@ const DEPRECATED_PLUGIN_SDK_SUBPATH_RECORDS = DEPRECATED_PLUGIN_SDK_SUBPATH_SEED
     } satisfies PluginCompatRecord;
     if (removeAfter <= "2026-07-30") {
       return Object.assign(record, {
-        releaseNote: `The deprecated public \`openclaw/plugin-sdk/${subpath}\` subpath was removed in the July 2026 compatibility sweep.`,
+        releaseNote: `The deprecated public \`nova/plugin-sdk/${subpath}\` subpath was removed in the July 2026 compatibility sweep.`,
       });
     }
     return record;
@@ -554,17 +554,17 @@ const DOCUMENTED_PUBLIC_PLUGIN_SDK_REPLACEMENTS: Record<
 > = {
   "agent-media-payload": {
     replacement:
-      "typed outbound payload planning via `openclaw/plugin-sdk/channel-outbound`; retain the facade for operator-supplied local-media root resolution until a focused public seam exists",
+      "typed outbound payload planning via `nova/plugin-sdk/channel-outbound`; retain the facade for operator-supplied local-media root resolution until a focused public seam exists",
     docsPath: "/plugins/sdk-channel-plugins",
   },
   "media-understanding": {
     replacement:
-      "`api.registerMediaUnderstandingProvider(...)` with provider-owned request helpers and types from `openclaw/plugin-sdk/plugin-entry`",
+      "`api.registerMediaUnderstandingProvider(...)` with provider-owned request helpers and types from `nova/plugin-sdk/plugin-entry`",
     docsPath: "/plugins/architecture",
   },
   "memory-host-core": {
     replacement:
-      "host-prepared memory prompts via `openclaw/plugin-sdk/core` and memory capability registration through the injected plugin API; retain the facade for companion-plugin public-artifact discovery until a focused read seam exists",
+      "host-prepared memory prompts via `nova/plugin-sdk/core` and memory capability registration through the injected plugin API; retain the facade for companion-plugin public-artifact discovery until a focused read seam exists",
     docsPath: "/plugins/architecture-internals#context-engine-plugins",
   },
   "plugin-config-runtime": {
@@ -593,12 +593,12 @@ const UNUSED_PUBLIC_PLUGIN_SDK_SUBPATH_RECORDS = UNUSED_PUBLIC_PLUGIN_SDK_SUBPAT
     removeAfter: "2026-07-30",
     replacement: "none needed — no known consumers; the subpath is removed without successor",
     docsPath: "/plugins/sdk-migration",
-    surfaces: [`openclaw/plugin-sdk/${subpath}`],
+    surfaces: [`nova/plugin-sdk/${subpath}`],
     diagnostics: [
       "repository deprecated API usage guard for core and bundled plugins; no external runtime import warning",
     ],
     tests: ["src/plugins/compat/registry.test.ts"],
-    releaseNote: `The unused public \`openclaw/plugin-sdk/${subpath}\` subpath was removed without a successor after the external-use corpus found no consumers.`,
+    releaseNote: `The unused public \`nova/plugin-sdk/${subpath}\` subpath was removed without a successor after the external-use corpus found no consumers.`,
   }),
 ) satisfies readonly PluginCompatRecord[];
 
@@ -624,7 +624,7 @@ const BUNDLED_ONLY_PUBLIC_PLUGIN_SDK_SUBPATH_RECORDS = BUNDLED_ONLY_PUBLIC_PLUGI
           ? "/plugins/tool-plugins"
           : (documented?.docsPath ?? "/plugins/sdk-migration")
         : "/plugins/sdk-migration",
-      surfaces: [`openclaw/plugin-sdk/${subpath}`],
+      surfaces: [`nova/plugin-sdk/${subpath}`],
       diagnostics: [
         "registry-backed public SDK demotion window; no external runtime import warning",
       ],
@@ -632,7 +632,7 @@ const BUNDLED_ONLY_PUBLIC_PLUGIN_SDK_SUBPATH_RECORDS = BUNDLED_ONLY_PUBLIC_PLUGI
     } satisfies PluginCompatRecord;
     if (!removalBlocked) {
       return Object.assign(record, {
-        releaseNote: `The public export for \`openclaw/plugin-sdk/${subpath}\` was removed; the module remains available to bundled plugins as a private-local-only subpath.`,
+        releaseNote: `The public export for \`nova/plugin-sdk/${subpath}\` was removed; the module remains available to bundled plugins as a private-local-only subpath.`,
       });
     }
     return record;
@@ -652,8 +652,8 @@ const PLUGIN_COMPAT_RECORDS = [
       "provider plugins via `api.registerProvider(...)`; host/runtime code registers against its lifecycle-owned `ApiRegistry`",
     docsPath: "/plugins/sdk-migration#process-global-api-provider-publication",
     surfaces: [
-      "openclaw/plugin-sdk/llm registerApiProvider",
-      "openclaw/plugin-sdk/llm unregisterApiProviders",
+      "nova/plugin-sdk/llm registerApiProvider",
+      "nova/plugin-sdk/llm unregisterApiProviders",
     ],
     diagnostics: ["plugin SDK compatibility registry and migration guide"],
     tests: ["src/plugins/compat/registry.test.ts"],
@@ -738,7 +738,7 @@ const PLUGIN_COMPAT_RECORDS = [
     surfaces: [
       "api.registerMemoryEmbeddingProvider(...)",
       "contracts.memoryEmbeddingProviders",
-      "openclaw/plugin-sdk/memory-core-host-engine-embeddings registerMemoryEmbeddingProvider",
+      "nova/plugin-sdk/memory-core-host-engine-embeddings registerMemoryEmbeddingProvider",
       "plugins inspect compatibility notices",
     ],
     diagnostics: ["plugin compatibility notice", "plugin SDK package guardrail"],
@@ -762,10 +762,10 @@ const PLUGIN_COMPAT_RECORDS = [
       "`getSessionEntry(...)`, `listSessionEntries(...)`, and row-level session mutations",
     docsPath: "/plugins/sdk-migration#removed-session-and-transcript-file-apis",
     surfaces: [
-      "openclaw/plugin-sdk/session-store-runtime loadSessionStore",
-      "openclaw/plugin-sdk/session-store-runtime updateSessionStore",
-      "openclaw/plugin-sdk/session-store-runtime resolveSessionFilePath",
-      "openclaw/plugin-sdk/session-store-runtime resolveSessionStoreEntry",
+      "nova/plugin-sdk/session-store-runtime loadSessionStore",
+      "nova/plugin-sdk/session-store-runtime updateSessionStore",
+      "nova/plugin-sdk/session-store-runtime resolveSessionFilePath",
+      "nova/plugin-sdk/session-store-runtime resolveSessionStoreEntry",
     ],
     diagnostics: ["plugin SDK deprecation"],
     tests: ["src/plugin-sdk/session-store-runtime.test.ts", "src/plugins/compat/registry.test.ts"],
@@ -804,9 +804,9 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-24",
     warningStarts: "2026-04-24",
     removeAfter: "2026-07-24",
-    replacement: "focused `openclaw/plugin-sdk/<subpath>` imports",
+    replacement: "focused `nova/plugin-sdk/<subpath>` imports",
     docsPath: "/plugins/sdk-migration",
-    surfaces: ["openclaw/plugin-sdk", "openclaw/plugin-sdk/compat"],
+    surfaces: ["nova/plugin-sdk", "nova/plugin-sdk/compat"],
     diagnostics: ["NOVA_PLUGIN_SDK_COMPAT_DEPRECATED"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -841,11 +841,7 @@ const PLUGIN_COMPAT_RECORDS = [
     owner: "plugin-execution",
     introduced: "2026-04-29",
     docsPath: "/plugins/architecture-internals",
-    surfaces: [
-      "createCapturedPluginRegistration",
-      "capturePluginRegistration",
-      "OpenClawPluginApi",
-    ],
+    surfaces: ["createCapturedPluginRegistration", "capturePluginRegistration", "NovaPluginApi"],
     diagnostics: ["runtime registration capture contract probe"],
     tests: ["src/plugins/captured-registration.test.ts"],
   },
@@ -913,8 +909,8 @@ const PLUGIN_COMPAT_RECORDS = [
       "generic channel SDK subpaths or plugin-local `api.ts` / `runtime-api.ts` barrels for new plugins",
     docsPath: "/plugins/sdk-overview",
     surfaces: [
-      "openclaw/plugin-sdk/discord component message helpers",
-      "openclaw/plugin-sdk/telegram-account resolveTelegramAccount",
+      "nova/plugin-sdk/discord component message helpers",
+      "nova/plugin-sdk/telegram-account resolveTelegramAccount",
     ],
     diagnostics: ["plugin SDK compatibility registry"],
     tests: [
@@ -932,9 +928,9 @@ const PLUGIN_COMPAT_RECORDS = [
     warningStarts: "2026-04-28",
     removeAfter: "2026-07-28",
     replacement:
-      "`openclaw/plugin-sdk/bundled-channel-config-schema` for maintained bundled plugins; plugin-local schemas for third-party plugins",
+      "`nova/plugin-sdk/bundled-channel-config-schema` for maintained bundled plugins; plugin-local schemas for third-party plugins",
     docsPath: "/plugins/sdk-migration",
-    surfaces: ["openclaw/plugin-sdk/channel-config-schema-legacy"],
+    surfaces: ["nova/plugin-sdk/channel-config-schema-legacy"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -949,9 +945,9 @@ const PLUGIN_COMPAT_RECORDS = [
     warningStarts: "2026-04-28",
     removeAfter: "2026-07-28",
     replacement:
-      "focused `openclaw/plugin-sdk/*` test subpaths such as `plugin-test-runtime`, `channel-test-helpers`, `test-env`, and `test-fixtures`",
+      "focused `nova/plugin-sdk/*` test subpaths such as `plugin-test-runtime`, `channel-test-helpers`, `test-env`, and `test-fixtures`",
     docsPath: "/plugins/sdk-migration#private-testing-barrel",
-    surfaces: ["openclaw/plugin-sdk/testing"],
+    surfaces: ["nova/plugin-sdk/testing"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -968,8 +964,8 @@ const PLUGIN_COMPAT_RECORDS = [
     replacement: "`channelRouteDedupeKey` and `channelRouteCompactKey`",
     docsPath: "/plugins/sdk-migration",
     surfaces: [
-      "openclaw/plugin-sdk/channel-route channelRouteIdentityKey",
-      "openclaw/plugin-sdk/channel-route channelRouteKey",
+      "nova/plugin-sdk/channel-route channelRouteIdentityKey",
+      "nova/plugin-sdk/channel-route channelRouteKey",
     ],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
@@ -989,9 +985,9 @@ const PLUGIN_COMPAT_RECORDS = [
     docsPath: "/plugins/sdk-migration",
     surfaces: [
       "ChannelMessagingAdapter.parseExplicitTarget",
-      "openclaw/plugin-sdk/channel-route ChannelRouteExplicitTarget",
-      "openclaw/plugin-sdk/channel-route ChannelRouteExplicitTargetParser",
-      "openclaw/plugin-sdk/channel-route resolveChannelRouteTargetWithParser",
+      "nova/plugin-sdk/channel-route ChannelRouteExplicitTarget",
+      "nova/plugin-sdk/channel-route ChannelRouteExplicitTargetParser",
+      "nova/plugin-sdk/channel-route resolveChannelRouteTargetWithParser",
     ],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: [
@@ -1007,9 +1003,9 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-05-23",
     warningStarts: "2026-05-23",
     removeAfter: "2026-08-23",
-    replacement: "`openclaw/plugin-sdk/channel-targets`",
+    replacement: "`nova/plugin-sdk/channel-targets`",
     docsPath: "/plugins/sdk-migration",
-    surfaces: ["openclaw/plugin-sdk/messaging-targets"],
+    surfaces: ["nova/plugin-sdk/messaging-targets"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: [
       "src/plugins/compat/registry.test.ts",
@@ -1059,7 +1055,7 @@ const PLUGIN_COMPAT_RECORDS = [
     removeAfter: "2026-07-24",
     replacement: "`setup.providers[].envVars` and `providerAuthChoices`",
     docsPath: "/plugins/manifest",
-    surfaces: ["openclaw.plugin.json providerAuthEnvVars", "provider setup"],
+    surfaces: ["nova.plugin.json providerAuthEnvVars", "provider setup"],
     diagnostics: ["manifest compatibility diagnostic"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -1075,7 +1071,7 @@ const PLUGIN_COMPAT_RECORDS = [
     removeAfter: "2026-07-24",
     replacement: "`channelConfigs.<id>.schema` and setup descriptors",
     docsPath: "/plugins/manifest",
-    surfaces: ["openclaw.plugin.json channelEnvVars", "channel setup"],
+    surfaces: ["nova.plugin.json channelEnvVars", "channel setup"],
     diagnostics: ["manifest compatibility diagnostic"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -1184,9 +1180,9 @@ const PLUGIN_COMPAT_RECORDS = [
     warningStarts: "2026-04-25",
     removeAfter: "2026-07-25",
     replacement:
-      "`openclaw/plugin-sdk/agent-runtime`; retain the public aliases until the shipped SDK contract has a replacement window backed by external-usage proof",
+      "`nova/plugin-sdk/agent-runtime`; retain the public aliases until the shipped SDK contract has a replacement window backed by external-usage proof",
     docsPath: "/plugins/sdk-agent-harness",
-    surfaces: ["openclaw/plugin-sdk/agent-harness", "openclaw/plugin-sdk/agent-harness-runtime"],
+    surfaces: ["nova/plugin-sdk/agent-harness", "nova/plugin-sdk/agent-harness-runtime"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/contracts/plugin-sdk-subpaths.test.ts"],
   },
@@ -1202,8 +1198,8 @@ const PLUGIN_COMPAT_RECORDS = [
     docsPath: "/plugins/sdk-runtime",
     surfaces: [
       "api.runtime.agent.runEmbeddedPiAgent",
-      "openclaw/extension-api runEmbeddedPiAgent",
-      "openclaw/plugin-sdk/agent-harness-runtime EmbeddedPi* aliases",
+      "nova/extension-api runEmbeddedPiAgent",
+      "nova/plugin-sdk/agent-harness-runtime EmbeddedPi* aliases",
     ],
     diagnostics: ["plugin SDK compatibility registry"],
     tests: [
@@ -1248,7 +1244,7 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-25",
     warningStarts: "2026-04-25",
     removeAfter: "2026-07-25",
-    replacement: "`openclaw plugins registry --refresh` and `openclaw doctor --fix`",
+    replacement: "`nova plugins registry --refresh` and `nova doctor --fix`",
     docsPath: "/cli/plugins#registry",
     surfaces: ["NOVA_DISABLE_PERSISTED_PLUGIN_REGISTRY", "plugin registry reads"],
     diagnostics: ["persisted-registry-disabled"],
@@ -1264,7 +1260,7 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-25",
     warningStarts: "2026-04-25",
     removeAfter: "2026-07-25",
-    replacement: "`openclaw plugins registry --refresh` and `openclaw doctor --fix`",
+    replacement: "`nova plugins registry --refresh` and `nova doctor --fix`",
     docsPath: "/cli/plugins#registry",
     surfaces: [
       "NOVA_DISABLE_PLUGIN_REGISTRY_MIGRATION",
@@ -1407,9 +1403,9 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-26",
     warningStarts: "2026-04-26",
     removeAfter: "2026-07-26",
-    replacement: "`openclaw.channel.exposure` metadata",
+    replacement: "`nova.channel.exposure` metadata",
     docsPath: "/plugins/sdk-setup",
-    surfaces: ["openclaw.channel.showConfigured", "openclaw.channel.showInSetup"],
+    surfaces: ["nova.channel.showConfigured", "nova.channel.showInSetup"],
     diagnostics: ["channel exposure compatibility path"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -1424,7 +1420,7 @@ const PLUGIN_COMPAT_RECORDS = [
     warningStarts: "2026-04-26",
     removeAfter: "2026-07-26",
     replacement:
-      "focused channel SDK subpaths, especially `openclaw/plugin-sdk/channel-runtime-context`",
+      "focused channel SDK subpaths, especially `nova/plugin-sdk/channel-runtime-context`",
     docsPath: "/plugins/sdk-migration",
     surfaces: [CHANNEL_RUNTIME_SDK_SURFACE],
     diagnostics: ["plugin SDK compatibility warning"],
@@ -1440,12 +1436,12 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-26",
     warningStarts: "2026-04-26",
     removeAfter: "2026-07-26",
-    replacement: "`openclaw/plugin-sdk/command-status`",
+    replacement: "`nova/plugin-sdk/command-status`",
     docsPath: "/plugins/sdk-migration",
     surfaces: [
-      "openclaw/plugin-sdk/command-auth buildCommandsMessage",
-      "openclaw/plugin-sdk/command-auth buildCommandsMessagePaginated",
-      "openclaw/plugin-sdk/command-auth buildHelpMessage",
+      "nova/plugin-sdk/command-auth buildCommandsMessage",
+      "nova/plugin-sdk/command-auth buildCommandsMessagePaginated",
+      "nova/plugin-sdk/command-auth buildHelpMessage",
     ],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
@@ -1460,29 +1456,29 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-26",
     warningStarts: "2026-04-26",
     removeAfter: "2026-07-26",
-    replacement: "`OpenClawConfig`",
+    replacement: "`NovaConfig`",
     docsPath: "/plugins/sdk-migration",
-    surfaces: ["openclaw/plugin-sdk `ClawdbotConfig` type export"],
+    surfaces: ["nova/plugin-sdk `ClawdbotConfig` type export"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
       "The deprecated compatibility surfaces tracked by clawdbot-config-type-alias were removed in the July 2026 sweep.",
   },
   {
-    code: "openclaw-schema-type-alias",
+    code: "nova-schema-type-alias",
     status: "removed",
     owner: "sdk",
     introduced: "2026-04-26",
     deprecated: "2026-04-26",
     warningStarts: "2026-04-26",
     removeAfter: "2026-07-26",
-    replacement: "`OpenClawConfig` from `openclaw/plugin-sdk/config-schema`",
+    replacement: "`NovaConfig` from `nova/plugin-sdk/config-schema`",
     docsPath: "/plugins/sdk-migration",
-    surfaces: ["openclaw/plugin-sdk `OpenClawSchemaType` type export"],
+    surfaces: ["nova/plugin-sdk `NovaSchemaType` type export"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
-      "The deprecated compatibility surfaces tracked by openclaw-schema-type-alias were removed in the July 2026 sweep.",
+      "The deprecated compatibility surfaces tracked by nova-schema-type-alias were removed in the July 2026 sweep.",
   },
   {
     code: "legacy-extension-api-import",
@@ -1492,10 +1488,9 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-26",
     warningStarts: "2026-04-26",
     removeAfter: "2026-07-26",
-    replacement:
-      "injected `api.runtime.*` helpers or focused `openclaw/plugin-sdk/<subpath>` imports",
+    replacement: "injected `api.runtime.*` helpers or focused `nova/plugin-sdk/<subpath>` imports",
     docsPath: "/plugins/sdk-migration",
-    surfaces: ["openclaw/extension-api"],
+    surfaces: ["nova/extension-api"],
     diagnostics: ["NOVA_EXTENSION_API_DEPRECATED"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -1715,8 +1710,8 @@ const PLUGIN_COMPAT_RECORDS = [
     replacement: "semantic `presentation` capabilities",
     docsPath: "/plugins/sdk-migration",
     surfaces: [
-      "openclaw/plugin-sdk/channel-actions createMessageToolButtonsSchema",
-      "openclaw/plugin-sdk/channel-actions createMessageToolCardSchema",
+      "nova/plugin-sdk/channel-actions createMessageToolButtonsSchema",
+      "nova/plugin-sdk/channel-actions createMessageToolCardSchema",
     ],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
@@ -1734,10 +1729,10 @@ const PLUGIN_COMPAT_RECORDS = [
     replacement: "`resolveInboundMentionDecision({ facts, policy })`",
     docsPath: "/plugins/sdk-migration",
     surfaces: [
-      "openclaw/plugin-sdk/channel-inbound resolveMentionGating",
-      "openclaw/plugin-sdk/channel-inbound resolveMentionGatingWithBypass",
-      "openclaw/plugin-sdk/channel-mention-gating resolveMentionGating",
-      "openclaw/plugin-sdk/channel-mention-gating resolveMentionGatingWithBypass",
+      "nova/plugin-sdk/channel-inbound resolveMentionGating",
+      "nova/plugin-sdk/channel-inbound resolveMentionGatingWithBypass",
+      "nova/plugin-sdk/channel-mention-gating resolveMentionGating",
+      "nova/plugin-sdk/channel-mention-gating resolveMentionGatingWithBypass",
     ],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
@@ -1754,7 +1749,7 @@ const PLUGIN_COMPAT_RECORDS = [
     removeAfter: "2026-07-26",
     replacement: "provider-owned `createTool(...)` on the returned `WebSearchProviderPlugin`",
     docsPath: "/plugins/sdk-provider-plugins",
-    surfaces: ["openclaw/plugin-sdk/provider-web-search createPluginBackedWebSearchProvider"],
+    surfaces: ["nova/plugin-sdk/provider-web-search createPluginBackedWebSearchProvider"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -1785,9 +1780,9 @@ const PLUGIN_COMPAT_RECORDS = [
     deprecated: "2026-04-26",
     warningStarts: "2026-04-26",
     removeAfter: "2026-07-26",
-    replacement: "focused `openclaw/plugin-sdk/*` test subpaths",
+    replacement: "focused `nova/plugin-sdk/*` test subpaths",
     docsPath: "/plugins/sdk-migration",
-    surfaces: ["openclaw/plugin-sdk/test-utils"],
+    surfaces: ["nova/plugin-sdk/test-utils"],
     diagnostics: ["plugin SDK compatibility warning"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:

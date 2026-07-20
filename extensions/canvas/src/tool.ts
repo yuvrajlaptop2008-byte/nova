@@ -9,21 +9,17 @@ import {
   callGatewayTool,
   listNodes,
   resolveNodeIdFromList,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import {
-  imageResultFromFile,
-  jsonResult,
-  readStringParam,
-} from "openclaw/plugin-sdk/channel-actions";
-import { readFiniteNumberParam, readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
-import type { AnyAgentTool, OpenClawConfig } from "openclaw/plugin-sdk/plugin-entry";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { imageResultFromFile, jsonResult, readStringParam } from "nova/plugin-sdk/channel-actions";
+import { readFiniteNumberParam, readPositiveIntegerParam } from "nova/plugin-sdk/param-readers";
+import type { AnyAgentTool, NovaConfig } from "nova/plugin-sdk/plugin-entry";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { validateSupportedA2UIJsonl } from "./a2ui-jsonl.js";
 import { normalizeCanvasSnapshotFileExtension, parseCanvasSnapshotPayload } from "./cli-helpers.js";
 import { CanvasToolSchema } from "./tool-schema.js";
 
 type CanvasToolOptions = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   agentSessionKey?: string;
 };
@@ -49,10 +45,10 @@ async function resolveNodeId(
 }
 
 async function writeBase64ToTempFile(params: { base64: string; ext: string }): Promise<string> {
-  const dir = resolvePreferredOpenClawTmpDir();
+  const dir = resolvePreferredNovaTmpDir();
   await fs.mkdir(dir, { recursive: true, mode: 0o700 });
   const ext = `.${normalizeCanvasSnapshotFileExtension(params.ext)}`;
-  const filePath = path.join(dir, `openclaw-canvas-snapshot-${randomUUID()}${ext}`);
+  const filePath = path.join(dir, `nova-canvas-snapshot-${randomUUID()}${ext}`);
   await fs.writeFile(filePath, Buffer.from(params.base64, "base64"));
   return filePath;
 }
@@ -81,9 +77,7 @@ async function readJsonlFromPath(jsonlPath: string, workspaceDir?: string): Prom
   return await fs.readFile(resolvedReal, "utf8");
 }
 
-function resolveCanvasImageSanitizationLimits(
-  config?: OpenClawConfig,
-): CanvasImageSanitizationLimits {
+function resolveCanvasImageSanitizationLimits(config?: NovaConfig): CanvasImageSanitizationLimits {
   const configured = config?.agents?.defaults?.imageMaxDimensionPx;
   if (typeof configured !== "number" || !Number.isFinite(configured)) {
     return {};

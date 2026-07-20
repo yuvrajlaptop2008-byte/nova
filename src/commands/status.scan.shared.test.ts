@@ -443,10 +443,10 @@ describe("buildTailscaleHttpsUrl", () => {
       buildTailscaleHttpsUrl({
         tailscaleMode: "serve",
         tailscaleDns: "node.tailnet.ts.net",
-        serviceName: "svc:openclaw",
+        serviceName: "svc:nova",
         controlUiBasePath: "/control",
       }),
-    ).toBe("https://openclaw.tailnet.ts.net/control");
+    ).toBe("https://nova.tailnet.ts.net/control");
   });
 
   it("does not advertise a node-IP URL for named Services", () => {
@@ -454,7 +454,7 @@ describe("buildTailscaleHttpsUrl", () => {
       buildTailscaleHttpsUrl({
         tailscaleMode: "serve",
         tailscaleDns: "100.64.0.8",
-        serviceName: "svc:openclaw",
+        serviceName: "svc:nova",
       }),
     ).toBeNull();
   });
@@ -478,7 +478,7 @@ describe("resolveSharedMemoryStatusSnapshot", () => {
     const resolveMemoryConfig = vi.fn(() => null);
     const getMemorySearchManager = vi.fn(async () => ({ manager }));
     const requireDefaultDatabasePath = vi.fn(
-      () => `/tmp/openclaw-missing-memory-${process.pid}.sqlite`,
+      () => `/tmp/nova-missing-memory-${process.pid}.sqlite`,
     );
 
     const result = await resolveSharedMemoryStatusSnapshot({
@@ -570,7 +570,7 @@ describe("resolveSharedMemoryStatusSnapshot", () => {
       memoryPlugin: { enabled: true, slot: "memory-core" },
       resolveMemoryConfig,
       getMemorySearchManager,
-      requireDefaultDatabasePath: () => `/tmp/openclaw-missing-memory-${process.pid}.sqlite`,
+      requireDefaultDatabasePath: () => `/tmp/nova-missing-memory-${process.pid}.sqlite`,
     });
 
     expect(result).toBeNull();
@@ -579,8 +579,8 @@ describe("resolveSharedMemoryStatusSnapshot", () => {
   });
 
   it("recognizes shipped memory tables before the manager migrates them", async () => {
-    const tempDir = makeTempDir(tempDirs, "openclaw-status-memory-");
-    const databasePath = path.join(tempDir, "openclaw-agent.sqlite");
+    const tempDir = makeTempDir(tempDirs, "nova-status-memory-");
+    const databasePath = path.join(tempDir, "nova-agent.sqlite");
     const db = new DatabaseSync(databasePath);
     db.exec(`
       CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -635,8 +635,8 @@ describe("resolveSharedMemoryStatusSnapshot", () => {
   });
 
   it("does not initialize memory status for an agent database owned by another feature", async () => {
-    const tempDir = makeTempDir(tempDirs, "openclaw-status-memory-");
-    const databasePath = path.join(tempDir, "openclaw-agent.sqlite");
+    const tempDir = makeTempDir(tempDirs, "nova-status-memory-");
+    const databasePath = path.join(tempDir, "nova-agent.sqlite");
     const db = new DatabaseSync(databasePath);
     db.exec(`
       CREATE TABLE cache_entries (

@@ -4,7 +4,7 @@ import {
   type NpmSpecResolution,
 } from "../infra/install-source-utils.js";
 import {
-  compareOpenClawReleaseVersions,
+  compareNovaReleaseVersions,
   isExactSemverVersion,
   isPrereleaseSemverVersion,
   type ParsedRegistryNpmSpec,
@@ -12,7 +12,7 @@ import {
 import { compareValidSemver } from "../infra/semver.js";
 import { runCommandWithTimeout } from "../process/exec.js";
 import {
-  validateOpenClawPackageInstallCompatibility,
+  validateNovaPackageInstallCompatibility,
   type PluginInstallRuntime,
 } from "./install-shared.js";
 import {
@@ -20,7 +20,7 @@ import {
   type PluginInstallFailureResult,
   type PluginInstallLogger,
 } from "./install-types.js";
-import type { OpenClawPackageManifest } from "./manifest.js";
+import type { NovaPackageManifest } from "./manifest.js";
 
 export function isNpmPackageNotFoundMessage(error: string): boolean {
   const normalized = error.trim();
@@ -31,7 +31,7 @@ export function isNpmPackageNotFoundMessage(error: string): boolean {
 }
 
 function compareNpmSemver(a: string, b: string): number {
-  const releaseCmp = compareOpenClawReleaseVersions(a, b);
+  const releaseCmp = compareNovaReleaseVersions(a, b);
   if (releaseCmp !== null) {
     return releaseCmp;
   }
@@ -174,10 +174,10 @@ export function validateNpmResolutionCompatibility(params: {
   expectedPluginId?: string;
   resolution: NpmSpecResolution;
 }): PluginInstallFailureResult | null {
-  return validateOpenClawPackageInstallCompatibility({
+  return validateNovaPackageInstallCompatibility({
     runtime: params.runtime,
     pluginId: params.expectedPluginId ?? params.resolution.name ?? params.parsedSpec.name,
-    packageMetadata: params.resolution.packageNova as OpenClawPackageManifest | undefined,
+    packageMetadata: params.resolution.packageNova as NovaPackageManifest | undefined,
   });
 }
 

@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-plugins-e2e" NOVA_PLUGINS_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-plugins-e2e" NOVA_PLUGINS_E2E_IMAGE)"
 NOVA_DOCKER_E2E_LOG_PRINT_BYTES="$(
   docker_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536
 )"

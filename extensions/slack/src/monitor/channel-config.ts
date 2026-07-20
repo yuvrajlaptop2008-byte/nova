@@ -3,14 +3,14 @@ import {
   applyChannelMatchMeta,
   buildChannelKeyCandidates,
   type ChannelMatchSource,
-} from "openclaw/plugin-sdk/channel-targets";
+} from "nova/plugin-sdk/channel-targets";
 import type {
   ChannelBotLoopProtectionConfig,
   ReplyToMode,
   SlackChannelConfig,
-} from "openclaw/plugin-sdk/config-contracts";
-import { mergePairLoopGuardConfig } from "openclaw/plugin-sdk/pair-loop-guard-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/config-contracts";
+import { mergePairLoopGuardConfig } from "nova/plugin-sdk/pair-loop-guard-runtime";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import { buildSlackChannelPolicyScope } from "../group-policy.js";
 import { normalizeSlackSlug } from "./allow-list.js";
 

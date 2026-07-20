@@ -18,7 +18,7 @@ import {
 
 describe("package dist inventory", () => {
   it("tracks missing and stale dist files", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-" }, async (packageRoot) => {
       const currentFile = path.join(packageRoot, "dist", "current-BR6xv1a1.js");
       await fs.mkdir(path.dirname(currentFile), { recursive: true });
       await fs.writeFile(currentFile, "export {};\n", "utf8");
@@ -44,7 +44,7 @@ describe("package dist inventory", () => {
   });
 
   it("keeps the pending install guard outside the expected inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-install-guard-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-install-guard-" }, async (packageRoot) => {
       const currentFile = path.join(packageRoot, "dist", "current.js");
       await fs.mkdir(path.dirname(currentFile), { recursive: true });
       await fs.writeFile(currentFile, "export {};\n", "utf8");
@@ -66,7 +66,7 @@ describe("package dist inventory", () => {
   });
 
   it("keeps npm-omitted dist artifacts out of the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-pack-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-pack-" }, async (packageRoot) => {
       const packagedQaChannelRuntime = path.join(
         packageRoot,
         "dist",
@@ -158,7 +158,7 @@ describe("package dist inventory", () => {
   });
 
   it("honors package files exclusions when writing the dist inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-package-files-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-package-files-" }, async (packageRoot) => {
       const packagedRuntime = path.join(packageRoot, "dist", "plugin-sdk", "runtime.js");
       const omittedTestRuntime = path.join(
         packageRoot,
@@ -222,14 +222,14 @@ describe("package dist inventory", () => {
   });
 
   it("keeps transient plugin dependency trees out of the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-plugin-deps-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-plugin-deps-" }, async (packageRoot) => {
       const realFile = path.join(packageRoot, "dist", "index.js");
       const rootDependencyPackage = path.join(
         packageRoot,
         "dist",
         "extensions",
         "node_modules",
-        "openclaw",
+        "nova",
         "package.json",
       );
       const pluginDependencyPackage = path.join(
@@ -254,7 +254,7 @@ describe("package dist inventory", () => {
 
   it("omits packaged extension node_modules while keeping extension runtime files", async () => {
     await withTempDir(
-      { prefix: "openclaw-dist-inventory-extension-node-modules-" },
+      { prefix: "nova-dist-inventory-extension-node-modules-" },
       async (packageRoot) => {
         const extensionRuntime = path.join(
           packageRoot,
@@ -268,7 +268,7 @@ describe("package dist inventory", () => {
           "dist",
           "extensions",
           "node_modules",
-          "openclaw",
+          "nova",
           "package.json",
         );
         const extensionDependencyPackage = path.join(
@@ -296,7 +296,7 @@ describe("package dist inventory", () => {
   });
 
   it("keeps publishable externalized bundled plugin dist trees out of the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-externalized-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-externalized-" }, async (packageRoot) => {
       const externalizedRuntime = path.join(
         packageRoot,
         "dist",
@@ -342,7 +342,7 @@ describe("package dist inventory", () => {
         externalizedPackageJson,
         JSON.stringify({
           name: "@nova/external-chat",
-          openclaw: {
+          nova: {
             release: {
               publishToClawHub: true,
               publishToNpm: true,
@@ -355,7 +355,7 @@ describe("package dist inventory", () => {
         bundledPackageJson,
         JSON.stringify({
           name: "@nova/bundled-chat",
-          openclaw: {},
+          nova: {},
         }),
         "utf8",
       );
@@ -367,7 +367,7 @@ describe("package dist inventory", () => {
   });
 
   it("keeps publishable core-package runtime plugin dist trees in the inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-core-runtime-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-core-runtime-" }, async (packageRoot) => {
       const coreRuntime = path.join(packageRoot, "dist", "extensions", "core-chat", "index.js");
       const corePackageJson = path.join(packageRoot, "extensions", "core-chat", "package.json");
 
@@ -378,7 +378,7 @@ describe("package dist inventory", () => {
         corePackageJson,
         JSON.stringify({
           name: "@nova/core-chat",
-          openclaw: {
+          nova: {
             release: {
               publishToClawHub: true,
               publishToNpm: true,
@@ -397,12 +397,12 @@ describe("package dist inventory", () => {
   it("matches install-stage paths case-insensitively across path segments", () => {
     expect(
       isLegacyPluginDependencyInstallStagePath(
-        "dist/extensions/brave/.openclaw-install-stage/node_modules/typebox/package.json",
+        "dist/extensions/brave/.nova-install-stage/node_modules/typebox/package.json",
       ),
     ).toBe(true);
     expect(
       isLegacyPluginDependencyInstallStagePath(
-        "dist/Extensions/browser/.OPENCLAW-INSTALL-STAGE-AbC123/node_modules/playwright-core/package.json",
+        "dist/Extensions/browser/.nova-INSTALL-STAGE-AbC123/node_modules/playwright-core/package.json",
       ),
     ).toBe(true);
     expect(
@@ -412,19 +412,19 @@ describe("package dist inventory", () => {
     ).toBe(true);
     expect(
       isLegacyPluginDependencyInstallStagePath(
-        "dist/extensions/browser/.openclaw-runtime-deps-copy-AbC123/package.json",
+        "dist/extensions/browser/.nova-runtime-deps-copy-AbC123/package.json",
       ),
     ).toBe(false);
-    expect(
-      isLegacyPluginDependencyInstallStagePath("dist/extensions/.openclaw-install-stage"),
-    ).toBe(false);
+    expect(isLegacyPluginDependencyInstallStagePath("dist/extensions/.nova-install-stage")).toBe(
+      false,
+    );
   });
 
   it("rejects pre-populated install-stage debris before writing an inventory", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-stage-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-stage-" }, async (packageRoot) => {
       for (const relativePath of [
-        "dist/extensions/brave/.openclaw-install-stage/package.json",
-        "dist/extensions/browser/.openclaw-install-stage-AbC123/node_modules/playwright-core/package.json",
+        "dist/extensions/brave/.nova-install-stage/package.json",
+        "dist/extensions/browser/.nova-install-stage-AbC123/node_modules/playwright-core/package.json",
       ]) {
         const filePath = path.join(packageRoot, relativePath);
         await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -438,13 +438,13 @@ describe("package dist inventory", () => {
   });
 
   it("rejects mixed-case install-stage debris on case-sensitive builders", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-stage-case-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-stage-case-" }, async (packageRoot) => {
       const stagedFile = path.join(
         packageRoot,
         "Dist",
         "Extensions",
         "browser",
-        ".OPENCLAW-INSTALL-STAGE-AbC123",
+        ".nova-INSTALL-STAGE-AbC123",
         "package.json",
       );
       await fs.mkdir(path.dirname(stagedFile), { recursive: true });
@@ -457,14 +457,14 @@ describe("package dist inventory", () => {
   });
 
   it("returns null when the inventory is missing", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-missing-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-missing-" }, async (packageRoot) => {
       await fs.mkdir(path.join(packageRoot, "dist"), { recursive: true });
       await expect(readPackageDistInventoryIfPresent(packageRoot)).resolves.toBeNull();
     });
   });
 
   it("rejects symlinked dist entries", async () => {
-    await withTempDir({ prefix: "openclaw-dist-inventory-symlink-" }, async (packageRoot) => {
+    await withTempDir({ prefix: "nova-dist-inventory-symlink-" }, async (packageRoot) => {
       const distDir = path.join(packageRoot, "dist");
       await fs.mkdir(distDir, { recursive: true });
       await fs.writeFile(path.join(packageRoot, "escape.js"), "export {};\n", "utf8");

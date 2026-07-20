@@ -35,7 +35,7 @@ import {
   type ExecApprovalsTarget,
   type NodesPageDataState,
 } from "../../lib/nodes/index.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { PollController } from "../../lit/poll-controller.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import { renderNodes } from "./view.ts";
@@ -68,7 +68,7 @@ function presenceConnectivitySignature(entries: PresenceEntry[]): string {
   return JSON.stringify([...states].toSorted(([left], [right]) => left.localeCompare(right)));
 }
 
-class NodesPage extends OpenClawLightDomElement implements NodesPageDataState {
+class NodesPage extends NovaLightDomElement implements NodesPageDataState {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -471,6 +471,6 @@ class NodesPage extends OpenClawLightDomElement implements NodesPageDataState {
   }
 }
 
-if (!customElements.get("openclaw-nodes-page")) {
-  customElements.define("openclaw-nodes-page", NodesPage);
+if (!customElements.get("nova-nodes-page")) {
+  customElements.define("nova-nodes-page", NodesPage);
 }

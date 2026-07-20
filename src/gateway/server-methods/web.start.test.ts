@@ -90,10 +90,10 @@ describe("webHandlers web.login.start", () => {
       channelId: "whatsapp",
       label: "WhatsApp",
       installSpec: "clawhub:@nova/whatsapp",
-      installCommand: "openclaw plugins install clawhub:@nova/whatsapp",
-      doctorFixCommand: "openclaw doctor --fix",
+      installCommand: "nova plugins install clawhub:@nova/whatsapp",
+      doctorFixCommand: "nova doctor --fix",
       repairHint:
-        "Install the official external plugin with: openclaw plugins install clawhub:@nova/whatsapp, or run: openclaw doctor --fix.",
+        "Install the official external plugin with: nova plugins install clawhub:@nova/whatsapp, or run: nova doctor --fix.",
     });
     const respond = vi.fn();
 
@@ -115,7 +115,7 @@ describe("webHandlers web.login.start", () => {
       expect.objectContaining({
         code: "INVALID_REQUEST",
         message:
-          "web login provider is not available. Install the official external plugin with: openclaw plugins install clawhub:@nova/whatsapp, or run: openclaw doctor --fix.",
+          "web login provider is not available. Install the official external plugin with: nova plugins install clawhub:@nova/whatsapp, or run: nova doctor --fix.",
       }),
     );
     expect(mocks.resolveMissingOfficialExternalChannelPluginRepairHint).toHaveBeenCalledWith({
@@ -134,10 +134,10 @@ describe("webHandlers web.login.start", () => {
               channelId: "whatsapp",
               label: "WhatsApp",
               installSpec: "clawhub:@nova/whatsapp",
-              installCommand: "openclaw plugins install clawhub:@nova/whatsapp",
-              doctorFixCommand: "openclaw doctor --fix",
+              installCommand: "nova plugins install clawhub:@nova/whatsapp",
+              doctorFixCommand: "nova doctor --fix",
               repairHint:
-                "Install the official external plugin with: openclaw plugins install clawhub:@nova/whatsapp, or run: openclaw doctor --fix.",
+                "Install the official external plugin with: nova plugins install clawhub:@nova/whatsapp, or run: nova doctor --fix.",
             }
           : channelId === "signal"
             ? {
@@ -145,10 +145,10 @@ describe("webHandlers web.login.start", () => {
                 channelId: "signal",
                 label: "Signal",
                 installSpec: "clawhub:@nova/signal",
-                installCommand: "openclaw plugins install clawhub:@nova/signal",
-                doctorFixCommand: "openclaw doctor --fix",
+                installCommand: "nova plugins install clawhub:@nova/signal",
+                doctorFixCommand: "nova doctor --fix",
                 repairHint:
-                  "Install the official external plugin with: openclaw plugins install clawhub:@nova/signal, or run: openclaw doctor --fix.",
+                  "Install the official external plugin with: nova plugins install clawhub:@nova/signal, or run: nova doctor --fix.",
               }
             : null,
     );
@@ -183,7 +183,7 @@ describe("webHandlers web.login.start", () => {
       expect.objectContaining({
         code: "INVALID_REQUEST",
         message:
-          "web login provider is not available. Configured official external channel plugins are missing for WhatsApp, Signal. Install them with: openclaw plugins install clawhub:@nova/whatsapp; openclaw plugins install clawhub:@nova/signal, or run: openclaw doctor --fix.",
+          "web login provider is not available. Configured official external channel plugins are missing for WhatsApp, Signal. Install them with: nova plugins install clawhub:@nova/whatsapp; nova plugins install clawhub:@nova/signal, or run: nova doctor --fix.",
       }),
     );
   });

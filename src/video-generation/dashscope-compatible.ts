@@ -11,7 +11,7 @@ import {
   resolveProviderOperationTimeoutMs,
   waitProviderOperationPollInterval,
   type ProviderOperationTimeoutMs,
-} from "openclaw/plugin-sdk/provider-http";
+} from "nova/plugin-sdk/provider-http";
 // DashScope-compatible video provider adapts DashScope-style generation APIs.
 import { readResponseWithLimit } from "../infra/http-body.js";
 import { resolveGeneratedMediaMaxBytes } from "../media/configured-max-bytes.js";

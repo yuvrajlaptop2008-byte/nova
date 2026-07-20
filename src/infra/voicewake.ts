@@ -1,10 +1,7 @@
 // Stores voice wake trigger configuration.
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "./kysely-sync.js";
 
 // Voice wake config stores trigger words used by local voice integrations.
@@ -13,10 +10,10 @@ type VoiceWakeConfig = {
   updatedAtMs: number;
 };
 
-const DEFAULT_TRIGGERS = ["openclaw", "claude", "computer"];
+const DEFAULT_TRIGGERS = ["nova", "claude", "computer"];
 const VOICEWAKE_CONFIG_KEY = "default";
 
-type VoiceWakeDatabase = Pick<OpenClawStateKyselyDatabase, "voicewake_triggers">;
+type VoiceWakeDatabase = Pick<NovaStateKyselyDatabase, "voicewake_triggers">;
 
 function sanitizeTriggers(triggers: string[] | undefined | null): string[] {
   const cleaned = (triggers ?? [])
@@ -26,7 +23,7 @@ function sanitizeTriggers(triggers: string[] | undefined | null): string[] {
 }
 
 function openStateDatabase(stateDir?: string) {
-  return openOpenClawStateDatabase({
+  return openNovaStateDatabase({
     env: stateDir ? { ...process.env, NOVA_STATE_DIR: stateDir } : process.env,
   });
 }
@@ -64,7 +61,7 @@ export async function setVoiceWakeTriggers(
 ): Promise<VoiceWakeConfig> {
   const sanitized = sanitizeTriggers(triggers);
   const updatedAtMs = Date.now();
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       const voicewakeDb = getNodeSqliteKysely<VoiceWakeDatabase>(db);
       executeSqliteQuerySync(

@@ -1,5 +1,5 @@
 // Openai tests cover image generation provider plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildOpenAIImageGenerationProvider } from "./image-generation-provider.js";
 
@@ -51,18 +51,18 @@ const {
   logInfoMock: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("openclaw/plugin-sdk/provider-auth")>()),
+vi.mock("nova/plugin-sdk/provider-auth", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("nova/plugin-sdk/provider-auth")>()),
   ensureAuthProfileStore: ensureAuthProfileStoreMock,
   isProviderApiKeyConfigured: isProviderApiKeyConfiguredMock,
   listProfilesForProvider: listProfilesForProviderMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth-runtime", () => ({
+vi.mock("nova/plugin-sdk/provider-auth-runtime", () => ({
   resolveApiKeyForProvider: resolveApiKeyForProviderMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-http", () => ({
+vi.mock("nova/plugin-sdk/provider-http", () => ({
   assertOkOrThrowHttpError: assertOkOrThrowHttpErrorMock,
   postJsonRequest: postJsonRequestMock,
   postMultipartRequest: postMultipartRequestMock,
@@ -72,7 +72,7 @@ vi.mock("openclaw/plugin-sdk/provider-http", () => ({
   sanitizeConfiguredModelProviderRequest: sanitizeConfiguredModelProviderRequestMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/logging-core", () => ({
+vi.mock("nova/plugin-sdk/logging-core", () => ({
   createSubsystemLogger: vi.fn(() => ({
     info: logInfoMock,
     warn: vi.fn(),
@@ -743,7 +743,7 @@ describe("openai image generation provider", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const result = await provider.generateImage({
       provider: "openai",
       model: "gpt-image-2",

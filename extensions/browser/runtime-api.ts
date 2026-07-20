@@ -89,7 +89,7 @@ export { handleBrowserGatewayRequest } from "./src/gateway/browser-request.js";
 export { browserHandlers } from "./src/gateway/browser-request.js";
 export {
   definePluginEntry,
-  type OpenClawPluginApi,
-  type OpenClawPluginToolContext,
-  type OpenClawPluginToolFactory,
-} from "openclaw/plugin-sdk/plugin-entry";
+  type NovaPluginApi,
+  type NovaPluginToolContext,
+  type NovaPluginToolFactory,
+} from "nova/plugin-sdk/plugin-entry";

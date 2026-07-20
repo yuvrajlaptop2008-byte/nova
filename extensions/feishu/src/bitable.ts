@@ -1,11 +1,11 @@
 // Feishu plugin module implements bitable behavior.
 import type * as Lark from "@larksuiteoapi/node-sdk";
-import { optionalPositiveIntegerSchema } from "openclaw/plugin-sdk/channel-actions";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
-import { jsonResult as json } from "openclaw/plugin-sdk/tool-results";
+import { optionalPositiveIntegerSchema } from "nova/plugin-sdk/channel-actions";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { readPositiveIntegerParam } from "nova/plugin-sdk/param-readers";
+import { jsonResult as json } from "nova/plugin-sdk/tool-results";
 import { Type, type TSchema } from "typebox";
-import type { OpenClawPluginApi } from "../runtime-api.js";
+import type { NovaPluginApi } from "../runtime-api.js";
 import { listEnabledFeishuAccounts } from "./accounts.js";
 import { createFeishuClient } from "./client.js";
 import { resolveAnyEnabledFeishuToolsConfig, resolveFeishuToolAccount } from "./tool-account.js";
@@ -583,7 +583,7 @@ const UpdateRecordSchema = Type.Object({
 
 // ============ Tool Registration ============
 
-export function registerFeishuBitableTools(api: OpenClawPluginApi) {
+export function registerFeishuBitableTools(api: NovaPluginApi) {
   if (!api.config) {
     return;
   }

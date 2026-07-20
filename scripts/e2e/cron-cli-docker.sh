@@ -5,11 +5,11 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-cron-cli-e2e" NOVA_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-cron-cli-e2e" NOVA_IMAGE)"
 PORT="18789"
 TOKEN="cron-cli-e2e-$(date +%s)-$$"
-CONTAINER_NAME="openclaw-cron-cli-e2e-$$"
-CLIENT_LOG="$(mktemp -t openclaw-cron-cli-log.XXXXXX)"
+CONTAINER_NAME="nova-cron-cli-e2e-$$"
+CLIENT_LOG="$(mktemp -t nova-cron-cli-log.XXXXXX)"
 
 cleanup() {
   docker_e2e_docker_cmd rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -38,20 +38,20 @@ docker_e2e_run_with_harness \
   bash -s >"$CLIENT_LOG" 2>&1 <<'INNER'
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+source scripts/lib/nova-e2e-instance.sh
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 
-entry="$(openclaw_e2e_resolve_entrypoint)"
+entry="$(nova_e2e_resolve_entrypoint)"
 gateway_pid=
 
 cleanup_inner() {
-  openclaw_e2e_stop_process "${gateway_pid:-}"
+  nova_e2e_stop_process "${gateway_pid:-}"
 }
 
 dump_logs_on_error() {
   status=$?
   if [ "$status" -ne 0 ]; then
-    openclaw_e2e_dump_logs \
+    nova_e2e_dump_logs \
       /tmp/cron-cli-gateway.log \
       /tmp/cron-cli-device-seed.json \
       /tmp/cron-cli-status.json \
@@ -168,14 +168,14 @@ read_json_field() {
 }
 
 seed_paired_cli_device > /tmp/cron-cli-device-seed.json
-gateway_pid="$(openclaw_e2e_start_gateway "$entry" 18789 /tmp/cron-cli-gateway.log)"
-openclaw_e2e_wait_gateway_ready "$gateway_pid" /tmp/cron-cli-gateway.log 300 18789
+gateway_pid="$(nova_e2e_start_gateway "$entry" 18789 /tmp/cron-cli-gateway.log)"
+nova_e2e_wait_gateway_ready "$gateway_pid" /tmp/cron-cli-gateway.log 300 18789
 
 cron_cli status --json > /tmp/cron-cli-status.json
 cron_add_args=(
   "cli cron smoke"
   --cron "*/5 * * * *"
-  --command "printf openclaw-cli-cron-ok"
+  --command "printf nova-cli-cron-ok"
   --no-deliver
   --timeout-seconds 15
   --json
@@ -235,7 +235,7 @@ node --input-type=module -e '
   const fs = await import("node:fs/promises");
   const value = JSON.parse(await fs.readFile("/tmp/cron-cli-runs.json", "utf8"));
   const matching = Array.isArray(value.entries)
-    ? value.entries.find((entry) => entry.status === "ok" && entry.summary === "openclaw-cli-cron-ok")
+    ? value.entries.find((entry) => entry.status === "ok" && entry.summary === "nova-cli-cron-ok")
     : undefined;
   if (!matching) {
     throw new Error("cron runs missing successful command summary");

@@ -267,7 +267,7 @@ function buildSessionDiffMock() {
   ].join("\n");
   return {
     sessionKey: "main",
-    root: "/tmp/openclaw-mock-checkout",
+    root: "/tmp/nova-mock-checkout",
     branch: "feature/session-diff-panel",
     baseRef: "main",
     files: [
@@ -505,12 +505,12 @@ function buildProfileUsageMocks(baseTime: number) {
       endDate: daily[daily.length - 1]?.date,
       sessions: [
         {
-          key: "agent:openclaw-mock:marathon",
+          key: "agent:nova-mock:marathon",
           label: "Release night marathon",
           usage: { ...usageCostTotals(4_000_000_000), durationMs: (59 * 60 + 4) * 60 * 1000 },
         },
         {
-          key: "agent:openclaw-mock:daily",
+          key: "agent:nova-mock:daily",
           label: "Daily driver",
           usage: { ...usageCostTotals(900_000_000), durationMs: 3 * 60 * 60 * 1000 },
         },
@@ -565,7 +565,7 @@ function buildProfileUsageMocks(baseTime: number) {
           },
         ],
         byAgent: [
-          { agentId: "openclaw-mock", totals: usageCostTotals(Math.round(lifetimeTokens * 0.8)) },
+          { agentId: "nova-mock", totals: usageCostTotals(Math.round(lifetimeTokens * 0.8)) },
           { agentId: "alpha", totals: usageCostTotals(Math.round(lifetimeTokens * 0.2)) },
         ],
         byChannel: [
@@ -682,7 +682,7 @@ function buildConfigMocks() {
   };
   return {
     get: {
-      path: "~/.openclaw/openclaw.json",
+      path: "~/.nova/nova.json",
       exists: true,
       raw: `${JSON.stringify(config, null, 2)}\n`,
       hash: "mock-config-hash",
@@ -814,7 +814,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
       updatedAtMs: baseTime - 30_000,
     },
   ];
-  const workspaceListCases = ["main", "alpha", "openclaw-mock"].map((agentId) => ({
+  const workspaceListCases = ["main", "alpha", "nova-mock"].map((agentId) => ({
     match: { agentId },
     response: {
       agentId,
@@ -836,7 +836,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
       "# Context notes\n\nThe right rail should feel like workspace context, not a modal pasted beside the chat.\n\n## Current focus\n\n- Markdown previews need readable dark-mode chrome.\n- Empty or unavailable content should show a quiet state instead of an empty card.\n- File previews should load from the same mock scenario as the file list.\n",
     ],
   ]);
-  const workspaceFileCases = ["main", "alpha", "openclaw-mock"].flatMap((agentId) =>
+  const workspaceFileCases = ["main", "alpha", "nova-mock"].flatMap((agentId) =>
     workspaceFiles.map((file) => ({
       match: { agentId, name: file.name },
       response: {
@@ -903,7 +903,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
     ],
     [
       "package.json",
-      '{\n  "name": "openclaw",\n  "scripts": { "dev:ui:mock": "tsx scripts/control-ui-mock-dev.ts" }\n}\n',
+      '{\n  "name": "nova",\n  "scripts": { "dev:ui:mock": "tsx scripts/control-ui-mock-dev.ts" }\n}\n',
     ],
     [
       "ui/vite.config.ts",
@@ -994,12 +994,12 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
   <path d="M232 114c-72-44-135-22-146 35 52 9 91-4 125-39" fill="none" stroke="#f06b5f" stroke-width="28" stroke-linecap="round"/>
   <path d="M408 114c72-44 135-22 146 35-52 9-91-4-125-39" fill="none" stroke="#f06b5f" stroke-width="28" stroke-linecap="round"/>
   <path d="M232 246c-45 28-91 35-142 23M408 246c45 28 91 35 142 23" fill="none" stroke="#e14b47" stroke-width="16" stroke-linecap="round"/>
-  <text x="320" y="326" text-anchor="middle" font-family="ui-sans-serif, system-ui" font-size="24" fill="#f6f7f9">openclaw session artifact</text>
+  <text x="320" y="326" text-anchor="middle" font-family="ui-sans-serif, system-ui" font-size="24" fill="#f6f7f9">nova session artifact</text>
 </svg>`;
   const lobsterArtifact = {
-    id: "artifact-openclaw-lobster",
+    id: "artifact-nova-lobster",
     type: "image",
-    title: "openclaw-lobster-preview.svg",
+    title: "nova-lobster-preview.svg",
     mimeType: "image/svg+xml",
     sizeBytes: Buffer.byteLength(lobsterSvg, "utf8"),
     source: "session-transcript",
@@ -1060,7 +1060,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
       channel: "whatsapp",
       unread: true,
     }),
-    sessionRow("agent:main:discord:channel:openclaw-dev", "#openclaw-dev", baseTime - 300_000, {
+    sessionRow("agent:main:discord:channel:nova-dev", "#nova-dev", baseTime - 300_000, {
       kind: "group",
       channel: "discord",
     }),
@@ -1068,7 +1068,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
       worktree: {
         id: "wt-sidebar-zones",
         branch: "claude/sidebar-agent-zones",
-        repoRoot: "~/Projects/openclaw",
+        repoRoot: "~/Projects/nova",
       },
     }),
     ...buildSessionRows({
@@ -1163,7 +1163,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
         {
           id: "mock-production-export-approval",
           request: {
-            command: "openclaw export --target production",
+            command: "nova export --target production",
             sessionKey: "agent:main:production-export",
           },
           createdAtMs: baseTime - 75_000,
@@ -1171,7 +1171,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
         },
       ],
       "plugin.approval.list": [],
-      "openclaw.approval.list": [],
+      "nova.approval.list": [],
       "sessions.patch": { ok: true },
       "sessions.diff": buildSessionDiffMock(),
       // The worktrees page assumes the gateway contract shape; without this
@@ -1182,9 +1182,9 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
             id: "wt-mock-1",
             name: "fix-session-icons",
             repoFingerprint: "a1b2c3d4e5f60718",
-            repoRoot: "/Users/demo/Projects/openclaw",
-            path: "/Users/demo/Projects/openclaw/.openclaw/worktrees/fix-session-icons",
-            branch: "openclaw/fix-session-icons",
+            repoRoot: "/Users/demo/Projects/nova",
+            path: "/Users/demo/Projects/nova/.nova/worktrees/fix-session-icons",
+            branch: "nova/fix-session-icons",
             baseRef: "origin/main",
             ownerKind: "session",
             createdAt: baseTime - 3 * 86_400_000,
@@ -1194,9 +1194,9 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
             id: "wt-mock-2",
             name: "dashboard-polish",
             repoFingerprint: "a1b2c3d4e5f60718",
-            repoRoot: "/Users/demo/Projects/openclaw",
-            path: "/Users/demo/Projects/openclaw/.openclaw/worktrees/dashboard-polish",
-            branch: "openclaw/dashboard-polish",
+            repoRoot: "/Users/demo/Projects/nova",
+            path: "/Users/demo/Projects/nova/.nova/worktrees/dashboard-polish",
+            branch: "nova/dashboard-polish",
             baseRef: "origin/main",
             ownerKind: "manual",
             createdAt: baseTime - 9 * 86_400_000,
@@ -1273,7 +1273,7 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
             deviceId: "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
             displayName: "iPhone",
             platform: "iOS 26.4",
-            clientId: "openclaw-ios",
+            clientId: "nova-ios",
             clientMode: "ui",
             roles: ["operator", "node"],
             scopes: ["operator.approvals", "operator.read", "operator.write"],
@@ -1390,14 +1390,14 @@ async function createChatPickerScenario(): Promise<ControlUiMockGatewayScenario>
           ts: baseTime - 30_000,
         },
         {
-          host: "openclaw-control-ui",
+          host: "nova-control-ui",
           version: "2026.6.11",
           platform: "macos 26.5.2",
           mode: "webchat",
           reason: "connect",
           roles: ["operator"],
           instanceId: "mock-unpaired-webchat",
-          text: "Node: openclaw-control-ui · mode webchat",
+          text: "Node: nova-control-ui · mode webchat",
           ts: baseTime - 10_000,
         },
       ],
@@ -1562,11 +1562,11 @@ function createMockGatewayPlugin(scenario: ControlUiMockGatewayScenario): Plugin
         res.end(bootstrapBody);
       });
     },
-    name: "openclaw-control-ui-mock-gateway",
+    name: "nova-control-ui-mock-gateway",
     transformIndexHtml(html) {
       return html.replace(
         "</head>",
-        `    <script data-openclaw-control-ui-mock-gateway>\n${initScript}\n    </script>\n  </head>`,
+        `    <script data-nova-control-ui-mock-gateway>\n${initScript}\n    </script>\n  </head>`,
       );
     },
   };
@@ -1574,7 +1574,7 @@ function createMockGatewayPlugin(scenario: ControlUiMockGatewayScenario): Plugin
 
 function createBoardFixturePlugin(): Plugin {
   return {
-    name: "openclaw-control-ui-board-fixture",
+    name: "nova-control-ui-board-fixture",
     configureServer(server) {
       server.middlewares.use(boardFixturePath, (_req, res, next) => {
         void server

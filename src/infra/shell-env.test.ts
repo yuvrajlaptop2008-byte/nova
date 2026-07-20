@@ -671,7 +671,7 @@ describe("shell env fallback", () => {
     if (process.platform === "win32") {
       return;
     }
-    const root = tempDirs.make("openclaw-shell-path-");
+    const root = tempDirs.make("nova-shell-path-");
     const daemonBin = path.join(root, "daemon-bin");
     const shellBin = path.join(root, "shell-bin");
     fs.mkdirSync(daemonBin);

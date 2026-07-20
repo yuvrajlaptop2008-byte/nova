@@ -5,7 +5,7 @@ import {
   resolveExpiresAtMsFromDurationMs,
 } from "@nova/normalization-core/number-coercion";
 import type { CommandContext } from "../auto-reply/reply/commands-types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createCorePluginStateSyncKeyedStore } from "../plugin-state/plugin-state-store.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { classifySystemAgentApprovalText } from "./approval-intent.js";
@@ -22,7 +22,7 @@ import { resolveSystemAgentRescuePolicy } from "./rescue-policy.js";
 /**
  * Message-channel rescue command handling for Nova.
  *
- * Rescue mode accepts `/openclaw` commands from approved message contexts,
+ * Rescue mode accepts `/nova` commands from approved message contexts,
  * stores pending persistent operations for explicit confirmation, and captures
  * command output without exposing local TUI or plugin-install flows remotely.
  */
@@ -31,9 +31,9 @@ type RescuePendingOperation = {
   operation: SystemAgentOperation;
 };
 
-/** Input required to process one possible `/openclaw` rescue message. */
+/** Input required to process one possible `/nova` rescue message. */
 type SystemAgentRescueMessageInput = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   command: CommandContext;
   commandBody: string;
   agentId?: string;
@@ -42,7 +42,7 @@ type SystemAgentRescueMessageInput = {
   deps?: SystemAgentCommandDeps;
 };
 
-const SYSTEM_AGENT_COMMAND = "/openclaw";
+const SYSTEM_AGENT_COMMAND = "/nova";
 const RESCUE_PENDING_NAMESPACE = "rescue-pending";
 const RESCUE_PENDING_MAX_ENTRIES = 1_024;
 
@@ -63,7 +63,7 @@ function createCaptureRuntime(): { runtime: RuntimeEnv; read: () => string } {
   };
 }
 
-/** Extract the command body after `/openclaw`, or null when the message is not for rescue. */
+/** Extract the command body after `/nova`, or null when the message is not for rescue. */
 export function extractSystemAgentRescueMessage(commandBody: string): string | null {
   const normalized = commandBody.trim();
   const lower = normalized.toLowerCase();
@@ -216,7 +216,7 @@ function buildAuditDetails(input: SystemAgentRescueMessageInput): Record<string,
 function formatPersistentPlan(operation: SystemAgentOperation): string {
   return formatSystemAgentPersistentPlan(operation).replace(
     "Say yes to apply.",
-    "Reply /openclaw yes to apply.",
+    "Reply /nova yes to apply.",
   );
 }
 
@@ -224,31 +224,31 @@ function formatUnsupportedRemoteOperation(operation: SystemAgentOperation): stri
   if (operation.kind === "open-tui") {
     return [
       "Nova rescue cannot open the local TUI from a message channel.",
-      "Use local `openclaw` for agent handoff, or ask for status, doctor, config, gateway, agents, or models.",
+      "Use local `nova` for agent handoff, or ask for status, doctor, config, gateway, agents, or models.",
     ].join(" ");
   }
   if (operation.kind === "channel-setup") {
     return [
       "Nova rescue cannot host the interactive channel setup from a message channel.",
-      "Run `openclaw setup` locally and say `connect " + operation.channel + "` instead.",
+      "Run `nova setup` locally and say `connect " + operation.channel + "` instead.",
     ].join(" ");
   }
   if (operation.kind === "model-setup") {
     return [
       "Nova rescue cannot host model-provider credential setup from a message channel.",
-      "Run `openclaw onboard` locally; it live-tests the candidate route before saving it.",
+      "Run `nova onboard` locally; it live-tests the candidate route before saving it.",
     ].join(" ");
   }
   if (operation.kind === "doctor-fix") {
     return [
       "Nova rescue cannot run doctor repairs from a message channel because they can change the inference route powering this session.",
-      "Exit Nova and run `openclaw doctor --fix` in a terminal.",
+      "Exit Nova and run `nova doctor --fix` in a terminal.",
     ].join(" ");
   }
   if (operation.kind === "plugin-install") {
     return [
       "Nova rescue cannot install plugins from a message channel by default because plugin install downloads executable code.",
-      "Use local `openclaw setup` or `openclaw plugins install` instead.",
+      "Use local `nova setup` or `nova plugins install` instead.",
     ].join(" ");
   }
   return null;

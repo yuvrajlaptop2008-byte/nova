@@ -2,13 +2,13 @@
  * Gateway tool-resolution tests.
  */
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveGatewayScopedTools } from "./tool-resolution.js";
 
 describe("resolveGatewayScopedTools", () => {
   beforeAll(() => {
     resolveGatewayScopedTools({
-      cfg: { tools: { profile: "minimal" } } as OpenClawConfig,
+      cfg: { tools: { profile: "minimal" } } as NovaConfig,
       sessionKey: "agent:main:telegram:group:-100123",
       messageProvider: "telegram",
       inboundEventKind: "room_event",
@@ -18,7 +18,7 @@ describe("resolveGatewayScopedTools", () => {
 
   it("force-allows the message tool for room-event loopback turns", () => {
     const result = resolveGatewayScopedTools({
-      cfg: { tools: { profile: "minimal" } } as OpenClawConfig,
+      cfg: { tools: { profile: "minimal" } } as NovaConfig,
       sessionKey: "agent:main:telegram:group:-100123",
       messageProvider: "telegram",
       inboundEventKind: "room_event",
@@ -31,7 +31,7 @@ describe("resolveGatewayScopedTools", () => {
 
   it("keeps webchat room-event turns on automatic source delivery", () => {
     const result = resolveGatewayScopedTools({
-      cfg: { tools: { profile: "minimal" } } as OpenClawConfig,
+      cfg: { tools: { profile: "minimal" } } as NovaConfig,
       sessionKey: "agent:main:webchat:forge-main",
       messageProvider: "webchat",
       inboundEventKind: "room_event",
@@ -43,7 +43,7 @@ describe("resolveGatewayScopedTools", () => {
 
   it("force-allows the message tool for routed webchat room-event turns", () => {
     const result = resolveGatewayScopedTools({
-      cfg: { tools: { profile: "minimal" } } as OpenClawConfig,
+      cfg: { tools: { profile: "minimal" } } as NovaConfig,
       sessionKey: "agent:main:telegram:group:-100123",
       messageProvider: "webchat",
       inboundEventKind: "room_event",
@@ -57,7 +57,7 @@ describe("resolveGatewayScopedTools", () => {
 
   it("keeps ordinary loopback turns under the configured profile", () => {
     const result = resolveGatewayScopedTools({
-      cfg: { tools: { profile: "minimal" } } as OpenClawConfig,
+      cfg: { tools: { profile: "minimal" } } as NovaConfig,
       sessionKey: "agent:main:telegram:group:-100123",
       messageProvider: "telegram",
       inboundEventKind: "user_request",
@@ -72,7 +72,7 @@ describe("resolveGatewayScopedTools", () => {
       cfg: {
         agents: { defaults: { sandbox: { mode: "all" } } },
         tools: { sandbox: { tools: { deny: ["sessions_list"] } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionKey: "agent:main:main",
       surface: "loopback",
     });
@@ -87,7 +87,7 @@ describe("resolveGatewayScopedTools", () => {
       cfg: {
         agents: { defaults: { sandbox: { mode: "non-main" } } },
         tools: { sandbox: { tools: { deny: ["sessions_list"] } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionKey: "agent:main:main",
       surface: "loopback",
     });
@@ -97,12 +97,12 @@ describe("resolveGatewayScopedTools", () => {
 
   it("exposes task suggestion tools only for actionable loopback turns", () => {
     const withoutActions = resolveGatewayScopedTools({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionKey: "agent:main:main",
       surface: "loopback",
     });
     const withActions = resolveGatewayScopedTools({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionKey: "agent:main:main",
       taskSuggestionDeliveryMode: "gateway",
       surface: "loopback",
@@ -117,7 +117,7 @@ describe("resolveGatewayScopedTools", () => {
   it("passes loopback yield context into sessions_yield", async () => {
     const onYield = vi.fn();
     const result = resolveGatewayScopedTools({
-      cfg: { tools: { profile: "minimal", alsoAllow: ["sessions_yield"] } } as OpenClawConfig,
+      cfg: { tools: { profile: "minimal", alsoAllow: ["sessions_yield"] } } as NovaConfig,
       sessionKey: "agent:main:telegram:group:-100123",
       sessionId: "session-123",
       onYield,

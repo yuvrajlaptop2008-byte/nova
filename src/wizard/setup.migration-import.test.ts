@@ -13,7 +13,7 @@ import {
 const tempRoots = new Set<string>();
 
 async function makeTempRoot() {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-setup-migration-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-setup-migration-"));
   tempRoots.add(root);
   return root;
 }

@@ -11,7 +11,7 @@ import { waitForFast } from "../wait-for.ts";
 import "../../components/app-sidebar.ts";
 
 describe("AppSidebar group mutation collapsed state", () => {
-  const COLLAPSED_STORAGE_KEY = "openclaw:sidebar:sessions:collapsed-sections";
+  const COLLAPSED_STORAGE_KEY = "nova:sidebar:sessions:collapsed-sections";
 
   async function mountCollapsedGroup(options: {
     groupsRename?: () => Promise<SessionGroupMutationResult>;

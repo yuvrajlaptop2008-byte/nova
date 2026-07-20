@@ -1,5 +1,5 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
-import type { ExtensionContext } from "openclaw/plugin-sdk/agent-sessions";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
+import type { ExtensionContext } from "nova/plugin-sdk/agent-sessions";
 import type { CompactionSummarizationInstructions } from "./compaction.js";
 import "./compaction.js";
 
@@ -26,9 +26,7 @@ type CompactionTestApi = {
 };
 
 function getTestApi(): CompactionTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.compactionTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.compactionTestApi")];
   if (!api) {
     throw new Error("compaction test API is unavailable");
   }

@@ -5,14 +5,14 @@ import path from "node:path";
 import { resetDiagnosticEventsForTest } from "../infra/diagnostic-events.js";
 import { withEnv } from "../test-utils/env.js";
 import { pluginLoaderCacheInstances } from "./loader-cache-instances.js";
-import { clearActivatedPluginRuntimeState, loadOpenClawPlugins } from "./loader.js";
+import { clearActivatedPluginRuntimeState, loadNovaPlugins } from "./loader.js";
 import { resetPluginRuntimeStateForTest } from "./runtime.js";
 
-export { loadOpenClawPlugins };
+export { loadNovaPlugins };
 
 export type TempPlugin = { dir: string; file: string; id: string };
-export type PluginLoadConfig = NonNullable<Parameters<typeof loadOpenClawPlugins>[0]>["config"];
-export type PluginRegistry = ReturnType<typeof loadOpenClawPlugins>;
+export type PluginLoadConfig = NonNullable<Parameters<typeof loadNovaPlugins>[0]>["config"];
+export type PluginRegistry = ReturnType<typeof loadNovaPlugins>;
 
 function chmodSafeDir(dir: string) {
   if (process.platform === "win32") {
@@ -32,7 +32,7 @@ export function mkdirSafe(dir: string) {
   chmodSafeDir(dir);
 }
 
-const fixtureRoot = mkdtempSafe(path.join(os.tmpdir(), "openclaw-plugin-"));
+const fixtureRoot = mkdtempSafe(path.join(os.tmpdir(), "nova-plugin-"));
 let tempDirIndex = 0;
 const prevBundledDir = process.env.NOVA_BUNDLED_PLUGINS_DIR;
 const prevDisableBundledPlugins = process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
@@ -93,7 +93,7 @@ export function writePlugin(params: {
   const file = path.join(dir, filename);
   fs.writeFileSync(file, params.body, "utf-8");
   fs.writeFileSync(
-    path.join(dir, "openclaw.plugin.json"),
+    path.join(dir, "nova.plugin.json"),
     JSON.stringify(
       {
         id: params.id,
@@ -121,10 +121,10 @@ export function loadBundleFixture(params: {
   useNoBundledPlugins();
   const workspaceDir = makeTempDir();
   const stateDir = makeTempDir();
-  const bundleRoot = path.join(workspaceDir, ".openclaw", "extensions", params.pluginId);
+  const bundleRoot = path.join(workspaceDir, ".nova", "extensions", params.pluginId);
   params.build(bundleRoot);
   return withEnv({ NOVA_STATE_DIR: stateDir, ...params.env }, () =>
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       workspaceDir,
       onlyPluginIds: params.onlyPluginIds ?? [params.pluginId],
       config: {

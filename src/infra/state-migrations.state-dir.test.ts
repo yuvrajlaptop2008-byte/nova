@@ -15,7 +15,7 @@ import {
 
 async function withStateDirFixture(run: (root: string) => Promise<void>): Promise<void> {
   try {
-    await withTempDir({ prefix: "openclaw-state-dir-" }, async (root) => {
+    await withTempDir({ prefix: "nova-state-dir-" }, async (root) => {
       await run(root);
     });
   } finally {
@@ -132,7 +132,7 @@ describe("legacy state dir auto-migration", () => {
                 spec: "demo@latest",
                 version: "1.0.0",
               }),
-              manifestPath: "/plugins/demo/openclaw.plugin.json",
+              manifestPath: "/plugins/demo/nova.plugin.json",
               manifestHash: "test",
               rootDir: "/plugins/demo",
               origin: "global",
@@ -289,7 +289,7 @@ describe("legacy state dir auto-migration", () => {
 
   it("migrates the legacy plugin install index before config reads", async () => {
     await withStateDirFixture(async (root) => {
-      const stateDir = path.join(root, ".openclaw");
+      const stateDir = path.join(root, ".nova");
       const sourcePath = path.join(stateDir, "plugins", "installs.json");
       fs.mkdirSync(path.dirname(sourcePath), { recursive: true });
       fs.writeFileSync(

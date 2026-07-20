@@ -1,6 +1,6 @@
 // Codex tests cover run attempt.usage limits plugin behavior.
 import path from "node:path";
-import { saveAuthProfileStore } from "openclaw/plugin-sdk/agent-runtime";
+import { saveAuthProfileStore } from "nova/plugin-sdk/agent-runtime";
 import { describe, expect, it } from "vitest";
 import { readCodexRateLimitsRevision, rememberCodexRateLimitsRead } from "./rate-limit-cache.js";
 import {

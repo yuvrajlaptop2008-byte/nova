@@ -15,7 +15,7 @@ const DEFAULT_USER_DRIVER_DIR = "~/.codex/skills/custom/telegram-e2e-bot-to-bot/
 const DEFAULT_BOT_CREDENTIALS_FILE =
   "~/.codex/skills/custom/telegram-e2e-bot-to-bot/credentials.local.json";
 const DEFAULT_CONVEX_ENV_FILE = "~/.codex/skills/custom/telegram-e2e-bot-to-bot/convex.local.env";
-const CHUNKED_PAYLOAD_MARKER = "__openclawQaCredentialPayloadChunksV1";
+const CHUNKED_PAYLOAD_MARKER = "__novaQaCredentialPayloadChunksV1";
 const TELEGRAM_USER_QA_CREDENTIAL_KIND = "telegram-user";
 const SHA256_HEX_RE = /^[a-f0-9]{64}$/u;
 const TELEGRAM_CHAT_ID_RE = /^-?\d+$/u;
@@ -467,7 +467,7 @@ async function createTelegramUserPayload(opts: Map<string, string>) {
     throw new Error("Missing group id in env, user-driver config, or bot credentials file.");
   }
 
-  const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-telegram-user-credential-"));
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-telegram-user-credential-"));
   const tdlibArchive = path.join(tempRoot, "tdlib.tgz");
   const desktopArchive = path.join(tempRoot, "desktop-tdata.tgz");
   try {
@@ -545,7 +545,7 @@ async function restoreTelegramUserPayload(params: {
     usage();
   }
   const payload = parseTelegramUserQaCredentialPayload(params.payload);
-  const tempRoot = await mkdtemp(path.join(tmpdir(), "openclaw-telegram-user-restore-"));
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "nova-telegram-user-restore-"));
   const tdlibArchive = path.join(tempRoot, "tdlib.tgz");
   const desktopArchive = path.join(tempRoot, "desktop-tdata.tgz");
   await mkdir(expandHome(userDriverDir), { recursive: true });

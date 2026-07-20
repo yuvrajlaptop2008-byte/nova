@@ -3,11 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { isPathInside } from "../../infra/path-guards.js";
 import { resolveUserPath } from "../../utils.js";
 
-export function resolveAllowedSkillSymlinkTargetRealPaths(config?: OpenClawConfig): string[] {
+export function resolveAllowedSkillSymlinkTargetRealPaths(config?: NovaConfig): string[] {
   const rawTargets = config?.skills?.load?.allowSymlinkTargets ?? [];
   const targetPaths = rawTargets
     .map((dir) => normalizeOptionalString(dir) ?? "")

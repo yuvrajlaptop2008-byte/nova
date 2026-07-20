@@ -1,6 +1,6 @@
 // Account helper tests cover channel account normalization and lookup helpers.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { normalizeAccountId } from "../../routing/session-key.js";
 import {
   createAccountListHelpers,
@@ -15,16 +15,16 @@ import {
 const { listConfiguredAccountIds, listAccountIds, resolveDefaultAccountId } =
   createAccountListHelpers("testchannel");
 
-function cfg(accounts?: Record<string, unknown> | null, defaultAccount?: string): OpenClawConfig {
+function cfg(accounts?: Record<string, unknown> | null, defaultAccount?: string): NovaConfig {
   if (accounts === null) {
     return {
       channels: {
         testchannel: defaultAccount ? { defaultAccount } : {},
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
   }
   if (accounts === undefined && !defaultAccount) {
-    return {} as unknown as OpenClawConfig;
+    return {} as unknown as NovaConfig;
   }
   return {
     channels: {
@@ -33,18 +33,18 @@ function cfg(accounts?: Record<string, unknown> | null, defaultAccount?: string)
         ...(defaultAccount ? { defaultAccount } : {}),
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as NovaConfig;
 }
 
 function expectResolvedAccountIdsCase(params: {
-  resolve: (cfg: OpenClawConfig) => string[];
-  input: OpenClawConfig;
+  resolve: (cfg: NovaConfig) => string[];
+  input: NovaConfig;
   expected: string[];
 }) {
   expect(params.resolve(params.input)).toEqual(params.expected);
 }
 
-function expectResolvedDefaultAccountCase(input: OpenClawConfig, expected: string) {
+function expectResolvedDefaultAccountCase(input: NovaConfig, expected: string) {
   expect(resolveDefaultAccountId(input)).toBe(expected);
 }
 
@@ -53,7 +53,7 @@ describe("createAccountListHelpers", () => {
     it.each([
       {
         name: "returns empty for missing config",
-        input: {} as OpenClawConfig,
+        input: {} as NovaConfig,
       },
       {
         name: "returns empty when no accounts key",
@@ -103,7 +103,7 @@ describe("createAccountListHelpers", () => {
     it.each([
       {
         name: 'returns ["default"] for empty config',
-        input: {} as OpenClawConfig,
+        input: {} as NovaConfig,
         expected: ["default"],
       },
       {
@@ -137,7 +137,7 @@ describe("createAccountListHelpers", () => {
               accounts: { work: {} },
             },
           },
-        } as unknown as OpenClawConfig),
+        } as unknown as NovaConfig),
       ).toEqual(["default", "work"]);
     });
 
@@ -189,7 +189,7 @@ describe("createAccountListHelpers", () => {
       },
       {
         name: 'returns "default" for empty config',
-        input: {} as OpenClawConfig,
+        input: {} as NovaConfig,
         expected: "default",
       },
     ])("$name", ({ input, expected }) => {

@@ -75,7 +75,7 @@
   overflow: hidden;
 }
 
-.board-session-surface__board > openclaw-board-view {
+.board-session-surface__board > nova-board-view {
   display: block;
   flex: 1 1 0;
   min-width: 0;

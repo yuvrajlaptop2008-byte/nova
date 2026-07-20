@@ -17,7 +17,7 @@ import {
 } from "../../../config/sessions/transcript-write-context.js";
 import { toErrorObject } from "../../../infra/errors.js";
 import { resolveGlobalSingleton } from "../../../shared/global-singleton.js";
-import { isTranscriptOnlyOpenClawAssistantMessage } from "../../../shared/transcript-only-openclaw-assistant.js";
+import { isTranscriptOnlyNovaAssistantMessage } from "../../../shared/transcript-only-nova-assistant.js";
 import { isSessionWriteLockAcquireError } from "../../session-write-lock-error.js";
 import type { acquireSessionWriteLock } from "../../session-write-lock.js";
 import type {
@@ -113,7 +113,7 @@ type SessionWithAgentPrompt = {
 };
 
 type PromptReleaseStreamFn = ((...args: unknown[]) => unknown) & {
-  __openclawSessionLockPromptReleaseInstalled?: boolean;
+  __novaSessionLockPromptReleaseInstalled?: boolean;
 };
 
 type SessionFileFingerprint =
@@ -226,10 +226,10 @@ function parsePromptReleasedMessageLine(
     if (!isJsonRecord(message)) {
       return undefined;
     }
-    const isOpenClawTranscriptOnlyAssistant = isTranscriptOnlyOpenClawAssistantMessage(message);
+    const isNovaTranscriptOnlyAssistant = isTranscriptOnlyNovaAssistantMessage(message);
     if (
       typeof message.role !== "string" ||
-      (!options?.allowAnyMessage && !isOpenClawTranscriptOnlyAssistant)
+      (!options?.allowAnyMessage && !isNovaTranscriptOnlyAssistant)
     ) {
       return undefined;
     }
@@ -931,7 +931,7 @@ type SessionFileOwnerState = {
 };
 
 const EMBEDDED_ATTEMPT_SESSION_FILE_OWNER_STATE_KEY = Symbol.for(
-  "openclaw.embeddedAttemptSessionFileOwnerState",
+  "nova.embeddedAttemptSessionFileOwnerState",
 );
 
 const sessionFileOwnerState = resolveGlobalSingleton(
@@ -1079,7 +1079,7 @@ function resetEmbeddedAttemptSessionFileOwnersForTest(): void {
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
   (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.embeddedAttemptSessionFileOwnersTestApi")
+    Symbol.for("nova.embeddedAttemptSessionFileOwnersTestApi")
   ] = { resetEmbeddedAttemptSessionFileOwnersForTest };
 }
 
@@ -2184,7 +2184,7 @@ export function installPromptSubmissionLockRelease(params: {
     return;
   }
   const currentStreamFn = agent.streamFn;
-  if (currentStreamFn["__openclawSessionLockPromptReleaseInstalled"] === true) {
+  if (currentStreamFn["__novaSessionLockPromptReleaseInstalled"] === true) {
     return;
   }
   const originalStreamFn = currentStreamFn.bind(agent);
@@ -2210,7 +2210,7 @@ export function installPromptSubmissionLockRelease(params: {
       await params.reacquireAfterPrompt();
     }
   };
-  wrappedStreamFn["__openclawSessionLockPromptReleaseInstalled"] = true;
+  wrappedStreamFn["__novaSessionLockPromptReleaseInstalled"] = true;
   agent.streamFn = wrappedStreamFn;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

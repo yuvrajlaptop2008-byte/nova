@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-update-channel-switch-e2e" NOVA_UPDATE_CHANNEL_SWITCH_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-update-channel-switch-e2e" NOVA_UPDATE_CHANNEL_SWITCH_E2E_IMAGE)"
 SKIP_BUILD="${NOVA_UPDATE_CHANNEL_SWITCH_E2E_SKIP_BUILD:-0}"
 cleanup() {
   docker_e2e_cleanup_package_tgz "${PACKAGE_TGZ:-}"
@@ -18,7 +18,7 @@ PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz update-channel-switch "${NOVA_CURR
 # Bare lanes mount the package artifact instead of baking app sources into the image.
 docker_e2e_package_mount_args "$PACKAGE_TGZ"
 NOVA_TEST_STATE_SCRIPT_B64="$(
-  node "$ROOT_DIR/scripts/lib/openclaw-test-state.mjs" shell \
+  node "$ROOT_DIR/scripts/lib/nova-test-state.mjs" shell \
     --label update-channel-switch \
     --scenario update-stable |
     base64 |
@@ -36,7 +36,7 @@ docker_e2e_run_with_harness \
   "${DOCKER_E2E_PACKAGE_ARGS[@]}" \
   "$IMAGE_NAME" \
   bash -lc 'set -euo pipefail
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/nova-e2e-instance.sh
 
 export npm_config_loglevel=error
 export npm_config_fund=false
@@ -51,7 +51,7 @@ export NOVA_NO_ONBOARD=1
 export NOVA_NO_PROMPT=1
 
 package_tgz="${NOVA_CURRENT_PACKAGE_TGZ:?missing NOVA_CURRENT_PACKAGE_TGZ}"
-git_root="/tmp/openclaw-git"
+git_root="/tmp/nova-git"
 mkdir -p "$git_root"
 # Build the fake git install from the packed package contents, not the checkout.
 tar -xzf "$package_tgz" -C "$git_root" --strip-components=1
@@ -61,15 +61,15 @@ node scripts/e2e/lib/package-git-fixture.mjs prepare "$git_root"
 node scripts/e2e/lib/update-channel-switch/assertions.mjs prepare-git-fixture "$git_root"
 (
   cd "$git_root"
-  if ! openclaw_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit >/tmp/openclaw-git-install.log 2>&1; then
-    openclaw_e2e_print_log /tmp/openclaw-git-install.log >&2
+  if ! nova_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit >/tmp/nova-git-install.log 2>&1; then
+    nova_e2e_print_log /tmp/nova-git-install.log >&2
     exit 1
   fi
 )
 node scripts/e2e/lib/update-channel-switch/assertions.mjs write-control-ui "$git_root"
 
-git config --global user.email "docker-e2e@openclaw.local"
-git config --global user.name "OpenClaw Docker E2E"
+git config --global user.email "docker-e2e@nova.local"
+git config --global user.name "Nova Docker E2E"
 git config --global gc.auto 0
 git -C "$git_root" init -q
 git -C "$git_root" config gc.auto 0
@@ -80,27 +80,27 @@ fixture_sha="$(git -C "$git_root" rev-parse HEAD)"
 
 pkg_tgz_path="$package_tgz"
 
-package_install_log="/tmp/openclaw-update-channel-switch-package-install.log"
-if ! openclaw_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$pkg_tgz_path" >"$package_install_log" 2>&1; then
-  openclaw_e2e_print_log "$package_install_log" >&2
+package_install_log="/tmp/nova-update-channel-switch-package-install.log"
+if ! nova_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$pkg_tgz_path" >"$package_install_log" 2>&1; then
+  nova_e2e_print_log "$package_install_log" >&2
   exit 1
 fi
-package_version="$(node -p "JSON.parse(require(\"node:fs\").readFileSync(\"/tmp/npm-prefix/lib/node_modules/openclaw/package.json\", \"utf8\")).version")"
+package_version="$(node -p "JSON.parse(require(\"node:fs\").readFileSync(\"/tmp/npm-prefix/lib/node_modules/nova/package.json\", \"utf8\")).version")"
 NOVA_PACKAGE_ACCEPTANCE_LEGACY_COMPAT="$(
   node scripts/e2e/lib/package-compat.mjs "$package_version"
 )"
 export NOVA_PACKAGE_ACCEPTANCE_LEGACY_COMPAT
-command -v openclaw >/dev/null
-openclaw_e2e_enable_openclaw_cli_timeout
+command -v nova >/dev/null
+nova_e2e_enable_nova_cli_timeout
 
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 
 export NOVA_GIT_DIR="$git_root"
 export NOVA_UPDATE_DEV_TARGET_REF="$fixture_sha"
 
 echo "==> package -> git dev channel"
 set +e
-dev_json="$(openclaw update --channel dev --yes --json --no-restart)"
+dev_json="$(nova update --channel dev --yes --json --no-restart)"
 dev_status=$?
 set -e
 printf "%s\n" "$dev_json"
@@ -110,13 +110,13 @@ fi
 UPDATE_JSON="$dev_json" node scripts/e2e/lib/update-channel-switch/assertions.mjs assert-update dev
 node scripts/e2e/lib/update-channel-switch/assertions.mjs assert-config-channel dev
 
-status_json="$(openclaw update status --json)"
+status_json="$(nova update status --json)"
 printf "%s\n" "$status_json"
 STATUS_JSON="$status_json" node scripts/e2e/lib/update-channel-switch/assertions.mjs assert-status-kind git
 
 echo "==> git -> package stable channel"
 set +e
-stable_json="$(openclaw update --channel stable --tag "$pkg_tgz_path" --yes --json --no-restart)"
+stable_json="$(nova update --channel stable --tag "$pkg_tgz_path" --yes --json --no-restart)"
 stable_status=$?
 set -e
 printf "%s\n" "$stable_json"
@@ -126,7 +126,7 @@ fi
 UPDATE_JSON="$stable_json" node scripts/e2e/lib/update-channel-switch/assertions.mjs assert-update stable
 node scripts/e2e/lib/update-channel-switch/assertions.mjs assert-config-channel stable
 
-status_json="$(openclaw update status --json)"
+status_json="$(nova update status --json)"
 printf "%s\n" "$status_json"
 STATUS_JSON="$status_json" node scripts/e2e/lib/update-channel-switch/assertions.mjs assert-status-kind package
 

@@ -140,7 +140,7 @@ describe("AgentsPage gateway lifecycle", () => {
       scope: "per-sender",
       agents: [{ id: "main", name: "Main" }],
     };
-    const page = document.createElement("openclaw-agents-page") as TestAgentsPage;
+    const page = document.createElement("nova-agents-page") as TestAgentsPage;
     page.routeData = {
       gateway: currentGateway,
       gatewaySnapshot: currentGateway.snapshot,
@@ -173,7 +173,7 @@ describe("AgentsPage gateway lifecycle", () => {
     const preloadedGateway = gateway(preloadedSnapshot);
     const currentGateway = gateway(preloadedSnapshot);
     const ensureList = vi.fn(async () => null);
-    const page = document.createElement("openclaw-agents-page") as TestAgentsPage;
+    const page = document.createElement("nova-agents-page") as TestAgentsPage;
     page.client = client;
     page.connected = true;
     page.routeData = {
@@ -211,7 +211,7 @@ describe("AgentsPage gateway lifecycle", () => {
       resolveSecond = resolve;
     });
     const ensureFiles = vi.fn().mockReturnValueOnce(first).mockReturnValueOnce(second);
-    const page = document.createElement("openclaw-agents-page") as TestAgentsPage;
+    const page = document.createElement("nova-agents-page") as TestAgentsPage;
     const oldClient = {} as GatewayBrowserClient;
     const nextClient = {} as GatewayBrowserClient;
     page.client = oldClient;
@@ -255,7 +255,7 @@ describe("AgentsPage gateway lifecycle", () => {
     });
     const ensureFiles = vi.fn().mockReturnValueOnce(first).mockReturnValueOnce(second);
     const client = {} as GatewayBrowserClient;
-    const page = document.createElement("openclaw-agents-page") as TestAgentsPage;
+    const page = document.createElement("nova-agents-page") as TestAgentsPage;
     page.client = client;
     page.connected = true;
     page.agentsList = {
@@ -305,7 +305,7 @@ describe("AgentsPage gateway lifecycle", () => {
     const currentGateway = gateway(snapshot(client));
     const oldAgents = agentsCapability(() => oldFiles.promise);
     const nextAgents = agentsCapability(() => nextFiles.promise);
-    const page = document.createElement("openclaw-agents-page") as TestAgentsPage;
+    const page = document.createElement("nova-agents-page") as TestAgentsPage;
     const context = pageContext(currentGateway, oldAgents);
     page.context = context;
     page.subscriptions.hostConnected();
@@ -343,7 +343,7 @@ describe("AgentsPage gateway lifecycle", () => {
         ensure: vi.fn(ensure),
         subscribe: vi.fn(() => () => undefined),
       }) as unknown as ApplicationContext["agentIdentity"];
-    const page = document.createElement("openclaw-agents-page") as TestAgentsPage;
+    const page = document.createElement("nova-agents-page") as TestAgentsPage;
     const context = pageContext(currentGateway, agents, {
       agentIdentity: identity(() => oldEnsure.promise),
     });
@@ -388,7 +388,7 @@ describe("AgentsPage gateway lifecycle", () => {
       state: { result: null, modelOverrides: {} },
       subscribe: vi.fn(() => () => undefined),
     } as unknown as ApplicationContext["sessions"];
-    const page = document.createElement("openclaw-agents-page") as TestAgentsPage;
+    const page = document.createElement("nova-agents-page") as TestAgentsPage;
     const context = pageContext(currentGateway, agents, { sessions: oldSessions });
     page.context = context;
     page.subscriptions.hostConnected();

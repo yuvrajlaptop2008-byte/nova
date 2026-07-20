@@ -30,8 +30,8 @@ export async function runDebugProxyStartCommand(opts: { host?: string; port?: nu
     id: settings.sessionId,
     startedAt: Date.now(),
     mode: "proxy-start",
-    sourceScope: "openclaw",
-    sourceProcess: "openclaw",
+    sourceScope: "nova",
+    sourceProcess: "nova",
     proxyUrl: settings.proxyUrl,
   });
   initializeDebugProxyCapture("proxy-start", settings);
@@ -84,8 +84,8 @@ export async function runDebugProxyRunCommand(opts: {
     id: sessionId,
     startedAt: Date.now(),
     mode: "proxy-run",
-    sourceScope: "openclaw",
-    sourceProcess: "openclaw",
+    sourceScope: "nova",
+    sourceProcess: "nova",
     proxyUrl: undefined,
   });
   const server = await startDebugProxyServer({

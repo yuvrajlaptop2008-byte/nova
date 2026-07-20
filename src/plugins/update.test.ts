@@ -3,9 +3,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import { bundledPluginRootAt } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledPluginRootAt } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { withEnvAsync } from "../test-utils/env.js";
 
 const APP_ROOT = "/app";
@@ -123,8 +123,8 @@ function createSuccessfulNpmUpdateResult(params?: {
 }) {
   return {
     ok: true,
-    pluginId: params?.pluginId ?? "opik-openclaw",
-    targetDir: params?.targetDir ?? "/tmp/opik-openclaw",
+    pluginId: params?.pluginId ?? "opik-nova",
+    targetDir: params?.targetDir ?? "/tmp/opik-nova",
     version: params?.version ?? "0.2.6",
     extensions: ["index.ts"],
     ...(params?.npmResolution ? { npmResolution: params.npmResolution } : {}),
@@ -140,7 +140,7 @@ function createSuccessfulClawHubUpdateResult(params?: {
   return {
     ok: true,
     pluginId: params?.pluginId ?? "legacy-chat",
-    targetDir: params?.targetDir ?? "/tmp/openclaw-plugins/legacy-chat",
+    targetDir: params?.targetDir ?? "/tmp/nova-plugins/legacy-chat",
     version: params?.version ?? "2026.5.1-beta.2",
     extensions: ["index.ts"],
     packageName: params?.clawhubPackage ?? "legacy-chat",
@@ -204,7 +204,7 @@ function createMarketplaceInstallConfig(params: {
   marketplaceSource: string;
   marketplacePlugin: string;
   marketplaceName?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     plugins: {
       installs: {
@@ -228,7 +228,7 @@ function createClawHubInstallConfig(params: {
   clawhubFamily: "bundle-plugin" | "code-plugin";
   clawhubChannel: "community" | "official" | "private";
   spec?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     plugins: {
       installs: {
@@ -246,7 +246,7 @@ function createClawHubInstallConfig(params: {
   };
 }
 
-function createEnabledDemoClawHubInstallConfig(): OpenClawConfig {
+function createEnabledDemoClawHubInstallConfig(): NovaConfig {
   const installPath = createInstalledPackageDir({
     name: "demo",
     version: "1.2.3",
@@ -280,7 +280,7 @@ function createGitInstallConfig(params: {
   spec: string;
   installPath: string;
   commit?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     plugins: {
       installs: {
@@ -300,7 +300,7 @@ function createBundledPathInstallConfig(params: {
   installPath: string;
   sourcePath?: string;
   spec?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     plugins: {
       load: { paths: params.loadPaths },
@@ -324,10 +324,10 @@ function createCodexAppServerInstallConfig(params: {
   return {
     plugins: {
       installs: {
-        "openclaw-codex-app-server": {
+        "nova-codex-app-server": {
           source: "npm" as const,
           spec: params.spec,
-          installPath: "/tmp/openclaw-codex-app-server",
+          installPath: "/tmp/nova-codex-app-server",
           ...(params.resolvedName ? { resolvedName: params.resolvedName } : {}),
           ...(params.resolvedSpec ? { resolvedSpec: params.resolvedSpec } : {}),
         },
@@ -342,7 +342,7 @@ function createInstalledPackageDir(params: {
   peerDependencies?: Record<string, string>;
   runnable?: boolean;
 }): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-update-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-update-test-"));
   tempDirs.push(dir);
   fs.writeFileSync(
     path.join(dir, "package.json"),
@@ -351,7 +351,7 @@ function createInstalledPackageDir(params: {
         name: params.name ?? "test-plugin",
         version: params.version,
         ...(params.peerDependencies ? { peerDependencies: params.peerDependencies } : {}),
-        ...(params.runnable ? { openclaw: { extensions: ["./index.js"] } } : {}),
+        ...(params.runnable ? { nova: { extensions: ["./index.js"] } } : {}),
       },
       null,
       2,
@@ -363,8 +363,8 @@ function createInstalledPackageDir(params: {
   return dir;
 }
 
-function createOpenClawPeerLinkFixtures(plugins: Array<{ pluginId: string; packageName: string }>) {
-  const peerTarget = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-peer-target-"));
+function createNovaPeerLinkFixtures(plugins: Array<{ pluginId: string; packageName: string }>) {
+  const peerTarget = fs.mkdtempSync(path.join(os.tmpdir(), "nova-peer-target-"));
   tempDirs.push(peerTarget);
   const installPaths = Object.fromEntries(
     plugins.map(({ pluginId, packageName }) => [
@@ -372,7 +372,7 @@ function createOpenClawPeerLinkFixtures(plugins: Array<{ pluginId: string; packa
       createInstalledPackageDir({
         name: packageName,
         version: "2026.5.4",
-        peerDependencies: { openclaw: ">=2026.5.4" },
+        peerDependencies: { nova: ">=2026.5.4" },
       }),
     ]),
   );
@@ -380,7 +380,7 @@ function createOpenClawPeerLinkFixtures(plugins: Array<{ pluginId: string; packa
     path.join(
       expectDefined(installPaths[pluginId], "installPaths[pluginId] test invariant"),
       "node_modules",
-      "openclaw",
+      "nova",
     );
   const linkPeer = (pluginId: string) => {
     fs.mkdirSync(path.dirname(peerLinkPath(pluginId)), { recursive: true });
@@ -394,7 +394,7 @@ function mockNpmViewMetadata(params: {
   version: string;
   integrity?: string;
   shasum?: string;
-  openclaw?: Record<string, unknown>;
+  nova?: Record<string, unknown>;
 }) {
   runCommandWithTimeoutMock.mockResolvedValueOnce({
     code: 0,
@@ -403,7 +403,7 @@ function mockNpmViewMetadata(params: {
       version: params.version,
       ...(params.integrity ? { "dist.integrity": params.integrity } : {}),
       ...(params.shasum ? { "dist.shasum": params.shasum } : {}),
-      ...(params.openclaw ? { openclaw: params.openclaw } : {}),
+      ...(params.nova ? { nova: params.nova } : {}),
     }),
     stderr: "",
   });
@@ -513,10 +513,10 @@ function expectCodexAppServerInstallState(params: {
   version: string;
   resolvedSpec?: string;
 }) {
-  const install = params.result.config.plugins?.installs?.["openclaw-codex-app-server"];
+  const install = params.result.config.plugins?.installs?.["nova-codex-app-server"];
   expect(install?.source).toBe("npm");
   expect(install?.spec).toBe(params.spec);
-  expect(install?.installPath).toBe("/tmp/openclaw-codex-app-server");
+  expect(install?.installPath).toBe("/tmp/nova-codex-app-server");
   expect(install?.version).toBe(params.version);
   if (params.resolvedSpec) {
     expect(install?.resolvedSpec).toBe(params.resolvedSpec);
@@ -593,7 +593,7 @@ describe("updateNpmInstalledPlugins", () => {
   });
 
   it("does not treat inherited prototype names as install records", async () => {
-    const config: OpenClawConfig = { plugins: { installs: {} } };
+    const config: NovaConfig = { plugins: { installs: {} } };
 
     const result = await updateNpmInstalledPlugins({
       config,
@@ -616,52 +616,52 @@ describe("updateNpmInstalledPlugins", () => {
     {
       name: "skips integrity drift checks for unpinned npm specs during dry-run updates",
       config: createNpmInstallConfig({
-        pluginId: "opik-openclaw",
-        spec: "@opik/opik-openclaw",
+        pluginId: "opik-nova",
+        spec: "@opik/opik-nova",
         integrity: "sha512-old",
-        installPath: "/tmp/opik-openclaw",
+        installPath: "/tmp/opik-nova",
       }),
-      pluginIds: ["opik-openclaw"],
+      pluginIds: ["opik-nova"],
       dryRun: true,
       expectedCall: {
-        spec: "@opik/opik-openclaw",
+        spec: "@opik/opik-nova",
         expectedIntegrity: undefined,
       },
     },
     {
       name: "keeps integrity drift checks for exact-version npm specs during dry-run updates",
       config: createNpmInstallConfig({
-        pluginId: "opik-openclaw",
-        spec: "@opik/opik-openclaw@0.2.5",
+        pluginId: "opik-nova",
+        spec: "@opik/opik-nova@0.2.5",
         integrity: "sha512-old",
-        installPath: "/tmp/opik-openclaw",
+        installPath: "/tmp/opik-nova",
       }),
-      pluginIds: ["opik-openclaw"],
+      pluginIds: ["opik-nova"],
       dryRun: true,
       expectedCall: {
-        spec: "@opik/opik-openclaw@0.2.5",
+        spec: "@opik/opik-nova@0.2.5",
         expectedIntegrity: "sha512-old",
       },
     },
     {
       name: "skips recorded integrity checks when an explicit npm version override changes the spec",
       config: createNpmInstallConfig({
-        pluginId: "openclaw-codex-app-server",
-        spec: "openclaw-codex-app-server@0.2.0-beta.3",
+        pluginId: "nova-codex-app-server",
+        spec: "nova-codex-app-server@0.2.0-beta.3",
         integrity: "sha512-old",
-        installPath: "/tmp/openclaw-codex-app-server",
+        installPath: "/tmp/nova-codex-app-server",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       specOverrides: {
-        "openclaw-codex-app-server": "openclaw-codex-app-server@0.2.0-beta.4",
+        "nova-codex-app-server": "nova-codex-app-server@0.2.0-beta.4",
       },
       installerResult: createSuccessfulNpmUpdateResult({
-        pluginId: "openclaw-codex-app-server",
-        targetDir: "/tmp/openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
+        targetDir: "/tmp/nova-codex-app-server",
         version: "0.2.0-beta.4",
       }),
       expectedCall: {
-        spec: "openclaw-codex-app-server@0.2.0-beta.4",
+        spec: "nova-codex-app-server@0.2.0-beta.4",
         expectedIntegrity: undefined,
       },
     },
@@ -821,7 +821,7 @@ describe("updateNpmInstalledPlugins", () => {
       name: "@nova/acpx",
       version: "2026.5.2",
       integrity: "sha512-old",
-      openclaw: {
+      nova: {
         compat: { pluginApi: ">=9999.0.0" },
       },
     });
@@ -1084,7 +1084,7 @@ describe("updateNpmInstalledPlugins", () => {
       name: "@nova/acpx",
       version: "2026.5.2",
       integrity: "sha512-old",
-      openclaw: {
+      nova: {
         compat: { pluginApi: ">=9999.0.0" },
       },
     });
@@ -1347,7 +1347,7 @@ describe("updateNpmInstalledPlugins", () => {
       shasum: "same",
     });
     installPluginFromNpmSpecMock.mockRejectedValue(new Error("installer should not run"));
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       plugins: {
         installs: {
           "lossless-claw": {
@@ -1377,7 +1377,7 @@ describe("updateNpmInstalledPlugins", () => {
       "version",
       "dist.integrity",
       "dist.shasum",
-      "openclaw",
+      "nova",
       "--json",
     ]);
     if (npmViewCall()?.[1] === undefined) {
@@ -1459,7 +1459,7 @@ describe("updateNpmInstalledPlugins", () => {
         "version",
         "dist.integrity",
         "dist.shasum",
-        "openclaw",
+        "nova",
         "--json",
       ]);
       expect(result.changed).toBe(false);
@@ -1473,7 +1473,7 @@ describe("updateNpmInstalledPlugins", () => {
           message:
             `demo is pinned to @acme/demo@1.2.3 (installed 1.2.3); ` +
             `registry ${updateChannel === "beta" ? "beta" : "latest"} resolves to ${registryVersion}. ` +
-            `Pass \`openclaw plugins update ${overrideSpec}\` to follow that registry line.`,
+            `Pass \`nova plugins update ${overrideSpec}\` to follow that registry line.`,
         },
       ]);
     },
@@ -1526,7 +1526,7 @@ describe("updateNpmInstalledPlugins", () => {
       "version",
       "dist.integrity",
       "dist.shasum",
-      "openclaw",
+      "nova",
       "--json",
     ]);
     expect(result.outcomes).toEqual([
@@ -1537,7 +1537,7 @@ describe("updateNpmInstalledPlugins", () => {
         nextVersion: "1.2.4",
         message:
           "demo is pinned to @acme/demo@1.2.3 (installed 1.2.3); registry latest resolves to 1.2.4. " +
-          "Pass `openclaw plugins update @acme/demo@latest` to follow that registry line.",
+          "Pass `nova plugins update @acme/demo@latest` to follow that registry line.",
       },
     ]);
   });
@@ -1553,7 +1553,7 @@ describe("updateNpmInstalledPlugins", () => {
       version: "2026.5.28-beta.4",
       integrity: "sha512-newer",
       shasum: "newer",
-      openclaw: {
+      nova: {
         extensions: ["./dist/index.js"],
         compat: { pluginApi: ">=2026.5.28-beta.4" },
       },
@@ -1618,7 +1618,7 @@ describe("updateNpmInstalledPlugins", () => {
       version: "2026.5.28-beta.4",
       integrity: "sha512-newer",
       shasum: "newer",
-      openclaw: {
+      nova: {
         extensions: ["./dist/index.js"],
         install: { minHostVersion: ">=2026.5.28-beta.4" },
       },
@@ -1662,11 +1662,11 @@ describe("updateNpmInstalledPlugins", () => {
     });
   });
 
-  it("repairs missing openclaw peer links before skipping unchanged npm plugins", async () => {
+  it("repairs missing nova peer links before skipping unchanged npm plugins", async () => {
     const installPath = createInstalledPackageDir({
       name: "@nova/codex",
       version: "2026.5.3",
-      peerDependencies: { openclaw: ">=2026.5.3" },
+      peerDependencies: { nova: ">=2026.5.3" },
     });
     mockNpmViewMetadata({
       name: "@nova/codex",
@@ -1686,7 +1686,7 @@ describe("updateNpmInstalledPlugins", () => {
         },
       }),
     );
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       plugins: {
         installs: {
           codex: {
@@ -1723,13 +1723,13 @@ describe("updateNpmInstalledPlugins", () => {
     ]);
   });
 
-  it("skips unchanged npm plugins when the openclaw peer link already resolves", async () => {
+  it("skips unchanged npm plugins when the nova peer link already resolves", async () => {
     const installPath = createInstalledPackageDir({
       name: "@nova/codex",
       version: "2026.5.3",
-      peerDependencies: { openclaw: ">=2026.5.3" },
+      peerDependencies: { nova: ">=2026.5.3" },
     });
-    fs.mkdirSync(path.join(installPath, "node_modules", "openclaw"), { recursive: true });
+    fs.mkdirSync(path.join(installPath, "node_modules", "nova"), { recursive: true });
     mockNpmViewMetadata({
       name: "@nova/codex",
       version: "2026.5.3",
@@ -1771,13 +1771,13 @@ describe("updateNpmInstalledPlugins", () => {
     ]);
   });
 
-  it("repairs openclaw peer links after batch npm updates prune earlier plugin links", async () => {
+  it("repairs nova peer links after batch npm updates prune earlier plugin links", async () => {
     const plugins = [
       { pluginId: "brave", packageName: "@nova/brave-plugin" },
       { pluginId: "codex", packageName: "@nova/codex" },
       { pluginId: "discord", packageName: "@nova/discord" },
     ];
-    const { installPaths, peerLinkPath, linkPeer } = createOpenClawPeerLinkFixtures(plugins);
+    const { installPaths, peerLinkPath, linkPeer } = createNovaPeerLinkFixtures(plugins);
     for (const { packageName } of plugins) {
       mockNpmViewMetadata({
         name: packageName,
@@ -1847,13 +1847,13 @@ describe("updateNpmInstalledPlugins", () => {
     );
   });
 
-  it("repairs sibling openclaw peer links after a targeted npm update prunes the shared install tree", async () => {
+  it("repairs sibling nova peer links after a targeted npm update prunes the shared install tree", async () => {
     const plugins = [
       { pluginId: "brave", packageName: "@nova/brave-plugin" },
       { pluginId: "codex", packageName: "@nova/codex" },
       { pluginId: "discord", packageName: "@nova/discord" },
     ];
-    const { installPaths, peerLinkPath, linkPeer } = createOpenClawPeerLinkFixtures(plugins);
+    const { installPaths, peerLinkPath, linkPeer } = createNovaPeerLinkFixtures(plugins);
     linkPeer("brave");
     linkPeer("discord");
     mockNpmViewMetadata({
@@ -1910,16 +1910,16 @@ describe("updateNpmInstalledPlugins", () => {
     }
   });
 
-  it("continues repairing sibling openclaw peer links after one recorded npm install cannot be relinked", async () => {
+  it("continues repairing sibling nova peer links after one recorded npm install cannot be relinked", async () => {
     const plugins = [
       { pluginId: "brave", packageName: "@nova/brave-plugin" },
       { pluginId: "codex", packageName: "@nova/codex" },
     ];
-    const { installPaths, peerLinkPath, linkPeer } = createOpenClawPeerLinkFixtures(plugins);
+    const { installPaths, peerLinkPath, linkPeer } = createNovaPeerLinkFixtures(plugins);
     const brokenInstallPath = createInstalledPackageDir({
       name: "@nova/broken-plugin",
       version: "2026.5.4",
-      peerDependencies: { openclaw: ">=2026.5.4" },
+      peerDependencies: { nova: ">=2026.5.4" },
     });
     fs.writeFileSync(path.join(brokenInstallPath, "node_modules"), "not a directory");
     linkPeer("brave");
@@ -1987,7 +1987,7 @@ describe("updateNpmInstalledPlugins", () => {
     expect(fs.existsSync(peerLinkPath("brave"))).toBe(true);
     expect(fs.existsSync(peerLinkPath("codex"))).toBe(true);
     expect(warnMessages).toEqual([
-      `Could not repair openclaw peer link for "broken" at ${brokenInstallPath}: Skipping openclaw peerDependency link because ${path.join(brokenInstallPath, "node_modules")} is not a real directory.`,
+      `Could not repair nova peer link for "broken" at ${brokenInstallPath}: Skipping nova peerDependency link because ${path.join(brokenInstallPath, "node_modules")} is not a real directory.`,
     ]);
   });
 
@@ -2042,9 +2042,9 @@ describe("updateNpmInstalledPlugins", () => {
   });
 
   it("expands home-relative install paths before checking installed npm versions", async () => {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-update-home-"));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-update-home-"));
     tempDirs.push(home);
-    const installPath = path.join(home, ".openclaw", "extensions", "lossless-claw");
+    const installPath = path.join(home, ".nova", "extensions", "lossless-claw");
     fs.mkdirSync(installPath, { recursive: true });
     fs.writeFileSync(
       path.join(installPath, "package.json"),
@@ -2063,7 +2063,7 @@ describe("updateNpmInstalledPlugins", () => {
         config: createNpmInstallConfig({
           pluginId: "lossless-claw",
           spec: "@martian-engineering/lossless-claw",
-          installPath: "~/.openclaw/extensions/lossless-claw",
+          installPath: "~/.nova/extensions/lossless-claw",
           resolvedName: "@martian-engineering/lossless-claw",
           resolvedVersion: "0.9.0",
           resolvedSpec: "@martian-engineering/lossless-claw@0.9.0",
@@ -2410,7 +2410,7 @@ describe("updateNpmInstalledPlugins", () => {
 
   it("disables a missing plugin payload when metadata probing also fails", async () => {
     const warn = vi.fn();
-    const installPath = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-update-missing-"));
+    const installPath = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-update-missing-"));
     tempDirs.push(installPath);
     installPluginFromNpmSpecMock.mockResolvedValue({
       ok: false,
@@ -2436,7 +2436,7 @@ describe("updateNpmInstalledPlugins", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = await updateNpmInstalledPlugins({
       config,
@@ -2485,7 +2485,7 @@ describe("updateNpmInstalledPlugins", () => {
             },
           },
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
     },
     {
       source: "ClawHub",
@@ -2509,7 +2509,7 @@ describe("updateNpmInstalledPlugins", () => {
             },
           },
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
     },
     {
       source: "marketplace",
@@ -2530,7 +2530,7 @@ describe("updateNpmInstalledPlugins", () => {
             },
           },
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
     },
   ])("skips disabled $source installs before update network calls", async ({ config }) => {
     installPluginFromNpmSpecMock.mockRejectedValue(new Error("npm installer should not run"));
@@ -2678,7 +2678,7 @@ describe("updateNpmInstalledPlugins", () => {
   });
 
   it("reinstalls missing exact official npm pins without official install sync", async () => {
-    const extensionsDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-missing-plugin-"));
+    const extensionsDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-missing-plugin-"));
     tempDirs.push(extensionsDir);
     const installPath = path.join(extensionsDir, "codex");
     installPluginFromNpmSpecMock.mockResolvedValue(
@@ -2726,7 +2726,7 @@ describe("updateNpmInstalledPlugins", () => {
   });
 
   it("keeps integrity checks when official sync repairs missing exact npm pins", async () => {
-    const extensionsDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-missing-plugin-"));
+    const extensionsDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-missing-plugin-"));
     tempDirs.push(extensionsDir);
     const installPath = path.join(extensionsDir, "codex");
     mockNpmViewMetadata({
@@ -2898,7 +2898,7 @@ describe("updateNpmInstalledPlugins", () => {
         "version",
         "dist.integrity",
         "dist.shasum",
-        "openclaw",
+        "nova",
         "--json",
       ]);
       expectRecordFields(result.outcomes[0], {
@@ -2906,7 +2906,7 @@ describe("updateNpmInstalledPlugins", () => {
         status: "unchanged",
         currentVersion: "1.2.3",
         nextVersion: "1.2.4",
-        message: `demo is pinned to ${spec} (installed 1.2.3); registry latest resolves to 1.2.4. Pass \`openclaw plugins update @acme/demo@latest\` to follow that registry line.`,
+        message: `demo is pinned to ${spec} (installed 1.2.3); registry latest resolves to 1.2.4. Pass \`nova plugins update @acme/demo@latest\` to follow that registry line.`,
       });
     },
   );
@@ -3018,7 +3018,7 @@ describe("updateNpmInstalledPlugins", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = await updateNpmInstalledPlugins({
       config,
@@ -3068,7 +3068,7 @@ describe("updateNpmInstalledPlugins", () => {
           contextEngine: "demo",
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = await updateNpmInstalledPlugins({
       config,
@@ -3181,7 +3181,7 @@ describe("updateNpmInstalledPlugins", () => {
       warning:
         "╭─ WARNING - ClawHub found security risks in this release ─╮\n│ • Finding: suspicious payload strings │\n╰───────────────────────────────────────────────────────────────────────╯",
     });
-    const installPath = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-update-missing-"));
+    const installPath = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-update-missing-"));
     tempDirs.push(installPath);
     const config = createClawHubInstallConfig({
       pluginId: "demo",
@@ -3397,14 +3397,14 @@ describe("updateNpmInstalledPlugins", () => {
           actualIntegrity: "sha512-new",
           resolution: {
             integrity: "sha512-new",
-            resolvedSpec: "@opik/opik-openclaw@0.2.5",
+            resolvedSpec: "@opik/opik-nova@0.2.5",
             version: "0.2.5",
           },
         });
         if (proceed === false) {
           return {
             ok: false,
-            error: "aborted: npm package integrity drift detected for @opik/opik-openclaw@0.2.5",
+            error: "aborted: npm package integrity drift detected for @opik/opik-nova@0.2.5",
           };
         }
         return createSuccessfulNpmUpdateResult();
@@ -3412,28 +3412,28 @@ describe("updateNpmInstalledPlugins", () => {
     );
 
     const config = createNpmInstallConfig({
-      pluginId: "opik-openclaw",
-      spec: "@opik/opik-openclaw@0.2.5",
+      pluginId: "opik-nova",
+      spec: "@opik/opik-nova@0.2.5",
       integrity: "sha512-old",
-      installPath: "/tmp/opik-openclaw",
+      installPath: "/tmp/opik-nova",
     });
     const result = await updateNpmInstalledPlugins({
       config,
-      pluginIds: ["opik-openclaw"],
+      pluginIds: ["opik-nova"],
       logger: { warn },
     });
 
     expect(warn).toHaveBeenCalledWith(
-      'Integrity drift for "opik-openclaw" (@opik/opik-openclaw@0.2.5): expected sha512-old, got sha512-new',
+      'Integrity drift for "opik-nova" (@opik/opik-nova@0.2.5): expected sha512-old, got sha512-new',
     );
     expect(result.changed).toBe(false);
     expect(result.config).toBe(config);
     expect(result.outcomes).toEqual([
       {
-        pluginId: "opik-openclaw",
+        pluginId: "opik-nova",
         status: "error",
         message:
-          "Failed to update opik-openclaw: aborted: npm package integrity drift detected for @opik/opik-openclaw@0.2.5",
+          "Failed to update opik-nova: aborted: npm package integrity drift detected for @opik/opik-nova@0.2.5",
       },
     ]);
   });
@@ -3492,43 +3492,43 @@ describe("updateNpmInstalledPlugins", () => {
       name: "reuses a recorded npm dist-tag spec for id-based updates",
       installerResult: {
         ok: true,
-        pluginId: "openclaw-codex-app-server",
-        targetDir: "/tmp/openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
+        targetDir: "/tmp/nova-codex-app-server",
         version: "0.2.0-beta.4",
         extensions: ["index.ts"],
       },
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server@beta",
-        resolvedName: "openclaw-codex-app-server",
-        resolvedSpec: "openclaw-codex-app-server@0.2.0-beta.3",
+        spec: "nova-codex-app-server@beta",
+        resolvedName: "nova-codex-app-server",
+        resolvedSpec: "nova-codex-app-server@0.2.0-beta.3",
       }),
-      expectedSpec: "openclaw-codex-app-server@beta",
+      expectedSpec: "nova-codex-app-server@beta",
       expectedVersion: "0.2.0-beta.4",
     },
     {
       name: "uses and persists an explicit npm spec override during updates",
       installerResult: {
         ok: true,
-        pluginId: "openclaw-codex-app-server",
-        targetDir: "/tmp/openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
+        targetDir: "/tmp/nova-codex-app-server",
         version: "0.2.0-beta.4",
         extensions: ["index.ts"],
         npmResolution: {
-          name: "openclaw-codex-app-server",
+          name: "nova-codex-app-server",
           version: "0.2.0-beta.4",
-          resolvedSpec: "openclaw-codex-app-server@0.2.0-beta.4",
+          resolvedSpec: "nova-codex-app-server@0.2.0-beta.4",
         },
       },
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server",
+        spec: "nova-codex-app-server",
       }),
       specOverrides: {
-        "openclaw-codex-app-server": "openclaw-codex-app-server@beta",
+        "nova-codex-app-server": "nova-codex-app-server@beta",
       },
-      expectedSpec: "openclaw-codex-app-server@beta",
-      expectedRecordSpec: "openclaw-codex-app-server@beta",
+      expectedSpec: "nova-codex-app-server@beta",
+      expectedRecordSpec: "nova-codex-app-server@beta",
       expectedVersion: "0.2.0-beta.4",
-      expectedResolvedSpec: "openclaw-codex-app-server@0.2.0-beta.4",
+      expectedResolvedSpec: "nova-codex-app-server@0.2.0-beta.4",
     },
   ] as const)(
     "$name",
@@ -3545,13 +3545,13 @@ describe("updateNpmInstalledPlugins", () => {
 
       const result = await updateNpmInstalledPlugins({
         config,
-        pluginIds: ["openclaw-codex-app-server"],
+        pluginIds: ["nova-codex-app-server"],
         ...(specOverrides ? { specOverrides } : {}),
       });
 
       expectNpmUpdateCall({
         spec: expectedSpec,
-        expectedPluginId: "openclaw-codex-app-server",
+        expectedPluginId: "nova-codex-app-server",
       });
       expectCodexAppServerInstallState({
         result,
@@ -3613,34 +3613,34 @@ describe("updateNpmInstalledPlugins", () => {
   it("tries npm beta for default npm specs on beta channel and preserves the default selector", async () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
-        pluginId: "openclaw-codex-app-server",
-        targetDir: "/tmp/openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
+        targetDir: "/tmp/nova-codex-app-server",
         version: "0.2.0-beta.4",
         npmResolution: {
-          name: "openclaw-codex-app-server",
+          name: "nova-codex-app-server",
           version: "0.2.0-beta.4",
-          resolvedSpec: "openclaw-codex-app-server@0.2.0-beta.4",
+          resolvedSpec: "nova-codex-app-server@0.2.0-beta.4",
         },
       }),
     );
 
     const result = await updateNpmInstalledPlugins({
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server",
+        spec: "nova-codex-app-server",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       updateChannel: "beta",
     });
 
     expectNpmUpdateCall({
-      spec: "openclaw-codex-app-server@beta",
-      expectedPluginId: "openclaw-codex-app-server",
+      spec: "nova-codex-app-server@beta",
+      expectedPluginId: "nova-codex-app-server",
     });
     expectCodexAppServerInstallState({
       result,
-      spec: "openclaw-codex-app-server",
+      spec: "nova-codex-app-server",
       version: "0.2.0-beta.4",
-      resolvedSpec: "openclaw-codex-app-server@0.2.0-beta.4",
+      resolvedSpec: "nova-codex-app-server@0.2.0-beta.4",
     });
   });
 
@@ -3781,55 +3781,55 @@ describe("updateNpmInstalledPlugins", () => {
       .mockResolvedValueOnce({
         ok: false,
         error:
-          "npm ERR! code ETARGET\nnpm ERR! No matching version found for openclaw-codex-app-server@beta.",
+          "npm ERR! code ETARGET\nnpm ERR! No matching version found for nova-codex-app-server@beta.",
       })
       .mockResolvedValueOnce(
         createSuccessfulNpmUpdateResult({
-          pluginId: "openclaw-codex-app-server",
-          targetDir: "/tmp/openclaw-codex-app-server",
+          pluginId: "nova-codex-app-server",
+          targetDir: "/tmp/nova-codex-app-server",
           version: "0.2.6",
           npmResolution: {
-            name: "openclaw-codex-app-server",
+            name: "nova-codex-app-server",
             version: "0.2.6",
-            resolvedSpec: "openclaw-codex-app-server@0.2.6",
+            resolvedSpec: "nova-codex-app-server@0.2.6",
           },
         }),
       );
 
     const config = createCodexAppServerInstallConfig({
-      spec: "openclaw-codex-app-server",
+      spec: "nova-codex-app-server",
     });
     const warnMessages: string[] = [];
     const result = await updateNpmInstalledPlugins({
       config,
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       updateChannel: "beta",
       logger: { warn: (msg) => warnMessages.push(msg) },
     });
 
-    expect(npmInstallCall(0)?.spec).toBe("openclaw-codex-app-server@beta");
-    expect(npmInstallCall(1)?.spec).toBe("openclaw-codex-app-server");
+    expect(npmInstallCall(0)?.spec).toBe("nova-codex-app-server@beta");
+    expect(npmInstallCall(1)?.spec).toBe("nova-codex-app-server");
     expect(npmInstallCall(1)?.config).toBe(config);
     expect(warnMessages).toEqual([
-      'Plugin "openclaw-codex-app-server" has no beta npm release for openclaw-codex-app-server@beta; using openclaw-codex-app-server instead. Core update can still complete.',
+      'Plugin "nova-codex-app-server" has no beta npm release for nova-codex-app-server@beta; using nova-codex-app-server instead. Core update can still complete.',
     ]);
     expectCodexAppServerInstallState({
       result,
-      spec: "openclaw-codex-app-server",
+      spec: "nova-codex-app-server",
       version: "0.2.6",
-      resolvedSpec: "openclaw-codex-app-server@0.2.6",
+      resolvedSpec: "nova-codex-app-server@0.2.6",
     });
     expect(result.outcomes[0]?.message).toBe(
-      "Updated openclaw-codex-app-server: unknown -> 0.2.6. (warning: beta channel fallback used openclaw-codex-app-server because openclaw-codex-app-server@beta could not be used).",
+      "Updated nova-codex-app-server: unknown -> 0.2.6. (warning: beta channel fallback used nova-codex-app-server because nova-codex-app-server@beta could not be used).",
     );
     expect(result.outcomes[0]?.channelFallback).toEqual({
-      requestedSpec: "openclaw-codex-app-server@beta",
-      usedSpec: "openclaw-codex-app-server",
+      requestedSpec: "nova-codex-app-server@beta",
+      usedSpec: "nova-codex-app-server",
       requestedLabel: "@beta",
       usedLabel: "@latest",
       reason: "unavailable",
       message:
-        "plugin channel fallback: openclaw-codex-app-server used @latest because @beta was unavailable",
+        "plugin channel fallback: nova-codex-app-server used @latest because @beta was unavailable",
     });
   });
 
@@ -3838,35 +3838,35 @@ describe("updateNpmInstalledPlugins", () => {
       .mockResolvedValueOnce({
         ok: false,
         error:
-          "npm ERR! code ETARGET\nnpm ERR! No matching version found for openclaw-codex-app-server@beta.",
+          "npm ERR! code ETARGET\nnpm ERR! No matching version found for nova-codex-app-server@beta.",
       })
       .mockResolvedValueOnce(
         createSuccessfulNpmUpdateResult({
-          pluginId: "openclaw-codex-app-server",
-          targetDir: "/tmp/openclaw-codex-app-server",
+          pluginId: "nova-codex-app-server",
+          targetDir: "/tmp/nova-codex-app-server",
           version: "0.2.6",
           npmResolution: {
-            name: "openclaw-codex-app-server",
+            name: "nova-codex-app-server",
             version: "0.2.6",
-            resolvedSpec: "openclaw-codex-app-server@0.2.6",
+            resolvedSpec: "nova-codex-app-server@0.2.6",
           },
         }),
       );
 
     const result = await updateNpmInstalledPlugins({
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server",
+        spec: "nova-codex-app-server",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       updateChannel: "beta",
       dryRun: true,
     });
 
     expect(result.outcomes[0]?.message).toBe(
-      "Would update openclaw-codex-app-server: unknown -> 0.2.6. (warning: beta channel fallback would use openclaw-codex-app-server because openclaw-codex-app-server@beta could not be used).",
+      "Would update nova-codex-app-server: unknown -> 0.2.6. (warning: beta channel fallback would use nova-codex-app-server because nova-codex-app-server@beta could not be used).",
     );
     expect(result.outcomes[0]?.channelFallback?.message).toBe(
-      "plugin channel fallback: openclaw-codex-app-server would use @latest because @beta was unavailable",
+      "plugin channel fallback: nova-codex-app-server would use @latest because @beta was unavailable",
     );
   });
 
@@ -3878,13 +3878,13 @@ describe("updateNpmInstalledPlugins", () => {
       })
       .mockResolvedValueOnce(
         createSuccessfulNpmUpdateResult({
-          pluginId: "openclaw-codex-app-server",
-          targetDir: "/tmp/openclaw-codex-app-server",
+          pluginId: "nova-codex-app-server",
+          targetDir: "/tmp/nova-codex-app-server",
           version: "0.2.6",
           npmResolution: {
-            name: "openclaw-codex-app-server",
+            name: "nova-codex-app-server",
             version: "0.2.6",
-            resolvedSpec: "openclaw-codex-app-server@0.2.6",
+            resolvedSpec: "nova-codex-app-server@0.2.6",
           },
         }),
       );
@@ -3892,32 +3892,32 @@ describe("updateNpmInstalledPlugins", () => {
     const warnMessages: string[] = [];
     const result = await updateNpmInstalledPlugins({
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server",
+        spec: "nova-codex-app-server",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       updateChannel: "beta",
       logger: { warn: (msg) => warnMessages.push(msg) },
     });
 
-    expect(npmInstallCall(0)?.spec).toBe("openclaw-codex-app-server@beta");
-    expect(npmInstallCall(1)?.spec).toBe("openclaw-codex-app-server");
+    expect(npmInstallCall(0)?.spec).toBe("nova-codex-app-server@beta");
+    expect(npmInstallCall(1)?.spec).toBe("nova-codex-app-server");
     expect(warnMessages).toEqual([
-      'Plugin "openclaw-codex-app-server" failed beta npm update for openclaw-codex-app-server@beta; using openclaw-codex-app-server instead. Core update can still complete.',
+      'Plugin "nova-codex-app-server" failed beta npm update for nova-codex-app-server@beta; using nova-codex-app-server instead. Core update can still complete.',
     ]);
     expectCodexAppServerInstallState({
       result,
-      spec: "openclaw-codex-app-server",
+      spec: "nova-codex-app-server",
       version: "0.2.6",
-      resolvedSpec: "openclaw-codex-app-server@0.2.6",
+      resolvedSpec: "nova-codex-app-server@0.2.6",
     });
     expect(result.outcomes[0]?.message).toBe(
-      "Updated openclaw-codex-app-server: unknown -> 0.2.6. (warning: beta channel fallback used openclaw-codex-app-server because openclaw-codex-app-server@beta could not be used).",
+      "Updated nova-codex-app-server: unknown -> 0.2.6. (warning: beta channel fallback used nova-codex-app-server because nova-codex-app-server@beta could not be used).",
     );
     expect(result.outcomes[0]?.channelFallback).toMatchObject({
       requestedLabel: "@beta",
       usedLabel: "@latest",
       reason: "failed",
-      message: "plugin channel fallback: openclaw-codex-app-server used @latest after @beta failed",
+      message: "plugin channel fallback: nova-codex-app-server used @latest after @beta failed",
     });
   });
 
@@ -3935,27 +3935,26 @@ describe("updateNpmInstalledPlugins", () => {
 
     const result = await updateNpmInstalledPlugins({
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server",
+        spec: "nova-codex-app-server",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       updateChannel: "beta",
     });
 
     expect(installPluginFromNpmSpecMock).toHaveBeenCalledTimes(2);
     expect(result.outcomes).toEqual([
       {
-        pluginId: "openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
         status: "error",
         message:
-          "Failed to update openclaw-codex-app-server: npm package not found for openclaw-codex-app-server.",
+          "Failed to update nova-codex-app-server: npm package not found for nova-codex-app-server.",
         channelFallback: {
-          requestedSpec: "openclaw-codex-app-server@beta",
-          usedSpec: "openclaw-codex-app-server",
+          requestedSpec: "nova-codex-app-server@beta",
+          usedSpec: "nova-codex-app-server",
           requestedLabel: "@beta",
           usedLabel: "@latest",
           reason: "failed",
-          message:
-            "plugin channel fallback: openclaw-codex-app-server used @latest after @beta failed",
+          message: "plugin channel fallback: nova-codex-app-server used @latest after @beta failed",
         },
       },
     ]);
@@ -3975,27 +3974,27 @@ describe("updateNpmInstalledPlugins", () => {
 
     const result = await updateNpmInstalledPlugins({
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server",
+        spec: "nova-codex-app-server",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       updateChannel: "beta",
       dryRun: true,
     });
 
     expect(result.outcomes).toEqual([
       {
-        pluginId: "openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
         status: "error",
         message:
-          "Failed to check openclaw-codex-app-server: npm package not found for openclaw-codex-app-server.",
+          "Failed to check nova-codex-app-server: npm package not found for nova-codex-app-server.",
         channelFallback: {
-          requestedSpec: "openclaw-codex-app-server@beta",
-          usedSpec: "openclaw-codex-app-server",
+          requestedSpec: "nova-codex-app-server@beta",
+          usedSpec: "nova-codex-app-server",
           requestedLabel: "@beta",
           usedLabel: "@latest",
           reason: "failed",
           message:
-            "plugin channel fallback: openclaw-codex-app-server would use @latest after @beta failed",
+            "plugin channel fallback: nova-codex-app-server would use @latest after @beta failed",
         },
       },
     ]);
@@ -4004,24 +4003,24 @@ describe("updateNpmInstalledPlugins", () => {
   it("preserves explicit npm tags when updating on the beta channel", async () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
-        pluginId: "openclaw-codex-app-server",
-        targetDir: "/tmp/openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
+        targetDir: "/tmp/nova-codex-app-server",
         version: "0.2.0-rc.1",
       }),
     );
 
     await updateNpmInstalledPlugins({
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server@rc",
+        spec: "nova-codex-app-server@rc",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       updateChannel: "beta",
       dryRun: true,
     });
 
     expectNpmUpdateCall({
-      spec: "openclaw-codex-app-server@rc",
-      expectedPluginId: "openclaw-codex-app-server",
+      spec: "nova-codex-app-server@rc",
+      expectedPluginId: "nova-codex-app-server",
     });
   });
 
@@ -4183,7 +4182,7 @@ describe("updateNpmInstalledPlugins", () => {
       ok: false,
       code: "clawhub_download_blocked",
       error:
-        'ClawHub blocked artifact download for "@nova/discord@2026.5.16-beta.5"; install was not started. ClawHub /api/v1/packages/%40openclaw%2Fdiscord/versions/2026.5.16-beta.5/artifact/download failed (403): Blocked: this package release has been flagged as malicious and cannot be downloaded.',
+        'ClawHub blocked artifact download for "@nova/discord@2026.5.16-beta.5"; install was not started. ClawHub /api/v1/packages/%40nova%2Fdiscord/versions/2026.5.16-beta.5/artifact/download failed (403): Blocked: this package release has been flagged as malicious and cannot be downloaded.',
       version: "2026.5.16-beta.5",
     });
 
@@ -4219,7 +4218,7 @@ describe("updateNpmInstalledPlugins", () => {
         code: "clawhub_download_blocked",
         currentVersion: "2026.5.12",
         message:
-          'Skipped discord ClawHub update: ClawHub blocked artifact download for "@nova/discord@2026.5.16-beta.5"; install was not started. ClawHub /api/v1/packages/%40openclaw%2Fdiscord/versions/2026.5.16-beta.5/artifact/download failed (403): Blocked: this package release has been flagged as malicious and cannot be downloaded. Existing installed plugin left unchanged.',
+          'Skipped discord ClawHub update: ClawHub blocked artifact download for "@nova/discord@2026.5.16-beta.5"; install was not started. ClawHub /api/v1/packages/%40nova%2Fdiscord/versions/2026.5.16-beta.5/artifact/download failed (403): Blocked: this package release has been flagged as malicious and cannot be downloaded. Existing installed plugin left unchanged.',
       },
     ]);
     expect(warnMessages).toStrictEqual([]);
@@ -4245,7 +4244,7 @@ describe("updateNpmInstalledPlugins", () => {
     installPluginFromNpmSpecMock.mockResolvedValueOnce(
       createSuccessfulNpmUpdateResult({
         pluginId: "discord",
-        targetDir: "/tmp/openclaw-plugins/discord",
+        targetDir: "/tmp/nova-plugins/discord",
         version: "2026.5.16",
         npmResolution: {
           name: "@nova/discord",
@@ -4276,7 +4275,7 @@ describe("updateNpmInstalledPlugins", () => {
     expectRecordFields(result.config.plugins?.installs?.discord, {
       source: "npm",
       spec: "@nova/discord@2026.5.16",
-      installPath: "/tmp/openclaw-plugins/discord",
+      installPath: "/tmp/nova-plugins/discord",
       version: "2026.5.16",
     });
     expect(result.outcomes[0]?.message).toBe(
@@ -4301,7 +4300,7 @@ describe("updateNpmInstalledPlugins", () => {
     installPluginFromNpmSpecMock.mockResolvedValueOnce(
       createSuccessfulNpmUpdateResult({
         pluginId: "discord",
-        targetDir: "/tmp/openclaw-plugins/discord",
+        targetDir: "/tmp/nova-plugins/discord",
         version: "2026.7.33",
         npmResolution: {
           name: "@nova/discord",
@@ -4349,7 +4348,7 @@ describe("updateNpmInstalledPlugins", () => {
     installPluginFromNpmSpecMock.mockResolvedValueOnce({
       ok: true,
       pluginId: "discord",
-      targetDir: "/tmp/openclaw-plugins/discord",
+      targetDir: "/tmp/nova-plugins/discord",
       extensions: [],
       npmResolution: {
         name: "@nova/discord",
@@ -4642,7 +4641,7 @@ describe("updateNpmInstalledPlugins", () => {
     installPluginFromNpmSpecMock.mockResolvedValue({
       ok: true,
       pluginId: "@nova/voice-call",
-      targetDir: "/tmp/openclaw-voice-call",
+      targetDir: "/tmp/nova-voice-call",
       version: "0.0.2",
       extensions: ["index.ts"],
     });
@@ -4684,7 +4683,7 @@ describe("updateNpmInstalledPlugins", () => {
     expectRecordFields(result.config.plugins?.installs?.["@nova/voice-call"], {
       source: "npm",
       spec: "@nova/voice-call",
-      installPath: "/tmp/openclaw-voice-call",
+      installPath: "/tmp/nova-voice-call",
       version: "0.0.2",
     });
     expect(result.config.plugins?.installs?.["voice-call"]).toBeUndefined();
@@ -4694,7 +4693,7 @@ describe("updateNpmInstalledPlugins", () => {
     installPluginFromNpmSpecMock.mockResolvedValue({
       ok: true,
       pluginId: "@nova/voice-call",
-      targetDir: "/tmp/openclaw-voice-call",
+      targetDir: "/tmp/nova-voice-call",
       version: "0.0.2",
       extensions: ["index.ts"],
     });
@@ -4719,7 +4718,7 @@ describe("updateNpmInstalledPlugins", () => {
         "@nova/voice-call": expect.objectContaining({
           source: "npm",
           spec: "@nova/voice-call",
-          installPath: "/tmp/openclaw-voice-call",
+          installPath: "/tmp/nova-voice-call",
         }),
       },
     });
@@ -4729,7 +4728,7 @@ describe("updateNpmInstalledPlugins", () => {
     installPluginFromNpmSpecMock.mockResolvedValue({
       ok: true,
       pluginId: "@nova/context-engine",
-      targetDir: "/tmp/openclaw-context-engine",
+      targetDir: "/tmp/nova-context-engine",
       version: "0.0.2",
       extensions: ["index.ts"],
     });
@@ -4746,7 +4745,7 @@ describe("updateNpmInstalledPlugins", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       pluginIds: ["context-engine"],
     });
 
@@ -4754,7 +4753,7 @@ describe("updateNpmInstalledPlugins", () => {
     expectRecordFields(result.config.plugins?.installs?.["@nova/context-engine"], {
       source: "npm",
       spec: "@nova/context-engine",
-      installPath: "/tmp/openclaw-context-engine",
+      installPath: "/tmp/nova-context-engine",
       version: "0.0.2",
     });
     expect(result.config.plugins?.installs?.["context-engine"]).toBeUndefined();
@@ -4876,28 +4875,28 @@ describe("updateNpmInstalledPlugins", () => {
   it("forwards dangerous force unsafe install to plugin update installers", async () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
-        pluginId: "openclaw-codex-app-server",
-        targetDir: "/tmp/openclaw-codex-app-server",
+        pluginId: "nova-codex-app-server",
+        targetDir: "/tmp/nova-codex-app-server",
         version: "0.2.0-beta.4",
       }),
     );
 
     await updateNpmInstalledPlugins({
       config: createCodexAppServerInstallConfig({
-        spec: "openclaw-codex-app-server@beta",
+        spec: "nova-codex-app-server@beta",
       }),
-      pluginIds: ["openclaw-codex-app-server"],
+      pluginIds: ["nova-codex-app-server"],
       dangerouslyForceUnsafeInstall: true,
     });
 
-    expect(npmInstallCall()?.spec).toBe("openclaw-codex-app-server@beta");
+    expect(npmInstallCall()?.spec).toBe("nova-codex-app-server@beta");
     expect(npmInstallCall()?.dangerouslyForceUnsafeInstall).toBe(true);
-    expect(npmInstallCall()?.expectedPluginId).toBe("openclaw-codex-app-server");
+    expect(npmInstallCall()?.expectedPluginId).toBe("nova-codex-app-server");
   });
 
   it("reuses the recorded managed extensions root when updating external plugins", async () => {
-    const installPath = "/var/openclaw/extensions/demo";
-    const extensionsDir = "/var/openclaw/extensions";
+    const installPath = "/var/nova/extensions/demo";
+    const extensionsDir = "/var/nova/extensions";
     const expectedExtensionsDir = path.resolve(extensionsDir);
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
@@ -5045,7 +5044,7 @@ describe("syncPluginsForUpdateChannel", () => {
 
   it("forwards an explicit env to bundled plugin source resolution", async () => {
     resolveBundledPluginSourcesMock.mockReturnValue(new Map());
-    const env = { NOVA_HOME: "/srv/openclaw-home" } as NodeJS.ProcessEnv;
+    const env = { NOVA_HOME: "/srv/nova-home" } as NodeJS.ProcessEnv;
 
     await syncPluginsForUpdateChannel({
       channel: "beta",
@@ -5061,7 +5060,7 @@ describe("syncPluginsForUpdateChannel", () => {
   });
 
   it("uses the provided env when matching bundled load and install paths", async () => {
-    const bundledHome = "/tmp/openclaw-home";
+    const bundledHome = "/tmp/nova-home";
     mockBundledSources(
       createBundledSource({
         localPath: `${bundledHome}/plugins/feishu`,
@@ -5106,7 +5105,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
         pluginId: "legacy-chat",
-        targetDir: "/tmp/openclaw-plugins/legacy-chat",
+        targetDir: "/tmp/nova-plugins/legacy-chat",
         version: "2.0.0",
         npmResolution: {
           name: "@nova/legacy-chat",
@@ -5155,7 +5154,7 @@ describe("syncPluginsForUpdateChannel", () => {
     expectRecordFields(result.config.plugins?.installs?.["legacy-chat"], {
       source: "npm",
       spec: "@nova/legacy-chat",
-      installPath: "/tmp/openclaw-plugins/legacy-chat",
+      installPath: "/tmp/nova-plugins/legacy-chat",
       version: "2.0.0",
       resolvedName: "@nova/legacy-chat",
       resolvedVersion: "2.0.0",
@@ -5168,7 +5167,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
         pluginId: "voice-call",
-        targetDir: "/tmp/openclaw-plugins/voice-call",
+        targetDir: "/tmp/nova-plugins/voice-call",
         version: "0.0.2-beta.1",
       }),
     );
@@ -5211,7 +5210,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromClawHubMock.mockResolvedValue(
       createSuccessfulClawHubUpdateResult({
         pluginId: "legacy-chat",
-        targetDir: "/tmp/openclaw-plugins/legacy-chat",
+        targetDir: "/tmp/nova-plugins/legacy-chat",
         version: "2026.5.1-beta.2",
         clawhubPackage: "legacy-chat",
       }),
@@ -5266,7 +5265,7 @@ describe("syncPluginsForUpdateChannel", () => {
     expectRecordFields(result.config.plugins?.installs?.["legacy-chat"], {
       source: "clawhub",
       spec: "clawhub:legacy-chat@2026.5.1-beta.2",
-      installPath: "/tmp/openclaw-plugins/legacy-chat",
+      installPath: "/tmp/nova-plugins/legacy-chat",
       version: "2026.5.1-beta.2",
       integrity: "sha256-clawpack",
       clawhubUrl: "https://clawhub.ai",
@@ -5295,7 +5294,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
         pluginId: "legacy-chat",
-        targetDir: "/tmp/openclaw-plugins/legacy-chat",
+        targetDir: "/tmp/nova-plugins/legacy-chat",
         version: "2.0.0",
       }),
     );
@@ -5344,7 +5343,7 @@ describe("syncPluginsForUpdateChannel", () => {
     expectRecordFields(result.config.plugins?.installs?.["legacy-chat"], {
       source: "npm",
       spec: "@nova/legacy-chat",
-      installPath: "/tmp/openclaw-plugins/legacy-chat",
+      installPath: "/tmp/nova-plugins/legacy-chat",
       version: "2.0.0",
     });
   });
@@ -5359,7 +5358,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
         pluginId: "voice-call",
-        targetDir: "/tmp/openclaw-plugins/voice-call",
+        targetDir: "/tmp/nova-plugins/voice-call",
         version: "2026.7.33",
         npmResolution: {
           name: "@nova/voice-call",
@@ -5412,7 +5411,7 @@ describe("syncPluginsForUpdateChannel", () => {
       code: "package_not_found",
       error: "Package not found on ClawHub.",
     });
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       channels: {
         "legacy-chat": {
           enabled: true,
@@ -5464,7 +5463,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
         pluginId: "voice-call",
-        targetDir: "/tmp/openclaw-plugins/voice-call",
+        targetDir: "/tmp/nova-plugins/voice-call",
         version: "0.0.2-beta.1",
       }),
     );
@@ -5509,7 +5508,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromClawHubMock.mockResolvedValue(
       createSuccessfulClawHubUpdateResult({
         pluginId: "legacy-chat",
-        targetDir: "/tmp/openclaw-plugins/legacy-chat",
+        targetDir: "/tmp/nova-plugins/legacy-chat",
         version: "2026.5.1-beta.2",
         clawhubPackage: "legacy-chat",
       }),
@@ -5537,7 +5536,7 @@ describe("syncPluginsForUpdateChannel", () => {
             "legacy-chat": {
               source: "npm",
               spec: "@nova/legacy-chat",
-              installPath: "/tmp/openclaw-plugins/legacy-chat",
+              installPath: "/tmp/nova-plugins/legacy-chat",
             },
           },
         },
@@ -5553,7 +5552,7 @@ describe("syncPluginsForUpdateChannel", () => {
     expectRecordFields(result.config.plugins?.installs?.["legacy-chat"], {
       source: "clawhub",
       spec: "clawhub:legacy-chat@2026.5.1-beta.2",
-      installPath: "/tmp/openclaw-plugins/legacy-chat",
+      installPath: "/tmp/nova-plugins/legacy-chat",
     });
   });
 
@@ -5565,7 +5564,7 @@ describe("syncPluginsForUpdateChannel", () => {
       error: "ClawHub ClawPack integrity mismatch.",
       warning: "WARNING\nSecurity scan: suspicious",
     });
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       channels: {
         "legacy-chat": {
           enabled: true,
@@ -5611,7 +5610,7 @@ describe("syncPluginsForUpdateChannel", () => {
     installPluginFromNpmSpecMock.mockResolvedValue(
       createSuccessfulNpmUpdateResult({
         pluginId: "default-chat",
-        targetDir: "/tmp/openclaw-plugins/default-chat",
+        targetDir: "/tmp/nova-plugins/default-chat",
         version: "2.0.0",
       }),
     );
@@ -5637,7 +5636,7 @@ describe("syncPluginsForUpdateChannel", () => {
     expectRecordFields(result.config.plugins?.installs?.["default-chat"], {
       source: "npm",
       spec: "@nova/default-chat",
-      installPath: "/tmp/openclaw-plugins/default-chat",
+      installPath: "/tmp/nova-plugins/default-chat",
       version: "2.0.0",
     });
   });
@@ -5686,7 +5685,7 @@ describe("syncPluginsForUpdateChannel", () => {
       ok: false,
       error: "package unavailable",
     });
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       channels: {
         "legacy-chat": {
           enabled: true,
@@ -5807,7 +5806,7 @@ describe("syncPluginsForUpdateChannel", () => {
     "migrates already-externalized records to prototype-named plugin id %s",
     async (targetPluginId) => {
       const legacyPluginId = `legacy-${targetPluginId}`;
-      const npmPackageName = `openclaw-plugin-${targetPluginId}`;
+      const npmPackageName = `nova-plugin-${targetPluginId}`;
       resolveBundledPluginSourcesMock.mockReturnValue(new Map());
 
       const result = await syncPluginsForUpdateChannel({
@@ -5879,7 +5878,7 @@ describe("syncPluginsForUpdateChannel", () => {
             "legacy-chat": {
               source: "npm",
               spec: "@nova/legacy-chat",
-              installPath: "/tmp/openclaw-plugins/legacy-chat",
+              installPath: "/tmp/nova-plugins/legacy-chat",
             },
           },
         },
@@ -5921,7 +5920,7 @@ describe("syncPluginsForUpdateChannel", () => {
             "legacy-chat": {
               source: "npm",
               resolvedName: "@nova/legacy-chat",
-              installPath: "/tmp/openclaw-plugins/legacy-chat",
+              installPath: "/tmp/nova-plugins/legacy-chat",
             },
           },
         },
@@ -5964,7 +5963,7 @@ describe("syncPluginsForUpdateChannel", () => {
               source: "npm",
               spec: "@nova/legacy-chat@1.2.3",
               resolvedSpec: "@nova/legacy-chat@1.2.3",
-              installPath: "/tmp/openclaw-plugins/legacy-chat",
+              installPath: "/tmp/nova-plugins/legacy-chat",
             },
           },
         },
@@ -6009,7 +6008,7 @@ describe("syncPluginsForUpdateChannel", () => {
               source: "clawhub",
               spec: "clawhub:legacy-chat@2026.5.1",
               clawhubPackage: "legacy-chat",
-              installPath: "/tmp/openclaw-plugins/legacy-chat",
+              installPath: "/tmp/nova-plugins/legacy-chat",
             },
           },
         },

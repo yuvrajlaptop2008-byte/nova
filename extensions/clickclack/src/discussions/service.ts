@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
-import type { PluginRuntime } from "openclaw/plugin-sdk/core";
+import type { PluginRuntime } from "nova/plugin-sdk/core";
 import type {
   SessionDiscussionInfo,
   SessionDiscussionProvider,
-} from "openclaw/plugin-sdk/session-discussion";
+} from "nova/plugin-sdk/session-discussion";
 import { listClickClackAccountIds, resolveClickClackAccount } from "../accounts.js";
 import {
   createClickClackClient,

@@ -224,7 +224,7 @@ describe("base vitest config", () => {
   it("classifies Crabbox shared dependencies as external dependencies", () => {
     expect(baseConfig.test?.deps?.moduleDirectories).toEqual([
       "/node_modules/",
-      "/openclaw-pnpm-node-modules/",
+      "/nova-pnpm-node-modules/",
     ]);
 
     const externalPatterns = baseConfig.test?.server?.deps?.external ?? [];
@@ -232,14 +232,14 @@ describe("base vitest config", () => {
       externalPatterns.some(
         (pattern) =>
           pattern instanceof RegExp &&
-          pattern.test("/tmp/openclaw-pnpm-node-modules/some-dep/dist/index.mjs"),
+          pattern.test("/tmp/nova-pnpm-node-modules/some-dep/dist/index.mjs"),
       ),
     ).toBe(true);
     expect(
       externalPatterns.some(
         (pattern) =>
           pattern instanceof RegExp &&
-          pattern.test("/tmp/openclaw-pnpm-node-modules/vite/dist/client/env.mjs"),
+          pattern.test("/tmp/nova-pnpm-node-modules/vite/dist/client/env.mjs"),
       ),
     ).toBe(false);
   });

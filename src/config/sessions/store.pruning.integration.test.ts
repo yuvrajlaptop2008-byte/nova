@@ -4,11 +4,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../../test-utils/openclaw-test-state.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
+import { createNovaTestState, type NovaTestState } from "../../test-utils/nova-test-state.js";
 import {
   resolveTrajectoryFilePath,
   resolveTrajectoryPointerFilePath,
@@ -20,7 +17,7 @@ import {
 import type { TrajectoryEvent } from "../../trajectory/types.js";
 import type { SessionEntry } from "./types.js";
 
-// Keep integration tests deterministic: never read a real openclaw.json.
+// Keep integration tests deterministic: never read a real nova.json.
 vi.mock("../config.js", async () => ({
   ...(await vi.importActual<typeof import("../config.js")>("../config.js")),
   getRuntimeConfig: vi.fn().mockReturnValue({}),
@@ -169,7 +166,7 @@ async function seedSqliteTrajectoryEvent(params: {
   storePath: string;
 }): Promise<void> {
   const event: TrajectoryEvent = {
-    traceSchema: "openclaw-trajectory",
+    traceSchema: "nova-trajectory",
     schemaVersion: 1,
     traceId: params.sessionId,
     source: "runtime",
@@ -189,7 +186,7 @@ async function seedSqliteTrajectoryEvent(params: {
 }
 
 describe("Integration: saveSessionStore with pruning", () => {
-  let testState: OpenClawTestState;
+  let testState: NovaTestState;
   let testDir: string;
   let storePath: string;
   let savedCacheTtl: string | undefined;
@@ -198,8 +195,8 @@ describe("Integration: saveSessionStore with pruning", () => {
     mockLoadConfig = vi.mocked(getRuntimeConfig) as ReturnType<typeof vi.fn>;
     mockLoadConfig.mockReset();
     disableAutomaticDiskBudget(mockLoadConfig);
-    testState = await createOpenClawTestState({
-      prefix: "openclaw-pruning-integ-",
+    testState = await createNovaTestState({
+      prefix: "nova-pruning-integ-",
       layout: "state-only",
     });
     testDir = testState.sessionsDir();
@@ -221,7 +218,7 @@ describe("Integration: saveSessionStore with pruning", () => {
       maintenance: { maxDiskBytes: null, highWaterBytes: null },
     });
     clearSessionStoreCacheForTest();
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
     if (savedCacheTtl === undefined) {
       delete process.env.NOVA_SESSION_CACHE_TTL_MS;
     } else {
@@ -316,7 +313,7 @@ describe("Integration: saveSessionStore with pruning", () => {
 
   it("sessions cleanup dry-run does not create a missing SQLite store", async () => {
     applyEnforcedMaintenanceConfig(mockLoadConfig);
-    const sqlitePath = path.join(testDir, "openclaw-agent.sqlite");
+    const sqlitePath = path.join(testDir, "nova-agent.sqlite");
 
     await expectPathMissing(sqlitePath);
 
@@ -436,12 +433,12 @@ describe("Integration: saveSessionStore with pruning", () => {
     const freshPointer = resolveTrajectoryPointerFilePath(freshTranscript);
     await fs.writeFile(staleTranscript, '{"type":"session"}\n', "utf-8");
     await fs.writeFile(freshTranscript, '{"type":"session"}\n', "utf-8");
-    await fs.writeFile(staleRuntime, '{"traceSchema":"openclaw-trajectory"}\n', "utf-8");
-    await fs.writeFile(freshRuntime, '{"traceSchema":"openclaw-trajectory"}\n', "utf-8");
+    await fs.writeFile(staleRuntime, '{"traceSchema":"nova-trajectory"}\n', "utf-8");
+    await fs.writeFile(freshRuntime, '{"traceSchema":"nova-trajectory"}\n', "utf-8");
     await fs.writeFile(
       stalePointer,
       JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: staleSessionId,
         runtimeFile: staleRuntime,
@@ -451,7 +448,7 @@ describe("Integration: saveSessionStore with pruning", () => {
     await fs.writeFile(
       freshPointer,
       JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: freshSessionId,
         runtimeFile: freshRuntime,

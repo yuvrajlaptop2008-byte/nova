@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/config.js";
+import type { NovaConfig } from "../../../config/config.js";
 import { replaceTranscriptEvents } from "../../../config/sessions/session-accessor.js";
 import { formatSqliteSessionFileMarker } from "../../../config/sessions/sqlite-marker.js";
 import { writeWorkspaceFile } from "../../../test-helpers/workspace.js";
@@ -43,7 +43,7 @@ async function createCaseWorkspace(prefix = "case"): Promise<string> {
 
 beforeAll(async () => {
   ({ default: handler, flushSessionMemoryWritesForTest } = await import("./handler.js"));
-  suiteWorkspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-session-memory-"));
+  suiteWorkspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-session-memory-"));
 });
 
 afterAll(async () => {
@@ -81,7 +81,7 @@ function createMockSessionContent(
 async function runNewWithPreviousSessionEntry(params: {
   tempDir: string;
   previousSessionEntry: { sessionId: string; sessionFile?: string };
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   action?: "new" | "reset";
   sessionKey?: string;
   workspaceDirOverride?: string;
@@ -96,7 +96,7 @@ async function runNewWithPreviousSessionEntry(params: {
         params.cfg ??
         ({
           agents: { defaults: { workspace: params.tempDir } },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       previousSessionEntry: params.previousSessionEntry,
       ...(params.workspaceDirOverride ? { workspaceDir: params.workspaceDirOverride } : {}),
     },
@@ -122,7 +122,7 @@ async function runNewWithPreviousSessionEntry(params: {
 
 async function runNewWithPreviousSession(params: {
   sessionContent: string;
-  cfg?: (tempDir: string) => OpenClawConfig;
+  cfg?: (tempDir: string) => NovaConfig;
   action?: "new" | "reset";
 }): Promise<{ tempDir: string; files: string[]; memoryContent: string }> {
   const tempDir = await createCaseWorkspace("workspace");
@@ -139,7 +139,7 @@ async function runNewWithPreviousSession(params: {
     params.cfg?.(tempDir) ??
     ({
       agents: { defaults: { workspace: tempDir } },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
   const { files, memoryContent } = await runNewWithPreviousSessionEntry({
     tempDir,
@@ -417,7 +417,7 @@ describe("session-memory hook", () => {
                   },
                 },
               },
-            }) satisfies OpenClawConfig,
+            }) satisfies NovaConfig,
         });
         expectDatedMemoryFile(files, "simple-math");
       },
@@ -471,7 +471,7 @@ describe("session-memory hook", () => {
                 },
               },
             },
-          } satisfies OpenClawConfig,
+          } satisfies NovaConfig,
           previousSessionEntry: {
             sessionId: "test-123",
             sessionFile,
@@ -582,7 +582,7 @@ describe("session-memory hook", () => {
           defaults: { workspace: mainWorkspace },
           list: [{ id: "navi", workspace: naviWorkspace }],
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       sessionKey: "agent:main:main",
       workspaceDirOverride: naviWorkspace,
       previousSessionEntry: {
@@ -911,7 +911,7 @@ describe("session-memory hook", () => {
           defaults: { workspace: defaultWorkspace },
           list: [{ id: "custom-agent", workspace: customAgentWorkspace }],
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       sessionKey: "agent:main:main",
       workspaceDirOverride: customAgentWorkspace,
       previousSessionEntry: {
@@ -948,7 +948,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
           content: [{ type: "text", text: "Lights turned on" }],
         },
@@ -969,7 +969,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "claude",
           content: [
             { type: "thinking", text: "..." },
@@ -981,7 +981,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
           content: [{ type: "text", text: "2+2 = 4" }],
         },
@@ -990,7 +990,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "gateway-injected",
           content: [{ type: "text", text: "standalone gateway reply" }],
         },
@@ -1017,7 +1017,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
           content: [{ type: "text", text: "Your number is 123-4567" }],
         },
@@ -1033,7 +1033,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
           content: [{ type: "text", text: "Your number is 123-4567" }],
         },
@@ -1058,7 +1058,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
           content: [{ type: "text", text: "Done" }],
         },
@@ -1071,7 +1071,7 @@ describe("session-memory hook", () => {
         type: "message",
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
           content: [{ type: "text", text: "Done" }],
         },

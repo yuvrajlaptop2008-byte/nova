@@ -1,11 +1,11 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
 import type {
   SessionCatalogProvider,
   SessionUpstreamActivity,
   SessionUpstreamProbe,
-} from "openclaw/plugin-sdk/session-catalog";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/session-catalog";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { CodexAppServerRpcError } from "./app-server/client.js";
 import type {
   CodexThread,
@@ -202,10 +202,10 @@ async function checkCodexUpstreamActivity(
 }
 
 export function createChecker(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   bindingStore: CodexAppServerBindingStore;
   control: CodexSessionCatalogControl;
-  getRuntimeConfig: () => OpenClawConfig | undefined;
+  getRuntimeConfig: () => NovaConfig | undefined;
 }): NonNullable<SessionCatalogProvider["checkUpstreamActivity"]> {
   return async (probes) =>
     await checkCodexUpstreamActivity(probes, params.control, async (probe) => {

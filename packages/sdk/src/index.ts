@@ -14,7 +14,7 @@ export {
   SessionsNamespace,
   TasksNamespace,
   ToolsNamespace,
-  type OpenClawOptions,
+  type NovaOptions,
 } from "./client.js";
 export { EventHub, isGatewayEvent } from "./event-hub.js";
 export { normalizeGatewayEvent } from "./normalize.js";
@@ -31,7 +31,7 @@ export type {
   ArtifactsDownloadResult,
   ArtifactsGetResult,
   ArtifactsListResult,
-  ConnectableOpenClawTransport,
+  ConnectableNovaTransport,
   EnvironmentCreateParams,
   EnvironmentSelection,
   EnvironmentSummary,
@@ -39,9 +39,9 @@ export type {
   GatewayEvent,
   GatewayRequestOptions,
   JsonObject,
-  OpenClawEvent,
-  OpenClawEventType,
-  OpenClawTransport,
+  NovaEvent,
+  NovaEventType,
+  NovaTransport,
   RunCreateParams,
   RunResult,
   RunStatus,

@@ -4,7 +4,7 @@
  * Custom OpenAI-compatible base URLs intentionally bypass Codex-runtime defaults.
  */
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ProviderRouteOverridePresence } from "../plugin-sdk/provider-model-types.js";
 import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 import {
@@ -40,12 +40,12 @@ export function resolveOpenAIImplicitAgentRuntime(params: {
   modelId?: string;
   api?: string | null;
   baseUrl?: unknown;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
   env?: Readonly<Record<string, string | undefined>>;
   requestTransportOverrides?: ProviderRouteOverridePresence;
-}): "codex" | "openclaw" | null {
+}): "codex" | "nova" | null {
   if (!isOpenAIProvider(params.provider)) {
     return null;
   }
@@ -73,11 +73,11 @@ export function resolveOpenAIImplicitAgentRuntime(params: {
   if (!resolution) {
     // Endpoint and adapter ownership stays in the provider artifact. Without
     // that policy, keep credentials and traffic on the core Nova runtime.
-    return "openclaw";
+    return "nova";
   }
   return resolution.kind !== "incompatible" && resolution.defaultRuntimeId === "codex"
     ? "codex"
-    : "openclaw";
+    : "nova";
 }
 
 /** Parses the provider portion from a provider/model ref. */
@@ -95,7 +95,7 @@ export function parseModelRefProvider(value: unknown): string | undefined {
 /** Returns true when selected model config should ensure the Codex plugin exists. */
 export function modelSelectionShouldEnsureCodexPlugin(params: {
   model?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
 }): boolean {
   const provider = parseModelRefProvider(params.model);
@@ -141,7 +141,7 @@ export function listOpenAIAuthProfileProvidersForAgentRuntime(params: {
   provider: string;
   harnessRuntime?: string;
   agentHarnessId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): string[] {
   if (!isOpenAIProvider(params.provider)) {
     return [params.provider];
@@ -156,7 +156,7 @@ export function resolveOpenAIRuntimeProvider(params: {
   agentHarnessId?: string;
   authProfileProvider?: string;
   authProfileId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }): string {
   return isOpenAIProvider(params.provider) ? OPENAI_PROVIDER_ID : params.provider;
@@ -169,7 +169,7 @@ export function resolveSelectedOpenAIRuntimeProvider(params: {
   agentHarnessId?: string;
   authProfileProvider?: string;
   authProfileId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
 }): string {
   return isOpenAIProvider(params.provider) ? OPENAI_PROVIDER_ID : params.provider;
@@ -179,7 +179,7 @@ export function resolveSelectedOpenAIRuntimeProvider(params: {
 export function resolveContextConfigProviderForRuntime(params: {
   provider: string;
   runtimeId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): string {
   return isOpenAIProvider(params.provider) ? OPENAI_PROVIDER_ID : params.provider;
 }

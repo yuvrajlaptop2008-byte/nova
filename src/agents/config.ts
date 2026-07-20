@@ -84,13 +84,13 @@ export function getExamplesPath(): string {
 }
 
 // =============================================================================
-// App Config (from package.json openclawConfig)
+// App Config (from package.json novaConfig)
 // =============================================================================
 
 interface PackageJson {
   name?: string;
   version?: string;
-  openclawConfig?: {
+  novaConfig?: {
     name?: string;
     configDir?: string;
   };
@@ -98,9 +98,9 @@ interface PackageJson {
 
 const pkg = JSON.parse(readFileSync(getPackageJsonPath(), "utf-8")) as PackageJson;
 
-const openClawConfigName: string | undefined = pkg.openclawConfig?.name;
-export const APP_NAME: string = openClawConfigName || "openclaw";
-export const CONFIG_DIR_NAME: string = pkg.openclawConfig?.configDir || ".openclaw";
+const novaConfigName: string | undefined = pkg.novaConfig?.name;
+export const APP_NAME: string = novaConfigName || "nova";
+export const CONFIG_DIR_NAME: string = pkg.novaConfig?.configDir || ".nova";
 export const VERSION: string = pkg.version || "0.0.0";
 
 const ENV_AGENT_DIR = `${APP_NAME.toUpperCase()}_AGENT_DIR`;
@@ -116,10 +116,10 @@ function expandTildePath(path: string): string {
 }
 
 // =============================================================================
-// User Config Paths (~/.openclaw/agent/*)
+// User Config Paths (~/.nova/agent/*)
 // =============================================================================
 
-/** Get the agent config directory (e.g., ~/.openclaw/agent/) */
+/** Get the agent config directory (e.g., ~/.nova/agent/) */
 export function getAgentDir(): string {
   const envDir = process.env[ENV_AGENT_DIR];
   if (envDir) {

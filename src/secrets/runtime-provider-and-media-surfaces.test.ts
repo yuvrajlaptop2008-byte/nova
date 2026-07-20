@@ -4,12 +4,12 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
 import { setActivePluginRegistry } from "../plugins/runtime.js";
 import { asConfig, setupSecretsRuntimeSnapshotTestHooks } from "./runtime.test-support.ts";
 
-function createOpenAiFileModelsConfig(): NonNullable<OpenClawConfig["models"]> {
+function createOpenAiFileModelsConfig(): NonNullable<NovaConfig["models"]> {
   return {
     providers: {
       openai: {
@@ -59,7 +59,7 @@ async function prepareMediaModelAuthSnapshot(params: {
       },
     }),
     env: {},
-    agentDirs: ["/tmp/openclaw-agent-main"],
+    agentDirs: ["/tmp/nova-agent-main"],
     loadAuthStore: () => ({ version: 1, profiles: {} }),
   });
 }
@@ -87,7 +87,7 @@ describe("secrets runtime provider and media surfaces", () => {
       env: {
         OPENAI_REALTIME_API_KEY: "sk-realtime-test",
       },
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
     });
 
@@ -99,7 +99,7 @@ describe("secrets runtime provider and media surfaces", () => {
     if (process.platform === "win32") {
       return;
     }
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-secrets-file-provider-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-secrets-file-provider-"));
     const secretsPath = path.join(root, "secrets.json");
     try {
       await fs.writeFile(
@@ -145,7 +145,7 @@ describe("secrets runtime provider and media surfaces", () => {
 
       const snapshot = await prepareSecretsRuntimeSnapshot({
         config,
-        agentDirs: ["/tmp/openclaw-agent-main"],
+        agentDirs: ["/tmp/nova-agent-main"],
         loadAuthStore: () => ({ version: 1, profiles: {} }),
       });
 
@@ -159,7 +159,7 @@ describe("secrets runtime provider and media surfaces", () => {
     if (process.platform === "win32") {
       return;
     }
-    const root = autoCleanupTempDirs.make("openclaw-provider-auth-refresh-");
+    const root = autoCleanupTempDirs.make("nova-provider-auth-refresh-");
     const secretsPath = path.join(root, "secrets.json");
     const writeSecrets = async (gatewayToken: string | undefined, modelKey: string) => {
       await fs.writeFile(
@@ -196,7 +196,7 @@ describe("secrets runtime provider and media surfaces", () => {
       await writeSecrets("gateway-old", "model-old");
       const initial = await prepareSecretsRuntimeSnapshot({
         config,
-        agentDirs: ["/tmp/openclaw-agent-main"],
+        agentDirs: ["/tmp/nova-agent-main"],
         loadAuthStore: () => ({ version: 1, profiles: {} }),
       });
       const {
@@ -207,7 +207,7 @@ describe("secrets runtime provider and media surfaces", () => {
       const { getRuntimeConfigSourceSnapshot, getRuntimeConfigSnapshot, setRuntimeConfigSnapshot } =
         await import("../config/runtime-snapshot.js");
       activateSecretsRuntimeSnapshot(initial);
-      const runtimeSourceConfig: OpenClawConfig = {
+      const runtimeSourceConfig: NovaConfig = {
         ...initial.sourceConfig,
         logging: { level: "debug" },
       };
@@ -260,7 +260,7 @@ describe("secrets runtime provider and media surfaces", () => {
     const initial = await prepareSecretsRuntimeSnapshot({
       config,
       env: { OPENAI_API_KEY: "sk-env-current" },
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
     });
     const {
@@ -302,7 +302,7 @@ describe("secrets runtime provider and media surfaces", () => {
     const initialConfig = asConfig({ gateway: { port: 19_040 } });
     const initial = await prepareSecretsRuntimeSnapshot({
       config: initialConfig,
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
     });
     const {
@@ -361,7 +361,7 @@ describe("secrets runtime provider and media surfaces", () => {
     if (process.platform === "win32") {
       return;
     }
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-secrets-file-provider-bad-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-secrets-file-provider-bad-"));
     const secretsPath = path.join(root, "secrets.json");
     try {
       await fs.writeFile(secretsPath, JSON.stringify(["not-an-object"]), "utf8");
@@ -383,7 +383,7 @@ describe("secrets runtime provider and media surfaces", () => {
               ...createOpenAiFileModelsConfig(),
             },
           }),
-          agentDirs: ["/tmp/openclaw-agent-main"],
+          agentDirs: ["/tmp/nova-agent-main"],
           loadAuthStore: () => ({ version: 1, profiles: {} }),
         }),
       ).rejects.toThrow("payload is not a JSON object");
@@ -420,7 +420,7 @@ describe("secrets runtime provider and media surfaces", () => {
       env: {
         MEDIA_SHARED_AUDIO_TOKEN: "shared-audio-token",
       },
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
     });
 
@@ -489,7 +489,7 @@ describe("secrets runtime provider and media surfaces", () => {
       env: {
         MEDIA_INFERRED_AUDIO_TOKEN: "inferred-audio-token",
       },
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
     });
 
@@ -559,7 +559,7 @@ describe("secrets runtime provider and media surfaces", () => {
         },
       }),
       env: {},
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
     });
 
@@ -596,7 +596,7 @@ describe("secrets runtime provider and media surfaces", () => {
         },
       }),
       env: { HEALTHY_MEDIA_MODEL_VALUE: "test-token" },
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
       allowUnavailableSecretOwners: true,
     });
@@ -641,7 +641,7 @@ describe("secrets runtime provider and media surfaces", () => {
         },
       }),
       env: {},
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/nova-agent-main"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
     });
 
@@ -682,7 +682,7 @@ describe("secrets runtime provider and media surfaces", () => {
         },
       }),
       env: { HEALTHY_TEST_VALUE: healthyValue },
-      agentDirs: ["/tmp/openclaw-agent-cold", "/tmp/openclaw-agent-healthy"],
+      agentDirs: ["/tmp/nova-agent-cold", "/tmp/nova-agent-healthy"],
       loadAuthStore: () => ({ version: 1, profiles: {} }),
       allowUnavailableSecretOwners: true,
     });

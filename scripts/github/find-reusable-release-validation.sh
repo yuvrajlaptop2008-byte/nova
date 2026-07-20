@@ -201,7 +201,7 @@ for ((index = 0; index < run_count; index += 1)); do
     --arg run_id "$run_id" \
     --arg verifier_sha "$VERIFIER_WORKFLOW_SHA" '
       . as $record
-      | .schema == "openclaw.release-validation-evidence/v3"
+      | .schema == "nova.release-validation-evidence/v3"
       and .valid == true
       and .repository == $repo
       and .producerOnTrustedMainLineage == true

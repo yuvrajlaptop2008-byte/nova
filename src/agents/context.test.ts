@@ -1,6 +1,6 @@
 // Covers context-window cache application and session-manager runtime registry.
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createSessionManagerRuntimeRegistry } from "./agent-hooks/session-manager-runtime-registry.js";
 import {
   MODEL_CONFIGURED_CONTEXT_TOKEN_CACHE,
@@ -660,7 +660,7 @@ describe("resolveContextTokensForModel", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const sourceCfg = {
       models: {
         providers: {
@@ -671,7 +671,7 @@ describe("resolveContextTokensForModel", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     expect(
       resolveContextTokensForModel({

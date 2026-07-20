@@ -13,7 +13,7 @@ import {
   withMcpAppActiveView,
 } from "./mcp-app-operations.js";
 
-const MCP_APP_STANDALONE_PATH = "/__openclaw__/mcp-app";
+const MCP_APP_STANDALONE_PATH = "/__nova__/mcp-app";
 const MCP_APP_STANDALONE_VIEW_PATH = `${MCP_APP_STANDALONE_PATH}/view`;
 const MCP_APP_STANDALONE_TICKET_SCOPE = "mcp-app-standalone-view";
 const MCP_APP_STANDALONE_TICKET_TTL_MS = 2 * 60_000;

@@ -14,7 +14,7 @@ describe("resolveSessionEntryResetFreshness", () => {
 
   beforeEach(() => {
     tempDirs = [];
-    tempDir = makeTempDir(tempDirs, "openclaw-session-entry-freshness-");
+    tempDir = makeTempDir(tempDirs, "nova-session-entry-freshness-");
     storePath = path.join(tempDir, "sessions.json");
   });
 

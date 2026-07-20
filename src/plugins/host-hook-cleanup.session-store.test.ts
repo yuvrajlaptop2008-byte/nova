@@ -5,9 +5,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { loadSessionEntry, replaceSessionEntry } from "../config/sessions/session-accessor.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import * as jsonFiles from "../infra/json-files.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import { runPluginHostCleanup } from "./host-hook-cleanup.js";
 import { createEmptyPluginRegistry } from "./registry-empty.js";
@@ -17,8 +17,8 @@ describe("plugin host cleanup session stores", () => {
   const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
 
   afterEach(async () => {
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     envSnapshot.restore();
     if (stateDir) {
       await fs.rm(stateDir, { recursive: true, force: true });
@@ -27,9 +27,7 @@ describe("plugin host cleanup session stores", () => {
   });
 
   it("does not rewrite session stores when cleanup scans find no plugin-owned state", async () => {
-    stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-cleanup-noop-"),
-    );
+    stateDir = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-host-cleanup-noop-"));
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     const storePath = path.join(stateDir, "sessions.json");
     await replaceSessionEntry({ sessionKey: "agent:main:main", storePath }, {
@@ -51,7 +49,7 @@ describe("plugin host cleanup session stores", () => {
 
   it("can defer persistent session-state cleanup to an atomic owner", async () => {
     stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-cleanup-deferred-"),
+      path.join(resolvePreferredNovaTmpDir(), "nova-host-cleanup-deferred-"),
     );
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     const storePath = path.join(stateDir, "sessions.json");
@@ -85,7 +83,7 @@ describe("plugin host cleanup session stores", () => {
 
   it("clears plugin-owned session state across resolved stores without touching unrelated rows", async () => {
     stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-cleanup-multistore-"),
+      path.join(resolvePreferredNovaTmpDir(), "nova-host-cleanup-multistore-"),
     );
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     const firstStorePath = path.join(stateDir, "agents", "a", "sessions", "sessions.json");
@@ -172,7 +170,7 @@ describe("plugin host cleanup session stores", () => {
 
   it("clears shared custom SQLite stores for each resolved agent", async () => {
     stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-cleanup-shared-custom-"),
+      path.join(resolvePreferredNovaTmpDir(), "nova-host-cleanup-shared-custom-"),
     );
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     const sharedStorePath = path.join(stateDir, "custom", "sessions.json");
@@ -222,7 +220,7 @@ describe("plugin host cleanup session stores", () => {
 
   it("preserves locked sessions for every harness owned by a disabled plugin", async () => {
     stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-cleanup-locked-harness-"),
+      path.join(resolvePreferredNovaTmpDir(), "nova-host-cleanup-locked-harness-"),
     );
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     const storePath = path.join(stateDir, "sessions.json");

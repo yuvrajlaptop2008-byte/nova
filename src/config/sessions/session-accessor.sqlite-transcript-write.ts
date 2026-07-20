@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { resolveTimestampMsToIsoString } from "@nova/normalization-core/number-coercion";
 import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
+  openNovaAgentDatabase,
+  runNovaAgentWriteTransaction,
+  type NovaAgentDatabase,
+} from "../../state/nova-agent-db.js";
 import type {
   SessionTranscriptAccessScope,
   SessionTranscriptTurnMessageAppend,
@@ -115,7 +115,7 @@ export async function replaceSqliteTranscriptEvents(
 ): Promise<void> {
   const resolved = resolveSqliteTranscriptScope(scope);
   await runExclusiveSqliteSessionWrite(resolved, async () => {
-    runOpenClawAgentWriteTransaction((database) => {
+    runNovaAgentWriteTransaction((database) => {
       replaceSqliteTranscriptEventsInTransaction(database, resolved, events);
     }, toDatabaseOptions(resolved));
   });
@@ -128,7 +128,7 @@ export function replaceSqliteTranscriptEventsSync(
 ): boolean {
   const resolved = resolveSqliteTranscriptScope(scope);
   let replaced = false;
-  runOpenClawAgentWriteTransaction((database) => {
+  runNovaAgentWriteTransaction((database) => {
     const fresh = readSessionEntryRow(database, resolved.sessionKey);
     if (!fresh || fresh.entry.sessionId !== resolved.sessionId) {
       return;
@@ -151,7 +151,7 @@ export async function importSqliteSessionRows(
   });
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
     let transcriptEvents = 0;
-    runOpenClawAgentWriteTransaction((database) => {
+    runNovaAgentWriteTransaction((database) => {
       const currentEntry = readSessionEntryRow(database, resolved.sessionKey)?.entry;
       const preservedHarnessId =
         params.entry.agentHarnessId === undefined &&
@@ -222,7 +222,7 @@ export async function appendSqliteTranscriptEvent(
   assertNonMessageTranscriptEvent(event);
   const resolved = resolveSqliteTranscriptScope(scope);
   await runExclusiveSqliteSessionWrite(resolved, async () => {
-    runOpenClawAgentWriteTransaction((database) => {
+    runNovaAgentWriteTransaction((database) => {
       appendTranscriptEventInTransaction(database, resolved, event);
     }, toDatabaseOptions(resolved));
   });
@@ -236,7 +236,7 @@ export function appendSqliteTranscriptEventSync(
   assertNonMessageTranscriptEvent(event);
   const resolved = resolveSqliteTranscriptScope(scope);
   let appended = false;
-  runOpenClawAgentWriteTransaction((database) => {
+  runNovaAgentWriteTransaction((database) => {
     const fresh = readSessionEntryRow(database, resolved.sessionKey);
     if (!fresh || fresh.entry.sessionId !== resolved.sessionId) {
       return;
@@ -250,7 +250,7 @@ export function appendSqliteTranscriptEventSync(
 export async function appendSqliteExpectedSessionTranscriptTurn(
   scope: SessionTranscriptWriteScope,
   options: {
-    config?: import("../types.openclaw.js").OpenClawConfig;
+    config?: import("../types.nova.js").NovaConfig;
     cwd?: string;
     expectedLifecycleRevision?: string;
     expectedSessionState?: SessionTranscriptTurnExpectedState;
@@ -266,7 +266,7 @@ export async function appendSqliteExpectedSessionTranscriptTurn(
     sessionId: options.expectedSessionId,
   });
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const preparedEntry = readSessionEntryRow(database, resolved.sessionKey);
     if (!sessionMatchesExpectedTranscriptTurn(preparedEntry, options)) {
       return sqliteSessionTranscriptTurnRebound(preparedEntry, options.sessionFile);
@@ -287,7 +287,7 @@ export async function appendSqliteExpectedSessionTranscriptTurn(
     );
     let previousIdentity = new Map<string, SessionEntry>();
     let currentIdentity = new Map<string, SessionEntry>();
-    runOpenClawAgentWriteTransaction((transactionDb) => {
+    runNovaAgentWriteTransaction((transactionDb) => {
       const fresh = readSessionEntryRow(transactionDb, resolved.sessionKey);
       if (!sessionMatchesExpectedTranscriptTurn(fresh, options)) {
         result = sqliteSessionTranscriptTurnRebound(fresh, options.sessionFile);
@@ -380,7 +380,7 @@ export async function appendSqliteTranscriptMessage<TMessage>(
   const resolved = resolveSqliteTranscriptScope(scope);
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
     let result: TranscriptMessageAppendResult<TMessage> | undefined;
-    runOpenClawAgentWriteTransaction((database) => {
+    runNovaAgentWriteTransaction((database) => {
       result = appendSqliteTranscriptMessageInTransaction(database, resolved, options);
     }, toDatabaseOptions(resolved));
     return result;
@@ -394,7 +394,7 @@ export function appendSqliteTranscriptMessageSync<TMessage>(
 ): TranscriptMessageAppendResult<TMessage> | undefined {
   const resolved = resolveSqliteTranscriptScope(scope);
   let result: TranscriptMessageAppendResult<TMessage> | undefined;
-  runOpenClawAgentWriteTransaction((database) => {
+  runNovaAgentWriteTransaction((database) => {
     const fresh = readSessionEntryRow(database, resolved.sessionKey);
     if (!fresh || fresh.entry.sessionId !== resolved.sessionId) {
       return;
@@ -411,7 +411,7 @@ export async function withSqliteTranscriptWriteLock<T>(
 ): Promise<T> {
   const resolved = resolveSqliteTranscriptScope(scope);
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     let transcriptSnapshot: SqliteTranscriptSnapshotState | undefined;
     return await run({
       readEvents: async () => {
@@ -424,7 +424,7 @@ export async function withSqliteTranscriptWriteLock<T>(
           throw new SqliteTranscriptMutationConflictError(resolved.sessionId);
         }
         const expectedSnapshot = transcriptSnapshot?.rows;
-        const nextSnapshot = runOpenClawAgentWriteTransaction((writeDatabase) => {
+        const nextSnapshot = runNovaAgentWriteTransaction((writeDatabase) => {
           if (expectedSnapshot !== undefined) {
             // The writer queue is process-local. Revalidate after BEGIN IMMEDIATE
             // so a committed cross-process append cannot be deleted by the rewrite.
@@ -443,7 +443,7 @@ export async function withSqliteTranscriptWriteLock<T>(
         let result: TranscriptMessageAppendResult<unknown> | undefined;
         const snapshotState = transcriptSnapshot;
         let nextSnapshotState = snapshotState;
-        runOpenClawAgentWriteTransaction((writeDatabase) => {
+        runNovaAgentWriteTransaction((writeDatabase) => {
           const snapshotStillCurrent =
             snapshotState?.kind === "current"
               ? isSqliteTranscriptSnapshotUnchanged(
@@ -476,7 +476,7 @@ export async function withSqliteTranscriptWriteTransaction<T>(
 ): Promise<T> {
   const resolved = resolveSqliteTranscriptScope(scope);
   return await runExclusiveSqliteSessionWrite(resolved, async () =>
-    runOpenClawAgentWriteTransaction(
+    runNovaAgentWriteTransaction(
       () => run({ sessionFile: formatSqliteSessionMarkerForScope(resolved) }),
       toDatabaseOptions(resolved),
       { operationLabel: "session.transcript.batch" },
@@ -485,7 +485,7 @@ export async function withSqliteTranscriptWriteTransaction<T>(
 }
 
 function isSqliteTranscriptSnapshotUnchanged(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
   expected: readonly SqliteTranscriptSnapshotRow[],
 ): boolean {
@@ -500,7 +500,7 @@ function isSqliteTranscriptSnapshotUnchanged(
 }
 
 function assertSqliteTranscriptSnapshotUnchanged(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
   expected: readonly SqliteTranscriptSnapshotRow[],
 ): void {
@@ -510,7 +510,7 @@ function assertSqliteTranscriptSnapshotUnchanged(
 }
 
 function appendSqliteTranscriptMessageInTransaction<TMessage>(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   resolved: ResolvedTranscriptScope,
   options: TranscriptMessageAppendOptions<TMessage>,
 ): TranscriptMessageAppendResult<TMessage> | undefined {

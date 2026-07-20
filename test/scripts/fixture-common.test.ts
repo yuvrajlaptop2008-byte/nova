@@ -20,7 +20,7 @@ afterEach(() => {
 
 describe("fixture common helpers", () => {
   it("writes nested text and formatted JSON files", () => {
-    const root = makeTempDir(tempDirs, "openclaw-fixture-common-");
+    const root = makeTempDir(tempDirs, "nova-fixture-common-");
     const textPath = path.join(root, "nested", "fixture.txt");
     const jsonPath = path.join(root, "config", "fixture.json");
 

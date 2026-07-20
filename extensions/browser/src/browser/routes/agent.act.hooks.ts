@@ -158,7 +158,7 @@ export function registerBrowserAgentActHookRoutes(
             // Existing-session Chrome MCP has no dialog hook primitive. Patch
             // one-shot window dialog functions in-page, then restore them.
             fn: `() => {
-              const state = (window.__openclawDialogHook ??= {});
+              const state = (window.__novaDialogHook ??= {});
               if (!state.originals) {
                 state.originals = {
                   alert: window.alert.bind(window),
@@ -171,7 +171,7 @@ export function registerBrowserAgentActHookRoutes(
                 window.alert = originals.alert;
                 window.confirm = originals.confirm;
                 window.prompt = originals.prompt;
-                delete window.__openclawDialogHook;
+                delete window.__novaDialogHook;
               };
               window.alert = (...args) => {
                 try {

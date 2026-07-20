@@ -4,7 +4,7 @@ const SETUP_INFERENCE_TEST_MAX_TOKENS = 32;
 export function resolveSetupInferenceProbeStreamParams(agentHarnessId?: string): {
   streamParams?: { maxTokens: number };
 } {
-  return !agentHarnessId || agentHarnessId === "openclaw"
+  return !agentHarnessId || agentHarnessId === "nova"
     ? { streamParams: { maxTokens: SETUP_INFERENCE_TEST_MAX_TOKENS } }
     : {};
 }

@@ -46,11 +46,11 @@ import {
 } from "../config/sessions/transcript-tree.js";
 import { selectVisibleTranscriptEvents } from "../config/sessions/transcript-visible-events.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { stripEnvelope, stripMessageIdHints } from "../shared/chat-envelope.js";
-import { resolveOpenClawAgentSqlitePath } from "../state/openclaw-agent-db.js";
+import { resolveNovaAgentSqlitePath } from "../state/nova-agent-db.js";
 import { runTasksWithConcurrency } from "../utils/run-with-concurrency.js";
 import { countToolResults, extractToolCallNames } from "../utils/transcript-tools.js";
 import {
@@ -118,7 +118,7 @@ const logger = createSubsystemLogger("usage-cost-cache");
 
 type UsageCostRefreshState = {
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   databasePath: string;
   fullRefreshRequested: boolean;
   pendingSessionFiles: Set<string>;
@@ -133,7 +133,7 @@ type UsageCostRefreshResult = "refreshed" | "busy";
 const usageCostRefreshes = new Map<string, UsageCostRefreshState>();
 
 function resolveUsageCostCacheDatabasePath(agentId?: string): string {
-  return resolveOpenClawAgentSqlitePath({ agentId: normalizeAgentId(agentId) });
+  return resolveNovaAgentSqlitePath({ agentId: normalizeAgentId(agentId) });
 }
 
 type UsageCostJsonlCheckpoint = {
@@ -184,13 +184,13 @@ type UsageCostTranscriptFile = {
 };
 
 function resolveUsageCostAgentDir(
-  config: OpenClawConfig | undefined,
+  config: NovaConfig | undefined,
   agentId: string | undefined,
 ): string | undefined {
   return agentId === undefined ? undefined : resolveAgentDir(config ?? {}, agentId);
 }
 
-function resolveUsageCostPricingFingerprint(config?: OpenClawConfig, agentDir?: string): string {
+function resolveUsageCostPricingFingerprint(config?: NovaConfig, agentDir?: string): string {
   return resolveModelCostConfigFingerprint(config, agentDir);
 }
 
@@ -357,7 +357,7 @@ function listUsageCountedSqliteTranscriptStats(
 function formatCanonicalUsageCostSqliteMarker(marker: SqliteSessionFileMarker): string {
   const storePath =
     resolveSqliteTargetFromSessionStorePath(marker.storePath, { agentId: marker.agentId }).path ??
-    resolveOpenClawAgentSqlitePath({ agentId: marker.agentId });
+    resolveNovaAgentSqlitePath({ agentId: marker.agentId });
   return formatSqliteSessionFileMarker({ ...marker, storePath });
 }
 
@@ -870,7 +870,7 @@ type UsageCostResolver = (params: {
 }) => ReturnType<typeof resolveModelCostConfig>;
 
 function createUsageCostResolver(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
 }): UsageCostResolver {
   const cache = new Map<string, ReturnType<typeof resolveModelCostConfig>>();
@@ -1100,7 +1100,7 @@ function parseUsageCostTranscriptEntry(
 
 async function scanTranscriptFile(params: {
   filePath: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   resolveCost?: UsageCostResolver;
   startOffset?: number;
   endOffset?: number;
@@ -1122,7 +1122,7 @@ async function scanTranscriptFile(params: {
 
 async function scanUsageFile(params: {
   filePath: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   resolveCost?: UsageCostResolver;
   startOffset?: number;
   endOffset?: number;
@@ -1226,7 +1226,7 @@ export async function loadCostUsageSummary(params?: {
   startMs?: number;
   endMs?: number;
   dayBucket?: UsageDailyBucket;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
 }): Promise<CostUsageSummary> {
   const now = Date.now();
@@ -1531,7 +1531,7 @@ async function scanUsageFileForRollup(params: {
 }
 
 async function refreshCostUsageCacheForAgent(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   agentDir?: string;
   databasePath?: string;
@@ -1624,7 +1624,7 @@ async function refreshCostUsageCacheForAgent(params?: {
 const usageCostRefreshRuntime = { refreshCostUsageCacheForAgent };
 
 async function refreshCostUsageCache(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   agentDir?: string;
   maxFiles?: number;
@@ -1638,7 +1638,7 @@ export async function loadCostUsageSummaryFromCache(params: {
   startMs: number;
   endMs: number;
   dayBucket?: UsageDailyBucket;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   requestRefresh?: boolean;
   refreshMode?: "background" | "sync-when-empty";
@@ -1681,7 +1681,7 @@ export async function loadCostUsageSummaryFromCache(params: {
 
 export async function loadSessionCostSummariesFromCache(params: {
   sessions: Array<{ sessionId?: string; sessionFile: string }>;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   startMs?: number;
   endMs?: number;
@@ -1753,7 +1753,7 @@ export async function loadSessionCostSummariesFromCache(params: {
 }
 
 function requestCostUsageCacheRefresh(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionFiles?: string[];
 }): void {
@@ -1783,7 +1783,7 @@ function requestCostUsageCacheRefresh(params?: {
 function mergeUsageCostRefreshRequest(
   state: UsageCostRefreshState,
   params?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     agentId?: string;
     sessionFiles?: string[];
   },
@@ -1880,7 +1880,7 @@ function clearUsageCostRefreshesForTest(): void {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.sessionCostUsageTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.sessionCostUsageTestApi")] = {
     requestCostUsageCacheRefresh,
     usageCostRefreshRuntime,
     clearUsageCostRefreshesForTest,
@@ -1985,7 +1985,7 @@ export async function loadSessionCostSummary(params: {
   sessionId?: string;
   sessionEntry?: SessionEntry;
   sessionFile?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   startMs?: number;
   endMs?: number;
@@ -2044,7 +2044,7 @@ export async function loadSessionUsageTimeSeries(params: {
   sessionId?: string;
   sessionEntry?: SessionEntry;
   sessionFile?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   maxPoints?: number;
 }): Promise<SessionUsageTimeSeries | null> {
@@ -2158,7 +2158,7 @@ export async function loadSessionLogs(params: {
   sessionId?: string;
   sessionEntry?: SessionEntry;
   sessionFile?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   limit?: number;
 }): Promise<SessionLogEntry[] | null> {

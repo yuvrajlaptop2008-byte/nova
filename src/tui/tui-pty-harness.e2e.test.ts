@@ -476,7 +476,7 @@ async function writeTuiPtyFixtureScript(dir: string) {
           },
           deliver: false,
           historyLimit: 5,
-          title: "openclaw tui pty fixture",
+          title: "nova tui pty fixture",
         });
       }
 
@@ -491,7 +491,7 @@ async function writeTuiPtyFixtureScript(dir: string) {
 }
 
 async function startTuiFixture(opts: { env?: NodeJS.ProcessEnv } = {}) {
-  const tempDir = await mkdtemp(path.join(tmpdir(), "openclaw-tui-pty-"));
+  const tempDir = await mkdtemp(path.join(tmpdir(), "nova-tui-pty-"));
   const scriptPath = await writeTuiPtyFixtureScript(tempDir);
   const logPath = path.join(tempDir, "fixture-log.jsonl");
   const run = startPty(process.execPath, ["--import", "tsx", scriptPath], {

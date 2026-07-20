@@ -9,7 +9,7 @@ import { fsHandlers } from "./fs.js";
 const tempRoots: string[] = [];
 
 async function makeTempRoot(): Promise<string> {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fs-listdir-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fs-listdir-"));
   tempRoots.push(root);
   // macOS tmpdir is a /var -> /private/var symlink; the handler returns resolved paths.
   return await fs.realpath(root);

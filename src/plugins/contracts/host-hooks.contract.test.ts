@@ -5,7 +5,7 @@ import { expectDefined } from "@nova/normalization-core";
 import {
   createPluginRegistryFixture,
   registerTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "nova/plugin-sdk/plugin-test-contracts";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   validatePluginsUiDescriptorsResult,
@@ -23,7 +23,7 @@ import { pluginHostHookHandlers } from "../../gateway/server-methods/plugin-host
 import { buildGatewaySessionRow } from "../../gateway/session-utils.js";
 import { withTempConfig } from "../../gateway/test-temp-config.js";
 import { emitAgentEvent, resetAgentEventsForTest } from "../../infra/agent-events.js";
-import { resolvePreferredOpenClawTmpDir } from "../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../../infra/tmp-nova-dir.js";
 import { withEnvAsync } from "../../test-utils/env.js";
 import { validatePluginCommandDefinition } from "../command-registration.js";
 import { executePluginCommand } from "../commands.js";
@@ -127,7 +127,7 @@ async function withHostHookState(
     session: { store: storePath },
   }),
 ): Promise<void> {
-  const stateDir = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), prefix));
+  const stateDir = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), prefix));
   const storePath = path.join(stateDir, "sessions.json");
   const tempConfig = createTempConfig(storePath);
   try {
@@ -504,7 +504,7 @@ describe("host-hook fixture plugin contract", () => {
 
   it("allows the official npm Codex plugin to keep /codex command ownership", () => {
     const { config, registry } = createPluginRegistryFixture();
-    const codexRoot = path.join("/tmp", ".openclaw", "npm", "node_modules", "@openclaw", "codex");
+    const codexRoot = path.join("/tmp", ".nova", "npm", "node_modules", "@nova", "codex");
     registerTestPlugin({
       registry,
       config,
@@ -537,7 +537,7 @@ describe("host-hook fixture plugin contract", () => {
 
   it("allows the official ClawHub Codex plugin to keep /codex command ownership", () => {
     const { config, registry } = createPluginRegistryFixture();
-    const codexRoot = path.join("/tmp", ".openclaw", "extensions", "codex");
+    const codexRoot = path.join("/tmp", ".nova", "extensions", "codex");
     registerTestPlugin({
       registry,
       config,
@@ -571,7 +571,7 @@ describe("host-hook fixture plugin contract", () => {
 
   it("rejects non-official global Codex plugins from /codex command ownership", () => {
     const { config, registry } = createPluginRegistryFixture();
-    const codexRoot = path.join("/tmp", ".openclaw", "extensions", "codex");
+    const codexRoot = path.join("/tmp", ".nova", "extensions", "codex");
     registerTestPlugin({
       registry,
       config,
@@ -1499,7 +1499,7 @@ describe("host-hook fixture plugin contract", () => {
     });
     setActivePluginRegistry(registry.registry);
 
-    await withHostHookState("openclaw-host-hooks-patch-", async ({ storePath, tempConfig }) => {
+    await withHostHookState("nova-host-hooks-patch-", async ({ storePath, tempConfig }) => {
       await updateSessionStore(storePath, (store) => {
         store["agent:main:main"] = {
           sessionId: "session-1",
@@ -1694,7 +1694,7 @@ describe("host-hook fixture plugin contract", () => {
   });
 
   it("reports duplicate next-turn injections as not newly enqueued", async () => {
-    await withHostHookState("openclaw-host-hooks-injection-", async ({ storePath, tempConfig }) => {
+    await withHostHookState("nova-host-hooks-injection-", async ({ storePath, tempConfig }) => {
       await updateSessionStore(storePath, (store) => {
         store["agent:main:main"] = {
           sessionId: "session-1",
@@ -1761,7 +1761,7 @@ describe("host-hook fixture plugin contract", () => {
     );
     setActivePluginRegistry(registry);
     await withHostHookState(
-      "openclaw-host-hooks-stale-",
+      "nova-host-hooks-stale-",
       async ({ storePath, tempConfig }) => {
         await updateSessionStore(storePath, (store) => {
           store["agent:main:main"] = {
@@ -1842,7 +1842,7 @@ describe("host-hook fixture plugin contract", () => {
       }),
     );
     setActivePluginRegistry(registry);
-    await withHostHookState("openclaw-host-hooks-order-", async ({ storePath, tempConfig }) => {
+    await withHostHookState("nova-host-hooks-order-", async ({ storePath, tempConfig }) => {
       await updateSessionStore(storePath, (store) => {
         store["agent:main:main"] = {
           sessionId: "session-1",
@@ -2488,7 +2488,7 @@ describe("host-hook fixture plugin contract", () => {
       ],
     });
 
-    await withHostHookState("openclaw-host-hooks-state-", async ({ tempConfig }) => {
+    await withHostHookState("nova-host-hooks-state-", async ({ tempConfig }) => {
       await runPluginHostCleanup({
         cfg: tempConfig,
         registry: registry.registry,
@@ -2837,7 +2837,7 @@ describe("host-hook fixture plugin contract", () => {
       },
     });
 
-    await withHostHookState("openclaw-host-hooks-store-", async ({ storePath, tempConfig }) => {
+    await withHostHookState("nova-host-hooks-store-", async ({ storePath, tempConfig }) => {
       await updateSessionStore(storePath, (store) => {
         store["agent:main:main"] = {
           sessionId: "session-1",
@@ -2913,7 +2913,7 @@ describe("host-hook fixture plugin contract", () => {
       }),
     ).toBe(true);
 
-    await withHostHookState("openclaw-host-hooks-run-context-", async ({ tempConfig }) => {
+    await withHostHookState("nova-host-hooks-run-context-", async ({ tempConfig }) => {
       await runPluginHostCleanup({
         cfg: tempConfig,
         registry,
@@ -2953,56 +2953,53 @@ describe("host-hook fixture plugin contract", () => {
       },
     });
 
-    await withHostHookState(
-      "openclaw-host-hooks-restart-state-",
-      async ({ storePath, tempConfig }) => {
-        await updateSessionStore(storePath, (store) => {
-          store["agent:main:main"] = {
-            sessionId: "session-1",
-            updatedAt: Date.now(),
-            pluginExtensions: {
-              "restart-state-fixture": { workflow: { state: "waiting" } },
-            },
-            pluginNextTurnInjections: {
-              "restart-state-fixture": [
-                {
-                  id: "resume",
-                  pluginId: "restart-state-fixture",
-                  text: "resume",
-                  placement: "prepend_context",
-                  createdAt: 1,
-                },
-              ],
-            },
-          };
-          return undefined;
-        });
+    await withHostHookState("nova-host-hooks-restart-state-", async ({ storePath, tempConfig }) => {
+      await updateSessionStore(storePath, (store) => {
+        store["agent:main:main"] = {
+          sessionId: "session-1",
+          updatedAt: Date.now(),
+          pluginExtensions: {
+            "restart-state-fixture": { workflow: { state: "waiting" } },
+          },
+          pluginNextTurnInjections: {
+            "restart-state-fixture": [
+              {
+                id: "resume",
+                pluginId: "restart-state-fixture",
+                text: "resume",
+                placement: "prepend_context",
+                createdAt: 1,
+              },
+            ],
+          },
+        };
+        return undefined;
+      });
 
-        const cleanupResult = await runPluginHostCleanup({
-          cfg: tempConfig,
-          registry: registry.registry,
-          pluginId: "restart-state-fixture",
-          reason: "restart",
-        });
-        expect(cleanupResult.failures).toEqual([]);
+      const cleanupResult = await runPluginHostCleanup({
+        cfg: tempConfig,
+        registry: registry.registry,
+        pluginId: "restart-state-fixture",
+        reason: "restart",
+      });
+      expect(cleanupResult.failures).toEqual([]);
 
-        const stored = loadSessionStore(storePath, { skipCache: true });
-        expect(stored["agent:main:main"]?.pluginExtensions).toEqual({
-          "restart-state-fixture": { workflow: { state: "waiting" } },
-        });
-        expect(stored["agent:main:main"]?.pluginNextTurnInjections).toEqual({
-          "restart-state-fixture": [
-            {
-              id: "resume",
-              pluginId: "restart-state-fixture",
-              text: "resume",
-              placement: "prepend_context",
-              createdAt: 1,
-            },
-          ],
-        });
-      },
-    );
+      const stored = loadSessionStore(storePath, { skipCache: true });
+      expect(stored["agent:main:main"]?.pluginExtensions).toEqual({
+        "restart-state-fixture": { workflow: { state: "waiting" } },
+      });
+      expect(stored["agent:main:main"]?.pluginNextTurnInjections).toEqual({
+        "restart-state-fixture": [
+          {
+            id: "resume",
+            pluginId: "restart-state-fixture",
+            text: "resume",
+            placement: "prepend_context",
+            createdAt: 1,
+          },
+        ],
+      });
+    });
   });
 
   it("cleans pending injections for plugins that registered no host-hook callbacks", async () => {
@@ -3015,7 +3012,7 @@ describe("host-hook fixture plugin contract", () => {
       }),
     );
     await withHostHookState(
-      "openclaw-host-hooks-injection-only-",
+      "nova-host-hooks-injection-only-",
       async ({ storePath, tempConfig }) => {
         await updateSessionStore(storePath, (store) => {
           store["agent:main:main"] = {

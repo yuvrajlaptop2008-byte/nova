@@ -1,10 +1,7 @@
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { executeSqliteQuerySync } from "../../infra/kysely-sync.js";
 import { getChildLogger } from "../../logging/logger.js";
-import {
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
+import { runNovaAgentWriteTransaction, type NovaAgentDatabase } from "../../state/nova-agent-db.js";
 import {
   materializeSqliteSessionStateDeletePlans,
   type SqliteSessionStateDeletePlan,
@@ -58,7 +55,7 @@ function collectSqliteSessionMaintenanceBaseKeys(
 }
 
 function hasStaleSqliteSessionEntryCandidate(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   pruneAfterMs: number,
   preserveKeys: ReadonlySet<string> | undefined,
 ): boolean {
@@ -76,7 +73,7 @@ function hasStaleSqliteSessionEntryCandidate(
 }
 
 export function applySqliteSessionEntryMaintenance(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   params: {
     activeSessionKey: string;
     archiveDirectory: string;
@@ -221,7 +218,7 @@ export function finalizeSqliteSessionEntryMaintenancePlansBestEffort(
   try {
     const materializedPlans = materializeSqliteSessionStateDeletePlans(stateDeletePlans);
     let archivedTranscripts: SessionLifecycleArchivedTranscript[] = [];
-    runOpenClawAgentWriteTransaction((database) => {
+    runNovaAgentWriteTransaction((database) => {
       deletePlannedSqliteLifecycleArtifactEntries(database, entryRemovals);
       archivedTranscripts = deleteMaterializedSqliteSessionStatePlans(database, materializedPlans);
     }, toDatabaseOptions(scope));

@@ -8,11 +8,11 @@ import {
   hasConfiguredAccountValue,
   listCombinedAccountIds,
   resolveMergedAccountConfig,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/account-resolution";
-import { resolveDangerousNameMatchingEnabled } from "openclaw/plugin-sdk/dangerous-name-runtime";
-import { parseStrictInteger } from "openclaw/plugin-sdk/number-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+  type NovaConfig,
+} from "nova/plugin-sdk/account-resolution";
+import { resolveDangerousNameMatchingEnabled } from "nova/plugin-sdk/dangerous-name-runtime";
+import { parseStrictInteger } from "nova/plugin-sdk/number-runtime";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
 import type {
   SynologyChatChannelConfig,
   ResolvedSynologyChatAccount,
@@ -20,7 +20,7 @@ import type {
 } from "./types.js";
 
 /** Extract the channel config from the full Nova config object. */
-function getChannelConfig(cfg: OpenClawConfig): SynologyChatChannelConfig | undefined {
+function getChannelConfig(cfg: NovaConfig): SynologyChatChannelConfig | undefined {
   return cfg?.channels?.["synology-chat"] as SynologyChatChannelConfig | undefined;
 }
 
@@ -93,7 +93,7 @@ function parseRateLimitPerMinute(raw: string | undefined): number {
  * List all configured account IDs for this channel.
  * Returns ["default"] if there's a base config, plus any named accounts.
  */
-export function listAccountIds(cfg: OpenClawConfig): string[] {
+export function listAccountIds(cfg: NovaConfig): string[] {
   const channelCfg = getChannelConfig(cfg);
   if (!channelCfg) {
     return [];
@@ -110,7 +110,7 @@ export function listAccountIds(cfg: OpenClawConfig): string[] {
  * Falls back to env vars for the "default" account.
  */
 export function resolveAccount(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId?: string | null,
 ): ResolvedSynologyChatAccount {
   const channelCfg = getChannelConfig(cfg) ?? {};

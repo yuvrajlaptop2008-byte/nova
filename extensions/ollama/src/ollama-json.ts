@@ -2,4 +2,4 @@
 export {
   parseJsonObjectPreservingUnsafeIntegers,
   parseJsonPreservingUnsafeIntegers,
-} from "openclaw/plugin-sdk/json-unsafe-integers";
+} from "nova/plugin-sdk/json-unsafe-integers";

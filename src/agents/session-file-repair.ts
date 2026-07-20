@@ -444,7 +444,7 @@ function isTranscriptOnlyDeliveryMirrorEntry(entry: unknown): boolean {
   const message = record.message as { role?: unknown; provider?: unknown; model?: unknown };
   return (
     message.role === "assistant" &&
-    normalizeTrimmedString(message.provider) === "openclaw" &&
+    normalizeTrimmedString(message.provider) === "nova" &&
     (normalizeTrimmedString(message.model) === "delivery-mirror" ||
       normalizeTrimmedString(message.model) === "gateway-injected")
   );

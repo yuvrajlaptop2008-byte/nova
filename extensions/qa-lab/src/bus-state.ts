@@ -33,7 +33,7 @@ import type {
   QaBusWaitForInput,
 } from "./runtime-api.js";
 
-const DEFAULT_BOT_ID = "openclaw";
+const DEFAULT_BOT_ID = "nova";
 const DEFAULT_BOT_NAME = "Nova QA";
 
 type QaBusEventSeed =

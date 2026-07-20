@@ -14,7 +14,7 @@ import {
 } from "../config/config.js";
 import { logConfigUpdated } from "../config/logging.js";
 import { ConfigMutationConflictError } from "../config/mutate.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { ensureControlUiAssetsBuilt } from "../infra/control-ui-assets.js";
 import { formatWindowsGatewayFirewallGuidance } from "../infra/windows-gateway-firewall-diagnostics.js";
 import { commitConfigWithPendingPluginInstalls } from "../plugins/install-record-commit.js";
@@ -83,7 +83,7 @@ function loadSetupPluginConfigModule(): Promise<SetupPluginConfigModule> {
 }
 
 async function resolveGatewaySecretInputForWizard(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   value: unknown;
   path: string;
 }): Promise<string | undefined> {
@@ -100,7 +100,7 @@ async function resolveGatewaySecretInputForWizard(params: {
 }
 
 async function runGatewayHealthCheck(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runtime: RuntimeEnv;
   port: number;
 }): Promise<void> {
@@ -140,8 +140,8 @@ async function runGatewayHealthCheck(params: {
     note(
       [
         "Docs:",
-        "https://docs.openclaw.ai/gateway/health",
-        "https://docs.openclaw.ai/gateway/troubleshooting",
+        "https://docs.nova.ai/gateway/health",
+        "https://docs.nova.ai/gateway/troubleshooting",
       ].join("\n"),
       "Health check help",
     );
@@ -181,7 +181,7 @@ async function promptChannelMode(runtime: RuntimeEnv): Promise<ChannelsWizardMod
         {
           value: "remove",
           label: "Remove channel config",
-          hint: "Delete channel tokens/settings from openclaw.json",
+          hint: "Delete channel tokens/settings from nova.json",
         },
       ],
       initialValue: "configure",
@@ -191,11 +191,11 @@ async function promptChannelMode(runtime: RuntimeEnv): Promise<ChannelsWizardMod
 }
 
 async function promptWebToolsConfig(
-  nextConfig: OpenClawConfig,
+  nextConfig: NovaConfig,
   runtime: RuntimeEnv,
   prompter: ReturnType<typeof createClackPrompter>,
-): Promise<OpenClawConfig> {
-  type WebSearchConfig = NonNullable<NonNullable<OpenClawConfig["tools"]>["web"]>["search"];
+): Promise<NovaConfig> {
+  type WebSearchConfig = NonNullable<NonNullable<NovaConfig["tools"]>["web"]>["search"];
   const existingSearch = nextConfig.tools?.web?.search;
   const existingFetch = nextConfig.tools?.web?.fetch;
   const { isCodexNativeWebSearchRelevant } = await import("../agents/codex-native-web-search.js");
@@ -210,7 +210,7 @@ async function promptWebToolsConfig(
     [
       "Web search lets your agent look things up online using the `web_search` tool.",
       "Choose a managed provider now, and Codex-capable models can also use native Codex web search.",
-      "Docs: https://docs.openclaw.ai/tools/web",
+      "Docs: https://docs.nova.ai/tools/web",
     ].join("\n"),
     "Web search",
   );
@@ -308,7 +308,7 @@ async function promptWebToolsConfig(
           [
             "No web search providers are currently available under this plugin policy.",
             "Enable plugins or remove deny rules, then rerun configure.",
-            "Docs: https://docs.openclaw.ai/tools/web",
+            "Docs: https://docs.nova.ai/tools/web",
           ].join("\n"),
           "Web search",
         );
@@ -389,9 +389,7 @@ export async function runConfigureWizard(
         }).readConfigFileSnapshotForWrite()
       ).snapshot;
     let currentBaseHash = snapshot.hash;
-    const baseConfig: OpenClawConfig = snapshot.valid
-      ? (snapshot.sourceConfig ?? snapshot.config)
-      : {};
+    const baseConfig: NovaConfig = snapshot.valid ? (snapshot.sourceConfig ?? snapshot.config) : {};
 
     if (snapshot.exists) {
       const title = snapshot.valid ? "Existing config detected" : "Invalid config";
@@ -401,14 +399,14 @@ export async function runConfigureWizard(
           [
             ...snapshot.issues.map((iss) => `- ${iss.path}: ${iss.message}`),
             "",
-            "Docs: https://docs.openclaw.ai/gateway/configuration",
+            "Docs: https://docs.nova.ai/gateway/configuration",
           ].join("\n"),
           "Config issues",
         );
       }
       if (!snapshot.valid) {
         outro(
-          `Config invalid. Run \`${formatCliCommand("openclaw doctor")}\` to repair it, then re-run configure.`,
+          `Config invalid. Run \`${formatCliCommand("nova doctor")}\` to repair it, then re-run configure.`,
         );
         runtime.exit(1);
         return;
@@ -795,9 +793,7 @@ export async function runConfigureWizard(
       const remoteUrl = normalizeOptionalString(nextConfig.gateway?.remote?.url);
       if (remoteUrl) {
         note(
-          ["Remote Gateway:", remoteUrl, "Docs: https://docs.openclaw.ai/gateway/remote"].join(
-            "\n",
-          ),
+          ["Remote Gateway:", remoteUrl, "Docs: https://docs.nova.ai/gateway/remote"].join("\n"),
           "Gateway",
         );
       }
@@ -870,7 +866,7 @@ export async function runConfigureWizard(
         `Gateway WS: ${displayLinks.wsUrl}`,
         gatewayStatusLine,
         ...windowsFirewallLines,
-        "Docs: https://docs.openclaw.ai/web/control-ui",
+        "Docs: https://docs.nova.ai/web/control-ui",
       ].join("\n"),
       "Control UI",
     );

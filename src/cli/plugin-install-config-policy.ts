@@ -48,7 +48,7 @@ function readBundledInstallRecoveryMetadata(rootDir: string): {
   const manifest = loadPluginManifest(rootDir, false);
   const pluginId = manifest.ok ? manifest.manifest.id : undefined;
   const parsed = tryReadJsonSync<{
-    openclaw?: {
+    nova?: {
       install?: {
         allowInvalidConfigRecovery?: boolean;
       };
@@ -56,7 +56,7 @@ function readBundledInstallRecoveryMetadata(rootDir: string): {
   }>(packageJsonPath);
   return {
     ...(pluginId ? { pluginId } : {}),
-    allowInvalidConfigRecovery: parsed?.openclaw?.install?.allowInvalidConfigRecovery === true,
+    allowInvalidConfigRecovery: parsed?.nova?.install?.allowInvalidConfigRecovery === true,
   };
 }
 

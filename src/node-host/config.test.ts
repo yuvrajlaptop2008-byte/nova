@@ -8,21 +8,21 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
 import { configureNodeHost, loadNodeHostConfig, type NodeHostConfig } from "./config.js";
 
 const fixtureDigest = ["fixture", "digest"].join("-");
 
 function readStoredToken(env: NodeJS.ProcessEnv): string | null | undefined {
-  const database = openOpenClawStateDatabase({ env });
+  const database = openNovaStateDatabase({ env });
   return executeSqliteQueryTakeFirstSync(
     database.db,
-    getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, "node_host_config">>(database.db)
+    getNodeSqliteKysely<Pick<NovaStateKyselyDatabase, "node_host_config">>(database.db)
       .selectFrom("node_host_config")
       .select("token")
       .where("config_key", "=", "current"),
@@ -138,13 +138,13 @@ async function runConcurrentImplicitConfigures(
 describe("node-host SQLite config", () => {
   const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
     afterEach(() => {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       cleanup();
     });
   });
 
   function makeTestEnv(): { env: NodeJS.ProcessEnv; stateDir: string } {
-    const stateDir = tempDirs.make("openclaw-node-host-config-");
+    const stateDir = tempDirs.make("nova-node-host-config-");
     return { env: { ...process.env, NOVA_STATE_DIR: stateDir }, stateDir };
   }
 
@@ -159,7 +159,7 @@ describe("node-host SQLite config", () => {
         port: 18443,
         tls: false,
         tlsFingerprint: fixtureDigest,
-        contextPath: "/openclaw-gw",
+        contextPath: "/nova-gw",
       },
       env,
       nowMs: 1_234,
@@ -175,10 +175,10 @@ describe("node-host SQLite config", () => {
         port: 18443,
         tls: false,
         tlsFingerprint: fixtureDigest,
-        contextPath: "/openclaw-gw",
+        contextPath: "/nova-gw",
       },
     });
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await expect(loadNodeHostConfig(env)).resolves.toEqual(configured);
     await expect(fs.stat(path.join(stateDir, "node.json"))).rejects.toMatchObject({
       code: "ENOENT",
@@ -203,15 +203,15 @@ describe("node-host SQLite config", () => {
       nowMs: 2,
     });
     expect(enabled.installedAppsSharing).toBe(true);
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await expect(loadNodeHostConfig(env)).resolves.toMatchObject({ installedAppsSharing: true });
   });
 
   it("adds the gateway context-path column to an existing state database", async () => {
     const { env } = makeTestEnv();
-    const database = openOpenClawStateDatabase({ env });
+    const database = openNovaStateDatabase({ env });
     database.db.exec("ALTER TABLE node_host_config DROP COLUMN gateway_context_path");
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
 
     const configured = await configureNodeHost({
       fallbackDisplayName: "node",
@@ -222,7 +222,7 @@ describe("node-host SQLite config", () => {
     });
 
     expect(configured.gateway?.contextPath).toBe("/upgraded");
-    const columns = openOpenClawStateDatabase({ env })
+    const columns = openNovaStateDatabase({ env })
       .db.prepare("PRAGMA table_info(node_host_config)")
       .all() as Array<{ name?: unknown }>;
     expect(columns).toContainEqual(expect.objectContaining({ name: "gateway_context_path" }));
@@ -273,11 +273,11 @@ describe("node-host SQLite config", () => {
 
   it("rejects corrupt canonical rows instead of rotating identity", async () => {
     const { env } = makeTestEnv();
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         executeSqliteQuerySync(
           db,
-          getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, "node_host_config">>(db)
+          getNodeSqliteKysely<Pick<NovaStateKyselyDatabase, "node_host_config">>(db)
             .insertInto("node_host_config")
             .values({
               config_key: "current",
@@ -305,11 +305,11 @@ describe("node-host SQLite config", () => {
 
   it("never reads legacy token material and nulls it on every configure", async () => {
     const { env } = makeTestEnv();
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         executeSqliteQuerySync(
           db,
-          getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, "node_host_config">>(db)
+          getNodeSqliteKysely<Pick<NovaStateKyselyDatabase, "node_host_config">>(db)
             .insertInto("node_host_config")
             .values({
               config_key: "current",
@@ -349,10 +349,10 @@ describe("node-host SQLite config", () => {
         await fs.symlink(path.join(stateDir, "missing-node.json"), sourcePath);
       }
 
-      await expect(loadNodeHostConfig(env)).rejects.toThrow("openclaw doctor --fix");
+      await expect(loadNodeHostConfig(env)).rejects.toThrow("nova doctor --fix");
       await expect(
         configureNodeHost({ fallbackDisplayName: "node", gateway: {}, env }),
-      ).rejects.toThrow("openclaw doctor --fix");
+      ).rejects.toThrow("nova doctor --fix");
     },
   );
 });

@@ -125,9 +125,7 @@ function classifyConfigWriteSource(record: Extract<ConfigAuditRecord, { event: "
   if (record.origin) {
     return record.origin;
   }
-  const launcherIndex = record.argv.findIndex((arg) =>
-    /(?:^|[/\\])openclaw(?:\.m?js)?$/i.test(arg),
-  );
+  const launcherIndex = record.argv.findIndex((arg) => /(?:^|[/\\])nova(?:\.m?js)?$/i.test(arg));
   let command: string | undefined;
   if (launcherIndex >= 0) {
     for (let index = launcherIndex + 1; index < record.argv.length; index += 1) {
@@ -613,10 +611,8 @@ export function listSystemChanges(
 }
 
 export const systemChangesHandlers: GatewayRequestHandlers = {
-  "openclaw.changes.list": ({ params, respond }) => {
-    if (
-      !assertValidParams(params, validateSystemChangesListParams, "openclaw.changes.list", respond)
-    ) {
+  "nova.changes.list": ({ params, respond }) => {
+    if (!assertValidParams(params, validateSystemChangesListParams, "nova.changes.list", respond)) {
       return;
     }
     try {

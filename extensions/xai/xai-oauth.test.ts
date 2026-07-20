@@ -1,10 +1,7 @@
 // Xai tests cover xai oauth plugin behavior.
-import type { ProviderAuthContext } from "openclaw/plugin-sdk/plugin-entry";
-import {
-  createRuntimeEnv,
-  createTestWizardPrompter,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { OAuthCredential } from "openclaw/plugin-sdk/provider-auth";
+import type { ProviderAuthContext } from "nova/plugin-sdk/plugin-entry";
+import { createRuntimeEnv, createTestWizardPrompter } from "nova/plugin-sdk/plugin-test-runtime";
+import type { OAuthCredential } from "nova/plugin-sdk/provider-auth";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createXaiDeviceCodeAuthMethod,
@@ -104,7 +101,7 @@ describe("xAI OAuth", () => {
       expect(body).toContain(`client_id=${encodeURIComponent(XAI_OAUTH_CLIENT_ID)}`);
       expect(body).toContain("refresh_token=refresh-1");
       const headers = new Headers(init?.headers ?? {});
-      expect(headers.get("user-agent")).toBe("openclaw/2026.3.22");
+      expect(headers.get("user-agent")).toBe("nova/2026.3.22");
       return jsonResponse({
         access_token: "access-2",
         expires_in: 120,

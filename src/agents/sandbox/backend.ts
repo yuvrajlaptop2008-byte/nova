@@ -32,7 +32,7 @@ export type {
   SandboxBackendWorkdirValidator,
 } from "./backend-handle.types.js";
 
-const SANDBOX_BACKEND_FACTORIES_STATE_KEY = Symbol.for("openclaw.sandboxBackendFactories");
+const SANDBOX_BACKEND_FACTORIES_STATE_KEY = Symbol.for("nova.sandboxBackendFactories");
 
 // Process-wide sandbox backend registry. Tests and plugins can install temporary
 // factories while core still auto-registers the bundled Docker and SSH backends.

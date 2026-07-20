@@ -1,16 +1,13 @@
 // Copilot tests cover harness plugin behavior.
 import type { CopilotClient } from "@github/copilot-sdk";
-import { attachModelProviderRequestTransport } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { attachModelProviderRequestTransport } from "nova/plugin-sdk/agent-harness-runtime";
 import type {
   AgentHarnessAttemptParams,
   AgentHarnessAttemptResult,
   AgentHarnessCompactParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import {
-  initializeGlobalHookRunner,
-  resetGlobalHookRunner,
-} from "openclaw/plugin-sdk/hook-runtime";
-import { createMockPluginRegistry } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { initializeGlobalHookRunner, resetGlobalHookRunner } from "nova/plugin-sdk/hook-runtime";
+import { createMockPluginRegistry } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCopilotAgentHarness, type CopilotSessionBinding } from "./harness.js";
 import type { resolvePoolAcquire } from "./src/attempt.js";
@@ -285,7 +282,7 @@ describe("createCopilotAgentHarness", () => {
       ["deepinfra", ["deepinfra"]],
       ["fireworks", ["fireworks"]],
       ["github", ["github"]],
-      ["openclaw", ["openclaw"]],
+      ["nova", ["nova"]],
       ["sglang", ["sglang"]],
       ["together", ["together"]],
       ["vllm", ["vllm"]],
@@ -618,7 +615,7 @@ describe("createCopilotAgentHarness", () => {
       expect(deleteSession).toHaveBeenCalledTimes(1);
     });
 
-    it("does not invoke deleteSession for a session belonging to a different openclawSessionId", async () => {
+    it("does not invoke deleteSession for a session belonging to a different novaSessionId", async () => {
       const pool = makePoolMock();
       const deleteSession = vi.fn().mockResolvedValue(undefined);
       const client = createMockCopilotClient({ deleteSession });

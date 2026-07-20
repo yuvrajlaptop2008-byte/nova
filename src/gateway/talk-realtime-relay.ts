@@ -2,7 +2,7 @@
 // Bridges browser Talk audio sessions with realtime voice provider plugins.
 import { randomUUID } from "node:crypto";
 import { resolveExpiresAtMsFromDurationMs } from "@nova/normalization-core/number-coercion";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import type { RealtimeVoiceProviderPlugin } from "../plugins/types.js";
 import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
@@ -162,7 +162,7 @@ type RelaySession = {
   toolResultEpoch: number;
   forcedConsults: RealtimeVoiceForcedConsultCoordinator;
   transcript: RealtimeVoiceTranscriptEntry[];
-  voiceConfig?: OpenClawConfig;
+  voiceConfig?: NovaConfig;
   voiceSessionCreated: boolean;
   voiceTranscriptSeq: number;
   voiceTranscriptWrites: Promise<void>;
@@ -172,7 +172,7 @@ type RelaySession = {
 type CreateTalkRealtimeRelaySessionParams = {
   context: GatewayRequestContext;
   connId: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider: RealtimeVoiceProviderPlugin;
   providerConfig: RealtimeVoiceProviderConfig;
   instructions: string;
@@ -1104,7 +1104,7 @@ function scheduleForcedAgentConsult(session: RelaySession | undefined, question:
       args: {
         question: handle.question,
         context:
-          "The realtime provider produced a final user transcript without invoking openclaw_agent_consult, so Nova is forcing the consult for realtime Talk.",
+          "The realtime provider produced a final user transcript without invoking nova_agent_consult, so Nova is forcing the consult for realtime Talk.",
         responseStyle: "Reply in a concise spoken tone.",
       },
       talkEvent: session.talk.emit({
@@ -1561,7 +1561,7 @@ export async function steerTalkRealtimeRelayAgentRun(params: {
       type: "tool.progress",
       turnId,
       payload: {
-        name: "openclaw_agent_control",
+        name: "nova_agent_control",
         phase: finalResult.mode,
         result: finalResult,
       },

@@ -1,24 +1,24 @@
 // Memory Core plugin module implements tools.shared behavior.
-import { optionalFiniteNumberSchema, stringEnum } from "openclaw/plugin-sdk/channel-actions";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { optionalFiniteNumberSchema, stringEnum } from "nova/plugin-sdk/channel-actions";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 import {
   listMemoryCorpusSupplements,
   resolveMemorySearchConfig,
   resolveSessionAgentIds,
   type MemoryCorpusSearchResult,
   type AnyAgentTool,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/memory-core-host-runtime-core";
-import type { PluginStateLeaseRunner } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+  type NovaConfig,
+} from "nova/plugin-sdk/memory-core-host-runtime-core";
+import type { PluginStateLeaseRunner } from "nova/plugin-sdk/plugin-state-runtime";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import { Type } from "typebox";
 import type { MemoryCoreAcquireLocalService } from "./memory/embedding-local-service.js";
 type MemorySearchManagerResult = Awaited<
   ReturnType<(typeof import("./memory/index.js"))["getMemorySearchManager"]>
 >;
 type MemoryToolOptions = {
-  config?: OpenClawConfig;
-  getConfig?: () => OpenClawConfig | undefined;
+  config?: NovaConfig;
+  getConfig?: () => NovaConfig | undefined;
   agentId?: string;
   agentSessionKey?: string;
   sandboxed?: boolean;
@@ -60,7 +60,7 @@ function resolveMemoryToolContext(options: MemoryToolOptions) {
 }
 
 export async function getMemoryManagerContextWithPurpose(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   purpose?: "default" | "status" | "cli";
   acquireLocalService?: MemoryCoreAcquireLocalService;
@@ -100,7 +100,7 @@ export function createMemoryTool(params: {
   name: string;
   description: string;
   parameters: typeof MemorySearchSchema | typeof MemoryGetSchema;
-  execute: (ctx: { cfg: OpenClawConfig; agentId: string }) => AnyAgentTool["execute"];
+  execute: (ctx: { cfg: NovaConfig; agentId: string }) => AnyAgentTool["execute"];
 }): AnyAgentTool | null {
   const ctx = resolveMemoryToolContext(params.options);
   if (!ctx) {

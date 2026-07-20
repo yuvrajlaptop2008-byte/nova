@@ -1,7 +1,7 @@
 // Clickclack tests cover accounts plugin behavior.
 import fs from "node:fs";
 import path from "node:path";
-import { withTempDir } from "openclaw/plugin-sdk/test-env";
+import { withTempDir } from "nova/plugin-sdk/test-env";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   listClickClackAccountIds,
@@ -268,7 +268,7 @@ describe("ClickClack account resolution", () => {
           workspace: "default",
           discussions: {
             enabled: true,
-            controlUrlBase: "https://team.openclaw.ai/",
+            controlUrlBase: "https://team.nova.ai/",
           },
           accounts: {
             support: {
@@ -283,13 +283,13 @@ describe("ClickClack account resolution", () => {
     expect(resolveClickClackAccount({ cfg }).discussions).toEqual({
       enabled: true,
       workspace: "default",
-      controlUrlBase: "https://team.openclaw.ai/",
+      controlUrlBase: "https://team.nova.ai/",
       section: "Sessions",
     });
     expect(resolveClickClackAccount({ cfg, accountId: "support" }).discussions).toEqual({
       enabled: true,
       workspace: "operations",
-      controlUrlBase: "https://team.openclaw.ai/",
+      controlUrlBase: "https://team.nova.ai/",
       section: "Live work",
     });
   });

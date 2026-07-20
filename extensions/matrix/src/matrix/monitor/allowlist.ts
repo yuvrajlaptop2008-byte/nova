@@ -1,10 +1,7 @@
 // Matrix plugin module implements allowlist behavior.
-import {
-  resolveAllowlistMatchByCandidates,
-  type AllowlistMatch,
-} from "openclaw/plugin-sdk/allow-from";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-normalization-runtime";
+import { resolveAllowlistMatchByCandidates, type AllowlistMatch } from "nova/plugin-sdk/allow-from";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-normalization-runtime";
 
 function normalizeAllowList(list?: Array<string | number>) {
   return normalizeStringEntries(list);

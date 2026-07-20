@@ -4,4 +4,4 @@ export {
   listRuntimeVideoGenerationProviders,
   type GenerateVideoParams,
   type GenerateVideoRuntimeResult,
-} from "openclaw/plugin-sdk/video-generation-runtime";
+} from "nova/plugin-sdk/video-generation-runtime";

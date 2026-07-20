@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-release-typed-onboarding-e2e" NOVA_RELEASE_TYPED_ONBOARDING_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-release-typed-onboarding-e2e" NOVA_RELEASE_TYPED_ONBOARDING_E2E_IMAGE)"
 SKIP_BUILD="${NOVA_RELEASE_TYPED_ONBOARDING_E2E_SKIP_BUILD:-0}"
 run_log=""
 cleanup() {

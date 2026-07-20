@@ -47,7 +47,7 @@ import { bindSimpleCompletionModelResolverWorkspace } from "../../agents/simple-
 import { normalizeCodexResponsesBaseUrlForOpenAISdk } from "../../agents/simple-completion-transport.js";
 import { normalizeUsage, hasNonzeroUsage } from "../../agents/usage.js";
 import { getRuntimeConfig } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { emitTrustedDiagnosticEvent, isDiagnosticsEnabled } from "../../infra/diagnostic-events.js";
 import { resolveDiagnosticModelContentCapturePolicy } from "../../infra/diagnostic-llm-content.js";
 import {
@@ -84,7 +84,7 @@ type WorkerInferenceSessionTarget = Pick<
 > & { agentId: string };
 
 type WorkerInferenceUsageParams = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   target: WorkerInferenceSessionTarget;
   request: WorkerInferenceStartParams;
   model: Model;
@@ -96,7 +96,7 @@ type WorkerInferenceUsageParams = {
 type WorkerInferenceRuntimeDependencies = {
   now: () => number;
   resolveSessionTarget: (
-    config: OpenClawConfig,
+    config: NovaConfig,
     sessionId: string,
   ) => WorkerInferenceSessionTarget | undefined;
   acquireRuntimeLease: typeof acquireAgentRunPreparedModelRuntime;
@@ -114,7 +114,7 @@ type WorkerInferenceRuntimeDependencies = {
 };
 
 function resolveWorkerInferenceAuthProfileMode(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentDir: string;
   profileId: string;
 }): string | undefined {
@@ -130,11 +130,11 @@ function resolveWorkerInferenceAuthProfileMode(params: {
 }
 
 export function projectWorkerInferenceModelRouteConfig(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   provider: string;
   modelId: string;
   authMode?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   const authRequirement = resolveProviderModelRouteAuthRequirement(params.authMode);
   if (!authRequirement) {
     return params.config;
@@ -409,7 +409,7 @@ function resolveReturnedProfileSource(
 }
 
 async function resolveApprovedModel(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   target: WorkerInferenceSessionTarget;
   request: WorkerInferenceStartParams;
   dependencies: WorkerInferenceRuntimeDependencies;
@@ -417,7 +417,7 @@ async function resolveApprovedModel(params: {
   | {
       provider: string;
       model: string;
-      config: OpenClawConfig;
+      config: NovaConfig;
       agentDir: string;
       workspaceDir: string;
       prepared: PreparedSimpleCompletionModel;

@@ -8,7 +8,7 @@ import {
   WORKTREE_GC_INTERVAL_MS,
 } from "../agents/worktrees/service.js";
 import type { HealthSummary } from "../commands/health.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { sweepStaleRunContexts } from "../infra/agent-events.js";
 import { pruneOrphanedDeliveryQueueMedia } from "../infra/outbound/delivery-queue-media-spool.js";
 import { cleanOldMedia } from "../media/store.js";
@@ -79,7 +79,7 @@ export function startGatewayMaintenanceTimers(params: {
   agentRunSeq: Map<string, number>;
   nodeSendToSession: (sessionKey: string, event: string, payload: unknown) => void;
   mediaCleanupTtlMs?: number;
-  getRuntimeConfig: () => OpenClawConfig;
+  getRuntimeConfig: () => NovaConfig;
   runWorktreeGc?: () => Promise<unknown>;
   runDeliveryQueueMediaGc?: () => Promise<unknown>;
   enableSkillCurator?: boolean;

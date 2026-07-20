@@ -9,7 +9,7 @@ import {
   type CodexBundleMcpThreadConfig,
   type EmbeddedRunAttemptParams,
   type resolveSandboxContext,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   CODEX_APP_SERVER_UNSUBSCRIBE_TIMEOUT_MS,
   CodexAppServerUnsafeSubscriptionError,
@@ -39,7 +39,7 @@ import {
 } from "./config.js";
 import {
   resolveCodexAppServerExecutionCwd,
-  resolveCodexExternalSandboxPolicyForOpenClawSandbox,
+  resolveCodexExternalSandboxPolicyForNovaSandbox,
   resolveCodexSandboxEnvironmentSelection,
   shouldRequireCodexSandboxExecServerEnvironment,
 } from "./dynamic-tool-build.js";
@@ -409,7 +409,7 @@ export async function startCodexAttemptThread(params: {
               remoteWorkspaceRoot: params.appServer.remoteWorkspaceRoot,
             });
             const startupSandboxPolicy = startupSandboxEnvironment
-              ? resolveCodexExternalSandboxPolicyForOpenClawSandbox(params.sandbox)
+              ? resolveCodexExternalSandboxPolicyForNovaSandbox(params.sandbox)
               : undefined;
             let startupReservation: CodexThreadRouteReservation | undefined;
             const releaseStartupReservation = () => {

@@ -43,7 +43,7 @@ async function readTextFileTail(
   }
 }
 
-export async function extractLastOpenClawVersionFromLog(
+export async function extractLastNovaVersionFromLog(
   logPath: string,
   pattern = NOVA_VERSION_PATTERN,
   maxBytes = DEFAULT_TEXT_FILE_TAIL_BYTES,

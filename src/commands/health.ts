@@ -20,7 +20,7 @@ import type { ChannelAccountSnapshot } from "../channels/plugins/types.public.js
 import { probeGatewayStatus } from "../cli/daemon-cli/probe.js";
 import { withProgress } from "../cli/progress.js";
 import { resolveStorePath } from "../config/sessions/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { listContextEngineQuarantines } from "../context-engine/registry.js";
 import {
   buildGatewayConnectionDetails,
@@ -76,7 +76,7 @@ export type { HealthSummary } from "./health.types.js";
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 
-const debugHealth = (cfg: OpenClawConfig | undefined, ...args: unknown[]) => {
+const debugHealth = (cfg: NovaConfig | undefined, ...args: unknown[]) => {
   if (isDiagnosticFlagEnabled("health", cfg)) {
     console.warn("[health:debug]", ...args);
   }
@@ -88,7 +88,7 @@ function isGatewayHealthAuthUnavailableError(error: unknown): boolean {
 
 export async function emitReachableGatewayAuthDiagnostic(params: {
   error: unknown;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: RuntimeEnv;
   timeoutMs?: number;
   token?: string;
@@ -330,10 +330,10 @@ export function formatConfigReloadHealthLine(summary: HealthSummary): string | n
   return "Config hot reload: disabled (watcher retries exhausted; restart the gateway to restore it)";
 }
 
-const resolveHeartbeatSummary = (cfg: OpenClawConfig, agentId: string) =>
+const resolveHeartbeatSummary = (cfg: NovaConfig, agentId: string) =>
   resolveHeartbeatSummaryForAgent(cfg, agentId);
 
-const resolveAgentOrder = (cfg: OpenClawConfig) => {
+const resolveAgentOrder = (cfg: NovaConfig) => {
   const defaultAgentId = resolveDefaultAgentId(cfg);
   const entries = Array.isArray(cfg.agents?.list) ? cfg.agents.list : [];
   const seen = new Set<string>();
@@ -461,7 +461,7 @@ const hasAccountValue = (account: unknown): boolean => account !== null && accou
 
 function resolveProbeAccountEnabled(params: {
   plugin: ChannelPlugin;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   account: unknown;
   diagnostics: string[];
@@ -483,7 +483,7 @@ function resolveProbeAccountEnabled(params: {
 
 async function resolveProbeAccountConfigured(params: {
   plugin: ChannelPlugin;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   account: unknown;
   diagnostics: string[];
@@ -506,7 +506,7 @@ async function resolveProbeAccountConfigured(params: {
 
 async function resolveHealthAccountContext(params: {
   plugin: ChannelPlugin;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
 }): Promise<{
   probeAccount: unknown;
@@ -805,13 +805,13 @@ export async function getHealthSnapshot(params?: {
   return summary;
 }
 
-/** Runs the `openclaw health` command against the gateway and renders JSON or text. */
+/** Runs the `nova health` command against the gateway and renders JSON or text. */
 export async function healthCommand(
   opts: {
     json?: boolean;
     timeoutMs?: number;
     verbose?: boolean;
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     token?: string;
     password?: string;
     localPortOverride?: number;
@@ -1128,12 +1128,12 @@ export async function healthCommand(
   }
 }
 
-async function readBestEffortHealthConfig(): Promise<OpenClawConfig> {
+async function readBestEffortHealthConfig(): Promise<NovaConfig> {
   const { readBestEffortConfig } = await loadConfigRuntime();
   return await readBestEffortConfig();
 }
 
-async function readRuntimeHealthConfig(): Promise<OpenClawConfig> {
+async function readRuntimeHealthConfig(): Promise<NovaConfig> {
   const { getRuntimeConfig } = await loadConfigRuntime();
   return getRuntimeConfig();
 }

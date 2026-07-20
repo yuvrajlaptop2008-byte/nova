@@ -21,7 +21,7 @@ export function resetAcpManagerTaskStateForTests(): void {
 export async function withAcpManagerTaskStateDir(
   run: (root: string) => Promise<void>,
 ): Promise<void> {
-  await withTempDir({ prefix: "openclaw-acp-manager-task-" }, async (root) => {
+  await withTempDir({ prefix: "nova-acp-manager-task-" }, async (root) => {
     const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
     setTestEnvValue("NOVA_STATE_DIR", root);
     resetAcpManagerTaskStateForTests();

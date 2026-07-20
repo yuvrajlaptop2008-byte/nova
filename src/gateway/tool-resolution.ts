@@ -15,7 +15,7 @@ import {
   type ExecSessionDefaults,
 } from "../agents/exec-defaults.js";
 import { createLazyExecTool, resolveExecToolConfig } from "../agents/lazy-exec-tool.js";
-import { createOpenClawTools } from "../agents/openclaw-tools.js";
+import { createNovaTools } from "../agents/nova-tools.js";
 import { resolveSandboxRuntimeStatus } from "../agents/sandbox/runtime-status.js";
 import { resolveSenderToolPolicy } from "../agents/sender-tool-policy.js";
 import {
@@ -46,7 +46,7 @@ import type {
 } from "../auto-reply/get-reply-options.types.js";
 import type { InboundEventKind } from "../channels/inbound-event/kind.js";
 import type { ConversationReadInvocationOrigin } from "../channels/plugins/conversation-read-origin.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveEventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import { logWarn } from "../logger.js";
 import type { PluginHookChannelContext } from "../plugins/hook-types.js";
@@ -62,7 +62,7 @@ type GatewayScopedToolSurface = "http" | "loopback";
 
 /** Resolve the tools visible to a gateway caller after agent, channel, and surface policy. */
 export function resolveGatewayScopedTools(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   runtimePolicySessionKey?: string;
   agentId?: string;
@@ -257,7 +257,7 @@ export function resolveGatewayScopedTools(params: {
     explicitDenylist.length > 0 ||
     excludedToolNames.length > 0;
 
-  const openClawTools = createOpenClawTools({
+  const novaTools = createNovaTools({
     agentSessionKey: params.sessionKey,
     requesterAgentIdOverride: agentId,
     agentChannel: params.messageProvider ?? undefined,
@@ -322,8 +322,8 @@ export function resolveGatewayScopedTools(params: {
   // CLI backends already own their local shell. This extra surface is deliberately
   // fixed to node so it cannot become a second path to Gateway-local execution.
   const baseTools = nodeExecSurface
-    ? openClawTools.filter((tool) => tool.name.trim().toLowerCase() !== "exec")
-    : openClawTools;
+    ? novaTools.filter((tool) => tool.name.trim().toLowerCase() !== "exec")
+    : novaTools;
   const allTools = includeNodeExecTool
     ? [
         ...baseTools,

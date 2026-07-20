@@ -153,7 +153,7 @@ describe("runAgentTurnWithFallback: conversation failures", () => {
     if (result.kind === "final") {
       expect(result.payload.text).toContain("Agent failed before reply");
       expect(result.payload.text).toContain("INVALID_ARGUMENT: some other failure");
-      expect(result.payload.text).toContain("Logs: openclaw logs --follow");
+      expect(result.payload.text).toContain("Logs: nova logs --follow");
     }
   });
 });

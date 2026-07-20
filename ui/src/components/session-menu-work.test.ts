@@ -5,11 +5,11 @@ import { fetchSessionMenuWork } from "./session-menu-work.ts";
 function pullRequest(overrides: Partial<ControlUiSessionPullRequest>): ControlUiSessionPullRequest {
   return {
     number: 1,
-    owner: "openclaw",
-    repo: "openclaw",
+    owner: "nova",
+    repo: "nova",
     branch: "feature/demo",
     title: "Demo",
-    url: "https://github.com/openclaw/openclaw/pull/1",
+    url: "https://github.com/nova/nova/pull/1",
     state: "open",
     ...overrides,
   };

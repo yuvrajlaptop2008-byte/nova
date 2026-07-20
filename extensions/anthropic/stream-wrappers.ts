@@ -2,26 +2,26 @@
  * Anthropic stream wrappers. They add beta headers, service tier/fast-mode
  * payload fields, and thinking-prefill cleanup around provider stream functions.
  */
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import { streamSimple } from "openclaw/plugin-sdk/llm";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import { streamSimple } from "nova/plugin-sdk/llm";
+import type { ProviderWrapStreamFnContext } from "nova/plugin-sdk/plugin-entry";
 import {
   resolveClaudeFable5ModelIdentity,
   resolveClaudeSonnet5ModelIdentity,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 import {
   applyAnthropicPayloadPolicyToParams,
   composeProviderStreamWrappers,
   createAnthropicThinkingPrefillPayloadWrapper,
   resolveAnthropicPayloadPolicy,
   streamWithPayloadPatch,
-} from "openclaw/plugin-sdk/provider-stream-shared";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/provider-stream-shared";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
 import {
   normalizeFastMode,
   normalizeLowercaseStringOrEmpty,
   readStringValue,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 
 const log = createSubsystemLogger("anthropic-stream");
 
@@ -153,10 +153,10 @@ export function createAnthropicBetaHeadersWrapper(
     const isOauth = isAnthropicOAuthApiKey(options?.apiKey);
     const effectiveBetas = betas.filter((beta) => beta !== ANTHROPIC_CONTEXT_1M_BETA_LEGACY);
 
-    const openClawBetas = isOauth
+    const novaBetas = isOauth
       ? (NOVA_OAUTH_ANTHROPIC_BETAS as readonly string[])
       : (NOVA_DEFAULT_ANTHROPIC_BETAS as readonly string[]);
-    const allBetas = [...new Set([...openClawBetas, ...effectiveBetas])];
+    const allBetas = [...new Set([...novaBetas, ...effectiveBetas])];
     return underlying(model, context, {
       ...options,
       headers: mergeAnthropicBetaHeader(options?.headers, allBetas),

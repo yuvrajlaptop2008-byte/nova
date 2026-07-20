@@ -1,12 +1,12 @@
-# OpenClaw Qwen Cloud Provider
+# Nova Qwen Cloud Provider
 
-Official OpenClaw provider plugin for Qwen Cloud.
+Official Nova provider plugin for Qwen Cloud.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/qwen-provider
-openclaw gateway restart
+nova plugins install @nova/qwen-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/qwen> for setup and configuration.
+See <https://docs.nova.ai/providers/qwen> for setup and configuration.

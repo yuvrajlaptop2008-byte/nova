@@ -28,7 +28,7 @@ const findSystemGatewayServicesMock = vi.hoisted(() =>
         label: string;
         detail: string;
         scope: "user" | "system";
-        marker?: "openclaw" | "clawdbot";
+        marker?: "nova" | "clawdbot";
         legacy?: boolean;
       }>
     >
@@ -95,9 +95,9 @@ import {
 } from "./systemd.js";
 
 const TEST_SERVICE_HOME = "/home/test";
-const TEST_MANAGED_HOME = "/tmp/openclaw-test-home";
-const GATEWAY_SERVICE = "openclaw-gateway.service";
-const NODE_SERVICE = "openclaw-node.service";
+const TEST_MANAGED_HOME = "/tmp/nova-test-home";
+const GATEWAY_SERVICE = "nova-gateway.service";
+const NODE_SERVICE = "nova-node.service";
 
 const createExecFileError = (
   message: string,
@@ -182,10 +182,10 @@ function mockReadGatewayServiceFile(
 }
 
 async function expectExecStartWithoutEnvironment(envFileLine: string) {
-  mockReadGatewayServiceFile(["[Service]", "ExecStart=/usr/bin/openclaw gateway run", envFileLine]);
+  mockReadGatewayServiceFile(["[Service]", "ExecStart=/usr/bin/nova gateway run", envFileLine]);
 
   const command = await readSystemdServiceExecStart({ HOME: TEST_SERVICE_HOME });
-  expect(command?.programArguments).toEqual(["/usr/bin/openclaw", "gateway", "run"]);
+  expect(command?.programArguments).toEqual(["/usr/bin/nova", "gateway", "run"]);
   expect(command?.environment).toBeUndefined();
 }
 
@@ -353,9 +353,9 @@ describe("systemd availability", () => {
       cb(null, "", "");
     });
 
-    await expect(
-      isSystemdUserServiceAvailable({ USER: "openclaw", SUDO_USER: "admin" }),
-    ).resolves.toBe(true);
+    await expect(isSystemdUserServiceAvailable({ USER: "nova", SUDO_USER: "admin" })).resolves.toBe(
+      true,
+    );
     expect(execFileMock).toHaveBeenCalledTimes(1);
   });
 });
@@ -381,7 +381,7 @@ describe("isSystemdServiceEnabled", () => {
     err.code = "ENOENT";
     vi.spyOn(fs, "access").mockRejectedValueOnce(err);
 
-    const result = await isSystemdServiceEnabled({ env: { HOME: "/tmp/openclaw-test-home" } });
+    const result = await isSystemdServiceEnabled({ env: { HOME: "/tmp/nova-test-home" } });
 
     expect(result).toBe(false);
     expect(execFileMock).not.toHaveBeenCalled();
@@ -485,7 +485,7 @@ describe("isSystemdServiceEnabled", () => {
     vi.spyOn(fs, "access").mockResolvedValue(undefined);
     execFileMock
       .mockImplementationOnce((_cmd, args, _opts, cb) => {
-        expect(args).toEqual(["--user", "is-enabled", "openclaw-gateway.service"]);
+        expect(args).toEqual(["--user", "is-enabled", "nova-gateway.service"]);
         const err = new Error("Failed to connect to bus") as Error & { code?: number };
         err.code = 1;
         cb(err, "", "Failed to connect to bus");
@@ -493,14 +493,14 @@ describe("isSystemdServiceEnabled", () => {
       .mockImplementationOnce((_cmd, args, _opts, cb) => {
         expect(args[0]).toBe("--machine");
         expect(args[1]).toMatch(/^[^@]+@$/);
-        expect(args.slice(2)).toEqual(["--user", "is-enabled", "openclaw-gateway.service"]);
+        expect(args.slice(2)).toEqual(["--user", "is-enabled", "nova-gateway.service"]);
         const err = new Error("permission denied") as Error & { code?: number };
         err.code = 1;
         cb(err, "", "permission denied");
       });
-    await expect(
-      isSystemdServiceEnabled({ env: { HOME: "/tmp/openclaw-test-home" } }),
-    ).rejects.toThrow("systemctl is-enabled unavailable: permission denied");
+    await expect(isSystemdServiceEnabled({ env: { HOME: "/tmp/nova-test-home" } })).rejects.toThrow(
+      "systemctl is-enabled unavailable: permission denied",
+    );
   });
 
   it("returns false when systemctl is-enabled exits with code 4 (not-found)", async () => {
@@ -509,12 +509,12 @@ describe("isSystemdServiceEnabled", () => {
       // On Ubuntu 24.04, `systemctl --user is-enabled <unit>` exits with
       // code 4 and prints "not-found" to stdout when the unit doesn't exist.
       const err = new Error(
-        "Command failed: systemctl --user is-enabled openclaw-gateway.service",
+        "Command failed: systemctl --user is-enabled nova-gateway.service",
       ) as Error & { code?: number };
       err.code = 4;
       cb(err, "not-found\n", "");
     });
-    const result = await isSystemdServiceEnabled({ env: { HOME: "/tmp/openclaw-test-home" } });
+    const result = await isSystemdServiceEnabled({ env: { HOME: "/tmp/nova-test-home" } });
     expect(result).toBe(false);
   });
 });
@@ -548,7 +548,7 @@ describe("isSystemdUnitActive", () => {
   });
 });
 
-describe("system-scope gateway unit detection (openclaw#87577)", () => {
+describe("system-scope gateway unit detection (nova#87577)", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     execFileMock.mockReset();
@@ -575,29 +575,29 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
   it("findInstalledSystemdGatewayScope prefers user scope when both exist", async () => {
     mockUnitFileLayout({
       user: true,
-      system: "/etc/systemd/system/openclaw-gateway.service",
+      system: "/etc/systemd/system/nova-gateway.service",
     });
     const result = await findInstalledSystemdGatewayScope({ HOME: TEST_MANAGED_HOME });
     expect(result?.scope).toBe("user");
     expect(result?.unitName).toBe(GATEWAY_SERVICE);
-    expect(result?.unitPath).toContain("/.config/systemd/user/openclaw-gateway.service");
+    expect(result?.unitPath).toContain("/.config/systemd/user/nova-gateway.service");
   });
 
   it("findInstalledSystemdGatewayScope detects system-scope unit in /etc/systemd/system", async () => {
-    mockUnitFileLayout({ system: "/etc/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/etc/systemd/system/nova-gateway.service" });
     const result = await findInstalledSystemdGatewayScope({ HOME: TEST_MANAGED_HOME });
     expect(result).toEqual({
       scope: "system",
       unitName: GATEWAY_SERVICE,
-      unitPath: "/etc/systemd/system/openclaw-gateway.service",
+      unitPath: "/etc/systemd/system/nova-gateway.service",
     });
   });
 
   it("findInstalledSystemdGatewayScope falls back to /usr/lib/systemd/system", async () => {
-    mockUnitFileLayout({ system: "/usr/lib/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/usr/lib/systemd/system/nova-gateway.service" });
     const result = await findInstalledSystemdGatewayScope({ HOME: TEST_MANAGED_HOME });
     expect(result?.scope).toBe("system");
-    expect(result?.unitPath).toBe("/usr/lib/systemd/system/openclaw-gateway.service");
+    expect(result?.unitPath).toBe("/usr/lib/systemd/system/nova-gateway.service");
   });
 
   it("findInstalledSystemdGatewayScope returns null when no unit file exists", async () => {
@@ -612,17 +612,17 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
     findSystemGatewayServicesMock.mockResolvedValueOnce([
       {
         platform: "linux",
-        label: "openclaw.service",
-        detail: "unit: /etc/systemd/system/openclaw.service",
+        label: "nova.service",
+        detail: "unit: /etc/systemd/system/nova.service",
         scope: "system",
-        marker: "openclaw",
+        marker: "nova",
       },
     ]);
     const result = await findInstalledSystemdGatewayScope({ HOME: TEST_MANAGED_HOME });
     expect(result).toEqual({
       scope: "system",
-      unitName: "openclaw.service",
-      unitPath: "/etc/systemd/system/openclaw.service",
+      unitName: "nova.service",
+      unitPath: "/etc/systemd/system/nova.service",
     });
   });
 
@@ -647,14 +647,14 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
     findSystemGatewayServicesMock.mockResolvedValueOnce([
       {
         platform: "linux",
-        label: "openclaw.service",
-        detail: "unit: /etc/systemd/system/openclaw.service",
+        label: "nova.service",
+        detail: "unit: /etc/systemd/system/nova.service",
         scope: "system",
-        marker: "openclaw",
+        marker: "nova",
       },
     ]);
     execFileMock.mockImplementationOnce((_cmd, args, _opts, cb) => {
-      expect(args).toEqual(["is-enabled", "openclaw.service"]);
+      expect(args).toEqual(["is-enabled", "nova.service"]);
       cb(null, "enabled\n", "");
     });
     await expect(isSystemdServiceEnabled({ env: { HOME: TEST_MANAGED_HOME } })).resolves.toBe(true);
@@ -665,10 +665,10 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
     findSystemGatewayServicesMock.mockResolvedValueOnce([
       {
         platform: "linux",
-        label: "openclaw.service",
-        detail: "unit: /etc/systemd/system/openclaw.service",
+        label: "nova.service",
+        detail: "unit: /etc/systemd/system/nova.service",
         scope: "system",
-        marker: "openclaw",
+        marker: "nova",
       },
     ]);
     mockEffectiveUid(1000);
@@ -676,14 +676,14 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
     await expect(
       restartSystemdService({ stdout, env: { HOME: TEST_MANAGED_HOME } }),
     ).rejects.toThrow(
-      /openclaw\.service is a system-scope unit \(\/etc\/systemd\/system\/openclaw\.service\); run `sudo systemctl restart openclaw\.service`/,
+      /nova\.service is a system-scope unit \(\/etc\/systemd\/system\/nova\.service\); run `sudo systemctl restart nova\.service`/,
     );
     expect(execFileMock).not.toHaveBeenCalled();
     expect(write).not.toHaveBeenCalled();
   });
 
   it("isSystemdServiceEnabled reports true for an enabled system-scope unit", async () => {
-    mockUnitFileLayout({ system: "/etc/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/etc/systemd/system/nova-gateway.service" });
     execFileMock.mockImplementationOnce((_cmd, args, _opts, cb) => {
       expect(args).toEqual(["is-enabled", GATEWAY_SERVICE]);
       cb(null, "enabled\n", "");
@@ -692,7 +692,7 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
   });
 
   it("isSystemdServiceEnabled reports false for a disabled system-scope unit", async () => {
-    mockUnitFileLayout({ system: "/etc/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/etc/systemd/system/nova-gateway.service" });
     execFileMock.mockImplementationOnce((_cmd, args, _opts, cb) => {
       expect(args).toEqual(["is-enabled", GATEWAY_SERVICE]);
       cb(createExecFileError("disabled", { code: 1 }), "disabled\n", "");
@@ -703,42 +703,37 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
   });
 
   it("readSystemdServiceRuntime queries the system manager for system-scope units", async () => {
-    mockUnitFileLayout({ system: "/etc/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/etc/systemd/system/nova-gateway.service" });
     execFileMock.mockImplementationOnce((_cmd, args, _opts, cb) => {
       expect(args[0]).toBe("show");
       expect(args).not.toContain("--user");
       cb(
         null,
-        [
-          "Id=openclaw-gateway.service",
-          "ActiveState=active",
-          "SubState=running",
-          "MainPID=4242",
-        ].join("\n"),
+        ["Id=nova-gateway.service", "ActiveState=active", "SubState=running", "MainPID=4242"].join(
+          "\n",
+        ),
         "",
       );
     });
     const runtime = await readSystemdServiceRuntime({ HOME: TEST_MANAGED_HOME });
     expect(runtime.status).toBe("running");
     expect(runtime.pid).toBe(4242);
-    expect(runtime.systemd?.unit).toBe("openclaw-gateway.service");
+    expect(runtime.systemd?.unit).toBe("nova-gateway.service");
   });
 
   it("restartSystemdService refuses to use the user manager when the unit is system-scope and the caller is not root", async () => {
-    mockUnitFileLayout({ system: "/etc/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/etc/systemd/system/nova-gateway.service" });
     mockEffectiveUid(1000);
     const { stdout, write } = createWritableStreamMock();
     await expect(
       restartSystemdService({ stdout, env: { HOME: TEST_MANAGED_HOME } }),
-    ).rejects.toThrow(
-      /system-scope unit .* run `sudo systemctl restart openclaw-gateway\.service`/,
-    );
+    ).rejects.toThrow(/system-scope unit .* run `sudo systemctl restart nova-gateway\.service`/);
     expect(execFileMock).not.toHaveBeenCalled();
     expect(write).not.toHaveBeenCalled();
   });
 
   it("restartSystemdService restarts the system unit directly when running as root", async () => {
-    mockUnitFileLayout({ system: "/etc/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/etc/systemd/system/nova-gateway.service" });
     mockEffectiveUid(0);
     execFileMock
       .mockImplementationOnce((_cmd, args, _opts, cb) => {
@@ -756,11 +751,11 @@ describe("system-scope gateway unit detection (openclaw#87577)", () => {
   });
 
   it("stopSystemdService surfaces sudo guidance for system-scope units without root", async () => {
-    mockUnitFileLayout({ system: "/etc/systemd/system/openclaw-gateway.service" });
+    mockUnitFileLayout({ system: "/etc/systemd/system/nova-gateway.service" });
     mockEffectiveUid(1000);
     const { stdout } = createWritableStreamMock();
     await expect(stopSystemdService({ stdout, env: { HOME: TEST_MANAGED_HOME } })).rejects.toThrow(
-      /sudo systemctl stop openclaw-gateway\.service/,
+      /sudo systemctl stop nova-gateway\.service/,
     );
     expect(execFileMock).not.toHaveBeenCalled();
   });
@@ -770,7 +765,7 @@ describe("isNonFatalSystemdInstallProbeError", () => {
   it("matches wrapper-only WSL install probe failures", () => {
     expect(
       isNonFatalSystemdInstallProbeError(
-        new Error("Command failed: systemctl --user is-enabled openclaw-gateway.service"),
+        new Error("Command failed: systemctl --user is-enabled nova-gateway.service"),
       ),
     ).toBe(true);
   });
@@ -910,7 +905,7 @@ describe("readSystemdServiceRuntime", () => {
         cb(
           null,
           [
-            "Id=openclaw-gateway.service",
+            "Id=nova-gateway.service",
             "ActiveState=active",
             "SubState=running",
             "MainPID=1234",
@@ -932,7 +927,7 @@ describe("readSystemdServiceRuntime", () => {
       lastExitStatus: 0,
       lastExitReason: "running",
       systemd: {
-        unit: "openclaw-gateway.service",
+        unit: "nova-gateway.service",
         killMode: "process",
         tasksCurrent: 807,
         memoryCurrent: 11_918_534_246,
@@ -941,7 +936,7 @@ describe("readSystemdServiceRuntime", () => {
   });
 
   // Regression for #84698: status probes must bound the systemctl subprocess so a
-  // wedged systemd socket cannot hang `openclaw status` (which advertises --timeout).
+  // wedged systemd socket cannot hang `nova status` (which advertises --timeout).
   it("passes a kill-backed timeout to systemctl when a read deadline is set", async () => {
     execFileMock.mockReset();
     execFileMock.mockImplementation((_cmd, _args, _opts, cb) => cb(null, "", ""));
@@ -976,7 +971,7 @@ describe("readSystemdServiceRuntime", () => {
         cb(
           null,
           [
-            "Id=openclaw-gateway.service",
+            "Id=nova-gateway.service",
             "ActiveState=failed",
             "SubState=failed",
             "Result=exit-code",
@@ -1007,12 +1002,12 @@ describe("resolveSystemdUserUnitPath", () => {
     {
       name: "uses default service name when NOVA_PROFILE is unset",
       env: { HOME: "/home/test" },
-      expected: "/home/test/.config/systemd/user/openclaw-gateway.service",
+      expected: "/home/test/.config/systemd/user/nova-gateway.service",
     },
     {
       name: "uses profile-specific service name when NOVA_PROFILE is set to a custom value",
       env: { HOME: "/home/test", NOVA_PROFILE: "jbphoenix" },
-      expected: "/home/test/.config/systemd/user/openclaw-gateway-jbphoenix.service",
+      expected: "/home/test/.config/systemd/user/nova-gateway-jbphoenix.service",
     },
     {
       name: "prefers NOVA_SYSTEMD_UNIT over NOVA_PROFILE",
@@ -1046,8 +1041,8 @@ describe("resolveSystemdUserUnitPath", () => {
 
 describe("splitArgsPreservingQuotes", () => {
   it("splits on whitespace outside quotes", () => {
-    expect(splitArgsPreservingQuotes('/usr/bin/openclaw gateway start --name "My Bot"')).toEqual([
-      "/usr/bin/openclaw",
+    expect(splitArgsPreservingQuotes('/usr/bin/nova gateway start --name "My Bot"')).toEqual([
+      "/usr/bin/nova",
       "gateway",
       "start",
       "--name",
@@ -1057,24 +1052,24 @@ describe("splitArgsPreservingQuotes", () => {
 
   it("supports systemd-style backslash escaping", () => {
     expect(
-      splitArgsPreservingQuotes('openclaw --name "My \\"Bot\\"" --foo bar', {
+      splitArgsPreservingQuotes('nova --name "My \\"Bot\\"" --foo bar', {
         escapeMode: "backslash",
       }),
-    ).toEqual(["openclaw", "--name", 'My "Bot"', "--foo", "bar"]);
+    ).toEqual(["nova", "--name", 'My "Bot"', "--foo", "bar"]);
   });
 
   it("supports schtasks-style escaped quotes while preserving other backslashes", () => {
     expect(
-      splitArgsPreservingQuotes('openclaw --path "C:\\\\Program Files\\\\Nova"', {
+      splitArgsPreservingQuotes('nova --path "C:\\\\Program Files\\\\Nova"', {
         escapeMode: "backslash-quote-only",
       }),
-    ).toEqual(["openclaw", "--path", "C:\\\\Program Files\\\\Nova"]);
+    ).toEqual(["nova", "--path", "C:\\\\Program Files\\\\Nova"]);
 
     expect(
-      splitArgsPreservingQuotes('openclaw --label "My \\"Quoted\\" Name"', {
+      splitArgsPreservingQuotes('nova --label "My \\"Quoted\\" Name"', {
         escapeMode: "backslash-quote-only",
       }),
-    ).toEqual(["openclaw", "--label", 'My "Quoted" Name']);
+    ).toEqual(["nova", "--label", 'My "Quoted" Name']);
   });
 });
 
@@ -1096,9 +1091,9 @@ describe("parseSystemdEnvAssignments", () => {
 
 describe("parseSystemdExecStart", () => {
   it("preserves quoted arguments", () => {
-    const execStart = '/usr/bin/openclaw gateway start --name "My Bot"';
+    const execStart = '/usr/bin/nova gateway start --name "My Bot"';
     expect(parseSystemdExecStart(execStart)).toEqual([
-      "/usr/bin/openclaw",
+      "/usr/bin/nova",
       "gateway",
       "start",
       "--name",
@@ -1114,8 +1109,8 @@ describe("readSystemdServiceExecStart", () => {
 
   it("loads NOVA_GATEWAY_TOKEN from EnvironmentFile", async () => {
     const readFileSpy = mockReadGatewayServiceFile(
-      ["[Service]", "ExecStart=/usr/bin/openclaw gateway run", "EnvironmentFile=%h/.openclaw/.env"],
-      { [`${TEST_SERVICE_HOME}/.openclaw/.env`]: "NOVA_GATEWAY_TOKEN=env-file-token\n" },
+      ["[Service]", "ExecStart=/usr/bin/nova gateway run", "EnvironmentFile=%h/.nova/.env"],
+      { [`${TEST_SERVICE_HOME}/.nova/.env`]: "NOVA_GATEWAY_TOKEN=env-file-token\n" },
     );
 
     const command = await readSystemdServiceExecStart({ HOME: TEST_SERVICE_HOME });
@@ -1127,11 +1122,11 @@ describe("readSystemdServiceExecStart", () => {
     mockReadGatewayServiceFile(
       [
         "[Service]",
-        "ExecStart=/usr/bin/openclaw gateway run",
-        "EnvironmentFile=%h/.openclaw/.env",
+        "ExecStart=/usr/bin/nova gateway run",
+        "EnvironmentFile=%h/.nova/.env",
         'Environment="NOVA_GATEWAY_TOKEN=inline-token"',
       ],
-      { [`${TEST_SERVICE_HOME}/.openclaw/.env`]: "NOVA_GATEWAY_TOKEN=env-file-token\n" },
+      { [`${TEST_SERVICE_HOME}/.nova/.env`]: "NOVA_GATEWAY_TOKEN=env-file-token\n" },
     );
 
     const command = await readSystemdServiceExecStart({ HOME: TEST_SERVICE_HOME });
@@ -1140,27 +1135,27 @@ describe("readSystemdServiceExecStart", () => {
   });
 
   it("ignores missing optional EnvironmentFile entries", async () => {
-    await expectExecStartWithoutEnvironment("EnvironmentFile=-%h/.openclaw/missing.env");
+    await expectExecStartWithoutEnvironment("EnvironmentFile=-%h/.nova/missing.env");
   });
 
   it("keeps parsing when non-optional EnvironmentFile entries are missing", async () => {
-    await expectExecStartWithoutEnvironment("EnvironmentFile=%h/.openclaw/missing.env");
+    await expectExecStartWithoutEnvironment("EnvironmentFile=%h/.nova/missing.env");
   });
 
   it("supports multiple EnvironmentFile entries and quoted paths", async () => {
     vi.spyOn(fs, "readFile").mockImplementation(async (pathname) => {
       const pathValue = pathLikeToString(pathname);
-      if (pathValue.endsWith("/openclaw-gateway.service")) {
+      if (pathValue.endsWith("/nova-gateway.service")) {
         return [
           "[Service]",
-          "ExecStart=/usr/bin/openclaw gateway run",
-          'EnvironmentFile=%h/.openclaw/first.env "%h/.openclaw/second env.env"',
+          "ExecStart=/usr/bin/nova gateway run",
+          'EnvironmentFile=%h/.nova/first.env "%h/.nova/second env.env"',
         ].join("\n");
       }
-      if (pathValue === "/home/test/.openclaw/first.env") {
+      if (pathValue === "/home/test/.nova/first.env") {
         return "NOVA_GATEWAY_TOKEN=first-token\n"; // pragma: allowlist secret
       }
-      if (pathValue === "/home/test/.openclaw/second env.env") {
+      if (pathValue === "/home/test/.nova/second env.env") {
         return 'NOVA_GATEWAY_PASSWORD="second password"\n'; // pragma: allowlist secret
       }
       throw new Error(`unexpected readFile path: ${pathValue}`);
@@ -1176,10 +1171,10 @@ describe("readSystemdServiceExecStart", () => {
   it("resolves relative EnvironmentFile paths from the unit directory", async () => {
     vi.spyOn(fs, "readFile").mockImplementation(async (pathname) => {
       const pathValue = pathLikeToString(pathname);
-      if (pathValue.endsWith("/openclaw-gateway.service")) {
+      if (pathValue.endsWith("/nova-gateway.service")) {
         return [
           "[Service]",
-          "ExecStart=/usr/bin/openclaw gateway run",
+          "ExecStart=/usr/bin/nova gateway run",
           "EnvironmentFile=./gateway.env ./override.env",
         ].join("\n");
       }
@@ -1205,14 +1200,14 @@ describe("readSystemdServiceExecStart", () => {
   it("parses EnvironmentFile content with comments and quoted values", async () => {
     vi.spyOn(fs, "readFile").mockImplementation(async (pathname) => {
       const pathValue = pathLikeToString(pathname);
-      if (pathValue.endsWith("/openclaw-gateway.service")) {
+      if (pathValue.endsWith("/nova-gateway.service")) {
         return [
           "[Service]",
-          "ExecStart=/usr/bin/openclaw gateway run",
-          "EnvironmentFile=%h/.openclaw/gateway.env",
+          "ExecStart=/usr/bin/nova gateway run",
+          "EnvironmentFile=%h/.nova/gateway.env",
         ].join("\n");
       }
-      if (pathValue === "/home/test/.openclaw/gateway.env") {
+      if (pathValue === "/home/test/.nova/gateway.env") {
         return [
           "# comment",
           "; another comment",
@@ -1251,13 +1246,13 @@ describe("stageSystemdService", () => {
       nodeEnvFilePath: string;
     }) => Promise<void>,
   ): Promise<void> {
-    const tempHomeRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-systemd-stage-"));
+    const tempHomeRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-systemd-stage-"));
     const home = path.join(tempHomeRoot, "home");
-    const stateDir = path.join(home, ".openclaw");
+    const stateDir = path.join(home, ".nova");
     const env = {
       HOME: home,
       NOVA_STATE_DIR: stateDir,
-      NOVA_SYSTEMD_UNIT: "openclaw-gateway-stage-test",
+      NOVA_SYSTEMD_UNIT: "nova-gateway-stage-test",
     };
     const unitPath = resolveSystemdUserUnitPath(env);
     const envFilePath = path.join(stateDir, "gateway.systemd.env");
@@ -1296,7 +1291,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: {
           NOVA_GATEWAY_TOKEN: "dotenv-token",
@@ -1330,7 +1325,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
           NOVA_GATEWAY_TOKEN: "file-backed-token",
@@ -1384,7 +1379,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
           NOVA_GATEWAY_TOKEN: "fresh-file-token",
@@ -1427,7 +1422,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
           NOVA_GATEWAY_PORT: "18789",
@@ -1460,7 +1455,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: {
           LLM_API_KEY: "$SECRET_FROM_SHELL",
@@ -1486,7 +1481,7 @@ describe("stageSystemdService", () => {
         unitPath,
         [
           "[Service]",
-          "ExecStart=/usr/bin/openclaw node run",
+          "ExecStart=/usr/bin/nova node run",
           "Environment=FOO=bar NOVA_GATEWAY_TOKEN=inline-token BAZ=qux",
           "Environment=NOVA_GATEWAY_TOKEN=token-only-line",
           "Environment='NOVA_GATEWAY_TOKEN=single-quoted-token' FROM_SINGLE=kept",
@@ -1501,7 +1496,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
           NOVA_GATEWAY_TOKEN: "fresh-token",
@@ -1543,7 +1538,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: {
           NOVA_GATEWAY_TOKEN: "fresh-token",
@@ -1581,7 +1576,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         // Staging manages NOVA_GATEWAY_TOKEN inline; NOVA_SERVICE_MANAGED_ENV_KEYS
         // marks it as an Nova-managed key so the stale env-file copy is cleared.
@@ -1628,7 +1623,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: { NOVA_GATEWAY_PORT: "18789" },
       });
@@ -1660,7 +1655,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: { LLM_API_KEY: "new-value" },
       });
@@ -1691,7 +1686,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: { NOVA_GATEWAY_PORT: "18789" },
       });
@@ -1723,7 +1718,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: { NOVA_GATEWAY_PORT: "18789" },
       });
@@ -1750,7 +1745,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: { NOVA_GATEWAY_PORT: "18789" },
       });
@@ -1784,7 +1779,7 @@ describe("stageSystemdService", () => {
       await stageSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         workingDirectory: "/tmp",
         environment: { NOVA_GATEWAY_PORT: "18789" },
       });
@@ -1806,13 +1801,13 @@ describe("systemd service install and uninstall", () => {
       nodeEnvFilePath: string;
     }) => Promise<void>,
   ): Promise<void> {
-    const tempHomeRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-systemd-"));
+    const tempHomeRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-systemd-"));
     const home = path.join(tempHomeRoot, "home");
-    const stateDir = path.join(home, ".openclaw");
+    const stateDir = path.join(home, ".nova");
     const env = {
       HOME: home,
       NOVA_STATE_DIR: stateDir,
-      NOVA_SYSTEMD_UNIT: "openclaw-node",
+      NOVA_SYSTEMD_UNIT: "nova-node",
       NOVA_SERVICE_KIND: "node",
     };
     const unitPath = resolveSystemdUserUnitPath(env);
@@ -1854,16 +1849,16 @@ describe("systemd service install and uninstall", () => {
       await installSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
-          NOVA_SYSTEMD_UNIT: "openclaw-node",
+          NOVA_SYSTEMD_UNIT: "nova-node",
         },
       });
 
       const unit = await fs.readFile(unitPath, "utf8");
-      expect(unitPath).toMatch(/openclaw-node\.service$/);
-      expect(unit).toContain("openclaw node run");
+      expect(unitPath).toMatch(/nova-node\.service$/);
+      expect(unit).toContain("nova node run");
       expect(execFileMock).toHaveBeenCalledTimes(4);
     });
   });
@@ -1884,7 +1879,7 @@ describe("systemd service install and uninstall", () => {
           cb(
             createExecFileError("enable failed"),
             "",
-            "Unit file openclaw-node.service does not exist.",
+            "Unit file nova-node.service does not exist.",
           );
         })
         .mockImplementationOnce((_cmd, args, _opts, cb) => {
@@ -1903,10 +1898,10 @@ describe("systemd service install and uninstall", () => {
       await installSystemdService({
         env,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
-          NOVA_SYSTEMD_UNIT: "openclaw-node",
+          NOVA_SYSTEMD_UNIT: "nova-node",
         },
       });
 
@@ -1948,10 +1943,10 @@ describe("systemd service install and uninstall", () => {
       await installSystemdService({
         env: installEnv,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
-          NOVA_SYSTEMD_UNIT: "openclaw-node",
+          NOVA_SYSTEMD_UNIT: "nova-node",
         },
       });
 
@@ -1962,7 +1957,7 @@ describe("systemd service install and uninstall", () => {
   it("uses the sudo-u target user for install activation machine-scope retry", async () => {
     await withNodeSystemdFixture(async ({ env }) => {
       mockEffectiveUid(1000);
-      const installEnv = { ...env, USER: "openclaw", SUDO_USER: "admin" };
+      const installEnv = { ...env, USER: "nova", SUDO_USER: "admin" };
       execFileMock
         .mockImplementationOnce((_cmd, args, _opts, cb) => {
           assertUserSystemctlArgs(args, "status");
@@ -1983,7 +1978,7 @@ describe("systemd service install and uninstall", () => {
           );
         })
         .mockImplementationOnce((_cmd, args, _opts, cb) => {
-          assertMachineUserSystemctlArgs(args, "openclaw", "enable", NODE_SERVICE);
+          assertMachineUserSystemctlArgs(args, "nova", "enable", NODE_SERVICE);
           cb(null, "", "");
         })
         .mockImplementationOnce((_cmd, args, _opts, cb) => {
@@ -1994,10 +1989,10 @@ describe("systemd service install and uninstall", () => {
       await installSystemdService({
         env: installEnv,
         stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-        programArguments: ["/usr/bin/openclaw", "node", "run"],
+        programArguments: ["/usr/bin/nova", "node", "run"],
         workingDirectory: "/tmp",
         environment: {
-          NOVA_SYSTEMD_UNIT: "openclaw-node",
+          NOVA_SYSTEMD_UNIT: "nova-node",
         },
       });
 
@@ -2034,10 +2029,10 @@ describe("systemd service install and uninstall", () => {
         installSystemdService({
           env,
           stdout: { write: vi.fn() } as unknown as NodeJS.WritableStream,
-          programArguments: ["/usr/bin/openclaw", "node", "run"],
+          programArguments: ["/usr/bin/nova", "node", "run"],
           workingDirectory: "/tmp",
           environment: {
-            NOVA_SYSTEMD_UNIT: "openclaw-node",
+            NOVA_SYSTEMD_UNIT: "nova-node",
           },
         }),
       ).rejects.toThrow("systemctl --user unavailable: Failed to connect to bus: No medium found");
@@ -2268,13 +2263,13 @@ describe("systemd service control", () => {
     execFileMock
       .mockImplementationOnce((_cmd, _args, _opts, cb) => cb(null, "", ""))
       .mockImplementationOnce((_cmd, args, _opts, cb) => {
-        assertUserSystemctlArgs(args, "reset-failed", "openclaw-gateway-work.service");
+        assertUserSystemctlArgs(args, "reset-failed", "nova-gateway-work.service");
         // args[0] is the "--user" scope flag; the systemctl verb is args[1].
         restartSequence.push(args[1] ?? "");
         cb(null, "", "");
       })
       .mockImplementationOnce((_cmd, args, _opts, cb) => {
-        assertUserSystemctlArgs(args, "restart", "openclaw-gateway-work.service");
+        assertUserSystemctlArgs(args, "restart", "nova-gateway-work.service");
         restartSequence.push(args[1] ?? "");
         cb(null, "", "");
       });

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nova CI Limits"
+  short_description: "Tune Nova CI fanout and runner budgets"
+  default_prompt: "Use $nova-ci-limits to inspect Nova CI pressure, tune runner-registration fanout safely, and document the exact validation before landing."

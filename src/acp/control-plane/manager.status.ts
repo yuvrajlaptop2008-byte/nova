@@ -6,7 +6,7 @@ import type {
   AcpRuntimeHandle,
   AcpRuntimeStatus,
 } from "@nova/acp-core/runtime/types";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
 import type {
   AcpSessionStatus,
@@ -19,7 +19,7 @@ import { resolveRuntimeOptionsFromMeta } from "./runtime-options.js";
 
 /** Reads a fresh ACP session status and reconciles runtime identifiers from the status response. */
 export async function runManagerGetSessionStatus(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   signal?: AbortSignal;
   throwIfAborted: (signal?: AbortSignal) => void;

@@ -41,14 +41,14 @@ import {
 import {
   psSingleQuote,
   windowsAgentTurnConfigPatchScript,
-  windowsOpenClawResolver,
+  windowsNovaResolver,
   windowsScopedEnvFunction,
 } from "./powershell.ts";
 import {
   buildCommonSmokeSummary,
   expectedPackageBuildCommit,
   expectedPackageTargetVersion,
-  extractLastOpenClawVersion,
+  extractLastNovaVersion,
   packAndServeSmokeArtifact,
   printSmokeTargetSummary,
   SmokeRunController,
@@ -101,7 +101,7 @@ const defaultOptions = (): WindowsOptions => ({
   hostIp: undefined,
   hostPort: 18426,
   hostPortExplicit: false,
-  installUrl: "https://openclaw.ai/install.ps1",
+  installUrl: "https://nova.ai/install.ps1",
   installVersion: "",
   json: false,
   keepServer: false,
@@ -111,7 +111,7 @@ const defaultOptions = (): WindowsOptions => ({
   npmRegistry: undefined,
   provider: "openai",
   skipLatestRefCheck: false,
-  snapshotHint: "pre-openclaw-native-e2e-2026-03-12",
+  snapshotHint: "pre-nova-native-e2e-2026-03-12",
   targetPackageSpec: "",
   upgradeFromPackedMain: false,
   vmName: "Windows 11",
@@ -127,20 +127,20 @@ function usage(): string {
 Options:
   --vm <name>                Parallels VM name. Default: "Windows 11"
   --snapshot-hint <name>     Snapshot name substring/fuzzy match.
-                             Default: "pre-openclaw-native-e2e-2026-03-12"
+                             Default: "pre-nova-native-e2e-2026-03-12"
   --mode <fresh|upgrade|both>
   --provider <openai|anthropic|minimax>
   --model <provider/model>    Override the model used for the agent-turn smoke.
   --api-key-env <var>        Host env var name for provider API key.
   --openai-api-key-env <var> Alias for --api-key-env (backward compatible)
-  --install-url <url>        Installer URL for latest release. Default: https://openclaw.ai/install.ps1
+  --install-url <url>        Installer URL for latest release. Default: https://nova.ai/install.ps1
   --host-port <port>         Host HTTP port for current-main tgz. Default: 18426
   --host-ip <ip>             Override Parallels host IP.
   --latest-version <ver>     Override npm latest version lookup.
   --install-version <ver>    Pin site-installer version/dist-tag for the baseline lane.
   --upgrade-from-packed-main
                              Upgrade lane: install packed current-main npm tgz as baseline,
-                             then run openclaw update --channel dev.
+                             then run nova update --channel dev.
   --target-package-spec <npm-spec>
                              Install this npm package tarball instead of packing current main.
   --npm-registry <url>       Registry used for target package installs.
@@ -285,10 +285,10 @@ class WindowsSmoke extends SmokeRunController<WindowsOptions> {
   }
 
   async run(): Promise<void> {
-    this.runDir = await makeTempDir("openclaw-parallels-windows.");
+    this.runDir = await makeTempDir("nova-parallels-windows.");
     this.phases = new PhaseRunner(this.runDir);
     this.guest = new WindowsGuest(this.options.vmName, this.phases);
-    this.tgzDir = await makeTempDir("openclaw-parallels-windows-tgz.");
+    this.tgzDir = await makeTempDir("nova-parallels-windows-tgz.");
     try {
       validateSnapshotRestoreMode(this.options.mode, "Windows smoke");
       this.snapshot = shouldSkipSnapshotRestore()
@@ -371,7 +371,7 @@ class WindowsSmoke extends SmokeRunController<WindowsOptions> {
     );
     await this.phase("fresh.preflight", 120, () => this.logGuestPreflight(true));
     await this.phase("fresh.install-main", WINDOWS_PACKAGE_INSTALL_TIMEOUT_SECONDS, () =>
-      this.installMain("openclaw-main-fresh.tgz"),
+      this.installMain("nova-main-fresh.tgz"),
     );
     this.status.freshVersion = await this.extractLastVersion("fresh.install-main");
     await this.phase("fresh.verify-main-version", 120, () => this.verifyTargetVersion());
@@ -394,7 +394,7 @@ class WindowsSmoke extends SmokeRunController<WindowsOptions> {
       await this.phase(
         "upgrade.install-baseline-package",
         WINDOWS_PACKAGE_INSTALL_TIMEOUT_SECONDS,
-        () => this.installMain("openclaw-main-upgrade.tgz"),
+        () => this.installMain("nova-main-upgrade.tgz"),
       );
       this.status.latestInstalledVersion = await this.extractLastVersion(
         "upgrade.install-baseline-package",
@@ -457,7 +457,7 @@ class WindowsSmoke extends SmokeRunController<WindowsOptions> {
     script: string,
     options: { check?: boolean; timeoutMs?: number } = {},
   ): string {
-    return this.guest.powershell(`${windowsOpenClawResolver}\n${script}`, options);
+    return this.guest.powershell(`${windowsNovaResolver}\n${script}`, options);
   }
 
   private restoreSnapshot(): void {
@@ -539,7 +539,7 @@ class WindowsSmoke extends SmokeRunController<WindowsOptions> {
 
   private logGuestPreflight(cleanNova: boolean): void {
     const cleanScript = cleanNova
-      ? "npm.cmd uninstall -g openclaw --no-fund --no-audit --loglevel=error 2>$null; $global:LASTEXITCODE = 0"
+      ? "npm.cmd uninstall -g nova --no-fund --no-audit --loglevel=error 2>$null; $global:LASTEXITCODE = 0"
       : "";
     this.guestPowerShell(
       `$ErrorActionPreference = 'Continue'
@@ -561,7 +561,7 @@ $script = Invoke-RestMethod -Uri ${psSingleQuote(this.options.installUrl)} -Time
 & ([scriptblock]::Create($script))${versionArg} -NoOnboard
 if ($LASTEXITCODE -ne 0) { throw "installer failed with exit code $LASTEXITCODE" }
 Invoke-Nova --version
-      if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LASTEXITCODE" }`,
+      if ($LASTEXITCODE -ne 0) { throw "nova --version failed with exit code $LASTEXITCODE" }`,
       this.remainingPhaseTimeoutMs(WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS) ??
         WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS,
     );
@@ -584,7 +584,7 @@ ${registryScript}
 npm.cmd install -g $tgz --no-fund --no-audit --loglevel=error
 if ($LASTEXITCODE -ne 0) { throw "npm install failed with exit code $LASTEXITCODE" }
 Invoke-Nova --version
-      if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LASTEXITCODE" }`,
+      if ($LASTEXITCODE -ne 0) { throw "nova --version failed with exit code $LASTEXITCODE" }`,
       this.remainingPhaseTimeoutMs(WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS) ??
         WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS,
     );
@@ -623,7 +623,7 @@ Invoke-Nova --version
 $PSNativeCommandUseErrorActionPreference = $false
 Set-Item -Path ('Env:' + ${psSingleQuote(this.auth.apiKeyEnv)}) -Value ${psSingleQuote(this.auth.apiKeyValue)}
 Invoke-Nova onboard --non-interactive --mode local --auth-choice ${psSingleQuote(this.auth.authChoice)} --secret-input-mode ref --gateway-port 18789 --gateway-bind loopback --install-daemon --skip-skills --skip-health --accept-risk --json
-if ($LASTEXITCODE -ne 0) { throw "openclaw onboard failed with exit code $LASTEXITCODE" }
+if ($LASTEXITCODE -ne 0) { throw "nova onboard failed with exit code $LASTEXITCODE" }
 ${this.windowsPluginIsolationScript()}`,
       720_000,
     );
@@ -650,7 +650,7 @@ ${this.windowsPluginIsolationScript()}`,
       },
       label,
       onLaunchRetry: warn,
-      script: `${windowsOpenClawResolver}\n${script}`,
+      script: `${windowsNovaResolver}\n${script}`,
       timeoutMs: this.remainingPhaseTimeoutMs(timeoutMs) ?? timeoutMs,
       vmName: this.options.vmName,
     });
@@ -660,7 +660,7 @@ ${this.windowsPluginIsolationScript()}`,
     this.guestPowerShell(
       `$ErrorActionPreference = 'Stop'
 ${windowsPortableGitPathScript}
-$configPath = Join-Path $env:USERPROFILE '.openclaw\\openclaw.json'
+$configPath = Join-Path $env:USERPROFILE '.nova\\nova.json'
 $config = Get-Content $configPath -Raw | ConvertFrom-Json
 if ($null -eq $config.update) {
   $config | Add-Member -MemberType NoteProperty -Name update -Value ([pscustomobject]@{})
@@ -668,12 +668,12 @@ if ($null -eq $config.update) {
 $config.update | Add-Member -Force -MemberType NoteProperty -Name channel -Value 'dev'
 $config | ConvertTo-Json -Depth 100 | Set-Content -Path $configPath -Encoding utf8
 ${windowsScopedEnvFunction}
-$script:OpenClawUpdateExit = 0
+$script:NovaUpdateExit = 0
 Invoke-WithScopedEnv @{ NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = '1'; NOVA_DISABLE_BUNDLED_PLUGINS = '1' } {
   Invoke-Nova update --channel dev --yes --json
-  $script:OpenClawUpdateExit = $LASTEXITCODE
+  $script:NovaUpdateExit = $LASTEXITCODE
 }
-if ($script:OpenClawUpdateExit -ne 0) { throw "openclaw update failed with exit code $script:OpenClawUpdateExit" }
+if ($script:NovaUpdateExit -ne 0) { throw "nova update failed with exit code $script:NovaUpdateExit" }
 Invoke-Nova --version
 Invoke-Nova update status --json`,
       { timeoutMs: this.updateTimeoutSeconds * 1000 },
@@ -754,7 +754,7 @@ Set-Item -Path ('Env:' + ${psSingleQuote(this.auth.apiKeyEnv)}) -Value ${psSingl
 $agentOk = $false
 for ($attempt = 1; $attempt -le 2; $attempt++) {
   $sessionId = if ($attempt -eq 1) { 'parallels-windows-smoke' } else { "parallels-windows-smoke-retry-$attempt" }
-  $sessionsDir = Join-Path $env:USERPROFILE '.openclaw\\agents\\main\\sessions'
+  $sessionsDir = Join-Path $env:USERPROFILE '.nova\\agents\\main\\sessions'
   $sessionPath = Join-Path $sessionsDir "$sessionId.jsonl"
   Remove-Item $sessionPath -Force -ErrorAction SilentlyContinue
   $args = @(
@@ -792,13 +792,13 @@ for ($attempt = 1; $attempt -le 2; $attempt++) {
     throw "agent failed with exit code $agentExitCode"
   }
 }
-if (-not $agentOk) { throw 'openclaw agent finished without OK response' }`,
+if (-not $agentOk) { throw 'nova agent finished without OK response' }`,
       this.agentTimeoutSeconds * 1000,
     );
   }
 
   private async extractLastVersion(phaseName: string): Promise<string> {
-    return await extractLastOpenClawVersion(this.runDir, phaseName, /Nova\s+([0-9][^\s]*)/gi);
+    return await extractLastNovaVersion(this.runDir, phaseName, /Nova\s+([0-9][^\s]*)/gi);
   }
 
   protected async writeSummary(): Promise<string> {

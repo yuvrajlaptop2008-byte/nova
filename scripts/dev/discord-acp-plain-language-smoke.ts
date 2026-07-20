@@ -68,7 +68,7 @@ const execFileAsync = promisify(execFile);
 const THREAD_BINDINGS_NAMESPACE = "thread-bindings";
 const THREAD_BINDINGS_MAX_ENTRIES = 10_000;
 
-type DriverMode = "token" | "webhook" | "openclaw";
+type DriverMode = "token" | "webhook" | "nova";
 
 type Args = {
   channelId: string;
@@ -83,7 +83,7 @@ type Args = {
   mentionUserId?: string;
   instruction?: string;
   stateDir: string;
-  openclawBin: string;
+  novaBin: string;
   json: boolean;
 };
 
@@ -151,7 +151,7 @@ const VALUE_OPTIONS = new Set([
   "--timeout-ms",
   "--poll-ms",
   "--state-dir",
-  "--openclaw-bin",
+  "--nova-bin",
 ]);
 
 class CliArgumentError extends Error {
@@ -249,7 +249,7 @@ function resolveStateDir(): string {
     return path.resolve(override);
   }
   const home = process.env.NOVA_HOME?.trim() || process.env.HOME || "";
-  return path.join(home, ".openclaw");
+  return path.join(home, ".nova");
 }
 
 function resolveArg(flag: string, argv: string[]): string | undefined {
@@ -298,11 +298,11 @@ function validateCliArgs(argv: string[]): void {
 
 function parseDriverMode(raw: string): DriverMode {
   const normalized = raw.trim().toLowerCase();
-  if (normalized === "token" || normalized === "webhook" || normalized === "openclaw") {
+  if (normalized === "token" || normalized === "webhook" || normalized === "nova") {
     return normalized;
   }
   throw new Error(
-    `Invalid --driver value ${JSON.stringify(raw)}; expected token, webhook, or openclaw.`,
+    `Invalid --driver value ${JSON.stringify(raw)}; expected token, webhook, or nova.`,
   );
 }
 
@@ -320,13 +320,13 @@ function safeErrorMessage(error: unknown): string {
 function usage(): string {
   return (
     "Usage: bun scripts/dev/discord-acp-plain-language-smoke.ts " +
-    "--channel <discord-channel-id> [--token <driver-token> | --driver webhook --bot-token <bot-token> | --driver openclaw] [options]\n\n" +
+    "--channel <discord-channel-id> [--token <driver-token> | --driver webhook --bot-token <bot-token> | --driver nova] [options]\n\n" +
     "Manual live smoke only (not CI). Sends a plain-language instruction in Discord and verifies:\n" +
     "1) Nova spawned an ACP thread binding\n" +
     "2) agent replied in that bound thread with the expected ACK token\n\n" +
     "Options:\n" +
     "  --channel <id>               Parent Discord channel id (required)\n" +
-    "  --driver <token|webhook|openclaw> Driver transport mode (default: token)\n" +
+    "  --driver <token|webhook|nova> Driver transport mode (default: token)\n" +
     "  --token <token>              Driver Discord token (required for driver=token)\n" +
     "  --token-prefix <prefix>      Auth prefix for --token (default: Bot)\n" +
     "  --bot-token <token>          Bot token for webhook driver mode\n" +
@@ -337,7 +337,7 @@ function usage(): string {
     "  --timeout-ms <n>             Total timeout in ms (default: 240000)\n" +
     "  --poll-ms <n>                Poll interval in ms (default: 1500)\n" +
     "  --state-dir <p>              Override Nova state dir for plugin-state polling\n" +
-    "  --openclaw-bin <path>        Nova CLI binary for driver=openclaw (default: openclaw)\n" +
+    "  --nova-bin <path>        Nova CLI binary for driver=nova (default: nova)\n" +
     "  --json                       Emit JSON output\n" +
     "\n" +
     "Environment fallbacks:\n" +
@@ -395,8 +395,8 @@ function parseArgs(argv = process.argv.slice(2)): Args {
     "--poll-ms",
   );
   const stateDir = path.resolve(resolveArg("--state-dir", argv) || resolveStateDir());
-  const openclawBin =
-    resolveArg("--openclaw-bin", argv) || process.env.NOVA_DISCORD_SMOKE_NOVA_BIN || "openclaw";
+  const novaBin =
+    resolveArg("--nova-bin", argv) || process.env.NOVA_DISCORD_SMOKE_NOVA_BIN || "nova";
   const json = hasFlag("--json", argv);
 
   if (!channelId) {
@@ -422,17 +422,17 @@ function parseArgs(argv = process.argv.slice(2)): Args {
     mentionUserId,
     instruction,
     stateDir,
-    openclawBin,
+    novaBin,
     json,
   };
 }
 
-async function openclawCliJson<T>(params: {
-  openclawBin: string;
+async function novaCliJson<T>(params: {
+  novaBin: string;
   args: string[];
   timeoutMs?: number;
 }): Promise<T> {
-  const result = await execFileAsync(params.openclawBin, params.args, {
+  const result = await execFileAsync(params.novaBin, params.args, {
     maxBuffer: 8 * 1024 * 1024,
     env: process.env,
     timeout: params.timeoutMs ?? DEFAULT_NOVA_CLI_TIMEOUT_MS,
@@ -440,23 +440,23 @@ async function openclawCliJson<T>(params: {
   });
   const stdout = (result.stdout || "").trim();
   if (!stdout) {
-    throw new Error(`openclaw ${params.args.join(" ")} returned empty stdout`);
+    throw new Error(`nova ${params.args.join(" ")} returned empty stdout`);
   }
   return JSON.parse(stdout) as T;
 }
 
-async function readMessagesWithOpenclaw(params: {
-  openclawBin: string;
+async function readMessagesWithnova(params: {
+  novaBin: string;
   target: string;
   limit: number;
   timeoutMs?: number;
 }): Promise<DiscordMessage[]> {
-  const response = await openclawCliJson<{
+  const response = await novaCliJson<{
     payload?: {
       messages?: DiscordMessage[];
     };
   }>({
-    openclawBin: params.openclawBin,
+    novaBin: params.novaBin,
     args: [
       "message",
       "read",
@@ -714,9 +714,9 @@ async function loadParentRecentMessages(params: {
   readAuthHeader: string;
   timeoutMs?: number;
 }): Promise<DiscordMessage[]> {
-  if (params.args.driverMode === "openclaw") {
-    return await readMessagesWithOpenclaw({
-      openclawBin: params.args.openclawBin,
+  if (params.args.driverMode === "nova") {
+    return await readMessagesWithnova({
+      novaBin: params.args.novaBin,
       target: params.args.channelId,
       limit: 20,
       timeoutMs: params.timeoutMs,
@@ -867,7 +867,7 @@ async function run(argv = process.argv.slice(2)): Promise<SuccessResult | Failur
         authHeader: botAuthHeader,
         timeoutMs: remainingTimeoutMs(deadline),
         body: {
-          name: `openclaw-acp-smoke-${smokeId.slice(-8)}`,
+          name: `nova-acp-smoke-${smokeId.slice(-8)}`,
         },
       });
       if (!webhook.id || !webhook.token) {
@@ -900,14 +900,14 @@ async function run(argv = process.argv.slice(2)): Promise<SuccessResult | Failur
     } else {
       setupStage = "send-message";
       minBindingBoundAt = Date.now() - 3_000;
-      const sent = await openclawCliJson<{
+      const sent = await novaCliJson<{
         payload?: {
           result?: {
             messageId?: string;
           };
         };
       }>({
-        openclawBin: args.openclawBin,
+        novaBin: args.novaBin,
         args: [
           "message",
           "send",
@@ -923,7 +923,7 @@ async function run(argv = process.argv.slice(2)): Promise<SuccessResult | Failur
       });
       sentMessageId = sent.payload?.result?.messageId || "";
       if (!sentMessageId) {
-        throw new Error("openclaw message send did not return payload.result.messageId");
+        throw new Error("nova message send did not return payload.result.messageId");
       }
     }
   } catch (err) {
@@ -991,9 +991,9 @@ async function run(argv = process.argv.slice(2)): Promise<SuccessResult | Failur
     while (Date.now() < deadline && !ackMessage) {
       try {
         const threadMessages =
-          args.driverMode === "openclaw"
-            ? await readMessagesWithOpenclaw({
-                openclawBin: args.openclawBin,
+          args.driverMode === "nova"
+            ? await readMessagesWithnova({
+                novaBin: args.novaBin,
                 target: threadId,
                 limit: 50,
                 timeoutMs: remainingTimeoutMs(deadline),

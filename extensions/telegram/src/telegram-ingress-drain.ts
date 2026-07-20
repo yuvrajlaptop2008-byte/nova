@@ -4,9 +4,9 @@ import {
   DEFAULT_INGRESS_ADOPTION_STALL_MS,
   type ChannelIngressMonitorLifecycle,
   type ChannelIngressQueue,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { clampPositiveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/channel-outbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { clampPositiveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
 import type { TelegramBotInfo } from "./bot-info.js";
 import {
   runWithTelegramSpooledReplayUpdate,
@@ -80,7 +80,7 @@ type TelegramIngressDrainDispatch = (
 type CreateTelegramIngressMonitorParams = {
   queue: ChannelIngressQueue<TelegramSpooledUpdatePayload>;
   /** Required for authorization-gated supersede (numeric allowlist). */
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   botInfo?: TelegramBotInfo;
   adoptionStallTimeoutMs?: number;

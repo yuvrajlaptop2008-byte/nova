@@ -2,24 +2,24 @@
   "name": "@nova/policy",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw policy doctor checks for workspace conformance",
+  "description": "Nova policy doctor checks for workspace conformance",
   "type": "module",
   "dependencies": {
     "json5": "2.2.3"
   },
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "nova": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.7.2"
+    "nova": ">=2026.7.2"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "nova": {
       "optional": true
     }
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

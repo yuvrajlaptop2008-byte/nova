@@ -78,7 +78,7 @@ describeControlUiE2e("Control UI mobile pairing mocked Gateway E2E", () => {
       expect(response?.status()).toBe(200);
 
       // Pairing folded into the identity-card agent menu.
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       await sidebar.getByRole("button", { name: /Agent menu/ }).click();
       const sidebarPairingButton = sidebar
         .locator("wa-dropdown.sidebar-agent-menu")

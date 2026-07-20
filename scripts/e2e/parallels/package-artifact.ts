@@ -31,8 +31,8 @@ function resolveNpmPackTarballFilename(value: unknown): string {
   // npm 10/11 return arrays; npm 12 keys local-workspace results by package name.
   const result = Array.isArray(value)
     ? value.at(-1)
-    : value && typeof value === "object" && "openclaw" in value
-      ? value.openclaw
+    : value && typeof value === "object" && "nova" in value
+      ? value.nova
       : value;
   const filename =
     result &&
@@ -52,27 +52,27 @@ function resolveNpmPackTarballFilename(value: unknown): string {
   return filename;
 }
 
-export function resolveOpenClawRegistryVersion(specOrAlias: string): string {
+export function resolveNovaRegistryVersion(specOrAlias: string): string {
   const rawValue = specOrAlias.trim();
-  const value = rawValue.startsWith("openclaw@") ? rawValue.slice("openclaw@".length) : rawValue;
+  const value = rawValue.startsWith("nova@") ? rawValue.slice("nova@".length) : rawValue;
   if (!value) {
     return "";
   }
   if (value === "latest" || value === "beta" || /^\d/.test(value)) {
-    return npmViewVersion(`openclaw@${value}`);
+    return npmViewVersion(`nova@${value}`);
   }
   const betaMatch = /^beta(\d+)$/u.exec(value);
   if (betaMatch) {
     const betaSuffix = `-beta.${betaMatch[1]}`;
     const versions = JSON.parse(
-      run("npm", ["view", "openclaw", "versions", "--json"], { quiet: true }).stdout,
+      run("npm", ["view", "nova", "versions", "--json"], { quiet: true }).stdout,
     ) as string[];
     const match = versions
       .filter((version) => version.endsWith(betaSuffix))
       .toSorted((a, b) => a.localeCompare(b, undefined, { numeric: true }))
       .at(-1);
     if (!match) {
-      die(`no openclaw registry version found for alias ${value}`);
+      die(`no nova registry version found for alias ${value}`);
     }
     return match;
   }
@@ -165,19 +165,19 @@ export async function packNova(input: {
     return { path: tgzPath, version };
   }
 
-  return await withPackageLock(path.join(tmpdir(), "openclaw-parallels-build.lock"), async () => {
+  return await withPackageLock(path.join(tmpdir(), "nova-parallels-build.lock"), async () => {
     await ensureCurrentBuildUnlocked({
       checkDirty: true,
       requireControlUi: input.requireControlUi,
     });
     const shortHead = run("git", ["rev-parse", "--short", "HEAD"], { quiet: true }).stdout.trim();
-    const tgzPath = path.join(input.destination, `openclaw-main-${shortHead}.tgz`);
+    const tgzPath = path.join(input.destination, `nova-main-${shortHead}.tgz`);
     // The canonical helper inventories the package, bundles private workspace runtime code,
     // and rejects tarballs that still depend on unpublished workspace packages.
     const packedPath = run(
       "node",
       [
-        "scripts/package-openclaw-for-docker.mjs",
+        "scripts/package-nova-for-docker.mjs",
         "--allow-unreleased-changelog",
         "--skip-build",
         "--source-dir",

@@ -1,27 +1,27 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../state/openclaw-agent-db.generated.js";
+import type { DB as NovaAgentKyselyDatabase } from "../state/nova-agent-db.generated.js";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  runOpenClawAgentWriteTransaction,
-} from "../state/openclaw-agent-db.js";
+  closeNovaAgentDatabasesForTest,
+  runNovaAgentWriteTransaction,
+} from "../state/nova-agent-db.js";
 import { withTempDir } from "../test-helpers/temp-dir.js";
 import { recordAcpParentStreamEvents } from "./acp-parent-stream-store.sqlite.js";
 import { listAcpParentStreamEventsForTest } from "./acp-parent-stream-store.sqlite.test-support.js";
 
 describe("ACP parent stream SQLite store", () => {
   afterEach(() => {
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
   });
 
   it("orders run events and removes them with the child session", async () => {
-    await withTempDir({ prefix: "openclaw-acp-parent-stream-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-acp-parent-stream-" }, async (stateDir) => {
       const options = {
         agentId: "codex",
         env: { ...process.env, NOVA_STATE_DIR: stateDir },
       };
-      runOpenClawAgentWriteTransaction((database) => {
-        const db = getNodeSqliteKysely<Pick<OpenClawAgentKyselyDatabase, "sessions">>(database.db);
+      runNovaAgentWriteTransaction((database) => {
+        const db = getNodeSqliteKysely<Pick<NovaAgentKyselyDatabase, "sessions">>(database.db);
         executeSqliteQuerySync(
           database.db,
           db.insertInto("sessions").values({
@@ -51,8 +51,8 @@ describe("ACP parent stream SQLite store", () => {
         { kind: "lifecycle", phase: "end" },
       ]);
 
-      runOpenClawAgentWriteTransaction((database) => {
-        const db = getNodeSqliteKysely<Pick<OpenClawAgentKyselyDatabase, "sessions">>(database.db);
+      runNovaAgentWriteTransaction((database) => {
+        const db = getNodeSqliteKysely<Pick<NovaAgentKyselyDatabase, "sessions">>(database.db);
         executeSqliteQuerySync(
           database.db,
           db.deleteFrom("sessions").where("session_id", "=", "session-1"),
@@ -65,13 +65,13 @@ describe("ACP parent stream SQLite store", () => {
   });
 
   it("drops unserializable events without blocking later diagnostics", async () => {
-    await withTempDir({ prefix: "openclaw-acp-parent-stream-invalid-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-acp-parent-stream-invalid-" }, async (stateDir) => {
       const options = {
         agentId: "codex",
         env: { ...process.env, NOVA_STATE_DIR: stateDir },
       };
-      runOpenClawAgentWriteTransaction((database) => {
-        const db = getNodeSqliteKysely<Pick<OpenClawAgentKyselyDatabase, "sessions">>(database.db);
+      runNovaAgentWriteTransaction((database) => {
+        const db = getNodeSqliteKysely<Pick<NovaAgentKyselyDatabase, "sessions">>(database.db);
         executeSqliteQuerySync(
           database.db,
           db.insertInto("sessions").values({

@@ -5,7 +5,7 @@ import {
 } from "@nova/normalization-core/string-coerce";
 import { normalizeStringEntries } from "@nova/normalization-core/string-normalization";
 import { listAgentWorkspaceDirs } from "../../agents/workspace-dirs.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { NodeRegistry } from "../../gateway/node-registry.js";
 import { listNodePairing, updatePairedNodeBins } from "../../infra/node-pairing.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
@@ -448,7 +448,7 @@ export async function refreshRemoteNodeBins(params: {
   platform?: string;
   deviceFamily?: string;
   commands?: string[];
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   timeoutMs?: number;
   readinessDelayMs?: number;
 }) {
@@ -479,7 +479,7 @@ async function refreshRemoteNodeBinsUncoalesced(params: {
   platform?: string;
   deviceFamily?: string;
   commands?: string[];
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   timeoutMs?: number;
   readinessDelayMs?: number;
 }) {
@@ -721,7 +721,7 @@ export function getRemoteSkillEligibility(options?: {
   };
 }
 
-export async function refreshRemoteBinsForConnectedNodes(cfg: OpenClawConfig) {
+export async function refreshRemoteBinsForConnectedNodes(cfg: NovaConfig) {
   if (!remoteRegistry) {
     return;
   }

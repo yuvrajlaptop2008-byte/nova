@@ -13,7 +13,7 @@ import { loadSettings } from "../../app/settings.ts";
 import { renderSettingsWorkspace } from "../../components/settings-workspace.ts";
 import { resolveSessionKey } from "../../lib/sessions/index.ts";
 import { uiSessionEventMatches } from "../../lib/sessions/session-key.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import {
   parseActivityEvent,
@@ -25,7 +25,7 @@ import { renderActivity } from "./view.ts";
 
 let activityClearBoundary: EventLogEntry | undefined;
 
-class ActivityPage extends OpenClawLightDomElement {
+class ActivityPage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -247,6 +247,6 @@ class ActivityPage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-activity-page")) {
-  customElements.define("openclaw-activity-page", ActivityPage);
+if (!customElements.get("nova-activity-page")) {
+  customElements.define("nova-activity-page", ActivityPage);
 }

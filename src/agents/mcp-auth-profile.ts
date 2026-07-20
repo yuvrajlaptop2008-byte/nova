@@ -3,7 +3,7 @@
  */
 import crypto from "node:crypto";
 import type { FetchLike } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { BundleMcpConfig, BundleMcpServerConfig } from "../plugins/bundle-mcp.js";
 import { resolveApiKeyForProfile } from "./auth-profiles/oauth.js";
 import { loadAuthProfileStoreForSecretsRuntime } from "./auth-profiles/store.js";
@@ -16,7 +16,7 @@ import { resolveMcpOAuthAccessToken, type McpOAuthConfig } from "./mcp-oauth.js"
 import { resolveMcpTransportConfig } from "./mcp-transport-config.js";
 
 type McpAuthProfileOptions = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
 };
 
@@ -101,7 +101,7 @@ async function resolveMcpAuthProfileBearerToken(
 async function resolveMcpBearerToken(params: {
   serverName: string;
   server: BundleMcpServerConfig;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
 }): Promise<string | undefined> {
   const authProfileId = resolveMcpAuthProfileId(params.server);
@@ -179,7 +179,7 @@ function buildTokenEnvVarName(serverName: string): string {
   return `NOVA_MCP_AUTH_${hash.toUpperCase()}_TOKEN`;
 }
 
-function stripOpenClawOnlyOAuthConfig(server: BundleMcpServerConfig): BundleMcpServerConfig {
+function stripNovaOnlyOAuthConfig(server: BundleMcpServerConfig): BundleMcpServerConfig {
   const next = { ...server };
   delete next.auth;
   delete next.oauth;
@@ -234,7 +234,7 @@ export async function resolveMcpBearerBundleConfig(
     }
     const headers = withoutMcpAuthorizationHeader(normalizeStringHeaders(server.headers));
     nextServers ??= { ...params.config.mcpServers };
-    nextServers[serverName] = stripOpenClawOnlyOAuthConfig({
+    nextServers[serverName] = stripNovaOnlyOAuthConfig({
       ...server,
       headers: {
         ...headers,

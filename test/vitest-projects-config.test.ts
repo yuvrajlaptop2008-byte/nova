@@ -33,7 +33,7 @@ import { createUnitFastIsolatedVitestConfig } from "./vitest/vitest.unit-fast-is
 import { createUnitFastVitestConfig } from "./vitest/vitest.unit-fast.config.ts";
 import { createUnitVitestConfig } from "./vitest/vitest.unit.config.ts";
 
-const patternFiles = createPatternFileHelper("openclaw-vitest-projects-config-");
+const patternFiles = createPatternFileHelper("nova-vitest-projects-config-");
 
 function requireTestConfig<T extends { test?: unknown }>(config: T): NonNullable<T["test"]> {
   if (!config.test) {
@@ -219,7 +219,7 @@ describe("projects vitest config", () => {
     expect(testConfig.isolate).toBe(true);
     expect(testConfig.runner).toBeUndefined();
     const setupFiles = normalizeConfigPaths(testConfig.setupFiles);
-    expect(setupFiles).not.toContain("test/setup-openclaw-runtime.ts");
+    expect(setupFiles).not.toContain("test/setup-nova-runtime.ts");
     expect(setupFiles).toContain("ui/src/test-helpers/lit-warnings.setup.ts");
     expect(requireWebOptimizer(testConfig).enabled).toBe(true);
   });

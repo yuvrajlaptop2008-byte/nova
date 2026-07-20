@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { fetchAnthropicUsage, resolveAnthropicUsageAuth } from "./usage.js";
 
-vi.mock("openclaw/plugin-sdk/provider-auth", async (importActual) => {
-  const actual = await importActual<typeof import("openclaw/plugin-sdk/provider-auth")>();
+vi.mock("nova/plugin-sdk/provider-auth", async (importActual) => {
+  const actual = await importActual<typeof import("nova/plugin-sdk/provider-auth")>();
   return {
     ...actual,
     readClaudeCliCredentialsCached: vi.fn(() => ({
@@ -130,7 +130,7 @@ describe("Anthropic provider usage", () => {
       resolveOAuthToken: async () => ({ token: "oauth-token" }),
     });
     expect(result).toEqual({
-      token: 'openclaw:anthropic-admin:v1:{"token":"sk-ant-admin-explicit"}',
+      token: 'nova:anthropic-admin:v1:{"token":"sk-ant-admin-explicit"}',
     });
   });
 
@@ -143,7 +143,7 @@ describe("Anthropic provider usage", () => {
       resolveOAuthToken: async () => null,
     });
     expect(result).toEqual({
-      token: 'openclaw:anthropic-admin:v1:{"token":"sk-ant-admin-profile"}',
+      token: 'nova:anthropic-admin:v1:{"token":"sk-ant-admin-profile"}',
     });
   });
 
@@ -160,7 +160,7 @@ describe("Anthropic provider usage", () => {
       resolveOAuthToken: async () => ({ token: "oauth-token" }),
     });
     expect(result).toEqual({
-      token: 'openclaw:anthropic-admin:v1:{"token":"sk-ant-admin-billing"}',
+      token: 'nova:anthropic-admin:v1:{"token":"sk-ant-admin-billing"}',
     });
   });
 

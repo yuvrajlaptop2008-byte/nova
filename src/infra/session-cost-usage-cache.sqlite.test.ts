@@ -3,14 +3,11 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanupTempDirs, makeTempDir } from "../../test/helpers/temp-dir.js";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-  resolveOpenClawAgentSqlitePath,
-} from "../state/openclaw-agent-db.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+  closeNovaAgentDatabasesForTest,
+  openNovaAgentDatabase,
+  resolveNovaAgentSqlitePath,
+} from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { withEnv } from "../test-utils/env.js";
 import {
   isSessionCostUsageRefreshRunning,
@@ -21,7 +18,7 @@ import {
 const tempDirs: string[] = [];
 
 function countRegisteredAgentDatabases(): number {
-  const row = openOpenClawStateDatabase()
+  const row = openNovaStateDatabase()
     .db.prepare("SELECT count(*) AS count FROM agent_databases")
     .get() as {
     count: number;
@@ -30,35 +27,35 @@ function countRegisteredAgentDatabases(): number {
 }
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
   cleanupTempDirs(tempDirs);
 });
 
 describe("session cost usage SQLite cache", () => {
   it("returns empty values without creating a missing agent database", () => {
-    const stateDir = makeTempDir(tempDirs, "openclaw-usage-cache-missing-");
+    const stateDir = makeTempDir(tempDirs, "nova-usage-cache-missing-");
 
     withEnv({ NOVA_STATE_DIR: stateDir }, () => {
-      const databasePath = resolveOpenClawAgentSqlitePath({ agentId: "worker-1" });
+      const databasePath = resolveNovaAgentSqlitePath({ agentId: "worker-1" });
 
       expect(readSessionCostUsageRollupRows("worker-1", databasePath)).toEqual([]);
       expect(isSessionCostUsageRefreshRunning("worker-1", databasePath)).toBe(false);
       expect(fs.existsSync(databasePath)).toBe(false);
-      expect(fs.existsSync(path.join(stateDir, "state", "openclaw.sqlite"))).toBe(false);
+      expect(fs.existsSync(path.join(stateDir, "state", "nova.sqlite"))).toBe(false);
     });
   });
 
   it("does not register readonly cache reads while writes still register", () => {
-    const stateDir = makeTempDir(tempDirs, "openclaw-usage-cache-registry-");
+    const stateDir = makeTempDir(tempDirs, "nova-usage-cache-registry-");
 
     withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const agentId = "worker-1";
-      const database = openOpenClawAgentDatabase({ agentId });
+      const database = openNovaAgentDatabase({ agentId });
       const databasePath = database.path;
-      closeOpenClawAgentDatabasesForTest();
+      closeNovaAgentDatabasesForTest();
 
-      const stateDatabase = openOpenClawStateDatabase();
+      const stateDatabase = openNovaStateDatabase();
       stateDatabase.db.prepare("DELETE FROM agent_databases").run();
       expect(countRegisteredAgentDatabases()).toBe(0);
 

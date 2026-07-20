@@ -2,7 +2,7 @@
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { asDateTimestampMs } from "@nova/normalization-core/number-coercion";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { coerceSecretRef } from "../config/types.secrets.js";
 import { resolveAuthProfileOrder } from "./auth-profiles/order.js";
 import type { AuthProfileCredential, AuthProfileStore } from "./auth-profiles/types.js";
@@ -24,10 +24,10 @@ export type AgentCredentialMap = Record<string, AgentCredential>;
 
 type ResolveAgentCredentialMapOptions = {
   includeSecretRefPlaceholders?: boolean;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 };
 
-const AGENT_SECRET_REF_CONFIGURED_MARKER = "openclaw-secret-ref-configured";
+const AGENT_SECRET_REF_CONFIGURED_MARKER = "nova-secret-ref-configured";
 
 function hasConfiguredSecretRef(value: unknown): boolean {
   return coerceSecretRef(value) !== null;

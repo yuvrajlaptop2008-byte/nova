@@ -17,7 +17,7 @@ import {
   listMemoryMigrationProviders,
   planProviderMemoryImport,
 } from "../../commands/migrate/memory-import.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { summarizeMigrationItems } from "../../plugin-sdk/migration.js";
 import type { MigrationItem, MigrationPlan, MigrationProviderPlugin } from "../../plugins/types.js";
 import { isValidAgentId, normalizeAgentId } from "../../routing/session-key.js";
@@ -121,7 +121,7 @@ function fingerprintMemoryPlan(params: {
 
 function targetAgentOrRespond(
   rawAgentId: string,
-  config: OpenClawConfig,
+  config: NovaConfig,
   respond: RespondFn,
 ): string | undefined {
   if (!isValidAgentId(rawAgentId)) {
@@ -138,7 +138,7 @@ function targetAgentOrRespond(
 
 async function planMemoryProvider(params: {
   provider: MigrationProviderPlugin;
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId: string;
   overwrite?: boolean;
 }): Promise<MemoryMigrationProviderPlan> {

@@ -1,9 +1,9 @@
-import type { AnyAgentTool, OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
-import { jsonResult } from "openclaw/plugin-sdk/tool-results";
+import type { AnyAgentTool, NovaPluginToolContext } from "nova/plugin-sdk/plugin-entry";
+import { jsonResult } from "nova/plugin-sdk/tool-results";
 import type {
   PluginHookToolResultPersistEvent,
   PluginHookToolResultPersistResult,
-} from "openclaw/plugin-sdk/types";
+} from "nova/plugin-sdk/types";
 import { parseToolInput, type OnePasswordBroker } from "./broker.js";
 import { OnePasswordError } from "./errors.js";
 import { AUTHORIZATION_NONCE_PARAM } from "./pending-authorization.js";
@@ -92,7 +92,7 @@ export function redactPersistedOnePasswordResult(
 
 export function createOnePasswordTool(
   broker: OnePasswordBroker,
-  invocation: OpenClawPluginToolContext,
+  invocation: NovaPluginToolContext,
 ): AnyAgentTool {
   return {
     name: "onepassword",

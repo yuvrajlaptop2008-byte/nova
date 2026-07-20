@@ -1,5 +1,5 @@
 // Qqbot plugin module implements slash command test support behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import type { CommandsPort } from "../adapter/commands.port.js";
 import { initCommands } from "./slash-commands-impl.js";
 
@@ -12,10 +12,7 @@ type WrittenQQBotConfig = {
   accounts?: { default?: { streaming?: unknown } };
 };
 
-export function installCommandRuntime(
-  currentConfig: OpenClawConfig,
-  writes: OpenClawConfig[],
-): void {
+export function installCommandRuntime(currentConfig: NovaConfig, writes: NovaConfig[]): void {
   const replaceConfigFile: ReplaceConfigFile = async (params) => {
     writes.push(params.nextConfig);
     return undefined as unknown as ReplaceConfigFileResult;
@@ -34,7 +31,7 @@ export function installCommandRuntime(
 }
 
 export function getWrittenQQBotConfig(
-  write: OpenClawConfig | undefined,
+  write: NovaConfig | undefined,
 ): WrittenQQBotConfig | undefined {
   return write?.channels?.qqbot as WrittenQQBotConfig | undefined;
 }

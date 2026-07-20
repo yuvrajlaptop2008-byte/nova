@@ -53,7 +53,7 @@ function isReleasedVersion(version: string): boolean {
 
 /**
  * Lazily resolve the local node host's nodeId from canonical shared SQLite state.
- * Process-stable: only changes on `openclaw node install`, which requires restart.
+ * Process-stable: only changes on `nova node install`, which requires restart.
  */
 let cachedLocalNodeId: Promise<string | null> | undefined;
 async function resolveLocalNodeId(): Promise<string | null> {

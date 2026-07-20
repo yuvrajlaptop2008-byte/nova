@@ -3,7 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getBundledChannelSetupPlugin } from "../channels/plugins/bundled.js";
 import type { ChannelPluginCatalogEntry } from "../channels/plugins/catalog.js";
 import type { ChannelPlugin } from "../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../plugins/runtime.js";
 import { DEFAULT_ACCOUNT_ID } from "../routing/session-key.js";
@@ -54,7 +54,7 @@ const channelWizardMocks = vi.hoisted(() => {
   };
   return {
     prompter,
-    setupChannels: vi.fn(async (...args: unknown[]) => args[0] as OpenClawConfig),
+    setupChannels: vi.fn(async (...args: unknown[]) => args[0] as NovaConfig),
   };
 });
 
@@ -452,13 +452,13 @@ describe("channelsAddCommand", () => {
     channelWizardMocks.prompter.text.mockClear();
     channelWizardMocks.setupChannels.mockClear();
     channelWizardMocks.setupChannels.mockImplementation(
-      async (...args: unknown[]) => args[0] as OpenClawConfig,
+      async (...args: unknown[]) => args[0] as NovaConfig,
     );
     setMinimalChannelsAddRegistryForTests();
   });
 
   it("keeps guided channel setup lazy until the user selects a channel", async () => {
-    const config: OpenClawConfig = { channels: {} };
+    const config: NovaConfig = { channels: {} };
     configMocks.readConfigFileSnapshot.mockResolvedValue({
       ...baseConfigSnapshot,
       sourceConfig: config,
@@ -479,8 +479,8 @@ describe("channelsAddCommand", () => {
   });
 
   it("persists an accepted plugin install after setup returns to an empty selection", async () => {
-    const config: OpenClawConfig = { channels: {} };
-    const installedConfig: OpenClawConfig = {
+    const config: NovaConfig = { channels: {} };
+    const installedConfig: NovaConfig = {
       ...config,
       plugins: {
         entries: { "external-chat": { enabled: true } },
@@ -513,7 +513,7 @@ describe("channelsAddCommand", () => {
   });
 
   it("preselects an installable catalog channel in guided setup", async () => {
-    const config: OpenClawConfig = { channels: {} };
+    const config: NovaConfig = { channels: {} };
     configMocks.readConfigFileSnapshot.mockResolvedValue({
       ...baseConfigSnapshot,
       sourceConfig: config,
@@ -697,7 +697,7 @@ describe("channelsAddCommand", () => {
       {
         channel: "whatsapp",
         account: "work",
-        authDir: "/tmp/openclaw-wa-auth",
+        authDir: "/tmp/nova-wa-auth",
       },
       runtime,
       { hasFlags: true },
@@ -708,7 +708,7 @@ describe("channelsAddCommand", () => {
       accounts: {
         work: {
           enabled: true,
-          authDir: "/tmp/openclaw-wa-auth",
+          authDir: "/tmp/nova-wa-auth",
         },
       },
     });
@@ -915,7 +915,7 @@ describe("channelsAddCommand", () => {
       {
         channel: "whatsapp",
         account: "work",
-        authDir: "/tmp/openclaw-wa-auth",
+        authDir: "/tmp/nova-wa-auth",
       },
       runtime,
       { hasFlags: true },
@@ -929,7 +929,7 @@ describe("channelsAddCommand", () => {
       accounts: {
         work: {
           enabled: true,
-          authDir: "/tmp/openclaw-wa-auth",
+          authDir: "/tmp/nova-wa-auth",
         },
       },
     });
@@ -1175,7 +1175,7 @@ describe("channelsAddCommand", () => {
       },
     };
     pluginInstallRecordCommitMocks.commitConfigWithPendingPluginInstalls.mockImplementationOnce(
-      async (params: { nextConfig: OpenClawConfig }) => {
+      async (params: { nextConfig: NovaConfig }) => {
         const { installs: _installs, ...plugins } = params.nextConfig.plugins ?? {};
         const writtenConfigLocal = { ...params.nextConfig, plugins };
         await configMocks.writeConfigFile(writtenConfigLocal);

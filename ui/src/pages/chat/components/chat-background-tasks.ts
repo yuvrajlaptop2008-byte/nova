@@ -423,7 +423,7 @@ export function renderBackgroundTasksToggle(
   const label = expanded ? t("chat.backgroundTasks.collapse") : t("chat.backgroundTasks.show");
   const activeCount = backgroundTasksActiveCount(backgroundTasks);
   return html`
-    <openclaw-tooltip .content=${label}>
+    <nova-tooltip .content=${label}>
       <button
         class="btn btn--ghost btn--icon chat-icon-btn chat-tasks-toggle"
         type="button"
@@ -436,7 +436,7 @@ export function renderBackgroundTasksToggle(
           ? html`<span class="chat-tasks-toggle__badge" aria-hidden="true">${activeCount}</span>`
           : nothing}
       </button>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
 }
 
@@ -474,7 +474,7 @@ export function renderBackgroundTasksRail(
           <strong>${t("chat.backgroundTasks.title")}</strong>
         </div>
         <div class="chat-tasks-rail__actions">
-          <openclaw-tooltip .content=${t("chat.backgroundTasks.refresh")}>
+          <nova-tooltip .content=${t("chat.backgroundTasks.refresh")}>
             <button
               class="btn btn--ghost btn--sm chat-tasks-rail__refresh"
               type="button"
@@ -484,8 +484,8 @@ export function renderBackgroundTasksRail(
             >
               ${icons.refresh}
             </button>
-          </openclaw-tooltip>
-          <openclaw-tooltip .content=${t("chat.backgroundTasks.collapse")}>
+          </nova-tooltip>
+          <nova-tooltip .content=${t("chat.backgroundTasks.collapse")}>
             <button
               type="button"
               class="nav-collapse-toggle chat-tasks-rail__collapse-toggle"
@@ -499,7 +499,7 @@ export function renderBackgroundTasksRail(
                   : icons.panelRightClose}</span
               >
             </button>
-          </openclaw-tooltip>
+          </nova-tooltip>
         </div>
       </div>
       ${!backgroundTasks.connected

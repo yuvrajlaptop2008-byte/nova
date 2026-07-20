@@ -1340,7 +1340,7 @@ export const id: TranslationMap = {
     autoSaveFailed: "Gagal menyimpan",
     autoSaveConflict: "Pengaturan diubah di tempat lain",
     retry: "Coba lagi",
-    applyBannerText: "Tersimpan ke openclaw.json — mulai ulang gateway untuk menerapkan.",
+    applyBannerText: "Tersimpan ke nova.json — mulai ulang gateway untuk menerapkan.",
     applyBannerAction: "Mulai ulang & terapkan",
     rawDiscard: "Buang",
     rawDraftBlocksApply:
@@ -1732,7 +1732,7 @@ export const id: TranslationMap = {
     skillWorkshop: "Tinjau, sempurnakan, dan terapkan proposal sebelum menjadi Skills aktif.",
     nodes: "Perangkat yang dipasangkan dan perintah.",
     chat: "Chat Gateway untuk intervensi cepat.",
-    config: "Edit openclaw.json.",
+    config: "Edit nova.json.",
     profile: "Statistik, rentetan, dan kehidupan agen Anda di reef.",
     communications: "Saluran, pesan, dan pengaturan audio.",
     appearance: "Tema, UI, dan pengaturan wizard penyiapan.",
@@ -2446,7 +2446,7 @@ export const id: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3461,17 +3461,16 @@ export const id: TranslationMap = {
         summary:
           "Gateway dapat dijangkau, tetapi memerlukan token atau kata sandi yang cocok sebelum browser ini dapat terhubung.",
         stepPaste:
-          "Tempel token dari openclaw dashboard --no-open atau masukkan kata sandi yang dikonfigurasi.",
+          "Tempel token dari nova dashboard --no-open atau masukkan kata sandi yang dikonfigurasi.",
         stepGenerate:
-          "Jika belum ada token yang dikonfigurasi, jalankan openclaw doctor --generate-gateway-token di host Gateway.",
+          "Jika belum ada token yang dikonfigurasi, jalankan nova doctor --generate-gateway-token di host Gateway.",
         stepConnect: "Klik Connect lagi setelah memperbarui kredensial.",
       },
       authFailed: {
         title: "Auth tidak cocok",
         summary:
           "Kredensial yang diberikan ditolak. Penyebab paling umum adalah token kedaluwarsa atau token yang disalin dari URL Gateway lain.",
-        stepDashboard:
-          "Jalankan openclaw dashboard --no-open lalu buka URL baru atau tempel tokennya.",
+        stepDashboard: "Jalankan nova dashboard --no-open lalu buka URL baru atau tempel tokennya.",
         stepReplace:
           "Ganti nilai token/kata sandi yang lama; jangan gunakan ulang token dari URL Gateway lain.",
         stepMode:
@@ -3495,8 +3494,8 @@ export const id: TranslationMap = {
           "Browser ini memerlukan persetujuan satu kali dari host Gateway sebelum dapat menggunakan Control UI.",
         upgradeSummary:
           "Browser ini sudah dikenal, tetapi akses yang diminta berubah dan memerlukan persetujuan baru.",
-        stepList: "Jalankan openclaw devices list di host Gateway.",
-        stepApproveId: "Setujui permintaan ini: openclaw devices approve {requestId}.",
+        stepList: "Jalankan nova devices list di host Gateway.",
+        stepApproveId: "Setujui permintaan ini: nova devices approve {requestId}.",
         stepApprove: "Setujui permintaan browser/perangkat yang tertunda dari daftar tersebut.",
         stepReconnect: "Hubungkan ulang setelah persetujuan selesai.",
       },
@@ -3523,7 +3522,7 @@ export const id: TranslationMap = {
         summary:
           "Control UI yang disajikan dan Gateway yang berjalan tidak sepakat tentang protokol koneksi yang didukung.",
         stepDashboard:
-          "Buka kembali dashboard yang disajikan dengan openclaw dashboard agar UI dan Gateway berasal dari instalasi yang sama.",
+          "Buka kembali dashboard yang disajikan dengan nova dashboard agar UI dan Gateway berasal dari instalasi yang sama.",
         stepDevUi:
           "Jika menggunakan pnpm ui:dev, bangun ulang atau mulai ulang UI dev terhadap checkout saat ini.",
         stepRestart:
@@ -3533,11 +3532,11 @@ export const id: TranslationMap = {
         title: "Tidak dapat terhubung",
         summary:
           "Browser tidak dapat menyelesaikan koneksi Gateway. Periksa target dan transport sebelum mencoba ulang kredensial.",
-        stepGateway: "Pastikan Gateway berjalan dengan openclaw status atau openclaw gateway run.",
+        stepGateway: "Pastikan Gateway berjalan dengan nova status atau nova gateway run.",
         stepUrl:
           "Periksa URL WebSocket dan gunakan wss:// saat Gateway berada di belakang HTTPS/Tailscale Serve.",
         stepDashboard:
-          "Buka kembali dashboard dengan openclaw dashboard --no-open untuk menyalin ulang URL dan detail auth saat ini.",
+          "Buka kembali dashboard dengan nova dashboard --no-open untuk menyalin ulang URL dan detail auth saat ini.",
       },
     },
   },

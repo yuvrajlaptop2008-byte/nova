@@ -17,11 +17,11 @@ describe("syncPluginVersions", () => {
     cleanupTempDirs(tempDirs);
   });
 
-  it("preserves workspace openclaw devDependencies and plugin host floors", () => {
-    const rootDir = makeTempDir(tempDirs, "openclaw-sync-plugin-versions-");
+  it("preserves workspace nova devDependencies and plugin host floors", () => {
+    const rootDir = makeTempDir(tempDirs, "nova-sync-plugin-versions-");
 
     writeJson(path.join(rootDir, "package.json"), {
-      name: "openclaw",
+      name: "nova",
       version: "2026.4.1",
     });
     writeJson(path.join(rootDir, "packages/ai/package.json"), {
@@ -37,12 +37,12 @@ describe("syncPluginVersions", () => {
       name: "@nova/imessage",
       version: "2026.3.30",
       devDependencies: {
-        openclaw: "workspace:*",
+        nova: "workspace:*",
       },
       peerDependencies: {
-        openclaw: ">=2026.3.30",
+        nova: ">=2026.3.30",
       },
-      openclaw: {
+      nova: {
         install: {
           minHostVersion: ">=2026.3.30",
         },
@@ -50,7 +50,7 @@ describe("syncPluginVersions", () => {
           pluginApi: ">=2026.3.30",
         },
         build: {
-          openclawVersion: "2026.3.30",
+          novaVersion: "2026.3.30",
         },
       },
     });
@@ -62,7 +62,7 @@ describe("syncPluginVersions", () => {
       version?: string;
       devDependencies?: Record<string, string>;
       peerDependencies?: Record<string, string>;
-      openclaw?: {
+      nova?: {
         install?: {
           minHostVersion?: string;
         };
@@ -70,7 +70,7 @@ describe("syncPluginVersions", () => {
           pluginApi?: string;
         };
         build?: {
-          openclawVersion?: string;
+          novaVersion?: string;
         };
       };
     };
@@ -85,27 +85,27 @@ describe("syncPluginVersions", () => {
       JSON.parse(fs.readFileSync(path.join(rootDir, "packages/llm-core/package.json"), "utf8")),
     ).toMatchObject({ private: true, version: "0.0.0-private" });
     expect(updatedPackage.version).toBe("2026.4.1");
-    expect(updatedPackage.devDependencies?.openclaw).toBe("workspace:*");
-    expect(updatedPackage.peerDependencies?.openclaw).toBe(">=2026.4.1");
-    expect(updatedPackage.openclaw?.install?.minHostVersion).toBe(">=2026.3.30");
-    expect(updatedPackage.openclaw?.compat?.pluginApi).toBe(">=2026.4.1");
-    expect(updatedPackage.openclaw?.build?.openclawVersion).toBe("2026.4.1");
+    expect(updatedPackage.devDependencies?.nova).toBe("workspace:*");
+    expect(updatedPackage.peerDependencies?.nova).toBe(">=2026.4.1");
+    expect(updatedPackage.nova?.install?.minHostVersion).toBe(">=2026.3.30");
+    expect(updatedPackage.nova?.compat?.pluginApi).toBe(">=2026.4.1");
+    expect(updatedPackage.nova?.build?.novaVersion).toBe("2026.4.1");
   });
 
   it("reports pending version sync without writing in check mode", () => {
-    const rootDir = makeTempDir(tempDirs, "openclaw-sync-plugin-versions-check-");
+    const rootDir = makeTempDir(tempDirs, "nova-sync-plugin-versions-check-");
 
     writeJson(path.join(rootDir, "package.json"), {
-      name: "openclaw",
+      name: "nova",
       version: "2026.4.2",
     });
     writeJson(path.join(rootDir, "extensions/discord/package.json"), {
       name: "@nova/discord",
       version: "2026.4.1",
       peerDependencies: {
-        openclaw: ">=2026.4.1",
+        nova: ">=2026.4.1",
       },
-      openclaw: {
+      nova: {
         compat: {
           pluginApi: ">=2026.4.1",
         },
@@ -118,7 +118,7 @@ describe("syncPluginVersions", () => {
     ) as {
       version?: string;
       peerDependencies?: Record<string, string>;
-      openclaw?: {
+      nova?: {
         compat?: {
           pluginApi?: string;
         };
@@ -127,15 +127,15 @@ describe("syncPluginVersions", () => {
 
     expect(summary.updated).toEqual(["@nova/discord"]);
     expect(unchangedPackage.version).toBe("2026.4.1");
-    expect(unchangedPackage.peerDependencies?.openclaw).toBe(">=2026.4.1");
-    expect(unchangedPackage.openclaw?.compat?.pluginApi).toBe(">=2026.4.1");
+    expect(unchangedPackage.peerDependencies?.nova).toBe(">=2026.4.1");
+    expect(unchangedPackage.nova?.compat?.pluginApi).toBe(">=2026.4.1");
   });
 
   it("uses the base release version for beta changelog entries", () => {
-    const rootDir = makeTempDir(tempDirs, "openclaw-sync-plugin-versions-beta-changelog-");
+    const rootDir = makeTempDir(tempDirs, "nova-sync-plugin-versions-beta-changelog-");
 
     writeJson(path.join(rootDir, "package.json"), {
-      name: "openclaw",
+      name: "nova",
       version: "2026.5.3-beta.1",
     });
     writeJson(path.join(rootDir, "extensions/matrix/package.json"), {

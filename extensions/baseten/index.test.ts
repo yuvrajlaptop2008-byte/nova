@@ -1,12 +1,12 @@
-import type { Model } from "openclaw/plugin-sdk/llm";
-import { createAssistantMessageEventStream } from "openclaw/plugin-sdk/llm";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
+import type { Model } from "nova/plugin-sdk/llm";
+import { createAssistantMessageEventStream } from "nova/plugin-sdk/llm";
+import type { ProviderWrapStreamFnContext } from "nova/plugin-sdk/plugin-entry";
 import {
   registerSingleProviderPlugin,
   resolveProviderPluginChoice,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { resolveAgentModelPrimaryValue } from "openclaw/plugin-sdk/provider-onboard";
-import { buildOpenAICompletionsParams } from "openclaw/plugin-sdk/provider-transport-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import { resolveAgentModelPrimaryValue } from "nova/plugin-sdk/provider-onboard";
+import { buildOpenAICompletionsParams } from "nova/plugin-sdk/provider-transport-runtime";
 import { describe, expect, it } from "vitest";
 import { runSingleProviderCatalog } from "../test-support/provider-model-test-helpers.js";
 import basetenPlugin from "./index.js";

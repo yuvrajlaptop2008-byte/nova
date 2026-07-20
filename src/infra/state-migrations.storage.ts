@@ -9,7 +9,7 @@ import {
   INSTALLED_PLUGIN_INDEX_VERSION,
   type InstalledPluginIndex,
 } from "../plugins/installed-plugin-index.js";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import { runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { requireNodeSqlite } from "./node-sqlite.js";
 import { parseRegistryNpmSpec } from "./npm-registry-spec.js";
 import { fileExists, safeReadDir } from "./state-migrations.fs.js";
@@ -677,7 +677,7 @@ async function migrateLegacyTaskRunsSidecar(params: {
     let importedTasks = 0;
     let importedDeliveryStates = 0;
     let skippedOrphanDeliveryStates = 0;
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const taskColumns = [
           "runtime",
@@ -811,7 +811,7 @@ async function migrateLegacyFlowRunsSidecar(params: {
   try {
     const conflicts: string[] = [];
     let imported = 0;
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const columns = [
           "shape",
@@ -1076,7 +1076,7 @@ export async function migrateLegacyDeliveryQueues(params: {
     let skipped = 0;
     const conflicts: string[] = [];
     try {
-      runOpenClawStateWriteTransaction(
+      runNovaStateWriteTransaction(
         ({ db }) => {
           const insert = db.prepare(
             `

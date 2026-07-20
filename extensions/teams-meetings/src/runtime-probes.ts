@@ -1,4 +1,4 @@
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
+import { sleep } from "nova/plugin-sdk/runtime-env";
 import type { TeamsMeetingsConfig, TeamsMeetingsMode, TeamsMeetingsTransport } from "./config.js";
 import type {
   TeamsMeetingsJoinRequest,

@@ -1,7 +1,7 @@
 import { AGENT_MODEL_CONFIG_KEYS } from "@nova/model-catalog-core/configured-model-refs";
 import { asOptionalRecord as asMutableRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalLowercaseString as normalizeString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { normalizeAgentId } from "../../../routing/session-key.js";
 import {
   asAgentRuntimePolicyConfig,
@@ -142,7 +142,7 @@ function collectAgentModelRefs(params: {
 }
 
 export function collectConfigModelRefs(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   blockedModelIdentities?: ReadonlySet<LegacyCodexModelIdentity>,
 ): CodexRouteHit[] {
   const hits: CodexRouteHit[] = [];
@@ -221,7 +221,7 @@ export function collectConfigModelRefs(
 }
 
 export function collectDisabledCodexPluginRouteHits(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env?: NodeJS.ProcessEnv,
 ): DisabledCodexPluginRouteHit[] {
   if (!isCodexPluginUnavailableByConfig(cfg)) {
@@ -325,7 +325,7 @@ export function collectDisabledCodexPluginRouteHits(
 
 /** Find Codex-routed model refs that require the Codex plugin while it is disabled. */
 export function collectDisabledCodexPluginRouteIssues(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env?: NodeJS.ProcessEnv,
 ): DisabledCodexPluginRouteIssue[] {
   const repairBlocked = codexPluginRepairIsBlocked(cfg);
@@ -338,9 +338,9 @@ export function collectDisabledCodexPluginRouteIssues(
 }
 
 export function enableCodexPluginForRequiredRoutes(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   routeHits: DisabledCodexPluginRouteHit[];
-}): { cfg: OpenClawConfig; changes: string[] } {
+}): { cfg: NovaConfig; changes: string[] } {
   // Explicit user opt-out wins over managed-harness repair; doctor warns instead.
   if (params.routeHits.length === 0 || codexPluginRepairIsBlocked(params.cfg)) {
     return { cfg: params.cfg, changes: [] };
@@ -375,18 +375,18 @@ export function enableCodexPluginForRequiredRoutes(params: {
   return { cfg, changes };
 }
 
-function codexPluginIsBlockedOutsideEntry(cfg: OpenClawConfig): boolean {
+function codexPluginIsBlockedOutsideEntry(cfg: NovaConfig): boolean {
   return cfg.plugins?.enabled === false || pluginIdListIncludes(cfg.plugins?.deny, "codex");
 }
 
-export function codexPluginRepairIsBlocked(cfg: OpenClawConfig): boolean {
+export function codexPluginRepairIsBlocked(cfg: NovaConfig): boolean {
   return (
     codexPluginIsBlockedOutsideEntry(cfg) ||
     asMutableRecord(asMutableRecord(cfg.plugins?.entries)?.codex)?.enabled === false
   );
 }
 
-function isCodexPluginUnavailableByConfig(cfg: OpenClawConfig): boolean {
+function isCodexPluginUnavailableByConfig(cfg: NovaConfig): boolean {
   if (codexPluginRepairIsBlocked(cfg)) {
     return true;
   }
@@ -439,7 +439,7 @@ function hasAgentPrimaryModelConfig(agent: unknown): boolean {
 }
 
 function collectChannelAgentRuntimeModelRefs(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ): Array<{ path: string; modelRef: string }> {
   const refs: Array<{ path: string; modelRef: string }> = [];
   const channelsModelByChannel = asMutableRecord(cfg.channels?.modelByChannel);

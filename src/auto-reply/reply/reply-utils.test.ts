@@ -31,13 +31,13 @@ function expectNormalizedReply(
 }
 
 describe("matchesMentionWithExplicit", () => {
-  const mentionRegexes = [/\bopenclaw\b/i];
+  const mentionRegexes = [/\bnova\b/i];
 
   it("combines explicit-mention state with regex fallback rules", () => {
     const cases = [
       {
         name: "regex match with explicit resolver available",
-        text: "@openclaw hello",
+        text: "@nova hello",
         mentionRegexes,
         explicit: {
           hasAnyMention: true,
@@ -70,7 +70,7 @@ describe("matchesMentionWithExplicit", () => {
       },
       {
         name: "falls back to regex when explicit cannot resolve",
-        text: "openclaw please",
+        text: "nova please",
         mentionRegexes,
         explicit: {
           hasAnyMention: true,

@@ -9,10 +9,10 @@ const BASH_BIN = process.platform === "win32" ? "bash" : "/bin/bash";
 const tempDirs: string[] = [];
 
 function makeRepository(): { root: string; commit: string } {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-apple-release-source-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-apple-release-source-"));
   tempDirs.push(root);
   execFileSync("git", ["init", "--quiet"], { cwd: root });
-  execFileSync("git", ["config", "user.email", "release-test@openclaw.test"], { cwd: root });
+  execFileSync("git", ["config", "user.email", "release-test@nova.test"], { cwd: root });
   execFileSync("git", ["config", "user.name", "Nova Release Test"], { cwd: root });
   writeFileSync(path.join(root, "tracked.txt"), "clean\n", "utf8");
   execFileSync("git", ["add", "tracked.txt"], { cwd: root });

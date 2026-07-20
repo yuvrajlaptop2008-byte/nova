@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { verifyOfficialExternalPluginCatalogSignedEnvelope } from "./official-external-plugin-catalog-envelope.js";
 import type { OfficialExternalPluginCatalogFeed } from "./official-external-plugin-catalog.js";
 
-const PAYLOAD_TYPE = "openclaw.official-external-plugin-catalog-feed.v1";
+const PAYLOAD_TYPE = "nova.official-external-plugin-catalog-feed.v1";
 
 type SigningKey = {
   keyId: string;
@@ -23,7 +23,7 @@ function fixtureFeed(): OfficialExternalPluginCatalogFeed {
         id: "@nova/signed-feed-proof",
         title: "Signed Feed Proof",
         state: "available",
-        publisher: { id: "openclaw", trust: "official" },
+        publisher: { id: "nova", trust: "official" },
       },
     ],
   };

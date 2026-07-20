@@ -1,6 +1,6 @@
 import { SYSTEM_PROMPT_CACHE_BOUNDARY } from "@nova/ai/internal/shared";
 import { expectDefined } from "@nova/normalization-core";
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import { buildOpenAICompletionsParams } from "./openai-transport-stream.js";
 import {
@@ -159,18 +159,18 @@ describe("openai transport stream", () => {
       } as never,
       { sessionId: "session-123" } as never,
       {
-        openclaw_session_id: "session-123",
-        openclaw_turn_id: "turn-123",
-        openclaw_turn_attempt: "1",
-        openclaw_transport: "stream",
+        nova_session_id: "session-123",
+        nova_turn_id: "turn-123",
+        nova_turn_attempt: "1",
+        nova_transport: "stream",
       },
     ) as { metadata?: Record<string, string> };
 
     expectRecordFields(params.metadata, {
-      openclaw_session_id: "session-123",
-      openclaw_turn_id: "turn-123",
-      openclaw_turn_attempt: "1",
-      openclaw_transport: "stream",
+      nova_session_id: "session-123",
+      nova_turn_id: "turn-123",
+      nova_turn_attempt: "1",
+      nova_transport: "stream",
     });
   });
 

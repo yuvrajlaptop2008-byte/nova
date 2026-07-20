@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   listManagedPluginNpmRoots: vi.fn(),
   repairMissingConfiguredPluginInstalls: vi.fn(),
-  relinkOpenClawPeerDependenciesInManagedNpmRoot: vi.fn(),
+  relinkNovaPeerDependenciesInManagedNpmRoot: vi.fn(),
   runPluginPayloadSmokeCheck: vi.fn(),
 }));
 
@@ -16,8 +16,7 @@ vi.mock("../../commands/doctor/shared/missing-configured-plugin-install.js", () 
   repairMissingConfiguredPluginInstalls: mocks.repairMissingConfiguredPluginInstalls,
 }));
 vi.mock("../../plugins/plugin-peer-link.js", () => ({
-  relinkOpenClawPeerDependenciesInManagedNpmRoot:
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot,
+  relinkNovaPeerDependenciesInManagedNpmRoot: mocks.relinkNovaPeerDependenciesInManagedNpmRoot,
 }));
 vi.mock("../../plugins/npm-project-roots.js", () => ({
   listManagedPluginNpmRoots: mocks.listManagedPluginNpmRoots,
@@ -26,7 +25,7 @@ vi.mock("./plugin-payload-validation.js", () => ({
   runPluginPayloadSmokeCheck: mocks.runPluginPayloadSmokeCheck,
 }));
 
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { VERSION } from "../../version.js";
 import {
   filterRecordsToActive,
@@ -50,7 +49,7 @@ describe("runPostCorePluginConvergence", () => {
       warnings: [],
       records: {},
     });
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot.mockResolvedValue({
+    mocks.relinkNovaPeerDependenciesInManagedNpmRoot.mockResolvedValue({
       checked: 0,
       attempted: 0,
       repaired: 0,
@@ -66,7 +65,7 @@ describe("runPostCorePluginConvergence", () => {
   });
 
   function makeTempDir(): string {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-post-core-convergence-"));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-post-core-convergence-"));
     tempDirs.push(dir);
     return dir;
   }
@@ -76,7 +75,7 @@ describe("runPostCorePluginConvergence", () => {
     fs.mkdirSync(pluginDir, { recursive: true });
     fs.writeFileSync(path.join(pluginDir, "index.js"), "export default {};\n", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify({
         id: pluginId,
         name: pluginId,
@@ -97,7 +96,7 @@ describe("runPostCorePluginConvergence", () => {
   }
 
   it("calls repair with NOVA_UPDATE_POST_CORE_CONVERGENCE=1 set", async () => {
-    const cfg = { plugins: { entries: {} } } as unknown as OpenClawConfig;
+    const cfg = { plugins: { entries: {} } } as unknown as NovaConfig;
     await runPostCorePluginConvergence({
       cfg,
       env: { NOVA_UPDATE_IN_PROGRESS: "1" },
@@ -119,7 +118,7 @@ describe("runPostCorePluginConvergence", () => {
         deny: ["disabled"],
         entries: { active: { enabled: true }, disabled: { enabled: true } },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const records = {
       active: { source: "npm" as const, installPath: "/p/active" },
       disabled: { source: "npm" as const, installPath: "/p/disabled" },
@@ -132,11 +131,11 @@ describe("runPostCorePluginConvergence", () => {
       env: { NOVA_STATE_DIR: "/state" },
     });
     expect(mocks.repairMissingConfiguredPluginInstalls).not.toHaveBeenCalled();
-    expect(mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot).not.toHaveBeenCalled();
+    expect(mocks.relinkNovaPeerDependenciesInManagedNpmRoot).not.toHaveBeenCalled();
   });
 
   it("uses the candidate runtime version over a stale inherited host version", async () => {
-    const cfg = { plugins: { entries: {} } } as unknown as OpenClawConfig;
+    const cfg = { plugins: { entries: {} } } as unknown as NovaConfig;
     await runPostCorePluginConvergence({
       cfg,
       env: { NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.12" },
@@ -159,7 +158,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { discord: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(result.errored).toBe(false);
@@ -174,7 +173,7 @@ describe("runPostCorePluginConvergence", () => {
       records: { discord: { source: "npm", installPath: "/p/discord" } },
     });
     const result = await runPostCorePluginConvergence({
-      cfg: { plugins: { entries: { discord: { enabled: true } } } } as unknown as OpenClawConfig,
+      cfg: { plugins: { entries: { discord: { enabled: true } } } } as unknown as NovaConfig,
       env: {},
     });
     expect(result.installRecords).toEqual({
@@ -182,17 +181,17 @@ describe("runPostCorePluginConvergence", () => {
     });
   });
 
-  it("repairs managed npm openclaw peer links in every managed npm project before payload smoke checks", async () => {
+  it("repairs managed npm nova peer links in every managed npm project before payload smoke checks", async () => {
     mocks.repairMissingConfiguredPluginInstalls.mockResolvedValue({
       changes: [],
       warnings: [],
       records: { codex: { source: "npm", installPath: "/p/codex" } },
     });
     mocks.listManagedPluginNpmRoots.mockResolvedValue([
-      "/tmp/openclaw-state/npm",
-      "/tmp/openclaw-state/npm/projects/codex",
+      "/tmp/nova-state/npm",
+      "/tmp/nova-state/npm/projects/codex",
     ]);
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot
+    mocks.relinkNovaPeerDependenciesInManagedNpmRoot
       .mockResolvedValueOnce({
         checked: 0,
         attempted: 0,
@@ -207,17 +206,17 @@ describe("runPostCorePluginConvergence", () => {
       });
 
     const result = await runPostCorePluginConvergence({
-      cfg: { plugins: { entries: { codex: { enabled: true } } } } as unknown as OpenClawConfig,
-      env: { NOVA_STATE_DIR: "/tmp/openclaw-state" },
+      cfg: { plugins: { entries: { codex: { enabled: true } } } } as unknown as NovaConfig,
+      env: { NOVA_STATE_DIR: "/tmp/nova-state" },
     });
 
-    expect(mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(1, {
-      npmRoot: "/tmp/openclaw-state/npm",
+    expect(mocks.relinkNovaPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(1, {
+      npmRoot: "/tmp/nova-state/npm",
       logger: {},
       onPackageReadError: expect.any(Function),
     });
-    expect(mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(2, {
-      npmRoot: "/tmp/openclaw-state/npm/projects/codex",
+    expect(mocks.relinkNovaPeerDependenciesInManagedNpmRoot).toHaveBeenNthCalledWith(2, {
+      npmRoot: "/tmp/nova-state/npm/projects/codex",
       logger: {},
       onPackageReadError: expect.any(Function),
     });
@@ -225,7 +224,7 @@ describe("runPostCorePluginConvergence", () => {
       "Repaired Nova host peer link(s) for 1 managed npm plugin package(s).",
     ]);
     expect(
-      mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot.mock.invocationCallOrder[0],
+      mocks.relinkNovaPeerDependenciesInManagedNpmRoot.mock.invocationCallOrder[0],
     ).toBeLessThan(
       expectDefined(
         mocks.runPluginPayloadSmokeCheck.mock.invocationCallOrder[0],
@@ -238,7 +237,7 @@ describe("runPostCorePluginConvergence", () => {
     const baseline = { matrix: { source: "npm" as const, installPath: "/p/matrix" } };
     const cfg = {
       plugins: { entries: { matrix: { enabled: true } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     mocks.repairMissingConfiguredPluginInstalls.mockResolvedValue({
       changes: [],
       warnings: [],
@@ -278,7 +277,7 @@ describe("runPostCorePluginConvergence", () => {
     });
     const cfg = {
       plugins: { entries: { discord: { enabled: true }, brave: { enabled: true } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const result = await runPostCorePluginConvergence({
       cfg,
@@ -312,7 +311,7 @@ describe("runPostCorePluginConvergence", () => {
   it("forwards ClawHub risk acknowledgement options to repair", async () => {
     const cfg = {
       plugins: { entries: { matrix: { enabled: true } } },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const onClawHubRisk = vi.fn(async () => true);
     await runPostCorePluginConvergence({
       cfg,
@@ -343,7 +342,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { discord: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(result.errored).toBe(false);
@@ -353,7 +352,7 @@ describe("runPostCorePluginConvergence", () => {
           'Failed to install missing configured plugin "discord" from @nova/discord: ENETUNREACH.',
         message:
           'Failed to install missing configured plugin "discord" from @nova/discord: ENETUNREACH.',
-        guidance: ["Run `openclaw update repair` to retry plugin repair."],
+        guidance: ["Run `nova update repair` to retry plugin repair."],
       },
     ]);
   });
@@ -370,7 +369,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { matrix: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(result.errored).toBe(false);
@@ -380,7 +379,7 @@ describe("runPostCorePluginConvergence", () => {
           'Failed to install missing configured plugin "matrix" from clawhub:@nova/matrix@beta: ClawHub ClawPack download for @nova/matrix@2026.6.1-beta.1 body stalled after 30000ms.',
         message:
           'Failed to install missing configured plugin "matrix" from clawhub:@nova/matrix@beta: ClawHub ClawPack download for @nova/matrix@2026.6.1-beta.1 body stalled after 30000ms.',
-        guidance: ["Run `openclaw update repair` to retry plugin repair."],
+        guidance: ["Run `nova update repair` to retry plugin repair."],
       },
     ]);
     expect(mocks.runPluginPayloadSmokeCheck).toHaveBeenCalledWith({
@@ -410,7 +409,7 @@ describe("runPostCorePluginConvergence", () => {
           deny: ["discord"],
           entries: { discord: { enabled: true } },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(result.errored).toBe(false);
@@ -432,7 +431,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { discord: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(result.errored).toBe(false);
@@ -473,7 +472,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(result.errored).toBe(true);
@@ -485,8 +484,8 @@ describe("runPostCorePluginConvergence", () => {
         message:
           'Plugin "brave" failed post-core payload smoke check (missing-main-entry): Plugin main entry "dist/index.js" not found at /p/brave/dist/index.js',
         guidance: [
-          "Run `openclaw update repair` to retry plugin repair.",
-          "Run `openclaw plugins inspect brave --runtime --json` for details.",
+          "Run `nova update repair` to retry plugin repair.",
+          "Run `nova plugins inspect brave --runtime --json` for details.",
         ],
       },
     ]);
@@ -511,7 +510,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(result.errored).toBe(true);
@@ -522,8 +521,8 @@ describe("runPostCorePluginConvergence", () => {
         message:
           'Plugin "brave" failed post-core payload smoke check (missing-install-path): Install path is missing from the plugin install record.',
         guidance: [
-          "Run `openclaw update repair` to retry plugin repair.",
-          "Run `openclaw plugins inspect brave --runtime --json` for details.",
+          "Run `nova update repair` to retry plugin repair.",
+          "Run `nova plugins inspect brave --runtime --json` for details.",
         ],
       },
     ]);
@@ -550,7 +549,7 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
 
@@ -558,7 +557,7 @@ describe("runPostCorePluginConvergence", () => {
       'Plugin "brave" failed post-core payload smoke check (unreadable-package-json): Could not read package.json at /p/brave/package.json: EACCES: permission denied';
     const guidance = [
       "Fix file access for /p/brave/package.json so it is readable by the user running Nova. For EACCES or EPERM, correct its ownership or permissions; otherwise resolve the reported filesystem I/O error, then retry.",
-      "Run `openclaw plugins inspect brave --runtime --json` for details.",
+      "Run `nova plugins inspect brave --runtime --json` for details.",
     ];
     expect(result.warnings).toStrictEqual([
       {
@@ -577,13 +576,13 @@ describe("runPostCorePluginConvergence", () => {
   });
 
   it("does not duplicate a package-scoped repair error owned by a smoke failure", async () => {
-    const installPath = "/tmp/openclaw-state/npm/projects/brave/node_modules/brave";
+    const installPath = "/tmp/nova-state/npm/projects/brave/node_modules/brave";
     mocks.repairMissingConfiguredPluginInstalls.mockResolvedValue({
       changes: [],
       warnings: [],
       records: { brave: { source: "npm", installPath } },
     });
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot.mockImplementation(
+    mocks.relinkNovaPeerDependenciesInManagedNpmRoot.mockImplementation(
       async (params: { onPackageReadError?: (error: unknown, packageDir: string) => void }) => {
         params.onPackageReadError?.(
           new Error(`EACCES: permission denied, open '${installPath}/package.json'`),
@@ -607,8 +606,8 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
-      env: { NOVA_STATE_DIR: "/tmp/openclaw-state" },
+      } as unknown as NovaConfig,
+      env: { NOVA_STATE_DIR: "/tmp/nova-state" },
     });
 
     expect(result.warnings).toHaveLength(1);
@@ -620,13 +619,13 @@ describe("runPostCorePluginConvergence", () => {
   });
 
   it("does not promote an inactive package read error into an ownerless blocker", async () => {
-    const installPath = "/tmp/openclaw-state/npm/projects/brave/node_modules/brave";
+    const installPath = "/tmp/nova-state/npm/projects/brave/node_modules/brave";
     mocks.repairMissingConfiguredPluginInstalls.mockResolvedValue({
       changes: [],
       warnings: [],
       records: { brave: { source: "npm", installPath } },
     });
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot.mockImplementation(
+    mocks.relinkNovaPeerDependenciesInManagedNpmRoot.mockImplementation(
       async (params: { onPackageReadError?: (error: unknown, packageDir: string) => void }) => {
         params.onPackageReadError?.(
           new Error(`EACCES: permission denied, open '${installPath}/package.json'`),
@@ -639,8 +638,8 @@ describe("runPostCorePluginConvergence", () => {
     const result = await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: false } } },
-      } as unknown as OpenClawConfig,
-      env: { NOVA_STATE_DIR: "/tmp/openclaw-state" },
+      } as unknown as NovaConfig,
+      env: { NOVA_STATE_DIR: "/tmp/nova-state" },
     });
 
     expect(mocks.runPluginPayloadSmokeCheck).toHaveBeenCalledWith({
@@ -652,8 +651,8 @@ describe("runPostCorePluginConvergence", () => {
   });
 
   it("keeps an unowned package read error visible for startup to block", async () => {
-    const packageDir = "/tmp/openclaw-state/npm/node_modules/untracked";
-    mocks.relinkOpenClawPeerDependenciesInManagedNpmRoot.mockImplementation(
+    const packageDir = "/tmp/nova-state/npm/node_modules/untracked";
+    mocks.relinkNovaPeerDependenciesInManagedNpmRoot.mockImplementation(
       async (params: { onPackageReadError?: (error: unknown, packageDir: string) => void }) => {
         params.onPackageReadError?.(new Error("EACCES: permission denied"), packageDir);
         return { checked: 0, attempted: 0, repaired: 0, skipped: 1 };
@@ -661,15 +660,15 @@ describe("runPostCorePluginConvergence", () => {
     );
 
     const result = await runPostCorePluginConvergence({
-      cfg: { plugins: { entries: {} } } as unknown as OpenClawConfig,
-      env: { NOVA_STATE_DIR: "/tmp/openclaw-state" },
+      cfg: { plugins: { entries: {} } } as unknown as NovaConfig,
+      env: { NOVA_STATE_DIR: "/tmp/nova-state" },
     });
 
     expect(result.warnings).toStrictEqual([
       {
         reason: "Failed to repair managed npm Nova host peer links: EACCES: permission denied",
         message: "Failed to repair managed npm Nova host peer links: EACCES: permission denied",
-        guidance: ["Run `openclaw update repair` to retry plugin repair."],
+        guidance: ["Run `nova update repair` to retry plugin repair."],
       },
     ]);
     expect(result.errored).toBe(false);
@@ -685,7 +684,7 @@ describe("runPostCorePluginConvergence", () => {
     await runPostCorePluginConvergence({
       cfg: {
         plugins: { entries: { brave: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       env: {},
     });
     expect(mocks.runPluginPayloadSmokeCheck).toHaveBeenCalledTimes(1);
@@ -708,12 +707,12 @@ describe("convergenceWarningsToOutcomes", () => {
           pluginId: "brave",
           reason: "missing-main-entry: …",
           message: 'Plugin "brave" failed payload smoke check.',
-          guidance: ["Run `openclaw update repair`."],
+          guidance: ["Run `nova update repair`."],
         },
         {
           reason: "Failed install",
           message: "Failed install for some plugin.",
-          guidance: ["Run `openclaw update repair`."],
+          guidance: ["Run `nova update repair`."],
         },
       ],
       errored: true,
@@ -747,7 +746,7 @@ describe("filterRecordsToActive", () => {
     const filtered = filterRecordsToActive({
       cfg: {
         plugins: { enabled: true, entries: { enabled: { enabled: true } } },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       records,
     });
     expect(filtered).toEqual(records);
@@ -767,7 +766,7 @@ describe("filterRecordsToActive", () => {
             "active-plugin": { enabled: true },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       records,
     });
     expect(filtered).toEqual({
@@ -785,7 +784,7 @@ describe("filterRecordsToActive", () => {
           enabled: true,
           deny: ["denied"],
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       records,
     });
     expect(filtered).toEqual({});
@@ -809,7 +808,7 @@ describe("filterRecordsToActive", () => {
           enabled: true,
           entries: { codex: { enabled: false } },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       records,
     });
     expect(filtered).toEqual(records);

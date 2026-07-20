@@ -29,7 +29,7 @@ export type BaseOpenAIStreamOptions = {
   headers?: Record<string, string>;
   firstEventTimeoutMs?: number;
   onFirstEventTimeout?: (reason: Error) => void;
-  openclawCodeModeToolSurface?: boolean;
+  novaCodeModeToolSurface?: boolean;
   responseFormat?: Record<string, unknown>;
   frequencyPenalty?: number;
   presencePenalty?: number;

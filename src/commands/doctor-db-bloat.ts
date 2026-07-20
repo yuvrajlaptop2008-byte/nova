@@ -3,10 +3,10 @@
 // (multi-hundred-MB stores, blocking vacuums) surfaced only after user harm.
 import fs from "node:fs";
 import { note } from "../../packages/terminal-core/src/note.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
-import { listOpenClawRegisteredAgentDatabases } from "../state/openclaw-agent-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import { listNovaRegisteredAgentDatabases } from "../state/nova-agent-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { formatBytes } from "./doctor-disk-space.js";
 
 // Bloat is only worth an operator's attention when the file is meaningfully
@@ -83,7 +83,7 @@ function describeBloat(label: string, stats: SqliteBloatStats): string | null {
 function collectSqliteBloatWarnings(deps?: { env?: NodeJS.ProcessEnv }): string[] {
   const env = deps?.env ?? process.env;
   const warnings: string[] = [];
-  const statePath = resolveOpenClawStateSqlitePath(env);
+  const statePath = resolveNovaStateSqlitePath(env);
   const stateStats = readSqliteBloatStats(statePath);
   if (stateStats) {
     const warning = describeBloat("state DB", stateStats);
@@ -91,7 +91,7 @@ function collectSqliteBloatWarnings(deps?: { env?: NodeJS.ProcessEnv }): string[
       warnings.push(warning);
     }
   }
-  for (const registered of listOpenClawRegisteredAgentDatabases({ env })) {
+  for (const registered of listNovaRegisteredAgentDatabases({ env })) {
     const stats = readSqliteBloatStats(registered.path);
     if (!stats) {
       continue;
@@ -105,7 +105,7 @@ function collectSqliteBloatWarnings(deps?: { env?: NodeJS.ProcessEnv }): string[
 }
 
 export function noteSqliteDatabaseBloat(
-  _cfg: OpenClawConfig, // reserved for API consistency with other Doctor contributions
+  _cfg: NovaConfig, // reserved for API consistency with other Doctor contributions
   deps?: { env?: NodeJS.ProcessEnv },
 ): void {
   const warnings = collectSqliteBloatWarnings(deps);

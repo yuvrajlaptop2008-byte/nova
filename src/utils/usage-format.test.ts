@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import {
   clearGatewayModelPricingFailures,
   replaceGatewayModelPricingCache,
@@ -69,7 +69,7 @@ describe("usage-format", () => {
 
   beforeEach(async () => {
     envSnapshot = captureEnv(["NOVA_AGENT_DIR", "NOVA_STATE_DIR"]);
-    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-usage-format-"));
+    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-usage-format-"));
     agentDir = path.join(stateDir, "agents", "main", "agent");
     process.env.NOVA_STATE_DIR = stateDir;
     delete process.env.NOVA_AGENT_DIR;
@@ -140,7 +140,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const cost = resolveModelCostConfig({
       provider: "test",
@@ -179,7 +179,7 @@ describe("usage-format", () => {
     ).toBeUndefined();
   });
 
-  it("prefers models.json pricing over openclaw config and cached pricing", async () => {
+  it("prefers models.json pricing over nova config and cached pricing", async () => {
     const config = {
       models: {
         providers: {
@@ -193,7 +193,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     await fs.writeFile(
       path.join(agentDir, "models.json"),
@@ -277,7 +277,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const resolveInputPrice = (scopedAgentDir?: string) =>
       resolveModelCostConfig({
         provider: "demo-scoped",
@@ -337,7 +337,7 @@ describe("usage-format", () => {
     ).toBe(999);
   });
 
-  it("falls back to openclaw config pricing when models.json is absent", () => {
+  it("falls back to nova config pricing when models.json is absent", () => {
     const config = {
       models: {
         providers: {
@@ -351,7 +351,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     setGatewayModelPricing([
       {
@@ -411,7 +411,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveModelCostConfig({
@@ -446,7 +446,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveModelCostConfig({
@@ -477,7 +477,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveModelCostConfig({
@@ -511,7 +511,7 @@ describe("usage-format", () => {
           "demo-structural": { models },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveModelCostConfig({
@@ -554,7 +554,7 @@ describe("usage-format", () => {
           "demo-replaced-cost": { models: [model] },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveModelCostConfig({
@@ -597,7 +597,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveModelCostConfig({
@@ -632,7 +632,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveModelCostConfig({
@@ -697,7 +697,7 @@ describe("usage-format", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const before = resolveModelCostConfigFingerprint(config);
     metadataOnlyModel.cost = { input: 9, output: 8, cacheRead: 7, cacheWrite: 6 };

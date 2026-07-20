@@ -1,6 +1,6 @@
 // Github Copilot plugin module implements usage behavior.
-import { buildCopilotIdeHeaders } from "openclaw/plugin-sdk/provider-auth";
-import { readProviderJsonResponse } from "openclaw/plugin-sdk/provider-http";
+import { buildCopilotIdeHeaders } from "nova/plugin-sdk/provider-auth";
+import { readProviderJsonResponse } from "nova/plugin-sdk/provider-http";
 import {
   buildUsageHttpErrorSnapshot,
   fetchJson,
@@ -8,7 +8,7 @@ import {
   PROVIDER_LABELS,
   type ProviderUsageSnapshot,
   type UsageWindow,
-} from "openclaw/plugin-sdk/provider-usage";
+} from "nova/plugin-sdk/provider-usage";
 import { PUBLIC_GITHUB_COPILOT_DOMAIN } from "./domain.js";
 
 type CopilotUsageResponse = {

@@ -39,7 +39,7 @@ export const DEFAULT_GATEWAY_HTTP_TOOL_DENY = [
   "nodes",
   // Desktop control on a paired Mac (pointer/keyboard) and screen reads
   "computer",
-  "openclaw",
+  "nova",
 ] as const;
 
 /**
@@ -63,5 +63,5 @@ export const GATEWAY_OWNER_ONLY_CORE_TOOLS = [
   "conversations_turn",
   "nodes",
   "computer",
-  "openclaw",
+  "nova",
 ] as const;

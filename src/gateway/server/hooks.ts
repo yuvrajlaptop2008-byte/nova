@@ -15,7 +15,7 @@ import {
   resolveMainSessionKey,
   resolveMainSessionKeyFromConfig,
 } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { RunCronAgentTurnResult } from "../../cron/isolated-agent/run.types.js";
 import { resolveCronAgentSessionKey } from "../../cron/isolated-agent/session-key.js";
 import type { CronJob } from "../../cron/types.js";
@@ -34,7 +34,7 @@ import { createHooksRequestHandler, type HookClientIpConfig } from "./hooks-requ
  */
 type SubsystemLogger = ReturnType<typeof createSubsystemLogger>;
 
-function resolveHookEventSessionKey(params: { cfg: OpenClawConfig; agentId?: string }): string {
+function resolveHookEventSessionKey(params: { cfg: NovaConfig; agentId?: string }): string {
   return params.agentId
     ? resolveAgentMainSessionKey({ cfg: params.cfg, agentId: params.agentId })
     : resolveMainSessionKey(params.cfg);
@@ -193,7 +193,7 @@ export function createGatewayHooksRequestHandler(params: {
         });
       }
     };
-    let dispatchCfg: OpenClawConfig;
+    let dispatchCfg: NovaConfig;
     try {
       dispatchCfg = getRuntimeConfig();
     } catch (err) {

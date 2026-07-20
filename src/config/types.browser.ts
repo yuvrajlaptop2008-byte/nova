@@ -11,10 +11,10 @@ export type BrowserProfileConfig = {
   /** Extra Chrome MCP arguments for existing-session profiles. */
   mcpArgs?: string[];
   /**
-   * Profile driver (default: openclaw). "extension" attaches to the user's
+   * Profile driver (default: nova). "extension" attaches to the user's
    * signed-in browser through the Nova Chrome extension relay.
    */
-  driver?: "openclaw" | "clawd" | "existing-session" | "extension";
+  driver?: "nova" | "clawd" | "existing-session" | "extension";
   /** If true, launch this profile in headless mode. Falls back to browser.headless. */
   headless?: boolean;
   /** Browser executable path for this profile. Falls back to browser.executablePath. */
@@ -54,7 +54,7 @@ export type BrowserConfig = {
   evaluateEnabled?: boolean;
   /** Base URL of the CDP endpoint (for remote browsers). Default: loopback CDP on the derived port. */
   cdpUrl?: string;
-  /** Accent color for the openclaw browser profile (hex). Default: #FF4500 */
+  /** Accent color for the nova browser profile (hex). Default: #FF4500 */
   color?: string;
   /** Override the browser executable path (all platforms). */
   executablePath?: string;

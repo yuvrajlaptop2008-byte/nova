@@ -48,10 +48,8 @@ describe("plugin.approval.request delivery routing (real gateway)", () => {
     deleteTestEnvValue("NOVA_GATEWAY_TOKEN");
     deleteTestEnvValue("NOVA_GATEWAY_PASSWORD");
 
-    tempHome = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-plugin-approval-turn-source-e2e-"),
-    );
-    const stateDir = path.join(tempHome, ".openclaw");
+    tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-plugin-approval-turn-source-e2e-"));
+    const stateDir = path.join(tempHome, ".nova");
     await fs.mkdir(stateDir, { recursive: true });
     setTestEnvValue("HOME", tempHome);
     setTestEnvValue("NOVA_STATE_DIR", stateDir);

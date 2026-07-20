@@ -3,8 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 import type { DatabaseSync, SQLInputValue } from "node:sqlite";
 import { gunzipSync } from "node:zlib";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import { runNovaStateWriteTransaction } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { sha256Hex } from "./crypto-digest.js";
 import { requireNodeSqlite } from "./node-sqlite.js";
 
@@ -116,7 +116,7 @@ export function detectLegacyDebugProxyCaptureSidecar(
   const paths = resolveLegacyDebugProxyCapturePaths(stateDir);
   if (
     path.resolve(paths.sourcePath) ===
-    path.resolve(resolveOpenClawStateSqlitePath({ ...env, NOVA_STATE_DIR: stateDir }))
+    path.resolve(resolveNovaStateSqlitePath({ ...env, NOVA_STATE_DIR: stateDir }))
   ) {
     return { ...paths, hasLegacy: false };
   }
@@ -423,7 +423,7 @@ export function migrateLegacyDebugProxyCaptureSidecar(params: {
   }
 
   try {
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const selectBlob = db.prepare(
           `SELECT encoding, size_bytes AS sizeBytes, sha256, data

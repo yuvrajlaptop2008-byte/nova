@@ -76,27 +76,27 @@ type GuardedSource = {
 const SAME_CHANNEL_SDK_GUARDS: GuardedSource[] = [
   {
     path: bundledPluginFile("discord", "src/shared.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/discord["']/, /plugin-sdk-internal\/discord/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/discord["']/, /plugin-sdk-internal\/discord/],
   },
   {
     path: bundledPluginFile("slack", "src/shared.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/slack["']/, /plugin-sdk-internal\/slack/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/slack["']/, /plugin-sdk-internal\/slack/],
   },
   {
     path: bundledPluginFile("telegram", "src/shared.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/telegram["']/, /plugin-sdk-internal\/telegram/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/telegram["']/, /plugin-sdk-internal\/telegram/],
   },
   {
     path: bundledPluginFile("telegram", "src/account-inspect.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/account-resolution["']/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/account-resolution["']/],
   },
   {
     path: bundledPluginFile("telegram", "src/accounts.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/account-resolution["']/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/account-resolution["']/],
   },
   {
     path: bundledPluginFile("telegram", "src/token.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/account-resolution["']/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/account-resolution["']/],
   },
   {
     path: bundledPluginFile("telegram", "src/channel.ts"),
@@ -136,19 +136,19 @@ const SAME_CHANNEL_SDK_GUARDS: GuardedSource[] = [
   },
   {
     path: bundledPluginFile("imessage", "src/shared.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/imessage["']/, /plugin-sdk-internal\/imessage/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/imessage["']/, /plugin-sdk-internal\/imessage/],
   },
   {
     path: bundledPluginFile("whatsapp", "src/shared.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/whatsapp["']/, /plugin-sdk-internal\/whatsapp/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/whatsapp["']/, /plugin-sdk-internal\/whatsapp/],
   },
   {
     path: bundledPluginFile("signal", "src/shared.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/signal["']/, /plugin-sdk-internal\/signal/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/signal["']/, /plugin-sdk-internal\/signal/],
   },
   {
     path: bundledPluginFile("signal", "src/runtime-api.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/signal["']/, /plugin-sdk-internal\/signal/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/signal["']/, /plugin-sdk-internal\/signal/],
   },
 ];
 
@@ -198,7 +198,7 @@ const SETUP_BARREL_GUARDS: GuardedSource[] = [
 const CHANNEL_CONFIG_SCHEMA_GUARDS: GuardedSource[] = [
   {
     path: bundledPluginFile("tlon", "src/config-schema.ts"),
-    forbiddenPatterns: [/["']openclaw\/plugin-sdk\/core["']/],
+    forbiddenPatterns: [/["']nova\/plugin-sdk\/core["']/],
   },
 ];
 
@@ -602,10 +602,10 @@ function expectNoCrossPluginSdkFacadeImports(file: string, imports: string[]): v
     return;
   }
   for (const specifier of imports) {
-    if (!specifier.startsWith("openclaw/plugin-sdk/")) {
+    if (!specifier.startsWith("nova/plugin-sdk/")) {
       continue;
     }
-    const targetSubpath = specifier.slice("openclaw/plugin-sdk/".length);
+    const targetSubpath = specifier.slice("nova/plugin-sdk/".length);
     const targetExtensionId =
       BUNDLED_EXTENSION_IDS.find(
         (extensionId) =>
@@ -683,10 +683,10 @@ describe("channel import guardrails", () => {
   it("keeps bundled extension source files off root and compat plugin-sdk imports", () => {
     expect(
       collectExtensionForbiddenImportMatches([
-        `"openclaw/plugin-sdk"`,
-        `'openclaw/plugin-sdk'`,
-        `"openclaw/plugin-sdk/compat"`,
-        `'openclaw/plugin-sdk/compat'`,
+        `"nova/plugin-sdk"`,
+        `'nova/plugin-sdk'`,
+        `"nova/plugin-sdk/compat"`,
+        `'nova/plugin-sdk/compat'`,
       ]),
     ).toEqual([]);
   });
@@ -765,7 +765,7 @@ describe("channel import guardrails", () => {
         expect(
           text,
           `${normalized} should import ${extensionId} helpers via the local api barrel`,
-        ).not.toMatch(new RegExp(`["']openclaw/plugin-sdk/${extensionId}(?:["'/])`, "u"));
+        ).not.toMatch(new RegExp(`["']nova/plugin-sdk/${extensionId}(?:["'/])`, "u"));
       }
     }
   });

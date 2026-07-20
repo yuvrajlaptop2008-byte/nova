@@ -1,17 +1,14 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { GatewayReloadPlan } from "./config-reload-plan.js";
 
-type AppliedCallback = (
-  plan: GatewayReloadPlan,
-  nextConfig: OpenClawConfig,
-) => void | Promise<void>;
+type AppliedCallback = (plan: GatewayReloadPlan, nextConfig: NovaConfig) => void | Promise<void>;
 
 export function createConfigAppliedRevisionTracker(options: {
   onConfigApplied?: AppliedCallback;
   onRevisionApplied?: (hash: string) => void;
 }) {
   let pending: { plan: GatewayReloadPlan; hash: string } | null = null;
-  const flush = async (currentConfig: OpenClawConfig) => {
+  const flush = async (currentConfig: NovaConfig) => {
     const owner = pending;
     if (!owner) {
       return;
@@ -28,7 +25,7 @@ export function createConfigAppliedRevisionTracker(options: {
       pending = { plan, hash };
     },
     flush,
-    apply: async (plan: GatewayReloadPlan, config: OpenClawConfig, hash: string) => {
+    apply: async (plan: GatewayReloadPlan, config: NovaConfig, hash: string) => {
       if (pending?.plan === plan) {
         await flush(config);
         return;

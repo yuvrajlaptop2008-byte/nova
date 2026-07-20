@@ -1,11 +1,11 @@
 // Memory Core plugin module implements rem harness behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   resolveMemoryDeepDreamingConfig,
   resolveMemoryRemDreamingConfig,
-} from "openclaw/plugin-sdk/memory-core-host-status";
+} from "nova/plugin-sdk/memory-core-host-status";
 import {
   filterRecallEntriesWithinLookback,
   previewRemDreaming,
@@ -26,7 +26,7 @@ type MemoryRemHarnessDeepConfig = ReturnType<typeof resolveMemoryDeepDreamingCon
 
 export type PreviewRemHarnessOptions = {
   workspaceDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   pluginConfig?: Record<string, unknown>;
   grounded?: boolean;
   groundedInputPaths?: string[];

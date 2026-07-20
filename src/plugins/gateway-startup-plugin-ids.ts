@@ -16,7 +16,7 @@ import {
   listExplicitlyDisabledChannelIdsForConfig,
   listPotentialConfiguredChannelIds,
 } from "../channels/config-presence.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   DEFAULT_MEMORY_DREAMING_PLUGIN_ID,
   resolveMemoryDreamingConfig,
@@ -87,7 +87,7 @@ function sortUniquePluginIds(values: Iterable<string>): string[] {
 }
 
 function normalizePluginsConfigForInstalledIndex(
-  config: OpenClawConfig["plugins"] | undefined,
+  config: NovaConfig["plugins"] | undefined,
   lookup: InstalledPluginIndexScopeLookup,
 ) {
   return normalizePluginsConfigWithResolver(config, lookup.normalizePluginId);
@@ -103,7 +103,7 @@ function isConfigActivationValueEnabled(value: unknown): boolean {
   return true;
 }
 
-function listPotentialEnabledChannelIds(config: OpenClawConfig, env: NodeJS.ProcessEnv): string[] {
+function listPotentialEnabledChannelIds(config: NovaConfig, env: NodeJS.ProcessEnv): string[] {
   const disabled = new Set(listExplicitlyDisabledChannelIdsForConfig(config));
   return listPotentialConfiguredChannelIds(config, env, { includePersistedAuthState: false })
     .map((id) => normalizeOptionalLowercaseString(id) ?? "")
@@ -114,7 +114,7 @@ function isGatewayStartupMemoryPlugin(plugin: InstalledPluginIndexRecord): boole
   return plugin.startup.memory;
 }
 
-function resolveGatewayStartupDreamingEngineId(config: OpenClawConfig): string | undefined {
+function resolveGatewayStartupDreamingEngineId(config: NovaConfig): string | undefined {
   const dreamingConfig = resolveMemoryDreamingConfig({
     pluginConfig: resolveMemoryDreamingPluginConfig(config),
     cfg: config,
@@ -128,7 +128,7 @@ function resolveGatewayStartupDreamingEngineId(config: OpenClawConfig): string |
   return DEFAULT_MEMORY_DREAMING_PLUGIN_ID;
 }
 
-function resolveGatewayStartupDreamingSelectedPluginId(config: OpenClawConfig): string | undefined {
+function resolveGatewayStartupDreamingSelectedPluginId(config: NovaConfig): string | undefined {
   const selectedPluginId = normalizeOptionalLowercaseString(resolveMemoryDreamingPluginId(config));
   return selectedPluginId && selectedPluginId !== DEFAULT_MEMORY_DREAMING_PLUGIN_ID
     ? selectedPluginId
@@ -149,11 +149,11 @@ function blocksPluginStartup(params: {
 }
 
 function resolveAuthorizedGatewayStartupDreamingPluginIds(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: NormalizedPluginsConfig;
   activationSource: {
     plugins: NormalizedPluginsConfig;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   activationSourcePlugins: NormalizedPluginsConfig;
   selectedMemoryPluginId?: string;
@@ -196,7 +196,7 @@ function resolveAuthorizedGatewayStartupDreamingPluginIds(params: {
 }
 
 function resolveMemorySlotStartupPluginId(params: {
-  activationSourceConfig: OpenClawConfig;
+  activationSourceConfig: NovaConfig;
   activationSourcePlugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   normalizePluginId: (pluginId: string) => string;
 }): string | undefined {
@@ -222,7 +222,7 @@ function resolveMemorySlotStartupPluginId(params: {
 }
 
 function resolveContextEngineSlotStartupPluginId(params: {
-  activationSourceConfig: OpenClawConfig;
+  activationSourceConfig: NovaConfig;
   activationSourcePlugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   normalizePluginId: (pluginId: string) => string;
 }): string | undefined {
@@ -301,7 +301,7 @@ function findManifestPlugin(
 
 function hasConfiguredActivationPath(params: {
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): boolean {
   return hasConfiguredActivationPathPatterns({
     paths: params.manifest?.activation?.onConfigPaths,
@@ -311,7 +311,7 @@ function hasConfiguredActivationPath(params: {
 
 function hasConfiguredActivationPathPatterns(params: {
   paths: readonly string[] | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): boolean {
   const paths = params.paths;
   if (!paths?.length) {
@@ -328,7 +328,7 @@ function hasConfiguredActivationPathPatterns(params: {
 function addConfiguredActivationPathPluginIds(
   target: Set<string>,
   params: {
-    activationSourceConfig: OpenClawConfig;
+    activationSourceConfig: NovaConfig;
     index: InstalledPluginIndex;
   },
 ): void {
@@ -360,7 +360,7 @@ function manifestOwnsConfiguredSpeechProvider(params: {
   });
 }
 
-function collectConfiguredWebSearchProviderIds(config: OpenClawConfig): ReadonlySet<string> {
+function collectConfiguredWebSearchProviderIds(config: NovaConfig): ReadonlySet<string> {
   const search = config.tools?.web?.search;
   if (search?.enabled === false || typeof search?.provider !== "string") {
     return new Set();
@@ -443,7 +443,7 @@ function buildManifestModelProviderLookup(
 }
 
 function collectConfiguredAgentModelProviderIds(
-  config: OpenClawConfig,
+  config: NovaConfig,
   manifestRegistry: PluginManifestRegistry,
 ): ReadonlySet<string> {
   const modelIdsByProvider = new Map<string, Set<string>>();
@@ -496,7 +496,7 @@ function collectConfiguredAgentModelProviderIds(
 }
 
 function configuredModelProviderNeedsRuntimePlugin(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   manifestModelProviders: ManifestModelProviderLookup;
   providerId: string;
   modelId: string;
@@ -528,7 +528,7 @@ function manifestOwnsConfiguredModelProvider(params: {
 }
 
 function collectConfiguredGenerationProviderIds(
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): ConfiguredGenerationProviderIds {
   const defaults = config.agents?.defaults;
   return {
@@ -538,7 +538,7 @@ function collectConfiguredGenerationProviderIds(
   };
 }
 
-function collectConfiguredVoiceProviderIds(config: OpenClawConfig): ConfiguredVoiceProviderIds {
+function collectConfiguredVoiceProviderIds(config: NovaConfig): ConfiguredVoiceProviderIds {
   const providerIds = collectModelProviderIds(config.agents?.defaults?.voiceModel);
   return {
     speechProviders: providerIds,
@@ -573,7 +573,7 @@ function readMemorySearchEnabled(
   return typeof enabled === "boolean" ? enabled : undefined;
 }
 
-function isMemorySlotExplicitlyDisabled(config: OpenClawConfig): boolean {
+function isMemorySlotExplicitlyDisabled(config: NovaConfig): boolean {
   return normalizeOptionalLowercaseString(config.plugins?.slots?.memory) === "none";
 }
 
@@ -599,10 +599,7 @@ type ConfiguredMemoryEmbeddingStartupProviderOwner = {
  * Both candidates are returned so matching covers the direct adapter and the
  * API owner without the runtime adapter registry.
  */
-function resolveMemoryEmbeddingProviderOwnerIds(
-  providerId: string,
-  config: OpenClawConfig,
-): string[] {
+function resolveMemoryEmbeddingProviderOwnerIds(providerId: string, config: NovaConfig): string[] {
   const ownerIds = [providerId];
   const genericOwnerId = normalizeOptionalLowercaseString(
     resolveConfiguredGenericEmbeddingProviderId(providerId, config),
@@ -664,7 +661,7 @@ function resolveEffectiveMemoryEmbeddingProviderEntries(
  * their API-owner adapter ids.
  */
 export function collectConfiguredMemoryEmbeddingStartupProviderOwners(
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): ConfiguredMemoryEmbeddingStartupProviderOwner[] {
   if (isMemorySlotExplicitlyDisabled(config)) {
     return [];
@@ -706,7 +703,7 @@ export function collectConfiguredMemoryEmbeddingStartupProviderOwners(
  * custom `models.providers` ids so the owning plugin loads at startup.
  */
 export function collectConfiguredMemoryEmbeddingProviderIds(
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): ReadonlySet<string> {
   const providerIds = new Set<string>();
   for (const provider of collectConfiguredMemoryEmbeddingStartupProviderOwners(config)) {
@@ -725,7 +722,7 @@ export function collectConfiguredMemoryEmbeddingProviderIds(
  * once that plugin loads.
  */
 export function collectUnregisteredConfiguredMemoryEmbeddingProviders(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   registeredProviderIds: ReadonlySet<string>;
 }): Array<{ configuredId: string; source: MemoryEmbeddingStartupProviderSource }> {
   const configured = collectConfiguredMemoryEmbeddingStartupProviderOwners(params.config);
@@ -779,7 +776,7 @@ function addPluginConfigEntryIds(
 function addConfiguredSlotPluginIds(
   target: Set<string>,
   params: {
-    activationSourceConfig: OpenClawConfig;
+    activationSourceConfig: NovaConfig;
     activationSourcePlugins: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
     lookup: InstalledPluginIndexScopeLookup;
   },
@@ -803,8 +800,8 @@ function addConfiguredSlotPluginIds(
 }
 
 function collectConfiguredStartupChannelIds(params: {
-  activationSourceConfig: OpenClawConfig;
-  config: OpenClawConfig;
+  activationSourceConfig: NovaConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): string[] {
   return sortUniquePluginIds([
@@ -813,7 +810,7 @@ function collectConfiguredStartupChannelIds(params: {
   ]);
 }
 
-function collectValidationHeartbeatTargetChannelIds(config: OpenClawConfig): string[] {
+function collectValidationHeartbeatTargetChannelIds(config: NovaConfig): string[] {
   const channelIds: string[] = [];
   const pushTarget = (target: unknown) => {
     if (typeof target !== "string") {
@@ -834,7 +831,7 @@ function collectValidationHeartbeatTargetChannelIds(config: OpenClawConfig): str
   return sortUniquePluginIds(channelIds);
 }
 
-function collectValidationChannelConfigIds(config: OpenClawConfig): string[] {
+function collectValidationChannelConfigIds(config: NovaConfig): string[] {
   const channels = isRecord(config.channels) ? config.channels : null;
   if (!channels) {
     return [];
@@ -847,7 +844,7 @@ function collectValidationChannelConfigIds(config: OpenClawConfig): string[] {
 }
 
 function collectConfigValidationChannelIds(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): string[] {
   return sortUniquePluginIds([
@@ -861,7 +858,7 @@ function collectConfigValidationChannelIds(params: {
   ]);
 }
 
-function collectConfiguredProviderIds(config: OpenClawConfig): string[] {
+function collectConfiguredProviderIds(config: NovaConfig): string[] {
   const configuredWebSearchProviderIds = collectConfiguredWebSearchProviderIds(config);
   const configuredGenerationProviderIds = collectConfiguredGenerationProviderIds(config);
   const configuredVoiceProviderIds = collectConfiguredVoiceProviderIds(config);
@@ -878,7 +875,7 @@ function collectConfiguredProviderIds(config: OpenClawConfig): string[] {
   ]);
 }
 
-function collectValidationConfiguredProviderIds(config: OpenClawConfig): string[] {
+function collectValidationConfiguredProviderIds(config: NovaConfig): string[] {
   const providerIds: string[] = [];
   const pushProviderId = (value: unknown) => {
     if (typeof value !== "string") {
@@ -914,7 +911,7 @@ function collectValidationConfiguredProviderIds(config: OpenClawConfig): string[
   return sortUniquePluginIds(providerIds);
 }
 
-function collectValidationConfiguredShorthandModelIds(config: OpenClawConfig): string[] {
+function collectValidationConfiguredShorthandModelIds(config: NovaConfig): string[] {
   return sortUniquePluginIds(
     collectConfiguredModelRefs(config)
       .map((ref) => ref.value)
@@ -927,13 +924,13 @@ function collectValidationConfiguredShorthandModelIds(config: OpenClawConfig): s
 function addRequiredAgentHarnessPluginIds(
   target: Set<string>,
   params: {
-    activationSourceConfig: OpenClawConfig;
-    config: OpenClawConfig;
+    activationSourceConfig: NovaConfig;
+    config: NovaConfig;
     index: InstalledPluginIndex;
     pluginsConfig: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
     activationSource: {
       plugins: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
-      rootConfig?: OpenClawConfig;
+      rootConfig?: NovaConfig;
     };
     env: NodeJS.ProcessEnv;
     platform?: NodeJS.Platform;
@@ -964,8 +961,8 @@ function addRequiredAgentHarnessPluginIds(
 }
 
 export function resolveGatewayStartupMetadataPluginIds(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   workerProviderIds?: readonly string[];
@@ -1101,8 +1098,8 @@ export function resolveGatewayStartupMetadataPluginIds(params: {
 }
 
 export function createGatewayStartupMetadataPluginIdScope(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   env: NodeJS.ProcessEnv;
   workerProviderIds?: readonly string[];
   platform?: NodeJS.Platform;
@@ -1139,7 +1136,7 @@ export function createGatewayStartupMetadataPluginIdScope(params: {
 function addValidationPluginConfigReferences(
   target: Set<string>,
   params: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     pluginsConfig: ReturnType<typeof normalizePluginsConfigForInstalledIndex>;
     normalizePluginId: (pluginId: string) => string;
   },
@@ -1169,7 +1166,7 @@ function addValidationPluginConfigReferences(
 }
 
 export function resolveConfigValidationMetadataPluginIds(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   platform?: NodeJS.Platform;
@@ -1235,7 +1232,7 @@ export function resolveConfigValidationMetadataPluginIds(params: {
 }
 
 export function createConfigValidationMetadataPluginIdScope(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   platform?: NodeJS.Platform;
 }): PluginMetadataSnapshotPluginIdScope {
@@ -1351,9 +1348,9 @@ function manifestOwnsConfiguredMemoryEmbeddingProvider(params: {
 
 type ConfiguredProviderActivation = {
   plugin: InstalledPluginIndexRecord;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: NormalizedPluginsConfig;
-  activationSource: { plugins: NormalizedPluginsConfig; rootConfig?: OpenClawConfig };
+  activationSource: { plugins: NormalizedPluginsConfig; rootConfig?: NovaConfig };
   platform?: NodeJS.Platform;
   autoEnabledReason?: string;
   allowImplicitExternal?: boolean;
@@ -1391,11 +1388,11 @@ function canStartConfiguredProvider(params: ConfiguredProviderActivation): boole
 function canStartConfiguredGenerationProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   configuredGenerationProviderIds: ConfiguredGenerationProviderIds;
   platform?: NodeJS.Platform;
@@ -1414,11 +1411,11 @@ function canStartConfiguredGenerationProviderPlugin(params: {
 function canStartConfiguredVoiceProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   configuredVoiceProviderIds: ConfiguredVoiceProviderIds;
   platform?: NodeJS.Platform;
@@ -1437,11 +1434,11 @@ function canStartConfiguredVoiceProviderPlugin(params: {
 function canStartConfiguredMemoryEmbeddingProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   configuredMemoryEmbeddingProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1460,11 +1457,11 @@ function canStartConfiguredMemoryEmbeddingProviderPlugin(params: {
 function canStartConfiguredWorkerProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   configuredWorkerProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1481,11 +1478,11 @@ function canStartConfiguredWorkerProviderPlugin(params: {
 function canStartConfiguredModelProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   configuredModelProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1506,9 +1503,9 @@ function canStartRequiredAgentHarnessPlugin(params: {
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
-  config: OpenClawConfig;
+  config: NovaConfig;
   requiredAgentHarnessRuntimes: ReadonlySet<string>;
   platform?: NodeJS.Platform;
 }): boolean {
@@ -1560,11 +1557,11 @@ function canStartRequiredAgentHarnessPlugin(params: {
 function canStartConfiguredSpeechProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   configuredSpeechProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1606,11 +1603,11 @@ function canStartConfiguredSpeechProviderPlugin(params: {
 function canStartConfiguredWebSearchProviderPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   configuredWebSearchProviderIds: ReadonlySet<string>;
   platform?: NodeJS.Platform;
@@ -1629,11 +1626,11 @@ function canStartConfiguredWebSearchProviderPlugin(params: {
 function canStartConfiguredRootPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   platform?: NodeJS.Platform;
 }): boolean {
@@ -1709,11 +1706,11 @@ function hasHookRuntimeStartupIntent(params: {
 function canStartExplicitHookPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: NormalizedPluginsConfig;
   activationSource: {
     plugins: NormalizedPluginsConfig;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   activationSourcePlugins: NormalizedPluginsConfig;
   platform?: NodeJS.Platform;
@@ -1759,11 +1756,11 @@ function canStartExplicitHookPlugin(params: {
 function canStartTrustedToolPolicyPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: NormalizedPluginsConfig;
   activationSource: {
     plugins: NormalizedPluginsConfig;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   platform?: NodeJS.Platform;
 }): boolean {
@@ -1801,11 +1798,11 @@ function canStartTrustedToolPolicyPlugin(params: {
 
 function canStartConfiguredChannelPlugin(params: {
   plugin: InstalledPluginIndexRecord;
-  config: OpenClawConfig;
+  config: NovaConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   manifestLookup: ManifestRegistryLookup;
   platform?: NodeJS.Platform;
@@ -1849,7 +1846,7 @@ function canStartConfiguredChannelPlugin(params: {
 }
 
 export function resolveChannelPluginIds(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): string[] {
@@ -1866,7 +1863,7 @@ export function resolveChannelPluginIdsFromRegistry(params: {
 }
 
 export function resolveConfiguredDeferredChannelPluginIdsFromRegistry(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   index: PluginRegistrySnapshot;
   manifestRegistry: PluginManifestRegistry;
@@ -1894,13 +1891,13 @@ export function resolveConfiguredDeferredChannelPluginIdsFromRegistry(params: {
 }
 
 function resolveConfiguredDeferredChannelPluginIdsFromPrepared(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   index: PluginRegistrySnapshot;
   configuredChannelIds: ReadonlySet<string>;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: NovaConfig;
   };
   manifestLookup: ManifestRegistryLookup;
   platform?: NodeJS.Platform;
@@ -1930,7 +1927,7 @@ function resolveConfiguredDeferredChannelPluginIdsFromPrepared(params: {
 }
 
 export function resolveConfiguredDeferredChannelPluginIds(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): string[] {
@@ -1938,8 +1935,8 @@ export function resolveConfiguredDeferredChannelPluginIds(params: {
 }
 
 export function resolveGatewayStartupPluginPlanFromRegistry(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   env: NodeJS.ProcessEnv;
   index: PluginRegistrySnapshot;
   manifestRegistry: PluginManifestRegistry;
@@ -2248,8 +2245,8 @@ export function resolveGatewayStartupPluginPlanFromRegistry(params: {
 }
 
 export function resolveGatewayStartupPluginIdsFromRegistry(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   env: NodeJS.ProcessEnv;
   index: PluginRegistrySnapshot;
   manifestRegistry: PluginManifestRegistry;
@@ -2260,8 +2257,8 @@ export function resolveGatewayStartupPluginIdsFromRegistry(params: {
 }
 
 export function loadGatewayStartupPluginPlan(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   index?: PluginRegistrySnapshot;
@@ -2316,8 +2313,8 @@ export function loadGatewayStartupPluginPlan(params: {
 }
 
 export function resolveGatewayStartupPluginIds(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   workerProviderIds?: readonly string[];

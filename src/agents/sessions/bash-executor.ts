@@ -50,7 +50,7 @@ export async function executeBashWithOperations(
 ): Promise<BashResult> {
   const sanitizeOutput = createStreamingBinaryOutputSanitizer();
   const output = new OutputAccumulator({
-    tempFilePrefix: "openclaw-bash",
+    tempFilePrefix: "nova-bash",
     transformDecodedText: (text) => sanitizeOutput(text).replace(/\r/g, ""),
   });
 

@@ -2,12 +2,12 @@
 import type { AcpRuntime, AcpRuntimeCapabilities } from "@nova/acp-core/runtime/types";
 import { afterEach, beforeEach, expect, vi } from "vitest";
 import { resetAcpManagerTaskStateForTests } from "../../../test/helpers/acp-manager-task-state.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { AcpSessionRuntimeOptions, SessionAcpMeta } from "../../config/sessions/types.js";
 import { deleteTestEnvValue, setTestEnvValue } from "../../test-utils/env.js";
 import { resetAcpActiveTurnsForTests } from "./active-turns.test-support.js";
 
-export type { AcpRuntime, OpenClawConfig, SessionAcpMeta };
+export type { AcpRuntime, NovaConfig, SessionAcpMeta };
 
 const hoistedMocks = vi.hoisted(() => {
   const listAcpSessionEntriesMock = vi.fn();

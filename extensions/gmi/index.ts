@@ -1,8 +1,8 @@
 // Gmi plugin entrypoint registers its Nova integration.
-import { readConfiguredProviderCatalogEntries } from "openclaw/plugin-sdk/provider-catalog-shared";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
-import { buildProviderToolCompatFamilyHooks } from "openclaw/plugin-sdk/provider-tools";
+import { readConfiguredProviderCatalogEntries } from "nova/plugin-sdk/provider-catalog-shared";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
+import { buildProviderReplayFamilyHooks } from "nova/plugin-sdk/provider-model-shared";
+import { buildProviderToolCompatFamilyHooks } from "nova/plugin-sdk/provider-tools";
 import { GMI_DEFAULT_MODEL_REF } from "./models.js";
 import { buildGmiProvider } from "./provider-catalog.js";
 

@@ -259,20 +259,16 @@ async function runWriterChild(argv: string[]): Promise<void> {
     database.exec("PRAGMA busy_timeout = 30000;");
     database.exec(STRESS_TABLE_SQL);
     const next = database
-      .prepare(
-        "SELECT COALESCE(MAX(batch), -1) + 1 AS next_batch FROM openclaw_reliability_entries",
-      )
+      .prepare("SELECT COALESCE(MAX(batch), -1) + 1 AS next_batch FROM nova_reliability_entries")
       .get() as { next_batch?: number | bigint };
     nextBatch = Number(next.next_batch ?? 0);
     const insert = database.prepare(
-      "INSERT INTO openclaw_reliability_entries (batch, ordinal, payload) VALUES (?, ?, ?)",
+      "INSERT INTO nova_reliability_entries (batch, ordinal, payload) VALUES (?, ?, ?)",
     );
     const insertSentinel = database.prepare(
-      "INSERT INTO openclaw_reliability_sentinel (id, payload) VALUES (1, ?)",
+      "INSERT INTO nova_reliability_sentinel (id, payload) VALUES (1, ?)",
     );
-    const deleteExpired = database.prepare(
-      "DELETE FROM openclaw_reliability_entries WHERE batch < ?",
-    );
+    const deleteExpired = database.prepare("DELETE FROM nova_reliability_entries WHERE batch < ?");
     process.on("message", (message: unknown) => {
       if (!message || typeof message !== "object") {
         return;

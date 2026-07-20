@@ -26,16 +26,16 @@ describe("website installer sync workflow", () => {
     expect(workflow.match(/timeout --kill-after=30s 20m docker run --rm/g)?.length).toBe(2);
     expect(workflow).not.toContain("timeout 20m docker run --rm");
     expect(workflow).not.toMatch(/(^|\n)\s+docker run --rm/u);
-    expect(workflow).toContain("bash /tmp/install.sh --version latest && openclaw --version");
+    expect(workflow).toContain("bash /tmp/install.sh --version latest && nova --version");
     expect(workflow).not.toContain("bash /tmp/install.sh --no-prompt --no-onboard");
-    expect(workflow).toContain("bash /tmp/install-cli.sh --prefix /tmp/openclaw");
+    expect(workflow).toContain("bash /tmp/install-cli.sh --prefix /tmp/nova");
     expect(workflow).toContain("macos-installer:");
     expect(workflow).toContain("runs-on: macos-15");
     expect(workflow).toContain("node-version: 24");
     expect(workflow).toContain('NOVA_NO_ONBOARD: "1"');
     expect(workflow).toContain('NOVA_NO_PROMPT: "1"');
     expect(workflow).toContain("bash scripts/install.sh --no-onboard --no-prompt --version latest");
-    expect(workflow).toContain("openclaw --version");
+    expect(workflow).toContain("nova --version");
     expect(workflow).toContain("windows-installer:");
     expect(workflow).toContain("runs-on: windows-latest");
     expect(workflow).toContain(".\\scripts\\install.ps1 -DryRun");
@@ -43,18 +43,16 @@ describe("website installer sync workflow", () => {
     expect(workflow).not.toContain(".\\scripts\\install.cmd");
   });
 
-  it("syncs verified scripts to openclaw.ai only after all installer checks pass", () => {
+  it("syncs verified scripts to nova.ai only after all installer checks pass", () => {
     expect(workflow).toContain("needs: [static, linux-docker, macos-installer, windows-installer]");
-    expect(workflow).toContain("repository: openclaw/openclaw.ai");
+    expect(workflow).toContain("repository: nova/nova.ai");
     expect(workflow).toContain("NOVA_GH_TOKEN: ${{ secrets.NOVA_GH_TOKEN }}");
     expect(workflow).toContain("NOVA_GH_TOKEN is not configured");
     expect(workflow).toContain("token: ${{ env.NOVA_GH_TOKEN }}");
-    expect(workflow).toContain("cp openclaw/scripts/install.sh openclaw.ai/public/install.sh");
-    expect(workflow).toContain(
-      "cp openclaw/scripts/install-cli.sh openclaw.ai/public/install-cli.sh",
-    );
-    expect(workflow).toContain("cp openclaw/scripts/install.ps1 openclaw.ai/public/install.ps1");
-    expect(workflow).toContain("rm -f openclaw.ai/public/install.cmd");
+    expect(workflow).toContain("cp nova/scripts/install.sh nova.ai/public/install.sh");
+    expect(workflow).toContain("cp nova/scripts/install-cli.sh nova.ai/public/install-cli.sh");
+    expect(workflow).toContain("cp nova/scripts/install.ps1 nova.ai/public/install.ps1");
+    expect(workflow).toContain("rm -f nova.ai/public/install.cmd");
     expect(workflow).toContain("bun run build");
     expect(workflow).toContain("git push origin HEAD:main");
   });

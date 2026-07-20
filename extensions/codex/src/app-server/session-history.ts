@@ -3,19 +3,19 @@
  * image payloads before replaying messages into the app-server projector.
  */
 import fs from "node:fs/promises";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { SessionEntry } from "openclaw/plugin-sdk/agent-sessions";
+import type { AgentMessage } from "nova/plugin-sdk/agent-harness-runtime";
+import type { SessionEntry } from "nova/plugin-sdk/agent-sessions";
 import {
   buildSessionContext,
   migrateSessionEntries,
   parseSessionEntries,
-} from "openclaw/plugin-sdk/agent-sessions";
+} from "nova/plugin-sdk/agent-sessions";
 import {
   listSessionEntries,
   parseSqliteSessionFileMarker,
   type SqliteSessionFileMarker,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { readSessionTranscriptEvents } from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/session-store-runtime";
+import { readSessionTranscriptEvents } from "nova/plugin-sdk/session-transcript-runtime";
 import { sanitizeCodexHistoryImagePayloads } from "./image-payload-sanitizer.js";
 
 function isMissingFileError(error: unknown): boolean {

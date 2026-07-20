@@ -5,15 +5,15 @@ import {
   implicitMentionKindWhen,
   matchesMentionWithExplicit,
   resolveInboundMentionDecision,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { hasControlCommand } from "openclaw/plugin-sdk/command-detection";
+} from "nova/plugin-sdk/channel-inbound";
+import { hasControlCommand } from "nova/plugin-sdk/command-detection";
 import type {
-  OpenClawConfig,
+  NovaConfig,
   TelegramGroupConfig,
   TelegramTopicConfig,
-} from "openclaw/plugin-sdk/config-contracts";
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
-import { danger, warn } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/config-contracts";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
+import { danger, warn } from "nova/plugin-sdk/runtime-env";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import { firstDefined, type NormalizedAllowFrom } from "./bot-access.js";
 import { isRecoverableMediaGroupError } from "./bot-handlers.media.js";
@@ -31,7 +31,7 @@ import { resolveTelegramCommandIngressAuthorization } from "./ingress.js";
 import type { TelegramMessageDispatchReplayClaim } from "./message-dispatch-dedupe.js";
 
 type MediaAuthorization = {
-  authorizationCfg: OpenClawConfig;
+  authorizationCfg: NovaConfig;
   chatId: number;
   isGroup: boolean;
   isForum: boolean;

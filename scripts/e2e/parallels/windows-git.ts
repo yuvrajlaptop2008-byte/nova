@@ -26,7 +26,7 @@ try:
     req = urllib.request.Request(
         "https://api.github.com/repos/git-for-windows/git/releases/latest",
         headers={
-            "User-Agent": "openclaw-parallels-smoke",
+            "User-Agent": "nova-parallels-smoke",
             "Accept": "application/vnd.github+json",
         },
     )

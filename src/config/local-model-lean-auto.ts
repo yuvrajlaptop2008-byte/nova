@@ -1,5 +1,5 @@
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { NovaConfig } from "./types.nova.js";
 
 const AUTO_LOCAL_MODEL_LEAN_PROVIDER_IDS = new Set(["lmstudio", "ollama"]);
 
@@ -8,12 +8,12 @@ function shouldAutoEnableLocalModelLean(providerId: string): boolean {
   return AUTO_LOCAL_MODEL_LEAN_PROVIDER_IDS.has(normalizeProviderId(providerId));
 }
 
-function resolveDefaultModelRef(config: OpenClawConfig): string | undefined {
+function resolveDefaultModelRef(config: NovaConfig): string | undefined {
   const model = config.agents?.defaults?.model;
   return typeof model === "string" ? model : model?.primary;
 }
 
-function clearAutoModel(config: OpenClawConfig): OpenClawConfig {
+function clearAutoModel(config: NovaConfig): NovaConfig {
   const wizard = { ...config.wizard };
   delete wizard.localModelLeanAutoModel;
   return { ...config, wizard };
@@ -21,11 +21,11 @@ function clearAutoModel(config: OpenClawConfig): OpenClawConfig {
 
 /** Maintains the onboarding-owned lean default while preserving explicit user configuration. */
 export function applyAutoLocalModelLean(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   providerId: string;
   modelRef: string;
 }): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   changed: boolean;
   enabled: boolean;
 } {

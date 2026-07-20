@@ -15,7 +15,7 @@ import {
   type MemoryQmdMcporterConfig,
   type MemoryQmdSearchMode,
   type MemoryQmdStartupMode,
-  type OpenClawConfig,
+  type NovaConfig,
   resolveMemoryHostAgentWorkspaceDir,
   resolveMemoryHostSearchPathConfig,
   normalizeAgentId,
@@ -24,7 +24,7 @@ import {
   splitShellArgs,
 } from "./config-utils.js";
 import { isPathInside } from "./fs-utils.js";
-import { parseDurationMs } from "./openclaw-runtime-config.js";
+import { parseDurationMs } from "./nova-runtime-config.js";
 
 function escapeQmdExactFilePattern(fileName: string): string {
   return fileName.replace(/[\\*?[\]{}()!+@]/g, "\\$&");
@@ -434,7 +434,7 @@ function resolveDefaultCollections(
 }
 
 export function resolveMemoryBackendConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
 }): ResolvedMemoryBackendConfig {
   const normalizedAgentId = normalizeAgentId(params.agentId);

@@ -17,16 +17,16 @@ function nodeOptionsWithoutExperimentalWarnings(): string {
 }
 
 function writeConfig(home: string, channels: Record<string, unknown>): void {
-  const configDir = path.join(home, ".openclaw");
+  const configDir = path.join(home, ".nova");
   fs.mkdirSync(configDir, { recursive: true });
-  fs.writeFileSync(path.join(configDir, "openclaw.json"), JSON.stringify({ channels }));
+  fs.writeFileSync(path.join(configDir, "nova.json"), JSON.stringify({ channels }));
 }
 
 function writeOnboardConfig(home: string): void {
-  const configDir = path.join(home, ".openclaw");
+  const configDir = path.join(home, ".nova");
   fs.mkdirSync(configDir, { recursive: true });
   fs.writeFileSync(
-    path.join(configDir, "openclaw.json"),
+    path.join(configDir, "nova.json"),
     JSON.stringify({
       auth: {
         profiles: {
@@ -39,7 +39,7 @@ function writeOnboardConfig(home: string): void {
 
 function writeAuthProfileStoreSqlite(agentDir: string, store: unknown): void {
   fs.mkdirSync(agentDir, { recursive: true });
-  const db = new DatabaseSync(path.join(agentDir, "openclaw-agent.sqlite"));
+  const db = new DatabaseSync(path.join(agentDir, "nova-agent.sqlite"));
   try {
     db.exec(`
       CREATE TABLE IF NOT EXISTS auth_profile_store (
@@ -101,7 +101,7 @@ function runStatusAssert(
   statusText: string,
   env: NodeJS.ProcessEnv = {},
 ) {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-status-assertions-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-status-assertions-"));
   try {
     const channelsStatusPath = path.join(tempDir, "channels-status.json");
     const statusTextPath = path.join(tempDir, "status.txt");
@@ -122,7 +122,7 @@ function runStatusAssert(
 
 describe("npm onboard channel agent assertions", () => {
   it("rejects loose mock OpenAI port args", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-onboard-assertions-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-onboard-assertions-"));
 
     try {
       for (const command of ["configure-mock-model", "assert-mock-model-config"]) {
@@ -138,8 +138,8 @@ describe("npm onboard channel agent assertions", () => {
   });
 
   it("validates OpenAI env refs from the SQLite auth profile store", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-onboard-assertions-"));
-    const agentDir = path.join(tempDir, ".openclaw", "agents", "main", "agent");
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-onboard-assertions-"));
+    const agentDir = path.join(tempDir, ".nova", "agents", "main", "agent");
 
     try {
       writeOnboardConfig(tempDir);
@@ -176,8 +176,8 @@ describe("npm onboard channel agent assertions", () => {
     ];
 
     for (const store of cases) {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-onboard-assertions-"));
-      const agentDir = path.join(tempDir, ".openclaw", "agents", "main", "agent");
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-onboard-assertions-"));
+      const agentDir = path.join(tempDir, ".nova", "agents", "main", "agent");
 
       try {
         writeOnboardConfig(tempDir);
@@ -194,8 +194,8 @@ describe("npm onboard channel agent assertions", () => {
   });
 
   it("rejects inline OpenAI keys in the SQLite auth profile store", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-onboard-assertions-"));
-    const agentDir = path.join(tempDir, ".openclaw", "agents", "main", "agent");
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-onboard-assertions-"));
+    const agentDir = path.join(tempDir, ".nova", "agents", "main", "agent");
 
     try {
       writeOnboardConfig(tempDir);
@@ -205,7 +205,7 @@ describe("npm onboard channel agent assertions", () => {
           "openai:api-key": {
             type: "api_key",
             provider: "openai",
-            key: "sk-openclaw-npm-onboard-e2e",
+            key: "sk-nova-npm-onboard-e2e",
           },
         },
       });
@@ -220,7 +220,7 @@ describe("npm onboard channel agent assertions", () => {
   });
 
   it("validates channel tokens in their canonical config fields", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-channel-assertions-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-channel-assertions-"));
     try {
       writeConfig(tempDir, {
         discord: { enabled: true, token: "discord-token" },
@@ -237,7 +237,7 @@ describe("npm onboard channel agent assertions", () => {
   });
 
   it("rejects tokens persisted on the wrong channel config field", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-channel-assertions-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-channel-assertions-"));
     try {
       writeConfig(tempDir, {
         telegram: { enabled: true, token: "telegram-token" },

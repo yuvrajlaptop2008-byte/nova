@@ -5,7 +5,7 @@ description: "Lower-level composition helpers under @nova/fs-safe/advanced. Less
 
 # `@nova/fs-safe/advanced`
 
-Composition primitives that OpenClaw uses to build higher-level APIs. They are public — semver applies — but treated as a less stable surface than the focused subpaths (`root`, `json`, `store`, `temp`, `archive`, `errors`). Reach for them only when you are building a primitive of your own and the focused subpaths do not cover it.
+Composition primitives that Nova uses to build higher-level APIs. They are public — semver applies — but treated as a less stable surface than the focused subpaths (`root`, `json`, `store`, `temp`, `archive`, `errors`). Reach for them only when you are building a primitive of your own and the focused subpaths do not cover it.
 
 ```ts
 import {
@@ -121,7 +121,7 @@ try {
 
 ## Stability
 
-Items in this surface can change shape between minor versions if a higher-level primitive needs them to. Pin to a minor version if you depend on a specific helper, or open an issue at the [GitHub repo](https://github.com/openclaw/fs-safe) and we will discuss promoting it to a focused subpath.
+Items in this surface can change shape between minor versions if a higher-level primitive needs them to. Pin to a minor version if you depend on a specific helper, or open an issue at the [GitHub repo](https://github.com/nova/fs-safe) and we will discuss promoting it to a focused subpath.
 
 ## Related pages
 

@@ -4,7 +4,7 @@ import { normalizeOptionalString } from "@nova/normalization-core/string-coerce"
 
 // oxlint-disable-next-line eslint/no-underscore-dangle -- Bundled builds replace this compile-time define identifier.
 declare const __NOVA_VERSION__: string | undefined;
-const CORE_PACKAGE_NAME = "openclaw";
+const CORE_PACKAGE_NAME = "nova";
 
 const PACKAGE_JSON_CANDIDATES = [
   "../package.json",

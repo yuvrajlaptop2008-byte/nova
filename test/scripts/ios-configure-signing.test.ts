@@ -42,7 +42,7 @@ function readGeneratedSigning(): string {
 
 describe.sequential("scripts/ios-configure-signing.sh", () => {
   beforeAll(() => {
-    const fixtureRoot = makeTempDir(tempDirs, "openclaw-ios-configure-signing-");
+    const fixtureRoot = makeTempDir(tempDirs, "nova-ios-configure-signing-");
     const scriptsDir = path.join(fixtureRoot, "scripts");
     const iosDir = path.join(fixtureRoot, "apps", "ios");
     mkdirSync(scriptsDir, { recursive: true });
@@ -62,12 +62,12 @@ describe.sequential("scripts/ios-configure-signing.sh", () => {
     const stdout = runConfigureSigning("FWJYW4S8P8");
     const generated = readGeneratedSigning();
 
-    expect(stdout).toContain("team=FWJYW4S8P8 app=ai.openclawfoundation.app");
+    expect(stdout).toContain("team=FWJYW4S8P8 app=ai.novafoundation.app");
     expect(generated).toContain("NOVA_DEVELOPMENT_TEAM = FWJYW4S8P8");
     expect(generated).toContain("NOVA_CODE_SIGN_ENTITLEMENTS = Sources/Nova.entitlements");
-    expect(generated).toContain("NOVA_APP_BUNDLE_ID = ai.openclawfoundation.app");
-    expect(generated).toContain("NOVA_SHARE_BUNDLE_ID = ai.openclawfoundation.app.share");
-    expect(generated).toContain("NOVA_APP_GROUP_ID = group.ai.openclawfoundation.app.shared");
+    expect(generated).toContain("NOVA_APP_BUNDLE_ID = ai.novafoundation.app");
+    expect(generated).toContain("NOVA_SHARE_BUNDLE_ID = ai.novafoundation.app.share");
+    expect(generated).toContain("NOVA_APP_GROUP_ID = group.ai.novafoundation.app.shared");
     expect(generated).toContain("NOVA_ACTIVITY_WIDGET_PROFILE = ");
   });
 
@@ -76,14 +76,14 @@ describe.sequential("scripts/ios-configure-signing.sh", () => {
     const generated = readGeneratedSigning();
 
     expect(stdout).toContain(
-      "canonical_team=FWJYW4S8P8 local_team=Y3YUZP442G app=ai.openclawfoundation.app.test.localuser-y3yuzp442g",
+      "canonical_team=FWJYW4S8P8 local_team=Y3YUZP442G app=ai.novafoundation.app.test.localuser-y3yuzp442g",
     );
     expect(generated).toContain("NOVA_DEVELOPMENT_TEAM = Y3YUZP442G");
     expect(generated).toContain(
-      "NOVA_APP_BUNDLE_ID = ai.openclawfoundation.app.test.localuser-y3yuzp442g",
+      "NOVA_APP_BUNDLE_ID = ai.novafoundation.app.test.localuser-y3yuzp442g",
     );
     expect(generated).toContain(
-      "NOVA_APP_GROUP_ID = group.ai.openclawfoundation.app.test.localuser-y3yuzp442g.shared",
+      "NOVA_APP_GROUP_ID = group.ai.novafoundation.app.test.localuser-y3yuzp442g.shared",
     );
   });
 });

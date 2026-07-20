@@ -1,5 +1,5 @@
 // Google plugin module implements transport stream behavior.
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
 import {
   calculateCost,
   getEnvApiKey,
@@ -7,17 +7,17 @@ import {
   type Model,
   type SimpleStreamOptions,
   type ThinkingLevel,
-} from "openclaw/plugin-sdk/llm";
-import { parseStrictNonNegativeInteger } from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/llm";
+import { parseStrictNonNegativeInteger } from "nova/plugin-sdk/number-runtime";
 import {
   collectProviderApiKeysForExecution,
   executeWithApiKeyRotation,
-} from "openclaw/plugin-sdk/provider-auth-runtime";
+} from "nova/plugin-sdk/provider-auth-runtime";
 import {
   createProviderHttpError,
   providerOperationRetryConfig,
   resolveProviderRequestHeaders,
-} from "openclaw/plugin-sdk/provider-http";
+} from "nova/plugin-sdk/provider-http";
 import {
   buildGuardedModelFetch,
   coerceTransportToolCallArguments,
@@ -32,11 +32,11 @@ import {
   stripSystemPromptCacheBoundary,
   transformTransportMessages,
   type WritableTransportStream,
-} from "openclaw/plugin-sdk/provider-transport-runtime";
+} from "nova/plugin-sdk/provider-transport-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { parseGeminiAuth } from "./gemini-auth.js";
 import { stripGoogleProviderPrefix } from "./model-id.js";
 import { normalizeGoogleApiBaseUrl } from "./provider-policy.js";
@@ -55,7 +55,7 @@ import {
 } from "./vertex-adc.js";
 
 type CanonicalGoogleTransportApi = "google-generative-ai" | "google-vertex";
-type GoogleTransportApi = CanonicalGoogleTransportApi | "openclaw-google-generative-ai-transport";
+type GoogleTransportApi = CanonicalGoogleTransportApi | "nova-google-generative-ai-transport";
 
 type GoogleTransportModel = Model<GoogleTransportApi> & {
   headers?: Record<string, string>;
@@ -259,7 +259,7 @@ function normalizeGoogleTransportRouteApi(
 ): CanonicalGoogleTransportApi | undefined {
   switch (api) {
     case "google-generative-ai":
-    case "openclaw-google-generative-ai-transport":
+    case "nova-google-generative-ai-transport":
       return "google-generative-ai";
     case "google-vertex":
       return "google-vertex";

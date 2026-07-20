@@ -15,7 +15,7 @@ const PLUGIN_MODEL_CATALOG_FILE = "catalog.json";
 const tempDirs: string[] = [];
 
 function writeModelsJson(contents: unknown): string {
-  const dir = mkdtempSync(join(tmpdir(), "openclaw-model-registry-"));
+  const dir = mkdtempSync(join(tmpdir(), "nova-model-registry-"));
   tempDirs.push(dir);
   const file = join(dir, "models.json");
   writeFileSync(file, JSON.stringify(contents, null, 2), "utf-8");
@@ -45,7 +45,7 @@ function writeModelsJsonWithPluginCatalogs(params: {
     pluginCatalog: unknown;
   }>;
 }): string {
-  const dir = mkdtempSync(join(tmpdir(), "openclaw-model-registry-"));
+  const dir = mkdtempSync(join(tmpdir(), "nova-model-registry-"));
   tempDirs.push(dir);
   const file = join(dir, "models.json");
   writeFileSync(file, JSON.stringify(params.root, null, 2), "utf-8");

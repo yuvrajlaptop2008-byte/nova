@@ -46,7 +46,7 @@ flow:
             senderId: driver
             senderName: QA Driver
             text:
-              expr: "`@openclaw reply exactly: ${config.primaryMarker}`"
+              expr: "`@nova reply exactly: ${config.primaryMarker}`"
         - waitForOutbound:
             conversation:
               id: { ref: config.primaryConversationId }
@@ -62,7 +62,7 @@ flow:
             senderId: driver
             senderName: QA Driver
             text:
-              expr: "`@openclaw reply exactly: ${config.secondaryMarker}`"
+              expr: "`@nova reply exactly: ${config.secondaryMarker}`"
         - waitForOutbound:
             conversation:
               id: { ref: config.secondaryConversationId }

@@ -1,12 +1,12 @@
-# OpenClaw Parallel Plugin
+# Nova Parallel Plugin
 
-Official OpenClaw plugin for Parallel.
+Official Nova plugin for Parallel.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/parallel-plugin
-openclaw gateway restart
+nova plugins install @nova/parallel-plugin
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/tools/parallel-search> for setup and configuration.
+See <https://docs.nova.ai/tools/parallel-search> for setup and configuration.

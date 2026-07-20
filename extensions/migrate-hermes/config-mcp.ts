@@ -1,6 +1,6 @@
 // Hermes MCP config mapping and manual follow-up planning.
-import { createMigrationManualItem } from "openclaw/plugin-sdk/migration";
-import type { MigrationItem } from "openclaw/plugin-sdk/plugin-entry";
+import { createMigrationManualItem } from "nova/plugin-sdk/migration";
+import type { MigrationItem } from "nova/plugin-sdk/plugin-entry";
 import { mcpValueHasEnvReferences, resolveMcpEnvReferences } from "./config-env.js";
 import { readPositiveNumber } from "./config-provider-contract.js";
 import { isRecord, readString, sanitizeName } from "./helpers.js";
@@ -319,7 +319,7 @@ export function mcpManualItems(params: {
     add(
       "oauth-login",
       `Hermes MCP server "${name}" requires OAuth login in Nova.`,
-      `Run "openclaw mcp login ${name}" after migration.`,
+      `Run "nova mcp login ${name}" after migration.`,
     );
   }
   if (
@@ -332,7 +332,7 @@ export function mcpManualItems(params: {
     add(
       "oauth-client",
       `Hermes MCP server "${name}" uses pre-registered OAuth client settings that were not copied into Nova config.`,
-      `Run "openclaw mcp login ${name}" and configure supported OAuth metadata manually.`,
+      `Run "nova mcp login ${name}" and configure supported OAuth metadata manually.`,
     );
   }
 

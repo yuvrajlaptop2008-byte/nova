@@ -246,8 +246,8 @@ export async function executeSystemAgentOperation(
       runtime.log(
         [
           `Connecting ${operation.channel} needs an interactive session.`,
-          "Run `openclaw setup` and say `connect " + operation.channel + "`,",
-          "or run `openclaw channels add` for the terminal wizard.",
+          "Run `nova setup` and say `connect " + operation.channel + "`,",
+          "or run `nova channels add` for the terminal wizard.",
         ].join("\n"),
       );
       return { applied: false };
@@ -255,17 +255,17 @@ export async function executeSystemAgentOperation(
       runtime.log(
         [
           "Changing model providers must happen outside the inference session that powers Nova.",
-          "Exit Nova and run `openclaw onboard`; it stages credentials, live-tests the candidate route, and saves only a passing setup.",
+          "Exit Nova and run `nova onboard`; it stages credentials, live-tests the candidate route, and saves only a passing setup.",
         ].join("\n"),
       );
       return { applied: false };
     case "open-setup": {
       const command =
         operation.target === "guided"
-          ? "openclaw onboard"
+          ? "nova onboard"
           : operation.target === "classic"
-            ? "openclaw onboard --classic"
-            : `openclaw channels add${operation.channel ? ` --channel ${operation.channel}` : ""}`;
+            ? "nova onboard --classic"
+            : `nova channels add${operation.channel ? ` --channel ${operation.channel}` : ""}`;
       runtime.log(
         `One-shot mode cannot open an interactive wizard. Run \`${command}\` in a terminal.`,
       );
@@ -310,7 +310,7 @@ export async function executeSystemAgentOperation(
       if (await isPluginBackingDefaultInferenceRoute(operation.pluginId)) {
         const message = [
           `Uninstalling ${operation.pluginId} could remove the provider behind Nova's own active inference route.`,
-          `Exit Nova and run \`openclaw plugins uninstall ${operation.pluginId}\` from a terminal.`,
+          `Exit Nova and run \`nova plugins uninstall ${operation.pluginId}\` from a terminal.`,
         ].join("\n");
         runtime.log(message);
         return { applied: false, message };
@@ -334,7 +334,7 @@ export async function executeSystemAgentOperation(
             // moment so the destructive removal never hits the active route.
             if (await isPluginBackingDefaultInferenceRoute(operation.pluginId)) {
               throw new Error(
-                `Uninstall aborted: ${operation.pluginId} now backs the active inference route. Exit Nova and run \`openclaw plugins uninstall ${operation.pluginId}\` from a terminal.`,
+                `Uninstall aborted: ${operation.pluginId} now backs the active inference route. Exit Nova and run \`nova plugins uninstall ${operation.pluginId}\` from a terminal.`,
               );
             }
             await runPluginUninstall(operation.pluginId, createNoExitRuntime(ctx.runtime));
@@ -396,7 +396,7 @@ export async function executeSystemAgentOperation(
     }
     case "doctor-fix":
       runtime.log(
-        "Doctor repairs can change the inference route that powers this session. Exit Nova and run `openclaw doctor --fix` in a terminal.",
+        "Doctor repairs can change the inference route that powers this session. Exit Nova and run `nova doctor --fix` in a terminal.",
       );
       return { applied: false };
     case "status": {
@@ -474,8 +474,8 @@ export async function executeSystemAgentOperation(
       if (result?.exitReason === "return-to-system-agent") {
         runtime.log(
           result.systemAgentMessage
-            ? `[openclaw] returned from agent with request: ${result.systemAgentMessage}`
-            : "[openclaw] returned from agent",
+            ? `[nova] returned from agent with request: ${result.systemAgentMessage}`
+            : "[nova] returned from agent",
         );
         return { applied: false, returnToShell: true, nextInput: result.systemAgentMessage };
       }

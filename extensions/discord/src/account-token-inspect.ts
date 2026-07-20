@@ -1,8 +1,5 @@
 // Discord plugin module implements account token inspect behavior.
-import {
-  hasConfiguredSecretInput,
-  normalizeSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+import { hasConfiguredSecretInput, normalizeSecretInputString } from "nova/plugin-sdk/secret-input";
 import type { DiscordCredentialStatus } from "./token.js";
 
 type InspectedDiscordConfiguredToken = {

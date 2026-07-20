@@ -31,9 +31,7 @@ describe("resetCommand", () => {
     });
 
     expect(
-      cleanupCommandLogMessages(runtime).some((message) =>
-        message.includes("openclaw backup create"),
-      ),
+      cleanupCommandLogMessages(runtime).some((message) => message.includes("nova backup create")),
     ).toBe(true);
   });
 
@@ -46,9 +44,7 @@ describe("resetCommand", () => {
     });
 
     expect(
-      cleanupCommandLogMessages(runtime).some((message) =>
-        message.includes("openclaw backup create"),
-      ),
+      cleanupCommandLogMessages(runtime).some((message) => message.includes("nova backup create")),
     ).toBe(false);
   });
 
@@ -60,7 +56,7 @@ describe("resetCommand", () => {
       dryRun: true,
     });
 
-    expect(removeWorkspaceDirs).toHaveBeenCalledWith(["/tmp/.openclaw/workspace"], runtime, {
+    expect(removeWorkspaceDirs).toHaveBeenCalledWith(["/tmp/.nova/workspace"], runtime, {
       dryRun: true,
       removeStateRows: false,
     });
@@ -75,7 +71,7 @@ describe("resetCommand", () => {
       nonInteractive: true,
     });
 
-    expect(removeWorkspaceDirs).toHaveBeenCalledWith(["/tmp/.openclaw/workspace"], runtime, {
+    expect(removeWorkspaceDirs).toHaveBeenCalledWith(["/tmp/.nova/workspace"], runtime, {
       dryRun: false,
       removeStateRows: true,
     });

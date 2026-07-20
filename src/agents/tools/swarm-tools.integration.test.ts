@@ -1,8 +1,8 @@
 import os from "node:os";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { withTempDir } from "../../test-helpers/temp-dir.js";
-import { createOpenClawTools } from "../openclaw-tools.js";
+import { createNovaTools } from "../nova-tools.js";
 import {
   resetSubagentRegistryForTests,
   testing as registryTesting,
@@ -15,7 +15,7 @@ import { createSessionsSpawnTool } from "./sessions-spawn-tool.js";
 import { testing as structuredOutputTesting } from "./structured-output-tool.test-support.js";
 
 const requesterSessionKey = "agent:main:main";
-const config: OpenClawConfig = {
+const config: NovaConfig = {
   session: { mainKey: "main", scope: "per-sender" },
   tools: { swarm: true },
   agents: {
@@ -55,7 +55,7 @@ describe("swarm tools integration", () => {
   });
 
   it("spawns three mock-model collectors and drains them in first-completion order", async () => {
-    await withTempDir({ prefix: "openclaw-swarm-tools-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-swarm-tools-" }, async (stateDir) => {
       vi.stubEnv("NOVA_STATE_DIR", stateDir);
       const publicToGateway = new Map<string, string>();
       const resultTextBySession = new Map<string, string>();
@@ -75,7 +75,7 @@ describe("swarm tools integration", () => {
         const outputSchema = params.swarmOutputSchema as Record<string, unknown>;
         const index = ++launchCount;
         const gatewayRunId = `gateway-${index}`;
-        const structuredOutput = createOpenClawTools({
+        const structuredOutput = createNovaTools({
           agentSessionKey: childSessionKey,
           runId: publicRunId,
           config,

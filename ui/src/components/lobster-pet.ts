@@ -804,6 +804,6 @@ class LobsterPet extends LitElement {
     });
   }
 }
-if (!customElements.get("openclaw-lobster-pet")) {
-  customElements.define("openclaw-lobster-pet", LobsterPet);
+if (!customElements.get("nova-lobster-pet")) {
+  customElements.define("nova-lobster-pet", LobsterPet);
 }

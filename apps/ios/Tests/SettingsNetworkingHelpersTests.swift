@@ -1,5 +1,5 @@
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 @Suite struct SettingsNetworkingHelpersTests {
     @Test func diagnosticsIssuesNameEachReviewerVisibleCheck() {

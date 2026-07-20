@@ -13,7 +13,7 @@ import {
 const tempDirs: string[] = [];
 
 async function makeTempDir() {
-  const dir = await fs.mkdtemp(path.join(tmpdir(), "openclaw-native-a2ui-"));
+  const dir = await fs.mkdtemp(path.join(tmpdir(), "nova-native-a2ui-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -40,9 +40,9 @@ describe("scripts/sync-native-a2ui.mjs", () => {
         "/repo",
         "apps",
         "shared",
-        "OpenClawKit",
+        "NovaKit",
         "Sources",
-        "OpenClawKit",
+        "NovaKit",
         "Resources",
         "CanvasA2UI",
       ),
@@ -56,8 +56,8 @@ describe("scripts/sync-native-a2ui.mjs", () => {
     await fs.writeFile(
       linuxConsumerFile,
       [
-        'include_bytes!("../../../../apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/CanvasA2UI/index.html");',
-        'include_bytes!("../../../../apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/CanvasA2UI/a2ui.bundle.js");',
+        'include_bytes!("../../../../apps/shared/NovaKit/Sources/NovaKit/Resources/CanvasA2UI/index.html");',
+        'include_bytes!("../../../../apps/shared/NovaKit/Sources/NovaKit/Resources/CanvasA2UI/a2ui.bundle.js");',
       ].join("\n"),
     );
 

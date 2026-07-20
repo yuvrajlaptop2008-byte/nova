@@ -6,7 +6,7 @@ import {
 } from "@nova/normalization-core/string-coerce";
 import type { CliDeps } from "../cli/deps.types.js";
 import type { CronFailureDestinationConfig } from "../config/types.cron.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { redactCronCommandSummaryForExternalDelivery } from "../cron/command-output-summary.js";
 import {
   resolveCronDeliveryPlan,
@@ -32,7 +32,7 @@ type CronLogger = {
 
 type CronAgentResolver = (requested?: string | null) => {
   agentId: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 };
 
 type CronWebhookTarget = {

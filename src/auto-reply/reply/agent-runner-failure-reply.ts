@@ -26,7 +26,7 @@ import {
 import { isMissingProviderAuthError } from "../../agents/model-auth.js";
 import { isFallbackSummaryError } from "../../agents/model-fallback.js";
 import { resolveSilentReplyPolicy } from "../../config/silent-reply.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { markReplyPayloadForSourceSuppressionDelivery } from "../reply-payload.js";
 import type { TemplateContext } from "../templating.js";
@@ -195,7 +195,7 @@ export function resolveExternalRunFailureTextForConversation(params: {
   text: string;
   sessionCtx: ExternalFailureConversationContext;
   isGenericRunnerFailure: boolean;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): string {
   if (!isNonDirectConversationContext(params.sessionCtx)) {
     return params.text;
@@ -326,7 +326,7 @@ function buildMissingApiKeyFailureText(input: { message: string; error?: unknown
     return "⚠️ Missing API key for OpenAI on the gateway. Use `openai/gpt-5.6-sol` with the OpenAI OAuth profile, or set `OPENAI_API_KEY` for direct OpenAI API-key runs.";
   }
   if (provider === "openai") {
-    return '⚠️ Missing API key for provider "openai". Run `openclaw doctor --fix` to repair stale OpenAI model/session routes, restart the gateway if doctor asks, then try again. If doctor has nothing to repair or the error persists, re-auth with `openclaw models auth login --provider openai` or run `openclaw configure`.';
+    return '⚠️ Missing API key for provider "openai". Run `nova doctor --fix` to repair stale OpenAI model/session routes, restart the gateway if doctor asks, then try again. If doctor has nothing to repair or the error persists, re-auth with `nova models auth login --provider openai` or run `nova configure`.';
   }
   if (SAFE_MISSING_API_KEY_PROVIDERS.has(provider)) {
     return `⚠️ Missing API key for provider "${provider}". Configure the gateway auth for that provider, then try again.`;
@@ -467,7 +467,7 @@ export function markAgentRunFailureReplyPayload<T extends ReplyPayload>(payload:
 export function buildTerminalAgentRunFailureReplyPayload(params: {
   isHeartbeat?: boolean;
   sessionCtx: ExternalFailureConversationContext;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): ReplyPayload {
   return markAgentRunFailureReplyPayload({
     text: resolveExternalRunFailureTextForConversation({
@@ -491,7 +491,7 @@ export function buildEmptyInteractiveReplyPayload(params: {
   hasExplicitSilentReply: boolean;
   hasCommittedDelivery: boolean;
   sessionCtx: ExternalFailureConversationContext;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): ReplyPayload | undefined {
   if (
     !params.isInteractive ||
@@ -520,7 +520,7 @@ export function buildKnownAgentRunFailureReplyPayload(params: {
   err: unknown;
   sessionCtx: TemplateContext;
   resolvedVerboseLevel: VerboseLevel | undefined;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): ReplyPayload | undefined {
   const message = formatErrorMessage(params.err);
   const isFallbackSummary = isFallbackSummaryError(params.err);

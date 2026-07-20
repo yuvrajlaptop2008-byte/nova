@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createQQBotIngressEffectOnce } from "../gateway/ingress-effects.js";
 import type { QueuedMessage } from "../gateway/message-queue.js";
@@ -58,7 +58,7 @@ function createHandlerContext(): SlashCommandHandlerContext {
 }
 
 function createDownload(name: string): string {
-  const downloads = path.join(testRoot, ".openclaw", "media", "qqbot", "downloads");
+  const downloads = path.join(testRoot, ".nova", "media", "qqbot", "downloads");
   fs.mkdirSync(downloads, { recursive: true });
   const filePath = path.join(downloads, name);
   fs.writeFileSync(filePath, "payload", "utf8");
@@ -67,7 +67,7 @@ function createDownload(name: string): string {
 
 beforeEach(() => {
   resetPluginStateStoreForTests();
-  testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-qqbot-effect-once-"));
+  testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-qqbot-effect-once-"));
   const stateDir = path.join(testRoot, "state");
   fs.mkdirSync(stateDir, { recursive: true });
   vi.stubEnv("NOVA_HOME", testRoot);

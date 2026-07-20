@@ -1,4 +1,4 @@
-import { withOpenClawStateLease } from "../state/openclaw-state-lease.js";
+import { withNovaStateLease } from "../state/nova-state-lease.js";
 
 const LEGACY_AUDIT_COORDINATION_SCOPE = "migration.legacy-audit";
 const LEGACY_AUDIT_COORDINATION_KEY = "filesystem-sqlite-boundary";
@@ -7,7 +7,7 @@ export function withLegacyAuditMigrationLease<T>(
   stateDir: string,
   run: () => Promise<T>,
 ): Promise<T> {
-  return withOpenClawStateLease(
+  return withNovaStateLease(
     {
       scope: LEGACY_AUDIT_COORDINATION_SCOPE,
       key: LEGACY_AUDIT_COORDINATION_KEY,

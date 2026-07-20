@@ -272,7 +272,7 @@ describe("buildReplyPromptEnvelope", () => {
       BodyStripped: "",
       Provider: "telegram",
       ChatType: "group",
-      MediaPaths: ["/tmp/openclaw-photo.jpg"],
+      MediaPaths: ["/tmp/nova-photo.jpg"],
       MediaUrls: ["https://example.com/photo.jpg"],
       InboundHistory: [{ sender: "Alice", timestamp: 1_700_000_000_000, body: "context" }],
     });

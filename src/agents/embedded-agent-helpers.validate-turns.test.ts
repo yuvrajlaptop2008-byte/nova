@@ -1,7 +1,7 @@
 // Covers provider-specific transcript turn validation and repair.
 
 import { expectDefined } from "@nova/normalization-core";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
 import { describe, expect, it } from "vitest";
 import { validateAnthropicTurns, validateGeminiTurns } from "./embedded-agent-helpers.js";
 

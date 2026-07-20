@@ -1,20 +1,20 @@
 // Elevenlabs plugin module implements tts behavior.
-import { MAX_AUDIO_BYTES } from "openclaw/plugin-sdk/media-runtime";
+import { MAX_AUDIO_BYTES } from "nova/plugin-sdk/media-runtime";
 import {
   assertOkOrThrowProviderError,
   assertProviderBinaryResponseContent,
   readProviderBinaryResponse,
-} from "openclaw/plugin-sdk/provider-http";
+} from "nova/plugin-sdk/provider-http";
 import {
   normalizeApplyTextNormalization,
   normalizeLanguageCode,
   normalizeSeed,
   requireInRange,
-} from "openclaw/plugin-sdk/speech";
+} from "nova/plugin-sdk/speech";
 import {
   fetchWithSsrFGuard,
   ssrfPolicyFromHttpBaseUrlAllowedHostname,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/ssrf-runtime";
 import { isValidElevenLabsVoiceId, normalizeElevenLabsBaseUrl } from "./shared.js";
 
 function assertElevenLabsVoiceSettings(settings: {

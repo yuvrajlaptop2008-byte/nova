@@ -9,7 +9,7 @@ import {
 } from "@nova/model-catalog-core/provider-id";
 import { asDateTimestampMs } from "@nova/normalization-core/number-coercion";
 import { normalizeUniqueStringEntries } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   DEFAULT_OAUTH_REFRESH_MARGIN_MS,
   type AuthCredentialReasonCode,
@@ -121,7 +121,7 @@ function buildProfileHealth(params: {
   credential: AuthProfileCredential;
   runtimeCredential?: AuthProfileCredential;
   store: AuthProfileStore;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   now: number;
   warnAfterMs: number;
   allowKeychainPrompt?: boolean;
@@ -274,7 +274,7 @@ function buildProfileHealth(params: {
 /** Build profile and provider auth health rollups from an auth profile store. */
 export function buildAuthHealthSummary(params: {
   store: AuthProfileStore;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   warnAfterMs?: number;
   providers?: string[];
   runtimeCredentialsByProvider?: ReadonlyMap<string, AuthProfileCredential>;

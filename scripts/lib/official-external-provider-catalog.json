@@ -2,10 +2,10 @@
   "entries": [
     {
       "name": "@nova/amazon-bedrock-provider",
-      "description": "OpenClaw Amazon Bedrock provider plugin",
+      "description": "Nova Amazon Bedrock provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "amazon-bedrock",
           "label": "Amazon Bedrock"
@@ -27,10 +27,10 @@
     },
     {
       "name": "@nova/amazon-bedrock-mantle-provider",
-      "description": "OpenClaw Amazon Bedrock Mantle provider plugin",
+      "description": "Nova Amazon Bedrock Mantle provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "amazon-bedrock-mantle",
           "label": "Amazon Bedrock Mantle"
@@ -52,10 +52,10 @@
     },
     {
       "name": "@nova/anthropic-vertex-provider",
-      "description": "OpenClaw Anthropic Vertex provider plugin",
+      "description": "Nova Anthropic Vertex provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "anthropic-vertex",
           "label": "Anthropic Vertex"
@@ -77,10 +77,10 @@
     },
     {
       "name": "@nova/arcee-provider",
-      "description": "OpenClaw Arcee provider plugin.",
+      "description": "Nova Arcee provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "arcee",
           "label": "Arcee AI"
@@ -143,10 +143,10 @@
     },
     {
       "name": "@nova/baseten-provider",
-      "description": "OpenClaw Baseten provider plugin.",
+      "description": "Nova Baseten provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "baseten",
           "label": "Baseten"
@@ -192,10 +192,10 @@
     },
     {
       "name": "@nova/cerebras-provider",
-      "description": "OpenClaw Cerebras provider plugin.",
+      "description": "Nova Cerebras provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "cerebras",
           "label": "Cerebras"
@@ -249,10 +249,10 @@
     },
     {
       "name": "@nova/chutes-provider",
-      "description": "OpenClaw Chutes.ai provider plugin.",
+      "description": "Nova Chutes.ai provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "chutes",
           "label": "Chutes"
@@ -320,10 +320,10 @@
     },
     {
       "name": "@nova/cohere-provider",
-      "description": "OpenClaw Cohere provider plugin",
+      "description": "Nova Cohere provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "cohere",
           "label": "Cohere"
@@ -366,10 +366,10 @@
     },
     {
       "name": "@nova/cloudflare-ai-gateway-provider",
-      "description": "OpenClaw Cloudflare AI Gateway provider plugin.",
+      "description": "Nova Cloudflare AI Gateway provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "cloudflare-ai-gateway",
           "label": "Cloudflare AI Gateway"
@@ -416,10 +416,10 @@
     },
     {
       "name": "@nova/deepinfra-provider",
-      "description": "OpenClaw DeepInfra provider plugin.",
+      "description": "Nova DeepInfra provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "deepinfra",
           "label": "DeepInfra"
@@ -491,10 +491,10 @@
     },
     {
       "name": "@nova/deepseek-provider",
-      "description": "OpenClaw DeepSeek provider plugin.",
+      "description": "Nova DeepSeek provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "deepseek",
           "label": "DeepSeek"
@@ -548,10 +548,10 @@
     },
     {
       "name": "@nova/featherless-provider",
-      "description": "OpenClaw Featherless AI provider plugin.",
+      "description": "Nova Featherless AI provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "featherless",
           "label": "Featherless AI"
@@ -598,10 +598,10 @@
     },
     {
       "name": "@nova/gmi-provider",
-      "description": "OpenClaw GMI Cloud provider plugin",
+      "description": "Nova GMI Cloud provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "gmi",
           "label": "GMI Cloud"
@@ -649,10 +649,10 @@
     },
     {
       "name": "@nova/longcat-provider",
-      "description": "OpenClaw LongCat provider plugin",
+      "description": "Nova LongCat provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "longcat",
           "label": "LongCat"
@@ -692,10 +692,10 @@
     },
     {
       "name": "@nova/meta-provider",
-      "description": "OpenClaw Meta provider plugin.",
+      "description": "Nova Meta provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "meta",
           "label": "Meta"
@@ -741,10 +741,10 @@
     },
     {
       "name": "@nova/groq-provider",
-      "description": "OpenClaw Groq media-understanding provider.",
+      "description": "Nova Groq media-understanding provider.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "groq",
           "label": "Groq"
@@ -803,10 +803,10 @@
     },
     {
       "name": "@nova/kilocode-provider",
-      "description": "OpenClaw Kilo Gateway provider plugin.",
+      "description": "Nova Kilo Gateway provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "kilocode",
           "label": "Kilo Gateway"
@@ -853,10 +853,10 @@
     },
     {
       "name": "@nova/kimi-provider",
-      "description": "OpenClaw Kimi provider plugin.",
+      "description": "Nova Kimi provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "kimi",
           "label": "Kimi Coding"
@@ -906,10 +906,10 @@
     },
     {
       "name": "@nova/pixverse-provider",
-      "description": "OpenClaw PixVerse video provider plugin",
+      "description": "Nova PixVerse video provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "pixverse",
           "label": "PixVerse"
@@ -947,10 +947,10 @@
     },
     {
       "name": "@nova/qianfan-provider",
-      "description": "OpenClaw Qianfan provider plugin.",
+      "description": "Nova Qianfan provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "qianfan",
           "label": "Qianfan"
@@ -996,10 +996,10 @@
     },
     {
       "name": "@nova/qwen-provider",
-      "description": "OpenClaw Qwen Cloud provider plugin.",
+      "description": "Nova Qwen Cloud provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "qwen",
           "label": "Qwen Cloud"
@@ -1189,10 +1189,10 @@
     },
     {
       "name": "@nova/fireworks-provider",
-      "description": "OpenClaw Fireworks provider plugin",
+      "description": "Nova Fireworks provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "fireworks",
           "label": "Fireworks"
@@ -1242,10 +1242,10 @@
     },
     {
       "name": "@nova/moonshot-provider",
-      "description": "OpenClaw Moonshot provider plugin",
+      "description": "Nova Moonshot provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "moonshot",
           "label": "Moonshot"
@@ -1335,7 +1335,7 @@
             ],
             "placeholder": "sk-...",
             "signupUrl": "https://platform.moonshot.cn/",
-            "docsUrl": "https://docs.openclaw.ai/tools/web",
+            "docsUrl": "https://docs.nova.ai/tools/web",
             "credentialPath": "plugins.entries.moonshot.config.webSearch.apiKey",
             "autoDetectOrder": 40
           }
@@ -1350,10 +1350,10 @@
     },
     {
       "name": "@nova/tencent-provider",
-      "description": "OpenClaw Tencent Cloud provider plugin (TokenHub + Token Plan)",
+      "description": "Nova Tencent Cloud provider plugin (TokenHub + Token Plan)",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "tencent",
           "label": "Tencent Cloud"
@@ -1430,10 +1430,10 @@
     },
     {
       "name": "@nova/venice-provider",
-      "description": "OpenClaw Venice provider plugin",
+      "description": "Nova Venice provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "venice",
           "label": "Venice"
@@ -1480,10 +1480,10 @@
     },
     {
       "name": "@nova/vercel-ai-gateway-provider",
-      "description": "OpenClaw Vercel AI Gateway provider plugin",
+      "description": "Nova Vercel AI Gateway provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "vercel-ai-gateway",
           "label": "Vercel AI Gateway"
@@ -1530,10 +1530,10 @@
     },
     {
       "name": "@nova/zai-provider",
-      "description": "OpenClaw Z.AI provider plugin",
+      "description": "Nova Z.AI provider plugin",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "zai",
           "label": "Z.AI"
@@ -1661,10 +1661,10 @@
     },
     {
       "name": "@nova/stepfun-provider",
-      "description": "OpenClaw StepFun provider plugin.",
+      "description": "Nova StepFun provider plugin.",
       "source": "official",
       "kind": "provider",
-      "openclaw": {
+      "nova": {
         "plugin": {
           "id": "stepfun",
           "label": "StepFun"

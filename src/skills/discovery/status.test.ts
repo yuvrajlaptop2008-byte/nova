@@ -38,7 +38,7 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("surfaces valid ClawHub linkage and local Skill Card metadata", async () => {
-    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-status-"));
+    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-status-"));
     try {
       const skillDir = path.join(workspaceDir, "skills", "agentreceipt");
       const originPath = path.join(skillDir, ".clawhub", "origin.json");
@@ -106,7 +106,7 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("uses ClawHub origin metadata for linkage when the skill name is a display name", async () => {
-    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-status-"));
+    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-status-"));
     try {
       const skillDir = path.join(workspaceDir, "skills", "agentreceipt");
       await writeClawHubStatusFixture({
@@ -134,7 +134,7 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("does not link ClawHub origin metadata from the wrong install directory", async () => {
-    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-status-"));
+    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-status-"));
     try {
       const copiedSkillDir = path.join(workspaceDir, "skills", "copied-agentreceipt");
       await writeClawHubStatusFixture({
@@ -159,7 +159,7 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("does not link ClawHub origin metadata when the lockfile registry disagrees", async () => {
-    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-status-"));
+    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-status-"));
     try {
       const skillDir = path.join(workspaceDir, "skills", "agentreceipt");
       await writeClawHubStatusFixture({
@@ -188,7 +188,7 @@ describe("buildWorkspaceSkillStatus", () => {
   it.runIf(process.platform !== "win32")(
     "does not surface or read Skill Card symlinks outside the skill directory",
     async () => {
-      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-status-"));
+      const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-status-"));
       try {
         const skillDir = path.join(workspaceDir, "skills", "agentreceipt");
         const secretPath = path.join(workspaceDir, "secret.txt");
@@ -209,7 +209,7 @@ describe("buildWorkspaceSkillStatus", () => {
   );
 
   it("surfaces malformed or mismatched ClawHub linkage without trusting it", async () => {
-    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-status-"));
+    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-status-"));
     try {
       const malformedDir = path.join(workspaceDir, "skills", "malformed");
       const missingLockDir = path.join(workspaceDir, "skills", "missing-lock");
@@ -265,8 +265,8 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("links a discovered global ClawHub skill only through the managed lockfile", async () => {
-    const managedParentDir = tempDirs.make("openclaw-managed-");
-    const workspaceDir = tempDirs.make("openclaw-skill-status-");
+    const managedParentDir = tempDirs.make("nova-managed-");
+    const workspaceDir = tempDirs.make("nova-skill-status-");
     const managedSkillsDir = path.join(managedParentDir, "skills");
     const skillDir = path.join(managedSkillsDir, "agentreceipt");
     await fs.mkdir(skillDir, { recursive: true });
@@ -291,7 +291,7 @@ describe("buildWorkspaceSkillStatus", () => {
     const report = buildWorkspaceSkillStatus(workspaceDir, { managedSkillsDir });
     const skill = report.skills.find((entry) => entry.skillKey === "agentreceipt");
 
-    expect(skill).toMatchObject({ source: "openclaw-managed" });
+    expect(skill).toMatchObject({ source: "nova-managed" });
     expect(skill?.clawhub).toMatchObject({
       status: "linked",
       valid: true,
@@ -302,8 +302,8 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("reports a globally installed skill as invalid when it is absent from the managed lockfile", async () => {
-    const managedParentDir = tempDirs.make("openclaw-managed-");
-    const workspaceDir = tempDirs.make("openclaw-skill-status-");
+    const managedParentDir = tempDirs.make("nova-managed-");
+    const workspaceDir = tempDirs.make("nova-skill-status-");
     const managedSkillsDir = path.join(managedParentDir, "skills");
     const skillDir = path.join(managedSkillsDir, "agentreceipt");
     await fs.mkdir(skillDir, { recursive: true });
@@ -332,9 +332,9 @@ describe("buildWorkspaceSkillStatus", () => {
   it.runIf(process.platform !== "win32")(
     "links a discovered managed skill whose install directory is a symlink",
     async () => {
-      const managedParentDir = tempDirs.make("openclaw-managed-");
-      const externalSkillDir = tempDirs.make("openclaw-skill-target-");
-      const workspaceDir = tempDirs.make("openclaw-skill-status-");
+      const managedParentDir = tempDirs.make("nova-managed-");
+      const externalSkillDir = tempDirs.make("nova-skill-target-");
+      const workspaceDir = tempDirs.make("nova-skill-status-");
       const managedSkillsDir = path.join(managedParentDir, "skills");
       await fs.mkdir(managedSkillsDir, { recursive: true });
       await fs.writeFile(
@@ -354,7 +354,7 @@ describe("buildWorkspaceSkillStatus", () => {
       const externalSkillRealDir = await fs.realpath(externalSkillDir);
 
       expect(skill).toMatchObject({
-        source: "openclaw-managed",
+        source: "nova-managed",
         baseDir: externalSkillRealDir,
       });
       expect(skill?.clawhub).toMatchObject({
@@ -564,7 +564,7 @@ describe("buildWorkspaceSkillStatus", () => {
   });
 
   it("classifies a mixed broken skill pack without flattening visibility reasons", () => {
-    const missingBin = "openclaw-test-definitely-missing-skill-bin";
+    const missingBin = "nova-test-definitely-missing-skill-bin";
     const report = buildWorkspaceSkillStatus("/tmp/ws", {
       agentId: "specialist",
       config: {
@@ -628,7 +628,7 @@ describe("buildWorkspaceSkillStatus", () => {
         }),
         createEntry("agent-filtered"),
         createEntry("disabled"),
-        createEntry("bundled-blocked", { source: "openclaw-bundled" }),
+        createEntry("bundled-blocked", { source: "nova-bundled" }),
       ],
     });
 

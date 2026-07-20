@@ -25,7 +25,7 @@
     "useDefineForClassFields": false,
     "verbatimModuleSyntax": true,
     "paths": {
-      "openclaw/plugin-sdk/*": ["./src/plugin-sdk/*.ts"],
+      "nova/plugin-sdk/*": ["./src/plugin-sdk/*.ts"],
       "@nova/ai": ["./packages/ai/src/index.ts"],
       "@nova/ai/diagnostics": ["./packages/ai/src/utils/diagnostics.ts"],
       "@nova/ai/event-stream": ["./packages/ai/src/utils/event-stream.ts"],
@@ -245,7 +245,7 @@
       "@nova/speech-core/*": ["./packages/speech-core/*"],
       "@nova/sdk": ["./packages/sdk/src/index.ts"],
       "@nova/plugin-sdk/*": ["./src/plugin-sdk/*.ts"],
-      "openclaw/plugin-sdk/account-id": ["./src/plugin-sdk/account-id.ts"],
+      "nova/plugin-sdk/account-id": ["./src/plugin-sdk/account-id.ts"],
       "@nova/*": ["./extensions/*"]
     }
   },

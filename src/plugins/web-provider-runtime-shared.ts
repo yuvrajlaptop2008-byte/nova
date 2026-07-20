@@ -1,7 +1,7 @@
 // Shares web provider runtime helpers across plugin-owned providers.
 import { withActivatedPluginIds } from "./activation-context.js";
 import { getLoadedRuntimePluginRegistry } from "./active-runtime-registry.js";
-import { isPluginRegistryLoadInFlight, loadOpenClawPlugins } from "./loader.js";
+import { isPluginRegistryLoadInFlight, loadNovaPlugins } from "./loader.js";
 import type { PluginLoadOptions } from "./loader.js";
 import type { PluginManifestRecord } from "./manifest-registry.js";
 import { hasExplicitPluginIdScope, normalizePluginIdScope } from "./plugin-scope.js";
@@ -187,7 +187,7 @@ export function resolvePluginWebProviders<TEntry>(
         return bundledArtifactProviders;
       }
     }
-    const registry = loadOpenClawPlugins(
+    const registry = loadNovaPlugins(
       buildPluginRuntimeLoadOptionsFromValues(
         {
           config: withActivatedPluginIds({
@@ -258,7 +258,7 @@ export function resolvePluginWebProviders<TEntry>(
       return bundledArtifactProviders;
     }
   }
-  const registry = loadOpenClawPlugins(loadOptions);
+  const registry = loadNovaPlugins(loadOptions);
   return deps.mapRegistryProviders({
     registry,
     onlyPluginIds: context.onlyPluginIds,

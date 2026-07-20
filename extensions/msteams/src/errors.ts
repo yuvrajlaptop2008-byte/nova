@@ -1,7 +1,7 @@
 // Msteams plugin module implements errors behavior.
-import { asFiniteNumberInRange, parseStrictFiniteNumber } from "openclaw/plugin-sdk/number-runtime";
-import { parseRetryAfterHeaderSeconds } from "openclaw/plugin-sdk/retry-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { asFiniteNumberInRange, parseStrictFiniteNumber } from "nova/plugin-sdk/number-runtime";
+import { parseRetryAfterHeaderSeconds } from "nova/plugin-sdk/retry-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 
 const MAX_SAFE_RETRY_AFTER_SECONDS = Number.MAX_SAFE_INTEGER / 1000;
 

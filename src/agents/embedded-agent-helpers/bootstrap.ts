@@ -4,7 +4,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { sanitizeGoogleAssistantFirstOrdering } from "../../shared/google-turn-ordering.js";
 import { sliceUtf16Safe, truncateUtf16Safe } from "../../utils.js";
 import { resolveAgentConfig } from "../agent-scope.js";
@@ -117,7 +117,7 @@ type PolicyDigest = {
   omittedLines: number;
 };
 
-export function resolveBootstrapMaxChars(cfg?: OpenClawConfig, agentId?: string | null): number {
+export function resolveBootstrapMaxChars(cfg?: NovaConfig, agentId?: string | null): number {
   const raw =
     cfg && agentId
       ? (resolveAgentConfig(cfg, agentId)?.bootstrapMaxChars ??
@@ -129,10 +129,7 @@ export function resolveBootstrapMaxChars(cfg?: OpenClawConfig, agentId?: string 
   return DEFAULT_BOOTSTRAP_MAX_CHARS;
 }
 
-export function resolveBootstrapTotalMaxChars(
-  cfg?: OpenClawConfig,
-  agentId?: string | null,
-): number {
+export function resolveBootstrapTotalMaxChars(cfg?: NovaConfig, agentId?: string | null): number {
   const raw =
     cfg && agentId
       ? (resolveAgentConfig(cfg, agentId)?.bootstrapTotalMaxChars ??
@@ -145,7 +142,7 @@ export function resolveBootstrapTotalMaxChars(
 }
 
 export function resolveBootstrapPromptTruncationWarningMode(
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): "off" | "once" | "always" {
   const raw = cfg?.agents?.defaults?.bootstrapPromptTruncationWarning;
   if (raw === "off" || raw === "once" || raw === "always") {

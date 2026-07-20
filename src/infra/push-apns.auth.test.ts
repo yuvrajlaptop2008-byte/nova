@@ -12,7 +12,7 @@ import {
 const tempDirs = createTrackedTempDirs();
 
 async function makeTempDir(): Promise<string> {
-  return await tempDirs.make("openclaw-push-apns-auth-test-");
+  return await tempDirs.make("nova-push-apns-auth-test-");
 }
 
 afterEach(async () => {
@@ -119,7 +119,7 @@ describe("push APNs auth and helper coverage", () => {
           nodeId: "ios-node-direct",
           transport: "direct",
           token: "ABCD1234ABCD1234ABCD1234ABCD1234",
-          topic: "ai.openclaw.ios",
+          topic: "ai.nova.ios",
           environment: "sandbox",
           updatedAtMs: 1,
         },
@@ -135,7 +135,7 @@ describe("push APNs auth and helper coverage", () => {
           relayHandle: "relay-handle-123",
           sendGrant: "send-grant-123",
           installationId: "install-123",
-          topic: "ai.openclaw.ios",
+          topic: "ai.nova.ios",
           environment: "production",
           distribution: "official",
           updatedAtMs: 1,
@@ -150,7 +150,7 @@ describe("push APNs auth and helper coverage", () => {
           nodeId: "ios-node-direct",
           transport: "direct",
           token: "ABCD1234ABCD1234ABCD1234ABCD1234",
-          topic: "ai.openclaw.ios",
+          topic: "ai.nova.ios",
           environment: "sandbox",
           updatedAtMs: 1,
         },

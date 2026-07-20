@@ -462,12 +462,12 @@ describe("background tasks rail rendering", () => {
     const running = container.querySelector('[data-task-id="task-1"]');
     expect(running?.textContent).toContain("12 tool uses");
     expect(running?.textContent).toContain("read");
-    expect(running?.querySelector("openclaw-elapsed-time")).not.toBeNull();
+    expect(running?.querySelector("nova-elapsed-time")).not.toBeNull();
 
     const finished = container.querySelector('[data-task-id="task-2"]');
     expect(finished?.textContent).toContain("1 tool use");
     expect(finished?.textContent).toContain("1m 5s");
-    expect(finished?.querySelector("openclaw-elapsed-time")).toBeNull();
+    expect(finished?.querySelector("nova-elapsed-time")).toBeNull();
   });
 
   it("opens a task inspector with prompt and output", () => {
@@ -655,7 +655,7 @@ describe("running-tasks status row", () => {
     );
 
     const elapsed = container.querySelector<HTMLElement & { startMs: number | null }>(
-      "openclaw-elapsed-time",
+      "nova-elapsed-time",
     );
     expect(elapsed?.startMs).toBe(4_000);
     expect(
@@ -679,7 +679,7 @@ describe("running-tasks status row", () => {
 
     const row = container.querySelector(".chat-tasks-status");
     expect(row).not.toBeNull();
-    expect(row?.querySelector("openclaw-elapsed-time")).not.toBeNull();
+    expect(row?.querySelector("nova-elapsed-time")).not.toBeNull();
     // The ticking timer must stay outside the polite live region.
     expect(row?.querySelector(".chat-tasks-status__time")?.getAttribute("aria-hidden")).toBe(
       "true",

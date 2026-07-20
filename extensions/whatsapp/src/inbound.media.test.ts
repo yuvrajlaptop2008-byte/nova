@@ -82,10 +82,10 @@ let currentMockSocket:
     }
   | undefined;
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
-  const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/runtime-config-snapshot")
-  >("openclaw/plugin-sdk/runtime-config-snapshot");
+vi.mock("nova/plugin-sdk/runtime-config-snapshot", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-config-snapshot")>(
+    "nova/plugin-sdk/runtime-config-snapshot",
+  );
   return {
     ...actual,
     getRuntimeConfig: vi.fn().mockReturnValue({
@@ -102,9 +102,9 @@ vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/conversation-runtime")>(
-    "openclaw/plugin-sdk/conversation-runtime",
+vi.mock("nova/plugin-sdk/conversation-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/conversation-runtime")>(
+    "nova/plugin-sdk/conversation-runtime",
   );
   return {
     ...actual,
@@ -117,9 +117,9 @@ vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/channel-pairing", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/channel-pairing")>(
-    "openclaw/plugin-sdk/channel-pairing",
+vi.mock("nova/plugin-sdk/channel-pairing", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/channel-pairing")>(
+    "nova/plugin-sdk/channel-pairing",
   );
   return {
     ...actual,
@@ -129,9 +129,9 @@ vi.mock("openclaw/plugin-sdk/channel-pairing", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/media-store", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/media-store")>(
-    "openclaw/plugin-sdk/media-store",
+vi.mock("nova/plugin-sdk/media-store", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/media-store")>(
+    "nova/plugin-sdk/media-store",
   );
   return {
     ...actual,
@@ -144,11 +144,11 @@ vi.mock("openclaw/plugin-sdk/media-store", async () => {
 
 vi.mock("./runtime.js", async () => {
   const { createChannelIngressQueueForTests: createChannelIngressQueue } = await Promise.resolve(
-    vi.importActual<typeof import("openclaw/plugin-sdk/plugin-state-test-runtime")>(
-      "openclaw/plugin-sdk/plugin-state-test-runtime",
+    vi.importActual<typeof import("nova/plugin-sdk/plugin-state-test-runtime")>(
+      "nova/plugin-sdk/plugin-state-test-runtime",
     ),
   );
-  const stateDir = `/tmp/openclaw-whatsapp-inbound-media-${Date.now()}-${Math.random()}`;
+  const stateDir = `/tmp/nova-whatsapp-inbound-media-${Date.now()}-${Math.random()}`;
   return {
     getOptionalWhatsAppRuntime: () => undefined,
     getWhatsAppRuntime: () => ({
@@ -164,7 +164,7 @@ vi.mock("./runtime.js", async () => {
   };
 });
 
-const HOME = path.join(os.tmpdir(), `openclaw-inbound-media-${crypto.randomUUID()}`);
+const HOME = path.join(os.tmpdir(), `nova-inbound-media-${crypto.randomUUID()}`);
 const ORIGINAL_HOME = process.env.HOME;
 process.env.HOME = HOME;
 

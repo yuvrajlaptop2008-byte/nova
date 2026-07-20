@@ -1,6 +1,6 @@
 // Discord tests cover chunk plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import { countLines, hasBalancedFences } from "openclaw/plugin-sdk/test-fixtures";
+import { countLines, hasBalancedFences } from "nova/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 import { chunkDiscordTextWithMode } from "./chunk.js";
 

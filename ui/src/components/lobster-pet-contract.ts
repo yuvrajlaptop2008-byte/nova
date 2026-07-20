@@ -66,7 +66,7 @@ export type LobsterLogoVisitDetail = {
 
 // Fired on the pet host whenever the logo stand-in phase changes; the
 // sidebar owns the brand slot, so the swap renders there, not here.
-export const LOBSTER_LOGO_VISIT_EVENT = "openclaw-lobster-logo-visit";
+export const LOBSTER_LOGO_VISIT_EVENT = "nova-lobster-logo-visit";
 
 function fnv1a(value: string): number {
   let hash = 0x811c9dc5;

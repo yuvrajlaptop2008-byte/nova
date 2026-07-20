@@ -1,13 +1,13 @@
-# Venice OpenClaw provider
+# Venice Nova provider
 
-Official OpenClaw provider plugin for Venice.
+Official Nova provider plugin for Venice.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/venice-provider
+nova plugins install @nova/venice-provider
 ```
 
 ## Docs
 
-See `docs/providers/venice.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/providers/venice`.
+See `docs/providers/venice.md` in the Nova repository, or the published docs at `https://docs.nova.ai/providers/venice`.

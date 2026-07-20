@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 function createTempDir(): string {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-public-surface-runtime-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-public-surface-runtime-"));
   tempDirs.push(tempDir);
   return tempDir;
 }

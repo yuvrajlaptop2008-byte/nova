@@ -13,7 +13,7 @@ let stateDir = "";
 const prevStateDir = process.env.NOVA_STATE_DIR;
 
 beforeEach(() => {
-  stateDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-relay-auth-")));
+  stateDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "nova-relay-auth-")));
   process.env.NOVA_STATE_DIR = stateDir;
 });
 afterEach(() => {
@@ -49,9 +49,7 @@ describe("extension relay host-local secret", () => {
 
   it("gives different hosts (state dirs) different secrets", () => {
     const a = ensureExtensionRelayToken();
-    const otherDir = fs.realpathSync(
-      fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-relay-auth-2-")),
-    );
+    const otherDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "nova-relay-auth-2-")));
     try {
       const b = ensureExtensionRelayToken({ ...process.env, NOVA_STATE_DIR: otherDir });
       expect(b).not.toBe(a);

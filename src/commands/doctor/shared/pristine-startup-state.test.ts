@@ -11,10 +11,10 @@ import {
 const roots: string[] = [];
 
 function createFixture(config: Record<string, unknown>, stateEntries: string[] = []) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-pristine-startup-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-pristine-startup-"));
   roots.push(root);
   const stateDir = path.join(root, "state");
-  const configPath = path.join(root, "openclaw.json");
+  const configPath = path.join(root, "nova.json");
   fs.writeFileSync(configPath, `${JSON.stringify(config)}\n`);
   fs.mkdirSync(stateDir, { recursive: true });
   for (const entry of stateEntries) {
@@ -37,7 +37,7 @@ function addBundledPlugin(
   const pluginDir = path.join(bundledPluginsDir, pluginId);
   fs.mkdirSync(pluginDir, { recursive: true });
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "nova.plugin.json"),
     `${JSON.stringify({ id: pluginId })}\n`,
   );
   if (options.doctorContract) {
@@ -83,7 +83,7 @@ describe("pristine startup state", () => {
         agents: {
           defaults: {
             model: { primary: "openai/gpt-5.6" },
-            models: { "openai/gpt-5.6": { agentRuntime: { id: "openclaw" } } },
+            models: { "openai/gpt-5.6": { agentRuntime: { id: "nova" } } },
             workspace: "/tmp/workspace",
           },
           list: [{ id: "main", workspace: "/tmp/workspace" }],

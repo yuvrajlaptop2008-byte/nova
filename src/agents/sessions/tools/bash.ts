@@ -48,7 +48,7 @@ function resolveBashTimeoutMs(timeoutSeconds: unknown): number | undefined {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.bashToolTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.bashToolTestApi")] = {
     resolveBashTimeoutMs,
   };
 }
@@ -324,7 +324,7 @@ export function createBashToolDefinition(
       resolveBashTimeoutMs(timeout);
       const resolvedCommand = commandPrefix ? `${commandPrefix}\n${command}` : command;
       const spawnContext = resolveSpawnContext(resolvedCommand, cwd, spawnHook, options?.shellPath);
-      const output = new OutputAccumulator({ tempFilePrefix: "openclaw-bash" });
+      const output = new OutputAccumulator({ tempFilePrefix: "nova-bash" });
       let acceptingOutput = true;
       let updateTimer: NodeJS.Timeout | undefined;
       let updateDirty = false;

@@ -9,7 +9,7 @@ import {
   getRuntimeConfig,
   getRuntimeConfigSourceSnapshot,
   projectConfigOntoRuntimeSourceSnapshot,
-  type OpenClawConfig,
+  type NovaConfig,
 } from "../config/config.js";
 import { createConfigRuntimeEnv } from "../config/env-vars.js";
 import { hashRuntimeConfigValue } from "../config/runtime-snapshot.js";
@@ -30,7 +30,7 @@ import {
   type ModelsJsonReadyResult,
   type ModelsJsonReadyState,
 } from "./models-config-state.js";
-import { planOpenClawModelsJson } from "./models-config.plan.js";
+import { planNovaModelsJson } from "./models-config.plan.js";
 import {
   decodePluginModelCatalogRelativePathPluginId,
   isGeneratedPluginModelCatalog,
@@ -40,12 +40,12 @@ import {
 } from "./plugin-model-catalog.js";
 import { stableStringify } from "./stable-stringify.js";
 
-type PreparedOpenClawModelsJsonSource = ModelsJsonReadyResult & {
+type PreparedNovaModelsJsonSource = ModelsJsonReadyResult & {
   fingerprint: string;
   workspaceDir?: string;
 };
 
-type EnsureOpenClawModelsJsonOptions = {
+type EnsureNovaModelsJsonOptions = {
   env?: NodeJS.ProcessEnv;
   pluginMetadataSnapshot?: Pick<PluginMetadataSnapshot, "index" | "manifestRegistry" | "owners">;
   workspaceDir?: string;
@@ -76,8 +76,8 @@ async function readPluginCatalogMtimes(agentDir: string): Promise<Array<[string,
 }
 
 async function buildModelsJsonFingerprint(params: {
-  config: OpenClawConfig;
-  sourceConfigForSecrets: OpenClawConfig;
+  config: NovaConfig;
+  sourceConfigForSecrets: NovaConfig;
   agentDir: string;
   workspaceDir?: string;
   pluginMetadataSnapshot?: Pick<PluginMetadataSnapshot, "index">;
@@ -157,7 +157,7 @@ async function writeModelsFileAtomicForModelsJson(
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.modelsConfigTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.modelsConfigTestApi")] = {
     ensureModelsFileModeForModelsJson,
     writeModelsFileAtomicForModelsJson,
   };
@@ -268,9 +268,9 @@ async function writePluginCatalogsForModelsJson(params: {
   return wrote || removedStale;
 }
 
-function resolveModelsConfigInput(config?: OpenClawConfig): {
-  config: OpenClawConfig;
-  sourceConfigForSecrets: OpenClawConfig;
+function resolveModelsConfigInput(config?: NovaConfig): {
+  config: NovaConfig;
+  sourceConfigForSecrets: NovaConfig;
 } {
   const runtimeSource = getRuntimeConfigSourceSnapshot();
   if (!config) {
@@ -297,7 +297,7 @@ function resolveModelsConfigInput(config?: OpenClawConfig): {
 
 /** Builds the canonical source freshness fingerprint for generated model catalogs. */
 async function buildModelsJsonSourceFingerprint(
-  config?: OpenClawConfig,
+  config?: NovaConfig,
   agentDirOverride?: string,
   options: {
     env?: NodeJS.ProcessEnv;
@@ -354,11 +354,11 @@ async function withModelsJsonWriteLock<T>(targetPath: string, run: () => Promise
 }
 
 /** Ensures models.json and plugin catalog sidecars are current for an agent. */
-async function prepareOpenClawModelsJsonSource(
-  config?: OpenClawConfig,
+async function prepareNovaModelsJsonSource(
+  config?: NovaConfig,
   agentDirOverride?: string,
-  options: EnsureOpenClawModelsJsonOptions = {},
-): Promise<PreparedOpenClawModelsJsonSource> {
+  options: EnsureNovaModelsJsonOptions = {},
+): Promise<PreparedNovaModelsJsonSource> {
   const resolved = resolveModelsConfigInput(config);
   const cfg = resolved.config;
   const sourceFingerprint = await buildModelsJsonSourceFingerprint(
@@ -400,7 +400,7 @@ async function prepareOpenClawModelsJsonSource(
       existingParsed: existingModelsFile.parsed,
       ...(pluginMetadataSnapshot ? { pluginMetadataSnapshot } : {}),
     });
-    const plan = await planOpenClawModelsJson({
+    const plan = await planNovaModelsJson({
       cfg,
       sourceConfigForSecrets: resolved.sourceConfigForSecrets,
       agentDir,
@@ -492,11 +492,11 @@ async function prepareOpenClawModelsJsonSource(
 }
 
 /** Ensures models.json and plugin catalog sidecars are current for an agent. */
-export async function ensureOpenClawModelsJson(
-  config?: OpenClawConfig,
+export async function ensureNovaModelsJson(
+  config?: NovaConfig,
   agentDirOverride?: string,
-  options: EnsureOpenClawModelsJsonOptions = {},
+  options: EnsureNovaModelsJsonOptions = {},
 ): Promise<ModelsJsonReadyResult> {
-  const prepared = await prepareOpenClawModelsJsonSource(config, agentDirOverride, options);
+  const prepared = await prepareNovaModelsJsonSource(config, agentDirOverride, options);
   return { agentDir: prepared.agentDir, wrote: prepared.wrote };
 }

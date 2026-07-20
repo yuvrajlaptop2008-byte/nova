@@ -54,28 +54,28 @@ const LAUNCH_AGENT_ENV_FILE_MODE = 0o600;
 const LAUNCH_AGENT_ENV_WRAPPER_MODE = 0o700;
 const LAUNCH_AGENT_ENV_DIR_NAME = "service-env";
 const LAUNCH_AGENT_STDERR_PATH = "/dev/null";
-const NOVA_UPDATE_LAUNCHD_LABEL_PREFIX = "ai.openclaw.update.";
-const NOVA_MANUAL_UPDATE_LAUNCHD_LABEL_PATTERN = /^ai\.openclaw\.manual-update\.\d+$/;
+const NOVA_UPDATE_LAUNCHD_LABEL_PREFIX = "ai.nova.update.";
+const NOVA_MANUAL_UPDATE_LAUNCHD_LABEL_PATTERN = /^ai\.nova\.manual-update\.\d+$/;
 const NOVA_PROFILE_UPDATE_LAUNCHD_LABEL_PATTERN =
-  /^ai\.openclaw\.[A-Za-z0-9._-]+\.update\.[A-Za-z0-9._-]+$/;
-const NOVA_DIRECT_CLI_NAMES = new Set(["openclaw", "openclaw.mjs"]);
+  /^ai\.nova\.[A-Za-z0-9._-]+\.update\.[A-Za-z0-9._-]+$/;
+const NOVA_DIRECT_CLI_NAMES = new Set(["nova", "nova.mjs"]);
 const NOVA_NODE_RUNTIME_NAMES = new Set(["bun", "bun.exe", "node", "node.exe"]);
-const NOVA_SCRIPT_NAMES = new Set(["openclaw.mjs"]);
+const NOVA_SCRIPT_NAMES = new Set(["nova.mjs"]);
 const LAUNCH_AGENT_STOP_PORT_RELEASE_TIMEOUT_MS = LAUNCH_AGENT_EXIT_TIMEOUT_SECONDS * 1_000;
 const LAUNCH_AGENT_STOP_PORT_RELEASE_POLL_MS = 100;
 
-export type StaleOpenClawUpdateLaunchdJob = {
+export type StaleNovaUpdateLaunchdJob = {
   label: string;
   pid?: number;
   lastExitStatus?: number;
 };
 
-type OpenClawUpdateLaunchdLabelCandidate = {
+type NovaUpdateLaunchdLabelCandidate = {
   label: string;
   requiresMetadata: boolean;
 };
 
-function normalizeOpenClawUpdateLaunchdLabel(label: unknown): string | null {
+function normalizeNovaUpdateLaunchdLabel(label: unknown): string | null {
   if (typeof label !== "string") {
     return null;
   }
@@ -84,14 +84,14 @@ function normalizeOpenClawUpdateLaunchdLabel(label: unknown): string | null {
     return trimmed;
   }
   // Manual update jobs include a timestamp-like suffix and should be cleaned up
-  // without matching arbitrary ai.openclaw labels.
+  // without matching arbitrary ai.nova labels.
   return NOVA_MANUAL_UPDATE_LAUNCHD_LABEL_PATTERN.test(trimmed) ? trimmed : null;
 }
 
-function normalizeOpenClawUpdateLaunchdLabelCandidate(
+function normalizeNovaUpdateLaunchdLabelCandidate(
   label: unknown,
-): OpenClawUpdateLaunchdLabelCandidate | null {
-  const normalized = normalizeOpenClawUpdateLaunchdLabel(label);
+): NovaUpdateLaunchdLabelCandidate | null {
+  const normalized = normalizeNovaUpdateLaunchdLabel(label);
   if (normalized) {
     return { label: normalized, requiresMetadata: false };
   }
@@ -119,16 +119,16 @@ function isCurrentGatewayLaunchdLabel(label: string, env: NodeJS.ProcessEnv): bo
   return Boolean(configuredLabel && label === configuredLabel);
 }
 
-function resolveCurrentOpenClawUpdateLaunchdJobLabel(
+function resolveCurrentNovaUpdateLaunchdJobLabel(
   env: NodeJS.ProcessEnv = process.env,
-): OpenClawUpdateLaunchdLabelCandidate | null {
+): NovaUpdateLaunchdLabelCandidate | null {
   for (const label of [
     env.LAUNCH_JOB_LABEL,
     env.LAUNCH_JOB_NAME,
     env.XPC_SERVICE_NAME,
     env.NOVA_LAUNCHD_LABEL,
   ]) {
-    const candidate = normalizeOpenClawUpdateLaunchdLabelCandidate(label);
+    const candidate = normalizeNovaUpdateLaunchdLabelCandidate(label);
     if (candidate) {
       if (isCurrentGatewayLaunchdLabel(candidate.label, env)) {
         continue;
@@ -223,7 +223,7 @@ async function resolveLaunchAgentEnvironmentWrapperOverwriteWarnings(params: {
     return [];
   }
   return [
-    `Existing generated LaunchAgent env wrapper at ${params.wrapperPath} contains custom behavior and will be overwritten; move custom behavior to openclaw gateway install --wrapper <path> or NOVA_WRAPPER.`,
+    `Existing generated LaunchAgent env wrapper at ${params.wrapperPath} contains custom behavior and will be overwritten; move custom behavior to nova gateway install --wrapper <path> or NOVA_WRAPPER.`,
   ];
 }
 
@@ -378,18 +378,16 @@ async function execLaunchctl(
   return await execFileUtf8(file, fileArgs, isWindows ? { windowsHide: true } : {});
 }
 
-export function parseLaunchctlListOpenClawUpdateJobs(
-  output: string,
-): StaleOpenClawUpdateLaunchdJob[] {
-  return parseLaunchctlListOpenClawUpdateJobCandidates(output)
+export function parseLaunchctlListNovaUpdateJobs(output: string): StaleNovaUpdateLaunchdJob[] {
+  return parseLaunchctlListNovaUpdateJobCandidates(output)
     .filter((job) => !job.requiresMetadata)
     .map(({ requiresMetadata: _requiresMetadata, ...job }) => job);
 }
 
-function parseLaunchctlListOpenClawUpdateJobCandidates(
+function parseLaunchctlListNovaUpdateJobCandidates(
   output: string,
-): Array<StaleOpenClawUpdateLaunchdJob & OpenClawUpdateLaunchdLabelCandidate> {
-  const jobs: Array<StaleOpenClawUpdateLaunchdJob & OpenClawUpdateLaunchdLabelCandidate> = [];
+): Array<StaleNovaUpdateLaunchdJob & NovaUpdateLaunchdLabelCandidate> {
+  const jobs: Array<StaleNovaUpdateLaunchdJob & NovaUpdateLaunchdLabelCandidate> = [];
   for (const rawLine of output.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (!line) {
@@ -397,7 +395,7 @@ function parseLaunchctlListOpenClawUpdateJobCandidates(
     }
     const parts = line.split(/\s+/);
     const [pidRaw, statusRaw, ...labelParts] = parts;
-    const candidate = normalizeOpenClawUpdateLaunchdLabelCandidate(labelParts.join(" "));
+    const candidate = normalizeNovaUpdateLaunchdLabelCandidate(labelParts.join(" "));
     if (!candidate) {
       continue;
     }
@@ -413,11 +411,11 @@ function parseLaunchctlListOpenClawUpdateJobCandidates(
   return jobs.toSorted((a, b) => a.label.localeCompare(b.label));
 }
 
-function hasOpenClawUpdateLaunchdMarker(env: Record<string, string | undefined> | undefined) {
+function hasNovaUpdateLaunchdMarker(env: Record<string, string | undefined> | undefined) {
   return env?.NOVA_UPDATE_RUN_HANDOFF?.trim() === "1";
 }
 
-function isOpenClawUpdateCommandPrefix(programArguments: string[], updateIndex: number): boolean {
+function isNovaUpdateCommandPrefix(programArguments: string[], updateIndex: number): boolean {
   if (updateIndex === 1) {
     const cliName = path.basename(programArguments[0] ?? "").toLowerCase();
     return NOVA_DIRECT_CLI_NAMES.has(cliName);
@@ -430,7 +428,7 @@ function isOpenClawUpdateCommandPrefix(programArguments: string[], updateIndex: 
   return NOVA_NODE_RUNTIME_NAMES.has(runtimeName) && NOVA_SCRIPT_NAMES.has(entryName);
 }
 
-function isOpenClawUpdateProgramArguments(programArguments: string[] | undefined): boolean {
+function isNovaUpdateProgramArguments(programArguments: string[] | undefined): boolean {
   if (!Array.isArray(programArguments) || programArguments.length === 0) {
     return false;
   }
@@ -439,26 +437,26 @@ function isOpenClawUpdateProgramArguments(programArguments: string[] | undefined
     return false;
   }
   return (
-    isOpenClawUpdateCommandPrefix(programArguments, updateIndex) &&
+    isNovaUpdateCommandPrefix(programArguments, updateIndex) &&
     !programArguments.some((arg) => arg.trim() === "gateway")
   );
 }
 
-async function isLaunchdJobConfirmedOpenClawUpdater(params: {
+async function isLaunchdJobConfirmedNovaUpdater(params: {
   label: string;
   env: NodeJS.ProcessEnv;
 }): Promise<boolean> {
   const plistPath = resolveLaunchAgentPlistPathForLabel(params.env, params.label);
   const command = await readLaunchAgentProgramArgumentsFromFile(plistPath);
   return (
-    hasOpenClawUpdateLaunchdMarker(command?.environment) ||
-    isOpenClawUpdateProgramArguments(command?.programArguments)
+    hasNovaUpdateLaunchdMarker(command?.environment) ||
+    isNovaUpdateProgramArguments(command?.programArguments)
   );
 }
 
-export async function findStaleOpenClawUpdateLaunchdJobs(
+export async function findStaleNovaUpdateLaunchdJobs(
   env: NodeJS.ProcessEnv = process.env,
-): Promise<StaleOpenClawUpdateLaunchdJob[]> {
+): Promise<StaleNovaUpdateLaunchdJob[]> {
   if (process.platform !== "darwin") {
     return [];
   }
@@ -468,14 +466,14 @@ export async function findStaleOpenClawUpdateLaunchdJobs(
   }
   // Never report the active gateway label as stale even when a wrapper exposes
   // update-like launchd metadata through the current environment.
-  const jobs: StaleOpenClawUpdateLaunchdJob[] = [];
-  for (const job of parseLaunchctlListOpenClawUpdateJobCandidates(result.stdout)) {
+  const jobs: StaleNovaUpdateLaunchdJob[] = [];
+  for (const job of parseLaunchctlListNovaUpdateJobCandidates(result.stdout)) {
     if (isCurrentGatewayLaunchdLabel(job.label, env)) {
       continue;
     }
     if (
       job.requiresMetadata &&
-      !(await isLaunchdJobConfirmedOpenClawUpdater({ label: job.label, env }))
+      !(await isLaunchdJobConfirmedNovaUpdater({ label: job.label, env }))
     ) {
       continue;
     }
@@ -488,8 +486,8 @@ export async function findStaleOpenClawUpdateLaunchdJobs(
   return jobs;
 }
 
-async function disableOpenClawUpdateLaunchdJobCandidate(params: {
-  candidate: OpenClawUpdateLaunchdLabelCandidate;
+async function disableNovaUpdateLaunchdJobCandidate(params: {
+  candidate: NovaUpdateLaunchdLabelCandidate;
   env: NodeJS.ProcessEnv;
   trustCurrentEnvMarker: boolean;
 }): Promise<boolean> {
@@ -499,8 +497,8 @@ async function disableOpenClawUpdateLaunchdJobCandidate(params: {
   if (
     params.candidate.requiresMetadata &&
     !(
-      (params.trustCurrentEnvMarker && hasOpenClawUpdateLaunchdMarker(params.env)) ||
-      (await isLaunchdJobConfirmedOpenClawUpdater({
+      (params.trustCurrentEnvMarker && hasNovaUpdateLaunchdMarker(params.env)) ||
+      (await isLaunchdJobConfirmedNovaUpdater({
         label: params.candidate.label,
         env: params.env,
       }))
@@ -513,29 +511,29 @@ async function disableOpenClawUpdateLaunchdJobCandidate(params: {
   return result.code === 0;
 }
 
-export async function disableOpenClawUpdateLaunchdJob(
+export async function disableNovaUpdateLaunchdJob(
   label: string,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<boolean> {
-  const candidate = normalizeOpenClawUpdateLaunchdLabelCandidate(label);
+  const candidate = normalizeNovaUpdateLaunchdLabelCandidate(label);
   if (!candidate) {
     return false;
   }
-  return await disableOpenClawUpdateLaunchdJobCandidate({
+  return await disableNovaUpdateLaunchdJobCandidate({
     candidate,
     env,
     trustCurrentEnvMarker: false,
   });
 }
 
-export async function disableCurrentOpenClawUpdateLaunchdJob(
+export async function disableCurrentNovaUpdateLaunchdJob(
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<boolean> {
-  const candidate = resolveCurrentOpenClawUpdateLaunchdJobLabel(env);
+  const candidate = resolveCurrentNovaUpdateLaunchdJobLabel(env);
   if (!candidate) {
     return false;
   }
-  return await disableOpenClawUpdateLaunchdJobCandidate({
+  return await disableNovaUpdateLaunchdJobCandidate({
     candidate,
     env,
     // Detached handoffs preserve the configured label, so only launchd-backed
@@ -585,7 +583,7 @@ export function formatLaunchAgentGuiSessionError(params: {
     "This usually means you are running from SSH/headless context or as the wrong user (including sudo).",
     `Fix: sign in to the macOS desktop as the target user and rerun \`${params.actionHint}\`.`,
     "For headless VM setups, enable auto-login for the target user so macOS creates the GUI session after boot.",
-    "Headless deployments should use a dedicated logged-in user session or a custom LaunchDaemon (not shipped): https://docs.openclaw.ai/gateway",
+    "Headless deployments should use a dedicated logged-in user session or a custom LaunchDaemon (not shipped): https://docs.nova.ai/gateway",
   ].join("\n");
 }
 
@@ -1009,7 +1007,7 @@ export async function stopLaunchAgent({
   if (!persistDisable) {
     // Default: bootout only. Removes the job from the current launchd domain without
     // persisting a disable, so KeepAlive auto-recovery survives future crashes and
-    // `openclaw gateway start` re-enables cleanly without a manual `launchctl enable`.
+    // `nova gateway start` re-enables cleanly without a manual `launchctl enable`.
     const bootout = await execLaunchctl(["bootout", serviceTarget]);
     if (bootout.code !== 0 && !isLaunchctlNotLoaded(bootout)) {
       throw new Error(`launchctl bootout failed: ${formatLaunchctlResultDetail(bootout)}`);
@@ -1156,7 +1154,7 @@ async function activateLaunchAgent(params: { env: GatewayServiceEnv; plistPath: 
     domain,
     serviceTarget: `${domain}/${label}`,
     plistPath: params.plistPath,
-    actionHint: "openclaw gateway install --force",
+    actionHint: "nova gateway install --force",
   });
 }
 
@@ -1249,7 +1247,7 @@ async function ensureLaunchAgentLoadedAfterFailure(params: {
       domain: params.domain,
       serviceTarget: params.serviceTarget,
       plistPath: params.plistPath,
-      actionHint: "openclaw gateway start",
+      actionHint: "nova gateway start",
       onMutation: params.onMutation,
     });
   } catch {
@@ -1284,7 +1282,7 @@ export async function startLaunchAgent({
       domain,
       serviceTarget,
       plistPath,
-      actionHint: "openclaw gateway start",
+      actionHint: "nova gateway start",
       onMutation: reportMutation,
       skipEnable: enabled,
     });
@@ -1353,7 +1351,7 @@ export async function restartLaunchAgent({
     warn,
   });
 
-  // `openclaw gateway restart` is an explicit operator request to bring the
+  // `nova gateway restart` is an explicit operator request to bring the
   // LaunchAgent back, so clear any persisted disabled state before restart.
   const enable = await execLaunchctl(["enable", serviceTarget]);
   if (enable.code === 0) {
@@ -1372,7 +1370,7 @@ export async function restartLaunchAgent({
       domain,
       serviceTarget,
       plistPath,
-      actionHint: "openclaw gateway restart",
+      actionHint: "nova gateway restart",
       onMutation: reportMutation,
     });
     writeLaunchAgentActionLine(stdout, "Restarted LaunchAgent", serviceTarget);
@@ -1401,7 +1399,7 @@ export async function restartLaunchAgent({
     domain,
     serviceTarget,
     plistPath,
-    actionHint: "openclaw gateway restart",
+    actionHint: "nova gateway restart",
     onMutation: reportMutation,
   });
   writeLaunchAgentActionLine(stdout, "Restarted LaunchAgent", serviceTarget);

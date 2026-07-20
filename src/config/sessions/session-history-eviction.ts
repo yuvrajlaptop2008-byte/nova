@@ -5,10 +5,10 @@ import {
 } from "../../sessions/session-lifecycle-admission.js";
 import { runQueuedStoreWrite, type StoreWriterQueue } from "../../shared/store-writer-queue.js";
 import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
+  openNovaAgentDatabase,
+  runNovaAgentWriteTransaction,
+  type NovaAgentDatabase,
+} from "../../state/nova-agent-db.js";
 import {
   hasRetainedSessionTranscriptArchives,
   measureSessionPhysicalDiskUsage,
@@ -92,7 +92,7 @@ export async function inspectSqliteSessionHistoryDiskBudget(
     sessionKey: "",
     storePath: params.storePath,
   });
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const candidates = readHistoricalSessionIds({
     database,
     protectedSessionIds: collectProtectedHistoricalSessionIds({
@@ -104,7 +104,7 @@ export async function inspectSqliteSessionHistoryDiskBudget(
 }
 
 function collectProtectedHistoricalSessionIds(params: {
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   storePath: string;
 }): Set<string> {
   const protectedSessionIds = readReferencedSqliteSessionIds(params.database);
@@ -116,7 +116,7 @@ function collectProtectedHistoricalSessionIds(params: {
 
 /** Session ids owned by in-flight work admissions, without live-reference protection. */
 export function collectAdmissionProtectedSessionIds(params: {
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   storePath: string;
 }): Set<string> {
   const protectedSessionIds = new Set<string>();
@@ -166,7 +166,7 @@ export function collectAdmissionProtectedSessionIds(params: {
 }
 
 function readHistoricalSessionIds(params: {
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   protectedSessionIds: ReadonlySet<string>;
 }): string[] {
   const db = getSessionKysely(params.database.db);
@@ -180,7 +180,7 @@ function readHistoricalSessionIds(params: {
   ).rows.flatMap((row) => (params.protectedSessionIds.has(row.session_id) ? [] : [row.session_id]));
 }
 
-function reclaimSqliteFreePages(database: OpenClawAgentDatabase): void {
+function reclaimSqliteFreePages(database: NovaAgentDatabase): void {
   // Committed row deletion first lands in the WAL. TRUNCATE makes that shrink immediately;
   // incremental vacuum can then return free tail pages from the main file without a rewrite.
   database.walMaintenance.checkpoint();
@@ -304,7 +304,7 @@ async function enforceSessionHistoryMaintenanceSerialized(
     sessionKey: "",
     storePath: params.storePath,
   });
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const archiveDirectory = resolveSqliteTranscriptArchiveDirectory(resolved);
   let usage: SessionPhysicalDiskUsage = await runExclusiveSqliteSessionWrite(resolved, async () => {
     reclaimSqliteFreePages(database);
@@ -363,7 +363,7 @@ async function enforceSessionHistoryMaintenanceSerialized(
           let deleted = false;
           let archivedTranscripts: ReturnType<typeof deleteMaterializedSqliteSessionStatePlans> =
             [];
-          runOpenClawAgentWriteTransaction((transactionDb) => {
+          runNovaAgentWriteTransaction((transactionDb) => {
             const protectedAtDelete = collectProtectedHistoricalSessionIds({
               database: transactionDb,
               storePath: params.storePath,

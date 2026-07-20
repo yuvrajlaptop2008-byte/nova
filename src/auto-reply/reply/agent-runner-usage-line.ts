@@ -1,6 +1,6 @@
 import { expectDefined } from "@nova/normalization-core";
 import { hasNonzeroUsage, type NormalizedUsage } from "../../agents/usage.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { PluginHookReplyUsageState } from "../../plugins/hook-types.js";
 import {
   estimateUsageCost,
@@ -62,7 +62,7 @@ const formatResponseUsageLine = (params: {
 };
 
 export const resolveResponseUsageLine = (params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   sessionRaw?: string | null;
   channel?: string;
   usage?: NormalizedUsage;

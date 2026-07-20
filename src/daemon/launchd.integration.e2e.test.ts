@@ -163,10 +163,10 @@ describeLaunchdIntegration("launchd integration", () => {
 
   beforeAll(async () => {
     const testId = randomUUID().slice(0, 8);
-    homeDir = await fs.mkdtemp(path.join(os.tmpdir(), `openclaw-launchd-int-${testId}-`));
+    homeDir = await fs.mkdtemp(path.join(os.tmpdir(), `nova-launchd-int-${testId}-`));
     env = {
       HOME: homeDir,
-      NOVA_LAUNCHD_LABEL: `ai.openclaw.launchd-int-${testId}`,
+      NOVA_LAUNCHD_LABEL: `ai.nova.launchd-int-${testId}`,
       NOVA_LOG_PREFIX: `gateway-launchd-int-${testId}`,
     };
   });

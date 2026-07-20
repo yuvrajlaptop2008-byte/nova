@@ -3,9 +3,9 @@ import {
   bindIngressLifecycleToReplyOptions,
   createChannelIngressMonitor,
   type ChannelIngressQueue,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { runDetachedWebhookWork } from "openclaw/plugin-sdk/webhook-request-guards";
+} from "nova/plugin-sdk/channel-outbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { runDetachedWebhookWork } from "nova/plugin-sdk/webhook-request-guards";
 import { dispatchSmsInboundEvent, type SmsChannelRuntime } from "./inbound.js";
 import { getSmsRuntime } from "./runtime.js";
 import {
@@ -51,7 +51,7 @@ function parseSmsIngressForm(
 }
 
 export function createSmsIngressSpool(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   account: ResolvedSmsAccount;
   channelRuntime: SmsChannelRuntime;
   queue?: ChannelIngressQueue<SmsIngressPayload>;

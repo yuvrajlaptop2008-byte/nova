@@ -13,9 +13,7 @@ type QueueCleanupTestApi = {
 };
 
 function getTestApi(): QueueCleanupTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.queueCleanupTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.queueCleanupTestApi")];
   if (!api) {
     throw new Error("queue cleanup test API is unavailable");
   }

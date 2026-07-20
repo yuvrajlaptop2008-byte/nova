@@ -1,4 +1,4 @@
-/** Implementation of `openclaw models list`. */
+/** Implementation of `nova models list`. */
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { parseModelRef } from "../../agents/model-selection.js";
 import { requestExitAfterOneShotOutput } from "../../cli/one-shot-exit.js";

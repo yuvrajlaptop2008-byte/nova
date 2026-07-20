@@ -444,7 +444,7 @@ export async function steerRealtimeTalkActiveConsult(params: {
     params.emitTalkEvent?.({
       type: "tool.progress",
       payload: {
-        name: "openclaw_agent_control",
+        name: "nova_agent_control",
         result,
       },
       final:
@@ -490,7 +490,7 @@ export async function submitRealtimeTalkAgentControl(params: {
       type: "tool.progress",
       callId: params.callId,
       payload: {
-        name: "openclaw_agent_control",
+        name: "nova_agent_control",
         result,
       },
       final:

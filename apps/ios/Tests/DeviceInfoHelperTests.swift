@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 struct DeviceInfoHelperTests {
     @Test func `iOS version display omits platform prefix`() {
@@ -11,7 +11,7 @@ struct DeviceInfoHelperTests {
 
     @Test func `build metadata prefers canonical iOS version`() {
         let metadata = DeviceInfoHelper.buildMetadata(infoDictionary: [
-            "OpenClawCanonicalVersion": "2026.7.10",
+            "NovaCanonicalVersion": "2026.7.10",
             "CFBundleShortVersionString": "2026.7.9",
             "CFBundleVersion": "42",
         ])

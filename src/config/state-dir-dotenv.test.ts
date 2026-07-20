@@ -18,7 +18,7 @@ describe("readStateDirDotEnvFromStateDir", () => {
   });
 
   async function withDotEnv<T>(content: string, run: (dir: string) => T | Promise<T>): Promise<T> {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-dotenv-test-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-dotenv-test-"));
     await fs.writeFile(path.join(dir, ".env"), content, "utf8");
     try {
       return await run(dir);
@@ -95,7 +95,7 @@ describe("readStateDirDotEnvFromStateDir", () => {
   });
 
   it("returns empty object when .env is missing", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-dotenv-missing-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-dotenv-missing-"));
     try {
       expect(readStateDirDotEnvFromStateDir(dir).entries).toEqual({});
     } finally {
@@ -104,7 +104,7 @@ describe("readStateDirDotEnvFromStateDir", () => {
   });
 
   it("reads a symlinked .env file", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-dotenv-symlink-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-dotenv-symlink-"));
     try {
       const realPath = path.join(dir, "real.env");
       await fs.writeFile(realPath, "REAL_KEY=from_symlink_target\n", "utf8");
@@ -117,7 +117,7 @@ describe("readStateDirDotEnvFromStateDir", () => {
   });
 
   it("warns when an oversized .env is skipped", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-dotenv-oversized-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-dotenv-oversized-"));
     try {
       const large = Buffer.alloc(2 * 1024 * 1024, "x");
       large.write("KEY=value\n", 0, "utf8");

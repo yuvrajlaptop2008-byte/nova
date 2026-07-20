@@ -1,5 +1,5 @@
 // Video provider registry stores video generation provider factories by id.
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import * as capabilityProviderRuntime from "../plugins/capability-provider-runtime.js";
 import {
   buildCapabilityProviderMaps,
@@ -10,16 +10,14 @@ import type { VideoGenerationProviderPlugin } from "../plugins/types.js";
 // Video-generation providers come from plugin capability registration. Canonical
 // ids drive listing; aliases only affect lookup.
 const BUILTIN_VIDEO_GENERATION_PROVIDERS: readonly VideoGenerationProviderPlugin[] = [];
-function resolvePluginVideoGenerationProviders(
-  cfg?: OpenClawConfig,
-): VideoGenerationProviderPlugin[] {
+function resolvePluginVideoGenerationProviders(cfg?: NovaConfig): VideoGenerationProviderPlugin[] {
   return capabilityProviderRuntime.resolvePluginCapabilityProviders({
     key: "videoGenerationProviders",
     cfg,
   });
 }
 
-function buildProviderMaps(cfg?: OpenClawConfig): {
+function buildProviderMaps(cfg?: NovaConfig): {
   canonical: Map<string, VideoGenerationProviderPlugin>;
   aliases: Map<string, VideoGenerationProviderPlugin>;
 } {
@@ -29,15 +27,13 @@ function buildProviderMaps(cfg?: OpenClawConfig): {
   );
 }
 
-export function listVideoGenerationProviders(
-  cfg?: OpenClawConfig,
-): VideoGenerationProviderPlugin[] {
+export function listVideoGenerationProviders(cfg?: NovaConfig): VideoGenerationProviderPlugin[] {
   return [...buildProviderMaps(cfg).canonical.values()];
 }
 
 export function getVideoGenerationProvider(
   providerId: string | undefined,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): VideoGenerationProviderPlugin | undefined {
   const normalized = normalizeCapabilityProviderId(providerId);
   if (!normalized) {

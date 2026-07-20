@@ -229,7 +229,7 @@ describe("normalizeStoredCronJobs", () => {
         agents: {
           defaults: {
             models: {
-              "openai/gpt-5.6-sol": { agentRuntime: { id: "openclaw" } },
+              "openai/gpt-5.6-sol": { agentRuntime: { id: "nova" } },
             },
           },
         },
@@ -271,7 +271,7 @@ describe("normalizeStoredCronJobs", () => {
               id: "primary",
               default: true,
               models: {
-                "openai/gpt-5.6-sol": { agentRuntime: { id: "openclaw" } },
+                "openai/gpt-5.6-sol": { agentRuntime: { id: "nova" } },
               },
             },
           ],
@@ -288,7 +288,7 @@ describe("normalizeStoredCronJobs", () => {
     });
 
     expect(rewritePlan.warnings.join("\n")).toContain(
-      'Retained agents.list.primary.models.openai/gpt-5.6-sol.agentRuntime.id="openclaw"',
+      'Retained agents.list.primary.models.openai/gpt-5.6-sol.agentRuntime.id="nova"',
     );
     const job = expectDefined(jobs[0], "job test invariant");
     expect((job.payload as Record<string, unknown>).model).toBe("codex/gpt-5.6-sol");
@@ -322,7 +322,7 @@ describe("normalizeStoredCronJobs", () => {
               id: "primary",
               default: true,
               models: {
-                "openai/gpt-5.6-sol": { agentRuntime: { id: "openclaw" } },
+                "openai/gpt-5.6-sol": { agentRuntime: { id: "nova" } },
               },
             },
           ],
@@ -465,7 +465,7 @@ describe("normalizeStoredCronJobs", () => {
 
   it("converts legacy agent command prompts into command cron payloads", () => {
     const command =
-      "cd /home/openclaw/.razor/quant && ./scripts/system/run_position_control.sh --write-card --silent-token NO_REPLY";
+      "cd /home/nova/.razor/quant && ./scripts/system/run_position_control.sh --write-card --silent-token NO_REPLY";
     const { job, result } = normalizeOneJob(
       makeLegacyJob({
         id: "quant-position-card",
@@ -478,7 +478,7 @@ describe("normalizeStoredCronJobs", () => {
             "",
             "Command to run:",
             `- command: ${command}`,
-            "- workdir: /home/openclaw/.razor/quant",
+            "- workdir: /home/nova/.razor/quant",
             "- background: false",
             "- timeout: 840",
             "",
@@ -508,7 +508,7 @@ describe("normalizeStoredCronJobs", () => {
     expect(payload).toEqual({
       kind: "command",
       argv: ["sh", "-lc", command],
-      cwd: "/home/openclaw/.razor/quant",
+      cwd: "/home/nova/.razor/quant",
       timeoutSeconds: 900,
     });
   });
@@ -525,7 +525,7 @@ describe("normalizeStoredCronJobs", () => {
           message: [
             "Command to run:",
             `- command: ${command}`,
-            "- workdir: /home/openclaw/.razor/clawd",
+            "- workdir: /home/nova/.razor/clawd",
           ].join("\n"),
           toolsAllow: ["read", "message"],
         },

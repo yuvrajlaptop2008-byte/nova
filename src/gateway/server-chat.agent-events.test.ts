@@ -2124,7 +2124,7 @@ describe("agent event handler", () => {
         name: "tool_search_code",
         toolCallId: "tool-search-node-1",
         args: {
-          code: 'return await openclaw.tools.call("openclaw:core:exec", { command: "echo hi" });',
+          code: 'return await nova.tools.call("nova:core:exec", { command: "echo hi" });',
         },
       },
     });
@@ -2139,7 +2139,7 @@ describe("agent event handler", () => {
       name: "exec",
       toolCallId: "tool-search-node-1",
       bridgeToolName: "tool_search_code",
-      bridgeTargetToolName: "openclaw:core:exec",
+      bridgeTargetToolName: "nova:core:exec",
       bridgeVerb: "call",
       args: { command: "echo hi" },
     });

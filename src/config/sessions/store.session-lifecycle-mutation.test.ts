@@ -10,9 +10,9 @@ import {
 } from "../../infra/kysely-sync.js";
 import { beginSessionWorkAdmission } from "../../sessions/session-lifecycle-admission.js";
 import { onInternalSessionTranscriptUpdate } from "../../sessions/transcript-events.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../../state/openclaw-agent-db.generated.js";
-import { openOpenClawAgentDatabase } from "../../state/openclaw-agent-db.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
+import type { DB as NovaAgentKyselyDatabase } from "../../state/nova-agent-db.generated.js";
+import { openNovaAgentDatabase } from "../../state/nova-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
 import { readSessionArchiveContentSync } from "./archive-compression.js";
 import {
   applySessionEntryLifecycleMutation,
@@ -36,12 +36,12 @@ describe("session store lifecycle mutations", () => {
   let storePath: string;
 
   beforeEach(() => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-session-lifecycle-mutation-"));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-session-lifecycle-mutation-"));
     storePath = path.join(tempDir, "agents", "main", "sessions", "sessions.json");
   });
 
   afterEach(() => {
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
@@ -382,7 +382,7 @@ describe("session store lifecycle mutations", () => {
       ],
     );
     const database = openLifecycleTestDatabase(storePath);
-    const db = getNodeSqliteKysely<OpenClawAgentKyselyDatabase>(database.db);
+    const db = getNodeSqliteKysely<NovaAgentKyselyDatabase>(database.db);
     const readSearchState = () => ({
       fts: executeSqliteQuerySync(
         database.db,
@@ -790,7 +790,7 @@ describe("session store lifecycle mutations", () => {
       [createTranscriptEvent(sessionId, "cleanup-marker shared transcript")],
     );
     const database = openLifecycleTestDatabase(storePath);
-    const db = getNodeSqliteKysely<OpenClawAgentKyselyDatabase>(database.db);
+    const db = getNodeSqliteKysely<NovaAgentKyselyDatabase>(database.db);
     executeSqliteQuerySync(
       database.db,
       db
@@ -901,7 +901,7 @@ function openLifecycleTestDatabase(storePath: string) {
   if (!target.path) {
     throw new Error(`Could not resolve SQLite database path for ${storePath}`);
   }
-  return openOpenClawAgentDatabase({
+  return openNovaAgentDatabase({
     agentId: target.agentId ?? "main",
     path: target.path,
   });

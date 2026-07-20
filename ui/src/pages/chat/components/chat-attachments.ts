@@ -485,16 +485,16 @@ export function renderAttachmentPreview(props: ChatAttachmentControlsProps) {
                     </div>
                   `
                 : html`
-                    <openclaw-tooltip .content=${att.fileName ?? "Attached file"}>
+                    <nova-tooltip .content=${att.fileName ?? "Attached file"}>
                       <div class="chat-attachment-file">
                         <span class="chat-attachment-file__icon">${icons.paperclip}</span>
                         <span class="chat-attachment-file__name"
                           >${att.fileName ?? "Attached file"}</span
                         >
                       </div>
-                    </openclaw-tooltip>
+                    </nova-tooltip>
                   `}
-            <openclaw-tooltip .content=${t("chat.composer.removeAttachment")}>
+            <nova-tooltip .content=${t("chat.composer.removeAttachment")}>
               <button
                 class="chat-attachment-remove"
                 type="button"
@@ -508,7 +508,7 @@ export function renderAttachmentPreview(props: ChatAttachmentControlsProps) {
               >
                 ${icons.x}
               </button>
-            </openclaw-tooltip>
+            </nova-tooltip>
           </div>
         `,
       )}

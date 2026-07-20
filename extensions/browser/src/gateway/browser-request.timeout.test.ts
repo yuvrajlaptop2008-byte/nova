@@ -1,6 +1,6 @@
 // Browser tests cover browser request.timeout plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const {

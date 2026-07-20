@@ -28,7 +28,7 @@ export function tryHandleRootVersionFastPath(
     deps.onError ??
     ((error: unknown) => {
       console.error(
-        "[openclaw] Failed to resolve version:",
+        "[nova] Failed to resolve version:",
         error instanceof Error ? (error.stack ?? error.message) : error,
       );
       exit(1);

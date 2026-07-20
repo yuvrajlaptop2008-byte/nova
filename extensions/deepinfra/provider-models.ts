@@ -1,18 +1,18 @@
 // Deepinfra provider module implements model/runtime integration.
 
-import { withTrustedEnvProxyGuardedFetchMode } from "openclaw/plugin-sdk/fetch-runtime";
-import { isProviderApiKeyConfigured } from "openclaw/plugin-sdk/provider-auth";
+import { withTrustedEnvProxyGuardedFetchMode } from "nova/plugin-sdk/fetch-runtime";
+import { isProviderApiKeyConfigured } from "nova/plugin-sdk/provider-auth";
 import {
   getCachedLiveProviderModelRows,
   LiveModelCatalogHttpError,
-} from "openclaw/plugin-sdk/provider-catalog-live-runtime";
-import { buildManifestModelProviderConfig } from "openclaw/plugin-sdk/provider-catalog-shared";
-import type { ModelDefinitionConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import { hasConfiguredSecretInput } from "openclaw/plugin-sdk/secret-input";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
-import { asPositiveSafeInteger } from "openclaw/plugin-sdk/string-coerce-runtime";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
+} from "nova/plugin-sdk/provider-catalog-live-runtime";
+import { buildManifestModelProviderConfig } from "nova/plugin-sdk/provider-catalog-shared";
+import type { ModelDefinitionConfig } from "nova/plugin-sdk/provider-model-shared";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
+import { hasConfiguredSecretInput } from "nova/plugin-sdk/secret-input";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
+import { asPositiveSafeInteger } from "nova/plugin-sdk/string-coerce-runtime";
+import manifest from "./nova.plugin.json" with { type: "json" };
 
 const log = createSubsystemLogger("deepinfra-models");
 
@@ -22,7 +22,7 @@ const DEEPINFRA_MANIFEST_PROVIDER = buildManifestModelProviderConfig({
 });
 
 export const DEEPINFRA_BASE_URL = DEEPINFRA_MANIFEST_PROVIDER.baseUrl;
-const DEEPINFRA_MODELS_URL = `${DEEPINFRA_BASE_URL}/models?sort_by=openclaw&filter=with_meta`;
+const DEEPINFRA_MODELS_URL = `${DEEPINFRA_BASE_URL}/models?sort_by=nova&filter=with_meta`;
 
 const DEEPINFRA_DEFAULT_MODEL_ID = "deepseek-ai/DeepSeek-V4-Flash";
 export const DEEPINFRA_DEFAULT_MODEL_REF = `deepinfra/${DEEPINFRA_DEFAULT_MODEL_ID}`;
@@ -173,7 +173,7 @@ function hasDeepInfraSurfaceModelRows(rows: readonly unknown[]): boolean {
   return rows.some((entry) => entryToSurfaceModel(entry as DeepInfraAgentModelEntry) !== null);
 }
 
-// Static fallback. Chat rows live in openclaw.plugin.json (manifest-validated);
+// Static fallback. Chat rows live in nova.plugin.json (manifest-validated);
 // non-chat surfaces live below because the manifest validator only accepts
 // chat-shaped rows. These are used pre-auth / offline; live discovery
 // overrides once a key is configured.
@@ -218,7 +218,7 @@ function manifestChatEntryToSurfaceModel(entry: ManifestChatModelEntry): DeepInf
 
 // Per-surface static fallback used only when no API key is configured or
 // live discovery fails. Kept deliberately minimal: the dynamic
-// `/v1/openai/models?sort_by=openclaw&filter=with_meta` projection is the
+// `/v1/openai/models?sort_by=nova&filter=with_meta` projection is the
 // real source of truth (140 tagged rows today), so every retired model
 // removed from the DeepInfra catalog disappears here automatically the
 // next time discovery runs. Newer entries — additional image-gen models,

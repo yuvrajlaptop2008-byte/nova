@@ -13,7 +13,7 @@ const MCP_APP_VIEW_TTL_MS = 10 * 60_000;
 const MCP_APP_VIEW_MAX_ENTRIES = 32;
 const MCP_APP_VIEW_MAX_BYTES = 6 * 1024 * 1024;
 const MCP_APP_VIEW_STORE_MAX_BYTES = 64 * 1024 * 1024;
-const MCP_APP_VIEW_STORE_KEY = Symbol.for("openclaw.mcpAppViewStore");
+const MCP_APP_VIEW_STORE_KEY = Symbol.for("nova.mcpAppViewStore");
 
 type McpAppPermissions = Partial<
   Record<"camera" | "clipboardWrite" | "geolocation" | "microphone", Record<string, never>>
@@ -401,6 +401,5 @@ const testing = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.mcpUiResourceTestApi")] =
-    testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.mcpUiResourceTestApi")] = testing;
 }

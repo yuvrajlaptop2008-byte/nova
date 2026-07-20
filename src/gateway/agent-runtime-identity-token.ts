@@ -10,7 +10,7 @@ import { normalizeAgentId } from "../routing/session-key.js";
 import { safeEqualSecret } from "../security/secret-equal.js";
 import type { AgentRuntimeMessageActionContext } from "./message-action-turn-capability.js";
 
-const AGENT_RUNTIME_IDENTITY_TOKEN_CONTEXT = "openclaw:gateway-agent-runtime-identity-token:v1";
+const AGENT_RUNTIME_IDENTITY_TOKEN_CONTEXT = "nova:gateway-agent-runtime-identity-token:v1";
 const AGENT_RUNTIME_IDENTITY_TOKEN_KIND = "agent-runtime";
 const MESSAGE_ACTION_TOKEN_TTL_MS = 60_000;
 

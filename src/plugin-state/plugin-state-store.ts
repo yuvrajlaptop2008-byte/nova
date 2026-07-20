@@ -1,5 +1,5 @@
 // Plugin state store exposes persisted per-plugin state operations.
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import {
   clearPluginStateDatabaseForTests,
   closePluginStateDatabase,
@@ -607,13 +607,13 @@ function clearPluginStateStoreForTests(): void {
 export function resetPluginStateStoreForTests(options: { closeDatabase?: boolean } = {}): void {
   if (options.closeDatabase !== false) {
     closePluginStateDatabase();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
   }
   namespaceOptionSignatures.clear();
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.pluginStateStoreTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.pluginStateStoreTestApi")] = {
     clearPluginStateStoreForTests,
   };
 }

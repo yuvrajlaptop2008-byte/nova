@@ -1,12 +1,12 @@
-# OpenClaw Gradium Plugin
+# Nova Gradium Plugin
 
-Official OpenClaw plugin for Gradium.
+Official Nova plugin for Gradium.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/gradium-speech
-openclaw gateway restart
+nova plugins install @nova/gradium-speech
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/gradium> for setup and configuration.
+See <https://docs.nova.ai/providers/gradium> for setup and configuration.

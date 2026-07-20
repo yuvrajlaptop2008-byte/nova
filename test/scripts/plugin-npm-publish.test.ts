@@ -24,7 +24,7 @@ function runPluginPublishWrapper(args: string[], env: NodeJS.ProcessEnv = {}) {
 }
 
 function makePackage(version: string): { packageDir: string; path: string } {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-plugin-publish-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-plugin-publish-test-"));
   tempDirs.push(root);
   const packageDir = join(root, "plugin");
   const binDir = join(root, "bin");

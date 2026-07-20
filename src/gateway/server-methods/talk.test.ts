@@ -5,14 +5,14 @@
 import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ErrorCodes } from "../../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { normalizeResolvedSecretInputString } from "../../config/types.secrets.js";
 import { REALTIME_VOICE_DESCRIBE_VIEW_TOOL_NAME } from "../../talk/describe-view-tool.js";
 import { buildTalkRealtimeConfig } from "./talk-shared.js";
 import { talkHandlers } from "./talk.js";
 
 const mocks = vi.hoisted(() => ({
-  getRuntimeConfig: vi.fn<() => OpenClawConfig>(),
+  getRuntimeConfig: vi.fn<() => NovaConfig>(),
   readConfigFileSnapshot: vi.fn(),
   canonicalizeSpeechProviderId: vi.fn((providerId: string | undefined) => providerId),
   getSpeechProvider: vi.fn(),
@@ -148,7 +148,7 @@ vi.mock("../talk-transcription-relay.js", async (importOriginal) => {
   };
 });
 
-function createTalkConfig(apiKey: unknown): OpenClawConfig {
+function createTalkConfig(apiKey: unknown): NovaConfig {
   return {
     talk: {
       provider: "acme",
@@ -159,7 +159,7 @@ function createTalkConfig(apiKey: unknown): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function expectRecordFields(record: unknown, expected: Record<string, unknown>) {
@@ -325,7 +325,7 @@ describe("talk.catalog handler", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -495,7 +495,7 @@ describe("talk.catalog handler", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -553,7 +553,7 @@ describe("talk.catalog handler", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -637,7 +637,7 @@ describe("talk.catalog handler", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -677,7 +677,7 @@ describe("talk.catalog handler", () => {
       client: { connect: { scopes: ["operator.read"] } } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     const catalog = mockCallArg(respond, 0, 1) as Record<string, Record<string, unknown>>;
@@ -726,7 +726,7 @@ describe("talk.catalog handler", () => {
                 "voice-call": { config: { streaming: { provider: "transcription" } } },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -774,7 +774,7 @@ describe("talk.speak handler", () => {
 
     mocks.getRuntimeConfig.mockReturnValue(runtimeConfig);
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: diskConfig,
@@ -807,7 +807,7 @@ describe("talk.speak handler", () => {
       },
     });
     mocks.synthesizeSpeech.mockImplementation(
-      async ({ cfg }: { cfg: OpenClawConfig; text: string; disableFallback: boolean }) => {
+      async ({ cfg }: { cfg: NovaConfig; text: string; disableFallback: boolean }) => {
         expect(cfg.messages?.tts?.provider).toBe("acme");
         expect(cfg.messages?.tts?.providers?.acme?.apiKey).toBe("env-acme-key");
         return {
@@ -857,7 +857,7 @@ describe("talk.config handler", () => {
 
   it("projects the runtime realtime transport when source config is invalid", async () => {
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: false,
       config: {},
@@ -879,7 +879,7 @@ describe("talk.config handler", () => {
             talk: {
               realtime: { transport: "provider-websocket" },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -942,7 +942,7 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtimeConfig = {
       ...sourceConfig,
       plugins: {
@@ -962,9 +962,9 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: sourceConfig,
@@ -1029,7 +1029,7 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtimeConfig = {
       ...sourceConfig,
       messages: {
@@ -1043,10 +1043,10 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: sourceConfig,
@@ -1116,7 +1116,7 @@ describe("talk.config handler", () => {
 
     mocks.getSpeechProvider.mockReturnValue(undefined);
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: sourceConfig,
@@ -1174,7 +1174,7 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtimeConfig = {
       talk: {
         provider: "acme",
@@ -1198,11 +1198,11 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     mocks.getSpeechProvider.mockReturnValue(undefined);
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: sourceConfig,
@@ -1274,7 +1274,7 @@ describe("talk.config handler", () => {
       }),
     });
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: sourceConfig,
@@ -1331,7 +1331,7 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtimeConfig = {
       talk: {
         provider: "acme",
@@ -1356,11 +1356,11 @@ describe("talk.config handler", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     mocks.getSpeechProvider.mockReturnValue(undefined);
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: sourceConfig,
@@ -1408,7 +1408,7 @@ describe("talk.config handler", () => {
 
     mocks.getSpeechProvider.mockReturnValue(undefined);
     mocks.readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "test-hash",
       valid: true,
       config: sourceConfig,
@@ -1542,7 +1542,7 @@ describe("talk.session unified handlers", () => {
                 consultRouting: "force-agent-consult",
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -1783,7 +1783,7 @@ describe("talk.session unified handlers", () => {
                 providers: { openai: { apiKey: "bad-key" } },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -1850,7 +1850,7 @@ describe("talk.session unified handlers", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -1954,7 +1954,7 @@ describe("talk.session unified handlers", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -1986,7 +1986,7 @@ describe("talk.session unified handlers", () => {
       isWebchatConnect: () => false,
       respond: createRespond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
     const session = mockCallArg(createRespond, 0, 1) as { sessionId: string; token: string };
@@ -2045,7 +2045,7 @@ describe("talk.session unified handlers", () => {
       isWebchatConnect: () => false,
       respond: startRespond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
         broadcastToConnIds,
       } as never,
     });
@@ -2162,7 +2162,7 @@ describe("talk.session unified handlers", () => {
       isWebchatConnect: () => false,
       respond: createRespond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
 
@@ -2197,7 +2197,7 @@ describe("talk.session unified handlers", () => {
       isWebchatConnect: () => false,
       respond: createRespond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
 
@@ -2226,7 +2226,7 @@ describe("talk.session unified handlers", () => {
       isWebchatConnect: () => false,
       respond: createRespond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
     const session = mockCallArg(createRespond, 0, 1) as { sessionId: string; token: string };
@@ -2370,7 +2370,7 @@ describe("talk.session unified handlers", () => {
       isWebchatConnect: () => false,
       respond: rejectedRespond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
 
@@ -2396,7 +2396,7 @@ describe("talk.session unified handlers", () => {
       isWebchatConnect: () => false,
       respond: createRespond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
 
@@ -2431,7 +2431,7 @@ describe("talk.session unified handlers", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     const error = expectRespondError(respond, { code: ErrorCodes.INVALID_REQUEST });
@@ -2464,13 +2464,13 @@ describe("talk.client.toolCall handler", () => {
       params: {
         sessionKey: "main",
         callId: "call-unbound",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "Do something" },
       },
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     expect(mocks.createOrResumeClientVoiceSession).toHaveBeenCalledWith({
@@ -2497,13 +2497,13 @@ describe("talk.client.toolCall handler", () => {
       params: {
         sessionKey: "main",
         callId: "call-legacy",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "Continue the call" },
       },
       client: { connId: "conn-legacy" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     expect(mocks.assertClientVoiceSessionOpen).toHaveBeenCalledWith({
@@ -2527,13 +2527,13 @@ describe("talk.client.toolCall handler", () => {
         sessionKey: "main",
         voiceSessionId: "relay-secret",
         callId: "call-relay-owner",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "Continue" },
       },
       client: { connId: "other-conn" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     expect(mocks.chatSend).not.toHaveBeenCalled();
@@ -2555,14 +2555,14 @@ describe("talk.client.toolCall handler", () => {
         sessionKey: "main",
         voiceSessionId: "voice-test",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "What is in this repo?", responseStyle: "one sentence" },
       },
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
 
@@ -2598,14 +2598,14 @@ describe("talk.client.toolCall handler", () => {
         sessionKey: "main",
         voiceSessionId: "voice-test",
         callId: "call-active",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "What is running?" },
       },
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
         logGateway: { warn: vi.fn() },
       } as never,
     });
@@ -2626,7 +2626,7 @@ describe("talk.client.toolCall handler", () => {
         sessionKey: "main",
         voiceSessionId: "voice-test",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "Are the basement lights off?" },
       },
       client: { connId: "conn-1" } as never,
@@ -2639,7 +2639,7 @@ describe("talk.client.toolCall handler", () => {
               consultThinkingLevel: "low",
               consultFastMode: true,
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -2664,14 +2664,14 @@ describe("talk.client.toolCall handler", () => {
         voiceSessionId: "relay-1",
         relaySessionId: "relay-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "What now?" },
       },
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
 
@@ -2713,14 +2713,14 @@ describe("talk.client.toolCall handler", () => {
           voiceSessionId: "relay-1",
           relaySessionId: "relay-1",
           callId: "call-1",
-          name: "openclaw_agent_consult",
+          name: "nova_agent_consult",
           args: { question: "What now?" },
         },
         client: { connId: "conn-1" } as never,
         isWebchatConnect: () => false,
         respond: respond as never,
         context: {
-          getRuntimeConfig: () => ({}) as OpenClawConfig,
+          getRuntimeConfig: () => ({}) as NovaConfig,
         } as never,
       });
 
@@ -2749,7 +2749,7 @@ describe("talk.client.toolCall handler", () => {
       isWebchatConnect: () => false,
       respond: respond as never,
       context: {
-        getRuntimeConfig: () => ({}) as OpenClawConfig,
+        getRuntimeConfig: () => ({}) as NovaConfig,
       } as never,
     });
 
@@ -2952,7 +2952,7 @@ describe("talk.client.create handler", () => {
                 instructions: "Speak warmly.",
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -3027,7 +3027,7 @@ describe("talk.client.create handler", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     const createInput = mockCallArg(createBrowserSession) as Record<string, unknown>;
@@ -3047,7 +3047,7 @@ describe("talk.client.create handler", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
     expect((mockCallArg(createBrowserSession) as Record<string, unknown>).tools).not.toContainEqual(
       expect.objectContaining({ name: REALTIME_VOICE_DESCRIBE_VIEW_TOOL_NAME }),
@@ -3069,7 +3069,7 @@ describe("talk.client.create handler", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
     expect((mockCallArg(createBrowserSession) as Record<string, unknown>).tools).toContainEqual(
       expect.objectContaining({ name: REALTIME_VOICE_DESCRIBE_VIEW_TOOL_NAME }),
@@ -3091,7 +3091,7 @@ describe("talk.client.create handler", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
     expect(createBrowserSession).not.toHaveBeenCalled();
     expect(respond).toHaveBeenCalledWith(
@@ -3148,7 +3148,7 @@ describe("talk.client.create handler", () => {
                 speakerVoiceId: "voice-123",
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -3210,7 +3210,7 @@ describe("talk.client.create handler", () => {
                 providers: { openai: { apiKey: "openai-key" } },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -3281,7 +3281,7 @@ describe("talk.client.create handler", () => {
                 providers: { openai: { apiKey: "openai-key" } },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -3336,7 +3336,7 @@ describe("talk.client.create handler", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -3398,7 +3398,7 @@ describe("talk.client.create handler", () => {
                 },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -3453,7 +3453,7 @@ describe("talk.client.create handler", () => {
                 providers: { custom: { apiKey: "custom-key" } },
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 
@@ -3476,7 +3476,7 @@ describe("talk.client.create handler", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     expectRespondError(respond, {
@@ -3499,7 +3499,7 @@ describe("talk.client.create handler", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     expectRespondError(respond, {
@@ -3548,7 +3548,7 @@ describe("talk.client.create handler", () => {
       client: { connId: "conn-1" } as never,
       isWebchatConnect: () => false,
       respond: respond as never,
-      context: { getRuntimeConfig: () => ({}) as OpenClawConfig } as never,
+      context: { getRuntimeConfig: () => ({}) as NovaConfig } as never,
     });
 
     expect(createBrowserSession).toHaveBeenCalledOnce();
@@ -3576,7 +3576,7 @@ describe("talk.client.create handler", () => {
                 brain: "direct-tools",
               },
             },
-          }) as OpenClawConfig,
+          }) as NovaConfig,
       } as never,
     });
 

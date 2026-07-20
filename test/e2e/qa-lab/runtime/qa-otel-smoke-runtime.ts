@@ -15,10 +15,10 @@ import {
   emitTrustedDiagnosticEvent,
   emitTrustedDiagnosticEventWithPrivateData,
   waitForDiagnosticEventsDrained,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
+} from "nova/plugin-sdk/diagnostic-runtime";
 import {
   createDiagnosticsOtelService,
-  type OpenClawPluginServiceContext,
+  type NovaPluginServiceContext,
 } from "../../../../extensions/diagnostics-otel/runtime-api.js";
 import { onTrustedInternalDiagnosticEvent } from "../../../../src/infra/diagnostic-events.js";
 import { createQaScriptEvidenceWriter } from "./script-evidence.js";
@@ -99,7 +99,7 @@ type CapturedLogRecord = {
 };
 
 type StdoutDiagnosticLogRecord = {
-  signal: "openclaw.diagnostic.log";
+  signal: "nova.diagnostic.log";
   ts?: unknown;
   "service.name"?: unknown;
   severityText?: unknown;
@@ -120,31 +120,31 @@ const OTLP_SIGNAL_PATHS = new Map<string, OtlpSignal>([
   ["/v1/logs", "logs"],
 ]);
 const REQUIRED_SPAN_NAMES = [
-  "openclaw.run",
-  "openclaw.harness.run",
-  "openclaw.context.assembled",
-  "openclaw.message.delivery",
+  "nova.run",
+  "nova.harness.run",
+  "nova.context.assembled",
+  "nova.message.delivery",
 ] as const;
-const REQUIRED_METRIC_NAMES = ["openclaw.harness.duration_ms"] as const;
+const REQUIRED_METRIC_NAMES = ["nova.harness.duration_ms"] as const;
 const DIRECT_RUN_ID = "qa-otel-direct-run";
 const DIRECT_CALL_ID = "qa-otel-direct-call";
 const DIRECT_ERROR_MESSAGE = "QA OTEL provider stream failed";
 const DIRECT_ERROR_SECRET = "sk-1234567890abcdef";
 const DISALLOWED_ATTRIBUTE_KEYS = new Set([
-  "openclaw.runId",
-  "openclaw.chatId",
-  "openclaw.messageId",
-  "openclaw.sessionKey",
-  "openclaw.sessionId",
-  "openclaw.callId",
-  "openclaw.toolCallId",
-  "openclaw.run_id",
-  "openclaw.chat_id",
-  "openclaw.message_id",
-  "openclaw.session_key",
-  "openclaw.session_id",
-  "openclaw.call_id",
-  "openclaw.tool_call_id",
+  "nova.runId",
+  "nova.chatId",
+  "nova.messageId",
+  "nova.sessionKey",
+  "nova.sessionId",
+  "nova.callId",
+  "nova.toolCallId",
+  "nova.run_id",
+  "nova.chat_id",
+  "nova.message_id",
+  "nova.session_key",
+  "nova.session_id",
+  "nova.call_id",
+  "nova.tool_call_id",
 ]);
 const DISALLOWED_BODY_NEEDLES = [
   "OTEL-QA-SECRET",
@@ -1030,7 +1030,7 @@ function isStdoutDiagnosticLogRecord(value: unknown): value is StdoutDiagnosticL
     typeof value === "object" &&
     value !== null &&
     !Array.isArray(value) &&
-    objectValue(value, "signal") === "openclaw.diagnostic.log"
+    objectValue(value, "signal") === "nova.diagnostic.log"
   );
 }
 
@@ -1126,9 +1126,9 @@ async function startDockerOtelCollector(
   if (collectorTelemetryPort === collectorPort) {
     throw new Error("OpenTelemetry collector telemetry port matched receiver port after retries.");
   }
-  const tempDir = await makeTempDir(path.join(osTmpdir(), "openclaw-otel-collector-"));
+  const tempDir = await makeTempDir(path.join(osTmpdir(), "nova-otel-collector-"));
   const configPath = path.join(tempDir, "collector.yaml");
-  const containerName = `openclaw-otel-smoke-${makeUuid()}`;
+  const containerName = `nova-otel-smoke-${makeUuid()}`;
   const useHostNetwork = (deps.platform ?? process.platform) === "linux";
   const collectorEndpoint = useHostNetwork ? `127.0.0.1:${collectorPort}` : "0.0.0.0:4318";
   const receiverEndpoint = useHostNetwork
@@ -1140,7 +1140,7 @@ async function startDockerOtelCollector(
       http:
         endpoint: ${collectorEndpoint}
 exporters:
-  otlphttp/openclaw:
+  otlphttp/nova:
     endpoint: ${receiverEndpoint}
 service:
   telemetry:
@@ -1149,13 +1149,13 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [otlphttp/openclaw]
+      exporters: [otlphttp/nova]
     metrics:
       receivers: [otlp]
-      exporters: [otlphttp/openclaw]
+      exporters: [otlphttp/nova]
     logs:
       receivers: [otlp]
-      exporters: [otlphttp/openclaw]
+      exporters: [otlphttp/nova]
 `;
   await writeConfigFile(configPath, config, "utf8");
 
@@ -1257,8 +1257,8 @@ function isLatestGenAiModelCallSpan(span: CapturedSpan): boolean {
   }
   return (
     span.name === `${operationName} ${modelName}` &&
-    typeof span.attributes["openclaw.provider"] === "string" &&
-    typeof span.attributes["openclaw.model"] === "string"
+    typeof span.attributes["nova.provider"] === "string" &&
+    typeof span.attributes["nova.model"] === "string"
   );
 }
 
@@ -1273,7 +1273,7 @@ function createDirectProducerContext(params: {
   logsExporter: OtelLogsExporter;
   outputDir: string;
   writeLog: (line: string) => void;
-}): OpenClawPluginServiceContext {
+}): NovaPluginServiceContext {
   return {
     config: {
       diagnostics: {
@@ -1318,7 +1318,7 @@ async function runDirectTelemetryProducer(params: {
   }
   previousEnv.set("OTEL_SERVICE_NAME", process.env.OTEL_SERVICE_NAME);
   previousEnv.set("OTEL_SEMCONV_STABILITY_OPT_IN", process.env.OTEL_SEMCONV_STABILITY_OPT_IN);
-  process.env.OTEL_SERVICE_NAME = "openclaw-qa-lab-otel-smoke";
+  process.env.OTEL_SERVICE_NAME = "nova-qa-lab-otel-smoke";
   process.env.OTEL_SEMCONV_STABILITY_OPT_IN = "gen_ai_latest_experimental";
   const traceId = "4bf92f3577b34da6a3ce929d0e0e4736";
   const harnessTrace = createDiagnosticTraceContext({
@@ -1582,8 +1582,8 @@ function assertSmoke(params: {
   if (modelSpans.length === 0) {
     failures.push("missing required GenAI model-call span");
   }
-  if (spanNames.has("openclaw.model.call")) {
-    failures.push("legacy openclaw.model.call span exported with GenAI semconv opt-in");
+  if (spanNames.has("nova.model.call")) {
+    failures.push("legacy nova.model.call span exported with GenAI semconv opt-in");
   }
   const metricNames = new Set(params.metrics.map((metric) => metric.name));
   for (const name of REQUIRED_METRIC_NAMES) {
@@ -1624,7 +1624,7 @@ function assertSmoke(params: {
 
   const attributeKeys = collectAttributeKeys(params.spans);
   const disallowed = [...DISALLOWED_ATTRIBUTE_KEYS].filter((key) => attributeKeys.has(key));
-  const contentKeys = [...attributeKeys].filter((key) => key.startsWith("openclaw.content."));
+  const contentKeys = [...attributeKeys].filter((key) => key.startsWith("nova.content."));
   if (disallowed.length > 0) {
     failures.push(`raw diagnostic id attributes exported: ${disallowed.join(", ")}`);
   }
@@ -1639,7 +1639,7 @@ function assertSmoke(params: {
     const serialized = JSON.stringify(span.attributes);
     return (
       Object.hasOwn(span.attributes, "error.type") ||
-      Object.hasOwn(span.attributes, "openclaw.errorCategory") ||
+      Object.hasOwn(span.attributes, "nova.errorCategory") ||
       serialized.includes("StreamAbandoned")
     );
   });
@@ -1649,13 +1649,13 @@ function assertSmoke(params: {
 
   const failedRunSpans = params.spans.filter(
     (span) =>
-      (span.name === "openclaw.run" || span.name === "openclaw.harness.run") &&
-      span.attributes["openclaw.error"] === `${DIRECT_ERROR_MESSAGE} OPENAI_API_KEY=***`,
+      (span.name === "nova.run" || span.name === "nova.harness.run") &&
+      span.attributes["nova.error"] === `${DIRECT_ERROR_MESSAGE} OPENAI_API_KEY=***`,
   );
   if (failedRunSpans.length !== 2) {
     const observed = params.spans
-      .filter((span) => span.name === "openclaw.run" || span.name === "openclaw.harness.run")
-      .map((span) => ({ name: span.name, error: span.attributes["openclaw.error"] }));
+      .filter((span) => span.name === "nova.run" || span.name === "nova.harness.run")
+      .map((span) => ({ name: span.name, error: span.attributes["nova.error"] }));
     failures.push(
       `run and harness spans did not export the redacted failure message: ${JSON.stringify(observed)}`,
     );

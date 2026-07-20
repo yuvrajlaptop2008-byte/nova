@@ -211,7 +211,7 @@ describe("gateway network client", () => {
   });
 
   it("bounds a stalled post-restart admin request by the client deadline", async () => {
-    const workDir = tempDirs.make("openclaw-gateway-network-post-restart-");
+    const workDir = tempDirs.make("nova-gateway-network-post-restart-");
     const statePath = join(workDir, "suspension.json");
     writeFileSync(
       statePath,

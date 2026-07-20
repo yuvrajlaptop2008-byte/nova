@@ -14,7 +14,7 @@ const { mockFetchWithSsrFGuard } = vi.hoisted(() => ({
   mockFetchWithSsrFGuard: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("nova/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: mockFetchWithSsrFGuard,
 }));
 
@@ -58,9 +58,7 @@ function createStalledLookup() {
   );
   return {
     lookupFn: lookupFn as unknown as NonNullable<
-      Parameters<
-        typeof import("openclaw/plugin-sdk/ssrf-runtime").fetchWithSsrFGuard
-      >[0]["lookupFn"]
+      Parameters<typeof import("nova/plugin-sdk/ssrf-runtime").fetchWithSsrFGuard>[0]["lookupFn"]
     >,
     release: () => release?.(),
   };
@@ -143,8 +141,8 @@ describe("fetchDiscordGatewayMetadataGuarded bounded reads", () => {
   });
 
   it("aborts stalled DNS preflight through the gateway metadata deadline", async () => {
-    const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-      "openclaw/plugin-sdk/ssrf-runtime",
+    const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+      "nova/plugin-sdk/ssrf-runtime",
     );
     const stalledLookup = createStalledLookup();
     const fetchImpl = vi.fn(async () => new Response("{}", { status: 200 }));

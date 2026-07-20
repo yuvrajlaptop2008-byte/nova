@@ -18,7 +18,7 @@ describe("session cost usage stream errors", () => {
   });
 
   it("does not crash when the transcript stream emits an error mid-read", async () => {
-    const tempDir = tempDirs.make("openclaw-session-cost-stream-");
+    const tempDir = tempDirs.make("nova-session-cost-stream-");
     const sessionsDir = path.join(tempDir, "agents", "main", "sessions");
     await fs.mkdir(sessionsDir, { recursive: true });
     const sessionFile = path.join(sessionsDir, "sess-stream-error.jsonl");
@@ -51,7 +51,7 @@ describe("session cost usage stream errors", () => {
   });
 
   it("does not persist a partial durable cache entry after a background stream error", async () => {
-    const tempDir = tempDirs.make("openclaw-session-cost-cache-stream-");
+    const tempDir = tempDirs.make("nova-session-cost-cache-stream-");
     const sessionsDir = path.join(tempDir, "agents", "main", "sessions");
     await fs.mkdir(sessionsDir, { recursive: true });
     const sessionFile = path.join(sessionsDir, "sess-cache-stream-error.jsonl");

@@ -865,7 +865,7 @@ export async function loadRunOverflowCompactionHarness(): Promise<{
   }));
 
   vi.doMock("../models-config.js", () => ({
-    ensureOpenClawModelsJson: vi.fn(async () => {}),
+    ensureNovaModelsJson: vi.fn(async () => {}),
   }));
 
   vi.doMock("../prepared-model-runtime.js", () => ({

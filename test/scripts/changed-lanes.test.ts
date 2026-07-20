@@ -192,8 +192,8 @@ afterEach(() => {
 
 describe("scripts/changed-lanes", () => {
   it("keeps a non-executed changed-gate warning fixture", () => {
-    // openclaw-temp-dir: allow test fixture for the temp warning report
-    const warningFixture = 'fs.mkdtemp("openclaw-warning-fixture-", () => {})';
+    // nova-temp-dir: allow test fixture for the temp warning report
+    const warningFixture = 'fs.mkdtemp("nova-warning-fixture-", () => {})';
 
     expect(warningFixture).toContain("mkdtemp");
   });
@@ -254,7 +254,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("delegates when the local checkout cannot resolve the default base ref", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-check-changed-missing-base-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-check-changed-missing-base-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(path.join(dir, "README.md"), "initial\n", "utf8");
     git(dir, ["add", "README.md"]);
@@ -291,7 +291,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("delegates path-scoped release metadata when local diff refs are unavailable", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-check-changed-metadata-missing-base-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-check-changed-metadata-missing-base-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(path.join(dir, "README.md"), "initial\n", "utf8");
     git(dir, ["add", "README.md"]);
@@ -407,7 +407,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("includes untracked worktree files in the default local diff", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(path.join(dir, "README.md"), "initial\n", "utf8");
     git(dir, ["add", "README.md"]);
@@ -442,7 +442,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("falls back to a two-dot diff when a delegated checkout has no merge base", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-no-merge-base-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-no-merge-base-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(path.join(dir, "README.md"), "initial\n", "utf8");
     git(dir, ["add", "README.md"]);
@@ -484,7 +484,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("prefers raw sync worktree paths over an implausibly broad no-merge-base diff", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-raw-sync-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-raw-sync-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     for (let index = 0; index < 250; index += 1) {
       writeFileSync(path.join(dir, `baseline-${index}.txt`), "baseline\n", "utf8");
@@ -538,7 +538,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("includes committed and untracked added files in the changed format check", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-added-format-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-added-format-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeRepoFile(dir, "README.md", "initial\n");
     git(dir, ["add", "."]);
@@ -587,7 +587,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("includes staged added, modified, and deleted files in the changed format check", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-staged-format-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-staged-format-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeRepoFile(dir, "src/modified.ts", "export const modified = { value: 1 };\n");
     writeRepoFile(dir, "src/removed.ts", "export const removed = { value: 1 };\n");
@@ -625,7 +625,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("fails the changed format check on a misformatted added file and passes once formatted", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-format-added-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-format-added-");
     writeRepoFile(dir, "src/added.test.ts", "export const added={value:1};\n");
 
     const dirty = runChangedFormatLaneWithRepoOxfmt(dir, ["src/added.test.ts"]);
@@ -638,7 +638,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("fails the changed format check on a misformatted modified file", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-format-modified-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-format-modified-");
     writeRepoFile(dir, "src/modified.ts", "export const modified={value:2};\n");
 
     const result = runChangedFormatLaneWithRepoOxfmt(dir, ["src/modified.ts"]);
@@ -647,7 +647,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("does not fail the changed format check for deleted paths", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-format-deleted-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-format-deleted-");
     writeRepoFile(dir, "src/kept.ts", "export const kept = { value: 1 };\n");
 
     const result = runChangedFormatLaneWithRepoOxfmt(dir, ["src/deleted.ts", "src/kept.ts"]);
@@ -655,7 +655,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("uses the merge commit first parent instead of a stale PR payload base", () => {
-    const { dir, staleBase } = createSyntheticMergeRepo("openclaw-changed-lanes-merge-");
+    const { dir, staleBase } = createSyntheticMergeRepo("nova-changed-lanes-merge-");
 
     expect(listChangedPathsFromGit({ base: staleBase, cwd: dir, includeWorktree: false })).toEqual([
       "src/main-only.ts",
@@ -672,7 +672,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("ignores local Crabbox metadata in the default local diff", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-crabbox-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-crabbox-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(path.join(dir, ".gitignore"), ".crabbox/\n", "utf8");
     writeFileSync(path.join(dir, "README.md"), "initial\n", "utf8");
@@ -709,7 +709,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("includes deleted worktree files in the default local diff", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-deleted-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-deleted-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     mkdirSync(path.join(dir, "src", "shared"), { recursive: true });
     writeFileSync(
@@ -748,7 +748,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("includes deleted staged files in the staged diff", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-changed-lanes-staged-deleted-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-changed-lanes-staged-deleted-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     mkdirSync(path.join(dir, "src", "shared"), { recursive: true });
     writeFileSync(
@@ -1081,7 +1081,7 @@ describe("scripts/changed-lanes", () => {
       "CI Corepack pnpm shim directory",
     );
 
-    expect(path.basename(shimDir)).toMatch(/^openclaw-corepack-pnpm-/u);
+    expect(path.basename(shimDir)).toMatch(/^nova-corepack-pnpm-/u);
     expect(existsSync(path.join(shimDir, "pnpm"))).toBe(true);
 
     cleanupCorepackPnpmShimDir();
@@ -1116,7 +1116,7 @@ describe("scripts/changed-lanes", () => {
       "--provider",
       "blacksmith-testbox",
       "--blacksmith-org",
-      "openclaw",
+      "nova",
       "--blacksmith-workflow",
       ".github/workflows/ci-check-testbox.yml",
       "--blacksmith-job",
@@ -1145,7 +1145,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("keeps small changed gates local only with a ready dependency install", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-check-changed-local-route-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-check-changed-local-route-");
     const docsResult = detectChangedLanes(["docs/reference/test.md"]);
     const noChangesResult = detectChangedLanes([]);
     const metadataResult = detectChangedLanes(["CHANGELOG.md"]);
@@ -1189,7 +1189,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("delegates staged changed gates as explicit remote paths", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-check-changed-staged-delegate-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-check-changed-staged-delegate-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(path.join(dir, "README.md"), "initial\n", "utf8");
     git(dir, ["add", "README.md"]);
@@ -1220,7 +1220,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("delegates empty staged changed gates without rediscovering unstaged paths", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-check-changed-empty-staged-delegate-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-check-changed-empty-staged-delegate-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(path.join(dir, "README.md"), "initial\n", "utf8");
     git(dir, ["add", "README.md"]);
@@ -1268,7 +1268,7 @@ describe("scripts/changed-lanes", () => {
 
   it("runs changed-check app tests under the parent heavy-check lock", () => {
     const result = detectChangedLanes([
-      "apps/shared/OpenClawKit/Sources/OpenClawProtocol/GatewayModels.swift",
+      "apps/shared/NovaKit/Sources/NovaProtocol/GatewayModels.swift",
     ]);
     const plan = createChangedCheckPlan(result, { env: { PATH: "/usr/bin" } });
     const testCommand = plan.commands.find((command) => command.args[0] === "test:macos:ci");
@@ -1378,7 +1378,7 @@ describe("scripts/changed-lanes", () => {
       "config/swiftlint.yml",
       "deploy/fly.private.toml",
       "docker-setup.sh",
-      "openclaw.podman.env",
+      "nova.podman.env",
       "setup-podman.sh",
       "skills/pyproject.toml",
     ]);
@@ -1523,7 +1523,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("classifies live Docker package script changes from the git diff", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-live-docker-package-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-live-docker-package-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(
       path.join(dir, "package.json"),
@@ -1585,7 +1585,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("classifies normal package script changes from the git diff", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-package-scripts-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-package-scripts-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(
       path.join(dir, "package.json"),
@@ -1861,7 +1861,7 @@ describe("scripts/changed-lanes", () => {
   it("runs SQLite sessions/transcripts schema baseline checks for baseline owner surfaces", () => {
     expect(
       shouldRunSqliteSessionSchemaBaselineCheck([
-        "src/state/openclaw-agent-schema.sql",
+        "src/state/nova-agent-schema.sql",
         "scripts/generate-sqlite-session-schema-baseline.ts",
         "scripts/lib/sqlite-session-schema-baseline.ts",
         "test/scripts/sqlite-session-schema-baseline.test.ts",
@@ -1869,7 +1869,7 @@ describe("scripts/changed-lanes", () => {
       ]),
     ).toBe(true);
 
-    const result = detectChangedLanes(["src/state/openclaw-agent-schema.sql"]);
+    const result = detectChangedLanes(["src/state/nova-agent-schema.sql"]);
     const plan = createChangedCheckPlan(result);
 
     expect(plan.commands).toContainEqual({
@@ -1973,7 +1973,7 @@ describe("scripts/changed-lanes", () => {
   });
 
   it("guards release metadata package changes to the top-level version field", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-release-metadata-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-release-metadata-");
     git(dir, ["init", "-q", "--initial-branch=main"]);
     writeFileSync(
       path.join(dir, "package.json"),
@@ -2064,9 +2064,9 @@ describe("scripts/changed-lanes", () => {
 
   it("runs macOS app CI tests for macOS app dependency changes", () => {
     for (const changedPath of [
-      "apps/macos/Sources/OpenClawMac/AppDelegate.swift",
-      "apps/macos-mlx-tts/Sources/OpenClawMLXTTS/main.swift",
-      "apps/shared/OpenClawKit/Sources/OpenClawProtocol/GatewayModels.swift",
+      "apps/macos/Sources/NovaMac/AppDelegate.swift",
+      "apps/macos-mlx-tts/Sources/NovaMLXTTS/main.swift",
+      "apps/shared/NovaKit/Sources/NovaProtocol/GatewayModels.swift",
       "apps/swabble/Sources/SwabbleKit/WakeWordGate.swift",
       "Swabble/Sources/SwabbleKit/WakeWordGate.swift",
     ]) {
@@ -2095,8 +2095,8 @@ describe("scripts/changed-lanes", () => {
 
   it("runs the native state schema guard for either contract owner", () => {
     for (const changedPath of [
-      "apps/shared/OpenClawKit/Sources/OpenClawNativeState/OpenClawNativeStateSQLite.swift",
-      "src/state/openclaw-state-db-contract.ts",
+      "apps/shared/NovaKit/Sources/NovaNativeState/NovaNativeStateSQLite.swift",
+      "src/state/nova-state-db-contract.ts",
     ]) {
       const plan = createChangedCheckPlan(detectChangedLanes([changedPath]), {
         env: { PATH: "/usr/bin" },
@@ -2166,7 +2166,7 @@ describe("scripts/changed-lanes", () => {
 
   it("runs app lint when SwiftLint is available in Testbox", () => {
     const result = detectChangedLanes([
-      "apps/shared/OpenClawKit/Sources/OpenClawProtocol/GatewayModels.swift",
+      "apps/shared/NovaKit/Sources/NovaProtocol/GatewayModels.swift",
     ]);
     const plan = createChangedCheckPlan(result, {
       env: { CI: "1", PATH: "/usr/bin" },
@@ -2235,7 +2235,7 @@ describe("scripts/changed-lanes", () => {
 
   it("checks native A2UI resources when the copied resource tree changes", () => {
     const result = detectChangedLanes([
-      "apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/CanvasA2UI/a2ui.bundle.js",
+      "apps/shared/NovaKit/Sources/NovaKit/Resources/CanvasA2UI/a2ui.bundle.js",
     ]);
     const plan = createChangedCheckPlan(result);
 

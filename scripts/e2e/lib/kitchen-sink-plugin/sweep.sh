@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/nova-e2e-instance.sh
 
 KITCHEN_SINK_SWEEP_SOURCE_ONLY="${KITCHEN_SINK_SWEEP_SOURCE_ONLY:-0}"
 if [[ -z "${NOVA_ENTRY:-}" && "$KITCHEN_SINK_SWEEP_SOURCE_ONLY" != "1" ]]; then
-  NOVA_ENTRY="$(openclaw_e2e_resolve_entrypoint)"
+  NOVA_ENTRY="$(nova_e2e_resolve_entrypoint)"
 fi
 export NOVA_ENTRY
 KITCHEN_SINK_CREATED_TMP_DIR=0
 if [[ -z "${KITCHEN_SINK_TMP_DIR:-}" ]]; then
-  KITCHEN_SINK_TMP_DIR="$(mktemp -d "/tmp/openclaw-kitchen-sink.XXXXXX")"
+  KITCHEN_SINK_TMP_DIR="$(mktemp -d "/tmp/nova-kitchen-sink.XXXXXX")"
   KITCHEN_SINK_CREATED_TMP_DIR=1
 else
   mkdir -p "$KITCHEN_SINK_TMP_DIR"
@@ -22,7 +22,7 @@ KITCHEN_SINK_CLAWHUB_PID_FILE=""
 
 cleanup_kitchen_sink_sweep() {
   if [[ -n "${KITCHEN_SINK_CLAWHUB_PID_FILE:-}" && -f "$KITCHEN_SINK_CLAWHUB_PID_FILE" ]]; then
-    openclaw_e2e_stop_process "$(cat "$KITCHEN_SINK_CLAWHUB_PID_FILE" 2>/dev/null || true)"
+    nova_e2e_stop_process "$(cat "$KITCHEN_SINK_CLAWHUB_PID_FILE" 2>/dev/null || true)"
   fi
   if [[ -n "${KITCHEN_SINK_CLAWHUB_FIXTURE_DIR:-}" ]]; then
     rm -rf "$KITCHEN_SINK_CLAWHUB_FIXTURE_DIR"
@@ -34,13 +34,13 @@ cleanup_kitchen_sink_sweep() {
 
 if [[ "$KITCHEN_SINK_SWEEP_SOURCE_ONLY" != "1" ]]; then
   trap cleanup_kitchen_sink_sweep EXIT
-  openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+  nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 fi
 
 print_kitchen_sink_log() {
   local log_file="$1"
   local max_bytes
-  max_bytes="$(openclaw_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536)" || return $?
+  max_bytes="$(nova_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536)" || return $?
   if [ ! -f "$log_file" ]; then
     return 0
   fi
@@ -58,24 +58,24 @@ print_kitchen_sink_log() {
   tail -c "$max_bytes" "$log_file"
 }
 
-openclaw_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536 >/dev/null
+nova_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536 >/dev/null
 
-run_kitchen_sink_openclaw_logged() {
+run_kitchen_sink_nova_logged() {
   local label="$1"
   shift
   local safe_label="${label//[^[:alnum:]._-]/_}"
   local log_file="${KITCHEN_SINK_TMP_DIR}/${safe_label}.log"
-  if ! openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" "$@" >"$log_file" 2>&1; then
+  if ! nova_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" "$@" >"$log_file" 2>&1; then
     print_kitchen_sink_log "$log_file"
     return 1
   fi
   print_kitchen_sink_log "$log_file"
 }
 
-run_kitchen_sink_openclaw_capture() {
+run_kitchen_sink_nova_capture() {
   local output_file="$1"
   shift
-  openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" "$@" >"$output_file"
+  nova_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" "$@" >"$output_file"
 }
 
 run_expect_failure() {
@@ -108,7 +108,7 @@ start_kitchen_sink_clawhub_fixture_server() {
   KITCHEN_SINK_CLAWHUB_PID_FILE="$server_pid_file"
 
   local wait_attempts
-  wait_attempts="$(openclaw_e2e_read_positive_int_env NOVA_CLAWHUB_FIXTURE_WAIT_ATTEMPTS 600)" || return $?
+  wait_attempts="$(nova_e2e_read_positive_int_env NOVA_CLAWHUB_FIXTURE_WAIT_ATTEMPTS 600)" || return $?
   for _ in $(seq 1 "$wait_attempts"); do
     if [[ -s "$server_port_file" ]]; then
       export NOVA_CLAWHUB_URL="http://127.0.0.1:$(cat "$server_port_file")"
@@ -155,32 +155,32 @@ run_success_scenario() {
   echo "Testing ${KITCHEN_SINK_LABEL} install from ${KITCHEN_SINK_SPEC}..."
   local install_args=("$KITCHEN_SINK_SPEC")
   if [ -n "${KITCHEN_SINK_PREINSTALL_SPEC:-}" ]; then
-    run_kitchen_sink_openclaw_logged "kitchen-sink-preinstall-${KITCHEN_SINK_LABEL}" plugins install "$KITCHEN_SINK_PREINSTALL_SPEC" --force
+    run_kitchen_sink_nova_logged "kitchen-sink-preinstall-${KITCHEN_SINK_LABEL}" plugins install "$KITCHEN_SINK_PREINSTALL_SPEC" --force
     assert_kitchen_sink_cutover_preinstalled
     install_args+=("--force")
   fi
-  run_kitchen_sink_openclaw_logged "kitchen-sink-install-${KITCHEN_SINK_LABEL}" plugins install "${install_args[@]}" --force
+  run_kitchen_sink_nova_logged "kitchen-sink-install-${KITCHEN_SINK_LABEL}" plugins install "${install_args[@]}" --force
   configure_kitchen_sink_runtime
-  run_kitchen_sink_openclaw_logged "kitchen-sink-enable-${KITCHEN_SINK_LABEL}" plugins enable "$KITCHEN_SINK_ID"
-  run_kitchen_sink_openclaw_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-plugins.json" plugins list --json
-  run_kitchen_sink_openclaw_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect.json" plugins inspect "$KITCHEN_SINK_ID" --runtime --json
-  run_kitchen_sink_openclaw_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect-all.json" plugins inspect --all --runtime --json
+  run_kitchen_sink_nova_logged "kitchen-sink-enable-${KITCHEN_SINK_LABEL}" plugins enable "$KITCHEN_SINK_ID"
+  run_kitchen_sink_nova_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-plugins.json" plugins list --json
+  run_kitchen_sink_nova_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect.json" plugins inspect "$KITCHEN_SINK_ID" --runtime --json
+  run_kitchen_sink_nova_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect-all.json" plugins inspect --all --runtime --json
   assert_kitchen_sink_installed
   if [ "$KITCHEN_SINK_SOURCE" = "clawhub" ]; then
-    run_kitchen_sink_openclaw_logged "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" plugins uninstall "$KITCHEN_SINK_SPEC" --force
+    run_kitchen_sink_nova_logged "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" plugins uninstall "$KITCHEN_SINK_SPEC" --force
   else
-    run_kitchen_sink_openclaw_logged "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" plugins uninstall "$KITCHEN_SINK_ID" --force
+    run_kitchen_sink_nova_logged "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" plugins uninstall "$KITCHEN_SINK_ID" --force
   fi
   remove_kitchen_sink_channel_config
-  run_kitchen_sink_openclaw_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json" plugins list --json
+  run_kitchen_sink_nova_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json" plugins list --json
   assert_kitchen_sink_removed
 }
 
 run_failure_scenario() {
   echo "Testing expected ${KITCHEN_SINK_LABEL} install failure from ${KITCHEN_SINK_SPEC}..."
-  run_expect_failure "install-${KITCHEN_SINK_LABEL}" openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" plugins install "$KITCHEN_SINK_SPEC" --force
+  run_expect_failure "install-${KITCHEN_SINK_LABEL}" nova_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" plugins install "$KITCHEN_SINK_SPEC" --force
   remove_kitchen_sink_channel_config
-  run_kitchen_sink_openclaw_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json" plugins list --json
+  run_kitchen_sink_nova_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json" plugins list --json
   assert_kitchen_sink_removed
 }
 

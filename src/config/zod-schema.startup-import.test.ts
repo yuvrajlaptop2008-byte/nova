@@ -1,11 +1,11 @@
 // Guards config schema startup imports against loading heavy runtime modules.
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const providersWhatsappImportMock = vi.hoisted(() => vi.fn());
 const providersCoreImportMock = vi.hoisted(() => vi.fn());
 
-describe("OpenClawSchema startup imports", () => {
+describe("NovaSchema startup imports", () => {
   beforeEach(() => {
     providersWhatsappImportMock.mockClear();
     providersCoreImportMock.mockClear();
@@ -25,7 +25,7 @@ describe("OpenClawSchema startup imports", () => {
       "./zod-schema.js?scope=startup-generic-channels",
     );
 
-    const parsed = runtime.OpenClawSchema.safeParse({
+    const parsed = runtime.NovaSchema.safeParse({
       channels: {
         defaults: {
           groupPolicy: "open",

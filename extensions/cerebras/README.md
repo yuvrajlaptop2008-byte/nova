@@ -1,12 +1,12 @@
-# OpenClaw Cerebras Provider
+# Nova Cerebras Provider
 
-Official OpenClaw provider plugin for Cerebras.
+Official Nova provider plugin for Cerebras.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/cerebras-provider
-openclaw gateway restart
+nova plugins install @nova/cerebras-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/cerebras> for setup and configuration.
+See <https://docs.nova.ai/providers/cerebras> for setup and configuration.

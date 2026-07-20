@@ -5,7 +5,7 @@ import { listRegisteredChannelPluginIds } from "../channels/registry.js";
 import { INTERNAL_MESSAGE_CHANNEL } from "./message-channel-constants.js";
 import { normalizeMessageChannel as normalizeMessageChannelCore } from "./message-channel-core.js";
 
-type ChannelId = string & { readonly __openclawChannelIdBrand?: never };
+type ChannelId = string & { readonly __novaChannelIdBrand?: never };
 
 /** Channel id that can receive outbound messages from the Gateway. */
 export type DeliverableMessageChannel = ChannelId;

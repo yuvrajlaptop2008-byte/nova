@@ -1,12 +1,12 @@
-# OpenClaw Chutes Provider
+# Nova Chutes Provider
 
-Official OpenClaw provider plugin for Chutes.
+Official Nova provider plugin for Chutes.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/chutes-provider
-openclaw gateway restart
+nova plugins install @nova/chutes-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/chutes> for setup and configuration.
+See <https://docs.nova.ai/providers/chutes> for setup and configuration.

@@ -153,7 +153,7 @@ describe("sidebar attention refresh ownership", () => {
     vi.spyOn(Date, "now").mockImplementation(() => now);
 
     const provider = createApplicationContextProvider({ gateway, overlays } as ApplicationContext);
-    const element = document.createElement("openclaw-sidebar-attention") as SidebarAttentionElement;
+    const element = document.createElement("nova-sidebar-attention") as SidebarAttentionElement;
     provider.append(element);
     document.body.append(provider);
     await waitForFast(() => expect(request).toHaveBeenCalledTimes(2));

@@ -4,12 +4,9 @@ import { resolveStateDir } from "../config/paths.js";
 import type { PluginRecord } from "../plugins/registry-types.js";
 import { createPluginRegistry } from "../plugins/registry.js";
 import type { PluginRuntime } from "../plugins/runtime/types.js";
-import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "../state/openclaw-agent-db.js";
-import { openOpenClawStateDatabase } from "../state/openclaw-state-db.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { closeNovaAgentDatabasesForTest, openNovaAgentDatabase } from "../state/nova-agent-db.js";
+import { openNovaStateDatabase } from "../state/nova-state-db.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import { resetPluginBlobStoreForTests, type OpenBlobStoreOptions } from "./plugin-blob-store.js";
 import { resetPluginStateStoreForTests } from "./plugin-state-store.js";
 
@@ -79,14 +76,14 @@ function createTestPluginRegistry() {
 }
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
+  closeNovaAgentDatabasesForTest();
   resetPluginBlobStoreForTests();
   resetPluginStateStoreForTests();
 });
 
 describe("plugin runtime state proxy", () => {
   it("binds openKeyedStore to the bundled plugin id and keeps resolveStateDir", async () => {
-    await withOpenClawTestState({ label: "plugin-state-runtime" }, async (state) => {
+    await withNovaTestState({ label: "plugin-state-runtime" }, async (state) => {
       const registry = createTestPluginRegistry();
       const record = createPluginRecord("discord", "bundled");
       registry.registry.plugins.push(record);
@@ -120,7 +117,7 @@ describe("plugin runtime state proxy", () => {
   });
 
   it("allows trusted official global plugins to use keyed state", async () => {
-    await withOpenClawTestState({ label: "plugin-state-trusted-global" }, async () => {
+    await withNovaTestState({ label: "plugin-state-trusted-global" }, async () => {
       const registry = createTestPluginRegistry();
       const record = createPluginRecord("slack", "global", { trustedOfficialInstall: true });
       registry.registry.plugins.push(record);
@@ -136,7 +133,7 @@ describe("plugin runtime state proxy", () => {
   });
 
   it("binds SQLite leases to trusted plugin identity and database scope", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-runtime" }, async (state) => {
+    await withNovaTestState({ label: "plugin-lease-runtime" }, async (state) => {
       const registry = createTestPluginRegistry();
       const bundled = createPluginRecord("memory-core", "bundled");
       registry.registry.plugins.push(bundled);
@@ -153,7 +150,7 @@ describe("plugin runtime state proxy", () => {
         async ({ signal }) => {
           expect(signal.aborted).toBe(false);
           expect(
-            openOpenClawStateDatabase({ env: state.env })
+            openNovaStateDatabase({ env: state.env })
               .db.prepare("SELECT scope, lease_key FROM state_leases")
               .get(),
           ).toEqual({ scope: "plugin:memory-core:qmd", lease_key: "embed" });
@@ -175,7 +172,7 @@ describe("plugin runtime state proxy", () => {
         },
         async () => {
           expect(
-            openOpenClawAgentDatabase({ agentId: "main", env: state.env })
+            openNovaAgentDatabase({ agentId: "main", env: state.env })
               .db.prepare("SELECT scope, lease_key FROM state_leases")
               .get(),
           ).toEqual({ scope: "plugin:memory-official:qmd", lease_key: "write" });
@@ -185,7 +182,7 @@ describe("plugin runtime state proxy", () => {
   });
 
   it("binds blob stores to the trusted plugin id", async () => {
-    await withOpenClawTestState({ label: "plugin-blob-runtime" }, async () => {
+    await withNovaTestState({ label: "plugin-blob-runtime" }, async () => {
       const registry = createTestPluginRegistry();
       const record = createPluginRecord("diffs", "global", { trustedOfficialInstall: true });
       registry.registry.plugins.push(record);
@@ -221,7 +218,7 @@ describe("plugin runtime state proxy", () => {
   });
 
   it("ignores plugin-supplied state directory overrides", async () => {
-    await withOpenClawTestState({ label: "plugin-blob-runtime-env" }, async (state) => {
+    await withNovaTestState({ label: "plugin-blob-runtime-env" }, async (state) => {
       const registry = createTestPluginRegistry();
       const record = createPluginRecord("diffs", "global", { trustedOfficialInstall: true });
       registry.registry.plugins.push(record);
@@ -241,7 +238,7 @@ describe("plugin runtime state proxy", () => {
       await store.register("viewer", new Uint8Array([1]), { kind: "viewer" });
 
       resetPluginBlobStoreForTests();
-      const { db } = openOpenClawStateDatabase({ env: state.env });
+      const { db } = openNovaStateDatabase({ env: state.env });
       expect(
         db
           .prepare(

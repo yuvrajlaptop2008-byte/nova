@@ -20,12 +20,12 @@ vi.mock("../infra/shell-env.js", () => shellEnvMocks);
 const tempDirs: string[] = [];
 
 function createTempConfig(files: Record<string, string>): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-dispatch-config-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-dispatch-config-"));
   tempDirs.push(dir);
   for (const [name, contents] of Object.entries(files)) {
     fs.writeFileSync(path.join(dir, name), contents);
   }
-  return path.join(dir, "openclaw.json5");
+  return path.join(dir, "nova.json5");
 }
 
 afterEach(() => {
@@ -45,7 +45,7 @@ describe("readGatewayDispatchConfig", () => {
         },
         models: { providers: { expensive: { apiKey: "\${MISSING_MODEL_KEY}" } } },
       }`,
-      "openclaw.json5": `{
+      "nova.json5": `{
         $include: "./gateway-base.json5",
         env: { vars: { NOVA_GATEWAY_TOKEN: "inline-token" } },
         agents: {
@@ -80,7 +80,7 @@ describe("readGatewayDispatchConfig", () => {
 
   it("loads only gateway credential shell env keys on explicit fallback", async () => {
     const configPath = createTempConfig({
-      "openclaw.json5": `{
+      "nova.json5": `{
         env: { shellEnv: { enabled: true, timeoutMs: 123 } },
         gateway: { auth: { mode: "token", token: "\${NOVA_GATEWAY_TOKEN}" } },
       }`,

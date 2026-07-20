@@ -3,13 +3,13 @@ import {
   decodeNodePtyResumeParams,
   resolveNodeHostExecutable,
   runNodePtyCommand,
-} from "openclaw/plugin-sdk/node-host";
+} from "nova/plugin-sdk/node-host";
 import type {
-  OpenClawPluginApi,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeInvokePolicy,
-} from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
+  NovaPluginApi,
+  NovaPluginNodeHostCommand,
+  NovaPluginNodeInvokePolicy,
+} from "nova/plugin-sdk/plugin-entry";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
 import type {
   SessionCatalogHost,
   SessionCatalogProvider,
@@ -17,8 +17,8 @@ import type {
   SessionCatalogTerminalPlan,
   SessionCatalogTranscriptItem,
   SessionsCatalogReadResult,
-} from "openclaw/plugin-sdk/session-catalog";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/session-catalog";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   isExactPiSessionCursor,
   listLocalPiSessionPage,
@@ -127,7 +127,7 @@ function isPiSessionCatalogEnabled(pluginConfig: unknown): boolean {
   );
 }
 
-function createPiSessionNodeHostCommands(): OpenClawPluginNodeHostCommand[] {
+function createPiSessionNodeHostCommands(): NovaPluginNodeHostCommand[] {
   const storeAvailable = ({ config, env }: { config: unknown; env: NodeJS.ProcessEnv }) =>
     fullConfigCatalogEnabled(config) && piSessionStoreAvailable(env);
   return [
@@ -192,7 +192,7 @@ function createPiSessionNodeHostCommands(): OpenClawPluginNodeHostCommand[] {
   ];
 }
 
-function createPiSessionNodeInvokePolicies(): OpenClawPluginNodeInvokePolicy[] {
+function createPiSessionNodeInvokePolicies(): NovaPluginNodeInvokePolicy[] {
   return [
     {
       commands: [PI_SESSIONS_LIST_COMMAND, PI_SESSION_READ_COMMAND, PI_TERMINAL_RESUME_COMMAND],
@@ -502,7 +502,7 @@ async function readPiTranscript(
   };
 }
 
-export function registerPiSessionCatalog(api: OpenClawPluginApi): void {
+export function registerPiSessionCatalog(api: NovaPluginApi): void {
   if (!isPiSessionCatalogEnabled(api.pluginConfig)) {
     return;
   }

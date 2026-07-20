@@ -1,4 +1,4 @@
-import { ensureGlobalUndiciEnvProxyDispatcher } from "openclaw/plugin-sdk/runtime-env";
+import { ensureGlobalUndiciEnvProxyDispatcher } from "nova/plugin-sdk/runtime-env";
 import { refreshOpenAICodexToken as refreshOpenAICodexTokenFromFlow } from "./openai-chatgpt-oauth-flow.runtime.js";
 
 type OpenAICodexProviderRuntimeDeps = {

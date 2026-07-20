@@ -158,7 +158,7 @@ describe("resolveDiscordRestFetch", () => {
   });
 
   function writeTempCa(contents: string): string {
-    const dir = mkdtempSync(path.join(os.tmpdir(), "openclaw-discord-rest-proxy-ca-"));
+    const dir = mkdtempSync(path.join(os.tmpdir(), "nova-discord-rest-proxy-ca-"));
     tempDirs.push(dir);
     const caFile = path.join(dir, "proxy-ca.pem");
     writeFileSync(caFile, contents, "utf8");

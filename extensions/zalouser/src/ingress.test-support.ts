@@ -2,10 +2,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { expect, vi } from "vitest";
 import type { createZalouserIngressMonitor } from "./ingress.js";
 import type { ZaloInboundMessage } from "./types.js";
@@ -62,7 +62,7 @@ export async function withZalouserIngressTestQueue<T>(
   fn: (queue: ZalouserTestQueue) => Promise<T>,
 ): Promise<T> {
   const createdDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-zalouser-ingress-"),
+    path.join(resolvePreferredNovaTmpDir(), "nova-zalouser-ingress-"),
   );
   const stateDir = await fs.realpath(createdDir);
   const previousStateDir = process.env.NOVA_STATE_DIR;
@@ -80,7 +80,7 @@ export async function withZalouserIngressTestQueue<T>(
     } else {
       process.env.NOVA_STATE_DIR = previousStateDir;
     }
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   }
 }

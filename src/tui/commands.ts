@@ -8,7 +8,7 @@ import {
   resolveTextCommand,
 } from "../auto-reply/commands-registry.js";
 import { formatThinkingLevels, listThinkingLevelLabels } from "../auto-reply/thinking.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 
 const VERBOSE_LEVELS = ["on", "off"];
 const TRACE_LEVELS = ["on", "off"];
@@ -24,7 +24,7 @@ type ParsedCommand = {
 };
 
 type SlashCommandOptions = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider?: string;
   model?: string;
   agentRuntime?: string;
@@ -34,7 +34,7 @@ type SlashCommandOptions = {
 };
 
 const COMMAND_ALIASES: Record<string, string> = {
-  crestodian: "openclaw", // hidden alias
+  crestodian: "nova", // hidden alias
   gwstatus: "gateway-status",
 };
 
@@ -116,7 +116,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     ...(options.local ? [{ name: "auth", description: "Run provider auth/login flow" }] : []),
     { name: "agent", description: "Switch agent (or open picker)" },
     { name: "agents", description: "Open agent picker" },
-    { name: "openclaw", description: "Return to Nova" },
+    { name: "nova", description: "Return to Nova" },
     { name: "session", description: "Switch session (or open picker)" },
     { name: "sessions", description: "Open session picker" },
     {
@@ -244,7 +244,7 @@ export function helpText(options: SlashCommandOptions = {}): string {
     "/gwstatus",
     ...(options.local ? ["/auth [provider]"] : []),
     "/agent <id> (or /agents)",
-    "/openclaw [request]",
+    "/nova [request]",
     "/session <key> (or /sessions)",
     "/model <provider/model> (or /models)",
     `/think <${thinkLevels}>`,

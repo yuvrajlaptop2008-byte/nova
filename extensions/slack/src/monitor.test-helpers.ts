@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { ChannelRuntimeSurface } from "openclaw/plugin-sdk/channel-contract";
+import type { ChannelRuntimeSurface } from "nova/plugin-sdk/channel-contract";
 // Slack helper module supports monitor helpers behavior.
-import { closeOpenClawStateDatabaseForTest } from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { closeNovaStateDatabaseForTest } from "nova/plugin-sdk/plugin-state-test-runtime";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { vi } from "vitest";
 import type { Mock } from "vitest";
 
@@ -21,7 +21,7 @@ type SlackProviderMonitor = (params: {
 }) => Promise<unknown>;
 type SlackStartupAuthClientFactory = typeof import("./client.js").createSlackStartupAuthClient;
 
-const SLACK_INGRESS_LIFECYCLE_CONTEXT_KEY = "openclawIngressLifecycle";
+const SLACK_INGRESS_LIFECYCLE_CONTEXT_KEY = "novaIngressLifecycle";
 
 type SlackRunOnceOptions = {
   botToken?: string;
@@ -308,7 +308,7 @@ export function resetSlackTestState(config: Record<string, unknown> = defaultSla
   // message keys to the state DB, and fixture ts values repeat across tests,
   // so a carried-over DB would dedupe unrelated test messages. realpath keeps
   // macOS /var vs /private/var symlinks out of resolver assertions.
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   // Clear worker-global Bolt handler registrations from previous test files:
   // with isolate=false a stale "message" handler makes waitForSlackEvent
   // return before THIS test's provider registers, dispatching through the old
@@ -318,7 +318,7 @@ export function resetSlackTestState(config: Record<string, unknown> = defaultSla
     fs.rmSync(lastSlackTestStateDir, { recursive: true, force: true });
   }
   lastSlackTestStateDir = fs.realpathSync(
-    fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-slack-monitor-state-")),
+    fs.mkdtempSync(path.join(resolvePreferredNovaTmpDir(), "nova-slack-monitor-state-")),
   );
   process.env.NOVA_STATE_DIR = lastSlackTestStateDir;
   slackTestState.config = config;
@@ -374,13 +374,13 @@ vi.mock("./monitor/config.runtime.js", async () => {
     loadConfig: () => slackTestState.config,
     readSessionUpdatedAt: vi.fn(() => undefined),
     recordSessionMetaFromInbound: vi.fn().mockResolvedValue(undefined),
-    resolveStorePath: vi.fn(() => "/tmp/openclaw-sessions.json"),
+    resolveStorePath: vi.fn(() => "/tmp/nova-sessions.json"),
     updateLastRoute: (...args: unknown[]) => slackTestState.updateLastRouteMock(...args),
   };
 });
 
-vi.mock("openclaw/plugin-sdk/channel-inbound", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/channel-inbound")>();
+vi.mock("nova/plugin-sdk/channel-inbound", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/channel-inbound")>();
   type DispatchParams = Parameters<typeof actual.dispatchChannelInboundTurn>[0];
   type ReplyResolver = NonNullable<DispatchParams["replyResolver"]>;
   const replyResolver: ReplyResolver = (...args) =>

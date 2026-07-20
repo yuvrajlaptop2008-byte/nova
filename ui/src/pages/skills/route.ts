@@ -57,6 +57,6 @@ export const page = definePage({
     import("./skills-page.ts").then(() => ({
       header: true,
       render: (data: SkillsRouteData | undefined) =>
-        html`<openclaw-skills-page .routeData=${data}></openclaw-skills-page>`,
+        html`<nova-skills-page .routeData=${data}></nova-skills-page>`,
     })),
 });

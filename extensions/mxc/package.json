@@ -1,10 +1,10 @@
 {
   "name": "@nova/mxc-sandbox",
   "version": "2026.6.11",
-  "description": "OpenClaw MXC sandbox execution plugin for MXC-capable hosts",
+  "description": "Nova MXC sandbox execution plugin for MXC-capable hosts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openclaw/openclaw"
+    "url": "https://github.com/nova/nova"
   },
   "type": "module",
   "devDependencies": {
@@ -14,7 +14,7 @@
     "@microsoft/mxc-sdk": "0.7.0",
     "zod": "4.4.3"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ],
@@ -27,7 +27,7 @@
       "pluginApi": ">=2026.6.11"
     },
     "build": {
-      "openclawVersion": "2026.6.11",
+      "novaVersion": "2026.6.11",
       "bundledDist": false,
       "staticAssets": [
         {

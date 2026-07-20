@@ -1,22 +1,22 @@
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 // Memory Core plugin entrypoint registers its Nova integration.
 import {
   jsonResult,
   resolveMemorySearchConfig,
   resolveSessionAgentIds,
   type MemoryPluginRuntime,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/memory-core-host-runtime-core";
-import { resolveMemoryBackendConfig } from "openclaw/plugin-sdk/memory-core-host-runtime-files";
+  type NovaConfig,
+} from "nova/plugin-sdk/memory-core-host-runtime-core";
+import { resolveMemoryBackendConfig } from "nova/plugin-sdk/memory-core-host-runtime-files";
 import {
   definePluginEntry,
   type AnyAgentTool,
-  type OpenClawPluginToolContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+  type NovaPluginToolContext,
+} from "nova/plugin-sdk/plugin-entry";
 import type {
   OpenKeyedStoreOptions,
   PluginStateLeaseRunner,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import type { TSchema } from "typebox";
 import { configureMemoryCoreDreamingState } from "./src/dreaming-state.js";
 import { registerShortTermPromotionDreaming } from "./src/dreaming.js";
@@ -28,13 +28,13 @@ import { buildPromptSection } from "./src/prompt-section.js";
 type MemoryToolsModule = typeof import("./src/tools.js");
 
 type MemoryToolOptions = {
-  config?: OpenClawConfig;
-  getConfig?: () => OpenClawConfig | undefined;
+  config?: NovaConfig;
+  getConfig?: () => NovaConfig | undefined;
   agentId?: string;
   agentSessionKey?: string;
   sandboxed?: boolean;
   oneShotCliRun?: boolean;
-  conversationRecall?: OpenClawPluginToolContext["conversationRecall"];
+  conversationRecall?: NovaPluginToolContext["conversationRecall"];
   acquireLocalService?: MemoryCoreAcquireLocalService;
   withLease?: PluginStateLeaseRunner;
 };
@@ -45,7 +45,7 @@ const loadRuntimeProviderModule = createLazyRuntimeModule(
   () => import("./src/runtime-provider.js"),
 );
 
-function getToolConfig(options: MemoryToolOptions): OpenClawConfig | undefined {
+function getToolConfig(options: MemoryToolOptions): NovaConfig | undefined {
   return options.getConfig?.() ?? options.config;
 }
 
@@ -148,7 +148,7 @@ function createLazyMemoryGetTool(options: MemoryToolOptions): AnyAgentTool | nul
 }
 
 function resolveMemoryToolOptions(
-  ctx: OpenClawPluginToolContext,
+  ctx: NovaPluginToolContext,
   host: MemoryCoreRuntimeHost,
 ): MemoryToolOptions {
   const getConfig = () => ctx.getRuntimeConfig?.() ?? ctx.runtimeConfig ?? ctx.config;

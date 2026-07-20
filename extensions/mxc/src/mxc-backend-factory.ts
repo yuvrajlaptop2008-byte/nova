@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import type { CreateSandboxBackendParams, SandboxBackendHandle } from "openclaw/plugin-sdk/sandbox";
+import type { CreateSandboxBackendParams, SandboxBackendHandle } from "nova/plugin-sdk/sandbox";
 import type { MxcConfig } from "./config.js";
 import { createMxcSandboxBackendHandle } from "./mxc-backend.js";
 
@@ -10,7 +10,7 @@ function sanitizeRuntimeId(value: string): string {
     .replace(/^-+|-+$/g, "")
     .slice(0, 48);
   const hash = createHash("sha256").update(value).digest("hex").slice(0, 8);
-  return `openclaw-mxc-${slug || "sandbox"}-${hash}`;
+  return `nova-mxc-${slug || "sandbox"}-${hash}`;
 }
 
 /** Factory function called by Nova when sandbox.backend=mxc. */

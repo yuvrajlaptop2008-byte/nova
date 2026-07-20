@@ -3,7 +3,7 @@
  * Exercises provider-family fallbacks, plugin replay hooks, and policy caching.
  */
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ProviderRuntimeModel } from "../plugins/provider-runtime-model.types.js";
 
 vi.mock("../plugins/provider-hook-runtime.js", async () => {
@@ -260,7 +260,7 @@ describe("resolveTranscriptPolicy", () => {
   });
 
   it("memoizes replay policy resolution for the same config and process env", () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
 
     const firstPolicy = resolveTranscriptPolicy({
       provider: "mistral",
@@ -279,7 +279,7 @@ describe("resolveTranscriptPolicy", () => {
   });
 
   it("does not reuse cached replay policies across custom env objects", () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const strictEnv = {
       ...process.env,
       NOVA_TEST_TRANSCRIPT_POLICY: "strict",
@@ -488,7 +488,7 @@ describe("resolveTranscriptPolicy", () => {
   });
 
   it("does not reuse cached unowned Anthropic policies across reasoning compat changes", () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const model = {
       id: "moonshotai/kimi-k2.5",
       name: "Kimi K2.5",
@@ -522,7 +522,7 @@ describe("resolveTranscriptPolicy", () => {
   });
 
   it("does not reuse cached OpenAI-compatible policies across reasoning metadata changes", () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
 
     const defaultPolicy = resolveTranscriptPolicy({
       config,

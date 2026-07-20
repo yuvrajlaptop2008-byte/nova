@@ -1,17 +1,17 @@
 // Qqbot tests cover active cfg plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it, vi } from "vitest";
 import { createActiveCfgProvider } from "./active-cfg.js";
 
-const getRuntimeConfigMock = vi.hoisted(() => vi.fn<() => OpenClawConfig>());
+const getRuntimeConfigMock = vi.hoisted(() => vi.fn<() => NovaConfig>());
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", () => ({
+vi.mock("nova/plugin-sdk/runtime-config-snapshot", () => ({
   getRuntimeConfig: getRuntimeConfigMock,
 }));
 
-function asCfg(shape: { bindings: Array<{ id: string }> }): OpenClawConfig {
-  return shape as unknown as OpenClawConfig;
+function asCfg(shape: { bindings: Array<{ id: string }> }): NovaConfig {
+  return shape as unknown as NovaConfig;
 }
 
 describe("createActiveCfgProvider", () => {
@@ -19,10 +19,7 @@ describe("createActiveCfgProvider", () => {
     const fallback = asCfg({ bindings: [] });
     const first = asCfg({ bindings: [{ id: "first" }] });
     const second = asCfg({ bindings: [{ id: "second" }] });
-    const load = vi
-      .fn<() => OpenClawConfig>()
-      .mockReturnValueOnce(first)
-      .mockReturnValueOnce(second);
+    const load = vi.fn<() => NovaConfig>().mockReturnValueOnce(first).mockReturnValueOnce(second);
 
     const provider = createActiveCfgProvider({ fallback, load });
 
@@ -33,7 +30,7 @@ describe("createActiveCfgProvider", () => {
 
   it("never caches a previously loaded value", () => {
     const fallback = asCfg({ bindings: [] });
-    const calls: OpenClawConfig[] = [
+    const calls: NovaConfig[] = [
       asCfg({ bindings: [{ id: "a" }] }),
       asCfg({ bindings: [{ id: "b" }] }),
       asCfg({ bindings: [{ id: "c" }] }),

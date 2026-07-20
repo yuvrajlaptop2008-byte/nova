@@ -4,14 +4,14 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import {
   resolveSessionTranscriptsDirForAgent,
-  type OpenClawConfig,
+  type NovaConfig,
   type ResolvedMemorySearchConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+} from "nova/plugin-sdk/memory-core-host-engine-foundation";
 import {
   ensureMemoryIndexSchema,
   requireNodeSqlite,
   type MemorySource,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
+} from "nova/plugin-sdk/memory-core-host-engine-storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { buildSessionEntryMock } = vi.hoisted(() => ({
@@ -20,7 +20,7 @@ const { buildSessionEntryMock } = vi.hoisted(() => ({
 const originalSyncYieldStateDir = process.env.NOVA_STATE_DIR;
 
 function setSyncYieldStateDir(): void {
-  Reflect.set(process.env, "NOVA_STATE_DIR", path.join(os.tmpdir(), "openclaw-session-sync-yield"));
+  Reflect.set(process.env, "NOVA_STATE_DIR", path.join(os.tmpdir(), "nova-session-sync-yield"));
 }
 
 function restoreSyncYieldStateDir(): void {
@@ -44,9 +44,9 @@ vi.mock("undici", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/memory-core-host-engine-qmd", async (importOriginal) => {
+vi.mock("nova/plugin-sdk/memory-core-host-engine-qmd", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/memory-core-host-engine-qmd")>();
+    await importOriginal<typeof import("nova/plugin-sdk/memory-core-host-engine-qmd")>();
   const basename = (filePath: string) => filePath.split(/[\\/]/).pop() ?? filePath;
   return {
     ...actual,
@@ -100,9 +100,9 @@ function createDbMock(): DatabaseSync {
 }
 
 class SessionSyncYieldHarness extends MemoryManagerSyncOps {
-  protected readonly cfg = {} as OpenClawConfig;
+  protected readonly cfg = {} as NovaConfig;
   protected readonly agentId = "main";
-  protected readonly workspaceDir = "/tmp/openclaw-test-workspace";
+  protected readonly workspaceDir = "/tmp/nova-test-workspace";
   protected readonly settings = {
     sync: {
       sessions: {

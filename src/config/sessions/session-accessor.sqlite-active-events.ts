@@ -7,11 +7,8 @@ import {
   getNodeSqliteKysely,
 } from "../../infra/kysely-sync.js";
 import { runSqliteDeferredTransactionSync } from "../../infra/sqlite-transaction.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../../state/openclaw-agent-db.generated.js";
-import {
-  openOpenClawAgentDatabase,
-  type OpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
+import type { DB as NovaAgentKyselyDatabase } from "../../state/nova-agent-db.generated.js";
+import { openNovaAgentDatabase, type NovaAgentDatabase } from "../../state/nova-agent-db.js";
 import type {
   SessionTranscriptVisibleMessageDeltaLimits,
   SessionTranscriptVisibleMessageDeltaResult,
@@ -26,7 +23,7 @@ import type { SessionTranscriptProjectionState } from "./session-transcript-inde
 import { startSessionTranscriptIndexReconcile } from "./session-transcript-reconcile.js";
 
 type ActiveTranscriptDatabase = Pick<
-  OpenClawAgentKyselyDatabase,
+  NovaAgentKyselyDatabase,
   | "session_transcript_active_events"
   | "session_transcript_generations"
   | "session_transcript_index_state"
@@ -79,7 +76,7 @@ export function isSessionTranscriptProjectionUnavailableError(
 }
 
 type CurrentProjection = {
-  database: OpenClawAgentDatabase;
+  database: NovaAgentDatabase;
   resolved: ReturnType<typeof resolveSqliteTranscriptReadScope>;
   state: SessionTranscriptProjectionState;
 };
@@ -92,7 +89,7 @@ const EMPTY_PROJECTION_STATE: SessionTranscriptProjectionState = {
   needsRebuild: false,
 };
 
-function getActiveTranscriptKysely(database: OpenClawAgentDatabase) {
+function getActiveTranscriptKysely(database: NovaAgentDatabase) {
   return getNodeSqliteKysely<ActiveTranscriptDatabase>(database.db);
 }
 
@@ -157,7 +154,7 @@ function bootstrapVisibleMessageCursor(
 }
 
 function readProjectionSnapshot(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): { latestSeq: number; state?: SessionTranscriptProjectionState } | undefined {
   const row = executeSqliteQueryTakeFirstSync(
@@ -202,7 +199,7 @@ function withCurrentProjectionSnapshot<T>(
 ): T {
   const resolved = resolveSqliteTranscriptReadScope(scope);
   const databaseOptions = toDatabaseOptions(resolved);
-  const database = openOpenClawAgentDatabase(databaseOptions);
+  const database = openNovaAgentDatabase(databaseOptions);
   const result = runSqliteDeferredTransactionSync(
     database.db,
     () => {

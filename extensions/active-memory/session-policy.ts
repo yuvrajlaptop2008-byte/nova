@@ -1,13 +1,13 @@
 import crypto from "node:crypto";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveRememberAcrossConversations } from "openclaw/plugin-sdk/memory-core-host-runtime-core";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolveRememberAcrossConversations } from "nova/plugin-sdk/memory-core-host-runtime-core";
 import {
   normalizePluginsConfig,
   resolvePluginConfigObject,
-} from "openclaw/plugin-sdk/plugin-config-runtime";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { parseAgentSessionKey, parseThreadSessionSuffix } from "openclaw/plugin-sdk/routing";
-import { asOptionalRecord as asRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/plugin-config-runtime";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import { parseAgentSessionKey, parseThreadSessionSuffix } from "nova/plugin-sdk/routing";
+import { asOptionalRecord as asRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveCanonicalSessionKeyFromSessionId } from "./session.js";
 import {
   DEFAULT_AGENT_ID,
@@ -20,7 +20,7 @@ function activeMemoryToggleKey(sessionKey: string): string {
   return crypto.createHash("sha256").update(sessionKey, "utf8").digest("hex");
 }
 
-function openActiveMemoryToggleStore(api: OpenClawPluginApi) {
+function openActiveMemoryToggleStore(api: NovaPluginApi) {
   return api.runtime.state.openKeyedStore<ActiveMemoryToggleEntry>({
     namespace: "session-toggles",
     maxEntries: 10_000,
@@ -28,7 +28,7 @@ function openActiveMemoryToggleStore(api: OpenClawPluginApi) {
 }
 
 async function isSessionActiveMemoryDisabled(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   sessionKey?: string;
 }): Promise<boolean> {
   const sessionKey = params.sessionKey?.trim();
@@ -52,7 +52,7 @@ async function isSessionActiveMemoryDisabled(params: {
 }
 
 async function setSessionActiveMemoryDisabled(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   sessionKey: string;
   disabled: boolean;
 }): Promise<void> {
@@ -69,7 +69,7 @@ async function setSessionActiveMemoryDisabled(params: {
 }
 
 function resolveCommandSessionKey(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   config: ResolvedActiveRecallPluginConfig;
   sessionKey?: string;
   sessionId?: string;
@@ -107,7 +107,7 @@ function formatActiveMemoryCommandHelp(): string {
   ].join("\n");
 }
 
-function isActiveMemoryGloballyEnabled(cfg: OpenClawConfig): boolean {
+function isActiveMemoryGloballyEnabled(cfg: NovaConfig): boolean {
   const entry = asRecord(cfg.plugins?.entries?.["active-memory"]);
   if (entry?.enabled === false) {
     return false;
@@ -116,7 +116,7 @@ function isActiveMemoryGloballyEnabled(cfg: OpenClawConfig): boolean {
   return pluginConfig?.enabled !== false;
 }
 
-function isActiveMemoryPluginEnabled(cfg: OpenClawConfig): boolean {
+function isActiveMemoryPluginEnabled(cfg: NovaConfig): boolean {
   const plugins = normalizePluginsConfig(cfg.plugins);
   if (!plugins.enabled || plugins.deny.includes("active-memory")) {
     return false;
@@ -127,20 +127,17 @@ function isActiveMemoryPluginEnabled(cfg: OpenClawConfig): boolean {
   return plugins.entries["active-memory"]?.enabled !== false;
 }
 
-function hasRememberAcrossConversationsAgent(cfg: OpenClawConfig): boolean {
+function hasRememberAcrossConversationsAgent(cfg: NovaConfig): boolean {
   const configuredAgentIds = cfg.agents?.list?.map((agent) => agent.id) ?? [];
   const agentIds = configuredAgentIds.length > 0 ? configuredAgentIds : ["main"];
   return agentIds.some((agentId) => resolveRememberAcrossConversations(cfg, agentId));
 }
 
-function shouldRememberAcrossConversations(cfg: OpenClawConfig, agentId: string): boolean {
+function shouldRememberAcrossConversations(cfg: NovaConfig, agentId: string): boolean {
   return resolveRememberAcrossConversations(cfg, agentId);
 }
 
-function updateActiveMemoryGlobalEnabledInConfig(
-  cfg: OpenClawConfig,
-  enabled: boolean,
-): OpenClawConfig {
+function updateActiveMemoryGlobalEnabledInConfig(cfg: NovaConfig, enabled: boolean): NovaConfig {
   const entries = { ...cfg.plugins?.entries };
   const existingEntry = asRecord(entries["active-memory"]) ?? {};
   const existingConfig = asRecord(existingEntry.config) ?? {};
@@ -195,7 +192,7 @@ function isAgentHarnessSessionKey(sessionKey: string): boolean {
 }
 
 function shouldSkipActiveMemoryForHarnessSession(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   agentId?: string;
   sessionKey?: string;
 }): boolean {

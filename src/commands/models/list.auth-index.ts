@@ -1,12 +1,12 @@
 import type { AuthProfileStore } from "../../agents/auth-profiles/types.js";
-/** Auth availability index for `openclaw models list` rows. */
+/** Auth availability index for `nova models list` rows. */
 import {
   createModelAuthAvailabilityResolver,
   type ModelAuthAvailabilityEvaluation,
   type ModelAuthAvailabilityRef,
 } from "../../agents/model-auth-availability.js";
 import type { createOpenAIModelRoutesResolver } from "../../agents/openai-model-routes.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PluginMetadataSnapshot } from "../../plugins/plugin-metadata-snapshot.types.js";
 import { loadPluginRegistrySnapshotWithMetadata } from "../../plugins/plugin-registry.js";
 
@@ -18,7 +18,7 @@ export type ModelListAuthIndex = {
 };
 
 type CreateModelListAuthIndexParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   authStore: AuthProfileStore;
   agentDir?: string;
   workspaceDir?: string;
@@ -30,7 +30,7 @@ type CreateModelListAuthIndexParams = {
 };
 
 function listValidatedSyntheticAuthProviderRefs(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   metadataSnapshot?: PluginMetadataSnapshot;

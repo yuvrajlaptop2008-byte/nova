@@ -1,5 +1,5 @@
 // Qqbot tests cover group-allways command plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { QueuedMessage } from "../../gateway/message-queue.js";
 import type { GatewayAccount } from "../../gateway/types.js";
@@ -25,7 +25,7 @@ type WrittenQQBotConfigWithAllways = {
 type RunCommandParams = {
   account?: GatewayAccount;
   arg?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 };
 
 const queueSnapshot = {
@@ -59,7 +59,7 @@ function createAccount(accountId = "default", overrides?: Record<string, unknown
   };
 }
 
-function createConfig(qqbot: NonNullable<OpenClawConfig["channels"]>["qqbot"]): OpenClawConfig {
+function createConfig(qqbot: NonNullable<NovaConfig["channels"]>["qqbot"]): NovaConfig {
   return {
     commands: {
       allowFrom: { qqbot: ["TRUSTED_OPENID"] },
@@ -69,7 +69,7 @@ function createConfig(qqbot: NonNullable<OpenClawConfig["channels"]>["qqbot"]): 
 }
 
 function getAllwaysConfig(
-  write: OpenClawConfig | undefined,
+  write: NovaConfig | undefined,
 ): WrittenQQBotConfigWithAllways | undefined {
   return write?.channels?.qqbot as WrittenQQBotConfigWithAllways | undefined;
 }
@@ -79,7 +79,7 @@ async function runGroupAllwaysCommand({
   arg = "",
   config = createConfig({ allowFrom: ["*"], defaultRequireMention: true }),
 }: RunCommandParams = {}) {
-  const writes: OpenClawConfig[] = [];
+  const writes: NovaConfig[] = [];
   installCommandRuntime(config, writes);
 
   const result = await trySlashCommand(createGroupAllwaysMessage(arg), {

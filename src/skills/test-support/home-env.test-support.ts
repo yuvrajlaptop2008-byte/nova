@@ -6,14 +6,14 @@ import { deleteTestEnvValue, setTestEnvValue } from "../../test-utils/env.js";
 /** Process home env snapshot used by skill loader tests. */
 export type SkillsHomeEnvSnapshot = {
   previousHome: string | undefined;
-  previousOpenClawHome: string | undefined;
+  previousNovaHome: string | undefined;
   previousUserProfile: string | undefined;
 };
 
 export function setMockSkillsHomeEnv(fakeHome: string): SkillsHomeEnvSnapshot {
   const snapshot: SkillsHomeEnvSnapshot = {
     previousHome: process.env.HOME,
-    previousOpenClawHome: process.env.NOVA_HOME,
+    previousNovaHome: process.env.NOVA_HOME,
     previousUserProfile: process.env.USERPROFILE,
   };
   setTestEnvValue("HOME", fakeHome);
@@ -37,7 +37,7 @@ export async function restoreMockSkillsHomeEnv(
 ) {
   vi.restoreAllMocks();
   restoreEnvValue("HOME", snapshot.previousHome);
-  restoreEnvValue("NOVA_HOME", snapshot.previousOpenClawHome);
+  restoreEnvValue("NOVA_HOME", snapshot.previousNovaHome);
   restoreEnvValue("USERPROFILE", snapshot.previousUserProfile);
   await cleanup?.();
 }

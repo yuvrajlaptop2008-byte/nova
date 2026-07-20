@@ -126,8 +126,8 @@ const RETRY_GUARD_MODEL_APIS = new Set([
   "openai-responses",
   "openai-chatgpt-responses",
   "azure-openai-responses",
-  "openclaw-openai-responses-transport",
-  "openclaw-azure-openai-responses-transport",
+  "nova-openai-responses-transport",
+  "nova-azure-openai-responses-transport",
 ]);
 // Allow one immediate continuation plus one follow-up continuation before
 // surfacing the existing incomplete-turn error path.

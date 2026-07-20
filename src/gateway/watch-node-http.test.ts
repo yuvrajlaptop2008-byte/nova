@@ -6,7 +6,7 @@ import {
   GATEWAY_CLIENT_MODES,
 } from "../../packages/gateway-protocol/src/client-info.js";
 import { PROTOCOL_VERSION, type ConnectParams } from "../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { issueDeviceBootstrapToken } from "../infra/device-bootstrap.js";
 import {
   loadOrCreateDeviceIdentity,
@@ -99,7 +99,7 @@ async function startRuntime(
   options?: {
     rateLimiter?: AuthRateLimiter;
     abortConnectResponse?: boolean;
-    config?: OpenClawConfig;
+    config?: NovaConfig;
   },
 ) {
   const nodeRegistry = new NodeRegistry();
@@ -173,7 +173,7 @@ async function waitForLastConnectedMetadata(baseDir: string, nodeId: string): Pr
 
 describe("watch node HTTP transport", () => {
   it("rejects capabilities and identities outside the bounded watch surface", async () => {
-    const baseDir = await tempDirs.make("openclaw-watch-node-surface-");
+    const baseDir = await tempDirs.make("nova-watch-node-surface-");
     const identity = loadOrCreateDeviceIdentity({
       path: path.join(baseDir, "watch-identity.sqlite"),
     });
@@ -232,7 +232,7 @@ describe("watch node HTTP transport", () => {
   });
 
   it("accepts a supported notification permission set to false", async () => {
-    const baseDir = await tempDirs.make("openclaw-watch-node-permissions-");
+    const baseDir = await tempDirs.make("nova-watch-node-permissions-");
     const identity = loadOrCreateDeviceIdentity({
       path: path.join(baseDir, "watch-identity.sqlite"),
     });
@@ -261,7 +261,7 @@ describe("watch node HTTP transport", () => {
   });
 
   it("does not let attacker challenges evict another client nonce", async () => {
-    const baseDir = await tempDirs.make("openclaw-watch-node-challenge-eviction-");
+    const baseDir = await tempDirs.make("nova-watch-node-challenge-eviction-");
     const identity = loadOrCreateDeviceIdentity({
       path: path.join(baseDir, "watch-identity.sqlite"),
     });
@@ -300,7 +300,7 @@ describe("watch node HTTP transport", () => {
   });
 
   it("requires an authenticated disconnect and emits one lifecycle teardown", async () => {
-    const baseDir = await tempDirs.make("openclaw-watch-node-disconnect-");
+    const baseDir = await tempDirs.make("nova-watch-node-disconnect-");
     const identity = loadOrCreateDeviceIdentity({
       path: path.join(baseDir, "watch-identity.sqlite"),
     });
@@ -360,7 +360,7 @@ describe("watch node HTTP transport", () => {
   });
 
   it("rejects empty shadow credentials without consuming the challenge", async () => {
-    const baseDir = await tempDirs.make("openclaw-watch-node-auth-fields-");
+    const baseDir = await tempDirs.make("nova-watch-node-auth-fields-");
     const identity = loadOrCreateDeviceIdentity({
       path: path.join(baseDir, "watch-identity.sqlite"),
     });
@@ -406,7 +406,7 @@ describe("watch node HTTP transport", () => {
       pruneIntervalMs: 0,
     };
 
-    const abortedBaseDir = await tempDirs.make("openclaw-watch-node-aborted-connect-");
+    const abortedBaseDir = await tempDirs.make("nova-watch-node-aborted-connect-");
     const abortedIdentity = loadOrCreateDeviceIdentity({
       path: path.join(abortedBaseDir, "watch-identity.sqlite"),
     });
@@ -442,7 +442,7 @@ describe("watch node HTTP transport", () => {
       abortedLimiter.dispose();
     }
 
-    const completedBaseDir = await tempDirs.make("openclaw-watch-node-completed-connect-");
+    const completedBaseDir = await tempDirs.make("nova-watch-node-completed-connect-");
     const completedIdentity = loadOrCreateDeviceIdentity({
       path: path.join(completedBaseDir, "watch-identity.sqlite"),
     });
@@ -480,7 +480,7 @@ describe("watch node HTTP transport", () => {
   });
 
   it("bootstraps, registers, polls an invoke, and accepts its result", async () => {
-    const baseDir = await tempDirs.make("openclaw-watch-node-http-");
+    const baseDir = await tempDirs.make("nova-watch-node-http-");
     const identity = loadOrCreateDeviceIdentity({
       path: path.join(baseDir, "watch-identity.sqlite"),
     });

@@ -9,7 +9,7 @@ import {
   hasConfiguredSecretInput,
   setSetupChannelEnabled,
   type ChannelSetupWizard,
-} from "openclaw/plugin-sdk/setup";
+} from "nova/plugin-sdk/setup";
 import { listClickClackAccountIds, resolveClickClackAccount } from "./accounts.js";
 import {
   applyClickClackCredentialConfig,

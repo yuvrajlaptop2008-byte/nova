@@ -3,7 +3,7 @@ import {
   normalizeStringEntries,
   sortUniqueStrings,
 } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveEnabledBundledManifestContractPlugins } from "./bundled-manifest-contract-plugins.js";
 import { loadBundledDocumentExtractorEntriesFromDir } from "./document-extractor-public-artifacts.js";
 import type { PluginDocumentExtractorEntry } from "./document-extractor-types.js";
@@ -22,7 +22,7 @@ function compareExtractors(
 }
 
 function resolveExplicitAllowedDocumentExtractorPluginIds(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   onlyPluginIds?: readonly string[];
 }): string[] | null {
   const allow = params.config?.plugins?.allow;
@@ -42,7 +42,7 @@ function resolveExplicitAllowedDocumentExtractorPluginIds(params: {
 
 /** Returns enabled document extractors in deterministic auto-detect order. */
 export function resolvePluginDocumentExtractors(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   onlyPluginIds?: readonly string[];

@@ -1,10 +1,7 @@
 // Whatsapp tests cover channel outbound plugin behavior.
-import type {
-  ExecApprovalRequest,
-  PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { MessagePresentationAction } from "openclaw/plugin-sdk/interactive-runtime";
+import type { ExecApprovalRequest, PluginApprovalRequest } from "nova/plugin-sdk/approval-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { MessagePresentationAction } from "nova/plugin-sdk/interactive-runtime";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { whatsappApprovalCapability } from "./approval-native.js";
 import { cacheInboundMessageMeta } from "./quoted-message.js";
@@ -92,7 +89,7 @@ describe("whatsappChannelOutbound", () => {
             targets: [{ channel: "whatsapp", to: "configured-target" }],
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const target = {
         channel: "whatsapp",
         to: "configured-target",
@@ -203,7 +200,7 @@ describe("whatsappChannelOutbound", () => {
           targets: [{ channel: "whatsapp", to: "configured-target" }],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const payload = whatsappApprovalCapability.render?.exec?.buildPendingPayload?.({
       cfg,
       request: {
@@ -303,7 +300,7 @@ describe("whatsappChannelOutbound", () => {
           targets: [{ channel: "whatsapp", to: "configured-target" }],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const payload = whatsappApprovalCapability.render?.exec?.buildPendingPayload?.({
       cfg,
       request: {

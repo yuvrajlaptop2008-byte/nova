@@ -1,12 +1,12 @@
-# OpenClaw DeepInfra Provider
+# Nova DeepInfra Provider
 
-Official OpenClaw provider plugin for DeepInfra.
+Official Nova provider plugin for DeepInfra.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/deepinfra-provider
-openclaw gateway restart
+nova plugins install @nova/deepinfra-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/deepinfra> for setup and configuration.
+See <https://docs.nova.ai/providers/deepinfra> for setup and configuration.

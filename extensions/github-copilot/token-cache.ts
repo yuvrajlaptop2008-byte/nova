@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
-import { asDateTimestampMs } from "openclaw/plugin-sdk/number-runtime";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { COPILOT_INTEGRATION_ID } from "openclaw/plugin-sdk/provider-auth";
+import { asDateTimestampMs } from "nova/plugin-sdk/number-runtime";
+import type { PluginStateSyncKeyedStore } from "nova/plugin-sdk/plugin-state-runtime";
+import { COPILOT_INTEGRATION_ID } from "nova/plugin-sdk/provider-auth";
 import { PUBLIC_GITHUB_COPILOT_DOMAIN } from "./domain.js";
 
 export const COPILOT_TOKEN_CACHE_NAMESPACE = "token";

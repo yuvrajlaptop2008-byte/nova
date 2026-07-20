@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   ChromeMcpDocumentUnavailableError,
@@ -90,7 +90,7 @@ function createFakeSession(): ChromeMcpSession {
       const pageLines = [
         "## Pages",
         `1: ${currentUrl} [selected]`,
-        "2: https://github.com/openclaw/openclaw/pull/45318",
+        "2: https://github.com/nova/nova/pull/45318",
       ];
       if (createdPageOpen) {
         pageLines.push(`3: ${currentUrl}`);
@@ -114,7 +114,7 @@ function createFakeSession(): ChromeMcpSession {
             text: [
               "## Pages",
               "1: https://developer.chrome.com/blog/chrome-devtools-mcp-debug-your-browser-session",
-              "2: https://github.com/openclaw/openclaw/pull/45318",
+              "2: https://github.com/nova/nova/pull/45318",
               `3: ${currentUrl} [selected]`,
             ].join("\n"),
           },
@@ -373,7 +373,7 @@ describe("chrome MCP page parsing", () => {
       {
         targetId: FAKE_TARGET_2,
         title: "",
-        url: "https://github.com/openclaw/openclaw/pull/45318",
+        url: "https://github.com/nova/nova/pull/45318",
         type: "page",
       },
     ]);
@@ -1467,8 +1467,8 @@ describe("chrome MCP page parsing", () => {
     const user = "browser-user";
     const password = "browser-password-1234567890"; // pragma: allowlist secret
     const cdpUrl = `wss://${user}:${password}@browserless.example/chrome?token=${secretToken}`;
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-chrome-mcp-test-"));
-    const configPath = path.join(tempDir, "openclaw.json");
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-chrome-mcp-test-"));
+    const configPath = path.join(tempDir, "nova.json");
     await fs.writeFile(configPath, JSON.stringify({ logging: { redactSensitive: "off" } }));
     vi.stubEnv("NOVA_CONFIG_PATH", configPath);
     const fakeMcpCommand = path.join(tempDir, "fake-mcp.mjs");
@@ -1518,7 +1518,7 @@ describe("chrome MCP page parsing", () => {
   });
 
   it("redacts home-relative user data dirs from attach failures", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-chrome-mcp-test-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-chrome-mcp-test-"));
     const homeDir = os.homedir();
     const userDataDir = path.join(
       homeDir,

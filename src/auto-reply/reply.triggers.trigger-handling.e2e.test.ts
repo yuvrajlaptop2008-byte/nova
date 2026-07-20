@@ -66,7 +66,7 @@ vi.mock("./reply/agent-runner.runtime.js", () => ({
         return "⚠️ Context overflow — prompt too large for this model. Try a shorter message or a larger-context model.";
       }
       const trimmed = message.replace(/\.\s*$/, "");
-      return `⚠️ Agent failed before reply: ${trimmed}.\nLogs: openclaw logs --follow`;
+      return `⚠️ Agent failed before reply: ${trimmed}.\nLogs: nova logs --follow`;
     };
     const stripHeartbeat = (text?: string) => {
       const trimmed = text?.trim();
@@ -361,8 +361,7 @@ describe("trigger handling", () => {
   for (const testCase of [
     {
       error: "sandbox is not defined.",
-      expected:
-        "⚠️ Agent failed before reply: sandbox is not defined.\nLogs: openclaw logs --follow",
+      expected: "⚠️ Agent failed before reply: sandbox is not defined.\nLogs: nova logs --follow",
     },
     {
       error: "Context window exceeded",
@@ -410,7 +409,7 @@ describe("trigger handling", () => {
 
   it("acknowledges bare /new without invoking the model or loading startup memory", async () => {
     await withTempHome(async (home) => {
-      const workspaceDir = join(home, "openclaw");
+      const workspaceDir = join(home, "nova");
       const nowMs = Date.now();
       const todayStamp = formatDateStampForZone(nowMs, TEST_TIME_ZONE);
       const yesterdayStamp = formatDateStampForZone(nowMs - 24 * 60 * 60 * 1000, TEST_TIME_ZONE);
@@ -432,7 +431,7 @@ describe("trigger handling", () => {
 
   it("acknowledges normalized bare /RESET without invoking the model", async () => {
     await withTempHome(async (home) => {
-      const workspaceDir = join(home, "openclaw");
+      const workspaceDir = join(home, "nova");
       const nowMs = Date.now();
       const todayStamp = formatDateStampForZone(nowMs, TEST_TIME_ZONE);
       await writeDailyMemoryNotes(workspaceDir, [
@@ -775,7 +774,7 @@ describe("trigger handling", () => {
       const runEmbeddedAgentMock = getRunEmbeddedAgentMock();
       runEmbeddedAgentMock.mockReset();
       const storePath = requireSessionStorePath(cfg);
-      const authDir = join(home, ".openclaw", "agents", "main", "agent");
+      const authDir = join(home, ".nova", "agents", "main", "agent");
       saveAuthProfileStore(
         {
           version: 1,

@@ -328,9 +328,9 @@ function writeSyntheticWorkspace(workspaceDir, fileCount) {
  * Writes isolated Nova config for the synthetic memory workspace.
  */
 export function writeConfig({ homeDir, workspaceDir, port, token }) {
-  const configDir = path.join(homeDir, ".openclaw");
+  const configDir = path.join(homeDir, ".nova");
   fs.mkdirSync(configDir, { recursive: true });
-  const configPath = path.join(configDir, "openclaw.json");
+  const configPath = path.join(configDir, "nova.json");
   const config = {
     agents: {
       defaults: {
@@ -778,7 +778,7 @@ async function main() {
     throw new Error("lsof is required for memory FD repro instrumentation");
   }
 
-  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-memory-fd-repro-"));
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-memory-fd-repro-"));
   const homeDir = path.join(rootDir, "home");
   const workspaceDir = path.join(rootDir, "workspace");
   fs.mkdirSync(options.outputDir, { recursive: true });
@@ -794,7 +794,7 @@ async function main() {
     ...process.env,
     ...SKIP_GATEWAY_ENV,
     HOME: homeDir,
-    NOVA_STATE_DIR: path.join(homeDir, ".openclaw"),
+    NOVA_STATE_DIR: path.join(homeDir, ".nova"),
     NOVA_CONFIG_PATH: configPath,
     NOVA_GATEWAY_TOKEN: token,
   };

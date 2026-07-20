@@ -699,7 +699,7 @@ export function renderExpandedToolCardContent(
   const sidebarAction = canOpenSidebar
     ? html`
         <div class="chat-tool-card__actions">
-          <openclaw-tooltip content=${t("chat.toolCards.openDetails")}>
+          <nova-tooltip content=${t("chat.toolCards.openDetails")}>
             <button
               class="chat-tool-card__action-btn"
               type="button"
@@ -708,7 +708,7 @@ export function renderExpandedToolCardContent(
             >
               <span class="chat-tool-card__action-icon">${icons.panelRightOpen}</span>
             </button>
-          </openclaw-tooltip>
+          </nova-tooltip>
         </div>
       `
     : nothing;

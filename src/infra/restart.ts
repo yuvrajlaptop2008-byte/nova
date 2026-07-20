@@ -228,8 +228,8 @@ function emitGatewayRestart(reasonOverride?: string, intent?: GatewayRestartInte
       process.emit("SIGUSR1");
     } else if (process.platform === "win32") {
       // On Windows with no SIGUSR1 listener, fall back to task-scheduler handoff.
-      // triggerOpenClawRestart() uses schtasks to restart the gateway.
-      const result = triggerOpenClawRestart();
+      // triggerNovaRestart() uses schtasks to restart the gateway.
+      const result = triggerNovaRestart();
       if (!result.ok) {
         // Roll back the cycle marker so future restart requests can still proceed.
         rollBackGatewayRestartEmission();
@@ -862,7 +862,7 @@ function normalizeSystemdUnit(raw?: string, profile?: string): string {
   return unit.endsWith(".service") ? unit : `${unit}.service`;
 }
 
-export function triggerOpenClawRestart(): RestartAttempt {
+export function triggerNovaRestart(): RestartAttempt {
   if (process.env.VITEST || process.env.NODE_ENV === "test") {
     return { ok: true, method: "supervisor", detail: "test mode" };
   }

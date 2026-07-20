@@ -14,12 +14,9 @@ import {
   resolveSessionTranscriptRuntimeTarget,
   upsertSessionEntry,
 } from "../../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { onSessionTranscriptUpdate } from "../../sessions/transcript-events.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../../state/nova-state-db.js";
 import type { WorkerConnectionIdentity } from "./connection-identity.js";
 import {
   createWorkerTranscriptCommitStore,
@@ -144,13 +141,13 @@ describe("worker transcript commit application", () => {
   let sessionsDir: string;
   let storePath: string;
   let sessionFile: string;
-  let cfg: OpenClawConfig;
+  let cfg: NovaConfig;
   let committer: WorkerTranscriptCommitter;
   let ledgerStore: WorkerTranscriptCommitStore;
   let unsubscribe: (() => void) | undefined;
 
   beforeEach(async () => {
-    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-worker-turn-"));
+    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "nova-worker-turn-"));
     sessionsDir = path.join(root, "agents", "main", "sessions");
     storePath = path.join(sessionsDir, "sessions.json");
     cfg = {
@@ -175,7 +172,7 @@ describe("worker transcript commit application", () => {
         storePath,
       })
     ).sessionFile;
-    const database = openOpenClawStateDatabase({
+    const database = openNovaStateDatabase({
       env: { NOVA_STATE_DIR: path.join(root, "state") },
     });
     ledgerStore = createWorkerTranscriptCommitStore({ database });
@@ -187,7 +184,7 @@ describe("worker transcript commit application", () => {
 
   afterEach(async () => {
     unsubscribe?.();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(root, { recursive: true, force: true });
   });
 

@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { redactMigrationPlan } from "openclaw/plugin-sdk/migration";
+import { redactMigrationPlan } from "nova/plugin-sdk/migration";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveHomePath } from "./helpers.js";
 import { buildMemoryItems } from "./memory.js";
@@ -41,7 +41,7 @@ describe("Claude migration provider", () => {
 
   it("resolves tilde source paths against the OS home when NOVA_HOME is set", () => {
     const previous = process.env.NOVA_HOME;
-    process.env.NOVA_HOME = path.join(path.sep, "tmp", "openclaw-home");
+    process.env.NOVA_HOME = path.join(path.sep, "tmp", "nova-home");
     try {
       expect(resolveHomePath("~/.claude")).toBe(path.join(os.homedir(), ".claude"));
     } finally {

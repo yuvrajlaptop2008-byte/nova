@@ -2,8 +2,8 @@
  * Opt-in CLI-backend dispatch for one-shot embedded runs.
  *
  * Embedded runs targeting a CLI runtime provider normally fall through to the
- * openclaw harness and call the provider API directly with that runtime's
- * credentials (`cli_runtime_passthrough_openclaw`). Anthropic routes direct
+ * nova harness and call the provider API directly with that runtime's
+ * credentials (`cli_runtime_passthrough_nova`). Anthropic routes direct
  * anthropic-messages calls on subscription OAuth tokens to metered "extra
  * usage" billing: without extra-usage balance the passthrough fails closed
  * with a billing error, and with it the run silently draws paid usage instead
@@ -14,7 +14,7 @@
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { onAgentEvent } from "../../infra/agent-events.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
-import { NOVA_MCP_TOOL_PREFIX, stripOpenClawMcpToolPrefix } from "../cli-runner/tool-policy.js";
+import { NOVA_MCP_TOOL_PREFIX, stripNovaMcpToolPrefix } from "../cli-runner/tool-policy.js";
 import { normalizeToolName } from "../tool-policy.js";
 import { isToolResultError } from "../tool-result-error.js";
 import { resolveEmbeddedCliBackendDispatchEligibility } from "./cli-backend-dispatch-eligibility.js";
@@ -140,7 +140,7 @@ async function runEmbeddedAgentViaCliBackend(
     if (!rawName) {
       return;
     }
-    const toolName = normalizeToolName(stripOpenClawMcpToolPrefix(rawName));
+    const toolName = normalizeToolName(stripNovaMcpToolPrefix(rawName));
     const toolCallId = typeof evt.data.toolCallId === "string" ? evt.data.toolCallId : undefined;
     if (phase === "start") {
       transcript.noteToolEvent({

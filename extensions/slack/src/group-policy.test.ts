@@ -1,5 +1,5 @@
 // Slack tests cover group policy plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { resolveSlackGroupRequireMention, resolveSlackGroupToolPolicy } from "./group-policy.js";
 
@@ -23,7 +23,7 @@ const cfg = {
       },
     },
   },
-} as OpenClawConfig;
+} as NovaConfig;
 
 describe("slack group policy", () => {
   it("uses matched channel requireMention and wildcard fallback", () => {
@@ -64,7 +64,7 @@ describe("slack group policy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(resolveSlackGroupRequireMention({ cfg: partialCfg, groupId: "partial" })).toBe(true);
     expect(resolveSlackGroupToolPolicy({ cfg: partialCfg, groupId: "partial" })).toBeUndefined();
@@ -84,7 +84,7 @@ describe("slack group policy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveSlackGroupToolPolicy({

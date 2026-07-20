@@ -1,10 +1,10 @@
 // Plugin validation and public errors wrap the host-owned SQLite lease engine.
 import { MAX_TIMER_TIMEOUT_MS } from "../shared/number-coercion.js";
 import {
-  OpenClawStateLeaseError,
-  type OpenClawStateLeaseErrorCode,
-  withOpenClawStateLease,
-} from "../state/openclaw-state-lease.js";
+  NovaStateLeaseError,
+  type NovaStateLeaseErrorCode,
+  withNovaStateLease,
+} from "../state/nova-state-lease.js";
 import {
   PluginStateLeaseError,
   type PluginStateLeaseContext,
@@ -98,7 +98,7 @@ function validateOptions(pluginId: string, options: PluginStateLeaseOptions) {
   };
 }
 
-function mapErrorCode(code: OpenClawStateLeaseErrorCode): PluginStateLeaseErrorCode {
+function mapErrorCode(code: NovaStateLeaseErrorCode): PluginStateLeaseErrorCode {
   switch (code) {
     case "NOVA_STATE_LEASE_INVALID_INPUT":
       return "PLUGIN_STATE_LEASE_INVALID_INPUT";
@@ -116,7 +116,7 @@ function mapErrorCode(code: OpenClawStateLeaseErrorCode): PluginStateLeaseErrorC
 }
 
 function mapLeaseError(error: unknown): unknown {
-  if (!(error instanceof OpenClawStateLeaseError)) {
+  if (!(error instanceof NovaStateLeaseError)) {
     return error;
   }
   return leaseError(mapErrorCode(error.code), error.message, error.cause);
@@ -147,7 +147,7 @@ export async function withPluginStateLease<T>(
 ): Promise<T> {
   const validated = validateOptions(pluginId, options);
   try {
-    return await withOpenClawStateLease(
+    return await withNovaStateLease(
       {
         ...validated,
         leaseLabel: "plugin lease",

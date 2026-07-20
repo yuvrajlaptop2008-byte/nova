@@ -2,11 +2,8 @@
 import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -14,7 +11,7 @@ import {
 } from "./kysely-sync.js";
 import type { LegacyStateDetection, MigrationMessages } from "./state-migrations.types.js";
 
-type TuiLastSessionMigrationDatabase = Pick<OpenClawStateKyselyDatabase, "tui_last_sessions">;
+type TuiLastSessionMigrationDatabase = Pick<NovaStateKyselyDatabase, "tui_last_sessions">;
 
 type LegacyTuiLastSession = {
   scopeKey: string;
@@ -220,7 +217,7 @@ export function migrateLegacyTuiLastSessions(params: {
   try {
     // No filesystem work belongs inside the synchronous SQLite commit section.
     assertLegacySourceUnchanged(params.detected.sourcePath, snapshot);
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const tuiDb = getNodeSqliteKysely<TuiLastSessionMigrationDatabase>(db);
         for (const record of activeRecords) {
@@ -282,7 +279,7 @@ export function migrateLegacyTuiLastSessions(params: {
 
   try {
     params.beforeVerify?.();
-    const database = openOpenClawStateDatabase({
+    const database = openNovaStateDatabase({
       env: { ...process.env, NOVA_STATE_DIR: params.stateDir },
     });
     const tuiDb = getNodeSqliteKysely<TuiLastSessionMigrationDatabase>(database.db);

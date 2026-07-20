@@ -5,10 +5,10 @@ import path from "node:path";
 import {
   markMigrationItemError,
   MIGRATION_REASON_MISSING_SOURCE_OR_TARGET,
-} from "openclaw/plugin-sdk/migration";
-import type { MigrationItem } from "openclaw/plugin-sdk/plugin-entry";
-import { appendRegularFile, pathExists } from "openclaw/plugin-sdk/security-runtime";
-import { isRecord as sharedIsRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/migration";
+import type { MigrationItem } from "nova/plugin-sdk/plugin-entry";
+import { appendRegularFile, pathExists } from "nova/plugin-sdk/security-runtime";
+import { isRecord as sharedIsRecord } from "nova/plugin-sdk/string-coerce-runtime";
 
 export function resolveHomePath(input: string): string {
   const trimmed = input.trim();

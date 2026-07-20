@@ -1,6 +1,6 @@
 services:
-  openclaw-gateway:
-    image: ${NOVA_IMAGE:-openclaw:local}
+  nova-gateway:
+    image: ${NOVA_IMAGE:-nova:local}
     build: .
     env_file:
       - path: .env
@@ -12,13 +12,13 @@ services:
       # Pin container-side state, workspace, and config paths so host values written to
       # `.env` (used by Compose for the bind-mount source below) cannot leak
       # into runtime code that resolves these env vars inside the container.
-      # Without this override, a macOS host path like /Users/<you>/.openclaw/...
+      # Without this override, a macOS host path like /Users/<you>/.nova/...
       # imported from .env caused first-reply `mkdir '/Users'` EACCES failures
       # in Linux Docker (#77436).
-      NOVA_STATE_DIR: /home/node/.openclaw
-      NOVA_CONFIG_PATH: /home/node/.openclaw/openclaw.json
-      NOVA_CONFIG_DIR: /home/node/.openclaw
-      NOVA_WORKSPACE_DIR: /home/node/.openclaw/workspace
+      NOVA_STATE_DIR: /home/node/.nova
+      NOVA_CONFIG_PATH: /home/node/.nova/nova.json
+      NOVA_CONFIG_DIR: /home/node/.nova
+      NOVA_WORKSPACE_DIR: /home/node/.nova/workspace
       NOVA_GATEWAY_TOKEN: ${NOVA_GATEWAY_TOKEN:-}
       NOVA_ALLOW_INSECURE_PRIVATE_WS: ${NOVA_ALLOW_INSECURE_PRIVATE_WS:-}
       # Empty means auto: Bonjour disables itself in detected containers.
@@ -39,9 +39,9 @@ services:
       CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE:-}
       TZ: ${NOVA_TZ:-UTC}
     volumes:
-      - "${NOVA_CONFIG_DIR:-${HOME:-/tmp}/.openclaw}:/home/node/.openclaw"
-      - "${NOVA_WORKSPACE_DIR:-${HOME:-/tmp}/.openclaw/workspace}:/home/node/.openclaw/workspace"
-      - "${NOVA_AUTH_PROFILE_SECRET_DIR:-${HOME:-/tmp}/.openclaw-auth-profile-secrets}:/home/node/.config/openclaw"
+      - "${NOVA_CONFIG_DIR:-${HOME:-/tmp}/.nova}:/home/node/.nova"
+      - "${NOVA_WORKSPACE_DIR:-${HOME:-/tmp}/.nova/workspace}:/home/node/.nova/workspace"
+      - "${NOVA_AUTH_PROFILE_SECRET_DIR:-${HOME:-/tmp}/.nova-auth-profile-secrets}:/home/node/.config/nova"
       ## Uncomment the lines below to enable sandbox isolation
       ## (agents.defaults.sandbox). Requires Docker CLI in the image
       ## (build with --build-arg NOVA_INSTALL_DOCKER_CLI=1) or use
@@ -89,9 +89,9 @@ services:
       retries: 5
       start_period: 20s
 
-  openclaw-cli:
-    image: ${NOVA_IMAGE:-openclaw:local}
-    network_mode: "service:openclaw-gateway"
+  nova-cli:
+    image: ${NOVA_IMAGE:-nova:local}
+    network_mode: "service:nova-gateway"
     env_file:
       - path: .env
         required: false
@@ -106,10 +106,10 @@ services:
       TERM: xterm-256color
       # Pin container-side state, workspace, and config paths so host values written to
       # `.env` cannot leak into runtime code via the env_file import (#77436).
-      NOVA_STATE_DIR: /home/node/.openclaw
-      NOVA_CONFIG_PATH: /home/node/.openclaw/openclaw.json
-      NOVA_CONFIG_DIR: /home/node/.openclaw
-      NOVA_WORKSPACE_DIR: /home/node/.openclaw/workspace
+      NOVA_STATE_DIR: /home/node/.nova
+      NOVA_CONFIG_PATH: /home/node/.nova/nova.json
+      NOVA_CONFIG_DIR: /home/node/.nova
+      NOVA_WORKSPACE_DIR: /home/node/.nova/workspace
       NOVA_GATEWAY_TOKEN: ${NOVA_GATEWAY_TOKEN:-}
       NOVA_ALLOW_INSECURE_PRIVATE_WS: ${NOVA_ALLOW_INSECURE_PRIVATE_WS:-}
       BROWSER: echo
@@ -118,12 +118,12 @@ services:
       CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE:-}
       TZ: ${NOVA_TZ:-UTC}
     volumes:
-      - "${NOVA_CONFIG_DIR:-${HOME:-/tmp}/.openclaw}:/home/node/.openclaw"
-      - "${NOVA_WORKSPACE_DIR:-${HOME:-/tmp}/.openclaw/workspace}:/home/node/.openclaw/workspace"
-      - "${NOVA_AUTH_PROFILE_SECRET_DIR:-${HOME:-/tmp}/.openclaw-auth-profile-secrets}:/home/node/.config/openclaw"
+      - "${NOVA_CONFIG_DIR:-${HOME:-/tmp}/.nova}:/home/node/.nova"
+      - "${NOVA_WORKSPACE_DIR:-${HOME:-/tmp}/.nova/workspace}:/home/node/.nova/workspace"
+      - "${NOVA_AUTH_PROFILE_SECRET_DIR:-${HOME:-/tmp}/.nova-auth-profile-secrets}:/home/node/.config/nova"
     stdin_open: true
     tty: true
     init: true
     entrypoint: ["node", "dist/index.js"]
     depends_on:
-      - openclaw-gateway
+      - nova-gateway

@@ -32,7 +32,7 @@ function createState(request: (method: string, params?: unknown) => Promise<unkn
 
 function storeIdentity() {
   localStorage.setItem(
-    "openclaw-device-identity-v1",
+    "nova-device-identity-v1",
     JSON.stringify({
       version: 1,
       deviceId: "00",

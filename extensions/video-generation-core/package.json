@@ -2,7 +2,7 @@
   "name": "@nova/video-generation-core",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw video generation runtime package",
+  "description": "Nova video generation runtime package",
   "type": "module",
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"

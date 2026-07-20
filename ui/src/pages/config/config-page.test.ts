@@ -48,7 +48,7 @@ afterEach(() => {
 describe("ConfigPage local user identity", () => {
   it("persists avatar selections while preserving the local display name", () => {
     localStorageMock.setItem(
-      "openclaw.control.user.v1",
+      "nova.control.user.v1",
       JSON.stringify({ name: "Buns", avatar: "old" }),
     );
     const page = new ConfigPage();
@@ -65,7 +65,7 @@ describe("ConfigPage local user identity", () => {
 
   it("surfaces a visible error instead of silently dropping the avatar when persistence fails", () => {
     localStorageMock.setItem(
-      "openclaw.control.user.v1",
+      "nova.control.user.v1",
       JSON.stringify({ name: "Buns", avatar: "old" }),
     );
     const page = new ConfigPage();
@@ -91,7 +91,7 @@ describe("ConfigPage local user identity", () => {
 
   it("clears the avatar error after a successful save", () => {
     localStorageMock.setItem(
-      "openclaw.control.user.v1",
+      "nova.control.user.v1",
       JSON.stringify({ name: "Buns", avatar: "old" }),
     );
     const page = new ConfigPage();

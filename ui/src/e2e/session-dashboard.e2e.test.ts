@@ -110,7 +110,7 @@ describeControlUiE2e("Control UI session dashboard stitch", () => {
                 render: "url",
                 title: "Release status",
                 viewId: "cv_release",
-                url: "/__openclaw__/canvas/documents/cv_release/index.html",
+                url: "/__nova__/canvas/documents/cv_release/index.html",
                 preferredHeight: 240,
                 sandbox: "scripts",
               },
@@ -125,7 +125,7 @@ describeControlUiE2e("Control UI session dashboard stitch", () => {
       },
     });
     await page.addInitScript((key) => {
-      const settingsKey = "openclaw.control.settings.v1:ws://127.0.0.1:18789";
+      const settingsKey = "nova.control.settings.v1:ws://127.0.0.1:18789";
       const settings = JSON.parse(localStorage.getItem(settingsKey) ?? "{}") as Record<
         string,
         unknown

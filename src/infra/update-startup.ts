@@ -9,13 +9,10 @@ import {
 } from "@nova/normalization-core/number-coercion";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { runCommandWithTimeout } from "../process/exec.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { VERSION } from "../version.js";
 import { isTruthyEnvValue } from "./env.js";
 import {
@@ -27,7 +24,7 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "./kysely-sync.js";
-import { resolveOpenClawPackageRoot } from "./openclaw-root.js";
+import { resolveNovaPackageRoot } from "./nova-root.js";
 import {
   resolveGatewayRestartDeferralTimeoutMs,
   scheduleGatewaySigusr1Restart,
@@ -101,7 +98,7 @@ const AUTO_STABLE_JITTER_HOURS_DEFAULT = 12;
 const AUTO_BETA_CHECK_INTERVAL_HOURS_DEFAULT = 1;
 const MANAGED_AUTO_UPDATE_SYSTEMD_RESTART_GRACE_MS = 2000;
 
-type UpdateCheckStateDatabase = Pick<OpenClawStateKyselyDatabase, "update_check_state">;
+type UpdateCheckStateDatabase = Pick<NovaStateKyselyDatabase, "update_check_state">;
 
 function shouldSkipCheck(allowInTests: boolean): boolean {
   if (allowInTests) {
@@ -113,7 +110,7 @@ function shouldSkipCheck(allowInTests: boolean): boolean {
   return false;
 }
 
-function resolveAutoUpdatePolicy(cfg: OpenClawConfig): AutoUpdatePolicy {
+function resolveAutoUpdatePolicy(cfg: NovaConfig): AutoUpdatePolicy {
   const auto = cfg.update?.auto;
   return {
     enabled: Boolean(auto?.enabled),
@@ -123,7 +120,7 @@ function resolveAutoUpdatePolicy(cfg: OpenClawConfig): AutoUpdatePolicy {
   };
 }
 
-function resolveCheckIntervalMs(cfg: OpenClawConfig): number {
+function resolveCheckIntervalMs(cfg: NovaConfig): number {
   const channel = normalizeUpdateChannel(cfg.update?.channel) ?? DEFAULT_PACKAGE_CHANNEL;
   const auto = resolveAutoUpdatePolicy(cfg);
   if (!auto.enabled) {
@@ -143,7 +140,7 @@ function presentString(value: string | null): string | undefined {
 }
 
 async function readState(): Promise<UpdateCheckState> {
-  const database = openOpenClawStateDatabase();
+  const database = openNovaStateDatabase();
   const stateDb = getNodeSqliteKysely<UpdateCheckStateDatabase>(database.db);
   const row = executeSqliteQueryTakeFirstSync(
     database.db,
@@ -174,7 +171,7 @@ async function readState(): Promise<UpdateCheckState> {
 
 async function writeState(state: UpdateCheckState): Promise<void> {
   const updatedAtMs = Date.now();
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runNovaStateWriteTransaction(({ db }) => {
     const stateDb = getNodeSqliteKysely<UpdateCheckStateDatabase>(db);
     executeSqliteQuerySync(
       db,
@@ -422,7 +419,7 @@ async function runAutoUpdateCommand(params: {
     };
   }
   const supervisor = detectRespawnSupervisor(process.env, process.platform, {
-    includeLinuxOpenClawGatewayServiceMarker: true,
+    includeLinuxNovaGatewayServiceMarker: true,
   });
   if (supervisor) {
     return await startManagedServiceAutoUpdateHandoff({
@@ -466,7 +463,7 @@ async function runAutoUpdateCommand(params: {
     }
   }
   if (argv.length === 0) {
-    argv.push("openclaw", ...baseArgs);
+    argv.push("nova", ...baseArgs);
   }
 
   try {
@@ -496,7 +493,7 @@ function clearAutoState(nextState: UpdateCheckState): void {
 }
 
 async function resolveStartupInstallStatus() {
-  const root = await resolveOpenClawPackageRoot({
+  const root = await resolveNovaPackageRoot({
     moduleUrl: import.meta.url,
     argv1: process.argv[1],
     cwd: process.cwd(),
@@ -511,7 +508,7 @@ async function resolveStartupInstallStatus() {
 }
 
 export async function runGatewayUpdateCheck(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   log: { info: (msg: string, meta?: Record<string, unknown>) => void };
   isNixMode: boolean;
   allowInTests?: boolean;
@@ -652,7 +649,7 @@ export async function runGatewayUpdateCheck(params: {
       state.lastNotifiedVersion !== resolved.version || state.lastNotifiedTag !== tag;
     if (shouldRunUpdateHints && shouldNotify) {
       params.log.info(
-        `update available (${tag}): v${resolved.version} (current v${VERSION}). Run: ${formatCliCommand("openclaw update")}`,
+        `update available (${tag}): v${resolved.version} (current v${VERSION}). Run: ${formatCliCommand("nova update")}`,
       );
       nextState.lastNotifiedVersion = resolved.version;
       nextState.lastNotifiedTag = tag;
@@ -767,7 +764,7 @@ export async function runGatewayUpdateCheck(params: {
 }
 
 export function scheduleGatewayUpdateCheck(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   log: { info: (msg: string, meta?: Record<string, unknown>) => void };
   isNixMode: boolean;
   onUpdateAvailableChange?: (updateAvailable: UpdateAvailable | null) => void;

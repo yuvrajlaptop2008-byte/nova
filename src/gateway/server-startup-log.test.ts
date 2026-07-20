@@ -59,7 +59,7 @@ describe("gateway startup log", () => {
 
     expect(warn.mock.calls).toEqual([
       [
-        "security warning: dangerous config flags enabled: gateway.controlUi.dangerouslyDisableDeviceAuth=true. Run `openclaw security audit`.",
+        "security warning: dangerous config flags enabled: gateway.controlUi.dangerouslyDisableDeviceAuth=true. Run `nova security audit`.",
       ],
     ]);
   });
@@ -140,7 +140,7 @@ describe("gateway startup log", () => {
 
     expect(warn.mock.calls).toEqual([
       [
-        "configured channel warning: channels.missing-chat is configured but no channel plugin is installed or loadable (no-channel-owner). Run `openclaw doctor --fix` or install the channel plugin before relying on this channel.",
+        "configured channel warning: channels.missing-chat is configured but no channel plugin is installed or loadable (no-channel-owner). Run `nova doctor --fix` or install the channel plugin before relying on this channel.",
       ],
     ]);
   });
@@ -185,7 +185,7 @@ describe("gateway startup log", () => {
     pluginRegistryMocks.loadPluginManifestRegistryForPluginRegistry.mockReturnValue({
       plugins: [
         {
-          id: "openclaw-modern-chat",
+          id: "nova-modern-chat",
           origin: "global",
           channels: ["legacy-chat"],
           enabledByDefault: false,
@@ -208,7 +208,7 @@ describe("gateway startup log", () => {
       activationSourceConfig: {
         plugins: {
           entries: {
-            "openclaw-modern-chat": {
+            "nova-modern-chat": {
               enabled: true,
             },
           },

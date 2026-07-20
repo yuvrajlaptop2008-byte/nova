@@ -39,7 +39,7 @@ FS_SAFE_PYTHON_MODE=auto      # auto | off | require
 FS_SAFE_PYTHON=/usr/bin/python3
 ```
 
-OpenClaw compatibility aliases are accepted too: `OPENCLAW_FS_SAFE_PYTHON_MODE`, `OPENCLAW_FS_SAFE_PYTHON`, `OPENCLAW_PINNED_PYTHON`, and `OPENCLAW_PINNED_WRITE_PYTHON`.
+Nova compatibility aliases are accepted too: `NOVA_FS_SAFE_PYTHON_MODE`, `NOVA_FS_SAFE_PYTHON`, `NOVA_PINNED_PYTHON`, and `NOVA_PINNED_WRITE_PYTHON`.
 
 ## What the helper does
 

@@ -1,8 +1,8 @@
 // Agent Workspace script supports Nova repository automation.
 export function posixAgentWorkspaceScript(purpose: string): string {
   return `set -eu
-workspace="\${NOVA_WORKSPACE_DIR:-$HOME/.openclaw/workspace}"
-mkdir -p "$workspace/.openclaw"
+workspace="\${NOVA_WORKSPACE_DIR:-$HOME/.nova/workspace}"
+mkdir -p "$workspace/.nova"
 cat > "$workspace/IDENTITY.md" <<'IDENTITY_EOF'
 # Identity
 
@@ -14,8 +14,8 @@ rm -f "$workspace/BOOTSTRAP.md"`;
 
 export function windowsAgentWorkspaceScript(purpose: string): string {
   return `$workspace = $env:NOVA_WORKSPACE_DIR
-if (-not $workspace) { $workspace = Join-Path $env:USERPROFILE '.openclaw\\workspace' }
-$stateDir = Join-Path $workspace '.openclaw'
+if (-not $workspace) { $workspace = Join-Path $env:USERPROFILE '.nova\\workspace' }
+$stateDir = Join-Path $workspace '.nova'
 New-Item -ItemType Directory -Path $stateDir -Force | Out-Null
 @'
 # Identity

@@ -2,7 +2,7 @@
 import path from "node:path";
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import { discoverOpenClawPlugins, type PluginDiscoveryResult } from "./discovery.js";
+import { discoverNovaPlugins, type PluginDiscoveryResult } from "./discovery.js";
 import { loadPluginManifest } from "./manifest.js";
 
 export type BundledPluginSource = {
@@ -49,8 +49,7 @@ export function resolveBundledPluginSources(params: {
   discovery?: PluginDiscoveryResult;
 }): Map<string, BundledPluginSource> {
   const discovery =
-    params.discovery ??
-    discoverOpenClawPlugins({ workspaceDir: params.workspaceDir, env: params.env });
+    params.discovery ?? discoverNovaPlugins({ workspaceDir: params.workspaceDir, env: params.env });
   const bundled = new Map<string, BundledPluginSource>();
 
   for (const candidate of discovery.candidates) {
@@ -137,5 +136,5 @@ export function resolveBundledPluginInstallCommandHint(params: {
   if (!bundledSource?.localPath) {
     return null;
   }
-  return `openclaw plugins install ${bundledSource.localPath}`;
+  return `nova plugins install ${bundledSource.localPath}`;
 }

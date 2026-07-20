@@ -3,12 +3,12 @@ import { rm } from "node:fs/promises";
 import { isIP } from "node:net";
 import os from "node:os";
 import path from "node:path";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { definePluginEntry, type OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { definePluginEntry, type NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { buildDevicePairPairingQrChannelData } from "./pairing-qr-channel-data.js";
 type NotifyModule = typeof import("./notify.js");
 
@@ -203,7 +203,7 @@ function isLoopbackHost(host: string): boolean {
 }
 
 function resolveScheme(
-  cfg: OpenClawPluginApi["config"],
+  cfg: NovaPluginApi["config"],
   opts?: { forceSecure?: boolean },
 ): "ws" | "wss" {
   if (opts?.forceSecure) {
@@ -357,7 +357,7 @@ async function resolveTailnetHost(): Promise<string | null> {
   );
 }
 
-function resolveAuthLabel(cfg: OpenClawPluginApi["config"]): ResolveAuthLabelResult {
+function resolveAuthLabel(cfg: NovaPluginApi["config"]): ResolveAuthLabelResult {
   const mode = cfg.gateway?.auth?.mode;
   const token =
     pickFirstDefined([process.env.NOVA_GATEWAY_TOKEN, cfg.gateway?.auth?.token]) ?? undefined;
@@ -400,7 +400,7 @@ function resolveRequiredAuthLabel(
     : { error: "Gateway auth is set to password, but no password is configured." };
 }
 
-async function resolveGatewayUrl(api: OpenClawPluginApi): Promise<ResolveUrlResult> {
+async function resolveGatewayUrl(api: NovaPluginApi): Promise<ResolveUrlResult> {
   const { resolveAdvertisedLanHost, resolveGatewayBindUrl, resolveGatewayPort } =
     await loadDevicePairApiModule();
   const cfg = api.config;
@@ -467,7 +467,7 @@ async function resolveGatewayUrl(api: OpenClawPluginApi): Promise<ResolveUrlResu
   };
 }
 
-async function resolveMobilePairingGatewayUrl(api: OpenClawPluginApi): Promise<ResolveUrlResult> {
+async function resolveMobilePairingGatewayUrl(api: NovaPluginApi): Promise<ResolveUrlResult> {
   const result = await resolveGatewayUrl(api);
   if (!result.url) {
     return result;
@@ -679,7 +679,7 @@ async function issueSetupPayload(params: {
 }
 
 async function sendQrPngToSupportedChannel(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   ctx: QrCommandContext;
   sender: QrChannelSender;
   target: string;
@@ -711,7 +711,7 @@ export default definePluginEntry({
   id: "device-pair",
   name: "Device Pair",
   description: "QR/bootstrap pairing helpers for Nova devices",
-  register(api: OpenClawPluginApi) {
+  register(api: NovaPluginApi) {
     let notifierService: ReturnType<NotifyModule["createPairingNotifierService"]> | undefined;
     api.registerService({
       id: "device-pair-notifier",
@@ -859,11 +859,11 @@ export default definePluginEntry({
           if (target && qrChannelSender) {
             let qrFilePath: string | undefined;
             try {
-              const { resolvePreferredOpenClawTmpDir, writeQrPngTempFile } =
+              const { resolvePreferredNovaTmpDir, writeQrPngTempFile } =
                 await loadDevicePairApiModule();
               qrFilePath = (
                 await writeQrPngTempFile(setupCode, {
-                  tmpRoot: resolvePreferredOpenClawTmpDir(),
+                  tmpRoot: resolvePreferredNovaTmpDir(),
                   dirPrefix: "device-pair-qr-",
                   fileName: "pair-qr.png",
                 })

@@ -19,7 +19,7 @@ import {
   resolveThreadBindingSpawnPolicy,
 } from "../../../channels/thread-bindings-policy.js";
 import type { SessionAcpMeta } from "../../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { formatErrorMessage } from "../../../infra/errors.js";
 import { normalizeConversationRef } from "../../../infra/outbound/session-binding-normalization.js";
 import {
@@ -69,7 +69,7 @@ export async function resolveBoundReplyPayload(params: {
 }
 
 function buildSpawnedAcpBindingMetadata(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: string;
   accountId: string;
   sessionKey: string;
@@ -113,7 +113,7 @@ async function bindSpawnedAcpSession(params: {
   sessionKey: string;
   conversationRef: ConversationRef;
   placement: SessionBindingPlacement;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: string;
   accountId: string;
   agentId: string;

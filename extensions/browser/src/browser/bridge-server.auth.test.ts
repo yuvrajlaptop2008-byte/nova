@@ -78,10 +78,10 @@ describe("startBrowserBridgeServer auth", () => {
     await expectAuthFlow({ authToken: "secret-token" }, { Authorization: "Bearer secret-token" });
   });
 
-  it("accepts x-openclaw-password when authPassword is set", async () => {
+  it("accepts x-nova-password when authPassword is set", async () => {
     await expectAuthFlow(
       { authPassword: "secret-password" },
-      { "x-openclaw-password": "secret-password" },
+      { "x-nova-password": "secret-password" },
     );
   });
 
@@ -106,7 +106,7 @@ describe("startBrowserBridgeServer auth", () => {
       .mockResolvedValue(undefined);
     bridge.state.extensionRelays = new Map([
       [
-        "openclaw",
+        "nova",
         {
           port: 18_799,
           token: "relay-token",

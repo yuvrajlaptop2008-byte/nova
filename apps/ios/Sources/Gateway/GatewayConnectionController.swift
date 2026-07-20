@@ -1,8 +1,8 @@
 import Foundation
 import Network
 import Observation
-import OpenClawChatUI
-import OpenClawKit
+import NovaChatUI
+import NovaKit
 import SwiftUI
 
 typealias GatewayTCPReachabilityProbe = @Sendable (String, Int, Double, String) async -> Bool
@@ -172,7 +172,7 @@ final class GatewayConnectionController {
                 endpoint.host,
                 endpoint.port,
                 GatewaySetupRouteProbeBudget.tcpConnectTimeoutSeconds,
-                "ai.openclaw.gateway.setup-route-\(index)")
+                "ai.nova.gateway.setup-route-\(index)")
             if reachable {
                 return link.selectingEndpoint(endpoint)
             }

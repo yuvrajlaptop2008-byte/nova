@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { createMeetingNodeHost } from "openclaw/plugin-sdk/meeting-runtime";
+import { createMeetingNodeHost } from "nova/plugin-sdk/meeting-runtime";
 import {
   DEFAULT_ZOOM_MEETINGS_AUDIO_INPUT_COMMAND,
   DEFAULT_ZOOM_MEETINGS_AUDIO_OUTPUT_COMMAND,

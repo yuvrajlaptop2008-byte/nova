@@ -1,17 +1,13 @@
 // Discord plugin module implements send.voice behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import {
-  extensionForMime,
-  maxBytesForKind,
-  unlinkIfExists,
-} from "openclaw/plugin-sdk/media-runtime";
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
-import type { RetryConfig } from "openclaw/plugin-sdk/retry-runtime";
-import { tempWorkspace, resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { loadWebMediaRaw } from "openclaw/plugin-sdk/web-media";
+import { recordChannelActivity } from "nova/plugin-sdk/channel-activity-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { extensionForMime, maxBytesForKind, unlinkIfExists } from "nova/plugin-sdk/media-runtime";
+import { requireRuntimeConfig } from "nova/plugin-sdk/plugin-config-runtime";
+import type { RetryConfig } from "nova/plugin-sdk/retry-runtime";
+import { tempWorkspace, resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
+import { loadWebMediaRaw } from "nova/plugin-sdk/web-media";
 import { resolveDiscordAccount } from "./accounts.js";
 import type { RequestClient } from "./internal/discord.js";
 import { parseAndResolveChannelRecipient } from "./recipient-resolution.js";
@@ -26,7 +22,7 @@ import {
 } from "./voice-message.js";
 
 type VoiceMessageOpts = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   token?: string;
   accountId?: string;
   verbose?: boolean;
@@ -59,7 +55,7 @@ async function materializeVoiceMessageInput(
   const extFromMime = media.contentType ? extensionForMime(media.contentType) : "";
   const ext = extFromName || extFromMime || ".bin";
   const workspace = await tempWorkspace({
-    rootDir: resolvePreferredOpenClawTmpDir(),
+    rootDir: resolvePreferredNovaTmpDir(),
     prefix: "voice-src-",
   });
   const filePath = await workspace.write(`input${ext}`, media.buffer);

@@ -1,5 +1,5 @@
 // Slack tests cover setup surface plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   createQueuedWizardPrompter,
   createSetupWizardAdapter,
@@ -7,8 +7,8 @@ import {
   runSetupWizardConfigure,
   runSetupWizardPrepare,
   runSetupWizardFinalize,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { WizardPrompter } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import type { WizardPrompter } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createSlackSetupWizardBase, slackSetupAdapter } from "./setup-core.js";
 import { buildSlackSetupLines } from "./setup-shared.js";
@@ -43,7 +43,7 @@ const baseCfg = {
       appToken: "xapp-test",
     },
   },
-} as OpenClawConfig;
+} as NovaConfig;
 
 function requireFirstStringArg(mock: ReturnType<typeof vi.fn>, label: string): string {
   const [call] = mock.mock.calls;
@@ -116,7 +116,7 @@ describe("slackSetupWizard.prepare", () => {
 
     await runSetupWizardPrepare({
       prepare: slackSetupWizard.prepare,
-      cfg: { channels: { slack: {} } } as OpenClawConfig,
+      cfg: { channels: { slack: {} } } as NovaConfig,
       prompter: createTestWizardPrompter({
         plain,
         note,
@@ -160,7 +160,7 @@ describe("slackSetupWizard.prepare", () => {
         },
         slash_commands: [
           {
-            command: "/openclaw",
+            command: "/nova",
             description: "Send a message to Nova",
             should_escape: false,
           },
@@ -240,7 +240,7 @@ describe("slackSetupWizard.prepare", () => {
 
     const result = await runSetupWizardConfigure({
       configure,
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       prompter: queued.prompter,
       options: { secretInputMode: "plaintext" as const },
     });
@@ -285,7 +285,7 @@ describe("slackSetupWizard.prepare", () => {
 
     const result = await runSetupWizardConfigure({
       configure,
-      cfg: { channels: { slack: { mode: "http" } } } as OpenClawConfig,
+      cfg: { channels: { slack: { mode: "http" } } } as NovaConfig,
       prompter: queued.prompter,
       options: { secretInputMode: "plaintext" as const },
     });
@@ -335,7 +335,7 @@ describe("slackSetupWizard.prepare", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       prompter: queued.prompter,
       options: { secretInputMode: "plaintext" as const },
     });
@@ -348,10 +348,10 @@ describe("slackSetupWizard.prepare", () => {
   });
 
   it.each([
-    { name: "new setup", cfg: {} as OpenClawConfig },
+    { name: "new setup", cfg: {} as NovaConfig },
     {
       name: "switch from user identity",
-      cfg: { channels: { slack: { identity: "user" } } } as OpenClawConfig,
+      cfg: { channels: { slack: { identity: "user" } } } as NovaConfig,
     },
   ])("keeps bot identity implicit for $name", async ({ cfg }) => {
     vi.stubEnv("SLACK_BOT_TOKEN", "");
@@ -422,7 +422,7 @@ describe("slackSetupWizard.prepare", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       prompter: queued.prompter,
       options: { secretInputMode: "plaintext" as const },
     });
@@ -449,7 +449,7 @@ describe("slackSetupWizard.prepare", () => {
             appToken: "test-app-token",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       prompter: queued.prompter,
     });
 
@@ -493,7 +493,7 @@ describe("slackSetupWizard.dmPolicy", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         "alerts",
       ),
     ).toBe("allowlist");
@@ -520,7 +520,7 @@ describe("slackSetupWizard.dmPolicy", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       "open",
       "alerts",
     );
@@ -557,7 +557,7 @@ describe("slackSetupWizard.status", () => {
   ])("treats a complete user-identity $name account as configured", async ({ slack }) => {
     expect(
       await slackSetupWizard.status.resolveConfigured({
-        cfg: { channels: { slack } } as OpenClawConfig,
+        cfg: { channels: { slack } } as NovaConfig,
       }),
     ).toBe(true);
   });
@@ -582,7 +582,7 @@ describe("slackSetupWizard.status", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
 
     expect(configured).toBe(false);

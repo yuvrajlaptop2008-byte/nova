@@ -1,4 +1,4 @@
-import { DEFAULT_TIMING } from "openclaw/plugin-sdk/channel-feedback";
+import { DEFAULT_TIMING } from "nova/plugin-sdk/channel-feedback";
 import { expect, it, vi } from "vitest";
 import {
   createChannelMessageReplyPipeline,

@@ -70,7 +70,7 @@ const mocks = vi.hoisted(() => ({
   rootWrite: vi.fn(async (_params?: unknown) => {}),
 }));
 
-const RESERVED_SYSTEM_AGENT_IDS_FOR_TEST = ["openclaw", "crestodian"] as const; // reserved ids
+const RESERVED_SYSTEM_AGENT_IDS_FOR_TEST = ["nova", "crestodian"] as const; // reserved ids
 
 vi.mock("../../config/config.js", async () => {
   const actual =
@@ -86,16 +86,16 @@ vi.mock("../../config/config.js", async () => {
     }) => {
       const draft = structuredClone(mocks.loadConfigReturn);
       const result = await params.mutate(draft, {
-        snapshot: { path: "/tmp/openclaw/config.json" },
+        snapshot: { path: "/tmp/nova/config.json" },
         previousHash: "test-hash",
         attempt: 0,
       });
       await mocks.writeConfigFile(draft);
       return {
-        path: "/tmp/openclaw/config.json",
+        path: "/tmp/nova/config.json",
         previousHash: "test-hash",
         persistedHash: "persisted-hash",
-        snapshot: { path: "/tmp/openclaw/config.json" },
+        snapshot: { path: "/tmp/nova/config.json" },
         nextConfig: draft,
         result,
         attempts: 1,
@@ -110,17 +110,17 @@ vi.mock("../../config/config.js", async () => {
       ) => Promise<{ nextConfig: Record<string, unknown>; result?: unknown }>;
     }) => {
       const transformed = await params.transform(structuredClone(mocks.loadConfigReturn), {
-        snapshot: { path: "/tmp/openclaw/config.json" },
+        snapshot: { path: "/tmp/nova/config.json" },
         previousHash: "test-hash",
         attempt: 0,
       });
       await mocks.writeConfigFile(transformed.nextConfig);
       mocks.loadConfigReturn = transformed.nextConfig;
       return {
-        path: "/tmp/openclaw/config.json",
+        path: "/tmp/nova/config.json",
         previousHash: "test-hash",
         persistedHash: "persisted-hash",
-        snapshot: { path: "/tmp/openclaw/config.json" },
+        snapshot: { path: "/tmp/nova/config.json" },
         nextConfig: transformed.nextConfig,
         result: transformed.result,
         attempts: 1,
@@ -1200,7 +1200,7 @@ describe("agents.delete", () => {
   it("reports trash failures without deleting the retained directory", async () => {
     const actualFs = await vi.importActual<typeof import("node:fs/promises")>("node:fs/promises");
     const workspaceDir = await actualFs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-agent-delete-trash-failure-"),
+      path.join(os.tmpdir(), "nova-agent-delete-trash-failure-"),
     );
     mocks.resolveAgentWorkspaceDir.mockReturnValueOnce(workspaceDir);
     mocks.movePathToTrash.mockRejectedValueOnce(

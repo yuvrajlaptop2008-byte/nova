@@ -76,7 +76,7 @@ function resolveProfileStateDir(
   homedir: () => string,
 ): string {
   const suffix = normalizeLowercaseStringOrEmpty(profile) === "default" ? "" : `-${profile}`;
-  return path.join(resolveRequiredHomeDir(env as NodeJS.ProcessEnv, homedir), `.openclaw${suffix}`);
+  return path.join(resolveRequiredHomeDir(env as NodeJS.ProcessEnv, homedir), `.nova${suffix}`);
 }
 
 export function applyCliProfileEnv(params: {
@@ -101,7 +101,7 @@ export function applyCliProfileEnv(params: {
   }
 
   if (!normalizeOptionalString(env.NOVA_CONFIG_PATH)) {
-    env.NOVA_CONFIG_PATH = path.join(stateDir, "openclaw.json");
+    env.NOVA_CONFIG_PATH = path.join(stateDir, "nova.json");
   }
 
   if (profile === "dev" && !env.NOVA_GATEWAY_PORT?.trim()) {

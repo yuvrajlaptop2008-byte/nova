@@ -272,15 +272,15 @@ export function attachGatewayWsConnectionHandler(params: AttachGatewayWsConnecti
     const { remoteAddr, remotePort, localAddr, localPort, endpoint } = resolveSocketAddress(socket);
     const preauthBudgetKey = (
       socket as WebSocket & {
-        __openclawPreauthBudgetClaimed?: boolean;
-        __openclawPreauthBudgetKey?: string;
+        __novaPreauthBudgetClaimed?: boolean;
+        __novaPreauthBudgetKey?: string;
       }
-    )["__openclawPreauthBudgetKey"];
+    )["__novaPreauthBudgetKey"];
     (
       socket as WebSocket & {
-        __openclawPreauthBudgetClaimed?: boolean;
+        __novaPreauthBudgetClaimed?: boolean;
       }
-    )["__openclawPreauthBudgetClaimed"] = true;
+    )["__novaPreauthBudgetClaimed"] = true;
     const headerValue = (value: string | string[] | undefined) =>
       Array.isArray(value) ? value[0] : value;
     const requestHost = headerValue(upgradeReq.headers.host);
@@ -466,7 +466,7 @@ export function attachGatewayWsConnectionHandler(params: AttachGatewayWsConnecti
       lastHandshakePhase === "ws_upgrade_started" &&
       !hasReceivedPreauthFrame &&
       lastFrameType === undefined &&
-      normalizeLowercaseStringOrEmpty(requestUserAgent).startsWith("openclaw/") &&
+      normalizeLowercaseStringOrEmpty(requestUserAgent).startsWith("nova/") &&
       isLoopbackAddress(remoteAddr);
 
     socket.once("close", (code, reason) => {

@@ -5,7 +5,7 @@ import type { OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.
 import type { OAuthClientMetadata, OAuthTokens } from "@modelcontextprotocol/sdk/shared/auth.js";
 import type { FetchLike } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawStateLeaseContext } from "../state/openclaw-state-lease.js";
+import type { NovaStateLeaseContext } from "../state/nova-state-lease.js";
 import {
   readMcpOAuthStore,
   resolveMcpOAuthStoreKey,
@@ -54,7 +54,7 @@ function buildOAuthClientMetadata(
 }
 
 export function bindMcpOAuthLeaseAssertion(
-  lease: OpenClawStateLeaseContext | undefined,
+  lease: NovaStateLeaseContext | undefined,
 ): ((database: DatabaseSync) => void) | undefined {
   return lease ? (database) => lease.assertOwnedInTransaction(database) : undefined;
 }
@@ -88,7 +88,7 @@ export function createMcpOAuthClientProvider(params: {
   onAuthorizationUrl?: (url: URL) => void | Promise<void>;
   allowAuthorizationRedirect?: boolean;
   suppressStoredTokens?: boolean;
-  lease?: OpenClawStateLeaseContext;
+  lease?: NovaStateLeaseContext;
 }): OAuthClientProvider {
   const config = params.config ?? {};
   const storeKey = resolveMcpOAuthStoreKey(params.serverName, params.serverUrl);
@@ -100,7 +100,7 @@ export function createMcpOAuthClientProvider(params: {
   const assertAuthorizationRedirectAllowed = () => {
     if (!allowAuthorizationRedirect) {
       throw new Error(
-        `MCP server "${params.serverName}" requires OAuth authorization. Run openclaw mcp login ${params.serverName}.`,
+        `MCP server "${params.serverName}" requires OAuth authorization. Run nova mcp login ${params.serverName}.`,
       );
     }
   };

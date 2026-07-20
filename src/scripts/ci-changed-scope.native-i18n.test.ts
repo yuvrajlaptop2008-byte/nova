@@ -12,7 +12,7 @@ describe("native i18n changed scope", () => {
     const generatedPaths = [
       "apps/.i18n/native/sv.json",
       "apps/.i18n/apple-translation-contradictions.json",
-      "apps/android/app/src/main/java/ai/openclaw/app/i18n/NativeStringResources.kt",
+      "apps/android/app/src/main/java/ai/nova/app/i18n/NativeStringResources.kt",
       "apps/android/app/src/main/res/values-sv/strings.xml",
       "apps/ios/Resources/Localizable.xcstrings",
       "apps/ios/WatchApp/sv.lproj/InfoPlist.strings",
@@ -48,7 +48,7 @@ describe("native i18n changed scope", () => {
       assertNativeGeneratedArtifactsIsolated([
         ...generatedPaths,
         ...generatedCompanionPaths,
-        "apps/android/app/src/main/java/ai/openclaw/app/MainActivity.kt",
+        "apps/android/app/src/main/java/ai/nova/app/MainActivity.kt",
       ]),
     ).toThrow("Native generated locale artifacts must be isolated from source changes");
   });

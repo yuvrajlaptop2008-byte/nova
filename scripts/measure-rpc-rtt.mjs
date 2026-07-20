@@ -31,7 +31,7 @@ function usage() {
   return [
     "Usage: node --import tsx scripts/measure-rpc-rtt.mjs",
     "  --output-dir <dir>",
-    "  [--repo-root <openclaw-repo>]",
+    "  [--repo-root <nova-repo>]",
     "  [--iterations <count>]",
     "  [--methods <comma-separated-methods>]",
     "  [--help, -h]",
@@ -285,12 +285,12 @@ async function defaultOpen(filePath, flags) {
   return await fs.open(filePath, flags);
 }
 
-function resolveOpenClawLaunchArgs(repoRoot, sourceEntryExists = existsSync) {
+function resolveNovaLaunchArgs(repoRoot, sourceEntryExists = existsSync) {
   const sourceEntry = path.join(repoRoot, "src", "entry.ts");
   if (sourceEntryExists(sourceEntry)) {
     return ["--import", "tsx", sourceEntry];
   }
-  return [path.join(repoRoot, "openclaw.mjs")];
+  return [path.join(repoRoot, "nova.mjs")];
 }
 
 /**
@@ -518,7 +518,7 @@ export async function startGateway({
   }
 
   let child;
-  const launcherArgs = resolveOpenClawLaunchArgs(repoRoot, sourceEntryExists);
+  const launcherArgs = resolveNovaLaunchArgs(repoRoot, sourceEntryExists);
   try {
     child = spawnImpl(
       process.execPath,
@@ -889,7 +889,7 @@ async function main() {
   const startedAt = new Date();
   const token = `rpc-rtt-${randomUUID()}`;
   const port = await getFreePort();
-  const configPath = path.join(tempRoot, "openclaw.json");
+  const configPath = path.join(tempRoot, "nova.json");
   const stdoutPath = path.join(tempRoot, "gateway.stdout.log");
   const stderrPath = path.join(tempRoot, "gateway.stderr.log");
   let gatewayChild;
@@ -945,14 +945,14 @@ async function main() {
         maxProtocol: protocol.PROTOCOL_VERSION,
         client: {
           id: "gateway-client",
-          displayName: "openclaw-rtt rpc probe",
+          displayName: "nova-rtt rpc probe",
           version: "rtt",
           platform: process.platform,
           mode: "backend",
-          instanceId: `openclaw-rtt-rpc-${randomUUID()}`,
+          instanceId: `nova-rtt-rpc-${randomUUID()}`,
         },
         locale: "en-US",
-        userAgent: "openclaw-rtt-rpc",
+        userAgent: "nova-rtt-rpc",
         role: "operator",
         scopes: ["operator.admin"],
         caps: [],

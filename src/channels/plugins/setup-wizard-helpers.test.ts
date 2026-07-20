@@ -3,10 +3,10 @@ import { expectDefined } from "@nova/normalization-core";
 import {
   resolveSetupWizardAllowFromEntries,
   resolveSetupWizardGroupAllowlist,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createWizardPrompter } from "../../../test/helpers/wizard-prompter.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../../plugins/runtime.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-key.js";
 import {
@@ -277,7 +277,7 @@ describe("buildSingleChannelSecretPromptState", () => {
 });
 
 async function runPromptLegacyAllowFrom(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   channel: "discord" | "slack";
   prompter: ReturnType<typeof createPrompter>;
   existing: string[];
@@ -372,7 +372,7 @@ describe("promptLegacyChannelAllowFrom", () => {
     const resolveEntries = vi.fn();
 
     const next = await runPromptLegacyAllowFrom({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       channel: "discord",
       existing: ["999"],
       prompter,
@@ -393,7 +393,7 @@ describe("promptLegacyChannelAllowFrom", () => {
     const resolveEntries = vi.fn(async () => [{ input: "alice", resolved: true, id: "U1" }]);
 
     const next = await runPromptLegacyAllowFrom({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       channel: "slack",
       prompter,
       existing: [],
@@ -422,7 +422,7 @@ describe("promptLegacyChannelAllowFromForAccount", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       channel: "slack",
       prompter,
       defaultAccountId: DEFAULT_ACCOUNT_ID,
@@ -518,7 +518,7 @@ describe("promptSingleChannelSecretInput", () => {
 
 describe("promptParsedAllowFromForScopedChannel", () => {
   it("writes parsed allowFrom values to default account channel config", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         imessage: {
           allowFrom: ["old"],
@@ -546,7 +546,7 @@ describe("promptParsedAllowFromForScopedChannel", () => {
   });
 
   it("writes parsed values to non-default account allowFrom", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         signal: {
           accounts: {
@@ -624,7 +624,7 @@ describe("promptParsedAllowFromForAccount", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: "alt",
       defaultAccountId: DEFAULT_ACCOUNT_ID,
       prompter,
@@ -668,7 +668,7 @@ describe("promptParsedAllowFromForAccount", () => {
             allowFrom: ["old"],
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       defaultAccountId: DEFAULT_ACCOUNT_ID,
       prompter: createPrompter(["new"]),
       noteTitle: "Nostr allowlist",
@@ -692,7 +692,7 @@ describe("promptParsedAllowFromForAccount", () => {
 
 describe("createPromptParsedAllowFromForAccount", () => {
   it("supports computed default account ids and optional notes", async () => {
-    const promptAllowFrom = createPromptParsedAllowFromForAccount<OpenClawConfig>({
+    const promptAllowFrom = createPromptParsedAllowFromForAccount<NovaConfig>({
       defaultAccountId: () => "work",
       message: "msg",
       placeholder: "placeholder",
@@ -828,7 +828,7 @@ describe("channel lookup note helpers", () => {
 
 describe("setAccountAllowFromForChannel", () => {
   it("writes allowFrom on default account channel config", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         imessage: {
           enabled: true,
@@ -852,7 +852,7 @@ describe("setAccountAllowFromForChannel", () => {
   });
 
   it("writes allowFrom on nested non-default account config", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         signal: {
           enabled: true,
@@ -879,7 +879,7 @@ describe("setAccountAllowFromForChannel", () => {
 
 describe("patchChannelConfigForAccount", () => {
   it("patches root channel config for default account", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         telegram: {
           enabled: false,
@@ -901,7 +901,7 @@ describe("patchChannelConfigForAccount", () => {
   });
 
   it("patches nested account config and preserves existing enabled flag", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         slack: {
           enabled: true,
@@ -929,7 +929,7 @@ describe("patchChannelConfigForAccount", () => {
   });
 
   it("moves single-account config into default account when patching non-default", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         telegram: {
           enabled: true,
@@ -962,7 +962,7 @@ describe("patchChannelConfigForAccount", () => {
   });
 
   it("supports imessage/signal account-scoped channel patches", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         signal: {
           enabled: false,
@@ -997,7 +997,7 @@ describe("patchChannelConfigForAccount", () => {
 
 describe("setSetupChannelEnabled", () => {
   it("updates enabled and keeps existing channel fields", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         discord: {
           enabled: true,
@@ -1028,7 +1028,7 @@ describe("setLegacyChannelDmPolicyWithAllowFrom", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const next = setLegacyChannelDmPolicyWithAllowFrom({
       cfg,
@@ -1041,7 +1041,7 @@ describe("setLegacyChannelDmPolicyWithAllowFrom", () => {
   });
 
   it("sets policy without changing allowFrom when not open", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         slack: {
           allowFrom: ["U1"],
@@ -1085,7 +1085,7 @@ describe("setAccountGroupPolicyForChannel", () => {
 
 describe("setChannelDmPolicyWithAllowFrom", () => {
   it("adds wildcard allowFrom when setting dmPolicy=open", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         signal: {
           dmPolicy: "pairing",
@@ -1105,7 +1105,7 @@ describe("setChannelDmPolicyWithAllowFrom", () => {
   });
 
   it("sets dmPolicy without changing allowFrom for non-open policies", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         imessage: {
           dmPolicy: "open",
@@ -1125,7 +1125,7 @@ describe("setChannelDmPolicyWithAllowFrom", () => {
   });
 
   it("supports telegram channel dmPolicy updates", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         telegram: {
           dmPolicy: "pairing",
@@ -1146,7 +1146,7 @@ describe("setChannelDmPolicyWithAllowFrom", () => {
 
 describe("setTopLevelChannelDmPolicyWithAllowFrom", () => {
   it("adds wildcard allowFrom for open policy", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         zalo: {
           dmPolicy: "pairing",
@@ -1165,7 +1165,7 @@ describe("setTopLevelChannelDmPolicyWithAllowFrom", () => {
   });
 
   it("supports custom allowFrom lookup callback", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         "nextcloud-talk": {
           dmPolicy: "pairing",
@@ -1448,7 +1448,7 @@ describe("createLegacyCompatChannelDmPolicy", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig),
+      } as unknown as NovaConfig),
     ).toBe("open");
 
     const next = dmPolicy.setPolicy(
@@ -1460,7 +1460,7 @@ describe("createLegacyCompatChannelDmPolicy", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       "open",
     );
 

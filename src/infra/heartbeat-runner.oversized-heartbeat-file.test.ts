@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resetLogger, setLoggerOverride } from "../logging/logger.js";
 import { loggingState } from "../logging/state.js";
 import { runHeartbeatOnce } from "./heartbeat-runner.js";
@@ -24,7 +24,7 @@ describe("runHeartbeatOnce oversized HEARTBEAT.md", () => {
       return;
     }
     await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: {
             workspace: tmpDir,
@@ -65,7 +65,7 @@ describe("runHeartbeatOnce oversized HEARTBEAT.md", () => {
 
   it("treats an oversized HEARTBEAT.md like a missing file and continues the run", async () => {
     await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: {
             workspace: tmpDir,

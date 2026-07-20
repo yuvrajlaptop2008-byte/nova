@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-profile_path="${1:-${RUNNER_TEMP:-/tmp}/openclaw-live.profile}"
+profile_path="${1:-${RUNNER_TEMP:-/tmp}/nova-live.profile}"
 
 mkdir -p "$(dirname "$profile_path")"
 : >"$profile_path"

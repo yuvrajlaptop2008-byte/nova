@@ -2,12 +2,12 @@
 import {
   resolveChannelDraftStreamingChunking,
   type ChannelDraftStreamingChunking,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "nova/plugin-sdk/channel-outbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { TELEGRAM_TEXT_CHUNK_LIMIT } from "./outbound-adapter.js";
 
 export function resolveTelegramDraftStreamingChunking(
-  cfg: OpenClawConfig | undefined,
+  cfg: NovaConfig | undefined,
   accountId?: string | null,
 ): ChannelDraftStreamingChunking {
   return resolveChannelDraftStreamingChunking(cfg, "telegram", accountId, {

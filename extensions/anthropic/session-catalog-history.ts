@@ -1,6 +1,6 @@
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { withSessionTranscriptWriteLock } from "openclaw/plugin-sdk/session-transcript-runtime";
+import type { AgentMessage } from "nova/plugin-sdk/agent-harness-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { withSessionTranscriptWriteLock } from "nova/plugin-sdk/session-transcript-runtime";
 import { CLAUDE_CLI_BACKEND_ID } from "./cli-constants.js";
 import type { ClaudeTranscriptItem } from "./session-catalog-transcript.js";
 
@@ -18,7 +18,7 @@ function importedClaudeMessage(
       role: "user",
       content: text,
       timestamp,
-      __openclaw: { mirrorOrigin: "claude-catalog-import" },
+      __nova: { mirrorOrigin: "claude-catalog-import" },
     } as AgentMessage;
   }
   const prefix =
@@ -56,7 +56,7 @@ export async function importClaudeHistory(params: {
   sessionKey: string;
   agentId: string;
   cwd?: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): Promise<void> {
   const items = params.items.toReversed();
   await withSessionTranscriptWriteLock(params, async (transcript) => {

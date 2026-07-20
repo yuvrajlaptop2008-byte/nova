@@ -56,7 +56,7 @@ describe("scripts/lib/vitest-shard-timings.mjs", () => {
   });
 
   it("persists include-pattern timing metadata", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-shard-timings-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-shard-timings-"));
     tempDirs.push(tempDir);
     const env = {
       NOVA_TEST_PROJECTS_TIMINGS_PATH: path.join(tempDir, "timings.json"),

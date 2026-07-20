@@ -6,7 +6,7 @@ import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
 import { CUSTOM_LOCAL_AUTH_MARKER } from "../agents/model-auth-markers.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import { buildProviderRegistry, runCapability } from "./runner.js";
 import { withAudioFixture, withVideoFixture } from "./runner.test-utils.js";
@@ -93,7 +93,7 @@ function createVideoProvider(
 }
 
 async function withIsolatedAgentDir<T>(run: (agentDir: string) => Promise<T>): Promise<T> {
-  const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-local-audio-auth-"));
+  const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-local-audio-auth-"));
   try {
     return await run(agentDir);
   } finally {
@@ -106,7 +106,7 @@ function createAudioCfg(params: {
   model: string;
   providerConfig?: Record<string, unknown>;
   entry?: Record<string, unknown>;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     ...(params.providerConfig
       ? {
@@ -127,10 +127,10 @@ function createAudioCfg(params: {
         },
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as NovaConfig;
 }
 
-function createVideoCfg(params: { provider: string; model: string }): OpenClawConfig {
+function createVideoCfg(params: { provider: string; model: string }): NovaConfig {
   return {
     tools: {
       media: {
@@ -140,14 +140,14 @@ function createVideoCfg(params: { provider: string; model: string }): OpenClawCo
         },
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as NovaConfig;
 }
 
 describe("runCapability local no-auth audio providers", () => {
   it("allows a local no-auth audio provider when configured as a local models provider", async () => {
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture("openclaw-local-audio-configured", async ({ ctx, media, cache }) => {
+        await withAudioFixture("nova-local-audio-configured", async ({ ctx, media, cache }) => {
           const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
             text: `ok:${req.apiKey}`,
             model: req.model,
@@ -189,48 +189,45 @@ describe("runCapability local no-auth audio providers", () => {
     modelAuthTestControl.forceMissingProvider = true;
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture(
-          "openclaw-local-audio-plugin-only",
-          async ({ ctx, media, cache }) => {
-            const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
-              text: "plugin local ok",
-              model: req.model,
-            }));
-            const cfg = createAudioCfg({ provider: "local-audio", model: "whisper-local" });
+        await withAudioFixture("nova-local-audio-plugin-only", async ({ ctx, media, cache }) => {
+          const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
+            text: "plugin local ok",
+            model: req.model,
+          }));
+          const cfg = createAudioCfg({ provider: "local-audio", model: "whisper-local" });
 
-            const result = await runCapability({
-              capability: "audio",
-              cfg,
-              ctx,
-              attachments: cache,
-              media,
-              agentDir,
-              providerRegistry: buildProviderRegistry({
-                "local-audio": createAudioProvider("local-audio", transcribeAudio, {
-                  resolveAuth: () => ({
-                    kind: "none",
-                    source: "local-audio plugin no-auth",
-                  }),
+          const result = await runCapability({
+            capability: "audio",
+            cfg,
+            ctx,
+            attachments: cache,
+            media,
+            agentDir,
+            providerRegistry: buildProviderRegistry({
+              "local-audio": createAudioProvider("local-audio", transcribeAudio, {
+                resolveAuth: () => ({
+                  kind: "none",
+                  source: "local-audio plugin no-auth",
                 }),
               }),
-            });
+            }),
+          });
 
-            if (result.decision.outcome !== "success") {
-              throw new Error(
-                result.decision.attachments[0]?.attempts[0]?.reason ??
-                  `expected success, got ${result.decision.outcome}`,
-              );
-            }
-            expect(result.decision.outcome).toBe("success");
-            expect(result.outputs[0]?.text).toBe("plugin local ok");
-            expect(transcribeAudio).toHaveBeenCalledTimes(1);
-            expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe(CUSTOM_LOCAL_AUTH_MARKER);
-            expect(transcribeAudio.mock.calls[0]?.[0].auth).toEqual({
-              kind: "none",
-              source: "local-audio plugin no-auth",
-            });
-          },
-        );
+          if (result.decision.outcome !== "success") {
+            throw new Error(
+              result.decision.attachments[0]?.attempts[0]?.reason ??
+                `expected success, got ${result.decision.outcome}`,
+            );
+          }
+          expect(result.decision.outcome).toBe("success");
+          expect(result.outputs[0]?.text).toBe("plugin local ok");
+          expect(transcribeAudio).toHaveBeenCalledTimes(1);
+          expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe(CUSTOM_LOCAL_AUTH_MARKER);
+          expect(transcribeAudio.mock.calls[0]?.[0].auth).toEqual({
+            kind: "none",
+            source: "local-audio plugin no-auth",
+          });
+        });
       });
     });
   });
@@ -238,7 +235,7 @@ describe("runCapability local no-auth audio providers", () => {
   it("prefers resolver env credentials over plugin-only media no-auth", async () => {
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync({ ...AUTH_ENV, OPENAI_API_KEY: "env-openai-audio-key" }, async () => {
-        await withAudioFixture("openclaw-openai-audio-env-key", async ({ ctx, media, cache }) => {
+        await withAudioFixture("nova-openai-audio-env-key", async ({ ctx, media, cache }) => {
           const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
             text: `env:${req.apiKey}`,
             model: req.model,
@@ -286,33 +283,30 @@ describe("runCapability local no-auth audio providers", () => {
     };
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync({ ...AUTH_ENV, OPENAI_API_KEY: "env-openai-audio-key" }, async () => {
-        await withAudioFixture(
-          "openclaw-openai-audio-oauth-env-key",
-          async ({ ctx, media, cache }) => {
-            const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
-              text: `auth:${req.apiKey}`,
-              model: req.model,
-            }));
-            const cfg = createAudioCfg({ provider: "openai", model: "whisper-1" });
+        await withAudioFixture("nova-openai-audio-oauth-env-key", async ({ ctx, media, cache }) => {
+          const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
+            text: `auth:${req.apiKey}`,
+            model: req.model,
+          }));
+          const cfg = createAudioCfg({ provider: "openai", model: "whisper-1" });
 
-            const result = await runCapability({
-              capability: "audio",
-              cfg,
-              ctx,
-              attachments: cache,
-              media,
-              agentDir,
-              providerRegistry: buildProviderRegistry({
-                openai: createAudioProvider("openai", transcribeAudio),
-              }),
-            });
+          const result = await runCapability({
+            capability: "audio",
+            cfg,
+            ctx,
+            attachments: cache,
+            media,
+            agentDir,
+            providerRegistry: buildProviderRegistry({
+              openai: createAudioProvider("openai", transcribeAudio),
+            }),
+          });
 
-            expect(result.decision.outcome).toBe("success");
-            expect(result.outputs[0]?.text).toBe("auth:env-openai-audio-key");
-            expect(transcribeAudio).toHaveBeenCalledTimes(1);
-            expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe("env-openai-audio-key");
-          },
-        );
+          expect(result.decision.outcome).toBe("success");
+          expect(result.outputs[0]?.text).toBe("auth:env-openai-audio-key");
+          expect(transcribeAudio).toHaveBeenCalledTimes(1);
+          expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe("env-openai-audio-key");
+        });
       });
     });
   });
@@ -330,38 +324,35 @@ describe("runCapability local no-auth audio providers", () => {
     };
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture(
-          "openclaw-local-audio-stored-profile",
-          async ({ ctx, media, cache }) => {
-            const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
-              text: `profile:${req.apiKey}`,
-              model: req.model,
-            }));
-            const cfg = createAudioCfg({ provider: "local-audio", model: "whisper-local" });
+        await withAudioFixture("nova-local-audio-stored-profile", async ({ ctx, media, cache }) => {
+          const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
+            text: `profile:${req.apiKey}`,
+            model: req.model,
+          }));
+          const cfg = createAudioCfg({ provider: "local-audio", model: "whisper-local" });
 
-            const result = await runCapability({
-              capability: "audio",
-              cfg,
-              ctx,
-              attachments: cache,
-              media,
-              agentDir,
-              providerRegistry: buildProviderRegistry({
-                "local-audio": createAudioProvider("local-audio", transcribeAudio, {
-                  resolveAuth: () => ({
-                    kind: "none",
-                    source: "local-audio plugin no-auth",
-                  }),
+          const result = await runCapability({
+            capability: "audio",
+            cfg,
+            ctx,
+            attachments: cache,
+            media,
+            agentDir,
+            providerRegistry: buildProviderRegistry({
+              "local-audio": createAudioProvider("local-audio", transcribeAudio, {
+                resolveAuth: () => ({
+                  kind: "none",
+                  source: "local-audio plugin no-auth",
                 }),
               }),
-            });
+            }),
+          });
 
-            expect(result.decision.outcome).toBe("success");
-            expect(result.outputs[0]?.text).toBe("profile:stored-local-audio-key");
-            expect(transcribeAudio).toHaveBeenCalledTimes(1);
-            expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe("stored-local-audio-key");
-          },
-        );
+          expect(result.decision.outcome).toBe("success");
+          expect(result.outputs[0]?.text).toBe("profile:stored-local-audio-key");
+          expect(transcribeAudio).toHaveBeenCalledTimes(1);
+          expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe("stored-local-audio-key");
+        });
       });
     });
   });
@@ -370,7 +361,7 @@ describe("runCapability local no-auth audio providers", () => {
     modelAuthTestControl.forceMissingProvider = true;
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture("openclaw-remote-audio-no-auth", async ({ ctx, media, cache }) => {
+        await withAudioFixture("nova-remote-audio-no-auth", async ({ ctx, media, cache }) => {
           const transcribeAudio = vi.fn(async () => ({
             text: "should not run",
             model: "remote-whisper",
@@ -410,44 +401,41 @@ describe("runCapability local no-auth audio providers", () => {
   it("prefers literal configured provider apiKey over media no-auth hook", async () => {
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture(
-          "openclaw-local-audio-literal-key",
-          async ({ ctx, media, cache }) => {
-            const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
-              text: `literal:${req.apiKey}`,
-              model: req.model,
-            }));
-            const cfg = createAudioCfg({
-              provider: "local-audio",
-              model: "whisper-local",
-              providerConfig: {
-                apiKey: "real-key",
-                models: [],
-              },
-            });
+        await withAudioFixture("nova-local-audio-literal-key", async ({ ctx, media, cache }) => {
+          const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
+            text: `literal:${req.apiKey}`,
+            model: req.model,
+          }));
+          const cfg = createAudioCfg({
+            provider: "local-audio",
+            model: "whisper-local",
+            providerConfig: {
+              apiKey: "real-key",
+              models: [],
+            },
+          });
 
-            const result = await runCapability({
-              capability: "audio",
-              cfg,
-              ctx,
-              attachments: cache,
-              media,
-              agentDir,
-              providerRegistry: buildProviderRegistry({
-                "local-audio": createAudioProvider("local-audio", transcribeAudio, {
-                  resolveAuth: () => ({
-                    kind: "none",
-                    source: "local-audio plugin no-auth",
-                  }),
+          const result = await runCapability({
+            capability: "audio",
+            cfg,
+            ctx,
+            attachments: cache,
+            media,
+            agentDir,
+            providerRegistry: buildProviderRegistry({
+              "local-audio": createAudioProvider("local-audio", transcribeAudio, {
+                resolveAuth: () => ({
+                  kind: "none",
+                  source: "local-audio plugin no-auth",
                 }),
               }),
-            });
+            }),
+          });
 
-            expect(result.decision.outcome).toBe("success");
-            expect(result.outputs[0]?.text).toBe("literal:real-key");
-            expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe("real-key");
-          },
-        );
+          expect(result.decision.outcome).toBe("success");
+          expect(result.outputs[0]?.text).toBe("literal:real-key");
+          expect(transcribeAudio.mock.calls[0]?.[0].apiKey).toBe("real-key");
+        });
       });
     });
   });
@@ -456,7 +444,7 @@ describe("runCapability local no-auth audio providers", () => {
     modelAuthTestControl.forceMissingProvider = true;
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture("openclaw-local-audio-hook-key", async ({ ctx, media, cache }) => {
+        await withAudioFixture("nova-local-audio-hook-key", async ({ ctx, media, cache }) => {
           const transcribeAudio = vi.fn(async (req: AudioTranscriptionRequest) => ({
             text: `hook:${req.apiKey}`,
             model: req.model,
@@ -497,7 +485,7 @@ describe("runCapability local no-auth audio providers", () => {
     modelAuthTestControl.forceMissingProvider = true;
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture("openclaw-local-audio-no-hook", async ({ ctx, media, cache }) => {
+        await withAudioFixture("nova-local-audio-no-hook", async ({ ctx, media, cache }) => {
           const transcribeAudio = vi.fn(async () => ({
             text: "should not run",
             model: "whisper-local",
@@ -530,7 +518,7 @@ describe("runCapability local no-auth audio providers", () => {
     modelAuthTestControl.forceMissingProvider = true;
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withAudioFixture("openclaw-local-audio-null-hook", async ({ ctx, media, cache }) => {
+        await withAudioFixture("nova-local-audio-null-hook", async ({ ctx, media, cache }) => {
           const transcribeAudio = vi.fn(async () => ({
             text: "should not run",
             model: "whisper-local",
@@ -565,7 +553,7 @@ describe("runCapability local no-auth audio providers", () => {
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
         await withAudioFixture(
-          "openclaw-local-audio-plugin-missing-profile",
+          "nova-local-audio-plugin-missing-profile",
           async ({ ctx, media, cache }) => {
             const transcribeAudio = vi.fn(async () => ({
               text: "should not run",
@@ -609,7 +597,7 @@ describe("runCapability local no-auth audio providers", () => {
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
         await withAudioFixture(
-          "openclaw-local-audio-missing-profile",
+          "nova-local-audio-missing-profile",
           async ({ ctx, media, cache }) => {
             const transcribeAudio = vi.fn(async () => ({
               text: "should not run",
@@ -658,42 +646,39 @@ describe("runCapability local no-auth audio providers", () => {
     modelAuthTestControl.forceMissingProvider = true;
     await withIsolatedAgentDir(async (agentDir) => {
       await withEnvAsync(AUTH_ENV, async () => {
-        await withVideoFixture(
-          "openclaw-local-video-plugin-only",
-          async ({ ctx, media, cache }) => {
-            const describeVideo = vi.fn(async (req: VideoDescriptionRequest) => ({
-              text: `video:${req.auth?.kind}`,
-              model: req.model,
-            }));
-            const cfg = createVideoCfg({ provider: "local-video", model: "video-local" });
+        await withVideoFixture("nova-local-video-plugin-only", async ({ ctx, media, cache }) => {
+          const describeVideo = vi.fn(async (req: VideoDescriptionRequest) => ({
+            text: `video:${req.auth?.kind}`,
+            model: req.model,
+          }));
+          const cfg = createVideoCfg({ provider: "local-video", model: "video-local" });
 
-            const result = await runCapability({
-              capability: "video",
-              cfg,
-              ctx,
-              attachments: cache,
-              media,
-              agentDir,
-              providerRegistry: buildProviderRegistry({
-                "local-video": createVideoProvider("local-video", describeVideo, {
-                  resolveAuth: () => ({
-                    kind: "none",
-                    source: "local-video plugin no-auth",
-                  }),
+          const result = await runCapability({
+            capability: "video",
+            cfg,
+            ctx,
+            attachments: cache,
+            media,
+            agentDir,
+            providerRegistry: buildProviderRegistry({
+              "local-video": createVideoProvider("local-video", describeVideo, {
+                resolveAuth: () => ({
+                  kind: "none",
+                  source: "local-video plugin no-auth",
                 }),
               }),
-            });
+            }),
+          });
 
-            expect(result.decision.outcome).toBe("success");
-            expect(result.outputs[0]?.text).toBe("video:none");
-            expect(describeVideo).toHaveBeenCalledTimes(1);
-            expect(describeVideo.mock.calls[0]?.[0].apiKey).toBe(CUSTOM_LOCAL_AUTH_MARKER);
-            expect(describeVideo.mock.calls[0]?.[0].auth).toEqual({
-              kind: "none",
-              source: "local-video plugin no-auth",
-            });
-          },
-        );
+          expect(result.decision.outcome).toBe("success");
+          expect(result.outputs[0]?.text).toBe("video:none");
+          expect(describeVideo).toHaveBeenCalledTimes(1);
+          expect(describeVideo.mock.calls[0]?.[0].apiKey).toBe(CUSTOM_LOCAL_AUTH_MARKER);
+          expect(describeVideo.mock.calls[0]?.[0].auth).toEqual({
+            kind: "none",
+            source: "local-video plugin no-auth",
+          });
+        });
       });
     });
   });

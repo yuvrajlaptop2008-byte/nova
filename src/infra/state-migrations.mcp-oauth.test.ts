@@ -8,11 +8,8 @@ import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import { createMcpOAuthClientProvider } from "../agents/mcp-oauth-provider.js";
 import { resolveMcpOAuthStoreKey } from "../agents/mcp-oauth-store.js";
 import { clearMcpOAuthCredentials, resolveMcpOAuthAccessToken } from "../agents/mcp-oauth.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { acquireGatewayLock } from "./gateway-lock.js";
 import {
   executeSqliteQuerySync,
@@ -24,29 +21,26 @@ import {
   migrateLegacyMcpOAuthStores,
 } from "./state-migrations.mcp-oauth.js";
 
-type MigrationDatabase = Pick<
-  OpenClawStateKyselyDatabase,
-  "mcp_oauth_stores" | "migration_sources"
->;
+type MigrationDatabase = Pick<NovaStateKyselyDatabase, "mcp_oauth_stores" | "migration_sources">;
 
 const DEFAULT_FILE_NAME = "server-0123456789abcdef.json";
 
 describe("legacy MCP OAuth Doctor migration", () => {
   const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
     afterEach(() => {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       vi.unstubAllEnvs();
       cleanup();
     });
   });
 
   function useStateDir(): { env: NodeJS.ProcessEnv; stateDir: string } {
-    const stateDir = tempDirs.make("openclaw-mcp-oauth-migration-");
+    const stateDir = tempDirs.make("nova-mcp-oauth-migration-");
     return { env: { ...process.env, NOVA_STATE_DIR: stateDir }, stateDir };
   }
 
   function database(env: NodeJS.ProcessEnv) {
-    return openOpenClawStateDatabase({ env }).db;
+    return openNovaStateDatabase({ env }).db;
   }
 
   async function writeLegacy(params: {
@@ -306,7 +300,7 @@ describe("legacy MCP OAuth Doctor migration", () => {
         authorizationChallenge: true,
         scope: "docs.read",
       }),
-    ).rejects.toThrow("Run openclaw mcp login Remote Docs.");
+    ).rejects.toThrow("Run nova mcp login Remote Docs.");
     const provider = createMcpOAuthClientProvider({
       serverName,
       serverUrl,
@@ -464,7 +458,7 @@ describe("legacy MCP OAuth Doctor migration", () => {
     "rejects a symlinked legacy directory before creating lock sidecars",
     async () => {
       const { env, stateDir } = useStateDir();
-      const externalDir = tempDirs.make("openclaw-mcp-oauth-external-");
+      const externalDir = tempDirs.make("nova-mcp-oauth-external-");
       const externalSource = path.join(externalDir, DEFAULT_FILE_NAME);
       await fsp.writeFile(externalSource, JSON.stringify(validStore()));
       await fsp.mkdir(stateDir, { recursive: true });
@@ -488,7 +482,7 @@ describe("legacy MCP OAuth Doctor migration", () => {
       const sourcePath = await writeLegacy({ stateDir });
       const sourceDir = path.dirname(sourcePath);
       const displacedDir = `${sourceDir}.displaced`;
-      const externalDir = tempDirs.make("openclaw-mcp-oauth-swap-external-");
+      const externalDir = tempDirs.make("nova-mcp-oauth-swap-external-");
       const externalSource = path.join(externalDir, DEFAULT_FILE_NAME);
       await fsp.writeFile(externalSource, JSON.stringify(validStore()));
 
@@ -614,7 +608,7 @@ describe("legacy MCP OAuth Doctor migration", () => {
     cases.push({ ...invalidUtf8, sourcePath: invalidUtf8Path });
 
     for (const testCase of cases) {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       const result = await migrate(testCase.stateDir, testCase.env);
       expect(result.warnings[0]).toContain("Failed reading legacy MCP OAuth store");
       expect(fs.existsSync(testCase.sourcePath)).toBe(true);

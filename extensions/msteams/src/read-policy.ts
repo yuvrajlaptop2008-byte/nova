@@ -1,7 +1,7 @@
-import { ToolAuthorizationError } from "openclaw/plugin-sdk/channel-actions";
-import type { ChannelMessageActionContext } from "openclaw/plugin-sdk/channel-contract";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import type { OpenClawConfig } from "../runtime-api.js";
+import { ToolAuthorizationError } from "nova/plugin-sdk/channel-actions";
+import type { ChannelMessageActionContext } from "nova/plugin-sdk/channel-contract";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import type { NovaConfig } from "../runtime-api.js";
 import { isDangerousNameMatchingEnabled, resolveDefaultGroupPolicy } from "../runtime-api.js";
 import { listChannelsForTeamWithPageInfo, resolveGraphToken } from "./graph.js";
 import { resolveMSTeamsRouteConfig } from "./policy.js";
@@ -60,7 +60,7 @@ function isStableUserId(value: string): boolean {
 }
 
 async function resolveAllowedDmTarget(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   target: string,
 ): Promise<string | undefined> {
   const teams = cfg.channels?.msteams;
@@ -103,10 +103,7 @@ async function resolveAllowedDmTarget(
   }
 }
 
-async function resolveDirectDmTarget(
-  cfg: OpenClawConfig,
-  target: string,
-): Promise<string | undefined> {
+async function resolveDirectDmTarget(cfg: NovaConfig, target: string): Promise<string | undefined> {
   if (cfg.channels?.msteams?.dmPolicy === "disabled") {
     return undefined;
   }
@@ -128,7 +125,7 @@ async function resolveDirectDmTarget(
   }
 }
 
-function resolveMSTeamsReadGroupPolicy(cfg: OpenClawConfig) {
+function resolveMSTeamsReadGroupPolicy(cfg: NovaConfig) {
   const teams = cfg.channels?.msteams;
   return teams ? (teams.groupPolicy ?? resolveDefaultGroupPolicy(cfg) ?? "allowlist") : "disabled";
 }
@@ -148,7 +145,7 @@ function isStableGraphChannelTarget(target: string): boolean {
   );
 }
 
-function hasMutableChannelConfig(cfg: OpenClawConfig): boolean {
+function hasMutableChannelConfig(cfg: NovaConfig): boolean {
   const teams = cfg.channels?.msteams?.teams ?? {};
   return Object.entries(teams).some(([teamKey, teamConfig]) => {
     if (teamKey !== "*" && !isStableChannelKey(teamKey)) {
@@ -161,7 +158,7 @@ function hasMutableChannelConfig(cfg: OpenClawConfig): boolean {
 }
 
 async function resolveConfiguredBotFrameworkTeamKey(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   graphTeamId: string,
 ): Promise<string | undefined> {
   const configuredTeams = cfg.channels?.msteams?.teams;
@@ -192,7 +189,7 @@ async function resolveConfiguredBotFrameworkTeamKey(
 }
 
 async function resolveStableChannelTarget(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   target: string,
 ): Promise<string | undefined> {
   if (isStableGraphChannelTarget(target)) {
@@ -212,7 +209,7 @@ async function resolveStableChannelTarget(
 }
 
 async function resolveAllowedChannelTarget(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   target: string,
 ): Promise<string | undefined> {
   const teams = cfg.channels?.msteams;
@@ -277,13 +274,13 @@ async function resolveAllowedChannelTarget(
   }
 }
 
-function bothUnknownScopesAllowed(cfg: OpenClawConfig): boolean {
+function bothUnknownScopesAllowed(cfg: NovaConfig): boolean {
   const teams = cfg.channels?.msteams;
   return resolveMSTeamsReadGroupPolicy(cfg) === "open" && (teams?.dmPolicy ?? "pairing") === "open";
 }
 
 export async function assertMSTeamsReadTargetAllowed(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   ctx: MSTeamsReadContext;
   target: string;
 }): Promise<string> {
@@ -343,7 +340,7 @@ export async function assertMSTeamsReadTargetAllowed(params: {
 }
 
 export async function assertMSTeamsTeamEnumerationAllowed(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   ctx?: MSTeamsReadContext;
   teamId: string;
 }): Promise<string> {
@@ -356,7 +353,7 @@ export async function assertMSTeamsTeamEnumerationAllowed(params: {
     cfg: teams,
     teamId: params.teamId,
     teamName: params.teamId,
-    conversationId: "__openclaw_all_channels__",
+    conversationId: "__nova_all_channels__",
     allowNameMatching: isDangerousNameMatchingEnabled(teams),
   });
   const stableTeamId = isStableGraphTeamId(params.teamId)
@@ -388,7 +385,7 @@ export async function assertMSTeamsTeamEnumerationAllowed(params: {
         allowed = resolveMSTeamsRouteConfig({
           cfg: teams,
           teamId: botFrameworkTeamKey,
-          conversationId: "__openclaw_all_channels__",
+          conversationId: "__nova_all_channels__",
         }).allowed;
       }
       if (!allowed && hasMutableChannelConfig(params.cfg)) {
@@ -400,7 +397,7 @@ export async function assertMSTeamsTeamEnumerationAllowed(params: {
         allowed = resolveMSTeamsRouteConfig({
           cfg: { ...teams, teams: resolved.teams },
           teamId: stableTeamId,
-          conversationId: "__openclaw_all_channels__",
+          conversationId: "__nova_all_channels__",
         }).allowed;
       }
     } catch {

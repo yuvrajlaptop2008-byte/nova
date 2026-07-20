@@ -102,9 +102,9 @@ function logAssistantPlan(
 ): void {
   // Assistant plans are echoed before execution so the user can see the interpreted command.
   const modelLabel = plan.modelLabel ?? overview.defaultModel ?? "configured model";
-  runtime.log(`[openclaw] planner: ${modelLabel}`);
+  runtime.log(`[nova] planner: ${modelLabel}`);
   if (plan.reply) {
     runtime.log(plan.reply);
   }
-  runtime.log(`[openclaw] interpreted: ${plan.command}`);
+  runtime.log(`[nova] interpreted: ${plan.command}`);
 }

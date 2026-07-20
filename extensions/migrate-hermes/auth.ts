@@ -3,14 +3,14 @@ import { createHash } from "node:crypto";
 import {
   loadAuthProfileStoreWithoutExternalProfiles,
   resolveAuthStorePathForDisplay,
-} from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-runtime";
 import {
   createMigrationItem,
   markMigrationItemConflict,
   markMigrationItemError,
   markMigrationItemSkipped,
-} from "openclaw/plugin-sdk/migration";
-import type { MigrationItem, MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/migration";
+import type { MigrationItem, MigrationProviderContext } from "nova/plugin-sdk/plugin-entry";
 import {
   buildOpenAICodexCredentialExtra,
   buildOauthProviderAuthResult,
@@ -20,13 +20,13 @@ import {
   updateAuthProfileStoreWithLock,
   type AuthProfileStore,
   type OAuthCredential,
-  type OpenClawConfig,
+  type NovaConfig,
   type ProviderAuthResult,
-} from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/provider-auth";
 import {
   applyAgentDefaultModelPrimary,
   resolveAgentModelPrimaryValue,
-} from "openclaw/plugin-sdk/provider-onboard";
+} from "nova/plugin-sdk/provider-onboard";
 import {
   applyAuthProfileConfigWithConflictCheck,
   hasAuthProfileConfigConflict,
@@ -55,7 +55,7 @@ const OPENAI_CODEX_DEFAULT_MODEL = "openai/gpt-5.6-sol";
 const HERMES_AUTH_DISPLAY_NAME = "Hermes import";
 
 type AgentDefaultModelConfigs = NonNullable<
-  NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]>["models"]
+  NonNullable<NonNullable<NovaConfig["agents"]>["defaults"]>["models"]
 >;
 type AgentDefaultModelConfigEntry = AgentDefaultModelConfigs[string];
 
@@ -161,10 +161,7 @@ function mergeModelConfigEntry(
   return existing ?? patch;
 }
 
-function applyOAuthModelConfigsToConfig(
-  cfg: OpenClawConfig,
-  result: ProviderAuthResult,
-): OpenClawConfig {
+function applyOAuthModelConfigsToConfig(cfg: NovaConfig, result: ProviderAuthResult): NovaConfig {
   const patchModels = readProviderAuthModelConfigs(result);
   const existingModels = cfg.agents?.defaults?.models ?? {};
   const models: AgentDefaultModelConfigs = result.replaceDefaultModels

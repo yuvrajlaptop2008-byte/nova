@@ -107,7 +107,7 @@ describe("bench-cli-startup", () => {
     "cleans timed-out benchmark process groups when the leader exits first",
     () => {
       const tempDirs = createTempDirTracker();
-      const tmpDir = tempDirs.make("openclaw-cli-startup-timeout-group-");
+      const tmpDir = tempDirs.make("nova-cli-startup-timeout-group-");
       const entryPath = join(tmpDir, "entry.mjs");
       const childPidPath = join(tmpDir, "child.pid");
       let childPid: number | undefined;
@@ -175,14 +175,14 @@ describe("bench-cli-startup", () => {
 
   it("writes compare-mode JSON output and creates parent directories", () => {
     const tempDirs = createTempDirTracker();
-    const tmpDir = tempDirs.make("openclaw-cli-startup-compare-output-");
+    const tmpDir = tempDirs.make("nova-cli-startup-compare-output-");
     try {
       const baselinePath = join(tmpDir, "baseline.json");
       const candidatePath = join(tmpDir, "candidate.json");
       const outputPath = join(tmpDir, "nested", "comparison.json");
       const makeReport = (durationAvg: number, maxRssAvg: number) => ({
         primary: {
-          entry: "openclaw.mjs",
+          entry: "nova.mjs",
           cases: [
             {
               id: "version",
@@ -248,7 +248,7 @@ describe("bench-cli-startup", () => {
   it("fails reports with no measured samples", () => {
     expect(
       testing.collectFailedSamples({
-        entry: "openclaw.mjs",
+        entry: "nova.mjs",
         cases: [
           {
             id: "version",
@@ -266,7 +266,7 @@ describe("bench-cli-startup", () => {
           },
         ],
       }),
-    ).toEqual(["openclaw.mjs version: no measured samples"]);
+    ).toEqual(["nova.mjs version: no measured samples"]);
   });
 
   it("fails reports with nonzero or signaled CLI samples", () => {
@@ -313,7 +313,7 @@ describe("bench-cli-startup", () => {
   it("fails reports with samples that did not report RSS", () => {
     expect(
       testing.collectFailedSamples({
-        entry: "openclaw.mjs",
+        entry: "nova.mjs",
         cases: [
           {
             id: "version",
@@ -339,7 +339,7 @@ describe("bench-cli-startup", () => {
           },
         ],
       }),
-    ).toEqual(["openclaw.mjs version sample 1: did not report max RSS"]);
+    ).toEqual(["nova.mjs version sample 1: did not report max RSS"]);
   });
 
   it("allows declared nonzero exit codes for clean-state probes", () => {
@@ -354,7 +354,7 @@ describe("bench-cli-startup", () => {
 
     expect(
       testing.collectFailedSamples({
-        entry: "openclaw.mjs",
+        entry: "nova.mjs",
         cases: [
           {
             id: "health",
@@ -389,7 +389,7 @@ describe("bench-cli-startup", () => {
 
     expect(
       testing.collectFailedSamples({
-        entry: "openclaw.mjs",
+        entry: "nova.mjs",
         cases: [
           {
             id: "health",
@@ -410,7 +410,7 @@ describe("bench-cli-startup", () => {
         ],
       }),
     ).toEqual([
-      "openclaw.mjs health sample 1: exited with expected code 1 but output did not match expected clean-state markers (Gateway target:)",
+      "nova.mjs health sample 1: exited with expected code 1 but output did not match expected clean-state markers (Gateway target:)",
     ]);
   });
 

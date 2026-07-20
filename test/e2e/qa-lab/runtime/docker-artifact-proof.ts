@@ -116,8 +116,8 @@ async function runScheduler(options: ProducerOptions, appendLog: (chunk: unknown
   await fs.mkdir(dockerRunDir, { recursive: true });
   let packageTgz = process.env.NOVA_CURRENT_PACKAGE_TGZ;
   if (packageTgz) {
-    const packageDir = path.join(dockerRunDir, "openclaw-package");
-    const evidencePackageTgz = path.join(packageDir, "openclaw-current.tgz");
+    const packageDir = path.join(dockerRunDir, "nova-package");
+    const evidencePackageTgz = path.join(packageDir, "nova-current.tgz");
     const sourcePackageTgz = path.resolve(packageTgz);
     await fs.mkdir(packageDir, { recursive: true });
     if (sourcePackageTgz !== evidencePackageTgz) {
@@ -175,7 +175,7 @@ async function runDockerArtifactProofProducer(
         "scripts/test-docker-all.mjs",
         "scripts/lib/docker-e2e-plan.mjs",
         "scripts/lib/docker-e2e-scenarios.mjs",
-        "scripts/package-openclaw-for-docker.mjs",
+        "scripts/package-nova-for-docker.mjs",
       ],
       docsRefs: ["docs/install/docker.md", "docs/help/testing.md"],
       id: options.lane,
@@ -194,7 +194,7 @@ async function runDockerArtifactProofProducer(
     }
     const identity = JSON.parse(await fs.readFile(result.identityPath, "utf8")) as ArtifactIdentity;
     assertIdentity(identity, options.lane);
-    const packagePath = path.join("docker-run", "openclaw-package", "openclaw-current.tgz");
+    const packagePath = path.join("docker-run", "nova-package", "nova-current.tgz");
     return await writer.write({
       artifacts: [
         { kind: "identity", filePath: "artifact-identities.json" },

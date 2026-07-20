@@ -1,6 +1,6 @@
 // Nova TUI backend tests cover rescue status integration with the TUI backend.
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { SystemAgentInferenceUnavailableError } from "./inference-error.js";
 import type { SystemAgentCommandDeps, SystemAgentOperation } from "./operations.js";
@@ -18,7 +18,7 @@ const overview: SystemAgentOverview = {
   defaultAgentId: "main",
   defaultModel: "openai/gpt-5.5",
   agents: [{ id: "main", isDefault: true, model: "openai/gpt-5.5" }],
-  config: { path: "/tmp/openclaw.json", exists: true, valid: true, issues: [], hash: null },
+  config: { path: "/tmp/nova.json", exists: true, valid: true, issues: [], hash: null },
   tools: {
     codex: { command: "codex", found: false, error: "not found" },
     claude: { command: "claude", found: false, error: "not found" },
@@ -32,8 +32,8 @@ const overview: SystemAgentOverview = {
     error: "offline",
   },
   references: {
-    docsUrl: "https://docs.openclaw.ai",
-    sourceUrl: "https://github.com/openclaw/openclaw",
+    docsUrl: "https://docs.nova.ai",
+    sourceUrl: "https://github.com/nova/nova",
   },
 };
 
@@ -49,13 +49,13 @@ const verifiedConfig = {
       },
     },
   },
-} satisfies OpenClawConfig;
+} satisfies NovaConfig;
 
-function configSnapshot(config: OpenClawConfig) {
+function configSnapshot(config: NovaConfig) {
   return {
     exists: true,
     valid: true,
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     hash: "h",
     config,
     runtimeConfig: config,
@@ -66,7 +66,7 @@ function configSnapshot(config: OpenClawConfig) {
 
 async function createVerifiedTuiOptions(
   deps: SystemAgentCommandDeps = {},
-  config: OpenClawConfig = verifiedConfig,
+  config: NovaConfig = verifiedConfig,
 ) {
   const fixture = await createSystemAgentVerifiedInferenceTestFixture(config);
   return {
@@ -142,12 +142,12 @@ describe("runSystemAgentTui", () => {
       backend?: unknown;
     };
     expect(options.local).toBe(true);
-    expect(options.session).toBe("agent:openclaw:main");
+    expect(options.session).toBe("agent:nova:main");
     expect(options.historyLimit).toBe(200);
     expect(options.config).toEqual({});
-    expect(options.title).toBe("openclaw setup");
+    expect(options.title).toBe("nova setup");
     if (!options.backend || typeof options.backend !== "object") {
-      throw new Error("expected openclaw TUI backend");
+      throw new Error("expected nova TUI backend");
     }
   });
 
@@ -160,7 +160,7 @@ describe("runSystemAgentTui", () => {
           thinkingDefault: "high",
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const profileQualifiedOverview = {
       ...overview,
       defaultModel: "openai/gpt-5.5@openai:setup-test",
@@ -206,7 +206,7 @@ describe("runSystemAgentTui", () => {
     const config = {
       ...verifiedConfig,
       agents: { defaults: { model: "openai/gpt-5.6-sol" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const verified = await createVerifiedTuiOptions(
       {
         loadOverview: async () => ({
@@ -253,7 +253,7 @@ describe("runSystemAgentTui", () => {
 
           await expect(
             backend.patchSession({
-              key: "agent:openclaw:main",
+              key: "agent:nova:main",
               model: "anthropic/claude-opus-4-8",
             }),
           ).rejects.toThrow("cannot change the model inside its active verified session");

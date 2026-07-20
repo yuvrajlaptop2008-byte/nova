@@ -325,7 +325,7 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "Skill Workshop",
       detailKeys: ["action", "name", "proposal_id"],
     },
-    openclaw: {
+    nova: {
       emoji: "🦀",
       title: "Nova",
       detailKeys: ["action", "path", "model"],

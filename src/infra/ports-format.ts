@@ -10,7 +10,7 @@ export function classifyPortListener(listener: PortListener, _port: number): Por
   const raw = normalizeLowercaseStringOrEmpty(
     `${listener.commandLine ?? ""} ${listener.command ?? ""}`,
   );
-  if (raw.includes("openclaw")) {
+  if (raw.includes("nova")) {
     return "gateway";
   }
   const command = normalizeLowercaseStringOrEmpty(listener.command ?? "");
@@ -211,7 +211,7 @@ export function buildPortHints(listeners: PortListener[], port: number): string[
   const expectedGatewayListeners = isExpectedGatewayListeners(listeners, port);
   if (kinds.has("gateway") && !expectedGatewayListeners) {
     hints.push(
-      `Gateway already running locally. Stop it (${formatCliCommand("openclaw gateway stop")}) or use a different port.`,
+      `Gateway already running locally. Stop it (${formatCliCommand("nova gateway stop")}) or use a different port.`,
     );
   }
   if (kinds.has("ssh")) {

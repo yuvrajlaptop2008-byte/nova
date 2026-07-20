@@ -3,17 +3,17 @@
  *
  * Maps runtime/session surfaces to the fallback tool text and workflow hints that belong in prompts.
  */
-import { isOpenClawMainPromptSurface } from "../plugins/agent-prompt-surface-kind.js";
+import { isNovaMainPromptSurface } from "../plugins/agent-prompt-surface-kind.js";
 import type { AgentPromptSurfaceKind } from "../plugins/types.js";
 import { isAcpSessionKey, isSubagentSessionKey } from "../routing/session-key.js";
 
 /** Builds fallback tool guidance when a runtime cannot render the structured tool list. */
-export function buildOpenClawToolFallbackText(params: {
+export function buildNovaToolFallbackText(params: {
   surface: AgentPromptSurfaceKind;
   execToolName: string;
   processToolName: string;
 }): string {
-  if (isOpenClawMainPromptSurface(params.surface)) {
+  if (isNovaMainPromptSurface(params.surface)) {
     return [
       "Nova lists the standard tools above. This runtime enables:",
       "- grep: search file contents for patterns",
@@ -44,11 +44,11 @@ export function buildOpenClawToolFallbackText(params: {
 }
 
 /** Returns whether the main Nova prompt should include workflow hints around the tool list. */
-export function shouldRenderOpenClawToolWorkflowHints(params: {
+export function shouldRenderNovaToolWorkflowHints(params: {
   surface: AgentPromptSurfaceKind;
   hasToolList: boolean;
 }): boolean {
-  return isOpenClawMainPromptSurface(params.surface);
+  return isNovaMainPromptSurface(params.surface);
 }
 
 /** Maps a session key to the prompt surface used for tool guidance and runtime behavior. */
@@ -58,5 +58,5 @@ export function resolveAgentPromptSurfaceForSessionKey(
   if (sessionKey && isAcpSessionKey(sessionKey)) {
     return "acp_backend";
   }
-  return sessionKey && isSubagentSessionKey(sessionKey) ? "subagent" : "openclaw_main";
+  return sessionKey && isSubagentSessionKey(sessionKey) ? "subagent" : "nova_main";
 }

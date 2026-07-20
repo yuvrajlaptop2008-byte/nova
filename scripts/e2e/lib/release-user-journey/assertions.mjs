@@ -114,9 +114,7 @@ function pathsEqual(left, right) {
 }
 
 function configPath() {
-  return (
-    process.env.NOVA_CONFIG_PATH ?? path.join(process.env.HOME ?? "", ".openclaw", "openclaw.json")
-  );
+  return process.env.NOVA_CONFIG_PATH ?? path.join(process.env.HOME ?? "", ".nova", "nova.json");
 }
 
 function assert(condition, message) {
@@ -135,16 +133,13 @@ function installRecords() {
 
 function assertOnboard() {
   const home = process.argv[3];
-  const stateDir = path.join(home, ".openclaw");
+  const stateDir = path.join(home, ".nova");
   const authPath = path.join(stateDir, "agents", "main", "agent", "auth-profiles.json");
-  assert(fs.existsSync(configPath()), "onboard did not write openclaw.json");
+  assert(fs.existsSync(configPath()), "onboard did not write nova.json");
   const stateRaw =
     fs.readFileSync(configPath(), "utf8") +
     (fs.existsSync(authPath) ? fs.readFileSync(authPath, "utf8") : "");
-  assert(
-    !stateRaw.includes("sk-openclaw-release-user-journey"),
-    "onboard persisted raw OpenAI key",
-  );
+  assert(!stateRaw.includes("sk-nova-release-user-journey"), "onboard persisted raw OpenAI key");
 }
 
 function configureMockModel() {

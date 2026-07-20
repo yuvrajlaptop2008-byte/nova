@@ -7,9 +7,9 @@ import {
   setGoogleOAuthSettingsFs,
 } from "./google-oauth.test-support.js";
 
-vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/runtime-env")>(
-    "openclaw/plugin-sdk/runtime-env",
+vi.mock("nova/plugin-sdk/runtime-env", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-env")>(
+    "nova/plugin-sdk/runtime-env",
   );
   return {
     ...actual,
@@ -17,9 +17,9 @@ vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-    "openclaw/plugin-sdk/ssrf-runtime",
+vi.mock("nova/plugin-sdk/ssrf-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+    "nova/plugin-sdk/ssrf-runtime",
   );
   return {
     ...actual,
@@ -40,8 +40,8 @@ vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
 });
 
 afterAll(() => {
-  vi.doUnmock("openclaw/plugin-sdk/runtime-env");
-  vi.doUnmock("openclaw/plugin-sdk/ssrf-runtime");
+  vi.doUnmock("nova/plugin-sdk/runtime-env");
+  vi.doUnmock("nova/plugin-sdk/ssrf-runtime");
   vi.resetModules();
 });
 
@@ -738,7 +738,7 @@ describe("loginGeminiCliOAuth", () => {
   }
 
   function userInfoResponse(): Response {
-    return responseJson({ email: "lobster@openclaw.ai" });
+    return responseJson({ email: "lobster@nova.ai" });
   }
 
   type RecordedFetchRequest = {
@@ -1085,13 +1085,13 @@ describe("loginGeminiCliOAuth", () => {
     const { refreshTokensForGeminiCli } = await import("./oauth.token.js");
     const result = await refreshTokensForGeminiCli({
       refresh: "refresh-token",
-      email: "lobster@openclaw.ai",
+      email: "lobster@nova.ai",
     });
 
     expect(result).toMatchObject({
       access: "access-token",
       refresh: "refresh-token",
-      email: "lobster@openclaw.ai",
+      email: "lobster@nova.ai",
       projectId: undefined,
     });
     expect(requests.map(({ url }) => url)).toEqual([TOKEN_URL, USERINFO_URL]);
@@ -1120,7 +1120,7 @@ describe("loginGeminiCliOAuth", () => {
     const { refreshTokensForGeminiCli } = await import("./oauth.token.js");
     const result = await refreshTokensForGeminiCli({
       refresh: "refresh-token",
-      email: "lobster@openclaw.ai",
+      email: "lobster@nova.ai",
     });
 
     expect(Number.isFinite(result.expires)).toBe(true);
@@ -1151,7 +1151,7 @@ describe("loginGeminiCliOAuth", () => {
       const { refreshTokensForGeminiCli } = await import("./oauth.token.js");
       const result = await refreshTokensForGeminiCli({
         refresh: "refresh-token",
-        email: "lobster@openclaw.ai",
+        email: "lobster@nova.ai",
       });
 
       expect(result.expires).toBe(0);
@@ -1183,7 +1183,7 @@ describe("loginGeminiCliOAuth", () => {
     const { refreshTokensForGeminiCli } = await import("./oauth.token.js");
     const result = await refreshTokensForGeminiCli({
       refresh: "refresh-token",
-      email: "lobster@openclaw.ai",
+      email: "lobster@nova.ai",
     });
 
     expect(Number.isSafeInteger(result.expires)).toBe(true);

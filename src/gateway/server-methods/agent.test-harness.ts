@@ -798,7 +798,7 @@ export function operatorWriteGatewayClient(): AgentHandlerArgs["client"] {
       minProtocol: 1,
       maxProtocol: 1,
       client: {
-        id: "openclaw-control-ui",
+        id: "nova-control-ui",
         version: "test",
         platform: "test",
         mode: "ui",
@@ -942,7 +942,7 @@ function toLintErrorObject(value: unknown, fallbackMessage: string): Error {
 /**
  * Pins subagent-registry deps for gateway handler tests, always keeping
  * `ensureRuntimePluginsLoaded` a no-op. Real ended-run hooks reload the
- * standalone plugin runtime in the background, and `loadOpenClawPlugins`
+ * standalone plugin runtime in the background, and `loadNovaPlugins`
  * starts by wiping process-wide plugin registrations — including the detached
  * task lifecycle runtime a later test just installed via
  * `setDetachedTaskLifecycleRuntime`. Without this pin, a prior test's async

@@ -82,5 +82,4 @@ export type ApplicationContext<TRouteId extends string = string> = {
   readonly preload: (routeId: TRouteId) => Promise<void>;
 };
 
-export const applicationContext =
-  createContext<ApplicationContext<RouteId>>("openclaw.application");
+export const applicationContext = createContext<ApplicationContext<RouteId>>("nova.application");

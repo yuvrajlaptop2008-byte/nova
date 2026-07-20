@@ -1,8 +1,8 @@
 // Fal tests cover video generation provider plugin behavior.
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
-import * as providerAuth from "openclaw/plugin-sdk/provider-auth-runtime";
-import * as providerHttp from "openclaw/plugin-sdk/provider-http";
-import { expectExplicitVideoGenerationCapabilities } from "openclaw/plugin-sdk/provider-test-contracts";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
+import * as providerAuth from "nova/plugin-sdk/provider-auth-runtime";
+import * as providerHttp from "nova/plugin-sdk/provider-http";
+import { expectExplicitVideoGenerationCapabilities } from "nova/plugin-sdk/provider-test-contracts";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { setFalVideoFetchGuardForTesting } from "./test-support.js";
 import { buildFalVideoGenerationProvider } from "./video-generation-provider.js";

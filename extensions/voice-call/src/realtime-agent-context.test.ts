@@ -2,7 +2,7 @@
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { VoiceCallConfig } from "./config.js";
 import type { CoreAgentDeps } from "./core-bridge.js";
@@ -16,7 +16,7 @@ afterEach(async () => {
 });
 
 async function createWorkspace(): Promise<string> {
-  const workspaceDir = await mkdtemp(path.join(tmpdir(), "openclaw-voice-context-"));
+  const workspaceDir = await mkdtemp(path.join(tmpdir(), "nova-voice-context-"));
   tempDirs.push(workspaceDir);
   return workspaceDir;
 }
@@ -65,7 +65,7 @@ describe("buildRealtimeVoiceInstructions", () => {
     await writeFile(path.join(workspaceDir, "IDENTITY.md"), "Name: Claw Voice\nVibe: snappy\n");
     await writeFile(path.join(workspaceDir, "SECRET.md"), "do not include\n");
 
-    const coreConfig = { agents: { list: [{ id: "voice" }] } } as OpenClawConfig;
+    const coreConfig = { agents: { list: [{ id: "voice" }] } } as NovaConfig;
 
     const instructions = await buildRealtimeVoiceInstructions({
       baseInstructions: "Base voice instructions.",
@@ -85,7 +85,7 @@ describe("buildRealtimeVoiceInstructions", () => {
 
     expect(instructions).toContain("Nova agent voice context:");
     expect(instructions).toContain("Consult behavior:");
-    expect(instructions).toContain("Call openclaw_agent_consult before answering requests");
+    expect(instructions).toContain("Call nova_agent_consult before answering requests");
     expect(instructions).toContain("- Agent id: voice");
     expect(instructions).toContain("- Name: Claw Voice");
     expect(instructions).toContain("- Vibe: snappy");
@@ -112,7 +112,7 @@ describe("buildRealtimeVoiceInstructions", () => {
     const instructions = await buildRealtimeVoiceInstructions({
       baseInstructions: "Base voice instructions.",
       config,
-      coreConfig: { agents: { list: [{ id: agentId }] } } as OpenClawConfig,
+      coreConfig: { agents: { list: [{ id: agentId }] } } as NovaConfig,
       agentRuntime: createAgentRuntime("/unused"),
     });
 

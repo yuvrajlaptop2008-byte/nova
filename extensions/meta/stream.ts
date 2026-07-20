@@ -1,8 +1,8 @@
 // Meta plugin module implements stream behavior.
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import { streamSimple } from "openclaw/plugin-sdk/llm";
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
-import { streamWithPayloadPatch } from "openclaw/plugin-sdk/provider-stream-shared";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import { streamSimple } from "nova/plugin-sdk/llm";
+import type { ProviderWrapStreamFnContext } from "nova/plugin-sdk/plugin-entry";
+import { streamWithPayloadPatch } from "nova/plugin-sdk/provider-stream-shared";
 
 const META_REASONING_ENCRYPTED_CONTENT_INCLUDE = "reasoning.encrypted_content";
 

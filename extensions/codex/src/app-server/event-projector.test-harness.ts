@@ -2,25 +2,22 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness";
+import type { EmbeddedRunAttemptParams } from "nova/plugin-sdk/agent-harness";
 import {
   embeddedAgentLog,
   formatToolAggregate,
   inferToolMetaFromArgs,
   resetAgentEventsForTest,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { SessionManager } from "openclaw/plugin-sdk/agent-sessions";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { SessionManager } from "nova/plugin-sdk/agent-sessions";
 import {
   onInternalDiagnosticEvent,
   resetDiagnosticEventsForTest,
   type DiagnosticEventPayload,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-import {
-  initializeGlobalHookRunner,
-  resetGlobalHookRunner,
-} from "openclaw/plugin-sdk/hook-runtime";
-import { createMockPluginRegistry } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { withTempDir } from "openclaw/plugin-sdk/test-env";
+} from "nova/plugin-sdk/diagnostic-runtime";
+import { initializeGlobalHookRunner, resetGlobalHookRunner } from "nova/plugin-sdk/hook-runtime";
+import { createMockPluginRegistry } from "nova/plugin-sdk/plugin-test-runtime";
+import { withTempDir } from "nova/plugin-sdk/test-env";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CodexAppServerEventProjector } from "./event-projector.js";
 import { createCodexTestModel, createCodexTestToolTerminalObserver } from "./test-support.js";
@@ -88,7 +85,7 @@ function assistantMessage(text: string, timestamp: number) {
 }
 
 export async function createParams(): Promise<EmbeddedRunAttemptParams> {
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-projector-"));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-projector-"));
   tempDirs.add(tempDir);
   const sessionFile = path.join(tempDir, "session.jsonl");
   SessionManager.open(sessionFile).appendMessage(assistantMessage("history", Date.now()));

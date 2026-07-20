@@ -1,18 +1,12 @@
 // Xai plugin module implements tool auth shared behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { canResolveEnvSecretRefInReadOnlyPath } from "openclaw/plugin-sdk/extension-shared";
-import {
-  coerceSecretRef,
-  resolveNonEnvSecretRefApiKeyMarker,
-} from "openclaw/plugin-sdk/provider-auth";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { canResolveEnvSecretRefInReadOnlyPath } from "nova/plugin-sdk/extension-shared";
+import { coerceSecretRef, resolveNonEnvSecretRefApiKeyMarker } from "nova/plugin-sdk/provider-auth";
 import {
   readProviderEnvValue,
   resolveProviderWebSearchPluginConfig,
-} from "openclaw/plugin-sdk/provider-web-search";
-import {
-  normalizeSecretInputString,
-  resolveSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+} from "nova/plugin-sdk/provider-web-search";
+import { normalizeSecretInputString, resolveSecretInputString } from "nova/plugin-sdk/secret-input";
 
 type XaiFallbackAuth = {
   apiKey: string;
@@ -43,7 +37,7 @@ function readConfiguredOrManagedApiKey(value: unknown): string | undefined {
 function readConfiguredRuntimeApiKey(
   value: unknown,
   path: string,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
 ): ConfiguredRuntimeApiKeyResolution {
   const resolved = resolveSecretInputString({
     value,
@@ -77,9 +71,7 @@ function readConfiguredRuntimeApiKey(
   return envValue ? { status: "available", value: envValue } : { status: "missing" };
 }
 
-function readPluginXaiWebSearchApiKeyResult(
-  cfg?: OpenClawConfig,
-): ConfiguredRuntimeApiKeyResolution {
+function readPluginXaiWebSearchApiKeyResult(cfg?: NovaConfig): ConfiguredRuntimeApiKeyResolution {
   return readConfiguredRuntimeApiKey(
     resolveProviderWebSearchPluginConfig(cfg as Record<string, unknown> | undefined, "xai")?.apiKey,
     "plugins.entries.xai.config.webSearch.apiKey",
@@ -88,8 +80,8 @@ function readPluginXaiWebSearchApiKeyResult(
 }
 
 function resolveConfiguredXaiToolApiKeyResult(params: {
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: NovaConfig;
+  sourceConfig?: NovaConfig;
 }): ConfiguredRuntimeApiKeyResolution {
   const runtimePlugin = readPluginXaiWebSearchApiKeyResult(params.runtimeConfig);
   if (runtimePlugin.status === "available" || runtimePlugin.status === "blocked") {
@@ -111,7 +103,7 @@ async function resolveXaiAuthProfileApiKey(auth?: XaiToolAuthContext): Promise<s
   return normalizeSecretInputString(value);
 }
 
-export function resolveFallbackXaiAuth(cfg?: OpenClawConfig): XaiFallbackAuth | undefined {
+export function resolveFallbackXaiAuth(cfg?: NovaConfig): XaiFallbackAuth | undefined {
   const pluginApiKey = readConfiguredOrManagedApiKey(
     resolveProviderWebSearchPluginConfig(cfg as Record<string, unknown> | undefined, "xai")?.apiKey,
   );
@@ -125,8 +117,8 @@ export function resolveFallbackXaiAuth(cfg?: OpenClawConfig): XaiFallbackAuth | 
 }
 
 export async function resolveXaiToolApiKeyWithAuth(params: {
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: NovaConfig;
+  sourceConfig?: NovaConfig;
   auth?: XaiToolAuthContext;
 }): Promise<string | undefined> {
   const configured = resolveConfiguredXaiToolApiKeyResult(params);
@@ -143,8 +135,8 @@ export async function resolveXaiToolApiKeyWithAuth(params: {
 
 export function isXaiToolEnabled(params: {
   enabled?: boolean;
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: NovaConfig;
+  sourceConfig?: NovaConfig;
   auth?: XaiToolAuthContext;
 }): boolean {
   if (params.enabled === false) {

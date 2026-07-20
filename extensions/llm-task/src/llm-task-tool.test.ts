@@ -5,7 +5,7 @@ vi.mock("../api.js", async () => {
   const actual = await vi.importActual<typeof import("../api.js")>("../api.js");
   return {
     ...actual,
-    resolvePreferredOpenClawTmpDir: () => "/tmp",
+    resolvePreferredNovaTmpDir: () => "/tmp",
   };
 });
 
@@ -33,7 +33,7 @@ const resolveThinkingPolicy = vi.fn(
       { id: "medium", label: "medium" },
       { id: "high", label: "high" },
       ...(model?.startsWith("gpt-5.6") &&
-      (agentRuntime === "openclaw" || (agentRuntime === "codex" && !model.endsWith("-luna")))
+      (agentRuntime === "nova" || (agentRuntime === "codex" && !model.endsWith("-luna")))
         ? [
             { id: "max", label: "max" },
             { id: "ultra", label: "ultra" },
@@ -70,7 +70,7 @@ function fakeApi(overrides: Record<string, unknown> = {}): LlmTaskApi {
           workspace: "/tmp",
           model: { primary: "openai/gpt-5.5" },
           models: {
-            "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+            "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
           },
         },
       },
@@ -292,7 +292,7 @@ describe("llm-task tool (json-only)", () => {
     expect(resolveThinkingPolicy).toHaveBeenCalledWith({
       provider: "openai",
       model: "gpt-5.5",
-      agentRuntime: "openclaw",
+      agentRuntime: "nova",
     });
   });
 
@@ -337,7 +337,7 @@ describe("llm-task tool (json-only)", () => {
           workspace: "/tmp",
           model: { primary: "openai/gpt-5.6-luna" },
           models: {
-            "openai/gpt-5.6-luna": { agentRuntime: { id: "openclaw" } },
+            "openai/gpt-5.6-luna": { agentRuntime: { id: "nova" } },
           },
         },
       },
@@ -354,12 +354,12 @@ describe("llm-task tool (json-only)", () => {
     expect(resolveThinkingPolicy).toHaveBeenCalledWith({
       provider: "openai",
       model: "gpt-5.6-luna",
-      agentRuntime: "openclaw",
+      agentRuntime: "nova",
     });
     const call = firstEmbeddedRunCall();
     expect(call.thinkLevel).toBe("ultra");
     expect(call.config).toBe(config);
-    expect(call.agentHarnessRuntimeOverride).toBe("openclaw");
+    expect(call.agentHarnessRuntimeOverride).toBe("nova");
   });
 
   it("normalizes thinking aliases", async () => {
@@ -403,7 +403,7 @@ describe("llm-task tool (json-only)", () => {
     mockEmbeddedRunJson({ ok: true });
     const call = await executeEmbeddedRun({ prompt: "x" });
     expect(call.disableTools).toBe(true);
-    expect(call.agentHarnessRuntimeOverride).toBe("openclaw");
+    expect(call.agentHarnessRuntimeOverride).toBe("nova");
   });
 
   it("rejects malformed numeric run options before dispatch", async () => {

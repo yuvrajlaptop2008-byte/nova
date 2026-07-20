@@ -1,17 +1,14 @@
 import { createHash } from "node:crypto";
-import { resolveDefaultAgentDir, resolveDefaultAgentId } from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { resolveDefaultAgentDir, resolveDefaultAgentId } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import type {
-  OpenClawPluginApi,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeInvokePolicy,
-} from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import type {
-  SessionCatalogHost,
-  SessionCatalogProvider,
-} from "openclaw/plugin-sdk/session-catalog";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+  NovaPluginApi,
+  NovaPluginNodeHostCommand,
+  NovaPluginNodeInvokePolicy,
+} from "nova/plugin-sdk/plugin-entry";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import type { SessionCatalogHost, SessionCatalogProvider } from "nova/plugin-sdk/session-catalog";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { CODEX_CONTROL_METHODS } from "./app-server/capabilities.js";
 import { resolveCodexSupervisionAppServerRuntimeOptions } from "./app-server/config.js";
 import { buildCodexAppServerConnectionFingerprint } from "./app-server/plugin-app-cache-key.js";
@@ -228,7 +225,7 @@ function createCodexSessionCatalogControlFromRequests(params: {
 /** Builds the passive catalog over the Codex plugin's canonical shared client. */
 export function createCodexSessionCatalogControl(params: {
   getPluginConfig: () => unknown;
-  getRuntimeConfig: () => OpenClawConfig | undefined;
+  getRuntimeConfig: () => NovaConfig | undefined;
   now?: () => number;
 }): CodexSessionCatalogControl {
   const now = params.now ?? Date.now;
@@ -363,7 +360,7 @@ export function createCodexSessionCatalogControl(params: {
 
 async function listGatewayHost(params: {
   bindingStore: CodexAppServerBindingStore;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   control: CodexSessionCatalogControl;
   query: CodexSessionCatalogParams;
   runtime: PluginRuntime;
@@ -409,7 +406,7 @@ async function listGatewayHost(params: {
 /** Lists Gateway-local and paired-node Codex sessions with per-host failures. */
 async function listCodexSessionCatalog(params: {
   bindingStore: CodexAppServerBindingStore;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   runtime: PluginRuntime;
   control: CodexSessionCatalogControl;
   query?: CodexSessionCatalogParams;
@@ -482,7 +479,7 @@ async function listCodexSessionCatalog(params: {
 /** Builds the node-local read-only Codex app-server catalog command. */
 export function createCodexSessionCatalogNodeHostCommands(
   control: CodexSessionCatalogControl,
-): OpenClawPluginNodeHostCommand[] {
+): NovaPluginNodeHostCommand[] {
   return [
     {
       command: CODEX_APP_SERVER_THREADS_LIST_COMMAND,
@@ -665,7 +662,7 @@ type CodexSupervisionMarker = { sourceThreadId: string };
 
 async function listAdoptedSessionEntries(params: {
   bindingStore: CodexAppServerBindingStore;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   runtime: PluginRuntime;
 }): Promise<Map<string, AdoptedSessionEntry>> {
   const adopted = new Map<string, AdoptedSessionEntry>();
@@ -710,7 +707,7 @@ async function listAdoptedSessionEntries(params: {
 
 async function findAdoptedSessionEntry(params: {
   bindingStore: CodexAppServerBindingStore;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: PluginRuntime;
   threadId: string;
 }): Promise<AdoptedSessionEntry | undefined> {
@@ -808,7 +805,7 @@ function matchesPendingSupervisionOwner(
 
 async function ensurePendingAdoptionBinding(params: {
   bindingStore: CodexAppServerBindingStore;
-  config: OpenClawConfig;
+  config: NovaConfig;
   identity: ReturnType<typeof sessionBindingIdentity>;
   sourceThreadId: string;
   connectionFingerprint: string;
@@ -869,9 +866,9 @@ async function ensurePendingAdoptionBinding(params: {
 }
 
 async function createOrReuseAdoptedSession(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   bindingStore: CodexAppServerBindingStore;
-  config: OpenClawConfig;
+  config: NovaConfig;
   sourceThread: CodexThread;
   connectionFingerprint: string;
 }): Promise<AdoptedSessionEntry> {
@@ -981,9 +978,9 @@ async function createOrReuseAdoptedSession(params: {
 }
 
 async function continueLocalCodexSessionInner(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   bindingStore: CodexAppServerBindingStore;
-  config: OpenClawConfig;
+  config: NovaConfig;
   control: CodexSessionCatalogControl;
   threadId: string;
   onContinued?: (upstream: CodexUpstreamBaseline & { connectionFingerprint: string }) => void;
@@ -1069,9 +1066,9 @@ async function continueLocalCodexSessionInner(params: {
 
 /** Creates one locked Nova branch whose first harness run forks the Codex source. */
 async function continueLocalCodexSession(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   bindingStore: CodexAppServerBindingStore;
-  config: OpenClawConfig;
+  config: NovaConfig;
   control: CodexSessionCatalogControl;
   threadId: string;
   onContinued?: (upstream: CodexUpstreamBaseline & { connectionFingerprint: string }) => void;
@@ -1098,7 +1095,7 @@ async function continueLocalCodexSession(params: {
 
 async function assertNoPendingSupervisionBranch(params: {
   bindingStore: CodexAppServerBindingStore;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: PluginRuntime;
   threadId: string;
 }): Promise<void> {
@@ -1135,7 +1132,7 @@ async function assertNoPendingSupervisionBranch(params: {
 /** Archives one inactive Gateway-local Codex thread after a fresh status read. */
 async function archiveLocalCodexSession(params: {
   bindingStore: CodexAppServerBindingStore;
-  config: OpenClawConfig;
+  config: NovaConfig;
   control: CodexSessionCatalogControl;
   runtime: PluginRuntime;
   threadId: string;
@@ -1178,7 +1175,7 @@ async function archiveLocalCodexSession(params: {
 }
 
 /** Allows read-only catalog and transcript commands on supported paired-node platforms. */
-export function createCodexSessionCatalogNodeInvokePolicies(): OpenClawPluginNodeInvokePolicy[] {
+export function createCodexSessionCatalogNodeInvokePolicies(): NovaPluginNodeInvokePolicy[] {
   return [
     {
       commands: [
@@ -1240,10 +1237,10 @@ function toGenericCatalogHost(
 }
 
 function registerCodexSessionCatalog(params: {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   bindingStore: CodexAppServerBindingStore;
   control: CodexSessionCatalogControl;
-  getRuntimeConfig: () => OpenClawConfig | undefined;
+  getRuntimeConfig: () => NovaConfig | undefined;
 }): void {
   const provider: SessionCatalogProvider = {
     id: "codex",

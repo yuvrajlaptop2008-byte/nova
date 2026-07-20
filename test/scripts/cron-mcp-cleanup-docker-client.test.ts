@@ -25,7 +25,7 @@ describe("cron MCP cleanup docker client", () => {
   });
 
   it("bounds missing probe pid waits", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cron-mcp-client-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-cron-mcp-client-"));
     try {
       const startedAt = Date.now();
       await expect(
@@ -38,7 +38,7 @@ describe("cron MCP cleanup docker client", () => {
   });
 
   it("does not parse malformed probe pid prefixes", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cron-mcp-client-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-cron-mcp-client-"));
     try {
       const pidPath = path.join(root, "probe.pid");
       fs.writeFileSync(pidPath, "123abc\n", "utf8");

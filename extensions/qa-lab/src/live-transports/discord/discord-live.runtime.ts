@@ -4,12 +4,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { DiscordApiError, handleDiscordMessageAction, requestDiscord } from "@nova/discord/api.js";
-import { DEFAULT_EMOJIS } from "openclaw/plugin-sdk/channel-feedback";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { writeExternalFileWithinRoot } from "openclaw/plugin-sdk/security-runtime";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { escapeHtml } from "openclaw/plugin-sdk/text-utility-runtime";
+import { DEFAULT_EMOJIS } from "nova/plugin-sdk/channel-feedback";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { writeExternalFileWithinRoot } from "nova/plugin-sdk/security-runtime";
+import { uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
+import { escapeHtml } from "nova/plugin-sdk/text-utility-runtime";
 import { chromium } from "playwright-core";
 import { z } from "zod";
 import { startQaGatewayChild } from "../../gateway-child.js";
@@ -375,7 +375,7 @@ function parseDiscordQaCredentialPayload(payload: unknown): DiscordQaRuntimeEnv 
 }
 
 function buildDiscordQaConfig(
-  baseCfg: OpenClawConfig,
+  baseCfg: NovaConfig,
   params: {
     guildId: string;
     channelId: string;
@@ -390,7 +390,7 @@ function buildDiscordQaConfig(
       guildId: string;
     };
   } = {},
-): OpenClawConfig {
+): NovaConfig {
   const pluginAllow = uniqueStrings([...(baseCfg.plugins?.allow ?? []), "discord"]);
   const pluginEntries = {
     ...baseCfg.plugins?.entries,
@@ -1109,7 +1109,7 @@ async function pollThreadReplyMessage(params: {
 }
 
 async function runDiscordThreadReplyFilePathAttachmentScenario(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   driverBotId: string;
   outputDir: string;
   runtimeEnv: DiscordQaRuntimeEnv;

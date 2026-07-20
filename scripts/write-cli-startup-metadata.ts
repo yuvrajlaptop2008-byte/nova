@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import pMap from "p-map";
 import type { RootHelpRenderOptions } from "../src/cli/program/root-help.js";
-import type { OpenClawConfig } from "../src/config/config.js";
+import type { NovaConfig } from "../src/config/config.js";
 import { resolveCliStartupRootHelpBundleIdentity } from "./lib/cli-startup-root-help-bundle.js";
 import { resolveWindowsTaskkillPath } from "./lib/windows-taskkill.mjs";
 
@@ -283,7 +283,7 @@ function readBundledChannelCatalog(
       const raw = readFileSync(packageJsonPath, "utf8");
       signature.update(`${dirEntry.name}\0${raw}\0`);
       const parsed = JSON.parse(raw) as {
-        openclaw?: {
+        nova?: {
           channel?: {
             id?: unknown;
             order?: unknown;
@@ -291,12 +291,12 @@ function readBundledChannelCatalog(
           };
         };
       };
-      const id = parsed.openclaw?.channel?.id;
+      const id = parsed.nova?.channel?.id;
       if (typeof id !== "string" || !id.trim()) {
         continue;
       }
-      const orderRaw = parsed.openclaw?.channel?.order;
-      const labelRaw = parsed.openclaw?.channel?.label;
+      const orderRaw = parsed.nova?.channel?.order;
+      const labelRaw = parsed.nova?.channel?.label;
       entries.push({
         id: id.trim(),
         order: typeof orderRaw === "number" ? orderRaw : 999,
@@ -319,13 +319,13 @@ function readBundledChannelCatalog(
 function createIsolatedRootHelpRenderContext(
   bundledPluginsDir: string = extensionsDir,
 ): RootHelpRenderContext {
-  const stateDir = path.join(rootDir, ".openclaw-build-root-help");
+  const stateDir = path.join(rootDir, ".nova-build-root-help");
   const workspaceDir = path.join(stateDir, "workspace");
   const homeDir = path.join(stateDir, "home");
   const env: NodeJS.ProcessEnv = {
     HOME: homeDir,
-    LOGNAME: process.env.LOGNAME ?? process.env.USER ?? "openclaw-build",
-    USER: process.env.USER ?? process.env.LOGNAME ?? "openclaw-build",
+    LOGNAME: process.env.LOGNAME ?? process.env.USER ?? "nova-build",
+    USER: process.env.USER ?? process.env.LOGNAME ?? "nova-build",
     PATH: process.env.PATH ?? "",
     TMPDIR: process.env.TMPDIR ?? "/tmp",
     LANG: process.env.LANG ?? "C.UTF-8",
@@ -336,7 +336,7 @@ function createIsolatedRootHelpRenderContext(
     NOVA_DISABLE_BUNDLED_PLUGINS: "",
     NOVA_STATE_DIR: stateDir,
   };
-  const config: OpenClawConfig = {
+  const config: NovaConfig = {
     agents: {
       defaults: {
         workspace: workspaceDir,
@@ -671,7 +671,7 @@ async function renderSourceCommandHelpText(
   command: SourceCommandHelpCommand,
   renderContext: RootHelpRenderContext = createIsolatedRootHelpRenderContext(),
 ): Promise<string> {
-  return await spawnText(["openclaw.mjs", command, "--help"], {
+  return await spawnText(["nova.mjs", command, "--help"], {
     cwd: rootDir,
     env: {
       ...renderContext.env,

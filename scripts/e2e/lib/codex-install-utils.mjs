@@ -7,11 +7,11 @@ import { readPluginInstallRecords } from "./plugin-index-sqlite.mjs";
 export { readJson };
 
 export function stateDir() {
-  return process.env.NOVA_STATE_DIR || path.join(process.env.HOME, ".openclaw");
+  return process.env.NOVA_STATE_DIR || path.join(process.env.HOME, ".nova");
 }
 
 export function configPath() {
-  return process.env.NOVA_CONFIG_PATH || path.join(stateDir(), "openclaw.json");
+  return process.env.NOVA_CONFIG_PATH || path.join(stateDir(), "nova.json");
 }
 
 export function managedNpmRoot() {

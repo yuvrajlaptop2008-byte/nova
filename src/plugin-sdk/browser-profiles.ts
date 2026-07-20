@@ -3,8 +3,8 @@
  */
 import path from "node:path";
 import type { BrowserConfig } from "../config/types.browser.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import type { NovaConfig } from "../config/types.nova.js";
+import { resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
 import type { ResolvedBrowserConfig, ResolvedBrowserProfile } from "./browser-types.js";
 import { loadBundledPluginPublicSurfaceModuleSync } from "./facade-loader.js";
 export type {
@@ -20,20 +20,20 @@ export const DEFAULT_BROWSER_EVALUATE_ENABLED = true;
 /** Default browser profile accent color shown in UI surfaces. */
 export const DEFAULT_NOVA_BROWSER_COLOR = "#FF4500";
 /** Default Nova-managed browser profile name. */
-export const DEFAULT_NOVA_BROWSER_PROFILE_NAME = "openclaw";
+export const DEFAULT_NOVA_BROWSER_PROFILE_NAME = "nova";
 /** Default browser profile selected when config omits a profile name. */
-export const DEFAULT_BROWSER_DEFAULT_PROFILE_NAME = "openclaw";
+export const DEFAULT_BROWSER_DEFAULT_PROFILE_NAME = "nova";
 /** Default timeout for browser actions issued through the browser plugin. */
 export const DEFAULT_BROWSER_ACTION_TIMEOUT_MS = 60_000;
 /** Default maximum AI snapshot text captured from browser pages. */
 export const DEFAULT_AI_SNAPSHOT_MAX_CHARS = 80_000;
 /** Default upload staging directory used by browser-backed file uploads. */
-export const DEFAULT_UPLOAD_DIR = path.join(resolvePreferredOpenClawTmpDir(), "uploads");
+export const DEFAULT_UPLOAD_DIR = path.join(resolvePreferredNovaTmpDir(), "uploads");
 
 type BrowserProfilesSurface = {
   resolveBrowserConfig: (
     cfg: BrowserConfig | undefined,
-    rootConfig?: OpenClawConfig,
+    rootConfig?: NovaConfig,
   ) => ResolvedBrowserConfig;
   resolveProfile: (
     resolved: ResolvedBrowserConfig,
@@ -56,7 +56,7 @@ function loadBrowserProfilesSurface(): BrowserProfilesSurface {
 /** Resolves browser config through the activated bundled browser profile facade. */
 export function resolveBrowserConfig(
   cfg: BrowserConfig | undefined,
-  rootConfig?: OpenClawConfig,
+  rootConfig?: NovaConfig,
 ): ResolvedBrowserConfig {
   return loadBrowserProfilesSurface().resolveBrowserConfig(cfg, rootConfig);
 }

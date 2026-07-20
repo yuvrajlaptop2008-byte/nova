@@ -161,13 +161,13 @@ export abstract class AppSidebarSessionListElement extends AppSidebarSessionNarr
                 >${icons.barChart}</span
               >`
             : nothing}
-          <openclaw-viewer-facepile
+          <nova-viewer-facepile
             .presencePayload=${this.presencePayload}
             .selfInstanceId=${this.presenceInstanceId}
             .sessionKey=${session.key}
             .maxVisible=${3}
             variant="session"
-          ></openclaw-viewer-facepile>
+          ></nova-viewer-facepile>
           ${session.pinned ? nothing : sessionState}
           ${renderSessionRowBadges({
             ...session,
@@ -209,15 +209,15 @@ export abstract class AppSidebarSessionListElement extends AppSidebarSessionNarr
           <span class="session-row-trail" id=${metaId ?? nothing}
             >${session.isChild && session.runtimeMs != null
               ? session.hasActiveRun || session.status === "running"
-                ? html`<openclaw-elapsed-time
+                ? html`<nova-elapsed-time
                     .startMs=${session.runtimeSampledAt! - session.runtimeMs}
-                  ></openclaw-elapsed-time>`
+                  ></nova-elapsed-time>`
                 : (formatDurationCompact(session.runtimeMs, { spaced: true }) ?? "0ms")
               : session.isChild && session.startedAt != null
-                ? html`<openclaw-elapsed-time
+                ? html`<nova-elapsed-time
                     .startMs=${session.startedAt}
                     .endMs=${session.endedAt ?? null}
-                  ></openclaw-elapsed-time>`
+                  ></nova-elapsed-time>`
                 : nothing}</span
           >
           ${session.isChild
@@ -637,7 +637,7 @@ export abstract class AppSidebarSessionListElement extends AppSidebarSessionNarr
                 data-sidebar-session-error
               >
                 <span class="callout__content">${this.sessionMutationError}</span>
-                <openclaw-tooltip .content=${t("chat.actions.dismissError")}>
+                <nova-tooltip .content=${t("chat.actions.dismissError")}>
                   <button
                     class="callout__dismiss"
                     type="button"
@@ -648,7 +648,7 @@ export abstract class AppSidebarSessionListElement extends AppSidebarSessionNarr
                   >
                     ${icons.x}
                   </button>
-                </openclaw-tooltip>
+                </nova-tooltip>
               </div>
             `
           : nothing}

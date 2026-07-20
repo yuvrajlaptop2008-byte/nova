@@ -1,15 +1,15 @@
 import { statSync } from "node:fs";
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/account-id";
 import {
   createAccountListHelpers,
   normalizeAccountId,
   resolveMergedAccountConfig,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/account-resolution";
+  type NovaConfig,
+} from "nova/plugin-sdk/account-resolution";
 // Imessage plugin module implements accounts behavior.
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { resolveAccountEntry } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { resolveAccountEntry } from "nova/plugin-sdk/routing";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import type { IMessageAccountConfig } from "./account-types.js";
 import { resolveLocalIMessageChatDbPath } from "./cli-path.js";
 
@@ -30,7 +30,7 @@ export const listIMessageAccountIds = listAccountIds;
 export const resolveDefaultIMessageAccountId = resolveDefaultAccountId;
 
 function resolveIMessageAccountConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId: string,
 ): IMessageAccountConfig | undefined {
   return resolveAccountEntry(cfg.channels?.imessage?.accounts, accountId);
@@ -75,7 +75,7 @@ function mergeIMessageStreamingConfig(
   };
 }
 
-function mergeIMessageAccountConfig(cfg: OpenClawConfig, accountId: string): IMessageAccountConfig {
+function mergeIMessageAccountConfig(cfg: NovaConfig, accountId: string): IMessageAccountConfig {
   const accountConfig = resolveIMessageAccountConfig(cfg, accountId);
   const merged = resolveMergedAccountConfig<IMessageAccountConfig>({
     channelConfig: cfg.channels?.imessage as IMessageAccountConfig | undefined,
@@ -92,7 +92,7 @@ function mergeIMessageAccountConfig(cfg: OpenClawConfig, accountId: string): IMe
 }
 
 export function resolveIMessageAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): ResolvedIMessageAccount {
   const accountId = normalizeAccountId(
@@ -137,7 +137,7 @@ function normalizeIMessageDbPath(value: string | undefined | null): string {
 
 // Stable signature for the local Messages backend an iMessage account targets.
 // Two enabled accounts that share a signature watch the same source, which
-// caused duplicate inbound handling in openclaw/openclaw#65141.
+// caused duplicate inbound handling in nova/nova#65141.
 function resolveIMessageAccountSourceSignature(account: ResolvedIMessageAccount): string {
   return JSON.stringify([
     normalizeIMessageCliPath(account.config.cliPath),
@@ -146,11 +146,11 @@ function resolveIMessageAccountSourceSignature(account: ResolvedIMessageAccount)
 }
 
 function resolveIMessageAccountSourceOwner(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   signature: string;
 }): string | undefined {
   // Prefer an explicit named account over the implicit "default" so that
-  // bindings tied to the named account keep working (openclaw/openclaw#65141).
+  // bindings tied to the named account keep working (nova/nova#65141).
   let defaultOwner: string | undefined;
   for (const candidateAccountId of listIMessageAccountIds(params.cfg)) {
     const candidate = resolveIMessageAccount({
@@ -185,12 +185,12 @@ function resolveIMessageDatabaseFileIdentity(dbPath: string): string | undefined
  * Returns the owner account id when `account` is an enabled duplicate of
  * another enabled account that targets the same local Messages source. Used
  * by the iMessage gateway lifecycle to skip starting redundant `imsg rpc`
- * watchers (openclaw/openclaw#65141) without otherwise marking the duplicate
+ * watchers (nova/nova#65141) without otherwise marking the duplicate
  * disabled — outbound selection, status surfaces, and capability listings
  * keep treating both accounts normally.
  */
 export function resolveIMessageDuplicateSourceOwner(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   account: ResolvedIMessageAccount;
 }): string | undefined {
   if (!params.account.enabled) {
@@ -203,14 +203,14 @@ export function resolveIMessageDuplicateSourceOwner(params: {
   return owner && owner !== params.account.accountId ? owner : undefined;
 }
 
-export function listEnabledIMessageAccounts(cfg: OpenClawConfig): ResolvedIMessageAccount[] {
+export function listEnabledIMessageAccounts(cfg: NovaConfig): ResolvedIMessageAccount[] {
   return listIMessageAccountIds(cfg)
     .map((accountId) => resolveIMessageAccount({ cfg, accountId }))
     .filter((account) => account.enabled);
 }
 
 export function hasExclusiveIMessageLocalDatabase(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   account: ResolvedIMessageAccount;
   cliPath: string;
   dbPath?: string;
@@ -256,7 +256,7 @@ export function hasExclusiveIMessageLocalDatabase(params: {
 }
 
 export function collectIMessageDuplicateAccountSourceWarnings(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): string[] {
   const groups = new Map<string, ResolvedIMessageAccount[]>();
   for (const accountId of listIMessageAccountIds(params.cfg)) {

@@ -1,44 +1,41 @@
 // Zalo plugin module implements channel behavior.
-import { describeWebhookAccountSnapshot } from "openclaw/plugin-sdk/account-helpers";
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
-import { formatAllowFromLowercase } from "openclaw/plugin-sdk/allow-from";
+import { describeWebhookAccountSnapshot } from "nova/plugin-sdk/account-helpers";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/account-id";
+import { formatAllowFromLowercase } from "nova/plugin-sdk/allow-from";
 import {
   adaptScopedAccountAccessor,
   createScopedChannelConfigAdapter,
   createScopedDmSecurityResolver,
   mapAllowFromEntries,
-} from "openclaw/plugin-sdk/channel-config-helpers";
-import type { ChannelAccountSnapshot } from "openclaw/plugin-sdk/channel-contract";
+} from "nova/plugin-sdk/channel-config-helpers";
+import type { ChannelAccountSnapshot } from "nova/plugin-sdk/channel-contract";
 import {
   buildChannelConfigSchema,
   createChatChannelPlugin,
   type ChannelPlugin,
-} from "openclaw/plugin-sdk/channel-core";
-import {
-  defineChannelMessageAdapter,
-  type MessageReceipt,
-} from "openclaw/plugin-sdk/channel-outbound";
+} from "nova/plugin-sdk/channel-core";
+import { defineChannelMessageAdapter, type MessageReceipt } from "nova/plugin-sdk/channel-outbound";
 import {
   buildOpenGroupPolicyRestrictSendersWarning,
   buildOpenGroupPolicyWarning,
   createOpenProviderGroupPolicyWarningCollector,
-} from "openclaw/plugin-sdk/channel-policy";
+} from "nova/plugin-sdk/channel-policy";
 import {
   createAttachedChannelResultAdapter,
   createEmptyChannelResult,
-} from "openclaw/plugin-sdk/channel-send-result";
-import { buildTokenChannelStatusSummary } from "openclaw/plugin-sdk/channel-status";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createStaticReplyToModeResolver } from "openclaw/plugin-sdk/conversation-runtime";
-import { createChannelDirectoryAdapter } from "openclaw/plugin-sdk/directory-runtime";
-import { listResolvedDirectoryUserEntriesFromAllowFrom } from "openclaw/plugin-sdk/directory-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { sendPayloadWithChunkedTextAndMedia } from "openclaw/plugin-sdk/reply-payload";
+} from "nova/plugin-sdk/channel-send-result";
+import { buildTokenChannelStatusSummary } from "nova/plugin-sdk/channel-status";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { createStaticReplyToModeResolver } from "nova/plugin-sdk/conversation-runtime";
+import { createChannelDirectoryAdapter } from "nova/plugin-sdk/directory-runtime";
+import { listResolvedDirectoryUserEntriesFromAllowFrom } from "nova/plugin-sdk/directory-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { sendPayloadWithChunkedTextAndMedia } from "nova/plugin-sdk/reply-payload";
 import {
   createComputedAccountStatusAdapter,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/status-helpers";
-import { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/status-helpers";
+import { chunkTextForOutbound } from "nova/plugin-sdk/text-chunking";
 import {
   listZaloAccountIds,
   resolveDefaultZaloAccountId,
@@ -86,7 +83,7 @@ const zaloSetupWizard = createZaloSetupWizardProxy(
 const zaloTextChunkLimit = 2000;
 
 async function sendZaloDelivery(ctx: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   to: string;
   text: string;
   accountId?: string | null;
@@ -148,7 +145,7 @@ const resolveZaloDmPolicy = createScopedDmSecurityResolver<ResolvedZaloAccount>(
 });
 
 const collectZaloSecurityWarnings = createOpenProviderGroupPolicyWarningCollector<{
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   account: ResolvedZaloAccount;
 }>({
   providerConfigPresent: (cfg) => cfg.channels?.zalo !== undefined,

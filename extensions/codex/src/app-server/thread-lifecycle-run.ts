@@ -2,8 +2,8 @@ import {
   embeddedAgentLog,
   formatErrorMessage,
   isHostScopedAgentToolActive,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { buildCodexUserMcpServersThreadConfigPatchForRuntime } from "openclaw/plugin-sdk/codex-mcp-projection";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { buildCodexUserMcpServersThreadConfigPatchForRuntime } from "nova/plugin-sdk/codex-mcp-projection";
 import { closeCodexStartupClientBestEffort } from "./attempt-client-cleanup.js";
 import { getCodexAppServerClientInstanceId } from "./client.js";
 import { isSystemAgentOnlyCodexDynamicToolAllowlist } from "./dynamic-tool-profile.js";
@@ -124,7 +124,7 @@ export async function startOrResumeThread(
       params.environmentSelection,
     );
     const hostSystemAgentActive =
-      params.hostSystemAgentActive ?? isHostScopedAgentToolActive("openclaw");
+      params.hostSystemAgentActive ?? isHostScopedAgentToolActive("nova");
     const ringZeroActive =
       hostSystemAgentActive && isSystemAgentOnlyCodexDynamicToolAllowlist(params.params.toolsAllow);
     if (ringZeroActive && params.nativeCodeModeEnabled !== false) {

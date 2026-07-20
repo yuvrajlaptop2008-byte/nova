@@ -7,10 +7,10 @@ import { SqliteBoardStore } from "../../boards/sqlite-board-store.js";
 import { replaceSessionEntrySync } from "../../config/sessions/session-accessor.entry.js";
 import { peekSystemEvents, resetSystemEventsForTest } from "../../infra/system-events.js";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+  closeNovaAgentDatabasesForTest,
+  openNovaAgentDatabase,
+} from "../../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import { resolveCoreOperatorGatewayMethodScope } from "../methods/core-descriptors.js";
 import { createBoardHandlers } from "./board.js";
 import { sessionMutationHandlers } from "./sessions-mutations.js";
@@ -91,8 +91,8 @@ describe("board gateway methods", () => {
   });
 
   afterEach(() => {
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
   });
 
   it("registers every contract method with its required scope", () => {
@@ -194,10 +194,10 @@ describe("board gateway methods", () => {
     const plainFrameUrl = first.widgets.find((widget) => widget.name === "plain")?.frameUrl;
     const statusFrameUrl = first.widgets.find((widget) => widget.name === "status")?.frameUrl;
     expect(plainFrameUrl).toMatch(
-      /^\/__openclaw__\/board\/agent%3Amain%3Amain\/plain\/index\.html\?bt=v1\./u,
+      /^\/__nova__\/board\/agent%3Amain%3Amain\/plain\/index\.html\?bt=v1\./u,
     );
     expect(statusFrameUrl).toMatch(
-      /^\/__openclaw__\/board\/agent%3Amain%3Amain\/status\/index\.html\?bt=v1\./u,
+      /^\/__nova__\/board\/agent%3Amain%3Amain\/status\/index\.html\?bt=v1\./u,
     );
     expect(first.widgets.find((widget) => widget.name === "status")?.declaredSummary).toEqual([
       "Network access: https://status.example",
@@ -813,9 +813,9 @@ describe("board gateway methods", () => {
 
   it("keeps board state across the real sessions.reset handler", async () => {
     const sessionKey = "agent:main:board-reset-proof";
-    const stateDir = tempDirs.make("openclaw-board-reset-");
+    const stateDir = tempDirs.make("nova-board-reset-");
     const env = { NOVA_STATE_DIR: stateDir };
-    const database = openOpenClawAgentDatabase({ agentId: "main", env });
+    const database = openNovaAgentDatabase({ agentId: "main", env });
     replaceSessionEntrySync(
       { agentId: "main", sessionKey, storePath: database.path },
       { sessionId: "board-reset-proof", updatedAt: Date.now() },

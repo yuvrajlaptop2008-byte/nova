@@ -123,7 +123,7 @@ describe("mantis visual task runtime", () => {
       "pnpm",
       "--dir",
       repoRoot,
-      "openclaw",
+      "nova",
       "qa",
       "mantis",
       "visual-driver",
@@ -311,7 +311,7 @@ describe("mantis visual task runtime", () => {
       }
       if (command === "pnpm") {
         return {
-          stdout: `\n> openclaw qa mantis visual-driver --vision-prompt '{"visible": boolean}'\n${JSON.stringify(
+          stdout: `\n> nova qa mantis visual-driver --vision-prompt '{"visible": boolean}'\n${JSON.stringify(
             {
               ok: true,
               outputs: [
@@ -359,7 +359,7 @@ describe("mantis visual task runtime", () => {
     expect(launchArgs[launchShellIndex + 3]).toContain("--no-first-run");
     const visionArgs = commands.find((entry) => entry.command === "pnpm")?.args ?? [];
     expectArgsContainSequence(visionArgs, [
-      "openclaw",
+      "nova",
       "infer",
       "image",
       "describe",

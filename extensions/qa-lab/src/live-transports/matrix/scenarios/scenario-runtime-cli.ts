@@ -1,15 +1,15 @@
 // QA Lab Matrix plugin module implements scenario runtime cli behavior.
-import { spawn as startOpenClawCliProcess } from "node:child_process";
+import { spawn as startNovaCliProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { chmod, mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { redactSensitiveText } from "openclaw/plugin-sdk/logging-core";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { redactSensitiveText } from "nova/plugin-sdk/logging-core";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import {
   killMatrixQaCliChild,
-  resolveMatrixQaOpenClawCliEntryPath,
+  resolveMatrixQaNovaCliEntryPath,
 } from "./scenario-runtime-cli-process.js";
 
 export type MatrixQaCliRunResult = {
@@ -64,7 +64,7 @@ export function redactMatrixQaCliOutput(text: string): string {
 }
 
 export function formatMatrixQaCliCommand(args: string[]) {
-  return `openclaw ${redactMatrixQaCliArgs(args).join(" ")}`;
+  return `nova ${redactMatrixQaCliArgs(args).join(" ")}`;
 }
 
 function buildMatrixQaCliResult(params: {
@@ -101,7 +101,7 @@ function formatMatrixQaCliTimeoutError(result: MatrixQaCliRunResult, timeoutMs: 
 }
 
 function isMatrixQaCliChildProcessGroupRunning(
-  child: ReturnType<typeof startOpenClawCliProcess>,
+  child: ReturnType<typeof startNovaCliProcess>,
 ): boolean {
   if (process.platform === "win32" || !child.pid) {
     return false;
@@ -114,7 +114,7 @@ function isMatrixQaCliChildProcessGroupRunning(
   }
 }
 
-export function startMatrixQaOpenClawCli(params: {
+export function startMatrixQaNovaCli(params: {
   allowNonZero?: boolean;
   args: string[];
   cwd?: string;
@@ -123,7 +123,7 @@ export function startMatrixQaOpenClawCli(params: {
   timeoutMs: number;
 }): MatrixQaCliSession {
   const cwd = params.cwd ?? process.cwd();
-  const distEntryPath = resolveMatrixQaOpenClawCliEntryPath(cwd);
+  const distEntryPath = resolveMatrixQaNovaCliEntryPath(cwd);
   const stdout: Buffer[] = [];
   const stderr: Buffer[] = [];
   let closed = false;
@@ -141,7 +141,7 @@ export function startMatrixQaOpenClawCli(params: {
       }
     | undefined;
 
-  const child = startOpenClawCliProcess(process.execPath, [distEntryPath, ...params.args], {
+  const child = startNovaCliProcess(process.execPath, [distEntryPath, ...params.args], {
     cwd,
     detached: process.platform !== "win32",
     env: params.env,
@@ -344,7 +344,7 @@ export function startMatrixQaOpenClawCli(params: {
   };
 }
 
-export async function runMatrixQaOpenClawCli(params: {
+export async function runMatrixQaNovaCli(params: {
   allowNonZero?: boolean;
   args: string[];
   cwd?: string;
@@ -352,7 +352,7 @@ export async function runMatrixQaOpenClawCli(params: {
   stdin?: string;
   timeoutMs: number;
 }): Promise<MatrixQaCliRunResult> {
-  return await startMatrixQaOpenClawCli(params).wait();
+  return await startMatrixQaNovaCli(params).wait();
 }
 
 async function assertMatrixQaPrivatePathMode(pathToCheck: string, label: string) {
@@ -365,7 +365,7 @@ async function assertMatrixQaPrivatePathMode(pathToCheck: string, label: string)
   }
 }
 
-export async function createMatrixQaOpenClawCliRuntime(params: {
+export async function createMatrixQaNovaCliRuntime(params: {
   accountId: string;
   accessToken: string;
   artifactLabel: string;
@@ -376,9 +376,7 @@ export async function createMatrixQaOpenClawCliRuntime(params: {
   runtimeEnv: NodeJS.ProcessEnv;
   userId: string;
 }) {
-  const rootDir = await mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-matrix-cli-qa-"),
-  );
+  const rootDir = await mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-matrix-cli-qa-"));
   const artifactDir = path.join(
     params.outputDir,
     params.artifactLabel.replace(/[^A-Za-z0-9_-]/g, "-"),
@@ -449,7 +447,7 @@ export async function createMatrixQaOpenClawCliRuntime(params: {
       args: string[],
       opts: { allowNonZero?: boolean; stdin?: string; timeoutMs: number },
     ): Promise<MatrixQaCliRunResult> =>
-      await runMatrixQaOpenClawCli({
+      await runMatrixQaNovaCli({
         allowNonZero: opts.allowNonZero,
         args,
         env,
@@ -457,7 +455,7 @@ export async function createMatrixQaOpenClawCliRuntime(params: {
         timeoutMs: opts.timeoutMs,
       }),
     start: (args: string[], opts: { allowNonZero?: boolean; timeoutMs: number }) =>
-      startMatrixQaOpenClawCli({
+      startMatrixQaNovaCli({
         allowNonZero: opts.allowNonZero,
         args,
         env,

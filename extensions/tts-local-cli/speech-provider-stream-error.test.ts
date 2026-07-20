@@ -1,21 +1,21 @@
 // TTS local CLI tests cover the canonical process-wrapper contract.
 import { writeFileSync } from "node:fs";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { runCommandBufferedMock } = vi.hoisted(() => ({ runCommandBufferedMock: vi.fn() }));
 
-vi.mock("openclaw/plugin-sdk/process-runtime", () => ({
+vi.mock("nova/plugin-sdk/process-runtime", () => ({
   runCommandBuffered: runCommandBufferedMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/media-runtime", () => ({
+vi.mock("nova/plugin-sdk/media-runtime", () => ({
   runFfmpeg: vi.fn(),
 }));
 
 import { buildCliSpeechProvider } from "./speech-provider.js";
 
-const TEST_CFG = {} as OpenClawConfig;
+const TEST_CFG = {} as NovaConfig;
 const MIB = 1024 * 1024;
 
 function commandResult(overrides: Record<string, unknown> = {}) {

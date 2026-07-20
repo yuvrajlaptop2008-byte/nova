@@ -11,7 +11,7 @@ import {
 } from "../../config/sessions.js";
 import { hasProviderOwnedSession } from "../../config/sessions/entry-freshness.js";
 import { isRecoverableTerminalSessionStatus } from "../../config/sessions/terminal-status.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   mergeDeliveryContext,
   normalizeSessionDeliveryFields,
@@ -41,7 +41,7 @@ export type AgentSessionPatchBuild = {
 export function buildAgentSessionPatch(params: {
   freshEntry: SessionEntry | undefined;
   initialEntry: SessionEntry | undefined;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionAgentId: string;
   canonicalSessionKey: string;
   storePath: string;

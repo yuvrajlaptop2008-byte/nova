@@ -33,7 +33,7 @@ const lockScript = join(repoRoot, "scripts/pr-lib/operation-lock.sh");
 const processGroupRunner = join(repoRoot, "scripts/pr-lib/process-group-runner.mjs");
 const managedChildUrl = pathToFileURL(join(repoRoot, "scripts/lib/managed-child-process.mjs")).href;
 const worktreeScript = join(repoRoot, "scripts/pr-lib/worktree.sh");
-const lockRef = "refs/openclaw/pr-operation-locks/42";
+const lockRef = "refs/nova/pr-operation-locks/42";
 const detachedChildren = new WeakSet<ChildProcess>();
 const goneProcessGroups = new Set<number>();
 let templateRepo = "";
@@ -41,7 +41,7 @@ let templateRepo = "";
 // Direct preload affects only the supervisor; operation fixtures keep real clocks.
 // The source assertions below pin the production safety durations being accelerated.
 function createProcessGroupTimingPreload() {
-  const dir = tempDirs.make("openclaw-pr-operation-lock-timing-");
+  const dir = tempDirs.make("nova-pr-operation-lock-timing-");
   const preloadPath = join(dir, "preload.cjs");
   writeFileSync(
     preloadPath,
@@ -67,10 +67,10 @@ function spawnDetached(command: string, args: readonly string[], options: SpawnO
 }
 
 function createTemplateRepo() {
-  const dir = mkdtempSync(join(tmpdir(), "openclaw-pr-operation-lock-template-"));
+  const dir = mkdtempSync(join(tmpdir(), "nova-pr-operation-lock-template-"));
   execFileSync("git", ["init", "-q", "-b", "main"], { cwd: dir });
   execFileSync("git", ["config", "user.name", "Nova Test"], { cwd: dir });
-  execFileSync("git", ["config", "user.email", "test@openclaw.invalid"], { cwd: dir });
+  execFileSync("git", ["config", "user.email", "test@nova.invalid"], { cwd: dir });
   writeFileSync(join(dir, "base.txt"), "base\n");
   execFileSync("git", ["add", "base.txt"], { cwd: dir });
   execFileSync("git", ["commit", "-qm", "base"], { cwd: dir });
@@ -86,7 +86,7 @@ afterAll(() => {
 });
 
 function createRepo(nestedName?: string) {
-  const tempRoot = tempDirs.make("openclaw-pr-operation-lock-");
+  const tempRoot = tempDirs.make("nova-pr-operation-lock-");
   const dir = nestedName ? join(tempRoot, nestedName) : tempRoot;
   if (nestedName) {
     mkdirSync(dir);
@@ -1129,7 +1129,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
 
   it("releases the lock after the operation deletes its runner worktree", async () => {
     const repoDir = createRepo();
-    const doomedDir = tempDirs.make("openclaw-pr-self-deleting-runner-");
+    const doomedDir = tempDirs.make("nova-pr-self-deleting-runner-");
     const copiedLibDir = join(doomedDir, "pr-lib");
     mkdirSync(copiedLibDir, { recursive: true });
     for (const file of ["operation-lock.sh", "process-group-runner.mjs"]) {
@@ -1173,7 +1173,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
     const sleepPath = join(binDir, "sleep");
     writeFileSync(sleepPath, "#!/bin/sh\nexit 0\n");
     chmodSync(sleepPath, 0o755);
-    const refLock = join(repoDir, ".git/refs/openclaw/pr-operation-locks/42.lock");
+    const refLock = join(repoDir, ".git/refs/nova/pr-operation-locks/42.lock");
     const fixture = writeOperationFixture(repoDir, "blocked-release.sh", [
       "acquire_pr_operation_lock 42",
       `: >'${refLock}'`,
@@ -1225,7 +1225,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
 
   it("rejects a notification for a lock owned by another process group", async () => {
     const repoDir = createRepo();
-    const foreignRef = "refs/openclaw/pr-operation-locks/43";
+    const foreignRef = "refs/nova/pr-operation-locks/43";
     const foreignHeld = join(repoDir, "foreign-held");
     const foreignHolder = spawnHolder(repoDir, foreignHeld, 43);
     try {
@@ -2018,7 +2018,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
       expect(await waitFor(() => existsSync(held))).toBe(true);
 
       const result = runLockShell(repoDir, [
-        "gh() { if [ \"$1 $2\" = 'repo view' ]; then printf 'openclaw/openclaw\\n'; else printf 'MERGED\\n'; fi; }",
+        "gh() { if [ \"$1 $2\" = 'repo view' ]; then printf 'nova/nova\\n'; else printf 'MERGED\\n'; fi; }",
         "gc_pr_worktrees false",
       ]);
       expect(result.status).toBe(0);

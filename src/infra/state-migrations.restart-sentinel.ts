@@ -4,11 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import { root, type Root } from "@nova/fs-safe";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { formatErrorMessage } from "./errors.js";
 import { acquireGatewayLock, GatewayLockError } from "./gateway-lock.js";
 import {
@@ -34,7 +31,7 @@ const MIGRATION_LOCK_POLL_INTERVAL_MS = 25;
 const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
 
 type RestartSentinelMigrationDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "gateway_restart_sentinel" | "migration_runs" | "migration_sources"
 >;
 
@@ -134,7 +131,7 @@ function receiptSourceKey(sourcePath: string): string {
 }
 
 function hasMigrationReceipt(sourcePath: string, env: NodeJS.ProcessEnv): boolean {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   return Boolean(
     executeSqliteQueryTakeFirstSync(
       db,
@@ -155,7 +152,7 @@ function decideAndRecordMigration(params: {
   const sourceKey = receiptSourceKey(params.sourcePath);
   const runId = `${sourceKey}:${params.snapshot.sha256.slice(0, 16)}`;
   const now = Date.now();
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => {
       const stateDb = getNodeSqliteKysely<RestartSentinelMigrationDatabase>(db);
       const receipt = executeSqliteQueryTakeFirstSync(
@@ -253,7 +250,7 @@ function decideAndRecordMigration(params: {
 }
 
 function markSourceRemoved(sourceKey: string, env: NodeJS.ProcessEnv): void {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       executeSqliteQuerySync(
         db,
@@ -489,7 +486,7 @@ export async function migrateLegacyRestartSentinel(params: {
     return {
       changes: [],
       warnings: [
-        `Failed migrating the legacy restart sentinel: ${detail}. Stop the Gateway, then run \`openclaw doctor --fix\` again.`,
+        `Failed migrating the legacy restart sentinel: ${detail}. Stop the Gateway, then run \`nova doctor --fix\` again.`,
       ],
     };
   }

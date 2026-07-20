@@ -19,10 +19,10 @@ export type {
   AcpSessionUpdateTag,
 } from "@nova/acp-core/runtime/types";
 export type {
-  OpenClawPluginApi,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
+  NovaPluginApi,
+  NovaPluginConfigSchema,
+  NovaPluginService,
+  NovaPluginServiceContext,
   PluginLogger,
 } from "../plugins/types.js";
 export type {

@@ -54,14 +54,14 @@ function collectWidgetThemeTokens(read: (hostVar: string) => string): Record<str
 }
 
 function buildWidgetThemeMessage(): {
-  type: "openclaw:widget-theme";
+  type: "nova:widget-theme";
   mode: "light" | "dark";
   tokens: Record<string, string>;
 } {
   const root = document.documentElement;
   const styles = getComputedStyle(root);
   return {
-    type: "openclaw:widget-theme",
+    type: "nova:widget-theme",
     mode: root.dataset.themeMode === "light" ? "light" : "dark",
     tokens: collectWidgetThemeTokens((hostVar) => styles.getPropertyValue(hostVar)),
   };

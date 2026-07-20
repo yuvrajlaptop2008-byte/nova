@@ -169,7 +169,7 @@ export async function handleAgentExecutionError(params: {
     const switchErrorText = params.shouldSurfaceToControlUi
       ? "⚠️ Agent failed before reply: model switch could not be completed. " +
         "The requested model may be temporarily unavailable.\n" +
-        "Logs: openclaw logs --follow"
+        "Logs: nova logs --follow"
       : isVerboseFailureDetailEnabled(turn.resolvedVerboseLevel)
         ? "⚠️ Agent failed before reply: model switch could not be completed. " +
           "The requested model may be temporarily unavailable. Please try again shortly."
@@ -466,7 +466,7 @@ export async function handleAgentExecutionError(params: {
         : isContextOverflow
           ? "⚠️ Context overflow — prompt too large for this model. Try a shorter message or a larger-context model."
           : params.shouldSurfaceToControlUi
-            ? `⚠️ Agent failed before reply: ${trimmedMessage}.\nLogs: openclaw logs --follow`
+            ? `⚠️ Agent failed before reply: ${trimmedMessage}.\nLogs: nova logs --follow`
             : (externalRunFailureReply?.text ??
               (turn.isHeartbeat
                 ? HEARTBEAT_EXTERNAL_RUN_FAILURE_TEXT

@@ -14,7 +14,7 @@ import type { ThinkLevel, VerboseLevel } from "../../auto-reply/thinking.js";
 import type { CliSessionBinding } from "../../config/sessions.js";
 import { formatSqliteSessionFileMarker } from "../../config/sessions/sqlite-marker.js";
 import type { AgentDefaultsConfig } from "../../config/types.agent-defaults.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { SourceDeliveryPlan } from "../../infra/outbound/source-delivery-plan.js";
 import {
   createUserTurnTranscriptRecorder,
@@ -108,7 +108,7 @@ function resolveIsolatedCronPromptCacheKey(params: {
   const digest = createHash("sha256").update(material).digest("hex").slice(0, 32);
   // Isolated cron rotates transcript/session ids per run; keep cache affinity
   // on stable job identity without sending raw local session labels upstream.
-  return `openclaw-cron-${digest}`;
+  return `nova-cron-${digest}`;
 }
 
 /** Detects single-line cron prompts that look like shell commands or command invocations. */
@@ -194,8 +194,8 @@ export type CronExecutionResult = {
 
 /** Creates the model-fallback executor for one isolated cron prompt run. */
 function createCronPromptExecutor(params: {
-  cfg: OpenClawConfig;
-  cfgWithAgentDefaults: OpenClawConfig;
+  cfg: NovaConfig;
+  cfgWithAgentDefaults: NovaConfig;
   job: CronJob;
   agentId: string;
   agentDir: string;
@@ -612,8 +612,8 @@ function createCronPromptExecutor(params: {
 
 /** Executes an isolated cron prompt, including live model-switch and interim-ack retries. */
 export async function executeCronRun(params: {
-  cfg: OpenClawConfig;
-  cfgWithAgentDefaults: OpenClawConfig;
+  cfg: NovaConfig;
+  cfgWithAgentDefaults: NovaConfig;
   job: CronJob;
   agentId: string;
   agentDir: string;

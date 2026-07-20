@@ -5,7 +5,7 @@ import path from "node:path";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveMatrixAccountStorageRoot } from "../../storage-paths.js";
 import { installMatrixTestRuntime } from "../../test-runtime.js";
@@ -58,8 +58,8 @@ describe("matrix client storage paths", () => {
     },
     logger = createTestLogger(),
   ): string {
-    const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-matrix-storage-"));
-    const stateDir = path.join(homeDir, ".openclaw");
+    const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-matrix-storage-"));
+    const stateDir = path.join(homeDir, ".nova");
     fs.mkdirSync(stateDir, { recursive: true });
     tempDirs.push(homeDir);
     installMatrixTestRuntime({
@@ -534,9 +534,7 @@ describe("matrix client storage paths", () => {
     });
 
     expect(rotatedStoragePaths.rootDir).toBe(oldStoragePaths.rootDir);
-    expect(fs.existsSync(path.join(oldStoragePaths.rootDir, "state", "openclaw.sqlite"))).toBe(
-      false,
-    );
+    expect(fs.existsSync(path.join(oldStoragePaths.rootDir, "state", "nova.sqlite"))).toBe(false);
   });
 
   it.each(["thread-bindings.json", "recovery-key.json", "crypto-idb-snapshot.json"])(

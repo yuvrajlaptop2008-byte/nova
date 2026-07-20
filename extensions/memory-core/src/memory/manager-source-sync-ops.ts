@@ -1,6 +1,6 @@
 // Memory Core plugin module owns memory and session source indexing.
 import path from "node:path";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+import { createSubsystemLogger } from "nova/plugin-sdk/memory-core-host-engine-foundation";
 import {
   buildSessionEntry,
   listSessionTranscriptCorpusEntriesForAgent,
@@ -9,14 +9,14 @@ import {
   sessionPathForFile,
   sessionPathForSessionIdentity,
   type SessionTranscriptCorpusEntry,
-} from "openclaw/plugin-sdk/memory-core-host-engine-qmd";
+} from "nova/plugin-sdk/memory-core-host-engine-qmd";
 import {
   buildFileEntry,
   listMemoryFiles,
   MEMORY_INDEX_FTS_TABLE,
   MEMORY_INDEX_VECTOR_TABLE,
   runWithConcurrency,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
+} from "nova/plugin-sdk/memory-core-host-engine-storage";
 import { MemoryManagerSessionSyncOps } from "./manager-session-sync-ops.js";
 import { resolveMemorySessionSyncPlan } from "./manager-session-sync-state.js";
 import {

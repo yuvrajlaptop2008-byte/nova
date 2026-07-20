@@ -15,8 +15,8 @@ import {
 } from "../../config/sessions/conversation-delivery-store.js";
 import { upsertSessionEntry } from "../../config/sessions/session-accessor.js";
 import { buildConversationRef } from "../../routing/conversation-ref.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
-import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
+import { openNovaStateDatabase } from "../../state/nova-state-db.js";
 import {
   OutboundDeliveryError,
   PlatformMessageNotDispatchedError,
@@ -66,7 +66,7 @@ function expectMockMessageContaining(mock: { mock: { calls: unknown[][] } }, exp
 }
 
 function readOutboundQueueStatus(tmpDir: string, id: string): string | undefined {
-  const { db } = openOpenClawStateDatabase({
+  const { db } = openNovaStateDatabase({
     env: { ...process.env, NOVA_STATE_DIR: tmpDir },
   });
   const row = db
@@ -217,7 +217,7 @@ describe("delivery-queue recovery", () => {
       });
       expect(await loadPendingDeliveries(tmpDir())).toHaveLength(0);
     } finally {
-      closeOpenClawAgentDatabasesForTest();
+      closeNovaAgentDatabasesForTest();
     }
   });
 
@@ -280,7 +280,7 @@ describe("delivery-queue recovery", () => {
       );
       expect(await loadPendingDeliveries(tmpDir())).toHaveLength(0);
     } finally {
-      closeOpenClawAgentDatabasesForTest();
+      closeNovaAgentDatabasesForTest();
     }
   });
 
@@ -344,7 +344,7 @@ describe("delivery-queue recovery", () => {
       });
       expect(await loadPendingDeliveries(tmpDir())).toHaveLength(0);
     } finally {
-      closeOpenClawAgentDatabasesForTest();
+      closeNovaAgentDatabasesForTest();
     }
   });
 
@@ -585,7 +585,7 @@ describe("delivery-queue recovery", () => {
       expect(readOutboundQueueStatus(tmpDir(), id)).toBe("failed");
       expectMockMessageContaining(log.warn, "owner state could not be marked unknown");
     } finally {
-      closeOpenClawAgentDatabasesForTest();
+      closeNovaAgentDatabasesForTest();
     }
   });
 

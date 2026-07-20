@@ -225,7 +225,7 @@ function shouldNeverBundleDependency(id: string): boolean {
 
 function shouldAlwaysBundleDependency(id: string): boolean {
   return (
-    id === "openclaw/plugin-sdk/ssrf-runtime-internal" ||
+    id === "nova/plugin-sdk/ssrf-runtime-internal" ||
     id === "@nova/fs-safe" ||
     id.startsWith("@nova/fs-safe/") ||
     id === "@nova/normalization-core" ||
@@ -277,7 +277,7 @@ function buildCoreDistEntries(): Record<string, string> {
     "audit/audit-event-writer.worker": "src/audit/audit-event-writer.worker.ts",
     "config/sessions/session-transcript-reconcile.worker":
       "src/config/sessions/session-transcript-reconcile.worker.ts",
-    "state/openclaw-database-verify.worker": "src/state/openclaw-database-verify.worker.ts",
+    "state/nova-database-verify.worker": "src/state/nova-database-verify.worker.ts",
     "system-agent/setup-inference-detection.worker":
       "src/system-agent/setup-inference-detection.worker.ts",
     "acp/control-plane/manager": "src/acp/control-plane/manager.ts",
@@ -314,7 +314,7 @@ function buildCoreDistEntries(): Record<string, string> {
     "plugins/runtime/index": "src/plugins/runtime/index.ts",
     "llm-slug-generator": "src/hooks/llm-slug-generator.ts",
     "mcp/plugin-tools-serve": "src/mcp/plugin-tools-serve.ts",
-    "mcp/openclaw-tools-serve": "src/mcp/openclaw-tools-serve.ts",
+    "mcp/nova-tools-serve": "src/mcp/nova-tools-serve.ts",
   };
 }
 
@@ -421,8 +421,8 @@ function shouldExternalizeAgentCoreDependency(id: string): boolean {
     id === "@nova/llm-core" ||
     id.startsWith("@nova/llm-core/") ||
     id === "ignore" ||
-    id === "openclaw" ||
-    id.startsWith("openclaw/") ||
+    id === "nova" ||
+    id.startsWith("nova/") ||
     id === "typebox" ||
     id.startsWith("typebox/") ||
     id === "yaml" ||
@@ -445,7 +445,7 @@ function shouldExternalizeNetPolicyDependency(id: string): boolean {
 }
 
 function shouldExternalizeSpeechCoreDependency(id: string): boolean {
-  return id === "openclaw" || id.startsWith("openclaw/");
+  return id === "nova" || id.startsWith("nova/");
 }
 
 function shouldExternalizeLlmCoreDependency(id: string): boolean {

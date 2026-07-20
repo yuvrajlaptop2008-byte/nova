@@ -4,11 +4,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -23,10 +20,10 @@ import {
 import type { GatewayRestartHandoff } from "./restart-handoff.js";
 
 const tempDirs: string[] = [];
-type GatewayRestartHandoffDatabase = Pick<OpenClawStateKyselyDatabase, "gateway_restart_handoff">;
+type GatewayRestartHandoffDatabase = Pick<NovaStateKyselyDatabase, "gateway_restart_handoff">;
 
 function createHandoffEnv(): NodeJS.ProcessEnv {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-restart-handoff-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-restart-handoff-"));
   tempDirs.push(dir);
   return {
     ...process.env,
@@ -39,7 +36,7 @@ function legacyHandoffPath(env: NodeJS.ProcessEnv): string {
 }
 
 function readHandoffRow(env: NodeJS.ProcessEnv) {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const stateDb = getNodeSqliteKysely<GatewayRestartHandoffDatabase>(db);
   return executeSqliteQueryTakeFirstSync(
     db,
@@ -82,7 +79,7 @@ function insertHandoffRow(
     restartTraceLastAt?: number | null;
   },
 ) {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const stateDb = getNodeSqliteKysely<GatewayRestartHandoffDatabase>(db);
   const now = Date.now();
   executeSqliteQuerySync(
@@ -201,7 +198,7 @@ function spawnHandoffConsumer(params: {
 
 describe("gateway restart handoff", () => {
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     for (const dir of tempDirs.splice(0)) {
       fs.rmSync(dir, { force: true, recursive: true });
     }
@@ -303,7 +300,7 @@ describe("gateway restart handoff", () => {
       startedAt: 10_000,
       lastAt: 10_250,
     });
-    const { db } = openOpenClawStateDatabase({ env });
+    const { db } = openNovaStateDatabase({ env });
     expect(
       db
         .prepare(
@@ -549,7 +546,7 @@ describe("gateway restart handoff", () => {
       supervisorMode: "external",
       createdAt: 1_000,
     });
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     const startFile = path.join(env.NOVA_STATE_DIR ?? "", "start-consumers");
 
     const first = spawnHandoffConsumer({
@@ -585,7 +582,7 @@ describe("gateway restart handoff", () => {
       createdAt: 1_000,
       ttlMs: 1_000,
     });
-    const { db } = openOpenClawStateDatabase({ env });
+    const { db } = openNovaStateDatabase({ env });
     const originalExec = db.exec.bind(db);
     let transactionBegan = false;
     const execSpy = vi.spyOn(db, "exec").mockImplementation((sql) => {

@@ -1,24 +1,24 @@
 import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import {
   createPluginRegistryFixture,
   registerVirtualTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "nova/plugin-sdk/plugin-test-contracts";
 import {
   clearEmbeddingProviders,
   clearMemoryEmbeddingProviders,
   getRegisteredEmbeddingProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const memoryHostEmbeddingMocks = vi.hoisted(() => ({
   createLocalEmbeddingProvider: vi.fn(),
 }));
-const LOCAL_EMBEDDING_RUNTIME_FACTS = Symbol.for("openclaw.localEmbeddingRuntimeFacts");
+const LOCAL_EMBEDDING_RUNTIME_FACTS = Symbol.for("nova.localEmbeddingRuntimeFacts");
 
-vi.mock("openclaw/plugin-sdk/memory-core-host-engine-embeddings", () => ({
+vi.mock("nova/plugin-sdk/memory-core-host-engine-embeddings", () => ({
   createLocalEmbeddingProvider: memoryHostEmbeddingMocks.createLocalEmbeddingProvider,
 }));
 
@@ -487,7 +487,7 @@ describe("llama.cpp provider plugin", () => {
     });
 
     expect(llamaCppEmbeddingProviderAdapter.formatSetupError?.(err)).toContain(
-      "openclaw plugins install @nova/llama-cpp-provider",
+      "nova plugins install @nova/llama-cpp-provider",
     );
   });
 });

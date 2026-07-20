@@ -1,8 +1,8 @@
-import { readRecentUserAssistantTextForSession } from "openclaw/plugin-sdk/session-store-runtime";
+import { readRecentUserAssistantTextForSession } from "nova/plugin-sdk/session-store-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildTelegramSessionTranscriptPromptEntries } from "./session-transcript-context.js";
 
-vi.mock("openclaw/plugin-sdk/session-store-runtime", () => ({
+vi.mock("nova/plugin-sdk/session-store-runtime", () => ({
   readRecentUserAssistantTextForSession: vi.fn(),
 }));
 

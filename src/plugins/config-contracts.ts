@@ -1,8 +1,8 @@
 /** Resolves plugin config contract metadata for scanners and secret/config policy checks. */
 import { normalizeSortedUniqueStringEntries } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { findBundledPluginMetadataById } from "./bundled-plugin-metadata.js";
-import { discoverOpenClawPlugins, type PluginDiscoveryResult } from "./discovery.js";
+import { discoverNovaPlugins, type PluginDiscoveryResult } from "./discovery.js";
 import { loadPluginManifestRegistry } from "./manifest-registry.js";
 import type { PluginManifestConfigContracts } from "./manifest.js";
 import type { PluginOrigin } from "./plugin-origin.types.js";
@@ -18,7 +18,7 @@ type PluginConfigContractMetadata = {
 
 /** Resolve config contract metadata for plugin ids through the runtime registry and bundled fallback. */
 export function resolvePluginConfigContractsById(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   fallbackToBundledMetadata?: boolean;
@@ -44,7 +44,7 @@ export function resolvePluginConfigContractsById(params: {
     }
     const discovery =
       params.discovery ??
-      discoverOpenClawPlugins({
+      discoverNovaPlugins({
         workspaceDir: params.workspaceDir,
         env: params.env,
       });

@@ -35,7 +35,7 @@ function childEnv(): NodeJS.ProcessEnv {
 }
 
 it("applies vi.mock factories after a sibling file fails during collection", async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-non-isolated-runner-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-non-isolated-runner-"));
   try {
     const write = (name: string, content: string) =>
       fs.writeFile(path.join(root, name), content, "utf-8");
@@ -120,7 +120,7 @@ it("applies vi.mock factories after a sibling file fails during collection", asy
 });
 
 it("clears named plugin runtime slots between files", async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-runtime-store-runner-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-runtime-store-runner-"));
   try {
     const write = (name: string, content: string) =>
       fs.writeFile(path.join(root, name), content, "utf-8");

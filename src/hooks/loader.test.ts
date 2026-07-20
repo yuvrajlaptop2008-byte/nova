@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { stripAnsi } from "../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { setLoggerOverride } from "../logging/logger.js";
 import { loggingState } from "../logging/state.js";
 import { captureEnv } from "../test-utils/env.js";
@@ -26,7 +26,7 @@ describe("loader", () => {
   let envSnapshot: ReturnType<typeof captureEnv>;
 
   beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-hooks-loader-"));
+    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-hooks-loader-"));
   });
 
   beforeEach(async () => {
@@ -64,7 +64,7 @@ describe("loader", () => {
         "---",
         `name: ${params.hookName}`,
         `description: ${params.hookName} test hook`,
-        `metadata: {"openclaw":{"events":${JSON.stringify(events)}}}`,
+        `metadata: {"nova":{"events":${JSON.stringify(events)}}}`,
         "---",
         "",
         `# ${params.hookName}`,
@@ -90,9 +90,9 @@ describe("loader", () => {
   }
 
   function withLegacyInternalHookHandlers(
-    config: OpenClawConfig,
+    config: NovaConfig,
     handlers?: Array<{ event: string; module: string; export?: string }>,
-  ): OpenClawConfig {
+  ): NovaConfig {
     if (!handlers) {
       return config;
     }
@@ -105,12 +105,12 @@ describe("loader", () => {
           handlers,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   function createEnabledHooksConfig(
     handlers?: Array<{ event: string; module: string; export?: string }>,
-  ): OpenClawConfig {
+  ): NovaConfig {
     return withLegacyInternalHookHandlers(
       {
         hooks: {
@@ -138,36 +138,36 @@ describe("loader", () => {
 
   describe("loadInternalHooks", () => {
     it("detects configured internal hook surfaces", () => {
-      expect(hasConfiguredInternalHooks({} satisfies OpenClawConfig)).toBe(false);
+      expect(hasConfiguredInternalHooks({} satisfies NovaConfig)).toBe(false);
       expect(
         hasConfiguredInternalHooks({
           hooks: { internal: { entries: { "session-memory": { enabled: true } } } },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ).toBe(true);
       expect(
         hasConfiguredInternalHooks({
           hooks: { internal: { entries: { "session-memory": { enabled: false } } } },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ).toBe(false);
       expect(
         hasConfiguredInternalHooks({
           hooks: { internal: { load: { extraDirs: ["/tmp/hooks"] } } },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ).toBe(true);
       expect(
         resolveConfiguredInternalHookNames({
           hooks: { internal: { entries: { "session-memory": { enabled: true } } } },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ).toEqual(new Set(["session-memory"]));
       expect(
         resolveConfiguredInternalHookNames({
           hooks: { internal: { enabled: true } },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ).toBeNull();
       expect(
         resolveConfiguredInternalHookNames({
           hooks: { internal: { installs: { pack: { source: "path" } } } },
-        } satisfies OpenClawConfig),
+        } satisfies NovaConfig),
       ).toBeNull();
     });
 
@@ -179,7 +179,7 @@ describe("loader", () => {
         },
       ]);
 
-    const expectNoCommandHookRegistration = async (cfg: OpenClawConfig) => {
+    const expectNoCommandHookRegistration = async (cfg: NovaConfig) => {
       const count = await loadInternalHooks(cfg, tmpDir);
       expect(count).toBe(0);
       expect(getRegisteredEventKeys()).not.toContain("command:new");
@@ -193,7 +193,7 @@ describe("loader", () => {
               enabled: false,
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies NovaConfig,
         withLegacyInternalHookHandlers(
           {
             hooks: {
@@ -201,7 +201,7 @@ describe("loader", () => {
                 enabled: false,
               },
             },
-          } satisfies OpenClawConfig,
+          } satisfies NovaConfig,
           [],
         ),
       ]) {
@@ -212,9 +212,9 @@ describe("loader", () => {
 
     it("skips hook discovery until internal hooks are configured", async () => {
       for (const cfg of [
-        {} satisfies OpenClawConfig,
-        { hooks: {} } satisfies OpenClawConfig,
-        { hooks: { internal: {} } } satisfies OpenClawConfig,
+        {} satisfies NovaConfig,
+        { hooks: {} } satisfies NovaConfig,
+        { hooks: { internal: {} } } satisfies NovaConfig,
       ]) {
         const count = await loadInternalHooks(cfg, tmpDir);
         expect(count).toBe(0);
@@ -235,7 +235,7 @@ describe("loader", () => {
               },
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies NovaConfig,
         tmpDir,
         { managedHooksDir: hooksDir, bundledHooksDir: "/nonexistent/bundled/hooks" },
       );
@@ -263,7 +263,7 @@ describe("loader", () => {
               },
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies NovaConfig,
         tmpDir,
         { managedHooksDir: hooksDir, bundledHooksDir: "/nonexistent/bundled/hooks" },
       );
@@ -457,7 +457,7 @@ describe("loader", () => {
           "---",
           "name: symlink-hook",
           "description: symlink test",
-          'metadata: {"openclaw":{"events":["command:new"]}}',
+          'metadata: {"nova":{"events":["command:new"]}}',
           "---",
           "",
           "# Symlink Hook",
@@ -502,7 +502,7 @@ describe("loader", () => {
           "---",
           "name: hardlink-hook",
           "description: hardlink test",
-          'metadata: {"openclaw":{"events":["command:new"]}}',
+          'metadata: {"nova":{"events":["command:new"]}}',
           "---",
           "",
           "# Hardlink Hook",

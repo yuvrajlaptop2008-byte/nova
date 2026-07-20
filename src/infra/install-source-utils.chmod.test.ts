@@ -3,13 +3,13 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 
-const resolvePreferredOpenClawTmpDirMock = vi.hoisted(() => vi.fn());
+const resolvePreferredNovaTmpDirMock = vi.hoisted(() => vi.fn());
 
-vi.mock("./tmp-openclaw-dir.js", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./tmp-openclaw-dir.js")>();
+vi.mock("./tmp-nova-dir.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./tmp-nova-dir.js")>();
   return {
     ...actual,
-    resolvePreferredOpenClawTmpDir: resolvePreferredOpenClawTmpDirMock,
+    resolvePreferredNovaTmpDir: resolvePreferredNovaTmpDirMock,
   };
 });
 
@@ -21,19 +21,19 @@ describe("withTempDir private root", () => {
   it.runIf(process.platform !== "win32")(
     "preserves parent temp root permissions when using private Nova temp root",
     async () => {
-      const mockParentRoot = tempDirs.make("openclaw-chmod-test-");
-      const mockOpenClawDir = path.join(mockParentRoot, "openclaw");
+      const mockParentRoot = tempDirs.make("nova-chmod-test-");
+      const mockNovaDir = path.join(mockParentRoot, "nova");
 
-      await fs.mkdir(mockOpenClawDir, { recursive: true });
+      await fs.mkdir(mockNovaDir, { recursive: true });
       await fs.chmod(mockParentRoot, 0o1777);
-      const canonicalOpenClawDir = await fs.realpath(mockOpenClawDir);
+      const canonicalNovaDir = await fs.realpath(mockNovaDir);
 
-      resolvePreferredOpenClawTmpDirMock.mockReturnValue(mockOpenClawDir);
+      resolvePreferredNovaTmpDirMock.mockReturnValue(mockNovaDir);
 
       let observedDir = "";
-      const value = await withTempDir("openclaw-test-", async (tmpDir) => {
+      const value = await withTempDir("nova-test-", async (tmpDir) => {
         observedDir = tmpDir;
-        expect(path.dirname(tmpDir)).toBe(canonicalOpenClawDir);
+        expect(path.dirname(tmpDir)).toBe(canonicalNovaDir);
         await fs.writeFile(path.join(tmpDir, "marker.txt"), "ok");
         return "done";
       });
@@ -47,7 +47,7 @@ describe("withTempDir private root", () => {
         ),
       ).resolves.toBe(false);
 
-      const privateRootStat = await fs.stat(mockOpenClawDir);
+      const privateRootStat = await fs.stat(mockNovaDir);
       expect(privateRootStat.mode & 0o7777).toBe(0o700);
 
       const parentStat = await fs.stat(mockParentRoot);

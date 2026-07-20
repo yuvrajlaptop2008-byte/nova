@@ -6,7 +6,7 @@ import {
   type MainSessionRecoveryOwnerLease,
 } from "../../agents/main-session-recovery-store.js";
 import { mergeSessionEntry, type SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { normalizeDeliveryContext } from "../../utils/delivery-context.shared.js";
 import { formatForLog } from "../ws-log.js";
 import { createAgentAdmissionController } from "./agent-admission-controller.js";
@@ -167,7 +167,7 @@ export const agentRunHandler: GatewayRequestHandlers["agent"] = async ({
       | undefined;
     let sessionPersistedBeforeGatewayAdmission = false;
     let bestEffortDeliver = requestedBestEffortDeliver ?? false;
-    let cfgForAgent: OpenClawConfig | undefined;
+    let cfgForAgent: NovaConfig | undefined;
     let resolvedSessionKey = requestedSessionKey;
     let resolvedSessionAgentId: string | undefined;
     let isNewSession = false;

@@ -2,14 +2,14 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import * as path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { extensionForMime } from "openclaw/plugin-sdk/media-mime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { extensionForMime } from "nova/plugin-sdk/media-mime";
 import {
   readRemoteMediaBuffer,
   MAX_IMAGE_BYTES,
   saveRemoteMedia,
-} from "openclaw/plugin-sdk/media-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/media-runtime";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import { TLON_MEDIA_FETCH_TIMEOUTS } from "../media-fetch-timeouts.js";
 
 const MAX_IMAGES_PER_MESSAGE = 8;

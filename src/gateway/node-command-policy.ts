@@ -3,7 +3,7 @@ import { expectDefined } from "@nova/normalization-core";
 // Computes per-platform allowlists from built-in, plugin, runtime, and config inputs.
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { normalizeUniqueStringEntries } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   NODE_AGENT_CLI_CLAUDE_RUN_COMMAND,
   NODE_BROWSER_PROXY_COMMAND,
@@ -376,7 +376,7 @@ function hasTalkSurface(node?: NodeCommandPolicyNode): boolean {
 }
 
 function resolveNodeCommandAllowlistInternal(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   node?: NodeCommandPolicyNode,
   options?: { includeDesktopHostCommands?: boolean; includeDangerousDefaults?: boolean },
 ): Set<string> {
@@ -448,14 +448,14 @@ function resolveNodeCommandAllowlistInternal(
 }
 
 export function resolveNodeCommandAllowlist(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   node?: NodeCommandPolicyNode,
 ): Set<string> {
   return resolveNodeCommandAllowlistInternal(cfg, node);
 }
 
 export function resolveNodePairingCommandAllowlist(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   node?: NodeCommandPolicyNode,
 ): Set<string> {
   return resolveNodeCommandAllowlistInternal(cfg, node, {

@@ -41,8 +41,8 @@ describe("Nix integration (U3, U5, U9)", () => {
   });
 
   describe("U5: CONFIG_PATH and STATE_DIR env var overrides", () => {
-    it("STATE_DIR defaults to ~/.openclaw when env not set", () => {
-      expect(resolveStateDir(envWith({ NOVA_STATE_DIR: undefined }))).toMatch(/\.openclaw$/);
+    it("STATE_DIR defaults to ~/.nova when env not set", () => {
+      expect(resolveStateDir(envWith({ NOVA_STATE_DIR: undefined }))).toMatch(/\.nova$/);
     });
 
     it("STATE_DIR respects NOVA_STATE_DIR override", () => {
@@ -54,11 +54,11 @@ describe("Nix integration (U3, U5, U9)", () => {
     it("STATE_DIR respects NOVA_HOME when state override is unset", () => {
       const customHome = path.join(path.sep, "custom", "home");
       expect(resolveStateDir(envWith({ NOVA_HOME: customHome, NOVA_STATE_DIR: undefined }))).toBe(
-        path.join(path.resolve(customHome), ".openclaw"),
+        path.join(path.resolve(customHome), ".nova"),
       );
     });
 
-    it("CONFIG_PATH defaults to NOVA_HOME/.openclaw/openclaw.json", () => {
+    it("CONFIG_PATH defaults to NOVA_HOME/.nova/nova.json", () => {
       const customHome = path.join(path.sep, "custom", "home");
       expect(
         resolveConfigPathCandidate(
@@ -68,31 +68,31 @@ describe("Nix integration (U3, U5, U9)", () => {
             NOVA_STATE_DIR: undefined,
           }),
         ),
-      ).toBe(path.join(path.resolve(customHome), ".openclaw", "openclaw.json"));
+      ).toBe(path.join(path.resolve(customHome), ".nova", "nova.json"));
     });
 
-    it("CONFIG_PATH defaults to ~/.openclaw/openclaw.json when env not set", () => {
+    it("CONFIG_PATH defaults to ~/.nova/nova.json when env not set", () => {
       expect(
         resolveConfigPathCandidate(
           envWith({ NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined }),
         ),
-      ).toMatch(/\.openclaw[\\/]openclaw\.json$/);
+      ).toMatch(/\.nova[\\/]nova\.json$/);
     });
 
     it("CONFIG_PATH respects NOVA_CONFIG_PATH override", () => {
       expect(
-        resolveConfigPathCandidate(envWith({ NOVA_CONFIG_PATH: "/nix/store/abc/openclaw.json" })),
-      ).toBe(path.resolve("/nix/store/abc/openclaw.json"));
+        resolveConfigPathCandidate(envWith({ NOVA_CONFIG_PATH: "/nix/store/abc/nova.json" })),
+      ).toBe(path.resolve("/nix/store/abc/nova.json"));
     });
 
     it("CONFIG_PATH expands ~ in NOVA_CONFIG_PATH override", async () => {
       await withTempHome(async (home) => {
         expect(
           resolveConfigPathCandidate(
-            envWith({ NOVA_HOME: home, NOVA_CONFIG_PATH: "~/.openclaw/custom.json" }),
+            envWith({ NOVA_HOME: home, NOVA_CONFIG_PATH: "~/.nova/custom.json" }),
             () => home,
           ),
-        ).toBe(path.join(home, ".openclaw", "custom.json"));
+        ).toBe(path.join(home, ".nova", "custom.json"));
       });
     });
 
@@ -100,9 +100,9 @@ describe("Nix integration (U3, U5, U9)", () => {
       expect(
         resolveConfigPathCandidate(
           envWith({ NOVA_STATE_DIR: "/custom/state", NOVA_TEST_FAST: "1" }),
-          () => path.join(path.sep, "tmp", "openclaw-config-home"),
+          () => path.join(path.sep, "tmp", "nova-config-home"),
         ),
-      ).toBe(path.join(path.resolve("/custom/state"), "openclaw.json"));
+      ).toBe(path.join(path.resolve("/custom/state"), "nova.json"));
     });
   });
 

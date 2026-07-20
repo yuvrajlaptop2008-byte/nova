@@ -1,29 +1,26 @@
 // Codex plugin module implements conversation binding behavior.
-import {
-  formatErrorMessage,
-  resolveSandboxContext,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resolveSessionAgentIds } from "openclaw/plugin-sdk/agent-runtime";
-import { loadExecApprovals } from "openclaw/plugin-sdk/exec-approvals-runtime";
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { formatErrorMessage, resolveSandboxContext } from "nova/plugin-sdk/agent-harness-runtime";
+import { resolveSessionAgentIds } from "nova/plugin-sdk/agent-runtime";
+import { loadExecApprovals } from "nova/plugin-sdk/exec-approvals-runtime";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 import type {
   PluginConversationBindingResolvedEvent,
   PluginHookInboundClaimContext,
   PluginHookInboundClaimEvent,
-} from "openclaw/plugin-sdk/plugin-entry";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-payload";
-import { getSessionEntry, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/plugin-entry";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-payload";
+import { getSessionEntry, resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
 import { resolveCodexAppServerForModelProvider } from "./app-server/app-server-policy.js";
 import { resolveCodexAppServerAuthProfileIdForAgent } from "./app-server/auth-bridge.js";
 import { CODEX_CONTROL_METHODS } from "./app-server/capabilities.js";
 import {
   canUseCodexModelBackedApprovalsReviewerForModel,
   codexSandboxPolicyForTurn,
-  resolveOpenClawExecPolicyForCodexAppServer,
+  resolveNovaExecPolicyForCodexAppServer,
   resolveCodexAppServerRuntimeOptions,
   type CodexAppServerApprovalPolicy,
   type CodexAppServerSandboxMode,
-  type OpenClawExecPolicyForCodexAppServer,
+  type NovaExecPolicyForCodexAppServer,
 } from "./app-server/config.js";
 import { assertCodexThreadStartResponse } from "./app-server/protocol-validators.js";
 import type {
@@ -135,7 +132,7 @@ async function resolveConversationAppServerRuntime(params: {
   modelProvider?: string;
   model?: string;
 }): Promise<{
-  execPolicy?: OpenClawExecPolicyForCodexAppServer;
+  execPolicy?: NovaExecPolicyForCodexAppServer;
   runtime: ReturnType<typeof resolveCodexAppServerRuntimeOptions>;
 }> {
   const execPolicy = resolveConversationExecPolicy({
@@ -158,12 +155,12 @@ async function resolveConversationAppServerRuntime(params: {
     model: params.model,
     config: params.config,
     agentDir: params.agentDir,
-    openClawSandboxActive: Boolean(sandboxForPolicy?.enabled),
+    novaSandboxActive: Boolean(sandboxForPolicy?.enabled),
   });
   return { execPolicy, runtime };
 }
 
-const CODEX_CONVERSATION_GLOBAL_STATE = Symbol.for("openclaw.codex.conversationBinding");
+const CODEX_CONVERSATION_GLOBAL_STATE = Symbol.for("nova.codex.conversationBinding");
 const CODEX_CONVERSATION_THREAD_DEVELOPER_INSTRUCTIONS =
   "This Codex thread is bound to an Nova conversation. Answer normally; Nova will deliver your final response back to the conversation.";
 
@@ -899,7 +896,7 @@ async function runBoundTurn(params: {
 }
 
 function assertNativeConversationApprovalPolicySupported(params: {
-  execPolicy?: OpenClawExecPolicyForCodexAppServer;
+  execPolicy?: NovaExecPolicyForCodexAppServer;
   approvalPolicy: ReturnType<typeof resolveCodexAppServerRuntimeOptions>["approvalPolicy"];
   approvalsReviewer: ReturnType<typeof resolveCodexAppServerRuntimeOptions>["approvalsReviewer"];
   modelBackedApprovalsReviewerUnavailable: boolean;
@@ -1044,7 +1041,7 @@ function resolveConversationExecPolicy(params: {
           config: params.config,
         }).sessionAgentId
       : undefined);
-  return resolveOpenClawExecPolicyForCodexAppServer({
+  return resolveNovaExecPolicyForCodexAppServer({
     config: params.config,
     agentId,
     execOverrides: readSessionExecOverrides({

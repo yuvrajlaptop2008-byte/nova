@@ -1,7 +1,7 @@
 /**
  * Doctor contract for the copilot extension.
  *
- * Mirrors {@link ../codex/doctor-contract-api.ts} so `openclaw doctor`
+ * Mirrors {@link ../codex/doctor-contract-api.ts} so `nova doctor`
  * can:
  *   - Reason about which session-state belongs to this extension
  *     (sessionRouteStateOwners) for cleanup of stale state across
@@ -13,8 +13,8 @@
  *     future retirements have a stable in-tree home.
  */
 
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { DoctorSessionRouteStateOwner } from "openclaw/plugin-sdk/runtime-doctor";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { DoctorSessionRouteStateOwner } from "nova/plugin-sdk/runtime-doctor";
 
 type LegacyConfigRule = {
   path: string[];
@@ -24,8 +24,8 @@ type LegacyConfigRule = {
 
 export const legacyConfigRules: LegacyConfigRule[] = [];
 
-export function normalizeCompatibilityConfig({ cfg }: { cfg: OpenClawConfig }): {
-  config: OpenClawConfig;
+export function normalizeCompatibilityConfig({ cfg }: { cfg: NovaConfig }): {
+  config: NovaConfig;
   changes: string[];
 } {
   return { config: cfg, changes: [] };

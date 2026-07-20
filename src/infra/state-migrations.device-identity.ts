@@ -2,11 +2,8 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { root, type Root } from "@nova/fs-safe";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { acquireDeviceIdentityCoordinator } from "./device-identity-coordinator.js";
 import {
   normalizeLegacyDeviceIdentity,
@@ -59,7 +56,7 @@ function deviceIdentityKeyMaterialMatches(left: DeviceIdentity, right: DeviceIde
 }
 
 type DeviceIdentityMigrationDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "device_identities" | "migration_runs" | "migration_sources"
 >;
 
@@ -141,7 +138,7 @@ function receiptSourceKey(sourcePath: string): string {
 
 function readMigrationReceipt(sourcePath: string, env: NodeJS.ProcessEnv): MigrationReceipt | null {
   const sourceKey = receiptSourceKey(sourcePath);
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const row = executeSqliteQueryTakeFirstSync(
     db,
     getNodeSqliteKysely<DeviceIdentityMigrationDatabase>(db)
@@ -204,7 +201,7 @@ function classifyCanonicalRow(
 }
 
 function readCanonicalIdentity(
-  db: ReturnType<typeof openOpenClawStateDatabase>["db"],
+  db: ReturnType<typeof openNovaStateDatabase>["db"],
 ): CanonicalIdentityRow | undefined {
   return executeSqliteQueryTakeFirstSync(
     db,
@@ -219,7 +216,7 @@ function verifyCanonicalIdentity(
   identity: NormalizedLegacyDeviceIdentity,
   env: NodeJS.ProcessEnv,
 ): void {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const row = readCanonicalIdentity(db);
   if (!row || classifyCanonicalRow(row, identity) !== "same") {
     throw new Error("canonical SQLite device identity no longer matches the legacy source");
@@ -234,7 +231,7 @@ function importAndRecordReceipt(params: {
   const sourceKey = receiptSourceKey(params.sourcePath);
   const runId = `${sourceKey}:${params.snapshot.sha256.slice(0, 16)}`;
   const now = Date.now();
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => {
       const stateDb = getNodeSqliteKysely<DeviceIdentityMigrationDatabase>(db);
       const existingReceipt = executeSqliteQueryTakeFirstSync(
@@ -341,7 +338,7 @@ function importAndRecordReceipt(params: {
 }
 
 function markSourceRemoved(sourceKey: string, env: NodeJS.ProcessEnv): void {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       executeSqliteQuerySync(
         db,
@@ -635,7 +632,7 @@ export async function migrateLegacyDeviceIdentity(params: {
     return {
       changes: [],
       warnings: [
-        `Failed migrating legacy device identity: ${detail}. Stop the Gateway and run \`openclaw doctor --fix\` again.`,
+        `Failed migrating legacy device identity: ${detail}. Stop the Gateway and run \`nova doctor --fix\` again.`,
       ],
     };
   }

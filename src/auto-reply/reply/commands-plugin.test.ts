@@ -1,7 +1,7 @@
 // Tests plugin command dispatch and plugin-scoped command aliases.
 import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { handlePluginCommand } from "./commands-plugin.js";
 import type { HandleCommandsParams } from "./commands-types.js";
 
@@ -13,10 +13,7 @@ vi.mock("../../plugins/commands.js", () => ({
   executePluginCommand: executePluginCommandMock,
 }));
 
-function buildPluginParams(
-  commandBodyNormalized: string,
-  cfg: OpenClawConfig,
-): HandleCommandsParams {
+function buildPluginParams(commandBodyNormalized: string, cfg: NovaConfig): HandleCommandsParams {
   return {
     cfg,
     ctx: {
@@ -59,7 +56,7 @@ describe("handlePluginCommand", () => {
       buildPluginParams("/card", {
         commands: { text: true },
         channels: { whatsapp: { allowFrom: ["*"] } },
-      } as OpenClawConfig),
+      } as NovaConfig),
       true,
     );
 
@@ -97,7 +94,7 @@ describe("handlePluginCommand", () => {
     const params = buildPluginParams("/card", {
       commands: { text: true },
       channels: { whatsapp: { allowFrom: ["*"] } },
-    } as OpenClawConfig);
+    } as NovaConfig);
     params.sessionEntry = {
       sessionId: "wrapper-session",
       sessionFile: "/tmp/wrapper-session.jsonl",
@@ -142,7 +139,7 @@ describe("handlePluginCommand", () => {
       buildPluginParams("/card", {
         commands: { text: true },
         channels: { whatsapp: { allowFrom: ["*"] } },
-      } as OpenClawConfig),
+      } as NovaConfig),
       true,
     );
 
@@ -179,7 +176,7 @@ describe("handlePluginCommand", () => {
       buildPluginParams("/approve-deploy", {
         commands: { text: true },
         channels: { whatsapp: { allowFrom: ["*"] } },
-      } as OpenClawConfig),
+      } as NovaConfig),
       true,
     );
 
@@ -192,7 +189,7 @@ describe("handlePluginCommand", () => {
     const allowedParams = buildPluginParams("/approve-deploy", {
       commands: { text: true },
       channels: { whatsapp: { allowFrom: ["*"] } },
-    } as OpenClawConfig);
+    } as NovaConfig);
     allowedParams.ctx.GatewayClientScopes = ["operator.approvals"];
 
     const allowed = await handlePluginCommand(allowedParams, true);

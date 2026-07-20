@@ -10,9 +10,9 @@ const gatewayRuntime = vi.hoisted(() => ({
   getRuntimeConfig: vi.fn(() => ({})),
 }));
 
-vi.mock("openclaw/plugin-sdk/gateway-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/gateway-runtime")>(
-    "openclaw/plugin-sdk/gateway-runtime",
+vi.mock("nova/plugin-sdk/gateway-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/gateway-runtime")>(
+    "nova/plugin-sdk/gateway-runtime",
   );
   return {
     ...actual,
@@ -20,7 +20,7 @@ vi.mock("openclaw/plugin-sdk/gateway-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", () => ({
+vi.mock("nova/plugin-sdk/runtime-config-snapshot", () => ({
   getRuntimeConfig: gatewayRuntime.getRuntimeConfig,
 }));
 

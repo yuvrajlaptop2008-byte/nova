@@ -342,9 +342,9 @@ describe("edge cases", () => {
       },
       {
         name: ".co stays links",
-        input: "Visit t.co and openclaw.co",
-        contains: ['<a href="http://t.co">', '<a href="http://openclaw.co">'],
-        notContains: ["<code>t.co</code>", "<code>openclaw.co</code>"],
+        input: "Visit t.co and nova.co",
+        contains: ['<a href="http://t.co">', '<a href="http://nova.co">'],
+        notContains: ["<code>t.co</code>", "<code>nova.co</code>"],
       },
       {
         name: "non-target extensions stay plain text",

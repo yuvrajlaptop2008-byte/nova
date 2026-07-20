@@ -2,17 +2,17 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { resolveAgentDir, resolveAgentWorkspaceDir } from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { parseAgentSessionKey } from "openclaw/plugin-sdk/routing";
+import { resolveAgentDir, resolveAgentWorkspaceDir } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import { parseAgentSessionKey } from "nova/plugin-sdk/routing";
 import {
   cleanupSessionLifecycleArtifacts,
   formatSqliteSessionFileMarker,
   patchSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { readSessionTranscriptEvents } from "openclaw/plugin-sdk/session-transcript-runtime";
-import { tempWorkspace, resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/session-store-runtime";
+import { readSessionTranscriptEvents } from "nova/plugin-sdk/session-transcript-runtime";
+import { tempWorkspace, resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import {
   applyActiveMemoryRuntimeConfigSnapshot,
   isMissingRegisteredMemoryToolsError,
@@ -141,8 +141,8 @@ async function cleanupActiveMemoryRecallSession(params: {
 }
 
 async function runRecallSubagent(params: {
-  api: OpenClawPluginApi;
-  runtimeConfig: OpenClawConfig;
+  api: NovaPluginApi;
+  runtimeConfig: NovaConfig;
   config: ResolvedActiveRecallPluginConfig;
   agentId: string;
   parentSessionKey?: string;
@@ -185,8 +185,8 @@ async function runRecallSubagent(params: {
   const transientWorkspace = params.config.persistTranscripts
     ? undefined
     : await tempWorkspace({
-        rootDir: resolvePreferredOpenClawTmpDir(),
-        prefix: "openclaw-active-memory-",
+        rootDir: resolvePreferredNovaTmpDir(),
+        prefix: "nova-active-memory-",
       });
   const tempDir = transientWorkspace?.dir;
   const persistedDir = params.config.persistTranscripts

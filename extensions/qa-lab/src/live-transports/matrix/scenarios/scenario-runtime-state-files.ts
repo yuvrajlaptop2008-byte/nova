@@ -3,7 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { MatrixQaScenarioContext } from "./scenario-runtime-shared.js";
 
 const MATRIX_SYNC_STORE_FILENAME = "bot-storage.json";
@@ -178,7 +178,7 @@ async function readMatrixSyncCacheCursorsFromSqlite(params: {
   userId?: string;
 }): Promise<MatrixSyncStoreCursor[]> {
   const databasePaths = await findFilesByName({
-    filename: "openclaw.sqlite",
+    filename: "nova.sqlite",
     rootDir: params.stateDir,
     maxDepth: 10,
   });
@@ -503,7 +503,7 @@ async function hasPersistedMatrixPluginStateDedupeEntry(params: {
   // matching keeps the probe independent of the runtime account id.
   const expectedKeySuffix = `\0${params.roomId.trim()}\0${params.eventId.trim()}`;
   const databasePaths = await findFilesByName({
-    filename: "openclaw.sqlite",
+    filename: "nova.sqlite",
     rootDir: params.stateDir,
     maxDepth: 10,
   });

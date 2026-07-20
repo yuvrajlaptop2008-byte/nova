@@ -1,6 +1,6 @@
 // Covers event session routing policy resolution.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import {
   resolveEventSessionKeyForPolicy,
   resolveEventSessionRoutingPolicy,
@@ -10,7 +10,7 @@ import {
 
 describe("event session routing", () => {
   it("routes single-owner dmScope=main direct event keys to the agent main session", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       session: { dmScope: "main" },
       channels: {
         telegram: {
@@ -19,7 +19,7 @@ describe("event session routing", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const policy = resolveEventSessionRoutingPolicy({
       cfg,
       sessionKey: "agent:main:telegram:work:direct:123",
@@ -44,12 +44,12 @@ describe("event session routing", () => {
   });
 
   it("does not route multi-owner or wildcard direct sessions to main", () => {
-    const baseCfg: OpenClawConfig = {
+    const baseCfg: NovaConfig = {
       session: { dmScope: "main" },
       channels: {
         telegram: { allowFrom: ["123", "456"] },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveMainScopedEventSessionKey({
@@ -62,14 +62,14 @@ describe("event session routing", () => {
         cfg: {
           ...baseCfg,
           channels: { telegram: { allowFrom: ["*"] } },
-        } as unknown as OpenClawConfig,
+        } as unknown as NovaConfig,
         sessionKey: "agent:main:telegram:default:direct:123",
       }),
     ).toBeNull();
   });
 
   it("preserves route-binding direct session overrides under global dmScope=main", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       session: { dmScope: "main" },
       channels: {
         telegram: {
@@ -90,7 +90,7 @@ describe("event session routing", () => {
           session: { dmScope: "per-account-channel-peer" },
         },
       ],
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const sessionKey = "agent:main:telegram:work:direct:123";
     const policy = resolveEventSessionRoutingPolicy({ cfg, sessionKey });
     const threadSessionKey = `${sessionKey}:thread:1712345678.123`;

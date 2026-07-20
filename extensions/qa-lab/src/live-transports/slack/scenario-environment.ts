@@ -1,7 +1,7 @@
 import path from "node:path";
 import type { WebClient } from "@slack/web-api";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { QaRunnerCliRegistration } from "openclaw/plugin-sdk/qa-runner-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { QaRunnerCliRegistration } from "nova/plugin-sdk/qa-runner-runtime";
 import {
   patchLiveQaGatewayConfig,
   readLiveQaGatewayConfig,
@@ -22,7 +22,7 @@ type AdapterDefinition = Awaited<ReturnType<AdapterFactory["create"]>>;
 type FlowPreparationInput = Parameters<NonNullable<AdapterDefinition["prepareFlow"]>>[0];
 
 export type SlackQaScenarioEnvironment = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelId: string;
   context: Omit<SlackQaScenarioContext, "sentTs">;
   gatewayDebugDirPath: string;
@@ -63,7 +63,7 @@ export function createSlackQaScenarioEnvironment(params: {
       assertSlackCodexApprovalModelSupported(primaryModel);
     }
     const snapshot = await readLiveQaGatewayConfig(input.gateway);
-    const cfg = buildSlackQaConfig(snapshot.config as OpenClawConfig, {
+    const cfg = buildSlackQaConfig(snapshot.config as NovaConfig, {
       channelId: params.channelId,
       driverBotUserId: params.driverBotUserId,
       overrides: scenario.configOverrides,

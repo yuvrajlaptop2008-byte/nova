@@ -3,11 +3,11 @@ import path from "node:path";
 import type {
   AgentHarnessAttemptParams,
   EmbeddedContextFile,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   resolveBootstrapContextForRun,
   resolveUserPath,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 
 // Filenames the Copilot SDK already loads natively from the working
 // directory / instructionDirectories (per
@@ -96,7 +96,7 @@ export async function resolveCopilotWorkspaceBootstrapContext(params: {
     });
     // Remap context-file paths from the workspace we LOADED them
     // from (`workspaceDir`, the canonical host workspace where
-    // SOUL.md / IDENTITY.md / .openclaw conventions live) onto the
+    // SOUL.md / IDENTITY.md / .nova conventions live) onto the
     // workspace the SDK session will actually OPERATE in
     // (`effectiveWorkspaceDir`). When the two are identical (no
     // sandbox, or sandbox `rw`), remap is a no-op. The render below

@@ -31,7 +31,7 @@ const NATIVE_CLAIM_SUFFIX = ".native-importing";
 class DeviceIdentityMigrationRequiredError extends Error {
   constructor(filePath: string) {
     super(
-      `Legacy device identity exists at ${filePath}. Run "openclaw doctor --fix" before starting the gateway or connecting this client.`,
+      `Legacy device identity exists at ${filePath}. Run "nova doctor --fix" before starting the gateway or connecting this client.`,
     );
     this.name = "DeviceIdentityMigrationRequiredError";
   }

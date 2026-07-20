@@ -1,15 +1,15 @@
 // Memory Core plugin module implements manager embedding ops behavior.
 import fs from "node:fs/promises";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
 import {
   enforceEmbeddingMaxInputTokens,
   hasNonTextEmbeddingParts,
   isEmbeddingBatchUnavailableError,
   type EmbeddingInput,
   type MemoryEmbeddingProviderRuntime,
-} from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+} from "nova/plugin-sdk/memory-core-host-engine-embeddings";
+import { createSubsystemLogger } from "nova/plugin-sdk/memory-core-host-engine-foundation";
 import {
   buildMultimodalChunkForIndexing,
   chunkMarkdown,
@@ -22,9 +22,9 @@ import {
   runWithConcurrency,
   type MemoryChunk,
   type MemorySource,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
-import { MAX_TIMER_TIMEOUT_MS, resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import { runSqliteImmediateTransactionSync } from "openclaw/plugin-sdk/sqlite-runtime";
+} from "nova/plugin-sdk/memory-core-host-engine-storage";
+import { MAX_TIMER_TIMEOUT_MS, resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import { runSqliteImmediateTransactionSync } from "nova/plugin-sdk/sqlite-runtime";
 import {
   MEMORY_BATCH_FAILURE_LIMIT,
   recordMemoryBatchFailure,

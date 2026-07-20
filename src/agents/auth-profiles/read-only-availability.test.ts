@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveStoredCredentialReadOnlyAvailability } from "./read-only-availability.js";
 
 const cfg = {
@@ -8,7 +8,7 @@ const cfg = {
       vault: { source: "env" },
     },
   },
-} satisfies OpenClawConfig;
+} satisfies NovaConfig;
 
 describe("resolveStoredCredentialReadOnlyAvailability", () => {
   it("prefers explicit secret refs over retained inline values", () => {

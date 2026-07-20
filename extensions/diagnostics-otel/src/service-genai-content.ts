@@ -8,7 +8,7 @@ import {
   ATTR_GEN_AI_TOOL_DEFINITIONS,
   GEN_AI_OPERATION_NAME_VALUE_EXECUTE_TOOL,
 } from "@opentelemetry/semantic-conventions/incubating";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   MAX_OTEL_CONTENT_ARRAY_ITEMS,
   MAX_OTEL_CONTENT_ATTRIBUTE_CHARS,
@@ -280,7 +280,7 @@ export function assignOtelToolIdentityAttributes(
   evt: { toolCallId?: string },
 ): void {
   // Semconv execute_tool identity, span-only by design: metric attrs must stay
-  // low-cardinality, and unlike the dropped openclaw.toolCallId passthrough keys
+  // low-cardinality, and unlike the dropped nova.toolCallId passthrough keys
   // (DROPPED_OTEL_ATTRIBUTE_KEYS) the semconv id is a deliberate per-span export.
   attributes["gen_ai.operation.name"] = GEN_AI_OPERATION_NAME_VALUE_EXECUTE_TOOL;
   const toolCallId = evt.toolCallId?.trim();
@@ -296,28 +296,20 @@ export function assignOtelModelContentAttributes(
 ): void {
   assignGenAiModelContentAttributes(attributes, content, policy);
   if (policy.inputMessages) {
-    assignOtelContentAttribute(
-      attributes,
-      "openclaw.content.input_messages",
-      content?.inputMessages,
-    );
+    assignOtelContentAttribute(attributes, "nova.content.input_messages", content?.inputMessages);
   }
   if (policy.toolDefinitions) {
     assignOtelContentAttribute(
       attributes,
-      "openclaw.content.tool_definitions",
+      "nova.content.tool_definitions",
       content?.toolDefinitions,
     );
   }
   if (policy.outputMessages) {
-    assignOtelContentAttribute(
-      attributes,
-      "openclaw.content.output_messages",
-      content?.outputMessages,
-    );
+    assignOtelContentAttribute(attributes, "nova.content.output_messages", content?.outputMessages);
   }
   if (policy.systemPrompt) {
-    assignOtelContentAttribute(attributes, "openclaw.content.system_prompt", content?.systemPrompt);
+    assignOtelContentAttribute(attributes, "nova.content.system_prompt", content?.systemPrompt);
   }
 }
 
@@ -327,19 +319,19 @@ export function assignOtelToolContentAttributes(
   policy: OtelContentCapturePolicy,
 ): void {
   // Mirror captured content onto the semconv keys next to the shipped
-  // openclaw.content.* names; normalize once so both copies stay byte-identical.
+  // nova.content.* names; normalize once so both copies stay byte-identical.
   if (policy.toolInputs) {
     const toolInput = normalizeOtelContentValue(content?.toolInput);
     if (toolInput) {
       attributes[ATTR_GEN_AI_TOOL_CALL_ARGUMENTS] = toolInput;
-      attributes["openclaw.content.tool_input"] = toolInput;
+      attributes["nova.content.tool_input"] = toolInput;
     }
   }
   if (policy.toolOutputs) {
     const toolOutput = normalizeOtelContentValue(content?.toolOutput);
     if (toolOutput) {
       attributes[ATTR_GEN_AI_TOOL_CALL_RESULT] = toolOutput;
-      attributes["openclaw.content.tool_output"] = toolOutput;
+      attributes["nova.content.tool_output"] = toolOutput;
     }
   }
 }

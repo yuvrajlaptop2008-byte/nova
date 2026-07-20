@@ -7,12 +7,9 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import type {
   PluginBlobOverflowPolicy,
   PluginBlobStoreErrorCode,
@@ -24,8 +21,8 @@ export const MAX_PLUGIN_BLOB_BYTES_PER_ENTRY = 100 * 1024 * 1024;
 export const MAX_PLUGIN_BLOB_BYTES_PER_PLUGIN = 512 * 1024 * 1024;
 export const MAX_PLUGIN_BLOB_ENTRIES_PER_PLUGIN = 50_000;
 
-type PluginBlobTable = OpenClawStateKyselyDatabase["plugin_blob_entries"];
-type PluginBlobDatabase = Pick<OpenClawStateKyselyDatabase, "plugin_blob_entries">;
+type PluginBlobTable = NovaStateKyselyDatabase["plugin_blob_entries"];
+type PluginBlobDatabase = Pick<NovaStateKyselyDatabase, "plugin_blob_entries">;
 type PluginBlobRow = Selectable<PluginBlobTable>;
 
 export type PluginBlobStoredInfo = Pick<
@@ -67,7 +64,7 @@ function createError(params: {
   return new PluginBlobStoreError(params.message, {
     code: params.code,
     operation: params.operation,
-    path: resolveOpenClawStateSqlitePath(params.env ?? process.env),
+    path: resolveNovaStateSqlitePath(params.env ?? process.env),
     cause: params.cause,
   });
 }
@@ -86,7 +83,7 @@ function wrapError(
 
 function openDatabase(operation: PluginBlobStoreOperation, env?: NodeJS.ProcessEnv) {
   try {
-    const database = openOpenClawStateDatabase(env ? { env } : {});
+    const database = openNovaStateDatabase(env ? { env } : {});
     return database;
   } catch (error) {
     throw wrapError(
@@ -453,7 +450,7 @@ function upsertBlob(db: DatabaseSync, params: BlobWriteParams, now: number): voi
 function writeBlob(params: BlobWriteParams, ifAbsent: boolean): boolean {
   try {
     openDatabase("register", params.env);
-    return runOpenClawStateWriteTransaction(
+    return runNovaStateWriteTransaction(
       ({ db }) => {
         const now = Date.now();
         if (ifAbsent && blobKeyExists(db, params)) {
@@ -539,7 +536,7 @@ export function pluginBlobDelete(params: {
 }): boolean {
   try {
     openDatabase("delete", params.env);
-    return runOpenClawStateWriteTransaction(
+    return runNovaStateWriteTransaction(
       ({ db }) => deleteKey(db, params) > 0,
       params.env ? { env: params.env } : {},
     );
@@ -563,7 +560,7 @@ export function pluginBlobDeleteExpiredKey(params: {
 }): PluginBlobStoredInfo | undefined {
   try {
     openDatabase("sweep", params.env);
-    return runOpenClawStateWriteTransaction(
+    return runNovaStateWriteTransaction(
       ({ db }) => {
         const row = selectExpiredKeyInfo(db, { ...params, now: Date.now() });
         if (!row) {
@@ -594,7 +591,7 @@ export function pluginBlobDeleteExpired(params: {
 }): PluginBlobStoredInfo[] {
   try {
     openDatabase("sweep", params.env);
-    return runOpenClawStateWriteTransaction(
+    return runNovaStateWriteTransaction(
       ({ db }) => {
         const now = Date.now();
         const rows = executeSqliteQuerySync(
@@ -636,7 +633,7 @@ export function pluginBlobClear(params: {
 }): void {
   try {
     openDatabase("clear", params.env);
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         executeSqliteQuerySync(
           db,

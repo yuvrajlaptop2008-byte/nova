@@ -1,9 +1,9 @@
 // Kimi Coding plugin entrypoint registers its Nova integration.
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
-import type { SecretInput } from "openclaw/plugin-sdk/secret-input";
-import { isRecord, normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
+import { createProviderApiKeyAuthMethod } from "nova/plugin-sdk/provider-auth-api-key";
+import { normalizeProviderId } from "nova/plugin-sdk/provider-model-shared";
+import type { SecretInput } from "nova/plugin-sdk/secret-input";
+import { isRecord, normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import { applyKimiCodeConfig, KIMI_CODING_MODEL_REF } from "./onboard.js";
 import { buildKimiCodingProvider, normalizeKimiCodingModelId } from "./provider-catalog.js";
 import { isKimiK3ModelId, resolveThinkingProfile } from "./provider-policy-api.js";

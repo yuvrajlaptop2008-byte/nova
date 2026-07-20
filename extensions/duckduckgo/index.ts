@@ -1,5 +1,5 @@
 // Duckduckgo plugin entrypoint registers its Nova integration.
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
 import { createDuckDuckGoWebSearchProvider } from "./src/ddg-search-provider.js";
 
 export default definePluginEntry({

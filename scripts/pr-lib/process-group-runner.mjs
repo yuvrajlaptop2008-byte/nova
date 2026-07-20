@@ -26,7 +26,7 @@ const invocationCwd = process.cwd();
 // delete; only the child keeps the caller's original cwd.
 process.chdir(repoRoot);
 const lockScript = fileURLToPath(new URL("./operation-lock.sh", import.meta.url));
-const lockSnapshotDir = mkdtempSync(join(tmpdir(), "openclaw-pr-lock-release-"));
+const lockSnapshotDir = mkdtempSync(join(tmpdir(), "nova-pr-lock-release-"));
 const lockScriptSnapshot = join(lockSnapshotDir, "operation-lock.sh");
 // merge-run can delete this revision's script directory before lock release.
 writeFileSync(lockScriptSnapshot, readFileSync(lockScript));
@@ -188,7 +188,7 @@ function consumeNotificationLine(line) {
   const [lockRef, ownerOid, extra] = line.split("\t");
   if (
     extra !== undefined ||
-    !/^refs\/openclaw\/pr-operation-locks\/[1-9][0-9]*$/u.test(lockRef ?? "") ||
+    !/^refs\/nova\/pr-operation-locks\/[1-9][0-9]*$/u.test(lockRef ?? "") ||
     !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(ownerOid ?? "")
   ) {
     notificationFailure ??= new Error("scripts/pr emitted malformed operation-lock metadata");

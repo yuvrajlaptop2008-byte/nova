@@ -147,8 +147,7 @@ export function resolveOpenAIStrictToolFlagWithDiagnostics(
 export function isOpenAICodexResponsesModel(model: Model): boolean {
   return (
     OPENAI_CODEX_RESPONSES_PROVIDERS.has(model.provider) &&
-    (model.api === "openai-chatgpt-responses" ||
-      model.api === "openclaw-openai-responses-transport")
+    (model.api === "openai-chatgpt-responses" || model.api === "nova-openai-responses-transport")
   );
 }
 

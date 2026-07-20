@@ -377,7 +377,7 @@ function buildCliEnvAuthLog(childEnv: Record<string, string>): string {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.cliRunnerExecuteTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.cliRunnerExecuteTestApi")] = {
     buildCliEnvAuthLog,
     buildCliExecLogLine,
     setCliRunnerExecuteTestDeps: (overrides: Record<string, unknown>) => {
@@ -433,7 +433,7 @@ export async function executePreparedCliRun(
 
   const basePrompt = cliSessionIdToUse
     ? params.prompt
-    : (context.openClawHistoryPrompt ?? params.prompt);
+    : (context.novaHistoryPrompt ?? params.prompt);
   let prompt = applyPluginTextReplacements(
     appendBootstrapPromptWarning(basePrompt, context.bootstrapPromptWarningLines, {
       preserveExactPrompt: context.heartbeatPrompt,
@@ -888,7 +888,7 @@ export async function executePreparedCliRun(
             cliSessionId: cliSessionIdToUse,
             resolvedSessionId,
             reusableSession: context.reusableCliSession,
-            hasHistoryPrompt: Boolean(context.openClawHistoryPrompt),
+            hasHistoryPrompt: Boolean(context.novaHistoryPrompt),
           }),
         );
         const logOutputText =
@@ -1588,7 +1588,7 @@ export async function executePreparedCliRun(
             prompt,
             useResume,
             forceNewSession:
-              cliSessionIdToUse === undefined && context.openClawHistoryPrompt !== undefined,
+              cliSessionIdToUse === undefined && context.novaHistoryPrompt !== undefined,
             requiredSessionGeneration: cliSessionIdToUse
               ? context.requiredClaudeLiveSessionGeneration
               : undefined,
@@ -1887,7 +1887,7 @@ export async function executePreparedCliRun(
                 retryableNoOutputTimeout &&
                 Boolean(cliSessionIdToUse) &&
                 Boolean(resolvedSessionId) &&
-                Boolean(context.openClawHistoryPrompt) &&
+                Boolean(context.novaHistoryPrompt) &&
                 Boolean(params.sessionKey) &&
                 params.timeoutMs - (Date.now() - context.started) > 0;
               if (params.sessionKey && emitLiveEvents && !deferWatchdogNoticeForFreshRetry) {

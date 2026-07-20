@@ -4,7 +4,7 @@
  * model API once a concrete stream implementation exists.
  */
 import type { ApiRegistry } from "@nova/ai";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { getModelLlmRuntime } from "../llm/model-runtime-binding.js";
 import type { Api, Model } from "../llm/types.js";
 import { resolveProviderStreamFn } from "../plugins/provider-runtime.js";
@@ -20,7 +20,7 @@ import type { StreamFn } from "./runtime/index.js";
 /** Resolves and registers the stream function for a provider-backed model. */
 export function registerProviderStreamForModel<TApi extends Api>(params: {
   model: Model<TApi>;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;

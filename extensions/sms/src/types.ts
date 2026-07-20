@@ -1,5 +1,5 @@
 // Sms type declarations define plugin contracts.
-import type { SecretInput } from "openclaw/plugin-sdk/secret-input";
+import type { SecretInput } from "nova/plugin-sdk/secret-input";
 
 type SmsChannelConfigFields = {
   enabled?: boolean;

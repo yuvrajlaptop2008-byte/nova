@@ -14,8 +14,8 @@ import {
   type WorkboardRunAttempt,
   type WorkboardStatus,
 } from "@nova/workboard-contract";
-import { safeEqualSecret } from "openclaw/plugin-sdk/security-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { safeEqualSecret } from "nova/plugin-sdk/security-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   BLOCKED_TOO_LONG_MS,
   MAX_CARD_ATTEMPTS,

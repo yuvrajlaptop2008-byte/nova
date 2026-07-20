@@ -1,7 +1,7 @@
 // Openai plugin entrypoint registers its Nova integration.
-import { resolvePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { buildProviderToolCompatFamilyHooks } from "openclaw/plugin-sdk/provider-tools";
+import { resolvePluginConfigObject } from "nova/plugin-sdk/plugin-config-runtime";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
+import { buildProviderToolCompatFamilyHooks } from "nova/plugin-sdk/provider-tools";
 import { buildOpenAIImageGenerationProvider } from "./image-generation-provider.js";
 import { openaiMediaUnderstandingProvider } from "./media-understanding-provider.js";
 import { openAiMemoryEmbeddingProviderAdapter } from "./memory-embedding-adapter.js";

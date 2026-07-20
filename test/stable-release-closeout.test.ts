@@ -23,8 +23,7 @@ const validCloseoutParams = {
   tagPackageJson: { version: "2026.6.8" },
   mainChangelog: changelog,
   tagChangelog: changelog,
-  mainAppcast:
-    "https://github.com/openclaw/openclaw/releases/download/v2026.6.8/Nova-2026.6.8.zip\n",
+  mainAppcast: "https://github.com/nova/nova/releases/download/v2026.6.8/Nova-2026.6.8.zip\n",
   release,
   releaseTagSha: "tag-sha",
   mainSha: "main-sha",
@@ -106,11 +105,11 @@ describe("stable release closeout", () => {
         assets: [
           ...release.assets,
           {
-            name: "openclaw-2026.6.8-stable-main-closeout.json",
+            name: "nova-2026.6.8-stable-main-closeout.json",
             digest: `sha256:${"d".repeat(64)}`,
           },
           {
-            name: "openclaw-2026.6.8-stable-main-closeout.json.sha256",
+            name: "nova-2026.6.8-stable-main-closeout.json.sha256",
             digest: `sha256:${"e".repeat(64)}`,
           },
         ],
@@ -141,10 +140,10 @@ describe("stable release closeout", () => {
       ...validCloseoutParams,
       release: {
         ...release,
-        assets: [{ name: "openclaw-2026.6.8-dependency-evidence.zip" }],
+        assets: [{ name: "nova-2026.6.8-dependency-evidence.zip" }],
       },
       mainAppcast:
-        "https://github.com/openclaw/openclaw/releases/download/v2026.6.8/openclaw-2026.6.8-dependency-evidence.zip\n",
+        "https://github.com/nova/nova/releases/download/v2026.6.8/nova-2026.6.8-dependency-evidence.zip\n",
       nowMs: Date.parse("2026-06-17T00:00:00Z"),
     });
 
@@ -171,7 +170,7 @@ describe("stable release closeout", () => {
       tagChangelog: changelog.replaceAll("2026.6.8", "2026.6.8-2"),
       release: correctionRelease,
       mainAppcast:
-        "https://github.com/openclaw/openclaw/releases/download/v2026.6.8-2/Nova-2026.6.8-2.zip\n",
+        "https://github.com/nova/nova/releases/download/v2026.6.8-2/Nova-2026.6.8-2.zip\n",
       nowMs: Date.parse("2026-06-17T00:00:00Z"),
     });
 
@@ -192,8 +191,7 @@ describe("stable release closeout", () => {
         ...release,
         tagName: "v2026.6.8-2",
       },
-      mainAppcast:
-        "https://github.com/openclaw/openclaw/releases/download/v2026.6.8-2/Nova-2026.6.8.zip\n",
+      mainAppcast: "https://github.com/nova/nova/releases/download/v2026.6.8-2/Nova-2026.6.8.zip\n",
       nowMs: Date.parse("2026-06-17T00:00:00Z"),
     });
 
@@ -216,7 +214,7 @@ describe("stable release closeout", () => {
       "GitHub release v2026.6.8 Android asset names do not match the recovery contract: expected Nova-Android-SHA256SUMS.txt, Nova-Android.apk; got <none>.",
     );
     expect(missing.errors).toContain(
-      "GitHub release v2026.6.8 Windows asset names do not match the recovery contract: expected OpenClawCompanion-SHA256SUMS.txt, OpenClawCompanion-Setup-arm64.exe, OpenClawCompanion-Setup-x64.exe; got <none>.",
+      "GitHub release v2026.6.8 Windows asset names do not match the recovery contract: expected NovaCompanion-SHA256SUMS.txt, NovaCompanion-Setup-arm64.exe, NovaCompanion-Setup-x64.exe; got <none>.",
     );
     expect(missing.errors).toContain(
       "GitHub release v2026.6.8 Android recovery asset(s) lack GitHub SHA-256 digests: Nova-Android-SHA256SUMS.txt, Nova-Android.apk.",
@@ -233,8 +231,8 @@ describe("stable release closeout", () => {
       requireCompletePlatformAssets: true,
       windowsNodeReleaseRunId: "42",
       windowsNodeInstallerDigests: {
-        "OpenClawCompanion-Setup-arm64.exe": `sha256:${"1".repeat(64)}`,
-        "OpenClawCompanion-Setup-x64.exe": `sha256:${"2".repeat(64)}`,
+        "NovaCompanion-Setup-arm64.exe": `sha256:${"1".repeat(64)}`,
+        "NovaCompanion-Setup-x64.exe": `sha256:${"2".repeat(64)}`,
       },
       release: {
         ...release,
@@ -243,15 +241,15 @@ describe("stable release closeout", () => {
           { name: "Nova-Android-SHA256SUMS.txt", digest: `sha256:${"d".repeat(64)}` },
           { name: "Nova-Android.apk", digest: `sha256:${"e".repeat(64)}` },
           {
-            name: "OpenClawCompanion-SHA256SUMS.txt",
+            name: "NovaCompanion-SHA256SUMS.txt",
             digest: `sha256:${"f".repeat(64)}`,
           },
           {
-            name: "OpenClawCompanion-Setup-arm64.exe",
+            name: "NovaCompanion-Setup-arm64.exe",
             digest: `sha256:${"1".repeat(64)}`,
           },
           {
-            name: "OpenClawCompanion-Setup-x64.exe",
+            name: "NovaCompanion-Setup-x64.exe",
             digest: `sha256:${"2".repeat(64)}`,
           },
         ],
@@ -265,8 +263,8 @@ describe("stable release closeout", () => {
         completePlatformAssetsRequired: true,
         windowsNodeReleaseRunId: "42",
         windowsNodeInstallerDigests: {
-          "OpenClawCompanion-Setup-arm64.exe": `sha256:${"1".repeat(64)}`,
-          "OpenClawCompanion-Setup-x64.exe": `sha256:${"2".repeat(64)}`,
+          "NovaCompanion-Setup-arm64.exe": `sha256:${"1".repeat(64)}`,
+          "NovaCompanion-Setup-x64.exe": `sha256:${"2".repeat(64)}`,
         },
       },
     });

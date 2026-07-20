@@ -1,11 +1,11 @@
 // Qqbot helper module supports config shared behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   applyAccountNameToChannelSection,
   deleteAccountFromConfigSection,
   setAccountEnabledInConfigSection,
-} from "openclaw/plugin-sdk/core";
-import type { ChannelSetupInput } from "openclaw/plugin-sdk/setup";
+} from "nova/plugin-sdk/core";
+import type { ChannelSetupInput } from "nova/plugin-sdk/setup";
 import {
   describeAccount as engineDescribeAccount,
   formatAllowFrom as engineFormatAllowFrom,
@@ -40,15 +40,15 @@ function validateQQBotSetupInput(params: {
 }
 
 function applyQQBotSetupAccountConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   input: ChannelSetupInput;
-}): OpenClawConfig {
+}): NovaConfig {
   return engineApplySetupAccountConfig(
     params.cfg as unknown as Record<string, unknown>,
     params.accountId,
     params.input,
-  ) as OpenClawConfig;
+  ) as NovaConfig;
 }
 
 function isQQBotConfigured(account: ResolvedQQBotAccount | undefined): boolean {
@@ -66,16 +66,16 @@ function formatQQBotAllowFrom(params: {
 }
 
 export const qqbotConfigAdapter = {
-  listAccountIds: (cfg: OpenClawConfig) => listQQBotAccountIds(cfg),
-  resolveAccount: (cfg: OpenClawConfig, accountId?: string | null) =>
+  listAccountIds: (cfg: NovaConfig) => listQQBotAccountIds(cfg),
+  resolveAccount: (cfg: NovaConfig, accountId?: string | null) =>
     resolveQQBotAccount(cfg, accountId, { allowUnresolvedSecretRef: true }),
-  defaultAccountId: (cfg: OpenClawConfig) => resolveDefaultQQBotAccountId(cfg),
+  defaultAccountId: (cfg: NovaConfig) => resolveDefaultQQBotAccountId(cfg),
   setAccountEnabled: ({
     cfg,
     accountId,
     enabled,
   }: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId: string;
     enabled: boolean;
   }) =>
@@ -86,7 +86,7 @@ export const qqbotConfigAdapter = {
       enabled,
       allowTopLevel: true,
     }),
-  deleteAccount: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId: string }) =>
+  deleteAccount: ({ cfg, accountId }: { cfg: NovaConfig; accountId: string }) =>
     deleteAccountFromConfigSection({
       cfg,
       sectionKey: "qqbot",
@@ -95,21 +95,21 @@ export const qqbotConfigAdapter = {
     }),
   isConfigured: isQQBotConfigured,
   describeAccount: describeQQBotAccount,
-  resolveAllowFrom: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId?: string | null }) =>
+  resolveAllowFrom: ({ cfg, accountId }: { cfg: NovaConfig; accountId?: string | null }) =>
     resolveQQBotAccount(cfg, accountId, { allowUnresolvedSecretRef: true }).config?.allowFrom,
   formatAllowFrom: ({ allowFrom }: { allowFrom: Array<string | number> | undefined | null }) =>
     formatQQBotAllowFrom({ allowFrom }),
 };
 
 export const qqbotSetupAdapterShared = {
-  resolveAccountId: ({ cfg, accountId }: { cfg: OpenClawConfig; accountId?: string | null }) =>
+  resolveAccountId: ({ cfg, accountId }: { cfg: NovaConfig; accountId?: string | null }) =>
     normalizeLowercaseStringOrEmpty(accountId) || resolveDefaultQQBotAccountId(cfg),
   applyAccountName: ({
     cfg,
     accountId,
     name,
   }: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId: string;
     name?: string;
   }) =>
@@ -126,7 +126,7 @@ export const qqbotSetupAdapterShared = {
     accountId,
     input,
   }: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId: string;
     input: ChannelSetupInput;
   }) => applyQQBotSetupAccountConfig({ cfg, accountId, input }),

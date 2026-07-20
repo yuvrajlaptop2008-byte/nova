@@ -23,7 +23,7 @@ const mockGrokProvider = vi.hoisted(() => ({
   pluginId: "xai",
   label: "Grok",
   hint: "Search with xAI",
-  docsUrl: "https://docs.openclaw.ai/tools/web",
+  docsUrl: "https://docs.nova.ai/tools/web",
   requiresCredential: true,
   credentialLabel: "xAI API key",
   placeholder: "xai-...",
@@ -114,7 +114,7 @@ const mockCodexProvider = vi.hoisted(() => ({
   pluginId: "codex",
   label: "Codex Hosted Search",
   hint: "Grounded answers through your Codex app-server account",
-  docsUrl: "https://docs.openclaw.ai/tools/web",
+  docsUrl: "https://docs.nova.ai/tools/web",
   requiresCredential: false,
   credentialLabel: "Codex app-server account",
   placeholder: "",
@@ -146,7 +146,7 @@ const ensureOnboardingPluginInstalled = vi.hoisted(() =>
             [entry.pluginId]: {
               source: "npm",
               spec: entry.install.npmSpec,
-              installPath: `/tmp/openclaw-plugins/${entry.pluginId}`,
+              installPath: `/tmp/nova-plugins/${entry.pluginId}`,
             },
           },
         },
@@ -217,7 +217,7 @@ describe("runSearchSetupFlow", () => {
         options: expect.arrayContaining([
           expect.objectContaining({
             label: "暂时跳过",
-            hint: "稍后可用 openclaw configure --section web 配置",
+            hint: "稍后可用 nova configure --section web 配置",
           }),
         ]),
       }),
@@ -398,7 +398,7 @@ describe("runSearchSetupFlow", () => {
         "Secret references enabled — Nova will store a reference instead of the API key.",
         "Env var: XAI_API_KEY.",
         "Set XAI_API_KEY in the Gateway environment.",
-        "Docs: https://docs.openclaw.ai/tools/web",
+        "Docs: https://docs.nova.ai/tools/web",
       ].join("\n"),
       "Web search",
     );

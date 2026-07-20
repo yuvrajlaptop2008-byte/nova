@@ -22,7 +22,7 @@ async function tryScutil(key: "ComputerName" | "LocalHostName") {
 
 function fallbackHostName() {
   const trimmed = normalizeOptionalString(os.hostname()) ?? "";
-  return trimmed.replace(/\.local$/i, "") || "openclaw";
+  return trimmed.replace(/\.local$/i, "") || "nova";
 }
 
 /** Resolve a user-facing name for the current machine. */

@@ -1,12 +1,12 @@
 // Slack plugin module implements action runtime behavior.
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-resolution";
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
-import { readBooleanParam } from "openclaw/plugin-sdk/boolean-param";
-import type { ChannelMessageActionContext } from "openclaw/plugin-sdk/channel-contract";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { isSingleUseReplyToMode } from "openclaw/plugin-sdk/reply-reference";
-import { resolveOpenProviderRuntimeGroupPolicy } from "openclaw/plugin-sdk/runtime-group-policy";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeAccountId } from "nova/plugin-sdk/account-resolution";
+import type { AgentToolResult } from "nova/plugin-sdk/agent-core";
+import { readBooleanParam } from "nova/plugin-sdk/boolean-param";
+import type { ChannelMessageActionContext } from "nova/plugin-sdk/channel-contract";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { isSingleUseReplyToMode } from "nova/plugin-sdk/reply-reference";
+import { resolveOpenProviderRuntimeGroupPolicy } from "nova/plugin-sdk/runtime-group-policy";
+import { normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 import type { ResolvedSlackAccount } from "./accounts.js";
 import { parseSlackBlocksInput } from "./blocks-input.js";
 import type { SlackConversationInfo } from "./channel-type.js";
@@ -22,7 +22,7 @@ import {
   readPositiveIntegerParam,
   readReactionParams,
   readStringParam,
-  type OpenClawConfig,
+  type NovaConfig,
   withNormalizedTimestamp,
 } from "./runtime-api.js";
 import { parseSlackTarget, resolveSlackChannelId, slackContextTargetsMatch } from "./targets.js";
@@ -76,14 +76,14 @@ export const slackActionRuntime = {
   removeSlackReaction: createLazySlackAction("removeSlackReaction"),
   resolveSlackConversationName: createLazySlackAction("resolveSlackConversationName"),
   resolveSlackConversationInfo: async (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId?: string | null;
     channelId: string;
     operation?: "read" | "write";
     requireFreshName?: boolean;
   }) => (await loadSlackChannelTypeRuntime()).resolveSlackConversationInfo(params),
   resolveSlackChannelType: async (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId?: string | null;
     channelId: string;
   }) => (await loadSlackChannelTypeRuntime()).resolveSlackChannelType(params),
@@ -208,7 +208,7 @@ function normalizeConfiguredSlackDmUserId(value: unknown): string | undefined {
 
 async function isSlackDmTargetConfigured(params: {
   account: ResolvedSlackAccount;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelId: string;
   userId?: string;
 }): Promise<boolean> {
@@ -275,7 +275,7 @@ function assertSlackMemberInfoAllowed(params: {
 
 function resolveSlackChannelReadPolicy(params: {
   account: ResolvedSlackAccount;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelId: string;
   channelName?: string;
   conversationReadOrigin?: ConversationReadInvocationOrigin;
@@ -346,7 +346,7 @@ function resolveSlackChannelReadPolicy(params: {
 
 async function assertSlackReadTargetAllowed(params: {
   account: ResolvedSlackAccount;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelId: string;
   conversationReadOrigin?: ConversationReadInvocationOrigin;
   context?: SlackActionContext;
@@ -470,7 +470,7 @@ function isSlackGroupDmTargetConfigured(account: ResolvedSlackAccount, channelId
 
 export async function handleSlackAction(
   params: Record<string, unknown>,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   context?: SlackActionContext,
 ): Promise<AgentToolResult<unknown>> {
   const resolveChannelId = () =>

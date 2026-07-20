@@ -1,6 +1,6 @@
 // Msteams plugin module implements message handler support behavior.
 import { vi } from "vitest";
-import type { OpenClawConfig, PluginRuntime, RuntimeEnv } from "../../runtime-api.js";
+import type { NovaConfig, PluginRuntime, RuntimeEnv } from "../../runtime-api.js";
 import { installMSTeamsTestRuntime } from "../monitor-handler.test-helpers.js";
 import type { MSTeamsMessageHandlerDeps } from "../monitor-handler.types.js";
 
@@ -21,10 +21,7 @@ type MessageHandlerDepsOptions = {
   getTeamDetails?: ReturnType<typeof vi.fn>;
 };
 
-export function createMessageHandlerDeps(
-  cfg: OpenClawConfig,
-  options: MessageHandlerDepsOptions = {},
-) {
+export function createMessageHandlerDeps(cfg: NovaConfig, options: MessageHandlerDepsOptions = {}) {
   const enqueueSystemEvent = options.enqueueSystemEvent ?? vi.fn();
   const readAllowFromStore = options.readAllowFromStore ?? vi.fn(async () => []);
   const upsertPairingRequest = options.upsertPairingRequest ?? vi.fn(async () => null);

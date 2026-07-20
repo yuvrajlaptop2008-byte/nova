@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import NovaKit
+import NovaProtocol
 import SwiftUI
 
 extension AgentProTab {
@@ -48,7 +48,7 @@ extension AgentProTab {
         .refreshable {
             await self.refreshOverview(force: true)
         }
-        .font(OpenClawType.body)
+        .font(NovaType.body)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 self.agentFilterMenu
@@ -56,7 +56,7 @@ extension AgentProTab {
             }
             if let headerSidebarAction {
                 ToolbarItem(placement: .topBarLeading) {
-                    OpenClawSidebarHeaderLeadingSlot(action: headerSidebarAction)
+                    NovaSidebarHeaderLeadingSlot(action: headerSidebarAction)
                 }
             }
         }
@@ -64,7 +64,7 @@ extension AgentProTab {
 
     var skillsDestination: some View {
         ZStack {
-            OpenClawProBackground()
+            NovaProBackground()
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     self.detailSummaryCard(
@@ -72,19 +72,19 @@ extension AgentProTab {
                         title: "Skills",
                         value: self.skillsValue,
                         detail: self.skillsDetail,
-                        color: self.gatewayConnected ? OpenClawBrand.accent : .secondary)
+                        color: self.gatewayConnected ? NovaBrand.accent : .secondary)
                     self.skillsPolicyControls
                     self.skillsFilterField
                     self.clawHubSearchCard
                     self.skillsList
                 }
                 .padding(.vertical, 18)
-                .font(OpenClawType.body)
+                .font(NovaType.body)
             }
             .refreshable {
                 await self.refreshOverview(force: true)
             }
-            .safeAreaPadding(.bottom, OpenClawProMetric.bottomScrollInset)
+            .safeAreaPadding(.bottom, NovaProMetric.bottomScrollInset)
         }
         .navigationTitle("Skills")
         .navigationBarTitleDisplayMode(.inline)
@@ -106,7 +106,7 @@ extension AgentProTab {
 
     var cronDestination: some View {
         ZStack {
-            OpenClawProBackground()
+            NovaProBackground()
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     self.directHeader(
@@ -123,12 +123,12 @@ extension AgentProTab {
                     self.cronJobsList(limit: nil)
                 }
                 .padding(.vertical, 18)
-                .font(OpenClawType.body)
+                .font(NovaType.body)
             }
             .refreshable {
                 await self.refreshOverview(force: true)
             }
-            .safeAreaPadding(.bottom, OpenClawProMetric.bottomScrollInset)
+            .safeAreaPadding(.bottom, NovaProMetric.bottomScrollInset)
         }
         .navigationTitle("Automations")
         .navigationBarTitleDisplayMode(.inline)
@@ -136,7 +136,7 @@ extension AgentProTab {
 
     var usageDestination: some View {
         ZStack {
-            OpenClawProBackground()
+            NovaProBackground()
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     self.directHeader(
@@ -148,17 +148,17 @@ extension AgentProTab {
                         title: "Usage",
                         value: self.usageValue,
                         detail: self.usageDetail,
-                        color: self.gatewayConnected ? OpenClawBrand.accent : .secondary)
+                        color: self.gatewayConnected ? NovaBrand.accent : .secondary)
                     self.usageTotalsCard
                     self.usageDailyList
                 }
                 .padding(.vertical, 18)
-                .font(OpenClawType.body)
+                .font(NovaType.body)
             }
             .refreshable {
                 await self.refreshOverview(force: true)
             }
-            .safeAreaPadding(.bottom, OpenClawProMetric.bottomScrollInset)
+            .safeAreaPadding(.bottom, NovaProMetric.bottomScrollInset)
         }
         .navigationTitle("Usage")
         .navigationBarTitleDisplayMode(.inline)
@@ -181,21 +181,21 @@ extension AgentProTab {
     @ViewBuilder
     func directHeader(for route: AgentRoute, title: String, subtitle: String) -> some View {
         if let headerSidebarAction = self.directHeaderSidebarAction(for: route) {
-            OpenClawAdaptiveHeaderRow(
+            NovaAdaptiveHeaderRow(
                 title: .localized(title),
                 subtitle: .localized(subtitle),
-                titleFont: OpenClawType.title3SemiBold,
-                subtitleFont: OpenClawType.subheadMedium)
+                titleFont: NovaType.title3SemiBold,
+                subtitleFont: NovaType.subheadMedium)
             {
-                OpenClawSidebarHeaderLeadingSlot(action: headerSidebarAction)
+                NovaSidebarHeaderLeadingSlot(action: headerSidebarAction)
             } accessory: {
                 EmptyView()
             }
-            .padding(.horizontal, OpenClawProMetric.pagePadding)
+            .padding(.horizontal, NovaProMetric.pagePadding)
         }
     }
 
-    func directHeaderSidebarAction(for route: AgentRoute) -> OpenClawSidebarHeaderAction? {
+    func directHeaderSidebarAction(for route: AgentRoute) -> NovaSidebarHeaderAction? {
         self.directRoute == route ? self.headerSidebarAction : nil
     }
 
@@ -211,15 +211,15 @@ extension AgentProTab {
                 ProIconBadge(systemName: icon, color: color)
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                        .font(OpenClawType.headline)
+                        .font(NovaType.headline)
                     Text(detail)
-                        .font(OpenClawType.caption)
+                        .font(NovaType.caption)
                         .foregroundStyle(.secondary)
                 }
                 Spacer(minLength: 8)
                 ProValuePill(value: value, color: color)
             }
         }
-        .padding(.horizontal, OpenClawProMetric.pagePadding)
+        .padding(.horizontal, NovaProMetric.pagePadding)
     }
 }

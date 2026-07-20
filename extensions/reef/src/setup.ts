@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
+import type { NovaConfig } from "nova/plugin-sdk/core";
 import { fingerprint } from "../protocol/index.js";
 import {
   parseReefRelayUrl,
@@ -42,7 +42,7 @@ export const reefSetupAdapter = {
     cfg,
     input,
   }: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId: string;
     input: Record<string, unknown>;
   }) =>
@@ -52,12 +52,12 @@ export const reefSetupAdapter = {
         ...cfg.channels,
         reef: { ...(cfg.channels?.reef as object), ...input },
       },
-    }) as OpenClawConfig,
+    }) as NovaConfig,
 };
 
 export const reefSetupWizard = {
   channel: "reef",
-  getStatus: async ({ cfg }: { cfg: OpenClawConfig }) => {
+  getStatus: async ({ cfg }: { cfg: NovaConfig }) => {
     const raw = cfg.channels?.reef as unknown;
     const parsed = ReefChannelConfigSchema.safeParse(raw ?? {});
     const configured =
@@ -68,13 +68,13 @@ export const reefSetupWizard = {
       statusLines: [configured ? `Reef @${parsed.data.handle}` : "Reef not configured"],
     };
   },
-  configure: async ({ cfg }: { cfg: OpenClawConfig }) => ({ cfg }),
+  configure: async ({ cfg }: { cfg: NovaConfig }) => ({ cfg }),
   configureInteractive: async ({
     cfg,
     prompter,
     options,
   }: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     prompter: Prompt;
     options?: { beforePersistentEffect?: () => Promise<void> };
   }) => {
@@ -231,7 +231,7 @@ export const reefSetupWizard = {
       "Reef safety fingerprint — share out of band",
     );
     return {
-      cfg: { ...cfg, channels: { ...cfg.channels, reef } } as OpenClawConfig,
+      cfg: { ...cfg, channels: { ...cfg.channels, reef } } as NovaConfig,
       accountId: "default",
     };
   },

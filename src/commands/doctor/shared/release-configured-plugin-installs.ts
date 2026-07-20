@@ -5,8 +5,8 @@ import { listPotentialConfiguredChannelPresenceSignals } from "../../../channels
 import { normalizeChatChannelId } from "../../../channels/registry.js";
 import { isChannelConfigured } from "../../../config/channel-configured.js";
 import { detectPluginAutoEnableCandidates } from "../../../config/plugin-auto-enable.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
-import { compareOpenClawVersions } from "../../../config/version.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
+import { compareNovaVersions } from "../../../config/version.js";
 import {
   createDeferredConfiguredPluginRepairDoctorResult,
   type UpdatePostInstallDoctorResult,
@@ -39,16 +39,16 @@ type ReleaseConfiguredPluginIds = {
   channelIds: string[];
 };
 
-function isPluginsGloballyDisabled(cfg: OpenClawConfig): boolean {
+function isPluginsGloballyDisabled(cfg: NovaConfig): boolean {
   return cfg.plugins?.enabled === false;
 }
 
-function isDenied(cfg: OpenClawConfig, pluginId: string): boolean {
+function isDenied(cfg: NovaConfig, pluginId: string): boolean {
   const deny = cfg.plugins?.deny;
   return Array.isArray(deny) && deny.includes(pluginId);
 }
 
-function collectBlockedPluginIds(cfg: OpenClawConfig): string[] {
+function collectBlockedPluginIds(cfg: NovaConfig): string[] {
   const ids = new Set<string>();
   const deny = cfg.plugins?.deny;
   if (Array.isArray(deny)) {
@@ -68,17 +68,17 @@ function collectBlockedPluginIds(cfg: OpenClawConfig): string[] {
   return [...ids].toSorted((left, right) => left.localeCompare(right));
 }
 
-function isPluginEntryDisabled(cfg: OpenClawConfig, pluginId: string): boolean {
+function isPluginEntryDisabled(cfg: NovaConfig, pluginId: string): boolean {
   return cfg.plugins?.entries?.[pluginId]?.enabled === false;
 }
 
-function isChannelDisabled(cfg: OpenClawConfig, channelId: string): boolean {
+function isChannelDisabled(cfg: NovaConfig, channelId: string): boolean {
   const channels = asObjectRecord(cfg.channels);
   const entry = asObjectRecord(channels?.[channelId]);
   return entry?.enabled === false;
 }
 
-function isDisabled(cfg: OpenClawConfig, pluginId: string): boolean {
+function isDisabled(cfg: NovaConfig, pluginId: string): boolean {
   if (isPluginEntryDisabled(cfg, pluginId)) {
     return true;
   }
@@ -101,7 +101,7 @@ function hasMaterialPluginEntry(entry: unknown): boolean {
   );
 }
 
-function collectMaterialPluginEntryIds(cfg: OpenClawConfig): string[] {
+function collectMaterialPluginEntryIds(cfg: NovaConfig): string[] {
   const entries = asObjectRecord(cfg.plugins?.entries);
   if (!entries) {
     return [];
@@ -112,7 +112,7 @@ function collectMaterialPluginEntryIds(cfg: OpenClawConfig): string[] {
     .filter((pluginId) => pluginId);
 }
 
-function collectSlotPluginIds(cfg: OpenClawConfig): string[] {
+function collectSlotPluginIds(cfg: NovaConfig): string[] {
   const slots = asObjectRecord(cfg.plugins?.slots);
   return ["memory", "contextEngine"]
     .map((key) => normalizeId(slots?.[key]))
@@ -122,7 +122,7 @@ function collectSlotPluginIds(cfg: OpenClawConfig): string[] {
     );
 }
 
-function collectConfiguredChannelIds(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): string[] {
+function collectConfiguredChannelIds(cfg: NovaConfig, env: NodeJS.ProcessEnv): string[] {
   const ids = new Set<string>();
   const channels = asObjectRecord(cfg.channels);
   if (channels) {
@@ -150,17 +150,14 @@ function collectConfiguredChannelIds(cfg: OpenClawConfig, env: NodeJS.ProcessEnv
   return [...ids].toSorted((left, right) => left.localeCompare(right));
 }
 
-function collectAgentHarnessRuntimePluginIds(
-  cfg: OpenClawConfig,
-  _env: NodeJS.ProcessEnv,
-): string[] {
+function collectAgentHarnessRuntimePluginIds(cfg: NovaConfig, _env: NodeJS.ProcessEnv): string[] {
   return collectConfiguredAgentHarnessRuntimes(cfg)
     .map((runtime) => AGENT_HARNESS_RUNTIME_PLUGIN_IDS[runtime])
     .filter((pluginId): pluginId is string => Boolean(pluginId))
     .toSorted((left, right) => left.localeCompare(right));
 }
 
-function collectWebSearchPluginIds(cfg: OpenClawConfig): string[] {
+function collectWebSearchPluginIds(cfg: NovaConfig): string[] {
   if (cfg.tools?.web?.search?.enabled === false) {
     return [];
   }
@@ -172,14 +169,14 @@ function collectWebSearchPluginIds(cfg: OpenClawConfig): string[] {
   return entry?.pluginId ? [entry.pluginId] : [];
 }
 
-function collectEnvWebSearchPluginIds(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): string[] {
+function collectEnvWebSearchPluginIds(cfg: NovaConfig, env: NodeJS.ProcessEnv): string[] {
   if (cfg.tools?.web?.search?.enabled === false) {
     return [];
   }
   return resolveWebSearchInstallCatalogEntriesForEnv(env).map((entry) => entry.pluginId);
 }
 
-function collectWebFetchPluginIds(cfg: OpenClawConfig): string[] {
+function collectWebFetchPluginIds(cfg: NovaConfig): string[] {
   const webFetch = cfg.tools?.web?.fetch;
   if (webFetch?.enabled === false) {
     return [];
@@ -194,7 +191,7 @@ function collectWebFetchPluginIds(cfg: OpenClawConfig): string[] {
   });
 }
 
-function collectEnvWebFetchPluginIds(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): string[] {
+function collectEnvWebFetchPluginIds(cfg: NovaConfig, env: NodeJS.ProcessEnv): string[] {
   if (cfg.tools?.web?.fetch?.enabled === false) {
     return [];
   }
@@ -204,14 +201,14 @@ function collectEnvWebFetchPluginIds(cfg: OpenClawConfig, env: NodeJS.ProcessEnv
   });
 }
 
-function collectSpeechPluginIds(cfg: OpenClawConfig): string[] {
+function collectSpeechPluginIds(cfg: NovaConfig): string[] {
   return resolveOfficialExternalProviderContractPluginIds({
     contract: "speechProviders",
     providerIds: collectConfiguredSpeechProviderIds(cfg),
   });
 }
 
-function collectAcpRuntimePluginIds(cfg: OpenClawConfig): string[] {
+function collectAcpRuntimePluginIds(cfg: NovaConfig): string[] {
   const acp = asObjectRecord(cfg.acp);
   if (!acp) {
     return [];
@@ -225,7 +222,7 @@ function collectAcpRuntimePluginIds(cfg: OpenClawConfig): string[] {
   return ["acpx"];
 }
 
-function collectAllowOnlyOfficialPluginIds(cfg: OpenClawConfig): string[] {
+function collectAllowOnlyOfficialPluginIds(cfg: NovaConfig): string[] {
   const allow = cfg.plugins?.allow;
   if (!Array.isArray(allow) || allow.length === 0) {
     return [];
@@ -246,7 +243,7 @@ function collectAllowOnlyOfficialPluginIds(cfg: OpenClawConfig): string[] {
   return ids;
 }
 
-function addEligiblePluginId(cfg: OpenClawConfig, pluginIds: Set<string>, pluginId: string): void {
+function addEligiblePluginId(cfg: NovaConfig, pluginIds: Set<string>, pluginId: string): void {
   const normalized = pluginId.trim();
   if (!normalized || isDenied(cfg, normalized) || isDisabled(cfg, normalized)) {
     return;
@@ -261,20 +258,20 @@ function shouldRunConfiguredPluginInstallReleaseStep(params: {
   releaseVersion?: string;
 }): boolean {
   const releaseVersion = params.releaseVersion ?? CONFIGURED_PLUGIN_INSTALL_RELEASE_VERSION;
-  const currentComparedToRelease = compareOpenClawVersions(
+  const currentComparedToRelease = compareNovaVersions(
     params.currentVersion ?? VERSION,
     releaseVersion,
   );
   if (currentComparedToRelease === null || currentComparedToRelease < 0) {
     return false;
   }
-  const touchedComparedToRelease = compareOpenClawVersions(params.touchedVersion, releaseVersion);
+  const touchedComparedToRelease = compareNovaVersions(params.touchedVersion, releaseVersion);
   return touchedComparedToRelease === null || touchedComparedToRelease < 0;
 }
 
 /** Collect plugin/channel ids implied by config for the release install backfill step. */
 function collectReleaseConfiguredPluginIds(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env?: NodeJS.ProcessEnv;
 }): ReleaseConfiguredPluginIds {
   const env = params.env ?? process.env;
@@ -341,7 +338,7 @@ function collectReleaseConfiguredPluginIds(params: {
 
 /** Run the configured-plugin install release backfill when the config still needs it. */
 export async function maybeRunConfiguredPluginInstallReleaseStep(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env?: NodeJS.ProcessEnv;
   touchedVersion?: string | null;
   currentVersion?: string | null;

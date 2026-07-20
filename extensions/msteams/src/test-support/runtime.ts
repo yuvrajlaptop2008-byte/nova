@@ -1,11 +1,11 @@
 // Msteams plugin module implements runtime behavior.
 import os from "node:os";
 import path from "node:path";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateKeyedStoreForTests,
   createPluginStateSyncKeyedStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import type { PluginRuntime } from "../../runtime-api.js";
 
 export const msteamsRuntimeStub = {
@@ -20,7 +20,7 @@ export const msteamsRuntimeStub = {
         return override;
       }
       const resolvedHome = homedir ? homedir() : os.homedir();
-      return path.join(resolvedHome, ".openclaw");
+      return path.join(resolvedHome, ".nova");
     },
   },
 } as unknown as PluginRuntime;

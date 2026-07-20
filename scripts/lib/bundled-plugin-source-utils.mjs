@@ -15,12 +15,7 @@ export function readIfExists(filePath) {
 function collectTrackedBundledPluginSourceCandidates(repoRoot) {
   const result = spawnSync(
     "git",
-    [
-      "ls-files",
-      "--",
-      ":(glob)extensions/*/openclaw.plugin.json",
-      ":(glob)extensions/*/package.json",
-    ],
+    ["ls-files", "--", ":(glob)extensions/*/nova.plugin.json", ":(glob)extensions/*/package.json"],
     {
       cwd: repoRoot,
       encoding: "utf8",
@@ -34,7 +29,7 @@ function collectTrackedBundledPluginSourceCandidates(repoRoot) {
   const candidatesByDir = new Map();
   for (const rawLine of result.stdout.split("\n")) {
     const line = rawLine.trim().replaceAll("\\", "/");
-    const match = /^extensions\/([^/]+)\/(openclaw\.plugin\.json|package\.json)$/u.exec(line);
+    const match = /^extensions\/([^/]+)\/(nova\.plugin\.json|package\.json)$/u.exec(line);
     if (!match?.[1] || !match[2]) {
       continue;
     }
@@ -44,7 +39,7 @@ function collectTrackedBundledPluginSourceCandidates(repoRoot) {
       packageJsonPath: null,
       pluginDir: path.join(repoRoot, "extensions", match[1]),
     };
-    if (match[2] === "openclaw.plugin.json") {
+    if (match[2] === "nova.plugin.json") {
       current.manifestPath = path.join(repoRoot, line);
     } else {
       current.packageJsonPath = path.join(repoRoot, line);
@@ -68,7 +63,7 @@ function collectBundledPluginSourceCandidatesFromDirectory(repoRoot) {
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => {
       const pluginDir = path.join(extensionsRoot, dirent.name);
-      const manifestPath = path.join(pluginDir, "openclaw.plugin.json");
+      const manifestPath = path.join(pluginDir, "nova.plugin.json");
       const packageJsonPath = path.join(pluginDir, "package.json");
       return {
         dirName: dirent.name,

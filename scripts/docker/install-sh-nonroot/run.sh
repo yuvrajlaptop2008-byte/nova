@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INSTALL_URL="${NOVA_INSTALL_URL:-https://openclaw.bot/install.sh}"
-DEFAULT_PACKAGE="openclaw"
+INSTALL_URL="${NOVA_INSTALL_URL:-https://nova.bot/install.sh}"
+DEFAULT_PACKAGE="nova"
 PACKAGE_NAME="${NOVA_INSTALL_PACKAGE:-$DEFAULT_PACKAGE}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 

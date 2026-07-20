@@ -2,7 +2,7 @@
 import {
   embeddedAgentLog,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   handleDynamicToolCallWithTimeout,
@@ -910,7 +910,7 @@ describe("dynamic tool execution helpers", () => {
         currentTurnHadNonTerminalDynamicToolResult: false,
         activeAppServerTurnRequests: 0,
         activeTurnItemIdsCount: 0,
-        pendingOpenClawDynamicToolCompletionIdsCount: 0,
+        pendingNovaDynamicToolCompletionIdsCount: 0,
       }),
     ).toBe(true);
     expect(
@@ -921,7 +921,7 @@ describe("dynamic tool execution helpers", () => {
         currentTurnHadNonTerminalDynamicToolResult: true,
         activeAppServerTurnRequests: 0,
         activeTurnItemIdsCount: 0,
-        pendingOpenClawDynamicToolCompletionIdsCount: 0,
+        pendingNovaDynamicToolCompletionIdsCount: 0,
       }),
     ).toBe(false);
     expect(
@@ -932,7 +932,7 @@ describe("dynamic tool execution helpers", () => {
         currentTurnHadNonTerminalDynamicToolResult: false,
         activeAppServerTurnRequests: 1,
         activeTurnItemIdsCount: 0,
-        pendingOpenClawDynamicToolCompletionIdsCount: 0,
+        pendingNovaDynamicToolCompletionIdsCount: 0,
       }),
     ).toBe(false);
     expect(
@@ -943,7 +943,7 @@ describe("dynamic tool execution helpers", () => {
         currentTurnHadNonTerminalDynamicToolResult: false,
         activeAppServerTurnRequests: 0,
         activeTurnItemIdsCount: 0,
-        pendingOpenClawDynamicToolCompletionIdsCount: 1,
+        pendingNovaDynamicToolCompletionIdsCount: 1,
       }),
     ).toBe(false);
   });
@@ -953,7 +953,7 @@ describe("dynamic tool execution helpers", () => {
       resolveTerminalDynamicToolBatchAction({
         activeAppServerTurnRequests: 1,
         activeTurnItemIdsCount: 0,
-        pendingOpenClawDynamicToolCompletionIdsCount: 0,
+        pendingNovaDynamicToolCompletionIdsCount: 0,
         currentTurnHadNonTerminalDynamicToolResult: false,
         hasPendingTerminalDynamicToolRelease: true,
       }),
@@ -962,7 +962,7 @@ describe("dynamic tool execution helpers", () => {
       resolveTerminalDynamicToolBatchAction({
         activeAppServerTurnRequests: 0,
         activeTurnItemIdsCount: 0,
-        pendingOpenClawDynamicToolCompletionIdsCount: 0,
+        pendingNovaDynamicToolCompletionIdsCount: 0,
         currentTurnHadNonTerminalDynamicToolResult: true,
         hasPendingTerminalDynamicToolRelease: true,
       }),
@@ -971,7 +971,7 @@ describe("dynamic tool execution helpers", () => {
       resolveTerminalDynamicToolBatchAction({
         activeAppServerTurnRequests: 0,
         activeTurnItemIdsCount: 0,
-        pendingOpenClawDynamicToolCompletionIdsCount: 0,
+        pendingNovaDynamicToolCompletionIdsCount: 0,
         currentTurnHadNonTerminalDynamicToolResult: false,
         hasPendingTerminalDynamicToolRelease: true,
       }),

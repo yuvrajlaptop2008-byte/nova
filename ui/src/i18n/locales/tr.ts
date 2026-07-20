@@ -1347,8 +1347,7 @@ export const tr: TranslationMap = {
     autoSaveFailed: "Kaydetme başarısız",
     autoSaveConflict: "Ayarlar başka bir yerden değiştirildi",
     retry: "Tekrar dene",
-    applyBannerText:
-      "openclaw.json dosyasına kaydedildi — uygulamak için gateway'i yeniden başlatın.",
+    applyBannerText: "nova.json dosyasına kaydedildi — uygulamak için gateway'i yeniden başlatın.",
     applyBannerAction: "Yeniden başlat ve uygula",
     rawDiscard: "Vazgeç",
     rawDraftBlocksApply:
@@ -1739,7 +1738,7 @@ export const tr: TranslationMap = {
       "Teklifleri canlı becerilere dönüşmeden önce gözden geçirin, iyileştirin ve uygulayın.",
     nodes: "Eşleştirilmiş cihazlar ve komutlar.",
     chat: "Hızlı müdahaleler için Gateway sohbeti.",
-    config: "openclaw.json dosyasını düzenleyin.",
+    config: "nova.json dosyasını düzenleyin.",
     profile: "Ajanınızın istatistikleri, serileri ve resifteki yaşamı.",
     communications: "Kanallar, mesajlar ve ses ayarları.",
     appearance: "Tema, UI ve kurulum sihirbazı ayarları.",
@@ -2466,7 +2465,7 @@ export const tr: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3482,9 +3481,9 @@ export const tr: TranslationMap = {
         summary:
           "Gateway erişilebilir, ancak bu tarayıcı bağlanmadan önce eşleşen bir token veya parola gerekir.",
         stepPaste:
-          "openclaw dashboard --no-open çıktısındaki tokenı yapıştırın veya yapılandırılmış parolayı girin.",
+          "nova dashboard --no-open çıktısındaki tokenı yapıştırın veya yapılandırılmış parolayı girin.",
         stepGenerate:
-          "Token yapılandırılmamışsa Gateway ana makinesinde openclaw doctor --generate-gateway-token çalıştırın.",
+          "Token yapılandırılmamışsa Gateway ana makinesinde nova doctor --generate-gateway-token çalıştırın.",
         stepConnect: "Kimlik bilgisini güncelledikten sonra Connect düğmesine tekrar tıklayın.",
       },
       authFailed: {
@@ -3492,7 +3491,7 @@ export const tr: TranslationMap = {
         summary:
           "Sağlanan kimlik bilgisi reddedildi. En yaygın neden eski bir token veya başka bir Gateway URL’sinden kopyalanmış tokendır.",
         stepDashboard:
-          "openclaw dashboard --no-open çalıştırın ve yeni URL’yi açın veya tokenını yapıştırın.",
+          "nova dashboard --no-open çalıştırın ve yeni URL’yi açın veya tokenını yapıştırın.",
         stepReplace:
           "Eski token/parola değerlerini değiştirin; başka bir Gateway URL’sinden tokenı yeniden kullanmayın.",
         stepMode:
@@ -3516,8 +3515,8 @@ export const tr: TranslationMap = {
           "Bu tarayıcının Control UI kullanabilmesi için Gateway hostundan tek seferlik onay gerekir.",
         upgradeSummary:
           "Bu tarayıcı zaten biliniyor, ancak istenen erişim değişti ve yeni onay gerekiyor.",
-        stepList: "Gateway hostunda openclaw devices list çalıştırın.",
-        stepApproveId: "Bu isteği onaylayın: openclaw devices approve {requestId}.",
+        stepList: "Gateway hostunda nova devices list çalıştırın.",
+        stepApproveId: "Bu isteği onaylayın: nova devices approve {requestId}.",
         stepApprove: "Bu listedeki bekleyen tarayıcı/cihaz isteğini onaylayın.",
         stepReconnect: "Onay tamamlandıktan sonra yeniden bağlanın.",
       },
@@ -3545,7 +3544,7 @@ export const tr: TranslationMap = {
         summary:
           "Sunulan Control UI ile çalışan Gateway desteklenen bağlantı protokolü konusunda uyuşmuyor.",
         stepDashboard:
-          "UI ve Gateway aynı kurulumdan gelsin diye sunulan dashboardı openclaw dashboard ile yeniden açın.",
+          "UI ve Gateway aynı kurulumdan gelsin diye sunulan dashboardı nova dashboard ile yeniden açın.",
         stepDevUi:
           "pnpm ui:dev kullanıyorsanız geliştirme UI’sini mevcut checkouta göre yeniden derleyin veya yeniden başlatın.",
         stepRestart:
@@ -3555,12 +3554,11 @@ export const tr: TranslationMap = {
         title: "Bağlanılamadı",
         summary:
           "Tarayıcı Gateway bağlantısını tamamlayamadı. Kimlik bilgilerini yeniden denemeden önce hedefi ve taşıma yolunu kontrol edin.",
-        stepGateway:
-          "openclaw status veya openclaw gateway run ile Gateway’in çalıştığını doğrulayın.",
+        stepGateway: "nova status veya nova gateway run ile Gateway’in çalıştığını doğrulayın.",
         stepUrl:
           "WebSocket URL’sini kontrol edin ve Gateway HTTPS/Tailscale Serve arkasındaysa wss:// kullanın.",
         stepDashboard:
-          "Geçerli URL ve auth ayrıntılarını yeniden kopyalamak için dashboardı openclaw dashboard --no-open ile yeniden açın.",
+          "Geçerli URL ve auth ayrıntılarını yeniden kopyalamak için dashboardı nova dashboard --no-open ile yeniden açın.",
       },
     },
   },

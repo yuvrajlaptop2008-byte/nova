@@ -23,7 +23,7 @@ function listExtensionManifests(): ExtensionManifestRecord[] {
     if (!entry.isDirectory()) {
       continue;
     }
-    const manifestPath = path.join(extensionsDir, entry.name, "openclaw.plugin.json");
+    const manifestPath = path.join(extensionsDir, entry.name, "nova.plugin.json");
     if (!fs.existsSync(manifestPath)) {
       continue;
     }
@@ -51,7 +51,7 @@ function listCatalogManifestsByPluginId(): Map<string, Record<string, unknown>> 
     if (!isRecord(entry)) {
       continue;
     }
-    const manifest = entry.openclaw;
+    const manifest = entry.nova;
     if (!isRecord(manifest) || !isRecord(manifest.plugin)) {
       continue;
     }
@@ -86,7 +86,7 @@ describe("official external provider endpoint catalog mirror", () => {
       ).toBeDefined();
       expect(
         catalogManifest?.providerEndpoints,
-        `catalog providerEndpoints for plugin "${pluginId}" must mirror extensions/${dirName}/openclaw.plugin.json`,
+        `catalog providerEndpoints for plugin "${pluginId}" must mirror extensions/${dirName}/nova.plugin.json`,
       ).toEqual(manifest.providerEndpoints);
       if (pluginId) {
         checkedPluginIds.push(pluginId);
@@ -115,7 +115,7 @@ describe("official external provider endpoint catalog mirror", () => {
       }
       expect(
         catalogManifest.providerEndpoints,
-        `catalog providerEndpoints for plugin "${pluginId}" must mirror extensions/${local.dirName}/openclaw.plugin.json`,
+        `catalog providerEndpoints for plugin "${pluginId}" must mirror extensions/${local.dirName}/nova.plugin.json`,
       ).toEqual(local.manifest.providerEndpoints);
     }
   });

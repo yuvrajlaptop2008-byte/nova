@@ -2,12 +2,12 @@
   "name": "@nova/fal-provider",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw fal provider plugin",
+  "description": "Nova fal provider plugin",
   "type": "module",
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

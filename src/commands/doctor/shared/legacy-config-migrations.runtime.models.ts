@@ -459,56 +459,56 @@ function removeUntargetedLegacyVllmQwenThinkingFormat(params: {
 const LEGACY_VLLM_QWEN_AGENT_THINKING_FORMAT_RULE: LegacyConfigRule = {
   path: ["agents", "defaults", "models"],
   message:
-    'agents.defaults.models.<vllm-model>.params.qwenThinkingFormat is legacy; run "openclaw doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
+    'agents.defaults.models.<vllm-model>.params.qwenThinkingFormat is legacy; run "nova doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
   match: (value) => hasLegacyVllmQwenThinkingFormat(value),
 };
 
 const LEGACY_VLLM_QWEN_PROVIDER_THINKING_FORMAT_RULE: LegacyConfigRule = {
   path: ["models", "providers", "vllm", "params"],
   message:
-    'models.providers.vllm.params.qwenThinkingFormat is legacy; run "openclaw doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
+    'models.providers.vllm.params.qwenThinkingFormat is legacy; run "nova doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
   match: (value) => hasLegacyVllmQwenThinkingProviderParams({ params: value }),
 };
 
 const LEGACY_VLLM_QWEN_PROVIDER_MODEL_THINKING_FORMAT_RULE: LegacyConfigRule = {
   path: ["models", "providers", "vllm", "models"],
   message:
-    'models.providers.vllm.models[*].params.qwenThinkingFormat is legacy; run "openclaw doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
+    'models.providers.vllm.models[*].params.qwenThinkingFormat is legacy; run "nova doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
   match: (value) => hasLegacyVllmQwenThinkingModelParams({ models: value }),
 };
 
 const LEGACY_VLLM_QWEN_NORMALIZED_PROVIDER_THINKING_FORMAT_RULE: LegacyConfigRule = {
   path: ["models", "providers"],
   message:
-    'models.providers.<vllm>.params.qwenThinkingFormat is legacy; run "openclaw doctor --fix" to move it to models.providers.<vllm>.models[].compat.thinkingFormat.',
+    'models.providers.<vllm>.params.qwenThinkingFormat is legacy; run "nova doctor --fix" to move it to models.providers.<vllm>.models[].compat.thinkingFormat.',
   match: (value) => hasLegacyVllmQwenThinkingNormalizedProvider(value),
 };
 
 const LEGACY_VLLM_QWEN_DEFAULT_PARAMS_THINKING_FORMAT_RULE: LegacyConfigRule = {
   path: ["agents", "defaults", "params"],
   message:
-    'agents.defaults.params.qwenThinkingFormat is legacy; run "openclaw doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
+    'agents.defaults.params.qwenThinkingFormat is legacy; run "nova doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
   match: (value) => hasLegacyVllmQwenThinkingParams(value),
 };
 
 const LEGACY_VLLM_QWEN_AGENT_PARAMS_THINKING_FORMAT_RULE: LegacyConfigRule = {
   path: ["agents"],
   message:
-    'agents.list[].params.qwenThinkingFormat is legacy; run "openclaw doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
+    'agents.list[].params.qwenThinkingFormat is legacy; run "nova doctor --fix" to move it to models.providers.vllm.models[].compat.thinkingFormat.',
   match: (value) => hasLegacyVllmQwenThinkingAgentParams(value),
 };
 
 const INVALID_THINKING_FORMAT_RULE: LegacyConfigRule = {
   path: ["models", "providers"],
   message:
-    'models.providers.<id>.models[*].compat.thinkingFormat has an unrecognized value; run "openclaw doctor --fix" to remove it and restore the runtime default.',
+    'models.providers.<id>.models[*].compat.thinkingFormat has an unrecognized value; run "nova doctor --fix" to remove it and restore the runtime default.',
   match: (value) => hasInvalidThinkingFormat(value),
 };
 
 const STALE_CONTEXT_WINDOW_RULE: LegacyConfigRule = {
   path: ["models", "providers"],
   message:
-    'models.providers.<id>.models[*].contextWindow has a stale catalog value; run "openclaw doctor --fix" to repair it.',
+    'models.providers.<id>.models[*].contextWindow has a stale catalog value; run "nova doctor --fix" to repair it.',
   match: (value) => hasStaleContextWindowValue(value),
 };
 
@@ -1103,7 +1103,7 @@ function rewriteKnownModelRefs(
 }
 
 const RETIRED_MODEL_REF_MESSAGE =
-  'Configured retired model refs are no longer in the bundled catalogs; run "openclaw doctor --fix" to upgrade them.';
+  'Configured retired model refs are no longer in the bundled catalogs; run "nova doctor --fix" to upgrade them.';
 const LEGACY_OPENAI_CODEX_RESPONSES_API = "openai-codex-responses";
 const OPENAI_PROVIDER_ID = "openai";
 const OPENAI_CHATGPT_RESPONSES_API = "openai-chatgpt-responses";
@@ -1419,7 +1419,7 @@ function buildBlockedLegacyOpenAICodexProviderPlan(
           warning: [
             "Legacy Codex provider routes require manual reconciliation before matching refs can migrate.",
             ...warningLines,
-            "- Doctor retained matching legacy refs in config, sessions, and cron. These refs will not execute until reconciled: fix the model route/auth metadata, remove the legacy provider entry, then rerun `openclaw doctor --fix`.",
+            "- Doctor retained matching legacy refs in config, sessions, and cron. These refs will not execute until reconciled: fix the model route/auth metadata, remove the legacy provider entry, then rerun `nova doctor --fix`.",
           ].join("\n"),
         }
       : {}),
@@ -1714,7 +1714,7 @@ const LEGACY_DEFAULT_MODEL_MIGRATION = defineLegacyConfigMigration({
   legacyRules: [
     {
       path: ["defaultModel"],
-      message: 'defaultModel moved to agents.defaults.model. Run "openclaw doctor --fix".',
+      message: 'defaultModel moved to agents.defaults.model. Run "nova doctor --fix".',
     },
   ],
   apply: (raw, changes) => {
@@ -1743,13 +1743,13 @@ export const LEGACY_CONFIG_MIGRATIONS_RUNTIME_MODELS: LegacyConfigMigrationSpec[
       {
         path: ["models", "providers"],
         message:
-          'models.providers.codex and models.providers.openai-codex are legacy; run "openclaw doctor --fix" to move them to models.providers.openai.',
+          'models.providers.codex and models.providers.openai-codex are legacy; run "nova doctor --fix" to move them to models.providers.openai.',
         match: (value, root) => hasAutoFixableLegacyOpenAICodexProvider(value, root),
       },
       {
         path: ["models", "providers"],
         message:
-          'openai-codex-responses is legacy; run "openclaw doctor --fix" to use openai-chatgpt-responses.',
+          'openai-codex-responses is legacy; run "nova doctor --fix" to use openai-chatgpt-responses.',
         match: (value) => {
           const providers = getRecord(value);
           return providers
@@ -1794,7 +1794,7 @@ export const LEGACY_CONFIG_MIGRATIONS_RUNTIME_MODELS: LegacyConfigMigrationSpec[
       {
         path: ["agents", "defaults", "models"],
         message:
-          'agents.defaults.models no longer restricts model overrides; run "openclaw doctor --fix" to preserve the previous restriction in agents.defaults.modelPolicy.allow.',
+          'agents.defaults.models no longer restricts model overrides; run "nova doctor --fix" to preserve the previous restriction in agents.defaults.modelPolicy.allow.',
         match: (_value, root) => collectLegacyDefaultModelAllowRefs(root) !== null,
       },
     ],

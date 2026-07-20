@@ -2,7 +2,7 @@
 import { redactSensitiveUrlLikeString } from "@nova/net-policy/redact-sensitive-url";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { resolveConfigPath, resolveGatewayPort } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { isSecureWebSocketUrl } from "./net.js";
 
 /** Resolved gateway target plus redacted display text for diagnostics. */
@@ -15,15 +15,15 @@ export type GatewayConnectionDetails = {
 };
 
 type GatewayConnectionDetailResolvers = {
-  getRuntimeConfig?: () => OpenClawConfig;
+  getRuntimeConfig?: () => NovaConfig;
   resolveConfigPath?: (env: NodeJS.ProcessEnv) => string;
-  resolveGatewayPort?: (cfg?: OpenClawConfig, env?: NodeJS.ProcessEnv) => number;
+  resolveGatewayPort?: (cfg?: NovaConfig, env?: NodeJS.ProcessEnv) => number;
 };
 
 /** Build gateway target details and reject unsafe remote plaintext websocket URLs. */
 export function buildGatewayConnectionDetailsWithResolvers(
   options: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     url?: string;
     configPath?: string;
     urlSource?: "cli" | "env";
@@ -88,8 +88,8 @@ export function buildGatewayConnectionDetailsWithResolvers(
         allowPrivateWs
           ? undefined
           : "Break-glass (trusted private networks only): set NOVA_ALLOW_INSECURE_PRIVATE_WS=1",
-        "Doctor: openclaw doctor --fix",
-        "Docs: https://docs.openclaw.ai/gateway/remote",
+        "Doctor: nova doctor --fix",
+        "Docs: https://docs.nova.ai/gateway/remote",
       ].join("\n"),
     );
   }

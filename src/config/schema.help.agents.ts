@@ -81,7 +81,7 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
   "agents.list.*.models.*.agentRuntime":
     "Optional per-model runtime policy for this agent. Use this for agent-specific model exceptions instead of setting a whole-agent runtime.",
   "agents.list.*.models.*.agentRuntime.id":
-    'Per-agent model runtime id: "openclaw", "auto", a registered plugin harness id such as "codex", or a supported CLI backend alias such as "claude-cli".',
+    'Per-agent model runtime id: "nova", "auto", a registered plugin harness id such as "codex", or a supported CLI backend alias such as "claude-cli".',
   "agents.defaults.imageModel.primary":
     "Optional image model (provider/model) used when the primary model lacks image input.",
   "agents.defaults.imageModel.fallbacks": "Ordered fallback image models (provider/model).",
@@ -177,7 +177,7 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
   "agents.defaults.embeddedAgent":
     "Embedded Nova runner hardening controls for how workspace-local agent settings are trusted and applied in Nova sessions.",
   "agents.defaults.embeddedAgent.projectSettingsPolicy":
-    'How embedded Nova handles workspace-local `.openclaw/settings.json`: "sanitize" (default) strips shellPath/shellCommandPrefix, "ignore" disables project settings entirely, and "trusted" applies project settings as-is.',
+    'How embedded Nova handles workspace-local `.nova/settings.json`: "sanitize" (default) strips shellPath/shellCommandPrefix, "ignore" disables project settings entirely, and "trusted" applies project settings as-is.',
   "agents.defaults.embeddedAgent.executionContract":
     'Embedded Nova execution contract: "default" keeps the standard runner behavior, while "strict-agentic" enables structured plan tracking and non-visible turn recovery for supported OpenAI/OpenAI Codex GPT-5-family runs.',
   "agents.list[].embeddedAgent":

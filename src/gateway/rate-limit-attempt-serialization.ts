@@ -1,6 +1,6 @@
 // Gateway auth rate-limit serialization.
 // Serializes limiter attempts per IP/scope so concurrent failures count correctly.
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 import { AUTH_RATE_LIMIT_SCOPE_DEFAULT, normalizeRateLimitClientIp } from "./auth-rate-limit.js";
 
 const pendingAttempts = new KeyedAsyncQueue();

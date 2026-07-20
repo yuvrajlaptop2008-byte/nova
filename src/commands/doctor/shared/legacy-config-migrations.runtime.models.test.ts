@@ -3,7 +3,7 @@
 import { expectDefined } from "@nova/normalization-core";
 import { describe, it, expect } from "vitest";
 import { createModelVisibilityPolicy } from "../../../agents/model-visibility-policy.js";
-import type { OpenClawConfig } from "../../../config/types.js";
+import type { NovaConfig } from "../../../config/types.js";
 import { legacyCodexProviderIdentityKey } from "./codex-route-model-ref.js";
 import {
   collectBlockedLegacyOpenAICodexProviderPlan,
@@ -83,7 +83,7 @@ describe("explicit model allow policy migration", () => {
       },
     };
     const changes: string[] = [];
-    const createPolicy = (cfg: OpenClawConfig) =>
+    const createPolicy = (cfg: NovaConfig) =>
       createModelVisibilityPolicy({
         cfg,
         catalog: [

@@ -1,5 +1,5 @@
 // Verifies harness lifecycle capability checks, diagnostics, and trace scoping.
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NOVA_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
 import type { ContextEngine } from "../../context-engine/types.js";
@@ -16,7 +16,7 @@ import {
   type DiagnosticTraceContext,
 } from "../../infra/diagnostic-trace-context.js";
 import type { EmbeddedRunAttemptResult } from "../embedded-agent-runner/run/types.js";
-import { createOpenClawAgentHarness } from "./builtin-openclaw.js";
+import { createNovaAgentHarness } from "./builtin-nova.js";
 import { runAgentHarnessLifecycleAttempt } from "./lifecycle.js";
 import type { AgentHarness, AgentHarnessAttemptParams } from "./types.js";
 
@@ -191,7 +191,7 @@ describe("AgentHarness lifecycle runner", () => {
   });
 
   it("advertises Nova embedded host capabilities", async () => {
-    const harness = createOpenClawAgentHarness();
+    const harness = createNovaAgentHarness();
 
     expect(harness.contextEngineHostCapabilities).toEqual(
       NOVA_EMBEDDED_CONTEXT_ENGINE_HOST.capabilities,

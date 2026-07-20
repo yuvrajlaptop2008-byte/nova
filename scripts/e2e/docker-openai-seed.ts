@@ -3,10 +3,10 @@
 import {
   applyProviderConfigWithDefaultModelPreset,
   type ModelDefinitionConfig,
-  type OpenClawConfig,
+  type NovaConfig,
 } from "../../dist/plugin-sdk/provider-onboard.js";
 
-export type { OpenClawConfig };
+export type { NovaConfig };
 
 const DOCKER_OPENAI_MODEL_REF = "openai/gpt-5.6-luna";
 const DOCKER_OPENAI_BASE_URL =
@@ -27,10 +27,7 @@ const DOCKER_OPENAI_MODEL: ModelDefinitionConfig = {
   maxTokens: 128_000,
 };
 
-export function applyDockerOpenAiProviderConfig(
-  config: OpenClawConfig,
-  apiKey: string,
-): OpenClawConfig {
+export function applyDockerOpenAiProviderConfig(config: NovaConfig, apiKey: string): NovaConfig {
   const seededConfig = applyProviderConfigWithDefaultModelPreset(config, {
     providerId: "openai",
     api: "openai-responses",

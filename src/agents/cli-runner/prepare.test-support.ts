@@ -6,7 +6,7 @@ type CliRunnerPrepareTestApi = {
 
 function getTestApi(): CliRunnerPrepareTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.cliRunnerPrepareTestApi")
+    Symbol.for("nova.cliRunnerPrepareTestApi")
   ] as CliRunnerPrepareTestApi;
 }
 

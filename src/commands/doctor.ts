@@ -173,7 +173,7 @@ async function maybeCreateSessionSqliteGithubIssue(
   if (!approved && options.nonInteractive !== true && options.json !== true) {
     const { promptYesNo } = await import("../cli/prompt.js");
     approved = await promptYesNo(
-      "Create a GitHub issue in openclaw/openclaw with the sanitized recovery report?",
+      "Create a GitHub issue in nova/nova with the sanitized recovery report?",
       false,
     );
   }

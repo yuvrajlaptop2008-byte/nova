@@ -1,17 +1,17 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   consultMeetingAgent,
   handleMeetingRealtimeConsultToolCall,
   resolveMeetingRealtimeTools,
   type MeetingAgentConsultSurface,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { PluginRuntime, RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { PluginRuntime, RuntimeLogger } from "nova/plugin-sdk/plugin-runtime";
 import type {
   RealtimeVoiceBridgeSession,
   RealtimeVoiceTool,
   RealtimeVoiceToolCallEvent,
   TalkEventInput,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "nova/plugin-sdk/realtime-voice";
 import type { ZoomMeetingsConfig, ZoomMeetingsToolPolicy } from "./config.js";
 
 const ZOOM_MEETINGS_CONSULT_SURFACE: MeetingAgentConsultSurface = {
@@ -38,9 +38,9 @@ export function resolveZoomMeetingsRealtimeTools(
   return resolveMeetingRealtimeTools(policy);
 }
 
-export async function consultOpenClawAgentForZoomMeeting(params: {
+export async function consultNovaAgentForZoomMeeting(params: {
   config: ZoomMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
   meetingSessionId: string;
@@ -67,7 +67,7 @@ export async function handleZoomMeetingsRealtimeConsultToolCall(params: {
   session: RealtimeVoiceBridgeSession;
   event: RealtimeVoiceToolCallEvent;
   config: ZoomMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
   meetingSessionId: string;

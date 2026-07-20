@@ -71,7 +71,7 @@ describe("resolveNonInteractiveApiKey", () => {
       provider: "zai",
       cfg: {},
       flagValue:
-        "openclaw onboard --non-interactive --auth-choice=zai-coding-global --zai-api-key $ZAI_API_KEY",
+        "nova onboard --non-interactive --auth-choice=zai-coding-global --zai-api-key $ZAI_API_KEY",
       flagName: "--zai-api-key",
       envVar: "ZAI_API_KEY",
       runtime: runtime as never,

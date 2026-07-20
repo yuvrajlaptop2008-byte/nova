@@ -27,8 +27,8 @@ const STEP_LABELS: Record<string, string> = {
   "ui:build": "Building UI assets",
   "ui:build (post-doctor repair)": "Restoring missing UI assets",
   "ui assets verify": "Validating UI assets",
-  "openclaw doctor entry": "Checking doctor entrypoint",
-  "openclaw doctor": "Running doctor checks",
+  "nova doctor entry": "Checking doctor entrypoint",
+  "nova doctor": "Running doctor checks",
   "git rev-parse HEAD (after)": "Verifying update",
   "global update": "Updating via package manager",
   "global update (omit optional)": "Retrying update without optional deps",
@@ -95,9 +95,9 @@ function inferUpdateFailureHints(result: UpdateRunResult): string[] {
     hints.push(
       "If you recover with sudo/manual package install on a managed Gateway, stop the Gateway first so it does not load files while the package tree is being replaced.",
     );
-    hints.push("Example: npm config set prefix ~/.local && npm i -g openclaw@latest");
+    hints.push("Example: npm config set prefix ~/.local && npm i -g nova@latest");
     hints.push(
-      "System install outline: openclaw gateway stop -> sudo <system-npm> i -g openclaw@latest -> openclaw gateway install --force -> openclaw gateway restart.",
+      "System install outline: nova gateway stop -> sudo <system-npm> i -g nova@latest -> nova gateway install --force -> nova gateway restart.",
     );
   }
 
@@ -108,7 +108,7 @@ function inferUpdateFailureHints(result: UpdateRunResult): string[] {
     hints.push(
       "Detected native optional dependency build failure. The updater retries with --omit=optional automatically.",
     );
-    hints.push("If it still fails: npm i -g openclaw@latest --omit=optional");
+    hints.push("If it still fails: npm i -g nova@latest --omit=optional");
   }
 
   return hints;

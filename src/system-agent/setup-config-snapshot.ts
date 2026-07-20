@@ -1,11 +1,11 @@
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/types.openclaw.js";
+import type { ConfigFileSnapshot, NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { shortenHomePath } from "../utils.js";
 import { isReservedSystemAgentId } from "./agent-id.js";
 
 export function requireValidSystemAgentSetupSnapshot(snapshot: ConfigFileSnapshot): {
-  sourceConfig: OpenClawConfig;
-  runtimeConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
+  runtimeConfig: NovaConfig;
 } {
   if (snapshot.exists && !snapshot.valid) {
     const issue = snapshot.issues?.[0];

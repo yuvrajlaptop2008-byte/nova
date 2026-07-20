@@ -2,15 +2,15 @@
 import {
   resolveApprovalOverGateway,
   type ApprovalResolveResult,
-} from "openclaw/plugin-sdk/approval-gateway-runtime";
-import type { ExecApprovalReplyDecision } from "openclaw/plugin-sdk/approval-reply-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { isApprovalNotFoundError } from "openclaw/plugin-sdk/error-runtime";
+} from "nova/plugin-sdk/approval-gateway-runtime";
+import type { ExecApprovalReplyDecision } from "nova/plugin-sdk/approval-reply-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { isApprovalNotFoundError } from "nova/plugin-sdk/error-runtime";
 
 export { isApprovalNotFoundError };
 
 export async function resolveIMessageApproval(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   approvalId: string;
   approvalKind: "exec" | "plugin";
   decision: ExecApprovalReplyDecision;

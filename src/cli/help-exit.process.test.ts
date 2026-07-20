@@ -25,9 +25,9 @@ const LAZY_GROUP_HELP_CASES = [
 ] as const;
 
 async function createHelpProcessFixture() {
-  const root = tempDirs.make("openclaw-help-exit-");
+  const root = tempDirs.make("nova-help-exit-");
   const stateDir = path.join(root, "state");
-  const configPath = path.join(stateDir, "openclaw.json");
+  const configPath = path.join(stateDir, "nova.json");
   const tlsImportGuardPath = path.join(root, "forbid-tls-import.mjs");
   const keepAlivePath = path.join(root, "keep-alive.mjs");
   await fs.mkdir(stateDir, { recursive: true });
@@ -92,8 +92,8 @@ async function runHelpProcess(params: {
 
 describe("CLI help process exit", () => {
   it.each([
-    { args: ["--help"], usage: "Usage: openclaw [options] [command]" },
-    { args: ["path", "--help"], usage: "Usage: openclaw path [options] [command]" },
+    { args: ["--help"], usage: "Usage: nova [options] [command]" },
+    { args: ["path", "--help"], usage: "Usage: nova path [options] [command]" },
   ])("exits promptly after $args", async ({ args, usage }) => {
     const result = await runHelpProcess({ args, forbidTlsImport: true });
 
@@ -106,6 +106,6 @@ describe("CLI help process exit", () => {
     const result = await runHelpProcess({ args: [group, "--help"], keepAlive: true });
 
     expect(result.stderr).toBe("");
-    expect(result.stdout).toContain(`Usage: openclaw ${usageCommand} [options] [command]`);
+    expect(result.stdout).toContain(`Usage: nova ${usageCommand} [options] [command]`);
   });
 });

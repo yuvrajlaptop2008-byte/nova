@@ -93,7 +93,7 @@ function createRoundTripProbe(
       senderId: "qa-rtt-driver",
       senderName: "QA RTT Driver",
     },
-    textPrefix: "@openclaw Telegram RTT check. Reply exactly: ",
+    textPrefix: "@nova Telegram RTT check. Reply exactly: ",
     chainReplies: true,
   };
 }
@@ -110,20 +110,17 @@ async function shouldFailPackageTelegramRun(
   return (await readQaSuiteFailedScenarioCountFromFile(result.summaryPath)) > 0;
 }
 
-async function resolveTrustedOpenClawCommand(
-  rawCommand: string,
-  env: NodeJS.ProcessEnv = process.env,
-) {
+async function resolveTrustedNovaCommand(rawCommand: string, env: NodeJS.ProcessEnv = process.env) {
   if (!path.isAbsolute(rawCommand)) {
     throw new Error("NOVA_NPM_TELEGRAM_SUT_COMMAND must be an absolute path.");
   }
   const commandName = path.basename(rawCommand);
-  if (commandName !== "openclaw" && commandName !== "openclaw.cmd") {
-    throw new Error(`NOVA_NPM_TELEGRAM_SUT_COMMAND must point to openclaw; got: ${commandName}`);
+  if (commandName !== "nova" && commandName !== "nova.cmd") {
+    throw new Error(`NOVA_NPM_TELEGRAM_SUT_COMMAND must point to nova; got: ${commandName}`);
   }
   const npmPrefix = env.NPM_CONFIG_PREFIX?.trim();
   if (!npmPrefix) {
-    throw new Error("Missing NPM_CONFIG_PREFIX for installed openclaw command validation.");
+    throw new Error("Missing NPM_CONFIG_PREFIX for installed nova command validation.");
   }
   const [realCommand, realPrefix] = await Promise.all([
     fs.realpath(rawCommand),
@@ -141,11 +138,11 @@ async function resolveTrustedOpenClawCommand(
 async function main() {
   const { runQaTelegramSuite } =
     await import("../../extensions/qa-lab/src/live-transports/telegram/cli.runtime.ts");
-  const rawSutOpenClawCommand = process.env.NOVA_NPM_TELEGRAM_SUT_COMMAND?.trim();
-  if (!rawSutOpenClawCommand) {
+  const rawSutNovaCommand = process.env.NOVA_NPM_TELEGRAM_SUT_COMMAND?.trim();
+  if (!rawSutNovaCommand) {
     throw new Error("Missing NOVA_NPM_TELEGRAM_SUT_COMMAND.");
   }
-  const sutOpenClawCommand = await resolveTrustedOpenClawCommand(rawSutOpenClawCommand);
+  const sutNovaCommand = await resolveTrustedNovaCommand(rawSutNovaCommand);
 
   const repoRoot = path.resolve(process.env.NOVA_NPM_TELEGRAM_REPO_ROOT ?? process.cwd());
   const outputDir = resolvePackageTelegramOutputDir(process.env, repoRoot);
@@ -155,7 +152,7 @@ async function main() {
     failFast: true,
     repoRoot,
     outputDir,
-    sutOpenClawCommand,
+    sutNovaCommand,
     providerMode: process.env.NOVA_NPM_TELEGRAM_PROVIDER_MODE as QaProviderMode | undefined,
     primaryModel: process.env.NOVA_NPM_TELEGRAM_MODEL,
     alternateModel: process.env.NOVA_NPM_TELEGRAM_ALT_MODEL,
@@ -208,6 +205,6 @@ export const testing = {
   resolveCredentialSource,
   createRoundTripProbe,
   resolveRttOptions,
-  resolveTrustedOpenClawCommand,
+  resolveTrustedNovaCommand,
   shouldFailPackageTelegramRun,
 };

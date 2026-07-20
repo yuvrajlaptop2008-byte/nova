@@ -11,7 +11,7 @@ import {
   isConfiguredSessionStoreAgentId,
   resolveExistingAgentSessionStoreTargetsSync,
 } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { normalizeAgentId, parseAgentSessionKey } from "../../routing/session-key.js";
 import { resolveSessionKeyForRun } from "../server-session-key.js";
 import { resolveRequestedSessionAgentId as resolveRequestedGlobalAgentId } from "../session-create-service.js";
@@ -57,7 +57,7 @@ export function resolveAbortSessionKey(params: {
 
 function resolveSessionKeyAgentId(
   sessionKey: string | undefined,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ): string | undefined {
   const key = normalizeOptionalString(sessionKey);
   if (!key) {
@@ -73,7 +73,7 @@ function resolveSessionKeyAgentId(
 function sessionKeyBelongsToAgent(
   sessionKey: string | undefined,
   agentId: string,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ): boolean {
   const key = normalizeOptionalString(sessionKey);
   if (cfg.session?.scope === "global" && key?.toLowerCase() === "global") {
@@ -84,7 +84,7 @@ function sessionKeyBelongsToAgent(
 }
 
 function resolveScopedAbortKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string | undefined;
   agentId: string | undefined;
 }): string | undefined {

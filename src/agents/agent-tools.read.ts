@@ -59,7 +59,7 @@ const ADAPTIVE_READ_CONTEXT_SHARE = 0.1;
 const CHARS_PER_TOKEN_ESTIMATE = 4;
 const MAX_ADAPTIVE_READ_PAGES = 4;
 
-type OpenClawReadToolOptions = {
+type NovaReadToolOptions = {
   modelContextWindowTokens?: number;
   imageSanitization?: ImageSanitizationLimits;
 };
@@ -80,7 +80,7 @@ const READ_CONTINUATION_NOTICE_RE =
   /\n\n\[(?:Showing lines [^\]]*?Use offset=\d+ to continue\.|\d+ more lines in file\. Use offset=\d+ to continue\.)\]\s*$/;
 const DAILY_MEMORY_PATH_RE = /^memory\/\d{4}-\d{2}-\d{2}\.md$/;
 
-function resolveAdaptiveReadMaxBytes(options?: OpenClawReadToolOptions): number {
+function resolveAdaptiveReadMaxBytes(options?: NovaReadToolOptions): number {
   const contextWindowTokens = options?.modelContextWindowTokens;
   if (
     typeof contextWindowTokens !== "number" ||
@@ -753,9 +753,9 @@ function withWorkspaceSafeTempHint(error: unknown): unknown {
   if (!isSandboxRootEscapeError(error)) {
     return error;
   }
-  const message = error.message.includes(".openclaw/tmp/")
+  const message = error.message.includes(".nova/tmp/")
     ? error.message
-    : `${error.message}. Use a relative path under \`.openclaw/tmp/\` inside the workspace for scratch/temp/meta files that file tools need to read or write later.`;
+    : `${error.message}. Use a relative path under \`.nova/tmp/\` inside the workspace for scratch/temp/meta files that file tools need to read or write later.`;
   return new Error(message, { cause: error });
 }
 
@@ -889,7 +889,7 @@ export function createSandboxedReadTool(params: SandboxToolParams) {
   const base = createReadTool(params.root, {
     operations: createSandboxReadOperations(params),
   }) as unknown as AnyAgentTool;
-  return createOpenClawReadTool(base, {
+  return createNovaReadTool(base, {
     modelContextWindowTokens: params.modelContextWindowTokens,
     imageSanitization: params.imageSanitization,
   });
@@ -928,9 +928,9 @@ export function createHostWorkspaceEditTool(root: string, options?: { workspaceO
 }
 
 /** Wrap the base read tool with Nova paging, MIME, and image handling. */
-export function createOpenClawReadTool(
+export function createNovaReadTool(
   base: AnyAgentTool,
-  options?: OpenClawReadToolOptions,
+  options?: NovaReadToolOptions,
 ): AnyAgentTool {
   return {
     ...base,
@@ -965,7 +965,7 @@ export function createOpenClawReadTool(
 export function wrapReadToolWithSkillContent(
   tool: AnyAgentTool,
   skills: readonly SkillReadContent[] | undefined,
-  options?: OpenClawReadToolOptions,
+  options?: NovaReadToolOptions,
 ): AnyAgentTool {
   const contentByPath = new Map(
     (skills ?? []).flatMap((skill) =>
@@ -993,7 +993,7 @@ export function wrapReadToolWithSkillContent(
       readFile: async (filePath) => Buffer.from(readContent(filePath), "utf8"),
     },
   }) as unknown as AnyAgentTool;
-  const virtualRead = createOpenClawReadTool(virtualBase, options);
+  const virtualRead = createNovaReadTool(virtualBase, options);
   return {
     ...tool,
     execute: async (toolCallId, args, signal, onUpdate) => {

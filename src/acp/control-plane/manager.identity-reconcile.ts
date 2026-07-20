@@ -8,7 +8,7 @@ import {
   resolveSessionIdentityFromMeta,
 } from "@nova/acp-core/runtime/session-identity";
 import type { AcpRuntime, AcpRuntimeHandle, AcpRuntimeStatus } from "@nova/acp-core/runtime/types";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { withAcpRuntimeErrorBoundary } from "../runtime/errors.js";
 import type { SessionAcpMeta, SessionEntry } from "./manager.types.js";
@@ -16,7 +16,7 @@ import { hasLegacyAcpIdentityProjection } from "./manager.utils.js";
 
 /** Reconciles runtime-reported session identifiers into persisted ACP session metadata. */
 export async function reconcileManagerRuntimeSessionIdentifiers(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   runtime: AcpRuntime;
   handle: AcpRuntimeHandle;
@@ -25,7 +25,7 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
   failOnStatusError: boolean;
   setCachedHandle: (sessionKey: string, handle: AcpRuntimeHandle) => void;
   writeSessionMeta: (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     sessionKey: string;
     mutate: (
       current: SessionAcpMeta | undefined,

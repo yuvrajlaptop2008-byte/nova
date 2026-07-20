@@ -28,7 +28,7 @@ import {
 import { normalizeThinkLevel, type ThinkLevel } from "../../auto-reply/thinking.js";
 import { getRuntimeConfig } from "../../config/config.js";
 import { resolveAgentModelPrimaryValue } from "../../config/model-input.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { callGateway, randomIdempotencyKey } from "../../gateway/call.js";
 import { ADMIN_SCOPE } from "../../gateway/operator-scopes.js";
 import { convertHeicToJpeg } from "../../media/media-services.js";
@@ -53,7 +53,7 @@ const HEIC_MODEL_RUN_MIMES = new Set(["image/heic", "image/heif"]);
 
 async function canonicalizeModelRunRef(params: {
   raw: string | undefined;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   preserveAuthProfile: boolean;
 }): Promise<string | undefined> {
   return await canonicalizeCaseOnlyCatalogModelRef({

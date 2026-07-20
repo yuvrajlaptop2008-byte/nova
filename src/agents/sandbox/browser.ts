@@ -68,15 +68,15 @@ import {
 const HOT_BROWSER_WINDOW_MS = 5 * 60 * 1000;
 const CDP_SOURCE_RANGE_ENV_KEY = "NOVA_BROWSER_CDP_SOURCE_RANGE";
 const CDP_AUTH_TOKEN_ENV_KEY = "NOVA_BROWSER_CDP_AUTH_TOKEN";
-const SANDBOX_BROWSER_IMAGE_CONTRACT_LABEL = "org.openclaw.sandbox-browser.contract";
+const SANDBOX_BROWSER_IMAGE_CONTRACT_LABEL = "org.nova.sandbox-browser.contract";
 
 function buildSandboxCdpAuthHeader(token: string): string {
-  return `Basic ${Buffer.from(`openclaw:${token}`).toString("base64")}`;
+  return `Basic ${Buffer.from(`nova:${token}`).toString("base64")}`;
 }
 
 function buildSandboxCdpUrl(params: { cdpPort: number; authToken: string }): string {
   const url = new URL(`http://127.0.0.1:${params.cdpPort}`);
-  url.username = "openclaw";
+  url.username = "nova";
   url.password = params.authToken;
   return url.toString().replace(/\/$/, "");
 }
@@ -311,7 +311,7 @@ export async function ensureSandboxBrowser(params: {
   if (hasContainer) {
     const registry = await readBrowserRegistry();
     const registryEntry = registry.entries.find((entry) => entry.containerName === containerName);
-    currentHash = await readDockerContainerLabel(containerName, "openclaw.configHash");
+    currentHash = await readDockerContainerLabel(containerName, "nova.configHash");
     hashMismatch = !currentHash || currentHash !== expectedHash;
     if (!currentHash) {
       currentHash = registryEntry?.configHash ?? null;
@@ -324,13 +324,13 @@ export async function ensureSandboxBrowser(params: {
       if (isHot) {
         const hint = (() => {
           if (params.cfg.scope === "session") {
-            return `openclaw sandbox recreate --browser --session ${params.scopeKey}`;
+            return `nova sandbox recreate --browser --session ${params.scopeKey}`;
           }
           if (params.cfg.scope === "agent") {
             const agentId = resolveSandboxAgentId(params.scopeKey) ?? "main";
-            return `openclaw sandbox recreate --browser --agent ${agentId}`;
+            return `nova sandbox recreate --browser --agent ${agentId}`;
           }
-          return "openclaw sandbox recreate --browser --all";
+          return "nova sandbox recreate --browser --all";
         })();
         defaultRuntime.log(
           `Sandbox browser config changed for ${containerName} (recently used). Recreate to apply: ${hint}`,
@@ -358,8 +358,8 @@ export async function ensureSandboxBrowser(params: {
       cfg: browserDockerCfg,
       scopeKey: params.scopeKey,
       labels: {
-        "openclaw.sandboxBrowser": "1",
-        "openclaw.browserConfigEpoch": SANDBOX_BROWSER_SECURITY_HASH_EPOCH,
+        "nova.sandboxBrowser": "1",
+        "nova.browserConfigEpoch": SANDBOX_BROWSER_SECURITY_HASH_EPOCH,
       },
       configHash: expectedHash,
       includeBinds: false,

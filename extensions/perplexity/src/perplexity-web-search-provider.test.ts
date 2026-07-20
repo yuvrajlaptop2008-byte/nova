@@ -1,12 +1,12 @@
 // Perplexity tests cover perplexity web search provider plugin behavior.
-import { withEnv, withEnvAsync } from "openclaw/plugin-sdk/test-env";
+import { withEnv, withEnvAsync } from "nova/plugin-sdk/test-env";
 import { describe, expect, it, vi } from "vitest";
 import { createStreamingResponse } from "../../test-support/streaming-error-response.js";
 
 const withTrustedWebSearchEndpointMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/provider-web-search", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/provider-web-search")>();
+vi.mock("nova/plugin-sdk/provider-web-search", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/provider-web-search")>();
   return {
     ...actual,
     withTrustedWebSearchEndpoint: withTrustedWebSearchEndpointMock,
@@ -37,7 +37,7 @@ describe("perplexity web search provider", () => {
           error: "missing_perplexity_api_key",
           message:
             "web_search (perplexity) needs an API key. Set PERPLEXITY_API_KEY or OPENROUTER_API_KEY in the Gateway environment, or configure plugins.entries.perplexity.config.webSearch.apiKey. If you do not want to configure a search API key, use web_fetch for a specific URL or the browser tool for interactive pages.",
-          docs: "https://docs.openclaw.ai/tools/web",
+          docs: "https://docs.nova.ai/tools/web",
         });
       },
     );

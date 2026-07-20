@@ -720,8 +720,8 @@ describe("sendMessageSlack blocks", () => {
         event_type: "assistant_thread_context",
         event_payload: {
           team_id: "T123",
-          openclaw_delivery_part_index: 0,
-          openclaw_delivery_part_count: 1,
+          nova_delivery_part_index: 0,
+          nova_delivery_part_count: 1,
         },
       },
       mrkdwn: false,

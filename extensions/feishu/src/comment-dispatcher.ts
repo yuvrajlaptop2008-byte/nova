@@ -1,7 +1,7 @@
 // Feishu plugin module implements comment dispatcher behavior.
-import { resolveHumanDelayConfig } from "openclaw/plugin-sdk/agent-runtime";
-import type { ChannelInboundTurnPlan } from "openclaw/plugin-sdk/channel-inbound";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+import { resolveHumanDelayConfig } from "nova/plugin-sdk/agent-runtime";
+import type { ChannelInboundTurnPlan } from "nova/plugin-sdk/channel-inbound";
+import { resolveSendableOutboundReplyParts } from "nova/plugin-sdk/reply-payload";
 import { resolveFeishuRuntimeAccount } from "./accounts.js";
 import { createFeishuClient } from "./client.js";
 import {

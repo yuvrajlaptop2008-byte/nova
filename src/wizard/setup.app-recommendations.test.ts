@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { refreshOnboardRecommendationsCommand } from "../commands/onboard-recommendations.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type {
   OnboardingRecommendationMatch,
@@ -13,7 +13,7 @@ import { setupAppRecommendations as setupAppRecommendationsWithOutcome } from ".
 
 async function setupAppRecommendations(
   params: Parameters<typeof setupAppRecommendationsWithOutcome>[0],
-): Promise<OpenClawConfig> {
+): Promise<NovaConfig> {
   const outcome = await setupAppRecommendationsWithOutcome(params);
   outcome.commitResult();
   return outcome.config;
@@ -229,7 +229,7 @@ describe("setupAppRecommendations", () => {
       updatedAt: 1,
     };
     const store = storeDeps(pending);
-    const ensurePlugin = vi.fn(async ({ cfg }: { cfg: OpenClawConfig }) => ({
+    const ensurePlugin = vi.fn(async ({ cfg }: { cfg: NovaConfig }) => ({
       cfg,
       installed: true as const,
       status: "installed" as const,
@@ -362,7 +362,7 @@ describe("setupAppRecommendations", () => {
   });
 
   it("preselects recommended matches and installs selected plugin and skill", async () => {
-    const config: OpenClawConfig = {};
+    const config: NovaConfig = {};
     const prompter = createPrompter(["recommendation:0", "recommendation:1"]);
     const store = storeDeps();
     const ensurePlugin = vi.fn(async () => ({
@@ -584,7 +584,7 @@ describe("setupAppRecommendations", () => {
   it("installs nothing when the explicit skip entry is selected", async () => {
     const ensurePlugin = vi.fn();
     const installSkill = vi.fn();
-    const config: OpenClawConfig = {};
+    const config: NovaConfig = {};
     const store = storeDeps();
 
     await expect(

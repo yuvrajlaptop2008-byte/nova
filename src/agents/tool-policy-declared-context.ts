@@ -1,7 +1,7 @@
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { normalizeConfiguredMcpServers } from "../config/mcp-config-normalize.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizePluginsConfig } from "../plugins/config-state.js";
 import {
   isManifestPluginAvailableForControlPlane,
@@ -69,7 +69,7 @@ function denylistBlocksPluginTool(params: {
 }
 
 function collectConfiguredMcpServerNames(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   toolDenylist?: string[];
 }): string[] {
   const servers = normalizeConfiguredMcpServers(params.config?.mcp?.servers);
@@ -96,7 +96,7 @@ function collectConfiguredMcpServerNames(params: {
 
 function collectAvailableManifestToolNames(params: {
   plugin: PluginManifestRecord;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env: NodeJS.ProcessEnv;
   denylist: ToolDenylist;
 }): string[] {
@@ -122,7 +122,7 @@ function collectAvailableManifestToolNames(params: {
 }
 
 function collectDeclaredPluginContext(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   toolDenylist?: string[];
   env?: NodeJS.ProcessEnv;
@@ -171,7 +171,7 @@ function collectDeclaredPluginContext(params: {
 }
 
 export function buildDeclaredToolAllowlistContext(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   toolDenylist?: string[];
   env?: NodeJS.ProcessEnv;

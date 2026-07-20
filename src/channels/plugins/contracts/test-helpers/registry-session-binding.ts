@@ -6,13 +6,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { expect } from "vitest";
-import type { OpenClawConfig } from "../../../../config/config.js";
+import type { NovaConfig } from "../../../../config/config.js";
 import {
   getSessionBindingService,
   type SessionBindingRecord,
 } from "../../../../infra/outbound/session-binding-service.js";
 import type { SessionBindingCapabilities } from "../../../../infra/outbound/session-binding.types.js";
-import { resolvePreferredOpenClawTmpDir } from "../../../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../../../../infra/tmp-nova-dir.js";
 import type { OpenKeyedStoreOptions } from "../../../../plugin-sdk/plugin-state-runtime.js";
 import {
   createPluginStateKeyedStoreForTests,
@@ -43,7 +43,7 @@ const contractApiPromises = new Map<string, Promise<Record<string, unknown>>>();
 
 async function createContractChannelConversationBindingManager(params: {
   channelId: Parameters<typeof getChannelPlugin>[0];
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): Promise<{ stop: () => void | Promise<void> } | null> {
   const createManager = getChannelPlugin(params.channelId)?.conversationBindings?.createManager;
@@ -53,7 +53,7 @@ async function createContractChannelConversationBindingManager(params: {
 }
 
 const matrixSessionBindingStateDir = fs.mkdtempSync(
-  path.join(resolvePreferredOpenClawTmpDir(), "openclaw-matrix-session-binding-contract-"),
+  path.join(resolvePreferredNovaTmpDir(), "nova-matrix-session-binding-contract-"),
 );
 const matrixSessionBindingAuth = {
   accountId: "ops",
@@ -144,7 +144,7 @@ async function createContractMatrixThreadBindingManager() {
 
 const baseSessionBindingCfg = {
   session: { mainKey: "main", scope: "per-sender" },
-} satisfies OpenClawConfig;
+} satisfies NovaConfig;
 
 type ChannelConversationBindingManagerFactory = NonNullable<
   NonNullable<ChannelPlugin["conversationBindings"]>["createManager"]
@@ -153,7 +153,7 @@ type ChannelConversationBindingManagerFactory = NonNullable<
 type DiscordContractApi = {
   createThreadBindingManager: (params: {
     accountId: string;
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     persist: boolean;
     enableSweeper: boolean;
   }) => unknown;
@@ -163,10 +163,7 @@ type DiscordContractApi = {
 };
 
 type FeishuContractApi = {
-  createFeishuThreadBindingManager: (params: {
-    accountId?: string;
-    cfg: OpenClawConfig;
-  }) => unknown;
+  createFeishuThreadBindingManager: (params: { accountId?: string; cfg: NovaConfig }) => unknown;
   feishuThreadBindingTesting: {
     resetFeishuThreadBindingsForTests: () => void;
   };

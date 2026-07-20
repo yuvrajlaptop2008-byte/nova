@@ -32,7 +32,7 @@ function deferred<T>(): Deferred<T> {
 }
 
 function createOutlet(router: TestRouter, context: TestContext): RouterOutletElement {
-  const outlet = document.createElement("openclaw-router-outlet") as RouterOutletElement;
+  const outlet = document.createElement("nova-router-outlet") as RouterOutletElement;
   outlet.router = router;
   outlet.retryContext = context;
   document.body.append(outlet);
@@ -52,7 +52,7 @@ async function settleOutlet(outlet: RouterOutletElement): Promise<void> {
   }
 }
 
-describe("openclaw-router-outlet", () => {
+describe("nova-router-outlet", () => {
   it("keeps the current route mounted until nested MCP Apps finish teardown", async () => {
     const teardown = deferred<void>();
     const teardownView = vi.fn(() => teardown.promise);

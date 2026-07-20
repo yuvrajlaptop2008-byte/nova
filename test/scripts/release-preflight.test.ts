@@ -39,7 +39,7 @@ afterEach(() => {
 });
 
 function makeFakePnpm(): { binDir: string; eventsPath: string; logPath: string } {
-  const root = makeTempDir(tempDirs, "openclaw-release-preflight-");
+  const root = makeTempDir(tempDirs, "nova-release-preflight-");
   const binDir = join(root, "bin");
   const eventsPath = join(root, "pnpm-events.log");
   const logPath = join(root, "pnpm.log");
@@ -99,7 +99,7 @@ function makeReleaseFixture(
     shortVersion?: string;
   } = {},
 ): string {
-  const root = makeTempDir(tempDirs, "openclaw-release-preflight-fixture-");
+  const root = makeTempDir(tempDirs, "nova-release-preflight-fixture-");
   const plistDir = join(root, "apps", "macos", "Sources", "Nova", "Resources");
   mkdirSync(plistDir, { recursive: true });
   writeFileSync(
@@ -242,7 +242,7 @@ describe("scripts/release-preflight.mjs", () => {
 
   it("checks non-version scopes without requiring macOS source metadata", () => {
     const fakePnpm = makeFakePnpm();
-    const root = makeTempDir(tempDirs, "openclaw-release-preflight-config-");
+    const root = makeTempDir(tempDirs, "nova-release-preflight-config-");
     const result = runPreflight(["--scope", "config"], fakePnpm, {}, root);
 
     expect(result.status).toBe(0);

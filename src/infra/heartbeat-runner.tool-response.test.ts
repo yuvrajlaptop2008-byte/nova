@@ -15,10 +15,10 @@ import {
   GENERIC_EXTERNAL_RUN_FAILURE_TEXT,
   HEARTBEAT_EXTERNAL_RUN_FAILURE_TEXT,
 } from "../auto-reply/reply/agent-runner-failure-copy.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { patchSessionEntry } from "../config/sessions/session-accessor.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { stripTrailingHeartbeatNotifyFalse } from "./heartbeat-delivery-normalization.js";
 import { getLastHeartbeatEvent, resetHeartbeatEventsForTest } from "./heartbeat-events.js";
 import { claimHeartbeatOutcomeForRun } from "./heartbeat-outcome-store.js";
@@ -64,7 +64,7 @@ describe("runHeartbeatOnce heartbeat response tool", () => {
     isolatedSession?: boolean;
     target?: "telegram" | "last" | "none";
     showOk?: boolean;
-  }): OpenClawConfig {
+  }): NovaConfig {
     return {
       agents: {
         defaults: {
@@ -99,7 +99,7 @@ describe("runHeartbeatOnce heartbeat response tool", () => {
         },
       },
       session: { store: params.storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   function createDeps(params: {
@@ -116,7 +116,7 @@ describe("runHeartbeatOnce heartbeat response tool", () => {
 
   function expectTelegramSend(
     sendTelegram: ReturnType<typeof vi.fn>,
-    params: { text: string; cfg: OpenClawConfig; silent?: boolean },
+    params: { text: string; cfg: NovaConfig; silent?: boolean },
   ) {
     expect(sendTelegram).toHaveBeenCalledTimes(1);
     expect(sendTelegram.mock.calls).toEqual([
@@ -228,7 +228,7 @@ describe("runHeartbeatOnce heartbeat response tool", () => {
       beforeSeed?: (params: {
         tmpDir: string;
         storePath: string;
-        cfg: OpenClawConfig;
+        cfg: NovaConfig;
       }) => Promise<void>;
     } = {},
   ) {
@@ -320,8 +320,8 @@ describe("runHeartbeatOnce heartbeat response tool", () => {
         wakeSource: "manual",
         wakeReason: "operator check",
       });
-      closeOpenClawAgentDatabasesForTest();
-      closeOpenClawStateDatabaseForTest();
+      closeNovaAgentDatabasesForTest();
+      closeNovaStateDatabaseForTest();
     });
   });
 
@@ -692,7 +692,7 @@ describe("runHeartbeatOnce heartbeat response tool", () => {
       session: {
         modelProvider: "anthropic",
         model: "claude-sonnet-4-6",
-        agentRuntimeOverride: "openclaw",
+        agentRuntimeOverride: "nova",
       },
     });
 

@@ -59,18 +59,18 @@ const MEMORY_HOST_SDK_EXPORTS = [
   "./status",
 ] as const;
 const MEMORY_HOST_SDK_ALLOWED_CORE_BRIDGE_FILES = [
-  "packages/memory-host-sdk/src/host/openclaw-runtime-auth.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-network.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-sqlite.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-auth.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-network.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-sqlite.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime.ts",
 ] as const;
 const MEMORY_HOST_SDK_RUNTIME_ADAPTER_FILES = [
-  "packages/memory-host-sdk/src/host/openclaw-runtime-agent.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-cli.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-config.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-io.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-memory.ts",
-  "packages/memory-host-sdk/src/host/openclaw-runtime-session.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-agent.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-cli.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-config.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-io.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-memory.ts",
+  "packages/memory-host-sdk/src/host/nova-runtime-session.ts",
 ] as const;
 
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Test helper lets assertions ascribe JSON file shape.
@@ -126,10 +126,10 @@ function collectCoreReferenceFiles(relativeDir: string): string[] {
     });
 }
 
-function collectOpenClawRuntimeDirectImportFiles(relativeDir: string): string[] {
+function collectNovaRuntimeDirectImportFiles(relativeDir: string): string[] {
   return collectCodeFiles(relativeDir).filter((file) => {
     const source = fs.readFileSync(resolve(REPO_ROOT, file), "utf8");
-    return source.includes('"./openclaw-runtime.js"');
+    return source.includes('"./nova-runtime.js"');
   });
 }
 
@@ -319,7 +319,7 @@ describe("opt-in extension package boundaries", () => {
     expect(collectCoreReferenceFiles("packages/memory-host-sdk/src")).toEqual([
       ...MEMORY_HOST_SDK_ALLOWED_CORE_BRIDGE_FILES,
     ]);
-    expect(collectOpenClawRuntimeDirectImportFiles("packages/memory-host-sdk/src")).toEqual([
+    expect(collectNovaRuntimeDirectImportFiles("packages/memory-host-sdk/src")).toEqual([
       ...MEMORY_HOST_SDK_RUNTIME_ADAPTER_FILES,
     ]);
   });

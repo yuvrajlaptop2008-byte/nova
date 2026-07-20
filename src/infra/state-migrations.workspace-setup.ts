@@ -16,7 +16,7 @@ import {
 } from "../agents/workspace-legacy-state.js";
 import { resolveWorkspaceStateIdentity } from "../agents/workspace-state-store.js";
 import { resolveLegacyStateDirs } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "./errors.js";
 import { acquireGatewayLock, GatewayLockError } from "./gateway-lock.js";
 import type { MigrationMessages } from "./state-migrations.types.js";
@@ -235,7 +235,7 @@ function listOrphanAttestationSources(params: {
 
 /** Detect retired workspace files only when an explicit Doctor flow opts in. */
 export function detectLegacyWorkspaceState(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   stateDir: string;
   env?: NodeJS.ProcessEnv;
   homedir?: () => string;
@@ -669,7 +669,7 @@ export async function migrateLegacyWorkspaceState(params: {
     return {
       changes: [],
       warnings: [
-        `Failed migrating legacy workspace state: ${detail}. Stop the Gateway and run \`openclaw doctor --fix\` again.`,
+        `Failed migrating legacy workspace state: ${detail}. Stop the Gateway and run \`nova doctor --fix\` again.`,
       ],
     };
   }

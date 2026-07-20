@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   QA_EVIDENCE_FILENAME,
   type QaEvidenceSummaryJson,
@@ -95,7 +95,7 @@ async function createFixturePlugin(root: string) {
   const realtimeCallsPath = path.join(root, "realtime-calls.jsonl");
   await fs.mkdir(pluginDir, { recursive: true });
   await fs.writeFile(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "nova.plugin.json"),
     `${JSON.stringify(
       {
         id: FIXTURE_PLUGIN_ID,
@@ -161,7 +161,7 @@ module.exports = {
   return { pluginDir, realtimeCallsPath, speechCallsPath };
 }
 
-function withFixturePlugin(config: OpenClawConfig, pluginDir: string): OpenClawConfig {
+function withFixturePlugin(config: NovaConfig, pluginDir: string): NovaConfig {
   return {
     ...config,
     plugins: {
@@ -306,7 +306,7 @@ async function waitForWebchatAudio(params: {
 }
 
 async function runWebchatAutoTtsProof(options: ProducerOptions): Promise<string> {
-  const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-webchat-tts-"));
+  const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-webchat-tts-"));
   const fixture = await createFixturePlugin(fixtureRoot);
   const mock = await startQaMockOpenAiServer();
   let gateway: Awaited<ReturnType<typeof startQaGatewayChild>> | undefined;
@@ -367,7 +367,7 @@ async function runWebchatAutoTtsProof(options: ProducerOptions): Promise<string>
     if (speechCalls.length !== 1) {
       throw new Error(`expected one final-tail TTS synthesis, received ${speechCalls.length}`);
     }
-    const route = `${gateway.baseUrl}/__openclaw__/assistant-media`;
+    const route = `${gateway.baseUrl}/__nova__/assistant-media`;
     const sourceParam = encodeURIComponent(source);
     const metadata = await fetch(`${route}?meta=1&source=${sourceParam}`, {
       headers: { Authorization: `Bearer ${gateway.token}` },
@@ -462,7 +462,7 @@ async function waitForQueuedTalkSteer(client: GatewayClient, sessionKey: string)
 }
 
 async function runActiveTalkAgentRunProof(options: ProducerOptions): Promise<string> {
-  const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-active-talk-"));
+  const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-active-talk-"));
   const fixture = await createFixturePlugin(fixtureRoot);
   const mock = await startQaMockOpenAiServer({ finalOnlyMarkerPauseMs: 60_000 });
   let gateway: Awaited<ReturnType<typeof startQaGatewayChild>> | undefined;
@@ -515,8 +515,8 @@ async function runActiveTalkAgentRunProof(options: ProducerOptions): Promise<str
     const tools = providerCalls[0]?.tools;
     if (
       !Array.isArray(tools) ||
-      !tools.includes("openclaw_agent_consult") ||
-      !tools.includes("openclaw_agent_control")
+      !tools.includes("nova_agent_consult") ||
+      !tools.includes("nova_agent_control")
     ) {
       throw new Error(
         `Talk provider did not receive consult/control tools: ${JSON.stringify(tools)}`,
@@ -525,7 +525,7 @@ async function runActiveTalkAgentRunProof(options: ProducerOptions): Promise<str
     const consultRequest = client.request("talk.client.toolCall", {
       sessionKey,
       callId: `qa-talk-${randomUUID()}`,
-      name: "openclaw_agent_consult",
+      name: "nova_agent_consult",
       args: { question: "final-only marker streaming qa check: inspect the active run" },
     });
     const steer = await waitForQueuedTalkSteer(client, sessionKey);

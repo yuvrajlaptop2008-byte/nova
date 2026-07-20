@@ -23,16 +23,16 @@ function runTsxScript(scriptPath: string, args: string[], cwd = process.cwd()) {
 }
 
 function createOldReleaseTarget() {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-old-release-target-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-old-release-target-"));
   tempDirs.push(root);
   mkdirSync(join(root, "extensions"), { recursive: true });
   mkdirSync(join(root, "scripts"), { recursive: true });
   writeFileSync(
     join(root, "package.json"),
-    `${JSON.stringify({ name: "openclaw", version: "2026.7.1-beta.3" }, null, 2)}\n`,
+    `${JSON.stringify({ name: "nova", version: "2026.7.1-beta.3" }, null, 2)}\n`,
   );
   writeFileSync(
-    join(root, "scripts", "openclaw-release-clawhub-plan.ts"),
+    join(root, "scripts", "nova-release-clawhub-plan.ts"),
     'throw new Error("old target planner invoked");\n',
   );
   writeFileSync(
@@ -61,7 +61,7 @@ describe("release wrapper scripts", () => {
   });
 
   it("loads the Nova ClawHub plan CLI and validates required arguments before planning", () => {
-    const result = runTsxScript("scripts/openclaw-release-clawhub-plan.ts", [
+    const result = runTsxScript("scripts/nova-release-clawhub-plan.ts", [
       "--bootstrap-workflow-ref",
       "main",
       "--bootstrap-workflow-sha",
@@ -87,7 +87,7 @@ describe("release wrapper scripts", () => {
     const releaseSha = "a".repeat(40);
     const bootstrapWorkflowRef = `release-publish/${"b".repeat(12)}-123`;
     const plan = runTsxScript(
-      join(repositoryRoot, "scripts/openclaw-release-clawhub-plan.ts"),
+      join(repositoryRoot, "scripts/nova-release-clawhub-plan.ts"),
       [
         "--bootstrap-workflow-ref",
         bootstrapWorkflowRef,

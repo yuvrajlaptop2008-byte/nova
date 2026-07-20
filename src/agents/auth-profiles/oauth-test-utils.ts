@@ -6,7 +6,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
 import { setTestEnvValue } from "../../test-utils/env.js";
 import type { resolveApiKeyForProfile } from "./oauth.js";
 import { loadPersistedAuthProfileStore } from "./persisted.js";
@@ -82,7 +82,7 @@ export async function createOAuthMainAgentDir(stateDir: string): Promise<string>
 /** Remove an OAuth temp root and close test databases first. */
 export async function removeOAuthTestTempRoot(tempRoot: string): Promise<void> {
   if (tempRoot) {
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
     await fs.rm(tempRoot, { recursive: true, force: true });
   }
 }

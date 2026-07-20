@@ -4,12 +4,12 @@ import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
 } from "../../infra/kysely-sync.js";
-import { withOpenClawAgentDatabaseReadOnly } from "../../state/openclaw-agent-db-readonly.js";
+import { withNovaAgentDatabaseReadOnly } from "../../state/nova-agent-db-readonly.js";
 import {
-  openOpenClawAgentDatabase,
-  resolveOpenClawAgentSqlitePath,
-  runOpenClawAgentWriteTransaction,
-} from "../../state/openclaw-agent-db.js";
+  openNovaAgentDatabase,
+  resolveNovaAgentSqlitePath,
+  runNovaAgentWriteTransaction,
+} from "../../state/nova-agent-db.js";
 import type { DeliveryContext } from "../../utils/delivery-context.types.js";
 import { isInternalSessionEffectsKey } from "./internal-session-key.js";
 import { deriveLastRoutePatch, deriveSessionMetaPatch } from "./metadata.js";
@@ -78,7 +78,7 @@ type SqliteSessionEntryPatchOptions = SessionEntryPatchOptions & {
 /** Loads one session entry from the additive SQLite session store. */
 export function loadSqliteSessionEntry(scope: SessionAccessScope): SessionEntry | undefined {
   const resolved = resolveSqliteScope(scope);
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   return readSessionEntryRow(database, resolved.sessionKey)?.entry;
 }
 
@@ -87,7 +87,7 @@ export function loadSqliteSessionEntryReadOnly(
   scope: SessionAccessScope,
 ): SessionEntry | undefined {
   const resolved = resolveSqliteScope(scope);
-  const result = withOpenClawAgentDatabaseReadOnly(
+  const result = withNovaAgentDatabaseReadOnly(
     (database) => readSessionEntryRow(database, resolved.sessionKey)?.entry,
     toDatabaseOptions(resolved),
   );
@@ -103,7 +103,7 @@ export function loadExactSqliteSessionEntry(
     return undefined;
   }
   const resolved = resolveSqliteScope(scope);
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const row = readExactSessionEntryRow(database, sessionKey);
   return row ? { sessionKey, entry: row.entry } : undefined;
 }
@@ -113,7 +113,7 @@ export function resolveSqliteSessionKeyBySessionId(
   scope: Pick<SessionTranscriptReadScope, "agentId" | "env" | "sessionId" | "storePath">,
 ): string | undefined {
   const resolved = resolveSqliteTranscriptReadScope(scope);
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const db = getSessionKysely(database.db);
   const row = executeSqliteQueryTakeFirstSync(
     database.db,
@@ -131,7 +131,7 @@ export function listSqliteSessionEntries(
   scope: Partial<Omit<SessionAccessScope, "sessionKey">> = {},
 ): SessionEntrySummary[] {
   const resolved = resolveSqliteScope({ ...scope, sessionKey: "" });
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   return listSqliteSessionEntriesFromDatabase(database);
 }
 
@@ -144,7 +144,7 @@ export function listSqliteSessionEntriesReadOnly(
   scope: Partial<Omit<SessionAccessScope, "sessionKey">> = {},
 ): SessionEntrySummary[] {
   const resolved = resolveSqliteScope({ ...scope, sessionKey: "" });
-  const result = withOpenClawAgentDatabaseReadOnly(
+  const result = withNovaAgentDatabaseReadOnly(
     (database) => listSqliteSessionEntriesFromDatabase(database),
     toDatabaseOptions(resolved),
   );
@@ -177,7 +177,7 @@ export function listSqliteSessionEntriesByStatus(
   statuses: readonly SessionEntryStatus[],
 ): SessionEntrySummary[] {
   const resolved = resolveSqliteScope({ ...scope, sessionKey: "" });
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   return readSqliteSessionEntriesByStatus(database, statuses).filter(
     ({ sessionKey }) => !isInternalSessionEffectsKey(sessionKey),
   );
@@ -188,7 +188,7 @@ export function listSqliteSessionTranscriptInstances(
   scope: Partial<Omit<SessionAccessScope, "sessionKey">> = {},
 ): SessionTranscriptInstance[] {
   const resolved = resolveSqliteScope({ ...scope, sessionKey: "" });
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const currentEntries = new Map(
     listSqliteSessionEntries(scope).map((summary) => [summary.sessionKey, summary.entry]),
   );
@@ -196,14 +196,14 @@ export function listSqliteSessionTranscriptInstances(
     agentId: resolved.agentId,
     currentEntries,
     database,
-    databasePath: resolveOpenClawAgentSqlitePath(toDatabaseOptions(resolved)),
+    databasePath: resolveNovaAgentSqlitePath(toDatabaseOptions(resolved)),
   });
 }
 
 /** Reads a session activity timestamp from the additive SQLite session store. */
 export function readSqliteSessionUpdatedAt(scope: SessionAccessScope): number | undefined {
   const resolved = resolveSqliteScope(scope);
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const row = readSessionEntryRow(database, resolved.sessionKey)?.row;
   return row ? normalizeSqliteNumber(row.updated_at) : undefined;
 }
@@ -237,7 +237,7 @@ export function replaceSqliteSessionEntrySync(
   const resolved = resolveSqliteScope(scope);
   let previous = new Map<string, SessionEntry>();
   let current = new Map<string, SessionEntry>();
-  runOpenClawAgentWriteTransaction((database) => {
+  runNovaAgentWriteTransaction((database) => {
     const identityKeys = collectSessionEntryLookupKeys(database, resolved.sessionKey);
     previous = readSqliteSessionIdentitySnapshot(database, identityKeys);
     writeSessionEntry(database, resolved.sessionKey, entry);
@@ -257,7 +257,7 @@ export async function patchSqliteSessionEntry(
 ): Promise<SessionEntry | null> {
   const resolved = resolveSqliteScope(scope);
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const prepared = readSqliteSessionEntrySelectionSnapshot(
       database,
       resolved.sessionKey,
@@ -276,7 +276,7 @@ export async function patchSqliteSessionEntry(
     let result: SessionEntry | null = null;
     let previousIdentity = new Map<string, SessionEntry>();
     let currentIdentity = new Map<string, SessionEntry>();
-    runOpenClawAgentWriteTransaction((writeDatabase) => {
+    runNovaAgentWriteTransaction((writeDatabase) => {
       const fresh = readSqliteSessionEntrySelectionSnapshot(
         writeDatabase,
         resolved.sessionKey,
@@ -343,7 +343,7 @@ export async function patchSqliteSessionEntryTarget(
 ): Promise<SessionEntry | null> {
   const resolved = resolveSqliteStoreScope(scope.storePath, { agentId: scope.agentId });
   return await runExclusiveSqliteSessionWrite(resolved, async () => {
-    const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+    const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
     const prepared = readSqliteLifecycleTargetSnapshot(database, scope.target);
     const writeBase = prepared.primary?.entry ?? options.fallbackEntry;
     if (!writeBase) {
@@ -358,7 +358,7 @@ export async function patchSqliteSessionEntryTarget(
     let result: SessionEntry | null = null;
     let previousIdentity = new Map<string, SessionEntry>();
     let currentIdentity = new Map<string, SessionEntry>();
-    runOpenClawAgentWriteTransaction((writeDatabase) => {
+    runNovaAgentWriteTransaction((writeDatabase) => {
       const fresh = readSqliteLifecycleTargetSnapshot(writeDatabase, scope.target);
       assertSqliteLifecycleTargetSnapshotUnchanged(prepared, fresh, "session-entry-target.patch");
       if (!patch) {

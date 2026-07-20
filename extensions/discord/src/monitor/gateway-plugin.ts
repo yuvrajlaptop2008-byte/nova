@@ -2,16 +2,16 @@
 import { randomUUID } from "node:crypto";
 import type { Agent as HttpAgent } from "node:http";
 import { Agent as HttpsAgent } from "node:https";
-import type { DiscordAccountConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createNodeProxyAgent } from "openclaw/plugin-sdk/fetch-runtime";
+import type { DiscordAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { createNodeProxyAgent } from "nova/plugin-sdk/fetch-runtime";
 import {
   captureWsEvent,
   resolveEffectiveDebugProxyUrl,
   resolveDebugProxySettings,
-} from "openclaw/plugin-sdk/proxy-capture";
-import { danger, warn } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/proxy-capture";
+import { danger, warn } from "nova/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import * as ws from "ws";
 import * as discordGateway from "../internal/gateway.js";
 import { createDiscordDnsLookup } from "../network-config.js";
@@ -161,7 +161,7 @@ function shouldLogDiscordGatewayTransportClose(params: {
 }
 
 type ResolveDiscordGatewayIntentsParams = {
-  intentsConfig?: import("openclaw/plugin-sdk/config-contracts").DiscordIntentsConfig;
+  intentsConfig?: import("nova/plugin-sdk/config-contracts").DiscordIntentsConfig;
   voiceEnabled?: boolean;
 };
 
@@ -201,7 +201,7 @@ function createGatewayPlugin(params: {
   runtime?: RuntimeEnv;
   testing?: GatewayPluginTestingOptions;
 }): discordGateway.GatewayPlugin {
-  class OpenClawGatewayPlugin extends discordGateway.GatewayPlugin {
+  class NovaGatewayPlugin extends discordGateway.GatewayPlugin {
     private gatewayInfoUsedFallback = false;
 
     constructor() {
@@ -347,7 +347,7 @@ function createGatewayPlugin(params: {
     }
   }
 
-  return new OpenClawGatewayPlugin();
+  return new NovaGatewayPlugin();
 }
 
 function createDiscordGatewayMetadataFetch(

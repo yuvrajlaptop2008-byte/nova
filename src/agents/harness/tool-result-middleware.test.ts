@@ -6,7 +6,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
   it("fails closed when middleware throws", async () => {
     // Middleware errors may contain sensitive tool data. The public result must
     // collapse to a generic error instead of returning the thrown message.
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, [
       () => {
         throw new Error("raw secret should not be logged or returned");
       },
@@ -50,7 +50,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
   });
 
   it("fails closed when middleware mutates the current result into an invalid shape", async () => {
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, [
       (event) => {
         event.result.content = "not an array" as never;
         return undefined;
@@ -127,7 +127,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
       content: [{ type: "text" as const, text: "delivered" }],
       details: cyclicDetails,
     };
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, []);
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, []);
 
     const result = await runner.applyToolResultMiddleware({
       toolCallId: "call-1",
@@ -152,9 +152,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
       client,
     };
     client.message = payload;
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
-      () => undefined,
-    ]);
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, [() => undefined]);
 
     const result = await runner.applyToolResultMiddleware({
       toolCallId: "call-1",
@@ -176,7 +174,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
 
   it("truncates oversized incoming text before a no-op middleware", async () => {
     let observedText = "";
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, [
       (event) => {
         const content = event.result.content[0];
         observedText = content?.type === "text" ? content.text : "";
@@ -200,7 +198,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
   });
 
   it("fails closed when middleware returns oversized top-level text", async () => {
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, [
       () => ({
         result: {
           content: [{ type: "text", text: "x".repeat(100_001) }],
@@ -531,9 +529,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
   });
 
   it("collapses oversized incoming details to a truncation marker", async () => {
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
-      () => undefined,
-    ]);
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, [() => undefined]);
 
     const result = await runner.applyToolResultMiddleware({
       toolCallId: "call-1",
@@ -551,9 +547,7 @@ describe("createAgentToolResultMiddlewareRunner", () => {
   });
 
   it("measures multibyte incoming details by serialized UTF-8 bytes", async () => {
-    const runner = createAgentToolResultMiddlewareRunner({ runtime: "openclaw" }, [
-      () => undefined,
-    ]);
+    const runner = createAgentToolResultMiddlewareRunner({ runtime: "nova" }, [() => undefined]);
     const details = { blob: "é".repeat(60_000) };
 
     const result = await runner.applyToolResultMiddleware({

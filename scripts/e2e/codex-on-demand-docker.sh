@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs a prepared OpenClaw npm tarball in Docker, runs OpenAI onboarding,
+# Installs a prepared Nova npm tarball in Docker, runs OpenAI onboarding,
 # and verifies the Codex plugin plus @openai/codex dependency are downloaded on demand.
 set -euo pipefail
 
@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-codex-on-demand-e2e" NOVA_CODEX_ON_DEMAND_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-codex-on-demand-e2e" NOVA_CODEX_ON_DEMAND_E2E_IMAGE)"
 DOCKER_TARGET="${NOVA_CODEX_ON_DEMAND_DOCKER_TARGET:-bare}"
 HOST_BUILD="${NOVA_CODEX_ON_DEMAND_HOST_BUILD:-1}"
 PACKAGE_TGZ="${NOVA_CURRENT_PACKAGE_TGZ:-}"
@@ -56,39 +56,39 @@ if ! docker_e2e_run_with_harness \
   -i "$IMAGE_NAME" bash -s >"$run_log" 2>&1 <<'EOF'; then
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+source scripts/lib/nova-e2e-instance.sh
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export npm_config_prefix="$NPM_CONFIG_PREFIX"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export NPM_CONFIG_CACHE="${NPM_CONFIG_CACHE:-$XDG_CACHE_HOME/npm}"
 export npm_config_cache="$NPM_CONFIG_CACHE"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export OPENAI_API_KEY="sk-openclaw-codex-on-demand-e2e"
+export OPENAI_API_KEY="sk-nova-codex-on-demand-e2e"
 
 dump_debug_logs() {
   local status="$1"
   echo "Codex on-demand scenario failed with exit code $status" >&2
-  openclaw_e2e_dump_logs \
-    /tmp/openclaw-install.log \
-    /tmp/openclaw-onboard.json \
-    /tmp/openclaw-plugins-list.json \
-    /tmp/openclaw-codex-inspect.json
+  nova_e2e_dump_logs \
+    /tmp/nova-install.log \
+    /tmp/nova-onboard.json \
+    /tmp/nova-plugins-list.json \
+    /tmp/nova-codex-inspect.json
 }
 trap 'status=$?; dump_debug_logs "$status"; exit "$status"' ERR
 
 mkdir -p "$NPM_CONFIG_PREFIX" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE"
 chmod 700 "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" || true
 
-openclaw_e2e_install_package /tmp/openclaw-install.log
-command -v openclaw >/dev/null
-openclaw_e2e_enable_openclaw_cli_timeout
+nova_e2e_install_package /tmp/nova-install.log
+command -v nova >/dev/null
+nova_e2e_enable_nova_cli_timeout
 
-openclaw_e2e_assert_dep_absent "@nova/codex" "$HOME/.openclaw" "$NPM_CONFIG_PREFIX"
-openclaw_e2e_assert_dep_absent "@openai/codex" "$HOME/.openclaw" "$NPM_CONFIG_PREFIX"
+nova_e2e_assert_dep_absent "@nova/codex" "$HOME/.nova" "$NPM_CONFIG_PREFIX"
+nova_e2e_assert_dep_absent "@openai/codex" "$HOME/.nova" "$NPM_CONFIG_PREFIX"
 
 echo "Running non-interactive OpenAI onboarding; Codex should install on demand..."
-openclaw onboard --non-interactive --accept-risk \
+nova onboard --non-interactive --accept-risk \
   --mode local \
   --auth-choice openai-api-key \
   --secret-input-mode ref \
@@ -97,10 +97,10 @@ openclaw onboard --non-interactive --accept-risk \
   --skip-channels \
   --skip-skills \
   --skip-health \
-  --json >/tmp/openclaw-onboard.json
+  --json >/tmp/nova-onboard.json
 
-openclaw plugins list --json >/tmp/openclaw-plugins-list.json
-openclaw plugins inspect codex --runtime --json >/tmp/openclaw-codex-inspect.json
+nova plugins list --json >/tmp/nova-plugins-list.json
+nova plugins inspect codex --runtime --json >/tmp/nova-codex-inspect.json
 node scripts/e2e/lib/codex-on-demand/assertions.mjs
 
 echo "Codex on-demand Docker E2E passed"

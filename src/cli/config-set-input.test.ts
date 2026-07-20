@@ -80,7 +80,7 @@ describe("config set input parsing", () => {
 
   it("parses valid --batch-file payloads", () => {
     withBatchFile(
-      "openclaw-config-set-input-",
+      "nova-config-set-input-",
       '[{"path":"gateway.auth.mode","value":"token"}]',
       (batchPath) => {
         const parsed = parseBatchSource({
@@ -105,7 +105,7 @@ describe("config set input parsing", () => {
   });
 
   it("rejects malformed --batch-file payloads", () => {
-    withBatchFile("openclaw-config-set-input-invalid-", "{}", (batchPath) => {
+    withBatchFile("nova-config-set-input-invalid-", "{}", (batchPath) => {
       expect(() =>
         parseBatchSource({
           batchFile: batchPath,
@@ -116,7 +116,7 @@ describe("config set input parsing", () => {
 
   it("rejects --batch-file payloads above the config mutation limit", () => {
     withBatchFile(
-      "openclaw-config-set-input-oversized-",
+      "nova-config-set-input-oversized-",
       " ".repeat(8 * 1024 * 1024 + 1),
       (batchPath) => {
         expect(() => parseBatchSource({ batchFile: batchPath })).toThrow(

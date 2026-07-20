@@ -2,9 +2,9 @@
 import {
   loadAuthProfileStoreWithoutExternalProfiles,
   resolveAuthStorePathForDisplay,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { MigrationItem, MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
-import { updateAuthProfileStoreWithLock } from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/agent-runtime";
+import type { MigrationItem, MigrationProviderContext } from "nova/plugin-sdk/plugin-entry";
+import { updateAuthProfileStoreWithLock } from "nova/plugin-sdk/provider-auth";
 import {
   applyAuthProfileConfigWithConflictCheck,
   hasAuthProfileConfigConflict,

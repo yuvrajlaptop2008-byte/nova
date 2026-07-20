@@ -1,12 +1,12 @@
-# OpenClaw StepFun Provider
+# Nova StepFun Provider
 
-Official OpenClaw provider plugin for StepFun.
+Official Nova provider plugin for StepFun.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/stepfun-provider
-openclaw gateway restart
+nova plugins install @nova/stepfun-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/stepfun> for setup and configuration.
+See <https://docs.nova.ai/providers/stepfun> for setup and configuration.

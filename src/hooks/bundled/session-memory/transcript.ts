@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { sanitizeModelSpecialTokens } from "../../../security/external-content.js";
 import { hasInterSessionUserProvenance } from "../../../sessions/input-provenance.js";
-import { isOpenClawDeliveryMirrorAssistantMessage } from "../../../shared/transcript-only-openclaw-assistant.js";
+import { isNovaDeliveryMirrorAssistantMessage } from "../../../shared/transcript-only-nova-assistant.js";
 
 const SESSION_MEMORY_TOOL_DIRECTIVE_PREFIX = String.raw`(?:(?:\|DSML\|)|(?:\uFF5CDSML\uFF5C))?`;
 const SESSION_MEMORY_TOOL_DIRECTIVE_KIND = String.raw`(?:tool_calls?|function_calls?|tool_use_error)`;
@@ -93,7 +93,7 @@ function renderSessionMemoryMessage(entry: unknown): RenderedSessionMemoryMessag
     return role === "user" ? { isDeliveryMirror: false, role } : undefined;
   }
   return {
-    isDeliveryMirror: isOpenClawDeliveryMirrorAssistantMessage(record.message),
+    isDeliveryMirror: isNovaDeliveryMirrorAssistantMessage(record.message),
     role,
     text: sanitized,
   };

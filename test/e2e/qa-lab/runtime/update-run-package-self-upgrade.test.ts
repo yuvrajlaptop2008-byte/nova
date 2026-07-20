@@ -37,13 +37,13 @@ describe("update.run package self-upgrade producer", () => {
 
     expect(script).toContain("source scripts/e2e/lib/upgrade-survivor/update-restart-auth.sh");
     expect(script).toContain("-u NOVA_SKIP_PROVIDERS");
-    expect(script).toContain("systemctl --user start openclaw-gateway.service");
-    expect(script).toContain("NOVA_SYSTEMD_UNIT=openclaw-gateway.service");
+    expect(script).toContain("systemctl --user start nova-gateway.service");
+    expect(script).toContain("NOVA_SYSTEMD_UNIT=nova-gateway.service");
     expect(script).toContain("restart mode: update process respawn (supervisor restart)");
     expect(script).toContain("service-owned target environment unexpectedly suppresses providers");
     expect(script).not.toContain("target_gateway_pid");
-    expect(script).not.toContain("openclaw_e2e_stop_process");
-    expect(script).toContain("systemctl --user stop openclaw-gateway.service");
+    expect(script).not.toContain("nova_e2e_stop_process");
+    expect(script).toContain("systemctl --user stop nova-gateway.service");
     expect(script).toContain(': >"$SYSTEMCTL_SHIM_LOG"');
     const runCleanup = script.slice(
       script.indexOf("rm -f \\"),
@@ -51,8 +51,8 @@ describe("update.run package self-upgrade producer", () => {
     );
     expect(runCleanup).toContain('"$UPDATE_STATUS_JSON"');
     expect(runCleanup).toContain('"$ARTIFACT_DIR/update-status.candidate.json"');
-    expect(script.indexOf("openclaw gateway install --force --json")).toBeLessThan(
-      script.indexOf("NOVA_SYSTEMD_UNIT=openclaw-gateway.service"),
+    expect(script.indexOf("nova gateway install --force --json")).toBeLessThan(
+      script.indexOf("NOVA_SYSTEMD_UNIT=nova-gateway.service"),
     );
   });
 

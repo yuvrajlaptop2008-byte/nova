@@ -1,7 +1,7 @@
 // Gmi plugin module implements models behavior.
-import { buildManifestModelProviderConfig } from "openclaw/plugin-sdk/provider-catalog-shared";
-import type { ModelDefinitionConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
+import { buildManifestModelProviderConfig } from "nova/plugin-sdk/provider-catalog-shared";
+import type { ModelDefinitionConfig } from "nova/plugin-sdk/provider-model-shared";
+import manifest from "./nova.plugin.json" with { type: "json" };
 
 const GMI_MANIFEST_PROVIDER = buildManifestModelProviderConfig({
   providerId: "gmi",

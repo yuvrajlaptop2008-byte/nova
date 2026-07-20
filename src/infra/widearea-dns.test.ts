@@ -13,7 +13,7 @@ import {
 } from "./widearea-dns.js";
 
 const baseZoneOpts: WideAreaGatewayZoneOpts = {
-  domain: "openclaw.internal.",
+  domain: "nova.internal.",
   gatewayPort: 18789,
   displayName: "Mac Studio (Nova)",
   tailnetIPv4: "100.123.224.76",
@@ -45,9 +45,9 @@ afterEach(() => {
 
 describe("wide-area DNS discovery domain helpers", () => {
   it.each([
-    { value: "openclaw.internal", expected: "openclaw.internal." },
-    { value: "openclaw.internal.", expected: "openclaw.internal." },
-    { value: "  openclaw.internal  ", expected: "openclaw.internal." },
+    { value: "nova.internal", expected: "nova.internal." },
+    { value: "nova.internal.", expected: "nova.internal." },
+    { value: "  nova.internal  ", expected: "nova.internal." },
     { value: "", expected: null },
     { value: "   ", expected: null },
     { value: null, expected: null },
@@ -56,7 +56,7 @@ describe("wide-area DNS discovery domain helpers", () => {
     expect(normalizeWideAreaDomain(value)).toBe(expected);
   });
 
-  it.each(["../../x", "foo/bar", "foo\\bar", "evil\nrecords", "openclaw..internal"])(
+  it.each(["../../x", "foo/bar", "foo\\bar", "evil\nrecords", "nova..internal"])(
     "rejects invalid domains for %j",
     (value) => {
       expect(() => normalizeWideAreaDomain(value)).toThrow(
@@ -110,10 +110,10 @@ describe("wide-area DNS discovery domain helpers", () => {
 
   it("builds valid zone paths under the DNS config directory", () => {
     const dnsDir = path.resolve(utils.CONFIG_DIR, "dns");
-    const zonePath = getWideAreaZonePath("openclaw.internal.");
+    const zonePath = getWideAreaZonePath("nova.internal.");
 
-    expect(zonePath).toBe(path.join(dnsDir, "openclaw.internal.db"));
-    expect(path.relative(dnsDir, zonePath)).toBe("openclaw.internal.db");
+    expect(zonePath).toBe(path.join(dnsDir, "nova.internal.db"));
+    expect(path.relative(dnsDir, zonePath)).toBe("nova.internal.db");
   });
 });
 
@@ -122,19 +122,19 @@ describe("wide-area DNS-SD zone rendering", () => {
     const txt = renderZoneText({
       tailnetIPv6: "fd7a:115c:a1e0::8801:e04c",
       sshPort: 22,
-      cliPath: "/opt/homebrew/bin/openclaw",
+      cliPath: "/opt/homebrew/bin/nova",
     });
 
     expectZoneRecords(txt, [
-      `$ORIGIN openclaw.internal.`,
+      `$ORIGIN nova.internal.`,
       `studio-london IN A 100.123.224.76`,
       `studio-london IN AAAA fd7a:115c:a1e0::8801:e04c`,
-      `_openclaw-gw._tcp IN PTR studio-london._openclaw-gw._tcp`,
-      `studio-london._openclaw-gw._tcp IN SRV 0 0 18789 studio-london`,
+      `_nova-gw._tcp IN PTR studio-london._nova-gw._tcp`,
+      `studio-london._nova-gw._tcp IN SRV 0 0 18789 studio-london`,
       `displayName=Mac Studio (Nova)`,
       `gatewayPort=18789`,
       `sshPort=22`,
-      `cliPath=/opt/homebrew/bin/openclaw`,
+      `cliPath=/opt/homebrew/bin/nova`,
     ]);
   });
 
@@ -147,7 +147,7 @@ describe("wide-area DNS-SD zone rendering", () => {
     {
       name: "includes gateway TLS TXT fields and trims display metadata",
       overrides: {
-        domain: "openclaw.internal",
+        domain: "nova.internal",
         displayName: "  Mac Studio (Nova)  ",
         hostLabel: " Studio London ",
         instanceLabel: " Studio London ",
@@ -155,18 +155,18 @@ describe("wide-area DNS-SD zone rendering", () => {
         gatewayTlsFingerprintSha256: "abc123",
         gatewayDirectReachable: true,
         tailnetDns: " tailnet.ts.net ",
-        cliPath: " /opt/homebrew/bin/openclaw ",
+        cliPath: " /opt/homebrew/bin/nova ",
       },
       records: [
-        `$ORIGIN openclaw.internal.`,
+        `$ORIGIN nova.internal.`,
         `studio-london IN A 100.123.224.76`,
-        `studio-london._openclaw-gw._tcp IN TXT`,
+        `studio-london._nova-gw._tcp IN TXT`,
         `displayName=Mac Studio (Nova)`,
         `gatewayTls=1`,
         `gatewayTlsSha256=abc123`,
         `gatewayDirectReachable=1`,
         `tailnetDns=tailnet.ts.net`,
-        `cliPath=/opt/homebrew/bin/openclaw`,
+        `cliPath=/opt/homebrew/bin/nova`,
       ],
     },
   ])("$name", ({ overrides, records }) => {
@@ -181,7 +181,7 @@ describe("wide-area DNS zone writes", () => {
     );
   });
 
-  it.each(["../../x", "foo/bar", "foo\\bar", "evil\nrecords", "openclaw..internal"])(
+  it.each(["../../x", "foo/bar", "foo\\bar", "evil\nrecords", "nova..internal"])(
     "rejects invalid domain %j before writing",
     async (domain) => {
       const ensureDirSpy = vi.spyOn(utils, "ensureDir").mockResolvedValue(undefined);
@@ -205,7 +205,7 @@ describe("wide-area DNS zone writes", () => {
     const result = await writeWideAreaGatewayZone(makeZoneOpts());
 
     expect(result).toEqual({
-      zonePath: getWideAreaZonePath("openclaw.internal."),
+      zonePath: getWideAreaZonePath("nova.internal."),
       changed: false,
     });
     expect(writeSpy).not.toHaveBeenCalled();
@@ -225,7 +225,7 @@ describe("wide-area DNS zone writes", () => {
     );
 
     expect(result).toEqual({
-      zonePath: getWideAreaZonePath("openclaw.internal."),
+      zonePath: getWideAreaZonePath("nova.internal."),
       changed: true,
     });
     const expectedZoneText = renderWideAreaGatewayZoneText({
@@ -233,7 +233,7 @@ describe("wide-area DNS zone writes", () => {
       serial: 2026031305,
     });
     expect(writeSpy).toHaveBeenCalledWith(
-      getWideAreaZonePath("openclaw.internal."),
+      getWideAreaZonePath("nova.internal."),
       expectedZoneText,
       "utf-8",
     );

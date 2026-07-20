@@ -5,14 +5,14 @@
 import {
   assertOkOrThrowProviderError,
   readProviderJsonResponse,
-} from "openclaw/plugin-sdk/provider-http";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import type { SpeechVoiceOption } from "openclaw/plugin-sdk/speech-core";
-import { trimToUndefined } from "openclaw/plugin-sdk/speech-core";
+} from "nova/plugin-sdk/provider-http";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import type { SpeechVoiceOption } from "nova/plugin-sdk/speech-core";
+import { trimToUndefined } from "nova/plugin-sdk/speech-core";
 import {
   fetchWithSsrFGuard,
   ssrfPolicyFromHttpBaseUrlAllowedHostname,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/ssrf-runtime";
 
 /** Default Azure Speech neural voice. */
 export const DEFAULT_AZURE_SPEECH_VOICE = "en-US-JennyNeural";

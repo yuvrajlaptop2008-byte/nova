@@ -4,13 +4,13 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HEARTBEAT_TRANSCRIPT_PROMPT } from "../auto-reply/heartbeat.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import {
   resolveStorePath,
   resolveSessionTranscriptsDirForAgent,
 } from "../config/sessions/paths.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { captureEnv, deleteTestEnvValue, setTestEnvValue } from "../test-utils/env.js";
 import {
   clearTuiLastSessionPointers,
@@ -42,7 +42,7 @@ vi.mock("../channels/plugins/persisted-auth-state.js", () => ({
 
 const noteMock = vi.fn();
 
-function setupSessionState(cfg: OpenClawConfig, env: NodeJS.ProcessEnv, homeDir: string) {
+function setupSessionState(cfg: NovaConfig, env: NodeJS.ProcessEnv, homeDir: string) {
   const agentId = "main";
   const sessionsDir = resolveSessionTranscriptsDirForAgent(agentId, env, () => homeDir);
   const storePath = resolveStorePath(cfg.session?.store, { agentId });
@@ -94,7 +94,7 @@ function hasRepairPromptMessage(
   return repairPromptCalls(confirmRuntimeRepair).some((prompt) => prompt.message?.includes(text));
 }
 
-async function runStateIntegrity(cfg: OpenClawConfig) {
+async function runStateIntegrity(cfg: NovaConfig) {
   setupSessionState(cfg, process.env, process.env.HOME ?? "");
   const confirmRuntimeRepair = vi.fn(async () => false);
   await noteStateIntegrity(cfg, { confirmRuntimeRepair, note: noteMock });
@@ -102,7 +102,7 @@ async function runStateIntegrity(cfg: OpenClawConfig) {
 }
 
 function writeSessionStore(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   sessions: Record<string, { sessionId: string; updatedAt: number } & Record<string, unknown>>,
 ) {
   setupSessionState(cfg, process.env, process.env.HOME ?? "");
@@ -110,7 +110,7 @@ function writeSessionStore(
   fs.writeFileSync(storePath, JSON.stringify(sessions, null, 2));
 }
 
-async function runStateIntegrityText(cfg: OpenClawConfig): Promise<string> {
+async function runStateIntegrityText(cfg: NovaConfig): Promise<string> {
   await noteStateIntegrity(cfg, { confirmRuntimeRepair: vi.fn(async () => false), note: noteMock });
   return stateIntegrityText();
 }
@@ -121,14 +121,14 @@ describe("structured state integrity findings", () => {
 
   beforeEach(() => {
     envSnapshot = captureEnv(["HOME", "NOVA_HOME", "NOVA_STATE_DIR"]);
-    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-doctor-state-integrity-"));
+    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "nova-doctor-state-integrity-"));
     setTestEnvValue("HOME", tempHome);
     setTestEnvValue("NOVA_HOME", tempHome);
-    setTestEnvValue("NOVA_STATE_DIR", path.join(tempHome, ".openclaw"));
+    setTestEnvValue("NOVA_STATE_DIR", path.join(tempHome, ".nova"));
   });
 
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     envSnapshot.restore();
     fs.rmSync(tempHome, { recursive: true, force: true });
   });
@@ -143,18 +143,18 @@ describe("structured state integrity findings", () => {
 
     expect(issue).toEqual({
       kind: "missing-state-dir",
-      path: path.join(tempHome, ".openclaw"),
+      path: path.join(tempHome, ".nova"),
     });
     expect(stateIntegrityIssueToHealthFinding(issue)).toMatchObject({
       checkId: "core/doctor/state-integrity",
       severity: "error",
-      path: path.join(tempHome, ".openclaw"),
-      fixHint: "Run `openclaw doctor --fix` to create the state directory.",
+      path: path.join(tempHome, ".nova"),
+      fixHint: "Run `nova doctor --fix` to create the state directory.",
     });
     expect(stateIntegrityIssueToRepairEffect(issue)).toEqual({
       kind: "state",
       action: "would-create-state-dir",
-      target: path.join(tempHome, ".openclaw"),
+      target: path.join(tempHome, ".nova"),
       dryRunSafe: false,
     });
   });
@@ -163,8 +163,8 @@ describe("structured state integrity findings", () => {
     if (process.platform === "win32") {
       return;
     }
-    const stateDir = path.join(tempHome, ".openclaw");
-    const configPath = path.join(tempHome, "openclaw.json");
+    const stateDir = path.join(tempHome, ".nova");
+    const configPath = path.join(tempHome, "nova.json");
     fs.mkdirSync(stateDir, { recursive: true, mode: 0o755 });
     fs.chmodSync(stateDir, 0o755);
     fs.writeFileSync(configPath, "{}\n", { mode: 0o644 });
@@ -196,8 +196,8 @@ describe("structured state integrity findings", () => {
     if (process.platform === "win32") {
       return;
     }
-    const stateDir = path.join(tempHome, ".openclaw");
-    const configPath = path.join(tempHome, "openclaw.json");
+    const stateDir = path.join(tempHome, ".nova");
+    const configPath = path.join(tempHome, "nova.json");
     fs.writeFileSync(configPath, "{}\n", { mode: 0o644 });
     fs.chmodSync(configPath, 0o644);
 
@@ -234,7 +234,7 @@ describe("structured state integrity findings", () => {
 });
 
 async function runOrphanTranscriptCheckWithQmdSessions(enabled: boolean, homeDir: string) {
-  const cfg: OpenClawConfig = {
+  const cfg: NovaConfig = {
     agents: {
       defaults: {
         memorySearch: { rememberAcrossConversations: false },
@@ -267,8 +267,8 @@ describe("doctor state integrity oauth dir checks", () => {
       "NOVA_OAUTH_DIR",
       "NOVA_AGENT_DIR",
     ]);
-    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-doctor-state-integrity-"));
-    const stateDir = path.join(tempHome, ".openclaw");
+    tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "nova-doctor-state-integrity-"));
+    const stateDir = path.join(tempHome, ".nova");
     setTestEnvValue("HOME", tempHome);
     setTestEnvValue("NOVA_HOME", tempHome);
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
@@ -279,13 +279,13 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     envSnapshot.restore();
     fs.rmSync(tempHome, { recursive: true, force: true });
   });
 
   it("does not prompt for oauth dir when no whatsapp/pairing config is active", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const confirmRuntimeRepair = await runStateIntegrity(cfg);
     expect(hasRepairPromptMessage(confirmRuntimeRepair, "Create OAuth dir at")).toBe(false);
     const text = stateIntegrityText();
@@ -294,7 +294,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("does not prompt for oauth dir when whatsapp is configured without persisted auth state", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         whatsapp: {},
       },
@@ -306,7 +306,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("prompts for oauth dir when a channel dmPolicy is pairing", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         telegram: {
           dmPolicy: "pairing",
@@ -319,7 +319,7 @@ describe("doctor state integrity oauth dir checks", () => {
 
   it("prompts for oauth dir when NOVA_OAUTH_DIR is explicitly configured", async () => {
     process.env.NOVA_OAUTH_DIR = path.join(tempHome, ".oauth");
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const confirmRuntimeRepair = await runStateIntegrity(cfg);
     expect(hasRepairPromptMessage(confirmRuntimeRepair, "Create OAuth dir at")).toBe(true);
     expect(stateIntegrityText()).toContain("CRITICAL: OAuth dir missing");
@@ -397,7 +397,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("warns about tombstoned subagent restart recovery sessions", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     writeSessionStore(cfg, {
       "agent:main:subagent:wedged-child": {
         sessionId: "session-wedged-child",
@@ -419,14 +419,14 @@ describe("doctor state integrity oauth dir checks", () => {
     const text = stateIntegrityText();
     expect(text).toContain("automatic restart recovery tombstoned");
     expect(text).toContain("agent:main:subagent:wedged-child");
-    expect(text).toContain("openclaw tasks maintenance --apply");
+    expect(text).toContain("nova tasks maintenance --apply");
     expect(hasRepairPromptMessage(confirmRuntimeRepair, "Clear stale aborted recovery flags")).toBe(
       true,
     );
   });
 
   it("clears stale aborted recovery flags for tombstoned subagent sessions when approved", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     const sessionKey = "agent:main:subagent:wedged-child";
     writeSessionStore(cfg, {
       [sessionKey]: {
@@ -520,7 +520,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("detects orphan transcripts and offers archival remediation", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     setupSessionState(cfg, process.env, process.env.HOME ?? "");
     const sessionsDir = resolveSessionTranscriptsDirForAgent("main", process.env, () => tempHome);
     fs.writeFileSync(path.join(sessionsDir, "orphan-session.jsonl"), '{"type":"session"}\n');
@@ -544,7 +544,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("does not auto-archive orphan transcripts from non-interactive repair mode", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     setupSessionState(cfg, process.env, process.env.HOME ?? "");
     const sessionsDir = resolveSessionTranscriptsDirForAgent("main", process.env, () => tempHome);
     fs.writeFileSync(path.join(sessionsDir, "orphan-session.jsonl"), '{"type":"session"}\n');
@@ -569,7 +569,7 @@ describe("doctor state integrity oauth dir checks", () => {
   it.skipIf(process.platform === "win32")(
     "does not archive referenced transcripts when the state dir path resolves through a symlink",
     async () => {
-      const cfg: OpenClawConfig = {};
+      const cfg: NovaConfig = {};
       const originalHome = tempHome;
       const symlinkHome = path.join(
         path.dirname(originalHome),
@@ -577,7 +577,7 @@ describe("doctor state integrity oauth dir checks", () => {
       );
       fs.symlinkSync(originalHome, symlinkHome, "dir");
       try {
-        const symlinkStateDir = path.join(symlinkHome, ".openclaw");
+        const symlinkStateDir = path.join(symlinkHome, ".nova");
         setTestEnvValue("HOME", symlinkHome);
         setTestEnvValue("NOVA_HOME", symlinkHome);
         setTestEnvValue("NOVA_STATE_DIR", symlinkStateDir);
@@ -631,8 +631,8 @@ describe("doctor state integrity oauth dir checks", () => {
     expect(confirmRuntimeRepair).toHaveBeenCalled();
   });
 
-  it("prints openclaw-only verification hints when recent sessions are missing transcripts", async () => {
-    const cfg: OpenClawConfig = {};
+  it("prints nova-only verification hints when recent sessions are missing transcripts", async () => {
+    const cfg: NovaConfig = {};
     writeSessionStore(cfg, {
       "agent:main:main": {
         sessionId: "missing-transcript",
@@ -641,22 +641,22 @@ describe("doctor state integrity oauth dir checks", () => {
     });
     const text = await runStateIntegrityText(cfg);
     expect(text).toContain("recent sessions are missing transcripts");
-    expect(text).toMatch(/openclaw sessions --store ".*sessions\.json"/);
+    expect(text).toMatch(/nova sessions --store ".*sessions\.json"/);
     expect(text).toMatch(
-      /openclaw sessions cleanup --store ".*sessions\.json" --dry-run --fix-missing/,
+      /nova sessions cleanup --store ".*sessions\.json" --dry-run --fix-missing/,
     );
     expect(text).not.toMatch(
-      /openclaw sessions cleanup --store ".*sessions\.json" --dry-run(?! --fix-missing)/,
+      /nova sessions cleanup --store ".*sessions\.json" --dry-run(?! --fix-missing)/,
     );
     expect(text).toMatch(
-      /openclaw sessions cleanup --store ".*sessions\.json" --enforce --fix-missing/,
+      /nova sessions cleanup --store ".*sessions\.json" --enforce --fix-missing/,
     );
     expect(text).not.toContain("--active");
     expect(text).not.toContain(" ls ");
   });
 
   it("moves a heartbeat-poisoned main session and clears stale TUI restore pointers", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     setupSessionState(cfg, process.env, tempHome);
     const sessionsDir = resolveSessionTranscriptsDirForAgent("main", process.env, () => tempHome);
     fs.writeFileSync(
@@ -710,7 +710,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("does not move a mixed main transcript that has real user activity", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     setupSessionState(cfg, process.env, tempHome);
     const sessionsDir = resolveSessionTranscriptsDirForAgent("main", process.env, () => tempHome);
     fs.writeFileSync(
@@ -742,7 +742,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("repairs a multi-chunk heartbeat transcript without loading it via readFileSync", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     setupSessionState(cfg, process.env, tempHome);
     const sessionsDir = resolveSessionTranscriptsDirForAgent("main", process.env, () => tempHome);
     const transcriptPath = path.join(sessionsDir, "large-heartbeat-session.jsonl");
@@ -793,7 +793,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("declines repair when a single JSONL record exceeds the scanner record cap", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     setupSessionState(cfg, process.env, tempHome);
     const sessionsDir = resolveSessionTranscriptsDirForAgent("main", process.env, () => tempHome);
     const transcriptPath = path.join(sessionsDir, "oversized-record-session.jsonl");
@@ -869,7 +869,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("does not let synthetic heartbeat metadata override mixed transcript history", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-heartbeat-main-mixed-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-heartbeat-main-mixed-"));
     try {
       const transcriptPath = path.join(tempDir, "session.jsonl");
       fs.writeFileSync(
@@ -892,7 +892,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("does not let heartbeat-looking routing metadata skip mixed transcript checks", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-heartbeat-main-route-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-heartbeat-main-route-"));
     try {
       const transcriptPath = path.join(tempDir, "session.jsonl");
       fs.writeFileSync(
@@ -917,7 +917,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("does not classify transcripts with real user activity after 400 heartbeat messages", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-heartbeat-main-cap-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-heartbeat-main-cap-"));
     try {
       const transcriptPath = path.join(tempDir, "session.jsonl");
       const heartbeatMessages = Array.from({ length: 400 }, () =>
@@ -939,7 +939,7 @@ describe("doctor state integrity oauth dir checks", () => {
   });
 
   it("keeps the heartbeat main-session helper conservative", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-heartbeat-main-helper-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-heartbeat-main-helper-"));
     try {
       const transcriptPath = path.join(tempDir, "session.jsonl");
       fs.writeFileSync(
@@ -977,7 +977,7 @@ describe("doctor state integrity oauth dir checks", () => {
       "main-session",
     );
 
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-tui-pointer-clear-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-tui-pointer-clear-"));
     try {
       await writeTuiLastSessionKey({
         scopeKey: "terminal",
@@ -1002,13 +1002,13 @@ describe("doctor state integrity oauth dir checks", () => {
         readTuiLastSessionKey({ scopeKey: "telegram", stateDir: tempDir }),
       ).resolves.toBe("agent:main:telegram:thread");
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
   });
 
   it("ignores slash-routing sessions for recent missing transcript warnings", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
     writeSessionStore(cfg, {
       "agent:main:telegram:slash:6790081233": {
         sessionId: "missing-slash-transcript",

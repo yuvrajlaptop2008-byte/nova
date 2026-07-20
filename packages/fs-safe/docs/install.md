@@ -33,7 +33,7 @@ node --version
 
 ## TypeScript
 
-Types ship with the package — no `@types/openclaw__fs-safe` needed. The `exports` map in `package.json` provides typed entries for every subpath:
+Types ship with the package — no `@types/nova__fs-safe` needed. The `exports` map in `package.json` provides typed entries for every subpath:
 
 ```ts
 import { root, FsSafeError } from "@nova/fs-safe";
@@ -109,9 +109,9 @@ FS_SAFE_PYTHON_MODE=off      # auto | off | require
 FS_SAFE_PYTHON=/usr/bin/python3
 ```
 
-OpenClaw compatibility aliases are also accepted:
-`OPENCLAW_FS_SAFE_PYTHON_MODE`, `OPENCLAW_FS_SAFE_PYTHON`,
-`OPENCLAW_PINNED_PYTHON`, and `OPENCLAW_PINNED_WRITE_PYTHON`.
+Nova compatibility aliases are also accepted:
+`NOVA_FS_SAFE_PYTHON_MODE`, `NOVA_FS_SAFE_PYTHON`,
+`NOVA_PINNED_PYTHON`, and `NOVA_PINNED_WRITE_PYTHON`.
 
 Disabling Python keeps the public API working, but downgrades POSIX mutation
 hardening from fd-relative syscalls to Node path operations guarded by lexical

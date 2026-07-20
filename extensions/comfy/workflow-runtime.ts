@@ -1,40 +1,37 @@
 // Comfy plugin module implements workflow runtime behavior.
 import fs from "node:fs/promises";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { canResolveEnvSecretRefInReadOnlyPath } from "openclaw/plugin-sdk/extension-shared";
-import { extensionForMime } from "openclaw/plugin-sdk/media-mime";
-import { resolvePositiveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import {
-  isProviderApiKeyConfigured,
-  type AuthProfileStore,
-} from "openclaw/plugin-sdk/provider-auth";
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/provider-auth-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { canResolveEnvSecretRefInReadOnlyPath } from "nova/plugin-sdk/extension-shared";
+import { extensionForMime } from "nova/plugin-sdk/media-mime";
+import { resolvePositiveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import { isProviderApiKeyConfigured, type AuthProfileStore } from "nova/plugin-sdk/provider-auth";
+import { resolveApiKeyForProvider } from "nova/plugin-sdk/provider-auth-runtime";
 import {
   assertOkOrThrowHttpError,
   normalizeBaseUrl,
   readProviderJsonResponse,
   resolveProviderHttpRequestConfig,
-} from "openclaw/plugin-sdk/provider-http";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
+} from "nova/plugin-sdk/provider-http";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
 import {
   normalizeSecretInputString,
   resolveSecretInputString,
-} from "openclaw/plugin-sdk/secret-input-runtime";
+} from "nova/plugin-sdk/secret-input-runtime";
 import {
   fetchWithSsrFGuard,
   isPrivateOrLoopbackHost,
   mergeSsrFPolicies,
   ssrfPolicyFromHttpBaseUrlAllowedOrigin,
   type SsrFPolicy,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/ssrf-runtime";
 import {
   asBoolean,
   isRecord,
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
   uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolveUserPath } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
+import { resolveUserPath } from "nova/plugin-sdk/text-utility-runtime";
 
 const DEFAULT_COMFY_LOCAL_BASE_URL = "http://127.0.0.1:8188";
 const DEFAULT_COMFY_CLOUD_BASE_URL = "https://cloud.comfy.org";
@@ -119,14 +116,14 @@ function setComfyFetchGuardForTesting(impl: typeof fetchWithSsrFGuard | null): v
 }
 
 if (process.env.VITEST === "true") {
-  Reflect.set(globalThis, Symbol.for("openclaw.comfyTestApi"), {
+  Reflect.set(globalThis, Symbol.for("nova.comfyTestApi"), {
     getConfig: getComfyConfig,
     setFetchGuard: setComfyFetchGuardForTesting,
   });
 }
 
 function resolveComfyGeneratedOutputMaxBytes(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   capability: ComfyCapability;
 }): number {
   const configured = params.cfg.agents?.defaults?.mediaMaxMb;
@@ -147,7 +144,7 @@ function readConfigInteger(config: ComfyProviderConfig, key: string): number | u
   return typeof value === "number" && Number.isInteger(value) && value > 0 ? value : undefined;
 }
 
-function getComfyConfig(cfg?: OpenClawConfig): ComfyProviderConfig {
+function getComfyConfig(cfg?: NovaConfig): ComfyProviderConfig {
   const pluginConfig = cfg?.plugins?.entries?.comfy?.config;
   if (isRecord(pluginConfig)) {
     return pluginConfig;
@@ -180,10 +177,7 @@ function resolveComfyMode(config: ComfyProviderConfig): ComfyMode {
   return normalizeOptionalString(config.mode) === "cloud" ? "cloud" : "local";
 }
 
-function resolveComfyApiKey(
-  config: ComfyProviderConfig,
-  cfg?: OpenClawConfig,
-): ComfyApiKeyResolution {
+function resolveComfyApiKey(config: ComfyProviderConfig, cfg?: NovaConfig): ComfyApiKeyResolution {
   const resolved = resolveSecretInputString({
     value: config.apiKey,
     path: "plugins.entries.comfy.config.apiKey",
@@ -625,7 +619,7 @@ async function downloadOutputFile(params: {
 }
 
 export function isComfyCapabilityConfigured(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
   capability: ComfyCapability;
 }): boolean {
@@ -656,7 +650,7 @@ export function isComfyCapabilityConfigured(params: {
 }
 
 export async function runComfyWorkflow(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir?: string;
   authStore?: AuthProfileStore;
   prompt: string;

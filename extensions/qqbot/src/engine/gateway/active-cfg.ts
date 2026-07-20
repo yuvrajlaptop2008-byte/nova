@@ -10,17 +10,17 @@
  * Issue #69546.
  */
 
-import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
+import type { NovaConfig } from "nova/plugin-sdk/core";
+import { getRuntimeConfig } from "nova/plugin-sdk/runtime-config-snapshot";
 
-type GatewayCfgLoader = () => OpenClawConfig;
+type GatewayCfgLoader = () => NovaConfig;
 
 interface ActiveCfgProvider {
-  getActiveCfg(): OpenClawConfig;
+  getActiveCfg(): NovaConfig;
 }
 
 interface ActiveCfgProviderOptions {
-  fallback: OpenClawConfig;
+  fallback: NovaConfig;
   load?: GatewayCfgLoader;
 }
 
@@ -28,13 +28,13 @@ export function createActiveCfgProvider(options: ActiveCfgProviderOptions): Acti
   const loader = options.load ?? defaultGatewayCfgLoader;
   const fallback = options.fallback;
   return {
-    getActiveCfg(): OpenClawConfig {
+    getActiveCfg(): NovaConfig {
       return resolveActiveCfg(loader, fallback);
     },
   };
 }
 
-function resolveActiveCfg(loader: GatewayCfgLoader, fallback: OpenClawConfig): OpenClawConfig {
+function resolveActiveCfg(loader: GatewayCfgLoader, fallback: NovaConfig): NovaConfig {
   try {
     return loader();
   } catch {
@@ -42,6 +42,6 @@ function resolveActiveCfg(loader: GatewayCfgLoader, fallback: OpenClawConfig): O
   }
 }
 
-function defaultGatewayCfgLoader(): OpenClawConfig {
+function defaultGatewayCfgLoader(): NovaConfig {
   return getRuntimeConfig();
 }

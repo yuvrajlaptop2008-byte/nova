@@ -2,16 +2,13 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { captureEnv } from "openclaw/plugin-sdk/test-env";
-import { mockPinnedHostnameResolution } from "openclaw/plugin-sdk/test-env";
-import {
-  createGrayscaleAlphaPngBuffer,
-  createSolidPngBuffer,
-} from "openclaw/plugin-sdk/test-fixtures";
-import { withMockedWindowsPlatform, withRestoredMocks } from "openclaw/plugin-sdk/test-node-mocks";
-import { optimizeImageToPng } from "openclaw/plugin-sdk/web-media";
+import { resolveStateDir } from "nova/plugin-sdk/state-paths";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
+import { captureEnv } from "nova/plugin-sdk/test-env";
+import { mockPinnedHostnameResolution } from "nova/plugin-sdk/test-env";
+import { createGrayscaleAlphaPngBuffer, createSolidPngBuffer } from "nova/plugin-sdk/test-fixtures";
+import { withMockedWindowsPlatform, withRestoredMocks } from "nova/plugin-sdk/test-node-mocks";
+import { optimizeImageToPng } from "nova/plugin-sdk/web-media";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import {
   LocalMediaAccessError,
@@ -59,9 +56,7 @@ async function expectLocalMediaAccessCode(promise: Promise<unknown>, code: strin
 }
 
 beforeAll(async () => {
-  fixtureRoot = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-media-test-"),
-  );
+  fixtureRoot = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-media-test-"));
   largeJpegBuffer = await fs.readFile("docs/assets/showcase/roof-camera-sky.jpg");
   largeJpegFile = await writeTempFile(largeJpegBuffer, ".jpg");
   tinyPngBuffer = createSolidPngBuffer(10, 10, { r: 0, g: 255, b: 0 });
@@ -102,7 +97,7 @@ describe("web media loading", () => {
       path.parse(os.tmpdir()).root,
       "var",
       "lib",
-      "openclaw-media-state-test",
+      "nova-media-state-test",
     );
   });
 
@@ -314,7 +309,7 @@ describe("local media root guard", () => {
 
   it("allows local paths under an explicit root", async () => {
     const result = await loadWebMedia(tinyPngFile, 1024 * 1024, {
-      localRoots: [resolvePreferredOpenClawTmpDir()],
+      localRoots: [resolvePreferredNovaTmpDir()],
     });
     expect(result.kind).toBe("image");
   });
@@ -325,7 +320,7 @@ describe("local media root guard", () => {
     try {
       await expectLocalMediaAccessCode(
         loadWebMedia("file://attacker/share/evil.png", 1024 * 1024, {
-          localRoots: [resolvePreferredOpenClawTmpDir()],
+          localRoots: [resolvePreferredNovaTmpDir()],
         }),
         "invalid-file-url",
       );
@@ -340,9 +335,9 @@ describe("local media root guard", () => {
     const actualStat = await fs.stat(tinyPngFile);
     const zeroDev = typeof actualLstat.dev === "bigint" ? 0n : 0;
     // Resolve before mocking platform: under `win32` the helper returns the
-    // os.tmpdir() fallback rather than the POSIX `/tmp/openclaw` root that
+    // os.tmpdir() fallback rather than the POSIX `/tmp/nova` root that
     // actually holds `tinyPngFile` on this Linux test runner (#60713).
-    const realTmpRoot = resolvePreferredOpenClawTmpDir();
+    const realTmpRoot = resolvePreferredNovaTmpDir();
 
     await withMockedWindowsPlatform(async () => {
       const lstatSpy = vi
@@ -361,7 +356,7 @@ describe("local media root guard", () => {
   });
 
   it("rejects Windows network paths before filesystem checks", async () => {
-    const realTmpRoot = resolvePreferredOpenClawTmpDir();
+    const realTmpRoot = resolvePreferredNovaTmpDir();
 
     await withMockedWindowsPlatform(async () => {
       const realpathSpy = vi.spyOn(fs, "realpath");

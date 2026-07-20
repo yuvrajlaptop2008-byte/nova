@@ -18,7 +18,7 @@ function writeMigratedSessionState(stateDir: string): void {
   mkdirSync(agentSessionsDir, { recursive: true });
   mkdirSync(agentDbDir, { recursive: true });
 
-  const db = new DatabaseSync(join(agentDbDir, "openclaw-agent.sqlite"));
+  const db = new DatabaseSync(join(agentDbDir, "nova-agent.sqlite"));
   try {
     db.exec(`
       CREATE TABLE sessions (
@@ -103,7 +103,7 @@ function writeMigratedSessionState(stateDir: string): void {
 }
 
 function assertConfiguredPluginState(params: { installPath?: string } = {}): void {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-upgrade-survivor-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-upgrade-survivor-"));
   try {
     const stateDir = join(root, "state");
     const workspace = join(root, "workspace");
@@ -160,7 +160,7 @@ function createUpdateRunSelfUpgradeSummary() {
   const note = "QA-UPDATE-RUN-PACKAGE-SELF-UPGRADE";
   return {
     status: "passed",
-    source: { spec: `openclaw@${sourceVersion}`, version: sourceVersion },
+    source: { spec: `nova@${sourceVersion}`, version: sourceVersion },
     target: { tag: "latest", resolvedVersion: targetVersion },
     installedVersion: targetVersion,
     expectedRestartNote: note,
@@ -205,7 +205,7 @@ function createUpdateRunSelfUpgradeSummary() {
     },
     supervisorHandoff: {
       servicePid: 4242,
-      systemctlInvocations: ["--user start openclaw-gateway.service"],
+      systemctlInvocations: ["--user start nova-gateway.service"],
       monitorEvents: [
         "source Gateway exited through supervised update handoff",
         "starting installed service without provider suppression",
@@ -233,7 +233,7 @@ function createUpdateRunSelfUpgradeSummary() {
 }
 
 function assertUpdateRunSelfUpgrade(summary: ReturnType<typeof createUpdateRunSelfUpgradeSummary>) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-update-run-self-upgrade-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-update-run-self-upgrade-"));
   try {
     const summaryPath = join(root, "summary.json");
     writeJson(summaryPath, summary);
@@ -256,12 +256,12 @@ describe("upgrade survivor assertions", () => {
     ) as string[];
 
     expect(scenarios).toContain("base");
-    expect(scenarios).toContain("acpx-openclaw-tools-bridge");
+    expect(scenarios).toContain("acpx-nova-tools-bridge");
     expect(new Set(scenarios).size).toBe(scenarios.length);
   });
 
   it("accepts the ACPX Nova tools bridge scenario during seed", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-upgrade-survivor-acpx-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-upgrade-survivor-acpx-"));
     try {
       const stateDir = join(root, "state");
       const workspace = join(root, "workspace");
@@ -273,7 +273,7 @@ describe("upgrade survivor assertions", () => {
           ...process.env,
           NOVA_STATE_DIR: stateDir,
           NOVA_TEST_WORKSPACE_DIR: workspace,
-          NOVA_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
+          NOVA_UPGRADE_SURVIVOR_SCENARIO: "acpx-nova-tools-bridge",
         },
         stdio: "pipe",
       });
@@ -283,9 +283,9 @@ describe("upgrade survivor assertions", () => {
   });
 
   it("asserts the ACPX Nova tools bridge config survived", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-upgrade-survivor-acpx-config-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-upgrade-survivor-acpx-config-"));
     try {
-      const configPath = join(root, "openclaw.json");
+      const configPath = join(root, "nova.json");
       const coveragePath = join(root, "coverage.json");
       writeJson(configPath, {
         plugins: {
@@ -294,14 +294,14 @@ describe("upgrade survivor assertions", () => {
             acpx: {
               enabled: true,
               config: {
-                openClawToolsMcpBridge: true,
+                novaToolsMcpBridge: true,
               },
             },
           },
         },
       });
       writeJson(coveragePath, {
-        acceptedIntents: ["acpx-openclaw-tools-bridge"],
+        acceptedIntents: ["acpx-nova-tools-bridge"],
         skippedIntents: [],
       });
 
@@ -310,7 +310,7 @@ describe("upgrade survivor assertions", () => {
           ...process.env,
           NOVA_CONFIG_PATH: configPath,
           NOVA_UPGRADE_SURVIVOR_CONFIG_COVERAGE_JSON: coveragePath,
-          NOVA_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
+          NOVA_UPGRADE_SURVIVOR_SCENARIO: "acpx-nova-tools-bridge",
         },
         stdio: "pipe",
       });
@@ -324,7 +324,7 @@ describe("upgrade survivor assertions", () => {
   });
 
   it("rejects ClawHub npm-pack installs outside the managed extensions root", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-upgrade-survivor-outside-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-upgrade-survivor-outside-"));
     try {
       expect(() =>
         assertConfiguredPluginState({ installPath: join(root, "outside-matrix") }),
@@ -384,7 +384,7 @@ describe("upgrade survivor assertions", () => {
   it("rejects duplicate target service starts during the supervised handoff", () => {
     const summary = createUpdateRunSelfUpgradeSummary();
     summary.supervisorHandoff.systemctlInvocations.push(
-      "--user --quiet start openclaw-gateway.service",
+      "--user --quiet start nova-gateway.service",
     );
 
     expect(() => assertUpdateRunSelfUpgrade(summary)).toThrow(/target exactly once/);

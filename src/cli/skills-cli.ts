@@ -231,7 +231,7 @@ function buildSkillVerificationOutput(
   const verifiedSourceUrl = readVerifiedClawHubSkillSourceUrl(result.provenance);
   return {
     ...result,
-    openclaw: {
+    nova: {
       resolution: {
         source: target.resolution.source,
         selector: target.resolution.selector,
@@ -411,7 +411,7 @@ export function registerSkillsCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/skills", "docs.openclaw.ai/cli/skills")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/skills", "docs.nova.ai/cli/skills")}\n`,
     );
 
   skills
@@ -471,7 +471,7 @@ export function registerSkillsCli(program: Command) {
     .option("--global", "Install into the shared managed skills directory", false)
     .option("--agent <id>", "Target agent workspace (defaults to cwd-inferred, then default agent)")
     .option("--as <slug>", "Install a git/local skill under this slug")
-    .addHelpText("after", "\nExamples:\n  openclaw skills install @owner/weather\n")
+    .addHelpText("after", "\nExamples:\n  nova skills install @owner/weather\n")
     .action(
       async (
         slug: string,
@@ -659,7 +659,7 @@ export function registerSkillsCli(program: Command) {
       false,
     )
     .option("--agent <id>", "Target agent workspace (defaults to cwd-inferred, then default agent)")
-    .addHelpText("after", "\nExamples:\n  openclaw skills verify @owner/weather\n")
+    .addHelpText("after", "\nExamples:\n  nova skills verify @owner/weather\n")
     .action(
       async (
         slug: string,

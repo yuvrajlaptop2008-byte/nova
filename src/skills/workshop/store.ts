@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 import { resolveStateDir } from "../../config/paths.js";
 import { sha256Hex } from "../../infra/crypto-digest.js";
 import { type FileLockOptions, withFileLock } from "../../infra/file-lock.js";

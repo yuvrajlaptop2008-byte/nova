@@ -71,7 +71,7 @@ const OPENAI_RESPONSES_APIS = new Set([
   "openai-responses",
   "azure-openai-responses",
   "openai-chatgpt-responses",
-  "openclaw-openai-responses-transport",
+  "nova-openai-responses-transport",
 ]);
 const OPENAI_RESPONSES_PROVIDERS = new Set(["openai", "azure-openai", "azure-openai-responses"]);
 const LOCAL_ENDPOINT_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
@@ -253,12 +253,12 @@ function resolveOpenAIResponsesPayloadCapabilities(
   return {
     allowsOpenAIServiceTier:
       (provider === "openai" &&
-        (api === "openai-responses" || api === "openclaw-openai-responses-transport") &&
+        (api === "openai-responses" || api === "nova-openai-responses-transport") &&
         endpointClass === "openai-public") ||
       (isOpenAIProvider &&
         (api === "openai-chatgpt-responses" ||
           api === "openai-responses" ||
-          api === "openclaw-openai-responses-transport") &&
+          api === "nova-openai-responses-transport") &&
         endpointClass === "openai"),
     allowsResponsesStore:
       supportsResponsesStoreField &&

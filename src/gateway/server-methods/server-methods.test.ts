@@ -13,7 +13,7 @@ import { GATEWAY_CLIENT_IDS } from "../../../packages/gateway-protocol/src/clien
 import { validateExecApprovalRequestParams } from "../../../packages/gateway-protocol/src/index.js";
 import { STREAM_ERROR_FALLBACK_TEXT } from "../../agents/stream-message-shared.js";
 import { HEARTBEAT_PROMPT } from "../../auto-reply/heartbeat.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { registerLegacyContextEngine } from "../../context-engine/legacy.registration.js";
 import {
   clearContextEnginesForOwner,
@@ -698,7 +698,7 @@ describe("augmentChatHistoryWithCanvasBlocks", () => {
       view: {
         backend: "canvas",
         id: "cv_user_text",
-        url: "/__openclaw__/canvas/documents/cv_user_text/index.html",
+        url: "/__nova__/canvas/documents/cv_user_text/index.html",
         title: "User pasted preview",
         preferred_height: 240,
       },
@@ -843,7 +843,7 @@ describe("injectTimestamp", () => {
           userTimezone: "America/New_York",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(injectTimestamp("cache sensitive prompt", timestampOptsFromConfig(cfg))).toBe(
       "cache sensitive prompt",
@@ -944,7 +944,7 @@ describe("sanitizeChatHistoryMessages", () => {
             type: "thinking",
             thinking: "Need a tool.",
             thinkingSignature: "large-provider-payload",
-            openclawReasoningReplay: {
+            novaReasoningReplay: {
               v: 1,
               source: "openai-responses",
               provider: "openai",
@@ -1483,7 +1483,7 @@ describe("projectRecentChatDisplayMessages", () => {
             args: { action: "send", message: "visible via message tool" },
           },
         ],
-        __openclaw: { seq: 1 },
+        __nova: { seq: 1 },
         timestamp: 1,
       },
       {
@@ -1494,7 +1494,7 @@ describe("projectRecentChatDisplayMessages", () => {
           sourceSessionKey: "agent:main:webchat:source",
           sourceTool: "sessions_send",
         },
-        __openclaw: { seq: 2 },
+        __nova: { seq: 2 },
         timestamp: 2,
       },
       {
@@ -1523,7 +1523,7 @@ describe("projectRecentChatDisplayMessages", () => {
             args: { action: "send", message: "visible via message tool" },
           },
         ],
-        __openclaw: { seq: 1 },
+        __nova: { seq: 1 },
         timestamp: 1,
       },
       {
@@ -1535,7 +1535,7 @@ describe("projectRecentChatDisplayMessages", () => {
           sourceSessionKey: "agent:main:webchat:source",
           sourceTool: "sessions_send",
         },
-        __openclaw: { seq: 2 },
+        __nova: { seq: 2 },
         timestamp: 2,
       },
       {
@@ -1548,7 +1548,7 @@ describe("projectRecentChatDisplayMessages", () => {
       {
         role: "assistant",
         content: [{ type: "text", text: "visible via message tool" }],
-        openclawMessageToolMirror: {
+        novaMessageToolMirror: {
           toolName: "message",
           toolCallId: "call-message",
           sourceReplySink: "internal-ui",
@@ -1655,7 +1655,7 @@ describe("projectRecentChatDisplayMessages", () => {
           sourceSessionKey: "agent:main:webchat:source",
           sourceTool: "sessions_send",
         },
-        __openclaw: { turnBoundary: true },
+        __nova: { turnBoundary: true },
         timestamp: 2,
       },
     ]);
@@ -1666,39 +1666,39 @@ describe("projectRecentChatDisplayMessages", () => {
       {
         role: "user",
         content: [{ type: "text", text: HEARTBEAT_PROMPT }],
-        __openclaw: { seq: 1 },
+        __nova: { seq: 1 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "First run started." }],
-        __openclaw: { seq: 2 },
+        __nova: { seq: 2 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "First run finished." }],
-        __openclaw: { seq: 3 },
+        __nova: { seq: 3 },
       },
       {
         role: "user",
         content: [{ type: "text", text: HEARTBEAT_PROMPT }],
-        __openclaw: { seq: 4 },
+        __nova: { seq: 4 },
       },
       {
         role: "system",
         content: [{ type: "text", text: "Compaction" }],
-        __openclaw: { kind: "compaction", seq: 5 },
+        __nova: { kind: "compaction", seq: 5 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "Second run finished." }],
-        __openclaw: { seq: 6 },
+        __nova: { seq: 6 },
       },
     ]);
 
     expect(
       result.map((message) => ({
         text: (message.content as Array<{ text?: string }> | undefined)?.[0]?.text,
-        metadata: message["__openclaw"],
+        metadata: message["__nova"],
       })),
     ).toEqual([
       {
@@ -1783,7 +1783,7 @@ describe("projectRecentChatDisplayMessages", () => {
             },
           },
         ],
-        openclawTtsSupplement: { textSha256 },
+        novaTtsSupplement: { textSha256 },
         timestamp: 2,
       },
     ]);
@@ -1814,7 +1814,7 @@ describe("projectRecentChatDisplayMessages", () => {
             },
           },
         ],
-        openclawTtsSupplement: { textSha256 },
+        novaTtsSupplement: { textSha256 },
         timestamp: 2,
       },
     ]);
@@ -1848,7 +1848,7 @@ describe("projectRecentChatDisplayMessages", () => {
           },
         ],
         timestamp: 2,
-        __openclaw: { seq: 2 },
+        __nova: { seq: 2 },
       },
       {
         role: "toolResult",
@@ -1863,7 +1863,7 @@ describe("projectRecentChatDisplayMessages", () => {
       role: "assistant",
       content: [{ type: "text", text: "I will clean that up now." }],
       timestamp: 2,
-      __openclaw: { seq: 2 },
+      __nova: { seq: 2 },
     });
   });
 
@@ -1909,14 +1909,14 @@ describe("projectRecentChatDisplayMessages", () => {
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "acp-runtime",
         content: [{ type: "text", text: "Good morning." }],
         timestamp: 2,
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "gateway-injected",
         content: [{ type: "text", text: "Good morning." }],
         idempotencyKey: "run-1",
@@ -1932,7 +1932,7 @@ describe("projectRecentChatDisplayMessages", () => {
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "acp-runtime",
         content: [{ type: "text", text: "Good morning." }],
         timestamp: 2,
@@ -1952,16 +1952,16 @@ describe("projectRecentChatDisplayMessages", () => {
         provider: "openai",
         model: "gpt-5.5",
         content: [{ type: "text", text: "Yo Peter. I’m here." }],
-        __openclaw: { mirrorIdentity: "run-1:assistant" },
+        __nova: { mirrorIdentity: "run-1:assistant" },
         timestamp: 2,
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         content: [{ type: "text", text: "Yo Peter. I’m here." }],
         idempotencyKey: "channel-final:message-1:0",
-        openclawDeliveryMirror: { kind: "channel-final", sourceMessageId: "message-1" },
+        novaDeliveryMirror: { kind: "channel-final", sourceMessageId: "message-1" },
         timestamp: 3,
       },
     ]);
@@ -1977,7 +1977,7 @@ describe("projectRecentChatDisplayMessages", () => {
         provider: "openai",
         model: "gpt-5.5",
         content: [{ type: "text", text: "Yo Peter. I’m here." }],
-        __openclaw: { mirrorIdentity: "run-1:assistant" },
+        __nova: { mirrorIdentity: "run-1:assistant" },
         timestamp: 2,
       },
     ]);
@@ -1990,7 +1990,7 @@ describe("projectRecentChatDisplayMessages", () => {
         provider: "openai",
         model: "gpt-5.5",
         content: [{ type: "text", text: "Repeated reply" }],
-        __openclaw: { mirrorIdentity: "run-1:assistant" },
+        __nova: { mirrorIdentity: "run-1:assistant" },
         timestamp: 1,
       },
       {
@@ -2000,11 +2000,11 @@ describe("projectRecentChatDisplayMessages", () => {
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         content: [{ type: "text", text: "Repeated reply" }],
         idempotencyKey: "channel-final:message-2:0",
-        openclawDeliveryMirror: { kind: "channel-final", sourceMessageId: "message-2" },
+        novaDeliveryMirror: { kind: "channel-final", sourceMessageId: "message-2" },
         timestamp: 3,
       },
     ]);
@@ -2012,7 +2012,7 @@ describe("projectRecentChatDisplayMessages", () => {
     expect(result).toHaveLength(2);
     expect(result[1]).toEqual(
       expect.objectContaining({
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
       }),
     );
@@ -2021,11 +2021,11 @@ describe("projectRecentChatDisplayMessages", () => {
   it("keeps adjacent channel-final delivery mirrors from distinct sends", () => {
     const deliveryMirror = (sourceMessageId: string, timestamp: number) => ({
       role: "assistant",
-      provider: "openclaw",
+      provider: "nova",
       model: "delivery-mirror",
       content: [{ type: "text", text: "Repeated reply" }],
       idempotencyKey: `channel-final:${sourceMessageId}:0`,
-      openclawDeliveryMirror: { kind: "channel-final", sourceMessageId },
+      novaDeliveryMirror: { kind: "channel-final", sourceMessageId },
       timestamp,
     });
 
@@ -2048,11 +2048,11 @@ describe("projectRecentChatDisplayMessages", () => {
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         content: [{ type: "text", text: "Repeated reply" }],
         idempotencyKey: "channel-final:message-unmarked:0",
-        openclawDeliveryMirror: { kind: "channel-final", sourceMessageId: "message-unmarked" },
+        novaDeliveryMirror: { kind: "channel-final", sourceMessageId: "message-unmarked" },
         timestamp: 2,
       },
     ]);
@@ -2074,11 +2074,11 @@ describe("projectRecentChatDisplayMessages", () => {
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         content: [{ type: "text", text: "Forwarded status" }],
         idempotencyKey: "channel-final:message-forwarded:0",
-        openclawDeliveryMirror: {
+        novaDeliveryMirror: {
           kind: "channel-final",
           sourceMessageId: "message-forwarded",
         },
@@ -2095,7 +2095,7 @@ describe("projectRecentChatDisplayMessages", () => {
     );
     expect(result[1]).toEqual(
       expect.objectContaining({
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
       }),
     );
@@ -2105,14 +2105,14 @@ describe("projectRecentChatDisplayMessages", () => {
     const result = projectRecentChatDisplayMessages([
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "acp-runtime",
         content: [{ type: "text", text: "First answer." }],
         timestamp: 1,
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "gateway-injected",
         content: [{ type: "text", text: "Second answer." }],
         timestamp: 2,
@@ -2122,14 +2122,14 @@ describe("projectRecentChatDisplayMessages", () => {
     expect(result).toEqual([
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "acp-runtime",
         content: [{ type: "text", text: "First answer." }],
         timestamp: 1,
       },
       {
         role: "assistant",
-        provider: "openclaw",
+        provider: "nova",
         model: "gateway-injected",
         content: [{ type: "text", text: "Second answer." }],
         timestamp: 2,
@@ -2146,7 +2146,7 @@ describe("projectRecentChatDisplayMessages", () => {
         { role: "assistant", content: "ANNOUNCE_SKIP", timestamp: 4 },
         {
           role: "custom",
-          customType: "openclaw.runtime-context",
+          customType: "nova.runtime-context",
           content: "hidden runtime context",
           display: false,
           timestamp: 5,
@@ -2162,13 +2162,13 @@ describe("projectRecentChatDisplayMessages", () => {
     const mediaOnly = {
       role: "user",
       content: "",
-      MediaPath: "/tmp/openclaw/user-upload.png",
+      MediaPath: "/tmp/nova/user-upload.png",
       timestamp: 1,
     };
     const multiMediaOnly = {
       role: "user",
       content: "",
-      MediaPaths: ["/tmp/openclaw/first.png", "/tmp/openclaw/second.jpg"],
+      MediaPaths: ["/tmp/nova/first.png", "/tmp/nova/second.jpg"],
       timestamp: 2,
     };
     const result = projectRecentChatDisplayMessages([
@@ -2215,7 +2215,7 @@ describe("projectRecentChatDisplayMessages", () => {
             },
           },
         ],
-        openclawTtsSupplement: { textSha256, spokenText },
+        novaTtsSupplement: { textSha256, spokenText },
         timestamp: 4,
       },
     ]);
@@ -2275,7 +2275,7 @@ describe("projectRecentChatDisplayMessages", () => {
             },
           },
         ],
-        openclawTtsSupplement: { textSha256 },
+        novaTtsSupplement: { textSha256 },
         timestamp: 2,
       },
     ]);
@@ -2326,7 +2326,7 @@ describe("projectRecentChatDisplayMessages", () => {
               },
             },
           ],
-          openclawTtsSupplement: { textSha256 },
+          novaTtsSupplement: { textSha256 },
           timestamp: 2,
         },
       ],
@@ -2383,7 +2383,7 @@ describe("projectRecentChatDisplayMessages", () => {
             },
           },
         ],
-        openclawTtsSupplement: ttsSupplement,
+        novaTtsSupplement: ttsSupplement,
         timestamp: 3,
       },
     ]);
@@ -2413,7 +2413,7 @@ describe("projectRecentChatDisplayMessages", () => {
             },
           },
         ],
-        openclawTtsSupplement: ttsSupplement,
+        novaTtsSupplement: ttsSupplement,
         timestamp: 3,
       },
     ]);
@@ -2434,32 +2434,32 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
       {
         role: "user",
         content: [{ type: "text", text: "real prior" }],
-        __openclaw: { seq: 1, recordTimestampMs: cutoff - 86_400_000 },
+        __nova: { seq: 1, recordTimestampMs: cutoff - 86_400_000 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "real reply" }],
-        __openclaw: { seq: 2, recordTimestampMs: cutoff - 86_400_000 },
+        __nova: { seq: 2, recordTimestampMs: cutoff - 86_400_000 },
       },
       {
         role: "user",
         content: [{ type: "text", text: "[Inter-session message] sourceTool=subagent_announce" }],
         provenance: announceProvenance,
-        __openclaw: { seq: 3, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 3, recordTimestampMs: cutoff - 1_000 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "fanfic lore-bible summary" }],
-        __openclaw: { seq: 4, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 4, recordTimestampMs: cutoff - 1_000 },
       },
       {
         role: "user",
         content: [{ type: "text", text: "fresh user turn" }],
-        __openclaw: { seq: 5, recordTimestampMs: cutoff + 5_000 },
+        __nova: { seq: 5, recordTimestampMs: cutoff + 5_000 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, cutoff);
-    expect(out.map((m) => asOptionalRecord(asOptionalRecord(m)?.["__openclaw"])?.["seq"])).toEqual([
+    expect(out.map((m) => asOptionalRecord(asOptionalRecord(m)?.["__nova"])?.["seq"])).toEqual([
       1, 2, 5,
     ]);
   });
@@ -2495,12 +2495,12 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
         role: "user",
         content: [{ type: "text", text: "[Inter-session message] sourceTool=subagent_announce" }],
         provenance: announceProvenance,
-        __openclaw: { seq: 1, recordTimestampMs: cutoff + 1_000 },
+        __nova: { seq: 1, recordTimestampMs: cutoff + 1_000 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "current-session reply" }],
-        __openclaw: { seq: 2, recordTimestampMs: cutoff + 2_000 },
+        __nova: { seq: 2, recordTimestampMs: cutoff + 2_000 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, cutoff);
@@ -2513,12 +2513,12 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
         role: "user",
         content: [{ type: "text", text: "[Inter-session message] sourceTool=subagent_announce" }],
         provenance: announceProvenance,
-        __openclaw: { seq: 1, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 1, recordTimestampMs: cutoff - 1_000 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "fresh-session reply" }],
-        __openclaw: { seq: 2, recordTimestampMs: cutoff + 1_000 },
+        __nova: { seq: 2, recordTimestampMs: cutoff + 1_000 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, cutoff);
@@ -2531,12 +2531,12 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
         role: "user",
         content: [{ type: "text", text: "[Inter-session message] sourceTool=subagent_announce" }],
         provenance: announceProvenance,
-        __openclaw: { seq: 1, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 1, recordTimestampMs: cutoff - 1_000 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "timestampless reply" }],
-        __openclaw: { seq: 2 },
+        __nova: { seq: 2 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, cutoff);
@@ -2549,12 +2549,12 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
         role: "user",
         content: [{ type: "text", text: "[Inter-session message] sourceTool=subagent_announce" }],
         provenance: announceProvenance,
-        __openclaw: { seq: 1, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 1, recordTimestampMs: cutoff - 1_000 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "would-be-stripped reply" }],
-        __openclaw: { seq: 2, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 2, recordTimestampMs: cutoff - 1_000 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, undefined);
@@ -2566,19 +2566,17 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
       {
         role: "user",
         content: [{ type: "text", text: "real prior" }],
-        __openclaw: { seq: 1, recordTimestampMs: cutoff + 1_000 },
+        __nova: { seq: 1, recordTimestampMs: cutoff + 1_000 },
       },
       {
         role: "user",
         content: [{ type: "text", text: "[Inter-session message] sourceTool=subagent_announce" }],
         provenance: announceProvenance,
-        __openclaw: { seq: 2, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 2, recordTimestampMs: cutoff - 1_000 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, cutoff);
-    expect(out.map((m) => asOptionalRecord(asOptionalRecord(m)?.["__openclaw"])?.["seq"])).toEqual([
-      1,
-    ]);
+    expect(out.map((m) => asOptionalRecord(asOptionalRecord(m)?.["__nova"])?.["seq"])).toEqual([1]);
   });
 
   it("does not drop a normal pre-cutoff user message that is not a subagent_announce", () => {
@@ -2586,12 +2584,12 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
       {
         role: "user",
         content: [{ type: "text", text: "older user turn" }],
-        __openclaw: { seq: 1, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 1, recordTimestampMs: cutoff - 1_000 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "older reply" }],
-        __openclaw: { seq: 2, recordTimestampMs: cutoff - 1_000 },
+        __nova: { seq: 2, recordTimestampMs: cutoff - 1_000 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, cutoff);
@@ -2604,12 +2602,12 @@ describe("dropPreSessionStartAnnouncePairs (#85648)", () => {
         role: "user",
         content: [{ type: "text", text: "[Inter-session message] sourceTool=subagent_announce" }],
         provenance: announceProvenance,
-        __openclaw: { seq: 1 },
+        __nova: { seq: 1 },
       },
       {
         role: "assistant",
         content: [{ type: "text", text: "reply" }],
-        __openclaw: { seq: 2 },
+        __nova: { seq: 2 },
       },
     ];
     const out = dropPreSessionStartAnnouncePairs(messages, cutoff);
@@ -2633,12 +2631,12 @@ describe("timestampOptsFromConfig", () => {
   it.each([
     {
       name: "extracts timezone from config",
-      cfg: { agents: { defaults: { userTimezone: "America/Chicago" } } } as OpenClawConfig,
+      cfg: { agents: { defaults: { userTimezone: "America/Chicago" } } } as NovaConfig,
       expected: "America/Chicago",
     },
     {
       name: "falls back gracefully with empty config",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       expected: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
     },
   ])("$name", ({ cfg, expected }) => {
@@ -2648,17 +2646,17 @@ describe("timestampOptsFromConfig", () => {
   it("keeps timestamp injection enabled for upgraded configs unless explicitly disabled", () => {
     const upgradedConfigWithExistingDefaults = {
       agents: { defaults: { userTimezone: "America/Chicago" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     // Existing user configs do not store envelopeTimestamp; omission remains
     // the shipped default even when other agent defaults are present, so no
     // config migration is needed for this broadened use of the setting.
-    expect(timestampOptsFromConfig({} as OpenClawConfig).includeTimestamp).toBe(true);
+    expect(timestampOptsFromConfig({} as NovaConfig).includeTimestamp).toBe(true);
     expect(timestampOptsFromConfig(upgradedConfigWithExistingDefaults).includeTimestamp).toBe(true);
     expect(
       timestampOptsFromConfig({
         agents: { defaults: { envelopeTimestamp: "off" } },
-      } as OpenClawConfig).includeTimestamp,
+      } as NovaConfig).includeTimestamp,
     ).toBe(false);
   });
 });
@@ -2935,7 +2933,7 @@ describe("exec approval handlers", () => {
     });
   }
 
-  function createExecApprovalFixture(opts?: { config?: OpenClawConfig }) {
+  function createExecApprovalFixture(opts?: { config?: NovaConfig }) {
     const manager = new ExecApprovalManager();
     const handlers = createExecApprovalHandlers(manager);
     const broadcasts: Array<{ event: string; payload: unknown }> = [];
@@ -5255,7 +5253,7 @@ describe("gateway healthHandlers.health cache freshness", () => {
     try {
       const contextEngine = await resolveContextEngine({
         plugins: { slots: { contextEngine: engineId } },
-      } as OpenClawConfig);
+      } as NovaConfig);
       await contextEngine.assemble({ sessionId: "s1", messages: [] });
 
       const cached = {
@@ -5318,7 +5316,7 @@ describe("gateway healthHandlers.health cache freshness", () => {
   });
 
   it("merges live dead-lettered delivery queue counts into cached health responses", async () => {
-    const tmpStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-health-cached-dq-"));
+    const tmpStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-health-cached-dq-"));
     const previousStateDir = process.env.NOVA_STATE_DIR;
     process.env.NOVA_STATE_DIR = tmpStateDir;
     try {
@@ -5567,16 +5565,16 @@ describe("logs.tail", () => {
   });
 
   it("falls back to latest rolling log file when today is missing", async () => {
-    const tempDir = await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-logs-"));
-    const older = path.join(tempDir, "openclaw-2026-01-20.log");
-    const newer = path.join(tempDir, "openclaw-2026-01-21.log");
+    const tempDir = await fsPromises.mkdtemp(path.join(os.tmpdir(), "nova-logs-"));
+    const older = path.join(tempDir, "nova-2026-01-20.log");
+    const newer = path.join(tempDir, "nova-2026-01-21.log");
 
     await fsPromises.writeFile(older, '{"msg":"old"}\n');
     await fsPromises.writeFile(newer, '{"msg":"new"}\n');
     await fsPromises.utimes(older, new Date(0), new Date(0));
     await fsPromises.utimes(newer, new Date(), new Date());
 
-    setLoggerOverride({ file: path.join(tempDir, "openclaw-2026-01-22.log") });
+    setLoggerOverride({ file: path.join(tempDir, "nova-2026-01-22.log") });
 
     const respond = vi.fn();
     await expectDefined(
@@ -5602,8 +5600,8 @@ describe("logs.tail", () => {
   });
 
   it("redacts sensitive CLI tokens from returned lines", async () => {
-    const tempDir = await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-logs-"));
-    const file = path.join(tempDir, "openclaw-2026-01-22.log");
+    const tempDir = await fsPromises.mkdtemp(path.join(os.tmpdir(), "nova-logs-"));
+    const file = path.join(tempDir, "nova-2026-01-22.log");
 
     await fsPromises.writeFile(
       file,

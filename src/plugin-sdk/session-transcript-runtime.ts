@@ -30,7 +30,7 @@ import type {
   SessionTranscriptDeliveryMirror,
   SessionTranscriptUpdateMode,
 } from "../config/sessions/transcript.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { extractAssistantVisibleText } from "../shared/chat-message-content.js";
 import type { AgentMessage } from "./agent-core.js";
@@ -128,7 +128,7 @@ export type SessionTranscriptAppendMessageParams<TMessage> = SessionTranscriptTa
   TranscriptMessageAppendOptions<TMessage>;
 
 export type SessionTranscriptAssistantMirrorAppendParams = SessionTranscriptReadParams & {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   deliveryMirror?: SessionTranscriptDeliveryMirror;
   idempotencyKey?: string;
   mediaUrls?: string[];
@@ -422,7 +422,7 @@ function createAssistantMirrorMessage(params: {
     role: "assistant",
     content: [{ type: "text", text: params.text }],
     api: "openai-responses",
-    provider: "openclaw",
+    provider: "nova",
     model: "delivery-mirror",
     usage: {
       input: 0,
@@ -435,14 +435,14 @@ function createAssistantMirrorMessage(params: {
     stopReason: "stop",
     timestamp: Date.now(),
     ...(params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : {}),
-    ...(params.deliveryMirror ? { openclawDeliveryMirror: params.deliveryMirror } : {}),
+    ...(params.deliveryMirror ? { novaDeliveryMirror: params.deliveryMirror } : {}),
   };
 }
 
 function findLatestEquivalentAssistantMessageId(
   events: readonly SessionTranscriptEvent[],
   message: SessionTranscriptAssistantMessage,
-  config: OpenClawConfig | undefined,
+  config: NovaConfig | undefined,
 ): string | undefined {
   const expectedText = extractAssistantMirrorComparableText(message, config);
   if (!expectedText) {
@@ -472,7 +472,7 @@ function findLatestEquivalentAssistantMessageId(
 
 function extractAssistantMirrorComparableText(
   message: SessionTranscriptAssistantMessage,
-  config: OpenClawConfig | undefined,
+  config: NovaConfig | undefined,
 ): string | undefined {
   const redacted = redactTranscriptMessage(
     message as Parameters<typeof redactTranscriptMessage>[0],
@@ -482,7 +482,7 @@ function extractAssistantMirrorComparableText(
 }
 
 function isDeliveryMirrorAssistantMessage(message: SessionTranscriptAssistantMessage): boolean {
-  return message.provider === "openclaw" && message.model === "delivery-mirror";
+  return message.provider === "nova" && message.model === "delivery-mirror";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

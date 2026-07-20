@@ -70,7 +70,7 @@ const QA_DOCKER_E2E_LANES = {
   "update-migration": {
     env: (env) => ({
       NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC:
-        env.NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC ?? "openclaw@2026.4.23",
+        env.NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC ?? "nova@2026.4.23",
       NOVA_UPGRADE_SURVIVOR_PUBLISHED_BASELINE: "1",
       NOVA_UPGRADE_SURVIVOR_SCENARIO: env.NOVA_UPGRADE_SURVIVOR_SCENARIO ?? "plugin-deps-cleanup",
     }),

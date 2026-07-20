@@ -1,7 +1,7 @@
 /**
  * Ensures runtime plugins required by selected native harnesses are installed.
  */
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { ProviderRouteOverridePresence } from "../../plugin-sdk/provider-model-types.js";
 import { withActivatedPluginIds } from "../../plugins/activation-context.js";
 import { resolveManifestActivationPlan } from "../../plugins/activation-planner.js";
@@ -39,13 +39,13 @@ function dedupePluginIds(values: readonly string[]): string[] {
   return result;
 }
 
-function restrictiveAllowlistOmitsPlugin(config: OpenClawConfig | undefined, pluginId: string) {
+function restrictiveAllowlistOmitsPlugin(config: NovaConfig | undefined, pluginId: string) {
   const allow = config?.plugins?.allow ?? [];
   return allow.length > 0 && !allow.includes(pluginId);
 }
 
 function resolveSelectedMemoryPluginIds(params: {
-  config: OpenClawConfig | undefined;
+  config: NovaConfig | undefined;
   workspaceDir: string;
 }): string[] {
   const registry = loadPluginRegistrySnapshot({
@@ -79,7 +79,7 @@ function resolveSelectedMemoryPluginIds(params: {
 export function resolveAgentHarnessOwnerPluginIds(params: {
   runtime: string;
   provider: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir: string;
 }): string[] {
   const activationPlan = resolveManifestActivationPlan({
@@ -159,7 +159,7 @@ export type AgentHarnessRuntimePayloadFailure = {
 export function resolveAgentHarnessRuntimeAvailability(params: {
   runtime: string;
   provider: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir: string;
   payloadFailures: readonly AgentHarnessRuntimePayloadFailure[];
   payloadCheckedPluginIds: readonly string[];
@@ -211,10 +211,10 @@ export function resolveAgentHarnessRuntimeAvailability(params: {
 }
 
 function withRuntimePluginIdsAllowed(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   requiredPluginId: string;
   pluginIds: readonly string[];
-}): OpenClawConfig | undefined {
+}): NovaConfig | undefined {
   if (params.pluginIds.length === 0) {
     return params.config;
   }
@@ -235,7 +235,7 @@ function withRuntimePluginIdsAllowed(params: {
 export async function ensureSelectedAgentHarnessPlugin(params: {
   provider: string;
   modelId: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
   agentHarnessId?: string;

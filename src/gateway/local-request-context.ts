@@ -5,7 +5,7 @@ import {
   loadPreparedModelCatalogSnapshot,
 } from "../agents/prepared-model-catalog.js";
 import type { CliDeps } from "../cli/deps.types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
   getPluginRuntimeGatewayRequestScope,
@@ -22,7 +22,7 @@ import type { GatewayRequestContext } from "./server-methods/types.js";
 // so local command paths do not silently enqueue cron/channel work.
 type LocalGatewayRequestContextParams = {
   deps: CliDeps;
-  getRuntimeConfig: () => OpenClawConfig;
+  getRuntimeConfig: () => NovaConfig;
 };
 
 function cronUnavailable(): never {

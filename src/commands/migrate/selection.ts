@@ -10,9 +10,9 @@ import { MIGRATION_CONFLICT_REASON_PHRASES } from "./output.js";
 
 // Selection tokens are shared with the command and prompt implementations.
 const MIGRATION_NOT_SELECTED_REASON = "not selected for migration";
-export const MIGRATION_SELECTION_ACCEPT = "__openclaw_migrate_accept_recommended__";
-export const MIGRATION_SELECTION_TOGGLE_ALL_ON = "__openclaw_migrate_toggle_all_on__";
-export const MIGRATION_SELECTION_TOGGLE_ALL_OFF = "__openclaw_migrate_toggle_all_off__";
+export const MIGRATION_SELECTION_ACCEPT = "__nova_migrate_accept_recommended__";
+export const MIGRATION_SELECTION_TOGGLE_ALL_ON = "__nova_migrate_toggle_all_on__";
+export const MIGRATION_SELECTION_TOGGLE_ALL_OFF = "__nova_migrate_toggle_all_off__";
 
 type InteractiveMigrationSelection = { action: "select"; selectedItemIds: Set<string> };
 /** Interactive skill selection result consumed by the apply flow. */

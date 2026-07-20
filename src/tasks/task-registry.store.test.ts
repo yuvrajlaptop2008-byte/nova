@@ -14,14 +14,11 @@ import { readSqliteNumberPragma } from "../infra/sqlite-pragma.test-support.js";
 import { resetLogger, setLoggerOverride } from "../logging/logger.js";
 import { loggingState } from "../logging/state.js";
 import { createWarnLogCapture } from "../logging/test-helpers/warn-log-capture.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabase,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabase, openNovaStateDatabase } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { captureEnv } from "../test-utils/env.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import { createManagedTaskFlow as createManagedTaskFlowOrNull } from "./task-flow-registry.js";
 import type { TaskFlowRecord } from "./task-flow-registry.types.js";
 import {
@@ -76,10 +73,7 @@ function createManagedTaskFlow(
   }
   return flow;
 }
-type TaskRegistryTestDatabase = Pick<
-  OpenClawStateKyselyDatabase,
-  "task_delivery_state" | "task_runs"
->;
+type TaskRegistryTestDatabase = Pick<NovaStateKyselyDatabase, "task_delivery_state" | "task_runs">;
 
 function requireFirstUpsertParams(upsertTaskWithDeliveryState: ReturnType<typeof vi.fn>): {
   task?: { taskId?: string };
@@ -181,7 +175,7 @@ describe("task-registry store runtime", () => {
   });
 
   it("logs restore parser failures and keeps the failure sticky", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-task-registry-restore-test");
+    const warnLogs = createWarnLogCapture("nova-task-registry-restore-test");
     const invalidValue = "not-requested";
     const loadSnapshot = vi.fn(() => {
       throw new Error(`Invalid persisted task delivery status: ${JSON.stringify(invalidValue)}`);
@@ -356,8 +350,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("rejects corrupt persisted task rows during sqlite restore", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-corrupt-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-store-corrupt-" },
       async () => {
         resetTaskRegistryForTests();
         const created = createTaskRecord({
@@ -372,7 +366,7 @@ describe("task-registry store runtime", () => {
           notifyPolicy: "silent",
         });
 
-        const database = openOpenClawStateDatabase();
+        const database = openNovaStateDatabase();
         const db = getNodeSqliteKysely<TaskRegistryTestDatabase>(database.db);
         executeSqliteQuerySync(
           database.db,
@@ -385,8 +379,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("drops invalid requester origins during sqlite restore", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-invalid-origin-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-store-invalid-origin-" },
       async () => {
         resetTaskRegistryForTests();
         const created = createTaskRecord({
@@ -404,7 +398,7 @@ describe("task-registry store runtime", () => {
           },
         });
 
-        const database = openOpenClawStateDatabase();
+        const database = openNovaStateDatabase();
         const db = getNodeSqliteKysely<TaskRegistryTestDatabase>(database.db);
         executeSqliteQuerySync(
           database.db,
@@ -421,8 +415,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("round-trips runtime-owned task detail through sqlite", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-detail-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-store-detail-" },
       async () => {
         const task: TaskRecord = {
           ...createStoredTask(),
@@ -447,8 +441,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("preserves explicit null task detail through sqlite", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-null-detail-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-store-null-detail-" },
       async () => {
         const task: TaskRecord = {
           ...createStoredTask(),
@@ -466,8 +460,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("loads task and delivery rows from one sqlite read snapshot", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-read-snapshot-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-store-read-snapshot-" },
       async () => {
         resetTaskRegistryForTests();
         const created = createTaskRecord({
@@ -484,7 +478,7 @@ describe("task-registry store runtime", () => {
             to: "C1234567890",
           },
         });
-        const database = openOpenClawStateDatabase();
+        const database = openNovaStateDatabase();
         database.db
           .prepare("UPDATE task_delivery_state SET last_notified_event_at = ? WHERE task_id = ?")
           .run(100, created.taskId);
@@ -522,8 +516,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("bypasses stale owner indexes for complete fresh results", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-owner-index-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-store-owner-index-" },
       async () => {
         resetTaskRegistryForTests();
         const ownerKey = "agent:main:main";
@@ -553,7 +547,7 @@ describe("task-registry store runtime", () => {
           target.taskId,
         );
 
-        const database = openOpenClawStateDatabase();
+        const database = openNovaStateDatabase();
         createUnsafeTaskOwnerIndex(database.db);
         expect(database.db.prepare("PRAGMA quick_check").get()).toEqual({ quick_check: "ok" });
         expect(database.db.prepare("PRAGMA integrity_check('task_runs')").all()).toEqual(
@@ -845,52 +839,49 @@ describe("task-registry store runtime", () => {
   });
 
   it("persists executor and requester agent ids in sqlite task rows", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-agent-id-" },
-      async () => {
-        const created = createTaskRecord({
-          runtime: "subagent",
-          requesterSessionKey: "global",
-          ownerKey: "global",
-          scopeKind: "session",
-          childSessionKey: "agent:worker:subagent:child",
-          requesterAgentId: "main",
-          runId: "run-worker-subagent-sqlite",
-          task: "Inspect worker state",
-          status: "running",
-          deliveryStatus: "pending",
-        });
+    await withNovaTestState({ layout: "state-only", prefix: "nova-task-agent-id-" }, async () => {
+      const created = createTaskRecord({
+        runtime: "subagent",
+        requesterSessionKey: "global",
+        ownerKey: "global",
+        scopeKind: "session",
+        childSessionKey: "agent:worker:subagent:child",
+        requesterAgentId: "main",
+        runId: "run-worker-subagent-sqlite",
+        task: "Inspect worker state",
+        status: "running",
+        deliveryStatus: "pending",
+      });
 
-        const database = openOpenClawStateDatabase();
-        const db = getNodeSqliteKysely<TaskRegistryTestDatabase>(database.db);
-        const row = executeSqliteQueryTakeFirstSync(
-          database.db,
-          db
-            .selectFrom("task_runs")
-            .select(["agent_id", "requester_agent_id", "child_session_key", "owner_key"])
-            .where("task_id", "=", created.taskId),
-        );
+      const database = openNovaStateDatabase();
+      const db = getNodeSqliteKysely<TaskRegistryTestDatabase>(database.db);
+      const row = executeSqliteQueryTakeFirstSync(
+        database.db,
+        db
+          .selectFrom("task_runs")
+          .select(["agent_id", "requester_agent_id", "child_session_key", "owner_key"])
+          .where("task_id", "=", created.taskId),
+      );
 
-        expect(row).toEqual({
-          agent_id: "worker",
-          requester_agent_id: "main",
-          child_session_key: "agent:worker:subagent:child",
-          owner_key: "global",
-        });
+      expect(row).toEqual({
+        agent_id: "worker",
+        requester_agent_id: "main",
+        child_session_key: "agent:worker:subagent:child",
+        owner_key: "global",
+      });
 
-        resetTaskRegistryForTests({ persist: false });
-        expect(findTaskByRunId("run-worker-subagent-sqlite")).toMatchObject({
-          taskId: created.taskId,
-          agentId: "worker",
-          requesterAgentId: "main",
-        });
-      },
-    );
+      resetTaskRegistryForTests({ persist: false });
+      expect(findTaskByRunId("run-worker-subagent-sqlite")).toMatchObject({
+        taskId: created.taskId,
+        agentId: "worker",
+        requesterAgentId: "main",
+      });
+    });
   });
 
   it("persists tool activity across sqlite restore", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-tool-activity-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-tool-activity-" },
       async () => {
         const created = createTaskRecord({
           runtime: "subagent",
@@ -919,8 +910,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("persists requester origin atomically when creating sqlite tasks", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-create-origin-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-create-origin-" },
       async () => {
         const created = createTaskRecord({
           runtime: "acp",
@@ -1027,8 +1018,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("prunes stale sqlite delivery state while retaining current rows", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-delivery-prune-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-delivery-prune-" },
       async () => {
         const taskA = createStoredTask();
         const taskB: TaskRecord = {
@@ -1072,8 +1063,8 @@ describe("task-registry store runtime", () => {
   });
 
   it("prunes large sqlite snapshots without binding every task id at once", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-large-prune-" },
+    await withNovaTestState(
+      { layout: "state-only", prefix: "nova-task-large-prune-" },
       async () => {
         const tasks = new Map<string, TaskRecord>();
         const deliveryStates = new Map<string, TaskDeliveryState>();
@@ -1110,49 +1101,43 @@ describe("task-registry store runtime", () => {
   });
 
   it("reopens after the shared state database is closed", async () => {
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-" },
-      async () => {
-        const task = createStoredTask();
-        saveTaskRegistryStateToSqlite({
-          tasks: new Map([[task.taskId, task]]),
-          deliveryStates: new Map(),
-        });
+    await withNovaTestState({ layout: "state-only", prefix: "nova-task-store-" }, async () => {
+      const task = createStoredTask();
+      saveTaskRegistryStateToSqlite({
+        tasks: new Map([[task.taskId, task]]),
+        deliveryStates: new Map(),
+      });
 
-        closeOpenClawStateDatabase();
+      closeNovaStateDatabase();
 
-        const restored = loadTaskRegistryStateFromSqlite();
-        expect(restored.tasks.get(task.taskId)).toEqual(task);
-      },
-    );
+      const restored = loadTaskRegistryStateFromSqlite();
+      expect(restored.tasks.get(task.taskId)).toEqual(task);
+    });
   });
 
   it("hardens the sqlite task store directory and file modes", async () => {
     if (process.platform === "win32") {
       return;
     }
-    await withOpenClawTestState(
-      { layout: "state-only", prefix: "openclaw-task-store-" },
-      async () => {
-        createTaskRecord({
-          runtime: "cron",
-          ownerKey: "agent:main:main",
-          scopeKind: "session",
-          sourceId: "job-456",
-          runId: "run-perms",
-          task: "Run secured cron",
-          status: "running",
-          deliveryStatus: "not_applicable",
-          notifyPolicy: "silent",
-        });
+    await withNovaTestState({ layout: "state-only", prefix: "nova-task-store-" }, async () => {
+      createTaskRecord({
+        runtime: "cron",
+        ownerKey: "agent:main:main",
+        scopeKind: "session",
+        sourceId: "job-456",
+        runId: "run-perms",
+        task: "Run secured cron",
+        status: "running",
+        deliveryStatus: "not_applicable",
+        notifyPolicy: "silent",
+      });
 
-        const databasePath = resolveOpenClawStateSqlitePath(process.env);
-        const registryDir = path.dirname(databasePath);
-        expect(databasePath.endsWith(path.join("state", "openclaw.sqlite"))).toBe(true);
-        expect(statSync(registryDir).mode & 0o777).toBe(0o700);
-        expect(statSync(databasePath).mode & 0o777).toBe(0o600);
-      },
-    );
+      const databasePath = resolveNovaStateSqlitePath(process.env);
+      const registryDir = path.dirname(databasePath);
+      expect(databasePath.endsWith(path.join("state", "nova.sqlite"))).toBe(true);
+      expect(statSync(registryDir).mode & 0o777).toBe(0o700);
+      expect(statSync(databasePath).mode & 0o777).toBe(0o600);
+    });
   });
 
   it("does not throw or diverge sqlite-direct reads when an upsert persist fails", () => {

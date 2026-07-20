@@ -6,7 +6,7 @@ import {
 } from "@nova/normalization-core/string-coerce";
 import { resolveApiKeyForProvider } from "../../agents/model-auth.js";
 import { getRuntimeConfig } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { callGateway } from "../../gateway/call.js";
 import { buildGatewayConnectionDetailsWithResolvers } from "../../gateway/connection-details.js";
 import { isLoopbackHost } from "../../gateway/net.js";
@@ -155,7 +155,7 @@ export async function runTtsConvert(params: {
 }
 
 function resolveTtsProviderForAuthHydration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider?: string;
   modelId?: string;
   channelId?: string;
@@ -170,10 +170,10 @@ function resolveTtsProviderForAuthHydration(params: {
 }
 
 async function injectTtsAuthProfileApiKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider?: string;
   channelId?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   if (!params.provider) {
     return params.cfg;
   }
@@ -259,7 +259,7 @@ type ExistingTtsProviderConfig =
     });
 
 function resolveExistingTtsProviderConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   providerId: string;
   channelId?: string;
 }): ExistingTtsProviderConfig | undefined {
@@ -287,7 +287,7 @@ function resolveExistingTtsProviderConfig(params: {
 }
 
 function resolveExistingTtsProviderConfigInTts(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   tts: unknown;
   providerId: string;
 }): TtsProviderConfigLocation | undefined {
@@ -329,7 +329,7 @@ const TTS_CONFIG_RESERVED_KEYS = new Set([
 ]);
 
 function resolveDirectTtsProviderConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   tts: unknown;
   providerId: string;
 }): TtsProviderConfigLocation | undefined {
@@ -351,7 +351,7 @@ function resolveDirectTtsProviderConfig(params: {
 }
 
 function resolveChannelTtsConfigForAuthHydration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelId?: string;
 }): { channelKey: string; tts: unknown } | undefined {
   const channels = params.cfg.channels;

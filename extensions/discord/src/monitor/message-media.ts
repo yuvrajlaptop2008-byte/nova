@@ -3,16 +3,16 @@ import { StickerFormatType, type APIAttachment, type APIStickerItem } from "disc
 import {
   formatMediaPlaceholderText,
   type MediaPlaceholderTextFact,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { getFileExtension, normalizeMimeType } from "openclaw/plugin-sdk/media-mime";
-import { saveRemoteMedia, type FetchLike } from "openclaw/plugin-sdk/media-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import type { SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/channel-inbound";
+import { getFileExtension, normalizeMimeType } from "nova/plugin-sdk/media-mime";
+import { saveRemoteMedia, type FetchLike } from "nova/plugin-sdk/media-runtime";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
+import type { SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import type { Message } from "../internal/discord.js";
 import {
   resolveDiscordMessageSnapshots,

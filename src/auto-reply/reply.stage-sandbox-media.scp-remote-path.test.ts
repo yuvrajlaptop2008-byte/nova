@@ -51,9 +51,9 @@ function createRemoteStageParams(home: string): {
   ]);
   return {
     cfg: createSandboxMediaStageConfig(home),
-    workspaceDir: join(home, "openclaw"),
+    workspaceDir: join(home, "nova"),
     sessionKey,
-    remoteCacheDir: join(home, ".openclaw", "media", "remote-cache", slugifySessionKey(sessionKey)),
+    remoteCacheDir: join(home, ".nova", "media", "remote-cache", slugifySessionKey(sessionKey)),
   };
 }
 
@@ -86,7 +86,7 @@ function requireFirstMockCall(mock: { mock: { calls: unknown[][] } }, label: str
 
 describe("stageSandboxMedia scp remote paths", () => {
   it("rejects remote attachment filenames with shell metacharacters before spawning scp", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir, sessionKey, remoteCacheDir } = createRemoteStageParams(home);
       const remotePath = "/Users/demo/Library/Messages/Attachments/ab/cd/evil$(touch pwned).jpg";
       const { ctx, sessionCtx } = createRemoteContexts(remotePath);
@@ -109,7 +109,7 @@ describe("stageSandboxMedia scp remote paths", () => {
   });
 
   it("uses a slugged remote cache directory for session keys with path separators", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir } = createRemoteStageParams(home);
       const sessionKey = "agent:main:explicit:../../escape";
       const remotePath = "/Users/demo/Library/Messages/Attachments/ab/cd/photo.jpg";
@@ -139,7 +139,7 @@ describe("stageSandboxMedia scp remote paths", () => {
   });
 
   it("rewrites remote iMessage attachment metadata to the staged local cache path", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir, sessionKey } = createRemoteStageParams(home);
       const remotePath = "/Users/demo/Library/Messages/Attachments/ab/cd/photo.jpg";
       const { ctx, sessionCtx } = createRemoteContexts(remotePath);
@@ -186,7 +186,7 @@ describe("stageSandboxMedia scp remote paths", () => {
   });
 
   it("uses absolute remote cache paths in cache mode even when sandbox staging is available", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir, sessionKey } = createRemoteStageParams(home);
       const sandboxWorkspace = join(home, "sandbox-workspace");
       vi.mocked(sandboxMocks.ensureSandboxWorkspaceForSession).mockResolvedValue({

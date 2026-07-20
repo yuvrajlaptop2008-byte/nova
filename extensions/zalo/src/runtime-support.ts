@@ -1,19 +1,19 @@
 // Zalo plugin module implements runtime support behavior.
-export type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-export type { OpenClawConfig, GroupPolicy } from "openclaw/plugin-sdk/config-contracts";
-export type { MarkdownTableMode } from "openclaw/plugin-sdk/config-contracts";
-export type { BaseTokenResolution } from "openclaw/plugin-sdk/channel-contract";
+export type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
+export type { NovaConfig, GroupPolicy } from "nova/plugin-sdk/config-contracts";
+export type { MarkdownTableMode } from "nova/plugin-sdk/config-contracts";
+export type { BaseTokenResolution } from "nova/plugin-sdk/channel-contract";
 export type {
   BaseProbeResult,
   ChannelAccountSnapshot,
   ChannelMessageActionAdapter,
   ChannelMessageActionName,
   ChannelStatusIssue,
-} from "openclaw/plugin-sdk/channel-contract";
-export type { SecretInput } from "openclaw/plugin-sdk/secret-input";
-export type { ChannelPlugin, PluginRuntime, WizardPrompter } from "openclaw/plugin-sdk/core";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export type { OutboundReplyPayload } from "openclaw/plugin-sdk/reply-payload";
+} from "nova/plugin-sdk/channel-contract";
+export type { SecretInput } from "nova/plugin-sdk/secret-input";
+export type { ChannelPlugin, PluginRuntime, WizardPrompter } from "nova/plugin-sdk/core";
+export type { RuntimeEnv } from "nova/plugin-sdk/runtime";
+export type { OutboundReplyPayload } from "nova/plugin-sdk/reply-payload";
 export {
   DEFAULT_ACCOUNT_ID,
   buildChannelConfigSchema,
@@ -23,7 +23,7 @@ export {
   normalizeAccountId,
   readStringParam,
   resolveClientIp,
-} from "openclaw/plugin-sdk/core";
+} from "nova/plugin-sdk/core";
 export {
   applyAccountNameToChannelSection,
   applySetupAccountConfigPatch,
@@ -33,38 +33,35 @@ export {
   promptSingleChannelSecretInput,
   runSingleChannelSecretStep,
   setTopLevelChannelDmPolicyWithAllowFrom,
-} from "openclaw/plugin-sdk/setup";
+} from "nova/plugin-sdk/setup";
 export {
   buildSecretInputSchema,
   hasConfiguredSecretInput,
   normalizeResolvedSecretInputString,
   normalizeSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+} from "nova/plugin-sdk/secret-input";
 export {
   buildTokenChannelStatusSummary,
   PAIRING_APPROVED_MESSAGE,
-} from "openclaw/plugin-sdk/channel-status";
-export { buildBaseAccountStatusSnapshot } from "openclaw/plugin-sdk/status-helpers";
-export { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
-export {
-  formatAllowFromLowercase,
-  isNormalizedSenderAllowed,
-} from "openclaw/plugin-sdk/allow-from";
-export { addWildcardAllowFrom } from "openclaw/plugin-sdk/setup";
-export { resolveOpenProviderRuntimeGroupPolicy } from "openclaw/plugin-sdk/runtime-group-policy";
+} from "nova/plugin-sdk/channel-status";
+export { buildBaseAccountStatusSnapshot } from "nova/plugin-sdk/status-helpers";
+export { chunkTextForOutbound } from "nova/plugin-sdk/text-chunking";
+export { formatAllowFromLowercase, isNormalizedSenderAllowed } from "nova/plugin-sdk/allow-from";
+export { addWildcardAllowFrom } from "nova/plugin-sdk/setup";
+export { resolveOpenProviderRuntimeGroupPolicy } from "nova/plugin-sdk/runtime-group-policy";
 export {
   warnMissingProviderGroupPolicyFallbackOnce,
   resolveDefaultGroupPolicy,
-} from "openclaw/plugin-sdk/runtime-group-policy";
-export { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-export { createChannelMessageReplyPipeline } from "openclaw/plugin-sdk/channel-outbound";
-export { logTypingFailure } from "openclaw/plugin-sdk/channel-feedback";
+} from "nova/plugin-sdk/runtime-group-policy";
+export { createChannelPairingController } from "nova/plugin-sdk/channel-pairing";
+export { createChannelMessageReplyPipeline } from "nova/plugin-sdk/channel-outbound";
+export { logTypingFailure } from "nova/plugin-sdk/channel-feedback";
 export {
   deliverTextOrMediaReply,
   isNumericTargetId,
   sendPayloadWithChunkedTextAndMedia,
-} from "openclaw/plugin-sdk/reply-payload";
-export { waitForAbortSignal } from "openclaw/plugin-sdk/runtime";
+} from "nova/plugin-sdk/reply-payload";
+export { waitForAbortSignal } from "nova/plugin-sdk/runtime";
 export {
   applyBasicWebhookRequestGuards,
   createFixedWindowRateLimiter,
@@ -78,8 +75,8 @@ export {
   WEBHOOK_ANOMALY_COUNTER_DEFAULTS,
   WEBHOOK_RATE_LIMIT_DEFAULTS,
   withResolvedWebhookRequestPipeline,
-} from "openclaw/plugin-sdk/webhook-ingress";
+} from "nova/plugin-sdk/webhook-ingress";
 export type {
   RegisterWebhookPluginRouteOptions,
   RegisterWebhookTargetOptions,
-} from "openclaw/plugin-sdk/webhook-ingress";
+} from "nova/plugin-sdk/webhook-ingress";

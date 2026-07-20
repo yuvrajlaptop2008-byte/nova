@@ -55,7 +55,7 @@ export function buildBrowserDoctorReport(params: {
     id: "profile",
     label: "Profile",
     status: "pass",
-    summary: `${status.profile ?? "openclaw"} via ${transport}`,
+    summary: `${status.profile ?? "nova"} via ${transport}`,
   });
 
   if (transport === "chrome-mcp") {
@@ -85,7 +85,7 @@ export function buildBrowserDoctorReport(params: {
         ? {}
         : {
             fixHint:
-              "Install the Nova Chrome extension (openclaw browser extension path), run openclaw browser extension pair, and paste the pairing string into the extension popup.",
+              "Install the Nova Chrome extension (nova browser extension path), run nova browser extension pair, and paste the pairing string into the extension popup.",
           }),
     });
   } else {
@@ -148,7 +148,7 @@ export function buildBrowserDoctorReport(params: {
       ...(status.cdpHttp || !status.running
         ? {}
         : {
-            fixHint: "Run openclaw browser start or inspect browser.cdpUrl/CDP port reachability.",
+            fixHint: "Run nova browser start or inspect browser.cdpUrl/CDP port reachability.",
           }),
     });
 
@@ -184,7 +184,7 @@ export function buildBrowserDoctorReport(params: {
 
   return {
     ok: checks.every((check) => check.status !== "fail"),
-    profile: status.profile ?? "openclaw",
+    profile: status.profile ?? "nova",
     transport,
     checks,
     status,

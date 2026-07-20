@@ -1,31 +1,31 @@
 // Memory Core plugin module implements session search visibility behavior.
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/memory-core-host-runtime-core";
-import type { MemorySearchResult } from "openclaw/plugin-sdk/memory-core-host-runtime-files";
-import { resolveSessionAgentId } from "openclaw/plugin-sdk/memory-host-core";
-import type { OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
+import type { NovaConfig } from "nova/plugin-sdk/memory-core-host-runtime-core";
+import type { MemorySearchResult } from "nova/plugin-sdk/memory-core-host-runtime-files";
+import { resolveSessionAgentId } from "nova/plugin-sdk/memory-host-core";
+import type { NovaPluginToolContext } from "nova/plugin-sdk/plugin-entry";
 import {
   extractTranscriptIdentityFromSessionsMemoryHit,
   loadCombinedSessionStoreForGateway,
   resolveSessionTranscriptMemoryHitKeyToSessionKeys,
   resolveTranscriptStemToSessionKeys,
-} from "openclaw/plugin-sdk/session-transcript-hit";
+} from "nova/plugin-sdk/session-transcript-hit";
 import {
   createAgentToAgentPolicy,
   createSessionVisibilityGuard,
   resolveEffectiveSessionToolsVisibility,
-} from "openclaw/plugin-sdk/session-visibility";
+} from "nova/plugin-sdk/session-visibility";
 import { readQmdSessionArtifactIdentity } from "./qmd-session-artifacts.js";
 
 function normalizeAgentIdForCompare(value: string | undefined): string | undefined {
   return value?.trim().toLowerCase() || undefined;
 }
 
-function isGlobalSessionKeyForSharedScope(cfg: OpenClawConfig, key: string): boolean {
+function isGlobalSessionKeyForSharedScope(cfg: NovaConfig, key: string): boolean {
   return cfg.session?.scope === "global" && key.trim().toLowerCase() === "global";
 }
 
-type ConversationRecallContext = NonNullable<OpenClawPluginToolContext["conversationRecall"]>;
+type ConversationRecallContext = NonNullable<NovaPluginToolContext["conversationRecall"]>;
 
 type SessionStore = ReturnType<typeof loadCombinedSessionStoreForGateway>["store"];
 
@@ -134,7 +134,7 @@ function isTrustedRecallRequester(params: {
 }
 
 function filterSessionKeysByScopedAgent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   keys: string[];
   scopedAgentId: string | undefined;
 }): string[] {
@@ -155,7 +155,7 @@ function filterSessionKeysByScopedAgent(params: {
 }
 
 export async function filterMemorySearchHitsBySessionVisibility(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   requesterSessionKey: string | undefined;
   sandboxed: boolean;

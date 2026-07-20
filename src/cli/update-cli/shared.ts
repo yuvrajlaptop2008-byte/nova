@@ -6,7 +6,7 @@ import path from "node:path";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { theme } from "../../../packages/terminal-core/src/theme.js";
 import { resolveRequiredHomeDir } from "../../infra/home-dir.js";
-import { resolveOpenClawPackageRoot } from "../../infra/openclaw-root.js";
+import { resolveNovaPackageRoot } from "../../infra/nova-root.js";
 import { readPackageName, readPackageVersion } from "../../infra/package-json.js";
 import { normalizePackageTagInput } from "../../infra/package-tag.js";
 import { parseStrictPositiveInteger } from "../../infra/parse-finite-number.js";
@@ -74,15 +74,15 @@ export function parseTimeoutMsOrExit(timeout?: string): number | undefined | nul
   return seconds * 1000;
 }
 
-const NOVA_REPO_URL = "https://github.com/openclaw/openclaw.git";
+const NOVA_REPO_URL = "https://github.com/nova/nova.git";
 const MAX_LOG_CHARS = 8000;
 
-export const DEFAULT_PACKAGE_NAME = "openclaw";
+export const DEFAULT_PACKAGE_NAME = "nova";
 const CORE_PACKAGE_NAMES = new Set([DEFAULT_PACKAGE_NAME]);
 
 /** Normalize a CLI tag/version/spec into the npm target form accepted by update flows. */
 export function normalizeTag(value?: string | null): string | null {
-  return normalizePackageTagInput(value, ["openclaw", DEFAULT_PACKAGE_NAME]);
+  return normalizePackageTagInput(value, ["nova", DEFAULT_PACKAGE_NAME]);
 }
 
 function normalizeVersionTag(tag: string): string | null {
@@ -157,9 +157,9 @@ export function resolveGitInstallDir(): string {
 function resolveDefaultGitDir(): string {
   const home = resolveRequiredHomeDir(process.env, os.homedir);
   if (home.startsWith("/")) {
-    return path.posix.join(home, "openclaw");
+    return path.posix.join(home, "nova");
   }
-  return path.join(home, "openclaw");
+  return path.join(home, "nova");
 }
 
 /** Prefer the current Node executable, falling back to `node` when run through another shim. */
@@ -176,11 +176,11 @@ export async function resolveUpdateRoot(): Promise<string> {
   // Preserve the lexical package path from the invoking shim. pnpm 11 package
   // modules realpath into a shared store, which is not the install owner.
   const invocationRoot = process.argv[1]
-    ? await resolveOpenClawPackageRoot({ cwd: path.dirname(path.resolve(process.argv[1])) })
+    ? await resolveNovaPackageRoot({ cwd: path.dirname(path.resolve(process.argv[1])) })
     : null;
   return (
     invocationRoot ??
-    (await resolveOpenClawPackageRoot({ moduleUrl: import.meta.url, cwd: process.cwd() })) ??
+    (await resolveNovaPackageRoot({ moduleUrl: import.meta.url, cwd: process.cwd() })) ??
     process.cwd()
   );
 }
@@ -262,7 +262,7 @@ export async function ensureGitCheckout(params: {
     const empty = await isEmptyDir(params.dir);
     if (!empty) {
       throw new Error(
-        `NOVA_GIT_DIR points at a non-git directory: ${params.dir}. Set NOVA_GIT_DIR to an empty folder or an openclaw checkout.`,
+        `NOVA_GIT_DIR points at a non-git directory: ${params.dir}. Set NOVA_GIT_DIR to an empty folder or an nova checkout.`,
       );
     }
 
@@ -308,11 +308,11 @@ export async function resolveGlobalManager(params: {
 
 const COMPLETION_CACHE_WRITE_TIMEOUT_MS = 30_000;
 const COMPLETION_CACHE_MANUAL_REFRESH_HINT =
-  "Shell tab-completion may be stale; refresh manually with: openclaw completion --write-state";
+  "Shell tab-completion may be stale; refresh manually with: nova completion --write-state";
 
 /** Best-effort refresh of shell completion state after a successful update. */
 export async function tryWriteCompletionCache(root: string, jsonMode: boolean): Promise<void> {
-  const binPath = path.join(root, "openclaw.mjs");
+  const binPath = path.join(root, "nova.mjs");
   if (!(await pathExists(binPath))) {
     return;
   }

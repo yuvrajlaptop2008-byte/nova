@@ -100,18 +100,18 @@ describe("resolveCopilotAuth - copilotHome resolution", () => {
       homeDir: fakeHomeDir,
     });
     expect(result.copilotHome).toBe(
-      resolve(join(FAKE_HOME, ".openclaw", "agents", "agent-1", "copilot")),
+      resolve(join(FAKE_HOME, ".nova", "agents", "agent-1", "copilot")),
     );
   });
 
   it("respects NOVA_HOME env var as the home root", () => {
     const result = resolveCopilotAuth({
       agentId: "agent-1",
-      env: { NOVA_HOME: "/custom/openclaw" } as NodeJS.ProcessEnv,
+      env: { NOVA_HOME: "/custom/nova" } as NodeJS.ProcessEnv,
       homeDir: fakeHomeDir,
     });
     expect(result.copilotHome).toBe(
-      resolve(join("/custom/openclaw", ".openclaw", "agents", "agent-1", "copilot")),
+      resolve(join("/custom/nova", ".nova", "agents", "agent-1", "copilot")),
     );
   });
 
@@ -123,7 +123,7 @@ describe("resolveCopilotAuth - copilotHome resolution", () => {
     });
     expect(result.agentId).toBe(COPILOT_DEFAULT_AGENT_ID);
     expect(result.copilotHome).toBe(
-      resolve(join(FAKE_HOME, ".openclaw", "agents", COPILOT_DEFAULT_AGENT_ID, "copilot")),
+      resolve(join(FAKE_HOME, ".nova", "agents", COPILOT_DEFAULT_AGENT_ID, "copilot")),
     );
   });
 
@@ -327,14 +327,14 @@ describe("resolveCopilotAuth - env var fallbacks", () => {
     const result = resolveCopilotAuth({
       agentId: "agent-1",
       env: {
-        NOVA_GITHUB_TOKEN: "openclaw-tok",
+        NOVA_GITHUB_TOKEN: "nova-tok",
         GITHUB_TOKEN: "github-tok",
       } as NodeJS.ProcessEnv,
       homeDir: fakeHomeDir,
     });
-    expect(result.gitHubToken).toBe("openclaw-tok");
+    expect(result.gitHubToken).toBe("nova-tok");
     expect(result.authProfileId).toBe("env:NOVA_GITHUB_TOKEN");
-    expect(result.authProfileVersion).toBe(tokenFingerprint("openclaw-tok"));
+    expect(result.authProfileVersion).toBe(tokenFingerprint("nova-tok"));
   });
 
   it("falls back to COPILOT_GITHUB_TOKEN with synthesised profile id + fingerprint", () => {
@@ -365,14 +365,14 @@ describe("resolveCopilotAuth - env var fallbacks", () => {
     const result = resolveCopilotAuth({
       agentId: "agent-1",
       env: {
-        NOVA_GITHUB_TOKEN: "openclaw-tok",
+        NOVA_GITHUB_TOKEN: "nova-tok",
         COPILOT_GITHUB_TOKEN: "copilot-tok",
         GH_TOKEN: "gh-tok",
         GITHUB_TOKEN: "github-tok",
       } as NodeJS.ProcessEnv,
       homeDir: fakeHomeDir,
     });
-    expect(result.gitHubToken).toBe("openclaw-tok");
+    expect(result.gitHubToken).toBe("nova-tok");
     expect(result.authProfileId).toBe("env:NOVA_GITHUB_TOKEN");
   });
 
@@ -488,9 +488,7 @@ describe("resolveCopilotAuth - defaults wiring", () => {
     });
     // We don't know the actual home, just that the resolver did not throw and
     // produced an absolute path containing the per-agent suffix.
-    expect(result.copilotHome.endsWith(join(".openclaw", "agents", "agent-1", "copilot"))).toBe(
-      true,
-    );
+    expect(result.copilotHome.endsWith(join(".nova", "agents", "agent-1", "copilot"))).toBe(true);
   });
 
   it("falls back to process.cwd() if homeDir throws", () => {
@@ -502,8 +500,6 @@ describe("resolveCopilotAuth - defaults wiring", () => {
       },
     });
     // Should not throw; should produce a path under cwd.
-    expect(result.copilotHome.includes(join(".openclaw", "agents", "agent-1", "copilot"))).toBe(
-      true,
-    );
+    expect(result.copilotHome.includes(join(".nova", "agents", "agent-1", "copilot"))).toBe(true);
   });
 });

@@ -2,8 +2,8 @@
 import {
   getRequiredHookHandler,
   registerHookHandlersForTest,
-} from "openclaw/plugin-sdk/channel-test-helpers";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/core";
+} from "nova/plugin-sdk/channel-test-helpers";
+import type { NovaPluginApi } from "nova/plugin-sdk/core";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { handleDiscordSubagentSpawning } from "./subagent-hooks.js";
 
@@ -95,7 +95,7 @@ function registerHandlersForTest(
     },
   },
 ) {
-  return registerHookHandlersForTest<OpenClawPluginApi>({
+  return registerHookHandlersForTest<NovaPluginApi>({
     config,
     register: (api) => {
       registerDiscordSubagentHooks(api);

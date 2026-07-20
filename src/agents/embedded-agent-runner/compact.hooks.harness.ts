@@ -105,14 +105,14 @@ export const resolveSessionAgentIdsMock = vi.fn(() => ({
   sessionAgentId: "main",
 }));
 export const estimateTokensMock = vi.fn((_message?: unknown) => 10);
-export const resolveAgentHarnessPolicyMock = vi.fn(() => ({ runtime: "openclaw" }));
+export const resolveAgentHarnessPolicyMock = vi.fn(() => ({ runtime: "nova" }));
 function createSelectedAgentHarnessMock(params: {
   agentHarnessId?: string;
   agentHarnessRuntimeOverride?: string;
 }): AgentHarness {
   const configured = resolveAgentHarnessPolicyMock() as { runtime?: string };
   const id =
-    params.agentHarnessId ?? params.agentHarnessRuntimeOverride ?? configured.runtime ?? "openclaw";
+    params.agentHarnessId ?? params.agentHarnessRuntimeOverride ?? configured.runtime ?? "nova";
   return {
     id,
     label: `${id} test harness`,
@@ -188,7 +188,7 @@ function createMockToolDefinitions(tools: unknown[] = []) {
     };
   });
 }
-export const createOpenClawCodingToolsMock = vi.fn(() => []);
+export const createNovaCodingToolsMock = vi.fn(() => []);
 const buildEmbeddedExtensionFactoriesMock = vi.fn(() => []);
 export const guardSessionManagerMock = vi.fn(() => ({
   flushPendingToolResults: vi.fn(),
@@ -494,7 +494,7 @@ export function resetCompactSessionStateMocks(): void {
   maybeCompactAgentHarnessSessionMock.mockReset();
   maybeCompactAgentHarnessSessionMock.mockResolvedValue(undefined);
   resolveAgentHarnessPolicyMock.mockReset();
-  resolveAgentHarnessPolicyMock.mockReturnValue({ runtime: "openclaw" });
+  resolveAgentHarnessPolicyMock.mockReturnValue({ runtime: "nova" });
   selectAgentHarnessMock.mockReset();
   selectAgentHarnessMock.mockImplementation(createSelectedAgentHarnessMock);
   selectAgentHarnessForPreparedModelProvidersMock.mockReset();
@@ -569,7 +569,7 @@ export function resetCompactHooksHarnessMocks(): void {
       resolveModelMock(provider, modelId, agentDir, cfg),
   );
   resolveAgentHarnessPolicyMock.mockReset();
-  resolveAgentHarnessPolicyMock.mockReturnValue({ runtime: "openclaw" });
+  resolveAgentHarnessPolicyMock.mockReturnValue({ runtime: "nova" });
   resolveContextWindowInfoMock.mockReset();
   resolveContextWindowInfoMock.mockReturnValue({ tokens: 128_000 });
 
@@ -583,8 +583,8 @@ export function resetCompactHooksHarnessMocks(): void {
 
   triggerInternalHook.mockReset();
   resetCompactSessionStateMocks();
-  createOpenClawCodingToolsMock.mockReset();
-  createOpenClawCodingToolsMock.mockReturnValue([]);
+  createNovaCodingToolsMock.mockReset();
+  createNovaCodingToolsMock.mockReturnValue([]);
   guardSessionManagerMock.mockReset();
   guardSessionManagerMock.mockReturnValue({
     flushPendingToolResults: vi.fn(),
@@ -732,7 +732,7 @@ export async function loadCompactHooksHarness(): Promise<{
   }));
 
   vi.doMock("../models-config.js", () => ({
-    ensureOpenClawModelsJson: vi.fn(async () => {}),
+    ensureNovaModelsJson: vi.fn(async () => {}),
   }));
 
   vi.doMock("../prepared-model-runtime.js", () => ({
@@ -856,7 +856,7 @@ export async function loadCompactHooksHarness(): Promise<{
   }));
 
   vi.doMock("../docs-path.js", () => ({
-    resolveOpenClawReferencePaths: vi.fn(async () => ({
+    resolveNovaReferencePaths: vi.fn(async () => ({
       docsPath: undefined,
       sourcePath: undefined,
     })),
@@ -868,7 +868,7 @@ export async function loadCompactHooksHarness(): Promise<{
   }));
 
   vi.doMock("../agent-tools.js", () => ({
-    createOpenClawCodingTools: createOpenClawCodingToolsMock,
+    createNovaCodingTools: createNovaCodingToolsMock,
     resolveProcessToolScopeKey: ({
       scopeKey,
       sessionKey,

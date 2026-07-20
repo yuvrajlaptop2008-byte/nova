@@ -4,18 +4,18 @@ import {
   callGatewayTool,
   listNodes,
   resolveNodeIdFromList,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { saveMediaBuffer } from "openclaw/plugin-sdk/media-store";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { saveMediaBuffer } from "nova/plugin-sdk/media-store";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createFileFetchTool } from "./file-fetch-tool.js";
 
-vi.mock("openclaw/plugin-sdk/agent-harness-runtime", () => ({
+vi.mock("nova/plugin-sdk/agent-harness-runtime", () => ({
   callGatewayTool: vi.fn(),
   listNodes: vi.fn(),
   resolveNodeIdFromList: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/media-store", () => ({
+vi.mock("nova/plugin-sdk/media-store", () => ({
   saveMediaBuffer: vi.fn(),
 }));
 

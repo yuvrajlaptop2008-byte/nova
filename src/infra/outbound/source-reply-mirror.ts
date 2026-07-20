@@ -17,7 +17,7 @@ import {
   completeRestartRecoveryTerminalDelivery,
   type RestartRecoveryTerminalDeliveryScope,
 } from "../../config/sessions/restart-recovery-receipt.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { normalizeAccountId, resolveAgentIdFromSessionKey } from "../../routing/session-key.js";
 import { readTrimmedStringAlias } from "../../utils/string-readers.js";
 import { createOutboundPayloadPlan, projectOutboundPayloadPlanForMirror } from "./payloads.js";
@@ -26,7 +26,7 @@ type SourceReplyTranscriptMirrorParams = {
   action: string;
   channel: string;
   actionParams: Record<string, unknown>;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   currentAccountId?: string | null;
   sessionKey?: string;

@@ -1,13 +1,13 @@
 // Mattermost plugin module implements setup core behavior.
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import type { ChannelSetupAdapter } from "openclaw/plugin-sdk/channel-setup";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "nova/plugin-sdk/account-id";
+import type { ChannelSetupAdapter } from "nova/plugin-sdk/channel-setup";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   applyAccountNameToChannelSection,
   applySetupAccountConfigPatch,
   migrateBaseNameToDefaultAccount,
-} from "openclaw/plugin-sdk/setup";
-import { createSetupInputPresenceValidator } from "openclaw/plugin-sdk/setup-runtime";
+} from "nova/plugin-sdk/setup";
+import { createSetupInputPresenceValidator } from "nova/plugin-sdk/setup-runtime";
 import {
   resolveMattermostAccount,
   type ResolvedMattermostAccount,
@@ -23,7 +23,7 @@ export function isMattermostConfigured(account: ResolvedMattermostAccount): bool
   return tokenConfigured && Boolean(account.baseUrl);
 }
 
-export function resolveMattermostAccountWithSecrets(cfg: OpenClawConfig, accountId: string) {
+export function resolveMattermostAccountWithSecrets(cfg: NovaConfig, accountId: string) {
   return resolveMattermostAccount({
     cfg,
     accountId,
@@ -32,11 +32,11 @@ export function resolveMattermostAccountWithSecrets(cfg: OpenClawConfig, account
 }
 
 export function applyMattermostSetupConfigPatch(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   name?: string;
   patch: Record<string, unknown>;
-}): OpenClawConfig {
+}): NovaConfig {
   const namedConfig = applyAccountNameToChannelSection({
     cfg: params.cfg,
     channelKey: channel,

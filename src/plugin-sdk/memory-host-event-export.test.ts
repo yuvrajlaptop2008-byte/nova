@@ -25,7 +25,7 @@ describe("memory host event export recovery", () => {
     const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "memory-host-publish-race-"));
     const workspaceDir = path.join(fixtureRoot, "workspace");
     const relativePath = "memory/events/state/memory-host-events.jsonl";
-    const ownerRelativePath = "memory/events/state/.openclaw-memory-host-events-owner.json";
+    const ownerRelativePath = "memory/events/state/.nova-memory-host-events-owner.json";
     const absolutePath = path.join(workspaceDir, relativePath);
     const owner = {
       queueKey: "state\0workspace",
@@ -127,7 +127,7 @@ describe("memory host event export recovery", () => {
         .slice(0, 32);
       const exportDir = path.join(workspaceDir, "memory", "events", stateHash);
       const exportPath = path.join(exportDir, "memory-host-events.jsonl");
-      const ownerPath = path.join(exportDir, ".openclaw-memory-host-events-owner.json");
+      const ownerPath = path.join(exportDir, ".nova-memory-host-events-owner.json");
       const expectedContent = `${JSON.stringify(event)}\n`;
       await fs.mkdir(exportDir, { recursive: true });
       await fs.writeFile(exportPath, "", { mode: 0o600 });
@@ -136,7 +136,7 @@ describe("memory host event export recovery", () => {
         ownerPath,
         `${JSON.stringify({
           schemaVersion: 3,
-          kind: "openclaw-memory-host-events-export",
+          kind: "nova-memory-host-events-export",
           stateHash,
           workspaceHash,
           pendingContentSha256: createHash("sha256").update(expectedContent).digest("hex"),
@@ -194,7 +194,7 @@ describe("memory host event export recovery", () => {
         .slice(0, 32);
       const exportDir = path.join(workspaceDir, "memory", "events", stateHash);
       const exportPath = path.join(exportDir, "memory-host-events.jsonl");
-      const ownerPath = path.join(exportDir, ".openclaw-memory-host-events-owner.json");
+      const ownerPath = path.join(exportDir, ".nova-memory-host-events-owner.json");
       const expectedContent = `${JSON.stringify(event)}\n`;
       await fs.mkdir(exportDir, { recursive: true });
       await fs.writeFile(exportPath, "", { mode: 0o600 });
@@ -202,7 +202,7 @@ describe("memory host event export recovery", () => {
         ownerPath,
         `${JSON.stringify({
           schemaVersion: 3,
-          kind: "openclaw-memory-host-events-export",
+          kind: "nova-memory-host-events-export",
           stateHash,
           workspaceHash,
           pendingContentSha256: createHash("sha256").update(expectedContent).digest("hex"),

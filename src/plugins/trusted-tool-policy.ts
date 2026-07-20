@@ -1,6 +1,6 @@
 // Resolves trusted tool policy for plugins from runtime config.
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isPlainObject } from "../utils.js";
 import type {
   PluginHookBeforeToolCallEvent,
@@ -178,7 +178,7 @@ export async function runTrustedToolPolicies(
   event: PluginHookBeforeToolCallEvent,
   ctx: PluginHookToolContext,
   options?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     deriveEvent?: (
       params: Record<string, unknown>,
     ) => Pick<PluginHookBeforeToolCallEvent, "derivedPaths">;
@@ -200,9 +200,9 @@ export async function runTrustedToolPolicies(
   let hasAdjustedParams = false;
   let approval: PluginHookBeforeToolCallResult["requireApproval"];
   const sessionExtensionStateCache = new Map<string, Record<string, PluginJsonValue> | undefined>();
-  let resolvedSessionConfig: OpenClawConfig | undefined = options?.config;
+  let resolvedSessionConfig: NovaConfig | undefined = options?.config;
   let didResolveSessionConfig = Boolean(options?.config);
-  const resolveSessionConfig = (): OpenClawConfig | undefined => {
+  const resolveSessionConfig = (): NovaConfig | undefined => {
     if (!didResolveSessionConfig) {
       didResolveSessionConfig = true;
       try {

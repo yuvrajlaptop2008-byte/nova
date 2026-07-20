@@ -1,4 +1,4 @@
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { resolveTeamsMeetingsConfig } from "./config.js";
 
@@ -12,8 +12,8 @@ const realtimeMocks = vi.hoisted(() => ({
   })),
 }));
 
-vi.mock("openclaw/plugin-sdk/meeting-runtime", async (importOriginal) => {
-  const original = await importOriginal<typeof import("openclaw/plugin-sdk/meeting-runtime")>();
+vi.mock("nova/plugin-sdk/meeting-runtime", async (importOriginal) => {
+  const original = await importOriginal<typeof import("nova/plugin-sdk/meeting-runtime")>();
   return {
     ...original,
     createNodeMeetingRealtimeAudioTransport: () => ({

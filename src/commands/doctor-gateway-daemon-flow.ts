@@ -2,7 +2,7 @@
 import { note } from "../../packages/terminal-core/src/note.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { resolveGatewayPort } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   resolveGatewayLaunchAgentLabel,
   resolveNodeLaunchAgentLabel,
@@ -139,7 +139,7 @@ function renderBlockingSystemGatewayServices(services: ExtraGatewayService[]): s
     "System-level Nova gateway service detected while the user gateway service is not installed.",
     ...services.map((svc) => `- ${svc.label} (${svc.detail})`),
     "Nova will not install a second user-level gateway service automatically.",
-    "Run `openclaw gateway status --deep` or `openclaw doctor --deep` to inspect duplicate services.",
+    "Run `nova gateway status --deep` or `nova doctor --deep` to inspect duplicate services.",
     `Set ${SERVICE_REPAIR_POLICY_ENV}=external if a system supervisor owns the gateway lifecycle.`,
   ].join("\n");
 }
@@ -161,7 +161,7 @@ function renderEstablishedGatewayConnections(connections: PortConnection[]): str
 }
 
 async function maybeReportEstablishedGatewayClients(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   deep: boolean;
   port?: number;
 }): Promise<void> {
@@ -185,7 +185,7 @@ async function maybeReportEstablishedGatewayClients(params: {
  * services, report port conflicts, or restart unhealthy supervision when policy allows.
  */
 export async function maybeRepairGatewayDaemon(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runtime: RuntimeEnv;
   prompter: DoctorPrompter;
   options: DoctorOptions;
@@ -339,7 +339,7 @@ export async function maybeRepairGatewayDaemon(params: {
       );
       if (!install) {
         note(
-          `Run ${formatCliCommand("openclaw gateway install")} when you want to install the gateway service.`,
+          `Run ${formatCliCommand("nova gateway install")} when you want to install the gateway service.`,
           "Gateway",
         );
       }
@@ -432,7 +432,7 @@ export async function maybeRepairGatewayDaemon(params: {
   if (process.platform === "darwin") {
     const label = resolveGatewayLaunchAgentLabel(process.env.NOVA_PROFILE);
     note(
-      `LaunchAgent loaded; stopping requires "${formatCliCommand("openclaw gateway stop")}" or launchctl bootout gui/$UID/${label}.`,
+      `LaunchAgent loaded; stopping requires "${formatCliCommand("nova gateway stop")}" or launchctl bootout gui/$UID/${label}.`,
       "Gateway",
     );
   }

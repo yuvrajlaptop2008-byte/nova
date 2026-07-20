@@ -1,12 +1,12 @@
 // Fireworks plugin entrypoint registers its Nova integration.
-import type { ProviderResolveDynamicModelContext } from "openclaw/plugin-sdk/plugin-entry";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
+import type { ProviderResolveDynamicModelContext } from "nova/plugin-sdk/plugin-entry";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
 import {
   buildProviderReplayFamilyHooks,
   cloneFirstTemplateModel,
   DEFAULT_CONTEXT_TOKENS,
   normalizeModelCompat,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 import { isFireworksKimiModelId } from "./model-id.js";
 import { applyFireworksConfig, FIREWORKS_DEFAULT_MODEL_REF } from "./onboard.js";
 import {

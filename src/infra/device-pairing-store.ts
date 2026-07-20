@@ -6,16 +6,16 @@
 // cross-process last-writer-wins per store) while WAL + busy_timeout make
 // concurrent gateway/CLI access safe at the statement level.
 import type {
-  DB as OpenClawStateKyselyDatabase,
+  DB as NovaStateKyselyDatabase,
   DevicePairingPaired,
   DevicePairingPending,
   DeviceBootstrapTokens,
-} from "../state/openclaw-state-db.generated.js";
+} from "../state/nova-state-db.generated.js";
 import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-  type OpenClawStateDatabaseOptions,
-} from "../state/openclaw-state-db.js";
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+  type NovaStateDatabaseOptions,
+} from "../state/nova-state-db.js";
 import type {
   DeviceAuthToken,
   DeviceBootstrapTokenRecord,
@@ -35,7 +35,7 @@ type DevicePairingStoreState = {
 type DevicePairingStoreTarget = "pending" | "paired" | "both";
 
 /** Route an explicit pairing base dir (tests, alternate state roots) to that dir's DB. */
-function resolveDevicePairingStateDbOptions(baseDir?: string): OpenClawStateDatabaseOptions {
+function resolveDevicePairingStateDbOptions(baseDir?: string): NovaStateDatabaseOptions {
   return baseDir ? { env: { ...process.env, NOVA_STATE_DIR: baseDir } } : {};
 }
 
@@ -226,8 +226,8 @@ function fromBootstrapRow(row: DeviceBootstrapTokens): DeviceBootstrapTokenRecor
 
 /** Load the full pending + paired device snapshot from the shared state DB. */
 export function loadDevicePairingStoreState(baseDir?: string): DevicePairingStoreState {
-  const { db } = openOpenClawStateDatabase(resolveDevicePairingStateDbOptions(baseDir));
-  const kysely = getNodeSqliteKysely<OpenClawStateKyselyDatabase>(db);
+  const { db } = openNovaStateDatabase(resolveDevicePairingStateDbOptions(baseDir));
+  const kysely = getNodeSqliteKysely<NovaStateKyselyDatabase>(db);
   const pendingById: Record<string, DevicePairingPendingRecord> = {};
   for (const row of executeSqliteQuerySync(
     db,
@@ -251,8 +251,8 @@ export function persistDevicePairingStoreState(
   baseDir: string | undefined,
   target: DevicePairingStoreTarget,
 ): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
-    const kysely = getNodeSqliteKysely<OpenClawStateKyselyDatabase>(db);
+  runNovaStateWriteTransaction(({ db }) => {
+    const kysely = getNodeSqliteKysely<NovaStateKyselyDatabase>(db);
     if (target !== "paired") {
       executeSqliteQuerySync(db, kysely.deleteFrom("device_pairing_pending"));
       const rows = Object.values(state.pendingById).map(toPendingRow);
@@ -274,8 +274,8 @@ export function persistDevicePairingStoreState(
 export function loadDeviceBootstrapTokenRecords(
   baseDir?: string,
 ): Record<string, DeviceBootstrapTokenRecord> {
-  const { db } = openOpenClawStateDatabase(resolveDevicePairingStateDbOptions(baseDir));
-  const kysely = getNodeSqliteKysely<OpenClawStateKyselyDatabase>(db);
+  const { db } = openNovaStateDatabase(resolveDevicePairingStateDbOptions(baseDir));
+  const kysely = getNodeSqliteKysely<NovaStateKyselyDatabase>(db);
   const state: Record<string, DeviceBootstrapTokenRecord> = {};
   for (const row of executeSqliteQuerySync(
     db,
@@ -291,8 +291,8 @@ export function persistDeviceBootstrapTokenRecords(
   state: Record<string, DeviceBootstrapTokenRecord>,
   baseDir?: string,
 ): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
-    const kysely = getNodeSqliteKysely<OpenClawStateKyselyDatabase>(db);
+  runNovaStateWriteTransaction(({ db }) => {
+    const kysely = getNodeSqliteKysely<NovaStateKyselyDatabase>(db);
     executeSqliteQuerySync(db, kysely.deleteFrom("device_bootstrap_tokens"));
     const rows = Object.entries(state).map(([tokenKey, record]) =>
       toBootstrapRow(tokenKey, record),

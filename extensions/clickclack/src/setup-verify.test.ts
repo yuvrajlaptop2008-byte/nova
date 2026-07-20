@@ -1,5 +1,5 @@
 // ClickClack tests cover post-write connection verification and gateway guidance.
-import { createNonExitingRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createNonExitingRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
   workspaces: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/gateway-runtime", () => ({
+vi.mock("nova/plugin-sdk/gateway-runtime", () => ({
   callGatewayFromCli: mocks.callGatewayFromCli,
 }));
 
@@ -62,7 +62,7 @@ describe("ClickClack post-write setup verification", () => {
     vi.unstubAllEnvs();
     mocks.callGatewayFromCli.mockReset().mockResolvedValue({ ok: true });
     mocks.createClient.mockReset();
-    mocks.me.mockReset().mockResolvedValue({ id: "usr_bot", handle: "openclaw" });
+    mocks.me.mockReset().mockResolvedValue({ id: "usr_bot", handle: "nova" });
     mocks.resolveWorkspaceId.mockReset().mockResolvedValue("wsp_default");
     mocks.workspaces
       .mockReset()
@@ -76,7 +76,7 @@ describe("ClickClack post-write setup verification", () => {
 
     expect(runtime.log).toHaveBeenNthCalledWith(
       1,
-      "Connected as @openclaw — workspace clickclack resolved.",
+      "Connected as @nova — workspace clickclack resolved.",
     );
     expect(runtime.log).toHaveBeenNthCalledWith(
       2,
@@ -151,13 +151,13 @@ describe("ClickClack post-write setup verification", () => {
             code: 1006,
           }),
         ),
-      expected: "Start Nova to connect: openclaw gateway",
+      expected: "Start Nova to connect: nova gateway",
     },
     {
       name: "unavailable",
       arrange: () => mocks.callGatewayFromCli.mockRejectedValue(new Error("probe failed")),
       expected:
-        "If Nova is running it connects automatically; otherwise start it with: openclaw gateway",
+        "If Nova is running it connects automatically; otherwise start it with: nova gateway",
     },
   ])("prints the gateway next step when status is $name", async ({ arrange, expected }) => {
     arrange();

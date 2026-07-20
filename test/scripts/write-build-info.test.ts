@@ -14,7 +14,7 @@ describe("write-build-info", () => {
   const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
   function createPackage(version = "2026.7.10"): string {
-    const rootDir = tempDirs.make("openclaw-build-info-");
+    const rootDir = tempDirs.make("nova-build-info-");
     fs.writeFileSync(path.join(rootDir, "package.json"), `${JSON.stringify({ version })}\n`);
     return rootDir;
   }

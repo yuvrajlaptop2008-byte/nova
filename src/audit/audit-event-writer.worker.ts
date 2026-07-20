@@ -1,6 +1,6 @@
 /** Worker-thread entrypoint for serialized audit writes and retention maintenance. */
 import { parentPort, workerData } from "node:worker_threads";
-import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabase } from "../state/nova-state-db.js";
 import { pruneExpiredAuditEvents, recordAuditEvent } from "./audit-event-store.js";
 import type { AuditEventInput } from "./audit-event-types.js";
 
@@ -43,7 +43,7 @@ port.on("message", (message: AuditWriterRequest) => {
   clearInterval(maintenanceTimer);
   reportMaintenance();
   try {
-    closeOpenClawStateDatabase();
+    closeNovaStateDatabase();
   } catch (error) {
     port.postMessage({ type: "maintenance-error", error: String(error) });
   }

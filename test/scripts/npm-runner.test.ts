@@ -36,13 +36,13 @@ describe("resolveNpmRunner", () => {
       execPath,
       env: {},
       existsSync: (candidate) => candidate === expectedNpmCliPath,
-      npmArgs: ["pack", "openclaw@beta"],
+      npmArgs: ["pack", "nova@beta"],
       platform: "darwin",
     });
 
     expect(runner).toEqual({
       command: execPath,
-      args: [expectedNpmCliPath, "pack", "openclaw@beta"],
+      args: [expectedNpmCliPath, "pack", "nova@beta"],
       shell: false,
     });
   });

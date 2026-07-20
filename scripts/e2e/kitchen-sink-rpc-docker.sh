@@ -4,15 +4,15 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-kitchen-sink-rpc-e2e" NOVA_KITCHEN_SINK_RPC_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-kitchen-sink-rpc-e2e" NOVA_KITCHEN_SINK_RPC_E2E_IMAGE)"
 MAX_MEMORY_MIB="$(docker_e2e_read_nonnegative_decimal_env NOVA_KITCHEN_SINK_MAX_MEMORY_MIB 2048)"
 MAX_CPU_PERCENT="$(docker_e2e_read_nonnegative_decimal_env NOVA_KITCHEN_SINK_MAX_CPU_PERCENT 1200)"
 # Keep the outer Docker watchdog above the walker's install, enable, inspect,
 # readiness, and first-RPC retry budgets so inner failures stay diagnostic.
 DOCKER_RUN_TIMEOUT="${NOVA_KITCHEN_SINK_RPC_DOCKER_RUN_TIMEOUT:-1500s}"
-CONTAINER_NAME="openclaw-kitchen-sink-rpc-e2e-$$"
-RUN_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-kitchen-sink-rpc.XXXXXX")"
-STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-kitchen-sink-rpc-stats.XXXXXX")"
+CONTAINER_NAME="nova-kitchen-sink-rpc-e2e-$$"
+RUN_LOG="$(mktemp "${TMPDIR:-/tmp}/nova-kitchen-sink-rpc.XXXXXX")"
+STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/nova-kitchen-sink-rpc-stats.XXXXXX")"
 
 cleanup() {
   docker_e2e_docker_cmd rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -24,7 +24,7 @@ docker_e2e_build_or_reuse "$IMAGE_NAME" kitchen-sink-rpc
 
 DOCKER_ENV_ARGS=(
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-  -e NOVA_ENTRY=/app/openclaw.mjs
+  -e NOVA_ENTRY=/app/nova.mjs
 )
 
 for env_name in \

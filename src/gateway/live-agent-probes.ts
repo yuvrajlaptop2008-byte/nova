@@ -36,11 +36,11 @@ type LiveCronProbeSpec = {
 };
 
 /** Selects the packaged launcher when built, otherwise the canonical source runner. */
-export function resolveOpenClawCliProcessArgs(
+export function resolveNovaCliProcessArgs(
   args: readonly string[],
   hasBuildOutput: boolean,
 ): string[] {
-  return [hasBuildOutput ? "openclaw.mjs" : "scripts/run-node.mjs", ...args];
+  return [hasBuildOutput ? "nova.mjs" : "scripts/run-node.mjs", ...args];
 }
 
 /** Return true for live agents that expose Claude-style MCP tool names. */
@@ -113,9 +113,9 @@ export function buildLiveCronProbeMessage(params: {
   const claudeLike = isClaudeLikeLiveAgent(params.agent);
   if (params.attempt === 0) {
     return (
-      "Use the Nova MCP cron tool from server `openclaw`. " +
-      "If it is not already visible, search/load MCP tools for `openclaw cron` or `cron`, " +
-      "then call the matching Nova MCP tool; Claude-style names may appear as `mcp__openclaw__cron`. " +
+      "Use the Nova MCP cron tool from server `nova`. " +
+      "If it is not already visible, search/load MCP tools for `nova cron` or `cron`, " +
+      "then call the matching Nova MCP tool; Claude-style names may appear as `mcp__nova__cron`. " +
       "Do not use Claude native `CronCreate`, `CronList`, or `CronDelete`; those are not Nova proof. " +
       `Call it with JSON arguments ${params.argsJson}. ` +
       "Preserve the JSON exactly, including job.sessionTarget and job.sessionKey; do not omit, rename, or flatten those fields. " +
@@ -125,9 +125,9 @@ export function buildLiveCronProbeMessage(params: {
   }
   if (claudeLike) {
     return (
-      "Retry the Nova MCP cron tool from server `openclaw` now. " +
-      "If it is not already visible, search/load MCP tools for `openclaw cron` or `cron`, " +
-      "then call the matching Nova MCP tool; Claude-style names may appear as `mcp__openclaw__cron`. " +
+      "Retry the Nova MCP cron tool from server `nova` now. " +
+      "If it is not already visible, search/load MCP tools for `nova cron` or `cron`, " +
+      "then call the matching Nova MCP tool; Claude-style names may appear as `mcp__nova__cron`. " +
       "Do not use Claude native `CronCreate`, `CronList`, or `CronDelete`; those are not Nova proof. " +
       `Use these exact JSON arguments: ${params.argsJson}. ` +
       "Preserve job.sessionTarget and job.sessionKey exactly as provided. " +
@@ -139,8 +139,8 @@ export function buildLiveCronProbeMessage(params: {
   }
   return (
     "Your previous Nova cron MCP tool call was cancelled before the job was created. " +
-    "Retry the Nova MCP cron tool from server `openclaw` now. " +
-    "If the harness shows Claude-style MCP names, use `mcp__openclaw__cron`. " +
+    "Retry the Nova MCP cron tool from server `nova` now. " +
+    "If the harness shows Claude-style MCP names, use `mcp__nova__cron`. " +
     `Use these exact JSON arguments: ${params.argsJson}. ` +
     "Preserve job.sessionTarget and job.sessionKey exactly as provided. " +
     `If the cron job is created, reply exactly: ${params.exactReply}. ` +
@@ -150,7 +150,7 @@ export function buildLiveCronProbeMessage(params: {
   );
 }
 
-export async function runOpenClawCliJson<T>(args: string[], env: NodeJS.ProcessEnv): Promise<T> {
+export async function runNovaCliJson<T>(args: string[], env: NodeJS.ProcessEnv): Promise<T> {
   const childEnv = { ...env };
   delete childEnv.VITEST;
   delete childEnv.VITEST_MODE;
@@ -164,7 +164,7 @@ export async function runOpenClawCliJson<T>(args: string[], env: NodeJS.ProcessE
   );
   const { stdout, stderr } = await runExec(
     process.execPath,
-    resolveOpenClawCliProcessArgs(cliArgs, hasBuildOutput),
+    resolveNovaCliProcessArgs(cliArgs, hasBuildOutput),
     {
       baseEnv: childEnv,
       cwd: process.cwd(),
@@ -177,7 +177,7 @@ export async function runOpenClawCliJson<T>(args: string[], env: NodeJS.ProcessE
   if (!trimmed) {
     throw new Error(
       [
-        `openclaw ${args.join(" ")} produced no JSON stdout`,
+        `nova ${args.join(" ")} produced no JSON stdout`,
         stderr.trim() ? `stderr: ${stderr.trim()}` : undefined,
       ]
         .filter(Boolean)
@@ -189,7 +189,7 @@ export async function runOpenClawCliJson<T>(args: string[], env: NodeJS.ProcessE
   } catch (error) {
     throw new Error(
       [
-        `openclaw ${args.join(" ")} returned invalid JSON`,
+        `nova ${args.join(" ")} returned invalid JSON`,
         `stdout: ${trimmed}`,
         stderr.trim() ? `stderr: ${stderr.trim()}` : undefined,
         error instanceof Error ? `cause: ${error.message}` : undefined,
@@ -208,7 +208,7 @@ export async function assertCronJobVisibleViaCli(params: {
   expectedName: string;
   expectedMessage: string;
 }): Promise<CronListJob | undefined> {
-  const cronList = await runOpenClawCliJson<CronListCliResult>(
+  const cronList = await runNovaCliJson<CronListCliResult>(
     [
       "cron",
       "list",

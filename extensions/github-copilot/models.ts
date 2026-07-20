@@ -2,18 +2,18 @@
 import type {
   ProviderResolveDynamicModelContext,
   ProviderRuntimeModel,
-} from "openclaw/plugin-sdk/core";
-import { buildCopilotIdeHeaders, COPILOT_INTEGRATION_ID } from "openclaw/plugin-sdk/provider-auth";
-import { readProviderJsonArrayFieldResponse } from "openclaw/plugin-sdk/provider-http";
-import type { ModelDefinitionConfig } from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/core";
+import { buildCopilotIdeHeaders, COPILOT_INTEGRATION_ID } from "nova/plugin-sdk/provider-auth";
+import { readProviderJsonArrayFieldResponse } from "nova/plugin-sdk/provider-http";
+import type { ModelDefinitionConfig } from "nova/plugin-sdk/provider-model-shared";
 import {
   normalizeModelCompat,
   supportsClaudeAdaptiveThinking,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 import {
   asPositiveSafeInteger,
   normalizeOptionalLowercaseString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import {
   resolveCopilotModelCompat,
   resolveCopilotTransportApi,
@@ -94,7 +94,7 @@ export function resolveCopilotForwardCompatModel(
   // Catch-all: create a synthetic model definition for any unknown model ID.
   // The Copilot API is OpenAI-compatible and will return its own error if the
   // model isn't available on the user's plan. This lets new models be used
-  // by simply adding them to agents.defaults.models in openclaw.json — no
+  // by simply adding them to agents.defaults.models in nova.json — no
   // code change required.
   const reasoning = /^o[13](\b|$)/.test(lowerModelId) || isCopilotCodexModelId(lowerModelId);
   const compat = resolveCopilotModelCompat(trimmedModelId);

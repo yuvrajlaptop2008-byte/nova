@@ -1,7 +1,7 @@
 // Console logging helpers format and write messages to console streams.
 import util from "node:util";
 import { stripAnsi } from "../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { isVerbose } from "../global-state.js";
 import { readLoggingConfig, shouldSkipMutatingLoggingConfigRead } from "./config.js";
 import { resolveEnvLogLevelOverride } from "./env-log-level.js";
@@ -19,7 +19,7 @@ type ConsoleSettings = {
 };
 export type ConsoleLoggerSettings = ConsoleSettings;
 
-type ConsoleConfigLoader = () => OpenClawConfig["logging"] | undefined;
+type ConsoleConfigLoader = () => NovaConfig["logging"] | undefined;
 const loadConfigFallbackDefault: ConsoleConfigLoader = () => undefined;
 let loadConfigFallback: ConsoleConfigLoader = loadConfigFallbackDefault;
 
@@ -61,7 +61,7 @@ function resolveConsoleSettings(): ConsoleSettings {
     return { level: "silent", style: normalizeConsoleStyle(undefined) };
   }
 
-  let cfg: OpenClawConfig["logging"] | undefined =
+  let cfg: NovaConfig["logging"] | undefined =
     (loggingState.overrideSettings as LoggerSettings | null) ?? readLoggingConfig();
   if (!cfg && !shouldSkipMutatingLoggingConfigRead()) {
     if (loggingState.resolvingConsoleSettings) {
@@ -120,7 +120,7 @@ export async function withConsoleSubsystemsSuppressed<T>(work: () => Promise<T>)
   const previousFilter = loggingState.consoleSubsystemFilter
     ? [...loggingState.consoleSubsystemFilter]
     : null;
-  setConsoleSubsystemFilter(["__openclaw_tui_quiet__"]);
+  setConsoleSubsystemFilter(["__nova_tui_quiet__"]);
   try {
     return await work();
   } finally {

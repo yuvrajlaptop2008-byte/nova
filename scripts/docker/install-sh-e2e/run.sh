@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Official installer E2E harness for Docker.
 #
-# Installs OpenClaw through the public one-liner, verifies the resolved npm
+# Installs Nova through the public one-liner, verifies the resolved npm
 # version, then exercises onboard + local embedded agent tool turns for the
 # configured model providers. Keep this script package-install based: it should
 # validate the installed npm artifact, not repo sources.
@@ -47,7 +47,7 @@ read_boolean_env() {
   esac
 }
 
-INSTALL_URL="${NOVA_INSTALL_URL:-https://openclaw.bot/install.sh}"
+INSTALL_URL="${NOVA_INSTALL_URL:-https://nova.bot/install.sh}"
 MODELS_MODE="${NOVA_E2E_MODELS:-both}" # both|openai|anthropic
 INSTALL_TAG="${NOVA_INSTALL_TAG:-latest}"
 E2E_PREVIOUS_VERSION="${NOVA_INSTALL_E2E_PREVIOUS:-}"
@@ -123,15 +123,15 @@ elif [[ "$MODELS_MODE" == "anthropic" && -z "$ANTHROPIC_API_TOKEN" && -z "$ANTHR
 fi
 
 resolve_npm_versions() {
-  EXPECTED_VERSION="$(quiet_npm view "openclaw@${INSTALL_TAG}" version)"
+  EXPECTED_VERSION="$(quiet_npm view "nova@${INSTALL_TAG}" version)"
   if [[ -z "$EXPECTED_VERSION" || "$EXPECTED_VERSION" == "undefined" || "$EXPECTED_VERSION" == "null" ]]; then
-    echo "ERROR: unable to resolve openclaw@${INSTALL_TAG} version" >&2
+    echo "ERROR: unable to resolve nova@${INSTALL_TAG} version" >&2
     return 2
   fi
   if [[ -n "$E2E_PREVIOUS_VERSION" ]]; then
     PREVIOUS_VERSION="$E2E_PREVIOUS_VERSION"
   else
-    PREVIOUS_VERSION="$(VERSIONS_JSON="$(quiet_npm view openclaw versions --json)" node - <<'NODE'
+    PREVIOUS_VERSION="$(VERSIONS_JSON="$(quiet_npm view nova versions --json)" node - <<'NODE'
 const versions = JSON.parse(process.env.VERSIONS_JSON || "[]");
 if (!Array.isArray(versions) || versions.length === 0) process.exit(1);
 process.stdout.write(versions.length >= 2 ? versions[versions.length - 2] : versions[0]);
@@ -146,7 +146,7 @@ preinstall_previous_version() {
     echo "Skip preinstall previous (NOVA_INSTALL_E2E_SKIP_PREVIOUS=1)"
   else
     echo "Preinstall previous (forces installer upgrade path; avoids read() prompt)"
-    quiet_npm install -g "openclaw@${PREVIOUS_VERSION}"
+    quiet_npm install -g "nova@${PREVIOUS_VERSION}"
   fi
 }
 
@@ -167,11 +167,11 @@ run_official_installer() (
 )
 
 verify_installed_version() {
-  INSTALLED_VERSION="$(openclaw --version 2>/dev/null | head -n 1 | tr -d '\r')"
-  INSTALLED_VERSION="$(extract_openclaw_semver "$INSTALLED_VERSION")"
+  INSTALLED_VERSION="$(nova --version 2>/dev/null | head -n 1 | tr -d '\r')"
+  INSTALLED_VERSION="$(extract_nova_semver "$INSTALLED_VERSION")"
   echo "installed=$INSTALLED_VERSION expected=$EXPECTED_VERSION"
   if [[ "$INSTALLED_VERSION" != "$EXPECTED_VERSION" ]]; then
-    echo "ERROR: expected openclaw@$EXPECTED_VERSION, got openclaw@$INSTALLED_VERSION" >&2
+    echo "ERROR: expected nova@$EXPECTED_VERSION, got nova@$INSTALLED_VERSION" >&2
     return 1
   fi
 }
@@ -186,7 +186,7 @@ set_image_model() {
   shift
   local candidate
   for candidate in "$@"; do
-    if openclaw --profile "$profile" models set-image "$candidate" >/dev/null 2>&1; then
+    if nova --profile "$profile" models set-image "$candidate" >/dev/null 2>&1; then
       echo "$candidate"
       return 0
     fi
@@ -200,7 +200,7 @@ set_agent_model() {
   local candidate
   shift
   for candidate in "$@"; do
-    if openclaw --profile "$profile" models set "$candidate" >/dev/null 2>&1; then
+    if nova --profile "$profile" models set "$candidate" >/dev/null 2>&1; then
       echo "$candidate"
       return 0
     fi
@@ -288,7 +288,7 @@ run_agent_turn() {
   # in the isolated container and already covered by gateway-specific lanes.
   set +e
   timeout --kill-after=15s "${AGENT_TURN_TIMEOUT_SECONDS}s" \
-    openclaw --profile "$profile" agent \
+    nova --profile "$profile" agent \
     --local \
     --session-id "$session_id" \
     --message "$prompt" \
@@ -490,14 +490,14 @@ dump_profile_debug() {
     fi
   fi
 
-  echo "---- openclaw processes ($profile) ----"
+  echo "---- nova processes ($profile) ----"
   for cmdline in /proc/[0-9]*/cmdline; do
     [[ -r "$cmdline" ]] || continue
     local pid
     pid="$(basename "$(dirname "$cmdline")")"
     local command
     command="$(tr '\0' ' ' <"$cmdline" | sed 's/[[:space:]]*$//')"
-    if [[ "$command" == *openclaw* || "$command" == *node* ]]; then
+    if [[ "$command" == *nova* || "$command" == *node* ]]; then
       echo "$pid $command"
     fi
   done
@@ -584,7 +584,7 @@ assert_session_used_tools() {
   if [[ ! -f "$jsonl" ]]; then
     export_workspace="$(mktemp -d)"
     local export_status=0
-    openclaw --profile "$profile" sessions export-trajectory \
+    nova --profile "$profile" sessions export-trajectory \
       --session-key "agent:main:explicit:${session_id}" \
       --agent main \
       --workspace "$export_workspace" \
@@ -594,7 +594,7 @@ assert_session_used_tools() {
       rm -rf "$export_workspace"
       return "$export_status"
     fi
-    jsonl="$export_workspace/.openclaw/trajectory-exports/scan/events.jsonl"
+    jsonl="$export_workspace/.nova/trajectory-exports/scan/events.jsonl"
   fi
   local scan_status=0
   node - <<'NODE' "$jsonl" "$@" || scan_status="$?"
@@ -787,7 +787,7 @@ NODE
 session_jsonl_path() {
   local profile="$1"
   local session_id="$2"
-  echo "$HOME/.openclaw-${profile}/agents/main/sessions/${session_id}.jsonl"
+  echo "$HOME/.nova-${profile}/agents/main/sessions/${session_id}.jsonl"
 }
 
 run_profile() {
@@ -799,7 +799,7 @@ run_profile() {
 
   phase_mark_start "Onboard ($profile)"
 	  if [[ "$agent_model_provider" == "openai" ]]; then
-	    openclaw --profile "$profile" onboard \
+	    nova --profile "$profile" onboard \
 	      --non-interactive \
 	      --accept-risk \
 	      --flow quickstart \
@@ -811,7 +811,7 @@ run_profile() {
       --workspace "$workspace" \
       --skip-health
 	  elif [[ -n "$ANTHROPIC_API_KEY" ]]; then
-	    openclaw --profile "$profile" onboard \
+	    nova --profile "$profile" onboard \
 	      --non-interactive \
 	      --accept-risk \
 	      --flow quickstart \
@@ -823,7 +823,7 @@ run_profile() {
       --workspace "$workspace" \
       --skip-health
 	  elif [[ -n "$ANTHROPIC_API_TOKEN" ]]; then
-	    openclaw --profile "$profile" onboard \
+	    nova --profile "$profile" onboard \
 	      --non-interactive \
 	      --accept-risk \
 	      --flow quickstart \
@@ -836,7 +836,7 @@ run_profile() {
       --workspace "$workspace" \
       --skip-health
 	  else
-	    openclaw --profile "$profile" onboard \
+	    nova --profile "$profile" onboard \
 	      --non-interactive \
 	      --accept-risk \
 	      --flow quickstart \
@@ -870,7 +870,7 @@ run_profile() {
       "$OPENAI_AGENT_MODEL" \
       "openai/gpt-5.5" \
       "openai/gpt-5.4-mini")"
-    openclaw --profile "$profile" config set models.providers.openai "{\"baseUrl\":\"https://api.openai.com/v1\",\"models\":[],\"timeoutSeconds\":${OPENAI_PROVIDER_TIMEOUT_SECONDS},\"agentRuntime\":{\"id\":\"openclaw\"}}" --strict-json >/dev/null
+    nova --profile "$profile" config set models.providers.openai "{\"baseUrl\":\"https://api.openai.com/v1\",\"models\":[],\"timeoutSeconds\":${OPENAI_PROVIDER_TIMEOUT_SECONDS},\"agentRuntime\":{\"id\":\"nova\"}}" --strict-json >/dev/null
     image_model="$(set_image_model "$profile" \
       "openai/gpt-5.4-image-2")"
   else
@@ -902,7 +902,7 @@ run_profile() {
 
   phase_mark_start "Start gateway ($profile)"
   GATEWAY_LOG="$workspace/gateway.log"
-  openclaw --profile "$profile" gateway --port "$port" --bind loopback >"$GATEWAY_LOG" 2>&1 &
+  nova --profile "$profile" gateway --port "$port" --bind loopback >"$GATEWAY_LOG" 2>&1 &
   GATEWAY_PID="$!"
   cleanup_profile() {
     if kill -0 "$GATEWAY_PID" 2>/dev/null; then
@@ -922,12 +922,12 @@ run_profile() {
 
   phase_mark_start "Wait for health ($profile)"
   for _ in $(seq 1 240); do
-    if openclaw --profile "$profile" health --timeout 5000 --json >/dev/null 2>&1; then
+    if nova --profile "$profile" health --timeout 5000 --json >/dev/null 2>&1; then
       break
     fi
     sleep 0.25
   done
-  if ! openclaw --profile "$profile" health --timeout 60000 --json >"$HEALTH_JSON" 2>&1; then
+  if ! nova --profile "$profile" health --timeout 60000 --json >"$HEALTH_JSON" 2>&1; then
     echo "ERROR: gateway health failed ($profile, output=$HEALTH_JSON)" >&2
     dump_profile_debug "$profile" "$HEALTH_JSON" >&2 || true
     return 1
@@ -1069,11 +1069,11 @@ run_profile() {
 }
 
 if [[ "$MODELS_MODE" == "openai" || "$MODELS_MODE" == "both" ]]; then
-  run_profile "e2e-openai" "18789" "/tmp/openclaw-e2e-openai" "openai"
+  run_profile "e2e-openai" "18789" "/tmp/nova-e2e-openai" "openai"
 fi
 
 if [[ "$MODELS_MODE" == "anthropic" || "$MODELS_MODE" == "both" ]]; then
-  run_profile "e2e-anthropic" "18799" "/tmp/openclaw-e2e-anthropic" "anthropic"
+  run_profile "e2e-anthropic" "18799" "/tmp/nova-e2e-anthropic" "anthropic"
 fi
 
 echo "OK"

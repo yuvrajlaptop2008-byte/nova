@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
-type LoggingConfig = OpenClawConfig["logging"];
+type LoggingConfig = NovaConfig["logging"];
 type InternalLoggingConfig = NonNullable<LoggingConfig> & {
   [fullContextToolPayloadRedaction]: true;
 };

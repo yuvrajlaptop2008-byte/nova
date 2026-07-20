@@ -1,5 +1,5 @@
 // Matrix helper module supports formatting behavior.
-import { isVoiceMessageCompatibleAudio } from "openclaw/plugin-sdk/media-runtime";
+import { isVoiceMessageCompatibleAudio } from "nova/plugin-sdk/media-runtime";
 import { getMatrixRuntime } from "../../runtime.js";
 import {
   markdownToMatrixHtml,

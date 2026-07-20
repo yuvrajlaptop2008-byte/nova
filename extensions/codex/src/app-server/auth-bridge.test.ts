@@ -6,9 +6,9 @@ import {
   clearRuntimeAuthProfileStoreSnapshots,
   loadAuthProfileStoreForSecretsRuntime,
   replaceRuntimeAuthProfileStoreSnapshots,
-} from "openclaw/plugin-sdk/agent-runtime";
-import { upsertAuthProfile } from "openclaw/plugin-sdk/provider-auth";
-import { withTempDir } from "openclaw/plugin-sdk/test-env";
+} from "nova/plugin-sdk/agent-runtime";
+import { upsertAuthProfile } from "nova/plugin-sdk/provider-auth";
+import { withTempDir } from "nova/plugin-sdk/test-env";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   applyCodexAppServerAuthProfile,
@@ -47,8 +47,8 @@ const providerRuntimeMocks = vi.hoisted(() => ({
   ),
 }));
 
-vi.mock("openclaw/plugin-sdk/agent-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/agent-runtime")>();
+vi.mock("nova/plugin-sdk/agent-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/agent-runtime")>();
   return {
     ...actual,
     resolveApiKeyForProfile: async (
@@ -189,7 +189,7 @@ async function writeCodexCliApiKeyAuthFile(codexHome: string): Promise<void> {
 
 describe("bridgeCodexAppServerStartOptions", () => {
   it("never overlays persisted profiles onto a supplied runtime store", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const authProfileStore = { version: 1, profiles: {} };
     try {
       upsertAuthProfile({
@@ -217,7 +217,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("sets agent-owned CODEX_HOME without overriding HOME for local app-server launches", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const startOptions = createStartOptions();
     try {
       const codexHome = resolveCodexAppServerHomeDir(agentDir);
@@ -242,7 +242,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("uses the native user Codex home for coexistence mode", async () => {
-    await withTempDir("openclaw-codex-user-home-", async (root) => {
+    await withTempDir("nova-codex-user-home-", async (root) => {
       const agentDir = path.join(root, "agent");
       const codexHome = path.join(root, "user-codex-home");
       vi.stubEnv("CODEX_HOME", codexHome);
@@ -259,7 +259,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("places the ephemeral auth-store override after configured root overrides", async () => {
-    await withTempDir("openclaw-codex-auth-store-", async (agentDir) => {
+    await withTempDir("nova-codex-auth-store-", async (agentDir) => {
       const startOptions = createStartOptions({
         args: ["-c", 'cli_auth_credentials_store="keyring"', "app-server"],
       });
@@ -277,7 +277,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not mistake an option value for the app-server subcommand", async () => {
-    await withTempDir("openclaw-codex-profile-name-", async (agentDir) => {
+    await withTempDir("nova-codex-profile-name-", async (agentDir) => {
       const startOptions = createStartOptions({
         args: ["--profile", "app-server", "app-server"],
       });
@@ -295,7 +295,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("preserves custom stdio backend arguments", async () => {
-    await withTempDir("openclaw-codex-custom-backend-", async (agentDir) => {
+    await withTempDir("nova-codex-custom-backend-", async (agentDir) => {
       const startOptions = createStartOptions({
         command: "custom-codex-compatible-server",
         commandSource: "config",
@@ -309,7 +309,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("preserves inherited HOME when clearEnv asks to clear app-server isolation vars", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const startOptions = createStartOptions({
       clearEnv: ["CODEX_HOME", "HOME", "FOO"],
     });
@@ -334,7 +334,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("preserves explicit CODEX_HOME and HOME overrides", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const codexHome = path.join(agentDir, "custom-codex-home");
     const nativeHome = path.join(agentDir, "custom-native-home");
     const startOptions = createStartOptions({
@@ -366,7 +366,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("clears inherited API-key env vars when the default Codex profile is subscription auth", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const startOptions = createStartOptions({
       env: { EXISTING: "1" },
       clearEnv: ["FOO"],
@@ -407,7 +407,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("clears an inherited OpenAI API key for an explicit Codex OAuth profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const startOptions = createStartOptions({ clearEnv: ["FOO"] });
     try {
       upsertAuthProfile({
@@ -443,7 +443,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("clears an inherited OpenAI API key for an explicit Codex token profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const startOptions = createStartOptions({ clearEnv: ["FOO"] });
     try {
       upsertAuthProfile({
@@ -478,7 +478,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   it.each(["api-key", "profile"] as const)(
     "clears all ambient auth env vars for prepared %s startup",
     async (preparedAuth) => {
-      const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+      const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
       const startOptions = createStartOptions({ clearEnv: ["FOO", "OPENAI_API_KEY"] });
       const preparedAuthHandoff =
         preparedAuth === "api-key"
@@ -565,7 +565,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
       authRequirement: "subscription",
       authProfileId: "openai:work",
       authProfileStore,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       subscriptionProfileRequiredError: "profile required",
       subscriptionProfileUnusableError: "profile unusable",
     });
@@ -647,7 +647,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps an inherited OpenAI API key for an explicit Codex api-key profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const startOptions = createStartOptions({ clearEnv: ["FOO"] });
     try {
       upsertAuthProfile({
@@ -679,7 +679,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not clear process environment for websocket app-server connections", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const startOptions = createStartOptions({
       transport: "websocket",
       url: "ws://127.0.0.1:1455",
@@ -712,7 +712,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("fingerprints resolved API-key auth-profile secrets without exposing them", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     try {
       upsertAuthProfile({
         agentDir,
@@ -753,7 +753,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("fingerprints API-key auth-profile secret refs", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     try {
       upsertAuthProfile({
         agentDir,
@@ -787,7 +787,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("fingerprints token auth-profile secret refs", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     try {
       upsertAuthProfile({
         agentDir,
@@ -824,7 +824,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   it("fingerprints supplied token stores with the same profile id independently", async () => {
     const resolveKey = async (token: string) =>
       await resolveCodexAppServerAuthAccountCacheKey({
-        agentDir: "/tmp/openclaw-codex-prepared-auth",
+        agentDir: "/tmp/nova-codex-prepared-auth",
         authProfileId: "openai:work",
         authProfileStore: {
           version: 1,
@@ -850,7 +850,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies an OpenAI Codex OAuth profile through app-server login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -885,7 +885,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies a supplied scoped OAuth profile instead of persisted credentials", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -936,7 +936,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
     { name: "without persisted same-id credentials", persistSameId: false },
     { name: "with persisted same-id credentials", persistSameId: true },
   ])("refreshes an expired scoped OAuth profile $name", async ({ persistSameId }) => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "scoped-refreshed-access",
@@ -1005,7 +1005,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("routes a supplied persisted OAuth clone through canonical refresh", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "persisted-refreshed-access",
@@ -1056,7 +1056,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps a prepared persisted store aligned across rotating refresh tokens", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     oauthMocks.refreshOpenAICodexToken
       .mockResolvedValueOnce({
         access: "first-rotated-access",
@@ -1107,7 +1107,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not replace a prepared persisted store changed during refresh", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     let resolveRefresh:
       | ((value: { access: string; refresh: string; expires: number }) => void)
       | undefined;
@@ -1163,7 +1163,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps a runtime-external same-account OAuth profile scoped", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "scoped-refreshed-access",
@@ -1227,7 +1227,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps an ambiguous supplied OAuth identity scoped", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "scoped-refreshed-access",
@@ -1287,7 +1287,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("routes a same-identity stale persisted clone through canonical persisted auth", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -1337,7 +1337,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps a changed-identity persisted clone scoped", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "account-a-refreshed-access",
@@ -1401,7 +1401,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("serializes concurrent refreshes of the same scoped OAuth profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     let resolveRefresh:
       | ((value: { access: string; refresh: string; expires: number; accountId: string }) => void)
@@ -1474,7 +1474,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("leaves native app-server auth untouched when auth bridging is disabled", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ requiresOpenaiAuth: true }));
     try {
       vi.stubEnv("OPENAI_API_KEY", "env-api-key");
@@ -1510,7 +1510,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
 
     await applyCodexAppServerAuthProfile({
       client: { request } as never,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       authProfileId: null,
       authProfileStore,
       preparedAuth: { kind: "api-key", apiKey: "prepared-platform-key" },
@@ -1539,7 +1539,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
     };
     vi.stubEnv("OPENAI_ROTATING_PREPARED_KEY", "first-prepared-key");
     const snapshot = await resolveCodexAppServerPreparedAuthProfileSnapshot({
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       authProfileId: "openai:work",
       authProfileStore,
     });
@@ -1553,7 +1553,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
       });
       await applyCodexAppServerAuthProfile({
         client: { request } as never,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         authProfileId: "openai:work",
         authProfileStore,
         preparedAuth: {
@@ -1573,7 +1573,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies a normal OpenAI API-key profile as a Codex app-server backup", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "apiKey" }));
     try {
       upsertAuthProfile({
@@ -1602,7 +1602,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies the default OpenAI Codex OAuth profile when no profile id is explicit", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -1661,7 +1661,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
     expect(resolveCodexAppServerAuthProfileId({ store: authProfileStore })).toBe("openai:qa-oauth");
     await applyCodexAppServerAuthProfile({
       client: { request } as never,
-      agentDir: "/tmp/openclaw-codex-auth-product-proof",
+      agentDir: "/tmp/nova-codex-auth-product-proof",
       authProfileStore,
     });
 
@@ -1693,7 +1693,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("answers refresh requests from a discovered inline Codex OAuth profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "refreshed-ref-backed-access-token",
       refresh: "refreshed-ref-backed-refresh-token",
@@ -1728,7 +1728,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies native Codex CLI OAuth when no Nova auth profile exists", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
@@ -1756,13 +1756,13 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("finds native Codex OAuth in the OS home when Nova uses an isolated home", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const osHome = path.join(root, "os-home");
-    const openClawHome = path.join(root, "openclaw-home");
-    const agentDir = path.join(openClawHome, "agents", "main", "agent");
+    const novaHome = path.join(root, "nova-home");
+    const agentDir = path.join(novaHome, "agents", "main", "agent");
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     vi.stubEnv("HOME", osHome);
-    vi.stubEnv("NOVA_HOME", openClawHome);
+    vi.stubEnv("NOVA_HOME", novaHome);
     vi.stubEnv("CODEX_HOME", undefined);
     try {
       await writeCodexCliAuthFile(path.join(osHome, ".codex"));
@@ -1785,7 +1785,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("answers refresh from native Codex CLI OAuth without persisting an Nova profile", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     const authProfileStorePath = path.join(agentDir, "auth-profiles.json");
@@ -1813,7 +1813,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("uses native Codex CLI OAuth when deriving cache keys without a supplied store", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     vi.stubEnv("CODEX_HOME", codexHome);
@@ -1831,7 +1831,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps a supplied empty store authoritative over native Codex CLI OAuth", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     vi.stubEnv("CODEX_HOME", codexHome);
@@ -1850,7 +1850,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("honors config auth order when selecting an implicit Codex profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -1902,7 +1902,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("refreshes an expired OpenAI Codex OAuth profile before app-server login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "fresh-access-token",
@@ -1944,7 +1944,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies an OpenAI Codex api-key profile backed by a secret ref", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "apiKey" }));
     vi.stubEnv("OPENAI_CODEX_API_KEY", "ref-backed-api-key");
     try {
@@ -1974,7 +1974,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("rejects non-Codex auth profiles before OAuth refresh", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -2004,7 +2004,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("fails subscription auth instead of falling back to an API key", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "apiKey" }));
     vi.stubEnv("CODEX_API_KEY", "placeholder");
     let rejection: unknown;
@@ -2041,7 +2041,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
     await expect(
       applyCodexAppServerAuthProfile({
         client: { request } as never,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         authProfileId: "openai:work",
         authProfileStore: {
           version: 1,
@@ -2069,7 +2069,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
 
     await applyCodexAppServerAuthProfile({
       client: { request } as never,
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       authProfileId: null,
       authRequirement: "subscription",
     });
@@ -2087,7 +2087,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
     await expect(
       applyCodexAppServerAuthProfile({
         client: { request } as never,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         authProfileId: null,
         authRequirement: "subscription",
       }),
@@ -2101,7 +2101,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
     await expect(
       applyCodexAppServerAuthProfile({
         client: { request } as never,
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         authProfileId: null,
         authRequirement: "subscription",
       }),
@@ -2110,7 +2110,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("falls back to CODEX_API_KEY when no auth profile and no Codex account is available", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -2140,7 +2140,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("falls back to OPENAI_API_KEY when CODEX_API_KEY is not set", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -2168,7 +2168,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("keeps an existing app-server ChatGPT account over env API-key fallback", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return {
@@ -2195,7 +2195,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("uses env API-key fallback when app-server has no account", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: false };
@@ -2222,7 +2222,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("uses Codex CLI api-key auth.json when no auth profile or env key exists", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const agentDir = path.join(root, "agent");
     const codexHome = path.join(root, "codex-cli");
     const request = vi.fn(async (method: string) => {
@@ -2257,7 +2257,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("includes Codex CLI api-key auth.json in fallback app-server cache keys", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const codexHome = path.join(root, "codex-cli");
     try {
       await writeCodexCliApiKeyAuthFile(codexHome);
@@ -2289,7 +2289,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not include Codex CLI api-key auth.json in websocket fallback cache keys", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const codexHome = path.join(root, "codex-cli");
     try {
       await writeCodexCliApiKeyAuthFile(codexHome);
@@ -2309,7 +2309,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("honors clearEnv before env API-key fallback", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -2335,7 +2335,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not send env API-key fallback to websocket app-server connections", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async (method: string) => {
       if (method === "account/read") {
         return { account: null, requiresOpenaiAuth: true };
@@ -2362,7 +2362,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("applies an OpenAI Codex token profile backed by a secret ref", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     vi.stubEnv("OPENAI_CODEX_TOKEN", "ref-backed-access-token");
     try {
@@ -2395,7 +2395,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("passes OpenAI Codex token profiles through to app-server token login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -2428,7 +2428,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("passes OpenAI Codex API-key profiles through to app-server API-key login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "apiKey" }));
     const tokenLikeKey = "eyJhbGciOiJub25l.eyJzdWIiOiJjb2RleCJ9.signature123456";
     try {
@@ -2460,7 +2460,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("accepts a legacy Codex auth-provider alias for app-server login", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({
@@ -2492,7 +2492,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("answers app-server ChatGPT token refresh requests from the bound profile", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "refreshed-access-token",
       refresh: "refreshed-refresh-token",
@@ -2531,7 +2531,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("does not persist an expired stale credential before forced token refresh succeeds", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const currentExpiry = Date.now() + 60_000;
     oauthMocks.refreshOpenAICodexToken.mockImplementationOnce(async () => {
       const persistedProfile = expectOAuthProfile(
@@ -2585,7 +2585,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("refreshes inherited main Codex OAuth without cloning it into the child store", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const stateDir = path.join(root, "state");
     const childAgentDir = path.join(stateDir, "agents", "worker", "agent");
     const childAuthPath = path.join(childAgentDir, "auth-profiles.json");
@@ -2636,7 +2636,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("force-refreshes the owner credential instead of a stale child OAuth clone", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const stateDir = path.join(root, "state");
     const childAgentDir = path.join(stateDir, "agents", "worker", "agent");
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
@@ -2711,7 +2711,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("accepts a refreshed Codex OAuth credential when the stored provider is a legacy alias", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     oauthMocks.refreshOpenAICodexToken.mockResolvedValueOnce({
       access: "refreshed-alias-access-token",
       refresh: "refreshed-alias-refresh-token",
@@ -2750,7 +2750,7 @@ describe("bridgeCodexAppServerStartOptions", () => {
   });
 
   it("preserves a stored ChatGPT plan type when building token login params", async () => {
-    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-app-server-"));
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-app-server-"));
     const request = vi.fn(async () => ({ type: "chatgptAuthTokens" }));
     try {
       upsertAuthProfile({

@@ -1,6 +1,6 @@
 // Load context tests cover agent and workspace context resolution for plugin runtimes.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 
 const loadConfigMock = vi.fn<typeof import("../../config/config.js").loadConfig>();
 const applyPluginAutoEnableMock =
@@ -100,7 +100,7 @@ describe("resolvePluginRuntimeLoadContext", () => {
         },
       },
     };
-    const env = { HOME: "/tmp/openclaw-home" } as NodeJS.ProcessEnv;
+    const env = { HOME: "/tmp/nova-home" } as NodeJS.ProcessEnv;
 
     applyPluginAutoEnableMock.mockReturnValue({
       config: resolvedConfig,
@@ -158,13 +158,13 @@ describe("resolvePluginRuntimeLoadContext", () => {
 
     resolvePluginRuntimeLoadContext({
       config: { plugins: {} },
-      env: { HOME: "/tmp/openclaw-home" } as NodeJS.ProcessEnv,
+      env: { HOME: "/tmp/nova-home" } as NodeJS.ProcessEnv,
     });
 
     expect(setCurrentPluginMetadataSnapshotMock).toHaveBeenCalledWith(derivedSnapshot, {
       config: { plugins: {} },
       compatibleConfigs: [{ plugins: {} }, { plugins: {} }],
-      env: { HOME: "/tmp/openclaw-home" },
+      env: { HOME: "/tmp/nova-home" },
       workspaceDir: "/resolved-workspace",
     });
     expect(clearCurrentPluginMetadataSnapshotMock).not.toHaveBeenCalled();
@@ -212,7 +212,7 @@ describe("resolvePluginRuntimeLoadContext", () => {
   });
 
   it("invalidates auto-enable results when config or process env mutates in place", () => {
-    const rawConfig: OpenClawConfig = { plugins: {} };
+    const rawConfig: NovaConfig = { plugins: {} };
     const env = process.env;
     const envKey = "NOVA_TEST_PLUGIN_AUTO_ENABLE_FINGERPRINT";
     const previousEnvValue = env[envKey];
@@ -251,7 +251,7 @@ describe("resolvePluginRuntimeLoadContext", () => {
 
     const context = resolvePluginRuntimeLoadContext({
       config: { plugins: {} },
-      env: { HOME: "/tmp/openclaw-home" } as NodeJS.ProcessEnv,
+      env: { HOME: "/tmp/nova-home" } as NodeJS.ProcessEnv,
     });
 
     expect(context.installRecords).toEqual({
@@ -265,7 +265,7 @@ describe("resolvePluginRuntimeLoadContext", () => {
   it("builds plugin load options from the shared runtime context", () => {
     const context = resolvePluginRuntimeLoadContext({
       config: { plugins: {} },
-      env: { HOME: "/tmp/openclaw-home" } as NodeJS.ProcessEnv,
+      env: { HOME: "/tmp/nova-home" } as NodeJS.ProcessEnv,
       workspaceDir: "/explicit-workspace",
     });
 

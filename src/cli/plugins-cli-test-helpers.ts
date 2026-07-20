@@ -3,7 +3,7 @@ import { Command } from "commander";
 import type { Mock } from "vitest";
 import { vi } from "vitest";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import type { CliMockOutputRuntime } from "./test-runtime-capture.js";
 
@@ -52,14 +52,14 @@ function invokeMock<TArgs extends unknown[], TResult>(mock: unknown, ...args: TA
   return (mock as (...args: TArgs) => TResult)(...args);
 }
 
-export const loadConfig: Mock<LoadConfigFn> = vi.fn<LoadConfigFn>(() => ({}) as OpenClawConfig);
+export const loadConfig: Mock<LoadConfigFn> = vi.fn<LoadConfigFn>(() => ({}) as NovaConfig);
 export const readConfigFileSnapshot: AsyncUnknownMock = vi.fn();
 export const readConfigFileSnapshotForWrite: AsyncUnknownMock = vi.fn();
 export const writeConfigFile: AsyncUnknownMock = vi.fn(async () => undefined);
 export const replaceConfigFile: AsyncUnknownMock = vi.fn(
-  async (params: { nextConfig: OpenClawConfig }) => await writeConfigFile(params.nextConfig),
+  async (params: { nextConfig: NovaConfig }) => await writeConfigFile(params.nextConfig),
 ) as AsyncUnknownMock;
-const resolveStateDir: Mock<() => string> = vi.fn(() => "/tmp/openclaw-state");
+const resolveStateDir: Mock<() => string> = vi.fn(() => "/tmp/nova-state");
 export const installPluginFromMarketplace: Mock<InstallPluginFromMarketplaceFn> = vi.fn();
 export const installPluginFromGitSpec: Mock<InstallPluginFromGitSpecFn> = vi.fn();
 const parseGitPluginSpec: Mock<ParseGitPluginSpecFn> = vi.fn();
@@ -195,10 +195,10 @@ vi.mock("../config/config.js", () => ({
     if (process.env.NOVA_NIX_MODE === "1") {
       throw new Error(
         [
-          "Config is managed by Nix (`NOVA_NIX_MODE=1`), so Nova treats openclaw.json as immutable.",
-          "Do not run setup, onboarding, openclaw update, plugin install/update/uninstall/enable, doctor repair/token-generation, or config set against this file.",
-          "Agent-first Nix setup: https://github.com/openclaw/nix-openclaw#quick-start",
-          "Nova Nix overview: https://docs.openclaw.ai/install/nix",
+          "Config is managed by Nix (`NOVA_NIX_MODE=1`), so Nova treats nova.json as immutable.",
+          "Do not run setup, onboarding, nova update, plugin install/update/uninstall/enable, doctor repair/token-generation, or config set against this file.",
+          "Agent-first Nix setup: https://github.com/nova/nix-nova#quick-start",
+          "Nova Nix overview: https://docs.nova.ai/install/nix",
         ].join("\n"),
       );
     }
@@ -225,11 +225,11 @@ vi.mock("../config/config.js", () => ({
       readConfigFileSnapshotForWrite,
       ...args,
     )) as (typeof import("../config/config.js"))["readConfigFileSnapshotForWrite"],
-  writeConfigFile: ((config: OpenClawConfig) =>
-    invokeMock<
-      [OpenClawConfig],
-      ReturnType<(typeof import("../config/config.js"))["writeConfigFile"]>
-    >(writeConfigFile, config)) as (typeof import("../config/config.js"))["writeConfigFile"],
+  writeConfigFile: ((config: NovaConfig) =>
+    invokeMock<[NovaConfig], ReturnType<(typeof import("../config/config.js"))["writeConfigFile"]>>(
+      writeConfigFile,
+      config,
+    )) as (typeof import("../config/config.js"))["writeConfigFile"],
   replaceConfigFile: ((
     params: Parameters<(typeof import("../config/config.js"))["replaceConfigFile"]>[0],
   ) =>
@@ -631,8 +631,8 @@ vi.mock("../plugins/git-install.js", () => ({
 
 vi.mock("../hooks/install.js", () => ({
   HOOK_INSTALL_ERROR_CODE: {
-    MISSING_NOVA_HOOKS: "missing_openclaw_hooks",
-    EMPTY_NOVA_HOOKS: "empty_openclaw_hooks",
+    MISSING_NOVA_HOOKS: "missing_nova_hooks",
+    EMPTY_NOVA_HOOKS: "empty_nova_hooks",
   },
   installHooksFromNpmSpec: ((
     ...args: Parameters<(typeof import("../hooks/install.js"))["installHooksFromNpmSpec"]>
@@ -755,11 +755,11 @@ export function resetPluginsCliTestState() {
   installHooksFromPath.mockReset();
   recordHookInstall.mockReset();
 
-  loadConfig.mockReturnValue({} as OpenClawConfig);
+  loadConfig.mockReturnValue({} as NovaConfig);
   readConfigFileSnapshot.mockImplementation(async () => {
     const config = getRuntimeConfig();
     return {
-      path: "/tmp/openclaw-config.json5",
+      path: "/tmp/nova-config.json5",
       exists: true,
       raw: "{}",
       parsed: config,
@@ -787,22 +787,23 @@ export function resetPluginsCliTestState() {
   });
   writeConfigFile.mockResolvedValue(undefined);
   replaceConfigFile.mockImplementation(
-    (async (params: { nextConfig: OpenClawConfig }) =>
-      await writeConfigFile(params.nextConfig)) as (...args: unknown[]) => Promise<unknown>,
+    (async (params: { nextConfig: NovaConfig }) => await writeConfigFile(params.nextConfig)) as (
+      ...args: unknown[]
+    ) => Promise<unknown>,
   );
-  resolveStateDir.mockReturnValue("/tmp/openclaw-state");
+  resolveStateDir.mockReturnValue("/tmp/nova-state");
   resolveMarketplaceInstallShortcut.mockResolvedValue(null);
   installPluginFromMarketplace.mockResolvedValue({
     ok: false,
     error: "marketplace install failed",
   });
-  enablePluginInConfig.mockImplementation(((cfg: OpenClawConfig, pluginId: string) => ({
+  enablePluginInConfig.mockImplementation(((cfg: NovaConfig, pluginId: string) => ({
     config: cfg,
     enabled: true,
     pluginId,
   })) as (...args: unknown[]) => unknown);
   recordPluginInstall.mockImplementation(
-    ((cfg: OpenClawConfig) => cfg) as (...args: unknown[]) => unknown,
+    ((cfg: NovaConfig) => cfg) as (...args: unknown[]) => unknown,
   );
   loadInstalledPluginIndexInstallRecords.mockImplementation(async () =>
     clonePluginInstallRecords(mockInstalledPluginIndexInstallRecords),
@@ -846,7 +847,7 @@ export function resetPluginsCliTestState() {
   });
   refreshPluginRegistry.mockResolvedValue(defaultRegistryIndex);
   notifyGatewayPluginMetadataChanged.mockResolvedValue(true);
-  applyExclusiveSlotSelection.mockImplementation((({ config }: { config: OpenClawConfig }) => ({
+  applyExclusiveSlotSelection.mockImplementation((({ config }: { config: NovaConfig }) => ({
     config,
     warnings: [],
   })) as (...args: unknown[]) => unknown);
@@ -854,7 +855,7 @@ export function resetPluginsCliTestState() {
     config,
     pluginId,
   }: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     pluginId: string;
   }) => ({
     ok: true,
@@ -870,12 +871,12 @@ export function resetPluginsCliTestState() {
   updateNpmInstalledPlugins.mockResolvedValue({
     outcomes: [],
     changed: false,
-    config: {} as OpenClawConfig,
+    config: {} as NovaConfig,
   });
   updateNpmInstalledHookPacks.mockResolvedValue({
     outcomes: [],
     changed: false,
-    config: {} as OpenClawConfig,
+    config: {} as NovaConfig,
   });
   promptYesNo.mockResolvedValue(true);
   promptText.mockResolvedValue("demo");
@@ -918,7 +919,7 @@ export function resetPluginsCliTestState() {
     error: "hook npm install disabled in test",
   });
   recordHookInstall.mockImplementation(
-    ((cfg: OpenClawConfig) => cfg) as (...args: unknown[]) => unknown,
+    ((cfg: NovaConfig) => cfg) as (...args: unknown[]) => unknown,
   );
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

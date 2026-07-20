@@ -151,7 +151,7 @@ function hasCronInCacheForTest(expr: string, tz: string): boolean {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.cronScheduleTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.cronScheduleTestApi")] = {
     clearCronScheduleCacheForTest,
     getCronScheduleCacheSizeForTest,
     getCronScheduleCacheMaxForTest,

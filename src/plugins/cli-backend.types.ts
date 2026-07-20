@@ -1,6 +1,6 @@
 /** Type contracts for plugin-owned CLI backend integrations. */
 import type { CliBackendConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ContextEngineHostCapability } from "../context-engine/types.js";
 
 export type PluginTextReplacement = {
@@ -21,7 +21,7 @@ export type CliBundleMcpMode =
   | "gemini-system-settings";
 
 export type CliBackendPrepareExecutionContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir: string;
   agentDir?: string;
   provider: string;
@@ -63,7 +63,7 @@ type CliBackendToolAvailability = {
 };
 
 export type CliBackendResolveExecutionArgsContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir: string;
   provider: string;
   modelId: string;
@@ -86,7 +86,7 @@ export type CliBackendNativeToolMode = "none" | "always-on" | "selectable";
 export type CliBackendSideQuestionToolMode = "disabled";
 
 export type CliBackendNormalizeConfigContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   backendId: string;
   agentId?: string;
 };
@@ -180,7 +180,7 @@ export type CliBackendPlugin = {
    * the generic CLI runner or prompt builder.
    */
   transformSystemPrompt?: (ctx: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     workspaceDir?: string;
     provider: string;
     modelId: string;

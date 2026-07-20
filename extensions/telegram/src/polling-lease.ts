@@ -1,8 +1,8 @@
 // Telegram plugin module implements polling lease behavior.
-import { resolveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
+import { resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
 import { fingerprintTelegramBotToken } from "./token-fingerprint.js";
 
-const TELEGRAM_POLLING_LEASES_KEY = Symbol.for("openclaw.telegram.pollingLeases");
+const TELEGRAM_POLLING_LEASES_KEY = Symbol.for("nova.telegram.pollingLeases");
 const DEFAULT_TELEGRAM_POLLING_LEASE_WAIT_MS = 5_000;
 
 type TelegramPollingLeaseEntry = {

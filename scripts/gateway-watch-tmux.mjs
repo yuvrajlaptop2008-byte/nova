@@ -20,7 +20,7 @@ const GATEWAY_WATCH_TMUX_SCRIPT = "scripts/gateway-watch-tmux.mjs";
 const SERVICE_HANDOFF_ARG = "--handoff-managed-service";
 const DEFAULT_GATEWAY_PORT = "18789";
 const TMUX_CWD_ENV_KEY = "NOVA_GATEWAY_WATCH_CWD";
-const TMUX_CWD_OPTION_KEY = "@openclaw.gateway_watch.cwd";
+const TMUX_CWD_OPTION_KEY = "@nova.gateway_watch.cwd";
 const TMUX_CHILD_ENV_KEYS = [
   "NODE_OPTIONS",
   "NOVA_CONFIG_PATH",
@@ -196,12 +196,7 @@ const resolveGatewayWatchBenchmarkArgs = ({ args = [], env = process.env } = {})
 export const resolveGatewayWatchTmuxSessionName = ({ args = [], env = process.env } = {}) => {
   const profile = resolveGatewayWatchProfile({ args, env });
   const { port } = resolveGatewayWatchPort({ args, env });
-  const parts = [
-    "openclaw",
-    "gateway",
-    "watch",
-    sanitizeSessionPart(profile ?? DEFAULT_PROFILE_NAME),
-  ];
+  const parts = ["nova", "gateway", "watch", sanitizeSessionPart(profile ?? DEFAULT_PROFILE_NAME)];
   if (port && String(port) !== DEFAULT_GATEWAY_PORT) {
     parts.push(sanitizeSessionPart(port));
   }
@@ -376,7 +371,7 @@ const runTmux = (spawnSyncImpl, args, options = {}) =>
   });
 
 const log = (stderr, message) => {
-  stderr.write(`[openclaw] ${message}\n`);
+  stderr.write(`[nova] ${message}\n`);
 };
 
 const getTmuxErrorText = (result) =>

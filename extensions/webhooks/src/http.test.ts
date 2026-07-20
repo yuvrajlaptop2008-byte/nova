@@ -1,10 +1,10 @@
 // Webhooks tests cover http plugin behavior.
 import { EventEmitter } from "node:events";
 import type { IncomingMessage } from "node:http";
-import { createRuntimeTaskFlow } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { createMockServerResponse } from "openclaw/plugin-sdk/test-env";
+import { createRuntimeTaskFlow } from "nova/plugin-sdk/plugin-test-runtime";
+import { createMockServerResponse } from "nova/plugin-sdk/test-env";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { NovaConfig } from "../runtime-api.js";
 import { createTaskFlowWebhookRequestHandler, type TaskFlowWebhookTarget } from "./http.js";
 
 type BoundTaskFlow = TaskFlowWebhookTarget["taskFlow"];
@@ -39,7 +39,7 @@ function createJsonRequest(params: {
   req.url = params.path;
   req.headers = {
     "content-type": "application/json",
-    ...(params.secret ? { "x-openclaw-webhook-secret": params.secret } : {}),
+    ...(params.secret ? { "x-nova-webhook-secret": params.secret } : {}),
   };
   req.socket = { remoteAddress: "127.0.0.1" } as MockIncomingMessage["socket"];
   req.destroyed = false;
@@ -75,7 +75,7 @@ function createHandler(secret = "shared-secret"): {
   const targetsByPath = new Map<string, TaskFlowWebhookTarget[]>([[target.path, [target]]]);
   return {
     handler: createTaskFlowWebhookRequestHandler({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       targetsByPath,
     }),
     target,
@@ -85,7 +85,7 @@ function createHandler(secret = "shared-secret"): {
 
 function createHandlerWithTarget(
   target: TaskFlowWebhookTarget,
-  cfg: OpenClawConfig = {} as OpenClawConfig,
+  cfg: NovaConfig = {} as NovaConfig,
 ): ReturnType<typeof createTaskFlowWebhookRequestHandler> {
   const targetsByPath = new Map<string, TaskFlowWebhookTarget[]>([[target.path, [target]]]);
   return createTaskFlowWebhookRequestHandler({

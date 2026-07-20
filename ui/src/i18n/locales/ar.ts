@@ -1332,7 +1332,7 @@ export const ar: TranslationMap = {
     autoSaveFailed: "فشل الحفظ",
     autoSaveConflict: "تم تغيير الإعدادات في مكان آخر",
     retry: "إعادة المحاولة",
-    applyBannerText: "تم الحفظ في openclaw.json — أعد تشغيل Gateway للتطبيق.",
+    applyBannerText: "تم الحفظ في nova.json — أعد تشغيل Gateway للتطبيق.",
     applyBannerAction: "إعادة التشغيل والتطبيق",
     rawDiscard: "تجاهل",
     rawDraftBlocksApply:
@@ -1721,7 +1721,7 @@ export const ar: TranslationMap = {
     skillWorkshop: "راجع المقترحات وحسّنها وطبّقها قبل أن تصبح مهارات نشطة.",
     nodes: "الأجهزة المقترنة والأوامر.",
     chat: "دردشة Gateway للتدخلات السريعة.",
-    config: "تعديل openclaw.json.",
+    config: "تعديل nova.json.",
     profile: "إحصاءات وكيلك، وسلاسل نشاطه، وحياته في الشعاب.",
     communications: "القنوات، والرسائل، وإعدادات الصوت.",
     appearance: "السمة، وواجهة المستخدم، وإعدادات معالج الإعداد.",
@@ -2426,7 +2426,7 @@ export const ar: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3435,17 +3435,16 @@ export const ar: TranslationMap = {
         title: "المصادقة مطلوبة",
         summary:
           "يمكن الوصول إلى Gateway، لكنه يحتاج إلى رمز مميز أو كلمة مرور مطابقة قبل أن يتمكن هذا المتصفح من الاتصال.",
-        stepPaste: "الصق الرمز المميز من openclaw dashboard --no-open أو أدخل كلمة المرور المكونة.",
+        stepPaste: "الصق الرمز المميز من nova dashboard --no-open أو أدخل كلمة المرور المكونة.",
         stepGenerate:
-          "إذا لم يتم تكوين رمز مميز، فشغل openclaw doctor --generate-gateway-token على مضيف Gateway.",
+          "إذا لم يتم تكوين رمز مميز، فشغل nova doctor --generate-gateway-token على مضيف Gateway.",
         stepConnect: "انقر على Connect مرة أخرى بعد تحديث بيانات الاعتماد.",
       },
       authFailed: {
         title: "بيانات المصادقة غير مطابقة",
         summary:
           "تم رفض بيانات الاعتماد المقدمة. السبب الأكثر شيوعا هو رمز مميز قديم أو رمز منسوخ من عنوان Gateway آخر.",
-        stepDashboard:
-          "شغل openclaw dashboard --no-open وافتح عنوان URL الجديد أو الصق رمزه المميز.",
+        stepDashboard: "شغل nova dashboard --no-open وافتح عنوان URL الجديد أو الصق رمزه المميز.",
         stepReplace:
           "استبدل قيم الرمز المميز/كلمة المرور القديمة؛ لا تعد استخدام رمز من عنوان Gateway آخر.",
         stepMode:
@@ -3467,8 +3466,8 @@ export const ar: TranslationMap = {
         summary: "يحتاج هذا المتصفح إلى موافقة لمرة واحدة من مضيف Gateway قبل استخدام Control UI.",
         upgradeSummary:
           "هذا المتصفح معروف بالفعل، لكن الوصول المطلوب تغير ويحتاج إلى موافقة جديدة.",
-        stepList: "شغل openclaw devices list على مضيف Gateway.",
-        stepApproveId: "وافق على هذا الطلب: openclaw devices approve {requestId}.",
+        stepList: "شغل nova devices list على مضيف Gateway.",
+        stepApproveId: "وافق على هذا الطلب: nova devices approve {requestId}.",
         stepApprove: "وافق على طلب المتصفح/الجهاز المعلق من تلك القائمة.",
         stepReconnect: "أعد الاتصال بعد اكتمال الموافقة.",
       },
@@ -3492,7 +3491,7 @@ export const ar: TranslationMap = {
         title: "عدم تطابق البروتوكول",
         summary: "لا يتفق Control UI المقدم مع Gateway العامل على بروتوكول الاتصال المدعوم.",
         stepDashboard:
-          "أعد فتح لوحة المعلومات المقدمة باستخدام openclaw dashboard حتى يأتي UI وGateway من التثبيت نفسه.",
+          "أعد فتح لوحة المعلومات المقدمة باستخدام nova dashboard حتى يأتي UI وGateway من التثبيت نفسه.",
         stepDevUi:
           "إذا كنت تستخدم pnpm ui:dev، فأعد بناء أو تشغيل واجهة التطوير مقابل checkout الحالي.",
         stepRestart: "أعد تشغيل Gateway بعد تحديث Nova حتى يقدم البروتوكول الحالي.",
@@ -3501,11 +3500,11 @@ export const ar: TranslationMap = {
         title: "تعذر الاتصال",
         summary:
           "لم يتمكن المتصفح من إكمال اتصال Gateway. تحقق من الهدف والنقل قبل إعادة تجربة بيانات الاعتماد.",
-        stepGateway: "تأكد من أن Gateway يعمل باستخدام openclaw status أو openclaw gateway run.",
+        stepGateway: "تأكد من أن Gateway يعمل باستخدام nova status أو nova gateway run.",
         stepUrl:
           "تحقق من عنوان WebSocket واستخدم wss:// عندما يكون Gateway خلف HTTPS/Tailscale Serve.",
         stepDashboard:
-          "أعد فتح لوحة المعلومات باستخدام openclaw dashboard --no-open لنسخ عنوان URL وتفاصيل المصادقة الحالية.",
+          "أعد فتح لوحة المعلومات باستخدام nova dashboard --no-open لنسخ عنوان URL وتفاصيل المصادقة الحالية.",
       },
     },
   },

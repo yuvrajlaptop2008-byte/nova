@@ -11,10 +11,10 @@ import {
   parseStrictPositiveInteger,
   resolveExpiresAtMsFromDurationSeconds,
   resolveTimestampMsToIsoString,
-} from "openclaw/plugin-sdk/number-runtime";
-import { readResponseTextLimited } from "openclaw/plugin-sdk/provider-http";
-import { sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
-import { fetchWithSsrFGuard, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { readResponseTextLimited } from "nova/plugin-sdk/provider-http";
+import { sleepWithAbort } from "nova/plugin-sdk/runtime-env";
+import { fetchWithSsrFGuard, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 import type { EngineLogger } from "../types.js";
 import { formatErrorMessage } from "../utils/format.js";
 
@@ -34,7 +34,7 @@ const QQBOT_TOKEN_REQUEST_TIMEOUT_MS = 30_000;
  * (`QQBOT_MEDIA_SSRF_POLICY` in `../utils/file-utils.ts`) so the relaxation
  * stays narrowly host-scoped instead of weakening the global default.
  *
- * See https://github.com/openclaw/openclaw/issues/88984.
+ * See https://github.com/nova/nova/issues/88984.
  */
 const QQBOT_TOKEN_SSRF_POLICY: SsrFPolicy = {
   hostnameAllowlist: ["bots.qq.com"],

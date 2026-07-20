@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { withTempHome, writeStateDirDotEnv } from "../config/test-helpers.js";
 import { shouldRequireGatewayTokenForInstall } from "../gateway/auth-install-policy.js";
 import { withEnvAsync } from "../test-utils/env.js";
@@ -12,7 +12,7 @@ import { resolveGatewayInstallToken } from "./gateway-install-token.js";
 
 const envVar = (...parts: string[]) => parts.join("_");
 
-function createExecGatewayTokenConfig(markerPath: string): OpenClawConfig {
+function createExecGatewayTokenConfig(markerPath: string): NovaConfig {
   return {
     gateway: {
       auth: {
@@ -40,7 +40,7 @@ function createExecGatewayTokenConfig(markerPath: string): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 describe("resolveGatewayAuthTokenForService", () => {
@@ -52,7 +52,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             token: "config-token",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {} as NodeJS.ProcessEnv,
     );
 
@@ -76,7 +76,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         CUSTOM_GATEWAY_TOKEN: "resolved-token",
       } as NodeJS.ProcessEnv,
@@ -98,7 +98,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         CUSTOM_GATEWAY_TOKEN: "resolved-token",
       } as NodeJS.ProcessEnv,
@@ -108,7 +108,7 @@ describe("resolveGatewayAuthTokenForService", () => {
   });
 
   it("skips exec SecretRefs by default for service token checks", async () => {
-    const tmp = await fs.mkdtemp(join(tmpdir(), "openclaw-service-token-exec-ref-"));
+    const tmp = await fs.mkdtemp(join(tmpdir(), "nova-service-token-exec-ref-"));
     const markerPath = join(tmp, "exec-ran");
     try {
       const resolved = await resolveGatewayAuthTokenForService(
@@ -124,7 +124,7 @@ describe("resolveGatewayAuthTokenForService", () => {
   });
 
   it("executes exec SecretRefs for service token checks when explicitly allowed", async () => {
-    const tmp = await fs.mkdtemp(join(tmpdir(), "openclaw-service-token-exec-ref-"));
+    const tmp = await fs.mkdtemp(join(tmpdir(), "nova-service-token-exec-ref-"));
     const markerPath = join(tmp, "exec-ran");
     try {
       const resolved = await resolveGatewayAuthTokenForService(
@@ -157,7 +157,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         NOVA_GATEWAY_TOKEN: "env-fallback-token",
       } as NodeJS.ProcessEnv,
@@ -183,7 +183,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         CUSTOM_GATEWAY_TOKEN: "   ",
         NOVA_GATEWAY_TOKEN: "env-fallback-token",
@@ -210,7 +210,7 @@ describe("resolveGatewayAuthTokenForService", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {} as NodeJS.ProcessEnv,
     );
 
@@ -230,7 +230,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             mode: "token",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(true);
@@ -244,7 +244,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             mode: "password",
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(false);
@@ -252,7 +252,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
 
   it("requires token in inferred mode when password env exists only in shell", async () => {
     await withEnvAsync(
-      { [envVar("OPENCLAW", "GATEWAY", "PASSWORD")]: "password-from-env" },
+      { [envVar("nova", "GATEWAY", "PASSWORD")]: "password-from-env" },
       async () => {
         // pragma: allowlist secret
         const required = shouldRequireGatewayTokenForInstall(
@@ -260,7 +260,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             gateway: {
               auth: {},
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           process.env,
         );
         expect(required).toBe(true);
@@ -285,7 +285,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             default: { source: "env" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(false);
@@ -302,7 +302,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
             NOVA_GATEWAY_PASSWORD: "configured-password", // pragma: allowlist secret
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(false);
@@ -319,7 +319,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
           gateway: {
             auth: {},
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         process.env,
       );
       expect(required).toBe(false);
@@ -332,7 +332,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
         gateway: {
           auth: {},
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {} as NodeJS.ProcessEnv,
     );
     expect(required).toBe(true);
@@ -345,7 +345,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
           auth: { mode: "none" },
           tailscale: { mode: "serve" },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       env: {} as NodeJS.ProcessEnv,
     });
 

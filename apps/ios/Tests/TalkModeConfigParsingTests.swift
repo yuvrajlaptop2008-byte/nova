@@ -1,8 +1,8 @@
 import AVFoundation
 import Foundation
-import OpenClawKit
+import NovaKit
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 @MainActor
 struct TalkModeManagerTests {
@@ -534,7 +534,7 @@ struct TalkModeManagerTests {
         #expect(manager.phase == .connecting)
         #expect(manager.watchPresentation == .phase)
 
-        for status in ["Asking OpenClaw", "Still asking OpenClaw", "Updating OpenClaw"] {
+        for status in ["Asking Nova", "Still asking Nova", "Updating Nova"] {
             manager._test_handleRealtimeRelayStatus(status)
             #expect(manager.phase == .thinking)
             #expect(manager.watchPresentation == .phase)
@@ -960,7 +960,7 @@ struct TalkModeManagerTests {
             "talk": [
                 "providers": [
                     "elevenlabs": [
-                        "apiKey": "__OPENCLAW_REDACTED__",
+                        "apiKey": "__NOVA_REDACTED__",
                         "voiceId": "bIHbv24MWmeRgasZH58o",
                     ],
                 ],
@@ -981,7 +981,7 @@ struct TalkModeManagerTests {
                 "resolved": [
                     "provider": "elevenlabs",
                     "config": [
-                        "apiKey": "__OPENCLAW_REDACTED__",
+                        "apiKey": "__NOVA_REDACTED__",
                         "voiceId": "bIHbv24MWmeRgasZH58o",
                     ],
                 ],
@@ -1000,7 +1000,7 @@ struct TalkModeManagerTests {
         #expect(parsed.realtimeProvider == "openai")
         #expect(parsed.realtimeModelId == "gpt-realtime-2")
         #expect(parsed.realtimeVoiceId == "cedar")
-        #expect(parsed.rawConfigApiKey == "__OPENCLAW_REDACTED__")
+        #expect(parsed.rawConfigApiKey == "__NOVA_REDACTED__")
     }
 
     @Test func `leaves native mode for managed room realtime transport`() {
@@ -1051,7 +1051,7 @@ struct TalkModeManagerTests {
             ],
             [
                 "role": "assistant",
-                "__openclaw": ["idempotencyKey": "current-run"],
+                "__nova": ["idempotencyKey": "current-run"],
                 "content": [["type": "text", "text": "current answer"]],
             ],
         ]
@@ -1102,10 +1102,10 @@ struct TalkModeManagerTests {
         #expect(processing.contains("idempotencyKey: runId"))
         #expect(completion.contains("guard let completionEvents = streamingOwner.completionEvents"))
         #expect(completion.contains("stream: completionEvents"))
-        #expect(streaming.contains("as: OpenClawChatEventPayload.self"))
-        #expect(streaming.contains("OpenClawChatEventText.assistantText"))
+        #expect(streaming.contains("as: NovaChatEventPayload.self"))
+        #expect(streaming.contains("NovaChatEventText.assistantText"))
         #expect(streaming.contains(#"chatEvent.state == "delta" || chatEvent.state == "final""#))
-        #expect(!streaming.contains("OpenClawAgentEventPayload"))
+        #expect(!streaming.contains("NovaAgentEventPayload"))
     }
 
     @Test func `late incremental final cannot reopen canceled speech ownership`() async {

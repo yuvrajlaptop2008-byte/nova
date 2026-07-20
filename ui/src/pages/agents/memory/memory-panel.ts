@@ -11,7 +11,7 @@ import { t } from "../../../i18n/index.ts";
 import { currentConfigObject } from "../../../lib/config/index.ts";
 import { formatTimeMs } from "../../../lib/format.ts";
 import { isPluginEnabledInConfigSnapshot } from "../../../lib/plugin-activation.ts";
-import { OpenClawLightDomElement } from "../../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../../lit/subscriptions-controller.ts";
 import {
   backfillDreamDiary,
@@ -97,7 +97,7 @@ function readWikiPagePreview(value: unknown, lookup: string): WikiPagePreview {
   };
 }
 
-class AgentMemoryPanel extends OpenClawLightDomElement {
+class AgentMemoryPanel extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -498,6 +498,6 @@ class AgentMemoryPanel extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-agent-memory-panel")) {
-  customElements.define("openclaw-agent-memory-panel", AgentMemoryPanel);
+if (!customElements.get("nova-agent-memory-panel")) {
+  customElements.define("nova-agent-memory-panel", AgentMemoryPanel);
 }

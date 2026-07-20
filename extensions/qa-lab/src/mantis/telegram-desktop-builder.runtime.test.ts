@@ -127,7 +127,7 @@ describe("mantis Telegram desktop builder runtime", () => {
     );
     expect(remoteScript).not.toContain("groupAllowFrom");
     expect(remoteScript).not.toContain("allowFrom:");
-    expect(remoteScript).toContain("openclaw gateway run");
+    expect(remoteScript).toContain("nova gateway run");
     expect(remoteScript).toContain("telegram-ready-message.json");
     expect(remoteScript).toContain("telegram-desktop-builder.mp4");
     expect(remoteScript).toContain(

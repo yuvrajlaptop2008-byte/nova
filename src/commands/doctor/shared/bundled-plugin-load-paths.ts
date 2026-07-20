@@ -2,7 +2,7 @@
 import path from "node:path";
 import { sanitizeForLog } from "../../../../packages/terminal-core/src/ansi.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import {
   buildBundledPluginLoadPathAliases,
   normalizeBundledLookupPath,
@@ -20,20 +20,20 @@ type BundledPluginLoadPathHit = {
   pathLabel: string;
 };
 
-function resolveBundledWorkspaceDir(cfg: OpenClawConfig): string | undefined {
+function resolveBundledWorkspaceDir(cfg: NovaConfig): string | undefined {
   return resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg)) ?? undefined;
 }
 
-function isOpenClawNodeModulesPackageRoot(packageRoot: string): boolean {
+function isNovaNodeModulesPackageRoot(packageRoot: string): boolean {
   const normalized = normalizeBundledLookupPath(packageRoot);
   const packageDir = path.basename(normalized);
   const parentDir = path.basename(path.dirname(normalized));
-  return packageDir === "openclaw" && parentDir === "node_modules";
+  return packageDir === "nova" && parentDir === "node_modules";
 }
 
 /** Find configured plugin load paths that alias bundled plugins already shipped by Nova. */
 export function scanBundledPluginLoadPathMigrations(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): BundledPluginLoadPathHit[] {
   const plugins = asObjectRecord(cfg.plugins);
@@ -83,7 +83,7 @@ export function scanBundledPluginLoadPathMigrations(
       const oldBundledLeaf = oldPackaged?.bundledLeaf ?? oldLegacy?.bundledLeaf;
       const oldPackageMatch =
         // Only rewrite paths rooted in the installed Nova package; user plugin paths stay intact.
-        oldPackageRoot && oldBundledLeaf && isOpenClawNodeModulesPackageRoot(oldPackageRoot)
+        oldPackageRoot && oldBundledLeaf && isNovaNodeModulesPackageRoot(oldPackageRoot)
           ? packagedBundledLeafMap.get(normalizeBundledLookupPath(oldBundledLeaf))
           : undefined;
       if (!oldPackageMatch) {
@@ -126,10 +126,10 @@ export function collectBundledPluginLoadPathWarnings(params: {
 
 /** Remove redundant bundled plugin load path aliases while preserving unrelated custom paths. */
 export function maybeRepairBundledPluginLoadPaths(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   changes: string[];
 } {
   const hits = scanBundledPluginLoadPathMigrations(cfg, env);

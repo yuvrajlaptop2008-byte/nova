@@ -1,7 +1,7 @@
 // Covers model runtime policy precedence and private QA runtime overrides.
 import { afterEach, describe, expect, it } from "vitest";
 import type { ModelDefinitionConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { deleteTestEnvValue, setTestEnvValue } from "../test-utils/env.js";
 import { resolveModelRuntimePolicy } from "./model-runtime-policy.js";
 
@@ -39,7 +39,7 @@ function restoreEnv(
   setTestEnvValue(name, value);
 }
 
-function makeProviderRuntimeConfig(runtime: string): OpenClawConfig {
+function makeProviderRuntimeConfig(runtime: string): NovaConfig {
   return {
     models: {
       providers: {
@@ -50,7 +50,7 @@ function makeProviderRuntimeConfig(runtime: string): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 afterEach(() => {
@@ -61,7 +61,7 @@ afterEach(() => {
 describe("resolveModelRuntimePolicy", () => {
   it("ignores the QA force-runtime override when the private QA gate is unset", () => {
     deleteTestEnvValue("NOVA_BUILD_PRIVATE_QA");
-    setTestEnvValue("NOVA_QA_FORCE_RUNTIME", "openclaw");
+    setTestEnvValue("NOVA_QA_FORCE_RUNTIME", "nova");
 
     expect(
       resolveModelRuntimePolicy({
@@ -79,7 +79,7 @@ describe("resolveModelRuntimePolicy", () => {
     // The force-runtime override is intentionally gated to private QA builds so
     // normal users cannot accidentally change model runtime selection via env.
     setTestEnvValue("NOVA_BUILD_PRIVATE_QA", "1");
-    setTestEnvValue("NOVA_QA_FORCE_RUNTIME", "openclaw");
+    setTestEnvValue("NOVA_QA_FORCE_RUNTIME", "nova");
 
     expect(
       resolveModelRuntimePolicy({
@@ -88,7 +88,7 @@ describe("resolveModelRuntimePolicy", () => {
         modelId: "gpt-5.5",
       }),
     ).toEqual({
-      policy: { id: "openclaw" },
+      policy: { id: "nova" },
       source: "model",
     });
   });
@@ -114,11 +114,11 @@ describe("resolveModelRuntimePolicy", () => {
       agents: {
         defaults: {
           models: {
-            "vllm/*": { agentRuntime: { id: "openclaw" } },
+            "vllm/*": { agentRuntime: { id: "nova" } },
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -127,7 +127,7 @@ describe("resolveModelRuntimePolicy", () => {
         modelId: "qwen-local",
       }),
     ).toEqual({
-      policy: { id: "openclaw" },
+      policy: { id: "nova" },
       source: "model",
       matchedProvider: "vllm",
     });
@@ -138,11 +138,11 @@ describe("resolveModelRuntimePolicy", () => {
       agents: {
         defaults: {
           models: {
-            "vllm/*": { agentRuntime: { id: "openclaw" } },
+            "vllm/*": { agentRuntime: { id: "nova" } },
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -150,7 +150,7 @@ describe("resolveModelRuntimePolicy", () => {
         provider: "vllm",
       }),
     ).toEqual({
-      policy: { id: "openclaw" },
+      policy: { id: "nova" },
       source: "model",
       matchedProvider: "vllm",
     });
@@ -163,12 +163,12 @@ describe("resolveModelRuntimePolicy", () => {
       agents: {
         defaults: {
           models: {
-            "vllm/*": { agentRuntime: { id: "openclaw" } },
+            "vllm/*": { agentRuntime: { id: "nova" } },
             "vllm/qwen-local": { agentRuntime: { id: "codex" } },
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -188,7 +188,7 @@ describe("resolveModelRuntimePolicy", () => {
       agents: {
         defaults: {
           models: {
-            "vllm/*": { agentRuntime: { id: "openclaw" } },
+            "vllm/*": { agentRuntime: { id: "nova" } },
           },
         },
       },
@@ -200,7 +200,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -224,7 +224,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -250,7 +250,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -270,12 +270,12 @@ describe("resolveModelRuntimePolicy", () => {
       agents: {
         defaults: {
           models: {
-            "claude-opus-4-7": { agentRuntime: { id: "openclaw" } },
+            "claude-opus-4-7": { agentRuntime: { id: "nova" } },
             "anthropic/claude-opus-4-7": { agentRuntime: { id: "claude-cli" } },
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -295,7 +295,7 @@ describe("resolveModelRuntimePolicy", () => {
       agents: {
         defaults: {
           models: {
-            "vllm/*": { agentRuntime: { id: "openclaw" } },
+            "vllm/*": { agentRuntime: { id: "nova" } },
           },
         },
       },
@@ -308,7 +308,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -317,7 +317,7 @@ describe("resolveModelRuntimePolicy", () => {
         modelId: "qwen-local",
       }),
     ).toEqual({
-      policy: { id: "openclaw" },
+      policy: { id: "nova" },
       source: "model",
       matchedProvider: "vllm",
     });
@@ -332,7 +332,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -356,7 +356,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -376,7 +376,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -408,7 +408,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({
@@ -435,7 +435,7 @@ describe("resolveModelRuntimePolicy", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveModelRuntimePolicy({

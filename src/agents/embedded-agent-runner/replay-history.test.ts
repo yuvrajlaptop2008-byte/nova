@@ -1,7 +1,7 @@
 // Coverage for normalizing assistant replay content before provider requests.
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
 import { describe, expect, it } from "vitest";
-import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../../shared/transcript-only-openclaw-assistant.js";
+import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../../shared/transcript-only-nova-assistant.js";
 import {
   INTERNAL_RUNTIME_CONTEXT_BEGIN,
   INTERNAL_RUNTIME_CONTEXT_END,
@@ -47,12 +47,12 @@ function userMessage(text: string): AgentMessage {
   return { role: "user", content: text, timestamp: 0 } as unknown as AgentMessage;
 }
 
-function openclawTranscriptAssistant(model: "delivery-mirror" | "gateway-injected"): AgentMessage {
+function novaTranscriptAssistant(model: "delivery-mirror" | "gateway-injected"): AgentMessage {
   return {
     role: "assistant",
     content: [{ type: "text", text: "channel mirror" }],
     api: NOVA_TRANSCRIPT_ARTIFACT_API,
-    provider: "openclaw",
+    provider: "nova",
     model,
     usage: {
       input: 0,
@@ -73,25 +73,25 @@ describe("normalizeAssistantReplayContent", () => {
       role: "user",
       content: "",
       MediaPath: "/tmp/late.png",
-      __openclaw: { lateMedia: true },
+      __nova: { lateMedia: true },
     } as unknown as AgentMessage;
     const blankArray = {
       role: "user",
       content: [{ type: "text", text: "  " }],
       MediaPaths: ["/tmp/late-array.png"],
-      __openclaw: { lateMedia: true },
+      __nova: { lateMedia: true },
     } as unknown as AgentMessage;
     const whitespaceOnlyPath = {
       role: "user",
       content: "",
       MediaPath: "   ",
-      __openclaw: { lateMedia: true },
+      __nova: { lateMedia: true },
     } as unknown as AgentMessage;
     const urlOnly = {
       role: "user",
       content: "",
       MediaUrl: "https://example.test/late.png",
-      __openclaw: { lateMedia: true },
+      __nova: { lateMedia: true },
     } as unknown as AgentMessage;
 
     const out = normalizeAssistantReplayContent([
@@ -352,14 +352,14 @@ describe("normalizeAssistantReplayContent", () => {
     expect(JSON.stringify(out)).not.toContain("assistant copied inbound metadata omitted");
   });
 
-  it("filters openclaw delivery-mirror and gateway-injected assistant messages from replay", () => {
+  it("filters nova delivery-mirror and gateway-injected assistant messages from replay", () => {
     // Gateway mirror entries are transcript artifacts, not model-authored
     // assistant turns, so they must not be sent back to providers.
     const messages = [
       userMessage("hello"),
-      openclawTranscriptAssistant("delivery-mirror"),
+      novaTranscriptAssistant("delivery-mirror"),
       bedrockAssistant([{ type: "text", text: "real reply" }]),
-      openclawTranscriptAssistant("gateway-injected"),
+      novaTranscriptAssistant("gateway-injected"),
     ];
     const out = normalizeAssistantReplayContent(messages);
     expect(out).toHaveLength(2);
@@ -374,7 +374,7 @@ describe("normalizeAssistantReplayContent", () => {
         ...bedrockAssistant([{ type: "text", text: "channel mirror" }], "stop"),
         provider: undefined,
         model: undefined,
-        openclawDeliveryMirror: { kind },
+        novaDeliveryMirror: { kind },
       } as unknown as AgentMessage;
       const realReply = bedrockAssistant([{ type: "text", text: "real reply" }], "stop", {
         input: 1,
@@ -395,7 +395,7 @@ describe("normalizeAssistantReplayContent", () => {
         output: 1,
         totalTokens: 2,
       }),
-      openclawDeliveryMirror: { kind: "unknown" },
+      novaDeliveryMirror: { kind: "unknown" },
     } as unknown as AgentMessage;
     const messages = [userMessage("hello"), assistant];
 

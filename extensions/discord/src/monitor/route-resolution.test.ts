@@ -1,6 +1,6 @@
 // Discord tests cover route resolution plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { ResolvedAgentRoute } from "openclaw/plugin-sdk/routing";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { ResolvedAgentRoute } from "nova/plugin-sdk/routing";
 import { describe, expect, it } from "vitest";
 import {
   buildDiscordRoutePeer,
@@ -10,10 +10,7 @@ import {
   shouldIgnoreStaleDiscordRouteBinding,
 } from "./route-resolution.js";
 
-function buildWorkerBindingConfig(peer: {
-  kind: "channel" | "direct";
-  id: string;
-}): OpenClawConfig {
+function buildWorkerBindingConfig(peer: { kind: "channel" | "direct"; id: string }): NovaConfig {
   return {
     agents: {
       list: [{ id: "worker" }],

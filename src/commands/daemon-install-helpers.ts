@@ -5,14 +5,14 @@ import path from "node:path";
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { collectDurableServiceEnvVarSources } from "../config/state-dir-dotenv.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { coerceSecretRef, resolveSecretInputRef, type SecretRef } from "../config/types.secrets.js";
 import { resolveGatewayLaunchAgentLabel } from "../daemon/constants.js";
 import { resolveGatewayStateDir, resolveGatewayTaskScriptPath } from "../daemon/paths.js";
 import {
   NOVA_WRAPPER_ENV_KEY,
   resolveGatewayProgramArguments,
-  resolveOpenClawWrapperPath,
+  resolveNovaWrapperPath,
 } from "../daemon/program-args.js";
 import {
   addServiceEnvPlanEntries,
@@ -66,7 +66,7 @@ const NON_PERSISTED_CONFIG_SECRET_ENV_TARGET_IDS = new Set([
 ]);
 const EXEC_SECRET_REF_PASS_ENV_ALLOWED_OVERRIDE_ONLY_KEYS = new Set(["HOME"]);
 
-function configContainsSecretRef(config: OpenClawConfig | undefined): boolean {
+function configContainsSecretRef(config: NovaConfig | undefined): boolean {
   if (!config) {
     return false;
   }
@@ -181,7 +181,7 @@ type ExecSecretRefPassEnvSource = {
 
 function collectConfigSecretRefServiceEnvSources(params: {
   env: Record<string, string | undefined>;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   configContainsSecretRef: boolean;
   stateDirDotEnvEnvironment: Record<string, string | undefined>;
   warn?: DaemonInstallWarnFn;
@@ -236,7 +236,7 @@ function collectConfigSecretRefServiceEnvSources(params: {
 
 function collectExecSecretRefPassEnvServiceEnvVars(params: {
   env: Record<string, string | undefined>;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   configContainsSecretRef: boolean;
   authStore?: AuthProfileStore;
   durableEnvironment: Record<string, string | undefined>;
@@ -341,7 +341,7 @@ function collectExecSecretRefPassEnvServiceEnvVars(params: {
 
 function collectPluginConfigSecretRefs(params: {
   env: Record<string, string | undefined>;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): SecretRef[] {
   const context = createResolverContext({
     sourceConfig: params.config,
@@ -592,7 +592,7 @@ function resolveGatewayInstallWorkingDirectory(params: {
 
 async function buildGatewayInstallEnvironment(params: {
   env: Record<string, string | undefined>;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   authStore?: AuthProfileStore;
   warn?: DaemonInstallWarnFn;
   serviceEnvironment: Record<string, string | undefined>;
@@ -726,7 +726,7 @@ export async function buildGatewayInstallPlan(params: {
   platform?: NodeJS.Platform;
   warn?: DaemonInstallWarnFn;
   /** Full config to extract env vars from (env vars + inline env keys). */
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   authStore?: AuthProfileStore;
   existingEnvironmentValueSources?: Record<
     string,
@@ -752,7 +752,7 @@ export async function buildGatewayInstallPlan(params: {
   }
   const wrapperPath = wrapperPointsAtWindowsTaskScript
     ? undefined
-    : await resolveOpenClawWrapperPath(wrapperInput);
+    : await resolveNovaWrapperPath(wrapperInput);
   const serviceInputEnv: Record<string, string | undefined> = wrapperPath
     ? { ...params.env, [NOVA_WRAPPER_ENV_KEY]: wrapperPath }
     : wrapperPointsAtWindowsTaskScript
@@ -846,6 +846,6 @@ function omitEnvKey(
 export function gatewayInstallErrorHint(platform = process.platform): string {
   return platform === "win32"
     ? "Tip: native Windows now falls back to a per-user Startup-folder login item when Scheduled Task creation is denied; if install still fails, rerun from an elevated PowerShell or skip service install."
-    : `Tip: rerun \`${formatCliCommand("openclaw gateway install")}\` after fixing the error.`;
+    : `Tip: rerun \`${formatCliCommand("nova gateway install")}\` after fixing the error.`;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

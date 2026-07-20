@@ -1,5 +1,5 @@
 // Plugin entry contracts define the manifest-facing hooks implemented by plugin packages.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { emptyPluginConfigSchema } from "../plugins/config-schema.js";
 import type {
   AgentHarness as _AgentHarness,
@@ -16,25 +16,25 @@ import type {
   MigrationProviderPlugin as _MigrationProviderPlugin,
   ProviderPlugin as _ProviderPlugin,
   MigrationSummary as _MigrationSummary,
-  OpenClawGatewayDiscoveryAdvertiseContext as _OpenClawGatewayDiscoveryAdvertiseContext,
-  OpenClawGatewayDiscoveryService as _OpenClawGatewayDiscoveryService,
-  OpenClawPluginApi as _OpenClawPluginApi,
-  OpenClawPluginCommandDefinition as _OpenClawPluginCommandDefinition,
-  OpenClawPluginConfigSchema as _OpenClawPluginConfigSchema,
-  OpenClawPluginDefinition as _OpenClawPluginDefinition,
-  OpenClawPluginHttpRouteHandler as _OpenClawPluginHttpRouteHandler,
-  OpenClawPluginNodeHostCommand as _OpenClawPluginNodeHostCommand,
-  OpenClawPluginNodeHostCommandAvailabilityContext as _OpenClawPluginNodeHostCommandAvailabilityContext,
-  OpenClawPluginNodeInvokePolicy as _OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginNodeInvokePolicyContext as _OpenClawPluginNodeInvokePolicyContext,
-  OpenClawPluginNodeInvokePolicyResult as _OpenClawPluginNodeInvokePolicyResult,
-  OpenClawPluginReloadRegistration as _OpenClawPluginReloadRegistration,
-  OpenClawPluginSecurityAuditCollector as _OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginSecurityAuditContext as _OpenClawPluginSecurityAuditContext,
-  OpenClawPluginService as _OpenClawPluginService,
-  OpenClawPluginServiceContext as _OpenClawPluginServiceContext,
-  OpenClawPluginToolContext as _OpenClawPluginToolContext,
-  OpenClawPluginToolFactory as _OpenClawPluginToolFactory,
+  NovaGatewayDiscoveryAdvertiseContext as _NovaGatewayDiscoveryAdvertiseContext,
+  NovaGatewayDiscoveryService as _NovaGatewayDiscoveryService,
+  NovaPluginApi as _NovaPluginApi,
+  NovaPluginCommandDefinition as _NovaPluginCommandDefinition,
+  NovaPluginConfigSchema as _NovaPluginConfigSchema,
+  NovaPluginDefinition as _NovaPluginDefinition,
+  NovaPluginHttpRouteHandler as _NovaPluginHttpRouteHandler,
+  NovaPluginNodeHostCommand as _NovaPluginNodeHostCommand,
+  NovaPluginNodeHostCommandAvailabilityContext as _NovaPluginNodeHostCommandAvailabilityContext,
+  NovaPluginNodeInvokePolicy as _NovaPluginNodeInvokePolicy,
+  NovaPluginNodeInvokePolicyContext as _NovaPluginNodeInvokePolicyContext,
+  NovaPluginNodeInvokePolicyResult as _NovaPluginNodeInvokePolicyResult,
+  NovaPluginReloadRegistration as _NovaPluginReloadRegistration,
+  NovaPluginSecurityAuditCollector as _NovaPluginSecurityAuditCollector,
+  NovaPluginSecurityAuditContext as _NovaPluginSecurityAuditContext,
+  NovaPluginService as _NovaPluginService,
+  NovaPluginServiceContext as _NovaPluginServiceContext,
+  NovaPluginToolContext as _NovaPluginToolContext,
+  NovaPluginToolFactory as _NovaPluginToolFactory,
   PluginAgentEventEmitParams as _PluginAgentEventEmitParams,
   PluginAgentEventEmitResult as _PluginAgentEventEmitResult,
   PluginAgentEventSubscriptionRegistration as _PluginAgentEventSubscriptionRegistration,
@@ -151,26 +151,26 @@ export type MigrationProviderPlugin = _MigrationProviderPlugin;
 // The plugin-authoring scaffold generates code importing ProviderPlugin from this entrypoint.
 export type ProviderPlugin = _ProviderPlugin;
 export type MigrationSummary = _MigrationSummary;
-export type OpenClawGatewayDiscoveryAdvertiseContext = _OpenClawGatewayDiscoveryAdvertiseContext;
-export type OpenClawGatewayDiscoveryService = _OpenClawGatewayDiscoveryService;
-export type OpenClawPluginApi = _OpenClawPluginApi;
-export type OpenClawPluginCommandDefinition = _OpenClawPluginCommandDefinition;
-export type OpenClawPluginConfigSchema = _OpenClawPluginConfigSchema;
-export type OpenClawPluginDefinition = _OpenClawPluginDefinition;
-export type OpenClawPluginHttpRouteHandler = _OpenClawPluginHttpRouteHandler;
-export type OpenClawPluginNodeHostCommand = _OpenClawPluginNodeHostCommand;
-export type OpenClawPluginNodeHostCommandAvailabilityContext =
-  _OpenClawPluginNodeHostCommandAvailabilityContext;
-export type OpenClawPluginNodeInvokePolicy = _OpenClawPluginNodeInvokePolicy;
-export type OpenClawPluginNodeInvokePolicyContext = _OpenClawPluginNodeInvokePolicyContext;
-export type OpenClawPluginNodeInvokePolicyResult = _OpenClawPluginNodeInvokePolicyResult;
-export type OpenClawPluginReloadRegistration = _OpenClawPluginReloadRegistration;
-export type OpenClawPluginSecurityAuditCollector = _OpenClawPluginSecurityAuditCollector;
-export type OpenClawPluginSecurityAuditContext = _OpenClawPluginSecurityAuditContext;
-export type OpenClawPluginService = _OpenClawPluginService;
-export type OpenClawPluginServiceContext = _OpenClawPluginServiceContext;
-export type OpenClawPluginToolContext = _OpenClawPluginToolContext;
-export type OpenClawPluginToolFactory = _OpenClawPluginToolFactory;
+export type NovaGatewayDiscoveryAdvertiseContext = _NovaGatewayDiscoveryAdvertiseContext;
+export type NovaGatewayDiscoveryService = _NovaGatewayDiscoveryService;
+export type NovaPluginApi = _NovaPluginApi;
+export type NovaPluginCommandDefinition = _NovaPluginCommandDefinition;
+export type NovaPluginConfigSchema = _NovaPluginConfigSchema;
+export type NovaPluginDefinition = _NovaPluginDefinition;
+export type NovaPluginHttpRouteHandler = _NovaPluginHttpRouteHandler;
+export type NovaPluginNodeHostCommand = _NovaPluginNodeHostCommand;
+export type NovaPluginNodeHostCommandAvailabilityContext =
+  _NovaPluginNodeHostCommandAvailabilityContext;
+export type NovaPluginNodeInvokePolicy = _NovaPluginNodeInvokePolicy;
+export type NovaPluginNodeInvokePolicyContext = _NovaPluginNodeInvokePolicyContext;
+export type NovaPluginNodeInvokePolicyResult = _NovaPluginNodeInvokePolicyResult;
+export type NovaPluginReloadRegistration = _NovaPluginReloadRegistration;
+export type NovaPluginSecurityAuditCollector = _NovaPluginSecurityAuditCollector;
+export type NovaPluginSecurityAuditContext = _NovaPluginSecurityAuditContext;
+export type NovaPluginService = _NovaPluginService;
+export type NovaPluginServiceContext = _NovaPluginServiceContext;
+export type NovaPluginToolContext = _NovaPluginToolContext;
+export type NovaPluginToolFactory = _NovaPluginToolFactory;
 export type PluginAgentEventEmitParams = _PluginAgentEventEmitParams;
 export type PluginAgentEventEmitResult = _PluginAgentEventEmitResult;
 export type PluginAgentEventSubscriptionRegistration = _PluginAgentEventSubscriptionRegistration;
@@ -269,10 +269,10 @@ export type WorkerSshEndpoint = _WorkerSshEndpoint;
 export type WorkerSshIdentity = _WorkerSshIdentity;
 export type WorkerSshIdentityRequest = _WorkerSshIdentityRequest;
 
-export type OpenClawPluginGatewayEventScope =
-  import("../plugins/gateway-events.js").OpenClawPluginGatewayEventScope;
-export type OpenClawPluginGatewayEvents =
-  import("../plugins/gateway-events.js").OpenClawPluginGatewayEvents;
+export type NovaPluginGatewayEventScope =
+  import("../plugins/gateway-events.js").NovaPluginGatewayEventScope;
+export type NovaPluginGatewayEvents =
+  import("../plugins/gateway-events.js").NovaPluginGatewayEvents;
 export { WorkerProviderError } from "../plugins/types.js";
 
 export type {
@@ -292,7 +292,7 @@ export type {
   UnifiedModelCatalogKind,
   UnifiedModelCatalogSource,
 } from "@nova/model-catalog-core/model-catalog-types";
-export type { OpenClawConfig };
+export type { NovaConfig };
 
 export {
   buildJsonPluginConfigSchema,
@@ -306,16 +306,16 @@ type DefinePluginEntryOptions = {
   name: string;
   description: string;
   /**
-   * @deprecated Declare exclusive plugin kind in `openclaw.plugin.json` via
+   * @deprecated Declare exclusive plugin kind in `nova.plugin.json` via
    * manifest `kind`. Runtime-entry `kind` remains only as a compatibility
    * fallback for older plugins.
    */
-  kind?: OpenClawPluginDefinition["kind"];
-  configSchema?: OpenClawPluginConfigSchema | (() => OpenClawPluginConfigSchema);
-  reload?: OpenClawPluginDefinition["reload"];
-  nodeHostCommands?: OpenClawPluginDefinition["nodeHostCommands"];
-  securityAuditCollectors?: OpenClawPluginDefinition["securityAuditCollectors"];
-  register: (api: OpenClawPluginApi) => void;
+  kind?: NovaPluginDefinition["kind"];
+  configSchema?: NovaPluginConfigSchema | (() => NovaPluginConfigSchema);
+  reload?: NovaPluginDefinition["reload"];
+  nodeHostCommands?: NovaPluginDefinition["nodeHostCommands"];
+  securityAuditCollectors?: NovaPluginDefinition["securityAuditCollectors"];
+  register: (api: NovaPluginApi) => void;
 };
 
 /** Normalized object shape that Nova loads from a plugin entry module. */
@@ -323,19 +323,16 @@ type DefinedPluginEntry = {
   id: string;
   name: string;
   description: string;
-  configSchema: OpenClawPluginConfigSchema;
-  register: NonNullable<OpenClawPluginDefinition["register"]>;
-} & Pick<
-  OpenClawPluginDefinition,
-  "kind" | "reload" | "nodeHostCommands" | "securityAuditCollectors"
->;
+  configSchema: NovaPluginConfigSchema;
+  register: NonNullable<NovaPluginDefinition["register"]>;
+} & Pick<NovaPluginDefinition, "kind" | "reload" | "nodeHostCommands" | "securityAuditCollectors">;
 
 /**
  * Canonical entry helper for non-channel plugins.
  *
  * Use this for provider, tool, command, service, memory, and context-engine
  * plugins. Channel plugins should use `defineChannelPluginEntry(...)` from
- * `openclaw/plugin-sdk/core` so they inherit the channel capability wiring.
+ * `nova/plugin-sdk/core` so they inherit the channel capability wiring.
  */
 export function definePluginEntry({
   id,

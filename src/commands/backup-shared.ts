@@ -81,7 +81,7 @@ function formatBackupArchiveTimestamp(
 
 /** Build the root directory name stored inside a backup tarball. */
 export function buildBackupArchiveRoot(nowMs = Date.now()): string {
-  return `${formatBackupArchiveTimestamp(nowMs)}-openclaw-backup`;
+  return `${formatBackupArchiveTimestamp(nowMs)}-nova-backup`;
 }
 
 /** Build the default `.tar.gz` filename for a backup archive. */
@@ -251,7 +251,7 @@ async function resolveBackupPlanFromPaths(params: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.backupPlanTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.backupPlanTestApi")] = {
     resolveBackupPlanFromPaths,
   };
 }

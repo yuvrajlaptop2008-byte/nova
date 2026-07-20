@@ -1,6 +1,6 @@
 // Matrix plugin module implements errors behavior.
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 
 export function formatMatrixErrorMessage(err: unknown): string {
   return formatErrorMessage(err);

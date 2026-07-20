@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { modelKey } from "../shared/model-key.js";
 
 type ModelExtraParamSources = {
@@ -15,7 +15,7 @@ function legacyModelKey(provider: string, modelId: string): string | undefined {
 
 /** Resolves the config records merged into one model request. */
 export function resolveModelExtraParamSources(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   provider: string;
   modelId?: string;
   agentId?: string;

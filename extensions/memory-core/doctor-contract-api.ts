@@ -5,8 +5,8 @@ import type { Dirent } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
-import { reclaimDefinitelyStaleFileLock } from "openclaw/plugin-sdk/file-lock";
-import { resolveUserPath, root } from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+import { reclaimDefinitelyStaleFileLock } from "nova/plugin-sdk/file-lock";
+import { resolveUserPath, root } from "nova/plugin-sdk/memory-core-host-engine-foundation";
 import {
   ensureMemoryIndexSchema,
   loadSqliteVecExtension,
@@ -17,23 +17,23 @@ import {
   MEMORY_INDEX_SOURCES_TABLE,
   MEMORY_INDEX_VECTOR_TABLE,
   requireNodeSqlite,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
-import { resolveMemoryDreamingWorkspaces } from "openclaw/plugin-sdk/memory-core-host-status";
+} from "nova/plugin-sdk/memory-core-host-engine-storage";
+import { resolveMemoryDreamingWorkspaces } from "nova/plugin-sdk/memory-core-host-status";
 import {
   normalizeMemoryHostEventRecordForStorage,
   resolveMemoryHostEventLogPath,
-} from "openclaw/plugin-sdk/memory-host-events";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/memory-host-events";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
 import {
   archiveLegacyStateSource,
   legacyStateFileExists,
   type PluginDoctorStateMigrationContext,
   type PluginDoctorStateMigration,
-} from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/runtime-doctor";
 import {
-  ensureOpenClawAgentDatabaseSchema,
-  resolveOpenClawAgentSqlitePath,
-} from "openclaw/plugin-sdk/sqlite-runtime";
+  ensureNovaAgentDatabaseSchema,
+  resolveNovaAgentSqlitePath,
+} from "nova/plugin-sdk/sqlite-runtime";
 import {
   DAILY_INGESTION_STATE_RELATIVE_PATH,
   SESSION_INGESTION_STATE_RELATIVE_PATH,
@@ -814,7 +814,7 @@ async function collectLegacyMemorySidecarSources(params: {
       agentId,
       legacyPath: normalizedPath,
       stateDir: params.stateDir,
-      agentDatabasePath: resolveOpenClawAgentSqlitePath({ agentId, env: migrationEnv }),
+      agentDatabasePath: resolveNovaAgentSqlitePath({ agentId, env: migrationEnv }),
     });
   }
   for (const agentId of agentIds) {
@@ -982,7 +982,7 @@ async function migrateLegacyMemorySidecarSource(params: {
       ...params.env,
       NOVA_STATE_DIR: params.source.stateDir,
     };
-    ensureOpenClawAgentDatabaseSchema(db, {
+    ensureNovaAgentDatabaseSchema(db, {
       agentId: params.source.agentId,
       env: migrationEnv,
       path: params.source.agentDatabasePath,
@@ -1872,7 +1872,7 @@ async function migrateLegacyMemoryHostEventSource(params: {
     }
     if (source.storage !== "archive" && (await source.root.exists(activeRelativePath))) {
       params.warnings.push(
-        "An old writer recreated the Memory Core host event source; rerun openclaw doctor --fix to import the retained rows",
+        "An old writer recreated the Memory Core host event source; rerun nova doctor --fix to import the retained rows",
       );
     }
     return "completed";

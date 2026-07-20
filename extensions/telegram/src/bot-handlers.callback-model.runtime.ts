@@ -1,14 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { buildCommandsMessagePaginated } from "openclaw/plugin-sdk/command-status";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { buildCommandsMessagePaginated } from "nova/plugin-sdk/command-status";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   applyModelOverrideToSessionEntry,
   ModelSelectionLockedError,
-} from "openclaw/plugin-sdk/model-session-runtime";
-import { formatModelsAvailableHeader } from "openclaw/plugin-sdk/models-provider-runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { patchSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/model-session-runtime";
+import { formatModelsAvailableHeader } from "nova/plugin-sdk/models-provider-runtime";
+import { parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
+import { patchSessionEntry } from "nova/plugin-sdk/session-store-runtime";
 import {
   resolveAgentDir,
   resolveDefaultAgentId,
@@ -41,7 +41,7 @@ export async function handleTelegramModelCallback(params: {
   messageThreadId?: number;
   resolvedThreadId?: number;
   senderId: string;
-  runtimeCfg: OpenClawConfig;
+  runtimeCfg: NovaConfig;
   telegramDeps: RegisterTelegramHandlerParams["telegramDeps"];
   actions: TelegramCallbackMessageActions;
   messageRuntime: TelegramHandlerMessageRuntime;
@@ -306,7 +306,7 @@ export async function handleTelegramModelCallback(params: {
       : `changed to <b>${escapeHtml(selection.provider)}/${escapeHtml(selection.model)}</b>`;
     const scopeText = isDefaultSelection
       ? "Session selection cleared. Runtime unchanged. New replies use the agent's configured default."
-      : `Session-only model selection. Runtime unchanged. Use /model ${escapeHtml(selection.provider)}/${escapeHtml(selection.model)} --runtime &lt;runtime&gt; to switch harnesses. The agent default in openclaw.json is unchanged; /reset or a new session may return to that default.`;
+      : `Session-only model selection. Runtime unchanged. Use /model ${escapeHtml(selection.provider)}/${escapeHtml(selection.model)} --runtime &lt;runtime&gt; to switch harnesses. The agent default in nova.json is unchanged; /reset or a new session may return to that default.`;
     await editMessageWithButtons(`✅ Model ${actionText}\n\n${scopeText}`, [], {
       parse_mode: "HTML",
     });

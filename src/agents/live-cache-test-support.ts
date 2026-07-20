@@ -17,7 +17,7 @@ import {
   requireApiKey,
 } from "./model-auth.js";
 import { normalizeProviderId, parseModelRef } from "./model-selection.js";
-import { ensureOpenClawModelsJson } from "./models-config.js";
+import { ensureNovaModelsJson } from "./models-config.js";
 import { buildAssistantMessage, buildUsageWithNoCost } from "./stream-message-shared.js";
 
 // Shared helpers for live prompt-cache regression tests. They resolve real
@@ -202,7 +202,7 @@ export async function resolveLiveDirectModelPool(params: {
   preferredModelIds: readonly string[];
 }): Promise<LiveResolvedModelPool> {
   const cfg = getRuntimeConfig();
-  await ensureOpenClawModelsJson(cfg);
+  await ensureNovaModelsJson(cfg);
   const agentDir = resolveDefaultAgentDir(cfg);
   const authStorage = discoverAuthStorage(agentDir);
   const models = discoverModels(authStorage, agentDir).getAll();

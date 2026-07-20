@@ -4,7 +4,7 @@ import type { ReplyPayload } from "../../auto-reply/reply-payload.js";
 import type { HistoryEntry } from "../../auto-reply/reply/history.types.js";
 import type { DispatchReplyWithBufferedBlockDispatcher } from "../../auto-reply/reply/provider-dispatcher.types.js";
 import type { FinalizedMsgContext } from "../../auto-reply/templating.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   emitTrustedDiagnosticEvent,
   onInternalDiagnosticEvent,
@@ -76,7 +76,7 @@ vi.mock("../session.js", async (importOriginal) => {
   return { ...actual, recordInboundSession: recordInboundSessionCore };
 });
 
-const cfg = {} as OpenClawConfig;
+const cfg = {} as NovaConfig;
 
 function createCtx(overrides: Partial<FinalizedMsgContext> = {}): FinalizedMsgContext {
   return {

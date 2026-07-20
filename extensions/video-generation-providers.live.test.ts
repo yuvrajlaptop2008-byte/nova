@@ -1,14 +1,11 @@
 // Video Generation Providers.Live.Test.Ts tests cover video generation providers plugin behavior.
-import {
-  resolveApiKeyForProvider,
-  resolveDefaultAgentDir,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { resolveApiKeyForProvider, resolveDefaultAgentDir } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import { getRuntimeConfig } from "nova/plugin-sdk/runtime-config-snapshot";
 import {
   isAuthErrorMessage,
   isBillingErrorMessage,
@@ -19,8 +16,8 @@ import {
   isServerErrorMessage,
   isTimeoutErrorMessage,
   isTruthyEnvValue,
-} from "openclaw/plugin-sdk/test-live";
-import { collectProviderApiKeys, getShellEnvAppliedKeys } from "openclaw/plugin-sdk/test-live-auth";
+} from "nova/plugin-sdk/test-live";
+import { collectProviderApiKeys, getShellEnvAppliedKeys } from "nova/plugin-sdk/test-live-auth";
 import {
   DEFAULT_LIVE_VIDEO_MODELS,
   canRunBufferBackedImageToVideoLiveLane,
@@ -35,14 +32,14 @@ import {
   resolveConfiguredLiveVideoModels,
   resolveLiveVideoAuthStore,
   resolveLiveVideoResolution,
-} from "openclaw/plugin-sdk/test-media-generation";
+} from "nova/plugin-sdk/test-media-generation";
 import type {
   GeneratedVideoAsset,
   VideoGenerationMode,
   VideoGenerationModeCapabilities,
   VideoGenerationProvider,
   VideoGenerationRequest,
-} from "openclaw/plugin-sdk/test-media-generation";
+} from "nova/plugin-sdk/test-media-generation";
 import { describe, expect, it } from "vitest";
 import alibabaPlugin from "./alibaba/index.js";
 import byteplusPlugin from "./byteplus/index.js";
@@ -156,7 +153,7 @@ function readPositiveIntegerEnv(raw: string | undefined, fallback: number): numb
   return Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
-function withPluginsEnabled(cfg: OpenClawConfig): OpenClawConfig {
+function withPluginsEnabled(cfg: NovaConfig): NovaConfig {
   return {
     ...cfg,
     plugins: {

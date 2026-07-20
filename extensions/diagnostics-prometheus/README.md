@@ -1,13 +1,13 @@
 # @nova/diagnostics-prometheus
 
-Official Prometheus diagnostics exporter for OpenClaw.
+Official Prometheus diagnostics exporter for Nova.
 
-This plugin exposes OpenClaw Gateway runtime metrics in Prometheus text format for Prometheus, Grafana, VictoriaMetrics, and compatible scrapers.
+This plugin exposes Nova Gateway runtime metrics in Prometheus text format for Prometheus, Grafana, VictoriaMetrics, and compatible scrapers.
 
 ## Install
 
 ```bash
-openclaw plugins install @nova/diagnostics-prometheus
+nova plugins install @nova/diagnostics-prometheus
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -18,10 +18,10 @@ Enable the plugin and set the scrape endpoint options in `plugins.entries.diagno
 
 The full config surface, metric names, and scrape examples live in the docs:
 
-- https://docs.openclaw.ai/gateway/prometheus
+- https://docs.nova.ai/gateway/prometheus
 
 ## Package
 
 - Plugin id: `diagnostics-prometheus`
 - Package: `@nova/diagnostics-prometheus`
-- Minimum OpenClaw host: `2026.4.25`
+- Minimum Nova host: `2026.4.25`

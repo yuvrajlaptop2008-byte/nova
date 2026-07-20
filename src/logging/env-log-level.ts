@@ -18,7 +18,7 @@ export function resolveEnvLogLevelOverride(): LogLevel | undefined {
   if (loggingState.invalidEnvLogLevelValue !== trimmed) {
     loggingState.invalidEnvLogLevelValue = trimmed;
     process.stderr.write(
-      `[openclaw] Ignoring invalid NOVA_LOG_LEVEL="${trimmed}" (allowed: ${ALLOWED_LOG_LEVELS.join("|")}).\n`,
+      `[nova] Ignoring invalid NOVA_LOG_LEVEL="${trimmed}" (allowed: ${ALLOWED_LOG_LEVELS.join("|")}).\n`,
     );
   }
   return undefined;

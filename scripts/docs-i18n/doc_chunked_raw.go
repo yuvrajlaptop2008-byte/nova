@@ -596,9 +596,9 @@ var contextualProductDestinations = map[string]contextualProductDestinationRule{
 	"Runway":      {hosts: []string{"runwayml.com"}, routes: []string{"/providers/runway", "/plugins/reference/runway"}},
 	"Synthetic":   {hosts: []string{"synthetic.new"}, routes: []string{"/providers/synthetic"}},
 	"Upstash Box": {hosts: []string{"upstash.com"}, routes: []string{"/install/upstash", "/docs/box"}},
-	"Lobster":     {routes: []string{"/tools/lobster", "/openclaw/lobster"}},
-	"Mantis":      {routes: []string{"/concepts/mantis", "/openclaw/mantis"}},
-	"Tokenjuice":  {routes: []string{"/tools/tokenjuice", "/openclaw/tokenjuice"}},
+	"Lobster":     {routes: []string{"/tools/lobster", "/nova/lobster"}},
+	"Mantis":      {routes: []string{"/concepts/mantis", "/nova/mantis"}},
+	"Tokenjuice":  {routes: []string{"/tools/tokenjuice", "/nova/tokenjuice"}},
 }
 
 func destinationMentionsProductName(destination, name string) bool {
@@ -1051,7 +1051,7 @@ func lastNonEmptyLineIndex(lines []string) int {
 }
 
 func docsI18nDocChunkMaxBytes() int {
-	value := strings.TrimSpace(os.Getenv("OPENCLAW_DOCS_I18N_DOC_CHUNK_MAX_BYTES"))
+	value := strings.TrimSpace(os.Getenv("NOVA_DOCS_I18N_DOC_CHUNK_MAX_BYTES"))
 	if value == "" {
 		return defaultDocChunkMaxBytes
 	}
@@ -1063,7 +1063,7 @@ func docsI18nDocChunkMaxBytes() int {
 }
 
 func docsI18nDocChunkPromptBudget() int {
-	value := strings.TrimSpace(os.Getenv("OPENCLAW_DOCS_I18N_DOC_CHUNK_PROMPT_BUDGET"))
+	value := strings.TrimSpace(os.Getenv("NOVA_DOCS_I18N_DOC_CHUNK_PROMPT_BUDGET"))
 	if value == "" {
 		return defaultDocChunkPromptBudget
 	}

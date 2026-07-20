@@ -1317,7 +1317,7 @@ describe("renderWorkboard", () => {
       launcher?.click();
       await nextFrame();
 
-      const modal = container.querySelector("openclaw-modal-dialog");
+      const modal = container.querySelector("nova-modal-dialog");
       const { dialog } = await getRenderedModalDialog(container);
       const titleInput = container.querySelector<HTMLInputElement>(".workboard-draft__title");
       expect(modal?.getAttribute("label")).toBe("New card");
@@ -1417,7 +1417,7 @@ describe("renderWorkboard", () => {
       launcher?.click();
       await nextFrame();
 
-      const modal = container.querySelector("openclaw-modal-dialog");
+      const modal = container.querySelector("nova-modal-dialog");
       const { dialog } = await getRenderedModalDialog(container);
       expect(modal?.getAttribute("label")).toBe("Inspect drawer focus");
       expect(dialog.open).toBe(true);
@@ -2318,7 +2318,7 @@ describe("renderWorkboard", () => {
       container,
     );
 
-    expect(container.querySelector("openclaw-modal-dialog")?.textContent).toContain("New card");
+    expect(container.querySelector("nova-modal-dialog")?.textContent).toContain("New card");
     expect(container.querySelector('[aria-label="Card templates"]')?.textContent).toContain(
       "Bugfix",
     );
@@ -3109,8 +3109,8 @@ describe("renderWorkboard", () => {
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     render(renderWorkboard(props), container);
 
-    expect(container.querySelector("openclaw-modal-dialog")?.textContent).toContain("Edit card");
-    expect(container.querySelector("openclaw-modal-dialog")?.textContent).toContain(
+    expect(container.querySelector("nova-modal-dialog")?.textContent).toContain("Edit card");
+    expect(container.querySelector("nova-modal-dialog")?.textContent).toContain(
       "Needs owner check",
     );
     const commentInput = container.querySelector<HTMLTextAreaElement>(".workboard-comments__input");
@@ -3156,7 +3156,7 @@ describe("renderWorkboard", () => {
     expect(state.cards[0]).toMatchObject({ title: "Renamed", priority: "high", updatedAt: 2 });
 
     render(renderWorkboard(props), container);
-    expect(container.querySelector("openclaw-modal-dialog")).toBeNull();
+    expect(container.querySelector("nova-modal-dialog")).toBeNull();
     container
       .querySelector<HTMLButtonElement>('button[aria-label="Edit card"]')
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));

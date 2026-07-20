@@ -566,12 +566,12 @@ export function registerGatewayCli(program: Command) {
         "after",
         () =>
           `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-            ["openclaw gateway run", "Run the gateway in the foreground."],
-            ["openclaw gateway status", "Show service status plus connectivity/capability."],
-            ["openclaw gateway discover", "Find local and wide-area gateway beacons."],
-            ["openclaw gateway stability", "Show recent stability diagnostics."],
-            ["openclaw gateway call health", "Call a gateway RPC method directly."],
-          ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/gateway", "docs.openclaw.ai/cli/gateway")}\n`,
+            ["nova gateway run", "Run the gateway in the foreground."],
+            ["nova gateway status", "Show service status plus connectivity/capability."],
+            ["nova gateway discover", "Find local and wide-area gateway beacons."],
+            ["nova gateway stability", "Show recent stability diagnostics."],
+            ["nova gateway call health", "Call a gateway RPC method directly."],
+          ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/gateway", "docs.nova.ai/cli/gateway")}\n`,
       ),
   );
 

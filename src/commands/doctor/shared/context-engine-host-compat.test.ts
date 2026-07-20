@@ -1,6 +1,6 @@
 // Context engine host compatibility tests cover doctor warnings for host/context mismatches.
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import {
   getContextEngineRegistration,
   registerContextEngineForOwner,
@@ -12,7 +12,7 @@ import {
 } from "./context-engine-host-compat.js";
 
 vi.mock("../../../agents/agent-scope-config.js", () => ({
-  resolveDefaultAgentDir: vi.fn(() => "/tmp/openclaw-doctor-host-compat"),
+  resolveDefaultAgentDir: vi.fn(() => "/tmp/nova-doctor-host-compat"),
 }));
 
 vi.mock("../../../agents/cli-backends.js", () => ({
@@ -21,10 +21,10 @@ vi.mock("../../../agents/cli-backends.js", () => ({
 
 vi.mock("../../../agents/harness/policy.js", () => ({
   resolveAgentHarnessPolicy: vi.fn(
-    (params: { config: OpenClawConfig; modelId: string; provider: string }) => ({
+    (params: { config: NovaConfig; modelId: string; provider: string }) => ({
       runtime:
         params.config.agents?.defaults?.models?.[`${params.provider}/${params.modelId}`]
-          ?.agentRuntime?.id ?? "openclaw",
+          ?.agentRuntime?.id ?? "nova",
     }),
   ),
 }));
@@ -87,7 +87,7 @@ function registerEngine(requiredCapabilities: ContextEngineHostCapability[]): st
   return id;
 }
 
-function configWithEngine(engineId: string, cfg: OpenClawConfig = {}): OpenClawConfig {
+function configWithEngine(engineId: string, cfg: NovaConfig = {}): NovaConfig {
   return {
     ...cfg,
     plugins: {
@@ -125,12 +125,12 @@ describe("doctor context-engine host compatibility", () => {
           defaults: {
             models: {
               "openai/gpt-5.5": { agentRuntime: { id: "codex" } },
-              "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "openclaw" } },
+              "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "nova" } },
             },
           },
         },
       }),
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
     });
 
     expect(warnings.join("\n")).toContain("Nova embedded runner");
@@ -151,7 +151,7 @@ describe("doctor context-engine host compatibility", () => {
           },
         },
       }),
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
     });
 
     expect(warnings).toEqual([]);
@@ -170,7 +170,7 @@ describe("doctor context-engine host compatibility", () => {
           },
         },
       }),
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
     });
 
     expect(result.config.plugins?.slots?.contextEngine).toBe("legacy");
@@ -192,7 +192,7 @@ describe("doctor context-engine host compatibility", () => {
     });
     const result = await maybeRepairContextEngineHostCompatibility({
       cfg,
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
     });
 
     expect(result.config).toBe(cfg);
@@ -213,7 +213,7 @@ describe("doctor context-engine host compatibility", () => {
     });
     const result = await maybeRepairContextEngineHostCompatibility({
       cfg,
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
     });
 
     expect(result.config).toBe(cfg);

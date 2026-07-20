@@ -156,7 +156,7 @@ export function buildWorkerConnectParams(
     maxProtocol: PROTOCOL_VERSION,
     client: {
       id: GATEWAY_CLIENT_IDS.WORKER,
-      version: descriptor.admission.handshake.openclawVersion,
+      version: descriptor.admission.handshake.novaVersion,
       platform: process.platform,
       mode: GATEWAY_CLIENT_MODES.WORKER,
     },

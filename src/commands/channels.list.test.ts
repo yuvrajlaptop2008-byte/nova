@@ -376,10 +376,10 @@ describe("channels list", () => {
       channelId: "discord",
       label: "Discord",
       installSpec: "@nova/discord",
-      installCommand: "openclaw plugins install @nova/discord",
-      doctorFixCommand: "openclaw doctor --fix",
+      installCommand: "nova plugins install @nova/discord",
+      doctorFixCommand: "nova doctor --fix",
       repairHint:
-        "Install the official external plugin with: openclaw plugins install @nova/discord, or run: openclaw doctor --fix.",
+        "Install the official external plugin with: nova plugins install @nova/discord, or run: nova doctor --fix.",
     });
     mocks.readConfigFileSnapshot.mockResolvedValue({
       ...baseConfigSnapshot,
@@ -406,7 +406,7 @@ describe("channels list", () => {
     expect(output).toContain("not installed");
     expect(output).toContain("configured");
     expect(output).toContain("disabled");
-    expect(output).toContain("run openclaw plugins install @nova/discord or openclaw doctor --fix");
+    expect(output).toContain("run nova plugins install @nova/discord or nova doctor --fix");
     expect(output).not.toContain("no configured chat channels");
   });
 
@@ -422,10 +422,10 @@ describe("channels list", () => {
       channelId: "discord",
       label: "Discord",
       installSpec: "@nova/discord",
-      installCommand: "openclaw plugins install @nova/discord",
-      doctorFixCommand: "openclaw doctor --fix",
+      installCommand: "nova plugins install @nova/discord",
+      doctorFixCommand: "nova doctor --fix",
       repairHint:
-        "Install the official external plugin with: openclaw plugins install @nova/discord, or run: openclaw doctor --fix.",
+        "Install the official external plugin with: nova plugins install @nova/discord, or run: nova doctor --fix.",
     });
     mocks.readConfigFileSnapshot.mockResolvedValue({
       ...baseConfigSnapshot,

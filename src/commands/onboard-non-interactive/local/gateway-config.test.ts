@@ -1,6 +1,6 @@
 // Non-interactive gateway config tests cover port, bind, auth token, and SecretRef preservation behavior.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { withEnv } from "../../../test-utils/env.js";
 import type { OnboardOptions } from "../../onboard-types.js";
 import { applyNonInteractiveGatewayConfig } from "./gateway-config.js";
@@ -35,19 +35,19 @@ const SAMPLE_SECRET_REF = {
   id: "NOVA_GATEWAY_TOKEN_REF",
 };
 
-function createTokenConfig(token: unknown): OpenClawConfig {
+function createTokenConfig(token: unknown): NovaConfig {
   return {
     gateway: { auth: { mode: "token", token } },
-  } as unknown as OpenClawConfig;
+  } as unknown as NovaConfig;
 }
 
 function applyGatewayConfig({
-  nextConfig = {} as OpenClawConfig,
+  nextConfig = {} as NovaConfig,
   opts = baseOpts,
   runtime = createRuntime(),
   env = {},
 }: {
-  nextConfig?: OpenClawConfig;
+  nextConfig?: NovaConfig;
   opts?: OnboardOptions;
   runtime?: ReturnType<typeof createRuntime>;
   env?: Record<string, string | undefined>;
@@ -264,7 +264,7 @@ describe("applyNonInteractiveGatewayConfig auth resolution", () => {
 
     expect(result).toBeNull();
     expect(runtime.error).toHaveBeenCalledWith(
-      'Environment variable "MISSING_GATEWAY_TOKEN_ENV" is missing or empty. Export it first, then rerun openclaw onboard --non-interactive.',
+      'Environment variable "MISSING_GATEWAY_TOKEN_ENV" is missing or empty. Export it first, then rerun nova onboard --non-interactive.',
     );
     expect(runtime.exit).toHaveBeenCalledWith(1);
     expect(randomToken).not.toHaveBeenCalled();

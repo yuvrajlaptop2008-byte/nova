@@ -3,7 +3,7 @@ import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { expectDefined } from "@nova/normalization-core";
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { WizardPrompter, WizardSelectOption } from "../wizard/prompts.js";
 import {
   buildAuthChoiceGroups,
@@ -27,17 +27,17 @@ type PromptAuthChoiceGroupedParams = {
   assistantVisibleOnly?: boolean;
   allowedChoices?: ReadonlySet<string>;
   additionalGroups?: readonly AuthChoiceGroup[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   allowKeepCurrentProvider?: boolean;
 };
 
-function resolveConfiguredModelRef(config?: OpenClawConfig): string | undefined {
+function resolveConfiguredModelRef(config?: NovaConfig): string | undefined {
   return resolveAgentModelPrimaryValue(config?.agents?.defaults?.model);
 }
 
-function resolveConfiguredProvider(config?: OpenClawConfig): string | undefined {
+function resolveConfiguredProvider(config?: NovaConfig): string | undefined {
   const modelRef = resolveConfiguredModelRef(config);
   const slashIndex = modelRef?.indexOf("/") ?? -1;
   if (!modelRef || slashIndex <= 0) {

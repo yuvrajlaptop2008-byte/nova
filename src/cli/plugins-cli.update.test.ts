@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { Command } from "commander";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { hashConfigIncludeRaw } from "../config/includes.js";
 import { CLAWHUB_INSTALL_ERROR_CODE } from "../plugins/clawhub-error-codes.js";
 import {
@@ -57,7 +57,7 @@ function createTrackedPluginConfig(params: {
   pluginId: string;
   spec: string;
   resolvedName?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   return {
     plugins: {
       installs: {
@@ -69,7 +69,7 @@ function createTrackedPluginConfig(params: {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function expectRestartNoticeLogged() {
@@ -90,18 +90,18 @@ function expectSingleCallParams(mockFn: ReturnType<typeof vi.fn>) {
 }
 
 function primeUpdateConfigSnapshot(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   configPath?: string;
   hash?: string;
-  loadedConfig?: OpenClawConfig;
+  loadedConfig?: NovaConfig;
   parsed?: Record<string, unknown>;
-  runtimeConfig?: OpenClawConfig;
-  sourceConfig?: OpenClawConfig;
+  runtimeConfig?: NovaConfig;
+  sourceConfig?: NovaConfig;
   valid?: boolean;
   includeFileHashesForWrite?: Record<string, string>;
   includeFileTargetsForWrite?: Record<string, string>;
 }) {
-  const configPath = params.configPath ?? path.join(process.cwd(), "openclaw.json5");
+  const configPath = params.configPath ?? path.join(process.cwd(), "nova.json5");
   const parsed = params.parsed ?? (params.config as Record<string, unknown>);
   const sourceConfig = params.sourceConfig ?? params.config;
   const runtimeConfig = params.runtimeConfig ?? params.config;
@@ -134,10 +134,10 @@ function primeUpdateConfigSnapshot(params: {
   return prepared;
 }
 
-function primeBlockedUpdateConfig(section: "hooks" | "plugins", config: OpenClawConfig): void {
+function primeBlockedUpdateConfig(section: "hooks" | "plugins", config: NovaConfig): void {
   const externalPath = path.join(
     path.parse(process.cwd()).root,
-    "external-openclaw",
+    "external-nova",
     `${section}.json5`,
   );
   primeUpdateConfigSnapshot({
@@ -211,7 +211,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const nextConfig = {
       hooks: {
         internal: {
@@ -224,7 +224,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     primeUpdateConfigSnapshot({
       config: cfg,
@@ -286,7 +286,7 @@ describe("plugins cli update", () => {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const snapshotConfig = {
       hooks: {
         internal: {
@@ -294,7 +294,7 @@ describe("plugins cli update", () => {
             "new-hooks": {
               source: "npm",
               spec: "@acme/new-hooks@1.0.0",
-              installPath: "~/.openclaw/hooks/new-hooks",
+              installPath: "~/.nova/hooks/new-hooks",
             },
           },
         },
@@ -304,7 +304,7 @@ describe("plugins cli update", () => {
           alpha: { enabled: false },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const installRecords = {
       alpha: {
         source: "npm",
@@ -323,7 +323,7 @@ describe("plugins cli update", () => {
               "new-hooks": {
                 source: "npm",
                 spec: "@acme/new-hooks@1.0.0",
-                installPath: "/home/test/.openclaw/hooks/new-hooks",
+                installPath: "/home/test/.nova/hooks/new-hooks",
               },
             },
           },
@@ -334,12 +334,12 @@ describe("plugins cli update", () => {
       },
     });
     setInstalledPluginIndexInstallRecords(installRecords);
-    updateNpmInstalledPlugins.mockImplementation(async (params: { config: OpenClawConfig }) => ({
+    updateNpmInstalledPlugins.mockImplementation(async (params: { config: NovaConfig }) => ({
       config: params.config,
       changed: false,
       outcomes: [],
     }));
-    updateNpmInstalledHookPacks.mockImplementation(async (params: { config: OpenClawConfig }) => ({
+    updateNpmInstalledHookPacks.mockImplementation(async (params: { config: NovaConfig }) => ({
       config: params.config,
       changed: false,
       outcomes: [],
@@ -357,7 +357,7 @@ describe("plugins cli update", () => {
             "new-hooks": {
               source: "npm",
               spec: "@acme/new-hooks@1.0.0",
-              installPath: "/home/test/.openclaw/hooks/new-hooks",
+              installPath: "/home/test/.nova/hooks/new-hooks",
             },
           },
         },
@@ -380,7 +380,7 @@ describe("plugins cli update", () => {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const persistedRecords = {
       alpha: {
         source: "npm",
@@ -410,7 +410,7 @@ describe("plugins cli update", () => {
           ...cfg.plugins,
           installs: persistedRecords,
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       changed: false,
       outcomes: [],
     });
@@ -462,7 +462,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeBlockedUpdateConfig("hooks", cfg);
 
     await expect(runPluginsCommand(["plugins", "update", "--all"])).rejects.toThrow("__exit__:1");
@@ -476,7 +476,7 @@ describe("plugins cli update", () => {
   });
 
   it("allows index-only legacy id migration when an included plugins section has no references", async () => {
-    const cfg = { plugins: {} } as OpenClawConfig;
+    const cfg = { plugins: {} } as NovaConfig;
     const pluginRecords = createTrackedPluginConfig({
       pluginId: "voice-call",
       spec: "@nova/voice-call@1.0.0",
@@ -492,7 +492,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeBlockedUpdateConfig("plugins", cfg);
     setInstalledPluginIndexInstallRecords(pluginRecords ?? {});
     updateNpmInstalledPlugins.mockResolvedValue({
@@ -526,7 +526,7 @@ describe("plugins cli update", () => {
           [pluginId]: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const pluginRecords = {
       [pluginId]: {
         source: "git",
@@ -540,7 +540,7 @@ describe("plugins cli update", () => {
         ...cfg.plugins,
         installs: pluginRecords,
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeBlockedUpdateConfig("plugins", cfg);
     setInstalledPluginIndexInstallRecords(pluginRecords);
     updateNpmInstalledPlugins.mockResolvedValue({
@@ -578,7 +578,7 @@ describe("plugins cli update", () => {
           brave: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const sourceCfg = structuredClone(cfg);
     delete sourceCfg.gateway;
     const previousRecords = {
@@ -612,7 +612,7 @@ describe("plugins cli update", () => {
           ...cfg.plugins,
           installs: nextRecords,
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       changed: true,
       outcomes: [{ pluginId: "brave", status: "updated", message: "Updated brave." }],
     });
@@ -643,14 +643,14 @@ describe("plugins cli update", () => {
           brave: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const changedCfg = {
       ...cfg,
       gateway: {
         ...cfg.gateway,
         port: 18890,
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const previousRecords = {
       brave: {
         source: "npm",
@@ -693,7 +693,7 @@ describe("plugins cli update", () => {
           ...cfg.plugins,
           installs: nextRecords,
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       changed: true,
       outcomes: [{ pluginId: "brave", status: "updated", message: "Updated brave." }],
     });
@@ -725,7 +725,7 @@ describe("plugins cli update", () => {
           brave: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const previousRecords = {
       brave: {
         source: "npm",
@@ -777,7 +777,7 @@ describe("plugins cli update", () => {
           ...cfg.plugins,
           installs: nextRecords,
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       changed: true,
       outcomes: [{ pluginId: "brave", status: "updated", message: "Updated brave." }],
     });
@@ -811,7 +811,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const previousRecords = {
       brave: {
         source: "npm",
@@ -854,7 +854,7 @@ describe("plugins cli update", () => {
           ...cfg.plugins,
           installs: nextRecords,
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       changed: true,
       outcomes: [{ pluginId: "brave", status: "updated", message: "Updated brave." }],
     });
@@ -883,7 +883,7 @@ describe("plugins cli update", () => {
           "voice-call": { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeBlockedUpdateConfig("plugins", cfg);
     setInstalledPluginIndexInstallRecords({
       "voice-call": {
@@ -919,7 +919,7 @@ describe("plugins cli update", () => {
       label: "git",
       record: {
         source: "git",
-        spec: "https://github.com/openclaw/voice-call.git",
+        spec: "https://github.com/nova/voice-call.git",
         installPath: "/tmp/voice-call",
       },
     },
@@ -941,7 +941,7 @@ describe("plugins cli update", () => {
             "voice-call": { enabled: true },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       primeBlockedUpdateConfig("plugins", cfg);
       setInstalledPluginIndexInstallRecords({
         "voice-call": record,
@@ -962,14 +962,14 @@ describe("plugins cli update", () => {
   it("blocks possible legacy id migration when an included plugins section is unresolved", async () => {
     const externalPath = path.join(
       path.parse(process.cwd()).root,
-      "external-openclaw",
+      "external-nova",
       "plugins.json5",
     );
-    const cfg = { plugins: {} } as OpenClawConfig;
+    const cfg = { plugins: {} } as NovaConfig;
     primeUpdateConfigSnapshot({
       config: cfg,
       parsed: { plugins: { $include: externalPath } },
-      sourceConfig: { plugins: { $include: externalPath } } as unknown as OpenClawConfig,
+      sourceConfig: { plugins: { $include: externalPath } } as unknown as NovaConfig,
       includeFileTargetsForWrite: {
         [externalPath]: externalPath,
       },
@@ -1015,7 +1015,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeBlockedUpdateConfig("plugins", cfg);
 
     await runPluginsCommand(["plugins", "update", "demo-hooks"]);
@@ -1041,7 +1041,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeBlockedUpdateConfig("plugins", cfg);
     setInstalledPluginIndexInstallRecords(cfg.plugins?.installs ?? {});
     updateNpmInstalledPlugins.mockResolvedValue({
@@ -1064,7 +1064,7 @@ describe("plugins cli update", () => {
           demo: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeBlockedUpdateConfig("plugins", cfg);
     setInstalledPluginIndexInstallRecords({
       demo: {
@@ -1094,8 +1094,8 @@ describe("plugins cli update", () => {
   });
 
   it("blocks combined plugin and hook updates when either config section uses an include", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-update-"));
-    const configPath = path.join(tempRoot, "openclaw.json5");
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-update-"));
+    const configPath = path.join(tempRoot, "nova.json5");
     const pluginsPath = path.join(tempRoot, "plugins.json5");
     const pluginsRaw = "{}\n";
     fs.writeFileSync(pluginsPath, pluginsRaw);
@@ -1118,7 +1118,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeUpdateConfigSnapshot({
       config: cfg,
       configPath,
@@ -1159,7 +1159,7 @@ describe("plugins cli update", () => {
       plugins: {
         installs: {},
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     await expect(runPluginsCommand(["plugins", "update"])).rejects.toThrow("__exit__:1");
 
@@ -1172,7 +1172,7 @@ describe("plugins cli update", () => {
       plugins: {
         installs: {},
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     await runPluginsCommand(["plugins", "update", "--all"]);
 
@@ -1183,8 +1183,8 @@ describe("plugins cli update", () => {
 
   it("passes dangerous force unsafe install to plugin updates", async () => {
     const config = createTrackedPluginConfig({
-      pluginId: "openclaw-codex-app-server",
-      spec: "openclaw-codex-app-server@beta",
+      pluginId: "nova-codex-app-server",
+      spec: "nova-codex-app-server@beta",
     });
     loadConfig.mockReturnValue(config);
     setInstalledPluginIndexInstallRecords(config.plugins?.installs ?? {});
@@ -1197,13 +1197,13 @@ describe("plugins cli update", () => {
     await runPluginsCommand([
       "plugins",
       "update",
-      "openclaw-codex-app-server",
+      "nova-codex-app-server",
       "--dangerously-force-unsafe-install",
     ]);
 
     const updateParams = expectSingleCallParams(updateNpmInstalledPlugins);
     expect(updateParams.config).toEqual(config);
-    expect(updateParams.pluginIds).toEqual(["openclaw-codex-app-server"]);
+    expect(updateParams.pluginIds).toEqual(["nova-codex-app-server"]);
     expect(updateParams.dangerouslyForceUnsafeInstall).toBe(true);
     expect(
       runtimeLogs.some((message) =>
@@ -1289,8 +1289,8 @@ describe("plugins cli update", () => {
 
   it("passes ClawHub risk acknowledgement to plugin updates", async () => {
     const config = createTrackedPluginConfig({
-      pluginId: "openclaw-codex-app-server",
-      spec: "openclaw-codex-app-server@beta",
+      pluginId: "nova-codex-app-server",
+      spec: "nova-codex-app-server@beta",
     });
     loadConfig.mockReturnValue(config);
     setInstalledPluginIndexInstallRecords(config.plugins?.installs ?? {});
@@ -1303,14 +1303,14 @@ describe("plugins cli update", () => {
     await runPluginsCommand([
       "plugins",
       "update",
-      "openclaw-codex-app-server",
+      "nova-codex-app-server",
       "--acknowledge-clawhub-risk",
     ]);
 
     expect(updateNpmInstalledPlugins).toHaveBeenCalledWith(
       expect.objectContaining({
         config,
-        pluginIds: ["openclaw-codex-app-server"],
+        pluginIds: ["nova-codex-app-server"],
         acknowledgeClawHubRisk: true,
       }),
     );
@@ -1319,8 +1319,8 @@ describe("plugins cli update", () => {
   it("does not pass an interactive ClawHub risk prompt to dry-run plugin updates", async () => {
     setTty(true);
     const config = createTrackedPluginConfig({
-      pluginId: "openclaw-codex-app-server",
-      spec: "clawhub:openclaw-codex-app-server",
+      pluginId: "nova-codex-app-server",
+      spec: "clawhub:nova-codex-app-server",
     });
     loadConfig.mockReturnValue(config);
     setInstalledPluginIndexInstallRecords(config.plugins?.installs ?? {});
@@ -1330,7 +1330,7 @@ describe("plugins cli update", () => {
       outcomes: [],
     });
 
-    await runPluginsCommand(["plugins", "update", "openclaw-codex-app-server", "--dry-run"]);
+    await runPluginsCommand(["plugins", "update", "nova-codex-app-server", "--dry-run"]);
 
     const updateParams = expectSingleCallParams(updateNpmInstalledPlugins);
     expect(updateParams.dryRun).toBe(true);
@@ -1348,7 +1348,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const nextConfig = {
       plugins: {
         installs: {
@@ -1358,17 +1358,17 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtimeConfig = {
       ...cfg,
       messages: {
         ackReactionScope: "group-mentions",
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const nextRuntimeConfig = {
       ...nextConfig,
       messages: runtimeConfig.messages,
-    } as OpenClawConfig;
+    } as NovaConfig;
     primeUpdateConfigSnapshot({
       config: cfg,
       runtimeConfig,
@@ -1430,7 +1430,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const nextConfig = {
       plugins: {
         installs: {
@@ -1444,7 +1444,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     loadConfig.mockReturnValue(cfg);
     setInstalledPluginIndexInstallRecords(cfg.plugins?.installs ?? {});
     updateNpmInstalledPlugins.mockResolvedValue({
@@ -1485,7 +1485,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     loadConfig.mockReturnValue(cfg);
     setInstalledPluginIndexInstallRecords(cfg.plugins?.installs ?? {});
     updateNpmInstalledPlugins.mockResolvedValue({
@@ -1524,7 +1524,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     loadConfig.mockReturnValue(cfg);
     setInstalledPluginIndexInstallRecords(cfg.plugins?.installs ?? {});
     updateNpmInstalledPlugins.mockResolvedValue({
@@ -1563,7 +1563,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     loadConfig.mockReturnValue(cfg);
     setInstalledPluginIndexInstallRecords(cfg.plugins?.installs ?? {});
     updateNpmInstalledPlugins.mockResolvedValue({
@@ -1605,7 +1605,7 @@ describe("plugins cli update", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     loadConfig.mockReturnValue(cfg);
     updateNpmInstalledPlugins.mockResolvedValue({
       config: cfg,

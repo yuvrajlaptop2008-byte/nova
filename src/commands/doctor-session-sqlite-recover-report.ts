@@ -7,7 +7,7 @@ import type { SessionStoreTarget } from "../config/sessions/targets.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { resolveSqliteDatabaseFilePaths } from "../infra/sqlite-files.js";
 import { assertSqliteIntegrity } from "../infra/sqlite-integrity.js";
-import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "../state/openclaw-state-db.js";
+import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "../state/nova-state-db.js";
 import {
   createSessionSqliteMigrationFailureIssue,
   findLatestFailedSessionSqliteMigrationManifest,
@@ -130,7 +130,7 @@ function inspectSqliteForRecovery(
   let inspectionError: unknown;
   try {
     const sqlite = requireNodeSqlite();
-    inspectionDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sqlite-recovery-"));
+    inspectionDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-sqlite-recovery-"));
     const inspectionPath = path.join(inspectionDir, path.basename(sqlitePath));
     for (const sourcePath of sourcePaths) {
       const suffix = sourcePath.slice(sqlitePath.length);

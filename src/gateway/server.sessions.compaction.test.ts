@@ -741,9 +741,7 @@ test("sessions.compact without maxLines runs embedded manual compaction for chec
   expect(compactionCall.workspaceDir).toBe("/tmp/task-repo");
   expect(compactionCall.cwd).toBe("/tmp/task-repo");
   expect(callConfig.agents?.defaults?.model?.primary).toBe("anthropic/claude-opus-4-6");
-  expect(callConfig.agents?.defaults?.workspace).toBe(
-    path.join(os.tmpdir(), "openclaw-gateway-test"),
-  );
+  expect(callConfig.agents?.defaults?.workspace).toBe(path.join(os.tmpdir(), "nova-gateway-test"));
   expect(compactionCall.provider).toBe("anthropic");
   expect(compactionCall.model).toBe("claude-opus-4-6");
   expect(compactionCall.allowGatewaySubagentBinding).toBe(true);
@@ -1684,7 +1682,7 @@ test("sessions.compact maxLines does not interrupt an active run when no transcr
 });
 
 test("sessions.patch preserves nested model ids under provider overrides", async () => {
-  await withTempDir({ prefix: "openclaw-gw-sessions-nested-" }, async (dir) => {
+  await withTempDir({ prefix: "nova-gw-sessions-nested-" }, async (dir) => {
     const storePath = path.join(dir, "sessions.json");
     const runtimeConfig = {
       agents: {

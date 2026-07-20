@@ -112,13 +112,13 @@ const cases = [
   {
     id: "help",
     label: "--help",
-    args: ["openclaw.mjs", "--help"],
+    args: ["nova.mjs", "--help"],
     limitMb: readPositiveNumberEnv("NOVA_STARTUP_MEMORY_HELP_MB", DEFAULT_LIMITS_MB.help),
   },
   {
     id: "pluginsList",
     label: "plugins list --json",
-    args: ["openclaw.mjs", "plugins", "list", "--json"],
+    args: ["nova.mjs", "plugins", "list", "--json"],
     limitMb: readPositiveNumberEnv(
       "NOVA_STARTUP_MEMORY_PLUGINS_LIST_MB",
       DEFAULT_LIMITS_MB.pluginsList,
@@ -127,7 +127,7 @@ const cases = [
   {
     id: "statusJson",
     label: "status --json",
-    args: ["openclaw.mjs", "status", "--json"],
+    args: ["nova.mjs", "status", "--json"],
     limitMb: readPositiveNumberEnv(
       "NOVA_STARTUP_MEMORY_STATUS_JSON_MB",
       DEFAULT_LIMITS_MB.statusJson,
@@ -136,7 +136,7 @@ const cases = [
   {
     id: "gatewayStatus",
     label: "gateway status",
-    args: ["openclaw.mjs", "gateway", "status"],
+    args: ["nova.mjs", "gateway", "status"],
     limitMb: readPositiveNumberEnv(
       "NOVA_STARTUP_MEMORY_GATEWAY_STATUS_MB",
       DEFAULT_LIMITS_MB.gatewayStatus,
@@ -392,7 +392,7 @@ function runStartupMemoryCheck(argv = process.argv.slice(2), params = {}) {
     return { skipped: true, results: [] };
   }
   const options = parseArgs(argv);
-  tmpHome = mkdtempSync(path.join(os.tmpdir(), "openclaw-startup-memory-"));
+  tmpHome = mkdtempSync(path.join(os.tmpdir(), "nova-startup-memory-"));
   rssHookPath = path.join(tmpHome, "measure-rss.mjs");
   writeFileSync(
     rssHookPath,

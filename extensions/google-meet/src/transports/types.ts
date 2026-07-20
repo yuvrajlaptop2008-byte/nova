@@ -4,7 +4,7 @@ import type {
   MeetingBrowserTab,
   MeetingSessionRecord,
   MeetingTranscriptSnapshot,
-} from "openclaw/plugin-sdk/meeting-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
 import type { GoogleMeetMode, GoogleMeetModeInput, GoogleMeetTransport } from "../config.js";
 
 export const GOOGLE_MEET_TRANSCRIPT_MAX_LINES = 2_000;

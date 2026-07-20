@@ -14,7 +14,7 @@ import {
   validateCronUpdateParams,
   validateWakeParams,
 } from "../../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveCronJobConfigRevision } from "../../cron/config-revision.js";
 import {
   assertValidCronAnnounceDelivery,
@@ -140,7 +140,7 @@ function compactCronListJob(job: CronJob) {
 }
 
 async function assertValidCronUpdatePatch(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   defaultAgentId?: string;
   currentJob: CronJob;
   patch: CronJobPatch;

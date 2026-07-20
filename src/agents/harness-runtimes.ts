@@ -2,7 +2,7 @@
  * Collects configured native harness runtime ids from model provider config.
  */
 import { parseModelCatalogRef } from "@nova/model-catalog-core/model-catalog-refs";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isRecord } from "../utils.js";
 import { NOVA_AGENT_RUNTIME_ID, isDefaultAgentRuntimeId } from "./agent-runtime-id.js";
 import { normalizeOptionalAgentRuntimeId } from "./agent-runtime-id.js";
@@ -63,7 +63,7 @@ function parseConfiguredModelRef(
 }
 
 function resolveConfiguredModelHarnessRuntime(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   includeImplicitRuntimePreferences: boolean;
   modelRef: string;
   agentId?: string;
@@ -85,7 +85,7 @@ function resolveConfiguredModelHarnessRuntime(params: {
   return isSelectablePluginRuntime(runtime) ? runtime : undefined;
 }
 
-function pushConfiguredModelRuntimeIds(config: OpenClawConfig, runtimes: Set<string>): void {
+function pushConfiguredModelRuntimeIds(config: NovaConfig, runtimes: Set<string>): void {
   for (const providerConfig of Object.values(config.models?.providers ?? {})) {
     const providerRuntime = normalizeConfiguredRuntimeId(providerConfig?.agentRuntime?.id);
     if (isSelectablePluginRuntime(providerRuntime)) {
@@ -122,7 +122,7 @@ function pushConfiguredModelRuntimeIds(config: OpenClawConfig, runtimes: Set<str
 }
 
 function pushConfiguredAgentModelRuntimeIds(
-  config: OpenClawConfig,
+  config: NovaConfig,
   runtimes: Set<string>,
   includeImplicitRuntimePreferences: boolean,
 ): void {
@@ -174,7 +174,7 @@ export type ConfiguredAgentHarnessRuntimeOptions = {
 
 /** Lists configured plugin harness runtime ids referenced by agent/model config. */
 export function collectConfiguredAgentHarnessRuntimes(
-  config: OpenClawConfig,
+  config: NovaConfig,
   options: ConfiguredAgentHarnessRuntimeOptions = {},
 ): string[] {
   const runtimes = new Set<string>();

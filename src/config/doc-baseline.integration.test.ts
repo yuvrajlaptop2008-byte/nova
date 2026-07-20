@@ -150,7 +150,7 @@ describe("config doc baseline integration", () => {
   });
 
   it("supports check mode for stale hash files", async () => {
-    await withTempDir({ prefix: "openclaw-config-doc-baseline-" }, async (tempRoot) => {
+    await withTempDir({ prefix: "nova-config-doc-baseline-" }, async (tempRoot) => {
       const rendered = getSharedRendered();
 
       const initial = await writeConfigDocBaselineArtifacts({
@@ -184,7 +184,7 @@ describe("config doc baseline integration", () => {
   });
 
   it("ratchets config entry count budgets in both directions", async () => {
-    await withTempDir({ prefix: "openclaw-config-doc-counts-" }, async (tempRoot) => {
+    await withTempDir({ prefix: "nova-config-doc-counts-" }, async (tempRoot) => {
       const rendered = await getSharedRendered();
       const countsPath = path.join(tempRoot, "docs/.generated/config-baseline.counts.json");
 

@@ -9,7 +9,7 @@
  * **Byte-fidelity**: `raw` is preserved on the root for round-trip
  * emit. The minimal prototype parser doesn't preserve every formatting
  * detail in the structural tree — for production, a fuller
- * comment-preserving parser ports from `openclaw-workspace`.
+ * comment-preserving parser ports from `nova-workspace`.
  *
  * @module @nova/oc-path/jsonc/ast
  */

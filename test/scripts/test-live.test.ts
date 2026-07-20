@@ -83,7 +83,7 @@ describe("scripts/test-live", () => {
   });
 
   posixIt("signals the live pnpm child when the wrapper is terminated", async () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-test-live-signal-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-test-live-signal-"));
     const fakePnpmPath = join(root, "pnpm");
     const childPidPath = join(root, "child.pid");
     const descendantPidPath = join(root, "descendant.pid");
@@ -135,7 +135,7 @@ describe("scripts/test-live", () => {
   });
 
   posixIt("kills the live pnpm process group after the no-output timeout", async () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-test-live-timeout-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-test-live-timeout-"));
     const fakePnpmPath = join(root, "pnpm");
     const childPidPath = join(root, "child.pid");
     const descendantPidPath = join(root, "descendant.pid");

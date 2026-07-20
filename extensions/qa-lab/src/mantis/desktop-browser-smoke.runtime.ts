@@ -2,8 +2,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { pathExists } from "openclaw/plugin-sdk/security-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { pathExists } from "nova/plugin-sdk/security-runtime";
 import { ensureRepoBoundDirectory, resolveRepoRelativeOutputDir } from "../cli-paths.js";
 import { isTruthyOptIn, trimToValue } from "../mantis-options.runtime.js";
 import {
@@ -74,7 +74,7 @@ type MantisDesktopBrowserSmokeSummary = {
   status: "pass" | "fail";
 };
 
-const DEFAULT_BROWSER_URL = "https://openclaw.ai";
+const DEFAULT_BROWSER_URL = "https://nova.ai";
 const DEFAULT_PROVIDER = "hetzner";
 const DEFAULT_CLASS = "beast";
 const DEFAULT_IDLE_TIMEOUT = "60m";
@@ -167,7 +167,7 @@ mkdir -p "$profile"
 profile_restored=false
 profile_archive_b64="\${${profileArchiveEnv}:-}"
 if [ -n "$profile_archive_b64" ]; then
-  profile_archive="$profile/openclaw-mantis-browser-profile.tgz"
+  profile_archive="$profile/nova-mantis-browser-profile.tgz"
   printf '%s' "$profile_archive_b64" | base64 -d >"$profile_archive"
   tar -xzf "$profile_archive" -C "$profile"
   rm -f "$profile_archive"
@@ -365,7 +365,7 @@ export async function runMantisDesktopBrowserSmoke(
   const explicitLeaseId = trimToValue(opts.leaseId) ?? trimToValue(env[CRABBOX_LEASE_ID_ENV]);
   const keepLease = opts.keepLease ?? isTruthyOptIn(env[CRABBOX_KEEP_ENV]);
   const createdLease = explicitLeaseId === undefined;
-  const remoteOutputDir = `/tmp/openclaw-mantis-desktop-${startedAt
+  const remoteOutputDir = `/tmp/nova-mantis-desktop-${startedAt
     .toISOString()
     .replace(/[^0-9A-Za-z]/gu, "-")}`;
   let leaseId = explicitLeaseId;

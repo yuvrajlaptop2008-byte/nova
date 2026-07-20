@@ -1,12 +1,12 @@
-# OpenClaw Perplexity Plugin
+# Nova Perplexity Plugin
 
-Official OpenClaw plugin for Perplexity.
+Official Nova plugin for Perplexity.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/perplexity-plugin
-openclaw gateway restart
+nova plugins install @nova/perplexity-plugin
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/tools/perplexity-search> for setup and configuration.
+See <https://docs.nova.ai/tools/perplexity-search> for setup and configuration.

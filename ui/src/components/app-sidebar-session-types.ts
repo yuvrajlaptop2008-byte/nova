@@ -136,11 +136,10 @@ export function sidebarSessionMetaId(key: string): string {
   return `sidebar-session-meta-${encodeURIComponent(key)}`;
 }
 
-const SIDEBAR_SESSION_GROUPING_STORAGE_KEY = "openclaw:sidebar:sessions:grouping";
-const SIDEBAR_SESSION_CATALOG_GROUPING_STORAGE_KEY = "openclaw:sidebar:sessions:catalog-grouping";
-const SIDEBAR_SESSION_SHOW_CRON_STORAGE_KEY = "openclaw:sidebar:sessions:show-cron";
-const SIDEBAR_SESSION_COLLAPSED_SECTIONS_STORAGE_KEY =
-  "openclaw:sidebar:sessions:collapsed-sections";
+const SIDEBAR_SESSION_GROUPING_STORAGE_KEY = "nova:sidebar:sessions:grouping";
+const SIDEBAR_SESSION_CATALOG_GROUPING_STORAGE_KEY = "nova:sidebar:sessions:catalog-grouping";
+const SIDEBAR_SESSION_SHOW_CRON_STORAGE_KEY = "nova:sidebar:sessions:show-cron";
+const SIDEBAR_SESSION_COLLAPSED_SECTIONS_STORAGE_KEY = "nova:sidebar:sessions:collapsed-sections";
 
 export function limitSidebarSessionRows(rows: SidebarRecentSession[], limit: number) {
   const requiredCount = rows.filter((row) => row.active || row.pinned).length;

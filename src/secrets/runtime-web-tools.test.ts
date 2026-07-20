@@ -1,6 +1,6 @@
 /** Tests web-tool secret metadata resolution from config and plugins. */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type {
   PluginWebFetchProviderEntry,
   PluginWebSearchProviderEntry,
@@ -102,8 +102,8 @@ vi.mock("../plugins/installed-plugin-index-records.js", () => ({
   loadInstalledPluginIndexInstallRecordsSync: loadInstalledPluginIndexInstallRecordsSyncMock,
 }));
 
-function asConfig(value: unknown): OpenClawConfig {
-  return value as OpenClawConfig;
+function asConfig(value: unknown): NovaConfig {
+  return value as NovaConfig;
 }
 
 function providerPluginId(provider: ProviderUnderTest): string {
@@ -132,7 +132,7 @@ function ensureRecord(target: Record<string, unknown>, key: string): Record<stri
 }
 
 function setConfiguredProviderKey(
-  configTarget: OpenClawConfig,
+  configTarget: NovaConfig,
   pluginId: string,
   value: unknown,
 ): void {
@@ -144,7 +144,7 @@ function setConfiguredProviderKey(
   webSearch.apiKey = value;
 }
 
-function setConfiguredFetchProviderKey(configTarget: OpenClawConfig, value: unknown): void {
+function setConfiguredFetchProviderKey(configTarget: NovaConfig, value: unknown): void {
   const plugins = ensureRecord(configTarget as Record<string, unknown>, "plugins");
   const entries = ensureRecord(plugins, "entries");
   const pluginEntry = ensureRecord(entries, "firecrawl");
@@ -266,7 +266,7 @@ function buildTestWebFetchProviders(): PluginWebFetchProviderEntry[] {
 }
 
 async function runRuntimeWebTools(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env?: NodeJS.ProcessEnv;
   allowUnavailableSecretOwners?: boolean;
 }) {
@@ -286,7 +286,7 @@ async function runRuntimeWebTools(params: {
 }
 
 function activateRuntimeWebToolsResult(
-  sourceConfig: OpenClawConfig,
+  sourceConfig: NovaConfig,
   result: Awaited<ReturnType<typeof runRuntimeWebTools>>,
 ): void {
   activateSecretsRuntimeSnapshotState({
@@ -305,10 +305,7 @@ function activateRuntimeWebToolsResult(
   });
 }
 
-function createProviderSecretRefConfig(
-  provider: ProviderUnderTest,
-  envRefId: string,
-): OpenClawConfig {
+function createProviderSecretRefConfig(provider: ProviderUnderTest, envRefId: string): NovaConfig {
   return asConfig({
     tools: {
       web: {
@@ -333,7 +330,7 @@ function createProviderSecretRefConfig(
   });
 }
 
-function readProviderKey(config: OpenClawConfig, provider: ProviderUnderTest): unknown {
+function readProviderKey(config: NovaConfig, provider: ProviderUnderTest): unknown {
   const pluginConfig = config.plugins?.entries?.[providerPluginId(provider)]?.config as
     | { webSearch?: { apiKey?: unknown } }
     | undefined;
@@ -759,7 +756,7 @@ describe("runtime web tools resolution", () => {
         },
       },
     });
-    const readDottedKey = (config: OpenClawConfig) =>
+    const readDottedKey = (config: NovaConfig) =>
       (
         config.plugins?.entries?.[pluginId]?.config as
           | { webSearch?: { apiKey?: unknown } }

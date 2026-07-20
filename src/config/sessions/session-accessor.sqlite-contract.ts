@@ -1,5 +1,5 @@
 import type { SessionTranscriptUpdate } from "../../sessions/transcript-events.js";
-import type { OpenClawConfig } from "../types.openclaw.js";
+import type { NovaConfig } from "../types.nova.js";
 import type { ResolvedSessionMaintenanceConfig } from "./store-maintenance.js";
 import type {
   DeletedAgentSessionEntryPurgeParams,
@@ -94,7 +94,7 @@ export type {
 } from "./session-accessor.types.js";
 
 export type TranscriptMessageAppendOptions<TMessage> = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   cwd?: string;
   idempotencyLookup?: "scan" | "scan-assistant" | "caller-checked";
   message: TMessage;

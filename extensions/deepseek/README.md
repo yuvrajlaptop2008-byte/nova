@@ -1,12 +1,12 @@
-# OpenClaw DeepSeek Provider
+# Nova DeepSeek Provider
 
-Official OpenClaw provider plugin for DeepSeek.
+Official Nova provider plugin for DeepSeek.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/deepseek-provider
-openclaw gateway restart
+nova plugins install @nova/deepseek-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/deepseek> for setup and configuration.
+See <https://docs.nova.ai/providers/deepseek> for setup and configuration.

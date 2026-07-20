@@ -1,5 +1,5 @@
 // Qa Lab plugin module resolves Crabline artifact paths reported by completed generations.
-import type { OpenClawCrablineChannelDriverSelection } from "@nova/crabline";
+import type { NovaCrablineChannelDriverSelection } from "@nova/crabline";
 
 type QaCrablineChannelDriverArtifactPaths = {
   capabilityMatrixPath: string;
@@ -8,7 +8,7 @@ type QaCrablineChannelDriverArtifactPaths = {
 };
 
 export type QaSuiteChannelDriverSelection = Omit<
-  OpenClawCrablineChannelDriverSelection,
+  NovaCrablineChannelDriverSelection,
   "capabilityMatrixPath" | "providerReadinessArtifactPath" | "smokeArtifactPath"
 > &
   QaCrablineChannelDriverArtifactPaths;
@@ -27,7 +27,7 @@ export function resolveQaCrablineChannelDriverArtifactPaths(params: {
     providerReadinessArtifactPath?: unknown;
     smokeArtifactPath?: unknown;
   };
-  selection?: OpenClawCrablineChannelDriverSelection | null;
+  selection?: NovaCrablineChannelDriverSelection | null;
 }): QaCrablineChannelDriverArtifactPaths | undefined {
   if (!params.selection) {
     return undefined;

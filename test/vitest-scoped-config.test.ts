@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { BUNDLED_PLUGIN_TEST_GLOB, bundledPluginFile } from "openclaw/plugin-sdk/test-fixtures";
+import { BUNDLED_PLUGIN_TEST_GLOB, bundledPluginFile } from "nova/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 import { cleanupTempDirs, makeTempDir } from "./helpers/temp-dir.js";
 import { normalizeConfigPath, normalizeConfigPaths } from "./helpers/vitest-config-paths.js";
@@ -161,12 +161,10 @@ function expectForkedIsolatedRunner(config: {
 describe("resolveVitestIsolation", () => {
   it("aliases private QA plugin SDK subpaths for source tests only", () => {
     for (const subpath of PRIVATE_PLUGIN_SDK_SUBPATHS) {
-      expect(findAlias(sharedVitestConfig.resolve.alias, `openclaw/plugin-sdk/${subpath}`)).toEqual(
-        {
-          find: `openclaw/plugin-sdk/${subpath}`,
-          replacement: path.join(process.cwd(), "src", "plugin-sdk", `${subpath}.ts`),
-        },
-      );
+      expect(findAlias(sharedVitestConfig.resolve.alias, `nova/plugin-sdk/${subpath}`)).toEqual({
+        find: `nova/plugin-sdk/${subpath}`,
+        replacement: path.join(process.cwd(), "src", "plugin-sdk", `${subpath}.ts`),
+      });
       expect(() =>
         findAlias(sharedVitestConfig.resolve.alias, `@nova/plugin-sdk/${subpath}`),
       ).toThrow(`missing alias @nova/plugin-sdk/${subpath}`);
@@ -216,7 +214,7 @@ describe("createScopedVitestConfig", () => {
     expect(normalizeConfigPath(testConfig.runner)).toBe("test/non-isolated-runner.ts");
     expect(normalizeConfigPaths(testConfig.setupFiles)).toEqual([
       "test/setup.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-nova-runtime.ts",
     ]);
   });
 
@@ -374,7 +372,7 @@ describe("createScopedVitestConfig", () => {
   });
 
   it("loads scoped include overrides from NOVA_VITEST_INCLUDE_FILE", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-vitest-scoped-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-vitest-scoped-"));
     try {
       const includeFile = path.join(tempDir, "include.json");
       fs.writeFileSync(includeFile, JSON.stringify(["src/utils/utils-misc.test.ts"]), "utf8");
@@ -393,7 +391,7 @@ describe("createScopedVitestConfig", () => {
   });
 
   it("keeps include-file targets inside the scoped project's ownership", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-vitest-scoped-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-vitest-scoped-"));
     try {
       const includeFile = path.join(tempDir, "include.json");
       fs.writeFileSync(
@@ -425,7 +423,7 @@ describe("createScopedVitestConfig", () => {
   ])(
     "rejects ambiguous watch-mode include-file target %s at an ownership boundary",
     (candidate) => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-vitest-scoped-"));
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-vitest-scoped-"));
       try {
         const includeFile = path.join(tempDir, "include.json");
         fs.writeFileSync(includeFile, JSON.stringify([candidate]), "utf8");
@@ -446,7 +444,7 @@ describe("createScopedVitestConfig", () => {
   );
 
   it("intersects a watch-mode directory target with project ownership", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-vitest-scoped-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-vitest-scoped-"));
     try {
       const includeFile = path.join(tempDir, "include.json");
       fs.writeFileSync(includeFile, JSON.stringify(["src/gateway/**/*.test.ts"]), "utf8");
@@ -466,7 +464,7 @@ describe("createScopedVitestConfig", () => {
   });
 
   it("keeps shared gateway include files inside their actual child projects", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-vitest-scoped-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-vitest-scoped-"));
     try {
       const includeFile = path.join(tempDir, "include.json");
       fs.writeFileSync(
@@ -502,7 +500,7 @@ describe("createScopedVitestConfig", () => {
     expect(normalizeConfigPaths(requireTestConfig(config).setupFiles)).toEqual([
       "test/setup.ts",
       "test/setup.extensions.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-nova-runtime.ts",
     ]);
   });
 
@@ -612,7 +610,7 @@ describe("scoped vitest configs", () => {
     expectForkedIsolatedRunner(defaultInfraConfig);
   });
 
-  it("keeps process, runtime config, and tooling lanes off the openclaw runtime setup", () => {
+  it("keeps process, runtime config, and tooling lanes off the nova runtime setup", () => {
     expect(normalizeConfigPaths(requireTestConfig(defaultProcessConfig).setupFiles)).toEqual([
       "test/setup.ts",
     ]);
@@ -621,7 +619,7 @@ describe("scoped vitest configs", () => {
     ]);
     expect(normalizeConfigPaths(requireTestConfig(defaultPluginSdkConfig).setupFiles)).toEqual([
       "test/setup.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-nova-runtime.ts",
     ]);
     expect(normalizeConfigPaths(requireTestConfig(defaultToolingConfig).setupFiles)).toEqual([
       "test/setup.ts",
@@ -655,7 +653,7 @@ describe("scoped vitest configs", () => {
     expect(isolatedConfig.runner).toBeUndefined();
   });
 
-  it("keeps selected plugin-sdk and commands light lanes off the openclaw runtime setup", () => {
+  it("keeps selected plugin-sdk and commands light lanes off the nova runtime setup", () => {
     expect(normalizeConfigPaths(requireTestConfig(defaultPluginSdkLightConfig).setupFiles)).toEqual(
       ["test/setup.ts"],
     );
@@ -664,7 +662,7 @@ describe("scoped vitest configs", () => {
     ]);
   });
 
-  it("keeps the ui lane off both the openclaw runtime setup and unit-fast excludes", () => {
+  it("keeps the ui lane off both the nova runtime setup and unit-fast excludes", () => {
     const testConfig = requireTestConfig(defaultUiConfig);
     expect(normalizeConfigPaths(testConfig.setupFiles)).toEqual([
       "test/setup.ts",
@@ -683,7 +681,7 @@ describe("scoped vitest configs", () => {
 
   it("loads channel include overrides from NOVA_VITEST_INCLUDE_FILE", () => {
     const tempDirs: string[] = [];
-    const tempDir = makeTempDir(tempDirs, "openclaw-vitest-channels-");
+    const tempDir = makeTempDir(tempDirs, "nova-vitest-channels-");
     try {
       const includeFile = path.join(tempDir, "include.json");
       fs.writeFileSync(
@@ -868,7 +866,7 @@ describe("scoped vitest configs", () => {
     expect(normalizeConfigPaths(testConfig.setupFiles)).toEqual([
       "test/setup.ts",
       "test/setup.extensions.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-nova-runtime.ts",
     ]);
     expect(testConfig.include).toEqual([
       "memory-core/**/*.test.ts",
@@ -897,12 +895,12 @@ describe("scoped vitest configs", () => {
     expect(normalizeConfigPaths(extensionsTestConfig.setupFiles)).toEqual([
       "test/setup.ts",
       "test/setup.extensions.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-nova-runtime.ts",
     ]);
     expect(normalizeConfigPaths(telegramTestConfig.setupFiles)).toEqual([
       "test/setup.ts",
       "test/setup.extensions.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-nova-runtime.ts",
     ]);
   });
 

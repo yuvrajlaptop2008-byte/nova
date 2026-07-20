@@ -173,7 +173,7 @@ export function buildPersistedUserTurnMediaInputsFromFields(
 
 export function buildLateMediaAttachedText(message: AgentMessage): string | undefined {
   const text = (
-    readOpenClawMessageMeta(message)?.lateMedia === true
+    readNovaMessageMeta(message)?.lateMedia === true
       ? buildPersistedUserTurnMediaInputsFromFields(message as PersistedUserTurnMediaFieldSource)
       : []
   )
@@ -218,8 +218,8 @@ function buildUserTurnSenderMeta(
   };
 }
 
-function readOpenClawMessageMeta(message: AgentMessage): Record<string, unknown> | undefined {
-  const meta = (message as unknown as Record<string, unknown>)["__openclaw"];
+function readNovaMessageMeta(message: AgentMessage): Record<string, unknown> | undefined {
+  const meta = (message as unknown as Record<string, unknown>)["__nova"];
   return meta && typeof meta === "object" && !Array.isArray(meta)
     ? (meta as Record<string, unknown>)
     : undefined;
@@ -233,9 +233,9 @@ export function buildPersistedUserTurnMessage(params: UserTurnInput): PersistedU
   // derived from each message's own `timestamp` field, so the current turn and
   // every historical turn serialize identically on the wire. Persisting a stamp
   // here would NOT match the bare-current arrival (the gateway no longer stamps
-  // the live turn) — see https://github.com/openclaw/openclaw/issues/3658.
+  // the live turn) — see https://github.com/nova/nova/issues/3658.
   const senderMeta = buildUserTurnSenderMeta(params.sender);
-  const openClawMeta = {
+  const novaMeta = {
     ...(params.senderIsOwner === undefined ? {} : { senderIsOwner: params.senderIsOwner }),
     ...senderMeta,
     ...(params.transport ? { transport: params.transport } : {}),
@@ -246,7 +246,7 @@ export function buildPersistedUserTurnMessage(params: UserTurnInput): PersistedU
     timestamp: params.timestamp ?? Date.now(),
     ...(params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : {}),
     ...mediaFields,
-    ...(Object.keys(openClawMeta).length > 0 ? { __openclaw: openClawMeta } : {}),
+    ...(Object.keys(novaMeta).length > 0 ? { __nova: novaMeta } : {}),
   } as PersistedUserTurnMessage;
   return applyInputProvenanceToUserMessage(message, params.provenance) as PersistedUserTurnMessage;
 }
@@ -300,12 +300,12 @@ function buildLateResolvedMediaMessage(params: {
     ...resolved,
     content,
     idempotencyKey,
-    __openclaw: { ...readOpenClawMessageMeta(params.resolvedMessage), lateMedia: true },
+    __nova: { ...readNovaMessageMeta(params.resolvedMessage), lateMedia: true },
   } as unknown as PersistedUserTurnMessage;
 }
 
 function isBeforeAgentRunBlockedMessage(message: AgentMessage): boolean {
-  const marker = (message as { __openclaw?: { beforeAgentRunBlocked?: unknown } })["__openclaw"]
+  const marker = (message as { __nova?: { beforeAgentRunBlocked?: unknown } })["__nova"]
     ?.beforeAgentRunBlocked;
   return marker !== undefined;
 }
@@ -338,12 +338,12 @@ export function mergePreparedUserTurnMessageForRuntime(params: {
   }
   const runtimeMessage = params.runtimeMessage as unknown as Record<string, unknown>;
   const preparedMessage = params.preparedMessage as unknown as Record<string, unknown>;
-  const runtimeMeta = readOpenClawMessageMeta(params.runtimeMessage);
-  const preparedMeta = readOpenClawMessageMeta(params.preparedMessage);
+  const runtimeMeta = readNovaMessageMeta(params.runtimeMessage);
+  const preparedMeta = readNovaMessageMeta(params.preparedMessage);
   return {
     ...runtimeMessage,
     ...preparedMessage,
-    ...(preparedMeta ? { __openclaw: { ...runtimeMeta, ...preparedMeta } } : {}),
+    ...(preparedMeta ? { __nova: { ...runtimeMeta, ...preparedMeta } } : {}),
     ...(userMessageHasImageContent(params.runtimeMessage)
       ? { content: params.runtimeMessage.content }
       : {}),
@@ -358,14 +358,14 @@ export function restorePreparedUserTurnOperationalMetaForRuntime(params: {
   if (!params.preparedMessage || !isUserMessage(params.runtimeMessage)) {
     return params.runtimeMessage;
   }
-  const preparedMeta = readOpenClawMessageMeta(params.preparedMessage);
+  const preparedMeta = readNovaMessageMeta(params.preparedMessage);
   const senderIsOwner = preparedMeta?.senderIsOwner;
   if (typeof senderIsOwner !== "boolean") {
     return params.runtimeMessage;
   }
   return {
     ...(params.runtimeMessage as unknown as Record<string, unknown>),
-    __openclaw: { ...readOpenClawMessageMeta(params.runtimeMessage), senderIsOwner },
+    __nova: { ...readNovaMessageMeta(params.runtimeMessage), senderIsOwner },
   } as unknown as AgentMessage;
 }
 
@@ -383,9 +383,9 @@ export function preparePersistedUserTurnMessageForTranscriptWrite(
   const provenance = normalizeInputProvenance(
     (message as unknown as { provenance?: unknown }).provenance,
   );
-  const senderIsOwner = readOpenClawMessageMeta(message)?.senderIsOwner;
-  const originalTransport = readOpenClawMessageMeta(message)?.transport;
-  const lateMedia = readOpenClawMessageMeta(message)?.lateMedia === true;
+  const senderIsOwner = readNovaMessageMeta(message)?.senderIsOwner;
+  const originalTransport = readNovaMessageMeta(message)?.transport;
+  const lateMedia = readNovaMessageMeta(message)?.lateMedia === true;
   // Hooks receive the original message object and may mutate nested metadata in
   // place. Snapshot transport correlation before handing them that reference.
   const transport =
@@ -407,7 +407,7 @@ export function preparePersistedUserTurnMessageForTranscriptWrite(
     return nextUserMessage;
   }
   const protectedMeta = {
-    ...readOpenClawMessageMeta(nextUserMessage),
+    ...readNovaMessageMeta(nextUserMessage),
     ...(typeof senderIsOwner === "boolean" ? { senderIsOwner } : {}),
     ...(transport ? { transport } : {}),
     ...(lateMedia ? { lateMedia: true } : {}),
@@ -415,7 +415,7 @@ export function preparePersistedUserTurnMessageForTranscriptWrite(
   return {
     ...(nextUserMessage as unknown as Record<string, unknown>),
     ...(idempotencyKey ? { idempotencyKey } : {}),
-    ...(Object.keys(protectedMeta).length > 0 ? { __openclaw: protectedMeta } : {}),
+    ...(Object.keys(protectedMeta).length > 0 ? { __nova: protectedMeta } : {}),
   } as unknown as PersistedUserTurnMessage;
 }
 
@@ -734,7 +734,7 @@ export function createUserTurnTranscriptRecorder(
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.userTurnTranscriptTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.userTurnTranscriptTestApi")] = {
     persistUserTurnTranscript,
   };
 }

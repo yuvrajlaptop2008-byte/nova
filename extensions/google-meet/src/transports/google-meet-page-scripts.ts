@@ -146,15 +146,15 @@ export function meetStatusScript(params: {
   const captionState = (() => {
     if (!captureCaptions) return undefined;
     const w = window;
-    if (!inCall && !w.__openclawMeetCaptions) return undefined;
+    if (!inCall && !w.__novaMeetCaptions) return undefined;
     // A reused tab starts a fresh logical transcript for each Nova session.
     // Status refreshes omit the id, so they preserve the active page-owned buffer.
-    if (!w.__openclawMeetCaptions || (captionSessionId && w.__openclawMeetCaptions.sessionId !== captionSessionId)) {
-      if (w.__openclawMeetCaptions?.settleTimer !== undefined) {
-        clearTimeout(w.__openclawMeetCaptions.settleTimer);
+    if (!w.__novaMeetCaptions || (captionSessionId && w.__novaMeetCaptions.sessionId !== captionSessionId)) {
+      if (w.__novaMeetCaptions?.settleTimer !== undefined) {
+        clearTimeout(w.__novaMeetCaptions.settleTimer);
       }
-      w.__openclawMeetCaptions?.observer?.disconnect?.();
-      w.__openclawMeetCaptions = {
+      w.__novaMeetCaptions?.observer?.disconnect?.();
+      w.__novaMeetCaptions = {
         sessionId: captionSessionId,
         // Epochs cross document lifetimes in the runtime transcript cursor.
         // Strong UUIDs keep a reloaded page distinct from its prior buffer.
@@ -168,7 +168,7 @@ export function meetStatusScript(params: {
         visible: []
       };
     }
-    return w.__openclawMeetCaptions;
+    return w.__novaMeetCaptions;
   })();
   const normalizeCaption = (speaker, captionText) => {
     if (!captionState) return;
@@ -209,7 +209,7 @@ export function meetStatusScript(params: {
       if (captionState.visible.length > 0 && captionState.settleTimer === undefined) {
         const pendingState = captionState;
         pendingState.settleTimer = setTimeout(() => {
-          if (window.__openclawMeetCaptions !== pendingState) return;
+          if (window.__novaMeetCaptions !== pendingState) return;
           commitLines(pendingState, pendingState.visible);
           pendingState.visible = [];
           pendingState.settleTimer = undefined;
@@ -380,7 +380,7 @@ export function meetTranscriptScript(
   if (!expectedMeetingUrl || currentMeetingUrl !== expectedMeetingUrl) {
     return JSON.stringify({ urlMatched: false });
   }
-  const state = window.__openclawMeetCaptions;
+  const state = window.__novaMeetCaptions;
   if (state?.sessionId && state.sessionId !== expectedSessionId) {
     return JSON.stringify({ urlMatched: true, sessionMatched: false });
   }

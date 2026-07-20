@@ -3,7 +3,7 @@
  * runtimes.
  */
 import { normalizeConfiguredMcpServers } from "../config/mcp-config-normalize.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   loadEnabledBundleMcpConfig,
   type BundleMcpConfig,
@@ -51,7 +51,7 @@ export function toCliBundleMcpServerConfig(server: BundleMcpServerConfig): Bundl
 /** Loads enabled bundled MCP servers and overlays user config by server name. */
 export function loadMergedBundleMcpConfig(params: {
   workspaceDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
   mapConfiguredServer?: BundleMcpServerMapper;
 }): MergedBundleMcpConfig {

@@ -5,24 +5,21 @@ import {
   resolveAgentConfig,
   resolveAgentWorkspaceDir,
   resolveDefaultAgentId,
-} from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-runtime";
 import type {
   AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginToolContext,
-} from "openclaw/plugin-sdk/plugin-entry";
-import {
-  canonicalPathFromExistingAncestor,
-  isPathInside,
-} from "openclaw/plugin-sdk/security-runtime";
+  NovaPluginApi,
+  NovaPluginToolContext,
+} from "nova/plugin-sdk/plugin-entry";
+import { canonicalPathFromExistingAncestor, isPathInside } from "nova/plugin-sdk/security-runtime";
 
 export type { WorkboardWorkspaceAccess } from "@nova/workboard-contract";
 
-type WorkboardConfig = NonNullable<OpenClawPluginToolContext["config"]>;
+type WorkboardConfig = NonNullable<NovaPluginToolContext["config"]>;
 type ResolveSandboxWorkspaceAuthority =
-  OpenClawPluginApi["runtime"]["sandbox"]["resolveWorkspaceAuthority"];
+  NovaPluginApi["runtime"]["sandbox"]["resolveWorkspaceAuthority"];
 type PrepareSandboxWorkspaceAuthority =
-  OpenClawPluginApi["runtime"]["sandbox"]["prepareWorkspaceAuthority"];
+  NovaPluginApi["runtime"]["sandbox"]["prepareWorkspaceAuthority"];
 
 export const WORKBOARD_TOOL_NAMES = [
   "workboard_list",
@@ -171,7 +168,7 @@ export function resolveCommandWorkboardWorkspaceAccess(params: {
 }
 
 function resolveToolWorkboardWorkspaceAccess(
-  context: OpenClawPluginToolContext | undefined,
+  context: NovaPluginToolContext | undefined,
   resolveSandboxWorkspaceAuthority?: ResolveSandboxWorkspaceAuthority,
 ): WorkboardWorkspaceAccess {
   if (!context?.sandboxed && context?.fsPolicy?.workspaceOnly !== true) {
@@ -393,7 +390,7 @@ export async function assertWorkboardWorkspaceSourceAccess(
 
 export function guardWorkboardToolsForWorkspaceAccess(
   tools: AnyAgentTool[],
-  context: OpenClawPluginToolContext | undefined,
+  context: NovaPluginToolContext | undefined,
   resolveSandboxWorkspaceAuthority?: ResolveSandboxWorkspaceAuthority,
 ): AnyAgentTool[] {
   const workspaceAccess = resolveToolWorkboardWorkspaceAccess(

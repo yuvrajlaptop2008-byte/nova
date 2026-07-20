@@ -18,8 +18,8 @@ import {
 } from "./guard-shared.mjs";
 
 /** Marker used to identify dependency guard comments. */
-const dependencyChangeMarker = "<!-- openclaw:dependency-guard -->";
-const dependencyGraphGuardMarker = "<!-- openclaw:dependency-graph-guard -->";
+const dependencyChangeMarker = "<!-- nova:dependency-guard -->";
+const dependencyGraphGuardMarker = "<!-- nova:dependency-graph-guard -->";
 export const dependencyChangedLabel = "dependencies-changed";
 const allowDependenciesCommand = "/allow-dependencies-change";
 export {
@@ -32,7 +32,7 @@ export {
 
 const maxListedFiles = 25;
 const autoscrubCommitMessage = "chore: remove dependency lockfile change";
-const securityTeamSlug = process.env.NOVA_SECURITY_TEAM_SLUG ?? "openclaw-secops";
+const securityTeamSlug = process.env.NOVA_SECURITY_TEAM_SLUG ?? "nova-secops";
 const dependencyManifestFields = [
   "dependencies",
   "devDependencies",
@@ -285,7 +285,7 @@ export function renderAuthorizedDependencyComment(override) {
     "",
     "### Dependency graph change authorized",
     "",
-    "This PR includes dependency graph changes. A repository admin or member of `@nova/openclaw-secops` authorized this exact head SHA with `/allow-dependencies-change`.",
+    "This PR includes dependency graph changes. A repository admin or member of `@nova/nova-secops` authorized this exact head SHA with `/allow-dependencies-change`.",
     "",
     `- Approved SHA: ${markdownCode(override.sha)}`,
     `- Approved by: @${sanitizeDisplayValue(override.login)}`,
@@ -303,7 +303,7 @@ export function renderTrustedDependencyComment({ actor, headSha }) {
     "",
     "### Dependency graph changes noted",
     "",
-    "This PR includes dependency graph changes. The dependency guard is informational because the PR author is a repository admin or a member of `@nova/openclaw-secops`.",
+    "This PR includes dependency graph changes. The dependency guard is informational because the PR author is a repository admin or a member of `@nova/nova-secops`.",
     "",
     `- Current SHA: ${markdownCode(headSha ?? "<head-sha>")}`,
     `- Trusted actor: @${sanitizeDisplayValue(actor.login)}`,
@@ -392,7 +392,7 @@ export function renderBlockedDependencyComment({
     ...autoscrubLines,
     ...removalSteps,
     "",
-    "If this PR intentionally needs a dependency graph change, ask a repository admin or member of `@nova/openclaw-secops` to comment:",
+    "If this PR intentionally needs a dependency graph change, ask a repository admin or member of `@nova/nova-secops` to comment:",
     "",
     "```text",
     allowDependenciesCommand,
@@ -461,7 +461,7 @@ function renderManifestChangeLine(change) {
 }
 
 export function githubApi(token, options = {}) {
-  const api = createGitHubApi(token, { ...options, userAgent: "openclaw-dependency-guard" });
+  const api = createGitHubApi(token, { ...options, userAgent: "nova-dependency-guard" });
   return {
     ...api,
     graphql: async (query, variables) => {

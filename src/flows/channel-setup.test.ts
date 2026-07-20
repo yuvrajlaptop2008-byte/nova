@@ -1,6 +1,6 @@
 // Channel setup tests cover setup flow prompts and config output.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
 import { WizardCancelledError, WizardNavigationError } from "../wizard/prompts.js";
 import {
@@ -85,7 +85,7 @@ function expectExternalCatalogInstallCall(index = 0) {
 }
 
 const resolveAgentWorkspaceDir = vi.hoisted(() =>
-  vi.fn((_cfg?: unknown, _agentId?: unknown) => "/tmp/openclaw-workspace"),
+  vi.fn((_cfg?: unknown, _agentId?: unknown) => "/tmp/nova-workspace"),
 );
 const resolveDefaultAgentId = vi.hoisted(() => vi.fn((_cfg?: unknown) => "default"));
 const listTrustedChannelPluginCatalogEntries = vi.hoisted(() =>
@@ -209,7 +209,7 @@ import { setupChannels } from "./channel-setup.js";
 describe("setupChannels workspace shadow exclusion", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    resolveAgentWorkspaceDir.mockReturnValue("/tmp/openclaw-workspace");
+    resolveAgentWorkspaceDir.mockReturnValue("/tmp/nova-workspace");
     resolveDefaultAgentId.mockReturnValue("default");
     listTrustedChannelPluginCatalogEntries.mockReturnValue([
       {
@@ -254,7 +254,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       listTrustedChannelPluginCatalogEntries,
     );
     expect(trustedInput.cfg).toEqual({});
-    expect(trustedInput.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(trustedInput.workspaceDir).toBe("/tmp/nova-workspace");
     const registryInput = callArg<{
       channel?: string;
       pluginId?: string;
@@ -262,7 +262,7 @@ describe("setupChannels workspace shadow exclusion", () => {
     }>(loadChannelSetupPluginRegistrySnapshotForChannel);
     expect(registryInput.channel).toBe("external-chat");
     expect(registryInput.pluginId).toBe("@vendor/external-chat-plugin");
-    expect(registryInput.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(registryInput.workspaceDir).toBe("/tmp/nova-workspace");
   });
 
   it("keeps trusted workspace overrides eligible during preload", async () => {
@@ -291,7 +291,7 @@ describe("setupChannels workspace shadow exclusion", () => {
     }>(loadChannelSetupPluginRegistrySnapshotForChannel);
     expect(registryInput.channel).toBe("external-chat");
     expect(registryInput.pluginId).toBe("trusted-external-chat-shadow");
-    expect(registryInput.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(registryInput.workspaceDir).toBe("/tmp/nova-workspace");
   });
 
   it("defers status and setup-plugin loads until a channel is selected", async () => {
@@ -462,7 +462,7 @@ describe("setupChannels workspace shadow exclusion", () => {
         configured: false,
         statusLines: [],
       })),
-      configure: vi.fn(async ({ cfg }: { cfg: OpenClawConfig }) => ({
+      configure: vi.fn(async ({ cfg }: { cfg: NovaConfig }) => ({
         cfg: {
           ...cfg,
           channels: {
@@ -601,7 +601,7 @@ describe("setupChannels workspace shadow exclusion", () => {
     }>(loadChannelSetupPluginRegistrySnapshotForChannel, 0);
     expect(firstRegistryInput.channel).toBe("external-chat");
     expect(firstRegistryInput.pluginId).toBe("external-chat");
-    expect(firstRegistryInput.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(firstRegistryInput.workspaceDir).toBe("/tmp/nova-workspace");
     expect(firstRegistryInput.forceSetupOnlyChannelPlugins).toBe(true);
     const secondRegistryInput = callArg<{
       channel?: string;
@@ -609,7 +609,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       forceSetupOnlyChannelPlugins?: boolean;
     }>(loadChannelSetupPluginRegistrySnapshotForChannel, 1);
     expect(secondRegistryInput.channel).toBe("external-chat");
-    expect(secondRegistryInput.workspaceDir).toBe("/tmp/openclaw-workspace");
+    expect(secondRegistryInput.workspaceDir).toBe("/tmp/nova-workspace");
     expect(secondRegistryInput.forceSetupOnlyChannelPlugins).toBe(true);
     expect(getChannelSetupPlugin).not.toHaveBeenCalled();
     expect(collectChannelStatus).not.toHaveBeenCalled();
@@ -731,7 +731,7 @@ describe("setupChannels workspace shadow exclusion", () => {
     const confirm = vi.fn(async () => {
       throw new WizardNavigationError("back");
     });
-    const cfg = { channels: { telegram: { botToken: "keep" } } } as OpenClawConfig;
+    const cfg = { channels: { telegram: { botToken: "keep" } } } as NovaConfig;
 
     const result = await setupChannels(
       cfg,
@@ -792,7 +792,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       const confirm = vi.fn(async () => {
         throw new WizardNavigationError("back");
       });
-      const cfg = { channels: { "external-chat": { token: "keep" } } } as OpenClawConfig;
+      const cfg = { channels: { "external-chat": { token: "keep" } } } as NovaConfig;
 
       const result = await setupChannels(
         cfg,
@@ -825,7 +825,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       return {
         cfg: {
           channels: { "external-chat": { token: "should-not-apply" } },
-        } as OpenClawConfig,
+        } as NovaConfig,
         accountId: "custom-account",
       };
     });
@@ -850,7 +850,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       throw new WizardNavigationError("back");
     });
     const result = await setupChannels(
-      { channels: { telegram: { botToken: "keep" } } } as OpenClawConfig,
+      { channels: { telegram: { botToken: "keep" } } } as NovaConfig,
       {} as never,
       {
         confirm: vi.fn(async () => true),
@@ -907,7 +907,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       throw new WizardNavigationError("back");
     });
     const result = await setupChannels(
-      { channels: { telegram: { botToken: "keep" } } } as OpenClawConfig,
+      { channels: { telegram: { botToken: "keep" } } } as NovaConfig,
       {} as never,
       {
         confirm: vi.fn(async () => true),
@@ -969,7 +969,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       .mockResolvedValueOnce("__done__");
     const cfg = {
       channels: { "external-chat": { token: "keep" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await setupChannels(
       cfg,
@@ -1036,7 +1036,7 @@ describe("setupChannels workspace shadow exclusion", () => {
     const text = vi.fn(async () => {
       throw new WizardNavigationError("back");
     });
-    const cfg = { plugins: { allow: ["memory-core"] } } as OpenClawConfig;
+    const cfg = { plugins: { allow: ["memory-core"] } } as NovaConfig;
 
     const result = await setupChannels(
       cfg,
@@ -1127,7 +1127,7 @@ describe("setupChannels workspace shadow exclusion", () => {
     const beforePersistentEffect = vi.fn(async () => undefined);
 
     const result = await setupChannels(
-      { channels: { telegram: { botToken: "keep" } } } as OpenClawConfig,
+      { channels: { telegram: { botToken: "keep" } } } as NovaConfig,
       {} as never,
       {
         confirm: vi.fn(async () => true),
@@ -1184,7 +1184,7 @@ describe("setupChannels workspace shadow exclusion", () => {
       .mockResolvedValueOnce("secret-token");
 
     const result = await setupChannels(
-      {} as OpenClawConfig,
+      {} as NovaConfig,
       {} as never,
       {
         confirm: vi.fn(async () => true),
@@ -1240,7 +1240,7 @@ describe("setupChannels workspace shadow exclusion", () => {
 
     await expect(
       setupChannels(
-        {} as OpenClawConfig,
+        {} as NovaConfig,
         {} as never,
         {
           confirm: vi.fn(async () => true),
@@ -1269,7 +1269,7 @@ describe("setupChannels workspace shadow exclusion", () => {
     const cancelled = new WizardCancelledError();
     const configure = vi.fn(async ({ prompter }) => {
       await prompter.text({ message: "Token" });
-      return { cfg: {} as OpenClawConfig };
+      return { cfg: {} as NovaConfig };
     });
     const externalChatPlugin = makeSetupPlugin({
       id: "external-chat",
@@ -1289,7 +1289,7 @@ describe("setupChannels workspace shadow exclusion", () => {
 
     await expect(
       setupChannels(
-        {} as OpenClawConfig,
+        {} as NovaConfig,
         {} as never,
         {
           confirm: vi.fn(async () => true),
@@ -1627,7 +1627,7 @@ describe("setupChannels workspace shadow exclusion", () => {
         { workspaceDir?: string } | undefined,
       ];
       expect(catalogLookupCall[0]).toBe("external-chat");
-      expect(catalogLookupCall[1]?.workspaceDir).toBe("/tmp/openclaw-workspace");
+      expect(catalogLookupCall[1]?.workspaceDir).toBe("/tmp/nova-workspace");
       expect(ensureChannelSetupPluginInstalled).toHaveBeenCalledTimes(1);
       expectExternalCatalogInstallCall();
       expect(note).not.toHaveBeenCalledWith("external-chat plugin not available.", "Channel setup");

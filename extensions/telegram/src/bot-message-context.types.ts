@@ -1,15 +1,15 @@
 // Telegram type declarations define plugin contracts.
 import type { Bot } from "grammy";
 import type { Message } from "grammy/types";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import type {
   DmPolicy,
   TelegramDirectConfig,
   TelegramGroupConfig,
   TelegramTopicConfig,
-} from "openclaw/plugin-sdk/config-contracts";
-import type { HistoryEntry } from "openclaw/plugin-sdk/reply-history";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+} from "nova/plugin-sdk/config-contracts";
+import type { HistoryEntry } from "nova/plugin-sdk/reply-history";
+import type { MsgContext } from "nova/plugin-sdk/reply-runtime";
 import type { StickerMetadata, TelegramContext } from "./bot/types.js";
 import type { TelegramReplyChainEntry } from "./message-cache.js";
 import type { TelegramSendChatActionHandler } from "./sendchataction-401-backoff.js";
@@ -52,7 +52,7 @@ export type TelegramLogger = {
 type ResolveTelegramGroupConfig = (
   chatId: string | number,
   messageThreadId: number | undefined,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ) => {
   groupConfig?: TelegramGroupConfig | TelegramDirectConfig;
   topicConfig?: TelegramTopicConfig;
@@ -63,10 +63,10 @@ type ResolveGroupActivation = (params: {
   agentId?: string;
   messageThreadId?: number;
   sessionKey?: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }) => boolean | undefined;
 
-type ResolveGroupRequireMention = (chatId: string | number, cfg: OpenClawConfig) => boolean;
+type ResolveGroupRequireMention = (chatId: string | number, cfg: NovaConfig) => boolean;
 
 type TelegramMessageContextRuntimeOverrides = Partial<
   Pick<
@@ -98,7 +98,7 @@ export type BuildTelegramMessageContextParams = {
   storeAllowFrom: string[];
   options?: TelegramMessageContextOptions;
   bot: Bot;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   account: { accountId: string };
   historyLimit: number;
   groupHistories: Map<string, HistoryEntry[]>;
@@ -112,7 +112,7 @@ export type BuildTelegramMessageContextParams = {
   resolveTelegramGroupConfig: ResolveTelegramGroupConfig;
   runtime?: TelegramMessageContextRuntimeOverrides;
   sessionRuntime?: TelegramMessageContextSessionRuntimeOverrides;
-  upsertPairingRequest?: typeof import("openclaw/plugin-sdk/conversation-runtime").upsertChannelPairingRequest;
+  upsertPairingRequest?: typeof import("nova/plugin-sdk/conversation-runtime").upsertChannelPairingRequest;
   /** Global (per-account) handler for sendChatAction 401 backoff (#27092). */
   sendChatActionHandler: TelegramSendChatActionHandler;
 };

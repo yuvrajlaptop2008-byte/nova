@@ -4,16 +4,16 @@ import { shortenText } from "./text-format.js";
 
 describe("shortenText", () => {
   it("returns original text when it fits", () => {
-    expect(shortenText("openclaw", 16)).toBe("openclaw");
+    expect(shortenText("nova", 16)).toBe("nova");
   });
 
   it("truncates and appends ellipsis when over limit", () => {
-    expect(shortenText("openclaw-status-output", 10)).toBe("openclaw-…");
+    expect(shortenText("nova-status-output", 10)).toBe("nova-…");
   });
 
   it("returns an empty string for non-positive limits", () => {
-    expect(shortenText("openclaw", 0)).toBe("");
-    expect(shortenText("openclaw", -1)).toBe("");
+    expect(shortenText("nova", 0)).toBe("");
+    expect(shortenText("nova", -1)).toBe("");
   });
 
   it("counts multi-byte characters correctly", () => {

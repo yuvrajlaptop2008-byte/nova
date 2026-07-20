@@ -34,9 +34,9 @@ const resolveMarkdownTableModeMock = vi.fn(() => "code");
 const convertMarkdownTablesMock = vi.fn((text: string) => text);
 const chunkMarkdownTextWithModeMock = vi.fn((text: string) => (text ? [text] : []));
 
-vi.mock("openclaw/plugin-sdk/plugin-config-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/plugin-config-runtime")>(
-    "openclaw/plugin-sdk/plugin-config-runtime",
+vi.mock("nova/plugin-sdk/plugin-config-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/plugin-config-runtime")>(
+    "nova/plugin-sdk/plugin-config-runtime",
   );
   return {
     ...actual,
@@ -453,7 +453,7 @@ describe("sendMessageMatrix media", () => {
       client,
       cfg: {} as never,
       mediaUrl: "file:///tmp/photo.png",
-      mediaLocalRoots: ["/tmp/openclaw-matrix-test"],
+      mediaLocalRoots: ["/tmp/nova-matrix-test"],
     });
 
     expect(mockCallArg(loadWebMediaMock, "loadWebMedia", 0)).toBe("file:///tmp/photo.png");
@@ -462,7 +462,7 @@ describe("sendMessageMatrix media", () => {
       "media options",
     );
     expect(mediaOptions.maxBytes).toBeUndefined();
-    expect(mediaOptions.localRoots).toEqual(["/tmp/openclaw-matrix-test"]);
+    expect(mediaOptions.localRoots).toEqual(["/tmp/nova-matrix-test"]);
   });
 });
 
@@ -714,16 +714,16 @@ describe("sendMessageMatrix threads", () => {
     await sendMessageMatrix("room:!room:example", "ignored", {
       client,
       cfg: {} as never,
-      extraContent: { "com.openclaw.approval": { id: "req-1" } },
+      extraContent: { "com.nova.approval": { id: "req-1" } },
     });
 
     expect(sendMessage).toHaveBeenCalledTimes(3);
     expect(sentContent(sendMessage, 0).body).toBe("first");
-    expect(sentContent(sendMessage, 0)["com.openclaw.approval"]).toEqual({ id: "req-1" });
+    expect(sentContent(sendMessage, 0)["com.nova.approval"]).toEqual({ id: "req-1" });
     expect(sentContent(sendMessage, 1).body).toBe("second");
-    expect(sentContent(sendMessage, 1)).not.toHaveProperty("com.openclaw.approval");
+    expect(sentContent(sendMessage, 1)).not.toHaveProperty("com.nova.approval");
     expect(sentContent(sendMessage, 2).body).toBe("third");
-    expect(sentContent(sendMessage, 2)).not.toHaveProperty("com.openclaw.approval");
+    expect(sentContent(sendMessage, 2)).not.toHaveProperty("com.nova.approval");
   });
 });
 

@@ -15,16 +15,16 @@ import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
 
 const FULL_RELEASE = ".github/workflows/full-release-validation.yml";
-const RELEASE_CHECKS = ".github/workflows/openclaw-release-checks.yml";
+const RELEASE_CHECKS = ".github/workflows/nova-release-checks.yml";
 const PACKAGE_ACCEPTANCE = ".github/workflows/package-acceptance.yml";
 const PLUGIN_PRERELEASE = ".github/workflows/plugin-prerelease.yml";
-const LIVE_E2E = ".github/workflows/openclaw-live-and-e2e-checks-reusable.yml";
+const LIVE_E2E = ".github/workflows/nova-live-and-e2e-checks-reusable.yml";
 const INSTALL_SMOKE = ".github/workflows/install-smoke.yml";
-const SHARED_IMAGE_PUBLISHER = ".github/workflows/openclaw-shared-image-publish-reusable.yml";
-const SCHEDULED_LIVE = ".github/workflows/openclaw-scheduled-live-checks.yml";
+const SHARED_IMAGE_PUBLISHER = ".github/workflows/nova-shared-image-publish-reusable.yml";
+const SCHEDULED_LIVE = ".github/workflows/nova-scheduled-live-checks.yml";
 const DOCKER_RELEASE = ".github/workflows/docker-release.yml";
 const UPDATE_MIGRATION = ".github/workflows/update-migration.yml";
-const PERFORMANCE = ".github/workflows/openclaw-performance.yml";
+const PERFORMANCE = ".github/workflows/nova-performance.yml";
 const LIVE_BUILD = "scripts/test-live-build-docker.sh";
 const DOCKER_E2E_IMAGE_HELPER = "scripts/lib/docker-e2e-image.sh";
 
@@ -235,7 +235,7 @@ describe("release validation no-push transport", () => {
   });
 
   it("models conditional reusable jobs as permission requests before scheduling", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-permission-graph-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-permission-graph-"));
     const fixture = join(root, "callee.yml");
     try {
       writeFileSync(
@@ -335,12 +335,12 @@ describe("release validation no-push transport", () => {
       'echo "Dispatched ${workflow}: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${run_id}"',
     );
     expect(verify.run).toContain('"ci.yml"');
-    expect(verify.run).toContain('"openclaw-release-checks.yml"');
+    expect(verify.run).toContain('"nova-release-checks.yml"');
     expect(dispatch.run).not.toContain('GITHUB_RUN_ID_VALUE="$EVIDENCE_ROOT_RUN_ID"');
     expect(dispatch.run).toContain("reused green product evidence from chain-root run");
     expect(dispatch.run).toContain("--connect-timeout 10");
     expect(dispatch.run).toContain("--max-time 30");
-    expect(dispatch.run).toContain("https://api.github.com/repos/openclaw/releases/dispatches");
+    expect(dispatch.run).toContain("https://api.github.com/repos/nova/releases/dispatches");
   });
 
   it("publishes an attempt-qualified canonical manifest plus a temporary legacy alias", () => {
@@ -361,8 +361,8 @@ describe("release validation no-push transport", () => {
     const pluginPrerelease = readWorkflow(PLUGIN_PRERELEASE);
 
     expect(fullText).toContain("dispatch_and_wait plugin-prerelease.yml");
-    expect(fullText).toContain("dispatch_and_wait openclaw-release-checks.yml");
-    expect(fullText).toContain("gh workflow run openclaw-performance.yml");
+    expect(fullText).toContain("dispatch_and_wait nova-release-checks.yml");
+    expect(fullText).toContain("gh workflow run nova-performance.yml");
 
     const preparePackage = job(release, "prepare_release_package");
     const live = job(release, "live_repo_e2e_release_checks");
@@ -652,7 +652,7 @@ describe("release validation no-push transport", () => {
     expect(functionalBuild.run).toContain("docker build");
     expect(functionalBuild.run).toContain("--target functional");
     expect(functionalBuild.run).toContain(
-      "--build-context openclaw_package=.artifacts/docker-e2e-package",
+      "--build-context nova_package=.artifacts/docker-e2e-package",
     );
     expect(functionalBuild.run).toContain('--tag "$IMAGE_REF"');
     const packDockerArtifact = step(dockerProducer, "Pack Docker E2E image artifact");
@@ -888,7 +888,7 @@ describe("release validation no-push transport", () => {
       .filter((name) => name.endsWith(".yml") || name.endsWith(".yaml"))
       .filter((name) =>
         readFileSync(join(".github/workflows", name), "utf8").includes(
-          "openclaw-shared-image-publish-reusable.yml",
+          "nova-shared-image-publish-reusable.yml",
         ),
       );
     expect(publisherCallers).toEqual([]);
@@ -960,7 +960,7 @@ describe("release validation no-push transport", () => {
   });
 
   it("fails a missing required local live image before any registry pull", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-live-local-image-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-live-local-image-"));
     const bin = join(root, "bin");
     const calls = join(root, "docker.log");
     try {
@@ -989,7 +989,7 @@ exit 2
           ...process.env,
           DOCKER_COMMAND_TIMEOUT: "5s",
           FAKE_DOCKER_LOG: calls,
-          NOVA_LIVE_IMAGE: "openclaw-live-test:required-local",
+          NOVA_LIVE_IMAGE: "nova-live-test:required-local",
           NOVA_LIVE_REQUIRE_LOCAL_IMAGE: "1",
           NOVA_SKIP_DOCKER_BUILD: "1",
           PATH: `${bin}:${process.env.PATH ?? ""}`,
@@ -997,16 +997,16 @@ exit 2
       });
       expect(result.status).toBe(1);
       expect(result.stderr).toContain(
-        "Required local live-test image not found: openclaw-live-test:required-local",
+        "Required local live-test image not found: nova-live-test:required-local",
       );
-      expect(readFileSync(calls, "utf8")).toBe("image inspect openclaw-live-test:required-local\n");
+      expect(readFileSync(calls, "utf8")).toBe("image inspect nova-live-test:required-local\n");
     } finally {
       rmSync(root, { force: true, recursive: true });
     }
   });
 
   it("fails a missing required local Docker E2E image before pull or build fallback", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-docker-e2e-local-image-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-docker-e2e-local-image-"));
     const bin = join(root, "bin");
     const calls = join(root, "docker.log");
     try {
@@ -1034,7 +1034,7 @@ exit 2
         [
           "-c",
           `source "$1"
-docker_e2e_build_or_reuse "openclaw-e2e:required-local" "required local image test"`,
+docker_e2e_build_or_reuse "nova-e2e:required-local" "required local image test"`,
           "bash",
           resolve(DOCKER_E2E_IMAGE_HELPER),
         ],
@@ -1052,9 +1052,9 @@ docker_e2e_build_or_reuse "openclaw-e2e:required-local" "required local image te
       );
       expect(result.status).toBe(1);
       expect(result.stderr).toContain(
-        "Required local Docker E2E image not found: openclaw-e2e:required-local",
+        "Required local Docker E2E image not found: nova-e2e:required-local",
       );
-      expect(readFileSync(calls, "utf8")).toBe("image inspect openclaw-e2e:required-local\n");
+      expect(readFileSync(calls, "utf8")).toBe("image inspect nova-e2e:required-local\n");
     } finally {
       rmSync(root, { force: true, recursive: true });
     }

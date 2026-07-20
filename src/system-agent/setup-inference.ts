@@ -41,7 +41,7 @@ import {
   normalizeAgentModelRefForConfig,
   resolveAgentModelPrimaryValue,
 } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
@@ -313,7 +313,7 @@ export type ActivateSetupInferenceDeps = {
   clearLoadInstalledPluginIndexInstallRecordsCache?: typeof import("../plugins/installed-plugin-index-records.js").clearLoadInstalledPluginIndexInstallRecordsCache;
   clearPluginMetadataLifecycleCaches?: typeof import("../plugins/plugin-metadata-lifecycle.js").clearPluginMetadataLifecycleCaches;
   invalidatePluginRuntimeDiscoveryAfterConfigMutation?: typeof import("../plugins/registry-refresh.js").invalidatePluginRuntimeDiscoveryAfterConfigMutation;
-  disposeOpenClawAgentDatabaseByPath?: typeof import("../state/openclaw-agent-db.js").disposeOpenClawAgentDatabaseByPath;
+  disposeNovaAgentDatabaseByPath?: typeof import("../state/nova-agent-db.js").disposeNovaAgentDatabaseByPath;
   createTempDir?: () => Promise<string>;
   removeTempDir?: (dir: string) => Promise<void>;
   timeoutMs?: number;
@@ -599,7 +599,7 @@ type SetupInferenceTestPlan = {
   provider: string;
   model: string;
   modelRef: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   /** Execution identity used by the real Nova turn. */
   agentId?: string;
   /** Default-agent owner whose model/runtime config is being selected. */
@@ -612,14 +612,14 @@ type SetupInferenceTestPlan = {
   persistModelRef?: string;
   manualAuth?: {
     profiles: ProviderAuthResult["profiles"];
-    runtimeConfigBase: OpenClawConfig;
-    sourceConfigBase: OpenClawConfig;
+    runtimeConfigBase: NovaConfig;
+    sourceConfigBase: NovaConfig;
     configPatch: unknown;
     pluginId?: string;
   };
 };
 
-function configureCodexCliPreparedAuth(cfg: OpenClawConfig): OpenClawConfig {
+function configureCodexCliPreparedAuth(cfg: NovaConfig): NovaConfig {
   const entry = cfg.plugins?.entries?.codex;
   const pluginConfig = entry?.config ?? {};
   const appServer =
@@ -784,7 +784,7 @@ function parseRef(modelRef: string): { provider: string; model: string } {
     : { provider: modelRef.slice(0, slash), model: modelRef.slice(slash + 1) };
 }
 
-function projectSetupTargetModelMetadata(config: OpenClawConfig, modelRef: string): unknown {
+function projectSetupTargetModelMetadata(config: NovaConfig, modelRef: string): unknown {
   const target = parseRef(modelRef);
   const canonicalKey = modelKey(target.provider, target.model);
   const keys = new Set(
@@ -825,7 +825,7 @@ function resolveSetupAgentRuntimeId(
     kind === "provider-auth" ||
     parseProviderAutoSetupChoiceId(kind) !== undefined
   ) {
-    return "openclaw";
+    return "nova";
   }
   return undefined;
 }
@@ -850,15 +850,15 @@ function mapFailoverReasonToSetupStatus(reason?: string | null): SetupInferenceF
 }
 
 function prepareManualAuthForActivation(params: {
-  baseConfig: OpenClawConfig;
-  preparedConfig: OpenClawConfig;
+  baseConfig: NovaConfig;
+  preparedConfig: NovaConfig;
   profiles: ProviderAuthResult["profiles"];
   selectedProfileId: string;
   modelRef: string;
   providerId: string;
   pluginId?: string;
 }): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   profiles: ProviderAuthResult["profiles"];
   selectedProfileId: string;
 } {
@@ -884,8 +884,8 @@ function prepareManualAuthForActivation(params: {
 }
 
 function copySelectedModelMetadata(params: {
-  target: OpenClawConfig;
-  prepared: OpenClawConfig;
+  target: NovaConfig;
+  prepared: NovaConfig;
   modelRef: string;
 }): void {
   const preparedDefaultModels = params.prepared.agents?.defaults?.models;
@@ -934,10 +934,7 @@ function copySelectedModelMetadata(params: {
   params.target.agents = { ...params.target.agents, list: nextAgents };
 }
 
-function findSelectedProviderConfigKey(
-  config: OpenClawConfig,
-  providerId: string,
-): string | undefined {
+function findSelectedProviderConfigKey(config: NovaConfig, providerId: string): string | undefined {
   const providers = config.models?.providers;
   if (!providers) {
     return undefined;
@@ -957,14 +954,14 @@ function findSelectedProviderConfigKey(
  * surface after intelligence exists.
  */
 function projectManualInferenceConfig(params: {
-  baseConfig: OpenClawConfig;
-  preparedConfig: OpenClawConfig;
+  baseConfig: NovaConfig;
+  preparedConfig: NovaConfig;
   selectedProfile?: ProviderAuthResult["profiles"][number];
   selectedProfileId?: string;
   modelRef: string;
   providerId: string;
   pluginId?: string;
-}): OpenClawConfig {
+}): NovaConfig {
   const config = structuredClone(params.baseConfig);
   if (params.selectedProfile && params.selectedProfileId) {
     const metadata = params.preparedConfig.auth?.profiles?.[params.selectedProfile.profileId] ?? {
@@ -1016,7 +1013,7 @@ function projectManualInferenceConfig(params: {
 }
 
 function canonicalizeSetupModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   raw: string;
   defaultProvider: string;
 }): string {
@@ -1038,8 +1035,8 @@ async function buildTestPlan(params: {
   modelRef?: string;
   authChoice?: string;
   apiKey?: string;
-  cfg: OpenClawConfig;
-  sourceCfg: OpenClawConfig;
+  cfg: NovaConfig;
+  sourceCfg: NovaConfig;
   workspaceDir: string;
   pluginWorkspaceDir: string;
   agentDir: string;
@@ -1175,7 +1172,7 @@ async function buildTestPlan(params: {
         modelRef,
         agentDir: params.agentDir,
         config: prepared.config,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: resolveDefaultAgentId(prepared.config),
         ...(prepared.selectedProfileId ? { authProfileId: prepared.selectedProfileId } : {}),
         persistModelRef: modelRef,
@@ -1218,7 +1215,7 @@ async function buildTestPlan(params: {
         model: route.model,
         modelRef: route.modelLabel,
         config: route.runConfig,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: route.agentId,
         agentDir: route.agentDir,
         ...(route.runner === "embedded"
@@ -1238,7 +1235,7 @@ async function buildTestPlan(params: {
         ...ref,
         modelRef,
         config: cfg,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: resolveDefaultAgentId(cfg),
         persistModelRef: modelRef,
       };
@@ -1254,7 +1251,7 @@ async function buildTestPlan(params: {
         ...ref,
         modelRef,
         config: cfg,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: resolveDefaultAgentId(cfg),
         persistModelRef: modelRef,
       };
@@ -1271,7 +1268,7 @@ async function buildTestPlan(params: {
         modelRef,
         agentHarnessRuntimeOverride: "codex",
         config: cfg,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: resolveDefaultAgentId(cfg),
         agentDir: params.agentDir,
         cleanupBundleMcpOnRunEnd: true,
@@ -1289,7 +1286,7 @@ async function buildTestPlan(params: {
         ...ref,
         modelRef,
         config: cfg,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: resolveDefaultAgentId(cfg),
         persistModelRef: modelRef,
       };
@@ -1305,7 +1302,7 @@ async function buildTestPlan(params: {
         ...ref,
         modelRef,
         config: cfg,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: resolveDefaultAgentId(cfg),
         persistModelRef: modelRef,
       };
@@ -1380,7 +1377,7 @@ async function buildTestPlan(params: {
         };
       }
       let result: ProviderAuthResult;
-      let preparedConfig: OpenClawConfig;
+      let preparedConfig: NovaConfig;
       try {
         if (interactive) {
           if (!params.prompter) {
@@ -1481,7 +1478,7 @@ async function buildTestPlan(params: {
         modelRef,
         agentDir: params.agentDir,
         config: preparedAuth.config,
-        agentId: "openclaw",
+        agentId: "nova",
         routeAgentId: resolveDefaultAgentId(preparedAuth.config),
         authProfileId: preparedAuth.selectedProfileId,
         persistModelRef: modelRef,
@@ -1500,14 +1497,14 @@ async function buildTestPlan(params: {
 }
 
 async function runProviderManualSecretMethod(params: {
-  config: OpenClawConfig;
-  baseConfig: OpenClawConfig;
+  config: NovaConfig;
+  baseConfig: NovaConfig;
   choice: ProviderAuthChoiceMetadata;
   method: ProviderAuthMethod;
   apiKey: string;
   agentDir: string;
   workspaceDir: string;
-}): Promise<{ result: ProviderAuthResult; config: OpenClawConfig }> {
+}): Promise<{ result: ProviderAuthResult; config: NovaConfig }> {
   const optionKey = params.choice.optionKey;
   const runNonInteractive = params.method.runNonInteractive;
   if (!optionKey || !params.choice.cliOption || !runNonInteractive) {
@@ -1626,10 +1623,8 @@ async function activateSetupInferenceUnredacted(
   if (snapshot.exists && !snapshot.valid) {
     throw new Error(invalidSetupConfigError(snapshot));
   }
-  const cfg: OpenClawConfig = snapshot.exists ? (snapshot.runtimeConfig ?? snapshot.config) : {};
-  const sourceCfg: OpenClawConfig = snapshot.exists
-    ? (snapshot.sourceConfig ?? snapshot.config)
-    : {};
+  const cfg: NovaConfig = snapshot.exists ? (snapshot.runtimeConfig ?? snapshot.config) : {};
+  const sourceCfg: NovaConfig = snapshot.exists ? (snapshot.sourceConfig ?? snapshot.config) : {};
   const workspace = params.workspace?.trim()
     ? resolveUserPath(params.workspace)
     : (
@@ -1640,7 +1635,7 @@ async function activateSetupInferenceUnredacted(
       ).workspace;
 
   const tempDir = await (
-    deps.createTempDir ?? (() => fs.mkdtemp(path.join(os.tmpdir(), "openclaw-setup-inference-")))
+    deps.createTempDir ?? (() => fs.mkdtemp(path.join(os.tmpdir(), "nova-setup-inference-")))
   )();
   const testAgentDir = path.join(tempDir, "agent");
   let pendingCodexInstall: PluginInstallRecord | undefined;
@@ -1784,7 +1779,7 @@ async function activateSetupInferenceUnredacted(
         reason: "source-changed",
         workspaceDir: workspace,
         policyPluginIds: ["codex"],
-        traceCommand: "openclaw-setup-probe",
+        traceCommand: "nova-setup-probe",
         logger: { warn: (message) => (registryRefreshWarning = message) },
       });
       const ensureHarnessPlugin =
@@ -1970,7 +1965,7 @@ async function activateSetupInferenceUnredacted(
         };
       }
       if (
-        successfulHarnessId !== "openclaw" &&
+        successfulHarnessId !== "nova" &&
         (test.auth.runtimeOwnerKind !== "plugin-harness" ||
           test.auth.runtimeOwnerId?.trim() !== successfulHarnessId ||
           !test.auth.runtimeArtifactFingerprint ||
@@ -1984,7 +1979,7 @@ async function activateSetupInferenceUnredacted(
         };
       }
     }
-    let committedConfig: OpenClawConfig | undefined;
+    let committedConfig: NovaConfig | undefined;
     let autoLocalModelLeanApplied = false;
     if (!needsPersistence) {
       const latestSnapshot = await readSnapshot();
@@ -2044,9 +2039,9 @@ async function activateSetupInferenceUnredacted(
           })
         : undefined;
       const stageCandidate = (
-        current: OpenClawConfig,
+        current: NovaConfig,
         configKind: "runtime" | "source",
-      ): OpenClawConfig => {
+      ): NovaConfig => {
         let next =
           codexPluginPatch === undefined ? current : stripPendingPluginInstallRecords(current);
         if (plan.manualAuth) {
@@ -2058,7 +2053,7 @@ async function activateSetupInferenceUnredacted(
           );
         }
         if (codexPluginPatch !== undefined) {
-          const patched = applyMergePatch(next, codexPluginPatch) as OpenClawConfig;
+          const patched = applyMergePatch(next, codexPluginPatch) as NovaConfig;
           const enabledCodex = enablePluginInConfig(
             normalizePluginTargetConfig(patched, "codex"),
             "codex",
@@ -2141,7 +2136,7 @@ async function activateSetupInferenceUnredacted(
             };
           }
           throw new SetupInferenceActivationIndeterminateError(
-            "Inference activation could not confirm whether its verified credential was saved or rolled back. No config commit was attempted; run openclaw doctor --fix before retrying.",
+            "Inference activation could not confirm whether its verified credential was saved or rolled back. No config commit was attempted; run nova doctor --fix before retrying.",
           );
         }
         if (persistedManualAuth.status === "not-persisted") {
@@ -2255,7 +2250,7 @@ async function activateSetupInferenceUnredacted(
             const rolledBack = await rollbackManualAuthProfiles(manualAuthReceipt, deps);
             if (!rolledBack) {
               throw new SetupInferenceActivationIndeterminateError(
-                "Inference activation stopped before its config commit, but could not confirm removal of its staged credential. Run openclaw doctor --fix before retrying.",
+                "Inference activation stopped before its config commit, but could not confirm removal of its staged credential. Run nova doctor --fix before retrying.",
               );
             }
           }
@@ -2287,13 +2282,13 @@ async function activateSetupInferenceUnredacted(
               configReferencesManualAuthProfiles(reconciledRuntime, manualAuthReceipt)
             ) {
               throw new SetupInferenceActivationIndeterminateError(
-                "Inference activation could not confirm its config commit state. The verified credential was retained because the current config may reference it. Run openclaw doctor --fix before retrying.",
+                "Inference activation could not confirm its config commit state. The verified credential was retained because the current config may reference it. Run nova doctor --fix before retrying.",
               );
             }
             const rolledBack = await rollbackManualAuthProfiles(manualAuthReceipt, deps);
             if (!rolledBack) {
               throw new SetupInferenceActivationIndeterminateError(
-                "Inference activation failed and its staged credential could not be rolled back. Run openclaw doctor --fix before retrying.",
+                "Inference activation failed and its staged credential could not be rolled back. Run nova doctor --fix before retrying.",
               );
             }
           }
@@ -2326,7 +2321,7 @@ async function activateSetupInferenceUnredacted(
       const after = await readSnapshot().catch(() => null);
       try {
         await appendSystemAgentAuditEntry({
-          operation: "openclaw.setup",
+          operation: "nova.setup",
           summary: "Verified and configured AI access through Nova setup",
           configPath: after?.path ?? snapshot.path,
           configHashBefore: snapshot.hash ?? null,
@@ -2436,7 +2431,7 @@ export async function verifySetupInference(
     return {
       ok: false,
       status: "unavailable",
-      error: "No Nova config exists. Run `openclaw onboard` first.",
+      error: "No Nova config exists. Run `nova onboard` first.",
     };
   }
   if (!snapshot.valid) {
@@ -2446,7 +2441,7 @@ export async function verifySetupInference(
       error: invalidSetupConfigError(snapshot),
     };
   }
-  const cfg: OpenClawConfig = snapshot.runtimeConfig ?? snapshot.config;
+  const cfg: NovaConfig = snapshot.runtimeConfig ?? snapshot.config;
   const baselineRoute = await projectInferenceRoute(cfg, params.agentId);
   let verifiedBinding: SystemAgentVerifiedInferenceBinding | undefined;
   const verification = await verifySetupInferenceConfig({
@@ -2577,7 +2572,7 @@ export async function resolvePersistentApplyInference(params: {
 
 /** Live-test a staged default-agent route before any caller persists it. */
 export async function verifySetupInferenceConfig(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   /** Candidate profiles staged in the isolated probe store, never the real agent store. */
   authProfiles?: ProviderAuthResult["profiles"];
   agentId?: string;
@@ -2602,11 +2597,11 @@ export async function verifySetupInferenceConfig(params: {
     return {
       ok: false,
       status: "unavailable",
-      error: "No agent model is configured. Run `openclaw onboard` first.",
+      error: "No agent model is configured. Run `nova onboard` first.",
     };
   }
   const tempDir = await (
-    deps.createTempDir ?? (() => fs.mkdtemp(path.join(os.tmpdir(), "openclaw-setup-inference-")))
+    deps.createTempDir ?? (() => fs.mkdtemp(path.join(os.tmpdir(), "nova-setup-inference-")))
   )();
   try {
     const builtPlan = await buildTestPlan({
@@ -2850,7 +2845,7 @@ export async function completeSetupInference(params: {
 
 /** Config-injected variant used by setup clients and live provider tests. */
 export async function completeSetupInferenceConfig(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   prompt: string;
   runtime: RuntimeEnv;
   timeoutMs?: number;
@@ -2865,7 +2860,7 @@ export async function completeSetupInferenceConfig(params: {
     return { ok: false, status: "unavailable", error: "No agent model is configured." };
   }
   const tempDir = await (
-    deps.createTempDir ?? (() => fs.mkdtemp(path.join(os.tmpdir(), "openclaw-setup-inference-")))
+    deps.createTempDir ?? (() => fs.mkdtemp(path.join(os.tmpdir(), "nova-setup-inference-")))
   )();
   try {
     const plan = await buildTestPlan({
@@ -2918,9 +2913,9 @@ async function cleanupSetupInferenceTempDir(params: {
 }): Promise<void> {
   try {
     const disposeDatabase =
-      params.deps.disposeOpenClawAgentDatabaseByPath ??
-      (await import("../state/openclaw-agent-db.js")).disposeOpenClawAgentDatabaseByPath;
-    disposeDatabase(path.join(params.tempDir, "agent", "openclaw-agent.sqlite"));
+      params.deps.disposeNovaAgentDatabaseByPath ??
+      (await import("../state/nova-agent-db.js")).disposeNovaAgentDatabaseByPath;
+    disposeDatabase(path.join(params.tempDir, "agent", "nova-agent.sqlite"));
   } catch {
     // Windows cannot remove an open SQLite file. Keep cleanup nonfatal, but
     // always try the directory removal so callers do not retain probe secrets.
@@ -2977,7 +2972,7 @@ async function retainUnownedCodexInstall(params: {
     const marked = await markRetained({
       packageDir: params.record.installPath,
       pluginId: "codex",
-      reason: "openclaw-inference-activation-not-committed",
+      reason: "nova-inference-activation-not-committed",
     });
     if (!marked) {
       log.warn("Could not retain the uncommitted Codex runtime package generation.");
@@ -3039,11 +3034,11 @@ async function reloadCodexRegistryAfterActivation(params: {
   const runtimeConfig =
     snapshot.exists && snapshot.valid
       ? (snapshot.runtimeConfig ?? snapshot.config)
-      : ({} satisfies OpenClawConfig);
+      : ({} satisfies NovaConfig);
   const sourceConfig =
     snapshot.exists && snapshot.valid
       ? (snapshot.sourceConfig ?? snapshot.config)
-      : ({} satisfies OpenClawConfig);
+      : ({} satisfies NovaConfig);
   try {
     const refreshPluginRegistry =
       params.deps.refreshPluginRegistryAfterConfigMutation ??
@@ -3098,11 +3093,11 @@ function mergePatchConflicts(base: unknown, current: unknown, patch: unknown): b
 }
 
 function applyManualAuthConfig(
-  config: OpenClawConfig,
+  config: NovaConfig,
   manualAuth: NonNullable<SetupInferenceTestPlan["manualAuth"]>,
   configKind: "runtime" | "source",
   enablePlugin: typeof enablePluginInConfig = enablePluginInConfig,
-): OpenClawConfig {
+): NovaConfig {
   let enabledConfig = config;
   if (manualAuth.pluginId) {
     const enableResult = enablePlugin(config, manualAuth.pluginId);
@@ -3120,7 +3115,7 @@ function applyManualAuthConfig(
       "Provider configuration changed during the live inference test, so the verified credential was not saved. Review the current provider settings and retry.",
     );
   }
-  return applyMergePatch(enabledConfig, manualAuth.configPatch) as OpenClawConfig;
+  return applyMergePatch(enabledConfig, manualAuth.configPatch) as NovaConfig;
 }
 
 type ManualAuthPersistenceReceipt = {
@@ -3158,7 +3153,7 @@ function modelSelectionReferencesProfile(value: unknown, profileIds: ReadonlySet
 }
 
 function configReferencesManualAuthProfiles(
-  config: OpenClawConfig,
+  config: NovaConfig,
   receipt: ManualAuthPersistenceReceipt,
 ): boolean {
   const profileIds = new Set(receipt.profiles.map((profile) => profile.profileId));
@@ -3370,7 +3365,7 @@ async function runSetupInferenceTest(params: {
       result = (await runCli({
         sessionId,
         sessionKey: `temp:setup-inference:${runId}`,
-        agentId: plan.agentId ?? "openclaw",
+        agentId: plan.agentId ?? "nova",
         trigger: "manual",
         sessionFile,
         workspaceDir: tempDir,
@@ -3382,8 +3377,8 @@ async function runSetupInferenceTest(params: {
         ...(plan.authProfileId ? { authProfileId: plan.authProfileId } : {}),
         timeoutMs,
         runId,
-        messageChannel: "openclaw",
-        messageProvider: "openclaw",
+        messageChannel: "nova",
+        messageProvider: "nova",
         executionMode: "side-question",
         disableTools: true,
         cleanupCliLiveSessionOnRunEnd: true,
@@ -3398,7 +3393,7 @@ async function runSetupInferenceTest(params: {
       result = (await runEmbedded({
         sessionId,
         sessionKey: `temp:setup-inference:${runId}`,
-        agentId: plan.agentId ?? "openclaw",
+        agentId: plan.agentId ?? "nova",
         trigger: "manual",
         sessionFile,
         workspaceDir: tempDir,
@@ -3430,8 +3425,8 @@ async function runSetupInferenceTest(params: {
           : {}),
         disableTools: true,
         modelRun: true,
-        messageChannel: "openclaw",
-        messageProvider: "openclaw",
+        messageChannel: "nova",
+        messageProvider: "nova",
         onSuccessfulAuthBinding: (binding) => {
           successfulAuth = binding;
         },

@@ -1,10 +1,10 @@
 // Canvas tests cover index plugin behavior.
 import type {
   AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginNodeInvokePolicyContext,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+  NovaPluginApi,
+  NovaPluginNodeInvokePolicyContext,
+} from "nova/plugin-sdk/plugin-entry";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import canvasPlugin from "./index.js";
 
@@ -60,19 +60,18 @@ vi.mock("./src/tool.js", () => ({
 }));
 
 function registerCanvas() {
-  const routes: Array<Parameters<OpenClawPluginApi["registerHttpRoute"]>[0]> = [];
-  const services: Array<Parameters<OpenClawPluginApi["registerService"]>[0]> = [];
-  const resolvers: Array<Parameters<OpenClawPluginApi["registerHostedMediaResolver"]>[0]> = [];
+  const routes: Array<Parameters<NovaPluginApi["registerHttpRoute"]>[0]> = [];
+  const services: Array<Parameters<NovaPluginApi["registerService"]>[0]> = [];
+  const resolvers: Array<Parameters<NovaPluginApi["registerHostedMediaResolver"]>[0]> = [];
   const tools: Array<{
-    tool: Parameters<OpenClawPluginApi["registerTool"]>[0];
-    opts: Parameters<OpenClawPluginApi["registerTool"]>[1];
+    tool: Parameters<NovaPluginApi["registerTool"]>[0];
+    opts: Parameters<NovaPluginApi["registerTool"]>[1];
   }> = [];
   const cliFeatures: Array<{
-    registrar: Parameters<OpenClawPluginApi["registerNodeCliFeature"]>[0];
-    opts: Parameters<OpenClawPluginApi["registerNodeCliFeature"]>[1];
+    registrar: Parameters<NovaPluginApi["registerNodeCliFeature"]>[0];
+    opts: Parameters<NovaPluginApi["registerNodeCliFeature"]>[1];
   }> = [];
-  const nodeInvokePolicies: Array<Parameters<OpenClawPluginApi["registerNodeInvokePolicy"]>[0]> =
-    [];
+  const nodeInvokePolicies: Array<Parameters<NovaPluginApi["registerNodeInvokePolicy"]>[0]> = [];
   canvasPlugin.register?.(
     createTestPluginApi({
       id: "canvas",
@@ -90,8 +89,8 @@ function registerCanvas() {
 }
 
 function createNodeInvokeContext(
-  params: Partial<OpenClawPluginNodeInvokePolicyContext>,
-): OpenClawPluginNodeInvokePolicyContext {
+  params: Partial<NovaPluginNodeInvokePolicyContext>,
+): NovaPluginNodeInvokePolicyContext {
   return {
     nodeId: "node-1",
     command: "canvas.a2ui.pushJSONL",
@@ -130,7 +129,7 @@ describe("Canvas plugin entry", () => {
     await services[0]?.stop?.({} as never);
     expect(mocks.createCanvasHttpRouteHandler).not.toHaveBeenCalled();
 
-    await routes[0]?.handler({ url: "/__openclaw__/canvas" } as never, {} as never);
+    await routes[0]?.handler({ url: "/__nova__/canvas" } as never, {} as never);
     expect(mocks.createCanvasHttpRouteHandler).toHaveBeenCalledTimes(1);
     expect(mocks.httpHandler.handleHttpRequest).toHaveBeenCalledTimes(1);
 

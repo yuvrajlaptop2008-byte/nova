@@ -49,7 +49,7 @@ function writeConfig(kind) {
 }
 
 function writeOpenAiWebSearchMinimalConfig() {
-  writeJson(path.join(process.env.NOVA_STATE_DIR, "openclaw.json"), {
+  writeJson(path.join(process.env.NOVA_STATE_DIR, "nova.json"), {
     agents: {
       defaults: {
         model: { primary: "openai/gpt-5" },
@@ -102,7 +102,7 @@ function writeOpenWebUiConfig([openaiApiKey]) {
       path: "models.providers.openai.timeoutSeconds",
       value: readPositiveIntEnv("NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS", 900),
     },
-    { path: "models.providers.openai.agentRuntime", value: { id: "openclaw" } },
+    { path: "models.providers.openai.agentRuntime", value: { id: "nova" } },
     { path: "gateway.controlUi.enabled", value: false },
     { path: "gateway.mode", value: "local" },
     { path: "gateway.bind", value: "lan" },

@@ -1,8 +1,8 @@
 import type {
   EmbeddedRunAttemptParams,
   NativeHookRelayRegistrationHandle,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { handleCodexAppServerApprovalRequest } from "./approval-bridge.js";
 import { isSystemAgentOnlyCodexDynamicToolAllowlist } from "./dynamic-tool-profile.js";
 import type {
@@ -116,7 +116,7 @@ export function resolveCodexDynamicToolDirectNames(
   // Nova is the run's only tool and must stay callable when Codex tool
   // search is unavailable. Exact toolsAllow is the public harness contract.
   if (hostSystemAgentActive && isSystemAgentOnlyCodexDynamicToolAllowlist(params.toolsAllow)) {
-    names.push("openclaw");
+    names.push("nova");
   }
   if (params.sourceReplyDeliveryMode === "message_tool_only") {
     names.push("message");

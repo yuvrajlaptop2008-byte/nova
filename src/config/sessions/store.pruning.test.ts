@@ -23,7 +23,7 @@ import type { SessionEntry } from "./types.js";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-const fixtureSuite = createFixtureSuite("openclaw-pruning-suite-");
+const fixtureSuite = createFixtureSuite("nova-pruning-suite-");
 
 beforeAll(async () => {
   await fixtureSuite.setup();
@@ -216,7 +216,7 @@ describe("applyFileBackedSessionStoreMaintenance", () => {
     let trajectoryCleanupReferencedIds: Set<string> | undefined;
 
     const result = await applyFileBackedSessionStoreMaintenance({
-      storePath: "/tmp/openclaw-sessions/sessions.json",
+      storePath: "/tmp/nova-sessions/sessions.json",
       store,
       activeSessionKey: "active",
       maintenanceConfig: {
@@ -273,7 +273,7 @@ describe("applyFileBackedSessionStoreMaintenance", () => {
     let report: { modelRunPruned: number; pruned: number; capped: number } | undefined;
 
     const result = await applyFileBackedSessionStoreMaintenance({
-      storePath: "/tmp/openclaw-sessions/sessions.json",
+      storePath: "/tmp/nova-sessions/sessions.json",
       store,
       maintenanceConfig: {
         mode: "enforce",
@@ -312,7 +312,7 @@ describe("applyFileBackedSessionStoreMaintenance", () => {
 
   it("preserves every active admission instead of only the writer session", async () => {
     const now = Date.now();
-    const storePath = "/tmp/openclaw-sessions/active-admissions.json";
+    const storePath = "/tmp/nova-sessions/active-admissions.json";
     const activeKey = "agent:main:cron:job:run:active";
     const store = makeStore([
       [activeKey, { sessionId: "active-session", updatedAt: now - 3 }],
@@ -353,7 +353,7 @@ describe("applyFileBackedSessionStoreMaintenance", () => {
 
   it("preserves every store alias backed by an active session id", async () => {
     const now = Date.now();
-    const storePath = "/tmp/openclaw-sessions/active-aliases.json";
+    const storePath = "/tmp/nova-sessions/active-aliases.json";
     const activeSessionId = "active-alias-session";
     const firstAlias = "agent:main:cron:job:run:active";
     const secondAlias = "agent:main:cron:job:run:active:thread:reply";
@@ -395,7 +395,7 @@ describe("applyFileBackedSessionStoreMaintenance", () => {
 
   it("preserves a raw legacy store key matched by a canonical admission identity", async () => {
     const now = Date.now();
-    const storePath = "/tmp/openclaw-sessions/active-legacy-key.json";
+    const storePath = "/tmp/nova-sessions/active-legacy-key.json";
     const rawActiveKey = "Agent:Main:Subagent:CHILD";
     const canonicalActiveKey = "agent:main:subagent:child";
     const store = makeStore([
@@ -434,8 +434,8 @@ describe("applyFileBackedSessionStoreMaintenance", () => {
 
   it("scopes active preservation by store and releases rows back to maintenance", async () => {
     const now = Date.now();
-    const activeStorePath = "/tmp/openclaw-sessions/active-store.json";
-    const maintainedStorePath = "/tmp/openclaw-sessions/maintained-store.json";
+    const activeStorePath = "/tmp/nova-sessions/active-store.json";
+    const maintainedStorePath = "/tmp/nova-sessions/maintained-store.json";
     const activeSessionId = "shared-session-id";
     const admission = await beginSessionWorkAdmission({
       scope: activeStorePath,

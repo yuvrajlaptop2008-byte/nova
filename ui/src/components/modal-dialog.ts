@@ -3,9 +3,9 @@ import "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 import type WaDialog from "@awesome.me/webawesome/dist/components/dialog/dialog.js";
 import { css, html } from "lit";
 import { property, query } from "lit/decorators.js";
-import { OpenClawLitElement } from "../lit/openclaw-element.ts";
+import { NovaLitElement } from "../lit/nova-element.ts";
 
-export class OpenClawModalDialog extends OpenClawLitElement {
+export class NovaModalDialog extends NovaLitElement {
   @property({ type: Boolean }) open = true;
   @property({ type: Boolean, reflect: true }) manual = false;
   @property() label = "";
@@ -23,13 +23,13 @@ export class OpenClawModalDialog extends OpenClawLitElement {
     }
 
     wa-dialog {
-      --width: min(var(--openclaw-modal-width, 540px), calc(100vw - 48px));
+      --width: min(var(--nova-modal-width, 540px), calc(100vw - 48px));
       --spacing: 0;
       --backdrop-filter: blur(4px);
     }
 
     wa-dialog::part(dialog) {
-      max-height: var(--openclaw-modal-max-height, calc(100dvh - 48px));
+      max-height: var(--nova-modal-max-height, calc(100dvh - 48px));
       padding: 0;
       border: 0;
       background: transparent;
@@ -211,12 +211,12 @@ export class OpenClawModalDialog extends OpenClawLitElement {
   }
 }
 
-if (!customElements.get("openclaw-modal-dialog")) {
-  customElements.define("openclaw-modal-dialog", OpenClawModalDialog);
+if (!customElements.get("nova-modal-dialog")) {
+  customElements.define("nova-modal-dialog", NovaModalDialog);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-modal-dialog": OpenClawModalDialog;
+    "nova-modal-dialog": NovaModalDialog;
   }
 }

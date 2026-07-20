@@ -4,7 +4,7 @@
  * auth profile store loading.
  */
 import { normalizeTrimmedStringList } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   resolveExternalCliAuthScopeFromConfig,
   type ExternalCliAuthScope,
@@ -15,23 +15,23 @@ export type ExternalCliAuthDiscovery =
   | {
       mode: "none";
       allowKeychainPrompt?: false;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
     }
   | {
       mode: "existing";
       allowKeychainPrompt?: boolean;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
     }
   | {
       mode: "scoped";
       allowKeychainPrompt?: boolean;
-      config?: OpenClawConfig;
+      config?: NovaConfig;
       providerIds?: Iterable<string>;
       profileIds?: Iterable<string>;
     };
 
 type ProviderAuthDiscoveryParams = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   provider: string;
   profileId?: string;
   preferredProfile?: string;
@@ -39,12 +39,12 @@ type ProviderAuthDiscoveryParams = {
 };
 
 type ConfigStatusDiscoveryParams = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   allowKeychainPrompt?: false;
 };
 
 type ProviderSetDiscoveryParams = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   providers: Iterable<string>;
   allowKeychainPrompt?: false;
 };
@@ -54,7 +54,7 @@ function normalizeStringList(values: Iterable<string | undefined>): string[] {
 }
 
 /** Disables external CLI auth discovery. */
-function externalCliDiscoveryNone(params?: { config?: OpenClawConfig }): ExternalCliAuthDiscovery {
+function externalCliDiscoveryNone(params?: { config?: NovaConfig }): ExternalCliAuthDiscovery {
   return {
     mode: "none",
     allowKeychainPrompt: false,
@@ -64,7 +64,7 @@ function externalCliDiscoveryNone(params?: { config?: OpenClawConfig }): Externa
 
 /** Allows external CLI auth discovery for specific providers and/or profiles. */
 export function externalCliDiscoveryScoped(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   providerIds?: Iterable<string>;
   profileIds?: Iterable<string>;
   allowKeychainPrompt?: boolean;
@@ -121,7 +121,7 @@ export function externalCliDiscoveryForProviders(
 }
 
 function externalCliDiscoveryFromScope(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   scope: ExternalCliAuthScope | undefined;
   allowKeychainPrompt: false;
 }): ExternalCliAuthDiscovery {

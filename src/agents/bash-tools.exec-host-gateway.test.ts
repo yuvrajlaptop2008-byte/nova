@@ -811,7 +811,7 @@ describe("processGatewayAllowlist", () => {
   });
 
   it("reviews and executes the same PATH-resolved executable", async () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-auto-review-path-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-auto-review-path-"));
     const shadowGit = path.join(tempDir, "git");
     fs.writeFileSync(shadowGit, "#!/bin/sh\nexit 0\n", { mode: 0o755 });
     try {
@@ -1445,7 +1445,7 @@ describe("processGatewayAllowlist", () => {
   });
 
   it("requests human approval when auto-review cannot resolve the executable", async () => {
-    const command = "openclaw-definitely-missing-executable --version";
+    const command = "nova-definitely-missing-executable --version";
     const { resolvedPath } = await configurePlanBackedCommand({ command });
     expect(resolvedPath).toBeUndefined();
 
@@ -1569,7 +1569,7 @@ describe("processGatewayAllowlist", () => {
     });
 
     const result = await runGatewayAllowlist({
-      command: "openclaw config set security.audit.suppressions '[]'",
+      command: "nova config set security.audit.suppressions '[]'",
       security: "full",
       ask: "on-miss",
     });
@@ -1588,7 +1588,7 @@ describe("processGatewayAllowlist", () => {
     });
 
     const result = await runGatewayAllowlist({
-      command: "openclaw config set security.audit.suppressions '[]'",
+      command: "nova config set security.audit.suppressions '[]'",
       security: "full",
       ask: "on-miss",
       autoReview: true,
@@ -1610,7 +1610,7 @@ describe("processGatewayAllowlist", () => {
     });
 
     await runGatewayAllowlist({
-      command: "openclaw config set security.audit.suppressions '[]'",
+      command: "nova config set security.audit.suppressions '[]'",
       security: "full",
       ask: "off",
     });
@@ -1624,7 +1624,7 @@ describe("processGatewayAllowlist", () => {
       analysisOk: true,
       allowlistSatisfied: true,
       segments: [
-        { resolution: null, argv: ["openclaw", "config", "get", "security.audit.suppressions"] },
+        { resolution: null, argv: ["nova", "config", "get", "security.audit.suppressions"] },
       ],
       segmentAllowlistEntries: [],
       segmentSatisfiedBy: [null],
@@ -1637,7 +1637,7 @@ describe("processGatewayAllowlist", () => {
     });
 
     await runGatewayAllowlist({
-      command: "openclaw config get security.audit.suppressions",
+      command: "nova config get security.audit.suppressions",
       security: "full",
       ask: "on-miss",
     });
@@ -1653,7 +1653,7 @@ describe("processGatewayAllowlist", () => {
       segments: [
         {
           resolution: null,
-          argv: ["openclaw", "--profile", "rescue", "config", "get", "security.audit.suppressions"],
+          argv: ["nova", "--profile", "rescue", "config", "get", "security.audit.suppressions"],
         },
       ],
       segmentAllowlistEntries: [],
@@ -1667,7 +1667,7 @@ describe("processGatewayAllowlist", () => {
     });
 
     await runGatewayAllowlist({
-      command: "openclaw --profile rescue config get security.audit.suppressions",
+      command: "nova --profile rescue config get security.audit.suppressions",
       security: "full",
       ask: "on-miss",
     });
@@ -1681,10 +1681,10 @@ describe("processGatewayAllowlist", () => {
       analysisOk: true,
       allowlistSatisfied: true,
       segments: [
-        { resolution: null, argv: ["openclaw", "config", "get", "security.audit.suppressions"] },
+        { resolution: null, argv: ["nova", "config", "get", "security.audit.suppressions"] },
         {
           resolution: null,
-          argv: ["openclaw", "config", "set", "security.audit.suppressions", "[]"],
+          argv: ["nova", "config", "set", "security.audit.suppressions", "[]"],
         },
       ],
       segmentAllowlistEntries: [],
@@ -1698,7 +1698,7 @@ describe("processGatewayAllowlist", () => {
 
     const result = await runGatewayAllowlist({
       command:
-        "openclaw config get security.audit.suppressions; openclaw config set security.audit.suppressions '[]'",
+        "nova config get security.audit.suppressions; nova config set security.audit.suppressions '[]'",
       security: "full",
       ask: "on-miss",
     });
@@ -1713,7 +1713,7 @@ describe("processGatewayAllowlist", () => {
       analysisOk: true,
       allowlistSatisfied: false,
       segments: [
-        { resolution: null, argv: ["openclaw", "config", "get", "security.audit.suppressions"] },
+        { resolution: null, argv: ["nova", "config", "get", "security.audit.suppressions"] },
       ],
       segmentAllowlistEntries: [],
     });
@@ -1726,7 +1726,7 @@ describe("processGatewayAllowlist", () => {
 
     const result = await runGatewayAllowlist({
       command:
-        "openclaw config get security.audit.suppressions; openclaw config set security.audit.suppressions '[]'",
+        "nova config get security.audit.suppressions; nova config set security.audit.suppressions '[]'",
       security: "full",
       ask: "on-miss",
     });
@@ -1742,14 +1742,14 @@ describe("processGatewayAllowlist", () => {
       allowlistSatisfied: false,
       segments: [
         {
-          raw: "openclaw config get security.audit.suppressions",
+          raw: "nova config get security.audit.suppressions",
           resolution: null,
-          argv: ["openclaw", "config", "get", "security.audit.suppressions"],
+          argv: ["nova", "config", "get", "security.audit.suppressions"],
         },
         {
-          raw: "openclaw config patch --stdin <<'EOF'",
+          raw: "nova config patch --stdin <<'EOF'",
           resolution: null,
-          argv: ["openclaw", "config", "patch", "--stdin"],
+          argv: ["nova", "config", "patch", "--stdin"],
         },
       ],
       segmentAllowlistEntries: [],
@@ -1762,7 +1762,7 @@ describe("processGatewayAllowlist", () => {
     });
 
     const result = await runGatewayAllowlist({
-      command: `openclaw config get security.audit.suppressions; openclaw config patch --stdin <<'EOF'
+      command: `nova config get security.audit.suppressions; nova config patch --stdin <<'EOF'
 {"security":{"audit":{"suppressions":[]}}}
 EOF`,
       security: "full",
@@ -1853,11 +1853,11 @@ EOF`,
       durationMs: 12,
       timedOut: false,
       aggregated: JSON.stringify({
-        path: "/tmp/openclaw-diagnostics.zip",
+        path: "/tmp/nova-diagnostics.zip",
         bytes: 1234,
         manifest: {
           generatedAt: "2026-04-28T20:58:29.311Z",
-          openclawVersion: "2026.4.27",
+          novaVersion: "2026.4.27",
           contents: [
             { path: "diagnostics.json", bytes: 100 },
             { path: "summary.md", bytes: 200 },
@@ -1888,7 +1888,7 @@ EOF`,
     );
 
     const result = await runGatewayAllowlist({
-      command: "openclaw gateway diagnostics export --json",
+      command: "nova gateway diagnostics export --json",
       trigger: "diagnostics",
       approvalFollowupMode: "direct",
       approvalFollowup,
@@ -1905,7 +1905,7 @@ EOF`,
     expect(followupTarget?.direct).toBe(true);
     const followupText = requireSentFollowupText(0);
     expect(followupText).toContain("Diagnostics export created.");
-    expect(followupText).toContain("Path: /tmp/openclaw-diagnostics.zip");
+    expect(followupText).toContain("Path: /tmp/nova-diagnostics.zip");
     expect(followupText).toContain("Contents (2 files):");
     expect(followupText).toContain("OpenAI Codex harness:");
     expect(followupText).toContain("Codex diagnostics sent to OpenAI servers:");
@@ -1943,10 +1943,10 @@ EOF`,
     });
 
     const result = await runGatewayAllowlist({
-      command: "openclaw sessions export-trajectory --json",
+      command: "nova sessions export-trajectory --json",
       approvalFollowupMode: "agent",
       sessionId: "approval-session",
-      sessionStore: "/tmp/openclaw-sessions.json",
+      sessionStore: "/tmp/nova-sessions.json",
       turnSourceChannel: "webchat",
     });
 
@@ -1957,7 +1957,7 @@ EOF`,
     expect(requireBuildFollowupTargetInput(0)).toMatchObject({
       direct: false,
       expectedSessionId: "approval-session",
-      sessionStore: "/tmp/openclaw-sessions.json",
+      sessionStore: "/tmp/nova-sessions.json",
     });
     expect(requireSentFollowupTarget(0)?.direct).toBe(false);
     expect(requireSentFollowupText(0)).toContain("done");

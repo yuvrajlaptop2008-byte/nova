@@ -1,4 +1,4 @@
-/** Implementation of `openclaw models status`. */
+/** Implementation of `nova models status`. */
 import path from "node:path";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { colorize, theme } from "../../../packages/terminal-core/src/theme.js";

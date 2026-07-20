@@ -27,7 +27,7 @@ import { resolveChannelResetConfig, resolveSessionResetType } from "../../config
 import { listSessionEntries } from "../../config/sessions/session-accessor.js";
 import { resolveSessionKey } from "../../config/sessions/session-key.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   buildAgentMainSessionKey,
   classifySessionKeyShape,
@@ -126,7 +126,7 @@ export function buildExplicitSessionIdSessionKey(params: {
 }
 
 function resolveLegacyMainStoreSessionForDefaultAgent(opts: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   defaultAgentId: string;
   mainKey: string;
   sessionKey?: string;
@@ -188,7 +188,7 @@ function resolveLegacyMainStoreSessionForDefaultAgent(opts: {
 }
 
 function collectSessionIdMatchesForRequest(opts: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionStore: Record<string, SessionEntry>;
   storePath: string;
   storeAgentId?: string;
@@ -250,7 +250,7 @@ function collectSessionIdMatchesForRequest(opts: {
  * into that agent's main session key.
  */
 export function resolveStoredSessionKeyForSessionId(opts: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionId: string;
   agentId?: string;
 }): SessionKeyResolution {
@@ -280,7 +280,7 @@ export function resolveStoredSessionKeyForSessionId(opts: {
 
 /** Resolves the session key/store targeted by one command request. */
 export function resolveSessionKeyForRequest(opts: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   to?: string;
   sessionId?: string;
   sessionKey?: string;
@@ -385,7 +385,7 @@ export function resolveSessionKeyForRequest(opts: {
 
 /** Resolves or creates the session used by one agent command request. */
 export function resolveSession(opts: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   to?: string;
   sessionId?: string;
   sessionKey?: string;

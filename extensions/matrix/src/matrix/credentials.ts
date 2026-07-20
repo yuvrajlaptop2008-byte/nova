@@ -1,5 +1,5 @@
 // Matrix plugin module implements credentials behavior.
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
+import { normalizeAccountId } from "nova/plugin-sdk/account-id";
 import {
   isMatrixCredentialRevocation,
   matrixCredentialsStoreKey,

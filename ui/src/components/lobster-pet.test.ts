@@ -45,7 +45,7 @@ type LobsterPetElement = HTMLElement & {
 };
 
 function createPet(seed: number, mode: LobsterPetMode = "idle"): LobsterPetElement {
-  const element = document.createElement("openclaw-lobster-pet") as LobsterPetElement;
+  const element = document.createElement("nova-lobster-pet") as LobsterPetElement;
   element.seed = seed;
   element.mode = mode;
   document.body.append(element);
@@ -453,7 +453,7 @@ describe("lobster pet element", () => {
     vi.setSystemTime(new Date("2026-07-09T12:00:00"));
     vi.stubGlobal("localStorage", window.localStorage);
     localStorage.setItem(
-      "openclaw.control.lobsterpet.familiarity.v1",
+      "nova.control.lobsterpet.familiarity.v1",
       JSON.stringify({ visits: 30, shoos: 0 }),
     );
     const element = createPet(42);
@@ -476,9 +476,7 @@ describe("lobster pet element", () => {
       .querySelector(".lobster-pet:not(.lobster-pet--shell)")
       ?.dispatchEvent(new Event("contextmenu", { cancelable: true }));
     await element.updateComplete;
-    const raw = JSON.parse(
-      localStorage.getItem("openclaw.control.lobsterpet.familiarity.v1") ?? "{}",
-    );
+    const raw = JSON.parse(localStorage.getItem("nova.control.lobsterpet.familiarity.v1") ?? "{}");
     expect(raw.shoos).toBe(1);
   });
 
@@ -618,14 +616,14 @@ describe("lobster pet element", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-09T12:00:00"));
     vi.stubGlobal("localStorage", window.localStorage);
-    localStorage.setItem("openclaw.control.lobsterpet.gatewayVersion.v1", "2026.6.1");
+    localStorage.setItem("nova.control.lobsterpet.gatewayVersion.v1", "2026.6.1");
     const element = createPet(42);
     element.gatewayVersion = "2026.7.1";
     await arrive(element);
 
     expect(element.querySelector(".lob-bindle")).not.toBeNull();
     expect(element.querySelector(".lobster-pet")?.getAttribute("title")).toContain("just moved in");
-    expect(localStorage.getItem("openclaw.control.lobsterpet.gatewayVersion.v1")).toBe("2026.7.1");
+    expect(localStorage.getItem("nova.control.lobsterpet.gatewayVersion.v1")).toBe("2026.7.1");
   });
 
   it("travels light on first sighting and on same-version reloads", async () => {
@@ -637,7 +635,7 @@ describe("lobster pet element", () => {
     first.gatewayVersion = "2026.7.1";
     await arrive(first);
     expect(first.querySelector(".lob-bindle")).toBeNull();
-    expect(localStorage.getItem("openclaw.control.lobsterpet.gatewayVersion.v1")).toBe("2026.7.1");
+    expect(localStorage.getItem("nova.control.lobsterpet.gatewayVersion.v1")).toBe("2026.7.1");
     first.remove();
 
     // Same version on the next load: still no bindle.
@@ -687,7 +685,7 @@ describe("lobster pet element", () => {
     vi.stubGlobal("localStorage", window.localStorage);
     const look = createLobsterPetLook(42, new Date("2026-07-09T12:00:00"));
     localStorage.setItem(
-      "openclaw.control.lobsterdex.v1",
+      "nova.control.lobsterdex.v1",
       JSON.stringify({
         [look.palette.id]: {
           firstSeenAt: new Date("2025-07-09T12:00:00").getTime(),

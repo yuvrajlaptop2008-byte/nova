@@ -5,7 +5,7 @@ import { expect } from "vitest";
 /** Platform flag shared by config backup permission tests. */
 export const IS_WINDOWS = process.platform === "win32";
 
-export function resolveConfigPathFromTempState(fileName = "openclaw.json"): string {
+export function resolveConfigPathFromTempState(fileName = "nova.json"): string {
   const stateDir = process.env.NOVA_STATE_DIR?.trim();
   if (!stateDir) {
     throw new Error("Expected NOVA_STATE_DIR to be set by withTempHome");

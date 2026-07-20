@@ -17,7 +17,7 @@ export type GatewayEvent = {
 };
 
 /** Minimal transport interface consumed by the Nova SDK client. */
-export type OpenClawTransport = {
+export type NovaTransport = {
   request<T = unknown>(
     method: string,
     params?: unknown,
@@ -28,14 +28,14 @@ export type OpenClawTransport = {
 };
 
 /** Transport variant that requires an explicit connection step. */
-export type ConnectableOpenClawTransport = OpenClawTransport & {
+export type ConnectableNovaTransport = NovaTransport & {
   connect(): Promise<void>;
 };
 
 /** Desired runtime/harness selection for future per-run execution routing. */
 export type RuntimeSelection =
   | "auto"
-  | { type: "embedded"; id: "openclaw" | "codex" | (string & {}) }
+  | { type: "embedded"; id: "nova" | "codex" | (string & {}) }
   | { type: "cli"; id: "claude-cli" | (string & {}) }
   | { type: "acp"; harness: "claude" | "cursor" | "gemini" | "opencode" | (string & {}) }
   | { type: "managed"; provider: "local" | "node" | "testbox" | "cloud" | (string & {}) };
@@ -271,7 +271,7 @@ export type RunResult = {
 };
 
 /** Stable SDK event type taxonomy derived from raw Gateway events. */
-export type OpenClawEventType =
+export type NovaEventType =
   | "run.created"
   | "run.queued"
   | "run.started"
@@ -302,11 +302,11 @@ export type OpenClawEventType =
   | "raw";
 
 /** Normalized SDK event with common run/session/task metadata. */
-export type OpenClawEvent<TData = unknown> = {
+export type NovaEvent<TData = unknown> = {
   version: 1;
   id: string;
   ts: number;
-  type: OpenClawEventType;
+  type: NovaEventType;
   runId?: string;
   sessionId?: string;
   sessionKey?: string;

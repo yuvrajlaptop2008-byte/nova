@@ -32,7 +32,7 @@ import {
 } from "../config/sessions/paths.js";
 import { loadSessionStore } from "../config/sessions/store-load.js";
 import { updateSessionStore } from "../config/sessions/store.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { HealthFinding, HealthRepairEffect } from "../flows/health-checks.js";
 import { resolveRequiredHomeDir } from "../infra/home-dir.js";
 import { resolveMemoryBackendConfig } from "../memory-host-sdk/engine-storage.js";
@@ -174,7 +174,7 @@ function formatOrphanAgentDirPreview(entries: OrphanAgentDir[], limit = 3): stri
   return labels.join(", ");
 }
 
-function listOrphanAgentDirs(cfg: OpenClawConfig, stateDir: string): OrphanAgentDir[] {
+function listOrphanAgentDirs(cfg: NovaConfig, stateDir: string): OrphanAgentDir[] {
   const configuredIds = new Set<string>();
   configuredIds.add(normalizeAgentId(resolveDefaultAgentId(cfg)));
   for (const entry of listAgentEntries(cfg)) {
@@ -313,7 +313,7 @@ function findOtherStateDirs(stateDir: string): string[] {
       if (entry.name.startsWith(".")) {
         continue;
       }
-      const candidates = [".openclaw"].map((dir) => path.resolve(root, entry.name, dir));
+      const candidates = [".nova"].map((dir) => path.resolve(root, entry.name, dir));
       for (const candidate of candidates) {
         if (candidate === resolvedState) {
           continue;
@@ -724,7 +724,7 @@ function isSlashRoutingSessionKey(sessionKey: string): boolean {
   return /^[^:]+:slash:[^:]+(?:$|:)/.test(scoped);
 }
 
-function shouldRequireOAuthDir(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): boolean {
+function shouldRequireOAuthDir(cfg: NovaConfig, env: NodeJS.ProcessEnv): boolean {
   if (env.NOVA_OAUTH_DIR?.trim()) {
     return true;
   }
@@ -760,13 +760,13 @@ function shouldRequireOAuthDir(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): boo
   return false;
 }
 
-function shouldSuppressOrphanTranscriptWarning(cfg: OpenClawConfig, agentId: string): boolean {
+function shouldSuppressOrphanTranscriptWarning(cfg: NovaConfig, agentId: string): boolean {
   const backendConfig = resolveMemoryBackendConfig({ cfg, agentId });
   return backendConfig?.backend === "qmd" && backendConfig.qmd?.sessions.enabled === true;
 }
 
 export function detectStateIntegrityHealthIssues(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   params?: {
     configPath?: string;
     env?: NodeJS.ProcessEnv;
@@ -894,7 +894,7 @@ export function stateIntegrityIssueToHealthFinding(
         severity: "warning",
         message: `State directory is under macOS cloud-synced storage (${issue.storage}), which can cause slow I/O and sync races.`,
         path: issue.path,
-        fixHint: "Move NOVA_STATE_DIR to local non-synced storage such as ~/.openclaw.",
+        fixHint: "Move NOVA_STATE_DIR to local non-synced storage such as ~/.nova.",
       };
     case "linux-sd-state-dir":
       return {
@@ -921,7 +921,7 @@ export function stateIntegrityIssueToHealthFinding(
         message:
           "State directory is missing. Sessions, credentials, logs, and config are stored there.",
         path: issue.path,
-        fixHint: "Run `openclaw doctor --fix` to create the state directory.",
+        fixHint: "Run `nova doctor --fix` to create the state directory.",
       };
     case "state-dir-not-writable":
       return {
@@ -931,7 +931,7 @@ export function stateIntegrityIssueToHealthFinding(
           ? `State directory is not writable. ${issue.hint}`
           : "State directory is not writable.",
         path: issue.path,
-        fixHint: "Run `openclaw doctor --fix` to repair state directory permissions.",
+        fixHint: "Run `nova doctor --fix` to repair state directory permissions.",
       };
     case "state-dir-too-open":
       return {
@@ -939,7 +939,7 @@ export function stateIntegrityIssueToHealthFinding(
         severity: "warning",
         message: "State directory permissions are too open. Recommend chmod 700.",
         path: issue.path,
-        fixHint: "Run `openclaw doctor --fix` to tighten state directory permissions.",
+        fixHint: "Run `nova doctor --fix` to tighten state directory permissions.",
       };
     case "config-file-too-open":
       return {
@@ -947,7 +947,7 @@ export function stateIntegrityIssueToHealthFinding(
         severity: "warning",
         message: "Config file is group/world readable. Recommend chmod 600.",
         path: issue.path,
-        fixHint: "Run `openclaw doctor --fix` to tighten config file permissions.",
+        fixHint: "Run `nova doctor --fix` to tighten config file permissions.",
       };
     case "missing-runtime-dir":
       return {
@@ -955,7 +955,7 @@ export function stateIntegrityIssueToHealthFinding(
         severity: "error",
         message: `${issue.label} is missing.`,
         path: issue.path,
-        fixHint: "Run `openclaw doctor --fix` to create missing runtime state directories.",
+        fixHint: "Run `nova doctor --fix` to create missing runtime state directories.",
       };
     case "runtime-dir-not-writable":
       return {
@@ -965,7 +965,7 @@ export function stateIntegrityIssueToHealthFinding(
           ? `${issue.label} is not writable. ${issue.hint}`
           : `${issue.label} is not writable.`,
         path: issue.path,
-        fixHint: "Run `openclaw doctor --fix` to repair runtime state directory permissions.",
+        fixHint: "Run `nova doctor --fix` to repair runtime state directory permissions.",
       };
   }
   return assertNeverStateIntegrityIssue(issue);
@@ -1032,7 +1032,7 @@ function assertNeverStateIntegrityIssue(issue: never): never {
 
 /** Emits state integrity warnings and applies selected runtime repairs. */
 export async function noteStateIntegrity(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   prompter: DoctorPrompterLike,
   configPath?: string,
 ) {
@@ -1042,7 +1042,7 @@ export async function noteStateIntegrity(
   const env = process.env;
   const homedir = () => resolveRequiredHomeDir(env, os.homedir);
   const stateDir = resolveStateDir(env, homedir);
-  const defaultStateDir = path.join(homedir(), ".openclaw");
+  const defaultStateDir = path.join(homedir(), ".nova");
   const oauthDir = resolveOAuthDir(env, stateDir);
   const agentId = resolveDefaultAgentId(cfg);
   const sessionsDir = resolveSessionTranscriptsDirForAgent(agentId, env, homedir);
@@ -1065,8 +1065,8 @@ export async function noteStateIntegrity(
       [
         `- State directory is under macOS cloud-synced storage (${displayStateDir}; ${cloudSyncedStateDir.storage}).`,
         "- This can cause slow I/O and sync/lock races for sessions and credentials.",
-        "- Prefer a local non-synced state dir (for example: ~/.openclaw).",
-        `  Set locally: NOVA_STATE_DIR=~/.openclaw ${formatCliCommand("openclaw doctor")}`,
+        "- Prefer a local non-synced state dir (for example: ~/.nova).",
+        `  Set locally: NOVA_STATE_DIR=~/.nova ${formatCliCommand("nova doctor")}`,
       ].join("\n"),
     );
   }
@@ -1313,9 +1313,9 @@ export async function noteStateIntegrity(
       warnings.push(
         [
           `- ${missing.length}/${recentTranscriptCandidates.length} recent sessions are missing transcripts.`,
-          `  Verify sessions in store: ${formatCliCommand(`openclaw sessions --store "${absoluteStorePath}"`)}`,
-          `  Preview cleanup impact: ${formatCliCommand(`openclaw sessions cleanup --store "${absoluteStorePath}" --dry-run --fix-missing`)}`,
-          `  Prune missing entries: ${formatCliCommand(`openclaw sessions cleanup --store "${absoluteStorePath}" --enforce --fix-missing`)}`,
+          `  Verify sessions in store: ${formatCliCommand(`nova sessions --store "${absoluteStorePath}"`)}`,
+          `  Preview cleanup impact: ${formatCliCommand(`nova sessions cleanup --store "${absoluteStorePath}" --dry-run --fix-missing`)}`,
+          `  Prune missing entries: ${formatCliCommand(`nova sessions cleanup --store "${absoluteStorePath}" --enforce --fix-missing`)}`,
         ].join("\n"),
       );
     }
@@ -1333,7 +1333,7 @@ export async function noteStateIntegrity(
             .slice(0, 3)
             .map(([key]) => key)
             .join(", ")}`,
-          `  Fix: ${formatCliCommand("openclaw tasks maintenance --apply")}`,
+          `  Fix: ${formatCliCommand("nova tasks maintenance --apply")}`,
         ].join("\n"),
       );
       const repairWedged = await prompter.confirmRuntimeRepair({
@@ -1498,7 +1498,7 @@ export function collectWorkspaceBackupTip(workspaceDir: string): string | null {
   if (fs.existsSync(gitMarker)) {
     return null;
   }
-  return "- Tip: back up the agent workspace in a private git repo; keep ~/.openclaw out of git (credentials, sessions). Details: /concepts/agent-workspace#git-backup-recommended";
+  return "- Tip: back up the agent workspace in a private git repo; keep ~/.nova out of git (credentials, sessions). Details: /concepts/agent-workspace#git-backup-recommended";
 }
 
 /** Emits the workspace backup tip when applicable. */

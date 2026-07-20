@@ -2,13 +2,13 @@
 import {
   shouldUseEnvHttpProxyForUrl,
   withTrustedEnvProxyGuardedFetchMode,
-} from "openclaw/plugin-sdk/fetch-runtime";
+} from "nova/plugin-sdk/fetch-runtime";
 import {
   positiveSecondsToSafeMilliseconds,
   resolveExpiresAtMsFromDurationSeconds,
-} from "openclaw/plugin-sdk/number-runtime";
-import { readResponseTextLimited } from "openclaw/plugin-sdk/provider-http";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { readResponseTextLimited } from "nova/plugin-sdk/provider-http";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 import { resolveCodexAccessTokenExpiry } from "./openai-chatgpt-auth-identity.js";
 import { trimNonEmptyString } from "./openai-chatgpt-shared.js";
 
@@ -26,9 +26,9 @@ function resolveOpenAICodexDeviceCodeHeaders(contentType: string): Record<string
   const version = process.env.NOVA_VERSION?.trim();
   return {
     "Content-Type": contentType,
-    originator: "openclaw",
+    originator: "nova",
     ...(version ? { version } : {}),
-    "User-Agent": version ? `openclaw/${version}` : "openclaw",
+    "User-Agent": version ? `nova/${version}` : "nova",
   };
 }
 

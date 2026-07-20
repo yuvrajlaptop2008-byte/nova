@@ -10,7 +10,7 @@ export function teamsMeetingStatusCallSource(): string {
     const media = [...document.querySelectorAll("audio, video")].filter(
       (element) =>
         typeof element.setSinkId === "function" &&
-        !String(element.id || "").startsWith("openclaw-teams-audio-output-"),
+        !String(element.id || "").startsWith("nova-teams-audio-output-"),
     );
     if (media.length > 0) {
       try {
@@ -22,8 +22,8 @@ export function teamsMeetingStatusCallSource(): string {
             element.srcObject?.getAudioTracks?.().some((track) => track.readyState === "live")
               ? element.srcObject
               : undefined;
-          const allBridgeEntries = Array.isArray(window.__openclawTeamsAudioOutputs)
-            ? window.__openclawTeamsAudioOutputs
+          const allBridgeEntries = Array.isArray(window.__novaTeamsAudioOutputs)
+            ? window.__novaTeamsAudioOutputs
             : [];
           const retainedBridgeEntries = allBridgeEntries.filter((entry) => !bridgeOwnedBySession(entry));
           const previousBridgeEntries = allBridgeEntries.filter(bridgeOwnedBySession);
@@ -157,7 +157,7 @@ export function teamsMeetingStatusCallSource(): string {
             if (!elementRouted && stream) {
               if (!entry && canMutateSession) {
                 const bridge = document.createElement("audio");
-                bridge.id = "openclaw-teams-audio-output-" + bridgeEntries.length;
+                bridge.id = "nova-teams-audio-output-" + bridgeEntries.length;
                 bridge.autoplay = false;
                 bridge.hidden = true;
                 bridge.srcObject = stream;
@@ -210,9 +210,9 @@ export function teamsMeetingStatusCallSource(): string {
               ...suspendedBySource.values(),
             ];
             if (nextBridgeEntries.length > 0) {
-              window.__openclawTeamsAudioOutputs = nextBridgeEntries;
+              window.__novaTeamsAudioOutputs = nextBridgeEntries;
             } else {
-              delete window.__openclawTeamsAudioOutputs;
+              delete window.__novaTeamsAudioOutputs;
             }
           }
           audioOutputRouted = routed.length > 0 && routed.every(Boolean);
@@ -274,7 +274,7 @@ export function teamsMeetingStatusCallSource(): string {
   let lastCaptionText;
   let recentTranscript = [];
   const captionState = (() => {
-    let active = window.__openclawTeamsCaptions;
+    let active = window.__novaTeamsCaptions;
     const activeOwnedByRequest = Boolean(
       !active || (sessionId && (!active.sessionId || active.sessionId === sessionId))
     );
@@ -299,14 +299,14 @@ export function teamsMeetingStatusCallSource(): string {
       archiveFinalizedCaptions(active);
       if (active.settleTimer !== undefined) clearTimeout(active.settleTimer);
       active.observer?.disconnect?.();
-      delete window.__openclawTeamsCaptions;
+      delete window.__novaTeamsCaptions;
       active = undefined;
     }
     if (!captureCaptions) {
       if (!canMutateSession) return undefined;
       if (active?.settleTimer !== undefined) clearTimeout(active.settleTimer);
       active?.observer?.disconnect?.();
-      if (active) delete window.__openclawTeamsCaptions;
+      if (active) delete window.__novaTeamsCaptions;
       return undefined;
     }
     if (!inCall && !active) return undefined;
@@ -314,7 +314,7 @@ export function teamsMeetingStatusCallSource(): string {
     if (!active) {
       if (active?.settleTimer !== undefined) clearTimeout(active.settleTimer);
       active?.observer?.disconnect?.();
-      window.__openclawTeamsCaptions = {
+      window.__novaTeamsCaptions = {
         sessionId,
         identity: expectedIdentity,
         epoch: crypto.randomUUID(),
@@ -328,7 +328,7 @@ export function teamsMeetingStatusCallSource(): string {
         visible: [],
       };
     }
-    return window.__openclawTeamsCaptions;
+    return window.__novaTeamsCaptions;
   })();
   const normalizeCaption = (speaker, captionText) => {
     if (!captionState) return undefined;
@@ -394,7 +394,7 @@ export function teamsMeetingStatusCallSource(): string {
     if (captionState.settleTimer !== undefined) clearTimeout(captionState.settleTimer);
     const pendingState = captionState;
     pendingState.settleTimer = setTimeout(() => {
-      if (window.__openclawTeamsCaptions !== pendingState) return;
+      if (window.__novaTeamsCaptions !== pendingState) return;
       commitCaptionLines(pendingState, pendingState.visible);
       retainSettledCaptionLines(pendingState, pendingState.visible);
       pendingState.visible = [];
@@ -405,10 +405,10 @@ export function teamsMeetingStatusCallSource(): string {
     if (
       !captionState ||
       captionState.finalized === true ||
-      window.__openclawTeamsCaptions !== captionState
+      window.__novaTeamsCaptions !== captionState
     ) return false;
     const observedIdentity = meetingIdentity(location.href);
-    const observedMeeting = window.__openclawTeamsMeeting;
+    const observedMeeting = window.__novaTeamsMeeting;
     const identityConflicts = Boolean(
       observedIdentity && expectedIdentity && observedIdentity !== expectedIdentity
     );

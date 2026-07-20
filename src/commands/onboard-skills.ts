@@ -6,7 +6,7 @@
  */
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveBrewExecutable } from "../infra/brew.js";
 import { isContainerEnvironment } from "../infra/container-environment.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -68,8 +68,7 @@ function formatSkillHint(skill: {
 const testing = { formatSkillHint, summarizeInstallFailure };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.onboardSkillsTestApi")] =
-    testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.onboardSkillsTestApi")] = testing;
 }
 
 const SKIP_REASON_LABELS = {
@@ -120,11 +119,11 @@ function isBrewOnlyInstallableSkill(skill: {
 function isTrustedAutoInstallableSkill(skill: { bundled: boolean; source: string }): boolean {
   // Onboarding can auto-run bundled recipes without another prompt. Workspace
   // skill metadata is mutable project input, so those installs stay explicit.
-  return skill.bundled && skill.source === "openclaw-bundled";
+  return skill.bundled && skill.source === "nova-bundled";
 }
 
 function resolveDefaultNodeManager(
-  config: OpenClawConfig,
+  config: NovaConfig,
   requested: NodeManagerChoice | undefined,
   runtime: RuntimeEnv,
 ): NodeManagerChoice {
@@ -142,12 +141,12 @@ function resolveDefaultNodeManager(
 
 /** Runs the interactive skills setup step and returns the updated config. */
 export async function setupSkills(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   workspaceDir: string,
   runtime: RuntimeEnv,
   prompter: WizardPrompter,
   options: { nodeManager?: NodeManagerChoice } = {},
-): Promise<OpenClawConfig> {
+): Promise<NovaConfig> {
   const report = buildWorkspaceSkillStatus(workspaceDir, { config: cfg });
   const eligible = report.skills.filter((s) => s.eligible);
   const unsupportedOs = report.skills.filter(
@@ -247,13 +246,13 @@ export async function setupSkills(
       t("wizard.skills.manualPrereqsTitle"),
     );
   }
-  let next: OpenClawConfig = cfg;
+  let next: NovaConfig = cfg;
   if (installable.length === 0 && missing.length === 0) {
     await prompter.note(
       [
         "No missing skill dependencies to install.",
-        `To inspect available skills, run: ${formatCliCommand("openclaw skills list --verbose")}`,
-        `To check skill status, run: ${formatCliCommand("openclaw skills check")}`,
+        `To inspect available skills, run: ${formatCliCommand("nova skills list --verbose")}`,
+        `To check skill status, run: ${formatCliCommand("nova skills check")}`,
       ].join("\n"),
       t("wizard.skills.allReadyTitle") ?? "All skills ready",
     );
@@ -295,7 +294,7 @@ export async function setupSkills(
         continue;
       }
       // Onboarding installs the primary recipe only; alternative recipes remain
-      // visible through `openclaw skills list --verbose`.
+      // visible through `nova skills list --verbose`.
       const spin = prompter.progress(t("wizard.skills.installing", { name: target.name }));
       const result = await installSkill({
         workspaceDir,
@@ -346,7 +345,7 @@ export async function setupSkills(
         runtime.log(result.stdout.trim());
       }
       runtime.log(
-        `Tip: run \`${formatCliCommand("openclaw doctor")}\` to review skills + requirements.`,
+        `Tip: run \`${formatCliCommand("nova doctor")}\` to review skills + requirements.`,
       );
       runtime.log(t("wizard.skills.docsLine"));
     }

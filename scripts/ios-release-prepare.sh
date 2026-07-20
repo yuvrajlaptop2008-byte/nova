@@ -11,7 +11,7 @@ Prepares local App Store release inputs without touching local signing overrides
 - writes apps/ios/build/AppStoreRelease.xcconfig with canonical bundle IDs
 - configures the release build for relay-backed APNs registration
 - configures manual App Store distribution signing with pinned provisioning profiles
-- regenerates apps/ios/OpenClaw.xcodeproj via xcodegen
+- regenerates apps/ios/Nova.xcodeproj via xcodegen
 EOF
 }
 
@@ -122,7 +122,7 @@ if [[ -z "${TEAM_ID}" ]]; then
 fi
 
 if [[ "${TEAM_ID}" != "${CANONICAL_TEAM_ID}" ]]; then
-  echo "iOS App Store release must use canonical OpenClaw Team ID ${CANONICAL_TEAM_ID}; got ${TEAM_ID}." >&2
+  echo "iOS App Store release must use canonical Nova Team ID ${CANONICAL_TEAM_ID}; got ${TEAM_ID}." >&2
   exit 1
 fi
 
@@ -132,7 +132,7 @@ if [[ -n "${NOVA_PUSH_RELAY_BASE_URL:-}" || -n "${IOS_PUSH_RELAY_BASE_URL:-}" ]]
 fi
 
 source "${ROOT_DIR}/scripts/lib/build-metadata.sh"
-RELEASE_GIT_COMMIT="$(NOVA_REQUIRE_BUILD_METADATA=1 openclaw_resolve_git_commit "${ROOT_DIR}")"
+RELEASE_GIT_COMMIT="$(NOVA_REQUIRE_BUILD_METADATA=1 nova_resolve_git_commit "${ROOT_DIR}")"
 bash "${RELEASE_SOURCE_HELPER}" --root "${ROOT_DIR}" --expected-commit "${RELEASE_GIT_COMMIT}"
 export GIT_COMMIT="${RELEASE_GIT_COMMIT}"
 
@@ -166,11 +166,11 @@ write_generated_file "${RELEASE_XCCONFIG}" <<EOF
 ${RELEASE_SIGNING_XCCONFIG}
 NOVA_DEVELOPMENT_TEAM = ${TEAM_ID}
 NOVA_IOS_SELECTED_TEAM = ${TEAM_ID}
-NOVA_APP_BUNDLE_ID = ai.openclawfoundation.app
-NOVA_SHARE_BUNDLE_ID = ai.openclawfoundation.app.share
-NOVA_ACTIVITY_WIDGET_BUNDLE_ID = ai.openclawfoundation.app.activitywidget
-NOVA_WATCH_APP_BUNDLE_ID = ai.openclawfoundation.app.watchkitapp
-NOVA_CODE_SIGN_ENTITLEMENTS = Sources/OpenClawAppAttest.entitlements
+NOVA_APP_BUNDLE_ID = ai.novafoundation.app
+NOVA_SHARE_BUNDLE_ID = ai.novafoundation.app.share
+NOVA_ACTIVITY_WIDGET_BUNDLE_ID = ai.novafoundation.app.activitywidget
+NOVA_WATCH_APP_BUNDLE_ID = ai.novafoundation.app.watchkitapp
+NOVA_CODE_SIGN_ENTITLEMENTS = Sources/NovaAppAttest.entitlements
 NOVA_APNS_ENTITLEMENT_ENVIRONMENT = production
 NOVA_APP_ATTEST_ENVIRONMENT = production
 NOVA_PUSH_MODE = appStore

@@ -3,26 +3,26 @@ import {
   buildLegacyDmAccountAllowlistAdapter,
   createAccountScopedAllowlistNameResolver,
   createNestedAllowlistOverrideResolver,
-} from "openclaw/plugin-sdk/allowlist-config-edit";
+} from "nova/plugin-sdk/allowlist-config-edit";
 import type {
   ChannelMessageActionAdapter,
   ChannelMessageToolDiscovery,
-} from "openclaw/plugin-sdk/channel-contract";
-import { createChatChannelPlugin } from "openclaw/plugin-sdk/channel-core";
-import { createChannelMessageAdapterFromOutbound } from "openclaw/plugin-sdk/channel-outbound";
-import { createPairingPrefixStripper } from "openclaw/plugin-sdk/channel-pairing";
+} from "nova/plugin-sdk/channel-contract";
+import { createChatChannelPlugin } from "nova/plugin-sdk/channel-core";
+import { createChannelMessageAdapterFromOutbound } from "nova/plugin-sdk/channel-outbound";
+import { createPairingPrefixStripper } from "nova/plugin-sdk/channel-pairing";
 import {
   createChannelDirectoryAdapter,
   createRuntimeDirectoryLiveAdapter,
-} from "openclaw/plugin-sdk/directory-runtime";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/directory-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { sleepWithAbort } from "nova/plugin-sdk/runtime-env";
 import {
   createComputedAccountStatusAdapter,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/status-helpers";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolveTargetsWithOptionalToken } from "openclaw/plugin-sdk/target-resolver-runtime";
+} from "nova/plugin-sdk/status-helpers";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import { resolveTargetsWithOptionalToken } from "nova/plugin-sdk/target-resolver-runtime";
 import {
   listEnabledDiscordAccounts,
   resolveDefaultDiscordAccountId,
@@ -40,7 +40,7 @@ import {
   projectCredentialSnapshotFields,
   resolveConfiguredFromCredentialStatuses,
   type ChannelPlugin,
-  type OpenClawConfig,
+  type NovaConfig,
 } from "./channel-api.js";
 import {
   buildDiscordCrossContextPresentation,
@@ -225,7 +225,7 @@ const discordMessageActions = {
   },
 };
 
-function resolveDiscordStartupAccountIds(cfg: OpenClawConfig): string[] {
+function resolveDiscordStartupAccountIds(cfg: NovaConfig): string[] {
   const startupAccountIds = listEnabledDiscordAccounts(cfg)
     .filter(
       (candidate) =>
@@ -245,7 +245,7 @@ function resolveDiscordStartupAccountIds(cfg: OpenClawConfig): string[] {
   ];
 }
 
-function resolveDiscordStartupDelayMs(cfg: OpenClawConfig, accountId: string): number {
+function resolveDiscordStartupDelayMs(cfg: NovaConfig, accountId: string): number {
   const startupAccountIds = resolveDiscordStartupAccountIds(cfg);
   const startupIndex = startupAccountIds.findIndex((candidateId) => candidateId === accountId);
   return startupIndex <= 0 ? 0 : startupIndex * DISCORD_ACCOUNT_STARTUP_STAGGER_MS;
@@ -595,7 +595,7 @@ export const discordPlugin: ChannelPlugin<ResolvedDiscordAccount, DiscordProbe> 
               ],
             };
           }
-          const statusCfg: OpenClawConfig = {
+          const statusCfg: NovaConfig = {
             channels: {
               discord: {
                 accounts: {

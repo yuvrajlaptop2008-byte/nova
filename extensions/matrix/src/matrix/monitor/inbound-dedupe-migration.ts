@@ -17,8 +17,8 @@ import path from "node:path";
 import {
   createPersistentDedupeImportEntry,
   type PersistentDedupeEntry,
-} from "openclaw/plugin-sdk/persistent-dedupe";
-import type { PluginDoctorStateMigrationContext } from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/persistent-dedupe";
+import type { PluginDoctorStateMigrationContext } from "nova/plugin-sdk/runtime-doctor";
 import { isRecord } from "../../record-shared.js";
 import { normalizeMatrixStorageMetadata } from "../client/storage.js";
 import {
@@ -66,8 +66,8 @@ export async function collectMatrixInboundDedupeSources(stateDir: string): Promi
     for (const entry of entries) {
       const entryPath = path.join(dir, entry.name);
       if (entry.isFile()) {
-        // Legacy per-root dedupe rows live in `<storageRoot>/state/openclaw.sqlite`.
-        if (entry.name === "openclaw.sqlite" && path.basename(dir) === "state") {
+        // Legacy per-root dedupe rows live in `<storageRoot>/state/nova.sqlite`.
+        if (entry.name === "nova.sqlite" && path.basename(dir) === "state") {
           sqliteRoots.add(path.dirname(dir));
         } else if (entry.name === MATRIX_LEGACY_INBOUND_DEDUPE_FILENAME) {
           jsonRoots.add(dir);

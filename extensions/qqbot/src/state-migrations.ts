@@ -3,8 +3,8 @@ import path from "node:path";
 import type {
   PluginDoctorStateMigration,
   PluginStateKeyedStore,
-} from "openclaw/plugin-sdk/runtime-doctor";
-import { fileExists } from "openclaw/plugin-sdk/security-runtime";
+} from "nova/plugin-sdk/runtime-doctor";
+import { fileExists } from "nova/plugin-sdk/security-runtime";
 import { buildQQBotStateKey } from "./engine/utils/state-keys.js";
 
 type CredentialBackup = {

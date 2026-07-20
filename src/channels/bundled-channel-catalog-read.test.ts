@@ -23,12 +23,12 @@ vi.mock("../plugins/channel-catalog-registry.js", () => ({
 }));
 
 // The channel-catalog.json fallback still walks package roots via
-// resolveOpenClawPackageRootSync. Isolate from the real repo by mocking
+// resolveNovaPackageRootSync. Isolate from the real repo by mocking
 // moduleUrl/argv1 resolution to null and deriving only from the tmp cwd.
-vi.mock("../infra/openclaw-root.js", () => ({
-  resolveOpenClawPackageRootSync: (opts: { cwd?: string; argv1?: string; moduleUrl?: string }) =>
+vi.mock("../infra/nova-root.js", () => ({
+  resolveNovaPackageRootSync: (opts: { cwd?: string; argv1?: string; moduleUrl?: string }) =>
     opts.cwd ?? null,
-  resolveOpenClawPackageRoot: async (opts: { cwd?: string; argv1?: string; moduleUrl?: string }) =>
+  resolveNovaPackageRoot: async (opts: { cwd?: string; argv1?: string; moduleUrl?: string }) =>
     opts.cwd ?? null,
 }));
 
@@ -67,7 +67,7 @@ function useBundledPluginsDir(extensionsRoot: string | undefined): void {
 
 function seedRoot(prefix: string): string {
   const root = makeTempRepoRoot(tempDirs, prefix);
-  writeJsonFile(path.join(root, "package.json"), { name: "openclaw" });
+  writeJsonFile(path.join(root, "package.json"), { name: "nova" });
   vi.spyOn(process, "cwd").mockReturnValue(root);
   return root;
 }
@@ -86,7 +86,7 @@ function seedChannelPkg(
   const pluginDir = path.dirname(pkgJsonPath);
   writeJsonFile(pkgJsonPath, {
     name: `@nova/${opts.id}`,
-    openclaw: {
+    nova: {
       channel: {
         id: opts.id,
         label: opts.label ?? opts.id,
@@ -97,7 +97,7 @@ function seedChannelPkg(
       },
     },
   });
-  writeJsonFile(path.join(pluginDir, "openclaw.plugin.json"), {
+  writeJsonFile(path.join(pluginDir, "nova.plugin.json"), {
     id: opts.id,
     configSchema: { type: "object" },
     channels: [opts.id],
@@ -148,7 +148,7 @@ describe("listBundledChannelCatalogEntries", () => {
       entries: [
         {
           name: "@nova/qqbot",
-          openclaw: {
+          nova: {
             channel: {
               id: "qqbot",
               label: "QQ Bot",
@@ -180,7 +180,7 @@ describe("listBundledChannelCatalogEntries", () => {
       entries: [
         {
           name: "@nova/matrix",
-          openclaw: {
+          nova: {
             channel: {
               id: "matrix",
               label: "Matrix",
@@ -207,7 +207,7 @@ describe("listBundledChannelCatalogEntries", () => {
       entries: [
         {
           name: "@nova/fallback",
-          openclaw: {
+          nova: {
             channel: {
               id: "fallback-channel",
               label: "Fallback",
@@ -236,7 +236,7 @@ describe("listBundledChannelCatalogEntries", () => {
       entries: [
         {
           name: "@nova/fallback",
-          openclaw: {
+          nova: {
             channel: {
               id: "fallback-channel",
               label: "Fallback",

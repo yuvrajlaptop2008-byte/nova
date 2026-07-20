@@ -1,31 +1,29 @@
 // Telegram plugin module implements bot.create telegram bot harness behavior.
 import { existsSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
-import { buildChannelInboundEventContext } from "openclaw/plugin-sdk/channel-inbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { MockFn } from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { GetReplyOptions, MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import { buildChannelInboundEventContext } from "nova/plugin-sdk/channel-inbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { MockFn } from "nova/plugin-sdk/plugin-test-runtime";
+import type { GetReplyOptions, MsgContext } from "nova/plugin-sdk/reply-runtime";
 import { beforeEach, vi } from "vitest";
 import type { TelegramBotDeps } from "./bot-deps.js";
 
 type AnyMock = ReturnType<typeof vi.fn>;
 type AnyAsyncMock = ReturnType<typeof vi.fn<(...args: unknown[]) => Promise<unknown>>>;
 type TelegramBotRuntimeForTest = typeof import("./bot.runtime.js");
-type GetRuntimeConfigFn =
-  typeof import("openclaw/plugin-sdk/runtime-config-snapshot").getRuntimeConfig;
-type GetSessionEntryFn = typeof import("openclaw/plugin-sdk/session-store-runtime").getSessionEntry;
+type GetRuntimeConfigFn = typeof import("nova/plugin-sdk/runtime-config-snapshot").getRuntimeConfig;
+type GetSessionEntryFn = typeof import("nova/plugin-sdk/session-store-runtime").getSessionEntry;
 type ListSessionEntriesFn =
-  typeof import("openclaw/plugin-sdk/session-store-runtime").listSessionEntries;
-type ResolveStorePathFn =
-  typeof import("openclaw/plugin-sdk/session-store-runtime").resolveStorePath;
+  typeof import("nova/plugin-sdk/session-store-runtime").listSessionEntries;
+type ResolveStorePathFn = typeof import("nova/plugin-sdk/session-store-runtime").resolveStorePath;
 type ReadSessionUpdatedAtFn =
-  typeof import("openclaw/plugin-sdk/session-store-runtime").readSessionUpdatedAt;
-type SessionEntry = import("openclaw/plugin-sdk/session-store-runtime").SessionEntry;
+  typeof import("nova/plugin-sdk/session-store-runtime").readSessionUpdatedAt;
+type SessionEntry = import("nova/plugin-sdk/session-store-runtime").SessionEntry;
 type SessionStore = Record<string, SessionEntry>;
 type LoadSessionStoreFn = (storePath?: string, opts?: unknown) => SessionStore;
 type ResolveTelegramApprovalForTest = NonNullable<TelegramBotDeps["resolveApproval"]>;
 type DispatchReplyWithBufferedBlockDispatcherFn =
-  typeof import("openclaw/plugin-sdk/reply-dispatch-runtime").dispatchReplyWithBufferedBlockDispatcher;
+  typeof import("nova/plugin-sdk/reply-dispatch-runtime").dispatchReplyWithBufferedBlockDispatcher;
 type DispatchReplyWithBufferedBlockDispatcherResult = Awaited<
   ReturnType<DispatchReplyWithBufferedBlockDispatcherFn>
 >;
@@ -44,7 +42,7 @@ const { sessionStorePath } = vi.hoisted(() => {
       : (process.env.TMPDIR ?? "/tmp");
   const separator = process.platform === "win32" ? "\\" : "/";
   return {
-    sessionStorePath: `${tempRoot.replace(/[\\/]+$/u, "")}${separator}openclaw-telegram-${
+    sessionStorePath: `${tempRoot.replace(/[\\/]+$/u, "")}${separator}nova-telegram-${
       process.pid
     }-${process.env.VITEST_POOL_ID ?? "0"}.json`,
   };
@@ -58,7 +56,7 @@ export function getLoadWebMediaMock(): AnyMock {
   return loadWebMedia;
 }
 
-vi.mock("openclaw/plugin-sdk/web-media", () => ({
+vi.mock("nova/plugin-sdk/web-media", () => ({
   loadWebMedia,
 }));
 
@@ -159,7 +157,7 @@ const replySpyHoisted = vi.hoisted(() => ({
     (
       ctx: MsgContext,
       opts?: GetReplyOptions,
-      configOverride?: OpenClawConfig,
+      configOverride?: NovaConfig,
     ) => Promise<ReplyPayloadLike | ReplyPayloadLike[] | undefined>
   >,
 }));
@@ -243,7 +241,7 @@ function normalizeLowercaseStringOrEmptyForTest(value: string | undefined): stri
   return value?.trim().toLowerCase() ?? "";
 }
 
-function resolveDefaultModelForAgentForTest(params: { cfg: OpenClawConfig }): {
+function resolveDefaultModelForAgentForTest(params: { cfg: NovaConfig }): {
   provider: string;
   model: string;
 } {
@@ -258,7 +256,7 @@ function resolveDefaultModelForAgentForTest(params: { cfg: OpenClawConfig }): {
   };
 }
 
-function createModelsProviderDataFromConfig(cfg: OpenClawConfig): {
+function createModelsProviderDataFromConfig(cfg: NovaConfig): {
   byProvider: Map<string, Set<string>>;
   providers: string[];
   resolvedDefault: { provider: string; model: string };
@@ -348,7 +346,7 @@ const grammySpies = vi.hoisted(() => ({
   setMessageReactionSpy: vi.fn(async () => undefined) as AnyAsyncMock,
   setMyCommandsSpy: vi.fn(async () => undefined) as AnyAsyncMock,
   getMeSpy: vi.fn(async () => ({
-    username: "openclaw_bot",
+    username: "nova_bot",
     has_topics_enabled: true,
   })) as AnyAsyncMock,
   getChatSpy: vi.fn(async () => undefined) as AnyAsyncMock,
@@ -538,7 +536,7 @@ export const getOnHandler = (event: string) => {
   return handler as (ctx: Record<string, unknown>) => Promise<void>;
 };
 
-const DEFAULT_TELEGRAM_TEST_CONFIG: OpenClawConfig = {
+const DEFAULT_TELEGRAM_TEST_CONFIG: NovaConfig = {
   agents: {
     defaults: {
       envelopeTimezone: "utc",
@@ -573,7 +571,7 @@ function makeTelegramMessageCtx(params: {
         ? {}
         : { message_thread_id: params.messageThreadId }),
     },
-    me: { username: "openclaw_bot" },
+    me: { username: "nova_bot" },
     getFile: async () => ({ download: async () => new Uint8Array() }),
   };
 }
@@ -705,7 +703,7 @@ beforeEach(() => {
   getChatSpy.mockResolvedValue(undefined);
   grammySpies.getMeSpy.mockReset();
   grammySpies.getMeSpy.mockResolvedValue({
-    username: "openclaw_bot",
+    username: "nova_bot",
     has_topics_enabled: true,
   });
   editMessageTextSpy.mockReset();
@@ -720,7 +718,7 @@ beforeEach(() => {
   listSkillCommandsForAgents.mockReset();
   listSkillCommandsForAgents.mockReturnValue([]);
   buildModelsProviderData.mockReset();
-  buildModelsProviderData.mockImplementation(async (cfg: OpenClawConfig) => {
+  buildModelsProviderData.mockImplementation(async (cfg: NovaConfig) => {
     return createModelsProviderDataFromConfig(cfg);
   });
   middlewareUseSpy.mockReset();

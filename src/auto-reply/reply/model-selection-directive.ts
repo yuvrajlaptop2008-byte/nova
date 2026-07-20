@@ -9,7 +9,7 @@ import {
   resolveConfiguredModelPolicyAllow,
   resolveModelRefFromString,
 } from "../../agents/model-selection-shared.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 export { modelKey };
 export type { ModelAliasIndex };
 
@@ -36,7 +36,7 @@ function formatNotAllowedError(params: {
     `Then retry: ${retryCommand}`,
   ];
   if (rawRuntime && normalizeProviderId(rawRuntime) === "codex") {
-    lines.push("If the Codex runtime is missing, run: openclaw plugins enable codex");
+    lines.push("If the Codex runtime is missing, run: nova plugins enable codex");
   }
   return lines.join("\n");
 }
@@ -231,7 +231,7 @@ export function resolveModelDirectiveSelection(params: {
   defaultModel: string;
   aliasIndex: ModelAliasIndex;
   allowedModelKeys: Set<string>;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string;
   rawRuntime?: string | undefined;
 }): { selection?: ModelDirectiveSelection; error?: string } {

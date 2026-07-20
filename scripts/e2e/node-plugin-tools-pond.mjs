@@ -101,7 +101,7 @@ async function writeProofPlugin(rootDir, nodeLabel, options = {}) {
   const pluginDir = path.join(rootDir, "plugin");
   const pluginPath = path.join(pluginDir, "pond-node-tools.mjs");
   await fs.mkdir(pluginDir, { recursive: true });
-  await writeJson(path.join(pluginDir, "openclaw.plugin.json"), {
+  await writeJson(path.join(pluginDir, "nova.plugin.json"), {
     id: PLUGIN_ID,
     name: "Pond Node Tools",
     description: "Node-hosted plugin tool proof",
@@ -116,7 +116,7 @@ async function writeProofPlugin(rootDir, nodeLabel, options = {}) {
     name: PLUGIN_ID,
     version: "0.0.0",
     type: "module",
-    openclaw: { extensions: ["./pond-node-tools.mjs"] },
+    nova: { extensions: ["./pond-node-tools.mjs"] },
   });
   const sharedToolRegistration = options.sharedTool
     ? `
@@ -255,7 +255,7 @@ async function writeRemoteExecProofSkill(stateDir, proofFilePath, skillName) {
 async function prepareRoleState(baseDir, role, token, nodeLabel, options = {}) {
   const rootDir = path.resolve(baseDir, role);
   const stateDir = path.join(rootDir, "state");
-  const configPath = path.join(rootDir, "openclaw.json");
+  const configPath = path.join(rootDir, "nova.json");
   await fs.mkdir(rootDir, { recursive: true, mode: 0o700 });
   await fs.chmod(rootDir, 0o700);
   const pluginPath = await writeProofPlugin(rootDir, nodeLabel, {
@@ -424,7 +424,7 @@ function childEnv(state, token, nodeLabel) {
 }
 
 function spawnNova(args, options) {
-  const cliArgs = options.built ? ["openclaw.mjs", ...args] : ["scripts/run-node.mjs", ...args];
+  const cliArgs = options.built ? ["nova.mjs", ...args] : ["scripts/run-node.mjs", ...args];
   const child = spawn("node", cliArgs, {
     cwd: repoRoot(),
     env: options.env,
@@ -647,7 +647,7 @@ async function readProofSkills(rpc, skillName = SKILL_NAME) {
   return (result?.skills ?? []).filter(
     (skill) =>
       skill.name === skillName &&
-      skill.source === "openclaw-node" &&
+      skill.source === "nova-node" &&
       skill.filePath.startsWith("node://") &&
       skill.filePath.endsWith(locatorSuffix),
   );
@@ -900,7 +900,7 @@ async function runHotPlugLocal(args) {
   const hotPlugSkillName = `${SKILL_NAME}-${skillProofToken.slice(-8)}`;
   const port = args.port ? Number(args.port) : await availableLoopbackPort();
   const baseDir = String(
-    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-hot-plug-"))),
+    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-hot-plug-"))),
   );
   const gatewayState = await prepareRoleState(baseDir, "gateway", token, "gateway", {
     liveModel,
@@ -1255,7 +1255,7 @@ async function runGateway(args) {
   }
   const port = Number(args.port || DEFAULT_PORT);
   const baseDir = String(
-    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-plugin-tools-"))),
+    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-plugin-tools-"))),
   );
   const state = await prepareRoleState(baseDir, "gateway", token, "gateway");
   console.log(JSON.stringify({ role: "gateway", port, tokenSet: true, stateDir: state.stateDir }));
@@ -1288,7 +1288,7 @@ async function runNode(args) {
   const nodeId = String(args.nodeId || `pond-${crypto.randomBytes(4).toString("hex")}`);
   const displayName = String(args.displayName || nodeId);
   const baseDir = String(
-    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-plugin-tools-"))),
+    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-plugin-tools-"))),
   );
   const state = await prepareRoleState(baseDir, nodeId, token, nodeId, {
     nodeSurfaces: args["plugin-only"] !== true,
@@ -1326,7 +1326,7 @@ async function runLocal(args) {
   const skillProofToken = proofToken();
   const port = args.port ? Number(args.port) : await availableLoopbackPort();
   const baseDir = String(
-    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-plugin-tools-"))),
+    args.baseDir || (await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-plugin-tools-"))),
   );
   const gatewayState = await prepareRoleState(baseDir, "gateway", token, "gateway", {
     liveModel: live ? liveModel : undefined,

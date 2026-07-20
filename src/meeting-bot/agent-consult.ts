@@ -1,5 +1,5 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import type { PluginRuntime, RuntimeLogger } from "../plugins/runtime/types.js";
 import { normalizeAgentId } from "../routing/session-key.js";
@@ -50,7 +50,7 @@ async function submitMeetingConsultWorkingResponse(params: {
 
 export async function consultMeetingAgent(params: {
   surface: MeetingAgentConsultSurface;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
   agentId?: string;
@@ -91,7 +91,7 @@ export async function handleMeetingRealtimeConsultToolCall(params: {
   strategy: string;
   session: RealtimeVoiceBridgeSession;
   event: RealtimeVoiceToolCallEvent;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
   agentId?: string;

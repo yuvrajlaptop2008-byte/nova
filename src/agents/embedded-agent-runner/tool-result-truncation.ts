@@ -7,7 +7,7 @@ import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string
 import { sliceUtf16Safe, truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { loadTranscriptEvents } from "../../config/sessions/session-accessor.js";
 import { parseSqliteSessionFileMarker } from "../../config/sessions/sqlite-marker.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { createDedupeCache } from "../../infra/dedupe.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import type { TextContent } from "../../llm/types.js";
@@ -314,7 +314,7 @@ export function calculateMaxToolResultCharsWithCap(
 
 export function resolveLiveToolResultMaxChars(params: {
   contextWindowTokens: number;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string | null;
 }): number {
   const configuredCap = resolveAgentContextLimits(params.cfg, params.agentId)?.toolResultMaxChars;
@@ -325,7 +325,7 @@ export function resolveLiveToolResultMaxChars(params: {
 export function resolveLiveToolResultAggregateMaxChars(params: {
   contextWindowTokens: number;
   perResultMaxChars?: number;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string | null;
 }): number {
   const perResultMaxChars = Math.max(
@@ -1485,7 +1485,7 @@ export async function truncateOversizedToolResultsInActiveTarget(params: {
   maxCharsOverride?: number;
   aggregateMaxCharsOverride?: number;
   protectTrailingToolResults?: boolean;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<{ truncated: boolean; truncatedCount: number; reason?: string }> {
   if (parseSqliteSessionFileMarker(params.scope.sessionFile)) {
     return await truncateOversizedToolResultsInRuntimeTranscript(params);

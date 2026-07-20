@@ -146,7 +146,7 @@ async function persistTestSessionConfig(): Promise<void> {
     configPaths.add(process.env.NOVA_CONFIG_PATH);
   }
   if (process.env.NOVA_STATE_DIR) {
-    configPaths.add(path.join(process.env.NOVA_STATE_DIR, "openclaw.json"));
+    configPaths.add(path.join(process.env.NOVA_STATE_DIR, "nova.json"));
   }
   const parsedConfigs = new Map<string, Record<string, unknown>>();
   let preservedTemplateStore: string | undefined;
@@ -273,10 +273,10 @@ export async function writeSessionStore(params: {
 
 async function setupGatewayTestHome() {
   gatewayEnvSnapshot = captureEnv([...GATEWAY_TEST_ENV_KEYS]);
-  tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gateway-home-"));
+  tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-gateway-home-"));
   process.env.HOME = tempHome;
   process.env.USERPROFILE = tempHome;
-  process.env.NOVA_STATE_DIR = path.join(tempHome, ".openclaw");
+  process.env.NOVA_STATE_DIR = path.join(tempHome, ".nova");
   delete process.env.NOVA_CONFIG_PATH;
   delete process.env.NOVA_AGENT_DIR;
 }
@@ -291,8 +291,8 @@ function applyGatewaySkipEnv() {
   process.env.NOVA_TEST_MINIMAL_GATEWAY = "1";
   process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "1";
   process.env.NOVA_BUNDLED_PLUGINS_DIR = tempHome
-    ? path.join(tempHome, "openclaw-test-no-bundled-extensions")
-    : "openclaw-test-no-bundled-extensions";
+    ? path.join(tempHome, "nova-test-no-bundled-extensions")
+    : "nova-test-no-bundled-extensions";
 }
 
 function resetGatewayLifecycleTestState(options: { preserveRuntimeBindings: boolean }): void {
@@ -330,7 +330,7 @@ async function resetGatewayTestState(options: { uniqueConfigRoot: boolean }) {
     await fs.mkdir(stateDir, { recursive: true });
   }
   if (options.uniqueConfigRoot) {
-    const suiteRoot = path.join(tempHome, ".openclaw-test-suite");
+    const suiteRoot = path.join(tempHome, ".nova-test-suite");
     await fs.mkdir(suiteRoot, { recursive: true });
     tempConfigRoot = path.join(suiteRoot, `case-${suiteConfigRootSeq++}`);
     await fs.rm(tempConfigRoot, {
@@ -341,7 +341,7 @@ async function resetGatewayTestState(options: { uniqueConfigRoot: boolean }) {
     });
     await fs.mkdir(tempConfigRoot, { recursive: true });
   } else {
-    tempConfigRoot = path.join(tempHome, ".openclaw-test");
+    tempConfigRoot = path.join(tempHome, ".nova-test");
     await fs.rm(tempConfigRoot, {
       recursive: true,
       force: true,
@@ -351,7 +351,7 @@ async function resetGatewayTestState(options: { uniqueConfigRoot: boolean }) {
     await fs.mkdir(tempConfigRoot, { recursive: true });
   }
   setTestConfigRoot(tempConfigRoot);
-  tempControlUiRoot = path.join(tempHome, ".openclaw-test-control-ui");
+  tempControlUiRoot = path.join(tempHome, ".nova-test-control-ui");
   await fs.rm(tempControlUiRoot, {
     recursive: true,
     force: true,
@@ -361,7 +361,7 @@ async function resetGatewayTestState(options: { uniqueConfigRoot: boolean }) {
   await fs.mkdir(tempControlUiRoot, { recursive: true });
   await fs.writeFile(
     path.join(tempControlUiRoot, "index.html"),
-    "<!doctype html><title>openclaw-test-control-ui</title>\n",
+    "<!doctype html><title>nova-test-control-ui</title>\n",
     "utf-8",
   );
   setTestConfigRoot(tempConfigRoot);
@@ -588,8 +588,8 @@ type GatewayTestMessage = {
   [key: string]: unknown;
 };
 
-const CONNECT_CHALLENGE_NONCE_KEY = "__openclawTestConnectChallengeNonce";
-const CONNECT_CHALLENGE_TRACKED_KEY = "__openclawTestConnectChallengeTracked";
+const CONNECT_CHALLENGE_NONCE_KEY = "__novaTestConnectChallengeNonce";
+const CONNECT_CHALLENGE_TRACKED_KEY = "__novaTestConnectChallengeTracked";
 type TrackedWs = WebSocket & Record<string, unknown>;
 
 export function getTrackedConnectChallengeNonce(ws: WebSocket): string | undefined {

@@ -11,7 +11,7 @@ import {
   validateAgentsWorkspaceListParams,
 } from "../../../packages/gateway-protocol/src/index.js";
 import { listAgentIds, resolveAgentWorkspaceDir } from "../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
 import type { GatewayRequestHandlers, RespondFn } from "./types.js";
 import { assertValidParams } from "./validation.js";
@@ -67,7 +67,7 @@ function workspaceError(type: string, message: string, details?: Record<string, 
 
 function resolveWorkspaceScopeOrRespond(
   params: { agentId: string; path?: string },
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   respond: RespondFn,
 ): { agentId: string; workspaceDir: string; browserPath: string } | null {
   const agentId = normalizeAgentId(params.agentId);

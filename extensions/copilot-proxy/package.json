@@ -2,12 +2,12 @@
   "name": "@nova/copilot-proxy",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw Copilot Proxy provider plugin",
+  "description": "Nova Copilot Proxy provider plugin",
   "type": "module",
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

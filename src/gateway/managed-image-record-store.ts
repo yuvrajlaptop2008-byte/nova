@@ -5,12 +5,12 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-  type OpenClawStateDatabaseOptions,
-} from "../state/openclaw-state-db.js";
+  openNovaStateDatabase,
+  runNovaStateWriteTransaction,
+  type NovaStateDatabaseOptions,
+} from "../state/nova-state-db.js";
 
 export const MANAGED_OUTGOING_ORIGINALS_SUBDIR = "outgoing/originals";
 
@@ -40,7 +40,7 @@ export type ManagedImageRecord = {
 };
 
 export type ManagedImageRecordDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "managed_outgoing_image_records"
 >;
 type ManagedImageRecordRow = Selectable<
@@ -54,7 +54,7 @@ type ManagedImageRecordEntry = {
   cleanupPending: boolean;
 };
 
-function stateDatabaseOptions(stateDir?: string): OpenClawStateDatabaseOptions {
+function stateDatabaseOptions(stateDir?: string): NovaStateDatabaseOptions {
   return stateDir ? { env: { ...process.env, NOVA_STATE_DIR: stateDir } } : { env: process.env };
 }
 
@@ -116,7 +116,7 @@ export function readManagedImageRecord(
   attachmentId: string,
   stateDir?: string,
 ): ManagedImageRecord | null {
-  const database = openOpenClawStateDatabase(stateDatabaseOptions(stateDir));
+  const database = openNovaStateDatabase(stateDatabaseOptions(stateDir));
   const row = executeSqliteQueryTakeFirstSync(
     database.db,
     getNodeSqliteKysely<ManagedImageRecordDatabase>(database.db)
@@ -132,7 +132,7 @@ export function listManagedImageRecordEntries(params: {
   stateDir?: string;
   sessionKey?: string;
 }): ManagedImageRecordEntry[] {
-  const database = openOpenClawStateDatabase(stateDatabaseOptions(params.stateDir));
+  const database = openNovaStateDatabase(stateDatabaseOptions(params.stateDir));
   const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(database.db);
   let query = stateDb.selectFrom("managed_outgoing_image_records").selectAll();
   if (params.sessionKey) {
@@ -148,7 +148,7 @@ export function listManagedImageRecordEntries(params: {
 }
 
 export function insertManagedImageRecord(record: ManagedImageRecord, stateDir?: string): void {
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runNovaStateWriteTransaction(({ db }) => {
     executeSqliteQuerySync(
       db,
       getNodeSqliteKysely<ManagedImageRecordDatabase>(db)
@@ -166,7 +166,7 @@ export function attachManagedImageRecordToMessage(params: {
   updatedAt: string;
   stateDir?: string;
 }): boolean {
-  return runOpenClawStateWriteTransaction(({ db }) => {
+  return runNovaStateWriteTransaction(({ db }) => {
     const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(db);
     const row = executeSqliteQueryTakeFirstSync(
       db,
@@ -214,7 +214,7 @@ export function claimManagedImageRecordCleanupIfCurrent(
   planned: ManagedImageRecord,
   stateDir?: string,
 ): boolean {
-  return runOpenClawStateWriteTransaction(({ db }) => {
+  return runNovaStateWriteTransaction(({ db }) => {
     const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(db);
     const row = executeSqliteQueryTakeFirstSync(
       db,
@@ -246,7 +246,7 @@ export function deleteClaimedManagedImageRecord(
   planned: ManagedImageRecord,
   stateDir?: string,
 ): boolean {
-  return runOpenClawStateWriteTransaction(({ db }) => {
+  return runNovaStateWriteTransaction(({ db }) => {
     const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(db);
     const row = executeSqliteQueryTakeFirstSync(
       db,

@@ -54,7 +54,7 @@ function appendCapturedOutput(
   if (next.length <= maxChars) {
     return next;
   }
-  const marker = `[openclaw: captured ${stream} truncated to last ${maxChars} chars]\n`;
+  const marker = `[nova: captured ${stream} truncated to last ${maxChars} chars]\n`;
   const tailChars = Math.max(0, maxChars - marker.length);
   return `${marker}${sliceUtf16Safe(next, -tailChars)}`;
 }

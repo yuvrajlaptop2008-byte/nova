@@ -1,12 +1,12 @@
-# OpenClaw Kilo Gateway Provider
+# Nova Kilo Gateway Provider
 
-Official OpenClaw provider plugin for Kilo Gateway.
+Official Nova provider plugin for Kilo Gateway.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/kilocode-provider
-openclaw gateway restart
+nova plugins install @nova/kilocode-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/kilocode> for setup and configuration.
+See <https://docs.nova.ai/providers/kilocode> for setup and configuration.

@@ -2,8 +2,8 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createClaimableDedupe } from "openclaw/plugin-sdk/persistent-dedupe";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { createClaimableDedupe } from "nova/plugin-sdk/persistent-dedupe";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, describe, expect, it } from "vitest";
 import { waitForMatrixInboundDedupeEntry } from "./scenario-runtime-state-files.js";
 
@@ -44,6 +44,6 @@ describe("Matrix QA persisted state probes", () => {
         stateDir,
         timeoutMs: 1_000,
       }),
-    ).resolves.toBe(path.join(accountRoot, "state", "openclaw.sqlite"));
+    ).resolves.toBe(path.join(accountRoot, "state", "nova.sqlite"));
   });
 });

@@ -1,12 +1,12 @@
-# OpenClaw Kimi Coding Provider
+# Nova Kimi Coding Provider
 
-Official OpenClaw provider plugin for Kimi Coding.
+Official Nova provider plugin for Kimi Coding.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/kimi-provider
-openclaw gateway restart
+nova plugins install @nova/kimi-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/moonshot> for setup and configuration.
+See <https://docs.nova.ai/providers/moonshot> for setup and configuration.

@@ -20,9 +20,7 @@ const directorySymlinkType = process.platform === "win32" ? "junction" : "dir";
 const canCreateDirectorySymlinks = (() => {
   let probeDir: string | undefined;
   try {
-    probeDir = fsSync.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-install-safe-dir-symlink-probe-"),
-    );
+    probeDir = fsSync.mkdtempSync(path.join(os.tmpdir(), "nova-install-safe-dir-symlink-probe-"));
     const targetDir = path.join(probeDir, "target");
     const linkDir = path.join(probeDir, "link");
     fsSync.mkdirSync(targetDir);
@@ -107,7 +105,7 @@ describe("resolveSafeInstallDir", () => {
       }),
     ).toEqual({
       ok: true,
-      path: path.join("/tmp/plugins", "@openclaw__matrix"),
+      path: path.join("/tmp/plugins", "@nova__matrix"),
     });
   });
 
@@ -127,7 +125,7 @@ describe("resolveSafeInstallDir", () => {
 
 describe("assertCanonicalPathWithinBase", () => {
   it("accepts in-base directories", async () => {
-    await withTempDir({ prefix: "openclaw-install-safe-" }, async (baseDir) => {
+    await withTempDir({ prefix: "nova-install-safe-" }, async (baseDir) => {
       const candidate = path.join(baseDir, "tools");
       await fs.mkdir(candidate, { recursive: true });
       await expect(
@@ -141,7 +139,7 @@ describe("assertCanonicalPathWithinBase", () => {
   });
 
   it("accepts missing candidate paths when their parent stays in base", async () => {
-    await withTempDir({ prefix: "openclaw-install-safe-" }, async (baseDir) => {
+    await withTempDir({ prefix: "nova-install-safe-" }, async (baseDir) => {
       const candidate = path.join(baseDir, "tools", "plugin");
       await fs.mkdir(path.dirname(candidate), { recursive: true });
       await expect(
@@ -155,7 +153,7 @@ describe("assertCanonicalPathWithinBase", () => {
   });
 
   it("rejects non-directory base paths", async () => {
-    await withTempDir({ prefix: "openclaw-install-safe-" }, async (baseDir) => {
+    await withTempDir({ prefix: "nova-install-safe-" }, async (baseDir) => {
       const baseFile = path.join(baseDir, "not-a-dir");
       await fs.writeFile(baseFile, "nope", "utf-8");
       await expect(
@@ -169,7 +167,7 @@ describe("assertCanonicalPathWithinBase", () => {
   });
 
   it("rejects non-directory candidate paths inside the base", async () => {
-    await withTempDir({ prefix: "openclaw-install-safe-" }, async (baseDir) => {
+    await withTempDir({ prefix: "nova-install-safe-" }, async (baseDir) => {
       const candidate = path.join(baseDir, "file.txt");
       await fs.writeFile(candidate, "nope", "utf-8");
       await expect(
@@ -185,8 +183,8 @@ describe("assertCanonicalPathWithinBase", () => {
   it.skipIf(!canCreateDirectorySymlinks)(
     "rejects symlinked candidate directories that escape the base",
     async () => {
-      await withTempDir({ prefix: "openclaw-install-safe-" }, async (baseDir) => {
-        await withTempDir({ prefix: "openclaw-install-safe-outside-" }, async (outsideDir) => {
+      await withTempDir({ prefix: "nova-install-safe-" }, async (baseDir) => {
+        await withTempDir({ prefix: "nova-install-safe-outside-" }, async (outsideDir) => {
           const linkDir = path.join(baseDir, "alias");
           await fs.symlink(outsideDir, linkDir, directorySymlinkType);
           await expect(
@@ -204,7 +202,7 @@ describe("assertCanonicalPathWithinBase", () => {
   it.skipIf(!canCreateDirectorySymlinks)(
     "accepts symlinked base directories when the target stays in the real base",
     async () => {
-      await withTempDir({ prefix: "openclaw-install-safe-" }, async (parentDir) => {
+      await withTempDir({ prefix: "nova-install-safe-" }, async (parentDir) => {
         const realBaseDir = path.join(parentDir, "real-base");
         const symlinkBaseDir = path.join(parentDir, "base-link");
         await fs.mkdir(realBaseDir, { recursive: true });
@@ -223,7 +221,7 @@ describe("assertCanonicalPathWithinBase", () => {
   it.skipIf(!canCreateDirectorySymlinks)(
     "rejects nested symlinked candidate directories",
     async () => {
-      await withTempDir({ prefix: "openclaw-install-safe-" }, async (parentDir) => {
+      await withTempDir({ prefix: "nova-install-safe-" }, async (parentDir) => {
         const realBaseDir = path.join(parentDir, "base");
         const nestedRealDir = path.join(parentDir, "nested-real");
         const nestedSymlinkDir = path.join(realBaseDir, "nested-link");

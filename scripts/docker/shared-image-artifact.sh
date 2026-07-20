@@ -216,7 +216,7 @@ const images = fs
     return { ref, id };
   });
 const manifest = {
-  schema: "openclaw.shared-docker-image-artifact/v1",
+  schema: "nova.shared-docker-image-artifact/v1",
   schemaVersion: 1,
   kind: process.env.ARTIFACT_KIND,
   targetSha: process.env.TARGET_SHA,
@@ -280,7 +280,7 @@ const fail = (message) => {
   throw new Error(`invalid shared Docker image artifact: ${message}`);
 };
 
-if (value.schema !== "openclaw.shared-docker-image-artifact/v1") fail("schema");
+if (value.schema !== "nova.shared-docker-image-artifact/v1") fail("schema");
 if (value.schemaVersion !== 1) fail("schemaVersion");
 if (value.kind !== process.env.ARTIFACT_KIND) fail("kind");
 if (value.targetSha !== process.env.TARGET_SHA) fail("target SHA");

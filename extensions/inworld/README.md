@@ -1,12 +1,12 @@
-# OpenClaw Inworld Plugin
+# Nova Inworld Plugin
 
-Official OpenClaw plugin for Inworld.
+Official Nova plugin for Inworld.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/inworld-speech
-openclaw gateway restart
+nova plugins install @nova/inworld-speech
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/inworld> for setup and configuration.
+See <https://docs.nova.ai/providers/inworld> for setup and configuration.

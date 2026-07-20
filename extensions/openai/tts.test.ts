@@ -6,7 +6,7 @@ import {
   finalizeDebugProxyCapture,
   getDebugProxyCaptureStore,
   initializeDebugProxyCapture,
-} from "openclaw/plugin-sdk/proxy-capture";
+} from "nova/plugin-sdk/proxy-capture";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { installDebugProxyTestResetHooks } from "../test-support/debug-proxy-env-test-helpers.js";
 import { createStreamingErrorResponse } from "../test-support/streaming-error-response.js";
@@ -18,7 +18,7 @@ import {
   openaiTTS,
 } from "./tts.js";
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("nova/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: async ({
     url,
     init,
@@ -142,9 +142,9 @@ describe("openai tts", () => {
       const init = firstFetchInit(fetchMock);
       const headers = init?.headers as Record<string, string> | undefined;
       expect(url).toBe("https://api.openai.com/v1/audio/speech");
-      expect(headers?.originator).toBe("openclaw");
+      expect(headers?.originator).toBe("nova");
       expect(headers?.version).toBe("2026.3.22");
-      expect(headers?.["User-Agent"]).toBe("openclaw/2026.3.22");
+      expect(headers?.["User-Agent"]).toBe("nova/2026.3.22");
     });
 
     it("sends instructions to custom OpenAI-compatible endpoints", async () => {
@@ -365,8 +365,8 @@ describe("openai tts", () => {
         id: "tts-session",
         startedAt: Date.now(),
         mode: "test",
-        sourceScope: "openclaw",
-        sourceProcess: "openclaw",
+        sourceScope: "nova",
+        sourceProcess: "nova",
       });
 
       await openaiTTS({

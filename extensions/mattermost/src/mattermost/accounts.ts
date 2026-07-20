@@ -2,9 +2,9 @@
 import {
   createAccountListHelpers,
   hasConfiguredAccountValue,
-} from "openclaw/plugin-sdk/account-helpers";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import { resolveMergedAccountConfig } from "openclaw/plugin-sdk/account-resolution";
+} from "nova/plugin-sdk/account-helpers";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "nova/plugin-sdk/account-id";
+import { resolveMergedAccountConfig } from "nova/plugin-sdk/account-resolution";
 import {
   resolveChannelStreamingBlockCoalesce,
   resolveChannelStreamingBlockEnabled,
@@ -12,9 +12,9 @@ import {
   resolveChannelPreviewStreamMode,
   type StreamingMode,
   type TextChunkMode,
-} from "openclaw/plugin-sdk/channel-outbound";
-import type { BlockStreamingCoalesceConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/channel-outbound";
+import type { BlockStreamingCoalesceConfig } from "nova/plugin-sdk/config-contracts";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import { normalizeResolvedSecretInputString, normalizeSecretInputString } from "../secret-input.js";
 import type {
   MattermostAccountConfig,
@@ -23,7 +23,7 @@ import type {
   MattermostReplyToMode,
 } from "../types.js";
 import { normalizeMattermostBaseUrl } from "./client.js";
-import type { OpenClawConfig } from "./runtime-api.js";
+import type { NovaConfig } from "./runtime-api.js";
 
 type MattermostTokenSource = "env" | "config" | "none";
 type MattermostBaseUrlSource = "env" | "config" | "none";
@@ -57,18 +57,15 @@ const mattermostAccountHelpers = createAccountListHelpers("mattermost", {
   },
 });
 
-export function listMattermostAccountIds(cfg: OpenClawConfig): string[] {
+export function listMattermostAccountIds(cfg: NovaConfig): string[] {
   return mattermostAccountHelpers.listAccountIds(cfg);
 }
 
-export function resolveDefaultMattermostAccountId(cfg: OpenClawConfig): string {
+export function resolveDefaultMattermostAccountId(cfg: NovaConfig): string {
   return mattermostAccountHelpers.resolveDefaultAccountId(cfg);
 }
 
-function mergeMattermostAccountConfig(
-  cfg: OpenClawConfig,
-  accountId: string,
-): MattermostAccountConfig {
+function mergeMattermostAccountConfig(cfg: NovaConfig, accountId: string): MattermostAccountConfig {
   return resolveMergedAccountConfig<MattermostAccountConfig>({
     channelConfig: cfg.channels?.mattermost as MattermostAccountConfig | undefined,
     accounts: cfg.channels?.mattermost?.accounts as
@@ -94,7 +91,7 @@ function resolveMattermostRequireMention(config: MattermostAccountConfig): boole
 }
 
 export function resolveMattermostAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   allowUnresolvedSecretRef?: boolean;
 }): ResolvedMattermostAccount {

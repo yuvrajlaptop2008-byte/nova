@@ -7,6 +7,6 @@ export const page = definePage({
   component: () =>
     import("./activity-page.ts").then(() => ({
       header: true,
-      render: () => html`<openclaw-activity-page></openclaw-activity-page>`,
+      render: () => html`<nova-activity-page></nova-activity-page>`,
     })),
 });

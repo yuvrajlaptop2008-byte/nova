@@ -2,7 +2,7 @@
 import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { t } from "../i18n/index.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import "./modal-dialog.ts";
 
 type GatewayUrlConfirmationProps = {
@@ -21,11 +21,7 @@ function renderGatewayUrlConfirmation(props: GatewayUrlConfirmationProps) {
   const description = t("channels.gatewayUrlConfirmation.subtitle");
 
   return html`
-    <openclaw-modal-dialog
-      label=${title}
-      description=${description}
-      @modal-cancel=${props.onCancel}
-    >
+    <nova-modal-dialog label=${title} description=${description} @modal-cancel=${props.onCancel}>
       <div class="exec-approval-card">
         <div class="exec-approval-header">
           <div>
@@ -42,11 +38,11 @@ function renderGatewayUrlConfirmation(props: GatewayUrlConfirmationProps) {
           <button class="btn" @click=${props.onCancel}>${t("common.cancel")}</button>
         </div>
       </div>
-    </openclaw-modal-dialog>
+    </nova-modal-dialog>
   `;
 }
 
-class GatewayUrlConfirmation extends OpenClawLightDomContentsElement {
+class GatewayUrlConfirmation extends NovaLightDomContentsElement {
   @property({ attribute: false }) props?: GatewayUrlConfirmationProps;
 
   override render() {
@@ -54,6 +50,6 @@ class GatewayUrlConfirmation extends OpenClawLightDomContentsElement {
   }
 }
 
-if (!customElements.get("openclaw-gateway-url-confirmation")) {
-  customElements.define("openclaw-gateway-url-confirmation", GatewayUrlConfirmation);
+if (!customElements.get("nova-gateway-url-confirmation")) {
+  customElements.define("nova-gateway-url-confirmation", GatewayUrlConfirmation);
 }

@@ -6,7 +6,7 @@
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { Type, type TSchema } from "typebox";
 import { parseDurationMs } from "../../cli/parse-duration.js";
-import { getRuntimeConfig, type OpenClawConfig } from "../../config/config.js";
+import { getRuntimeConfig, type NovaConfig } from "../../config/config.js";
 import { resolveCronCreationDelivery } from "../../cron/delivery-context.js";
 import { assertCronDeliveryInputNonBlankFields } from "../../cron/delivery-target-validation.js";
 import { normalizeCronJobCreate, normalizeCronJobPatch } from "../../cron/normalize.js";
@@ -465,7 +465,7 @@ function readCronJobIdParam(params: Record<string, unknown>) {
 
 function resolveCronToolCallerScope(
   opts: CronToolOptions | undefined,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ): CronToolCallerScope | undefined {
   const sessionKey = opts?.agentSessionKey?.trim();
   if (!sessionKey) {
@@ -726,7 +726,7 @@ export function createCronTool(opts?: CronToolOptions, deps?: CronToolDeps): Any
     label: "Cron",
     name: "cron",
     displaySummary: CRON_TOOL_DISPLAY_SUMMARY,
-    description: `Gateway schedules/wakes: reminders, later checks/follow-ups, recurring work. Never exec sleep/process-poll as timer. Main job => heartbeat system event; isolated => background task in \`openclaw tasks\`.
+    description: `Gateway schedules/wakes: reminders, later checks/follow-ups, recurring work. Never exec sleep/process-poll as timer. Main job => heartbeat system event; isolated => background task in \`nova tasks\`.
 
 ACTIONS:
 - status scheduler; list compact summaries (includeDisabled, session agentId auto-filter; get for full); get jobId
@@ -853,7 +853,7 @@ Restricted isolated runs may only self status/list, current get/runs/remove, and
             // job properties to the top level alongside `action` instead of nesting
             // them inside `job`. When `params.job` is missing or empty, reconstruct
             // a synthetic job object from any recognised top-level job fields.
-            // See: https://github.com/openclaw/openclaw/issues/11310
+            // See: https://github.com/nova/nova/issues/11310
             if (isMissingOrEmptyObject(params.job)) {
               const synthetic = recoverCronObjectFromFlatParams(params);
               // Only use the synthetic job if at least one meaningful field is present
@@ -1108,7 +1108,7 @@ Restricted isolated runs may only self status/list, current get/runs/remove, and
             // Without this, the wake gateway call goes through with no session
             // key and the system event lands on the heartbeat / main default
             // rather than the originating conversation lane. Closes the
-            // upstream half of openclaw/openclaw#46886 (#64556 — agentId/
+            // upstream half of nova/nova#46886 (#64556 — agentId/
             // sessionKey silently ignored for `action: "wake"`). Explicit
             // params on the tool call still take precedence over the inferred
             // value, so call sites can wake a different session owned by the

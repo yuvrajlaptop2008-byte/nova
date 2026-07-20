@@ -2,10 +2,7 @@
 import { auth } from "@modelcontextprotocol/sdk/client/auth.js";
 import type { FetchLike } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import {
-  type OpenClawStateLeaseContext,
-  withOpenClawStateLease,
-} from "../state/openclaw-state-lease.js";
+import { type NovaStateLeaseContext, withNovaStateLease } from "../state/nova-state-lease.js";
 import {
   bindMcpOAuthLeaseAssertion,
   createMcpOAuthClientProvider,
@@ -44,10 +41,10 @@ function isMcpOAuthRedirectRegistrationError(error: unknown): boolean {
 
 async function withMcpOAuthLease<T>(
   storeKey: string,
-  run: (lease: OpenClawStateLeaseContext) => Promise<T>,
+  run: (lease: NovaStateLeaseContext) => Promise<T>,
   signal?: AbortSignal,
 ): Promise<T> {
-  return await withOpenClawStateLease(
+  return await withNovaStateLease(
     {
       scope: "core:mcp-oauth",
       key: storeKey,
@@ -62,7 +59,7 @@ async function withMcpOAuthLease<T>(
 
 function mcpOAuthAdditionalAuthorizationError(serverName: string): Error {
   return new Error(
-    `MCP server "${serverName}" requires additional OAuth authorization. Run openclaw mcp login ${serverName}.`,
+    `MCP server "${serverName}" requires additional OAuth authorization. Run nova mcp login ${serverName}.`,
   );
 }
 
@@ -169,7 +166,7 @@ export async function resolveMcpOAuthAccessToken(
           return undefined;
         }
         throw new Error(
-          `MCP server "${params.serverName}" requires OAuth authorization. Run openclaw mcp login ${params.serverName}.`,
+          `MCP server "${params.serverName}" requires OAuth authorization. Run nova mcp login ${params.serverName}.`,
         );
       }
 
@@ -186,7 +183,7 @@ export async function resolveMcpOAuthAccessToken(
       }
       if (!tokens.refresh_token) {
         throw new Error(
-          `MCP server "${params.serverName}" has expired OAuth credentials. Run openclaw mcp login ${params.serverName}.`,
+          `MCP server "${params.serverName}" has expired OAuth credentials. Run nova mcp login ${params.serverName}.`,
         );
       }
 
@@ -209,7 +206,7 @@ export async function resolveMcpOAuthAccessToken(
       const refreshedTokens = await provider.tokens();
       if (result !== "AUTHORIZED" || !refreshedTokens?.access_token) {
         throw new Error(
-          `MCP server "${params.serverName}" could not refresh OAuth credentials. Run openclaw mcp login ${params.serverName}.`,
+          `MCP server "${params.serverName}" could not refresh OAuth credentials. Run nova mcp login ${params.serverName}.`,
         );
       }
       return refreshedTokens.access_token;
@@ -298,7 +295,7 @@ async function runMcpOAuthLoginAttempt(
     scope?: string;
     forceAuthorization?: boolean;
   },
-  lease: OpenClawStateLeaseContext,
+  lease: NovaStateLeaseContext,
 ): Promise<"authorized" | "redirect"> {
   const result = await auth(
     createMcpOAuthClientProvider({

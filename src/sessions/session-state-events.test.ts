@@ -2,17 +2,14 @@ import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import { cleanupTempDirs, makeTempDir } from "../../test/helpers/temp-dir.js";
 import { drainFormattedSystemEvents } from "../auto-reply/reply/session-system-events.js";
 import { upsertSessionEntry } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { setHeartbeatWakeHandler } from "../infra/heartbeat-wake.js";
 import {
   enqueueSystemEvent,
   peekSystemEventEntries,
   resetSystemEventsForTest,
 } from "../infra/system-events.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import {
   acknowledgeSessionStateNotices,
   classifySessionStateActor,
@@ -39,11 +36,11 @@ const watcher = "agent:main:main";
 const nestedWatcher = "agent:main:subagent:parent";
 const child = "agent:main:subagent:child";
 const group = "agent:main:telegram:group:room-1";
-const cfg = {} as OpenClawConfig;
+const cfg = {} as NovaConfig;
 let disposeHeartbeatWakeHandler: (() => void) | undefined;
 
 function createDatabaseOptions() {
-  const stateDir = makeTempDir(tempDirs, "openclaw-session-state-");
+  const stateDir = makeTempDir(tempDirs, "nova-session-state-");
   vi.stubEnv("NOVA_STATE_DIR", stateDir);
   return { env: { ...process.env, NOVA_STATE_DIR: stateDir } };
 }
@@ -68,7 +65,7 @@ function readCursor(
   watcherSessionKey = watcher,
   targetSessionKey = child,
 ) {
-  return openOpenClawStateDatabase(database)
+  return openNovaStateDatabase(database)
     .db.prepare(
       `SELECT last_seen_sequence, notified_sequence, material_sequence
        FROM session_watch_cursors
@@ -112,7 +109,7 @@ async function createWatcherSession(
 afterEach(() => {
   disposeHeartbeatWakeHandler?.();
   disposeHeartbeatWakeHandler = undefined;
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   resetSystemEventsForTest();
   vi.unstubAllEnvs();
   vi.useRealTimers();
@@ -303,7 +300,7 @@ describe("session state events", () => {
   it("prunes retention and cap rows while keeping monotonic autoincrement heads", () => {
     const database = createDatabaseOptions();
     const now = Date.now();
-    const { db } = openOpenClawStateDatabase(database);
+    const { db } = openNovaStateDatabase(database);
     db.exec(`
       WITH RECURSIVE rows(value) AS (
         SELECT 1 UNION ALL SELECT value + 1 FROM rows WHERE value <= ${SESSION_STATE_MAX_ROWS}
@@ -348,7 +345,7 @@ describe("session state events", () => {
 
     // A manually removed row is not a retention gap: only pruning stamps the
     // per-session watermark that historyGap may consult.
-    openOpenClawStateDatabase(database)
+    openNovaStateDatabase(database)
       .db.prepare("DELETE FROM session_state_events WHERE sequence = ?")
       .run(first.sequence);
     expect(listSessionStateEventsSince(child, "main", 0, 200, database).historyGap).toBe(false);
@@ -392,7 +389,7 @@ describe("session state events", () => {
     )!;
     expect(event.sequence).toBeGreaterThan(0);
     expect(peekSystemEventEntries("global")).toEqual([]);
-    const cursorRow = openOpenClawStateDatabase(database)
+    const cursorRow = openNovaStateDatabase(database)
       .db.prepare("SELECT COUNT(*) AS n FROM session_watch_cursors")
       .get() as { n: number };
     expect(cursorRow.n).toBe(0);
@@ -556,7 +553,7 @@ describe("session state events", () => {
       ),
     ).toBe(false);
 
-    const rows = openOpenClawStateDatabase(database)
+    const rows = openNovaStateDatabase(database)
       .db.prepare(
         `SELECT watcher_session_key, target_session_key, provenance, updated_at
          FROM session_watch_cursors
@@ -572,7 +569,7 @@ describe("session state events", () => {
       },
     ]);
     expect(listAmbientGroupWatchTargets(watcher, database)).toEqual(new Set([group]));
-    openOpenClawStateDatabase(database)
+    openNovaStateDatabase(database)
       .db.prepare(
         `DELETE FROM session_watch_cursors
          WHERE watcher_session_key = ? AND target_session_key = ?`,
@@ -667,7 +664,7 @@ describe("session state events", () => {
     sweepSessionStateWatchNotices({ ...database, now: activeAt });
 
     expect(listAmbientGroupWatchTargets(watcher, database)).toEqual(new Set([group]));
-    const cursors = openOpenClawStateDatabase(database)
+    const cursors = openNovaStateDatabase(database)
       .db.prepare("SELECT COUNT(*) AS count FROM session_watch_cursors")
       .get() as { count: number };
     expect(cursors.count).toBe(1);
@@ -718,7 +715,7 @@ describe("session state events", () => {
     registerSessionStateWatch({ watcherSessionKey: watcher, targetSessionKey: group }, database);
     expect(listAmbientGroupWatchTargets(watcher, database)).toEqual(new Set());
     expect(
-      openOpenClawStateDatabase(database)
+      openNovaStateDatabase(database)
         .db.prepare(
           `SELECT provenance FROM session_watch_cursors
            WHERE watcher_session_key = ? AND target_session_key = ?`,

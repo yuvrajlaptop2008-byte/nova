@@ -5,8 +5,8 @@
 import {
   callGatewayTool,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { resolveCodexGatewayTimeoutWithGraceMs } from "./attempt-timeouts.js";
 
 const DEFAULT_CODEX_APPROVAL_TIMEOUT_MS = 120_000;
@@ -48,7 +48,7 @@ export async function requestPluginApproval(params: {
     "plugin.approval.request",
     { timeoutMs: resolveCodexGatewayTimeoutWithGraceMs(timeoutMs) },
     {
-      pluginId: "openclaw-codex-app-server",
+      pluginId: "nova-codex-app-server",
       title: truncateForGateway(params.title, MAX_PLUGIN_APPROVAL_TITLE_LENGTH),
       description: truncateForGateway(params.description, MAX_PLUGIN_APPROVAL_DESCRIPTION_LENGTH),
       severity: params.severity,

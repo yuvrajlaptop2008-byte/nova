@@ -9,7 +9,7 @@ const SCRIPT_PATH = "scripts/e2e/lib/parallels-package/log-progress-extract.mjs"
 const tempRoots = useAutoCleanupTempDirTracker(afterEach);
 
 function makeTempRoot(): string {
-  return tempRoots.make("openclaw-parallels-progress-");
+  return tempRoots.make("nova-parallels-progress-");
 }
 
 function runExtract(logPath?: string) {

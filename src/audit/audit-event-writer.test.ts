@@ -1,9 +1,6 @@
 import { afterAll, afterEach, describe, expect, it } from "vitest";
 import { cleanupTempDirs, makeTempDir } from "../../test/helpers/temp-dir.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { listAuditEvents } from "./audit-event-store.js";
 import type { AuditEventInput } from "./audit-event-types.js";
 import { createAuditEventWriter } from "./audit-event-writer.js";
@@ -26,7 +23,7 @@ function input(): AuditEventInput {
 }
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 afterAll(() => {
@@ -35,12 +32,12 @@ afterAll(() => {
 
 describe("audit event worker", () => {
   it("returns immediately under SQLite contention and flushes before stop", async () => {
-    const stateDir = makeTempDir(tempDirs, "openclaw-audit-writer-");
+    const stateDir = makeTempDir(tempDirs, "nova-audit-writer-");
     const database = { env: { NOVA_STATE_DIR: stateDir } };
     const errors: string[] = [];
     const writer = createAuditEventWriter({ stateDir, onError: (error) => errors.push(error) });
     await writer.ready;
-    const { db } = openOpenClawStateDatabase(database);
+    const { db } = openNovaStateDatabase(database);
     db.exec("BEGIN IMMEDIATE");
     const startedAt = performance.now();
     expect(writer.record(input())).toBe(true);

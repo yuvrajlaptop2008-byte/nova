@@ -168,7 +168,7 @@ export function renderAgents(props: AgentsProps) {
       <section class="agents-toolbar">
         <div class="agents-toolbar-row">
           <div class="agents-control-select">
-            <openclaw-agent-select
+            <nova-agent-select
               .agents=${agents}
               .selectedId=${selectedId}
               .defaultId=${defaultId}
@@ -177,7 +177,7 @@ export function renderAgents(props: AgentsProps) {
               .disabled=${props.loading}
               .onSelect=${props.onSelectAgent}
               .onCreateAgent=${props.onCreateAgent}
-            ></openclaw-agent-select>
+            ></nova-agent-select>
           </div>
           <div class="agents-toolbar-actions">
             ${selectedAgent
@@ -370,9 +370,7 @@ export function renderAgents(props: AgentsProps) {
                         onClick: () => props.onOpenMemoryImport?.(),
                       })}
                     </div>
-                    <openclaw-agent-memory-panel
-                      .agentId=${selectedAgent.id}
-                    ></openclaw-agent-memory-panel>
+                    <nova-agent-memory-panel .agentId=${selectedAgent.id}></nova-agent-memory-panel>
                   `
                 : nothing}
             `}

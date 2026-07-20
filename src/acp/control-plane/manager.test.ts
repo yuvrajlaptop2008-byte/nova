@@ -9,7 +9,7 @@ import {
   withAcpManagerTaskStateDir,
 } from "../../../test/helpers/acp-manager-task-state.js";
 import { listSessionStateEventsSince } from "../../sessions/session-state-events.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import { isAcpTurnActive } from "./active-turns.js";
 import {
   AcpRuntimeError,
@@ -27,7 +27,7 @@ import {
   mockCallArg,
   mockParentedAcpSessionEntries,
   readySessionMeta,
-  type OpenClawConfig,
+  type NovaConfig,
   resetAcpSessionManagerForTests,
   type SessionAcpMeta,
 } from "./manager.test-helpers.js";
@@ -83,7 +83,7 @@ describe("AcpSessionManager", () => {
       ...baseCfg,
       session: { mainKey: "main" },
       agents: { list: [{ id: "main", default: true }] },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await manager.runTurn({
       provenance: "system",
@@ -161,7 +161,7 @@ describe("AcpSessionManager", () => {
           payload: { outcome: "cancelled" },
         },
       ]);
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
     });
   });
 
@@ -339,7 +339,7 @@ describe("AcpSessionManager", () => {
         label: "Korean path",
         task: "Print the current directory in Korean",
         status: "succeeded",
-        progressSummary: "현재 작업 디렉토리는 /home/bykim0119/.openclaw/workspace 입니다",
+        progressSummary: "현재 작업 디렉토리는 /home/bykim0119/.nova/workspace 입니다",
       });
     });
   }, 300_000);
@@ -727,7 +727,7 @@ describe("AcpSessionManager", () => {
             timeoutSeconds: 1,
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const first = manager.runTurn({
         provenance: "system",
@@ -911,7 +911,7 @@ describe("AcpSessionManager", () => {
         enabled: true,
         dispatch: { enabled: true },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const manager = new AcpSessionManager();
     await expect(
@@ -1042,17 +1042,17 @@ describe("AcpSessionManager", () => {
       runtime: runtimeState.runtime,
     });
     hoisted.readAcpSessionEntryMock.mockReturnValue({
-      sessionKey: "agent:openclaw:acp:session-1",
-      storeSessionKey: "agent:openclaw:acp:session-1",
+      sessionKey: "agent:nova:acp:session-1",
+      storeSessionKey: "agent:nova:acp:session-1",
       acp: readySessionMeta({
-        agent: "openclaw",
+        agent: "nova",
       }),
     });
 
     const manager = new AcpSessionManager();
     const closeResult = await manager.closeSession({
       cfg: baseCfg,
-      sessionKey: "agent:openclaw:acp:session-1",
+      sessionKey: "agent:nova:acp:session-1",
       reason: "terminal-task-cleanup",
       allowBackendUnavailable: true,
       discardPersistentState: true,
@@ -1063,7 +1063,7 @@ describe("AcpSessionManager", () => {
     expect(closeResult.runtimeNotice).toContain("does not support session/close");
     expect(closeResult.metaCleared).toBe(true);
     expect(runtimeState.prepareFreshSession).toHaveBeenCalledWith({
-      sessionKey: "agent:openclaw:acp:session-1",
+      sessionKey: "agent:nova:acp:session-1",
     });
   });
 

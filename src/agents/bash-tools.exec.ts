@@ -32,7 +32,7 @@ import {
   normalizeHostOverrideEnvVarKey,
   sanitizeHostExecEnvWithDiagnostics,
 } from "../infra/host-env-security.js";
-import { NOVA_CLI_ENV_VAR } from "../infra/openclaw-exec-env.js";
+import { NOVA_CLI_ENV_VAR } from "../infra/nova-exec-env.js";
 import {
   getShellPathFromLoginShell,
   resolveShellEnvFallbackTimeoutMs,

@@ -1,6 +1,6 @@
 // Venice tests cover models plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import { clearLiveCatalogCacheForTests } from "openclaw/plugin-sdk/provider-catalog-live-runtime";
+import { clearLiveCatalogCacheForTests } from "nova/plugin-sdk/provider-catalog-live-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   buildVeniceModelDefinition,

@@ -1,16 +1,16 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { resolveDefaultAgentId } from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { withTimeout } from "openclaw/plugin-sdk/security-runtime";
+import { resolveDefaultAgentId } from "nova/plugin-sdk/agent-runtime";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { withTimeout } from "nova/plugin-sdk/security-runtime";
 import type {
   SessionCatalogHost,
   SessionCatalogProvider,
   SessionCatalogTranscriptItem,
-} from "openclaw/plugin-sdk/session-catalog";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/session-catalog";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { CLAUDE_CLI_BACKEND_ID, CLAUDE_CLI_DEFAULT_MODEL_REF } from "./cli-constants.js";
 import {
   adoptedSessionKey,
@@ -1266,7 +1266,7 @@ async function resolveNodeClaudeRecord(params: {
 }
 
 async function continueClaudeSession(
-  api: OpenClawPluginApi,
+  api: NovaPluginApi,
   hostId: string,
   threadId: string,
 ): Promise<{ sessionKey: string }> {
@@ -1460,7 +1460,7 @@ function toGenericClaudeHost(
   };
 }
 
-export function registerClaudeSessionCatalog(api: OpenClawPluginApi): void {
+export function registerClaudeSessionCatalog(api: NovaPluginApi): void {
   const provider: SessionCatalogProvider = {
     id: "claude",
     label: "Claude Code",

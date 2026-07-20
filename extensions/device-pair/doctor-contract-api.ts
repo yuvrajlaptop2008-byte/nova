@@ -4,7 +4,7 @@ import path from "node:path";
 import {
   archiveLegacyStateSource,
   type PluginDoctorStateMigration,
-} from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/runtime-doctor";
 import {
   DEVICE_PAIR_NOTIFY_LEGACY_STATE_FILE,
   DEVICE_PAIR_NOTIFY_SUBSCRIBER_MAX_ENTRIES,

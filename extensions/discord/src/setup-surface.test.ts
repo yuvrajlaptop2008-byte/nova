@@ -1,5 +1,5 @@
 // Discord tests cover setup surface plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { createDiscordSetupWizardBase } from "./setup-core.js";
 
@@ -34,7 +34,7 @@ describe("discordSetupWizard.dmPolicy", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         "alerts",
       ),
     ).toBe("allowlist");
@@ -60,7 +60,7 @@ describe("discordSetupWizard.dmPolicy", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       "open",
       "alerts",
     );
@@ -89,7 +89,7 @@ describe("discordSetupWizard.status", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
     });
 
     expect(configured).toBe(false);
@@ -111,7 +111,7 @@ describe("discordSetupWizard.groupAccess", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountId: "default",
       resolved: [
         {

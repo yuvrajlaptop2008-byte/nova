@@ -16,19 +16,19 @@ import {
 import { requireNodeSqlite } from "../../infra/node-sqlite.js";
 import { resolveSqliteDatabaseFilePaths } from "../../infra/sqlite-files.js";
 import { readSqliteUserVersion } from "../../infra/sqlite-user-version.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../../state/openclaw-agent-db.generated.js";
+import type { DB as NovaAgentKyselyDatabase } from "../../state/nova-agent-db.generated.js";
 import {
   NOVA_AGENT_SCHEMA_VERSION,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-} from "../../state/openclaw-agent-db.js";
-import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "../../state/openclaw-state-db.js";
+  runNovaAgentWriteTransaction,
+  type NovaAgentDatabase,
+} from "../../state/nova-agent-db.js";
+import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "../../state/nova-state-db.js";
 import { resolveUserPath } from "../../utils.js";
 import { resolveRegisteredAgentIdForDir } from "../agent-dir-registry.js";
 import { resolveDefaultAgentDir } from "../agent-scope-config.js";
 
 type AuthProfileDatabase = Pick<
-  OpenClawAgentKyselyDatabase,
+  NovaAgentKyselyDatabase,
   "auth_profile_store" | "auth_profile_state"
 >;
 
@@ -51,13 +51,13 @@ function inferAgentIdFromDir(agentDir: string): string {
   return `custom-${sha256HexPrefix(normalized, 12)}`;
 }
 
-// The auth database lives in the agent dir and shares the openclaw-agent schema
+// The auth database lives in the agent dir and shares the nova-agent schema
 // so auth store/state can move with the rest of agent-local durable state.
 function resolveAuthProfileDatabaseOptions(agentDir?: string) {
   const dir = resolveAgentDir(agentDir);
   return {
     agentId: resolveRegisteredAgentIdForDir(dir) ?? inferAgentIdFromDir(dir),
-    path: path.join(dir, "openclaw-agent.sqlite"),
+    path: path.join(dir, "nova-agent.sqlite"),
   };
 }
 
@@ -198,7 +198,7 @@ export function inspectPersistedAuthProfileStateRaw(
 /** Reads the raw persisted secrets-store payload without coercing the schema. */
 export function readPersistedAuthProfileStoreRaw(
   agentDir?: string,
-  database?: OpenClawAgentDatabase,
+  database?: NovaAgentDatabase,
 ): unknown {
   if (database) {
     const db = getAuthProfileKysely(database.db);
@@ -221,7 +221,7 @@ export function readPersistedAuthProfileStoreRaw(
 /** Reads the raw persisted runtime-state payload without coercing the schema. */
 export function readPersistedAuthProfileStateRaw(
   agentDir?: string,
-  database?: OpenClawAgentDatabase,
+  database?: NovaAgentDatabase,
 ): unknown {
   if (database) {
     const db = getAuthProfileKysely(database.db);
@@ -245,9 +245,9 @@ export function readPersistedAuthProfileStateRaw(
 export function writePersistedAuthProfileStoreRaw(
   payload: unknown,
   agentDir?: string,
-  database?: OpenClawAgentDatabase,
+  database?: NovaAgentDatabase,
 ): void {
-  const write = (target: OpenClawAgentDatabase) => {
+  const write = (target: NovaAgentDatabase) => {
     const db = getAuthProfileKysely(target.db);
     executeSqliteQuerySync(
       target.db,
@@ -270,15 +270,15 @@ export function writePersistedAuthProfileStoreRaw(
     write(database);
     return;
   }
-  runOpenClawAgentWriteTransaction(write, resolveAuthProfileDatabaseOptions(agentDir));
+  runNovaAgentWriteTransaction(write, resolveAuthProfileDatabaseOptions(agentDir));
 }
 
 /** Deletes the persisted secrets-store row while leaving runtime state intact. */
 export function deletePersistedAuthProfileStoreRaw(
   agentDir?: string,
-  database?: OpenClawAgentDatabase,
+  database?: NovaAgentDatabase,
 ): void {
-  const remove = (target: OpenClawAgentDatabase) => {
+  const remove = (target: NovaAgentDatabase) => {
     const db = getAuthProfileKysely(target.db);
     executeSqliteQuerySync(
       target.db,
@@ -289,16 +289,16 @@ export function deletePersistedAuthProfileStoreRaw(
     remove(database);
     return;
   }
-  runOpenClawAgentWriteTransaction(remove, resolveAuthProfileDatabaseOptions(agentDir));
+  runNovaAgentWriteTransaction(remove, resolveAuthProfileDatabaseOptions(agentDir));
 }
 
 /** Writes or deletes the persisted runtime-state payload. */
 export function writePersistedAuthProfileStateRaw(
   payload: unknown,
   agentDir?: string,
-  database?: OpenClawAgentDatabase,
+  database?: NovaAgentDatabase,
 ): void {
-  const write = (target: OpenClawAgentDatabase) => {
+  const write = (target: NovaAgentDatabase) => {
     const db = getAuthProfileKysely(target.db);
     if (!payload) {
       executeSqliteQuerySync(
@@ -328,13 +328,13 @@ export function writePersistedAuthProfileStateRaw(
     write(database);
     return;
   }
-  runOpenClawAgentWriteTransaction(write, resolveAuthProfileDatabaseOptions(agentDir));
+  runNovaAgentWriteTransaction(write, resolveAuthProfileDatabaseOptions(agentDir));
 }
 
 /** Runs an auth-profile database write transaction for store/state updates. */
 export function runAuthProfileWriteTransaction<T>(
   agentDir: string | undefined,
-  operation: (database: OpenClawAgentDatabase) => T,
+  operation: (database: NovaAgentDatabase) => T,
 ): T {
-  return runOpenClawAgentWriteTransaction(operation, resolveAuthProfileDatabaseOptions(agentDir));
+  return runNovaAgentWriteTransaction(operation, resolveAuthProfileDatabaseOptions(agentDir));
 }

@@ -1,8 +1,5 @@
-import type { PluginRuntime, RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
-import type {
-  RealtimeVoiceBridgeSession,
-  TalkEventInput,
-} from "openclaw/plugin-sdk/realtime-voice";
+import type { PluginRuntime, RuntimeLogger } from "nova/plugin-sdk/plugin-runtime";
+import type { RealtimeVoiceBridgeSession, TalkEventInput } from "nova/plugin-sdk/realtime-voice";
 import { describe, expect, it, vi } from "vitest";
 import { handleGoogleMeetRealtimeConsultToolCall } from "./agent-consult.js";
 import { resolveGoogleMeetConfig } from "./config.js";
@@ -89,7 +86,7 @@ describe("handleGoogleMeetRealtimeConsultToolCall", () => {
       event: {
         itemId: "item-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "What should I say?" },
       },
       config: resolveGoogleMeetConfig({}),
@@ -125,7 +122,7 @@ describe("handleGoogleMeetRealtimeConsultToolCall", () => {
         event: {
           itemId: "item-1",
           callId: "call-1",
-          name: "openclaw_agent_consult",
+          name: "nova_agent_consult",
           args: { question: "What should I say?" },
         },
         config: resolveGoogleMeetConfig({ realtime: { agentId: "jay" } }),

@@ -8,7 +8,7 @@ describe("OutputAccumulator", () => {
     const accumulator = new OutputAccumulator({
       maxBytes: 8,
       maxLines: 10,
-      tempFilePrefix: "openclaw-output-test",
+      tempFilePrefix: "nova-output-test",
     });
 
     accumulator.append(Buffer.from("secret output"));
@@ -28,7 +28,7 @@ describe("OutputAccumulator", () => {
     const accumulator = new OutputAccumulator({
       maxBytes: 5,
       maxLines: 10,
-      tempFilePrefix: "openclaw-output-test",
+      tempFilePrefix: "nova-output-test",
     });
 
     accumulator.append(Buffer.from("a🙂b"));

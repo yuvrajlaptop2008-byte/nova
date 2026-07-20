@@ -3,13 +3,13 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import type { Message } from "grammy/types";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolvePersistentDedupePluginStateNamespace } from "openclaw/plugin-sdk/persistent-dedupe";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolvePersistentDedupePluginStateNamespace } from "nova/plugin-sdk/persistent-dedupe";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveTelegramBotInfoCachePath } from "./bot-info-cache.js";
 import { resolveTelegramMessageCachePath } from "./message-cache.js";
@@ -58,7 +58,7 @@ afterEach(() => {
 
 describe("telegram state migrations", () => {
   it("detects legacy bot-info cache import", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const persistedPath = resolveTelegramBotInfoCachePath("ops", env);
     try {
@@ -73,7 +73,7 @@ describe("telegram state migrations", () => {
             id: 123456,
             is_bot: true,
             first_name: "Nova",
-            username: "openclaw_bot",
+            username: "nova_bot",
           },
         }),
       );
@@ -88,7 +88,7 @@ describe("telegram state migrations", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const botInfoPlan = plans.find(
         (plan) =>
@@ -116,7 +116,7 @@ describe("telegram state migrations", () => {
           fetchedAt: "2026-05-24T11:00:00.000Z",
           botInfo: {
             id: 123456,
-            username: "openclaw_bot",
+            username: "nova_bot",
           },
         },
       });
@@ -126,7 +126,7 @@ describe("telegram state migrations", () => {
   });
 
   it("detects legacy message-cache import for the runtime sidecar path", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const storePath = resolveStorePath(undefined, { env });
     const persistedPath = resolveTelegramMessageCachePath(storePath);
@@ -136,7 +136,7 @@ describe("telegram state migrations", () => {
       arrayEntry.key = "default:7:9999";
       arrayEntry.node.sourceMessage = {
         ...arrayEntry.node.sourceMessage,
-        openclaw_prompt_context_projection: {
+        nova_prompt_context_projection: {
           transcriptMessageId: "must-not-be-inferred",
           partIndex: 0,
           finalPart: true,
@@ -165,7 +165,7 @@ describe("telegram state migrations", () => {
         agents: {
           list: [{ id: "ops", default: true }],
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const messageCachePlan = plans.find(
         (plan) =>
@@ -197,16 +197,14 @@ describe("telegram state migrations", () => {
           threadId: "42",
         },
       });
-      expect(entries[0]?.value).not.toHaveProperty(
-        "sourceMessage.openclaw_prompt_context_projection",
-      );
+      expect(entries[0]?.value).not.toHaveProperty("sourceMessage.nova_prompt_context_projection");
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
   });
 
   it("detects legacy topic-name cache import for an account-scoped runtime sidecar path", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const storePath = resolveStorePath(undefined, { env, agentId: "ops" });
     const persistedPath = resolveTopicNameCachePath(storePath);
@@ -234,7 +232,7 @@ describe("telegram state migrations", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const topicNamePlan = plans.find(
         (plan) =>
@@ -270,7 +268,7 @@ describe("telegram state migrations", () => {
   });
 
   it("detects legacy topic-name cache import for the global sidecar path", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const legacyStorePath = path.join(dir, "sessions", "sessions.json");
     const persistedPath = resolveTopicNameCachePath(legacyStorePath);
@@ -301,7 +299,7 @@ describe("telegram state migrations", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const topicNamePlan = plans.find(
         (plan) =>
@@ -337,7 +335,7 @@ describe("telegram state migrations", () => {
   });
 
   it("detects remaining Telegram JSON sidecars for plugin-state import", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const storePath = resolveStorePath(undefined, { env });
     const now = Date.now();
@@ -407,7 +405,7 @@ describe("telegram state migrations", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const dispatchNamespace = resolvePersistentDedupePluginStateNamespace({
         namespace: TELEGRAM_MESSAGE_DISPATCH_DEDUPE_NAMESPACE,
@@ -481,7 +479,7 @@ describe("telegram state migrations", () => {
   it("cleans up expired and boundary Telegram TTL cache sidecars", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-15T12:00:00.000Z"));
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const storePath = resolveStorePath(undefined, { env });
     const sentMessagePath = `${storePath}.telegram-sent-messages.json`;
@@ -509,7 +507,7 @@ describe("telegram state migrations", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const expiredPlans = plans.filter(
         (plan) =>
@@ -532,7 +530,7 @@ describe("telegram state migrations", () => {
   });
 
   it("migrates shipped Telegram message dispatch plugin-state buckets", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const now = Date.now();
     const replayKey = JSON.stringify(["message", "7", 42]);
@@ -571,7 +569,7 @@ describe("telegram state migrations", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const plan = plans.find(
         (candidate) =>
@@ -648,7 +646,7 @@ describe("telegram state migrations", () => {
   });
 
   it("detects Telegram account sidecars even after the account was removed from config", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const updateOffsetPath = path.join(dir, "telegram", "update-offset-oldbot.json");
     const threadBindingsPath = path.join(dir, "telegram", "thread-bindings-oldbot.json");
@@ -709,7 +707,7 @@ describe("telegram state migrations", () => {
   });
 
   it("imports legacy session-store sidecars into the current runtime scope", async () => {
-    const dir = await mkdtemp(path.join(os.tmpdir(), "openclaw-telegram-state-migration-"));
+    const dir = await mkdtemp(path.join(os.tmpdir(), "nova-telegram-state-migration-"));
     const env = { ...process.env, NOVA_STATE_DIR: dir };
     const storePath = resolveStorePath(undefined, { env });
     const legacyStorePath = path.join(dir, "sessions", "sessions.json");
@@ -744,7 +742,7 @@ describe("telegram state migrations", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const plans = await detectTelegramLegacyStateMigrations({ cfg, env });
       const importPlans = plans.filter((plan) => plan.kind === "plugin-state-import");
       const currentSentPlan = importPlans.find(

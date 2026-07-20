@@ -84,7 +84,7 @@ describe("TasksPage cancellation lifecycle", () => {
   it("scopes both active and recent task requests to the selected agent", async () => {
     const request = vi.fn(async () => ({ tasks: [] }));
     const source = createGateway({ request } as unknown as GatewayBrowserClient);
-    const page = document.createElement("openclaw-tasks-page") as TasksPageTestElement;
+    const page = document.createElement("nova-tasks-page") as TasksPageTestElement;
     page.context = createContext(source.gateway, "writer");
     document.body.append(page);
 
@@ -109,7 +109,7 @@ describe("TasksPage cancellation lifecycle", () => {
     });
     const client = { request } as unknown as GatewayBrowserClient;
     const source = createGateway(client);
-    const page = document.createElement("openclaw-tasks-page") as TasksPageTestElement;
+    const page = document.createElement("nova-tasks-page") as TasksPageTestElement;
     page.context = createContext(source.gateway);
     document.body.append(page);
     await vi.waitFor(() => expect(request).toHaveBeenCalledWith("tasks.list", expect.anything()));

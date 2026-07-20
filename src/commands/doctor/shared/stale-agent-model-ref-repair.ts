@@ -9,11 +9,11 @@ import {
 import { DEFAULT_MODEL, DEFAULT_PROVIDER } from "../../../agents/defaults.js";
 import { normalizeProviderId } from "../../../agents/model-selection.js";
 import type { AgentModelConfig } from "../../../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { resolvePluginMetadataSnapshot } from "../../../plugins/plugin-metadata-snapshot.js";
 
 type StaleAgentModelRefRepair = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   changes: string[];
   warnings: string[];
 };
@@ -43,7 +43,7 @@ function providerFromModelRef(ref: string): string | undefined {
 }
 
 function collectPluginProviderIds(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options: RepairOptions,
 ): { providerIds?: Set<string>; warnings: string[] } {
   if (options.pluginProviderIds) {
@@ -86,7 +86,7 @@ function collectPluginProviderIds(
 }
 
 function collectPersistedProviderIds(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   env: NodeJS.ProcessEnv;
   injected?: ReadonlyMap<string, ReadonlySet<string>>;
@@ -202,7 +202,7 @@ function filterFallbacks(params: {
   }
 }
 
-function firstExplicitModelRef(cfg: OpenClawConfig): string | undefined {
+function firstExplicitModelRef(cfg: NovaConfig): string | undefined {
   if (!isRecord(cfg.models?.providers)) {
     return undefined;
   }
@@ -229,7 +229,7 @@ function modelPrimaryRef(model: unknown): string | undefined {
 }
 
 export function repairStaleAgentModelRefs(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options: RepairOptions = {},
 ): StaleAgentModelRefRepair {
   const replaceMode = cfg.models?.mode === "replace";

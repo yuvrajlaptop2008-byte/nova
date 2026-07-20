@@ -5,12 +5,12 @@ import os from "node:os";
 import path from "node:path";
 import { SYSTEM_PROMPT_CACHE_BOUNDARY } from "@nova/ai/internal/shared";
 import { expectDefined } from "@nova/normalization-core";
-import { CURRENT_SESSION_VERSION } from "openclaw/plugin-sdk/agent-sessions";
+import { CURRENT_SESSION_VERSION } from "nova/plugin-sdk/agent-sessions";
 import { Type } from "typebox";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildGroupChatContext, buildGroupIntro } from "../../auto-reply/reply/groups.js";
 import type { ChannelPlugin } from "../../channels/plugins/types.plugin.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { registerLegacyContextEngine } from "../../context-engine/legacy.registration.js";
 import { registerContextEngineForOwner } from "../../context-engine/registry.js";
 import type { ContextEngine } from "../../context-engine/types.js";
@@ -124,13 +124,13 @@ function createTestMcpLoopbackServerConfig(port: number) {
   // substitution without starting the real MCP HTTP server.
   return {
     mcpServers: {
-      openclaw: {
+      nova: {
         type: "http",
         url: `http://127.0.0.1:${port}/mcp`,
         alwaysLoad: true,
         headers: {
           Authorization: "Bearer ${NOVA_MCP_TOKEN}",
-          "x-openclaw-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
+          "x-nova-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
         },
       },
     },
@@ -159,7 +159,7 @@ function createCliBackendConfig(
     reseedFromRawTranscriptWhenUncompacted?: boolean;
     systemPromptWhen?: "first" | "always" | "never";
   } = {},
-): OpenClawConfig {
+): NovaConfig {
   return {
     agents: {
       defaults: {
@@ -182,7 +182,7 @@ function createCliBackendConfig(
         },
       },
     },
-  } satisfies OpenClawConfig;
+  } satisfies NovaConfig;
 }
 
 function setCliBackendForPrepareTest(
@@ -237,7 +237,7 @@ function setCliBackendForPrepareTest(
 function createSessionFile() {
   // Prepare tests use canonical Nova session paths because several cases
   // assert that external or stale transcript paths are ignored.
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-prepare-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-cli-prepare-"));
   sessionFileEnvSnapshot ??= captureEnv(["NOVA_STATE_DIR"]);
   setTestEnvValue("NOVA_STATE_DIR", dir);
   const sessionFile = path.join(dir, "agents", "main", "sessions", "session-test.jsonl");
@@ -399,7 +399,7 @@ describe("prepareCliRunContext", () => {
               },
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies NovaConfig,
       });
 
       expect(context.backendResolved.modelProvider).toBe("fixture-anthropic");
@@ -432,7 +432,7 @@ describe("prepareCliRunContext", () => {
       mintMcpLoopbackClientGrant: vi.fn(createTestMcpLoopbackClientGrant),
       revokeMcpLoopbackClientGrant: vi.fn(() => true),
       resolveMcpLoopbackScopedTools: vi.fn(() => ({ agentId: "main", tools: [] })),
-      resolveOpenClawReferencePaths: vi.fn(async () => ({ docsPath: null, sourcePath: null })),
+      resolveNovaReferencePaths: vi.fn(async () => ({ docsPath: null, sourcePath: null })),
       prepareClaudeCliSkillsPlugin: vi.fn(async () => ({
         args: [],
         cleanup: vi.fn(async () => undefined),
@@ -469,7 +469,7 @@ describe("prepareCliRunContext", () => {
   it("honors an explicit auth agent directory independently of session identity", async () => {
     const { dir, sessionFile } = createSessionFile();
     const modelOwnerAgentDir = path.join(dir, "ops-agent");
-    const systemAgentDir = path.join(dir, "openclaw-agent");
+    const systemAgentDir = path.join(dir, "nova-agent");
     const prepareExecution = vi.fn(async () => undefined);
     fs.mkdirSync(modelOwnerAgentDir, { recursive: true });
     cliBackendsTesting.setDepsForTest({
@@ -494,8 +494,8 @@ describe("prepareCliRunContext", () => {
     try {
       const context = await prepareCliRunContext({
         sessionId: "session-test",
-        sessionKey: "agent:openclaw:main",
-        agentId: "openclaw",
+        sessionKey: "agent:nova:main",
+        agentId: "nova",
         sessionFile,
         workspaceDir: dir,
         agentDir: modelOwnerAgentDir,
@@ -509,7 +509,7 @@ describe("prepareCliRunContext", () => {
           agents: {
             list: [
               { id: "ops", default: true, agentDir: modelOwnerAgentDir },
-              { id: "openclaw", agentDir: systemAgentDir },
+              { id: "nova", agentDir: systemAgentDir },
             ],
           },
         },
@@ -791,7 +791,7 @@ describe("prepareCliRunContext", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
       });
 
       expect(resolveApiKeyForProfile).toHaveBeenCalledWith(
@@ -1111,8 +1111,8 @@ describe("prepareCliRunContext", () => {
         mcp?: { allowed?: string[] };
         mcpServers?: Record<string, { url?: string }>;
       };
-      expect(generatedSettings.mcp?.allowed).toEqual(["openclaw"]);
-      expect(generatedSettings.mcpServers?.openclaw?.url).toBe("http://127.0.0.1:31783/mcp");
+      expect(generatedSettings.mcp?.allowed).toEqual(["nova"]);
+      expect(generatedSettings.mcpServers?.nova?.url).toBe("http://127.0.0.1:31783/mcp");
       expect(context.preparedBackend.env?.GEMINI_CLI_SYSTEM_SETTINGS_PATH).toBe(
         profileSystemSettingsPath,
       );
@@ -1316,7 +1316,7 @@ describe("prepareCliRunContext", () => {
         args: ["--plugin-dir", skillsPluginDir],
         cleanup: skillsCleanup,
       })),
-      resolveOpenClawReferencePaths: vi.fn(async () => {
+      resolveNovaReferencePaths: vi.fn(async () => {
         throw new Error("reference path lookup failed");
       }),
     });
@@ -1339,9 +1339,9 @@ describe("prepareCliRunContext", () => {
 
       expect(skillsCleanup).toHaveBeenCalledOnce();
       expect(fs.existsSync(skillsPluginDir)).toBe(false);
-      expect(
-        fs.readdirSync(tempRoot).filter((entry) => entry.startsWith("openclaw-cli-mcp-")),
-      ).toEqual([]);
+      expect(fs.readdirSync(tempRoot).filter((entry) => entry.startsWith("nova-cli-mcp-"))).toEqual(
+        [],
+      );
     } finally {
       tempEnvSnapshot.restore();
       fs.rmSync(dir, { recursive: true, force: true });
@@ -1410,7 +1410,7 @@ describe("prepareCliRunContext", () => {
           },
         ],
       })),
-      resolveOpenClawReferencePaths: vi.fn(async () => ({ docsPath: "docs", sourcePath: "src" })),
+      resolveNovaReferencePaths: vi.fn(async () => ({ docsPath: "docs", sourcePath: "src" })),
     });
 
     const context = await prepareCliRunContext({
@@ -1439,7 +1439,7 @@ describe("prepareCliRunContext", () => {
     );
     expect(context.systemPrompt).toBe("BTW system prompt");
     expect(context.params.prompt).toBe("side question prompt");
-    expect(context.openClawHistoryPrompt).toBeUndefined();
+    expect(context.novaHistoryPrompt).toBeUndefined();
     expect(context.contextEngine).toBeUndefined();
     expect(context.contextEngineTurnPrompt).toBeUndefined();
     expect(context.hadSessionFile).toBe(false);
@@ -1475,7 +1475,7 @@ describe("prepareCliRunContext", () => {
     const bootstrapPath = path.join(dir, "BOOTSTRAP.md");
     const config = {
       agents: { defaults: { workspace: dir } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     cliBackendsTesting.setDepsForTest({
       resolvePluginSetupCliBackend: () => undefined,
       resolveRuntimeCliBackends: () => [
@@ -1788,8 +1788,8 @@ describe("prepareCliRunContext", () => {
 
       expect(context.reusableCliSession).toEqual({ mode: "reuse", sessionId: "cli-session" });
       expect(context.params.prompt).toBe("Current event:\nBob: yes\n\n[Nova room event]");
-      expect(context.openClawHistoryPrompt).toContain("Room context:\nAlice: lunch?");
-      expect(context.openClawHistoryPrompt).toContain("Current event:\nBob: yes");
+      expect(context.novaHistoryPrompt).toContain("Room context:\nAlice: lunch?");
+      expect(context.novaHistoryPrompt).toContain("Current event:\nBob: yes");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -1994,7 +1994,7 @@ describe("prepareCliRunContext", () => {
     });
     registerTestContextEngine(engineId, factory);
     setCliRunnerPrepareTestDeps({
-      resolveOpenClawReferencePaths: vi.fn(async () => {
+      resolveNovaReferencePaths: vi.fn(async () => {
         throw new Error("reference path lookup failed");
       }),
     });
@@ -2134,7 +2134,7 @@ describe("prepareCliRunContext", () => {
         list: [{ id: "main", default: true, agentDir: runtimeAgentDir }],
       },
       plugins: { slots: { contextEngine: engineId } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const factory = vi.fn((_ctx: unknown): ContextEngine => {
       return {
         info: { id: engineId, name: "CLI runtime config engine" },
@@ -2290,7 +2290,7 @@ describe("prepareCliRunContext", () => {
 
   it("uses cwd for CLI system prompt workspace guidance", async () => {
     const { dir, sessionFile } = createSessionFile();
-    const taskDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-task-"));
+    const taskDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-cli-task-"));
     try {
       const context = await prepareCliRunContext({
         sessionId: "session-test",
@@ -2414,7 +2414,7 @@ describe("prepareCliRunContext", () => {
         sessionId: "cli-session",
         drift: { reasons: ["system-prompt"] },
       });
-      expect(context.openClawHistoryPrompt).toBeUndefined();
+      expect(context.novaHistoryPrompt).toBeUndefined();
       expect(context.params.prompt).toContain(
         "Nova resumed this CLI session after prompt content changed.",
       );
@@ -2825,8 +2825,8 @@ describe("prepareCliRunContext", () => {
         sessionId: "cli-session",
         drift: { reasons: ["system-prompt"] },
       });
-      expect(context.openClawHistoryPrompt).toContain("prior no-compaction ask");
-      expect(context.openClawHistoryPrompt).toContain("latest ask");
+      expect(context.novaHistoryPrompt).toContain("prior no-compaction ask");
+      expect(context.novaHistoryPrompt).toContain("latest ask");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -2865,8 +2865,8 @@ describe("prepareCliRunContext", () => {
       });
 
       expect(context.reusableCliSession).toEqual({ mode: "reuse", sessionId: "cli-session" });
-      expect(context.openClawHistoryPrompt).toContain("prior resumable ask");
-      expect(context.openClawHistoryPrompt).toContain("latest ask");
+      expect(context.novaHistoryPrompt).toContain("prior resumable ask");
+      expect(context.novaHistoryPrompt).toContain("latest ask");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -3566,7 +3566,7 @@ describe("prepareCliRunContext", () => {
         },
         cliToolAvailability: {
           native: [],
-          mcp: ["mcp__openclaw__memory_search", "mcp__openclaw__memory_get", "mcp__other__thing"],
+          mcp: ["mcp__nova__memory_search", "mcp__nova__memory_get", "mcp__other__thing"],
         },
       });
       cleanup = context.preparedBackend.cleanup;
@@ -3583,14 +3583,14 @@ describe("prepareCliRunContext", () => {
       const rawBundle = JSON.parse(fs.readFileSync(mcpConfigPath ?? "", "utf-8")) as {
         mcpServers?: Record<string, unknown>;
       };
-      expect(Object.keys(rawBundle.mcpServers ?? {})).toEqual(["openclaw"]);
+      expect(Object.keys(rawBundle.mcpServers ?? {})).toEqual(["nova"]);
     } finally {
       await cleanup?.();
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
 
-  it("serves only the openclaw MCP server for ring-zero runs", async () => {
+  it("serves only the nova MCP server for ring-zero runs", async () => {
     const { dir, sessionFile } = createSessionFile();
     try {
       const getActiveMcpLoopbackRuntime = vi.fn(() => undefined);
@@ -3638,12 +3638,12 @@ describe("prepareCliRunContext", () => {
         provider: "claude-cli",
         model: "test-model",
         timeoutMs: 1_000,
-        runId: "run-test-openclaw-mcp",
+        runId: "run-test-nova-mcp",
         config: createCliBackendConfig(),
         systemAgentTool: { surface: "cli" },
         cliToolAvailability: {
           native: [],
-          mcp: ["mcp__openclaw__openclaw"],
+          mcp: ["mcp__nova__nova"],
         },
       };
       const context = await prepareCliRunContext(params);
@@ -3661,7 +3661,7 @@ describe("prepareCliRunContext", () => {
       expect(resolveExecutionArgs).not.toHaveBeenCalled();
       expect(context.params.cliToolAvailability).toEqual({
         native: [],
-        mcp: ["mcp__openclaw__openclaw"],
+        mcp: ["mcp__nova__nova"],
       });
       const mcpConfigPath = expectDefined(
         args[args.indexOf("--mcp-config") + 1],
@@ -3670,9 +3670,9 @@ describe("prepareCliRunContext", () => {
       const raw = JSON.parse(fs.readFileSync(mcpConfigPath, "utf-8")) as {
         mcpServers?: Record<string, { env?: Record<string, string> }>;
       };
-      expect(Object.keys(raw.mcpServers ?? {})).toEqual(["openclaw"]);
-      expect(raw.mcpServers?.openclaw?.env).toMatchObject({
-        NOVA_TOOLS_MCP_TOOLS: "openclaw",
+      expect(Object.keys(raw.mcpServers ?? {})).toEqual(["nova"]);
+      expect(raw.mcpServers?.nova?.env).toMatchObject({
+        NOVA_TOOLS_MCP_TOOLS: "nova",
         NOVA_TOOLS_MCP_SYSTEM_AGENT_SURFACE: "cli",
       });
 
@@ -3821,8 +3821,8 @@ describe("prepareCliRunContext", () => {
         mode: "invalidate",
         invalidatedReason: "missing-transcript",
       });
-      expect(context.openClawHistoryPrompt).toContain("prior claude-cli ask");
-      expect(context.openClawHistoryPrompt).toContain("latest ask");
+      expect(context.novaHistoryPrompt).toContain("prior claude-cli ask");
+      expect(context.novaHistoryPrompt).toContain("latest ask");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -3907,7 +3907,7 @@ describe("prepareCliRunContext", () => {
       });
       // The reseed prompt is gateway-built text, so node placement keeps the
       // backend's raw-transcript reseed semantics for fresh-retry paths.
-      expect(context.openClawHistoryPrompt).toContain("gateway-only history");
+      expect(context.novaHistoryPrompt).toContain("gateway-only history");
       expect(context.claudeSkillsPluginArgs).toEqual([]);
       expect(context.systemPrompt).not.toContain("GATEWAY_ONLY_SKILL_PATH");
       expect(context.mcpDeliveryCapture).toBeUndefined();
@@ -3979,8 +3979,8 @@ describe("prepareCliRunContext", () => {
         sessionId: "warm-claude-sid",
       });
       expect(context.requiredClaudeLiveSessionGeneration).toBe("warm-live-generation");
-      expect(context.openClawHistoryPrompt).toContain("earlier warm context");
-      expect(context.openClawHistoryPrompt).toContain("warm follow-up");
+      expect(context.novaHistoryPrompt).toContain("earlier warm context");
+      expect(context.novaHistoryPrompt).toContain("warm follow-up");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -3998,14 +3998,14 @@ describe("prepareCliRunContext", () => {
 
       const context = await prepareCliRunContext({
         sessionId: "session-test",
-        sessionKey: "agent:openclaw:main",
+        sessionKey: "agent:nova:main",
         sessionFile,
         workspaceDir: dir,
         prompt: "approve the proposal",
         provider: "claude-cli",
         model: "opus",
         timeoutMs: 1_000,
-        runId: "run-openclaw-process-per-turn",
+        runId: "run-nova-process-per-turn",
         cliSessionBinding: { sessionId: "native-claude-sid" },
         config: createCliBackendConfig(),
         disableCliLiveSession: true,
@@ -4250,7 +4250,7 @@ describe("prepareCliRunContext", () => {
 
   it("renders CLI skills from sandbox-readable paths instead of persisted host snapshots", async () => {
     const { dir, sessionFile } = createSessionFile();
-    const hostSkillDir = "/home/tzdai/.npm-global/lib/node_modules/openclaw/skills/gog";
+    const hostSkillDir = "/home/tzdai/.npm-global/lib/node_modules/nova/skills/gog";
     const hostSkillPath = `${hostSkillDir}/SKILL.md`;
     const materializedWorkspace = path.join(dir, "state", "sandbox-skills");
     const materializedSkillDir = path.join(materializedWorkspace, "skills", "gog");
@@ -4305,10 +4305,10 @@ describe("prepareCliRunContext", () => {
               description: "Read Gmail safely.",
               filePath: hostSkillPath,
               baseDir: hostSkillDir,
-              source: "openclaw-bundled",
+              source: "nova-bundled",
               sourceInfo: {
                 path: hostSkillPath,
-                source: "openclaw-bundled",
+                source: "nova-bundled",
                 scope: "project",
                 origin: "top-level",
                 baseDir: hostSkillDir,
@@ -4324,9 +4324,7 @@ describe("prepareCliRunContext", () => {
         sessionKey: "agent:main:sandboxed-user",
         workspaceDir: dir,
       });
-      expect(context.systemPrompt).toContain(
-        "/workspace/.openclaw/sandbox-skills/skills/gog/SKILL.md",
-      );
+      expect(context.systemPrompt).toContain("/workspace/.nova/sandbox-skills/skills/gog/SKILL.md");
       expect(context.systemPrompt).not.toContain(hostSkillPath);
       expect(context.systemPromptReport.skills.promptChars).toBeGreaterThan(0);
       expect(context.systemPromptReport.skills.entries).toEqual([
@@ -4375,9 +4373,9 @@ describe("prepareCliRunContext", () => {
       });
       setCliRunnerPrepareTestDeps({
         prepareClaudeCliSkillsPlugin: vi.fn(async () => ({
-          args: ["--plugin-dir", path.join(dir, "openclaw-skills")],
+          args: ["--plugin-dir", path.join(dir, "nova-skills")],
           cleanup: vi.fn(async () => undefined),
-          pluginDir: path.join(dir, "openclaw-skills"),
+          pluginDir: path.join(dir, "nova-skills"),
         })),
       });
 
@@ -4427,7 +4425,7 @@ describe("prepareCliRunContext", () => {
       expect(context.systemPromptReport.skills.promptChars).toBe(0);
       expect(context.claudeSkillsPluginArgs).toEqual([
         "--plugin-dir",
-        path.join(dir, "openclaw-skills"),
+        path.join(dir, "nova-skills"),
       ]);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -4673,9 +4671,9 @@ describe("prepareCliRunContext", () => {
         config: createCliBackendConfig(),
       });
 
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain(summaryMarker);
-      expect(context.openClawHistoryPrompt).not.toContain("Nova reseed history truncated");
+      expect(context.novaHistoryPrompt).toBeDefined();
+      expect(context.novaHistoryPrompt).toContain(summaryMarker);
+      expect(context.novaHistoryPrompt).not.toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -4728,9 +4726,9 @@ describe("prepareCliRunContext", () => {
         config: createCliBackendConfig(),
       });
 
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain(summaryMarker);
-      expect(context.openClawHistoryPrompt).not.toContain("Nova reseed history truncated");
+      expect(context.novaHistoryPrompt).toBeDefined();
+      expect(context.novaHistoryPrompt).toContain(summaryMarker);
+      expect(context.novaHistoryPrompt).not.toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -4762,8 +4760,8 @@ describe("prepareCliRunContext", () => {
         config: createCliBackendConfig(),
       });
 
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain("Nova reseed history truncated");
+      expect(context.novaHistoryPrompt).toBeDefined();
+      expect(context.novaHistoryPrompt).toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -4838,10 +4836,10 @@ describe("prepareCliRunContext", () => {
       });
 
       expect(context.reusableCliSession).toEqual({ mode: "reuse", sessionId: "cli-session" });
-      expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain(recentMarker);
-      expect(context.openClawHistoryPrompt).toContain("EARLIEST_USER");
-      expect(context.openClawHistoryPrompt).not.toContain("Nova reseed history truncated");
+      expect(context.novaHistoryPrompt).toBeDefined();
+      expect(context.novaHistoryPrompt).toContain(recentMarker);
+      expect(context.novaHistoryPrompt).toContain("EARLIEST_USER");
+      expect(context.novaHistoryPrompt).not.toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

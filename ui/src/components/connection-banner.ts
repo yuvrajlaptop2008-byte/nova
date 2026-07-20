@@ -3,7 +3,7 @@
 import { html, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { t } from "../i18n/index.ts";
-import { OpenClawLightDomContentsElement } from "../lit/openclaw-element.ts";
+import { NovaLightDomContentsElement } from "../lit/nova-element.ts";
 import { redactLoginFailureError } from "./login-gate.ts";
 
 type ConnectionBannerProps = {
@@ -29,7 +29,7 @@ function renderConnectionBanner(props: ConnectionBannerProps) {
   `;
 }
 
-class ConnectionBanner extends OpenClawLightDomContentsElement {
+class ConnectionBanner extends NovaLightDomContentsElement {
   @property({ attribute: false }) props?: ConnectionBannerProps;
 
   override render() {
@@ -37,6 +37,6 @@ class ConnectionBanner extends OpenClawLightDomContentsElement {
   }
 }
 
-if (!customElements.get("openclaw-connection-banner")) {
-  customElements.define("openclaw-connection-banner", ConnectionBanner);
+if (!customElements.get("nova-connection-banner")) {
+  customElements.define("nova-connection-banner", ConnectionBanner);
 }

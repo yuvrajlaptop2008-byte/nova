@@ -6,7 +6,7 @@ import {
   fingerprintResolvedAuthProfileCredential,
   fingerprintResolvedProviderAuth,
 } from "../agents/execution-auth-binding.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { resolveSystemAgentConfiguredRouteFromConfig } from "./inference-route.js";
 import {
@@ -22,7 +22,7 @@ type SystemAgentVerifiedInferenceTestFixture = {
 
 /** Build exact, revalidatable proof for a test config without reading host credentials. */
 export async function createSystemAgentVerifiedInferenceTestFixture(
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): Promise<SystemAgentVerifiedInferenceTestFixture> {
   const configuredRoute = await resolveSystemAgentConfiguredRouteFromConfig(config);
   if (!configuredRoute) {
@@ -64,7 +64,7 @@ export async function createSystemAgentVerifiedInferenceTestFixture(
         pluginId,
         origin: "global",
         rootDir: `/plugins/${pluginId}`,
-        manifestPath: `/plugins/${pluginId}/openclaw.plugin.json`,
+        manifestPath: `/plugins/${pluginId}/nova.plugin.json`,
         manifestHash: `${pluginId}-manifest-v1`,
         source: `/plugins/${pluginId}/index.js`,
         packageName: `@nova/${pluginId}`,
@@ -85,9 +85,9 @@ export async function createSystemAgentVerifiedInferenceTestFixture(
     const authProfileOwnerFingerprint = profileId
       ? fingerprintAuthProfileOwnerShape({ profileId, credential })
       : undefined;
-    const resolveRuntimeOwnerFingerprint = (currentConfig: OpenClawConfig) => {
+    const resolveRuntimeOwnerFingerprint = (currentConfig: NovaConfig) => {
       const backend = resolveCliBackendConfig(configuredRoute.provider, currentConfig, {
-        agentId: "openclaw",
+        agentId: "nova",
       });
       if (!backend || backend.id !== runtimeArtifactId) {
         return undefined;
@@ -137,10 +137,10 @@ export async function createSystemAgentVerifiedInferenceTestFixture(
 
   const agentHarnessId =
     configuredRoute.agentHarnessRuntimeOverride === "auto"
-      ? "openclaw"
+      ? "nova"
       : configuredRoute.agentHarnessRuntimeOverride;
   const authFingerprint =
-    profileId && agentHarnessId !== "openclaw"
+    profileId && agentHarnessId !== "nova"
       ? fingerprintResolvedAuthProfileCredential({ profileId, credential, resolvedAuth })
       : fingerprintResolvedProviderAuth(resolvedAuth);
   if (!authFingerprint) {
@@ -154,7 +154,7 @@ export async function createSystemAgentVerifiedInferenceTestFixture(
       ...(profileId ? { authProfileId: profileId } : {}),
       authFingerprint,
       agentHarnessId,
-      ...(agentHarnessId === "openclaw"
+      ...(agentHarnessId === "nova"
         ? {}
         : {
             runtimeOwnerKind: "plugin-harness" as const,

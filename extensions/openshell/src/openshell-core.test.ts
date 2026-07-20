@@ -9,13 +9,13 @@ import {
   disposeSshSandboxSession,
   shellEscape,
   type CreateSandboxBackendParams,
-} from "openclaw/plugin-sdk/sandbox";
+} from "nova/plugin-sdk/sandbox";
 import {
   createSandboxBrowserConfig,
   createSandboxPruneConfig,
   createSandboxSshConfig,
   createSandboxTestContext,
-} from "openclaw/plugin-sdk/test-fixtures";
+} from "nova/plugin-sdk/test-fixtures";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { OpenShellSandboxBackend } from "./backend.types.js";
 import {
@@ -41,10 +41,9 @@ let createOpenShellSandboxBackendManager: typeof import("./backend.js").createOp
 let createOpenShellSandboxBackendFactory: typeof import("./backend.js").createOpenShellSandboxBackendFactory;
 
 async function installOpenShellBackendMocks() {
-  vi.doMock("openclaw/plugin-sdk/sandbox", async () => {
-    const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/sandbox")>(
-      "openclaw/plugin-sdk/sandbox",
-    );
+  vi.doMock("nova/plugin-sdk/sandbox", async () => {
+    const actual =
+      await vi.importActual<typeof import("nova/plugin-sdk/sandbox")>("nova/plugin-sdk/sandbox");
     return {
       ...actual,
       disposeSshSandboxSession: sandboxMocks.disposeSshSandboxSession,
@@ -64,7 +63,7 @@ async function installOpenShellBackendMocks() {
 }
 
 function uninstallOpenShellBackendMocks() {
-  vi.doUnmock("openclaw/plugin-sdk/sandbox");
+  vi.doUnmock("nova/plugin-sdk/sandbox");
   vi.doUnmock("./cli.js");
   vi.resetModules();
 }
@@ -73,7 +72,7 @@ function resetOpenShellBackendMocks() {
   vi.clearAllMocks();
   cliMocks.createOpenShellSshSession.mockResolvedValue({
     command: "ssh",
-    configPath: "/tmp/openclaw-openshell-test-ssh-config",
+    configPath: "/tmp/nova-openshell-test-ssh-config",
     host: "openshell-test",
   });
   sandboxMocks.runSshSandboxCommand.mockImplementation(
@@ -225,11 +224,11 @@ describe("openshell backend manager", () => {
   it.runIf(process.platform !== "win32")(
     "clears the materialized skills directory through the remote backend boundary",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-workspace-");
-      const skillsWorkspaceDir = await makeTempDir("openclaw-openshell-skills-");
-      sandboxMocks.remoteRoot = await makeTempDir("openclaw-openshell-remote-");
-      sandboxMocks.remoteAgentRoot = await makeTempDir("openclaw-openshell-agent-remote-");
-      const materializedDir = path.join(sandboxMocks.remoteRoot, ".openclaw", "sandbox-skills");
+      const workspaceDir = await makeTempDir("nova-openshell-workspace-");
+      const skillsWorkspaceDir = await makeTempDir("nova-openshell-skills-");
+      sandboxMocks.remoteRoot = await makeTempDir("nova-openshell-remote-");
+      sandboxMocks.remoteAgentRoot = await makeTempDir("nova-openshell-agent-remote-");
+      const materializedDir = path.join(sandboxMocks.remoteRoot, ".nova", "sandbox-skills");
       await fs.mkdir(materializedDir, { recursive: true });
       await fs.writeFile(path.join(materializedDir, "stale.txt"), "stale", "utf8");
       await fs.writeFile(path.join(skillsWorkspaceDir, "SKILL.md"), "# Skill\n", "utf8");
@@ -252,7 +251,7 @@ describe("openshell backend manager", () => {
 
       const result = await backend.runRemoteShellScript({
         script: 'test -d "$1"',
-        args: ["/sandbox/.openclaw/sandbox-skills"],
+        args: ["/sandbox/.nova/sandbox-skills"],
       });
 
       expect(result?.code).toBe(0);
@@ -264,12 +263,12 @@ describe("openshell backend manager", () => {
   it.runIf(process.platform !== "win32")(
     "rejects symlinked materialized skills parents through the remote backend boundary",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-workspace-");
-      const skillsWorkspaceDir = await makeTempDir("openclaw-openshell-skills-");
-      sandboxMocks.remoteRoot = await makeTempDir("openclaw-openshell-remote-");
-      sandboxMocks.remoteAgentRoot = await makeTempDir("openclaw-openshell-agent-remote-");
-      const outsideDir = await makeTempDir("openclaw-openshell-outside-");
-      await fs.symlink(outsideDir, path.join(sandboxMocks.remoteRoot, ".openclaw"));
+      const workspaceDir = await makeTempDir("nova-openshell-workspace-");
+      const skillsWorkspaceDir = await makeTempDir("nova-openshell-skills-");
+      sandboxMocks.remoteRoot = await makeTempDir("nova-openshell-remote-");
+      sandboxMocks.remoteAgentRoot = await makeTempDir("nova-openshell-agent-remote-");
+      const outsideDir = await makeTempDir("nova-openshell-outside-");
+      await fs.symlink(outsideDir, path.join(sandboxMocks.remoteRoot, ".nova"));
       await fs.writeFile(path.join(skillsWorkspaceDir, "SKILL.md"), "# Skill\n", "utf8");
       cliMocks.runOpenShellCli.mockResolvedValue({ code: 0, stdout: "", stderr: "" });
 
@@ -305,15 +304,15 @@ describe("openshell backend manager", () => {
     const manager = createOpenShellSandboxBackendManager({
       pluginConfig: resolveOpenShellPluginConfig({
         command: "openshell",
-        from: "openclaw",
+        from: "nova",
       }),
     });
 
     const result = await manager.describeRuntime({
       entry: {
-        containerName: "openclaw-session-1234",
+        containerName: "nova-session-1234",
         backendId: "openshell",
-        runtimeLabel: "openclaw-session-1234",
+        runtimeLabel: "nova-session-1234",
         sessionKey: "agent:main",
         createdAtMs: 1,
         lastUsedAtMs: 1,
@@ -346,10 +345,10 @@ describe("openshell backend manager", () => {
     });
     expect(cliMocks.runOpenShellCli).toHaveBeenCalledWith({
       context: {
-        sandboxName: "openclaw-session-1234",
+        sandboxName: "nova-session-1234",
         config: expectedConfig,
       },
-      args: ["sandbox", "get", "openclaw-session-1234"],
+      args: ["sandbox", "get", "nova-session-1234"],
     });
   });
 
@@ -369,13 +368,13 @@ describe("openshell backend manager", () => {
 
     await manager.removeRuntime({
       entry: {
-        containerName: "openclaw-session-5678",
+        containerName: "nova-session-5678",
         backendId: "openshell",
-        runtimeLabel: "openclaw-session-5678",
+        runtimeLabel: "nova-session-5678",
         sessionKey: "agent:main",
         createdAtMs: 1,
         lastUsedAtMs: 1,
-        image: "openclaw",
+        image: "nova",
         configLabelKind: "Source",
       },
       config: {},
@@ -387,10 +386,10 @@ describe("openshell backend manager", () => {
     });
     expect(cliMocks.runOpenShellCli).toHaveBeenCalledWith({
       context: {
-        sandboxName: "openclaw-session-5678",
+        sandboxName: "nova-session-5678",
         config: expectedConfig,
       },
-      args: ["sandbox", "delete", "openclaw-session-5678"],
+      args: ["sandbox", "delete", "nova-session-5678"],
     });
   });
 
@@ -419,8 +418,8 @@ describe("openshell backend manager", () => {
   });
 
   it("preserves a local sandbox skills shadow when mirror sync crosses filesystems", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-workspace-");
-    const shadowFile = path.join(workspaceDir, ".openclaw", "sandbox-skills", "user-note.txt");
+    const workspaceDir = await makeTempDir("nova-openshell-workspace-");
+    const shadowFile = path.join(workspaceDir, ".nova", "sandbox-skills", "user-note.txt");
     await fs.mkdir(path.dirname(shadowFile), { recursive: true });
     await fs.writeFile(shadowFile, "local shadow", "utf8");
 
@@ -439,11 +438,11 @@ describe("openshell backend manager", () => {
       if (args[0] === "sandbox" && args[1] === "download") {
         const tmpDir = expectDefined(args[4], "OpenShell download destination");
         await fs.writeFile(path.join(tmpDir, "from-remote.txt"), "remote", "utf8");
-        await fs.mkdir(path.join(tmpDir, ".openclaw", "sandbox-skills", "skills"), {
+        await fs.mkdir(path.join(tmpDir, ".nova", "sandbox-skills", "skills"), {
           recursive: true,
         });
         await fs.writeFile(
-          path.join(tmpDir, ".openclaw", "sandbox-skills", "skills", "generated.txt"),
+          path.join(tmpDir, ".nova", "sandbox-skills", "skills", "generated.txt"),
           "generated",
           "utf8",
         );
@@ -479,7 +478,7 @@ describe("openshell backend manager", () => {
         "remote",
       );
       await expectPathMissing(
-        path.join(workspaceDir, ".openclaw", "sandbox-skills", "skills", "generated.txt"),
+        path.join(workspaceDir, ".nova", "sandbox-skills", "skills", "generated.txt"),
       );
     } finally {
       renameSpy.mockRestore();
@@ -487,13 +486,13 @@ describe("openshell backend manager", () => {
   });
 
   it("drops non-directory materialized sandbox skills from mirror downloads", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-workspace-");
+    const workspaceDir = await makeTempDir("nova-openshell-workspace-");
     cliMocks.runOpenShellCli.mockImplementation(async ({ args }: { args: string[] }) => {
       if (args[0] === "sandbox" && args[1] === "download") {
         const tmpDir = expectDefined(args[4], "OpenShell download destination");
         await fs.writeFile(path.join(tmpDir, "from-remote.txt"), "remote", "utf8");
-        await fs.mkdir(path.join(tmpDir, ".openclaw"), { recursive: true });
-        await fs.writeFile(path.join(tmpDir, ".openclaw", "sandbox-skills"), "poison", "utf8");
+        await fs.mkdir(path.join(tmpDir, ".nova"), { recursive: true });
+        await fs.writeFile(path.join(tmpDir, ".nova", "sandbox-skills"), "poison", "utf8");
       }
       return { code: 0, stdout: "", stderr: "" };
     });
@@ -522,19 +521,19 @@ describe("openshell backend manager", () => {
     await expect(fs.readFile(path.join(workspaceDir, "from-remote.txt"), "utf8")).resolves.toBe(
       "remote",
     );
-    await expectPathMissing(path.join(workspaceDir, ".openclaw", "sandbox-skills"));
+    await expectPathMissing(path.join(workspaceDir, ".nova", "sandbox-skills"));
   });
 
   it("restores a local sandbox skills shadow when mirror download has a file parent", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-workspace-");
-    const shadowFile = path.join(workspaceDir, ".openclaw", "sandbox-skills", "user-note.txt");
+    const workspaceDir = await makeTempDir("nova-openshell-workspace-");
+    const shadowFile = path.join(workspaceDir, ".nova", "sandbox-skills", "user-note.txt");
     await fs.mkdir(path.dirname(shadowFile), { recursive: true });
     await fs.writeFile(shadowFile, "local shadow", "utf8");
     cliMocks.runOpenShellCli.mockImplementation(async ({ args }: { args: string[] }) => {
       if (args[0] === "sandbox" && args[1] === "download") {
         const tmpDir = expectDefined(args[4], "OpenShell download destination");
         await fs.writeFile(path.join(tmpDir, "from-remote.txt"), "remote", "utf8");
-        await fs.writeFile(path.join(tmpDir, ".openclaw"), "poison", "utf8");
+        await fs.writeFile(path.join(tmpDir, ".nova"), "poison", "utf8");
       }
       return { code: 0, stdout: "", stderr: "" };
     });
@@ -564,7 +563,7 @@ describe("openshell backend manager", () => {
       "remote",
     );
     await expect(fs.readFile(shadowFile, "utf8")).resolves.toBe("local shadow");
-    expect((await fs.stat(path.join(workspaceDir, ".openclaw"))).isDirectory()).toBe(true);
+    expect((await fs.stat(path.join(workspaceDir, ".nova"))).isDirectory()).toBe(true);
   });
 });
 
@@ -576,10 +575,10 @@ function createOpenShellBackendSandboxConfig(): CreateSandboxBackendParams["cfg"
     backend: "openshell",
     scope: "session",
     workspaceAccess: "rw",
-    workspaceRoot: "/tmp/openclaw-sandboxes",
+    workspaceRoot: "/tmp/nova-sandboxes",
     docker: {
-      image: "openclaw-sandbox:bookworm-slim",
-      containerPrefix: "openclaw-sbx-",
+      image: "nova-sandbox:bookworm-slim",
+      containerPrefix: "nova-sbx-",
       workdir: "/workspace",
       readOnlyRoot: false,
       tmpfs: [],
@@ -588,7 +587,7 @@ function createOpenShellBackendSandboxConfig(): CreateSandboxBackendParams["cfg"
       binds: [],
       env: {},
     },
-    ssh: createSandboxSshConfig("/tmp/openclaw-sandboxes"),
+    ssh: createSandboxSshConfig("/tmp/nova-sandboxes"),
     browser: createSandboxBrowserConfig(),
     tools: { allow: ["*"], deny: [] },
     prune: createSandboxPruneConfig(),
@@ -602,7 +601,7 @@ async function makeTempDir(prefix: string) {
 }
 
 async function makeExecutable(params: { name: string; script: string }): Promise<string> {
-  const dir = await makeTempDir("openclaw-openshell-bin-");
+  const dir = await makeTempDir("nova-openshell-bin-");
   const file = path.join(dir, params.name);
   const logPath = path.join(dir, "openshell.log");
   await fs.writeFile(file, params.script.replaceAll("__LOG__", logPath), { mode: 0o755 });
@@ -683,7 +682,7 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "rejects remote-only symlink parents in pinned mirror mutations",
     async () => {
-      const stateDir = await makeTempDir("openclaw-openshell-remote-pin-");
+      const stateDir = await makeTempDir("nova-openshell-remote-pin-");
       const remoteRoot = path.join(stateDir, "sandbox");
       const remoteAgentRoot = path.join(stateDir, "agent");
       const outsideDir = path.join(stateDir, "outside");
@@ -752,7 +751,7 @@ describe("openshell fs bridges", () => {
   );
 
   it("writes locally and syncs the file to the remote workspace", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({
       overrides: {
@@ -779,7 +778,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("creates remote mirror directories through the pinned backend operation", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({
       overrides: {
@@ -800,7 +799,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("renames remote mirror paths through the pinned backend operation", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     await fs.writeFile(path.join(workspaceDir, "source.txt"), "payload", "utf8");
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({
@@ -828,8 +827,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects cross-root mirror renames before the remote backend commit", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const agentWorkspaceDir = await makeTempDir("openclaw-openshell-agent-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
+    const agentWorkspaceDir = await makeTempDir("nova-openshell-agent-fs-");
     const sourcePath = path.join(workspaceDir, "source.txt");
     await fs.writeFile(sourcePath, "payload", "utf8");
     const backend = createMirrorBackendMock();
@@ -857,7 +856,7 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "rejects local mirror symlink rename sources before the remote backend commit",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+      const workspaceDir = await makeTempDir("nova-openshell-fs-");
       await fs.writeFile(path.join(workspaceDir, "target.txt"), "payload", "utf8");
       await fs.symlink("target.txt", path.join(workspaceDir, "link.txt"));
       const backend = createMirrorBackendMock();
@@ -885,7 +884,7 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "rejects local mirror hardlinked rename sources before the remote backend commit",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+      const workspaceDir = await makeTempDir("nova-openshell-fs-");
       const sourcePath = path.join(workspaceDir, "source.txt");
       await fs.writeFile(sourcePath, "payload", "utf8");
       await fs.link(sourcePath, path.join(workspaceDir, "other-link.txt"));
@@ -912,7 +911,7 @@ describe("openshell fs bridges", () => {
   );
 
   it("removes remote mirror paths through the pinned backend operation", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     await fs.writeFile(path.join(workspaceDir, "target.txt"), "payload", "utf8");
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({
@@ -938,7 +937,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("removes recursive local mirror directories without raw path deletion", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     await fs.mkdir(path.join(workspaceDir, "nested", "child"), { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "nested", "child", "target.txt"), "payload", "utf8");
     const backend = createMirrorBackendMock();
@@ -966,8 +965,8 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "removes recursive local mirror directories containing symlink leaves without following them",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-      const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+      const workspaceDir = await makeTempDir("nova-openshell-fs-");
+      const outsideDir = await makeTempDir("nova-openshell-outside-");
       const outsideTarget = path.join(outsideDir, "target.txt");
       await fs.mkdir(path.join(workspaceDir, "nested"), { recursive: true });
       await fs.writeFile(outsideTarget, "outside", "utf8");
@@ -994,8 +993,8 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "removes local mirror symlink leaves when force is false",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-      const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+      const workspaceDir = await makeTempDir("nova-openshell-fs-");
+      const outsideDir = await makeTempDir("nova-openshell-outside-");
       const outsideTarget = path.join(outsideDir, "target.txt");
       await fs.writeFile(outsideTarget, "outside", "utf8");
       await fs.symlink(outsideTarget, path.join(workspaceDir, "link.txt"));
@@ -1026,8 +1025,8 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "rejects local mirror mkdir when a validated parent is swapped to an outside symlink",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-      const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+      const workspaceDir = await makeTempDir("nova-openshell-fs-");
+      const outsideDir = await makeTempDir("nova-openshell-outside-");
       const slotPath = path.join(workspaceDir, "slot");
       await fs.mkdir(slotPath, { recursive: true });
       const backend = createMirrorBackendMock();
@@ -1055,8 +1054,8 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "rejects local mirror remove when a validated parent is swapped to an outside symlink",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-      const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+      const workspaceDir = await makeTempDir("nova-openshell-fs-");
+      const outsideDir = await makeTempDir("nova-openshell-outside-");
       const slotPath = path.join(workspaceDir, "slot");
       const outsideTarget = path.join(outsideDir, "target.txt");
       await fs.mkdir(slotPath, { recursive: true });
@@ -1087,8 +1086,8 @@ describe("openshell fs bridges", () => {
   it.runIf(process.platform !== "win32")(
     "rejects local mirror rename when a validated destination parent is swapped to an outside symlink",
     async () => {
-      const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-      const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+      const workspaceDir = await makeTempDir("nova-openshell-fs-");
+      const outsideDir = await makeTempDir("nova-openshell-outside-");
       const slotPath = path.join(workspaceDir, "slot");
       const sourcePath = path.join(workspaceDir, "source.txt");
       await fs.mkdir(slotPath, { recursive: true });
@@ -1119,7 +1118,7 @@ describe("openshell fs bridges", () => {
   );
 
   it("keeps local mirror state unchanged when remote pinned mkdir is rejected", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     const backend = createMirrorBackendMock();
     backend["mkdirpRemotePath"] = vi.fn().mockRejectedValue(new Error("remote rejected"));
     const sandbox = createSandboxTestContext({
@@ -1139,7 +1138,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("keeps local mirror state unchanged when remote pinned remove is rejected", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     const targetPath = path.join(workspaceDir, "target.txt");
     await fs.writeFile(targetPath, "payload", "utf8");
     const backend = createMirrorBackendMock();
@@ -1163,7 +1162,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("keeps local mirror state unchanged when remote pinned rename is rejected", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     const sourcePath = path.join(workspaceDir, "source.txt");
     const targetPath = path.join(workspaceDir, "nested", "target.txt");
     await fs.writeFile(sourcePath, "payload", "utf8");
@@ -1189,8 +1188,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects symlink-parent writes instead of escaping the local mount root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
+    const outsideDir = await makeTempDir("nova-openshell-outside-");
     await fs.symlink(outsideDir, path.join(workspaceDir, "alias"));
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({
@@ -1218,7 +1217,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects writes whose final target is a symlink inside the local mount root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     const linkedTarget = path.join(workspaceDir, "existing.txt");
     await fs.writeFile(linkedTarget, "keep", "utf8");
     await fs.symlink("existing.txt", path.join(workspaceDir, "link.txt"));
@@ -1248,8 +1247,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects a parent symlink that lands outside the sandbox root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
+    const outsideDir = await makeTempDir("nova-openshell-outside-");
     await fs.writeFile(path.join(outsideDir, "secret.txt"), "outside", "utf8");
     await fs.symlink(outsideDir, path.join(workspaceDir, "subdir"));
     const backend = createMirrorBackendMock();
@@ -1271,7 +1270,7 @@ describe("openshell fs bridges", () => {
   });
 
   it("reads regular files through the shared safe fs root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
     await fs.mkdir(path.join(workspaceDir, "subdir"), { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "subdir", "secret.txt"), "inside", "utf8");
 
@@ -1294,12 +1293,12 @@ describe("openshell fs bridges", () => {
   });
 
   it("reads materialized sandbox skills from the protected skills workspace", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const skillsWorkspaceDir = await makeTempDir("openclaw-openshell-skills-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
+    const skillsWorkspaceDir = await makeTempDir("nova-openshell-skills-");
     const skillFile = path.join(skillsWorkspaceDir, "skills", "demo", "SKILL.md");
     const shadowFile = path.join(
       workspaceDir,
-      ".openclaw",
+      ".nova",
       "sandbox-skills",
       "skills",
       "demo",
@@ -1327,17 +1326,17 @@ describe("openshell fs bridges", () => {
 
     await expect(
       bridge.readFile({
-        filePath: "/sandbox/.openclaw/sandbox-skills/skills/demo/SKILL.md",
+        filePath: "/sandbox/.nova/sandbox-skills/skills/demo/SKILL.md",
       }),
     ).resolves.toEqual(Buffer.from("# Demo\nmaterialized\n"));
     await expect(
       bridge.readFile({
-        filePath: ".openclaw/sandbox-skills/skills/demo/SKILL.md",
+        filePath: ".nova/sandbox-skills/skills/demo/SKILL.md",
       }),
     ).resolves.toEqual(Buffer.from("# Demo\nmaterialized\n"));
     await expect(
       bridge.writeFile({
-        filePath: ".openclaw/sandbox-skills/skills/demo/SKILL.md",
+        filePath: ".nova/sandbox-skills/skills/demo/SKILL.md",
         data: "owned",
       }),
     ).rejects.toThrow(/read-only/);
@@ -1352,8 +1351,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects reads of a symlinked leaf", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
+    const outsideDir = await makeTempDir("nova-openshell-outside-");
     await fs.mkdir(path.join(workspaceDir, "subdir"), { recursive: true });
     await fs.writeFile(path.join(outsideDir, "secret.txt"), "outside", "utf8");
     await fs.symlink(
@@ -1380,8 +1379,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("rejects hardlinked files inside the sandbox root", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const outsideDir = await makeTempDir("openclaw-openshell-outside-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
+    const outsideDir = await makeTempDir("nova-openshell-outside-");
     await fs.mkdir(path.join(workspaceDir, "subdir"), { recursive: true });
     await fs.writeFile(path.join(outsideDir, "secret.txt"), "outside", "utf8");
     await fs.link(
@@ -1408,8 +1407,8 @@ describe("openshell fs bridges", () => {
   });
 
   it("maps agent mount paths when the sandbox workspace is read-only", async () => {
-    const workspaceDir = await makeTempDir("openclaw-openshell-fs-");
-    const agentWorkspaceDir = await makeTempDir("openclaw-openshell-agent-");
+    const workspaceDir = await makeTempDir("nova-openshell-fs-");
+    const agentWorkspaceDir = await makeTempDir("nova-openshell-agent-");
     await fs.writeFile(path.join(agentWorkspaceDir, "note.txt"), "agent", "utf8");
     const backend = createMirrorBackendMock();
     const sandbox = createSandboxTestContext({

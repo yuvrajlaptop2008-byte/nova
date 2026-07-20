@@ -26,7 +26,7 @@ describe("TranscriptsStore.readUtterancesFromSessionDir", () => {
   });
 
   it("returns an empty array when transcript.jsonl is missing", () => {
-    const tmpDir = makeTempDir(tempRoots, "openclaw-transcript-test-");
+    const tmpDir = makeTempDir(tempRoots, "nova-transcript-test-");
     const store = new TranscriptsStore(tmpDir);
     const sessionDir = path.join(tmpDir, "2026-07-01", "missing");
     fs.mkdirSync(sessionDir, { recursive: true });
@@ -37,7 +37,7 @@ describe("TranscriptsStore.readUtterancesFromSessionDir", () => {
   });
 
   it("reads utterances from transcript.jsonl", () => {
-    const tmpDir = makeTempDir(tempRoots, "openclaw-transcript-test-");
+    const tmpDir = makeTempDir(tempRoots, "nova-transcript-test-");
     const store = new TranscriptsStore(tmpDir);
     const sessionDir = path.join(tmpDir, "2026-07-01", "session-1");
     fs.mkdirSync(sessionDir, { recursive: true });
@@ -58,7 +58,7 @@ describe("TranscriptsStore.readUtterancesFromSessionDir", () => {
   });
 
   it("keeps only the tail when utterances exceed maxUtterances", () => {
-    const tmpDir = makeTempDir(tempRoots, "openclaw-transcript-test-");
+    const tmpDir = makeTempDir(tempRoots, "nova-transcript-test-");
     const store = new TranscriptsStore(tmpDir);
     const sessionDir = path.join(tmpDir, "2026-07-01", "session-1");
     fs.mkdirSync(sessionDir, { recursive: true });
@@ -78,7 +78,7 @@ describe("TranscriptsStore.readUtterancesFromSessionDir", () => {
   it.runIf(process.platform === "linux")(
     "does not leak file descriptors when JSON.parse throws",
     async () => {
-      const tmpDir = makeTempDir(tempRoots, "openclaw-transcript-test-");
+      const tmpDir = makeTempDir(tempRoots, "nova-transcript-test-");
       const store = new TranscriptsStore(tmpDir);
       const sessionDir = path.join(tmpDir, "2026-07-01", "session-1");
       fs.mkdirSync(sessionDir, { recursive: true });
@@ -99,7 +99,7 @@ describe("TranscriptsStore.readUtterancesFromSessionDir", () => {
   it.runIf(process.platform === "linux")(
     "does not leak file descriptors in the happy path",
     async () => {
-      const tmpDir = makeTempDir(tempRoots, "openclaw-transcript-test-");
+      const tmpDir = makeTempDir(tempRoots, "nova-transcript-test-");
       const store = new TranscriptsStore(tmpDir);
       const sessionDir = path.join(tmpDir, "2026-07-01", "session-1");
       fs.mkdirSync(sessionDir, { recursive: true });
@@ -119,7 +119,7 @@ describe("TranscriptsStore.readUtterancesFromSessionDir", () => {
   );
 
   it("rejects non-ENOENT read stream errors", async () => {
-    const tmpDir = makeTempDir(tempRoots, "openclaw-transcript-test-");
+    const tmpDir = makeTempDir(tempRoots, "nova-transcript-test-");
     const store = new TranscriptsStore(tmpDir);
     const sessionDir = path.join(tmpDir, "2026-07-01", "session-1");
     fs.mkdirSync(sessionDir, { recursive: true });
@@ -146,7 +146,7 @@ describe("TranscriptsStore.writeSummary", () => {
   });
 
   it("stores the summary in the existing session directory without a session descriptor", async () => {
-    const tmpDir = makeTempDir(tempRoots, "openclaw-transcript-test-");
+    const tmpDir = makeTempDir(tempRoots, "nova-transcript-test-");
     const store = new TranscriptsStore(tmpDir);
     const session = {
       sessionId: "ansi-\u001b[31mprovider\u001b[0m",

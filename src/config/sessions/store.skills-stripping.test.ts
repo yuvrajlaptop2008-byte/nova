@@ -20,7 +20,7 @@ import {
   updateSessionStore,
 } from "./store.js";
 
-const suiteRootTracker = createSuiteTempRootTracker({ prefix: "openclaw-skills-strip-" });
+const suiteRootTracker = createSuiteTempRootTracker({ prefix: "nova-skills-strip-" });
 
 function makeFixtureSkill(name: string, bodySize = 3000): Skill {
   // 3KB body simulates a realistic SKILL.md.

@@ -22,14 +22,14 @@ export function resolveSkillSource(skill: Skill): string {
 
 export function resolveSkillTelemetrySourceValue(value: unknown): SkillTelemetrySource {
   const source = normalizeOptionalString(value) ?? "";
-  if (source === "bundled" || source === "openclaw-bundled") {
+  if (source === "bundled" || source === "nova-bundled") {
     return "bundled";
   }
   if (
     source === "workspace" ||
-    source === "openclaw-workspace" ||
-    source === "openclaw-managed" ||
-    source === "openclaw-extra" ||
+    source === "nova-workspace" ||
+    source === "nova-managed" ||
+    source === "nova-extra" ||
     source === "agents-skills-personal" ||
     source === "agents-skills-project"
   ) {

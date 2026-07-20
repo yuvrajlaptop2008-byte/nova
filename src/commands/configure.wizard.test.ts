@@ -1,6 +1,6 @@
 // Configure wizard tests cover guided setup routing across gateway, auth, channels, skills, and search.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 
 const mocks = vi.hoisted(() => {
   const writeConfigFile = vi.fn();
@@ -40,14 +40,14 @@ const mocks = vi.hoisted(() => {
     summarizeExistingConfig: vi.fn(),
     promptAuthConfig: vi.fn(),
     promptGatewayConfig: vi.fn(),
-    promptRemoteGatewayConfig: vi.fn(async (cfg: OpenClawConfig) => ({
+    promptRemoteGatewayConfig: vi.fn(async (cfg: NovaConfig) => ({
       ...cfg,
       gateway: { mode: "remote", remote: { url: "wss://gateway.example.test" } },
     })),
-    isCodexNativeWebSearchRelevant: vi.fn(({ config }: { config: OpenClawConfig }) =>
+    isCodexNativeWebSearchRelevant: vi.fn(({ config }: { config: NovaConfig }) =>
       Boolean(config.auth?.profiles?.["openai:default"]),
     ),
-    setupChannels: vi.fn(async (cfg: OpenClawConfig) => cfg),
+    setupChannels: vi.fn(async (cfg: NovaConfig) => cfg),
   };
 });
 
@@ -61,14 +61,14 @@ vi.mock("@clack/prompts", () => ({
 }));
 
 vi.mock("../config/config.js", () => ({
-  CONFIG_PATH: "~/.openclaw/openclaw.json",
+  CONFIG_PATH: "~/.nova/nova.json",
   createConfigIO: () => ({
     readConfigFileSnapshotForWrite: async () => ({
       snapshot: await mocks.readConfigFileSnapshot(),
       writeOptions: {
         assertConfigPathForWrite: mocks.assertConfigPathForWrite,
-        expectedConfigPath: "/tmp/openclaw.json",
-        ownedConfigPathForWrite: "/tmp/openclaw.json",
+        expectedConfigPath: "/tmp/nova.json",
+        ownedConfigPathForWrite: "/tmp/nova.json",
       },
     }),
   }),
@@ -78,9 +78,9 @@ vi.mock("../config/config.js", () => ({
     writeOptions: {
       assertConfigPathForWrite: mocks.assertConfigPathForWrite,
       envSnapshotForRestore: { SECRET: "resolved-secret" },
-      expectedConfigPath: "/tmp/openclaw.json",
+      expectedConfigPath: "/tmp/nova.json",
       includeFileHashesForWrite: { "/tmp/plugins.json5": "stale-hash" },
-      ownedConfigPathForWrite: "/tmp/openclaw.json",
+      ownedConfigPathForWrite: "/tmp/nova.json",
     },
   }),
   writeConfigFile: mocks.writeConfigFile,
@@ -97,7 +97,7 @@ vi.mock("../infra/windows-gateway-firewall-diagnostics.js", () => ({
   formatWindowsGatewayFirewallGuidance: (params: { bind?: string }) =>
     params.bind === "lan"
       ? [
-          "Windows firewall: if another device cannot connect to the LAN URL, run `openclaw gateway status --deep` from this Windows host.",
+          "Windows firewall: if another device cannot connect to the LAN URL, run `nova gateway status --deep` from this Windows host.",
         ]
       : [],
 }));
@@ -111,8 +111,8 @@ vi.mock("../../packages/terminal-core/src/note.js", () => ({
 }));
 
 vi.mock("./onboard-helpers.js", () => ({
-  DEFAULT_WORKSPACE: "~/.openclaw/workspace",
-  applyWizardMetadata: (cfg: OpenClawConfig) => cfg,
+  DEFAULT_WORKSPACE: "~/.nova/workspace",
+  applyWizardMetadata: (cfg: NovaConfig) => cfg,
   ensureWorkspaceAndSessions: vi.fn(),
   guardCancel: <T>(value: T) => value,
   printWizardHeader: mocks.printWizardHeader,
@@ -205,7 +205,7 @@ function createSearchProviderOption(overrides: Record<string, unknown>) {
 }
 
 function createEnabledWebSearchConfig(provider: string, pluginEntry: Record<string, unknown>) {
-  return (cfg: OpenClawConfig) => ({
+  return (cfg: NovaConfig) => ({
     ...cfg,
     tools: {
       ...cfg.tools,
@@ -227,7 +227,7 @@ function createEnabledWebSearchConfig(provider: string, pluginEntry: Record<stri
   });
 }
 
-function setupBaseWizardState(config: OpenClawConfig = {}) {
+function setupBaseWizardState(config: NovaConfig = {}) {
   mocks.readConfigFileSnapshot.mockResolvedValue({
     ...EMPTY_CONFIG_SNAPSHOT,
     config,
@@ -338,11 +338,11 @@ describe("runConfigureWizard", () => {
       },
     ]);
     mocks.setupSearch.mockReset();
-    mocks.setupSearch.mockImplementation(async (cfg: OpenClawConfig) => cfg);
+    mocks.setupSearch.mockImplementation(async (cfg: NovaConfig) => cfg);
     mocks.promptAuthConfig.mockReset();
-    mocks.promptAuthConfig.mockImplementation(async (cfg: OpenClawConfig) => cfg);
+    mocks.promptAuthConfig.mockImplementation(async (cfg: NovaConfig) => cfg);
     mocks.promptGatewayConfig.mockReset();
-    mocks.promptGatewayConfig.mockImplementation(async (cfg: OpenClawConfig) => ({
+    mocks.promptGatewayConfig.mockImplementation(async (cfg: NovaConfig) => ({
       config: cfg,
       port: 18789,
     }));
@@ -489,7 +489,7 @@ describe("runConfigureWizard", () => {
       [
         "Remote Gateway:",
         "wss://gateway.example.test",
-        "Docs: https://docs.openclaw.ai/gateway/remote",
+        "Docs: https://docs.nova.ai/gateway/remote",
       ].join("\n"),
       "Gateway",
     );
@@ -497,7 +497,7 @@ describe("runConfigureWizard", () => {
 
   it("persists provider-owned web search config changes returned by setupSearch", async () => {
     setupBaseWizardState();
-    mocks.setupSearch.mockImplementation(async (cfg: OpenClawConfig) => {
+    mocks.setupSearch.mockImplementation(async (cfg: NovaConfig) => {
       const configured = createEnabledWebSearchConfig("firecrawl", {
         enabled: true,
         config: { webSearch: { apiKey: "fc-entered-key" } },
@@ -552,7 +552,7 @@ describe("runConfigureWizard", () => {
 
   it("keeps web_search disabled when provider setup has no credential", async () => {
     setupBaseWizardState();
-    mocks.setupSearch.mockImplementation(async (cfg: OpenClawConfig) => ({
+    mocks.setupSearch.mockImplementation(async (cfg: NovaConfig) => ({
       ...cfg,
       tools: {
         ...cfg.tools,
@@ -597,7 +597,7 @@ describe("runConfigureWizard", () => {
       [
         "No web search providers are currently available under this plugin policy.",
         "Enable plugins or remove deny rules, then rerun configure.",
-        "Docs: https://docs.openclaw.ai/tools/web",
+        "Docs: https://docs.nova.ai/tools/web",
       ].join("\n"),
       "Web search",
     );
@@ -651,11 +651,11 @@ describe("runConfigureWizard", () => {
         envVars: [],
         placeholder: "(no key needed)",
         signupUrl: "https://duckduckgo.com/",
-        docsUrl: "https://docs.openclaw.ai/tools/web",
+        docsUrl: "https://docs.nova.ai/tools/web",
         credentialPath: "",
       }),
     ]);
-    mocks.setupSearch.mockImplementation(async (cfg: OpenClawConfig) =>
+    mocks.setupSearch.mockImplementation(async (cfg: NovaConfig) =>
       createEnabledWebSearchConfig("duckduckgo", {
         enabled: true,
       })(cfg),
@@ -735,7 +735,7 @@ describe("runConfigureWizard", () => {
   });
 
   it("retries without dropping nested plugin config written during wizard flow (issue #64188)", async () => {
-    const baseConfig: OpenClawConfig = {
+    const baseConfig: NovaConfig = {
       plugins: {
         entries: {
           "github-copilot": {
@@ -835,7 +835,7 @@ describe("runConfigureWizard", () => {
     };
     const agents = requireRecord(retryCall.nextConfig.agents, "agents config");
     const defaults = requireRecord(agents.defaults, "agent defaults");
-    expect(String(defaults.workspace)).toContain("/.openclaw/workspace");
+    expect(String(defaults.workspace)).toContain("/.nova/workspace");
     const githubCopilot = getPluginEntry(retryCall.nextConfig, "github-copilot");
     expect(githubCopilot.enabled).toBe(false);
     const pluginConfig = requireRecord(githubCopilot.config, "github-copilot config");

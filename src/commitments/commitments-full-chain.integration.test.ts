@@ -1,13 +1,13 @@
 // Exercises the full commitment extraction-to-follow-up chain.
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { runHeartbeatOnce } from "../infra/heartbeat-runner.js";
 import { installHeartbeatRunnerTestRuntime } from "../infra/heartbeat-runner.test-harness.js";
 import {
   seedSessionStore,
   withTempHeartbeatSandbox,
 } from "../infra/heartbeat-runner.test-utils.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import { enqueueCommitmentExtraction } from "./runtime.js";
 import {
@@ -25,7 +25,7 @@ describe("commitments full-chain integration", () => {
   const dueMs = writeMs + 10 * 60_000;
 
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     resetCommitmentExtractionRuntimeForTests();
     vi.useRealTimers();
     vi.unstubAllEnvs();
@@ -38,7 +38,7 @@ describe("commitments full-chain integration", () => {
     await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
       await withEnvAsync({ NOVA_STATE_DIR: tmpDir }, async () => {
         const sessionKey = "agent:main:telegram:user-155462274";
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           agents: {
             defaults: {
               workspace: tmpDir,

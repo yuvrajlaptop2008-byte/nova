@@ -5,7 +5,7 @@ import { listReadOnlyChannelPluginsForConfig } from "../channels/plugins/read-on
 import type { ChannelPlugin } from "../channels/plugins/types.plugin.js";
 import { inspectReadOnlyChannelAccount } from "../channels/read-only-account-inspect.js";
 import { resolveNativeSkillsEnabled } from "../config/commands.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { AgentToolsConfig } from "../config/types.tools.js";
 import { readInstalledPackageVersion } from "../infra/package-update-utils.js";
 import { normalizePluginsConfig } from "../plugins/config-state.js";
@@ -48,11 +48,11 @@ const loadPluginTrustPolicyDeps = createLazyPromise(
 );
 
 function readChannelCommandSetting(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   channelId: string,
   key: "native" | "nativeSkills",
 ): unknown {
-  const channelCfg = cfg.channels?.[channelId as keyof NonNullable<OpenClawConfig["channels"]>];
+  const channelCfg = cfg.channels?.[channelId as keyof NonNullable<NovaConfig["channels"]>];
   if (!channelCfg || typeof channelCfg !== "object" || Array.isArray(channelCfg)) {
     return undefined;
   }
@@ -63,10 +63,7 @@ function readChannelCommandSetting(
   return (commands as Record<string, unknown>)[key];
 }
 
-async function isChannelPluginConfigured(
-  cfg: OpenClawConfig,
-  plugin: ChannelPlugin,
-): Promise<boolean> {
+async function isChannelPluginConfigured(cfg: NovaConfig, plugin: ChannelPlugin): Promise<boolean> {
   const accountIds = plugin.config.listAccountIds(cfg);
   const candidates = accountIds.length > 0 ? accountIds : [undefined];
   for (const accountId of candidates) {
@@ -127,7 +124,7 @@ async function isChannelPluginConfigured(
 }
 
 function resolveToolPolicies(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   deps: PluginTrustPolicyDeps;
   agentTools?: AgentToolsConfig;
   sandboxMode?: "off" | "non-main" | "all";
@@ -157,7 +154,7 @@ function normalizePluginIdSet(entries: string[]): Set<string> {
 }
 
 function resolveEnabledExtensionPluginIds(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   pluginDirs: string[];
 }): string[] {
   const normalized = normalizePluginsConfig(params.cfg.plugins);
@@ -253,7 +250,7 @@ function isPinnedRegistrySpec(spec: string): boolean {
 
 /** Collect supply-chain and reachable-tool findings for installed plugins and hook packs. */
 export async function collectPluginsTrustFindings(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   stateDir: string;
 }): Promise<SecurityAuditFinding[]> {
   const findings: SecurityAuditFinding[] = [];
@@ -381,7 +378,7 @@ export async function collectPluginsTrustFindings(params: {
           sandboxMode,
           agentId: context.agentId,
         });
-        const broadPolicy = deps.isToolAllowedByPolicies("__openclaw_plugin_probe__", policies);
+        const broadPolicy = deps.isToolAllowedByPolicies("__nova_plugin_probe__", policies);
         const explicitPluginAllow =
           !restrictiveProfile &&
           (hasExplicitPluginAllow({
@@ -482,7 +479,7 @@ export async function collectPluginsTrustFindings(params: {
         title: "Plugin index records drift from installed package versions",
         detail: `Detected plugin install metadata drift:\n${pluginVersionDrift.map((entry) => `- ${entry}`).join("\n")}`,
         remediation:
-          "Run `openclaw plugins update --all` (or reinstall affected plugins) to refresh install metadata.",
+          "Run `nova plugins update --all` (or reinstall affected plugins) to refresh install metadata.",
       });
     }
   }
@@ -544,7 +541,7 @@ export async function collectPluginsTrustFindings(params: {
         title: "Hook install records drift from installed package versions",
         detail: `Detected hook install metadata drift:\n${hookVersionDrift.map((entry) => `- ${entry}`).join("\n")}`,
         remediation:
-          "Run `openclaw hooks update --all` (or reinstall affected hooks) to refresh install metadata.",
+          "Run `nova hooks update --all` (or reinstall affected hooks) to refresh install metadata.",
       });
     }
   }

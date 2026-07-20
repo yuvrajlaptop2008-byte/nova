@@ -8,7 +8,7 @@ import { splitTrailingAuthProfile } from "../../../agents/model-ref-profile.js";
 import { normalizeConfiguredProviderCatalogModelId } from "../../../agents/model-ref-shared.js";
 import { configuredModelRouteNeedsCodex } from "../../../config/codex-plugin-diagnostics.js";
 import type { AgentRuntimePolicyConfig } from "../../../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { normalizeAgentId } from "../../../routing/session-key.js";
 import type { MutableRecord } from "./codex-route-types.js";
 
@@ -186,7 +186,7 @@ export function readAgentPrimaryModelRef(agent: unknown, fallback?: string): str
 }
 
 export function modelRefUsesCodexRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelRef: string | undefined;
   agentId?: string;
   env?: NodeJS.ProcessEnv;
@@ -208,7 +208,7 @@ export function modelRefUsesCodexRuntime(params: {
 }
 
 export function resolveRuntimeModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelRef: string;
   agentId?: string;
 }): string {
@@ -255,7 +255,7 @@ function resolveKnownCompatModelAliasRef(modelRef: string): string | undefined {
 }
 
 function resolveConfiguredModelAliasRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelRef: string;
   agentId?: string;
 }): string | undefined {
@@ -275,7 +275,7 @@ function resolveConfiguredModelAliasRef(params: {
 }
 
 function resolveDefaultProviderForAliasContext(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
 }): string {
   const primaryModelRef =
@@ -308,10 +308,7 @@ function resolveDefaultProviderForAliasContext(params: {
   return normalizeProviderId(implicit?.provider ?? DEFAULT_PROVIDER) || DEFAULT_PROVIDER;
 }
 
-function findAgentById(
-  cfg: OpenClawConfig,
-  agentId: string | undefined,
-): MutableRecord | undefined {
+function findAgentById(cfg: NovaConfig, agentId: string | undefined): MutableRecord | undefined {
   if (!agentId) {
     return undefined;
   }
@@ -347,7 +344,7 @@ function resolveAliasFromModelsMap(
 }
 
 function resolveConfiguredBareModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelRef: string;
   agentId?: string;
 }): string | undefined {
@@ -412,7 +409,7 @@ function normalizeProviderModelRef(provider: string, modelId: string): string {
   return `${normalizedProvider}/${normalizedModelId}`;
 }
 
-export function resolveImplicitDefaultAgentModelRef(cfg: OpenClawConfig): string {
+export function resolveImplicitDefaultAgentModelRef(cfg: NovaConfig): string {
   const fallbackProvider = resolveConfiguredProviderFallback({
     cfg,
     defaultProvider: DEFAULT_PROVIDER,
@@ -423,7 +420,7 @@ export function resolveImplicitDefaultAgentModelRef(cfg: OpenClawConfig): string
 }
 
 export function agentUsesCodexRuntimeForCompaction(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agent: unknown;
   agentId?: string;
   currentRuntime?: string;
@@ -458,7 +455,7 @@ export function parseModelRef(modelRef: string): { provider: string; modelId: st
 }
 
 export function canonicalOpenAIModelUsesCodexRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelRef: string;
   agentId?: string;
   env?: NodeJS.ProcessEnv;

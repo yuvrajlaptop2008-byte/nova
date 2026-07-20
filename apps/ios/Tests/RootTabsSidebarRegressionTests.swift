@@ -65,7 +65,7 @@ struct RootTabsSidebarRegressionTests {
         #expect(drawerContent.contains("self.sidebarDrawerLayer"))
         #expect(drawerContent.contains("self.sidebarDrawerContentSurface"))
         #expect(drawerContent.contains("self.sidebarDrawerContentCard"))
-        #expect(drawerContent.contains(".background(OpenClawSidebarPalette.background)"))
+        #expect(drawerContent.contains(".background(NovaSidebarPalette.background)"))
         #expect(!drawerContent.contains("Color.black.opacity(0.35)"))
         #expect(!sidebarLayer.contains(".clipShape"))
         #expect(!sidebarLayer.contains(".shadow"))
@@ -79,9 +79,9 @@ struct RootTabsSidebarRegressionTests {
         #expect(contentCard.contains("if self.isSidebarVisible {"))
         #expect(contentCard.contains("self.hideSidebar()"))
         #expect(contentCard.contains("isEnabled: self.isSidebarVisible && !self.reduceMotion"))
-        #expect(contentCard.contains("cornerRadius: OpenClawProMetric.drawerRadius * progress"))
+        #expect(contentCard.contains("cornerRadius: NovaProMetric.drawerRadius * progress"))
         #expect(contentCard.contains(".offset(x: Self.sidebarContentOffset("))
-        #expect(!contentCard.contains("OpenClawProBackground()"))
+        #expect(!contentCard.contains("NovaProBackground()"))
         #expect(!contentCard.contains(".shadow("))
     }
 

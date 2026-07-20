@@ -17,15 +17,15 @@ import {
 } from "@nova/normalization-core/number-coercion";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { stripAnsi } from "../../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { toErrorObject } from "../../infra/errors.js";
-import { resolveOpenClawPackageRootSync } from "../../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../../infra/nova-root.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { listAgentToolResultMiddlewares } from "../../plugins/agent-tool-result-middleware.js";
 import { hasGlobalHooks } from "../../plugins/hook-runner-global.js";
 import type { PluginHookToolRequesterContext } from "../../plugins/hook-types.js";
 import { PluginApprovalResolutions } from "../../plugins/types.js";
-import { resolveOpenClawStateSqlitePath } from "../../state/openclaw-state-db.paths.js";
+import { resolveNovaStateSqlitePath } from "../../state/nova-state-db.paths.js";
 import {
   cancelDeferredPluginToolApproval,
   hasBeforeToolCallPolicy,
@@ -103,7 +103,7 @@ type NativeHookRelayRegistration = {
   agentId?: string;
   sessionId: string;
   sessionKey?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   runId: string;
   channelId?: string;
   requester?: PluginHookToolRequesterContext;
@@ -137,7 +137,7 @@ type RegisterNativeHookRelayParams = {
   agentId?: string;
   sessionId: string;
   sessionKey?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   runId: string;
   channelId?: string;
   requester?: PluginHookToolRequesterContext;
@@ -269,7 +269,7 @@ type ActiveNativeHookRelayRegistrationHandle = NativeHookRelayRegistrationHandle
   generation: string;
 };
 
-const NATIVE_HOOK_RELAY_STATE_SYMBOL = Symbol.for("openclaw.nativeHookRelay.state");
+const NATIVE_HOOK_RELAY_STATE_SYMBOL = Symbol.for("nova.nativeHookRelay.state");
 
 function getNativeHookRelaySharedState(): NativeHookRelaySharedState {
   const globalRecord = globalThis as typeof globalThis & {
@@ -431,7 +431,7 @@ export function registerNativeHookRelay(
     throw new Error("Native hook relay expiry is outside the supported Date range");
   }
   const allowedEvents = normalizeAllowedEvents(params.allowedEvents);
-  const stateDbPath = resolveOpenClawStateSqlitePath();
+  const stateDbPath = resolveNovaStateSqlitePath();
   unregisterNativeHookRelay(relayId, undefined, {
     deferBridgeRecordRemovalMs: NATIVE_HOOK_BRIDGE_REPLACEMENT_RECORD_GRACE_MS,
   });
@@ -609,11 +609,9 @@ function buildNativeHookRelayCommandWithStateDatabase(params: {
   nodeExecutable?: string;
 }): string {
   const timeoutMs = normalizePositiveInteger(params.timeoutMs, DEFAULT_RELAY_TIMEOUT_MS);
-  const executable = params.executable ?? resolveOpenClawCliExecutable();
+  const executable = params.executable ?? resolveNovaCliExecutable();
   const argv =
-    executable === "openclaw"
-      ? ["openclaw"]
-      : [params.nodeExecutable ?? process.execPath, executable];
+    executable === "nova" ? ["nova"] : [params.nodeExecutable ?? process.execPath, executable];
   const nicePrefix = resolveNativeHookRelayNicePrefix(params.nice);
   return shellQuoteArgs([
     ...nicePrefix,
@@ -1663,7 +1661,7 @@ function nativeHookRelayPermissionAllowAlwaysKey(params: {
   request: NativeHookRelayPermissionApprovalRequest;
 }): string {
   const hash = createHash("sha256");
-  hash.update("openclaw:native-hook-relay:permission-allow-always:v2");
+  hash.update("nova:native-hook-relay:permission-allow-always:v2");
   hash.update("\0");
   hash.update(params.registration.relayId);
   hash.update("\0");
@@ -2053,7 +2051,7 @@ function readCodexToolResponse(rawPayload: JsonValue): unknown {
 
 function readNativeHookRelayApprovalMode(rawPayload: JsonValue): "report" | undefined {
   const payload = isJsonObject(rawPayload) ? rawPayload : {};
-  return payload.openclaw_approval_mode === "report" ? "report" : undefined;
+  return payload.nova_approval_mode === "report" ? "report" : undefined;
 }
 
 function normalizeNativeHookToolName(toolName: string | undefined): string {
@@ -2072,7 +2070,7 @@ async function requestNativeHookRelayPermissionApproval(
     "plugin.approval.request",
     { timeoutMs: timeoutMs + 10_000 },
     {
-      pluginId: `openclaw-native-hook-relay-${request.provider}`,
+      pluginId: `nova-native-hook-relay-${request.provider}`,
       title: truncateText(
         `${nativeHookRelayProviderDisplayName(request.provider)} permission request`,
         MAX_APPROVAL_TITLE_LENGTH,
@@ -2218,19 +2216,19 @@ function truncateText(value: string, maxLength: number): string {
   return `${truncateUtf16Safe(value, Math.max(0, maxLength - 3))}...`;
 }
 
-function resolveOpenClawCliExecutable(): string {
+function resolveNovaCliExecutable(): string {
   const envPath = process.env.NOVA_CLI_PATH?.trim();
   if (envPath && existsSync(envPath)) {
     return envPath;
   }
-  const packageRoot = resolveOpenClawPackageRootSync({
+  const packageRoot = resolveNovaPackageRootSync({
     moduleUrl: import.meta.url,
     argv1: process.argv[1],
     cwd: process.cwd(),
   });
   if (packageRoot) {
     for (const candidate of [
-      path.join(packageRoot, "openclaw.mjs"),
+      path.join(packageRoot, "nova.mjs"),
       path.join(packageRoot, "dist", "entry.js"),
       path.join(packageRoot, "scripts", "run-node.mjs"),
     ]) {

@@ -13,7 +13,7 @@ import { createTempDirHarness } from "./temp-dir.test-helper.js";
 const fetchWithSsrFGuardMock = vi.hoisted(() => vi.fn());
 const tempDirs = createTempDirHarness();
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("nova/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchWithSsrFGuardMock,
 }));
 
@@ -824,12 +824,12 @@ describe("qa suite", () => {
     expect(
       qaSuiteProgressTesting.buildQaRuntimeEnvPatch({
         providerMode: "mock-openai",
-        forcedRuntime: "openclaw",
+        forcedRuntime: "nova",
         mockBaseUrl: "http://127.0.0.1:44080",
       }),
     ).toEqual({
       NOVA_BUILD_PRIVATE_QA: "1",
-      NOVA_QA_FORCE_RUNTIME: "openclaw",
+      NOVA_QA_FORCE_RUNTIME: "nova",
     });
   });
 
@@ -850,8 +850,8 @@ describe("qa suite", () => {
         },
       },
     });
-    const sutOpenClawCommand = {
-      executablePath: "/usr/local/bin/openclaw-telegram-sut-launcher",
+    const sutNovaCommand = {
+      executablePath: "/usr/local/bin/nova-telegram-sut-launcher",
       usePackagedPlugins: true,
     };
 
@@ -870,7 +870,7 @@ describe("qa suite", () => {
           adapterFactories: [adapterFactory],
           channelId: "telegram",
           adapterOptions: { repoRoot: "/repo" },
-          sutOpenClawCommand,
+          sutNovaCommand,
           thinkingDefault: "minimal",
           claudeCliAuthMode: "subscription",
           enabledPluginIds: ["acpx"],
@@ -884,7 +884,7 @@ describe("qa suite", () => {
       adapterFactories: [adapterFactory],
       channelId: "telegram",
       adapterOptions: { repoRoot: "/repo" },
-      sutOpenClawCommand,
+      sutNovaCommand,
       concurrency: 1,
       startLab,
       controlUiEnabled: true,
@@ -966,7 +966,7 @@ describe("qa suite", () => {
       qaSuiteProgressTesting.remapModelRefForForcedRuntime({
         modelRef: "mock-openai/gpt-5.6-luna",
         providerMode: "mock-openai",
-        forcedRuntime: "openclaw",
+        forcedRuntime: "nova",
       }),
     ).toBe("mock-openai/gpt-5.6-luna");
   });

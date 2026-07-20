@@ -7,14 +7,14 @@ import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vites
 // Mock the plugin-sdk runtime-config surface so we can drive the policy
 // reader from the test without booting a gateway. mutateConfigFile is also
 // mocked so persistAllowAlways tests can assert what would have been written
-// without touching ~/.openclaw/openclaw.json.
+// without touching ~/.nova/nova.json.
 const getRuntimeConfigMock = vi.fn();
 const mutateConfigFileMock = vi.fn();
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", () => ({
+vi.mock("nova/plugin-sdk/runtime-config-snapshot", () => ({
   getRuntimeConfig: () => getRuntimeConfigMock(),
 }));
-vi.mock("openclaw/plugin-sdk/config-mutation", () => ({
+vi.mock("nova/plugin-sdk/config-mutation", () => ({
   mutateConfigFile: (input: unknown) => mutateConfigFileMock(input),
 }));
 
@@ -31,8 +31,8 @@ afterEach(() => {
 });
 
 afterAll(() => {
-  vi.doUnmock("openclaw/plugin-sdk/runtime-config-snapshot");
-  vi.doUnmock("openclaw/plugin-sdk/config-mutation");
+  vi.doUnmock("nova/plugin-sdk/runtime-config-snapshot");
+  vi.doUnmock("nova/plugin-sdk/config-mutation");
   vi.resetModules();
 });
 

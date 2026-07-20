@@ -11,7 +11,7 @@ const STARTUP_REFUSAL =
   "Nova startup migrations did not complete cleanly; refusing to report the gateway ready.";
 
 function seedPluginStateConflict(stateDir: string): void {
-  const sharedPath = path.join(stateDir, "state", "openclaw.sqlite");
+  const sharedPath = path.join(stateDir, "state", "nova.sqlite");
   const sidecarPath = path.join(stateDir, "plugin-state", "state.sqlite");
   fs.mkdirSync(path.dirname(sharedPath), { recursive: true });
   fs.mkdirSync(path.dirname(sidecarPath), { recursive: true });
@@ -69,11 +69,11 @@ function seedPluginStateConflict(stateDir: string): void {
 describe("gateway startup-migration refusal", () => {
   it("exits cleanly after reporting the refusal once and releasing its lease", async () => {
     const temporaryRoot = await fs.promises.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-startup-migration-exit-"),
+      path.join(os.tmpdir(), "nova-startup-migration-exit-"),
     );
     const root = await fs.promises.realpath(temporaryRoot);
     const stateDir = path.join(root, "state");
-    const configPath = path.join(root, "openclaw.json");
+    const configPath = path.join(root, "nova.json");
     const env: NodeJS.ProcessEnv = {
       ...process.env,
       HOME: root,
@@ -113,7 +113,7 @@ describe("gateway startup-migration refusal", () => {
       expect(result.signal, output).toBeNull();
       expect(result.stderr).toContain(STARTUP_REFUSAL);
       expect(result.stderr.split(STARTUP_REFUSAL)).toHaveLength(2);
-      expect(result.stderr).not.toContain("[openclaw] Could not start the CLI.");
+      expect(result.stderr).not.toContain("[nova] Could not start the CLI.");
       expect(hasActiveStartupMigrationLease({ env })).toBe(false);
     } finally {
       await fs.promises.rm(root, { recursive: true, force: true });

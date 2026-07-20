@@ -15,7 +15,7 @@ const mocks = vi.hoisted(() => {
     startOptions: vi.fn(async (startOptions) => startOptions),
   };
   const providerAuth = {
-    agentDir: vi.fn(() => "/tmp/openclaw-agent"),
+    agentDir: vi.fn(() => "/tmp/nova-agent"),
   };
   return { authBridge, managedBinary, providerAuth };
 });
@@ -33,7 +33,7 @@ vi.mock("./managed-binary.js", () => ({
   resolveManagedCodexNativeCommand: mocks.managedBinary.nativeCommand,
 }));
 
-vi.mock("openclaw/plugin-sdk/agent-runtime", () => ({
+vi.mock("nova/plugin-sdk/agent-runtime", () => ({
   resolveDefaultAgentDir: mocks.providerAuth.agentDir,
 }));
 
@@ -75,7 +75,7 @@ describe("listCodexAppServerModels", () => {
     const initialize = JSON.parse(harness.writes[0] ?? "{}") as { id?: number };
     harness.send({
       id: initialize.id,
-      result: { userAgent: "openclaw/0.143.0 (macOS; test)" },
+      result: { userAgent: "nova/0.143.0 (macOS; test)" },
     });
     await vi.waitFor(() => expect(harness.writes.length).toBeGreaterThanOrEqual(3));
     const list = JSON.parse(harness.writes[2] ?? "{}") as { id?: number; method?: string };
@@ -137,7 +137,7 @@ describe("listCodexAppServerModels", () => {
     const initialize = JSON.parse(harness.writes[0] ?? "{}") as { id?: number };
     harness.send({
       id: initialize.id,
-      result: { userAgent: "openclaw/0.143.0 (macOS; test)" },
+      result: { userAgent: "nova/0.143.0 (macOS; test)" },
     });
     await vi.waitFor(() => expect(harness.writes.length).toBeGreaterThanOrEqual(3));
     const firstList = JSON.parse(harness.writes[2] ?? "{}") as {
@@ -217,7 +217,7 @@ describe("listCodexAppServerModels", () => {
     const initialize = JSON.parse(harness.writes[0] ?? "{}") as { id?: number };
     harness.send({
       id: initialize.id,
-      result: { userAgent: "openclaw/0.143.0 (macOS; test)" },
+      result: { userAgent: "nova/0.143.0 (macOS; test)" },
     });
     await vi.waitFor(() => expect(harness.writes.length).toBeGreaterThanOrEqual(3));
     const firstList = JSON.parse(harness.writes[2] ?? "{}") as { id?: number };

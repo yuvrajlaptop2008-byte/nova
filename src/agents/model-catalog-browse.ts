@@ -5,7 +5,7 @@ import {
   clampTimerTimeoutMs,
   resolveTimerTimeoutMs,
 } from "@nova/normalization-core/number-coercion";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ModelCatalogEntry, ModelCatalogSnapshot } from "./model-catalog.types.js";
 import {
   buildConfiguredModelCatalog,
@@ -23,7 +23,7 @@ export type ModelCatalogBrowseView = "default" | "configured" | "provider-config
 
 /** Source-authored provider rows for inventory UIs, independent of picker allowlists. */
 export function buildProviderConfigModelCatalogForBrowse(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
 }): ModelCatalogEntry[] {
   return buildConfiguredModelCatalog(params).toSorted(
@@ -36,7 +36,7 @@ export function buildProviderConfigModelCatalogForBrowse(params: {
 
 /** True when a browse view requires the full published catalog generation. */
 export function modelCatalogBrowseRequiresFullDiscovery(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   view?: ModelCatalogBrowseView;
 }): boolean {
   const view = params.view ?? "default";
@@ -55,7 +55,7 @@ function resolveModelCatalogBrowseTimeoutMs(value: number | undefined): number {
 }
 
 async function loadCatalogForBrowse<T>(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   view?: ModelCatalogBrowseView;
   loadCatalog: (params: { readOnly: boolean }) => Promise<T>;
   empty: T;
@@ -94,7 +94,7 @@ async function loadCatalogForBrowse<T>(params: {
 
 /** Loads an explicit logical/physical catalog snapshot for route-aware browse surfaces. */
 export function loadPreparedModelCatalogSnapshotForBrowse(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   view?: ModelCatalogBrowseView;
   loadCatalog: (params: { readOnly: boolean }) => Promise<ModelCatalogSnapshot>;
   timeoutMs?: number;

@@ -29,7 +29,7 @@ import type {
   SimpleStreamOptions,
   TextContent,
   ToolResultMessage,
-} from "openclaw/plugin-sdk/llm";
+} from "nova/plugin-sdk/llm";
 import type { Static, TSchema } from "typebox";
 import type { Theme } from "../../modes/interactive/theme/theme.js";
 import type {
@@ -275,12 +275,12 @@ export interface ExtensionUIContext {
    * - `keybindings`: KeybindingsManager for app-level keybindings
    *
    * For full app keybinding support (escape, ctrl+d, model switching, etc.),
-   * extend `CustomEditor` from `openclaw/plugin-sdk/agent-sessions` and call
+   * extend `CustomEditor` from `nova/plugin-sdk/agent-sessions` and call
    * `super.handleInput(data)` for keys you don't handle.
    *
    * @example
    * ```ts
-   * import { CustomEditor } from "openclaw/plugin-sdk/agent-sessions";
+   * import { CustomEditor } from "nova/plugin-sdk/agent-sessions";
    *
    * class VimEditor extends CustomEditor {
    *   private mode: "normal" | "insert" = "insert";

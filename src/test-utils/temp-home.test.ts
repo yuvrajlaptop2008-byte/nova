@@ -20,10 +20,10 @@ describe("createTempHomeEnv", () => {
     const previousUserProfile = process.env.USERPROFILE;
     const previousStateDir = process.env.NOVA_STATE_DIR;
 
-    const tempHome = await createTempHomeEnv("openclaw-temp-home-");
+    const tempHome = await createTempHomeEnv("nova-temp-home-");
     expect(process.env.HOME).toBe(tempHome.home);
     expect(process.env.USERPROFILE).toBe(tempHome.home);
-    expect(process.env.NOVA_STATE_DIR).toBe(path.join(tempHome.home, ".openclaw"));
+    expect(process.env.NOVA_STATE_DIR).toBe(path.join(tempHome.home, ".nova"));
     const homeStat = await fs.stat(tempHome.home);
     expect(homeStat.isDirectory()).toBe(true);
 

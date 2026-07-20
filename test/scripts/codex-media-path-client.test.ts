@@ -18,7 +18,7 @@ const fakeAppServerPath = path.resolve(
 const writeConfigPath = path.resolve("scripts/e2e/lib/codex-media-path/write-config.mjs");
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-codex-media-path-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-codex-media-path-"));
   tempRoots.push(root);
   return root;
 }
@@ -40,7 +40,7 @@ function runWriteConfig(root: string, env: Record<string, string> = {}) {
     encoding: "utf8",
     env: {
       ...process.env,
-      NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+      NOVA_CONFIG_PATH: path.join(root, "nova.json"),
       NOVA_GATEWAY_TOKEN: "test-token",
       NOVA_STATE_DIR: path.join(root, "state"),
       NOVA_TEST_WORKSPACE_DIR: path.join(root, "workspace"),
@@ -121,7 +121,7 @@ describe("codex media path limits", () => {
     });
 
     expect(result.status).toBe(0);
-    const config = JSON.parse(readFileSync(path.join(root, "openclaw.json"), "utf8"));
+    const config = JSON.parse(readFileSync(path.join(root, "nova.json"), "utf8"));
     expect(config.gateway.port).toBe(19002);
     expect(config.agents.defaults.timeoutSeconds).toBe(240);
     expect(config.plugins.entries.codex.config.appServer.requestTimeoutMs).toBe(240_000);

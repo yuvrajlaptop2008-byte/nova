@@ -3,7 +3,7 @@ import type {
   WhatsAppQaDriverObservedMessage,
   WhatsAppQaDriverSession,
 } from "@nova/whatsapp/api.js";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import type { startQaGatewayChild } from "../../gateway-child.js";
 
 export type WhatsAppQaRuntimeEnv = {

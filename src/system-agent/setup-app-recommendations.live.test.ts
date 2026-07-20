@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { getSetupAppRecommendations } from "./setup-app-recommendations.js";
 import { completeSetupInferenceConfig } from "./setup-inference.js";
@@ -8,12 +8,12 @@ const LIVE = process.env.NOVA_LIVE_TEST === "1" && Boolean(process.env.OPENAI_AP
 const describeLive = LIVE ? describe : describe.skip;
 const modelId = process.env.NOVA_LIVE_APP_RECOMMENDATIONS_MODEL ?? "gpt-5.6-luna";
 
-const config: OpenClawConfig = {
+const config: NovaConfig = {
   models: {
     providers: {
       openai: {
         api: "openai-responses",
-        agentRuntime: { id: "openclaw" },
+        agentRuntime: { id: "nova" },
         apiKey: { source: "env", provider: "default", id: "OPENAI_API_KEY" },
         baseUrl: "https://api.openai.com/v1",
         models: [
@@ -21,7 +21,7 @@ const config: OpenClawConfig = {
             id: modelId,
             name: modelId,
             api: "openai-responses",
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "nova" },
             input: ["text"],
             reasoning: true,
             contextWindow: 1_047_576,
@@ -37,7 +37,7 @@ const config: OpenClawConfig = {
       model: { primary: `openai/${modelId}` },
       models: {
         [`openai/${modelId}`]: {
-          agentRuntime: { id: "openclaw" },
+          agentRuntime: { id: "nova" },
           params: { maxTokens: 60_000 },
         },
       },

@@ -5,7 +5,7 @@ import { expectDefined } from "@nova/normalization-core";
  * Applies account names and validates setup results for channel onboarding adapters.
  */
 import { z, type ZodType } from "zod";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-key.js";
 import {
   collectSingleAccountPromotionEntries,
@@ -36,14 +36,14 @@ const NAMED_ACCOUNT_PROMOTION_KEYS_BY_CHANNEL: Record<string, readonly string[]>
   telegram: ["botToken", "tokenFile"],
 };
 
-function channelHasAccounts(cfg: OpenClawConfig, channelKey: string): boolean {
+function channelHasAccounts(cfg: NovaConfig, channelKey: string): boolean {
   const channels = cfg.channels as Record<string, unknown> | undefined;
   const base = channels?.[channelKey] as ChannelSectionBase | undefined;
   return Boolean(base?.accounts && Object.keys(base.accounts).length > 0);
 }
 
 function shouldStoreNameInAccounts(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   accountId: string;
   alwaysUseAccounts?: boolean;
@@ -58,12 +58,12 @@ function shouldStoreNameInAccounts(params: {
 }
 
 export function applyAccountNameToChannelSection(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   accountId: string;
   name?: string;
   alwaysUseAccounts?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   const trimmed = params.name?.trim();
   if (!trimmed) {
     return params.cfg;
@@ -90,7 +90,7 @@ export function applyAccountNameToChannelSection(params: {
           name: trimmed,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
   const baseAccounts: Record<string, Record<string, unknown>> = base?.accounts ?? {};
   const existingAccount = baseAccounts[accountId] ?? {};
@@ -113,15 +113,15 @@ export function applyAccountNameToChannelSection(params: {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 /** Moves a root-level channel name into `accounts.default` before adding named accounts. */
 export function migrateBaseNameToDefaultAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   alwaysUseAccounts?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   if (params.alwaysUseAccounts) {
     return params.cfg;
   }
@@ -148,18 +148,18 @@ export function migrateBaseNameToDefaultAccount(params: {
         accounts,
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 /** Applies setup-time account naming and optional root-name migration in one step. */
 export function prepareScopedSetupConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   accountId: string;
   name?: string;
   alwaysUseAccounts?: boolean;
   migrateBaseName?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   const namedConfig = applyAccountNameToChannelSection({
     cfg: params.cfg,
     channelKey: params.channelKey,
@@ -179,11 +179,11 @@ export function prepareScopedSetupConfig(params: {
 
 /** Applies a setup patch using account-scoped config semantics. */
 export function applySetupAccountConfigPatch(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   accountId: string;
   patch: Record<string, unknown>;
-}): OpenClawConfig {
+}): NovaConfig {
   return patchScopedAccountConfig({
     cfg: params.cfg,
     channelKey: params.channelKey,
@@ -239,7 +239,7 @@ export function createPatchedAccountSetupAdapter(params: {
 /** Creates a Zod-backed setup input validator with an optional typed semantic check. */
 export function createZodSetupInputValidator<T extends ChannelSetupInput>(params: {
   schema: ZodType<T>;
-  validate?: (params: { cfg: OpenClawConfig; accountId: string; input: T }) => string | null;
+  validate?: (params: { cfg: NovaConfig; accountId: string; input: T }) => string | null;
 }): NonNullable<ChannelSetupAdapter["validateInput"]> {
   return (inputParams) => {
     const parsed = params.schema.safeParse(inputParams.input);
@@ -277,7 +277,7 @@ export function createSetupInputPresenceValidator(params: {
   defaultAccountOnlyEnvError?: string;
   whenNotUseEnv?: SetupInputPresenceRequirement[];
   validate?: (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId: string;
     input: ChannelSetupInput;
   }) => string | null;
@@ -338,7 +338,7 @@ export function createEnvPatchedAccountSetupAdapter(params: {
 
 /** Patches channel config at root for default accounts or under `accounts.<id>` for named accounts. */
 export function patchScopedAccountConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   accountId: string;
   patch: Record<string, unknown>;
@@ -346,7 +346,7 @@ export function patchScopedAccountConfig(params: {
   ensureChannelEnabled?: boolean;
   ensureAccountEnabled?: boolean;
   scopeDefaultToAccounts?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   const accountId = normalizeAccountId(params.accountId);
   const channels = params.cfg.channels as Record<string, unknown> | undefined;
   const channelConfig = channels?.[params.channelKey];
@@ -372,7 +372,7 @@ export function patchScopedAccountConfig(params: {
           ...patch,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   const accounts = base?.accounts ?? {};
@@ -400,7 +400,7 @@ export function patchScopedAccountConfig(params: {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 type ChannelSectionRecord = Record<string, unknown> & {
@@ -415,14 +415,14 @@ function cloneIfObject<T>(value: T): T {
 }
 
 function moveSingleAccountKeysIntoAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   channel: ChannelSectionRecord;
   accounts: Record<string, Record<string, unknown>>;
   keysToMove: string[];
   targetAccountId: string;
   baseAccount?: Record<string, unknown>;
-}): OpenClawConfig {
+}): NovaConfig {
   const nextAccount: Record<string, unknown> = { ...params.baseAccount };
   for (const key of params.keysToMove) {
     if (!(key in nextAccount)) {
@@ -445,7 +445,7 @@ function moveSingleAccountKeysIntoAccount(params: {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function resolveExistingAccountKey(
@@ -498,9 +498,9 @@ function resolveSingleAccountPromotionTarget(params: { channel: ChannelSectionBa
  * Promotes legacy single-account channel fields into the account map for multi-account setup.
  */
 export function moveSingleAccountChannelSectionToDefaultAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
-}): OpenClawConfig {
+}): NovaConfig {
   const channels = params.cfg.channels as Record<string, unknown> | undefined;
   const baseConfig = channels?.[params.channelKey];
   const base =

@@ -3,8 +3,8 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CopilotClient, approveAll } from "@github/copilot-sdk";
-import type { AgentHarnessAttemptParams } from "openclaw/plugin-sdk/agent-harness-runtime";
-import { isLiveTestEnabled } from "openclaw/plugin-sdk/test-live";
+import type { AgentHarnessAttemptParams } from "nova/plugin-sdk/agent-harness-runtime";
+import { isLiveTestEnabled } from "nova/plugin-sdk/test-live";
 import { describe, expect, it, vi } from "vitest";
 import { createCopilotAgentHarness } from "../harness.js";
 import type { CopilotClientPool } from "./runtime.js";
@@ -16,12 +16,12 @@ const liveToolState = vi.hoisted(() => ({
   toolName: "live_echo",
 }));
 
-vi.mock("openclaw/plugin-sdk/agent-harness", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/agent-harness")>();
+vi.mock("nova/plugin-sdk/agent-harness", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/agent-harness")>();
 
   return {
     ...actual,
-    createOpenClawCodingTools: vi.fn(() => [
+    createNovaCodingTools: vi.fn(() => [
       {
         name: liveToolState.toolName,
         label: liveToolState.toolName,
@@ -149,7 +149,7 @@ describeLive("copilot agent runtime live smoke", () => {
     liveToolState.calls.length = 0;
     const streamedTexts: string[] = [];
     const prompt = `Use the ${liveToolState.toolName} tool exactly once with text '${liveToolState.expectedText}', then reply with exactly two short sentences totaling at least twelve words.`;
-    const copilotHome = await mkdtemp(join(tmpdir(), "openclaw-copilot-live-"));
+    const copilotHome = await mkdtemp(join(tmpdir(), "nova-copilot-live-"));
     const harness = createCopilotAgentHarness({ pool: createApproveAllPool() });
 
     expect(

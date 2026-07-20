@@ -4,7 +4,7 @@ import {
   isSessionIdentityPending,
   resolveSessionIdentityFromMeta,
 } from "@nova/acp-core/runtime/session-identity";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import type {
   AcpSessionManagerDeps,
@@ -17,7 +17,7 @@ import type {
 
 /** Resolves pending ACP session identities opportunistically during manager startup. */
 export async function runManagerStartupIdentityReconcile(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   deps: Pick<AcpSessionManagerDeps, "listAcpSessions">;
   withSessionActor: WithManagerSessionActor;
   resolveSession: ResolveManagerSession;

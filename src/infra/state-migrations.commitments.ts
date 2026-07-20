@@ -15,10 +15,7 @@ import {
   type CommitmentsDatabase,
 } from "../commitments/store-record.js";
 import type { CommitmentRecord } from "../commitments/types.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -237,7 +234,7 @@ export function migrateLegacyCommitments(params: {
   let activeDuplicateCount = 0;
   try {
     assertLegacySourceUnchanged(params.detected.sourcePath, snapshot);
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const commitmentsDb = getNodeSqliteKysely<CommitmentsDatabase>(db);
         for (const legacyRecord of legacyRecords) {
@@ -296,7 +293,7 @@ export function migrateLegacyCommitments(params: {
 
   try {
     params.beforeVerify?.();
-    const database = openOpenClawStateDatabase({
+    const database = openNovaStateDatabase({
       env: { ...process.env, NOVA_STATE_DIR: params.stateDir },
     });
     const commitmentsDb = getNodeSqliteKysely<CommitmentsDatabase>(database.db);

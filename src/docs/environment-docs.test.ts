@@ -22,7 +22,7 @@ describe("environment docs", () => {
     expect(markdown).toContain(
       "Nova ignores provider credentials and protected runtime controls from workspace `.env`",
     );
-    expect(markdown).toContain("~/.openclaw/.env");
+    expect(markdown).toContain("~/.nova/.env");
     expect(markdown).toContain("$NOVA_STATE_DIR/.env");
     expect(markdown).toContain("The config `env` block");
     expect(markdown).toContain("NOVA_LOAD_SHELL_ENV=1");
@@ -39,7 +39,7 @@ describe("environment docs", () => {
       "Provider credential environment variables are blocked from untrusted workspace `.env` files",
     );
     expect(markdown).toContain("provider auth keys declared by installed trusted plugins");
-    expect(markdown).toContain("~/.openclaw/.env");
+    expect(markdown).toContain("~/.nova/.env");
     expect(markdown).toContain("$NOVA_STATE_DIR/.env");
 
     for (const key of providerCredentialExamples) {

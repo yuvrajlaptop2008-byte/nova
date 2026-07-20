@@ -57,14 +57,14 @@ describe("scripts/ios-release-signing.mjs", () => {
 
     expect(output).toContain("NOVA_CODE_SIGN_STYLE = Manual");
     expect(output).toContain("NOVA_CODE_SIGN_IDENTITY = Apple Distribution");
-    expect(output).toContain("NOVA_APP_GROUP_ID = group.ai.openclawfoundation.app.shared");
-    expect(output).toContain("NOVA_APP_PROFILE = Nova App Store ai.openclawfoundation.app");
-    expect(output).toContain("NOVA_SHARE_PROFILE = Nova App Store ai.openclawfoundation.app.share");
+    expect(output).toContain("NOVA_APP_GROUP_ID = group.ai.novafoundation.app.shared");
+    expect(output).toContain("NOVA_APP_PROFILE = Nova App Store ai.novafoundation.app");
+    expect(output).toContain("NOVA_SHARE_PROFILE = Nova App Store ai.novafoundation.app.share");
     expect(output).toContain(
-      "NOVA_ACTIVITY_WIDGET_PROFILE = Nova App Store ai.openclawfoundation.app.activitywidget",
+      "NOVA_ACTIVITY_WIDGET_PROFILE = Nova App Store ai.novafoundation.app.activitywidget",
     );
     expect(output).toContain(
-      "NOVA_WATCH_APP_PROFILE = Nova App Store ai.openclawfoundation.app.watchkitapp",
+      "NOVA_WATCH_APP_PROFILE = Nova App Store ai.novafoundation.app.watchkitapp",
     );
     expect(output).not.toContain("NOVA_WATCH_EXTENSION_PROFILE");
   });
@@ -73,13 +73,13 @@ describe("scripts/ios-release-signing.mjs", () => {
     const output = runSigning("plan");
 
     expect(output).toContain("Team ID: FWJYW4S8P8");
-    expect(output).toContain("Signing repo: git@github.com:openclaw/apps-signing.git");
+    expect(output).toContain("Signing repo: git@github.com:nova/apps-signing.git");
     expect(output).toContain("Signing branch: main");
     expect(output).toContain("Signing setup and sync: Fastlane match");
-    expect(output).not.toContain("OpenClawWatchExtension");
+    expect(output).not.toContain("NovaWatchExtension");
     expect(output).toContain(
       "capabilities: PUSH_NOTIFICATIONS, APP_GROUPS, APP_ATTEST, HEALTH_KIT",
     );
-    expect(output).toContain("app groups: group.ai.openclawfoundation.app.shared");
+    expect(output).toContain("app groups: group.ai.novafoundation.app.shared");
   });
 });

@@ -1,29 +1,29 @@
 /**
  * Browser-local SDK config bridge plus Browser-specific default port helpers.
  */
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 
 export {
   getRuntimeConfig,
   getRuntimeConfigSourceSnapshot,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
-export { mutateConfigFile } from "openclaw/plugin-sdk/config-mutation";
+} from "nova/plugin-sdk/runtime-config-snapshot";
+export { mutateConfigFile } from "nova/plugin-sdk/config-mutation";
 export {
   type BrowserConfig,
   type BrowserProfileConfig,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/config-contracts";
+  type NovaConfig,
+} from "nova/plugin-sdk/config-contracts";
 export {
   normalizePluginsConfig,
   resolveEffectiveEnableState,
-} from "openclaw/plugin-sdk/plugin-config-runtime";
-export { resolveGatewayPort } from "openclaw/plugin-sdk/core";
+} from "nova/plugin-sdk/plugin-config-runtime";
+export { resolveGatewayPort } from "nova/plugin-sdk/core";
 export {
   CONFIG_DIR,
   escapeRegExp,
   resolveUserPath,
   shortenHomePath,
-} from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/text-utility-runtime";
 type PortRange = { start: number; end: number };
 
 const DEFAULT_BROWSER_CDP_PORT_RANGE_START = 18800;

@@ -14,7 +14,7 @@ import {
   scanSessionTranscriptTree,
   selectSessionTranscriptLeafControlledPath,
 } from "../../config/sessions/transcript-tree.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { readFileWindowFully } from "../../infra/file-read.js";
 import { isPathInside } from "../../infra/path-guards.js";
@@ -414,7 +414,7 @@ function resolveSafeCliSessionFile(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): { sessionFile: string; sessionsDir: string } {
   const { defaultAgentId, sessionAgentId } = resolveSessionAgentIds({
     sessionKey: params.sessionKey,
@@ -441,7 +441,7 @@ async function loadCliSessionEntries(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<unknown[]> {
   try {
     const { sessionFile, sessionsDir } = resolveSafeCliSessionFile(params);
@@ -497,7 +497,7 @@ export async function hasCliSessionTranscript(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<boolean> {
   try {
     const { sessionFile, sessionsDir } = resolveSafeCliSessionFile(params);
@@ -527,7 +527,7 @@ export async function loadCliSessionHistoryMessages(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<unknown[]> {
   const history = (await loadCliSessionEntries(params)).flatMap((entry) => {
     const candidate = entry as HistoryEntry;
@@ -542,7 +542,7 @@ export async function loadCliSessionContextEngineMessages(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): Promise<unknown[]> {
   const entries = await loadCliSessionEntries(params);
   const latestCompactionIndex = entries.findLastIndex((entry) => {
@@ -586,7 +586,7 @@ export async function loadCliSessionReseedMessages(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   allowRawTranscriptReseed?: boolean;
   rawTranscriptReseedReason?: RawTranscriptReseedReason;
 }): Promise<unknown[]> {

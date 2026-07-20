@@ -28,7 +28,7 @@ import { resolveConfigPath } from "../config/paths.js";
 import { resolveSessionTranscriptsDirForAgent } from "../config/sessions/paths.js";
 import type { OptionalBootstrapFileName } from "../config/types.agent-defaults.js";
 import type { GatewayAuthMode } from "../config/types.gateway.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   resolveAdvertisedControlUiLinks,
   resolveControlUiLinks,
@@ -76,7 +76,7 @@ export function guardCancel<T>(value: T | symbol, runtime: RuntimeEnv, exitCode 
 }
 
 /** Summarizes existing config values before onboarding overwrites or reuses them. */
-export function summarizeExistingConfig(config: OpenClawConfig): string {
+export function summarizeExistingConfig(config: NovaConfig): string {
   const rows: string[] = [];
   const defaults = config.agents?.defaults;
   if (defaults?.workspace) {
@@ -98,7 +98,7 @@ export function summarizeExistingConfig(config: OpenClawConfig): string {
   return rows.length ? rows.join("\n") : "No key settings detected.";
 }
 
-function summarizeGatewayConfig(config: OpenClawConfig): string | null {
+function summarizeGatewayConfig(config: NovaConfig): string | null {
   const gateway = config.gateway;
   if (
     !gateway?.mode &&
@@ -181,16 +181,16 @@ export function validateGatewayPasswordInput(value: unknown): string | undefined
   return undefined;
 }
 
-/** Prints the onboarding banner: pixel mascot beside the OPENCLAW wordmark. */
+/** Prints the onboarding banner: pixel mascot beside the nova wordmark. */
 export async function printWizardHeader(runtime: RuntimeEnv): Promise<void> {
   await printClawBanner(runtime);
 }
 
 /** Records wizard provenance metadata on config writes. */
 export function applyWizardMetadata(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   params: { command: string; mode: OnboardMode },
-): OpenClawConfig {
+): NovaConfig {
   const commit =
     normalizeOptionalString(process.env.GIT_COMMIT) ?? normalizeOptionalString(process.env.GIT_SHA);
   return {
@@ -228,8 +228,8 @@ export function formatControlUiSshHint(params: {
     "BYOH note: lan, tailnet, and custom bind are currently IPv4-only.",
     "If your host is IPv6-only, use an IPv4 sidecar or proxy in front of the Gateway.",
     "Docs:",
-    "https://docs.openclaw.ai/gateway/remote",
-    "https://docs.openclaw.ai/web/control-ui",
+    "https://docs.nova.ai/gateway/remote",
+    "https://docs.nova.ai/web/control-ui",
   ]
     .filter(Boolean)
     .join("\n");
@@ -426,7 +426,7 @@ export async function probeGatewayConfiguredModel(
     };
   }
   try {
-    const config = configCandidate as OpenClawConfig;
+    const config = configCandidate as NovaConfig;
     const model = resolveAgentEffectiveModelPrimary(config, resolveDefaultAgentId(config));
     return model
       ? { kind: "configured" }

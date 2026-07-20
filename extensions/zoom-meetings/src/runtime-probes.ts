@@ -1,4 +1,4 @@
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
+import { sleep } from "nova/plugin-sdk/runtime-env";
 import type { ZoomMeetingsConfig, ZoomMeetingsMode, ZoomMeetingsTransport } from "./config.js";
 import { zoomMeetingsInvalidRequest as invalidRequest } from "./errors.js";
 import { resolveZoomMeetingsProbeTimeoutMs } from "./probe-timeout.js";

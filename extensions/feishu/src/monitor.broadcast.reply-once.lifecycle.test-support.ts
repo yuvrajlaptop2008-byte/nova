@@ -1,6 +1,6 @@
 // Feishu plugin module implements monitor.broadcast.reply once.lifecycle support behavior.
 import "./lifecycle.test-support.js";
-import { createNonExitingRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createNonExitingRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ClawdbotConfig, RuntimeEnv } from "../runtime-api.js";
 import { FeishuConfigSchema } from "./config-schema.js";
@@ -138,7 +138,7 @@ describe("Feishu broadcast reply-once lifecycle", () => {
     resetFeishuLifecycleTestMocks();
     handlersByAccount = new Map();
     runtimesByAccount = new Map();
-    setFeishuLifecycleStateDir("openclaw-feishu-broadcast");
+    setFeishuLifecycleStateDir("nova-feishu-broadcast");
 
     createFeishuReplyDispatcherMock.mockReturnValue(createFeishuLifecycleReplyDispatcher());
 

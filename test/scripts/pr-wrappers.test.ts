@@ -27,7 +27,7 @@ const canonicalMismatchMessage = (repo: string) =>
   ].join("\n");
 
 function makeMismatchedWrapperRepo() {
-  const root = realpathSync(mkdtempSync(join(realpathSync(tmpdir()), "openclaw-pr-dev-wrapper-")));
+  const root = realpathSync(mkdtempSync(join(realpathSync(tmpdir()), "nova-pr-dev-wrapper-")));
   const home = join(root, "home");
   const canonicalPath = join(root, "canonical");
   const linkedPath = join(root, "linked");
@@ -280,7 +280,7 @@ describe("scripts/pr wrappers", () => {
   });
 
   it("refuses to substitute a different canonical wrapper implementation", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-pr-wrapper-revision-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-pr-wrapper-revision-"));
     const repo = join(dir, "repo");
     const linked = join(dir, "linked");
     mkdirSync(join(repo, "scripts", "lib"), { recursive: true });
@@ -339,7 +339,7 @@ describe("scripts/pr wrappers", () => {
   });
 
   it("runs the local wrapper when it matches origin/main and the canonical checkout is parked elsewhere", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-pr-wrapper-anchor-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-pr-wrapper-anchor-"));
     const repo = join(dir, "repo");
     const linked = join(dir, "linked");
     mkdirSync(join(repo, "scripts", "lib"), { recursive: true });
@@ -393,7 +393,7 @@ describe("scripts/pr wrappers", () => {
   });
 
   it("verifies local GitHub auth through GraphQL when REST quota is unavailable", () => {
-    const dir = mkdtempSync(join(tmpdir(), "openclaw-pr-auth-"));
+    const dir = mkdtempSync(join(tmpdir(), "nova-pr-auth-"));
     const gh = join(dir, "gh");
     writeFileSync(
       gh,

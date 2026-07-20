@@ -1,5 +1,5 @@
 // QA Lab web_search metadata shared by runtime and contract-only loading.
-import type { WebSearchProviderPlugin } from "openclaw/plugin-sdk/provider-web-search-contract";
+import type { WebSearchProviderPlugin } from "nova/plugin-sdk/provider-web-search-contract";
 
 const QA_LAB_WEB_SEARCH_PROVIDER_ID = "qa-lab-search";
 export const QA_LAB_WEB_SEARCH_DENIED_INPUT_QUERY = "NOVA_QA_WEB_SEARCH_DENIED_INPUT";
@@ -12,8 +12,8 @@ export function createQaLabWebSearchProviderBase(): Omit<WebSearchProviderPlugin
     requiresCredential: false,
     envVars: [],
     placeholder: "(no key needed)",
-    signupUrl: "https://docs.openclaw.ai/concepts/qa-e2e-automation",
-    docsUrl: "https://docs.openclaw.ai/concepts/qa-e2e-automation",
+    signupUrl: "https://docs.nova.ai/concepts/qa-e2e-automation",
+    docsUrl: "https://docs.nova.ai/concepts/qa-e2e-automation",
     credentialPath: "",
     inactiveSecretPaths: [],
     getCredentialValue: () => undefined,

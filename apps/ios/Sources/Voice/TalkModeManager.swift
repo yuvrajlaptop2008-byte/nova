@@ -1,9 +1,9 @@
 import AVFAudio
 import Foundation
 import Observation
-import OpenClawChatUI
-import OpenClawKit
-import OpenClawProtocol
+import NovaChatUI
+import NovaKit
+import NovaProtocol
 import OSLog
 import Speech
 
@@ -25,7 +25,7 @@ private final class StreamFailureBox: @unchecked Sendable {
 }
 
 enum TalkPushToTalkOnceStart {
-    case busy(OpenClawTalkPTTStopPayload)
+    case busy(NovaTalkPTTStopPayload)
     case started(captureId: String)
 }
 
@@ -95,10 +95,10 @@ private enum PushToTalkGatewayContext {
 
 @MainActor
 private final class TalkPushToTalkOnceOperation {
-    private var result: OpenClawTalkPTTStopPayload?
-    private var continuation: CheckedContinuation<OpenClawTalkPTTStopPayload, Never>?
+    private var result: NovaTalkPTTStopPayload?
+    private var continuation: CheckedContinuation<NovaTalkPTTStopPayload, Never>?
 
-    func wait() async -> OpenClawTalkPTTStopPayload {
+    func wait() async -> NovaTalkPTTStopPayload {
         if let result {
             return result
         }
@@ -111,7 +111,7 @@ private final class TalkPushToTalkOnceOperation {
         }
     }
 
-    func finish(_ payload: OpenClawTalkPTTStopPayload) {
+    func finish(_ payload: NovaTalkPTTStopPayload) {
         guard self.result == nil else { return }
         self.result = payload
         self.continuation?.resume(returning: payload)
@@ -131,7 +131,7 @@ final class TalkModeManager: NSObject {
     private static let defaultRealtimeModelIdFallback = "gpt-realtime-2"
     private static let defaultTalkProvider = "elevenlabs"
     private static let defaultSilenceTimeoutMs = TalkDefaults.silenceTimeoutMs
-    private static let redactedConfigSentinel = "__OPENCLAW_REDACTED__"
+    private static let redactedConfigSentinel = "__NOVA_REDACTED__"
     private static let realtimePrefetchExpiryLeewaySeconds: TimeInterval = 30
     private static let preferredInputDeviceIDKey = "talk.preferredInputDeviceID"
     var isEnabled: Bool = false
@@ -340,7 +340,7 @@ final class TalkModeManager: NSObject {
         (@MainActor (_ method: String, _ paramsJSON: String?) async throws -> Void)?
     #endif
 
-    private let logger = Logger(subsystem: "ai.openclawfoundation.app", category: "TalkMode")
+    private let logger = Logger(subsystem: "ai.novafoundation.app", category: "TalkMode")
 
     private static func nowSeconds() -> TimeInterval {
         ProcessInfo.processInfo.systemUptime
@@ -883,7 +883,7 @@ final class TalkModeManager: NSObject {
         self.pttTimeoutTask = nil
         self.pttAutoStopEnabled = false
         if let pendingCaptureId, pttOnceOperations[pendingCaptureId] != nil {
-            let payload = OpenClawTalkPTTStopPayload(
+            let payload = NovaTalkPTTStopPayload(
                 captureId: pendingCaptureId,
                 transcript: nil,
                 status: "cancelled")
@@ -934,7 +934,7 @@ final class TalkModeManager: NSObject {
         self.stopSpeaking()
         self.lastInterruptedAtSeconds = nil
         if let pendingCaptureId {
-            let payload = OpenClawTalkPTTStopPayload(
+            let payload = NovaTalkPTTStopPayload(
                 captureId: pendingCaptureId,
                 transcript: nil,
                 status: "cancelled")
@@ -962,7 +962,7 @@ final class TalkModeManager: NSObject {
     func beginPushToTalk(
         transcriptionOnly: Bool = false,
         canStartCapture: @MainActor () -> Bool = { true },
-        onCaptureReserved: @MainActor (String) -> Void = { _ in }) async throws -> OpenClawTalkPTTStartPayload
+        onCaptureReserved: @MainActor (String) -> Void = { _ in }) async throws -> NovaTalkPTTStartPayload
     {
         try Task.checkCancellation()
         guard canStartCapture(), self.foregroundPushToTalkAllowed else {
@@ -972,7 +972,7 @@ final class TalkModeManager: NSObject {
             guard activePushToTalk.transcriptionOnly == transcriptionOnly else {
                 throw Self.pushToTalkModeConflictError()
             }
-            return OpenClawTalkPTTStartPayload(captureId: activePushToTalk.captureId)
+            return NovaTalkPTTStartPayload(captureId: activePushToTalk.captureId)
         }
         if self.finishingPushToTalk != nil {
             throw Self.pushToTalkBusyError()
@@ -1094,19 +1094,19 @@ final class TalkModeManager: NSObject {
             throw error
         }
 
-        return OpenClawTalkPTTStartPayload(captureId: captureId)
+        return NovaTalkPTTStartPayload(captureId: captureId)
     }
 
-    func endPushToTalk() -> OpenClawTalkPTTStopPayload {
+    func endPushToTalk() -> NovaTalkPTTStopPayload {
         let captureId = self.activePTTCaptureId ?? UUID().uuidString
         return self.endPushToTalk(captureId: captureId)
     }
 
-    func endPushToTalk(expectedTranscriptionOnly: Bool) -> OpenClawTalkPTTStopPayload {
+    func endPushToTalk(expectedTranscriptionOnly: Bool) -> NovaTalkPTTStopPayload {
         guard let activePushToTalk,
               activePushToTalk.transcriptionOnly == expectedTranscriptionOnly
         else {
-            return OpenClawTalkPTTStopPayload(
+            return NovaTalkPTTStopPayload(
                 captureId: UUID().uuidString,
                 transcript: nil,
                 status: "idle")
@@ -1114,11 +1114,11 @@ final class TalkModeManager: NSObject {
         return self.endPushToTalk(captureId: activePushToTalk.captureId)
     }
 
-    func endPushToTalk(captureId: String) -> OpenClawTalkPTTStopPayload {
+    func endPushToTalk(captureId: String) -> NovaTalkPTTStopPayload {
         guard let activePushToTalk,
               activePushToTalk.captureId == captureId
         else {
-            return OpenClawTalkPTTStopPayload(captureId: captureId, transcript: nil, status: "idle")
+            return NovaTalkPTTStopPayload(captureId: captureId, transcript: nil, status: "idle")
         }
         guard self.isPushToTalkActive else {
             let shouldResume = self.isEnabled
@@ -1131,7 +1131,7 @@ final class TalkModeManager: NSObject {
             self.pttAutoStopEnabled = false
             self.setStatus(String(localized: "Ready"), phase: .idle)
             self.finishActivePushToTalk(captureId)
-            let payload = OpenClawTalkPTTStopPayload(
+            let payload = NovaTalkPTTStopPayload(
                 captureId: captureId,
                 transcript: nil,
                 status: "idle")
@@ -1157,7 +1157,7 @@ final class TalkModeManager: NSObject {
             self.setStatus(String(localized: "Ready"), phase: .idle)
             let shouldResume = self.isEnabled
             self.finishActivePushToTalk(captureId)
-            let payload = OpenClawTalkPTTStopPayload(
+            let payload = NovaTalkPTTStopPayload(
                 captureId: captureId,
                 transcript: nil,
                 status: "empty")
@@ -1170,7 +1170,7 @@ final class TalkModeManager: NSObject {
             self.setStatus(String(localized: "Ready"), phase: .idle)
             let shouldResume = self.isEnabled
             self.finishActivePushToTalk(captureId)
-            let payload = OpenClawTalkPTTStopPayload(
+            let payload = NovaTalkPTTStopPayload(
                 captureId: captureId,
                 transcript: transcript,
                 status: "transcribed")
@@ -1183,7 +1183,7 @@ final class TalkModeManager: NSObject {
             self.setStatus(String(localized: "Gateway not connected"), phase: .idle)
             let shouldResume = self.isEnabled
             self.finishActivePushToTalk(captureId)
-            let payload = OpenClawTalkPTTStopPayload(
+            let payload = NovaTalkPTTStopPayload(
                 captureId: captureId,
                 transcript: transcript,
                 status: "offline")
@@ -1192,7 +1192,7 @@ final class TalkModeManager: NSObject {
             return payload
         }
 
-        let payload = OpenClawTalkPTTStopPayload(
+        let payload = NovaTalkPTTStopPayload(
             captureId: captureId,
             transcript: transcript,
             status: "queued")
@@ -1219,7 +1219,7 @@ final class TalkModeManager: NSObject {
         onCaptureReserved: @MainActor (String) -> Void = { _ in }) async throws -> TalkPushToTalkOnceStart
     {
         if let captureId = activePTTCaptureId ?? finishingPushToTalk?.captureId {
-            return .busy(OpenClawTalkPTTStopPayload(
+            return .busy(NovaTalkPTTStopPayload(
                 captureId: captureId,
                 transcript: nil,
                 status: "busy"))
@@ -1250,13 +1250,13 @@ final class TalkModeManager: NSObject {
         }
     }
 
-    func awaitPushToTalkOnce(_ start: TalkPushToTalkOnceStart) async -> OpenClawTalkPTTStopPayload {
+    func awaitPushToTalkOnce(_ start: TalkPushToTalkOnceStart) async -> NovaTalkPTTStopPayload {
         switch start {
         case let .busy(payload):
             return payload
         case let .started(captureId):
             guard let operation = pttOnceOperations[captureId] else {
-                return OpenClawTalkPTTStopPayload(captureId: captureId, transcript: nil, status: "idle")
+                return NovaTalkPTTStopPayload(captureId: captureId, transcript: nil, status: "idle")
             }
             let payload = await withTaskCancellationHandler {
                 await operation.wait()
@@ -1270,16 +1270,16 @@ final class TalkModeManager: NSObject {
         }
     }
 
-    func cancelPushToTalk() -> OpenClawTalkPTTStopPayload {
+    func cancelPushToTalk() -> NovaTalkPTTStopPayload {
         let captureId = self.activePTTCaptureId ?? UUID().uuidString
         return self.cancelPushToTalk(captureId: captureId)
     }
 
-    func cancelPushToTalk(expectedTranscriptionOnly: Bool) -> OpenClawTalkPTTStopPayload {
+    func cancelPushToTalk(expectedTranscriptionOnly: Bool) -> NovaTalkPTTStopPayload {
         guard let activePushToTalk,
               activePushToTalk.transcriptionOnly == expectedTranscriptionOnly
         else {
-            return OpenClawTalkPTTStopPayload(
+            return NovaTalkPTTStopPayload(
                 captureId: UUID().uuidString,
                 transcript: nil,
                 status: "idle")
@@ -1287,9 +1287,9 @@ final class TalkModeManager: NSObject {
         return self.cancelPushToTalk(captureId: activePushToTalk.captureId)
     }
 
-    func cancelPushToTalk(captureId: String) -> OpenClawTalkPTTStopPayload {
+    func cancelPushToTalk(captureId: String) -> NovaTalkPTTStopPayload {
         guard self.activePTTCaptureId == captureId else {
-            return OpenClawTalkPTTStopPayload(captureId: captureId, transcript: nil, status: "idle")
+            return NovaTalkPTTStopPayload(captureId: captureId, transcript: nil, status: "idle")
         }
 
         let shouldResume = self.isEnabled
@@ -1305,7 +1305,7 @@ final class TalkModeManager: NSObject {
         self.finishActivePushToTalk(captureId)
         self.setStatus(String(localized: "Ready"), phase: .idle)
 
-        let payload = OpenClawTalkPTTStopPayload(
+        let payload = NovaTalkPTTStopPayload(
             captureId: captureId,
             transcript: nil,
             status: "cancelled")
@@ -1894,7 +1894,7 @@ final class TalkModeManager: NSObject {
         _ = self.endPushToTalk(captureId: captureId)
     }
 
-    private func finishPTTOnce(_ payload: OpenClawTalkPTTStopPayload) {
+    private func finishPTTOnce(_ payload: NovaTalkPTTStopPayload) {
         self.pttOnceOperations[payload.captureId]?.finish(payload)
     }
 
@@ -2073,7 +2073,7 @@ final class TalkModeManager: NSObject {
     }
 
     private func completeTranscriptResponse(
-        acknowledgement: OpenClawChatSendResponse,
+        acknowledgement: NovaChatSendResponse,
         startedAt: Double,
         gateway: GatewayNodeSession,
         gatewayRoute: GatewayNodeSessionRoute,
@@ -2749,7 +2749,7 @@ final class TalkModeManager: NSObject {
         guard event.event == "chat", let payload = event.payload else { return false }
         let chatEvent = try? GatewayPayloadDecoding.decode(
             payload,
-            as: OpenClawChatEventPayload.self)
+            as: NovaChatEventPayload.self)
         return chatEvent?.runId == runId
     }
 
@@ -2763,7 +2763,7 @@ final class TalkModeManager: NSObject {
     }
 
     private static func chatSendHistorySince(
-        response: OpenClawChatSendResponse,
+        response: NovaChatSendResponse,
         startedAt: Double) -> Double?
     {
         self.isTerminalChatSendSuccess(response.status) ? nil : startedAt
@@ -2774,9 +2774,9 @@ final class TalkModeManager: NSObject {
         gateway: GatewayNodeSession,
         sessionKey: String,
         gatewayRoute: GatewayNodeSessionRoute,
-        idempotencyKey: String) async throws -> OpenClawChatSendResponse
+        idempotencyKey: String) async throws -> NovaChatSendResponse
     {
-        let request = OpenClawChatGatewayRequests.sendMessage(
+        let request = NovaChatGatewayRequests.sendMessage(
             sessionKey: sessionKey,
             agentID: nil,
             expectedSessionRoutingContract: nil,
@@ -2789,7 +2789,7 @@ final class TalkModeManager: NSObject {
             request,
             ifCurrentRoute: gatewayRoute)
         guard await gateway.currentRoute() == gatewayRoute else { throw CancellationError() }
-        return try JSONDecoder().decode(OpenClawChatSendResponse.self, from: res)
+        return try JSONDecoder().decode(NovaChatSendResponse.self, from: res)
     }
 
     private func waitForChatCompletion(
@@ -2815,12 +2815,12 @@ final class TalkModeManager: NSObject {
                     guard let payload = evt.payload,
                           let chatEvent = try? GatewayPayloadDecoding.decode(
                               payload,
-                              as: OpenClawChatEventPayload.self),
+                              as: NovaChatEventPayload.self),
                           chatEvent.runId == runId
                     else {
                         continue
                     }
-                    if let text = OpenClawChatEventText.assistantText(from: chatEvent) {
+                    if let text = NovaChatEventText.assistantText(from: chatEvent) {
                         latestAssistantText = text
                     }
                     switch chatEvent.state {
@@ -2878,7 +2878,7 @@ final class TalkModeManager: NSObject {
         runId: String,
         since: Double? = nil) async throws -> String?
     {
-        let request = OpenClawChatGatewayRequests.history(sessionKey: sessionKey, agentID: nil)
+        let request = NovaChatGatewayRequests.history(sessionKey: sessionKey, agentID: nil)
         let res = try await gateway.request(
             request,
             ifCurrentRoute: gatewayRoute)
@@ -2895,7 +2895,7 @@ final class TalkModeManager: NSObject {
     {
         for msg in messages.reversed() {
             guard (msg["role"] as? String) == "assistant" else { continue }
-            let metadata = msg["__openclaw"] as? [String: Any]
+            let metadata = msg["__nova"] as? [String: Any]
             let idempotencyKey = (msg["idempotencyKey"] as? String) ?? (metadata?["idempotencyKey"] as? String)
             guard idempotencyKey == runId else { continue }
             if let since, let timestamp = msg["timestamp"] as? Double,
@@ -3577,13 +3577,13 @@ final class TalkModeManager: NSObject {
             guard let payload = evt.payload else { continue }
             guard let chatEvent = try? GatewayPayloadDecoding.decode(
                 payload,
-                as: OpenClawChatEventPayload.self)
+                as: NovaChatEventPayload.self)
             else {
                 continue
             }
             guard chatEvent.runId == runId else { continue }
             guard chatEvent.state == "delta" || chatEvent.state == "final" else { continue }
-            guard let text = OpenClawChatEventText.assistantText(from: chatEvent) else { continue }
+            guard let text = NovaChatEventText.assistantText(from: chatEvent) else { continue }
             let segments = self.incrementalSpeechBuffer.ingest(text: text, isFinal: false)
             if let lang = incrementalSpeechBuffer.directive?.language {
                 self.incrementalSpeechLanguage = ElevenLabsTTSClient.validatedLanguage(lang)
@@ -4076,7 +4076,7 @@ extension TalkModeManager {
         switch status {
         case "Listening", "Listening (Realtime)":
             .listening
-        case "Thinking", "Thinking…", "Asking OpenClaw", "Still asking OpenClaw", "Updating OpenClaw":
+        case "Thinking", "Thinking…", "Asking Nova", "Still asking Nova", "Updating Nova":
             .thinking
         case "Speaking", "Speaking…":
             .speaking
@@ -4090,15 +4090,15 @@ extension TalkModeManager {
     private static func watchPresentation(forRealtimeStatus status: String) -> TalkWatchPresentation {
         switch status {
         case "Listening", "Listening (Realtime)", "Thinking", "Thinking…", "Speaking", "Speaking…",
-             "Asking OpenClaw", "Still asking OpenClaw", "Updating OpenClaw", "Connecting",
+             "Asking Nova", "Still asking Nova", "Updating Nova", "Connecting",
              "Connecting realtime…", "Waiting for realtime…", "Ready", "Reconnecting", "Reconnecting…":
             .phase
         case "Realtime failed before connecting":
             .localized("Realtime failed before connecting")
         case "Realtime disconnected":
             .localized("Realtime disconnected")
-        case "OpenClaw unavailable":
-            .localized("OpenClaw unavailable")
+        case "Nova unavailable":
+            .localized("Nova unavailable")
         case "Confirmation needed":
             .localized("Confirmation needed")
         default:
@@ -4116,12 +4116,12 @@ extension TalkModeManager {
             String(localized: "Thinking")
         case "Thinking…":
             String(localized: "Thinking…")
-        case "Asking OpenClaw":
-            String(localized: "Asking OpenClaw")
-        case "Still asking OpenClaw":
-            String(localized: "Still asking OpenClaw")
-        case "Updating OpenClaw":
-            String(localized: "Updating OpenClaw")
+        case "Asking Nova":
+            String(localized: "Asking Nova")
+        case "Still asking Nova":
+            String(localized: "Still asking Nova")
+        case "Updating Nova":
+            String(localized: "Updating Nova")
         case "Speaking":
             String(localized: "Speaking")
         case "Speaking…":
@@ -4142,8 +4142,8 @@ extension TalkModeManager {
             String(localized: "Realtime failed before connecting")
         case "Realtime disconnected":
             String(localized: "Realtime disconnected")
-        case "OpenClaw unavailable":
-            String(localized: "OpenClaw unavailable")
+        case "Nova unavailable":
+            String(localized: "Nova unavailable")
         case "Confirmation needed":
             String(localized: "Confirmation needed")
         default:

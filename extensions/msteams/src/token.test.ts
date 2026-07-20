@@ -2,7 +2,7 @@
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { MSTeamsConfig } from "../runtime-api.js";
 import { setMSTeamsRuntime } from "./runtime.js";
@@ -298,7 +298,7 @@ describe("resolveDelegatedAccessToken", () => {
     resetPluginStateStoreForTests();
     setMSTeamsRuntime(msteamsRuntimeStub);
     saveAndClearEnv();
-    stateDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-msteams-token-"));
+    stateDir = mkdtempSync(path.join(os.tmpdir(), "nova-msteams-token-"));
     process.env.NOVA_STATE_DIR = stateDir;
     oauthTokenMocks.refreshMSTeamsDelegatedTokens.mockReset();
   });
@@ -331,7 +331,7 @@ describe("resolveDelegatedAccessToken", () => {
       accessToken: "stale-access",
       refreshToken: "refresh-token",
     });
-    expect(existsSync(path.join(stateDir!, "state", "openclaw.sqlite"))).toBe(true);
+    expect(existsSync(path.join(stateDir!, "state", "nova.sqlite"))).toBe(true);
     expect(existsSync(path.join(stateDir!, "msteams-delegated.json"))).toBe(false);
   });
 

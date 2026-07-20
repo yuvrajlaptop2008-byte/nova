@@ -76,7 +76,7 @@ async function runFallbackStoreCase(): Promise<FallbackStoreCaseResult> {
   );
 
   vi.doMock("../agents/agent-scope-config.js", () => ({
-    resolveDefaultAgentDir: () => "/tmp/openclaw-agent",
+    resolveDefaultAgentDir: () => "/tmp/nova-agent",
   }));
   vi.doMock("../agents/auth-profiles/oauth.js", () => ({
     resolveApiKeyForProfile,
@@ -127,7 +127,7 @@ describe("provider auth profile helpers", () => {
     expect(fallbackStoreCase.resolvedKey).toBe("fallback-key");
     expect(fallbackStoreCase.resolveApiKeyCalls).toContainEqual([
       expect.objectContaining({
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         profileId: "openai:default",
         store: expect.objectContaining({
           profiles: expect.objectContaining({
@@ -182,7 +182,7 @@ describe("provider auth profile helpers", () => {
     );
 
     vi.doMock("../agents/agent-scope-config.js", () => ({
-      resolveDefaultAgentDir: () => "/tmp/openclaw-agent",
+      resolveDefaultAgentDir: () => "/tmp/nova-agent",
     }));
     vi.doMock("../agents/auth-profiles/oauth.js", () => ({
       resolveApiKeyForProfile,
@@ -247,7 +247,7 @@ describe("provider auth profile helpers", () => {
     );
 
     vi.doMock("../agents/agent-scope-config.js", () => ({
-      resolveDefaultAgentDir: () => "/tmp/openclaw-agent",
+      resolveDefaultAgentDir: () => "/tmp/nova-agent",
     }));
     vi.doMock("../agents/auth-profiles/external-cli-discovery.js", () => ({
       externalCliDiscoveryForProviderAuth: vi.fn(() => externalCli),
@@ -284,12 +284,10 @@ describe("provider auth profile helpers", () => {
         includeExternalCliAuth: true,
       }),
     ).toBe(true);
-    expect(loadAuthProfileStoreForSecretsRuntime).toHaveBeenNthCalledWith(1, "/tmp/openclaw-agent");
-    expect(loadAuthProfileStoreForSecretsRuntime).toHaveBeenNthCalledWith(
-      2,
-      "/tmp/openclaw-agent",
-      { externalCli },
-    );
+    expect(loadAuthProfileStoreForSecretsRuntime).toHaveBeenNthCalledWith(1, "/tmp/nova-agent");
+    expect(loadAuthProfileStoreForSecretsRuntime).toHaveBeenNthCalledWith(2, "/tmp/nova-agent", {
+      externalCli,
+    });
   });
 
   it("accepts plus-signed Copilot token expiry strings", async () => {
@@ -837,7 +835,7 @@ describe("provider auth profile helpers", () => {
   it("retains valid Copilot exchanges across A to B to A profile rotation", async () => {
     vi.resetModules();
 
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-copilot-cache-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-copilot-cache-"));
     try {
       const fetchImpl = vi.fn(async (_url: string, init?: RequestInit) => {
         const authorization = new Headers(init?.headers).get("authorization");

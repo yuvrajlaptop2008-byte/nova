@@ -5,9 +5,7 @@ type QueueEnqueueTestApi = {
 };
 
 function getTestApi(): QueueEnqueueTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.queueEnqueueTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.queueEnqueueTestApi")];
   if (!api) {
     throw new Error("queue enqueue test API is unavailable");
   }

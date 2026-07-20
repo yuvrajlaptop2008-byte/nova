@@ -1,5 +1,5 @@
 // Opencode Go tests cover onboard plugin behavior.
-import { expectProviderOnboardPrimaryAndFallbacks } from "openclaw/plugin-sdk/provider-test-contracts";
+import { expectProviderOnboardPrimaryAndFallbacks } from "nova/plugin-sdk/provider-test-contracts";
 import { describe, expect, it } from "vitest";
 import { applyOpencodeGoConfig, applyOpencodeGoProviderConfig } from "./onboard.js";
 

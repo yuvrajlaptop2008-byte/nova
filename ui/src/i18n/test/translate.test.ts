@@ -1,5 +1,5 @@
 // Control UI tests cover translate behavior.
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createStorageMock } from "../../test-helpers/storage.ts";
 import * as translate from "../lib/translate.ts";
@@ -98,8 +98,8 @@ describe("i18n", () => {
   });
 
   it("should replace parameters correctly", () => {
-    expect(translate.t("connection.help.copyCommandAria", { command: "openclaw dashboard" })).toBe(
-      "Copy command: openclaw dashboard",
+    expect(translate.t("connection.help.copyCommandAria", { command: "nova dashboard" })).toBe(
+      "Copy command: nova dashboard",
     );
   });
 
@@ -124,7 +124,7 @@ describe("i18n", () => {
   it("loads saved non-English locale on startup", async () => {
     vi.stubGlobal("localStorage", createStorageMock());
     vi.stubGlobal("navigator", { language: "en-US" } as Navigator);
-    localStorage.setItem("openclaw.i18n.locale", "zh-CN");
+    localStorage.setItem("nova.i18n.locale", "zh-CN");
     const fresh = await importFreshTranslate();
     await vi.waitFor(() => {
       expect(fresh.i18n.getLocale()).toBe("zh-CN");

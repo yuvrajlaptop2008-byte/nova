@@ -115,8 +115,8 @@ describe("status-all diagnosis port checks", () => {
 
   it("treats same-process dual-stack loopback listeners as healthy", async () => {
     const params = createBaseParams([
-      { pid: 5001, commandLine: "openclaw-gateway", address: "127.0.0.1:18789" },
-      { pid: 5001, commandLine: "openclaw-gateway", address: "[::1]:18789" },
+      { pid: 5001, commandLine: "nova-gateway", address: "127.0.0.1:18789" },
+      { pid: 5001, commandLine: "nova-gateway", address: "[::1]:18789" },
     ]);
 
     await appendStatusAllDiagnosis(params);
@@ -129,7 +129,7 @@ describe("status-all diagnosis port checks", () => {
 
   it("treats a single wildcard Gateway listener as healthy", async () => {
     const params = createBaseParams([
-      { pid: 5001, commandLine: "openclaw-gateway", address: "0.0.0.0:18789" },
+      { pid: 5001, commandLine: "nova-gateway", address: "0.0.0.0:18789" },
     ]);
 
     await appendStatusAllDiagnosis(params);
@@ -142,8 +142,8 @@ describe("status-all diagnosis port checks", () => {
 
   it("keeps warning for multi-process listener conflicts", async () => {
     const params = createBaseParams([
-      { pid: 5001, commandLine: "openclaw-gateway", address: "127.0.0.1:18789" },
-      { pid: 5002, commandLine: "openclaw-gateway", address: "[::1]:18789" },
+      { pid: 5001, commandLine: "nova-gateway", address: "127.0.0.1:18789" },
+      { pid: 5002, commandLine: "nova-gateway", address: "[::1]:18789" },
     ]);
 
     await appendStatusAllDiagnosis(params);
@@ -173,11 +173,11 @@ describe("status-all diagnosis port checks", () => {
 
     const output = params.lines.join("\n");
     expect(output).toContain(
-      "Update restart: failed · managed-service-handoff-failed · run openclaw gateway status --deep",
+      "Update restart: failed · managed-service-handoff-failed · run nova gateway status --deep",
     );
-    expect(output).toContain("Update restart failed; run openclaw gateway status --deep.");
+    expect(output).toContain("Update restart failed; run nova gateway status --deep.");
     expect(output).toContain(
-      "If the service is down, run openclaw gateway restart or openclaw gateway install --force.",
+      "If the service is down, run nova gateway restart or nova gateway install --force.",
     );
   });
 
@@ -200,10 +200,10 @@ describe("status-all diagnosis port checks", () => {
 
     const output = params.lines.join("\n");
     expect(output).toContain(
-      "Update restart: restart pending health verification · run openclaw gateway status --deep",
+      "Update restart: restart pending health verification · run nova gateway status --deep",
     );
     expect(output).toContain(
-      "Update restart is still pending; run openclaw update status --json for handoff state.",
+      "Update restart is still pending; run nova update status --json for handoff state.",
     );
   });
 
@@ -380,12 +380,12 @@ describe("status-all diagnosis port checks", () => {
     Object.defineProperty(process, "platform", { value: "darwin" });
     try {
       restartLogMocks.resolveGatewaySupervisorLogPaths.mockReturnValue({
-        logDir: "/Users/test/Library/Logs/openclaw",
-        stdoutPath: "/Users/test/Library/Logs/openclaw/gateway.log",
-        stderrPath: "/Users/test/Library/Logs/openclaw/gateway.err.log",
+        logDir: "/Users/test/Library/Logs/nova",
+        stdoutPath: "/Users/test/Library/Logs/nova/gateway.log",
+        stderrPath: "/Users/test/Library/Logs/nova/gateway.err.log",
       });
       restartLogMocks.resolveGatewayRestartLogPath.mockReturnValue(
-        "/tmp/openclaw/logs/gateway-restart.log",
+        "/tmp/nova/logs/gateway-restart.log",
       );
       gatewayMocks.readFileTailLines.mockImplementation(async (filePath: string) => {
         if (filePath.endsWith("gateway.log")) {
@@ -402,10 +402,10 @@ describe("status-all diagnosis port checks", () => {
 
       const output = params.lines.join("\n");
       expect(gatewayMocks.readFileTailLines).not.toHaveBeenCalledWith(
-        "/Users/test/Library/Logs/openclaw/gateway.err.log",
+        "/Users/test/Library/Logs/nova/gateway.err.log",
         40,
       );
-      expect(output).toContain("# stdout: /Users/test/Library/Logs/openclaw/gateway.log");
+      expect(output).toContain("# stdout: /Users/test/Library/Logs/nova/gateway.log");
       expect(output).toContain("gateway stdout current");
       expect(output).not.toContain("# stderr:");
       expect(output).not.toContain("failed to bind gateway socket stale");

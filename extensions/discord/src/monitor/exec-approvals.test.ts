@@ -1,15 +1,14 @@
 // Discord tests cover exec approvals plugin behavior.
-import type { ApprovalResolveResult } from "openclaw/plugin-sdk/approval-gateway-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { ApprovalResolveResult } from "nova/plugin-sdk/approval-gateway-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildExecApprovalCustomId, parseExecApprovalData } from "../approval-custom-id.js";
 import { parseCustomId, type ButtonInteraction, type ComponentData } from "../internal/discord.js";
 
 const resolveApprovalOverGatewayMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/approval-gateway-runtime", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/approval-gateway-runtime")>();
+vi.mock("nova/plugin-sdk/approval-gateway-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/approval-gateway-runtime")>();
   return {
     ...actual,
     resolveApprovalOverGateway: resolveApprovalOverGatewayMock,
@@ -22,8 +21,8 @@ import {
 } from "./exec-approvals.js";
 
 function buildConfig(
-  execApprovals?: NonNullable<NonNullable<OpenClawConfig["channels"]>["discord"]>["execApprovals"],
-): OpenClawConfig {
+  execApprovals?: NonNullable<NonNullable<NovaConfig["channels"]>["discord"]>["execApprovals"],
+): NovaConfig {
   return {
     channels: {
       discord: {
@@ -31,7 +30,7 @@ function buildConfig(
         execApprovals,
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function createInteraction(overrides?: Partial<ButtonInteraction>): ButtonInteraction {

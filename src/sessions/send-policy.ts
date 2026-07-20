@@ -5,7 +5,7 @@ import {
 } from "@nova/normalization-core/string-coerce";
 import { normalizeChatType } from "../channels/chat-type.js";
 import type { SessionChatType, SessionEntry } from "../config/sessions.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   hasAmbiguousCanonicalSessionPeerShape,
   parseCanonicalSessionPeerShape,
@@ -74,7 +74,7 @@ function hasAmbiguousPeerShape(key?: string): boolean {
 
 /** Resolves whether a session send is allowed by entry override and config rules. */
 export function resolveSendPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry?: SessionEntry;
   sessionKey?: string;
   channel?: string;

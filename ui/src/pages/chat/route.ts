@@ -31,6 +31,6 @@ export const page = definePage({
   component: () =>
     import("./chat-page.ts").then(() => ({
       header: true,
-      render: (data: unknown) => html`<openclaw-chat-page .data=${data}></openclaw-chat-page>`,
+      render: (data: unknown) => html`<nova-chat-page .data=${data}></nova-chat-page>`,
     })),
 });

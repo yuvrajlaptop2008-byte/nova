@@ -31,7 +31,7 @@ export function createWizardPrompter(
 
 /** Create isolated auth state and agent directories for auth tests. */
 export async function setupAuthTestEnv(
-  prefix = "openclaw-auth-",
+  prefix = "nova-auth-",
   options?: { agentSubdir?: string },
 ): Promise<{
   stateDir: string;

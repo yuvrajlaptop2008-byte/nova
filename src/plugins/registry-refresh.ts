@@ -1,5 +1,5 @@
 // Registry refresh helper shared by plugin config mutations that need post-write discovery repair.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { loadInstalledPluginIndexInstallRecords } from "./installed-plugin-index-records.js";
 import type { InstalledPluginIndexRefreshReason } from "./installed-plugin-index.js";
@@ -13,7 +13,7 @@ export type PluginRegistryRefreshLogger = {
 
 /** Refresh persisted plugin registry and clear runtime discovery after a config mutation. */
 export async function refreshPluginRegistryAfterConfigMutation(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   reason: InstalledPluginIndexRefreshReason;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;

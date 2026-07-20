@@ -1,7 +1,7 @@
 // Qa Lab plugin module implements qa channel transport behavior.
 import { setTimeout as sleep } from "node:timers/promises";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import type { QaBusState } from "./bus-state.js";
 import { QaSuiteInfraError } from "./errors.js";
 import { getQaProvider } from "./providers/index.js";
@@ -91,7 +91,7 @@ export function createQaChannelGatewayConfig(params: {
       [QA_CHANNEL_ID]: {
         enabled: true,
         baseUrl: params.baseUrl,
-        botUserId: "openclaw",
+        botUserId: "nova",
         botDisplayName: "Nova QA",
         allowFrom: senderAllowlist ? [...senderAllowlist] : ["*"],
         ...(senderAllowlist
@@ -115,7 +115,7 @@ export function createQaChannelGatewayConfig(params: {
     messages: {
       visibleReplies: "automatic",
       groupChat: {
-        mentionPatterns: ["\\b@?openclaw\\b"],
+        mentionPatterns: ["\\b@?nova\\b"],
         visibleReplies: "automatic",
       },
     },
@@ -138,10 +138,10 @@ function createQaChannelReportNotes(params: QaTransportReportParams) {
 async function handleQaChannelAction(params: {
   action: QaTransportActionName;
   args: Record<string, unknown>;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }) {
-  const { qaChannelPlugin } = await import("openclaw/plugin-sdk/qa-channel");
+  const { qaChannelPlugin } = await import("nova/plugin-sdk/qa-channel");
   return await qaChannelPlugin.actions?.handleAction?.({
     channel: QA_CHANNEL_ID,
     action: params.action,

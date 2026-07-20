@@ -15,7 +15,7 @@ import {
 } from "../lib/windows-taskkill.mjs";
 
 const PLUGIN_SPEC = process.env.NOVA_KITCHEN_SINK_NPM_SPEC || "npm:@nova/kitchen-sink@latest";
-const PLUGIN_ID = process.env.NOVA_KITCHEN_SINK_PLUGIN_ID || "openclaw-kitchen-sink-fixture";
+const PLUGIN_ID = process.env.NOVA_KITCHEN_SINK_PLUGIN_ID || "nova-kitchen-sink-fixture";
 const CHANNEL_ID = "kitchen-sink-channel";
 const CHANNEL_ACCOUNT_ID = "local";
 const TOKEN = "kitchen-sink-rpc-token";
@@ -105,7 +105,7 @@ Runs the external Kitchen Sink plugin RPC walk against a built Nova entry.
 Environment:
   NOVA_ENTRY                         Built Nova entrypoint. Defaults to dist/index.mjs or dist/index.js.
   NOVA_KITCHEN_SINK_NPM_SPEC         Plugin package spec. Default: npm:@nova/kitchen-sink@latest.
-  NOVA_KITCHEN_SINK_PLUGIN_ID        Plugin id. Default: openclaw-kitchen-sink-fixture.
+  NOVA_KITCHEN_SINK_PLUGIN_ID        Plugin id. Default: nova-kitchen-sink-fixture.
   NOVA_KITCHEN_SINK_PERSONALITY      Plugin fixture personality. Default: conformance.
   NOVA_KITCHEN_SINK_RPC_PORT         Gateway loopback port. Default: OS-selected free port.
   NOVA_KITCHEN_SINK_RPC_READY_MS     Gateway readiness timeout.
@@ -253,7 +253,7 @@ export async function resolveKitchenSinkRpcPort(env = process.env, options = {})
   return await (options.findAvailablePort ?? findAvailableLoopbackPort)();
 }
 
-function resolveOpenClawRunner() {
+function resolveNovaRunner() {
   if (process.env.NOVA_ENTRY) {
     return {
       command: "node",
@@ -267,13 +267,13 @@ function resolveOpenClawRunner() {
       return { command: "node", baseArgs: [resolved], label: resolved };
     }
   }
-  return { pnpm: true, baseArgs: ["openclaw"], label: "pnpm openclaw" };
+  return { pnpm: true, baseArgs: ["nova"], label: "pnpm nova" };
 }
 
 export function makeEnv() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-kitchen-sink-rpc-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-kitchen-sink-rpc-"));
   const home = path.join(root, "home");
-  const stateDir = path.join(home, ".openclaw");
+  const stateDir = path.join(home, ".nova");
   fs.mkdirSync(stateDir, { recursive: true });
   return {
     root,
@@ -283,7 +283,7 @@ export function makeEnv() {
       USERPROFILE: home,
       NOVA_HOME: home,
       NOVA_STATE_DIR: stateDir,
-      NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+      NOVA_CONFIG_PATH: path.join(stateDir, "nova.json"),
       NOVA_NO_ONBOARD: "1",
       NOVA_SKIP_PROVIDERS: "0",
       NOVA_KITCHEN_SINK_PERSONALITY: process.env.NOVA_KITCHEN_SINK_PERSONALITY || "conformance",
@@ -652,7 +652,7 @@ export function signalProcessGroup(
 
 async function runNova(runner, args, env, options = {}) {
   const config = resolveKitchenSinkRpcConfig(env);
-  const command = await resolveOpenClawCommand(runner, args, env, {
+  const command = await resolveNovaCommand(runner, args, env, {
     stdio: ["ignore", "pipe", "pipe"],
   });
   return runCommand(command.command, command.args, {
@@ -668,7 +668,7 @@ async function runNova(runner, args, env, options = {}) {
   });
 }
 
-async function resolveOpenClawCommand(runner, args, env, options = {}) {
+async function resolveNovaCommand(runner, args, env, options = {}) {
   if (runner.pnpm) {
     const { createPnpmRunnerSpawnSpec } = await import("../pnpm-runner.mjs");
     return createPnpmRunnerSpawnSpec({
@@ -924,7 +924,7 @@ async function rpcCall(method, params, options) {
 }
 
 async function loadCallGatewayModule(runner) {
-  if (!usesBuiltOpenClawEntry(runner)) {
+  if (!usesBuiltNovaEntry(runner)) {
     return null;
   }
   callGatewayModulePromise ??= importCallGatewayModule();
@@ -991,7 +991,7 @@ export function findDistCallGatewayModuleFiles(cwd = process.cwd()) {
     : [];
 }
 
-export function usesBuiltOpenClawEntry(runner, cwd = process.cwd(), env = process.env) {
+export function usesBuiltNovaEntry(runner, cwd = process.cwd(), env = process.env) {
   if (runner?.pnpm || !runner?.baseArgs?.[0]) {
     return false;
   }
@@ -1284,7 +1284,7 @@ function configureKitchenSink(env, port) {
 
 async function startGateway(runner, port, env, logPath) {
   const log = fs.openSync(logPath, "w");
-  const command = await resolveOpenClawCommand(
+  const command = await resolveNovaCommand(
     runner,
     ["gateway", "--port", String(port), "--bind", "loopback", "--allow-unconfigured"],
     env,
@@ -2078,7 +2078,7 @@ async function samplePosixProcessTree(pid, run, commandLineNeedles) {
     const commandMatches = descendants.filter(matchesCommandNeedles);
     const rootCommandMatches = rootRow && matchesCommandNeedles(rootRow) ? [rootRow] : [];
     const gatewayTitleMatches = descendants.filter((row) =>
-      row.command.toLowerCase().includes("openclaw-gateway"),
+      row.command.toLowerCase().includes("nova-gateway"),
     );
     const selected = selectPeakRssProcess(
       commandMatches.length > 0
@@ -2563,7 +2563,7 @@ function isNonEmptyString(value) {
 
 export async function main() {
   const config = resolveKitchenSinkRpcConfig();
-  let runner = resolveOpenClawRunner();
+  let runner = resolveNovaRunner();
   const port = await resolveKitchenSinkRpcPort();
   const { root, env } = makeEnv();
   const logPath = path.join(root, "gateway.log");
@@ -2587,7 +2587,7 @@ export async function main() {
       resourceLabel: "plugins install",
       timeoutMs: config.installTimeoutMs,
     });
-    runner = resolveOpenClawRunner();
+    runner = resolveNovaRunner();
     console.log(`Kitchen Sink RPC runtime runner: ${runner.label}`);
     configureKitchenSink(env, port);
     await runNova(runner, ["plugins", "enable", PLUGIN_ID], env, {

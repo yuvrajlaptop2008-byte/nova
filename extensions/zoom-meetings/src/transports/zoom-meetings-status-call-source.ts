@@ -10,7 +10,7 @@ export function zoomMeetingStatusCallSource(): string {
     const media = [...document.querySelectorAll("audio, video")].filter(
       (element) =>
         typeof element.setSinkId === "function" &&
-        !String(element.id || "").startsWith("openclaw-zoom-audio-output-"),
+        !String(element.id || "").startsWith("nova-zoom-audio-output-"),
     );
     if (media.length > 0) {
       try {
@@ -22,8 +22,8 @@ export function zoomMeetingStatusCallSource(): string {
             element.srcObject?.getAudioTracks?.().some((track) => track.readyState === "live")
               ? element.srcObject
               : undefined;
-          const allBridgeEntries = Array.isArray(window.__openclawZoomAudioOutputs)
-            ? window.__openclawZoomAudioOutputs
+          const allBridgeEntries = Array.isArray(window.__novaZoomAudioOutputs)
+            ? window.__novaZoomAudioOutputs
             : [];
           const retainedBridgeEntries = allBridgeEntries.filter((entry) => !bridgeOwnedBySession(entry));
           const previousBridgeEntries = allBridgeEntries.filter(bridgeOwnedBySession);
@@ -157,7 +157,7 @@ export function zoomMeetingStatusCallSource(): string {
             if (!elementRouted && stream) {
               if (!entry && canMutateSession) {
                 const bridge = document.createElement("audio");
-                bridge.id = "openclaw-zoom-audio-output-" + bridgeEntries.length;
+                bridge.id = "nova-zoom-audio-output-" + bridgeEntries.length;
                 bridge.autoplay = false;
                 bridge.hidden = true;
                 bridge.srcObject = stream;
@@ -210,9 +210,9 @@ export function zoomMeetingStatusCallSource(): string {
               ...suspendedBySource.values(),
             ];
             if (nextBridgeEntries.length > 0) {
-              window.__openclawZoomAudioOutputs = nextBridgeEntries;
+              window.__novaZoomAudioOutputs = nextBridgeEntries;
             } else {
-              delete window.__openclawZoomAudioOutputs;
+              delete window.__novaZoomAudioOutputs;
             }
           }
           audioOutputRouted = routed.length > 0 && routed.every(Boolean);
@@ -274,7 +274,7 @@ export function zoomMeetingStatusCallSource(): string {
   let lastCaptionText;
   let recentTranscript = [];
   const captionState = (() => {
-    let active = window.__openclawZoomCaptions;
+    let active = window.__novaZoomCaptions;
     const activeOwnedByRequest = Boolean(
       !active || (sessionId && (!active.sessionId || active.sessionId === sessionId))
     );
@@ -299,14 +299,14 @@ export function zoomMeetingStatusCallSource(): string {
       archiveFinalizedCaptions(active);
       if (active.settleTimer !== undefined) clearTimeout(active.settleTimer);
       active.observer?.disconnect?.();
-      delete window.__openclawZoomCaptions;
+      delete window.__novaZoomCaptions;
       active = undefined;
     }
     if (!captureCaptions) {
       if (!canMutateSession) return undefined;
       if (active?.settleTimer !== undefined) clearTimeout(active.settleTimer);
       active?.observer?.disconnect?.();
-      if (active) delete window.__openclawZoomCaptions;
+      if (active) delete window.__novaZoomCaptions;
       return undefined;
     }
     if (!inCall && !active) return undefined;
@@ -314,7 +314,7 @@ export function zoomMeetingStatusCallSource(): string {
     if (!active) {
       if (active?.settleTimer !== undefined) clearTimeout(active.settleTimer);
       active?.observer?.disconnect?.();
-      window.__openclawZoomCaptions = {
+      window.__novaZoomCaptions = {
         sessionId,
         identity: expectedIdentity,
         epoch: crypto.randomUUID(),
@@ -328,7 +328,7 @@ export function zoomMeetingStatusCallSource(): string {
         visible: [],
       };
     }
-    return window.__openclawZoomCaptions;
+    return window.__novaZoomCaptions;
   })();
   const normalizeCaption = (speaker, captionText) => {
     if (!captionState) return undefined;
@@ -394,7 +394,7 @@ export function zoomMeetingStatusCallSource(): string {
     if (captionState.settleTimer !== undefined) clearTimeout(captionState.settleTimer);
     const pendingState = captionState;
     pendingState.settleTimer = setTimeout(() => {
-      if (window.__openclawZoomCaptions !== pendingState) return;
+      if (window.__novaZoomCaptions !== pendingState) return;
       commitCaptionLines(pendingState, pendingState.visible);
       retainSettledCaptionLines(pendingState, pendingState.visible);
       pendingState.visible = [];
@@ -405,10 +405,10 @@ export function zoomMeetingStatusCallSource(): string {
     if (
       !captionState ||
       captionState.finalized === true ||
-      window.__openclawZoomCaptions !== captionState
+      window.__novaZoomCaptions !== captionState
     ) return false;
     const observedIdentity = meetingIdentity(location.href);
-    const observedMeeting = window.__openclawZoomMeeting;
+    const observedMeeting = window.__novaZoomMeeting;
     const identityConflicts = Boolean(
       observedIdentity && expectedIdentity && observedIdentity !== expectedIdentity
     );

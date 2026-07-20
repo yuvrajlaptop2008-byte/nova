@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createReplyOperation,
@@ -402,7 +402,7 @@ describe("embedded-agent runner run registry", () => {
   it("resolves active embedded runs by canonical session file", async () => {
     // Session-file lookup canonicalizes symlinks so heartbeat/diagnostic callers
     // can find the active handle from the file path they observe.
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-run-registry-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-run-registry-"));
     try {
       const sessionFile = path.join(tempDir, "session.jsonl");
       const symlinkFile = path.join(tempDir, "session-link.jsonl");
@@ -425,7 +425,7 @@ describe("embedded-agent runner run registry", () => {
 
   it("records active run session files in diagnostic state for heartbeat recovery", () => {
     setDiagnosticsEnabledForProcess(true);
-    const sessionFile = "/tmp/openclaw-run-registry-session.jsonl";
+    const sessionFile = "/tmp/nova-run-registry-session.jsonl";
     const handle = createRunHandle();
 
     setActiveEmbeddedRun("session-file-diagnostics", handle, "agent:main:visible", sessionFile);
@@ -436,11 +436,11 @@ describe("embedded-agent runner run registry", () => {
 
     updateActiveEmbeddedRunSessionFile(
       "session-file-diagnostics",
-      "/tmp/openclaw-run-registry-rotated.jsonl",
+      "/tmp/nova-run-registry-rotated.jsonl",
     );
 
     expect(getDiagnosticSessionState({ sessionId: "session-file-diagnostics" }).sessionFile).toBe(
-      "/tmp/openclaw-run-registry-rotated.jsonl",
+      "/tmp/nova-run-registry-rotated.jsonl",
     );
   });
 
@@ -1047,7 +1047,7 @@ describe("embedded-agent runner run registry", () => {
   it("tracks timeout abandonment by session id, key, and file until a new run starts", () => {
     // Abandonment markers must catch retries addressed by any durable identity,
     // then clear once a new run owns the same session key/file.
-    const sessionFile = "/tmp/openclaw-abandoned-session.jsonl";
+    const sessionFile = "/tmp/nova-abandoned-session.jsonl";
     const handle = createRunHandle();
 
     setActiveEmbeddedRun("session-timeout", handle, "agent:main:main", sessionFile);

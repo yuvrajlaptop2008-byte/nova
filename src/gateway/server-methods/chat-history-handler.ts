@@ -17,7 +17,7 @@ import {
   isSessionTranscriptProjectionUnavailableError,
   resolveTranscriptSessionKeyBySessionId,
 } from "../../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { measureDiagnosticsTimelineSpan } from "../../infra/diagnostics-timeline.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { jsonUtf8Bytes } from "../../infra/json-utf8-bytes.js";
@@ -117,7 +117,7 @@ async function handleChatMetadataRequest({
 }
 
 async function buildChatMetadataResult(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   context: GatewayRequestContext;
   agentId: string;
 }): Promise<ChatMetadataResult> {
@@ -144,7 +144,7 @@ async function buildChatMetadataResult(params: {
 }
 
 async function buildChatStartupMetadataResult(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   context: GatewayRequestContext;
   agentId: string;
   modelCatalog: ModelCatalogSnapshot | undefined;
@@ -179,7 +179,7 @@ async function buildChatStartupMetadataResult(params: {
 }
 
 async function buildChatStartupModelCatalogProjection(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   snapshot: ModelCatalogSnapshot;
   sessionAgentId: string;
   sessionEntry: ReturnType<typeof loadSessionEntry>["entry"];
@@ -342,7 +342,7 @@ async function handleChatHistoryRequest({
   }
   const agentIdOverride = normalizeOptionalText((params as { agentId?: string }).agentId);
   const requestedAgentId = resolveRequestedChatAgentId({
-    cfg: (context as { getRuntimeConfig?: () => OpenClawConfig }).getRuntimeConfig?.(),
+    cfg: (context as { getRuntimeConfig?: () => NovaConfig }).getRuntimeConfig?.(),
     requestedSessionKey: sessionKey,
     agentId: agentIdOverride,
   });

@@ -2,7 +2,7 @@ import { prependSystemPromptAdditionAfterCacheBoundary } from "@nova/ai/internal
 /**
  * Builds and repairs prompt inputs for embedded-agent attempts.
  */
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import type {
   ContextEnginePromptCacheInfo,
   ContextEngineRuntimeContext,
@@ -96,7 +96,7 @@ export function forgetPromptBuildDrainCacheForRun(runId: string | undefined): vo
  * session-store reads do not lose plugin context after a failed first attempt.
  */
 export async function resolvePromptBuildHookResult(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   prompt: string;
   messages: unknown[];
   hookCtx: PluginHookAgentContext;
@@ -208,7 +208,7 @@ export function resolvePromptModeForSession(sessionKey?: string): "minimal" | "f
  * keep their normal prompt shape.
  */
 export function shouldInjectHeartbeatPrompt(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   defaultAgentId?: string;
   isDefaultAgent: boolean;
@@ -462,7 +462,7 @@ export function mergeOrphanedTrailingUserPrompt(params: {
 }
 
 export function resolveAttemptFsWorkspaceOnly(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionAgentId: string;
 }): boolean {
   return resolveEffectiveToolFsWorkspaceOnly({

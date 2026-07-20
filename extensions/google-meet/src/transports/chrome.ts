@@ -1,5 +1,5 @@
 // Google Meet plugin module implements chrome behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   createLocalMeetingRealtimeAudioTransport,
   createNodeMeetingRealtimeAudioTransport,
@@ -14,12 +14,12 @@ import {
   type MeetingRealtimeAudioEngineHandle,
   type MeetingRealtimeToolCallParams,
   type MeetingRuntimePlatform,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import { addTimerTimeoutGraceMs } from "openclaw/plugin-sdk/number-runtime";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import type { RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import { addTimerTimeoutGraceMs } from "nova/plugin-sdk/number-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import type { RuntimeLogger } from "nova/plugin-sdk/plugin-runtime";
 import {
-  consultOpenClawAgentForGoogleMeet,
+  consultNovaAgentForGoogleMeet,
   handleGoogleMeetRealtimeConsultToolCall,
   resolveGoogleMeetRealtimeTools,
 } from "../agent-consult.js";
@@ -63,14 +63,14 @@ type ChromeNodeRealtimeAudioBridgeHandle = MeetingRealtimeAudioEngineHandle & {
 
 function createGoogleMeetRealtimeEngineBindings(params: {
   config: GoogleMeetConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
 }) {
   return {
     platform: GOOGLE_MEET_RUNTIME_PLATFORM,
     consultAgent: (consult: MeetingAgentConsultParams) =>
-      consultOpenClawAgentForGoogleMeet({
+      consultNovaAgentForGoogleMeet({
         config: params.config,
         fullConfig: params.fullConfig,
         runtime: params.runtime,
@@ -123,7 +123,7 @@ export async function assertBlackHole2chAvailable(params: {
 export async function launchChromeMeet(params: {
   runtime: PluginRuntime;
   config: GoogleMeetConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   meetingSessionId: string;
   requesterSessionKey?: string;
   mode: GoogleMeetMode;
@@ -497,7 +497,7 @@ export async function recoverCurrentMeetTabOnNode(params: {
 export async function launchChromeMeetOnNode(params: {
   runtime: PluginRuntime;
   config: GoogleMeetConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   meetingSessionId: string;
   requesterSessionKey?: string;
   mode: GoogleMeetMode;

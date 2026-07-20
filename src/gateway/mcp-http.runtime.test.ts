@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { McpLoopbackToolCache, resolveMcpLoopbackScopedTools } from "./mcp-http.runtime.js";
 
 const resolveGatewayScopedTools = vi.hoisted(() => vi.fn());
@@ -17,7 +17,7 @@ function scopedToolFixture(names: string[]) {
 
 function scopeParams(overrides: Record<string, unknown> = {}) {
   return {
-    cfg: {} as OpenClawConfig,
+    cfg: {} as NovaConfig,
     sessionKey: "agent:main:recall",
     messageProvider: undefined,
     currentChannelId: undefined,
@@ -69,7 +69,7 @@ describe("resolveMcpLoopbackScopedTools", () => {
 describe("McpLoopbackToolCache", () => {
   it("does not share cache rows across different grant allowlists", () => {
     const cache = new McpLoopbackToolCache();
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
 
     const unrestricted = cache.resolve(scopeParams({ cfg }));
     const restricted = cache.resolve(scopeParams({ cfg, toolsAllow: ["memory_search"] }));

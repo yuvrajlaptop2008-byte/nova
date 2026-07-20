@@ -1,24 +1,24 @@
-# ClickClack OpenClaw channel
+# ClickClack Nova channel
 
-Official OpenClaw channel plugin for ClickClack.
+Official Nova channel plugin for ClickClack.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/clickclack
+nova plugins install @nova/clickclack
 ```
 
 ## Setup
 
 ```sh
-openclaw channels add clickclack \
+nova channels add clickclack \
   --base-url https://clickclack.example.com \
   --token ccb_... \
   --workspace default
-openclaw gateway
+nova gateway
 ```
 
-Run `openclaw onboard` for guided setup. The workspace value can be a
+Run `nova onboard` for guided setup. The workspace value can be a
 `wsp_...` id, slug, or display name.
 
 For the default account only, `--use-env` reads `CLICKCLACK_BOT_TOKEN`; config
@@ -27,7 +27,7 @@ storage is the normal setup path.
 ## Command menus
 
 ClickClack command menus are enabled by default. At gateway startup, the
-extension publishes OpenClaw's native commands for composer autocomplete,
+extension publishes Nova's native commands for composer autocomplete,
 labeled with the bot's handle. The bot token must include `commands:write`;
 current `bot:write` and `bot:admin` bundles include it.
 
@@ -37,7 +37,7 @@ continue to work without a menu.
 
 ## Discussions
 
-ClickClack can create one managed channel for each OpenClaw session:
+ClickClack can create one managed channel for each Nova session:
 
 The account token needs `channels:write`, which is included in `bot:admin` but
 not in the normal `bot:write` setup token. The ClickClack server must also
@@ -53,7 +53,7 @@ support and return the managed-channel fields used by this integration.
       discussions: {
         enabled: true,
         workspace: "default",
-        controlUrlBase: "https://team.openclaw.ai",
+        controlUrlBase: "https://team.nova.ai",
         section: "Sessions",
       },
     },
@@ -67,7 +67,7 @@ restore, label, category, and deletion changes are reflected in the channel;
 deletion archives the channel and never deletes its messages. `workspace`
 defaults to the account workspace, and `section` defaults to `Sessions`.
 `controlUrlBase` adds a link back to `/chat?session=<session-key>` in the
-OpenClaw Control UI.
+Nova Control UI.
 
 Enable discussions on exactly one ClickClack account. Multiple enabled
 discussion accounts are rejected because the session discussion provider does
@@ -82,7 +82,7 @@ and alternate targets; the side-agent prompt is not the authorization boundary.
 The agent still needs those three tools in its effective tool allowlist.
 
 The binding, managed ownership reference, and side-session identity include the
-concrete OpenClaw session id as well as the pinned server and channel. Resetting
+concrete Nova session id as well as the pinned server and channel. Resetting
 a reusable session key, replacing a binding, or retargeting it therefore revokes
 the old channel locally, archives it when the old credential remains usable, and
 starts a fresh channel and side transcript.
@@ -94,7 +94,7 @@ server and channel id, so renaming the local account cannot turn a managed
 channel into an ordinary one.
 
 Managed-channel ownership references include a durable per-installation id, so
-two OpenClaw gateways using the same ClickClack workspace do not adopt each
+two Nova gateways using the same ClickClack workspace do not adopt each
 other's discussion channels. They also include the destination and a durable
 binding generation, so an account or workspace round trip cannot re-adopt a
 previous channel. Changing or removing `controlUrlBase` is reflected on the next
@@ -108,7 +108,7 @@ routing.
 
 When a workspace move keeps the original workspace credential configured, the
 plugin archives the old channel before release. If the token is replaced with a
-workspace-scoped credential that cannot access the old workspace, OpenClaw
+workspace-scoped credential that cannot access the old workspace, Nova
 releases the binding into the revoked-channel marker without trying the new token
 against the old channel; archive that leftover channel from ClickClack.
 
@@ -120,4 +120,4 @@ the discussion.
 
 ## Docs
 
-See `docs/channels/clickclack.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/channels/clickclack`.
+See `docs/channels/clickclack.md` in the Nova repository, or the published docs at `https://docs.nova.ai/channels/clickclack`.

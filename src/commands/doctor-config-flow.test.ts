@@ -2,10 +2,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import { withTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome } from "nova/plugin-sdk/test-env";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { writeChannelPairingStateSnapshot } from "../pairing/pairing-store-sqlite.test-helpers.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { loadAndMaybeMigrateDoctorConfig } from "./doctor-config-flow.js";
 import {
   getDoctorConfigInputForTest,
@@ -358,14 +358,14 @@ vi.mock("../config/legacy.js", () => {
         addIssue(
           issues,
           ["heartbeat"],
-          'heartbeat is legacy; use agents.defaults.heartbeat and channels.defaults.heartbeat. Run "openclaw doctor --fix".',
+          'heartbeat is legacy; use agents.defaults.heartbeat and channels.defaults.heartbeat. Run "nova doctor --fix".',
         );
       }
       if ("memorySearch" in root) {
         addIssue(
           issues,
           ["memorySearch"],
-          'memorySearch is legacy; use agents.defaults.memorySearch. Run "openclaw doctor --fix".',
+          'memorySearch is legacy; use agents.defaults.memorySearch. Run "nova doctor --fix".',
         );
       }
       const gateway = asRecord(root.gateway);
@@ -373,7 +373,7 @@ vi.mock("../config/legacy.js", () => {
         addIssue(
           issues,
           ["gateway", "bind"],
-          'gateway.bind host aliases are legacy; use the canonical bind mode. Run "openclaw doctor --fix".',
+          'gateway.bind host aliases are legacy; use the canonical bind mode. Run "nova doctor --fix".',
         );
       }
       const sessionThreadBindings = asRecord(asRecord(root.session)?.threadBindings);
@@ -381,7 +381,7 @@ vi.mock("../config/legacy.js", () => {
         addIssue(
           issues,
           ["session", "threadBindings", "ttlHours"],
-          'session.threadBindings.ttlHours is legacy; use session.threadBindings.idleHours. Run "openclaw doctor --fix".',
+          'session.threadBindings.ttlHours is legacy; use session.threadBindings.idleHours. Run "nova doctor --fix".',
         );
       }
       const sessionMaintenance = asRecord(asRecord(root.session)?.maintenance);
@@ -389,7 +389,7 @@ vi.mock("../config/legacy.js", () => {
         addIssue(
           issues,
           ["session", "maintenance"],
-          'session.maintenance.rotateBytes is deprecated and ignored; run "openclaw doctor --fix" to remove it.',
+          'session.maintenance.rotateBytes is deprecated and ignored; run "nova doctor --fix" to remove it.',
         );
       }
       const xSearch = asRecord(asRecord(asRecord(root.tools)?.web)?.x_search);
@@ -397,7 +397,7 @@ vi.mock("../config/legacy.js", () => {
         addIssue(
           issues,
           ["tools", "web", "x_search", "apiKey"],
-          'tools.web.x_search.apiKey is legacy; use plugins.entries.xai.config.webSearch.apiKey. Run "openclaw doctor --fix".',
+          'tools.web.x_search.apiKey is legacy; use plugins.entries.xai.config.webSearch.apiKey. Run "nova doctor --fix".',
         );
       }
       const sandbox = asRecord(asRecord(asRecord(root.agents)?.defaults)?.sandbox);
@@ -405,7 +405,7 @@ vi.mock("../config/legacy.js", () => {
         addIssue(
           issues,
           ["agents", "defaults", "sandbox"],
-          'agents.defaults.sandbox.perSession is legacy; use agents.defaults.sandbox.scope. Run "openclaw doctor --fix".',
+          'agents.defaults.sandbox.perSession is legacy; use agents.defaults.sandbox.scope. Run "nova doctor --fix".',
         );
       }
 
@@ -423,8 +423,8 @@ vi.mock("../config/legacy.js", () => {
             issues,
             ["channels", channelId],
             channelId === "googlechat"
-              ? `channels.${channelId}.streamMode is legacy and no longer used. Run "openclaw doctor --fix".`
-              : `channels.${channelId}.streamMode, channels.${channelId}.streaming aliases are legacy. Run "openclaw doctor --fix".`,
+              ? `channels.${channelId}.streamMode is legacy and no longer used. Run "nova doctor --fix".`
+              : `channels.${channelId}.streamMode, channels.${channelId}.streaming aliases are legacy. Run "nova doctor --fix".`,
           );
         }
         const threadBindings = asRecord(channel.threadBindings);
@@ -432,7 +432,7 @@ vi.mock("../config/legacy.js", () => {
           addIssue(
             issues,
             ["channels", channelId, "threadBindings", "ttlHours"],
-            'channels.<id>.threadBindings.ttlHours is legacy; use channels.<id>.threadBindings.idleHours. Run "openclaw doctor --fix".',
+            'channels.<id>.threadBindings.ttlHours is legacy; use channels.<id>.threadBindings.idleHours. Run "nova doctor --fix".',
           );
         }
         if (channelId === "slack") {
@@ -441,7 +441,7 @@ vi.mock("../config/legacy.js", () => {
               addIssue(
                 issues,
                 ["channels", "slack"],
-                'channels.slack.channels.<id>.allow is legacy; use enabled. Run "openclaw doctor --fix".',
+                'channels.slack.channels.<id>.allow is legacy; use enabled. Run "nova doctor --fix".',
               );
             }
           }
@@ -452,7 +452,7 @@ vi.mock("../config/legacy.js", () => {
               addIssue(
                 issues,
                 ["channels", "googlechat"],
-                'channels.googlechat.groups.<id>.allow is legacy; use enabled. Run "openclaw doctor --fix".',
+                'channels.googlechat.groups.<id>.allow is legacy; use enabled. Run "nova doctor --fix".',
               );
             }
           }
@@ -465,7 +465,7 @@ vi.mock("../config/legacy.js", () => {
                 addIssue(
                   issues,
                   ["channels", "discord"],
-                  'channels.discord.guilds.<id>.channels.<id>.allow is legacy; use enabled. Run "openclaw doctor --fix".',
+                  'channels.discord.guilds.<id>.channels.<id>.allow is legacy; use enabled. Run "nova doctor --fix".',
                 );
               }
             }
@@ -478,7 +478,7 @@ vi.mock("../config/legacy.js", () => {
             addIssue(
               issues,
               ["channels", channelId, "accounts", accountId, "threadBindings", "ttlHours"],
-              'channels.<id>.threadBindings.ttlHours is legacy; use channels.<id>.threadBindings.idleHours. Run "openclaw doctor --fix".',
+              'channels.<id>.threadBindings.ttlHours is legacy; use channels.<id>.threadBindings.idleHours. Run "nova doctor --fix".',
             );
           }
         }
@@ -672,7 +672,7 @@ vi.mock("./doctor/shared/plugin-tool-allowlist-warnings.js", () => ({
 }));
 
 vi.mock("../doctor-plugin-registry.js", () => ({
-  maybeRepairManagedNpmOpenClawPeerLinks: vi.fn(async () => undefined),
+  maybeRepairManagedNpmNovaPeerLinks: vi.fn(async () => undefined),
   maybeRepairStaleManagedNpmBundledPlugins: vi.fn(() => undefined),
 }));
 
@@ -913,12 +913,12 @@ vi.mock("../plugins/doctor-contract-registry.js", () => {
       {
         path: ["channels", "telegram", "groupMentionsOnly"],
         message:
-          'channels.telegram.groupMentionsOnly was removed; use channels.telegram.groups."*".requireMention instead. Run "openclaw doctor --fix".',
+          'channels.telegram.groupMentionsOnly was removed; use channels.telegram.groups."*".requireMention instead. Run "nova doctor --fix".',
       },
       {
         path: ["talk"],
         message:
-          "talk.voiceId/talk.voiceAliases/talk.modelId/talk.outputFormat/talk.apiKey are legacy; use talk.providers.<provider> and run openclaw doctor --fix.",
+          "talk.voiceId/talk.voiceAliases/talk.modelId/talk.outputFormat/talk.apiKey are legacy; use talk.providers.<provider> and run nova doctor --fix.",
         match: hasLegacyTalkFields,
       },
     ],
@@ -1263,8 +1263,8 @@ vi.mock("./doctor-config-preflight.js", async () => {
   function resolveConfigPath() {
     const stateDir =
       process.env.NOVA_STATE_DIR ||
-      (process.env.HOME ? pathLocal.join(process.env.HOME, ".openclaw") : "");
-    return process.env.NOVA_CONFIG_PATH || pathLocal.join(stateDir, "openclaw.json");
+      (process.env.HOME ? pathLocal.join(process.env.HOME, ".nova") : "");
+    return process.env.NOVA_CONFIG_PATH || pathLocal.join(stateDir, "nova.json");
   }
 
   function normalizeDiscordStreamingCompat(cfg: Record<string, unknown>): Record<string, unknown> {
@@ -1542,7 +1542,7 @@ describe("doctor config flow", () => {
     const result = await runDoctorConfigWithInput({
       config: {
         gateway: { auth: { mode: "token", token: 123 } },
-        agents: { list: [{ id: "openclaw" }] },
+        agents: { list: [{ id: "nova" }] },
       },
       run: loadAndMaybeMigrateDoctorConfig,
     });
@@ -1718,7 +1718,7 @@ describe("doctor config flow", () => {
       previewNotes.mock.calls.some(
         ([message, title]) =>
           title === "Doctor" &&
-          message.includes("openclaw doctor --fix") &&
+          message.includes("nova doctor --fix") &&
           message.includes("rotate hooks.token"),
       ),
     ).toBe(true);
@@ -1792,13 +1792,13 @@ describe("doctor config flow", () => {
       hooks: {
         enabled: true,
         token: "hook-secret",
-        transformsDir: "/virtual/.openclaw/workspace/skills/linear-webhook",
+        transformsDir: "/virtual/.nova/workspace/skills/linear-webhook",
         mappings: [
           {
             match: { path: "linear" },
             action: "agent",
             messageTemplate: "Linear event",
-            transform: { module: "./openclaw-linear-transform.js" },
+            transform: { module: "./nova-linear-transform.js" },
           },
         ],
       },
@@ -1806,8 +1806,8 @@ describe("doctor config flow", () => {
 
     const warning = doctorWarnings.join("\n");
     expect(warning).toContain("hooks.transformsDir:");
-    expect(warning).toContain("/virtual/.openclaw/workspace/skills/linear-webhook");
-    expect(warning).toContain("/virtual/.openclaw/hooks/transforms");
+    expect(warning).toContain("/virtual/.nova/workspace/skills/linear-webhook");
+    expect(warning).toContain("/virtual/.nova/hooks/transforms");
     expect(warning).toContain("move custom transforms there or remove hooks.transformsDir");
   });
 
@@ -2033,7 +2033,7 @@ describe("doctor config flow", () => {
       config: {
         bridge: { bind: "auto" },
         gateway: { auth: { mode: "token", token: "ok", extra: true } },
-        agents: { list: [{ id: "openclaw" }] },
+        agents: { list: [{ id: "nova" }] },
         session: {
           maintenance: {
             rotateBytes: "10mb",
@@ -2198,8 +2198,8 @@ describe("doctor config flow", () => {
   it("keeps discord streaming aliases on disk during repair so downgrades stay recoverable", async () => {
     await withTempHome(
       async (home) => {
-        const configDir = path.join(home, ".openclaw");
-        const configPath = path.join(configDir, "openclaw.json");
+        const configDir = path.join(home, ".nova");
+        const configPath = path.join(configDir, "nova.json");
         await fs.mkdir(configDir, { recursive: true });
         await fs.writeFile(
           configPath,
@@ -2500,10 +2500,10 @@ describe("doctor config flow", () => {
   it("converts numeric discord ids to strings on repair", async () => {
     await withTempHome(
       async (home) => {
-        const configDir = path.join(home, ".openclaw");
+        const configDir = path.join(home, ".nova");
         await fs.mkdir(configDir, { recursive: true });
         await fs.writeFile(
-          path.join(configDir, "openclaw.json"),
+          path.join(configDir, "nova.json"),
           JSON.stringify(
             {
               channels: {
@@ -2705,10 +2705,10 @@ describe("doctor config flow", () => {
   it('repairs dmPolicy="allowlist" by restoring allowFrom from pairing store on repair', async () => {
     const result = await withTempHome(
       async (home) => {
-        const configDir = path.join(home, ".openclaw");
+        const configDir = path.join(home, ".nova");
         await fs.mkdir(configDir, { recursive: true });
         await fs.writeFile(
-          path.join(configDir, "openclaw.json"),
+          path.join(configDir, "nova.json"),
           JSON.stringify(
             {
               channels: {
@@ -2735,7 +2735,7 @@ describe("doctor config flow", () => {
       },
       { skipSessionCleanup: true },
     );
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
 
     const cfg = result.cfg as {
       channels: {
@@ -2995,7 +2995,7 @@ describe("doctor config flow", () => {
         noteSpy.mock.calls.some(
           ([message, title]) =>
             title === "Doctor" &&
-            message.includes('Run "openclaw doctor --fix" to migrate legacy config keys.'),
+            message.includes('Run "nova doctor --fix" to migrate legacy config keys.'),
         ),
       ).toBe(true);
     } finally {
@@ -3079,10 +3079,10 @@ describe("doctor config flow", () => {
     await withTempHome(
       async (home) => {
         const providerId = "acme-speech";
-        const configDir = path.join(home, ".openclaw");
+        const configDir = path.join(home, ".nova");
         await fs.mkdir(configDir, { recursive: true });
         await fs.writeFile(
-          path.join(configDir, "openclaw.json"),
+          path.join(configDir, "nova.json"),
           JSON.stringify(
             {
               talk: {

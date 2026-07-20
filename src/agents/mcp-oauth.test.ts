@@ -1,14 +1,11 @@
 // Covers MCP OAuth token persistence, isolation, and noninteractive behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { withTempHome as withBaseTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome as withBaseTempHome } from "nova/plugin-sdk/test-env";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { vi } from "vitest";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { createMcpOAuthClientProvider } from "./mcp-oauth-provider.js";
 import {
   readMcpOAuthStore,
@@ -37,12 +34,12 @@ async function withTempHome<T>(
 ): Promise<T> {
   return withBaseTempHome(async (home) => {
     const previousStateDir = process.env.NOVA_STATE_DIR;
-    process.env.NOVA_STATE_DIR = path.join(home, ".openclaw");
-    closeOpenClawStateDatabaseForTest();
+    process.env.NOVA_STATE_DIR = path.join(home, ".nova");
+    closeNovaStateDatabaseForTest();
     try {
       return await run(home);
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       if (previousStateDir === undefined) {
         delete process.env.NOVA_STATE_DIR;
       } else {
@@ -55,10 +52,10 @@ async function withTempHome<T>(
 describe("MCP OAuth provider", () => {
   beforeEach(() => {
     authMock.mockReset();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
   });
 
-  afterEach(() => closeOpenClawStateDatabaseForTest());
+  afterEach(() => closeNovaStateDatabaseForTest());
 
   it("preserves insufficient scope and forces the next login through authorization", async () => {
     await withTempHome(
@@ -84,7 +81,7 @@ describe("MCP OAuth provider", () => {
             scope: "docs.write",
           }),
         ).rejects.toThrow(
-          'MCP server "Remote Docs" requires additional OAuth authorization. Run openclaw mcp login Remote Docs.',
+          'MCP server "Remote Docs" requires additional OAuth authorization. Run nova mcp login Remote Docs.',
         );
         expect(authMock).not.toHaveBeenCalled();
         expect(provider.tokens()).toMatchObject({
@@ -176,7 +173,7 @@ describe("MCP OAuth provider", () => {
         expect(readMcpOAuthStore(storeKey).pendingAuthorizationChallenge).toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-insufficient-scope-",
+        prefix: "nova-mcp-oauth-insufficient-scope-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -226,7 +223,7 @@ describe("MCP OAuth provider", () => {
         expect(provider.tokens()).toMatchObject({ access_token: "newer-token" });
       },
       {
-        prefix: "openclaw-mcp-oauth-terminal-rejection-",
+        prefix: "nova-mcp-oauth-terminal-rejection-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -291,7 +288,7 @@ describe("MCP OAuth provider", () => {
         });
       },
       {
-        prefix: "openclaw-mcp-oauth-rejected-token-challenge-",
+        prefix: "nova-mcp-oauth-rejected-token-challenge-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -339,7 +336,7 @@ describe("MCP OAuth provider", () => {
         expect(readMcpOAuthStore(storeKey).pendingAuthorizationChallenge).toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-doctor-challenge-",
+        prefix: "nova-mcp-oauth-doctor-challenge-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -394,7 +391,7 @@ describe("MCP OAuth provider", () => {
         expect(authMock).toHaveBeenCalledOnce();
       },
       {
-        prefix: "openclaw-mcp-oauth-legacy-token-",
+        prefix: "nova-mcp-oauth-legacy-token-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -412,11 +409,11 @@ describe("MCP OAuth provider", () => {
             serverName: "Remote Docs",
             serverUrl: "https://mcp.example.com/mcp",
           }),
-        ).rejects.toThrow("Run openclaw mcp login Remote Docs.");
+        ).rejects.toThrow("Run nova mcp login Remote Docs.");
         expect(authMock).not.toHaveBeenCalled();
       },
       {
-        prefix: "openclaw-mcp-oauth-missing-token-",
+        prefix: "nova-mcp-oauth-missing-token-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -436,7 +433,7 @@ describe("MCP OAuth provider", () => {
             authorizationChallenge: true,
             scope: "docs.read",
           }),
-        ).rejects.toThrow("Run openclaw mcp login Remote Docs.");
+        ).rejects.toThrow("Run nova mcp login Remote Docs.");
         expect(
           readMcpOAuthStore(resolveMcpOAuthStoreKey("Remote Docs", "https://mcp.example.com/mcp")),
         ).toMatchObject({
@@ -445,7 +442,7 @@ describe("MCP OAuth provider", () => {
         });
       },
       {
-        prefix: "openclaw-mcp-oauth-challenge-provenance-",
+        prefix: "nova-mcp-oauth-challenge-provenance-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -473,7 +470,7 @@ describe("MCP OAuth provider", () => {
             resourceMetadataUrl,
             scope: "docs.read",
           }),
-        ).rejects.toThrow("Run openclaw mcp login Remote Docs.");
+        ).rejects.toThrow("Run nova mcp login Remote Docs.");
         expect(authMock).not.toHaveBeenCalled();
         expect(
           readMcpOAuthStore(resolveMcpOAuthStoreKey("Remote Docs", "https://mcp.example.com/mcp")),
@@ -498,7 +495,7 @@ describe("MCP OAuth provider", () => {
         });
       },
       {
-        prefix: "openclaw-mcp-oauth-challenge-bootstrap-",
+        prefix: "nova-mcp-oauth-challenge-bootstrap-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -519,21 +516,21 @@ describe("MCP OAuth provider", () => {
           token_type: "Bearer",
         });
 
-        const databasePath = resolveOpenClawStateSqlitePath();
-        const rows = openOpenClawStateDatabase()
+        const databasePath = resolveNovaStateSqlitePath();
+        const rows = openNovaStateDatabase()
           .db.prepare("SELECT store_key, format_version FROM mcp_oauth_stores")
           .all();
         expect(rows).toEqual([
           { store_key: expect.stringMatching(/^Remote-Docs-[a-f0-9]{16}$/), format_version: 1 },
         ]);
-        await expect(fs.readdir(`${home}/.openclaw/mcp-oauth`)).rejects.toMatchObject({
+        await expect(fs.readdir(`${home}/.nova/mcp-oauth`)).rejects.toMatchObject({
           code: "ENOENT",
         });
         const stat = await fs.stat(databasePath);
         expect(stat.mode & 0o777).toBe(0o600);
       },
       {
-        prefix: "openclaw-mcp-oauth-",
+        prefix: "nova-mcp-oauth-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -559,12 +556,12 @@ describe("MCP OAuth provider", () => {
           hasDiscoveryState: false,
           hasLastAuthorizationUrl: false,
         });
-        await expect(fs.stat(resolveOpenClawStateSqlitePath())).rejects.toMatchObject({
+        await expect(fs.stat(resolveNovaStateSqlitePath())).rejects.toMatchObject({
           code: "ENOENT",
         });
       },
       {
-        prefix: "openclaw-mcp-oauth-status-",
+        prefix: "nova-mcp-oauth-status-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -599,7 +596,7 @@ describe("MCP OAuth provider", () => {
         expect(store.credentialState).toBe("cleared");
       },
       {
-        prefix: "openclaw-mcp-oauth-atomic-fields-",
+        prefix: "nova-mcp-oauth-atomic-fields-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -615,14 +612,14 @@ describe("MCP OAuth provider", () => {
         });
         await provider.saveTokens({ access_token: "access", token_type: "Bearer" });
         const storeKey = resolveMcpOAuthStoreKey("Remote Docs", "https://mcp.example.com/mcp");
-        openOpenClawStateDatabase()
+        openNovaStateDatabase()
           .db.prepare("UPDATE mcp_oauth_stores SET store_json = ? WHERE store_key = ?")
           .run("{", storeKey);
 
         expect(() => provider.tokens()).toThrow("store_json is not valid JSON");
       },
       {
-        prefix: "openclaw-mcp-oauth-corrupt-row-",
+        prefix: "nova-mcp-oauth-corrupt-row-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -638,14 +635,14 @@ describe("MCP OAuth provider", () => {
         });
         await provider.saveTokens({ access_token: "access", token_type: "Bearer" });
         const storeKey = resolveMcpOAuthStoreKey("Remote Docs", "https://mcp.example.com/mcp");
-        openOpenClawStateDatabase()
+        openNovaStateDatabase()
           .db.prepare("UPDATE mcp_oauth_stores SET store_json = ? WHERE store_key = ?")
           .run(JSON.stringify({ tokenExpiresAt: 10_000 }), storeKey);
 
         expect(() => provider.tokens()).toThrow("tokenExpiresAt requires tokens");
       },
       {
-        prefix: "openclaw-mcp-oauth-orphan-expiry-",
+        prefix: "nova-mcp-oauth-orphan-expiry-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -668,7 +665,7 @@ describe("MCP OAuth provider", () => {
         expect(second.tokens()).toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-url-",
+        prefix: "nova-mcp-oauth-url-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -741,7 +738,7 @@ describe("MCP OAuth provider", () => {
         expect(readMcpOAuthStore(storeKey)).toEqual({});
       },
       {
-        prefix: "openclaw-mcp-oauth-localhost-failure-",
+        prefix: "nova-mcp-oauth-localhost-failure-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -788,7 +785,7 @@ describe("MCP OAuth provider", () => {
         ]);
       },
       {
-        prefix: "openclaw-mcp-oauth-localhost-persist-",
+        prefix: "nova-mcp-oauth-localhost-persist-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -808,16 +805,16 @@ describe("MCP OAuth provider", () => {
           serverUrl: "https://mcp.example.com/mcp",
         });
 
-        expect(() => provider.state?.()).toThrow("Run openclaw mcp login Remote Docs.");
+        expect(() => provider.state?.()).toThrow("Run nova mcp login Remote Docs.");
         expect(() => provider.saveCodeVerifier?.("verifier")).toThrow(
-          "Run openclaw mcp login Remote Docs.",
+          "Run nova mcp login Remote Docs.",
         );
         await expect(
           provider.redirectToAuthorization?.(new URL("https://auth.example.com/authorize")),
-        ).rejects.toThrow("Run openclaw mcp login Remote Docs.");
+        ).rejects.toThrow("Run nova mcp login Remote Docs.");
       },
       {
-        prefix: "openclaw-mcp-oauth-noninteractive-",
+        prefix: "nova-mcp-oauth-noninteractive-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -848,7 +845,7 @@ describe("MCP OAuth provider", () => {
         ).toBe("cleared");
       },
       {
-        prefix: "openclaw-mcp-oauth-clear-",
+        prefix: "nova-mcp-oauth-clear-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,

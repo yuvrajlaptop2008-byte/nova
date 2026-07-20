@@ -1,9 +1,9 @@
-import OpenClawKit
+import NovaKit
 import SwiftUI
 import Testing
 import UIKit
-@testable import OpenClaw
-@testable import OpenClawChatUI
+@testable import Nova
+@testable import NovaChatUI
 
 struct SwiftUIRenderSmokeTests {
     @MainActor private static func host(_ view: some View, size: CGSize? = nil) -> UIWindow {
@@ -104,7 +104,7 @@ struct SwiftUIRenderSmokeTests {
 
     @Test @MainActor func `settings pro tab appearance row builds for all preferences`() throws {
         for preference in AppAppearancePreference.allCases {
-            let suiteName = "OpenClawTests.appearance.\(preference.rawValue).\(UUID().uuidString)"
+            let suiteName = "NovaTests.appearance.\(preference.rawValue).\(UUID().uuidString)"
             let defaults = try #require(UserDefaults(suiteName: suiteName))
             defer { defaults.removePersistentDomain(forName: suiteName) }
             defaults.set(preference.rawValue, forKey: AppAppearancePreference.storageKey)
@@ -126,7 +126,7 @@ struct SwiftUIRenderSmokeTests {
     @Test @MainActor func `hosted push relay disclosure builds A view hierarchy`() {
         for typeSize in [DynamicTypeSize.large, .accessibility5] {
             let root = HostedPushRelayDisclosureSheet(
-                message: "Enabling this sends delivery data through OpenClaw's hosted push relay.",
+                message: "Enabling this sends delivery data through Nova's hosted push relay.",
                 onContinue: {})
                 .environment(\.dynamicTypeSize, typeSize)
 
@@ -141,26 +141,26 @@ struct SwiftUIRenderSmokeTests {
                     text: #"Inline math \(E = mc^2\) stays inside prose."#,
                     context: .assistant,
                     variant: .standard,
-                    font: OpenClawChatTypography.body,
-                    textColor: OpenClawChatTheme.assistantText)
+                    font: NovaChatTypography.body,
+                    textColor: NovaChatTheme.assistantText)
                 ChatMathBlockView(block: ChatMathBlock(
                     latex: #"\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"#,
-                    isComplete: true), textColor: OpenClawChatTheme.assistantText)
+                    isComplete: true), textColor: NovaChatTheme.assistantText)
                 ChatMathBlockView(block: ChatMathBlock(
                     latex: #"\notARealCommand{"#,
-                    isComplete: true), textColor: OpenClawChatTheme.assistantText)
+                    isComplete: true), textColor: NovaChatTheme.assistantText)
                 ChatMathBlockView(block: ChatMathBlock(
                     latex: "α + β = γ",
-                    isComplete: true), textColor: OpenClawChatTheme.assistantText)
+                    isComplete: true), textColor: NovaChatTheme.assistantText)
                 ChatMathBlockView(block: ChatMathBlock(
                     latex: String(repeating: "{", count: 65) + "x",
-                    isComplete: true), textColor: OpenClawChatTheme.assistantText)
+                    isComplete: true), textColor: NovaChatTheme.assistantText)
                 ChatMathBlockView(block: ChatMathBlock(
                     latex: String(repeating: #"\bar"#, count: 129) + "x",
-                    isComplete: true), textColor: OpenClawChatTheme.assistantText)
+                    isComplete: true), textColor: NovaChatTheme.assistantText)
                 ChatMathBlockView(block: ChatMathBlock(
                     latex: #"x\textcolor{#fff}{}"#,
-                    isComplete: true), textColor: OpenClawChatTheme.assistantText)
+                    isComplete: true), textColor: NovaChatTheme.assistantText)
             }
             .environment(\.dynamicTypeSize, typeSize)
 
@@ -186,8 +186,8 @@ struct SwiftUIRenderSmokeTests {
                 text: markdown,
                 context: .assistant,
                 variant: .standard,
-                font: OpenClawChatTypography.body,
-                textColor: OpenClawChatTheme.assistantText)
+                font: NovaChatTypography.body,
+                textColor: NovaChatTheme.assistantText)
                 .environment(\.dynamicTypeSize, typeSize)
 
             _ = Self.host(root, size: CGSize(width: 393, height: 700))
@@ -213,8 +213,8 @@ struct SwiftUIRenderSmokeTests {
                     text: markdown,
                     context: .assistant,
                     variant: .standard,
-                    font: OpenClawChatTypography.body,
-                    textColor: OpenClawChatTheme.assistantText)
+                    font: NovaChatTypography.body,
+                    textColor: NovaChatTheme.assistantText)
                     .environment(\.dynamicTypeSize, typeSize)
                     .preferredColorScheme(scheme)
 
@@ -238,7 +238,7 @@ struct SwiftUIRenderSmokeTests {
             text: text,
             markdownVariant: .standard,
             showsReasoning: false,
-            assistantName: "OpenClaw",
+            assistantName: "Nova",
             assistantAvatarText: "OC",
             assistantAvatarTint: nil,
             showsAssistantAvatar: true,
@@ -249,12 +249,12 @@ struct SwiftUIRenderSmokeTests {
 
     @Test @MainActor func `assistant usage footer builds across dynamic type sizes`() throws {
         let usage = try JSONDecoder().decode(
-            OpenClawChatUsage.self,
+            NovaChatUsage.self,
             from: Data(#"{"input":12000,"output":300,"cacheRead":438400,"cacheWrite":307000,"cost":{"total":0.0123}}"#
                 .utf8))
-        let message = OpenClawChatMessage(
+        let message = NovaChatMessage(
             role: "assistant",
-            content: [OpenClawChatMessageContent(
+            content: [NovaChatMessageContent(
                 type: "text",
                 text: "A completed assistant response with per-run usage.",
                 thinking: nil,
@@ -275,7 +275,7 @@ struct SwiftUIRenderSmokeTests {
                 markdownVariant: .standard,
                 userAccent: nil,
                 displayOptions: [],
-                assistantName: "OpenClaw",
+                assistantName: "Nova",
                 assistantAvatarText: "OC",
                 assistantAvatarTint: nil,
                 showsAssistantAvatar: true,
@@ -323,7 +323,7 @@ struct SwiftUIRenderSmokeTests {
             let root = GatewayQuickSetupSheet()
                 .environment(appModel)
                 .environment(gatewayController)
-                .openClawSheetChrome()
+                .novaSheetChrome()
 
             _ = Self.host(root, size: CGSize(width: 393, height: 520))
         }
@@ -339,8 +339,8 @@ struct SwiftUIRenderSmokeTests {
                 onScanQRCode: {},
                 onManualSetup: {})),
             AnyView(OnboardingSuccessStep(
-                gatewayName: "OpenClaw Gateway",
-                gatewayAddress: "openclaw.local",
+                gatewayName: "Nova Gateway",
+                gatewayAddress: "nova.local",
                 onGetStarted: {})),
             AnyView(NavigationStack {
                 Form {
@@ -360,7 +360,7 @@ struct SwiftUIRenderSmokeTests {
                     }
                 }
                 .scrollContentBackground(.hidden)
-                .background(OpenClawBrand.activationCanvas)
+                .background(NovaBrand.activationCanvas)
             }),
         ]
 
@@ -460,7 +460,7 @@ struct SwiftUIRenderSmokeTests {
             .environment(gatewayController)
 
         let window = Self.host(root)
-        let url = try #require(URL(string: "openclaw://agent?message=hello%20from%20deep%20link"))
+        let url = try #require(URL(string: "nova://agent?message=hello%20from%20deep%20link"))
         await appModel.handleDeepLink(url: url)
         await Self.waitForPresentedAlert(in: window)
 
@@ -523,7 +523,7 @@ struct SwiftUIRenderSmokeTests {
         let screens: [AnyView] = [
             AnyView(CommandCenterTab(openChat: {}, openSettings: {})),
             AnyView(IPadActivityScreen(openChat: {}, openSettings: {})),
-            AnyView(OpenClawDocsScreen()),
+            AnyView(NovaDocsScreen()),
             AnyView(IPadWorkboardScreen(openChat: {}, openSettings: {})),
             AnyView(IPadSkillWorkshopScreen(openSettings: {})),
             AnyView(AgentProTab(directRoute: .agents)),
@@ -566,7 +566,7 @@ struct SwiftUIRenderSmokeTests {
     }
 
     @Test @MainActor func `voice wake toast builds A view hierarchy`() {
-        let root = VoiceWakeToast(command: "openclaw: do something")
+        let root = VoiceWakeToast(command: "nova: do something")
         _ = Self.host(root)
     }
 
@@ -641,15 +641,15 @@ extension GatewayDiscoveryModel.DiscoveredGateway {
     fileprivate static let previewGateway = GatewayDiscoveryModel.DiscoveredGateway(
         name: "Studio Gateway",
         endpoint: .hostPort(
-            host: .name("openclaw.local", nil),
+            host: .name("nova.local", nil),
             port: 18789),
         stableID: "preview-gateway",
-        debugID: "openclaw.local",
-        lanHost: "openclaw.local",
+        debugID: "nova.local",
+        lanHost: "nova.local",
         tailnetDns: nil,
         gatewayPort: 18789,
         canvasPort: 18789,
         tlsEnabled: true,
         tlsFingerprintSha256: "preview",
-        cliPath: "/opt/homebrew/bin/openclaw")
+        cliPath: "/opt/homebrew/bin/nova")
 }

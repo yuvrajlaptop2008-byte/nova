@@ -1,13 +1,13 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   addMeetingSetupCheck,
   createMeetingSetupStatus,
   resolveMeetingBrowserNodeInfo,
   type MeetingSetupStatus,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import type { TeamsMeetingsConfig, TeamsMeetingsMode, TeamsMeetingsTransport } from "./config.js";
 import { assertBlackHole2chAvailable } from "./transports/chrome.js";
 import { TEAMS_MEETINGS_BROWSER_NODE_ADAPTER } from "./transports/teams-meetings-platform-constants.js";
@@ -32,7 +32,7 @@ async function commandExists(runtime: PluginRuntime, command: string): Promise<b
 
 export async function getTeamsMeetingsSetupStatus(params: {
   config: TeamsMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   options?: { mode?: TeamsMeetingsMode; transport?: TeamsMeetingsTransport };
 }): Promise<MeetingSetupStatus> {

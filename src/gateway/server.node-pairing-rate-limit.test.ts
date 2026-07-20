@@ -107,7 +107,7 @@ describe("node pairing rate limit", () => {
       },
     };
     await withGatewayServer(async ({ port }) => {
-      const identityPrefix = path.join(os.tmpdir(), `openclaw-node-pairing-${randomUUID()}`);
+      const identityPrefix = path.join(os.tmpdir(), `nova-node-pairing-${randomUUID()}`);
 
       const responses = await Promise.all(
         Array.from(
@@ -142,10 +142,7 @@ describe("node pairing rate limit", () => {
       },
     };
     await withGatewayServer(async ({ port }) => {
-      const identityPrefix = path.join(
-        os.tmpdir(),
-        `openclaw-node-pairing-upgrade-${randomUUID()}`,
-      );
+      const identityPrefix = path.join(os.tmpdir(), `nova-node-pairing-upgrade-${randomUUID()}`);
       const pairedIdentityPath = `${identityPrefix}-paired.sqlite`;
       const pairedIdentity = await approveNodeIdentity({
         identityPath: pairedIdentityPath,
@@ -203,10 +200,7 @@ describe("node pairing rate limit", () => {
       },
     };
     await withGatewayServer(async ({ port }) => {
-      const identityPath = path.join(
-        os.tmpdir(),
-        `openclaw-node-reapproval-${randomUUID()}.sqlite`,
-      );
+      const identityPath = path.join(os.tmpdir(), `nova-node-reapproval-${randomUUID()}.sqlite`);
       const identity = await approveNodeIdentity({ identityPath, caps: ["camera"] });
 
       const responses = await Promise.all(

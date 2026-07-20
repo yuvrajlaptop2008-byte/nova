@@ -2,10 +2,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 
 const note = vi.hoisted(() => vi.fn());
 
@@ -38,13 +35,13 @@ function firstNoteCall(): [string, string] {
 }
 
 describe("noteSessionLockHealth", () => {
-  let state: OpenClawTestState;
+  let state: NovaTestState;
 
   beforeEach(async () => {
     note.mockClear();
-    state = await createOpenClawTestState({
+    state = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-doctor-locks-",
+      prefix: "nova-doctor-locks-",
     });
   });
 
@@ -65,7 +62,7 @@ describe("noteSessionLockHealth", () => {
     await noteSessionLockHealth({
       shouldRepair: false,
       staleMs: 60_000,
-      readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+      readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
     });
 
     expect(note).toHaveBeenCalledTimes(1);
@@ -98,7 +95,7 @@ describe("noteSessionLockHealth", () => {
     await noteSessionLockHealth({
       shouldRepair: true,
       staleMs: 30_000,
-      readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+      readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
     });
 
     expect(note).toHaveBeenCalledTimes(1);
@@ -130,7 +127,7 @@ describe("noteSessionLockHealth", () => {
 
     const locks = await detectStaleSessionLocks({
       staleMs: 30_000,
-      readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+      readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
     });
 
     expect(locks).toHaveLength(1);
@@ -151,7 +148,7 @@ describe("noteSessionLockHealth", () => {
 
     const [lock] = await detectStaleSessionLocks({
       staleMs: 30_000,
-      readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+      readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
     });
     if (!lock) {
       throw new Error("expected stale session lock");
@@ -181,7 +178,7 @@ describe("noteSessionLockHealth", () => {
 
     const [lock] = await detectStaleSessionLocks({
       staleMs: 30_000,
-      readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+      readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
     });
     if (!lock) {
       throw new Error("expected stale session lock");
@@ -200,9 +197,9 @@ describe("noteSessionLockHealth", () => {
   });
 
   it("uses the supplied env to choose the structured lint state dir", async () => {
-    const other = await createOpenClawTestState({
+    const other = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-doctor-locks-other-",
+      prefix: "nova-doctor-locks-other-",
       applyEnv: false,
     });
     try {
@@ -217,7 +214,7 @@ describe("noteSessionLockHealth", () => {
       const locks = await detectStaleSessionLocks({
         env: other.env,
         staleMs: 30_000,
-        readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+        readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
       });
 
       expect(locks.map((lock) => lock.lockPath)).toEqual([lockPath]);
@@ -239,7 +236,7 @@ describe("noteSessionLockHealth", () => {
 
     const [lock] = await detectStaleSessionLocks({
       staleMs: 30_000,
-      readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+      readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
     });
     if (!lock) {
       throw new Error("expected stale session lock");
@@ -272,7 +269,7 @@ describe("noteSessionLockHealth", () => {
     await noteSessionLockHealth({
       shouldRepair: true,
       env: { NOVA_SESSION_WRITE_LOCK_STALE_MS: "30000" },
-      readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
+      readOwnerProcessArgs: () => ["node", "/opt/nova/nova.mjs", "doctor"],
     });
 
     expect(note).toHaveBeenCalledTimes(1);
@@ -301,7 +298,7 @@ describe("noteSessionLockHealth", () => {
 
     expect(note).toHaveBeenCalledTimes(1);
     const [message] = firstNoteCall();
-    expect(message).toContain("stale=yes (non-openclaw-owner)");
+    expect(message).toContain("stale=yes (non-nova-owner)");
     expect(message).toContain("[removed]");
     expect(message).toContain("Removed 1 stale session lock file");
     await expect(fs.access(falseLiveLock)).rejects.toThrow();

@@ -4,7 +4,7 @@ import { expectDefined } from "@nova/normalization-core";
 import { afterEach, describe, expect, it } from "vitest";
 import type { SubagentRunRecord } from "../../agents/subagent-registry.js";
 import type { ChannelPlugin } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { formatDurationCompact } from "../../infra/format-time/format-duration.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../../plugins/runtime.js";
 import {
@@ -36,7 +36,7 @@ function createSlackThreadingPlugin(): ChannelPlugin {
 }
 
 describe("buildThreadingToolContext", () => {
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as NovaConfig;
 
   afterEach(() => {
     resetPluginRuntimeStateForTest();
@@ -167,7 +167,7 @@ describe("buildThreadingToolContext", () => {
 
     const result = buildThreadingToolContext({
       sessionCtx,
-      config: { channels: { slack: { replyToMode: "all" } } } as OpenClawConfig,
+      config: { channels: { slack: { replyToMode: "all" } } } as NovaConfig,
       hasRepliedRef: undefined,
     });
 
@@ -189,7 +189,7 @@ describe("buildThreadingToolContext", () => {
 
     const result = buildThreadingToolContext({
       sessionCtx,
-      config: { channels: { slack: { replyToMode: "all" } } } as OpenClawConfig,
+      config: { channels: { slack: { replyToMode: "all" } } } as NovaConfig,
       hasRepliedRef: undefined,
     });
 
@@ -210,7 +210,7 @@ describe("buildThreadingToolContext", () => {
         To: "channel:C1",
         ReplyToMode: "off",
       },
-      config: { channels: { slack: { replyToMode: "all" } } } as OpenClawConfig,
+      config: { channels: { slack: { replyToMode: "all" } } } as NovaConfig,
       hasRepliedRef: undefined,
     });
 
@@ -246,7 +246,7 @@ describe("buildThreadingToolContext", () => {
 
     const result = buildThreadingToolContext({
       sessionCtx,
-      config: { channels: { googlechat: { replyToMode: "all" } } } as OpenClawConfig,
+      config: { channels: { googlechat: { replyToMode: "all" } } } as NovaConfig,
       hasRepliedRef: undefined,
     });
 

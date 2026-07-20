@@ -4,9 +4,9 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { SessionEntry } from "../config/sessions.js";
 import { loadSessionEntry, replaceSessionEntry } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import type { NovaConfig } from "../config/types.nova.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import {
   deleteSessionGroup,
   ensureSessionGroupRegistered,
@@ -18,17 +18,17 @@ import {
 describe("session groups catalog", () => {
   let root: string;
   let env: NodeJS.ProcessEnv;
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as NovaConfig;
 
   beforeEach(async () => {
     const tempRoot = await fs.realpath(os.tmpdir());
-    root = await fs.mkdtemp(path.join(tempRoot, "openclaw-session-groups-"));
+    root = await fs.mkdtemp(path.join(tempRoot, "nova-session-groups-"));
     env = { ...process.env, NOVA_STATE_DIR: root };
   });
 
   afterEach(async () => {
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(root, { recursive: true, force: true });
   });
 

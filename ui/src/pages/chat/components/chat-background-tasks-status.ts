@@ -1,5 +1,5 @@
 // Registers <wa-tooltip>: the status row's hover preview uses it directly
-// because openclaw-tooltip only carries plain-text content.
+// because nova-tooltip only carries plain-text content.
 import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
 import { html, nothing, type TemplateResult } from "lit";
 import "../../../components/elapsed-time.ts";
@@ -61,7 +61,7 @@ function renderStatusPreviewRow(task: TaskSummary): TemplateResult {
           ? html`<span class="chat-tasks-rail__task-sep" aria-hidden="true">·</span>
               <span>
                 ${active
-                  ? html`<openclaw-elapsed-time .startMs=${timeMs}></openclaw-elapsed-time>`
+                  ? html`<nova-elapsed-time .startMs=${timeMs}></nova-elapsed-time>`
                   : formatRelativeTimestamp(timeMs)}
               </span>`
           : nothing}
@@ -131,7 +131,7 @@ export function renderBackgroundTasksStatusRow(
             <!-- Ticking time stays out of the polite live region: without
                  aria-hidden, screen readers would re-announce every second. -->
             <span class="chat-tasks-status__time" aria-hidden="true">
-              <openclaw-elapsed-time .startMs=${status.startedMs}></openclaw-elapsed-time>
+              <nova-elapsed-time .startMs=${status.startedMs}></nova-elapsed-time>
             </span>
             <span class="chat-tasks-status__sep" aria-hidden="true">·</span>
           `

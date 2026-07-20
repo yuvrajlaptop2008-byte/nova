@@ -2,10 +2,7 @@
  * Test-only helpers for producing Codex app-server prompt snapshots and dynamic
  * tool specs without starting a live app-server.
  */
-import type {
-  AnyAgentTool,
-  EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+import type { AnyAgentTool, EmbeddedRunAttemptParams } from "nova/plugin-sdk/agent-harness-runtime";
 import {
   type CodexAppServerRuntimeOptions,
   resolveCodexAppServerRuntimeOptions,

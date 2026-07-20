@@ -4,7 +4,7 @@ import { parse } from "yaml";
 
 const workflowPath = ".github/workflows/plugin-npm-release.yml";
 const metaPackagePath = "extensions/meta/package.json";
-const metaManifestPath = "extensions/meta/openclaw.plugin.json";
+const metaManifestPath = "extensions/meta/nova.plugin.json";
 
 type Step = {
   env?: Record<string, string>;
@@ -181,7 +181,7 @@ describe("plugin npm extended-stable workflow", () => {
       "fs.writeFileSync(process.argv[3], `${JSON.stringify(pack, null, 2)}\\n`)",
     );
     expect(prepare.run).toContain('path.join(process.env.ARTIFACT_DIR, "preflight-manifest.json")');
-    expect(prepare.run).toContain('kind: "openclaw-plugin-npm-preflight"');
+    expect(prepare.run).toContain('kind: "nova-plugin-npm-preflight"');
     expect(prepare.run).toContain('mode: "preflight-only"');
     expect(prepare.run).toContain("source_package_json_sha256=");
     expect(prepare.run).toContain("packed_package_json_sha256=");
@@ -306,15 +306,15 @@ describe("plugin npm extended-stable workflow", () => {
   it("attests the canonical Meta provider package and install route", () => {
     const packageJson = JSON.parse(readFileSync(metaPackagePath, "utf8")) as {
       name?: string;
-      openclaw?: {
+      nova?: {
         install?: { npmSpec?: string };
         release?: { publishToClawHub?: boolean; publishToNpm?: boolean };
       };
     };
     const pluginManifest = JSON.parse(readFileSync(metaManifestPath, "utf8")) as { id?: string };
     expect(packageJson.name).toBe("@nova/meta-provider");
-    expect(packageJson.openclaw?.install?.npmSpec).toBe("@nova/meta-provider");
-    expect(packageJson.openclaw?.release).toEqual({
+    expect(packageJson.nova?.install?.npmSpec).toBe("@nova/meta-provider");
+    expect(packageJson.nova?.release).toEqual({
       publishToClawHub: true,
       publishToNpm: true,
     });

@@ -2,12 +2,12 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { MAX_DATE_TIMESTAMP_MS } from "openclaw/plugin-sdk/number-runtime";
+import { MAX_DATE_TIMESTAMP_MS } from "nova/plugin-sdk/number-runtime";
 import {
   testing as sessionBindingTesting,
   registerSessionBindingAdapter,
-} from "openclaw/plugin-sdk/session-binding-runtime";
-import { getSessionEntry, upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/session-binding-runtime";
+import { getSessionEntry, upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { installMatrixMonitorTestRuntime } from "../../test-runtime.js";
 import { MATRIX_NOVA_FINALIZED_PREVIEW_KEY } from "../send/types.js";
@@ -3124,7 +3124,7 @@ describe("matrix monitor handler draft streaming", () => {
       name: "exec",
       phase: "end",
       status: "failed",
-      progressText: "run openclaw cron -> run jq (agent) failed",
+      progressText: "run nova cron -> run jq (agent) failed",
     });
     await opts.onItemEvent?.({
       itemId: "command-1",
@@ -3132,7 +3132,7 @@ describe("matrix monitor handler draft streaming", () => {
       name: "exec",
       phase: "end",
       status: "failed",
-      progressText: "run openclaw cron -> run jq (agent) failed",
+      progressText: "run nova cron -> run jq (agent) failed",
     });
     expect(sendSingleTextMessageMatrixMock).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(5_000);
@@ -3161,7 +3161,7 @@ describe("matrix monitor handler draft streaming", () => {
     );
     expect(recoveredEdit?.[2]).not.toContain("completed");
     expect(recoveredEdit?.[2]).not.toContain("failed");
-    expect(recoveredEdit?.[2]).not.toContain("run openclaw cron -> run jq");
+    expect(recoveredEdit?.[2]).not.toContain("run nova cron -> run jq");
     vi.useRealTimers();
   });
 

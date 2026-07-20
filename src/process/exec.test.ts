@@ -207,7 +207,7 @@ describe("runCommandWithTimeout", () => {
   it.runIf(process.platform === "win32")(
     "rejects unresolved commands before Execa can fall through to ambient ComSpec",
     async () => {
-      const command = `openclaw-missing-${process.pid}\r\ncalc.exe`;
+      const command = `nova-missing-${process.pid}\r\ncalc.exe`;
       const previousComspec = process.env.comspec;
       process.env.comspec = process.execPath;
       try {
@@ -455,7 +455,7 @@ describe("runCommandWithTimeout", () => {
   it("keeps argv values out of transport errors", async () => {
     const privateArg = "private-command-argument";
     const error = await runCommandWithTimeout(
-      [`openclaw-missing-${process.pid}-${Date.now()}`, "--token", privateArg],
+      [`nova-missing-${process.pid}-${Date.now()}`, "--token", privateArg],
       { timeoutMs: 3_000 },
     ).catch((caught: unknown) => caught);
 
@@ -590,7 +590,7 @@ describe("runCommandBuffered", () => {
   it("keeps argv values out of buffered transport errors", async () => {
     const privateArg = "private-buffered-argument";
     const result = await runCommandBuffered(
-      [`openclaw-missing-${process.pid}-${Date.now()}`, privateArg],
+      [`nova-missing-${process.pid}-${Date.now()}`, privateArg],
       { timeoutMs: 3_000 },
     );
 

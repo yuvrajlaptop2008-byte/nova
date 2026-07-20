@@ -2,12 +2,12 @@
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createJsonlRequestTailer } from "../../../../scripts/e2e/lib/codex-media-path/jsonl-request-tail.mjs";
-import { closeOpenClawAgentDatabasesForTest } from "../../../../src/state/openclaw-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../../../src/state/nova-agent-db.js";
 import { connectGatewayStatusClient, postJson } from "../../../helpers/gateway-e2e-harness.js";
 import {
-  createOpenClawTestInstance,
-  type OpenClawTestInstance,
-} from "../../../helpers/openclaw-test-instance.js";
+  createNovaTestInstance,
+  type NovaTestInstance,
+} from "../../../helpers/nova-test-instance.js";
 import { runCodexAuthDoctorMigrationProof } from "./codex-auth-product-proof.test-support.js";
 
 const oauthAccess = "test-oauth-access";
@@ -16,7 +16,7 @@ const MODEL = "openai/gpt-5.6-luna";
 const PRODUCT_OUTPUT = "QA_CODEX_AUTH_PRODUCT_PROOF_OK";
 const REQUEST_TIMEOUT_MS = 60_000;
 
-let instance: OpenClawTestInstance | undefined;
+let instance: NovaTestInstance | undefined;
 
 type AppServerLogEntry = {
   id?: number | string;
@@ -30,7 +30,7 @@ type AppServerRequestLog = { read(): AppServerLogEntry[] };
 type GatewayHistory = Record<string, unknown> & { messages?: unknown[] };
 
 afterEach(async () => {
-  closeOpenClawAgentDatabasesForTest();
+  closeNovaAgentDatabasesForTest();
   await instance?.cleanup();
   instance = undefined;
 });
@@ -48,7 +48,7 @@ function waitForRequest(requestLog: AppServerRequestLog, method: string) {
   );
 }
 
-async function waitForAssistantHistory(testInstance: OpenClawTestInstance, expected: string) {
+async function waitForAssistantHistory(testInstance: NovaTestInstance, expected: string) {
   const client = await connectGatewayStatusClient(testInstance);
   try {
     return await vi.waitFor(
@@ -106,7 +106,7 @@ describe("Codex auth product proof", () => {
       const appServerFixture = fileURLToPath(
         new URL("./codex-auth-app-server.fixture.mjs", import.meta.url),
       );
-      instance = await createOpenClawTestInstance({
+      instance = await createNovaTestInstance({
         name: "qa-codex-auth-product-proof",
         env: {
           NOVA_AGENT_HARNESS_FALLBACK: "none",

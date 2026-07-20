@@ -1,7 +1,7 @@
 // Telegram plugin module implements bot native commands.fixture test support behavior.
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import { vi } from "vitest";
-import type { OpenClawConfig, TelegramAccountConfig } from "../runtime-api.js";
+import type { NovaConfig, TelegramAccountConfig } from "../runtime-api.js";
 import type { registerTelegramNativeCommands } from "./bot-native-commands.js";
 
 type RegisterTelegramNativeCommandsParams = Parameters<typeof registerTelegramNativeCommands>[0];
@@ -34,7 +34,7 @@ export function createNativeCommandTestParams(
         },
         command: vi.fn(),
       } as unknown as NativeCommandTestParams["bot"]),
-    cfg: params.cfg ?? ({} as OpenClawConfig),
+    cfg: params.cfg ?? ({} as NovaConfig),
     runtime:
       params.runtime ??
       ({

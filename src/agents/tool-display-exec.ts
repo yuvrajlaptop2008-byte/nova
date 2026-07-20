@@ -278,9 +278,9 @@ function summarizeKnownExec(words: string[]): string {
     return `run ${bin} ${script}`;
   }
 
-  if (bin === "openclaw") {
+  if (bin === "nova") {
     const sub = firstPositional(words, 1);
-    return sub ? `run openclaw ${sub}` : "run openclaw";
+    return sub ? `run nova ${sub}` : "run nova";
   }
 
   const arg = firstPositional(words, 1);
@@ -439,10 +439,10 @@ function classifyWorkspacePath(
     if (!segment) {
       continue;
     }
-    if (segment === ".openclaw" && segments[index + 1] === "workspace") {
+    if (segment === ".nova" && segments[index + 1] === "workspace") {
       return "agent";
     }
-    if (segment === ".openclaw" && segments[index + 1] === "sandboxes") {
+    if (segment === ".nova" && segments[index + 1] === "sandboxes") {
       return "sandbox";
     }
     if (/[-_]workspace$/i.test(segment) && segment.toLowerCase() !== "workspace") {
@@ -528,7 +528,7 @@ const KNOWN_SUMMARY_PREFIXES = [
   "run build",
   "start app",
   "run lint",
-  "run openclaw",
+  "run nova",
   "run node script",
   "run node ",
   "run python",

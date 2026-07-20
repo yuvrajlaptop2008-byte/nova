@@ -5,7 +5,7 @@ import {
   completeWithPreparedSimpleCompletionModel,
   prepareSimpleCompletionModelForAgent,
 } from "../../agents/simple-completion-runtime.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import type { TextContent } from "../../llm/types.js";
 
@@ -24,7 +24,7 @@ type LabelModelPhase = "utility" | "primary fallback";
 export type ConversationLabelParams = {
   userMessage: string;
   prompt: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   agentDir?: string;
   maxLength?: number;
@@ -54,7 +54,7 @@ function logLabelFailure(phase: LabelModelPhase, message: string): void {
 }
 
 async function prepareLabelModel(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   agentDir?: string;
   useUtilityModel: boolean;
@@ -97,7 +97,7 @@ function selectedLabelModelsMatch(
 
 async function completeLabel(params: {
   prepared: ReadyLabelModel;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   userMessage: string;
   prompt: string;
   maxLength: number;

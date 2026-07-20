@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import http, { createServer } from "node:http";
 import os from "node:os";
 import path from "node:path";
-import { captureEnv } from "openclaw/plugin-sdk/test-env";
+import { captureEnv } from "nova/plugin-sdk/test-env";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { saveMediaStreamWithIdleTimeout } from "./media-chunk-idle.js";
 
@@ -18,7 +18,7 @@ describe("saveMediaStreamWithIdleTimeout", () => {
   let envSnapshot: ReturnType<typeof captureEnv>;
 
   beforeAll(async () => {
-    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-feishu-idle-"));
+    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-feishu-idle-"));
     envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
     process.env.NOVA_STATE_DIR = stateDir;
   });

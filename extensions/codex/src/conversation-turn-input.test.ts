@@ -26,7 +26,7 @@ describe("codex conversation turn input", () => {
 
   it("uses staged remote-cache paths for remote iMessage image attachments", () => {
     const rawPath = "/Users/demo/Library/Messages/Attachments/ab/cd/photo.jpg";
-    const stagedPath = "/tmp/openclaw-proof/.openclaw/media/remote-cache/imessage/photo.jpg";
+    const stagedPath = "/tmp/nova-proof/.nova/media/remote-cache/imessage/photo.jpg";
 
     const input = buildCodexConversationTurnInput({
       prompt: "what is this?",

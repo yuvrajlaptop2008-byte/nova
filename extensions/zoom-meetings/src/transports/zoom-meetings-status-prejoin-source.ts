@@ -118,8 +118,8 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
     entry?.bridge?.remove?.();
   };
   const retireOwnedAudioBridges = (restoreSources = true) => {
-    const entries = Array.isArray(window.__openclawZoomAudioOutputs)
-      ? window.__openclawZoomAudioOutputs
+    const entries = Array.isArray(window.__novaZoomAudioOutputs)
+      ? window.__novaZoomAudioOutputs
       : [];
     const retained = [];
     for (const entry of entries) {
@@ -129,12 +129,12 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
       }
       retireAudioBridge(entry, restoreSources);
     }
-    if (retained.length > 0) window.__openclawZoomAudioOutputs = retained;
-    else delete window.__openclawZoomAudioOutputs;
+    if (retained.length > 0) window.__novaZoomAudioOutputs = retained;
+    else delete window.__novaZoomAudioOutputs;
   };
   const adoptAudioBridgeSourcesForSession = () => {
-    const entries = Array.isArray(window.__openclawZoomAudioOutputs)
-      ? window.__openclawZoomAudioOutputs
+    const entries = Array.isArray(window.__novaZoomAudioOutputs)
+      ? window.__novaZoomAudioOutputs
       : [];
     const suspendedBySource = new Map();
     for (const entry of entries) {
@@ -156,12 +156,12 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
       retireAudioBridge(entry, false);
     }
     const suspended = [...suspendedBySource.values()];
-    if (suspended.length > 0) window.__openclawZoomAudioOutputs = suspended;
-    else delete window.__openclawZoomAudioOutputs;
+    if (suspended.length > 0) window.__novaZoomAudioOutputs = suspended;
+    else delete window.__novaZoomAudioOutputs;
   };
   const suspendOwnedAudioBridges = () => {
-    const entries = Array.isArray(window.__openclawZoomAudioOutputs)
-      ? window.__openclawZoomAudioOutputs
+    const entries = Array.isArray(window.__novaZoomAudioOutputs)
+      ? window.__novaZoomAudioOutputs
       : [];
     const retained = [];
     const suspendedBySource = new Map();
@@ -197,18 +197,18 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
       retireAudioBridge(entry, false);
     }
     const next = [...retained, ...suspendedBySource.values()];
-    if (next.length > 0) window.__openclawZoomAudioOutputs = next;
-    else delete window.__openclawZoomAudioOutputs;
+    if (next.length > 0) window.__novaZoomAudioOutputs = next;
+    else delete window.__novaZoomAudioOutputs;
   };
   const retireOwnedCaptions = () => {
-    const active = window.__openclawZoomCaptions;
+    const active = window.__novaZoomCaptions;
     const owned = Boolean(
       active && sessionId && (!active.sessionId || active.sessionId === sessionId)
     );
     if (!owned) return;
     if (active.settleTimer !== undefined) clearTimeout(active.settleTimer);
     active.observer?.disconnect?.();
-    delete window.__openclawZoomCaptions;
+    delete window.__novaZoomCaptions;
   };
   const finalizeCaptionState = (active) => {
     if (!active) return;
@@ -236,18 +236,18 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
   };
   const archiveFinalizedCaptions = (active) => {
     if (active?.finalized !== true || !active.sessionId) return;
-    const archive = window.__openclawZoomCaptionArchive &&
-        typeof window.__openclawZoomCaptionArchive === "object"
-      ? window.__openclawZoomCaptionArchive
+    const archive = window.__novaZoomCaptionArchive &&
+        typeof window.__novaZoomCaptionArchive === "object"
+      ? window.__novaZoomCaptionArchive
       : {};
     archive[active.sessionId] = active;
     const retained = Object.entries(archive)
       .sort((left, right) => Number(right[1]?.finalizedAt || 0) - Number(left[1]?.finalizedAt || 0))
       .slice(0, 4);
-    window.__openclawZoomCaptionArchive = Object.fromEntries(retained);
+    window.__novaZoomCaptionArchive = Object.fromEntries(retained);
   };
   const finalizeOwnedCaptions = () => {
-    const active = window.__openclawZoomCaptions;
+    const active = window.__novaZoomCaptions;
     const owned = Boolean(
       active && sessionId && (!active.sessionId || active.sessionId === sessionId)
     );
@@ -266,7 +266,7 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
   });
   const notes = [];
   const currentIdentity = meetingIdentity(location.href);
-  const priorMeeting = window.__openclawZoomMeeting;
+  const priorMeeting = window.__novaZoomMeeting;
   if (expectedIdentity && currentIdentity && currentIdentity !== expectedIdentity) {
     // A confirmed SPA transition must stop resources still owned by this
     // request, while preserving any newer session already committed to the tab.
@@ -277,7 +277,7 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
       sessionId &&
       (!priorMeeting.sessionId || priorMeeting.sessionId === sessionId)
     );
-    if (requestOwnsMeeting) delete window.__openclawZoomMeeting;
+    if (requestOwnsMeeting) delete window.__novaZoomMeeting;
     return JSON.stringify({
       inCall: false,
       manualActionRequired: true,
@@ -292,8 +292,8 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
     priorMeeting?.sessionId && priorMeeting.sessionId !== sessionId
   );
   const captionOwnerConflict = Boolean(
-    window.__openclawZoomCaptions?.sessionId &&
-    window.__openclawZoomCaptions.sessionId !== sessionId
+    window.__novaZoomCaptions?.sessionId &&
+    window.__novaZoomCaptions.sessionId !== sessionId
   );
   const committedOwnerConflict = meetingOwnerConflict || captionOwnerConflict;
   const canRepairCaptionOwner = Boolean(
@@ -425,7 +425,7 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
   }
   if (canMutateSession && !inCall && !identityAwaitingRerender) retireOwnedAudioBridges();
   if (canMutateSession && (identityVerifiedBeforeCall || identityPreservedInCall)) {
-    window.__openclawZoomMeeting = {
+    window.__novaZoomMeeting = {
       ...(priorMeeting?.identity === expectedIdentity && !meetingOwnerConflict ? priorMeeting : {}),
       identity: expectedIdentity,
       sessionId: sessionId || priorMeeting?.sessionId,
@@ -444,7 +444,7 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
       (priorMeeting.awaitingAdmission !== true && markerAgeMs >= identityRetentionMs)
     )
   ) {
-    delete window.__openclawZoomMeeting;
+    delete window.__novaZoomMeeting;
   }
   const microphone = first(selectors.microphone) || findTextButton(/mute|unmute|microphone/i);
   let microphoneState = identityVerified ? (toggleState(microphone, "microphone") || (devicesDisabled ? "off" : undefined)) : undefined;
@@ -529,7 +529,7 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
   let audioInputDeviceLabel;
   let audioInputRouteError;
   const ensureVirtualAudioInput = async () => {
-    const preparedInput = window.__openclawZoomMeeting;
+    const preparedInput = window.__novaZoomMeeting;
     if (preparedInput?.identity === expectedIdentity && (!sessionId || preparedInput?.sessionId === sessionId)) {
       delete preparedInput.audioInputDeviceId;
     }

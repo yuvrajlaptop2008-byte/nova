@@ -4,7 +4,7 @@
 import path from "node:path";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import type { CliBackendConfig } from "../../config/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   CLI_FRESH_WATCHDOG_DEFAULTS,
   CLI_RESUME_WATCHDOG_DEFAULTS,
@@ -93,7 +93,7 @@ export function resolveCliNoOutputTimeoutMs(params: {
 }
 
 export function resolveCliRunTimeoutOverrideMs(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   lane?: string;
   timeoutMs: number;
   runTimeoutOverrideMs?: number;

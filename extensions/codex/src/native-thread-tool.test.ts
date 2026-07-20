@@ -1,9 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { MODEL_SELECTION_LOCKED_MESSAGE } from "openclaw/plugin-sdk/model-session-runtime";
-import type { OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { withTempDir } from "openclaw/plugin-sdk/test-env";
+import { MODEL_SELECTION_LOCKED_MESSAGE } from "nova/plugin-sdk/model-session-runtime";
+import type { NovaPluginToolContext } from "nova/plugin-sdk/plugin-entry";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
+import { withTempDir } from "nova/plugin-sdk/test-env";
 import { describe, expect, it, vi } from "vitest";
 import { CODEX_CONTROL_METHODS } from "./app-server/capabilities.js";
 import { CODEX_INTERACTIVE_THREAD_SOURCE_KINDS } from "./app-server/protocol.js";
@@ -23,7 +23,7 @@ describe("native Codex thread tool", () => {
   let sessionFile: string;
 
   async function withFixture(run: () => void | Promise<void>): Promise<void> {
-    await withTempDir("openclaw-codex-threads-", async (tempRoot) => {
+    await withTempDir("nova-codex-threads-", async (tempRoot) => {
       root = tempRoot;
       sessionFile = path.join(root, "sessions", "session-id.jsonl");
       await fs.mkdir(path.dirname(sessionFile), { recursive: true });
@@ -51,7 +51,7 @@ describe("native Codex thread tool", () => {
     modelSelectionLocked?: boolean;
     bindingStore?: CodexAppServerBindingStore;
   }) {
-    const context: OpenClawPluginToolContext = {
+    const context: NovaPluginToolContext = {
       config: {},
       agentId: "main",
       agentDir: path.join(root, "agent"),

@@ -1,5 +1,5 @@
 // Tests queue drain restart behavior when follow-up runs chain together.
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { describe, expect, it, vi } from "vitest";
 import {
   getActiveGatewayRootWorkCount,

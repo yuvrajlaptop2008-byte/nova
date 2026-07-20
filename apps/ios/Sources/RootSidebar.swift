@@ -1,5 +1,5 @@
-import OpenClawChatUI
-import OpenClawProtocol
+import NovaChatUI
+import NovaProtocol
 import SwiftUI
 
 struct RootSidebar: View {
@@ -38,8 +38,8 @@ struct RootSidebar: View {
             }
             self.footer
         }
-        .foregroundStyle(OpenClawSidebarPalette.text)
-        .background(OpenClawSidebarPalette.background)
+        .foregroundStyle(NovaSidebarPalette.text)
+        .background(NovaSidebarPalette.background)
         .sheet(isPresented: self.$showsPagesEditor) {
             RootSidebarPagesEditor(
                 pinnedPages: self.pinnedPages,
@@ -70,11 +70,11 @@ struct RootSidebar: View {
     private var brandHeader: some View {
         HStack(spacing: 4) {
             HStack(spacing: 8) {
-                OpenClawProMark(size: 26, shadowRadius: 2)
+                NovaProMark(size: 26, shadowRadius: 2)
                     .accessibilityHidden(true)
-                Text(String(localized: "OpenClaw"))
-                    .font(OpenClawType.headline)
-                    .foregroundStyle(OpenClawSidebarPalette.textStrong)
+                Text(String(localized: "Nova"))
+                    .font(NovaType.headline)
+                    .foregroundStyle(NovaSidebarPalette.textStrong)
                     .lineLimit(1)
             }
             .padding(.leading, 6)
@@ -105,12 +105,12 @@ struct RootSidebar: View {
             if self.isDrawerLayout {
                 Button(action: self.dismissSidebar) {
                     Image(systemName: "xmark")
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                         .frame(width: 40, height: 44)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(OpenClawSidebarPalette.accent)
+                .foregroundStyle(NovaSidebarPalette.accent)
                 .accessibilityLabel(String(localized: "Hide Sidebar"))
                 .accessibilityIdentifier(RootTabs.sidebarHideButtonAccessibilityIdentifier)
             }
@@ -118,7 +118,7 @@ struct RootSidebar: View {
         .padding(.leading, 8)
         .padding(.trailing, 8)
         .padding(.vertical, 8)
-        .background(OpenClawSidebarPalette.background)
+        .background(NovaSidebarPalette.background)
         .overlay(alignment: .bottom) { self.separator }
     }
 
@@ -139,7 +139,7 @@ struct RootSidebar: View {
             }
             .padding(4)
             .background(.ultraThinMaterial, in: RoundedRectangle(
-                cornerRadius: OpenClawProMetric.cardRadius,
+                cornerRadius: NovaProMetric.cardRadius,
                 style: .continuous))
         }
     }
@@ -171,30 +171,30 @@ struct RootSidebar: View {
                 ZStack(alignment: .bottomTrailing) {
                     ZStack {
                         Circle()
-                            .fill(OpenClawSidebarPalette.elevated)
+                            .fill(NovaSidebarPalette.elevated)
                         Text(verbatim: Self.agentBadge(name: Self.agentDisplayName(agent), identity: agent.identity))
-                            .font(OpenClawType.caption2Bold)
-                            .foregroundStyle(OpenClawSidebarPalette.textStrong)
+                            .font(NovaType.caption2Bold)
+                            .foregroundStyle(NovaSidebarPalette.textStrong)
                     }
                     .frame(width: 28, height: 28)
                     if isSelected {
                         Circle()
-                            .fill(OpenClawBrand.ok)
+                            .fill(NovaBrand.ok)
                             .frame(width: 8, height: 8)
-                            .overlay(Circle().stroke(OpenClawSidebarPalette.background, lineWidth: 1.5))
+                            .overlay(Circle().stroke(NovaSidebarPalette.background, lineWidth: 1.5))
                     }
                 }
                 .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(verbatim: Self.agentDisplayName(agent))
-                        .font(OpenClawType.subheadSemiBold)
-                        .foregroundStyle(OpenClawSidebarPalette.textStrong)
+                        .font(NovaType.subheadSemiBold)
+                        .foregroundStyle(NovaSidebarPalette.textStrong)
                         .lineLimit(1)
                     if let model = Self.agentModelLabel(agent) {
                         Text(verbatim: model)
-                            .font(OpenClawType.caption2Medium)
-                            .foregroundStyle(OpenClawSidebarPalette.muted)
+                            .font(NovaType.caption2Medium)
+                            .foregroundStyle(NovaSidebarPalette.muted)
                             .lineLimit(1)
                     }
                 }
@@ -206,8 +206,8 @@ struct RootSidebar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(isSelected ? OpenClawSidebarPalette.selection : Color.clear, in: RoundedRectangle(
-            cornerRadius: OpenClawProMetric.controlRadius,
+        .background(isSelected ? NovaSidebarPalette.selection : Color.clear, in: RoundedRectangle(
+            cornerRadius: NovaProMetric.controlRadius,
             style: .continuous))
         .accessibilityValue(isSelected ? String(localized: "Selected") : "")
     }
@@ -219,16 +219,16 @@ struct RootSidebar: View {
                     self.appModel.setSelectedAgentId(agent.id)
                 } label: {
                     Text(verbatim: Self.agentDisplayName(agent))
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                 }
             }
         } label: {
             HStack(spacing: 9) {
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(OpenClawType.captionSemiBold)
+                    .font(NovaType.captionSemiBold)
                     .frame(width: 28)
                 Text(String(localized: "More Agents"))
-                    .font(OpenClawType.subheadSemiBold)
+                    .font(NovaType.subheadSemiBold)
                     .lineLimit(1)
                 Spacer(minLength: 4)
             }
@@ -237,7 +237,7 @@ struct RootSidebar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .foregroundStyle(OpenClawSidebarPalette.muted)
+        .foregroundStyle(NovaSidebarPalette.muted)
     }
 
     /// Same key order the Agents roster uses for its model subtitles.
@@ -260,12 +260,12 @@ struct RootSidebar: View {
     {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(OpenClawType.subheadSemiBold)
+                .font(NovaType.subheadSemiBold)
                 .frame(width: 40, height: 44)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .foregroundStyle(OpenClawSidebarPalette.text)
+        .foregroundStyle(NovaSidebarPalette.text)
         .accessibilityLabel(label)
     }
 
@@ -298,19 +298,19 @@ struct RootSidebar: View {
     private var searchField: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .font(OpenClawType.captionSemiBold)
-                .foregroundStyle(OpenClawSidebarPalette.muted)
+                .font(NovaType.captionSemiBold)
+                .foregroundStyle(NovaSidebarPalette.muted)
                 .accessibilityHidden(true)
             ZStack(alignment: .leading) {
                 if self.searchText.isEmpty {
                     Text(String(localized: "Search sessions"))
-                        .font(OpenClawType.subhead)
-                        .foregroundStyle(OpenClawSidebarPalette.muted)
+                        .font(NovaType.subhead)
+                        .foregroundStyle(NovaSidebarPalette.muted)
                         .accessibilityHidden(true)
                 }
                 TextField("", text: self.$searchText)
-                    .font(OpenClawType.subhead)
-                    .foregroundStyle(OpenClawSidebarPalette.textStrong)
+                    .font(NovaType.subhead)
+                    .foregroundStyle(NovaSidebarPalette.textStrong)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .focused(self.$isSearchFocused)
@@ -321,8 +321,8 @@ struct RootSidebar: View {
                     self.searchText = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(OpenClawType.subhead)
-                        .foregroundStyle(OpenClawSidebarPalette.muted)
+                        .font(NovaType.subhead)
+                        .foregroundStyle(NovaSidebarPalette.muted)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(String(localized: "Clear session search"))
@@ -330,8 +330,8 @@ struct RootSidebar: View {
         }
         .frame(minHeight: 44)
         .padding(.horizontal, 12)
-        .background(OpenClawSidebarPalette.elevated, in: RoundedRectangle(
-            cornerRadius: OpenClawProMetric.controlRadius,
+        .background(NovaSidebarPalette.elevated, in: RoundedRectangle(
+            cornerRadius: NovaProMetric.controlRadius,
             style: .continuous))
         .padding(.horizontal, 10)
         .padding(.bottom, 4)
@@ -344,8 +344,8 @@ struct RootSidebar: View {
         VStack(alignment: .leading, spacing: 6) {
             if let sessionErrorText = self.model.sessionErrorText {
                 Text(verbatim: sessionErrorText)
-                    .font(OpenClawType.captionMedium)
-                    .foregroundStyle(OpenClawBrand.warn)
+                    .font(NovaType.captionMedium)
+                    .foregroundStyle(NovaBrand.warn)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 10)
             }
@@ -354,16 +354,16 @@ struct RootSidebar: View {
                 HStack(spacing: 9) {
                     ProgressView().controlSize(.small)
                     Text(String(localized: "Loading sessions"))
-                        .font(OpenClawType.captionMedium)
-                        .foregroundStyle(OpenClawSidebarPalette.muted)
+                        .font(NovaType.captionMedium)
+                        .foregroundStyle(NovaSidebarPalette.muted)
                 }
                 .frame(minHeight: 44)
                 .padding(.horizontal, 10)
             } else if sections.isEmpty {
                 self.sessionsHeader(String(localized: "Recent"))
                 Text(String(localized: "No recent sessions"))
-                    .font(OpenClawType.captionMedium)
-                    .foregroundStyle(OpenClawSidebarPalette.muted)
+                    .font(NovaType.captionMedium)
+                    .foregroundStyle(NovaSidebarPalette.muted)
                     .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                     .padding(.horizontal, 10)
             } else {
@@ -388,17 +388,17 @@ struct RootSidebar: View {
             } label: {
                 Label {
                     Text(String(localized: "All Sessions…"))
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                 } icon: {
                     Image(systemName: "rectangle.stack")
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                 }
                 .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                 .padding(.horizontal, 10)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .foregroundStyle(OpenClawSidebarPalette.accent)
+            .foregroundStyle(NovaSidebarPalette.accent)
         }
     }
 
@@ -411,12 +411,12 @@ struct RootSidebar: View {
                     self.showsPagesEditor = true
                 } label: {
                     Image(systemName: "square.and.pencil")
-                        .font(OpenClawType.captionSemiBold)
+                        .font(NovaType.captionSemiBold)
                         .frame(width: 40, height: 32)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(OpenClawSidebarPalette.muted)
+                .foregroundStyle(NovaSidebarPalette.muted)
                 .accessibilityLabel(String(localized: "Edit Pages"))
             }
             self.homeRow
@@ -439,19 +439,19 @@ struct RootSidebar: View {
         } label: {
             HStack(spacing: 9) {
                 Image(systemName: "house")
-                    .font(OpenClawType.subheadSemiBold)
+                    .font(NovaType.subheadSemiBold)
                     .frame(width: 18)
                 Text(String(localized: "Home"))
-                    .font(OpenClawType.subheadSemiBold)
+                    .font(NovaType.subheadSemiBold)
                     .lineLimit(1)
                 Spacer(minLength: 4)
                 if mainSession?.hasActiveRun == true {
                     ProgressView()
                         .controlSize(.mini)
-                        .tint(OpenClawSidebarPalette.accent)
+                        .tint(NovaSidebarPalette.accent)
                 } else if mainSession?.unread == true {
                     Circle()
-                        .fill(OpenClawSidebarPalette.accent)
+                        .fill(NovaSidebarPalette.accent)
                         .frame(width: 7, height: 7)
                         .accessibilityHidden(true)
                 }
@@ -461,9 +461,9 @@ struct RootSidebar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .foregroundStyle(isSelected ? OpenClawSidebarPalette.accent : OpenClawSidebarPalette.text)
-        .background(isSelected ? OpenClawSidebarPalette.selection : Color.clear, in: RoundedRectangle(
-            cornerRadius: OpenClawProMetric.controlRadius,
+        .foregroundStyle(isSelected ? NovaSidebarPalette.accent : NovaSidebarPalette.text)
+        .background(isSelected ? NovaSidebarPalette.selection : Color.clear, in: RoundedRectangle(
+            cornerRadius: NovaProMetric.controlRadius,
             style: .continuous))
         .accessibilityValue(mainSession?.unread == true ? String(localized: "Unread") : "")
     }
@@ -486,7 +486,7 @@ struct RootSidebar: View {
                                 .accessibilityHidden(true)
                         }
                         Text(verbatim: self.gatewayName)
-                            .font(OpenClawType.subheadSemiBold)
+                            .font(NovaType.subheadSemiBold)
                             .lineLimit(1)
                     }
                     .frame(minHeight: 44, alignment: .leading)
@@ -494,7 +494,7 @@ struct RootSidebar: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(OpenClawSidebarPalette.text)
+                .foregroundStyle(NovaSidebarPalette.text)
                 .accessibilityValue(self.gatewayStatusTitle)
 
                 Spacer(minLength: 4)
@@ -502,12 +502,12 @@ struct RootSidebar: View {
         }
         .padding(.horizontal, 10)
         .padding(.bottom, 8)
-        .background(OpenClawSidebarPalette.background)
+        .background(NovaSidebarPalette.background)
     }
 
     /// Alias-aware main lookup: rosters may return namespaced keys
     /// ("agent:<id>:main"), so raw comparison would drop Home's badges.
-    private var mainSessionEntry: OpenClawChatSessionEntry? {
+    private var mainSessionEntry: NovaChatSessionEntry? {
         self.model.sessions.first { $0.key == self.resolvedMainSessionKey }
     }
 
@@ -540,9 +540,9 @@ struct RootSidebar: View {
         CommandSessionGrouping.categories(from: self.model.sessions, knownGroups: SessionGroupStore.load())
     }
 
-    private var sessionGroups: [OpenClawChatSessionGroup] {
+    private var sessionGroups: [NovaChatSessionGroup] {
         self.sessionCategories.enumerated().map { offset, name in
-            OpenClawChatSessionGroup(name: name, position: offset)
+            NovaChatSessionGroup(name: name, position: offset)
         }
     }
 
@@ -577,49 +577,49 @@ struct RootSidebar: View {
                     if node.badges.runningCount > 0 {
                         ProgressView()
                             .controlSize(.mini)
-                            .tint(OpenClawSidebarPalette.accent)
+                            .tint(NovaSidebarPalette.accent)
                     } else {
                         Image(systemName: "bubble.left")
-                            .font(OpenClawType.captionSemiBold)
+                            .font(NovaType.captionSemiBold)
                             .foregroundStyle(isSelected
-                                ? OpenClawSidebarPalette.accent
-                                : OpenClawSidebarPalette.muted)
+                                ? NovaSidebarPalette.accent
+                                : NovaSidebarPalette.muted)
                     }
                 }
                 .frame(width: 18)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: CommandCenterTab.sessionTitle(session))
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                         .foregroundStyle(isSelected
-                            ? OpenClawSidebarPalette.accent
-                            : OpenClawSidebarPalette.textStrong)
+                            ? NovaSidebarPalette.accent
+                            : NovaSidebarPalette.textStrong)
                         .lineLimit(1)
                     // Web-parity subtitle: the work line (repo/branch) names the
                     // session; recency moves to the trailing metadata slot.
                     if let workSubtitle = ChatSessionSidebarModel.workSubtitle(for: session) {
                         Text(verbatim: workSubtitle)
-                            .font(OpenClawType.caption2Medium)
-                            .foregroundStyle(OpenClawSidebarPalette.muted)
+                            .font(NovaType.caption2Medium)
+                            .foregroundStyle(NovaSidebarPalette.muted)
                             .lineLimit(1)
                     }
                 }
 
                 Spacer(minLength: 4)
                 Text(verbatim: CommandCenterTab.sessionDetail(session))
-                    .font(OpenClawType.caption2Medium)
-                    .foregroundStyle(OpenClawSidebarPalette.muted)
+                    .font(NovaType.caption2Medium)
+                    .foregroundStyle(NovaSidebarPalette.muted)
                     .lineLimit(1)
                 if session.unread == true {
                     Circle()
-                        .fill(OpenClawSidebarPalette.accent)
+                        .fill(NovaSidebarPalette.accent)
                         .frame(width: 7, height: 7)
                         .accessibilityHidden(true)
                 }
                 if session.pinned == true {
                     Image(systemName: "pin.fill")
-                        .font(OpenClawType.caption2Medium)
-                        .foregroundStyle(OpenClawSidebarPalette.accent)
+                        .font(NovaType.caption2Medium)
+                        .foregroundStyle(NovaSidebarPalette.accent)
                         .accessibilityHidden(true)
                 }
             }
@@ -628,8 +628,8 @@ struct RootSidebar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(isSelected ? OpenClawSidebarPalette.selection : Color.clear, in: RoundedRectangle(
-            cornerRadius: OpenClawProMetric.controlRadius,
+        .background(isSelected ? NovaSidebarPalette.selection : Color.clear, in: RoundedRectangle(
+            cornerRadius: NovaProMetric.controlRadius,
             style: .continuous))
         .commandSessionActions(
             session: session,
@@ -661,20 +661,20 @@ struct RootSidebar: View {
             HStack(spacing: 0) {
                 Label {
                     Text(destination.sidebarTitle)
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                         .lineLimit(1)
                 } icon: {
                     Image(systemName: destination.systemImage)
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                 }
                 Spacer(minLength: 6)
                 if badgeCount > 0 {
                     Text(verbatim: badgeCount.formatted())
-                        .font(OpenClawType.caption2Bold)
+                        .font(NovaType.caption2Bold)
                         .foregroundStyle(Color.white)
                         .padding(.horizontal, 6)
                         .frame(minWidth: 18, minHeight: 18)
-                        .background(OpenClawSidebarPalette.accent, in: Capsule())
+                        .background(NovaSidebarPalette.accent, in: Capsule())
                         .accessibilityLabel(String(localized: "Attention"))
                 }
             }
@@ -683,9 +683,9 @@ struct RootSidebar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .foregroundStyle(isSelected ? OpenClawSidebarPalette.accent : OpenClawSidebarPalette.text)
-        .background(isSelected ? OpenClawSidebarPalette.selection : Color.clear, in: RoundedRectangle(
-            cornerRadius: OpenClawProMetric.controlRadius,
+        .foregroundStyle(isSelected ? NovaSidebarPalette.accent : NovaSidebarPalette.text)
+        .background(isSelected ? NovaSidebarPalette.selection : Color.clear, in: RoundedRectangle(
+            cornerRadius: NovaProMetric.controlRadius,
             style: .continuous))
     }
 
@@ -708,12 +708,12 @@ struct RootSidebar: View {
                 self.selectSidebarDestination(.chat)
             } label: {
                 Image(systemName: "plus.bubble")
-                    .font(OpenClawType.captionSemiBold)
+                    .font(NovaType.captionSemiBold)
                     .frame(width: 40, height: 32)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .foregroundStyle(OpenClawSidebarPalette.muted)
+            .foregroundStyle(NovaSidebarPalette.muted)
             .disabled(!self.appModel.isOperatorGatewayConnected)
             .accessibilityLabel(String(localized: "New Chat"))
         }
@@ -721,15 +721,15 @@ struct RootSidebar: View {
 
     private func sectionTitle(_ title: String) -> some View {
         Text(verbatim: title.uppercased())
-            .font(OpenClawType.caption2Bold)
-            .foregroundStyle(OpenClawSidebarPalette.muted)
+            .font(NovaType.caption2Bold)
+            .foregroundStyle(NovaSidebarPalette.muted)
             .tracking(0.5)
             .padding(.horizontal, 10)
     }
 
     private var separator: some View {
         Rectangle()
-            .fill(OpenClawSidebarPalette.hairline)
+            .fill(NovaSidebarPalette.hairline)
             .frame(height: 1 / self.displayScale)
     }
 
@@ -762,15 +762,15 @@ struct RootSidebar: View {
 
     private var gatewayStatusColor: Color {
         switch GatewayStatusBuilder.build(appModel: self.appModel) {
-        case .connected: OpenClawBrand.ok
-        case .connecting: OpenClawBrand.accent
-        case .error: OpenClawBrand.warn
-        case .disconnected: OpenClawSidebarPalette.muted
+        case .connected: NovaBrand.ok
+        case .connecting: NovaBrand.accent
+        case .error: NovaBrand.warn
+        case .disconnected: NovaSidebarPalette.muted
         }
     }
 
     private func patchSession(
-        _ session: OpenClawChatSessionEntry,
+        _ session: NovaChatSessionEntry,
         label: String?? = nil,
         category: String?? = nil,
         pinned: Bool? = nil,
@@ -796,7 +796,7 @@ struct RootSidebar: View {
         }
     }
 
-    private func deleteSession(_ session: OpenClawChatSessionEntry) {
+    private func deleteSession(_ session: NovaChatSessionEntry) {
         Task {
             do {
                 try await self.appModel.makeChatTransport().deleteSession(key: session.key)
@@ -810,7 +810,7 @@ struct RootSidebar: View {
         }
     }
 
-    private func forkSession(_ session: OpenClawChatSessionEntry) {
+    private func forkSession(_ session: NovaChatSessionEntry) {
         Task {
             do {
                 let key = try await self.appModel.makeChatTransport().forkSession(parentKey: session.key)
@@ -852,7 +852,7 @@ struct RootSidebarPagesEditor: View {
                     }
                 } footer: {
                     Text("Pinned pages stay in the sidebar. Home is always shown.")
-                        .font(OpenClawType.caption)
+                        .font(NovaType.caption)
                 }
             }
             .navigationTitle(String(localized: "Pages"))
@@ -863,12 +863,12 @@ struct RootSidebarPagesEditor: View {
                         self.dismiss()
                     } label: {
                         Text(String(localized: "Done"))
-                            .font(OpenClawType.subheadSemiBold)
+                            .font(NovaType.subheadSemiBold)
                     }
                 }
             }
         }
-        .openClawSheetChrome()
+        .novaSheetChrome()
     }
 
     private func pageRow(_ destination: RootTabs.SidebarDestination) -> some View {
@@ -879,7 +879,7 @@ struct RootSidebarPagesEditor: View {
             } label: {
                 Label {
                     Text(destination.sidebarTitle)
-                        .font(OpenClawType.subheadSemiBold)
+                        .font(NovaType.subheadSemiBold)
                 } icon: {
                     Image(systemName: destination.systemImage)
                 }
@@ -892,8 +892,8 @@ struct RootSidebarPagesEditor: View {
                 self.onTogglePin(destination)
             } label: {
                 Image(systemName: isPinned ? "pin.fill" : "pin")
-                    .font(OpenClawType.subheadSemiBold)
-                    .foregroundStyle(isPinned ? OpenClawBrand.accent : Color.secondary)
+                    .font(NovaType.subheadSemiBold)
+                    .foregroundStyle(isPinned ? NovaBrand.accent : Color.secondary)
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }

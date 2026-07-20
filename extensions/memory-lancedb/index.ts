@@ -7,36 +7,33 @@
  */
 
 import { Buffer } from "node:buffer";
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
+import type { AgentToolResult } from "nova/plugin-sdk/agent-core";
 import {
   resolveAgentConfig,
   resolveDefaultAgentId as resolveConfiguredDefaultAgentId,
-} from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-runtime";
 import {
   optionalFiniteNumberSchema,
   optionalPositiveIntegerSchema,
-} from "openclaw/plugin-sdk/channel-actions";
-import { BUNDLED_CHAT_CHANNEL_ENVELOPE_PREFIXES } from "openclaw/plugin-sdk/chat-channel-ids";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import type { MemoryEmbeddingProvider } from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
-import { MESSAGE_TOOL_DELIVERY_HINTS } from "openclaw/plugin-sdk/message-tool-delivery-hints";
-import {
-  parseStrictPositiveInteger,
-  resolveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { readFiniteNumberParam, readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
-import { resolveLivePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-import { ensureGlobalUndiciEnvProxyDispatcher } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/channel-actions";
+import { BUNDLED_CHAT_CHANNEL_ENVELOPE_PREFIXES } from "nova/plugin-sdk/chat-channel-ids";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import type { MemoryEmbeddingProvider } from "nova/plugin-sdk/memory-core-host-engine-embeddings";
+import { MESSAGE_TOOL_DELIVERY_HINTS } from "nova/plugin-sdk/message-tool-delivery-hints";
+import { parseStrictPositiveInteger, resolveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import { readFiniteNumberParam, readPositiveIntegerParam } from "nova/plugin-sdk/param-readers";
+import { resolveLivePluginConfigObject } from "nova/plugin-sdk/plugin-config-runtime";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
+import { ensureGlobalUndiciEnvProxyDispatcher } from "nova/plugin-sdk/runtime-env";
 import {
   asOptionalRecord as asRecord,
   normalizeLowercaseStringOrEmpty,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { Type } from "typebox";
-import { definePluginEntry, type OpenClawPluginApi } from "./api.js";
+import { definePluginEntry, type NovaPluginApi } from "./api.js";
 import {
   DEFAULT_CAPTURE_MAX_CHARS,
   DEFAULT_RECALL_MAX_CHARS,
@@ -72,10 +69,10 @@ type OpenAiEmbeddingClient = {
 };
 const loadOpenAiModule = createLazyRuntimeModule(() => import("openai"));
 const loadMemoryEmbeddingProviderModule = createLazyRuntimeModule(
-  () => import("openclaw/plugin-sdk/memory-core-host-engine-embeddings"),
+  () => import("nova/plugin-sdk/memory-core-host-engine-embeddings"),
 );
 const loadMemoryHostCoreModule = createLazyRuntimeModule(
-  () => import("openclaw/plugin-sdk/memory-host-core"),
+  () => import("nova/plugin-sdk/memory-host-core"),
 );
 
 function extractUserTextContent(message: unknown): string[] {
@@ -412,7 +409,7 @@ class ProviderAdapterEmbeddings implements Embeddings {
   private providerPromise: Promise<MemoryEmbeddingProvider> | undefined;
 
   constructor(
-    private api: OpenClawPluginApi,
+    private api: NovaPluginApi,
     private embedding: MemoryConfig["embedding"],
   ) {}
 
@@ -427,7 +424,7 @@ class ProviderAdapterEmbeddings implements Embeddings {
   }
 
   private async createProvider(): Promise<MemoryEmbeddingProvider> {
-    const cfg = (this.api.runtime.config?.current?.() ?? this.api.config) as OpenClawConfig;
+    const cfg = (this.api.runtime.config?.current?.() ?? this.api.config) as NovaConfig;
     const providerId = this.embedding.provider;
     const { getMemoryEmbeddingProvider } = await loadMemoryEmbeddingProviderModule();
     const adapter = getMemoryEmbeddingProvider(providerId, cfg);
@@ -543,7 +540,7 @@ export const testing = {
   truncateEmbeddingVector,
 } as const;
 
-function createEmbeddings(api: OpenClawPluginApi, cfg: MemoryConfig): Embeddings {
+function createEmbeddings(api: NovaPluginApi, cfg: MemoryConfig): Embeddings {
   const { provider, model, dimensions, apiKey, baseUrl } = cfg.embedding;
   if (provider === "openai" && apiKey) {
     return new OpenAiCompatibleEmbeddings(apiKey, model, baseUrl, dimensions);
@@ -1433,7 +1430,7 @@ export default definePluginEntry({
   kind: "memory" as const,
   configSchema: memoryConfigSchema,
 
-  register(api: OpenClawPluginApi) {
+  register(api: NovaPluginApi) {
     let cfg: MemoryConfig;
     try {
       cfg = memoryConfigSchema.parse(api.pluginConfig);
@@ -1457,8 +1454,8 @@ export default definePluginEntry({
     const embeddings = createEmbeddings(api, cfg);
     const autoCaptureCursors = new Map<string, AutoCaptureCursor>();
     const memoryRecallCooldowns = new Map<string, { until: number; error: string }>();
-    const resolveRuntimeConfig = (): OpenClawConfig =>
-      (api.runtime.config?.current?.() ?? api.config) as OpenClawConfig;
+    const resolveRuntimeConfig = (): NovaConfig =>
+      (api.runtime.config?.current?.() ?? api.config) as NovaConfig;
     const resolveEnabledAgentId = (
       rawAgentId: string | undefined,
       runtimeConfig = resolveRuntimeConfig(),
@@ -1481,9 +1478,7 @@ export default definePluginEntry({
     };
     const resolveCurrentHookConfig = () => {
       const runtimePluginConfig = resolveLivePluginConfigObject(
-        api.runtime.config?.current
-          ? () => api.runtime.config.current() as OpenClawConfig
-          : undefined,
+        api.runtime.config?.current ? () => api.runtime.config.current() as NovaConfig : undefined,
         "memory-lancedb",
         api.pluginConfig as Record<string, unknown>,
       );

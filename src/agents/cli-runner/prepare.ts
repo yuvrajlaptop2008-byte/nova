@@ -24,7 +24,7 @@ import {
   getActiveMcpLoopbackRuntime,
 } from "../../gateway/mcp-http.loopback-runtime.js";
 import { resolveMcpLoopbackScopedTools } from "../../gateway/mcp-http.runtime.js";
-import { buildSystemAgentToolsMcpServerConfig } from "../../mcp/openclaw-tools-serve-config.js";
+import { buildSystemAgentToolsMcpServerConfig } from "../../mcp/nova-tools-serve-config.js";
 import type {
   CliBackendAuthEpochMode,
   CliBackendPreparedExecution,
@@ -145,9 +145,9 @@ const prepareDeps = {
   mintMcpLoopbackClientGrant,
   revokeMcpLoopbackClientGrant,
   resolveMcpLoopbackScopedTools,
-  resolveOpenClawReferencePaths: async (
-    params: Parameters<typeof import("../docs-path.js").resolveOpenClawReferencePaths>[0],
-  ) => (await import("../docs-path.js")).resolveOpenClawReferencePaths(params),
+  resolveNovaReferencePaths: async (
+    params: Parameters<typeof import("../docs-path.js").resolveNovaReferencePaths>[0],
+  ) => (await import("../docs-path.js")).resolveNovaReferencePaths(params),
   prepareClaudeCliSkillsPlugin,
   claudeCliSessionTranscriptHasContent,
   claudeCliSessionTranscriptHasOrphanedToolUse,
@@ -295,7 +295,7 @@ function shouldSkipLocalCliCredentialEpoch(params: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.cliRunnerPrepareTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.cliRunnerPrepareTestApi")] = {
     setCliRunnerPrepareTestDeps: (overrides: Record<string, unknown>) => {
       setCliRunnerPrepareTestDeps(overrides as Partial<typeof prepareDeps>);
     },
@@ -642,7 +642,7 @@ export async function prepareCliRunContext(
       : hashCliSessionText(JSON.stringify([toolBoundExtraSystemPromptHash ?? null, bootstrapMode]));
   // Ring-zero Nova runs replace the bundle MCP surface entirely: no
   // loopback server, no plugin/user servers. A selectable backend also removes
-  // its native tools, leaving only this openclaw stdio server.
+  // its native tools, leaving only this nova stdio server.
   const systemAgentMcpConfig = internalParams.systemAgentTool
     ? buildSystemAgentToolsMcpServerConfig(internalParams.systemAgentTool)
     : undefined;
@@ -1018,16 +1018,16 @@ export async function prepareCliRunContext(
         `cli session reset: provider=${params.provider} reason=${invalidatedReason}`,
       );
     }
-    let openClawHistoryMessages: unknown[] | undefined;
-    const loadOpenClawHistoryMessages = async () => {
-      openClawHistoryMessages ??= await loadCliSessionHistoryMessages({
+    let novaHistoryMessages: unknown[] | undefined;
+    const loadNovaHistoryMessages = async () => {
+      novaHistoryMessages ??= await loadCliSessionHistoryMessages({
         sessionId: params.sessionId,
         sessionFile: params.sessionFile,
         sessionKey: params.sessionKey,
         agentId: params.agentId,
         config: params.config,
       });
-      return openClawHistoryMessages;
+      return novaHistoryMessages;
     };
     const heartbeatPrompt =
       isSideQuestion || params.bootstrapContextRunKind === "commitment-only"
@@ -1037,9 +1037,9 @@ export async function prepareCliRunContext(
             agentId: sessionAgentId,
             defaultAgentId,
           });
-    const openClawReferences = isSideQuestion
+    const novaReferences = isSideQuestion
       ? { docsPath: null, sourcePath: null }
-      : await prepareDeps.resolveOpenClawReferencePaths({
+      : await prepareDeps.resolveNovaReferencePaths({
           workspaceDir,
           argv1: process.argv[1],
           cwd,
@@ -1081,8 +1081,8 @@ export async function prepareCliRunContext(
           runtimeCapabilities,
           ownerNumbers: params.ownerNumbers,
           heartbeatPrompt,
-          docsPath: openClawReferences.docsPath ?? undefined,
-          sourcePath: openClawReferences.sourcePath ?? undefined,
+          docsPath: novaReferences.docsPath ?? undefined,
+          sourcePath: novaReferences.sourcePath ?? undefined,
           skillsPrompt: systemPromptSkillsPrompt,
           tools: promptTools,
           contextFiles,
@@ -1111,7 +1111,7 @@ export async function prepareCliRunContext(
         const hookResult = await resolvePromptBuildHookResult({
           config: params.config ?? getRuntimeConfig(),
           prompt: params.prompt,
-          messages: await loadOpenClawHistoryMessages(),
+          messages: await loadNovaHistoryMessages(),
           hookCtx: {
             runId: params.runId,
             agentId: sessionAgentId,
@@ -1187,9 +1187,9 @@ export async function prepareCliRunContext(
     // Node placement keeps this: the history prompt is built from the
     // gateway-side Nova transcript, so a fresh remote CLI session still
     // receives prior conversation context via stdin.
-    const shouldPrepareOpenClawHistoryPrompt =
+    const shouldPrepareNovaHistoryPrompt =
       !isSideQuestion && (!reusableCliSessionId || allowRawTranscriptReseed);
-    const openClawHistoryPrompt = shouldPrepareOpenClawHistoryPrompt
+    const novaHistoryPrompt = shouldPrepareNovaHistoryPrompt
       ? buildCliSessionHistoryPrompt({
           messages: await loadCliSessionReseedMessages({
             sessionId: params.sessionId,
@@ -1352,7 +1352,7 @@ export async function prepareCliRunContext(
       systemPromptReport,
       claudeSkillsPluginArgs: claudeSkillsPlugin.args,
       bootstrapPromptWarningLines: bootstrapPromptWarning.lines,
-      ...(openClawHistoryPrompt ? { openClawHistoryPrompt } : {}),
+      ...(novaHistoryPrompt ? { novaHistoryPrompt } : {}),
       heartbeatPrompt,
       authEpoch,
       authBindingFingerprint,

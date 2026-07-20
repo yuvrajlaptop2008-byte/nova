@@ -6,20 +6,20 @@ import {
   canUseCodexModelBackedApprovalsReviewerForModel,
   type CodexAppServerRuntimeOptions,
   type CodexPluginConfig,
-  type OpenClawExecPolicyForCodexAppServer,
+  type NovaExecPolicyForCodexAppServer,
 } from "./config.js";
 
 /**
  * Promotes implicit `never` approval policy to `untrusted` only when runtime
  * requirements allow Nova to handle tool approvals.
  */
-export function resolveCodexAppServerForOpenClawToolPolicy(params: {
+export function resolveCodexAppServerForNovaToolPolicy(params: {
   appServer: CodexAppServerRuntimeOptions;
   pluginConfig: CodexPluginConfig;
   env: NodeJS.ProcessEnv;
   shouldPromote: boolean;
   canUseUntrustedApprovalPolicy: boolean;
-  execPolicy?: OpenClawExecPolicyForCodexAppServer;
+  execPolicy?: NovaExecPolicyForCodexAppServer;
 }): CodexAppServerRuntimeOptions {
   if (
     !params.shouldPromote ||

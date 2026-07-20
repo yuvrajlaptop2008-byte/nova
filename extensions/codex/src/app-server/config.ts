@@ -6,20 +6,20 @@ import path from "node:path";
 import {
   resolveProviderIdForAuth,
   type ProviderAuthAliasLookupParams,
-} from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-runtime";
 import {
   resolveExecApprovalsFromFile,
   type ExecApprovalsFile,
-} from "openclaw/plugin-sdk/exec-approvals-runtime";
-import { resolvePositiveTimerTimeoutMs } from "openclaw/plugin-sdk/number-runtime";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
+} from "nova/plugin-sdk/exec-approvals-runtime";
+import { resolvePositiveTimerTimeoutMs } from "nova/plugin-sdk/number-runtime";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
 import {
   buildSecretInputSchema,
   normalizeResolvedSecretInputString,
   type SecretInput,
-} from "openclaw/plugin-sdk/secret-input";
-import { normalizeTrimmedStringList } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { detectWindowsSpawnCommandInlineArgs } from "openclaw/plugin-sdk/windows-spawn";
+} from "nova/plugin-sdk/secret-input";
+import { normalizeTrimmedStringList } from "nova/plugin-sdk/string-coerce-runtime";
+import { detectWindowsSpawnCommandInlineArgs } from "nova/plugin-sdk/windows-spawn";
 import { parse as parseToml } from "smol-toml";
 import { z } from "zod";
 import type {
@@ -34,7 +34,7 @@ import {
   codexSessionCatalogConfigSchema,
 } from "./session-discovery-config.js";
 
-const START_OPTIONS_KEY_SECRET_SYMBOL = Symbol.for("openclaw.codexAppServerStartOptionsKeySecret");
+const START_OPTIONS_KEY_SECRET_SYMBOL = Symbol.for("nova.codexAppServerStartOptionsKeySecret");
 const START_OPTIONS_KEY_SECRET = getStartOptionsKeySecret();
 const UNIX_CODEX_REQUIREMENTS_PATH = "/etc/codex/requirements.toml";
 const WINDOWS_CODEX_REQUIREMENTS_SUFFIX = "\\OpenAI\\Codex\\requirements.toml";
@@ -47,20 +47,20 @@ type CodexAppServerHomeScope = "agent" | "user";
 type CodexAppServerPolicyMode = "yolo" | "guardian";
 export type CodexAppServerConnectionClass = "local-loopback" | "remote";
 type CodexAppServerRemoteAppsSubstrate = "preconfigured";
-type OpenClawExecMode = "deny" | "allowlist" | "ask" | "auto" | "full";
-type OpenClawExecSecurity = "deny" | "allowlist" | "full";
-type OpenClawExecAsk = "off" | "on-miss" | "always";
-type OpenClawExecApprovalFloorsForCodexAppServer = {
-  security?: OpenClawExecSecurity;
-  ask?: OpenClawExecAsk;
+type NovaExecMode = "deny" | "allowlist" | "ask" | "auto" | "full";
+type NovaExecSecurity = "deny" | "allowlist" | "full";
+type NovaExecAsk = "off" | "on-miss" | "always";
+type NovaExecApprovalFloorsForCodexAppServer = {
+  security?: NovaExecSecurity;
+  ask?: NovaExecAsk;
 };
-export type OpenClawExecPolicyForCodexAppServer = {
-  mode?: OpenClawExecMode;
-  security: OpenClawExecSecurity;
-  ask: OpenClawExecAsk;
+export type NovaExecPolicyForCodexAppServer = {
+  mode?: NovaExecMode;
+  security: NovaExecSecurity;
+  ask: NovaExecAsk;
   touched: boolean;
 };
-type OpenClawExecPolicy = OpenClawExecPolicyForCodexAppServer;
+type NovaExecPolicy = NovaExecPolicyForCodexAppServer;
 type ProviderAuthAliasConfig = NonNullable<ProviderAuthAliasLookupParams>["config"];
 type CodexAppServerDefaultPolicy = {
   mode: CodexAppServerPolicyMode;
@@ -310,7 +310,7 @@ const DEFAULT_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS = 60_000;
 const DEFAULT_CODEX_COMPUTER_USE_LIVE_TEST_TIMEOUT_MS = 60_000;
 const DEFAULT_CODEX_COMPUTER_USE_TOOL_CALL_TIMEOUT_MS = 60_000;
 const DEFAULT_CODEX_COMPUTER_USE_HEALTH_CHECK_INTERVAL_MINUTES = 60;
-const DEFAULT_CODEX_APP_SERVER_NETWORK_PROXY_PROFILE_PREFIX = "openclaw-network";
+const DEFAULT_CODEX_APP_SERVER_NETWORK_PROXY_PROFILE_PREFIX = "nova-network";
 
 const codexAppServerTransportSchema = z.enum(["stdio", "websocket", "unix"]);
 const codexAppServerHomeScopeSchema = z.enum(["agent", "user"]);
@@ -581,8 +581,8 @@ function resolveCodexPluginDestructivePolicy(policy: CodexPluginDestructivePolic
 export function resolveCodexAppServerRuntimeOptions(
   params: {
     pluginConfig?: unknown;
-    execMode?: OpenClawExecMode;
-    execPolicy?: OpenClawExecPolicyForCodexAppServer;
+    execMode?: NovaExecMode;
+    execPolicy?: NovaExecPolicyForCodexAppServer;
     modelProvider?: string;
     model?: string;
     config?: ProviderAuthAliasConfig;
@@ -594,7 +594,7 @@ export function resolveCodexAppServerRuntimeOptions(
     readRequirementsFile?: (path: string) => string | undefined;
     platform?: NodeJS.Platform;
     hostName?: string;
-    openClawSandboxActive?: boolean;
+    novaSandboxActive?: boolean;
     managedCommandOrder?: CodexManagedCommandOrder;
   } = {},
 ): CodexAppServerRuntimeOptions {
@@ -625,17 +625,17 @@ export function resolveCodexAppServerRuntimeOptions(
   const connectionClass = inferCodexAppServerConnectionClass({ transport, url });
   const remoteAppsSubstrate: CodexAppServerRemoteAppsSubstrate = "preconfigured";
   const remoteWorkspaceRoot = normalizeRemoteWorkspaceRoot(config.remoteWorkspaceRoot);
-  const execMode = resolveEffectiveOpenClawExecModeForCodexAppServer({
+  const execMode = resolveEffectiveNovaExecModeForCodexAppServer({
     execMode: params.execMode,
     execPolicy: params.execPolicy,
   });
-  assertCodexAppServerAllowedForOpenClawExecMode(execMode);
+  assertCodexAppServerAllowedForNovaExecMode(execMode);
   const explicitPolicyMode =
     resolvePolicyMode(config.mode) ?? resolvePolicyMode(env.NOVA_CODEX_APP_SERVER_MODE);
   const configuredSandbox =
     resolveSandbox(config.sandbox) ?? resolveSandbox(env.NOVA_CODEX_APP_SERVER_SANDBOX);
   const explicitApprovalsReviewer = resolveApprovalsReviewer(config.approvalsReviewer);
-  const normalizedPolicyMode = resolveCodexPolicyModeForOpenClawExecMode(execMode);
+  const normalizedPolicyMode = resolveCodexPolicyModeForNovaExecMode(execMode);
   const ignoreLegacyYoloPolicyMode =
     normalizedPolicyMode === "guardian" && explicitPolicyMode === "yolo";
   const canUseModelBackedReviewer = canUseCodexModelBackedApprovalsReviewerForModel({
@@ -660,7 +660,7 @@ export function resolveCodexAppServerRuntimeOptions(
     (execMode !== "auto" || !canUseModelBackedReviewer);
   const forceUserReviewer = forceUserReviewerForUnknownModel || forceUserReviewerForExecMode;
   const forceGuardianReviewer = execMode === "auto" && canUseModelBackedReviewer;
-  const execModeRequiringPromptingApprovals: Extract<OpenClawExecMode, "auto" | "ask"> | undefined =
+  const execModeRequiringPromptingApprovals: Extract<NovaExecMode, "auto" | "ask"> | undefined =
     execMode === "auto" || execMode === "ask" ? execMode : forceUserReviewer ? "ask" : undefined;
   const forceDangerFullAccessSandbox =
     params.execPolicy?.touched === true &&
@@ -694,7 +694,7 @@ export function resolveCodexAppServerRuntimeOptions(
             ? selectForcedDangerFullAccessSandbox({
                 configuredSandbox,
                 defaultPolicy,
-                openClawSandboxActive: Boolean(params.openClawSandboxActive),
+                novaSandboxActive: Boolean(params.novaSandboxActive),
               })
             : selectForcedPromptingSandbox({
                 configuredSandbox,
@@ -1369,8 +1369,8 @@ function resolveDefaultCodexAppServerPolicy(params: {
   transport: CodexAppServerTransportMode;
   forceGuardian?: boolean;
   forceUserReviewer?: boolean;
-  execModeRequiringPromptingApprovals?: Extract<OpenClawExecMode, "auto" | "ask">;
-  execModeRequiringUserReviewer?: OpenClawExecMode;
+  execModeRequiringPromptingApprovals?: Extract<NovaExecMode, "auto" | "ask">;
+  execModeRequiringUserReviewer?: NovaExecMode;
   env?: NodeJS.ProcessEnv;
   requirementsToml?: string | null;
   requirementsPath?: string;
@@ -1737,7 +1737,7 @@ function normalizeRequirementsApprovalsReviewer(
 
 function selectGuardianApprovalPolicy(
   allowedApprovalPolicies: Set<CodexAppServerApprovalPolicy> | undefined,
-  execModeRequiringPromptingApprovals?: Extract<OpenClawExecMode, "auto" | "ask">,
+  execModeRequiringPromptingApprovals?: Extract<NovaExecMode, "auto" | "ask">,
 ): CodexAppServerApprovalPolicy {
   if (allowedApprovalPolicies === undefined || allowedApprovalPolicies.has("on-request")) {
     return "on-request";
@@ -1758,7 +1758,7 @@ function selectGuardianApprovalPolicy(
 
 function selectGuardianApprovalsReviewer(
   allowedApprovalsReviewers: Set<CodexAppServerApprovalsReviewer> | undefined,
-  execModeRequiringAutoReviewer?: Extract<OpenClawExecMode, "auto">,
+  execModeRequiringAutoReviewer?: Extract<NovaExecMode, "auto">,
 ): CodexAppServerApprovalsReviewer {
   if (allowedApprovalsReviewers === undefined || allowedApprovalsReviewers.has("auto_review")) {
     return "auto_review";
@@ -1779,7 +1779,7 @@ function selectGuardianApprovalsReviewer(
 
 function selectUserApprovalsReviewer(
   allowedApprovalsReviewers: Set<CodexAppServerApprovalsReviewer> | undefined,
-  execModeRequiringUserReviewer?: OpenClawExecMode,
+  execModeRequiringUserReviewer?: NovaExecMode,
 ): CodexAppServerApprovalsReviewer {
   if (allowedApprovalsReviewers === undefined || allowedApprovalsReviewers.has("user")) {
     return "user";
@@ -2079,13 +2079,13 @@ function selectForcedPromptingSandbox(params: {
 function selectForcedDangerFullAccessSandbox(params: {
   configuredSandbox?: CodexAppServerSandboxMode;
   defaultPolicy: CodexAppServerDefaultPolicy | undefined;
-  openClawSandboxActive: boolean;
+  novaSandboxActive: boolean;
 }): CodexAppServerSandboxMode {
   if (params.configuredSandbox === "read-only") {
     return "read-only";
   }
   if (params.defaultPolicy?.dangerFullAccessAllowed === false) {
-    if (params.openClawSandboxActive) {
+    if (params.novaSandboxActive) {
       return params.defaultPolicy.sandbox ?? "workspace-write";
     }
     throw new Error(
@@ -2129,13 +2129,13 @@ function resolveApprovalsReviewer(value: unknown): CodexAppServerApprovalsReview
     : undefined;
 }
 
-function resolveOpenClawExecPolicyFromConfig(params: {
+function resolveNovaExecPolicyFromConfig(params: {
   config?: unknown;
   agentId?: string;
-}): OpenClawExecPolicy {
+}): NovaExecPolicy {
   const root = readRecord(params.config);
   const globalExec = readRecord(readRecord(root?.tools)?.exec);
-  const globalPolicy = applyOpenClawExecPolicyLayer(createDefaultOpenClawExecPolicy(), globalExec);
+  const globalPolicy = applyNovaExecPolicyLayer(createDefaultNovaExecPolicy(), globalExec);
   const agentId = params.agentId?.trim();
   if (!agentId) {
     return globalPolicy;
@@ -2148,10 +2148,10 @@ function resolveOpenClawExecPolicyFromConfig(params: {
     return typeof id === "string" && normalizeAgentId(id) === normalizedAgentId;
   });
   const agentExec = readRecord(readRecord(readRecord(agentEntry)?.tools)?.exec);
-  return applyOpenClawExecPolicyLayer(globalPolicy, agentExec);
+  return applyNovaExecPolicyLayer(globalPolicy, agentExec);
 }
 
-export function resolveOpenClawExecPolicyForCodexAppServer(params: {
+export function resolveNovaExecPolicyForCodexAppServer(params: {
   execOverrides?: {
     security?: unknown;
     ask?: unknown;
@@ -2159,32 +2159,32 @@ export function resolveOpenClawExecPolicyForCodexAppServer(params: {
   approvals?: ExecApprovalsFile;
   config?: unknown;
   agentId?: string;
-}): OpenClawExecPolicyForCodexAppServer {
-  const basePolicy = resolveOpenClawExecPolicyFromConfig({
+}): NovaExecPolicyForCodexAppServer {
+  const basePolicy = resolveNovaExecPolicyFromConfig({
     config: params.config,
     agentId: params.agentId,
   });
-  const overridePolicy = applyOpenClawExecPolicyLayer(basePolicy, params.execOverrides);
-  const approvalFloors = resolveOpenClawExecApprovalFloorsForCodexAppServer({
+  const overridePolicy = applyNovaExecPolicyLayer(basePolicy, params.execOverrides);
+  const approvalFloors = resolveNovaExecApprovalFloorsForCodexAppServer({
     approvals: params.approvals,
     agentId: params.agentId,
     policy: overridePolicy,
   });
-  return applyOpenClawExecApprovalFloors(overridePolicy, approvalFloors);
+  return applyNovaExecApprovalFloors(overridePolicy, approvalFloors);
 }
 
-function resolveEffectiveOpenClawExecModeForCodexAppServer(params: {
-  execMode?: OpenClawExecMode;
-  execPolicy?: OpenClawExecPolicyForCodexAppServer;
-}): OpenClawExecMode | undefined {
+function resolveEffectiveNovaExecModeForCodexAppServer(params: {
+  execMode?: NovaExecMode;
+  execPolicy?: NovaExecPolicyForCodexAppServer;
+}): NovaExecMode | undefined {
   if (params.execPolicy?.touched === true) {
     return params.execPolicy.mode;
   }
   return params.execMode;
 }
 
-function resolveCodexPolicyModeForOpenClawExecMode(
-  mode: OpenClawExecMode | undefined,
+function resolveCodexPolicyModeForNovaExecMode(
+  mode: NovaExecMode | undefined,
 ): CodexAppServerPolicyMode | undefined {
   if (!mode || mode === "full") {
     return undefined;
@@ -2192,7 +2192,7 @@ function resolveCodexPolicyModeForOpenClawExecMode(
   return "guardian";
 }
 
-function assertCodexAppServerAllowedForOpenClawExecMode(mode: OpenClawExecMode | undefined): void {
+function assertCodexAppServerAllowedForNovaExecMode(mode: NovaExecMode | undefined): void {
   if (mode === "deny" || mode === "allowlist") {
     throw new Error(
       `Codex app-server local execution is not available when tools.exec.mode=${mode}`,
@@ -2200,7 +2200,7 @@ function assertCodexAppServerAllowedForOpenClawExecMode(mode: OpenClawExecMode |
   }
 }
 
-function createDefaultOpenClawExecPolicy(): OpenClawExecPolicy {
+function createDefaultNovaExecPolicy(): NovaExecPolicy {
   return {
     security: "full",
     ask: "off",
@@ -2208,17 +2208,17 @@ function createDefaultOpenClawExecPolicy(): OpenClawExecPolicy {
   };
 }
 
-function applyOpenClawExecPolicyLayer(
-  base: OpenClawExecPolicy,
+function applyNovaExecPolicyLayer(
+  base: NovaExecPolicy,
   exec?: { mode?: unknown; security?: unknown; ask?: unknown },
-): OpenClawExecPolicy {
+): NovaExecPolicy {
   if (!exec) {
     return base;
   }
   const mode = readExecMode(exec.mode);
   if (mode !== undefined) {
     return {
-      ...resolveOpenClawExecPolicyForMode(mode),
+      ...resolveNovaExecPolicyForMode(mode),
       touched: true,
     };
   }
@@ -2230,18 +2230,18 @@ function applyOpenClawExecPolicyLayer(
   const nextSecurity = security ?? base.security;
   const nextAsk = ask ?? base.ask;
   return {
-    mode: resolveOpenClawExecModeFromPolicy({ security: nextSecurity, ask: nextAsk }),
+    mode: resolveNovaExecModeFromPolicy({ security: nextSecurity, ask: nextAsk }),
     security: nextSecurity,
     ask: nextAsk,
     touched: true,
   };
 }
 
-function resolveOpenClawExecApprovalFloorsForCodexAppServer(params: {
+function resolveNovaExecApprovalFloorsForCodexAppServer(params: {
   approvals?: ExecApprovalsFile;
   agentId?: string;
-  policy: OpenClawExecPolicy;
-}): OpenClawExecApprovalFloorsForCodexAppServer | undefined {
+  policy: NovaExecPolicy;
+}): NovaExecApprovalFloorsForCodexAppServer | undefined {
   if (!params.approvals) {
     return undefined;
   }
@@ -2255,31 +2255,29 @@ function resolveOpenClawExecApprovalFloorsForCodexAppServer(params: {
   }).agent;
 }
 
-function applyOpenClawExecApprovalFloors(
-  base: OpenClawExecPolicy,
-  approvalFloors?: OpenClawExecApprovalFloorsForCodexAppServer,
-): OpenClawExecPolicy {
+function applyNovaExecApprovalFloors(
+  base: NovaExecPolicy,
+  approvalFloors?: NovaExecApprovalFloorsForCodexAppServer,
+): NovaExecPolicy {
   if (!approvalFloors) {
     return base;
   }
   const nextSecurity = approvalFloors.security
-    ? minOpenClawExecSecurity(base.security, approvalFloors.security)
+    ? minNovaExecSecurity(base.security, approvalFloors.security)
     : base.security;
-  const nextAsk = approvalFloors.ask ? maxOpenClawExecAsk(base.ask, approvalFloors.ask) : base.ask;
+  const nextAsk = approvalFloors.ask ? maxNovaExecAsk(base.ask, approvalFloors.ask) : base.ask;
   if (nextSecurity === base.security && nextAsk === base.ask) {
     return base;
   }
   return {
-    mode: resolveOpenClawExecModeFromPolicy({ security: nextSecurity, ask: nextAsk }),
+    mode: resolveNovaExecModeFromPolicy({ security: nextSecurity, ask: nextAsk }),
     security: nextSecurity,
     ask: nextAsk,
     touched: true,
   };
 }
 
-function resolveOpenClawExecPolicyForMode(
-  mode: OpenClawExecMode,
-): Omit<OpenClawExecPolicy, "touched"> {
+function resolveNovaExecPolicyForMode(mode: NovaExecMode): Omit<NovaExecPolicy, "touched"> {
   switch (mode) {
     case "deny":
       return { mode, security: "deny", ask: "off" };
@@ -2295,10 +2293,10 @@ function resolveOpenClawExecPolicyForMode(
   return exhaustiveMode;
 }
 
-function resolveOpenClawExecModeFromPolicy(params: {
-  security: OpenClawExecSecurity;
-  ask: OpenClawExecAsk;
-}): OpenClawExecMode {
+function resolveNovaExecModeFromPolicy(params: {
+  security: NovaExecSecurity;
+  ask: NovaExecAsk;
+}): NovaExecMode {
   if (params.security === "deny") {
     return "deny";
   }
@@ -2311,20 +2309,17 @@ function resolveOpenClawExecModeFromPolicy(params: {
   return "ask";
 }
 
-function minOpenClawExecSecurity(
-  left: OpenClawExecSecurity,
-  right: OpenClawExecSecurity,
-): OpenClawExecSecurity {
-  const order: Record<OpenClawExecSecurity, number> = { deny: 0, allowlist: 1, full: 2 };
+function minNovaExecSecurity(left: NovaExecSecurity, right: NovaExecSecurity): NovaExecSecurity {
+  const order: Record<NovaExecSecurity, number> = { deny: 0, allowlist: 1, full: 2 };
   return order[left] <= order[right] ? left : right;
 }
 
-function maxOpenClawExecAsk(left: OpenClawExecAsk, right: OpenClawExecAsk): OpenClawExecAsk {
-  const order: Record<OpenClawExecAsk, number> = { off: 0, "on-miss": 1, always: 2 };
+function maxNovaExecAsk(left: NovaExecAsk, right: NovaExecAsk): NovaExecAsk {
+  const order: Record<NovaExecAsk, number> = { off: 0, "on-miss": 1, always: 2 };
   return order[left] >= order[right] ? left : right;
 }
 
-function readExecMode(value: unknown): OpenClawExecMode | undefined {
+function readExecMode(value: unknown): NovaExecMode | undefined {
   return value === "deny" ||
     value === "allowlist" ||
     value === "ask" ||
@@ -2411,11 +2406,11 @@ function readBooleanEnv(value: string | undefined): boolean | undefined {
   return undefined;
 }
 
-function readExecSecurity(value: unknown): OpenClawExecSecurity | undefined {
+function readExecSecurity(value: unknown): NovaExecSecurity | undefined {
   return value === "deny" || value === "allowlist" || value === "full" ? value : undefined;
 }
 
-function readExecAsk(value: unknown): OpenClawExecAsk | undefined {
+function readExecAsk(value: unknown): NovaExecAsk | undefined {
   return value === "off" || value === "on-miss" || value === "always" ? value : undefined;
 }
 

@@ -24,7 +24,7 @@ import {
 const scratchDirs: string[] = [];
 
 function makeScratchDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-shard-test-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "nova-shard-test-"));
   scratchDirs.push(dir);
   return dir;
 }
@@ -240,7 +240,7 @@ describe("scripts/ci-run-node-test-shard.mjs", () => {
     const slot = path.join(persistentRoot, "vitest-cache-0");
     mkdirSync(slot, { recursive: true });
     const metadata = path.join(slot, "_metadata.json");
-    const generation = path.join(persistentRoot, ".openclaw-transform-generation");
+    const generation = path.join(persistentRoot, ".nova-transform-generation");
     const oldest = path.join(slot, "oldest");
     const newest = path.join(slot, "newest");
     writeFileSync(metadata, "{}", "utf8");

@@ -1,6 +1,6 @@
 import { resolveClaudeSonnet5ModelIdentity } from "@nova/llm-core";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   lookupCachedContextTokens,
   lookupCachedContextWindow,
@@ -21,8 +21,8 @@ export type ModelsConfig = {
 };
 
 export type ContextTokenResolutionParams = {
-  cfg?: OpenClawConfig;
-  sourceCfg?: OpenClawConfig | null;
+  cfg?: NovaConfig;
+  sourceCfg?: NovaConfig | null;
   provider?: string;
   modelProvider?: string;
   model?: string;
@@ -78,7 +78,7 @@ function resolveProviderModelRef(params: {
 }
 
 function resolveConfiguredProviderContextTokens(
-  cfg: OpenClawConfig | null | undefined,
+  cfg: NovaConfig | null | undefined,
   provider: string,
   model: string,
 ): ConfiguredContextTokens | undefined {
@@ -154,7 +154,7 @@ function resolveProviderQualifiedModel(provider: string, model: string): string 
 }
 
 function resolveConfiguredRuntimeContextTokens(
-  cfg: OpenClawConfig | null | undefined,
+  cfg: NovaConfig | null | undefined,
   provider: string,
   modelProvider: string | undefined,
   model: string,

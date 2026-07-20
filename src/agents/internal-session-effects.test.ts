@@ -15,7 +15,7 @@ import {
 
 describe("internal session effects", () => {
   it("creates a hidden deterministic SQLite session", async () => {
-    await withTempDir({ prefix: "openclaw-internal-session-effects-" }, async (dir) => {
+    await withTempDir({ prefix: "nova-internal-session-effects-" }, async (dir) => {
       const storePath = path.join(dir, "sessions.json");
       const target = await prepareInternalSessionEffectsSession({
         agentId: "main",
@@ -43,7 +43,7 @@ describe("internal session effects", () => {
   });
 
   it("forks visible SQLite history into the hidden session", async () => {
-    await withTempDir({ prefix: "openclaw-internal-session-effects-" }, async (dir) => {
+    await withTempDir({ prefix: "nova-internal-session-effects-" }, async (dir) => {
       const storePath = path.join(dir, "sessions.json");
       const source = {
         agentId: "main",
@@ -79,7 +79,7 @@ describe("internal session effects", () => {
   });
 
   it("hard-deletes the hidden entry and transcript rows", async () => {
-    await withTempDir({ prefix: "openclaw-internal-session-effects-" }, async (dir) => {
+    await withTempDir({ prefix: "nova-internal-session-effects-" }, async (dir) => {
       const storePath = path.join(dir, "sessions.json");
       const target = await prepareInternalSessionEffectsSession({
         agentId: "main",

@@ -13,7 +13,7 @@ vi.mock("./schtasks-exec.js", () => ({
   execSchtasks: (...args: unknown[]) => execSchtasksMock(...args),
 }));
 
-// Real content from the openclaw-gateway.service unit file (the canonical gateway unit).
+// Real content from the nova-gateway.service unit file (the canonical gateway unit).
 const GATEWAY_SERVICE_CONTENTS = `\
 [Unit]
 Description=Nova Gateway (v2026.3.8)
@@ -21,9 +21,9 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/node /home/openclaw/.npm-global/lib/node_modules/openclaw/dist/entry.js gateway --port 18789
+ExecStart=/usr/bin/node /home/nova/.npm-global/lib/node_modules/nova/dist/entry.js gateway --port 18789
 Restart=always
-Environment=NOVA_SERVICE_MARKER=openclaw
+Environment=NOVA_SERVICE_MARKER=nova
 Environment=NOVA_SERVICE_KIND=gateway
 Environment=NOVA_SERVICE_VERSION=2026.3.8
 
@@ -31,7 +31,7 @@ Environment=NOVA_SERVICE_VERSION=2026.3.8
 WantedBy=default.target
 `;
 
-// Real content from the openclaw-test.service unit file (a non-gateway openclaw service).
+// Real content from the nova-test.service unit file (a non-gateway nova service).
 const TEST_SERVICE_CONTENTS = `\
 [Unit]
 Description=Nova test service
@@ -57,11 +57,11 @@ Environment=HOME=/home/clawdbot
 const COMPANION_SERVICE_CONTENTS = `\
 [Unit]
 Description=Nova companion worker
-After=openclaw-gateway.service
-Requires=openclaw-gateway.service
+After=nova-gateway.service
+Requires=nova-gateway.service
 
 [Service]
-ExecStart=/usr/bin/node /opt/openclaw-worker/dist/index.js worker
+ExecStart=/usr/bin/node /opt/nova-worker/dist/index.js worker
 `;
 
 const CUSTOM_NOVA_GATEWAY_CONTENTS = `\
@@ -69,16 +69,16 @@ const CUSTOM_NOVA_GATEWAY_CONTENTS = `\
 Description=Custom Nova gateway
 
 [Service]
-ExecStart=/usr/bin/node /opt/openclaw/dist/entry.js gateway --port 18888
+ExecStart=/usr/bin/node /opt/nova/dist/entry.js gateway --port 18888
 `;
 
 describe("detectMarkerLineWithGateway", () => {
-  it("returns null for openclaw-test.service (openclaw only in description, no gateway on same line)", () => {
+  it("returns null for nova-test.service (nova only in description, no gateway on same line)", () => {
     expect(detectMarkerLineWithGateway(TEST_SERVICE_CONTENTS)).toBeNull();
   });
 
-  it("returns openclaw for the canonical gateway unit (ExecStart has both openclaw and gateway)", () => {
-    expect(detectMarkerLineWithGateway(GATEWAY_SERVICE_CONTENTS)).toBe("openclaw");
+  it("returns nova for the canonical gateway unit (ExecStart has both nova and gateway)", () => {
+    expect(detectMarkerLineWithGateway(GATEWAY_SERVICE_CONTENTS)).toBe("nova");
   });
 
   it("returns clawdbot for a clawdbot gateway unit", () => {
@@ -86,8 +86,8 @@ describe("detectMarkerLineWithGateway", () => {
   });
 
   it("handles line continuations — marker and gateway split across physical lines", () => {
-    const contents = `[Service]\nExecStart=/usr/bin/node /opt/openclaw/dist/entry.js \\\n  gateway --port 18789\n`;
-    expect(detectMarkerLineWithGateway(contents)).toBe("openclaw");
+    const contents = `[Service]\nExecStart=/usr/bin/node /opt/nova/dist/entry.js \\\n  gateway --port 18789\n`;
+    expect(detectMarkerLineWithGateway(contents)).toBe("nova");
   });
 
   it("ignores dependency-only references to the gateway unit", () => {
@@ -95,7 +95,7 @@ describe("detectMarkerLineWithGateway", () => {
   });
 
   it("ignores non-gateway ExecStart commands that only pass gateway-named options", () => {
-    const contents = `[Service]\nExecStart=/usr/bin/openclaw-helper --gateway-url http://127.0.0.1:18789 sync\n`;
+    const contents = `[Service]\nExecStart=/usr/bin/nova-helper --gateway-url http://127.0.0.1:18789 sync\n`;
     expect(detectMarkerLineWithGateway(contents)).toBeNull();
   });
 });
@@ -106,12 +106,12 @@ describe("findExtraGatewayServices (linux / scanSystemdDir) — real filesystem"
   // Only runs on Linux/macOS where the linux branch of findExtraGatewayServices is active.
   const isLinux = process.platform === "linux";
 
-  it.skipIf(!isLinux)("does not report openclaw-test.service as a gateway service", async () => {
-    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+  it.skipIf(!isLinux)("does not report nova-test.service as a gateway service", async () => {
+    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
     const systemdDir = path.join(tmpHome, ".config", "systemd", "user");
     try {
       await fs.mkdir(systemdDir, { recursive: true });
-      await fs.writeFile(path.join(systemdDir, "openclaw-test.service"), TEST_SERVICE_CONTENTS);
+      await fs.writeFile(path.join(systemdDir, "nova-test.service"), TEST_SERVICE_CONTENTS);
       const result = await findExtraGatewayServices({ HOME: tmpHome });
       expect(result).toStrictEqual([]);
     } finally {
@@ -120,16 +120,13 @@ describe("findExtraGatewayServices (linux / scanSystemdDir) — real filesystem"
   });
 
   it.skipIf(!isLinux)(
-    "does not report the canonical openclaw-gateway.service as an extra service",
+    "does not report the canonical nova-gateway.service as an extra service",
     async () => {
-      const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+      const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
       const systemdDir = path.join(tmpHome, ".config", "systemd", "user");
       try {
         await fs.mkdir(systemdDir, { recursive: true });
-        await fs.writeFile(
-          path.join(systemdDir, "openclaw-gateway.service"),
-          GATEWAY_SERVICE_CONTENTS,
-        );
+        await fs.writeFile(path.join(systemdDir, "nova-gateway.service"), GATEWAY_SERVICE_CONTENTS);
         const result = await findExtraGatewayServices({ HOME: tmpHome });
         expect(result).toStrictEqual([]);
       } finally {
@@ -141,7 +138,7 @@ describe("findExtraGatewayServices (linux / scanSystemdDir) — real filesystem"
   it.skipIf(!isLinux)(
     "reports a legacy clawdbot-gateway service as an extra gateway service",
     async () => {
-      const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+      const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
       const systemdDir = path.join(tmpHome, ".config", "systemd", "user");
       const unitPath = path.join(systemdDir, "clawdbot-gateway.service");
       try {
@@ -167,12 +164,12 @@ describe("findExtraGatewayServices (linux / scanSystemdDir) — real filesystem"
   it.skipIf(!isLinux)(
     "does not report companion units that only depend on the gateway",
     async () => {
-      const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+      const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
       const systemdDir = path.join(tmpHome, ".config", "systemd", "user");
       try {
         await fs.mkdir(systemdDir, { recursive: true });
         await fs.writeFile(
-          path.join(systemdDir, "openclaw-companion.service"),
+          path.join(systemdDir, "nova-companion.service"),
           COMPANION_SERVICE_CONTENTS,
         );
         const result = await findExtraGatewayServices({ HOME: tmpHome });
@@ -183,31 +180,28 @@ describe("findExtraGatewayServices (linux / scanSystemdDir) — real filesystem"
     },
   );
 
-  it.skipIf(!isLinux)(
-    "reports custom-named gateway units that execute openclaw gateway",
-    async () => {
-      const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
-      const systemdDir = path.join(tmpHome, ".config", "systemd", "user");
-      const unitPath = path.join(systemdDir, "custom-openclaw.service");
-      try {
-        await fs.mkdir(systemdDir, { recursive: true });
-        await fs.writeFile(unitPath, CUSTOM_NOVA_GATEWAY_CONTENTS);
-        const result = await findExtraGatewayServices({ HOME: tmpHome });
-        expect(result).toEqual([
-          {
-            platform: "linux",
-            label: "custom-openclaw.service",
-            detail: `unit: ${unitPath}`,
-            scope: "user",
-            marker: "openclaw",
-            legacy: false,
-          },
-        ]);
-      } finally {
-        await fs.rm(tmpHome, { recursive: true, force: true });
-      }
-    },
-  );
+  it.skipIf(!isLinux)("reports custom-named gateway units that execute nova gateway", async () => {
+    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
+    const systemdDir = path.join(tmpHome, ".config", "systemd", "user");
+    const unitPath = path.join(systemdDir, "custom-nova.service");
+    try {
+      await fs.mkdir(systemdDir, { recursive: true });
+      await fs.writeFile(unitPath, CUSTOM_NOVA_GATEWAY_CONTENTS);
+      const result = await findExtraGatewayServices({ HOME: tmpHome });
+      expect(result).toEqual([
+        {
+          platform: "linux",
+          label: "custom-nova.service",
+          detail: `unit: ${unitPath}`,
+          scope: "user",
+          marker: "nova",
+          legacy: false,
+        },
+      ]);
+    } finally {
+      await fs.rm(tmpHome, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("findExtraGatewayServices (darwin / scanLaunchdDir) — real filesystem", () => {
@@ -228,7 +222,7 @@ describe("findExtraGatewayServices (darwin / scanLaunchdDir) — real filesystem
   });
 
   it("does not report LaunchAgent companions that only mention the gateway label", async () => {
-    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
     const launchdDir = path.join(tmpHome, "Library", "LaunchAgents");
     try {
       await fs.mkdir(launchdDir, { recursive: true });
@@ -237,8 +231,8 @@ describe("findExtraGatewayServices (darwin / scanLaunchdDir) — real filesystem
         `<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0"><dict>
 <key>Label</key><string>com.example.companion</string>
-<key>KeepAlive</key><dict><key>OtherJobEnabled</key><dict><key>ai.openclaw.gateway</key><true/></dict></dict>
-<key>ProgramArguments</key><array><string>/usr/local/bin/openclaw-helper</string><string>sync</string></array>
+<key>KeepAlive</key><dict><key>OtherJobEnabled</key><dict><key>ai.nova.gateway</key><true/></dict></dict>
+<key>ProgramArguments</key><array><string>/usr/local/bin/nova-helper</string><string>sync</string></array>
 </dict></plist>`,
       );
       const result = await findExtraGatewayServices({ HOME: tmpHome });
@@ -249,7 +243,7 @@ describe("findExtraGatewayServices (darwin / scanLaunchdDir) — real filesystem
   });
 
   it("does not report LaunchAgent companions that only pass gateway-named options", async () => {
-    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
     const launchdDir = path.join(tmpHome, "Library", "LaunchAgents");
     try {
       await fs.mkdir(launchdDir, { recursive: true });
@@ -258,7 +252,7 @@ describe("findExtraGatewayServices (darwin / scanLaunchdDir) — real filesystem
         `<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0"><dict>
 <key>Label</key><string>com.example.companion-options</string>
-<key>ProgramArguments</key><array><string>/usr/local/bin/openclaw-helper</string><string>--gateway-url</string><string>http://127.0.0.1:18789</string><string>sync</string></array>
+<key>ProgramArguments</key><array><string>/usr/local/bin/nova-helper</string><string>--gateway-url</string><string>http://127.0.0.1:18789</string><string>sync</string></array>
 </dict></plist>`,
       );
       const result = await findExtraGatewayServices({ HOME: tmpHome });
@@ -269,7 +263,7 @@ describe("findExtraGatewayServices (darwin / scanLaunchdDir) — real filesystem
   });
 
   it("does not report non-gateway LaunchAgents that mention clawdbot in environment values", async () => {
-    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
     const launchdDir = path.join(tmpHome, "Library", "LaunchAgents");
     try {
       await fs.mkdir(launchdDir, { recursive: true });
@@ -289,28 +283,28 @@ describe("findExtraGatewayServices (darwin / scanLaunchdDir) — real filesystem
     }
   });
 
-  it("reports custom LaunchAgents that execute openclaw gateway", async () => {
-    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+  it("reports custom LaunchAgents that execute nova gateway", async () => {
+    const tmpHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
     const launchdDir = path.join(tmpHome, "Library", "LaunchAgents");
-    const plistPath = path.join(launchdDir, "com.example.openclaw-gateway.plist");
+    const plistPath = path.join(launchdDir, "com.example.nova-gateway.plist");
     try {
       await fs.mkdir(launchdDir, { recursive: true });
       await fs.writeFile(
         plistPath,
         `<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0"><dict>
-<key>Label</key><string>com.example.openclaw-gateway</string>
-<key>ProgramArguments</key><array><string>/usr/local/bin/openclaw</string><string>gateway</string><string>--port</string><string>18888</string></array>
+<key>Label</key><string>com.example.nova-gateway</string>
+<key>ProgramArguments</key><array><string>/usr/local/bin/nova</string><string>gateway</string><string>--port</string><string>18888</string></array>
 </dict></plist>`,
       );
       const result = await findExtraGatewayServices({ HOME: tmpHome });
       expect(result).toEqual([
         {
           platform: "darwin",
-          label: "com.example.openclaw-gateway",
+          label: "com.example.nova-gateway",
           detail: `plist: ${plistPath}`,
           scope: "user",
-          marker: "openclaw",
+          marker: "nova",
           legacy: false,
         },
       ]);
@@ -355,14 +349,14 @@ describe("findExtraGatewayServices (win32)", () => {
     expect(result).toStrictEqual([]);
   });
 
-  it("collects only non-openclaw marker tasks from schtasks output", async () => {
+  it("collects only non-nova marker tasks from schtasks output", async () => {
     // Real schtasks /Query /FO LIST /V output prefixes root-folder task
     // names with a backslash (e.g. TaskName:\Nova Gateway).
     execSchtasksMock.mockResolvedValueOnce({
       code: 0,
       stdout: [
         "TaskName:\\Nova Gateway",
-        "Task To Run: C:\\Program Files\\Nova\\openclaw.exe gateway run",
+        "Task To Run: C:\\Program Files\\Nova\\nova.exe gateway run",
         "",
         "TaskName: Clawdbot Legacy",
         "Task To Run: C:\\clawdbot\\clawdbot.exe run",
@@ -394,13 +388,13 @@ describe("findExtraGatewayServices (win32)", () => {
       code: 0,
       stdout: [
         "TaskName:\\Nova Gateway",
-        "Task To Run: C:\\Program Files\\Nova\\openclaw.exe gateway run",
+        "Task To Run: C:\\Program Files\\Nova\\nova.exe gateway run",
         "",
         "TaskName:\\Nova Gateway (dev)",
-        "Task To Run: C:\\Program Files\\Nova\\openclaw.exe gateway run --profile dev",
+        "Task To Run: C:\\Program Files\\Nova\\nova.exe gateway run --profile dev",
         "",
         "TaskName:\\Nova Gateway Backup",
-        "Task To Run: C:\\Program Files\\Nova\\openclaw.exe gateway run",
+        "Task To Run: C:\\Program Files\\Nova\\nova.exe gateway run",
         "",
       ].join("\n"),
       stderr: "",
@@ -411,10 +405,9 @@ describe("findExtraGatewayServices (win32)", () => {
       {
         platform: "win32",
         label: "\\Nova Gateway Backup",
-        detail:
-          "task: \\Nova Gateway Backup, run: C:\\Program Files\\Nova\\openclaw.exe gateway run",
+        detail: "task: \\Nova Gateway Backup, run: C:\\Program Files\\Nova\\nova.exe gateway run",
         scope: "system",
-        marker: "openclaw",
+        marker: "nova",
         legacy: false,
       },
     ]);

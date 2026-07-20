@@ -1,6 +1,6 @@
 import type {
-  OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginNodeInvokePolicyResult,
+  NovaPluginNodeInvokePolicy,
+  NovaPluginNodeInvokePolicyResult,
 } from "../plugins/plugin-registration.types.js";
 
 export type MeetingBrowserNodeStartConfig = {
@@ -24,7 +24,7 @@ export type MeetingBrowserNodePolicyOptions = {
 
 type PolicyDecision =
   | { approved: true; params: Record<string, unknown> }
-  | { approved: false; result: OpenClawPluginNodeInvokePolicyResult };
+  | { approved: false; result: NovaPluginNodeInvokePolicyResult };
 
 function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
@@ -213,7 +213,7 @@ function buildForwardParams(
 
 export function createMeetingBrowserNodeInvokePolicy(
   options: MeetingBrowserNodePolicyOptions,
-): OpenClawPluginNodeInvokePolicy {
+): NovaPluginNodeInvokePolicy {
   return {
     commands: [options.commandName],
     dangerous: true,

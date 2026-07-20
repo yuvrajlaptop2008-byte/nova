@@ -3,7 +3,7 @@ import { wrapToolWithBeforeToolCallHook } from "../agents/agent-tools.before-too
 import { BEFORE_TOOL_CALL_HOOK_CONTEXT } from "../agents/before-tool-call-metadata.js";
 import type { CodeModeHeadlessResult } from "../agents/code-mode.js";
 import type { AnyAgentTool } from "../agents/tools/common.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createCronScriptRuntime } from "./trigger-script.js";
 
 type EvaluatorDeps = Parameters<typeof createCronScriptRuntime>[0];
@@ -26,7 +26,7 @@ function abortReason(signal: AbortSignal | undefined): Error {
   return reason instanceof Error ? reason : new Error("preparation aborted");
 }
 
-function createPreparedRuntime(config: OpenClawConfig) {
+function createPreparedRuntime(config: NovaConfig) {
   const tool = wrapToolWithBeforeToolCallHook(
     {
       name: "probe",
@@ -56,7 +56,7 @@ function createEvaluator(
     >[0],
   ) => Promise<CodeModeHeadlessResult>,
 ) {
-  const config = {} as OpenClawConfig;
+  const config = {} as NovaConfig;
   const prepareRuntime = vi.fn(async () => createPreparedRuntime(config));
   return {
     evaluate: createCronScriptRuntime({ config, runHeadless, prepareRuntime }).evaluateTrigger,
@@ -154,7 +154,7 @@ describe("cron trigger script evaluator", () => {
   });
 
   it("single-flights concurrent runtime preparation for the same job", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     let release: ((runtime: ReturnType<typeof createPreparedRuntime>) => void) | undefined;
     const pending = new Promise<ReturnType<typeof createPreparedRuntime>>((resolve) => {
       release = resolve;
@@ -176,7 +176,7 @@ describe("cron trigger script evaluator", () => {
   });
 
   it("retries shared runtime preparation for a still-live evaluator after its owner aborts", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const prepareRuntime = vi.fn(async (params: PrepareParams) => {
       if (prepareRuntime.mock.calls.length === 1) {
         return await new Promise<never>((_resolve, reject) => {
@@ -213,7 +213,7 @@ describe("cron trigger script evaluator", () => {
   it("retries shared runtime preparation after an earlier evaluator reaches its deadline", async () => {
     vi.useFakeTimers();
     try {
-      const config = {} as OpenClawConfig;
+      const config = {} as NovaConfig;
       const prepareRuntime = vi.fn(async (params: PrepareParams) => {
         if (prepareRuntime.mock.calls.length === 1) {
           return await new Promise<never>((_resolve, reject) => {
@@ -251,7 +251,7 @@ describe("cron trigger script evaluator", () => {
   });
 
   it("invalidates a cached runtime when toolsAllow changes", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const prepareRuntime = vi.fn(async (_params: PrepareParams) => createPreparedRuntime(config));
     const runHeadless = vi.fn(async () => completed({ value: { fire: false } }));
     const evaluate = createCronTriggerEvaluator({ config, prepareRuntime, runHeadless });
@@ -329,7 +329,7 @@ describe("cron trigger script evaluator", () => {
   });
 
   it("cancels runtime preparation when its only evaluator aborts", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     let preparationSignal: AbortSignal | undefined;
     const prepareRuntime = vi.fn(async (params: { signal?: AbortSignal }): Promise<never> => {
       preparationSignal = params.signal;
@@ -369,7 +369,7 @@ describe("cron trigger script evaluator", () => {
   it("keeps the internal evaluation deadline classified as timeout", async () => {
     vi.useFakeTimers();
     try {
-      const config = {} as OpenClawConfig;
+      const config = {} as NovaConfig;
       const prepareRuntime = vi.fn(async (params: { signal?: AbortSignal }): Promise<never> => {
         return await new Promise<never>((_resolve, reject) => {
           params.signal?.addEventListener("abort", () => reject(abortReason(params.signal)), {
@@ -402,7 +402,7 @@ describe("cron trigger script evaluator", () => {
 
 describe("cron script payload evaluator", () => {
   it("uses payload-grade capped budgets and exposes frozen trigger state", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const runHeadless = vi.fn(async (_params: HeadlessParams) =>
       completed({
         value: {
@@ -456,7 +456,7 @@ describe("cron script payload evaluator", () => {
   });
 
   it("uses payload defaults and accepts an omitted result state", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const runHeadless = vi.fn(async (_params: HeadlessParams) => completed({ value: {} }));
     const runtime = createCronScriptRuntime({
       config,
@@ -474,7 +474,7 @@ describe("cron script payload evaluator", () => {
   });
 
   it("canonicalizes returned state to the JSON value that will be persisted", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const runtime = createCronScriptRuntime({
       config,
       runHeadless: vi.fn(async () =>
@@ -500,7 +500,7 @@ describe("cron script payload evaluator", () => {
     [{ nextCheck: "tomorrowish" }, "nextCheck must be a positive duration"],
     [{ state: "x".repeat(17 * 1024) }, "state exceeds the 16KB limit"],
   ] as const)("rejects an invalid result %#", async (value, error) => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const runtime = createCronScriptRuntime({
       config,
       runHeadless: vi.fn(async () => completed({ value })),
@@ -513,7 +513,7 @@ describe("cron script payload evaluator", () => {
   });
 
   it("surfaces executor failures through the cron error contract", async () => {
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
     const runtime = createCronScriptRuntime({
       config,
       runHeadless: vi.fn(async () => ({

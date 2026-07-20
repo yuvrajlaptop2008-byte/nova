@@ -9,7 +9,7 @@ import {
   type ControlUiE2eServer,
 } from "../test-helpers/control-ui-e2e.ts";
 
-const NATIVE_UPDATE_AVAILABILITY_CHANGED_EVENT = "openclaw:native-update-availability-changed";
+const NATIVE_UPDATE_AVAILABILITY_CHANGED_EVENT = "nova:native-update-availability-changed";
 
 const chromiumExecutablePath = resolvePlaywrightChromiumExecutablePath(chromium.executablePath());
 const chromiumAvailable = canRunPlaywrightChromium(chromiumExecutablePath);
@@ -90,16 +90,16 @@ describeControlUiE2e("Control UI coalesced update E2E", () => {
     });
     await context.addInitScript(() => {
       const nativeWindow = window as unknown as {
-        openClawUpdateMessages: unknown[];
+        novaUpdateMessages: unknown[];
         webkit: {
-          messageHandlers: { openclawUpdate: { postMessage: (message: unknown) => void } };
+          messageHandlers: { novaUpdate: { postMessage: (message: unknown) => void } };
         };
       };
-      nativeWindow.openClawUpdateMessages = [];
+      nativeWindow.novaUpdateMessages = [];
       nativeWindow.webkit = {
         messageHandlers: {
-          openclawUpdate: {
-            postMessage: (message) => nativeWindow.openClawUpdateMessages.push(message),
+          novaUpdate: {
+            postMessage: (message) => nativeWindow.novaUpdateMessages.push(message),
           },
         },
       };
@@ -130,7 +130,7 @@ describeControlUiE2e("Control UI coalesced update E2E", () => {
       await page.getByRole("button", { name: /Update Mac app \+ Gateway/ }).click();
       expect(
         await page.evaluate(
-          () => (window as unknown as { openClawUpdateMessages: unknown[] }).openClawUpdateMessages,
+          () => (window as unknown as { novaUpdateMessages: unknown[] }).novaUpdateMessages,
         ),
       ).toEqual([{ type: "start-update" }]);
       expect(await gateway.getRequests("update.run")).toHaveLength(0);

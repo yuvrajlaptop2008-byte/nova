@@ -1,8 +1,8 @@
 import Foundation
-import OpenClawKit
-import OpenClawProtocol
+import NovaKit
+import NovaProtocol
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 @MainActor
 private final class UnusedPCMStreamingAudioPlayer: PCMStreamingAudioPlaying {

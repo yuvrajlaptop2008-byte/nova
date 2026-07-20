@@ -1,5 +1,5 @@
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { AssistantMessage } from "openclaw/plugin-sdk/llm";
+import type { EmbeddedRunAttemptParams } from "nova/plugin-sdk/agent-harness-runtime";
+import type { AssistantMessage } from "nova/plugin-sdk/llm";
 import {
   createAssistantMessage as buildAssistantMessage,
   createAssistantMirrorMessage as buildAssistantMirrorMessage,

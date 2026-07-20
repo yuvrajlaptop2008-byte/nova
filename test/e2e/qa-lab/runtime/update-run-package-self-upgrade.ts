@@ -179,7 +179,7 @@ async function runProducer(options: ProducerOptions): Promise<QaEvidenceSummaryJ
         { kind: "log", filePath: path.join("lane", "systemctl-shim-setup.log") },
         { kind: "log", filePath: path.join("lane", "supervisor-monitor.log") },
         { kind: "log", filePath: path.join("lane", "systemctl-shim-gateway.log") },
-        { kind: "summary", filePath: path.join("lane", "openclaw-gateway.service") },
+        { kind: "summary", filePath: path.join("lane", "nova-gateway.service") },
         { kind: "health", filePath: path.join("lane", "healthz.json") },
         { kind: "health", filePath: path.join("lane", "readyz.json") },
         { kind: "health", filePath: path.join("lane", "gateway-status.json") },

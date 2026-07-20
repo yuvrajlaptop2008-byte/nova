@@ -107,7 +107,7 @@ import {
   uiSessionEventMatches,
 } from "../../lib/sessions/session-key.ts";
 import { SessionUnreadPatchGuard } from "../../lib/sessions/unread.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { PollController } from "../../lit/poll-controller.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import {
@@ -241,7 +241,7 @@ type ResolvedBoardView = {
 };
 
 const boardChatDockLayout = createDockPanelLayout({
-  storageKey: "openclaw.control.board-chat-dock.v1",
+  storageKey: "nova.control.board-chat-dock.v1",
   minHeight: 180,
   minWidth: 320,
   defaultDock: "right",
@@ -283,7 +283,7 @@ function catalogRawResult(raw: unknown): string | null {
 }
 function nativeHistoryMessageIdentity(message: unknown): string | null {
   const record = catalogRawRecord(message);
-  const metadata = catalogRawRecord(record?.["__openclaw"]);
+  const metadata = catalogRawRecord(record?.["__nova"]);
   const seq = metadata?.seq;
   const id = metadata?.id ?? record?.messageId;
   const sourceIdentity =
@@ -348,7 +348,7 @@ function keyboardEventPathMatches(event: KeyboardEvent, selector: string): boole
     .some((target) => target instanceof Element && target.matches(selector));
 }
 
-class ChatPane extends OpenClawLightDomElement {
+class ChatPane extends NovaLightDomElement {
   // One lifecycle-owned minute tick refreshes both relative labels and external PR state.
   readonly minutePoll = new PollController(this, 60_000, () => {
     this.requestUpdate();
@@ -1801,7 +1801,7 @@ class ChatPane extends OpenClawLightDomElement {
     const title = t("chat.board.resetTitle");
     const description = t("chat.board.resetDescription");
     return html`
-      <openclaw-modal-dialog
+      <nova-modal-dialog
         label=${title}
         description=${description}
         @modal-cancel=${() => this.settleResetConfirmation(false)}
@@ -1831,7 +1831,7 @@ class ChatPane extends OpenClawLightDomElement {
             </button>
           </div>
         </div>
-      </openclaw-modal-dialog>
+      </nova-modal-dialog>
     `;
   }
 
@@ -2233,11 +2233,7 @@ class ChatPane extends OpenClawLightDomElement {
     this.cancelResetConfirmationForSessionChange();
     this.syncHistoryObserver();
     const board = this.resolveBoardView();
-    if (
-      board.hasBoard &&
-      board.face === "dashboard" &&
-      !customElements.get("openclaw-board-view")
-    ) {
+    if (board.hasBoard && board.face === "dashboard" && !customElements.get("nova-board-view")) {
       void ensureBoardViewElement().then((loaded) => {
         if (loaded) {
           this.requestUpdate();
@@ -2834,7 +2830,7 @@ class ChatPane extends OpenClawLightDomElement {
       state.sidebarContent.sessionKey === sessionKey;
     const label = t("chat.sessionDiscussion.show");
     return html`
-      <openclaw-tooltip .content=${label}>
+      <nova-tooltip .content=${label}>
         <button
           class="btn btn--ghost btn--icon chat-icon-btn chat-session-discussion-toggle"
           type="button"
@@ -2844,7 +2840,7 @@ class ChatPane extends OpenClawLightDomElement {
         >
           ${icons.messageSquare}
         </button>
-      </openclaw-tooltip>
+      </nova-tooltip>
     `;
   }
 
@@ -3386,13 +3382,13 @@ class ChatPane extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-chat-pane")) {
-  customElements.define("openclaw-chat-pane", ChatPane);
+if (!customElements.get("nova-chat-pane")) {
+  customElements.define("nova-chat-pane", ChatPane);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-chat-pane": ChatPane;
+    "nova-chat-pane": ChatPane;
   }
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

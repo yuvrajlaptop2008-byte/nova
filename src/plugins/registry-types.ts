@@ -34,10 +34,7 @@ import type { PluginKind } from "./plugin-kind.types.js";
 import type { PluginRuntime } from "./runtime/types.js";
 import type { SessionCatalogProvider } from "./session-catalog.js";
 import type { PluginDependencyStatus } from "./status-dependencies-core.js";
-import type {
-  OpenClawPluginHttpRouteAuth,
-  OpenClawPluginHttpRouteUpgradeHandler,
-} from "./types.js";
+import type { NovaPluginHttpRouteAuth, NovaPluginHttpRouteUpgradeHandler } from "./types.js";
 import type { PluginMcpServerConnectionResolverRegistration } from "./types.mcp-connection.js";
 type ChannelPlugin = import("../channels/plugins/types.plugin.js").ChannelPlugin;
 type CliBackendPlugin = import("./types.js").CliBackendPlugin;
@@ -45,22 +42,21 @@ type ImageGenerationProviderPlugin = import("./types.js").ImageGenerationProvide
 type MediaUnderstandingProviderPlugin = import("./types.js").MediaUnderstandingProviderPlugin;
 type TranscriptSourceProvider = import("./types.js").TranscriptSourceProvider;
 type MusicGenerationProviderPlugin = import("./types.js").MusicGenerationProviderPlugin;
-type OpenClawPluginCliCommandDescriptor = import("./types.js").OpenClawPluginCliCommandDescriptor;
-type OpenClawPluginCliRegistrar = import("./types.js").OpenClawPluginCliRegistrar;
-type OpenClawPluginCommandDefinition = import("./types.js").OpenClawPluginCommandDefinition;
+type NovaPluginCliCommandDescriptor = import("./types.js").NovaPluginCliCommandDescriptor;
+type NovaPluginCliRegistrar = import("./types.js").NovaPluginCliRegistrar;
+type NovaPluginCommandDefinition = import("./types.js").NovaPluginCommandDefinition;
 type PluginInteractiveHandlerRegistration =
   import("./types.js").PluginInteractiveHandlerRegistration;
-type OpenClawPluginGatewayRuntimeScopeSurface =
-  import("./types.js").OpenClawPluginGatewayRuntimeScopeSurface;
-type OpenClawGatewayDiscoveryService = import("./types.js").OpenClawGatewayDiscoveryService;
-type OpenClawPluginHttpRouteHandler = import("./types.js").OpenClawPluginHttpRouteHandler;
-type OpenClawPluginHttpRouteMatch = import("./types.js").OpenClawPluginHttpRouteMatch;
-type OpenClawPluginHostedMediaResolver = import("./types.js").OpenClawPluginHostedMediaResolver;
-type OpenClawPluginReloadRegistration = import("./types.js").OpenClawPluginReloadRegistration;
-type OpenClawPluginSecurityAuditCollector =
-  import("./types.js").OpenClawPluginSecurityAuditCollector;
-type OpenClawPluginService = import("./types.js").OpenClawPluginService;
-type OpenClawPluginToolFactory = import("./types.js").OpenClawPluginToolFactory;
+type NovaPluginGatewayRuntimeScopeSurface =
+  import("./types.js").NovaPluginGatewayRuntimeScopeSurface;
+type NovaGatewayDiscoveryService = import("./types.js").NovaGatewayDiscoveryService;
+type NovaPluginHttpRouteHandler = import("./types.js").NovaPluginHttpRouteHandler;
+type NovaPluginHttpRouteMatch = import("./types.js").NovaPluginHttpRouteMatch;
+type NovaPluginHostedMediaResolver = import("./types.js").NovaPluginHostedMediaResolver;
+type NovaPluginReloadRegistration = import("./types.js").NovaPluginReloadRegistration;
+type NovaPluginSecurityAuditCollector = import("./types.js").NovaPluginSecurityAuditCollector;
+type NovaPluginService = import("./types.js").NovaPluginService;
+type NovaPluginToolFactory = import("./types.js").NovaPluginToolFactory;
 type PluginConversationBindingResolvedEvent =
   import("./types.js").PluginConversationBindingResolvedEvent;
 type TypedPluginHookRegistration = import("./types.js").PluginHookRegistration;
@@ -82,7 +78,7 @@ type UnifiedModelCatalogProviderPlugin = import("./types.js").UnifiedModelCatalo
 export type PluginToolRegistration = {
   pluginId: string;
   pluginName?: string;
-  factory: OpenClawPluginToolFactory;
+  factory: NovaPluginToolFactory;
   names: string[];
   declaredNames?: string[];
   optional: boolean;
@@ -94,10 +90,10 @@ export type PluginToolRegistration = {
 type PluginCliRegistration = {
   pluginId: string;
   pluginName?: string;
-  register: OpenClawPluginCliRegistrar;
+  register: NovaPluginCliRegistrar;
   parentPath: string[];
   commands: string[];
-  descriptors: OpenClawPluginCliCommandDescriptor[];
+  descriptors: NovaPluginCliCommandDescriptor[];
   source: string;
   rootDir?: string;
 };
@@ -106,11 +102,11 @@ type PluginCliRegistration = {
 export type PluginHttpRouteRegistration = {
   pluginId?: string;
   path: string;
-  handler: OpenClawPluginHttpRouteHandler;
-  handleUpgrade?: OpenClawPluginHttpRouteUpgradeHandler;
-  auth: OpenClawPluginHttpRouteAuth;
-  match: OpenClawPluginHttpRouteMatch;
-  gatewayRuntimeScopeSurface?: OpenClawPluginGatewayRuntimeScopeSurface;
+  handler: NovaPluginHttpRouteHandler;
+  handleUpgrade?: NovaPluginHttpRouteUpgradeHandler;
+  auth: NovaPluginHttpRouteAuth;
+  match: NovaPluginHttpRouteMatch;
+  gatewayRuntimeScopeSurface?: NovaPluginGatewayRuntimeScopeSurface;
   gatewayMethodDispatchAllowed?: boolean;
   nodeCapability?: {
     surface: string;
@@ -122,7 +118,7 @@ export type PluginHttpRouteRegistration = {
 type PluginHostedMediaResolverRegistration = {
   pluginId: string;
   pluginName?: string;
-  resolver: OpenClawPluginHostedMediaResolver;
+  resolver: NovaPluginHostedMediaResolver;
   source: string;
   rootDir?: string;
 };
@@ -255,7 +251,7 @@ type PluginHookRegistration = {
 export type PluginServiceRegistration = {
   pluginId: string;
   pluginName?: string;
-  service: OpenClawPluginService;
+  service: NovaPluginService;
   source: string;
   origin: PluginOrigin;
   trustedOfficialInstall?: boolean;
@@ -265,7 +261,7 @@ export type PluginServiceRegistration = {
 export type PluginGatewayDiscoveryServiceRegistration = {
   pluginId: string;
   pluginName?: string;
-  service: OpenClawGatewayDiscoveryService;
+  service: NovaGatewayDiscoveryService;
   source: string;
   rootDir?: string;
 };
@@ -273,7 +269,7 @@ export type PluginGatewayDiscoveryServiceRegistration = {
 type PluginReloadRegistration = {
   pluginId: string;
   pluginName?: string;
-  registration: OpenClawPluginReloadRegistration;
+  registration: NovaPluginReloadRegistration;
   source: string;
   rootDir?: string;
 };
@@ -281,7 +277,7 @@ type PluginReloadRegistration = {
 export type PluginNodeHostCommandRegistration = {
   pluginId: string;
   pluginName?: string;
-  command: import("./types.js").OpenClawPluginNodeHostCommand;
+  command: import("./types.js").NovaPluginNodeHostCommand;
   source: string;
   rootDir?: string;
 };
@@ -289,7 +285,7 @@ export type PluginNodeHostCommandRegistration = {
 type PluginNodeInvokePolicyRegistration = {
   pluginId: string;
   pluginName?: string;
-  policy: import("./types.js").OpenClawPluginNodeInvokePolicy;
+  policy: import("./types.js").NovaPluginNodeInvokePolicy;
   pluginConfig?: Record<string, unknown>;
   source: string;
   rootDir?: string;
@@ -298,7 +294,7 @@ type PluginNodeInvokePolicyRegistration = {
 type PluginSecurityAuditCollectorRegistration = {
   pluginId: string;
   pluginName?: string;
-  collector: OpenClawPluginSecurityAuditCollector;
+  collector: NovaPluginSecurityAuditCollector;
   source: string;
   rootDir?: string;
 };
@@ -306,7 +302,7 @@ type PluginSecurityAuditCollectorRegistration = {
 export type PluginCommandRegistration = {
   pluginId: string;
   pluginName?: string;
-  command: OpenClawPluginCommandDefinition;
+  command: NovaPluginCommandDefinition;
   source: string;
   rootDir?: string;
 };

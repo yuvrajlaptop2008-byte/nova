@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type {
   FileSecretProviderConfig,
   ManualExecSecretProviderConfig,
@@ -69,7 +69,7 @@ const WINDOWS_UNC_PATH_PATTERN = /^\\\\[^\\]+\\[^\\]+/;
 export type { SecretRefResolveCache } from "./resolve-types.js";
 
 type ResolveSecretRefOptions = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env?: NodeJS.ProcessEnv;
   cache?: SecretRefResolveCache;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
@@ -140,7 +140,7 @@ function toProviderKey(source: SecretRefSource, provider: string): string {
 
 function resolveConfiguredProvider(params: {
   ref: SecretRef;
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
 }): SecretProviderConfig {

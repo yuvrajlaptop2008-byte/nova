@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { MAX_TIMER_TIMEOUT_MS } from "@nova/normalization-core/number-coercion";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { loggingState } from "../logging/state.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { AGENT_HARNESS_SESSION_KEY_RESERVED_MESSAGE } from "../sessions/agent-harness-session-key.js";
@@ -53,7 +53,7 @@ const jsonRuntime = {
   exit: vi.fn(),
 };
 
-function mockConfig(storePath: string, overrides?: Partial<OpenClawConfig>) {
+function mockConfig(storePath: string, overrides?: Partial<NovaConfig>) {
   const config = {
     agents: {
       defaults: {
@@ -76,9 +76,9 @@ function mockConfig(storePath: string, overrides?: Partial<OpenClawConfig>) {
 
 async function withTempStore(
   fn: (ctx: { dir: string; store: string }) => Promise<void>,
-  overrides?: Partial<OpenClawConfig>,
+  overrides?: Partial<NovaConfig>,
 ) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-agent-cli-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-agent-cli-"));
   const store = path.join(dir, "sessions.json");
   mockConfig(store, overrides);
   try {
@@ -584,7 +584,7 @@ describe("agentCliCommand", () => {
 
   it("uses an agent-scoped --to value as the gateway session selector", async () => {
     await withTempStore(async () => {
-      const sessionKey = "agent:main:openclaw-weixin:direct:o9cq802hhmfc@im.wechat";
+      const sessionKey = "agent:main:nova-weixin:direct:o9cq802hhmfc@im.wechat";
       mockGatewaySuccessReply();
 
       await agentCliCommand({ message: "hi", to: sessionKey }, runtime);
@@ -2269,7 +2269,7 @@ describe("agentCliCommand", () => {
       expect(agentCommand).not.toHaveBeenCalled();
       expect(runtime.exit).toHaveBeenCalledWith(1);
       const errorMessages = mockMessages(runtime.error);
-      expect(errorMessages.some((m) => m.includes("openclaw sessions compact"))).toBe(true);
+      expect(errorMessages.some((m) => m.includes("nova sessions compact"))).toBe(true);
       expect(errorMessages.some((m) => m.includes("EMBEDDED FALLBACK"))).toBe(false);
     });
   }
@@ -2290,7 +2290,7 @@ describe("agentCliCommand", () => {
     expect(agentCommand).not.toHaveBeenCalled();
     expect(runtime.exit).toHaveBeenCalledWith(1);
     const errorMessages = mockMessages(runtime.error);
-    expect(errorMessages.some((m) => m.includes("openclaw sessions compact"))).toBe(true);
+    expect(errorMessages.some((m) => m.includes("nova sessions compact"))).toBe(true);
     expect(errorMessages.some((m) => m.includes("EMBEDDED FALLBACK"))).toBe(false);
   });
 

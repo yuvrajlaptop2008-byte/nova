@@ -7,7 +7,7 @@ type CronDeliveryDispatchTestApi = {
 
 function getTestApi(): CronDeliveryDispatchTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.cronDeliveryDispatchTestApi")
+    Symbol.for("nova.cronDeliveryDispatchTestApi")
   ] as CronDeliveryDispatchTestApi;
 }
 

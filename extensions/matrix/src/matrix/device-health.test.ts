@@ -1,13 +1,13 @@
 // Matrix tests cover device health plugin behavior.
 import { describe, expect, it } from "vitest";
-import { isOpenClawManagedMatrixDevice, summarizeMatrixDeviceHealth } from "./device-health.js";
+import { isNovaManagedMatrixDevice, summarizeMatrixDeviceHealth } from "./device-health.js";
 
 describe("matrix device health", () => {
   it("detects Nova-managed device names", () => {
-    expect(isOpenClawManagedMatrixDevice("Nova Gateway")).toBe(true);
-    expect(isOpenClawManagedMatrixDevice("Nova Debug")).toBe(true);
-    expect(isOpenClawManagedMatrixDevice("Element iPhone")).toBe(false);
-    expect(isOpenClawManagedMatrixDevice(null)).toBe(false);
+    expect(isNovaManagedMatrixDevice("Nova Gateway")).toBe(true);
+    expect(isNovaManagedMatrixDevice("Nova Debug")).toBe(true);
+    expect(isNovaManagedMatrixDevice("Element iPhone")).toBe(false);
+    expect(isNovaManagedMatrixDevice(null)).toBe(false);
   });
 
   it("summarizes stale Nova-managed devices separately from the current device", () => {
@@ -36,14 +36,14 @@ describe("matrix device health", () => {
 
     expect(summary).toEqual({
       currentDeviceId: "du314Zpw3A",
-      currentOpenClawDevices: [
+      currentNovaDevices: [
         {
           deviceId: "du314Zpw3A",
           displayName: "Nova Gateway",
           current: true,
         },
       ],
-      staleOpenClawDevices: [
+      staleNovaDevices: [
         {
           deviceId: "BritdXC6iL",
           displayName: "Nova Gateway",

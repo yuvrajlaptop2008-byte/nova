@@ -60,7 +60,7 @@ function createManifestPlugin(id: string): PluginManifestRecord {
     origin: "bundled",
     rootDir: `/tmp/${id}`,
     source: "bundled",
-    manifestPath: `/tmp/${id}/openclaw.plugin.json`,
+    manifestPath: `/tmp/${id}/nova.plugin.json`,
     providerDiscoverySource: `/tmp/${id}/provider-discovery.ts`,
   };
 }
@@ -485,9 +485,9 @@ describe("resolvePluginDiscoveryProvidersRuntime", () => {
         plugins: [
           {
             ...createManifestPlugin("deepseek"),
-            rootDir: "/tmp/openclaw/dist/extensions/deepseek",
-            manifestPath: "/tmp/openclaw/dist/extensions/deepseek/openclaw.plugin.json",
-            providerDiscoverySource: "/tmp/openclaw/dist/extensions/deepseek/provider-discovery.js",
+            rootDir: "/tmp/nova/dist/extensions/deepseek",
+            manifestPath: "/tmp/nova/dist/extensions/deepseek/nova.plugin.json",
+            providerDiscoverySource: "/tmp/nova/dist/extensions/deepseek/provider-discovery.js",
           },
         ],
         diagnostics: [],
@@ -498,8 +498,8 @@ describe("resolvePluginDiscoveryProvidersRuntime", () => {
     clearPluginMetadataLifecycleCaches();
 
     expect(mocks.clearNativeRequireJavaScriptModuleCache).toHaveBeenCalledWith(
-      "/tmp/openclaw/dist/extensions/deepseek/provider-discovery.js",
-      { dependencyRoot: "/tmp/openclaw/dist" },
+      "/tmp/nova/dist/extensions/deepseek/provider-discovery.js",
+      { dependencyRoot: "/tmp/nova/dist" },
     );
   });
 

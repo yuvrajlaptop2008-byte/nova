@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { resolvePreferredOpenClawTmpDir } from "./tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "./tmp-nova-dir.js";
 import {
   consumeUpdatePostInstallDoctorResult,
   createDeferredConfiguredPluginRepairDoctorResult,
@@ -30,10 +30,10 @@ describe("post-install doctor result IPC", () => {
   });
 
   it("rejects result paths outside the secure Nova temp root", async () => {
-    const tempRoot = resolvePreferredOpenClawTmpDir();
+    const tempRoot = resolvePreferredNovaTmpDir();
     const resultPath = path.join(
       `${tempRoot}-outside`,
-      `openclaw-update-doctor-${process.pid}-00000000-0000-4000-8000-000000000000.json`,
+      `nova-update-doctor-${process.pid}-00000000-0000-4000-8000-000000000000.json`,
     );
 
     await expect(

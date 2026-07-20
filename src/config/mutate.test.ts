@@ -22,11 +22,11 @@ import {
   setRuntimeConfigSnapshot,
   setRuntimeConfigSnapshotRefreshHandler,
 } from "./runtime-snapshot.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "./types.js";
+import type { ConfigFileSnapshot, NovaConfig } from "./types.js";
 
 type MockValidationIssue = { path: string; message: string };
 type MockValidationResult =
-  | { ok: true; config: OpenClawConfig; warnings: MockValidationIssue[] }
+  | { ok: true; config: NovaConfig; warnings: MockValidationIssue[] }
   | { ok: false; issues: MockValidationIssue[]; warnings: MockValidationIssue[] };
 type ConfigIOReadForWrite = ReturnType<
   typeof import("./io.js").createConfigIO
@@ -49,7 +49,7 @@ const ioMocks = vi.hoisted(() => {
 });
 const validationMocks = vi.hoisted(() => ({
   validateConfigObjectWithPlugins: vi.fn(
-    (config: OpenClawConfig): MockValidationResult => ({
+    (config: NovaConfig): MockValidationResult => ({
       ok: true,
       config,
       warnings: [],
@@ -78,15 +78,15 @@ function createSnapshot(params: {
   hash: string;
   path?: string;
   parsed?: unknown;
-  sourceConfig: OpenClawConfig;
-  runtimeConfig?: OpenClawConfig;
+  sourceConfig: NovaConfig;
+  runtimeConfig?: NovaConfig;
 }): ConfigFileSnapshot {
   const runtimeConfig = (params.runtimeConfig ??
     params.sourceConfig) as ConfigFileSnapshot["config"];
   const sourceConfig = params.sourceConfig as ConfigFileSnapshot["sourceConfig"];
   const parsed = params.parsed ?? params.sourceConfig;
   return {
-    path: params.path ?? "/tmp/openclaw.json",
+    path: params.path ?? "/tmp/nova.json",
     exists: true,
     raw: `${JSON.stringify(parsed, null, 2)}\n`,
     parsed,
@@ -109,7 +109,7 @@ async function resolveIncludeTarget(filePath: string): Promise<string> {
 const allowConfigPathWrite = () => {};
 
 describe("config mutate helpers", () => {
-  const suiteRootTracker = createSuiteTempRootTracker({ prefix: "openclaw-config-mutate-" });
+  const suiteRootTracker = createSuiteTempRootTracker({ prefix: "nova-config-mutate-" });
   const originalNixMode = process.env.NOVA_NIX_MODE;
 
   beforeAll(async () => {
@@ -128,13 +128,11 @@ describe("config mutate helpers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetConfigRuntimeState();
-    validationMocks.validateConfigObjectWithPlugins.mockImplementation(
-      (config: OpenClawConfig) => ({
-        ok: true,
-        config,
-        warnings: [],
-      }),
-    );
+    validationMocks.validateConfigObjectWithPlugins.mockImplementation((config: NovaConfig) => ({
+      ok: true,
+      config,
+      warnings: [],
+    }));
     ioMocks.resolveConfigSnapshotHash.mockImplementation(
       (snapshot: { hash?: string }) => snapshot.hash ?? null,
     );
@@ -247,12 +245,12 @@ describe("config mutate helpers", () => {
   it("preserves config path ownership across transform retries", async () => {
     const initial = createSnapshot({
       hash: "hash-1",
-      path: "/tmp/first-openclaw.json",
+      path: "/tmp/first-nova.json",
       sourceConfig: { agents: { list: [] } },
     });
     const fresh = createSnapshot({
       hash: "hash-2",
-      path: "/tmp/second-openclaw.json",
+      path: "/tmp/second-nova.json",
       sourceConfig: { agents: { list: [] } },
     });
     ioMocks.readConfigFileSnapshotForWrite
@@ -268,7 +266,7 @@ describe("config mutate helpers", () => {
       new ConfigMutationConflictError("stale", { currentHash: fresh.hash ?? null }),
     );
 
-    const transform = vi.fn((config: OpenClawConfig) => ({ nextConfig: config }));
+    const transform = vi.fn((config: NovaConfig) => ({ nextConfig: config }));
 
     await expect(
       transformConfigFileWithRetry({
@@ -285,12 +283,12 @@ describe("config mutate helpers", () => {
   it("captures retry ownership before checking a caller base hash", async () => {
     const initial = createSnapshot({
       hash: "hash-1",
-      path: "/tmp/first-openclaw.json",
+      path: "/tmp/first-nova.json",
       sourceConfig: { agents: { list: [] } },
     });
     const fresh = createSnapshot({
       hash: "hash-2",
-      path: "/tmp/second-openclaw.json",
+      path: "/tmp/second-nova.json",
       sourceConfig: { agents: { list: [] } },
     });
     ioMocks.readConfigFileSnapshotForWrite
@@ -308,7 +306,7 @@ describe("config mutate helpers", () => {
           ownedConfigPathForWrite: fresh.path,
         },
       });
-    const transform = vi.fn((config: OpenClawConfig) => ({ nextConfig: config }));
+    const transform = vi.fn((config: NovaConfig) => ({ nextConfig: config }));
 
     await expect(
       transformConfigFileWithRetry({
@@ -349,7 +347,7 @@ describe("config mutate helpers", () => {
     await expect(
       transformConfigFileWithRetry({
         transform(config) {
-          activeConfigPath = "/tmp/second-openclaw.json";
+          activeConfigPath = "/tmp/second-nova.json";
           return { nextConfig: config };
         },
       }),
@@ -477,7 +475,7 @@ describe("config mutate helpers", () => {
 
   it("rejects replace attempts when the active config path changed", async () => {
     const snapshot = createSnapshot({
-      path: "/tmp/second-openclaw.json",
+      path: "/tmp/second-nova.json",
       hash: "same-hash",
       sourceConfig: { gateway: { port: 18789 } },
     });
@@ -490,7 +488,7 @@ describe("config mutate helpers", () => {
       replaceConfigFile({
         baseHash: snapshot.hash,
         nextConfig: { gateway: { port: 19002 } },
-        writeOptions: { expectedConfigPath: "/tmp/first-openclaw.json" },
+        writeOptions: { expectedConfigPath: "/tmp/first-nova.json" },
       }),
     ).rejects.toThrow("config path changed since last load");
     expect(ioMocks.writeConfigFile).not.toHaveBeenCalled();
@@ -511,9 +509,7 @@ describe("config mutate helpers", () => {
       replaceConfigFile({
         nextConfig: { gateway: { port: 19001 } },
       }),
-    ).rejects.toThrow(
-      "Agent-first Nix setup: https://github.com/openclaw/nix-openclaw#quick-start",
-    );
+    ).rejects.toThrow("Agent-first Nix setup: https://github.com/nova/nix-nova#quick-start");
 
     expect(ioMocks.writeConfigFile).not.toHaveBeenCalled();
   });
@@ -535,7 +531,7 @@ describe("config mutate helpers", () => {
           draft.gateway = { ...draft.gateway, port: 19001 };
         },
       }),
-    ).rejects.toThrow("Nova Nix overview: https://docs.openclaw.ai/install/nix");
+    ).rejects.toThrow("Nova Nix overview: https://docs.nova.ai/install/nix");
 
     expect(ioMocks.writeConfigFile).not.toHaveBeenCalled();
   });
@@ -652,8 +648,8 @@ describe("config mutate helpers", () => {
 
   it("repairs invalid config through a single-file top-level plugins include", async () => {
     const home = await suiteRootTracker.make("include");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -809,8 +805,8 @@ describe("config mutate helpers", () => {
 
   it("repairs a malformed single-file top-level include", async () => {
     const home = await suiteRootTracker.make("malformed-include");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -836,7 +832,7 @@ describe("config mutate helpers", () => {
     };
     const nextConfig = {
       plugins: { entries: { demo: { enabled: true } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     ioMocks.readConfigFileSnapshotForWrite
       .mockResolvedValueOnce({
         snapshot,
@@ -875,8 +871,8 @@ describe("config mutate helpers", () => {
 
   it("repairs a missing single-file top-level include from its snapshot", async () => {
     const home = await suiteRootTracker.make("missing-include");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -901,7 +897,7 @@ describe("config mutate helpers", () => {
     };
     const nextConfig = {
       plugins: { entries: { demo: { enabled: true } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     ioMocks.readConfigFileSnapshotForWrite
       .mockResolvedValueOnce({
         snapshot,
@@ -942,8 +938,8 @@ describe("config mutate helpers", () => {
     async () => {
       const home = await suiteRootTracker.make("missing-include-symlink-escape");
       const outside = await suiteRootTracker.make("missing-include-symlink-outside");
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
-      const linkPath = path.join(home, ".openclaw", "link");
+      const configPath = path.join(home, ".nova", "nova.json");
+      const linkPath = path.join(home, ".nova", "link");
       const pluginsPath = path.join(linkPath, "plugins.json5");
       const outsidePluginsPath = path.join(outside, "plugins.json5");
       await fs.mkdir(path.dirname(configPath), { recursive: true });
@@ -996,8 +992,8 @@ describe("config mutate helpers", () => {
 
   it("does not overwrite a malformed include changed after its snapshot", async () => {
     const home = await suiteRootTracker.make("malformed-include-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     const snapshotRaw = "{ malformed";
     const concurrentRaw = "{ differently malformed";
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
@@ -1050,8 +1046,8 @@ describe("config mutate helpers", () => {
 
   it("prefers mutation-start include hashes over commit-time reread hashes", async () => {
     const home = await suiteRootTracker.make("include-mutation-start-hash");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     const initialRaw = `${JSON.stringify({ entries: {} }, null, 2)}\n`;
     const concurrentRaw = `${JSON.stringify(
       { entries: { concurrent: { enabled: true } } },
@@ -1105,8 +1101,8 @@ describe("config mutate helpers", () => {
 
   it("uses a provided mutation-start snapshot even without write options", async () => {
     const home = await suiteRootTracker.make("include-mutation-start-snapshot");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     const concurrentRaw = `${JSON.stringify(
       { entries: { concurrent: { enabled: true } } },
       null,
@@ -1146,8 +1142,8 @@ describe("config mutate helpers", () => {
 
   it("warns before a single-file include write with plugin validation skipped", async () => {
     const home = await suiteRootTracker.make("include-skip-plugin-validation");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -1178,7 +1174,7 @@ describe("config mutate helpers", () => {
       snapshot: refreshedSnapshot,
       writeOptions: { expectedConfigPath: configPath },
     });
-    const nextConfig: OpenClawConfig = {
+    const nextConfig: NovaConfig = {
       plugins: {
         entries: {
           "strict-plugin": { enabled: true },
@@ -1235,7 +1231,7 @@ describe("config mutate helpers", () => {
   it("rejects direct mutations to external include roots", async () => {
     const home = await suiteRootTracker.make("include-allowed-root");
     const sharedRoot = path.join(home, "shared");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
+    const configPath = path.join(home, ".nova", "nova.json");
     const pluginsPath = path.join(sharedRoot, "plugins.json5");
     await fs.mkdir(sharedRoot, { recursive: true });
     await fs.mkdir(path.dirname(configPath), { recursive: true });
@@ -1253,7 +1249,7 @@ describe("config mutate helpers", () => {
     });
     const nextConfig = {
       plugins: { entries: { demo: { enabled: true } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     ioMocks.readConfigFileSnapshotForWrite.mockResolvedValue({
       snapshot: createSnapshot({
         hash: "hash-include-allowed-root-refreshed",
@@ -1290,8 +1286,8 @@ describe("config mutate helpers", () => {
 
   it("preflights single-file top-level include writes before persisting", async () => {
     const home = await suiteRootTracker.make("include-runtime-preflight");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -1342,8 +1338,8 @@ describe("config mutate helpers", () => {
 
   it("runs a caller commit guard after runtime preflight and before an include write", async () => {
     const home = await suiteRootTracker.make("include-caller-preflight");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -1406,8 +1402,8 @@ describe("config mutate helpers", () => {
 
   it("preserves auth-store refresh scope for managed top-level include writes", async () => {
     const home = await suiteRootTracker.make("include-managed-refresh-scope");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -1423,7 +1419,7 @@ describe("config mutate helpers", () => {
     });
     const nextConfig = {
       plugins: { entries: { demo: { enabled: true } } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     ioMocks.readConfigFileSnapshotForWrite.mockResolvedValue({
       snapshot: createSnapshot({
         hash: "hash-include-managed-refresh-scope-written",
@@ -1434,7 +1430,7 @@ describe("config mutate helpers", () => {
       writeOptions: { expectedConfigPath: configPath },
     });
     const preflight = vi.fn(
-      async (sourceConfig: OpenClawConfig, refreshOptions?: { includeAuthStoreRefs?: boolean }) => {
+      async (sourceConfig: NovaConfig, refreshOptions?: { includeAuthStoreRefs?: boolean }) => {
         if (refreshOptions?.includeAuthStoreRefs !== false) {
           throw new Error("unavailable auth-profile SecretRef");
         }
@@ -1472,16 +1468,14 @@ describe("config mutate helpers", () => {
       includeAuthStoreRefs: false,
     });
     expect(notifications).toEqual([{ includeAuthStoreRefs: false }]);
-    const persisted = JSON.parse(
-      await fs.readFile(pluginsPath, "utf-8"),
-    ) as OpenClawConfig["plugins"];
+    const persisted = JSON.parse(await fs.readFile(pluginsPath, "utf-8")) as NovaConfig["plugins"];
     expect(persisted?.entries?.demo?.enabled).toBe(true);
   });
 
   it("uses the published restart env source for isolated managed include writes", async () => {
     const home = await suiteRootTracker.make("include-managed-deferred-restart-env");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const envPath = path.join(home, ".openclaw", "config", "env.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const envPath = path.join(home, ".nova", "config", "env.json5");
     const envKey = "OC";
     await fs.mkdir(path.dirname(envPath), { recursive: true });
     await fs.writeFile(
@@ -1504,15 +1498,15 @@ describe("config mutate helpers", () => {
     const initialConfig = {
       env: { vars: { [envKey]: "old" } },
       gateway: { auth: { mode: "token" as const, token: "old" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const acceptedRestartConfig = {
       env: { vars: { [envKey]: "live" } },
       gateway: { auth: { mode: "token" as const, token: "live" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const nextConfig = {
       env: { vars: { [envKey]: "next" } },
       gateway: { auth: { mode: "token" as const, token: "live" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const snapshot = createSnapshot({
       hash: "hash-include-managed-deferred-restart-env",
       path: configPath,
@@ -1532,7 +1526,7 @@ describe("config mutate helpers", () => {
         gateway: { auth: { mode: "token", token: "next" } },
       },
     });
-    let preflightSource: OpenClawConfig | undefined;
+    let preflightSource: NovaConfig | undefined;
     const releaseOwner = registerManagedRuntimeConfigWriteOwner(
       configPath,
       async (sourceConfig) => {
@@ -1598,8 +1592,8 @@ describe("config mutate helpers", () => {
 
   it("does not overwrite concurrent include edits made during preflight", async () => {
     const home = await suiteRootTracker.make("include-preflight-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -1654,8 +1648,8 @@ describe("config mutate helpers", () => {
 
   it("does not overwrite concurrent include edits made during backup rotation", async () => {
     const home = await suiteRootTracker.make("include-backup-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     const rootConfig = { plugins: { $include: "./config/plugins.json5" } };
     const initialPluginsRaw = `${JSON.stringify({ entries: {} }, null, 2)}\n`;
     const concurrentPluginsRaw = `${JSON.stringify(
@@ -1700,8 +1694,8 @@ describe("config mutate helpers", () => {
 
   it("does not write an include after its root ownership changes during backup rotation", async () => {
     const home = await suiteRootTracker.make("include-root-backup-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     const rootConfig = { plugins: { $include: "./config/plugins.json5" } };
     const initialPluginsRaw = `${JSON.stringify({ entries: {} }, null, 2)}\n`;
     const concurrentRootRaw = `${JSON.stringify(
@@ -1747,8 +1741,8 @@ describe("config mutate helpers", () => {
 
   it("does not write an include after its root ownership changes during preflight", async () => {
     const home = await suiteRootTracker.make("include-root-preflight-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     const rootConfig = { plugins: { $include: "./config/plugins.json5" } };
     const initialPluginsRaw = `${JSON.stringify({ entries: {} }, null, 2)}\n`;
     const concurrentRootRaw = `${JSON.stringify(
@@ -1802,8 +1796,8 @@ describe("config mutate helpers", () => {
 
   it("does not write an include after the active config path changes during preflight", async () => {
     const home = await suiteRootTracker.make("include-active-path-preflight-concurrent");
-    const firstConfigPath = path.join(home, "first", "openclaw.json");
-    const secondConfigPath = path.join(home, "second", "openclaw.json");
+    const firstConfigPath = path.join(home, "first", "nova.json");
+    const secondConfigPath = path.join(home, "second", "nova.json");
     const pluginsPath = path.join(home, "first", "plugins.json5");
     const rootConfig = { plugins: { $include: "./plugins.json5" } };
     const initialPluginsRaw = `${JSON.stringify({ entries: {} }, null, 2)}\n`;
@@ -1863,8 +1857,8 @@ describe("config mutate helpers", () => {
 
   it("rolls back an include write when config path ownership changes during commit", async () => {
     const home = await suiteRootTracker.make("include-active-path-commit-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "plugins.json5");
     const rootConfig = { plugins: { $include: "./plugins.json5" } };
     const initialPluginsRaw = `${JSON.stringify({ entries: {} }, null, 2)}\n`;
     await fs.mkdir(path.dirname(configPath), { recursive: true });
@@ -1879,7 +1873,7 @@ describe("config mutate helpers", () => {
     let activeConfigPath = configPath;
     const assertConfigPathForWrite = () => {
       if (fsNode.readFileSync(pluginsPath, "utf-8") !== initialPluginsRaw) {
-        activeConfigPath = "/tmp/other-openclaw.json";
+        activeConfigPath = "/tmp/other-nova.json";
       }
       if (activeConfigPath !== configPath) {
         throw new ConfigMutationConflictError("config path changed since last load", {
@@ -1917,8 +1911,8 @@ describe("config mutate helpers", () => {
       const home = await suiteRootTracker.make(
         `include-post-write-${changeKind.replaceAll(" ", "-")}`,
       );
-      const configPath = path.join(home, "first", "openclaw.json");
-      const otherConfigPath = path.join(home, "second", "openclaw.json");
+      const configPath = path.join(home, "first", "nova.json");
+      const otherConfigPath = path.join(home, "second", "nova.json");
       const pluginsPath = path.join(home, "first", "plugins.json5");
       const rootConfig = { plugins: { $include: "./plugins.json5" } };
       const initialPluginsRaw = `${JSON.stringify({ entries: {} }, null, 2)}\n`;
@@ -1979,9 +1973,9 @@ describe("config mutate helpers", () => {
     async () => {
       const home = await suiteRootTracker.make("include-preflight-parent-swap");
       const outside = await suiteRootTracker.make("include-preflight-parent-swap-outside");
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
-      const includeDir = path.join(home, ".openclaw", "config");
-      const movedIncludeDir = path.join(home, ".openclaw", "config-original");
+      const configPath = path.join(home, ".nova", "nova.json");
+      const includeDir = path.join(home, ".nova", "config");
+      const movedIncludeDir = path.join(home, ".nova", "config-original");
       const pluginsPath = path.join(includeDir, "plugins.json5");
       const outsidePluginsPath = path.join(outside, "plugins.json5");
       await fs.mkdir(includeDir, { recursive: true });
@@ -2056,8 +2050,8 @@ describe("config mutate helpers", () => {
 
   it("does not overwrite include edits made after the mutation snapshot", async () => {
     const home = await suiteRootTracker.make("include-snapshot-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -2105,8 +2099,8 @@ describe("config mutate helpers", () => {
 
   it("preflights the restored include payload with the current environment", async () => {
     const home = await suiteRootTracker.make("include-restored-preflight");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -2130,7 +2124,7 @@ describe("config mutate helpers", () => {
       parsed: { plugins: { $include: "./config/plugins.json5" } },
       sourceConfig: { plugins: { entries: { old: oldEntry } } },
     });
-    const observedSources: OpenClawConfig[] = [];
+    const observedSources: NovaConfig[] = [];
 
     try {
       setRuntimeConfigSnapshotRefreshHandler({
@@ -2176,8 +2170,8 @@ describe("config mutate helpers", () => {
 
   it("does not re-substitute resolved root values during include preflight", async () => {
     const home = await suiteRootTracker.make("include-root-escaped-env");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -2204,7 +2198,7 @@ describe("config mutate helpers", () => {
         plugins: { entries: {} },
       },
     });
-    const observedSources: OpenClawConfig[] = [];
+    const observedSources: NovaConfig[] = [];
 
     try {
       setRuntimeConfigSnapshotRefreshHandler({
@@ -2244,8 +2238,8 @@ describe("config mutate helpers", () => {
 
   it("preserves unresolved optional env refs during include write-through", async () => {
     const home = await suiteRootTracker.make("include-unresolved-env");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -2307,8 +2301,8 @@ describe("config mutate helpers", () => {
 
   it("rolls back single-file top-level include writes when runtime refresh fails", async () => {
     const home = await suiteRootTracker.make("include-runtime-refresh-rollback");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     const env = {} as NodeJS.ProcessEnv;
     const envKey = "NOVA_TEST_INCLUDE_ROLLBACK_ENV";
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
@@ -2378,8 +2372,8 @@ describe("config mutate helpers", () => {
 
   it("does not overwrite concurrent include edits during failed refresh rollback", async () => {
     const home = await suiteRootTracker.make("include-runtime-refresh-concurrent");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -2445,8 +2439,8 @@ describe("config mutate helpers", () => {
 
   it("rejects invalid base config before skipped-plugin include writes", async () => {
     const home = await suiteRootTracker.make("include-skip-invalid-base");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const pluginsPath = path.join(home, ".openclaw", "config", "plugins.json5");
+    const configPath = path.join(home, ".nova", "nova.json");
+    const pluginsPath = path.join(home, ".nova", "config", "plugins.json5");
     await fs.mkdir(path.dirname(pluginsPath), { recursive: true });
     await fs.writeFile(
       configPath,
@@ -2470,7 +2464,7 @@ describe("config mutate helpers", () => {
           "strict-plugin": { enabled: "yes" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     validationMocks.validateConfigObjectWithPlugins.mockReturnValue({
       ok: false,
       issues: [
@@ -2507,7 +2501,7 @@ describe("config mutate helpers", () => {
   it("falls back to the root writer when a plugins include write is not isolated", async () => {
     const snapshot = createSnapshot({
       hash: "hash-multi",
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       parsed: { plugins: { $include: "./config/plugins.json5" }, gateway: { mode: "local" } },
       sourceConfig: {
         gateway: { mode: "local" },
@@ -2543,9 +2537,9 @@ describe("config mutate helpers", () => {
 
   it("preflights injected root writers before persisting", async () => {
     const home = await suiteRootTracker.make("injected-root-runtime-preflight");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
+    const configPath = path.join(home, ".nova", "nova.json");
     await fs.mkdir(path.dirname(configPath), { recursive: true });
-    const initialConfig = { gateway: { mode: "local" } } satisfies OpenClawConfig;
+    const initialConfig = { gateway: { mode: "local" } } satisfies NovaConfig;
     const initialRaw = `${JSON.stringify(initialConfig, null, 2)}\n`;
     await fs.writeFile(configPath, initialRaw, "utf-8");
     const snapshot = createSnapshot({
@@ -2561,8 +2555,8 @@ describe("config mutate helpers", () => {
           token: { source: "exec", provider: "execmain", id: "gateway/token" },
         },
       },
-    } as OpenClawConfig;
-    const injectedWrite = vi.fn(async (config: OpenClawConfig, options?: ConfigWriteOptions) => {
+    } as NovaConfig;
+    const injectedWrite = vi.fn(async (config: NovaConfig, options?: ConfigWriteOptions) => {
       await options?.preCommitRuntimePreflight?.(config);
       await fs.writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`, "utf-8");
       return { persistedHash: "hash-written", persistedConfig: config };

@@ -1,7 +1,7 @@
 /** Gateway health probes used by doctor before deeper daemon and memory diagnostics. */
 import { note } from "../../packages/terminal-core/src/note.js";
 import { probeGatewayStatus } from "../cli/daemon-cli/probe.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   buildGatewayConnectionDetails,
   buildGatewayProbeConnectionDetails,
@@ -56,8 +56,8 @@ function noteCliGatewayVersionSkew(status: StatusSummary | undefined): void {
   note(
     [
       `This command is Nova ${VERSION}; the running Gateway is Nova ${gatewayVersion}.`,
-      "Check `openclaw --version`, `which openclaw`, and `openclaw gateway status --deep`.",
-      "If this mismatch is unexpected, update PATH so `openclaw` points to the version you want, or reinstall the Gateway service from that same Nova install.",
+      "Check `nova --version`, `which nova`, and `nova gateway status --deep`.",
+      "If this mismatch is unexpected, update PATH so `nova` points to the version you want, or reinstall the Gateway service from that same Nova install.",
     ].join("\n"),
     "Nova version mismatch",
   );
@@ -71,7 +71,7 @@ function noteCliGatewayVersionSkew(status: StatusSummary | undefined): void {
  */
 export async function checkGatewayHealth(params: {
   runtime: RuntimeEnv;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   timeoutMs?: number;
 }): Promise<{ healthOk: boolean; authenticated: boolean; status?: StatusSummary }> {
   const timeoutMs =
@@ -93,7 +93,7 @@ export async function checkGatewayHealth(params: {
           .map(
             (owner) =>
               `- ${owner.degradationState ?? "cold"} ${owner.ownerKind}:${owner.ownerId} (${owner.paths.join(", ")}): ${redactSecretDegradationReason(owner.reason)}` +
-              "\n  Retry: openclaw secrets reload",
+              "\n  Retry: nova secrets reload",
           )
           .join("\n"),
         "Secret runtime degradation",
@@ -174,7 +174,7 @@ export async function checkGatewayHealth(params: {
 
 /** Probes gateway memory readiness without forcing deep embedding checks. */
 export async function probeGatewayMemoryStatus(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   timeoutMs?: number;
 }): Promise<GatewayMemoryProbe> {
   const timeoutMs =

@@ -4,7 +4,7 @@
  * auth availability without writing secret material into generated config.
  */
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
 import { resolveProviderSyntheticAuthWithPlugin } from "../plugins/provider-runtime.js";
 import type { ProviderAuthEvidence } from "../secrets/provider-env-vars.js";
@@ -56,7 +56,7 @@ function resolveAuthProfileStoreInput(input: AuthProfileStoreInput) {
 export function createProviderApiKeyResolverFromPreparedCredentials(
   env: NodeJS.ProcessEnv,
   credentials: Readonly<AuthStorageData>,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
 ): ProviderApiKeyResolver {
   const resolveConfiguredOrEnvironment = createProviderApiKeyResolver(
     env,
@@ -90,7 +90,7 @@ export function createProviderApiKeyResolverFromPreparedCredentials(
 
 function createProviderAuthLookupCaches(
   env: NodeJS.ProcessEnv,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
 ): () => ProviderAuthLookupCaches {
   let caches: ProviderAuthLookupCaches | undefined;
   return () => {
@@ -123,7 +123,7 @@ function resolveProviderIdForAuthFromCaches(
 export function createProviderApiKeyResolver(
   env: NodeJS.ProcessEnv,
   authStoreInput: AuthProfileStoreInput,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
 ): ProviderApiKeyResolver {
   const getLookupCaches = createProviderAuthLookupCaches(env, config);
   return (provider: string): { apiKey: string | undefined; discoveryApiKey?: string } => {
@@ -172,7 +172,7 @@ export function createProviderApiKeyResolver(
 export function createProviderAuthResolver(
   env: NodeJS.ProcessEnv,
   authStoreInput: AuthProfileStoreInput,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
 ): ProviderAuthResolver {
   const getLookupCaches = createProviderAuthLookupCaches(env, config);
   return (provider: string, options?: { oauthMarker?: string }) => {
@@ -262,7 +262,7 @@ export function createProviderAuthResolver(
 
 function resolveConfigBackedProviderAuth(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   authProvider?: string;
 }):

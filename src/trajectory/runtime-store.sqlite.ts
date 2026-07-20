@@ -7,20 +7,17 @@ import {
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../state/openclaw-agent-db.generated.js";
+import type { DB as NovaAgentKyselyDatabase } from "../state/nova-agent-db.generated.js";
 import {
-  openOpenClawAgentDatabase,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-  type OpenClawAgentDatabaseOptions,
-} from "../state/openclaw-agent-db.js";
+  openNovaAgentDatabase,
+  runNovaAgentWriteTransaction,
+  type NovaAgentDatabase,
+  type NovaAgentDatabaseOptions,
+} from "../state/nova-agent-db.js";
 import { TRAJECTORY_RUNTIME_CAPTURE_MAX_BYTES } from "./paths.js";
 import type { TrajectoryEvent } from "./types.js";
 
-type SqliteTrajectoryRuntimeDatabase = Pick<
-  OpenClawAgentKyselyDatabase,
-  "trajectory_runtime_events"
->;
+type SqliteTrajectoryRuntimeDatabase = Pick<NovaAgentKyselyDatabase, "trajectory_runtime_events">;
 
 export type SqliteTrajectoryRuntimeScope = {
   agentId?: string;
@@ -53,7 +50,7 @@ export function appendSqliteTrajectoryRuntimeEvents(
     1,
     Math.floor(scope.maxRuntimeBytes ?? TRAJECTORY_RUNTIME_CAPTURE_MAX_BYTES),
   );
-  runOpenClawAgentWriteTransaction((database) => {
+  runNovaAgentWriteTransaction((database) => {
     const db = getTrajectoryKysely(database.db);
     let seq = readNextTrajectorySeq(database, scope.sessionId);
     for (const event of events) {
@@ -95,7 +92,7 @@ export function loadSqliteTrajectoryRuntimeEventRowsSync(
     maxEvents?: number;
   },
 ): SqliteTrajectoryRuntimeEventRow[] {
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(scope));
+  const database = openNovaAgentDatabase(toDatabaseOptions(scope));
   const db = getTrajectoryKysely(database.db);
   let query = db
     .selectFrom("trajectory_runtime_events")
@@ -124,7 +121,7 @@ function toDatabaseOptions(scope: {
   agentId?: string;
   env?: NodeJS.ProcessEnv;
   storePath: string;
-}): OpenClawAgentDatabaseOptions {
+}): NovaAgentDatabaseOptions {
   const requestedAgentId = scope.agentId ? normalizeAgentId(scope.agentId) : undefined;
   const target = resolveSqliteTargetFromSessionStorePath(
     scope.storePath,
@@ -142,7 +139,7 @@ function toDatabaseOptions(scope: {
   };
 }
 
-function readNextTrajectorySeq(database: OpenClawAgentDatabase, sessionId: string): number {
+function readNextTrajectorySeq(database: NovaAgentDatabase, sessionId: string): number {
   const db = getTrajectoryKysely(database.db);
   const row = executeSqliteQueryTakeFirstSync(
     database.db,
@@ -158,7 +155,7 @@ function readNextTrajectorySeq(database: OpenClawAgentDatabase, sessionId: strin
 }
 
 function trimSqliteTrajectoryRuntimeWindow(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
   maxRuntimeBytes: number,
 ): void {

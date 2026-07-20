@@ -1,5 +1,5 @@
 // Executes task records through configured runtimes and updates registry state.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import type {
@@ -463,7 +463,7 @@ export function runTaskInFlowForOwner(
 }
 
 export async function cancelFlowById(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   flowId: string;
 }): Promise<CancelFlowResult> {
   const flow = getTaskFlowById(params.flowId);
@@ -572,7 +572,7 @@ export async function cancelFlowById(params: {
 }
 
 export async function cancelFlowByIdForOwner(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   flowId: string;
   callerOwnerKey: string;
 }): Promise<CancelFlowResult> {
@@ -594,7 +594,7 @@ export async function cancelFlowByIdForOwner(params: {
 }
 
 export async function cancelDetachedTaskRunById(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   taskId: string;
   reason?: string;
 }) {

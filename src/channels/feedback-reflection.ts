@@ -1,7 +1,7 @@
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { resolveStorePath } from "../config/sessions/paths.js";
 import { appendTranscriptEvent, loadSessionEntry } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { buildChannelInboundEventContext } from "./inbound-event/context.js";
 import { createChannelInboundEnvelopeBuilder } from "./inbound-event/envelope.js";
 import { dispatchChannelInboundTurn } from "./turn/kernel.js";
@@ -12,7 +12,7 @@ const MAX_COOLDOWN_ENTRIES = 500;
 const lastReflectionBySession = new Map<string, number>();
 
 export async function recordChannelFeedbackEvent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   sessionKey: string;
   event: Parameters<typeof appendTranscriptEvent>[1];
@@ -96,7 +96,7 @@ function parseReflectionResponse(text: string) {
 }
 
 export async function runChannelFeedbackReflection(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: string;
   channelLabel: string;
   accountId?: string;

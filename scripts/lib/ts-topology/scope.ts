@@ -125,7 +125,7 @@ export function createPluginSdkScope(_repoRoot: string): TopologyScope {
   const entrypoints = publicPluginSdkEntrypoints.map((entrypoint) => ({
     entrypoint,
     sourcePath: `src/plugin-sdk/${entrypoint}.ts`,
-    importSpecifier: `openclaw/plugin-sdk/${entrypoint}`,
+    importSpecifier: `nova/plugin-sdk/${entrypoint}`,
   }));
   return buildScopeFromEntrypoints("plugin-sdk", "Nova plugin-sdk public surface", entrypoints);
 }

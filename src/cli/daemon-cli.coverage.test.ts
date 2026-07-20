@@ -86,7 +86,7 @@ vi.mock("../gateway/probe-auth.js", () => ({
 vi.mock("../daemon/program-args.js", () => ({
   NOVA_WRAPPER_ENV_KEY: "NOVA_WRAPPER",
   resolveGatewayProgramArguments: (opts: unknown) => resolveGatewayProgramArguments(opts),
-  resolveOpenClawWrapperPath: async (value: string | undefined) => value?.trim() || undefined,
+  resolveNovaWrapperPath: async (value: string | undefined) => value?.trim() || undefined,
 }));
 
 vi.mock("../daemon/service.js", async () => {
@@ -186,7 +186,7 @@ describe("daemon-cli coverage", () => {
 
   beforeEach(() => {
     daemonProgram = createDaemonProgram();
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-daemon-cli-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-daemon-cli-"));
     envSnapshot = captureEnv([
       "NOVA_STATE_DIR",
       "NOVA_CONFIG_PATH",
@@ -194,7 +194,7 @@ describe("daemon-cli coverage", () => {
       "NOVA_PROFILE",
     ]);
     setTestEnvValue("NOVA_STATE_DIR", tmpDir);
-    setTestEnvValue("NOVA_CONFIG_PATH", path.join(tmpDir, "openclaw.json"));
+    setTestEnvValue("NOVA_CONFIG_PATH", path.join(tmpDir, "nova.json"));
     deleteTestEnvValue("NOVA_GATEWAY_PORT");
     deleteTestEnvValue("NOVA_PROFILE");
     serviceReadCommand.mockResolvedValue(null);
@@ -232,11 +232,11 @@ describe("daemon-cli coverage", () => {
       programArguments: ["/bin/node", "cli", "gateway", "--port", "19001"],
       environment: {
         NOVA_PROFILE: "dev",
-        NOVA_STATE_DIR: "/tmp/openclaw-daemon-state",
-        NOVA_CONFIG_PATH: "/tmp/openclaw-daemon-state/openclaw.json",
+        NOVA_STATE_DIR: "/tmp/nova-daemon-state",
+        NOVA_CONFIG_PATH: "/tmp/nova-daemon-state/nova.json",
         NOVA_GATEWAY_PORT: "19001",
       },
-      sourcePath: "/tmp/ai.openclaw.gateway.plist",
+      sourcePath: "/tmp/ai.nova.gateway.plist",
     });
 
     await runDaemonCommand(["daemon", "status", "--json"]);
@@ -305,12 +305,12 @@ describe("daemon-cli coverage", () => {
     serviceReadCommand.mockResolvedValueOnce({
       programArguments: ["/bin/node", "cli", "gateway", "--port", "18789"],
       environment: {
-        NOVA_WRAPPER: "/usr/local/bin/openclaw-doppler",
+        NOVA_WRAPPER: "/usr/local/bin/nova-doppler",
         PATH: "/custom/go/bin:/usr/bin",
         GOPATH: "/Users/test/.local/gopath",
         GOBIN: "/Users/test/.local/gopath/bin",
       },
-      sourcePath: "/tmp/ai.openclaw.gateway.plist",
+      sourcePath: "/tmp/ai.nova.gateway.plist",
     });
 
     await runDaemonCommand(["daemon", "install", "--force", "--json"]);
@@ -321,12 +321,12 @@ describe("daemon-cli coverage", () => {
     );
     expect(installPlanParams.existingEnvironment).toEqual({
       PATH: "/custom/go/bin:/usr/bin",
-      NOVA_WRAPPER: "/usr/local/bin/openclaw-doppler",
+      NOVA_WRAPPER: "/usr/local/bin/nova-doppler",
       GOPATH: "/Users/test/.local/gopath",
       GOBIN: "/Users/test/.local/gopath/bin",
     });
     expect((installPlanParams.env as NodeJS.ProcessEnv).NOVA_WRAPPER).toBe(
-      "/usr/local/bin/openclaw-doppler",
+      "/usr/local/bin/nova-doppler",
     );
   });
 
@@ -338,12 +338,12 @@ describe("daemon-cli coverage", () => {
       "daemon",
       "install",
       "--wrapper",
-      "/usr/local/bin/openclaw-doppler",
+      "/usr/local/bin/nova-doppler",
       "--json",
     ]);
 
     expect(requireMockCallArg(buildGatewayInstallPlan, "buildGatewayInstallPlan").wrapperPath).toBe(
-      "/usr/local/bin/openclaw-doppler",
+      "/usr/local/bin/nova-doppler",
     );
   });
 

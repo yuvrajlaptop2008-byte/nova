@@ -3,8 +3,8 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import type { Message } from "grammy/types";
-import type { ChannelReplayClaimHandle } from "openclaw/plugin-sdk/persistent-dedupe";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import type { ChannelReplayClaimHandle } from "nova/plugin-sdk/persistent-dedupe";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   buildTelegramMessageDispatchAccountReplayKey,
@@ -23,7 +23,7 @@ const tempDirs: string[] = [];
 let previousStateDir: string | undefined;
 
 function createStateDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "openclaw-telegram-dispatch-dedupe-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "nova-telegram-dispatch-dedupe-"));
   tempDirs.push(dir);
   return dir;
 }

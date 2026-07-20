@@ -1,6 +1,6 @@
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { canonicalizeMainSessionAlias } from "../../config/sessions/main-session.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { McpLoopbackRequestContext } from "../../gateway/mcp-grant-store.js";
 import { normalizeMessageChannel } from "../../utils/message-channel.js";
 import type { RunCliAgentParams } from "./types.js";
@@ -80,7 +80,7 @@ export function resolveCliMcpMessageProvider(
 
 export function resolveCliMcpSessionKey(
   run: Pick<RunCliAgentParams, "sessionKey">,
-  config: OpenClawConfig,
+  config: NovaConfig,
   agentId: string,
 ): string {
   return canonicalizeMainSessionAlias({
@@ -92,7 +92,7 @@ export function resolveCliMcpSessionKey(
 
 export function buildCliMcpGrantContext(params: {
   run: RunCliAgentParams;
-  config: OpenClawConfig;
+  config: NovaConfig;
   requireExplicitMessageTarget: boolean;
   agentId: string;
   modelProvider: string;

@@ -174,7 +174,7 @@ function assertUpdate(channel) {
 }
 
 function assertConfigChannel(channel) {
-  const config = readJson(path.join(process.env.HOME, ".openclaw", "openclaw.json"));
+  const config = readJson(path.join(process.env.HOME, ".nova", "nova.json"));
   if (config.update?.channel === channel) {
     return;
   }
@@ -198,10 +198,10 @@ function assertStatusKind(kind) {
 
 switch (command) {
   case "prepare-git-fixture":
-    prepareGitFixture(args[0] ?? "/tmp/openclaw-git");
+    prepareGitFixture(args[0] ?? "/tmp/nova-git");
     break;
   case "write-control-ui":
-    writeControlUi(args[0] ?? "/tmp/openclaw-git");
+    writeControlUi(args[0] ?? "/tmp/nova-git");
     break;
   case "assert-update":
     assertUpdate(args[0]);

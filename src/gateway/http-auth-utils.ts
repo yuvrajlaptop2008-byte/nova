@@ -6,7 +6,7 @@ import {
   normalizeOptionalString,
 } from "@nova/normalization-core/string-coerce";
 import { getRuntimeConfig } from "../config/io.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { AuthRateLimiter } from "./auth-rate-limit.js";
 import {
   authorizeHttpGatewayConnect,
@@ -208,7 +208,7 @@ export async function checkGatewayHttpRequestAuth(params: {
   trustedProxies?: string[];
   allowRealIpFallback?: boolean;
   rateLimiter?: AuthRateLimiter;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): Promise<GatewayHttpRequestAuthCheckResult> {
   const token = getBearerToken(params.req);
   const browserOriginPolicy = resolveHttpBrowserOriginPolicy(params.req, params.cfg);
@@ -253,7 +253,7 @@ export async function authorizeScopedGatewayHttpRequestOrReply(params: {
     requestAuth: AuthorizedGatewayHttpRequest,
   ) => string[];
 }): Promise<{
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   requestAuth: AuthorizedGatewayHttpRequest;
   operatorScopes: string[];
 } | null> {
@@ -299,7 +299,7 @@ export function resolveTrustedHttpOperatorScopes(
     return [];
   }
 
-  const headerValue = getHeader(req, "x-openclaw-scopes");
+  const headerValue = getHeader(req, "x-nova-scopes");
   if (headerValue === undefined) {
     // No scope header present - trusted clients without an explicit header
     // get the default operator scopes (matching pre-#57783 behavior).
@@ -363,7 +363,7 @@ export function authorizeOpenAiCompatibleHttpModelOverride(
   req: IncomingMessage,
   requestAuth: AuthorizedGatewayHttpRequest,
 ): { allowed: true } | { allowed: false; missingScope: typeof ADMIN_SCOPE } {
-  const requestedModelOverride = normalizeOptionalString(getHeader(req, "x-openclaw-model"));
+  const requestedModelOverride = normalizeOptionalString(getHeader(req, "x-nova-model"));
   if (!requestedModelOverride || resolveOpenAiCompatibleHttpSenderIsOwner(req, requestAuth)) {
     return { allowed: true };
   }

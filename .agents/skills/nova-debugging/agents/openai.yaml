@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nova Debugging"
+  short_description: "Debug model, tool, stream, and live behavior"
+  default_prompt: "Use $nova-debugging to identify the right Nova debug boundary, turn on targeted logs, and choose the narrowest local or Crabbox proof."

@@ -1,7 +1,7 @@
 // Agent timestamp injection adds compact local-time context to direct gateway
 // agent messages without double-stamping channel envelopes or cron prompts.
 import { resolveUserTimezone } from "../../agents/date-time.js";
-import type { OpenClawConfig } from "../../config/types.js";
+import type { NovaConfig } from "../../config/types.js";
 import { formatZonedTimestamp } from "../../infra/format-time/format-datetime.ts";
 
 /**
@@ -70,7 +70,7 @@ export function buildTimestampPrefix(
  * these handlers, so there is no double-stamping risk. The detection
  * pattern is a safety net for edge cases.
  *
- * @see https://github.com/openclaw/openclaw/issues/3658
+ * @see https://github.com/nova/nova/issues/3658
  */
 export function injectTimestamp(message: string, opts?: TimestampInjectionOptions): string {
   if (opts?.includeTimestamp === false) {
@@ -100,9 +100,9 @@ export function injectTimestamp(message: string, opts?: TimestampInjectionOption
 }
 
 /**
- * Build TimestampInjectionOptions from an OpenClawConfig.
+ * Build TimestampInjectionOptions from an NovaConfig.
  */
-export function timestampOptsFromConfig(cfg: OpenClawConfig): TimestampInjectionOptions {
+export function timestampOptsFromConfig(cfg: NovaConfig): TimestampInjectionOptions {
   return {
     timezone: resolveUserTimezone(cfg.agents?.defaults?.userTimezone),
     includeTimestamp: cfg.agents?.defaults?.envelopeTimestamp !== "off",

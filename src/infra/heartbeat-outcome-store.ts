@@ -1,8 +1,8 @@
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import type { Insertable, Selectable } from "kysely";
 import type { HeartbeatToolResponse } from "../auto-reply/heartbeat-tool-response.js";
-import type { DB as OpenClawAgentKyselyDatabase } from "../state/openclaw-agent-db.generated.js";
-import { runOpenClawAgentWriteTransaction } from "../state/openclaw-agent-db.js";
+import type { DB as NovaAgentKyselyDatabase } from "../state/nova-agent-db.generated.js";
+import { runNovaAgentWriteTransaction } from "../state/nova-agent-db.js";
 import type { HeartbeatWakeSource } from "./heartbeat-wake.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "./kysely-sync.js";
 
@@ -13,8 +13,8 @@ const HEARTBEAT_OUTCOME_WAKE_REASON_MAX_CHARS = 1_000;
 const HEARTBEAT_OUTCOME_TASK_NAME_MAX_CHARS = 200;
 const HEARTBEAT_OUTCOME_MAX_TASKS = 32;
 
-type HeartbeatOutcomeTable = OpenClawAgentKyselyDatabase["heartbeat_outcomes"];
-type HeartbeatOutcomeDatabase = Pick<OpenClawAgentKyselyDatabase, "heartbeat_outcomes">;
+type HeartbeatOutcomeTable = NovaAgentKyselyDatabase["heartbeat_outcomes"];
+type HeartbeatOutcomeDatabase = Pick<NovaAgentKyselyDatabase, "heartbeat_outcomes">;
 type HeartbeatOutcomeRow = Selectable<HeartbeatOutcomeTable>;
 type HeartbeatOutcomeInsert = Insertable<HeartbeatOutcomeTable>;
 
@@ -120,7 +120,7 @@ export function persistHeartbeatOutcome(params: {
     context_claimed_at: null,
     updated_at: Date.now(),
   };
-  runOpenClawAgentWriteTransaction(
+  runNovaAgentWriteTransaction(
     ({ db }) => {
       const agentDb = getNodeSqliteKysely<HeartbeatOutcomeDatabase>(db);
       executeSqliteQuerySync(
@@ -159,7 +159,7 @@ export function claimHeartbeatOutcomeForRun(params: {
   runId: string;
   env?: NodeJS.ProcessEnv;
 }): PersistedHeartbeatOutcome | undefined {
-  return runOpenClawAgentWriteTransaction(
+  return runNovaAgentWriteTransaction(
     ({ db }) => {
       const agentDb = getNodeSqliteKysely<HeartbeatOutcomeDatabase>(db);
       const row = executeSqliteQuerySync(

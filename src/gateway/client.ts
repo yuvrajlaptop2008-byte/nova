@@ -37,9 +37,7 @@ export type {
   GatewayReconnectPausedInfo,
 } from "../../packages/gateway-client/src/index.js";
 
-function createOpenClawGatewayClientHostDeps(
-  overrides?: GatewayClientHostDeps,
-): GatewayClientHostDeps {
+function createNovaGatewayClientHostDeps(overrides?: GatewayClientHostDeps): GatewayClientHostDeps {
   return {
     // This wrapper is the only place the package reaches into Nova runtime
     // state. Keep device identity, token storage, proxy, and redaction here.
@@ -66,7 +64,7 @@ export class GatewayClient {
     this.#client = new BaseGatewayClient({
       ...opts,
       clientVersion: opts.clientVersion ?? VERSION,
-      hostDeps: createOpenClawGatewayClientHostDeps(opts.hostDeps),
+      hostDeps: createNovaGatewayClientHostDeps(opts.hostDeps),
     });
   }
 

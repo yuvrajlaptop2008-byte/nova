@@ -1,6 +1,6 @@
-import type { HealthFinding } from "openclaw/plugin-sdk/health";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { HealthFinding } from "nova/plugin-sdk/health";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { PolicyEvidence, PolicyExecApprovalEvidence } from "../policy-state.js";
 import { execApprovalsPolicyShapeFinding } from "./access-shapes.js";
 import { CHECK_IDS, POLICY_CHECK_IDS } from "./check-ids.js";

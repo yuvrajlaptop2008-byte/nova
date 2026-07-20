@@ -4,7 +4,7 @@ set -euo pipefail
 # Definition:
 #   Docker/package E2E proof for local channel plugin trust gating. The host
 #   mode builds or reuses the functional Docker image, then runs the container
-#   mode against the installed OpenClaw package.
+#   mode against the installed Nova package.
 #
 # Parameters:
 #   --container: run the in-container scenario. Host mode is the default.
@@ -22,7 +22,7 @@ Usage:
   bash scripts/e2e/channel-plugin-trust-docker.sh [--container]
 
 Description:
-  Proves the packaged OpenClaw CLI enforces local channel plugin trust for
+  Proves the packaged Nova CLI enforces local channel plugin trust for
   plugins.load.paths entries in a clean Docker/package environment.
 
 Options:
@@ -46,16 +46,16 @@ EOF
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-run_openclaw() {
-  if command -v openclaw >/dev/null 2>&1; then
-    openclaw "$@"
+run_nova() {
+  if command -v nova >/dev/null 2>&1; then
+    nova "$@"
     return
   fi
-  if [ -f /app/openclaw.mjs ]; then
-    node /app/openclaw.mjs "$@"
+  if [ -f /app/nova.mjs ]; then
+    node /app/nova.mjs "$@"
     return
   fi
-  echo "openclaw CLI not found in Docker image" >&2
+  echo "nova CLI not found in Docker image" >&2
   exit 1
 }
 
@@ -68,10 +68,10 @@ write_load_paths_fixture() {
 
   cat >"$plugin_dir/package.json" <<EOF
 {
-  "name": "@openclaw-e2e/$plugin_id",
+  "name": "@nova-e2e/$plugin_id",
   "version": "0.0.0-e2e",
   "private": true,
-  "openclaw": {
+  "nova": {
     "extensions": ["./index.cjs"],
     "setupEntry": "./setup-entry.cjs",
     "channel": {
@@ -85,7 +85,7 @@ write_load_paths_fixture() {
 }
 EOF
 
-  cat >"$plugin_dir/openclaw.plugin.json" <<EOF
+  cat >"$plugin_dir/nova.plugin.json" <<EOF
 {
   "id": "$plugin_id",
   "name": "E2E load-paths Shadow",
@@ -216,7 +216,7 @@ run_case() {
   local case_id="${1:?missing case id}"
   local trusted="${2:?missing trusted flag}"
   local scratch
-  scratch="$(mktemp -d "/tmp/openclaw-channel-plugin-trust-$case_id.XXXXXX")"
+  scratch="$(mktemp -d "/tmp/nova-channel-plugin-trust-$case_id.XXXXXX")"
   local plugin_dir="$scratch/e2e-load-paths-shadow"
   local marker_dir="$scratch/markers"
   local stdout_file="$scratch/stdout.log"
@@ -234,7 +234,7 @@ run_case() {
     PLUGINTRUST_SETUP_IMPORT_MARKER="$marker_dir/setup-import.marker" \
     PLUGINTRUST_SETUP_REGISTER_MARKER="$marker_dir/setup-register.marker" \
     PLUGINTRUST_CANARY="$canary" \
-    run_openclaw channels add --channel e2e-load-paths --token "$canary" \
+    run_nova channels add --channel e2e-load-paths --token "$canary" \
       >"$stdout_file" 2>"$stderr_file"
   local status=$?
   set -e
@@ -273,11 +273,11 @@ run_case() {
 }
 
 run_container() {
-  source scripts/lib/openclaw-e2e-instance.sh
-  openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
-  export NOVA_WORKSPACE_DIR="$HOME/.openclaw/workspace"
+  source scripts/lib/nova-e2e-instance.sh
+  nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+  export NOVA_WORKSPACE_DIR="$HOME/.nova/workspace"
 
-  run_openclaw --version
+  run_nova --version
   run_case untrusted-load-paths 0
   run_case trusted-load-paths 1
   echo "Channel plugin trust Docker E2E passed."
@@ -288,7 +288,7 @@ run_host() {
   local image_name
   image_name="$(
     docker_e2e_resolve_image \
-      "openclaw-channel-plugin-trust-e2e:local" \
+      "nova-channel-plugin-trust-e2e:local" \
       NOVA_CHANNEL_PLUGIN_TRUST_E2E_IMAGE
   )"
   local skip_build="${NOVA_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD:-0}"

@@ -1,13 +1,10 @@
 // Zalo plugin module implements status issues behavior.
-import type {
-  ChannelAccountSnapshot,
-  ChannelStatusIssue,
-} from "openclaw/plugin-sdk/channel-contract";
+import type { ChannelAccountSnapshot, ChannelStatusIssue } from "nova/plugin-sdk/channel-contract";
 import {
   coerceStatusIssueAccountId,
   readStatusIssueFields,
-} from "openclaw/plugin-sdk/extension-shared";
-import { standardDmPolicyOpenIssue } from "openclaw/plugin-sdk/status-helpers";
+} from "nova/plugin-sdk/extension-shared";
+import { standardDmPolicyOpenIssue } from "nova/plugin-sdk/status-helpers";
 
 const ZALO_STATUS_FIELDS = ["accountId", "enabled", "configured", "dmPolicy"] as const;
 

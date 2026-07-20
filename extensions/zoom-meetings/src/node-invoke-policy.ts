@@ -1,15 +1,15 @@
-import { createMeetingBrowserNodeInvokePolicy } from "openclaw/plugin-sdk/meeting-runtime";
+import { createMeetingBrowserNodeInvokePolicy } from "nova/plugin-sdk/meeting-runtime";
 import type {
-  OpenClawPluginNodeInvokePolicy,
-  OpenClawPluginNodeInvokePolicyContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+  NovaPluginNodeInvokePolicy,
+  NovaPluginNodeInvokePolicyContext,
+} from "nova/plugin-sdk/plugin-entry";
 import type { ZoomMeetingsConfig } from "./config.js";
 import { ZOOM_MEETINGS_PLATFORM_ADAPTER } from "./transports/zoom-meetings-platform-adapter.js";
 import { ZOOM_MEETINGS_NODE_COMMAND } from "./transports/zoom-meetings-platform-constants.js";
 
 export function createZoomMeetingsNodeInvokePolicy(
   config: ZoomMeetingsConfig,
-): OpenClawPluginNodeInvokePolicy {
+): NovaPluginNodeInvokePolicy {
   const base = createMeetingBrowserNodeInvokePolicy({
     commandName: ZOOM_MEETINGS_NODE_COMMAND,
     displayName: "Zoom meetings",
@@ -20,7 +20,7 @@ export function createZoomMeetingsNodeInvokePolicy(
   });
   return {
     ...base,
-    async handle(ctx: OpenClawPluginNodeInvokePolicyContext) {
+    async handle(ctx: NovaPluginNodeInvokePolicyContext) {
       const params =
         ctx.params && typeof ctx.params === "object" && !Array.isArray(ctx.params)
           ? (ctx.params as Record<string, unknown>)

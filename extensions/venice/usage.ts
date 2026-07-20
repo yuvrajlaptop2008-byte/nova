@@ -1,6 +1,6 @@
-import type { ProviderUsageSnapshot } from "openclaw/plugin-sdk/provider-usage";
-import { buildUsageHttpErrorSnapshot } from "openclaw/plugin-sdk/provider-usage";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
+import type { ProviderUsageSnapshot } from "nova/plugin-sdk/provider-usage";
+import { buildUsageHttpErrorSnapshot } from "nova/plugin-sdk/provider-usage";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
 
 const VENICE_BALANCE_URL = "https://api.venice.ai/api/v1/billing/balance";
 const VENICE_USAGE_RESPONSE_MAX_BYTES = 1024 * 1024;

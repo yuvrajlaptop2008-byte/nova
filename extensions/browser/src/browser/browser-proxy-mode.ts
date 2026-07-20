@@ -55,7 +55,7 @@ export function resolveBrowserNavigationProxyMode(params: {
   profile: Pick<ResolvedBrowserProfile, "attachOnly" | "cdpIsLoopback" | "driver">;
 }): BrowserNavigationProxyMode {
   if (
-    params.profile.driver === "openclaw" &&
+    params.profile.driver === "nova" &&
     params.profile.cdpIsLoopback &&
     !params.profile.attachOnly &&
     hasExplicitChromeProxyRoutingArg(params.resolved.extraArgs)

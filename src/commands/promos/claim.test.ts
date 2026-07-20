@@ -113,7 +113,7 @@ function makePromotion(overrides: Record<string, unknown> = {}) {
 function makeSnapshot(config: Record<string, unknown> = {}) {
   return {
     valid: true,
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     hash: "hash-1",
     issues: [],
     config,

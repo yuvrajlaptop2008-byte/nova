@@ -26,7 +26,7 @@ const PROFILE_COLORS = [
 ];
 
 describe("profile name validation", () => {
-  it.each(["openclaw", "work", "my-profile", "test123", "a", "a-b-c-1-2-3", "1test"])(
+  it.each(["nova", "work", "my-profile", "test123", "a", "a-b-c-1-2-3", "1test"])(
     "accepts valid lowercase name: %s",
     (name) => {
       expect(isValidProfileName(name)).toBe(true);
@@ -117,7 +117,7 @@ describe("getUsedPorts", () => {
 
   it("extracts ports from profile configs", () => {
     const profiles = {
-      openclaw: { cdpPort: 18792 },
+      nova: { cdpPort: 18792 },
       work: { cdpPort: 18793 },
       personal: { cdpPort: 18795 },
     };
@@ -166,7 +166,7 @@ describe("port collision prevention", () => {
     // Raw config shows empty - no ports used
     expect(usedFromRaw.size).toBe(0);
 
-    // But resolved config has implicit openclaw at 18800
+    // But resolved config has implicit nova at 18800
     const resolved = resolveBrowserConfig({});
     const usedFromResolved = getUsedPorts(resolved.profiles);
     expect(usedFromResolved.has(CDP_PORT_RANGE_START)).toBe(true);
@@ -185,7 +185,7 @@ describe("port collision prevention", () => {
     // Raw config: first allocation gets 18800
     expect(buggyAllocatedPort).toBe(CDP_PORT_RANGE_START);
 
-    // Resolved config: includes implicit openclaw at 18800
+    // Resolved config: includes implicit nova at 18800
     const resolved = resolveBrowserConfig(
       rawConfig.browser as Parameters<typeof resolveBrowserConfig>[0],
     );
@@ -256,7 +256,7 @@ describe("getUsedColors", () => {
 
   it("extracts and uppercases colors from profile configs", () => {
     const profiles = {
-      openclaw: { color: "#ff4500" },
+      nova: { color: "#ff4500" },
       work: { color: "#0066CC" },
     };
     const used = getUsedColors(profiles);

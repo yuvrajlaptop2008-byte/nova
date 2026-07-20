@@ -5,7 +5,7 @@ import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { testing as cliBackendsTesting } from "../../agents/cli-backends.test-support.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { SessionEntry } from "../../config/sessions.js";
 import { loadSessionEntry, replaceSessionEntry } from "../../config/sessions/session-accessor.js";
 import { formatSqliteSessionFileMarker } from "../../config/sessions/sqlite-marker.js";
@@ -68,7 +68,7 @@ vi.mock("../../agents/prepared-model-catalog.js", () => ({
 }));
 
 vi.mock("../../agents/workspace.js", () => ({
-  DEFAULT_AGENT_WORKSPACE_DIR: "/tmp/openclaw-workspace",
+  DEFAULT_AGENT_WORKSPACE_DIR: "/tmp/nova-workspace",
   ensureAgentWorkspace: (...args: unknown[]) => mocks.ensureAgentWorkspace(...args),
 }));
 registerGetReplyRuntimeOverrides(mocks);
@@ -145,7 +145,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
     mocks.buildStatusReply.mockReset();
     mocks.buildStatusReply.mockImplementation(async (params: unknown) => {
       const status = params as {
-        cfg: OpenClawConfig;
+        cfg: NovaConfig;
         resolvedThinkLevel?: string;
         resolveDefaultThinkingLevel: () => Promise<string | undefined>;
         sessionKey?: string;
@@ -206,23 +206,23 @@ describe("getReplyFromConfig fast test bootstrap", () => {
 
   it("fails fast on unmarked config overrides in strict fast-test mode", async () => {
     await expect(
-      getReplyFromConfig(buildGetReplyCtx(), undefined, {} as OpenClawConfig),
+      getReplyFromConfig(buildGetReplyCtx(), undefined, {} as NovaConfig),
     ).rejects.toThrow(/withFastReplyConfig\(\)\/markCompleteReplyConfig\(\)/);
     expect(vi.mocked(loadConfigMock)).not.toHaveBeenCalled();
   });
 
   it("skips getRuntimeConfig, workspace bootstrap, and session bootstrap for marked test configs", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fast-reply-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fast-reply-"));
     const cfg = markCompleteReplyConfig({
       agents: {
         defaults: {
           model: "anthropic/claude-opus-4-6",
-          workspace: path.join(home, "openclaw"),
+          workspace: path.join(home, "nova"),
         },
       },
       channels: { telegram: { allowFrom: ["*"] } },
       session: { store: path.join(home, "sessions.json") },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     await expect(getReplyFromConfig(buildGetReplyCtx(), undefined, cfg)).resolves.toEqual({
       text: "ok",
@@ -244,7 +244,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
           botToken: "resolved-telegram-token",
         },
       },
-    } satisfies OpenClawConfig);
+    } satisfies NovaConfig);
 
     await getReplyFromConfig(buildGetReplyCtx(), undefined, {
       agents: {
@@ -252,7 +252,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
           userTimezone: "America/New_York",
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(vi.mocked(loadConfigMock)).toHaveBeenCalledOnce();
     expect(mocks.initSessionState).toHaveBeenCalledOnce();
@@ -277,7 +277,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         SessionKey: "agent:main:slack:channel:C123",
       }),
       { onSessionPrepared } as never,
-      {} as OpenClawConfig,
+      {} as NovaConfig,
     );
 
     expect(onSessionPrepared).toHaveBeenCalledWith({
@@ -303,7 +303,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         SessionKey: sessionKey,
       }),
       undefined,
-      {} as OpenClawConfig,
+      {} as NovaConfig,
     );
 
     expect(result).toEqual({ text: MODEL_SELECTION_LOCKED_RESET_MESSAGE });
@@ -312,7 +312,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("marks configs through withFastReplyConfig()", async () => {
-    const cfg = withFastReplyConfig({ session: { store: "/tmp/sessions.json" } } as OpenClawConfig);
+    const cfg = withFastReplyConfig({ session: { store: "/tmp/sessions.json" } } as NovaConfig);
 
     await expect(getReplyFromConfig(buildGetReplyCtx(), undefined, cfg)).resolves.toEqual({
       text: "ok",
@@ -323,7 +323,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("clears stale ack-only heartbeat pending delivery before running heartbeat", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-heartbeat-pending-clear-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-heartbeat-pending-clear-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -347,7 +347,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         },
       },
       session: { store: storePath },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     await expect(
       getReplyFromConfig(buildGetReplyCtx(), { isHeartbeat: true }, cfg),
@@ -361,7 +361,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("keeps non-ack heartbeat pending delivery without direct replay", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-heartbeat-pending-replay-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-heartbeat-pending-replay-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -381,7 +381,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         },
       },
       session: { store: storePath },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     await expect(
       getReplyFromConfig(buildGetReplyCtx(), { isHeartbeat: true }, cfg),
@@ -394,7 +394,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("does not replay stale heartbeat pending delivery", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-heartbeat-pending-suppress-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-heartbeat-pending-suppress-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -415,7 +415,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         },
       },
       session: { store: storePath },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     await expect(
       getReplyFromConfig(buildGetReplyCtx(), { isHeartbeat: true }, cfg),
@@ -430,7 +430,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("handles native /status before workspace bootstrap", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-status-fast-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-native-status-fast-"));
     const targetSessionKey = "agent:main:telegram:123";
     const cfg = markCompleteReplyConfig({
       agents: {
@@ -440,7 +440,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         },
       },
       session: { store: path.join(home, "sessions.json") },
-    } as OpenClawConfig);
+    } as NovaConfig);
     vi.mocked(resolveDefaultModelMock).mockReturnValueOnce({
       defaultProvider: "openai",
       defaultModel: "gpt-5.5",
@@ -484,7 +484,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("uses configured agent thinking defaults for native /status", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-status-agent-think-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-native-status-agent-think-"));
     const targetSessionKey = "agent:main:telegram:123";
     const cfg = markCompleteReplyConfig({
       agents: {
@@ -501,7 +501,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         ],
       },
       session: { store: path.join(home, "sessions.json") },
-    } as OpenClawConfig);
+    } as NovaConfig);
     vi.mocked(resolveDefaultModelMock).mockReturnValueOnce({
       defaultProvider: "openai",
       defaultModel: "gpt-5.5",
@@ -542,7 +542,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("uses the target session thinking override for native /status", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-status-think-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-native-status-think-"));
     const storePath = path.join(home, "sessions.json");
     const targetSessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -560,7 +560,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         },
       },
       session: { store: storePath },
-    } as OpenClawConfig);
+    } as NovaConfig);
     vi.mocked(resolveDefaultModelMock).mockReturnValueOnce({
       defaultProvider: "openai",
       defaultModel: "gpt-5.5",
@@ -602,7 +602,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("handles native slash directives before workspace bootstrap", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-slash-fast-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-native-slash-fast-"));
     const targetSessionKey = "agent:main:telegram:123";
     const cfg = markCompleteReplyConfig({
       agents: {
@@ -612,7 +612,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         },
       },
       session: { store: path.join(home, "sessions.json") },
-    } as OpenClawConfig);
+    } as NovaConfig);
     mocks.resolveReplyDirectives.mockResolvedValueOnce({
       kind: "reply",
       reply: { text: "model status" },
@@ -650,7 +650,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("continues native slash goal starts with the rewritten command-safe prompt", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-native-goal-fast-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-native-goal-fast-"));
     const targetSessionKey = "agent:main:telegram:123";
     const storePath = path.join(home, "sessions.json");
     const cfg = markCompleteReplyConfig({
@@ -661,7 +661,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         },
       },
       session: { store: storePath },
-    } as OpenClawConfig);
+    } as NovaConfig);
     const continuationPrompt = `Pursue this goal exactly as written from this JSON string: "\\/status"`;
     const continueDirectives = async (params: unknown) =>
       createGetReplyContinueDirectivesResult({
@@ -742,7 +742,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         CommandSource: "native",
         CommandTargetSessionKey: "agent:main:main",
       }),
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       agentId: "main",
       commandAuthorized: true,
       workspaceDir: "/tmp/workspace",
@@ -760,7 +760,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("preserves usage footer mode during fast reset bootstrap", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fast-reset-usage-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fast-reset-usage-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -778,7 +778,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         CommandBody: "/reset",
         SessionKey: sessionKey,
       }),
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       agentId: "main",
       commandAuthorized: true,
       workspaceDir: home,
@@ -789,7 +789,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("rejects a fast reset bootstrap for a model-locked session", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fast-reset-locked-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fast-reset-locked-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -809,7 +809,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
           CommandBody: "/reset",
           SessionKey: sessionKey,
         }),
-        cfg: { session: { store: storePath } } as OpenClawConfig,
+        cfg: { session: { store: storePath } } as NovaConfig,
         agentId: "main",
         commandAuthorized: true,
         workspaceDir: home,
@@ -823,7 +823,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("captures the initial SQLite session entry during fast bootstrap", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fast-initial-entry-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fast-initial-entry-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -841,7 +841,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         CommandBody: "hello",
         SessionKey: sessionKey,
       }),
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       agentId: "main",
       commandAuthorized: true,
       workspaceDir: home,
@@ -862,7 +862,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         To: undefined,
         SenderId: "gateway-client",
       }),
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionKey: "main",
       isGroup: false,
       triggerBodyNormalized: "/codex bind",
@@ -883,7 +883,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         RawBody: body,
         CommandBody: body,
       }),
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionKey: "main",
       isGroup: false,
       triggerBodyNormalized: body,
@@ -894,7 +894,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("keeps the existing session for /reset newline soft during fast bootstrap", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fast-reset-newline-soft-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fast-reset-newline-soft-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -911,7 +911,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         CommandBody: "/reset \nsoft",
         SessionKey: sessionKey,
       }),
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       agentId: "main",
       commandAuthorized: true,
       workspaceDir: home,
@@ -923,7 +923,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("keeps the existing session for /reset: soft during fast bootstrap", async () => {
-    const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-fast-reset-colon-soft-"));
+    const home = await fs.mkdtemp(path.join(os.tmpdir(), "nova-fast-reset-colon-soft-"));
     const storePath = path.join(home, "sessions.json");
     const sessionKey = "agent:main:telegram:123";
     await seedFastPathSessionStore(storePath, {
@@ -940,7 +940,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
         CommandBody: "/reset: soft",
         SessionKey: sessionKey,
       }),
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       agentId: "main",
       commandAuthorized: true,
       workspaceDir: home,

@@ -12,9 +12,9 @@ import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text.js";
 import { resolveBundledInstallPlanForCatalogEntry } from "../cli/plugin-install-plan.js";
 import { assertConfigWriteAllowedInCurrentMode } from "../config/nix-mode-write-guard.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { parseClawHubPluginSpec } from "../infra/clawhub-spec.js";
-import { isOpenClawOrgNpmSpec, parseRegistryNpmSpec } from "../infra/npm-registry-spec.js";
+import { isNovaOrgNpmSpec, parseRegistryNpmSpec } from "../infra/npm-registry-spec.js";
 import { normalizeUpdateChannel, resolveRegistryUpdateChannel } from "../infra/update-channels.js";
 import {
   findBundledPluginSourceInMap,
@@ -78,7 +78,7 @@ export type OnboardingPluginInstallStatus = "installed" | "skipped" | "failed" |
 
 /** Config and status returned after attempting an onboarding plugin install. */
 type OnboardingPluginInstallResult = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   installed: boolean;
   pluginId: string;
   status: OnboardingPluginInstallStatus;
@@ -106,7 +106,7 @@ function shouldFallbackClawHubToNpm(params: {
   result: { ok: false; code?: string };
   npmSpec?: string;
 }): boolean {
-  if (!isOpenClawOrgNpmSpec(params.npmSpec)) {
+  if (!isNovaOrgNpmSpec(params.npmSpec)) {
     return false;
   }
   // Only official Nova npm packages are safe fallback targets for ClawHub
@@ -192,7 +192,7 @@ function hasGitWorkspace(workspaceDir?: string): boolean {
   return roots.some((root) => hasTrustedGitWorkspace(root));
 }
 
-function addPluginLoadPath(cfg: OpenClawConfig, pluginPath: string): OpenClawConfig {
+function addPluginLoadPath(cfg: NovaConfig, pluginPath: string): NovaConfig {
   const existing = cfg.plugins?.load?.paths ?? [];
   const merged = uniqueStrings([...existing, pluginPath]);
   return {
@@ -239,12 +239,12 @@ function formatPortableLocalPath(localPath: string, workspaceDir?: string): stri
 }
 
 async function recordLocalPluginInstall(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: OnboardingPluginInstallEntry;
   localPath: string;
   npmSpec?: string | null;
   workspaceDir?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   const sourcePath = formatPortableLocalPath(params.localPath, params.workspaceDir);
   const install = {
     pluginId: params.entry.pluginId,
@@ -351,7 +351,7 @@ function resolveClawHubSpecForOnboarding(install: PluginPackageInstall): string 
 }
 
 function resolveInstallDefaultChoice(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: OnboardingPluginInstallEntry;
   localPath?: string | null;
   bundledLocalPath?: string | null;
@@ -563,9 +563,8 @@ function formatInstallErrorDetail(message: string): string {
 const testing = { formatInstallErrorDetail, summarizeInstallError };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.onboardingPluginInstallTestApi")
-  ] = testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.onboardingPluginInstallTestApi")] =
+    testing;
 }
 
 function isTimeoutError(error: unknown): boolean {
@@ -573,7 +572,7 @@ function isTimeoutError(error: unknown): boolean {
 }
 
 async function applyPluginEnablement(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   pluginId: string;
   label: string;
   prompter: WizardPrompter;
@@ -742,7 +741,7 @@ function isClawHubTrustWarning(message: string): boolean {
 }
 
 async function installPluginFromNpmSpecWithProgress(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: OnboardingPluginInstallEntry;
   npmSpec: string;
   prompter: WizardPrompter;
@@ -819,7 +818,7 @@ async function installPluginFromNpmSpecWithProgress(params: {
 }
 
 async function installPluginFromNpmPackArchiveWithProgress(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: OnboardingPluginInstallEntry;
   archivePath: string;
   prompter: WizardPrompter;
@@ -881,7 +880,7 @@ async function installPluginFromNpmPackArchiveWithProgress(params: {
 }
 
 async function installPluginFromOverride(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: OnboardingPluginInstallEntry;
   override: PluginInstallOverride;
   prompter: WizardPrompter;
@@ -1011,7 +1010,7 @@ async function installPluginFromOverride(params: {
 }
 
 async function installPluginFromClawHubSpecWithProgress(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: OnboardingPluginInstallEntry;
   clawhubSpec: string;
   prompter: WizardPrompter;
@@ -1119,7 +1118,7 @@ async function installPluginFromClawHubSpecWithProgress(params: {
 
 /** Ensures an onboarding plugin is installed, enabled, and recorded in config. */
 export async function ensureOnboardingPluginInstalled(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: OnboardingPluginInstallEntry;
   prompter: WizardPrompter;
   runtime: RuntimeEnv;

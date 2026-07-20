@@ -1,6 +1,6 @@
 /** Shared test harness for CLI runner bundle-MCP config preparation tests. */
 import { afterAll, beforeAll } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   createBundleMcpTempHarness,
   createBundleProbePlugin,
@@ -44,9 +44,9 @@ export function setupCliBundleMcpTestHarness(): void {
   beforeAll(async () => {
     // Use an empty bundled-dir override so only temp fixture plugins participate.
     envSnapshot = captureEnv(["NOVA_BUNDLED_PLUGINS_DIR"]);
-    bundleProbeHomeDir = await tempHarness.createTempDir("openclaw-cli-bundle-mcp-home-");
-    bundleProbeWorkspaceDir = await tempHarness.createTempDir("openclaw-cli-bundle-mcp-workspace-");
-    const emptyBundledDir = await tempHarness.createTempDir("openclaw-cli-bundle-mcp-bundled-");
+    bundleProbeHomeDir = await tempHarness.createTempDir("nova-cli-bundle-mcp-home-");
+    bundleProbeWorkspaceDir = await tempHarness.createTempDir("nova-cli-bundle-mcp-workspace-");
+    const emptyBundledDir = await tempHarness.createTempDir("nova-cli-bundle-mcp-bundled-");
     setTestEnvValue("NOVA_BUNDLED_PLUGINS_DIR", emptyBundledDir);
     ({ serverPath: bundleProbeServerPath } = await createBundleProbePlugin(bundleProbeHomeDir));
   });
@@ -57,7 +57,7 @@ export function setupCliBundleMcpTestHarness(): void {
   });
 }
 
-function createEnabledBundleProbeConfig(): OpenClawConfig {
+function createEnabledBundleProbeConfig(): NovaConfig {
   return {
     plugins: {
       entries: {

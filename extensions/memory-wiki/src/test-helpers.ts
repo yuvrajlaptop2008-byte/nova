@@ -6,11 +6,11 @@ import type {
   PluginBlobEntryInfo,
   PluginBlobStore,
   PluginStateEntry,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "nova/plugin-sdk/plugin-state-runtime";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import { afterEach, vi } from "vitest";
-import type { OpenClawPluginApi } from "../api.js";
+import type { NovaPluginApi } from "../api.js";
 import {
   configureMemoryWikiCompiledCacheStore,
   createMemoryWikiCompiledCacheStore,
@@ -30,7 +30,7 @@ type MemoryWikiTestVault = {
 };
 
 type MemoryWikiPluginApiHarness = {
-  api: OpenClawPluginApi;
+  api: NovaPluginApi;
   registerCli: ReturnType<typeof vi.fn>;
   registerGatewayMethod: ReturnType<typeof vi.fn>;
   registerMemoryCorpusSupplement: ReturnType<typeof vi.fn>;
@@ -165,7 +165,7 @@ export function createMemoryWikiTestHarness() {
 
   async function createTempDir(prefix: string): Promise<string> {
     configureCompiledCacheStore();
-    const tempDir = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), prefix));
+    const tempDir = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), prefix));
     tempDirs.push(tempDir);
     return tempDir;
   }
@@ -215,7 +215,7 @@ export function createMemoryWikiTestHarness() {
           openKeyedStore: vi.fn(<T>() => createMemoryKeyedStore<T>()),
           openBlobStore: vi.fn(<T>() => createMemoryBlobStore<T>()),
         },
-      } as unknown as OpenClawPluginApi["runtime"],
+      } as unknown as NovaPluginApi["runtime"],
       registerCli,
       registerGatewayMethod,
       registerMemoryCorpusSupplement,

@@ -9,7 +9,7 @@ import {
   type ImageMetadata,
 } from "rastermill";
 import { resolveSystemBin } from "../infra/resolve-system-bin.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
 import { createLazyRuntimeModule } from "../shared/lazy-runtime.js";
 
 export type { ImageMetadata, ImageProbe };
@@ -54,8 +54,8 @@ export function createImageProcessor() {
       outputPixels: MAX_IMAGE_INPUT_PIXELS,
     },
     temp: {
-      rootDir: resolvePreferredOpenClawTmpDir(),
-      prefix: "openclaw-img-",
+      rootDir: resolvePreferredNovaTmpDir(),
+      prefix: "nova-img-",
     },
     commandResolver: (command) =>
       resolveSystemBin(command, { trust: command === "powershell" ? "strict" : "standard" }),

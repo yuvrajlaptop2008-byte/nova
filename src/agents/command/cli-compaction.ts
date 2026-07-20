@@ -6,7 +6,7 @@
  */
 import type { SessionEntry } from "../../config/sessions/types.js";
 import type { AgentCompactionMode } from "../../config/types.agent-defaults.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { buildGenericCliContextEngineHostSupport } from "../../context-engine/host-compat.js";
 import { ensureContextEnginesInitialized as ensureContextEnginesInitializedImpl } from "../../context-engine/init.js";
 import { resolveContextEngine as resolveContextEngineImpl } from "../../context-engine/registry.js";
@@ -61,11 +61,11 @@ type SettingsManagerLike = {
 type CliCompactionDeps = {
   openSessionManager: (sessionFile: string) => SessionManagerLike;
   ensureContextEnginesInitialized: () => void;
-  resolveContextEngine: (cfg: OpenClawConfig) => Promise<ContextEngine>;
+  resolveContextEngine: (cfg: NovaConfig) => Promise<ContextEngine>;
   createPreparedEmbeddedAgentSettingsManager: (params: {
     cwd: string;
     agentDir: string;
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     contextTokenBudget?: number;
   }) => SettingsManagerLike | Promise<SettingsManagerLike>;
   applyAgentAutoCompactionGuard: (params: {
@@ -105,7 +105,7 @@ type CliCompactionRuntimeContextParams = {
   workspaceDir: string;
   cwd?: string;
   agentDir: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   skillsSnapshot?: SkillSnapshot;
   senderIsOwner?: boolean;
   provider: string;
@@ -254,7 +254,7 @@ function buildCliCompactionRuntimeContext(params: CliCompactionRuntimeContextPar
 }
 
 async function resolveCliContextCompactionSuccess(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   compactResult: Awaited<ReturnType<ContextEngine["compact"]>>;
   sessionFile: string;
   sessionId: string;
@@ -309,7 +309,7 @@ async function compactCliTranscript(params: {
   sessionFile: string;
   sessionManager: SessionManagerLike;
   storePath?: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir: string;
   cwd?: string;
   agentDir: string;
@@ -447,7 +447,7 @@ async function compactCliTranscript(params: {
 }
 
 async function compactNativeHarnessCliTranscript(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionId: string;
   sessionKey: string;
   sessionFile: string;
@@ -589,7 +589,7 @@ async function compactNativeHarnessCliTranscript(params: {
 
 /** Runs pre-turn compaction for a CLI session and returns the updated session entry. */
 export async function runCliTurnCompactionLifecycle(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionId: string;
   sessionKey: string;
   sessionEntry: SessionEntry | undefined;

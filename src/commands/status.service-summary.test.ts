@@ -31,7 +31,7 @@ describe("readServiceStatusSummary", () => {
     const summary = await readServiceStatusSummary(
       createService({
         isLoaded: vi.fn(async () => true),
-        readCommand: vi.fn(async () => ({ programArguments: ["openclaw", "gateway", "run"] })),
+        readCommand: vi.fn(async () => ({ programArguments: ["nova", "gateway", "run"] })),
         readRuntime: vi.fn(async () => ({ status: "running" })),
       }),
       "Daemon",
@@ -95,7 +95,7 @@ describe("readServiceStatusSummary", () => {
       createService({
         isLoaded,
         readCommand: vi.fn(async () => ({
-          programArguments: ["openclaw", "gateway", "run", "--port", "18789"],
+          programArguments: ["nova", "gateway", "run", "--port", "18789"],
           environment: { NOVA_GATEWAY_PORT: "18789" },
         })),
         readRuntime,
@@ -113,18 +113,18 @@ describe("readServiceStatusSummary", () => {
   });
 
   it("includes service layout diagnostics and flags source checkout entrypoints", async () => {
-    await withTempDir({ prefix: "openclaw-status-service-layout-" }, async (root) => {
+    await withTempDir({ prefix: "nova-status-service-layout-" }, async (root) => {
       await fs.mkdir(path.join(root, ".git"), { recursive: true });
       await fs.mkdir(path.join(root, "src"), { recursive: true });
       await fs.mkdir(path.join(root, "extensions"), { recursive: true });
       await fs.mkdir(path.join(root, "dist"), { recursive: true });
       await fs.writeFile(
         path.join(root, "package.json"),
-        JSON.stringify({ name: "openclaw", version: "0.0.0-test" }),
+        JSON.stringify({ name: "nova", version: "0.0.0-test" }),
         "utf8",
       );
       const entrypoint = path.join(root, "dist", "index.js");
-      const serviceFile = path.join(root, "openclaw-gateway.service");
+      const serviceFile = path.join(root, "nova-gateway.service");
       await fs.writeFile(entrypoint, "export {};\n", "utf8");
       await fs.writeFile(serviceFile, "[Service]\n", "utf8");
       const realRoot = await fs.realpath(root);
@@ -146,7 +146,7 @@ describe("readServiceStatusSummary", () => {
         throw new Error("Expected service layout diagnostics");
       }
       expect(layout.sourcePath).toBe(serviceFile);
-      expect(layout.sourcePathReal).toBe(path.join(realRoot, "openclaw-gateway.service"));
+      expect(layout.sourcePathReal).toBe(path.join(realRoot, "nova-gateway.service"));
       expect(layout.entrypoint).toBe(entrypoint);
       expect(layout.entrypointReal).toBe(path.join(realRoot, "dist", "index.js"));
       expect(layout.packageRoot).toBe(realRoot);

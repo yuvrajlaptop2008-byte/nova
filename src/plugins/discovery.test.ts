@@ -2,10 +2,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { bundledDistPluginFile } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledDistPluginFile } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
-import { discoverOpenClawPlugins } from "./discovery.js";
+import { discoverNovaPlugins } from "./discovery.js";
 import { listBuiltRuntimeEntryCandidates } from "./package-entrypoints.js";
 import {
   cleanupTrackedTempDirs,
@@ -25,7 +25,7 @@ vi.mock("./bundled-dir.js", async (importOriginal) => {
 const tempDirs: string[] = [];
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-plugins", tempDirs);
+  return makeTrackedTempDir("nova-plugins", tempDirs);
 }
 
 const mkdirSafe = mkdirSafeDir;
@@ -40,11 +40,11 @@ function countMatching<T>(items: readonly T[], predicate: (item: T) => boolean):
   return count;
 }
 
-function withOpenClawPackageArgv<T>(packageRoot: string, fn: () => T): T {
+function withNovaPackageArgv<T>(packageRoot: string, fn: () => T): T {
   mkdirSafe(path.join(packageRoot, "bin"));
-  fs.writeFileSync(path.join(packageRoot, "package.json"), '{"name":"openclaw"}\n', "utf-8");
+  fs.writeFileSync(path.join(packageRoot, "package.json"), '{"name":"nova"}\n', "utf-8");
   const originalArgv = process.argv;
-  process.argv = [originalArgv[0] ?? "node", path.join(packageRoot, "bin", "openclaw")];
+  process.argv = [originalArgv[0] ?? "node", path.join(packageRoot, "bin", "nova")];
   try {
     return fn();
   } finally {
@@ -57,7 +57,7 @@ function symlinkDirectory(target: string, linkPath: string): void {
 }
 
 const canCreateDirectorySymlinks = (() => {
-  const probeDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-symlink-probe-"));
+  const probeDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-symlink-probe-"));
   const targetDir = path.join(probeDir, "target");
   const linkDir = path.join(probeDir, "link");
   try {
@@ -123,13 +123,13 @@ function buildBundledDiscoveryEnv(stateDir: string): NodeJS.ProcessEnv {
 
 async function discoverWithStateDir(
   stateDir: string,
-  params: Parameters<typeof discoverOpenClawPlugins>[0],
+  params: Parameters<typeof discoverNovaPlugins>[0],
 ) {
-  return discoverOpenClawPlugins({ ...params, env: buildDiscoveryEnv(stateDir) });
+  return discoverNovaPlugins({ ...params, env: buildDiscoveryEnv(stateDir) });
 }
 
-function discoverWithEnv(params: Parameters<typeof discoverOpenClawPlugins>[0]) {
-  return discoverOpenClawPlugins(params);
+function discoverWithEnv(params: Parameters<typeof discoverNovaPlugins>[0]) {
+  return discoverNovaPlugins(params);
 }
 
 function writePluginPackageManifest(params: {
@@ -145,7 +145,7 @@ function writePluginPackageManifest(params: {
     path.join(params.packageDir, "package.json"),
     JSON.stringify({
       name: params.packageName,
-      openclaw: {
+      nova: {
         extensions: params.extensions,
         ...(params.runtimeExtensions ? { runtimeExtensions: params.runtimeExtensions } : {}),
         ...(params.setupEntry ? { setupEntry: params.setupEntry } : {}),
@@ -163,7 +163,7 @@ function writePluginManifest(params: {
   requiresPlugins?: string[];
 }) {
   fs.writeFileSync(
-    path.join(params.pluginDir, "openclaw.plugin.json"),
+    path.join(params.pluginDir, "nova.plugin.json"),
     JSON.stringify({
       id: params.id,
       ...(params.requiresPlugins ? { requiresPlugins: params.requiresPlugins } : {}),
@@ -368,7 +368,7 @@ function expectCandidateFields(
 }
 
 function expectCandidatePresence(
-  result: Awaited<ReturnType<typeof discoverOpenClawPlugins>>,
+  result: Awaited<ReturnType<typeof discoverNovaPlugins>>,
   params: { present?: readonly string[]; absent?: readonly string[] },
 ) {
   const ids = result.candidates.map((candidate) => candidate.idHint);
@@ -466,7 +466,7 @@ afterEach(() => {
   cleanupTrackedTempDirs(tempDirs);
 });
 
-describe("discoverOpenClawPlugins", () => {
+describe("discoverNovaPlugins", () => {
   it("discovers global and workspace extensions", async () => {
     const stateDir = makeTempDir();
     const workspaceDir = path.join(stateDir, "workspace");
@@ -477,7 +477,7 @@ describe("discoverOpenClawPlugins", () => {
       pluginId: "alpha",
     });
     createPackagePluginWithEntry({
-      packageDir: path.join(workspaceDir, ".openclaw", "extensions", "beta"),
+      packageDir: path.join(workspaceDir, ".nova", "extensions", "beta"),
       packageName: "@nova/beta",
       pluginId: "beta",
     });
@@ -490,7 +490,7 @@ describe("discoverOpenClawPlugins", () => {
     const stateDir = makeTempDir();
     const workspaceDir = path.join(stateDir, "workspace");
     const globalExt = path.join(stateDir, "extensions");
-    const workspaceExt = path.join(workspaceDir, ".openclaw", "extensions");
+    const workspaceExt = path.join(workspaceDir, ".nova", "extensions");
     mkdirSafe(globalExt);
     mkdirSafe(workspaceExt);
     fs.writeFileSync(path.join(globalExt, "my-helper.mjs"), "export default {}", "utf-8");
@@ -587,7 +587,7 @@ describe("discoverOpenClawPlugins", () => {
     async () => {
       const stateDir = makeTempDir();
       const workspaceDir = path.join(stateDir, "workspace");
-      const workspaceExt = path.join(workspaceDir, ".openclaw", "extensions");
+      const workspaceExt = path.join(workspaceDir, ".nova", "extensions");
       mkdirSafe(workspaceExt);
 
       const linkedPluginDir = path.join(stateDir, "workspace-linked-plugin-src");
@@ -626,7 +626,7 @@ describe("discoverOpenClawPlugins", () => {
   it("does not recurse arbitrary workspace directories for plugin auto-discovery", () => {
     const stateDir = makeTempDir();
     const workspaceDir = path.join(stateDir, "workspace");
-    const workspaceExt = path.join(workspaceDir, ".openclaw", "extensions");
+    const workspaceExt = path.join(workspaceDir, ".nova", "extensions");
 
     const expectedWorkspacePluginDir = path.join(workspaceExt, "workspace-plugin");
     createPackagePluginWithEntry({
@@ -641,7 +641,7 @@ describe("discoverOpenClawPlugins", () => {
       packageName: "@nova/stray-workspace-plugin",
     });
 
-    const result = discoverOpenClawPlugins({
+    const result = discoverNovaPlugins({
       workspaceDir,
       env: buildDiscoveryEnv(stateDir),
     });
@@ -658,12 +658,12 @@ describe("discoverOpenClawPlugins", () => {
     const homeDir = makeTempDir();
     const workspaceRoot = path.join(homeDir, "workspace");
     createPackagePluginWithEntry({
-      packageDir: path.join(workspaceRoot, ".openclaw", "extensions", "tilde-workspace"),
+      packageDir: path.join(workspaceRoot, ".nova", "extensions", "tilde-workspace"),
       packageName: "@nova/tilde-workspace",
       pluginId: "tilde-workspace",
     });
 
-    const result = discoverOpenClawPlugins({
+    const result = discoverNovaPlugins({
       workspaceDir: "~/workspace",
       env: {
         ...buildDiscoveryEnv(stateDir),
@@ -715,10 +715,10 @@ describe("discoverOpenClawPlugins", () => {
       "utf-8",
     );
     fs.writeFileSync(path.join(extensionDir, "package.json"), '{"name":"@nova/twitch"}\n', "utf-8");
-    fs.writeFileSync(path.join(extensionDir, "openclaw.plugin.json"), '{"id":"twitch"}\n', "utf-8");
+    fs.writeFileSync(path.join(extensionDir, "nova.plugin.json"), '{"id":"twitch"}\n', "utf-8");
 
-    const result = withOpenClawPackageArgv(packageRoot, () =>
-      discoverOpenClawPlugins({ env: buildDiscoveryEnv(stateDir) }),
+    const result = withNovaPackageArgv(packageRoot, () =>
+      discoverNovaPlugins({ env: buildDiscoveryEnv(stateDir) }),
     );
 
     expect(result.diagnostics.map((entry) => entry.message).join("\n")).not.toContain(
@@ -728,7 +728,7 @@ describe("discoverOpenClawPlugins", () => {
 
   it("does not treat repo-level live or test files as plugin entrypoints", () => {
     const stateDir = makeTempDir();
-    const packageRoot = path.join(stateDir, "node_modules", "openclaw");
+    const packageRoot = path.join(stateDir, "node_modules", "nova");
     const bundledDir = path.join(packageRoot, "dist", "extensions");
     mkdirSafe(bundledDir);
 
@@ -746,8 +746,8 @@ describe("discoverOpenClawPlugins", () => {
       pluginId: "real-plugin",
     });
 
-    const { candidates, diagnostics } = withOpenClawPackageArgv(packageRoot, () =>
-      discoverOpenClawPlugins({
+    const { candidates, diagnostics } = withNovaPackageArgv(packageRoot, () =>
+      discoverNovaPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
           NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
@@ -762,7 +762,7 @@ describe("discoverOpenClawPlugins", () => {
 
   it("discovers bind-mounted bundled source overlays before packaged dist bundles", () => {
     const stateDir = makeTempDir();
-    const packageRoot = path.join(stateDir, "node_modules", "openclaw");
+    const packageRoot = path.join(stateDir, "node_modules", "nova");
     const bundledRoot = path.join(packageRoot, "dist", "extensions");
     const bundledPluginDir = path.join(bundledRoot, "synology-chat");
     const sourcePluginDir = path.join(packageRoot, "extensions", "synology-chat");
@@ -781,8 +781,8 @@ describe("discoverOpenClawPlugins", () => {
     const sourceEntryPath = path.join(sourcePluginDir, "src", "index.ts");
     const bundledEntryPath = path.join(bundledPluginDir, "index.js");
 
-    const { candidates, diagnostics } = withOpenClawPackageArgv(packageRoot, () =>
-      discoverOpenClawPlugins({
+    const { candidates, diagnostics } = withNovaPackageArgv(packageRoot, () =>
+      discoverNovaPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
           NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
@@ -816,7 +816,7 @@ describe("discoverOpenClawPlugins", () => {
 
   it("keeps copied source plugin dirs inert when they are not mounted overlays", () => {
     const stateDir = makeTempDir();
-    const packageRoot = path.join(stateDir, "node_modules", "openclaw");
+    const packageRoot = path.join(stateDir, "node_modules", "nova");
     const bundledRoot = path.join(packageRoot, "dist", "extensions");
     const bundledPluginDir = path.join(bundledRoot, "synology-chat");
     const sourcePluginDir = path.join(packageRoot, "extensions", "synology-chat");
@@ -834,8 +834,8 @@ describe("discoverOpenClawPlugins", () => {
     mockLinuxMountInfo([]);
     const bundledEntryPath = path.join(bundledPluginDir, "index.js");
 
-    const { candidates, diagnostics } = withOpenClawPackageArgv(packageRoot, () =>
-      discoverOpenClawPlugins({
+    const { candidates, diagnostics } = withNovaPackageArgv(packageRoot, () =>
+      discoverNovaPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
           NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
@@ -974,7 +974,7 @@ describe("discoverOpenClawPlugins", () => {
     expect(
       result.diagnostics.some(
         (entry) =>
-          entry.pluginId === "source-only-pack" && entry.message.includes("openclaw doctor --fix"),
+          entry.pluginId === "source-only-pack" && entry.message.includes("nova doctor --fix"),
       ),
     ).toBe(false);
     expect(result.diagnostics).toHaveLength(1);
@@ -1081,7 +1081,7 @@ describe("discoverOpenClawPlugins", () => {
     const pluginDir = path.join(stateDir, "extensions", "guardrail-bridge");
     mkdirSafe(pluginDir);
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.extension.json"),
+      path.join(pluginDir, "nova.extension.json"),
       JSON.stringify({
         name: "guardrail-bridge",
         type: "npm",
@@ -1097,8 +1097,8 @@ describe("discoverOpenClawPlugins", () => {
       diagnostics: result.diagnostics,
       level: "warn",
       pluginId: "guardrail-bridge",
-      source: path.join(pluginDir, "openclaw.extension.json"),
-      messageIncludes: 'run "openclaw doctor --fix"',
+      source: path.join(pluginDir, "nova.extension.json"),
+      messageIncludes: 'run "nova doctor --fix"',
     });
   });
 
@@ -1151,7 +1151,7 @@ describe("discoverOpenClawPlugins", () => {
     writePluginManifest({ pluginDir: installedPluginDir, id: "discord" });
     writePluginEntry(path.join(installedPluginDir, "src", "index.ts"));
 
-    const result = discoverOpenClawPlugins({
+    const result = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
@@ -1197,7 +1197,7 @@ describe("discoverOpenClawPlugins", () => {
     writePluginEntry(path.join(packageDir, "dist", "two.js"));
 
     const realpathSync = vi.spyOn(fs, "realpathSync");
-    const { candidates } = discoverOpenClawPlugins({
+    const { candidates } = discoverNovaPlugins({
       env: buildDiscoveryEnv(stateDir),
     });
 
@@ -1228,7 +1228,7 @@ describe("discoverOpenClawPlugins", () => {
       const canonicalPackageDir = fs.realpathSync(realPackageDir);
 
       const realpathSync = vi.spyOn(fs, "realpathSync");
-      const { candidates } = discoverOpenClawPlugins({
+      const { candidates } = discoverNovaPlugins({
         extraPaths: [linkedPackageDir, canonicalPackageDir],
         env: buildDiscoveryEnv(stateDir),
       });
@@ -1381,7 +1381,7 @@ describe("discoverOpenClawPlugins", () => {
       result.diagnostics.some(
         (entry) =>
           entry.level === "error" &&
-          entry.message.includes("openclaw.runtimeExtensions[0]") &&
+          entry.message.includes("nova.runtimeExtensions[0]") &&
           entry.message.includes("non-empty string"),
       ),
     ).toBe(true);
@@ -1406,7 +1406,7 @@ describe("discoverOpenClawPlugins", () => {
       result.diagnostics.some(
         (entry) =>
           entry.level === "error" &&
-          entry.message.includes("openclaw.extensions[1]") &&
+          entry.message.includes("nova.extensions[1]") &&
           entry.message.includes("non-empty string"),
       ),
     ).toBe(true);
@@ -1465,7 +1465,7 @@ describe("discoverOpenClawPlugins", () => {
   it("keeps workspace package TypeScript entries unless runtime entries are explicit", () => {
     const stateDir = makeTempDir();
     const workspaceDir = path.join(stateDir, "workspace");
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-pack");
+    const pluginDir = path.join(workspaceDir, ".nova", "extensions", "workspace-pack");
     mkdirSafe(path.join(pluginDir, "src"));
     mkdirSafe(path.join(pluginDir, "dist"));
 
@@ -1477,7 +1477,7 @@ describe("discoverOpenClawPlugins", () => {
     writePluginEntry(path.join(pluginDir, "src", "index.ts"));
     writePluginEntry(path.join(pluginDir, "dist", "index.js"));
 
-    const { candidates } = discoverOpenClawPlugins({
+    const { candidates } = discoverNovaPlugins({
       workspaceDir,
       env: buildDiscoveryEnv(stateDir),
     });
@@ -1497,7 +1497,7 @@ describe("discoverOpenClawPlugins", () => {
       compatPluginApi: ">=2026.5.27-beta.2",
     });
 
-    const { candidates, diagnostics } = discoverOpenClawPlugins({
+    const { candidates, diagnostics } = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
       }),
@@ -1523,7 +1523,7 @@ describe("discoverOpenClawPlugins", () => {
       path.join(pluginDir, "package.json"),
       JSON.stringify({
         name: "@nova/malformed-channel",
-        openclaw: {
+        nova: {
           extensions: ["./index.js"],
           plugin: { id: "malformed-channel" },
           compat: { pluginApi: 20260527 },
@@ -1533,7 +1533,7 @@ describe("discoverOpenClawPlugins", () => {
     );
     writePluginEntry(path.join(pluginDir, "index.js"));
 
-    const { candidates, diagnostics } = discoverOpenClawPlugins({
+    const { candidates, diagnostics } = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27",
       }),
@@ -1546,7 +1546,7 @@ describe("discoverOpenClawPlugins", () => {
       pluginId: "malformed-channel",
       source: path.join(pluginDir, "package.json"),
       messageIncludes:
-        "invalid package plugin API metadata: package.json openclaw.compat.pluginApi must be a string; skipping discovery",
+        "invalid package plugin API metadata: package.json nova.compat.pluginApi must be a string; skipping discovery",
     });
   });
 
@@ -1559,7 +1559,7 @@ describe("discoverOpenClawPlugins", () => {
       path.join(pluginDir, "package.json"),
       JSON.stringify({
         name: "@nova/future-shape",
-        openclaw: {
+        nova: {
           extensions: { runtime: "./src/index.ts" },
           compat: { pluginApi: ">=2026.5.27-beta.2" },
         },
@@ -1567,7 +1567,7 @@ describe("discoverOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const { candidates, diagnostics } = discoverOpenClawPlugins({
+    const { candidates, diagnostics } = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
       }),
@@ -1582,7 +1582,7 @@ describe("discoverOpenClawPlugins", () => {
       messageIncludes:
         "plugin requires plugin API >=2026.5.27-beta.2, but this host is 2026.5.27-beta.1; skipping discovery",
     });
-    expectNoDiagnostic({ diagnostics, messageIncludes: "openclaw.extensions" });
+    expectNoDiagnostic({ diagnostics, messageIncludes: "nova.extensions" });
   });
 
   it("discovers same-floor beta non-bundled package plugin API candidates", () => {
@@ -1595,7 +1595,7 @@ describe("discoverOpenClawPlugins", () => {
       compatPluginApi: ">=2026.5.27-beta.1",
     });
 
-    const { candidates, diagnostics } = discoverOpenClawPlugins({
+    const { candidates, diagnostics } = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
       }),
@@ -1614,7 +1614,7 @@ describe("discoverOpenClawPlugins", () => {
       path.join(pluginDir, "package.json"),
       JSON.stringify({
         name: "@nova/downloadable",
-        openclaw: {
+        nova: {
           extensions: ["./index.ts"],
           compat: { pluginApi: ">=2099.1.1" },
         },
@@ -1624,7 +1624,7 @@ describe("discoverOpenClawPlugins", () => {
     writePluginManifest({ pluginDir, id: "downloadable" });
     writePluginEntry(path.join(pluginDir, "index.ts"));
 
-    const { candidates } = discoverOpenClawPlugins({
+    const { candidates } = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
@@ -1642,7 +1642,7 @@ describe("discoverOpenClawPlugins", () => {
       path.join(pluginDir, "package.json"),
       JSON.stringify({
         name: "@nova/downloadable",
-        openclaw: {
+        nova: {
           extensions: ["./index.ts"],
         },
       }),
@@ -1651,7 +1651,7 @@ describe("discoverOpenClawPlugins", () => {
     writePluginManifest({ pluginDir, id: "downloadable" });
     writePluginEntry(path.join(pluginDir, "index.js"));
 
-    const { candidates, diagnostics } = discoverOpenClawPlugins({
+    const { candidates, diagnostics } = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
@@ -1667,7 +1667,7 @@ describe("discoverOpenClawPlugins", () => {
 
   it("discovers source-checkout-only bundled plugins alongside built bundled plugins", () => {
     const stateDir = makeTempDir();
-    const packageRoot = path.join(stateDir, "openclaw");
+    const packageRoot = path.join(stateDir, "nova");
     const bundledDir = path.join(packageRoot, "dist", "extensions");
     const sourceDir = path.join(packageRoot, "extensions");
     const builtPluginDir = path.join(bundledDir, "shipped");
@@ -1698,7 +1698,7 @@ describe("discoverOpenClawPlugins", () => {
       path.join(sourceOnlyPluginDir, "package.json"),
       JSON.stringify({
         name: "@nova/downloadable",
-        openclaw: {
+        nova: {
           extensions: ["./index.ts"],
         },
       }),
@@ -1707,7 +1707,7 @@ describe("discoverOpenClawPlugins", () => {
     writePluginManifest({ pluginDir: sourceOnlyPluginDir, id: "downloadable" });
     writePluginEntry(path.join(sourceOnlyPluginDir, "index.ts"));
 
-    const { candidates } = discoverOpenClawPlugins({
+    const { candidates } = discoverNovaPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
         NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
@@ -1724,11 +1724,11 @@ describe("discoverOpenClawPlugins", () => {
 
   it("does not discover nested node_modules copies under installed plugins", async () => {
     const stateDir = makeTempDir();
-    const pluginDir = path.join(stateDir, "extensions", "opik-openclaw");
+    const pluginDir = path.join(stateDir, "extensions", "opik-nova");
     const nestedDiffsDir = path.join(
       pluginDir,
       "node_modules",
-      "openclaw",
+      "nova",
       "dist",
       "extensions",
       "diffs",
@@ -1739,10 +1739,10 @@ describe("discoverOpenClawPlugins", () => {
 
     writePluginPackageManifest({
       packageDir: pluginDir,
-      packageName: "@opik/opik-openclaw",
+      packageName: "@opik/opik-nova",
       extensions: ["./src/index.ts"],
     });
-    writePluginManifest({ pluginDir, id: "opik-openclaw" });
+    writePluginManifest({ pluginDir, id: "opik-nova" });
     fs.writeFileSync(
       path.join(pluginDir, "src", "index.ts"),
       "export default function () {}",
@@ -1755,8 +1755,8 @@ describe("discoverOpenClawPlugins", () => {
     );
 
     writePluginPackageManifest({
-      packageDir: path.join(pluginDir, "node_modules", "openclaw"),
-      packageName: "openclaw",
+      packageDir: path.join(pluginDir, "node_modules", "nova"),
+      packageName: "nova",
       extensions: [`./${bundledDistPluginFile("diffs", "index.js")}`],
     });
     writePluginManifest({ pluginDir: nestedDiffsDir, id: "diffs" });
@@ -1767,15 +1767,15 @@ describe("discoverOpenClawPlugins", () => {
     );
 
     const { candidates } = await discoverWithStateDir(stateDir, {});
-    expectCandidateOrder(candidates, ["opik-openclaw"]);
+    expectCandidateOrder(candidates, ["opik-nova"]);
   });
 
   it("skips dependency and build directories while scanning workspace roots", () => {
     const stateDir = makeTempDir();
     const workspaceDir = path.join(stateDir, "workspace");
-    const workspaceRoot = path.join(workspaceDir, ".openclaw", "extensions");
+    const workspaceRoot = path.join(workspaceDir, ".nova", "extensions");
     const workspacePluginDir = path.join(workspaceRoot, "workspace-plugin");
-    const nestedNodeModulesDir = path.join(workspaceRoot, "node_modules", "openclaw");
+    const nestedNodeModulesDir = path.join(workspaceRoot, "node_modules", "nova");
     const nestedDistDir = path.join(workspaceRoot, "dist", "extensions", "diffs");
     mkdirSafe(path.join(workspacePluginDir, "src"));
     mkdirSafe(path.join(nestedNodeModulesDir, "src"));
@@ -1789,7 +1789,7 @@ describe("discoverOpenClawPlugins", () => {
 
     createPackagePluginWithEntry({
       packageDir: nestedNodeModulesDir,
-      packageName: "openclaw",
+      packageName: "nova",
       pluginId: "node-modules-copy",
     });
 
@@ -1800,7 +1800,7 @@ describe("discoverOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const { candidates } = discoverOpenClawPlugins({
+    const { candidates } = discoverNovaPlugins({
       workspaceDir,
       env: buildDiscoveryEnv(stateDir),
     });
@@ -1963,7 +1963,7 @@ describe("discoverOpenClawPlugins", () => {
     const result = await discoverWithStateDir(stateDir, setup(stateDir));
     const legacy = findCandidateById(result.candidates, "legacy-with-bad-bundle");
 
-    expect(legacy?.format).toBe("openclaw");
+    expect(legacy?.format).toBe("nova");
     expect(hasDiagnosticSourceSuffix(result.diagnostics, bundleMarker)).toBe(true);
   });
 
@@ -2194,7 +2194,7 @@ describe("discoverOpenClawPlugins", () => {
       outsideManifest,
       JSON.stringify({
         name: "@nova/pack",
-        openclaw: { extensions: ["./entry.ts"] },
+        nova: { extensions: ["./entry.ts"] },
       }),
       "utf-8",
     );
@@ -2235,15 +2235,15 @@ describe("discoverOpenClawPlugins", () => {
     "repairs world-writable bundled plugin dirs before loading them",
     async () => {
       const stateDir = makeTempDir();
-      const packageRoot = path.join(stateDir, "node_modules", "openclaw");
+      const packageRoot = path.join(stateDir, "node_modules", "nova");
       const bundledDir = path.join(packageRoot, "dist", "extensions");
       const packDir = path.join(bundledDir, "demo-pack");
       mkdirSafe(packDir);
       fs.writeFileSync(path.join(packDir, "index.ts"), "export default function () {}", "utf-8");
       fs.chmodSync(packDir, 0o777);
 
-      const result = withOpenClawPackageArgv(packageRoot, () =>
-        discoverOpenClawPlugins({
+      const result = withNovaPackageArgv(packageRoot, () =>
+        discoverNovaPlugins({
           env: { ...process.env, ...buildBundledDiscoveryEnv(stateDir) },
         }),
       );
@@ -2296,7 +2296,7 @@ describe("discoverOpenClawPlugins", () => {
     fs.chmodSync(blockedDir, 0o777);
 
     try {
-      const result = discoverOpenClawPlugins({
+      const result = discoverNovaPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
           NOVA_PLUGINS_PATHS: blockedDir,
@@ -2324,7 +2324,7 @@ describe("discoverOpenClawPlugins", () => {
       fs.chmodSync(pluginDir, 0o777);
 
       try {
-        const result = discoverOpenClawPlugins({
+        const result = discoverNovaPlugins({
           extraPaths: [pluginDir],
           env: {
             ...buildDiscoveryEnv(stateDir),
@@ -2367,7 +2367,7 @@ describe("discoverOpenClawPlugins", () => {
 
   it("discovers bundled and global plugins for each workspace-specific scan", () => {
     const stateDir = makeTempDir();
-    const packageRoot = path.join(stateDir, "node_modules", "openclaw");
+    const packageRoot = path.join(stateDir, "node_modules", "nova");
     const bundledDir = path.join(packageRoot, "dist", "extensions");
     const globalExt = path.join(stateDir, "extensions");
     const workspaceA = path.join(stateDir, "workspace-a");
@@ -2384,12 +2384,12 @@ describe("discoverOpenClawPlugins", () => {
       pluginId: "global-plugin",
     });
     createPackagePluginWithEntry({
-      packageDir: path.join(workspaceA, ".openclaw", "extensions", "workspace-a-plugin"),
+      packageDir: path.join(workspaceA, ".nova", "extensions", "workspace-a-plugin"),
       packageName: "@nova/workspace-a-plugin",
       pluginId: "workspace-a-plugin",
     });
     createPackagePluginWithEntry({
-      packageDir: path.join(workspaceB, ".openclaw", "extensions", "workspace-b-plugin"),
+      packageDir: path.join(workspaceB, ".nova", "extensions", "workspace-b-plugin"),
       packageName: "@nova/workspace-b-plugin",
       pluginId: "workspace-b-plugin",
     });
@@ -2399,7 +2399,7 @@ describe("discoverOpenClawPlugins", () => {
       NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
     };
-    const first = withOpenClawPackageArgv(packageRoot, () =>
+    const first = withNovaPackageArgv(packageRoot, () =>
       discoverWithEnv({ workspaceDir: workspaceA, env }),
     );
     expectCandidatePresence(first, {
@@ -2407,7 +2407,7 @@ describe("discoverOpenClawPlugins", () => {
       absent: ["workspace-b-plugin"],
     });
 
-    const second = withOpenClawPackageArgv(packageRoot, () =>
+    const second = withNovaPackageArgv(packageRoot, () =>
       discoverWithEnv({ workspaceDir: workspaceB, env }),
     );
     expectCandidatePresence(second, {

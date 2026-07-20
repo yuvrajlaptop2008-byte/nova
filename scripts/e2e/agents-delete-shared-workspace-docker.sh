@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-agents-delete-shared-workspace-e2e:local" NOVA_AGENTS_DELETE_SHARED_WORKSPACE_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-agents-delete-shared-workspace-e2e:local" NOVA_AGENTS_DELETE_SHARED_WORKSPACE_E2E_IMAGE)"
 SKIP_BUILD="${NOVA_AGENTS_DELETE_SHARED_WORKSPACE_E2E_SKIP_BUILD:-0}"
 DOCKER_COMMAND_TIMEOUT="${NOVA_AGENTS_DELETE_SHARED_WORKSPACE_DOCKER_COMMAND_TIMEOUT:-300s}"
 NOVA_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 agents-delete-shared-workspace empty)"
@@ -28,22 +28,22 @@ run_logged agents-delete-shared-workspace docker_e2e_docker_cmd run --rm \
   "$IMAGE_NAME" \
   -lc '
 set -euo pipefail
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/nova-e2e-instance.sh
 
-run_openclaw() {
-  if command -v openclaw >/dev/null 2>&1; then
-    openclaw "$@"
+run_nova() {
+  if command -v nova >/dev/null 2>&1; then
+    nova "$@"
     return
   fi
-  if [ -f /app/openclaw.mjs ]; then
-    node /app/openclaw.mjs "$@"
+  if [ -f /app/nova.mjs ]; then
+    node /app/nova.mjs "$@"
     return
   fi
-  echo "openclaw CLI not found in Docker image" >&2
+  echo "nova CLI not found in Docker image" >&2
   exit 1
 }
 
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 export SHARED_WORKSPACE="$HOME/workspace-shared"
 output_file="$HOME/delete.json"
 trap '\''rm -rf "$HOME"'\'' EXIT
@@ -51,7 +51,7 @@ trap '\''rm -rf "$HOME"'\'' EXIT
 mkdir -p "$NOVA_STATE_DIR" "$SHARED_WORKSPACE"
 node scripts/e2e/lib/fixture.mjs agents-delete-config
 
-run_openclaw agents delete ops --force --json > "$output_file"
+run_nova agents delete ops --force --json > "$output_file"
 
 node scripts/e2e/lib/fixture.mjs agents-delete-assert "$output_file"
 '

@@ -6,9 +6,9 @@ import {
   resolveAuthStorePathForDisplay,
   saveAuthProfileStore,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/agent-runtime";
+import type { MigrationProviderContext } from "nova/plugin-sdk/plugin-entry";
+import type { NovaConfig } from "nova/plugin-sdk/provider-auth";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   HERMES_REASON_AUTH_PROFILE_EXISTS,
@@ -83,7 +83,7 @@ describe("Hermes migration secret items", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const provider = buildHermesMigrationProvider();
     const plan = await provider.plan(
@@ -308,7 +308,7 @@ describe("Hermes migration secret items", () => {
       ].join("\n"),
     );
     await writeFile(path.join(source, ".env"), `${envVar}=${value}\n`);
-    const config = { agents: { defaults: { workspace: workspaceDir } } } as OpenClawConfig;
+    const config = { agents: { defaults: { workspace: workspaceDir } } } as NovaConfig;
     const runtime = makeConfigRuntime(config);
 
     const result = await buildHermesMigrationProvider({ runtime }).apply(
@@ -419,7 +419,7 @@ describe("Hermes migration secret items", () => {
     const source = path.join(root, "hermes");
     const workspaceDir = path.join(root, "workspace");
     const stateDir = path.join(root, "state");
-    const config = { agents: { defaults: { workspace: workspaceDir } } } as OpenClawConfig;
+    const config = { agents: { defaults: { workspace: workspaceDir } } } as NovaConfig;
     const accountOne = fakeJwt({
       "https://api.openai.com/auth": { chatgpt_account_id: "acct_one" },
       "https://api.openai.com/profile": { email: "one@example.test" },
@@ -525,7 +525,7 @@ describe("Hermes migration secret items", () => {
         },
       }),
     );
-    const config = { agents: { defaults: { workspace: workspaceDir } } } as OpenClawConfig;
+    const config = { agents: { defaults: { workspace: workspaceDir } } } as NovaConfig;
     const runtime = makeConfigRuntime(config);
     const result = await buildHermesMigrationProvider({ runtime }).apply(
       makeContext({
@@ -606,7 +606,7 @@ describe("Hermes migration secret items", () => {
     );
     vi.stubEnv("HOME", root);
     vi.stubEnv("HERMES_HOME", "");
-    const config = { agents: { defaults: { workspace: workspaceDir } } } as OpenClawConfig;
+    const config = { agents: { defaults: { workspace: workspaceDir } } } as NovaConfig;
     const runtime = makeConfigRuntime(config);
 
     const result = await buildHermesMigrationProvider({ runtime }).apply(
@@ -657,7 +657,7 @@ describe("Hermes migration secret items", () => {
           workspace: workspaceDir,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const runtime = {
       config: {
         current: () => config,
@@ -801,7 +801,7 @@ describe("Hermes migration secret items", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const provider = buildHermesMigrationProvider();
     const ctx = makeContext({
@@ -840,7 +840,7 @@ describe("Hermes migration secret items", () => {
           workspace: workspaceDir,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const provider = buildHermesMigrationProvider();
     const ctx = makeContext({
@@ -893,7 +893,7 @@ describe("Hermes migration secret items", () => {
           workspace: workspaceDir,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const provider = buildHermesMigrationProvider();
     const ctx = makeContext({
@@ -1033,7 +1033,7 @@ describe("Hermes migration secret items", () => {
           workspace: workspaceDir,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const provider = buildHermesMigrationProvider();
     const ctx = makeContext({
@@ -1137,7 +1137,7 @@ describe("Hermes migration secret items", () => {
           workspace: workspaceDir,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const provider = buildHermesMigrationProvider();
     const ctx = makeContext({
@@ -1195,7 +1195,7 @@ describe("Hermes migration secret items", () => {
           workspace: workspaceDir,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     try {
       process.env.XDG_DATA_HOME = xdgDataHome;
@@ -1274,7 +1274,7 @@ describe("Hermes migration secret items", () => {
           workspace: workspaceDir,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const provider = buildHermesMigrationProvider();
     const ctx = makeContext({
@@ -1415,7 +1415,7 @@ describe("Hermes migration secret items", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await writeFile(path.join(source, "auth.json"), "{}");
     await writeFile(
       path.join(root, ".local", "share", "opencode", "auth.json"),
@@ -1477,7 +1477,7 @@ describe("Hermes migration secret items", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await writeFile(path.join(source, "config.yaml"), "model: openai/gpt-5.5\n");
     await writeFile(
       path.join(root, ".local", "share", "opencode", "auth.json"),

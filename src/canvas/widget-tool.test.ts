@@ -22,7 +22,7 @@ afterEach(async () => {
 });
 
 async function createStateDir(): Promise<string> {
-  const stateDir = await mkdtemp(path.join(tmpdir(), "openclaw-widget-tool-"));
+  const stateDir = await mkdtemp(path.join(tmpdir(), "nova-widget-tool-"));
   tempDirs.push(stateDir);
   return stateDir;
 }
@@ -136,7 +136,7 @@ describe("show_widget", () => {
     });
 
     expect(viewId).toMatch(/^cv_[a-f0-9]{32}$/);
-    expect(url).toBe(`/__openclaw__/canvas/documents/${viewId}/index.html`);
+    expect(url).toBe(`/__nova__/canvas/documents/${viewId}/index.html`);
     expect(JSON.parse(text)).toMatchObject({
       kind: "canvas",
       presentation: { target: "assistant_message", title: "<Status>", sandbox: "scripts" },
@@ -155,7 +155,7 @@ describe("show_widget", () => {
     expect(html).toContain("--accent:#ff5c5c");
     expect(html).toContain("--accent-fill:#d13c3c");
     expect(html).toContain('<body class="svg-widget"><script>');
-    expect(html).toContain("openclaw:widget-size");
+    expect(html).toContain("nova:widget-size");
     const manifest = JSON.parse(
       await readFile(
         path.join(resolveCanvasDocumentDir(stateDir, viewId), "manifest.json"),
@@ -324,15 +324,13 @@ describe("show_widget", () => {
 
     expect(html).not.toContain('<body class="svg-widget">');
     expect(html.indexOf("window.sendPrompt")).toBeLessThan(html.indexOf("<section>"));
-    expect(html).toContain("openclaw:widget-theme");
-    expect(html.indexOf("openclaw:widget-theme")).toBeLessThan(html.indexOf("<section>"));
-    expect(html).toContain("openclaw:widget-snapshot-request");
-    expect(html.indexOf("openclaw:widget-theme")).toBeLessThan(
-      html.indexOf("openclaw:widget-snapshot-request"),
+    expect(html).toContain("nova:widget-theme");
+    expect(html.indexOf("nova:widget-theme")).toBeLessThan(html.indexOf("<section>"));
+    expect(html).toContain("nova:widget-snapshot-request");
+    expect(html.indexOf("nova:widget-theme")).toBeLessThan(
+      html.indexOf("nova:widget-snapshot-request"),
     );
-    expect(html.indexOf("openclaw:widget-snapshot-request")).toBeLessThan(
-      html.indexOf("<section>"),
-    );
+    expect(html.indexOf("nova:widget-snapshot-request")).toBeLessThan(html.indexOf("<section>"));
     const bridgeKeys = JSON.parse(html.match(/const keys=(\[[^\]]+\])/)?.[1] ?? "[]") as string[];
     expect(bridgeKeys).toEqual([
       "surface",
@@ -354,11 +352,11 @@ describe("show_widget", () => {
       "font-body",
       "font-mono",
     ]);
-    expect(html).toContain("openclaw:widget-prompt-offer");
+    expect(html).toContain("nova:widget-prompt-offer");
     expect(html).toContain("navigator.userActivation");
     expect(html).toContain("c.port1.postMessage.bind(c.port1)");
-    expect(html).toContain('post({type:"openclaw:widget-prompt"');
-    expect(html).not.toContain('window.parent.postMessage({type:"openclaw:widget-prompt",');
+    expect(html).toContain('post({type:"nova:widget-prompt"');
+    expect(html).not.toContain('window.parent.postMessage({type:"nova:widget-prompt",');
     expect(html).toContain("const post=(message,origin)=>parent.postMessage(message,origin)");
     expect(html).toContain('query.call(root,"script")');
     expect(html).toContain('queryDocument("canvas")');

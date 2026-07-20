@@ -6,7 +6,7 @@ type CliChannelOptionsTestApi = {
 
 function getTestApi(): CliChannelOptionsTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.cliChannelOptionsTestApi")
+    Symbol.for("nova.cliChannelOptionsTestApi")
   ] as CliChannelOptionsTestApi;
 }
 

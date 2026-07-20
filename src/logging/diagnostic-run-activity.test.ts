@@ -1,5 +1,5 @@
 // Unit tests for shared run-staleness threshold policy.
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it } from "vitest";
 import { hasInternalDiagnosticEventListeners } from "../infra/diagnostic-event-listener-presence.js";
 import {

@@ -1,9 +1,9 @@
 // Deepseek plugin entrypoint registers its Nova integration.
-import { readConfiguredProviderCatalogEntries } from "openclaw/plugin-sdk/provider-catalog-shared";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
-import { buildProviderToolCompatFamilyHooks } from "openclaw/plugin-sdk/provider-tools";
-import { fetchDeepSeekUsage } from "openclaw/plugin-sdk/provider-usage";
+import { readConfiguredProviderCatalogEntries } from "nova/plugin-sdk/provider-catalog-shared";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
+import { buildProviderReplayFamilyHooks } from "nova/plugin-sdk/provider-model-shared";
+import { buildProviderToolCompatFamilyHooks } from "nova/plugin-sdk/provider-tools";
+import { fetchDeepSeekUsage } from "nova/plugin-sdk/provider-usage";
 import { applyDeepSeekConfig, DEEPSEEK_DEFAULT_MODEL_REF } from "./onboard.js";
 import { buildDeepSeekProvider } from "./provider-catalog.js";
 import { createDeepSeekV4ThinkingWrapper } from "./stream.js";

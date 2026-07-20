@@ -45,7 +45,7 @@ export type DeclaredToolAllowlistContext = {
 };
 
 /** Synthetic allowlist entry that means "use default plugin tools". */
-export const DEFAULT_PLUGIN_TOOLS_ALLOWLIST_ENTRY = "__openclaw_default_plugin_tools__";
+export const DEFAULT_PLUGIN_TOOLS_ALLOWLIST_ENTRY = "__nova_default_plugin_tools__";
 
 const SHIPPED_PLUGIN_POLICY_FAMILY_CORE_TOOLS = new Map<string, readonly string[]>([
   // `canvas` is a shipped operator policy family. Keep promoted `show_widget`

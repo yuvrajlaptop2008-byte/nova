@@ -1,11 +1,11 @@
 // Logbook node-host command: screen capture for headless node hosts (macOS).
-// Nodes without the Nova app (plain `openclaw node host run`) advertise
+// Nodes without the Nova app (plain `nova node host run`) advertise
 // logbook.snapshot so capture works anywhere the plugin is enabled.
 import { randomUUID } from "node:crypto";
 import { chmod, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { runExec } from "openclaw/plugin-sdk/process-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { runExec } from "nova/plugin-sdk/process-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 
 type LogbookSnapshotParams = {
   screenIndex?: number;
@@ -45,7 +45,7 @@ export async function handleLogbookSnapshot(rawParams: unknown): Promise<Logbook
   );
   // The shared helper rejects unsafe temp roots; the private subdirectory
   // keeps captures out of the broader Nova temp namespace.
-  const captureDir = path.join(resolvePreferredOpenClawTmpDir(), "logbook");
+  const captureDir = path.join(resolvePreferredNovaTmpDir(), "logbook");
   await mkdir(captureDir, { recursive: true, mode: 0o700 });
   await chmod(captureDir, 0o700);
   const filePath = path.join(captureDir, `logbook-snapshot-${randomUUID()}.jpg`);

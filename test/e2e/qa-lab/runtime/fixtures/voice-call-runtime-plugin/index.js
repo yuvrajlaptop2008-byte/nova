@@ -30,7 +30,7 @@ export default {
               request.onToolCall?.({
                 itemId: "qa-consult-item",
                 callId: "qa-consult-call",
-                name: "openclaw_agent_consult",
+                name: "nova_agent_consult",
                 args: {
                   question: "Use the embedded agent context to identify the caller request.",
                   context: "Realtime provider context marker: VOICE-CONSULT-42",
@@ -55,7 +55,7 @@ export default {
       },
     });
     api.registerGatewayMethod("qa.voiceCall.streamSession", async ({ params, respond }) => {
-      const runtime = globalThis[Symbol.for("openclaw.voice-call.runtime")];
+      const runtime = globalThis[Symbol.for("nova.voice-call.runtime")];
       const callId = typeof params?.callId === "string" ? params.callId : "";
       const call = runtime?.manager?.getCall?.(callId);
       const issue = runtime?.manager?.streamSessionIssuer;

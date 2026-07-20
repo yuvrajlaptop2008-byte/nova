@@ -5,8 +5,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { tryReadJsonSync } from "../infra/json-files.js";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
-import { resolveOpenClawDevSourceRoot } from "./dev-source-root.js";
+import { resolveNovaPackageRootSync } from "../infra/nova-root.js";
+import { resolveNovaDevSourceRoot } from "./dev-source-root.js";
 import { PluginLruCache } from "./plugin-cache-primitives.js";
 
 type PluginSdkAliasCandidateKind = "dist" | "src";
@@ -86,9 +86,9 @@ function resolvePluginLoaderJitiNativeModules(): string[] {
     const nativeModules = Array.isArray(configured)
       ? configured.filter((entry): entry is string => typeof entry === "string")
       : [];
-    return [...new Set([...nativeModules, "openclaw"])];
+    return [...new Set([...nativeModules, "nova"])];
   } catch {
-    return ["openclaw"];
+    return ["nova"];
   }
 }
 
@@ -143,7 +143,7 @@ function resolvePluginLoaderJitiFsCacheDir(params: LoaderModuleResolveParams = {
   return path.join(
     resolveJitiFsCacheTmpDir(),
     "jiti",
-    "openclaw",
+    "nova",
     version,
     sanitizeJitiCachePathSegment(installMarker),
   );
@@ -167,7 +167,7 @@ function listPluginSdkSubpathsFromPackageJson(pkg: PluginSdkPackageJson): string
     .toSorted();
 }
 
-function hasTrustedOpenClawRootIndicator(params: {
+function hasTrustedNovaRootIndicator(params: {
   packageRoot: string;
   packageJson: PluginSdkPackageJson;
 }): boolean {
@@ -179,14 +179,14 @@ function hasTrustedOpenClawRootIndicator(params: {
     return false;
   }
   const hasCliEntryExport = Object.hasOwn(packageExports, "./cli-entry");
-  const hasOpenClawBin =
+  const hasNovaBin =
     (typeof params.packageJson.bin === "string" &&
-      normalizeLowercaseStringOrEmpty(params.packageJson.bin).includes("openclaw")) ||
+      normalizeLowercaseStringOrEmpty(params.packageJson.bin).includes("nova")) ||
     (typeof params.packageJson.bin === "object" &&
       params.packageJson.bin !== null &&
-      typeof params.packageJson.bin.openclaw === "string");
-  const hasOpenClawEntrypoint = fs.existsSync(path.join(params.packageRoot, "openclaw.mjs"));
-  return hasCliEntryExport || hasOpenClawBin || hasOpenClawEntrypoint;
+      typeof params.packageJson.bin.nova === "string");
+  const hasNovaEntrypoint = fs.existsSync(path.join(params.packageRoot, "nova.mjs"));
+  return hasCliEntryExport || hasNovaBin || hasNovaEntrypoint;
 }
 
 function readPluginSdkSubpathsFromPackageRoot(packageRoot: string): string[] | null {
@@ -194,21 +194,21 @@ function readPluginSdkSubpathsFromPackageRoot(packageRoot: string): string[] | n
   if (!pkg) {
     return null;
   }
-  if (!hasTrustedOpenClawRootIndicator({ packageRoot, packageJson: pkg })) {
+  if (!hasTrustedNovaRootIndicator({ packageRoot, packageJson: pkg })) {
     return null;
   }
   const subpaths = listPluginSdkSubpathsFromPackageJson(pkg);
   return subpaths.length > 0 ? subpaths : null;
 }
 
-function resolveTrustedOpenClawRootFromArgvHint(params: {
+function resolveTrustedNovaRootFromArgvHint(params: {
   argv1?: string;
   cwd: string;
 }): string | null {
   if (!params.argv1) {
     return null;
   }
-  const packageRoot = resolveOpenClawPackageRootSync({
+  const packageRoot = resolveNovaPackageRootSync({
     cwd: params.cwd,
     argv1: params.argv1,
   });
@@ -219,7 +219,7 @@ function resolveTrustedOpenClawRootFromArgvHint(params: {
   if (!packageJson) {
     return null;
   }
-  return hasTrustedOpenClawRootIndicator({ packageRoot, packageJson }) ? packageRoot : null;
+  return hasTrustedNovaRootIndicator({ packageRoot, packageJson }) ? packageRoot : null;
 }
 
 function findNearestPluginSdkPackageRoot(startDir: string, maxDepth = 12): string | null {
@@ -242,13 +242,13 @@ export function resolveLoaderPackageRoot(
   params: LoaderModuleResolveParams & { modulePath: string },
 ): string | null {
   const cwd = params.cwd ?? path.dirname(params.modulePath);
-  const fromModulePath = resolveOpenClawPackageRootSync({ cwd });
+  const fromModulePath = resolveNovaPackageRootSync({ cwd });
   if (fromModulePath) {
     return fromModulePath;
   }
   const argv1 = params.argv1 ?? process.argv[1];
   const moduleUrl = params.moduleUrl ?? (params.modulePath ? undefined : import.meta.url);
-  return resolveOpenClawPackageRootSync({
+  return resolveNovaPackageRootSync({
     cwd,
     ...(argv1 ? { argv1 } : {}),
     ...(moduleUrl ? { moduleUrl } : {}),
@@ -357,7 +357,7 @@ function formatResolutionError(error: unknown): string {
 function resolveDevSourceRootParam(params: { devSourceRoot?: string | null }): string | null {
   return params.devSourceRoot !== undefined
     ? params.devSourceRoot
-    : resolveOpenClawDevSourceRoot(process.env);
+    : resolveNovaDevSourceRoot(process.env);
 }
 
 function resolveLoaderPluginSdkPackageRoot(
@@ -368,11 +368,11 @@ function resolveLoaderPluginSdkPackageRoot(
     return devSourceRoot;
   }
   const cwd = params.cwd ?? path.dirname(params.modulePath);
-  const fromCwd = resolveOpenClawPackageRootSync({ cwd });
+  const fromCwd = resolveNovaPackageRootSync({ cwd });
   const fromExplicitHints =
-    resolveTrustedOpenClawRootFromArgvHint({ cwd, argv1: params.argv1 }) ??
+    resolveTrustedNovaRootFromArgvHint({ cwd, argv1: params.argv1 }) ??
     (params.moduleUrl
-      ? resolveOpenClawPackageRootSync({
+      ? resolveNovaPackageRootSync({
           cwd,
           moduleUrl: params.moduleUrl,
         })
@@ -412,7 +412,7 @@ const cachedPluginSdkScopedAliasMaps = new PluginLruCache<Record<string, string>
 const cachedBundledPluginPublicSurfaceAliasMaps = new PluginLruCache<Record<string, string>>(
   MAX_PLUGIN_LOADER_ALIAS_CACHE_ENTRIES,
 );
-const PLUGIN_SDK_PACKAGE_NAMES = ["openclaw/plugin-sdk", "@nova/plugin-sdk"] as const;
+const PLUGIN_SDK_PACKAGE_NAMES = ["nova/plugin-sdk", "@nova/plugin-sdk"] as const;
 const CODEX_NATIVE_TASK_RUNTIME_PLUGIN_SDK_SUBPATH = "codex-native-task-runtime";
 const CODEX_MCP_PROJECTION_PLUGIN_SDK_SUBPATH = "codex-mcp-projection";
 const OLLAMA_CONFIGURED_LOCAL_ORIGIN_RUNTIME_PLUGIN_SDK_SUBPATH = "ssrf-runtime-internal";
@@ -1038,7 +1038,7 @@ export function listWorkspacePackageExportAliasEntries(params: {
     params.packageDir,
     "package.json",
   );
-  const fallbackPackageRoot = resolveOpenClawPackageRootSync({ cwd: process.cwd() });
+  const fallbackPackageRoot = resolveNovaPackageRootSync({ cwd: process.cwd() });
   const packageJson =
     tryReadJsonSync<PluginSdkPackageJson>(packageJsonPath) ??
     (fallbackPackageRoot
@@ -1610,7 +1610,7 @@ function resolvePluginSdkScopedAliasMap(
         }
         break;
       }
-      if (Object.hasOwn(aliasMap, `openclaw/plugin-sdk/${subpath}`)) {
+      if (Object.hasOwn(aliasMap, `nova/plugin-sdk/${subpath}`)) {
         break;
       }
     }

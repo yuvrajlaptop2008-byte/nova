@@ -1,5 +1,5 @@
 // Sms plugin module implements accounts behavior.
-import { normalizeOptionalAccountId } from "openclaw/plugin-sdk/account-id";
+import { normalizeOptionalAccountId } from "nova/plugin-sdk/account-id";
 import {
   DEFAULT_ACCOUNT_ID,
   hasConfiguredAccountValue,
@@ -7,14 +7,14 @@ import {
   resolveAccountEntry,
   resolveListedDefaultAccountId,
   resolveMergedAccountConfig,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/account-resolution";
-import { parseStrictInteger } from "openclaw/plugin-sdk/number-runtime";
+  type NovaConfig,
+} from "nova/plugin-sdk/account-resolution";
+import { parseStrictInteger } from "nova/plugin-sdk/number-runtime";
 import {
   hasConfiguredSecretInput,
   normalizeResolvedSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/secret-input";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
 import { normalizeSmsAllowFrom, normalizeSmsPhoneNumber } from "./phone.js";
 import type { ResolvedSmsAccount, SmsChannelConfig } from "./types.js";
 
@@ -22,7 +22,7 @@ const CHANNEL_ID = "sms";
 const DEFAULT_WEBHOOK_PATH = "/webhooks/sms";
 const DEFAULT_TEXT_CHUNK_LIMIT = 1500;
 
-function getChannelConfig(cfg: OpenClawConfig): SmsChannelConfig | undefined {
+function getChannelConfig(cfg: NovaConfig): SmsChannelConfig | undefined {
   return cfg?.channels?.[CHANNEL_ID] as SmsChannelConfig | undefined;
 }
 
@@ -68,7 +68,7 @@ function hasBaseAccount(channelCfg: SmsChannelConfig | undefined): boolean {
   );
 }
 
-export function listSmsAccountIds(cfg: OpenClawConfig): string[] {
+export function listSmsAccountIds(cfg: NovaConfig): string[] {
   const channelCfg = getChannelConfig(cfg);
   return listCombinedAccountIds({
     configuredAccountIds: Object.keys(channelCfg?.accounts ?? {}),
@@ -76,7 +76,7 @@ export function listSmsAccountIds(cfg: OpenClawConfig): string[] {
   });
 }
 
-export function resolveDefaultSmsAccountId(cfg: OpenClawConfig): string {
+export function resolveDefaultSmsAccountId(cfg: NovaConfig): string {
   const channelCfg = getChannelConfig(cfg);
   return resolveListedDefaultAccountId({
     accountIds: listSmsAccountIds(cfg),
@@ -84,10 +84,7 @@ export function resolveDefaultSmsAccountId(cfg: OpenClawConfig): string {
   });
 }
 
-export function resolveSmsAccount(
-  cfg: OpenClawConfig,
-  accountId?: string | null,
-): ResolvedSmsAccount {
+export function resolveSmsAccount(cfg: NovaConfig, accountId?: string | null): ResolvedSmsAccount {
   const channelCfg = getChannelConfig(cfg) ?? {};
   const id = normalizeOptionalAccountId(accountId) ?? resolveDefaultSmsAccountId(cfg);
   const accountConfig = resolveAccountEntry(channelCfg.accounts, id);
@@ -155,7 +152,7 @@ export function resolveSmsAccount(
   };
 }
 
-export function inspectSmsAccount(cfg: OpenClawConfig, accountId?: string | null) {
+export function inspectSmsAccount(cfg: NovaConfig, accountId?: string | null) {
   const account = resolveSmsAccount(cfg, accountId);
   const configured = isSmsAccountConfigured(account);
   return {

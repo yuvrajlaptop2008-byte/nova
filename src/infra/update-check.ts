@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { runCommandWithTimeout } from "../process/exec.js";
 import { detectPackageManager as detectPackageManagerImpl } from "./detect-package-manager.js";
-import { compareOpenClawReleaseVersions } from "./npm-registry-spec.js";
+import { compareNovaReleaseVersions } from "./npm-registry-spec.js";
 import { compareValidSemver, normalizeLegacyDotBetaVersion } from "./semver.js";
 import { channelToNpmTag, type UpdateChannel } from "./update-channels.js";
 import {
@@ -75,7 +75,7 @@ export type UpdateCheckResult = {
 };
 
 const PUBLIC_NPM_REGISTRY_URL = "https://registry.npmjs.org/";
-const PUBLIC_NPM_PACKAGE_NAME = "openclaw";
+const PUBLIC_NPM_PACKAGE_NAME = "nova";
 
 function isLoopbackNpmRegistry(raw: string): boolean {
   try {
@@ -512,9 +512,9 @@ export async function resolveNpmChannelTag(params: {
 
 export function compareSemverStrings(a: string | null, b: string | null): number | null {
   if (a && b) {
-    const openClawReleaseCmp = compareOpenClawReleaseVersions(a, b);
-    if (openClawReleaseCmp != null) {
-      return openClawReleaseCmp;
+    const novaReleaseCmp = compareNovaReleaseVersions(a, b);
+    if (novaReleaseCmp != null) {
+      return novaReleaseCmp;
     }
   }
   const normalizedA = a ? normalizeLegacyDotBetaVersion(a) : null;

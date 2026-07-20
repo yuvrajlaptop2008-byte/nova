@@ -1,6 +1,6 @@
 /** Lightweight direct loader for bundled provider policy public artifacts. */
 import type { ModelProviderConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type {
   ProviderModelRouteResolution,
   ProviderNormalizeModelCatalogIdContext,
@@ -27,9 +27,7 @@ const providerPolicySurfaceByPluginId = new Map<string, BundledProviderPolicySur
 /** Provider policy hooks loaded from bundled plugin public artifacts. */
 export type BundledProviderPolicySurface = {
   normalizeConfig?: (ctx: ProviderNormalizeConfigContext) => ModelProviderConfig | null | undefined;
-  applyConfigDefaults?: (
-    ctx: ProviderApplyConfigDefaultsContext,
-  ) => OpenClawConfig | null | undefined;
+  applyConfigDefaults?: (ctx: ProviderApplyConfigDefaultsContext) => NovaConfig | null | undefined;
   resolveConfigApiKey?: (ctx: ProviderResolveConfigApiKeyContext) => string | null | undefined;
   resolveThinkingProfile?: (
     ctx: ProviderDefaultThinkingPolicyContext,

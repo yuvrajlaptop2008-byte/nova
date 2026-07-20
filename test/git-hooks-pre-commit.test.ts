@@ -142,7 +142,7 @@ afterEach(() => {
 
 describe("git-hooks/pre-commit (integration)", () => {
   it("does not treat staged filenames as git-add flags (e.g. --all)", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-pre-commit-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-pre-commit-");
     run(dir, "git", ["init", "-q", "--initial-branch=main"]);
 
     // Use the real hook script and lightweight helper stubs.
@@ -164,7 +164,7 @@ describe("git-hooks/pre-commit (integration)", () => {
   });
 
   it("skips formatting staged files while a merge commit is in progress", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-pre-commit-merge-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-pre-commit-merge-");
     run(dir, "git", ["init", "-q", "--initial-branch=main"]);
     installPreCommitFixture(dir);
     const logPath = installFormattingRecorder(dir);
@@ -221,7 +221,7 @@ describe("git-hooks/pre-commit (integration)", () => {
     ["merge rebase state", "rebase-merge", "dir"],
     ["apply rebase state", "rebase-apply", "dir"],
   ])("skips formatting staged files while %s metadata is present", (_label, gitPath, kind) => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-pre-commit-sequencer-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-pre-commit-sequencer-");
     run(dir, "git", ["init", "-q", "--initial-branch=main"]);
     installPreCommitFixture(dir);
     const logPath = installFormattingRecorder(dir);
@@ -242,7 +242,7 @@ describe("git-hooks/pre-commit (integration)", () => {
   });
 
   it("still formats staged files during a normal commit", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-pre-commit-normal-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-pre-commit-normal-");
     run(dir, "git", ["init", "-q", "--initial-branch=main"]);
     installPreCommitFixture(dir);
     const logPath = installFormattingRecorder(dir);
@@ -258,7 +258,7 @@ describe("git-hooks/pre-commit (integration)", () => {
   });
 
   it("does not run the changed-scope check for non-doc staged changes", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-pre-commit-no-check-changed-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-pre-commit-no-check-changed-");
     run(dir, "git", ["init", "-q", "--initial-branch=main"]);
 
     const fakeBinDir = installPreCommitFixture(dir);
@@ -281,7 +281,7 @@ describe("git-hooks/pre-commit (integration)", () => {
   });
 
   it("does not re-add staged paths that are ignored by the current .gitignore", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-pre-commit-ignored-staged-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-pre-commit-ignored-staged-");
     run(dir, "git", ["init", "-q", "--initial-branch=main"]);
 
     const fakeBinDir = installPreCommitFixture(dir);
@@ -305,7 +305,7 @@ describe("git-hooks/pre-commit (integration)", () => {
   });
 
   it("ignores FAST_COMMIT because the hook is already formatting-only", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-pre-commit-fast-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-pre-commit-fast-");
     run(dir, "git", ["init", "-q", "--initial-branch=main"]);
 
     const fakeBinDir = installPreCommitFixture(dir);
@@ -332,7 +332,7 @@ describe("git-hooks/pre-commit (integration)", () => {
 
 describe("scripts/pre-commit/run-node-tool.sh", () => {
   it("runs the installed local tool without invoking pnpm", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-run-node-tool-local-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-run-node-tool-local-");
     installRunNodeToolFixture(dir);
     writeFileSync(path.join(dir, "pnpm-lock.yaml"), "lockfileVersion: '9.0'\n", "utf8");
 
@@ -355,7 +355,7 @@ describe("scripts/pre-commit/run-node-tool.sh", () => {
   });
 
   it("fails before pnpm can hydrate dependencies when node_modules is missing", () => {
-    const dir = makeTempRepoRoot(tempDirs, "openclaw-run-node-tool-missing-deps-");
+    const dir = makeTempRepoRoot(tempDirs, "nova-run-node-tool-missing-deps-");
     installRunNodeToolFixture(dir);
     writeFileSync(path.join(dir, "pnpm-lock.yaml"), "lockfileVersion: '9.0'\n", "utf8");
 

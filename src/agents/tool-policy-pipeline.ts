@@ -263,7 +263,7 @@ function resetToolPolicyWarningCacheForTest(): void {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.toolPolicyWarningCacheTestApi")
-  ] = { resetToolPolicyWarningCacheForTest };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.toolPolicyWarningCacheTestApi")] = {
+    resetToolPolicyWarningCacheForTest,
+  };
 }

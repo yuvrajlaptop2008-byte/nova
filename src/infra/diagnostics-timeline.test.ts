@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   emitDiagnosticsTimelineEvent,
   isDiagnosticsTimelineEnabled,
@@ -14,7 +14,7 @@ import {
 const tempDirs: string[] = [];
 
 async function createTimelineEnv() {
-  const dir = await mkdtemp(join(tmpdir(), "openclaw-diagnostics-timeline-"));
+  const dir = await mkdtemp(join(tmpdir(), "nova-diagnostics-timeline-"));
   tempDirs.push(dir);
   return {
     env: {
@@ -88,9 +88,9 @@ describe("diagnostics timeline", () => {
     const { env } = await createTimelineEnv();
     const envWithoutFlag = { ...env };
     delete envWithoutFlag.NOVA_DIAGNOSTICS;
-    const configWithTimeline = { diagnostics: { flags: ["timeline"] } } as OpenClawConfig;
-    const configWithWildcard = { diagnostics: { flags: ["*"] } } as OpenClawConfig;
-    const configWithoutTimeline = { diagnostics: { flags: ["telegram.http"] } } as OpenClawConfig;
+    const configWithTimeline = { diagnostics: { flags: ["timeline"] } } as NovaConfig;
+    const configWithWildcard = { diagnostics: { flags: ["*"] } } as NovaConfig;
+    const configWithoutTimeline = { diagnostics: { flags: ["telegram.http"] } } as NovaConfig;
 
     expect(isDiagnosticsTimelineEnabled({ config: configWithTimeline, env: envWithoutFlag })).toBe(
       true,
@@ -105,7 +105,7 @@ describe("diagnostics timeline", () => {
 
   it("lets false-like env diagnostics disable config-enabled timeline output", async () => {
     const { env } = await createTimelineEnv();
-    const configWithTimeline = { diagnostics: { flags: ["timeline"] } } as OpenClawConfig;
+    const configWithTimeline = { diagnostics: { flags: ["timeline"] } } as NovaConfig;
 
     expect(
       isDiagnosticsTimelineEnabled({
@@ -133,7 +133,7 @@ describe("diagnostics timeline", () => {
     );
 
     const [event] = await readTimeline(path);
-    expect(event?.schemaVersion).toBe("openclaw.diagnostics.v1");
+    expect(event?.schemaVersion).toBe("nova.diagnostics.v1");
     expect(event?.type).toBe("mark");
     expect(event?.name).toBe("gateway.ready");
     expect(event?.runId).toBe("run-1");
@@ -156,7 +156,7 @@ describe("diagnostics timeline", () => {
       measureDiagnosticsTimelineSpan("runtimeDeps.stage", () => "ok", {
         phase: "startup",
         attributes: { pluginCount: 3 },
-        config: { diagnostics: { flags: ["timeline"] } } as OpenClawConfig,
+        config: { diagnostics: { flags: ["timeline"] } } as NovaConfig,
         env: configOnlyEnv,
       }),
     ).resolves.toBe("ok");

@@ -3,9 +3,9 @@ import {
   createAckReactionHandle,
   shouldAckReactionForWhatsApp,
   type AckReactionHandle,
-} from "openclaw/plugin-sdk/channel-feedback";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/channel-feedback";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
 import { requireWhatsAppInboundAdmission } from "../../inbound/admission.js";
 import type { AdmittedWebInboundMessage } from "../../inbound/types.js";
 import { resolveWhatsAppReactionLevel } from "../../reaction-level.js";
@@ -16,7 +16,7 @@ import { resolveGroupActivationFor } from "./group-activation.js";
 import { resolveReactionParticipant } from "./reaction-participant.js";
 
 export async function maybeSendAckReaction(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   msg: AdmittedWebInboundMessage;
   agentId: string;
   sessionKey: string;

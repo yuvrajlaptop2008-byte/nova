@@ -107,12 +107,12 @@ function configSnapshot(config: Record<string, unknown> = {}) {
     snapshot: {
       valid: true,
       parsed: {},
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       sourceConfig: config,
       hash: "base-hash",
     },
     writeOptions: {
-      expectedConfigPath: "/tmp/openclaw.json",
+      expectedConfigPath: "/tmp/nova.json",
       includeFileHashesForWrite: { "/tmp/plugins.json": "include-hash" },
       includeFileTargetsForWrite: { "/tmp/plugins.json": "/tmp/plugins.json" },
     },
@@ -142,7 +142,7 @@ function metadataSnapshot(params: {
     origin: params.origin ?? "bundled",
     rootDir: `/tmp/${id}`,
     source: `/tmp/${id}/index.ts`,
-    manifestPath: `/tmp/${id}/openclaw.plugin.json`,
+    manifestPath: `/tmp/${id}/nova.plugin.json`,
   };
   return {
     index: {
@@ -177,7 +177,7 @@ const hostedDiffsEntry = {
   name: "@nova/diffs",
   version: "2.0.0",
   description: "Hosted description",
-  openclaw: {
+  nova: {
     plugin: { id: "diffs", label: "Hosted Diffs" },
     install: { clawhubSpec: "clawhub:@nova/diffs", defaultChoice: "clawhub" },
   },
@@ -190,7 +190,7 @@ const hostedFeedDiffsEntry = {
   title: "Diffs",
   state: "available",
   featured: true,
-  publisher: { id: "openclaw", trust: "official" },
+  publisher: { id: "nova", trust: "official" },
   install: {
     candidates: [
       {
@@ -289,8 +289,8 @@ describe("plugin management service", () => {
         {
           ...hostedDiffsEntry,
           name: "community/impostor",
-          openclaw: {
-            ...hostedDiffsEntry.openclaw,
+          nova: {
+            ...hostedDiffsEntry.nova,
             install: { clawhubSpec: "clawhub:community/impostor", defaultChoice: "clawhub" },
           },
         },
@@ -314,14 +314,14 @@ describe("plugin management service", () => {
         entries: [
           {
             name: "community/partial",
-            openclaw: {
+            nova: {
               plugin: { id: "partial", label: "Partial" },
               catalog: { featured: "yes", order: 25 },
             },
           },
           {
             name: "community/invalid",
-            openclaw: {
+            nova: {
               plugin: { id: "invalid", label: "Invalid" },
               catalog: { featured: "yes", order: "first" },
             },
@@ -389,7 +389,7 @@ describe("plugin management service", () => {
         {
           name: "@nova/firecrawl",
           description: "Web extraction and crawling.",
-          openclaw: {
+          nova: {
             plugin: { id: "firecrawl", label: "FireCrawl" },
             catalog: { featured: true, order: 60 },
             icon,
@@ -683,7 +683,7 @@ describe("plugin management service", () => {
           id: "@nova/bluebubbles",
           title: "BlueBubbles",
           state: "available",
-          publisher: { id: "openclaw", trust: "official" },
+          publisher: { id: "nova", trust: "official" },
           install: {
             candidates: [{ sourceRef: "public-clawhub", package: "@nova/bluebubbles" }],
           },
@@ -738,8 +738,8 @@ describe("plugin management service", () => {
           id: "sonos",
           title: "Sonos",
           state: "available",
-          publisher: { id: "openclaw", trust: "official" },
-          openclaw: { plugin: { id: "sonos" } },
+          publisher: { id: "nova", trust: "official" },
+          nova: { plugin: { id: "sonos" } },
           install: { candidates: [{ sourceRef: "public-clawhub", package: "sonos" }] },
         },
       ],

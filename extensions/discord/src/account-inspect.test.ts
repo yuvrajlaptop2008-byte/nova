@@ -1,10 +1,10 @@
 // Discord tests cover account inspect plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import { inspectDiscordAccount } from "./account-inspect.js";
 
-function asConfig(value: unknown): OpenClawConfig {
-  return value as OpenClawConfig;
+function asConfig(value: unknown): NovaConfig {
+  return value as NovaConfig;
 }
 
 describe("inspectDiscordAccount", () => {

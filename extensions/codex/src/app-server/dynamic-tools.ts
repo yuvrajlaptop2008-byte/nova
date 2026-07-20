@@ -3,7 +3,7 @@
  * tool-call responses.
  */
 import { createHash } from "node:crypto";
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
+import type { AgentToolResult } from "nova/plugin-sdk/agent-core";
 import {
   consumeAdjustedParamsForToolCall,
   consumePreExecutionBlockedToolCall,
@@ -40,13 +40,13 @@ import {
   type MessagingToolSend,
   type MessagingToolSourceReplyPayload,
   wrapToolWithBeforeToolCallHook,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { emitTrustedDiagnosticEvent } from "openclaw/plugin-sdk/diagnostic-runtime";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import type { ImageContent, TextContent } from "openclaw/plugin-sdk/llm";
-import { normalizeOpenAIToolSchemas } from "openclaw/plugin-sdk/provider-tools";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { emitTrustedDiagnosticEvent } from "nova/plugin-sdk/diagnostic-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import type { ImageContent, TextContent } from "nova/plugin-sdk/llm";
+import { normalizeOpenAIToolSchemas } from "nova/plugin-sdk/provider-tools";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { resolveAgentContextLimitValue } from "./agent-context-limits.js";
 import type { CodexDynamicToolsLoading } from "./config.js";
 import {
@@ -371,7 +371,7 @@ export type CodexDynamicToolBridge = {
 };
 
 /** Namespace attached to Nova-owned dynamic tools exposed to Codex. */
-const CODEX_NOVA_DYNAMIC_TOOL_NAMESPACE = "openclaw";
+const CODEX_NOVA_DYNAMIC_TOOL_NAMESPACE = "nova";
 
 // Keep Nova control-path tools directly callable even when Codex tool_search
 // is unavailable or resolves a connector-only universe. Developer instructions
@@ -936,7 +936,7 @@ function createCodexDynamicToolSpecs(params: {
   const directOnlyNamespaceTools: CodexDynamicToolFunctionSpec[] = [];
   for (const entry of params.entries) {
     const functionSpec = createCodexDynamicToolFunctionSpec({ entry });
-    if (entry.name === "openclaw" && params.directToolNames.has(entry.name)) {
+    if (entry.name === "nova" && params.directToolNames.has(entry.name)) {
       // Nova is ring-zero and its whole turn surface. Keep its canonical
       // root name even though generic direct-only tools use a model namespace.
       specs.push(functionSpec);

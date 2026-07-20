@@ -5,7 +5,7 @@ import type {
   QueuedFileWriterDiagnostics,
 } from "../agents/queued-file-writer.js";
 import { parseSqliteSessionFileMarker } from "../config/sessions/sqlite-marker.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { redactSecrets } from "../logging/redact.js";
 import { parseBooleanValue } from "../utils/boolean.js";
 import { safeJsonStringify } from "../utils/safe-json.js";
@@ -17,7 +17,7 @@ import { appendSqliteTrajectoryRuntimeEvents } from "./runtime-store.sqlite.js";
 import type { TrajectoryEvent, TrajectoryToolDefinition } from "./types.js";
 
 type TrajectoryRuntimeInit = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   maxRuntimeFileBytes?: number;
   runId?: string;
@@ -322,7 +322,7 @@ export function createTrajectoryRuntimeRecorder(
     const nextSeq = seq + 1;
     const sourceSeq = sink.nextSourceSeq?.() ?? nextSeq;
     const event: TrajectoryEvent = {
-      traceSchema: "openclaw-trajectory",
+      traceSchema: "nova-trajectory",
       schemaVersion: 1,
       traceId,
       source: "runtime",

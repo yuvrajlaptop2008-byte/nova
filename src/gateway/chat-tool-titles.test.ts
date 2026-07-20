@@ -17,16 +17,16 @@ vi.mock("../agents/utility-model.js", () => ({
   resolveUtilityModelRefForAgent,
 }));
 
-import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { closeOpenClawAgentDatabases } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import type { NovaConfig } from "../config/types.nova.js";
+import { closeNovaAgentDatabases } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { generateToolCallTitles } from "./chat-tool-titles.js";
 
 const AGENT_ID = "main";
 
 function mockPreparedModel(): void {
   prepareSimpleCompletionModelForAgent.mockResolvedValue({
-    selection: { provider: "openai", modelId: "gpt-test", agentDir: "/tmp/openclaw-agent" },
+    selection: { provider: "openai", modelId: "gpt-test", agentDir: "/tmp/nova-agent" },
     model: { provider: "openai", id: "gpt-test", maxTokens: 8192 },
     auth: { apiKey: "k", mode: "api-key" },
   });
@@ -50,14 +50,14 @@ describe("generateToolCallTitles", () => {
     // Default: canonical utility routing resolves a cheap same-provider model.
     resolveUtilityModelRefForAgent.mockReturnValue("openai/gpt-test");
     // realpath: macOS tmpdir is a /var -> /private/var symlink and DB paths resolve canonically.
-    stateDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-tool-titles-")));
+    stateDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "nova-tool-titles-")));
     previousStateDir = process.env.NOVA_STATE_DIR;
     process.env.NOVA_STATE_DIR = stateDir;
   });
 
   afterEach(() => {
-    closeOpenClawAgentDatabases();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabases();
+    closeNovaStateDatabaseForTest();
     if (previousStateDir === undefined) {
       delete process.env.NOVA_STATE_DIR;
     } else {
@@ -71,7 +71,7 @@ describe("generateToolCallTitles", () => {
     mockCompletionTitles({ "0": "Checked repo status", "1": "Listed source files" });
 
     const result = await generateToolCallTitles({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       agentId: AGENT_ID,
       items: [
         { id: "item-1", name: "bash", input: "git status --short" },
@@ -93,7 +93,7 @@ describe("generateToolCallTitles", () => {
     const token = ["ghp", "a1b2c3d4e5f6a1b2c3d4e5f6"].join("_");
 
     await generateToolCallTitles({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       agentId: AGENT_ID,
       items: [
         {
@@ -120,7 +120,7 @@ describe("generateToolCallTitles", () => {
     const input = `${padding} Authorization: Bearer ${token}`;
 
     await generateToolCallTitles({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       agentId: AGENT_ID,
       items: [{ id: "item-1", name: "bash", input }],
     });
@@ -138,7 +138,7 @@ describe("generateToolCallTitles", () => {
     mockCompletionTitles({ "0": "Inspected boundary input" });
 
     await generateToolCallTitles({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       agentId: AGENT_ID,
       items: [{ id: "item-1", name: "bash", input: `${"a".repeat(1_999)}😀tail` }],
     });
@@ -156,7 +156,7 @@ describe("generateToolCallTitles", () => {
     mockPreparedModel();
     mockCompletionTitles({ "0": "Checked repo status" });
     const params = {
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       agentId: AGENT_ID,
       items: [{ id: "item-1", name: "bash", input: "git status --short" }],
     };
@@ -176,7 +176,7 @@ describe("generateToolCallTitles", () => {
 
     await expect(
       generateToolCallTitles({
-        cfg: {} satisfies OpenClawConfig,
+        cfg: {} satisfies NovaConfig,
         agentId: AGENT_ID,
         items: [{ id: "item-1", name: "bash", input: "git status --short" }],
       }),
@@ -187,7 +187,7 @@ describe("generateToolCallTitles", () => {
   it("prepares the canonical utility model ref", async () => {
     mockPreparedModel();
     mockCompletionTitles({ "0": "Checked repo status" });
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
 
     await generateToolCallTitles({
       cfg,
@@ -216,7 +216,7 @@ describe("generateToolCallTitles", () => {
     // The resolver may append the agent primary's profile; the session's
     // profile must replace it so preparation cannot pick the wrong credential.
     resolveUtilityModelRefForAgent.mockReturnValue("openai/gpt-test@default");
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
 
     await generateToolCallTitles({
       cfg,
@@ -233,7 +233,7 @@ describe("generateToolCallTitles", () => {
   it("derives utility routing from the session's effective provider", async () => {
     mockPreparedModel();
     mockCompletionTitles({ "0": "Checked repo status" });
-    const cfg = {} satisfies OpenClawConfig;
+    const cfg = {} satisfies NovaConfig;
 
     await generateToolCallTitles({
       cfg,
@@ -255,7 +255,7 @@ describe("generateToolCallTitles", () => {
     mockPreparedModel();
     mockCompletionTitles({ "0": "Checked repo status" });
     const params = {
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       agentId: AGENT_ID,
       items: [{ id: "item-1", name: "bash", input: "git status --short" }],
     };
@@ -276,7 +276,7 @@ describe("generateToolCallTitles", () => {
 
     await expect(
       generateToolCallTitles({
-        cfg: {} satisfies OpenClawConfig,
+        cfg: {} satisfies NovaConfig,
         agentId: AGENT_ID,
         items: [{ id: "item-1", name: "bash", input: "git status --short" }],
       }),
@@ -292,7 +292,7 @@ describe("generateToolCallTitles", () => {
 
     await expect(
       generateToolCallTitles({
-        cfg: {} satisfies OpenClawConfig,
+        cfg: {} satisfies NovaConfig,
         agentId: AGENT_ID,
         items: [{ id: "item-1", name: "bash", input: "git status --short" }],
       }),

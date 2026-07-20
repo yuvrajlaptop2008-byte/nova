@@ -135,7 +135,7 @@ describe("mcp-app-view localization", () => {
     Reflect.set(view, "context", {
       gateway: {
         snapshot: { client: { request } },
-        connection: { gatewayUrl: "ws://gateway.example:8443/openclaw" },
+        connection: { gatewayUrl: "ws://gateway.example:8443/nova" },
       },
       theme: {
         subscribe(listener: () => void) {
@@ -251,7 +251,7 @@ describe("mcp-app-view localization", () => {
     Reflect.set(view, "context", {
       gateway: {
         snapshot: { client: { request } },
-        connection: { gatewayUrl: "ws://gateway.example:8443/openclaw" },
+        connection: { gatewayUrl: "ws://gateway.example:8443/nova" },
       },
     });
     view.sessionKey = "agent:main:main";
@@ -274,7 +274,7 @@ describe("mcp-app-view localization", () => {
     Reflect.set(view, "context", {
       gateway: {
         snapshot: { client: { request } },
-        connection: { gatewayUrl: "ws://gateway.example:8443/openclaw" },
+        connection: { gatewayUrl: "ws://gateway.example:8443/nova" },
       },
     });
     view.sessionKey = "agent:main:main";
@@ -464,7 +464,7 @@ describe("mcp-app-view localization", () => {
       Reflect.set(view, "context", {
         gateway: {
           snapshot: { client: { request } },
-          connection: { gatewayUrl: "ws://gateway.example:8443/openclaw" },
+          connection: { gatewayUrl: "ws://gateway.example:8443/nova" },
         },
       });
       view.sessionKey = "agent:main:main";

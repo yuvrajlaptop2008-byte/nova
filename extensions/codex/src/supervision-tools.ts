@@ -1,6 +1,6 @@
-import { resolveDefaultAgentDir } from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { jsonResult, readStringParam, type AnyAgentTool } from "openclaw/plugin-sdk/core";
+import { resolveDefaultAgentDir } from "nova/plugin-sdk/agent-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { jsonResult, readStringParam, type AnyAgentTool } from "nova/plugin-sdk/core";
 /**
  * Compatibility tools for the retired Codex Supervisor plugin.
  *
@@ -9,8 +9,8 @@ import { jsonResult, readStringParam, type AnyAgentTool } from "openclaw/plugin-
  * continuation belongs to the Codex harness, which installs approval and tool
  * handlers before it starts or resumes the harness-owned Codex thread.
  */
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { Type } from "typebox";
 import {
   resolveCodexAppServerAuthProfileIdForAgent,
@@ -146,7 +146,7 @@ type EndpointRequest = <T = unknown>(
 
 type CodexSupervisionToolsOptions = {
   getPluginConfig: () => unknown;
-  getRuntimeConfig?: () => OpenClawConfig | undefined;
+  getRuntimeConfig?: () => NovaConfig | undefined;
   /** Trusted owner bit supplied by the plugin tool context. */
   senderIsOwner: boolean;
   env?: NodeJS.ProcessEnv;
@@ -355,7 +355,7 @@ function readLegacyEnvEndpoints(env: NodeJS.ProcessEnv): CodexSupervisionEndpoin
 function resolveEndpoints(
   pluginConfig: unknown,
   env: NodeJS.ProcessEnv,
-  runtimeConfig: OpenClawConfig | undefined,
+  runtimeConfig: NovaConfig | undefined,
 ): ResolvedSupervisionEndpoint[] {
   const configured = readCodexPluginConfig(pluginConfig).supervision?.endpoints;
   const endpoints = configured?.length ? configured : readLegacyEnvEndpoints(env);
@@ -432,7 +432,7 @@ function supervisionEndpointConnectionKey(params: {
   endpoint: NormalizedSupervisionEndpoint;
   pluginConfig: unknown;
   env: NodeJS.ProcessEnv;
-  runtimeConfig: OpenClawConfig | undefined;
+  runtimeConfig: NovaConfig | undefined;
 }): string {
   // Endpoint probes report unsafe connections as unhealthy; the actual request path still
   // validates security before connecting, while this path only fingerprints live ownership.

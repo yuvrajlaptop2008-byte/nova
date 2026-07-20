@@ -195,4 +195,4 @@
 - Added secure absolute file reads, secret-file helpers, permissions inspection, Windows ACL helpers, and local-root readers.
 - Added archive extraction and preflight helpers for ZIP/TAR with optional `jszip` and `tar` dependencies, size/count/path/link limits, and staged destination writes.
 - Added file locks, async locks, bounded directory walking, install-path sanitizers, filename sanitization, regular-file helpers, trash moves, and advanced composition helpers.
-- Added OpenClaw bypass-parity coverage, API coverage, a benchmark workflow, docs site generation, security docs, and coverage CI.
+- Added Nova bypass-parity coverage, API coverage, a benchmark workflow, docs site generation, security docs, and coverage CI.

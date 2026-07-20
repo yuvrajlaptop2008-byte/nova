@@ -1,4 +1,4 @@
-// Summarizes channel token/account credential fields for `openclaw status --all`.
+// Summarizes channel token/account credential fields for `nova status --all`.
 // The display path is intentionally secret-safe unless the caller explicitly requests disclosure.
 
 import { asRecord } from "@nova/normalization-core/record-coerce";

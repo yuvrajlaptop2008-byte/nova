@@ -3,8 +3,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import type { NovaConfig } from "../config/config.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import { enqueueCommitmentExtraction } from "./runtime.js";
 import {
@@ -56,7 +56,7 @@ describe("commitment extraction runtime", () => {
   const nowMs = Date.parse("2026-04-29T16:00:00.000Z");
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     resetCommitmentExtractionRuntimeForTests();
     runEmbeddedAgentMock.mockReset();
     resolveDefaultModelMock.mockReset();
@@ -68,8 +68,8 @@ describe("commitment extraction runtime", () => {
     tmpDirs.length = 0;
   });
 
-  async function createConfig(): Promise<OpenClawConfig> {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-commitment-runtime-"));
+  async function createConfig(): Promise<NovaConfig> {
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-commitment-runtime-"));
     tmpDirs.push(tmpDir);
     stateDirEnvSnapshot ??= captureEnv(["NOVA_STATE_DIR"]);
     setTestEnvValue("NOVA_STATE_DIR", tmpDir);
@@ -97,7 +97,7 @@ describe("commitment extraction runtime", () => {
   });
 
   it("keeps hidden extraction opt-in by default", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       commitments: {},
     };
     configureCommitmentExtractionRuntime({

@@ -8,7 +8,7 @@ import { renderCatFacePngBase64 } from "../../test/helpers/live-image-probe.js";
 import { isLiveTestEnabled } from "../agents/live-test-helpers.js";
 import type { ChannelOutboundContext } from "../channels/plugins/types.adapters.js";
 import { clearConfigCache, clearRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { getSessionBindingService } from "../infra/outbound/session-binding-service.js";
 import { findBundledPluginMetadataById } from "../plugins/bundled-plugin-metadata.js";
@@ -313,10 +313,10 @@ async function writePluginBindingApproval(params: {
   channel: string;
   accountId: string;
 }): Promise<void> {
-  const openclawDir = path.join(params.homeDir, ".openclaw");
-  await fs.mkdir(openclawDir, { recursive: true });
+  const novaDir = path.join(params.homeDir, ".nova");
+  await fs.mkdir(novaDir, { recursive: true });
   await fs.writeFile(
-    path.join(openclawDir, "plugin-binding-approvals.json"),
+    path.join(novaDir, "plugin-binding-approvals.json"),
     `${JSON.stringify(
       {
         version: 1,
@@ -346,7 +346,7 @@ async function writeGatewayConfig(params: {
   workspace: string;
 }): Promise<void> {
   const modelProvider = params.modelProvider?.trim() || "codex";
-  const cfg: OpenClawConfig = {
+  const cfg: NovaConfig = {
     gateway: {
       mode: "local",
       port: params.port,
@@ -396,11 +396,11 @@ describeLive("gateway live (native Codex conversation binding)", () => {
     "binds a Slack DM to Codex app-server, updates controls, and forwards image media paths",
     async () => {
       const previous: LiveEnvSnapshot = snapshotLiveEnv(["CODEX_HOME", "HOME"]);
-      const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-codex-bind-"));
+      const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-codex-bind-"));
       const tempHome = path.join(tempRoot, "home");
       const stateDir = path.join(tempRoot, "state");
       const workspace = path.join(tempRoot, "workspace");
-      const configPath = path.join(tempRoot, "openclaw.json");
+      const configPath = path.join(tempRoot, "nova.json");
       const token = `test-${randomUUID()}`;
       const port = await getFreeGatewayPort();
       const sessionKey = "main";

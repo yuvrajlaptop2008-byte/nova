@@ -137,7 +137,7 @@ function renderRemovalPrompt(props: NodesProps) {
       ? t("nodes.inventory.removePromptBody")
       : t("nodes.inventory.removeStalePromptBody");
   return html`
-    <openclaw-modal-dialog
+    <nova-modal-dialog
       label=${title}
       description=${body}
       @modal-cancel=${props.onInventoryRemovalCancel}
@@ -163,7 +163,7 @@ function renderRemovalPrompt(props: NodesProps) {
           </button>
         </div>
       </div>
-    </openclaw-modal-dialog>
+    </nova-modal-dialog>
   `;
 }
 

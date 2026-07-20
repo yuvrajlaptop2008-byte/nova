@@ -48,10 +48,7 @@ import type {
   EmbeddedSandboxInfo,
 } from "./embedded-agent-runner/types.js";
 import { buildPromisedWorkPromptSection } from "./promised-work-prompt.js";
-import {
-  buildOpenClawToolFallbackText,
-  shouldRenderOpenClawToolWorkflowHints,
-} from "./prompt-surface.js";
+import { buildNovaToolFallbackText, shouldRenderNovaToolWorkflowHints } from "./prompt-surface.js";
 import { sanitizeForPromptLiteral } from "./sanitize-for-prompt.js";
 import {
   buildSkillWorkshopPromptSection,
@@ -459,8 +456,8 @@ function buildWebchatCanvasSection(params: {
     params.sourceMessageToolOnly
       ? "- Files: message attachment fields. Web rich render: `[embed ...]`."
       : "- Attachments: `MEDIA:`. Web rich render: `[embed ...]`.",
-    '- Hosted doc: `[embed ref="cv_123" title="Status" height="320" /]`; URL form: `[embed url="/__openclaw__/canvas/documents/cv_123/index.html" title="Status" height="320" /]`.',
-    "- Never local/file:// or arbitrary URL. URL must start `/__openclaw__/canvas/`; else use `ref`.",
+    '- Hosted doc: `[embed ref="cv_123" title="Status" height="320" /]`; URL form: `[embed url="/__nova__/canvas/documents/cv_123/index.html" title="Status" height="320" /]`.',
+    "- Never local/file:// or arbitrary URL. URL must start `/__nova__/canvas/`; else use `ref`.",
     "- Hosted root is profile-, not workspace-scoped; stage there.",
     "- Quote attributes. Prefer `ref`; use `url` only with full hosted URL.",
     "",
@@ -617,9 +614,9 @@ function buildDocsSection(params: {
   }
   const lines = [
     "## Documentation",
-    docsPath ? `Docs: ${docsPath}` : "Docs: https://docs.openclaw.ai",
-    docsPath ? "Mirror: https://docs.openclaw.ai" : undefined,
-    sourcePath ? `Source: ${sourcePath}` : "Source: https://github.com/openclaw/openclaw",
+    docsPath ? `Docs: ${docsPath}` : "Docs: https://docs.nova.ai",
+    docsPath ? "Mirror: https://docs.nova.ai" : undefined,
+    sourcePath ? `Source: ${sourcePath}` : "Source: https://github.com/nova/nova",
     docsPath
       ? `Nova behavior questions: docs first via \`${params.readToolName}\`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.`
       : "Nova behavior questions: docs mirror first when web exists. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
@@ -627,7 +624,7 @@ function buildDocsSection(params: {
     sourcePath
       ? "If docs are silent/stale, say so and inspect local source."
       : "If docs are silent/stale, say so and inspect GitHub source.",
-    "Diagnosis: run `openclaw status` when possible; ask only if blocked.",
+    "Diagnosis: run `nova status` when possible; ask only if blocked.",
     "",
   ];
   return lines.filter((line): line is string => line !== undefined);
@@ -769,7 +766,7 @@ export function buildAgentSystemPrompt(params: {
   promptContribution?: ProviderSystemPromptContribution;
 }) {
   const acpEnabled = params.acpEnabled === true;
-  const promptSurface = params.promptSurface ?? "openclaw_main";
+  const promptSurface = params.promptSurface ?? "nova_main";
   const sandboxedRuntime = params.sandboxInfo?.enabled === true;
   const acpSpawnRuntimeEnabled = acpEnabled && !sandboxedRuntime;
   const coreToolSummaries: Record<string, string> = {
@@ -799,7 +796,7 @@ export function buildAgentSystemPrompt(params: {
     conversations_list: "List exact external conversation addresses",
     conversations_send: "Send directly to an external conversation",
     conversations_turn: "Send and wait for one correlated external reply",
-    openclaw: "System setup/config expert; writes need human approval",
+    nova: "System setup/config expert; writes need human approval",
     gateway: "Read gateway config/schema",
     agents_list: acpSpawnRuntimeEnabled
       ? "List allowed Nova subagent ids; not ACP ids"
@@ -841,7 +838,7 @@ export function buildAgentSystemPrompt(params: {
     "conversations_list",
     "conversations_send",
     "conversations_turn",
-    "openclaw",
+    "nova",
     "gateway",
     "agents_list",
     "sessions_list",
@@ -904,13 +901,13 @@ export function buildAgentSystemPrompt(params: {
     toolLines.push(summary ? `- ${name}: ${summary}` : `- ${name}`);
   }
   const toolSchemaDirectoryPrompt = params.toolSchemaDirectoryPrompt?.trim();
-  const renderOpenClawToolWorkflowHints = shouldRenderOpenClawToolWorkflowHints({
+  const renderNovaToolWorkflowHints = shouldRenderNovaToolWorkflowHints({
     surface: promptSurface,
     hasToolList: toolLines.length > 0,
   });
 
   const hasGateway = availableTools.has("gateway");
-  const hasNova = availableTools.has("openclaw");
+  const hasNova = availableTools.has("nova");
   const readToolName = resolveToolName("read");
   const execToolName = resolveToolName("exec");
   const processToolName = resolveToolName("process");
@@ -985,7 +982,7 @@ export function buildAgentSystemPrompt(params: {
       : "Single global file workspace unless explicitly told otherwise.";
   const workspaceOnlyGuidance =
     params.fsWorkspaceOnly === true
-      ? "tools.fs.workspaceOnly ON: file-tool scratch/temp/meta stays in workspace, preferably `.openclaw/tmp/`. If file tools need it later, never exec-write `/tmp`; use workspace path."
+      ? "tools.fs.workspaceOnly ON: file-tool scratch/temp/meta stays in workspace, preferably `.nova/tmp/`. If file tools need it later, never exec-write `/tmp`; use workspace path."
       : "";
   const safetySection = [
     "## Safety",
@@ -1041,7 +1038,7 @@ export function buildAgentSystemPrompt(params: {
     toolLines,
     toolSchemaDirectoryPrompt,
     capabilityToolNames: [...availableTools].toSorted(),
-    renderOpenClawToolWorkflowHints,
+    renderNovaToolWorkflowHints,
     hasGateway,
     hasNova,
     readToolName,
@@ -1084,7 +1081,7 @@ export function buildAgentSystemPrompt(params: {
       "Tools policy-filtered. Names case-sensitive; call exact.",
       toolLines.length > 0
         ? toolLines.join("\n")
-        : buildOpenClawToolFallbackText({
+        : buildNovaToolFallbackText({
             surface: promptSurface,
             execToolName,
             processToolName,
@@ -1093,7 +1090,7 @@ export function buildAgentSystemPrompt(params: {
         ? ["", "### Deferred Tool Schemas", toolSchemaDirectoryPrompt]
         : []),
       "TOOLS.md guides usage; never grants availability.",
-      ...(renderOpenClawToolWorkflowHints
+      ...(renderNovaToolWorkflowHints
         ? [
             `Long wait: no rapid poll. Use ${execToolName} yieldMs or ${processToolName}(poll, timeout=<ms>).`,
             "Large work: `sessions_spawn`; completion push-based.",
@@ -1122,7 +1119,7 @@ export function buildAgentSystemPrompt(params: {
               : []),
           ]
         : []),
-      ...(renderOpenClawToolWorkflowHints
+      ...(renderNovaToolWorkflowHints
         ? [
             availableTools.has("sessions_yield")
               ? "Never loop-poll `subagents list`/`sessions_list`; wait with `sessions_yield`. Status only on-demand/intervention/debug/request."
@@ -1174,7 +1171,7 @@ export function buildAgentSystemPrompt(params: {
       "Do not invent commands.",
       ...(hasNova
         ? [
-            "Config, channels, plugins, new agents, model/provider, updates: ask `openclaw`. Never write own config; Nova is system expert.",
+            "Config, channels, plugins, new agents, model/provider, updates: ask `nova`. Never write own config; Nova is system expert.",
           ]
         : [
             "Config read: `gateway` (`config.get|config.schema.lookup`). Write/restart unavailable; ask human.",

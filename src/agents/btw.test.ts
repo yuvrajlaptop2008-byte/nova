@@ -17,7 +17,7 @@ const readFileMock = vi.fn();
 const parseSessionEntriesMock = vi.fn();
 const migrateSessionEntriesMock = vi.fn();
 const buildSessionContextMock = vi.fn();
-const ensureOpenClawModelsJsonMock = vi.fn();
+const ensureNovaModelsJsonMock = vi.fn();
 const discoverAuthStorageMock = vi.fn();
 const discoverModelsMock = vi.fn();
 const getModelRegistryRuntimeMock = vi.fn();
@@ -75,7 +75,7 @@ vi.mock("./sessions/session-manager.js", () => ({
 }));
 
 vi.mock("./models-config.js", () => ({
-  ensureOpenClawModelsJson: (...args: unknown[]) => ensureOpenClawModelsJsonMock(...args),
+  ensureNovaModelsJson: (...args: unknown[]) => ensureNovaModelsJsonMock(...args),
 }));
 
 vi.mock("./agent-model-discovery.js", () => ({
@@ -97,7 +97,7 @@ vi.mock("./prepared-model-runtime.js", () => ({
     workspaceDir?: string;
   }) => {
     const workspaceOptions = params.workspaceDir ? { workspaceDir: params.workspaceDir } : {};
-    await ensureOpenClawModelsJsonMock(params.config, params.agentDir, workspaceOptions);
+    await ensureNovaModelsJsonMock(params.config, params.agentDir, workspaceOptions);
     const authStorage = discoverAuthStorageMock(params.agentDir, {
       config: params.config,
       ...(params.inheritedAuthDir ? { inheritedAuthDir: params.inheritedAuthDir } : {}),
@@ -569,7 +569,7 @@ describe("runBtwSideQuestion", () => {
     parseSessionEntriesMock.mockReset();
     migrateSessionEntriesMock.mockReset();
     buildSessionContextMock.mockReset();
-    ensureOpenClawModelsJsonMock.mockReset();
+    ensureNovaModelsJsonMock.mockReset();
     discoverAuthStorageMock.mockReset();
     discoverModelsMock.mockReset();
     getModelRegistryRuntimeMock.mockReset();
@@ -738,7 +738,7 @@ describe("runBtwSideQuestion", () => {
     const result = await runSideQuestion();
 
     expect(result).toEqual({ text: "Final answer." });
-    const ensureArgs = mockCall(ensureOpenClawModelsJsonMock);
+    const ensureArgs = mockCall(ensureNovaModelsJsonMock);
     expect(ensureArgs?.[1]).toBe(DEFAULT_AGENT_DIR);
     expect(ensureArgs?.[2]).toEqual({ workspaceDir: "/tmp/workspace" });
     expect(discoverModelsMock).toHaveBeenCalledWith(undefined, DEFAULT_AGENT_DIR, {
@@ -999,7 +999,7 @@ describe("runBtwSideQuestion", () => {
       harnessAuthProvider: "openai",
       deferredRouteSupport: {
         requestTransportOverrides: "none",
-        runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+        runtimePolicy: { compatibleIds: ["nova", "codex"] },
       },
     });
     expect(preparedRuntimeAuth?.plan?.modelRoute).toBeUndefined();
@@ -1010,7 +1010,7 @@ describe("runBtwSideQuestion", () => {
       expect.objectContaining({
         modelProvider: expect.objectContaining({
           requestTransportOverrides: "none",
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
           preparedAuth: { source: "harness" },
         }),
       }),
@@ -1143,7 +1143,7 @@ describe("runBtwSideQuestion", () => {
         agents: {
           defaults: {
             models: {
-              "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "openclaw" } },
+              "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "nova" } },
             },
           },
         },
@@ -1859,7 +1859,7 @@ describe("runBtwSideQuestion", () => {
           agents: {
             defaults: {
               models: {
-                "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+                "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
               },
             },
           },
@@ -1940,7 +1940,7 @@ describe("runBtwSideQuestion", () => {
           agents: {
             defaults: {
               models: {
-                "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+                "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
               },
             },
           },

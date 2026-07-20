@@ -10,7 +10,7 @@ import {
 
 const DIRECT_IMAGE_BYTES = Buffer.from("docker-direct-image");
 const CODEX_IMAGE_BYTES = Buffer.from("docker-codex-image");
-const DIRECT_TOKEN = "sk-openclaw-image-auth-e2e";
+const DIRECT_TOKEN = "sk-nova-image-auth-e2e";
 const CODEX_TOKEN = "docker-codex-oauth-token";
 
 export type RequestRecord = {

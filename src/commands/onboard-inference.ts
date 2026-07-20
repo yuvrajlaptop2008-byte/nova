@@ -10,7 +10,7 @@ import {
 } from "../agents/cli-credentials.js";
 import { resolveDefaultModelForAgent } from "../agents/model-selection.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { probeLocalCommand, type LocalCommandProbe } from "../system-agent/probes.js";
 
 /**
@@ -56,7 +56,7 @@ type DetectInferenceBackendsDeps = {
 };
 
 type DetectInferenceBackendsOptions = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   platform?: NodeJS.Platform;
   deps?: DetectInferenceBackendsDeps;
@@ -166,7 +166,7 @@ async function detectNativeCodexAppServer(
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.onboardInferenceTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.onboardInferenceTestApi")] = {
     detectNativeCodexAppServer,
   };
 }

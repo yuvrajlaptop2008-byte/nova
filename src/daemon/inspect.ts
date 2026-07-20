@@ -18,7 +18,7 @@ export type ExtraGatewayService = {
   label: string;
   detail: string;
   scope: "user" | "system";
-  marker?: "openclaw" | "clawdbot";
+  marker?: "nova" | "clawdbot";
   legacy?: boolean;
 };
 
@@ -26,7 +26,7 @@ export type FindExtraGatewayServicesOptions = {
   deep?: boolean;
 };
 
-const EXTRA_MARKERS = ["openclaw", "clawdbot"] as const;
+const EXTRA_MARKERS = ["nova", "clawdbot"] as const;
 const SYSTEMD_REFERENCE_ONLY_KEYS = new Set([
   "after",
   "before",
@@ -114,8 +114,8 @@ export function detectMarkerLineWithGateway(contents: string): Marker | null {
 
 function hasGatewayServiceMarker(content: string): boolean {
   const lower = normalizeLowercaseStringOrEmpty(content);
-  const markerKeys = ["openclaw_service_marker"];
-  const kindKeys = ["openclaw_service_kind"];
+  const markerKeys = ["nova_service_marker"];
+  const kindKeys = ["nova_service_kind"];
   const markerValues = [normalizeLowercaseStringOrEmpty(GATEWAY_SERVICE_MARKER)];
   const hasMarkerKey = markerKeys.some((key) => lower.includes(key));
   const hasKindKey = kindKeys.some((key) => lower.includes(key));
@@ -178,27 +178,27 @@ function detectLaunchdGatewayExecutionMarker(contents: string): Marker | null {
   return null;
 }
 
-function isOpenClawGatewayLaunchdService(label: string, contents: string): boolean {
+function isNovaGatewayLaunchdService(label: string, contents: string): boolean {
   if (hasGatewayServiceMarker(contents)) {
     return true;
   }
-  if (detectLaunchdGatewayExecutionMarker(contents) !== "openclaw") {
+  if (detectLaunchdGatewayExecutionMarker(contents) !== "nova") {
     return false;
   }
-  return label.startsWith("ai.openclaw.");
+  return label.startsWith("ai.nova.");
 }
 
-function isOpenClawGatewaySystemdService(name: string, contents: string): boolean {
+function isNovaGatewaySystemdService(name: string, contents: string): boolean {
   if (hasGatewayServiceMarker(contents)) {
     return true;
   }
-  if (!name.startsWith("openclaw-gateway")) {
+  if (!name.startsWith("nova-gateway")) {
     return false;
   }
   return normalizeLowercaseStringOrEmpty(contents).includes("gateway");
 }
 
-function isOpenClawGatewayTaskName(name: string): boolean {
+function isNovaGatewayTaskName(name: string): boolean {
   const normalized = normalizeLowercaseStringOrEmpty(name);
   if (!normalized) {
     return false;
@@ -209,7 +209,7 @@ function isOpenClawGatewayTaskName(name: string): boolean {
   // gateway task is not misidentified as an extra gateway service.
   const stripped = normalized.replace(/^\\+/, "");
   const defaultName = normalizeLowercaseStringOrEmpty(resolveGatewayWindowsTaskName());
-  return stripped === defaultName || /^openclaw gateway \(.+\)$/.test(stripped);
+  return stripped === defaultName || /^nova gateway \(.+\)$/.test(stripped);
 }
 
 function tryExtractPlistLabel(contents: string): string | null {
@@ -297,8 +297,8 @@ async function scanLaunchdDir(params: {
     const legacyLabel = isLegacyLabel(labelFromName) || isLegacyLabel(label);
     const executionMarker = detectLaunchdGatewayExecutionMarker(contents);
     const marker =
-      hasGatewayServiceMarker(contents) || executionMarker === "openclaw"
-        ? "openclaw"
+      hasGatewayServiceMarker(contents) || executionMarker === "nova"
+        ? "nova"
         : executionMarker === "clawdbot" || legacyLabel
           ? "clawdbot"
           : null;
@@ -310,7 +310,7 @@ async function scanLaunchdDir(params: {
     if (isIgnoredLaunchdLabel(label)) {
       continue;
     }
-    if (marker === "openclaw" && isOpenClawGatewayLaunchdService(label, contents)) {
+    if (marker === "nova" && isNovaGatewayLaunchdService(label, contents)) {
       continue;
     }
     results.push({
@@ -319,7 +319,7 @@ async function scanLaunchdDir(params: {
       detail: `plist: ${fullPath}`,
       scope: params.scope,
       marker,
-      legacy: marker !== "openclaw" || isLegacyLabel(label),
+      legacy: marker !== "nova" || isLegacyLabel(label),
     });
   }
 
@@ -340,15 +340,15 @@ async function scanSystemdDir(params: {
 
   for (const { entry, name, fullPath, contents } of candidates) {
     const marker = hasGatewayServiceMarker(contents)
-      ? "openclaw"
+      ? "nova"
       : detectMarkerLineWithGateway(contents);
     if (!marker) {
       continue;
     }
     if (
       !params.includeManagedNova &&
-      marker === "openclaw" &&
-      isOpenClawGatewaySystemdService(name, contents)
+      marker === "nova" &&
+      isNovaGatewaySystemdService(name, contents)
     ) {
       continue;
     }
@@ -358,7 +358,7 @@ async function scanSystemdDir(params: {
       detail: `unit: ${fullPath}`,
       scope: params.scope,
       marker,
-      legacy: marker !== "openclaw",
+      legacy: marker !== "nova",
     });
   }
 
@@ -525,7 +525,7 @@ export async function findExtraGatewayServices(
       if (!name) {
         continue;
       }
-      if (isOpenClawGatewayTaskName(name)) {
+      if (isNovaGatewayTaskName(name)) {
         continue;
       }
       const lowerName = normalizeLowercaseStringOrEmpty(name);
@@ -546,7 +546,7 @@ export async function findExtraGatewayServices(
         detail: task.taskToRun ? `task: ${name}, run: ${task.taskToRun}` : name,
         scope: "system",
         marker,
-        legacy: marker !== "openclaw",
+        legacy: marker !== "nova",
       });
     }
     return results;

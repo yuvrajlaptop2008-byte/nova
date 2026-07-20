@@ -11,7 +11,7 @@ import {
   resolveAgentRunErrorLifecycleFields,
 } from "../../agents/run-termination.js";
 import { resolveGroupSessionKey } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   isTrustedMessageActionTurnIngress,
   mintMessageActionTurnCapability,
@@ -53,7 +53,7 @@ export async function runEmbeddedFallbackCandidate(params: {
   turn: AgentTurnParams;
   effectiveRun: FollowupRun["run"];
   candidateRun: FollowupRun["run"];
-  runtimeConfig: OpenClawConfig;
+  runtimeConfig: NovaConfig;
   provider: string;
   model: string;
   sessionRuntimeOverride?: string;
@@ -128,8 +128,8 @@ export async function runEmbeddedFallbackCandidate(params: {
   });
   const embeddedRunHarnessOverride =
     params.sessionRuntimeOverride ??
-    (agentHarnessPolicy.runtime === "openclaw" && embeddedRunProvider !== params.provider
-      ? "openclaw"
+    (agentHarnessPolicy.runtime === "nova" && embeddedRunProvider !== params.provider
+      ? "nova"
       : undefined);
   const messageActionCapabilitySessionKey =
     turn.runtimePolicySessionKey ?? embeddedContext.sessionKey;

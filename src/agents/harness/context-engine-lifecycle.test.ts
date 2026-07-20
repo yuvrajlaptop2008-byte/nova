@@ -1,5 +1,5 @@
 // Covers context-engine message filtering, assemble validation, and turn finalization.
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
 import { describe, expect, it, vi } from "vitest";
 import { buildMemorySystemPromptAddition } from "../../context-engine/delegate.js";
 import {
@@ -54,7 +54,7 @@ function runtimeContextMessage(content: string, timestamp: number): AgentMessage
     customType: NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE,
     content,
     display: false,
-    details: { source: "openclaw-runtime-context" },
+    details: { source: "nova-runtime-context" },
     timestamp,
   } as AgentMessage;
 }
@@ -175,7 +175,7 @@ describe("harness context engine lifecycle", () => {
     expect(assembleParams?.runtimeSettings).toMatchObject({
       schemaVersion: 1,
       runtime: {
-        host: "openclaw",
+        host: "nova",
         mode: "normal",
       },
       model: {
@@ -207,7 +207,7 @@ describe("harness context engine lifecycle", () => {
       agentId: "main",
       sessionId: sessionParams.sessionId,
       sessionKey: sessionParams.sessionKey,
-      storePath: "/tmp/state/openclaw.sqlite",
+      storePath: "/tmp/state/nova.sqlite",
     };
     const bootstrapRuntimeContext = {
       transcriptStorage: { kind: "sqlite" as const },

@@ -1,5 +1,5 @@
 /** Builds plugin lookup tables keyed by manifest ids, channels, providers, and commands. */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   createGatewayStartupMetadataPluginIdScope,
   isMetadataSnapshotScopedForGatewayStartup,
@@ -27,8 +27,8 @@ export type PluginLookUpTable = PluginMetadataSnapshot & {
 };
 
 type LoadPluginLookUpTableParams = {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: NovaConfig;
+  activationSourceConfig?: NovaConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   index?: PluginRegistrySnapshot;

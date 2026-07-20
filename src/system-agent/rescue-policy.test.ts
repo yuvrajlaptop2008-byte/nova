@@ -1,9 +1,9 @@
 // Nova rescue policy tests cover eligibility and safety decisions.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveSystemAgentRescuePolicy } from "./rescue-policy.js";
 
-function decide(cfg: OpenClawConfig, overrides = {}) {
+function decide(cfg: NovaConfig, overrides = {}) {
   return resolveSystemAgentRescuePolicy({
     cfg,
     senderIsOwner: true,

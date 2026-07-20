@@ -1,12 +1,12 @@
 [package]
-name = "openclaw-desktop-linux"
+name = "nova-desktop-linux"
 version = "0.1.0"
-description = "OpenClaw desktop companion for Linux"
+description = "Nova desktop companion for Linux"
 edition = "2021"
 rust-version = "1.93"
 
 [[bin]]
-name = "openclaw-desktop"
+name = "nova-desktop"
 path = "src/main.rs"
 
 [build-dependencies]

@@ -8,7 +8,7 @@ import { enqueueCommandInLane, type CommandLaneTaskMarker } from "../../process/
 import { runWithGatewayIndependentRootWorkContinuation } from "../../process/gateway-work-admission.js";
 import { CommandLane } from "../../process/lanes.js";
 import { DEFAULT_AGENT_ID } from "../../routing/session-key.js";
-import { resolveOpenClawStateSqlitePath } from "../../state/openclaw-state-db.paths.js";
+import { resolveNovaStateSqlitePath } from "../../state/nova-state-db.paths.js";
 import {
   clearCronJobActive,
   isCronActiveJobMarkerCurrent,
@@ -320,7 +320,7 @@ export function resumeScheduling(state: CronServiceState) {
 export async function status(state: CronServiceState) {
   return await locked(state, async () => {
     await ensureLoadedForRead(state);
-    const sqlitePath = resolveOpenClawStateSqlitePath();
+    const sqlitePath = resolveNovaStateSqlitePath();
     return {
       enabled: state.deps.cronEnabled,
       storePath: sqlitePath,

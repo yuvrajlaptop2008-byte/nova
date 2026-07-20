@@ -77,9 +77,9 @@ async function startCronListGateway(token: string): Promise<{ url: string }> {
 
 describe("gateway-backed CLI process exit", () => {
   it("exits promptly after cron list emits complete output", async () => {
-    const root = tempDirs.make("openclaw-gateway-cli-exit-");
+    const root = tempDirs.make("nova-gateway-cli-exit-");
     const stateDir = path.join(root, "state");
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     const caTriggerPath = path.join(root, "load-default-ca.mjs");
     const token = "test-token";
     const gateway = await startCronListGateway(token);

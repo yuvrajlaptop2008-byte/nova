@@ -13,14 +13,12 @@ type VolatileAliasTarget = {
   tabKey: string;
 };
 
-const durableAliasStateSymbol = Symbol.for(
-  "openclaw.browser.session-tabs.interaction-storage-keys",
-);
+const durableAliasStateSymbol = Symbol.for("nova.browser.session-tabs.interaction-storage-keys");
 const durableExactStateSymbol = Symbol.for(
-  "openclaw.browser.session-tabs.exact-interaction-storage-keys",
+  "nova.browser.session-tabs.exact-interaction-storage-keys",
 );
-const volatileAliasStateSymbol = Symbol.for("openclaw.browser.session-tabs.volatile-aliases");
-const volatileExactStateSymbol = Symbol.for("openclaw.browser.session-tabs.exact-volatile-aliases");
+const volatileAliasStateSymbol = Symbol.for("nova.browser.session-tabs.volatile-aliases");
+const volatileExactStateSymbol = Symbol.for("nova.browser.session-tabs.exact-volatile-aliases");
 
 function interactionKey(identity: AliasIdentity): string {
   return `${identity.sessionKey}\u0000${identity.baseUrl ?? ""}\u0000${identity.profile ?? ""}\u0000${identity.targetId}`;

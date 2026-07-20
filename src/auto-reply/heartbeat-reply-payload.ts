@@ -1,8 +1,5 @@
 // Heartbeat reply payload selector for multi-payload auto-reply results.
-import {
-  hasOutboundReplyContent,
-  isReasoningReplyPayload,
-} from "openclaw/plugin-sdk/reply-payload";
+import { hasOutboundReplyContent, isReasoningReplyPayload } from "nova/plugin-sdk/reply-payload";
 import { getReplyPayloadMetadata } from "./reply-payload.js";
 import type { ReplyPayload } from "./types.js";
 

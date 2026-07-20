@@ -57,7 +57,7 @@ type SharedTestSetupOptions = {
   loadProfileEnv?: boolean;
 };
 
-const SHARED_TEST_SETUP = Symbol.for("openclaw.sharedTestSetup");
+const SHARED_TEST_SETUP = Symbol.for("nova.sharedTestSetup");
 
 type SharedTestSetupHandle = {
   cleanup: () => void;

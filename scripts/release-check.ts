@@ -48,11 +48,11 @@ import {
   runInstalledWorkspaceBootstrapSmoke,
   WORKSPACE_TEMPLATE_PACK_PATHS,
 } from "./lib/workspace-bootstrap-smoke.mjs";
-import { resolveNpmRunner } from "./npm-runner.mjs";
 import {
   collectInstalledPackageErrors,
   normalizeInstalledBinaryVersion,
-} from "./openclaw-npm-postpublish-verify.ts";
+} from "./nova-npm-postpublish-verify.ts";
+import { resolveNpmRunner } from "./npm-runner.mjs";
 import { resolvePnpmRunner } from "./pnpm-runner.mjs";
 import { listStaticExtensionAssetOutputs } from "./runtime-postbuild.mjs";
 import { sparkleBuildFloorsFromShortVersion, type SparkleBuildFloors } from "./sparkle-build.ts";
@@ -113,7 +113,7 @@ const requiredPathGroups = [
   "dist/agents/model-provider-auth.worker.js",
   "dist/audit/audit-event-writer.worker.js",
   "dist/config/sessions/session-transcript-reconcile.worker.js",
-  "dist/state/openclaw-database-verify.worker.js",
+  "dist/state/nova-database-verify.worker.js",
   "dist/system-agent/setup-inference-detection.worker.js",
   "dist/task-registry-control.runtime.js",
   "dist/telegram-ingress-worker.runtime.js",
@@ -173,11 +173,11 @@ const DEFAULT_RELEASE_CHECK_COMMAND_TIMEOUT_MS = 5 * 60 * 1000;
 const DEFAULT_RELEASE_CHECK_COMMAND_MAX_BUFFER_BYTES = 100 * 1024 * 1024;
 export const MAX_CRITICAL_PLUGIN_SDK_ENTRYPOINT_BYTES = 2 * 1024 * 1024;
 const CRITICAL_PLUGIN_SDK_SIZE_CHECK_SPECIFIERS = [
-  "openclaw/plugin-sdk/core",
-  "openclaw/plugin-sdk/provider-entry",
-  "openclaw/plugin-sdk/runtime",
+  "nova/plugin-sdk/core",
+  "nova/plugin-sdk/provider-entry",
+  "nova/plugin-sdk/runtime",
 ] as const;
-const CRITICAL_PLUGIN_SDK_IMPORT_SMOKE_SPECIFIERS = ["openclaw/plugin-sdk/core"] as const;
+const CRITICAL_PLUGIN_SDK_IMPORT_SMOKE_SPECIFIERS = ["nova/plugin-sdk/core"] as const;
 export const PACKED_CLI_SMOKE_COMMANDS = [
   ["--help"],
   ["onboard", "--help"],
@@ -514,7 +514,7 @@ export function writePackedTarballInstallManifest(
   }
   const dependencies: Record<string, string> = {
     "@nova/ai": pathToFileURL(aiTarball).href,
-    openclaw: pathToFileURL(tarballPath).href,
+    nova: pathToFileURL(tarballPath).href,
   };
   mkdirSync(prefixDir, { recursive: true });
   writeFileSync(
@@ -548,12 +548,7 @@ export function resolvePackedInstalledBinaryPath(
   prefixDir: string,
   platform: NodeJS.Platform = process.platform,
 ): string {
-  return join(
-    prefixDir,
-    "node_modules",
-    ".bin",
-    platform === "win32" ? "openclaw.cmd" : "openclaw",
-  );
+  return join(prefixDir, "node_modules", ".bin", platform === "win32" ? "nova.cmd" : "nova");
 }
 
 function resolvePackedInstalledBinaryCommandInvocation(
@@ -671,7 +666,7 @@ export function collectPackedInstalledPackageVerificationErrors(params: {
     normalizeInstalledBinaryVersion(params.installedBinaryVersion) !== params.expectedVersion
   ) {
     errors.push(
-      `installed openclaw binary version mismatch: expected ${params.expectedVersion}, found ${params.installedBinaryVersion || "<missing>"}.`,
+      `installed nova binary version mismatch: expected ${params.expectedVersion}, found ${params.installedBinaryVersion || "<missing>"}.`,
     );
   }
   return errors;
@@ -714,7 +709,7 @@ export function createPackedPluginSdkTypescriptSmokeProject(params: {
   aiPackageSpec?: string;
 }): void {
   const dependencies: Record<string, string> = {
-    openclaw: params.packageSpec,
+    nova: params.packageSpec,
   };
   if (params.aiPackageSpec) {
     dependencies["@nova/ai"] = params.aiPackageSpec;
@@ -724,7 +719,7 @@ export function createPackedPluginSdkTypescriptSmokeProject(params: {
     join(params.consumerDir, "package.json"),
     `${JSON.stringify(
       {
-        name: "openclaw-plugin-sdk-type-smoke",
+        name: "nova-plugin-sdk-type-smoke",
         private: true,
         type: "module",
         dependencies,
@@ -776,10 +771,10 @@ function runPackedPluginSdkTypescriptSmoke(
     stdio: "inherit",
   });
 
-  const installedOpenClawRoot = join(consumerDir, "node_modules", "openclaw");
+  const installedNovaRoot = join(consumerDir, "node_modules", "nova");
   const tscPath = [
     join(consumerDir, "node_modules", "typescript", "bin", "tsc"),
-    join(installedOpenClawRoot, "node_modules", "typescript", "bin", "tsc"),
+    join(installedNovaRoot, "node_modules", "typescript", "bin", "tsc"),
   ].find((candidate) => existsSync(candidate));
   if (!tscPath) {
     throw new Error("release-check: packed plugin SDK TypeScript smoke could not find tsc.");
@@ -794,8 +789,8 @@ function runPackedPluginSdkTypescriptSmoke(
 }
 
 export function writePackedBundledPluginActivationConfig(homeDir: string): void {
-  const configPath = join(homeDir, ".openclaw", "openclaw.json");
-  mkdirSync(join(homeDir, ".openclaw"), { recursive: true });
+  const configPath = join(homeDir, ".nova", "nova.json");
+  mkdirSync(join(homeDir, ".nova"), { recursive: true });
   writeFileSync(
     configPath,
     `${JSON.stringify(
@@ -813,7 +808,7 @@ export function writePackedBundledPluginActivationConfig(homeDir: string): void 
         models: {
           providers: {
             openai: {
-              apiKey: "sk-openclaw-release-check",
+              apiKey: "sk-nova-release-check",
               baseUrl: "https://api.openai.com/v1",
               models: [],
             },
@@ -840,14 +835,14 @@ function runPackedBundledPluginActivationSmoke(packageRoot: string, tmpRoot: str
   mkdirSync(homeDir, { recursive: true });
   const env = createPackedCliSmokeEnv(process.env, {
     HOME: homeDir,
-    OPENAI_API_KEY: "sk-openclaw-release-check",
+    OPENAI_API_KEY: "sk-nova-release-check",
   });
 
   writePackedBundledPluginActivationConfig(homeDir);
   runReleaseCheckCommand(
     {
       command: process.execPath,
-      args: [join(packageRoot, "openclaw.mjs"), ...PACKED_BUNDLED_RUNTIME_DEPS_REPAIR_ARGS],
+      args: [join(packageRoot, "nova.mjs"), ...PACKED_BUNDLED_RUNTIME_DEPS_REPAIR_ARGS],
     },
     {
       cwd: packageRoot,
@@ -856,7 +851,7 @@ function runPackedBundledPluginActivationSmoke(packageRoot: string, tmpRoot: str
     },
   );
   runReleaseCheckCommand(
-    { command: process.execPath, args: [join(packageRoot, "openclaw.mjs"), "plugins", "doctor"] },
+    { command: process.execPath, args: [join(packageRoot, "nova.mjs"), "plugins", "doctor"] },
     {
       cwd: packageRoot,
       stdio: "inherit",
@@ -903,7 +898,7 @@ function runPackedCliSmoke(params: {
   const env = createPackedCliSmokeEnv(process.env, {
     HOME: params.homeDir,
     NOVA_STATE_DIR: params.stateDir,
-    OPENAI_API_KEY: "sk-openclaw-release-check",
+    OPENAI_API_KEY: "sk-nova-release-check",
   });
   const windowsRoot = env.SystemRoot ?? env.WINDIR ?? "C:\\Windows";
   const trustedCmdPath = join(windowsRoot, "System32", "cmd.exe");
@@ -937,7 +932,7 @@ function runPackedCliSmoke(params: {
 }
 
 function runPackedBundledChannelEntrySmoke(): void {
-  const tmpRoot = mkdtempSync(join(tmpdir(), "openclaw-release-pack-smoke-"));
+  const tmpRoot = mkdtempSync(join(tmpdir(), "nova-release-pack-smoke-"));
   try {
     const expectedVersion = (
       JSON.parse(readFileSync(resolve("package.json"), "utf8")) as {
@@ -959,7 +954,7 @@ function runPackedBundledChannelEntrySmoke(): void {
     });
     installPackedTarball(prefixDir, tarballPath, tmpRoot, localPackageTarballs);
 
-    const packageRoot = join(prefixDir, "node_modules", "openclaw");
+    const packageRoot = join(prefixDir, "node_modules", "nova");
     verifyPackedInstalledPackage({
       expectedVersion,
       packageRoot,
@@ -1000,7 +995,7 @@ function runPackedBundledChannelEntrySmoke(): void {
     runReleaseCheckCommand(
       {
         command: process.execPath,
-        args: [join(packageRoot, "openclaw.mjs"), ...PACKED_COMPLETION_SMOKE_ARGS],
+        args: [join(packageRoot, "nova.mjs"), ...PACKED_COMPLETION_SMOKE_ARGS],
       },
       {
         cwd: packageRoot,
@@ -1064,8 +1059,8 @@ export function collectForbiddenPackPaths(paths: Iterable<string>): string[] {
       (path) =>
         isLegacyPluginDependencyInstallStagePath(path) ||
         forbiddenPrefixes.some((prefix) => path.startsWith(prefix)) ||
-        /(^|\/)\.openclaw-runtime-deps-[^/]+(\/|$)/u.test(path) ||
-        path.endsWith("/.openclaw-runtime-deps-stamp.json") ||
+        /(^|\/)\.nova-runtime-deps-[^/]+(\/|$)/u.test(path) ||
+        path.endsWith("/.nova-runtime-deps-stamp.json") ||
         path.includes("node_modules/"),
     )
     .toSorted((left, right) => left.localeCompare(right));
@@ -1186,7 +1181,7 @@ function checkAppcastSparkleVersions() {
   }
 }
 
-// Critical functions that channel extension plugins import from openclaw/plugin-sdk.
+// Critical functions that channel extension plugins import from nova/plugin-sdk.
 // If any are missing from the compiled output, plugins crash at runtime (#27569).
 const requiredPluginSdkExports = [
   "isDangerousNameMatchingEnabled",
@@ -1267,7 +1262,7 @@ async function checkPluginSdkExports() {
 export function collectCriticalPluginSdkEntrypointSizeErrors(rootDir = process.cwd()): string[] {
   const errors: string[] = [];
   for (const specifier of CRITICAL_PLUGIN_SDK_SIZE_CHECK_SPECIFIERS) {
-    const subpath = specifier.slice("openclaw/plugin-sdk/".length);
+    const subpath = specifier.slice("nova/plugin-sdk/".length);
     const relativePath = `dist/plugin-sdk/${subpath}.js`;
     const filePath = resolve(rootDir, relativePath);
     if (!existsSync(filePath)) {

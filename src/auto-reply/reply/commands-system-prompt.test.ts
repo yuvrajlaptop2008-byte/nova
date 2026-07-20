@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveSessionAgentIds } from "../../agents/agent-scope.js";
-import { createOpenClawCodingTools } from "../../agents/agent-tools.js";
+import { createNovaCodingTools } from "../../agents/agent-tools.js";
 import { resolveBootstrapContextForRun } from "../../agents/bootstrap-files.js";
 import {
   ensureSandboxWorkspaceForSession,
@@ -16,8 +16,8 @@ import { resolveReusableWorkspaceSkillSnapshot } from "../../skills/runtime/sess
 import { resolveCommandsSystemPromptBundle } from "./commands-system-prompt.js";
 import type { HandleCommandsParams } from "./commands-types.js";
 
-const { createOpenClawCodingToolsMock } = vi.hoisted(() => ({
-  createOpenClawCodingToolsMock: vi.fn(() => []),
+const { createNovaCodingToolsMock } = vi.hoisted(() => ({
+  createNovaCodingToolsMock: vi.fn(() => []),
 }));
 
 vi.mock("../../agents/bootstrap-files.js", () => ({
@@ -67,7 +67,7 @@ vi.mock("../../agents/system-prompt.js", () => ({
 }));
 
 vi.mock("../../agents/agent-tools.js", () => ({
-  createOpenClawCodingTools: createOpenClawCodingToolsMock,
+  createNovaCodingTools: createNovaCodingToolsMock,
 }));
 
 vi.mock("../../tts/tts-settings.js", () => ({
@@ -137,8 +137,8 @@ function requireFirstArg(
 describe("resolveCommandsSystemPromptBundle", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    createOpenClawCodingToolsMock.mockClear();
-    createOpenClawCodingToolsMock.mockReturnValue([]);
+    createNovaCodingToolsMock.mockClear();
+    createNovaCodingToolsMock.mockReturnValue([]);
     vi.mocked(ensureSandboxWorkspaceForSession).mockResolvedValue(null);
     vi.mocked(resolveReusableWorkspaceSkillSnapshot).mockReturnValue({
       snapshot: { prompt: "", skills: [], resolvedSkills: [] },
@@ -150,10 +150,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
   it("opts command tool builds into gateway subagent binding", async () => {
     await resolveCommandsSystemPromptBundle(makeParams());
 
-    const toolParams = requireFirstArg(
-      vi.mocked(createOpenClawCodingTools),
-      "createOpenClawCodingTools",
-    );
+    const toolParams = requireFirstArg(vi.mocked(createNovaCodingTools), "createNovaCodingTools");
     expect(toolParams.allowGatewaySubagentBinding).toBe(true);
     expect(toolParams.sessionKey).toBe("agent:main:default");
     expect(toolParams.workspaceDir).toBe("/tmp/workspace");
@@ -188,10 +185,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
 
     await resolveCommandsSystemPromptBundle(params);
 
-    const toolParams = requireFirstArg(
-      vi.mocked(createOpenClawCodingTools),
-      "createOpenClawCodingTools",
-    );
+    const toolParams = requireFirstArg(vi.mocked(createNovaCodingTools), "createNovaCodingTools");
     expect(toolParams.agentId).toBe("target");
     expect(toolParams.sessionKey).toBe("agent:target:telegram:direct:target-session");
     const bootstrapParams = requireFirstArg(
@@ -240,10 +234,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
         sessionId: "target-session",
       }),
     );
-    const toolParams = requireFirstArg(
-      vi.mocked(createOpenClawCodingTools),
-      "createOpenClawCodingTools",
-    );
+    const toolParams = requireFirstArg(vi.mocked(createNovaCodingTools), "createNovaCodingTools");
     expect(toolParams.groupId).toBe("target-group");
     expect(toolParams.groupChannel).toBe("#target");
     expect(toolParams.groupSpace).toBe("target-space");
@@ -280,7 +271,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
   });
 
   it("uses materialized sandbox skill paths for sandbox command prompts", async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-command-sandbox-skills-"));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "nova-command-sandbox-skills-"));
     try {
       const workspaceDir = path.join(root, "workspace");
       const skillsWorkspaceDir = path.join(root, "state", "sandbox-skills");
@@ -314,7 +305,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
       vi.mocked(resolveReusableWorkspaceSkillSnapshot).mockReturnValue({
         snapshot: {
           prompt:
-            "<available_skills>~/.npm-global/lib/node_modules/openclaw/skills/gog/SKILL.md</available_skills>",
+            "<available_skills>~/.npm-global/lib/node_modules/nova/skills/gog/SKILL.md</available_skills>",
           skills: [],
           resolvedSkills: [],
         },
@@ -324,9 +315,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
 
       const result = await resolveCommandsSystemPromptBundle(params);
 
-      expect(result.skillsPrompt).toContain(
-        "/workspace/.openclaw/sandbox-skills/skills/gog/SKILL.md",
-      );
+      expect(result.skillsPrompt).toContain("/workspace/.nova/sandbox-skills/skills/gog/SKILL.md");
       expect(result.skillsPrompt).not.toContain("~/.npm-global");
       expect(vi.mocked(resolveReusableWorkspaceSkillSnapshot)).not.toHaveBeenCalled();
       const promptParams = requireFirstArg(
@@ -334,7 +323,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
         "buildAgentSystemPrompt",
       );
       expect(promptParams.skillsPrompt).toContain(
-        "/workspace/.openclaw/sandbox-skills/skills/gog/SKILL.md",
+        "/workspace/.nova/sandbox-skills/skills/gog/SKILL.md",
       );
       expect(String(promptParams.skillsPrompt)).not.toContain("~/.npm-global");
     } finally {
@@ -365,7 +354,7 @@ describe("resolveCommandsSystemPromptBundle", () => {
       sandboxed: false,
       mode: "off",
     } as never);
-    createOpenClawCodingToolsMock.mockReturnValue([{ name: "sessions_spawn" }] as never);
+    createNovaCodingToolsMock.mockReturnValue([{ name: "sessions_spawn" }] as never);
     const params = makeParams();
     params.cfg = {
       agents: {

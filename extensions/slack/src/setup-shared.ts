@@ -1,11 +1,11 @@
 // Slack plugin module implements setup shared behavior.
-import { describeAccountSnapshot } from "openclaw/plugin-sdk/account-helpers";
-import { hasConfiguredSecretInput } from "openclaw/plugin-sdk/secret-input";
-import { patchChannelConfigForAccount } from "openclaw/plugin-sdk/setup-runtime";
-import { formatDocsLink } from "openclaw/plugin-sdk/setup-tools";
+import { describeAccountSnapshot } from "nova/plugin-sdk/account-helpers";
+import { hasConfiguredSecretInput } from "nova/plugin-sdk/secret-input";
+import { patchChannelConfigForAccount } from "nova/plugin-sdk/setup-runtime";
+import { formatDocsLink } from "nova/plugin-sdk/setup-tools";
 import { isSlackPluginAccountConfigured } from "./account-configured.js";
 import type { ResolvedSlackAccount } from "./accounts.js";
-import type { OpenClawConfig } from "./channel-api.js";
+import type { NovaConfig } from "./channel-api.js";
 
 export const SLACK_CHANNEL = "slack" as const;
 
@@ -45,7 +45,7 @@ export function buildSlackManifest(botName = "Nova") {
       },
       slash_commands: [
         {
-          command: "/openclaw",
+          command: "/nova",
           description: "Send a message to Nova",
           should_escape: false,
         },
@@ -120,10 +120,10 @@ export function buildSlackSetupLines(): string[] {
 }
 
 export function setSlackChannelAllowlist(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId: string,
   channelKeys: string[],
-): OpenClawConfig {
+): NovaConfig {
   const channels = Object.fromEntries(channelKeys.map((key) => [key, { enabled: true }]));
   return patchChannelConfigForAccount({
     cfg,

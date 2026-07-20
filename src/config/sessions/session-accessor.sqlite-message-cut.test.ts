@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../../test/helpers/temp-dir.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../../state/nova-state-db.js";
 import {
   appendTranscriptEvent,
   appendTranscriptMessage,
@@ -21,12 +21,12 @@ const agentId = "main";
 const sessionKey = "agent:main:message-cut";
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 async function createSession(options: { activeLeafTarget?: string } = {}) {
-  const stateDir = tempDirs.make("openclaw-message-cut-");
+  const stateDir = tempDirs.make("nova-message-cut-");
   const env = { ...process.env, NOVA_STATE_DIR: stateDir };
   const sessionId = "message-cut-source";
   const scope = { agentId, env, sessionId, sessionKey };

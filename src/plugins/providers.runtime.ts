@@ -8,7 +8,7 @@ import { extractPluginInstallRecordsFromInstalledPluginIndex } from "./installed
 import {
   getRuntimePluginRegistryForLoadOptions,
   isPluginRegistryLoadInFlight,
-  loadOpenClawPlugins,
+  loadNovaPlugins,
   type PluginLoadOptions,
 } from "./loader.js";
 import { resolvePluginMetadataSnapshot } from "./plugin-metadata-snapshot.js";
@@ -345,7 +345,7 @@ export function resolvePluginProviders(params: {
     if (params.skipIfLoadInFlight && isPluginRegistryLoadInFlight(loadState.loadOptions)) {
       return [];
     }
-    const registry = loadOpenClawPlugins(loadState.loadOptions);
+    const registry = loadNovaPlugins(loadState.loadOptions);
     return registry.providers.map((entry) =>
       Object.assign({}, entry.provider, { pluginId: entry.pluginId }),
     );

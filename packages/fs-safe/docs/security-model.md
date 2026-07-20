@@ -102,4 +102,4 @@ The library does not advertise different security guarantees per platform — it
 
 ## Reporting issues
 
-Suspected security issues belong in private disclosure first. See [`SECURITY.md`](https://github.com/openclaw/fs-safe/blob/main/SECURITY.md) in the repo for the current contact path.
+Suspected security issues belong in private disclosure first. See [`SECURITY.md`](https://github.com/nova/fs-safe/blob/main/SECURITY.md) in the repo for the current contact path.

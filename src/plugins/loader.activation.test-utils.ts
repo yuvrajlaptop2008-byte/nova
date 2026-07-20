@@ -6,7 +6,7 @@ import { getContextEngineRegistration } from "../context-engine/registry.js";
 import { withEnv } from "../test-utils/env.js";
 import { getCompactionProvider } from "./compaction-provider.js";
 import { writePersistedInstalledPluginIndexInstallRecordsSync } from "./installed-plugin-index-records.js";
-import { loadOpenClawPlugins } from "./loader.js";
+import { loadNovaPlugins } from "./loader.js";
 import {
   EMPTY_PLUGIN_SCHEMA,
   makeTempDir,
@@ -42,16 +42,16 @@ import type { PluginSdkResolutionPreference } from "./sdk-alias.js";
 afterEach(globalAfterEach0);
 afterAll(globalAfterAll1);
 
-describe("loadOpenClawPlugins", () => {
+describe("loadNovaPlugins", () => {
   it.each([
     {
       name: "does not reuse cached registries when env-resolved install paths change",
       setup: () => {
         useNoBundledPlugins();
-        const openclawHome = makeTempDir();
+        const novaHome = makeTempDir();
         const ignoredHome = makeTempDir();
         const stateDir = makeTempDir();
-        const pluginDir = path.join(openclawHome, "plugins", "tracked-install-cache");
+        const pluginDir = path.join(novaHome, "plugins", "tracked-install-cache");
         mkdirSafe(pluginDir);
         const plugin = writePlugin({
           id: "tracked-install-cache",
@@ -83,18 +83,18 @@ describe("loadOpenClawPlugins", () => {
         const secondHome = makeTempDir();
         return {
           loadFirst: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               env: {
                 ...process.env,
-                NOVA_HOME: openclawHome,
+                NOVA_HOME: novaHome,
                 HOME: ignoredHome,
                 NOVA_STATE_DIR: stateDir,
                 NOVA_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
               },
             }),
           loadVariant: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               env: {
                 ...process.env,
@@ -130,9 +130,9 @@ describe("loadOpenClawPlugins", () => {
         };
 
         return {
-          loadFirst: () => loadOpenClawPlugins(options),
+          loadFirst: () => loadNovaPlugins(options),
           loadVariant: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               pluginSdkResolution: "workspace" as PluginSdkResolutionPreference,
             }),
@@ -162,9 +162,9 @@ describe("loadOpenClawPlugins", () => {
         };
 
         return {
-          loadFirst: () => loadOpenClawPlugins(options),
+          loadFirst: () => loadNovaPlugins(options),
           loadVariant: () =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               ...options,
               runtimeOptions: {
                 allowGatewaySubagentBinding: true,
@@ -188,7 +188,7 @@ describe("loadOpenClawPlugins", () => {
       body: `module.exports = { id: "tilde-bundled", register() {} };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       env: {
         ...process.env,
         HOME: homeDir,
@@ -212,32 +212,32 @@ describe("loadOpenClawPlugins", () => {
 
   it("prefers NOVA_HOME over HOME for env-expanded load paths", () => {
     const ignoredHome = makeTempDir();
-    const openclawHome = makeTempDir();
+    const novaHome = makeTempDir();
     const stateDir = makeTempDir();
     const bundledDir = makeTempDir();
     const plugin = writePlugin({
-      id: "openclaw-home-demo",
-      dir: path.join(openclawHome, "plugins", "openclaw-home-demo"),
+      id: "nova-home-demo",
+      dir: path.join(novaHome, "plugins", "nova-home-demo"),
       filename: "index.cjs",
-      body: `module.exports = { id: "openclaw-home-demo", register() {} };`,
+      body: `module.exports = { id: "nova-home-demo", register() {} };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       env: {
         ...process.env,
         HOME: ignoredHome,
-        NOVA_HOME: openclawHome,
+        NOVA_HOME: novaHome,
         NOVA_STATE_DIR: stateDir,
         NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       },
       config: {
         plugins: {
-          allow: ["openclaw-home-demo"],
+          allow: ["nova-home-demo"],
           entries: {
-            "openclaw-home-demo": { enabled: true },
+            "nova-home-demo": { enabled: true },
           },
           load: {
-            paths: ["~/plugins/openclaw-home-demo"],
+            paths: ["~/plugins/nova-home-demo"],
           },
         },
       },
@@ -245,7 +245,7 @@ describe("loadOpenClawPlugins", () => {
 
     expect(
       fs.realpathSync(
-        registry.plugins.find((entry) => entry.id === "openclaw-home-demo")?.source ?? "",
+        registry.plugins.find((entry) => entry.id === "nova-home-demo")?.source ?? "",
       ),
     ).toBe(fs.realpathSync(plugin.file));
   });
@@ -372,7 +372,7 @@ describe("loadOpenClawPlugins", () => {
     });
 
     expect(() =>
-      loadOpenClawPlugins({
+      loadNovaPlugins({
         cache: false,
         throwOnLoadError: true,
         config: {
@@ -510,7 +510,7 @@ describe("loadOpenClawPlugins", () => {
       }
     });
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const channel = registry.channels.find((entry) => entry.plugin.id === "demo");
           expect(channel?.plugin.id).toBe("demo");
         },
@@ -556,7 +556,7 @@ describe("loadOpenClawPlugins", () => {
       }
     });
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expect(countMatching(registry.channels, (entry) => entry.plugin.id === "demo")).toBe(1);
           expect(
             registry.channels.find((entry) => entry.plugin.id === "demo")?.plugin.meta?.label,
@@ -569,7 +569,7 @@ describe("loadOpenClawPlugins", () => {
         body: `module.exports = { id: "context-engine-malformed", register(api) {
     api.registerContextEngine({ id: "broken-context" });
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expectRegistryErrorDiagnostic({
             registry,
             pluginId: "context-engine-malformed",
@@ -584,7 +584,7 @@ describe("loadOpenClawPlugins", () => {
         body: `module.exports = { id: "context-engine-core-collision", register(api) {
     api.registerContextEngine("legacy", () => ({}));
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expectRegistryErrorDiagnostic({
             registry,
             pluginId: "context-engine-core-collision",
@@ -598,7 +598,7 @@ describe("loadOpenClawPlugins", () => {
         body: `module.exports = { id: "compaction-provider-malformed", register(api) {
     api.registerCompactionProvider({ id: "broken-compaction", label: "Broken" });
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expectRegistryErrorDiagnostic({
             registry,
             pluginId: "compaction-provider-malformed",
@@ -613,7 +613,7 @@ describe("loadOpenClawPlugins", () => {
         body: `module.exports = { id: "memory-prompt-supplement-malformed", register(api) {
     api.registerMemoryPromptSupplement({ id: "broken-memory-prompt" });
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expectRegistryErrorDiagnostic({
             registry,
             pluginId: "memory-prompt-supplement-malformed",
@@ -628,7 +628,7 @@ describe("loadOpenClawPlugins", () => {
         body: `module.exports = { id: "memory-prompt-preparation-malformed", register(api) {
     api.registerMemoryPromptPreparation({ id: "broken-memory-prompt" });
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expectRegistryErrorDiagnostic({
             registry,
             pluginId: "memory-prompt-preparation-malformed",
@@ -643,7 +643,7 @@ describe("loadOpenClawPlugins", () => {
         body: `module.exports = { id: "cli-missing-metadata", register(api) {
     api.registerCli(() => {});
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expect(registry.cliRegistrars).toHaveLength(0);
           expectRegistryErrorDiagnostic({
             registry,
@@ -666,7 +666,7 @@ describe("loadOpenClawPlugins", () => {
       ],
     });
   } };`,
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expect(registry.cliRegistrars).toHaveLength(1);
           expect(registry.cliRegistrars[0]?.parentPath).toEqual(["nodes"]);
           expect(registry.cliRegistrars[0]?.commands).toEqual(["demo-node"]);
@@ -730,7 +730,7 @@ describe("loadOpenClawPlugins", () => {
         buildBody: (ownerId: string) => `module.exports = { id: "${ownerId}", register(api) {
     api.registerHook("gateway:startup", () => {}, { name: "shared-hook" });
   } };`,
-        selectCount: (registry: ReturnType<typeof loadOpenClawPlugins>) =>
+        selectCount: (registry: ReturnType<typeof loadNovaPlugins>) =>
           countMatching(registry.hooks, (entry) => entry.entry.hook.name === "shared-hook"),
         duplicateMessage: "hook already registered: shared-hook (hook-owner-a)",
         assert: expectDuplicateRegistrationResult,
@@ -742,7 +742,7 @@ describe("loadOpenClawPlugins", () => {
         buildBody: (ownerId: string) => `module.exports = { id: "${ownerId}", register(api) {
     api.registerService({ id: "shared-service", start() {} });
   } };`,
-        selectCount: (registry: ReturnType<typeof loadOpenClawPlugins>) =>
+        selectCount: (registry: ReturnType<typeof loadNovaPlugins>) =>
           countMatching(registry.services, (entry) => entry.service.id === "shared-service"),
         duplicateMessage: "service already registered: shared-service (service-owner-a)",
         assert: expectDuplicateRegistrationResult,
@@ -754,13 +754,13 @@ describe("loadOpenClawPlugins", () => {
         buildBody: (ownerId: string) => `module.exports = { id: "${ownerId}", register(api) {
     api.registerGatewayDiscoveryService({ id: "shared-discovery", advertise() {} });
   } };`,
-        selectCount: (registry: ReturnType<typeof loadOpenClawPlugins>) =>
+        selectCount: (registry: ReturnType<typeof loadNovaPlugins>) =>
           registry.gatewayDiscoveryServices.filter(
             (entry) => entry.service.id === "shared-discovery",
           ).length,
         duplicateMessage:
           "gateway discovery service already registered: shared-discovery (discovery-owner-a)",
-        assertPrimaryOwner: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assertPrimaryOwner: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expect(
             registry.plugins.find((entry) => entry.id === "discovery-owner-a")
               ?.gatewayDiscoveryServiceIds,
@@ -778,7 +778,7 @@ describe("loadOpenClawPlugins", () => {
         selectCount: () => 1,
         duplicateMessage:
           "context engine already registered: shared-context-engine-loader-test (plugin:context-engine-owner-a)",
-        assertPrimaryOwner: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assertPrimaryOwner: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expect(
             registry.plugins.find((entry) => entry.id === "context-engine-owner-a")
               ?.contextEngineIds,
@@ -793,10 +793,10 @@ describe("loadOpenClawPlugins", () => {
         buildBody: (ownerId: string) => `module.exports = { id: "${ownerId}", register(api) {
     api.registerCli(() => {}, { commands: ["shared-cli"] });
   } };`,
-        selectCount: (registry: ReturnType<typeof loadOpenClawPlugins>) =>
+        selectCount: (registry: ReturnType<typeof loadNovaPlugins>) =>
           registry.cliRegistrars.length,
         duplicateMessage: "cli command already registered: shared-cli (cli-owner-a)",
-        assertPrimaryOwner: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assertPrimaryOwner: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expect(registry.cliRegistrars[0]?.pluginId).toBe("cli-owner-a");
         },
         assert: expectDuplicateRegistrationResult,
@@ -943,7 +943,7 @@ describe("loadOpenClawPlugins", () => {
   } };`,
           }),
         ],
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expect(
             registry.httpRoutes.find((entry) => entry.pluginId === "http-route-missing-auth"),
           ).toBeUndefined();
@@ -965,7 +965,7 @@ describe("loadOpenClawPlugins", () => {
   } };`,
           }),
         ],
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const routes = registry.httpRoutes.filter(
             (entry) => entry.pluginId === "http-route-replace-self",
           );
@@ -992,7 +992,7 @@ describe("loadOpenClawPlugins", () => {
   } };`,
           }),
         ],
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const route = registry.httpRoutes.find((entry) => entry.path === "/demo");
           expect(route?.pluginId).toBe("http-route-owner-a");
           expectDiagnosticContaining({
@@ -1013,7 +1013,7 @@ describe("loadOpenClawPlugins", () => {
   } };`,
           }),
         ],
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const routes = registry.httpRoutes.filter(
             (entry) => entry.pluginId === "http-route-overlap",
           );
@@ -1037,7 +1037,7 @@ describe("loadOpenClawPlugins", () => {
   } };`,
           }),
         ],
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const routes = registry.httpRoutes.filter(
             (entry) => entry.pluginId === "http-route-overlap-same-auth",
           );
@@ -1059,7 +1059,7 @@ describe("loadOpenClawPlugins", () => {
       body: `module.exports = { id: "config-disable", register() {} };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -1085,7 +1085,7 @@ describe("loadOpenClawPlugins", () => {
       JSON.stringify(
         {
           name: "@nova/nested-default-channel",
-          openclaw: {
+          nova: {
             extensions: ["./index.cjs"],
           },
         },
@@ -1095,7 +1095,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "nested-default-channel",
@@ -1143,7 +1143,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         channels: {
@@ -1179,7 +1179,7 @@ describe("loadOpenClawPlugins", () => {
       body: `module.exports = { id: "unrelated-plugin", register() { throw new Error("unrelated plugin should not load"); } };`,
     });
     fs.writeFileSync(
-      path.join(unrelated.dir, "openclaw.plugin.json"),
+      path.join(unrelated.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "unrelated-plugin",
@@ -1192,7 +1192,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -1242,7 +1242,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
     });
     fs.writeFileSync(
-      path.join(plugin.dir, "openclaw.plugin.json"),
+      path.join(plugin.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "lazy-channel-plugin",
@@ -1264,7 +1264,7 @@ describe("loadOpenClawPlugins", () => {
       },
     };
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config,
     });
@@ -1275,7 +1275,7 @@ describe("loadOpenClawPlugins", () => {
       "disabled",
     );
 
-    const broadSetupRegistry = loadOpenClawPlugins({
+    const broadSetupRegistry = loadNovaPlugins({
       cache: false,
       config,
       includeSetupOnlyChannelPlugins: true,
@@ -1288,7 +1288,7 @@ describe("loadOpenClawPlugins", () => {
       broadSetupRegistry.plugins.find((entry) => entry.id === "lazy-channel-plugin")?.status,
     ).toBe("disabled");
 
-    const scopedSetupRegistry = loadOpenClawPlugins({
+    const scopedSetupRegistry = loadNovaPlugins({
       cache: false,
       config,
       includeSetupOnlyChannelPlugins: true,
@@ -1334,7 +1334,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
     });
     fs.writeFileSync(
-      path.join(workspacePluginDir, "openclaw.plugin.json"),
+      path.join(workspacePluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "workspace-shadow",
@@ -1347,7 +1347,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir,
       includeSetupOnlyChannelPlugins: true,
@@ -1400,7 +1400,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
     });
     fs.writeFileSync(
-      path.join(workspacePluginDir, "openclaw.plugin.json"),
+      path.join(workspacePluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "trusted-workspace-shadow",
@@ -1413,7 +1413,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir,
       includeSetupOnlyChannelPlugins: true,
@@ -1469,7 +1469,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
     });
     fs.writeFileSync(
-      path.join(plugin.dir, "openclaw.plugin.json"),
+      path.join(plugin.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "untrusted-load-path-channel",
@@ -1482,7 +1482,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const scopedSetupRegistry = loadOpenClawPlugins({
+    const scopedSetupRegistry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -1534,7 +1534,7 @@ describe("loadOpenClawPlugins", () => {
   };`,
     });
     fs.writeFileSync(
-      path.join(plugin.dir, "openclaw.plugin.json"),
+      path.join(plugin.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "denylisted-load-path-channel",
@@ -1547,7 +1547,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const scopedSetupRegistry = loadOpenClawPlugins({
+    const scopedSetupRegistry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -1604,7 +1604,7 @@ describe("loadOpenClawPlugins", () => {
         "utf-8",
       );
       fs.writeFileSync(
-        path.join(globalDir, "openclaw.plugin.json"),
+        path.join(globalDir, "nova.plugin.json"),
         JSON.stringify(
           {
             id: "untrusted-global-channel",
@@ -1623,7 +1623,7 @@ describe("loadOpenClawPlugins", () => {
             name: "@nova/untrusted-global-channel",
             version: "0.0.0-test",
             main: "./index.cjs",
-            openclaw: {
+            nova: {
               extensions: ["./index.cjs"],
             },
           },
@@ -1633,7 +1633,7 @@ describe("loadOpenClawPlugins", () => {
         "utf-8",
       );
 
-      const scopedSetupRegistry = loadOpenClawPlugins({
+      const scopedSetupRegistry = loadNovaPlugins({
         cache: false,
         config: {
           plugins: {

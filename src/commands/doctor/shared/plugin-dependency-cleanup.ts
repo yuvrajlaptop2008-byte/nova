@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { resolveStateDir } from "../../../config/paths.js";
 import type { HealthFinding } from "../../../flows/health-checks.js";
-import { resolveOpenClawPackageRootSync } from "../../../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../../../infra/nova-root.js";
 import { resolveConfigDir, resolveUserPath } from "../../../utils.js";
 import { removeStalePluginRuntimeSymlinks } from "./plugin-runtime-symlinks.js";
 
@@ -58,21 +58,21 @@ async function pathExists(targetPath: string): Promise<boolean> {
 
 function isRuntimeDependencyMarkerName(name: string): boolean {
   return (
-    name === ".openclaw-runtime-deps.json" ||
-    name === ".openclaw-runtime-deps-stamp.json" ||
-    name.startsWith(".openclaw-runtime-deps-")
+    name === ".nova-runtime-deps.json" ||
+    name === ".nova-runtime-deps-stamp.json" ||
+    name.startsWith(".nova-runtime-deps-")
   );
 }
 
 function isInstallStageDebrisName(name: string): boolean {
-  return /^\.openclaw-install-stage(?:-.+)?$/u.test(name);
+  return /^\.nova-install-stage(?:-.+)?$/u.test(name);
 }
 
 function isLegacyDependencyDebrisName(name: string): boolean {
   return (
     isRuntimeDependencyMarkerName(name) ||
-    name === ".openclaw-pnpm-store" ||
-    name === ".openclaw-install-backups" ||
+    name === ".nova-pnpm-store" ||
+    name === ".nova-install-backups" ||
     isInstallStageDebrisName(name)
   );
 }
@@ -188,9 +188,9 @@ function collectExplicitStageTargets(env: NodeJS.ProcessEnv): CleanupTarget[] {
   }));
 }
 
-async function hasOpenClawRenameResidue(root: string): Promise<boolean> {
+async function hasNovaRenameResidue(root: string): Promise<boolean> {
   const nodeModulesRoot = path.join(root, "node_modules");
-  if (await isFile(path.join(nodeModulesRoot, ".openclaw-rename-tmp"))) {
+  if (await isFile(path.join(nodeModulesRoot, ".nova-rename-tmp"))) {
     return true;
   }
   const entries = await fs.readdir(nodeModulesRoot, { withFileTypes: true }).catch(() => []);
@@ -199,7 +199,7 @@ async function hasOpenClawRenameResidue(root: string): Promise<boolean> {
       continue;
     }
     const entryPath = path.join(nodeModulesRoot, entry.name);
-    if (await isFile(path.join(entryPath, ".openclaw-rename-tmp"))) {
+    if (await isFile(path.join(entryPath, ".nova-rename-tmp"))) {
       return true;
     }
     if (!entry.name.startsWith("@")) {
@@ -210,7 +210,7 @@ async function hasOpenClawRenameResidue(root: string): Promise<boolean> {
       if (!scopedEntry.isDirectory() || scopedEntry.isSymbolicLink()) {
         continue;
       }
-      if (await isFile(path.join(entryPath, scopedEntry.name, ".openclaw-rename-tmp"))) {
+      if (await isFile(path.join(entryPath, scopedEntry.name, ".nova-rename-tmp"))) {
         return true;
       }
     }
@@ -223,7 +223,7 @@ async function hasExplicitStageDebrisProof(root: string): Promise<boolean> {
   if (children.some((childPath) => isRuntimeDependencyMarkerName(path.basename(childPath)))) {
     return true;
   }
-  return await hasOpenClawRenameResidue(root);
+  return await hasNovaRenameResidue(root);
 }
 
 function filterLegacyStaleRootCandidates(
@@ -335,7 +335,7 @@ async function collectLegacyPluginDependencyTargetEntries(
 ): Promise<CleanupTarget[]> {
   const packageRoot =
     options.packageRoot ??
-    resolveOpenClawPackageRootSync({
+    resolveNovaPackageRootSync({
       argv1: process.argv[1],
       moduleUrl: import.meta.url,
       cwd: process.cwd(),
@@ -401,7 +401,7 @@ export async function detectLegacyPluginDependencyStateIssues(
   const env = params.env ?? process.env;
   const packageRoot =
     params.packageRoot ??
-    resolveOpenClawPackageRootSync({
+    resolveNovaPackageRootSync({
       argv1: process.argv[1],
       moduleUrl: import.meta.url,
       cwd: process.cwd(),
@@ -431,7 +431,7 @@ export function legacyPluginDependencyStateIssueToHealthFinding(
     target: issue.path,
     path: issue.path,
     requirement: "legacy-plugin-dependency-state-removed",
-    fixHint: "Run `openclaw doctor --fix` to remove legacy plugin dependency state.",
+    fixHint: "Run `nova doctor --fix` to remove legacy plugin dependency state.",
   };
 }
 
@@ -445,7 +445,7 @@ export async function cleanupLegacyPluginDependencyState(params: {
   const warnings: string[] = [];
   const packageRoot =
     params.packageRoot ??
-    resolveOpenClawPackageRootSync({
+    resolveNovaPackageRootSync({
       argv1: process.argv[1],
       moduleUrl: import.meta.url,
       cwd: process.cwd(),
@@ -476,7 +476,6 @@ export async function cleanupLegacyPluginDependencyState(params: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.pluginDependencyCleanupTestApi")
-  ] = { collectLegacyPluginDependencyTargets };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.pluginDependencyCleanupTestApi")] =
+    { collectLegacyPluginDependencyTargets };
 }

@@ -11,7 +11,7 @@ import {
   resolveExpiresAtMsFromDurationMs,
   resolveExpiresAtMsFromEpochSeconds,
 } from "@nova/normalization-core/number-coercion";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { readProviderJsonResponse } from "../provider-http-errors.js";
 import { resolveProviderRequestHeaders } from "../provider-request-config.js";
@@ -60,7 +60,7 @@ const testing = {
   },
 };
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.authProfileUsageTestApi")] =
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.authProfileUsageTestApi")] =
     testing;
 }
 
@@ -269,9 +269,9 @@ async function probeWhamForCooldown(
     const defaultHeaders: Record<string, string> = {
       Authorization: `Bearer ${profile.access}`,
       Accept: "application/json",
-      originator: "openclaw",
+      originator: "nova",
       ...(version ? { version } : {}),
-      "User-Agent": `openclaw/${version || "dev"}`,
+      "User-Agent": `nova/${version || "dev"}`,
     };
     if (profile.accountId) {
       defaultHeaders["ChatGPT-Account-Id"] = profile.accountId;
@@ -919,7 +919,7 @@ export async function markAuthProfileFailure(params: {
   store: AuthProfileStore;
   profileId: string;
   reason: AuthProfileFailureReason;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
   runId?: string;
   modelId?: string;

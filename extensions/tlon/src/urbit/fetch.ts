@@ -1,9 +1,5 @@
 // Tlon plugin module implements fetch behavior.
-import {
-  fetchWithSsrFGuard,
-  type LookupFn,
-  type SsrFPolicy,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+import { fetchWithSsrFGuard, type LookupFn, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 import { validateUrbitBaseUrl } from "./base-url.js";
 import { UrbitUrlError } from "./errors.js";
 

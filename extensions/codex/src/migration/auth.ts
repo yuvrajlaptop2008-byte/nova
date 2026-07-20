@@ -1,12 +1,12 @@
 // Codex plugin module implements auth behavior.
-import { loadAuthProfileStoreWithoutExternalProfiles } from "openclaw/plugin-sdk/agent-runtime";
+import { loadAuthProfileStoreWithoutExternalProfiles } from "nova/plugin-sdk/agent-runtime";
 import {
   createMigrationItem,
   markMigrationItemConflict,
   markMigrationItemError,
   markMigrationItemSkipped,
-} from "openclaw/plugin-sdk/migration";
-import type { MigrationItem, MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/migration";
+import type { MigrationItem, MigrationProviderContext } from "nova/plugin-sdk/plugin-entry";
 import {
   applyAuthProfileConfig,
   buildApiKeyCredential,
@@ -18,13 +18,13 @@ import {
   updateAuthProfileStoreWithLock,
   type AuthProfileStore,
   type OAuthCredential,
-  type OpenClawConfig,
+  type NovaConfig,
   type ProviderAuthResult,
-} from "openclaw/plugin-sdk/provider-auth";
+} from "nova/plugin-sdk/provider-auth";
 import {
   isRecord,
   normalizeOptionalString as readString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { readJsonObject } from "./helpers.js";
 import type { CodexSource } from "./source.js";
 import type { resolveCodexMigrationTargets } from "./targets.js";
@@ -41,7 +41,7 @@ const CODEX_CONFIG_PATCH_MODE_RETURN = "return";
 
 type CodexMigrationTargets = ReturnType<typeof resolveCodexMigrationTargets>;
 type AgentDefaultModelConfigs = NonNullable<
-  NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]>["models"]
+  NonNullable<NonNullable<NovaConfig["agents"]>["defaults"]>["models"]
 >;
 type AgentDefaultModelConfigEntry = AgentDefaultModelConfigs[string];
 
@@ -121,7 +121,7 @@ async function buildCodexOAuthCredential(source: CodexSource): Promise<CodexAuth
         models: Object.fromEntries(modelRefs.map((modelRef) => [modelRef, {}])),
       },
     },
-  } satisfies Partial<OpenClawConfig>;
+  } satisfies Partial<NovaConfig>;
   const result = buildOauthProviderAuthResult({
     providerId: OPENAI_PROVIDER_ID,
     defaultModel: OPENAI_CODEX_DEFAULT_MODEL,
@@ -220,15 +220,15 @@ function itemProfileTarget(
   return { profileId: matched ?? credential.profileId, matchedExisting: Boolean(matched) };
 }
 
-function replaceConfigDraft(draft: OpenClawConfig, next: OpenClawConfig): void {
-  for (const key of Object.keys(draft) as Array<keyof OpenClawConfig>) {
+function replaceConfigDraft(draft: NovaConfig, next: NovaConfig): void {
+  for (const key of Object.keys(draft) as Array<keyof NovaConfig>) {
     delete draft[key];
   }
   Object.assign(draft, next);
 }
 
 function existingAuthProfileConfigIsCompatible(
-  existing: NonNullable<NonNullable<OpenClawConfig["auth"]>["profiles"]>[string],
+  existing: NonNullable<NonNullable<NovaConfig["auth"]>["profiles"]>[string],
   profile: CodexAuthProfileConfig,
 ): boolean {
   if (existing.provider !== profile.provider || existing.mode !== profile.mode) {
@@ -241,7 +241,7 @@ function existingAuthProfileConfigIsCompatible(
 }
 
 function hasAuthProfileConfigConflict(
-  config: OpenClawConfig,
+  config: NovaConfig,
   profile: CodexAuthProfileConfig,
   overwrite: boolean,
 ): boolean {
@@ -258,14 +258,14 @@ function hasCurrentAuthProfileConfigConflict(
 ): boolean {
   let config = ctx.config;
   try {
-    config = (ctx.runtime?.config?.current?.() as OpenClawConfig | undefined) ?? config;
+    config = (ctx.runtime?.config?.current?.() as NovaConfig | undefined) ?? config;
   } catch {
     // Fall back to the planning snapshot; direct config writes recheck inside mutate.
   }
   return hasAuthProfileConfigConflict(config, profile, Boolean(ctx.overwrite));
 }
 
-function applyDefaultModelIfMissing(cfg: OpenClawConfig): OpenClawConfig {
+function applyDefaultModelIfMissing(cfg: NovaConfig): NovaConfig {
   const currentModel = cfg.agents?.defaults?.model;
   const primary =
     typeof currentModel === "string"
@@ -302,9 +302,9 @@ function mergeModelConfigEntry(
 }
 
 function applyOAuthModelConfigsToConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   credential: Extract<CodexAuthCredential, { kind: "oauth" }>,
-): OpenClawConfig {
+): NovaConfig {
   const existingModels = cfg.agents?.defaults?.models ?? {};
   const models: AgentDefaultModelConfigs = credential.result.replaceDefaultModels
     ? { ...credential.modelConfigs }
@@ -327,10 +327,10 @@ function applyOAuthModelConfigsToConfig(
 }
 
 function applyOAuthConfigToConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   credential: Extract<CodexAuthCredential, { kind: "oauth" }>,
   profileId: string,
-): OpenClawConfig {
+): NovaConfig {
   let next = applyOAuthModelConfigsToConfig(cfg, credential);
   const profile = credential.result.profiles[0];
   if (profile) {
@@ -351,10 +351,10 @@ function applyOAuthConfigToConfig(
 }
 
 function applyApiKeyConfigToConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   credential: Extract<CodexAuthCredential, { kind: "api_key" }>,
   profileId: string,
-): OpenClawConfig {
+): NovaConfig {
   return applyAuthProfileConfig(cfg, {
     profileId,
     provider: credential.provider,
@@ -413,7 +413,7 @@ function authProfileConfigForCredential(
 async function applyCodexAuthProfileConfig(
   ctx: MigrationProviderContext,
   profile: CodexAuthProfileConfig,
-  applyConfig: (config: OpenClawConfig) => OpenClawConfig,
+  applyConfig: (config: NovaConfig) => NovaConfig,
 ): Promise<CodexAuthConfigApplyResult> {
   const configApi = ctx.runtime?.config;
   if (!configApi?.current || !configApi.mutateConfigFile) {

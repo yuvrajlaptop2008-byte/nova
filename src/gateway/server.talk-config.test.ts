@@ -65,7 +65,7 @@ async function createFreshOperatorDevice(scopes: string[], nonce: string) {
   const identity = loadOrCreateDeviceIdentity({
     path: path.join(
       os.tmpdir(),
-      `openclaw-talk-config-device-${process.pid}-${talkConfigDeviceSeq++}.sqlite`,
+      `nova-talk-config-device-${process.pid}-${talkConfigDeviceSeq++}.sqlite`,
     ),
   });
   const signedAtMs = Date.now();

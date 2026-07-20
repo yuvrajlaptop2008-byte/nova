@@ -9,12 +9,12 @@ import { runGatewayUpdate, type UpdateRunResult } from "../../infra/update-runne
 import { defaultRuntime } from "../../runtime.js";
 import {
   NOVA_DATABASE_SCHEMA_DOCS_URL,
-  preflightOpenClawDatabaseSchemas,
-  type IncompatibleOpenClawDatabase,
-  type IndeterminateOpenClawDatabase,
-  type OpenClawDatabaseSchemaPreflight,
-} from "../../state/openclaw-database-preflight.js";
-import type { OpenClawSchemaVersions } from "../../state/openclaw-schema-versions.js";
+  preflightNovaDatabaseSchemas,
+  type IncompatibleNovaDatabase,
+  type IndeterminateNovaDatabase,
+  type NovaDatabaseSchemaPreflight,
+} from "../../state/nova-database-preflight.js";
+import type { NovaSchemaVersions } from "../../state/nova-schema-versions.js";
 import { createUpdateProgress, printResult } from "./progress.js";
 import {
   createGlobalCommandRunner,
@@ -29,7 +29,7 @@ import { UpdateCommandAbort, type PreManagedServiceStop } from "./update-command
 const DEFAULT_UPDATE_STEP_TIMEOUT_MS = 30 * 60_000;
 
 type BeforeGitMutation = (target: {
-  schemaVersions?: OpenClawSchemaVersions;
+  schemaVersions?: NovaSchemaVersions;
   metadataUnreadable?: string;
 }) => Promise<{
   allowGatewayServiceRepair?: boolean;
@@ -38,8 +38,8 @@ type BeforeGitMutation = (target: {
 
 export function formatSchemaRefusalLines(
   schemas: {
-    incompatible: readonly IncompatibleOpenClawDatabase[];
-    indeterminate: readonly IndeterminateOpenClawDatabase[];
+    incompatible: readonly IncompatibleNovaDatabase[];
+    indeterminate: readonly IndeterminateNovaDatabase[];
   },
   dryRun = false,
 ): string[] {
@@ -59,15 +59,15 @@ export function formatSchemaRefusalLines(
 }
 
 export function checkTargetDatabaseSchemas(
-  supportedVersions: OpenClawSchemaVersions | undefined,
+  supportedVersions: NovaSchemaVersions | undefined,
   env: NodeJS.ProcessEnv = process.env,
-): OpenClawDatabaseSchemaPreflight {
+): NovaDatabaseSchemaPreflight {
   return supportedVersions
-    ? preflightOpenClawDatabaseSchemas({ env, supportedVersions })
+    ? preflightNovaDatabaseSchemas({ env, supportedVersions })
     : { incompatible: [], indeterminate: [] };
 }
 
-export function hasSchemaRefusal(schemas: OpenClawDatabaseSchemaPreflight): boolean {
+export function hasSchemaRefusal(schemas: NovaDatabaseSchemaPreflight): boolean {
   return schemas.incompatible.length > 0 || schemas.indeterminate.length > 0;
 }
 

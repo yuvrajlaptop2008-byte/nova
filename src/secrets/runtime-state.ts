@@ -25,7 +25,7 @@ import {
   setRuntimeConfigSnapshotRefreshHandler,
   type RuntimeConfigSnapshotRefreshHandler,
 } from "../config/runtime-snapshot.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { coerceSecretRef, isSecretRef, type SecretRef } from "../config/types.secrets.js";
 import type { PluginManifestRegistry } from "../plugins/manifest-registry.js";
 import type { PluginOrigin } from "../plugins/plugin-origin.types.js";
@@ -44,8 +44,8 @@ import type { RuntimeWebToolsMetadata } from "./runtime-web-tools.types.js";
 
 /** Prepared secrets runtime snapshot activated for fast secret resolution. */
 export type PreparedSecretsRuntimeSnapshot = {
-  sourceConfig: OpenClawConfig;
-  config: OpenClawConfig;
+  sourceConfig: NovaConfig;
+  config: NovaConfig;
   authStores: Array<{ agentDir: string; store: RuntimeAuthProfileStore }>;
   authStoreCredentialsRevision: number;
   warnings: SecretResolverWarning[];
@@ -87,7 +87,7 @@ function listLocatedSecretRefs(
 }
 
 /** Whether two configs resolve the same SecretRefs through the same provider contracts. */
-export function hasSameSecretReloadContract(left: OpenClawConfig, right: OpenClawConfig): boolean {
+export function hasSameSecretReloadContract(left: NovaConfig, right: NovaConfig): boolean {
   return isDeepStrictEqual(
     {
       refs: listLocatedSecretRefs(left, left.secrets?.defaults),
@@ -366,10 +366,7 @@ function mergeRollbackValue(previous: unknown, candidate: unknown, current: unkn
   return merged;
 }
 
-export function hasSameSecretProviderDefinition(
-  ref: SecretRef,
-  configs: OpenClawConfig[],
-): boolean {
+export function hasSameSecretProviderDefinition(ref: SecretRef, configs: NovaConfig[]): boolean {
   const definition = configs[0]?.secrets?.providers?.[ref.provider];
   if (
     !configs.every((config) =>
@@ -383,7 +380,7 @@ export function hasSameSecretProviderDefinition(
   }
   // Plugin integration ownership is not fully normalized to one entry. Preserve a resolved value
   // only across an unchanged plugin/channel snapshot, or rollback can pair it with rejected owner state.
-  const dependency = (config: OpenClawConfig) => ({
+  const dependency = (config: NovaConfig) => ({
     plugins: config.plugins,
     channels: config.channels,
   });
@@ -396,8 +393,8 @@ function preserveResolvedSecretRefValues(
   currentSource: unknown,
   current: unknown,
   restored: unknown,
-  sourceConfig: OpenClawConfig,
-  currentSourceConfig: OpenClawConfig,
+  sourceConfig: NovaConfig,
+  currentSourceConfig: NovaConfig,
 ): unknown {
   const sourceRef = coerceSecretRef(source, sourceConfig.secrets?.defaults);
   if (sourceRef) {
@@ -444,9 +441,9 @@ function preserveResolvedAuthStoreSecretValues(
   candidate: Record<string, AuthProfileStore>,
   restored: Record<string, AuthProfileStore>,
   current: Record<string, AuthProfileStore>,
-  previousConfig: OpenClawConfig,
-  candidateConfig: OpenClawConfig,
-  currentConfig: OpenClawConfig,
+  previousConfig: NovaConfig,
+  candidateConfig: NovaConfig,
+  currentConfig: NovaConfig,
 ): Record<string, AuthProfileStore> {
   const next = structuredClone(restored);
   for (const [agentDir, store] of Object.entries(next)) {
@@ -628,7 +625,7 @@ function mergeRollbackAuthStoreCredentials(
   candidate: Record<string, AuthProfileStore>,
   current: Record<string, AuthProfileStore>,
   restored: Record<string, AuthProfileStore>,
-  configs: [OpenClawConfig, OpenClawConfig, OpenClawConfig],
+  configs: [NovaConfig, NovaConfig, NovaConfig],
   mutationLineage: typeof activeSnapshotLineageAuthMutations,
 ): Record<string, AuthProfileStore> {
   const next = structuredClone(restored);
@@ -878,7 +875,7 @@ export function activateSecretsRuntimeSnapshotState(params: {
   snapshot: PreparedSecretsRuntimeSnapshot;
   refreshContext: SecretsRuntimeRefreshContext | null;
   refreshHandler: RuntimeConfigSnapshotRefreshHandler | null;
-  runtimeSourceConfig?: OpenClawConfig;
+  runtimeSourceConfig?: NovaConfig;
   mergeLiveAuthBookkeeping?: boolean;
   preserveActivationLineage?: boolean;
 }): void {
@@ -995,7 +992,7 @@ export function restoreSecretsRuntimeSnapshotStateIfCurrent(
     params.snapshot.sourceConfig,
     params.ownedSnapshot.sourceConfig,
     activeSnapshot.sourceConfig,
-  ) as OpenClawConfig;
+  ) as NovaConfig;
   const restoredConfig = preserveResolvedSecretRefValues(
     restoredSourceConfig,
     activeSnapshot.sourceConfig,
@@ -1003,7 +1000,7 @@ export function restoreSecretsRuntimeSnapshotStateIfCurrent(
     mergeRollbackValue(params.snapshot.config, params.ownedSnapshot.config, activeSnapshot.config),
     restoredSourceConfig,
     activeSnapshot.sourceConfig,
-  ) as OpenClawConfig;
+  ) as NovaConfig;
   return activateSecretsRuntimeSnapshotStateIfCurrent({
     ...params,
     snapshot: {
@@ -1054,8 +1051,8 @@ export function hasActiveSecretsRuntimeSnapshotLineage(revision: number): boolea
 export function setSecretsRuntimeSourceSnapshotIfCurrent(params: {
   expectedSecretsRevision: number;
   expectedRuntimeConfigRevision: number;
-  runtimeSourceConfig: OpenClawConfig;
-  secretsSourceConfig: OpenClawConfig;
+  runtimeSourceConfig: NovaConfig;
+  secretsSourceConfig: NovaConfig;
 }): boolean {
   if (activeSnapshotRevision !== params.expectedSecretsRevision) {
     return false;
@@ -1074,7 +1071,7 @@ export function setSecretsRuntimeSourceSnapshotIfCurrent(params: {
   return true;
 }
 
-function advanceSecretsRuntimeSourceSnapshot(sourceConfig: OpenClawConfig): void {
+function advanceSecretsRuntimeSourceSnapshot(sourceConfig: NovaConfig): void {
   if (activeSnapshot) {
     activeSnapshot.sourceConfig = sourceConfig;
     activeSnapshotRevision += 1;
@@ -1090,8 +1087,8 @@ function advanceSecretsRuntimeSourceSnapshot(sourceConfig: OpenClawConfig): void
 /** Reverts source ownership while retaining scoped descendants of the committed source write. */
 export function restoreSecretsRuntimeSourceSnapshotIfLineageCurrent(params: {
   expectedLineageRevision: number;
-  runtimeSourceConfig: OpenClawConfig;
-  secretsSourceConfig: OpenClawConfig;
+  runtimeSourceConfig: NovaConfig;
+  secretsSourceConfig: NovaConfig;
 }): boolean {
   if (!activeSnapshot || activeSnapshotLineageStartRevision !== params.expectedLineageRevision) {
     return false;

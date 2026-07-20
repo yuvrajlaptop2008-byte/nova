@@ -26,7 +26,7 @@ function runDockerRunArgs(pathPrefix: string) {
     "unset NOVA_LIVE_DOCKER_CPUS NOVA_DOCKER_E2E_CPUS",
     "unset NOVA_LIVE_DOCKER_PIDS_LIMIT NOVA_DOCKER_E2E_PIDS_LIMIT",
     "ARGS=()",
-    "openclaw_live_init_docker_run_args ARGS 42s || exit $?",
+    "nova_live_init_docker_run_args ARGS 42s || exit $?",
     "printf '%s\\n' \"${ARGS[@]}\"",
   ].join("\n");
 
@@ -62,8 +62,8 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         "-c",
         [
           "source scripts/lib/live-docker-auth.sh",
-          'fallback="$(openclaw_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180)"',
-          'leading_zero="$(NOVA_LIVE_SAMPLE_SECONDS=008 openclaw_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180)"',
+          'fallback="$(nova_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180)"',
+          'leading_zero="$(NOVA_LIVE_SAMPLE_SECONDS=008 nova_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180)"',
           'printf "%s\\n%s\\n" "$fallback" "$leading_zero"',
         ].join("\n"),
       ],
@@ -75,7 +75,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         "-c",
         [
           "source scripts/lib/live-docker-auth.sh",
-          "NOVA_LIVE_SAMPLE_SECONDS=30s openclaw_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180",
+          "NOVA_LIVE_SAMPLE_SECONDS=30s nova_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180",
         ].join("\n"),
       ],
       { cwd: process.cwd(), encoding: "utf8" },
@@ -88,7 +88,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("adds a kill-after grace period when timeout supports it", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-gnu-");
+    const binDir = makeTempBin("nova-live-docker-auth-gnu-");
     writeExecutable(
       path.join(binDir, "timeout"),
       [
@@ -117,7 +117,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("caps default CPU limits to the runner capacity", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-cpus-");
+    const binDir = makeTempBin("nova-live-docker-auth-cpus-");
     writeExecutable(
       path.join(binDir, "timeout"),
       [
@@ -137,7 +137,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         [
           "source scripts/lib/live-docker-auth.sh",
           "ARGS=()",
-          "NOVA_LIVE_DOCKER_AVAILABLE_CPUS=8 openclaw_live_init_docker_run_args ARGS 42s",
+          "NOVA_LIVE_DOCKER_AVAILABLE_CPUS=8 nova_live_init_docker_run_args ARGS 42s",
           "printf '%s\\n' \"${ARGS[@]}\"",
         ].join("\n"),
       ],
@@ -168,7 +168,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("falls back to plain timeout when kill-after is unavailable", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-plain-");
+    const binDir = makeTempBin("nova-live-docker-auth-plain-");
     writeExecutable(
       path.join(binDir, "timeout"),
       ["#!/bin/sh", 'if [ "$1" = "--kill-after=1s" ]; then', "  exit 1", "fi", "exit 0", ""].join(
@@ -191,7 +191,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("uses gtimeout when timeout is unavailable", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-gtimeout-");
+    const binDir = makeTempBin("nova-live-docker-auth-gtimeout-");
     writeExecutable(
       path.join(binDir, "gtimeout"),
       [
@@ -220,7 +220,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("allows live Docker resource limits to be disabled", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-no-limits-");
+    const binDir = makeTempBin("nova-live-docker-auth-no-limits-");
     writeExecutable(
       path.join(binDir, "timeout"),
       [
@@ -240,7 +240,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         [
           "source scripts/lib/live-docker-auth.sh",
           "ARGS=()",
-          "NOVA_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS=1 openclaw_live_init_docker_run_args ARGS 42s",
+          "NOVA_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS=1 nova_live_init_docker_run_args ARGS 42s",
           "printf '%s\\n' \"${ARGS[@]}\"",
         ].join("\n"),
       ],
@@ -265,7 +265,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("normalizes live Docker pids limits", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-pids-");
+    const binDir = makeTempBin("nova-live-docker-auth-pids-");
     writeExecutable(
       path.join(binDir, "timeout"),
       [
@@ -285,7 +285,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         [
           "source scripts/lib/live-docker-auth.sh",
           "ARGS=()",
-          "NOVA_LIVE_DOCKER_PIDS_LIMIT=0008 openclaw_live_init_docker_run_args ARGS 42s",
+          "NOVA_LIVE_DOCKER_PIDS_LIMIT=0008 nova_live_init_docker_run_args ARGS 42s",
           "printf '%s\\n' \"${ARGS[@]}\"",
         ].join("\n"),
       ],
@@ -307,7 +307,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
     ["live", "NOVA_LIVE_DOCKER_PIDS_LIMIT"],
     ["shared", "NOVA_DOCKER_E2E_PIDS_LIMIT"],
   ])("rejects invalid %s Docker pids limits before live Docker setup", (_label, envName) => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-invalid-pids-");
+    const binDir = makeTempBin("nova-live-docker-auth-invalid-pids-");
     writeExecutable(
       path.join(binDir, "timeout"),
       [
@@ -327,7 +327,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         [
           "source scripts/lib/live-docker-auth.sh",
           "ARGS=()",
-          "openclaw_live_init_docker_run_args ARGS 42s",
+          "nova_live_init_docker_run_args ARGS 42s",
         ].join("\n"),
       ],
       {
@@ -348,7 +348,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it("fails fast when no timeout wrapper is available", () => {
-    const binDir = makeTempBin("openclaw-live-docker-auth-no-timeout-");
+    const binDir = makeTempBin("nova-live-docker-auth-no-timeout-");
 
     const result = runDockerRunArgs(binDir);
     expect(result.status).toBe(127);

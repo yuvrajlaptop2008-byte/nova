@@ -13,15 +13,15 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
   it("mounts cache and npm tool dirs outside the bind-mounted Docker home", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
-    expect(script).toContain('DOCKER_CACHE_CONTAINER_DIR="/tmp/openclaw-cache"');
-    expect(script).toContain('DOCKER_CLI_TOOLS_CONTAINER_DIR="/tmp/openclaw-npm-global"');
-    expect(script).toContain("openclaw_live_codex_harness_is_ci()");
-    expect(script).toContain("openclaw_live_is_ci");
+    expect(script).toContain('DOCKER_CACHE_CONTAINER_DIR="/tmp/nova-cache"');
+    expect(script).toContain('DOCKER_CLI_TOOLS_CONTAINER_DIR="/tmp/nova-npm-global"');
+    expect(script).toContain("nova_live_codex_harness_is_ci()");
+    expect(script).toContain("nova_live_is_ci");
     expect(script).toContain('-e XDG_CACHE_HOME="$DOCKER_CACHE_CONTAINER_DIR"');
     expect(script).toContain('-e NPM_CONFIG_PREFIX="$DOCKER_CLI_TOOLS_CONTAINER_DIR"');
-    expect(script).toContain('openclaw_live_prepare_bind_dir_for_container_user "$CLI_TOOLS_DIR"');
-    expect(script).toContain('openclaw_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"');
-    expect(script).toContain("openclaw_live_uses_managed_bind_dirs");
+    expect(script).toContain('nova_live_prepare_bind_dir_for_container_user "$CLI_TOOLS_DIR"');
+    expect(script).toContain('nova_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"');
+    expect(script).toContain("nova_live_uses_managed_bind_dirs");
     expect(script).toContain('-v "$CACHE_HOME_DIR":"$DOCKER_CACHE_CONTAINER_DIR"');
     expect(script).toContain('-v "$CLI_TOOLS_DIR":"$DOCKER_CLI_TOOLS_CONTAINER_DIR"');
     expect(script).not.toContain('-v "$CACHE_HOME_DIR":/home/node/.cache');
@@ -35,7 +35,7 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
       "NOVA_LIVE_CODEX_HARNESS_AUTH=codex-auth requires ~/.codex/auth.json before building the live Docker image",
     );
     expect(script).toContain(
-      "If this is a Testbox/API-key run, set NOVA_LIVE_CODEX_HARNESS_AUTH=api-key and run through openclaw-testbox-env.",
+      "If this is a Testbox/API-key run, set NOVA_LIVE_CODEX_HARNESS_AUTH=api-key and run through nova-testbox-env.",
     );
     expect(script.indexOf("requires ~/.codex/auth.json before building")).toBeLessThan(
       script.indexOf('NOVA_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR"'),
@@ -54,18 +54,18 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain('DOCKER_USER="$(id -u):$(id -g)"');
-    expect(script).toContain("if openclaw_live_uses_managed_bind_dirs; then");
+    expect(script).toContain("if nova_live_uses_managed_bind_dirs; then");
     expect(script).toContain('if [[ "$CODEX_HARNESS_AUTH_MODE" == "api-key" ]]; then');
     expect(script).toContain('if [[ -z "${DOCKER_HOME_DIR:-}" ]]; then');
     expect(script).not.toContain('DOCKER_USER="0:0"');
     expect(script).toContain(
-      'DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-home.XXXXXX")"',
+      'DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-home.XXXXXX")"',
     );
     expect(script).toContain(
-      'CONFIG_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-config.XXXXXX")"',
+      'CONFIG_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-config.XXXXXX")"',
     );
     expect(script).toContain(
-      'WORKSPACE_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-workspace.XXXXXX")"',
+      'WORKSPACE_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-workspace.XXXXXX")"',
     );
     expect(script).toContain('DOCKER_CACHE_CONTAINER_DIR="/home/node/.cache"');
     expect(script).toContain('DOCKER_CLI_TOOLS_CONTAINER_DIR="/home/node/.npm-global"');
@@ -75,7 +75,7 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     );
     expect(script).toContain('if [[ "$CODEX_HARNESS_AUTH_MODE" != "api-key" ]]; then');
     expect(script.indexOf('PROFILE_STATUS="api-key-env"')).toBeLessThan(
-      script.indexOf("openclaw_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT"),
+      script.indexOf("nova_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT"),
     );
     expect(script).toContain("cleanup_codex_live_mounts() {");
     expect(script).toContain(

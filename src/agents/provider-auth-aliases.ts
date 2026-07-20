@@ -4,7 +4,7 @@
  * providers, with trusted workspace plugin handling and process-stable caching.
  */
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizePluginsConfig } from "../plugins/config-state.js";
 import { getCurrentPluginMetadataSnapshot } from "../plugins/current-plugin-metadata-snapshot.js";
 import type { PluginManifestRecord } from "../plugins/manifest-registry.js";
@@ -19,7 +19,7 @@ import type { PluginOrigin } from "../plugins/plugin-origin.types.js";
 
 /** Inputs that control plugin metadata and trust scope for auth alias lookup. */
 export type ProviderAuthAliasLookupParams = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   includeUntrustedWorkspacePlugins?: boolean;
@@ -63,10 +63,9 @@ function resetProviderAuthAliasMapCacheForTest(): void {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.providerAuthAliasesTestApi")] =
-    {
-      resetProviderAuthAliasMapCacheForTest,
-    };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.providerAuthAliasesTestApi")] = {
+    resetProviderAuthAliasMapCacheForTest,
+  };
 }
 
 function resolveProviderAuthAliasOriginPriority(origin: PluginOrigin | undefined): number {
@@ -78,7 +77,7 @@ function resolveProviderAuthAliasOriginPriority(origin: PluginOrigin | undefined
 
 function isWorkspacePluginTrustedForAuthAliases(
   plugin: PluginManifestRecord,
-  config: OpenClawConfig | undefined,
+  config: NovaConfig | undefined,
 ): boolean {
   return isWorkspacePluginAllowedByConfig({
     config,

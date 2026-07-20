@@ -30,7 +30,7 @@ import { log } from "./logger.js";
 import { isGooglePromptCacheEligible, resolveCacheRetention } from "./prompt-cache-retention.js";
 import { EmbeddedAttemptSessionTakeoverError } from "./run/attempt.session-lock.js";
 
-const GOOGLE_PROMPT_CACHE_CUSTOM_TYPE = "openclaw.google-prompt-cache";
+const GOOGLE_PROMPT_CACHE_CUSTOM_TYPE = "nova.google-prompt-cache";
 // CachedContent metadata responses are tiny (name + expireTime); cap the read so
 // a buggy/hostile Google endpoint cannot stream an unbounded body into memory.
 const GOOGLE_PROMPT_CACHE_RESPONSE_MAX_BYTES = 1024 * 1024;

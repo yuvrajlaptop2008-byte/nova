@@ -1340,7 +1340,7 @@ export const vi: TranslationMap = {
     autoSaveFailed: "Lưu thất bại",
     autoSaveConflict: "Cài đặt đã được thay đổi ở nơi khác",
     retry: "Thử lại",
-    applyBannerText: "Đã lưu vào openclaw.json — khởi động lại gateway để áp dụng.",
+    applyBannerText: "Đã lưu vào nova.json — khởi động lại gateway để áp dụng.",
     applyBannerAction: "Khởi động lại & áp dụng",
     rawDiscard: "Loại bỏ",
     rawDraftBlocksApply:
@@ -1733,7 +1733,7 @@ export const vi: TranslationMap = {
       "Xem xét, tinh chỉnh và áp dụng các đề xuất trước khi chúng trở thành kỹ năng đang hoạt động.",
     nodes: "Thiết bị đã ghép nối và lệnh.",
     chat: "Trò chuyện Gateway để can thiệp nhanh.",
-    config: "Chỉnh sửa openclaw.json.",
+    config: "Chỉnh sửa nova.json.",
     profile: "Thống kê, chuỗi hoạt động và cuộc sống trong rạn san hô của agent của bạn.",
     communications: "Kênh, tin nhắn và cài đặt âm thanh.",
     appearance: "Giao diện, UI và cài đặt trình hướng dẫn thiết lập.",
@@ -2448,7 +2448,7 @@ export const vi: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3460,16 +3460,16 @@ export const vi: TranslationMap = {
         title: "Cần xác thực",
         summary:
           "Gateway có thể truy cập được, nhưng cần token hoặc mật khẩu khớp trước khi trình duyệt này có thể kết nối.",
-        stepPaste: "Dán token từ openclaw dashboard --no-open hoặc nhập mật khẩu đã cấu hình.",
+        stepPaste: "Dán token từ nova dashboard --no-open hoặc nhập mật khẩu đã cấu hình.",
         stepGenerate:
-          "Nếu chưa cấu hình token, hãy chạy openclaw doctor --generate-gateway-token trên máy chủ Gateway.",
+          "Nếu chưa cấu hình token, hãy chạy nova doctor --generate-gateway-token trên máy chủ Gateway.",
         stepConnect: "Nhấp Connect lần nữa sau khi cập nhật thông tin xác thực.",
       },
       authFailed: {
         title: "Xác thực không khớp",
         summary:
           "Thông tin xác thực đã cung cấp bị từ chối. Nguyên nhân phổ biến nhất là token cũ hoặc token sao chép từ một Gateway URL khác.",
-        stepDashboard: "Chạy openclaw dashboard --no-open rồi mở URL mới hoặc dán token của nó.",
+        stepDashboard: "Chạy nova dashboard --no-open rồi mở URL mới hoặc dán token của nó.",
         stepReplace:
           "Thay các giá trị token/mật khẩu cũ; không dùng lại token từ Gateway URL khác.",
         stepMode:
@@ -3492,8 +3492,8 @@ export const vi: TranslationMap = {
           "Trình duyệt này cần phê duyệt một lần từ máy chủ Gateway trước khi dùng Control UI.",
         upgradeSummary:
           "Trình duyệt này đã được biết đến, nhưng quyền truy cập yêu cầu đã thay đổi và cần phê duyệt mới.",
-        stepList: "Chạy openclaw devices list trên máy chủ Gateway.",
-        stepApproveId: "Phê duyệt yêu cầu này: openclaw devices approve {requestId}.",
+        stepList: "Chạy nova devices list trên máy chủ Gateway.",
+        stepApproveId: "Phê duyệt yêu cầu này: nova devices approve {requestId}.",
         stepApprove: "Phê duyệt yêu cầu trình duyệt/thiết bị đang chờ trong danh sách đó.",
         stepReconnect: "Kết nối lại sau khi phê duyệt hoàn tất.",
       },
@@ -3519,7 +3519,7 @@ export const vi: TranslationMap = {
         summary:
           "Control UI được phục vụ và Gateway đang chạy không thống nhất về giao thức kết nối được hỗ trợ.",
         stepDashboard:
-          "Mở lại dashboard được phục vụ bằng openclaw dashboard để UI và Gateway đến từ cùng một bản cài đặt.",
+          "Mở lại dashboard được phục vụ bằng nova dashboard để UI và Gateway đến từ cùng một bản cài đặt.",
         stepDevUi:
           "Nếu dùng pnpm ui:dev, hãy build lại hoặc khởi động lại UI dev theo checkout hiện tại.",
         stepRestart:
@@ -3529,10 +3529,10 @@ export const vi: TranslationMap = {
         title: "Không thể kết nối",
         summary:
           "Trình duyệt không thể hoàn tất kết nối Gateway. Kiểm tra đích và transport trước khi thử lại thông tin xác thực.",
-        stepGateway: "Xác nhận Gateway đang chạy bằng openclaw status hoặc openclaw gateway run.",
+        stepGateway: "Xác nhận Gateway đang chạy bằng nova status hoặc nova gateway run.",
         stepUrl: "Kiểm tra WebSocket URL và dùng wss:// khi Gateway nằm sau HTTPS/Tailscale Serve.",
         stepDashboard:
-          "Mở lại dashboard bằng openclaw dashboard --no-open để sao chép lại URL và chi tiết auth hiện tại.",
+          "Mở lại dashboard bằng nova dashboard --no-open để sao chép lại URL và chi tiết auth hiện tại.",
       },
     },
   },

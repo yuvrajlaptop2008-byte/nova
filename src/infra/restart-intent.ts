@@ -1,11 +1,8 @@
 // Persists short-lived gateway restart intent for supervisor SIGTERM handoff.
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { createSubsystemLogger } from "../logging/subsystem.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -16,7 +13,7 @@ const GATEWAY_RESTART_INTENT_KEY = "gateway-restart";
 const GATEWAY_RESTART_INTENT_TTL_MS = 60_000;
 
 const restartLog = createSubsystemLogger("restart");
-type GatewayRestartIntentDatabase = Pick<OpenClawStateKyselyDatabase, "gateway_restart_intent">;
+type GatewayRestartIntentDatabase = Pick<NovaStateKyselyDatabase, "gateway_restart_intent">;
 
 type GatewayRestartIntentPayload = {
   kind: "gateway-restart";
@@ -62,7 +59,7 @@ export function writeGatewayRestartIntentSync(opts: {
         ? Math.floor(opts.intent.waitMs)
         : null;
     const createdAt = Date.now();
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<GatewayRestartIntentDatabase>(db);
         executeSqliteQuerySync(
@@ -103,7 +100,7 @@ export function writeGatewayRestartIntentSync(opts: {
 
 export function clearGatewayRestartIntentSync(env: NodeJS.ProcessEnv = process.env): void {
   try {
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       ({ db }) => {
         const stateDb = getNodeSqliteKysely<GatewayRestartIntentDatabase>(db);
         executeSqliteQuerySync(
@@ -122,7 +119,7 @@ function readGatewayRestartIntentPayloadSync(
   env: NodeJS.ProcessEnv,
 ): GatewayRestartIntentPayload | null {
   try {
-    const { db } = openOpenClawStateDatabase({ env });
+    const { db } = openNovaStateDatabase({ env });
     const stateDb = getNodeSqliteKysely<GatewayRestartIntentDatabase>(db);
     const parsed = executeSqliteQueryTakeFirstSync(
       db,

@@ -292,7 +292,7 @@ describe("gateway pre-auth hardening", () => {
           trustedProxies: ["127.0.0.1"],
         },
       },
-      prefix: "openclaw-preauth-proxy-",
+      prefix: "nova-preauth-proxy-",
       run: async () => {
         const harness = await createGatewaySuiteHarness();
         try {

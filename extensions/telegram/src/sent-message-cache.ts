@@ -1,16 +1,16 @@
 // Telegram plugin module implements sent message cache behavior.
 import { createHash } from "node:crypto";
 import fs from "node:fs";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { PluginStateSyncKeyedStore } from "nova/plugin-sdk/plugin-state-runtime";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
+import { resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
 import { getTelegramRuntime } from "./runtime.js";
 
 const TTL_MS = 24 * 60 * 60 * 1000;
 export const TELEGRAM_SENT_MESSAGE_CACHE_NAMESPACE = "telegram.sent-messages";
 export const TELEGRAM_SENT_MESSAGE_CACHE_MAX_ENTRIES = 10_000;
-const TELEGRAM_SENT_MESSAGES_STATE_KEY = Symbol.for("openclaw.telegramSentMessagesState");
+const TELEGRAM_SENT_MESSAGES_STATE_KEY = Symbol.for("nova.telegramSentMessagesState");
 
 type PersistedSentMessage = {
   scopeKey: string;
@@ -48,11 +48,11 @@ function createSentMessageStore(): SentMessageStore {
   return new Map<string, Map<string, number>>();
 }
 
-function resolveSentMessageStorePath(cfg?: Pick<OpenClawConfig, "session">): string {
+function resolveSentMessageStorePath(cfg?: Pick<NovaConfig, "session">): string {
   return `${resolveStorePath(cfg?.session?.store)}.telegram-sent-messages.json`;
 }
 
-function resolveSentMessageScopeKey(cfg?: Pick<OpenClawConfig, "session">): string {
+function resolveSentMessageScopeKey(cfg?: Pick<NovaConfig, "session">): string {
   const storePath = resolveStorePath(cfg?.session?.store);
   return createHash("sha256").update(storePath, "utf8").digest("hex").slice(0, 24);
 }
@@ -142,7 +142,7 @@ function readPersistedSentMessages(scopeKey: string): SentMessageStore {
   return store;
 }
 
-function getSentMessageBucket(cfg?: Pick<OpenClawConfig, "session">): SentMessageBucket {
+function getSentMessageBucket(cfg?: Pick<NovaConfig, "session">): SentMessageBucket {
   const state = getSentMessageState();
   const scopeKey = resolveSentMessageScopeKey(cfg);
   const existing = state.bucketsByScope.get(scopeKey);
@@ -157,7 +157,7 @@ function getSentMessageBucket(cfg?: Pick<OpenClawConfig, "session">): SentMessag
   return bucket;
 }
 
-function getSentMessages(cfg?: Pick<OpenClawConfig, "session">): SentMessageStore {
+function getSentMessages(cfg?: Pick<NovaConfig, "session">): SentMessageStore {
   return getSentMessageBucket(cfg).store;
 }
 
@@ -177,7 +177,7 @@ function persistSentMessage(
 export function recordSentMessage(
   chatId: number | string,
   messageId: number,
-  cfg?: Pick<OpenClawConfig, "session">,
+  cfg?: Pick<NovaConfig, "session">,
 ): void {
   const scopeKey = String(chatId);
   const idKey = String(messageId);
@@ -201,7 +201,7 @@ export function recordSentMessage(
 export function wasSentByBot(
   chatId: number | string,
   messageId: number,
-  cfg?: Pick<OpenClawConfig, "session">,
+  cfg?: Pick<NovaConfig, "session">,
 ): boolean {
   const scopeKey = String(chatId);
   const idKey = String(messageId);
@@ -215,7 +215,7 @@ export function wasSentByBot(
 }
 
 export function listTelegramLegacySentMessageCacheEntries(params: {
-  cfg?: Pick<OpenClawConfig, "session">;
+  cfg?: Pick<NovaConfig, "session">;
   persistedPath?: string;
 }): Array<{ key: string; value: PersistedSentMessage; ttlMs?: number; timestamp?: number }> {
   const scopeKey = resolveSentMessageScopeKey(params.cfg);

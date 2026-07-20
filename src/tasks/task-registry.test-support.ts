@@ -20,9 +20,7 @@ type TaskRegistryTestApi = {
 };
 
 function getTestApi(): TaskRegistryTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.taskRegistryTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.taskRegistryTestApi")];
   if (!api) {
     throw new Error("task registry test API is unavailable");
   }

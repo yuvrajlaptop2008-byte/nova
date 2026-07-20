@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-model-shared";
+import type { ProviderPlugin } from "nova/plugin-sdk/provider-model-shared";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createWizardPrompter as buildWizardPrompter } from "../../test/helpers/wizard-prompter.js";
 import {
@@ -11,7 +11,7 @@ import {
 } from "../agents/auth-profiles/oauth-test-utils.js";
 import { upsertAuthProfileWithLock } from "../agents/auth-profiles/profiles.js";
 import { DEFAULT_BOOTSTRAP_FILENAME } from "../agents/workspace.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginCompatibilityNotice } from "../plugins/status.js";
 import type { ProviderAuthResult } from "../plugins/types.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -170,7 +170,7 @@ const resolveGatewayPort = vi.hoisted(() =>
 );
 const readConfigFileSnapshot = vi.hoisted(() =>
   vi.fn(async () => ({
-    path: "/tmp/.openclaw/openclaw.json",
+    path: "/tmp/.nova/nova.json",
     exists: false,
     raw: null as string | null,
     parsed: {},
@@ -204,7 +204,7 @@ function getWizardNoteCalls(note: WizardPrompter["note"]) {
   return (note as unknown as { mock: { calls: unknown[][] } }).mock.calls;
 }
 
-function modelConfigWithApiKey(apiKey: string): OpenClawConfig {
+function modelConfigWithApiKey(apiKey: string): NovaConfig {
   return {
     agents: { defaults: { model: { primary: "openai/gpt-5.5" } } },
     auth: {
@@ -262,9 +262,9 @@ function prepareMockAuthProfilesIn(
   return persistCalls;
 }
 
-function persistedWizardConfigs(): OpenClawConfig[] {
+function persistedWizardConfigs(): NovaConfig[] {
   return (replaceConfigFile.mock.calls as unknown[][]).map(
-    ([params]) => (params as { nextConfig: OpenClawConfig }).nextConfig,
+    ([params]) => (params as { nextConfig: NovaConfig }).nextConfig,
   );
 }
 
@@ -398,7 +398,7 @@ vi.mock("../config/config.js", () => ({
 }));
 
 vi.mock("../commands/onboard-helpers.js", () => ({
-  DEFAULT_WORKSPACE: "/tmp/openclaw-workspace",
+  DEFAULT_WORKSPACE: "/tmp/nova-workspace",
   applyWizardMetadata: (cfg: unknown) => cfg,
   summarizeExistingConfig: () => "summary",
   handleReset: async () => {},
@@ -486,7 +486,7 @@ describe("runSetupWizard", () => {
   let suiteCase = 0;
 
   beforeAll(async () => {
-    suiteRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-onboard-suite-"));
+    suiteRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-onboard-suite-"));
   });
 
   afterAll(async () => {
@@ -535,7 +535,7 @@ describe("runSetupWizard", () => {
     }));
     readConfigFileSnapshot.mockReset();
     readConfigFileSnapshot.mockResolvedValue({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: false,
       raw: null,
       parsed: {},
@@ -615,7 +615,7 @@ describe("runSetupWizard", () => {
   it("skips provider entries without an id during preferred-provider lookup", async () => {
     setupChannels.mockClear();
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -677,7 +677,7 @@ describe("runSetupWizard", () => {
 
   it("exits when config is invalid", async () => {
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -757,7 +757,7 @@ describe("runSetupWizard", () => {
   it("seeds interactive remote setup from command flags", async () => {
     const remoteToken = "REDACTED";
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -813,7 +813,7 @@ describe("runSetupWizard", () => {
 
   it("does not reuse stored remote credentials for an overridden URL", async () => {
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -998,7 +998,7 @@ describe("runSetupWizard", () => {
 
   it("skips the security acknowledgement after it was accepted once", async () => {
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -1186,7 +1186,7 @@ describe("runSetupWizard", () => {
   it("allows size-drop writes for pending plugin install record migration", async () => {
     replaceConfigFile.mockClear();
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -1296,7 +1296,7 @@ describe("runSetupWizard", () => {
     promptDefaultModel.mockClear();
     replaceConfigFile.mockClear();
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -1768,7 +1768,7 @@ describe("runSetupWizard", () => {
       },
     ]);
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},
@@ -1822,7 +1822,7 @@ describe("runSetupWizard", () => {
     process.env.NOVA_GATEWAY_PASSWORD = "gateway-ref-password"; // pragma: allowlist secret
     probeGatewayReachable.mockClear();
     readConfigFileSnapshot.mockResolvedValueOnce({
-      path: "/tmp/.openclaw/openclaw.json",
+      path: "/tmp/.nova/nova.json",
       exists: true,
       raw: "{}",
       parsed: {},

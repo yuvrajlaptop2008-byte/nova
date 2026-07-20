@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginMetadataSnapshot } from "../plugins/plugin-metadata-snapshot.types.js";
 import { resolveOAuthApiKeyMarker } from "./model-auth-markers.js";
 import {
@@ -33,7 +33,7 @@ function registry(entries: ModelCatalogEntry[]): ModelRegistry {
 }
 
 async function build(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   entries?: ModelCatalogEntry[];
   readOnly?: boolean;
 }) {
@@ -75,7 +75,7 @@ describe("prepared model catalog builder", () => {
   });
 
   it("overlays configured metadata onto discovered rows", async () => {
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       plugins: { enabled: false },
       models: {
         providers: {

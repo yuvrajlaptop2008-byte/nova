@@ -236,7 +236,7 @@ type ReplyRunState = {
   followupAdmissionBarriersByKey: Map<string, ReplyRunFollowupAdmissionBarrier>;
 };
 
-const REPLY_RUN_STATE_KEY = Symbol.for("openclaw.replyRunRegistry");
+const REPLY_RUN_STATE_KEY = Symbol.for("nova.replyRunRegistry");
 
 const replyRunState = resolveGlobalSingleton<ReplyRunState>(REPLY_RUN_STATE_KEY, () => ({
   activeRunsByKey: new Map<string, ReplyOperation>(),
@@ -1320,7 +1320,7 @@ const replyRunRegistryTestApi = {
 };
 
 if (process.env.VITEST === "true" || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.replyRunRegistryTestApi")] =
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.replyRunRegistryTestApi")] =
     replyRunRegistryTestApi;
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

@@ -3,10 +3,10 @@ import type {
   ensureConfiguredBindingRouteReady,
   getSessionBindingService,
   resolveConfiguredBindingRoute,
-} from "openclaw/plugin-sdk/conversation-runtime";
-import { createRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { ResolvedAgentRoute } from "openclaw/plugin-sdk/routing";
-import { resolveGroupSessionKey } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/conversation-runtime";
+import { createRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
+import type { ResolvedAgentRoute } from "nova/plugin-sdk/routing";
+import { resolveGroupSessionKey } from "nova/plugin-sdk/session-store-runtime";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ClawdbotConfig, PluginRuntime } from "../runtime-api.js";
 import { parseMergeForwardContent } from "./bot-content.js";
@@ -356,9 +356,9 @@ const {
 
 const finalizeInboundContextMock = mockBuildChannelInboundEventContext;
 
-vi.mock("openclaw/plugin-sdk/channel-inbound", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/channel-inbound")>(
-    "openclaw/plugin-sdk/channel-inbound",
+vi.mock("nova/plugin-sdk/channel-inbound", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/channel-inbound")>(
+    "nova/plugin-sdk/channel-inbound",
   );
   return {
     ...actual,
@@ -377,16 +377,16 @@ vi.mock("openclaw/plugin-sdk/channel-inbound", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/reply-runtime")>(
-    "openclaw/plugin-sdk/reply-runtime",
+vi.mock("nova/plugin-sdk/reply-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/reply-runtime")>(
+    "nova/plugin-sdk/reply-runtime",
   );
   return { ...actual, dispatchInboundMessage: mockDispatchInboundMessage };
 });
 
-vi.mock("openclaw/plugin-sdk/session-store-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/session-store-runtime")>(
-    "openclaw/plugin-sdk/session-store-runtime",
+vi.mock("nova/plugin-sdk/session-store-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/session-store-runtime")>(
+    "nova/plugin-sdk/session-store-runtime",
   );
   return { ...actual, resolveStorePath: mockResolveStorePath };
 });
@@ -425,9 +425,9 @@ vi.mock("./bot-name.js", () => ({
   resolveFeishuBotName: mockResolveFeishuBotName,
 }));
 
-vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/conversation-runtime")>(
-    "openclaw/plugin-sdk/conversation-runtime",
+vi.mock("nova/plugin-sdk/conversation-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/conversation-runtime")>(
+    "nova/plugin-sdk/conversation-runtime",
   );
   return {
     ...actual,
@@ -474,7 +474,7 @@ afterAll(() => {
   vi.doUnmock("./audio-preflight.runtime.js");
   vi.doUnmock("./client.js");
   vi.doUnmock("./bot-name.js");
-  vi.doUnmock("openclaw/plugin-sdk/conversation-runtime");
+  vi.doUnmock("nova/plugin-sdk/conversation-runtime");
   vi.resetModules();
 });
 
@@ -2081,11 +2081,11 @@ describe("handleFeishuMessage command authorization", () => {
         chat_id: "oc-bot-group",
         chat_type: "group",
         message_type: "text",
-        content: JSON.stringify({ text: mentionedOpenId ? "@_openclaw /status" : "/status" }),
+        content: JSON.stringify({ text: mentionedOpenId ? "@_nova /status" : "/status" }),
         mentions: mentionedOpenId
           ? [
               {
-                key: "@_openclaw",
+                key: "@_nova",
                 id: { open_id: mentionedOpenId },
                 name: "Nova",
               },
@@ -2096,8 +2096,8 @@ describe("handleFeishuMessage command authorization", () => {
 
     await dispatchMessage({
       cfg: { channels: { feishu: baseFeishuConfig } } as ClawdbotConfig,
-      event: createEvent("msg-bot-off", "ou-other-app-openclaw"),
-      botOpenId: "ou-openclaw",
+      event: createEvent("msg-bot-off", "ou-other-app-nova"),
+      botOpenId: "ou-nova",
     });
     expect(mockDispatchReplyFromConfig).not.toHaveBeenCalled();
 
@@ -2111,8 +2111,8 @@ describe("handleFeishuMessage command authorization", () => {
                 path.message_id === "msg-bot-mentioned"
                   ? [
                       {
-                        key: "@_openclaw",
-                        id: "ou-openclaw",
+                        key: "@_nova",
+                        id: "ou-nova",
                         id_type: "open_id",
                         name: "Nova",
                       },
@@ -2130,7 +2130,7 @@ describe("handleFeishuMessage command authorization", () => {
         channels: { feishu: { ...baseFeishuConfig, allowBots: true } },
       } as ClawdbotConfig,
       event: createEvent("msg-bot-unmentioned"),
-      botOpenId: "ou-openclaw",
+      botOpenId: "ou-nova",
     });
     expect(mockDispatchReplyFromConfig).not.toHaveBeenCalled();
 
@@ -2141,12 +2141,12 @@ describe("handleFeishuMessage command authorization", () => {
         channels: { feishu: { ...baseFeishuConfig, allowBots: true } },
       } as ClawdbotConfig,
       event: unrelatedMentionEvent,
-      botOpenId: "ou-openclaw",
+      botOpenId: "ou-nova",
     });
     expect(mockDispatchReplyFromConfig).not.toHaveBeenCalled();
 
-    const admittedEvent = createEvent("msg-bot-mentioned", "ou-other-app-openclaw");
-    admittedEvent.message.content = JSON.stringify({ text: "@_openclaw @_alice /status" });
+    const admittedEvent = createEvent("msg-bot-mentioned", "ou-other-app-nova");
+    admittedEvent.message.content = JSON.stringify({ text: "@_nova @_alice /status" });
     admittedEvent.message.mentions?.push({
       key: "@_alice",
       id: { open_id: "ou-alice" },
@@ -2157,7 +2157,7 @@ describe("handleFeishuMessage command authorization", () => {
         channels: { feishu: { ...baseFeishuConfig, allowBots: true } },
       } as ClawdbotConfig,
       event: admittedEvent,
-      botOpenId: "ou-openclaw",
+      botOpenId: "ou-nova",
     });
 
     expect(mockResolveFeishuBotName).toHaveBeenCalledWith(
@@ -2174,7 +2174,7 @@ describe("handleFeishuMessage command authorization", () => {
       0,
     );
     expect(inbound.CommandBody).toBe("/status");
-    expect(inbound.BodyForAgent).not.toContain("ou-other-app-openclaw");
+    expect(inbound.BodyForAgent).not.toContain("ou-other-app-nova");
     expect(inbound.BodyForAgent).not.toContain("ou-alice");
     expect(getMessage).toHaveBeenCalledTimes(3);
     expect(mockDispatchReplyFromConfig).toHaveBeenCalledTimes(1);
@@ -2197,7 +2197,7 @@ describe("handleFeishuMessage command authorization", () => {
         chat_id: "oc-bot-group",
         chat_type: "group",
         message_type: "text",
-        content: JSON.stringify({ text: "@_openclaw ping" }),
+        content: JSON.stringify({ text: "@_nova ping" }),
       },
     };
 
@@ -2231,10 +2231,10 @@ describe("handleFeishuMessage command authorization", () => {
         chat_id: "oc-loop-group",
         chat_type: "group",
         message_type: "text",
-        content: JSON.stringify({ text: "@_openclaw ping" }),
+        content: JSON.stringify({ text: "@_nova ping" }),
         mentions: [
           {
-            key: "@_openclaw",
+            key: "@_nova",
             id: { open_id: "ou-loop-self" },
             name: "Nova",
           },

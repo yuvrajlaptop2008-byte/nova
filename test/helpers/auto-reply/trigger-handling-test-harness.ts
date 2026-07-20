@@ -7,7 +7,7 @@ import { afterAll, afterEach, beforeAll, expect, vi } from "vitest";
 import { clearRuntimeAuthProfileStoreSnapshots } from "../../../src/agents/auth-profiles.js";
 import type { EmbeddedAgentQueueMessageOutcome } from "../../../src/agents/embedded-agent-runner/runs.js";
 import { withFastReplyConfig } from "../../../src/auto-reply/reply/get-reply-fast-path.test-support.js";
-import type { OpenClawConfig } from "../../../src/config/types.openclaw.js";
+import type { NovaConfig } from "../../../src/config/types.nova.js";
 
 // Avoid exporting vitest mock types (TS2742 under pnpm + d.ts emit).
 type AnyMock = any;
@@ -22,7 +22,7 @@ function getSharedMocks<T>(key: string, create: () => T): T {
   return store[symbol];
 }
 
-const embeddedAgentMocks = getSharedMocks("openclaw.trigger-handling.embedded-agent-mocks", () => ({
+const embeddedAgentMocks = getSharedMocks("nova.trigger-handling.embedded-agent-mocks", () => ({
   abortEmbeddedAgentRun: vi.fn().mockReturnValue(false),
   compactEmbeddedAgentSession: vi.fn(),
   runEmbeddedAgent: vi.fn(),
@@ -118,7 +118,7 @@ const DEFAULT_MODEL_CATALOG = [
   { provider: "minimax", id: "MiniMax-M2.7", name: "MiniMax M2.7" },
 ];
 
-const modelCatalogMocks = getSharedMocks("openclaw.trigger-handling.model-catalog-mocks", () => ({
+const modelCatalogMocks = getSharedMocks("nova.trigger-handling.model-catalog-mocks", () => ({
   loadManifestModelCatalog: vi.fn(() => DEFAULT_MODEL_CATALOG),
   loadPreparedModelCatalog: vi.fn().mockResolvedValue(DEFAULT_MODEL_CATALOG),
 }));
@@ -157,7 +157,7 @@ vi.doMock("../../../src/plugins/provider-runtime.runtime.js", () => ({
   refreshProviderOAuthCredentialWithPlugin: async () => undefined,
 }));
 
-const modelFallbackMocks = getSharedMocks("openclaw.trigger-handling.model-fallback-mocks", () => ({
+const modelFallbackMocks = getSharedMocks("nova.trigger-handling.model-fallback-mocks", () => ({
   runWithModelFallback: vi.fn(
     async (params: {
       provider: string;
@@ -181,7 +181,7 @@ vi.doMock("../../../src/infra/git-commit.js", () => ({
   resolveCommitHash: vi.fn(() => "abcdef0"),
 }));
 
-const webSessionMocks = getSharedMocks("openclaw.trigger-handling.web-session-mocks", () => ({
+const webSessionMocks = getSharedMocks("nova.trigger-handling.web-session-mocks", () => ({
   webAuthExists: vi.fn().mockResolvedValue(true),
   getWebAuthAgeMs: vi.fn().mockReturnValue(120_000),
   readWebSelfId: vi.fn().mockReturnValue({ e164: "+1999" }),
@@ -203,7 +203,7 @@ type TempHomeEnvSnapshot = {
   userProfile: string | undefined;
   homeDrive: string | undefined;
   homePath: string | undefined;
-  openclawHome: string | undefined;
+  novaHome: string | undefined;
   stateDir: string | undefined;
 };
 
@@ -216,7 +216,7 @@ function snapshotTempHomeEnv(): TempHomeEnvSnapshot {
     userProfile: process.env.USERPROFILE,
     homeDrive: process.env.HOMEDRIVE,
     homePath: process.env.HOMEPATH,
-    openclawHome: process.env.NOVA_HOME,
+    novaHome: process.env.NOVA_HOME,
     stateDir: process.env.NOVA_STATE_DIR,
   };
 }
@@ -234,7 +234,7 @@ function restoreTempHomeEnv(snapshot: TempHomeEnvSnapshot): void {
   restoreKey("USERPROFILE", snapshot.userProfile);
   restoreKey("HOMEDRIVE", snapshot.homeDrive);
   restoreKey("HOMEPATH", snapshot.homePath);
-  restoreKey("NOVA_HOME", snapshot.openclawHome);
+  restoreKey("NOVA_HOME", snapshot.novaHome);
   restoreKey("NOVA_STATE_DIR", snapshot.stateDir);
 }
 
@@ -242,7 +242,7 @@ function setTempHomeEnv(home: string): void {
   process.env.HOME = home;
   process.env.USERPROFILE = home;
   delete process.env.NOVA_HOME;
-  process.env.NOVA_STATE_DIR = join(home, ".openclaw");
+  process.env.NOVA_STATE_DIR = join(home, ".nova");
 
   if (process.platform !== "win32") {
     return;
@@ -256,7 +256,7 @@ function setTempHomeEnv(home: string): void {
 }
 
 beforeAll(async () => {
-  suiteTempHomeRoot = await fs.mkdtemp(join(os.tmpdir(), "openclaw-triggers-suite-"));
+  suiteTempHomeRoot = await fs.mkdtemp(join(os.tmpdir(), "nova-triggers-suite-"));
 });
 
 afterAll(async () => {
@@ -275,7 +275,7 @@ afterAll(async () => {
 export async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
   const home = join(suiteTempHomeRoot, `case-${++suiteTempHomeId}`);
   const snapshot = snapshotTempHomeEnv();
-  await fs.mkdir(join(home, ".openclaw", "agents", "main", "sessions"), { recursive: true });
+  await fs.mkdir(join(home, ".nova", "agents", "main", "sessions"), { recursive: true });
   setTempHomeEnv(home);
 
   try {
@@ -300,12 +300,12 @@ export async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise
   }
 }
 
-export function makeCfg(home: string): OpenClawConfig {
+export function makeCfg(home: string): NovaConfig {
   return withFastReplyConfig({
     agents: {
       defaults: {
         model: { primary: "anthropic/claude-opus-4-7" },
-        workspace: join(home, "openclaw"),
+        workspace: join(home, "nova"),
         // Test harness: avoid 1s coalescer idle sleeps that dominate trigger suites.
         blockStreamingCoalesce: { idleMs: 1 },
         // Trigger tests assert routing/authorization behavior, not delivery pacing.
@@ -323,7 +323,7 @@ export function makeCfg(home: string): OpenClawConfig {
       },
     },
     session: { store: join(home, "sessions.json") },
-  } as OpenClawConfig);
+  } as NovaConfig);
 }
 
 async function loadGetReplyFromConfig() {

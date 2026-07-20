@@ -1,4 +1,4 @@
-import { extensionForMime } from "openclaw/plugin-sdk/media-mime";
+import { extensionForMime } from "nova/plugin-sdk/media-mime";
 import {
   assertOkOrThrowHttpError,
   createProviderOperationDeadline,
@@ -6,10 +6,10 @@ import {
   executeProviderOperationWithRetry,
   fetchWithTimeoutGuarded,
   type ProviderOperationTimeoutMs,
-} from "openclaw/plugin-sdk/provider-http";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import type { GeneratedVideoAsset } from "openclaw/plugin-sdk/video-generation";
+} from "nova/plugin-sdk/provider-http";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import type { GeneratedVideoAsset } from "nova/plugin-sdk/video-generation";
 
 export type XaiVideoRequestPolicy = {
   allowPrivateNetwork: boolean;

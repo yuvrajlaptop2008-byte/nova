@@ -3,10 +3,10 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  type OpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  type NovaStateDatabase,
+} from "../../state/nova-state-db.js";
 import type { WorkerSessionPlacementIdentity } from "./placement-record.js";
 import {
   createWorkerSessionPlacementStore,
@@ -24,17 +24,17 @@ const OWNER_EPOCH = 7;
 
 describe("worker session placement gate", () => {
   let root: string;
-  let database: OpenClawStateDatabase;
+  let database: NovaStateDatabase;
   let store: WorkerSessionPlacementStore;
 
   beforeEach(async () => {
-    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-worker-gate-"));
-    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "nova-worker-gate-"));
+    database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerSessionPlacementStore({ database });
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(root, { recursive: true, force: true });
   });
 

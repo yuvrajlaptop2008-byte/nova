@@ -1,8 +1,8 @@
 // Xai tests cover web search plugin behavior.
-import { createTestWizardPrompter } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { NON_ENV_SECRETREF_MARKER } from "openclaw/plugin-sdk/provider-auth-runtime";
-import { createNonExitingRuntime } from "openclaw/plugin-sdk/runtime-env";
-import { withEnv, withEnvAsync, withFetchPreconnect } from "openclaw/plugin-sdk/test-env";
+import { createTestWizardPrompter } from "nova/plugin-sdk/plugin-test-runtime";
+import { NON_ENV_SECRETREF_MARKER } from "nova/plugin-sdk/provider-auth-runtime";
+import { createNonExitingRuntime } from "nova/plugin-sdk/runtime-env";
+import { withEnv, withEnvAsync, withFetchPreconnect } from "nova/plugin-sdk/test-env";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildXaiCatalogModels, resolveXaiCatalogEntry } from "./model-definitions.js";
 import { isModernXaiModel, resolveXaiForwardCompatModel } from "./provider-models.js";
@@ -21,8 +21,8 @@ const providerAuthMocks = vi.hoisted(() => ({
   listUsableProviderAuthProfileIds: vi.fn(() => ({ agentDir: "", profileIds: [] as string[] })),
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth", async (importOriginal) => {
-  const original = await importOriginal<typeof import("openclaw/plugin-sdk/provider-auth")>();
+vi.mock("nova/plugin-sdk/provider-auth", async (importOriginal) => {
+  const original = await importOriginal<typeof import("nova/plugin-sdk/provider-auth")>();
   return {
     ...original,
     ensureAuthProfileStore: providerAuthMocks.ensureAuthProfileStore,
@@ -30,17 +30,16 @@ vi.mock("openclaw/plugin-sdk/provider-auth", async (importOriginal) => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/provider-auth-runtime", async (importOriginal) => {
-  const original =
-    await importOriginal<typeof import("openclaw/plugin-sdk/provider-auth-runtime")>();
+vi.mock("nova/plugin-sdk/provider-auth-runtime", async (importOriginal) => {
+  const original = await importOriginal<typeof import("nova/plugin-sdk/provider-auth-runtime")>();
   return {
     ...original,
     resolveApiKeyForProvider: providerAuthRuntimeMocks.resolveApiKeyForProvider,
   };
 });
 
-vi.mock("openclaw/plugin-sdk/provider-web-search", async (importOriginal) => {
-  const original = await importOriginal<typeof import("openclaw/plugin-sdk/provider-web-search")>();
+vi.mock("nova/plugin-sdk/provider-web-search", async (importOriginal) => {
+  const original = await importOriginal<typeof import("nova/plugin-sdk/provider-web-search")>();
   return {
     ...original,
     postTrustedWebToolsJson: async (
@@ -298,7 +297,7 @@ describe("xai web search config resolution", () => {
     const tool = provider.createTool({
       config: {
         agents: {
-          list: [{ id: "main", default: true, agentDir: "/tmp/openclaw-xai-main-agent" }],
+          list: [{ id: "main", default: true, agentDir: "/tmp/nova-xai-main-agent" }],
         },
         plugins: {
           entries: {
@@ -322,7 +321,7 @@ describe("xai web search config resolution", () => {
     expect(providerAuthRuntimeMocks.resolveApiKeyForProvider).toHaveBeenCalledWith(
       expect.objectContaining({
         provider: "xai",
-        agentDir: "/tmp/openclaw-xai-main-agent",
+        agentDir: "/tmp/nova-xai-main-agent",
       }),
     );
     expect(fetchCallHeader(mockFetch, 0, "Authorization")).toBe("Bearer oauth-web-search-token");
@@ -338,12 +337,12 @@ describe("xai web search config resolution", () => {
     const mockFetch = installXaiWebSearchFetch();
     const provider = createXaiWebSearchProvider();
     const tool = provider.createTool({
-      agentDir: "/tmp/openclaw-xai-active-agent",
+      agentDir: "/tmp/nova-xai-active-agent",
       config: {
         agents: {
           list: [
-            { id: "main", default: true, agentDir: "/tmp/openclaw-xai-main-agent" },
-            { id: "side", agentDir: "/tmp/openclaw-xai-active-agent" },
+            { id: "main", default: true, agentDir: "/tmp/nova-xai-main-agent" },
+            { id: "side", agentDir: "/tmp/nova-xai-active-agent" },
           ],
         },
       },
@@ -357,7 +356,7 @@ describe("xai web search config resolution", () => {
     expect(providerAuthRuntimeMocks.resolveApiKeyForProvider).toHaveBeenCalledWith(
       expect.objectContaining({
         provider: "xai",
-        agentDir: "/tmp/openclaw-xai-active-agent",
+        agentDir: "/tmp/nova-xai-active-agent",
       }),
     );
     expect(fetchCallHeader(mockFetch, 0, "Authorization")).toBe("Bearer active-agent-oauth-token");
@@ -395,7 +394,7 @@ describe("xai web search config resolution", () => {
     const tool = provider.createTool({
       config: {
         agents: {
-          list: [{ id: "main", default: true, agentDir: "/tmp/openclaw-xai-main-agent" }],
+          list: [{ id: "main", default: true, agentDir: "/tmp/nova-xai-main-agent" }],
         },
         tools: {
           web: {
@@ -417,7 +416,7 @@ describe("xai web search config resolution", () => {
       2,
       expect.objectContaining({
         provider: "xai",
-        agentDir: "/tmp/openclaw-xai-main-agent",
+        agentDir: "/tmp/nova-xai-main-agent",
         profileId: "xai:default",
         lockedProfile: true,
         forceRefresh: true,
@@ -464,7 +463,7 @@ describe("xai web search config resolution", () => {
     const tool = provider.createTool({
       config: {
         agents: {
-          list: [{ id: "main", default: true, agentDir: "/tmp/openclaw-xai-main-agent" }],
+          list: [{ id: "main", default: true, agentDir: "/tmp/nova-xai-main-agent" }],
         },
         tools: {
           web: {
@@ -486,7 +485,7 @@ describe("xai web search config resolution", () => {
       3,
       expect.objectContaining({
         provider: "xai",
-        agentDir: "/tmp/openclaw-xai-main-agent",
+        agentDir: "/tmp/nova-xai-main-agent",
         credentialPrecedence: "env-first",
       }),
     );
@@ -520,7 +519,7 @@ describe("xai web search config resolution", () => {
         profileId: "xai:key",
       });
     providerAuthMocks.listUsableProviderAuthProfileIds.mockReturnValue({
-      agentDir: "/tmp/openclaw-xai-main-agent",
+      agentDir: "/tmp/nova-xai-main-agent",
       profileIds: ["xai:default", "xai:key"],
     });
     providerAuthMocks.ensureAuthProfileStore.mockReturnValue({
@@ -559,7 +558,7 @@ describe("xai web search config resolution", () => {
     const tool = provider.createTool({
       config: {
         agents: {
-          list: [{ id: "main", default: true, agentDir: "/tmp/openclaw-xai-main-agent" }],
+          list: [{ id: "main", default: true, agentDir: "/tmp/nova-xai-main-agent" }],
         },
         tools: {
           web: {
@@ -581,7 +580,7 @@ describe("xai web search config resolution", () => {
       4,
       expect.objectContaining({
         provider: "xai",
-        agentDir: "/tmp/openclaw-xai-main-agent",
+        agentDir: "/tmp/nova-xai-main-agent",
         profileId: "xai:key",
         lockedProfile: true,
       }),
@@ -622,7 +621,7 @@ describe("xai web search config resolution", () => {
     const tool = provider.createTool({
       config: {
         agents: {
-          list: [{ id: "main", default: true, agentDir: "/tmp/openclaw-xai-main-agent" }],
+          list: [{ id: "main", default: true, agentDir: "/tmp/nova-xai-main-agent" }],
         },
         tools: {
           web: {
@@ -644,7 +643,7 @@ describe("xai web search config resolution", () => {
       2,
       expect.objectContaining({
         provider: "xai",
-        agentDir: "/tmp/openclaw-xai-main-agent",
+        agentDir: "/tmp/nova-xai-main-agent",
         credentialPrecedence: "env-first",
       }),
     );

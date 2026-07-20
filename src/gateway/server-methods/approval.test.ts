@@ -21,12 +21,12 @@ import {
   type PluginApprovalRequestPayload,
 } from "../../infra/plugin-approvals.js";
 import type { SystemAgentApprovalRequestPayload } from "../../infra/system-agent-approvals.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  type OpenClawStateDatabaseOptions,
-} from "../../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  type NovaStateDatabaseOptions,
+} from "../../state/nova-state-db.js";
 import { ExecApprovalManager } from "../exec-approval-manager.js";
 import { getOperatorApprovalDetailed, insertOperatorApproval } from "../operator-approval-store.js";
 
@@ -39,21 +39,21 @@ import { createApprovalHandlers } from "./approval.js";
 import type { GatewayRequestHandlerOptions } from "./types.js";
 
 const tempDirs: string[] = [];
-type OperatorApprovalDatabase = Pick<OpenClawStateKyselyDatabase, "operator_approvals">;
+type OperatorApprovalDatabase = Pick<NovaStateKyselyDatabase, "operator_approvals">;
 const managersForCleanup: Array<{
   listPendingRecords(): Array<{ id: string }>;
   expire(id: string, resolvedBy?: string | null): boolean;
 }> = [];
 
-function createDatabaseOptions(): OpenClawStateDatabaseOptions {
+function createDatabaseOptions(): NovaStateDatabaseOptions {
   const stateDir = fs.realpathSync(
-    fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-approval-handler-")),
+    fs.mkdtempSync(path.join(os.tmpdir(), "nova-approval-handler-")),
   );
   tempDirs.push(stateDir);
   return { env: { ...process.env, NOVA_STATE_DIR: stateDir } };
 }
 
-function createManagers(databaseOptions: OpenClawStateDatabaseOptions) {
+function createManagers(databaseOptions: NovaStateDatabaseOptions) {
   const persistence = { runtimeEpoch: "approval-handler-test", databaseOptions };
   const managers = {
     exec: new ExecApprovalManager<ExecApprovalRequestPayload>({
@@ -79,8 +79,8 @@ function createManagers(databaseOptions: OpenClawStateDatabaseOptions) {
   return managers;
 }
 
-function deleteDurableApproval(databaseOptions: OpenClawStateDatabaseOptions, id: string): void {
-  const database = openOpenClawStateDatabase(databaseOptions);
+function deleteDurableApproval(databaseOptions: NovaStateDatabaseOptions, id: string): void {
+  const database = openNovaStateDatabase(databaseOptions);
   const stateDb = getNodeSqliteKysely<OperatorApprovalDatabase>(database.db);
   executeSqliteQuerySync(
     database.db,
@@ -89,10 +89,10 @@ function deleteDurableApproval(databaseOptions: OpenClawStateDatabaseOptions, id
 }
 
 function corruptDurableApprovalPresentation(
-  databaseOptions: OpenClawStateDatabaseOptions,
+  databaseOptions: NovaStateDatabaseOptions,
   id: string,
 ): void {
-  const database = openOpenClawStateDatabase(databaseOptions);
+  const database = openNovaStateDatabase(databaseOptions);
   const stateDb = getNodeSqliteKysely<OperatorApprovalDatabase>(database.db);
   executeSqliteQuerySync(
     database.db,
@@ -271,7 +271,7 @@ describe("unified approval handlers", () => {
         manager.expire(record.id, "test-cleanup");
       }
     }
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     for (const dir of tempDirs.splice(0)) {
       fs.rmSync(dir, { force: true, recursive: true });
     }
@@ -587,7 +587,7 @@ describe("unified approval handlers", () => {
     ["approval.get", "."],
     ["approval.resolve", ".."],
   ] as const)("rejects unsafe approval id through %s: %s", async (method, id) => {
-    const databasePath = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-unsafe-approval-id-"));
+    const databasePath = fs.mkdtempSync(path.join(os.tmpdir(), "nova-unsafe-approval-id-"));
     tempDirs.push(databasePath);
     const handlers = createApprovalHandlers({
       execApprovalManager: new ExecApprovalManager(),
@@ -612,7 +612,7 @@ describe("unified approval handlers", () => {
   it.each(["approval.get", "approval.resolve"] as const)(
     "returns sanitized UNAVAILABLE when %s cannot read durable state",
     async (method) => {
-      const databasePath = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-approval-broken-db-"));
+      const databasePath = fs.mkdtempSync(path.join(os.tmpdir(), "nova-approval-broken-db-"));
       tempDirs.push(databasePath);
       const context = createContext();
       const handlers = createApprovalHandlers({
@@ -875,14 +875,14 @@ describe("unified approval handlers", () => {
   });
 
   it("repairs durable pending state after a transient local storage failure", async () => {
-    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-approval-reconcile-"));
+    const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-approval-reconcile-"));
     tempDirs.push(stateDir);
     const databasePath = path.join(stateDir, "state.sqlite");
     const backupPath = path.join(stateDir, "state.backup.sqlite");
-    const databaseOptions = { path: databasePath } satisfies OpenClawStateDatabaseOptions;
+    const databaseOptions = { path: databasePath } satisfies NovaStateDatabaseOptions;
     const managers = createManagers(databaseOptions);
     const pending = registerExec(managers.exec, { id: "transient-storage-repair" });
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     fs.renameSync(databasePath, backupPath);
     fs.mkdirSync(databasePath);
     expect(() =>

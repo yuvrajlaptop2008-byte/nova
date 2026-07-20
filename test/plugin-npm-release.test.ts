@@ -1,7 +1,7 @@
 // Plugin npm release tests validate plugin npm release artifacts.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { bundledPluginFile, bundledPluginRoot } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledPluginFile, bundledPluginRoot } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { collectClawHubPublishablePluginPackages } from "../scripts/lib/plugin-clawhub-release.ts";
 import {
@@ -160,7 +160,7 @@ function externalPluginContract(version: string) {
       pluginApi: `>=${version}`,
     },
     build: {
-      openclawVersion: version,
+      novaVersion: version,
     },
   };
 }
@@ -186,7 +186,7 @@ describe("collectPublishablePluginPackageErrors", () => {
             type: "git",
             url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             ...externalPluginContract("2026.3.15"),
             install: {
@@ -211,7 +211,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           name: "broken",
           version: "latest",
           private: true,
-          openclaw: {
+          nova: {
             extensions: [""],
             ...externalPluginContract("2026.3.15"),
             install: {
@@ -229,8 +229,8 @@ describe("collectPublishablePluginPackageErrors", () => {
       'package.json type must be "module" so built .js runtime entries load as ESM.',
       `package.json repository.url must be "${NOVA_PLUGIN_NPM_REPOSITORY_URL}" so npm provenance can validate GitHub trusted publishing; found "<missing>".`,
       'package.json version must match YYYY.M.PATCH, YYYY.M.PATCH-N, YYYY.M.PATCH-alpha.N, or YYYY.M.PATCH-beta.N; found "latest".',
-      "openclaw.extensions must contain only non-empty strings.",
-      "openclaw.install.npmSpec must be a non-empty string for publishable plugins.",
+      "nova.extensions must contain only non-empty strings.",
+      "nova.install.npmSpec must be a non-empty string for publishable plugins.",
     ]);
   });
 
@@ -244,7 +244,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           name: "@nova/twitch",
           version: "2026.5.1-beta.1",
           type: "module",
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             ...externalPluginContract("2026.5.1-beta.1"),
             install: {
@@ -275,7 +275,7 @@ describe("collectPublishablePluginPackageErrors", () => {
             type: "git",
             url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             ...externalPluginContract("2026.5.1-beta.1"),
             release: {
@@ -284,7 +284,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           },
         },
       }),
-    ).toEqual(["openclaw.install.npmSpec must be a non-empty string for publishable plugins."]);
+    ).toEqual(["nova.install.npmSpec must be a non-empty string for publishable plugins."]);
   });
 
   it("requires the external plugin package compatibility contract for npm publish", () => {
@@ -301,7 +301,7 @@ describe("collectPublishablePluginPackageErrors", () => {
             type: "git",
             url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             install: {
               npmSpec: "@nova/voice-call",
@@ -313,8 +313,8 @@ describe("collectPublishablePluginPackageErrors", () => {
         },
       }),
     ).toEqual([
-      "openclaw.compat.pluginApi is required for external code plugin packages.",
-      "openclaw.build.openclawVersion is required for external code plugin packages.",
+      "nova.compat.pluginApi is required for external code plugin packages.",
+      "nova.build.novaVersion is required for external code plugin packages.",
     ]);
   });
 
@@ -332,7 +332,7 @@ describe("collectPublishablePluginPackageErrors", () => {
             type: "git",
             url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             ...externalPluginContract("2026.3.15"),
             install: {
@@ -364,7 +364,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           dependencies: {
             "@openai/codex": "0.142.5",
           },
-          openclaw: {
+          nova: {
             extensions: ["./index.ts"],
             ...externalPluginContract("2026.6.11"),
             install: {
@@ -378,8 +378,8 @@ describe("collectPublishablePluginPackageErrors", () => {
         },
       }),
     ).toEqual([
-      'openclaw.release.requireLatestDependencies must not contain duplicate package names; found "@openai/codex".',
-      'openclaw.release.requireLatestDependencies must reference package.json dependencies or optionalDependencies; "missing" is not a runtime dependency.',
+      'nova.release.requireLatestDependencies must not contain duplicate package names; found "@openai/codex".',
+      'nova.release.requireLatestDependencies must reference package.json dependencies or optionalDependencies; "missing" is not a runtime dependency.',
     ]);
   });
 });
@@ -478,7 +478,7 @@ describe("collectPluginReleaseDependencyFreshnessErrors", () => {
         "dist-tags.latest",
         "--json",
         "--userconfig",
-        expect.stringContaining("openclaw-plugin-npm-view-"),
+        expect.stringContaining("nova-plugin-npm-view-"),
       ]);
       expect(options).toMatchObject({
         killSignal: "SIGKILL",
@@ -495,7 +495,7 @@ describe("collectPluginReleaseDependencyFreshnessErrors", () => {
 
 describe("collectPluginReleasePlan", () => {
   it("fails closed when the published-version lookup times out", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     mkdirSync(join(repoDir, "extensions", "demo-plugin"), { recursive: true });
     writePluginReadme(repoDir, "demo-plugin");
     writeJsonFile(join(repoDir, "extensions", "demo-plugin", "package.json"), {
@@ -506,7 +506,7 @@ describe("collectPluginReleasePlan", () => {
         type: "git",
         url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.4.10"),
         install: {
@@ -524,7 +524,7 @@ describe("collectPluginReleasePlan", () => {
         "@nova/demo-plugin@2026.4.10",
         "version",
         "--userconfig",
-        expect.stringContaining("openclaw-plugin-npm-view-"),
+        expect.stringContaining("nova-plugin-npm-view-"),
       ]);
       throw Object.assign(new Error("spawnSync npm ETIMEDOUT"), { code: "ETIMEDOUT" });
     }) as unknown as ExecFileSync;
@@ -550,13 +550,13 @@ describe("collectPublishablePluginPackages", () => {
       const packageJson = JSON.parse(
         readFileSync(join(plugin.packageDir, "package.json"), "utf8"),
       ) as {
-        openclaw?: {
+        nova?: {
           build?: {
             bundledDist?: unknown;
           };
         };
       };
-      if (packageJson.openclaw?.build?.bundledDist === true) {
+      if (packageJson.nova?.build?.bundledDist === true) {
         corePackageRuntimePluginIds.add(plugin.extensionId);
       }
     }
@@ -572,7 +572,7 @@ describe("collectPublishablePluginPackages", () => {
   });
 
   it("collects publishable npm plugins from extension package manifests", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     mkdirSync(join(repoDir, "extensions", "demo-plugin"), { recursive: true });
     writePluginReadme(repoDir, "demo-plugin");
     writeJsonFile(join(repoDir, "extensions", "demo-plugin", "package.json"), {
@@ -583,7 +583,7 @@ describe("collectPublishablePluginPackages", () => {
         type: "git",
         url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.4.10"),
         install: {
@@ -609,7 +609,7 @@ describe("collectPublishablePluginPackages", () => {
   });
 
   it("uses extended-stable for every publishable plugin at the exact root version", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     writeJsonFile(join(repoDir, "package.json"), { version: "2026.7.33" });
     writePluginReadme(repoDir, "demo-plugin");
     writeJsonFile(join(repoDir, "extensions", "demo-plugin", "package.json"), {
@@ -617,7 +617,7 @@ describe("collectPublishablePluginPackages", () => {
       version: "2026.7.33",
       type: "module",
       repository: { type: "git", url: NOVA_PLUGIN_NPM_REPOSITORY_URL },
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.7.33"),
         install: { npmSpec: "@nova/demo-plugin" },
@@ -631,7 +631,7 @@ describe("collectPublishablePluginPackages", () => {
   });
 
   it("rejects extended-stable plugins whose version differs from core", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     writeJsonFile(join(repoDir, "package.json"), { version: "2026.7.34" });
     writePluginReadme(repoDir, "demo-plugin");
     writeJsonFile(join(repoDir, "extensions", "demo-plugin", "package.json"), {
@@ -639,7 +639,7 @@ describe("collectPublishablePluginPackages", () => {
       version: "2026.7.33",
       type: "module",
       repository: { type: "git", url: NOVA_PLUGIN_NPM_REPOSITORY_URL },
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.7.33"),
         install: { npmSpec: "@nova/demo-plugin" },
@@ -653,7 +653,7 @@ describe("collectPublishablePluginPackages", () => {
   });
 
   it("collects exact release dependencies that must match npm latest", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     mkdirSync(join(repoDir, "extensions", "demo-plugin"), { recursive: true });
     writePluginReadme(repoDir, "demo-plugin");
     writeJsonFile(join(repoDir, "extensions", "demo-plugin", "package.json"), {
@@ -667,7 +667,7 @@ describe("collectPublishablePluginPackages", () => {
       dependencies: {
         "demo-runtime": "1.2.3",
       },
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.4.10"),
         install: {
@@ -700,7 +700,7 @@ describe("collectPublishablePluginPackages", () => {
   });
 
   it("does not validate unselected publishable plugin manifests", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     mkdirSync(join(repoDir, "extensions", "demo-plugin"), { recursive: true });
     writePluginReadme(repoDir, "demo-plugin");
     writeJsonFile(join(repoDir, "extensions", "demo-plugin", "package.json"), {
@@ -711,7 +711,7 @@ describe("collectPublishablePluginPackages", () => {
         type: "git",
         url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.4.10-beta.1"),
         install: {
@@ -727,7 +727,7 @@ describe("collectPublishablePluginPackages", () => {
       name: "@nova/private-plugin",
       version: "2026.4.10-beta.1",
       private: true,
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.4.10-beta.1"),
         install: {
@@ -757,13 +757,13 @@ describe("collectPublishablePluginPackages", () => {
   });
 
   it("treats an explicit empty extension filter as no candidates", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     mkdirSync(join(repoDir, "extensions", "private-plugin"), { recursive: true });
     writeJsonFile(join(repoDir, "extensions", "private-plugin", "package.json"), {
       name: "@nova/private-plugin",
       version: "2026.4.10-beta.1",
       private: true,
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.4.10-beta.1"),
         release: {
@@ -780,7 +780,7 @@ describe("collectPublishablePluginPackages", () => {
   });
 
   it("publishes alpha plugin packages to the alpha dist-tag", () => {
-    const repoDir = makeTempRepoRoot(tempDirs, "openclaw-plugin-npm-release-");
+    const repoDir = makeTempRepoRoot(tempDirs, "nova-plugin-npm-release-");
     mkdirSync(join(repoDir, "extensions", "demo-plugin"), { recursive: true });
     writePluginReadme(repoDir, "demo-plugin");
     writeJsonFile(join(repoDir, "extensions", "demo-plugin", "package.json"), {
@@ -791,7 +791,7 @@ describe("collectPublishablePluginPackages", () => {
         type: "git",
         url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
-      openclaw: {
+      nova: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.4.10-alpha.1"),
         install: {

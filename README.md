@@ -1,7 +1,7 @@
 # ⭐ Nova — Personal AI Assistant
 
 Nova is a multi-channel AI gateway you run on your own devices. It is a standalone
-project forked from OpenClaw and fully disconnected from the upstream repository
+project forked from Nova and fully disconnected from the upstream repository
 and its GitHub organization.
 
 This is a local, independent build. Issues and releases live only at
@@ -27,7 +27,7 @@ inherited setup docs in `docs/`. Works with npm, pnpm, or bun.
 
 MIT — see [LICENSE](LICENSE).
 
-> Note: this README was rebranded from the original OpenClaw project. Sections
+> Note: this README was rebranded from the original Nova project. Sections
 > below may still reference upstream terminology; the code and repository are
 > fully independent.
 
@@ -59,27 +59,27 @@ nova gateway status
 Foreground/debug mode:
 
 ```bash
-openclaw gateway stop
-openclaw gateway --port 18789 --verbose
+nova gateway stop
+nova gateway --port 18789 --verbose
 ```
 
 Send a test message or ask the assistant after either startup mode is running:
 
 ```bash
 # Send a message
-openclaw message send --target +1234567890 --message "Hello from OpenClaw"
+nova message send --target +1234567890 --message "Hello from Nova"
 
 # Talk to the assistant (optionally deliver back to any connected channel: WhatsApp/Telegram/Slack/Discord/Google Chat/Signal/iMessage/IRC/Microsoft Teams/Matrix/Feishu/LINE/Mattermost/Nextcloud Talk/Nostr/Synology Chat/Tlon/Twitch/Zalo/Zalo Personal/WeChat/QQ/WebChat)
-openclaw agent --message "Ship checklist" --thinking high
+nova agent --message "Ship checklist" --thinking high
 ```
 
-Upgrading? [Updating guide](https://docs.nova.dev/install/updating) (and run `openclaw doctor`).
+Upgrading? [Updating guide](https://docs.nova.dev/install/updating) (and run `nova doctor`).
 
 Models config + CLI: [Models](https://docs.nova.dev/concepts/models). Auth profile rotation + fallbacks: [Model failover](https://docs.nova.dev/concepts/model-failover).
 
 ## Security defaults (DM access)
 
-OpenClaw connects to real messaging surfaces. Treat inbound DMs as **untrusted input**.
+Nova connects to real messaging surfaces. Treat inbound DMs as **untrusted input**.
 
 Full security guide: [Security](https://docs.nova.dev/gateway/security).
 Before remote exposure, use the [Gateway exposure runbook](https://docs.nova.dev/gateway/security/exposure-runbook).
@@ -87,10 +87,10 @@ Before remote exposure, use the [Gateway exposure runbook](https://docs.nova.dev
 Default behavior on Telegram/WhatsApp/Signal/iMessage/Microsoft Teams/Discord/Google Chat/Slack:
 
 - **DM pairing** (`dmPolicy="pairing"` / `channels.discord.dmPolicy="pairing"` / `channels.slack.dmPolicy="pairing"`; legacy: `channels.discord.dm.policy`, `channels.slack.dm.policy`): unknown senders receive a short pairing code and the bot does not process their message.
-- Approve with: `openclaw pairing approve <channel> <code>` (then the sender is added to a local allowlist store).
+- Approve with: `nova pairing approve <channel> <code>` (then the sender is added to a local allowlist store).
 - Public inbound DMs require an explicit opt-in: set `dmPolicy="open"` and include `"*"` in the channel allowlist (`allowFrom` / `channels.discord.allowFrom` / `channels.slack.allowFrom`; legacy: `channels.discord.dm.allowFrom`, `channels.slack.dm.allowFrom`).
 
-Run `openclaw doctor` to surface risky/misconfigured DM policies.
+Run `nova doctor` to surface risky/misconfigured DM policies.
 
 ## Highlights
 
@@ -134,7 +134,7 @@ The Gateway alone delivers a great experience. All apps are optional and add ext
 
 If you plan to build/run companion apps, follow the platform runbooks below.
 
-### macOS (OpenClaw.app) (optional)
+### macOS (Nova.app) (optional)
 
 - Menu bar control for the Gateway and health.
 - Voice Wake + push-to-talk overlay.
@@ -147,13 +147,13 @@ Note: signed builds required for macOS permissions to stick across rebuilds (see
 
 - Pairs as a node over the Gateway WebSocket (device pairing).
 - Voice trigger forwarding + Canvas surface.
-- Controlled via `openclaw nodes …`.
+- Controlled via `nova nodes …`.
 
 Runbook: [iOS connect](https://docs.nova.dev/platforms/ios).
 
 ### Android node (optional)
 
-- Pairs as a WS node via device pairing (`openclaw devices ...`).
+- Pairs as a WS node via device pairing (`nova devices ...`).
 - Exposes Connect/Chat/Voice tabs plus Canvas, Camera, Screen capture, and Android device command families.
 - Runbook: [Android connect](https://docs.nova.dev/platforms/android).
 
@@ -168,12 +168,12 @@ For the dev loop:
 
 ```bash
 git clone https://github.com/yuvrajlaptop2008-byte/nova.git
-cd openclaw
+cd nova
 
 pnpm install
 
-# First run only (or after resetting local OpenClaw config/workspace)
-pnpm openclaw setup
+# First run only (or after resetting local Nova config/workspace)
+pnpm nova setup
 
 # Optional: prebuild Control UI before first startup
 pnpm ui:build
@@ -189,9 +189,9 @@ pnpm build
 pnpm ui:build
 ```
 
-`pnpm openclaw setup` writes the local config/workspace needed for `pnpm gateway:watch`. It is safe to re-run, but you normally only need it on first setup or after resetting local state. `pnpm gateway:watch` hands the configured Gateway port from the installed service to a durable tmux pane; run `pnpm openclaw gateway start` when you want the installed service back. It does not rebuild `dist/control-ui`, so rerun `pnpm ui:build` after `ui/` changes or use `pnpm ui:dev` when iterating on the Control UI. If you want this checkout to run onboarding directly, use `pnpm openclaw onboard --install-daemon`.
+`pnpm nova setup` writes the local config/workspace needed for `pnpm gateway:watch`. It is safe to re-run, but you normally only need it on first setup or after resetting local state. `pnpm gateway:watch` hands the configured Gateway port from the installed service to a durable tmux pane; run `pnpm nova gateway start` when you want the installed service back. It does not rebuild `dist/control-ui`, so rerun `pnpm ui:build` after `ui/` changes or use `pnpm ui:dev` when iterating on the Control UI. If you want this checkout to run onboarding directly, use `pnpm nova onboard --install-daemon`.
 
-Note: `pnpm openclaw ...` runs TypeScript directly (via `tsx`). `pnpm build` produces `dist/` for running via Node / the packaged `openclaw` binary, while `pnpm gateway:watch` rebuilds the runtime on demand during the dev loop.
+Note: `pnpm nova ...` runs TypeScript directly (via `tsx`). `pnpm build` produces `dist/` for running via Node / the packaged `nova` binary, while `pnpm gateway:watch` rebuilds the runtime on demand during the dev loop.
 
 ## Development channels
 
@@ -199,18 +199,18 @@ Note: `pnpm openclaw ...` runs TypeScript directly (via `tsx`). `pnpm build` pro
 - **beta**: prerelease tags (`vYYYY.M.D-beta.N`), npm dist-tag `beta` (macOS app may be missing).
 - **dev**: moving head of `main`, npm dist-tag `dev` (when published).
 
-Switch channels (git + npm): `openclaw update --channel stable|beta|dev`.
+Switch channels (git + npm): `nova update --channel stable|beta|dev`.
 Details: [Development channels](https://docs.nova.dev/install/development-channels).
 
 ## Agent workspace + skills
 
-- Workspace root: `~/.openclaw/workspace` (configurable via `agents.defaults.workspace`).
+- Workspace root: `~/.nova/workspace` (configurable via `agents.defaults.workspace`).
 - Injected prompt files: `AGENTS.md`, `SOUL.md`, `TOOLS.md`.
-- Skills: `~/.openclaw/workspace/skills/<skill>/SKILL.md`.
+- Skills: `~/.nova/workspace/skills/<skill>/SKILL.md`.
 
 ## Configuration
 
-Minimal `~/.openclaw/openclaw.json` (model + defaults):
+Minimal `~/.nova/nova.json` (model + defaults):
 
 ```json5
 {
@@ -228,13 +228,13 @@ Minimal `~/.openclaw/openclaw.json` (model + defaults):
 
 ## Molty
 
-OpenClaw was built for **Molty**, a space lobster AI assistant. 🦞
+Nova was built for **Molty**, a space lobster AI assistant. 🦞
 by Peter Steinberger and the community.
 
-- [openclaw.ai](https://nova.dev)
+- [nova.ai](https://nova.dev)
 - [soul.md](https://soul.md)
 - [steipete.me](https://steipete.me)
-- [@openclaw](https://x.com/openclaw)
+- [@nova](https://x.com/nova)
 
 ## Community
 
@@ -307,7 +307,7 @@ Thanks to all clawtributors:
 [![scald](https://avatars.githubusercontent.com/u/1215913?v=4&s=48)](https://github.com/scald) [![Serhii](https://avatars.githubusercontent.com/u/151471784?v=4&s=48)](https://github.com/kashevk0) [![a](https://avatars.githubusercontent.com/u/33371662?v=4&s=48)](https://github.com/Yuandiaodiaodiao) [![Doğu Abaris](https://avatars.githubusercontent.com/u/135986694?v=4&s=48)](https://github.com/doguabaris) [![ysqander](https://avatars.githubusercontent.com/u/80843820?v=4&s=48)](https://github.com/ysqander) [![andranik-sahakyan](https://avatars.githubusercontent.com/u/8908029?v=4&s=48)](https://github.com/andranik-sahakyan) [![Wangnov](https://avatars.githubusercontent.com/u/48670012?v=4&s=48)](https://github.com/Wangnov) [![Austin](https://avatars.githubusercontent.com/u/112558420?v=4&s=48)](https://github.com/rixau) [![lisitan](https://avatars.githubusercontent.com/u/50470712?v=4&s=48)](https://github.com/lisitan) [![Rishi Vhavle](https://avatars.githubusercontent.com/u/134706404?v=4&s=48)](https://github.com/kaizen403)
 [![Frank Harris](https://avatars.githubusercontent.com/u/183158?v=4&s=48)](https://github.com/hirefrank) [![Kenny Lee](https://avatars.githubusercontent.com/u/1432489?v=4&s=48)](https://github.com/kennyklee) [![Alice Losasso](https://avatars.githubusercontent.com/u/104875499?v=4&s=48)](https://github.com/dddabtc) [![edincampara](https://avatars.githubusercontent.com/u/142477787?v=4&s=48)](https://github.com/edincampara) [![Felix Hellström](https://avatars.githubusercontent.com/u/30758862?v=4&s=48)](https://github.com/fellanH) [![Varun Chopra](https://avatars.githubusercontent.com/u/113368492?v=4&s=48)](https://github.com/VarunChopra11) [![wangai-studio](https://avatars.githubusercontent.com/u/256938352?v=4&s=48)](https://github.com/wangai-studio) [![sleontenko](https://avatars.githubusercontent.com/u/7135949?v=4&s=48)](https://github.com/sleontenko) [![Yassine Amjad](https://avatars.githubusercontent.com/u/59234686?v=4&s=48)](https://github.com/yassine20011) [![Anton Eicher](https://avatars.githubusercontent.com/u/54324760?v=4&s=48)](https://github.com/ant1eicher)
 [![Drake Thomsen](https://avatars.githubusercontent.com/u/120344051?v=4&s=48)](https://github.com/ThomsenDrake) [![Hinata Kaga (samon)](https://avatars.githubusercontent.com/u/61647657?v=4&s=48)](https://github.com/kakuteki) [![andreabadesso](https://avatars.githubusercontent.com/u/3586068?v=4&s=48)](https://github.com/andreabadesso) [![chenxin-yan](https://avatars.githubusercontent.com/u/71162231?v=4&s=48)](https://github.com/chenxin-yan) [![cordx56](https://avatars.githubusercontent.com/u/23298744?v=4&s=48)](https://github.com/cordx56) [![dvrshil](https://avatars.githubusercontent.com/u/81693876?v=4&s=48)](https://github.com/dvrshil) [![MarvinCui](https://avatars.githubusercontent.com/u/130876763?v=4&s=48)](https://github.com/MarvinCui) [![Yeom-JinHo](https://avatars.githubusercontent.com/u/81306489?v=4&s=48)](https://github.com/Yeom-JinHo) [![Jeremy Mumford](https://avatars.githubusercontent.com/u/36290330?v=4&s=48)](https://github.com/17jmumford) [![Charlie Niño](https://avatars.githubusercontent.com/u/2346724?v=4&s=48)](https://github.com/KnHack)
-[![Sharoon Sharif](https://avatars.githubusercontent.com/u/150296639?v=4&s=48)](https://github.com/SharoonSharif) [![Oren](https://avatars.githubusercontent.com/u/168856?v=4&s=48)](https://github.com/orenyomtov) [![MattQ](https://avatars.githubusercontent.com/u/115874885?v=4&s=48)](https://github.com/mattqdev) [![Parker Todd Brooks](https://avatars.githubusercontent.com/u/585456?v=4&s=48)](https://github.com/parkertoddbrooks) [![Yufeng He](https://avatars.githubusercontent.com/u/40085740?v=4&s=48)](https://github.com/he-yufeng) [![Milofax](https://avatars.githubusercontent.com/u/2537423?v=4&s=48)](https://github.com/Milofax) [![Steve (OpenClaw)](https://avatars.githubusercontent.com/u/261149299?v=4&s=48)](https://github.com/stevebot-alive) [![zhoulf1006](https://avatars.githubusercontent.com/u/35586967?v=4&s=48)](https://github.com/zhoulf1006) [![Jonatan](https://avatars.githubusercontent.com/u/19454127?v=4&s=48)](https://github.com/jrrcdev) [![Sebastian B Otaegui](https://avatars.githubusercontent.com/u/91633?v=4&s=48)](https://github.com/feniix)
+[![Sharoon Sharif](https://avatars.githubusercontent.com/u/150296639?v=4&s=48)](https://github.com/SharoonSharif) [![Oren](https://avatars.githubusercontent.com/u/168856?v=4&s=48)](https://github.com/orenyomtov) [![MattQ](https://avatars.githubusercontent.com/u/115874885?v=4&s=48)](https://github.com/mattqdev) [![Parker Todd Brooks](https://avatars.githubusercontent.com/u/585456?v=4&s=48)](https://github.com/parkertoddbrooks) [![Yufeng He](https://avatars.githubusercontent.com/u/40085740?v=4&s=48)](https://github.com/he-yufeng) [![Milofax](https://avatars.githubusercontent.com/u/2537423?v=4&s=48)](https://github.com/Milofax) [![Steve (Nova)](https://avatars.githubusercontent.com/u/261149299?v=4&s=48)](https://github.com/stevebot-alive) [![zhoulf1006](https://avatars.githubusercontent.com/u/35586967?v=4&s=48)](https://github.com/zhoulf1006) [![Jonatan](https://avatars.githubusercontent.com/u/19454127?v=4&s=48)](https://github.com/jrrcdev) [![Sebastian B Otaegui](https://avatars.githubusercontent.com/u/91633?v=4&s=48)](https://github.com/feniix)
 [![Matthew](https://avatars.githubusercontent.com/u/76985631?v=4&s=48)](https://github.com/ZetiMente) [![ABFS Tech](https://avatars.githubusercontent.com/u/82096803?v=4&s=48)](https://github.com/QuantDeveloperUSA) [![alexstyl](https://avatars.githubusercontent.com/u/1665273?v=4&s=48)](https://github.com/alexstyl) [![Ethan Palm](https://avatars.githubusercontent.com/u/56270045?v=4&s=48)](https://github.com/ethanpalm) [![Qkal](https://avatars.githubusercontent.com/u/77361240?v=4&s=48)](https://github.com/qkal) [![cygaar](https://avatars.githubusercontent.com/u/97691933?v=4&s=48)](https://github.com/cygaar) [![Umut CAN](https://avatars.githubusercontent.com/u/78921017?v=4&s=48)](https://github.com/U-C4N) [![Jakob](https://avatars.githubusercontent.com/u/38699060?v=4&s=48)](https://github.com/jakobdylanc) [![antons](https://avatars.githubusercontent.com/u/129705?v=4&s=48)](https://github.com/antons) [![austinm911](https://avatars.githubusercontent.com/u/31991302?v=4&s=48)](https://github.com/austinm911)
 [![mahmoudashraf93](https://avatars.githubusercontent.com/u/9130129?v=4&s=48)](https://github.com/mahmoudashraf93) [![philipp-spiess](https://avatars.githubusercontent.com/u/458591?v=4&s=48)](https://github.com/philipp-spiess) [![pkrmf](https://avatars.githubusercontent.com/u/1714267?v=4&s=48)](https://github.com/pkrmf) [![joshrad-dev](https://avatars.githubusercontent.com/u/62785552?v=4&s=48)](https://github.com/joshrad-dev) [![factnest365-ops](https://avatars.githubusercontent.com/u/236534360?v=4&s=48)](https://github.com/factnest365-ops) [![yingchunbai](https://avatars.githubusercontent.com/u/33477283?v=4&s=48)](https://github.com/yingchunbai) [![AJ (@techfren)](https://avatars.githubusercontent.com/u/8023513?v=4&s=48)](https://github.com/aj47) [![Marchel Fahrezi](https://avatars.githubusercontent.com/u/53804949?v=4&s=48)](https://github.com/Alg0rix) [![futhgar](https://avatars.githubusercontent.com/u/51002668?v=4&s=48)](https://github.com/futhgar) [![Zhang](https://avatars.githubusercontent.com/u/56248212?v=4&s=48)](https://github.com/YonganZhang)
 [![Rémi](https://avatars.githubusercontent.com/u/1299873?v=4&s=48)](https://github.com/remusao) [![Dan Ballance](https://avatars.githubusercontent.com/u/13839912?v=4&s=48)](https://github.com/danballance) [![Eric Su](https://avatars.githubusercontent.com/u/60202455?v=4&s=48)](https://github.com/GHesericsu) [![Kimitaka Watanabe](https://avatars.githubusercontent.com/u/167225?v=4&s=48)](https://github.com/kimitaka) [![Justin Ling](https://avatars.githubusercontent.com/u/2521993?v=4&s=48)](https://github.com/itsjling) [![Raymond Berger](https://avatars.githubusercontent.com/u/921217?v=4&s=48)](https://github.com/RayBB) [![lutr0](https://avatars.githubusercontent.com/u/76906369?v=4&s=48)](https://github.com/lutr0) [![claude](https://avatars.githubusercontent.com/u/81847?v=4&s=48)](https://github.com/claude) [![AngryBird](https://avatars.githubusercontent.com/u/48046333?v=4&s=48)](https://github.com/angrybirddd) [![Fabian Williams](https://avatars.githubusercontent.com/u/92543063?v=4&s=48)](https://github.com/fabianwilliams)
@@ -395,7 +395,7 @@ nico-hoff
 nikus-pan
 nonggialiang
 oliviareid-svg
-openclaw-bot
+nova-bot
 pablohrcarvalho
 patrick-barletta
 pinghuachiu

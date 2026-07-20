@@ -1,18 +1,18 @@
 // Verifies cloud-worker provider profile config parsing.
 import { describe, expect, it } from "vitest";
-import { OpenClawSchema } from "./zod-schema.js";
+import { NovaSchema } from "./zod-schema.js";
 
 function parseCloudWorkers(value: unknown) {
-  const result = OpenClawSchema.safeParse({ cloudWorkers: value });
+  const result = NovaSchema.safeParse({ cloudWorkers: value });
   if (!result.success) {
     throw new Error(JSON.stringify(result.error.issues, null, 2));
   }
   return result.data.cloudWorkers;
 }
 
-describe("OpenClawSchema cloudWorkers config", () => {
+describe("NovaSchema cloudWorkers config", () => {
   it("is absent by default and accepts an empty opt-in block", () => {
-    expect(OpenClawSchema.parse({}).cloudWorkers).toBeUndefined();
+    expect(NovaSchema.parse({}).cloudWorkers).toBeUndefined();
     expect(parseCloudWorkers({})).toStrictEqual({});
   });
 
@@ -25,7 +25,7 @@ describe("OpenClawSchema cloudWorkers config", () => {
             settings: {
               host: "worker.example.test",
               port: 22,
-              user: "openclaw",
+              user: "nova",
               keyRef: {
                 source: "file",
                 provider: "default",
@@ -47,7 +47,7 @@ describe("OpenClawSchema cloudWorkers config", () => {
           settings: {
             host: "worker.example.test",
             port: 22,
-            user: "openclaw",
+            user: "nova",
             keyRef: {
               source: "file",
               provider: "default",
@@ -107,6 +107,6 @@ describe("OpenClawSchema cloudWorkers config", () => {
     },
     { profiles: { development: { provider: "qa-lab", unsupported: true } } },
   ])("rejects invalid core profile fields %#", (cloudWorkers) => {
-    expect(OpenClawSchema.safeParse({ cloudWorkers }).success).toBe(false);
+    expect(NovaSchema.safeParse({ cloudWorkers }).success).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 // Chutes tests cover models plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import { clearLiveCatalogCacheForTests } from "openclaw/plugin-sdk/provider-catalog-live-runtime";
+import { clearLiveCatalogCacheForTests } from "nova/plugin-sdk/provider-catalog-live-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildChutesModelDefinition,
@@ -8,8 +8,8 @@ import {
   CHUTES_MODEL_CATALOG,
   discoverChutesModels,
 } from "./models.js";
+import manifest from "./nova.plugin.json" with { type: "json" };
 import { applyChutesConfig } from "./onboard.js";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
 
 const EXPECTED_STATIC_MODEL_IDS = [
   "deepseek-ai/DeepSeek-V3.2-TEE",

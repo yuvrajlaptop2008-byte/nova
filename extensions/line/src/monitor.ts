@@ -1,14 +1,14 @@
 // Line plugin module implements monitor behavior.
 import type { webhook } from "@line/bot-sdk";
-import { hasFinalInboundReplyDispatch } from "openclaw/plugin-sdk/channel-inbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { chunkMarkdownText } from "openclaw/plugin-sdk/reply-runtime";
+import { hasFinalInboundReplyDispatch } from "nova/plugin-sdk/channel-inbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { chunkMarkdownText } from "nova/plugin-sdk/reply-runtime";
 import {
   danger,
   logVerbose,
   waitForAbortSignal,
   type RuntimeEnv,
-} from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/runtime-env";
 import {
   isRequestBodyLimitError,
   normalizePluginHttpPath,
@@ -16,11 +16,11 @@ import {
   registerWebhookTargetWithPluginRoute,
   requestBodyErrorToText,
   resolveSingleWebhookTarget,
-} from "openclaw/plugin-sdk/webhook-ingress";
+} from "nova/plugin-sdk/webhook-ingress";
 import {
   beginWebhookRequestPipelineOrReject,
   createWebhookInFlightLimiter,
-} from "openclaw/plugin-sdk/webhook-request-guards";
+} from "nova/plugin-sdk/webhook-request-guards";
 import { resolveDefaultLineAccountId } from "./accounts.js";
 import { deliverLineAutoReply } from "./auto-reply-delivery.js";
 import { createLineBot } from "./bot.js";
@@ -47,7 +47,7 @@ interface MonitorLineProviderOptions {
   channelAccessToken: string;
   channelSecret: string;
   accountId?: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: RuntimeEnv;
   abortSignal?: AbortSignal;
   webhookUrl?: string;
@@ -75,7 +75,7 @@ type LineWebhookTarget = {
 const lineWebhookTargets = new Map<string, LineWebhookTarget[]>();
 
 function startLineLoadingKeepalive(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   userId: string;
   accountId?: string;
   intervalMs?: number;

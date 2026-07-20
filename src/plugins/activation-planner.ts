@@ -2,7 +2,7 @@
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { uniqueStrings } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { normalizePluginsConfig } from "./config-state.js";
 import {
   hasExplicitManifestOwnerTrust,
@@ -60,7 +60,7 @@ type PluginActivationPlan = {
 
 type ResolveManifestActivationPlanParams = {
   trigger: PluginActivationPlannerTrigger;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   origin?: PluginOrigin;

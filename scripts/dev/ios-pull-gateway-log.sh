@@ -16,15 +16,15 @@ if [[ -z "$DEVICE_UDID" || -z "$BUNDLE_ID" ]]; then
 fi
 
 if [[ -z "$DEST" ]]; then
-  dest_dir="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-ios-gateway.XXXXXX")"
-  DEST="$dest_dir/openclaw-gateway.log"
+  dest_dir="$(mktemp -d "${TMPDIR:-/tmp}/nova-ios-gateway.XXXXXX")"
+  DEST="$dest_dir/nova-gateway.log"
 fi
 
 xcrun devicectl device copy from \
   --device "$DEVICE_UDID" \
   --domain-type appDataContainer \
   --domain-identifier "$BUNDLE_ID" \
-  --source Documents/openclaw-gateway.log \
+  --source Documents/nova-gateway.log \
   --destination "$DEST" >/dev/null
 
 if [[ ! -s "$DEST" ]]; then

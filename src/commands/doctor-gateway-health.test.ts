@@ -1,6 +1,6 @@
 // Doctor gateway health tests cover gateway probe failures, auth requirements, and repair messages.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import {
   GATEWAY_HEALTH_CREDENTIALS_REQUIRED_MESSAGE,
   GATEWAY_HEALTH_CREDENTIALS_REQUIRED_TITLE,
@@ -50,7 +50,7 @@ vi.mock("./health.js", () => ({
 import { checkGatewayHealth, probeGatewayMemoryStatus } from "./doctor-gateway-health.js";
 
 describe("checkGatewayHealth", () => {
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as NovaConfig;
 
   beforeEach(() => {
     callGateway.mockReset();
@@ -105,9 +105,9 @@ describe("checkGatewayHealth", () => {
     const mismatchOutput = mismatchNotes.join("\n");
     expect(mismatchOutput).toContain("the running Gateway is Nova 2026.4.23");
     expect(mismatchOutput).not.toContain("That usually means");
-    expect(mismatchOutput).toContain("Check `openclaw --version`, `which openclaw`");
+    expect(mismatchOutput).toContain("Check `nova --version`, `which nova`");
     expect(mismatchOutput).toContain(
-      "If this mismatch is unexpected, update PATH so `openclaw` points to the version you want",
+      "If this mismatch is unexpected, update PATH so `nova` points to the version you want",
     );
   });
 
@@ -147,11 +147,11 @@ describe("checkGatewayHealth", () => {
     expect(note).toHaveBeenCalledWith(
       [
         "- cold account:discord:ops (channels.discord.accounts.ops.token): secret resolution failed",
-        "  Retry: openclaw secrets reload",
+        "  Retry: nova secrets reload",
         "- stale capability:tts (messages.tts.providers.elevenlabs.apiKey): secret provider policy denied resolution",
-        "  Retry: openclaw secrets reload",
+        "  Retry: nova secrets reload",
         "- cold capability:web-fetch:firecrawl (plugins.entries.firecrawl.config.webFetch.apiKey): resolved secret value was invalid",
-        "  Retry: openclaw secrets reload",
+        "  Retry: nova secrets reload",
       ].join("\n"),
       "Secret runtime degradation",
     );
@@ -293,7 +293,7 @@ describe("checkGatewayHealth", () => {
 });
 
 describe("probeGatewayMemoryStatus", () => {
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as NovaConfig;
 
   beforeEach(() => {
     callGateway.mockReset();
@@ -362,8 +362,7 @@ describe("probeGatewayMemoryStatus", () => {
       embedding: {
         ok: false,
         checked: false,
-        error:
-          "memory embedding readiness not checked; run `openclaw memory status --deep` to probe",
+        error: "memory embedding readiness not checked; run `nova memory status --deep` to probe",
       },
     });
 

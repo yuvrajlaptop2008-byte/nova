@@ -1,6 +1,6 @@
 import Foundation
-import OpenClawKit
-import OpenClawProtocol
+import NovaKit
+import NovaProtocol
 
 struct AgentOverviewRefreshGate {
     private var generation: UInt64 = 0

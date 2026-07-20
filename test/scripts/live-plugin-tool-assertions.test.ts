@@ -49,7 +49,7 @@ function runAssertionCommand(command: string, root: string, env: Record<string, 
 
 describe("live plugin tool assertions", () => {
   it("rejects loose timeout env values instead of parsing numeric prefixes", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     try {
       const result = runAssertionCommand("configure", root, {
         NOVA_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS: "1e3",
@@ -63,14 +63,14 @@ describe("live plugin tool assertions", () => {
   });
 
   it("writes strict positive timeout values into generated config", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     try {
       const result = runAssertionCommand("configure", root, {
         NOVA_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS: "240",
       });
 
       expect(result.status, result.stderr).toBe(0);
-      const config = JSON.parse(readFileSync(path.join(root, "state", "openclaw.json"), "utf8"));
+      const config = JSON.parse(readFileSync(path.join(root, "state", "nova.json"), "utf8"));
       expect(config.models.providers.openai.timeoutSeconds).toBe(240);
       expect(config.agents.defaults.timeoutSeconds).toBe(240);
     } finally {
@@ -79,7 +79,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("streams session transcripts across chunk boundaries", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     const sessionsDir = path.join(root, "state", "agents", "main", "sessions");
 
     try {
@@ -124,15 +124,8 @@ describe("live plugin tool assertions", () => {
   });
 
   it("reads causal tool evidence from the canonical SQLite transcript", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
-    const databasePath = path.join(
-      root,
-      "state",
-      "agents",
-      "main",
-      "agent",
-      "openclaw-agent.sqlite",
-    );
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
+    const databasePath = path.join(root, "state", "agents", "main", "agent", "nova-agent.sqlite");
 
     try {
       writeJson(path.join(root, "agent.json"), {
@@ -192,7 +185,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("rejects markers that only appear as raw transcript text", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     const sessionsDir = path.join(root, "state", "agents", "main", "sessions");
 
     try {
@@ -216,7 +209,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("rejects split transcript evidence across unrelated files", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     const sessionsDir = path.join(root, "state", "agents", "main", "sessions");
 
     try {
@@ -238,7 +231,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("bounds session transcript traversal before scanning unbounded trees", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     const sessionsDir = path.join(root, "state", "agents", "main", "sessions");
 
     try {
@@ -262,7 +255,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("rejects markers that only appear in error payload text", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     const sessionsDir = path.join(root, "state", "agents", "main", "sessions");
 
     try {
@@ -289,7 +282,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("rejects non-JSON stdout even when a later object contains the slug", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     const sessionsDir = path.join(root, "state", "agents", "main", "sessions");
 
     try {
@@ -317,7 +310,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("bounds agent output diagnostics on missing reply slug", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
 
     try {
       writeJson(path.join(root, "agent.json"), {
@@ -348,7 +341,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("rejects oversized agent output before parsing it", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
 
     try {
       writeFileSync(
@@ -373,7 +366,7 @@ describe("live plugin tool assertions", () => {
   });
 
   it("does not dump session transcript contents when a transcript check fails", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-live-plugin-tool-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-live-plugin-tool-"));
     const sessionsDir = path.join(root, "state", "agents", "main", "sessions");
 
     try {

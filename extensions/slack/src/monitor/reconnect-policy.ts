@@ -1,5 +1,5 @@
 // Slack plugin module implements reconnect policy behavior.
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import { formatSlackError } from "../errors.js";
 
 const SLACK_AUTH_ERROR_RE =

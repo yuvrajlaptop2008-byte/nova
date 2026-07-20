@@ -27,7 +27,7 @@ export function formatLlamaCppSetupError(error: unknown): string {
         : undefined,
     missing && detail ? `Detail: ${detail}` : null,
     "To enable local GGUF models:",
-    "1) Install the official provider plugin: openclaw plugins install @nova/llama-cpp-provider",
+    "1) Install the official provider plugin: nova plugins install @nova/llama-cpp-provider",
     "2) Use Node 24 for native installs/updates.",
     "3) If you use pnpm from source: pnpm approve-builds, then pnpm rebuild node-llama-cpp.",
   ]

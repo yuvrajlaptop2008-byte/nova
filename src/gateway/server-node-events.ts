@@ -7,7 +7,7 @@ import {
 } from "@nova/normalization-core/string-coerce";
 import { sliceUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { validateNodePresenceActivityPayload } from "../../packages/gateway-protocol/src/index.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { updatePairedDeviceMetadata } from "../infra/device-pairing.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
@@ -344,7 +344,7 @@ function parsePayloadObject(payloadJSON?: string | null): Record<string, unknown
 }
 
 async function sendReceiptAck(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   deps: NodeEventContext["deps"];
   sessionKey: string;
   channel: string;

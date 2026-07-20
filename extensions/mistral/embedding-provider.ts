@@ -5,8 +5,8 @@ import {
   resolveRemoteEmbeddingClient,
   type MemoryEmbeddingProvider,
   type MemoryEmbeddingProviderCreateOptions,
-} from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
-import type { SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/memory-core-host-engine-embeddings";
+import type { SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 
 type MistralEmbeddingClient = {
   baseUrl: string;

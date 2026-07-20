@@ -7,17 +7,17 @@ import {
   clearRuntimeAuthProfileStoreSnapshots,
   ensureAuthProfileStore,
   saveAuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
-import { MAX_DATE_TIMESTAMP_MS, MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/agent-runtime";
+import { MAX_DATE_TIMESTAMP_MS, MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
 import type {
-  OpenClawConfig,
-  OpenClawPluginApi,
+  NovaConfig,
+  NovaPluginApi,
   ProviderAuthResult,
   ProviderCatalogResult,
   UnifiedModelCatalogEntry,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
-import type { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/plugin-entry";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
+import type { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import { runGitHubCopilotDeviceFlow } from "./login.js";
 
@@ -36,9 +36,9 @@ function requireAuthMethod<T>(methods: readonly T[], index: number): T {
   return expectDefined(methods[index], `GitHub Copilot auth method ${index}`);
 }
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/ssrf-runtime")>(
-    "openclaw/plugin-sdk/ssrf-runtime",
+vi.mock("nova/plugin-sdk/ssrf-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/ssrf-runtime")>(
+    "nova/plugin-sdk/ssrf-runtime",
   );
   return {
     ...actual,
@@ -61,13 +61,13 @@ import plugin from "./index.js";
 
 const tempDirs: string[] = [];
 type RegisteredMemoryEmbeddingProvider = Parameters<
-  OpenClawPluginApi["registerMemoryEmbeddingProvider"]
+  NovaPluginApi["registerMemoryEmbeddingProvider"]
 >[0];
-type RegisteredProvider = Parameters<OpenClawPluginApi["registerProvider"]>[0];
+type RegisteredProvider = Parameters<NovaPluginApi["registerProvider"]>[0];
 type GithubCopilotTestProvider = RegisteredProvider & {
   auth: Array<{
     run: (ctx: unknown) => Promise<ProviderAuthResult | null>;
-    runNonInteractive: (ctx: unknown) => Promise<OpenClawConfig | null>;
+    runNonInteractive: (ctx: unknown) => Promise<NovaConfig | null>;
   }>;
   catalog: {
     run: (ctx: unknown) => Promise<ProviderCatalogResult>;
@@ -99,7 +99,7 @@ afterAll(() => {
 });
 
 async function createAgentDir() {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-github-copilot-test-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-github-copilot-test-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -142,9 +142,8 @@ function requireFirstMockArg<T>(
 }
 
 function registerProviderAndCatalogWithPluginConfig(pluginConfig: Record<string, unknown>) {
-  const registerProviderMock = vi.fn<OpenClawPluginApi["registerProvider"]>();
-  const registerModelCatalogProviderMock =
-    vi.fn<OpenClawPluginApi["registerModelCatalogProvider"]>();
+  const registerProviderMock = vi.fn<NovaPluginApi["registerProvider"]>();
+  const registerModelCatalogProviderMock = vi.fn<NovaPluginApi["registerModelCatalogProvider"]>();
 
   plugin.register(
     createTestPluginApi({
@@ -243,7 +242,7 @@ describe("github-copilot plugin", () => {
 
   it("registers embedding provider", () => {
     const registerMemoryEmbeddingProviderMock =
-      vi.fn<OpenClawPluginApi["registerMemoryEmbeddingProvider"]>();
+      vi.fn<NovaPluginApi["registerMemoryEmbeddingProvider"]>();
 
     plugin.register(
       createTestPluginApi({
@@ -655,7 +654,7 @@ describe("github-copilot plugin", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const profileContext = {
         config,
         agentDir,

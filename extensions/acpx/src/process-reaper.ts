@@ -4,7 +4,7 @@
  */
 import { createRequire } from "node:module";
 import path from "node:path";
-import { runExec } from "openclaw/plugin-sdk/process-runtime";
+import { runExec } from "nova/plugin-sdk/process-runtime";
 import { CODEX_ACP_PACKAGE, LEGACY_CODEX_ACP_PACKAGE } from "./codex-adapter.js";
 import { splitCommandParts } from "./command-line.js";
 import { resolveAcpxPluginRoot } from "./config.js";
@@ -66,7 +66,7 @@ export type AcpxProcessCleanupDeps = {
 type AcpxProcessCleanupResult = {
   inspectedPids: number[];
   terminatedPids: number[];
-  skippedReason?: "missing-root" | "not-openclaw-owned" | "unverified-root";
+  skippedReason?: "missing-root" | "not-nova-owned" | "unverified-root";
 };
 
 /** Result from startup orphan reaping. */
@@ -88,7 +88,7 @@ function resolvePackageRoot(packageName: string): string | undefined {
   }
 }
 
-function resolveOpenClawInstallRoot(pluginRoot: string): string {
+function resolveNovaInstallRoot(pluginRoot: string): string {
   if (
     path.basename(pluginRoot) === "acpx" &&
     path.basename(path.dirname(pluginRoot)) === "extensions"
@@ -101,11 +101,11 @@ function resolveOpenClawInstallRoot(pluginRoot: string): string {
 
 function resolveOwnedAcpPackageRootCandidates(packageName: string): string[] {
   const pluginRoot = resolveAcpxPluginRoot(import.meta.url);
-  const openClawRoot = resolveOpenClawInstallRoot(pluginRoot);
+  const novaRoot = resolveNovaInstallRoot(pluginRoot);
   return [
     resolvePackageRoot(packageName),
     path.join(pluginRoot, "node_modules", packageName),
-    path.join(openClawRoot, "node_modules", packageName),
+    path.join(novaRoot, "node_modules", packageName),
   ].flatMap((root) => (root ? [normalizePathLike(root)] : []));
 }
 
@@ -133,7 +133,7 @@ function commandWrapperBelongsToRoot(command: string, wrapperRoot: string | unde
 }
 
 /** Check whether a command references an Nova-generated ACPX wrapper path. */
-export function isOpenClawLeaseAwareAcpxProcessCommand(params: {
+export function isNovaLeaseAwareAcpxProcessCommand(params: {
   command: string | undefined;
   wrapperRoot?: string;
 }): boolean {
@@ -183,7 +183,7 @@ function liveCommandMatchesLeaseIdentity(params: {
 }
 
 /** Check whether a command is owned by Nova ACPX runtime packages or wrappers. */
-function isOpenClawOwnedAcpxProcessCommand(params: {
+function isNovaOwnedAcpxProcessCommand(params: {
   command: string | undefined;
   wrapperRoot?: string;
 }): boolean {
@@ -193,7 +193,7 @@ function isOpenClawOwnedAcpxProcessCommand(params: {
   }
   const normalized = normalizePathLike(command);
   if (
-    isOpenClawLeaseAwareAcpxProcessCommand({
+    isNovaLeaseAwareAcpxProcessCommand({
       command: normalized,
       wrapperRoot: params.wrapperRoot,
     })
@@ -326,7 +326,7 @@ async function terminatePids(
 }
 
 /** Terminate one validated Nova-owned ACPX wrapper process tree. */
-export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
+export async function cleanupNovaOwnedAcpxProcessTree(params: {
   rootPid?: number;
   rootCommand?: string;
   expectedLeaseId?: string;
@@ -364,7 +364,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-nova-owned",
     };
   }
   if (
@@ -374,11 +374,11 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-nova-owned",
     };
   }
   if (
-    !isOpenClawOwnedAcpxProcessCommand({
+    !isNovaOwnedAcpxProcessCommand({
       command: rootCommand,
       wrapperRoot: params.wrapperRoot,
     })
@@ -386,7 +386,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-nova-owned",
     };
   }
   if (
@@ -399,7 +399,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
     return {
       inspectedPids: listedTree.map((processInfo) => processInfo.pid),
       terminatedPids: [],
-      skippedReason: "not-openclaw-owned",
+      skippedReason: "not-nova-owned",
     };
   }
 
@@ -411,7 +411,7 @@ export async function cleanupOpenClawOwnedAcpxProcessTree(params: {
 }
 
 /** Reap orphaned Nova-owned ACPX wrapper trees during runtime startup. */
-export async function reapStaleOpenClawOwnedAcpxOrphans(params: {
+export async function reapStaleNovaOwnedAcpxOrphans(params: {
   wrapperRoot: string;
   deps?: AcpxProcessCleanupDeps;
 }): Promise<AcpxStartupReapResult> {
@@ -429,7 +429,7 @@ export async function reapStaleOpenClawOwnedAcpxOrphans(params: {
   const orphans = processes.filter(
     (processInfo) =>
       processInfo.ppid === 1 &&
-      isOpenClawOwnedAcpxProcessCommand({
+      isNovaOwnedAcpxProcessCommand({
         command: processInfo.command,
         wrapperRoot: params.wrapperRoot,
       }),

@@ -65,7 +65,7 @@ if (USE_CANONICAL_DECLARATIONS) {
     }
   }
 } else {
-  const flatDeclarationTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-sdk-dts-"));
+  const flatDeclarationTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-sdk-dts-"));
   try {
     await build({
       clean: true,

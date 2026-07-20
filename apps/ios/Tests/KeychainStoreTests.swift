@@ -1,10 +1,10 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 @Suite struct KeychainStoreTests {
     @Test func saveLoadUpdateDeleteRoundTrip() {
-        let service = "ai.openclawfoundation.app.tests.\(UUID().uuidString)"
+        let service = "ai.novafoundation.app.tests.\(UUID().uuidString)"
         let account = "value"
 
         #expect(KeychainStore.delete(service: service, account: account))

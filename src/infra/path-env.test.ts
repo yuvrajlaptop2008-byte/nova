@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ensureOpenClawCliOnPath } from "./path-env.js";
+import { ensureNovaCliOnPath } from "./path-env.js";
 
 const state = vi.hoisted(() => ({
   dirs: new Set<string>(),
@@ -46,7 +46,7 @@ vi.mock("./env.js", () => ({
   isTruthyEnvValue: (value?: string) => value === "1" || value === "true",
 }));
 
-describe("ensureOpenClawCliOnPath", () => {
+describe("ensureNovaCliOnPath", () => {
   const envKeys = [
     "PATH",
     "NOVA_PATH_BOOTSTRAPPED",
@@ -82,9 +82,9 @@ describe("ensureOpenClawCliOnPath", () => {
   });
 
   function setupAppCliRoot(name: string) {
-    const tmp = abs(`/tmp/openclaw-path/${name}`);
+    const tmp = abs(`/tmp/nova-path/${name}`);
     const appBinDir = path.join(tmp, "AppBin");
-    const appCli = path.join(appBinDir, "openclaw");
+    const appCli = path.join(appBinDir, "nova");
     setDir(tmp);
     setDir(appBinDir);
     setExe(appCli);
@@ -98,7 +98,7 @@ describe("ensureOpenClawCliOnPath", () => {
     platform: NodeJS.Platform;
     allowProjectLocalBin?: boolean;
   }) {
-    ensureOpenClawCliOnPath(params);
+    ensureNovaCliOnPath(params);
     return (process.env.PATH ?? "").split(path.delimiter);
   }
 
@@ -124,7 +124,7 @@ describe("ensureOpenClawCliOnPath", () => {
     }
   }
 
-  it("prepends the bundled app bin dir when a sibling openclaw exists", () => {
+  it("prepends the bundled app bin dir when a sibling nova exists", () => {
     const { tmp, appBinDir, appCli } = setupAppCliRoot("case-bundled");
     resetBootstrapEnv();
 
@@ -138,7 +138,7 @@ describe("ensureOpenClawCliOnPath", () => {
   });
 
   it("keeps the current runtime directory ahead of system PATH hardening", () => {
-    const tmp = abs("/tmp/openclaw-path/case-runtime-dir");
+    const tmp = abs("/tmp/nova-path/case-runtime-dir");
     const nodeBinDir = path.join(tmp, "node-bin");
     const nodeExec = path.join(nodeBinDir, "node");
     setDir(tmp);
@@ -160,7 +160,7 @@ describe("ensureOpenClawCliOnPath", () => {
   it("is idempotent", () => {
     process.env.PATH = "/bin";
     process.env.NOVA_PATH_BOOTSTRAPPED = "1";
-    ensureOpenClawCliOnPath({
+    ensureNovaCliOnPath({
       execPath: "/tmp/does-not-matter",
       cwd: "/tmp",
       homeDir: "/tmp",
@@ -204,7 +204,7 @@ describe("ensureOpenClawCliOnPath", () => {
     ({ envValue, allowProjectLocalBin }) => {
       const { tmp, appCli } = setupAppCliRoot("case-project-local");
       const localBinDir = path.join(tmp, "node_modules", ".bin");
-      const localCli = path.join(localBinDir, "openclaw");
+      const localCli = path.join(localBinDir, "nova");
       setDir(path.join(tmp, "node_modules"));
       setDir(localBinDir);
       setExe(localCli);
@@ -241,7 +241,7 @@ describe("ensureOpenClawCliOnPath", () => {
     const { tmp, appCli } = setupAppCliRoot("case-deleted-cwd");
     const localBinDir = path.join(tmp, "node_modules", ".bin");
     setDir(localBinDir);
-    setExe(path.join(localBinDir, "openclaw"));
+    setExe(path.join(localBinDir, "nova"));
     resetBootstrapEnv();
     process.env.NOVA_ALLOW_PROJECT_LOCAL_BIN = "1";
     const cwdSpy = vi.spyOn(process, "cwd").mockImplementation(() => {
@@ -249,7 +249,7 @@ describe("ensureOpenClawCliOnPath", () => {
     });
 
     try {
-      ensureOpenClawCliOnPath({ execPath: appCli, homeDir: tmp, platform: "darwin" });
+      ensureNovaCliOnPath({ execPath: appCli, homeDir: tmp, platform: "darwin" });
     } finally {
       cwdSpy.mockRestore();
     }
@@ -399,10 +399,10 @@ describe("ensureOpenClawCliOnPath", () => {
   });
 
   it("ignores package-manager env roots derived from the active workspace", () => {
-    const homeDir = abs("/tmp/openclaw-path/home");
+    const homeDir = abs("/tmp/nova-path/home");
     const cwd = path.join(homeDir, "workspace");
     const appBinDir = path.join(homeDir, "app-bin");
-    const appCli = path.join(appBinDir, "openclaw");
+    const appCli = path.join(appBinDir, "nova");
     const pnpmHome = path.join(cwd, ".pnpm");
     const npmPrefix = path.join(cwd, ".npm-prefix");
     for (const dir of [homeDir, cwd, appBinDir, pnpmHome, path.join(pnpmHome, "bin"), npmPrefix]) {
@@ -427,10 +427,10 @@ describe("ensureOpenClawCliOnPath", () => {
   });
 
   it("ignores package-manager env roots whose existing parent resolves into the workspace", () => {
-    const homeDir = abs("/tmp/openclaw-path/home");
+    const homeDir = abs("/tmp/nova-path/home");
     const cwd = path.join(homeDir, "workspace");
     const appBinDir = path.join(homeDir, "app-bin");
-    const appCli = path.join(appBinDir, "openclaw");
+    const appCli = path.join(appBinDir, "nova");
     for (const dir of [homeDir, cwd, appBinDir]) {
       setDir(dir);
     }
@@ -487,7 +487,7 @@ describe("ensureOpenClawCliOnPath", () => {
     {
       name: "appends Linuxbrew dirs after system dirs",
       setup: () => {
-        const tmp = abs("/tmp/openclaw-path/case-linuxbrew");
+        const tmp = abs("/tmp/nova-path/case-linuxbrew");
         const execDir = path.join(tmp, "exec");
         setDir(tmp);
         setDir(execDir);

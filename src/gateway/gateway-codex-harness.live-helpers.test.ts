@@ -41,11 +41,11 @@ function expectStrictCodexModelsCommandText(text: string): void {
 describe("gateway codex harness live helpers", () => {
   it("builds an exact large-output command without escape-sensitive newlines", () => {
     const command = buildCodexHarnessLargeOutputCommand({
-      commandMarker: "OPENCLAW-LARGE-OUTPUT-ABC",
+      commandMarker: "nova-LARGE-OUTPUT-ABC",
       outputBytes: 1_000_000,
     });
 
-    expect(command).toContain('"OPENCLAW-LARGE-OUTPUT-ABC|"');
+    expect(command).toContain('"nova-LARGE-OUTPUT-ABC|"');
     expect(command).toContain(".slice(0,1000000)");
     expect(command).not.toContain("\\n");
     expect(command).not.toContain("\n");
@@ -88,8 +88,8 @@ describe("gateway codex harness live helpers", () => {
   });
 
   it("matches a successful wrapped native command by its per-turn marker", () => {
-    const expectedCommand = `node -e 'console.log("OPENCLAW-LARGE-OUTPUT-ABC")'`;
-    const wrappedCommand = `node -e "console.log(\\"OPENCLAW-LARGE-OUTPUT-ABC\\")"`;
+    const expectedCommand = `node -e 'console.log("nova-LARGE-OUTPUT-ABC")'`;
+    const wrappedCommand = `node -e "console.log(\\"nova-LARGE-OUTPUT-ABC\\")"`;
     const events = [
       {
         stream: "tool",
@@ -114,14 +114,14 @@ describe("gateway codex harness live helpers", () => {
 
     expect(
       requireSuccessfulNativeCommandExecution(events, {
-        commandMarker: "OPENCLAW-LARGE-OUTPUT-ABC",
+        commandMarker: "nova-LARGE-OUTPUT-ABC",
         expectedCommand,
       }),
     ).toEqual({ itemId: "item-1", resultIndex: 1, startIndex: 0 });
   });
 
   it("rejects a successful command that only echoes the expected command", () => {
-    const expectedCommand = `node -e 'console.log("OPENCLAW-LARGE-OUTPUT-ABC")'`;
+    const expectedCommand = `node -e 'console.log("nova-LARGE-OUTPUT-ABC")'`;
     expect(() =>
       requireSuccessfulNativeCommandExecution(
         [
@@ -146,15 +146,15 @@ describe("gateway codex harness live helpers", () => {
           },
         ],
         {
-          commandMarker: "OPENCLAW-LARGE-OUTPUT-ABC",
+          commandMarker: "nova-LARGE-OUTPUT-ABC",
           expectedCommand,
         },
       ),
-    ).toThrow("missing native bash command start for marker OPENCLAW-LARGE-OUTPUT-ABC");
+    ).toThrow("missing native bash command start for marker nova-LARGE-OUTPUT-ABC");
   });
 
   it("accepts a completed native command when Codex omits or nulls its optional exit code", () => {
-    const expectedCommand = "node -e OPENCLAW-NO-EXIT-CODE";
+    const expectedCommand = "node -e nova-NO-EXIT-CODE";
     for (const result of [{ status: "completed" }, { status: "completed", exitCode: null }]) {
       const events = [
         {
@@ -180,7 +180,7 @@ describe("gateway codex harness live helpers", () => {
 
       expect(
         requireSuccessfulNativeCommandExecution(events, {
-          commandMarker: "OPENCLAW-NO-EXIT-CODE",
+          commandMarker: "nova-NO-EXIT-CODE",
           expectedCommand,
         }),
       ).toEqual({ itemId: "item-no-exit-code", resultIndex: 1, startIndex: 0 });
@@ -190,10 +190,10 @@ describe("gateway codex harness live helpers", () => {
   it("reports a missing native command start explicitly", () => {
     expect(() =>
       requireSuccessfulNativeCommandExecution([], {
-        commandMarker: "OPENCLAW-MISSING",
-        expectedCommand: "node -e OPENCLAW-MISSING",
+        commandMarker: "nova-MISSING",
+        expectedCommand: "node -e nova-MISSING",
       }),
-    ).toThrow("missing native bash command start for marker OPENCLAW-MISSING");
+    ).toThrow("missing native bash command start for marker nova-MISSING");
   });
 
   it("reports a missing native command item id explicitly", () => {
@@ -205,16 +205,16 @@ describe("gateway codex harness live helpers", () => {
             data: {
               phase: "start",
               name: "bash",
-              args: { command: "node -e OPENCLAW-NO-ITEM" },
+              args: { command: "node -e nova-NO-ITEM" },
             },
           },
         ],
         {
-          commandMarker: "OPENCLAW-NO-ITEM",
-          expectedCommand: "node -e OPENCLAW-NO-ITEM",
+          commandMarker: "nova-NO-ITEM",
+          expectedCommand: "node -e nova-NO-ITEM",
         },
       ),
-    ).toThrow("native bash command start for marker OPENCLAW-NO-ITEM has no itemId");
+    ).toThrow("native bash command start for marker nova-NO-ITEM has no itemId");
   });
 
   it("reports a missing successful native command result explicitly", () => {
@@ -227,7 +227,7 @@ describe("gateway codex harness live helpers", () => {
               phase: "start",
               name: "bash",
               itemId: "item-failed",
-              args: { command: "node -e OPENCLAW-FAILED" },
+              args: { command: "node -e nova-FAILED" },
             },
           },
           {
@@ -242,13 +242,11 @@ describe("gateway codex harness live helpers", () => {
           },
         ],
         {
-          commandMarker: "OPENCLAW-FAILED",
-          expectedCommand: "node -e OPENCLAW-FAILED",
+          commandMarker: "nova-FAILED",
+          expectedCommand: "node -e nova-FAILED",
         },
       ),
-    ).toThrow(
-      "native bash command item-failed for marker OPENCLAW-FAILED has no successful result",
-    );
+    ).toThrow("native bash command item-failed for marker nova-FAILED has no successful result");
   });
 
   it("bounds failed-command diagnostics to the matching item without raw output", () => {
@@ -263,7 +261,7 @@ describe("gateway codex harness live helpers", () => {
               phase: "start",
               name: "bash",
               itemId: "item-failed",
-              args: { command: "node -e OPENCLAW-FAILED" },
+              args: { command: "node -e nova-FAILED" },
             },
           },
           {
@@ -288,8 +286,8 @@ describe("gateway codex harness live helpers", () => {
           },
         ],
         {
-          commandMarker: "OPENCLAW-FAILED",
-          expectedCommand: "node -e OPENCLAW-FAILED",
+          commandMarker: "nova-FAILED",
+          expectedCommand: "node -e nova-FAILED",
         },
       );
     } catch (error) {
@@ -303,7 +301,7 @@ describe("gateway codex harness live helpers", () => {
   });
 
   it("requires a successful marker-bearing large result in durable history", () => {
-    const expectedCommand = `node -e 'console.log("OPENCLAW-PERSISTED")'`;
+    const expectedCommand = `node -e 'console.log("nova-PERSISTED")'`;
     const messages = [
       {
         role: "assistant",
@@ -323,7 +321,7 @@ describe("gateway codex harness live helpers", () => {
         content: [
           {
             type: "text",
-            text: "OPENCLAW-PERSISTED",
+            text: "nova-PERSISTED",
           },
           {
             type: "text",
@@ -335,21 +333,21 @@ describe("gateway codex harness live helpers", () => {
 
     expect(
       requireSuccessfulPersistedNativeCommandExecution(messages, {
-        commandMarker: "OPENCLAW-PERSISTED",
+        commandMarker: "nova-PERSISTED",
         expectedCommand,
         minimumOutputChars: 1_000,
       }),
     ).toEqual({ callIndex: 0, resultIndex: 1, toolCallId: "persisted-call" });
     expect(() =>
       requireSuccessfulPersistedNativeCommandExecution(messages.slice(1), {
-        commandMarker: "OPENCLAW-PERSISTED",
+        commandMarker: "nova-PERSISTED",
         expectedCommand,
         minimumOutputChars: 1_000,
       }),
     ).toThrow("has no successful large result");
     expect(
       requireSuccessfulPersistedNativeCommandExecution(messages.slice(1), {
-        commandMarker: "OPENCLAW-PERSISTED",
+        commandMarker: "nova-PERSISTED",
         expectedCommand,
         minimumOutputChars: 1_000,
         toolCallId: "persisted-call",
@@ -358,7 +356,7 @@ describe("gateway codex harness live helpers", () => {
   });
 
   it("rejects echoed or failed native commands in durable history", () => {
-    const expectedCommand = `node -e 'console.log("OPENCLAW-PERSISTED")'`;
+    const expectedCommand = `node -e 'console.log("nova-PERSISTED")'`;
     const echoedMessages = [
       {
         role: "assistant",
@@ -378,14 +376,14 @@ describe("gateway codex harness live helpers", () => {
         content: [
           {
             type: "text",
-            text: "OPENCLAW-PERSISTED\n...(truncated: original 2000 chars)",
+            text: "nova-PERSISTED\n...(truncated: original 2000 chars)",
           },
         ],
       },
     ];
     expect(() =>
       requireSuccessfulPersistedNativeCommandExecution(echoedMessages, {
-        commandMarker: "OPENCLAW-PERSISTED",
+        commandMarker: "nova-PERSISTED",
         expectedCommand,
         minimumOutputChars: 1_000,
       }),
@@ -410,19 +408,19 @@ describe("gateway codex harness live helpers", () => {
         content: [
           {
             type: "text",
-            text: "OPENCLAW-PERSISTED\n...(truncated: original 2000 chars)",
+            text: "nova-PERSISTED\n...(truncated: original 2000 chars)",
           },
         ],
       },
     ];
     expect(() =>
       requireSuccessfulPersistedNativeCommandExecution(failedMessages, {
-        commandMarker: "OPENCLAW-PERSISTED",
+        commandMarker: "nova-PERSISTED",
         expectedCommand,
         minimumOutputChars: 1_000,
       }),
     ).toThrow(
-      "persisted native bash command for marker OPENCLAW-PERSISTED has no successful large result",
+      "persisted native bash command for marker nova-PERSISTED has no successful large result",
     );
 
     const nonzeroMessages = [
@@ -435,7 +433,7 @@ describe("gateway codex harness live helpers", () => {
     ];
     expect(() =>
       requireSuccessfulPersistedNativeCommandExecution(nonzeroMessages, {
-        commandMarker: "OPENCLAW-PERSISTED",
+        commandMarker: "nova-PERSISTED",
         expectedCommand,
         minimumOutputChars: 1_000,
       }),
@@ -443,7 +441,7 @@ describe("gateway codex harness live helpers", () => {
   });
 
   it("accepts successful request-local evidence when compaction removed durable history", () => {
-    const expectedCommand = "node -e OPENCLAW-COMPACTED";
+    const expectedCommand = "node -e nova-COMPACTED";
     const events = [
       {
         stream: "tool",
@@ -469,7 +467,7 @@ describe("gateway codex harness live helpers", () => {
 
     expect(
       requireSuccessfulNativeCommandCompactionEvidence({
-        commandMarker: "OPENCLAW-COMPACTED",
+        commandMarker: "nova-COMPACTED",
         events,
         expectedCommand,
         messages: [],
@@ -478,7 +476,7 @@ describe("gateway codex harness live helpers", () => {
     ).toEqual({ source: "compacted-event" });
     expect(() =>
       requireSuccessfulNativeCommandCompactionEvidence({
-        commandMarker: "OPENCLAW-COMPACTED",
+        commandMarker: "nova-COMPACTED",
         events: events.slice(0, 2),
         expectedCommand,
         messages: [],
@@ -488,7 +486,7 @@ describe("gateway codex harness live helpers", () => {
 
     expect(() =>
       requireSuccessfulNativeCommandCompactionEvidence({
-        commandMarker: "OPENCLAW-COMPACTED",
+        commandMarker: "nova-COMPACTED",
         events,
         expectedCommand,
         messages: [
@@ -499,7 +497,7 @@ describe("gateway codex harness live helpers", () => {
             content: [
               {
                 type: "text",
-                text: "OPENCLAW-COMPACTED\n...(truncated: original 2000 chars)",
+                text: "nova-COMPACTED\n...(truncated: original 2000 chars)",
               },
             ],
           },
@@ -510,7 +508,7 @@ describe("gateway codex harness live helpers", () => {
   });
 
   it("rejects large durable output from a different marker-bearing command", () => {
-    const expectedCommand = "node -e OPENCLAW-EXACT";
+    const expectedCommand = "node -e nova-EXACT";
     const messages = [
       {
         role: "assistant",
@@ -530,7 +528,7 @@ describe("gateway codex harness live helpers", () => {
         content: [
           {
             type: "text",
-            text: "OPENCLAW-EXACT\n...(truncated: original 2000 chars)",
+            text: "nova-EXACT\n...(truncated: original 2000 chars)",
           },
         ],
       },
@@ -538,7 +536,7 @@ describe("gateway codex harness live helpers", () => {
 
     expect(() =>
       requireSuccessfulNativeCommandCompactionEvidence({
-        commandMarker: "OPENCLAW-EXACT",
+        commandMarker: "nova-EXACT",
         events: [],
         expectedCommand,
         messages,
@@ -548,7 +546,7 @@ describe("gateway codex harness live helpers", () => {
   });
 
   it("ties a result-only durable row to the exact request-local item id", () => {
-    const expectedCommand = "node -e OPENCLAW-RESULT-ONLY";
+    const expectedCommand = "node -e nova-RESULT-ONLY";
     const events = [
       {
         stream: "tool",
@@ -577,14 +575,14 @@ describe("gateway codex harness live helpers", () => {
       content: [
         {
           type: "text",
-          text: "OPENCLAW-RESULT-ONLY\n...(truncated: original 2000 chars)",
+          text: "nova-RESULT-ONLY\n...(truncated: original 2000 chars)",
         },
       ],
     });
 
     expect(
       requireSuccessfulNativeCommandCompactionEvidence({
-        commandMarker: "OPENCLAW-RESULT-ONLY",
+        commandMarker: "nova-RESULT-ONLY",
         events,
         expectedCommand,
         messages: [resultOnlyMessage("different-call"), resultOnlyMessage("exact-call")],
@@ -593,7 +591,7 @@ describe("gateway codex harness live helpers", () => {
     ).toEqual({ source: "persisted-history" });
     expect(() =>
       requireSuccessfulNativeCommandCompactionEvidence({
-        commandMarker: "OPENCLAW-RESULT-ONLY",
+        commandMarker: "nova-RESULT-ONLY",
         events,
         expectedCommand,
         messages: [resultOnlyMessage("different-call")],
@@ -647,7 +645,7 @@ describe("gateway codex harness live helpers", () => {
     const text = [
       "Status: running on `openai/gpt-5.5` with low reasoning/text settings.",
       "",
-      "Session context is healthy: `22k/272k` tokens used, `0` compactions, `53%` cache hit. Current workspace is `/tmp/openclaw-live-codex-harness/workspace/dev`.",
+      "Session context is healthy: `22k/272k` tokens used, `0` compactions, `53%` cache hit. Current workspace is `/tmp/nova-live-codex-harness/workspace/dev`.",
     ].join("\n");
 
     expect(isExpectedCodexStatusCommandText(text)).toBe(true);
@@ -655,7 +653,7 @@ describe("gateway codex harness live helpers", () => {
 
   it("accepts current app-server status prose without the Nova prefix", () => {
     const text = [
-      "Status: running on `openai/gpt-5.5` in `/tmp/openclaw-live-codex-harness/workspace/dev`.",
+      "Status: running on `openai/gpt-5.5` in `/tmp/nova-live-codex-harness/workspace/dev`.",
       "",
       "Context is at 22k / 272k tokens, with no compactions. There’s 1 active task: `/codex status`.",
     ].join("\n");
@@ -679,7 +677,7 @@ describe("gateway codex harness live helpers", () => {
 
   it("accepts workspace-only healthy status prose emitted by current codex", () => {
     const text =
-      "Working normally. Current workspace: `/tmp/openclaw-live-codex-harness/workspace/dev`.";
+      "Working normally. Current workspace: `/tmp/nova-live-codex-harness/workspace/dev`.";
 
     expect(
       EXPECTED_CODEX_STATUS_COMMAND_TEXT.some((expectedText) => text.includes(expectedText)),
@@ -770,7 +768,7 @@ describe("gateway codex harness live helpers", () => {
 
   it("accepts the online idle status emitted by current codex", () => {
     const text =
-      "I'm online in `/tmp/openclaw-live-codex-harness-KiaUQ4/workspace/dev`, with workspace-write access. No active task is running right now.";
+      "I'm online in `/tmp/nova-live-codex-harness-KiaUQ4/workspace/dev`, with workspace-write access. No active task is running right now.";
 
     expect(isExpectedCodexStatusCommandText(text)).toBe(true);
   });
@@ -785,7 +783,7 @@ describe("gateway codex harness live helpers", () => {
 
   it("accepts the normal-work status emitted by current codex", () => {
     const text =
-      "Working normally. Current cwd is `/tmp/openclaw-live-codex-harness/workspace/dev`, sandbox is workspace-write, network is restricted, and the current date is 2026-05-09 UTC.";
+      "Working normally. Current cwd is `/tmp/nova-live-codex-harness/workspace/dev`, sandbox is workspace-write, network is restricted, and the current date is 2026-05-09 UTC.";
 
     expect(
       EXPECTED_CODEX_STATUS_COMMAND_TEXT.some((expectedText) => text.includes(expectedText)),

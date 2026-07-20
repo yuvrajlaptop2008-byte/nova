@@ -321,7 +321,7 @@ function resolveAgentSqlitePathFromSessionsDir(sessionsDir: string): string | nu
   if (path.basename(sessionsDir) !== "sessions") {
     return null;
   }
-  return path.join(path.dirname(sessionsDir), "agent", "openclaw-agent.sqlite");
+  return path.join(path.dirname(sessionsDir), "agent", "nova-agent.sqlite");
 }
 
 function countNeedlesInSqliteTranscriptEvents(

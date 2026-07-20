@@ -1,9 +1,9 @@
-import { requestHeartbeat } from "openclaw/plugin-sdk/heartbeat-runtime";
-import { wrapExternalContent } from "openclaw/plugin-sdk/security-runtime";
+import { requestHeartbeat } from "nova/plugin-sdk/heartbeat-runtime";
+import { wrapExternalContent } from "nova/plugin-sdk/security-runtime";
 import {
   enqueueSystemEvent,
   resolveMainSessionKeyFromConfig,
-} from "openclaw/plugin-sdk/system-event-runtime";
+} from "nova/plugin-sdk/system-event-runtime";
 import type { PageSharePayload } from "./relay-protocol.js";
 
 export const PAGE_SHARE_GATEWAY_REQUIRED_ERROR =

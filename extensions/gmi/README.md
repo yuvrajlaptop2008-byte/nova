@@ -1,13 +1,13 @@
-# OpenClaw GMI Cloud Provider
+# Nova GMI Cloud Provider
 
-Official OpenClaw provider plugin for hosted GMI Cloud models through an
+Official Nova provider plugin for hosted GMI Cloud models through an
 OpenAI-compatible API.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/gmi-provider
-openclaw gateway restart
+nova plugins install @nova/gmi-provider
+nova gateway restart
 ```
 
 Configure a GMI Cloud API key, then select models with refs such as

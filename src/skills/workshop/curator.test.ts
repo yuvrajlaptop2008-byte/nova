@@ -9,11 +9,8 @@ import {
   waitForDiagnosticEventsDrained,
 } from "../../infra/diagnostic-events.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../../infra/kysely-sync.js";
-import type { DB as OpenClawStateDatabase } from "../../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+import type { DB as NovaStateDatabase } from "../../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../../state/nova-state-db.js";
 import { loadSkills } from "../loading/session.js";
 import {
   buildWorkspaceSkillSnapshot,
@@ -126,8 +123,8 @@ async function runSkillCuratorSweep(options: {
 }
 
 function readSkillUsageFiles(): string[] {
-  const database = openOpenClawStateDatabase({ env: process.env });
-  const kysely = getNodeSqliteKysely<Pick<OpenClawStateDatabase, "skill_usage">>(database.db);
+  const database = openNovaStateDatabase({ env: process.env });
+  const kysely = getNodeSqliteKysely<Pick<NovaStateDatabase, "skill_usage">>(database.db);
   return executeSqliteQuerySync(
     database.db,
     kysely.selectFrom("skill_usage").select("skill_file").orderBy("skill_file", "asc"),
@@ -161,7 +158,7 @@ function addAppliedSkill(params: {
     scanState: "clean",
   });
   store.records.set(id, {
-    schema: "openclaw.skill-workshop.proposal.v1",
+    schema: "nova.skill-workshop.proposal.v1",
     id,
     kind,
     status: "applied",
@@ -203,7 +200,7 @@ function writeSkill(agentDir: string, key: string, name: string): void {
 }
 
 beforeEach(() => {
-  rootDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-curator-")));
+  rootDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "nova-curator-")));
   stateDir = path.join(rootDir, "state-root");
   fs.mkdirSync(stateDir, { recursive: true });
   originalStateDir = process.env.NOVA_STATE_DIR;
@@ -211,7 +208,7 @@ beforeEach(() => {
   store.entries.length = 0;
   store.records.clear();
   store.readManifest.mockReset().mockImplementation(async () => ({
-    schema: "openclaw.skill-workshop.proposals-manifest.v1",
+    schema: "nova.skill-workshop.proposals-manifest.v1",
     updatedAt: new Date(0).toISOString(),
     proposals: store.entries,
   }));
@@ -221,7 +218,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   resetDiagnosticEventsForTest();
   if (originalStateDir === undefined) {
     delete process.env.NOVA_STATE_DIR;
@@ -597,7 +594,7 @@ describe("skill curator lifecycle", () => {
       ).toContain("skill curator has not completed a sweep");
 
       resolveManifest?.({
-        schema: "openclaw.skill-workshop.proposals-manifest.v1",
+        schema: "nova.skill-workshop.proposals-manifest.v1",
         updatedAt: new Date(nowMs).toISOString(),
         proposals: [],
       });

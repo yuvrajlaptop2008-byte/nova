@@ -74,7 +74,7 @@ describeMantisWebUiChat("Mantis Control UI web chat proof", () => {
         {
           role: "system",
           timestamp: Date.now() - 1_000,
-          __openclaw: {
+          __nova: {
             kind: "compaction",
             id: "mantis-compaction-entry",
             tokensBefore: 900_000,

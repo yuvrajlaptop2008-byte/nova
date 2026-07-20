@@ -172,7 +172,7 @@ function hasGitGatewayFileListing(cwd: string): boolean {
 }
 
 function withTinyGitRepo(files: Record<string, string>, test: (cwd: string) => void): void {
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-test-projects-"));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-test-projects-"));
   try {
     for (const [file, source] of Object.entries(files)) {
       const absolute = path.join(cwd, file);
@@ -190,7 +190,7 @@ function withTinyGitRepo(files: Record<string, string>, test: (cwd: string) => v
 }
 
 function withTinyFileTree(files: Record<string, string>, test: (cwd: string) => void): void {
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-test-projects-"));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "nova-test-projects-"));
   try {
     for (const [file, source] of Object.entries(files)) {
       const absolute = path.join(cwd, file);
@@ -381,9 +381,9 @@ describe("scripts/test-projects changed-target routing", () => {
       mode: "targets",
       targets: ["test/vitest/vitest.tooling.config.ts"],
     });
-    expect(resolveChangedTestTargetPlan(["scripts/github/resolve-openclaw-ref.sh"])).toEqual({
+    expect(resolveChangedTestTargetPlan(["scripts/github/resolve-nova-ref.sh"])).toEqual({
       mode: "targets",
-      targets: ["test/scripts/resolve-openclaw-ref.test.ts"],
+      targets: ["test/scripts/resolve-nova-ref.test.ts"],
     });
   });
 
@@ -787,7 +787,7 @@ describe("scripts/test-projects changed-target routing", () => {
       ["scripts/e2e/cron-mcp-cleanup-seed.ts", ["test/scripts/docker-e2e-seeds.test.ts"]],
       [
         "scripts/e2e/lib/onboard/scenario.sh",
-        ["test/scripts/e2e-shell-tempfiles.test.ts", "test/scripts/openclaw-test-state.test.ts"],
+        ["test/scripts/e2e-shell-tempfiles.test.ts", "test/scripts/nova-test-state.test.ts"],
       ],
       [
         "scripts/e2e/lib/onboard/assert-config.mjs",
@@ -887,7 +887,7 @@ describe("scripts/test-projects changed-target routing", () => {
           "test/scripts/package-acceptance-workflow.test.ts",
           "test/scripts/upgrade-survivor-probe-gateway.test.ts",
           "test/scripts/upgrade-survivor-assertions.test.ts",
-          "test/scripts/openclaw-test-state.test.ts",
+          "test/scripts/nova-test-state.test.ts",
         ],
       ],
       [
@@ -1413,7 +1413,7 @@ describe("scripts/test-projects changed-target routing", () => {
         ],
       ],
       [
-        ".github/workflows/shared-openclawkit-periphery.yml",
+        ".github/workflows/shared-novakit-periphery.yml",
         [
           "test/scripts/periphery-intersection.test.ts",
           "test/scripts/periphery-scope-workflows.test.ts",
@@ -1467,18 +1467,16 @@ describe("scripts/test-projects changed-target routing", () => {
   });
 
   it("keeps release-check workflow edits on release workflow regression tests", () => {
-    expect(resolveChangedTestTargetPlan([".github/workflows/openclaw-release-checks.yml"])).toEqual(
-      {
-        mode: "targets",
-        targets: [
-          "test/scripts/package-acceptance-workflow.test.ts",
-          "test/scripts/openclaw-cross-os-release-checks.test.ts",
-          "test/scripts/plugin-prerelease-test-plan.test.ts",
-          "test/scripts/test-install-sh-docker.test.ts",
-          "test/scripts/ci-workflow-guards.test.ts",
-        ],
-      },
-    );
+    expect(resolveChangedTestTargetPlan([".github/workflows/nova-release-checks.yml"])).toEqual({
+      mode: "targets",
+      targets: [
+        "test/scripts/package-acceptance-workflow.test.ts",
+        "test/scripts/nova-cross-os-release-checks.test.ts",
+        "test/scripts/plugin-prerelease-test-plan.test.ts",
+        "test/scripts/test-install-sh-docker.test.ts",
+        "test/scripts/ci-workflow-guards.test.ts",
+      ],
+    });
   });
 
   it("keeps workflow sanity script edits on workflow guard tests", () => {
@@ -1547,10 +1545,10 @@ describe("scripts/test-projects changed-target routing", () => {
     });
 
     expect(
-      resolveChangedTestTargetPlan(["scripts/github/run-openclaw-cross-os-release-checks.sh"]),
+      resolveChangedTestTargetPlan(["scripts/github/run-nova-cross-os-release-checks.sh"]),
     ).toEqual({
       mode: "targets",
-      targets: ["test/scripts/openclaw-cross-os-release-workflow.test.ts"],
+      targets: ["test/scripts/nova-cross-os-release-workflow.test.ts"],
     });
 
     expect(resolveChangedTestTargetPlan(["scripts/github/security-sensitive-guard.mjs"])).toEqual({
@@ -1596,7 +1594,7 @@ describe("scripts/test-projects changed-target routing", () => {
       ["scripts/pnpm-runner.d.mts", ["test/scripts/pnpm-runner.test.ts"]],
       [
         "scripts/lib/cross-os-release-checks/runtime.ts",
-        ["test/scripts/openclaw-cross-os-release-checks.test.ts"],
+        ["test/scripts/nova-cross-os-release-checks.test.ts"],
       ],
       [
         "scripts/install.sh",
@@ -1604,7 +1602,7 @@ describe("scripts/test-projects changed-target routing", () => {
           "test/scripts/install-sh.test.ts",
           "test/scripts/test-install-sh-docker.test.ts",
           "test/scripts/website-installer-sync-workflow.test.ts",
-          "test/scripts/openclaw-cross-os-release-checks.test.ts",
+          "test/scripts/nova-cross-os-release-checks.test.ts",
           "src/scripts/ci-changed-scope.test.ts",
         ],
       ],
@@ -1613,14 +1611,14 @@ describe("scripts/test-projects changed-target routing", () => {
         [
           "test/scripts/install-ps1.test.ts",
           "test/scripts/website-installer-sync-workflow.test.ts",
-          "test/scripts/openclaw-cross-os-release-checks.test.ts",
+          "test/scripts/nova-cross-os-release-checks.test.ts",
           "src/scripts/ci-changed-scope.test.ts",
         ],
       ],
-      ["scripts/podman/openclaw.container.in", ["test/scripts/test-install-sh-docker.test.ts"]],
+      ["scripts/podman/nova.container.in", ["test/scripts/test-install-sh-docker.test.ts"]],
       [
-        "scripts/package-openclaw-for-docker.mjs",
-        ["test/e2e/qa-lab/runtime/package-openclaw-for-docker.e2e.test.ts"],
+        "scripts/package-nova-for-docker.mjs",
+        ["test/e2e/qa-lab/runtime/package-nova-for-docker.e2e.test.ts"],
       ],
       ["scripts/ios-run.sh", ["test/scripts/ios-run.test.ts"]],
       ["scripts/ios-write-version-xcconfig.sh", ["test/scripts/ios-version.test.ts"]],
@@ -1657,12 +1655,9 @@ describe("scripts/test-projects changed-target routing", () => {
         "scripts/test-install-sh-e2e-docker.sh",
         ["test/scripts/docker-build-helper.test.ts", "test/scripts/test-install-sh-docker.test.ts"],
       ],
-      ["scripts/openclaw-prepack.ts", ["test/openclaw-prepack.test.ts"]],
-      ["scripts/openclaw-npm-release-check.ts", ["test/openclaw-npm-release-check.test.ts"]],
-      [
-        "scripts/openclaw-npm-postpublish-verify.ts",
-        ["test/openclaw-npm-postpublish-verify.test.ts"],
-      ],
+      ["scripts/nova-prepack.ts", ["test/nova-prepack.test.ts"]],
+      ["scripts/nova-npm-release-check.ts", ["test/nova-npm-release-check.test.ts"]],
+      ["scripts/nova-npm-postpublish-verify.ts", ["test/nova-npm-postpublish-verify.test.ts"]],
       ["scripts/verify-pr-hosted-gates.mjs", ["test/scripts/verify-pr-hosted-gates.test.ts"]],
       [
         "scripts/postinstall-bundled-plugins.mjs",
@@ -1756,8 +1751,8 @@ describe("scripts/test-projects changed-target routing", () => {
       ["scripts/auth-monitor.sh", ["test/scripts/auth-monitor.test.ts"]],
       ["scripts/mobile-reauth.sh", ["test/scripts/auth-monitor.test.ts"]],
       ["scripts/setup-auth-system.sh", ["test/scripts/auth-monitor.test.ts"]],
-      ["scripts/systemd/openclaw-auth-monitor.service", ["test/scripts/auth-monitor.test.ts"]],
-      ["scripts/systemd/openclaw-auth-monitor.timer", ["test/scripts/auth-monitor.test.ts"]],
+      ["scripts/systemd/nova-auth-monitor.service", ["test/scripts/auth-monitor.test.ts"]],
+      ["scripts/systemd/nova-auth-monitor.timer", ["test/scripts/auth-monitor.test.ts"]],
       ["scripts/termux-auth-widget.sh", ["test/scripts/auth-monitor.test.ts"]],
       ["scripts/termux-quick-auth.sh", ["test/scripts/auth-monitor.test.ts"]],
       ["scripts/termux-sync-widget.sh", ["test/scripts/auth-monitor.test.ts"]],
@@ -1817,10 +1812,10 @@ describe("scripts/test-projects changed-target routing", () => {
           "src/infra/run-node.test.ts",
           "src/infra/package-dist-inventory.test.ts",
           "test/release-check.test.ts",
-          "test/openclaw-npm-release-check.test.ts",
+          "test/nova-npm-release-check.test.ts",
           "test/scripts/check-gateway-watch-regression.test.ts",
-          "test/scripts/check-openclaw-package-tarball.test.ts",
-          "test/scripts/openclaw-cross-os-release-checks.test.ts",
+          "test/scripts/check-nova-package-tarball.test.ts",
+          "test/scripts/nova-cross-os-release-checks.test.ts",
         ],
       ],
       [
@@ -1831,10 +1826,10 @@ describe("scripts/test-projects changed-target routing", () => {
           "src/infra/run-node.test.ts",
           "src/infra/package-dist-inventory.test.ts",
           "test/release-check.test.ts",
-          "test/openclaw-npm-release-check.test.ts",
+          "test/nova-npm-release-check.test.ts",
           "test/scripts/check-gateway-watch-regression.test.ts",
-          "test/scripts/check-openclaw-package-tarball.test.ts",
-          "test/scripts/openclaw-cross-os-release-checks.test.ts",
+          "test/scripts/check-nova-package-tarball.test.ts",
+          "test/scripts/nova-cross-os-release-checks.test.ts",
         ],
       ],
       [
@@ -2009,7 +2004,7 @@ describe("scripts/test-projects changed-target routing", () => {
         ],
       ],
       [
-        ".github/workflows/openclaw-live-and-e2e-checks-reusable.yml",
+        ".github/workflows/nova-live-and-e2e-checks-reusable.yml",
         [
           "test/scripts/package-acceptance-workflow.test.ts",
           "test/scripts/ci-workflow-guards.test.ts",
@@ -2140,7 +2135,7 @@ describe("scripts/test-projects changed-target routing", () => {
         "scripts/lib/package-dist-imports.mjs",
         [
           "test/scripts/check-package-dist-imports.test.ts",
-          "test/scripts/check-openclaw-package-tarball.test.ts",
+          "test/scripts/check-nova-package-tarball.test.ts",
           "test/scripts/postinstall-bundled-plugins.test.ts",
           "test/release-check.test.ts",
         ],
@@ -2171,8 +2166,8 @@ describe("scripts/test-projects changed-target routing", () => {
         "scripts/lib/npm-publish-plan.mjs",
         [
           "test/npm-publish-plan.test.ts",
-          "test/openclaw-npm-release-check.test.ts",
-          "test/openclaw-npm-postpublish-verify.test.ts",
+          "test/nova-npm-release-check.test.ts",
+          "test/nova-npm-postpublish-verify.test.ts",
           "test/plugin-npm-release.test.ts",
           "test/plugin-clawhub-release.test.ts",
           "test/scripts/release-upgrade-baseline.test.ts",
@@ -2192,17 +2187,14 @@ describe("scripts/test-projects changed-target routing", () => {
       ],
       [
         "scripts/lib/workspace-bootstrap-smoke.mjs",
-        ["test/release-check.test.ts", "test/openclaw-npm-release-check.test.ts"],
+        ["test/release-check.test.ts", "test/nova-npm-release-check.test.ts"],
       ],
       [
-        "scripts/openclaw-release-clawhub-runtime-state.ts",
-        ["test/scripts/openclaw-release-clawhub-runtime-state.test.ts"],
+        "scripts/nova-release-clawhub-runtime-state.ts",
+        ["test/scripts/nova-release-clawhub-runtime-state.test.ts"],
       ],
-      [
-        "scripts/openclaw-release-clawhub-plan.ts",
-        ["test/scripts/release-wrapper-scripts.test.ts"],
-      ],
-      ["scripts/lib/openclaw-release-clawhub-plan.ts", ["test/plugin-clawhub-release.test.ts"]],
+      ["scripts/nova-release-clawhub-plan.ts", ["test/scripts/release-wrapper-scripts.test.ts"]],
+      ["scripts/lib/nova-release-clawhub-plan.ts", ["test/plugin-clawhub-release.test.ts"]],
       [
         "scripts/lib/plugin-clawhub-release.ts",
         ["test/plugin-clawhub-release.test.ts", "test/plugin-npm-release.test.ts"],
@@ -2282,7 +2274,7 @@ describe("scripts/test-projects changed-target routing", () => {
           "src/plugins/bundled-plugin-metadata.test.ts",
           "src/infra/update-global.test.ts",
           "src/infra/update-runner.test.ts",
-          "test/openclaw-npm-postpublish-verify.test.ts",
+          "test/nova-npm-postpublish-verify.test.ts",
         ],
       ],
       [
@@ -2556,13 +2548,13 @@ describe("scripts/test-projects changed-target routing", () => {
   it("routes the shell helper test to the isolated tooling shard", () => {
     expect(
       buildVitestRunPlans(["--changed", "origin/main"], process.cwd(), () => [
-        "test/scripts/openclaw-e2e-instance.test.ts",
+        "test/scripts/nova-e2e-instance.test.ts",
       ]),
     ).toEqual([
       {
         config: "test/vitest/vitest.tooling-isolated.config.ts",
         forwardedArgs: [],
-        includePatterns: ["test/scripts/openclaw-e2e-instance.test.ts"],
+        includePatterns: ["test/scripts/nova-e2e-instance.test.ts"],
         watchMode: false,
       },
     ]);
@@ -2634,7 +2626,7 @@ describe("scripts/test-projects changed-target routing", () => {
         includePatterns: [
           "test/scripts/plugin-prerelease-test-plan.test.ts",
           "test/scripts/kitchen-sink-rpc-walk.test.ts",
-          "test/scripts/openclaw-test-state.test.ts",
+          "test/scripts/nova-test-state.test.ts",
           "test/scripts/plugin-lifecycle-measure.test.ts",
           "test/scripts/docker-e2e-plan.test.ts",
           "test/scripts/release-media-memory-scenario.test.ts",
@@ -2845,7 +2837,7 @@ describe("scripts/test-projects changed-target routing", () => {
         includePatterns: [
           "test/scripts/check-extension-package-tsc-boundary.test.ts",
           "test/scripts/control-ui-i18n.test.ts",
-          "test/scripts/openclaw-e2e-instance.test.ts",
+          "test/scripts/nova-e2e-instance.test.ts",
         ],
         watchMode: false,
       },
@@ -2860,7 +2852,7 @@ describe("scripts/test-projects changed-target routing", () => {
     expect(toolingPlans.every((plan) => (plan.includePatterns?.length ?? 0) <= 60)).toBe(true);
     expect(toolingTargets).toContain("test/scripts/run-opengrep.test.ts");
     expect(toolingTargets).not.toContain("test/scripts/docker-build-helper.test.ts");
-    expect(toolingTargets).not.toContain("test/scripts/openclaw-e2e-instance.test.ts");
+    expect(toolingTargets).not.toContain("test/scripts/nova-e2e-instance.test.ts");
     expect(new Set(toolingTargets).size).toBe(toolingTargets.length);
     expect(e2ePlans).toEqual([
       {
@@ -3003,7 +2995,7 @@ describe("scripts/test-projects changed-target routing", () => {
         includePatterns: [
           "test/scripts/check-extension-package-tsc-boundary.test.ts",
           "test/scripts/control-ui-i18n.test.ts",
-          "test/scripts/openclaw-e2e-instance.test.ts",
+          "test/scripts/nova-e2e-instance.test.ts",
         ],
         watchMode: false,
       },
@@ -3018,7 +3010,7 @@ describe("scripts/test-projects changed-target routing", () => {
     expect(toolingPlans.every((plan) => (plan.includePatterns?.length ?? 0) <= 60)).toBe(true);
     expect(toolingTargets).toContain("test/scripts/run-opengrep.test.ts");
     expect(toolingTargets).not.toContain("test/scripts/docker-build-helper.test.ts");
-    expect(toolingTargets).not.toContain("test/scripts/openclaw-e2e-instance.test.ts");
+    expect(toolingTargets).not.toContain("test/scripts/nova-e2e-instance.test.ts");
     expect(new Set(toolingTargets).size).toBe(toolingTargets.length);
     expect(e2ePlans).toEqual([
       {
@@ -3112,7 +3104,7 @@ describe("scripts/test-projects changed-target routing", () => {
   });
 
   it("rejects explicit test-support helper files with no importing tests", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-test-targets-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-test-targets-"));
     try {
       fs.mkdirSync(path.join(tempDir, "src", "lonely"), { recursive: true });
       fs.writeFileSync(
@@ -3825,7 +3817,7 @@ describe("scripts/test-projects changed-target routing", () => {
   });
 
   it("uses collision-resistant include-file names for scoped Vitest specs", () => {
-    const tempDir = path.join("tmp", "openclaw-vitest-specs");
+    const tempDir = path.join("tmp", "nova-vitest-specs");
     const [spec] = createVitestRunSpecs(["src/plugin-sdk/temp-path.test.ts"], {
       baseEnv: {},
       tempDir,
@@ -3833,7 +3825,7 @@ describe("scripts/test-projects changed-target routing", () => {
 
     expect(path.dirname(spec?.includeFilePath ?? "")).toBe(tempDir);
     expect(path.basename(spec?.includeFilePath ?? "")).toMatch(
-      /^openclaw-vitest-include-[0-9a-f-]{36}-0\.json$/u,
+      /^nova-vitest-include-[0-9a-f-]{36}-0\.json$/u,
     );
     expect(spec?.includeFilePath).not.toMatch(new RegExp(`${process.pid}-\\d+-0\\.json$`, "u"));
   });
@@ -3867,7 +3859,7 @@ describe("scripts/test-projects changed-target routing", () => {
   });
 
   it("retains routed glob targets in watch-mode include files", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-test-projects-watch-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-test-projects-watch-"));
     try {
       const includeFile = path.join(tempDir, "include.json");
       writeVitestIncludeFile(includeFile, ["src/gateway/**/*.test.ts"], {
@@ -4129,7 +4121,7 @@ describe("scripts/test-projects changed-target routing", () => {
           "src/plugins/bundled-plugin-metadata.test.ts",
           "src/infra/update-global.test.ts",
           "src/infra/update-runner.test.ts",
-          "test/openclaw-npm-postpublish-verify.test.ts",
+          "test/nova-npm-postpublish-verify.test.ts",
         ],
       });
     }
@@ -4813,7 +4805,7 @@ describe("scripts/test-projects full-suite sharding", () => {
     expect(toolingTargets).toContain("src/scripts/control-ui-i18n-report.test.ts");
     expect(toolingTargets.some((target) => target.endsWith(".live.test.ts"))).toBe(false);
     expect(toolingTargets).not.toContain("test/scripts/docker-build-helper.test.ts");
-    expect(toolingTargets).not.toContain("test/scripts/openclaw-e2e-instance.test.ts");
+    expect(toolingTargets).not.toContain("test/scripts/nova-e2e-instance.test.ts");
     const matrixTargets = matrixPlans.flatMap((plan) => plan.forwardedArgs);
     expect(matrixPlans).toHaveLength(3);
     expect(matrixPlans.every((plan) => plan.forwardedArgs.length <= 40)).toBe(true);

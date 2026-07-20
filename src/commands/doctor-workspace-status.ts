@@ -2,7 +2,7 @@
 import { note } from "../../packages/terminal-core/src/note.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { HealthFinding } from "../flows/health-checks.js";
 import {
   resolvePluginVersionDriftUpdateCommand,
@@ -65,8 +65,8 @@ function noteFlowRecoveryHints() {
     [
       ...suspicious.slice(0, 5).map((finding) => finding.message),
       suspicious.length > 5 ? `...and ${suspicious.length - 5} more.` : null,
-      `Inspect: ${formatCliCommand("openclaw tasks flow show <flow-id>")}`,
-      `Cancel: ${formatCliCommand("openclaw tasks flow cancel <flow-id>")}`,
+      `Inspect: ${formatCliCommand("nova tasks flow show <flow-id>")}`,
+      `Cancel: ${formatCliCommand("nova tasks flow cancel <flow-id>")}`,
     ]
       .filter((line): line is string => Boolean(line))
       .join("\n"),
@@ -89,7 +89,7 @@ function pluginVersionDriftToHealthFindings(
       path: `plugins.entries.${entry.pluginId}`,
       target: entry.pluginId,
       requirement: "plugin-version-drift",
-      fixHint: `${updateCommand} && ${formatCliCommand("openclaw gateway restart")}`,
+      fixHint: `${updateCommand} && ${formatCliCommand("nova gateway restart")}`,
     };
   });
 }
@@ -128,14 +128,14 @@ function taskFlowRecoveryToHealthFinding(finding: TaskFlowRecoveryFinding): Heal
     target: finding.flowId,
     requirement: "taskflow-recovery",
     fixHint: [
-      formatCliCommand(`openclaw tasks flow show ${finding.flowId}`),
-      formatCliCommand(`openclaw tasks flow cancel ${finding.flowId}`),
+      formatCliCommand(`nova tasks flow show ${finding.flowId}`),
+      formatCliCommand(`nova tasks flow cancel ${finding.flowId}`),
     ].join(" or "),
   };
 }
 
 export function collectWorkspaceStatusHealthFindings(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options: NoteWorkspaceStatusOptions = {},
 ): HealthFinding[] {
   const workspaceDir = resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg));
@@ -174,18 +174,18 @@ function notePluginVersionDrift(drift: PluginVersionDriftReport | undefined) {
       return `- ${entry.pluginId}: ${entry.installedVersion} (${sourceLabel}) -> expected ${drift.gatewayVersion}`;
     }),
     singleDrift
-      ? `Fix: ${updateCommands[0]} && ${formatCliCommand("openclaw gateway restart")}.`
+      ? `Fix: ${updateCommands[0]} && ${formatCliCommand("nova gateway restart")}.`
       : [
           "Fix each drifted plugin:",
           ...updateCommands.map((command) => `- ${command}`),
-          `Then run ${formatCliCommand("openclaw gateway restart")}.`,
+          `Then run ${formatCliCommand("nova gateway restart")}.`,
         ].join("\n"),
   ];
   note(lines.join("\n"), "Plugin version drift");
 }
 
 /** Emits plugin and TaskFlow recovery problem notes for doctor. */
-export function noteWorkspaceStatus(cfg: OpenClawConfig, options: NoteWorkspaceStatusOptions = {}) {
+export function noteWorkspaceStatus(cfg: NovaConfig, options: NoteWorkspaceStatusOptions = {}) {
   const workspaceDir = resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg));
   const pluginRegistry = buildPluginRegistrySnapshotReport({
     config: cfg,

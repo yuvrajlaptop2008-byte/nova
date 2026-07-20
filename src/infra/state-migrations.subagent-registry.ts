@@ -295,7 +295,7 @@ export async function migrateLegacySubagentRegistry(params: {
     return {
       changes: [],
       warnings: [
-        `Failed migrating legacy subagent registry: ${detail}. Stop the Gateway, then run \`openclaw doctor --fix\` again.`,
+        `Failed migrating legacy subagent registry: ${detail}. Stop the Gateway, then run \`nova doctor --fix\` again.`,
       ],
     };
   }

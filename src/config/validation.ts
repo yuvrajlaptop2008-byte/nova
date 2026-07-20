@@ -59,14 +59,14 @@ import {
   isValidExactModelPolicyRef,
   parseModelPolicyWildcardRef,
 } from "./model-policy-ref.js";
-import type { OpenClawConfig, ConfigValidationIssue } from "./types.js";
+import type { NovaConfig, ConfigValidationIssue } from "./types.js";
 import { coerceSecretRef } from "./types.secrets.js";
 import {
   type DmPolicyAllowFromViolation,
   evaluateDmPolicyAllowFromDependency,
   isBuiltInModelProviderOverlayId,
 } from "./zod-schema.core.js";
-import { OpenClawSchema } from "./zod-schema.js";
+import { NovaSchema } from "./zod-schema.js";
 
 const LEGACY_REMOVED_PLUGIN_IDS = new Set([
   "google-antigravity-auth",
@@ -77,7 +77,7 @@ const BLOCKED_PLUGIN_CANDIDATE_PREFIX = "blocked plugin candidate:";
 
 function formatRemovedPluginConfigWarning(pluginId: string): string {
   if (pluginId === "skill-workshop") {
-    return "plugin removed: skill-workshop (stale plugin config ignored; Skill Workshop is built into Nova skills now. Use skills.workshop settings and openclaw skills workshop commands, then remove this plugins config entry)";
+    return "plugin removed: skill-workshop (stale plugin config ignored; Skill Workshop is built into Nova skills now. Use skills.workshop settings and nova skills workshop commands, then remove this plugins config entry)";
   }
   return `plugin removed: ${pluginId} (stale config entry ignored; remove it from plugins config)`;
 }
@@ -97,7 +97,7 @@ type AllowedValuesCollection = {
 };
 type JsonSchemaLike = Record<string, unknown>;
 
-function materializeBundledModelProviderOverlays(config: OpenClawConfig): OpenClawConfig {
+function materializeBundledModelProviderOverlays(config: NovaConfig): NovaConfig {
   const providers = config.models?.providers;
   if (!providers) {
     return config;
@@ -144,7 +144,7 @@ function stripPreservedLegacyRootKeysForValidation(
 }
 
 const CUSTOM_EXPECTED_ONE_OF_RE = /expected one of ((?:"[^"]+"(?:\|"?[^"]+"?)*)+)/i;
-const SECRETREF_POLICY_DOC_URL = "https://docs.openclaw.ai/reference/secretref-credential-surface";
+const SECRETREF_POLICY_DOC_URL = "https://docs.nova.ai/reference/secretref-credential-surface";
 const bundledChannelSchemaById = new Map<string, unknown>(
   GENERATED_BUNDLED_CHANNEL_CONFIG_METADATA.filter((entry) => entry.configurable !== false).map(
     (entry) => [entry.channelId, entry.schema] as const,
@@ -228,9 +228,9 @@ function formatMissingOfficialExternalPluginWarning(
     return null;
   }
   if (pluginId === "memory-lancedb" && opts?.selectedMissingMemorySlot) {
-    return `plugin not installed: ${pluginId} — gateway will run without persistent memory until installed; install the official external plugin with: openclaw plugins install ${installSpec}`;
+    return `plugin not installed: ${pluginId} — gateway will run without persistent memory until installed; install the official external plugin with: nova plugins install ${installSpec}`;
   }
-  return `plugin not installed: ${pluginId} — install the official external plugin with: openclaw plugins install ${installSpec}`;
+  return `plugin not installed: ${pluginId} — install the official external plugin with: nova plugins install ${installSpec}`;
 }
 
 function asJsonSchemaLike(value: unknown): JsonSchemaLike | null {
@@ -385,7 +385,7 @@ type ChannelDmPolicyDependencyWarningOptions = {
   dmAllowFromModes?: ReadonlyMap<string, ChannelDmAllowFromMode>;
 };
 
-function hasChannelDmPolicyDependencyWarningCandidates(config: OpenClawConfig): boolean {
+function hasChannelDmPolicyDependencyWarningCandidates(config: NovaConfig): boolean {
   if (!config.channels || !isRecord(config.channels)) {
     return false;
   }
@@ -410,7 +410,7 @@ function hasChannelDmPolicyDependencyWarningCandidates(config: OpenClawConfig): 
  * are skipped because their config shape does not match this warning's top-level paths.
  */
 function collectChannelDmPolicyDependencyWarnings(
-  config: OpenClawConfig,
+  config: NovaConfig,
   options: ChannelDmPolicyDependencyWarningOptions = {},
 ): ConfigValidationIssue[] {
   if (!config.channels || !isRecord(config.channels)) {
@@ -465,7 +465,7 @@ function collectChannelDmPolicyDependencyWarnings(
   return warnings;
 }
 
-function collectRawBundledChannelConfigIssues(config: OpenClawConfig): ConfigValidationIssue[] {
+function collectRawBundledChannelConfigIssues(config: NovaConfig): ConfigValidationIssue[] {
   if (!config.channels || !isRecord(config.channels)) {
     return [];
   }
@@ -959,7 +959,7 @@ function createIdentityAvatarIssue(index: number, message: string): ConfigValida
   return withConfigIssuePath({ path: formatConfigPath(pathSegments), message }, pathSegments);
 }
 
-function validateIdentityAvatar(config: OpenClawConfig): ConfigValidationIssue[] {
+function validateIdentityAvatar(config: NovaConfig): ConfigValidationIssue[] {
   const agents = config.agents?.list;
   if (!Array.isArray(agents) || agents.length === 0) {
     return [];
@@ -1012,7 +1012,7 @@ function validateIdentityAvatar(config: OpenClawConfig): ConfigValidationIssue[]
   return issues;
 }
 
-function validateGatewayTailscaleBind(config: OpenClawConfig): ConfigValidationIssue[] {
+function validateGatewayTailscaleBind(config: NovaConfig): ConfigValidationIssue[] {
   const tailscaleMode = config.gateway?.tailscale?.mode ?? "off";
   if (tailscaleMode !== "serve" && tailscaleMode !== "funnel") {
     return [];
@@ -1039,7 +1039,7 @@ function validateGatewayTailscaleBind(config: OpenClawConfig): ConfigValidationI
   ];
 }
 
-function validateGatewayTailscaleAuth(config: OpenClawConfig): ConfigValidationIssue[] {
+function validateGatewayTailscaleAuth(config: NovaConfig): ConfigValidationIssue[] {
   const tailscaleMode = config.gateway?.tailscale?.mode ?? "off";
   if (!isUnsafeGatewayTailscaleNoAuth({ authMode: config.gateway?.auth?.mode, tailscaleMode })) {
     return [];
@@ -1052,7 +1052,7 @@ function validateGatewayTailscaleAuth(config: OpenClawConfig): ConfigValidationI
   ];
 }
 
-function collectModelPolicyAllowIssues(config: OpenClawConfig): ConfigValidationIssue[] {
+function collectModelPolicyAllowIssues(config: NovaConfig): ConfigValidationIssue[] {
   const issues: ConfigValidationIssue[] = [];
   const defaultModels = config.agents?.defaults?.models;
   const collectAliases = (...modelMaps: Array<typeof defaultModels | undefined>): Set<string> => {
@@ -1119,13 +1119,13 @@ export function validateConfigObjectRaw(
     validateBundledChannels?: boolean;
     preservedLegacyRootKeys?: readonly string[];
   },
-): { ok: true; config: OpenClawConfig } | { ok: false; issues: ConfigValidationIssue[] } {
+): { ok: true; config: NovaConfig } | { ok: false; issues: ConfigValidationIssue[] } {
   const normalizedRaw = stripPreservedLegacyRootKeysForValidation(
     raw,
     opts?.preservedLegacyRootKeys,
   );
   const policyIssues = collectUnsupportedSecretRefPolicyIssues(normalizedRaw);
-  const validated = OpenClawSchema.safeParse(normalizedRaw);
+  const validated = NovaSchema.safeParse(normalizedRaw);
   if (!validated.success) {
     const schemaIssues = validated.error.issues.map((issue) => mapZodIssueToConfigIssue(issue));
     return {
@@ -1133,7 +1133,7 @@ export function validateConfigObjectRaw(
       issues: mergeUnsupportedMutableSecretRefIssues(policyIssues, schemaIssues),
     };
   }
-  const validatedConfig = materializeBundledModelProviderOverlays(validated.data as OpenClawConfig);
+  const validatedConfig = materializeBundledModelProviderOverlays(validated.data as NovaConfig);
   const channelIssues =
     policyIssues.length > 0 || opts?.validateBundledChannels
       ? collectRawBundledChannelConfigIssues(validatedConfig)
@@ -1187,7 +1187,7 @@ export function validateConfigObject(
     manifestRegistry?: Pick<PluginMetadataSnapshot, "manifestRegistry">["manifestRegistry"];
     sourceRaw?: unknown;
   },
-): { ok: true; config: OpenClawConfig } | { ok: false; issues: ConfigValidationIssue[] } {
+): { ok: true; config: NovaConfig } | { ok: false; issues: ConfigValidationIssue[] } {
   const result = validateConfigObjectRaw(raw, opts);
   if (!result.ok) {
     return result;
@@ -1203,7 +1203,7 @@ export function validateConfigObject(
 type ValidateConfigWithPluginsResult =
   | {
       ok: true;
-      config: OpenClawConfig;
+      config: NovaConfig;
       warnings: ConfigValidationIssue[];
     }
   | {
@@ -1217,7 +1217,7 @@ type ValidateConfigWithPluginsParams = {
   pluginValidation?: "full" | "skip";
   pluginMetadataSnapshot?: Pick<PluginMetadataSnapshot, "manifestRegistry">;
   loadPluginMetadataSnapshot?: (
-    config: OpenClawConfig,
+    config: NovaConfig,
   ) => Pick<PluginMetadataSnapshot, "manifestRegistry">;
   sourceRaw?: unknown;
   preservedLegacyRootKeys?: readonly string[];
@@ -1323,7 +1323,7 @@ function validateConfigObjectWithPluginsBase(
     >;
   };
 
-  let compatConfig: OpenClawConfig | null | undefined;
+  let compatConfig: NovaConfig | null | undefined;
   let compatPluginIds: ReadonlySet<string> | null = null;
   let compatPluginIdsResolved = false;
   let registryDiagnosticsPushed = false;
@@ -1400,7 +1400,7 @@ function validateConfigObjectWithPluginsBase(
     return compatPluginIds;
   };
 
-  const ensureCompatConfig = (): OpenClawConfig => {
+  const ensureCompatConfig = (): NovaConfig => {
     if (compatConfig !== undefined) {
       return compatConfig ?? config;
     }
@@ -1633,13 +1633,13 @@ function validateConfigObjectWithPluginsBase(
     if (installCatalogEntry) {
       const issue = {
         path: pathEntry,
-        message: `web_search provider is not available: ${trimmed} (install or enable plugin "${installCatalogEntry.pluginId}", then run openclaw doctor --fix)`,
+        message: `web_search provider is not available: ${trimmed} (install or enable plugin "${installCatalogEntry.pluginId}", then run nova doctor --fix)`,
         allowedValues: collectKnownWebSearchProviderIds(),
       };
       if (hasPluginEvidenceForWebSearchProvider(trimmed, installCatalogEntry.pluginId)) {
         warnings.push({
           ...issue,
-          message: `web_search provider is not available: ${trimmed} (configured plugin "${installCatalogEntry.pluginId}" is unavailable; Gateway will ignore this optional provider until the plugin is installed/enabled or openclaw doctor --fix repairs the config)`,
+          message: `web_search provider is not available: ${trimmed} (configured plugin "${installCatalogEntry.pluginId}" is unavailable; Gateway will ignore this optional provider until the plugin is installed/enabled or nova doctor --fix repairs the config)`,
         });
         return;
       }
@@ -1658,7 +1658,7 @@ function validateConfigObjectWithPluginsBase(
     if (hasStalePluginEvidenceForUnknownWebSearchProvider(trimmed)) {
       warnings.push({
         ...issue,
-        message: `${issue.message} (stale web search plugin config ignored; run openclaw doctor --fix to remove stale config, or install the plugin)`,
+        message: `${issue.message} (stale web search plugin config ignored; run nova doctor --fix to remove stale config, or install the plugin)`,
       });
       return;
     }
@@ -1789,7 +1789,7 @@ function validateConfigObjectWithPluginsBase(
         if (hasStalePluginEvidenceForUnknownChannel(trimmed)) {
           warnings.push({
             ...issue,
-            message: `${issue.message} (stale channel plugin config ignored; run openclaw doctor --fix to remove stale config, or install the plugin)`,
+            message: `${issue.message} (stale channel plugin config ignored; run nova doctor --fix to remove stale config, or install the plugin)`,
           });
         } else {
           issues.push(issue);

@@ -1,6 +1,6 @@
 // Transport message transform tests cover replay cleanup for provider-specific
 // tool-call/result sequencing before messages are sent back to transports.
-import type { Api, Context, Model } from "openclaw/plugin-sdk/llm";
+import type { Api, Context, Model } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import { transformTransportMessages } from "./transport-message-transform.js";
 
@@ -148,7 +148,7 @@ describe("transformTransportMessages synthetic tool-result policy", () => {
       sourceModel: "claude-fable-5",
       sourceResponseModel: undefined,
       targetProvider: "anthropic",
-      targetApi: "openclaw-anthropic-messages-transport" as const,
+      targetApi: "nova-anthropic-messages-transport" as const,
       targetModel: "claude-fable-5",
       targetCanonicalModelId: undefined,
     },
@@ -355,7 +355,7 @@ describe("transformTransportMessages synthetic tool-result policy", () => {
 
     const result = transformTransportMessages(
       messages,
-      makeModel("openclaw-openai-responses-transport" as Api, "openai", "gpt-5.4"),
+      makeModel("nova-openai-responses-transport" as Api, "openai", "gpt-5.4"),
     );
 
     expect(result.map((msg) => msg.role)).toEqual([
@@ -601,13 +601,13 @@ describe("transformTransportMessages synthetic tool-result policy", () => {
 
     const anthropicAlias = transformTransportMessages(
       messages,
-      makeModel("openclaw-anthropic-messages-transport" as Api, "anthropic", "claude-opus-4-6"),
+      makeModel("nova-anthropic-messages-transport" as Api, "anthropic", "claude-opus-4-6"),
     );
     expect(anthropicAlias.map((msg) => msg.role)).toEqual(["assistant", "toolResult", "user"]);
 
     const googleAlias = transformTransportMessages(
       messages,
-      makeModel("openclaw-google-generative-ai-transport" as Api, "google", "gemini-2.5-pro"),
+      makeModel("nova-google-generative-ai-transport" as Api, "google", "gemini-2.5-pro"),
     );
     expect(googleAlias.map((msg) => msg.role)).toEqual(["assistant", "toolResult", "user"]);
     const googleToolResult = requireToolResultMessage(googleAlias[1]);

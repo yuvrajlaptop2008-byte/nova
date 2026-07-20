@@ -14,7 +14,7 @@ import type {
   SessionAcpMeta,
   SessionEntry,
 } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { AcpRuntimeError } from "../runtime/errors.js";
 import { getAcpRuntimeBackend, requireAcpRuntimeBackend } from "../runtime/registry.js";
 import {
@@ -43,7 +43,7 @@ export type AcpSessionResolution =
 
 /** Input required to create or resume an ACP runtime session. */
 export type AcpInitializeSessionInput = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   agent: string;
   mode: AcpRuntimeSessionMode;
@@ -61,7 +61,7 @@ export type AcpTurnAttachment = {
 
 /** Input for one ACP prompt turn routed through the manager. */
 export type AcpRunTurnInput = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   provenance: "human" | "agent" | "system";
   text: string;
@@ -80,7 +80,7 @@ type AcpTurnLifecycleEvent = {
 
 /** Input for closing, resetting, or cleaning up an ACP session. */
 export type AcpCloseSessionInput = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   reason: string;
   discardPersistentState?: boolean;
@@ -158,7 +158,7 @@ export type AcpSessionManagerDeps = {
 };
 
 export type WriteManagerSessionMeta = (params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   mutate: (
     current: SessionAcpMeta | undefined,
@@ -170,18 +170,18 @@ export type WriteManagerSessionMeta = (params: {
 }) => Promise<SessionEntry | null>;
 
 export type ResolveManagerSession = (params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
 }) => AcpSessionResolution;
 
 export type EnsureManagerRuntimeHandle = (params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   meta: SessionAcpMeta;
 }) => Promise<{ runtime: AcpRuntime; handle: AcpRuntimeHandle; meta: SessionAcpMeta }>;
 
 export type ReconcileManagerRuntimeSessionIdentifiers = (params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   runtime: AcpRuntime;
   handle: AcpRuntimeHandle;
@@ -195,7 +195,7 @@ export type ReconcileManagerRuntimeSessionIdentifiers = (params: {
 }>;
 
 export type SetManagerSessionState = (params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   state: SessionAcpMeta["state"];
   lastError?: string;

@@ -3,14 +3,14 @@
 // cannot drift apart unnoticed.
 import http from "node:http";
 import { expectDefined } from "@nova/normalization-core";
-import { sendDurableMessageBatch } from "openclaw/plugin-sdk/channel-outbound";
+import { sendDurableMessageBatch } from "nova/plugin-sdk/channel-outbound";
 import {
   createTestRegistry,
   releasePinnedPluginChannelRegistry,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/channel-test-helpers";
+} from "nova/plugin-sdk/channel-test-helpers";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { NovaConfig } from "../runtime-api.js";
 import { tlonPlugin } from "./channel.js";
 
 const uploadImageFromUrl = vi.hoisted(() => vi.fn(async () => "https://media.example/image.png"));
@@ -100,7 +100,7 @@ describe("tlon outbound assistant-visible sanitization", () => {
           network: { dangerouslyAllowPrivateNetwork: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await sendDurableMessageBatch({
       cfg,

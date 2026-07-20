@@ -52,7 +52,7 @@ async function createTempDir(prefix: string): Promise<string> {
 }
 
 function resolveBundlePluginRoot(homeDir: string, pluginId: string) {
-  return path.join(homeDir, ".openclaw", "extensions", pluginId);
+  return path.join(homeDir, ".nova", "extensions", pluginId);
 }
 
 async function writeClaudeBundleCommandFixture(params: {
@@ -101,8 +101,8 @@ function expectEnabledClaudeBundleCommands(
 
 describe("loadEnabledClaudeBundleCommands", () => {
   it("loads enabled Claude bundle markdown commands and honors invocation policy", async () => {
-    const homeDir = await createTempDir("openclaw-bundle-commands-home-");
-    const workspaceDir = await createTempDir("openclaw-bundle-commands-workspace-");
+    const homeDir = await createTempDir("nova-bundle-commands-home-");
+    const workspaceDir = await createTempDir("nova-bundle-commands-workspace-");
     await withEnvAsync(
       {
         HOME: homeDir,
@@ -232,8 +232,8 @@ describe("loadEnabledClaudeBundleCommands", () => {
   });
 
   it("warns and skips oversized bundle commands without dropping siblings", async () => {
-    const homeDir = await createTempDir("openclaw-bundle-commands-oversized-");
-    const workspaceDir = await createTempDir("openclaw-bundle-commands-oversized-ws-");
+    const homeDir = await createTempDir("nova-bundle-commands-oversized-");
+    const workspaceDir = await createTempDir("nova-bundle-commands-oversized-ws-");
 
     await writeClaudeBundleCommandFixture({
       homeDir,

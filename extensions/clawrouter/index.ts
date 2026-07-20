@@ -4,10 +4,10 @@ import {
   type ProviderAuthMethod,
   type ProviderResolveDynamicModelContext,
   type ProviderRuntimeModel,
-} from "openclaw/plugin-sdk/plugin-entry";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
-import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";
-import { buildProviderToolCompatFamilyHooks } from "openclaw/plugin-sdk/provider-tools";
+} from "nova/plugin-sdk/plugin-entry";
+import { createProviderApiKeyAuthMethod } from "nova/plugin-sdk/provider-auth-api-key";
+import { buildProviderReplayFamilyHooks } from "nova/plugin-sdk/provider-model-shared";
+import { buildProviderToolCompatFamilyHooks } from "nova/plugin-sdk/provider-tools";
 import {
   buildClawRouterProviderConfig,
   normalizeClawRouterApiBaseUrl,
@@ -137,7 +137,7 @@ export default definePluginEntry({
           if (!discoveryApiKey) {
             try {
               const { resolveApiKeyForProvider } =
-                await import("openclaw/plugin-sdk/provider-auth-runtime");
+                await import("nova/plugin-sdk/provider-auth-runtime");
               discoveryApiKey = (
                 await resolveApiKeyForProvider({
                   provider: PROVIDER_ID,
@@ -186,8 +186,7 @@ export default definePluginEntry({
       },
       prepareDynamicModel: async (ctx) => {
         const scope = dynamicModelScope(ctx);
-        const { resolveApiKeyForProvider } =
-          await import("openclaw/plugin-sdk/provider-auth-runtime");
+        const { resolveApiKeyForProvider } = await import("nova/plugin-sdk/provider-auth-runtime");
         const apiKey = (
           await resolveApiKeyForProvider({
             provider: PROVIDER_ID,

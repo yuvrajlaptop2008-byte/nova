@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
+import { openNovaStateDatabase } from "../../state/nova-state-db.js";
 import {
   failPendingDelivery,
   loadPendingDelivery,
@@ -30,7 +30,7 @@ describe("delivery-queue storage", () => {
     enqueueDelivery(params, rootDir);
 
   function readStatus(id: string): string | undefined {
-    const { db } = openOpenClawStateDatabase({
+    const { db } = openNovaStateDatabase({
       env: { ...process.env, NOVA_STATE_DIR: tmpDir() },
     });
     const row = db

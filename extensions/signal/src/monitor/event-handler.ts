@@ -1,6 +1,6 @@
 // Signal plugin module implements event handler behavior.
 import { setTimeout as sleep } from "node:timers/promises";
-import { resolveHumanDelayConfig } from "openclaw/plugin-sdk/agent-runtime";
+import { resolveHumanDelayConfig } from "nova/plugin-sdk/agent-runtime";
 import {
   createStatusReactionController,
   DEFAULT_EMOJIS,
@@ -11,7 +11,7 @@ import {
   shouldAckReaction,
   type StatusReactionController,
   type StatusReactionEmojis,
-} from "openclaw/plugin-sdk/channel-feedback";
+} from "nova/plugin-sdk/channel-feedback";
 import {
   buildMentionRegexes,
   buildChannelInboundEventContext,
@@ -27,38 +27,33 @@ import {
   runChannelInboundEvent,
   shouldDebounceTextInbound,
   type ChannelInboundTurnPlan,
-} from "openclaw/plugin-sdk/channel-inbound";
+} from "nova/plugin-sdk/channel-inbound";
 import {
   bindIngressLifecycleToReplyOptions,
   createChannelMessageReplyPipeline,
-} from "openclaw/plugin-sdk/channel-outbound";
+} from "nova/plugin-sdk/channel-outbound";
 import {
   resolveChannelGroupPolicy,
   resolveChannelGroupRequireMention,
-} from "openclaw/plugin-sdk/channel-policy";
-import { isControlCommandMessage } from "openclaw/plugin-sdk/command-detection";
-import { collectErrorGraphCandidates, formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+} from "nova/plugin-sdk/channel-policy";
+import { isControlCommandMessage } from "nova/plugin-sdk/command-detection";
+import { collectErrorGraphCandidates, formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   createInternalHookEvent,
   fireAndForgetHook,
   toInternalMessageReceivedContext,
   triggerInternalHook,
-} from "openclaw/plugin-sdk/hook-runtime";
-import { kindFromMime } from "openclaw/plugin-sdk/media-runtime";
-import { createChannelHistoryWindow } from "openclaw/plugin-sdk/reply-history";
-import { resolveBatchedReplyThreadingPolicy } from "openclaw/plugin-sdk/reply-reference";
-import { resolveAgentRoute, resolveInboundLastRouteSessionKey } from "openclaw/plugin-sdk/routing";
-import {
-  danger,
-  logVerbose,
-  shouldLogVerbose,
-  sleep as delay,
-} from "openclaw/plugin-sdk/runtime-env";
-import { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/security-runtime";
-import { readSessionUpdatedAt, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
-import { normalizeE164, truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/hook-runtime";
+import { kindFromMime } from "nova/plugin-sdk/media-runtime";
+import { createChannelHistoryWindow } from "nova/plugin-sdk/reply-history";
+import { resolveBatchedReplyThreadingPolicy } from "nova/plugin-sdk/reply-reference";
+import { resolveAgentRoute, resolveInboundLastRouteSessionKey } from "nova/plugin-sdk/routing";
+import { danger, logVerbose, shouldLogVerbose, sleep as delay } from "nova/plugin-sdk/runtime-env";
+import { resolvePinnedMainDmOwnerFromAllowlist } from "nova/plugin-sdk/security-runtime";
+import { readSessionUpdatedAt, resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import { enqueueSystemEvent } from "nova/plugin-sdk/system-event-runtime";
+import { normalizeE164, truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { resolveSignalReplyToMode } from "../accounts.js";
 import {
   maybeResolveSignalApprovalReaction,

@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
-import type { LookupFn } from "openclaw/plugin-sdk/ssrf-runtime";
+import type { LookupFn } from "nova/plugin-sdk/ssrf-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { claimClickClackSetupCode } from "./setup-claim.js";
 
@@ -35,7 +35,7 @@ describe("ClickClack setup-code claim", () => {
         token: "test-token",
         bot: {
           id: "usr_bot",
-          handle: "openclaw",
+          handle: "nova",
           display_name: "Nova",
         },
         workspace: {
@@ -62,7 +62,7 @@ describe("ClickClack setup-code claim", () => {
       token: "test-token",
       bot: {
         id: "usr_bot",
-        handle: "openclaw",
+        handle: "nova",
         display_name: "Nova",
       },
       workspace: {
@@ -96,7 +96,7 @@ describe("ClickClack setup-code claim", () => {
       response.end(
         JSON.stringify({
           token: "test-token",
-          bot: { id: "usr_bot", handle: "openclaw", display_name: "Nova" },
+          bot: { id: "usr_bot", handle: "nova", display_name: "Nova" },
           workspace: {
             id: "wsp_1",
             route_id: "clickclack",
@@ -178,7 +178,7 @@ describe("ClickClack setup-code claim", () => {
     const fetchMock = vi.fn(async () =>
       Response.json({
         token: "test-token",
-        bot: { id: "usr_bot", handle: "openclaw", display_name: "Nova" },
+        bot: { id: "usr_bot", handle: "nova", display_name: "Nova" },
         workspace: { id: "wsp_1", route_id: "clickclack", slug: "default" },
         defaults: {},
       }),

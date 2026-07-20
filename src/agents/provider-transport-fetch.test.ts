@@ -1,7 +1,7 @@
 // Verifies guarded provider fetch wiring, stream cleanup, proxy, and local service behavior.
 import { MAX_TIMER_TIMEOUT_MS } from "@nova/normalization-core/number-coercion";
+import type { Model } from "nova/plugin-sdk/llm";
 import { Stream } from "openai/streaming";
-import type { Model } from "openclaw/plugin-sdk/llm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mintSecretSentinel } from "../secrets/sentinel.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
@@ -356,7 +356,7 @@ describe("buildGuardedModelFetch", () => {
     const model = {
       id: "gpt-5.5",
       provider: "openai",
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
       baseUrl: "https://chatgpt.com/backend-api/codex",
     } as unknown as Model<"openai-responses">;
 
@@ -386,7 +386,7 @@ describe("buildGuardedModelFetch", () => {
     const model = {
       id: "gpt-5.5",
       provider: "openai",
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
       baseUrl: "https://chatgpt.com/backend-api/codex",
     } as unknown as Model<"openai-responses">;
 
@@ -426,7 +426,7 @@ describe("buildGuardedModelFetch", () => {
     const model = {
       id: "gpt-5.5",
       provider: "openai",
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
       baseUrl: "https://chatgpt.com/backend-api/codex",
     } as unknown as Model<"openai-responses">;
 
@@ -455,7 +455,7 @@ describe("buildGuardedModelFetch", () => {
     const model = {
       id: "gpt-5.5",
       provider: "openai",
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
       baseUrl: "https://chatgpt.com/backend-api/codex",
     } as unknown as Model<"openai-responses">;
 

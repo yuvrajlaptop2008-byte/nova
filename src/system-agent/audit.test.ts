@@ -18,7 +18,7 @@ describe("Nova audit log", () => {
   });
 
   it("writes records into shared SQLite state", async () => {
-    await withTempDir({ prefix: "openclaw-audit-" }, async (tempDir) => {
+    await withTempDir({ prefix: "nova-audit-" }, async (tempDir) => {
       vi.stubEnv("NOVA_STATE_DIR", tempDir);
 
       const auditStore = await appendSystemAgentAuditEntry({

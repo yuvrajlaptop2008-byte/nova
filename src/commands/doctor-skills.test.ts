@@ -1,7 +1,7 @@
 // Doctor skills tests cover skill install checks, status summaries, and repair guidance.
 import { describe, expect, it, vi } from "vitest";
 import { createEmptyInstallChecks } from "../cli/requirements-test-fixtures.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { SkillStatusEntry, SkillStatusReport } from "../skills/discovery/status.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
 import {
@@ -141,8 +141,8 @@ describe("doctor skills", () => {
     expect(typeof body === "string" ? body.split("\n") : []).toEqual([
       "2 allowed skills are not usable in this environment (missing binaries, env vars, or config).",
       "- calendar, places",
-      "Disable unused skills: openclaw doctor --fix",
-      "Inspect details: openclaw skills check --agent <id> or openclaw skills info <name> --agent <id>",
+      "Disable unused skills: nova doctor --fix",
+      "Inspect details: nova skills check --agent <id> or nova skills info <name> --agent <id>",
     ]);
   });
 
@@ -190,7 +190,7 @@ describe("doctor skills", () => {
   });
 
   it("disables unavailable skills through skills.entries without dropping existing config", () => {
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       skills: {
         entries: {
           gog: { env: { EXISTING: "1" } },

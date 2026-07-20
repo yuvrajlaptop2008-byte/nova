@@ -476,7 +476,7 @@ async function runCliAgentWithLifecycleInternal(
     try {
       await params.onFastModeAutoProgress?.({
         text: summary,
-        channelData: { openclawProgressKind: FAST_MODE_AUTO_PROGRESS_KIND },
+        channelData: { novaProgressKind: FAST_MODE_AUTO_PROGRESS_KIND },
       });
     } catch {
       // Progress hints are best-effort; a channel failure must not fail the agent turn.

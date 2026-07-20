@@ -1,14 +1,14 @@
 // Gateway probe auth helpers used by status scans.
 // This module resolves probe credentials without exposing secret values to report builders.
 
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   resolveGatewayProbeAuthSafeWithSecretInputs,
   resolveGatewayProbeTarget,
 } from "../gateway/probe-auth.js";
 
 /** Resolves gateway probe auth plus any non-secret warning about credential lookup. */
-export async function resolveGatewayProbeAuthResolution(cfg: OpenClawConfig): Promise<{
+export async function resolveGatewayProbeAuthResolution(cfg: NovaConfig): Promise<{
   auth: {
     token?: string;
     password?: string;

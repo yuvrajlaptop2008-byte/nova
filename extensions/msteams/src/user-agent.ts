@@ -14,7 +14,7 @@ function resolveTeamsSdkVersion(): string {
   }
 }
 
-function resolveOpenClawVersion(): string {
+function resolveNovaVersion(): string {
   try {
     return getMSTeamsRuntime().version;
   } catch {
@@ -26,7 +26,7 @@ function resolveOpenClawVersion(): string {
  * Build a combined User-Agent string that preserves the Teams SDK identity
  * and appends the Nova version.
  *
- * Format: "teams.ts[apps]/<sdk-version> Nova/<openclaw-version>"
+ * Format: "teams.ts[apps]/<sdk-version> Nova/<nova-version>"
  * Example: "teams.ts[apps]/2.0.5 Nova/2026.3.22"
  *
  * This lets the Teams backend track SDK usage while also identifying the
@@ -36,7 +36,7 @@ export function buildUserAgent(): string {
   if (cachedUserAgent) {
     return cachedUserAgent;
   }
-  cachedUserAgent = `teams.ts[apps]/${resolveTeamsSdkVersion()} Nova/${resolveOpenClawVersion()}`;
+  cachedUserAgent = `teams.ts[apps]/${resolveTeamsSdkVersion()} Nova/${resolveNovaVersion()}`;
   return cachedUserAgent;
 }
 
@@ -46,10 +46,10 @@ export function buildUserAgent(): string {
  * only contribute the Nova piece — passing the full `buildUserAgent()`
  * would double-print the SDK token.
  *
- * Format: "Nova/<openclaw-version>"
+ * Format: "Nova/<nova-version>"
  */
-export function buildOpenClawUserAgentFragment(): string {
-  return `Nova/${resolveOpenClawVersion()}`;
+export function buildNovaUserAgentFragment(): string {
+  return `Nova/${resolveNovaVersion()}`;
 }
 
 export function ensureUserAgentHeader(headers?: HeadersInit): Headers {

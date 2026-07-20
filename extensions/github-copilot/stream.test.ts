@@ -1,6 +1,6 @@
 // Github Copilot tests cover stream plugin behavior.
-import type { Context } from "openclaw/plugin-sdk/llm";
-import { buildCopilotIdeHeaders, COPILOT_INTEGRATION_ID } from "openclaw/plugin-sdk/provider-auth";
+import type { Context } from "nova/plugin-sdk/llm";
+import { buildCopilotIdeHeaders, COPILOT_INTEGRATION_ID } from "nova/plugin-sdk/provider-auth";
 import { describe, expect, it, vi } from "vitest";
 import { wrapCopilotAnthropicStream, wrapCopilotProviderStream } from "./stream.js";
 

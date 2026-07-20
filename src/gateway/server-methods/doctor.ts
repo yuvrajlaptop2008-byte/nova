@@ -5,7 +5,7 @@ import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { asOptionalRecord } from "@nova/normalization-core/record-coerce";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   resolveMemoryDeepDreamingConfig,
   resolveMemoryLightDreamingConfig,
@@ -32,7 +32,7 @@ import type { GatewayRequestContext, GatewayRequestHandlers } from "./types.js";
 
 const MANAGED_DEEP_SLEEP_CRON_NAME = "Memory Dreaming Promotion";
 const MANAGED_DEEP_SLEEP_CRON_TAG = "[managed-by=memory-core.short-term-promotion]";
-const DEEP_SLEEP_SYSTEM_EVENT_TEXT = "__openclaw_memory_core_short_term_promotion_dream__";
+const DEEP_SLEEP_SYSTEM_EVENT_TEXT = "__nova_memory_core_short_term_promotion_dream__";
 const DREAM_DIARY_FILE_NAMES = ["DREAMS.md", "dreams.md"] as const;
 const REM_HARNESS_DEFAULT_CANDIDATE_LIMIT = 25;
 const REM_HARNESS_MAX_CANDIDATE_LIMIT = 100;
@@ -288,7 +288,7 @@ async function listWorkspaceDailyFiles(memoryDir: string): Promise<string[]> {
 }
 
 function resolveDreamingConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
 ): Omit<
   DoctorMemoryDreamingPayload,
   | "shortTermCount"
@@ -711,7 +711,7 @@ function resolveDoctorMemoryTarget(
   context: GatewayRequestContext,
   params: unknown,
 ): {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   workspaceDir: string;
 } {
@@ -730,7 +730,7 @@ function resolveDoctorMemoryTarget(
 const SKIPPED_MEMORY_EMBEDDING_PROBE = {
   ok: false,
   checked: false,
-  error: "memory embedding readiness not checked; run `openclaw memory status --deep` to probe",
+  error: "memory embedding readiness not checked; run `nova memory status --deep` to probe",
 } as const;
 
 export const doctorHandlers: GatewayRequestHandlers = {

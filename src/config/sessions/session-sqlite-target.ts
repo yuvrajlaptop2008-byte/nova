@@ -15,7 +15,7 @@ function resolveCustomStoreSqlitePath(params: {
   const resolved = path.resolve(params.storePath);
   const sessionsDir = path.dirname(resolved);
   const sqliteBaseName =
-    params.sqliteBaseName ?? (path.basename(resolved, path.extname(resolved)) || "openclaw-agent");
+    params.sqliteBaseName ?? (path.basename(resolved, path.extname(resolved)) || "nova-agent");
   const agentId = params.agentId ? normalizeAgentId(params.agentId) : undefined;
   const sqliteName =
     agentId && agentId !== DEFAULT_AGENT_ID && normalizeAgentId(sqliteBaseName) !== agentId
@@ -30,7 +30,7 @@ export function resolveSqliteTargetFromSessionStorePath(
   options: { agentId?: string } = {},
 ): ResolvedSqliteStoreTarget {
   const resolved = path.resolve(storePath);
-  if (path.basename(resolved) === "openclaw-agent.sqlite" || resolved.endsWith(".sqlite")) {
+  if (path.basename(resolved) === "nova-agent.sqlite" || resolved.endsWith(".sqlite")) {
     const agentId = resolveAgentIdFromSqliteDatabasePath(resolved);
     return {
       path: resolved,
@@ -50,7 +50,7 @@ export function resolveSqliteTargetFromSessionStorePath(
     return {
       path: resolveCustomStoreSqlitePath({
         ...(options.agentId ? { agentId: options.agentId } : {}),
-        sqliteBaseName: "openclaw-agent",
+        sqliteBaseName: "nova-agent",
         storePath: resolved,
       }),
     };
@@ -60,20 +60,20 @@ export function resolveSqliteTargetFromSessionStorePath(
     return {
       path: resolveCustomStoreSqlitePath({
         ...(options.agentId ? { agentId: options.agentId } : {}),
-        sqliteBaseName: "openclaw-agent",
+        sqliteBaseName: "nova-agent",
         storePath: resolved,
       }),
     };
   }
   return {
     agentId: normalizeAgentId(path.basename(agentDir)),
-    path: path.join(agentDir, "agent", "openclaw-agent.sqlite"),
+    path: path.join(agentDir, "agent", "nova-agent.sqlite"),
   };
 }
 
 /** Extracts the agent id from the canonical per-agent SQLite database path. */
 function resolveAgentIdFromSqliteDatabasePath(databasePath: string): string | undefined {
-  if (path.basename(databasePath) !== "openclaw-agent.sqlite") {
+  if (path.basename(databasePath) !== "nova-agent.sqlite") {
     return undefined;
   }
   const agentDbDir = path.dirname(databasePath);

@@ -322,7 +322,7 @@ function buildClaudeLiveArgs(params: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.claudeLiveSessionTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.claudeLiveSessionTestApi")] = {
     buildClaudeLiveArgs,
     resetClaudeLiveSessionsForTest,
   };

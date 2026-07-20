@@ -4,17 +4,13 @@ import {
   resolveAgentEffectiveModelPrimary,
   resolveDefaultAgentId,
 } from "../agents/agent-scope.js";
-import {
-  NOVA_DOCS_URL,
-  NOVA_SOURCE_URL,
-  resolveOpenClawReferencePaths,
-} from "../agents/docs-path.js";
+import { NOVA_DOCS_URL, NOVA_SOURCE_URL, resolveNovaReferencePaths } from "../agents/docs-path.js";
 import {
   readConfigFileSnapshot,
   resolveConfigPath,
   resolveGatewayPort,
   type ConfigFileSnapshot,
-  type OpenClawConfig,
+  type NovaConfig,
 } from "../config/config.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
 import { normalizeAgentId } from "../routing/session-key.js";
@@ -62,7 +58,7 @@ export type SystemAgentOverview = {
   };
 };
 
-type OpenClawReferencePaths = Awaited<ReturnType<typeof resolveOpenClawReferencePaths>>;
+type NovaReferencePaths = Awaited<ReturnType<typeof resolveNovaReferencePaths>>;
 
 type GatewayConnectionDetails = {
   url: string;
@@ -75,12 +71,12 @@ type SystemAgentOverviewDependencies = {
   resolveConfigPath?: typeof resolveConfigPath;
   resolveGatewayPort?: typeof resolveGatewayPort;
   buildGatewayConnectionDetails?: (input: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     configPath: string;
   }) => GatewayConnectionDetails;
   probeLocalCommand?: typeof probeLocalCommand;
   probeGatewayUrl?: typeof probeGatewayUrl;
-  resolveOpenClawReferencePaths?: typeof resolveOpenClawReferencePaths;
+  resolveNovaReferencePaths?: typeof resolveNovaReferencePaths;
 };
 
 function issueMessages(snapshot: ConfigFileSnapshot): string[] {
@@ -90,7 +86,7 @@ function issueMessages(snapshot: ConfigFileSnapshot): string[] {
   });
 }
 
-function buildAgentSummaries(cfg: OpenClawConfig): SystemAgentSummary[] {
+function buildAgentSummaries(cfg: NovaConfig): SystemAgentSummary[] {
   const defaultAgentId = resolveDefaultAgentId(cfg);
   const entries = listAgentEntries(cfg);
   if (entries.length === 0) {
@@ -130,7 +126,7 @@ function buildAgentSummaries(cfg: OpenClawConfig): SystemAgentSummary[] {
   return summaries;
 }
 
-function resolveFastTestReferences(env: NodeJS.ProcessEnv): OpenClawReferencePaths | undefined {
+function resolveFastTestReferences(env: NodeJS.ProcessEnv): NovaReferencePaths | undefined {
   if (env.NOVA_TEST_FAST !== "1") {
     return undefined;
   }
@@ -168,7 +164,7 @@ export async function loadSystemAgentOverview(
   } catch (err) {
     gatewayError = err instanceof Error ? err.message : String(err);
   }
-  const resolveReferences = deps.resolveOpenClawReferencePaths ?? resolveOpenClawReferencePaths;
+  const resolveReferences = deps.resolveNovaReferencePaths ?? resolveNovaReferencePaths;
   const commandProbe = deps.probeLocalCommand ?? probeLocalCommand;
   const [codex, claude, gemini, gateway, references] = await Promise.all([
     // Probes run in parallel; each individual probe is timeout-bounded in probes.ts.
@@ -266,7 +262,7 @@ export function formatSystemAgentOverview(overview: SystemAgentOverview): string
     `AI: ${
       overview.defaultModel
         ? `conversation runs on ${overview.defaultModel}`
-        : "inference unavailable; run openclaw onboard before starting Nova"
+        : "inference unavailable; run nova onboard before starting Nova"
     }`,
     `Docs: ${overview.references.docsPath ?? overview.references.docsUrl}`,
     overview.references.sourcePath
@@ -283,13 +279,13 @@ export function formatSystemAgentOverview(overview: SystemAgentOverview): string
 
 function recommendSystemAgentNextStep(overview: SystemAgentOverview): string {
   if (!overview.config.exists) {
-    return 'run "openclaw onboard" to establish inference';
+    return 'run "nova onboard" to establish inference';
   }
   if (!overview.config.valid) {
     return 'run "validate config" or "doctor" to inspect the config';
   }
   if (!overview.defaultModel) {
-    return 'run "openclaw onboard" to establish inference';
+    return 'run "nova onboard" to establish inference';
   }
   if (!overview.gateway.reachable) {
     return 'run "gateway status" or "restart gateway"';
@@ -308,7 +304,7 @@ function formatStartupUse(overview: SystemAgentOverview): string {
   if (overview.defaultModel) {
     return `Using: ${overview.defaultModel} — just tell me what you want.`;
   }
-  return "Inference unavailable: run `openclaw onboard` and complete a live model check first.";
+  return "Inference unavailable: run `nova onboard` and complete a live model check first.";
 }
 
 function formatStartupGatewayStatus(overview: SystemAgentOverview): string {
@@ -326,7 +322,7 @@ function formatStartupAction(overview: SystemAgentOverview): string {
     return "Nova needs working inference before it can help with the rest of setup.";
   }
   if (!overview.config.exists) {
-    return "Run `openclaw onboard` to establish inference before starting Nova.";
+    return "Run `nova onboard` to establish inference before starting Nova.";
   }
   if (!overview.gateway.reachable) {
     return "I can start debugging with `gateway status`, or queue `restart gateway` for approval.";

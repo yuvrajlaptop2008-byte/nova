@@ -1,15 +1,12 @@
 // Whatsapp plugin module implements status issues behavior.
-import type {
-  ChannelAccountSnapshot,
-  ChannelStatusIssue,
-} from "openclaw/plugin-sdk/channel-contract";
-import { formatCliCommand } from "openclaw/plugin-sdk/cli-runtime";
+import type { ChannelAccountSnapshot, ChannelStatusIssue } from "nova/plugin-sdk/channel-contract";
+import { formatCliCommand } from "nova/plugin-sdk/cli-runtime";
 import {
   asString,
   collectIssuesForEnabledAccounts,
   isRecord,
   readAccountStatusSnapshot,
-} from "openclaw/plugin-sdk/status-helpers";
+} from "nova/plugin-sdk/status-helpers";
 
 const WHATSAPP_ACCOUNT_STATUS_FIELDS = [
   "statusState",
@@ -80,7 +77,7 @@ export function collectWhatsAppStatusIssues(
           accountId,
           kind: "auth",
           message: "Not linked (no WhatsApp Web session).",
-          fix: `Run: ${formatCliCommand("openclaw channels login")} (scan QR on the gateway host).`,
+          fix: `Run: ${formatCliCommand("nova channels login")} (scan QR on the gateway host).`,
         });
         return;
       }
@@ -95,7 +92,7 @@ export function collectWhatsAppStatusIssues(
           accountId,
           kind: "runtime",
           message: `Linked but stale${staleSuffix}${lastError ? `: ${lastError}` : "."}`,
-          fix: `Run: ${formatCliCommand("openclaw doctor")} (or restart the gateway). If it persists, relink via channels login and check logs.`,
+          fix: `Run: ${formatCliCommand("nova doctor")} (or restart the gateway). If it persists, relink via channels login and check logs.`,
         });
         return;
       }
@@ -116,7 +113,7 @@ export function collectWhatsAppStatusIssues(
           accountId,
           kind: "runtime",
           message: `Linked but ${stateLabel}${reconnectAttempts != null ? ` (reconnectAttempts=${reconnectAttempts})` : ""}${lastError ? `: ${lastError}` : "."}`,
-          fix: `Run: ${formatCliCommand("openclaw doctor")} (or restart the gateway). If it persists, relink via channels login and check logs.`,
+          fix: `Run: ${formatCliCommand("nova doctor")} (or restart the gateway). If it persists, relink via channels login and check logs.`,
         });
         return;
       }
@@ -127,7 +124,7 @@ export function collectWhatsAppStatusIssues(
           accountId,
           kind: "auth",
           message: `Linked session logged out${lastError ? `: ${lastError}` : "."}`,
-          fix: `Run: ${formatCliCommand("openclaw channels login")} (scan QR on the gateway host).`,
+          fix: `Run: ${formatCliCommand("nova channels login")} (scan QR on the gateway host).`,
         });
         return;
       }
@@ -145,7 +142,7 @@ export function collectWhatsAppStatusIssues(
           accountId,
           kind: "runtime",
           message: `Linked but recently reconnected (reconnectAttempts=${reconnectAttempts})${lastError ? `: ${lastError}` : "."}`,
-          fix: `Watch: ${formatCliCommand("openclaw logs --follow")} and run ${formatCliCommand("openclaw channels status --probe")} if disconnects continue. If it keeps flapping, restart the gateway or relink via channels login.`,
+          fix: `Watch: ${formatCliCommand("nova logs --follow")} and run ${formatCliCommand("nova channels status --probe")} if disconnects continue. If it keeps flapping, restart the gateway or relink via channels login.`,
         });
         return;
       }
@@ -156,7 +153,7 @@ export function collectWhatsAppStatusIssues(
           accountId,
           kind: "runtime",
           message: `Linked but disconnected${reconnectAttempts != null ? ` (reconnectAttempts=${reconnectAttempts})` : ""}${lastError ? `: ${lastError}` : "."}`,
-          fix: `Run: ${formatCliCommand("openclaw doctor")} (or restart the gateway). If it persists, relink via channels login and check logs.`,
+          fix: `Run: ${formatCliCommand("nova doctor")} (or restart the gateway). If it persists, relink via channels login and check logs.`,
         });
       }
     },

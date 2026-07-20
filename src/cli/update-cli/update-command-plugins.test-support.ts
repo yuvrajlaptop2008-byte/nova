@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
 import type { PostCorePluginUpdateResult } from "./update-command-plugins.js";
 import "./update-command-plugins.js";
@@ -17,7 +17,7 @@ type UpdateCommandPluginsTestApi = {
   };
   collectMissingPluginInstallPayloads(params: {
     records: Record<string, PluginInstallRecord>;
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     skipDisabledPlugins?: boolean;
     syncOfficialPluginInstalls?: boolean;
     env?: NodeJS.ProcessEnv;
@@ -31,7 +31,7 @@ type UpdateCommandPluginsTestApi = {
 
 function getTestApi(): UpdateCommandPluginsTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.updateCommandPluginsTestApi")
+    Symbol.for("nova.updateCommandPluginsTestApi")
   ] as UpdateCommandPluginsTestApi;
 }
 

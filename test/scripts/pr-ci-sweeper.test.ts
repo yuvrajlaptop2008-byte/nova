@@ -180,7 +180,7 @@ function fakeGithub(options: {
   return { github, calls };
 }
 
-const context = { repo: { owner: "openclaw", repo: "openclaw" } };
+const context = { repo: { owner: "nova", repo: "nova" } };
 const core = { info: () => {}, setFailed: () => {} };
 
 describe("runPrCiSweeper", () => {
@@ -209,7 +209,7 @@ describe("runPrCiSweeper", () => {
       context: context as never,
       core: core as never,
       dryRun: true,
-      appSlug: "openclaw-barnacle",
+      appSlug: "nova-barnacle",
       now: NOW,
     });
     expect(results).toEqual([
@@ -230,7 +230,7 @@ describe("runPrCiSweeper", () => {
       github: github as never,
       context: context as never,
       core: core as never,
-      appSlug: "openclaw-barnacle",
+      appSlug: "nova-barnacle",
       now: NOW,
     });
     expect(results).toEqual([

@@ -20,7 +20,7 @@ import {
   resolveGatewayPort as resolveGatewayPortFromPaths,
   resolveStateDir as resolveStateDirFromPaths,
 } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createAbortError } from "../infra/abort-signal.js";
 import { loadDeviceAuthToken } from "../infra/device-auth-store.js";
 import { loadOrCreateDeviceIdentity, type DeviceIdentity } from "../infra/device-identity.js";
@@ -72,7 +72,7 @@ type CallGatewayBaseOptions = {
   token?: string;
   password?: string;
   tlsFingerprint?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   method: string;
   params?: unknown;
   expectFinal?: boolean;
@@ -329,8 +329,8 @@ export function isGatewayExplicitAuthRequiredError(
 }
 
 const defaultCreateGatewayClient = (opts: GatewayClientOptions) => new GatewayClient(opts);
-type GatewayRuntimeConfigLoader = () => OpenClawConfig | Promise<OpenClawConfig>;
-const defaultGetRuntimeConfig = async (): Promise<OpenClawConfig> =>
+type GatewayRuntimeConfigLoader = () => NovaConfig | Promise<NovaConfig>;
+const defaultGetRuntimeConfig = async (): Promise<NovaConfig> =>
   (await import("../config/io.js")).getRuntimeConfig();
 const defaultGatewayCallDeps: {
   createGatewayClient: typeof defaultCreateGatewayClient;
@@ -376,7 +376,7 @@ function resolveGatewayClientDisplayName(opts: CallGatewayBaseOptions): string |
   return method ? `gateway:${method}` : "gateway:request";
 }
 
-async function loadGatewayConfig(): Promise<OpenClawConfig> {
+async function loadGatewayConfig(): Promise<NovaConfig> {
   const loadConfigFn =
     typeof gatewayCallDeps.getRuntimeConfig === "function"
       ? gatewayCallDeps.getRuntimeConfig
@@ -386,16 +386,16 @@ async function loadGatewayConfig(): Promise<OpenClawConfig> {
   return await loadConfigFn();
 }
 
-function loadGatewayConfigForConnectionDetails(): OpenClawConfig {
+function loadGatewayConfigForConnectionDetails(): NovaConfig {
   if (
     gatewayCallDeps.getRuntimeConfig !== defaultGetRuntimeConfig &&
     typeof gatewayCallDeps.getRuntimeConfig === "function"
   ) {
     const config = gatewayCallDeps.getRuntimeConfig();
-    if (config && typeof (config as Promise<OpenClawConfig>).then === "function") {
+    if (config && typeof (config as Promise<NovaConfig>).then === "function") {
       throw new Error("async gateway config loader is not supported for connection details");
     }
-    return config as OpenClawConfig;
+    return config as NovaConfig;
   }
   return readGatewayDispatchConfig();
 }
@@ -416,7 +416,7 @@ function resolveGatewayConfigPath(env: NodeJS.ProcessEnv): string {
   return resolveConfigPathFn(env, resolveGatewayStateDir(env));
 }
 
-function resolveGatewayPortValue(config?: OpenClawConfig, env?: NodeJS.ProcessEnv): number {
+function resolveGatewayPortValue(config?: NovaConfig, env?: NodeJS.ProcessEnv): number {
   const resolveGatewayPortFn =
     typeof gatewayCallDeps.resolveGatewayPort === "function"
       ? gatewayCallDeps.resolveGatewayPort
@@ -426,7 +426,7 @@ function resolveGatewayPortValue(config?: OpenClawConfig, env?: NodeJS.ProcessEn
 
 export function buildGatewayConnectionDetails(
   options: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     url?: string;
     configPath?: string;
     urlSource?: "cli" | "env";
@@ -543,7 +543,7 @@ function hasStoredOperatorDeviceAuthToken(deviceIdentity: DeviceIdentity | null)
   return Boolean(loadStoredOperatorDeviceAuthToken(deviceIdentity)?.token);
 }
 
-function resolveGatewayCallAuth(config: OpenClawConfig) {
+function resolveGatewayCallAuth(config: NovaConfig) {
   return resolveGatewayAuth({
     authConfig: config.gateway?.auth,
     env: process.env,
@@ -643,7 +643,7 @@ type GatewayRemoteSettings = {
 };
 
 type ResolvedGatewayCallContext = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   configPath: string;
   isRemoteMode: boolean;
   remote?: GatewayRemoteSettings;
@@ -700,7 +700,7 @@ async function resolveGatewayCallContext(
     explicitAuth,
   });
   const config =
-    opts.config ?? (canSkipConfigLoad ? ({} as OpenClawConfig) : await loadGatewayConfig());
+    opts.config ?? (canSkipConfigLoad ? ({} as NovaConfig) : await loadGatewayConfig());
   const configPath = opts.configPath ?? resolveGatewayConfigPath(process.env);
   const isRemoteMode = config.gateway?.mode === "remote";
   const remote = isRemoteMode
@@ -817,7 +817,7 @@ function formatGatewayCloseError(
       "\n- Gateway not yet ready to accept connections (retry after a moment)" +
       "\n- TLS mismatch (connecting with ws:// to a wss:// gateway, or vice versa)" +
       "\n- Gateway process stopped or became unreachable (confirm it is still running)" +
-      "\nRun `openclaw doctor` for diagnostics.";
+      "\nRun `nova doctor` for diagnostics.";
   }
   return message;
 }

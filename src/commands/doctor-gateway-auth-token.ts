@@ -1,5 +1,5 @@
 /** Resolves gateway service auth tokens without leaking exec-backed secrets during install. */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveSecretInputRef } from "../config/types.secrets.js";
 import { resolveGatewayAuthToken } from "../gateway/auth-token-resolution.js";
 import { trimToUndefined } from "../gateway/credentials.js";
@@ -11,7 +11,7 @@ import { trimToUndefined } from "../gateway/credentials.js";
  * arbitrary commands; NOVA_GATEWAY_TOKEN remains an explicit env override.
  */
 export async function resolveGatewayAuthTokenForService(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv,
   options: { allowExecSecretRefs?: boolean } = {},
 ): Promise<{ token?: string; unavailableReason?: string }> {

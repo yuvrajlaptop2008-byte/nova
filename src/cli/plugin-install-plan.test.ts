@@ -1,5 +1,5 @@
 // Plugin install plan tests cover install planning for local, registry, and bundled plugins.
-import { installedPluginRoot } from "openclaw/plugin-sdk/test-fixtures";
+import { installedPluginRoot } from "nova/plugin-sdk/test-fixtures";
 import { describe, expect, it, vi } from "vitest";
 import { PLUGIN_INSTALL_ERROR_CODE } from "../plugins/install.js";
 import {
@@ -72,30 +72,30 @@ describe("plugin install plan helpers", () => {
   });
 
   it("resolves exact official external plugin ids before npm fallback", () => {
-    const result = resolveCatalogOfficialExternalInstallPlan("wecom-openclaw-plugin");
+    const result = resolveCatalogOfficialExternalInstallPlan("wecom-nova-plugin");
 
     expect(result).toEqual({
-      pluginId: "wecom-openclaw-plugin",
-      npmSpec: "@wecom/wecom-openclaw-plugin@2026.5.7",
+      pluginId: "wecom-nova-plugin",
+      npmSpec: "@wecom/wecom-nova-plugin@2026.5.7",
       expectedIntegrity:
         "sha512-TCkP9as00WfEhgFWG8YL/rcmaWGIshAki2HQh83nTRccGfVBCoGjrEboTTqq3yDmK9koWTV11zi8u8A4dNtvug==",
     });
   });
 
   it("skips official external plan for explicit npm selectors", () => {
-    expect(resolveCatalogOfficialExternalInstallPlan("wecom-openclaw-plugin@beta")).toBeNull();
+    expect(resolveCatalogOfficialExternalInstallPlan("wecom-nova-plugin@beta")).toBeNull();
     expect(
-      resolveCatalogOfficialExternalInstallPlan("@wecom/wecom-openclaw-plugin@2026.5.7"),
+      resolveCatalogOfficialExternalInstallPlan("@wecom/wecom-nova-plugin@2026.5.7"),
     ).toBeNull();
   });
 
   it("trusts exact official external npm packages without remapping the spec", () => {
     const result = resolveCatalogOfficialExternalNpmPackageTrust(
-      "@wecom/wecom-openclaw-plugin@2026.5.7",
+      "@wecom/wecom-nova-plugin@2026.5.7",
     );
 
     expect(result).toEqual({
-      pluginId: "wecom-openclaw-plugin",
+      pluginId: "wecom-nova-plugin",
       expectedIntegrity:
         "sha512-TCkP9as00WfEhgFWG8YL/rcmaWGIshAki2HQh83nTRccGfVBCoGjrEboTTqq3yDmK9koWTV11zi8u8A4dNtvug==",
       trustedSourceLinkedOfficialInstall: true,

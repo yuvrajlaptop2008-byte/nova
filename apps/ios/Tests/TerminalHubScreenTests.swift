@@ -1,7 +1,7 @@
 import Foundation
 import Testing
-@testable import OpenClaw
-@testable import OpenClawKit
+@testable import Nova
+@testable import NovaKit
 
 @MainActor
 struct TerminalHubScreenTests {
@@ -61,7 +61,7 @@ struct TerminalHubScreenTests {
 
         let script = TerminalHubScreen.terminalAuthUserScript(config: config)
 
-        #expect(script?.contains("__OPENCLAW_NATIVE_CONTROL_AUTH__") == true)
+        #expect(script?.contains("__NOVA_NATIVE_CONTROL_AUTH__") == true)
         // JSONSerialization escapes forward slashes, hence the `\/` literals.
         #expect(script?.contains("\"https:\\/\\/gateway.example.com:8443\"") == true)
         #expect(script?.contains("\"token\":\"secret-token\"") == true)

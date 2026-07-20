@@ -2,14 +2,14 @@
 import {
   optionalNonNegativeIntegerSchema,
   optionalPositiveIntegerSchema,
-} from "openclaw/plugin-sdk/channel-actions";
+} from "nova/plugin-sdk/channel-actions";
 import {
   readNonNegativeIntegerParam,
   readPositiveIntegerParam,
-} from "openclaw/plugin-sdk/param-readers";
-import { jsonResult } from "openclaw/plugin-sdk/tool-results";
+} from "nova/plugin-sdk/param-readers";
+import { jsonResult } from "nova/plugin-sdk/tool-results";
 import { Type } from "typebox";
-import type { OpenClawPluginApi } from "../runtime-api.js";
+import type { NovaPluginApi } from "../runtime-api.js";
 import {
   createEmbeddedLobsterRunner,
   resolveLobsterCwd,
@@ -23,7 +23,7 @@ import {
 } from "./lobster-taskflow.js";
 
 type BoundTaskFlow = ReturnType<
-  NonNullable<OpenClawPluginApi["runtime"]>["tasks"]["managedFlows"]["bindSession"]
+  NonNullable<NovaPluginApi["runtime"]>["tasks"]["managedFlows"]["bindSession"]
 >;
 
 type JsonLike =
@@ -230,7 +230,7 @@ function resolveManagedFlowToolResult(result: ManagedLobsterFlowResult) {
   return formatManagedFlowResult(result);
 }
 
-export function createLobsterTool(api: OpenClawPluginApi, options?: LobsterToolOptions) {
+export function createLobsterTool(api: NovaPluginApi, options?: LobsterToolOptions) {
   const runner = options?.runner ?? createEmbeddedLobsterRunner();
   return {
     name: "lobster",

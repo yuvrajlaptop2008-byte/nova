@@ -23,10 +23,10 @@ import { resolveAgentHarnessOwnerPluginIds } from "../agents/harness/runtime-plu
 import type { AgentHarnessAuthBindingFingerprintParams } from "../agents/harness/types.js";
 import type { ResolvedProviderAuth } from "../agents/model-auth-runtime-shared.js";
 import { resolveApiKeyForProvider } from "../agents/model-auth.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizePluginsConfig } from "../plugins/config-state.js";
 import { passesManifestOwnerBasePolicy } from "../plugins/manifest-owner-policy.js";
-import type { OpenClawPackageBuild } from "../plugins/manifest.js";
+import type { NovaPackageBuild } from "../plugins/manifest.js";
 import type { PluginOrigin } from "../plugins/plugin-origin.types.js";
 import { loadPluginRegistrySnapshot } from "../plugins/plugin-registry.js";
 import {
@@ -94,11 +94,11 @@ type SystemAgentOwnerPluginRegistryRecord = {
   packageVersion?: string;
   installRecordHash?: string;
   packageJson?: { path: string; hash: string };
-  packageBuild?: OpenClawPackageBuild;
+  packageBuild?: NovaPackageBuild;
 };
 
 type SystemAgentOwnerPluginRegistryLoader = (params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   workspaceDir: string;
   env: NodeJS.ProcessEnv;
 }) => { plugins: readonly SystemAgentOwnerPluginRegistryRecord[] };
@@ -146,7 +146,7 @@ export function resolveSystemAgentExpectedAgentHarnessRuntimeArtifact(
 ): ExpectedAgentHarnessRuntimeArtifact | undefined {
   if (
     binding.execution.runner !== "embedded" ||
-    binding.execution.agentHarnessRuntimeOverride === "openclaw"
+    binding.execution.agentHarnessRuntimeOverride === "nova"
   ) {
     return undefined;
   }
@@ -186,7 +186,7 @@ async function resolveAgentHarnessAuthBindingFingerprint(params: {
   authProfileId: string;
   authProfileStore: AgentHarnessAuthBindingFingerprintParams["authProfileStore"];
   agentDir: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   deps: SystemAgentVerifiedInferenceDeps;
 }): Promise<string | undefined> {
   const input = {
@@ -228,7 +228,7 @@ async function resolveCurrentRuntimeOwnerFingerprint(params: {
       provider: params.route.provider,
       config: params.route.runConfig,
       agentDir: params.route.agentDir,
-      agentId: "openclaw",
+      agentId: "nova",
       runtimeOwnerId: params.runtimeOwnerId,
       ...(params.authProfileId ? { authProfileId: params.authProfileId } : {}),
       ...(params.skipLocalCredential ? { skipLocalCredential: true } : {}),
@@ -255,7 +255,7 @@ async function resolveCurrentRuntimeOwnerFingerprint(params: {
     }
   }
   if (params.kind === "plugin-harness") {
-    if (params.route.agentHarnessRuntimeOverride === "openclaw") {
+    if (params.route.agentHarnessRuntimeOverride === "nova") {
       return undefined;
     }
     return fingerprintOpaqueRuntimeOwner({
@@ -299,7 +299,7 @@ async function resolveCurrentRuntimeOwnerFingerprint(params: {
 }
 
 function projectRelevantPlugins(
-  config: OpenClawConfig,
+  config: NovaConfig,
   route: SystemAgentConfiguredRouteIdentity | null,
   ownerPluginIds: readonly string[],
 ): unknown {
@@ -343,7 +343,7 @@ function projectOwnerPluginRuntime(
 // Plugin ids alone survive an in-place runtime replacement. Bind the selected
 // installed source and package identity so a stale inference proof cannot write.
 function projectOwnerPluginRuntimes(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   route: SystemAgentConfiguredRoute;
   ownerPluginIds: readonly string[];
   deps: SystemAgentVerifiedInferenceDeps;
@@ -365,7 +365,7 @@ function projectOwnerPluginRuntimes(params: {
 }
 
 function projectOwnerPluginArtifacts(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   route: SystemAgentConfiguredRoute;
   ownerPluginIds: readonly string[];
   deps: SystemAgentVerifiedInferenceDeps;
@@ -397,7 +397,7 @@ function projectOwnerPluginArtifacts(params: {
   });
 }
 async function projectVerifiedExecutionFingerprint(
-  config: OpenClawConfig,
+  config: NovaConfig,
   route: SystemAgentConfiguredRoute,
   ownerPluginIds: readonly string[],
   deps: SystemAgentVerifiedInferenceDeps,
@@ -426,10 +426,10 @@ async function projectVerifiedExecutionFingerprint(
 }
 
 function resolveRouteHarnessOwnerPluginIds(
-  config: OpenClawConfig,
+  config: NovaConfig,
   route: SystemAgentConfiguredRoute,
 ): string[] {
-  if (route.runner !== "embedded" || route.agentHarnessRuntimeOverride === "openclaw") {
+  if (route.runner !== "embedded" || route.agentHarnessRuntimeOverride === "nova") {
     return [];
   }
   const workspaceDir = resolveAgentWorkspaceDir(config, route.agentId, process.env);
@@ -442,7 +442,7 @@ function resolveRouteHarnessOwnerPluginIds(
 }
 
 function resolveRouteOwnerPluginIds(
-  config: OpenClawConfig,
+  config: NovaConfig,
   route: SystemAgentConfiguredRoute,
 ): string[] {
   const workspaceDir = resolveAgentWorkspaceDir(config, route.agentId, process.env);
@@ -467,7 +467,7 @@ function resolveRouteOwnerPluginIds(
 
 /** Capture once immediately before a live setup turn. */
 export function captureSystemAgentOwnerPluginArtifacts(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   executionRoute: SystemAgentConfiguredRoute;
   deps?: SystemAgentVerifiedInferenceDeps;
 }): SystemAgentOwnerPluginArtifactSnapshot {
@@ -555,8 +555,7 @@ async function resolveCurrentAuthFingerprint(params: {
     }
     if (
       credential.type === "oauth" ||
-      (params.route.runner === "embedded" &&
-        params.route.agentHarnessRuntimeOverride !== "openclaw")
+      (params.route.runner === "embedded" && params.route.agentHarnessRuntimeOverride !== "nova")
     ) {
       if (credential.type === "oauth") {
         return fingerprintAuthProfileCredential({
@@ -677,7 +676,7 @@ export async function createSystemAgentVerifiedInferenceBinding(params: {
     currentRuntimeArtifactFingerprint = await resolveArtifact({
       provider: execution.provider,
       config: execution.runConfig,
-      agentId: "openclaw",
+      agentId: "nova",
       runtimeArtifactId: params.auth.runtimeArtifactId.trim(),
     });
     if (currentRuntimeArtifactFingerprint !== params.auth.runtimeArtifactFingerprint) {
@@ -685,7 +684,7 @@ export async function createSystemAgentVerifiedInferenceBinding(params: {
     }
   }
   const pluginHarnessId =
-    execution.runner === "embedded" && successfulHarnessId !== "openclaw"
+    execution.runner === "embedded" && successfulHarnessId !== "nova"
       ? successfulHarnessId
       : undefined;
   if (pluginHarnessId) {
@@ -874,7 +873,7 @@ export async function resolveSystemAgentVerifiedInferenceRoute(
     currentRuntimeArtifactFingerprint = await resolveArtifact({
       provider: currentExecution.provider,
       config: currentExecution.runConfig,
-      agentId: "openclaw",
+      agentId: "nova",
       runtimeArtifactId: binding.auth.runtimeArtifactId,
     }).catch(() => undefined);
     if (currentRuntimeArtifactFingerprint !== binding.auth.runtimeArtifactFingerprint) {
@@ -882,7 +881,7 @@ export async function resolveSystemAgentVerifiedInferenceRoute(
     }
   } else if (
     binding.execution.runner === "embedded" &&
-    binding.execution.agentHarnessRuntimeOverride !== "openclaw"
+    binding.execution.agentHarnessRuntimeOverride !== "nova"
   ) {
     const harnessId = binding.execution.agentHarnessRuntimeOverride;
     const artifactId = binding.auth.runtimeArtifactId?.trim();

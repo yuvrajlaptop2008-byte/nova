@@ -1,7 +1,7 @@
 // Memory Wiki plugin entrypoint registers its Nova integration.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { definePluginEntry, type OpenClawConfig } from "./api.js";
+import { definePluginEntry, type NovaConfig } from "./api.js";
 import { registerWikiCli } from "./src/cli.js";
 import {
   activateMemoryWikiCompiledCacheOwner,
@@ -56,7 +56,7 @@ async function loadConfiguredVaultIdentity(vaultRoot: string): Promise<{
     };
   }
   try {
-    const stat = await fs.stat(path.join(vaultRoot, ".openclaw-wiki", "log.jsonl"));
+    const stat = await fs.stat(path.join(vaultRoot, ".nova-wiki", "log.jsonl"));
     if (!stat.isFile()) {
       return null;
     }
@@ -82,7 +82,7 @@ export default definePluginEntry({
   register(api) {
     const config = resolveMemoryWikiConfig(api.pluginConfig);
     const getAppConfig = () =>
-      (api.runtime.config?.current?.() ?? api.config) as OpenClawConfig | undefined;
+      (api.runtime.config?.current?.() ?? api.config) as NovaConfig | undefined;
     const resolveConfig: MemoryWikiConfigResolver = (agentId, appConfig = getAppConfig()) =>
       resolveMemoryWikiAgentConfig({ config, appConfig, agentId });
     const resolveToolContext = (agentId?: string) => {

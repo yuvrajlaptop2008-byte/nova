@@ -2,7 +2,7 @@
 // provider payload transforms, and MiniMax/Copilot special paths.
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   looksLikeSecretSentinel,
   mintSecretSentinel,
@@ -15,7 +15,7 @@ const SET_RUNTIME_API_KEY_FIELD = ["setRuntime", "ApiKey"].join("");
 
 const hoisted = vi.hoisted(() => ({
   completeMock: vi.fn(),
-  ensureOpenClawModelsJsonMock: vi.fn(async () => {}),
+  ensureNovaModelsJsonMock: vi.fn(async () => {}),
   getApiKeyForModelMock: vi.fn(
     async (): Promise<{
       apiKey: string;
@@ -49,7 +49,7 @@ const hoisted = vi.hoisted(() => ({
 }));
 const {
   completeMock,
-  ensureOpenClawModelsJsonMock,
+  ensureNovaModelsJsonMock,
   getApiKeyForModelMock,
   resolveApiKeyForProviderMock,
   requireApiKeyMock,
@@ -113,7 +113,7 @@ vi.mock("../agents/models-config.js", async () => ({
   ...(await vi.importActual<typeof import("../agents/models-config.js")>(
     "../agents/models-config.js",
   )),
-  ensureOpenClawModelsJson: ensureOpenClawModelsJsonMock,
+  ensureNovaModelsJson: ensureNovaModelsJsonMock,
 }));
 
 vi.mock("../agents/model-auth.js", () => ({
@@ -302,7 +302,7 @@ describe("describeImageWithModel", () => {
 
     const result = await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "google",
       model: "gemini-3.1-flash-preview",
       profile: "google:default",
@@ -357,7 +357,7 @@ describe("describeImageWithModel", () => {
 
     const result = await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "google",
       model: "gemini-3.1-flash-lite",
       profile: "google:default",
@@ -417,7 +417,7 @@ describe("describeImageWithModel", () => {
 
     await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "github-copilot",
       model: "gpt-5.6-sol",
       profile: "github-copilot:preferred",
@@ -471,7 +471,7 @@ describe("describeImageWithModel", () => {
 
     await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "github-copilot",
       model: "gemini-3.1-pro-preview",
       buffer: Buffer.from("png-bytes"),
@@ -549,7 +549,7 @@ describe("describeImageWithModel", () => {
 
     await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "github-copilot",
       model: "gpt-4.1",
       buffer: Buffer.from("png-bytes"),
@@ -588,7 +588,7 @@ describe("describeImageWithModel", () => {
     await expect(
       describeImageWithModel({
         cfg: {},
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         provider: "github-copilot",
         model: "gemini-3.1-pro-preview",
         buffer: Buffer.from("png-bytes"),
@@ -625,7 +625,7 @@ describe("describeImageWithModel", () => {
 
     await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "openai",
       model: "gpt-4o",
       buffer: Buffer.from("png-bytes"),
@@ -671,7 +671,7 @@ describe("describeImageWithModel", () => {
 
     await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "agent-plan",
       model: "doubao-seed-2.0-pro",
       buffer: Buffer.from("png-bytes"),
@@ -708,7 +708,7 @@ describe("describeImageWithModel", () => {
 
     await describeImageWithModel({
       cfg: {},
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "fake",
       model: "small-vlm",
       buffer: Buffer.from("png-bytes"),
@@ -745,8 +745,8 @@ describe("describeImageWithModel", () => {
         list: [
           {
             id: "vision-agent",
-            agentDir: "/tmp/openclaw-agent",
-            workspace: "/tmp/openclaw-workspace",
+            agentDir: "/tmp/nova-agent",
+            workspace: "/tmp/nova-workspace",
           },
         ],
       },
@@ -755,7 +755,7 @@ describe("describeImageWithModel", () => {
     await describeImageWithModel({
       cfg,
       agentId: "vision-agent",
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/nova-agent",
       provider: "google",
       model: "gemini-2.5-flash",
       buffer: Buffer.alloc(1),
@@ -766,20 +766,20 @@ describe("describeImageWithModel", () => {
     });
 
     expect(acquireAgentRunPreparedModelRuntimeMock).toHaveBeenCalledWith(
-      expect.objectContaining({ workspaceDir: "/tmp/openclaw-workspace" }),
+      expect.objectContaining({ workspaceDir: "/tmp/nova-workspace" }),
     );
     expect(resolveModelAsyncMock).toHaveBeenCalledWith(
       "google",
       "gemini-2.5-flash",
-      "/tmp/openclaw-agent",
+      "/tmp/nova-agent",
       cfg,
-      expect.objectContaining({ workspaceDir: "/tmp/openclaw-workspace" }),
+      expect.objectContaining({ workspaceDir: "/tmp/nova-workspace" }),
     );
   });
 
   it("uses one committed prepared generation for image setup and streaming", async () => {
-    const requestedCfg: OpenClawConfig = { logging: { level: "info" } };
-    const committedCfg: OpenClawConfig = { logging: { level: "debug" } };
+    const requestedCfg: NovaConfig = { logging: { level: "info" } };
+    const committedCfg: NovaConfig = { logging: { level: "debug" } };
     acquireAgentRunPreparedModelRuntimeMock.mockResolvedValueOnce({
       snapshot: {
         agentDir: "/tmp/committed-agent",
@@ -839,7 +839,7 @@ describe("describeImageWithModel", () => {
   });
 
   it("reuses a parent run generation without acquiring another image lease", async () => {
-    const cfg: OpenClawConfig = { logging: { level: "info" } };
+    const cfg: NovaConfig = { logging: { level: "info" } };
     discoverModelsMock.mockReturnValue({
       find: vi.fn(() => ({
         provider: "google",

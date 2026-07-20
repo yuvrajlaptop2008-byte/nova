@@ -51,7 +51,7 @@ function createTaskRecord(params: Parameters<typeof createTaskRecordOrNull>[0]):
 }
 
 beforeEach(async () => {
-  stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gateway-tasks-"));
+  stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-gateway-tasks-"));
   setTestEnvValue("NOVA_STATE_DIR", stateDir);
   resetTaskRegistryForTests();
   cancelSessionMock.mockReset();

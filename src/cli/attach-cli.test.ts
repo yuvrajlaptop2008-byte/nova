@@ -4,7 +4,7 @@ import { writeClaudeMcpConfig } from "./attach-cli.js";
 
 const MCP_CONFIG = {
   mcpServers: {
-    openclaw: {
+    nova: {
       type: "http",
       url: "http://127.0.0.1:54321/mcp",
       headers: {

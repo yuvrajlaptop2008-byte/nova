@@ -7,7 +7,7 @@ import { stylePromptMessage } from "../../../packages/terminal-core/src/prompt-s
 import { sanitizeTerminalText } from "../../../packages/terminal-core/src/safe-text.js";
 import { theme } from "../../../packages/terminal-core/src/theme.js";
 import { readConfigFileSnapshot } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
 import type { ClawHubRiskAcknowledgementRequest } from "../../infra/clawhub-install-trust.js";
 import { pathExists } from "../../infra/fs-safe.js";
@@ -47,7 +47,7 @@ import {
 import { readPackageVersion, type UpdateCommandOptions } from "./shared.js";
 
 const POST_UPDATE_PLUGIN_REPAIR_GUIDANCE =
-  "Run openclaw update repair to retry post-update plugin repair.";
+  "Run nova update repair to retry post-update plugin repair.";
 
 export type PostCorePluginUpdateResult = NonNullable<
   NonNullable<UpdateRunResult["postUpdate"]>["plugins"]
@@ -144,7 +144,7 @@ function isTrackedPackageInstallRecord(record: PluginInstallRecord): boolean {
 
 async function collectMissingPluginInstallPayloads(params: {
   records: Record<string, PluginInstallRecord>;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   skipDisabledPlugins?: boolean;
   syncOfficialPluginInstalls?: boolean;
   env?: NodeJS.ProcessEnv;
@@ -223,7 +223,7 @@ function formatMissingPluginPayloadReason(entry: MissingPluginInstallPayload): s
 }
 
 function formatPostUpdatePluginInspectGuidance(pluginId: string): string {
-  return `Run openclaw plugins inspect ${pluginId} --runtime --json for details.`;
+  return `Run nova plugins inspect ${pluginId} --runtime --json for details.`;
 }
 
 function createPostUpdatePluginWarning(params: {
@@ -309,8 +309,8 @@ function buildInvalidConfigPostCoreUpdateResult(): {
   result: PostCorePluginUpdateResult;
 } {
   const guidance = [
-    "Run `openclaw doctor` to inspect the config validation errors.",
-    "Once the config parses, rerun `openclaw update repair`.",
+    "Run `nova doctor` to inspect the config validation errors.",
+    "Once the config parses, rerun `nova update repair`.",
   ];
   const message =
     "Plugin post-update convergence skipped because the config is invalid; refusing to restart the gateway with an unverified plugin set.";
@@ -339,12 +339,11 @@ function buildInvalidConfigPostCoreUpdateResult(): {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.updateCommandPluginsTestApi")] =
-    {
-      buildInvalidConfigPostCoreUpdateResult,
-      collectMissingPluginInstallPayloads,
-      resolvePostSyncPluginUpdateSkipIds,
-    };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.updateCommandPluginsTestApi")] = {
+    buildInvalidConfigPostCoreUpdateResult,
+    collectMissingPluginInstallPayloads,
+    resolvePostSyncPluginUpdateSkipIds,
+  };
 }
 
 export async function updatePluginsAfterCoreUpdate(params: {
@@ -632,7 +631,7 @@ export async function updatePluginsAfterCoreUpdate(params: {
     if (params.restoredAuthoredChannels !== undefined) {
       nextConfig = {
         ...nextConfig,
-        channels: structuredClone(params.restoredAuthoredChannels) as OpenClawConfig["channels"],
+        channels: structuredClone(params.restoredAuthoredChannels) as NovaConfig["channels"],
       };
     }
     await commitPluginInstallRecordsWithConfig({

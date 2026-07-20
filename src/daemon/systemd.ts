@@ -127,7 +127,7 @@ async function findMarkerOwnedSystemSystemdUnit(): Promise<{
     if (
       svc.platform !== "linux" ||
       svc.scope !== "system" ||
-      svc.marker !== "openclaw" ||
+      svc.marker !== "nova" ||
       !svc.label?.endsWith(".service")
     ) {
       continue;

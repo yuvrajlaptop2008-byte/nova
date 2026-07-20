@@ -1,19 +1,19 @@
 // Telegram plugin module implements state migrations behavior.
 import fs from "node:fs";
 import path from "node:path";
-import type { ChannelLegacyStateMigrationPlan } from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { ChannelLegacyStateMigrationPlan } from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   type PersistentDedupeLegacyJsonImportEntry,
   createPersistentDedupeImportEntry,
   listPersistentDedupeLegacyJsonFileEntries,
   resolvePersistentDedupePluginStateNamespace,
   shouldReplacePersistentDedupeEntry,
-} from "openclaw/plugin-sdk/persistent-dedupe";
-import { createPluginStateSyncKeyedStore } from "openclaw/plugin-sdk/runtime-doctor";
-import { fileExists } from "openclaw/plugin-sdk/security-runtime";
-import { resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
-import { isRecord, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/persistent-dedupe";
+import { createPluginStateSyncKeyedStore } from "nova/plugin-sdk/runtime-doctor";
+import { fileExists } from "nova/plugin-sdk/security-runtime";
+import { resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
+import { isRecord, uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import { listTelegramAccountIds, resolveDefaultTelegramAccountId } from "./account-selection.js";
 import {
   listTelegramLegacyBotInfoCacheEntries,
@@ -153,9 +153,9 @@ function listTelegramLegacyMessageCacheEntries(persistedPath: string) {
     if (!isTelegramMessageCacheSourceMessage(sourceMessage)) {
       continue;
     }
-    const { openclaw_prompt_context_projection: _projection, ...canonicalSourceMessage } =
+    const { nova_prompt_context_projection: _projection, ...canonicalSourceMessage } =
       sourceMessage as PersistedTelegramMessageCacheValue["sourceMessage"] & {
-        openclaw_prompt_context_projection?: unknown;
+        nova_prompt_context_projection?: unknown;
       };
     const parsedThreadId = parseTelegramMessageThreadId(value.node.threadId);
     const threadId = parsedThreadId === undefined ? undefined : String(parsedThreadId);
@@ -281,7 +281,7 @@ function mapTelegramMessageDispatchDedupeImportEntries(params: {
 }
 
 function listTelegramLegacySidecarAccountIds(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   stateDir: string;
   prefix: string;
   suffix: string;
@@ -305,7 +305,7 @@ function listTelegramLegacySidecarAccountIds(params: {
 }
 
 function detectTelegramMessageCacheLegacyStateMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir?: string;
 }): ChannelLegacyStateMigrationPlan[] {
@@ -335,7 +335,7 @@ function detectTelegramMessageCacheLegacyStateMigration(params: {
 }
 
 function detectTelegramBotInfoCacheLegacyStateMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): ChannelLegacyStateMigrationPlan[] {
   return listTelegramAccountIds(params.cfg).flatMap((accountId) => {
@@ -365,7 +365,7 @@ function detectTelegramBotInfoCacheLegacyStateMigration(params: {
 }
 
 function detectTelegramUpdateOffsetLegacyStateMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir?: string;
 }): ChannelLegacyStateMigrationPlan[] {
@@ -440,7 +440,7 @@ function detectTelegramStickerCacheLegacyStateMigration(params: {
 }
 
 function detectTelegramSentMessageCacheLegacyStateMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir?: string;
 }): ChannelLegacyStateMigrationPlan[] {
@@ -476,7 +476,7 @@ function detectTelegramSentMessageCacheLegacyStateMigration(params: {
 }
 
 function detectTelegramThreadBindingLegacyStateMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir?: string;
 }): ChannelLegacyStateMigrationPlan[] {
@@ -508,7 +508,7 @@ function detectTelegramThreadBindingLegacyStateMigration(params: {
 }
 
 function detectTelegramMessageDispatchLegacyStateMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir?: string;
 }): ChannelLegacyStateMigrationPlan[] {
@@ -601,7 +601,7 @@ function topicNameCacheImportSource(params: {
 }
 
 function detectTelegramTopicNameCacheLegacyStateMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir?: string;
 }): ChannelLegacyStateMigrationPlan[] {
@@ -654,7 +654,7 @@ function detectTelegramTopicNameCacheLegacyStateMigration(params: {
 }
 
 export async function detectTelegramLegacyStateMigrations(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
   stateDir?: string;
 }): Promise<ChannelLegacyStateMigrationPlan[]> {

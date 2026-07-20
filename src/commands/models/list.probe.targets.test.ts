@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthProfileStore } from "../../agents/auth-profiles.js";
 import type { ModelCatalogEntry } from "../../agents/model-catalog.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { withEnvAsync } from "../../test-utils/env.js";
 
 let mockStore: AuthProfileStore;
@@ -23,7 +23,7 @@ vi.mock("../../agents/prepared-model-catalog.js", () => ({
   loadPreparedModelCatalog: loadModelCatalogMock,
 }));
 vi.mock("../../agents/model-auth.js", () => ({
-  hasUsableCustomProviderApiKey: (cfg: OpenClawConfig, provider: string) => {
+  hasUsableCustomProviderApiKey: (cfg: NovaConfig, provider: string) => {
     const raw = cfg.models?.providers?.[provider]?.apiKey;
     return typeof raw === "string" && raw.trim().length > 0 && raw !== "ollama-local";
   },
@@ -55,7 +55,7 @@ vi.mock("../../agents/model-auth.js", () => ({
       : null;
   },
   resolveProviderEntryApiKeyProfileReference: (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     provider: string;
     store: AuthProfileStore;
   }) => {
@@ -73,7 +73,7 @@ vi.mock("../../agents/model-auth.js", () => ({
   },
   resolveProviderEntryApiKeyBinding: async () => ({ kind: "profile-unresolved" }),
   resolveUsableCustomProviderApiKey: (params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     provider: string;
     env?: NodeJS.ProcessEnv;
   }) => {
@@ -150,7 +150,7 @@ async function buildAnthropicProbePlan(order: string[]) {
           anthropic: order,
         },
       },
-    } as OpenClawConfig,
+    } as NovaConfig,
     providers: ["anthropic"],
     modelCandidates: ["anthropic/claude-sonnet-4-6"],
     options: {
@@ -182,7 +182,7 @@ async function buildAnthropicPlanFromModelsJsonApiKey(apiKey: string) {
           },
         },
       },
-    } as OpenClawConfig,
+    } as NovaConfig,
     providers: ["anthropic"],
     modelCandidates: ["anthropic/claude-sonnet-4-6"],
     options: {
@@ -347,7 +347,7 @@ describe("buildProbeTargets reason codes", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       providers: ["anthropic"],
       modelCandidates: ["anthropic/claude-sonnet-4-6"],
       options: {
@@ -388,7 +388,7 @@ describe("buildProbeTargets reason codes", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       providers: ["anthropic"],
       modelCandidates: [],
       options: {
@@ -424,7 +424,7 @@ describe("buildProbeTargets reason codes", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       providers: ["anthropic"],
       modelCandidates: ["anthropic/claude-sonnet-4-6"],
       options: {
@@ -462,7 +462,7 @@ describe("buildProbeTargets reason codes", () => {
                 },
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           providers: ["anthropic"],
           modelCandidates: ["anthropic/claude-sonnet-4-6"],
           options: {
@@ -501,7 +501,7 @@ describe("buildProbeTargets reason codes", () => {
                 },
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           providers: ["anthropic"],
           modelCandidates: ["anthropic/claude-sonnet-4-6"],
           options: {
@@ -529,7 +529,7 @@ describe("buildProbeTargets reason codes", () => {
       async () => {
         mockAllowedProfiles = ["anthropic:default"];
         const plan = await buildProbeTargets({
-          cfg: {} as OpenClawConfig,
+          cfg: {} as NovaConfig,
           providers: ["anthropic"],
           modelCandidates: ["anthropic/claude-sonnet-4-6"],
           options: {
@@ -579,7 +579,7 @@ describe("buildProbeTargets reason codes", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       providers: ["anthropic"],
       modelCandidates: ["anthropic/claude-sonnet-4-6"],
       options: {
@@ -631,7 +631,7 @@ describe("buildProbeTargets reason codes", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       providers: ["anthropic"],
       modelCandidates: ["anthropic/claude-sonnet-4-6"],
       options: {
@@ -668,7 +668,7 @@ describe("buildProbeTargets reason codes", () => {
                 },
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           providers: ["zai"],
           modelCandidates: ["zai/glm-4.7"],
           options: {
@@ -717,7 +717,7 @@ describe("buildProbeTargets reason codes", () => {
           },
         },
         auth: { order: { byteplus: ["byteplus:plan"] } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       providers: ["byteplus-plan"],
       modelCandidates: [],
       options: {
@@ -756,7 +756,7 @@ describe("buildProbeTargets reason codes", () => {
     resolveAuthProfileEligibilityMock.mockReturnValue({ eligible: true, reasonCode: "ok" });
 
     const plan = await buildProbeTargets({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       providers: ["byteplus-plan"],
       modelCandidates: ["byteplus-plan/ark-code-latest"],
       options: {
@@ -799,7 +799,7 @@ describe("buildProbeTargets reason codes", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         providers: ["zai"],
         modelCandidates: [],
         options: {
@@ -851,7 +851,7 @@ describe("buildProbeTargets reason codes", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         providers: ["anthropic"],
         modelCandidates: [],
         options: {
@@ -885,7 +885,7 @@ describe("buildProbeTargets reason codes", () => {
     ]);
 
     const withoutWorkspace = await buildProbeTargets({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       providers: ["workspace-cloud"],
       modelCandidates: [],
       options: {
@@ -895,7 +895,7 @@ describe("buildProbeTargets reason codes", () => {
       },
     });
     const withWorkspace = await buildProbeTargets({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       workspaceDir: "/tmp/workspace",
       providers: ["workspace-cloud"],
       modelCandidates: [],
@@ -938,7 +938,7 @@ describe("buildProbeTargets reason codes", () => {
 
     const { defaultPlan, agentPlan } = await withClearedAnthropicEnv(async () => ({
       defaultPlan: await buildProbeTargets({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         providers: ["anthropic"],
         modelCandidates: ["anthropic/claude-sonnet-4-6"],
         options: {
@@ -948,7 +948,7 @@ describe("buildProbeTargets reason codes", () => {
         },
       }),
       agentPlan: await buildProbeTargets({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         agentDir: "/tmp/coder-agent",
         providers: ["anthropic"],
         modelCandidates: ["anthropic/claude-sonnet-4-6"],

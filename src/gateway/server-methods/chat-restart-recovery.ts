@@ -18,7 +18,7 @@ import {
   type SessionTranscriptTurnExpectedState,
   type SessionTranscriptTurnLifecyclePatch,
 } from "../../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { loadOrCreateProcessDeviceIdentity } from "../../infra/device-identity.js";
 import { findRestartRecoveryUnsafeChatAdmissionHook } from "../../plugins/restart-recovery-hook-safety.js";
 import { isCronSessionKey, isSubagentSessionKey } from "../../routing/session-key.js";
@@ -30,7 +30,7 @@ import type { GatewayRequestContext } from "./types.js";
 
 export { hasRestartRecoveryTerminalRun };
 
-const RESTART_SAFE_CHAT_REQUEST_VERIFIER_DOMAIN = "openclaw.chat.restart-retry.v1";
+const RESTART_SAFE_CHAT_REQUEST_VERIFIER_DOMAIN = "nova.chat.restart-retry.v1";
 
 type RestartSafeChatRequest = {
   fingerprint: string;
@@ -57,7 +57,7 @@ type DurableChatClaimResolution =
   | { kind: "pending"; message: string }
   | { kind: "rejected"; message: string; unavailable?: true };
 
-function hasRestartUnsafeMessageSemantics(rawMessage: string, cfg: OpenClawConfig): boolean {
+function hasRestartUnsafeMessageSemantics(rawMessage: string, cfg: NovaConfig): boolean {
   if (
     shouldComputeCommandAuthorized(rawMessage, cfg) ||
     rawMessage.startsWith("/") ||
@@ -95,7 +95,7 @@ export function createRestartSafeChatRequest(params: {
   eligible: boolean;
   message: string;
   senderIsOwner: boolean;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): RestartSafeChatRequest | undefined {
   if (!params.eligible || hasRestartUnsafeMessageSemantics(params.message, params.cfg)) {
     return undefined;
@@ -139,7 +139,7 @@ function isAdoptedRestartRecoveryClaim(
 
 export async function resolveDurableChatClaim(params: {
   canonicalSessionKey: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   clientRunId: string;
   entry?: SessionEntry;
   persistedSessionKey: string;
@@ -268,7 +268,7 @@ function hasRestartUnsafeChatWork(params: {
 
 export function resolveRestartSafeChatAdmission(params: {
   agentId: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   clientRunId: string;
   context: Pick<GatewayRequestContext, "chatAbortControllers" | "chatQueuedTurns">;
   entry?: SessionEntry;

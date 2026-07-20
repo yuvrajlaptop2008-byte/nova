@@ -26,7 +26,7 @@ import {
   validateNodeRenameParams,
 } from "../../../packages/gateway-protocol/src/index.js";
 import { getRuntimeConfig } from "../../config/io.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   getPairedDevice,
   listApprovedPairedDeviceRoles,
@@ -285,7 +285,7 @@ async function resolveDirectNodePushConfig() {
 }
 
 function resolveRelayNodePushConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   registration: Extract<
     NonNullable<Awaited<ReturnType<typeof loadApnsRegistration>>>,
     { transport: "relay" }
@@ -584,7 +584,7 @@ function listPendingNodeActions(nodeId: string): PendingNodeAction[] {
 function refreshConnectedNodeSurfaceCaches(params: {
   context: GatewayRequestContext;
   nodeSession: NodeSession;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }) {
   const cfg = params.cfg ?? params.context.getRuntimeConfig();
   const { nodeSession } = params;
@@ -613,7 +613,7 @@ function refreshConnectedNodeSurfaceCaches(params: {
 function resolveAllowedPendingNodeActions(params: {
   nodeId: string;
   client: { connect?: ConnectParams | null } | null;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): PendingNodeAction[] {
   const pending = listPendingNodeActions(params.nodeId);
   if (pending.length === 0) {
@@ -738,7 +738,7 @@ function emitTalkPttNodeEvent(params: {
 
 export async function maybeWakeNodeWithApns(
   nodeId: string,
-  opts?: { force?: boolean; wakeReason?: string; cfg?: OpenClawConfig },
+  opts?: { force?: boolean; wakeReason?: string; cfg?: NovaConfig },
 ): Promise<NodeWakeAttempt> {
   const state = nodeWakeById.get(nodeId) ?? { lastWakeAtMs: 0 };
   nodeWakeById.set(nodeId, state);
@@ -858,7 +858,7 @@ export async function maybeWakeNodeWithApns(
 
 export async function maybeSendNodeWakeNudge(
   nodeId: string,
-  opts?: { cfg?: OpenClawConfig },
+  opts?: { cfg?: NovaConfig },
 ): Promise<NodeWakeNudgeAttempt> {
   const startedAtMs = Date.now();
   const withDuration = (
@@ -1111,7 +1111,7 @@ export const nodeHandlers: GatewayRequestHandlers = {
       respond(true, rejected, undefined);
     });
   },
-  // Remove a node pairing (CLI: `openclaw nodes remove`). This revokes the
+  // Remove a node pairing (CLI: `nova nodes remove`). This revokes the
   // device's `node` role in devices/paired.json, which drops the approved node
   // surface with it, and disconnects the device's node-role sessions: a
   // mixed-role device keeps its row and only loses the `node` role, a

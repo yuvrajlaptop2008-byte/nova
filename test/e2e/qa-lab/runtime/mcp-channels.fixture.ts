@@ -88,7 +88,7 @@ const GATEWAY_EVENT_RETAIN_LIMIT = MCP_CHANNEL_LIMITS.gatewayEventRetainLimit;
 const MCP_RAW_MESSAGE_RETAIN_LIMIT = MCP_CHANNEL_LIMITS.rawMessageRetainLimit;
 const ED25519_SPKI_PREFIX = Buffer.from("302a300506032b6570032100", "hex");
 const DEFAULT_GATEWAY_CLIENT: GatewayClientInfo = {
-  id: "openclaw-tui",
+  id: "nova-tui",
   displayName: "docker-mcp-channels",
   version: "1.0.0",
   platform: process.platform,
@@ -448,7 +448,7 @@ export async function connectMcpClient(params: {
     stderr: "pipe",
   });
   transport.stderr?.on("data", (chunk) => {
-    process.stderr.write(`[openclaw mcp] ${String(chunk)}`);
+    process.stderr.write(`[nova mcp] ${String(chunk)}`);
   });
   const rawMessages: unknown[] = [];
   Reflect.set(transport, "onmessage", (message: unknown) => {

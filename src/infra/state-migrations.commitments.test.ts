@@ -8,10 +8,7 @@ import { commitmentRecordToRow, type CommitmentsDatabase } from "../commitments/
 import { listCommitments } from "../commitments/store.js";
 import { readCommitmentsForTest, seedCommitmentsForTest } from "../commitments/store.test-utils.js";
 import type { CommitmentRecord } from "../commitments/types.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "./kysely-sync.js";
 import {
@@ -25,7 +22,7 @@ describe("legacy commitments doctor migration", () => {
 
   const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
     afterEach(() => {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       vi.restoreAllMocks();
       envSnapshot?.restore();
       envSnapshot = undefined;
@@ -34,7 +31,7 @@ describe("legacy commitments doctor migration", () => {
   });
 
   async function useStateDir(): Promise<string> {
-    const stateDir = tempDirs.make("openclaw-commitments-migration-");
+    const stateDir = tempDirs.make("nova-commitments-migration-");
     envSnapshot ??= captureEnv(["NOVA_STATE_DIR"]);
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     return stateDir;
@@ -111,7 +108,7 @@ describe("legacy commitments doctor migration", () => {
     expect(records).toHaveLength(2);
     expect(records.find((entry) => entry.id === legacy.id)).toStrictEqual(record());
     expect(records.find((entry) => entry.id === unrelated.id)).toStrictEqual(unrelated);
-    const database = openOpenClawStateDatabase();
+    const database = openNovaStateDatabase();
     const row = executeSqliteQuerySync(
       database.db,
       getNodeSqliteKysely<CommitmentsDatabase>(database.db)
@@ -283,7 +280,7 @@ describe("legacy commitments doctor migration", () => {
     await useStateDir();
     const canonical = record();
     const row = commitmentRecordToRow(canonical);
-    const database = openOpenClawStateDatabase();
+    const database = openNovaStateDatabase();
     executeSqliteQuerySync(
       database.db,
       getNodeSqliteKysely<CommitmentsDatabase>(database.db)

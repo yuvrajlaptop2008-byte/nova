@@ -1,5 +1,5 @@
 // Shared harness for extra-params wrapper tests.
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { Context, Model, SimpleStreamOptions } from "../../llm/types.js";
 import type {
   prepareProviderExtraParams,
@@ -24,9 +24,7 @@ type ExtraParamsTestApi = {
 };
 
 function getTestApi(): ExtraParamsTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.extraParamsTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.extraParamsTestApi")];
   if (!api) {
     throw new Error("extra params test API is unavailable");
   }
@@ -62,7 +60,7 @@ type RunExtraParamsCaseParams<
   applyModelId?: string;
   applyProvider?: string;
   callerHeaders?: Record<string, string>;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   model: Model<TApi>;
   mockProviderRuntime?: boolean;
   options?: SimpleStreamOptions;

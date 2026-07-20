@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const RELAY_WATCHDOG_ALARM = "openclaw-relay-watchdog";
-const RELAY_OPENING_DEADLINE_ALARM = "openclaw-relay-opening-deadline";
+const RELAY_WATCHDOG_ALARM = "nova-relay-watchdog";
+const RELAY_OPENING_DEADLINE_ALARM = "nova-relay-opening-deadline";
 const START_TIME_MS = Date.parse("2026-07-16T08:00:00.000Z");
 
 type SocketEvent = { data?: unknown };

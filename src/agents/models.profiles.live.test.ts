@@ -3,11 +3,11 @@ import { writeSync } from "node:fs";
 import { defaultApiRegistry } from "@nova/ai/internal/runtime";
 import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { expectDefined } from "@nova/normalization-core";
-import { type Api, completeSimple, type Model } from "openclaw/plugin-sdk/llm";
+import { type Api, completeSimple, type Model } from "nova/plugin-sdk/llm";
 import { Type } from "typebox";
 import { describe, expect, it, vi } from "vitest";
 import { getRuntimeConfig } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { coerceSecretRef, type SecretInput } from "../config/types.secrets.js";
 import { parseLiveCsvFilter } from "../media-generation/live-test-helpers.js";
 import { withBundledPluginEnablementCompat } from "../plugins/bundled-compat.js";
@@ -70,7 +70,7 @@ import {
   resolveUsableCustomProviderApiKey,
 } from "./model-auth.js";
 import { shouldSuppressBuiltInModel } from "./model-suppression.js";
-import { ensureOpenClawModelsJson } from "./models-config.js";
+import { ensureNovaModelsJson } from "./models-config.js";
 import type { StreamFn } from "./runtime/index.js";
 import { prepareModelForSimpleCompletion } from "./simple-completion-transport.js";
 
@@ -106,7 +106,7 @@ const LOCAL_OLLAMA_HOSTNAMES = new Set([
   "host.docker.internal",
   "host.orb.internal",
 ]);
-let activeLiveCompletionConfig: OpenClawConfig | undefined;
+let activeLiveCompletionConfig: NovaConfig | undefined;
 
 type OllamaRuntimeApi = {
   createConfiguredOllamaStreamFn: (params: {
@@ -179,7 +179,7 @@ function filterLiveModelRefsByProvider(
 function findUnmatchedExplicitLiveModelRefs(params: {
   refs: readonly { provider: string; id: string }[];
   models: readonly Pick<Model, "provider" | "id">[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
 }): string[] {
   const unmatched: string[] = [];
@@ -223,7 +223,7 @@ function resolveLiveProviderDiscoveryProviderIds(params: {
 }
 
 function resolveLiveProviderDiscoveryPluginIds(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   providers: readonly string[] | undefined;
   env?: NodeJS.ProcessEnv;
 }): string[] {
@@ -247,10 +247,10 @@ function resolveLiveProviderDiscoveryPluginIds(params: {
 }
 
 function applyLiveProviderDiscoveryPluginCompat(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   providers: readonly string[] | undefined;
   env?: NodeJS.ProcessEnv;
-}): OpenClawConfig {
+}): NovaConfig {
   const pluginIds = resolveLiveProviderDiscoveryPluginIds(params);
   const pluginConfig =
     pluginIds.length > 0 ? enableLiveProviderPlugins(params.config, pluginIds) : params.config;
@@ -261,10 +261,7 @@ function applyLiveProviderDiscoveryPluginCompat(params: {
   });
 }
 
-function enableLiveProviderPlugins(
-  config: OpenClawConfig,
-  pluginIds: readonly string[],
-): OpenClawConfig {
+function enableLiveProviderPlugins(config: NovaConfig, pluginIds: readonly string[]): NovaConfig {
   const compatConfig =
     withBundledPluginEnablementCompat({
       config,
@@ -289,10 +286,10 @@ function enableLiveProviderPlugins(
 }
 
 function applyLiveOllamaProviderEnvCompat(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   providers: readonly string[] | undefined;
   env?: NodeJS.ProcessEnv;
-}): OpenClawConfig {
+}): NovaConfig {
   if (!params.providers?.some((provider) => normalizeProviderId(provider) === "ollama")) {
     return params.config;
   }
@@ -331,7 +328,7 @@ function applyLiveOllamaProviderEnvCompat(params: {
 }
 
 async function ensureLiveProviderApisRegistered(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   providers: readonly string[] | undefined;
 }): Promise<void> {
   if (!params.providers?.some((provider) => normalizeProviderId(provider) === "ollama")) {
@@ -429,7 +426,7 @@ function isLocalOllamaBaseUrl(baseUrl: string): boolean {
   }
 }
 
-function resolveLiveOllamaBaseUrl(model: Pick<Model, "baseUrl">, config?: OpenClawConfig): string {
+function resolveLiveOllamaBaseUrl(model: Pick<Model, "baseUrl">, config?: NovaConfig): string {
   return (
     readStringProperty(model, "baseUrl") ||
     readConfiguredOllamaBaseUrl(config?.models?.providers?.ollama) ||
@@ -439,7 +436,7 @@ function resolveLiveOllamaBaseUrl(model: Pick<Model, "baseUrl">, config?: OpenCl
 
 function isLiveLocalOllamaModel(
   model: Pick<Model, "provider" | "baseUrl">,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
 ): boolean {
   return (
     normalizeProviderId(model.provider) === "ollama" &&
@@ -449,7 +446,7 @@ function isLiveLocalOllamaModel(
 
 function canReuseConfiguredLocalOllamaApiKey(
   model: Pick<Model, "baseUrl">,
-  config?: OpenClawConfig,
+  config?: NovaConfig,
 ): boolean {
   const providerConfig = config?.models?.providers?.ollama;
   if (isOllamaRemoteApiKeyReference(providerConfig?.apiKey)) {
@@ -484,7 +481,7 @@ function canonicalOllamaCredentialBaseUrl(baseUrl: string): string {
 
 async function resolveLiveModelApiKeyInfo(params: {
   model: Model;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   requireProfileKeys: boolean;
 }): Promise<Awaited<ReturnType<typeof getApiKeyForModel>>> {
   if (isLiveLocalOllamaModel(params.model, params.cfg)) {
@@ -857,7 +854,7 @@ describe("explicit live model discovery scope", () => {
           openai: { enabled: true },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = applyLiveProviderDiscoveryPluginCompat({
       config: cfg,
@@ -876,7 +873,7 @@ describe("explicit live model discovery scope", () => {
       plugins: {
         bundledDiscovery: "compat",
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = applyLiveProviderDiscoveryPluginCompat({
       config: cfg,
@@ -900,7 +897,7 @@ describe("explicit live model discovery scope", () => {
       plugins: {
         bundledDiscovery: "compat",
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = applyLiveProviderDiscoveryPluginCompat({
       config: cfg,
@@ -931,7 +928,7 @@ describe("explicit live model discovery scope", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = applyLiveProviderDiscoveryPluginCompat({
       config: cfg,
@@ -961,7 +958,7 @@ describe("explicit live model discovery scope", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const result = applyLiveProviderDiscoveryPluginCompat({
       config: cfg,
@@ -983,7 +980,7 @@ describe("explicit live model discovery scope", () => {
       plugins: {
         bundledDiscovery: "compat",
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     for (const baseUrl of [
       "http://127.0.0.1:11434",
@@ -1031,7 +1028,7 @@ describe("explicit live model discovery scope", () => {
             },
           },
         },
-      } satisfies OpenClawConfig;
+      } satisfies NovaConfig;
 
       const result = applyLiveProviderDiscoveryPluginCompat({
         config: cfg,
@@ -1065,7 +1062,7 @@ describe("explicit live model discovery scope", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = applyLiveProviderDiscoveryPluginCompat({
       config: cfg,
@@ -1098,7 +1095,7 @@ describe("explicit live model discovery scope", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = applyLiveProviderDiscoveryPluginCompat({
       config: cfg,
@@ -1759,7 +1756,7 @@ describeLive("live models (profile keys)", () => {
       activeLiveCompletionConfig = cfg;
       logProgress("[live-models] preparing models.json");
       await withLiveStageTimeout(
-        ensureOpenClawModelsJson(
+        ensureNovaModelsJson(
           cfg,
           undefined,
           providerList ? { providerDiscoveryProviderIds: providerList } : undefined,

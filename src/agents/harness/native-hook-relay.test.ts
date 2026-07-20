@@ -15,7 +15,7 @@ import { createMockPluginRegistry } from "../../plugins/hooks.test-fixtures.js";
 import { patchPluginSessionExtension } from "../../plugins/host-hook-state.js";
 import { createEmptyPluginRegistry } from "../../plugins/registry-empty.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
-import { resolveOpenClawStateSqlitePath } from "../../state/openclaw-state-db.paths.js";
+import { resolveNovaStateSqlitePath } from "../../state/nova-state-db.paths.js";
 import {
   deleteNativeHookRelayBridgeRecordIfOwned,
   readNativeHookRelayBridgeRecord,
@@ -121,7 +121,7 @@ function uniqueNativeHookRelayIdForTests(prefix: string): string {
 }
 
 function nativeHookRelayStateDbArgForTests(): string {
-  return `--state-db ${resolveOpenClawStateSqlitePath()}`;
+  return `--state-db ${resolveNovaStateSqlitePath()}`;
 }
 
 function openDeferredNativeHookRelayBridgeRequest(
@@ -208,7 +208,7 @@ function getNativeHookRelaySharedStateForTests(): NativeHookRelaySharedStateForT
     globalThis as typeof globalThis & {
       [key: symbol]: NativeHookRelaySharedStateForTests | undefined;
     }
-  )[Symbol.for("openclaw.nativeHookRelay.state")];
+  )[Symbol.for("nova.nativeHookRelay.state")];
   if (!state) {
     throw new Error("Expected native hook relay shared state to be initialized");
   }
@@ -233,7 +233,7 @@ describe("native hook relay registry", () => {
       allowedEvents: ["pre_tool_use"],
       ttlMs: 10_000,
       command: {
-        executable: "/opt/Open Claw/openclaw.mjs",
+        executable: "/opt/Open Claw/nova.mjs",
         nodeExecutable: "/usr/local/bin/node",
         timeoutMs: 1234,
       },
@@ -252,15 +252,15 @@ describe("native hook relay registry", () => {
       },
     );
     expect(relay.commandForEvent("pre_tool_use")).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event pre_tool_use --timeout 1234`,
     );
     expect(relay.commandForEvent("pre_tool_use", { timeoutMs: 900 })).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event pre_tool_use --timeout 900`,
     );
     expect(relay.commandForEvent("pre_tool_use", { timeoutMs: 2_000 })).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event pre_tool_use --timeout 1234`,
     );
   });
@@ -536,7 +536,7 @@ describe("native hook relay registry", () => {
       sessionId: "session-1",
       runId: "run-1",
       command: {
-        executable: "/opt/Open Claw/openclaw.mjs",
+        executable: "/opt/Open Claw/nova.mjs",
         nodeExecutable: "/usr/local/bin/node",
         timeoutMs: 1234,
       },
@@ -547,7 +547,7 @@ describe("native hook relay registry", () => {
     expect(relay.shouldRelayEvent("before_agent_finalize")).toBe(false);
     expect(relay.shouldRelayEvent("permission_request")).toBe(true);
     expect(relay.commandForEvent("pre_tool_use")).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event pre_tool_use --pre-tool-use-unavailable noop --timeout 1234`,
     );
   });
@@ -562,7 +562,7 @@ describe("native hook relay registry", () => {
       runId: "run-1",
       preToolUseLoopDetection: false,
       command: {
-        executable: "/opt/Open Claw/openclaw.mjs",
+        executable: "/opt/Open Claw/nova.mjs",
         nodeExecutable: "/usr/local/bin/node",
         timeoutMs: 1234,
       },
@@ -570,7 +570,7 @@ describe("native hook relay registry", () => {
 
     expect(relay.shouldRelayEvent("pre_tool_use")).toBe(true);
     expect(relay.commandForEvent("pre_tool_use")).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event pre_tool_use --timeout 1234`,
     );
   });
@@ -582,7 +582,7 @@ describe("native hook relay registry", () => {
       sessionKey: "agent:main:session-1",
       runId: "run-1",
       command: {
-        executable: "/opt/Open Claw/openclaw.mjs",
+        executable: "/opt/Open Claw/nova.mjs",
         nodeExecutable: "/usr/local/bin/node",
         timeoutMs: 1234,
       },
@@ -590,7 +590,7 @@ describe("native hook relay registry", () => {
 
     expect(relay.shouldRelayEvent("pre_tool_use")).toBe(true);
     expect(relay.commandForEvent("pre_tool_use")).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event pre_tool_use --timeout 1234`,
     );
   });
@@ -629,7 +629,7 @@ describe("native hook relay registry", () => {
       sessionId: "session-1",
       runId: "run-1",
       command: {
-        executable: "/opt/Open Claw/openclaw.mjs",
+        executable: "/opt/Open Claw/nova.mjs",
         nodeExecutable: "/usr/local/bin/node",
         timeoutMs: 1234,
       },
@@ -639,7 +639,7 @@ describe("native hook relay registry", () => {
     expect(relay.shouldRelayEvent("post_tool_use")).toBe(true);
     expect(relay.shouldRelayEvent("before_agent_finalize")).toBe(false);
     expect(relay.commandForEvent("post_tool_use")).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event post_tool_use --timeout 1234`,
     );
   });
@@ -653,7 +653,7 @@ describe("native hook relay registry", () => {
       sessionId: "session-1",
       runId: "run-1",
       command: {
-        executable: "/opt/Open Claw/openclaw.mjs",
+        executable: "/opt/Open Claw/nova.mjs",
         nodeExecutable: "/usr/local/bin/node",
         timeoutMs: 1234,
       },
@@ -661,7 +661,7 @@ describe("native hook relay registry", () => {
 
     expect(relay.shouldRelayEvent("before_agent_finalize")).toBe(true);
     expect(relay.commandForEvent("before_agent_finalize")).toBe(
-      "/usr/local/bin/node '/opt/Open Claw/openclaw.mjs' hooks relay --provider codex --relay-id " +
+      "/usr/local/bin/node '/opt/Open Claw/nova.mjs' hooks relay --provider codex --relay-id " +
         `${relay.relayId} ${nativeHookRelayStateDbArgForTests()} --generation ${relay.generation} --event before_agent_finalize --timeout 1234`,
     );
   });
@@ -1023,7 +1023,7 @@ describe("native hook relay registry", () => {
     expect(
       deleteNativeHookRelayBridgeRecordIfOwned({
         ...before,
-        stateDbPath: resolveOpenClawStateSqlitePath(),
+        stateDbPath: resolveNovaStateSqlitePath(),
       }),
     ).toBe(true);
     expect(testing.getNativeHookRelayBridgeRecordForTests(relay.relayId)).toBeUndefined();
@@ -1903,7 +1903,7 @@ describe("native hook relay registry", () => {
       event: "pre_tool_use",
       rawPayload: {
         hook_event_name: "PreToolUse",
-        openclaw_approval_mode: "report",
+        nova_approval_mode: "report",
         tool_name: "exec_command",
         tool_use_id: "native-report-timeout",
         tool_input: { cmd: "pnpm test" },
@@ -2082,7 +2082,7 @@ describe("native hook relay registry", () => {
       event: "pre_tool_use",
       rawPayload: {
         hook_event_name: "PreToolUse",
-        openclaw_approval_mode: "report",
+        nova_approval_mode: "report",
         cwd: "/repo",
         tool_name: "exec_command",
         tool_use_id: "native-report-rewrite-1",
@@ -2208,7 +2208,7 @@ describe("native hook relay registry", () => {
       event: "pre_tool_use",
       rawPayload: {
         hook_event_name: "PreToolUse",
-        openclaw_approval_mode: "report",
+        nova_approval_mode: "report",
         cwd: "/repo",
         tool_name: "exec_command",
         tool_use_id: "native-approval-report-1",
@@ -2244,7 +2244,7 @@ describe("native hook relay registry", () => {
       event: "pre_tool_use",
       rawPayload: {
         hook_event_name: "PreToolUse",
-        openclaw_approval_mode: "report",
+        nova_approval_mode: "report",
         cwd: "/repo",
         tool_name: "exec_command",
         tool_use_id: "native-approval-report-duplicate",
@@ -2316,7 +2316,7 @@ describe("native hook relay registry", () => {
       event: "pre_tool_use",
       rawPayload: {
         hook_event_name: "PreToolUse",
-        openclaw_approval_mode: "report",
+        nova_approval_mode: "report",
         cwd: "/repo",
         tool_name: "exec_command",
         tool_use_id: "native-approval-cancelled",
@@ -2345,7 +2345,7 @@ describe("native hook relay registry", () => {
   });
 
   it("passes config to trusted policies for native pre-tool session extension reads", async () => {
-    const stateDir = await fs.mkdtemp(path.join(tmpdir(), "openclaw-native-relay-policy-"));
+    const stateDir = await fs.mkdtemp(path.join(tmpdir(), "nova-native-relay-policy-"));
     const storePath = path.join(stateDir, "sessions.json");
     const config = { session: { store: storePath } };
     const seen: unknown[] = [];
@@ -2445,7 +2445,7 @@ describe("native hook relay registry", () => {
       sessionKey: "agent:main:session-1",
       runId: "run-1",
     });
-    const cwd = path.join("/tmp", "openclaw-native-hook-cwd");
+    const cwd = path.join("/tmp", "nova-native-hook-cwd");
     const patch = ["*** Begin Patch", "*** Add File: src/new.ts", "+x", "*** End Patch"].join("\n");
 
     const response = await invokeNativeHookRelay({
@@ -2652,7 +2652,7 @@ describe("native hook relay registry", () => {
         tool_name: "mcp__shell__run_command",
         tool_use_id: "mcp-call-security",
         tool_input: {
-          command: "rm -rf /tmp/openclaw-important-state",
+          command: "rm -rf /tmp/nova-important-state",
         },
       },
     });
@@ -2668,7 +2668,7 @@ describe("native hook relay registry", () => {
     expectRecordFields(event, {
       toolName: "mcp__shell__run_command",
       params: {
-        command: "rm -rf /tmp/openclaw-important-state",
+        command: "rm -rf /tmp/nova-important-state",
       },
       toolCallId: "mcp-call-security",
     });
@@ -2702,7 +2702,7 @@ describe("native hook relay registry", () => {
         tool_use_id: "mcp-call-2",
         tool_input: { path: "/repo/package.json" },
         tool_response: {
-          content: [{ type: "text", text: '{ "name": "openclaw" }' }],
+          content: [{ type: "text", text: '{ "name": "nova" }' }],
           structuredContent: { bytes: 22 },
         },
       },
@@ -2716,7 +2716,7 @@ describe("native hook relay registry", () => {
       runId: "run-1",
       toolCallId: "mcp-call-2",
       result: {
-        content: [{ type: "text", text: '{ "name": "openclaw" }' }],
+        content: [{ type: "text", text: '{ "name": "nova" }' }],
         structuredContent: { bytes: 22 },
       },
     });
@@ -2749,8 +2749,8 @@ describe("native hook relay registry", () => {
         tool_name: "mcp__github__create_issue",
         tool_use_id: "mcp-call-3",
         tool_input: {
-          owner: "openclaw",
-          repo: "openclaw",
+          owner: "nova",
+          repo: "nova",
           title: "Test issue",
         },
       },
@@ -2768,8 +2768,8 @@ describe("native hook relay registry", () => {
       toolName: "mcp__github__create_issue",
       toolCallId: "mcp-call-3",
       toolInput: {
-        owner: "openclaw",
-        repo: "openclaw",
+        owner: "nova",
+        repo: "nova",
         title: "Test issue",
       },
     });
@@ -3283,7 +3283,7 @@ describe("native hook relay registry", () => {
         hook_event_name: "PermissionRequest",
         tool_name: "Bash",
         tool_use_id: "reused-call-id",
-        tool_input: { command: "rm -rf /tmp/openclaw-important-state" },
+        tool_input: { command: "rm -rf /tmp/nova-important-state" },
       },
     });
 
@@ -3543,10 +3543,10 @@ describe("native hook relay command builder", () => {
         relayId: "relay-1",
         generation: "generation-1",
         event: "permission_request",
-        executable: "openclaw",
+        executable: "nova",
       }),
     ).toBe(
-      "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request --timeout 5000",
+      "nova hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event permission_request --timeout 5000",
     );
   });
 
@@ -3558,10 +3558,10 @@ describe("native hook relay command builder", () => {
         generation: "generation-1",
         event: "pre_tool_use",
         preToolUseUnavailable: "noop",
-        executable: "openclaw",
+        executable: "nova",
       }),
     ).toBe(
-      "openclaw hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event pre_tool_use --pre-tool-use-unavailable noop --timeout 5000",
+      "nova hooks relay --provider codex --relay-id relay-1 --generation generation-1 --event pre_tool_use --pre-tool-use-unavailable noop --timeout 5000",
     );
   });
 });

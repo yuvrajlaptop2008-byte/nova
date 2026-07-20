@@ -18,7 +18,7 @@ const MAX_REFIRES_PER_SWEEP = 10;
 // only recognized while it is the active identity, so an auth failover can at
 // worst double the budget to four re-fires — still bounded, and the
 // newest-close ownership check keeps human closes authoritative regardless.
-const KNOWN_SWEEPER_LOGINS = ["openclaw-barnacle[bot]"];
+const KNOWN_SWEEPER_LOGINS = ["nova-barnacle[bot]"];
 const REOPEN_DELAY_MS = 5_000;
 
 const sleep = (ms) =>

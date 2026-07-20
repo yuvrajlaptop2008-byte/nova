@@ -22,7 +22,7 @@ import { loadPersistedAuthProfileStore } from "../../../agents/auth-profiles/per
 import { updateAuthProfileStoreWithLock } from "../../../agents/auth-profiles/store.js";
 import type { AuthProfileStore, OAuthCredential } from "../../../agents/auth-profiles/types.js";
 import { resolveStateDir } from "../../../config/paths.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { shortenHomePath } from "../../../utils.js";
 
 type StaleOAuthProfileShadow = {
@@ -66,7 +66,7 @@ async function collectStateAgentDirs(env: NodeJS.ProcessEnv): Promise<string[]> 
 }
 
 async function collectCandidateAgentDirs(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv,
 ): Promise<string[]> {
   const dirs = new Set<string>();
@@ -110,7 +110,7 @@ function shouldRemoveLocalOAuthShadow(params: {
 
 /** Find local OAuth profiles that safely inherit fresher main-agent credentials instead. */
 export async function scanStaleOAuthProfileShadows(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env?: NodeJS.ProcessEnv;
   now?: number;
 }): Promise<StaleOAuthProfileShadow[]> {
@@ -281,7 +281,7 @@ export function collectStaleOAuthProfileShadowWarnings(params: {
 
 /** Remove stale per-agent OAuth profile shadows after rechecking each locked store. */
 export async function repairStaleOAuthProfileShadows(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env?: NodeJS.ProcessEnv;
   now?: number;
 }): Promise<{ changes: string[]; warnings: string[] }> {
@@ -333,7 +333,6 @@ const testing = {
 };
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.staleOAuthProfileShadowsTestApi")
-  ] = testing;
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.staleOAuthProfileShadowsTestApi")] =
+    testing;
 }

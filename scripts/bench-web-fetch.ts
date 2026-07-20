@@ -4,7 +4,7 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { extractBasicHtmlContent } from "../src/agents/tools/web-fetch-utils.js";
 import { createWebFetchTool } from "../src/agents/tools/web-fetch.js";
-import type { OpenClawConfig } from "../src/config/types.openclaw.js";
+import type { NovaConfig } from "../src/config/types.nova.js";
 import type { LookupFn } from "../src/infra/net/ssrf.js";
 import { extractReadableContent } from "../src/web-fetch/content-extractors.runtime.js";
 import { stripLeadingPackageManagerSeparator } from "./lib/arg-utils.mjs";
@@ -115,7 +115,7 @@ const MARKDOWN_BODY = "# Web Fetch Benchmark\n\n" + "- markdown list item\n".rep
 const OFFLINE_PROVIDER_ENV_VARS = ["FIRECRAWL_API_KEY"] as const;
 
 const lookupFn = (async () => [{ address: "93.184.216.34", family: 4 }]) as unknown as LookupFn;
-const toolConfig: OpenClawConfig = {
+const toolConfig: NovaConfig = {
   tools: {
     web: {
       fetch: {

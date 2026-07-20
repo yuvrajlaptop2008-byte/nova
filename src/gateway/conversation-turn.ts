@@ -7,7 +7,7 @@ import {
   type ConversationRegistryScope,
 } from "../config/sessions/conversation-registry.js";
 import { resolveStorePath } from "../config/sessions/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveOutboundChannelPlugin } from "../infra/outbound/channel-resolution.js";
 import {
   ConversationDeliveryRejectedError,
@@ -55,7 +55,7 @@ const defaultDeps: ConversationTurnDeps = {
 
 function resolveConversationScope(params: {
   agentId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): ConversationRegistryScope {
   const configuredStore = params.config.session?.store;
   return {
@@ -142,7 +142,7 @@ function resultForCompletedOperation(params: {
 
 function prepareConversationMessageId(params: {
   plugin: ReturnType<typeof resolveOutboundChannelPlugin>;
-  config: OpenClawConfig;
+  config: NovaConfig;
   conversation: ConversationRecord;
   message: string;
 }): string {
@@ -175,7 +175,7 @@ function prepareConversationMessageId(params: {
 async function ensureConversationContextBinding(params: {
   deps: ConversationTurnDeps;
   scope: ConversationRegistryScope;
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId: string;
   conversation: ConversationRecord;
   plugin: ReturnType<typeof resolveOutboundChannelPlugin>;
@@ -216,7 +216,7 @@ async function ensureConversationContextBinding(params: {
 /** Owns correlation, delivery, and waiting inside the Gateway process that receives ingress. */
 export async function runGatewayConversationTurn(
   params: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     agentId: string;
     senderIsOwner: boolean;
     sourceSessionKey?: string;

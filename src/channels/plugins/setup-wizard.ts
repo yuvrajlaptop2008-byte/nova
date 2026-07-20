@@ -4,7 +4,7 @@
  * Adapts declarative wizard definitions into imperative setup adapters used by onboarding.
  */
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-key.js";
 import { configureChannelAccessWithAllowlist } from "./setup-group-access-configure.js";
 import { moveSingleAccountChannelSectionToDefaultAccount } from "./setup-helpers.js";
@@ -38,17 +38,17 @@ type ChannelSectionWithAccounts = Record<string, unknown> & {
   defaultAccount?: string;
 };
 
-function getChannelSection(cfg: OpenClawConfig, channelKey: string): ChannelSectionWithAccounts {
+function getChannelSection(cfg: NovaConfig, channelKey: string): ChannelSectionWithAccounts {
   const channels = cfg.channels as Record<string, unknown> | undefined;
   const channel = channels?.[channelKey];
   return channel && typeof channel === "object" ? (channel as ChannelSectionWithAccounts) : {};
 }
 
 function createWizardAccountScope(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelKey: string;
   accountId: string;
-}): { cfg: OpenClawConfig; restore: (cfg: OpenClawConfig) => OpenClawConfig } {
+}): { cfg: NovaConfig; restore: (cfg: NovaConfig) => NovaConfig } {
   const accountId = normalizeAccountId(params.accountId);
   const initialChannel = getChannelSection(params.cfg, params.channelKey);
   // An existing accounts map — even empty — makes legacy plugins write account-scoped
@@ -75,7 +75,7 @@ function createWizardAccountScope(params: {
         defaultAccount: accountId,
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 
   return {
     cfg: scopedCfg,
@@ -91,7 +91,7 @@ function createWizardAccountScope(params: {
           ...currentCfg.channels,
           [params.channelKey]: restoredChannel,
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
     },
   };
 }
@@ -135,7 +135,7 @@ async function buildStatus(
 // inputs funnel through them unless a field supplies a narrower writer.
 function applySetupInput(params: {
   plugin: ChannelSetupWizardPlugin;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   input: ChannelSetupInput;
 }) {
@@ -177,7 +177,7 @@ function applySetupInput(params: {
 
 function collectCredentialValues(params: {
   wizard: ChannelSetupWizard;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
 }): ChannelSetupWizardCredentialValues {
   const values: ChannelSetupWizardCredentialValues = {};
@@ -200,7 +200,7 @@ function collectCredentialValues(params: {
 async function applyWizardTextInputValue(params: {
   plugin: ChannelSetupWizardPlugin;
   input: ChannelSetupWizardTextInput;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   value: string;
 }) {
@@ -281,7 +281,7 @@ export function buildChannelSetupWizardAdapterFromSetupWizard(params: {
             channelKey: plugin.id,
             accountId,
           })
-        : { cfg, restore: (currentCfg: OpenClawConfig) => currentCfg };
+        : { cfg, restore: (currentCfg: NovaConfig) => currentCfg };
       let next = accountScope.cfg;
       let credentialValues = collectCredentialValues({
         wizard,

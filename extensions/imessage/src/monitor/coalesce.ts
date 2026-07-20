@@ -1,10 +1,10 @@
 // Imessage plugin module implements the same-sender inbound debounce merge.
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { sliceUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { sliceUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import type { IMessagePayload } from "./types.js";
 
 // Keep the merge contract narrow (caps, ID tracking, reply-context preference)
-// so a future SDK lift into `openclaw/plugin-sdk/channel-inbound` is a
+// so a future SDK lift into `nova/plugin-sdk/channel-inbound` is a
 // mechanical extraction instead of a behavioral redesign. Apple's URL-preview
 // split-send pipeline is the iMessage-only behavior this still protects.
 

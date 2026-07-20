@@ -1,11 +1,11 @@
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   normalizePluginsConfig,
   resolveEffectiveEnableState,
   resolveLivePluginConfigObject,
-} from "openclaw/plugin-sdk/plugin-config-runtime";
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-config-runtime";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
 import type { AuditRow, PendingAuthorization, StandingGrant } from "./src/broker.js";
 import { OnePasswordBroker } from "./src/broker.js";
 import { MAX_REGISTERED_ITEMS, parseOnePasswordConfig } from "./src/config.js";
@@ -23,7 +23,7 @@ export default definePluginEntry({
     const startupConfig = parseOnePasswordConfig(api.pluginConfig);
     const resolveCurrentConfig = () => {
       const liveConfig = api.runtime.config?.current
-        ? (api.runtime.config.current() as OpenClawConfig)
+        ? (api.runtime.config.current() as NovaConfig)
         : undefined;
       if (!liveConfig) {
         return startupConfig;

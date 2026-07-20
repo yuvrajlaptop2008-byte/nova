@@ -120,7 +120,7 @@ export async function settleAgentFallbackCycle(params: {
       kind: "final",
       payload: markAgentRunFailureReplyPayload({
         text: cycle.shouldSurfaceToControlUi
-          ? `⚠️ Agent failed before reply: ${embeddedErrorText}.\nLogs: openclaw logs --follow`
+          ? `⚠️ Agent failed before reply: ${embeddedErrorText}.\nLogs: nova logs --follow`
           : (providerRequestError?.userMessage ?? PROVIDER_CONVERSATION_STATE_ERROR_USER_MESSAGE),
       }),
     };

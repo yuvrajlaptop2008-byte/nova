@@ -1,6 +1,6 @@
 // Twitch tests cover plugin plugin behavior.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../api.js";
+import type { NovaConfig } from "../api.js";
 import { twitchPlugin } from "./plugin.js";
 
 describe("twitchPlugin pairing", () => {
@@ -20,12 +20,12 @@ describe("twitchPlugin outbound session routing", () => {
     });
 
     expect(route).toMatchObject({
-      sessionKey: "agent:ops:twitch:group:openclaw",
-      baseSessionKey: "agent:ops:twitch:group:openclaw",
+      sessionKey: "agent:ops:twitch:group:nova",
+      baseSessionKey: "agent:ops:twitch:group:nova",
       recipientSessionExact: true,
-      peer: { kind: "group", id: "openclaw" },
+      peer: { kind: "group", id: "nova" },
       chatType: "group",
-      to: "openclaw",
+      to: "nova",
     });
   });
 
@@ -68,7 +68,7 @@ describe("twitchPlugin.status.buildAccountSnapshot", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const snapshot = await twitchPlugin.status?.buildAccountSnapshot?.({
       account: secondary,
@@ -103,7 +103,7 @@ describe("twitchPlugin.config", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(twitchPlugin.config.defaultAccountId?.(cfg)).toBe("secondary");
     expect(twitchPlugin.config.resolveAccount(cfg).accountId).toBe("secondary");

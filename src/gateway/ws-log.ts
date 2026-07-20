@@ -3,7 +3,7 @@
 import { readStringValue } from "@nova/normalization-core/string-coerce";
 import { sliceUtf16Safe, truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import chalk from "chalk";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+import { resolveSendableOutboundReplyParts } from "nova/plugin-sdk/reply-payload";
 import { isVerbose } from "../globals.js";
 import { stringifyNonErrorCause } from "../infra/errors.js";
 import { shouldLogSubsystemToConsole } from "../logging/console.js";

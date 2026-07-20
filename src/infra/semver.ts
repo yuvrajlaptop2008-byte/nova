@@ -6,12 +6,12 @@ export function compareValidSemver(left: string, right: string): number | null {
   return parsedLeft && parsedRight ? parsedLeft.compare(parsedRight) : null;
 }
 
-export function isOpenClawCorrectionSemver(version: SemVer): boolean {
+export function isNovaCorrectionSemver(version: SemVer): boolean {
   return version.prerelease.length === 1 && typeof version.prerelease[0] === "number";
 }
 
-function toOpenClawComparableVersion(version: SemVer): string {
-  if (isOpenClawCorrectionSemver(version)) {
+function toNovaComparableVersion(version: SemVer): string {
+  if (isNovaCorrectionSemver(version)) {
     return `${version.major}.${version.minor}.${version.patch}+${version.prerelease[0]}`;
   }
   // SemVer.version excludes build metadata, which remains precedence-neutral.
@@ -19,8 +19,8 @@ function toOpenClawComparableVersion(version: SemVer): string {
 }
 
 /** Compares prereleases, stable releases, then Nova numeric corrections. */
-export function compareOpenClawSemver(left: SemVer, right: SemVer): number {
-  return compareBuild(toOpenClawComparableVersion(left), toOpenClawComparableVersion(right));
+export function compareNovaSemver(left: SemVer, right: SemVer): number {
+  return compareBuild(toNovaComparableVersion(left), toNovaComparableVersion(right));
 }
 
 /** Converts legacy Nova `1.2.3.beta.N` tags into valid SemVer prereleases. */

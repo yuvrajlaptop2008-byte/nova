@@ -526,14 +526,14 @@ describe("buildServiceEnvironment", () => {
     }
     expect(env.NOVA_GATEWAY_PORT).toBe("18789");
     expect(env.NOVA_GATEWAY_TOKEN).toBeUndefined();
-    expect(env.NOVA_SERVICE_MARKER).toBe("openclaw");
+    expect(env.NOVA_SERVICE_MARKER).toBe("nova");
     expect(env.NOVA_SERVICE_KIND).toBe("gateway");
     expect(typeof env.NOVA_SERVICE_VERSION).toBe("string");
-    expect(env.NOVA_SYSTEMD_UNIT).toBe("openclaw-gateway.service");
+    expect(env.NOVA_SYSTEMD_UNIT).toBe("nova-gateway.service");
     expect(env.NOVA_WINDOWS_TASK_NAME).toBe("Nova Gateway");
     expect(env.NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER).toBe("1");
     if (process.platform === "darwin") {
-      expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.openclaw.gateway");
+      expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.nova.gateway");
     }
   });
 
@@ -544,19 +544,19 @@ describe("buildServiceEnvironment", () => {
       platform: "darwin",
     });
 
-    expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.openclaw.gateway");
+    expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.nova.gateway");
   });
 
   it("passes through NOVA_WRAPPER for gateway services", () => {
     const env = buildServiceEnvironment({
       env: {
         HOME: "/home/user",
-        NOVA_WRAPPER: " /usr/local/bin/openclaw-doppler ",
+        NOVA_WRAPPER: " /usr/local/bin/nova-doppler ",
       },
       port: 18789,
     });
 
-    expect(env.NOVA_WRAPPER).toBe("/usr/local/bin/openclaw-doppler");
+    expect(env.NOVA_WRAPPER).toBe("/usr/local/bin/nova-doppler");
   });
 
   it("forwards TMPDIR from the host environment on Linux", () => {
@@ -574,7 +574,7 @@ describe("buildServiceEnvironment", () => {
       port: 18789,
       platform: "darwin",
     });
-    expect(env.TMPDIR).toBe(path.join("/Users/user", ".openclaw", "tmp"));
+    expect(env.TMPDIR).toBe(path.join("/Users/user", ".nova", "tmp"));
   });
 
   it("uses a canonical system PATH for macOS LaunchAgents", () => {
@@ -609,10 +609,10 @@ describe("buildServiceEnvironment", () => {
       env: { HOME: "/home/user", NOVA_PROFILE: "work" },
       port: 18789,
     });
-    expect(env.NOVA_SYSTEMD_UNIT).toBe("openclaw-gateway-work.service");
+    expect(env.NOVA_SYSTEMD_UNIT).toBe("nova-gateway-work.service");
     expect(env.NOVA_WINDOWS_TASK_NAME).toBe("Nova Gateway (work)");
     if (process.platform === "darwin") {
-      expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.openclaw.work");
+      expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.nova.work");
     }
   });
 
@@ -621,26 +621,26 @@ describe("buildServiceEnvironment", () => {
       env: {
         HOME: "/home/user",
         NOVA_PROFILE: "work",
-        NOVA_SYSTEMD_UNIT: "openclaw-gateway-maintenance",
+        NOVA_SYSTEMD_UNIT: "nova-gateway-maintenance",
       },
       port: 18789,
       platform: "linux",
     });
 
-    expect(env.NOVA_SYSTEMD_UNIT).toBe("openclaw-gateway-maintenance.service");
+    expect(env.NOVA_SYSTEMD_UNIT).toBe("nova-gateway-maintenance.service");
   });
 
   it("preserves explicit systemd unit overrides with service suffix", () => {
     const env = buildServiceEnvironment({
       env: {
         HOME: "/home/user",
-        NOVA_SYSTEMD_UNIT: "openclaw-gateway-maintenance.service",
+        NOVA_SYSTEMD_UNIT: "nova-gateway-maintenance.service",
       },
       port: 18789,
       platform: "linux",
     });
 
-    expect(env.NOVA_SYSTEMD_UNIT).toBe("openclaw-gateway-maintenance.service");
+    expect(env.NOVA_SYSTEMD_UNIT).toBe("nova-gateway-maintenance.service");
   });
 
   it("sets a profile-specific launchd marker for macOS gateway services", () => {
@@ -650,7 +650,7 @@ describe("buildServiceEnvironment", () => {
       platform: "darwin",
     });
 
-    expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.openclaw.work");
+    expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.nova.work");
   });
 
   it("does not persist ambient proxy environment variables for launchd/systemd runtime", () => {
@@ -780,7 +780,7 @@ describe("buildNodeServiceEnvironment", () => {
       platform: "darwin",
     });
 
-    expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.openclaw.node");
+    expect(env.NOVA_LAUNCHD_LABEL).toBe("ai.nova.node");
   });
 
   it("passes through NOVA_GATEWAY_TOKEN for node services", () => {
@@ -851,7 +851,7 @@ describe("buildNodeServiceEnvironment", () => {
       env: { HOME: "/Users/user", TMPDIR: "/var/folders/xw/abc123/T/" },
       platform: "darwin",
     });
-    expect(env.TMPDIR).toBe(path.join("/Users/user", ".openclaw", "tmp"));
+    expect(env.TMPDIR).toBe(path.join("/Users/user", ".nova", "tmp"));
   });
 
   it("falls back to os.tmpdir for node services when TMPDIR is not set on Linux", () => {
@@ -934,32 +934,32 @@ describe("shared Node TLS env defaults matrix", () => {
 describe("resolveGatewayStateDir", () => {
   it("uses the default state dir when no overrides are set", () => {
     const env = { HOME: "/Users/test" };
-    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".openclaw"));
+    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".nova"));
   });
 
   it("appends the profile suffix when set", () => {
     const env = { HOME: "/Users/test", NOVA_PROFILE: "rescue" };
-    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".openclaw-rescue"));
+    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".nova-rescue"));
   });
 
   it("treats default profiles as the base state dir", () => {
     const env = { HOME: "/Users/test", NOVA_PROFILE: "Default" };
-    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".openclaw"));
+    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".nova"));
   });
 
   it("uses NOVA_STATE_DIR when provided", () => {
-    const env = { HOME: "/Users/test", NOVA_STATE_DIR: "/var/lib/openclaw" };
-    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/var/lib/openclaw"));
+    const env = { HOME: "/Users/test", NOVA_STATE_DIR: "/var/lib/nova" };
+    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/var/lib/nova"));
   });
 
   it("expands ~ in NOVA_STATE_DIR", () => {
-    const env = { HOME: "/Users/test", NOVA_STATE_DIR: "~/openclaw-state" };
-    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/Users/test/openclaw-state"));
+    const env = { HOME: "/Users/test", NOVA_STATE_DIR: "~/nova-state" };
+    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/Users/test/nova-state"));
   });
 
   it("preserves Windows absolute paths without HOME", () => {
-    const env = { NOVA_STATE_DIR: "C:\\State\\openclaw" };
-    expect(resolveGatewayStateDir(env)).toBe("C:\\State\\openclaw");
+    const env = { NOVA_STATE_DIR: "C:\\State\\nova" };
+    expect(resolveGatewayStateDir(env)).toBe("C:\\State\\nova");
   });
 });
 

@@ -37,7 +37,7 @@ import { isNixMode, normalizeStateDirEnv } from "../config/paths.js";
 import { captureConfigOverrideApplier } from "../config/runtime-overrides.js";
 import { resolveMainSessionKey } from "../config/sessions.js";
 import type { GatewayAuthConfig } from "../config/types.gateway.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isSecretRef } from "../config/types.secrets.js";
 import { getActiveCronJobCount } from "../cron/active-jobs.js";
 import {
@@ -49,7 +49,7 @@ import {
   isDiagnosticsTimelineEnabled,
 } from "../infra/diagnostics-timeline.js";
 import { isTruthyEnvValue, isVitestRuntimeEnv, logAcceptedEnvOption } from "../infra/env.js";
-import { ensureOpenClawCliOnPath } from "../infra/path-env.js";
+import { ensureNovaCliOnPath } from "../infra/path-env.js";
 import { readGatewayRestartHandoffSync } from "../infra/restart-handoff.js";
 import {
   type GatewayRestartEmitter,
@@ -174,7 +174,7 @@ export async function resetPreparedModelCatalogForTest(): Promise<void> {
   await resetPreparedModelCatalogForTestLocal();
 }
 
-ensureOpenClawCliOnPath();
+ensureNovaCliOnPath();
 
 const MAX_MEDIA_TTL_HOURS = 24 * 7;
 const POST_READY_MAINTENANCE_DELAY_MS = 250;
@@ -268,7 +268,7 @@ const gatewayRuntime = runtimeForLogger(log);
 
 function createGatewayStartupTrace() {
   const logEnabled = isTruthyEnvValue(process.env.NOVA_GATEWAY_STARTUP_TRACE);
-  let timelineConfig: OpenClawConfig | undefined;
+  let timelineConfig: NovaConfig | undefined;
   let eventLoopDelay: ReturnType<typeof monitorEventLoopDelay> | undefined;
   const timelineOptions = () => ({
     ...(timelineConfig ? { config: timelineConfig } : {}),
@@ -364,7 +364,7 @@ function createGatewayStartupTrace() {
     }
   };
   return {
-    setConfig(config: OpenClawConfig) {
+    setConfig(config: NovaConfig) {
       timelineConfig = config;
       ensureEventLoopDelay();
     },
@@ -474,12 +474,12 @@ function formatRuntimeGatewayAuthTokenWarning(): string {
   const base =
     "Gateway auth token was missing. Generated a runtime token for this startup without changing config; restart will generate a different token.";
   if (!isNixMode) {
-    return `${base} Persist one with \`openclaw config set gateway.auth.mode token\` and \`openclaw config set gateway.auth.token <token>\`.`;
+    return `${base} Persist one with \`nova config set gateway.auth.mode token\` and \`nova config set gateway.auth.token <token>\`.`;
   }
   return [
     base,
     "In Nix mode, set gateway.auth.token in your Nix-managed Nova config and rebuild.",
-    "For the first-party Nix flow, see https://github.com/openclaw/nix-openclaw#quick-start and https://docs.openclaw.ai/install/nix.",
+    "For the first-party Nix flow, see https://github.com/nova/nix-nova#quick-start and https://docs.nova.ai/install/nix.",
   ].join(" ");
 }
 
@@ -564,7 +564,7 @@ export type GatewayServerOptions = {
   startupStartedAt?: number;
   /**
    * Config snapshot already read by the CLI gateway preflight. Passing it avoids
-   * reparsing openclaw.json during server startup.
+   * reparsing nova.json during server startup.
    */
   startupConfigSnapshotRead?: ReadConfigFileSnapshotWithPluginMetadataResult;
   /** Restart request override; direct servers fail closed on restart-required reloads. */
@@ -579,17 +579,17 @@ export async function startGatewayServer(
   const [
     {
       NOVA_DATABASE_SCHEMA_DOCS_URL,
-      OpenClawDatabaseSchemaPreflightError,
-      preflightOpenClawDatabaseSchemas,
+      NovaDatabaseSchemaPreflightError,
+      preflightNovaDatabaseSchemas,
     },
     agentDatabase,
     stateDatabase,
   ] = await Promise.all([
-    import("../state/openclaw-database-preflight.js"),
-    import("../state/openclaw-agent-db.js"),
-    import("../state/openclaw-state-db.js"),
+    import("../state/nova-database-preflight.js"),
+    import("../state/nova-agent-db.js"),
+    import("../state/nova-state-db.js"),
   ]);
-  const databaseSchemas = preflightOpenClawDatabaseSchemas({
+  const databaseSchemas = preflightNovaDatabaseSchemas({
     env: process.env,
     supportedVersions: {
       state: stateDatabase.NOVA_STATE_SCHEMA_VERSION,
@@ -608,7 +608,7 @@ export async function startGatewayServer(
         docsUrl: NOVA_DATABASE_SCHEMA_DOCS_URL,
       });
     }
-    throw new OpenClawDatabaseSchemaPreflightError(databaseSchemas.incompatible);
+    throw new NovaDatabaseSchemaPreflightError(databaseSchemas.incompatible);
   }
   for (const database of databaseSchemas.indeterminate) {
     log.warn("database schema preflight could not inspect database; continuing to real open", {
@@ -685,7 +685,7 @@ export async function startGatewayServer(
   const emitSecretsStateEvent = (
     code: "SECRETS_RELOADER_DEGRADED" | "SECRETS_RELOADER_RECOVERED",
     message: string,
-    cfg: OpenClawConfig,
+    cfg: NovaConfig,
   ) => {
     enqueueSystemEvent(`[${code}] ${message}`, {
       sessionKey: resolveMainSessionKey(cfg),
@@ -796,7 +796,7 @@ export async function startGatewayServer(
   const seededControlUiAllowedOrigins = controlUiSeed.seededAllowedOrigins
     ? cfgAtStart.gateway?.controlUi?.allowedOrigins
     : undefined;
-  const applyFixedGatewayOverlays = (config: OpenClawConfig): OpenClawConfig => {
+  const applyFixedGatewayOverlays = (config: NovaConfig): NovaConfig => {
     let runtimeConfig = config;
     if (reloadAuthOverride || startupTailscaleOverride) {
       runtimeConfig = {
@@ -834,7 +834,7 @@ export async function startGatewayServer(
     }
     return runtimeConfig;
   };
-  const applyReloadableGatewayAuthRefs = (config: OpenClawConfig): OpenClawConfig => {
+  const applyReloadableGatewayAuthRefs = (config: NovaConfig): NovaConfig => {
     if (!startupAuthSecretRefOverride?.token && !startupAuthSecretRefOverride?.password) {
       return config;
     }
@@ -847,9 +847,9 @@ export async function startGatewayServer(
     };
   };
   const prepareReloadCandidate = (params: {
-    runtimeConfig: OpenClawConfig;
-    sourceConfig: OpenClawConfig;
-    previousSourceConfig?: OpenClawConfig;
+    runtimeConfig: NovaConfig;
+    sourceConfig: NovaConfig;
+    previousSourceConfig?: NovaConfig;
   }) => {
     const previousSourceConfig =
       params.previousSourceConfig ??
@@ -870,14 +870,14 @@ export async function startGatewayServer(
           discovery: metadata?.discovery,
         });
     const applyCandidateOverrides = captureConfigOverrideApplier();
-    const reapplyCompareOverlays = (config: OpenClawConfig): OpenClawConfig =>
+    const reapplyCompareOverlays = (config: NovaConfig): NovaConfig =>
       applyCandidateOverrides(
         mergeActivationSectionsIntoRuntimeConfig({
           runtimeConfig: config,
           activationConfig: pluginCandidate.compareConfig,
         }),
       );
-    const reapplyRuntimeOverlays = (config: OpenClawConfig): OpenClawConfig =>
+    const reapplyRuntimeOverlays = (config: NovaConfig): NovaConfig =>
       applyFixedGatewayOverlays(applyReloadableGatewayAuthRefs(reapplyCompareOverlays(config)));
     return {
       runtimeConfig: reapplyRuntimeOverlays(params.runtimeConfig),
@@ -1067,7 +1067,7 @@ export async function startGatewayServer(
       env: process.env,
       tailscaleMode,
     });
-  const resolveSharedGatewaySessionGenerationForConfig = (config: OpenClawConfig) =>
+  const resolveSharedGatewaySessionGenerationForConfig = (config: NovaConfig) =>
     resolveSharedGatewaySessionGeneration(
       resolveGatewayAuth({
         authConfig: config.gateway?.auth,
@@ -1827,7 +1827,7 @@ export async function startGatewayServer(
         ]),
       );
     const reloadAttachedGatewayPlugins = async (params: {
-      nextConfig: OpenClawConfig;
+      nextConfig: NovaConfig;
       changedPaths: readonly string[];
       beforeReplace: (channels: ReadonlySet<ChannelId>) => Promise<void>;
       commitRuntime: () => Promise<void>;
@@ -1979,7 +1979,7 @@ export async function startGatewayServer(
           clients,
           invalidateDeviceTransports: watchNodeHttpRuntime.invalidateSessionsForDevice,
           disconnectDeviceTransports: watchNodeHttpRuntime.disconnectSessionsForDevice,
-          enforceSharedGatewayAuthGenerationForConfigWrite: (nextConfig: OpenClawConfig) => {
+          enforceSharedGatewayAuthGenerationForConfigWrite: (nextConfig: NovaConfig) => {
             enforceSharedGatewaySessionGenerationForConfigWrite({
               state: sharedGatewaySessionGenerationState,
               nextConfig,
@@ -2289,10 +2289,10 @@ export async function startGatewayServer(
     }
     finishGatewayRestartTrace("restart.ready", collectGatewayProcessMemoryUsageMb());
     if (!minimalTestGateway) {
-      const { startOpenClawDatabaseIntegrityVerifier } =
-        await import("../state/openclaw-database-verify.js");
+      const { startNovaDatabaseIntegrityVerifier } =
+        await import("../state/nova-database-verify.js");
       runtimeState.gatewayLifetimeSidecars.push(
-        startOpenClawDatabaseIntegrityVerifier({ env: process.env }),
+        startNovaDatabaseIntegrityVerifier({ env: process.env }),
       );
     }
     postAttachRuntimeReturned = true;

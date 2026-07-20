@@ -1,7 +1,7 @@
 // Tests execution approval policy matching and persistence.
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { DEFAULT_AGENT_ID } from "../routing/session-key.js";
 import {
   makeMockCommandResolution,
@@ -105,7 +105,7 @@ function expectMalformedAgentAskUsesDefaults(agentAsk: unknown): void {
   expectFields(summary.ask, {
     requested: "off",
     host: "always",
-    hostSource: "~/.openclaw/exec-approvals.json defaults.ask",
+    hostSource: "~/.nova/exec-approvals.json defaults.ask",
     effective: "always",
     note: "more aggressive ask wins",
   });
@@ -439,19 +439,19 @@ describe("exec approvals policy helpers", () => {
       requested: "full",
       host: "allowlist",
       effective: "allowlist",
-      hostSource: "~/.openclaw/exec-approvals.json defaults.security",
+      hostSource: "~/.nova/exec-approvals.json defaults.security",
       note: "stricter host security wins",
     });
     expectFields(summary.ask, {
       requested: "off",
       host: "always",
       effective: "always",
-      hostSource: "~/.openclaw/exec-approvals.json defaults.ask",
+      hostSource: "~/.nova/exec-approvals.json defaults.ask",
       note: "more aggressive ask wins",
     });
     expect(summary.askFallback).toEqual({
       effective: "deny",
-      source: "~/.openclaw/exec-approvals.json defaults.askFallback",
+      source: "~/.nova/exec-approvals.json defaults.askFallback",
     });
   });
 
@@ -603,8 +603,8 @@ describe("exec approvals policy helpers", () => {
   });
 
   it("uses NOVA_STATE_DIR when reporting default host sources", () => {
-    const originalOpenClawStateDir = process.env.NOVA_STATE_DIR;
-    const stateDir = path.join(process.cwd(), ".tmp-openclaw-state");
+    const originalNovaStateDir = process.env.NOVA_STATE_DIR;
+    const stateDir = path.join(process.cwd(), ".tmp-nova-state");
     process.env.NOVA_STATE_DIR = stateDir;
     try {
       const summary = summarizeExecPolicyScopeSnapshot({
@@ -625,10 +625,10 @@ describe("exec approvals policy helpers", () => {
         `${path.join(stateDir, "exec-approvals.json")} defaults.security`,
       );
     } finally {
-      if (originalOpenClawStateDir === undefined) {
+      if (originalNovaStateDir === undefined) {
         delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.NOVA_STATE_DIR = originalOpenClawStateDir;
+        process.env.NOVA_STATE_DIR = originalNovaStateDir;
       }
     }
   });
@@ -676,7 +676,7 @@ describe("exec approvals policy helpers", () => {
 
     expect(summary.askFallback).toEqual({
       effective: "allowlist",
-      source: "~/.openclaw/exec-approvals.json defaults.askFallback",
+      source: "~/.nova/exec-approvals.json defaults.askFallback",
     });
   });
 
@@ -720,15 +720,15 @@ describe("exec approvals policy helpers", () => {
 
     expectFields(summary.security, {
       host: "allowlist",
-      hostSource: "~/.openclaw/exec-approvals.json agents.*.security",
+      hostSource: "~/.nova/exec-approvals.json agents.*.security",
     });
     expectFields(summary.ask, {
       host: "always",
-      hostSource: "~/.openclaw/exec-approvals.json agents.*.ask",
+      hostSource: "~/.nova/exec-approvals.json agents.*.ask",
     });
     expect(summary.askFallback).toEqual({
       effective: "deny",
-      source: "~/.openclaw/exec-approvals.json agents.*.askFallback",
+      source: "~/.nova/exec-approvals.json agents.*.askFallback",
     });
   });
 
@@ -823,7 +823,7 @@ describe("exec approvals policy helpers", () => {
         agents: {
           list: [{ id: "runner" }],
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       approvals: {
         version: 1,
         agents: {
@@ -865,7 +865,7 @@ describe("exec approvals policy helpers", () => {
             ask: "off",
           },
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       approvals: {
         version: 1,
         agents: {
@@ -880,11 +880,11 @@ describe("exec approvals policy helpers", () => {
     expect(snapshots.map((snapshot) => snapshot.scopeLabel)).toEqual(["tools.exec"]);
     expectFields(snapshots[0]?.security, {
       host: "allowlist",
-      hostSource: "~/.openclaw/exec-approvals.json agents.main.security",
+      hostSource: "~/.nova/exec-approvals.json agents.main.security",
     });
     expectFields(snapshots[0]?.ask, {
       host: "always",
-      hostSource: "~/.openclaw/exec-approvals.json agents.main.ask",
+      hostSource: "~/.nova/exec-approvals.json agents.main.ask",
     });
   });
 
@@ -909,7 +909,7 @@ describe("exec approvals policy helpers", () => {
             },
           ],
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       approvals: {
         version: 1,
       },

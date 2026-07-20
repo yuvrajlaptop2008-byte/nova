@@ -1,12 +1,11 @@
 // Workshop types define generated skill draft, policy, and config contracts.
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { SkillScanFinding } from "../security/scanner.js";
 
 /** Schema id for persisted skill workshop proposal records. */
-export const SKILL_WORKSHOP_SCHEMA = "openclaw.skill-workshop.proposal.v1" as const;
-export const SKILL_WORKSHOP_MANIFEST_SCHEMA =
-  "openclaw.skill-workshop.proposals-manifest.v1" as const;
-export const SKILL_WORKSHOP_ROLLBACK_SCHEMA = "openclaw.skill-workshop.rollback.v1" as const;
+export const SKILL_WORKSHOP_SCHEMA = "nova.skill-workshop.proposal.v1" as const;
+export const SKILL_WORKSHOP_MANIFEST_SCHEMA = "nova.skill-workshop.proposals-manifest.v1" as const;
+export const SKILL_WORKSHOP_ROLLBACK_SCHEMA = "nova.skill-workshop.rollback.v1" as const;
 export const MAX_SKILL_PROPOSAL_ORIGIN_RUN_IDS = 4096;
 
 type SkillProposalKind = "create" | "update";
@@ -155,7 +154,7 @@ export type SkillProposalSupportFileInput = {
 
 export type SkillProposalCreateInput = {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   name: string;
   description: string;
@@ -169,7 +168,7 @@ export type SkillProposalCreateInput = {
 
 export type SkillProposalUpdateInput = {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   skillName: string;
   description?: string;
@@ -183,7 +182,7 @@ export type SkillProposalUpdateInput = {
 
 export type SkillProposalReviseInput = {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   proposalId: string;
   content: string;
@@ -196,7 +195,7 @@ export type SkillProposalReviseInput = {
 
 export type SkillProposalActionInput = {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   proposalId: string;
   reason?: string;

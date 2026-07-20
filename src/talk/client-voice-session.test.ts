@@ -7,8 +7,8 @@ import {
   emitTrustedDiagnosticEvent,
   waitForDiagnosticEventsDrained,
 } from "../infra/diagnostic-events.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import {
   closeClientVoiceSession,
@@ -79,17 +79,15 @@ async function completeRun(runId: string): Promise<void> {
 
 describe("client voice session", () => {
   beforeEach(async () => {
-    tempDir = await fs.realpath(
-      await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-voice-session-")),
-    );
+    tempDir = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "nova-voice-session-")));
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     sendDurableMessageBatch.mockClear();
   });
 
   afterEach(async () => {
     clientVoiceSessionTesting.reset();
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     envSnapshot.restore();
     await fs.rm(tempDir, { recursive: true, force: true });
   });

@@ -11,7 +11,7 @@ import type {
   ExecApprovalRequestPayload as InfraExecApprovalRequestPayload,
 } from "../infra/exec-approvals.js";
 import { resolveTimerTimeoutMs } from "../shared/number-coercion.js";
-import type { OpenClawStateDatabaseOptions } from "../state/openclaw-state-db.js";
+import type { NovaStateDatabaseOptions } from "../state/nova-state-db.js";
 import {
   consumeOperatorApprovalAllowOnce,
   forceDenyOperatorApproval,
@@ -102,7 +102,7 @@ export type ExecApprovalRecord<TPayload = ExecApprovalRequestPayload> = {
 
 type OperatorApprovalPersistenceRuntime = {
   runtimeEpoch: string;
-  databaseOptions?: OpenClawStateDatabaseOptions;
+  databaseOptions?: NovaStateDatabaseOptions;
 };
 
 type ExecApprovalManagerOptions<TPayload> = {

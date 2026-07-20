@@ -5,41 +5,41 @@
 import PackageDescription
 
 let package = Package(
-    name: "OpenClawMLXTTS",
+    name: "NovaMLXTTS",
     platforms: [
         .macOS(.v15),
     ],
     products: [
-        .executable(name: "openclaw-mlx-tts", targets: ["OpenClawMLXTTSHelper"]),
+        .executable(name: "nova-mlx-tts", targets: ["NovaMLXTTSHelper"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Blaizzy/mlx-audio-swift", revision: "fc4fe22dc41c053062e647a4e3db9142193670d2"),
-        .package(path: "../shared/OpenClawMLXTTSProtocol"),
+        .package(path: "../shared/NovaMLXTTSProtocol"),
     ],
     targets: [
         .target(
-            name: "OpenClawMLXTTSRuntime",
+            name: "NovaMLXTTSRuntime",
             dependencies: [
                 .product(name: "MLXAudioTTS", package: "mlx-audio-swift"),
-                .product(name: "OpenClawMLXTTSProtocol", package: "OpenClawMLXTTSProtocol"),
+                .product(name: "NovaMLXTTSProtocol", package: "NovaMLXTTSProtocol"),
             ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),
             ]),
         .executableTarget(
-            name: "OpenClawMLXTTSHelper",
+            name: "NovaMLXTTSHelper",
             dependencies: [
-                "OpenClawMLXTTSRuntime",
-                .product(name: "OpenClawMLXTTSProtocol", package: "OpenClawMLXTTSProtocol"),
+                "NovaMLXTTSRuntime",
+                .product(name: "NovaMLXTTSProtocol", package: "NovaMLXTTSProtocol"),
             ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),
             ]),
         .testTarget(
-            name: "OpenClawMLXTTSRuntimeTests",
+            name: "NovaMLXTTSRuntimeTests",
             dependencies: [
-                "OpenClawMLXTTSRuntime",
-                .product(name: "OpenClawMLXTTSProtocol", package: "OpenClawMLXTTSProtocol"),
+                "NovaMLXTTSRuntime",
+                .product(name: "NovaMLXTTSProtocol", package: "NovaMLXTTSProtocol"),
             ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),

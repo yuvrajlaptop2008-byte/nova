@@ -10,7 +10,7 @@ import { buildWorkspaceSkillsPrompt } from "./workspace.js";
 describe("buildWorkspaceSkillsPrompt", () => {
   it("applies bundled allowlist without affecting workspace skills", async () => {
     const env = captureEnv(["HOME", "USERPROFILE", "NOVA_HOME", "NOVA_STATE_DIR"]);
-    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-"));
+    const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-"));
     try {
       setTestEnvValue("HOME", workspaceDir);
       setTestEnvValue("USERPROFILE", workspaceDir);

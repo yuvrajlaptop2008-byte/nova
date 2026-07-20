@@ -1,6 +1,6 @@
 // Workshop config helpers resolve skill workshop settings from Nova config.
 import { asNullableRecord } from "@nova/normalization-core/record-coerce";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 
 /** Runtime configuration for the skill workshop proposal flow. */
 export type SkillWorkshopConfig = {
@@ -37,7 +37,7 @@ function readApprovalPolicy(value: unknown, fallback: SkillWorkshopConfig["appro
   return value === "pending" || value === "auto" ? value : fallback;
 }
 
-export function resolveSkillWorkshopConfig(config?: OpenClawConfig): SkillWorkshopConfig {
+export function resolveSkillWorkshopConfig(config?: NovaConfig): SkillWorkshopConfig {
   const raw = asNullableRecord(config?.skills?.workshop) ?? {};
   const autonomous = asNullableRecord(raw.autonomous) ?? {};
   return {

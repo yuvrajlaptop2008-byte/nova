@@ -2,26 +2,26 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { encodePngRgba, fillPixel } from "openclaw/plugin-sdk/media-runtime";
-import type { OpenClawPluginToolFactory } from "openclaw/plugin-sdk/plugin-entry";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { encodePngRgba, fillPixel } from "nova/plugin-sdk/media-runtime";
+import type { NovaPluginToolFactory } from "nova/plugin-sdk/plugin-entry";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import {
   createCapturedPluginRegistration,
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
 import {
-  expectOpenClawLiveTranscriptMarker,
+  expectNovaLiveTranscriptMarker,
   runRealtimeSttLiveTest,
-} from "openclaw/plugin-sdk/provider-test-contracts";
+} from "nova/plugin-sdk/provider-test-contracts";
 import {
   REALTIME_VOICE_AUDIO_FORMAT_PCM16_24KHZ,
   type RealtimeVoiceBridge,
   type RealtimeVoiceBridgeEvent,
-} from "openclaw/plugin-sdk/realtime-voice";
-import { getRuntimeConfig } from "openclaw/plugin-sdk/runtime-config-snapshot";
-import { isBillingErrorMessage } from "openclaw/plugin-sdk/test-live";
+} from "nova/plugin-sdk/realtime-voice";
+import { getRuntimeConfig } from "nova/plugin-sdk/runtime-config-snapshot";
+import { isBillingErrorMessage } from "nova/plugin-sdk/test-live";
 import { describe, expect, it } from "vitest";
 import { createCodeExecutionTool } from "./code-execution.js";
 import plugin from "./index.js";
@@ -33,7 +33,7 @@ const liveEnabled = XAI_API_KEY.trim().length > 0 && process.env.NOVA_LIVE_TEST 
 const describeLive = liveEnabled ? describe : describe.skip;
 const EMPTY_AUTH_STORE = { version: 1, profiles: {} } as const;
 
-function createLiveConfig(): OpenClawConfig {
+function createLiveConfig(): NovaConfig {
   const cfg = getRuntimeConfig();
   return {
     ...cfg,
@@ -48,7 +48,7 @@ function createLiveConfig(): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function createReferencePng(): Buffer {
@@ -113,8 +113,8 @@ function registerXaiRealtimeVoiceProvider() {
   return requireRegisteredProvider(captured.realtimeVoiceProviders, "xai");
 }
 
-function registerXaiToolFactories(): Map<string, OpenClawPluginToolFactory> {
-  const factories = new Map<string, OpenClawPluginToolFactory>();
+function registerXaiToolFactories(): Map<string, NovaPluginToolFactory> {
+  const factories = new Map<string, NovaPluginToolFactory>();
   plugin.register(
     createTestPluginApi({
       registerTool(tool, options) {
@@ -179,7 +179,7 @@ describeLive("xai plugin live", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const explicitConfig = {
         plugins: {
           entries: {
@@ -191,7 +191,7 @@ describeLive("xai plugin live", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       expect(
         codeExecutionFactory({
@@ -383,7 +383,7 @@ describeLive("xai plugin live", () => {
 
       const normalized = transcript?.text.toLowerCase() ?? "";
       expect(transcript?.model).toBeUndefined();
-      expectOpenClawLiveTranscriptMarker(normalized);
+      expectNovaLiveTranscriptMarker(normalized);
       expect(normalized).toContain("speech");
       expect(normalized).toContain("text");
       expect(normalized).toContain("integration");
@@ -475,7 +475,7 @@ describeLive("xai plugin live", () => {
       });
 
       const normalized = transcripts.join(" ").toLowerCase();
-      expectOpenClawLiveTranscriptMarker(normalized);
+      expectNovaLiveTranscriptMarker(normalized);
       expect(normalized).toContain("transcription");
       expect(partials.length + transcripts.length).toBeGreaterThan(0);
     });
@@ -527,11 +527,11 @@ describeLive("xai plugin live", () => {
       },
       audioFormat: REALTIME_VOICE_AUDIO_FORMAT_PCM16_24KHZ,
       instructions:
-        "Reply briefly to spoken input. When a text message asks to call the live probe, call openclaw_live_probe. After a tool result, say its marker exactly.",
+        "Reply briefly to spoken input. When a text message asks to call the live probe, call nova_live_probe. After a tool result, say its marker exactly.",
       tools: [
         {
           type: "function",
-          name: "openclaw_live_probe",
+          name: "nova_live_probe",
           description: "Return the live validation marker.",
           parameters: {
             type: "object",
@@ -688,9 +688,9 @@ describeLive("xai plugin live", () => {
         finalUserTranscripts.slice(userTranscriptsBeforeBargeIn).join(" ").toLowerCase(),
       ).toMatch(/stop|interrupt/);
 
-      bridge.sendUserMessage?.("Call openclaw_live_probe now with token bluebird.");
+      bridge.sendUserMessage?.("Call nova_live_probe now with token bluebird.");
       await waitForXaiLive("realtime tool call", () => toolCalls.length > 0);
-      expect(toolCalls[0]?.name).toBe("openclaw_live_probe");
+      expect(toolCalls[0]?.name).toBe("nova_live_probe");
       await bridge.submitToolResult(toolCalls[0]?.callId ?? "", { marker });
       await waitForXaiLive("tool-result audio", () =>
         finalAssistantTranscripts.some((text) => text.includes(marker)),

@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   countSessionLogMentions,
   countSystemPromptChars,
@@ -147,7 +147,7 @@ async function writeFakePlugin(params: {
         name: "@nova/tool-search-e2e-fixture",
         version: "0.0.0",
         type: "module",
-        openclaw: {
+        nova: {
           extensions: ["./index.js"],
         },
       },
@@ -157,7 +157,7 @@ async function writeFakePlugin(params: {
     "utf8",
   );
   await fs.writeFile(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "nova.plugin.json"),
     `${JSON.stringify(
       {
         id: FAKE_PLUGIN_ID,
@@ -386,12 +386,12 @@ export async function runToolSearchGatewayLane(params: {
       headers: {
         authorization: `Bearer ${gatewayToken}`,
         "content-type": "application/json",
-        "x-openclaw-scopes": "operator.write",
-        "x-openclaw-agent": "qa",
-        "x-openclaw-session-key": `tool-search-gateway-${params.lane}`,
+        "x-nova-scopes": "operator.write",
+        "x-nova-agent": "qa",
+        "x-nova-session-key": `tool-search-gateway-${params.lane}`,
       },
       body: JSON.stringify({
-        model: "openclaw/qa",
+        model: "nova/qa",
         input: [
           {
             type: "message",

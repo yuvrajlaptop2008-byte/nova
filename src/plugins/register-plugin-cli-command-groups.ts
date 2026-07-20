@@ -7,7 +7,7 @@ import {
   removeCommandGroupNames,
   type CommandGroupEntry,
 } from "../cli/program/register-command-groups.js";
-import type { OpenClawPluginCliCommandDescriptor, PluginLogger } from "./types.js";
+import type { NovaPluginCliCommandDescriptor, PluginLogger } from "./types.js";
 
 type PluginCliCommandGroupEntry = CommandGroupEntry & {
   pluginId: string;
@@ -21,7 +21,7 @@ function canRegisterPluginCliLazily(entry: PluginCliCommandGroupEntry): boolean 
     return false;
   }
   const descriptorNames = new Set(
-    (entry.placeholders as readonly OpenClawPluginCliCommandDescriptor[]).map(
+    (entry.placeholders as readonly NovaPluginCliCommandDescriptor[]).map(
       (descriptor) => descriptor.name,
     ),
   );

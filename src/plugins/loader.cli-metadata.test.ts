@@ -5,9 +5,9 @@ import { pathToFileURL } from "node:url";
 import { afterAll, afterEach, describe, expect, it } from "vitest";
 import {
   defineBundledChannelEntry,
-  type OpenClawPluginApi,
+  type NovaPluginApi,
 } from "../plugin-sdk/channel-entry-contract.js";
-import { loadOpenClawPluginCliRegistry, loadOpenClawPlugins } from "./loader.js";
+import { loadNovaPluginCliRegistry, loadNovaPlugins } from "./loader.js";
 import {
   cleanupPluginLoaderFixturesForTest,
   EMPTY_PLUGIN_SCHEMA,
@@ -49,7 +49,7 @@ describe("plugin loader CLI metadata", () => {
       });
       const errors: string[] = [];
 
-      const registry = await loadOpenClawPluginCliRegistry({
+      const registry = await loadNovaPluginCliRegistry({
         cache: false,
         logger: {
           info: () => {},
@@ -105,7 +105,7 @@ describe("plugin loader CLI metadata", () => {
     });
 
     const warnings: string[] = [];
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       env: { ...process.env, NOVA_STATE_DIR: stateDir },
       logger: {
         info: () => {},
@@ -148,7 +148,7 @@ describe("plugin loader CLI metadata", () => {
 };`,
     });
     fs.writeFileSync(
-      path.join(plugin.dir, "openclaw.plugin.json"),
+      path.join(plugin.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "Config-Cli",
@@ -167,7 +167,7 @@ describe("plugin loader CLI metadata", () => {
       "utf-8",
     );
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           load: { paths: [plugin.file] },
@@ -199,7 +199,7 @@ describe("plugin loader CLI metadata", () => {
       JSON.stringify(
         {
           name: "@nova/cli-metadata-channel",
-          openclaw: { extensions: ["./index.cjs"], setupEntry: "./setup-entry.cjs" },
+          nova: { extensions: ["./index.cjs"], setupEntry: "./setup-entry.cjs" },
         },
         null,
         2,
@@ -207,7 +207,7 @@ describe("plugin loader CLI metadata", () => {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "cli-metadata-channel",
@@ -276,7 +276,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           load: { paths: [pluginDir] },
@@ -306,7 +306,7 @@ module.exports = {
       JSON.stringify(
         {
           name: "@nova/bundled-skip-channel",
-          openclaw: { extensions: ["./index.cjs"] },
+          nova: { extensions: ["./index.cjs"] },
         },
         null,
         2,
@@ -314,7 +314,7 @@ module.exports = {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "bundled-skip-channel",
@@ -338,7 +338,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           allow: ["bundled-skip-channel"],
@@ -374,7 +374,7 @@ module.exports = {
       JSON.stringify(
         {
           name: "@nova/bundled-cli-channel",
-          openclaw: { extensions: ["./index.cjs"] },
+          nova: { extensions: ["./index.cjs"] },
         },
         null,
         2,
@@ -382,7 +382,7 @@ module.exports = {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "bundled-cli-channel",
@@ -425,7 +425,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           allow: ["bundled-cli-channel"],
@@ -458,7 +458,7 @@ module.exports = {
       JSON.stringify(
         {
           name: "@nova/bundled-skip-provider",
-          openclaw: { extensions: ["./index.cjs"] },
+          nova: { extensions: ["./index.cjs"] },
         },
         null,
         2,
@@ -466,7 +466,7 @@ module.exports = {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "bundled-skip-provider",
@@ -489,7 +489,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           allow: ["bundled-skip-provider"],
@@ -522,7 +522,7 @@ module.exports = {
       JSON.stringify(
         {
           name: "@nova/full-cli-metadata-channel",
-          openclaw: { extensions: ["./index.cjs"] },
+          nova: { extensions: ["./index.cjs"] },
         },
         null,
         2,
@@ -530,7 +530,7 @@ module.exports = {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "full-cli-metadata-channel",
@@ -590,7 +590,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -619,7 +619,7 @@ module.exports = {
       JSON.stringify(
         {
           name: "@nova/discovery-cli-metadata-channel",
-          openclaw: { extensions: ["./index.cjs"] },
+          nova: { extensions: ["./index.cjs"] },
         },
         null,
         2,
@@ -627,7 +627,7 @@ module.exports = {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "discovery-cli-metadata-channel",
@@ -690,7 +690,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       activate: false,
       cache: false,
       config: {
@@ -725,7 +725,7 @@ module.exports = {
       JSON.stringify(
         {
           name: "@nova/force-runtime-cli-channel",
-          openclaw: { extensions: ["./index.cjs"], setupEntry: "./setup-entry.cjs" },
+          nova: { extensions: ["./index.cjs"], setupEntry: "./setup-entry.cjs" },
         },
         null,
         2,
@@ -733,7 +733,7 @@ module.exports = {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "force-runtime-cli-channel",
@@ -795,7 +795,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       activate: false,
       cache: false,
       forceFullRuntimeForChannelPlugins: true,
@@ -885,7 +885,7 @@ module.exports = {
 
     entry.register({
       registrationMode: "discovery",
-      runtime: {} as OpenClawPluginApi["runtime"],
+      runtime: {} as NovaPluginApi["runtime"],
       registerChannel: (registration) => {
         const plugin = "plugin" in registration ? registration.plugin : registration;
         channels.push(plugin.id);
@@ -893,7 +893,7 @@ module.exports = {
       registerCli: (_register, options) => {
         commands.push(...(options?.descriptors ?? []).map((descriptor) => descriptor.name));
       },
-    } as OpenClawPluginApi);
+    } as NovaPluginApi);
 
     expect(channels).toEqual(["bundled-discovery-cli"]);
     expect(fs.existsSync(runtimeMarker)).toBe(true);
@@ -929,7 +929,7 @@ module.exports = {
 };`,
     });
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       cache: false,
       config: {
         plugins: {
@@ -976,7 +976,7 @@ module.exports = {
 };`,
     });
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           load: { paths: [plugin.file] },
@@ -1014,7 +1014,7 @@ module.exports = {
 };`,
     });
     fs.writeFileSync(
-      path.join(plugin.dir, "openclaw.plugin.json"),
+      path.join(plugin.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "memory-external",
@@ -1027,7 +1027,7 @@ module.exports = {
       "utf-8",
     );
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           load: { paths: [plugin.file] },
@@ -1067,7 +1067,7 @@ module.exports = {
 };`,
     });
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       config: {
         plugins: {
           load: { paths: [plugin.file] },

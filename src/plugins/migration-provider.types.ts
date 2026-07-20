@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginLogger } from "./logger-types.js";
 import type { PluginRuntime } from "./runtime/types.js";
 
-export type PluginConfigMigration = (config: OpenClawConfig) =>
+export type PluginConfigMigration = (config: NovaConfig) =>
   | {
-      config: OpenClawConfig;
+      config: NovaConfig;
       changes: string[];
     }
   | null
@@ -86,7 +86,7 @@ type MigrationProviderPreparation = {
 };
 
 export type MigrationProviderContext = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime?: PluginRuntime;
   logger: PluginLogger;
   stateDir: string;
@@ -103,7 +103,7 @@ export type MigrationProviderContext = {
   signal?: AbortSignal;
 };
 
-/** Migration source implemented by a plugin and orchestrated by `openclaw migrate`. */
+/** Migration source implemented by a plugin and orchestrated by `nova migrate`. */
 export type MigrationProviderPlugin = {
   id: string;
   label: string;
@@ -122,7 +122,7 @@ export type MigrationProviderPlugin = {
 };
 
 type PluginSetupAutoEnableContext = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
 };
 

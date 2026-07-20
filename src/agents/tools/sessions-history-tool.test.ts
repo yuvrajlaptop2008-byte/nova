@@ -7,7 +7,7 @@ import { expectDefined } from "@nova/normalization-core";
 import { Value } from "typebox/value";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { clearSessionStoreCacheForTest } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { callGateway as gatewayCall } from "../../gateway/call.js";
 import { createSessionVisibilityChecker } from "../../plugin-sdk/session-visibility.js";
 import { deleteTestEnvValue, setTestEnvValue } from "../../test-utils/env.js";
@@ -17,7 +17,7 @@ type CallGatewayRequest = Parameters<typeof gatewayCall>[0];
 type HistoryMessage = {
   role: string;
   content: string;
-  __openclaw: { seq: number };
+  __nova: { seq: number };
 };
 
 let createSessionsHistoryTool: typeof import("./sessions-history-tool.js").createSessionsHistoryTool;
@@ -73,7 +73,7 @@ function readMessageSeq(message: unknown): number | undefined {
   if (!message || typeof message !== "object" || Array.isArray(message)) {
     return undefined;
   }
-  const meta = (message as Record<string, unknown>)["__openclaw"];
+  const meta = (message as Record<string, unknown>)["__nova"];
   if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
     return undefined;
   }
@@ -85,7 +85,7 @@ function readMessageId(message: unknown): string | undefined {
   if (!message || typeof message !== "object" || Array.isArray(message)) {
     return undefined;
   }
-  const meta = (message as Record<string, unknown>)["__openclaw"];
+  const meta = (message as Record<string, unknown>)["__nova"];
   if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
     return undefined;
   }
@@ -96,7 +96,7 @@ function readMessageId(message: unknown): string | undefined {
 describe("sessions_history redaction", () => {
   beforeAll(async () => {
     previousConfigPath = process.env.NOVA_CONFIG_PATH;
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sessions-history-redact-"));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-sessions-history-redact-"));
     useLoggingConfig("redaction-off.json", { redactSensitive: "off" });
     ({ createSessionsHistoryTool } = await import("./sessions-history-tool.js"));
   });
@@ -330,7 +330,7 @@ describe("sessions_history redaction", () => {
     const messages = Array.from({ length: 30 }, (_, index) => ({
       role: index % 2 === 0 ? "user" : "assistant",
       content: `message-${index + 1} ${"x".repeat(4_000)}`,
-      __openclaw: { id: `message-${index + 1}`, seq: index + 1 },
+      __nova: { id: `message-${index + 1}`, seq: index + 1 },
     }));
     const tool = createSessionsHistoryTool({
       config: {},
@@ -357,7 +357,7 @@ describe("sessions_history redaction", () => {
     const messages: HistoryMessage[] = Array.from({ length: 30 }, (_, index) => ({
       role: "assistant",
       content: `message-${index + 1} ${"x".repeat(10_000)}`,
-      __openclaw: { seq: index + 1 },
+      __nova: { seq: index + 1 },
     }));
     const tool = createSessionsHistoryTool({
       config: {},
@@ -398,9 +398,9 @@ describe("sessions_history redaction", () => {
       callGateway: async <T = Record<string, unknown>>(): Promise<T> =>
         ({
           messages: [
-            { role: "tool", content: "hidden", __openclaw: { seq: 6 } },
-            { role: "assistant", content: "visible", __openclaw: { seq: 7 } },
-            { role: "assistant", content: "latest", __openclaw: { seq: 8 } },
+            { role: "tool", content: "hidden", __nova: { seq: 6 } },
+            { role: "assistant", content: "visible", __nova: { seq: 7 } },
+            { role: "assistant", content: "latest", __nova: { seq: 8 } },
           ],
           offset: 0,
           nextOffset: 5,
@@ -413,8 +413,8 @@ describe("sessions_history redaction", () => {
     const details = readHistoryDetails(result);
 
     expect(details.messages).toEqual([
-      { role: "assistant", content: "visible", __openclaw: { seq: 7 } },
-      { role: "assistant", content: "latest", __openclaw: { seq: 8 } },
+      { role: "assistant", content: "visible", __nova: { seq: 7 } },
+      { role: "assistant", content: "latest", __nova: { seq: 8 } },
     ]);
     expect(details).toMatchObject({
       offset: 0,
@@ -446,7 +446,7 @@ describe("sessions_history redaction", () => {
           session: { store: storePath },
           tools: { sessions: { visibility: "self" } },
           agents: { defaults: { sandbox: { sessionToolsVisibility: "spawned" } } },
-        } as OpenClawConfig,
+        } as NovaConfig,
         callGateway: async <T = Record<string, unknown>>(
           request: CallGatewayRequest,
         ): Promise<T> => {
@@ -502,7 +502,7 @@ describe("sessions_history redaction", () => {
           session: { store: storePath },
           tools: { sessions: { visibility: "self" } },
           agents: { defaults: { sandbox: { sessionToolsVisibility: "spawned" } } },
-        } as OpenClawConfig,
+        } as NovaConfig,
         callGateway: async <T = Record<string, unknown>>(
           request: CallGatewayRequest,
         ): Promise<T> => {
@@ -555,7 +555,7 @@ describe("sessions_history redaction", () => {
           session: { store: storePath },
           tools: { sessions: { visibility: "self" } },
           agents: { defaults: { sandbox: { sessionToolsVisibility: "spawned" } } },
-        } as OpenClawConfig,
+        } as NovaConfig,
         callGateway: async <T = Record<string, unknown>>(
           request: CallGatewayRequest,
         ): Promise<T> => {

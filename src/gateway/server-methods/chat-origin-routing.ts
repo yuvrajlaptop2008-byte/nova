@@ -4,7 +4,7 @@ import {
 } from "../../../packages/gateway-protocol/src/client-info.js";
 import { CHAT_SEND_SESSION_KEY_MAX_LENGTH } from "../../../packages/gateway-protocol/src/schema.js";
 import { listAgentIds } from "../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { getSessionBindingService } from "../../infra/outbound/session-binding-service.js";
 import type { ChannelRouteRef } from "../../plugin-sdk/channel-route.js";
 import { isPluginOwnedSessionBindingRecord } from "../../plugins/conversation-binding.js";
@@ -114,7 +114,7 @@ export function normalizeExplicitChatSendOrigin(
 }
 
 export function validateChatSelectedAgent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   requestedSessionKey: string;
   agentId?: string;
 }): { ok: true; agentId?: string } | { ok: false; error: string } {
@@ -149,7 +149,7 @@ export function validateChatSelectedAgent(params: {
 }
 
 export function resolveRequestedChatAgentId(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   requestedSessionKey: string;
   agentId?: string;
 }): string | undefined {

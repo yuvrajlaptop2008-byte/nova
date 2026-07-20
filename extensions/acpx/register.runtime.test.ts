@@ -35,7 +35,7 @@ const { realRuntime, realServiceStartMock, realServiceStopMock, createRealServic
     };
   });
 
-vi.mock("openclaw/plugin-sdk/acp-runtime-backend", () => ({
+vi.mock("nova/plugin-sdk/acp-runtime-backend", () => ({
   getAcpRuntimeBackend: (id: string) => runtimeRegistry.get(id),
   registerAcpRuntimeBackend: (entry: { id: string; runtime: unknown }) => {
     runtimeRegistry.set(entry.id, entry);
@@ -63,8 +63,8 @@ function restoreEnv(): void {
 
 function createServiceContext() {
   return {
-    workspaceDir: "/tmp/openclaw-acpx-register-test",
-    stateDir: "/tmp/openclaw-acpx-register-test/state",
+    workspaceDir: "/tmp/nova-acpx-register-test",
+    stateDir: "/tmp/nova-acpx-register-test/state",
     config: {},
     logger: {
       info: vi.fn(),

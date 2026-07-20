@@ -6,7 +6,7 @@ describe("ModelSetupWizardRunner", () => {
   it("starts, advances an unbounded note step, and guards duplicate answers", async () => {
     let resolveDone: ((value: unknown) => void) | null = null;
     const request = vi.fn((method: string, _params?: unknown, _options?: unknown) => {
-      if (method === "openclaw.setup.auth.start") {
+      if (method === "nova.setup.auth.start") {
         return Promise.resolve({ sessionId: "session-1", done: false, status: "running" });
       }
       if (method === "wizard.next" && !resolveDone) {
@@ -55,7 +55,7 @@ describe("ModelSetupWizardRunner", () => {
 
   it("cancels the gateway wizard when advancing fails", async () => {
     const request = vi.fn((method: string) => {
-      if (method === "openclaw.setup.auth.start") {
+      if (method === "nova.setup.auth.start") {
         return Promise.resolve({ sessionId: "session-1", done: false, status: "running" });
       }
       if (method === "wizard.next") {

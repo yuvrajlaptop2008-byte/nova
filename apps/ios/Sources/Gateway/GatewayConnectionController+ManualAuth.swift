@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawKit
+import NovaKit
 
 extension GatewayConnectionController {
     static func migrateLegacyDeviceAuth() {

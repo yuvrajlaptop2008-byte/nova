@@ -6,7 +6,7 @@ import { randomUUID, createHash } from "node:crypto";
 import type {
   OpenKeyedStoreOptions,
   PluginStateKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import { ACPX_PROCESS_LEASE_MAX_ENTRIES, ACPX_PROCESS_LEASE_NAMESPACE } from "./state.js";
 
 /** Environment variable carrying the ACPX process lease id. */
@@ -14,9 +14,9 @@ export const NOVA_ACPX_LEASE_ID_ENV = "NOVA_ACPX_LEASE_ID";
 /** Environment variable carrying the owning gateway instance id. */
 const NOVA_GATEWAY_INSTANCE_ID_ENV = "NOVA_GATEWAY_INSTANCE_ID";
 /** CLI argument carrying the ACPX process lease id for platforms without env wrapping. */
-export const NOVA_ACPX_LEASE_ID_ARG = "--openclaw-acpx-lease-id";
+export const NOVA_ACPX_LEASE_ID_ARG = "--nova-acpx-lease-id";
 /** CLI argument carrying the owning gateway instance id. */
-export const NOVA_GATEWAY_INSTANCE_ID_ARG = "--openclaw-gateway-instance-id";
+export const NOVA_GATEWAY_INSTANCE_ID_ARG = "--nova-gateway-instance-id";
 
 /** Lifecycle state for a tracked ACPX wrapper process. */
 type AcpxProcessLeaseState = "open" | "closing" | "closed" | "lost";

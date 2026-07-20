@@ -1,9 +1,9 @@
 import { createApiRegistry, type ApiRegistry } from "@nova/ai";
 // Simple completion transport tests cover provider-specific stream alias
 // selection before the generic completion helper invokes the LLM layer.
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { createMoonshotThinkingWrapper } from "../llm/providers/stream-wrappers/moonshot-thinking.js";
 import { mintSecretSentinel } from "../secrets/sentinel.js";
 import type { StreamFn } from "./runtime/index.js";
@@ -13,7 +13,7 @@ const ensureCustomApiRegistered = vi.fn();
 const resolveProviderStreamFn = vi.fn();
 const wrapProviderSimpleCompletionStreamFn = vi.fn();
 const buildTransportAwareSimpleStreamFn = vi.fn();
-const createOpenClawTransportStreamFnForModel = vi.fn();
+const createNovaTransportStreamFnForModel = vi.fn();
 const createTransportAwareStreamFnForModel = vi.fn();
 const prepareTransportAwareSimpleModel = vi.fn();
 const resolveTransportAwareSimpleApi = vi.fn();
@@ -34,7 +34,7 @@ vi.mock("./google-simple-completion-stream.js", () => ({
 
 vi.mock("./provider-transport-stream.js", () => ({
   buildTransportAwareSimpleStreamFn,
-  createOpenClawTransportStreamFnForModel,
+  createNovaTransportStreamFnForModel,
   createTransportAwareStreamFnForModel,
   prepareTransportAwareSimpleModel,
   resolveTransportAwareSimpleApi,
@@ -82,7 +82,7 @@ describe("prepareModelForSimpleCompletion", () => {
     pluginStreamFn.mockClear();
     wrapProviderSimpleCompletionStreamFn.mockReset();
     buildTransportAwareSimpleStreamFn.mockReset();
-    createOpenClawTransportStreamFnForModel.mockReset();
+    createNovaTransportStreamFnForModel.mockReset();
     createTransportAwareStreamFnForModel.mockReset();
     prepareTransportAwareSimpleModel.mockReset();
     resolveTransportAwareSimpleApi.mockReset();
@@ -91,7 +91,7 @@ describe("prepareModelForSimpleCompletion", () => {
     resolveProviderStreamFn.mockReturnValue(pluginStreamFn);
     wrapProviderSimpleCompletionStreamFn.mockReturnValue(undefined);
     buildTransportAwareSimpleStreamFn.mockReturnValue(undefined);
-    createOpenClawTransportStreamFnForModel.mockReturnValue(undefined);
+    createNovaTransportStreamFnForModel.mockReturnValue(undefined);
     createTransportAwareStreamFnForModel.mockReturnValue(undefined);
     prepareTransportAwareSimpleModel.mockImplementation((model) => model);
     resolveTransportAwareSimpleApi.mockReturnValue(undefined);
@@ -134,7 +134,7 @@ describe("prepareModelForSimpleCompletion", () => {
     expect(wrapProviderSimpleCompletionStreamFn).toHaveBeenCalledTimes(1);
     expect(wrapProviderSimpleCompletionStreamFn.mock.results[0]?.value).toBeTypeOf("function");
     expect(result.api).toBe(
-      "openclaw-provider-simple:moonshot:kimi-k2.7-code:moonshot-simple-source:https%3A%2F%2Fapi.moonshot.ai%2Fv1",
+      "nova-provider-simple:moonshot:kimi-k2.7-code:moonshot-simple-source:https%3A%2F%2Fapi.moonshot.ai%2Fv1",
     );
     expect(wrapProviderSimpleCompletionStreamFn).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -171,7 +171,7 @@ describe("prepareModelForSimpleCompletion", () => {
       maxTokens: 4096,
       headers: { Authorization: `Bearer ${sentinel}` },
     };
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       models: {
         providers: {
           ollama: {
@@ -243,12 +243,12 @@ describe("prepareModelForSimpleCompletion", () => {
     expect(createAnthropicVertexStreamFnForModel).toHaveBeenCalledWith(model);
     expect(ensureCustomApiRegistered).toHaveBeenCalledWith(
       apiRegistry,
-      "openclaw-anthropic-vertex-simple:https%3A%2F%2Fus-central1-aiplatform.googleapis.com",
+      "nova-anthropic-vertex-simple:https%3A%2F%2Fus-central1-aiplatform.googleapis.com",
       "vertex-stream",
     );
     expect(result).toEqual({
       ...model,
-      api: "openclaw-anthropic-vertex-simple:https%3A%2F%2Fus-central1-aiplatform.googleapis.com",
+      api: "nova-anthropic-vertex-simple:https%3A%2F%2Fus-central1-aiplatform.googleapis.com",
     });
   });
 
@@ -270,7 +270,7 @@ describe("prepareModelForSimpleCompletion", () => {
     buildTransportAwareSimpleStreamFn.mockReturnValueOnce("transport-stream");
     prepareTransportAwareSimpleModel.mockReturnValueOnce({
       ...model,
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
     });
 
     const result = prepareModelForSimpleCompletion({ model });
@@ -279,12 +279,12 @@ describe("prepareModelForSimpleCompletion", () => {
     expect(buildTransportAwareSimpleStreamFn).toHaveBeenCalledWith(model, { cfg: undefined });
     expect(ensureCustomApiRegistered).toHaveBeenCalledWith(
       apiRegistry,
-      "openclaw-openai-responses-transport",
+      "nova-openai-responses-transport",
       "transport-stream",
     );
     expect(result).toEqual({
       ...model,
-      api: "openclaw-openai-responses-transport",
+      api: "nova-openai-responses-transport",
     });
   });
 
@@ -304,7 +304,7 @@ describe("prepareModelForSimpleCompletion", () => {
     };
     prepareGoogleSimpleCompletionModel.mockImplementationOnce((_registry: unknown, m: unknown) => ({
       ...(m as Model<"google-generative-ai">),
-      api: "openclaw-google-generative-ai-simple",
+      api: "nova-google-generative-ai-simple",
     }));
     resolveProviderStreamFn.mockReturnValueOnce(undefined);
 
@@ -315,7 +315,7 @@ describe("prepareModelForSimpleCompletion", () => {
     expect(buildTransportAwareSimpleStreamFn).not.toHaveBeenCalled();
     expect(result).toEqual({
       ...model,
-      api: "openclaw-google-generative-ai-simple",
+      api: "nova-google-generative-ai-simple",
     });
   });
 
@@ -336,7 +336,7 @@ describe("prepareModelForSimpleCompletion", () => {
 
     const transportModel = {
       ...model,
-      api: "openclaw-google-generative-ai-transport",
+      api: "nova-google-generative-ai-transport",
     };
     resolveProviderStreamFn.mockReturnValueOnce(undefined);
     buildTransportAwareSimpleStreamFn.mockReturnValueOnce("google-transport-stream");
@@ -347,7 +347,7 @@ describe("prepareModelForSimpleCompletion", () => {
     expect(buildTransportAwareSimpleStreamFn).toHaveBeenCalledWith(model, { cfg: undefined });
     expect(ensureCustomApiRegistered).toHaveBeenCalledWith(
       apiRegistry,
-      "openclaw-google-generative-ai-transport",
+      "nova-google-generative-ai-transport",
       "google-transport-stream",
     );
     expect(prepareGoogleSimpleCompletionModel).not.toHaveBeenCalled();
@@ -382,14 +382,14 @@ describe("prepareModelForSimpleCompletion", () => {
       };
 
       resolveProviderStreamFn.mockReturnValueOnce(undefined);
-      createOpenClawTransportStreamFnForModel.mockReturnValueOnce("codex-transport-stream");
-      resolveTransportAwareSimpleApi.mockReturnValueOnce("openclaw-openai-responses-transport");
+      createNovaTransportStreamFnForModel.mockReturnValueOnce("codex-transport-stream");
+      resolveTransportAwareSimpleApi.mockReturnValueOnce("nova-openai-responses-transport");
 
       const result = prepareModelForSimpleCompletion({ model });
 
       // ChatGPT/Codex response endpoints share the transport stream, but the
       // simple-completion API must normalize caller-supplied base URLs first.
-      expect(createOpenClawTransportStreamFnForModel).toHaveBeenCalledWith(
+      expect(createNovaTransportStreamFnForModel).toHaveBeenCalledWith(
         {
           ...model,
           baseUrl: expectedBaseUrl,
@@ -398,13 +398,13 @@ describe("prepareModelForSimpleCompletion", () => {
       );
       expect(ensureCustomApiRegistered).toHaveBeenCalledWith(
         apiRegistry,
-        "openclaw-openai-responses-transport",
+        "nova-openai-responses-transport",
         "codex-transport-stream",
       );
       expect(result).toEqual({
         ...model,
         baseUrl: expectedBaseUrl,
-        api: "openclaw-openai-responses-transport",
+        api: "nova-openai-responses-transport",
       });
       expect(prepareTransportAwareSimpleModel).not.toHaveBeenCalled();
     },

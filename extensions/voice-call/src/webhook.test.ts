@@ -1,6 +1,6 @@
 // Voice Call tests cover webhook plugin behavior.
 import { request, type IncomingMessage } from "node:http";
-import type { RealtimeTranscriptionProviderPlugin } from "openclaw/plugin-sdk/realtime-transcription";
+import type { RealtimeTranscriptionProviderPlugin } from "nova/plugin-sdk/realtime-transcription";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { VoiceCallConfigSchema, resolveVoiceCallConfig, type VoiceCallConfig } from "./config.js";
 import type { CallManager } from "./manager.js";

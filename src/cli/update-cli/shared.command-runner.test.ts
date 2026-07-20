@@ -38,13 +38,13 @@ describe("createGlobalCommandRunner", () => {
 
     const result = await runCommand(["npm", "root", "-g"], {
       timeoutMs: 1200,
-      cwd: "/tmp/openclaw",
+      cwd: "/tmp/nova",
       env: { NOVA_TEST: "1" },
     });
 
     expect(runCommandWithTimeout).toHaveBeenCalledWith(["npm", "root", "-g"], {
       timeoutMs: 1200,
-      cwd: "/tmp/openclaw",
+      cwd: "/tmp/nova",
       env: { NOVA_TEST: "1" },
     });
     expect(result).toEqual({
@@ -97,20 +97,20 @@ describe("createGlobalCommandRunner", () => {
   it.runIf(process.platform !== "win32")(
     "resolves update ownership from the lexical invocation path",
     async () => {
-      await withTempDir({ prefix: "openclaw-update-root-" }, async (base) => {
-        const storeRoot = path.join(base, "store", "openclaw");
-        const packageRoot = path.join(base, "global", "v11", "install", "node_modules", "openclaw");
+      await withTempDir({ prefix: "nova-update-root-" }, async (base) => {
+        const storeRoot = path.join(base, "store", "nova");
+        const packageRoot = path.join(base, "global", "v11", "install", "node_modules", "nova");
         await fs.mkdir(path.dirname(packageRoot), { recursive: true });
         await fs.mkdir(storeRoot, { recursive: true });
         await fs.writeFile(
           path.join(storeRoot, "package.json"),
-          JSON.stringify({ name: "openclaw", version: "1.0.0" }),
+          JSON.stringify({ name: "nova", version: "1.0.0" }),
           "utf8",
         );
         await fs.symlink(storeRoot, packageRoot, "dir");
 
         const previousArgv = [...process.argv];
-        process.argv[1] = path.join(packageRoot, "openclaw.mjs");
+        process.argv[1] = path.join(packageRoot, "nova.mjs");
         try {
           await expect(resolveUpdateRoot()).resolves.toBe(packageRoot);
         } finally {

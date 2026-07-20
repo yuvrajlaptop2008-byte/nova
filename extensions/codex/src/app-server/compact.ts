@@ -6,8 +6,8 @@ import {
   resolveCompactionTimeoutMs,
   type CompactEmbeddedAgentSessionParams,
   type EmbeddedAgentCompactResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resolveAgentDir, resolveDefaultAgentId } from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { resolveAgentDir, resolveDefaultAgentId } from "nova/plugin-sdk/agent-runtime";
 import { readCodexNotificationItem } from "./attempt-notifications.js";
 import { resolveCodexBindingAppServerConnection } from "./binding-connection.js";
 import { CodexAppServerRpcError, type CodexAppServerClient } from "./client.js";
@@ -363,16 +363,14 @@ export async function maybeCompactCodexAppServerSession(
   params: CompactEmbeddedAgentSessionParams,
   options: CodexAppServerCompactOptions,
 ): Promise<EmbeddedAgentCompactResult | undefined> {
-  warnIfIgnoringOpenClawCompactionOverrides(params);
+  warnIfIgnoringNovaCompactionOverrides(params);
   // Codex owns automatic context-pressure compaction for Codex runtime sessions.
   // This entry point starts native Codex compaction for the bound thread and
   // retains the lease until Codex reports the context-compaction item complete.
   return compactCodexNativeThread(params, options);
 }
 
-function warnIfIgnoringOpenClawCompactionOverrides(
-  params: CompactEmbeddedAgentSessionParams,
-): void {
+function warnIfIgnoringNovaCompactionOverrides(params: CompactEmbeddedAgentSessionParams): void {
   const ignoredConfig = readIgnoredCompactionOverridePaths(params);
   if (ignoredConfig.length === 0) {
     return;

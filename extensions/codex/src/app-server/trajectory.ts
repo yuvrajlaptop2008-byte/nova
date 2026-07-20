@@ -5,9 +5,9 @@
 import type {
   EmbeddedRunAttemptParams,
   EmbeddedRunAttemptResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { parseSqliteSessionFileMarker } from "openclaw/plugin-sdk/session-store-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { parseSqliteSessionFileMarker } from "nova/plugin-sdk/session-store-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import { resolveCodexLocalRuntimeAttribution } from "./local-runtime-attribution.js";
 import { flattenCodexDynamicToolFunctions, type CodexDynamicToolSpec } from "./protocol.js";
 
@@ -158,7 +158,7 @@ export function createCodexTrajectoryRecorder(
   return {
     recordEvent: (type, data) => {
       const event = boundedTrajectoryEvent({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: params.attempt.sessionId,
         source: "runtime",

@@ -25,7 +25,7 @@ import { join, resolve } from "node:path";
  *     non-reversible pool fingerprint so token rotation busts the
  *     client pool cleanly.
  *   - Computes a per-agent `copilotHome` default
- *     (`<openClawHome>/.openclaw/agents/<agentId>/copilot`, or
+ *     (`<novaHome>/.nova/agents/<agentId>/copilot`, or
  *     `<agentDir>/copilot` when an agent directory is supplied) that
  *     respects `NOVA_HOME` for the home directory root.
  *   - Defaults to `useLoggedInUser` when no token signal is available.
@@ -268,11 +268,11 @@ function resolveCopilotHome(args: {
     return resolve(join(args.agentDir, "copilot"));
   }
 
-  const openClawHome = readString(args.env.NOVA_HOME);
-  const rootHome = openClawHome ? resolve(openClawHome) : safeHomeDir(args.homeDir);
+  const novaHome = readString(args.env.NOVA_HOME);
+  const rootHome = novaHome ? resolve(novaHome) : safeHomeDir(args.homeDir);
   // Per-agent isolation per proposal section 3.6:
-  //   <openClawHome>/.openclaw/agents/<agentId>/copilot
-  return resolve(join(rootHome, ".openclaw", "agents", args.agentId, "copilot"));
+  //   <novaHome>/.nova/agents/<agentId>/copilot
+  return resolve(join(rootHome, ".nova", "agents", args.agentId, "copilot"));
 }
 
 function safeHomeDir(homeDir: () => string): string {

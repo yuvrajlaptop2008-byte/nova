@@ -185,7 +185,7 @@ describe("check-memory-fd-repro", () => {
   });
 
   it("writes an offline FTS-only memory search config for repro indexing", () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-memory-fd-config-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-memory-fd-config-"));
     try {
       const homeDir = path.join(root, "home");
       const workspaceDir = path.join(root, "workspace");

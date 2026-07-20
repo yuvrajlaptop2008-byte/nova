@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { normalizeStringEntries } from "@nova/normalization-core/string-normalization";
 import type { ChatType } from "../channels/chat-type.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   formatActiveNodeContextLabel,
   getActiveNodeContext,
@@ -50,7 +50,7 @@ type SystemPromptRuntimeParams = {
 };
 
 export function buildSystemPromptParams(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   runtime: Omit<RuntimeInfoInput, "agentId">;
   workspaceDir?: string;
@@ -78,7 +78,7 @@ export function buildSystemPromptParams(params: {
 }
 
 function resolveRepoRoot(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   cwd?: string;
 }): string | undefined {

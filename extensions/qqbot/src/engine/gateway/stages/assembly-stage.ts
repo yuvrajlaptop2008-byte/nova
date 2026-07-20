@@ -19,8 +19,8 @@ import {
   formatInboundEnvelope,
   resolveEnvelopeFormatOptions,
   type EnvelopeFormatOptions,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
+} from "nova/plugin-sdk/channel-inbound";
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
 import {
   buildMergedMessageContext,
   formatAttachmentTags,

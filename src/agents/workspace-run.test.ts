@@ -2,7 +2,7 @@
 // agent config, session keys, and environment fallback.
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { resolveRunWorkspaceDir } from "./workspace-run.js";
 
 describe("resolveRunWorkspaceDir", () => {
@@ -23,7 +23,7 @@ describe("resolveRunWorkspaceDir", () => {
     const workspaceDir = path.join(process.cwd(), "tmp", "workspace-run-canonical");
     const cfg = {
       agents: { defaults: { workspace: workspaceDir } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = resolveRunWorkspaceDir({
       workspaceDir,
@@ -43,7 +43,7 @@ describe("resolveRunWorkspaceDir", () => {
         defaults: { workspace: defaultWorkspace },
         list: [{ id: "research", workspace: researchWorkspace }],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = resolveRunWorkspaceDir({
       workspaceDir: undefined,
@@ -64,7 +64,7 @@ describe("resolveRunWorkspaceDir", () => {
       agents: {
         defaults: { workspace: defaultWorkspace },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = resolveRunWorkspaceDir({
       workspaceDir: "   ",
@@ -79,7 +79,7 @@ describe("resolveRunWorkspaceDir", () => {
   });
 
   it("falls back to built-in main workspace when config is unavailable", () => {
-    const workspaceDir = path.join(path.sep, "srv", "openclaw-workspace");
+    const workspaceDir = path.join(path.sep, "srv", "nova-workspace");
     const result = resolveRunWorkspaceDir({
       workspaceDir: null,
       sessionKey: "agent:main:subagent:test",
@@ -108,7 +108,7 @@ describe("resolveRunWorkspaceDir", () => {
       ...process.env,
       HOME: "/home/runner",
       NOVA_HOME: undefined,
-      NOVA_STATE_DIR: "/tmp/openclaw-state",
+      NOVA_STATE_DIR: "/tmp/nova-state",
     } satisfies NodeJS.ProcessEnv;
     const result = resolveRunWorkspaceDir({
       workspaceDir: undefined,
@@ -120,7 +120,7 @@ describe("resolveRunWorkspaceDir", () => {
 
     expect(result.agentId).toBe("research");
     expect(result.agentIdSource).toBe("explicit");
-    expect(result.workspaceDir).toBe(path.resolve("/tmp/openclaw-state", "workspace-research"));
+    expect(result.workspaceDir).toBe(path.resolve("/tmp/nova-state", "workspace-research"));
   });
 
   it("throws for malformed agent session keys even when config has a default agent", () => {
@@ -136,7 +136,7 @@ describe("resolveRunWorkspaceDir", () => {
           { id: "research", workspace: researchWorkspace, default: true },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     expect(() =>
       resolveRunWorkspaceDir({
@@ -153,7 +153,7 @@ describe("resolveRunWorkspaceDir", () => {
       agents: {
         defaults: { workspace: fallbackWorkspace },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const result = resolveRunWorkspaceDir({
       workspaceDir: undefined,

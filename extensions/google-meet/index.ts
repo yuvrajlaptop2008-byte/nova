@@ -2,19 +2,19 @@
 import {
   optionalPositiveIntegerSchema,
   readPositiveIntegerParam,
-} from "openclaw/plugin-sdk/channel-actions";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+} from "nova/plugin-sdk/channel-actions";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   callGatewayFromCli,
   ErrorCodes,
   errorShape,
   type GatewayRequestHandlerOptions,
-} from "openclaw/plugin-sdk/gateway-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { definePluginEntry, type OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeAgentId, parseAgentSessionKey } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { jsonResult as json } from "openclaw/plugin-sdk/tool-results";
+} from "nova/plugin-sdk/gateway-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { definePluginEntry, type NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import { normalizeAgentId, parseAgentSessionKey } from "nova/plugin-sdk/routing";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import { jsonResult as json } from "nova/plugin-sdk/tool-results";
 import { Type } from "typebox";
 import {
   buildGoogleMeetCalendarDayWindow,
@@ -200,7 +200,7 @@ const googleMeetConfigSchema = {
     },
     "realtime.agentId": {
       label: "Realtime Consult Agent",
-      help: 'Nova agent id used by openclaw_agent_consult. Defaults to "main".',
+      help: 'Nova agent id used by nova_agent_consult. Defaults to "main".',
       advanced: true,
     },
     "realtime.toolPolicy": {
@@ -481,7 +481,7 @@ async function callGoogleMeetGatewayFromTool(params: {
   config: GoogleMeetConfig;
   action: GoogleMeetGatewayToolAction;
   raw: Record<string, unknown>;
-  runtime?: OpenClawPluginApi["runtime"];
+  runtime?: NovaPluginApi["runtime"];
 }): Promise<unknown> {
   try {
     if (params.runtime) {
@@ -528,7 +528,7 @@ function keepTrustedToolAgentId(
 
 async function createMeetFromParams(params: {
   config: GoogleMeetConfig;
-  runtime: OpenClawPluginApi["runtime"];
+  runtime: NovaPluginApi["runtime"];
   raw: Record<string, unknown>;
 }) {
   const create = await loadGoogleMeetCreateModule();
@@ -537,7 +537,7 @@ async function createMeetFromParams(params: {
 
 async function createAndJoinMeetFromParams(params: {
   config: GoogleMeetConfig;
-  runtime: OpenClawPluginApi["runtime"];
+  runtime: NovaPluginApi["runtime"];
   raw: Record<string, unknown>;
   ensureRuntime: () => Promise<GoogleMeetRuntime>;
 }) {
@@ -715,7 +715,7 @@ export default definePluginEntry({
   name: "Google Meet",
   description: "Join Google Meet calls through Chrome or Twilio transports",
   configSchema: googleMeetConfigSchema,
-  register(api: OpenClawPluginApi) {
+  register(api: NovaPluginApi) {
     const config = googleMeetConfigSchema.parse(api.pluginConfig);
     let runtime: GoogleMeetRuntime | null = null;
 

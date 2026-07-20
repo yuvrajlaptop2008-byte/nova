@@ -26,7 +26,7 @@ export type RespawnSupervisor = "launchd" | "systemd" | "schtasks";
 type GatewayRespawnSupervisor = RespawnSupervisor | "external";
 
 interface DetectRespawnSupervisorOptions {
-  includeLinuxOpenClawGatewayServiceMarker?: boolean;
+  includeLinuxNovaGatewayServiceMarker?: boolean;
 }
 
 function hasAnyHint(env: NodeJS.ProcessEnv, keys: readonly string[]): boolean {
@@ -36,10 +36,8 @@ function hasAnyHint(env: NodeJS.ProcessEnv, keys: readonly string[]): boolean {
   });
 }
 
-function hasOpenClawGatewayServiceMarker(env: NodeJS.ProcessEnv): boolean {
-  return (
-    env.NOVA_SERVICE_MARKER?.trim() === "openclaw" && env.NOVA_SERVICE_KIND?.trim() === "gateway"
-  );
+function hasNovaGatewayServiceMarker(env: NodeJS.ProcessEnv): boolean {
+  return env.NOVA_SERVICE_MARKER?.trim() === "nova" && env.NOVA_SERVICE_KIND?.trim() === "gateway";
 }
 
 function isCurrentGatewayLaunchdJob(env: NodeJS.ProcessEnv): boolean {
@@ -65,8 +63,7 @@ export function detectRespawnSupervisor(
   }
   if (platform === "linux") {
     return hasAnyHint(env, SUPERVISOR_HINTS.systemd) ||
-      (options.includeLinuxOpenClawGatewayServiceMarker === true &&
-        hasOpenClawGatewayServiceMarker(env))
+      (options.includeLinuxNovaGatewayServiceMarker === true && hasNovaGatewayServiceMarker(env))
       ? "systemd"
       : null;
   }

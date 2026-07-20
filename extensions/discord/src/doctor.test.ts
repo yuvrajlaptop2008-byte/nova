@@ -1,5 +1,5 @@
 // Discord tests cover doctor plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import {
   collectDiscordMissingEnvTokenWarnings,
@@ -555,7 +555,7 @@ describe("discord doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const hits = scanDiscordNumericIdEntries(cfg);
     expect(hits.map((hit) => hit.path)).toEqual([
@@ -578,9 +578,9 @@ describe("discord doctor", () => {
           guilds: { main: { users: [111], roles: [222] } },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
-    const result = maybeRepairDiscordNumericIds(cfg, "openclaw doctor --fix");
+    const result = maybeRepairDiscordNumericIds(cfg, "nova doctor --fix");
     expect(result.config.channels?.discord?.allowFrom).toEqual(["123"]);
     expect(
       (result.config.channels?.discord?.dm as { allowFrom?: string[] } | undefined)?.allowFrom,
@@ -594,11 +594,11 @@ describe("discord doctor", () => {
   it("formats repair guidance for unsafe numeric ids", () => {
     const warnings = collectDiscordNumericIdWarnings({
       hits: [{ path: "channels.discord.allowFrom[0]", entry: 106232522769186816, safe: false }],
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
     });
 
     expect(warnings[0]).toContain("cannot be auto-repaired");
-    expect(warnings[1]).toContain("openclaw doctor --fix");
+    expect(warnings[1]).toContain("nova doctor --fix");
   });
 
   it("warns when default env fallback token is missing after migration", async () => {
@@ -608,7 +608,7 @@ describe("discord doctor", () => {
           allowFrom: ["123"],
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const missingTokenWarning =
       "- channels.discord: default account has no available bot token, and DISCORD_BOT_TOKEN is absent in this doctor environment. After migration, verify DISCORD_BOT_TOKEN is present in the state-dir .env or configure channels.discord.token / channels.discord.accounts.default.token as a SecretRef.";
@@ -621,7 +621,7 @@ describe("discord doctor", () => {
     expect(
       await discordDoctor.collectPreviewWarnings?.({
         cfg,
-        doctorFixCommand: "openclaw doctor --fix",
+        doctorFixCommand: "nova doctor --fix",
         env: {},
       }),
     ).toStrictEqual([missingTokenWarning]);
@@ -638,7 +638,7 @@ describe("discord doctor", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(collectDiscordMissingEnvTokenWarnings({ cfg, env: {} })).toStrictEqual([]);
   });

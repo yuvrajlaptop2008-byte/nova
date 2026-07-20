@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ProviderModelRouteCandidate } from "../plugin-sdk/provider-model-types.js";
 import {
   findModelCatalogRouteDonor,
@@ -181,7 +181,7 @@ describe("projectModelCatalogEntryForRoute", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const overrides = resolveConfiguredModelCatalogOverrides({ cfg, entry: platformEntry });
 
     expect(
@@ -213,7 +213,7 @@ describe("projectModelCatalogEntryForRoute", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const canonicalPolicy: ModelCatalogRoutePolicy = {
       ...routePolicy,
       resolveIdentity: (entry) => {
@@ -240,7 +240,7 @@ describe("projectModelCatalogEntryForRoute", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const literalEntry = { ...platformEntry, id: "openai/acme-model" };
 
     expect(

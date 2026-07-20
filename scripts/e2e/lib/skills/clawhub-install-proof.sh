@@ -5,46 +5,46 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 cd "$ROOT_DIR"
 
-source "$ROOT_DIR/scripts/lib/openclaw-e2e-instance.sh"
+source "$ROOT_DIR/scripts/lib/nova-e2e-instance.sh"
 
 NOVA_TEST_STATE_SCRIPT_B64="${NOVA_TEST_STATE_SCRIPT_B64:-}"
-openclaw_skill_install_owns_home=0
+nova_skill_install_owns_home=0
 cleanup_clawhub_skill_install_home() {
-  if [ "$openclaw_skill_install_owns_home" = "1" ] && [ -n "${HOME:-}" ]; then
+  if [ "$nova_skill_install_owns_home" = "1" ] && [ -n "${HOME:-}" ]; then
     rm -rf "$HOME"
   fi
 }
 trap cleanup_clawhub_skill_install_home EXIT
 
 if [ -n "$NOVA_TEST_STATE_SCRIPT_B64" ]; then
-  openclaw_e2e_eval_test_state_from_b64 "$NOVA_TEST_STATE_SCRIPT_B64"
+  nova_e2e_eval_test_state_from_b64 "$NOVA_TEST_STATE_SCRIPT_B64"
 else
-  export HOME="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-skill-install-home.XXXXXX")"
-  openclaw_skill_install_owns_home=1
+  export HOME="$(mktemp -d "${TMPDIR:-/tmp}/nova-skill-install-home.XXXXXX")"
+  nova_skill_install_owns_home=1
   export USERPROFILE="$HOME"
   export NOVA_HOME="$HOME"
-  export NOVA_STATE_DIR="$HOME/.openclaw"
-  export NOVA_CONFIG_PATH="$NOVA_STATE_DIR/openclaw.json"
+  export NOVA_STATE_DIR="$HOME/.nova"
+  export NOVA_CONFIG_PATH="$NOVA_STATE_DIR/nova.json"
   mkdir -p "$NOVA_STATE_DIR"
 fi
 
 if [ -n "${NOVA_CURRENT_PACKAGE_TGZ:-}" ]; then
   export NPM_CONFIG_PREFIX="${NPM_CONFIG_PREFIX:-$HOME/.npm-global}"
   export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-  openclaw_e2e_install_package /tmp/openclaw-skill-install-npm.log
+  nova_e2e_install_package /tmp/nova-skill-install-npm.log
 fi
 
-if [ -n "${NOVA_CURRENT_PACKAGE_TGZ:-}" ] && command -v openclaw >/dev/null 2>&1; then
-  NOVA_CMD=(openclaw)
+if [ -n "${NOVA_CURRENT_PACKAGE_TGZ:-}" ] && command -v nova >/dev/null 2>&1; then
+  NOVA_CMD=(nova)
 elif command -v pnpm >/dev/null 2>&1 && [ -f package.json ]; then
   if [ "${NOVA_SKILL_INSTALL_E2E_BUILD_SOURCE:-0}" = "1" ]; then
-    pnpm build >/tmp/openclaw-skill-install-build.log 2>&1
+    pnpm build >/tmp/nova-skill-install-build.log 2>&1
   fi
-  NOVA_CMD=(pnpm --silent openclaw)
-elif command -v openclaw >/dev/null 2>&1; then
-  NOVA_CMD=(openclaw)
+  NOVA_CMD=(pnpm --silent nova)
+elif command -v nova >/dev/null 2>&1; then
+  NOVA_CMD=(nova)
 else
-  echo "openclaw command not found; install package first or run from repo with pnpm" >&2
+  echo "nova command not found; install package first or run from repo with pnpm" >&2
   exit 1
 fi
 
@@ -65,10 +65,10 @@ NODE
 query="${NOVA_SKILL_INSTALL_E2E_QUERY:-homeassistant}"
 requested_slug="${NOVA_SKILL_INSTALL_E2E_SLUG:-}"
 preferred_slug="${NOVA_SKILL_INSTALL_E2E_PREFERRED_SLUG:-homeassistant-skill}"
-search_json="/tmp/openclaw-skill-install-search.json"
-resolve_json="/tmp/openclaw-skill-install-resolved.json"
-install_log="/tmp/openclaw-skill-install.log"
-info_json="/tmp/openclaw-skill-install-info.json"
+search_json="/tmp/nova-skill-install-search.json"
+resolve_json="/tmp/nova-skill-install-resolved.json"
+install_log="/tmp/nova-skill-install.log"
+info_json="/tmp/nova-skill-install-info.json"
 
 echo "Searching live ClawHub skills for: $query"
 "${NOVA_CMD[@]}" skills search "$query" --limit 8 --json >"$search_json"
@@ -105,18 +105,18 @@ slug="$(node -e 'process.stdout.write(JSON.parse(require("node:fs").readFileSync
 echo "Installing live ClawHub skill: $slug"
 if ! "${NOVA_CMD[@]}" skills install "$slug" --force >"$install_log" 2>&1; then
   echo "Skill install failed" >&2
-  openclaw_e2e_dump_logs /tmp/openclaw-skill-install-npm.log "$search_json" "$resolve_json" "$install_log"
+  nova_e2e_dump_logs /tmp/nova-skill-install-npm.log "$search_json" "$resolve_json" "$install_log"
   exit 1
 fi
 
-workspace_dir="$HOME/.openclaw/workspace"
+workspace_dir="$HOME/.nova/workspace"
 skill_dir="$workspace_dir/skills/$slug"
 origin_json="$skill_dir/.clawhub/origin.json"
 lock_json="$workspace_dir/.clawhub/lock.json"
 
-openclaw_e2e_assert_file "$skill_dir/SKILL.md"
-openclaw_e2e_assert_file "$origin_json"
-openclaw_e2e_assert_file "$lock_json"
+nova_e2e_assert_file "$skill_dir/SKILL.md"
+nova_e2e_assert_file "$origin_json"
+nova_e2e_assert_file "$lock_json"
 
 "${NOVA_CMD[@]}" skills info "$slug" --json >"$info_json"
 

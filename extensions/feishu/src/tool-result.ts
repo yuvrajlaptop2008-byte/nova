@@ -1,6 +1,6 @@
 // Feishu plugin module implements tool result behavior.
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { jsonResult } from "openclaw/plugin-sdk/tool-results";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { jsonResult } from "nova/plugin-sdk/tool-results";
 
 export function unknownToolActionResult(action: unknown) {
   return jsonResult({ error: `Unknown action: ${String(action)}` });

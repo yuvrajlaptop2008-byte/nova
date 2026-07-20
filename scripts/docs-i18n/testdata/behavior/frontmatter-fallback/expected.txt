@@ -1,1 +1,1 @@
-Deploying OpenClaw on Fly.io
+Deploying Nova on Fly.io

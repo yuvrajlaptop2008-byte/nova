@@ -8,12 +8,12 @@ import {
   getMcpAppViewLease,
   type McpAppViewLease,
 } from "../agents/mcp-ui-resource.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 import { visitSessionMessagesAsync } from "./session-transcript-readers.js";
 import { loadSessionEntry } from "./session-utils.js";
 
-const MCP_APP_RESTORE_IN_FLIGHT_KEY = Symbol.for("openclaw.mcpAppRestoreInFlight");
+const MCP_APP_RESTORE_IN_FLIGHT_KEY = Symbol.for("nova.mcpAppRestoreInFlight");
 
 type McpAppDescriptor = {
   viewId: string;
@@ -245,7 +245,7 @@ function getRestoreInFlight(): Map<string, Promise<ReconstructionResult | undefi
 }
 
 async function reconstructMcpAppView(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   lookup: TranscriptLookup;
   allowedAppToolNames: ReadonlySet<string>;
@@ -304,7 +304,7 @@ async function reconstructMcpAppView(params: {
 }
 
 async function restoreMcpAppViewOnce(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   viewId: string;
 }): Promise<ReconstructionResult | undefined> {
@@ -322,7 +322,7 @@ async function restoreMcpAppViewOnce(params: {
 }
 
 export async function mintMcpAppViewFromTranscript(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   descriptor: BoardMcpAppDescriptor;
   allowedAppToolNames: ReadonlySet<string>;
@@ -340,7 +340,7 @@ export async function mintMcpAppViewFromTranscript(params: {
 }
 
 export async function restoreMcpAppView(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   viewId: string;
 }): Promise<ReconstructionResult | undefined> {

@@ -144,7 +144,7 @@ class FakeWorkerGateway {
   }
 
   async start(): Promise<void> {
-    this.rootDir = await mkdtemp(path.join(tmpdir(), "openclaw-worker-gateway-"));
+    this.rootDir = await mkdtemp(path.join(tmpdir(), "nova-worker-gateway-"));
     this.socketPath = path.join(this.rootDir, "gateway.sock");
     await new Promise<void>((resolve, reject) => {
       const onError = (error: Error) => {
@@ -716,7 +716,7 @@ function descriptor(socketPath: string, workspaceDir: string): WorkerLaunchDescr
       rpcSetVersion: WORKER_RPC_SET_VERSION,
       handshake: {
         bundleHash: BUNDLE_HASH,
-        openclawVersion: "worker-test",
+        novaVersion: "worker-test",
         protocolFeatures: [...WORKER_PROTOCOL_FEATURES],
       },
     },
@@ -746,7 +746,7 @@ async function setup(options?: FakeGatewayOptions): Promise<{
   const gateway = new FakeWorkerGateway(options);
   gateways.push(gateway);
   await gateway.start();
-  const workspaceDir = await mkdtemp(path.join(tmpdir(), "openclaw-worker-workspace-"));
+  const workspaceDir = await mkdtemp(path.join(tmpdir(), "nova-worker-workspace-"));
   tempDirs.push(workspaceDir);
   return { gateway, workspaceDir, launch: descriptor(gateway.socketPath, workspaceDir) };
 }

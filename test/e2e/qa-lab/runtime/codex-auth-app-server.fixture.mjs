@@ -17,9 +17,9 @@ runFakeCodexAppServer({
     initialize: ({ sendResult }) =>
       sendResult(
         createFakeInitializeResponse({
-          name: "openclaw-qa-codex-auth",
+          name: "nova-qa-codex-auth",
           version: "0.143.0",
-          userAgent: "openclaw/0.143.0 (test)",
+          userAgent: "nova/0.143.0 (test)",
         }),
       ),
     "account/login/start": ({ params, sendResult }) => sendResult({ type: params?.type }),

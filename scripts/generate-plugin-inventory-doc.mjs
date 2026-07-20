@@ -33,8 +33,8 @@ const PLUGIN_DOC_ALIASES = new Map([
   ["tokenjuice", "/tools/tokenjuice"],
 ]);
 const SKIPPED_REFERENCE_PAGE_IDS = new Set(["parallel"]);
-const MANUAL_SECTION_START = "<!-- openclaw-plugin-reference:manual-start -->";
-const MANUAL_SECTION_END = "<!-- openclaw-plugin-reference:manual-end -->";
+const MANUAL_SECTION_START = "<!-- nova-plugin-reference:manual-start -->";
+const MANUAL_SECTION_END = "<!-- nova-plugin-reference:manual-end -->";
 // Generated link labels are user-visible product names and translation source.
 const RELATED_DOC_PRODUCT_IDS = new Set([
   "chutes",
@@ -279,7 +279,7 @@ function resolveDocs({ dirName, manifest, packageJson }) {
     pushUniqueDocLink(links, { href: pluginAlias, label: pluginAliasLabel });
   }
 
-  const channelDoc = normalizeDocPath(packageJson.openclaw?.channel?.docsPath);
+  const channelDoc = normalizeDocPath(packageJson.nova?.channel?.docsPath);
   if (channelDoc) {
     pushUniqueDocLink(links, {
       href: channelDoc,
@@ -347,14 +347,14 @@ function resolveInstallRoute(packageJson, status) {
     return "source checkout only";
   }
   if (status === "core") {
-    const release = packageJson.openclaw?.release;
+    const release = packageJson.nova?.release;
     if (release?.publishToClawHub === true || release?.publishToNpm === true) {
       return `included in Nova; ${resolveInstallRoute(packageJson, "external")}`;
     }
     return "included in Nova";
   }
-  const install = packageJson.openclaw?.install;
-  const release = packageJson.openclaw?.release;
+  const install = packageJson.nova?.install;
+  const release = packageJson.nova?.release;
   const clawhubSpec =
     typeof install?.clawhubSpec === "string" ? `: \`${install.clawhubSpec}\`` : "";
   const npmSpec =
@@ -377,10 +377,10 @@ function resolveInstallRoute(packageJson, status) {
 }
 
 function resolveStatus({ dirName, packageJson, excludedDirs }) {
-  const release = packageJson.openclaw?.release;
+  const release = packageJson.nova?.release;
   const hasInstallSpec =
-    typeof packageJson.openclaw?.install?.clawhubSpec === "string" ||
-    typeof packageJson.openclaw?.install?.npmSpec === "string";
+    typeof packageJson.nova?.install?.clawhubSpec === "string" ||
+    typeof packageJson.nova?.install?.npmSpec === "string";
   if (!excludedDirs.has(dirName)) {
     return "core";
   }
@@ -493,7 +493,7 @@ title: "Plugin reference"
 # Plugin reference
 
 This page is generated from \`extensions/*/package.json\` and
-\`openclaw.plugin.json\`. Regenerate it with:
+\`nova.plugin.json\`. Regenerate it with:
 
 \`\`\`bash
 pnpm plugins:inventory:gen
@@ -510,7 +510,7 @@ function collectPluginSourceEntries() {
     .readdirSync(EXTENSIONS_DIR)
     .toSorted((left, right) => left.localeCompare(right))) {
     const packagePath = path.join(EXTENSIONS_DIR, dirName, "package.json");
-    const manifestPath = path.join(EXTENSIONS_DIR, dirName, "openclaw.plugin.json");
+    const manifestPath = path.join(EXTENSIONS_DIR, dirName, "nova.plugin.json");
     if (!fs.existsSync(packagePath) || !fs.existsSync(manifestPath)) {
       continue;
     }
@@ -613,7 +613,7 @@ title: "Plugin inventory"
 
 # Plugin inventory
 
-This page is generated from \`extensions/*/package.json\`, \`openclaw.plugin.json\`,
+This page is generated from \`extensions/*/package.json\`, \`nova.plugin.json\`,
 and the root npm package \`files\` exclusions. Regenerate it with:
 
 \`\`\`bash
@@ -622,7 +622,7 @@ pnpm plugins:inventory:gen
 
 ## Definitions
 
-- **Core npm package:** built into the \`openclaw\` npm package and available without a separate plugin install.
+- **Core npm package:** built into the \`nova\` npm package and available without a separate plugin install.
 - **Official external package:** Nova-maintained plugin omitted from the core npm package, kept in this official inventory, and installed on demand through ClawHub and/or npm.
 - **Source checkout only:** repo-local plugin omitted from published npm artifacts and not advertised as an installable package.
 
@@ -639,9 +639,9 @@ Official external packages need one install, then a Gateway restart.
 For example, Discord is an official external package:
 
 \`\`\`bash
-openclaw plugins install @nova/discord
-openclaw gateway restart
-openclaw plugins inspect discord --runtime --json
+nova plugins install @nova/discord
+nova gateway restart
+nova plugins inspect discord --runtime --json
 \`\`\`
 
 During the launch cutover, ordinary bare package specs still install from npm.

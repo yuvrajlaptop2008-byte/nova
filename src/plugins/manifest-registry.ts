@@ -7,7 +7,7 @@ import {
   uniqueStrings,
 } from "@nova/normalization-core/string-normalization";
 import { sanitizeForLog } from "../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import { satisfiesPluginApiRange } from "../infra/clawhub.js";
 import { isBlockedObjectKey } from "../infra/prototype-keys.js";
@@ -17,7 +17,7 @@ import { loadBundleManifest } from "./bundle-manifest.js";
 import { normalizePluginsConfigWithResolver } from "./config-policy.js";
 import { isBundledPluginInsideDevSourceRoot } from "./dev-source-root.js";
 import {
-  discoverOpenClawPlugins,
+  discoverNovaPlugins,
   type PluginCandidate,
   type PluginDiscoveryResult,
 } from "./discovery.js";
@@ -34,7 +34,7 @@ import {
   isCoreReservedPluginId,
   loadPluginManifest,
   PLUGIN_MANIFEST_FILENAME,
-  type OpenClawPackageManifest,
+  type NovaPackageManifest,
   type PluginManifestActivation,
   type PluginManifestCatalog,
   type PluginManifestConfigContracts,
@@ -241,7 +241,7 @@ export type PluginManifestRecord = {
   providerAuthChoices?: PluginManifest["providerAuthChoices"];
   activation?: PluginManifestActivation;
   setup?: PluginManifestSetup;
-  packageManifest?: OpenClawPackageManifest;
+  packageManifest?: NovaPackageManifest;
   packageDependencies?: PluginDependencySpecMap;
   packageOptionalDependencies?: PluginDependencySpecMap;
   packageChannel?: PluginPackageChannel;
@@ -289,7 +289,7 @@ export type PluginManifestRegistry = {
 export type BundledChannelConfigCollector = (params: {
   pluginDir: string;
   manifest: PluginManifest;
-  packageManifest?: OpenClawPackageManifest;
+  packageManifest?: NovaPackageManifest;
 }) => Record<string, PluginManifestChannelConfig> | undefined;
 
 function rejectCaseFoldedIdCollisions(
@@ -338,7 +338,7 @@ function normalizePreferredPluginIds(raw: unknown): string[] | undefined {
 
 function mergePackageChannelMetaIntoChannelConfigs(params: {
   channelConfigs?: Record<string, PluginManifestChannelConfig>;
-  packageChannel?: OpenClawPackageManifest["channel"];
+  packageChannel?: NovaPackageManifest["channel"];
 }): Record<string, PluginManifestChannelConfig> | undefined {
   const channelId = params.packageChannel?.id?.trim();
   if (
@@ -559,7 +559,7 @@ function buildRecord(params: {
     enabledByDefaultOnPlatforms: params.manifest.enabledByDefaultOnPlatforms,
     autoEnableWhenConfiguredProviders: params.manifest.autoEnableWhenConfiguredProviders,
     legacyPluginIds: params.manifest.legacyPluginIds,
-    format: params.candidate.format ?? "openclaw",
+    format: params.candidate.format ?? "nova",
     bundleFormat: params.candidate.bundleFormat,
     kind: params.manifest.kind,
     channels: params.manifest.channels ?? [],
@@ -732,7 +732,7 @@ function pushNonBundledChannelConfigDescriptorDiagnostic(params: {
     level: "warn",
     pluginId: sanitizeForLog(params.record.id),
     source: sanitizeForLog(params.record.manifestPath),
-    message: `channel plugin manifest declares ${safeMissingChannels.join(", ")} without channelConfigs metadata; add openclaw.plugin.json#channelConfigs so config schema and setup surfaces work before runtime loads. Channels without channelConfigs still appear in channel listings, but setup UI may be limited.`,
+    message: `channel plugin manifest declares ${safeMissingChannels.join(", ")} without channelConfigs metadata; add nova.plugin.json#channelConfigs so config schema and setup surfaces work before runtime loads. Channels without channelConfigs still appear in channel listings, but setup UI may be limited.`,
   });
 }
 
@@ -761,7 +761,7 @@ function dedupePluginDiagnostics(diagnostics: PluginDiagnostic[]): PluginDiagnos
 function matchesInstalledPluginRecord(params: {
   pluginId: string;
   candidate: PluginCandidate;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env: NodeJS.ProcessEnv;
   installRecords: Record<string, PluginInstallRecord>;
   installPathOnly?: boolean;
@@ -881,7 +881,7 @@ function isTrustedOfficialPluginInstall(params: {
 function resolveDuplicatePrecedenceRank(params: {
   pluginId: string;
   candidate: PluginCandidate;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env: NodeJS.ProcessEnv;
   installRecords: Record<string, PluginInstallRecord>;
 }): number {
@@ -923,7 +923,7 @@ function isIntentionalInstalledBundledDuplicate(params: {
   pluginId: string;
   left: PluginCandidate;
   right: PluginCandidate;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env: NodeJS.ProcessEnv;
   installRecords: Record<string, PluginInstallRecord>;
 }): boolean {
@@ -969,7 +969,7 @@ function isSameGlobalPackageDuplicate(left: PluginCandidate, right: PluginCandid
 
 export function loadPluginManifestRegistry(
   params: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     workspaceDir?: string;
     env?: NodeJS.ProcessEnv;
     candidates?: PluginCandidate[];
@@ -998,7 +998,7 @@ export function loadPluginManifestRegistry(
         diagnostics: params.diagnostics ?? [],
       }
     : (params.discovery ??
-      discoverOpenClawPlugins({
+      discoverNovaPlugins({
         workspaceDir: params.workspaceDir,
         extraPaths: normalized.loadPaths,
         env,
@@ -1024,7 +1024,7 @@ export function loadPluginManifestRegistry(
       env,
       realpathCache,
     });
-    const isBundleRecord = (candidate.format ?? "openclaw") === "bundle";
+    const isBundleRecord = (candidate.format ?? "nova") === "bundle";
     const isManifestlessConfiguredFile =
       candidate.origin === "config" &&
       explicitConfiguredFileSources.has(path.resolve(candidate.source)) &&
@@ -1260,7 +1260,7 @@ export function loadBundledPluginManifestRegistry(
   return loadPluginManifestRegistry({
     env,
     installRecords,
-    discovery: discoverOpenClawPlugins({
+    discovery: discoverNovaPlugins({
       env,
       installRecords,
       rootScope: "bundled",

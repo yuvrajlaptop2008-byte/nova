@@ -300,7 +300,7 @@ describe("AppSidebar session catalog pagination", () => {
     expect(linkedRow?.querySelector('[data-session-menu="true"]')).not.toBeNull();
     linkedRow?.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
     await sidebar.updateComplete;
-    const linkedMenu = sidebar.querySelector<TestSessionMenu>("openclaw-session-menu");
+    const linkedMenu = sidebar.querySelector<TestSessionMenu>("nova-session-menu");
     await linkedMenu?.updateComplete;
     expect(linkedMenu?.querySelector('[data-shortcut="a"]')).not.toBeNull();
     expect(linkedMenu?.querySelector('[data-shortcut="d"]')).not.toBeNull();

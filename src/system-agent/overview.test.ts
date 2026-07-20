@@ -1,6 +1,6 @@
 // Nova overview tests cover summary output for rescue diagnostics.
 import { describe, expect, it } from "vitest";
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/config.js";
+import type { ConfigFileSnapshot, NovaConfig } from "../config/config.js";
 import {
   formatSystemAgentOverview,
   formatSystemAgentOnboardingWelcome,
@@ -12,15 +12,15 @@ import {
 function createOverview(defaultModel?: string): SystemAgentOverview {
   return {
     config: {
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: true,
       valid: true,
       issues: [],
       hash: null,
     },
     references: {
-      docsUrl: "https://docs.openclaw.ai",
-      sourceUrl: "https://github.com/openclaw/openclaw",
+      docsUrl: "https://docs.nova.ai",
+      sourceUrl: "https://github.com/nova/nova",
     },
     agents: [{ id: "main", isDefault: true, ...(defaultModel ? { model: defaultModel } : {}) }],
     defaultAgentId: "main",
@@ -41,7 +41,7 @@ function createOverview(defaultModel?: string): SystemAgentOverview {
 
 describe("loadSystemAgentOverview", () => {
   it("summarizes config, agents, model, tools, and gateway", async () => {
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       agents: {
         defaults: { model: { primary: "openai/gpt-5.2" } },
         list: [
@@ -52,7 +52,7 @@ describe("loadSystemAgentOverview", () => {
       gateway: { port: 19001 },
     };
     const snapshot: ConfigFileSnapshot = {
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: true,
       raw: "{}",
       parsed: runtimeConfig,
@@ -70,7 +70,7 @@ describe("loadSystemAgentOverview", () => {
       env: { NOVA_TEST_FAST: "1" },
       deps: {
         readConfigFileSnapshot: async () => snapshot,
-        resolveConfigPath: () => "/tmp/openclaw.json",
+        resolveConfigPath: () => "/tmp/nova.json",
         resolveGatewayPort: (cfg) => cfg?.gateway?.port ?? 8765,
         buildGatewayConnectionDetails: (input) => ({
           url: `ws://127.0.0.1:${input.config.gateway?.port ?? 8765}`,
@@ -96,7 +96,7 @@ describe("loadSystemAgentOverview", () => {
     expect(overview.gateway.url).toBe("ws://127.0.0.1:19001");
     expect(overview.gateway.reachable).toBe(false);
     expect(overview.references.docsPath).toMatch(/docs$/);
-    expect(overview.references.sourceUrl).toBe("https://github.com/openclaw/openclaw");
+    expect(overview.references.sourceUrl).toBe("https://github.com/nova/nova");
     expect(formatSystemAgentOverview(overview)).toContain(
       'Next: run "gateway status" or "restart gateway"',
     );
@@ -115,10 +115,10 @@ describe("loadSystemAgentOverview", () => {
 
     const startup = formatSystemAgentStartupMessage(overview);
     expect(formatSystemAgentOverview(overview)).toContain(
-      'Next: run "openclaw onboard" to establish inference',
+      'Next: run "nova onboard" to establish inference',
     );
     expect(startup).toContain("Inference unavailable");
-    expect(startup).toContain("run `openclaw onboard`");
+    expect(startup).toContain("run `nova onboard`");
     expect(startup).toContain("Nova needs working inference");
     expect(startup).not.toContain("local Claude Code/Codex/Gemini login");
     expect(startup).not.toContain("typed commands as last resort");

@@ -1,12 +1,9 @@
 // Covers MCP OAuth token refresh, lease cancellation, and concurrency.
 import path from "node:path";
-import { withTempHome as withBaseTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome as withBaseTempHome } from "nova/plugin-sdk/test-env";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { vi } from "vitest";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { createMcpOAuthClientProvider, withMcpOAuthLeaseSignal } from "./mcp-oauth-provider.js";
 import { readMcpOAuthStore, resolveMcpOAuthStoreKey } from "./mcp-oauth-store.js";
 import { clearMcpOAuthCredentials, resolveMcpOAuthAccessToken } from "./mcp-oauth.js";
@@ -25,12 +22,12 @@ async function withTempHome<T>(
 ): Promise<T> {
   return withBaseTempHome(async (home) => {
     const previousStateDir = process.env.NOVA_STATE_DIR;
-    process.env.NOVA_STATE_DIR = path.join(home, ".openclaw");
-    closeOpenClawStateDatabaseForTest();
+    process.env.NOVA_STATE_DIR = path.join(home, ".nova");
+    closeNovaStateDatabaseForTest();
     try {
       return await run(home);
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       if (previousStateDir === undefined) {
         delete process.env.NOVA_STATE_DIR;
       } else {
@@ -43,10 +40,10 @@ async function withTempHome<T>(
 describe("MCP OAuth provider", () => {
   beforeEach(() => {
     authMock.mockReset();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
   });
 
-  afterEach(() => closeOpenClawStateDatabaseForTest());
+  afterEach(() => closeNovaStateDatabaseForTest());
 
   it("aborts OAuth fetches when their owning lease signal is lost", async () => {
     const lease = new AbortController();
@@ -96,7 +93,7 @@ describe("MCP OAuth provider", () => {
         expect(authMock).not.toHaveBeenCalled();
       },
       {
-        prefix: "openclaw-mcp-oauth-fresh-token-",
+        prefix: "nova-mcp-oauth-fresh-token-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -160,13 +157,13 @@ describe("MCP OAuth provider", () => {
           access_token: "decoy-token",
           refresh_token: "test-auth-token",
         });
-        const leaseCount = openOpenClawStateDatabase()
+        const leaseCount = openNovaStateDatabase()
           .db.prepare("SELECT COUNT(*) AS count FROM state_leases WHERE scope = ?")
           .get("core:mcp-oauth") as { count: number };
         expect(leaseCount.count).toBe(0);
       },
       {
-        prefix: "openclaw-mcp-oauth-aborted-refresh-",
+        prefix: "nova-mcp-oauth-aborted-refresh-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -210,7 +207,7 @@ describe("MCP OAuth provider", () => {
         });
       },
       {
-        prefix: "openclaw-mcp-oauth-expired-token-",
+        prefix: "nova-mcp-oauth-expired-token-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -272,7 +269,7 @@ describe("MCP OAuth provider", () => {
         expect(authMock).toHaveBeenCalledOnce();
       },
       {
-        prefix: "openclaw-mcp-oauth-concurrent-refresh-",
+        prefix: "nova-mcp-oauth-concurrent-refresh-",
         skipSessionCleanup: true,
         env: {
           NOVA_CONFIG_PATH: undefined,
@@ -344,7 +341,7 @@ describe("MCP OAuth provider", () => {
         ).toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-concurrent-challenge-",
+        prefix: "nova-mcp-oauth-concurrent-challenge-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -400,7 +397,7 @@ describe("MCP OAuth provider", () => {
         expect(provider.tokens()).toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-refresh-logout-",
+        prefix: "nova-mcp-oauth-refresh-logout-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
@@ -449,7 +446,7 @@ describe("MCP OAuth provider", () => {
         ).toBeUndefined();
       },
       {
-        prefix: "openclaw-mcp-oauth-rejected-token-",
+        prefix: "nova-mcp-oauth-rejected-token-",
         skipSessionCleanup: true,
         env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },

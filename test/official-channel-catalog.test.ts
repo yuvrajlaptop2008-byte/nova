@@ -1,7 +1,7 @@
 // Official channel catalog tests validate catalog metadata and entries.
 import fs from "node:fs";
 import path from "node:path";
-import { bundledPluginRoot } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledPluginRoot } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   buildOfficialChannelCatalog,
@@ -17,7 +17,7 @@ type OfficialChannelCatalogEntry = ReturnType<
   typeof buildOfficialChannelCatalog
 >["entries"][number];
 type OfficialChannelInstall = NonNullable<
-  NonNullable<OfficialChannelCatalogEntry["openclaw"]>["install"]
+  NonNullable<OfficialChannelCatalogEntry["nova"]>["install"]
 >;
 
 function makeRepoRoot(prefix: string): string {
@@ -29,7 +29,7 @@ function writeJson(filePath: string, value: unknown): void {
 }
 
 function requireInstall(entry: OfficialChannelCatalogEntry | undefined): OfficialChannelInstall {
-  const install = entry?.openclaw?.install;
+  const install = entry?.nova?.install;
   if (!install) {
     throw new Error("expected official channel install config");
   }
@@ -59,9 +59,9 @@ function summarizeCatalogEntry(entry: OfficialChannelCatalogEntry) {
     name: entry.name,
     description: entry.description,
     source: entry.source,
-    plugin: entry.openclaw?.plugin,
-    channel: entry.openclaw?.channel,
-    install: entry.openclaw?.install,
+    plugin: entry.nova?.plugin,
+    channel: entry.nova?.channel,
+    install: entry.nova?.install,
   };
 }
 
@@ -71,12 +71,12 @@ afterEach(() => {
 
 describe("buildOfficialChannelCatalog", () => {
   it("includes publishable official channel plugins and skips non-publishable entries", () => {
-    const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-");
+    const repoRoot = makeRepoRoot("nova-official-channel-catalog-");
     writeJson(path.join(repoRoot, "extensions", "whatsapp", "package.json"), {
       name: "@nova/whatsapp",
       version: "2026.3.23",
       description: "Nova WhatsApp channel plugin",
-      openclaw: {
+      nova: {
         channel: {
           id: "whatsapp",
           label: "WhatsApp",
@@ -98,7 +98,7 @@ describe("buildOfficialChannelCatalog", () => {
     });
     writeJson(path.join(repoRoot, "extensions", "local-only", "package.json"), {
       name: "@nova/local-only",
-      openclaw: {
+      nova: {
         channel: {
           id: "local-only",
           label: "Local Only",
@@ -119,14 +119,14 @@ describe("buildOfficialChannelCatalog", () => {
 
     expect(
       summarizeCatalogEntry(
-        findCatalogEntry(entries, (entry) => entry.name === "@wecom/wecom-openclaw-plugin"),
+        findCatalogEntry(entries, (entry) => entry.name === "@wecom/wecom-nova-plugin"),
       ),
     ).toEqual({
-      name: "@wecom/wecom-openclaw-plugin",
+      name: "@wecom/wecom-nova-plugin",
       description: "Nova WeCom channel plugin by the Tencent WeCom team.",
       source: "external",
       plugin: {
-        id: "wecom-openclaw-plugin",
+        id: "wecom-nova-plugin",
         label: "WeCom",
       },
       channel: {
@@ -141,7 +141,7 @@ describe("buildOfficialChannelCatalog", () => {
         aliases: ["qywx", "wework", "enterprise-wechat"],
       },
       install: {
-        npmSpec: "@wecom/wecom-openclaw-plugin@2026.5.7",
+        npmSpec: "@wecom/wecom-nova-plugin@2026.5.7",
         defaultChoice: "npm",
         expectedIntegrity:
           "sha512-TCkP9as00WfEhgFWG8YL/rcmaWGIshAki2HQh83nTRccGfVBCoGjrEboTTqq3yDmK9koWTV11zi8u8A4dNtvug==",
@@ -149,14 +149,14 @@ describe("buildOfficialChannelCatalog", () => {
     });
     expect(
       summarizeCatalogEntry(
-        findCatalogEntry(entries, (entry) => entry.name === "openclaw-plugin-yuanbao"),
+        findCatalogEntry(entries, (entry) => entry.name === "nova-plugin-yuanbao"),
       ),
     ).toEqual({
-      name: "openclaw-plugin-yuanbao",
+      name: "nova-plugin-yuanbao",
       description: "Nova Yuanbao channel plugin by the Tencent Yuanbao team.",
       source: "external",
       plugin: {
-        id: "openclaw-plugin-yuanbao",
+        id: "nova-plugin-yuanbao",
         label: "Yuanbao",
       },
       channel: {
@@ -171,7 +171,7 @@ describe("buildOfficialChannelCatalog", () => {
         aliases: ["yuanbao", "yb", "tencent-yuanbao", "元宝"],
       },
       install: {
-        npmSpec: "openclaw-plugin-yuanbao@2.15.0",
+        npmSpec: "nova-plugin-yuanbao@2.15.0",
         defaultChoice: "npm",
         expectedIntegrity:
           "sha512-3GD+mf3EjTSUTOAREjTHAyp/deXdpgqB+q+xE0b19Qtat4ADhUV1mHDwFkVCRqTCBY5ATFKtKcipoDejqFj/+w==",
@@ -204,7 +204,7 @@ describe("buildOfficialChannelCatalog", () => {
   });
 
   it("keeps third-party official external catalog npm sources exactly pinned", () => {
-    const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-policy-");
+    const repoRoot = makeRepoRoot("nova-official-channel-catalog-policy-");
     const entries = buildOfficialChannelCatalog({ repoRoot }).entries.filter(
       (entry) => entry.source === "external" && !entry.name?.startsWith("@nova/"),
     );
@@ -218,14 +218,14 @@ describe("buildOfficialChannelCatalog", () => {
   });
 
   it("allows official Nova channel npm specs without integrity during launch", () => {
-    const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-openclaw-policy-");
+    const repoRoot = makeRepoRoot("nova-official-channel-catalog-nova-policy-");
     const twitch = buildOfficialChannelCatalog({ repoRoot }).entries.find(
-      (entry) => entry.openclaw?.channel?.id === "twitch",
+      (entry) => entry.nova?.channel?.id === "twitch",
     );
 
     expect({
       name: twitch?.name,
-      install: twitch?.openclaw?.install,
+      install: twitch?.nova?.install,
     }).toEqual({
       name: "@nova/twitch",
       install: {
@@ -240,10 +240,10 @@ describe("buildOfficialChannelCatalog", () => {
   });
 
   it("preserves ClawHub specs when generating publishable channel catalog entries", () => {
-    const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-clawhub-");
+    const repoRoot = makeRepoRoot("nova-official-channel-catalog-clawhub-");
     writeJson(path.join(repoRoot, "extensions", "storepack-chat", "package.json"), {
       name: "@nova/storepack-chat",
-      openclaw: {
+      nova: {
         channel: {
           id: "storepack-chat",
           label: "Storepack Chat",
@@ -263,7 +263,7 @@ describe("buildOfficialChannelCatalog", () => {
     });
 
     const entry = buildOfficialChannelCatalog({ repoRoot }).entries.find(
-      (candidate) => candidate.openclaw?.channel?.id === "storepack-chat",
+      (candidate) => candidate.nova?.channel?.id === "storepack-chat",
     );
 
     expect(requireInstall(entry)).toEqual({
@@ -274,10 +274,10 @@ describe("buildOfficialChannelCatalog", () => {
   });
 
   it("writes the official catalog under dist", () => {
-    const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-write-");
+    const repoRoot = makeRepoRoot("nova-official-channel-catalog-write-");
     writeJson(path.join(repoRoot, "extensions", "whatsapp", "package.json"), {
       name: "@nova/whatsapp",
-      openclaw: {
+      nova: {
         channel: {
           id: "whatsapp",
           label: "WhatsApp",
@@ -300,15 +300,12 @@ describe("buildOfficialChannelCatalog", () => {
     expect(fs.existsSync(outputPath)).toBe(true);
     const entries = JSON.parse(fs.readFileSync(outputPath, "utf8")).entries;
     expect(entries.map((entry: { name?: string }) => entry.name)).toContain(
-      "@wecom/wecom-openclaw-plugin",
+      "@wecom/wecom-nova-plugin",
     );
-    expect(entries.map((entry: { name?: string }) => entry.name)).toContain(
-      "openclaw-plugin-yuanbao",
-    );
+    expect(entries.map((entry: { name?: string }) => entry.name)).toContain("nova-plugin-yuanbao");
     const whatsappEntry = findCatalogEntry(
       entries,
-      (entry: { openclaw?: { channel?: { id?: string } } }) =>
-        entry.openclaw?.channel?.id === "whatsapp",
+      (entry: { nova?: { channel?: { id?: string } } }) => entry.nova?.channel?.id === "whatsapp",
     );
     expect(summarizeCatalogEntry(whatsappEntry)).toEqual({
       name: "@nova/whatsapp",
@@ -333,8 +330,7 @@ describe("buildOfficialChannelCatalog", () => {
       },
     });
     const whatsappEntries = entries.filter(
-      (entry: { openclaw?: { channel?: { id?: string } } }) =>
-        entry.openclaw?.channel?.id === "whatsapp",
+      (entry: { nova?: { channel?: { id?: string } } }) => entry.nova?.channel?.id === "whatsapp",
     );
     expect(whatsappEntries).toHaveLength(1);
   });

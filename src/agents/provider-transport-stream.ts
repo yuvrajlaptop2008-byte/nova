@@ -3,7 +3,7 @@
  *
  * Routes models that need Nova-managed proxy/TLS/local-service semantics onto built-in transport implementations.
  */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { Api, Model } from "../llm/types.js";
 import { resolveProviderStreamFn } from "../plugins/provider-runtime.js";
 import { createAnthropicMessagesTransportStreamFn } from "./anthropic-transport-stream.js";
@@ -26,16 +26,16 @@ const SUPPORTED_TRANSPORT_APIS = new Set<Api>([
 ]);
 
 const SIMPLE_TRANSPORT_API_ALIAS: Record<string, Api> = {
-  "openai-responses": "openclaw-openai-responses-transport",
-  "openai-chatgpt-responses": "openclaw-openai-responses-transport",
-  "openai-completions": "openclaw-openai-completions-transport",
-  "azure-openai-responses": "openclaw-azure-openai-responses-transport",
-  "anthropic-messages": "openclaw-anthropic-messages-transport",
-  "google-generative-ai": "openclaw-google-generative-ai-transport",
+  "openai-responses": "nova-openai-responses-transport",
+  "openai-chatgpt-responses": "nova-openai-responses-transport",
+  "openai-completions": "nova-openai-completions-transport",
+  "azure-openai-responses": "nova-azure-openai-responses-transport",
+  "anthropic-messages": "nova-anthropic-messages-transport",
+  "google-generative-ai": "nova-google-generative-ai-transport",
 };
 
 type ProviderTransportStreamContext = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
@@ -99,7 +99,7 @@ function createSupportedTransportStreamFn(
   }
 }
 
-function hasOpenClawTransportRequirement(model: Model): boolean {
+function hasNovaTransportRequirement(model: Model): boolean {
   const request = getModelProviderRequestTransport(model);
   return Boolean(request?.proxy || request?.tls || getModelProviderLocalService(model));
 }
@@ -119,7 +119,7 @@ export function createTransportAwareStreamFnForModel(
   model: Model,
   ctx?: ProviderTransportStreamContext,
 ): StreamFn | undefined {
-  if (!hasOpenClawTransportRequirement(model)) {
+  if (!hasNovaTransportRequirement(model)) {
     return undefined;
   }
   if (!isTransportAwareApiSupported(model.api)) {
@@ -131,7 +131,7 @@ export function createTransportAwareStreamFnForModel(
 }
 
 /** Creates a managed Nova transport stream for explicit fallback/runtime callers. */
-export function createOpenClawTransportStreamFnForModel(
+export function createNovaTransportStreamFnForModel(
   model: Model,
   ctx?: ProviderTransportStreamContext,
 ): StreamFn | undefined {

@@ -1,7 +1,7 @@
 // Discord type declarations define plugin contracts.
-import type { MessageReceipt } from "openclaw/plugin-sdk/channel-outbound";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { RetryConfig } from "openclaw/plugin-sdk/retry-runtime";
+import type { MessageReceipt } from "nova/plugin-sdk/channel-outbound";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { RetryConfig } from "nova/plugin-sdk/retry-runtime";
 import type { RequestClient } from "./internal/discord.js";
 
 export class DiscordSendError extends Error {
@@ -35,12 +35,12 @@ export type DiscordSendResult = {
 };
 
 export type DiscordRuntimeAccountContext = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
 };
 
 export type DiscordReactOpts = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string;
   token?: string;
   rest?: RequestClient;

@@ -1,5 +1,5 @@
 // Channel-aware cron delivery validation for gateway-owned mutations.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { listConfiguredMessageChannels } from "../infra/outbound/channel-selection.js";
 import {
   resolveTargetPrefixedChannel,
@@ -8,7 +8,7 @@ import {
 import { isDeliverableMessageChannel, normalizeMessageChannel } from "../utils/message-channel.js";
 import type { CronDelivery, CronJobCreate } from "./types.js";
 
-function hasExplicitChannelConfigEntry(cfg: OpenClawConfig): boolean {
+function hasExplicitChannelConfigEntry(cfg: NovaConfig): boolean {
   const channels = cfg.channels;
   if (!channels || typeof channels !== "object" || Array.isArray(channels)) {
     return false;
@@ -24,7 +24,7 @@ function hasExplicitChannelConfigEntry(cfg: OpenClawConfig): boolean {
 }
 
 async function assertConfiguredAnnounceChannel(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel?: string;
   field: "delivery.channel" | "delivery.failureDestination.channel";
 }) {
@@ -79,7 +79,7 @@ function assertCompatibleAnnounceTarget(params: {
 }
 
 export async function assertValidCronAnnounceDelivery(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   delivery?: CronDelivery;
 }) {
   if (params.delivery && (params.delivery.mode ?? "announce") === "announce") {
@@ -118,6 +118,6 @@ export async function assertValidCronAnnounceDelivery(params: {
   }
 }
 
-export async function assertValidCronCreateDelivery(cfg: OpenClawConfig, job: CronJobCreate) {
+export async function assertValidCronCreateDelivery(cfg: NovaConfig, job: CronJobCreate) {
   await assertValidCronAnnounceDelivery({ cfg, delivery: job.delivery });
 }

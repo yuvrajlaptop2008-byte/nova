@@ -149,7 +149,7 @@ function methodReason(params: {
   }
   if (
     text.includes(".live.test.") ||
-    sourceText.includes("openclaw_live") ||
+    sourceText.includes("nova_live") ||
     sourceText.includes("live_test") ||
     sourceText.includes("api_key") ||
     sourceText.includes("token") ||

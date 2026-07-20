@@ -10,11 +10,11 @@ const ERROR_DETAIL_TAIL_BYTES = 16 * 1024;
 const JSON_ARTIFACT_MAX_BYTES = readPositiveIntEnv("NOVA_PLUGIN_INDEX_JSON_MAX_BYTES", 1024 * 1024);
 
 function stateDir() {
-  return process.env.NOVA_STATE_DIR || path.join(process.env.HOME, ".openclaw");
+  return process.env.NOVA_STATE_DIR || path.join(process.env.HOME, ".nova");
 }
 
 function configPath() {
-  return process.env.NOVA_CONFIG_PATH || path.join(stateDir(), "openclaw.json");
+  return process.env.NOVA_CONFIG_PATH || path.join(stateDir(), "nova.json");
 }
 
 function readJsonMaybe(file) {
@@ -59,7 +59,7 @@ function assertIndexJsonByteLength(bytesRaw, label) {
 }
 
 function sqlitePath(root = stateDir()) {
-  return path.join(root, "state", "openclaw.sqlite");
+  return path.join(root, "state", "nova.sqlite");
 }
 
 function legacyIndexPath(root = stateDir()) {

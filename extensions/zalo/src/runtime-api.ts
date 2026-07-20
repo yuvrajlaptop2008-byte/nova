@@ -9,7 +9,7 @@ export {
   type ChannelStatusIssue,
   type GroupPolicy,
   type MarkdownTableMode,
-  type OpenClawConfig,
+  type NovaConfig,
   type OutboundReplyPayload,
   type PluginRuntime,
   type RegisterWebhookPluginRouteOptions,

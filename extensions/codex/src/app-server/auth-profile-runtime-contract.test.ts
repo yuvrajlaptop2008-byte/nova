@@ -5,8 +5,8 @@ import path from "node:path";
 import {
   abortAndDrainAgentHarnessRun,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness";
-import { AUTH_PROFILE_RUNTIME_CONTRACT } from "openclaw/plugin-sdk/agent-runtime-test-contracts";
+} from "nova/plugin-sdk/agent-harness";
+import { AUTH_PROFILE_RUNTIME_CONTRACT } from "nova/plugin-sdk/agent-runtime-test-contracts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCodexRuntimePlanFixture } from "./run-attempt-test-harness.js";
 import { runCodexAppServerAttempt as runCodexAppServerAttemptImpl } from "./run-attempt.js";
@@ -258,7 +258,7 @@ describe("Auth profile runtime contract - Codex app-server adapter", () => {
   beforeEach(async () => {
     resetCodexTestBindingStore();
     vi.useRealTimers();
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-auth-contract-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-auth-contract-"));
   });
 
   afterEach(async () => {

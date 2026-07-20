@@ -65,7 +65,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("imports config and system audit JSONL only through explicit doctor repair", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-" }, async (stateDir) => {
       const configPath = path.join(stateDir, "logs", "config-audit.jsonl");
       const systemPath = path.join(stateDir, "audit", "system-agent.jsonl");
       const crestodianPath = path.join(stateDir, "audit", "crestodian.jsonl");
@@ -75,7 +75,7 @@ describe("legacy core audit log migration", () => {
         ts: "2026-07-01T00:00:00.000Z",
         source: "config-io",
         event: "config.write",
-        argv: ["openclaw", "config", "set", "token", "must-redact"],
+        argv: ["nova", "config", "set", "token", "must-redact"],
         execArgv: [],
       };
       const unredactedDigest = createHash("sha256")
@@ -131,7 +131,7 @@ describe("legacy core audit log migration", () => {
         expect((await fs.stat(`${configPath}.migrated.raw`)).mode & 0o777).toBe(0o600);
       }
       expect(JSON.parse(archivedConfig.trim())).toMatchObject({
-        argv: ["openclaw", "config", "set", "token", "***"],
+        argv: ["nova", "config", "set", "token", "***"],
       });
       expect(
         listSystemAgentAuditEntriesForTests({ env })
@@ -148,7 +148,7 @@ describe("legacy core audit log migration", () => {
       const laterConfigRecord = {
         ...unredactedConfigRecord,
         ts: "2026-07-04T00:00:00.000Z",
-        argv: ["openclaw", "config", "set", "token", "later-redaction-marker"],
+        argv: ["nova", "config", "set", "token", "later-redaction-marker"],
       };
       await fs.appendFile(`${configPath}.migrated.raw`, `${JSON.stringify(laterConfigRecord)}\n`);
       const rawRecovery = detectLegacyAuditLogs({
@@ -181,7 +181,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("rehashes a checkpointed raw archive before treating it as clean", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-rehash-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-rehash-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       const rawPath = `${sourcePath}.migrated.raw`;
       const original = {
@@ -221,14 +221,14 @@ describe("legacy core audit log migration", () => {
   });
 
   it("restores the captured archive prefix when an in-place scrub write fails", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-scrub-write-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-scrub-write-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "logs", "config-audit.jsonl");
       const rawPath = `${sourcePath}.migrated.raw`;
       const originalRecord = {
         ts: "2026-07-01T00:00:00.000Z",
         source: "config-io",
         event: "config.write",
-        argv: ["openclaw", "config", "set", "token", "scrub-write-marker"],
+        argv: ["nova", "config", "set", "token", "scrub-write-marker"],
         execArgv: [],
       };
       const originalContent = `${JSON.stringify(originalRecord)}\n`;
@@ -302,7 +302,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("restores a moved scrub journal before parsing an interrupted archive", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-scrub-restart-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-scrub-restart-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "logs", "config-audit.jsonl");
       const sanitizedPath = `${sourcePath}.migrated`;
       const rawPath = `${sanitizedPath}.raw`;
@@ -311,7 +311,7 @@ describe("legacy core audit log migration", () => {
         ts: "2026-07-01T00:00:00.000Z",
         source: "config-io",
         event: "config.write",
-        argv: ["openclaw", "config", "set", "token", "restart-redaction-marker"],
+        argv: ["nova", "config", "set", "token", "restart-redaction-marker"],
         execArgv: [],
       };
       const originalContent = `${JSON.stringify(originalRecord)}\n`;
@@ -351,7 +351,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("discards a stale restore journal while recovering a post-checkpoint append", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-stale-journal-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-stale-journal-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       const rawPath = `${sourcePath}.migrated.raw`;
       const restorePath = `${rawPath}.doctor-scrub-restore`;
@@ -393,7 +393,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("does not replay a scrub journal over a same-inode replacement archive", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-scrub-replaced-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-scrub-replaced-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       const sanitizedPath = `${sourcePath}.migrated`;
       const rawPath = `${sanitizedPath}.raw`;
@@ -429,7 +429,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("resumes a deterministic audit claim left by an interrupted Doctor", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-resume-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-resume-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       const claimPath = path.join(
         path.dirname(sourcePath),
@@ -485,7 +485,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("does not resurrect a pruned raw-archive head when later rows are appended", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-late-tail-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-late-tail-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       const records = ["first", "second", "third"].map((summary, index) => ({
         timestamp: `2026-07-03T00:00:0${index}.000Z`,
@@ -542,7 +542,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("keeps identical rows from separate raw archive generations", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-generations-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-generations-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       const record = {
         timestamp: "2026-07-03T00:00:00.000Z",
@@ -586,7 +586,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("keeps restored raw archives idempotent after device and inode changes", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-restored-" }, async (rootDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-restored-" }, async (rootDir) => {
       const stateDir = path.join(rootDir, "source-state");
       const restoredStateDir = path.join(rootDir, "restored-state");
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
@@ -641,131 +641,122 @@ describe("legacy core audit log migration", () => {
   });
 
   it("resumes the stable generation of an interrupted sanitized archive", async () => {
-    await withTempDir(
-      { prefix: "openclaw-audit-migration-sanitized-resume-" },
-      async (stateDir) => {
-        const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
-        const claimPath = path.join(
-          path.dirname(sourcePath),
-          `.${path.basename(sourcePath)}.doctor-importing`,
-        );
-        const record = {
-          timestamp: "2026-07-03T00:00:00.000Z",
-          operation: "gateway.restart",
-          summary: "Interrupted operation",
-        };
-        await fs.mkdir(path.dirname(sourcePath), { recursive: true });
-        await fs.writeFile(claimPath, `${JSON.stringify(record)}\n`);
-        await fs.writeFile(`${sourcePath}.migrated`, `${JSON.stringify(record)}\n`);
+    await withTempDir({ prefix: "nova-audit-migration-sanitized-resume-" }, async (stateDir) => {
+      const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
+      const claimPath = path.join(
+        path.dirname(sourcePath),
+        `.${path.basename(sourcePath)}.doctor-importing`,
+      );
+      const record = {
+        timestamp: "2026-07-03T00:00:00.000Z",
+        operation: "gateway.restart",
+        summary: "Interrupted operation",
+      };
+      await fs.mkdir(path.dirname(sourcePath), { recursive: true });
+      await fs.writeFile(claimPath, `${JSON.stringify(record)}\n`);
+      await fs.writeFile(`${sourcePath}.migrated`, `${JSON.stringify(record)}\n`);
 
-        const result = await migrateLegacyAuditLogs({
-          detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
-          stateDir,
-        });
+      const result = await migrateLegacyAuditLogs({
+        detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
+        stateDir,
+      });
 
-        expect(result.warnings).toEqual([]);
-        await expect(fs.access(`${sourcePath}.migrated.raw`)).resolves.toBeUndefined();
-        await expect(fs.access(`${sourcePath}.migrated.2.raw`)).rejects.toMatchObject({
-          code: "ENOENT",
-        });
-        expect(
-          listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, NOVA_STATE_DIR: stateDir },
-          }),
-        ).toHaveLength(1);
-      },
-    );
+      expect(result.warnings).toEqual([]);
+      await expect(fs.access(`${sourcePath}.migrated.raw`)).resolves.toBeUndefined();
+      await expect(fs.access(`${sourcePath}.migrated.2.raw`)).rejects.toMatchObject({
+        code: "ENOENT",
+      });
+      expect(
+        listSystemAgentAuditEntriesForTests({
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
+        }),
+      ).toHaveLength(1);
+    });
   });
 
   it("allocates a new generation when an active source follows a sanitized-only archive", async () => {
-    await withTempDir(
-      { prefix: "openclaw-audit-migration-sanitized-recreated-" },
-      async (stateDir) => {
-        const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
-        const record = {
-          timestamp: "2026-07-03T00:00:00.000Z",
-          operation: "gateway.restart",
-          summary: "Repeated after downgrade",
-        };
-        await fs.mkdir(path.dirname(sourcePath), { recursive: true });
-        await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
-        await migrateLegacyAuditLogs({
-          detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
-          stateDir,
-        });
-        await fs.rm(`${sourcePath}.migrated.raw`);
-        const firstSanitized = await fs.readFile(`${sourcePath}.migrated`, "utf8");
-        await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
+    await withTempDir({ prefix: "nova-audit-migration-sanitized-recreated-" }, async (stateDir) => {
+      const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
+      const record = {
+        timestamp: "2026-07-03T00:00:00.000Z",
+        operation: "gateway.restart",
+        summary: "Repeated after downgrade",
+      };
+      await fs.mkdir(path.dirname(sourcePath), { recursive: true });
+      await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
+      await migrateLegacyAuditLogs({
+        detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
+        stateDir,
+      });
+      await fs.rm(`${sourcePath}.migrated.raw`);
+      const firstSanitized = await fs.readFile(`${sourcePath}.migrated`, "utf8");
+      await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
 
-        const repeated = await migrateLegacyAuditLogs({
-          detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
-          stateDir,
-        });
+      const repeated = await migrateLegacyAuditLogs({
+        detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
+        stateDir,
+      });
 
-        expect(repeated.warnings).toEqual([]);
-        expect(repeated.changes.join("\n")).toContain("1 new row");
-        await expect(fs.readFile(`${sourcePath}.migrated`, "utf8")).resolves.toBe(firstSanitized);
-        await expect(fs.access(`${sourcePath}.migrated.2.raw`)).resolves.toBeUndefined();
-        expect(
-          listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, NOVA_STATE_DIR: stateDir },
-          }),
-        ).toHaveLength(2);
-      },
-    );
+      expect(repeated.warnings).toEqual([]);
+      expect(repeated.changes.join("\n")).toContain("1 new row");
+      await expect(fs.readFile(`${sourcePath}.migrated`, "utf8")).resolves.toBe(firstSanitized);
+      await expect(fs.access(`${sourcePath}.migrated.2.raw`)).resolves.toBeUndefined();
+      expect(
+        listSystemAgentAuditEntriesForTests({
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
+        }),
+      ).toHaveLength(2);
+    });
   });
 
   it("resumes a claim at its reserved generation instead of an older sanitized-only slot", async () => {
-    await withTempDir(
-      { prefix: "openclaw-audit-migration-claimed-generation-" },
-      async (stateDir) => {
-        const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
-        const secondClaimPath = path.join(
-          path.dirname(sourcePath),
-          `.${path.basename(sourcePath)}.doctor-importing.2`,
-        );
-        const record = {
-          timestamp: "2026-07-03T00:00:00.000Z",
-          operation: "gateway.restart",
-          summary: "Repeated after interrupted downgrade",
-        };
-        await fs.mkdir(path.dirname(sourcePath), { recursive: true });
-        await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
-        await migrateLegacyAuditLogs({
-          detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
-          stateDir,
-        });
-        await fs.rm(`${sourcePath}.migrated.raw`);
-        await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
-        await fs.rename(sourcePath, secondClaimPath);
+    await withTempDir({ prefix: "nova-audit-migration-claimed-generation-" }, async (stateDir) => {
+      const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
+      const secondClaimPath = path.join(
+        path.dirname(sourcePath),
+        `.${path.basename(sourcePath)}.doctor-importing.2`,
+      );
+      const record = {
+        timestamp: "2026-07-03T00:00:00.000Z",
+        operation: "gateway.restart",
+        summary: "Repeated after interrupted downgrade",
+      };
+      await fs.mkdir(path.dirname(sourcePath), { recursive: true });
+      await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
+      await migrateLegacyAuditLogs({
+        detected: detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }),
+        stateDir,
+      });
+      await fs.rm(`${sourcePath}.migrated.raw`);
+      await fs.writeFile(sourcePath, `${JSON.stringify(record)}\n`);
+      await fs.rename(sourcePath, secondClaimPath);
 
-        const detected = detectLegacyAuditLogs({
-          stateDir,
-          doctorOnlyStateMigrations: true,
-        });
-        expect(detected.sources).toMatchObject([
-          {
-            sourcePath: secondClaimPath,
-            storage: "claim",
-            sanitizedArchivePath: `${sourcePath}.migrated.2`,
-            rawArchivePath: `${sourcePath}.migrated.2.raw`,
-          },
-        ]);
-        const resumed = await migrateLegacyAuditLogs({ detected, stateDir });
+      const detected = detectLegacyAuditLogs({
+        stateDir,
+        doctorOnlyStateMigrations: true,
+      });
+      expect(detected.sources).toMatchObject([
+        {
+          sourcePath: secondClaimPath,
+          storage: "claim",
+          sanitizedArchivePath: `${sourcePath}.migrated.2`,
+          rawArchivePath: `${sourcePath}.migrated.2.raw`,
+        },
+      ]);
+      const resumed = await migrateLegacyAuditLogs({ detected, stateDir });
 
-        expect(resumed.warnings).toEqual([]);
-        await expect(fs.access(`${sourcePath}.migrated.2.raw`)).resolves.toBeUndefined();
-        expect(
-          listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, NOVA_STATE_DIR: stateDir },
-          }),
-        ).toHaveLength(2);
-      },
-    );
+      expect(resumed.warnings).toEqual([]);
+      await expect(fs.access(`${sourcePath}.migrated.2.raw`)).resolves.toBeUndefined();
+      expect(
+        listSystemAgentAuditEntriesForTests({
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
+        }),
+      ).toHaveLength(2);
+    });
   });
 
   it("leaves malformed audit sources in place without partial imports", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-invalid-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-invalid-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       await fs.mkdir(path.dirname(sourcePath), { recursive: true });
       await fs.writeFile(sourcePath, "{bad json\n");
@@ -786,7 +777,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("does not migrate newer audit generations before an older source is repaired", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-order-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-order-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       const rawPath = `${sourcePath}.migrated.raw`;
       const event = (summary: string) => ({
@@ -828,13 +819,13 @@ describe("legacy core audit log migration", () => {
   });
 
   it("restores the active source when raw archive hardening fails", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-permissions-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-permissions-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "logs", "config-audit.jsonl");
       const record = {
         ts: "2026-07-01T00:00:00.000Z",
         source: "config-io",
         event: "config.write",
-        argv: ["openclaw", "config", "set", "token", "must-redact"],
+        argv: ["nova", "config", "set", "token", "must-redact"],
         execArgv: [],
       };
       await fs.mkdir(path.dirname(sourcePath), { recursive: true });
@@ -889,7 +880,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("requires exclusive state ownership before claiming legacy audit files", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-lock-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-lock-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "audit", "system-agent.jsonl");
       await fs.mkdir(path.dirname(sourcePath), { recursive: true });
       await fs.writeFile(
@@ -929,7 +920,7 @@ describe("legacy core audit log migration", () => {
   });
 
   it("leaves rows from an old config writer at the recreated source path", async () => {
-    await withTempDir({ prefix: "openclaw-audit-migration-concurrent-" }, async (stateDir) => {
+    await withTempDir({ prefix: "nova-audit-migration-concurrent-" }, async (stateDir) => {
       const sourcePath = path.join(stateDir, "logs", "config-audit.jsonl");
       await fs.mkdir(path.dirname(sourcePath), { recursive: true });
       const records = Array.from({ length: 10_000 }, (_, index) =>
@@ -937,7 +928,7 @@ describe("legacy core audit log migration", () => {
           ts: new Date(Date.UTC(2026, 6, 1, 0, 0, index)).toISOString(),
           source: "config-io",
           event: "config.write",
-          argv: ["openclaw", "config", "set", `key-${index}`, "value"],
+          argv: ["nova", "config", "set", `key-${index}`, "value"],
           execArgv: [],
         }),
       );
@@ -946,7 +937,7 @@ describe("legacy core audit log migration", () => {
         ts: "2026-07-02T00:00:00.000Z",
         source: "config-io",
         event: "config.write",
-        argv: ["openclaw", "config", "set", "later", "value"],
+        argv: ["nova", "config", "set", "later", "value"],
         execArgv: [],
       };
 
@@ -999,10 +990,10 @@ describe("legacy core audit log migration", () => {
     "rejects audit sources beneath symlinked state parents",
     async () => {
       const externalAuditDir = await fs.mkdtemp(
-        path.join(os.tmpdir(), "openclaw-audit-migration-external-"),
+        path.join(os.tmpdir(), "nova-audit-migration-external-"),
       );
       try {
-        await withTempDir({ prefix: "openclaw-audit-migration-symlink-" }, async (stateDir) => {
+        await withTempDir({ prefix: "nova-audit-migration-symlink-" }, async (stateDir) => {
           const externalSource = path.join(externalAuditDir, "system-agent.jsonl");
           await fs.writeFile(
             externalSource,

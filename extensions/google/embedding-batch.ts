@@ -12,12 +12,12 @@ import {
   sanitizeAndNormalizeEmbedding,
   withRemoteHttpResponse,
   type EmbeddingBatchExecutionParams,
-} from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+} from "nova/plugin-sdk/memory-core-host-engine-embeddings";
 import {
   assertOkOrThrowProviderError,
   createProviderHttpError,
   readProviderJsonObjectResponse,
-} from "openclaw/plugin-sdk/provider-http";
+} from "nova/plugin-sdk/provider-http";
 import type { GeminiEmbeddingClient, GeminiTextEmbeddingRequest } from "./embedding-provider.js";
 import { parseGeminiAuth } from "./gemini-auth.js";
 
@@ -148,7 +148,7 @@ function buildGeminiUploadBody(params: { jsonl: string; displayName: string }): 
   body: Blob;
   contentType: string;
 } {
-  const boundary = `openclaw-${hashText(params.displayName)}`;
+  const boundary = `nova-${hashText(params.displayName)}`;
   const jsonPart = JSON.stringify({
     file: {
       displayName: params.displayName,

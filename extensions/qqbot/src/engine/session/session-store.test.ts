@@ -40,7 +40,7 @@ async function useStateAndHome(): Promise<{ stateDir: string; homeDir: string }>
 
 function sessionPath(homeDir: string, accountId: string): string {
   const encodedId = Buffer.from(accountId, "utf8").toString("base64url");
-  return path.join(homeDir, ".openclaw", "qqbot", "sessions", `session-${encodedId}.json`);
+  return path.join(homeDir, ".nova", "qqbot", "sessions", `session-${encodedId}.json`);
 }
 
 function writeLegacySession(homeDir: string, state: SessionState): string {

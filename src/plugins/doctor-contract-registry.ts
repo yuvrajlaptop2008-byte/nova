@@ -6,7 +6,7 @@ import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { asNullableRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeTrimmedStringList } from "@nova/normalization-core/string-normalization";
 import type { LegacyConfigRule } from "../config/legacy.shared.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import type {
   OpenKeyedStoreOptions,
   PluginStateKeyedStore,
@@ -32,17 +32,15 @@ type PluginDoctorContractModule = {
 };
 
 type PluginDoctorCompatibilityMutation = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   changes: string[];
 };
 
 type PluginDoctorCompatibilityNormalizer = (params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }) => PluginDoctorCompatibilityMutation;
 
-type PluginDoctorSessionStoreAgentIdsResolver = (params: {
-  cfg: OpenClawConfig;
-}) => readonly string[];
+type PluginDoctorSessionStoreAgentIdsResolver = (params: { cfg: NovaConfig }) => readonly string[];
 
 type PluginDoctorContractEntry = {
   pluginId: string;
@@ -74,7 +72,7 @@ export type PluginDoctorStateMigration = {
   /** Import retired file state only during explicit `doctor --fix` repair. */
   doctorOnly?: boolean;
   detectLegacyState: (params: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     env: NodeJS.ProcessEnv;
     stateDir: string;
     oauthDir: string;
@@ -84,7 +82,7 @@ export type PluginDoctorStateMigration = {
     | PluginDoctorStateMigrationDetection
     | null;
   migrateLegacyState: (params: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     env: NodeJS.ProcessEnv;
     stateDir: string;
     oauthDir: string;
@@ -404,7 +402,7 @@ function loadPluginDoctorContractEntry(
 }
 
 function resolvePluginDoctorContracts(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -443,7 +441,7 @@ function resolvePluginDoctorContracts(params?: {
   return entries;
 }
 export function listPluginDoctorLegacyConfigRules(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -452,7 +450,7 @@ export function listPluginDoctorLegacyConfigRules(params?: {
 }
 
 export function listPluginDoctorSessionRouteStateOwners(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -470,7 +468,7 @@ export function listPluginDoctorSessionRouteStateOwners(params?: {
 
 /** Resolve plugin-owned agent IDs whose core session stores need migration. */
 export function listPluginDoctorSessionStoreAgentIds(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -493,7 +491,7 @@ export function listPluginDoctorSessionStoreAgentIds(params?: {
 }
 
 export function listPluginDoctorStateMigrationEntries(params?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -507,15 +505,15 @@ export function listPluginDoctorStateMigrationEntries(params?: {
 }
 
 export function applyPluginDoctorCompatibilityMigrations(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   params?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     workspaceDir?: string;
     env?: NodeJS.ProcessEnv;
     pluginIds?: readonly string[];
   },
 ): {
-  config: OpenClawConfig;
+  config: NovaConfig;
   changes: string[];
 } {
   let nextCfg = cfg;

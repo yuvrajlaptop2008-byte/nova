@@ -2,7 +2,7 @@
   "name": "@nova/github-copilot-provider",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw GitHub Copilot provider plugin",
+  "description": "Nova GitHub Copilot provider plugin",
   "type": "module",
   "dependencies": {
     "@clack/prompts": "1.6.0"
@@ -10,7 +10,7 @@
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

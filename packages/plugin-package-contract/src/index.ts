@@ -6,7 +6,7 @@ export type JsonObject = Record<string, unknown>;
 /** Compatibility metadata extracted from an external plugin package. */
 export type ExternalPluginCompatibility = {
   pluginApiRange?: string;
-  builtWithOpenClawVersion?: string;
+  builtWithNovaVersion?: string;
   pluginSdkVersion?: string;
   minGatewayVersion?: string;
 };
@@ -25,8 +25,8 @@ export type ExternalCodePluginValidationResult = {
 
 /** Required package.json field paths for external code plugin packages. */
 export const EXTERNAL_CODE_PLUGIN_REQUIRED_FIELD_PATHS = [
-  "openclaw.compat.pluginApi",
-  "openclaw.build.openclawVersion",
+  "nova.compat.pluginApi",
+  "nova.build.novaVersion",
 ] as const;
 
 /** Narrow unknown values to plain records. */
@@ -44,20 +44,20 @@ function normalizeOptionalString(value: unknown): string | undefined {
 }
 
 /** Read Nova package.json blocks without trusting caller input shape. */
-function readOpenClawBlock(packageJson: unknown) {
+function readNovaBlock(packageJson: unknown) {
   const root = isRecord(packageJson) ? packageJson : undefined;
-  const openclaw = isRecord(root?.openclaw) ? root.openclaw : undefined;
-  const compat = isRecord(openclaw?.compat) ? openclaw.compat : undefined;
-  const build = isRecord(openclaw?.build) ? openclaw.build : undefined;
-  const install = isRecord(openclaw?.install) ? openclaw.install : undefined;
-  return { root, openclaw, compat, build, install };
+  const nova = isRecord(root?.nova) ? root.nova : undefined;
+  const compat = isRecord(nova?.compat) ? nova.compat : undefined;
+  const build = isRecord(nova?.build) ? nova.build : undefined;
+  const install = isRecord(nova?.install) ? nova.install : undefined;
+  return { root, nova, compat, build, install };
 }
 
 /** Normalize compatibility metadata from an external plugin package.json. */
 export function normalizeExternalPluginCompatibility(
   packageJson: unknown,
 ): ExternalPluginCompatibility | undefined {
-  const { root, compat, build, install } = readOpenClawBlock(packageJson);
+  const { root, compat, build, install } = readNovaBlock(packageJson);
   const version = normalizeOptionalString(root?.version);
   const minHostVersion = normalizeOptionalString(install?.minHostVersion);
   const compatibility: ExternalPluginCompatibility = {};
@@ -72,9 +72,9 @@ export function normalizeExternalPluginCompatibility(
     compatibility.minGatewayVersion = minGatewayVersion;
   }
 
-  const builtWithOpenClawVersion = normalizeOptionalString(build?.openclawVersion) ?? version;
-  if (builtWithOpenClawVersion) {
-    compatibility.builtWithOpenClawVersion = builtWithOpenClawVersion;
+  const builtWithNovaVersion = normalizeOptionalString(build?.novaVersion) ?? version;
+  if (builtWithNovaVersion) {
+    compatibility.builtWithNovaVersion = builtWithNovaVersion;
   }
 
   const pluginSdkVersion = normalizeOptionalString(build?.pluginSdkVersion);
@@ -87,13 +87,13 @@ export function normalizeExternalPluginCompatibility(
 
 /** List missing required field paths for an external code plugin package.json. */
 export function listMissingExternalCodePluginFieldPaths(packageJson: unknown): string[] {
-  const { compat, build } = readOpenClawBlock(packageJson);
+  const { compat, build } = readNovaBlock(packageJson);
   const missing: string[] = [];
   if (!normalizeOptionalString(compat?.pluginApi)) {
-    missing.push("openclaw.compat.pluginApi");
+    missing.push("nova.compat.pluginApi");
   }
-  if (!normalizeOptionalString(build?.openclawVersion)) {
-    missing.push("openclaw.build.openclawVersion");
+  if (!normalizeOptionalString(build?.novaVersion)) {
+    missing.push("nova.build.novaVersion");
   }
   return missing;
 }

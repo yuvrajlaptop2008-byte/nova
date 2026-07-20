@@ -9,10 +9,10 @@ import {
   replaceRuntimeAuthProfileStoreSnapshots,
 } from "../../agents/auth-profiles.js";
 import { clearRuntimeConfigSnapshot, setRuntimeConfigSnapshot } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { createDeferred } from "../../test-utils/deferred.js";
 import { withEnvAsync } from "../../test-utils/env.js";
-import { withOpenClawTestState } from "../../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../../test-utils/nova-test-state.js";
 import { expectGatewayErrorResponse } from "./gateway-response.test-helpers.js";
 import { modelsHandlers } from "./models.js";
 import type { RespondFn } from "./types.js";
@@ -21,7 +21,7 @@ const withoutOpenAIEnvAuth = async <T>(run: () => Promise<T>): Promise<T> =>
   await withEnvAsync(
     {
       CODEX_API_KEY: undefined,
-      CODEX_HOME: "/__openclaw_models_list_test__/codex",
+      CODEX_HOME: "/__nova_models_list_test__/codex",
       OPENAI_API_KEY: undefined,
       OPENAI_BASE_URL: undefined,
       OPENAI_OAUTH_TOKEN: undefined,
@@ -48,7 +48,7 @@ function createDemoOAuthStore(params: { access: string; expires: number }) {
 function requestModelsList(params: {
   view: "default" | "configured" | "provider-config" | "all";
   respond?: ReturnType<typeof vi.fn>;
-  runtimeConfig?: OpenClawConfig;
+  runtimeConfig?: NovaConfig;
   loadGatewayModelCatalog: (params?: {
     agentDir?: string;
     readOnly?: boolean;
@@ -79,7 +79,7 @@ function requestModelsList(params: {
     client: null,
     isWebchatConnect: () => false,
     context: {
-      getRuntimeConfig: () => params.runtimeConfig ?? ({} as OpenClawConfig),
+      getRuntimeConfig: () => params.runtimeConfig ?? ({} as NovaConfig),
       loadGatewayModelCatalog: params.loadGatewayModelCatalog,
       loadGatewayModelCatalogSnapshot: async (
         loadParams: Parameters<typeof params.loadGatewayModelCatalog>[0],
@@ -162,7 +162,7 @@ describe("models.list", () => {
         providers: {
           "mounted-json": {
             source: "file",
-            path: "/tmp/openclaw-test-secrets.json",
+            path: "/tmp/nova-test-secrets.json",
             mode: "json",
           },
         },
@@ -172,7 +172,7 @@ describe("models.list", () => {
           vllm: sourceProvider,
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const runtimeConfig = {
       ...sourceConfig,
       models: {
@@ -184,7 +184,7 @@ describe("models.list", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const loadGatewayModelCatalog = vi.fn(() => Promise.resolve([]));
     setRuntimeConfigSnapshot(runtimeConfig, sourceConfig);
     try {
@@ -228,7 +228,7 @@ describe("models.list", () => {
         providers: {
           "mounted-json": {
             source: "file",
-            path: "/tmp/openclaw-test-secrets.json",
+            path: "/tmp/nova-test-secrets.json",
             mode: "json",
           },
         },
@@ -252,7 +252,7 @@ describe("models.list", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     setRuntimeConfigSnapshot(config, config);
     try {
       const { request, respond } = requestModelsList({
@@ -295,7 +295,7 @@ describe("models.list", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig;
+      } as unknown as NovaConfig;
 
       vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
       try {
@@ -318,7 +318,7 @@ describe("models.list", () => {
                 id: "gpt-test",
                 name: "GPT Test",
                 provider: "openai",
-                agentRuntime: { id: "openclaw", source: "implicit" },
+                agentRuntime: { id: "nova", source: "implicit" },
                 available: false,
               },
             ],
@@ -342,7 +342,7 @@ describe("models.list", () => {
         providers: {
           "mounted-json": {
             source: "file",
-            path: "/tmp/openclaw-test-secrets.json",
+            path: "/tmp/nova-test-secrets.json",
             mode: "json",
           },
         },
@@ -360,7 +360,7 @@ describe("models.list", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     try {
@@ -492,7 +492,7 @@ describe("models.list", () => {
             vllm: { apiKey: "test-key" },
           },
         },
-      } as unknown as OpenClawConfig;
+      } as unknown as NovaConfig;
 
       const loadConfiguredCatalog = vi.fn(() => Promise.resolve(catalog));
       const { request: configuredRequest, respond: configuredRespond } = requestModelsList({
@@ -574,10 +574,10 @@ describe("models.list", () => {
 
   it("keeps keyless local provider wildcard discoveries visible with unknown availability", async () => {
     await withoutOpenAIEnvAuth(async () => {
-      await withOpenClawTestState(
+      await withNovaTestState(
         {
           layout: "state-only",
-          prefix: "openclaw-models-list-local-wildcard-",
+          prefix: "nova-models-list-local-wildcard-",
           agentEnv: "main",
           env: { VLLM_API_KEY: undefined },
         },
@@ -609,7 +609,7 @@ describe("models.list", () => {
                 },
               },
             },
-          } as unknown as OpenClawConfig;
+          } as unknown as NovaConfig;
           const expected = {
             models: [
               {
@@ -644,10 +644,10 @@ describe("models.list", () => {
 
   it("marks legacy OpenAI Codex aliases available through ChatGPT OAuth", async () => {
     await withoutOpenAIEnvAuth(async () => {
-      await withOpenClawTestState(
+      await withNovaTestState(
         {
           layout: "state-only",
-          prefix: "openclaw-models-list-codex-alias-",
+          prefix: "nova-models-list-codex-alias-",
           agentEnv: "main",
         },
         async (state) => {
@@ -703,10 +703,10 @@ describe("models.list", () => {
 
   it("marks catalog models available through their configured CLI runtime", async () => {
     await withEnvAsync({ ANTHROPIC_API_KEY: undefined }, async () => {
-      await withOpenClawTestState(
+      await withNovaTestState(
         {
           layout: "state-only",
-          prefix: "openclaw-models-list-cli-runtime-",
+          prefix: "nova-models-list-cli-runtime-",
           agentEnv: "main",
         },
         async (state) => {
@@ -733,7 +733,7 @@ describe("models.list", () => {
                 },
               },
             },
-          } as unknown as OpenClawConfig;
+          } as unknown as NovaConfig;
           const { request, respond } = requestModelsList({
             view: "all",
             runtimeConfig,
@@ -777,7 +777,7 @@ describe("models.list", () => {
         providers: {
           "mounted-json": {
             source: "file",
-            path: "/tmp/openclaw-test-secrets.json",
+            path: "/tmp/nova-test-secrets.json",
             mode: "json",
           },
         },
@@ -800,7 +800,7 @@ describe("models.list", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const { request, respond } = requestModelsList({
       view: "all",
@@ -836,7 +836,7 @@ describe("models.list", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const { request, respond } = requestModelsList({
       view: "all",
@@ -858,12 +858,12 @@ describe("models.list", () => {
   });
 
   it("uses an exact hydrated runtime snapshot as managed SecretRef proof", async () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       secrets: {
         providers: {
           "mounted-json": {
             source: "file",
-            path: "/tmp/openclaw-test-secrets.json",
+            path: "/tmp/nova-test-secrets.json",
             mode: "json",
           },
         },
@@ -886,7 +886,7 @@ describe("models.list", () => {
       sourceConfig.models?.providers?.vllm,
       "source vLLM provider",
     );
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       ...sourceConfig,
       models: {
         providers: {
@@ -922,10 +922,10 @@ describe("models.list", () => {
   });
 
   it("does not mark catalog rows available from expired OAuth profiles", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-models-list-expired-profile-",
+        prefix: "nova-models-list-expired-profile-",
         agentEnv: "main",
       },
       async (state) => {
@@ -964,10 +964,10 @@ describe("models.list", () => {
   });
 
   it("uses refreshed persisted OAuth when the runtime auth snapshot is stale", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-models-list-stale-runtime-profile-",
+        prefix: "nova-models-list-stale-runtime-profile-",
         agentEnv: "main",
       },
       async (state) => {
@@ -1022,10 +1022,10 @@ describe("models.list", () => {
   });
 
   it("marks env SecretRef-backed auth profiles available", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-models-list-env-profile-",
+        prefix: "nova-models-list-env-profile-",
         agentEnv: "main",
         env: {
           DEMO_PROVIDER_TOKEN: "test-token",
@@ -1076,10 +1076,10 @@ describe("models.list", () => {
   });
 
   it("keeps non-env SecretRef-backed auth profile availability unknown", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-models-list-file-profile-",
+        prefix: "nova-models-list-file-profile-",
         agentEnv: "main",
       },
       async (state) => {
@@ -1106,12 +1106,12 @@ describe("models.list", () => {
               providers: {
                 "mounted-json": {
                   source: "file",
-                  path: "/tmp/openclaw-test-secrets.json",
+                  path: "/tmp/nova-test-secrets.json",
                   mode: "json",
                 },
               },
             },
-          } as OpenClawConfig,
+          } as NovaConfig,
           loadGatewayModelCatalog: vi.fn(() =>
             Promise.resolve([{ id: "demo-model", name: "Demo Model", provider: "demo-provider" }]),
           ),
@@ -1138,10 +1138,10 @@ describe("models.list", () => {
   });
 
   it("uses an exact hydrated runtime profile SecretRef as read-only proof", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       {
         layout: "state-only",
-        prefix: "openclaw-models-list-hydrated-file-profile-",
+        prefix: "nova-models-list-hydrated-file-profile-",
         agentEnv: "main",
       },
       async (state) => {
@@ -1184,12 +1184,12 @@ describe("models.list", () => {
                 providers: {
                   "mounted-json": {
                     source: "file",
-                    path: "/tmp/openclaw-test-secrets.json",
+                    path: "/tmp/nova-test-secrets.json",
                     mode: "json",
                   },
                 },
               },
-            } as OpenClawConfig,
+            } as NovaConfig,
             loadGatewayModelCatalog: vi.fn(() =>
               Promise.resolve([
                 { id: "demo-model", name: "Demo Model", provider: "demo-provider" },
@@ -1232,10 +1232,10 @@ describe("models.list", () => {
       },
       { name: "managed-marker", apiKey: "secretref-managed" },
     ] as const) {
-      await withOpenClawTestState(
+      await withNovaTestState(
         {
           layout: "state-only",
-          prefix: `openclaw-models-list-provider-${fixture.name}-profile-`,
+          prefix: `nova-models-list-provider-${fixture.name}-profile-`,
           agentEnv: "main",
           env: {
             NOVA_TEST_PROFILE_API_KEY: "test-token",
@@ -1273,7 +1273,7 @@ describe("models.list", () => {
                 },
               },
             },
-          } as unknown as OpenClawConfig;
+          } as unknown as NovaConfig;
 
           const { request, respond } = requestModelsList({
             view: "all",

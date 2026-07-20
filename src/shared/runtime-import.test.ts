@@ -32,32 +32,29 @@ describe("runtime-import", () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("win32");
 
     expect(
-      await captureRuntimeImportSpecifier(
-        "C:\\Users\\alice\\openclaw\\dist\\subagent-registry.js",
-        ["./subagent-registry.runtime.js"],
-      ),
-    ).toBe("file:///C:/Users/alice/openclaw/dist/subagent-registry.runtime.js");
+      await captureRuntimeImportSpecifier("C:\\Users\\alice\\nova\\dist\\subagent-registry.js", [
+        "./subagent-registry.runtime.js",
+      ]),
+    ).toBe("file:///C:/Users/alice/nova/dist/subagent-registry.runtime.js");
   });
 
   it("resolves runtime imports from file URL base paths", async () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("win32");
 
     expect(
-      await captureRuntimeImportSpecifier(
-        "file:///C:/Users/alice/openclaw/dist/subagent-registry.js",
-        ["./subagent-registry.runtime.js"],
-      ),
-    ).toBe("file:///C:/Users/alice/openclaw/dist/subagent-registry.runtime.js");
+      await captureRuntimeImportSpecifier("file:///C:/Users/alice/nova/dist/subagent-registry.js", [
+        "./subagent-registry.runtime.js",
+      ]),
+    ).toBe("file:///C:/Users/alice/nova/dist/subagent-registry.runtime.js");
   });
 
   it("resolves absolute Windows runtime import parts directly", async () => {
     vi.spyOn(process, "platform", "get").mockReturnValue("win32");
 
     expect(
-      await captureRuntimeImportSpecifier(
-        "file:///C:/Users/alice/openclaw/dist/subagent-registry.js",
-        ["D:\\Nova\\dist\\subagent-registry.runtime.js"],
-      ),
+      await captureRuntimeImportSpecifier("file:///C:/Users/alice/nova/dist/subagent-registry.js", [
+        "D:\\Nova\\dist\\subagent-registry.runtime.js",
+      ]),
     ).toBe("file:///D:/Nova/dist/subagent-registry.runtime.js");
   });
 
@@ -74,16 +71,16 @@ describe("runtime-import", () => {
     const importModule = vi.fn(async (specifier: string) => ({ specifier }));
 
     const result = await importRuntimeModule(
-      "C:\\Users\\alice\\openclaw\\dist\\subagent-registry.js",
+      "C:\\Users\\alice\\nova\\dist\\subagent-registry.js",
       ["./subagent-registry.runtime.js"],
       importModule,
     );
 
     expect(importModule).toHaveBeenCalledWith(
-      "file:///C:/Users/alice/openclaw/dist/subagent-registry.runtime.js",
+      "file:///C:/Users/alice/nova/dist/subagent-registry.runtime.js",
     );
     expect(result).toEqual({
-      specifier: "file:///C:/Users/alice/openclaw/dist/subagent-registry.runtime.js",
+      specifier: "file:///C:/Users/alice/nova/dist/subagent-registry.runtime.js",
     });
   });
 });

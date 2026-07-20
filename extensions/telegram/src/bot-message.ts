@@ -1,15 +1,15 @@
 // Telegram plugin module implements bot message behavior.
-import type { OpenClawConfig, TelegramAccountConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveTextChunkLimit } from "openclaw/plugin-sdk/reply-chunking";
-import { DEFAULT_GROUP_HISTORY_LIMIT } from "openclaw/plugin-sdk/reply-history";
+import type { NovaConfig, TelegramAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { resolveTextChunkLimit } from "nova/plugin-sdk/reply-chunking";
+import { DEFAULT_GROUP_HISTORY_LIMIT } from "nova/plugin-sdk/reply-history";
 import {
   createSubsystemLogger,
   danger,
   logVerbose,
   shouldLogVerbose,
   sleepWithAbort,
-} from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import type { TelegramBotDeps } from "./bot-deps.js";
 import {
   buildTelegramMessageContext,
@@ -69,7 +69,7 @@ type TelegramMessageProcessorDeps = Omit<
 };
 
 export type TelegramMessageProcessorTurnContext = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   telegramCfg: TelegramAccountConfig;
   onDispatchStart?: () => Promise<void> | void;
   /** One-way cancellation from an outer spool owner into an isolated retry attempt. */
@@ -86,7 +86,7 @@ export type TelegramMessageProcessorTurnContext = {
 
 export function resolveTelegramMessageTurnSettings(params: {
   accountId: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   telegramCfg: TelegramAccountConfig;
   opts: Pick<TelegramBotOptions, "allowFrom" | "groupAllowFrom" | "replyToMode">;
 }) {

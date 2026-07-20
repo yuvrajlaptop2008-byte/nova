@@ -1,9 +1,9 @@
 // Signal transport binding for numbered ask_user reactions.
-import type { OutboundDeliveryResult } from "openclaw/plugin-sdk/channel-send-result";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { questionGatewayRuntime } from "openclaw/plugin-sdk/question-gateway-runtime";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import { normalizeAccountId } from "openclaw/plugin-sdk/routing";
+import type { OutboundDeliveryResult } from "nova/plugin-sdk/channel-send-result";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { questionGatewayRuntime } from "nova/plugin-sdk/question-gateway-runtime";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
+import { normalizeAccountId } from "nova/plugin-sdk/routing";
 import { resolveSignalTarget } from "./aliases.js";
 import {
   resolveSignalApprovalConversationKey,
@@ -60,7 +60,7 @@ function buildKey(accountId: string, conversationKey: string, messageId: string)
 }
 
 function resolveConversationKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   to: string;
 }): string | null {
@@ -78,7 +78,7 @@ function resolveConversationKey(params: {
 }
 
 export function registerSignalQuestionReactionTargetForDeliveredPayload(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   target: { channel: string; to: string; accountId?: string | null };
   payload: ReplyPayload;
   results: readonly OutboundDeliveryResult[];
@@ -110,7 +110,7 @@ export function registerSignalQuestionReactionTargetForDeliveredPayload(params: 
 }
 
 export async function maybeResolveSignalQuestionReaction(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId: string;
   conversationKey: string;
   messageId: string;

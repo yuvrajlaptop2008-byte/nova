@@ -8,7 +8,7 @@ import { TEAMS_MEETINGS_PLATFORM_ADAPTER } from "./teams-meetings-platform-adapt
 export const URL =
   "https://teams.microsoft.com/l/meetup-join/19%3ameeting_test%40thread.v2/0?context=%7b%7d";
 export const CONSUMER_URL = "https://teams.live.com/meet/9326458712345?p=abc";
-export const MEETING_STATE_KEY = "__openclawTeamsMeeting";
+export const MEETING_STATE_KEY = "__novaTeamsMeeting";
 
 export function consumerLightMeetingUrl(meetingCode: string, passcode: string) {
   const coordinates = btoa(JSON.stringify({ meetingCode, passcode }));
@@ -284,10 +284,10 @@ export async function runStatusScript(params: {
     window[MEETING_STATE_KEY] = params.priorMeeting;
   }
   if (params.priorAudioOutputs) {
-    window["__openclawTeamsAudioOutputs"] = params.priorAudioOutputs;
+    window["__novaTeamsAudioOutputs"] = params.priorAudioOutputs;
   }
   if (params.priorCaptions) {
-    window["__openclawTeamsCaptions"] = params.priorCaptions;
+    window["__novaTeamsCaptions"] = params.priorCaptions;
   }
   const script = teamsMeetingStatusScript({
     allowMicrophone: params.allowMicrophone,
@@ -380,7 +380,7 @@ export function runLeaveScript(params: {
     };
   }
   if (params.priorAudioOutputs) {
-    window["__openclawTeamsAudioOutputs"] = params.priorAudioOutputs;
+    window["__novaTeamsAudioOutputs"] = params.priorAudioOutputs;
   }
   const run = runInNewContext(
     `(${teamsMeetingLeaveScript({ leaveInitiated: params.leaveInitiated ?? false, meetingSessionId: params.meetingSessionId ?? "session-1", meetingUrl: URL })})`,

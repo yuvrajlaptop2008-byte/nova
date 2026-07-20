@@ -1,7 +1,7 @@
 // Status scan test helpers provide shared mocks and config fixtures for scan suites.
 import type { Mock } from "vitest";
 import { vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import { withEnvAsync } from "../test-utils/env.js";
 
 type UnknownMock = Mock<(...args: unknown[]) => unknown>;
@@ -9,7 +9,7 @@ type ResolveConfigPathMock = Mock<() => string>;
 
 type StatusScanSharedMocks = {
   resolveConfigPath: ResolveConfigPathMock;
-  resolveGatewayPort: Mock<(cfg?: OpenClawConfig) => number>;
+  resolveGatewayPort: Mock<(cfg?: NovaConfig) => number>;
   hasConfiguredChannels: UnknownMock;
   hasConfiguredChannelsForReadOnlyScope: UnknownMock;
   readBestEffortConfig: UnknownMock;
@@ -28,8 +28,8 @@ type StatusScanSharedMocks = {
 
 export function createStatusScanSharedMocks(configPathLabel: string): StatusScanSharedMocks {
   return {
-    resolveConfigPath: vi.fn(() => `/tmp/openclaw-${configPathLabel}-missing-${process.pid}.json`),
-    resolveGatewayPort: vi.fn((cfg?: OpenClawConfig) => cfg?.gateway?.port ?? 18789),
+    resolveConfigPath: vi.fn(() => `/tmp/nova-${configPathLabel}-missing-${process.pid}.json`),
+    resolveGatewayPort: vi.fn((cfg?: NovaConfig) => cfg?.gateway?.port ?? 18789),
     hasConfiguredChannels: vi.fn(),
     hasConfiguredChannelsForReadOnlyScope: vi.fn(),
     readBestEffortConfig: vi.fn(),
@@ -186,12 +186,12 @@ export async function loadStatusScanModuleForTest(
 
   vi.doMock("../plugins/channel-plugin-ids.js", () => ({
     hasConfiguredChannelsForReadOnlyScope: (params: {
-      config: OpenClawConfig;
+      config: NovaConfig;
       env?: NodeJS.ProcessEnv;
       includePersistedAuthState?: boolean;
     }) => mocks.hasConfiguredChannelsForReadOnlyScope(params),
     listConfiguredChannelIdsForReadOnlyScope: (params: {
-      config: OpenClawConfig;
+      config: NovaConfig;
       env?: NodeJS.ProcessEnv;
       includePersistedAuthState?: boolean;
     }) =>
@@ -284,14 +284,14 @@ export async function loadStatusScanModuleForTest(
   return await import("./status.scan.js");
 }
 
-export function createStatusScanConfig<T extends object = OpenClawConfig>(
+export function createStatusScanConfig<T extends object = NovaConfig>(
   overrides: T = {} as T,
-): OpenClawConfig & T {
+): NovaConfig & T {
   return {
     session: {},
     gateway: {},
     ...overrides,
-  } as OpenClawConfig & T;
+  } as NovaConfig & T;
 }
 
 export function createStatusSummary(
@@ -369,7 +369,7 @@ function createStatusGatewayProbeFailure() {
   };
 }
 
-export function createStatusMemorySearchConfig(): OpenClawConfig {
+export function createStatusMemorySearchConfig(): NovaConfig {
   return createStatusScanConfig({
     agents: {
       defaults: {
@@ -397,8 +397,8 @@ export function applyStatusScanDefaults(
   mocks: StatusScanSharedMocks,
   options: {
     hasConfiguredChannels?: boolean;
-    sourceConfig?: OpenClawConfig;
-    resolvedConfig?: OpenClawConfig;
+    sourceConfig?: NovaConfig;
+    resolvedConfig?: NovaConfig;
     summary?: ReturnType<typeof createStatusSummary>;
     update?: ReturnType<typeof createStatusUpdateResult> | false;
     gatewayProbe?: ReturnType<typeof createStatusGatewayProbeFailure> | false;
@@ -411,7 +411,7 @@ export function applyStatusScanDefaults(
   mocks.hasConfiguredChannels.mockReturnValue(options.hasConfiguredChannels ?? false);
   mocks.hasConfiguredChannelsForReadOnlyScope.mockImplementation((rawParams: unknown) => {
     const params = rawParams as {
-      config: OpenClawConfig;
+      config: NovaConfig;
       env?: NodeJS.ProcessEnv;
       includePersistedAuthState?: boolean;
     };

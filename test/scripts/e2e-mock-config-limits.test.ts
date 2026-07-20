@@ -261,7 +261,7 @@ describe("e2e mock and config helper numeric limits", () => {
   });
 
   it("returns a clear error when mock OpenAI cannot append request logs", async () => {
-    const requestLogDirectory = await mkdtemp(join(tmpdir(), "openclaw-mock-request-log-"));
+    const requestLogDirectory = await mkdtemp(join(tmpdir(), "nova-mock-request-log-"));
     try {
       await withMockServer(
         mockOpenAiPath,
@@ -287,7 +287,7 @@ describe("e2e mock and config helper numeric limits", () => {
   });
 
   it("returns a clear error when web-search mock cannot append request logs", async () => {
-    const requestLogDirectory = await mkdtemp(join(tmpdir(), "openclaw-web-search-log-"));
+    const requestLogDirectory = await mkdtemp(join(tmpdir(), "nova-web-search-log-"));
     try {
       await withMockServer(
         webSearchMockPath,

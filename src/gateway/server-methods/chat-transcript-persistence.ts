@@ -9,7 +9,7 @@ import {
   type TranscriptEvent,
 } from "../../config/sessions/session-accessor.js";
 import { resolveMirroredTranscriptText } from "../../config/sessions/transcript-mirror.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { AssistantDisplayContentBlock } from "./chat-assistant-content.js";
 import {
   appendInjectedAssistantMessageToTranscript,
@@ -99,7 +99,7 @@ function findSourceReplyTranscriptMirrorByIdempotencyKeyInEvents(
   idempotencyKey: string,
 ): { messageId: string; message: Record<string, unknown> } | null {
   const found = findAssistantTranscriptMessageByIdempotencyKeyInEvents(events, idempotencyKey);
-  if (found?.message.provider !== "openclaw" || found.message.model !== "delivery-mirror") {
+  if (found?.message.provider !== "nova" || found.message.model !== "delivery-mirror") {
     return null;
   }
   return found;
@@ -149,7 +149,7 @@ function findSourceReplyTranscriptMirrorByMetadataInEvents(params: {
     return (
       typeof transcriptEventId(event) === "string" &&
       message?.role === "assistant" &&
-      message.provider === "openclaw" &&
+      message.provider === "nova" &&
       message.model === "delivery-mirror" &&
       extractAssistantTranscriptText(message) === expectedText
     );
@@ -192,7 +192,7 @@ export async function appendAssistantTranscriptMessage(params: {
     runId: string;
   };
   ttsSupplement?: GatewayInjectedTtsSupplementMarker;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): Promise<TranscriptAppendResult> {
   const scope = assistantTranscriptScope(params);
   if (!scope) {

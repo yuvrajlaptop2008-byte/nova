@@ -10,7 +10,7 @@ import os from "node:os";
 import path from "node:path";
 import { readDockerE2eJsonArtifact } from "./lib/docker-e2e-json-artifacts.mjs";
 
-const DEFAULT_WORKFLOW = "openclaw-live-and-e2e-checks-reusable.yml";
+const DEFAULT_WORKFLOW = "nova-live-and-e2e-checks-reusable.yml";
 
 function usage() {
   return [
@@ -453,9 +453,7 @@ function safePathSegment(value) {
 }
 
 function defaultOutputDir(input) {
-  return fs.mkdtempSync(
-    path.join(os.tmpdir(), `openclaw-docker-e2e-rerun-${safePathSegment(input)}-`),
-  );
+  return fs.mkdtempSync(path.join(os.tmpdir(), `nova-docker-e2e-rerun-${safePathSegment(input)}-`));
 }
 
 function printEntries(entries, ref, workflow, runValue) {

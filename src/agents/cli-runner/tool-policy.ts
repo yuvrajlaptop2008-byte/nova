@@ -1,10 +1,10 @@
 import { normalizeToolName } from "../tool-policy.js";
 
 /** Transport prefix CLI harnesses use for loopback Nova MCP tool names. */
-export const NOVA_MCP_TOOL_PREFIX = "mcp__openclaw__";
+export const NOVA_MCP_TOOL_PREFIX = "mcp__nova__";
 
 /** Strips the loopback MCP transport prefix so observers see gateway tool names. */
-export function stripOpenClawMcpToolPrefix(toolName: string): string {
+export function stripNovaMcpToolPrefix(toolName: string): string {
   return toolName.startsWith(NOVA_MCP_TOOL_PREFIX)
     ? toolName.slice(NOVA_MCP_TOOL_PREFIX.length)
     : toolName;
@@ -34,7 +34,7 @@ export function resolveLoopbackToolsAllowFromMcpPermissions(
     if (trimmed.startsWith("mcp__") && !trimmed.startsWith(NOVA_MCP_TOOL_PREFIX)) {
       continue;
     }
-    const name = normalizeToolName(stripOpenClawMcpToolPrefix(trimmed));
+    const name = normalizeToolName(stripNovaMcpToolPrefix(trimmed));
     if (name) {
       names.add(name);
     }

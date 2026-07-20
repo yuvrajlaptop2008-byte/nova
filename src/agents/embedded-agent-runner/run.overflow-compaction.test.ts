@@ -192,7 +192,7 @@ function makeForwardedRuntimePlan(overrides: RuntimePlanOverrides = {}): AgentRu
     resolvedRef: {
       provider: "anthropic",
       modelId: "test-model",
-      harnessId: "openclaw",
+      harnessId: "nova",
     },
     tools: {
       normalize: vi.fn((tools) => tools),
@@ -369,7 +369,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
       provider: "openai",
       model: "gpt-5.6-sol",
       thinkLevel: "ultra",
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessRuntimeOverride: "nova",
       runId: "run-before-model-resolve-thinking-revalidation",
     });
 
@@ -473,9 +473,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
       mockedEnsureAuthProfileStoreWithoutExternalProfiles,
     ) as [string | undefined, { allowKeychainPrompt?: boolean } | undefined];
     expect(typeof agentDir).toBe("string");
-    expect(String(agentDir).replaceAll("\\", "/").endsWith("/.openclaw/agents/main/agent")).toBe(
-      true,
-    );
+    expect(String(agentDir).replaceAll("\\", "/").endsWith("/.nova/agents/main/agent")).toBe(true);
     expect(authStoreOptions).toEqual({ allowKeychainPrompt: false });
   });
 
@@ -995,8 +993,8 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
     const attemptParams = mockCallArg(mockedRunEmbeddedAttempt) as EmbeddedRunAttemptParams;
     expect(attemptParams?.runtimePlan).toBe(runtimePlan);
     expect(attemptParams?.internalEvents).toBe(internalEvents);
-    expect(attemptParams?.agentHarnessId).toBe("openclaw");
-    expect(attemptParams?.agentHarnessRuntimeOverride).toBe("openclaw");
+    expect(attemptParams?.agentHarnessId).toBe("nova");
+    expect(attemptParams?.agentHarnessRuntimeOverride).toBe("nova");
   });
 
   it("routes non-empty request stream params through Nova before auth preparation", async () => {
@@ -1019,12 +1017,12 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
         },
       },
       streamParams: { maxTokens: 64 },
-      runId: "request-stream-params-use-openclaw",
+      runId: "request-stream-params-use-nova",
     });
 
-    expectMockCallFields(mockedRunEmbeddedAttempt, { agentHarnessId: "openclaw" });
+    expectMockCallFields(mockedRunEmbeddedAttempt, { agentHarnessId: "nova" });
     const runtimePlanInput = expectMockCallFields(mockedBuildAgentRuntimePlan, {
-      harnessId: "openclaw",
+      harnessId: "nova",
     });
     const preparedAuthPlan = expectRecordFields(runtimePlanInput.preparedAuthPlan, {});
     expectRecordFields(preparedAuthPlan.modelRoute, {
@@ -1140,7 +1138,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
   });
 
   it("revalidates reserved harness ownership after the global queue wait", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-harness-admission-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-harness-admission-"));
     const storePath = path.join(dir, "sessions.json");
     const sessionId = "native-session";
     const sessionKey = "agent:main:harness:codex:supervision:native-thread";
@@ -3060,7 +3058,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
     mockedBuildAgentRuntimePlan
       .mockReturnValueOnce(
         makeForwardedRuntimePlan({
-          resolvedRef: { provider: "openai", modelId: "gpt-5.5", harnessId: "openclaw" },
+          resolvedRef: { provider: "openai", modelId: "gpt-5.5", harnessId: "nova" },
           auth: {
             providerForAuth: "openai",
             authProfileProviderForAuth: "openai",
@@ -3073,7 +3071,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
       )
       .mockReturnValueOnce(
         makeForwardedRuntimePlan({
-          resolvedRef: { provider: "openai", modelId: "gpt-5.5", harnessId: "openclaw" },
+          resolvedRef: { provider: "openai", modelId: "gpt-5.5", harnessId: "nova" },
           auth: {
             providerForAuth: "openai",
             authProfileProviderForAuth: "openai",
@@ -3115,7 +3113,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
             },
           },
         },
-        runId: "implicit-codex-full-plan-falls-back-openclaw",
+        runId: "implicit-codex-full-plan-falls-back-nova",
       });
     } finally {
       clearAgentHarnesses();
@@ -3124,14 +3122,14 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
     expect(pluginRunAttempt).not.toHaveBeenCalled();
     expect(mockedRunEmbeddedAttempt).toHaveBeenCalledTimes(2);
     expectMockCallFields(mockedRunEmbeddedAttempt, {
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
       authProfileId: "openai:sub",
       resolvedApiKey: "profile-subscription-token",
     });
     expectMockCallFields(
       mockedRunEmbeddedAttempt,
       {
-        agentHarnessId: "openclaw",
+        agentHarnessId: "nova",
         authProfileId: undefined,
         resolvedApiKey: "direct-subscription-token",
       },
@@ -3337,7 +3335,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
       ...overflowBaseRunParams,
       provider: "openai",
       model: "gpt-5.5",
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
       modelSelectionLocked: true,
       config: {
         agents: { defaults: { compaction: { model: "anthropic/claude-opus-4-6" } } },
@@ -3429,7 +3427,7 @@ describe("runEmbeddedAgent overflow compaction trigger routing", () => {
   });
 
   it("recovers preflight compaction when stale tokens point at an empty transcript", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-empty-preflight-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-empty-preflight-"));
     const storePath = path.join(dir, "sessions.json");
     await replaceSessionEntry(
       { sessionKey: "test-key", storePath },

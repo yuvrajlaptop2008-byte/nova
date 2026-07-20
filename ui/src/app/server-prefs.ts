@@ -192,7 +192,7 @@ export function changedServerUiPrefs(previous: UiSettings, next: UiSettings): Se
 // scope. Applying only on a server *delta* keeps an unpushable local edit
 // (viewer scope) from being reverted by every later snapshot — including the
 // first snapshot after a reload or reconnect — carrying the same old value.
-const LAST_SEEN_STORAGE_KEY = "openclaw.control.serverPrefs.v1";
+const LAST_SEEN_STORAGE_KEY = "nova.control.serverPrefs.v1";
 
 let lastSeenScope = "";
 let lastSeenServerPrefsKey: string | null = null;

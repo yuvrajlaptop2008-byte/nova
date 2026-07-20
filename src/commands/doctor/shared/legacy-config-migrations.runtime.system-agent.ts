@@ -9,7 +9,7 @@ import {
 
 const LEGACY_SYSTEM_AGENT_CONFIG_RULE: LegacyConfigRule = {
   path: ["crestodian"],
-  message: 'crestodian config moved to systemAgent. Run "openclaw doctor --fix" to migrate it.',
+  message: 'crestodian config moved to systemAgent. Run "nova doctor --fix" to migrate it.',
 };
 
 export const LEGACY_CONFIG_MIGRATIONS_RUNTIME_SYSTEM_AGENT: LegacyConfigMigrationSpec[] = [

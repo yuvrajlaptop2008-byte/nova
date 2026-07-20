@@ -1,6 +1,6 @@
 import type { WhatsAppQaDriverSession } from "@nova/whatsapp/api.js";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { QaRunnerCliRegistration } from "openclaw/plugin-sdk/qa-runner-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { QaRunnerCliRegistration } from "nova/plugin-sdk/qa-runner-runtime";
 import { QaSuiteScenarioSkipError } from "../../errors.js";
 import {
   patchLiveQaGatewayConfig,
@@ -94,7 +94,7 @@ export function createWhatsAppQaScenarioEnvironment(params: {
             ? "allowlist"
             : "pairing";
     const snapshot = await readLiveQaGatewayConfig(input.gateway);
-    const cfg = buildWhatsAppQaConfig(snapshot.config as OpenClawConfig, {
+    const cfg = buildWhatsAppQaConfig(snapshot.config as NovaConfig, {
       allowFrom,
       authDir: params.sutAuthDir,
       dmPolicy,

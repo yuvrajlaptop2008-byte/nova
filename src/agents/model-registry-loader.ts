@@ -1,5 +1,5 @@
 /** Lifecycle-backed model-registry view for command paths. */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   loadPreparedAgentModelRegistry,
   type LoadPreparedAgentModelRegistryOptions,
@@ -13,8 +13,8 @@ type LoadAgentModelRegistryOptions = LoadPreparedAgentModelRegistryOptions & {
 
 /** Forks a registry from the generation prepared by the owning command lifecycle. */
 export async function loadAgentModelRegistry(
-  config: OpenClawConfig,
+  config: NovaConfig,
   options: LoadAgentModelRegistryOptions = {},
-): Promise<{ agentDir: string; config: OpenClawConfig; registry: ModelRegistry }> {
+): Promise<{ agentDir: string; config: NovaConfig; registry: ModelRegistry }> {
   return await loadPreparedAgentModelRegistry(config, options);
 }

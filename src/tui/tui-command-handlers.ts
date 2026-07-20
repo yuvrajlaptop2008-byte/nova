@@ -161,7 +161,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
   const setAgent = async (id: string) => {
     state.currentAgentId = normalizeAgentId(id);
     await setSession("");
-    chatLog.addSystem(`agent set to ${state.currentAgentId}; use /openclaw to return`);
+    chatLog.addSystem(`agent set to ${state.currentAgentId}; use /nova to return`);
   };
 
   const closeOverlayAndRender = (handle: OverlayHandle) => {
@@ -493,7 +493,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
       case "queue":
         await sendMessage(raw);
         break;
-      case "openclaw":
+      case "nova":
         chatLog.addSystem(args ? `returning to Nova with request: ${args}` : "returning to Nova");
         requestExit({
           exitReason: "return-to-system-agent",

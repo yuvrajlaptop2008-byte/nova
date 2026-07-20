@@ -115,33 +115,33 @@
   display: none;
 }
 
-html.openclaw-native-macos .shell-nav-expand {
+html.nova-native-macos .shell-nav-expand {
   top: 52px;
 }
 
 /* Newer Mac apps host a native sidebar toggle in the titlebar next to
-   back/forward and add openclaw-native-nav; the in-page toggles (desktop
+   back/forward and add nova-native-nav; the in-page toggles (desktop
    collapse/expand plus the drawer hamburger in compact layouts) would duplicate
    it, so they disappear entirely (⌘B and the accessible titlebar button
    cover keyboard/screen-reader use). Older apps only add
-   openclaw-native-macos and keep the web controls visible. */
-html.openclaw-native-nav .shell-nav-expand,
-html.openclaw-native-nav .sidebar-brand__collapse,
-html.openclaw-native-nav .topbar .topbar-nav-toggle {
+   nova-native-macos and keep the web controls visible. */
+html.nova-native-nav .shell-nav-expand,
+html.nova-native-nav .sidebar-brand__collapse,
+html.nova-native-nav .topbar .topbar-nav-toggle {
   display: none;
 }
 
 /* Shipped Mac builds without web chrome only replace the sidebar toggle via
-   openclaw-native-nav. Web-chrome hosts replace the toggle and brand search;
+   nova-native-nav. Web-chrome hosts replace the toggle and brand search;
    new-thread stays in the brand row and moves to the titlebar only when the
    rail is collapsed. */
-html.openclaw-native-web-chrome .shell-nav-expand,
-html.openclaw-native-web-chrome .sidebar-brand__collapse {
+html.nova-native-web-chrome .shell-nav-expand,
+html.nova-native-web-chrome .sidebar-brand__collapse {
   display: none;
 }
 
 /* The titlebar strip replaces brand search only while it is visible. */
-html.openclaw-native-web-chrome .shell:not(.shell--mobile-nav) .sidebar-brand .sidebar-search {
+html.nova-native-web-chrome .shell:not(.shell--mobile-nav) .sidebar-brand .sidebar-search {
   display: none;
 }
 
@@ -157,7 +157,7 @@ html.openclaw-native-web-chrome .shell:not(.shell--mobile-nav) .sidebar-brand .s
   align-items: center;
   gap: 4px;
   width: 156px;
-  height: var(--openclaw-native-titlebar-height, 50px);
+  height: var(--nova-native-titlebar-height, 50px);
 }
 
 .macos-titlebar-controls__button.topbar-icon-btn {
@@ -1069,11 +1069,11 @@ html.openclaw-native-web-chrome .shell:not(.shell--mobile-nav) .sidebar-brand .s
 }
 
 /* Native dashboard actions must also clear AppKit's drag strip. */
-html.openclaw-native-macos
+html.nova-native-macos
   .shell:not(.shell--mobile-nav)
   .sidebar-update-card--floating
   .sidebar-update-card {
-  margin-top: calc(var(--openclaw-native-titlebar-height, 50px) + 2px);
+  margin-top: calc(var(--nova-native-titlebar-height, 50px) + 2px);
 }
 
 .sidebar-update-card__action {
@@ -1909,7 +1909,7 @@ html.openclaw-native-macos
   letter-spacing: -0.02em;
 }
 
-.viewer-facepile > openclaw-tooltip:not(:first-child) .viewer-avatar {
+.viewer-facepile > nova-tooltip:not(:first-child) .viewer-avatar {
   margin-left: -5px;
 }
 
@@ -2407,9 +2407,9 @@ wa-dropdown.session-menu::part(menu) {
 /* Popover hosts live in the top layer so menus escape in-page stacking
    contexts (e.g. the sidebar resizer above the nav); the host itself must
    stay a zero-size shell around its fixed-position menu. */
-openclaw-menu-surface[popover],
-openclaw-native-link-menu[popover],
-openclaw-session-menu[popover] {
+nova-menu-surface[popover],
+nova-native-link-menu[popover],
+nova-session-menu[popover] {
   width: 0;
   height: 0;
   margin: 0;
@@ -3415,7 +3415,7 @@ wa-dropdown.sidebar-session-sort-menu::part(menu) {
   margin-top: 0;
 }
 
-.content--chat > openclaw-router-outlet {
+.content--chat > nova-router-outlet {
   display: flex;
   flex: 1 1 0;
   min-width: 0;
@@ -3433,15 +3433,15 @@ wa-dropdown.sidebar-session-sort-menu::part(menu) {
   margin-top: 14px;
 }
 
-.content--workboard > openclaw-router-outlet,
-.content--workboard openclaw-workboard-page {
+.content--workboard > nova-router-outlet,
+.content--workboard nova-workboard-page {
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
   min-height: 0;
 }
 
-.content--workboard openclaw-workboard-page {
+.content--workboard nova-workboard-page {
   gap: 14px;
 }
 

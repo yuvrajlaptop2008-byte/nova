@@ -27,13 +27,13 @@ const {
   })),
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-auth-runtime", () => ({
+vi.mock("nova/plugin-sdk/provider-auth-runtime", () => ({
   resolveApiKeyForProvider: resolveApiKeyForProviderMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-http", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/provider-http")>(
-    "openclaw/plugin-sdk/provider-http",
+vi.mock("nova/plugin-sdk/provider-http", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/provider-http")>(
+    "nova/plugin-sdk/provider-http",
   );
   return {
     assertOkOrThrowHttpError: assertOkOrThrowHttpErrorMock,
@@ -48,8 +48,8 @@ vi.mock("openclaw/plugin-sdk/provider-http", async () => {
 });
 
 afterAll(() => {
-  vi.doUnmock("openclaw/plugin-sdk/provider-auth-runtime");
-  vi.doUnmock("openclaw/plugin-sdk/provider-http");
+  vi.doUnmock("nova/plugin-sdk/provider-auth-runtime");
+  vi.doUnmock("nova/plugin-sdk/provider-http");
   vi.resetModules();
 });
 

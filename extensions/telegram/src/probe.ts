@@ -1,10 +1,10 @@
 // Telegram plugin module implements probe behavior.
-import type { BaseProbeResult } from "openclaw/plugin-sdk/channel-contract";
-import type { TelegramNetworkConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
-import { fetchWithTimeout } from "openclaw/plugin-sdk/text-utility-runtime";
+import type { BaseProbeResult } from "nova/plugin-sdk/channel-contract";
+import type { TelegramNetworkConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import { sleepWithAbort } from "nova/plugin-sdk/runtime-env";
+import { fetchWithTimeout } from "nova/plugin-sdk/text-utility-runtime";
 import { normalizeTelegramBotInfo, type TelegramBotInfo } from "./bot-info.js";
 import {
   resolveTelegramApiBase,

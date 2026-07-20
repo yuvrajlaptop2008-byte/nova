@@ -1,6 +1,6 @@
 import { AGENT_MODEL_CONFIG_KEYS } from "@nova/model-catalog-core/configured-model-refs";
 import { asOptionalRecord as asMutableRecord } from "@nova/normalization-core/record-coerce";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import {
   maybeMigrateLegacyLosslessCompactionConfig,
   rewriteAgentCompactionRefs,
@@ -62,8 +62,8 @@ function rewriteModelPolicyAllowRefs(params: {
 }
 
 function rewriteAgentModelRefs(params: {
-  cfg: OpenClawConfig;
-  preRepairCfg: OpenClawConfig;
+  cfg: NovaConfig;
+  preRepairCfg: NovaConfig;
   hits: CodexRouteHit[];
   agent: MutableRecord | undefined;
   path: string;
@@ -194,7 +194,7 @@ function rewriteAgentModelRefs(params: {
 }
 
 function rewriteConfigModelRefsWithCompactionPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   preserveSharedDefaultCompactionOverrides: SharedDefaultCompactionOverrideConsumers;
   ignoreLegacyAgentRuntimePins?: boolean;
   blockedModelIdentities?: ReadonlySet<LegacyCodexModelIdentity>;
@@ -307,7 +307,7 @@ function rewriteConfigModelRefsWithCompactionPolicy(params: {
 }
 
 function rewriteNonAgentModelRefs(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   hits: CodexRouteHit[];
   blockedModelIdentities?: ReadonlySet<LegacyCodexModelIdentity>;
   env?: NodeJS.ProcessEnv;
@@ -371,7 +371,7 @@ function rewriteNonAgentModelRefs(params: {
 }
 
 export function configRepairWouldClearLegacyRuntimePins(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   blockedModelIdentities?: ReadonlySet<LegacyCodexModelIdentity>;
   env?: NodeJS.ProcessEnv;
 }): boolean {
@@ -386,7 +386,7 @@ export function configRepairWouldClearLegacyRuntimePins(params: {
 }
 
 export function rewriteConfigModelRefs(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env?: NodeJS.ProcessEnv;
   blockedModelIdentities?: ReadonlySet<LegacyCodexModelIdentity>;
 }): ConfigRouteRepairResult {

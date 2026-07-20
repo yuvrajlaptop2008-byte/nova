@@ -1,13 +1,10 @@
 // Install download test utilities provide isolated state and workspace paths.
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../../test-utils/nova-test-state.js";
 
 /** Creates isolated Nova state for install download tests. */
-export async function createInstallDownloadTestState(): Promise<OpenClawTestState> {
-  return await createOpenClawTestState({
+export async function createInstallDownloadTestState(): Promise<NovaTestState> {
+  return await createNovaTestState({
     layout: "state-only",
-    prefix: "openclaw-skills-install-",
+    prefix: "nova-skills-install-",
   });
 }

@@ -5,10 +5,10 @@ import os from "node:os";
 import path from "node:path";
 import type * as Lark from "@larksuiteoapi/node-sdk";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { createNonExitingRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { createNonExitingRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { feishuDedupeState } from "./dedup-state.js";
 import { claimUnprocessedFeishuMessage } from "./dedup.js";
@@ -101,7 +101,7 @@ function startIngress(params: {
 }
 
 async function withQueue<T>(fn: (queue: FeishuIngressQueue, stateDir: string) => Promise<T>) {
-  const created = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-feishu-ingress-"));
+  const created = await fs.mkdtemp(path.join(os.tmpdir(), "nova-feishu-ingress-"));
   const stateDir = await fs.realpath(created);
   const previousStateDir = process.env.NOVA_STATE_DIR;
   process.env.NOVA_STATE_DIR = stateDir;
@@ -114,7 +114,7 @@ async function withQueue<T>(fn: (queue: FeishuIngressQueue, stateDir: string) =>
     return await fn(queue, stateDir);
   } finally {
     feishuDedupeState.reset();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     if (previousStateDir === undefined) {
       delete process.env.NOVA_STATE_DIR;
     } else {
@@ -179,7 +179,7 @@ async function postWebhook(url: string, envelope: ReturnType<typeof messageEnvel
 
 afterEach(() => {
   feishuDedupeState.reset();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   vi.restoreAllMocks();
 });
 

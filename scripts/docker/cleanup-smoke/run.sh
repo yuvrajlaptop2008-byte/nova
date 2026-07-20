@@ -3,8 +3,8 @@ set -euo pipefail
 
 cd /repo
 
-export NOVA_STATE_DIR="/tmp/openclaw-test"
-export NOVA_CONFIG_PATH="${NOVA_STATE_DIR}/openclaw.json"
+export NOVA_STATE_DIR="/tmp/nova-test"
+export NOVA_CONFIG_PATH="${NOVA_STATE_DIR}/nova.json"
 
 read_positive_int_env() {
   local name="${1:?missing environment variable name}"
@@ -57,8 +57,8 @@ ensure_cleanup_smoke_node_options() {
 ensure_cleanup_smoke_node_options
 
 echo "==> Build"
-if ! pnpm build >/tmp/openclaw-cleanup-build.log 2>&1; then
-  print_log_tail /tmp/openclaw-cleanup-build.log
+if ! pnpm build >/tmp/nova-cleanup-build.log 2>&1; then
+  print_log_tail /tmp/nova-cleanup-build.log
   exit 1
 fi
 
@@ -70,8 +70,8 @@ echo 'creds' >"${NOVA_STATE_DIR}/credentials/marker.txt"
 echo 'session' >"${NOVA_STATE_DIR}/agents/main/sessions/sessions.json"
 
 echo "==> Reset (config+creds+sessions)"
-if ! pnpm openclaw reset --scope config+creds+sessions --yes --non-interactive >/tmp/openclaw-cleanup-reset.log 2>&1; then
-  print_log_tail /tmp/openclaw-cleanup-reset.log
+if ! pnpm nova reset --scope config+creds+sessions --yes --non-interactive >/tmp/nova-cleanup-reset.log 2>&1; then
+  print_log_tail /tmp/nova-cleanup-reset.log
   exit 1
 fi
 
@@ -84,8 +84,8 @@ mkdir -p "${NOVA_STATE_DIR}/credentials"
 echo '{}' >"${NOVA_CONFIG_PATH}"
 
 echo "==> Uninstall (state only)"
-if ! pnpm openclaw uninstall --state --yes --non-interactive >/tmp/openclaw-cleanup-uninstall.log 2>&1; then
-  print_log_tail /tmp/openclaw-cleanup-uninstall.log
+if ! pnpm nova uninstall --state --yes --non-interactive >/tmp/nova-cleanup-uninstall.log 2>&1; then
+  print_log_tail /tmp/nova-cleanup-uninstall.log
   exit 1
 fi
 

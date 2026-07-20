@@ -1,7 +1,7 @@
 // Qa Lab plugin module implements cli behavior.
 import type { Command } from "commander";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
 import { collectString } from "./cli-options.js";
 import type {
   QaLabSelfCheckCommandOptions,
@@ -508,7 +508,7 @@ export function registerQaLabCli(program: Command) {
     )
     .option("--memory <size>", "Multipass memory size")
     .option("--disk <size>", "Multipass disk size")
-    .option("--runtime-pair <pair>", "Run each scenario under both runtimes, e.g. openclaw,codex")
+    .option("--runtime-pair <pair>", "Run each scenario under both runtimes, e.g. nova,codex")
     .option(
       "--runtime-parity-tier <tier>",
       "Add scenarios tagged with runtimeParityTier (standard, optional, live-only, soak; repeatable or comma-separated)",
@@ -651,7 +651,7 @@ export function registerQaLabCli(program: Command) {
       "Directory of curated JSONL transcripts",
       "qa/scenarios/jsonl-replay",
     )
-    .option("--runtime-pair <pair>", "Runtime pair label, e.g. openclaw,codex", "openclaw,codex")
+    .option("--runtime-pair <pair>", "Runtime pair label, e.g. nova,codex", "nova,codex")
     .option(
       "--provider-mode <mode>",
       `Provider mode (${formatQaProviderModeHelp()})`,
@@ -915,7 +915,7 @@ export function registerQaLabCli(program: Command) {
       parseQaCliTcpPortOption(value, "--qa-lab-port"),
     )
     .option("--provider-base-url <url>", "Provider base URL for the QA gateway")
-    .option("--image <name>", "Prebaked image name", "openclaw:qa-local-prebaked")
+    .option("--image <name>", "Prebaked image name", "nova:qa-local-prebaked")
     .option("--use-prebuilt-image", "Use image: instead of build: in docker-compose", false)
     .option(
       "--bind-ui-dist",
@@ -940,7 +940,7 @@ export function registerQaLabCli(program: Command) {
   qa.command("docker-build-image")
     .description("Build the prebaked QA Docker image with qa-channel + qa-lab bundled")
     .option("--repo-root <path>", "Repository root to target when running from a neutral cwd")
-    .option("--image <name>", "Image tag", "openclaw:qa-local-prebaked")
+    .option("--image <name>", "Image tag", "nova:qa-local-prebaked")
     .action(async (opts: { repoRoot?: string; image?: string }) => {
       await runQaDockerBuildImage(opts);
     });
@@ -956,7 +956,7 @@ export function registerQaLabCli(program: Command) {
       parseQaCliTcpPortOption(value, "--qa-lab-port"),
     )
     .option("--provider-base-url <url>", "Provider base URL for the QA gateway")
-    .option("--image <name>", "Image tag", "openclaw:qa-local-prebaked")
+    .option("--image <name>", "Image tag", "nova:qa-local-prebaked")
     .option("--use-prebuilt-image", "Use image: instead of build: in docker-compose", false)
     .option(
       "--bind-ui-dist",

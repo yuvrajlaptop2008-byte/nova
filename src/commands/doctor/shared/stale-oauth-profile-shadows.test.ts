@@ -14,7 +14,7 @@ import {
   saveAuthProfileStore,
 } from "../../../agents/auth-profiles/store.js";
 import type { AuthProfileStore, OAuthCredential } from "../../../agents/auth-profiles/types.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { captureEnv } from "../../../test-utils/env.js";
 import {
   collectStaleOAuthProfileShadowWarnings,
@@ -61,7 +61,7 @@ describe("stale OAuth profile shadow doctor repair", () => {
 
   beforeEach(async () => {
     clearRuntimeAuthProfileStoreSnapshots();
-    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-stale-oauth-shadow-"));
+    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-stale-oauth-shadow-"));
     stateDir = path.join(tempRoot, "state");
     process.env.NOVA_STATE_DIR = stateDir;
     process.env.NOVA_HOME = stateDir;
@@ -102,17 +102,17 @@ describe("stale OAuth profile shadow doctor repair", () => {
     );
 
     const hits = await scanStaleOAuthProfileShadows({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       now,
     });
     const warnings = collectStaleOAuthProfileShadowWarnings({
       hits,
-      doctorFixCommand: "openclaw doctor --fix",
+      doctorFixCommand: "nova doctor --fix",
     });
 
     expect(hits).toHaveLength(1);
     expect(warnings[0]).toContain("stale OAuth auth profile anthropic:default");
-    expect(warnings[0]).toContain("openclaw doctor --fix");
+    expect(warnings[0]).toContain("nova doctor --fix");
     expect(loadPersistedAuthProfileStore(childAgentDir)?.profiles[profileId]).toBeDefined();
   });
 
@@ -145,7 +145,7 @@ describe("stale OAuth profile shadow doctor repair", () => {
     );
 
     const hits = await scanStaleOAuthProfileShadows({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       now,
     });
 
@@ -206,7 +206,7 @@ describe("stale OAuth profile shadow doctor repair", () => {
     );
 
     const hits = await scanStaleOAuthProfileShadows({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       env: injectedEnv,
       now,
     });
@@ -232,7 +232,7 @@ describe("stale OAuth profile shadow doctor repair", () => {
           accountId: "acct-shared",
           expires: now - 60_000,
           oauthRef: {
-            source: "openclaw-credentials",
+            source: "nova-credentials",
             provider: "openai-codex",
             id: "0123456789abcdef0123456789abcdef",
           },
@@ -253,11 +253,11 @@ describe("stale OAuth profile shadow doctor repair", () => {
     );
 
     const hits = await scanStaleOAuthProfileShadows({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       now,
     });
     const repair = await repairStaleOAuthProfileShadows({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       now,
     });
 
@@ -309,7 +309,7 @@ describe("stale OAuth profile shadow doctor repair", () => {
     );
 
     const result = await repairStaleOAuthProfileShadows({
-      cfg: { agents: { list: [{ id: "telegram" }] } } satisfies OpenClawConfig,
+      cfg: { agents: { list: [{ id: "telegram" }] } } satisfies NovaConfig,
       now,
     });
 
@@ -350,7 +350,7 @@ describe("stale OAuth profile shadow doctor repair", () => {
     );
 
     const result = await repairStaleOAuthProfileShadows({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       now,
     });
 
@@ -383,7 +383,7 @@ describe("stale OAuth profile shadow doctor repair", () => {
     );
 
     const result = await repairStaleOAuthProfileShadows({
-      cfg: {} satisfies OpenClawConfig,
+      cfg: {} satisfies NovaConfig,
       now,
     });
 

@@ -4,8 +4,8 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import * as path from "node:path";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/security-runtime";
-import { asRecord, readStringValue } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/security-runtime";
+import { asRecord, readStringValue } from "nova/plugin-sdk/string-coerce-runtime";
 
 type CanvasSnapshotPayload = {
   format: CanvasSnapshotFormat;
@@ -44,7 +44,7 @@ export function parseCanvasSnapshotPayload(value: unknown): CanvasSnapshotPayloa
 }
 
 function resolveCliName(): string {
-  return "openclaw";
+  return "nova";
 }
 
 function resolveCanvasSnapshotId(id: string): string {
@@ -55,7 +55,7 @@ function resolveCanvasSnapshotId(id: string): string {
 }
 
 function resolveTempPathParts(opts: { ext: string; tmpDir?: string; id?: string }) {
-  const tmpDir = opts.tmpDir ?? resolvePreferredOpenClawTmpDir();
+  const tmpDir = opts.tmpDir ?? resolvePreferredNovaTmpDir();
   if (!opts.tmpDir) {
     fs.mkdirSync(tmpDir, { recursive: true, mode: 0o700 });
   }

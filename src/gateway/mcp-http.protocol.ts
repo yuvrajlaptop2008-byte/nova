@@ -1,5 +1,5 @@
 /** Server identity advertised by the local MCP loopback initialize response. */
-export const MCP_LOOPBACK_SERVER_NAME = "openclaw";
+export const MCP_LOOPBACK_SERVER_NAME = "nova";
 /** Protocol-facing loopback server version, independent from the Nova app version. */
 export const MCP_LOOPBACK_SERVER_VERSION = "0.1.0";
 /** MCP protocol versions accepted by the loopback HTTP bridge, newest first for negotiation. */

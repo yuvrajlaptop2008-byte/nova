@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   clearPluginRegistryLoadCache,
-  loadOpenClawPlugins,
+  loadNovaPlugins,
   resolveRuntimePluginRegistry,
 } from "./loader.js";
 import { resetPluginLoaderTestStateForTest } from "./loader.test-fixtures.js";
@@ -60,10 +60,10 @@ describe("clearPluginRegistryLoadCache", () => {
       },
       workspaceDir: "/tmp/workspace-a",
     };
-    const registry = loadOpenClawPlugins(loadOptions);
+    const registry = loadNovaPlugins(loadOptions);
 
     clearPluginRegistryLoadCache();
 
-    expect(loadOpenClawPlugins(loadOptions)).not.toBe(registry);
+    expect(loadNovaPlugins(loadOptions)).not.toBe(registry);
   });
 });

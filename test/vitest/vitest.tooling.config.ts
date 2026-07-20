@@ -18,7 +18,7 @@ export function createToolingVitestConfig(env?: Record<string, string | undefine
       env,
       exclude: [...boundaryTestFiles, ...toolingDockerTestFiles, ...toolingIsolatedTestFiles],
       fileParallelism: false,
-      includeOpenClawRuntimeSetup: false,
+      includeNovaRuntimeSetup: false,
       name: "tooling",
       passWithNoTests: true,
     },

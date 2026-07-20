@@ -1,7 +1,7 @@
 // Ollama tests cover setup plugin behavior.
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import type { WizardPrompter } from "openclaw/plugin-sdk/setup";
-import { jsonResponse, requestBodyText, requestUrl } from "openclaw/plugin-sdk/test-env";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import type { WizardPrompter } from "nova/plugin-sdk/setup";
+import { jsonResponse, requestBodyText, requestUrl } from "nova/plugin-sdk/test-env";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   checkOllamaCloudAuth,
@@ -22,16 +22,16 @@ const fetchWithSsrFGuardMock = vi.hoisted(() =>
   })),
 );
 
-vi.mock("openclaw/plugin-sdk/provider-auth", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/provider-auth")>();
+vi.mock("nova/plugin-sdk/provider-auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/provider-auth")>();
   return {
     ...actual,
     upsertAuthProfileWithLock,
   };
 });
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/ssrf-runtime")>();
+vi.mock("nova/plugin-sdk/ssrf-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/ssrf-runtime")>();
   return {
     ...actual,
     fetchWithSsrFGuard: (...args: Parameters<typeof actual.fetchWithSsrFGuard>) =>

@@ -12,7 +12,7 @@ import { createAssistantMessageEventStream } from "../llm/utils/event-stream.js"
 import type { StreamFn } from "./runtime/index.js";
 import { buildStreamErrorAssistantMessage } from "./stream-message-shared.js";
 
-const CUSTOM_API_SOURCE_PREFIX = "openclaw-custom-api:";
+const CUSTOM_API_SOURCE_PREFIX = "nova-custom-api:";
 
 /** Returns the registry source id used for a custom API stream function. */
 function getCustomApiRegistrySourceId(api: Api): string {

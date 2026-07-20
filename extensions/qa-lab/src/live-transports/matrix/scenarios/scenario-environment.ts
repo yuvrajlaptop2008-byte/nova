@@ -1,8 +1,8 @@
 // QA Lab Matrix setup prepares transport state for the shared flow host.
 import { setTimeout as sleep } from "node:timers/promises";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import type { QaRunnerCliRegistration } from "openclaw/plugin-sdk/qa-runner-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import type { QaRunnerCliRegistration } from "nova/plugin-sdk/qa-runner-runtime";
 import type { MatrixQaProvisionResult } from "../substrate/client.js";
 import type { MatrixQaRoomObserver } from "../substrate/client.js";
 import { buildMatrixQaConfig, type MatrixQaConfigOverrides } from "../substrate/config.js";
@@ -181,7 +181,7 @@ export function createMatrixQaScenarioEnvironment(params: MatrixQaScenarioEnviro
   const prepareFlow = async (input: FlowPreparationInput) => {
     const configOverrides = readMatrixConfigOverrides(input.config);
     const configSnapshot = (await input.gateway.call("config.get", {}, { timeoutMs: 60_000 })) as {
-      config?: OpenClawConfig;
+      config?: NovaConfig;
     };
     if (!configSnapshot.config) {
       throw new Error("Matrix QA scenario requires config.get config");

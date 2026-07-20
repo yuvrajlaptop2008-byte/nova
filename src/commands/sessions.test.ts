@@ -186,7 +186,7 @@ describe("sessionsCommand", () => {
     const store = await writeStore({
       main: {
         sessionId: "abc123",
-        sessionFile: "sqlite:main:abc123:/tmp/openclaw/agents/main/sessions/sessions.json",
+        sessionFile: "sqlite:main:abc123:/tmp/nova/agents/main/sessions/sessions.json",
         updatedAt: Date.now() - 10 * 60_000,
         model: "test:opus",
       },
@@ -197,10 +197,10 @@ describe("sessionsCommand", () => {
       sessions?: Array<{ key: string; sessionFile?: string }>;
     }>(sessionsCommand, store);
 
-    expect(payload.path).toMatch(/openclaw-agent\.sqlite$/u);
+    expect(payload.path).toMatch(/nova-agent\.sqlite$/u);
     expect(payload.path).not.toContain("sessions.json");
     expect(payload.sessions?.find((row) => row.key === "main")?.sessionFile).toBe(
-      "sqlite:main:abc123:/tmp/openclaw/agents/main/agent/openclaw-agent.sqlite",
+      "sqlite:main:abc123:/tmp/nova/agents/main/agent/nova-agent.sqlite",
     );
   });
 
@@ -209,7 +209,7 @@ describe("sessionsCommand", () => {
       "agent:child:main": {
         sessionId: "child-session",
         updatedAt: Date.now() - 10 * 60_000,
-        sessionFile: "/tmp/openclaw/child-session.jsonl",
+        sessionFile: "/tmp/nova/child-session.jsonl",
         spawnedBy: "agent:main:main",
         spawnedWorkspaceDir: "/workspace/project",
         spawnedCwd: "/workspace/project/tasks",
@@ -247,7 +247,7 @@ describe("sessionsCommand", () => {
 
     const child = payload.sessions?.find((row) => row.key === "agent:child:main");
     expect(child).toMatchObject({
-      sessionFile: "/tmp/openclaw/child-session.jsonl",
+      sessionFile: "/tmp/nova/child-session.jsonl",
       spawnedBy: "agent:main:main",
       spawnedWorkspaceDir: "/workspace/project",
       spawnedCwd: "/workspace/project/tasks",

@@ -15,7 +15,7 @@ import {
 
 describe("config journal snapshots", () => {
   const suiteRootTracker = createSuiteTempRootTracker({
-    prefix: "openclaw-config-journal-snapshot-",
+    prefix: "nova-config-journal-snapshot-",
   });
 
   beforeAll(async () => {
@@ -24,7 +24,7 @@ describe("config journal snapshots", () => {
 
   it("fingerprints every snapshot leaf with a per-install key", async () => {
     const home = await suiteRootTracker.make("fingerprint-home");
-    const stateDir = path.join(home, ".openclaw");
+    const stateDir = path.join(home, ".nova");
     const fingerprinted = fingerprintConfigSnapshotAuthoredConfig(
       {
         gateway: { auth: { token: "test-token" }, port: 18789 },
@@ -65,10 +65,10 @@ describe("config journal snapshots", () => {
 
   it("hands the snapshot slot to another config path via the unfiltered CAS token", async () => {
     const home = await suiteRootTracker.make("snapshot-path-transfer");
-    const env = { NOVA_STATE_DIR: path.join(home, ".openclaw") } as NodeJS.ProcessEnv;
+    const env = { NOVA_STATE_DIR: path.join(home, ".nova") } as NodeJS.ProcessEnv;
     const context = { env, homedir: () => home };
-    const pathA = path.join(home, ".openclaw", "config-a.json");
-    const pathB = path.join(home, ".openclaw", "config-b.json");
+    const pathA = path.join(home, ".nova", "config-a.json");
+    const pathB = path.join(home, ".nova", "config-b.json");
     upsertConfigSnapshotAuditRecord({
       ...context,
       configPath: pathA,
@@ -95,8 +95,8 @@ describe("config journal snapshots", () => {
 
   it("does not restore a snapshot slot after another writer replaces it", async () => {
     const home = await suiteRootTracker.make("snapshot-compare-and-set");
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
-    const env = { NOVA_STATE_DIR: path.join(home, ".openclaw") } as NodeJS.ProcessEnv;
+    const configPath = path.join(home, ".nova", "nova.json");
+    const env = { NOVA_STATE_DIR: path.join(home, ".nova") } as NodeJS.ProcessEnv;
     const context = { env, homedir: () => home };
     const prior = upsertConfigSnapshotAuditRecord({
       ...context,

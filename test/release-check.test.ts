@@ -2,7 +2,7 @@
 import { chmodSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve as resolvePath, win32 } from "node:path";
-import { bundledDistPluginFile, bundledPluginFile } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledDistPluginFile, bundledPluginFile } from "nova/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 import { listBundledPluginPackArtifacts } from "../scripts/lib/bundled-plugin-build-entries.mjs";
 import {
@@ -18,7 +18,7 @@ import {
   WORKSPACE_TEMPLATE_PACK_PATHS,
   createWorkspaceBootstrapSmokeEnv,
 } from "../scripts/lib/workspace-bootstrap-smoke.mjs";
-import { collectInstalledRootDependencyManifestErrors } from "../scripts/openclaw-npm-postpublish-verify.ts";
+import { collectInstalledRootDependencyManifestErrors } from "../scripts/nova-npm-postpublish-verify.ts";
 import {
   collectAppcastSparkleVersionErrors,
   collectBundledExtensionManifestErrors,
@@ -325,14 +325,14 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "broken",
           packageJson: {
-            openclaw: {
+            nova: {
               install: { npmSpec: "   " },
             },
           },
         },
       ]),
     ).toEqual([
-      "bundled extension 'broken' manifest invalid | openclaw.install.npmSpec must be a non-empty string",
+      "bundled extension 'broken' manifest invalid | nova.install.npmSpec must be a non-empty string",
     ]);
   });
 
@@ -342,14 +342,14 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "broken",
           packageJson: {
-            openclaw: {
+            nova: {
               install: { npmSpec: "@nova/broken", minHostVersion: "2026.3.14" },
             },
           },
         },
       ]),
     ).toEqual([
-      "bundled extension 'broken' manifest invalid | openclaw.install.minHostVersion must use a semver floor in the form \">=x.y.z[-prerelease][+build]\"",
+      "bundled extension 'broken' manifest invalid | nova.install.minHostVersion must use a semver floor in the form \">=x.y.z[-prerelease][+build]\"",
     ]);
   });
 
@@ -359,7 +359,7 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "irc",
           packageJson: {
-            openclaw: {
+            nova: {
               install: { minHostVersion: ">=2026.3.14" },
             },
           },
@@ -374,13 +374,13 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "broken",
           packageJson: {
-            openclaw: {
+            nova: {
               install: 123,
             },
           },
         },
       ]),
-    ).toEqual(["bundled extension 'broken' manifest invalid | openclaw.install must be an object"]);
+    ).toEqual(["bundled extension 'broken' manifest invalid | nova.install must be an object"]);
   });
 });
 
@@ -395,15 +395,11 @@ describe("bundled plugin package dependency checks", () => {
   });
 
   it("does not require root deps for root chunks sourced from the owning installed plugin", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-root-owned-installed-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "nova-root-owned-installed-"));
 
     try {
       mkdirSync(join(tempRoot, "dist", "extensions", "memory-lancedb"), { recursive: true });
-      writeFileSync(
-        join(tempRoot, "package.json"),
-        `{"name":"openclaw","dependencies":{}}\n`,
-        "utf8",
-      );
+      writeFileSync(join(tempRoot, "package.json"), `{"name":"nova","dependencies":{}}\n`, "utf8");
       writeFileSync(
         join(tempRoot, "dist", "extensions", "memory-lancedb", "package.json"),
         `{"name":"@nova/memory-lancedb","dependencies":{"root-owned-test-dep":"^1.0.0"}}\n`,
@@ -422,15 +418,11 @@ describe("bundled plugin package dependency checks", () => {
   });
 
   it("still requires root deps for root-owned installed chunks", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-root-owned-installed-missing-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "nova-root-owned-installed-missing-"));
 
     try {
       mkdirSync(join(tempRoot, "dist", "extensions", "memory-lancedb"), { recursive: true });
-      writeFileSync(
-        join(tempRoot, "package.json"),
-        `{"name":"openclaw","dependencies":{}}\n`,
-        "utf8",
-      );
+      writeFileSync(join(tempRoot, "package.json"), `{"name":"nova","dependencies":{}}\n`, "utf8");
       writeFileSync(
         join(tempRoot, "dist", "extensions", "memory-lancedb", "package.json"),
         `{"name":"@nova/memory-lancedb","dependencies":{"root-owned-test-dep":"^1.0.0"}}\n`,
@@ -456,7 +448,7 @@ describe("bundled plugin package dependency checks", () => {
 // statSync().mode never reports execute bits, so these tests are meaningless there.
 describe.skipIf(process.platform === "win32")("collectSkillShellScriptExecutableErrors", () => {
   it("flags non-executable shell scripts under skills/*/scripts", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-release-check-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-release-check-"));
     const scriptPath = join(root, "skills", "openai-whisper-api", "scripts", "transcribe.sh");
     mkdirSync(join(root, "skills", "openai-whisper-api", "scripts"), { recursive: true });
     writeFileSync(scriptPath, "#!/usr/bin/env bash\necho test\n", "utf8");
@@ -472,7 +464,7 @@ describe.skipIf(process.platform === "win32")("collectSkillShellScriptExecutable
   });
 
   it("accepts executable shell scripts", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-release-check-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-release-check-"));
     const scriptPath = join(root, "skills", "openai-whisper-api", "scripts", "transcribe.sh");
     mkdirSync(join(root, "skills", "openai-whisper-api", "scripts"), { recursive: true });
     writeFileSync(scriptPath, "#!/usr/bin/env bash\necho test\n", "utf8");
@@ -493,12 +485,12 @@ describe("collectForbiddenPackPaths", () => {
         "dist/index.js",
         bundledDistPluginFile("discord", "node_modules/@discordjs/voice/index.js"),
         bundledPluginFile("tlon", "node_modules/.bin/tlon"),
-        "node_modules/.bin/openclaw",
+        "node_modules/.bin/nova",
       ]),
     ).toEqual([
       bundledDistPluginFile("discord", "node_modules/@discordjs/voice/index.js"),
       bundledPluginFile("tlon", "node_modules/.bin/tlon"),
-      "node_modules/.bin/openclaw",
+      "node_modules/.bin/nova",
     ]);
   });
 
@@ -549,11 +541,11 @@ describe("collectForbiddenPackPaths", () => {
         "dist/index.js",
         "dist/extensions/clickclack/index.js",
         "dist/extensions/slack/setup-entry.js",
-        "dist/extensions/msteams/openclaw.plugin.json",
+        "dist/extensions/msteams/nova.plugin.json",
       ]),
     ).toEqual([
       "dist/extensions/clickclack/index.js",
-      "dist/extensions/msteams/openclaw.plugin.json",
+      "dist/extensions/msteams/nova.plugin.json",
       "dist/extensions/slack/setup-entry.js",
     ]);
   });
@@ -595,13 +587,13 @@ describe("collectForbiddenPackPaths", () => {
       collectForbiddenPackPaths([
         "dist/index.js",
         "dist/extensions/browser/.Nova-Install-Stage/package.json",
-        "dist/extensions/codex/.openclaw-runtime-deps-backup-node_modules-old/zod/index.js",
-        "dist/extensions/discord/.openclaw-runtime-deps-stamp.json",
+        "dist/extensions/codex/.nova-runtime-deps-backup-node_modules-old/zod/index.js",
+        "dist/extensions/discord/.nova-runtime-deps-stamp.json",
       ]),
     ).toEqual([
       "dist/extensions/browser/.Nova-Install-Stage/package.json",
-      "dist/extensions/codex/.openclaw-runtime-deps-backup-node_modules-old/zod/index.js",
-      "dist/extensions/discord/.openclaw-runtime-deps-stamp.json",
+      "dist/extensions/codex/.nova-runtime-deps-backup-node_modules-old/zod/index.js",
+      "dist/extensions/discord/.nova-runtime-deps-stamp.json",
     ]);
   });
 
@@ -637,7 +629,7 @@ describe("collectForbiddenPackPaths", () => {
   });
 
   it("blocks root dist chunks that still reference private qa lab sources", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-release-private-qa-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "nova-release-private-qa-"));
 
     try {
       mkdirSync(join(tempRoot, "dist"), { recursive: true });
@@ -657,7 +649,7 @@ describe("collectForbiddenPackPaths", () => {
   });
 
   it("blocks private QA paths in the generated dist inventory", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-release-inventory-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "nova-release-inventory-"));
 
     try {
       mkdirSync(join(tempRoot, "dist"), { recursive: true });
@@ -676,7 +668,7 @@ describe("collectForbiddenPackPaths", () => {
   });
 
   it("blocks root plugin SDK declarations that still reference private test helpers", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-release-private-sdk-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "nova-release-private-sdk-"));
 
     try {
       mkdirSync(join(tempRoot, "dist", "plugin-sdk"), { recursive: true });
@@ -720,12 +712,12 @@ describe("collectMissingPackPaths", () => {
       "dist/agents/model-provider-auth.worker.js",
       "dist/audit/audit-event-writer.worker.js",
       "dist/config/sessions/session-transcript-reconcile.worker.js",
-      "dist/state/openclaw-database-verify.worker.js",
+      "dist/state/nova-database-verify.worker.js",
       "dist/system-agent/setup-inference-detection.worker.js",
       "dist/task-registry-control.runtime.js",
       "dist/telegram-ingress-worker.runtime.js",
       bundledDistPluginFile("telegram", "runtime-api.js"),
-      bundledDistPluginFile("telegram", "openclaw.plugin.json"),
+      bundledDistPluginFile("telegram", "nova.plugin.json"),
       bundledDistPluginFile("telegram", "package.json"),
     ]) {
       expect(missing).toContain(path);
@@ -759,7 +751,7 @@ describe("collectMissingPackPaths", () => {
         "dist/agents/model-provider-auth.worker.js",
         "dist/audit/audit-event-writer.worker.js",
         "dist/config/sessions/session-transcript-reconcile.worker.js",
-        "dist/state/openclaw-database-verify.worker.js",
+        "dist/state/nova-database-verify.worker.js",
         "dist/system-agent/setup-inference-detection.worker.js",
         "dist/task-registry-control.runtime.js",
         "dist/telegram-ingress-worker.runtime.js",
@@ -773,7 +765,7 @@ describe("collectMissingPackPaths", () => {
   it("runs postpublish package integrity checks against the packed install before publish", () => {
     const root = mkdtempSync(join(tmpdir(), "release-check-packed-install-"));
     try {
-      const packageRoot = join(root, "openclaw");
+      const packageRoot = join(root, "nova");
       const distDir = join(packageRoot, "dist");
       mkdirSync(distDir, { recursive: true });
       for (const relativePath of [
@@ -790,14 +782,14 @@ describe("collectMissingPackPaths", () => {
       }
       writeFileSync(
         join(packageRoot, "package.json"),
-        `${JSON.stringify({ name: "openclaw", version: "2026.5.14-beta.3", dependencies: {} })}\n`,
+        `${JSON.stringify({ name: "nova", version: "2026.5.14-beta.3", dependencies: {} })}\n`,
       );
       writeFileSync(join(distDir, "typescript-compiler.js"), "x".repeat(6 * 1024 * 1024 + 1));
 
       expect(
         collectPackedInstalledPackageVerificationErrors({
           expectedVersion: "2026.5.14-beta.3",
-          installedBinaryVersion: "openclaw 2026.5.14-beta.3",
+          installedBinaryVersion: "nova 2026.5.14-beta.3",
           packageRoot,
         }),
       ).toEqual([
@@ -850,11 +842,11 @@ describe("createPackedPluginSdkTypescriptSmokeProject", () => {
     const root = mkdtempSync(join(tmpdir(), "release-check-plugin-sdk-types-"));
     try {
       const consumerDir = join(root, "consumer");
-      const packageRoot = join(root, "openclaw");
+      const packageRoot = join(root, "nova");
       createPackedPluginSdkTypescriptSmokeProject({
         consumerDir,
         packageSpec: `file:${packageRoot}`,
-        aiPackageSpec: "file:/tmp/openclaw-ai.tgz",
+        aiPackageSpec: "file:/tmp/nova-ai.tgz",
       });
 
       const packageJson = JSON.parse(readFileSync(join(consumerDir, "package.json"), "utf8")) as {
@@ -869,18 +861,18 @@ describe("createPackedPluginSdkTypescriptSmokeProject", () => {
         "utf8",
       );
 
-      expect(packageJson.dependencies?.openclaw).toBe(`file:${packageRoot}`);
-      expect(packageJson.dependencies?.["@nova/ai"]).toBe("file:/tmp/openclaw-ai.tgz");
+      expect(packageJson.dependencies?.nova).toBe(`file:${packageRoot}`);
+      expect(packageJson.dependencies?.["@nova/ai"]).toBe("file:/tmp/nova-ai.tgz");
       expect(tsconfig.compilerOptions?.skipLibCheck).toBe(true);
       expect(source).toBe(fixtureSource);
-      expect(source).toContain('"openclaw/plugin-sdk/core"');
-      expect(source).toContain('"openclaw/plugin-sdk/plugin-entry"');
-      expect(source).toContain('"openclaw/plugin-sdk/channel-entry-contract"');
-      expect(source).toContain('"openclaw/plugin-sdk/config-contracts"');
-      expect(source).toContain('"openclaw/plugin-sdk/runtime-env"');
+      expect(source).toContain('"nova/plugin-sdk/core"');
+      expect(source).toContain('"nova/plugin-sdk/plugin-entry"');
+      expect(source).toContain('"nova/plugin-sdk/channel-entry-contract"');
+      expect(source).toContain('"nova/plugin-sdk/config-contracts"');
+      expect(source).toContain('"nova/plugin-sdk/runtime-env"');
       expect(source).toContain("type PublicPluginSdkModules = [");
       expect(source).not.toContain("TelegramAccountConfig");
-      expect(source).not.toContain("openclaw/plugin-sdk/channel-contract-testing");
+      expect(source).not.toContain("nova/plugin-sdk/channel-contract-testing");
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
@@ -890,23 +882,23 @@ describe("createPackedPluginSdkTypescriptSmokeProject", () => {
 describe("collectPackUnpackedSizeErrors", () => {
   it("accepts pack results within the unpacked size budget", () => {
     expect(
-      collectPackUnpackedSizeErrors([makePackResult("openclaw-2026.3.14.tgz", 120_354_302)]),
+      collectPackUnpackedSizeErrors([makePackResult("nova-2026.3.14.tgz", 120_354_302)]),
     ).toStrictEqual([]);
   });
 
   it("flags oversized pack results that risk low-memory startup failures", () => {
     expect(
-      collectPackUnpackedSizeErrors([makePackResult("openclaw-2026.3.12.tgz", 224_002_564)]),
+      collectPackUnpackedSizeErrors([makePackResult("nova-2026.3.12.tgz", 224_002_564)]),
     ).toEqual([
-      "openclaw-2026.3.12.tgz unpackedSize 224002564 bytes (213.6 MiB) exceeds budget 211812352 bytes (202.0 MiB). Investigate duplicate channel shims, copied extension trees, or other accidental pack bloat before release.",
+      "nova-2026.3.12.tgz unpackedSize 224002564 bytes (213.6 MiB) exceeds budget 211812352 bytes (202.0 MiB). Investigate duplicate channel shims, copied extension trees, or other accidental pack bloat before release.",
     ]);
   });
 
   it("fails closed when npm pack output omits unpackedSize for every result", () => {
     expect(
       collectPackUnpackedSizeErrors([
-        { filename: "openclaw-2026.3.14.tgz" },
-        { filename: "openclaw-extra.tgz", unpackedSize: Number.NaN },
+        { filename: "nova-2026.3.14.tgz" },
+        { filename: "nova-extra.tgz", unpackedSize: Number.NaN },
       ]),
     ).toEqual([
       "npm pack --dry-run produced no unpackedSize data; pack size budget was not verified.",
@@ -916,29 +908,29 @@ describe("collectPackUnpackedSizeErrors", () => {
 
 describe("resolvePackedTarballPath", () => {
   it("resolves one local npm pack tarball filename inside the pack destination", () => {
+    expect(resolvePackedTarballPath("/tmp/nova-pack", [{ filename: "nova-2026.6.17.tgz" }])).toBe(
+      resolvePath("/tmp/nova-pack", "nova-2026.6.17.tgz"),
+    );
     expect(
-      resolvePackedTarballPath("/tmp/openclaw-pack", [{ filename: "openclaw-2026.6.17.tgz" }]),
-    ).toBe(resolvePath("/tmp/openclaw-pack", "openclaw-2026.6.17.tgz"));
-    expect(
-      resolvePackedTarballPath("/tmp/openclaw-pack", [
-        { filename: "/tmp/openclaw-pack/openclaw-2026.6.17.tgz" },
+      resolvePackedTarballPath("/tmp/nova-pack", [
+        { filename: "/tmp/nova-pack/nova-2026.6.17.tgz" },
       ]),
-    ).toBe(resolvePath("/tmp/openclaw-pack", "openclaw-2026.6.17.tgz"));
+    ).toBe(resolvePath("/tmp/nova-pack", "nova-2026.6.17.tgz"));
   });
 
   it("rejects path-like npm pack tarball filenames", () => {
     const unsafeFilenames = [
-      "../openclaw.tgz",
-      "nested/openclaw.tgz",
-      "nested\\openclaw.tgz",
-      "/tmp/openclaw.tgz",
-      "C:\\temp\\openclaw.tgz",
-      "openclaw\u0000.tgz",
-      "openclaw.tar.gz",
+      "../nova.tgz",
+      "nested/nova.tgz",
+      "nested\\nova.tgz",
+      "/tmp/nova.tgz",
+      "C:\\temp\\nova.tgz",
+      "nova\u0000.tgz",
+      "nova.tar.gz",
     ];
 
     for (const filename of unsafeFilenames) {
-      expect(() => resolvePackedTarballPath("/tmp/openclaw-pack", [{ filename }])).toThrow(
+      expect(() => resolvePackedTarballPath("/tmp/nova-pack", [{ filename }])).toThrow(
         "release-check: npm pack reported unsafe tarball filename",
       );
     }

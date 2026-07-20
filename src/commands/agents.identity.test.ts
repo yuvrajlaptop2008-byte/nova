@@ -33,7 +33,7 @@ type ConfigWritePayload = {
 };
 
 async function createIdentityWorkspace(subdir = "work") {
-  const root = await makeTempWorkspace("openclaw-identity-");
+  const root = await makeTempWorkspace("nova-identity-");
   const workspace = path.join(root, subdir);
   await fs.mkdir(workspace, { recursive: true });
   return { root, workspace };
@@ -78,7 +78,7 @@ describe("agents set-identity command", () => {
       "- Name: Nova",
       "- Creature: helpful sloth",
       "- Emoji: :)",
-      "- Avatar: avatars/openclaw.png",
+      "- Avatar: avatars/nova.png",
       "",
     ]);
 
@@ -101,7 +101,7 @@ describe("agents set-identity command", () => {
       name: "Nova",
       theme: "helpful sloth",
       emoji: ":)",
-      avatar: "avatars/openclaw.png",
+      avatar: "avatars/nova.png",
     });
   });
 
@@ -155,7 +155,7 @@ describe("agents set-identity command", () => {
       "- Name: Nova",
       "- Theme: space lobster",
       "- Emoji: :)",
-      "- Avatar: avatars/openclaw.png",
+      "- Avatar: avatars/nova.png",
       "",
     ]);
 
@@ -244,13 +244,13 @@ describe("agents set-identity command", () => {
     await agentsSetIdentityCommand({ agent: "ghostzzz", name: "Ghost" }, runtime);
 
     expect(runtime.error).toHaveBeenCalledWith(
-      'Agent "ghostzzz" not found. Create it with `openclaw agents add`.',
+      'Agent "ghostzzz" not found. Create it with `nova agents add`.',
     );
     expect(runtime.exit).toHaveBeenCalledWith(1);
     expect(configMocks.writeConfigFile).not.toHaveBeenCalled();
   });
 
-  it.each(["main", "openclaw", "crestodian"])(
+  it.each(["main", "nova", "crestodian"])(
     "does not create absent reserved agent %s",
     async (agentId) => {
       configMocks.readConfigFileSnapshot.mockResolvedValue({
@@ -261,7 +261,7 @@ describe("agents set-identity command", () => {
       await agentsSetIdentityCommand({ agent: agentId, name: "Hijack" }, runtime);
 
       expect(runtime.error).toHaveBeenCalledWith(
-        `Agent "${agentId}" not found. Create it with \`openclaw agents add\`.`,
+        `Agent "${agentId}" not found. Create it with \`nova agents add\`.`,
       );
       expect(runtime.exit).toHaveBeenCalledWith(1);
       expect(configMocks.writeConfigFile).not.toHaveBeenCalled();

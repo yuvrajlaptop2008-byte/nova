@@ -20,7 +20,7 @@ describe("context engine runtime settings", () => {
     expect(settings).toMatchObject({
       schemaVersion: 1,
       runtime: {
-        host: "openclaw",
+        host: "nova",
         mode: "normal",
         harnessId: "embedded",
         runtimeId: "direct",

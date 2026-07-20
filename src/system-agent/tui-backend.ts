@@ -114,7 +114,7 @@ function splitModelRef(ref: string | undefined): { provider?: string; model?: st
 }
 
 class SystemAgentTuiBackend implements TuiBackend {
-  readonly connection = { url: "openclaw local" };
+  readonly connection = { url: "nova local" };
 
   onEvent?: (evt: TuiEvent) => void;
   onConnected?: () => void;
@@ -185,7 +185,7 @@ class SystemAgentTuiBackend implements TuiBackend {
     verboseLevel: string;
   }> {
     return {
-      sessionId: "openclaw",
+      sessionId: "nova",
       messages: this.messages,
       thinkingLevel: this.route.thinkingLevel,
       verboseLevel: "off",
@@ -195,7 +195,7 @@ class SystemAgentTuiBackend implements TuiBackend {
   async listSessions(): Promise<TuiSessionList> {
     return {
       ts: Date.now(),
-      path: "openclaw",
+      path: "nova",
       count: 1,
       defaults: {
         model: this.route.model ?? null,
@@ -205,7 +205,7 @@ class SystemAgentTuiBackend implements TuiBackend {
       sessions: [
         {
           key: SYSTEM_AGENT_SESSION_KEY,
-          sessionId: "openclaw",
+          sessionId: "nova",
           displayName: "Nova",
           updatedAt: Date.now(),
           thinkingLevel: this.route.thinkingLevel,
@@ -229,15 +229,15 @@ class SystemAgentTuiBackend implements TuiBackend {
   async patchSession(opts: SessionsPatchParams): Promise<SessionsPatchResult> {
     if (opts.model !== undefined) {
       throw new Error(
-        "Nova cannot change the model inside its active verified session. Exit and run `openclaw onboard`, then start Nova again.",
+        "Nova cannot change the model inside its active verified session. Exit and run `nova onboard`, then start Nova again.",
       );
     }
     return {
       ok: true,
-      path: "openclaw",
+      path: "nova",
       key: SYSTEM_AGENT_SESSION_KEY,
       entry: {
-        sessionId: "openclaw",
+        sessionId: "nova",
         displayName: "Nova",
         updatedAt: Date.now(),
       },
@@ -267,7 +267,7 @@ class SystemAgentTuiBackend implements TuiBackend {
     return {
       ok: true as const,
       key: SYSTEM_AGENT_SESSION_KEY,
-      entry: { sessionId: "openclaw", updatedAt: Date.now() },
+      entry: { sessionId: "nova", updatedAt: Date.now() },
     };
   }
 
@@ -379,7 +379,7 @@ async function runSetupHandoff(
 ): Promise<void> {
   if (handoff.target !== "channels") {
     runtime.error(
-      "Setup cannot replace the inference route powering Nova. Exit and run `openclaw onboard`, then start Nova again.",
+      "Setup cannot replace the inference route powering Nova. Exit and run `nova onboard`, then start Nova again.",
     );
     return;
   }
@@ -458,7 +458,7 @@ export async function runSystemAgentTui(
         historyLimit: 200,
         backend,
         config: {},
-        title: "openclaw setup",
+        title: "nova setup",
         ...(initialMessage ? { message: initialMessage } : {}),
       });
     } finally {
@@ -471,7 +471,7 @@ export async function runSystemAgentTui(
     }
     if (handoff.kind === "model-setup") {
       runtime.error(
-        "Nova cannot replace its active inference route. Run `openclaw onboard` outside this session, then start Nova again.",
+        "Nova cannot replace its active inference route. Run `nova onboard` outside this session, then start Nova again.",
       );
       return;
     }

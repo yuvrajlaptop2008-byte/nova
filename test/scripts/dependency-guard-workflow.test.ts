@@ -183,7 +183,7 @@ describe("dependency guard workflow", () => {
     const runStep = workflowStep(detectSteps, 1, "dependency guard bounded comment run step");
     const script = readFileSync("scripts/github/dependency-guard.mjs", "utf8");
 
-    expect(runStep.env?.NOVA_SECURITY_TEAM_SLUG).toBe("openclaw-secops");
+    expect(runStep.env?.NOVA_SECURITY_TEAM_SLUG).toBe("nova-secops");
     expect(runStep.env?.NOVA_SECURITY_APPROVERS).toBe("vincentkoc,steipete,joshavant");
     expect(workflow).toContain("scripts/github/dependency-guard.mjs");
     expect(script).toContain('"dependencies-changed"');
@@ -213,7 +213,7 @@ describe("dependency guard workflow", () => {
     expect(script).toContain('"overrides"');
     expect(script).toContain('"packageManager"');
     expect(script).toContain("/allow-dependencies-change");
-    expect(script).toContain("openclaw-secops");
+    expect(script).toContain("nova-secops");
     expect(script).toContain("securityApproverSet");
     expect(guardSources).toContain("/memberships/");
     expect(guardSources).toContain("isCommentNewerThan");
@@ -258,14 +258,14 @@ describe("dependency guard workflow", () => {
 
   it("requires secops review for future workflow or guard changes", () => {
     const codeowners = readFileSync(CODEOWNERS, "utf8");
-    expect(codeowners).toContain("/.github/workflows/dependency-guard.yml @nova/openclaw-secops");
+    expect(codeowners).toContain("/.github/workflows/dependency-guard.yml @nova/nova-secops");
     expect(codeowners).toContain(
-      "/test/scripts/dependency-guard-workflow.test.ts @nova/openclaw-secops",
+      "/test/scripts/dependency-guard-workflow.test.ts @nova/nova-secops",
     );
-    expect(codeowners).toContain("/scripts/github/dependency-guard.mjs @nova/openclaw-secops");
-    expect(codeowners).toContain("/package-lock.json @nova/openclaw-secops");
-    expect(codeowners).toContain("/npm-shrinkwrap.json @nova/openclaw-secops");
-    expect(codeowners).toContain("/extensions/*/package-lock.json @nova/openclaw-secops");
-    expect(codeowners).toContain("/extensions/*/npm-shrinkwrap.json @nova/openclaw-secops");
+    expect(codeowners).toContain("/scripts/github/dependency-guard.mjs @nova/nova-secops");
+    expect(codeowners).toContain("/package-lock.json @nova/nova-secops");
+    expect(codeowners).toContain("/npm-shrinkwrap.json @nova/nova-secops");
+    expect(codeowners).toContain("/extensions/*/package-lock.json @nova/nova-secops");
+    expect(codeowners).toContain("/extensions/*/npm-shrinkwrap.json @nova/nova-secops");
   });
 });

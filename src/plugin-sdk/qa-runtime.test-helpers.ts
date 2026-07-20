@@ -68,10 +68,10 @@ export async function expectPrivateQaLabRuntimeSurfaceLoad(params: {
   tempDirs: string[];
   importRuntime: () => Promise<QaRuntimeModule>;
   loadBundledPluginPublicSurfaceModuleSync: SurfaceLoaderMock;
-  resolveOpenClawPackageRootSync: SurfaceLoaderMock;
+  resolveNovaPackageRootSync: SurfaceLoaderMock;
 }) {
-  const sourceRoot = makePrivateQaSourceRoot(params.tempDirs, "openclaw-qa-runtime-root-");
-  params.resolveOpenClawPackageRootSync.mockReturnValue(sourceRoot);
+  const sourceRoot = makePrivateQaSourceRoot(params.tempDirs, "nova-qa-runtime-root-");
+  params.resolveNovaPackageRootSync.mockReturnValue(sourceRoot);
 
   const runtimeSurface = makeQaRuntimeSurface();
   params.loadBundledPluginPublicSurfaceModuleSync.mockReturnValue(runtimeSurface);

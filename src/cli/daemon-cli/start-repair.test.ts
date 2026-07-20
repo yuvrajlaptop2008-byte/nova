@@ -14,8 +14,8 @@ const buildGatewayInstallPlanMock = vi.hoisted(() =>
       const preservedFileValue =
         params.existingEnvironmentValueSources?.TELEGRAM_DEFAULT_BOTTOKEN === "file";
       return {
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
-        workingDirectory: "/tmp/openclaw",
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
+        workingDirectory: "/tmp/nova",
         environment: {
           TELEGRAM_DEFAULT_BOTTOKEN: preservedFileValue
             ? params.existingEnvironment?.TELEGRAM_DEFAULT_BOTTOKEN
@@ -31,7 +31,7 @@ const buildGatewayInstallPlanMock = vi.hoisted(() =>
 const resolveGatewayInstallTokenMock = vi.hoisted(() => vi.fn());
 const readConfigFileSnapshotForWriteMock = vi.hoisted(() => vi.fn());
 const resolveGatewayPortMock = vi.hoisted(() => vi.fn(() => 18789));
-const resolveOpenClawWrapperPathMock = vi.hoisted(() => vi.fn());
+const resolveNovaWrapperPathMock = vi.hoisted(() => vi.fn());
 const formatGatewayServiceStartRepairIssuesMock = vi.hoisted(() => vi.fn());
 const defaultRuntimeLogMock = vi.hoisted(() => vi.fn());
 
@@ -57,7 +57,7 @@ vi.mock("../../config/paths.js", () => ({
 
 vi.mock("../../daemon/program-args.js", () => ({
   NOVA_WRAPPER_ENV_KEY: "NOVA_WRAPPER",
-  resolveOpenClawWrapperPath: resolveOpenClawWrapperPathMock,
+  resolveNovaWrapperPath: resolveNovaWrapperPathMock,
 }));
 
 vi.mock("../../daemon/service.js", () => ({
@@ -84,7 +84,7 @@ describe("repairLoadedGatewayServiceForStart", () => {
     resolveGatewayInstallTokenMock.mockReset();
     readConfigFileSnapshotForWriteMock.mockReset();
     resolveGatewayPortMock.mockClear();
-    resolveOpenClawWrapperPathMock.mockReset();
+    resolveNovaWrapperPathMock.mockReset();
     formatGatewayServiceStartRepairIssuesMock.mockReset();
     defaultRuntimeLogMock.mockClear();
 
@@ -94,9 +94,9 @@ describe("repairLoadedGatewayServiceForStart", () => {
     });
     readConfigFileSnapshotForWriteMock.mockResolvedValue({
       snapshot: { exists: true, valid: true, sourceConfig: {}, config: {} },
-      writeOptions: { expectedConfigPath: "/tmp/openclaw.json" },
+      writeOptions: { expectedConfigPath: "/tmp/nova.json" },
     });
-    resolveOpenClawWrapperPathMock.mockResolvedValue("/usr/bin/openclaw");
+    resolveNovaWrapperPathMock.mockResolvedValue("/usr/bin/nova");
     formatGatewayServiceStartRepairIssuesMock.mockReturnValue(
       "service was installed by an older version",
     );
@@ -123,7 +123,7 @@ describe("repairLoadedGatewayServiceForStart", () => {
       running: false,
       env: {},
       command: {
-        programArguments: ["/usr/bin/openclaw", "gateway", "run"],
+        programArguments: ["/usr/bin/nova", "gateway", "run"],
         environment: existingEnvironment,
         environmentValueSources: existingEnvironmentValueSources,
       },

@@ -16,7 +16,7 @@ import {
   withOwnedSessionTranscriptWrites,
 } from "../../../config/sessions/transcript-write-context.js";
 import { appendExactAssistantMessageToSessionTranscript } from "../../../config/sessions/transcript.js";
-import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../../../shared/transcript-only-openclaw-assistant.js";
+import { NOVA_TRANSCRIPT_ARTIFACT_API } from "../../../shared/transcript-only-nova-assistant.js";
 import { guardSessionManager } from "../../session-tool-result-guard-wrapper.js";
 import {
   SessionWriteLockStaleError,
@@ -53,7 +53,7 @@ afterEach(async () => {
 async function createTempSessionFile(): Promise<string> {
   // Use a real file so owner normalization can exercise realpath/symlink
   // behavior.
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-attempt-session-lock-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-attempt-session-lock-"));
   tempDirs.push(dir);
   const sessionFile = path.join(dir, "session.jsonl");
   await fs.writeFile(sessionFile, '{"type":"session"}\n', "utf8");
@@ -862,7 +862,7 @@ describe("embedded attempt session lock lifecycle", () => {
   });
 
   it("preserves an unflushed first user turn while merging global metadata", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-attempt-session-first-turn-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-attempt-session-first-turn-"));
     tempDirs.push(dir);
     const sessionFile = path.join(dir, "session.jsonl");
     await fs.writeFile(
@@ -953,7 +953,7 @@ describe("embedded attempt session lock lifecycle", () => {
   });
 
   it("persists the restored leaf before returning from a prompt-released merge", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-attempt-session-leaf-fence-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-attempt-session-leaf-fence-"));
     tempDirs.push(dir);
     const initialManager = SessionManager.create(dir, dir);
     initialManager.appendMessage({ role: "user", content: "question", timestamp: 1 });
@@ -997,7 +997,7 @@ describe("embedded attempt session lock lifecycle", () => {
         message: {
           role: "assistant",
           content: [{ type: "text", text: "side delivery" }],
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
         },
       })}\n`,
@@ -1034,7 +1034,7 @@ describe("embedded attempt session lock lifecycle", () => {
   });
 
   it("publishes the restoring leaf for every active session fence", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-attempt-session-shared-leaf-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-attempt-session-shared-leaf-"));
     tempDirs.push(dir);
     const initialManager = SessionManager.create(dir, dir);
     initialManager.appendMessage({ role: "user", content: "question", timestamp: 1 });
@@ -1088,7 +1088,7 @@ describe("embedded attempt session lock lifecycle", () => {
         message: {
           role: "assistant",
           content: [{ type: "text", text: "side delivery" }],
-          provider: "openclaw",
+          provider: "nova",
           model: "delivery-mirror",
         },
       })}\n`,
@@ -1114,9 +1114,7 @@ describe("embedded attempt session lock lifecycle", () => {
   });
 
   it("reloads a trusted first-turn rewrite for every active session fence", async () => {
-    const dir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "openclaw-attempt-session-shared-rewrite-"),
-    );
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-attempt-session-shared-rewrite-"));
     tempDirs.push(dir);
     const sessionFile = path.join(dir, "session.jsonl");
     await fs.writeFile(
@@ -1185,7 +1183,7 @@ describe("embedded attempt session lock lifecycle", () => {
   });
 
   it("preserves globally resolved metadata when a stale manager appends the reply branch", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-attempt-session-metadata-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-attempt-session-metadata-"));
     tempDirs.push(dir);
     const initialManager = SessionManager.create(dir, dir);
     initialManager.appendMessage({
@@ -1414,7 +1412,7 @@ describe("embedded attempt session lock lifecycle", () => {
       message: {
         role: "assistant",
         content: [{ type: "text", text: "mirrored media delivery" }],
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
       },
     });
@@ -1455,7 +1453,7 @@ describe("embedded attempt session lock lifecycle", () => {
         role: "assistant",
         content: [{ type: "text", text: "image-1.jpg" }],
         api: "openai-responses",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         stopReason: "stop",
         idempotencyKey: "run-message-tool:message-tool:fingerprint:call-1",
@@ -1480,7 +1478,7 @@ describe("embedded attempt session lock lifecycle", () => {
         role: "assistant",
         content: [{ type: "text", text: `image-${index}.jpg` }],
         api: "openai-responses",
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
         stopReason: "stop",
         idempotencyKey: `run-message-tool:message-tool:fingerprint:call-${index}`,
@@ -1558,7 +1556,7 @@ describe("embedded attempt session lock lifecycle", () => {
           timestamp: new Date().toISOString(),
           message: {
             role: "assistant",
-            provider: "openclaw",
+            provider: "nova",
             model: "delivery-mirror",
           },
         }),
@@ -1619,7 +1617,7 @@ describe("embedded attempt session lock lifecycle", () => {
       message: {
         role: "assistant",
         content: [{ type: "text", text: "mirrored migrated media delivery" }],
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
       },
     });
@@ -2204,7 +2202,7 @@ describe("embedded attempt session lock lifecycle", () => {
       role: "assistant",
       content: [{ type: "text", text: "old answer" }],
       api: "messages",
-      provider: "openclaw",
+      provider: "nova",
       model: "session-lock-test",
       usage: {
         input: 0,
@@ -2276,7 +2274,7 @@ describe("embedded attempt session lock lifecycle", () => {
       role: "assistant",
       content: [{ type: "text", text: "old answer" }],
       api: "messages",
-      provider: "openclaw",
+      provider: "nova",
       model: "session-lock-test",
       usage: {
         input: 0,
@@ -2324,7 +2322,7 @@ describe("embedded attempt session lock lifecycle", () => {
       role: "assistant",
       content: [{ type: "text", text: "old answer" }],
       api: "messages",
-      provider: "openclaw",
+      provider: "nova",
       model: "session-lock-test",
       usage: {
         input: 0,
@@ -2376,7 +2374,7 @@ describe("embedded attempt session lock lifecycle", () => {
         role: "assistant",
         content: [{ type: "text", text: "new answer" }],
         api: "messages",
-        provider: "openclaw",
+        provider: "nova",
         model: "session-lock-test",
         usage: {
           input: 0,
@@ -2418,7 +2416,7 @@ describe("embedded attempt session lock lifecycle", () => {
       role: "assistant",
       content: [{ type: "text", text: "old answer" }],
       api: "messages",
-      provider: "openclaw",
+      provider: "nova",
       model: "session-lock-test",
       usage: {
         input: 0,
@@ -2451,7 +2449,7 @@ describe("embedded attempt session lock lifecycle", () => {
   });
 
   it("validates first-turn exact assistant appends through the production facade", async () => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-attempt-session-facade-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-attempt-session-facade-"));
     tempDirs.push(dir);
     const sessionId = "facade-session";
     const sessionKey = "facade";
@@ -2490,7 +2488,7 @@ describe("embedded attempt session lock lifecycle", () => {
             role: "assistant",
             content: [{ type: "text", text: "first-turn delivery" }],
             api: NOVA_TRANSCRIPT_ARTIFACT_API,
-            provider: "openclaw",
+            provider: "nova",
             model: "delivery-mirror",
             usage: {
               input: 0,
@@ -3396,7 +3394,7 @@ describe("embedded attempt session lock lifecycle", () => {
       message: {
         role: "assistant",
         content: [{ type: "text", text: "delivery during prompt" }],
-        provider: "openclaw",
+        provider: "nova",
         model: "delivery-mirror",
       },
     });

@@ -1,10 +1,10 @@
 // Migrate Claude plugin module implements plan behavior.
-import { createMigrationItem, summarizeMigrationItems } from "openclaw/plugin-sdk/migration";
+import { createMigrationItem, summarizeMigrationItems } from "nova/plugin-sdk/migration";
 import type {
   MigrationItem,
   MigrationPlan,
   MigrationProviderContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-entry";
 import { buildConfigItems } from "./config.js";
 import { buildMemoryItems } from "./memory.js";
 import { buildSkillItems } from "./skills.js";
@@ -109,7 +109,7 @@ export async function buildClaudePlan(ctx: MigrationProviderContext): Promise<Mi
     summary: summarizeMigrationItems(items),
     items,
     warnings,
-    nextSteps: memoryOnly ? [] : ["Run openclaw doctor after applying the migration."],
+    nextSteps: memoryOnly ? [] : ["Run nova doctor after applying the migration."],
     metadata: { agentDir: targets.agentDir },
   };
 }

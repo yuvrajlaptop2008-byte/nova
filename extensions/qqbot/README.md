@@ -1,11 +1,11 @@
-# OpenClaw QQ Bot
+# Nova QQ Bot
 
-Official OpenClaw channel plugin for QQ Bot group and direct-message workflows.
+Official Nova channel plugin for QQ Bot group and direct-message workflows.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/qqbot
+nova plugin add @nova/qqbot
 ```
 
-Configure QQ Bot credentials in OpenClaw, then connect the bot to the groups or direct-message contexts where agents should operate.
+Configure QQ Bot credentials in Nova, then connect the bot to the groups or direct-message contexts where agents should operate.

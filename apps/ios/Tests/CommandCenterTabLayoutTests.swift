@@ -1,6 +1,6 @@
 import SwiftUI
 import Testing
-@testable import OpenClaw
+@testable import Nova
 
 @MainActor
 @Suite struct CommandCenterTabLayoutTests {

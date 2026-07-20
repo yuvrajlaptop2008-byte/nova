@@ -9,5 +9,5 @@
         android:width="88dp"
         android:height="88dp"
         android:gravity="center"
-        android:drawable="@drawable/ic_openclaw_launcher" />
+        android:drawable="@drawable/ic_nova_launcher" />
 </layer-list>

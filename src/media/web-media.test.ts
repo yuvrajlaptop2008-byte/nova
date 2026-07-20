@@ -8,7 +8,7 @@ import JSZip from "jszip";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { createSolidPngBuffer } from "../../test/helpers/image-fixtures.js";
 import { resolveStateDir } from "../config/paths.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../plugins/runtime.js";
 import { withEnvAsync } from "../test-utils/env.js";
@@ -24,7 +24,7 @@ let resolveImageCompressionGrid: typeof import("./web-media.js").resolveImageCom
 
 const TINY_PNG_BUFFER = createSolidPngBuffer(1, 1, { r: 255, g: 255, b: 255 });
 const TINY_PNG_BASE64 = TINY_PNG_BUFFER.toString("base64");
-const CANVAS_HOST_PATH = "/__openclaw__/canvas";
+const CANVAS_HOST_PATH = "/__nova__/canvas";
 
 let fixtureRoot = "";
 let tinyPngFile = "";
@@ -42,7 +42,7 @@ beforeAll(async () => {
     optimizeImageToJpeg,
     resolveImageCompressionGrid,
   } = await import("./web-media.js"));
-  fixtureRoot = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "web-media-core-"));
+  fixtureRoot = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "web-media-core-"));
   tinyPngFile = path.join(fixtureRoot, "tiny.png");
   await fs.writeFile(tinyPngFile, Buffer.from(TINY_PNG_BASE64, "base64"));
   workspaceDir = path.join(fixtureRoot, "workspace");
@@ -735,7 +735,7 @@ describe("loadWebMedia", () => {
 
   it("rejects trusted host-read HTML hardlinks to files outside Nova temp root", async () => {
     const outsideRoot = await fs.mkdtemp(
-      path.join(path.dirname(resolvePreferredOpenClawTmpDir()), "web-media-host-html-"),
+      path.join(path.dirname(resolvePreferredNovaTmpDir()), "web-media-host-html-"),
     );
     const outsideHtml = path.join(outsideRoot, "report.html");
     const htmlLink = path.join(fixtureRoot, "hardlinked-report.html");

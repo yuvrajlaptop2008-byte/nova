@@ -139,7 +139,7 @@ describe("plugin management Gateway handlers", () => {
           summary: "Readable diffs",
           latestVersion: "1.2.3",
           runtimeId: "diffs",
-          ownerHandle: "openclaw",
+          ownerHandle: "nova",
           verificationTier: "source-linked",
           stats: { downloads: 149263, installs: 280, stars: 0, versions: 83 },
         },

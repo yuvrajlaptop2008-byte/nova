@@ -2,8 +2,8 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { EmbeddedRunAttemptParams } from "openclaw/plugin-sdk/agent-harness-runtime";
-import { GPT5_BEHAVIOR_CONTRACT as CODEX_GPT5_BEHAVIOR_CONTRACT } from "openclaw/plugin-sdk/provider-model-shared";
+import type { EmbeddedRunAttemptParams } from "nova/plugin-sdk/agent-harness-runtime";
+import { GPT5_BEHAVIOR_CONTRACT as CODEX_GPT5_BEHAVIOR_CONTRACT } from "nova/plugin-sdk/provider-model-shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CodexAppServerRpcError } from "./client.js";
 import { buildCodexAppServerConnectionFingerprint } from "./plugin-app-cache-key.js";
@@ -39,7 +39,7 @@ type CodexThreadLifecycleTimingLogger = NonNullable<
 describe("Codex ring-zero thread config", () => {
   it("applies the restriction to both thread start and resume", () => {
     const params = createAttemptParams({ provider: "openai" });
-    params.toolsAllow = ["openclaw"];
+    params.toolsAllow = ["nova"];
     const appServer = createAppServerOptions() as never;
     const start = buildThreadStartParams(params, {
       appServer,
@@ -442,7 +442,7 @@ describe("Codex app-server native code mode config", () => {
         },
         {
           type: "namespace",
-          name: "openclaw",
+          name: "nova",
           description: "",
           tools: [
             {
@@ -476,7 +476,7 @@ describe("Codex app-server native code mode config", () => {
       dynamicTools: [
         {
           type: "namespace",
-          name: "openclaw",
+          name: "nova",
           description: "",
           tools: [
             {
@@ -552,7 +552,7 @@ describe("Codex app-server native code mode config", () => {
     const searchableFingerprint = codexDynamicToolsFingerprint([
       {
         type: "namespace",
-        name: "openclaw",
+        name: "nova",
         description: "",
         tools: [
           {
@@ -806,8 +806,8 @@ describe("Codex app-server native code mode config", () => {
   it("omits Nova model selection when adopting a native Codex thread", () => {
     const request = buildThreadResumeParams(createAttemptParams({ provider: "codex" }), {
       threadId: "thread-adopted",
-      model: "openclaw-model",
-      modelProvider: "openclaw-provider",
+      model: "nova-model",
+      modelProvider: "nova-provider",
       preserveNativeModel: true,
       appServer: createAppServerOptions() as never,
       developerInstructions: "test instructions",
@@ -1522,7 +1522,7 @@ describe("Codex app-server model provider selection", () => {
 
 describe("Codex plugin binding recovery", () => {
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-plugin-recovery-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-plugin-recovery-"));
     resetCodexTestBindingStore();
   });
 
@@ -1669,7 +1669,7 @@ describe("Codex plugin binding recovery", () => {
 
 describe("Codex app-server adopted thread lifecycle", () => {
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-thread-adoption-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-thread-adoption-"));
     resetCodexTestBindingStore();
   });
 
@@ -1776,7 +1776,7 @@ describe("Codex app-server adopted thread lifecycle", () => {
 
 describe("Codex app-server supervised branch lifecycle", () => {
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-supervision-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-supervision-"));
     resetCodexTestBindingStore();
   });
 
@@ -2899,7 +2899,7 @@ describe("Codex app-server supervised branch lifecycle", () => {
 
 describe("Codex app-server thread lifecycle timing", () => {
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-thread-lifecycle-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-thread-lifecycle-"));
     // Bindings are keyed by session identity, not tempDir, so sibling tests
     // would otherwise leak resumable threads into fresh-start expectations.
     resetCodexTestBindingStore();

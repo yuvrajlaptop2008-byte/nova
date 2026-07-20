@@ -1,7 +1,7 @@
 // Msteams tests cover message handler.authz plugin behavior.
-import { createInboundDebouncer } from "openclaw/plugin-sdk/channel-inbound-debounce";
+import { createInboundDebouncer } from "nova/plugin-sdk/channel-inbound-debounce";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig, PluginRuntime } from "../../runtime-api.js";
+import type { NovaConfig, PluginRuntime } from "../../runtime-api.js";
 import type { GraphThreadMessage } from "../graph-thread.js";
 import "./message-handler-mock-support.test-support.js";
 import { getRuntimeApiMockState } from "./message-handler-mock-support.test-support.js";
@@ -93,7 +93,7 @@ vi.mock("../team-identity.js", () => ({
 
 describe("msteams monitor handler authz", () => {
   function createDeps(
-    cfg: OpenClawConfig,
+    cfg: NovaConfig,
     options: {
       hasControlCommand?: PluginRuntime["channel"]["text"]["hasControlCommand"];
       isControlCommandMessage?: PluginRuntime["channel"]["commands"]["isControlCommandMessage"];
@@ -161,7 +161,7 @@ describe("msteams monitor handler authz", () => {
   function createThreadAllowlistConfig(params: {
     groupAllowFrom: string[];
     dangerouslyAllowNameMatching?: boolean;
-  }): OpenClawConfig {
+  }): NovaConfig {
     return {
       channels: {
         msteams: {
@@ -179,7 +179,7 @@ describe("msteams monitor handler authz", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   function createMessageActivity(params: {
@@ -336,7 +336,7 @@ describe("msteams monitor handler authz", () => {
           groupAllowFrom: [],
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler(createAttackerGroupActivity({ text: "" }));
@@ -362,7 +362,7 @@ describe("msteams monitor handler authz", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler(
@@ -385,7 +385,7 @@ describe("msteams monitor handler authz", () => {
           allowFrom: [],
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler({
@@ -468,7 +468,7 @@ describe("msteams monitor handler authz", () => {
           groupAllowFrom: ["sender-aad"],
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler({
@@ -521,7 +521,7 @@ describe("msteams monitor handler authz", () => {
           allowFrom: ["sender-aad"],
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler({
@@ -565,7 +565,7 @@ describe("msteams monitor handler authz", () => {
           groupAllowFrom: ["sender-aad"],
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler({
@@ -610,7 +610,7 @@ describe("msteams monitor handler authz", () => {
           allowFrom: ["trusted-aad"],
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler(createAttackerPersonalActivity("msg-drop-dm"));
@@ -631,7 +631,7 @@ describe("msteams monitor handler authz", () => {
           groupAllowFrom: [],
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler(createAttackerGroupActivity());
@@ -653,7 +653,7 @@ describe("msteams monitor handler authz", () => {
             requireMention: false,
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       { hasControlCommand },
     );
 
@@ -678,7 +678,7 @@ describe("msteams monitor handler authz", () => {
             requireMention: false,
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         isControlCommandMessage,
         shouldComputeCommandAuthorized,
@@ -711,7 +711,7 @@ describe("msteams monitor handler authz", () => {
             requireMention: true,
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       {
         hasControlCommand: vi.fn(() => false),
         isControlCommandMessage: isBareAbort,
@@ -744,7 +744,7 @@ describe("msteams monitor handler authz", () => {
           requireMention: true,
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler(
@@ -787,7 +787,7 @@ describe("msteams monitor handler authz", () => {
           requireMention: false,
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler(
@@ -841,7 +841,7 @@ describe("msteams monitor handler authz", () => {
           requireMention: false,
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const handler = createMSTeamsMessageHandler(deps);
     await handler(
@@ -887,7 +887,7 @@ describe("msteams monitor handler authz", () => {
             requireMention: false,
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       { hasControlCommand },
     );
 
@@ -1005,7 +1005,7 @@ describe("msteams monitor handler authz", () => {
     resetThreadMocks();
     const { deps } = createDeps({
       channels: { msteams: { groupPolicy: "open", requireMention: false } },
-    } as OpenClawConfig);
+    } as NovaConfig);
     const handler = createMSTeamsMessageHandler(deps);
     await handler(
       createMessageActivity({
@@ -1039,7 +1039,7 @@ describe("msteams monitor handler authz", () => {
     graphThreadMockState.fetchChatMessageText.mockResolvedValueOnce("complete quoted message");
     const { deps } = createDeps({
       channels: { msteams: { dmPolicy: "open", allowFrom: ["*"] } },
-    } as OpenClawConfig);
+    } as NovaConfig);
     const handler = createMSTeamsMessageHandler(deps);
 
     await handler(

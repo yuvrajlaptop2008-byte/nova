@@ -7,15 +7,15 @@ import {
   type AgentMessage,
   type EmbeddedRunAttemptParams,
   type EmbeddedRunAttemptResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { AssistantMessage, Usage } from "openclaw/plugin-sdk/llm";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import type { AssistantMessage, Usage } from "nova/plugin-sdk/llm";
 import {
   publishSessionTranscriptUpdateByIdentity,
   withSessionTranscriptWriteLock,
   type SessionTranscriptTargetParams,
   type SessionTranscriptWriteLockParams,
-} from "openclaw/plugin-sdk/session-transcript-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/session-transcript-runtime";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import type { CodexThread, JsonValue } from "./protocol.js";
 import {
   attachCodexMirrorIdentity,
@@ -321,14 +321,14 @@ export async function importCodexThreadHistoryToTranscript(params: {
 
 function attachCodexMirrorOrigin(message: AgentMessage): AgentMessage {
   const record = message as unknown as Record<string, unknown>;
-  const existing = record["__openclaw"];
+  const existing = record["__nova"];
   const baseMeta =
     existing && typeof existing === "object" && !Array.isArray(existing)
       ? (existing as Record<string, unknown>)
       : {};
   return {
     ...record,
-    __openclaw: { ...baseMeta, [MIRROR_ORIGIN_META_KEY]: CODEX_APP_SERVER_MIRROR_ORIGIN },
+    __nova: { ...baseMeta, [MIRROR_ORIGIN_META_KEY]: CODEX_APP_SERVER_MIRROR_ORIGIN },
   } as unknown as AgentMessage;
 }
 

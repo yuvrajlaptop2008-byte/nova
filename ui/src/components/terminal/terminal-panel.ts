@@ -11,7 +11,7 @@ import type {
 import { html, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
 import { t } from "../../i18n/index.ts";
-import { OpenClawLitElement } from "../../lit/openclaw-element.ts";
+import { NovaLitElement } from "../../lit/nova-element.ts";
 import { createDockPanelLayout, type DockPanelSide } from "../dock-panel-layout.ts";
 import { panelTabStripStyles } from "../panel-tab-strip.ts";
 import {
@@ -73,7 +73,7 @@ function shellBasename(shell: string): string {
 }
 
 const panelLayout = createDockPanelLayout({
-  storageKey: "openclaw.terminal.panel.v1",
+  storageKey: "nova.terminal.panel.v1",
   minHeight: 140,
   minWidth: 320,
   defaultDock: "bottom",
@@ -94,8 +94,8 @@ function forceTerminalRender(controller: GhosttyTerminalController): void {
   }
 }
 
-/** `<openclaw-terminal-panel>` — the dockable Control UI shell surface. */
-export class OpenClawTerminalPanel extends OpenClawLitElement {
+/** `<nova-terminal-panel>` — the dockable Control UI shell surface. */
+export class NovaTerminalPanel extends NovaLitElement {
   /** Gateway client used for terminal.* RPCs; null until connected. */
   @property({ attribute: false }) client: TerminalGatewayClient | null = null;
   /** Agent whose workspace and sandbox policy own newly opened sessions. */
@@ -1149,7 +1149,7 @@ export class OpenClawTerminalPanel extends OpenClawLitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-terminal-panel": OpenClawTerminalPanel;
+    "nova-terminal-panel": NovaTerminalPanel;
   }
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

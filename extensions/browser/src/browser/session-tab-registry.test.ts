@@ -63,12 +63,12 @@ describe("session tab registry", () => {
     expect(closeTab).toHaveBeenNthCalledWith(1, {
       targetId: "tab-a",
       baseUrl: "http://127.0.0.1:9222",
-      profile: "openclaw",
+      profile: "nova",
     });
     expect(closeTab).toHaveBeenNthCalledWith(2, {
       targetId: "tab-b",
       baseUrl: "http://127.0.0.1:9222",
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 
@@ -86,7 +86,7 @@ describe("session tab registry", () => {
     expect(clientMocks.browserCloseTabByRawTargetId).toHaveBeenCalledWith(
       "http://127.0.0.1:9222",
       "RAW_TARGET",
-      { profile: "openclaw" },
+      { profile: "nova" },
     );
   });
 
@@ -119,7 +119,7 @@ describe("session tab registry", () => {
     trackSessionBrowserTab({
       sessionKey: "agent:main:main",
       targetId: "RAW-A",
-      profile: "openclaw",
+      profile: "nova",
       ownership: { status: "non-durable", reason: "browser-identity-lookup-failed" },
       aliases: ["RAW-A", "t1", "docs"],
       now: 1_000,
@@ -127,7 +127,7 @@ describe("session tab registry", () => {
     touchSessionBrowserTab({
       sessionKey: "agent:main:main",
       targetId: "docs",
-      profile: "openclaw",
+      profile: "nova",
       now: 9_000,
     });
     const closeTab = vi.fn(async () => {});
@@ -138,7 +138,7 @@ describe("session tab registry", () => {
     untrackSessionBrowserTab({
       sessionKey: "agent:main:main",
       targetId: "t1",
-      profile: "openclaw",
+      profile: "nova",
     });
     await expect(
       closeTrackedBrowserTabsForSessions({
@@ -154,7 +154,7 @@ describe("session tab registry", () => {
       sessionKey: "agent:main:main",
       targetId: "RAW-A",
       baseUrl: "http://127.0.0.1:9001",
-      profile: "openclaw",
+      profile: "nova",
       aliases: ["shared"],
       now: 1_000,
     });
@@ -162,7 +162,7 @@ describe("session tab registry", () => {
       sessionKey: "agent:main:main",
       targetId: "RAW-B",
       baseUrl: "http://127.0.0.1:9002",
-      profile: "openclaw",
+      profile: "nova",
       aliases: ["shared"],
       now: 1_000,
     });
@@ -170,7 +170,7 @@ describe("session tab registry", () => {
       sessionKey: "agent:main:main",
       targetId: "shared",
       baseUrl: "http://127.0.0.1:9001",
-      profile: "openclaw",
+      profile: "nova",
       now: 9_000,
     });
     const closeTab = vi.fn(async () => {});
@@ -181,7 +181,7 @@ describe("session tab registry", () => {
     expect(closeTab).toHaveBeenCalledWith({
       targetId: "RAW-B",
       baseUrl: "http://127.0.0.1:9002",
-      profile: "openclaw",
+      profile: "nova",
     });
   });
 

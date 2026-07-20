@@ -3,10 +3,10 @@ import os from "node:os";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../../test/helpers/temp-dir.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  type OpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  type NovaStateDatabase,
+} from "../../state/nova-state-db.js";
 import {
   BUNDLE_HASH,
   MANIFEST_REF,
@@ -20,17 +20,17 @@ const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
 describe("worker placement dispatch reclaim", () => {
   let root: string;
-  let database: OpenClawStateDatabase;
+  let database: NovaStateDatabase;
   let placementStore: PlacementStore;
 
   beforeEach(async () => {
-    root = tempDirs.make("openclaw-dispatch-", await fs.realpath(os.tmpdir()));
-    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    root = tempDirs.make("nova-dispatch-", await fs.realpath(os.tmpdir()));
+    database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     placementStore = createWorkerSessionPlacementStore({ database, now: () => 1_000 });
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(root, { recursive: true, force: true });
   });
 
@@ -111,7 +111,7 @@ describe("worker placement dispatch reclaim", () => {
       state: "reclaimed",
       workspaceResultConflict: {
         paths: ["src/local.ts"],
-        stagedResultRef: expect.stringMatching(/^refs\/openclaw\/worker-results\/reclaim-/u),
+        stagedResultRef: expect.stringMatching(/^refs\/nova\/worker-results\/reclaim-/u),
         totalCount: 1,
       },
     });
@@ -121,7 +121,7 @@ describe("worker placement dispatch reclaim", () => {
       sessionKey: REQUEST.sessionKey,
       agentId: REQUEST.agentId,
       paths: ["src/local.ts"],
-      stagedResultRef: expect.stringMatching(/^refs\/openclaw\/worker-results\/reclaim-/u),
+      stagedResultRef: expect.stringMatching(/^refs\/nova\/worker-results\/reclaim-/u),
       totalCount: 1,
     });
     expect(placementStore.listPendingWorkspaceResults()).toEqual([]);

@@ -4,7 +4,7 @@ set -Eeuo pipefail
 export DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 export DISPLAY=:1
-export HOME=/tmp/openclaw-home
+export HOME=/tmp/nova-home
 export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_CACHE_HOME="${HOME}/.cache"
 
@@ -202,7 +202,7 @@ except ValueError:
     print(f"[sandbox-browser] ERROR: invalid CDP source range: {SOURCE_RANGE}", file=sys.stderr)
     raise SystemExit(1)
 
-EXPECTED_BASIC = "Basic " + base64.b64encode(f"openclaw:{AUTH_TOKEN}".encode()).decode()
+EXPECTED_BASIC = "Basic " + base64.b64encode(f"nova:{AUTH_TOKEN}".encode()).decode()
 EXPECTED_BEARER = "Bearer " + AUTH_TOKEN
 
 
@@ -284,7 +284,7 @@ class Handler(socketserver.BaseRequestHandler):
         if not has_auth(header_bytes):
             self.request.sendall(
                 b"HTTP/1.1 401 Unauthorized\r\n"
-                b'WWW-Authenticate: Basic realm="OpenClaw CDP"\r\n'
+                b'WWW-Authenticate: Basic realm="Nova CDP"\r\n'
                 b"Connection: close\r\n"
                 b"Content-Length: 0\r\n\r\n"
             )

@@ -28,7 +28,7 @@ import {
 import type { MsgContext } from "../auto-reply/templating.js";
 import { applyTemplate } from "../auto-reply/templating.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { ModelProviderConfig, OpenClawConfig } from "../config/types.js";
+import type { ModelProviderConfig, NovaConfig } from "../config/types.js";
 import type {
   MediaUnderstandingConfig,
   MediaUnderstandingModelConfig,
@@ -37,7 +37,7 @@ import { logVerbose, shouldLogVerbose } from "../globals.js";
 import { hasErrnoCode } from "../infra/errors.js";
 import { writeExternalFileWithinRoot } from "../infra/fs-safe.js";
 import { resolveProxyFetchFromEnv } from "../infra/net/proxy-fetch.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
 import { runFfmpeg } from "../media/media-services.js";
 import {
   getOfficialExternalPluginCatalogManifest,
@@ -77,7 +77,7 @@ type ProviderRegistry = Map<string, MediaUnderstandingProvider>;
 const loadModelAuth = createLazyRuntimeModule(async () => await import("../agents/model-auth.js"));
 
 function resolveLiteralProviderApiKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   providerId: string;
 }): string | null {
   return normalizeNullableString(params.cfg.models?.providers?.[params.providerId]?.apiKey);
@@ -402,7 +402,7 @@ export function buildModelDecision(params: {
 function resolveEntryRunOptions(params: {
   capability: MediaUnderstandingCapability;
   entry: MediaUnderstandingModelConfig;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   config?: MediaUnderstandingConfig;
 }): {
   maxBytes: number;
@@ -492,7 +492,7 @@ async function resolveProviderExecutionAuth(params: {
   capability: MediaUnderstandingCapability;
   providerId: string;
   provider?: MediaUnderstandingProvider;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: MediaUnderstandingModelConfig;
   agentDir?: string;
   workspaceDir?: string;
@@ -601,7 +601,7 @@ async function resolveProviderExecutionContext(params: {
   capability: MediaUnderstandingCapability;
   providerId: string;
   provider?: MediaUnderstandingProvider;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   entry: MediaUnderstandingModelConfig;
   config?: MediaUnderstandingConfig;
   agentDir?: string;
@@ -752,14 +752,14 @@ function formatMissingProviderHint(providerId: string): string {
   if (!catalogHint) {
     return "";
   }
-  return ` Install the official external plugin with: ${formatCliCommand(catalogHint.installCommand)}, then run ${formatCliCommand("openclaw plugins registry --refresh")} and stop and start the gateway service, or run ${formatCliCommand(catalogHint.doctorFixCommand)} to repair automatically.`;
+  return ` Install the official external plugin with: ${formatCliCommand(catalogHint.installCommand)}, then run ${formatCliCommand("nova plugins registry --refresh")} and stop and start the gateway service, or run ${formatCliCommand(catalogHint.doctorFixCommand)} to repair automatically.`;
 }
 
 /** Executes one provider-backed media-understanding entry for one attachment. */
 export async function runProviderEntry(params: {
   capability: MediaUnderstandingCapability;
   entry: MediaUnderstandingModelConfig;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   ctx: MsgContext;
   attachmentIndex: number;
   cache: MediaAttachmentCache;
@@ -1009,7 +1009,7 @@ export async function runProviderEntry(params: {
 export async function runCliEntry(params: {
   capability: MediaUnderstandingCapability;
   entry: MediaUnderstandingModelConfig;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   ctx: MsgContext;
   attachmentIndex: number;
   cache: MediaAttachmentCache;
@@ -1037,9 +1037,7 @@ export async function runCliEntry(params: {
     const stat = await fs.stat(pathResult.path);
     assertMinAudioSize({ size: stat.size, attachmentIndex: params.attachmentIndex });
   }
-  const outputDir = await fs.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), "openclaw-media-cli-"),
-  );
+  const outputDir = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-media-cli-"));
   const mediaPath = await resolveCliMediaPath({
     capability,
     command,

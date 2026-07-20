@@ -10,7 +10,7 @@ import {
   resolvePositiveTimerTimeoutMs,
 } from "@nova/normalization-core/number-coercion";
 import type { ModelProviderLocalServiceConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { toErrorObject } from "../infra/errors.js";
 import type { Model } from "../llm/types.js";
 import { isSensitiveFieldKey, redactSensitiveText } from "../logging/redact.js";
@@ -28,7 +28,7 @@ const DEFAULT_PROBE_TIMEOUT_MS = 2_000;
 const PROBE_INTERVAL_MS = 250;
 const LOCAL_SERVICE_OUTPUT_TAIL_MAX_BYTES = 8 * 1024;
 
-const MODEL_PROVIDER_LOCAL_SERVICE_SYMBOL = Symbol.for("openclaw.modelProviderLocalService");
+const MODEL_PROVIDER_LOCAL_SERVICE_SYMBOL = Symbol.for("nova.modelProviderLocalService");
 
 type ModelWithProviderLocalService = {
   [MODEL_PROVIDER_LOCAL_SERVICE_SYMBOL]?: ModelProviderLocalServiceConfig;
@@ -89,7 +89,7 @@ export type AcquireConfiguredProviderLocalService = (
 
 /** Bind local-service acquisition to a host-owned config snapshot. */
 export function createConfiguredProviderLocalServiceAcquirer(
-  getConfig: () => OpenClawConfig,
+  getConfig: () => NovaConfig,
 ): AcquireConfiguredProviderLocalService {
   return async (target, signal) => {
     const provider = getConfig().models?.providers?.[target.providerId];

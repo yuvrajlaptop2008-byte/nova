@@ -126,7 +126,7 @@ describe("Nova Codex sandbox exec-server", () => {
     const addRequest = requests[0];
     expect(addRequest?.method).toBe("environment/add");
     expect(environment).toEqual({
-      environmentId: expect.stringMatching(/^openclaw-sandbox-/),
+      environmentId: expect.stringMatching(/^nova-sandbox-/),
       cwd: "/workspace",
     });
     const execServerUrl =
@@ -510,10 +510,7 @@ describe("Nova Codex sandbox exec-server", () => {
       client: client as never,
       sandbox,
     });
-    const unauthorizedUrl = execServerUrlFromClient(client).replace(
-      /\/openclaw-[^/?#]+/u,
-      "/wrong",
-    );
+    const unauthorizedUrl = execServerUrlFromClient(client).replace(/\/nova-[^/?#]+/u, "/wrong");
     const socket = await openSocket(unauthorizedUrl);
 
     await expect(waitForSocketClose(socket)).resolves.toEqual({ code: 1008 });
@@ -526,10 +523,7 @@ describe("Nova Codex sandbox exec-server", () => {
       client: client as never,
       sandbox,
     });
-    const unauthorizedUrl = execServerUrlFromClient(client).replace(
-      /\/openclaw-[^/?#]+/u,
-      "/wrong",
-    );
+    const unauthorizedUrl = execServerUrlFromClient(client).replace(/\/nova-[^/?#]+/u, "/wrong");
     const socket = await openSocket(unauthorizedUrl);
     const closed = waitForSocketClose(socket);
 

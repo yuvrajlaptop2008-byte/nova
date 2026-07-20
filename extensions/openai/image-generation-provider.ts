@@ -1,28 +1,28 @@
 // Openai provider module implements model/runtime integration.
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import type {
   ImageGenerationOutputFormat,
   ImageGenerationProvider,
   ImageGenerationResult,
-} from "openclaw/plugin-sdk/image-generation";
+} from "nova/plugin-sdk/image-generation";
 import {
   parseOpenAiCompatibleImageResponse,
   resolveInlineImageJsonResponseMaxBytes,
   toImageDataUrl,
-} from "openclaw/plugin-sdk/image-generation";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/logging-core";
-import { resolveClosestSize } from "openclaw/plugin-sdk/media-generation-runtime";
-import { extensionForMime } from "openclaw/plugin-sdk/media-mime";
-import { canonicalizeBase64, MAX_IMAGE_BYTES } from "openclaw/plugin-sdk/media-runtime";
+} from "nova/plugin-sdk/image-generation";
+import { createSubsystemLogger } from "nova/plugin-sdk/logging-core";
+import { resolveClosestSize } from "nova/plugin-sdk/media-generation-runtime";
+import { extensionForMime } from "nova/plugin-sdk/media-mime";
+import { canonicalizeBase64, MAX_IMAGE_BYTES } from "nova/plugin-sdk/media-runtime";
 import {
   ensureAuthProfileStore,
   hasConfiguredSecretInput,
   isProviderApiKeyConfigured,
   listProfilesForProvider,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/provider-auth";
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/provider-auth-runtime";
+} from "nova/plugin-sdk/provider-auth";
+import { resolveApiKeyForProvider } from "nova/plugin-sdk/provider-auth-runtime";
 import {
   assertOkOrThrowHttpError,
   postJsonRequest,
@@ -30,9 +30,9 @@ import {
   readProviderJsonResponse,
   resolveProviderHttpRequestConfig,
   sanitizeConfiguredModelProviderRequest,
-} from "openclaw/plugin-sdk/provider-http";
-import { isPrivateNetworkOptInEnabled } from "openclaw/plugin-sdk/ssrf-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/provider-http";
+import { isPrivateNetworkOptInEnabled } from "nova/plugin-sdk/ssrf-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   canonicalizeCodexResponsesBaseUrl,
   isOpenAICodexBaseUrl,
@@ -127,7 +127,7 @@ function resolveOpenAIImageCount(count: number | undefined): number {
   return Math.max(1, Math.min(OPENAI_MAX_IMAGE_RESULTS, Math.trunc(count)));
 }
 
-function resolveGeneratedImageMaxBytes(cfg: OpenClawConfig): number {
+function resolveGeneratedImageMaxBytes(cfg: NovaConfig): number {
   const configured = cfg.agents?.defaults?.mediaMaxMb;
   if (typeof configured === "number" && Number.isFinite(configured) && configured > 0) {
     return Math.floor(configured * MB);
@@ -266,7 +266,7 @@ function resolveNativeOpenAIImageSizesForModel(model: string): readonly string[]
   }
 }
 
-function resolveConfiguredOpenAIImageBaseUrl(cfg: OpenClawConfig | undefined, model: string) {
+function resolveConfiguredOpenAIImageBaseUrl(cfg: NovaConfig | undefined, model: string) {
   const modelId = model.trim().replace(/^openai\//u, "");
   const modelBaseUrl = cfg?.models?.providers?.openai?.models
     ?.find((candidate) => candidate.id.trim().replace(/^openai\//u, "") === modelId)
@@ -307,7 +307,7 @@ function resolveOpenAIImageRequestSize(params: {
 function shouldAllowPrivateImageEndpoint(req: {
   provider: string;
   model: string;
-  cfg: OpenClawConfig | undefined;
+  cfg: NovaConfig | undefined;
 }) {
   if (req.provider === MOCK_OPENAI_PROVIDER_ID) {
     return true;
@@ -338,10 +338,7 @@ function resolveRequestAuthStore(req: {
   });
 }
 
-function hasDirectOpenAIImageApiKeyAuth(params: {
-  cfg?: OpenClawConfig;
-  agentDir?: string;
-}): boolean {
+function hasDirectOpenAIImageApiKeyAuth(params: { cfg?: NovaConfig; agentDir?: string }): boolean {
   if (hasExplicitOpenAIImageApiKeyConfig(params.cfg)) {
     return true;
   }
@@ -378,7 +375,7 @@ function hasCodexResponseTransportProfileConfigured(req: {
 }
 
 function resolveOpenAIImageAuthProvider(req: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   authStore?: AuthProfileStore;
   agentDir?: string;
 }): string {
@@ -393,12 +390,12 @@ function resolveOpenAIImageAuthProvider(req: {
   return "openai";
 }
 
-function hasExplicitOpenAIImageApiKeyConfig(cfg: OpenClawConfig | undefined): boolean {
+function hasExplicitOpenAIImageApiKeyConfig(cfg: NovaConfig | undefined): boolean {
   const providerConfig = cfg?.models?.providers?.openai;
   return providerConfig?.apiKey !== undefined || providerConfig?.auth === "api-key";
 }
 
-function hasExplicitDirectOpenAIImageConfig(cfg: OpenClawConfig | undefined): boolean {
+function hasExplicitDirectOpenAIImageConfig(cfg: NovaConfig | undefined): boolean {
   const providerConfig = cfg?.models?.providers?.openai;
   if (!providerConfig) {
     return false;
@@ -412,7 +409,7 @@ function hasExplicitDirectOpenAIImageConfig(cfg: OpenClawConfig | undefined): bo
   );
 }
 
-function hasChatGPTImageRouteConfig(cfg: OpenClawConfig | undefined): boolean {
+function hasChatGPTImageRouteConfig(cfg: NovaConfig | undefined): boolean {
   const providerConfig = cfg?.models?.providers?.openai;
   return (
     isOpenAICodexBaseUrl(resolveConfiguredOpenAIBaseUrl(cfg)) ||
@@ -421,7 +418,7 @@ function hasChatGPTImageRouteConfig(cfg: OpenClawConfig | undefined): boolean {
 }
 
 function resolveConfiguredOpenAIImageHeaders(
-  cfg: OpenClawConfig | undefined,
+  cfg: NovaConfig | undefined,
 ): Record<string, string> | undefined {
   const headers = cfg?.models?.providers?.openai?.headers;
   if (!headers) {
@@ -435,7 +432,7 @@ function resolveConfiguredOpenAIImageHeaders(
   return Object.keys(stringHeaders).length > 0 ? stringHeaders : undefined;
 }
 
-function forceOpenAIImageApiKeyAuth(cfg: OpenClawConfig | undefined): OpenClawConfig | undefined {
+function forceOpenAIImageApiKeyAuth(cfg: NovaConfig | undefined): NovaConfig | undefined {
   if (!hasExplicitOpenAIImageApiKeyConfig(cfg)) {
     return cfg;
   }
@@ -459,7 +456,7 @@ function forceOpenAIImageApiKeyAuth(cfg: OpenClawConfig | undefined): OpenClawCo
 }
 
 async function resolveOpenAIImageAuth(req: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentDir?: string;
   authStore?: AuthProfileStore;
 }) {

@@ -20,7 +20,7 @@ function writeRepoFile(repoRoot: string, relativePath: string, value: string): v
 }
 
 function makeEnvMutationFixture(): string {
-  const repoRoot = createTempDir("openclaw-test-env-mutations-");
+  const repoRoot = createTempDir("nova-test-env-mutations-");
   writeRepoFile(
     repoRoot,
     "src/runtime.ts",
@@ -41,7 +41,7 @@ const dynamicEnvKey = "NOVA_STATE_DIR";
 process.env[dynamicEnvKey] = "dynamic";
 delete process.env[dynamicEnvKey];
 const fixture = 'process.env.NOVA_HOME = "not code"';
-process.env.NOT_OPENCLAW = "ignored";
+process.env.NOT_nova = "ignored";
 `,
   );
   writeRepoFile(
@@ -60,7 +60,7 @@ process.env.NOVA_AGENT_DIR = "agent";
   );
   writeRepoFile(
     repoRoot,
-    "src/test-utils/openclaw-test-state.ts",
+    "src/test-utils/nova-test-state.ts",
     `
 process.env.HOME = "allowed";
 delete process.env.NOVA_STATE_DIR;
@@ -195,7 +195,7 @@ describe("collectTestEnvMutationReport", () => {
           "--limit",
           limit,
           "--repo-root",
-          createTempDir("openclaw-env-limit-"),
+          createTempDir("nova-env-limit-"),
         ]),
       ).toThrow("--limit expects a non-negative integer");
     }

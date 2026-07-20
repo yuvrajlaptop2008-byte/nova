@@ -193,7 +193,7 @@ function buildPreparedSystemRunPayload(rawInvokeParams: unknown) {
 }
 
 async function writeExecApprovalsConfig(config: Record<string, unknown>) {
-  const approvalsPath = path.join(process.env.HOME ?? "", ".openclaw", "exec-approvals.json");
+  const approvalsPath = path.join(process.env.HOME ?? "", ".nova", "exec-approvals.json");
   await fs.mkdir(path.dirname(approvalsPath), { recursive: true });
   await fs.writeFile(approvalsPath, JSON.stringify(config, null, 2));
 }
@@ -400,7 +400,7 @@ describe("exec approvals", () => {
   let tempCaseIndex = 0;
 
   beforeAll(async () => {
-    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-exec-approvals-"));
+    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-exec-approvals-"));
   });
 
   beforeEach(async () => {
@@ -490,7 +490,7 @@ describe("exec approvals", () => {
   });
 
   it("skips approval when node allowlist is satisfied", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-bin-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-bin-"));
     const binDir = path.join(tempDir, "bin");
     await fs.mkdir(binDir, { recursive: true });
     const exeName = process.platform === "win32" ? "tool.cmd" : "tool";
@@ -1348,7 +1348,7 @@ describe("exec approvals", () => {
     if (process.platform === "win32") {
       return;
     }
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-wrapper-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-wrapper-"));
     try {
       const binDir = path.join(tempDir, "bin");
       const wrapperPath = path.join(binDir, "gog-wrapper");
@@ -1394,9 +1394,9 @@ describe("exec approvals", () => {
     if (process.platform === "win32") {
       return;
     }
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-skill-prelude-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-skill-prelude-"));
     try {
-      const skillDir = path.join(tempDir, ".openclaw", "skills", "gog");
+      const skillDir = path.join(tempDir, ".nova", "skills", "gog");
       const skillPath = path.join(skillDir, "SKILL.md");
       const binDir = path.join(tempDir, "bin");
       const wrapperPath = path.join(binDir, "gog-wrapper");

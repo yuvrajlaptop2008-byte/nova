@@ -29,7 +29,7 @@ const OPENAI_ERROR_BODY_MAX_CHARS = 4096;
 const OPENAI_RESPONSE_BODY_MAX_BYTES = 256 * 1024;
 const STATE_FILE_NAME = "issue-labeler-state.json";
 const CONFIG_BASE_DIR = process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config");
-const STATE_FILE_PATH = join(CONFIG_BASE_DIR, "openclaw", STATE_FILE_NAME);
+const STATE_FILE_PATH = join(CONFIG_BASE_DIR, "nova", STATE_FILE_NAME);
 
 const ISSUE_QUERY = `
   query($owner: String!, $name: String!, $after: String, $pageSize: Int!) {

@@ -28,14 +28,14 @@ describe("config secret refs schema", () => {
           default: { source: "env" },
           filemain: {
             source: "file",
-            path: "~/.openclaw/secrets.json",
+            path: "~/.nova/secrets.json",
             mode: "json",
             timeoutMs: 10_000,
             allowInsecurePath: true,
           },
           vault: {
             source: "exec",
-            command: "/usr/local/bin/openclaw-secret-resolver",
+            command: "/usr/local/bin/nova-secret-resolver",
             args: ["resolve"],
             allowSymlinkCommand: true,
           },
@@ -219,7 +219,7 @@ describe("config secret refs schema", () => {
         providers: {
           rawfile: {
             source: "file",
-            path: "~/.openclaw/token.txt",
+            path: "~/.nova/token.txt",
             mode: "singleValue",
           },
         },

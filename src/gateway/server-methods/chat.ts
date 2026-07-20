@@ -8,7 +8,7 @@ import {
 } from "../../../packages/gateway-protocol/src/index.js";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { resolveSessionWorkStartError } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { beginSessionWorkAdmission } from "../../sessions/session-lifecycle-admission.js";
 import {
   projectChatDisplayMessage,
@@ -132,7 +132,7 @@ export const chatHandlers: GatewayRequestHandlers = {
     // Load session to find transcript file
     const rawSessionKey = p.sessionKey;
     const requestedAgentId = resolveRequestedChatAgentId({
-      cfg: (context as { getRuntimeConfig?: () => OpenClawConfig }).getRuntimeConfig?.(),
+      cfg: (context as { getRuntimeConfig?: () => NovaConfig }).getRuntimeConfig?.(),
       requestedSessionKey: rawSessionKey,
       agentId: p.agentId,
     });

@@ -11,14 +11,14 @@ import {
   setTimeout as scheduleNativeTimeout,
 } from "node:timers";
 import chokidar from "chokidar";
-import { detectMime } from "openclaw/plugin-sdk/media-mime";
-import { isTruthyEnvValue, type RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
+import { detectMime } from "nova/plugin-sdk/media-mime";
+import { isTruthyEnvValue, type RuntimeEnv } from "nova/plugin-sdk/runtime-env";
+import { resolveStateDir } from "nova/plugin-sdk/state-paths";
 import {
   lowercasePreservingWhitespace,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
-import { ensureDir, resolveUserPath } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
+import { ensureDir, resolveUserPath } from "nova/plugin-sdk/text-utility-runtime";
 import { WebSocketServer } from "ws";
 import {
   CANVAS_HOST_PATH,
@@ -122,14 +122,14 @@ function defaultIndexHTML() {
     !!(
       window.webkit &&
       window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.openclawCanvasA2UIAction
+      window.webkit.messageHandlers.novaCanvasA2UIAction
     );
   const hasAndroid = () =>
     !!(
-      (window.openclawCanvasA2UIAction &&
-        typeof window.openclawCanvasA2UIAction.postMessage === "function")
+      (window.novaCanvasA2UIAction &&
+        typeof window.novaCanvasA2UIAction.postMessage === "function")
     );
-  const hasHelper = () => typeof window.openclawSendUserAction === "function";
+  const hasHelper = () => typeof window.novaSendUserAction === "function";
   const helperReady = hasHelper();
   statusEl.textContent = "";
   statusEl.appendChild(document.createTextNode("Bridge: "));
@@ -147,7 +147,7 @@ function defaultIndexHTML() {
     const d = ev && ev.detail || {};
     log("Action status: id=" + (d.id || "?") + " ok=" + String(!!d.ok) + (d.error ? (" error=" + d.error) : ""));
   };
-  window.addEventListener("openclaw:a2ui-action-status", onStatus);
+  window.addEventListener("nova:a2ui-action-status", onStatus);
 
   function send(name, sourceComponentId) {
     if (!hasHelper()) {
@@ -155,8 +155,8 @@ function defaultIndexHTML() {
       return;
     }
     const sendUserAction =
-      typeof window.openclawSendUserAction === "function"
-        ? window.openclawSendUserAction
+      typeof window.novaSendUserAction === "function"
+        ? window.novaSendUserAction
         : undefined;
     const ok = sendUserAction({
       name,
@@ -229,7 +229,7 @@ function shouldIgnoreCanvasWatchPath(rootReal: string, candidatePath: string): b
     return false;
   }
   // Chokidar evaluates ignored matchers against absolute paths. Scope the
-  // policy below the root so the default ~/.openclaw parent is still watched.
+  // policy below the root so the default ~/.nova parent is still watched.
   return relative
     .split(/[\\/]/u)
     .some((segment) => segment.startsWith(".") || segment === "node_modules");

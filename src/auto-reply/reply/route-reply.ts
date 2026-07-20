@@ -14,7 +14,7 @@ import { normalizeChatType } from "../../channels/chat-type.js";
 import { getBundledChannelPlugin } from "../../channels/plugins/bundled.js";
 import { getLoadedChannelPlugin, normalizeChannelId } from "../../channels/plugins/index.js";
 import { normalizeChatChannelId } from "../../channels/registry.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { buildOutboundSessionContext } from "../../infra/outbound/session-context.js";
 import { hasReplyPayloadContent } from "../../interactive/payload.js";
@@ -91,7 +91,7 @@ type RouteReplyParams = {
   /** Reply policy fallback for delivery kinds that do not carry payload metadata. */
   replyDelivery?: ReplyDeliveryContext;
   /** Config for provider-specific settings. */
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   /** Optional abort signal for cooperative cancellation. */
   abortSignal?: AbortSignal;
   /** Mirror reply into session transcript (default: true when sessionKey is set). */

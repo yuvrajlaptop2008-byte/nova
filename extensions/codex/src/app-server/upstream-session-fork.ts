@@ -1,14 +1,14 @@
 import type {
   AgentHarnessSessionForkParams,
   AgentHarnessSessionForkResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
 import {
   deleteSessionUpstreamLink,
   upsertSessionUpstreamLink,
-} from "openclaw/plugin-sdk/session-catalog";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/session-catalog";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { CodexSessionCatalogControl } from "../session-catalog-types.js";
 import { codexLastTerminalTurnId, codexUpstreamBaseline } from "../session-upstream-marker.js";
 import { assertCodexThreadForkResponse } from "./protocol-validators.js";
@@ -40,7 +40,7 @@ export async function forkCodexUpstreamSession(
     bindingStore: CodexAppServerBindingStore;
     control: CodexSessionCatalogControl;
     harnessRuntimeId: string;
-    resolveConfig?: () => OpenClawConfig | undefined;
+    resolveConfig?: () => NovaConfig | undefined;
     runtime: PluginRuntime;
   },
 ): Promise<AgentHarnessSessionForkResult> {

@@ -60,7 +60,7 @@ describe("openEditor", () => {
 
 describe("markdown sidebar", () => {
   it("opens workspace files from markdown preview clicks", async () => {
-    const panel = document.createElement("openclaw-chat-detail-panel") as HTMLElement & {
+    const panel = document.createElement("nova-chat-detail-panel") as HTMLElement & {
       content: unknown;
       onOpenWorkspaceFile?: (target: { path: string; line?: number | null }) => void;
       updateComplete?: Promise<unknown>;
@@ -84,7 +84,7 @@ describe("markdown sidebar", () => {
   });
 
   it("keeps a canvas scripts ceiling under a trusted global sandbox", async () => {
-    const panel = document.createElement("openclaw-chat-detail-panel") as HTMLElement & {
+    const panel = document.createElement("nova-chat-detail-panel") as HTMLElement & {
       content: unknown;
       embedSandboxMode: "trusted";
       canvasPluginSurfaceUrl: string;

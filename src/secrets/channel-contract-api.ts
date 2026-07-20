@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { openRootFileSync } from "../infra/boundary-file-read.js";
 import { shouldRejectHardlinkedPluginFiles } from "../plugins/hardlink-policy.js";
 import type { PluginManifestRecord } from "../plugins/manifest-registry.js";
@@ -20,7 +20,7 @@ import type { SecretTargetRegistryEntry } from "./target-registry-types.js";
 
 type BundledChannelContractApi = {
   collectRuntimeConfigAssignments?: (params: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     defaults: SecretDefaults | undefined;
     context: ResolverContext;
   }) => void;
@@ -74,8 +74,8 @@ function orderedContractApiExtensions(): readonly string[] {
 
 function resolvePluginContractApiPath(rootDir: string): string | null {
   // Compiled npm-published plugins place their public artifacts under <rootDir>/dist/
-  // (per package.json `openclaw.runtimeExtensions`), while flat-layout plugins keep
-  // them at <rootDir>/. Search both, preferring dist/ when running from built openclaw
+  // (per package.json `nova.runtimeExtensions`), while flat-layout plugins keep
+  // them at <rootDir>/. Search both, preferring dist/ when running from built nova
   // artifacts and rootDir/ when running from source.
   const searchDirs = RUNNING_FROM_BUILT_ARTIFACT
     ? [path.join(rootDir, "dist"), rootDir]
@@ -152,7 +152,7 @@ function recordOwnsChannel(record: PluginManifestRecord, channelId: string): boo
 
 function listChannelSecretContractRecords(params: {
   channelId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   loadablePluginOrigins?: ReadonlyMap<string, PluginOrigin>;
 }): PluginManifestRecord[] {
@@ -187,7 +187,7 @@ function listChannelSecretContractRecords(params: {
 /** Loads a channel secret contract API for a channel id and current plugin origin policy. */
 export function loadChannelSecretContractApi(params: {
   channelId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   env?: NodeJS.ProcessEnv;
   loadablePluginOrigins?: ReadonlyMap<string, PluginOrigin>;
 }): BundledChannelSecretContractApi | undefined {

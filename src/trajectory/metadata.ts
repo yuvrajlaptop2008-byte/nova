@@ -2,7 +2,7 @@
 import { resolveStateDir } from "../config/paths.js";
 import { redactConfigObject } from "../config/redact-snapshot.js";
 import type { SessionSystemPromptReport } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveCommitHash } from "../infra/git-commit.js";
 import { resolveOsSummary } from "../infra/os-summary.js";
 import {
@@ -19,7 +19,7 @@ import { VERSION } from "../version.js";
 // plugin, skill, and prompt context to explain a run after logs are exported.
 type BuildTrajectoryRunMetadataParams = {
   env?: NodeJS.ProcessEnv;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir: string;
   sessionFile?: string;
   sessionKey?: string;
@@ -138,7 +138,7 @@ function buildPluginsFromActiveRegistry() {
 }
 
 function buildPluginsFromManifest(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }) {
@@ -241,7 +241,7 @@ export function buildTrajectoryRunMetadata(
   return {
     capturedAt: new Date().toISOString(),
     harness: {
-      type: "openclaw",
+      type: "nova",
       name: "Nova",
       version: VERSION,
       gitSha:

@@ -10,7 +10,7 @@ vi.mock("./client.js", () => ({
   createSlackWebClient: createSlackWebClientMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/text-utility-runtime", () => ({
+vi.mock("nova/plugin-sdk/text-utility-runtime", () => ({
   withTimeout: withTimeoutMock,
 }));
 
@@ -42,7 +42,7 @@ describe("probeSlack", () => {
       ok: true,
       user_id: "U123",
       bot_id: "B123",
-      user: "openclaw-bot",
+      user: "nova-bot",
       team_id: "T123",
       team: "Nova",
     });
@@ -51,7 +51,7 @@ describe("probeSlack", () => {
       ok: true,
       status: 200,
       elapsedMs: 45,
-      bot: { id: "U123", name: "openclaw-bot" },
+      bot: { id: "U123", name: "nova-bot" },
       team: { id: "T123", name: "Nova" },
     });
     expect(createSlackWebClientMock).toHaveBeenCalledWith("xoxb-test");

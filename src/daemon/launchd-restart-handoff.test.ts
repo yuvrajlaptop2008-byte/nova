@@ -50,7 +50,7 @@ async function executeReloadHandoff(launchctlStub: string): Promise<{
   try {
     const home = path.join(stubDir, "home");
     const callsPath = path.join(stubDir, "launchctl.calls");
-    fs.mkdirSync(path.join(home, ".openclaw", "logs"), { recursive: true });
+    fs.mkdirSync(path.join(home, ".nova", "logs"), { recursive: true });
     fs.writeFileSync(
       path.join(stubDir, "launchctl"),
       `#!/bin/sh\nprintf '%s\\n' "$*" >> "$LAUNCHCTL_CALLS_PATH"\n${launchctlStub}\n`,
@@ -102,10 +102,7 @@ async function executeReloadHandoff(launchctlStub: string): Promise<{
     }
 
     const calls = fs.readFileSync(callsPath, "utf8").trim().split("\n");
-    const log = fs.readFileSync(
-      path.join(home, ".openclaw", "logs", "gateway-restart.log"),
-      "utf8",
-    );
+    const log = fs.readFileSync(path.join(home, ".nova", "logs", "gateway-restart.log"), "utf8");
     return { calls, exitCode, log };
   } finally {
     fs.rmSync(stubDir, { recursive: true, force: true });
@@ -136,11 +133,11 @@ describe("scheduleDetachedLaunchdRestartHandoff", () => {
     expect(spawnMock).toHaveBeenCalledTimes(1);
     const [, args] = requireSpawnCall();
     expect(args[0]).toBe("-c");
-    expect(args[2]).toBe("openclaw-launchd-restart-handoff");
+    expect(args[2]).toBe("nova-launchd-restart-handoff");
     expect(args[6]).toBe("9876");
     expect(args[1]).toContain('while kill -0 "$wait_pid" >/dev/null 2>&1; do');
-    expect(args[1]).toContain("exec >>'/Users/test/.openclaw/logs/gateway-restart.log' 2>&1");
-    expect(args[1]).toContain("openclaw restart attempt source=handoff mode=kickstart");
+    expect(args[1]).toContain("exec >>'/Users/test/.nova/logs/gateway-restart.log' 2>&1");
+    expect(args[1]).toContain("nova restart attempt source=handoff mode=kickstart");
     expect(args[1]).toContain("pid=%s interactive=0");
     expect(args[1]).toContain('launchctl enable "$service_target"');
     expect(args[1]).toContain('if launchctl kickstart -k "$service_target"; then');
@@ -186,7 +183,7 @@ describe("scheduleDetachedLaunchdRestartHandoff", () => {
     });
 
     const [, args] = requireSpawnCall();
-    expect(args[1]).toContain("openclaw restart attempt source=handoff mode=reload");
+    expect(args[1]).toContain("nova restart attempt source=handoff mode=reload");
     expect(args[1]).toContain('launchctl enable "$service_target"');
     expect(args[1]).toContain('launchctl bootout "$service_target"');
     // The unload poll must outlast launchd's ExitTimeOut SIGKILL ceiling plus
@@ -289,7 +286,7 @@ esac`);
     });
 
     const [, args, options] = requireSpawnCall();
-    expect(args[1]).toContain("exec >>'/Users/test/.openclaw/logs/gateway-restart.log' 2>&1");
+    expect(args[1]).toContain("exec >>'/Users/test/.nova/logs/gateway-restart.log' 2>&1");
     expect(args[1]).not.toContain("/tmp/evil-bin");
     expect(args[1]).not.toContain("/tmp/evil.dylib");
     expect(args[1]).not.toContain("/tmp/evil-npmrc");

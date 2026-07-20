@@ -2,9 +2,9 @@
   "name": "@nova/lmstudio-provider",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw LM Studio provider plugin",
+  "description": "Nova LM Studio provider plugin",
   "type": "module",
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

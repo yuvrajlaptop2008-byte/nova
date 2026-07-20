@@ -2,17 +2,14 @@
 import {
   defineBundledChannelEntry,
   loadBundledEntryExportSync,
-} from "openclaw/plugin-sdk/channel-entry-contract";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/channel-entry-contract";
+} from "nova/plugin-sdk/channel-entry-contract";
+import type { NovaPluginApi } from "nova/plugin-sdk/channel-entry-contract";
 
-function registerWhatsAppCallTool(api: OpenClawPluginApi): void {
-  const registerTool = loadBundledEntryExportSync<(api: OpenClawPluginApi) => void>(
-    import.meta.url,
-    {
-      specifier: "./call-tool-api.js",
-      exportName: "registerWhatsAppCallTool",
-    },
-  );
+function registerWhatsAppCallTool(api: NovaPluginApi): void {
+  const registerTool = loadBundledEntryExportSync<(api: NovaPluginApi) => void>(import.meta.url, {
+    specifier: "./call-tool-api.js",
+    exportName: "registerWhatsAppCallTool",
+  });
   registerTool(api);
 }
 

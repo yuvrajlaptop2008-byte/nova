@@ -99,7 +99,7 @@ function agentHarnessRunOutcome(result: AgentHarnessAttemptResult): DiagnosticHa
 }
 
 function shouldEmitAgentRunDiagnostics(harness: AgentHarness): boolean {
-  return harness.id !== "openclaw";
+  return harness.id !== "nova";
 }
 
 function diagnosticChannel(params: AgentHarnessAttemptParams): string | undefined {

@@ -1,5 +1,5 @@
-# Raft (OpenClaw plugin)
+# Raft (Nova plugin)
 
-Raft CLI wake bridge channel plugin for OpenClaw.
+Raft CLI wake bridge channel plugin for Nova.
 
-Docs: https://docs.openclaw.ai/channels/raft
+Docs: https://docs.nova.ai/channels/raft

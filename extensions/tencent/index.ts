@@ -1,7 +1,7 @@
 // Tencent plugin entrypoint registers its Nova integration.
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
-import { buildSingleProviderApiKeyCatalog } from "openclaw/plugin-sdk/provider-catalog-shared";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
+import { createProviderApiKeyAuthMethod } from "nova/plugin-sdk/provider-auth-api-key";
+import { buildSingleProviderApiKeyCatalog } from "nova/plugin-sdk/provider-catalog-shared";
 import {
   TOKENHUB_MODEL_CATALOG,
   TOKENHUB_PROVIDER_ID,

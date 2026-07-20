@@ -87,7 +87,7 @@ describe("buildTelegramMessageContext reactions", () => {
       },
       cfg: {
         agents: {
-          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/openclaw" },
+          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/nova" },
         },
         channels: {
           telegram: {
@@ -134,7 +134,7 @@ describe("buildTelegramMessageContext reactions", () => {
       },
       cfg: {
         agents: {
-          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/openclaw" },
+          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/nova" },
         },
         channels: {
           telegram: {
@@ -182,7 +182,7 @@ describe("buildTelegramMessageContext reactions", () => {
       },
       cfg: {
         agents: {
-          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/openclaw" },
+          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/nova" },
         },
         channels: {
           telegram: {
@@ -231,7 +231,7 @@ describe("buildTelegramMessageContext reactions", () => {
       },
       cfg: {
         agents: {
-          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/openclaw" },
+          defaults: { model: "anthropic/claude-opus-4-5", workspace: "/tmp/nova" },
         },
         channels: { telegram: { dmPolicy: "open", allowFrom: ["*"] } },
         messages: {

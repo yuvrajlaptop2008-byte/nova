@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, it } from "vitest";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
-import { createOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
+import { createNovaTestState } from "../test-utils/nova-test-state.js";
 import { createAgent } from "./agent-create.js";
 import {
   DEFAULT_IDENTITY_FILENAME,
@@ -11,7 +11,7 @@ import {
 } from "./workspace.js";
 
 it("keeps a fresh named workspace pending through the first run setup", async () => {
-  const state = await createOpenClawTestState({
+  const state = await createNovaTestState({
     layout: "state-only",
     scenario: "minimal",
     label: "named-agent-hatch",
@@ -34,7 +34,7 @@ it("keeps a fresh named workspace pending through the first run setup", async ()
       await fs.readFile(path.join(workspace, DEFAULT_IDENTITY_FILENAME), "utf8"),
     ).not.toContain("Researcher");
   } finally {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await state.cleanup();
   }
 });

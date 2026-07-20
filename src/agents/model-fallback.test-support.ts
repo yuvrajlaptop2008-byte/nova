@@ -27,9 +27,7 @@ type ModelFallbackTestApi = {
 };
 
 function getTestApi(): ModelFallbackTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.modelFallbackTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.modelFallbackTestApi")];
   if (!api) {
     throw new Error("model fallback test API is unavailable");
   }

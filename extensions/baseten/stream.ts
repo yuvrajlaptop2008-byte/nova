@@ -1,6 +1,6 @@
 /** Baseten request payload policy for models with opt-in chat-template reasoning. */
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
-import { createPayloadPatchStreamWrapper } from "openclaw/plugin-sdk/provider-stream-shared";
+import type { ProviderWrapStreamFnContext } from "nova/plugin-sdk/plugin-entry";
+import { createPayloadPatchStreamWrapper } from "nova/plugin-sdk/provider-stream-shared";
 import { usesBasetenChatTemplateThinking } from "./models.js";
 
 const BASETEN_DEEPSEEK_V4_MODEL_ID = "deepseek-ai/deepseek-v4-pro";

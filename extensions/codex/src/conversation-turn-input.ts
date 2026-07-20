@@ -1,8 +1,8 @@
 // Codex plugin module implements conversation turn input behavior.
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { PluginHookInboundClaimEvent } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeSingleOrTrimmedStringList } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { PluginHookInboundClaimEvent } from "nova/plugin-sdk/plugin-entry";
+import { normalizeSingleOrTrimmedStringList } from "nova/plugin-sdk/string-coerce-runtime";
 import type { CodexUserInput } from "./app-server/protocol.js";
 
 type InboundMedia = {

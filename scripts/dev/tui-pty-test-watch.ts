@@ -416,7 +416,7 @@ async function main(): Promise<void> {
     process.stdout.write(
       [
         "\x1b[2J\x1b[H",
-        "openclaw TUI PTY tests",
+        "nova TUI PTY tests",
         "",
         `Mode: ${options.mode}`,
         `Waiting for the first TUI frame... ${elapsedSeconds}s`,

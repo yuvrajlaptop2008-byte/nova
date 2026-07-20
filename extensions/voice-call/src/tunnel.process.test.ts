@@ -43,7 +43,7 @@ async function waitForProcessExit(pid: number, timeoutMs: number): Promise<boole
 
 describe.skipIf(process.platform === "win32")("voice-call tunnel child shutdown", () => {
   it("force-kills ngrok when it ignores graceful shutdown", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-ngrok-stop-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-ngrok-stop-"));
     const pidPath = path.join(tempDir, "ngrok.pid");
     const ngrokPath = path.join(tempDir, "ngrok");
     const previousPath = process.env.PATH;
@@ -95,7 +95,7 @@ describe.skipIf(process.platform === "win32")("voice-call tunnel child shutdown"
   });
 
   it("force-kills ngrok before rejecting a startup timeout", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-ngrok-timeout-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-ngrok-timeout-"));
     const pidPath = path.join(tempDir, "ngrok.pid");
     const signalPath = path.join(tempDir, "ngrok.signal");
     const ngrokPath = path.join(tempDir, "ngrok");

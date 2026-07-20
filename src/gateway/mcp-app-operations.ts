@@ -21,7 +21,7 @@ import {
   getMcpAppViewLease,
   type McpAppViewLease,
 } from "../agents/mcp-ui-resource.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { logWarn } from "../logger.js";
 import { restoreMcpAppView } from "./mcp-app-reconstruction.js";
@@ -111,7 +111,7 @@ async function requireCallableTool(
 export async function resolveMcpAppActiveView(params: {
   sessionKey: string;
   viewId: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
 }): Promise<McpAppActiveView> {
   const existingRuntime = peekSessionMcpRuntime({ sessionKey: params.sessionKey });
   if (

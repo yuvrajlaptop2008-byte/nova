@@ -32,7 +32,7 @@ describe("generateConversationLabel", () => {
       selection: {
         provider: "openai",
         modelId: "gpt-test",
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
       },
       model: { provider: "openai", id: "gpt-test", maxTokens: 8192 },
       auth: { apiKey: "resolved-key", mode: "api-key" },
@@ -105,7 +105,7 @@ describe("generateConversationLabel", () => {
       selection: {
         provider: "openai",
         modelId: "gpt-test",
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
       },
       model: { provider: "openai", id: "gpt-test", maxTokens: 1_024 },
       auth: { apiKey: "resolved-key", mode: "api-key" },
@@ -125,7 +125,7 @@ describe("generateConversationLabel", () => {
       selection: {
         provider: "openai",
         modelId: "gpt-5.5",
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
       },
       model: {
         provider: "openai",
@@ -171,14 +171,14 @@ describe("generateConversationLabel", () => {
         selection: {
           provider: "openai",
           modelId: "gpt-5.6-luna",
-          agentDir: "/tmp/openclaw-agent",
+          agentDir: "/tmp/nova-agent",
         },
       })
       .mockResolvedValueOnce({
         selection: {
           provider: "openai",
           modelId: "gpt-5.6-sol",
-          agentDir: "/tmp/openclaw-agent",
+          agentDir: "/tmp/nova-agent",
         },
         model: { provider: "openai", id: "gpt-5.6-sol", maxTokens: 8192 },
         auth: { apiKey: "test-api-key", mode: "api-key" },
@@ -205,7 +205,7 @@ describe("generateConversationLabel", () => {
         selection: {
           provider: "openai",
           modelId: "gpt-5.6-luna",
-          agentDir: "/tmp/openclaw-agent",
+          agentDir: "/tmp/nova-agent",
         },
         model: { provider: "openai", id: "gpt-5.6-luna", maxTokens: 8192 },
         auth: { apiKey: "test-api-key", mode: "oauth" },
@@ -214,7 +214,7 @@ describe("generateConversationLabel", () => {
         selection: {
           provider: "openai",
           modelId: "gpt-5.6-sol",
-          agentDir: "/tmp/openclaw-agent",
+          agentDir: "/tmp/nova-agent",
         },
         model: { provider: "openai", id: "gpt-5.6-sol", maxTokens: 8192 },
         auth: { apiKey: "test-api-key", mode: "oauth" },

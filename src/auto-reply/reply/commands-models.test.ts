@@ -3,7 +3,7 @@ import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { testing as cliBackendsTesting } from "../../agents/cli-backends.test-support.js";
 import type { ChannelPlugin } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
 import {
   createChannelTestPluginBase,
@@ -203,7 +203,7 @@ beforeAll(async () => {
   ]);
   await buildModelsProviderData({
     agents: { defaults: { model: { primary: "anthropic/claude-opus-4-5" } } },
-  } as OpenClawConfig);
+  } as NovaConfig);
 });
 
 beforeEach(() => {
@@ -265,7 +265,7 @@ afterEach(() => {
 
 function buildParams(
   commandBodyNormalized: string,
-  cfgOverrides: Partial<OpenClawConfig> = {},
+  cfgOverrides: Partial<NovaConfig> = {},
 ): HandleCommandsParams {
   return {
     cfg: {
@@ -278,7 +278,7 @@ function buildParams(
         text: true,
       },
       ...cfgOverrides,
-    } as OpenClawConfig,
+    } as NovaConfig,
     ctx: {
       Surface: "discord",
     },
@@ -403,7 +403,7 @@ describe("handleModelsCommand", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await buildModelsProviderData(cfg, "worker");
 
@@ -447,7 +447,7 @@ describe("handleModelsCommand", () => {
 
     const data = await buildModelsProviderData({
       agents: { defaults: { model: { primary: "anthropic/claude-opus-4-5" } } },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.byProvider.has("openai")).toBe(false);
     const checker = modelProviderAuthMocks.createProviderAuthChecker.mock.results.at(-1)?.value;
@@ -492,7 +492,7 @@ describe("handleModelsCommand", () => {
     const data = await buildModelsProviderData(
       {
         agents: { defaults: { model: { primary: "anthropic/claude-opus-4-5" } } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       undefined,
       { view: "all" },
     );
@@ -525,7 +525,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.byProvider.get("custom-provider")).toEqual(new Set(["custom-modern-model"]));
     expect(data.modelNames.get("custom-provider/custom-modern-model")).toBe("Custom Modern");
@@ -619,7 +619,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect([...(data.byProvider.get("claude-cli") ?? [])].toSorted()).toEqual([
       "claude-haiku-4-5",
@@ -670,7 +670,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.byProvider.has("acme-cli")).toBe(false);
   });
@@ -699,7 +699,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
     expect([...(minimaxData.byProvider.get("minimax") ?? [])]).toEqual(["abab-7"]);
   });
 
@@ -753,7 +753,7 @@ describe("handleModelsCommand", () => {
           model: { primary: "openai/gpt-5.5" },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.runtimeChoicesByProvider?.get("openai")?.[0]).toEqual({
       id: "codex",
@@ -761,7 +761,7 @@ describe("handleModelsCommand", () => {
       description: "Use the OpenAI Codex runtime selected by the effective harness policy.",
     });
     expect(data.runtimeChoicesByProvider?.get("openai")?.[1]).toEqual({
-      id: "openclaw",
+      id: "nova",
       label: "Nova Default",
       description: "Use the built-in Nova runtime.",
     });
@@ -782,10 +782,10 @@ describe("handleModelsCommand", () => {
           model: { primary: "openai/gpt-5.5" },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.runtimeChoicesByProvider?.get("openai")?.[0]).toEqual({
-      id: "openclaw",
+      id: "nova",
       label: "Nova Default",
       description: "Use the built-in Nova runtime.",
     });
@@ -797,7 +797,7 @@ describe("handleModelsCommand", () => {
         providers: {
           openai: {
             baseUrl: "https://api.openai.com/v1",
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "nova" },
             models: [],
           },
         },
@@ -810,7 +810,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.runtimeChoicesByProvider?.get("openai")?.[0]).toEqual({
       id: "codex",
@@ -818,7 +818,7 @@ describe("handleModelsCommand", () => {
       description: "Use the OpenAI Codex runtime selected by the effective harness policy.",
     });
     expect(data.runtimeChoicesByProvider?.get("openai")?.[1]).toEqual({
-      id: "openclaw",
+      id: "nova",
       label: "Nova Default",
       description: "Use the built-in Nova runtime.",
     });
@@ -840,10 +840,10 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.runtimeChoicesByProvider?.get("anthropic")?.[0]).toEqual({
-      id: "openclaw",
+      id: "nova",
       label: "Nova Default",
       description: "Use the built-in Nova runtime.",
     });
@@ -865,7 +865,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.runtimeChoicesByProvider?.get("anthropic")?.[0]).toEqual({
       id: "claude-cli",
@@ -873,7 +873,7 @@ describe("handleModelsCommand", () => {
       description: "Use the Claude CLI runtime selected by the effective harness policy.",
     });
     expect(data.runtimeChoicesByProvider?.get("anthropic")?.[1]).toEqual({
-      id: "openclaw",
+      id: "nova",
       label: "Nova Default",
       description: "Use the built-in Nova runtime.",
     });
@@ -889,7 +889,7 @@ describe("handleModelsCommand", () => {
 
     const data = await buildModelsProviderData({
       agents: { defaults: { modelPolicy: { allow: ["clawrouter/anthropic/*"] } } },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(data.providers).toEqual(["clawrouter"]);
     expect([...expectDefined(data.byProvider.get("clawrouter"), "clawrouter models")]).toEqual([
@@ -1005,9 +1005,9 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } satisfies Partial<OpenClawConfig>;
+    } satisfies Partial<NovaConfig>;
 
-    const data = await buildModelsProviderData(cfg as OpenClawConfig);
+    const data = await buildModelsProviderData(cfg as NovaConfig);
 
     expect([...(data.byProvider.get("openai") ?? [])]).toEqual(["gpt-5.4"]);
     expect([...(data.byProvider.get("deepseek") ?? [])].toSorted()).toEqual([

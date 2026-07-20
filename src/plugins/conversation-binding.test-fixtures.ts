@@ -9,9 +9,9 @@ type PluginBindingGlobalState = {
 };
 
 export function resetPluginConversationBindingStateForTest(): void {
-  resolveGlobalMap(Symbol.for("openclaw.pluginBindingPendingRequests")).clear();
+  resolveGlobalMap(Symbol.for("nova.pluginBindingPendingRequests")).clear();
   const state = resolveGlobalSingleton<PluginBindingGlobalState>(
-    Symbol.for("openclaw.plugins.binding.global-state"),
+    Symbol.for("nova.plugins.binding.global-state"),
     () => ({
       fallbackNoticeBindingIds: new Set(),
       approvalsCache: null,

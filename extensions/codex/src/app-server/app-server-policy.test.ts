@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import {
   resolveCodexAppServerForModelProvider,
-  resolveCodexAppServerForOpenClawToolPolicy,
+  resolveCodexAppServerForNovaToolPolicy,
 } from "./app-server-policy.js";
 import { readCodexPluginConfig, resolveCodexAppServerRuntimeOptions } from "./config.js";
 
@@ -10,7 +10,7 @@ describe("Codex app-server policy", () => {
   it("keeps implicit Codex yolo approval policy when untrusted approvals are disallowed", () => {
     const appServer = resolveCodexAppServerRuntimeOptions({ env: {}, requirementsToml: null });
 
-    const resolved = resolveCodexAppServerForOpenClawToolPolicy({
+    const resolved = resolveCodexAppServerForNovaToolPolicy({
       appServer,
       pluginConfig: readCodexPluginConfig({}),
       env: {},
@@ -24,7 +24,7 @@ describe("Codex app-server policy", () => {
   it("promotes implicit yolo approval policy when Nova tool policy requires review", () => {
     const appServer = resolveCodexAppServerRuntimeOptions({ env: {}, requirementsToml: null });
 
-    const resolved = resolveCodexAppServerForOpenClawToolPolicy({
+    const resolved = resolveCodexAppServerForNovaToolPolicy({
       appServer,
       pluginConfig: readCodexPluginConfig({}),
       env: {},
@@ -43,21 +43,21 @@ describe("Codex app-server policy", () => {
         'allowed_approval_policies = ["never"]\nallowed_sandbox_modes = ["workspace-write"]\n',
     });
 
-    const explicitConfig = resolveCodexAppServerForOpenClawToolPolicy({
+    const explicitConfig = resolveCodexAppServerForNovaToolPolicy({
       appServer,
       pluginConfig: readCodexPluginConfig({ appServer: { mode: "yolo" } }),
       env: {},
       shouldPromote: true,
       canUseUntrustedApprovalPolicy: true,
     });
-    const explicitEnv = resolveCodexAppServerForOpenClawToolPolicy({
+    const explicitEnv = resolveCodexAppServerForNovaToolPolicy({
       appServer,
       pluginConfig: readCodexPluginConfig({}),
       env: { NOVA_CODEX_APP_SERVER_APPROVAL_POLICY: "never" },
       shouldPromote: true,
       canUseUntrustedApprovalPolicy: true,
     });
-    const explicitRequirements = resolveCodexAppServerForOpenClawToolPolicy({
+    const explicitRequirements = resolveCodexAppServerForNovaToolPolicy({
       appServer: requirementsAppServer,
       pluginConfig: readCodexPluginConfig({}),
       env: {},

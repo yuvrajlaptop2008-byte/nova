@@ -1,5 +1,5 @@
 // Microsoft Foundry plugin entrypoint registers its Nova integration.
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "nova/plugin-sdk/plugin-entry";
 import { buildMicrosoftFoundryImageGenerationProvider } from "./image-generation-provider.js";
 import { buildMicrosoftFoundryProvider } from "./provider.js";
 

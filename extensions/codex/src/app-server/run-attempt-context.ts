@@ -6,9 +6,9 @@ import {
   getAgentHarnessHookRunner,
   resolveContextEngineOwnerPluginId,
   runHarnessContextEngineMaintenance,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
-  buildCodexOpenClawPromptContext,
+  buildCodexNovaPromptContext,
   buildCodexWorkspaceBootstrapContext,
   getCodexWorkspaceMemoryToolNames,
   readMirroredSessionHistoryMessages,
@@ -146,7 +146,7 @@ export async function prepareCodexAttemptContext(
     buildDeveloperInstructions(runtimeParams, { dynamicTools: toolBridge.availableSpecs }),
     workspaceBootstrapContext.developerInstructions,
   );
-  const openClawPromptContext = buildCodexOpenClawPromptContext({
+  const novaPromptContext = buildCodexNovaPromptContext({
     params: runtimeParams,
     workspacePromptContext: workspaceBootstrapContext.promptContext,
   });
@@ -180,7 +180,7 @@ export async function prepareCodexAttemptContext(
     buildActiveContextEngineRuntimeContext,
     workspaceBootstrapContext,
     baseDeveloperInstructions,
-    openClawPromptContext,
+    novaPromptContext,
     skillsCollaborationInstructions,
     promptState,
     codexContextProjectionMaxChars,

@@ -3,7 +3,7 @@ import path from "node:path";
 import { timestampMsToIsoFileStamp } from "@nova/normalization-core/number-coercion";
 import { getRuntimeConfig } from "../../config/config.js";
 import { resolveStateDir } from "../../config/paths.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { MigrationProviderContext } from "../../plugins/types.js";
 import type { RuntimeEnv } from "../../runtime.js";
 
@@ -41,7 +41,7 @@ export function buildMigrationContext(params: {
   overwrite?: boolean;
   providerOptions?: Record<string, unknown>;
   backupPath?: string;
-  configOverride?: OpenClawConfig;
+  configOverride?: NovaConfig;
   runtime: RuntimeEnv;
   reportDir?: string;
   json?: boolean;

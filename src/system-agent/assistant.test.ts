@@ -9,7 +9,7 @@ import type { SystemAgentOverview } from "./overview.js";
 function overview(overrides: Partial<SystemAgentOverview["tools"]> = {}): SystemAgentOverview {
   return {
     config: {
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: false,
       valid: false,
       issues: [],
@@ -30,8 +30,8 @@ function overview(overrides: Partial<SystemAgentOverview["tools"]> = {}): System
       reachable: false,
     },
     references: {
-      docsUrl: "https://docs.openclaw.ai",
-      sourceUrl: "https://github.com/openclaw/openclaw",
+      docsUrl: "https://docs.nova.ai",
+      sourceUrl: "https://github.com/nova/nova",
     },
   };
 }
@@ -65,7 +65,7 @@ describe("Nova assistant", () => {
           apiKeys: { openai: true, anthropic: false },
         }),
         config: {
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           exists: true,
           valid: true,
           issues: [],
@@ -83,10 +83,10 @@ describe("Nova assistant", () => {
         defaultAgentId: "main",
         defaultModel: "openai/gpt-5.5",
         references: {
-          docsPath: "/tmp/openclaw/docs",
-          docsUrl: "https://docs.openclaw.ai",
-          sourcePath: "/tmp/openclaw",
-          sourceUrl: "https://github.com/openclaw/openclaw",
+          docsPath: "/tmp/nova/docs",
+          docsUrl: "https://docs.nova.ai",
+          sourcePath: "/tmp/nova",
+          sourceUrl: "https://github.com/nova/nova",
         },
       },
     });
@@ -95,8 +95,8 @@ describe("Nova assistant", () => {
     expect(prompt).toContain("Default model: openai/gpt-5.5");
     expect(prompt).toContain("id=main, name=Main, workspace=/tmp/main");
     expect(prompt).toContain("OpenAI API key: found");
-    expect(prompt).toContain("Nova docs: /tmp/openclaw/docs");
-    expect(prompt).toContain("Nova source: /tmp/openclaw");
+    expect(prompt).toContain("Nova docs: /tmp/nova/docs");
+    expect(prompt).toContain("Nova source: /tmp/nova");
   });
 
   it("keeps truncated conversation history valid at a UTF-16 boundary", () => {

@@ -1,4 +1,4 @@
-import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
+import { KeyedAsyncQueue } from "nova/plugin-sdk/keyed-async-queue";
 import { MODELS_JSON_STATE } from "./models-config-state.js";
 
 export function resetModelsJsonReadyCacheForTest(): void {

@@ -1,6 +1,6 @@
 // Slack plugin module implements explicit Enterprise Grid installation policy.
-import type { OpenClawConfig, SlackAccountConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaConfig, SlackAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import { resolveDefaultSlackAccountId } from "../accounts.js";
 import { formatSlackError } from "../errors.js";
 
@@ -171,10 +171,7 @@ export function assertEnterpriseSlackDmPolicy(params: {
   );
 }
 
-export function assertNoEnterpriseSlackBindings(params: {
-  cfg: OpenClawConfig;
-  accountId: string;
-}) {
+export function assertNoEnterpriseSlackBindings(params: { cfg: NovaConfig; accountId: string }) {
   const defaultAccountId = resolveDefaultSlackAccountId(params.cfg);
   const configured = params.cfg.bindings?.find((binding) => {
     if (binding.match.channel.trim().toLowerCase() !== "slack") {

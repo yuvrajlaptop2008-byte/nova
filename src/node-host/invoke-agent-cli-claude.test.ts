@@ -34,7 +34,7 @@ function client(calls: Array<{ method: string; params: unknown }>): NodeHostClie
 async function executableScript(source: string): Promise<string> {
   // realpath: macOS tmpdir is a /var -> /private/var symlink and the approval
   // plan canonicalizes argv[0]; raw mkdtemp paths pass on Linux but fail here.
-  const dir = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-claude-")));
+  const dir = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-claude-")));
   tempDirs.push(dir);
   const file = path.join(dir, "claude-test");
   await fs.writeFile(file, `#!/usr/bin/env node\n${source}\n`, { mode: 0o700 });
@@ -68,7 +68,7 @@ describe("Claude CLI node command", () => {
   });
 
   it("accepts bounded Claude resume/fork args and a separate system prompt", async () => {
-    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-claude-cwd-"));
+    const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-claude-cwd-"));
     tempDirs.push(cwd);
     await expect(
       decodeClaudeCliNodeRunParams(
@@ -102,7 +102,7 @@ describe("Claude CLI node command", () => {
       decodeClaudeCliNodeRunParams(
         JSON.stringify({
           argv: ["-p"],
-          cwd: "/definitely/missing/openclaw-node-cwd",
+          cwd: "/definitely/missing/nova-node-cwd",
           idleTimeoutMs: 1_000,
           timeoutMs: 2_000,
         }),
@@ -112,7 +112,7 @@ describe("Claude CLI node command", () => {
       decodeClaudeCliNodeRunParams(
         JSON.stringify({
           argv: ["-p"],
-          env: { [["OPENCLAW", "GATEWAY", "TOKEN"].join("_")]: "" },
+          env: { [["nova", "GATEWAY", "TOKEN"].join("_")]: "" },
           idleTimeoutMs: 1_000,
           timeoutMs: 2_000,
         }),
@@ -306,7 +306,7 @@ writeChunk();`,
   });
 
   it("does not spawn Claude when cancellation wins during approval", async () => {
-    const markerDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-claude-marker-"));
+    const markerDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-claude-marker-"));
     tempDirs.push(markerDir);
     const marker = path.join(markerDir, "spawned");
     const executable = await executableScript(

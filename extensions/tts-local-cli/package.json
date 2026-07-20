@@ -2,12 +2,12 @@
   "name": "@nova/tts-local-cli",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw local CLI TTS plugin",
+  "description": "Nova local CLI TTS plugin",
   "type": "module",
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

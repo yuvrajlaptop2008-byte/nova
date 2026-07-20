@@ -62,14 +62,12 @@ export function resolveDaemonNodeBinDir(nodePath?: string): string[] | undefined
   return [path.dirname(trimmed)];
 }
 
-function isOpenClawCommandBasename(basename: string, platform: NodeJS.Platform): boolean {
-  if (basename === "openclaw") {
+function isNovaCommandBasename(basename: string, platform: NodeJS.Platform): boolean {
+  if (basename === "nova") {
     return true;
   }
   if (platform === "win32") {
-    return (
-      basename === "openclaw.cmd" || basename === "openclaw.ps1" || basename === "openclaw.exe"
-    );
+    return basename === "nova.cmd" || basename === "nova.ps1" || basename === "nova.exe";
   }
   return false;
 }
@@ -96,7 +94,7 @@ function addUniquePathDir(dirs: string[], dir: string | undefined): void {
 }
 
 /** Resolve the Nova CLI binary directory from argv/PATH for daemon PATH. */
-function resolveDaemonOpenClawBinDir(
+function resolveDaemonNovaBinDir(
   params: {
     argv?: string[];
     env?: Record<string, string | undefined>;
@@ -113,11 +111,7 @@ function resolveDaemonOpenClawBinDir(
   const argv1 = argv[1]?.trim();
   const dirs: string[] = [];
 
-  if (
-    argv1 &&
-    path.isAbsolute(argv1) &&
-    isOpenClawCommandBasename(path.basename(argv1), platform)
-  ) {
+  if (argv1 && path.isAbsolute(argv1) && isNovaCommandBasename(path.basename(argv1), platform)) {
     addUniquePathDir(dirs, path.dirname(argv1));
   }
 
@@ -129,7 +123,7 @@ function resolveDaemonOpenClawBinDir(
     if (!path.isAbsolute(segment)) {
       continue;
     }
-    const candidate = path.join(segment, platform === "win32" ? "openclaw.cmd" : "openclaw");
+    const candidate = path.join(segment, platform === "win32" ? "nova.cmd" : "nova");
     if (!existsSync(candidate)) {
       continue;
     }
@@ -154,7 +148,7 @@ export function resolveDaemonServicePathDirs(params: {
   for (const dir of resolveDaemonNodeBinDir(params.nodePath) ?? []) {
     addUniquePathDir(dirs, dir);
   }
-  for (const dir of resolveDaemonOpenClawBinDir(params) ?? []) {
+  for (const dir of resolveDaemonNovaBinDir(params) ?? []) {
     addUniquePathDir(dirs, dir);
   }
   return dirs.length > 0 ? dirs : undefined;

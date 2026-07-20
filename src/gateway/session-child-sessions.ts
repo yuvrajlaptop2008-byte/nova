@@ -3,7 +3,7 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { loadCombinedSessionStoreForGateway } from "../config/sessions/combined-store-gateway.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 // Child-session discovery reads the combined gateway session store and matches
 // both legacy spawnedBy and newer parentSessionKey relationships.
@@ -31,7 +31,7 @@ function isDirectChildSessionEntry(params: {
 
 /** Finds direct child sessions for a parent session across the combined gateway store. */
 export function findDirectChildSessionsForParent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   parentKey: string;
 }): DirectChildSessionEntry[] {
   const { store } = loadCombinedSessionStoreForGateway(params.cfg);

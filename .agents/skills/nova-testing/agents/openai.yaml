@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nova Testing"
+  short_description: "Choose cheap, targeted Nova validation"
+  default_prompt: "Use $nova-testing to choose the cheapest safe test or CI verification path, inspect failures, and rerun only the relevant Nova lane."

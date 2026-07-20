@@ -87,7 +87,7 @@ function runWriteConfig(root: string, env: Record<string, string> = {}) {
     encoding: "utf8",
     env: {
       ...process.env,
-      NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+      NOVA_CONFIG_PATH: path.join(root, "nova.json"),
       NOVA_GATEWAY_TOKEN: "test-token",
       NOVA_OPENAI_CHAT_TOOLS_MODEL: "openai/gpt-5.6-luna",
       NOVA_STATE_DIR: path.join(root, "state"),
@@ -175,7 +175,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
   });
 
   it("fails auth preflight before Docker build work starts", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-openai-chat-tools-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-openai-chat-tools-"));
     try {
       const result = runDockerRunnerAuthPreflight(root);
       const output = `${result.stdout}\n${result.stderr}`;
@@ -191,7 +191,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
   });
 
   it("treats placeholder profile auth as missing before Docker build work starts", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-openai-chat-tools-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-openai-chat-tools-"));
     try {
       const profile = path.join(root, "profile");
       writeFileSync(profile, "OPENAI_API_KEY=undefined\n");
@@ -217,7 +217,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
     "rejects invalid Docker runner %s before auth or Docker build work starts",
     (_label, envName, value) => {
       const tempDirs: string[] = [];
-      const root = makeTempDir(tempDirs, "openclaw-openai-chat-tools-");
+      const root = makeTempDir(tempDirs, "nova-openai-chat-tools-");
       try {
         const result = runDockerRunnerAuthPreflight(root, { [envName]: value });
         const output = `${result.stdout}\n${result.stderr}`;
@@ -273,7 +273,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
   });
 
   it("rejects loose write-config timeout env values", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-openai-chat-tools-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-openai-chat-tools-"));
     try {
       const result = runWriteConfig(root, {
         NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "1e3",
@@ -287,7 +287,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
   });
 
   it("rejects out-of-range write-config gateway ports", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-openai-chat-tools-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-openai-chat-tools-"));
     try {
       const result = runWriteConfig(root, { PORT: "65536" });
 
@@ -299,7 +299,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
   });
 
   it("writes strict positive timeout and port values into generated config", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-openai-chat-tools-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-openai-chat-tools-"));
     try {
       const result = runWriteConfig(root, {
         NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "240",
@@ -307,7 +307,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
       });
 
       expect(result.status).toBe(0);
-      const config = JSON.parse(readFileSync(path.join(root, "openclaw.json"), "utf8"));
+      const config = JSON.parse(readFileSync(path.join(root, "nova.json"), "utf8"));
       expect(config.gateway.port).toBe(19001);
       expect(config.models.providers.openai.timeoutSeconds).toBe(240);
       expect(config.agents.defaults.timeoutSeconds).toBe(240);
@@ -321,7 +321,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
       expect(request.method).toBe("POST");
       expect(request.url).toBe("/v1/chat/completions");
       expect(request.headers.authorization).toBe("Bearer test-token");
-      expect(request.headers["x-openclaw-model"]).toBe("openai/gpt-5.4-mini");
+      expect(request.headers["x-nova-model"]).toBe("openai/gpt-5.4-mini");
       response.writeHead(200, { "content-type": "application/json" });
       response.end(JSON.stringify(toolCallResponse()));
     });

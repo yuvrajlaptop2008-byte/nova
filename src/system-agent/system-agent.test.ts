@@ -1,6 +1,6 @@
 // Nova tests cover main rescue and audit command behavior.
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { SystemAgentInferenceUnavailableError } from "./inference-error.js";
 import type { SystemAgentCommandDeps } from "./operations.js";
 import type { SystemAgentOverview } from "./overview.js";
@@ -20,7 +20,7 @@ const overview: SystemAgentOverview = {
   defaultAgentId: "main",
   defaultModel: "openai/gpt-5.5",
   agents: [{ id: "main", isDefault: true, model: "openai/gpt-5.5" }],
-  config: { path: "/tmp/openclaw.json", exists: true, valid: true, issues: [], hash: null },
+  config: { path: "/tmp/nova.json", exists: true, valid: true, issues: [], hash: null },
   tools: {
     codex: { command: "codex", found: false, error: "not found" },
     claude: { command: "claude", found: false, error: "not found" },
@@ -34,8 +34,8 @@ const overview: SystemAgentOverview = {
     error: "offline",
   },
   references: {
-    docsUrl: "https://docs.openclaw.ai",
-    sourceUrl: "https://github.com/openclaw/openclaw",
+    docsUrl: "https://docs.nova.ai",
+    sourceUrl: "https://github.com/nova/nova",
   },
 };
 
@@ -56,13 +56,13 @@ const verifiedConfig = {
       },
     },
   },
-} satisfies OpenClawConfig;
+} satisfies NovaConfig;
 
-function configSnapshot(config: OpenClawConfig) {
+function configSnapshot(config: NovaConfig) {
   return {
     exists: true,
     valid: true,
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     hash: "h",
     config,
     runtimeConfig: config,
@@ -148,11 +148,11 @@ describe("runSystemAgent", () => {
 
     expect(runGatewayRestartCalls).toBe(0);
     expect(onReadyCalls).toBe(0);
-    expect(lines.join("\n")).toContain("[openclaw] planner: openai/gpt-5.5");
-    expect(lines.join("\n")).toContain("[openclaw] interpreted: restart gateway");
+    expect(lines.join("\n")).toContain("[nova] planner: openai/gpt-5.5");
+    expect(lines.join("\n")).toContain("[nova] interpreted: restart gateway");
     expect(lines.join("\n")).toContain("Plan: restart the Gateway. Say yes to apply.");
     expect(lines.indexOf("Default model: openai/gpt-5.5")).toBeLessThan(
-      lines.findIndex((line) => line.includes("[openclaw] planner:")),
+      lines.findIndex((line) => line.includes("[nova] planner:")),
     );
   });
 
@@ -160,7 +160,7 @@ describe("runSystemAgent", () => {
     const { runtime } = createSystemAgentTestRuntime();
     const changedConfig = {
       agents: { defaults: { model: "anthropic/claude-opus-4-8" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const readConfigFileSnapshot = vi
       .fn()
       .mockResolvedValueOnce(configSnapshot(verifiedConfig))
@@ -190,7 +190,7 @@ describe("runSystemAgent", () => {
     const { runtime } = createSystemAgentTestRuntime();
     const changedConfig = {
       agents: { defaults: { model: "anthropic/claude-opus-4-8" } },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const readConfigFileSnapshot = vi
       .fn()
       .mockResolvedValueOnce(configSnapshot(verifiedConfig))
@@ -304,8 +304,8 @@ describe("runSystemAgent", () => {
     const { runtime, lines } = createSystemAgentTestRuntime();
     const changedConfig = {
       agents: { defaults: { model: "anthropic/claude-opus-4-8" } },
-    } satisfies OpenClawConfig;
-    let currentConfig: OpenClawConfig = verifiedConfig;
+    } satisfies NovaConfig;
+    let currentConfig: NovaConfig = verifiedConfig;
     const verified = await createVerifiedRunOptions({
       readConfigFileSnapshot: vi.fn(async () => configSnapshot(currentConfig)) as never,
     });

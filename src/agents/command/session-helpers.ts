@@ -1,7 +1,7 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import type { ChannelOutboundTargetMode } from "../../channels/plugins/types.public.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   resolveAgentDeliveryPlanWithSessionRoute,
   resolveAgentOutboundTarget,
@@ -63,7 +63,7 @@ type PreparedCurrentRunDelivery = {
 };
 
 export async function prepareCurrentRunDelivery(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   opts: AgentCommandOpts;
   agentId: string;
   currentSessionKey?: string;

@@ -6,7 +6,7 @@
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { replaceSessionEntry } from "../config/sessions/session-accessor.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import { createWarnLogCapture } from "../logging/test-helpers/warn-log-capture.js";
@@ -78,7 +78,7 @@ describe("agent-tools.policy", () => {
 });
 
 describe("resolveGroupToolPolicy group context validation", () => {
-  const cfg: OpenClawConfig = {
+  const cfg: NovaConfig = {
     channels: {
       whatsapp: {
         groups: {
@@ -156,7 +156,7 @@ describe("resolveGroupToolPolicy group context validation", () => {
   });
 
   it("keeps specific session group policy ahead of trusted parent caller groupId", () => {
-    const scopedCfg: OpenClawConfig = {
+    const scopedCfg: NovaConfig = {
       channels: {
         whatsapp: {
           groups: {
@@ -195,7 +195,7 @@ describe("resolveGroupToolPolicy group context validation", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const policy = resolveGroupToolPolicy({
       config: channelCfg,
@@ -211,10 +211,10 @@ describe("resolveGroupToolPolicy group context validation", () => {
 describe("resolveSubagentToolPolicyForSession", () => {
   const baseCfg = {
     agents: { defaults: { subagents: { maxSpawnDepth: 2 } } },
-  } as unknown as OpenClawConfig;
+  } as unknown as NovaConfig;
 
   it("uses stored leaf role for flat depth-1 session keys", async () => {
-    const storePath = createSessionStorePath("openclaw-subagent-policy");
+    const storePath = createSessionStorePath("nova-subagent-policy");
     await writeSessionEntries(storePath, {
       "agent:main:subagent:flat-leaf": {
         sessionId: "flat-leaf",
@@ -229,7 +229,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const policy = resolveSubagentToolPolicyForSession(cfg, "agent:main:subagent:flat-leaf");
     expect(isToolAllowedByPolicyName("sessions_spawn", policy)).toBe(false);
@@ -239,7 +239,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
   });
 
   it("resolves inherited tool denies from stored subagent sessions", async () => {
-    const storePath = createSessionStorePath("openclaw-subagent-inherited-deny");
+    const storePath = createSessionStorePath("nova-subagent-inherited-deny");
     await writeSessionEntries(storePath, {
       "agent:main:subagent:limited": {
         sessionId: "limited-session",
@@ -255,7 +255,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const policy = resolveInheritedToolPolicyForSession(cfg, "agent:main:subagent:limited");
     expect(isToolAllowedByPolicyName("exec", policy)).toBe(false);
@@ -264,7 +264,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
   });
 
   it("resolves inherited tool allows from stored subagent sessions", async () => {
-    const storePath = createSessionStorePath("openclaw-subagent-inherited-allow");
+    const storePath = createSessionStorePath("nova-subagent-inherited-allow");
     await writeSessionEntries(storePath, {
       "agent:main:subagent:limited": {
         sessionId: "limited-session",
@@ -280,7 +280,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const policy = resolveInheritedToolPolicyForSession(cfg, "agent:main:subagent:limited");
     expect(isToolAllowedByPolicyName("sessions_spawn", policy)).toBe(true);
@@ -290,7 +290,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
   });
 
   it("keeps configured plugin allows separate from inherited tool allows", async () => {
-    const storePath = createSessionStorePath("openclaw-subagent-inherited-allow-separate");
+    const storePath = createSessionStorePath("nova-subagent-inherited-allow-separate");
     await writeSessionEntries(storePath, {
       "agent:main:subagent:limited": {
         sessionId: "limited-session",
@@ -313,7 +313,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const subagentPolicy = resolveSubagentToolPolicyForSession(cfg, "agent:main:subagent:limited");
     const inheritedPolicy = resolveInheritedToolPolicyForSession(
@@ -325,7 +325,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
   });
 
   it("applies inherited tool policy from stored ACP sessions without subagent metadata", async () => {
-    const storePath = createSessionStorePath("openclaw-acp-inherited-deny");
+    const storePath = createSessionStorePath("nova-acp-inherited-deny");
     await writeSessionEntries(storePath, {
       "agent:main:acp:limited": {
         sessionId: "limited-acp-session",
@@ -339,7 +339,7 @@ describe("resolveSubagentToolPolicyForSession", () => {
       session: {
         store: storePath,
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const policy = resolveInheritedToolPolicyForSession(cfg, "agent:main:acp:limited");
     expect(isToolAllowedByPolicyName("custom_plugin_tool", policy)).toBe(true);
@@ -357,7 +357,7 @@ describe("resolveEffectiveToolPolicy", () => {
           "openrouter/anthropic/claude-sonnet": { deny: ["read"] },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveEffectiveToolPolicy({
@@ -375,7 +375,7 @@ describe("resolveEffectiveToolPolicy", () => {
           "anthropic/claude-sonnet": { deny: ["exec"] },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       resolveEffectiveToolPolicy({
@@ -392,7 +392,7 @@ describe("resolveEffectiveToolPolicy", () => {
         profile: "messaging",
         exec: { host: "sandbox" },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toBeUndefined();
   });
@@ -403,7 +403,7 @@ describe("resolveEffectiveToolPolicy", () => {
         profile: "messaging",
         fs: { workspaceOnly: false },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toBeUndefined();
   });
@@ -415,7 +415,7 @@ describe("resolveEffectiveToolPolicy", () => {
         alsoAllow: ["web_search"],
         exec: { host: "sandbox" },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toEqual(["web_search"]);
   });
@@ -435,7 +435,7 @@ describe("resolveEffectiveToolPolicy", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg, agentId: "coder" });
     expect(result.profileAlsoAllow).toBeUndefined();
   });
@@ -456,7 +456,7 @@ describe("resolveEffectiveToolPolicy", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg, agentId: "messenger" });
     expect(result.profileAlsoAllow).toEqual(["image"]);
     expect(result.profileAlsoAllow).not.toContain("exec");
@@ -464,7 +464,7 @@ describe("resolveEffectiveToolPolicy", () => {
   });
 
   it("does not warn an agent profile about inherited global tool sections (#47487)", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-agent-tools-policy-test");
+    const warnLogs = createWarnLogCapture("nova-agent-tools-policy-test");
     try {
       const cfg = {
         tools: {
@@ -482,7 +482,7 @@ describe("resolveEffectiveToolPolicy", () => {
             },
           ],
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       resolveEffectiveToolPolicy({ config: cfg, agentId: "sage" });
 
@@ -493,7 +493,7 @@ describe("resolveEffectiveToolPolicy", () => {
   });
 
   it("still warns when an agent profile has its own configured exec section (#47487)", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-agent-tools-policy-test");
+    const warnLogs = createWarnLogCapture("nova-agent-tools-policy-test");
     try {
       const cfg = {
         agents: {
@@ -507,7 +507,7 @@ describe("resolveEffectiveToolPolicy", () => {
             },
           ],
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       resolveEffectiveToolPolicy({ config: cfg, agentId: "sage" });
 
@@ -521,7 +521,7 @@ describe("resolveEffectiveToolPolicy", () => {
   });
 
   it("only lists configured sections whose grants are still missing (#47487)", async () => {
-    const warnLogs = createWarnLogCapture("openclaw-agent-tools-policy-test");
+    const warnLogs = createWarnLogCapture("nova-agent-tools-policy-test");
     try {
       const cfg = {
         agents: {
@@ -537,7 +537,7 @@ describe("resolveEffectiveToolPolicy", () => {
             },
           ],
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       resolveEffectiveToolPolicy({ config: cfg, agentId: "echo" });
 
@@ -561,7 +561,7 @@ describe("resolveEffectiveToolPolicy", () => {
         alsoAllow: ["exec", "process"],
         exec: { host: "sandbox" },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = resolveEffectiveToolPolicy({ config: cfg });
     expect(result.profileAlsoAllow).toEqual(["exec", "process"]);
   });

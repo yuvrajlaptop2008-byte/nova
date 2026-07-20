@@ -124,7 +124,7 @@ vi.mock("../plugins/plugin-registry.js", () => ({
 }));
 
 vi.mock("../plugins/manifest-metadata-scan.js", () => ({
-  listOpenClawPluginManifestMetadata: () =>
+  listNovaPluginManifestMetadata: () =>
     providerEndpointPlugins.map((manifest, index) => ({
       pluginDir: `provider-endpoint-fixture-${index}`,
       manifest,
@@ -194,7 +194,7 @@ describe("provider attribution", () => {
       product: "Nova",
       version: "2026.3.22",
       headers: {
-        "HTTP-Referer": "https://openclaw.ai",
+        "HTTP-Referer": "https://nova.ai",
         "X-OpenRouter-Title": "Nova",
         "X-OpenRouter-Categories":
           "cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent",
@@ -239,7 +239,7 @@ describe("provider attribution", () => {
       product: "Nova",
       version: "2026.3.22",
       headers: {
-        "x-goog-api-client": "openclaw/2026.3.22",
+        "x-goog-api-client": "nova/2026.3.22",
       },
     });
   });
@@ -250,7 +250,7 @@ describe("provider attribution", () => {
         NOVA_VERSION: "2026.3.22",
       })?.headers,
     ).toEqual({
-      "HTTP-Referer": "https://openclaw.ai",
+      "HTTP-Referer": "https://nova.ai",
       "X-OpenRouter-Title": "Nova",
       "X-OpenRouter-Categories":
         "cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent",
@@ -268,17 +268,17 @@ describe("provider attribution", () => {
       product: "Nova",
       version: "2026.3.22",
       headers: {
-        originator: "openclaw",
+        originator: "nova",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "nova/2026.3.22",
       },
     });
     expect(
       resolveProviderAttributionPolicy("openai", { NOVA_VERSION: "2026.3.22" })?.headers,
     ).toEqual({
-      originator: "openclaw",
+      originator: "nova",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "nova/2026.3.22",
     });
   });
 
@@ -293,9 +293,9 @@ describe("provider attribution", () => {
       product: "Nova",
       version: "2026.3.22",
       headers: {
-        originator: "openclaw",
+        originator: "nova",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "nova/2026.3.22",
       },
     });
   });
@@ -307,20 +307,20 @@ describe("provider attribution", () => {
       verification: "vendor-hidden-api-spec",
       hook: "request-headers",
       reviewNote:
-        "xAI api.x.ai accepts a standard openclaw User-Agent. Companion originator/version headers mirror the OpenAI attribution shape for consistency; they are not validated against an xAI-specific spec and are expected to be ignored by xAI's OpenAI-compatible surface.",
+        "xAI api.x.ai accepts a standard nova User-Agent. Companion originator/version headers mirror the OpenAI attribution shape for consistency; they are not validated against an xAI-specific spec and are expected to be ignored by xAI's OpenAI-compatible surface.",
       product: "Nova",
       version: "2026.3.22",
       headers: {
-        originator: "openclaw",
+        originator: "nova",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "nova/2026.3.22",
       },
     });
     expect(resolveProviderAttributionPolicy("xai", { NOVA_VERSION: "2026.3.22" })?.headers).toEqual(
       {
-        originator: "openclaw",
+        originator: "nova",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "nova/2026.3.22",
       },
     );
   });
@@ -377,9 +377,9 @@ describe("provider attribution", () => {
         { NOVA_VERSION: "2026.3.22" },
       ).attributionHeaders,
     ).toEqual({
-      originator: "openclaw",
+      originator: "nova",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "nova/2026.3.22",
     });
 
     expectRecordFields(
@@ -723,7 +723,7 @@ describe("provider attribution", () => {
         { NOVA_VERSION: "2026.3.22" },
       ).attributionHeaders,
     ).toEqual({
-      "x-goog-api-client": "openclaw/2026.3.22",
+      "x-goog-api-client": "nova/2026.3.22",
     });
 
     expect(

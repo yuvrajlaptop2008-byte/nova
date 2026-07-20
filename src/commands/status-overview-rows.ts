@@ -1,4 +1,4 @@
-// Builds overview table rows for `openclaw status` and `openclaw status --all`.
+// Builds overview table rows for `nova status` and `nova status --all`.
 // The row builders combine scan surfaces with health/session summaries while keeping rendering elsewhere.
 
 import { formatCliCommand } from "../cli/command-format.js";
@@ -70,7 +70,7 @@ function buildModelPricingOverviewValue(params: {
   return params.warn(`warning · optional pricing refresh degraded${detail}`);
 }
 
-/** Builds the default `openclaw status` overview rows from scan, health, memory, and session inputs. */
+/** Builds the default `nova status` overview rows from scan, health, memory, and session inputs. */
 export function buildStatusCommandOverviewRows(
   params: {
     opts: {
@@ -239,7 +239,7 @@ export function buildStatusAllOverviewRows(params: {
       ...(params.updateRestartValue
         ? [{ Item: "Update restart", Value: params.updateRestartValue }]
         : []),
-      { Item: "Security", Value: `Run: ${formatCliCommand("openclaw security audit --deep")}` },
+      { Item: "Security", Value: `Run: ${formatCliCommand("nova security audit --deep")}` },
     ],
     agentsValue: buildStatusAllAgentsValue({
       agentStatus: params.agentStatus,

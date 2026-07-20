@@ -9,7 +9,7 @@ import { hasOperatorAdminAccess } from "../../app/operator-access.ts";
 import { renderSettingsWorkspace } from "../../components/settings-workspace.ts";
 import { t } from "../../i18n/index.ts";
 import { isGatewayMethodAdvertised } from "../../lib/gateway-methods.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import {
   buildModelProviderCards,
@@ -82,7 +82,7 @@ function mergeProbeResults(cardId: string, results: ModelsProbeResult[]): Models
   };
 }
 
-export class ModelProvidersPage extends OpenClawLightDomElement {
+export class ModelProvidersPage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -596,6 +596,6 @@ export class ModelProvidersPage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-model-providers-page")) {
-  customElements.define("openclaw-model-providers-page", ModelProvidersPage);
+if (!customElements.get("nova-model-providers-page")) {
+  customElements.define("nova-model-providers-page", ModelProvidersPage);
 }

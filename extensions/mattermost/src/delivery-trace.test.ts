@@ -14,16 +14,16 @@ import {
   type DeliveryTraceInStep,
   type DeliveryTraceScenarioName,
   type WireRecorder,
-} from "openclaw/plugin-sdk/channel-contract-testing";
-import type { OpenClawConfig, PluginRuntime } from "openclaw/plugin-sdk/core";
-import { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
+} from "nova/plugin-sdk/channel-contract-testing";
+import type { NovaConfig, PluginRuntime } from "nova/plugin-sdk/core";
+import { resolveMarkdownTableMode } from "nova/plugin-sdk/markdown-table-runtime";
 import {
   chunkMarkdownTextWithMode,
   resolveChunkMode,
   resolveTextChunkLimit,
-} from "openclaw/plugin-sdk/reply-chunking";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import { convertMarkdownTables } from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/reply-chunking";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-runtime";
+import { convertMarkdownTables } from "nova/plugin-sdk/text-chunking";
 import { describe, it, vi } from "vitest";
 import { createMattermostPost, type MattermostClient } from "./mattermost/client.js";
 import {
@@ -40,7 +40,7 @@ const ACCOUNT_ID = "main";
 // Matches the monitor's draft stream wiring (throttleMs: 1200).
 const DRAFT_THROTTLE_MS = 1200;
 
-const cfg = {} as OpenClawConfig;
+const cfg = {} as NovaConfig;
 const tableMode = resolveMarkdownTableMode({ cfg, channel: "mattermost" });
 const chunkMode = resolveChunkMode(cfg, "mattermost", ACCOUNT_ID);
 const textLimit = resolveTextChunkLimit(cfg, "mattermost", ACCOUNT_ID, { fallbackLimit: 4000 });

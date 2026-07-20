@@ -157,7 +157,7 @@ flow:
             expr: "recoveryRequests.some((request) => String(request.allInputText ?? '').includes('Your previous turn was interrupted by a gateway restart'))"
             message: restart recovery prompt did not reach the provider
         - assert:
-            expr: "recoveryRequests.every((request) => !String(request.allInputText ?? '').includes('[OpenClaw heartbeat poll]'))"
+            expr: "recoveryRequests.every((request) => !String(request.allInputText ?? '').includes('[Nova heartbeat poll]'))"
             message: heartbeat poll raced the restart recovery proof
         - set: recoveryLogs
           value:

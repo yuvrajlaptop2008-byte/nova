@@ -11,7 +11,7 @@ import {
   type AgentAvatarResolution,
   resolvePublicAgentAvatarSource,
 } from "../agents/identity-avatar.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { matchRootFileOpenFailure, openRootFileSync } from "../infra/boundary-file-read.js";
 import { readFileDescriptorBounded } from "../infra/boundary-file-read.js";
 import {
@@ -87,7 +87,7 @@ import { resolveRequestClientIp } from "./net.js";
 import { resolveSharedGatewaySessionGeneration } from "./server/ws-shared-generation.js";
 
 const ROOT_PREFIX = "/";
-const CONTROL_UI_ASSISTANT_MEDIA_PREFIX = "/__openclaw__/assistant-media";
+const CONTROL_UI_ASSISTANT_MEDIA_PREFIX = "/__nova__/assistant-media";
 const CONTROL_UI_ASSISTANT_MEDIA_TICKET_SCOPE = "assistant-media";
 const CONTROL_UI_ASSISTANT_MEDIA_TICKET_TTL_MS = 5 * 60 * 1000;
 const CONTROL_UI_ASSETS_MISSING_MESSAGE =
@@ -98,7 +98,7 @@ const controlUiAssistantMediaTicketSecret = randomBytes(32);
 
 type ControlUiRequestOptions = {
   basePath?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   terminalEnabled?: boolean;
   agentId?: string;
   root?: ControlUiRootState;
@@ -114,7 +114,7 @@ export type ControlUiRootState =
   | { kind: "invalid"; path: string }
   | { kind: "missing" };
 
-const CONTROL_UI_NAMESPACE_PREFIX = "/__openclaw__/";
+const CONTROL_UI_NAMESPACE_PREFIX = "/__nova__/";
 const CONTROL_UI_ROOT_PUBLIC_ASSETS = new Set([
   "apple-touch-icon.png",
   "favicon-32.png",
@@ -551,7 +551,7 @@ export async function handleControlUiAssistantMediaRequest(
   res: ServerResponse,
   opts?: {
     basePath?: string;
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     agentId?: string;
     auth?: ResolvedGatewayAuth;
     trustedProxies?: string[];
@@ -671,7 +671,7 @@ export async function handleControlUiAvatarRequest(
   res: ServerResponse,
   opts: {
     basePath?: string;
-    config: OpenClawConfig;
+    config: NovaConfig;
     auth?: ResolvedGatewayAuth;
     trustedProxies?: string[];
     allowRealIpFallback?: boolean;
@@ -845,25 +845,25 @@ function isSafeRelativePath(relPath: string) {
 
 // Path served by the gateway under the default Control UI namespace when no
 // `gateway.controlUi.basePath` is configured. The SPA is mounted at
-// `/__openclaw__/`, so a browser that opens the default entry infers
-// `/__openclaw__` as its base path (see `inferBasePathFromPathname`) and fetches
-// `/__openclaw__/control-ui-config.json`. Accept that namespaced alias so the
+// `/__nova__/`, so a browser that opens the default entry infers
+// `/__nova__` as its base path (see `inferBasePathFromPathname`) and fetches
+// `/__nova__/control-ui-config.json`. Accept that namespaced alias so the
 // default entry resolves its bootstrap config instead of 404ing.
 const CONTROL_UI_DEFAULT_NAMESPACE_BOOTSTRAP_CONFIG_PATH = `${CONTROL_UI_NAMESPACE_PREFIX.replace(
   /\/$/,
   "",
 )}${CONTROL_UI_BOOTSTRAP_CONFIG_PATH}`;
 
-// Single-underscore `/__openclaw` prefix used by the pre-base-path-relative
+// Single-underscore `/__nova` prefix used by the pre-base-path-relative
 // bootstrap endpoint. Before #66946 made the config path base-path-relative,
 // `CONTROL_UI_BOOTSTRAP_CONFIG_PATH` was hard-coded to
-// `/__openclaw/control-ui-config.json`, so current main and the v2026.6.1
+// `/__nova/control-ui-config.json`, so current main and the v2026.6.1
 // release serve and document that exact path under an empty base path.
-const LEGACY_CONTROL_UI_NAMESPACE_PREFIX = "/__openclaw";
+const LEGACY_CONTROL_UI_NAMESPACE_PREFIX = "/__nova";
 
 // The old documented no-base-path bootstrap endpoint
-// (`/__openclaw/control-ui-config.json`, single underscore). It is derived from
-// the legacy `/__openclaw` namespace joined with the canonical config constant
+// (`/__nova/control-ui-config.json`, single underscore). It is derived from
+// the legacy `/__nova` namespace joined with the canonical config constant
 // so it tracks any rename of the config filename. Kept as an empty-base-path
 // compatibility alias so older bundles and clients that fetch the previously
 // documented endpoint keep receiving config after upgrading instead of 404ing.
@@ -875,19 +875,19 @@ const LEGACY_BOOTSTRAP_CONFIG_PATH = `${LEGACY_CONTROL_UI_NAMESPACE_PREFIX}${CON
  * The canonical endpoint is the configured base path joined with the shared
  * bootstrap constant (or the bare constant when no base path is configured).
  * For every base path (configured or empty) we additionally accept the legacy
- * single-underscore suffix `${basePath}/__openclaw/control-ui-config.json` that
+ * single-underscore suffix `${basePath}/__nova/control-ui-config.json` that
  * current main and v2026.6.1 serve and document, so older bundles and clients
  * that still request the pre-#66946 endpoint keep receiving config after an
  * upgrade instead of 404ing. When no base path is configured we further accept
- * the default-namespace alias `/__openclaw__/control-ui-config.json`, which is
- * what the default `/__openclaw__/` entry requests after inferring its base path
+ * the default-namespace alias `/__nova__/control-ui-config.json`, which is
+ * what the default `/__nova__/` entry requests after inferring its base path
  * from the URL. All compatibility endpoints are preserved; no path is removed.
  */
 function matchesControlUiBootstrapConfigPath(pathname: string, basePath: string): boolean {
   // Canonical and legacy suffixes apply under both an empty and a configured
   // base path. `LEGACY_BOOTSTRAP_CONFIG_PATH` already starts with the legacy
-  // `/__openclaw` namespace, so joining it with the base path yields
-  // `${basePath}/__openclaw/control-ui-config.json` (or the bare legacy path
+  // `/__nova` namespace, so joining it with the base path yields
+  // `${basePath}/__nova/control-ui-config.json` (or the bare legacy path
   // when no base path is configured).
   if (
     pathname === `${basePath}${CONTROL_UI_BOOTSTRAP_CONFIG_PATH}` ||
@@ -895,7 +895,7 @@ function matchesControlUiBootstrapConfigPath(pathname: string, basePath: string)
   ) {
     return true;
   }
-  // The default `/__openclaw__/` namespace alias only applies when no base path
+  // The default `/__nova__/` namespace alias only applies when no base path
   // is configured; with a configured base path the canonical endpoint already
   // lives under that base path and this inferred alias does not apply.
   return basePath === "" && pathname === CONTROL_UI_DEFAULT_NAMESPACE_BOOTSTRAP_CONFIG_PATH;

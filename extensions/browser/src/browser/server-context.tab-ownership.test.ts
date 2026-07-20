@@ -65,14 +65,12 @@ describe("browser tab ownership probes", () => {
       throw new Error(`unexpected fetch: ${value}`);
     });
     global.fetch = withBrowserFetchPreconnect(fetchMock);
-    const state = makeState("openclaw");
-    const openclaw = createTestBrowserRouteContext({ getState: () => state }).forProfile(
-      "openclaw",
-    );
+    const state = makeState("nova");
+    const nova = createTestBrowserRouteContext({ getState: () => state }).forProfile("nova");
     const controller = new AbortController();
     const abortError = new Error("caller aborted managed ownership probe");
 
-    const opening = openclaw.openTab("http://127.0.0.1:8080", {
+    const opening = nova.openTab("http://127.0.0.1:8080", {
       signal: controller.signal,
     });
     await probeStarted;

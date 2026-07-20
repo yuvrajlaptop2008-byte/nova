@@ -172,8 +172,8 @@ describe("collectDiskSpaceHealthFindings", () => {
       expect.objectContaining({
         checkId: "core/doctor/disk-space",
         severity: "warning",
-        message: "Low disk space: 300 MB free on the partition containing /home/test/.openclaw.",
-        path: "/home/test/.openclaw",
+        message: "Low disk space: 300 MB free on the partition containing /home/test/.nova.",
+        path: "/home/test/.nova",
         target: "300 MB",
         requirement: "low-free-space",
         fixHint: expect.stringContaining("prevent future config/session write failures"),
@@ -191,8 +191,8 @@ describe("collectDiskSpaceHealthFindings", () => {
       expect.objectContaining({
         checkId: "core/doctor/disk-space",
         severity: "warning",
-        message: "CRITICAL: only 50 MB free on the partition containing /home/test/.openclaw.",
-        path: "/home/test/.openclaw",
+        message: "CRITICAL: only 50 MB free on the partition containing /home/test/.nova.",
+        path: "/home/test/.nova",
         target: "50 MB",
         requirement: "critical-free-space",
         fixHint: expect.stringContaining("avoid data loss"),

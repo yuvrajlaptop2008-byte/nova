@@ -69,7 +69,7 @@ export class WorktreeSnapshotError extends Error {
     this.snapshotError = snapshotError;
   }
 }
-const SNAPSHOT_REF_PREFIX = "refs/openclaw/snapshots";
+const SNAPSHOT_REF_PREFIX = "refs/nova/snapshots";
 const log = createSubsystemLogger("agents/worktrees");
 
 type ServiceOptions = {
@@ -204,7 +204,7 @@ async function canResetFailedWorktreeAdd(
 }
 
 async function runSetupScript(repoRoot: string, worktreePath: string): Promise<void> {
-  const setupScript = path.join(repoRoot, ".openclaw", "worktree-setup.sh");
+  const setupScript = path.join(repoRoot, ".nova", "worktree-setup.sh");
   const stat = await fs.stat(setupScript).catch(() => undefined);
   if (!stat?.isFile() || (stat.mode & 0o111) === 0) {
     return;
@@ -331,15 +331,15 @@ async function snapshotWorktree(
   reason: string,
   provisionedPaths: readonly string[],
 ): Promise<string> {
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-worktree-index-"));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-worktree-index-"));
   const indexPath = path.join(tempDir, "index");
   const snapshotRef = `${SNAPSHOT_REF_PREFIX}/${record.id}`;
   const env: NodeJS.ProcessEnv = {
     GIT_INDEX_FILE: indexPath,
     GIT_AUTHOR_NAME: "Nova",
-    GIT_AUTHOR_EMAIL: "openclaw@localhost",
+    GIT_AUTHOR_EMAIL: "nova@localhost",
     GIT_COMMITTER_NAME: "Nova",
-    GIT_COMMITTER_EMAIL: "openclaw@localhost",
+    GIT_COMMITTER_EMAIL: "nova@localhost",
     ...(process.platform === "win32"
       ? {}
       : {
@@ -486,7 +486,7 @@ export class ManagedWorktreeService {
       }
       return await this.restore({ id: existing.id });
     }
-    const branch = `openclaw/${name}`;
+    const branch = `nova/${name}`;
     const branchExists = await runGit(repository.repoRoot, [
       "show-ref",
       "--quiet",

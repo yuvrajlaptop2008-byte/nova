@@ -4,15 +4,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { clearRuntimeAuthProfileStoreSnapshots } from "../agents/auth-profiles/store.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import { maybeRepairLegacyOAuthSidecarProfiles } from "./doctor-auth-oauth-sidecar.js";
 import { testing } from "./doctor-auth-oauth-sidecar.test-support.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
 
-const states: OpenClawTestState[] = [];
+const states: NovaTestState[] = [];
 
 function makePrompter(shouldRepair: boolean): DoctorPrompter {
   return {
@@ -33,10 +30,10 @@ function makePrompter(shouldRepair: boolean): DoctorPrompter {
   };
 }
 
-async function makeTestState(seed = "legacy-oauth-seed"): Promise<OpenClawTestState> {
-  const state = await createOpenClawTestState({
+async function makeTestState(seed = "legacy-oauth-seed"): Promise<NovaTestState> {
+  const state = await createNovaTestState({
     layout: "state-only",
-    prefix: "openclaw-doctor-oauth-sidecar-",
+    prefix: "nova-doctor-oauth-sidecar-",
     env: {
       NOVA_AGENT_DIR: undefined,
       NOVA_AUTH_PROFILE_SECRET_KEY: seed,
@@ -47,7 +44,7 @@ async function makeTestState(seed = "legacy-oauth-seed"): Promise<OpenClawTestSt
 }
 
 function writeLegacyAuthProfiles(
-  state: OpenClawTestState,
+  state: NovaTestState,
   store: unknown,
   agentId = "main",
 ): Promise<string> {
@@ -55,7 +52,7 @@ function writeLegacyAuthProfiles(
 }
 
 function encryptLegacySidecarMaterial(params: {
-  ref: { source: "openclaw-credentials"; provider: "openai-codex"; id: string };
+  ref: { source: "nova-credentials"; provider: "openai-codex"; id: string };
   profileId: string;
   provider: string;
   seed: string;
@@ -95,7 +92,7 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
     const state = await makeTestState(seed);
     const profileId = "openai-codex:default";
     const ref = {
-      source: "openclaw-credentials" as const,
+      source: "nova-credentials" as const,
       provider: "openai-codex" as const,
       id: "0123456789abcdef0123456789abcdef",
     };
@@ -186,7 +183,7 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
           type: "oauth",
           provider: "openai-codex",
           oauthRef: {
-            source: "openclaw-credentials",
+            source: "nova-credentials",
             provider: "openai-codex",
             id: "fedcba9876543210fedcba9876543210",
           },
@@ -210,7 +207,7 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
     const state = await makeTestState("wrong-seed");
     const profileId = "openai-codex:default";
     const ref = {
-      source: "openclaw-credentials" as const,
+      source: "nova-credentials" as const,
       provider: "openai-codex" as const,
       id: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     };
@@ -289,7 +286,7 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
     async () => {
       const state = await makeTestState();
       const ref = {
-        source: "openclaw-credentials" as const,
+        source: "nova-credentials" as const,
         provider: "openai-codex" as const,
         id: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       };
@@ -362,7 +359,7 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
     const authPath = path.join(agentDir, "auth-profiles.json");
     const profileId = "openai-codex:external";
     const ref = {
-      source: "openclaw-credentials" as const,
+      source: "nova-credentials" as const,
       provider: "openai-codex" as const,
       id: "dddddddddddddddddddddddddddddddd",
     };
@@ -428,7 +425,7 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
     const state = await makeTestState(seed);
     const profileId = "openai-codex:default";
     const ref = {
-      source: "openclaw-credentials" as const,
+      source: "nova-credentials" as const,
       provider: "openai-codex" as const,
       id: "cccccccccccccccccccccccccccccccc",
     };

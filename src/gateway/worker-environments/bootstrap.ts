@@ -23,7 +23,7 @@ import {
   workerSshRemoteCommand,
 } from "./ssh.js";
 
-const BOOTSTRAP_ROOT = ".openclaw-worker";
+const BOOTSTRAP_ROOT = ".nova-worker";
 const BOOTSTRAP_RECEIPT = "bootstrap-receipt.json";
 const DEFAULT_BOOTSTRAP_TIMEOUT_MS = 10 * 60_000;
 const NODE_MISSING_EXIT_CODE = 42;
@@ -54,7 +54,7 @@ try {
   const actual = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
   const expected = JSON.parse(process.argv[2]);
   const shapeMatches =
-    Object.keys(actual).sort().join(",") === "bundleHash,openclawVersion,protocolFeatures";
+    Object.keys(actual).sort().join(",") === "bundleHash,novaVersion,protocolFeatures";
   const featuresMatch =
     Array.isArray(actual.protocolFeatures) &&
     Array.isArray(expected.protocolFeatures) &&
@@ -63,7 +63,7 @@ try {
   process.exit(
     shapeMatches &&
       actual.bundleHash === expected.bundleHash &&
-      actual.openclawVersion === expected.openclawVersion &&
+      actual.novaVersion === expected.novaVersion &&
       featuresMatch
       ? 0
       : 1,
@@ -140,7 +140,7 @@ function addFile(relative) {
     fail("unsafe worker file: " + relative);
   }
   const contents = fs.readFileSync(absolute);
-  const mode = relative === "openclaw.mjs" || (stats.mode & 0o111) !== 0 ? 0o700 : 0o600;
+  const mode = relative === "nova.mjs" || (stats.mode & 0o111) !== 0 ? 0o700 : 0o600;
   fs.chmodSync(absolute, mode);
   entries.push({
     path: relative,
@@ -194,7 +194,7 @@ function readNpmInventory() {
 }
 try {
   assertRoot();
-  addFile("openclaw.mjs");
+  addFile("nova.mjs");
   addFile("package.json");
   if (install === "npm") {
     readNpmInventory();
@@ -276,8 +276,8 @@ fi
 incoming=$root/.incoming
 ensure_private_directory "$incoming"
 incoming=$(cd "$incoming" && pwd -P)
-find "$incoming" -type f -name 'openclaw-upload-*.tgz.*' -mmin +60 -exec rm -f -- {} + 2>/dev/null || true
-upload=$(mktemp "$incoming/openclaw-upload-$hash.tgz.XXXXXXXX")
+find "$incoming" -type f -name 'nova-upload-*.tgz.*' -mmin +60 -exec rm -f -- {} + 2>/dev/null || true
+upload=$(mktemp "$incoming/nova-upload-$hash.tgz.XXXXXXXX")
 printf '%s\t%s\t%s\n' '${BOOTSTRAP_OUTPUT_TAG}' install "$upload"
 `;
 
@@ -455,8 +455,8 @@ case "$install" in
       exit 2
     fi
     npm install --global --prefix "$npm_prefix" --ignore-scripts --omit=dev --no-audit --no-fund "$package_archive"
-    package_dir=$npm_prefix/lib/node_modules/openclaw
-    if [ ! -f "$package_dir/openclaw.mjs" ]; then
+    package_dir=$npm_prefix/lib/node_modules/nova
+    if [ ! -f "$package_dir/nova.mjs" ]; then
       printf '%s\n' 'npm did not install the Nova package root' >&2
       exit 2
     fi
@@ -516,12 +516,12 @@ type WorkerBootstrapDependencies = {
 
 function normalizeHandshake(artifact: WorkerInstallationArtifact): WorkerAdmissionHandshake {
   const bundleHash = artifact.bundleHash.trim();
-  const openclawVersion = artifact.openclawVersion.trim();
+  const novaVersion = artifact.novaVersion.trim();
   const protocolFeatures = artifact.protocolFeatures.map((feature) => feature.trim());
   if (!BUNDLE_HASH_PATTERN.test(bundleHash)) {
     throw new Error("Worker bundle hash must be a lowercase SHA-256 digest");
   }
-  if (!openclawVersion) {
+  if (!novaVersion) {
     throw new Error("Worker Nova version must be non-empty");
   }
   if (
@@ -533,11 +533,8 @@ function normalizeHandshake(artifact: WorkerInstallationArtifact): WorkerAdmissi
     throw new Error("Worker protocol features must be unique non-empty strings");
   }
   if (artifact.install === "npm") {
-    if (
-      !isExactSemverVersion(openclawVersion) ||
-      artifact.packageSpec !== `openclaw@${openclawVersion}`
-    ) {
-      throw new Error(`Worker npm install must use exact package openclaw@${openclawVersion}`);
+    if (!isExactSemverVersion(novaVersion) || artifact.packageSpec !== `nova@${novaVersion}`) {
+      throw new Error(`Worker npm install must use exact package nova@${novaVersion}`);
     }
     if (!NPM_INTEGRITY_PATTERN.test(artifact.packageIntegrity)) {
       throw new Error("Worker npm install requires a pinned SHA-512 package integrity");
@@ -545,7 +542,7 @@ function normalizeHandshake(artifact: WorkerInstallationArtifact): WorkerAdmissi
   } else if (!BUNDLE_HASH_PATTERN.test(artifact.tarballSha256)) {
     throw new Error("Worker bundle archive digest must be a lowercase SHA-256 digest");
   }
-  return { bundleHash, openclawVersion, protocolFeatures };
+  return { bundleHash, novaVersion, protocolFeatures };
 }
 
 function parseReceiptJson(
@@ -563,7 +560,7 @@ function parseReceiptJson(
   }
   if (
     parsed.bundleHash !== expected.bundleHash ||
-    parsed.openclawVersion !== expected.openclawVersion ||
+    parsed.novaVersion !== expected.novaVersion ||
     parsed.protocolFeatures.length !== expected.protocolFeatures.length ||
     parsed.protocolFeatures.some((feature, index) => feature !== expected.protocolFeatures[index])
   ) {
@@ -700,7 +697,7 @@ export async function bootstrapWorker(
     ssh: request.ssh,
     pinnedHostKey: request.pinnedHostKey,
     resolveIdentity: dependencies.resolveIdentity,
-    temporaryDirectoryPrefix: "openclaw-worker-bootstrap-",
+    temporaryDirectoryPrefix: "nova-worker-bootstrap-",
   });
   try {
     const preflight = parsePreflight(

@@ -1,6 +1,6 @@
 /** Tests bundle-MCP resume hash stability across loopback endpoint changes. */
 import { describe, expect, it } from "vitest";
-import { buildSystemAgentToolsMcpServerConfig } from "../../mcp/openclaw-tools-serve-config.js";
+import { buildSystemAgentToolsMcpServerConfig } from "../../mcp/nova-tools-serve-config.js";
 import { resolveCliSessionReuse } from "../cli-session.js";
 import { prepareCliBundleMcpConfig } from "./bundle-mcp.js";
 import {
@@ -18,7 +18,7 @@ describe("prepareCliBundleMcpConfig resume hash", () => {
     const first = await prepareBundleProbeCliConfig({
       additionalConfig: {
         mcpServers: {
-          openclaw: {
+          nova: {
             type: "http",
             url: "http://127.0.0.1:23119/mcp",
             headers: {
@@ -31,7 +31,7 @@ describe("prepareCliBundleMcpConfig resume hash", () => {
     const second = await prepareBundleProbeCliConfig({
       additionalConfig: {
         mcpServers: {
-          openclaw: {
+          nova: {
             type: "http",
             url: "http://127.0.0.1:24567/mcp",
             headers: {
@@ -53,7 +53,7 @@ describe("prepareCliBundleMcpConfig resume hash", () => {
     const first = await prepareBundleProbeCliConfig({
       additionalConfig: {
         mcpServers: {
-          openclaw: {
+          nova: {
             type: "http",
             url: "http://127.0.0.1:23119/mcp",
             headers: {
@@ -66,7 +66,7 @@ describe("prepareCliBundleMcpConfig resume hash", () => {
     const second = await prepareBundleProbeCliConfig({
       additionalConfig: {
         mcpServers: {
-          openclaw: {
+          nova: {
             type: "http",
             url: "http://127.0.0.1:23119/other",
             headers: {

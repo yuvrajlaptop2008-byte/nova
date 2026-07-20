@@ -36,7 +36,7 @@ import {
   resolveSessionTranscriptIdentity,
 } from "../../src/plugin-sdk/session-transcript-runtime.js";
 import { sleep } from "../../src/utils.js";
-import { createOpenClawTestInstance } from "./openclaw-test-instance.js";
+import { createNovaTestInstance } from "./nova-test-instance.js";
 
 type DoctorMode = "import" | "inspect" | "validate" | "restore";
 type ProofChildProcess = ChildProcessByStdio<null, Readable, Readable>;
@@ -290,11 +290,11 @@ export async function runSqliteSessionsTranscriptsFlipProof(
 ): Promise<SqliteSessionsTranscriptsFlipProofReport> {
   const print = options.print ?? false;
   const mockOpenAiPort = await getFreeTcpPort();
-  const inst = await createOpenClawTestInstance({
+  const inst = await createNovaTestInstance({
     name: `sqlite-sessions-transcripts-flip-${randomUUID()}`,
     config: buildMockOpenAiConfig(mockOpenAiPort),
     env: {
-      OPENAI_API_KEY: "sk-openclaw-e2e-mock",
+      OPENAI_API_KEY: "sk-nova-e2e-mock",
       NOVA_TEST_MINIMAL_GATEWAY: undefined,
       NOVA_SKIP_PROVIDERS: undefined,
     },
@@ -580,7 +580,7 @@ function buildProofContext(stateDir: string): ProofContext {
   const legacySessionsDir = path.join(stateDir, "sessions");
   return {
     activeSessionsDir,
-    agentDbPath: path.join(agentDir, "agent", "openclaw-agent.sqlite"),
+    agentDbPath: path.join(agentDir, "agent", "nova-agent.sqlite"),
     agentId: AGENT_ID,
     archiveRoots: [path.join(agentDir, "session-sqlite-import-archive"), activeSessionsDir],
     cleanupPruneSessionKey: CLEANUP_PRUNE_SESSION_KEY,
@@ -630,7 +630,7 @@ function buildMockOpenAiConfig(mockPort: number): Record<string, unknown> {
         model: { primary: modelRef },
         models: {
           [modelRef]: {
-            agentRuntime: { id: "openclaw" },
+            agentRuntime: { id: "nova" },
             params: { openaiWsWarmup: false, transport: "sse" },
           },
         },
@@ -640,13 +640,13 @@ function buildMockOpenAiConfig(mockPort: number): Record<string, unknown> {
       mode: "merge",
       providers: {
         openai: {
-          agentRuntime: { id: "openclaw" },
+          agentRuntime: { id: "nova" },
           api: "openai-responses",
           apiKey: { source: "env", provider: "default", id: "OPENAI_API_KEY" },
           baseUrl: `http://127.0.0.1:${mockPort}/v1`,
           models: [
             {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "nova" },
               api: "openai-responses",
               contextTokens: 96_000,
               contextWindow: 128_000,
@@ -915,7 +915,7 @@ async function writeTranscript(
 }
 
 async function runDoctor(
-  inst: Awaited<ReturnType<typeof createOpenClawTestInstance>>,
+  inst: Awaited<ReturnType<typeof createNovaTestInstance>>,
   mode: DoctorMode,
   storePath: string,
 ): Promise<DoctorCommandEvidence> {
@@ -979,7 +979,7 @@ function parseDoctorRestore(parsed: Record<string, unknown>): { restore?: Doctor
 }
 
 async function runRollbackRestoreProof(
-  inst: Awaited<ReturnType<typeof createOpenClawTestInstance>>,
+  inst: Awaited<ReturnType<typeof createNovaTestInstance>>,
   context: ProofContext,
 ): Promise<RollbackRestoreEvidence> {
   const drillDir = path.join(context.stateDir, "rollback-drill");
@@ -987,7 +987,7 @@ async function runRollbackRestoreProof(
   const sessionId = "sqlite-rollback-restore";
   const sessionKey = "agent:main:rollback-restore";
   const sourcePath = path.join(drillDir, `${sessionId}.jsonl`);
-  const sqlitePath = path.join(drillDir, "openclaw-agent.sqlite");
+  const sqlitePath = path.join(drillDir, "nova-agent.sqlite");
   await fs.mkdir(drillDir, { recursive: true });
   await fs.writeFile(
     storePath,
@@ -1430,7 +1430,7 @@ async function runGatewayCleanupPruningProof(
 }
 
 async function runDoctorIdempotenceProof(
-  inst: Awaited<ReturnType<typeof createOpenClawTestInstance>>,
+  inst: Awaited<ReturnType<typeof createNovaTestInstance>>,
   context: ProofContext,
 ): Promise<DoctorCommandEvidence> {
   const before = readSqliteEvidence(context.agentDbPath, context.trackedSessionKeys);
@@ -1486,7 +1486,7 @@ function requireScaleMigrationProof(
 }
 
 async function runDowngradeReupgradeProof(
-  inst: Awaited<ReturnType<typeof createOpenClawTestInstance>>,
+  inst: Awaited<ReturnType<typeof createNovaTestInstance>>,
   context: ProofContext,
 ): Promise<DowngradeReupgradeEvidence> {
   await fs.mkdir(context.activeSessionsDir, { recursive: true });
@@ -1529,7 +1529,7 @@ async function runDowngradeReupgradeProof(
   await fs.writeFile(
     trajectoryPointerPath,
     `${JSON.stringify({
-      traceSchema: "openclaw-trajectory-pointer",
+      traceSchema: "nova-trajectory-pointer",
       schemaVersion: 1,
       sessionId: DOWNGRADE_REUPGRADE_SESSION_ID,
       runtimeFile: trajectoryPath,
@@ -1715,7 +1715,7 @@ async function runSecondStartupAfterResetProof(
 }
 
 async function runConcurrentMultiClientLifecycle(
-  inst: Awaited<ReturnType<typeof createOpenClawTestInstance>>,
+  inst: Awaited<ReturnType<typeof createNovaTestInstance>>,
   context: ProofContext,
   primaryClient: Awaited<ReturnType<typeof connectGatewayClient>>,
 ): Promise<void> {

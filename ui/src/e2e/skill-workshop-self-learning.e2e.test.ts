@@ -38,7 +38,7 @@ function configSnapshot(enabled: boolean, hash: string) {
 
 function emptyProposalManifest() {
   return {
-    schema: "openclaw.skill-workshop.proposals-manifest.v1",
+    schema: "nova.skill-workshop.proposals-manifest.v1",
     updatedAt: "2026-07-13T12:00:00.000Z",
     proposals: [],
   };

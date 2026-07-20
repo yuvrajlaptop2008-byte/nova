@@ -1,7 +1,7 @@
 // OpenAI stream wrapper tests cover streamed text, tools, and reasoning fields.
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type { Model } from "openclaw/plugin-sdk/llm";
-import { createAssistantMessageEventStream } from "openclaw/plugin-sdk/llm";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import type { Model } from "nova/plugin-sdk/llm";
+import { createAssistantMessageEventStream } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import {
   createOpenAIAttributionHeadersWrapper,
@@ -259,7 +259,7 @@ describe("createCodexNativeWebSearchWrapper", () => {
       {},
     );
 
-    expect(observedOptions[0]?.openclawCodeModeToolSurface).toBeUndefined();
+    expect(observedOptions[0]?.novaCodeModeToolSurface).toBeUndefined();
     expect(payloads[0]).toEqual({ model: "gpt-5.5" });
   });
 
@@ -300,7 +300,7 @@ describe("createCodexNativeWebSearchWrapper", () => {
       {},
     );
 
-    expect(observedOptions[0]?.openclawCodeModeToolSurface).toBe(true);
+    expect(observedOptions[0]?.novaCodeModeToolSurface).toBe(true);
     expect(payloads[0]?.tools).toEqual([
       { type: "function", name: "exec" },
       { type: "function", name: "wait" },
@@ -745,15 +745,15 @@ describe("createOpenAIAttributionHeadersWrapper", () => {
       { messages: [] },
       {
         headers: {
-          originator: "openclaw",
-          "User-Agent": "openclaw",
+          originator: "nova",
+          "User-Agent": "nova",
         },
       },
     );
 
     expect(codexCalls).toBe(1);
-    expect(capturedHeaders?.originator).toBe("openclaw");
-    expect(capturedHeaders?.["User-Agent"]).toMatch(/^openclaw\//);
+    expect(capturedHeaders?.originator).toBe("nova");
+    expect(capturedHeaders?.["User-Agent"]).toMatch(/^nova\//);
   });
 
   it("keeps existing wrapped Codex streams so runtime OAuth injection is preserved", () => {
@@ -787,8 +787,8 @@ describe("createOpenAIAttributionHeadersWrapper", () => {
       {
         apiKey: "oauth-bearer-token",
         headers: {
-          originator: "openclaw",
-          "User-Agent": "openclaw",
+          originator: "nova",
+          "User-Agent": "nova",
         },
       },
     );
@@ -796,7 +796,7 @@ describe("createOpenAIAttributionHeadersWrapper", () => {
     expect(upstreamCalls).toBe(1);
     expect(codexCalls).toBe(0);
     expect(capturedOptions?.apiKey).toBe("oauth-bearer-token");
-    expect(capturedOptions?.headers?.originator).toBe("openclaw");
-    expect(capturedOptions?.headers?.["User-Agent"]).toMatch(/^openclaw\//);
+    expect(capturedOptions?.headers?.originator).toBe("nova");
+    expect(capturedOptions?.headers?.["User-Agent"]).toMatch(/^nova\//);
   });
 });

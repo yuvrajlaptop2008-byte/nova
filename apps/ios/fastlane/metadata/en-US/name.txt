@@ -1,1 +1,1 @@
-OpenClaw - iOS Client
+Nova - iOS Client

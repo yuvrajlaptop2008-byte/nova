@@ -45,7 +45,7 @@ import {
   warmCurrentProviderAuthStateOffMainThread,
 } from "../../agents/model-provider-auth.js";
 import { resolveProviderIdForAuth } from "../../agents/provider-auth-aliases.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { coerceSecretRef, hasConfiguredSecretInput } from "../../config/types.secrets.js";
 import { loadProviderUsageSummary } from "../../infra/provider-usage.load.js";
 import { providerUsageLabel, resolveUsageProviderId } from "../../infra/provider-usage.shared.js";
@@ -411,7 +411,7 @@ function resolveEnvVarName(source: string): string | undefined {
 }
 
 function resolveProviderApiKeys(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   store: AuthProfileStore,
 ): Map<string, ModelAuthStatusProvider["apiKey"]> {
   const lookupMaps = resolveProviderEnvAuthLookupMaps({ config: cfg, env: process.env });
@@ -480,7 +480,7 @@ function resolveProviderApiKeys(
   return apiKeys;
 }
 
-function resolveConfigBoundProfileIds(cfg: OpenClawConfig, store: AuthProfileStore): Set<string> {
+function resolveConfigBoundProfileIds(cfg: NovaConfig, store: AuthProfileStore): Set<string> {
   const profileIds = new Set<string>();
   for (const provider of Object.keys(cfg.models?.providers ?? {})) {
     const reference = resolveProviderEntryApiKeyProfileReference({ cfg, provider, store });
@@ -492,7 +492,7 @@ function resolveConfigBoundProfileIds(cfg: OpenClawConfig, store: AuthProfileSto
 }
 
 function resolveConfiguredProviders(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   apiKeys: ReadonlyMap<string, ModelAuthStatusProvider["apiKey"]>,
 ): {
   providers: string[];

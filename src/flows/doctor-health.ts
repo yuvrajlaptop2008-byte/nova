@@ -24,8 +24,8 @@ export async function doctorCommand(runtime?: RuntimeEnv, options: DoctorOptions
   const prompter = createDoctorPrompter({ runtime: effectiveRuntime, options });
   intro("Nova doctor");
 
-  const { resolveOpenClawPackageRoot } = await import("../infra/openclaw-root.js");
-  const root = await resolveOpenClawPackageRoot({
+  const { resolveNovaPackageRoot } = await import("../infra/nova-root.js");
+  const root = await resolveNovaPackageRoot({
     moduleUrl: import.meta.url,
     argv1: process.argv[1],
     cwd: process.cwd(),

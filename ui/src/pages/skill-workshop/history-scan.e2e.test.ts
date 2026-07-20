@@ -24,13 +24,13 @@ let browser: Browser | null = null;
 let server: ControlUiE2eServer | null = null;
 
 const emptyProposals = {
-  schema: "openclaw.skill-workshop.proposals-manifest.v1",
+  schema: "nova.skill-workshop.proposals-manifest.v1",
   updatedAt: "2026-07-13T08:00:00.000Z",
   proposals: [],
 };
 
 const emptyHistory = {
-  schema: "openclaw.skill-workshop.history-scan.v1",
+  schema: "nova.skill-workshop.history-scan.v1",
   hasScanned: false,
   reviewedSessions: 0,
   ideasFound: 0,

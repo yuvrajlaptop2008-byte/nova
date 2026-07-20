@@ -13,7 +13,7 @@ type EnvSnapshot = {
   userProfile: string | undefined;
   homeDrive: string | undefined;
   homePath: string | undefined;
-  openclawHome: string | undefined;
+  novaHome: string | undefined;
   stateDir: string | undefined;
 };
 
@@ -30,7 +30,7 @@ function snapshotEnv(): EnvSnapshot {
     userProfile: process.env.USERPROFILE,
     homeDrive: process.env.HOMEDRIVE,
     homePath: process.env.HOMEPATH,
-    openclawHome: process.env.NOVA_HOME,
+    novaHome: process.env.NOVA_HOME,
     stateDir: process.env.NOVA_STATE_DIR,
   };
 }
@@ -47,7 +47,7 @@ function restoreEnv(snapshot: EnvSnapshot) {
   restoreKey("USERPROFILE", snapshot.userProfile);
   restoreKey("HOMEDRIVE", snapshot.homeDrive);
   restoreKey("HOMEPATH", snapshot.homePath);
-  restoreKey("NOVA_HOME", snapshot.openclawHome);
+  restoreKey("NOVA_HOME", snapshot.novaHome);
   restoreKey("NOVA_STATE_DIR", snapshot.stateDir);
 }
 
@@ -74,7 +74,7 @@ function setTempHome(base: string) {
   setTestEnvValue("USERPROFILE", base);
   // Ensure tests using HOME isolation aren't affected by leaked NOVA_HOME.
   deleteTestEnvValue("NOVA_HOME");
-  setTestEnvValue("NOVA_STATE_DIR", path.join(base, ".openclaw"));
+  setTestEnvValue("NOVA_STATE_DIR", path.join(base, ".nova"));
 
   if (process.platform !== "win32") {
     return;
@@ -111,7 +111,7 @@ export async function withTempHome<T>(
     skipSessionCleanup?: boolean;
   } = {},
 ): Promise<T> {
-  const prefix = opts.prefix ?? "openclaw-test-home-";
+  const prefix = opts.prefix ?? "nova-test-home-";
   const base = await allocateTempHomeBase(prefix);
   const snapshot = snapshotEnv();
   const envKeys = Object.keys(opts.env ?? {});
@@ -123,7 +123,7 @@ export async function withTempHome<T>(
   const envSnapshot = snapshotExtraEnv(envKeys);
 
   setTempHome(base);
-  await fs.mkdir(path.join(base, ".openclaw", "agents", "main", "sessions"), { recursive: true });
+  await fs.mkdir(path.join(base, ".nova", "agents", "main", "sessions"), { recursive: true });
   if (opts.env) {
     for (const [key, raw] of Object.entries(opts.env)) {
       const value = typeof raw === "function" ? raw(base) : raw;

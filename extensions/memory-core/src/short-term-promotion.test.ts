@@ -3,12 +3,12 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
-import { createPluginStateKeyedStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
+import { createPluginStateKeyedStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { deriveConceptTags } from "./concept-vocabulary.js";
 
-vi.mock("openclaw/plugin-sdk/memory-host-events", () => ({
+vi.mock("nova/plugin-sdk/memory-host-events", () => ({
   appendMemoryHostEvent: vi.fn(async () => {}),
 }));
 
@@ -1394,7 +1394,7 @@ describe("short-term promotion", () => {
       expect(secondApply.reconciledExisting).toBe(1);
 
       const memoryText = await fs.readFile(path.join(workspaceDir, "MEMORY.md"), "utf-8");
-      expect(memoryText.match(/openclaw-memory-promotion:/g)?.length).toBe(1);
+      expect(memoryText.match(/nova-memory-promotion:/g)?.length).toBe(1);
       expect(
         memoryText.match(/The gateway should stay loopback-only on port 18789\./g)?.length,
       ).toBe(1);
@@ -1461,9 +1461,9 @@ describe("short-term promotion", () => {
 
       const memoryText = await fs.readFile(path.join(workspaceDir, "MEMORY.md"), "utf-8");
       expect(memoryText).toContain(
-        "<!-- openclaw-memory-promotion:memory:memory/project alpha/2026-04-01.md:2:2 -->",
+        "<!-- nova-memory-promotion:memory:memory/project alpha/2026-04-01.md:2:2 -->",
       );
-      expect(memoryText.match(/openclaw-memory-promotion:/g)?.length).toBe(1);
+      expect(memoryText.match(/nova-memory-promotion:/g)?.length).toBe(1);
       expect(
         memoryText.match(/The project alpha gateway should stay loopback-only on port 18789\./g)
           ?.length,
@@ -1619,10 +1619,10 @@ describe("short-term promotion", () => {
         "- Plan switches use exRule, not abConfig", // 2
         "", // 3
         "## Light Sleep", // 4
-        "<!-- openclaw:dreaming:light:start -->", // 5
+        "<!-- nova:dreaming:light:start -->", // 5
         "- Candidate: staged dream", // 6
         "  - confidence: 0.95", // 7
-        "<!-- openclaw:dreaming:light:end -->", // 8
+        "<!-- nova:dreaming:light:end -->", // 8
       ]);
 
       // Stored recall snippet equals the marker text exactly, so relocate's
@@ -1641,7 +1641,7 @@ describe("short-term promotion", () => {
             startLine: 5,
             endLine: 5,
             score: 0.94,
-            snippet: "<!-- openclaw:dreaming:light:start -->",
+            snippet: "<!-- nova:dreaming:light:start -->",
             source: "memory",
           },
         ],
@@ -1666,7 +1666,7 @@ describe("short-term promotion", () => {
         .readFile(path.join(workspaceDir, "MEMORY.md"), "utf-8")
         .catch(() => "");
       expect(memoryText).not.toContain("Promoted From Short-Term Memory");
-      expect(memoryText).not.toMatch(/openclaw:dreaming/i);
+      expect(memoryText).not.toMatch(/nova:dreaming/i);
     });
   });
 
@@ -1679,9 +1679,9 @@ describe("short-term promotion", () => {
         "Legitimate durable observation about backups.",
         "",
         "## Light Sleep",
-        "<!-- openclaw:dreaming:light:start -->",
+        "<!-- nova:dreaming:light:start -->",
         "- Candidate: staged dream scratchwork",
-        "<!-- openclaw:dreaming:light:end -->",
+        "<!-- nova:dreaming:light:end -->",
       ]);
       expect(dailyPath).toBeTruthy();
 
@@ -1982,7 +1982,7 @@ describe("short-term promotion", () => {
       expect(promotedLine).toMatch(
         /\[score=0\.\d{3} signals=1 recalls=1 avg=0\.\d{3} source=memory\/2026-04-01\.md:1-1\]/,
       );
-      expect(memoryText).toMatch(/<!-- openclaw-memory-promotion:[^\n]+ -->/);
+      expect(memoryText).toMatch(/<!-- nova-memory-promotion:[^\n]+ -->/);
     });
   });
 
@@ -2639,9 +2639,9 @@ describe("short-term promotion", () => {
         "# 2026-05-28",
         "",
         "## Light Sleep",
-        "<!-- openclaw:dreaming:light:start -->",
+        "<!-- nova:dreaming:light:start -->",
         "- Candidate: scratch reflection",
-        "<!-- openclaw:dreaming:light:end -->",
+        "<!-- nova:dreaming:light:end -->",
         "- Reviewed travel timing before the workshop.",
       ]);
       await recordShortTermRecalls({
@@ -3218,11 +3218,11 @@ describe("short-term promotion", () => {
           "# Long-Term Memory",
           "",
           "## Promoted From Short-Term Memory (2026-04-10)",
-          "<!-- openclaw-memory-promotion:legacy-old -->",
+          "<!-- nova-memory-promotion:legacy-old -->",
           `- ${filler}`,
           "",
           "## Promoted From Short-Term Memory (2026-04-20)",
-          "<!-- openclaw-memory-promotion:legacy-newer -->",
+          "<!-- nova-memory-promotion:legacy-newer -->",
           `- ${filler}`,
           "",
         ].join("\n");

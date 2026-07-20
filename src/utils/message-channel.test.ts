@@ -75,12 +75,12 @@ describe("message-channel", () => {
   });
 
   it("classifies the browser copilot as a dedicated browser operator UI", () => {
-    const client = { id: "openclaw-browser-copilot", mode: "ui" };
+    const client = { id: "nova-browser-copilot", mode: "ui" };
     expect(isBrowserCopilotClient(client)).toBe(true);
     expect(isBrowserOperatorUiClient(client)).toBe(true);
     expect(isOperatorUiClient(client)).toBe(true);
     expect(isBrowserCopilotClient({ id: "webchat", mode: "webchat" })).toBe(false);
-    expect(isBrowserCopilotClient({ id: "openclaw-browser-copilot", mode: "webchat" })).toBe(true);
+    expect(isBrowserCopilotClient({ id: "nova-browser-copilot", mode: "webchat" })).toBe(true);
   });
 
   it("normalizes plugin aliases when registered", () => {

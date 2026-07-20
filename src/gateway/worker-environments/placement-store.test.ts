@@ -4,10 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  type OpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  type NovaStateDatabase,
+} from "../../state/nova-state-db.js";
 import type { WorkerSessionPlacementIdentity } from "./placement-record.js";
 import {
   createWorkerSessionPlacementStore,
@@ -22,19 +22,19 @@ const SESSION: WorkerSessionPlacementIdentity = {
 
 describe("worker session placement store", () => {
   let root: string;
-  let database: OpenClawStateDatabase;
+  let database: NovaStateDatabase;
   let store: WorkerSessionPlacementStore;
   let nowMs: number;
 
   beforeEach(async () => {
-    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-placement-"));
-    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "nova-placement-"));
+    database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     nowMs = 1_000;
     store = createWorkerSessionPlacementStore({ database, now: () => nowMs });
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(root, { recursive: true, force: true });
   });
 
@@ -503,8 +503,8 @@ describe("worker session placement store", () => {
       runId: "worker-restart-run",
     });
 
-    closeOpenClawStateDatabaseForTest();
-    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    closeNovaStateDatabaseForTest();
+    database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerSessionPlacementStore({ database, now: () => nowMs });
 
     expect(store.clearLocalTurnClaimsAfterRestart()).toBe(1);
@@ -749,9 +749,9 @@ describe("worker session placement store", () => {
     expect(() => store.releaseTurn(claim)).toThrow("pending cloud workspace result");
 
     const manifestRef = `sha256:${"f".repeat(64)}`;
-    const stagedResultRef = `refs/openclaw/worker-results/${claim.claimId}`;
+    const stagedResultRef = `refs/nova/worker-results/${claim.claimId}`;
     expect(() =>
-      store.recordStagedWorkspaceResult(claim, "refs/openclaw/worker-results/unsafe.claim"),
+      store.recordStagedWorkspaceResult(claim, "refs/nova/worker-results/unsafe.claim"),
     ).toThrow("Worker workspace staged result reference is invalid");
     store.recordStagedWorkspaceResult(claim, stagedResultRef);
     store.recordWorkspaceResultConflict(claim, {
@@ -791,7 +791,7 @@ describe("worker session placement store", () => {
         { length: 300 },
         (_, index) => `conflict-${index.toString().padStart(3, "0")}`,
       ),
-      stagedResultRef: `refs/openclaw/worker-results/${laterClaim.claimId}`,
+      stagedResultRef: `refs/nova/worker-results/${laterClaim.claimId}`,
     });
     expect(store.get(SESSION.sessionId)?.workspaceResultConflict).toMatchObject({
       totalCount: 300,
@@ -1013,8 +1013,8 @@ describe("worker session placement store", () => {
       basePack,
     });
 
-    closeOpenClawStateDatabaseForTest();
-    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    closeNovaStateDatabaseForTest();
+    database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerSessionPlacementStore({ database, now: () => nowMs });
     expect(store.listWorkspaceReconciliationOwners()).toEqual([owner]);
     const loaded = store.loadWorkspaceReconciliation(owner);

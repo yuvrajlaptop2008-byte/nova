@@ -2,7 +2,7 @@
 import { Command } from "commander";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { stripAnsi } from "../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { SESSION_EXEC_OVERRIDES_NOTE } from "../infra/exec-approvals-effective.js";
 import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "../infra/exec-approvals.js";
 import { registerExecPolicyCli } from "./exec-policy-cli.js";
@@ -57,7 +57,7 @@ function readFirstReplaceConfigArg(): Record<string, unknown> {
 const mocks = vi.hoisted(() => {
   const runtimeErrors: string[] = [];
   const stringifyArgs = (args: unknown[]) => args.map((value) => String(value)).join(" ");
-  let configState: OpenClawConfig = {
+  let configState: NovaConfig = {
     tools: {
       exec: {
         host: "auto",
@@ -90,7 +90,7 @@ const mocks = vi.hoisted(() => {
   };
   return {
     getConfig: () => configState,
-    setConfig: (next: OpenClawConfig) => {
+    setConfig: (next: NovaConfig) => {
       configState = next;
     },
     getApprovals: () => approvalsState,
@@ -102,35 +102,35 @@ const mocks = vi.hoisted(() => {
     },
     defaultRuntime,
     runtimeErrors,
-    mutateConfigFile: vi.fn(async ({ mutate }: { mutate: (draft: OpenClawConfig) => void }) => {
+    mutateConfigFile: vi.fn(async ({ mutate }: { mutate: (draft: NovaConfig) => void }) => {
       const draft = structuredClone(configState);
       mutate(draft);
       configState = draft;
       return {
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         previousHash: "hash-1",
         persistedHash: "hash-1",
-        snapshot: { path: "/tmp/openclaw.json" },
+        snapshot: { path: "/tmp/nova.json" },
         nextConfig: draft,
         result: undefined,
       };
     }),
     replaceConfigFile: vi.fn(
-      async ({ nextConfig }: { nextConfig: OpenClawConfig; baseHash?: string }) => {
+      async ({ nextConfig }: { nextConfig: NovaConfig; baseHash?: string }) => {
         configState = structuredClone(nextConfig);
         return {
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           previousHash: "hash-1",
           persistedHash: "hash-1",
-          snapshot: { path: "/tmp/openclaw.json" },
+          snapshot: { path: "/tmp/nova.json" },
           nextConfig,
         };
       },
     ),
     readConfigFileSnapshot: vi.fn<
-      () => Promise<{ path: string; hash: string; config: OpenClawConfig }>
+      () => Promise<{ path: string; hash: string; config: NovaConfig }>
     >(async () => ({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "config-hash-1",
       config: configState,
     })),
@@ -248,15 +248,15 @@ describe("exec-policy CLI", () => {
     mocks.defaultRuntime.exit.mockClear();
     mocks.mutateConfigFile.mockReset();
     mocks.mutateConfigFile.mockImplementation(
-      async ({ mutate }: { mutate: (draft: OpenClawConfig) => void }) => {
+      async ({ mutate }: { mutate: (draft: NovaConfig) => void }) => {
         const draft = structuredClone(mocks.getConfig());
         mutate(draft);
         mocks.setConfig(draft);
         return {
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           previousHash: "hash-1",
           persistedHash: "hash-1",
-          snapshot: { path: "/tmp/openclaw.json" },
+          snapshot: { path: "/tmp/nova.json" },
           nextConfig: draft,
           result: undefined,
         };
@@ -264,20 +264,20 @@ describe("exec-policy CLI", () => {
     );
     mocks.replaceConfigFile.mockReset();
     mocks.replaceConfigFile.mockImplementation(
-      async ({ nextConfig }: { nextConfig: OpenClawConfig; baseHash?: string }) => {
+      async ({ nextConfig }: { nextConfig: NovaConfig; baseHash?: string }) => {
         mocks.setConfig(structuredClone(nextConfig));
         return {
-          path: "/tmp/openclaw.json",
+          path: "/tmp/nova.json",
           previousHash: "hash-1",
           persistedHash: "hash-1",
-          snapshot: { path: "/tmp/openclaw.json" },
+          snapshot: { path: "/tmp/nova.json" },
           nextConfig,
         };
       },
     );
     mocks.readConfigFileSnapshot.mockReset();
     mocks.readConfigFileSnapshot.mockImplementation(async () => ({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       hash: "config-hash-1",
       config: mocks.getConfig(),
     }));
@@ -311,7 +311,7 @@ describe("exec-policy CLI", () => {
     const effectivePolicy = payload.effectivePolicy as { note?: unknown } | undefined;
     expect(String(effectivePolicy?.note)).toContain(SESSION_EXEC_OVERRIDES_NOTE);
     expectFields(payload, {
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       approvalsPath: "/tmp/exec-approvals.json",
     });
     const scope = readFirstPolicyScope(payload);
@@ -426,7 +426,7 @@ describe("exec-policy CLI", () => {
       },
     });
     mocks.readConfigFileSnapshot.mockImplementationOnce(async () => ({
-      path: "/tmp/openclaw.json\u001B[2J\nforged",
+      path: "/tmp/nova.json\u001B[2J\nforged",
       hash: "config-hash-1",
       config: mocks.getConfig(),
     }));
@@ -457,7 +457,7 @@ describe("exec-policy CLI", () => {
     const output = stripAnsi(
       mocks.defaultRuntime.log.mock.calls.map((call) => String(call[0] ?? "")).join("\n"),
     );
-    expect(output).toContain("/tmp/openclaw.json");
+    expect(output).toContain("/tmp/nova.json");
     expect(output).toContain("/tmp/exec-approvals.json");
     expect(output).toContain("scope\\u{200B}name");
     expect(output).toContain("host=auto");
@@ -465,7 +465,7 @@ describe("exec-policy CLI", () => {
     expect(output).toContain("host)");
     expect(output).toContain(SESSION_EXEC_OVERRIDES_NOTE);
     expect(output).toContain("\\nforged");
-    expect(output).not.toContain("/tmp/openclaw.json\nforged");
+    expect(output).not.toContain("/tmp/nova.json\nforged");
     expect(output).not.toContain("\u001B[2J");
     expect(output).not.toContain("\u0007");
   });

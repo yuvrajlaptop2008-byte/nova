@@ -1,5 +1,5 @@
 import { expectDefined } from "@nova/normalization-core";
-/** Formatting helpers for `openclaw health` failures and channel summaries. */
+/** Formatting helpers for `nova health` failures and channel summaries. */
 import { asNullableRecord } from "@nova/normalization-core/record-coerce";
 import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text.js";
 import { colorize, isRich, theme } from "../../packages/terminal-core/src/theme.js";

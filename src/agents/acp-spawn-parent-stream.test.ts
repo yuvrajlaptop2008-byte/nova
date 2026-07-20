@@ -1,6 +1,6 @@
 /** Tests ACP child-to-parent stream relay notices and routing. */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { mergeMockedModule } from "../test-utils/vitest-module-mocks.js";
 
 const enqueueSystemEventMock = vi.fn();
@@ -43,7 +43,7 @@ const progressCommentaryDeliveryContext = {
   threadId: 1122,
 };
 
-function progressModeConfig(acp?: OpenClawConfig["acp"]): OpenClawConfig {
+function progressModeConfig(acp?: NovaConfig["acp"]): NovaConfig {
   return {
     ...(acp ? { acp } : {}),
     channels: {

@@ -61,8 +61,7 @@ export function registerCapabilityCli(program: Command): void {
     .description("Run provider-backed inference commands through a stable CLI surface")
     .addHelpText(
       "after",
-      () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/infer", "docs.openclaw.ai/cli/infer")}\n`,
+      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/infer", "docs.nova.ai/cli/infer")}\n`,
     );
 
   registerCapabilityListAndInspect(capability);

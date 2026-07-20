@@ -1,10 +1,10 @@
 // Covers agent harness selection, fallback behavior, and compaction routing.
-import type { Model } from "openclaw/plugin-sdk/llm";
+import type { Model } from "nova/plugin-sdk/llm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { NOVA_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
 import type { ContextEngine } from "../../context-engine/types.js";
-import { createOpenClawCodingTools } from "../../plugin-sdk/agent-harness.js";
+import { createNovaCodingTools } from "../../plugin-sdk/agent-harness.js";
 import { mintSecretSentinel } from "../../secrets/sentinel.js";
 import { isHostScopedAgentToolActive } from "../agent-tools.ring-zero-context.js";
 import { testing as cliBackendsTesting } from "../cli-backends.test-support.js";
@@ -16,8 +16,8 @@ import type { SystemAgentToolOptions } from "../tools/system-agent-tool.js";
 import { maybeCompactAgentHarnessSession } from "./compaction.js";
 import { clearAgentHarnesses, registerAgentHarness } from "./registry.js";
 import {
-  agentHarnessBuildsOpenClawTools,
-  agentHarnessExposesOpenClawTools,
+  agentHarnessBuildsNovaTools,
+  agentHarnessExposesNovaTools,
   resolveAgentHarnessPolicy,
   resolveAvailableAgentHarnessPolicy,
   resolvePluginHarnessPolicyToolsAllow,
@@ -36,9 +36,7 @@ import type {
   AgentHarnessCompactResult,
 } from "./types.js";
 
-const agentRunAttempt = vi.fn<AgentHarness["runAttempt"]>(async () =>
-  createAttemptResult("openclaw"),
-);
+const agentRunAttempt = vi.fn<AgentHarness["runAttempt"]>(async () => createAttemptResult("nova"));
 const compactAuthMocks = vi.hoisted(() => ({
   ensureAuthProfileStore: vi.fn(),
   ensureAuthProfileStoreWithoutExternalProfiles: vi.fn(),
@@ -50,19 +48,19 @@ const providerOwnerMocks = vi.hoisted(() => ({
 }));
 
 it("identifies harnesses that expose Nova tools", () => {
-  expect(agentHarnessBuildsOpenClawTools("openclaw")).toBe(false);
-  expect(agentHarnessBuildsOpenClawTools("codex")).toBe(true);
-  expect(agentHarnessBuildsOpenClawTools("copilot")).toBe(true);
-  expect(agentHarnessBuildsOpenClawTools("custom")).toBe(false);
-  expect(agentHarnessExposesOpenClawTools("openclaw")).toBe(true);
-  expect(agentHarnessExposesOpenClawTools("codex")).toBe(true);
-  expect(agentHarnessExposesOpenClawTools("copilot")).toBe(true);
-  expect(agentHarnessExposesOpenClawTools("custom")).toBe(false);
+  expect(agentHarnessBuildsNovaTools("nova")).toBe(false);
+  expect(agentHarnessBuildsNovaTools("codex")).toBe(true);
+  expect(agentHarnessBuildsNovaTools("copilot")).toBe(true);
+  expect(agentHarnessBuildsNovaTools("custom")).toBe(false);
+  expect(agentHarnessExposesNovaTools("nova")).toBe(true);
+  expect(agentHarnessExposesNovaTools("codex")).toBe(true);
+  expect(agentHarnessExposesNovaTools("copilot")).toBe(true);
+  expect(agentHarnessExposesNovaTools("custom")).toBe(false);
 });
 
-vi.mock("./builtin-openclaw.js", () => ({
-  createOpenClawAgentHarness: (): AgentHarness => ({
-    id: "openclaw",
+vi.mock("./builtin-nova.js", () => ({
+  createNovaAgentHarness: (): AgentHarness => ({
+    id: "nova",
     label: "Nova embedded agent",
     contextEngineHostCapabilities: NOVA_EMBEDDED_CONTEXT_ENGINE_HOST.capabilities,
     supports: () => ({ supported: true, priority: 0 }),
@@ -140,7 +138,7 @@ afterEach(() => {
   }
 });
 
-function createAttemptParams(config?: OpenClawConfig): EmbeddedRunAttemptParams {
+function createAttemptParams(config?: NovaConfig): EmbeddedRunAttemptParams {
   return {
     prompt: "hello",
     sessionId: "session-1",
@@ -241,7 +239,7 @@ function registerSuccessfulCodexHarness(): void {
   );
 }
 
-function groupSenderDenyAllConfig(): OpenClawConfig {
+function groupSenderDenyAllConfig(): NovaConfig {
   // Mirrors Telegram sender policy shape used when selection must preserve
   // channel/group sender tool constraints across fallback attempts.
   return {
@@ -256,10 +254,10 @@ function groupSenderDenyAllConfig(): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
-function groupDenyAllConfig(): OpenClawConfig {
+function groupDenyAllConfig(): NovaConfig {
   return {
     channels: {
       telegram: {
@@ -270,10 +268,10 @@ function groupDenyAllConfig(): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
-function providerRuntimeConfig(provider: string, runtime: string): OpenClawConfig {
+function providerRuntimeConfig(provider: string, runtime: string): NovaConfig {
   return {
     models: {
       providers: {
@@ -284,14 +282,10 @@ function providerRuntimeConfig(provider: string, runtime: string): OpenClawConfi
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
-function agentModelRuntimeConfig(
-  modelRef: string,
-  runtime: string,
-  agentId?: string,
-): OpenClawConfig {
+function agentModelRuntimeConfig(modelRef: string, runtime: string, agentId?: string): NovaConfig {
   if (agentId) {
     return {
       agents: {
@@ -300,7 +294,7 @@ function agentModelRuntimeConfig(
           { id: agentId, models: { [modelRef]: { agentRuntime: { id: runtime } } } },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
   return {
     agents: {
@@ -310,7 +304,7 @@ function agentModelRuntimeConfig(
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 type CompactSessionParams = Parameters<typeof maybeCompactAgentHarnessSession>[0];
@@ -388,15 +382,15 @@ describe("runAgentHarnessAttempt", () => {
       const pluginRunAttempt = vi.fn<AgentHarness["runAttempt"]>(async (attemptParams) => {
         receivedPrivateAuthority = "systemAgentTool" in attemptParams;
         await Promise.resolve();
-        hostScopeActive = isHostScopedAgentToolActive("openclaw");
-        toolNames = createOpenClawCodingTools({
-          config: { tools: { allow: ["read"], deny: ["openclaw"], toolSearch: true } },
-          runtimeToolAllowlist: ["openclaw"],
+        hostScopeActive = isHostScopedAgentToolActive("nova");
+        toolNames = createNovaCodingTools({
+          config: { tools: { allow: ["read"], deny: ["nova"], toolSearch: true } },
+          runtimeToolAllowlist: ["nova"],
           toolConstructionPlan: {
             includeBaseCodingTools: false,
             includeShellTools: false,
             includeChannelTools: false,
-            includeOpenClawTools: true,
+            includeNovaTools: true,
             includePluginTools: false,
           },
         }).map((tool) => tool.name);
@@ -414,7 +408,7 @@ describe("runAgentHarnessAttempt", () => {
       const params = createAttemptParams(
         providerRuntimeConfig("codex", harnessId),
       ) as EmbeddedRunAttemptParams & { systemAgentTool?: SystemAgentToolOptions };
-      params.toolsAllow = ["openclaw"];
+      params.toolsAllow = ["nova"];
       params.systemAgentTool = { surface: "cli", proposalRef: {}, directiveRef: {} };
 
       await runAgentHarnessAttempt(params);
@@ -422,14 +416,14 @@ describe("runAgentHarnessAttempt", () => {
       expect(pluginRunAttempt).toHaveBeenCalledTimes(1);
       expect(receivedPrivateAuthority).toBe(false);
       expect(hostScopeActive).toBe(true);
-      expect(toolNames).toEqual(["openclaw"]);
-      expect(isHostScopedAgentToolActive("openclaw")).toBe(false);
+      expect(toolNames).toEqual(["nova"]);
+      expect(isHostScopedAgentToolActive("nova")).toBe(false);
     },
   );
 
   it.each([
     { name: "missing", toolsAllow: undefined },
-    { name: "broad", toolsAllow: ["openclaw", "read"] },
+    { name: "broad", toolsAllow: ["nova", "read"] },
   ])("rejects $name allowlists for private Nova authority", async ({ toolsAllow }) => {
     const pluginRunAttempt = vi.fn<AgentHarness["runAttempt"]>(async () =>
       createAttemptResult("codex"),
@@ -450,10 +444,10 @@ describe("runAgentHarnessAttempt", () => {
     params.systemAgentTool = { surface: "cli", proposalRef: {}, directiveRef: {} };
 
     await expect(runAgentHarnessAttempt(params)).rejects.toThrow(
-      'Nova host authority requires toolsAllow: ["openclaw"]',
+      'Nova host authority requires toolsAllow: ["nova"]',
     );
     expect(pluginRunAttempt).not.toHaveBeenCalled();
-    expect(isHostScopedAgentToolActive("openclaw")).toBe(false);
+    expect(isHostScopedAgentToolActive("nova")).toBe(false);
   });
 
   it("keeps the host Nova allowlist across global, agent, and sandbox deny-all policy", async () => {
@@ -466,7 +460,7 @@ describe("runAgentHarnessAttempt", () => {
       received.push({
         toolsAllow: attemptParams.toolsAllow,
         extraSystemPrompt: attemptParams.extraSystemPrompt,
-        hostScopeActive: isHostScopedAgentToolActive("openclaw"),
+        hostScopeActive: isHostScopedAgentToolActive("nova"),
       });
       return createAttemptResult("codex");
     });
@@ -480,22 +474,22 @@ describe("runAgentHarnessAttempt", () => {
       { ownerPluginId: "codex" },
     );
     const cases: Array<{
-      config: OpenClawConfig;
+      config: NovaConfig;
       agentId?: string;
       sessionKey?: string;
     }> = [
-      { config: { tools: { deny: ["*"] } } as OpenClawConfig },
+      { config: { tools: { deny: ["*"] } } as NovaConfig },
       {
         config: {
           agents: { list: [{ id: "worker", tools: { deny: ["*"] } }] },
-        } as OpenClawConfig,
+        } as NovaConfig,
         agentId: "worker",
       },
       {
         config: {
           agents: { defaults: { sandbox: { mode: "all" } } },
           tools: { sandbox: { tools: { deny: ["*"] } } },
-        } as OpenClawConfig,
+        } as NovaConfig,
         sessionKey: "agent:main:session-1",
       },
     ];
@@ -508,47 +502,47 @@ describe("runAgentHarnessAttempt", () => {
       params.agentHarnessRuntimeOverride = "codex";
       params.agentId = testCase.agentId;
       params.sessionKey = testCase.sessionKey;
-      params.toolsAllow = ["openclaw"];
+      params.toolsAllow = ["nova"];
       params.systemAgentTool = { surface: "cli", proposalRef: {}, directiveRef: {} };
       await runAgentHarnessAttempt(params);
     }
 
     expect(received).toEqual([
-      { toolsAllow: ["openclaw"], extraSystemPrompt: undefined, hostScopeActive: true },
-      { toolsAllow: ["openclaw"], extraSystemPrompt: undefined, hostScopeActive: true },
-      { toolsAllow: ["openclaw"], extraSystemPrompt: undefined, hostScopeActive: true },
+      { toolsAllow: ["nova"], extraSystemPrompt: undefined, hostScopeActive: true },
+      { toolsAllow: ["nova"], extraSystemPrompt: undefined, hostScopeActive: true },
+      { toolsAllow: ["nova"], extraSystemPrompt: undefined, hostScopeActive: true },
     ]);
-    expect(isHostScopedAgentToolActive("openclaw")).toBe(false);
+    expect(isHostScopedAgentToolActive("nova")).toBe(false);
   });
 
   it("binds the same host Nova scope to the built-in Nova harness", async () => {
     let toolNames: string[] = [];
     agentRunAttempt.mockImplementationOnce(async () => {
       await Promise.resolve();
-      toolNames = createOpenClawCodingTools({
-        config: { tools: { allow: ["read"], deny: ["openclaw"], toolSearch: true } },
-        runtimeToolAllowlist: ["openclaw"],
+      toolNames = createNovaCodingTools({
+        config: { tools: { allow: ["read"], deny: ["nova"], toolSearch: true } },
+        runtimeToolAllowlist: ["nova"],
         toolConstructionPlan: {
           includeBaseCodingTools: false,
           includeShellTools: false,
           includeChannelTools: false,
-          includeOpenClawTools: true,
+          includeNovaTools: true,
           includePluginTools: false,
         },
       }).map((tool) => tool.name);
-      return createAttemptResult("openclaw");
+      return createAttemptResult("nova");
     });
     const params = createAttemptParams(
-      providerRuntimeConfig("codex", "openclaw"),
+      providerRuntimeConfig("codex", "nova"),
     ) as EmbeddedRunAttemptParams & { systemAgentTool?: SystemAgentToolOptions };
-    params.toolsAllow = ["openclaw"];
+    params.toolsAllow = ["nova"];
     params.systemAgentTool = { surface: "gateway", proposalRef: {}, directiveRef: {} };
 
     const result = await runAgentHarnessAttempt(params);
 
-    expect(result.sessionIdUsed).toBe("openclaw");
-    expect(toolNames).toEqual(["openclaw"]);
-    expect(isHostScopedAgentToolActive("openclaw")).toBe(false);
+    expect(result.sessionIdUsed).toBe("nova");
+    expect(toolNames).toEqual(["nova"]);
+    expect(isHostScopedAgentToolActive("nova")).toBe(false);
   });
 
   it("unwraps sentinels only at the plugin harness handoff", async () => {
@@ -594,17 +588,17 @@ describe("runAgentHarnessAttempt", () => {
   it("falls back to the Nova harness in auto mode when no plugin harness matches", async () => {
     const result = await runAgentHarnessAttempt(createAttemptParams());
 
-    expect(result.sessionIdUsed).toBe("openclaw");
+    expect(result.sessionIdUsed).toBe("nova");
     expect(agentRunAttempt).toHaveBeenCalledTimes(1);
   });
 
   it("allows the selected Nova harness to satisfy context-engine pre-prompt assembly", async () => {
     const result = await runAgentHarnessAttempt({
-      ...createAttemptParams(providerRuntimeConfig("codex", "openclaw")),
+      ...createAttemptParams(providerRuntimeConfig("codex", "nova")),
       contextEngine: createContextEngineRequiringAssembly(),
     });
 
-    expect(result.sessionIdUsed).toBe("openclaw");
+    expect(result.sessionIdUsed).toBe("nova");
     expect(agentRunAttempt).toHaveBeenCalledTimes(1);
   });
 
@@ -660,7 +654,7 @@ describe("runAgentHarnessAttempt", () => {
         harnessAuthProvider: "openai",
         deferredRouteSupport: {
           requestTransportOverrides: "none",
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
         },
       },
     } as never;
@@ -672,7 +666,7 @@ describe("runAgentHarnessAttempt", () => {
       expect.objectContaining({
         modelProvider: expect.objectContaining({
           requestTransportOverrides: "none",
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
           preparedAuth: { source: "harness" },
         }),
       }),
@@ -769,7 +763,7 @@ describe("runAgentHarnessAttempt", () => {
       runtimeSource: "implicit",
     });
     expect(resolveAvailableAgentHarnessPolicy({ provider: "openai", modelId: "gpt-5.4" })).toEqual({
-      runtime: "openclaw",
+      runtime: "nova",
       runtimeSource: "implicit",
     });
 
@@ -779,17 +773,17 @@ describe("runAgentHarnessAttempt", () => {
       modelId: "gpt-5.4",
     });
 
-    expect(result.sessionIdUsed).toBe("openclaw");
+    expect(result.sessionIdUsed).toBe("nova");
     expect(agentRunAttempt).toHaveBeenCalledTimes(1);
   });
 
   it("honors explicit Nova runtime for OpenAI agent model runs", async () => {
     const result = await runAgentHarnessAttempt({
-      ...createAttemptParams(providerRuntimeConfig("openai", "openclaw")),
+      ...createAttemptParams(providerRuntimeConfig("openai", "nova")),
       provider: "openai",
       modelId: "gpt-5.4",
     });
-    expect(result.sessionIdUsed).toBe("openclaw");
+    expect(result.sessionIdUsed).toBe("nova");
     expect(agentRunAttempt).toHaveBeenCalledTimes(1);
   });
 
@@ -797,11 +791,11 @@ describe("runAgentHarnessAttempt", () => {
     registerSuccessfulCodexHarness();
 
     const result = await runAgentHarnessAttempt({
-      ...createAttemptParams(agentModelRuntimeConfig("openai/*", "openclaw")),
+      ...createAttemptParams(agentModelRuntimeConfig("openai/*", "nova")),
       provider: "openai",
       modelId: "gpt-5.4",
     });
-    expect(result.sessionIdUsed).toBe("openclaw");
+    expect(result.sessionIdUsed).toBe("nova");
     expect(agentRunAttempt).toHaveBeenCalledTimes(1);
   });
 
@@ -888,23 +882,23 @@ describe("runAgentHarnessAttempt", () => {
   it.each([
     {
       name: "narrow allowlist",
-      config: { tools: { allow: ["message"] } } as OpenClawConfig,
+      config: { tools: { allow: ["message"] } } as NovaConfig,
     },
     {
       name: "specific denylist",
-      config: { tools: { deny: ["exec"] } } as OpenClawConfig,
+      config: { tools: { deny: ["exec"] } } as NovaConfig,
     },
     {
       name: "narrow profile",
-      config: { tools: { profile: "coding" } } as OpenClawConfig,
+      config: { tools: { profile: "coding" } } as NovaConfig,
     },
   ])("marks plugin side questions restricted for a $name", ({ config }) => {
     expect(resolvePluginHarnessPolicyToolsAllow(createAttemptParams(config))).toEqual([]);
   });
 
   it.each([
-    { name: "full tool profile", config: { tools: { profile: "full" } } as OpenClawConfig },
-    { name: "explicit empty allowlist", config: { tools: { allow: [] } } as OpenClawConfig },
+    { name: "full tool profile", config: { tools: { profile: "full" } } as NovaConfig },
+    { name: "explicit empty allowlist", config: { tools: { allow: [] } } as NovaConfig },
   ])("leaves plugin side questions unrestricted for an $name", ({ config }) => {
     expect(resolvePluginHarnessPolicyToolsAllow(createAttemptParams(config))).toBeUndefined();
   });
@@ -916,7 +910,7 @@ describe("runAgentHarnessAttempt", () => {
           "*": { deny: ["*"] },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolvePluginHarnessPolicyToolsAllow({
@@ -934,7 +928,7 @@ describe("runAgentHarnessAttempt", () => {
           "*": { deny: ["*"] },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolvePluginHarnessPolicyToolsAllow({
@@ -984,9 +978,7 @@ describe("selectAgentHarness", () => {
       runtime: "auto",
       runtimeSource: "implicit",
     });
-    expect(selectAgentHarness({ provider: "custom", modelId: "gpt-5.4-codex" }).id).toBe(
-      "openclaw",
-    );
+    expect(selectAgentHarness({ provider: "custom", modelId: "gpt-5.4-codex" }).id).toBe("nova");
   });
 
   it("auto-selects plugin support by default", () => {
@@ -1018,7 +1010,7 @@ describe("selectAgentHarness", () => {
     });
 
     expect(selectAgentHarness({ provider: "deepseek", modelId: "deepseek-v4-pro" }).id).toBe(
-      "openclaw",
+      "nova",
     );
     expect(supports).not.toHaveBeenCalled();
     expect(providerOwnerMocks.resolveProviderRefOwnership).not.toHaveBeenCalled();
@@ -1090,10 +1082,10 @@ describe("selectAgentHarness", () => {
     const harness = selectAgentHarness({
       provider: "codex",
       modelId: "gpt-5.4",
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
     });
 
-    expect(harness.id).toBe("openclaw");
+    expect(harness.id).toBe("nova");
     expect(supports).not.toHaveBeenCalled();
   });
 
@@ -1202,7 +1194,7 @@ describe("selectAgentHarness", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     registerAgentHarness({
       id: "copilot",
       label: "Copilot",
@@ -1259,7 +1251,7 @@ describe("selectAgentHarness", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     registerAgentHarness({
       id: "copilot",
       label: "Copilot",
@@ -1311,7 +1303,7 @@ describe("selectAgentHarness", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       buildAgentHarnessSupportContext({
@@ -1323,7 +1315,7 @@ describe("selectAgentHarness", () => {
     ).toMatchObject({
       api: "openai-completions",
       requestTransportOverrides: "present",
-      runtimePolicy: { compatibleIds: ["openclaw"] },
+      runtimePolicy: { compatibleIds: ["nova"] },
     });
   });
 
@@ -1343,7 +1335,7 @@ describe("selectAgentHarness", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     expect(
       buildAgentHarnessSupportContext({
@@ -1356,7 +1348,7 @@ describe("selectAgentHarness", () => {
       api: "openai-completions",
       baseUrl: "https://api.openai.com/v1",
       requestTransportOverrides: "present",
-      runtimePolicy: { compatibleIds: ["openclaw"] },
+      runtimePolicy: { compatibleIds: ["nova"] },
     });
   });
 
@@ -1372,7 +1364,7 @@ describe("selectAgentHarness", () => {
         requestedRuntime: "codex",
       }).modelProvider,
     ).toMatchObject({
-      runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+      runtimePolicy: { compatibleIds: ["nova", "codex"] },
     });
   });
 
@@ -1413,12 +1405,12 @@ describe("selectAgentHarness", () => {
             requestTransportOverrides: "none",
           },
           requestedRuntime: "codex",
-          config: config as OpenClawConfig,
+          config: config as NovaConfig,
           ...identity,
         }).modelProvider,
       ).toMatchObject({
         requestTransportOverrides: "present",
-        runtimePolicy: { compatibleIds: ["openclaw"] },
+        runtimePolicy: { compatibleIds: ["nova"] },
       });
     },
   );
@@ -1444,7 +1436,7 @@ describe("selectAgentHarness", () => {
           api: "openai-responses",
           baseUrl: "https://api.openai.com/v1",
           requestTransportOverrides: "none",
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
         },
         config: { agents: { defaults: { params: { store: false } } } },
         agentHarnessRuntimeOverride: "codex",
@@ -1474,7 +1466,7 @@ describe("selectAgentHarness", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const modelProvider = {
       api: "openai-responses",
       baseUrl: "https://api.openai.com/v1",
@@ -1488,7 +1480,7 @@ describe("selectAgentHarness", () => {
         modelProvider,
         config,
       }),
-    ).toEqual({ runtime: "openclaw", runtimeSource: "implicit" });
+    ).toEqual({ runtime: "nova", runtimeSource: "implicit" });
     expect(
       selectAgentHarness({
         provider: "openai",
@@ -1496,7 +1488,7 @@ describe("selectAgentHarness", () => {
         modelProvider,
         config,
       }).id,
-    ).toBe("openclaw");
+    ).toBe("nova");
     expect(
       selectAgentHarness({
         provider: "openai",
@@ -1536,14 +1528,12 @@ describe("selectAgentHarness", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       resolveAvailableAgentHarnessPolicy({ provider: "openai", modelId: "gpt-5.5", config }),
-    ).toEqual({ runtime: "openclaw", runtimeSource: "implicit" });
-    expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.5", config }).id).toBe(
-      "openclaw",
-    );
+    ).toEqual({ runtime: "nova", runtimeSource: "implicit" });
+    expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.5", config }).id).toBe("nova");
     expect(() =>
       selectAgentHarness({
         provider: "openai",
@@ -1570,11 +1560,11 @@ describe("selectAgentHarness", () => {
       api: "openai-completions",
       baseUrl: "https://api.openai.com/v1",
       requestTransportOverrides: "none" as const,
-      runtimePolicy: { compatibleIds: ["openclaw"] },
+      runtimePolicy: { compatibleIds: ["nova"] },
     };
 
     expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.5", modelProvider }).id).toBe(
-      "openclaw",
+      "nova",
     );
     expect(() =>
       selectAgentHarness({
@@ -1599,7 +1589,7 @@ describe("selectAgentHarness", () => {
       runAttempt: vi.fn(async () => createAttemptResult("codex")),
     });
 
-    expect(selectAgentHarness({ provider: "openai", modelId: "gpt-future" }).id).toBe("openclaw");
+    expect(selectAgentHarness({ provider: "openai", modelId: "gpt-future" }).id).toBe("nova");
     expect(supports).toHaveBeenCalledWith(
       expect.objectContaining({
         modelProvider: expect.objectContaining({ runtimePolicy: undefined }),
@@ -1610,7 +1600,7 @@ describe("selectAgentHarness", () => {
   it("projects a harness-owned auth plan as a closed harness source", () => {
     const deferredRouteSupport = {
       requestTransportOverrides: "none" as const,
-      runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+      runtimePolicy: { compatibleIds: ["nova", "codex"] },
     };
     expect(
       resolveAgentHarnessPreparedAuthSupport({
@@ -1669,7 +1659,7 @@ describe("selectAgentHarness", () => {
         modelId: "gpt-future",
         modelProvider: {
           requestTransportOverrides: "none",
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
           preparedAuth: { source: "harness" },
         },
         agentHarnessRuntimeOverride: "codex",
@@ -1679,7 +1669,7 @@ describe("selectAgentHarness", () => {
       expect.objectContaining({
         modelProvider: expect.objectContaining({
           preparedAuth: { source: "harness" },
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
         }),
       }),
     );
@@ -1699,14 +1689,14 @@ describe("selectAgentHarness", () => {
       api: "openai-responses",
       baseUrl: "https://api.openai.com/v1",
       requestTransportOverrides: "none" as const,
-      runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+      runtimePolicy: { compatibleIds: ["nova", "codex"] },
       preparedAuth: { source: "direct" as const, mode: "api-key", requirement: "api-key" as const },
     };
     const incompatible = {
       api: "openai-completions",
       baseUrl: "https://api.openai.com/v1",
       requestTransportOverrides: "none" as const,
-      runtimePolicy: { compatibleIds: ["openclaw"] },
+      runtimePolicy: { compatibleIds: ["nova"] },
       preparedAuth: { source: "direct" as const, mode: "api-key", requirement: "api-key" as const },
     };
     const base = { provider: "openai", modelId: "gpt-5.5" };
@@ -1722,7 +1712,7 @@ describe("selectAgentHarness", () => {
         ...base,
         modelProviders: [compatible, incompatible],
       }).id,
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it.each([
@@ -1748,13 +1738,13 @@ describe("selectAgentHarness", () => {
             api: "openai-responses",
             baseUrl: "https://api.openai.com/v1",
             requestTransportOverrides: "none",
-            runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+            runtimePolicy: { compatibleIds: ["nova", "codex"] },
           },
           {
             api: "openai-completions",
             baseUrl: "https://api.openai.com/v1",
             requestTransportOverrides: "none",
-            runtimePolicy: { compatibleIds: ["openclaw"] },
+            runtimePolicy: { compatibleIds: ["nova"] },
           },
         ],
         ...pin,
@@ -1823,19 +1813,19 @@ describe("selectAgentHarness", () => {
     const harness = selectAgentHarness({
       provider: "openai",
       modelId: "gpt-5.4",
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessRuntimeOverride: "nova",
     });
 
-    expect(harness.id).toBe("openclaw");
+    expect(harness.id).toBe("nova");
     expect(providerOwnerMocks.resolveProviderRefOwnership).not.toHaveBeenCalled();
 
     const result = await runAgentHarnessAttempt({
       ...createAttemptParams(),
       provider: "openai",
       modelId: "gpt-5.4",
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessRuntimeOverride: "nova",
     });
-    expect(result.sessionIdUsed).toBe("openclaw");
+    expect(result.sessionIdUsed).toBe("nova");
   });
 
   it("treats legacy PI runtime overrides as the built-in Nova harness", async () => {
@@ -1847,7 +1837,7 @@ describe("selectAgentHarness", () => {
       agentHarnessRuntimeOverride: "pi",
     });
 
-    expect(harness.id).toBe("openclaw");
+    expect(harness.id).toBe("nova");
 
     const result = await runAgentHarnessAttempt({
       ...createAttemptParams(),
@@ -1855,7 +1845,7 @@ describe("selectAgentHarness", () => {
       modelId: "gpt-5.4",
       agentHarnessRuntimeOverride: "pi",
     });
-    expect(result.sessionIdUsed).toBe("openclaw");
+    expect(result.sessionIdUsed).toBe("nova");
   });
 
   it("allows per-agent model runtime policy overrides", () => {
@@ -1870,12 +1860,12 @@ describe("selectAgentHarness", () => {
       }),
     ).toThrow('Requested agent harness "codex" is not registered');
     expect(selectAgentHarness({ provider: "anthropic", modelId: "sonnet-4.6", config }).id).toBe(
-      "openclaw",
+      "nova",
     );
   });
 
   it("selects Nova when the implicit OpenAI Codex harness is unavailable", () => {
-    expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.4" }).id).toBe("openclaw");
+    expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.4" }).id).toBe("nova");
   });
 
   it.each(["default", "auto"] as const)(
@@ -1886,7 +1876,7 @@ describe("selectAgentHarness", () => {
         { runtime: "codex", runtimeSource: "implicit" },
       );
       expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.4", config }).id).toBe(
-        "openclaw",
+        "nova",
       );
 
       const supports = vi.fn(() => ({ supported: false as const, reason: "unsupported route" }));
@@ -1900,7 +1890,7 @@ describe("selectAgentHarness", () => {
         { ownerPluginId: "codex" },
       );
       expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.4", config }).id).toBe(
-        "openclaw",
+        "nova",
       );
       expect(supports).toHaveBeenCalledOnce();
     },
@@ -1930,13 +1920,13 @@ describe("selectAgentHarness", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       expect(resolveAgentHarnessPolicy({ provider: "openai", modelId: "gpt-5.4", config })).toEqual(
-        { runtime: "openclaw", runtimeSource: "implicit" },
+        { runtime: "nova", runtimeSource: "implicit" },
       );
       expect(selectAgentHarness({ provider: "openai", modelId: "gpt-5.4", config }).id).toBe(
-        "openclaw",
+        "nova",
       );
       expect(supports).not.toHaveBeenCalled();
     },
@@ -1949,7 +1939,7 @@ describe("selectAgentHarness", () => {
           agentRuntime: { id: "codex" },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(
       selectAgentHarness({
@@ -1957,12 +1947,12 @@ describe("selectAgentHarness", () => {
         modelId: "sonnet-4.6",
         config,
       }).id,
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it("ignores legacy agent CLI runtime aliases for OpenAI agent model runs", async () => {
     registerSuccessfulCodexHarness();
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       agents: {
         defaults: {
           agentRuntime: { id: "claude-cli" },
@@ -1988,14 +1978,14 @@ describe("selectAgentHarness", () => {
       selectAgentHarness({
         provider: "codex",
         modelId: "gpt-5.4",
-        agentHarnessId: "openclaw",
+        agentHarnessId: "nova",
         config: providerRuntimeConfig("codex", "codex"),
       }).id,
-    ).toBe("openclaw");
+    ).toBe("nova");
   });
 
   it("ignores env-forced Nova for OpenAI default runtime selection", () => {
-    process.env.NOVA_AGENT_RUNTIME = "openclaw";
+    process.env.NOVA_AGENT_RUNTIME = "nova";
     registerFailingCodexHarness();
 
     expect(
@@ -2039,7 +2029,7 @@ describe("selectAgentHarness", () => {
     await expect(
       maybeCompactAgentHarnessSession(
         createCompactionParams({
-          agentHarnessId: "openclaw",
+          agentHarnessId: "nova",
           authProfileId: "openai:work",
           authProfileIdSource: "user",
           runtimeAuthPlan: {
@@ -2219,11 +2209,11 @@ describe("selectAgentHarness", () => {
             list: [{ id: "main", default: true, agentDir: "/tmp/main-agent" }],
             defaults: {
               models: {
-                "openai/gpt-5.5": { agentRuntime: { id: "openclaw" } },
+                "openai/gpt-5.5": { agentRuntime: { id: "nova" } },
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
       }),
     ).resolves.toEqual({ ok: true, compacted: false });
     expect(compact).toHaveBeenCalledTimes(1);
@@ -2359,7 +2349,7 @@ describe("selectAgentHarness", () => {
         model: "gpt-5.5",
         authProfileId: "deleted-profile",
         agentHarnessId: "codex",
-        config: agentModelRuntimeConfig("openai/gpt-5.5", "openclaw"),
+        config: agentModelRuntimeConfig("openai/gpt-5.5", "nova"),
       }),
     ).resolves.toEqual({ ok: true, compacted: false });
     expect(compact).toHaveBeenCalledTimes(1);
@@ -2634,7 +2624,7 @@ describe("selectAgentHarness", () => {
           modelId,
           agentHarnessRuntimeOverride: alias,
         }).id,
-      ).toBe("openclaw");
+      ).toBe("nova");
     },
   );
 
@@ -2647,7 +2637,7 @@ describe("selectAgentHarness", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(() =>
       selectAgentHarness({

@@ -1,11 +1,7 @@
 // Telegram plugin module implements sendchataction 401 and transient backoff behavior.
 import type { Bot } from "grammy";
-import {
-  computeBackoff,
-  sleepWithAbort,
-  type BackoffPolicy,
-} from "openclaw/plugin-sdk/runtime-env";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { computeBackoff, sleepWithAbort, type BackoffPolicy } from "nova/plugin-sdk/runtime-env";
+import { normalizeLowercaseStringOrEmpty } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   isRecoverableTelegramNetworkError,
   isTelegramRateLimitError,
@@ -199,7 +195,7 @@ export function createTelegramSendChatActionHandler({
           logger(
             `CRITICAL: sendChatAction suspended after ${consecutive401Failures} consecutive 401 errors. ` +
               `Bot token is likely invalid. Telegram may DELETE the bot if requests continue. ` +
-              `Replace the token and restart: openclaw channels restart telegram`,
+              `Replace the token and restart: nova channels restart telegram`,
           );
         } else {
           logger(

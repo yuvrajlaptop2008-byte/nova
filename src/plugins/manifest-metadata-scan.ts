@@ -5,7 +5,7 @@ import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalString as normalizeTrimmedString } from "@nova/normalization-core/string-coerce";
 import { resolveStateDir } from "../config/paths.js";
 import { resolveHomeRelativePath } from "../infra/home-dir.js";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../infra/nova-root.js";
 import { readRegularFileSync } from "../infra/regular-file.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { parseJsonWithJson5Fallback } from "../utils/parse-json-compat.js";
@@ -31,7 +31,7 @@ type CandidateDir = {
   origin?: string;
 };
 
-const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
+const PLUGIN_MANIFEST_FILENAME = "nova.plugin.json";
 let manifestMetadataCache:
   | {
       key: string;
@@ -131,7 +131,7 @@ function resolvePackageRootsForSourceManifestMetadata(): string[] {
     { argv1: process.argv[1] },
     { moduleUrl: import.meta.url },
   ] satisfies Array<{ argv1?: string; moduleUrl?: string }>) {
-    const root = resolveOpenClawPackageRootSync(params);
+    const root = resolveNovaPackageRootSync(params);
     if (root && !roots.includes(root)) {
       roots.push(root);
     }
@@ -175,7 +175,7 @@ function uniqueCandidateDirs(candidates: CandidateDir[]): CandidateDir[] {
 }
 
 /** Lists plugin manifest metadata from installed, bundled, and global plugin roots. */
-export function listOpenClawPluginManifestMetadata(
+export function listNovaPluginManifestMetadata(
   env: NodeJS.ProcessEnv = process.env,
 ): PluginManifestMetadataRecord[] {
   const candidates: CandidateDir[] = [];

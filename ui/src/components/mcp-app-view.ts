@@ -39,7 +39,7 @@ type HostContext = NonNullable<
 type ScheduleFrame = (callback: FrameRequestCallback) => number;
 type ScheduleFallback = (callback: () => void, delayMs: number) => number;
 type McpAppResources = {
-  bridge: OpenClawAppBridge | null;
+  bridge: NovaAppBridge | null;
   cleanups: Set<() => void>;
   frameHeight: number;
   iframe: HTMLIFrameElement;
@@ -92,7 +92,7 @@ function hostContext(element: Element | undefined, height: number): HostContext 
   };
 }
 
-class OpenClawAppBridge extends AppBridge {
+class NovaAppBridge extends AppBridge {
   setMessageHandler(handler: NonNullable<AppBridge["onmessage"]>) {
     Reflect.set(this, "onmessage", handler);
   }
@@ -326,7 +326,7 @@ export class McpAppView extends LitElement {
         return;
       }
 
-      const bridge = new OpenClawAppBridge(
+      const bridge = new NovaAppBridge(
         null,
         { name: "Nova", version: "1.0.0" },
         buildMcpAppHostCapabilities(

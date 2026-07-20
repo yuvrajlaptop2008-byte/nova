@@ -67,11 +67,7 @@ function defaultVitestJsonReportPath(prefix) {
 /**
  * Runs Vitest with the JSON reporter unless an existing report was supplied.
  */
-export function runVitestJsonReport({
-  config,
-  reportPath = "",
-  prefix = "openclaw-vitest-report",
-}) {
+export function runVitestJsonReport({ config, reportPath = "", prefix = "nova-vitest-report" }) {
   const resolvedReportPath = reportPath || defaultVitestJsonReportPath(prefix);
 
   if (!(reportPath && fs.existsSync(resolvedReportPath))) {

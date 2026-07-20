@@ -6,13 +6,13 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { loadJsonFile, saveJsonFile } from "openclaw/plugin-sdk/json-store";
+import { loadJsonFile, saveJsonFile } from "nova/plugin-sdk/json-store";
 import { DEFAULT_NOVA_BROWSER_COLOR, DEFAULT_NOVA_BROWSER_PROFILE_NAME } from "./constants.js";
 
 const CHROME_NETWORK_PREDICTION_DISABLED = 2;
 
 function decoratedMarkerPath(userDataDir: string) {
-  return path.join(userDataDir, ".openclaw-profile-decorated");
+  return path.join(userDataDir, ".nova-profile-decorated");
 }
 
 function safeReadJson(filePath: string): Record<string, unknown> | null {
@@ -117,9 +117,9 @@ export function isProfileDecorated(
 }
 
 /** Return whether this profile was initialized with Chromium's automation keychain. */
-export function usesOpenClawMockKeychain(userDataDir: string): boolean {
+export function usesNovaMockKeychain(userDataDir: string): boolean {
   const localState = safeReadJson(path.join(userDataDir, "Local State"));
-  return readDefaultProfileInfo(localState)?.openclaw_mock_keychain === true;
+  return readDefaultProfileInfo(localState)?.nova_mock_keychain === true;
 }
 
 /** Disable Chromium network prediction in an Nova-managed Chrome profile. */
@@ -136,7 +136,7 @@ export function ensureProfileNetworkPredictionDisabled(userDataDir: string) {
  * Best-effort profile decoration (name + lobster-orange). Chrome preference keys
  * vary by version; we keep this conservative and idempotent.
  */
-export function decorateOpenClawProfile(
+export function decorateNovaProfile(
   userDataDir: string,
   opts?: { name?: string; color?: string; downloadDir?: string; mockKeychain?: boolean },
 ) {
@@ -155,7 +155,7 @@ export function decorateOpenClawProfile(
   if (opts?.mockKeychain) {
     // Chrome preserves extra fields in this per-profile dictionary. Recording
     // the key source here keeps later launches on the same encryption backend.
-    setDeep(localState, ["profile", "info_cache", "Default", "openclaw_mock_keychain"], true);
+    setDeep(localState, ["profile", "info_cache", "Default", "nova_mock_keychain"], true);
   }
   // Color keys are best-effort (Chrome changes these frequently).
   setDeep(localState, ["profile", "info_cache", "Default", "profile_color"], desiredColor);

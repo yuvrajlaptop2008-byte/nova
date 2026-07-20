@@ -1,5 +1,5 @@
 // Together plugin entrypoint registers its Nova integration.
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
 import { applyTogetherConfig, TOGETHER_DEFAULT_MODEL_REF } from "./onboard.js";
 import { buildTogetherProvider } from "./provider-catalog.js";
 import { buildTogetherVideoGenerationProvider } from "./video-generation-provider.js";

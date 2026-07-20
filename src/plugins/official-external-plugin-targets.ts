@@ -1,7 +1,7 @@
 // Lightweight static projections for deciding whether plugin repair can be skipped.
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { BUNDLED_OFFICIAL_EXTERNAL_PLUGIN_CATALOG_ENTRIES } from "./official-external-plugin-bundled-catalogs.js";
 
 type StaticProvider = {
@@ -22,7 +22,7 @@ type StaticManifest = {
   webSearchProviders?: readonly StaticWebProvider[];
 };
 
-type StaticEntry = { openclaw?: StaticManifest };
+type StaticEntry = { nova?: StaticManifest };
 
 const STATIC_ENTRIES = BUNDLED_OFFICIAL_EXTERNAL_PLUGIN_CATALOG_ENTRIES as readonly StaticEntry[];
 
@@ -44,7 +44,7 @@ export function hasOfficialExternalProviderTarget(params: {
 }): boolean {
   const providerIds = normalizeIds(params.providerIds);
   return STATIC_ENTRIES.some((entry) =>
-    entry.openclaw?.providers?.some(
+    entry.nova?.providers?.some(
       (provider) =>
         envHasAny(params.env, provider.envVars) ||
         [provider.id, ...(provider.aliases ?? [])].some((providerId) => {
@@ -64,7 +64,7 @@ export function hasOfficialExternalContractTarget(params: {
     return false;
   }
   return STATIC_ENTRIES.some((entry) =>
-    entry.openclaw?.contracts?.[params.contract]?.some((providerId) => {
+    entry.nova?.contracts?.[params.contract]?.some((providerId) => {
       const normalized = normalizeOptionalLowercaseString(providerId);
       return normalized ? providerIds.has(normalized) : false;
     }),
@@ -76,7 +76,7 @@ export function hasOfficialExternalWebContractEnvTarget(params: {
   env: NodeJS.ProcessEnv;
 }): boolean {
   return STATIC_ENTRIES.some((entry) => {
-    const manifest = entry.openclaw;
+    const manifest = entry.nova;
     const contractIds = normalizeIds(manifest?.contracts?.[params.contract] ?? []);
     return manifest?.webSearchProviders?.some((provider) => {
       const providerId = normalizeOptionalLowercaseString(provider.id);
@@ -88,12 +88,12 @@ export function hasOfficialExternalWebContractEnvTarget(params: {
 }
 
 export function hasOfficialExternalChannelTarget(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): boolean {
   const channels = isRecord(params.config.channels) ? params.config.channels : undefined;
   return STATIC_ENTRIES.some((entry) => {
-    const channel = entry.openclaw?.channel;
+    const channel = entry.nova?.channel;
     const channelId = normalizeOptionalLowercaseString(channel?.id);
     if (!channelId) {
       return false;
@@ -112,7 +112,7 @@ export function hasOfficialExternalWebSearchTarget(params: {
 }): boolean {
   const configuredId = normalizeOptionalLowercaseString(params.providerId);
   return STATIC_ENTRIES.some((entry) =>
-    entry.openclaw?.webSearchProviders?.some((provider) => {
+    entry.nova?.webSearchProviders?.some((provider) => {
       const providerId = normalizeOptionalLowercaseString(provider.id);
       return (
         (configuredId !== undefined && providerId === configuredId) ||

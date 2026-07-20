@@ -1,11 +1,11 @@
-# OpenClaw Nextcloud Talk
+# Nova Nextcloud Talk
 
-Official OpenClaw channel plugin for Nextcloud Talk conversations.
+Official Nova channel plugin for Nextcloud Talk conversations.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/nextcloud-talk
+nova plugin add @nova/nextcloud-talk
 ```
 
-Configure the Nextcloud server and Talk credentials in OpenClaw, then enable the conversations where agents should receive and send messages.
+Configure the Nextcloud server and Talk credentials in Nova, then enable the conversations where agents should receive and send messages.

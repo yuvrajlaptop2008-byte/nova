@@ -7,8 +7,8 @@ import type {
   WorkboardNotification,
   WorkboardRunAttempt,
 } from "@nova/workboard-contract";
-import { isFutureDateTimestampMs } from "openclaw/plugin-sdk/number-runtime";
-import { safeEqualSecret } from "openclaw/plugin-sdk/security-runtime";
+import { isFutureDateTimestampMs } from "nova/plugin-sdk/number-runtime";
+import { safeEqualSecret } from "nova/plugin-sdk/security-runtime";
 import {
   appendEvent,
   assertCanMutateClaimedCard,

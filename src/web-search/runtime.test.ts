@@ -9,7 +9,7 @@ import {
   replaceRuntimeAuthProfileStoreSnapshots,
 } from "../agents/auth-profiles/store.js";
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { PluginWebSearchProviderEntry } from "../plugins/web-provider-types.js";
 import {
   createWebSearchTestProvider,
@@ -23,13 +23,13 @@ type TestPluginWebSearchConfig = {
 };
 
 type WebSearchProviderResolverParams = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   onlyPluginIds?: readonly string[];
   origin?: string;
 };
 
 type ManifestContractOwnerParams = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   contract?: string;
   origin?: string;
   value?: string;
@@ -68,7 +68,7 @@ function createCustomSearchTool() {
   };
 }
 
-function getCustomSearchApiKey(config?: OpenClawConfig): unknown {
+function getCustomSearchApiKey(config?: NovaConfig): unknown {
   const pluginConfig = config?.plugins?.entries?.["custom-search"]?.config as
     | TestPluginWebSearchConfig
     | undefined;
@@ -89,7 +89,7 @@ function createCustomSearchProvider(
   });
 }
 
-function createCustomSearchConfig(apiKey: unknown): OpenClawConfig {
+function createCustomSearchConfig(apiKey: unknown): NovaConfig {
   return {
     plugins: {
       entries: {
@@ -424,7 +424,7 @@ describe("web search runtime", () => {
   });
 
   it("auto-detects a provider from a model-provider auth profile", async () => {
-    const agentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-auth-"));
+    const agentDir = mkdtempSync(path.join(os.tmpdir(), "nova-web-search-auth-"));
     tempDirs.push(agentDir);
     replaceRuntimeAuthProfileStoreSnapshots([
       {
@@ -466,8 +466,8 @@ describe("web search runtime", () => {
   });
 
   it("auto-detects a provider from the active agent auth profile", async () => {
-    const defaultAgentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-default-"));
-    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-active-"));
+    const defaultAgentDir = mkdtempSync(path.join(os.tmpdir(), "nova-web-search-default-"));
+    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "nova-web-search-active-"));
     tempDirs.push(defaultAgentDir, activeAgentDir);
     replaceRuntimeAuthProfileStoreSnapshots([
       {
@@ -499,7 +499,7 @@ describe("web search runtime", () => {
           { id: "side", agentDir: activeAgentDir },
         ],
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     expect(
       hasUsableWebSearchProvider({
@@ -522,7 +522,7 @@ describe("web search runtime", () => {
   });
 
   it("passes the active agentDir into selected provider tools", async () => {
-    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-web-search-tool-agent-"));
+    const activeAgentDir = mkdtempSync(path.join(os.tmpdir(), "nova-web-search-tool-agent-"));
     tempDirs.push(activeAgentDir);
     const provider = createCustomSearchProvider({
       credentialPath: "",

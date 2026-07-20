@@ -88,7 +88,7 @@ runs:
       run: |
         set -euo pipefail
         source "$GITHUB_ACTION_PATH/../setup-pnpm-store-cache/ensure-node.sh"
-        openclaw_ensure_node "$REQUESTED_NODE_VERSION"
+        nova_ensure_node "$REQUESTED_NODE_VERSION"
 
     - name: Setup pnpm
       id: setup-pnpm
@@ -124,7 +124,7 @@ runs:
         # inputs, runner platform, and the exact Node patch live in the runtime
         # marker below, so changes refresh this disk in place.
         key: ${{ github.repository }}-node-deps-bind-v5-${{ inputs.node-version }}
-        path: /var/tmp/openclaw-node-deps
+        path: /var/tmp/nova-node-deps
         # Single semantic writer: only the designated trusted-push job may
         # commit, so pull_request clones stay read-only. Like every sticky
         # disk here, this gate binds cooperating code, not hostile code: the
@@ -141,7 +141,7 @@ runs:
       if: inputs.vitest-fs-cache == 'true' && inputs.save-vitest-fs-cache == 'true' && runner.os != 'Windows'
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
       with:
-        path: /var/tmp/openclaw-vitest-fs-cache
+        path: /var/tmp/nova-vitest-fs-cache
         # Blacksmith transparently accelerates the upstream Actions cache API.
         # The scheduled/dispatch warmer writes one immutable protected archive;
         # all CI shards restore it into isolated runner-local directories.
@@ -153,7 +153,7 @@ runs:
       if: inputs.vitest-fs-cache == 'true' && inputs.save-vitest-fs-cache != 'true' && runner.os != 'Windows'
       uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
       with:
-        path: /var/tmp/openclaw-vitest-fs-cache
+        path: /var/tmp/nova-vitest-fs-cache
         key: ${{ github.repository }}-vitest-fs-v3-protected-${{ runner.os }}-${{ runner.arch }}-node-${{ inputs.node-version }}-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '**/package.json', '**/tsconfig*.json', 'vitest.config.*', 'test/vitest/**', '!**/node_modules/**') }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: |
           ${{ github.repository }}-vitest-fs-v3-protected-${{ runner.os }}-${{ runner.arch }}-node-${{ inputs.node-version }}-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '**/package.json', '**/tsconfig*.json', 'vitest.config.*', 'test/vitest/**', '!**/node_modules/**') }}-
@@ -166,8 +166,8 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        cache_root=/var/tmp/openclaw-vitest-fs-cache
-        generation_file="$cache_root/.openclaw-transform-generation"
+        cache_root=/var/tmp/nova-vitest-fs-cache
+        generation_file="$cache_root/.nova-transform-generation"
         mkdir -p "$cache_root"
         cache_generation=""
         if [[ -f "$generation_file" ]]; then
@@ -204,7 +204,7 @@ runs:
       if: inputs.node-compile-cache == 'true' && inputs.save-node-compile-cache == 'true' && runner.os != 'Windows'
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
       with:
-        path: /var/tmp/openclaw-node-compile-cache
+        path: /var/tmp/nova-node-compile-cache
         key: ${{ github.repository }}-node-compile-v3-${{ inputs.node-compile-cache-scope }}-protected-${{ runner.os }}-${{ runner.arch }}-node-${{ inputs.node-version }}-${{ steps.node-compile-cache-epoch.outputs.value }}
         restore-keys: |
           ${{ github.repository }}-node-compile-v3-${{ inputs.node-compile-cache-scope }}-protected-${{ runner.os }}-${{ runner.arch }}-node-${{ inputs.node-version }}-
@@ -213,7 +213,7 @@ runs:
       if: inputs.node-compile-cache == 'true' && inputs.save-node-compile-cache != 'true' && runner.os != 'Windows'
       uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
       with:
-        path: /var/tmp/openclaw-node-compile-cache
+        path: /var/tmp/nova-node-compile-cache
         key: ${{ github.repository }}-node-compile-v3-${{ inputs.node-compile-cache-scope }}-protected-${{ runner.os }}-${{ runner.arch }}-node-${{ inputs.node-version }}-${{ steps.node-compile-cache-epoch.outputs.value }}
         restore-keys: |
           ${{ github.repository }}-node-compile-v3-${{ inputs.node-compile-cache-scope }}-protected-${{ runner.os }}-${{ runner.arch }}-node-${{ inputs.node-version }}-
@@ -225,7 +225,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        cache_root=/var/tmp/openclaw-node-compile-cache
+        cache_root=/var/tmp/nova-node-compile-cache
         mkdir -p "$cache_root"
         echo "NODE_COMPILE_CACHE=$cache_root" >> "$GITHUB_ENV"
         echo "NODE_COMPILE_CACHE_PORTABLE=1" >> "$GITHUB_ENV"
@@ -246,7 +246,7 @@ runs:
         FROZEN_LOCKFILE: ${{ inputs.frozen-lockfile }}
       run: |
         set -euo pipefail
-        sticky_root=/var/tmp/openclaw-node-deps
+        sticky_root=/var/tmp/nova-node-deps
         sticky_modules="$sticky_root/node_modules"
         sticky_store="$sticky_root/store"
         workspace_modules="$GITHUB_WORKSPACE/node_modules"
@@ -306,7 +306,7 @@ runs:
         CI: "true"
         FROZEN_LOCKFILE: ${{ inputs.frozen-lockfile }}
         STICKY_DISK: ${{ inputs.sticky-disk }}
-        STICKY_ROOT: /var/tmp/openclaw-node-deps
+        STICKY_ROOT: /var/tmp/nova-node-deps
         STICKY_WRITER: ${{ inputs.save-sticky-disk == 'true' && github.event_name != 'pull_request' && 'true' || 'false' }}
       run: |
         set -euo pipefail
@@ -323,7 +323,7 @@ runs:
             ;;
         esac
 
-        sticky_marker="$STICKY_ROOT/.openclaw-deps-fingerprint"
+        sticky_marker="$STICKY_ROOT/.nova-deps-fingerprint"
         sticky_fingerprint=""
         sticky_fingerprint_matches="false"
         sticky_snapshot_matches="false"
@@ -347,7 +347,7 @@ runs:
           sudo umount "$GITHUB_WORKSPACE/node_modules"
           rm -rf "$GITHUB_WORKSPACE/node_modules"
           mkdir -p "$GITHUB_WORKSPACE/node_modules"
-          ephemeral_store="${RUNNER_TEMP:?}/openclaw-pnpm-store"
+          ephemeral_store="${RUNNER_TEMP:?}/nova-pnpm-store"
           mkdir -p "$ephemeral_store"
           export PNPM_CONFIG_STORE_DIR="$ephemeral_store"
           echo "PNPM_CONFIG_STORE_DIR=$ephemeral_store" >> "$GITHUB_ENV"

@@ -1,7 +1,7 @@
 // QA Lab Slack credentials, instrumentation, and channel config.
 import type { WebClient } from "@slack/web-api";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   type SlackQaRuntimeEnv,
   type SlackQaConfigOverrides,
@@ -113,7 +113,7 @@ export function instrumentSlackPostMessage(client: WebClient) {
 }
 
 export function buildSlackQaConfig(
-  baseCfg: OpenClawConfig,
+  baseCfg: NovaConfig,
   params: {
     channelId: string;
     driverBotUserId: string;
@@ -123,7 +123,7 @@ export function buildSlackQaConfig(
     sutAppToken: string;
     sutBotToken: string;
   },
-): OpenClawConfig {
+): NovaConfig {
   const codexApprovalConfig = params.overrides?.codexApproval === true;
   const progressOverrides = params.overrides?.progress;
   const primaryModel = params.primaryModel;

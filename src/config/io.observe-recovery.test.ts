@@ -6,11 +6,8 @@ import path from "node:path";
 import JSON5 from "json5";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { executeSqliteQueryTakeFirstSync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { listConfigAuditRecordsForTests } from "./io.audit.test-support.js";
 import { createConfigIO } from "./io.js";
 import {
@@ -22,7 +19,7 @@ import {
 import type { ConfigFileSnapshot } from "./types.js";
 
 const CONFIG_CLOBBER_SNAPSHOT_LIMIT = 32;
-type ConfigHealthDatabase = Pick<OpenClawStateKyselyDatabase, "config_health_entries">;
+type ConfigHealthDatabase = Pick<NovaStateKyselyDatabase, "config_health_entries">;
 type ObserveRecoveryDeps = Parameters<typeof maybeRecoverSuspiciousConfigRead>[0]["deps"];
 
 function resolveLastKnownGoodConfigPath(configPath: string): string {
@@ -48,20 +45,20 @@ describe("config observe recovery", () => {
   }
 
   beforeAll(async () => {
-    fixtureRoot = await fsp.mkdtemp(path.join(os.tmpdir(), "openclaw-config-observe-recovery-"));
+    fixtureRoot = await fsp.mkdtemp(path.join(os.tmpdir(), "nova-config-observe-recovery-"));
   });
 
   afterAll(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fsp.rm(fixtureRoot, { recursive: true, force: true });
   });
 
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
   });
 
   function readConfigHealthRow(home: string, configPath: string) {
-    const { db } = openOpenClawStateDatabase({ env: { HOME: home } as NodeJS.ProcessEnv });
+    const { db } = openNovaStateDatabase({ env: { HOME: home } as NodeJS.ProcessEnv });
     const healthDb = getNodeSqliteKysely<ConfigHealthDatabase>(db);
     return executeSqliteQueryTakeFirstSync(
       db,
@@ -170,7 +167,7 @@ describe("config observe recovery", () => {
     warn = vi.fn(),
     options: { env?: NodeJS.ProcessEnv; observe?: boolean } = {},
   ) {
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
+    const configPath = path.join(home, ".nova", "nova.json");
     const error = vi.fn();
     return {
       configPath,
@@ -255,7 +252,7 @@ describe("config observe recovery", () => {
     auditPath: string;
     warn: ReturnType<typeof vi.fn>;
   } {
-    const configPath = path.join(home, ".openclaw", "openclaw.json");
+    const configPath = path.join(home, ".nova", "nova.json");
     return {
       deps: {
         fs,
@@ -265,7 +262,7 @@ describe("config observe recovery", () => {
         logger: { warn },
       },
       configPath,
-      auditPath: path.join(home, ".openclaw", "logs", "config-audit.jsonl"),
+      auditPath: path.join(home, ".nova", "logs", "config-audit.jsonl"),
       warn,
     };
   }
@@ -447,7 +444,7 @@ describe("config observe recovery", () => {
   it("read snapshots auto-restore tiny valid clobbers before recording them observed", async () => {
     await withSuiteHome(async (home) => {
       const { io, configPath, warn } = createTestConfigIO(home);
-      const auditPath = path.join(home, ".openclaw", "logs", "config-audit.jsonl");
+      const auditPath = path.join(home, ".nova", "logs", "config-audit.jsonl");
       await seedConfigBackup(configPath, {
         ...recoverableTelegramConfig,
         channels: {
@@ -540,7 +537,7 @@ describe("config observe recovery", () => {
   it("does not auto-restore read snapshots when observation is disabled", async () => {
     await withSuiteHome(async (home) => {
       const { io, configPath } = createTestConfigIO(home, vi.fn(), { observe: false });
-      const auditPath = path.join(home, ".openclaw", "logs", "config-audit.jsonl");
+      const auditPath = path.join(home, ".nova", "logs", "config-audit.jsonl");
       await seedConfigBackup(configPath, recoverableTelegramConfig);
       const clobbered = await writeConfigRaw(configPath, {
         meta: { lastTouchedVersion: "2026.5.28" },
@@ -558,7 +555,7 @@ describe("config observe recovery", () => {
   it("does not auto-restore include-authored roots from stale full-file backups", async () => {
     await withSuiteHome(async (home) => {
       const { io, configPath } = createTestConfigIO(home);
-      const auditPath = path.join(home, ".openclaw", "logs", "config-audit.jsonl");
+      const auditPath = path.join(home, ".nova", "logs", "config-audit.jsonl");
       const includedConfig = {
         ...recoverableTelegramConfig,
         channels: {
@@ -1041,7 +1038,7 @@ describe("config observe recovery", () => {
         promoteConfigSnapshotToLastKnownGood({ deps, snapshot, logger: deps.logger }),
       ).resolves.toBe(true);
 
-      await expectPathMissing(path.join(home, ".openclaw", "logs", "config-health.json"));
+      await expectPathMissing(path.join(home, ".nova", "logs", "config-health.json"));
       const row = readConfigHealthRow(home, configPath);
       expect(row).toMatchObject({
         config_path: configPath,
@@ -1061,7 +1058,7 @@ describe("config observe recovery", () => {
 
       recoverClobberedUpdateChannelSync({ deps, configPath });
 
-      await expectPathMissing(path.join(home, ".openclaw", "logs", "config-health.json"));
+      await expectPathMissing(path.join(home, ".nova", "logs", "config-health.json"));
       const row = readConfigHealthRow(home, configPath);
       expect(row).toMatchObject({
         config_path: configPath,

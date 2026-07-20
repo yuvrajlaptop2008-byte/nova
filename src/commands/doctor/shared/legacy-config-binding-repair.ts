@@ -1,11 +1,8 @@
 // Repairs canonical binding references after agent config migration.
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { normalizeAgentId } from "../../../routing/session-key.js";
 
-export function pruneBindingsForMissingAgents(
-  cfg: OpenClawConfig,
-  changes: string[],
-): OpenClawConfig {
+export function pruneBindingsForMissingAgents(cfg: NovaConfig, changes: string[]): NovaConfig {
   const agents = cfg.agents?.list;
   const bindings = cfg.bindings;
   if (!Array.isArray(agents) || agents.length === 0 || !Array.isArray(bindings)) {

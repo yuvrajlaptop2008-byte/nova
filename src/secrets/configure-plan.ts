@@ -1,7 +1,7 @@
-/** Builds the interactive `openclaw secrets configure` target list and apply plan. */
+/** Builds the interactive `nova secrets configure` target list and apply plan. */
 import { isDeepStrictEqual } from "node:util";
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   resolveSecretInputRef,
   type SecretProviderConfig,
@@ -15,13 +15,13 @@ import {
   discoverConfigSecretTargets,
 } from "./target-registry.js";
 
-/** Credential target shown by `openclaw secrets configure` before a SecretRef is selected. */
+/** Credential target shown by `nova secrets configure` before a SecretRef is selected. */
 export type ConfigureCandidate = {
   type: string;
   path: string;
   pathSegments: string[];
   label: string;
-  configFile: "openclaw.json" | "auth-profiles.json";
+  configFile: "nova.json" | "auth-profiles.json";
   expectedResolvedValue: "string" | "string-or-object";
   existingRef?: SecretRef;
   isDerived?: boolean;
@@ -42,7 +42,7 @@ type ConfigureProviderChanges = {
   deletes: string[];
 };
 
-function getSecretProviders(config: OpenClawConfig): Record<string, SecretProviderConfig> {
+function getSecretProviders(config: NovaConfig): Record<string, SecretProviderConfig> {
   if (!isRecord(config.secrets?.providers)) {
     return {};
   }
@@ -54,7 +54,7 @@ function configureCandidateSortKey(candidate: ConfigureCandidate): string {
     const agentId = candidate.agentId ?? "";
     return `auth-profiles:${agentId}:${candidate.path}`;
   }
-  return `openclaw:${candidate.path}`;
+  return `nova:${candidate.path}`;
 }
 
 function resolveAuthProfileProvider(
@@ -75,19 +75,19 @@ function resolveAuthProfileProvider(
 
 /** Builds configure candidates for Nova config plus an optional auth-profile scope. */
 export function buildConfigureCandidatesForScope(params: {
-  config: OpenClawConfig;
-  authoredOpenClawConfig?: OpenClawConfig;
+  config: NovaConfig;
+  authoredNovaConfig?: NovaConfig;
   authProfiles?: {
     agentId: string;
     store: AuthProfileStore;
   };
 }): ConfigureCandidate[] {
-  const authoredConfig = params.authoredOpenClawConfig ?? params.config;
+  const authoredConfig = params.authoredNovaConfig ?? params.config;
 
   const hasPathInAuthoredConfig = (pathSegments: string[]): boolean =>
     hasPath(authoredConfig, pathSegments);
 
-  const openclawCandidates = discoverConfigSecretTargets(params.config)
+  const novaCandidates = discoverConfigSecretTargets(params.config)
     .filter((entry) => entry.entry.includeInConfigure)
     .map((entry) => {
       const resolved = resolveSecretInputRef({
@@ -107,7 +107,7 @@ export function buildConfigureCandidatesForScope(params: {
           path: entry.path,
           pathSegments: [...entry.pathSegments],
           label: entry.path,
-          configFile: `openclaw.json` as const,
+          configFile: `nova.json` as const,
           expectedResolvedValue: entry.entry.expectedResolvedValue,
         },
         resolved.ref ? { existingRef: resolved.ref } : {},
@@ -152,7 +152,7 @@ export function buildConfigureCandidatesForScope(params: {
             );
           });
 
-  return [...openclawCandidates, ...authCandidates].toSorted((a, b) =>
+  return [...novaCandidates, ...authCandidates].toSorted((a, b) =>
     configureCandidateSortKey(a).localeCompare(configureCandidateSortKey(b)),
   );
 }
@@ -191,8 +191,8 @@ function hasPath(root: unknown, segments: string[]): boolean {
 
 /** Computes provider upserts/deletes between original and edited config. */
 export function collectConfigureProviderChanges(params: {
-  original: OpenClawConfig;
-  next: OpenClawConfig;
+  original: NovaConfig;
+  next: NovaConfig;
 }): ConfigureProviderChanges {
   const originalProviders = getSecretProviders(params.original);
   const nextProviders = getSecretProviders(params.next);
@@ -242,7 +242,7 @@ export function buildSecretsConfigurePlan(params: {
     version: 1,
     protocolVersion: 1,
     generatedAt: params.generatedAt ?? new Date().toISOString(),
-    generatedBy: "openclaw secrets configure",
+    generatedBy: "nova secrets configure",
     targets: [...params.selectedTargets.values()].map((entry) =>
       Object.assign(
         {

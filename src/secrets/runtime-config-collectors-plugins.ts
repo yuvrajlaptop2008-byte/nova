@@ -1,7 +1,7 @@
 /** Collects plugin config secret refs from runtime plugin metadata. */
 import { normalizeStringEntries } from "@nova/normalization-core/string-normalization";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   collectPluginConfigContractMatches,
   resolvePluginConfigContractsById,
@@ -34,7 +34,7 @@ function parsePluginConfigArrayIndex(segment: string): number | undefined {
 /** Collects SecretRef assignments from plugin-owned config contract paths. */
 export function collectPluginConfigAssignments(params: {
   /** Mutable config snapshot whose plugin config values will receive resolved secrets. */
-  config: OpenClawConfig;
+  config: NovaConfig;
   /** Defaults from the source config, used while matching manifest-declared SecretInput paths. */
   defaults: SecretDefaults | undefined;
   /** Resolver context that receives assignments and inactive-surface warnings. */

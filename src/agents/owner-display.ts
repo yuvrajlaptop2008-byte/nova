@@ -5,7 +5,7 @@
  */
 import crypto from "node:crypto";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 type OwnerDisplaySetting = {
   ownerDisplay?: "raw" | "hash";
@@ -13,7 +13,7 @@ type OwnerDisplaySetting = {
 };
 
 type OwnerDisplaySecretResolution = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   generatedSecret?: string;
 };
 
@@ -21,7 +21,7 @@ type OwnerDisplaySecretResolution = {
  * Resolve owner display settings for prompt rendering.
  * Keep auth secrets decoupled from owner hash secrets.
  */
-export function resolveOwnerDisplaySetting(config?: OpenClawConfig): OwnerDisplaySetting {
+export function resolveOwnerDisplaySetting(config?: NovaConfig): OwnerDisplaySetting {
   const ownerDisplay = config?.commands?.ownerDisplay;
   if (ownerDisplay !== "hash") {
     return { ownerDisplay, ownerDisplaySecret: undefined };
@@ -37,7 +37,7 @@ export function resolveOwnerDisplaySetting(config?: OpenClawConfig): OwnerDispla
  * Returns updated config and generated secret when autofill was needed.
  */
 export function ensureOwnerDisplaySecret(
-  config: OpenClawConfig,
+  config: NovaConfig,
   generateSecret: () => string = () => crypto.randomBytes(32).toString("hex"),
 ): OwnerDisplaySecretResolution {
   const settings = resolveOwnerDisplaySetting(config);

@@ -1,28 +1,25 @@
 // Codex tests cover dynamic tools plugin behavior.
 import { createHash } from "node:crypto";
-import type { AgentToolResult } from "openclaw/plugin-sdk/agent-core";
-import type { AnyAgentTool } from "openclaw/plugin-sdk/agent-harness";
+import type { AgentToolResult } from "nova/plugin-sdk/agent-core";
+import type { AnyAgentTool } from "nova/plugin-sdk/agent-harness";
 import {
   HEARTBEAT_RESPONSE_TOOL_NAME,
   embeddedAgentLog,
   wrapToolWithBeforeToolCallHook,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { createTerminalPresentationContractTool } from "openclaw/plugin-sdk/agent-runtime-test-contracts";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { createTerminalPresentationContractTool } from "nova/plugin-sdk/agent-runtime-test-contracts";
 import {
   onInternalDiagnosticEvent,
   waitForDiagnosticEventsDrained,
   type DiagnosticEventPayload,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-import {
-  initializeGlobalHookRunner,
-  resetGlobalHookRunner,
-} from "openclaw/plugin-sdk/hook-runtime";
+} from "nova/plugin-sdk/diagnostic-runtime";
+import { initializeGlobalHookRunner, resetGlobalHookRunner } from "nova/plugin-sdk/hook-runtime";
 import {
   createEmptyPluginRegistry,
   createMockPluginRegistry,
   createTestRegistry,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createCodexDynamicToolBridge } from "./dynamic-tools.js";
 import {
@@ -33,7 +30,7 @@ import {
 } from "./protocol.js";
 import { settleCodexSourceReplyFinality } from "./source-reply-finality.js";
 
-const CODEX_NOVA_DYNAMIC_TOOL_NAMESPACE = "openclaw";
+const CODEX_NOVA_DYNAMIC_TOOL_NAMESPACE = "nova";
 
 const COMPUTER_FRAME_IMAGE =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=";
@@ -2758,7 +2755,7 @@ describe("createCodexDynamicToolBridge", () => {
       callId: "call-1",
       namespace: null,
       tool: "exec",
-      arguments: { command: "touch /tmp/openclaw-replay-test" },
+      arguments: { command: "touch /tmp/nova-replay-test" },
     });
 
     expect(result).toEqual(expectInputText("done"));
@@ -3072,7 +3069,7 @@ describe("createCodexDynamicToolBridge", () => {
   });
 
   it("keeps config out of Codex tool-result contexts", async () => {
-    const config = { session: { store: "/tmp/openclaw-session-store.json" } };
+    const config = { session: { store: "/tmp/nova-session-store.json" } };
     const registry = createEmptyPluginRegistry();
     const middlewareContexts: Record<string, unknown>[] = [];
     const legacyContexts: Record<string, unknown>[] = [];

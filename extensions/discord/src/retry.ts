@@ -4,13 +4,13 @@ import {
   extractErrorCode,
   formatErrorMessage,
   readErrorName,
-} from "openclaw/plugin-sdk/error-runtime";
-import { parseStrictNonNegativeInteger } from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/error-runtime";
+import { parseStrictNonNegativeInteger } from "nova/plugin-sdk/number-runtime";
 import {
   createChannelApiRetryRunner,
   resolveRetryConfig,
   type RetryConfig,
-} from "openclaw/plugin-sdk/retry-runtime";
+} from "nova/plugin-sdk/retry-runtime";
 import { RateLimitError } from "./internal/discord.js";
 
 const DISCORD_RETRY_DEFAULTS = {

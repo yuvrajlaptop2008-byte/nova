@@ -1,18 +1,18 @@
 // Google Meet supplies surface labels; core owns generic meeting consult wiring.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   consultMeetingAgent,
   handleMeetingRealtimeConsultToolCall,
   resolveMeetingRealtimeTools,
   type MeetingAgentConsultSurface,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { PluginRuntime, RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { PluginRuntime, RuntimeLogger } from "nova/plugin-sdk/plugin-runtime";
 import type {
   RealtimeVoiceBridgeSession,
   RealtimeVoiceToolCallEvent,
   RealtimeVoiceTool,
   TalkEventInput,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "nova/plugin-sdk/realtime-voice";
 import type { GoogleMeetConfig, GoogleMeetToolPolicy } from "./config.js";
 
 const GOOGLE_MEET_CONSULT_SURFACE: MeetingAgentConsultSurface = {
@@ -37,9 +37,9 @@ export function resolveGoogleMeetRealtimeTools(policy: GoogleMeetToolPolicy): Re
   return resolveMeetingRealtimeTools(policy);
 }
 
-export async function consultOpenClawAgentForGoogleMeet(params: {
+export async function consultNovaAgentForGoogleMeet(params: {
   config: GoogleMeetConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
   meetingSessionId: string;
@@ -66,7 +66,7 @@ export async function handleGoogleMeetRealtimeConsultToolCall(params: {
   session: RealtimeVoiceBridgeSession;
   event: RealtimeVoiceToolCallEvent;
   config: GoogleMeetConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
   meetingSessionId: string;

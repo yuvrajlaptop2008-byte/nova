@@ -2,15 +2,15 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { withEnvAsync } from "../../test-utils/env.js";
 
 async function withOpenRouterStateDir(run: (stateDir: string) => Promise<void>) {
   // Each case gets an isolated state dir because the module persists capability
   // rows through the plugin state store across imports.
-  const stateDir = mkdtempSync(join(tmpdir(), "openclaw-openrouter-capabilities-"));
+  const stateDir = mkdtempSync(join(tmpdir(), "nova-openrouter-capabilities-"));
   resetPluginStateStoreForTests();
   try {
     await withEnvAsync(

@@ -45,7 +45,7 @@ function setMediaStoreNetworkDepsForTest(deps?: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.mediaStoreTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.mediaStoreTestApi")] = {
     setMediaStoreNetworkDepsForTest,
   };
 }

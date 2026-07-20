@@ -1,10 +1,7 @@
 import { posix, win32 } from "node:path";
-import { buildPluginConfigSchema, type OpenClawPluginConfigSchema } from "openclaw/plugin-sdk/core";
-import {
-  formatPluginConfigIssue,
-  mapPluginConfigIssues,
-} from "openclaw/plugin-sdk/extension-shared";
-import { MAX_TIMER_TIMEOUT_SECONDS } from "openclaw/plugin-sdk/number-runtime";
+import { buildPluginConfigSchema, type NovaPluginConfigSchema } from "nova/plugin-sdk/core";
+import { formatPluginConfigIssue, mapPluginConfigIssues } from "nova/plugin-sdk/extension-shared";
+import { MAX_TIMER_TIMEOUT_SECONDS } from "nova/plugin-sdk/number-runtime";
 import { z } from "zod";
 
 const MXC_CONTAINMENTS = ["process", "processcontainer"] as const;
@@ -70,7 +67,7 @@ const MxcPluginConfigSchema = z.strictObject({
     .optional(),
 });
 
-export function createMxcPluginConfigSchema(): OpenClawPluginConfigSchema {
+export function createMxcPluginConfigSchema(): NovaPluginConfigSchema {
   return buildPluginConfigSchema(MxcPluginConfigSchema, {
     safeParse(value) {
       if (value === undefined) {

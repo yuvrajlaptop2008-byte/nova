@@ -7,10 +7,10 @@ import {
   replaceRuntimeAuthProfileStoreSnapshots,
   resolveDefaultAgentDir,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
-import { MODEL_SELECTION_LOCKED_MESSAGE } from "openclaw/plugin-sdk/model-session-runtime";
-import type { PluginCommandContext, PluginCommandResult } from "openclaw/plugin-sdk/plugin-entry";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+} from "nova/plugin-sdk/agent-runtime";
+import { MODEL_SELECTION_LOCKED_MESSAGE } from "nova/plugin-sdk/model-session-runtime";
+import type { PluginCommandContext, PluginCommandResult } from "nova/plugin-sdk/plugin-entry";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CODEX_CONTROL_METHODS } from "./app-server/capabilities.js";
 import type { CodexComputerUseStatus } from "./app-server/computer-use.js";
@@ -329,7 +329,7 @@ function expectedDiagnosticsTargetBlock(params: {
 describe("codex command", () => {
   beforeEach(async () => {
     resetCodexTestBindingStore();
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-command-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-command-"));
     vi.stubEnv("NOVA_STATE_DIR", tempDir);
   });
 
@@ -425,7 +425,7 @@ describe("codex command", () => {
     });
 
     expectResultTextContains(result, "ON   google-calendar");
-    expectResultTextContains(result, "openclaw.json");
+    expectResultTextContains(result, "nova.json");
   });
 
   it("enables and disables Codex sub-plugins through the /codex plugins command surface", async () => {
@@ -440,13 +440,13 @@ describe("codex command", () => {
     const disabled = await handleCodexCommand(createContext("plugins disable google-calendar"), {
       deps: createDeps({ codexPluginsManagementIo }),
     });
-    expectResultTextContains(disabled, "google-calendar: disabled in openclaw.json");
+    expectResultTextContains(disabled, "google-calendar: disabled in nova.json");
     expect(codexPluginsManagementIo.current()["google-calendar"]?.enabled).toBe(false);
 
     const enabled = await handleCodexCommand(createContext("plugins enable google-calendar"), {
       deps: createDeps({ codexPluginsManagementIo }),
     });
-    expectResultTextContains(enabled, "google-calendar: enabled in openclaw.json");
+    expectResultTextContains(enabled, "google-calendar: enabled in nova.json");
     expect(codexPluginsManagementIo.currentConfig().enabled).toBe(true);
     expect(codexPluginsManagementIo.current()["google-calendar"]?.enabled).toBe(true);
   });
@@ -2707,7 +2707,7 @@ describe("codex command", () => {
         threadId: "thread-123",
         includeLogs: true,
         tags: {
-          source: "openclaw-diagnostics",
+          source: "nova-diagnostics",
           channel: "test",
         },
       },
@@ -2970,7 +2970,7 @@ describe("codex command", () => {
         threadId: "thread-approved",
         includeLogs: true,
         tags: {
-          source: "openclaw-diagnostics",
+          source: "nova-diagnostics",
           channel: "test",
         },
       },
@@ -3469,7 +3469,7 @@ describe("codex command", () => {
       threadId: "thread-789",
       includeLogs: true,
       tags: {
-        source: "openclaw-diagnostics",
+        source: "nova-diagnostics",
         channel: "test",
       },
     });

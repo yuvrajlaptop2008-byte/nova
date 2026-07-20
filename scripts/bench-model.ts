@@ -1,6 +1,6 @@
 // Bench Model script supports Nova repository automation.
 import { pathToFileURL } from "node:url";
-import { completeSimple, type Model } from "openclaw/plugin-sdk/llm";
+import { completeSimple, type Model } from "nova/plugin-sdk/llm";
 import { expectDefined } from "../packages/normalization-core/src/expect.js";
 import { parseStrictIntegerOption } from "./lib/dev-tooling-safety.ts";
 

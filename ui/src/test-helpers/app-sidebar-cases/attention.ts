@@ -226,10 +226,7 @@ describe("AppSidebar session attention", () => {
   });
 
   it("marks a collapsed section that contains agent-declared attention", async () => {
-    localStorage.setItem(
-      "openclaw:sidebar:sessions:collapsed-sections",
-      JSON.stringify(["ungrouped"]),
-    );
+    localStorage.setItem("nova:sidebar:sessions:collapsed-sections", JSON.stringify(["ungrouped"]));
     const sessionsHarness = createSessionsHarness("main", [sessionKey]);
     setRows(sessionsHarness, [agentAttentionRow()]);
     const { sidebar } = await mountSidebar(

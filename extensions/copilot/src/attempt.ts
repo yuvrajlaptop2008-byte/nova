@@ -6,7 +6,7 @@ import type {
   AgentHarnessAttemptResult,
   AgentMessage,
   SandboxContext,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   buildAgentHookContextChannelFields,
   cancelPendingAgentQuestionForSession,
@@ -31,7 +31,7 @@ import {
   runAgentHarnessLlmOutputHook,
   clearActiveEmbeddedRun,
   setActiveEmbeddedRun,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import { createCopilotByokAuth, resolveCopilotAuth } from "./auth-bridge.js";
 import { createCopilotByokProxy } from "./byok-proxy.js";
 import {
@@ -88,9 +88,9 @@ export type CopilotSessionConfig = Pick<
   | "workingDirectory"
 >;
 // NOTE(plugin-sdk-widening): AttemptParamsLike can be removed once
-// openclaw/plugin-sdk/agent-harness-runtime declares auth, messages,
+// nova/plugin-sdk/agent-harness-runtime declares auth, messages,
 // onAssistantDelta, and initialReplayState.sdkSessionId fields. Tracked by
-// project openclaw-copilot-harness; reviewer-attempt-bridge note.
+// project nova-copilot-harness; reviewer-attempt-bridge note.
 
 type AttemptParamsLike = AgentHarnessAttemptParams & {
   auth?: {
@@ -165,7 +165,7 @@ interface CopilotAttemptDeps {
   isHostScopedToolActive?: (toolName: string) => boolean;
   /**
    * Optional override for sandbox-context resolution. The default delegates to
-   * `openclaw/plugin-sdk/agent-harness-runtime#resolveSandboxContext`, which is
+   * `nova/plugin-sdk/agent-harness-runtime#resolveSandboxContext`, which is
    * the same path PI uses. Tests inject a stub here to avoid the real
    * resolver's side effects (container provisioning, registry writes).
    */
@@ -173,7 +173,7 @@ interface CopilotAttemptDeps {
   /**
    * Called once with the SDK session id and pooled client immediately
    * after the SDK session is created (or resumed) successfully. The
-   * harness uses this to track the openclawSessionId -> sdkSessionId
+   * harness uses this to track the novaSessionId -> sdkSessionId
    * mapping needed for `reset(params)` (see harness.ts). Exceptions
    * thrown from this callback are swallowed so they cannot break the
    * attempt.
@@ -368,7 +368,7 @@ export async function runCopilotAttempt(
   const input = params as AttemptParamsLike;
   const createToolBridge = deps.createToolBridge ?? createCopilotToolBridge;
   const hostSystemAgentActive =
-    deps.isHostScopedToolActive?.("openclaw") ?? isHostScopedAgentToolActive("openclaw");
+    deps.isHostScopedToolActive?.("nova") ?? isHostScopedAgentToolActive("nova");
   const ringZeroSystemAgentRun =
     hostSystemAgentActive && isSystemAgentOnlyToolAllowlist(input.toolsAllow);
   const messages = getMessagesSnapshotInput(input);
@@ -660,7 +660,7 @@ export async function runCopilotAttempt(
         // enforcement layer receives the same context PI does
         // (identity, owner-only allowlist, auth-profile store,
         // channel/routing, model context, run hooks). See
-        // tool-bridge.ts buildOpenClawCodingToolsOptions().
+        // tool-bridge.ts buildNovaCodingToolsOptions().
         attemptParams: observeToolTerminal ? { ...input, observeToolTerminal } : input,
         computerContextEpoch,
         sessionRef,
@@ -1153,14 +1153,14 @@ export async function runCopilotAttempt(
   // Nova's runtime transcript store. The Copilot SDK may still maintain
   // its own private files; Nova-side audit state is addressed only by
   // session identity so missing identity cannot silently recreate JSONL state.
-  const openClawSessionIdForMirror = readString(input.sessionId);
+  const novaSessionIdForMirror = readString(input.sessionId);
   const sessionKeyForMirror = readString((input as { sessionKey?: unknown }).sessionKey);
-  const openClawStorePathForMirror = readString(input.sessionTarget?.storePath);
-  const mirrorScopeSessionId = sessionIdUsed ?? openClawSessionIdForMirror;
+  const novaStorePathForMirror = readString(input.sessionTarget?.storePath);
+  const mirrorScopeSessionId = sessionIdUsed ?? novaSessionIdForMirror;
   if (
-    openClawSessionIdForMirror &&
+    novaSessionIdForMirror &&
     sessionKeyForMirror &&
-    openClawStorePathForMirror &&
+    novaStorePathForMirror &&
     messagesSnapshot.length > 0
   ) {
     const taggedMessages = messagesSnapshot.map((message, index) => {
@@ -1187,10 +1187,10 @@ export async function runCopilotAttempt(
       return attachCopilotMirrorIdentity(message, `${identityScope}:${message.role}:${index}`);
     });
     await dualWriteCopilotTranscriptBestEffort({
-      sessionId: openClawSessionIdForMirror,
+      sessionId: novaSessionIdForMirror,
       sessionKey: sessionKeyForMirror,
       agentId: readString(input.agentId),
-      storePath: openClawStorePathForMirror,
+      storePath: novaStorePathForMirror,
       messages: taggedMessages,
       idempotencyScope: mirrorScopeSessionId ? `copilot:${mirrorScopeSessionId}` : undefined,
       config: (input as { config?: unknown }).config as never,
@@ -1476,7 +1476,7 @@ function buildCopilotAvailableTools(sdkTools: SdkTool[], includeAskUser: boolean
 }
 
 function isSystemAgentOnlyToolAllowlist(toolsAllow: readonly string[] | undefined): boolean {
-  return toolsAllow?.length === 1 && toolsAllow[0]?.trim().toLowerCase() === "openclaw";
+  return toolsAllow?.length === 1 && toolsAllow[0]?.trim().toLowerCase() === "nova";
 }
 
 async function createMessageOptions(
@@ -1640,8 +1640,8 @@ function readTailUserText(messages: AgentMessage[]): string | undefined {
 // widening the module's public surface for what is otherwise a pure
 // guard. See attempt.ts dual-write tagging block.
 function hasMirrorIdentity(message: AgentMessage): boolean {
-  const record = message as unknown as { __openclaw?: unknown };
-  const meta = record["__openclaw"];
+  const record = message as unknown as { __nova?: unknown };
+  const meta = record["__nova"];
   if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
     return false;
   }

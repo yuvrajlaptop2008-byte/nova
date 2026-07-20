@@ -15,7 +15,7 @@ export function posixCodexPlatformPackageRepairFunction(): string {
   grep -F 'Missing optional dependency @openai/codex-' "$output_file" >/dev/null 2>&1 || return 1
   state_home="\${NOVA_PARALLELS_HOME:-\${HOME:-}}"
   codex_manifest=""
-  for candidate in "$state_home"/.openclaw/npm/projects/*/node_modules/@nova/codex/package.json; do
+  for candidate in "$state_home"/.nova/npm/projects/*/node_modules/@nova/codex/package.json; do
     [ -f "$candidate" ] || continue
     codex_manifest="$candidate"
     break
@@ -25,7 +25,7 @@ export function posixCodexPlatformPackageRepairFunction(): string {
     return 1
   fi
   project_root="\${codex_manifest%/node_modules/@nova/codex/package.json}"
-  cache_dir="$(mktemp -d "\${TMPDIR:-/tmp}/openclaw-npm-cache.XXXXXX")"
+  cache_dir="$(mktemp -d "\${TMPDIR:-/tmp}/nova-npm-cache.XXXXXX")"
   echo "codex-platform-repair: retrying managed npm install once with a fresh cache" >&2
   repair_rc=0
   (
@@ -48,16 +48,16 @@ export function windowsCodexPlatformPackageRepairFunction(): string {
   if ($outputText -notmatch [regex]::Escape('Missing optional dependency @openai/codex-')) {
     return $false
   }
-  $projectsRoot = Join-Path $env:USERPROFILE '.openclaw\npm\projects'
+  $projectsRoot = Join-Path $env:USERPROFILE '.nova\npm\projects'
   $codexManifest = Get-ChildItem -Path $projectsRoot -Filter package.json -File -Recurse -ErrorAction SilentlyContinue |
-    Where-Object { $_.FullName -match 'node_modules[\\/]@openclaw[\\/]codex[\\/]package\.json$' } |
+    Where-Object { $_.FullName -match 'node_modules[\\/]@nova[\\/]codex[\\/]package\.json$' } |
     Select-Object -First 1
   if (-not $codexManifest) {
     Write-Warning 'codex-platform-repair: managed Codex project not found'
     return $false
   }
   $projectRoot = $codexManifest.Directory.Parent.Parent.Parent.FullName
-  $cacheDir = Join-Path ([System.IO.Path]::GetTempPath()) ('openclaw-npm-cache-' + [guid]::NewGuid().ToString('N'))
+  $cacheDir = Join-Path ([System.IO.Path]::GetTempPath()) ('nova-npm-cache-' + [guid]::NewGuid().ToString('N'))
   $oldUpperCache = [Environment]::GetEnvironmentVariable('NPM_CONFIG_CACHE', 'Process')
   $oldLowerCache = [Environment]::GetEnvironmentVariable('npm_config_cache', 'Process')
   $pushedLocation = $false
@@ -109,7 +109,7 @@ export function windowsProviderOnlyPluginIsolationScript(options: PluginIsolatio
   return `$env:NOVA_PARALLELS_PLUGIN_ISOLATION = @'
 ${payloadJson}
 '@
-$isolationScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) ('openclaw-parallels-plugin-isolation-' + [guid]::NewGuid().ToString('N') + '.cjs')
+$isolationScriptPath = Join-Path ([System.IO.Path]::GetTempPath()) ('nova-parallels-plugin-isolation-' + [guid]::NewGuid().ToString('N') + '.cjs')
 try {
 @'
 ${providerOnlyPluginIsolationNodeSource()}
@@ -143,7 +143,7 @@ const home =
   process.env.HOME ||
   process.env.USERPROFILE ||
   "/root";
-const configPath = path.join(home, ".openclaw", "openclaw.json");
+const configPath = path.join(home, ".nova", "nova.json");
 const stateDir = path.dirname(configPath);
 const modelId = String(payload.modelId || "");
 const allowedPluginId = String(payload.pluginId || "").trim();
@@ -199,7 +199,7 @@ if (providerEntry && typeof providerEntry === "object" && !Array.isArray(provide
   }
 }
 
-fs.rmSync(path.join(stateDir, "npm", "node_modules", "@openclaw", "codex"), {
+fs.rmSync(path.join(stateDir, "npm", "node_modules", "@nova", "codex"), {
   recursive: true,
   force: true,
 });

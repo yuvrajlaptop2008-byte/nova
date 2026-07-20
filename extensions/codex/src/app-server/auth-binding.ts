@@ -1,12 +1,12 @@
 import {
   fingerprintResolvedAuthProfileCredential,
   type AgentHarnessAuthBindingFingerprintParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   resolveApiKeyForProfile,
   type AuthProfileCredential,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-runtime";
 
 type CodexAppServerPreparedAuthBinding = {
   authProfileStore: AuthProfileStore;

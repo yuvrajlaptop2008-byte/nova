@@ -33,11 +33,11 @@ import {
   isPromptInjectionHookName,
 } from "./types.js";
 import type {
-  OpenClawPluginApi,
-  OpenClawPluginHookOptions,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
-  OpenClawPluginToolOptions,
+  NovaPluginApi,
+  NovaPluginHookOptions,
+  NovaPluginToolContext,
+  NovaPluginToolFactory,
+  NovaPluginToolOptions,
   PluginHookHandlerMap,
   PluginHookName,
   PluginHookRegistration as TypedPluginHookRegistration,
@@ -46,7 +46,7 @@ import type {
 const LEGACY_DEACTIVATE_HOOK_ALIAS_COMPAT = getPluginCompatRecord("legacy-deactivate-hook-alias");
 const LEGACY_SUBAGENT_SPAWNING_HOOK_COMPAT = getPluginCompatRecord("legacy-subagent-spawning-hook");
 
-const ACTIVE_PLUGIN_HOOK_REGISTRATIONS_KEY = Symbol.for("openclaw.activePluginHookRegistrations");
+const ACTIVE_PLUGIN_HOOK_REGISTRATIONS_KEY = Symbol.for("nova.activePluginHookRegistrations");
 const activePluginHookRegistrations = resolveGlobalSingleton<
   Map<string, Array<{ event: string; handler: Parameters<typeof registerInternalHook>[1] }>>
 >(ACTIVE_PLUGIN_HOOK_REGISTRATIONS_KEY, () => new Map());
@@ -91,7 +91,7 @@ export function createToolHookRegistrars(state: PluginRegistryState) {
 
   const registerCodexAppServerExtensionFactory = (
     record: PluginRecord,
-    factory: Parameters<OpenClawPluginApi["registerCodexAppServerExtensionFactory"]>[0],
+    factory: Parameters<NovaPluginApi["registerCodexAppServerExtensionFactory"]>[0],
   ) => {
     if (record.origin !== "bundled") {
       pushDiagnostic({
@@ -154,8 +154,8 @@ export function createToolHookRegistrars(state: PluginRegistryState) {
 
   const registerAgentToolResultMiddleware = (
     record: PluginRecord,
-    handler: Parameters<OpenClawPluginApi["registerAgentToolResultMiddleware"]>[0],
-    options: Parameters<OpenClawPluginApi["registerAgentToolResultMiddleware"]>[1],
+    handler: Parameters<NovaPluginApi["registerAgentToolResultMiddleware"]>[0],
+    options: Parameters<NovaPluginApi["registerAgentToolResultMiddleware"]>[1],
     policy?: PluginTypedHookPolicy,
   ) => {
     if (typeof (handler as unknown) !== "function") {
@@ -235,8 +235,8 @@ export function createToolHookRegistrars(state: PluginRegistryState) {
 
   const registerTool = (
     record: PluginRecord,
-    tool: AnyAgentTool | OpenClawPluginToolFactory,
-    opts?: OpenClawPluginToolOptions,
+    tool: AnyAgentTool | NovaPluginToolFactory,
+    opts?: NovaPluginToolOptions,
   ) => {
     if (pluginsWithChannelRegistrationConflict.has(record.id)) {
       return;
@@ -253,8 +253,8 @@ export function createToolHookRegistrars(state: PluginRegistryState) {
     }
     const names = [...(opts?.names ?? []), ...(opts?.name ? [opts.name] : [])];
     const optional = opts?.optional === true;
-    const factory: OpenClawPluginToolFactory =
-      typeof tool === "function" ? tool : (_ctx: OpenClawPluginToolContext) => tool;
+    const factory: NovaPluginToolFactory =
+      typeof tool === "function" ? tool : (_ctx: NovaPluginToolContext) => tool;
     if (typeof tool !== "function") {
       names.push(tool.name);
     }
@@ -289,8 +289,8 @@ export function createToolHookRegistrars(state: PluginRegistryState) {
     record: PluginRecord,
     events: string | string[],
     handler: Parameters<typeof registerInternalHook>[1],
-    opts: OpenClawPluginHookOptions | undefined,
-    config: OpenClawPluginApi["config"],
+    opts: NovaPluginHookOptions | undefined,
+    config: NovaPluginApi["config"],
     pluginConfig: unknown,
   ) => {
     const normalizedEvents = normalizeStringEntries(Array.isArray(events) ? events : [events]);
@@ -319,7 +319,7 @@ export function createToolHookRegistrars(state: PluginRegistryState) {
             ...entry.hook,
             name: hookName,
             description,
-            source: "openclaw-plugin",
+            source: "nova-plugin",
             pluginId: record.id,
           },
           metadata: { ...entry.metadata, events: normalizedEvents },
@@ -328,7 +328,7 @@ export function createToolHookRegistrars(state: PluginRegistryState) {
           hook: {
             name: hookName,
             description,
-            source: "openclaw-plugin",
+            source: "nova-plugin",
             pluginId: record.id,
             filePath: record.source,
             baseDir: path.dirname(record.source),

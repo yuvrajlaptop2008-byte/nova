@@ -6,9 +6,9 @@ import {
   type ChannelIngressMonitorDeliveryResult,
   type ChannelIngressMonitorLifecycle,
   type ChannelIngressQueue,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { collectErrorGraphCandidates, formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import type { ChannelReplayClaimHandle } from "openclaw/plugin-sdk/persistent-dedupe";
+} from "nova/plugin-sdk/channel-outbound";
+import { collectErrorGraphCandidates, formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import type { ChannelReplayClaimHandle } from "nova/plugin-sdk/persistent-dedupe";
 import { getFeishuRuntime } from "./runtime.js";
 
 const FEISHU_INGRESS_PAYLOAD_VERSION = 1;

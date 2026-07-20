@@ -1,7 +1,7 @@
 // Discord plugin module owns voice-session participant membership events.
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import { formatErrorMessage } from "openclaw/plugin-sdk/ssrf-runtime";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
+import { createSubsystemLogger } from "nova/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "nova/plugin-sdk/ssrf-runtime";
+import { enqueueSystemEvent } from "nova/plugin-sdk/system-event-runtime";
 import type { APIVoiceState, Client } from "../internal/discord.js";
 import {
   collectDiscordVoiceParticipants,

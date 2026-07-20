@@ -70,7 +70,7 @@ function projectThinkingCatalogCompat(compat: Model["compat"]) {
 export interface CreateAgentSessionOptions {
   /** Working directory for project-local discovery. Default: process.cwd() */
   cwd?: string;
-  /** Global config directory. Default: ~/.openclaw/agents/default */
+  /** Global config directory. Default: ~/.nova/agents/default */
   agentDir?: string;
 
   /** Auth storage for credentials. Default: AuthStorage.create(agentDir/auth.json) */
@@ -219,7 +219,7 @@ function getAttributionHeaders(
 
   if (model.provider === "openrouter" || baseUrl.includes("openrouter.ai")) {
     return {
-      "HTTP-Referer": "https://openclaw.ai",
+      "HTTP-Referer": "https://nova.ai",
       "X-OpenRouter-Title": "Nova",
       "X-OpenRouter-Categories": "cli-agent",
     };
@@ -232,7 +232,7 @@ function getAttributionHeaders(
     baseUrl.includes("gateway.ai.cloudflare.com")
   ) {
     return {
-      "User-Agent": "openclaw",
+      "User-Agent": "nova",
     };
   }
 

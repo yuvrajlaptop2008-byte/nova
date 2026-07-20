@@ -4,16 +4,13 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../src/config/types.openclaw.js";
+import type { NovaConfig } from "../src/config/types.nova.js";
 import {
   connectGatewayClient,
   disconnectGatewayClient,
   getFreeGatewayPort,
 } from "../src/gateway/test-helpers.e2e.js";
-import {
-  createOpenClawTestInstance,
-  type OpenClawTestInstance,
-} from "./helpers/openclaw-test-instance.js";
+import { createNovaTestInstance, type NovaTestInstance } from "./helpers/nova-test-instance.js";
 
 const PLUGIN_ID = "cron-registry-owner-proof";
 const SCHEDULE_METHOD = `${PLUGIN_ID}.schedule`;
@@ -68,7 +65,7 @@ type CronListPage = {
   jobs: CronJobView[];
 };
 
-const instances: OpenClawTestInstance[] = [];
+const instances: NovaTestInstance[] = [];
 const cleanupDirs: string[] = [];
 const modelServers: MockModelServer[] = [];
 
@@ -186,7 +183,7 @@ async function writeBundledSchedulerPlugin(bundledRoot: string): Promise<void> {
   const pluginDir = path.join(bundledRoot, PLUGIN_ID);
   await mkdir(pluginDir, { recursive: true });
   await writeFile(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "nova.plugin.json"),
     `${JSON.stringify(
       {
         id: PLUGIN_ID,
@@ -267,7 +264,7 @@ describe("plugin cron registry ownership e2e", () => {
     "keeps recurring startup-plugin jobs through workspace registry churn",
     { timeout: E2E_TIMEOUT_MS },
     async () => {
-      const fixtureDir = await mkdtemp(path.join(tmpdir(), "openclaw-cron-owner-e2e-"));
+      const fixtureDir = await mkdtemp(path.join(tmpdir(), "nova-cron-owner-e2e-"));
       cleanupDirs.push(fixtureDir);
       const bundledRoot = path.join(fixtureDir, "bundled");
       const mainWorkspace = path.join(fixtureDir, "workspace-main");
@@ -296,7 +293,7 @@ describe("plugin cron registry ownership e2e", () => {
           defaults: {
             workspace: mainWorkspace,
             model: { primary: modelRef },
-            models: { [modelRef]: { agentRuntime: { id: "openclaw" } } },
+            models: { [modelRef]: { agentRuntime: { id: "nova" } } },
             skills: [],
           },
           list: [
@@ -339,9 +336,9 @@ describe("plugin cron registry ownership e2e", () => {
             },
           },
         },
-      } satisfies OpenClawConfig;
+      } satisfies NovaConfig;
       const customPort = await getFreeGatewayPort();
-      const instance = await createOpenClawTestInstance({
+      const instance = await createNovaTestInstance({
         name: "plugin-cron-registry-owner",
         port: customPort,
         config,
@@ -373,9 +370,7 @@ describe("plugin cron registry ownership e2e", () => {
           sqlitePath: string;
         }>("cron.status", {});
         expect(cronStatus).toMatchObject({ enabled: true, storage: "sqlite" });
-        expect(cronStatus.sqlitePath).toBe(
-          path.join(instance.stateDir, "state", "openclaw.sqlite"),
-        );
+        expect(cronStatus.sqlitePath).toBe(path.join(instance.stateDir, "state", "nova.sqlite"));
 
         const ownerResult = await client.request<ScheduleResult>(SCHEDULE_METHOD, {
           name: "owner-survival",

@@ -35,8 +35,8 @@ describe("AppSidebar agent chip", () => {
     const menu = sidebar.querySelector(".sidebar-agent-menu");
     expect(menu).not.toBeNull();
     expect(menu?.querySelector(".sidebar-pair-mobile")).not.toBeNull();
-    expect(menu?.querySelector("openclaw-sidebar-build-chip")).not.toBeNull();
-    expect(menu?.querySelector("openclaw-theme-mode-toggle")).not.toBeNull();
+    expect(menu?.querySelector("nova-sidebar-build-chip")).not.toBeNull();
+    expect(menu?.querySelector("nova-theme-mode-toggle")).not.toBeNull();
     // External help links stay folded into Web Awesome's keyboard-navigable submenu.
     const helpRow = [...(menu?.querySelectorAll<HTMLElement>("wa-dropdown-item") ?? [])].find(
       (row) => row.textContent?.includes("Help"),
@@ -51,15 +51,15 @@ describe("AppSidebar agent chip", () => {
       ...(menu?.querySelectorAll('wa-dropdown-item[slot="submenu"] a[href]') ?? []),
     ].map((link) => link.getAttribute("href"));
     expect(linkHrefs).toEqual([
-      "https://docs.openclaw.ai",
-      "https://docs.openclaw.ai/help",
+      "https://docs.nova.ai",
+      "https://docs.nova.ai/help",
       "https://discord.gg/clawd",
-      "https://docs.openclaw.ai/releases",
+      "https://docs.nova.ai/releases",
     ]);
     const openExternal = vi.spyOn(window, "open").mockReturnValue(null);
     menu?.querySelector<HTMLElement>('wa-dropdown-item[slot="submenu"]')?.click();
     expect(openExternal).toHaveBeenCalledWith(
-      "https://docs.openclaw.ai/",
+      "https://docs.nova.ai/",
       "_blank",
       "noopener,noreferrer",
     );

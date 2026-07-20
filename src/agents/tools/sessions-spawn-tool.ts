@@ -10,7 +10,7 @@ import {
   supportsAutomaticThreadBindingSpawn,
 } from "../../channels/thread-bindings-policy.js";
 import { getRuntimeConfig } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveSnakeCaseParamKey } from "../../param-key.js";
 import { parseAgentSessionKey } from "../../routing/session-key.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
@@ -55,7 +55,7 @@ import {
 
 const SESSIONS_SPAWN_RUNTIMES = ["subagent", "acp"] as const;
 const SESSIONS_SPAWN_SANDBOX_MODES = ["inherit", "require"] as const;
-// Keep the schema local to avoid a circular import through acp-spawn/openclaw-tools.
+// Keep the schema local to avoid a circular import through acp-spawn/nova-tools.
 const SESSIONS_SPAWN_ACP_STREAM_TARGETS = ["parent"] as const;
 const UNSUPPORTED_SESSIONS_SPAWN_PARAM_KEYS = [
   "target",
@@ -102,7 +102,7 @@ function hasAnyThreadAvailability(availability: SessionsSpawnThreadAvailability)
 }
 
 function resolveSessionsSpawnThreadAvailability(opts?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentChannel?: GatewayMessageChannel;
   agentAccountId?: string;
 }): SessionsSpawnThreadAvailability {
@@ -227,7 +227,7 @@ function createSessionsSpawnToolSchema(params: {
   return Type.Object(schema);
 }
 
-function resolveAcpUnavailableMessage(opts?: { sandboxed?: boolean; config?: OpenClawConfig }) {
+function resolveAcpUnavailableMessage(opts?: { sandboxed?: boolean; config?: NovaConfig }) {
   if (opts?.sandboxed === true) {
     return 'runtime="acp" is unavailable from sandboxed sessions because ACP sessions run on the host. Use runtime="subagent".';
   }
@@ -252,7 +252,7 @@ export function createSessionsSpawnTool(
     currentThreadTs?: string;
     currentMessageId?: string | number;
     sandboxed?: boolean;
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     /** Explicit agent ID override for cron/hook sessions where session key parsing may not work. */
     requesterAgentIdOverride?: string;
     requesterRunId?: string;

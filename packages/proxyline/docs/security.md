@@ -80,4 +80,4 @@ This is deliberate: two competing proxy patches would race on `http.request` and
 
 ## Reporting
 
-Security issues: open a private advisory at <https://github.com/openclaw/proxyline/security/advisories>. Do not open public issues for unpatched problems.
+Security issues: open a private advisory at <https://github.com/nova/proxyline/security/advisories>. Do not open public issues for unpatched problems.

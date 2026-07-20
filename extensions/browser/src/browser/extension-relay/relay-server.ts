@@ -12,7 +12,7 @@
  */
 import http, { type IncomingMessage, type Server } from "node:http";
 import type { Duplex } from "node:stream";
-import { safeEqualSecret } from "openclaw/plugin-sdk/security-runtime";
+import { safeEqualSecret } from "nova/plugin-sdk/security-runtime";
 import { WebSocketServer, type WebSocket } from "ws";
 import { isLoopbackHost } from "../../gateway/net.js";
 import { rawDataToString } from "../../infra/ws.js";
@@ -21,8 +21,8 @@ import { ExtensionRelayBridge } from "./relay-bridge.js";
 import type { PageSharePayload } from "./relay-protocol.js";
 
 const log = createSubsystemLogger("browser").child("extension-relay");
-const EXTENSION_RELAY_PROTOCOL = "openclaw-extension-relay";
-const EXTENSION_RELAY_TOKEN_PROTOCOL_PREFIX = "openclaw-extension-token.";
+const EXTENSION_RELAY_PROTOCOL = "nova-extension-relay";
+const EXTENSION_RELAY_TOKEN_PROTOCOL_PREFIX = "nova-extension-token.";
 
 /**
  * Cap relay frame size to bound memory from a hostile/buggy peer while leaving
@@ -138,7 +138,7 @@ export async function startExtensionRelayServer(params: {
       return;
     }
     if (!isAuthorized(req, params.token)) {
-      res.writeHead(401, { "WWW-Authenticate": 'Basic realm="openclaw-extension-relay"' });
+      res.writeHead(401, { "WWW-Authenticate": 'Basic realm="nova-extension-relay"' });
       res.end("Unauthorized");
       return;
     }
@@ -149,7 +149,7 @@ export async function startExtensionRelayServer(params: {
         res.end(
           JSON.stringify({
             error:
-              "Nova Chrome extension is not connected. Install the extension and pair it with `openclaw browser extension pair`.",
+              "Nova Chrome extension is not connected. Install the extension and pair it with `nova browser extension pair`.",
           }),
         );
         return;

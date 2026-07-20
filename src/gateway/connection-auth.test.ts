@@ -1,7 +1,7 @@
 // Gateway connection auth tests document token/password precedence for local,
 // remote, CLI override, env override, and config-secret connection flows.
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { resolveGatewayConnectionAuth } from "./connection-auth.js";
 
 type ResolvedAuth = { token?: string; password?: string };
@@ -9,14 +9,14 @@ type GatewayConnectionAuthOptions = Parameters<typeof resolveGatewayConnectionAu
 
 type ConnectionAuthCase = {
   name: string;
-  cfgLocal: OpenClawConfig;
+  cfgLocal: NovaConfig;
   env: NodeJS.ProcessEnv;
   options?: Partial<Omit<GatewayConnectionAuthOptions, "config" | "env">>;
   expected: ResolvedAuth;
 };
 
-function cfg(input: Partial<OpenClawConfig>): OpenClawConfig {
-  return input as OpenClawConfig;
+function cfg(input: Partial<NovaConfig>): NovaConfig {
+  return input as NovaConfig;
 }
 
 function createRemoteModeConfig() {
@@ -192,7 +192,7 @@ describe("resolveGatewayConnectionAuth", () => {
     expect(asyncResolved).toEqual(expected);
   });
 
-  it("resolves local SecretRef token when OPENCLAW env is absent", async () => {
+  it("resolves local SecretRef token when nova env is absent", async () => {
     const config = cfg({
       gateway: {
         mode: "local",
@@ -220,7 +220,7 @@ describe("resolveGatewayConnectionAuth", () => {
     });
   });
 
-  it("resolves config-first token SecretRef even when OPENCLAW env token exists", async () => {
+  it("resolves config-first token SecretRef even when nova env token exists", async () => {
     const config = cfg({
       gateway: {
         mode: "local",
@@ -250,7 +250,7 @@ describe("resolveGatewayConnectionAuth", () => {
     });
   });
 
-  it("resolves config-first password SecretRef even when OPENCLAW env password exists", async () => {
+  it("resolves config-first password SecretRef even when nova env password exists", async () => {
     const config = cfg({
       gateway: {
         mode: "local",

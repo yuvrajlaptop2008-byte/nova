@@ -174,7 +174,7 @@ function configSnapshot(isWorkboardEnabled: boolean) {
     config,
     hash: isWorkboardEnabled ? "plugins-config-enabled" : "plugins-config-disabled",
     issues: [],
-    path: "/tmp/openclaw-e2e/openclaw.json",
+    path: "/tmp/nova-e2e/nova.json",
     raw: JSON.stringify(config, null, 2),
     resolved: config,
     sourceConfig: config,
@@ -339,7 +339,7 @@ describeControlUiE2e("Control UI Plugins mocked Gateway E2E", () => {
       methodResponses: pluginMethodResponses(),
     });
     let pluginIconAuth = "";
-    await page.route("**/__openclaw__/plugin-icon/remote-icon", async (route) => {
+    await page.route("**/__nova__/plugin-icon/remote-icon", async (route) => {
       pluginIconAuth = route.request().headers().authorization ?? "";
       await route.fulfill({
         body: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#f97316" d="M4 3h16v18H4z"/></svg>`,
@@ -564,7 +564,7 @@ describeControlUiE2e("Control UI Plugins mocked Gateway E2E", () => {
       if (await settingsSidebar.isVisible()) {
         await settingsSidebar.getByRole("button", { name: "Back to app" }).click();
       }
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       await sidebar.waitFor({ state: "visible" });
       const pagesButton = sidebar.locator(".sidebar-nav__head-action");
       if ((await pagesButton.getAttribute("aria-expanded")) !== "true") {

@@ -22,7 +22,7 @@ import {
 import { resolveSpawnedWorkspaceInheritance } from "../../../agents/spawned-context.js";
 import { updateSessionEntry } from "../../../config/sessions/session-accessor.js";
 import type { SessionAcpMeta } from "../../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { formatErrorMessage } from "../../../infra/errors.js";
 import {
   getSessionBindingService,
@@ -47,7 +47,7 @@ import {
 } from "./shared.js";
 import { resolveAcpTargetSessionKey } from "./targets.js";
 async function cleanupFailedSpawn(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   shouldDeleteSession: boolean;
   initializedRuntime?: AcpSpawnRuntimeCloseHandle;
@@ -291,7 +291,7 @@ export async function handleAcpSpawnAction(
 
 function resolveAcpSessionForCommandOrStop(params: {
   acpManager: ReturnType<typeof getAcpSessionManager>;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
 }): CommandHandlerResult | null {
   const resolved = params.acpManager.resolveSession({
@@ -379,7 +379,7 @@ export async function handleAcpCancelAction(
 }
 
 async function runAcpSteer(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   instruction: string;
   requestId: string;

@@ -21,7 +21,7 @@ describe("runNodeIdentityShow", () => {
   let writeStdoutSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-node-identity-"));
+    stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-node-identity-"));
     prevStateDir = process.env.NOVA_STATE_DIR;
     process.env.NOVA_STATE_DIR = stateDir;
     stdout = [];
@@ -54,7 +54,7 @@ describe("runNodeIdentityShow", () => {
     runNodeIdentityShow({});
     expect(errorSpy).toHaveBeenCalledOnce();
     expect(exitSpy).toHaveBeenCalledWith(1);
-    expect(fs.existsSync(path.join(stateDir, "state", "openclaw.sqlite"))).toBe(false);
+    expect(fs.existsSync(path.join(stateDir, "state", "nova.sqlite"))).toBe(false);
   });
 
   it("writes deviceId and raw public key JSON to stdout", () => {

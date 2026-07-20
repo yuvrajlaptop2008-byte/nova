@@ -264,9 +264,7 @@ function readWorkflowRun(parentRunId, workflowSha) {
   if (!/^[1-9][0-9]*$/u.test(String(parentRunId))) {
     throw new Error("parent run ID must be a positive decimal");
   }
-  const workflowRun = JSON.parse(
-    run("gh", ["api", `repos/openclaw/openclaw/actions/runs/${parentRunId}`]),
-  );
+  const workflowRun = JSON.parse(run("gh", ["api", `repos/nova/nova/actions/runs/${parentRunId}`]));
   if (workflowRun.head_sha !== workflowSha) {
     throw new Error(
       `Full Release Validation run ${parentRunId} head ${String(workflowRun.head_sha)} does not match trusted workflow SHA ${workflowSha}`,
@@ -302,13 +300,13 @@ function waitForWorkflowRun(parentRunId, workflowSha) {
         return;
       }
       throw new Error(
-        `Full Release Validation concluded ${String(suite.conclusion).toLowerCase()}: https://github.com/openclaw/openclaw/actions/runs/${parentRunId}`,
+        `Full Release Validation concluded ${String(suite.conclusion).toLowerCase()}: https://github.com/nova/nova/actions/runs/${parentRunId}`,
       );
     }
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 45_000);
   }
   throw new Error(
-    `Timed out waiting for Full Release Validation: https://github.com/openclaw/openclaw/actions/runs/${parentRunId}`,
+    `Timed out waiting for Full Release Validation: https://github.com/nova/nova/actions/runs/${parentRunId}`,
   );
 }
 
@@ -322,14 +320,7 @@ export function releaseEvidenceVerificationArgs(parentRunId) {
 export function releaseEvidenceVerifierPath(worktreeRoot) {
   const candidates = [
     join(worktreeRoot, "scripts", "release-ci-summary.mjs"),
-    join(
-      worktreeRoot,
-      ".agents",
-      "skills",
-      "release-openclaw-ci",
-      "scripts",
-      "release-ci-summary.mjs",
-    ),
+    join(worktreeRoot, ".agents", "skills", "release-nova-ci", "scripts", "release-ci-summary.mjs"),
   ];
   const verifier = candidates.find((candidate) => existsSync(candidate));
   if (!verifier) {
@@ -339,7 +330,7 @@ export function releaseEvidenceVerifierPath(worktreeRoot) {
 }
 
 function verifyReleaseEvidence(parentRunId, workflowSha) {
-  const verifierWorktree = mkdtempSync(join(tmpdir(), "openclaw-release-verifier-"));
+  const verifierWorktree = mkdtempSync(join(tmpdir(), "nova-release-verifier-"));
   try {
     run("git", ["worktree", "add", "--detach", verifierWorktree, workflowSha], {
       stdio: ["ignore", "ignore", "inherit"],
@@ -415,7 +406,7 @@ function main() {
       throw new Error("Could not determine Full Release Validation run id.");
     }
 
-    console.log(`Parent run: https://github.com/openclaw/openclaw/actions/runs/${parentRunId}`);
+    console.log(`Parent run: https://github.com/nova/nova/actions/runs/${parentRunId}`);
     waitForWorkflowRun(parentRunId, workflowSha);
     verifyReleaseEvidence(parentRunId, workflowSha);
   } finally {

@@ -1,5 +1,5 @@
 // Markdown → Bot API 10.2 InputRichBlock[] for Telegram rich messages.
-import type { MarkdownTableMode } from "openclaw/plugin-sdk/config-contracts";
+import type { MarkdownTableMode } from "nova/plugin-sdk/config-contracts";
 import {
   isAutoLinkedFileRef,
   markdownToIRWithMeta,
@@ -10,7 +10,7 @@ import {
   type MarkdownStyle,
   type MarkdownTableCell,
   type MarkdownTableMeta,
-} from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/text-chunking";
 import {
   inputRichBlocksToPlainText,
   normalizeRichText,
@@ -92,7 +92,7 @@ function resolveTelegramLinkAction(
   }
   const label = source.slice(link.start, link.end);
   if (context.origin === "linkify" && isAutoLinkedFileRef(href, label)) {
-    // Bare file refs (README.md, openclaw.json) must render as code, not links:
+    // Bare file refs (README.md, nova.json) must render as code, not links:
     // Telegram's server-side entity detection would otherwise re-linkify them
     // and show spurious domain previews for TLD-like extensions.
     return { kind: "code" };

@@ -4,12 +4,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { getAgentScopedMediaLocalRoots } from "../../media/local-roots.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../../test-utils/nova-test-state.js";
 import { createManagedOutgoingImageBlocks } from "../managed-image-attachments.js";
 import { normalizeWebchatReplyMediaPathsForDisplay } from "./chat-reply-media.js";
 
@@ -28,16 +25,16 @@ type MediaTestContext = {
   stateDir: string;
   agentDir: string;
   workspaceDir: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 };
 
 describe("normalizeWebchatReplyMediaPathsForDisplay", () => {
-  let testState: OpenClawTestState;
+  let testState: NovaTestState;
 
   beforeEach(async () => {
-    testState = await createOpenClawTestState({
+    testState = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-webchat-reply-media-",
+      prefix: "nova-webchat-reply-media-",
     });
   });
 
@@ -49,7 +46,7 @@ describe("normalizeWebchatReplyMediaPathsForDisplay", () => {
     agentDir: string;
     workspaceDir: string;
     allowRead: boolean;
-  }): OpenClawConfig {
+  }): NovaConfig {
     return {
       tools: params.allowRead ? { allow: ["read"] } : { fs: { workspaceOnly: true } },
       agents: {
@@ -99,10 +96,7 @@ describe("normalizeWebchatReplyMediaPathsForDisplay", () => {
     return `data:image/png;base64,${PNG_BYTES.toString("base64")}`;
   }
 
-  async function normalizeReplyMedia(params: {
-    cfg: OpenClawConfig;
-    payloads: ReplyMediaPayloads;
-  }) {
+  async function normalizeReplyMedia(params: { cfg: NovaConfig; payloads: ReplyMediaPayloads }) {
     const [payload] = await normalizeWebchatReplyMediaPathsForDisplay({
       cfg: params.cfg,
       sessionKey: TEST_SESSION_KEY,
@@ -126,7 +120,7 @@ describe("normalizeWebchatReplyMediaPathsForDisplay", () => {
   }
 
   async function createManagedImageBlocks(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     mediaUrls: string[] | undefined;
   }) {
     return createManagedOutgoingImageBlocks({

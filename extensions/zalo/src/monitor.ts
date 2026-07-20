@@ -1,30 +1,30 @@
 // Zalo plugin module implements monitor behavior.
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { logTypingFailure } from "openclaw/plugin-sdk/channel-feedback";
+import { logTypingFailure } from "nova/plugin-sdk/channel-feedback";
 import {
   formatInboundMediaUnavailableText,
   resolveChannelInboundRouteEnvelope,
   type ChannelInboundMediaInput,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { resolveStableChannelMessageIngress } from "openclaw/plugin-sdk/channel-ingress-runtime";
-import { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-import type { MarkdownTableMode, OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+} from "nova/plugin-sdk/channel-inbound";
+import { resolveStableChannelMessageIngress } from "nova/plugin-sdk/channel-ingress-runtime";
+import { createChannelPairingController } from "nova/plugin-sdk/channel-pairing";
+import type { MarkdownTableMode, NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   createLazyRuntimeModule,
   createLazyRuntimeNamedExport,
-} from "openclaw/plugin-sdk/lazy-runtime";
+} from "nova/plugin-sdk/lazy-runtime";
 import {
   deliverTextOrMediaReply,
   resolveSendableOutboundReplyParts,
   type OutboundReplyPayload,
-} from "openclaw/plugin-sdk/reply-payload";
-import { sleepWithAbort, waitForAbortSignal } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/reply-payload";
+import { sleepWithAbort, waitForAbortSignal } from "nova/plugin-sdk/runtime-env";
 import {
   resolveDefaultGroupPolicy,
   warnMissingProviderGroupPolicyFallbackOnce,
-} from "openclaw/plugin-sdk/runtime-group-policy";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { registerPluginHttpRoute, resolveWebhookPath } from "openclaw/plugin-sdk/webhook-ingress";
+} from "nova/plugin-sdk/runtime-group-policy";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
+import { registerPluginHttpRoute, resolveWebhookPath } from "nova/plugin-sdk/webhook-ingress";
 import type { ResolvedZaloAccount } from "./accounts.js";
 import {
   ZaloApiError,
@@ -62,7 +62,7 @@ const ZALO_MEDIA_RESPONSE_HEADER_TIMEOUT_MS = 120_000;
 type ZaloMonitorOptions = {
   token: string;
   account: ResolvedZaloAccount;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: ZaloRuntimeEnv;
   abortSignal: AbortSignal;
   useWebhook?: boolean;
@@ -84,7 +84,7 @@ type ZaloStatusSink = (patch: { lastInboundAt?: number; lastOutboundAt?: number 
 type ZaloProcessingContext = {
   token: string;
   account: ResolvedZaloAccount;
-  config: OpenClawConfig;
+  config: NovaConfig;
   runtime: ZaloRuntimeEnv;
   core: ZaloCoreRuntime;
   mediaMaxMb: number;
@@ -743,7 +743,7 @@ async function deliverZaloReply(params: {
   chatId: string;
   runtime: ZaloRuntimeEnv;
   core: ZaloCoreRuntime;
-  config: OpenClawConfig;
+  config: NovaConfig;
   webhookUrl?: string;
   webhookPath?: string;
   proxyUrl?: string;

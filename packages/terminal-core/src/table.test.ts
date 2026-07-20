@@ -125,7 +125,7 @@ describe("renderTable", () => {
             `\x1b[2mGet current weather and forecasts via wttr.in or Open-Meteo. ` +
             `Use when: user asks about weather, temperature, or forecasts for any location.` +
             `\x1b[0m`,
-          Source: "openclaw-bundled",
+          Source: "nova-bundled",
         },
       ],
     });
@@ -272,7 +272,7 @@ describe("renderTable", () => {
   });
 
   it("does not split BEL-terminated OSC-8 links when wrapping", () => {
-    const open = "\x1b]8;;https://openclaw.ai\x07";
+    const open = "\x1b]8;;https://nova.ai\x07";
     const close = "\x1b]8;;\x07";
     const out = renderTable({
       width: 24,
@@ -310,9 +310,9 @@ describe("renderTable", () => {
   });
 
   it("does not split C1 OSC-8 links when wrapping", () => {
-    const open = "\x9d8;;https://openclaw.ai\x9c";
+    const open = "\x9d8;;https://nova.ai\x9c";
     const close = "\x9d8;;\x9c";
-    const canonicalOpen = "\x1b]8;;https://openclaw.ai\x07";
+    const canonicalOpen = "\x1b]8;;https://nova.ai\x07";
     const canonicalClose = "\x1b]8;;\x07";
     const out = renderTable({
       width: 24,
@@ -328,7 +328,7 @@ describe("renderTable", () => {
   });
 
   it("preserves OSC-8 parameters when reopening wrapped links", () => {
-    const open = "\x1b]8;id=docs;https://openclaw.ai\x07";
+    const open = "\x1b]8;id=docs;https://nova.ai\x07";
     const close = "\x1b]8;;\x07";
     const out = renderTable({
       width: 20,
@@ -358,9 +358,9 @@ describe("renderTable", () => {
   });
 
   it.each([
-    ["BEL ST", "\x1b]8;;https://openclaw.ai\x07", "\x1b]8;;\x07"],
-    ["ESC-backslash ST", "\x1b]8;;https://openclaw.ai\x1b\\", "\x1b]8;;\x1b\\"],
-    ["C1 ST", "\x9d8;;https://openclaw.ai\x9c", "\x9d8;;\x9c"],
+    ["BEL ST", "\x1b]8;;https://nova.ai\x07", "\x1b]8;;\x07"],
+    ["ESC-backslash ST", "\x1b]8;;https://nova.ai\x1b\\", "\x1b]8;;\x1b\\"],
+    ["C1 ST", "\x9d8;;https://nova.ai\x9c", "\x9d8;;\x9c"],
   ])(
     "closes and reopens embedded OSC-8 links at wrap boundaries (%s)",
     (_label, openSeq, closeSeq) => {
@@ -399,9 +399,9 @@ describe("renderTable", () => {
   );
 
   it.each([
-    ["BEL ST", "\x1b]8;;https://openclaw.ai\x07", "\x1b]8;;\x07"],
-    ["ESC-backslash ST", "\x1b]8;;https://openclaw.ai\x1b\\", "\x1b]8;;\x1b\\"],
-    ["C1 ST", "\x9d8;;https://openclaw.ai\x9c", "\x9d8;;\x9c"],
+    ["BEL ST", "\x1b]8;;https://nova.ai\x07", "\x1b]8;;\x07"],
+    ["ESC-backslash ST", "\x1b]8;;https://nova.ai\x1b\\", "\x1b]8;;\x1b\\"],
+    ["C1 ST", "\x9d8;;https://nova.ai\x9c", "\x9d8;;\x9c"],
   ])(
     "does not reopen a leading OSC-8 link onto wrapped suffix lines (%s)",
     (_label, openSeq, closeSeq) => {
@@ -488,7 +488,7 @@ describe("renderTable", () => {
           Status: "✗ missing",
           Skill: "📸 peekaboo",
           Description: "Capture screenshots from macOS windows and keep table wrapping stable.",
-          Source: "openclaw-bundled",
+          Source: "nova-bundled",
         },
       ],
     });
@@ -684,7 +684,7 @@ describe("wrapNoteMessage", () => {
 
   it("preserves long Windows paths without inserting spaces/newlines", () => {
     // No spaces: wrapNoteMessage splits on whitespace, so a "Program Files" style path would wrap.
-    const input = "C:\\\\State\\\\Nova\\\\bin\\\\openclaw.exe";
+    const input = "C:\\\\State\\\\Nova\\\\bin\\\\nova.exe";
     const wrapped = wrapNoteMessage(input, { maxWidth: 10, columns: 80 });
     expect(wrapped).toBe(input);
   });
@@ -707,7 +707,7 @@ describe("wrapNoteMessage", () => {
     const wrapped = wrapNoteMessage(
       [
         "- Found 1 session lock file.",
-        "- ~/.openclaw/agents/main/sessions/9c2acae5-841f-4aea-936b-fdb513b60202.jsonl.lock pid=86519 (alive) age=2m47s stale=no",
+        "- ~/.nova/agents/main/sessions/9c2acae5-841f-4aea-936b-fdb513b60202.jsonl.lock pid=86519 (alive) age=2m47s stale=no",
       ].join("\n"),
       { columns: 80 },
     );
@@ -726,7 +726,7 @@ describe("wrapNoteMessage", () => {
     expect(rendered).toContain(".jsonl.lock");
     expect(rendered).not.toContain(".js\n");
     expect(rendered).toContain(
-      "- ~/.openclaw/agents/main/sessions/9c2acae5-841f-4aea-936b-fdb513b60202.jsonl.lock",
+      "- ~/.nova/agents/main/sessions/9c2acae5-841f-4aea-936b-fdb513b60202.jsonl.lock",
     );
   });
 

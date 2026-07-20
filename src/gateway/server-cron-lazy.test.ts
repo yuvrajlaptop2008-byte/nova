@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { CliDeps } from "../cli/deps.types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { GatewayCronServiceContract } from "./server-cron-contract.js";
 import type { GatewayCronState } from "./server-cron.js";
 
@@ -38,7 +38,7 @@ describe("createLazyGatewayCronState", () => {
   });
 
   it("resolves its default store path from the prepared env", () => {
-    const stateRoot = "/tmp/openclaw-candidate-state";
+    const stateRoot = "/tmp/nova-candidate-state";
     const lazy = createLazyGatewayCronState({
       ...createParams(),
       env: { ...process.env, NOVA_STATE_DIR: stateRoot },
@@ -288,11 +288,11 @@ describe("createLazyGatewayCronState", () => {
   });
 });
 
-function createParams(overrides: Partial<OpenClawConfig> = {}) {
+function createParams(overrides: Partial<NovaConfig> = {}) {
   return {
     cfg: {
       ...overrides,
-    } as OpenClawConfig,
+    } as NovaConfig,
     deps: {} as CliDeps,
     broadcast: vi.fn(),
   };
@@ -301,7 +301,7 @@ function createParams(overrides: Partial<OpenClawConfig> = {}) {
 function createCronState(cron: GatewayCronServiceContract): GatewayCronState {
   return {
     cron,
-    storePath: "/tmp/openclaw-cron.json",
+    storePath: "/tmp/nova-cron.json",
     cronEnabled: true,
   } as GatewayCronState;
 }

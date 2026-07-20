@@ -3,12 +3,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
-import type { Message, Usage } from "openclaw/plugin-sdk/llm";
+import type { Message, Usage } from "nova/plugin-sdk/llm";
 import { afterAll, describe, expect, it } from "vitest";
 import { replaceTranscriptEvents } from "../config/sessions/session-accessor.js";
 import { formatSqliteSessionFileMarker } from "../config/sessions/sqlite-marker.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { exportTrajectoryBundle, resolveDefaultTrajectoryExportDir } from "./export.js";
 import {
   TRAJECTORY_POINTER_FILE_MAX_BYTES,
@@ -19,7 +19,7 @@ import {
 import { appendSqliteTrajectoryRuntimeEvents } from "./runtime-store.sqlite.js";
 import type { TrajectoryEvent } from "./types.js";
 
-const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-trajectory-"));
+const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-trajectory-"));
 let tempDirId = 0;
 
 function makeTempDir(): string {
@@ -197,8 +197,8 @@ function writeToolCallSessionFile(sessionFile: string): void {
 }
 
 afterAll(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
   fs.rmSync(tempRoot, { recursive: true, force: true });
 });
 
@@ -213,9 +213,9 @@ describe("exportTrajectoryBundle", () => {
     expect(outputDir).toBe(
       path.join(
         "/tmp/workspace",
-        ".openclaw",
+        ".nova",
         "trajectory-exports",
-        "openclaw-trajectory-___evil_-2026-04-22T08-00-00",
+        "nova-trajectory-___evil_-2026-04-22T08-00-00",
       ),
     );
   });
@@ -328,7 +328,7 @@ describe("exportTrajectoryBundle", () => {
     );
     appendSqliteTrajectoryRuntimeEvents({ sessionId, storePath }, [
       {
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: sessionId,
         source: "runtime",
@@ -396,7 +396,7 @@ describe("exportTrajectoryBundle", () => {
     const promptCache = { readTokens: 333_824, writeTokens: 51_130 };
     writeSimpleSessionFile(sessionFile);
     const runtimeEvent: TrajectoryEvent = {
-      traceSchema: "openclaw-trajectory",
+      traceSchema: "nova-trajectory",
       schemaVersion: 1,
       traceId: "session-1",
       source: "runtime",
@@ -532,7 +532,7 @@ describe("exportTrajectoryBundle", () => {
       runtimeFile,
       [
         {
-          traceSchema: "openclaw-trajectory",
+          traceSchema: "nova-trajectory",
           schemaVersion: 1,
           traceId: "session-1",
           source: "runtime",
@@ -548,7 +548,7 @@ describe("exportTrajectoryBundle", () => {
           },
         },
         {
-          traceSchema: "openclaw-trajectory",
+          traceSchema: "nova-trajectory",
           schemaVersion: 1,
           traceId: "session-1",
           source: "runtime",
@@ -558,7 +558,7 @@ describe("exportTrajectoryBundle", () => {
           sourceSeq: 2,
           sessionId: "session-1",
           data: {
-            harness: { type: "openclaw", token: rawSecrets[3] },
+            harness: { type: "nova", token: rawSecrets[3] },
             metadata: {
               [`https://example.test/callback?token=${rawSecrets[1]}`]:
                 "secret-looking metadata key",
@@ -570,7 +570,7 @@ describe("exportTrajectoryBundle", () => {
           },
         },
         {
-          traceSchema: "openclaw-trajectory",
+          traceSchema: "nova-trajectory",
           schemaVersion: 1,
           traceId: "session-1",
           source: "runtime",
@@ -582,7 +582,7 @@ describe("exportTrajectoryBundle", () => {
           data: { prompt: `submitted ${rawSecrets[1]}` },
         },
         {
-          traceSchema: "openclaw-trajectory",
+          traceSchema: "nova-trajectory",
           schemaVersion: 1,
           traceId: "session-1",
           source: "runtime",
@@ -674,7 +674,7 @@ describe("exportTrajectoryBundle", () => {
         JSON.stringify({}),
         "",
         JSON.stringify({
-          traceSchema: "openclaw-trajectory",
+          traceSchema: "nova-trajectory",
           schemaVersion: 1,
           traceId: "session-1",
           source: "runtime",
@@ -687,7 +687,7 @@ describe("exportTrajectoryBundle", () => {
         }),
         '{"traceSchema":',
         JSON.stringify({
-          traceSchema: "openclaw-trajectory",
+          traceSchema: "nova-trajectory",
           schemaVersion: 1,
           traceId: "session-1",
           source: "runtime",
@@ -1210,7 +1210,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       resolveTrajectoryPointerFilePath(sessionFile),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: "session-1",
         runtimeFile: recordedRuntimeFile,
@@ -1220,7 +1220,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       recordedRuntimeFile,
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1235,7 +1235,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       path.join(envRuntimeDir, "session-1.jsonl"),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1278,7 +1278,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       resolveTrajectoryPointerFilePath(sessionFile),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: "session-1",
         runtimeFile: outsideFile,
@@ -1288,7 +1288,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       outsideFile,
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1325,7 +1325,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       resolveTrajectoryPointerFilePath(sessionFile),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: "session-1",
         runtimeFile: path.join(tmpDir, "recorded", "session-1.jsonl"),
@@ -1335,7 +1335,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       defaultRuntimeFile,
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1370,7 +1370,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       resolveTrajectoryPointerFilePath(sessionFile),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: "session-1",
         runtimeFile: symlinkFile,
@@ -1380,7 +1380,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       targetFile,
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1431,7 +1431,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       runtimeFile,
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "other-session",
         source: "runtime",
@@ -1467,7 +1467,7 @@ describe("exportTrajectoryBundle", () => {
     fs.writeFileSync(
       runtimeFile,
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1519,7 +1519,7 @@ describe("exportTrajectoryBundle", () => {
 
     const runtimeEvents: TrajectoryEvent[] = [
       {
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1535,7 +1535,7 @@ describe("exportTrajectoryBundle", () => {
         },
       },
       {
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1556,7 +1556,7 @@ describe("exportTrajectoryBundle", () => {
         },
       },
       {
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1566,7 +1566,7 @@ describe("exportTrajectoryBundle", () => {
         sourceSeq: 3,
         sessionId: "session-1",
         data: {
-          harness: { type: "openclaw", version: "0.1.0" },
+          harness: { type: "nova", version: "0.1.0" },
           model: { provider: "openai", name: "gpt-5.4" },
           skills: {
             entries: [
@@ -1585,7 +1585,7 @@ describe("exportTrajectoryBundle", () => {
         },
       },
       {
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",
@@ -1599,7 +1599,7 @@ describe("exportTrajectoryBundle", () => {
         },
       },
       {
-        traceSchema: "openclaw-trajectory",
+        traceSchema: "nova-trajectory",
         schemaVersion: 1,
         traceId: "session-1",
         source: "runtime",

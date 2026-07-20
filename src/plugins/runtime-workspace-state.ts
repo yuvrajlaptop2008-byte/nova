@@ -3,9 +3,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import { PLUGIN_REGISTRY_STATE } from "./runtime-state-key.js";
 
-const PINNED_PLUGIN_REGISTRY_WORKSPACE_KEY = Symbol.for(
-  "openclaw.pinnedPluginRegistryWorkspaceDir",
-);
+const PINNED_PLUGIN_REGISTRY_WORKSPACE_KEY = Symbol.for("nova.pinnedPluginRegistryWorkspaceDir");
 
 type GlobalRegistryWorkspaceState = typeof globalThis & {
   [PLUGIN_REGISTRY_STATE]?: {

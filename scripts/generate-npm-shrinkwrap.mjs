@@ -19,7 +19,7 @@ const NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS = 10 * 60 * 1000;
 const NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES = 64 * 1024 * 1024;
 const NPM_SHRINKWRAP_DEFAULT_JOBS = 4;
 const NPM_SHRINKWRAP_MAX_JOBS = 16;
-const SHRINKWRAP_WORKER_KIND = "openclaw-shrinkwrap-package";
+const SHRINKWRAP_WORKER_KIND = "nova-shrinkwrap-package";
 
 function usage() {
   return [
@@ -733,7 +733,7 @@ function normalizeNpmVersionDrift(lockfile) {
 }
 
 function generateShrinkwrap(packageDir, options = {}) {
-  const tempDir = mkdtempSync(path.join(tmpdir(), "openclaw-shrinkwrap-"));
+  const tempDir = mkdtempSync(path.join(tmpdir(), "nova-shrinkwrap-"));
   try {
     const packageJson = JSON.parse(readFileSync(path.join(packageDir, "package.json"), "utf8"));
     const currentShrinkwrap = readCurrentShrinkwrap(packageDir);
@@ -1118,7 +1118,7 @@ function listManagedShrinkwrapPackageDirs() {
       }
       const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
       return (
-        packageJson.openclaw?.release?.publishToNpm === true ||
+        packageJson.nova?.release?.publishToNpm === true ||
         existsSync(shrinkwrapPathForPackage(path.join(ROOT_DIR, packageDir)))
       );
     })

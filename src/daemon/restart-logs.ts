@@ -46,7 +46,7 @@ export function resolveGatewayLogPaths(env: GatewayServiceEnv): GatewayLogPaths 
 
 function resolveMacLaunchAgentLogPaths(env: GatewayServiceEnv): GatewayLogPaths {
   const home = resolveHomeDir(env).replaceAll("\\", "/");
-  const logDir = path.posix.join(home, "Library", "Logs", "openclaw");
+  const logDir = path.posix.join(home, "Library", "Logs", "nova");
   const prefix = resolveMacLaunchAgentLogPrefix(env);
   return {
     logDir,
@@ -87,7 +87,7 @@ export function appendGatewayLifecycleAuditLog(
     ];
     fs.appendFileSync(
       logPath,
-      `[${new Date().toISOString()}] openclaw gateway lifecycle ${fields.join(" ")}\n`,
+      `[${new Date().toISOString()}] nova gateway lifecycle ${fields.join(" ")}\n`,
       "utf8",
     );
   } catch {
@@ -123,7 +123,7 @@ export function renderCmdRestartLogSetup(env: GatewayServiceEnv): {
     quotedLogPath,
     lines: [
       `if not exist ${quotedLogDir} mkdir ${quotedLogDir} >nul 2>&1`,
-      `>> ${quotedLogPath} 2>&1 echo [%DATE% %TIME%] openclaw restart log initialized`,
+      `>> ${quotedLogPath} 2>&1 echo [%DATE% %TIME%] nova restart log initialized`,
     ],
   };
 }

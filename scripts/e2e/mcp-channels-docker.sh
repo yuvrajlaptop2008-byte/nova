@@ -5,11 +5,11 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-mcp-channels-e2e" NOVA_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-mcp-channels-e2e" NOVA_IMAGE)"
 PORT="18789"
 TOKEN="mcp-e2e-$(date +%s)-$$"
-CONTAINER_NAME="openclaw-mcp-e2e-$$"
-CLIENT_LOG="$(mktemp -t openclaw-mcp-client-log.XXXXXX)"
+CONTAINER_NAME="nova-mcp-e2e-$$"
+CLIENT_LOG="$(mktemp -t nova-mcp-client-log.XXXXXX)"
 
 cleanup() {
   docker_e2e_docker_cmd rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -38,21 +38,21 @@ docker_e2e_run_with_harness \
   -e "NOVA_ALLOW_INSECURE_PRIVATE_WS=1" \
   "$IMAGE_NAME" \
   bash -lc "set -euo pipefail
-    source scripts/lib/openclaw-e2e-instance.sh
-    openclaw_e2e_eval_test_state_from_b64 \"\${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}\"
-    entry=\"\$(openclaw_e2e_resolve_entrypoint)\"
+    source scripts/lib/nova-e2e-instance.sh
+    nova_e2e_eval_test_state_from_b64 \"\${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}\"
+    entry=\"\$(nova_e2e_resolve_entrypoint)\"
     mock_port=44081
     export NOVA_DOCKER_OPENAI_BASE_URL=\"http://127.0.0.1:\$mock_port/v1\"
-    mock_pid=\"\$(openclaw_e2e_start_mock_openai \"\$mock_port\" /tmp/mcp-channels-mock-openai.log)\"
+    mock_pid=\"\$(nova_e2e_start_mock_openai \"\$mock_port\" /tmp/mcp-channels-mock-openai.log)\"
     gateway_pid=
     cleanup_inner() {
-      openclaw_e2e_stop_process \"\${gateway_pid:-}\"
-      openclaw_e2e_stop_process \"\${mock_pid:-}\"
+      nova_e2e_stop_process \"\${gateway_pid:-}\"
+      nova_e2e_stop_process \"\${mock_pid:-}\"
     }
     dump_gateway_log_on_error() {
       status=\$?
       if [ \"\$status\" -ne 0 ]; then
-        openclaw_e2e_dump_logs \
+        nova_e2e_dump_logs \
           /tmp/mcp-channels-gateway.log \
           /tmp/mcp-channels-seed.log \
           /tmp/mcp-channels-mock-openai.log
@@ -62,10 +62,10 @@ docker_e2e_run_with_harness \
     }
     trap cleanup_inner EXIT
     trap dump_gateway_log_on_error ERR
-    openclaw_e2e_wait_mock_openai \"\$mock_port\"
+    nova_e2e_wait_mock_openai \"\$mock_port\"
     tsx scripts/e2e/mcp-channels-seed.ts >/tmp/mcp-channels-seed.log
-    gateway_pid=\"\$(openclaw_e2e_start_gateway \"\$entry\" $PORT /tmp/mcp-channels-gateway.log)\"
-    openclaw_e2e_wait_gateway_ready \"\$gateway_pid\" /tmp/mcp-channels-gateway.log 480 $PORT
+    gateway_pid=\"\$(nova_e2e_start_gateway \"\$entry\" $PORT /tmp/mcp-channels-gateway.log)\"
+    nova_e2e_wait_gateway_ready \"\$gateway_pid\" /tmp/mcp-channels-gateway.log 480 $PORT
     tsx test/e2e/qa-lab/runtime/mcp-channels-docker-client.ts
   " >"$CLIENT_LOG" 2>&1
 status=${PIPESTATUS[0]}

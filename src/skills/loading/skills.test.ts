@@ -6,7 +6,7 @@ import {
   clearRuntimeConfigSnapshot,
   setRuntimeConfigSnapshot,
 } from "../../config/runtime-snapshot.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { clearPluginMetadataLifecycleCaches } from "../../plugins/plugin-metadata-lifecycle.js";
 import { setActiveDegradedSecretOwners } from "../../secrets/runtime-degraded-state.js";
 import { captureEnv, withPathResolutionEnv } from "../../test-utils/env.js";
@@ -32,7 +32,7 @@ vi.mock("./plugin-skills.js", () => ({
   resolvePluginSkillDirs: () => [],
 }));
 
-const fixtureSuite = createFixtureSuite("openclaw-skills-suite-");
+const fixtureSuite = createFixtureSuite("nova-skills-suite-");
 let tempHome: TempHomeEnv | null = null;
 let skillsHomeEnv: SkillsHomeEnvSnapshot | null = null;
 const pluginEnvSnapshot = captureEnv(["NOVA_DISABLE_BUNDLED_PLUGINS"]);
@@ -122,7 +122,7 @@ function envSkillSnapshot(name: string, metadata: SkillEntry["metadata"]): Skill
   };
 }
 
-function rawSkillApiKeyRefConfig(skillName: string): OpenClawConfig {
+function rawSkillApiKeyRefConfig(skillName: string): NovaConfig {
   return {
     skills: {
       entries: {
@@ -138,7 +138,7 @@ function rawSkillApiKeyRefConfig(skillName: string): OpenClawConfig {
   };
 }
 
-function resolvedSkillApiKeyConfig(skillName: string, apiKey: string): OpenClawConfig {
+function resolvedSkillApiKeyConfig(skillName: string, apiKey: string): NovaConfig {
   return {
     skills: {
       entries: {
@@ -153,9 +153,9 @@ function resolvedSkillApiKeyConfig(skillName: string, apiKey: string): OpenClawC
 beforeAll(async () => {
   await fixtureSuite.setup();
   process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "1";
-  tempHome = await createTempHomeEnv("openclaw-skills-home-");
+  tempHome = await createTempHomeEnv("nova-skills-home-");
   skillsHomeEnv = setMockSkillsHomeEnv(tempHome.home);
-  await fs.mkdir(path.join(tempHome.home, ".openclaw", "agents", "main", "sessions"), {
+  await fs.mkdir(path.join(tempHome.home, ".nova", "agents", "main", "sessions"), {
     recursive: true,
   });
 });
@@ -289,7 +289,7 @@ describe("buildWorkspaceSkillCommandSpecs", () => {
           "compound-bundle": { enabled: true },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     // Prime plugin discovery before the bundle exists; clear the lifecycle cache
     // below to model the install/reload boundary that exposes new plugin files.
@@ -298,7 +298,7 @@ describe("buildWorkspaceSkillCommandSpecs", () => {
       config,
     });
 
-    const pluginRoot = path.join(workspaceDir, ".openclaw", "extensions", "compound-bundle");
+    const pluginRoot = path.join(workspaceDir, ".nova", "extensions", "compound-bundle");
     await fs.mkdir(path.join(pluginRoot, ".claude-plugin"), { recursive: true });
     await fs.mkdir(path.join(pluginRoot, "commands"), { recursive: true });
     await fs.writeFile(
@@ -512,7 +512,7 @@ describe("shouldIncludeSkill", () => {
     requires: { env: [envName] },
   });
 
-  function shouldInclude(config?: OpenClawConfig): boolean {
+  function shouldInclude(config?: NovaConfig): boolean {
     return shouldIncludeSkill({ entry, config, bundledAllowlist: undefined });
   }
 
@@ -703,7 +703,7 @@ describe("applySkillEnvOverrides", () => {
       primaryEnv: "ENV_KEY",
       requires: { env: ["ENV_KEY"] },
     });
-    const config: OpenClawConfig = {
+    const config: NovaConfig = {
       skills: {
         entries: {
           [skillName]: {

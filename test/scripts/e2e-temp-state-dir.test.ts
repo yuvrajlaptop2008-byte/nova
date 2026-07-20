@@ -36,7 +36,7 @@ function waitForExit(child: ReturnType<typeof spawn>) {
 
 describe("E2E temp state dirs", () => {
   it("cleans generated state dirs", async () => {
-    const state = await createE2eStateDir("openclaw-e2e-temp-state-test-", {
+    const state = await createE2eStateDir("nova-e2e-temp-state-test-", {
       NOVA_STATE_DIR: "",
     });
 
@@ -47,9 +47,9 @@ describe("E2E temp state dirs", () => {
   });
 
   it("leaves caller-provided state dirs alone", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-e2e-temp-state-existing-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-e2e-temp-state-existing-"));
     try {
-      const state = await createE2eStateDir("openclaw-e2e-temp-state-test-", {
+      const state = await createE2eStateDir("nova-e2e-temp-state-test-", {
         NOVA_STATE_DIR: root,
       });
 
@@ -64,7 +64,7 @@ describe("E2E temp state dirs", () => {
   it.runIf(process.platform !== "win32")(
     "retries generated state cleanup after a failed removal",
     async () => {
-      const root = mkdtempSync(path.join(tmpdir(), "openclaw-e2e-temp-state-retry-"));
+      const root = mkdtempSync(path.join(tmpdir(), "nova-e2e-temp-state-retry-"));
       const lockedParent = path.join(root, "locked");
       mkdirSync(lockedParent);
 
@@ -91,7 +91,7 @@ describe("E2E temp state dirs", () => {
   );
 
   it("cleans generated state dirs on termination signals", async () => {
-    const root = mkdtempSync(path.join(tmpdir(), "openclaw-e2e-temp-state-signal-"));
+    const root = mkdtempSync(path.join(tmpdir(), "nova-e2e-temp-state-signal-"));
     try {
       const statePathFile = path.join(root, "state-path");
       const scriptPath = path.join(root, "probe.mjs");
@@ -101,7 +101,7 @@ describe("E2E temp state dirs", () => {
         `import { writeFileSync } from "node:fs";
 import { createE2eStateDir } from ${JSON.stringify(helperUrl)};
 
-const state = await createE2eStateDir("openclaw-e2e-temp-state-signal-", {
+const state = await createE2eStateDir("nova-e2e-temp-state-signal-", {
   NOVA_STATE_DIR: "",
 });
 state.registerExitCleanup();

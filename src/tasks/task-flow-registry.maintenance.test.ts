@@ -1,7 +1,7 @@
 // Covers maintenance reconciliation for managed task-flow records.
 import { afterEach, describe, expect, it } from "vitest";
 import { captureEnv } from "../test-utils/env.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import { SUBAGENT_KILL_TASK_ERROR } from "./detached-task-runtime-contract.js";
 import { createRunningTaskRun as createRunningTaskRunOrNull } from "./task-executor.js";
 import {
@@ -58,10 +58,10 @@ function createRunningTaskRun(
 async function withTaskFlowMaintenanceStateDir(
   run: (root: string) => Promise<void>,
 ): Promise<void> {
-  await withOpenClawTestState(
+  await withNovaTestState(
     {
       layout: "state-only",
-      prefix: "openclaw-task-flow-maintenance-",
+      prefix: "nova-task-flow-maintenance-",
     },
     async (state) => {
       resetTaskRegistryDeliveryRuntimeForTests();

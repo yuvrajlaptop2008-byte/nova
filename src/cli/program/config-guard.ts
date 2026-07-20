@@ -134,7 +134,7 @@ function hasLegacyStateMigrationInputs(): boolean {
       path.join(stateDir, "restart-sentinel.json"),
       path.join(stateDir, "restart-sentinel.json.doctor-importing"),
       path.join(stateDir, "sessions"),
-      path.join(stateDir, "state", "openclaw.sqlite"),
+      path.join(stateDir, "state", "nova.sqlite"),
     ].some(fileOrDirExists) ||
     sqliteSidecarPaths.some(
       (sourcePath) => fileOrDirExists(sourcePath) || hasPendingSqliteSidecarArchive(sourcePath),
@@ -353,11 +353,11 @@ export async function ensureConfigReady(
         ? new (await import("../../config/nix-mode-write-guard.js")).NixModeConfigMutationError({
             configPath: snapshot.path,
           }).message
-        : commandText(formatCliCommand("openclaw doctor --fix"));
+        : commandText(formatCliCommand("nova doctor --fix"));
     params.runtime.error(`${muted("Fix:")} ${fixHint}`);
   }
   params.runtime.error(
-    `${muted("Inspect:")} ${commandText(formatCliCommand("openclaw config validate"))}`,
+    `${muted("Inspect:")} ${commandText(formatCliCommand("nova config validate"))}`,
   );
   params.runtime.error(
     muted(

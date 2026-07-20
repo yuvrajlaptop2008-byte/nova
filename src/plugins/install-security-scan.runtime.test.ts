@@ -68,9 +68,9 @@ describe("install security scan official bypass", () => {
   it("bypasses plugin install friction for bundled Nova sources", async () => {
     const result = await scanBundleInstallSourceRuntime({
       logger: {},
-      pluginId: "openclaw/kitchen-sink",
-      sourceDir: "/tmp/openclaw-bundled-plugin",
-      source: { kind: "bundled", authority: "openclaw", mutable: false, network: false },
+      pluginId: "nova/kitchen-sink",
+      sourceDir: "/tmp/nova-bundled-plugin",
+      source: { kind: "bundled", authority: "nova", mutable: false, network: false },
     });
 
     expect(result).toBeUndefined();
@@ -81,7 +81,7 @@ describe("install security scan official bypass", () => {
     const result = await scanBundleInstallSourceRuntime({
       logger: {},
       pluginId: "@nova/matrix",
-      sourceDir: "/tmp/openclaw-official-clawhub-plugin",
+      sourceDir: "/tmp/nova-official-clawhub-plugin",
       source: { kind: "clawhub", authority: "official", mutable: false, network: true },
     });
 
@@ -94,13 +94,13 @@ describe("install security scan official bypass", () => {
       installId: "node",
       logger: {},
       origin: {
-        type: "openclaw-bundled",
+        type: "nova-bundled",
         skillName: "peekaboo",
         installId: "node",
       },
-      source: { kind: "bundled", authority: "openclaw", mutable: false, network: false },
+      source: { kind: "bundled", authority: "nova", mutable: false, network: false },
       skillName: "peekaboo",
-      sourceDir: "/tmp/openclaw-bundled-skill/peekaboo",
+      sourceDir: "/tmp/nova-bundled-skill/peekaboo",
     });
 
     expect(result).toBeUndefined();
@@ -113,7 +113,7 @@ describe("install security scan official bypass", () => {
       packageName: "@nova/matrix",
       requestedSpecifier: "@nova/matrix@latest",
       source: { kind: "npm", authority: "official", mutable: false, network: true },
-      sourcePath: "/tmp/openclaw-official-npm",
+      sourcePath: "/tmp/nova-official-npm",
       sourcePathKind: "directory",
     });
 
@@ -132,7 +132,7 @@ describe("install security scan official bypass", () => {
     const result = await scanBundleInstallSourceRuntime({
       logger: {},
       pluginId: "@nova/matrix",
-      sourceDir: "/tmp/openclaw-official-clawhub-plugin",
+      sourceDir: "/tmp/nova-official-clawhub-plugin",
       source: { kind: "clawhub", authority: "official", mutable: false, network: true },
     });
 

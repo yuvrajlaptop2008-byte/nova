@@ -2,7 +2,7 @@ import { parseStrictPositiveInteger } from "@nova/normalization-core/number-coer
 import { normalizeSessionsGroupBy, type SessionsGroupBy } from "../../lib/sessions/grouping.ts";
 import { getSafeLocalStorage } from "../../local-storage.ts";
 
-const GROUP_BY_STORAGE_KEY = "openclaw:sessions:group-by";
+const GROUP_BY_STORAGE_KEY = "nova:sessions:group-by";
 
 export function loadStoredGroupBy(): SessionsGroupBy {
   return normalizeSessionsGroupBy(getSafeLocalStorage()?.getItem(GROUP_BY_STORAGE_KEY));

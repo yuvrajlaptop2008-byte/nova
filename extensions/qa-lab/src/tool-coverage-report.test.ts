@@ -84,7 +84,7 @@ describe("qa tool coverage report", () => {
         capabilityLayer: "codex-native-workspace",
         required: true,
         fixtureCount: 1,
-        openclaw: "not-run",
+        nova: "not-run",
         codex: "not-run",
         drift: "not-run",
       }),
@@ -148,8 +148,8 @@ describe("qa tool coverage report", () => {
               scenarioId: "tool-read",
               drift: "none",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [{ tool: "read", argsHash: "a", resultHash: "r" }],
                   finalText: "",
@@ -177,8 +177,8 @@ describe("qa tool coverage report", () => {
               drift: "tool-result-shape",
               driftDetails: "tool result differs",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [{ tool: "write", argsHash: "a", resultHash: "r1" }],
                   finalText: "",
@@ -200,7 +200,7 @@ describe("qa tool coverage report", () => {
           },
         ],
         run: {
-          runtimePair: ["openclaw", "codex"],
+          runtimePair: ["nova", "codex"],
         },
       },
       generatedAt: "2026-05-10T00:00:00.000Z",
@@ -238,8 +238,8 @@ describe("qa tool coverage report", () => {
               scenarioId: "tool-optional",
               drift: "tool-call-shape",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [],
                   finalText: "",
@@ -282,9 +282,9 @@ describe("qa tool coverage report", () => {
         makeScenario("tool-searchable-web-search", "web-search", {
           toolName: "web_search",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
-            capabilityLayer: "openclaw-dynamic-searchable",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
+            capabilityLayer: "nova-dynamic-searchable",
           },
         }),
       ],
@@ -298,8 +298,8 @@ describe("qa tool coverage report", () => {
               drift: "tool-call-shape",
               driftDetails: "searchable discovery was report-only",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [{ tool: "web_search", argsHash: "a", resultHash: "r" }],
                   finalText: "",
@@ -331,7 +331,7 @@ describe("qa tool coverage report", () => {
     expect(report.searchableDynamicTools).toBe(1);
     expect(report.rows[0]).toEqual(
       expect.objectContaining({
-        capabilityLayer: "openclaw-dynamic-searchable",
+        capabilityLayer: "nova-dynamic-searchable",
         required: false,
         drift: "tool-call-shape",
       }),
@@ -344,9 +344,9 @@ describe("qa tool coverage report", () => {
         makeScenario("tool-web-search", "web-search", {
           toolName: "web_search",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
-            capabilityLayer: "openclaw-dynamic-direct",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
+            capabilityLayer: "nova-dynamic-direct",
             required: true,
           },
         }),
@@ -361,8 +361,8 @@ describe("qa tool coverage report", () => {
               drift: "tool-result-shape",
               driftDetails: "runtime envelopes differ",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [{ tool: "web_search", argsHash: "a", resultHash: "r1" }],
                   finalText: "",
@@ -398,9 +398,9 @@ describe("qa tool coverage report", () => {
         makeScenario("tool-web-search", "web-search", {
           toolName: "web_search",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
-            capabilityLayer: "openclaw-dynamic-direct",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
+            capabilityLayer: "nova-dynamic-direct",
             required: true,
           },
         }),
@@ -415,8 +415,8 @@ describe("qa tool coverage report", () => {
               drift: "tool-result-shape",
               driftDetails: "Codex maps the controlled tool fault differently",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [{ tool: "web_search", argsHash: "a", resultHash: "r1" }],
                   finalText: "",
@@ -458,9 +458,9 @@ describe("qa tool coverage report", () => {
         makeScenario("tool-web-search", "web-search", {
           toolName: "web_search",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
-            capabilityLayer: "openclaw-dynamic-direct",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
+            capabilityLayer: "nova-dynamic-direct",
             required: true,
           },
         }),
@@ -475,8 +475,8 @@ describe("qa tool coverage report", () => {
               drift: "tool-call-shape",
               driftDetails: "Codex emitted no web_search call",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [{ tool: "web_search", argsHash: "a", resultHash: "r" }],
                   finalText: "",
@@ -511,9 +511,9 @@ describe("qa tool coverage report", () => {
         makeScenario("tool-web-search", "web-search", {
           toolName: "web_search",
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
-            capabilityLayer: "openclaw-dynamic-direct",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
+            capabilityLayer: "nova-dynamic-direct",
             required: true,
           },
         }),
@@ -528,8 +528,8 @@ describe("qa tool coverage report", () => {
               drift: "failure-mode",
               driftDetails: "at least one runtime failed",
               cells: {
-                openclaw: {
-                  runtime: "openclaw",
+                nova: {
+                  runtime: "nova",
                   transcriptBytes: "",
                   toolCalls: [{ tool: "web_search", argsHash: "a", resultHash: "r" }],
                   finalText: "",
@@ -565,9 +565,9 @@ describe("qa tool coverage report", () => {
       scenarios: [
         makeScenario("tool-web-search", "web-search", {
           toolCoverage: {
-            bucket: "openclaw-dynamic-integration",
-            expectedLayer: "openclaw-dynamic",
-            capabilityLayer: "openclaw-dynamic-direct",
+            bucket: "nova-dynamic-integration",
+            expectedLayer: "nova-dynamic",
+            capabilityLayer: "nova-dynamic-direct",
             required: true,
           },
         }),
@@ -602,7 +602,7 @@ describe("qa tool coverage report", () => {
         scenarios: [
           makeScenario("tool-bad-layer", "bad", {
             toolCoverage: {
-              bucket: "openclaw-dynamic-integration",
+              bucket: "nova-dynamic-integration",
               capabilityLayer: "everything-everywhere",
             },
           }),
@@ -656,8 +656,8 @@ describe("qa tool coverage report", () => {
     );
     expect(report.rows.find((row) => row.tool === "image_generate")).toEqual(
       expect.objectContaining({
-        bucket: "openclaw-dynamic-integration",
-        expectedLayer: "openclaw-dynamic",
+        bucket: "nova-dynamic-integration",
+        expectedLayer: "nova-dynamic",
         required: false,
       }),
     );
@@ -669,8 +669,8 @@ describe("qa tool coverage report", () => {
     );
     expect(report.rows.find((row) => row.tool === "web_search")).toEqual(
       expect.objectContaining({
-        bucket: "openclaw-dynamic-integration",
-        capabilityLayer: "openclaw-dynamic-direct",
+        bucket: "nova-dynamic-integration",
+        capabilityLayer: "nova-dynamic-direct",
         required: true,
       }),
     );

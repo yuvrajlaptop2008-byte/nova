@@ -23,20 +23,20 @@ function resolveInstallerVersionCases(params: { stdinCwd: string }): string[] {
     [
       "-c",
       `${versionHelperSource}
-fake_openclaw_decorated() { printf '%s\\n' 'Nova 2026.3.10 (abcdef0)'; }
-fake_openclaw_raw() { printf '%s\\n' "Nova dev's build"; }
-NOVA_BIN=fake_openclaw_decorated resolve_openclaw_version
-NOVA_BIN=fake_openclaw_raw resolve_openclaw_version
+fake_nova_decorated() { printf '%s\\n' 'Nova 2026.3.10 (abcdef0)'; }
+fake_nova_raw() { printf '%s\\n' "Nova dev's build"; }
+NOVA_BIN=fake_nova_decorated resolve_nova_version
+NOVA_BIN=fake_nova_raw resolve_nova_version
 (
   cd "$1"
   source /dev/stdin <<'NOVA_STDIN_INSTALLER'
 ${versionHelperSource}
-fake_openclaw_stdin() { printf '%s\\n' 'Nova 2026.3.10 (abcdef0)'; }
-NOVA_BIN=fake_openclaw_stdin
-resolve_openclaw_version
+fake_nova_stdin() { printf '%s\\n' 'Nova 2026.3.10 (abcdef0)'; }
+NOVA_BIN=fake_nova_stdin
+resolve_nova_version
 NOVA_STDIN_INSTALLER
 )`,
-      "openclaw-version-test",
+      "nova-version-test",
       params.stdinCwd,
     ],
     {
@@ -59,7 +59,7 @@ describe("install.sh version resolution", () => {
   it.runIf(process.platform !== "win32")(
     "parses CLI versions and keeps stdin helpers isolated from cwd",
     () => {
-      const hostileCwd = makeTempDir(tempRoots, "openclaw-install-stdin-");
+      const hostileCwd = makeTempDir(tempRoots, "nova-install-stdin-");
       const hostileHelper = path.join(
         hostileCwd,
         "docker",
@@ -70,7 +70,7 @@ describe("install.sh version resolution", () => {
       fs.writeFileSync(
         hostileHelper,
         `#!/usr/bin/env bash
-extract_openclaw_semver() {
+extract_nova_semver() {
   printf '%s' 'poisoned'
 }
 `,

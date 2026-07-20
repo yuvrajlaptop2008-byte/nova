@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs OpenClaw from a prepared package tarball, installs @nova/codex
+# Installs Nova from a prepared package tarball, installs @nova/codex
 # from a registry/git/tarball spec, and verifies a live Codex app-server turn.
 set -Eeuo pipefail
 
@@ -12,11 +12,11 @@ ROOT_DIR="$TRUSTED_HARNESS_DIR"
 source "$TRUSTED_HARNESS_DIR/scripts/lib/docker-e2e-image.sh"
 source "$TRUSTED_HARNESS_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-codex-npm-plugin-live-e2e" NOVA_CODEX_NPM_PLUGIN_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-codex-npm-plugin-live-e2e" NOVA_CODEX_NPM_PLUGIN_E2E_IMAGE)"
 DOCKER_TARGET="${NOVA_CODEX_NPM_PLUGIN_DOCKER_TARGET:-bare}"
 HOST_BUILD="${NOVA_CODEX_NPM_PLUGIN_HOST_BUILD:-1}"
 PACKAGE_TGZ="${NOVA_CURRENT_PACKAGE_TGZ:-}"
-PROFILE_FILE="${NOVA_CODEX_NPM_PLUGIN_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}}"
+PROFILE_FILE="${NOVA_CODEX_NPM_PLUGIN_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.nova-testbox-live.profile}}"
 CODEX_PLUGIN_SPEC="${NOVA_CODEX_NPM_PLUGIN_SPEC:-}"
 CODEX_PLUGIN_MOUNT=()
 CODEX_PLUGIN_PACK_DIR=""
@@ -96,20 +96,20 @@ prepare_codex_plugin_spec() {
   local pack_output
 
   if [ -z "$CODEX_PLUGIN_SPEC" ]; then
-    CODEX_PLUGIN_PACK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-codex-plugin-pack.XXXXXX")"
+    CODEX_PLUGIN_PACK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/nova-codex-plugin-pack.XXXXXX")"
     (
       cd "$CANDIDATE_ROOT"
       node scripts/lib/plugin-npm-runtime-build.mjs extensions/codex
       node scripts/lib/plugin-npm-package-manifest.mjs --run extensions/codex -- \
         npm pack --json --ignore-scripts --pack-destination "$CODEX_PLUGIN_PACK_DIR"
-    ) >/tmp/openclaw-codex-plugin-pack.log 2>&1
+    ) >/tmp/nova-codex-plugin-pack.log 2>&1
     pack_output=()
     while IFS= read -r packed_file; do
       pack_output+=("$packed_file")
     done < <(find "$CODEX_PLUGIN_PACK_DIR" -maxdepth 1 -type f -name '*.tgz' | sort)
     if [ "${#pack_output[@]}" -ne 1 ]; then
       echo "Expected one packed Codex plugin tarball; found ${#pack_output[@]}." >&2
-      docker_e2e_print_log /tmp/openclaw-codex-plugin-pack.log >&2
+      docker_e2e_print_log /tmp/nova-codex-plugin-pack.log >&2
       exit 1
     fi
     source_path="${pack_output[0]}"
@@ -182,8 +182,8 @@ if ! docker_e2e_run_with_harness \
   -i "$IMAGE_NAME" bash -s >"$run_log" 2>&1 <<'EOF'; then
 set -Eeuo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+source scripts/lib/nova-e2e-instance.sh
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export npm_config_prefix="$NPM_CONFIG_PREFIX"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
@@ -213,7 +213,7 @@ CODEX_PLUGIN_SPEC="${NOVA_CODEX_NPM_PLUGIN_SPEC:?missing NOVA_CODEX_NPM_PLUGIN_S
 MODEL_REF="${NOVA_CODEX_NPM_PLUGIN_MODEL:?missing NOVA_CODEX_NPM_PLUGIN_MODEL}"
 POST_UNINSTALL_MODEL_REF="$MODEL_REF"
 SESSION_ID="codex-npm-plugin-live"
-SUCCESS_MARKER="OPENCLAW-CODEX-NPM-PLUGIN-LIVE-OK"
+SUCCESS_MARKER="nova-CODEX-NPM-PLUGIN-LIVE-OK"
 AGENT_TURN_TIMEOUT_SECONDS="${NOVA_CODEX_NPM_PLUGIN_AGENT_TIMEOUT_SECONDS:-420}"
 PLUGIN_INSTALL_FLAGS=(--force)
 if [ "${NOVA_CODEX_NPM_PLUGIN_FORCE_UNSAFE_INSTALL:-0}" = "1" ]; then
@@ -223,46 +223,46 @@ fi
 dump_debug_logs() {
   local status="$1"
   echo "Codex npm plugin live scenario failed with exit code $status" >&2
-  openclaw_e2e_dump_logs \
-    /tmp/openclaw-install.log \
-    /tmp/openclaw-codex-plugin-install.log \
-    /tmp/openclaw-codex-plugin-enable.log \
-    /tmp/openclaw-codex-plugins-list.json \
-    /tmp/openclaw-codex-plugin-inspect.json \
-    /tmp/openclaw-codex-preflight.log \
-    /tmp/openclaw-codex-agent.json \
-    /tmp/openclaw-codex-agent.err \
-    /tmp/openclaw-codex-agent-turn1.json \
-    /tmp/openclaw-codex-agent-turn1.err \
-    /tmp/openclaw-codex-agent-turn2.json \
-    /tmp/openclaw-codex-agent-turn2.err \
-    /tmp/openclaw-codex-followthrough.json \
-    /tmp/openclaw-codex-followthrough.log \
-    /tmp/openclaw-codex-followthrough.err \
-    /tmp/openclaw-codex-plugin-uninstall.log \
-    /tmp/openclaw-codex-plugins-list-after-uninstall.json \
-    /tmp/openclaw-codex-agent-after-uninstall.json \
-    /tmp/openclaw-codex-agent-after-uninstall.err
+  nova_e2e_dump_logs \
+    /tmp/nova-install.log \
+    /tmp/nova-codex-plugin-install.log \
+    /tmp/nova-codex-plugin-enable.log \
+    /tmp/nova-codex-plugins-list.json \
+    /tmp/nova-codex-plugin-inspect.json \
+    /tmp/nova-codex-preflight.log \
+    /tmp/nova-codex-agent.json \
+    /tmp/nova-codex-agent.err \
+    /tmp/nova-codex-agent-turn1.json \
+    /tmp/nova-codex-agent-turn1.err \
+    /tmp/nova-codex-agent-turn2.json \
+    /tmp/nova-codex-agent-turn2.err \
+    /tmp/nova-codex-followthrough.json \
+    /tmp/nova-codex-followthrough.log \
+    /tmp/nova-codex-followthrough.err \
+    /tmp/nova-codex-plugin-uninstall.log \
+    /tmp/nova-codex-plugins-list-after-uninstall.json \
+    /tmp/nova-codex-agent-after-uninstall.json \
+    /tmp/nova-codex-agent-after-uninstall.err
 }
 trap 'status=$?; dump_debug_logs "$status"; exit "$status"' ERR
 
 mkdir -p "$NPM_CONFIG_PREFIX" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE"
 chmod 700 "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" || true
 
-openclaw_e2e_install_package /tmp/openclaw-install.log
-command -v openclaw >/dev/null
-openclaw_e2e_enable_openclaw_cli_timeout
+nova_e2e_install_package /tmp/nova-install.log
+command -v nova >/dev/null
+nova_e2e_enable_nova_cli_timeout
 
 echo "Installing Codex plugin: $CODEX_PLUGIN_SPEC"
-openclaw plugins install "$CODEX_PLUGIN_SPEC" "${PLUGIN_INSTALL_FLAGS[@]}" >/tmp/openclaw-codex-plugin-install.log 2>&1
+nova plugins install "$CODEX_PLUGIN_SPEC" "${PLUGIN_INSTALL_FLAGS[@]}" >/tmp/nova-codex-plugin-install.log 2>&1
 
 node scripts/e2e/lib/codex-npm-plugin-live/assertions.mjs configure "$MODEL_REF"
 
 echo "Enabling Codex plugin..."
-openclaw plugins enable codex >/tmp/openclaw-codex-plugin-enable.log 2>&1
+nova plugins enable codex >/tmp/nova-codex-plugin-enable.log 2>&1
 
-openclaw plugins list --json >/tmp/openclaw-codex-plugins-list.json
-openclaw plugins inspect codex --runtime --json >/tmp/openclaw-codex-plugin-inspect.json
+nova plugins list --json >/tmp/nova-codex-plugins-list.json
+nova plugins inspect codex --runtime --json >/tmp/nova-codex-plugin-inspect.json
 node scripts/e2e/lib/codex-npm-plugin-live/assertions.mjs assert-plugin "$CODEX_PLUGIN_SPEC"
 node scripts/e2e/lib/codex-npm-plugin-live/assertions.mjs assert-npm-deps
 
@@ -298,7 +298,7 @@ run_agent_turn() {
   local status
 
   echo "${label}_prompt: $message"
-  if openclaw agent --local \
+  if nova agent --local \
     --agent main \
     --session-id "$SESSION_ID" \
     --model "$MODEL_REF" \
@@ -328,29 +328,29 @@ echo "codex_cli_prompt: Reply exactly: ${SUCCESS_MARKER}-PREFLIGHT"
   --json \
   --color never \
   --skip-git-repo-check \
-  "Reply exactly: ${SUCCESS_MARKER}-PREFLIGHT" >/tmp/openclaw-codex-preflight.log 2>&1 </dev/null
+  "Reply exactly: ${SUCCESS_MARKER}-PREFLIGHT" >/tmp/nova-codex-preflight.log 2>&1 </dev/null
 node scripts/e2e/lib/codex-npm-plugin-live/assertions.mjs assert-preflight "${SUCCESS_MARKER}-PREFLIGHT"
 echo "codex_cli_reply: ${SUCCESS_MARKER}-PREFLIGHT"
 
-echo "Running OpenClaw local agent turns through npm-installed Codex plugin..."
+echo "Running Nova local agent turns through npm-installed Codex plugin..."
 run_agent_turn \
   "turn1" \
   "${SUCCESS_MARKER}-TURN-1" \
-  "Reply in one short sentence. Include token ${SUCCESS_MARKER}-TURN-1 and say hello from the OpenClaw Codex plugin." \
-  /tmp/openclaw-codex-agent-turn1.json \
-  /tmp/openclaw-codex-agent-turn1.err
+  "Reply in one short sentence. Include token ${SUCCESS_MARKER}-TURN-1 and say hello from the Nova Codex plugin." \
+  /tmp/nova-codex-agent-turn1.json \
+  /tmp/nova-codex-agent-turn1.err
 run_agent_turn \
   "turn2" \
   "${SUCCESS_MARKER}-TURN-2" \
   "Using this same conversation, name the exact token from your previous reply, then include token ${SUCCESS_MARKER}-TURN-2." \
-  /tmp/openclaw-codex-agent-turn2.json \
-  /tmp/openclaw-codex-agent-turn2.err
+  /tmp/nova-codex-agent-turn2.json \
+  /tmp/nova-codex-agent-turn2.err
 run_agent_turn \
   "turn3" \
   "$SUCCESS_MARKER" \
   "Answer 7 plus 8, include token $SUCCESS_MARKER, and mention whether you saw ${SUCCESS_MARKER}-TURN-2 earlier." \
-  /tmp/openclaw-codex-agent.json \
-  /tmp/openclaw-codex-agent.err
+  /tmp/nova-codex-agent.json \
+  /tmp/nova-codex-agent.err
 
 node scripts/e2e/lib/codex-npm-plugin-live/assertions.mjs assert-agent-turn "$SUCCESS_MARKER" "$SESSION_ID" "$MODEL_REF"
 
@@ -387,21 +387,21 @@ PROMPT
 )"
 
 echo "Running Codex progress follow-through regression turn..."
-NOVA_PACKAGE_ROOT="$(openclaw_e2e_package_root "$NPM_CONFIG_PREFIX")"
+NOVA_PACKAGE_ROOT="$(nova_e2e_package_root "$NPM_CONFIG_PREFIX")"
 if node scripts/e2e/lib/codex-npm-plugin-live/followthrough-turn.mjs \
   "$NOVA_PACKAGE_ROOT" \
   "$FOLLOWTHROUGH_SESSION_ID" \
   "$MODEL_REF" \
   "$AGENT_TURN_TIMEOUT_SECONDS" \
-  /tmp/openclaw-codex-followthrough.json \
+  /tmp/nova-codex-followthrough.json \
   "$FOLLOWTHROUGH_PROMPT" \
-  >/tmp/openclaw-codex-followthrough.log \
-  2>/tmp/openclaw-codex-followthrough.err </dev/null; then
+  >/tmp/nova-codex-followthrough.log \
+  2>/tmp/nova-codex-followthrough.err </dev/null; then
   followthrough_status=0
 else
   followthrough_status=$?
 fi
-echo "followthrough_agent_status: $followthrough_status stdout_bytes=$(wc -c </tmp/openclaw-codex-followthrough.json 2>/dev/null || printf 0) stderr_bytes=$(wc -c </tmp/openclaw-codex-followthrough.err 2>/dev/null || printf 0)"
+echo "followthrough_agent_status: $followthrough_status stdout_bytes=$(wc -c </tmp/nova-codex-followthrough.json 2>/dev/null || printf 0) stderr_bytes=$(wc -c </tmp/nova-codex-followthrough.err 2>/dev/null || printf 0)"
 if [ "$followthrough_status" -ne 0 ]; then
   dump_debug_logs "$followthrough_status"
   exit "$followthrough_status"
@@ -420,18 +420,18 @@ echo "followthrough_reply: ${FOLLOWTHROUGH_PROGRESS_MARKER} -> ${FOLLOWTHROUGH_C
 echo "TRANSCRIPT_END"
 
 echo "Uninstalling Codex plugin and verifying the configured harness now fails..."
-openclaw plugins uninstall codex --force >/tmp/openclaw-codex-plugin-uninstall.log 2>&1
-openclaw plugins list --json >/tmp/openclaw-codex-plugins-list-after-uninstall.json
+nova plugins uninstall codex --force >/tmp/nova-codex-plugin-uninstall.log 2>&1
+nova plugins list --json >/tmp/nova-codex-plugins-list-after-uninstall.json
 node scripts/e2e/lib/codex-npm-plugin-live/assertions.mjs assert-uninstalled
 
-if openclaw agent --local \
+if nova agent --local \
   --agent main \
   --session-id "${SESSION_ID}-after-uninstall" \
   --model "$POST_UNINSTALL_MODEL_REF" \
   --message "Reply exactly: ${SUCCESS_MARKER}-AFTER-UNINSTALL" \
   --thinking low \
   --timeout 120 \
-  --json >/tmp/openclaw-codex-agent-after-uninstall.json 2>/tmp/openclaw-codex-agent-after-uninstall.err; then
+  --json >/tmp/nova-codex-agent-after-uninstall.json 2>/tmp/nova-codex-agent-after-uninstall.err; then
   post_uninstall_status=0
 else
   post_uninstall_status=$?

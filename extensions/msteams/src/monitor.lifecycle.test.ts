@@ -2,7 +2,7 @@
 import { EventEmitter } from "node:events";
 import type { Request, Response } from "express";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig, RuntimeEnv } from "../runtime-api.js";
+import type { NovaConfig, RuntimeEnv } from "../runtime-api.js";
 import type { MSTeamsConversationStore } from "./conversation-store.js";
 import type { MSTeamsActivityHandler } from "./monitor-handler.js";
 import type { MSTeamsMessageHandlerDeps } from "./monitor-handler.types.js";
@@ -230,7 +230,7 @@ async function waitForMSTeamsTestState(assertion: () => void | Promise<void>): P
   await vi.waitFor(assertion, { interval: 1 });
 }
 
-function createConfig(port: number): OpenClawConfig {
+function createConfig(port: number): NovaConfig {
   return {
     channels: {
       msteams: {
@@ -244,12 +244,12 @@ function createConfig(port: number): OpenClawConfig {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function updateMSTeamsConfig(
-  cfg: OpenClawConfig,
-  patch: NonNullable<NonNullable<OpenClawConfig["channels"]>["msteams"]>,
+  cfg: NovaConfig,
+  patch: NonNullable<NonNullable<NovaConfig["channels"]>["msteams"]>,
 ): void {
   const msteams = cfg.channels?.msteams;
   if (!cfg.channels || !msteams) {
@@ -278,10 +278,8 @@ function createStores() {
   };
 }
 
-function requireRegisteredMSTeamsConfig(): OpenClawConfig {
-  const registered = registerMSTeamsHandlers.mock.calls[0]?.[1] as
-    | { cfg?: OpenClawConfig }
-    | undefined;
+function requireRegisteredMSTeamsConfig(): NovaConfig {
+  const registered = registerMSTeamsHandlers.mock.calls[0]?.[1] as { cfg?: NovaConfig } | undefined;
   if (!registered?.cfg) {
     throw new Error("expected registered MSTeams handler config");
   }
@@ -883,7 +881,7 @@ describe("monitorMSTeamsProvider lifecycle", () => {
         name: "adaptiveCard/action",
         from: { id: "29:user", aadObjectId: "aad-user" },
         conversation: { id: "19:channel@thread.tacv2", conversationType: "channel" },
-        value: { action: { data: { openclawPollId: "poll-1", choices: "0" } } },
+        value: { action: { data: { novaPollId: "poll-1", choices: "0" } } },
       },
     });
 
@@ -943,7 +941,7 @@ describe("monitorMSTeamsProvider lifecycle", () => {
         name: "adaptiveCard/action",
         from: { id: "29:user", aadObjectId: "aad-user" },
         conversation: { id: "19:other@thread.tacv2", conversationType: "channel" },
-        value: { action: { data: { openclawPollId: "poll-1", choices: "0" } } },
+        value: { action: { data: { novaPollId: "poll-1", choices: "0" } } },
       },
     });
 

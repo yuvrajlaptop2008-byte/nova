@@ -6,13 +6,13 @@ import {
   listMissingRequiredPlatformPackages,
   readManagedNpmRootInstalledDependency,
   readManagedNpmRootPeerDependencySnapshot,
-  readOpenClawManagedNpmRootOverrides,
-  repairManagedNpmRootOpenClawPeer,
+  readNovaManagedNpmRootOverrides,
+  repairManagedNpmRootNovaPeer,
   syncManagedNpmRootPeerDependencies,
   upsertManagedNpmRootDependency,
   type ManagedNpmRootInstalledDependency,
 } from "../infra/npm-managed-root.js";
-import { installedPackageNeedsOpenClawPeerLinkRepair } from "../infra/package-update-utils.js";
+import { installedPackageNeedsNovaPeerLinkRepair } from "../infra/package-update-utils.js";
 import {
   createSafeNpmInstallArgs,
   createSafeNpmInstallEnv,
@@ -52,7 +52,7 @@ import {
 import {
   defaultLogger,
   ensureInstallTargetAvailableForMode,
-  formatUnresolvedOpenClawPeerLinkError,
+  formatUnresolvedNovaPeerLinkError,
   loadPluginInstallRuntime,
   readOptionalPackageManifest,
   resolveEffectiveInstallMode,
@@ -65,7 +65,7 @@ import type {
   PluginInstallPolicyRequest,
 } from "./install-types.js";
 import { hasRetainedManagedNpmInstallMarker } from "./managed-npm-retention.js";
-import { relinkOpenClawPeerDependenciesInManagedNpmRoot } from "./plugin-peer-link.js";
+import { relinkNovaPeerDependenciesInManagedNpmRoot } from "./plugin-peer-link.js";
 
 export async function installPluginFromManagedNpmRoot(
   params: InstallSafetyOverrides & {
@@ -191,17 +191,17 @@ export async function installPluginFromManagedNpmRoot(
     prepared: ManagedNpmRootPreparedDependency,
   ): Promise<InstallPluginResult> => {
     logger.info?.(`Installing ${params.displaySpec} into ${npmRoot}…`);
-    if (params.packageName !== "openclaw") {
-      const repairedOpenClawPeer = await repairManagedNpmRootOpenClawPeer({
+    if (params.packageName !== "nova") {
+      const repairedNovaPeer = await repairManagedNpmRootNovaPeer({
         npmRoot,
         timeoutMs,
         logger,
       });
-      if (repairedOpenClawPeer) {
-        logger.info?.(`Repaired stale openclaw peer dependency in ${npmRoot}`);
+      if (repairedNovaPeer) {
+        logger.info?.(`Repaired stale nova peer dependency in ${npmRoot}`);
       }
     }
-    const managedOverrides = await readOpenClawManagedNpmRootOverrides();
+    const managedOverrides = await readNovaManagedNpmRootOverrides();
     rollbackPeerDependencySnapshot ??= await readManagedNpmRootPeerDependencySnapshot({ npmRoot });
     const rollbackFailedManagedNpmInstall = async (
       failure: Extract<InstallPluginResult, { ok: false }>,
@@ -415,7 +415,7 @@ export async function installPluginFromManagedNpmRoot(
       );
       let freshCacheDir: string | undefined;
       try {
-        freshCacheDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-npm-cache-"));
+        freshCacheDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-npm-cache-"));
         install = await runCommandWithTimeout(npmInstallArgs, {
           ...npmInstallOptions,
           env: {
@@ -465,31 +465,31 @@ export async function installPluginFromManagedNpmRoot(
         });
       }
     }
-    if (params.packageName !== "openclaw") {
-      const repairedOpenClawPeer = await repairManagedNpmRootOpenClawPeer({
+    if (params.packageName !== "nova") {
+      const repairedNovaPeer = await repairManagedNpmRootNovaPeer({
         npmRoot,
         timeoutMs,
         logger,
       });
-      if (repairedOpenClawPeer) {
-        logger.info?.(`Repaired stale openclaw peer dependency in ${npmRoot} after npm install`);
+      if (repairedNovaPeer) {
+        logger.info?.(`Repaired stale nova peer dependency in ${npmRoot} after npm install`);
       }
     }
     try {
-      await relinkOpenClawPeerDependenciesInManagedNpmRoot({
+      await relinkNovaPeerDependenciesInManagedNpmRoot({
         npmRoot,
         logger,
       });
     } catch (error) {
       return await rollbackFailedManagedNpmInstall({
         ok: false,
-        error: `Failed to repair openclaw peer links after npm install: ${String(error)}`,
+        error: `Failed to repair nova peer links after npm install: ${String(error)}`,
       });
     }
-    if (installedPackageNeedsOpenClawPeerLinkRepair(installRoot)) {
+    if (installedPackageNeedsNovaPeerLinkRepair(installRoot)) {
       return await rollbackFailedManagedNpmInstall({
         ok: false,
-        error: formatUnresolvedOpenClawPeerLinkError(params.packageName),
+        error: formatUnresolvedNovaPeerLinkError(params.packageName),
       });
     }
 

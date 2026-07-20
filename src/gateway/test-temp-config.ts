@@ -8,7 +8,7 @@ import {
   resetConfigRuntimeState,
   setRuntimeConfigSnapshot,
 } from "../config/config.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { clearSecretsRuntimeSnapshot } from "../secrets/runtime.js";
 
 function withStableOwnerDisplaySecretForTest(cfg: unknown): unknown {
@@ -27,7 +27,7 @@ function withStableOwnerDisplaySecretForTest(cfg: unknown): unknown {
     ...record,
     commands: {
       ...commands,
-      ownerDisplaySecret: "openclaw-test-owner-display-secret",
+      ownerDisplaySecret: "nova-test-owner-display-secret",
     },
   };
 }
@@ -40,9 +40,9 @@ export async function withTempConfig(params: {
 }): Promise<void> {
   const prevConfigPath = process.env.NOVA_CONFIG_PATH;
 
-  const testConfig = withStableOwnerDisplaySecretForTest(params.cfg) as OpenClawConfig;
-  const dir = await mkdtemp(path.join(os.tmpdir(), params.prefix ?? "openclaw-test-config-"));
-  const configPath = path.join(dir, "openclaw.json");
+  const testConfig = withStableOwnerDisplaySecretForTest(params.cfg) as NovaConfig;
+  const dir = await mkdtemp(path.join(os.tmpdir(), params.prefix ?? "nova-test-config-"));
+  const configPath = path.join(dir, "nova.json");
 
   process.env.NOVA_CONFIG_PATH = configPath;
 

@@ -29,7 +29,7 @@ export function isCurrentProcessLaunchdServiceLabel(
     return false;
   }
   if (
-    normalizeOptionalString(env.NOVA_SERVICE_MARKER) === "openclaw" &&
+    normalizeOptionalString(env.NOVA_SERVICE_MARKER) === "nova" &&
     Boolean(normalizeOptionalString(env.NOVA_SERVICE_KIND))
   ) {
     // Managed wrappers inject service metadata; trust it when launchd's own

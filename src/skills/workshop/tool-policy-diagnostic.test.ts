@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { detectSkillWorkshopToolPolicyDiagnostic } from "./tool-policy-diagnostic.js";
 
-function detect(config: OpenClawConfig, workshopEnabled = true) {
+function detect(config: NovaConfig, workshopEnabled = true) {
   return detectSkillWorkshopToolPolicyDiagnostic({ config, workshopEnabled });
 }
 

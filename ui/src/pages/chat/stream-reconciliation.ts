@@ -203,7 +203,7 @@ function buildAssistantStreamMessage(
     role: "assistant",
     content: [{ type: "text", text: stream }],
     timestamp,
-    openclawStreamFallback: {
+    novaStreamFallback: {
       replacementText,
       source,
       ...(itemId ? { itemId } : {}),
@@ -215,7 +215,7 @@ function streamFallbackReplacementText(message: unknown): string | null {
   if (!message || typeof message !== "object") {
     return null;
   }
-  const fallback = (message as { openclawStreamFallback?: unknown }).openclawStreamFallback;
+  const fallback = (message as { novaStreamFallback?: unknown }).novaStreamFallback;
   if (!fallback || typeof fallback !== "object") {
     return null;
   }
@@ -231,7 +231,7 @@ function terminalMessageReplacesStreamFallback(message: unknown, fallback: unkno
   if (!fallbackText) {
     return false;
   }
-  const metadata = (fallback as { openclawStreamFallback?: unknown }).openclawStreamFallback;
+  const metadata = (fallback as { novaStreamFallback?: unknown }).novaStreamFallback;
   const source =
     metadata && typeof metadata === "object"
       ? (metadata as { source?: unknown }).source
@@ -299,7 +299,7 @@ function streamFallbackItemId(message: unknown): string | null {
   if (!message || typeof message !== "object") {
     return null;
   }
-  const fallback = (message as { openclawStreamFallback?: unknown }).openclawStreamFallback;
+  const fallback = (message as { novaStreamFallback?: unknown }).novaStreamFallback;
   if (!fallback || typeof fallback !== "object") {
     return null;
   }

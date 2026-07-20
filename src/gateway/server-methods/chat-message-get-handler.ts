@@ -6,7 +6,7 @@ import {
   validateChatMessageGetParams,
 } from "../../../packages/gateway-protocol/src/index.js";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   augmentChatHistoryWithCanvasBlocks,
   dropPreSessionStartAnnouncePairs,
@@ -76,7 +76,7 @@ export const chatMessageGetHandlers: GatewayRequestHandlers = {
     };
     const agentIdOverride = normalizeOptionalText((params as { agentId?: string }).agentId);
     const requestedAgentId = resolveRequestedChatAgentId({
-      cfg: (context as { getRuntimeConfig?: () => OpenClawConfig }).getRuntimeConfig?.(),
+      cfg: (context as { getRuntimeConfig?: () => NovaConfig }).getRuntimeConfig?.(),
       requestedSessionKey: sessionKey,
       agentId: agentIdOverride,
     });

@@ -8,7 +8,7 @@ import {
   resolveAgentMainSessionKey,
   resolveExplicitAgentSessionKey,
 } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { formatUncaughtError } from "../../infra/errors.js";
 import {
   loadVoiceWakeRoutingConfig,
@@ -87,7 +87,7 @@ function logAttachmentFailure(
 
 export async function prepareAgentContentPhase(params: {
   request: AgentRunRequest;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   context: GatewayRequestHandlerOptions["context"];
   respond: GatewayRequestHandlerOptions["respond"];
   isRawModelRun: boolean;

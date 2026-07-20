@@ -34,7 +34,7 @@ function deleteEnvValue(key: string): void {
 }
 
 async function withStateDir<T>(name: string, fn: (stateDir: string) => Promise<T>): Promise<T> {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), `openclaw-${name}-`));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), `nova-${name}-`));
   const previousStateDir = process.env.NOVA_STATE_DIR;
   try {
     setEnvValue("NOVA_STATE_DIR", root);
@@ -210,7 +210,7 @@ function legacyRecord(nowMs: number, stale = false) {
 }
 
 async function runPackagedDoctor(stateDir: string): Promise<void> {
-  const configPath = path.join(stateDir, "openclaw.json");
+  const configPath = path.join(stateDir, "nova.json");
   await fs.writeFile(configPath, JSON.stringify({ plugins: { enabled: false } }, null, 2));
   const entry = await fs.stat("dist/index.mjs").then(
     () => "dist/index.mjs",

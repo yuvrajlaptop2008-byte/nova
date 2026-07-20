@@ -71,7 +71,7 @@ describe("web_search late-bound runtime fallback", () => {
       },
     });
 
-    await tool?.execute("call-search", { query: "openclaw" }, undefined);
+    await tool?.execute("call-search", { query: "nova" }, undefined);
 
     expect(firstRunWebSearchParams()?.runtimeWebSearch?.selectedProvider).toBe("brave");
   });
@@ -85,7 +85,7 @@ describe("web_search late-bound runtime fallback", () => {
       lateBindRuntimeConfig: true,
     });
 
-    await tool?.execute("call-search", { query: "openclaw" }, undefined);
+    await tool?.execute("call-search", { query: "nova" }, undefined);
 
     expect(firstRunWebSearchParams()?.config).toBe(fallbackConfig);
   });
@@ -99,7 +99,7 @@ describe("web_search late-bound runtime fallback", () => {
       lateBindRuntimeConfig: true,
     });
 
-    await tool?.execute("call-search", { query: "openclaw" }, undefined);
+    await tool?.execute("call-search", { query: "nova" }, undefined);
 
     expect(mocks.resolveManifestContractOwnerPluginId).not.toHaveBeenCalled();
     expect(firstRunWebSearchParams()?.preferRuntimeProviders).toBe(true);
@@ -111,14 +111,14 @@ describe("web_search late-bound runtime fallback", () => {
       lateBindRuntimeConfig: true,
     });
 
-    await tool?.execute("call-search", { query: "openclaw" }, undefined);
+    await tool?.execute("call-search", { query: "nova" }, undefined);
 
     expect(mocks.resolveManifestContractOwnerPluginId).not.toHaveBeenCalled();
     expect(firstRunWebSearchParams()?.preferRuntimeProviders).toBe(true);
   });
 
   it("keeps runtime provider discovery enabled when configured search provider has a manifest owner", async () => {
-    mocks.resolveManifestContractOwnerPluginId.mockReturnValue("openclaw-bundled-brave");
+    mocks.resolveManifestContractOwnerPluginId.mockReturnValue("nova-bundled-brave");
     const config = {
       tools: { web: { search: { provider: "brave" } } },
     };
@@ -127,7 +127,7 @@ describe("web_search late-bound runtime fallback", () => {
       lateBindRuntimeConfig: true,
     });
 
-    await tool?.execute("call-search", { query: "openclaw" }, undefined);
+    await tool?.execute("call-search", { query: "nova" }, undefined);
 
     expect(mocks.resolveManifestContractOwnerPluginId).not.toHaveBeenCalled();
     expect(firstRunWebSearchParams()?.preferRuntimeProviders).toBe(true);
@@ -155,7 +155,7 @@ describe("web_search late-bound runtime fallback", () => {
       },
     });
 
-    await tool?.execute("call-search", { query: "openclaw" }, undefined);
+    await tool?.execute("call-search", { query: "nova" }, undefined);
 
     expect(firstRunWebSearchParams()?.runtimeWebSearch?.selectedProvider).toBe("perplexity");
   });
@@ -171,7 +171,7 @@ describe("web_search late-bound runtime fallback", () => {
       lateBindRuntimeConfig: true,
     });
 
-    await expect(tool?.execute("call-search", { query: "openclaw" }, undefined)).rejects.toThrow(
+    await expect(tool?.execute("call-search", { query: "nova" }, undefined)).rejects.toThrow(
       "web_search is disabled.",
     );
     expect(mocks.runWebSearch).not.toHaveBeenCalled();
@@ -192,9 +192,7 @@ describe("web_search late-bound runtime fallback", () => {
       config: { tools: { web: { search: { provider: "brave" } } } },
     });
 
-    await expect(
-      tool?.execute("call-search", { query: "openclaw" }, undefined),
-    ).rejects.toMatchObject({
+    await expect(tool?.execute("call-search", { query: "nova" }, undefined)).rejects.toMatchObject({
       name: "SecretSurfaceUnavailableError",
       code: "SECRET_SURFACE_UNAVAILABLE",
       ownerKind: "capability",

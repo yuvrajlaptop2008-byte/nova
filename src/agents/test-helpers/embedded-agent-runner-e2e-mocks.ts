@@ -73,12 +73,12 @@ export function installEmbeddedRunnerFastRunE2eMocks(
     runAttempt: vi.fn(),
   });
   vi.doMock("../harness/selection.js", () => ({
-    agentHarnessBuildsOpenClawTools: vi.fn(
+    agentHarnessBuildsNovaTools: vi.fn(
       (harnessId: string) => harnessId === "codex" || harnessId === "copilot",
     ),
     selectAgentHarness: vi.fn(createMockAgentHarness),
     selectAgentHarnessForPreparedModelProviders: vi.fn(createMockAgentHarness),
-    resolveAgentHarnessPolicy: vi.fn(() => ({ runtime: "openclaw" })),
+    resolveAgentHarnessPolicy: vi.fn(() => ({ runtime: "nova" })),
     runAgentHarnessAttempt: (params: unknown) => options.runEmbeddedAttempt(params),
   }));
   vi.doMock("../runtime-plan/build.js", () => ({
@@ -251,12 +251,12 @@ function resolveMockHarnessId(params: {
   provider?: string;
   agentHarnessId?: string;
   agentHarnessRuntimeOverride?: string;
-}): "codex" | "openclaw" {
+}): "codex" | "nova" {
   return params.provider === "codex-cli" ||
     params.agentHarnessId === "codex" ||
     params.agentHarnessRuntimeOverride === "codex"
     ? "codex"
-    : "openclaw";
+    : "nova";
 }
 
 /** Installs deterministic backoff mocks for retry/timeout E2E tests. */

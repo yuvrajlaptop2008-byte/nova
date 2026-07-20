@@ -7,8 +7,8 @@ import { replaceSessionEntry } from "../config/sessions/session-accessor.js";
 import { formatSqliteSessionFileMarker } from "../config/sessions/sqlite-marker.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import type { RuntimeEnv } from "../runtime.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import {
   resolveTrajectoryPointerFilePath,
   TRAJECTORY_RUNTIME_FILE_MAX_BYTES,
@@ -40,7 +40,7 @@ function makeEvent(
   params: Partial<TrajectoryEvent> & { type: string; ts: string },
 ): TrajectoryEvent {
   return {
-    traceSchema: "openclaw-trajectory",
+    traceSchema: "nova-trajectory",
     schemaVersion: 1,
     traceId: "trace-1",
     source: "runtime",
@@ -92,7 +92,7 @@ describe("sessionsTailCommand", () => {
   beforeEach(() => {
     setSessionsTailFollowIntervalMsForTests(2);
     previousStateDir = process.env.NOVA_STATE_DIR;
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sessions-tail-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-sessions-tail-"));
     process.env.NOVA_STATE_DIR = path.join(tmpDir, "state");
     mocks.getRuntimeConfig.mockReturnValue({
       agents: {
@@ -110,8 +110,8 @@ describe("sessionsTailCommand", () => {
     } else {
       process.env.NOVA_STATE_DIR = previousStateDir;
     }
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
@@ -233,7 +233,7 @@ describe("sessionsTailCommand", () => {
     fs.writeFileSync(
       resolveTrajectoryPointerFilePath(sessionFile),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: "session-one",
         runtimeFile: relocatedTrajectoryPath,
@@ -289,7 +289,7 @@ describe("sessionsTailCommand", () => {
     fs.writeFileSync(
       resolveTrajectoryPointerFilePath(sessionFile),
       `${JSON.stringify({
-        traceSchema: "openclaw-trajectory-pointer",
+        traceSchema: "nova-trajectory-pointer",
         schemaVersion: 1,
         sessionId: "old-session",
         runtimeFile: staleRuntimePath,

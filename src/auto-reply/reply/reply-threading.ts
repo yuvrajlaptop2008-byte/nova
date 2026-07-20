@@ -5,7 +5,7 @@ import { getChannelPlugin } from "../../channels/plugins/index.js";
 import type { ChannelThreadingAdapter } from "../../channels/plugins/types.core.js";
 import { normalizeAnyChannelId } from "../../channels/registry.js";
 import type { ReplyToMode } from "../../config/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { DEFAULT_ACCOUNT_ID } from "../../routing/account-id.js";
 import {
   copyReplyPayloadMetadata,
@@ -31,7 +31,7 @@ function normalizeReplyToModeChatType(
 
 /** Resolve configured reply-to mode from channel and chat-type config. */
 function resolveConfiguredReplyToMode(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   channel?: OriginatingChannelType,
   chatType?: string | null,
 ): ReplyToMode {
@@ -54,7 +54,7 @@ function resolveConfiguredReplyToMode(
 
 /** Resolve reply-to mode using channel threading adapter override when present. */
 function resolveReplyToModeWithThreading(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   threading: ChannelThreadingAdapter | undefined,
   params: {
     channel?: OriginatingChannelType;
@@ -72,7 +72,7 @@ function resolveReplyToModeWithThreading(
 
 /** Resolve effective reply-to mode for a channel/account/chat tuple. */
 export function resolveReplyToMode(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   channel?: OriginatingChannelType,
   accountId?: string | null,
   chatType?: string | null,
@@ -92,7 +92,7 @@ export function resolveReplyToMode(
 
 /** Resolve the account that routed reply delivery will use when none is explicit. */
 export function resolveReplyDeliveryAccountId(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   channel?: OriginatingChannelType,
   accountId?: string | null,
 ): string | undefined {

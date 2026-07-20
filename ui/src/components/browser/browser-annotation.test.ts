@@ -20,7 +20,7 @@ function node(overrides: Partial<BrowserInspectedNode> = {}): BrowserInspectedNo
 describe("buildAnnotationPrompt", () => {
   it("describes the page, marked regions, and inspected element", () => {
     const prompt = buildAnnotationPrompt({
-      url: "https://github.com/openclaw/openclaw/pull/103853",
+      url: "https://github.com/nova/nova/pull/103853",
       title: "feat(ui): collapse session PR chips",
       strokes: [
         {
@@ -32,7 +32,7 @@ describe("buildAnnotationPrompt", () => {
       ],
       element: node({ name: "Merge", role: "button" }),
     });
-    expect(prompt).toContain("https://github.com/openclaw/openclaw/pull/103853");
+    expect(prompt).toContain("https://github.com/nova/nova/pull/103853");
     expect(prompt).toContain("Marked region 1");
     expect(prompt).toContain("30% across / 60% down");
     expect(prompt).toContain('button "Merge" (role=button)');

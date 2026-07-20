@@ -393,14 +393,14 @@ export async function runGitUpdate(params: {
       return await rollbackError("ui-build-failed");
     }
 
-    const doctorEntry = path.join(gitRoot, "openclaw.mjs");
+    const doctorEntry = path.join(gitRoot, "nova.mjs");
     const doctorEntryExists = await fs.stat(doctorEntry).then(
       () => true,
       () => false,
     );
     if (!doctorEntryExists) {
       steps.push({
-        name: "openclaw doctor entry",
+        name: "nova doctor entry",
         command: `verify ${doctorEntry}`,
         cwd: gitRoot,
         durationMs: 0,
@@ -417,7 +417,7 @@ export async function runGitUpdate(params: {
     });
     const doctorStep = await runStep(
       step(
-        "openclaw doctor",
+        "nova doctor",
         [
           doctorNodePath,
           doctorEntry,

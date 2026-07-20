@@ -4,12 +4,12 @@ import { randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { performance } from "node:perf_hooks";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isDiagnosticFlagEnabled } from "./diagnostic-flags.js";
 import { isTruthyEnvValue } from "./env.js";
 import { appendRegularFileSync } from "./regular-file.js";
 
-const NOVA_DIAGNOSTICS_TIMELINE_SCHEMA_VERSION = "openclaw.diagnostics.v1";
+const NOVA_DIAGNOSTICS_TIMELINE_SCHEMA_VERSION = "nova.diagnostics.v1";
 
 type DiagnosticsTimelineEventType =
   | "span.start"
@@ -53,13 +53,13 @@ type DiagnosticsTimelineSpanOptions = {
   phase?: string;
   parentSpanId?: string;
   attributes?: DiagnosticsTimelineAttributes;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   omitErrorMessage?: boolean;
 };
 
 type DiagnosticsTimelineOptions = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
 };
 
@@ -73,7 +73,7 @@ type ActiveDiagnosticsTimelineSpan = {
 };
 
 type StartedDiagnosticsTimelineSpan = ActiveDiagnosticsTimelineSpan & {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env: NodeJS.ProcessEnv;
   startedAt: number;
   omitErrorMessage?: boolean;

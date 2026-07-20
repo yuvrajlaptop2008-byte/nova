@@ -1,18 +1,15 @@
-import {
-  isProviderAuthProfileConfigured,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/provider-auth";
-import { resolveApiKeyForProvider } from "openclaw/plugin-sdk/provider-auth-runtime";
+import { isProviderAuthProfileConfigured, type NovaConfig } from "nova/plugin-sdk/provider-auth";
+import { resolveApiKeyForProvider } from "nova/plugin-sdk/provider-auth-runtime";
 import type {
   RealtimeVoiceBridgeCreateRequest,
   RealtimeVoiceProviderConfig,
-} from "openclaw/plugin-sdk/realtime-voice";
-import { normalizeResolvedSecretInputString } from "openclaw/plugin-sdk/secret-input";
+} from "nova/plugin-sdk/realtime-voice";
+import { normalizeResolvedSecretInputString } from "nova/plugin-sdk/secret-input";
 import {
   asFiniteNumber,
   normalizeOptionalString,
   parseBooleanValue as readBoolean,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { XAI_BASE_URL } from "./model-definitions.js";
 
 type XaiRealtimeVoice = "eve" | "ara" | "rex" | "sal" | "leo";
@@ -223,7 +220,7 @@ export function toXaiRealtimeWsUrl(
 
 export async function resolveXaiRealtimeApiKey(
   configApiKey: string | undefined,
-  cfg: OpenClawConfig | undefined,
+  cfg: NovaConfig | undefined,
 ): Promise<string> {
   const direct =
     normalizeOptionalString(configApiKey) ?? normalizeOptionalString(process.env.XAI_API_KEY);
@@ -236,13 +233,13 @@ export async function resolveXaiRealtimeApiKey(
     return oauthKey;
   }
   throw new Error(
-    "xAI credentials missing for realtime voice. Sign in with `openclaw onboard --auth-choice xai-oauth`, run `openclaw onboard --auth-choice xai-api-key`, or set XAI_API_KEY.",
+    "xAI credentials missing for realtime voice. Sign in with `nova onboard --auth-choice xai-oauth`, run `nova onboard --auth-choice xai-api-key`, or set XAI_API_KEY.",
   );
 }
 
 export function hasXaiRealtimeApiKeyInput(
   configApiKey: string | undefined,
-  cfg: OpenClawConfig | undefined,
+  cfg: NovaConfig | undefined,
 ): boolean {
   if (normalizeOptionalString(configApiKey) || normalizeOptionalString(process.env.XAI_API_KEY)) {
     return true;

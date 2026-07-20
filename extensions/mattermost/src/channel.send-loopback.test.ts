@@ -1,9 +1,9 @@
 // Mattermost tests cover the action-to-REST send path over loopback.
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { withServer } from "openclaw/plugin-sdk/test-env";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
+import { withServer } from "nova/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import { mattermostPlugin } from "./channel.js";
-import type { OpenClawConfig } from "./runtime-api.js";
+import type { NovaConfig } from "./runtime-api.js";
 import { setMattermostRuntime } from "./runtime.js";
 
 const CHANNEL_ID = "aaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -38,7 +38,7 @@ describe("Mattermost send action loopback", () => {
               network: { dangerouslyAllowPrivateNetwork: true },
             },
           },
-        } as OpenClawConfig;
+        } as NovaConfig;
         const handleAction = mattermostPlugin.actions?.handleAction;
         if (!handleAction) {
           throw new Error("Mattermost send action missing");

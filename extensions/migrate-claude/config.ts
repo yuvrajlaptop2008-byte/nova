@@ -6,8 +6,8 @@ import {
   createMigrationManualItem,
   hasMigrationConfigPatchConflict,
   MIGRATION_REASON_TARGET_EXISTS,
-} from "openclaw/plugin-sdk/migration";
-import type { MigrationItem, MigrationProviderContext } from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/migration";
+import type { MigrationItem, MigrationProviderContext } from "nova/plugin-sdk/plugin-entry";
 import { childRecord, isRecord, readJsonObject, sanitizeName } from "./helpers.js";
 import type { ClaudeSource } from "./source.js";
 

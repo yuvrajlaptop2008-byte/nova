@@ -1,5 +1,5 @@
 // Nextcloud Talk tests cover inbound.behavior plugin behavior.
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/channel-test-helpers";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/channel-test-helpers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { OutboundReplyPayload, PluginRuntime, RuntimeEnv } from "../runtime-api.js";
 import type { ResolvedNextcloudTalkAccount } from "./accounts.js";
@@ -252,7 +252,7 @@ describe("nextcloud-talk inbound behavior", () => {
         roomToken: "room-group",
         roomName: "Ops",
         isGroupChat: true,
-        text: "/openclaw reload",
+        text: "/nova reload",
       }),
       account: createAccount({
         config: {

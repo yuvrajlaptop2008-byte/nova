@@ -46,7 +46,7 @@ function expectAuditRecord(
 const mockConfig = vi.hoisted(() => {
   const initial = {};
   const state = {
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
     exists: true,
     config: initial as TestConfig,
     hash: "mock-hash-0" as string | undefined,
@@ -72,7 +72,7 @@ const mockConfig = vi.hoisted(() => {
   };
   return {
     reset() {
-      state.path = "/tmp/openclaw.json";
+      state.path = "/tmp/nova.json";
       state.exists = true;
       state.config = {};
       state.hash = "mock-hash-0";
@@ -138,7 +138,7 @@ vi.mock("./overview.js", () => ({
       { id: "main", isDefault: true },
       { id: "work", isDefault: false, model: "openai/gpt-5.2" },
     ],
-    config: { path: "/tmp/openclaw.json", exists: true, valid: true, issues: [], hash: null },
+    config: { path: "/tmp/nova.json", exists: true, valid: true, issues: [], hash: null },
     tools: {
       codex: { command: "codex", found: false, error: "not found" },
       claude: { command: "claude", found: false, error: "not found" },
@@ -152,8 +152,8 @@ vi.mock("./overview.js", () => ({
       error: "offline",
     },
     references: {
-      docsUrl: "https://docs.openclaw.ai",
-      sourceUrl: "https://github.com/openclaw/openclaw",
+      docsUrl: "https://docs.nova.ai",
+      sourceUrl: "https://github.com/nova/nova",
     },
   })),
 }));
@@ -180,12 +180,12 @@ describe("parseSystemAgentOperation", () => {
   });
 
   it("runs setup bootstrap only after approval and audits it", async () => {
-    const tempDir = opTempDirs.make("openclaw-setup-");
+    const tempDir = opTempDirs.make("nova-setup-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     mockConfig.setConfig({ agents: { defaults: { model: { primary: "openai/gpt-5.5" } } } });
     const applySetup = vi.fn(async () => ({
-      configPath: path.join(tempDir, "openclaw.json"),
+      configPath: path.join(tempDir, "nova.json"),
       configHashBefore: "mock-hash-0",
       configHashAfter: "mock-hash-1",
       bootstrapPending: true,
@@ -224,7 +224,7 @@ describe("parseSystemAgentOperation", () => {
     expect(result.applied).toBe(true);
     expect(result.bootstrapPending).toBe(true);
 
-    expect(lines.join("\n")).toContain("[openclaw] done: openclaw.setup");
+    expect(lines.join("\n")).toContain("[nova] done: nova.setup");
     expect(applySetup).toHaveBeenCalledWith(
       {
         workspace: "/tmp/work",
@@ -239,7 +239,7 @@ describe("parseSystemAgentOperation", () => {
     expectAuditRecord(
       audit,
       {
-        operation: "openclaw.setup",
+        operation: "nova.setup",
         summary: "Bootstrapped setup workspace",
       },
       {
@@ -253,7 +253,7 @@ describe("parseSystemAgentOperation", () => {
   });
 
   it("rejects setup without a default model before any workspace or Gateway write", async () => {
-    const tempDir = opTempDirs.make("openclaw-no-inference-setup-");
+    const tempDir = opTempDirs.make("nova-no-inference-setup-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const applySetup = vi.fn();
@@ -271,12 +271,12 @@ describe("parseSystemAgentOperation", () => {
     ).rejects.toThrow("requires working inference first");
 
     expect(applySetup).not.toHaveBeenCalled();
-    expect(lines.join("\n")).not.toContain("[openclaw] running: openclaw.setup");
+    expect(lines.join("\n")).not.toContain("[nova] running: nova.setup");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
   it("rejects setup when the current route fails its live inference check", async () => {
-    const tempDir = opTempDirs.make("openclaw-failed-inference-setup-");
+    const tempDir = opTempDirs.make("nova-failed-inference-setup-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     mockConfig.setConfig({ agents: { defaults: { model: { primary: "openai/gpt-5.5" } } } });
     const { runtime, lines } = createSystemAgentTestRuntime();
@@ -298,7 +298,7 @@ describe("parseSystemAgentOperation", () => {
     ).rejects.toThrow("failed a live check");
 
     expect(applySetup).not.toHaveBeenCalled();
-    expect(lines.join("\n")).not.toContain("[openclaw] running: openclaw.setup");
+    expect(lines.join("\n")).not.toContain("[nova] running: nova.setup");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
@@ -340,7 +340,7 @@ describe("parseSystemAgentOperation", () => {
     });
     const { runtime } = createSystemAgentTestRuntime();
     const applySetup = vi.fn(async () => ({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/nova.json",
       configHashBefore: "mock-hash-0",
       configHashAfter: "mock-hash-1",
       bootstrapPending: false,
@@ -375,7 +375,7 @@ describe("parseSystemAgentOperation", () => {
   });
 
   it("rejects a setup model switch before writing", async () => {
-    const tempDir = opTempDirs.make("openclaw-model-switch-setup-");
+    const tempDir = opTempDirs.make("nova-model-switch-setup-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime } = createSystemAgentTestRuntime();
     const applySetup = vi.fn();
@@ -392,18 +392,18 @@ describe("parseSystemAgentOperation", () => {
           },
         },
       ),
-    ).rejects.toThrow("Exit Nova and run `openclaw onboard`");
+    ).rejects.toThrow("Exit Nova and run `nova onboard`");
 
     expect(applySetup).not.toHaveBeenCalled();
   });
 
   it("allows the same requested model while preserving it without a model write", async () => {
-    const tempDir = opTempDirs.make("openclaw-same-model-setup-");
+    const tempDir = opTempDirs.make("nova-same-model-setup-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime } = createSystemAgentTestRuntime();
     mockConfig.setConfig({ agents: { defaults: { model: { primary: "openai/gpt-5.5" } } } });
     const applySetup = vi.fn(async () => ({
-      configPath: path.join(tempDir, "openclaw.json"),
+      configPath: path.join(tempDir, "nova.json"),
       configHashBefore: "mock-hash-0",
       configHashAfter: "mock-hash-1",
       bootstrapPending: false,
@@ -440,7 +440,7 @@ describe("parseSystemAgentOperation", () => {
   });
 
   it("live-verifies a staged default model before writing and preserves concurrent edits", async () => {
-    const tempDir = opTempDirs.make("openclaw-verified-model-");
+    const tempDir = opTempDirs.make("nova-verified-model-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     mockConfig.setConfig({
       agents: {
@@ -503,7 +503,7 @@ describe("parseSystemAgentOperation", () => {
             ...requireRecord(current.agents, "agents"),
             defaults: {
               ...requireRecord(requireRecord(current.agents, "agents").defaults, "defaults"),
-              models: { "google/unrelated": { agentRuntime: { id: "openclaw" } } },
+              models: { "google/unrelated": { agentRuntime: { id: "nova" } } },
             },
             list: [
               { id: "main", default: true, workspace: "/tmp/main" },
@@ -655,7 +655,7 @@ describe("parseSystemAgentOperation", () => {
         const next = structuredClone(config);
         const defaults = requireRecord(requireRecord(next.agents, "agents").defaults, "defaults");
         defaults.models = {
-          "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "openclaw" } },
+          "anthropic/claude-sonnet-4-6": { agentRuntime: { id: "nova" } },
         };
         return next;
       },
@@ -708,7 +708,7 @@ describe("parseSystemAgentOperation", () => {
   ])(
     "aborts when concurrent $field changes invalidate the verified route",
     async ({ initial, change }) => {
-      const tempDir = opTempDirs.make("openclaw-route-conflict-");
+      const tempDir = opTempDirs.make("nova-route-conflict-");
       setTestEnvValue("NOVA_STATE_DIR", tempDir);
       mockConfig.setConfig(initial);
       mockConfig.mutateConfigFile.mockClear();
@@ -730,13 +730,13 @@ describe("parseSystemAgentOperation", () => {
       ).rejects.toThrow("inference route changed during verification");
 
       expect(mockConfig.mutateConfigFile).toHaveBeenCalledOnce();
-      expect(lines.join("\n")).not.toContain("[openclaw] done: config.setDefaultModel");
+      expect(lines.join("\n")).not.toContain("[nova] done: config.setDefaultModel");
       await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
     },
   );
 
   it("keeps the working model and writes no audit when live inference fails", async () => {
-    const tempDir = opTempDirs.make("openclaw-rejected-model-");
+    const tempDir = opTempDirs.make("nova-rejected-model-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const originalConfig = {
       agents: { defaults: { model: { primary: "anthropic/claude-sonnet-4-6" } } },
@@ -762,12 +762,12 @@ describe("parseSystemAgentOperation", () => {
 
     expect(mockConfig.currentConfig()).toEqual(originalConfig);
     expect(mockConfig.mutateConfigFile).not.toHaveBeenCalled();
-    expect(lines.join("\n")).not.toContain("[openclaw] done: config.setDefaultModel");
+    expect(lines.join("\n")).not.toContain("[nova] done: config.setDefaultModel");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
   it("writes nothing when the exact latest route fails its locked recheck", async () => {
-    const tempDir = opTempDirs.make("openclaw-latest-route-rejected-");
+    const tempDir = opTempDirs.make("nova-latest-route-rejected-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const originalConfig = {
       agents: { defaults: { model: { primary: "anthropic/claude-sonnet-4-6" } } },
@@ -789,12 +789,12 @@ describe("parseSystemAgentOperation", () => {
 
     expect(verifyInferenceConfig).toHaveBeenCalledTimes(2);
     expect(mockConfig.currentConfig()).toEqual(originalConfig);
-    expect(lines.join("\n")).not.toContain("[openclaw] done: config.setDefaultModel");
+    expect(lines.join("\n")).not.toContain("[nova] done: config.setDefaultModel");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
   it("rejects a live result from a different model before opening the write boundary", async () => {
-    const tempDir = opTempDirs.make("openclaw-mismatched-model-result-");
+    const tempDir = opTempDirs.make("nova-mismatched-model-result-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const originalConfig = {
       agents: { defaults: { model: { primary: "anthropic/claude-sonnet-4-6" } } },
@@ -818,12 +818,12 @@ describe("parseSystemAgentOperation", () => {
     expect(verifyInferenceConfig).toHaveBeenCalledOnce();
     expect(mockConfig.mutateConfigFile).not.toHaveBeenCalled();
     expect(mockConfig.currentConfig()).toEqual(originalConfig);
-    expect(lines.join("\n")).not.toContain("[openclaw] done: config.setDefaultModel");
+    expect(lines.join("\n")).not.toContain("[nova] done: config.setDefaultModel");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
   it("rejects a different model result from the final commit-boundary probe", async () => {
-    const tempDir = opTempDirs.make("openclaw-final-mismatched-model-result-");
+    const tempDir = opTempDirs.make("nova-final-mismatched-model-result-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const originalConfig = {
       agents: { defaults: { model: { primary: "anthropic/claude-sonnet-4-6" } } },
@@ -845,12 +845,12 @@ describe("parseSystemAgentOperation", () => {
 
     expect(verifyInferenceConfig).toHaveBeenCalledTimes(2);
     expect(mockConfig.currentConfig()).toEqual(originalConfig);
-    expect(lines.join("\n")).not.toContain("[openclaw] done: config.setDefaultModel");
+    expect(lines.join("\n")).not.toContain("[nova] done: config.setDefaultModel");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
   it("rechecks the existing inference binding inside the locked model transform", async () => {
-    const tempDir = opTempDirs.make("openclaw-model-binding-rotated-");
+    const tempDir = opTempDirs.make("nova-model-binding-rotated-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const originalConfig = {
       agents: { defaults: { model: { primary: "anthropic/claude-sonnet-4-6" } } },
@@ -884,12 +884,12 @@ describe("parseSystemAgentOperation", () => {
     expect(verifyInferenceConfig).toHaveBeenCalledOnce();
     expect(beforePersistentApply).toHaveBeenCalledOnce();
     expect(mockConfig.currentConfig()).toEqual(originalConfig);
-    expect(lines.join("\n")).not.toContain("[openclaw] done: config.setDefaultModel");
+    expect(lines.join("\n")).not.toContain("[nova] done: config.setDefaultModel");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
   it("rechecks the existing inference binding after the candidate's final live probe", async () => {
-    const tempDir = opTempDirs.make("openclaw-model-binding-final-probe-rotated-");
+    const tempDir = opTempDirs.make("nova-model-binding-final-probe-rotated-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const originalConfig = {
       agents: { defaults: { model: { primary: "anthropic/claude-sonnet-4-6" } } },
@@ -927,12 +927,12 @@ describe("parseSystemAgentOperation", () => {
     expect(verifyInferenceConfig).toHaveBeenCalledTimes(2);
     expect(beforePersistentApply).toHaveBeenCalledTimes(2);
     expect(mockConfig.currentConfig()).toEqual(originalConfig);
-    expect(lines.join("\n")).not.toContain("[openclaw] done: config.setDefaultModel");
+    expect(lines.join("\n")).not.toContain("[nova] done: config.setDefaultModel");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
   it("stages and persists model changes at the effective default-agent owner", async () => {
-    const tempDir = opTempDirs.make("openclaw-default-agent-model-");
+    const tempDir = opTempDirs.make("nova-default-agent-model-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     mockConfig.setConfig({
       agents: {
@@ -976,7 +976,7 @@ describe("parseSystemAgentOperation", () => {
   });
 
   it("refuses doctor repairs before any write or audit", async () => {
-    const tempDir = opTempDirs.make("openclaw-doctor-fix-refused-");
+    const tempDir = opTempDirs.make("nova-doctor-fix-refused-");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runDoctor = vi.fn(async () => {});
@@ -990,8 +990,8 @@ describe("parseSystemAgentOperation", () => {
     expect(isPersistentSystemAgentOperation({ kind: "doctor-fix" })).toBe(false);
     expect(runDoctor).not.toHaveBeenCalled();
     expect(lines.join("\n")).toContain("Exit Nova");
-    expect(lines.join("\n")).toContain("openclaw doctor --fix");
-    expect(lines.join("\n")).not.toContain("[openclaw] running: doctor.fix");
+    expect(lines.join("\n")).toContain("nova doctor --fix");
+    expect(lines.join("\n")).not.toContain("[nova] running: doctor.fix");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
@@ -1021,9 +1021,7 @@ describe("parseSystemAgentOperation", () => {
       returnToShell: true,
       nextInput: "restart gateway",
     });
-    expect(lines.join("\n")).toContain(
-      "[openclaw] returned from agent with request: restart gateway",
-    );
+    expect(lines.join("\n")).toContain("[nova] returned from agent with request: restart gateway");
   });
 
   it("seeds a fresh hatch into the agent TUI", async () => {
@@ -1060,6 +1058,6 @@ describe("parseSystemAgentOperation", () => {
       returnToShell: true,
     });
     expect((result as { nextInput?: string }).nextInput).toBeUndefined();
-    expect(lines.join("\n")).toContain("[openclaw] returned from agent");
+    expect(lines.join("\n")).toContain("[nova] returned from agent");
   });
 });

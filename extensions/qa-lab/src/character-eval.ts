@@ -1,8 +1,8 @@
 // Qa Lab plugin module implements character eval behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { normalizeStringEntries, uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { normalizeStringEntries, uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import pMap from "p-map";
 import prettyMilliseconds from "pretty-ms";
 import { createQaArtifactRunId } from "./artifact-run-id.js";

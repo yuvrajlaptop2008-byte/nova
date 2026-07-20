@@ -1,9 +1,9 @@
 import os from "node:os";
 import { basename, isAbsolute, resolve } from "node:path";
 import JSON5 from "json5";
-import type { HealthCheckContext, HealthFinding } from "openclaw/plugin-sdk/health";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { HealthCheckContext, HealthFinding } from "nova/plugin-sdk/health";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import type { PolicyAuthProfileEvidence } from "../policy-state.js";
 import { POLICY_TOOL_GROUPS } from "../tool-policy-conformance.js";
 import { CHECK_IDS } from "./check-ids.js";
@@ -258,7 +258,7 @@ export function channelIdsFromFindings(findings: readonly HealthFinding[]): read
     ...new Set(
       findings
         .filter((finding) => finding.checkId === CHECK_IDS.policyDeniedChannelProvider)
-        .map((finding) => finding.ocPath?.match(/^oc:\/\/openclaw\.config\/channels\/(.+)$/)?.[1])
+        .map((finding) => finding.ocPath?.match(/^oc:\/\/nova\.config\/channels\/(.+)$/)?.[1])
         .filter((id): id is string => id !== undefined && id !== ""),
     ),
   ];
@@ -382,7 +382,7 @@ export function normalizePolicyChannelId(value: string): string {
 }
 
 function canonicalExecApprovalsPath(): string {
-  return "~/.openclaw/exec-approvals.json";
+  return "~/.nova/exec-approvals.json";
 }
 
 function execApprovalsArtifactLocation(ctx: HealthCheckContext): {

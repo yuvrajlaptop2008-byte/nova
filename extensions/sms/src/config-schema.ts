@@ -5,9 +5,9 @@ import {
   buildMultiAccountChannelSchema,
   DmPolicySchema,
   requireOpenAllowFrom,
-} from "openclaw/plugin-sdk/channel-config-schema";
-import { requireChannelOpenAllowFrom } from "openclaw/plugin-sdk/extension-shared";
-import { buildSecretInputSchema } from "openclaw/plugin-sdk/secret-input";
+} from "nova/plugin-sdk/channel-config-schema";
+import { requireChannelOpenAllowFrom } from "nova/plugin-sdk/extension-shared";
+import { buildSecretInputSchema } from "nova/plugin-sdk/secret-input";
 import { z } from "zod";
 
 const SecretInputSchema = buildSecretInputSchema();

@@ -7,7 +7,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { testing as sessionMcpTesting } from "../../agents/agent-bundle-mcp-runtime.js";
 import { getOrCreateSessionMcpRuntime } from "../../agents/agent-bundle-mcp-tools.js";
 import * as bootstrapCache from "../../agents/bootstrap-cache.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { InternalSessionEntry as SessionEntry } from "../../config/sessions.js";
 import {
   appendTranscriptEvent,
@@ -228,7 +228,7 @@ let suiteRoot = "";
 let suiteCase = 0;
 
 beforeAll(async () => {
-  suiteRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-session-suite-"));
+  suiteRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-session-suite-"));
 });
 
 afterAll(async () => {
@@ -318,7 +318,7 @@ describe("resolveReplySessionPreprocessingState", () => {
 
   function resolvePreprocessingState(storePath: string) {
     return resolveReplySessionPreprocessingState({
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       ctx: {
         Body: "<media:audio>",
         RawBody: "<media:audio>",
@@ -334,7 +334,7 @@ describe("resolveReplySessionPreprocessingState", () => {
   }
 
   it("returns the valid durable harness owner lock before preprocessing", async () => {
-    const storePath = await createStorePath("openclaw-media-preflight-valid-");
+    const storePath = await createStorePath("nova-media-preflight-valid-");
     await writeSessionStoreFast(storePath, {
       [sessionKey]: {
         sessionId: "native-media-session",
@@ -370,7 +370,7 @@ describe("resolveReplySessionPreprocessingState", () => {
       },
     ],
   ] as const)("rejects a reserved %s before preprocessing", async (_label, entry) => {
-    const storePath = await createStorePath(`openclaw-media-preflight-invalid-${_label}-`);
+    const storePath = await createStorePath(`nova-media-preflight-invalid-${_label}-`);
     await writeSessionStoreFast(storePath, entry ? { [sessionKey]: entry } : {});
 
     expect(() => resolvePreprocessingState(storePath)).toThrow();
@@ -584,7 +584,7 @@ afterEach(async () => {
 });
 describe("initSessionState guarded initialization", () => {
   it("rejects inbound work for an archived session", async () => {
-    const storePath = await createStorePath("openclaw-session-init-archived-");
+    const storePath = await createStorePath("nova-session-init-archived-");
     const sessionKey = "agent:main:telegram:chat:archived";
     await writeSessionStoreFast(storePath, {
       [sessionKey]: {
@@ -600,7 +600,7 @@ describe("initSessionState guarded initialization", () => {
           Body: "blocked while archived",
           SessionKey: sessionKey,
         },
-        cfg: { session: { store: storePath } } as OpenClawConfig,
+        cfg: { session: { store: storePath } } as NovaConfig,
         commandAuthorized: true,
       }),
     ).rejects.toThrow(
@@ -609,7 +609,7 @@ describe("initSessionState guarded initialization", () => {
   });
 
   it("serializes concurrent initializers before reading the guarded snapshot", async () => {
-    const storePath = await createStorePath("openclaw-session-init-race-");
+    const storePath = await createStorePath("nova-session-init-race-");
     const sessionKey = "agent:main:telegram:chat:42";
     await writeSessionStoreFast(storePath, {
       [sessionKey]: {
@@ -617,7 +617,7 @@ describe("initSessionState guarded initialization", () => {
         updatedAt: 100,
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
     let releaseWriter = () => {};
     const writerReleased = new Promise<void>((resolve) => {
       releaseWriter = resolve;
@@ -653,7 +653,7 @@ describe("initSessionState guarded initialization", () => {
 describe("initSessionState thread forking", () => {
   it("forks a new SQLite session from the parent session", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const root = await makeCaseDir("openclaw-thread-session-");
+    const root = await makeCaseDir("nova-thread-session-");
     const sessionsDir = path.join(root, "sessions");
     await fs.mkdir(sessionsDir);
 
@@ -698,7 +698,7 @@ describe("initSessionState thread forking", () => {
 
     const cfg = {
       session: { store: storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const threadSessionKey = "agent:main:slack:channel:c1:thread:123";
     const threadLabel = "Slack thread #general: starter";
@@ -737,7 +737,7 @@ describe("initSessionState thread forking", () => {
 
   it("forks from parent when thread session key already exists but was not forked yet", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const root = await makeCaseDir("openclaw-thread-session-existing-");
+    const root = await makeCaseDir("nova-thread-session-existing-");
     const sessionsDir = path.join(root, "sessions");
     await fs.mkdir(sessionsDir);
 
@@ -797,7 +797,7 @@ describe("initSessionState thread forking", () => {
 
     const cfg = {
       session: { store: storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const first = await initSessionState({
       ctx: {
@@ -837,7 +837,7 @@ describe("initSessionState thread forking", () => {
   });
 
   it("skips fork and creates fresh session when parent tokens exceed threshold", async () => {
-    const root = await makeCaseDir("openclaw-thread-session-overflow-");
+    const root = await makeCaseDir("nova-thread-session-overflow-");
     const sessionsDir = path.join(root, "sessions");
     await fs.mkdir(sessionsDir);
 
@@ -884,7 +884,7 @@ describe("initSessionState thread forking", () => {
 
     const cfg = {
       session: { store: storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const threadSessionKey = "agent:main:slack:channel:c1:thread:456";
     const result = await initSessionState({
@@ -908,7 +908,7 @@ describe("initSessionState thread forking", () => {
   });
 
   it("skips fork when resolved parent token estimate exceeds threshold", async () => {
-    const root = await makeCaseDir("openclaw-thread-session-overflow-estimated-");
+    const root = await makeCaseDir("nova-thread-session-overflow-estimated-");
     const sessionsDir = path.join(root, "sessions");
     await fs.mkdir(sessionsDir);
 
@@ -941,7 +941,7 @@ describe("initSessionState thread forking", () => {
 
     const cfg = {
       session: { store: storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const threadSessionKey = "agent:main:slack:channel:c1:thread:estimated";
     const result = await initSessionState({
@@ -969,12 +969,12 @@ describe("initSessionState thread forking", () => {
   });
 
   it("records topic-specific SQLite session identity when MessageThreadId is present", async () => {
-    const root = await makeCaseDir("openclaw-topic-session-");
+    const root = await makeCaseDir("nova-topic-session-");
     const storePath = path.join(root, "sessions.json");
 
     const cfg = {
       session: { store: storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -997,12 +997,12 @@ describe("initSessionState thread forking", () => {
   });
 
   it("records topic-specific SQLite session identity from SessionKey", async () => {
-    const root = await makeCaseDir("openclaw-topic-session-key-");
+    const root = await makeCaseDir("nova-topic-session-key-");
     const storePath = path.join(root, "sessions.json");
 
     const cfg = {
       session: { store: storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     setActivePluginRegistry(createSessionConversationTestRegistry());
     try {
@@ -1031,9 +1031,9 @@ describe("initSessionState thread forking", () => {
 
 describe("initSessionState RawBody", () => {
   it("uses RawBody for command extraction and reset triggers when Body contains wrapped context", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-");
+    const root = await makeCaseDir("nova-rawbody-");
     const storePath = path.join(root, "sessions.json");
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const statusResult = await initSessionState({
       ctx: {
@@ -1062,7 +1062,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("preserves argument casing while still matching reset triggers case-insensitively", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-reset-case-");
+    const root = await makeCaseDir("nova-rawbody-reset-case-");
     const storePath = path.join(root, "sessions.json");
 
     const cfg = {
@@ -1070,7 +1070,7 @@ describe("initSessionState RawBody", () => {
         store: storePath,
         resetTriggers: ["/new"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const ctx = {
       RawBody: "/NEW KeepThisCase",
@@ -1090,7 +1090,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("drops cached skills snapshot when /new rotates an existing session", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-reset-skills-");
+    const root = await makeCaseDir("nova-rawbody-reset-skills-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:signal:direct:uuid:reset-skills";
     const existingSessionId = "session-with-stale-skills";
@@ -1142,7 +1142,7 @@ describe("initSessionState RawBody", () => {
         store: storePath,
         resetTriggers: ["/new"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1202,7 +1202,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("drains stale system events when /new rotates an existing session", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-reset-system-events-");
+    const root = await makeCaseDir("nova-rawbody-reset-system-events-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:system-events";
     const existingSessionId = "session-with-stale-events";
@@ -1222,7 +1222,7 @@ describe("initSessionState RawBody", () => {
         store: storePath,
         resetTriggers: ["/new"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1254,7 +1254,7 @@ describe("initSessionState RawBody", () => {
     // rollover. Previously the carryover was gated on resetTriggered, so the
     // next non-/new turn dropped the override and reverted to the default
     // model despite the "Model set to ... for this session" ack.
-    const root = await makeCaseDir("openclaw-daily-rollover-model-");
+    const root = await makeCaseDir("nova-daily-rollover-model-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:discord:channel:daily-rollover";
     const existingSessionId = "session-before-daily-reset";
@@ -1278,7 +1278,7 @@ describe("initSessionState RawBody", () => {
 
     const cfg = {
       session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1315,7 +1315,7 @@ describe("initSessionState RawBody", () => {
     // resetTriggered while the implicit stale rollover runs with
     // resetTriggered === false. The model override on this same path was already
     // fixed (#90119); the behavior overrides must follow suit.
-    const root = await makeCaseDir("openclaw-daily-rollover-behavior-");
+    const root = await makeCaseDir("nova-daily-rollover-behavior-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:discord:channel:daily-rollover-behavior";
     const existingSessionId = "session-before-daily-reset-behavior";
@@ -1341,7 +1341,7 @@ describe("initSessionState RawBody", () => {
 
     const cfg = {
       session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1386,7 +1386,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("preserves usage footer mode across daily rollover", async () => {
-    const root = await makeCaseDir("openclaw-daily-rollover-usage-");
+    const root = await makeCaseDir("nova-daily-rollover-usage-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:discord:channel:daily-rollover-usage";
     const existingSessionId = "session-before-daily-reset-usage";
@@ -1410,7 +1410,7 @@ describe("initSessionState RawBody", () => {
       },
       cfg: {
         session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       commandAuthorized: true,
     });
 
@@ -1420,7 +1420,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("preserves user labels across dashboard session stale rollover (#101451)", async () => {
-    const root = await makeCaseDir("openclaw-dashboard-rollover-label-");
+    const root = await makeCaseDir("nova-dashboard-rollover-label-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:dashboard:8c0b2b68-05e1-4b25-a8c2-ef6f43a01f77";
     const existingSessionId = "dashboard-session-before-rollover";
@@ -1445,7 +1445,7 @@ describe("initSessionState RawBody", () => {
       },
       cfg: {
         session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-      } as OpenClawConfig,
+      } as NovaConfig,
       commandAuthorized: true,
     });
 
@@ -1466,7 +1466,7 @@ describe("initSessionState RawBody", () => {
   it("clears an auto-fallback model override on an implicit daily stale rollover (#90119)", async () => {
     // Counterpart: auto-created fallback overrides must still be cleared on a
     // daily rollover so stale sessions return to the configured default.
-    const root = await makeCaseDir("openclaw-daily-rollover-fallback-");
+    const root = await makeCaseDir("nova-daily-rollover-fallback-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:discord:channel:daily-rollover-fallback";
     const existingSessionId = "session-before-daily-reset-fallback";
@@ -1489,7 +1489,7 @@ describe("initSessionState RawBody", () => {
 
     const cfg = {
       session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1514,7 +1514,7 @@ describe("initSessionState RawBody", () => {
     // auto-fallback model override is dropped back to the configured default.
     // The two travel separate paths (direct carry vs resolveResetPreservedSelection),
     // so they must not interfere.
-    const root = await makeCaseDir("openclaw-daily-rollover-mixed-");
+    const root = await makeCaseDir("nova-daily-rollover-mixed-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:discord:channel:daily-rollover-mixed";
     const existingSessionId = "session-before-daily-reset-mixed";
@@ -1539,7 +1539,7 @@ describe("initSessionState RawBody", () => {
 
     const cfg = {
       session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1561,7 +1561,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("rotates local session state for /new on bound ACP sessions", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-acp-reset-");
+    const root = await makeCaseDir("nova-rawbody-acp-reset-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:codex:acp:binding:discord:default:feedface";
     const existingSessionId = "session-existing";
@@ -1594,7 +1594,7 @@ describe("initSessionState RawBody", () => {
           allowFrom: ["*"],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1617,7 +1617,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("rotates local session state for ACP /new when no matching conversation binding exists", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-acp-reset-no-conversation-");
+    const root = await makeCaseDir("nova-rawbody-acp-reset-no-conversation-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:codex:acp:binding:discord:default:feedface";
     const existingSessionId = "session-existing";
@@ -1638,7 +1638,7 @@ describe("initSessionState RawBody", () => {
           allowFrom: ["*"],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1662,7 +1662,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("keeps custom reset triggers working on bound ACP sessions", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-acp-custom-reset-");
+    const root = await makeCaseDir("nova-rawbody-acp-custom-reset-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:codex:acp:binding:discord:default:feedface";
     const existingSessionId = "session-existing";
@@ -1698,7 +1698,7 @@ describe("initSessionState RawBody", () => {
           allowFrom: ["*"],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1721,7 +1721,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("keeps normal /new behavior for unbound ACP-shaped session keys", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-acp-unbound-reset-");
+    const root = await makeCaseDir("nova-rawbody-acp-unbound-reset-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:codex:acp:binding:discord:default:feedface";
     const existingSessionId = "session-existing";
@@ -1742,7 +1742,7 @@ describe("initSessionState RawBody", () => {
           allowFrom: ["*"],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1765,7 +1765,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("does not suppress /new when active conversation binding points to a non-ACP session", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-acp-nonacp-binding-");
+    const root = await makeCaseDir("nova-rawbody-acp-nonacp-binding-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:codex:acp:binding:discord:default:feedface";
     const existingSessionId = "session-existing";
@@ -1800,7 +1800,7 @@ describe("initSessionState RawBody", () => {
           allowFrom: ["*"],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     sessionBindingTesting.resetSessionBindingAdaptersForTests();
     registerSessionBindingAdapter({
@@ -1851,7 +1851,7 @@ describe("initSessionState RawBody", () => {
   });
 
   it("does not suppress /new when active target session key is non-ACP even with configured ACP binding", async () => {
-    const root = await makeCaseDir("openclaw-rawbody-acp-configured-fallback-target-");
+    const root = await makeCaseDir("nova-rawbody-acp-configured-fallback-target-");
     const storePath = path.join(root, "sessions.json");
     const channelId = "1478836151241412759";
     const fallbackSessionKey = "agent:main:discord:channel:focus-target";
@@ -1885,7 +1885,7 @@ describe("initSessionState RawBody", () => {
           allowFrom: ["*"],
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -1913,7 +1913,7 @@ describe("initSessionState RawBody", () => {
     const targetSessionKey = "agent:main:main";
     const cfg = {
       session: { store: storePath },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     setMinimalCurrentConversationBindingRegistryForTests();
     registerCurrentConversationBindingAdapterForTest({
@@ -1955,8 +1955,8 @@ describe("initSessionState RawBody", () => {
   });
 
   it("uses the default per-agent sessions store when config store is unset", async () => {
-    const root = await makeCaseDir("openclaw-session-store-default-");
-    const stateDir = path.join(root, ".openclaw");
+    const root = await makeCaseDir("nova-session-store-default-");
+    const stateDir = path.join(root, ".nova");
     const agentId = "worker1";
     const sessionKey = `agent:${agentId}:telegram:12345`;
     const sessionId = "sess-worker-1";
@@ -1973,7 +1973,7 @@ describe("initSessionState RawBody", () => {
         },
       });
 
-      const cfg = {} as OpenClawConfig;
+      const cfg = {} as NovaConfig;
       const result = await initSessionState({
         ctx: {
           Body: "hello",
@@ -2056,7 +2056,7 @@ describe("initSessionState RawBody", () => {
       channel: conversation.channel as "slack" | "signal" | "googlechat",
       accountId: "default",
     });
-    const storePath = await createStorePath("openclaw-generic-current-binding-");
+    const storePath = await createStorePath("nova-generic-current-binding-");
     const boundSessionKey = `agent:codex:acp:binding:${conversation.channel}:default:test`;
 
     await getSessionBindingService().bind({
@@ -2073,7 +2073,7 @@ describe("initSessionState RawBody", () => {
       },
       cfg: {
         session: { store: storePath },
-      } as OpenClawConfig,
+      } as NovaConfig,
       commandAuthorized: true,
     });
 
@@ -2099,7 +2099,7 @@ describe("initSessionState reset policy", () => {
 
   it("keeps the current session across the former daily boundary by default", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-    const root = await makeCaseDir("openclaw-reset-daily-");
+    const root = await makeCaseDir("nova-reset-daily-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:s1";
     const existingSessionId = "daily-session-id";
@@ -2110,7 +2110,7 @@ describe("initSessionState reset policy", () => {
         updatedAt: new Date(2026, 0, 18, 3, 0, 0).getTime(),
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2127,7 +2127,7 @@ describe("initSessionState reset policy", () => {
 
   it("treats sessions as stale before the daily reset when updated before yesterday's boundary", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 3, 0, 0));
-    const root = await makeCaseDir("openclaw-reset-daily-edge-");
+    const root = await makeCaseDir("nova-reset-daily-edge-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:s-edge";
     const existingSessionId = "daily-edge-session";
@@ -2141,7 +2141,7 @@ describe("initSessionState reset policy", () => {
 
     const cfg = {
       session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2154,7 +2154,7 @@ describe("initSessionState reset policy", () => {
 
   it("expires sessions when idle timeout wins over daily reset", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-idle-");
+    const root = await makeCaseDir("nova-reset-idle-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:s2";
     const existingSessionId = "idle-session-id";
@@ -2171,7 +2171,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2184,7 +2184,7 @@ describe("initSessionState reset policy", () => {
 
   it("preserves idle rollover when an ordinary send asserts the current session id", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-idle-requested-session-ordinary-");
+    const root = await makeCaseDir("nova-reset-idle-requested-session-ordinary-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:main";
     const existingSessionId = "webchat-ordinary-session-id";
@@ -2201,7 +2201,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey, Provider: "internal", Surface: "internal" },
       cfg,
@@ -2215,7 +2215,7 @@ describe("initSessionState reset policy", () => {
 
   it("pins a durably admitted session across an idle reset boundary", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-idle-pinned-admission-");
+    const root = await makeCaseDir("nova-reset-idle-pinned-admission-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:main";
     const existingSessionId = "durably-admitted-session-id";
@@ -2234,7 +2234,7 @@ describe("initSessionState reset policy", () => {
           store: storePath,
           reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       commandAuthorized: true,
       expectedExistingSessionId: existingSessionId,
       pinExpectedExistingSession: true,
@@ -2246,7 +2246,7 @@ describe("initSessionState reset policy", () => {
 
   it("reuses an idle-expired session when a reconnecting client requests current session resume", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-idle-requested-session-");
+    const root = await makeCaseDir("nova-reset-idle-requested-session-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:main";
     const existingSessionId = "webchat-reconnect-session-id";
@@ -2263,7 +2263,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey, Provider: "internal", Surface: "internal" },
       cfg,
@@ -2278,7 +2278,7 @@ describe("initSessionState reset policy", () => {
 
   it("does not reuse an idle-expired session for a stale asserted session id", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-idle-stale-requested-session-");
+    const root = await makeCaseDir("nova-reset-idle-stale-requested-session-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:main";
     const existingSessionId = "webchat-current-session-id";
@@ -2295,7 +2295,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey, Provider: "internal", Surface: "internal" },
       cfg,
@@ -2310,7 +2310,7 @@ describe("initSessionState reset policy", () => {
 
   it("drains stale system events when idle rollover creates a new session", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-idle-system-events-");
+    const root = await makeCaseDir("nova-reset-idle-system-events-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:idle-system-events";
     const existingSessionId = "idle-system-events-session";
@@ -2331,7 +2331,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "idle", idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2354,7 +2354,7 @@ describe("initSessionState reset policy", () => {
 
   it("reuses completed run entries while the session is still fresh", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-terminal-entry-");
+    const root = await makeCaseDir("nova-reset-terminal-entry-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:terminal-entry";
     const existingSessionId = "terminal-entry-old";
@@ -2369,7 +2369,7 @@ describe("initSessionState reset policy", () => {
       },
     });
 
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2442,7 +2442,7 @@ describe("initSessionState reset policy", () => {
     },
   ])("$name", async (scenario) => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-terminal-entry-");
+    const root = await makeCaseDir("nova-reset-terminal-entry-");
     const storePath = path.join(root, "sessions.json");
     const existingSessionId = "terminal-entry-old";
     const now = Date.now();
@@ -2459,7 +2459,7 @@ describe("initSessionState reset policy", () => {
       transcriptMutationOrder: scenario.transcriptMutationOrder,
     });
 
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: scenario.sessionKey },
       cfg,
@@ -2493,7 +2493,7 @@ describe("initSessionState reset policy", () => {
 
   it("recovers failed group sessions without rotating the transcript", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-failed-entry-");
+    const root = await makeCaseDir("nova-reset-failed-entry-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:telegram:group:-1001";
     const existingSessionId = "failed-entry-old";
@@ -2510,16 +2510,16 @@ describe("initSessionState reset policy", () => {
       },
     });
 
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
     const result = await initSessionState({
       ctx: {
-        Body: "@openclaw hello",
-        RawBody: "@openclaw hello",
-        CommandBody: "@openclaw hello",
+        Body: "@nova hello",
+        RawBody: "@nova hello",
+        CommandBody: "@nova hello",
         SessionKey: sessionKey,
         ChatType: "group",
         Provider: "telegram",
-        BotUsername: "openclaw",
+        BotUsername: "nova",
       },
       cfg,
       commandAuthorized: true,
@@ -2541,7 +2541,7 @@ describe("initSessionState reset policy", () => {
 
   it("keeps the existing stale session for /reset soft", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-soft-stale-");
+    const root = await makeCaseDir("nova-reset-soft-stale-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:soft-stale";
     const existingSessionId = "soft-stale-session-id";
@@ -2558,7 +2558,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: {
         Body: "/reset soft",
@@ -2581,7 +2581,7 @@ describe("initSessionState reset policy", () => {
 
   it("keeps the existing stale session for /reset: soft", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-soft-colon-stale-");
+    const root = await makeCaseDir("nova-reset-soft-colon-stale-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:soft-colon-stale";
     const existingSessionId = "soft-colon-stale-session-id";
@@ -2598,7 +2598,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: {
         Body: "/reset: soft",
@@ -2621,7 +2621,7 @@ describe("initSessionState reset policy", () => {
 
   it("keeps the existing stale session for multiline /reset soft tails", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-soft-multiline-stale-");
+    const root = await makeCaseDir("nova-reset-soft-multiline-stale-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:soft-multiline-stale";
     const existingSessionId = "soft-multiline-stale-session-id";
@@ -2638,7 +2638,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: {
         Body: "/reset soft\nre-read persona files",
@@ -2660,7 +2660,7 @@ describe("initSessionState reset policy", () => {
   });
 
   it("keeps multiline slash skill payloads on the current session", async () => {
-    const root = await makeCaseDir("openclaw-skill-multiline-session-");
+    const root = await makeCaseDir("nova-skill-multiline-session-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:skill-multiline";
     const existingSessionId = "skill-multiline-session-id";
@@ -2680,7 +2680,7 @@ describe("initSessionState reset policy", () => {
         CommandBody: body,
         SessionKey: sessionKey,
       },
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       commandAuthorized: true,
     });
 
@@ -2692,7 +2692,7 @@ describe("initSessionState reset policy", () => {
 
   it("does not preserve a stale session for unauthorized /reset soft", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const root = await makeCaseDir("openclaw-reset-soft-stale-unauthorized-");
+    const root = await makeCaseDir("nova-reset-soft-stale-unauthorized-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:soft-stale-unauthorized";
     const existingSessionId = "soft-stale-unauthorized-session-id";
@@ -2709,7 +2709,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: {
         Body: "/reset soft",
@@ -2734,7 +2734,7 @@ describe("initSessionState reset policy", () => {
 
   it("uses per-type overrides for thread sessions", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-    const root = await makeCaseDir("openclaw-reset-thread-");
+    const root = await makeCaseDir("nova-reset-thread-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:slack:channel:c1:thread:123";
     const existingSessionId = "thread-session-id";
@@ -2752,7 +2752,7 @@ describe("initSessionState reset policy", () => {
         reset: { mode: "daily", atHour: 4 },
         resetByType: { thread: { mode: "idle", idleMinutes: 180 } },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "reply", SessionKey: sessionKey, ThreadLabel: "Slack thread" },
       cfg,
@@ -2765,7 +2765,7 @@ describe("initSessionState reset policy", () => {
 
   it("detects thread sessions without thread key suffix", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-    const root = await makeCaseDir("openclaw-reset-thread-nosuffix-");
+    const root = await makeCaseDir("nova-reset-thread-nosuffix-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:discord:channel:c1";
     const existingSessionId = "thread-nosuffix";
@@ -2782,7 +2782,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         resetByType: { thread: { mode: "idle", idleMinutes: 180 } },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "reply", SessionKey: sessionKey, ThreadLabel: "Discord thread" },
       cfg,
@@ -2795,7 +2795,7 @@ describe("initSessionState reset policy", () => {
 
   it("keeps the no-reset default for types without an override", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-    const root = await makeCaseDir("openclaw-reset-type-default-");
+    const root = await makeCaseDir("nova-reset-type-default-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:s4";
     const existingSessionId = "type-default-session";
@@ -2812,7 +2812,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         resetByType: { thread: { mode: "idle", idleMinutes: 60 } },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2825,7 +2825,7 @@ describe("initSessionState reset policy", () => {
 
   it("keeps legacy idleMinutes behavior without reset config", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-    const root = await makeCaseDir("openclaw-reset-legacy-");
+    const root = await makeCaseDir("nova-reset-legacy-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:whatsapp:dm:s3";
     const existingSessionId = "legacy-session-id";
@@ -2842,7 +2842,7 @@ describe("initSessionState reset policy", () => {
         store: storePath,
         idleMinutes: 240,
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2861,7 +2861,7 @@ describe("initSessionState reset policy", () => {
 describe("initSessionState browser tab cleanup", () => {
   it("closes tracked browser tabs when idle session expires", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const storePath = await createStorePath("openclaw-tab-cleanup-idle-");
+    const storePath = await createStorePath("nova-tab-cleanup-idle-");
     const sessionKey = "agent:main:whatsapp:dm:tab-idle";
     const existingSessionId = "tab-idle-session-id";
 
@@ -2877,7 +2877,7 @@ describe("initSessionState browser tab cleanup", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2894,7 +2894,7 @@ describe("initSessionState browser tab cleanup", () => {
 
   it("skips browser tab cleanup when root browser support is disabled", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const storePath = await createStorePath("openclaw-tab-cleanup-browser-disabled-");
+    const storePath = await createStorePath("nova-tab-cleanup-browser-disabled-");
     const sessionKey = "agent:main:webchat:dm:tab-disabled";
     const existingSessionId = "tab-disabled-session-id";
 
@@ -2911,7 +2911,7 @@ describe("initSessionState browser tab cleanup", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2924,7 +2924,7 @@ describe("initSessionState browser tab cleanup", () => {
 
   it("skips browser tab cleanup when the browser plugin entry is disabled", async () => {
     vi.setSystemTime(new Date(2026, 0, 18, 5, 30, 0));
-    const storePath = await createStorePath("openclaw-tab-cleanup-browser-plugin-disabled-");
+    const storePath = await createStorePath("nova-tab-cleanup-browser-plugin-disabled-");
     const sessionKey = "agent:main:webchat:dm:tab-plugin-disabled";
     const existingSessionId = "tab-plugin-disabled-session-id";
 
@@ -2941,7 +2941,7 @@ describe("initSessionState browser tab cleanup", () => {
         store: storePath,
         reset: { mode: "daily", atHour: 4, idleMinutes: 30 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: { Body: "hello", SessionKey: sessionKey },
       cfg,
@@ -2953,7 +2953,7 @@ describe("initSessionState browser tab cleanup", () => {
   });
 
   it("closes tracked browser tabs on explicit /new reset", async () => {
-    const storePath = await createStorePath("openclaw-tab-cleanup-reset-");
+    const storePath = await createStorePath("nova-tab-cleanup-reset-");
     const sessionKey = "agent:main:telegram:dm:tab-reset";
     const existingSessionId = "tab-reset-session-id";
 
@@ -2966,7 +2966,7 @@ describe("initSessionState browser tab cleanup", () => {
 
     const cfg = {
       session: { store: storePath, idleMinutes: 999 },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: {
         Body: "/new",
@@ -2987,12 +2987,12 @@ describe("initSessionState browser tab cleanup", () => {
   });
 
   it("does not close browser tabs for a fresh session without previous state", async () => {
-    const storePath = await createStorePath("openclaw-tab-cleanup-fresh-");
+    const storePath = await createStorePath("nova-tab-cleanup-fresh-");
     const sessionKey = "agent:main:telegram:dm:tab-fresh";
 
     const cfg = {
       session: { store: storePath, idleMinutes: 999 },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await initSessionState({
       ctx: {
         Body: "hello",
@@ -3007,7 +3007,7 @@ describe("initSessionState browser tab cleanup", () => {
   });
 
   it("includes the peer-scoped runtime key for direct-message cleanup", async () => {
-    const storePath = await createStorePath("openclaw-tab-cleanup-peer-key-");
+    const storePath = await createStorePath("nova-tab-cleanup-peer-key-");
     const canonicalKey = "agent:main:main";
     const existingSessionId = "tab-peer-key-session-id";
     await writeSessionStoreFast(storePath, {
@@ -3017,7 +3017,7 @@ describe("initSessionState browser tab cleanup", () => {
       },
     });
 
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
     const result = await initSessionState({
       ctx: {
         Body: "/new",
@@ -3046,7 +3046,7 @@ describe("initSessionState browser tab cleanup", () => {
 
 describe("initSessionState channel reset overrides", () => {
   it("uses channel-specific reset policy when configured", async () => {
-    const root = await makeCaseDir("openclaw-channel-idle-");
+    const root = await makeCaseDir("nova-channel-idle-");
     const storePath = path.join(root, "sessions.json");
     const sessionKey = "agent:main:discord:dm:123";
     const sessionId = "session-override";
@@ -3066,7 +3066,7 @@ describe("initSessionState channel reset overrides", () => {
         resetByType: { direct: { mode: "idle", idleMinutes: 10 } },
         resetByChannel: { discord: { mode: "idle", idleMinutes: 10080 } },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -3097,7 +3097,7 @@ describe("initSessionState reset triggers in WhatsApp groups", () => {
     });
   }
 
-  function makeCfg(params: { storePath: string; allowFrom: string[] }): OpenClawConfig {
+  function makeCfg(params: { storePath: string; allowFrom: string[] }): NovaConfig {
     return {
       session: { store: params.storePath, idleMinutes: 999 },
       channels: {
@@ -3106,13 +3106,13 @@ describe("initSessionState reset triggers in WhatsApp groups", () => {
           groupPolicy: "open",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
   }
 
   it("applies WhatsApp group reset authorization across sender variants", async () => {
     const sessionKey = "agent:main:whatsapp:group:120363406150318674@g.us";
     const existingSessionId = "existing-session-123";
-    const storePath = await createStorePath("openclaw-group-reset");
+    const storePath = await createStorePath("nova-group-reset");
     const cases = [
       {
         name: "authorized sender",
@@ -3178,7 +3178,7 @@ describe("initSessionState reset triggers in WhatsApp groups", () => {
   it("preserves scoped WhatsApp group activation state across stale rollover", async () => {
     const sessionKey =
       "agent:main:whatsapp:group:120363406150318674@g.us:thread:whatsapp-account-work";
-    const storePath = await createStorePath("openclaw-group-activation-backfill-");
+    const storePath = await createStorePath("nova-group-activation-backfill-");
     await writeSessionStoreFast(storePath, {
       [sessionKey]: {
         sessionId: "old-group-activation-session",
@@ -3239,7 +3239,7 @@ describe("initSessionState reset triggers in Slack channels", () => {
     const existingSessionId = "existing-session-123";
     const sessionKey = "agent:main:slack:channel:c2";
     const body = "<@U123> /new take notes";
-    const storePath = await createStorePath("openclaw-slack-channel-new-");
+    const storePath = await createStorePath("nova-slack-channel-new-");
     await seedSessionStore({
       storePath,
       sessionKey,
@@ -3247,7 +3247,7 @@ describe("initSessionState reset triggers in Slack channels", () => {
     });
     const cfg = {
       session: { store: storePath, idleMinutes: 999 },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -3293,7 +3293,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   }
 
   it("rejects explicit resets without replacing a model-locked session", async () => {
-    const storePath = await createStorePath("openclaw-reset-model-locked-");
+    const storePath = await createStorePath("nova-reset-model-locked-");
     const sessionKey = "agent:main:telegram:dm:model-locked";
     const existingSessionId = "existing-model-locked-session";
 
@@ -3326,7 +3326,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
           },
           cfg: {
             session: { store: storePath, idleMinutes: 999 },
-          } as OpenClawConfig,
+          } as NovaConfig,
           commandAuthorized: true,
         }),
       ).rejects.toThrow(MODEL_SELECTION_LOCKED_RESET_MESSAGE);
@@ -3343,7 +3343,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("does not implicitly expire a model-locked session", async () => {
-    const storePath = await createStorePath("openclaw-expiry-model-locked-");
+    const storePath = await createStorePath("nova-expiry-model-locked-");
     const sessionKey = "agent:main:telegram:dm:model-locked-expiry";
     const existingSessionId = "existing-model-locked-expiry-session";
     await writeSessionStoreFast(storePath, {
@@ -3372,7 +3372,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
       },
       cfg: {
         session: { store: storePath, idleMinutes: 1 },
-      } as OpenClawConfig,
+      } as NovaConfig,
       commandAuthorized: true,
     });
 
@@ -3388,7 +3388,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("preserves behavior overrides across /new and /reset", async () => {
-    const storePath = await createStorePath("openclaw-reset-overrides-");
+    const storePath = await createStorePath("nova-reset-overrides-");
     const sessionKey = "agent:main:telegram:dm:user-overrides";
     const existingSessionId = "existing-session-overrides";
     const overrides = {
@@ -3418,7 +3418,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, idleMinutes: 999 },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const result = await initSessionState({
         ctx: {
@@ -3444,7 +3444,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("preserves usage family metadata across /new and /reset", async () => {
-    const storePath = await createStorePath("openclaw-reset-usage-family-");
+    const storePath = await createStorePath("nova-reset-usage-family-");
     const sessionKey = "agent:main:telegram:dm:user-usage-family";
     const existingSessionId = "existing-session-usage-family";
     const cases = [
@@ -3483,7 +3483,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
         },
         cfg: {
           session: { store: storePath, idleMinutes: 999 },
-        } as OpenClawConfig,
+        } as NovaConfig,
         commandAuthorized: true,
       });
 
@@ -3510,7 +3510,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("preserves selected auth profile overrides across /new and /reset", async () => {
-    const storePath = await createStorePath("openclaw-reset-model-auth-");
+    const storePath = await createStorePath("nova-reset-model-auth-");
     const sessionKey = "agent:main:telegram:dm:user-model-auth";
     const existingSessionId = "existing-session-model-auth";
     const overrides = {
@@ -3549,7 +3549,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, idleMinutes: 999 },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const result = await initSessionState({
         ctx: {
@@ -3599,7 +3599,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("clears auto-sourced model/provider/auth overrides on /new and /reset (#69301)", async () => {
-    const storePath = await createStorePath("openclaw-reset-auto-overrides-");
+    const storePath = await createStorePath("nova-reset-auto-overrides-");
     const sessionKey = "agent:main:telegram:direct:6761477233";
     const existingSessionId = "existing-session-auto-overrides";
     const autoOverrides = {
@@ -3626,7 +3626,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, idleMinutes: 999 },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const result = await initSessionState({
         ctx: {
@@ -3659,7 +3659,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("clears recovered auto fallback model overrides without modelOverrideSource on /new and /reset", async () => {
-    const storePath = await createStorePath("openclaw-reset-recovered-auto-fallback-");
+    const storePath = await createStorePath("nova-reset-recovered-auto-fallback-");
     const sessionKey = "agent:main:telegram:direct:6761477233";
     const existingSessionId = "existing-session-recovered-auto-fallback";
     const autoOverrides = {
@@ -3684,7 +3684,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, idleMinutes: 999 },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const result = await initSessionState({
         ctx: {
@@ -3718,7 +3718,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("clears recovered Codex fallback metadata for Discord channel sessions on /new", async () => {
-    const storePath = await createStorePath("openclaw-reset-discord-codex-fallback-");
+    const storePath = await createStorePath("nova-reset-discord-codex-fallback-");
     const sessionKey = "agent:main:discord:channel:1488013357016420522";
     const existingSessionId = "existing-discord-codex-fallback";
     await seedSessionStoreWithOverrides({
@@ -3758,7 +3758,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       commandAuthorized: true,
     });
 
@@ -3776,7 +3776,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("clears stale runtime model cache fields on /new and /reset (#77322)", async () => {
-    const storePath = await createStorePath("openclaw-reset-runtime-model-cache-");
+    const storePath = await createStorePath("nova-reset-runtime-model-cache-");
     const sessionKey = "agent:main:telegram:direct:runtime-model-cache";
     const existingSessionId = "existing-session-runtime-model-cache";
     const runtimeModelCache = {
@@ -3825,7 +3825,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, idleMinutes: 999 },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const result = await initSessionState({
         ctx: {
@@ -3925,7 +3925,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("preserves spawned session ownership metadata across /new and /reset", async () => {
-    const storePath = await createStorePath("openclaw-reset-spawned-metadata-");
+    const storePath = await createStorePath("nova-reset-spawned-metadata-");
     const sessionKey = "subagent:owned-child";
     const existingSessionId = "existing-session-owned-child";
     const overrides = {
@@ -3953,7 +3953,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, idleMinutes: 999 },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       const result = await initSessionState({
         ctx: {
@@ -3979,7 +3979,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("requires operator.admin when Provider is internal even if Surface carries external metadata", async () => {
-    const storePath = await createStorePath("openclaw-internal-reset-provider-authoritative-");
+    const storePath = await createStorePath("nova-internal-reset-provider-authoritative-");
     const sessionKey = "agent:main:telegram:dm:provider-authoritative";
     const existingSessionId = "existing-session-provider-authoritative";
 
@@ -3992,7 +3992,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
     const cfg = {
       session: { store: storePath, idleMinutes: 999 },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -4016,7 +4016,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("keeps the existing session for /reset soft", async () => {
-    const storePath = await createStorePath("openclaw-soft-reset-session-");
+    const storePath = await createStorePath("nova-soft-reset-session-");
     const sessionKey = "agent:main:telegram:dm:user-soft-reset";
     const existingSessionId = "existing-session-soft-reset";
 
@@ -4037,7 +4037,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
     const cfg = {
       session: { store: storePath, idleMinutes: 999 },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -4059,7 +4059,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("keeps the existing session for /reset newline soft", async () => {
-    const storePath = await createStorePath("openclaw-reset-newline-soft-");
+    const storePath = await createStorePath("nova-reset-newline-soft-");
     const sessionKey = "agent:main:telegram:dm:user-reset-newline-soft";
     const existingSessionId = "existing-session-reset-newline-soft";
 
@@ -4072,7 +4072,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
     const cfg = {
       session: { store: storePath, idleMinutes: 999 },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -4094,7 +4094,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("archives the old session store entry on /new", async () => {
-    const storePath = await createStorePath("openclaw-archive-old-");
+    const storePath = await createStorePath("nova-archive-old-");
     const sessionKey = "agent:main:telegram:dm:user-archive";
     const existingSessionId = "existing-session-archive";
     const transcriptPath = path.join(path.dirname(storePath), `${existingSessionId}.jsonl`);
@@ -4108,7 +4108,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
     const cfg = {
       session: { store: storePath, idleMinutes: 999 },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -4136,7 +4136,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("drains foreign work before replacing a reply session", async () => {
-    const storePath = await createStorePath("openclaw-rollover-admission-");
+    const storePath = await createStorePath("nova-rollover-admission-");
     const sessionKey = "agent:main:telegram:dm:rollover-admission";
     const existingSessionId = "session-before-admitted-rollover";
     const transcriptPath = path.join(path.dirname(storePath), `${existingSessionId}.jsonl`);
@@ -4167,7 +4167,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
         Provider: "telegram",
         Surface: "telegram",
       },
-      cfg: { session: { store: storePath, idleMinutes: 999 } } as OpenClawConfig,
+      cfg: { session: { store: storePath, idleMinutes: 999 } } as NovaConfig,
       commandAuthorized: true,
     });
 
@@ -4190,7 +4190,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("keeps the initiating reply admission during an in-band rollover", async () => {
-    const storePath = await createStorePath("openclaw-rollover-initiator-");
+    const storePath = await createStorePath("nova-rollover-initiator-");
     const sessionKey = "agent:main:telegram:dm:rollover-initiator";
     const existingSessionId = "session-before-initiating-rollover";
     await writeSessionStoreFast(storePath, {
@@ -4219,7 +4219,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
               Provider: "telegram",
               Surface: "telegram",
             },
-            cfg: { session: { store: storePath, idleMinutes: 999 } } as OpenClawConfig,
+            cfg: { session: { store: storePath, idleMinutes: 999 } } as NovaConfig,
             commandAuthorized: true,
           }),
       );
@@ -4231,7 +4231,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("cancels a competing admitted rollover without deadlocking the session", async () => {
-    const storePath = await createStorePath("openclaw-rollover-contenders-");
+    const storePath = await createStorePath("nova-rollover-contenders-");
     const sessionKey = "agent:main:telegram:dm:rollover-contenders";
     const existingSessionId = "session-before-competing-rollovers";
     await writeSessionStoreFast(storePath, {
@@ -4267,7 +4267,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
                 Provider: "telegram",
                 Surface: "telegram",
               },
-              cfg: { session: { store: storePath, idleMinutes: 999 } } as OpenClawConfig,
+              cfg: { session: { store: storePath, idleMinutes: 999 } } as NovaConfig,
               commandAuthorized: true,
               signal: controller.signal,
             }),
@@ -4295,7 +4295,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
       expectedInterruption: true,
     },
   ])("$name", async ({ body, expectedInterruption }) => {
-    const storePath = await createStorePath("openclaw-rollover-revalidation-");
+    const storePath = await createStorePath("nova-rollover-revalidation-");
     const sessionKey = "agent:main:telegram:dm:rollover-revalidation";
     const staleSessionId = "stale-session-before-revalidation";
     const replacementSessionId = "fresh-replacement-before-revalidation";
@@ -4417,7 +4417,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
         Provider: "telegram",
         Surface: "telegram",
       },
-      cfg: { session: { store: storePath, idleMinutes: 1 } } as OpenClawConfig,
+      cfg: { session: { store: storePath, idleMinutes: 1 } } as NovaConfig,
       commandAuthorized: true,
     });
     const replaceSession = runExclusiveSessionStoreWrite(storePath, async () => {
@@ -4465,7 +4465,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
     try {
       // Simulate: it is 5am, session was last active at 3am (before 4am daily boundary)
       vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-      const storePath = await createStorePath("openclaw-stale-archive-");
+      const storePath = await createStorePath("nova-stale-archive-");
       const sessionKey = "agent:main:telegram:dm:archive-stale-user";
       const existingSessionId = "stale-session-to-be-archived";
       const transcriptPath = path.join(path.dirname(storePath), `${existingSessionId}.jsonl`);
@@ -4480,7 +4480,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const result = await initSessionState({
         ctx: {
           Body: "hello",
@@ -4516,7 +4516,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
     let operation: ReturnType<typeof replyRunRegistry.begin> | undefined;
     try {
       vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-      const storePath = await createStorePath("openclaw-active-stale-archive-");
+      const storePath = await createStorePath("nova-active-stale-archive-");
       const sessionKey = "agent:main:telegram:dm:active-stale-user";
       const transcriptPath = path.join(path.dirname(storePath), `${existingSessionId}.jsonl`);
       const sessionStartedAt = new Date(2026, 0, 18, 3, 0, 0).getTime();
@@ -4538,7 +4538,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const result = await initSessionState({
         ctx: {
           Body: "hello while active",
@@ -4576,7 +4576,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
     let operation: ReturnType<typeof replyRunRegistry.begin> | undefined;
     try {
       vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-      const storePath = await createStorePath("openclaw-queued-stale-archive-");
+      const storePath = await createStorePath("nova-queued-stale-archive-");
       const sessionKey = "agent:main:telegram:dm:queued-stale-user";
       const existingSessionId = "queued-stale-session";
       const transcriptPath = path.join(path.dirname(storePath), `${existingSessionId}.jsonl`);
@@ -4596,7 +4596,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const result = await initSessionState({
         ctx: {
           Body: "hello after boundary",
@@ -4634,7 +4634,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
     let operation: ReturnType<typeof replyRunRegistry.begin> | undefined;
     try {
       vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-      const storePath = await createStorePath("openclaw-active-other-stale-archive-");
+      const storePath = await createStorePath("nova-active-other-stale-archive-");
       const sessionKey = "agent:main:telegram:dm:active-other-stale-user";
       const existingSessionId = "inactive-stale-session";
       const transcriptPath = path.join(path.dirname(storePath), `${existingSessionId}.jsonl`);
@@ -4655,7 +4655,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
 
       const cfg = {
         session: { store: storePath, reset: { mode: "daily", atHour: 4 } },
-      } as OpenClawConfig;
+      } as NovaConfig;
       const result = await initSessionState({
         ctx: {
           Body: "hello after boundary",
@@ -4691,7 +4691,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
     vi.useFakeTimers();
     try {
       vi.setSystemTime(new Date(2026, 0, 18, 5, 0, 0));
-      const storePath = await createStorePath("openclaw-cli-implicit-reset-");
+      const storePath = await createStorePath("nova-cli-implicit-reset-");
       const sessionKey = "agent:main:telegram:dm:claude-cli-user";
       const existingSessionId = "provider-owned-session";
       const transcriptPath = path.join(path.dirname(storePath), `${existingSessionId}.jsonl`);
@@ -4718,7 +4718,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
       });
       await fs.writeFile(transcriptPath, '{"type":"message"}\n', "utf8");
 
-      const cfg = { session: { store: storePath } } as OpenClawConfig;
+      const cfg = { session: { store: storePath } } as NovaConfig;
       const result = await initSessionState({
         ctx: {
           Body: "hello",
@@ -4752,7 +4752,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("honors explicit reset policies for provider-owned CLI sessions", async () => {
-    const storePath = await createStorePath("openclaw-cli-explicit-reset-");
+    const storePath = await createStorePath("nova-cli-explicit-reset-");
     const sessionKey = "agent:main:telegram:dm:claude-cli-explicit-user";
     const existingSessionId = "provider-owned-explicit-session";
     const cfg = {
@@ -4760,7 +4760,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
         store: storePath,
         reset: { mode: "idle", idleMinutes: 1 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await writeSessionStoreFast(storePath, {
       [sessionKey]: {
@@ -4797,7 +4797,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("disposes the previous bundle MCP runtime on session rollover", async () => {
-    const storePath = await createStorePath("openclaw-stale-runtime-dispose-");
+    const storePath = await createStorePath("nova-stale-runtime-dispose-");
     const sessionKey = "agent:main:telegram:dm:runtime-stale-user";
     const existingSessionId = "stale-runtime-session";
     const cfg = {
@@ -4805,7 +4805,7 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
         store: storePath,
         reset: { mode: "idle", idleMinutes: 1 },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await writeSessionStoreFast(storePath, {
       [sessionKey]: {
@@ -4843,12 +4843,12 @@ describe("initSessionState preserves behavior overrides across /new and /reset",
   });
 
   it("idle-based new session does NOT preserve overrides (no entry to read)", async () => {
-    const storePath = await createStorePath("openclaw-idle-no-preserve-");
+    const storePath = await createStorePath("nova-idle-no-preserve-");
     const sessionKey = "agent:main:telegram:dm:new-user";
 
     const cfg = {
       session: { store: storePath, idleMinutes: 0 },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -4884,7 +4884,7 @@ describe("drainFormattedSystemEvents", () => {
       enqueueSystemEvent("Model switched.", { sessionKey: "agent:main:main" });
 
       const result = await drainFormattedSystemEvents({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         sessionKey: "agent:main:main",
         isMainSession: true,
         isNewSession: false,
@@ -4904,7 +4904,7 @@ describe("drainFormattedSystemEvents", () => {
     ]);
 
     const result = await drainFormattedSystemEvents({
-      cfg: { channels: {} } as OpenClawConfig,
+      cfg: { channels: {} } as NovaConfig,
       sessionKey: "agent:main:main",
       isMainSession: true,
       isNewSession: true,
@@ -4929,7 +4929,7 @@ describe("drainFormattedSystemEvents", () => {
       enqueueSystemEvent("Model switched.", { sessionKey: "agent:main:main" });
 
       const result = await drainFormattedSystemEvents({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         sessionKey: "agent:main:main",
         isMainSession: true,
         isNewSession: false,
@@ -4953,7 +4953,7 @@ describe("drainFormattedSystemEvents", () => {
       });
 
       const result = await drainFormattedSystemEvents({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         sessionKey: "agent:main:main",
         isMainSession: true,
         isNewSession: false,
@@ -4981,7 +4981,7 @@ describe("persistSessionUsageUpdate", () => {
   }
 
   it("uses lastCallUsage for totalTokens when provided", async () => {
-    const storePath = await createStorePath("openclaw-usage-");
+    const storePath = await createStorePath("nova-usage-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5016,7 +5016,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("keeps the prior total stale when last-call context is unavailable", async () => {
-    const storePath = await createStorePath("openclaw-usage-unavailable-context-");
+    const storePath = await createStorePath("nova-usage-unavailable-context-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5060,7 +5060,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("marks a fresh zero stale when a completed run has no context snapshot", async () => {
-    const storePath = await createStorePath("openclaw-usage-no-snapshot-");
+    const storePath = await createStorePath("nova-usage-no-snapshot-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5090,7 +5090,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("preserves fresh post-compaction totalTokens across model-only updates", async () => {
-    const storePath = await createStorePath("openclaw-usage-no-snapshot-");
+    const storePath = await createStorePath("nova-usage-no-snapshot-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5121,7 +5121,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("accounts exhausted-run usage without committing its model and persists CLI binding", async () => {
-    const storePath = await createStorePath("openclaw-usage-exhausted-");
+    const storePath = await createStorePath("nova-usage-exhausted-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5174,7 +5174,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("accounts goal usage when fresh token snapshots are persisted", async () => {
-    const storePath = await createStorePath("openclaw-usage-goal-");
+    const storePath = await createStorePath("nova-usage-goal-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5229,7 +5229,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("uses lastCallUsage cache counters when available", async () => {
-    const storePath = await createStorePath("openclaw-usage-cache-");
+    const storePath = await createStorePath("nova-usage-cache-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5271,7 +5271,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("marks totalTokens as unknown when no fresh context snapshot is available", async () => {
-    const storePath = await createStorePath("openclaw-usage-");
+    const storePath = await createStorePath("nova-usage-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5296,7 +5296,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("preserves fresh post-compaction totalTokens across stale usage updates", async () => {
-    const storePath = await createStorePath("openclaw-usage-");
+    const storePath = await createStorePath("nova-usage-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5327,7 +5327,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("marks older fresh totalTokens stale when no compaction preservation is requested", async () => {
-    const storePath = await createStorePath("openclaw-usage-");
+    const storePath = await createStorePath("nova-usage-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5357,7 +5357,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("uses promptTokens when available without lastCallUsage", async () => {
-    const storePath = await createStorePath("openclaw-usage-");
+    const storePath = await createStorePath("nova-usage-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5383,7 +5383,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("treats CLI usage as a fresh context snapshot when requested", async () => {
-    const storePath = await createStorePath("openclaw-usage-cli-");
+    const storePath = await createStorePath("nova-usage-cli-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5431,7 +5431,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("clears stale CLI binding when usage update reports an unflushed replacement", async () => {
-    const storePath = await createStorePath("openclaw-usage-cli-clear-");
+    const storePath = await createStorePath("nova-usage-cli-clear-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5495,7 +5495,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("prefers fresh final usage over zero compactionTokensAfter", async () => {
-    const storePath = await createStorePath("openclaw-usage-compaction-reset-");
+    const storePath = await createStorePath("nova-usage-compaction-reset-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5545,7 +5545,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("prefers fresh lastCallUsage over positive compactionTokensAfter", async () => {
-    const storePath = await createStorePath("openclaw-usage-compaction-positive-");
+    const storePath = await createStorePath("nova-usage-compaction-positive-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5587,7 +5587,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("uses positive compactionTokensAfter when final usage has no prompt total", async () => {
-    const storePath = await createStorePath("openclaw-usage-compaction-fallback-");
+    const storePath = await createStorePath("nova-usage-compaction-fallback-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5653,7 +5653,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("persists totalTokens from promptTokens when usage is unavailable", async () => {
-    const storePath = await createStorePath("openclaw-usage-");
+    const storePath = await createStorePath("nova-usage-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5690,7 +5690,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("keeps non-clamped lastCallUsage totalTokens when exceeding context window", async () => {
-    const storePath = await createStorePath("openclaw-usage-");
+    const storePath = await createStorePath("nova-usage-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5716,7 +5716,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("snapshots estimatedCostUsd instead of accumulating (fixes #69347)", async () => {
-    const storePath = await createStorePath("openclaw-usage-cost-");
+    const storePath = await createStorePath("nova-usage-cost-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5727,7 +5727,7 @@ describe("persistSessionUsageUpdate", () => {
       },
     });
 
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       models: {
         providers: {
           openai: {
@@ -5788,7 +5788,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("preserves the displayed session model when heartbeat usage uses a heartbeat model", async () => {
-    const storePath = await createStorePath("openclaw-usage-heartbeat-model-");
+    const storePath = await createStorePath("nova-usage-heartbeat-model-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5834,7 +5834,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("persists heartbeat CLI binding while preserving displayed session model", async () => {
-    const storePath = await createStorePath("openclaw-usage-heartbeat-cli-binding-");
+    const storePath = await createStorePath("nova-usage-heartbeat-cli-binding-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5895,7 +5895,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("honors heartbeat CLI binding clears while preserving displayed session model", async () => {
-    const storePath = await createStorePath("openclaw-usage-heartbeat-cli-clear-");
+    const storePath = await createStorePath("nova-usage-heartbeat-cli-clear-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -5964,7 +5964,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("preserves the displayed session model when an internal announce uses fallback", async () => {
-    const storePath = await createStorePath("openclaw-usage-internal-announce-model-");
+    const storePath = await createStorePath("nova-usage-internal-announce-model-");
     const sessionKey = "agent:main:telegram:group:-1003871627242:topic:6823";
     await seedSessionStore({
       storePath,
@@ -6068,7 +6068,7 @@ describe("persistSessionUsageUpdate", () => {
   });
 
   it("persists zero estimatedCostUsd for free priced models", async () => {
-    const storePath = await createStorePath("openclaw-usage-free-cost-");
+    const storePath = await createStorePath("nova-usage-free-cost-");
     const sessionKey = "main";
     await seedSessionStore({
       storePath,
@@ -6101,7 +6101,7 @@ describe("persistSessionUsageUpdate", () => {
             },
           },
         },
-      } satisfies OpenClawConfig,
+      } satisfies NovaConfig,
       usage: { input: 5_107, output: 1_827, cacheRead: 1_536, cacheWrite: 0 },
       lastCallUsage: { input: 5_107, output: 1_827, cacheRead: 1_536, cacheWrite: 0 },
       providerUsed: "openai",
@@ -6119,7 +6119,7 @@ describe("persistSessionUsageUpdate", () => {
 describe("initSessionState stale threadId fallback", () => {
   it("does not inherit lastThreadId from a previous thread interaction in non-thread sessions", async () => {
     const storePath = await createStorePath("stale-thread-");
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     // First interaction: inside a DM topic (thread session)
     const threadResult = await initSessionState({
@@ -6149,7 +6149,7 @@ describe("initSessionState stale threadId fallback", () => {
 
   it("preserves explicit transport thread routing in non-thread sessions", async () => {
     const storePath = await createStorePath("transport-thread-");
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6170,7 +6170,7 @@ describe("initSessionState stale threadId fallback", () => {
 
   it("preserves lastThreadId within the same thread session", async () => {
     const storePath = await createStorePath("preserve-thread-");
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     // First message in thread
     await initSessionState({
@@ -6216,7 +6216,7 @@ describe("initSessionState dmScope delivery migration", () => {
     });
     const cfg = {
       session: { store: storePath, dmScope: "per-channel-peer" },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6260,7 +6260,7 @@ describe("initSessionState dmScope delivery migration", () => {
     });
     const cfg = {
       session: { store: storePath, dmScope: "per-channel-peer" },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     await initSessionState({
       ctx: {
@@ -6316,7 +6316,7 @@ describe("initSessionState internal channel routing preservation", () => {
         },
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6377,7 +6377,7 @@ describe("initSessionState internal channel routing preservation", () => {
         updatedAt: Date.now(),
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6419,7 +6419,7 @@ describe("initSessionState internal channel routing preservation", () => {
         },
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6466,7 +6466,7 @@ describe("initSessionState internal channel routing preservation", () => {
         },
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6505,7 +6505,7 @@ describe("initSessionState internal channel routing preservation", () => {
     });
     const cfg = {
       session: { store: storePath, dmScope: "per-channel-peer" },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6539,7 +6539,7 @@ describe("initSessionState internal channel routing preservation", () => {
     });
     const cfg = {
       session: { store: storePath, dmScope: "per-channel-peer" },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6574,7 +6574,7 @@ describe("initSessionState internal channel routing preservation", () => {
         },
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6596,7 +6596,7 @@ describe("initSessionState internal channel routing preservation", () => {
   it("uses session key channel hint when first turn is internal webchat", async () => {
     const storePath = await createStorePath("session-key-channel-hint-");
     const sessionKey = "agent:main:telegram:group:98765";
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6614,7 +6614,7 @@ describe("initSessionState internal channel routing preservation", () => {
 
   it("keeps internal route when there is no persisted external fallback", async () => {
     const storePath = await createStorePath("no-external-fallback-");
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6633,7 +6633,7 @@ describe("initSessionState internal channel routing preservation", () => {
 
   it("keeps webchat channel for webchat/main sessions", async () => {
     const storePath = await createStorePath("preserve-webchat-main-");
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6665,7 +6665,7 @@ describe("initSessionState internal channel routing preservation", () => {
         },
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6698,7 +6698,7 @@ describe("initSessionState internal channel routing preservation", () => {
         },
       },
     });
-    const cfg = { session: { store: storePath } } as OpenClawConfig;
+    const cfg = { session: { store: storePath } } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {
@@ -6726,7 +6726,7 @@ describe("initSessionState internal channel routing preservation", () => {
           defaultAccount: "work",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const result = await initSessionState({
       ctx: {

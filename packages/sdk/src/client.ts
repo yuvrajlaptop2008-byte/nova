@@ -18,8 +18,8 @@ import type {
   EnvironmentsListResult,
   GatewayEvent,
   GatewayRequestOptions,
-  OpenClawEvent,
-  OpenClawTransport,
+  NovaEvent,
+  NovaTransport,
   RunCreateParams,
   RunResult,
   RunTimestamp,
@@ -42,16 +42,16 @@ const MAX_REPLAY_EVENTS_PER_RUN = 500;
 const MAX_NORMALIZED_REPLAY_EVENTS = 2000;
 
 /** Connection and transport options for the Nova SDK client. */
-export type OpenClawOptions = {
+export type NovaOptions = {
   gateway?: "auto" | (string & {});
   url?: string;
   token?: string;
   password?: string;
   requestTimeoutMs?: number;
-  transport?: OpenClawTransport;
+  transport?: NovaTransport;
 };
 
-function resolveGatewayUrl(options: OpenClawOptions): string | undefined {
+function resolveGatewayUrl(options: NovaOptions): string | undefined {
   if (options.url) {
     return options.url;
   }
@@ -252,7 +252,7 @@ function requireToolsEffectiveSessionKey(params: unknown): ToolsEffectiveParams 
   return params;
 }
 
-function readChatProjection(event: OpenClawEvent): ChatProjection | undefined {
+function readChatProjection(event: NovaEvent): ChatProjection | undefined {
   const raw = event.raw;
   if (event.type !== "raw" || raw?.event !== "chat") {
     return undefined;
@@ -289,11 +289,11 @@ function readChatProjectionReplace(payload: Record<string, unknown>): boolean {
   return payload.replace === true;
 }
 
-function isAssistantRunEvent(event: OpenClawEvent): boolean {
+function isAssistantRunEvent(event: NovaEvent): boolean {
   return event.type === "assistant.delta" || event.type === "assistant.message";
 }
 
-function isTerminalRunEvent(event: OpenClawEvent): boolean {
+function isTerminalRunEvent(event: NovaEvent): boolean {
   return (
     event.type === "run.completed" ||
     event.type === "run.failed" ||
@@ -303,10 +303,10 @@ function isTerminalRunEvent(event: OpenClawEvent): boolean {
 }
 
 function normalizeChatProjectionEvent(
-  event: OpenClawEvent,
+  event: NovaEvent,
   projection: ChatProjection,
   previousText: string | undefined,
-): OpenClawEvent {
+): NovaEvent {
   const text = readChatProjectionText(projection.payload);
   const deltaText = readChatProjectionDeltaText(projection.payload);
   const hasPreviousText = previousText !== undefined;
@@ -339,18 +339,18 @@ export class Nova {
   readonly approvals: ApprovalsNamespace;
   readonly environments: EnvironmentsNamespace;
 
-  private readonly transport: OpenClawTransport;
-  private readonly normalizedEvents = new EventHub<OpenClawEvent>({
+  private readonly transport: NovaTransport;
+  private readonly normalizedEvents = new EventHub<NovaEvent>({
     replayLimit: MAX_NORMALIZED_REPLAY_EVENTS,
   });
-  private readonly replayByRunId = new Map<string, OpenClawEvent[]>();
+  private readonly replayByRunId = new Map<string, NovaEvent[]>();
   private connected = false;
   private closed = false;
   private eventPumpPromise: Promise<void> | null = null;
   private eventPumpReady: Promise<void> | null = null;
   private closePromise: Promise<void> | null = null;
 
-  constructor(options: OpenClawOptions = {}) {
+  constructor(options: NovaOptions = {}) {
     this.transport =
       options.transport ??
       new GatewayClientTransport({
@@ -422,14 +422,11 @@ export class Nova {
     return await this.transport.request<T>(method, params, options);
   }
 
-  events(filter?: (event: OpenClawEvent) => boolean): AsyncIterable<OpenClawEvent> {
+  events(filter?: (event: NovaEvent) => boolean): AsyncIterable<NovaEvent> {
     return this.iterateEvents(filter);
   }
 
-  runEvents(
-    runId: string,
-    filter?: (event: OpenClawEvent) => boolean,
-  ): AsyncIterable<OpenClawEvent> {
+  runEvents(runId: string, filter?: (event: NovaEvent) => boolean): AsyncIterable<NovaEvent> {
     return this.iterateRunEvents(runId, filter);
   }
 
@@ -444,9 +441,7 @@ export class Nova {
     }
   }
 
-  private async *iterateEvents(
-    filter?: (event: OpenClawEvent) => boolean,
-  ): AsyncIterable<OpenClawEvent> {
+  private async *iterateEvents(filter?: (event: NovaEvent) => boolean): AsyncIterable<NovaEvent> {
     await this.connect();
     this.assertOpen();
     for await (const event of this.normalizedEvents.stream(filter)) {
@@ -456,15 +451,15 @@ export class Nova {
 
   private async *iterateRunEvents(
     runId: string,
-    filter?: (event: OpenClawEvent) => boolean,
-  ): AsyncIterable<OpenClawEvent> {
+    filter?: (event: NovaEvent) => boolean,
+  ): AsyncIterable<NovaEvent> {
     await this.connect();
     this.assertOpen();
     const replayEvents = this.replaySnapshot(runId);
     let hasCanonicalAssistantRunEvent = replayEvents.some(isAssistantRunEvent);
     let hasTerminalRunEvent = replayEvents.some(isTerminalRunEvent);
     let previousChatProjectionText: string | undefined;
-    const toRunStreamEvent = (event: OpenClawEvent): OpenClawEvent | undefined => {
+    const toRunStreamEvent = (event: NovaEvent): NovaEvent | undefined => {
       const chatProjection = readChatProjection(event);
       if (chatProjection?.state === "delta") {
         if (hasCanonicalAssistantRunEvent) {
@@ -496,7 +491,7 @@ export class Nova {
       }
       return event;
     };
-    const matches = (event: OpenClawEvent) => event.runId === runId;
+    const matches = (event: NovaEvent) => event.runId === runId;
     const liveSource = this.normalizedEvents.stream(matches, { replay: true });
     const live = liveSource[Symbol.asyncIterator]();
     const seen = new Set<string>();
@@ -591,7 +586,7 @@ export class Nova {
     return this.eventPumpReady;
   }
 
-  private recordReplayEvent(event: OpenClawEvent): void {
+  private recordReplayEvent(event: NovaEvent): void {
     if (!event.runId) {
       return;
     }
@@ -612,7 +607,7 @@ export class Nova {
     }
   }
 
-  private replaySnapshot(runId: string): OpenClawEvent[] {
+  private replaySnapshot(runId: string): NovaEvent[] {
     return [...(this.replayByRunId.get(runId) ?? [])];
   }
 }
@@ -646,7 +641,7 @@ export class Run {
     readonly sessionKey?: string,
   ) {}
 
-  events(filter?: (event: OpenClawEvent) => boolean): AsyncIterable<OpenClawEvent> {
+  events(filter?: (event: NovaEvent) => boolean): AsyncIterable<NovaEvent> {
     return this.client.runEvents(this.id, filter);
   }
 
@@ -814,7 +809,7 @@ export class RunsNamespace {
     return new Run(this.client, runId);
   }
 
-  events(runId: string): AsyncIterable<OpenClawEvent> {
+  events(runId: string): AsyncIterable<NovaEvent> {
     return new Run(this.client, runId).events();
   }
 

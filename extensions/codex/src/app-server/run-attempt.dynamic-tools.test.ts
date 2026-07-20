@@ -1,14 +1,14 @@
 // Codex tests cover run attemptynamic tools plugin behavior.
 import path from "node:path";
-import { onAgentEvent, type AgentEventPayload } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { onAgentEvent, type AgentEventPayload } from "nova/plugin-sdk/agent-harness-runtime";
 import {
   emitTrustedDiagnosticEvent,
   onInternalDiagnosticEvent,
   waitForDiagnosticEventsDrained,
   type DiagnosticEventPayload,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
-import { initializeGlobalHookRunner } from "openclaw/plugin-sdk/hook-runtime";
-import { createMockPluginRegistry } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/diagnostic-runtime";
+import { initializeGlobalHookRunner } from "nova/plugin-sdk/hook-runtime";
+import { createMockPluginRegistry } from "nova/plugin-sdk/plugin-test-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { resolveCodexAppServerHookChannelId } from "./dynamic-tool-build.js";
 import {

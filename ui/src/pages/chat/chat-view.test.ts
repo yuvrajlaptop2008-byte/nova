@@ -1052,7 +1052,7 @@ describe("chat code-block copy", () => {
     vi.stubGlobal("navigator", { clipboard: { writeText } });
     const container = renderChatView();
     const thread = requireElement(container, ".chat-thread", "chat thread");
-    const payload = 'openclaw:block-art-code:"literal"';
+    const payload = 'nova:block-art-code:"literal"';
     const button = document.createElement("button");
     button.type = "button";
     button.className = "code-block-copy";
@@ -2384,7 +2384,7 @@ describe("chat voice controls", () => {
     );
     const tooltip = talkButton.parentElement as (HTMLElement & { content?: string }) | null;
     expect(talkButton.getAttribute("title")).toBeNull();
-    expect(tooltip?.localName).toBe("openclaw-tooltip");
+    expect(tooltip?.localName).toBe("nova-tooltip");
     expect(tooltip?.content).toBe(startTalkLabel);
     expect(talkButton.textContent?.trim()).toBe(startTalkLabel);
     requireElement(
@@ -3322,7 +3322,7 @@ describe("chat attachment picker", () => {
     chat.dispatchEvent(createDragEvent("dragleave"));
     expect(chat.hasAttribute("data-attachment-drop-active")).toBe(false);
 
-    chat.dispatchEvent(createDragEvent("dragenter", ["application/x-openclaw-session"]));
+    chat.dispatchEvent(createDragEvent("dragenter", ["application/x-nova-session"]));
     expect(chat.hasAttribute("data-attachment-drop-active")).toBe(false);
   });
 
@@ -3959,7 +3959,7 @@ describe("chat welcome", () => {
 
     const clawd = container.querySelector(".agent-chat__welcome-clawd");
     expect(clawd).not.toBeNull();
-    expect(clawd?.querySelector("openclaw-mascot")?.getAttribute("mood")).toBe("idle");
+    expect(clawd?.querySelector("nova-mascot")?.getAttribute("mood")).toBe("idle");
     expect(container.querySelector(".agent-chat__badge")).toBeNull();
   });
 
@@ -3968,7 +3968,7 @@ describe("chat welcome", () => {
     const welcome = requireElement(container, ".agent-chat__welcome", "welcome screen");
     const mascot = requireElement(
       container,
-      ".agent-chat__welcome-clawd openclaw-mascot",
+      ".agent-chat__welcome-clawd nova-mascot",
       "welcome mascot",
     ) as HTMLElement & { tease: boolean; catchOnce: () => void };
     const catchOnce = vi.spyOn(mascot, "catchOnce");
@@ -4245,7 +4245,7 @@ describe("chat model controls", () => {
       renderChatModelControls({
         ...createChatModelControlsProps(state),
         modelSelectionLocked: true,
-        modelSelectionRuntimeId: "openclaw",
+        modelSelectionRuntimeId: "nova",
       }),
       container,
     );
@@ -5374,9 +5374,8 @@ describe("right-click Reply", () => {
       document.querySelector<HTMLButtonElement>('[aria-label="Fork from here"]')?.disabled,
     ).toBe(true);
     expect(
-      document
-        .querySelector<HTMLElement>('[aria-label="Rewind to here"]')
-        ?.closest("openclaw-tooltip")?.content,
+      document.querySelector<HTMLElement>('[aria-label="Rewind to here"]')?.closest("nova-tooltip")
+        ?.content,
     ).toBe("Rewind is unavailable while the agent is working");
   });
 

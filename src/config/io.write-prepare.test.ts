@@ -9,7 +9,7 @@ import {
   resolvePersistCandidateForWrite,
   resolveWriteEnvSnapshotForPath,
 } from "./io.write-prepare.js";
-import type { OpenClawConfig } from "./types.js";
+import type { NovaConfig } from "./types.js";
 
 describe("config io write prepare", () => {
   it("ignores prototype-chain keys when building merge patches", () => {
@@ -71,11 +71,11 @@ describe("config io write prepare", () => {
           plugins: {
             entries: {},
             installs: {
-              "openclaw-web-search": {
+              "nova-web-search": {
                 source: "npm",
-                spec: "@ollama/openclaw-web-search",
-                installPath: "/tmp/openclaw-web-search",
-                resolvedName: "@ollama/openclaw-web-search",
+                spec: "@ollama/nova-web-search",
+                installPath: "/tmp/nova-web-search",
+                resolvedName: "@ollama/nova-web-search",
                 resolvedVersion: "0.2.2",
               },
             },
@@ -85,17 +85,17 @@ describe("config io write prepare", () => {
           plugins: {
             entries: {},
             installs: {
-              "openclaw-web-search": {
+              "nova-web-search": {
                 source: "npm",
-                spec: "@ollama/openclaw-web-search@0.2.2",
-                installPath: "/tmp/openclaw-web-search",
-                resolvedName: "@ollama/openclaw-web-search",
+                spec: "@ollama/nova-web-search@0.2.2",
+                installPath: "/tmp/nova-web-search",
+                resolvedName: "@ollama/nova-web-search",
                 resolvedVersion: "0.2.2",
               },
             },
           },
         },
-      }) as OpenClawConfig,
+      }) as NovaConfig,
       [["plugins", "installs"]],
     ) as {
       plugins?: {
@@ -138,7 +138,7 @@ describe("config io write prepare", () => {
         agents: { list: [{ id: "main" }, { id: "ops" }] },
         gateway: { mode: "local" },
       },
-    }) as OpenClawConfig;
+    }) as NovaConfig;
 
     expect(persisted.agents?.defaults?.params).toEqual({
       transport: "sse",
@@ -152,7 +152,7 @@ describe("config io write prepare", () => {
   });
 
   it("preserves authored Google model params under normalized config keys", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       agents: {
         defaults: {
           model: { primary: "google/gemini-3-pro-preview" },
@@ -178,7 +178,7 @@ describe("config io write prepare", () => {
           },
         },
       },
-    }) as OpenClawConfig;
+    }) as NovaConfig;
 
     expect(persisted.agents?.defaults?.model).toEqual({
       primary: "google/gemini-3.1-pro-preview",
@@ -190,7 +190,7 @@ describe("config io write prepare", () => {
   });
 
   it("does not reintroduce legacy openai-codex model params after doctor route repair", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       agents: {
         defaults: {
           model: "openai-codex/gpt-5.5",
@@ -218,7 +218,7 @@ describe("config io write prepare", () => {
           },
         },
       },
-    }) as OpenClawConfig;
+    }) as NovaConfig;
 
     expect(persisted.agents?.defaults?.model).toBe("openai/gpt-5.5");
     expect(persisted.agents?.defaults?.models).not.toHaveProperty("openai-codex/gpt-5.5");
@@ -229,7 +229,7 @@ describe("config io write prepare", () => {
   });
 
   it("normalizes retired Google model refs during unrelated config writes", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       agents: {
         defaults: {
           model: {
@@ -274,7 +274,7 @@ describe("config io write prepare", () => {
       },
       gateway: { port: 18789 },
     };
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       agents: {
         defaults: {
           model: {
@@ -326,7 +326,7 @@ describe("config io write prepare", () => {
         ...runtimeConfig,
         gateway: { port: 18888 },
       },
-    }) as OpenClawConfig;
+    }) as NovaConfig;
 
     expect(persisted.agents?.defaults?.model).toEqual({
       primary: "google/gemini-3.1-pro-preview",
@@ -372,7 +372,7 @@ describe("config io write prepare", () => {
       contextWindow: 1_048_576,
       maxTokens: 65_536,
     });
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       models: {
         providers: {
           google: {
@@ -387,7 +387,7 @@ describe("config io write prepare", () => {
       },
       gateway: { port: 18789 },
     };
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       models: {
         providers: {
           google: {
@@ -409,7 +409,7 @@ describe("config io write prepare", () => {
         ...runtimeConfig,
         gateway: { port: 18888 },
       },
-    }) as OpenClawConfig;
+    }) as NovaConfig;
 
     expect(persisted.models?.providers?.google?.models).toEqual([
       makeModel("google/gemini-3.1-pro-preview", "Gemini 3 Pro"),
@@ -430,7 +430,7 @@ describe("config io write prepare", () => {
       contextWindow: 200_000,
       maxTokens: 8192,
     });
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       models: {
         providers: {
           myproxy: {
@@ -441,7 +441,7 @@ describe("config io write prepare", () => {
       },
       gateway: { port: 18789 },
     };
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       models: {
         providers: {
           myproxy: {
@@ -468,7 +468,7 @@ describe("config io write prepare", () => {
           },
         ],
       ]),
-    }) as OpenClawConfig;
+    }) as NovaConfig;
 
     expect(persisted.models?.providers?.myproxy?.models).toEqual([
       makeModel("vendor/modern-model"),
@@ -477,7 +477,7 @@ describe("config io write prepare", () => {
   });
 
   it("allows explicit unsets to remove authored agent provider params", () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: NovaConfig = {
       agents: {
         defaults: {
           params: { transport: "sse", openaiWsWarmup: false },
@@ -497,14 +497,14 @@ describe("config io write prepare", () => {
         ["agents", "defaults", "params"],
         ["agents", "defaults", "models", "openai/gpt-5.4", "params"],
       ],
-    }) as OpenClawConfig;
+    }) as NovaConfig;
 
     expect(persisted.agents?.defaults).not.toHaveProperty("params");
     expect(persisted.agents?.defaults?.models?.["openai/gpt-5.4"]).not.toHaveProperty("params");
   });
 
   it("applies explicit unsets without mutating caller config", () => {
-    const input: OpenClawConfig = {
+    const input: NovaConfig = {
       gateway: { mode: "local" },
       commands: { ownerDisplay: "hash" },
       tools: { alsoAllow: ["exec", "fetch", "read"] },
@@ -534,7 +534,7 @@ describe("config io write prepare", () => {
     ["constructor key", ["commands", "constructor"]],
     ["prototype constructor property", ["commands", "prototype"]],
   ] as const)("treats %s unset paths as immutable no-ops", (_name, unsetPath) => {
-    const input: OpenClawConfig = {
+    const input: NovaConfig = {
       gateway: { mode: "local" },
       commands: { ownerDisplay: "hash" },
       tools: { alsoAllow: ["exec", "fetch"] },
@@ -857,8 +857,8 @@ describe("config io write prepare", () => {
       'channels.telegram.dmPolicy = "open" requires channels.telegram.allowFrom to include "*"',
     );
 
-    expect(message).toContain("openclaw config set channels.telegram.allowFrom '[\"*\"]'");
-    expect(message).toContain('openclaw config set channels.telegram.dmPolicy "pairing"');
+    expect(message).toContain("nova config set channels.telegram.allowFrom '[\"*\"]'");
+    expect(message).toContain('nova config set channels.telegram.dmPolicy "pairing"');
   });
 
   it("preserves env refs on unchanged paths while keeping changed paths resolved", () => {
@@ -1083,8 +1083,8 @@ describe("config io write prepare", () => {
     const snapshot = { OPENAI_API_KEY: "sk-secret" };
     expect(
       resolveWriteEnvSnapshotForPath({
-        actualConfigPath: "/tmp/openclaw.json",
-        expectedConfigPath: "/tmp/openclaw.json",
+        actualConfigPath: "/tmp/nova.json",
+        expectedConfigPath: "/tmp/nova.json",
         envSnapshotForRestore: snapshot,
       }),
     ).toBe(snapshot);
@@ -1093,7 +1093,7 @@ describe("config io write prepare", () => {
   it("drops the read-time env snapshot when writing a different config path", () => {
     expect(
       resolveWriteEnvSnapshotForPath({
-        actualConfigPath: "/tmp/openclaw.json",
+        actualConfigPath: "/tmp/nova.json",
         expectedConfigPath: "/tmp/other.json",
         envSnapshotForRestore: { OPENAI_API_KEY: "sk-secret" },
       }),
@@ -1108,19 +1108,19 @@ describe("config io write prepare", () => {
           cliPath: "/usr/local/bin/imsg",
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
-    const runtimeConfig: OpenClawConfig = {
+    const runtimeConfig: NovaConfig = {
       gateway: { port: 18789 },
       channels: {
         imessage: {
           cliPath: "/usr/local/bin/imsg",
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     (runtimeConfig.channels!.imessage as Record<string, unknown>).runtimeOnlyDefault = true;
 
-    const nextConfig: OpenClawConfig = structuredClone(runtimeConfig);
+    const nextConfig: NovaConfig = structuredClone(runtimeConfig);
     nextConfig.gateway = {
       ...nextConfig.gateway,
       auth: { mode: "token" },
@@ -1154,7 +1154,7 @@ describe("config io write prepare", () => {
         },
       },
       gateway: { port: 18789 },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const nextConfig = structuredClone(sourceConfig);
     delete (nextConfig.channels?.discord?.dm as { enabled?: boolean; policy?: string } | undefined)
@@ -1208,9 +1208,9 @@ describe("config io write prepare", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
-    const nextConfig: OpenClawConfig = {
+    const nextConfig: NovaConfig = {
       ...structuredClone(sourceConfig),
       gateway: {
         auth: { mode: "token" },
@@ -1243,26 +1243,26 @@ describe("config io write prepare", () => {
   });
 
   it("preserves root $schema during unrelated partial writes", () => {
-    const sourceConfig: OpenClawConfig = {
-      $schema: "https://openclaw.ai/config.json",
+    const sourceConfig: NovaConfig = {
+      $schema: "https://nova.ai/config.json",
       gateway: { mode: "local" },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
 
     const persisted = resolvePersistCandidateForWrite({
       runtimeConfig: sourceConfig,
       sourceConfig,
       nextConfig: {
         gateway: { mode: "local", port: 18789 },
-      } satisfies OpenClawConfig,
-    }) as OpenClawConfig;
+      } satisfies NovaConfig,
+    }) as NovaConfig;
 
-    expect(persisted.$schema).toBe("https://openclaw.ai/config.json");
+    expect(persisted.$schema).toBe("https://nova.ai/config.json");
     expect(persisted.gateway).toEqual({ mode: "local", port: 18789 });
   });
 
   it("rejects writes that would flatten a root include", () => {
     const sourceConfig = {
-      $schema: "https://openclaw.ai/config-from-include.json",
+      $schema: "https://nova.ai/config-from-include.json",
       gateway: { mode: "local" },
     };
 
@@ -1283,7 +1283,7 @@ describe("config io write prepare", () => {
 
   it("does not restore root $schema when the next config explicitly clears it", () => {
     const sourceConfig = {
-      $schema: "https://openclaw.ai/config.json",
+      $schema: "https://nova.ai/config.json",
       gateway: { mode: "local" },
     };
 
@@ -1302,7 +1302,7 @@ describe("config io write prepare", () => {
 
   it("does not restore root $schema when the next config sets an invalid value", () => {
     const sourceConfig = {
-      $schema: "https://openclaw.ai/config.json",
+      $schema: "https://nova.ai/config.json",
       gateway: { mode: "local" },
     };
 

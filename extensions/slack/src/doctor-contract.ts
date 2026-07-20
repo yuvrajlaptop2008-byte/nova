@@ -2,9 +2,9 @@
 import type {
   ChannelDoctorConfigMutation,
   ChannelDoctorLegacyConfigRule,
-} from "openclaw/plugin-sdk/channel-contract";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { asObjectRecord, defineChannelAliasMigration } from "openclaw/plugin-sdk/runtime-doctor";
+} from "nova/plugin-sdk/channel-contract";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { asObjectRecord, defineChannelAliasMigration } from "nova/plugin-sdk/runtime-doctor";
 import { resolveSlackNativeStreaming, resolveSlackStreamingMode } from "./streaming-compat.js";
 
 const streamingAliasMigration = defineChannelAliasMigration({
@@ -138,26 +138,26 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
   {
     path: ["channels", "slack"],
     message:
-      'channels.slack.dm.replyToMode moved to replyToModeByChatType.direct. Run "openclaw doctor --fix".',
+      'channels.slack.dm.replyToMode moved to replyToModeByChatType.direct. Run "nova doctor --fix".',
     match: hasLegacyDmReplyMode,
   },
   {
     path: ["channels", "slack", "accounts"],
     message:
-      'channels.slack.accounts.<id>.dm.replyToMode moved to replyToModeByChatType.direct. Run "openclaw doctor --fix".',
+      'channels.slack.accounts.<id>.dm.replyToMode moved to replyToModeByChatType.direct. Run "nova doctor --fix".',
     match: (value) =>
       Object.values(asObjectRecord(value) ?? {}).some((account) => hasLegacyDmReplyMode(account)),
   },
   {
     path: ["channels", "slack"],
     message:
-      'channels.slack.thread.requireExplicitMention is legacy; use channels.slack.implicitMentions.threadParticipation instead. Run "openclaw doctor --fix".',
+      'channels.slack.thread.requireExplicitMention is legacy; use channels.slack.implicitMentions.threadParticipation instead. Run "nova doctor --fix".',
     match: hasLegacySlackThreadMentionPolicy,
   },
   {
     path: ["channels", "slack", "accounts"],
     message:
-      'channels.slack.accounts.<id>.thread.requireExplicitMention is legacy; use channels.slack.accounts.<id>.implicitMentions.threadParticipation instead. Run "openclaw doctor --fix".',
+      'channels.slack.accounts.<id>.thread.requireExplicitMention is legacy; use channels.slack.accounts.<id>.implicitMentions.threadParticipation instead. Run "nova doctor --fix".',
     match: (value) => {
       const accounts = asObjectRecord(value);
       return Boolean(
@@ -169,13 +169,13 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
   {
     path: ["channels", "slack"],
     message:
-      'channels.slack.channels.<id>.allow is legacy; use channels.slack.channels.<id>.enabled instead. Run "openclaw doctor --fix".',
+      'channels.slack.channels.<id>.allow is legacy; use channels.slack.channels.<id>.enabled instead. Run "nova doctor --fix".',
     match: hasLegacySlackChannelAllowAlias,
   },
   {
     path: ["channels", "slack", "accounts"],
     message:
-      'channels.slack.accounts.<id>.channels.<id>.allow is legacy; use channels.slack.accounts.<id>.channels.<id>.enabled instead. Run "openclaw doctor --fix".',
+      'channels.slack.accounts.<id>.channels.<id>.allow is legacy; use channels.slack.accounts.<id>.channels.<id>.enabled instead. Run "nova doctor --fix".',
     match: (value) => {
       const accounts = asObjectRecord(value);
       if (!accounts) {
@@ -189,7 +189,7 @@ export const legacyConfigRules: ChannelDoctorLegacyConfigRule[] = [
 export function normalizeCompatibilityConfig({
   cfg,
 }: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): ChannelDoctorConfigMutation {
   const changes: string[] = [];
   const aliases = streamingAliasMigration.normalizeChannelConfig({ cfg, changes });
@@ -276,8 +276,8 @@ export function normalizeCompatibilityConfig({
       ...aliases.config,
       channels: {
         ...aliases.config.channels,
-        slack: updated as unknown as NonNullable<OpenClawConfig["channels"]>["slack"],
-      } as OpenClawConfig["channels"],
+        slack: updated as unknown as NonNullable<NovaConfig["channels"]>["slack"],
+      } as NovaConfig["channels"],
     },
     changes,
   };

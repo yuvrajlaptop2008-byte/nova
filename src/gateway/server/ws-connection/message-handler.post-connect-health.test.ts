@@ -11,7 +11,7 @@ import {
   type DiagnosticSecurityEvent,
 } from "../../../infra/diagnostic-events.js";
 import { setAvatar } from "../../../state/user-profiles.js";
-import { withOpenClawTestState } from "../../../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../../../test-utils/nova-test-state.js";
 import { mintAgentRuntimeIdentityToken } from "../../agent-runtime-identity-token.js";
 import type { AuthRateLimiter } from "../../auth-rate-limit.js";
 import type { ResolvedGatewayAuth } from "../../auth.js";
@@ -157,7 +157,7 @@ function createConnectedTestClient(params: {
     ...(params.invalidatedReason ? { invalidatedReason: params.invalidatedReason } : {}),
     connect: {
       client: {
-        id: "openclaw-control-ui",
+        id: "nova-control-ui",
         version: "dev",
         platform: "test",
         mode: "ui",
@@ -349,7 +349,7 @@ function connectTrustedProxyUser(connId: string) {
     minProtocol: PROTOCOL_VERSION,
     maxProtocol: PROTOCOL_VERSION,
     client: {
-      id: "openclaw-control-ui",
+      id: "nova-control-ui",
       version: "dev",
       platform: "test",
       mode: "ui",
@@ -552,7 +552,7 @@ describe("attachGatewayWsMessageHandler post-connect health refresh", () => {
         minProtocol: PROTOCOL_VERSION,
         maxProtocol: PROTOCOL_VERSION,
         client: {
-          id: "openclaw-control-ui",
+          id: "nova-control-ui",
           version: "dev",
           platform: "test",
           mode: "ui",
@@ -595,7 +595,7 @@ describe("attachGatewayWsMessageHandler post-connect health refresh", () => {
   });
 
   it("projects a stable durable profile into presence and refreshes avatar state on reconnect", async () => {
-    await withOpenClawTestState({ label: "gateway-profile-presence" }, async () => {
+    await withNovaTestState({ label: "gateway-profile-presence" }, async () => {
       const connect = async (suffix: string) => {
         const connId = `conn-trusted-proxy-user-${suffix}`;
         const harness = connectTrustedProxyUser(connId);
@@ -693,7 +693,7 @@ describe("attachGatewayWsMessageHandler post-connect health refresh", () => {
       minProtocol: PROTOCOL_VERSION,
       maxProtocol: PROTOCOL_VERSION,
       client: {
-        id: "openclaw-control-ui",
+        id: "nova-control-ui",
         version: "dev",
         platform: "test",
         mode: "ui",
@@ -1190,12 +1190,12 @@ describe("resolvePinnedClientMetadata", () => {
   );
 
   it.each([
-    ["openclaw-ios", "iOS 26.5.0", "iOS 26.4.2", "iPhone"],
-    ["openclaw-ios", "iPadOS 26.5.0", "iPadOS 26.4.2", "iPad"],
-    ["openclaw-ios", "iPadOS 26.5.0", "iOS 26.4.2", "iPad"],
-    ["openclaw-android", "Android 16", "Android 15", "Android"],
-    ["openclaw-macos", "macOS 26.5.1", "macOS 26.5.0", "Mac"],
-    ["openclaw-macos", "macOS 27.0.0", "macOS 26.5.1", "Mac"],
+    ["nova-ios", "iOS 26.5.0", "iOS 26.4.2", "iPhone"],
+    ["nova-ios", "iPadOS 26.5.0", "iPadOS 26.4.2", "iPad"],
+    ["nova-ios", "iPadOS 26.5.0", "iOS 26.4.2", "iPad"],
+    ["nova-android", "Android 16", "Android 15", "Android"],
+    ["nova-macos", "macOS 26.5.1", "macOS 26.5.0", "Mac"],
+    ["nova-macos", "macOS 27.0.0", "macOS 26.5.1", "Mac"],
   ])(
     "allows %s platform version refresh without metadata-upgrade approval",
     (clientId, claimedPlatform, pairedPlatform, deviceFamily) => {
@@ -1221,7 +1221,7 @@ describe("resolvePinnedClientMetadata", () => {
   it.each(["node", "ui"])("allows a macOS platform version refresh in %s mode", (clientMode) => {
     expect(
       testing.resolvePinnedClientMetadata({
-        clientId: "openclaw-macos",
+        clientId: "nova-macos",
         clientMode,
         claimedPlatform: "macOS 26.5.2",
         claimedDeviceFamily: "Mac",
@@ -1258,7 +1258,7 @@ describe("resolvePinnedClientMetadata", () => {
   it("refreshes a shared node-host macOS pin from the native Mac app", () => {
     expect(
       testing.resolvePinnedClientMetadata({
-        clientId: "openclaw-macos",
+        clientId: "nova-macos",
         clientMode: "ui",
         claimedPlatform: "macOS 26.5.2",
         claimedDeviceFamily: "Mac",
@@ -1277,7 +1277,7 @@ describe("resolvePinnedClientMetadata", () => {
   it("still requires approval when an iOS device family changes", () => {
     expect(
       testing.resolvePinnedClientMetadata({
-        clientId: "openclaw-ios",
+        clientId: "nova-ios",
         clientMode: "node",
         claimedPlatform: "iOS 26.5.0",
         claimedDeviceFamily: "iPad",
@@ -1296,7 +1296,7 @@ describe("resolvePinnedClientMetadata", () => {
   it("still requires approval when a macOS device family changes", () => {
     expect(
       testing.resolvePinnedClientMetadata({
-        clientId: "openclaw-macos",
+        clientId: "nova-macos",
         clientMode: "node",
         claimedPlatform: "macOS 26.5.2",
         claimedDeviceFamily: "VirtualMac",
@@ -1314,8 +1314,8 @@ describe("resolvePinnedClientMetadata", () => {
 
   it.each([
     ["node-host", "macOS 26.5.2", "macOS 26.5.1"],
-    ["openclaw-macos", "macOS anything", "macOS previous"],
-    ["openclaw-macos", "macOS", "macOS 26.5.1"],
+    ["nova-macos", "macOS anything", "macOS previous"],
+    ["nova-macos", "macOS", "macOS 26.5.1"],
   ])(
     "keeps non-version macOS platform changes approval-bound for %s",
     (clientId, claimed, paired) => {

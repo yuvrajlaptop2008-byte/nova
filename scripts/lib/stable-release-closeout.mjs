@@ -83,8 +83,8 @@ function readReleaseAssets(release) {
 function isCloseoutEvidenceAsset(assetName, tag) {
   const releaseVersion = tag.slice(1);
   return (
-    assetName === `openclaw-${releaseVersion}-stable-main-closeout.json` ||
-    assetName === `openclaw-${releaseVersion}-stable-main-closeout.json.sha256`
+    assetName === `nova-${releaseVersion}-stable-main-closeout.json` ||
+    assetName === `nova-${releaseVersion}-stable-main-closeout.json.sha256`
   );
 }
 
@@ -202,11 +202,11 @@ export function verifyStableMainCloseout(params) {
       },
       {
         label: "Windows",
-        prefix: "OpenClawCompanion-",
+        prefix: "NovaCompanion-",
         expected: [
-          "OpenClawCompanion-SHA256SUMS.txt",
-          "OpenClawCompanion-Setup-arm64.exe",
-          "OpenClawCompanion-Setup-x64.exe",
+          "NovaCompanion-SHA256SUMS.txt",
+          "NovaCompanion-Setup-arm64.exe",
+          "NovaCompanion-Setup-x64.exe",
         ],
       },
     ];
@@ -232,10 +232,7 @@ export function verifyStableMainCloseout(params) {
       }
     }
 
-    const windowsInstallerNames = [
-      "OpenClawCompanion-Setup-arm64.exe",
-      "OpenClawCompanion-Setup-x64.exe",
-    ];
+    const windowsInstallerNames = ["NovaCompanion-Setup-arm64.exe", "NovaCompanion-Setup-x64.exe"];
     let trustedWindowsDigests = params.windowsNodeInstallerDigests;
     if (typeof trustedWindowsDigests === "string") {
       try {

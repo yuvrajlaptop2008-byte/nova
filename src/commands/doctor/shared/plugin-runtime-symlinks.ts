@@ -4,7 +4,7 @@ import path from "node:path";
 import { sortUniqueStrings } from "@nova/normalization-core/string-normalization";
 import { note } from "../../../../packages/terminal-core/src/note.js";
 import type { HealthFinding } from "../../../flows/health-checks.js";
-import { resolveOpenClawPackageRootSync } from "../../../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../../../infra/nova-root.js";
 import { shortenHomePath } from "../../../utils.js";
 
 const PLUGIN_RUNTIME_DEPS_MARKER = "plugin-runtime-deps";
@@ -109,7 +109,7 @@ function stalePluginRuntimeSymlinkToHealthFinding(item: StalePluginRuntimeSymlin
     path: item.path,
     target: item.path,
     requirement: "stale-plugin-runtime-symlink-removed",
-    fixHint: "Run `openclaw doctor --fix` to remove stale plugin-runtime symlinks.",
+    fixHint: "Run `nova doctor --fix` to remove stale plugin-runtime symlinks.",
   };
 }
 
@@ -118,7 +118,7 @@ export async function collectStalePluginRuntimeSymlinkHealthFindings(
 ): Promise<HealthFinding[]> {
   const packageRoot =
     params.packageRoot ??
-    resolveOpenClawPackageRootSync({
+    resolveNovaPackageRootSync({
       argv1: process.argv[1],
       moduleUrl: import.meta.url,
       cwd: process.cwd(),
@@ -153,7 +153,7 @@ export async function noteStalePluginRuntimeSymlinks(
   if (stale.length > MAX_REPORTED) {
     lines.push(`  - ...and ${stale.length - MAX_REPORTED} more`);
   }
-  lines.push("- Repair: run `openclaw doctor --fix` to remove the dangling symlinks.");
+  lines.push("- Repair: run `nova doctor --fix` to remove the dangling symlinks.");
   (options.noteFn ?? note)(lines.join("\n"), "Plugin-runtime symlinks");
 }
 

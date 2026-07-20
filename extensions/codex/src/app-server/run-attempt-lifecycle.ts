@@ -7,7 +7,7 @@ import {
   runAgentEndSideEffects,
   type EmbeddedRunAttemptParams,
   type EmbeddedRunAttemptResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import type { CodexAppServerRuntimeOptions } from "./config.js";
 import { codexWorkspaceDirCache } from "./workspace-dir-cache.js";
 

@@ -22,7 +22,7 @@ import type { ThinkLevel, VerboseLevel } from "../../auto-reply/thinking.js";
 import { persistSessionTranscriptTurn } from "../../config/sessions/session-accessor.js";
 import { readTailAssistantTextFromSessionTranscript } from "../../config/sessions/transcript.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   injectTimestamp,
   timestampOptsFromConfig,
@@ -153,7 +153,7 @@ type PersistTextTurnTranscriptParams = {
   sessionAgentId: string;
   threadId?: string | number;
   sessionCwd: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   embeddedAssistantGapFill?: boolean;
   assistant: {
     api: string;
@@ -190,7 +190,7 @@ function resolveProfileAuthFromStore(params: { agentDir: string; profileId: stri
 }
 
 function resolveHarnessAuthProfileSelection(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentDir: string;
   workspaceDir: string;
   provider: string;
@@ -318,7 +318,7 @@ async function persistTextTurnTranscript(
           return true;
         }
         const latest = await readTailAssistantTextFromSessionTranscript(sessionFile, {
-          excludeTranscriptOnlyOpenClawAssistant: true,
+          excludeTranscriptOnlyNovaAssistant: true,
         });
         const normalizedReply = normalizeTranscriptMirrorText(replyText);
         const normalizedLatest = latest?.text ? normalizeTranscriptMirrorText(latest.text) : "";
@@ -385,14 +385,14 @@ export async function persistAcpTurnTranscript(params: {
   sessionAgentId: string;
   threadId?: string | number;
   sessionCwd: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): Promise<PersistTextTurnTranscriptResult> {
   return await persistTextTurnTranscript({
     ...params,
     ...(params.userInput ? { userMessage: buildPersistedUserTurnMessage(params.userInput) } : {}),
     assistant: {
       api: "openai-responses",
-      provider: "openclaw",
+      provider: "nova",
       model: "acp-runtime",
     },
   });
@@ -412,7 +412,7 @@ export async function persistCliTurnTranscript(params: {
   sessionAgentId: string;
   threadId?: string | number;
   sessionCwd: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   embeddedAssistantGapFill?: boolean;
   skipUserTurn?: boolean;
 }): Promise<PersistTextTurnTranscriptResult> {
@@ -452,7 +452,7 @@ export function runAgentAttempt(params: {
   modelOverride: string;
   configuredAuthProfileId?: string;
   originalProvider: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionEntry: SessionEntry | undefined;
   agentHarnessRuntimeOverride?: string;
   sessionId: string;
@@ -537,7 +537,7 @@ export function runAgentAttempt(params: {
   );
   const bootstrapPromptWarningSignature =
     bootstrapPromptWarningSignaturesSeen[bootstrapPromptWarningSignaturesSeen.length - 1];
-  const requestedAgentHarnessId = isRawModelRun ? "openclaw" : undefined;
+  const requestedAgentHarnessId = isRawModelRun ? "nova" : undefined;
   const sessionRuntimeOverride = isRawModelRun ? undefined : params.agentHarnessRuntimeOverride;
   const locksSessionRuntimeOverride =
     sessionRuntimeOverride !== undefined && params.sessionEntry?.modelSelectionLocked === true;
@@ -577,7 +577,7 @@ export function runAgentAttempt(params: {
       agentId: params.sessionAgentId,
     });
   const agentHarnessPolicy = isRawModelRun
-    ? ({ runtime: "openclaw", runtimeSource: "model" } as const)
+    ? ({ runtime: "nova", runtimeSource: "model" } as const)
     : sessionRuntimeOverride
       ? ({ runtime: sessionRuntimeOverride, runtimeSource: "model" } as const)
       : resolveAvailableAgentHarnessPolicy({
@@ -638,8 +638,8 @@ export function runAgentAttempt(params: {
   const embeddedAgentHarnessOverride =
     requestedAgentHarnessId ??
     sessionRuntimeOverride ??
-    (agentHarnessPolicy.runtime === "openclaw" && agentHarnessPolicy.runtimeSource !== "implicit"
-      ? "openclaw"
+    (agentHarnessPolicy.runtime === "nova" && agentHarnessPolicy.runtimeSource !== "implicit"
+      ? "nova"
       : undefined);
   if (!isRawModelRun && isCliExecutionProvider) {
     const cliSessionBinding = getCliSessionBinding(params.sessionEntry, cliExecutionProvider);

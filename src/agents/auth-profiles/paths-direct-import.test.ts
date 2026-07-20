@@ -20,7 +20,7 @@ describe("path-resolve helpers (direct-import coverage attribution)", () => {
   let stateDir = "";
 
   beforeEach(async () => {
-    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-path-direct-"));
+    stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-path-direct-"));
   });
 
   afterEach(async () => {
@@ -75,18 +75,18 @@ describe("path-resolve helpers (direct-import coverage attribution)", () => {
     const agentDir = path.join(stateDir, "agents", "main", "agent");
     const resolved = resolveAuthStorePathForDisplay(agentDir);
     expect(resolved.startsWith(stateDir)).toBe(true);
-    expect(path.basename(resolved)).toBe("openclaw-agent.sqlite");
+    expect(path.basename(resolved)).toBe("nova-agent.sqlite");
   });
 
   it("resolveAuthStorePathForDisplay expands a tilde-rooted agent dir to the sqlite store", () => {
-    const tildeAgentDir = "~fake-openclaw-no-expand";
+    const tildeAgentDir = "~fake-nova-no-expand";
     const resolved = resolveAuthStorePathForDisplay(tildeAgentDir);
-    expect(resolved).toBe(path.resolve(tildeAgentDir, "openclaw-agent.sqlite"));
+    expect(resolved).toBe(path.resolve(tildeAgentDir, "nova-agent.sqlite"));
   });
 
   it("resolveAuthStatePathForDisplay returns the sqlite auth state store", () => {
     const agentDir = path.join(stateDir, "agents", "main", "agent");
     const resolved = resolveAuthStatePathForDisplay(agentDir);
-    expect(resolved).toBe(path.join(agentDir, "openclaw-agent.sqlite"));
+    expect(resolved).toBe(path.join(agentDir, "nova-agent.sqlite"));
   });
 });

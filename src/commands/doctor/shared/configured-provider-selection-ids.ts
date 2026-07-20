@@ -1,10 +1,10 @@
 // Reads provider ids selected by auth, model, channel, and media configuration.
 import { collectConfiguredModelRefs } from "@nova/model-catalog-core/configured-model-refs";
 import { normalizeNullableString as normalizeId } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import { asObjectRecord } from "./object.js";
 
-function collectConfiguredProviderIds(cfg: OpenClawConfig): Set<string> {
+function collectConfiguredProviderIds(cfg: NovaConfig): Set<string> {
   const ids = new Set<string>();
   const add = (value: unknown) => {
     const id = normalizeId(value);
@@ -42,7 +42,7 @@ function collectConfiguredProviderIds(cfg: OpenClawConfig): Set<string> {
   return ids;
 }
 
-function collectConfiguredMediaProviderIds(cfg: OpenClawConfig): Set<string> {
+function collectConfiguredMediaProviderIds(cfg: NovaConfig): Set<string> {
   const ids = new Set<string>();
   const add = (value: unknown) => {
     const id = normalizeId(value);
@@ -67,18 +67,14 @@ function collectConfiguredMediaProviderIds(cfg: OpenClawConfig): Set<string> {
 }
 
 /** Provider ids used by static and installed-registry plugin matching. */
-export function collectConfiguredProviderSelectionIds(cfg: OpenClawConfig): ReadonlySet<string> {
+export function collectConfiguredProviderSelectionIds(cfg: NovaConfig): ReadonlySet<string> {
   return new Set([...collectConfiguredProviderIds(cfg), ...collectConfiguredMediaProviderIds(cfg)]);
 }
 
-export function collectConfiguredMediaProviderSelectionIds(
-  cfg: OpenClawConfig,
-): ReadonlySet<string> {
+export function collectConfiguredMediaProviderSelectionIds(cfg: NovaConfig): ReadonlySet<string> {
   return collectConfiguredMediaProviderIds(cfg);
 }
 
-export function collectConfiguredModelProviderSelectionIds(
-  cfg: OpenClawConfig,
-): ReadonlySet<string> {
+export function collectConfiguredModelProviderSelectionIds(cfg: NovaConfig): ReadonlySet<string> {
   return collectConfiguredProviderIds(cfg);
 }

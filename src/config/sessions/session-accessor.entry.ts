@@ -5,7 +5,7 @@ import {
 } from "../../gateway/session-store-key.js";
 import { resolveAgentIdFromSessionKey } from "../../routing/session-key.js";
 import { getRuntimeConfig } from "../io.js";
-import type { OpenClawConfig } from "../types.openclaw.js";
+import type { NovaConfig } from "../types.nova.js";
 import { resolveAgentMainSessionKey } from "./main-session.js";
 import { resolveStorePath } from "./paths.js";
 import { clearPluginOwnedSessionState } from "./plugin-host-cleanup.js";
@@ -72,7 +72,7 @@ function isStorePathTemplate(store?: string): boolean {
 
 function resolveLogicalSessionStoreCandidates(params: {
   agentId: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env?: NodeJS.ProcessEnv;
 }): SessionStoreTarget[] {
   const storeConfig = params.cfg.session?.store;
@@ -96,7 +96,7 @@ function resolveLogicalSessionStoreCandidates(params: {
 function buildLogicalSessionEntryCandidateKeys(params: {
   agentId: string;
   canonicalKey: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   requestedKey: string;
 }): string[] {
   const targets = new Set<string>();

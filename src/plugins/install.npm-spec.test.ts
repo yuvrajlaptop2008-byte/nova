@@ -19,15 +19,14 @@ import {
 import { createSuiteTempRootTracker } from "./test-helpers/fs-fixtures.js";
 
 const runCommandWithTimeoutMock = vi.fn();
-const resolveOpenClawPackageRootSyncMock = vi.fn();
+const resolveNovaPackageRootSyncMock = vi.fn();
 
 vi.mock("../process/exec.js", () => ({
   runCommandWithTimeout: (...args: unknown[]) => runCommandWithTimeoutMock(...args),
 }));
 
-vi.mock("../infra/openclaw-root.js", () => ({
-  resolveOpenClawPackageRootSync: (...args: unknown[]) =>
-    resolveOpenClawPackageRootSyncMock(...args),
+vi.mock("../infra/nova-root.js", () => ({
+  resolveNovaPackageRootSync: (...args: unknown[]) => resolveNovaPackageRootSyncMock(...args),
 }));
 
 vi.resetModules();
@@ -35,7 +34,7 @@ vi.resetModules();
 const { installPluginFromNpmPackArchive, installPluginFromNpmSpec, PLUGIN_INSTALL_ERROR_CODE } =
   await import("./install.js");
 
-const suiteTempRootTracker = createSuiteTempRootTracker("openclaw-plugin-install-npm-spec");
+const suiteTempRootTracker = createSuiteTempRootTracker("nova-plugin-install-npm-spec");
 let previousNpmGlobalConfig: string | undefined;
 let npmGlobalConfigPath: string;
 let npmPackArchiveInstallCase: {
@@ -84,7 +83,7 @@ function npmViewArgv(spec: string): string[] {
     "version",
     "dist.integrity",
     "dist.shasum",
-    "openclaw",
+    "nova",
     "--json",
   ];
 }
@@ -225,7 +224,7 @@ function writeInstalledNpmPlugin(params: {
   dependency?: { name: string; version: string };
   hoistedDependency?: { name: string; version: string };
   peerDependencies?: Record<string, string>;
-  openclaw?: Record<string, unknown>;
+  nova?: Record<string, unknown>;
   replaceExisting?: boolean;
 }) {
   const pluginDir = path.join(params.npmRoot, "node_modules", params.packageName);
@@ -238,7 +237,7 @@ function writeInstalledNpmPlugin(params: {
     JSON.stringify({
       name: params.packageName,
       version: params.version,
-      openclaw: params.openclaw ?? { extensions: ["./dist/index.js"] },
+      nova: params.nova ?? { extensions: ["./dist/index.js"] },
       ...(params.dependency
         ? { dependencies: { [params.dependency.name]: params.dependency.version } }
         : {}),
@@ -247,7 +246,7 @@ function writeInstalledNpmPlugin(params: {
     "utf-8",
   );
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "nova.plugin.json"),
     JSON.stringify({
       id: params.pluginId ?? params.packageName,
       name: params.pluginId ?? params.packageName,
@@ -305,7 +304,7 @@ type MockNpmPackage = {
   dependency?: { name: string; version: string };
   hoistedDependency?: { name: string; version: string };
   peerDependencies?: Record<string, string>;
-  openclaw?: Record<string, unknown>;
+  nova?: Record<string, unknown>;
   expectedDependencySpec?: string;
   versions?: string[];
   installedVersion?: string;
@@ -340,7 +339,7 @@ function writeNpmRootPackageLock(params: {
         : { integrity: pkg.installedIntegrity ?? pkg.integrity ?? "sha512-plugin-test" }),
     };
     if (pkg.materializesRootNova) {
-      lockPackages["node_modules/openclaw"] = {
+      lockPackages["node_modules/nova"] = {
         peer: true,
         version: "2026.5.3",
       };
@@ -392,7 +391,7 @@ function readTextFileTree(dir: string, rootDir = dir): Record<string, string> {
   );
 }
 
-function prunePluginLocalOpenClawPeerLinks(npmRoot: string) {
+function prunePluginLocalNovaPeerLinks(npmRoot: string) {
   const nodeModulesDir = path.join(npmRoot, "node_modules");
   if (!fs.existsSync(nodeModulesDir)) {
     return;
@@ -416,7 +415,7 @@ function prunePluginLocalOpenClawPeerLinks(npmRoot: string) {
       if (packageNodeModules && !packageNodeModules.isDirectory()) {
         continue;
       }
-      fs.rmSync(path.join(packageNodeModulesDir, "openclaw"), {
+      fs.rmSync(path.join(packageNodeModulesDir, "nova"), {
         recursive: true,
         force: true,
       });
@@ -473,7 +472,7 @@ function mockNpmViewAndInstallMany(packages: MockNpmPackage[]) {
               integrity: viewPackage.integrity ?? "sha512-plugin-test",
               shasum: viewPackage.shasum ?? "pluginshasum",
             },
-            ...(viewPackage.openclaw ? { openclaw: viewPackage.openclaw } : {}),
+            ...(viewPackage.nova ? { nova: viewPackage.nova } : {}),
           }),
         );
       }
@@ -513,14 +512,14 @@ function mockNpmViewAndInstallMany(packages: MockNpmPackage[]) {
           dependencies?: Record<string, string>;
         };
         const installedPackages: MockNpmPackage[] = [];
-        prunePluginLocalOpenClawPeerLinks(npmRoot);
+        prunePluginLocalNovaPeerLinks(npmRoot);
         for (const packageName of Object.keys(manifest.dependencies ?? {})) {
-          if (packageName === "openclaw") {
-            const openclawRoot = path.join(npmRoot, "node_modules", "openclaw");
-            fs.mkdirSync(openclawRoot, { recursive: true });
+          if (packageName === "nova") {
+            const novaRoot = path.join(npmRoot, "node_modules", "nova");
+            fs.mkdirSync(novaRoot, { recursive: true });
             fs.writeFileSync(
-              path.join(openclawRoot, "package.json"),
-              JSON.stringify({ name: "openclaw", version: "0.0.0-test" }),
+              path.join(novaRoot, "package.json"),
+              JSON.stringify({ name: "nova", version: "0.0.0-test" }),
               "utf8",
             );
             continue;
@@ -547,11 +546,11 @@ function mockNpmViewAndInstallMany(packages: MockNpmPackage[]) {
             version: pkg.installedVersion ?? pkg.version,
           });
           if (pkg.materializesRootNova) {
-            const openclawRoot = path.join(npmRoot, "node_modules", "openclaw");
-            fs.mkdirSync(openclawRoot, { recursive: true });
+            const novaRoot = path.join(npmRoot, "node_modules", "nova");
+            fs.mkdirSync(novaRoot, { recursive: true });
             fs.writeFileSync(
-              path.join(openclawRoot, "package.json"),
-              JSON.stringify({ name: "openclaw", version: "2026.5.3" }),
+              path.join(novaRoot, "package.json"),
+              JSON.stringify({ name: "nova", version: "2026.5.3" }),
               "utf8",
             );
           }
@@ -566,12 +565,12 @@ function mockNpmViewAndInstallMany(packages: MockNpmPackage[]) {
       }
       if (argv[0] === "npm" && argv[1] === "uninstall") {
         const packageName = (argv as string[]).at(-1);
-        if (packageName === "openclaw") {
+        if (packageName === "nova") {
           const npmRoot = options?.cwd;
           if (!npmRoot) {
             throw new Error(`unexpected npm uninstall command: ${(argv as string[]).join(" ")}`);
           }
-          fs.rmSync(path.join(npmRoot, "node_modules", "openclaw"), {
+          fs.rmSync(path.join(npmRoot, "node_modules", "nova"), {
             recursive: true,
             force: true,
           });
@@ -613,33 +612,33 @@ afterAll(() => {
 
 beforeEach(() => {
   runCommandWithTimeoutMock.mockReset();
-  resolveOpenClawPackageRootSyncMock.mockReset();
+  resolveNovaPackageRootSyncMock.mockReset();
   const hostRoot = suiteTempRootTracker.makeTempDir();
   fs.writeFileSync(
     path.join(hostRoot, "package.json"),
-    `${JSON.stringify({ name: "openclaw", version: "0.0.0-test" }, null, 2)}\n`,
+    `${JSON.stringify({ name: "nova", version: "0.0.0-test" }, null, 2)}\n`,
     "utf8",
   );
-  resolveOpenClawPackageRootSyncMock.mockReturnValue(hostRoot);
+  resolveNovaPackageRootSyncMock.mockReturnValue(hostRoot);
   vi.unstubAllEnvs();
   process.env.NPM_CONFIG_GLOBALCONFIG = npmGlobalConfigPath;
 });
 
 beforeAll(async () => {
   runCommandWithTimeoutMock.mockReset();
-  resolveOpenClawPackageRootSyncMock.mockReset();
+  resolveNovaPackageRootSyncMock.mockReset();
   const hostRoot = suiteTempRootTracker.makeTempDir();
   fs.writeFileSync(
     path.join(hostRoot, "package.json"),
-    `${JSON.stringify({ name: "openclaw", version: "0.0.0-test" }, null, 2)}\n`,
+    `${JSON.stringify({ name: "nova", version: "0.0.0-test" }, null, 2)}\n`,
     "utf8",
   );
-  resolveOpenClawPackageRootSyncMock.mockReturnValue(hostRoot);
+  resolveNovaPackageRootSyncMock.mockReturnValue(hostRoot);
   process.env.NPM_CONFIG_GLOBALCONFIG = npmGlobalConfigPath;
 
   const stateDir = suiteTempRootTracker.makeTempDir();
   const npmRoot = path.join(stateDir, "npm");
-  const archivePath = path.join(stateDir, "openclaw-pack-demo-1.2.3.tgz");
+  const archivePath = path.join(stateDir, "nova-pack-demo-1.2.3.tgz");
   fs.writeFileSync(archivePath, "fixture pack contents", "utf8");
 
   mockNpmViewAndInstallMany([
@@ -692,14 +691,14 @@ beforeAll(async () => {
 
 beforeAll(async () => {
   runCommandWithTimeoutMock.mockReset();
-  resolveOpenClawPackageRootSyncMock.mockReset();
+  resolveNovaPackageRootSyncMock.mockReset();
   const hostRoot = suiteTempRootTracker.makeTempDir();
   fs.writeFileSync(
     path.join(hostRoot, "package.json"),
-    `${JSON.stringify({ name: "openclaw", version: "0.0.0-test" }, null, 2)}\n`,
+    `${JSON.stringify({ name: "nova", version: "0.0.0-test" }, null, 2)}\n`,
     "utf8",
   );
-  resolveOpenClawPackageRootSyncMock.mockReturnValue(hostRoot);
+  resolveNovaPackageRootSyncMock.mockReturnValue(hostRoot);
   process.env.NPM_CONFIG_GLOBALCONFIG = npmGlobalConfigPath;
 
   const stateDir = suiteTempRootTracker.makeTempDir();
@@ -788,13 +787,13 @@ describe("installPluginFromNpmSpec", () => {
     expect(result.targetDir).toBe(resolveTestPluginPackageDir(npmRoot, "@nova/pack-demo"));
     expect(result.npmResolution?.resolvedSpec).toBe("@nova/pack-demo@1.2.3");
     expect(result.npmResolution?.integrity).toBe("sha512-pack-demo");
-    expect(result.npmTarballName).toBe("openclaw-pack-demo-1.2.3.tgz");
+    expect(result.npmTarballName).toBe("nova-pack-demo-1.2.3.tgz");
     expectNpmInstallIntoProject({
       calls,
       npmRoot,
       packageName: "@nova/pack-demo",
     });
-    expect(dependencySpec).toMatch(/^file:\.\/_openclaw-pack-archives\/.+\.tgz$/);
+    expect(dependencySpec).toMatch(/^file:\.\/_nova-pack-archives\/.+\.tgz$/);
     expect(dependencySpec).not.toContain(archivePath);
     expect(stagedArchiveContents).toBe("fixture pack contents");
   });
@@ -831,7 +830,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(result.error).toContain("unsupported npm pack package name");
     expect(fs.existsSync(path.join(victimDir, "keep.txt"))).toBe(true);
     expect(fs.existsSync(path.join(npmRoot, "package.json"))).toBe(false);
-    expect(fs.existsSync(path.join(npmRoot, "_openclaw-pack-archives"))).toBe(false);
+    expect(fs.existsSync(path.join(npmRoot, "_nova-pack-archives"))).toBe(false);
     expect(runCommandWithTimeoutMock.mock.calls).toHaveLength(1);
   });
 
@@ -839,8 +838,8 @@ describe("installPluginFromNpmSpec", () => {
     const stateDir = suiteTempRootTracker.makeTempDir();
     const npmRoot = path.join(stateDir, "npm");
     const packageName = "@nova/pack-demo";
-    const archiveV1Path = path.join(stateDir, "openclaw-pack-demo-1.0.0.tgz");
-    const archiveV2Path = path.join(stateDir, "openclaw-pack-demo-2.0.0.tgz");
+    const archiveV1Path = path.join(stateDir, "nova-pack-demo-1.0.0.tgz");
+    const archiveV2Path = path.join(stateDir, "nova-pack-demo-2.0.0.tgz");
     fs.writeFileSync(archiveV1Path, "v1 pack contents", "utf8");
     fs.writeFileSync(archiveV2Path, "v2 pack contents", "utf8");
 
@@ -912,7 +911,7 @@ describe("installPluginFromNpmSpec", () => {
     const stateDir = suiteTempRootTracker.makeTempDir();
     const npmRoot = path.join(stateDir, "npm");
     const packageName = "@nova/pack-demo";
-    const archivePath = path.join(stateDir, "openclaw-pack-demo-2.0.0.tgz");
+    const archivePath = path.join(stateDir, "nova-pack-demo-2.0.0.tgz");
     fs.writeFileSync(archivePath, "v2 pack contents", "utf8");
 
     mockNpmViewAndInstallMany([
@@ -946,7 +945,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(fs.existsSync(resolveTestPluginPackageDir(npmRoot, packageName))).toBe(true);
   });
 
-  it("installs npm plugins into .openclaw/npm", async () => {
+  it("installs npm plugins into .nova/npm", async () => {
     const { calls, dependencyInstalled, npmRoot, result } = npmSpecInstallCase;
 
     expect(result.ok).toBe(true);
@@ -1307,9 +1306,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(result.error).toContain("integrity sha512-evil");
     expect(result.error).toContain("expected sha512-safe");
     expect(managedInstallAttempts).toBe(1);
-    expect(fs.existsSync(path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects"))).toBe(
-      false,
-    );
+    expect(fs.existsSync(path.join(npmProjectRoot, "_nova-quarantined-npm-projects"))).toBe(false);
     expect(fs.existsSync(resolveTestPluginPackageDir(npmRoot, "drift-plugin"))).toBe(false);
   });
 
@@ -1353,9 +1350,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(result.error).toContain("version 1.0.1");
     expect(result.error).toContain("expected 1.0.0");
     expect(managedInstallAttempts).toBe(1);
-    expect(fs.existsSync(path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects"))).toBe(
-      false,
-    );
+    expect(fs.existsSync(path.join(npmProjectRoot, "_nova-quarantined-npm-projects"))).toBe(false);
     expect(fs.existsSync(resolveTestPluginPackageDir(npmRoot, "version-drift-plugin"))).toBe(false);
   });
 
@@ -1409,7 +1404,7 @@ describe("installPluginFromNpmSpec", () => {
     ) as { packages?: Record<string, { integrity?: string }> };
     expect(installed.packages?.[`node_modules/${packageName}`]?.integrity).toBe("sha512-safe");
     expect(
-      fs.readdirSync(path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects")),
+      fs.readdirSync(path.join(npmProjectRoot, "_nova-quarantined-npm-projects")),
     ).toHaveLength(1);
   });
 
@@ -1463,7 +1458,7 @@ describe("installPluginFromNpmSpec", () => {
       );
       expect(result.error).toContain(`${missingField} missing`);
       expect(
-        fs.readdirSync(path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects")),
+        fs.readdirSync(path.join(npmProjectRoot, "_nova-quarantined-npm-projects")),
       ).toHaveLength(1);
       expect(fs.existsSync(resolveTestPluginPackageDir(npmRoot, packageName))).toBe(false);
     },
@@ -1519,12 +1514,12 @@ describe("installPluginFromNpmSpec", () => {
       const manifestPath = path.join(npmProjectRoot, "package.json");
       const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as {
         dependencies?: Record<string, string>;
-        openclaw?: { managedPeerDependencies?: string[] };
+        nova?: { managedPeerDependencies?: string[] };
       };
       manifest.dependencies ??= {};
       manifest.dependencies[addedPeerName] = "2.0.0";
-      manifest.openclaw ??= {};
-      manifest.openclaw.managedPeerDependencies = [addedPeerName];
+      manifest.nova ??= {};
+      manifest.nova.managedPeerDependencies = [addedPeerName];
       fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
       mutatedPeerAfterQuarantine = true;
     };
@@ -1550,7 +1545,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.SECURITY_SCAN_BLOCKED);
     expect(managedInstallAttempts).toBe(2);
     expect(mutatedPeerAfterQuarantine).toBe(true);
-    const quarantineParent = path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects");
+    const quarantineParent = path.join(npmProjectRoot, "_nova-quarantined-npm-projects");
     const quarantines = fs.readdirSync(quarantineParent);
     expect(quarantines).toHaveLength(1);
     expect(
@@ -1570,10 +1565,10 @@ describe("installPluginFromNpmSpec", () => {
       fs.readFileSync(path.join(npmProjectRoot, "package.json"), "utf8"),
     ) as {
       dependencies?: Record<string, string>;
-      openclaw?: { managedPeerDependencies?: string[] };
+      nova?: { managedPeerDependencies?: string[] };
     };
     expect(manifest.dependencies?.[addedPeerName]).toBeUndefined();
-    expect(manifest.openclaw?.managedPeerDependencies ?? []).not.toContain(addedPeerName);
+    expect(manifest.nova?.managedPeerDependencies ?? []).not.toContain(addedPeerName);
   });
 
   it("quarantines and retries once when package-lock omits the installed plugin", async () => {
@@ -1622,7 +1617,7 @@ describe("installPluginFromNpmSpec", () => {
     );
     expect(managedInstallAttempts).toBe(2);
     expect(
-      fs.readdirSync(path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects")),
+      fs.readdirSync(path.join(npmProjectRoot, "_nova-quarantined-npm-projects")),
     ).toHaveLength(1);
     expect(fs.existsSync(resolveTestPluginPackageDir(npmRoot, "missing-lock-plugin"))).toBe(false);
   });
@@ -1647,7 +1642,7 @@ describe("installPluginFromNpmSpec", () => {
       pluginId: "codex-fixture",
       npmRoot,
       expectedDependencySpec: "1.0.0",
-      openclaw: {
+      nova: {
         extensions: ["./dist/index.js"],
         install: { requiredPlatformPackages: [platformPackage] },
       },
@@ -1692,7 +1687,7 @@ describe("installPluginFromNpmSpec", () => {
 
     expect(result.ok).toBe(true);
     expect(managedInstallAttempts).toBe(2);
-    expect(repairCacheDir).toContain("openclaw-npm-cache-");
+    expect(repairCacheDir).toContain("nova-npm-cache-");
     expect(fs.existsSync(repairCacheDir)).toBe(false);
     expect(warnings).toContain(
       `npm omitted current-platform package(s) ${platformPackage}; retrying once with a fresh cache.`,
@@ -1718,7 +1713,7 @@ describe("installPluginFromNpmSpec", () => {
       pluginId: "codex-fixture",
       npmRoot,
       expectedDependencySpec: "1.0.0",
-      openclaw: {
+      nova: {
         extensions: ["./dist/index.js"],
         install: { requiredPlatformPackages: [platformPackage] },
       },
@@ -1818,7 +1813,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(warnings.some((warning) => warning.includes("managed npm project corruption"))).toBe(
       true,
     );
-    const quarantineParent = path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects");
+    const quarantineParent = path.join(npmProjectRoot, "_nova-quarantined-npm-projects");
     const quarantines = fs.readdirSync(quarantineParent);
     expect(quarantines).toHaveLength(1);
     const quarantineDir = path.join(quarantineParent, quarantines[0] ?? "");
@@ -1931,7 +1926,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(managedInstallAttempts).toBeGreaterThanOrEqual(2);
     expect(result.error).toContain("npm install failed after managed npm project recovery");
     expect(result.error).toContain("Original npm error");
-    const quarantineParent = path.join(npmProjectRoot, "_openclaw-quarantined-npm-projects");
+    const quarantineParent = path.join(npmProjectRoot, "_nova-quarantined-npm-projects");
     const quarantines = fs.readdirSync(quarantineParent);
     expect(quarantines).toHaveLength(1);
     expect(
@@ -1979,7 +1974,7 @@ describe("installPluginFromNpmSpec", () => {
   });
 
   it.runIf(process.platform !== "win32")(
-    "does not let managed openclaw peer links poison later npm installs",
+    "does not let managed nova peer links poison later npm installs",
     async () => {
       const stateDir = suiteTempRootTracker.makeTempDir();
       const npmRoot = path.join(stateDir, "npm");
@@ -1991,7 +1986,7 @@ describe("installPluginFromNpmSpec", () => {
           version: "1.0.0",
           pluginId: "peer-plugin",
           npmRoot,
-          peerDependencies: { openclaw: "^2026.0.0" },
+          peerDependencies: { nova: "^2026.0.0" },
         },
         {
           spec: "next-plugin@1.0.0",
@@ -2009,9 +2004,9 @@ describe("installPluginFromNpmSpec", () => {
       });
       expect(first.ok).toBe(true);
       const peerPluginDir = resolveTestPluginPackageDir(npmRoot, "peer-plugin");
-      expect(
-        fs.lstatSync(path.join(peerPluginDir, "node_modules", "openclaw")).isSymbolicLink(),
-      ).toBe(true);
+      expect(fs.lstatSync(path.join(peerPluginDir, "node_modules", "nova")).isSymbolicLink()).toBe(
+        true,
+      );
 
       const second = await installPluginFromNpmSpec({
         spec: "next-plugin@1.0.0",
@@ -2021,11 +2016,11 @@ describe("installPluginFromNpmSpec", () => {
 
       expect(second.ok).toBe(true);
       if (!second.ok) {
-        expect(second.error).not.toContain("peer-plugin/node_modules/openclaw");
+        expect(second.error).not.toContain("peer-plugin/node_modules/nova");
       }
-      expect(
-        fs.lstatSync(path.join(peerPluginDir, "node_modules", "openclaw")).isSymbolicLink(),
-      ).toBe(true);
+      expect(fs.lstatSync(path.join(peerPluginDir, "node_modules", "nova")).isSymbolicLink()).toBe(
+        true,
+      );
     },
   );
 
@@ -2043,7 +2038,7 @@ describe("installPluginFromNpmSpec", () => {
           version: "1.0.0",
           pluginId: "peer-plugin",
           npmRoot,
-          peerDependencies: { openclaw: "^2026.0.0" },
+          peerDependencies: { nova: "^2026.0.0" },
         },
         {
           spec: "next-plugin@1.0.0",
@@ -2079,19 +2074,19 @@ describe("installPluginFromNpmSpec", () => {
     },
   );
 
-  it("rejects managed npm plugins when their openclaw peer link cannot be repaired", async () => {
+  it("rejects managed npm plugins when their nova peer link cannot be repaired", async () => {
     const stateDir = suiteTempRootTracker.makeTempDir();
     const npmRoot = path.join(stateDir, "npm");
     const warnings: string[] = [];
 
-    resolveOpenClawPackageRootSyncMock.mockReturnValue(null);
+    resolveNovaPackageRootSyncMock.mockReturnValue(null);
     mockNpmViewAndInstall({
       spec: "@nova/codex@2026.5.7",
       packageName: "@nova/codex",
       version: "2026.5.7",
       pluginId: "@nova/codex",
       npmRoot,
-      peerDependencies: { openclaw: ">=2026.5.7" },
+      peerDependencies: { nova: ">=2026.5.7" },
     });
 
     const result = await installPluginFromNpmSpec({
@@ -2105,10 +2100,10 @@ describe("installPluginFromNpmSpec", () => {
       return;
     }
     expect(result.error).toContain("@nova/codex");
-    expect(result.error).toContain("plugin-local node_modules/openclaw link");
-    expect(
-      warnings.some((warning) => warning.includes("Could not locate openclaw package root")),
-    ).toBe(true);
+    expect(result.error).toContain("plugin-local node_modules/nova link");
+    expect(warnings.some((warning) => warning.includes("Could not locate nova package root"))).toBe(
+      true,
+    );
     expect(fs.existsSync(resolveTestPluginPackageDir(npmRoot, "@nova/codex"))).toBe(false);
     const npmProjectRoot = resolvePluginNpmProjectDir({
       npmDir: npmRoot,
@@ -2128,8 +2123,8 @@ describe("installPluginFromNpmSpec", () => {
       version: "2026.5.27",
       pluginId: "whatsapp",
       npmRoot,
-      peerDependencies: { openclaw: ">=2026.5.27" },
-      openclaw: {
+      peerDependencies: { nova: ">=2026.5.27" },
+      nova: {
         extensions: ["./dist/index.js"],
         install: { minHostVersion: ">=2026.4.25" },
         compat: { pluginApi: ">=2026.5.27" },
@@ -2150,7 +2145,7 @@ describe("installPluginFromNpmSpec", () => {
     expect(result.error).toContain("requires plugin API >=2026.5.27");
     expect(result.error).toContain("runtime exposes 2026.5.10-beta.1");
     expect(result.error).toContain("install a compatible plugin version");
-    expect(fs.existsSync(path.join(npmRoot, "node_modules", "@openclaw", "whatsapp"))).toBe(false);
+    expect(fs.existsSync(path.join(npmRoot, "node_modules", "@nova", "whatsapp"))).toBe(false);
     expect(fs.existsSync(path.join(npmRoot, "package.json"))).toBe(false);
     expect(
       runCommandWithTimeoutMock.mock.calls.some(([argv]) => isManagedNpmInstallCommand(argv)),
@@ -2171,7 +2166,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "whatsapp",
         npmRoot,
         versions: ["2026.5.26", "2026.5.27"],
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           install: { minHostVersion: ">=2026.4.25" },
           compat: { pluginApi: ">=2026.5.27" },
@@ -2184,7 +2179,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "whatsapp",
         npmRoot,
         expectedDependencySpec: "2026.5.26",
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           install: { minHostVersion: ">=2026.4.25" },
           compat: { pluginApi: ">=2026.5.10-beta.1" },
@@ -2239,7 +2234,7 @@ describe("installPluginFromNpmSpec", () => {
       version: "2026.5.26",
       pluginId: "whatsapp",
       npmRoot: npmProjectRoot,
-      openclaw: {
+      nova: {
         extensions: ["./dist/index.js"],
         install: { minHostVersion: ">=2026.4.25" },
         compat: { pluginApi: ">=2026.5.10-beta.1" },
@@ -2254,7 +2249,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "whatsapp",
         npmRoot,
         versions: ["2026.5.26", "2026.5.27"],
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           install: { minHostVersion: ">=2026.4.25" },
           compat: { pluginApi: ">=2026.5.27" },
@@ -2267,7 +2262,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "whatsapp",
         npmRoot,
         expectedDependencySpec: "2026.5.26",
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           install: { minHostVersion: ">=2026.4.25" },
           compat: { pluginApi: ">=2026.5.10-beta.1" },
@@ -2319,7 +2314,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "msteams",
         npmRoot,
         versions: ["2026.5.28-beta.3", "2026.5.28-beta.4"],
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           compat: { pluginApi: ">=2026.5.28-beta.4" },
         },
@@ -2331,7 +2326,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "msteams",
         npmRoot,
         expectedDependencySpec: "2026.5.28-beta.3",
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           compat: { pluginApi: ">=2026.5.28-beta.3" },
         },
@@ -2375,7 +2370,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "msteams",
         npmRoot,
         versions: ["2026.5.27", "2026.5.28-beta.4"],
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           compat: { pluginApi: ">=2026.5.28-beta.4" },
         },
@@ -2413,7 +2408,7 @@ describe("installPluginFromNpmSpec", () => {
         pluginId: "msteams",
         npmRoot,
         versions: ["2026.5.28-alpha.10", "2026.5.28-beta.4"],
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
           compat: { pluginApi: ">=2026.5.28-beta.4" },
         },
@@ -2439,7 +2434,7 @@ describe("installPluginFromNpmSpec", () => {
   });
 
   it.runIf(process.platform !== "win32")(
-    "repairs root openclaw materialized by npm peer handling",
+    "repairs root nova materialized by npm peer handling",
     async () => {
       const stateDir = suiteTempRootTracker.makeTempDir();
       const npmRoot = path.join(stateDir, "npm");
@@ -2450,7 +2445,7 @@ describe("installPluginFromNpmSpec", () => {
         version: "1.0.0",
         pluginId: "required-peer-plugin",
         npmRoot,
-        peerDependencies: { openclaw: "^2026.0.0" },
+        peerDependencies: { nova: "^2026.0.0" },
         materializesRootNova: true,
       });
 
@@ -2466,34 +2461,34 @@ describe("installPluginFromNpmSpec", () => {
         packageName: "required-peer-plugin",
       });
       const requiredPeerPluginDir = resolveTestPluginPackageDir(npmRoot, "required-peer-plugin");
-      expect(fs.existsSync(path.join(npmProjectRoot, "node_modules", "openclaw"))).toBe(false);
+      expect(fs.existsSync(path.join(npmProjectRoot, "node_modules", "nova"))).toBe(false);
       const lockfile = JSON.parse(
         fs.readFileSync(path.join(npmProjectRoot, "package-lock.json"), "utf8"),
       ) as {
         packages?: Record<string, unknown>;
       };
-      expect(lockfile.packages?.["node_modules/openclaw"]).toBeUndefined();
+      expect(lockfile.packages?.["node_modules/nova"]).toBeUndefined();
       expect(
-        fs.lstatSync(path.join(requiredPeerPluginDir, "node_modules", "openclaw")).isSymbolicLink(),
+        fs.lstatSync(path.join(requiredPeerPluginDir, "node_modules", "nova")).isSymbolicLink(),
       ).toBe(true);
     },
   );
 
-  it("repairs stale managed openclaw root packages before npm plugin installs", async () => {
+  it("repairs stale managed nova root packages before npm plugin installs", async () => {
     const stateDir = suiteTempRootTracker.makeTempDir();
     const npmRoot = path.join(stateDir, "npm");
     const npmProjectRoot = resolvePluginNpmProjectDir({
       npmDir: npmRoot,
       packageName: "@nova/discord",
     });
-    fs.mkdirSync(path.join(npmProjectRoot, "node_modules", "openclaw"), { recursive: true });
+    fs.mkdirSync(path.join(npmProjectRoot, "node_modules", "nova"), { recursive: true });
     fs.writeFileSync(
       path.join(npmProjectRoot, "package.json"),
       JSON.stringify(
         {
           private: true,
           dependencies: {
-            openclaw: "2026.5.4",
+            nova: "2026.5.4",
           },
         },
         null,
@@ -2509,16 +2504,16 @@ describe("installPluginFromNpmSpec", () => {
           packages: {
             "": {
               dependencies: {
-                openclaw: "2026.5.4",
+                nova: "2026.5.4",
               },
             },
-            "node_modules/openclaw": {
+            "node_modules/nova": {
               version: "2026.5.4",
-              resolved: "https://registry.npmjs.org/openclaw/-/openclaw-2026.5.4.tgz",
+              resolved: "https://registry.npmjs.org/nova/-/nova-2026.5.4.tgz",
             },
           },
           dependencies: {
-            openclaw: {
+            nova: {
               version: "2026.5.4",
             },
           },
@@ -2529,9 +2524,9 @@ describe("installPluginFromNpmSpec", () => {
       "utf-8",
     );
     fs.writeFileSync(
-      path.join(npmProjectRoot, "node_modules", "openclaw", "package.json"),
+      path.join(npmProjectRoot, "node_modules", "nova", "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "nova",
         version: "2026.5.4",
       }),
       "utf-8",
@@ -2543,7 +2538,7 @@ describe("installPluginFromNpmSpec", () => {
       version: "2026.5.5-beta.1",
       pluginId: "discord",
       npmRoot,
-      peerDependencies: { openclaw: ">=2026.5.5-beta.1" },
+      peerDependencies: { nova: ">=2026.5.5-beta.1" },
       expectedDependencySpec: "2026.5.5-beta.1",
     });
 
@@ -2557,7 +2552,7 @@ describe("installPluginFromNpmSpec", () => {
     const manifest = JSON.parse(
       fs.readFileSync(path.join(npmProjectRoot, "package.json"), "utf8"),
     ) as { dependencies?: Record<string, string> };
-    expect(manifest.dependencies).not.toHaveProperty("openclaw");
+    expect(manifest.dependencies).not.toHaveProperty("nova");
     expect(manifest.dependencies?.["@nova/discord"]).toBe("2026.5.5-beta.1");
     const lockfile = JSON.parse(
       fs.readFileSync(path.join(npmProjectRoot, "package-lock.json"), "utf8"),
@@ -2565,14 +2560,14 @@ describe("installPluginFromNpmSpec", () => {
       packages?: Record<string, unknown>;
       dependencies?: Record<string, unknown>;
     };
-    expect(lockfile.packages?.["node_modules/openclaw"]).toBeUndefined();
-    expect(lockfile.dependencies?.openclaw).toBeUndefined();
+    expect(lockfile.packages?.["node_modules/nova"]).toBeUndefined();
+    expect(lockfile.dependencies?.nova).toBeUndefined();
   });
 
-  it("preserves the active host openclaw runtime package during npm plugin installs", async () => {
+  it("preserves the active host nova runtime package during npm plugin installs", async () => {
     const stateDir = suiteTempRootTracker.makeTempDir();
     const npmRoot = path.join(stateDir, "npm");
-    const hostPackageRoot = path.join(npmRoot, "node_modules", "openclaw");
+    const hostPackageRoot = path.join(npmRoot, "node_modules", "nova");
     fs.mkdirSync(hostPackageRoot, { recursive: true });
     fs.writeFileSync(
       path.join(npmRoot, "package.json"),
@@ -2580,7 +2575,7 @@ describe("installPluginFromNpmSpec", () => {
         {
           private: true,
           dependencies: {
-            openclaw: "2026.5.12-beta.6",
+            nova: "2026.5.12-beta.6",
           },
         },
         null,
@@ -2596,10 +2591,10 @@ describe("installPluginFromNpmSpec", () => {
           packages: {
             "": {
               dependencies: {
-                openclaw: "2026.5.12-beta.6",
+                nova: "2026.5.12-beta.6",
               },
             },
-            "node_modules/openclaw": {
+            "node_modules/nova": {
               version: "2026.5.12-beta.6",
             },
           },
@@ -2612,16 +2607,16 @@ describe("installPluginFromNpmSpec", () => {
     fs.writeFileSync(
       path.join(hostPackageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "nova",
         version: "2026.5.12-beta.6",
       }),
       "utf-8",
     );
 
-    resolveOpenClawPackageRootSyncMock.mockReturnValue(hostPackageRoot);
+    resolveNovaPackageRootSyncMock.mockReturnValue(hostPackageRoot);
     mockNpmViewAndInstall({
-      spec: "@xdarkicex/openclaw-memory-libravdb@1.4.69",
-      packageName: "@xdarkicex/openclaw-memory-libravdb",
+      spec: "@xdarkicex/nova-memory-libravdb@1.4.69",
+      packageName: "@xdarkicex/nova-memory-libravdb",
       version: "1.4.69",
       pluginId: "libravdb-memory",
       npmRoot,
@@ -2629,7 +2624,7 @@ describe("installPluginFromNpmSpec", () => {
     });
 
     const result = await installPluginFromNpmSpec({
-      spec: "@xdarkicex/openclaw-memory-libravdb@1.4.69",
+      spec: "@xdarkicex/nova-memory-libravdb@1.4.69",
       npmDir: npmRoot,
       logger: { info: () => {}, warn: () => {} },
     });
@@ -2641,19 +2636,19 @@ describe("installPluginFromNpmSpec", () => {
     const baseManifest = JSON.parse(
       fs.readFileSync(path.join(npmRoot, "package.json"), "utf8"),
     ) as { dependencies?: Record<string, string> };
-    expect(baseManifest.dependencies?.openclaw).toBe("2026.5.12-beta.6");
-    expect(baseManifest.dependencies?.["@xdarkicex/openclaw-memory-libravdb"]).toBeUndefined();
+    expect(baseManifest.dependencies?.nova).toBe("2026.5.12-beta.6");
+    expect(baseManifest.dependencies?.["@xdarkicex/nova-memory-libravdb"]).toBeUndefined();
     const npmProjectRoot = resolvePluginNpmProjectDir({
       npmDir: npmRoot,
-      packageName: "@xdarkicex/openclaw-memory-libravdb",
+      packageName: "@xdarkicex/nova-memory-libravdb",
     });
     const projectManifest = JSON.parse(
       fs.readFileSync(path.join(npmProjectRoot, "package.json"), "utf8"),
     ) as { dependencies?: Record<string, string> };
-    expect(projectManifest.dependencies?.["@xdarkicex/openclaw-memory-libravdb"]).toBe("1.4.69");
+    expect(projectManifest.dependencies?.["@xdarkicex/nova-memory-libravdb"]).toBe("1.4.69");
     expect(fs.existsSync(hostPackageRoot)).toBe(true);
     expect(result.targetDir).toBe(
-      resolveTestPluginPackageDir(npmRoot, "@xdarkicex/openclaw-memory-libravdb"),
+      resolveTestPluginPackageDir(npmRoot, "@xdarkicex/nova-memory-libravdb"),
     );
     expect(
       runCommandWithTimeoutMock.mock.calls.some(
@@ -2661,7 +2656,7 @@ describe("installPluginFromNpmSpec", () => {
           Array.isArray(argv) &&
           argv[0] === "npm" &&
           argv[1] === "uninstall" &&
-          argv.includes("openclaw"),
+          argv.includes("nova"),
       ),
     ).toBe(false);
   });
@@ -2746,7 +2741,7 @@ describe("installPluginFromNpmSpec", () => {
         }
         if (argv[0] === "npm" && argv[1] === "uninstall") {
           if (!(argv as string[]).includes("--legacy-peer-deps")) {
-            fs.mkdirSync(path.join(options?.cwd ?? npmRoot, "node_modules", "openclaw"), {
+            fs.mkdirSync(path.join(options?.cwd ?? npmRoot, "node_modules", "nova"), {
               recursive: true,
             });
           }
@@ -2770,11 +2765,11 @@ describe("installPluginFromNpmSpec", () => {
       fs.promises.access(path.join(npmProjectRoot, "package.json")),
     ).rejects.toHaveProperty("code", "ENOENT");
     await expect(
-      fs.promises.access(path.join(npmProjectRoot, "node_modules", "openclaw")),
+      fs.promises.access(path.join(npmProjectRoot, "node_modules", "nova")),
     ).rejects.toHaveProperty("code", "ENOENT");
   });
 
-  it("does not fail rollback snapshots on plugin-local openclaw peer symlinks", async () => {
+  it("does not fail rollback snapshots on plugin-local nova peer symlinks", async () => {
     const npmRoot = path.join(suiteTempRootTracker.makeTempDir(), "npm");
     const npmProjectRoot = resolvePluginNpmProjectDir({
       npmDir: npmRoot,
@@ -2809,17 +2804,17 @@ describe("installPluginFromNpmSpec", () => {
     const hostRoot = suiteTempRootTracker.makeTempDir();
     fs.writeFileSync(
       path.join(hostRoot, "package.json"),
-      `${JSON.stringify({ name: "openclaw", version: "0.0.0-test" }, null, 2)}\n`,
+      `${JSON.stringify({ name: "nova", version: "0.0.0-test" }, null, 2)}\n`,
       "utf8",
     );
-    resolveOpenClawPackageRootSyncMock.mockReturnValue(hostRoot);
+    resolveNovaPackageRootSyncMock.mockReturnValue(hostRoot);
     const installedDir = writeInstalledNpmPlugin({
       npmRoot: npmProjectRoot,
       packageName: "@nova/codex",
       version: "0.0.1",
-      peerDependencies: { openclaw: "*" },
+      peerDependencies: { nova: "*" },
     });
-    const peerLink = path.join(installedDir, "node_modules", "openclaw");
+    const peerLink = path.join(installedDir, "node_modules", "nova");
     fs.mkdirSync(path.dirname(peerLink), { recursive: true });
     fs.symlinkSync(hostRoot, peerLink, "junction");
 
@@ -2834,10 +2829,10 @@ describe("installPluginFromNpmSpec", () => {
       if (source === nodeModulesDir && fs.existsSync(peerLink)) {
         const destinationPeerLink = path.join(
           destination,
-          "@openclaw",
+          "@nova",
           "codex",
           "node_modules",
-          "openclaw",
+          "nova",
         );
         const shouldCopyPeerLink = options.filter
           ? await options.filter(peerLink, destinationPeerLink)
@@ -2932,7 +2927,7 @@ describe("installPluginFromNpmSpec", () => {
       path.join(hostRoot, "package.json"),
       `${JSON.stringify(
         {
-          name: "openclaw",
+          name: "nova",
         },
         null,
         2,
@@ -2952,7 +2947,7 @@ describe("installPluginFromNpmSpec", () => {
       ].join("\n"),
       "utf8",
     );
-    resolveOpenClawPackageRootSyncMock.mockReturnValue(hostRoot);
+    resolveNovaPackageRootSyncMock.mockReturnValue(hostRoot);
     mockNpmViewAndInstall({
       spec: "@nova/voice-call@0.0.1",
       packageName: "@nova/voice-call",
@@ -2972,12 +2967,12 @@ describe("installPluginFromNpmSpec", () => {
           }
           const manifest = JSON.parse(
             fs.readFileSync(path.join(npmProjectRoot, "package.json"), "utf8"),
-          ) as { overrides?: Record<string, unknown>; openclaw?: { managedOverrides?: string[] } };
+          ) as { overrides?: Record<string, unknown>; nova?: { managedOverrides?: string[] } };
           if (installAttempts === 1) {
             expect(manifest.overrides?.["node-domexception"]).toBe(
               "npm:@nolyfill/domexception@1.0.28",
             );
-            expect(manifest.openclaw?.managedOverrides).toEqual([
+            expect(manifest.nova?.managedOverrides).toEqual([
               "axios",
               "nested",
               "node-domexception",
@@ -2997,7 +2992,7 @@ describe("installPluginFromNpmSpec", () => {
               semver: "1.2.3",
             },
           });
-          expect(manifest.openclaw?.managedOverrides).toEqual(["axios", "nested"]);
+          expect(manifest.nova?.managedOverrides).toEqual(["axios", "nested"]);
         }
         return await baseImplementation?.(argv, options);
       },

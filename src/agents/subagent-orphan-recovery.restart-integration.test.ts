@@ -78,7 +78,7 @@ describe("subagent orphan recovery — faithful restart path", () => {
   beforeEach(async () => {
     resetTaskRegistryForTests({ persist: false });
     resetTaskFlowRegistryForTests({ persist: false });
-    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-orphan-integ-"));
+    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-orphan-integ-"));
     process.env.NOVA_STATE_DIR = tempStateDir;
     setRuntimeConfigSnapshot({ session: { store: undefined } } as never);
     // Real registry wiring: only the delivery/announce/cleanup seams (true

@@ -6,9 +6,9 @@ import { resolveBundledPluginsDir } from "./bundled-dir.js";
 import { formatPluginSourceForTable, resolvePluginSourceRoots } from "./source-display.js";
 
 const PLUGIN_SOURCE_ROOTS = {
-  stock: path.resolve(path.sep, "opt", "homebrew", "lib", "node_modules", "openclaw", "extensions"),
-  global: path.resolve(path.sep, "Users", "x", ".openclaw", "extensions"),
-  workspace: path.resolve(path.sep, "Users", "x", "ws", ".openclaw", "extensions"),
+  stock: path.resolve(path.sep, "opt", "homebrew", "lib", "node_modules", "nova", "extensions"),
+  global: path.resolve(path.sep, "Users", "x", ".nova", "extensions"),
+  workspace: path.resolve(path.sep, "Users", "x", "ws", ".nova", "extensions"),
 };
 
 function expectFormattedSource(params: {
@@ -74,7 +74,7 @@ describe("formatPluginSourceForTable", () => {
   ])("shortens $origin sources under the $sourceKey root", expectFormattedSourceCase);
 
   it("ignores untrusted explicit env override for the stock source root", () => {
-    const homeDir = path.resolve(path.sep, "tmp", "openclaw-home");
+    const homeDir = path.resolve(path.sep, "tmp", "nova-home");
     const rawEnv = {
       NOVA_BUNDLED_PLUGINS_DIR: "~/bundled",
       NOVA_STATE_DIR: "~/state",
@@ -90,7 +90,7 @@ describe("formatPluginSourceForTable", () => {
       expected: {
         stock,
         global: path.join(homeDir, "state", "extensions"),
-        workspace: path.join(homeDir, "ws", ".openclaw", "extensions"),
+        workspace: path.join(homeDir, "ws", ".nova", "extensions"),
       },
     });
   });

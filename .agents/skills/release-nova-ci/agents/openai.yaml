@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nova Release CI"
+  short_description: "Verify and debug Nova release validation runs"
+  default_prompt: "Use $release-nova-ci to validate one frozen release SHA with one active parent run, recover only the smallest failed lane, and stop on a precise external blocker."

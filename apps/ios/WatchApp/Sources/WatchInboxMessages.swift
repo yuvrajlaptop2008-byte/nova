@@ -1,13 +1,13 @@
 import Foundation
-import OpenClawKit
+import NovaKit
 
-// Canonical transport leaf models live in OpenClawKit. The local envelope types
+// Canonical transport leaf models live in NovaKit. The local envelope types
 // below retain the existing Watch inbox persistence shape without `type`.
-typealias WatchPayloadType = OpenClawWatchPayloadType
-typealias WatchRiskLevel = OpenClawWatchRisk
-typealias WatchExecApprovalDecision = OpenClawWatchExecApprovalDecision
-typealias WatchExecApprovalTransportOutcome = OpenClawWatchExecApprovalOutcome
-typealias WatchExecApprovalCloseReason = OpenClawWatchExecApprovalCloseReason
+typealias WatchPayloadType = NovaWatchPayloadType
+typealias WatchRiskLevel = NovaWatchRisk
+typealias WatchExecApprovalDecision = NovaWatchExecApprovalDecision
+typealias WatchExecApprovalTransportOutcome = NovaWatchExecApprovalOutcome
+typealias WatchExecApprovalCloseReason = NovaWatchExecApprovalCloseReason
 typealias WatchOpaqueUTF8Key = ExactOpaqueIdentifierKey
 typealias WatchApprovalID = ExecApprovalIdentifier
 typealias WatchGatewayID = GatewayStableIdentifier
@@ -17,7 +17,7 @@ struct WatchExecApprovalIdentityKey: Hashable, Sendable {
     var approvalID: WatchApprovalID.Key
 }
 
-typealias WatchExecApprovalItem = OpenClawWatchExecApprovalItem
+typealias WatchExecApprovalItem = NovaWatchExecApprovalItem
 
 struct WatchExecApprovalPromptMessage: Codable, Equatable {
     var approval: WatchExecApprovalItem
@@ -72,10 +72,10 @@ struct WatchExecApprovalSnapshotMessage: Codable, Equatable {
     }
 }
 
-typealias WatchExecApprovalSnapshotRequestMessage = OpenClawWatchExecApprovalSnapshotRequestMessage
-typealias WatchExecApprovalSnapshotRequestItem = OpenClawWatchExecApprovalSnapshotRequestItem
-typealias WatchExecApprovalResolveMessage = OpenClawWatchExecApprovalResolveMessage
-typealias WatchAppCommand = OpenClawWatchAppCommand
+typealias WatchExecApprovalSnapshotRequestMessage = NovaWatchExecApprovalSnapshotRequestMessage
+typealias WatchExecApprovalSnapshotRequestItem = NovaWatchExecApprovalSnapshotRequestItem
+typealias WatchExecApprovalResolveMessage = NovaWatchExecApprovalResolveMessage
+typealias WatchAppCommand = NovaWatchAppCommand
 
 enum WatchStatusLocalizationKey: String {
     case connected
@@ -479,38 +479,38 @@ extension WatchExecApprovalDecision {
 }
 
 struct WatchAppSnapshotMessage: Codable, Equatable {
-    var gatewayStatus: OpenClawWatchAppStatus
+    var gatewayStatus: NovaWatchAppStatus
     var gatewayConnected: Bool
     var agentName: String
     var agentAvatarURL: String?
     var agentAvatarText: String?
     var sessionKey: String
     var gatewayStableID: String?
-    var talkStatus: OpenClawWatchAppStatus
+    var talkStatus: NovaWatchAppStatus
     var talkEnabled: Bool
     var talkListening: Bool
     var talkSpeaking: Bool
     var pendingApprovalCount: Int
     var chatItems: [WatchChatItem]?
-    var chatStatus: OpenClawWatchAppStatus?
+    var chatStatus: NovaWatchAppStatus?
     var sentAtMs: Int64?
     var snapshotId: String?
 
     init(
-        gatewayStatus: OpenClawWatchAppStatus,
+        gatewayStatus: NovaWatchAppStatus,
         gatewayConnected: Bool,
         agentName: String,
         agentAvatarURL: String?,
         agentAvatarText: String?,
         sessionKey: String,
         gatewayStableID: String?,
-        talkStatus: OpenClawWatchAppStatus,
+        talkStatus: NovaWatchAppStatus,
         talkEnabled: Bool,
         talkListening: Bool,
         talkSpeaking: Bool,
         pendingApprovalCount: Int,
         chatItems: [WatchChatItem]?,
-        chatStatus: OpenClawWatchAppStatus?,
+        chatStatus: NovaWatchAppStatus?,
         sentAtMs: Int64?,
         snapshotId: String?)
     {
@@ -595,7 +595,7 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
     }
 
     static func localizedChatStatusText(
-        status: OpenClawWatchAppStatus?,
+        status: NovaWatchAppStatus?,
         chatCount: Int,
         hasAppSnapshot: Bool,
         localize: (WatchStatusLocalizationKey) -> String = { $0.localized }) -> String
@@ -655,7 +655,7 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
         let chatStatusCode = try container.decodeIfPresent(String.self, forKey: .chatStatusCode)
         let chatStatusText = try container.decodeIfPresent(String.self, forKey: .chatStatusText)
         if let gatewayStatus = try? container.decode(
-            OpenClawWatchAppStatus.self,
+            NovaWatchAppStatus.self,
             forKey: .gatewayStatus)
         {
             self.gatewayStatus = gatewayStatus
@@ -663,7 +663,7 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
                   let gatewayStatusText,
                   !gatewayStatusText.isEmpty
         {
-            self.gatewayStatus = OpenClawWatchAppStatus(
+            self.gatewayStatus = NovaWatchAppStatus(
                 code: .legacy,
                 verbatim: gatewayStatusText)
         } else {
@@ -672,7 +672,7 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
                 connected: self.gatewayConnected)
         }
         if let talkStatus = try? container.decode(
-            OpenClawWatchAppStatus.self,
+            NovaWatchAppStatus.self,
             forKey: .talkStatus)
         {
             self.talkStatus = talkStatus
@@ -680,7 +680,7 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
                   let talkStatusText,
                   !talkStatusText.isEmpty
         {
-            self.talkStatus = OpenClawWatchAppStatus(
+            self.talkStatus = NovaWatchAppStatus(
                 code: .legacy,
                 verbatim: talkStatusText)
         } else {
@@ -691,7 +691,7 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
                 speaking: self.talkSpeaking)
         }
         self.chatStatus = (try? container.decode(
-            OpenClawWatchAppStatus.self,
+            NovaWatchAppStatus.self,
             forKey: .chatStatus)) ?? Self.decodeLegacyChatStatus(
             code: chatStatusCode,
             text: chatStatusText)
@@ -719,7 +719,7 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
 
     private static func parseStatus(
         _ value: Any?,
-        fallbackText: String? = nil) -> OpenClawWatchAppStatus?
+        fallbackText: String? = nil) -> NovaWatchAppStatus?
     {
         guard let payload = value as? [String: Any],
               let rawCode = payload["code"] as? String
@@ -727,12 +727,12 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
             return nil
         }
         let verbatim = payload["verbatim"] as? String
-        guard let code = OpenClawWatchAppStatusCode(rawValue: rawCode) else {
+        guard let code = NovaWatchAppStatusCode(rawValue: rawCode) else {
             let legacyText = verbatim?.isEmpty == false ? verbatim : fallbackText
             guard let legacyText, !legacyText.isEmpty else { return nil }
-            return OpenClawWatchAppStatus(code: .legacy, verbatim: legacyText)
+            return NovaWatchAppStatus(code: .legacy, verbatim: legacyText)
         }
-        return OpenClawWatchAppStatus(
+        return NovaWatchAppStatus(
             code: code,
             localizationKey: payload["localizationKey"] as? String,
             arguments: payload["arguments"] as? [String] ?? [],
@@ -741,57 +741,57 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
 
     private static func decodeLegacyGatewayStatus(
         text: String?,
-        connected: Bool) -> OpenClawWatchAppStatus
+        connected: Bool) -> NovaWatchAppStatus
     {
         if connected {
-            return OpenClawWatchAppStatus(code: .gatewayConnected)
+            return NovaWatchAppStatus(code: .gatewayConnected)
         }
         guard let text, !text.isEmpty else {
-            return OpenClawWatchAppStatus(code: .gatewayOffline)
+            return NovaWatchAppStatus(code: .gatewayOffline)
         }
-        return OpenClawWatchAppStatus(code: .legacy, verbatim: text)
+        return NovaWatchAppStatus(code: .legacy, verbatim: text)
     }
 
     private static func decodeLegacyTalkStatus(
         text: String?,
         enabled: Bool,
         listening: Bool,
-        speaking: Bool) -> OpenClawWatchAppStatus
+        speaking: Bool) -> NovaWatchAppStatus
     {
         if speaking {
-            return OpenClawWatchAppStatus(code: .talkSpeaking)
+            return NovaWatchAppStatus(code: .talkSpeaking)
         }
         if listening {
-            return OpenClawWatchAppStatus(code: .talkListening)
+            return NovaWatchAppStatus(code: .talkListening)
         }
         if !enabled {
-            return OpenClawWatchAppStatus(code: .talkOff)
+            return NovaWatchAppStatus(code: .talkOff)
         }
         guard let text, !text.isEmpty else {
-            return OpenClawWatchAppStatus(code: .talkReady)
+            return NovaWatchAppStatus(code: .talkReady)
         }
-        return OpenClawWatchAppStatus(code: .legacy, verbatim: text)
+        return NovaWatchAppStatus(code: .legacy, verbatim: text)
     }
 
     private static func decodeLegacyChatStatus(
         code: String?,
-        text: String?) -> OpenClawWatchAppStatus?
+        text: String?) -> NovaWatchAppStatus?
     {
-        let statusCode: OpenClawWatchAppStatusCode? = switch code {
+        let statusCode: NovaWatchAppStatusCode? = switch code {
         case "connectIPhone":
-            OpenClawWatchAppStatusCode.chatConnectIPhone
+            NovaWatchAppStatusCode.chatConnectIPhone
         case "noMessages":
-            OpenClawWatchAppStatusCode.chatNoMessages
+            NovaWatchAppStatusCode.chatNoMessages
         case "unavailable":
-            OpenClawWatchAppStatusCode.chatUnavailable
+            NovaWatchAppStatusCode.chatUnavailable
         default:
             nil
         }
         if let statusCode {
-            return OpenClawWatchAppStatus(code: statusCode)
+            return NovaWatchAppStatus(code: statusCode)
         }
         guard let text, !text.isEmpty else { return nil }
-        return OpenClawWatchAppStatus(code: .legacy, verbatim: text)
+        return NovaWatchAppStatus(code: .legacy, verbatim: text)
     }
 
     private static func parseChatItem(_ item: Any) -> WatchChatItem? {
@@ -824,11 +824,11 @@ struct WatchAppSnapshotMessage: Codable, Equatable {
     }
 }
 
-typealias WatchChatCompletionMessage = OpenClawWatchChatCompletionMessage
-typealias WatchChatItem = OpenClawWatchChatItem
-typealias WatchAppSnapshotRequestMessage = OpenClawWatchAppSnapshotRequestMessage
-typealias WatchAppCommandMessage = OpenClawWatchAppCommandMessage
-typealias WatchPromptAction = OpenClawWatchAction
+typealias WatchChatCompletionMessage = NovaWatchChatCompletionMessage
+typealias WatchChatItem = NovaWatchChatItem
+typealias WatchAppSnapshotRequestMessage = NovaWatchAppSnapshotRequestMessage
+typealias WatchAppCommandMessage = NovaWatchAppCommandMessage
+typealias WatchPromptAction = NovaWatchAction
 
 struct WatchNotifyMessage: Codable {
     var id: String?
@@ -941,7 +941,7 @@ struct WatchExecApprovalRecord: Codable, Equatable, Identifiable {
     }
 }
 
-extension OpenClawWatchAppStatus {
+extension NovaWatchAppStatus {
     func localizedText(
         localize: (WatchStatusLocalizationKey) -> String = { $0.localized },
         localizePresentation: (String, [String]) -> String = { key, arguments in

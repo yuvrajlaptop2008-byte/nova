@@ -14,7 +14,7 @@ import {
 import { formatConfigIssueLines } from "../config/issue-format.js";
 import { resolveCanonicalConfigPath } from "../config/paths.js";
 import type { ConfigFileSnapshot, LegacyConfigIssue } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import type { StartupMigrationLease } from "../infra/startup-migration-checkpoint.js";
 import { normalizePluginsConfig, resolveEffectiveEnableState } from "../plugins/config-state.js";
@@ -42,9 +42,9 @@ const loadLegacyCronRepair = createLazyRuntimeModule(
 const startupPreflightTraceStartedAt = performance.now();
 
 function withLegacyCronWebhook(
-  config: OpenClawConfig,
-  legacyConfig: OpenClawConfig | undefined,
-): OpenClawConfig {
+  config: NovaConfig,
+  legacyConfig: NovaConfig | undefined,
+): NovaConfig {
   const legacyCron = legacyConfig?.cron as Record<string, unknown> | undefined;
   if (!legacyCron || !Object.hasOwn(legacyCron, "webhook")) {
     return config;
@@ -55,7 +55,7 @@ function withLegacyCronWebhook(
       ...config.cron,
       webhook: legacyCron.webhook,
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 async function measureStartupPreflightStep<T>(name: string, run: () => T | Promise<T>): Promise<T> {
@@ -119,7 +119,7 @@ async function maybeMigrateLegacyConfig(): Promise<string[]> {
 
 export type DoctorConfigPreflightResult = {
   snapshot: Awaited<ReturnType<typeof readConfigFileSnapshot>>;
-  baseConfig: OpenClawConfig;
+  baseConfig: NovaConfig;
   cronCodexRuntimePolicyTargets?: CronCodexRuntimePolicyTarget[];
 };
 
@@ -178,10 +178,7 @@ type StartupPluginConvergenceResult = {
   quarantinedPlugins: DegradedPlugin[];
 };
 
-async function planStartupPluginVerification(params: {
-  cfg: OpenClawConfig;
-  env: NodeJS.ProcessEnv;
-}) {
+async function planStartupPluginVerification(params: { cfg: NovaConfig; env: NodeJS.ProcessEnv }) {
   const { planStartupPluginConvergence } = await measureStartupPreflightStep(
     "plugin-plan-import",
     () => import("./doctor/shared/startup-plugin-convergence-plan.js"),
@@ -195,7 +192,7 @@ async function planStartupPluginVerification(params: {
 }
 
 function buildStartupPluginQuarantine(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   failures: readonly PluginPayloadSmokeFailure[];
 }): DegradedPlugin[] {
   return buildDegradedPluginsFromVerificationFailures(
@@ -208,7 +205,7 @@ function buildStartupPluginQuarantine(params: {
 }
 
 function isStartupPluginVerificationFailureActive(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   failure: PluginPayloadSmokeFailure;
 }): boolean {
   return resolveEffectiveEnableState({
@@ -225,11 +222,11 @@ function formatStartupPluginSmokeFailure(failure: PluginPayloadSmokeFailure): st
     reason: failure.reason,
     detail: failure.detail,
     ...(failure.installPath ? { installPath: failure.installPath } : {}),
-  })}. Run \`openclaw update repair\` to retry plugin repair.`;
+  })}. Run \`nova update repair\` to retry plugin repair.`;
 }
 
 async function runStartupUpgradeConvergence(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): Promise<StartupPluginConvergenceResult> {
   const plan = await planStartupPluginVerification(params);
@@ -293,7 +290,7 @@ async function runStartupUpgradeConvergence(params: {
 }
 
 async function refreshStartupPluginQuarantine(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): Promise<StartupPluginConvergenceResult> {
   const plan = await planStartupPluginVerification(params);
@@ -358,7 +355,7 @@ function formatStartupMigrationFailure(params: { warnings: string[]; blockers: s
   return [
     "Nova startup migrations did not complete cleanly; refusing to report the gateway ready.",
     ...details,
-    'Run "openclaw doctor --fix" against the mounted state/config, then restart the container.',
+    'Run "nova doctor --fix" against the mounted state/config, then restart the container.',
   ].join("\n");
 }
 
@@ -509,18 +506,12 @@ export async function runDoctorConfigPreflight(
     );
     if (options.repairPrefixedConfig === true && snapshot.exists && !snapshot.valid) {
       if (await recoverConfigFromJsonRootSuffix(snapshot)) {
-        note(
-          "Removed non-JSON prefix from openclaw.json; original saved as .clobbered.*.",
-          "Config",
-        );
+        note("Removed non-JSON prefix from nova.json; original saved as .clobbered.*.", "Config");
         snapshot = addDoctorLegacyIssues(await readConfigFileSnapshot(readOptions));
       } else if (
         await recoverConfigFromLastKnownGood({ snapshot, reason: "doctor-invalid-config" })
       ) {
-        note(
-          "Restored openclaw.json from last-known-good; original saved as .clobbered.*.",
-          "Config",
-        );
+        note("Restored nova.json from last-known-good; original saved as .clobbered.*.", "Config");
         snapshot = addDoctorLegacyIssues(await readConfigFileSnapshot(readOptions));
       }
       if (
@@ -657,7 +648,7 @@ export async function runDoctorConfigPreflight(
           throwStartupMigrationRefusal(
             formatStartupMigrationFailure({
               warnings: [],
-              blockers: ['Nova config is invalid; run "openclaw doctor --fix" before startup.'],
+              blockers: ['Nova config is invalid; run "nova doctor --fix" before startup.'],
             }),
           );
         }

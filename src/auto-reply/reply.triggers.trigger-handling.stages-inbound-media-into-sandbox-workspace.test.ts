@@ -145,7 +145,7 @@ async function setupSandboxWorkspace(home: string): Promise<{
   sandboxDir: string;
 }> {
   const cfg = createSandboxMediaStageConfig(home);
-  const workspaceDir = join(home, "openclaw");
+  const workspaceDir = join(home, "nova");
   const sandboxDir = join(home, "sandboxes", "session");
   await fs.mkdir(sandboxDir, { recursive: true });
   sandboxMocks.ensureSandboxWorkspaceForSession.mockResolvedValue({
@@ -160,7 +160,7 @@ async function writeInboundMedia(
   fileName: string,
   payload: string | Buffer,
 ): Promise<string> {
-  const inboundDir = join(home, ".openclaw", "media", "inbound");
+  const inboundDir = join(home, ".nova", "media", "inbound");
   await fs.mkdir(inboundDir, { recursive: true });
   const mediaPath = join(inboundDir, fileName);
   await fs.writeFile(mediaPath, payload);
@@ -169,7 +169,7 @@ async function writeInboundMedia(
 
 describe("stageSandboxMedia", () => {
   it("stages managed inbound media URIs into the sandbox workspace", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir, sandboxDir } = await setupSandboxWorkspace(home);
       const fileName = "report.pdf";
       const mediaPath = await writeInboundMedia(home, fileName, "pdf-bytes");
@@ -198,9 +198,9 @@ describe("stageSandboxMedia", () => {
   });
 
   it("keeps host-staged inbound images available to native vision", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const cfg = createSandboxMediaStageConfig(home);
-      const workspaceDir = join(home, "openclaw");
+      const workspaceDir = join(home, "nova");
       sandboxMocks.ensureSandboxWorkspaceForSession.mockResolvedValue(null);
       const fileName = "host-photo.png";
       await writeInboundMedia(home, fileName, "host-image-bytes");
@@ -223,7 +223,7 @@ describe("stageSandboxMedia", () => {
       const stagedPath = ctx.MediaPath ?? "";
       const stagedRelativePath = path.relative(workspaceDir, stagedPath);
       expect(stagedRelativePath).toMatch(
-        new RegExp(`^media/inbound/openclaw-staged-[0-9a-f-]+/${fileName}$`),
+        new RegExp(`^media/inbound/nova-staged-[0-9a-f-]+/${fileName}$`),
       );
       expect(result.staged.get(mediaUri)).toBe(stagedPath);
       expect(sessionCtx.MediaPath).toBe(stagedPath);
@@ -235,7 +235,7 @@ describe("stageSandboxMedia", () => {
   });
 
   it("stages allowed media and blocks unsafe paths", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir, sandboxDir } = await setupSandboxWorkspace(home);
 
       {
@@ -308,7 +308,7 @@ describe("stageSandboxMedia", () => {
   });
 
   it("blocks destination symlink escapes when staging into sandbox workspace", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir, sandboxDir } = await setupSandboxWorkspace(home);
 
       const mediaPath = await writeInboundMedia(home, "payload.txt", "PAYLOAD");
@@ -339,7 +339,7 @@ describe("stageSandboxMedia", () => {
   });
 
   it("skips oversized media staging and keeps original media paths", async () => {
-    await withSandboxMediaTempHome("openclaw-triggers-", async (home) => {
+    await withSandboxMediaTempHome("nova-triggers-", async (home) => {
       const { cfg, workspaceDir, sandboxDir } = await setupSandboxWorkspace(home);
 
       const mediaPath = await writeInboundMedia(

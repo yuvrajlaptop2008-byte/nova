@@ -105,7 +105,7 @@ function readCodexBinding(sessionId, sessionKey, entry) {
     );
   }
 
-  const dbPath = path.join(stateDir(), "state", "openclaw.sqlite");
+  const dbPath = path.join(stateDir(), "state", "nova.sqlite");
   if (!fs.existsSync(dbPath)) {
     throw new Error(`missing Nova state database: ${dbPath}`);
   }
@@ -190,7 +190,7 @@ function readSessionEntry(sessionId) {
       `NOVA_CODEX_NPM_PLUGIN_SESSION_STORE_CONTRACT must be sqlite or legacy-json; got ${sessionStoreContract}`,
     );
   }
-  const dbPath = path.join(stateDir(), "agents", "main", "agent", "openclaw-agent.sqlite");
+  const dbPath = path.join(stateDir(), "agents", "main", "agent", "nova-agent.sqlite");
   if (!fs.existsSync(dbPath)) {
     throw new Error(`missing agent session database: ${dbPath}`);
   }
@@ -363,8 +363,8 @@ function normalizePluginSpec(spec) {
 
 function assertPlugin() {
   const spec = process.argv[3] || "npm:@nova/codex";
-  const list = readJson("/tmp/openclaw-codex-plugins-list.json");
-  const inspect = readJson("/tmp/openclaw-codex-plugin-inspect.json");
+  const list = readJson("/tmp/nova-codex-plugins-list.json");
+  const inspect = readJson("/tmp/nova-codex-plugin-inspect.json");
   const plugin = (list.plugins || []).find((entry) => entry.id === "codex");
   if (!plugin) {
     throw new Error("codex plugin not found in plugins list --json output");
@@ -463,7 +463,7 @@ function assertNpmDeps() {
 
   const openAiCodexPackageJson = findCodexPackageJson("@openai/codex");
   if (!openAiCodexPackageJson) {
-    throw new Error("missing @openai/codex dependency under .openclaw/npm");
+    throw new Error("missing @openai/codex dependency under .nova/npm");
   }
   assertPathInside(npmRoot, openAiCodexPackageJson, "@openai/codex dependency");
 
@@ -510,7 +510,7 @@ function printCodexBin() {
 
 function assertPreflight() {
   const marker = process.argv[3];
-  const output = readTextFileBounded("/tmp/openclaw-codex-preflight.log", "Codex preflight log");
+  const output = readTextFileBounded("/tmp/nova-codex-preflight.log", "Codex preflight log");
   if (!output.includes(marker)) {
     throw new Error(`Codex CLI preflight did not contain ${marker}:\n${output}`);
   }
@@ -579,7 +579,7 @@ function assertNativeCodexSessionEvidence(params) {
   return matchingEvidence;
 }
 
-function extractOpenClawToolTimeline(transcriptEvents) {
+function extractNovaToolTimeline(transcriptEvents) {
   const timeline = [];
   for (const event of transcriptEvents) {
     const message = event?.type === "message" ? event.message : undefined;
@@ -639,7 +639,7 @@ function findToolResult(timeline, call, beforeIndex = Number.POSITIVE_INFINITY) 
 }
 
 function assertFollowthroughTranscript({ transcriptEvents, progressMarker, completeMarker }) {
-  const timeline = extractOpenClawToolTimeline(transcriptEvents);
+  const timeline = extractNovaToolTimeline(transcriptEvents);
   const markerCalls = timeline.flatMap((entry) => {
     if (entry.type !== "call" || entry.name !== "message") {
       return [];
@@ -807,8 +807,8 @@ function assertAgentTurn() {
     marker: process.argv[3],
     sessionId: process.argv[4],
     modelRef: process.argv[5],
-    stdoutPath: "/tmp/openclaw-codex-agent.json",
-    stderrPath: "/tmp/openclaw-codex-agent.err",
+    stdoutPath: "/tmp/nova-codex-agent.json",
+    stderrPath: "/tmp/nova-codex-agent.err",
   });
 }
 
@@ -823,8 +823,8 @@ function assertFollowthrough() {
     throw new Error(`expected three follow-through input paths, got ${inputPaths.length}`);
   }
 
-  const stdoutPath = "/tmp/openclaw-codex-followthrough.json";
-  const stderrPath = "/tmp/openclaw-codex-followthrough.err";
+  const stdoutPath = "/tmp/nova-codex-followthrough.json";
+  const stderrPath = "/tmp/nova-codex-followthrough.err";
   const response = JSON.parse(readTextFileBounded(stdoutPath, "Nova follow-through JSON"));
   const replyTexts = (response.payloads || [])
     .map((payload) => (payload && typeof payload.text === "string" ? payload.text.trim() : ""))
@@ -869,7 +869,7 @@ function assertUninstalled() {
       `codex install record still exists after uninstall: ${JSON.stringify(records.codex)}`,
     );
   }
-  const list = readJson("/tmp/openclaw-codex-plugins-list-after-uninstall.json");
+  const list = readJson("/tmp/nova-codex-plugins-list-after-uninstall.json");
   const plugin = (list.plugins || []).find((entry) => entry.id === "codex");
   if (plugin?.status === "loaded" || plugin?.enabled === true) {
     throw new Error(`codex plugin still loaded/enabled after uninstall: ${JSON.stringify(plugin)}`);
@@ -890,17 +890,11 @@ function assertAgentError() {
       `expected Nova agent to fail after Codex uninstall, got status ${process.argv[3]}`,
     );
   }
-  const stdout = fs.existsSync("/tmp/openclaw-codex-agent-after-uninstall.json")
-    ? readTextFileTail(
-        "/tmp/openclaw-codex-agent-after-uninstall.json",
-        "post-uninstall agent stdout",
-      )
+  const stdout = fs.existsSync("/tmp/nova-codex-agent-after-uninstall.json")
+    ? readTextFileTail("/tmp/nova-codex-agent-after-uninstall.json", "post-uninstall agent stdout")
     : "";
-  const stderr = fs.existsSync("/tmp/openclaw-codex-agent-after-uninstall.err")
-    ? readTextFileTail(
-        "/tmp/openclaw-codex-agent-after-uninstall.err",
-        "post-uninstall agent stderr",
-      )
+  const stderr = fs.existsSync("/tmp/nova-codex-agent-after-uninstall.err")
+    ? readTextFileTail("/tmp/nova-codex-agent-after-uninstall.err", "post-uninstall agent stderr")
     : "";
   const combined = `${stdout}\n${stderr}`;
   if (

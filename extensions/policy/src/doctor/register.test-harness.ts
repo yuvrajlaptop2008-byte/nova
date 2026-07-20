@@ -8,18 +8,18 @@ import {
   type HealthCheckContext,
   type HealthFinding,
   type HealthRepairContext,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/health";
-import { clearHealthChecksForTest } from "openclaw/plugin-sdk/plugin-test-runtime";
+  type NovaConfig,
+} from "nova/plugin-sdk/health";
+import { clearHealthChecksForTest } from "nova/plugin-sdk/plugin-test-runtime";
 import { registerPolicyDoctorChecks } from "./register.js";
 
 export let workspaceDir: string;
 
-let originalOpenClawHome: string | undefined;
+let originalNovaHome: string | undefined;
 
-let originalOpenClawStateDir: string | undefined;
+let originalNovaStateDir: string | undefined;
 
-export function cfgWithPolicy(settings: Record<string, unknown> = {}): OpenClawConfig {
+export function cfgWithPolicy(settings: Record<string, unknown> = {}): NovaConfig {
   return {
     plugins: {
       entries: {
@@ -32,7 +32,7 @@ export function cfgWithPolicy(settings: Record<string, unknown> = {}): OpenClawC
   };
 }
 
-export function ctx(configPath: string, cfg: OpenClawConfig = {}): HealthCheckContext {
+export function ctx(configPath: string, cfg: NovaConfig = {}): HealthCheckContext {
   return {
     mode: "lint",
     runtime: {
@@ -46,7 +46,7 @@ export function ctx(configPath: string, cfg: OpenClawConfig = {}): HealthCheckCo
   };
 }
 
-export function repairCtx(configPath: string, cfg: OpenClawConfig = {}): HealthRepairContext {
+export function repairCtx(configPath: string, cfg: NovaConfig = {}): HealthRepairContext {
   return {
     ...ctx(configPath, cfg),
     mode: "fix",
@@ -105,36 +105,33 @@ export async function runPolicyRepairCheck(checkId: string, repairCheckCtx: Heal
 
 export const describe0BeforeEach0 = async () => {
   clearHealthChecksForTest();
-  originalOpenClawHome = process.env.NOVA_HOME;
-  originalOpenClawStateDir = process.env.NOVA_STATE_DIR;
+  originalNovaHome = process.env.NOVA_HOME;
+  originalNovaStateDir = process.env.NOVA_STATE_DIR;
   workspaceDir = await fs.mkdtemp(join(tmpdir(), "policy-doctor-"));
   process.env.NOVA_HOME = workspaceDir;
   delete process.env.NOVA_STATE_DIR;
-  await fs.mkdir(join(workspaceDir, ".openclaw"), { recursive: true });
+  await fs.mkdir(join(workspaceDir, ".nova"), { recursive: true });
   try {
-    await fs.symlink(
-      "../exec-approvals.json",
-      join(workspaceDir, ".openclaw", "exec-approvals.json"),
-    );
+    await fs.symlink("../exec-approvals.json", join(workspaceDir, ".nova", "exec-approvals.json"));
   } catch (err) {
     if (typeof err !== "object" || err === null || !("code" in err) || err.code !== "EPERM") {
       throw err;
     }
-    await fs.rm(join(workspaceDir, ".openclaw"), { recursive: true, force: true });
-    await fs.symlink(workspaceDir, join(workspaceDir, ".openclaw"), "junction");
+    await fs.rm(join(workspaceDir, ".nova"), { recursive: true, force: true });
+    await fs.symlink(workspaceDir, join(workspaceDir, ".nova"), "junction");
   }
 };
 
 export const describe0AfterEach1 = async () => {
-  if (originalOpenClawHome === undefined) {
+  if (originalNovaHome === undefined) {
     delete process.env.NOVA_HOME;
   } else {
-    process.env.NOVA_HOME = originalOpenClawHome;
+    process.env.NOVA_HOME = originalNovaHome;
   }
-  if (originalOpenClawStateDir === undefined) {
+  if (originalNovaStateDir === undefined) {
     delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.NOVA_STATE_DIR = originalOpenClawStateDir;
+    process.env.NOVA_STATE_DIR = originalNovaStateDir;
   }
   await fs.rm(workspaceDir, { recursive: true, force: true });
   clearHealthChecksForTest();

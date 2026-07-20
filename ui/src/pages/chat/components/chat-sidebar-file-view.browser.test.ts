@@ -45,7 +45,7 @@ type DetailPanel = HTMLElement & {
 const mounted: DetailPanel[] = [];
 
 async function mountFile(content: FileSidebarContent): Promise<DetailPanel> {
-  const panel = document.createElement("openclaw-chat-detail-panel") as DetailPanel;
+  const panel = document.createElement("nova-chat-detail-panel") as DetailPanel;
   panel.content = content;
   document.body.append(panel);
   mounted.push(panel);

@@ -1,5 +1,5 @@
 import type { SessionTranscriptWriteScope } from "../../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resolveSessionIdMatchSelection } from "../../sessions/session-id-resolution.js";
 import {
   loadCombinedSessionStoreForGateway,
@@ -22,7 +22,7 @@ export type ResolvedWorkerSessionTarget = Omit<
 };
 
 export function resolveWorkerSessionTarget(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   sessionId: string,
 ): ResolvedWorkerSessionTarget | undefined {
   const { store } = loadCombinedSessionStoreForGateway(cfg);

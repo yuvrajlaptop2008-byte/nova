@@ -20,7 +20,7 @@ import {
 import { resolveStorePath } from "../config/sessions/paths.js";
 import { loadSessionStore } from "../config/sessions/store.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { clearPluginLoaderCache } from "../plugins/loader.test-fixtures.js";
 import { resetPluginRuntimeStateForTest } from "../plugins/runtime.js";
@@ -209,7 +209,7 @@ async function waitForAcpBackendReady(timeoutMs = CONNECT_TIMEOUT_MS): Promise<v
 }
 
 async function waitForSessionEntry(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey: string;
   timeoutMs?: number;
 }): Promise<SessionEntry> {
@@ -227,7 +227,7 @@ async function waitForSessionEntry(params: {
 }
 
 async function runOpenCodeThinkingControlProof(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   model: string;
   thinking: string;
   sessionKeys: string[];
@@ -277,7 +277,7 @@ async function runOpenCodeThinkingControlProof(params: {
 }
 
 async function runCodexThinkingControlProof(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   model: string;
   thinking: string;
   sessionKeys: string[];
@@ -350,7 +350,7 @@ function createConfig(params: {
   subagentModel?: string;
   thinking?: string;
   includePrimaryOnlyAcpAgent?: boolean;
-}): OpenClawConfig {
+}): NovaConfig {
   const subagents = params.subagentModel
     ? {
         allowAgents: ["*"],
@@ -433,8 +433,8 @@ describeLive("gateway live (ACP spawn defaults)", () => {
     "applies existing subagent defaults to live ACP spawns without leaking primary agent model",
     async () => {
       const previousEnv = snapshotAcpSpawnDefaultsLiveEnv();
-      const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-acp-spawn-"));
-      const tempConfigPath = path.join(tempRoot, "openclaw.json");
+      const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-acp-spawn-"));
+      const tempConfigPath = path.join(tempRoot, "nova.json");
       const tempStateDir = path.join(tempRoot, "state");
       const port = await getFreeGatewayPort();
       const token = `test-${randomUUID()}`;

@@ -52,7 +52,7 @@ export function resolveDebugProxySettings(
     blobDir: resolveDebugProxyBlobDir(env),
     certDir: env[NOVA_DEBUG_PROXY_CERT_DIR]?.trim() || resolveDebugProxyCertDir(env),
     sessionId,
-    sourceProcess: "openclaw",
+    sourceProcess: "nova",
   };
 }
 

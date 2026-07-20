@@ -12,7 +12,7 @@ import {
   hasOutboundReplyContent,
   isReasoningReplyPayload,
   resolveSendableOutboundReplyParts,
-} from "openclaw/plugin-sdk/reply-payload";
+} from "nova/plugin-sdk/reply-payload";
 import {
   listAgentIds,
   resolveAgentConfig,
@@ -87,7 +87,7 @@ import {
 } from "../config/sessions/session-accessor.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 import type { AgentDefaultsConfig } from "../config/types.agent-defaults.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   hasActiveCronJobs,
   hasActiveCronJobsExceptMarker,
@@ -281,7 +281,7 @@ function resolveHeartbeatChannelPlugin(channel: string): ChannelPlugin | undefin
   return activePlugin ?? getChannelPlugin(channel as ChannelId);
 }
 
-function resolveHeartbeatTimeoutOverrideSeconds(cfg: OpenClawConfig, heartbeat?: HeartbeatConfig) {
+function resolveHeartbeatTimeoutOverrideSeconds(cfg: NovaConfig, heartbeat?: HeartbeatConfig) {
   if (typeof heartbeat?.timeoutSeconds === "number") {
     return heartbeat.timeoutSeconds;
   }
@@ -343,7 +343,7 @@ type ActiveHoursSchedule = {
 };
 
 function resolveActiveHoursSchedule(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   heartbeat?: HeartbeatConfig,
 ): ActiveHoursSchedule | undefined {
   const activeHours = heartbeat?.activeHours;
@@ -369,7 +369,7 @@ function activeHoursConfigMatch(a?: ActiveHoursSchedule, b?: ActiveHoursSchedule
 
 export type HeartbeatRunner = {
   stop: () => void;
-  updateConfig: (cfg: OpenClawConfig) => void;
+  updateConfig: (cfg: NovaConfig) => void;
 };
 
 function resolveHeartbeatSchedulerSeed(explicitSeed?: string) {
@@ -388,15 +388,12 @@ function resolveHeartbeatSchedulerSeed(explicitSeed?: string) {
   }
 }
 
-function hasExplicitHeartbeatAgents(cfg: OpenClawConfig) {
+function hasExplicitHeartbeatAgents(cfg: NovaConfig) {
   const list = cfg.agents?.list ?? [];
   return list.some((entry) => Boolean(entry?.heartbeat));
 }
 
-function resolveHeartbeatConfig(
-  cfg: OpenClawConfig,
-  agentId?: string,
-): HeartbeatConfig | undefined {
+function resolveHeartbeatConfig(cfg: NovaConfig, agentId?: string): HeartbeatConfig | undefined {
   const defaults = cfg.agents?.defaults?.heartbeat;
   if (!agentId) {
     return defaults;
@@ -419,7 +416,7 @@ function omitExplicitHeartbeatDestination(heartbeat: HeartbeatConfig | undefined
 }
 
 function resolveHeartbeatForWake(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   configuredHeartbeat?: HeartbeatConfig;
   requestedHeartbeat?: HeartbeatConfig;
@@ -436,7 +433,7 @@ function resolveHeartbeatForWake(params: {
     : heartbeat;
 }
 
-function resolveHeartbeatAgents(cfg: OpenClawConfig): HeartbeatAgent[] {
+function resolveHeartbeatAgents(cfg: NovaConfig): HeartbeatAgent[] {
   const list = cfg.agents?.list ?? [];
   if (hasExplicitHeartbeatAgents(cfg)) {
     return list
@@ -457,20 +454,20 @@ function resolveHeartbeatAgents(cfg: OpenClawConfig): HeartbeatAgent[] {
   return [{ agentId: fallbackId, heartbeat: resolveHeartbeatConfig(cfg, fallbackId) }];
 }
 
-function resolveHeartbeatPromptRaw(cfg: OpenClawConfig, heartbeat?: HeartbeatConfig) {
+function resolveHeartbeatPromptRaw(cfg: NovaConfig, heartbeat?: HeartbeatConfig) {
   return heartbeat?.prompt ?? cfg.agents?.defaults?.heartbeat?.prompt;
 }
 
-export function resolveHeartbeatPrompt(cfg: OpenClawConfig, heartbeat?: HeartbeatConfig) {
+export function resolveHeartbeatPrompt(cfg: NovaConfig, heartbeat?: HeartbeatConfig) {
   return resolveHeartbeatPromptText(resolveHeartbeatPromptRaw(cfg, heartbeat));
 }
 
-function resolveHeartbeatResponseToolPrompt(cfg: OpenClawConfig, heartbeat?: HeartbeatConfig) {
+function resolveHeartbeatResponseToolPrompt(cfg: NovaConfig, heartbeat?: HeartbeatConfig) {
   return resolveHeartbeatPromptForResponseTool(resolveHeartbeatPromptRaw(cfg, heartbeat));
 }
 
 function resolveHeartbeatModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   heartbeat?: HeartbeatConfig;
   entry?: SessionEntry;
@@ -506,7 +503,7 @@ function resolveHeartbeatModelRef(params: {
 }
 
 function usesCodexHarness(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   heartbeat?: HeartbeatConfig;
   entry?: SessionEntry;
@@ -526,7 +523,7 @@ function usesCodexHarness(params: {
 }
 
 function shouldUseHeartbeatResponseToolPrompt(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   heartbeat?: HeartbeatConfig;
   entry?: SessionEntry;
@@ -547,7 +544,7 @@ function shouldUseHeartbeatResponseToolPrompt(params: {
   return usesCodexHarness(params);
 }
 
-function resolveHeartbeatAckMaxChars(cfg: OpenClawConfig, heartbeat?: HeartbeatConfig) {
+function resolveHeartbeatAckMaxChars(cfg: NovaConfig, heartbeat?: HeartbeatConfig) {
   return Math.max(
     0,
     heartbeat?.ackMaxChars ??
@@ -556,7 +553,7 @@ function resolveHeartbeatAckMaxChars(cfg: OpenClawConfig, heartbeat?: HeartbeatC
   );
 }
 
-function isHeartbeatTypingEnabled(params: { cfg: OpenClawConfig; hasChatDelivery: boolean }) {
+function isHeartbeatTypingEnabled(params: { cfg: NovaConfig; hasChatDelivery: boolean }) {
   if (!params.hasChatDelivery) {
     return false;
   }
@@ -565,14 +562,14 @@ function isHeartbeatTypingEnabled(params: { cfg: OpenClawConfig; hasChatDelivery
   return typingMode !== "never";
 }
 
-function resolveHeartbeatTypingIntervalSeconds(cfg: OpenClawConfig) {
+function resolveHeartbeatTypingIntervalSeconds(cfg: NovaConfig) {
   const agentCfg = cfg.agents?.defaults;
   const configured = agentCfg?.typingIntervalSeconds;
   return typeof configured === "number" && configured > 0 ? configured : undefined;
 }
 
 function resolveHeartbeatSession(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentId?: string,
   heartbeat?: HeartbeatConfig,
   forcedSessionKey?: string,
@@ -907,7 +904,7 @@ type HeartbeatPreflight = HeartbeatWakePayloadFlags & {
 };
 
 async function resolveHeartbeatPreflight(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   heartbeat?: HeartbeatConfig;
   runScope: HeartbeatRunScope;
@@ -1125,7 +1122,7 @@ function appendHeartbeatFileDirectives(prompt: string, heartbeatFileContent?: st
 }
 
 function resolveHeartbeatRunPrompt(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   heartbeat?: HeartbeatConfig;
   preflight: HeartbeatPreflight;
   canRelayToUser: boolean;
@@ -1304,7 +1301,7 @@ function heartbeatRunOwnsPendingFinalDelivery(
 }
 
 export async function runHeartbeatOnce(opts: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string;
   sessionKey?: string;
   heartbeat?: HeartbeatConfig;
@@ -2415,8 +2412,8 @@ export const testing = {
 };
 
 export function startHeartbeatRunner(opts: {
-  cfg?: OpenClawConfig;
-  readCurrentConfig?: () => OpenClawConfig;
+  cfg?: NovaConfig;
+  readCurrentConfig?: () => NovaConfig;
   runtime?: RuntimeEnv;
   abortSignal?: AbortSignal;
   runOnce?: typeof runHeartbeatOnce;
@@ -2574,7 +2571,7 @@ export function startHeartbeatRunner(opts: {
     state.timer.unref?.();
   };
 
-  const updateConfig = (cfg: OpenClawConfig) => {
+  const updateConfig = (cfg: NovaConfig) => {
     if (state.stopped) {
       return;
     }

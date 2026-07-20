@@ -16,10 +16,10 @@ import {
   parseSqliteSessionFileMarker,
 } from "../../config/sessions/sqlite-marker.js";
 import { clearSessionStoreCacheForTest } from "../../config/sessions/store.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { createUserTurnTranscriptRecorder } from "../../sessions/user-turn-transcript.js";
 import { createTestUserTurnTranscriptTarget } from "../../sessions/user-turn-transcript.test-support.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
 import { registerGeneratedMediaTaskActivity } from "../../tasks/generated-media-task-activity.js";
 import { resetGeneratedMediaTaskActivityForTests } from "../../tasks/task-runtime.test-helpers.js";
 import { captureEnv, setTestEnvValue } from "../../test-utils/env.js";
@@ -78,7 +78,7 @@ vi.mock("../cli-runner/claude-live-session.js", () => ({
 }));
 
 vi.mock("../model-selection.js", () => ({
-  isCliProvider: (provider: string, cfg?: OpenClawConfig) => {
+  isCliProvider: (provider: string, cfg?: NovaConfig) => {
     const normalized = provider.trim().toLowerCase();
     return (
       normalized === "claude-cli" ||
@@ -109,7 +109,7 @@ vi.mock("../model-runtime-aliases.js", async () => {
       modelId,
     }: {
       provider?: string;
-      cfg?: OpenClawConfig;
+      cfg?: NovaConfig;
       modelId?: string;
     }) => {
       const key = provider && modelId ? `${provider}/${modelId}` : undefined;
@@ -250,7 +250,7 @@ describe("CLI attempt execution", () => {
   let storePath: string;
   let homeEnvSnapshot: ReturnType<typeof captureEnv> | undefined;
 
-  async function runOpenClawEmbeddedAttemptForTest(overrides?: {
+  async function runNovaEmbeddedAttemptForTest(overrides?: {
     opts?: Partial<RunAgentAttemptParams["opts"]>;
     runId?: string;
     body?: string;
@@ -282,7 +282,7 @@ describe("CLI attempt execution", () => {
       originalProvider: "openai",
       modelOverride: overrides?.modelOverride ?? "gpt-5.4",
       configuredAuthProfileId: overrides?.configuredAuthProfileId,
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -319,7 +319,7 @@ describe("CLI attempt execution", () => {
 
   beforeEach(async () => {
     homeEnvSnapshot = captureEnv(["HOME", "NOVA_STATE_DIR"]);
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-cli-attempt-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-cli-attempt-"));
     storePath = path.join(tmpDir, "sessions.json");
     runCliAgentMock.mockReset();
     runEmbeddedAgentMock.mockReset();
@@ -334,7 +334,7 @@ describe("CLI attempt execution", () => {
     for (const [sessionKey, entry] of Object.entries(sessionStore)) {
       await replaceSessionEntry({ sessionKey, storePath }, entry);
     }
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
   }
 
   function readSessionStore(): Record<string, SessionEntry> {
@@ -347,7 +347,7 @@ describe("CLI attempt execution", () => {
     vi.useRealTimers();
     homeEnvSnapshot?.restore();
     homeEnvSnapshot = undefined;
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
     await fs.rm(tmpDir, { recursive: true, force: true });
   });
 
@@ -363,7 +363,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "opus",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry: params.sessionEntry,
       sessionId: params.sessionEntry.sessionId,
       sessionKey: params.sessionKey,
@@ -411,12 +411,9 @@ describe("CLI attempt execution", () => {
     );
   }
 
-  function makeClaudeCliSessionEntry(
-    openclawSessionId: string,
-    cliSessionId: string,
-  ): SessionEntry {
+  function makeClaudeCliSessionEntry(novaSessionId: string, cliSessionId: string): SessionEntry {
     return {
-      sessionId: openclawSessionId,
+      sessionId: novaSessionId,
       updatedAt: Date.now(),
       cliSessionBindings: {
         "claude-cli": {
@@ -480,7 +477,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "opus",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -638,7 +635,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "opus",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -707,7 +704,7 @@ describe("CLI attempt execution", () => {
     const homeDir = path.join(tmpDir, "home");
     setTestEnvValue("HOME", homeDir);
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-123",
+      sessionId: "nova-session-123",
       updatedAt: Date.now(),
       cliSessionBindings: {
         "claude-cli": {
@@ -763,7 +760,7 @@ describe("CLI attempt execution", () => {
     setTestEnvValue("HOME", homeDir);
     await fs.mkdir(projectsDir, { recursive: true });
     // Intentionally do NOT write `${cliSessionId}.jsonl` (no native transcript).
-    const sessionEntry = makeClaudeCliSessionEntry("openclaw-sid", cliSessionId);
+    const sessionEntry = makeClaudeCliSessionEntry("nova-sid", cliSessionId);
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
     await fs.writeFile(storePath, JSON.stringify(sessionStore, null, 2), "utf-8");
     hasClaudeLiveSessionForOwnerMock.mockReturnValue(true);
@@ -790,7 +787,7 @@ describe("CLI attempt execution", () => {
       agentAccountId: undefined,
       agentId: "main",
       authProfileId: "anthropic:claude-cli",
-      sessionId: "openclaw-sid",
+      sessionId: "nova-sid",
       sessionKey,
     });
     expect(sessionStore[sessionKey]?.cliSessionBindings?.["claude-cli"]?.sessionId).toBe(
@@ -825,7 +822,7 @@ describe("CLI attempt execution", () => {
       "utf-8",
     );
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-456",
+      sessionId: "nova-session-456",
       updatedAt: Date.now(),
       cliSessionBindings: {
         "claude-cli": {
@@ -880,7 +877,7 @@ describe("CLI attempt execution", () => {
       })}\n`,
       "utf-8",
     );
-    const sessionEntry = makeClaudeCliSessionEntry("openclaw-session-cwd", cliSessionId);
+    const sessionEntry = makeClaudeCliSessionEntry("nova-session-cwd", cliSessionId);
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
     await writeSessionStoreSeed(sessionStore);
     runCliAgentMock.mockResolvedValueOnce(makeCliResult("resumed cli response"));
@@ -903,7 +900,7 @@ describe("CLI attempt execution", () => {
   it("passes session-bound OpenAI Codex auth profile to codex-cli aliases", async () => {
     const sessionKey = "agent:main:direct:codex-cli-auth-alias";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-codex",
+      sessionId: "nova-session-codex",
       updatedAt: Date.now(),
       authProfileOverride: "openai:work",
       authProfileOverrideSource: "user",
@@ -916,7 +913,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "codex-cli",
       originalProvider: "codex-cli",
       modelOverride: "gpt-5.4",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -949,11 +946,11 @@ describe("CLI attempt execution", () => {
   it("skips auto auth-profile resolution for CLI-owned transport", async () => {
     const sessionKey = "agent:main:direct:codex-cli-owned-transport";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-codex-owned",
+      sessionId: "nova-session-codex-owned",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           agentRuntime: { id: "codex" },
@@ -1001,7 +998,7 @@ describe("CLI attempt execution", () => {
   it("selects a google-gemini-cli auth profile for canonical Google models routed through Gemini CLI", async () => {
     const sessionKey = "agent:main:direct:gemini-cli-auth-bridge";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-gemini",
+      sessionId: "nova-session-gemini",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -1043,7 +1040,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -1077,7 +1074,7 @@ describe("CLI attempt execution", () => {
   it("forwards pinned canonical Google API-key profiles to Google models routed through Gemini CLI", async () => {
     const sessionKey = "agent:main:direct:gemini-cli-google-api-key";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-gemini-api-key",
+      sessionId: "nova-session-gemini-api-key",
       updatedAt: Date.now(),
       authProfileOverride: "google:api-key",
       authProfileOverrideSource: "user",
@@ -1113,7 +1110,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -1147,7 +1144,7 @@ describe("CLI attempt execution", () => {
   it("rejects incompatible pinned profiles before selecting another CLI identity", async () => {
     const sessionKey = "agent:main:direct:gemini-cli-incompatible-auth";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-gemini-incompatible-auth",
+      sessionId: "nova-session-gemini-incompatible-auth",
       updatedAt: Date.now(),
       authProfileOverride: "vercel-ai-gateway:default",
       authProfileOverrideSource: "user",
@@ -1182,7 +1179,7 @@ describe("CLI attempt execution", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         sessionEntry,
         sessionId: sessionEntry.sessionId,
         sessionKey,
@@ -1215,7 +1212,7 @@ describe("CLI attempt execution", () => {
   it("ignores stale auto-selected profiles when resolving Gemini CLI auth order", async () => {
     const sessionKey = "agent:main:direct:gemini-cli-stale-auto-auth";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-gemini-stale-auto-auth",
+      sessionId: "nova-session-gemini-stale-auto-auth",
       updatedAt: Date.now(),
       authProfileOverride: "openai:work",
       authProfileOverrideSource: "auto",
@@ -1263,7 +1260,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -1297,7 +1294,7 @@ describe("CLI attempt execution", () => {
   it("selects canonical Google API-key auth order for Google models routed through Gemini CLI", async () => {
     const sessionKey = "agent:main:direct:gemini-cli-google-api-key-order";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-gemini-api-key-order",
+      sessionId: "nova-session-gemini-api-key-order",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -1336,7 +1333,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -1710,7 +1707,7 @@ describe("CLI attempt execution", () => {
     expect(messages).toHaveLength(1);
   });
 
-  it("embedded assistant gap-fill skips trailing openclaw.cache-ttl custom entries (regression for #83427)", async () => {
+  it("embedded assistant gap-fill skips trailing nova.cache-ttl custom entries (regression for #83427)", async () => {
     const sessionKey = "agent:main:subagent:embedded-gap-fill-cache-ttl";
     const sessionEntry: SessionEntry = {
       sessionId: "session-embedded-gap-fill-cache-ttl",
@@ -1749,7 +1746,7 @@ describe("CLI attempt execution", () => {
       { agentId: "main", sessionId: sessionEntry.sessionId, sessionKey, storePath },
       {
         type: "custom",
-        customType: "openclaw.cache-ttl",
+        customType: "nova.cache-ttl",
         timestamp: new Date().toISOString(),
         data: {
           provider: "anthropic",
@@ -1890,7 +1887,7 @@ describe("CLI attempt execution", () => {
   it("forwards separate user trigger, channel, and provider context to CLI runs", async () => {
     const sessionKey = "agent:main:direct:claude-channel-context";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-channel",
+      sessionId: "nova-session-channel",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -1901,7 +1898,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "opus",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -1955,7 +1952,7 @@ describe("CLI attempt execution", () => {
   it("forwards message-tool-only policy and requires explicit subagent targets", async () => {
     const sessionKey = "agent:main:subagent:claude-message-policy";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-cli-message-policy",
+      sessionId: "nova-session-cli-message-policy",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -1966,7 +1963,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "opus",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2003,7 +2000,7 @@ describe("CLI attempt execution", () => {
   it("does not pass auth-order profiles to CLI backends that do not stage them", async () => {
     const sessionKey = "agent:main:direct:claude-auth-order";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-claude-auth-order",
+      sessionId: "nova-session-claude-auth-order",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2020,7 +2017,7 @@ describe("CLI attempt execution", () => {
             "claude-cli": ["claude-cli:work"],
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2053,7 +2050,7 @@ describe("CLI attempt execution", () => {
   it("does not pass auth-order profiles to configured CLI runtimes that do not stage them", async () => {
     const sessionKey = "agent:main:direct:anthropic-claude-runtime-auth-order";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-anthropic-claude-runtime-auth-order",
+      sessionId: "nova-session-anthropic-claude-runtime-auth-order",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2090,7 +2087,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2153,7 +2150,7 @@ describe("CLI attempt execution", () => {
   it("forwards runtime toolsAllow into CLI attempts so the CLI harness can fail closed", async () => {
     const sessionKey = "agent:main:direct:claude-tools-allow";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-cli-tools-allow",
+      sessionId: "nova-session-cli-tools-allow",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2164,7 +2161,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "opus",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2203,7 +2200,7 @@ describe("CLI attempt execution", () => {
     vi.setSystemTime(new Date("2024-06-05T15:30:00Z"));
     const sessionKey = "agent:main:direct:claude-timestamp";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-cli-timestamp",
+      sessionId: "nova-session-cli-timestamp",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2224,7 +2221,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "opus",
-      cfg: { agents: { defaults: { userTimezone: "UTC" } } } as OpenClawConfig,
+      cfg: { agents: { defaults: { userTimezone: "UTC" } } } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2264,7 +2261,7 @@ describe("CLI attempt execution", () => {
   it("routes canonical Anthropic models through the configured Claude CLI runtime", async () => {
     const sessionKey = "agent:main:direct:canonical-claude-cli";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-canonical-cli",
+      sessionId: "nova-session-canonical-cli",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2286,7 +2283,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2323,7 +2320,7 @@ describe("CLI attempt execution", () => {
     });
     expect(fallbackRuntimeState.originRuntime).toBe("cli");
 
-    const fallbackArg = await runOpenClawEmbeddedAttemptForTest({
+    const fallbackArg = await runNovaEmbeddedAttemptForTest({
       runId: "run-canonical-claude-cli-fallback",
       isFallbackRetry: true,
       fallbackRuntimeState,
@@ -2335,7 +2332,7 @@ describe("CLI attempt execution", () => {
   it("routes provider-qualified Anthropic shorthand through the configured Claude CLI runtime", async () => {
     const sessionKey = "agent:main:direct:shorthand-claude-cli";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-shorthand-cli",
+      sessionId: "nova-session-shorthand-cli",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2354,7 +2351,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2390,7 +2387,7 @@ describe("CLI attempt execution", () => {
   it("routes canonical OpenAI models through the configured embedded Codex runtime", async () => {
     const sessionKey = "agent:main:direct:canonical-codex-cli";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-canonical-codex-cli",
+      sessionId: "nova-session-canonical-codex-cli",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2400,7 +2397,7 @@ describe("CLI attempt execution", () => {
       meta: {
         durationMs: 5,
         finalAssistantVisibleText: "canonical codex embedded",
-        executionTrace: { runner: "openclaw" },
+        executionTrace: { runner: "nova" },
       },
     });
 
@@ -2416,7 +2413,7 @@ describe("CLI attempt execution", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2463,7 +2460,7 @@ describe("CLI attempt execution", () => {
   });
 
   it("keeps live stream output for visible subagent lane runs", async () => {
-    const embeddedArg = await runOpenClawEmbeddedAttemptForTest({
+    const embeddedArg = await runNovaEmbeddedAttemptForTest({
       opts: { lane: "subagent" },
       runId: "visible-subagent-stream",
     });
@@ -2472,7 +2469,7 @@ describe("CLI attempt execution", () => {
   });
 
   it("forwards Gateway plugin runtime binding to embedded runs", async () => {
-    const embeddedArg = await runOpenClawEmbeddedAttemptForTest({
+    const embeddedArg = await runNovaEmbeddedAttemptForTest({
       opts: { allowGatewaySubagentBinding: true },
       runId: "gateway-plugin-runtime-binding",
     });
@@ -2481,7 +2478,7 @@ describe("CLI attempt execution", () => {
   });
 
   it("suppresses live stream output for hidden internal runs", async () => {
-    const embeddedArg = await runOpenClawEmbeddedAttemptForTest({
+    const embeddedArg = await runNovaEmbeddedAttemptForTest({
       opts: { lane: "subagent", sessionEffects: "internal" },
       runId: "internal-subagent-stream",
     });
@@ -2500,7 +2497,7 @@ describe("CLI attempt execution", () => {
       }),
     });
     const images = [{ type: "image" as const, data: "aGVsbG8=", mimeType: "image/png" }];
-    const embeddedArg = await runOpenClawEmbeddedAttemptForTest({
+    const embeddedArg = await runNovaEmbeddedAttemptForTest({
       runId: "embedded-image-turn",
       body: "runtime image prompt",
       transcriptBody: "canonical image caption",
@@ -2526,7 +2523,7 @@ describe("CLI attempt execution", () => {
     async ({ originRuntime, retry, expectedImages }) => {
       const images = [{ type: "image" as const, data: "aGVsbG8=", mimeType: "image/png" }];
       const imageOrder = ["inline" as const];
-      const embeddedArg = await runOpenClawEmbeddedAttemptForTest({
+      const embeddedArg = await runNovaEmbeddedAttemptForTest({
         runId: `embedded-image-fallback-${originRuntime ?? "unset"}-${retry}`,
         isFallbackRetry: retry,
         fallbackRuntimeState: originRuntime === undefined ? undefined : { originRuntime },
@@ -2542,7 +2539,7 @@ describe("CLI attempt execution", () => {
     const images = [{ type: "image" as const, data: "aGVsbG8=", mimeType: "image/png" }];
     const fallbackRuntimeState: NonNullable<RunAgentAttemptParams["fallbackRuntimeState"]> = {};
 
-    const firstArg = await runOpenClawEmbeddedAttemptForTest({
+    const firstArg = await runNovaEmbeddedAttemptForTest({
       runId: "raw-cli-shaped-origin",
       providerOverride: "claude-cli",
       modelOverride: "claude-opus-4-7",
@@ -2552,7 +2549,7 @@ describe("CLI attempt execution", () => {
     expect(fallbackRuntimeState.originRuntime).toBe("embedded");
     expect(firstArg.images).toEqual(images);
 
-    const retryArg = await runOpenClawEmbeddedAttemptForTest({
+    const retryArg = await runNovaEmbeddedAttemptForTest({
       runId: "raw-cli-shaped-origin-retry",
       providerOverride: "claude-cli",
       modelOverride: "claude-opus-4-7",
@@ -2566,7 +2563,7 @@ describe("CLI attempt execution", () => {
   it("forwards selected auth profiles through metadata-scoped provider aliases", async () => {
     const sessionKey = "agent:main:direct:metadata-auth-alias";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-metadata-auth-alias",
+      sessionId: "nova-session-metadata-auth-alias",
       updatedAt: Date.now(),
       authProfileOverride: "openai:work",
       authProfileOverrideSource: "user",
@@ -2596,7 +2593,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "fixture",
       originalProvider: "fixture",
       modelOverride: "fixture-model",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2644,7 +2641,7 @@ describe("CLI attempt execution", () => {
     const { clearAgentHarnesses, registerAgentHarness } = await import("../harness/registry.js");
     const sessionKey = "agent:main:direct:openai-chatgpt-api-key";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-openai-chatgpt-api-key",
+      sessionId: "nova-session-openai-chatgpt-api-key",
       updatedAt: Date.now(),
       authProfileOverride: "openai:backup",
       authProfileOverrideSource: "user",
@@ -2680,7 +2677,7 @@ describe("CLI attempt execution", () => {
         providerOverride: "openai",
         originalProvider: "openai",
         modelOverride: "gpt-5.4",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         sessionEntry,
         sessionId: sessionEntry.sessionId,
         sessionKey,
@@ -2720,7 +2717,7 @@ describe("CLI attempt execution", () => {
   it("keeps one-shot model runs on the raw embedded provider path", async () => {
     const sessionKey = "agent:main:direct:model-run-raw";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-model-run-raw",
+      sessionId: "nova-session-model-run-raw",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2739,7 +2736,7 @@ describe("CLI attempt execution", () => {
             agentRuntime: { id: "claude-cli" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2778,7 +2775,7 @@ describe("CLI attempt execution", () => {
     expectMockArgFields(runEmbeddedAgentMock, {
       provider: "anthropic",
       model: "claude-opus-4-7",
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
       prompt: "raw prompt",
       messageChannel: "discord",
       messageProvider: "discord-voice",
@@ -2792,7 +2789,7 @@ describe("CLI attempt execution", () => {
   it("forwards trusted elevated defaults to embedded agent runs", async () => {
     const sessionKey = "agent:main:telegram:direct:123";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-elevated-followup",
+      sessionId: "nova-session-elevated-followup",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2810,7 +2807,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "openai",
       originalProvider: "openai",
       modelOverride: "gpt-5.4",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2848,7 +2845,7 @@ describe("CLI attempt execution", () => {
   it("forwards one-shot CLI cleanup to CLI providers", async () => {
     const sessionKey = "agent:main:direct:cleanup-claude-cli";
     const sessionEntry: SessionEntry = {
-      sessionId: "openclaw-session-cleanup-cli",
+      sessionId: "nova-session-cleanup-cli",
       updatedAt: Date.now(),
     };
     const sessionStore: Record<string, SessionEntry> = { [sessionKey]: sessionEntry };
@@ -2859,7 +2856,7 @@ describe("CLI attempt execution", () => {
       providerOverride: "claude-cli",
       originalProvider: "claude-cli",
       modelOverride: "claude-opus-4-7",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey,
@@ -2896,7 +2893,7 @@ describe("CLI attempt execution", () => {
   });
 
   it("replaces a stale automatic session profile with the configured model profile", async () => {
-    const embeddedArg = await runOpenClawEmbeddedAttemptForTest({
+    const embeddedArg = await runNovaEmbeddedAttemptForTest({
       runId: "configured-auth-replaces-auto",
       configuredAuthProfileId: "openai:verified",
       sessionEntry: {
@@ -2912,7 +2909,7 @@ describe("CLI attempt execution", () => {
   });
 
   it("preserves an explicit session profile over the configured model profile", async () => {
-    const embeddedArg = await runOpenClawEmbeddedAttemptForTest({
+    const embeddedArg = await runNovaEmbeddedAttemptForTest({
       runId: "session-auth-over-configured",
       configuredAuthProfileId: "openai:verified",
       sessionEntry: {
@@ -2932,7 +2929,7 @@ describe("embedded attempt harness pinning", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-embedded-attempt-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-embedded-attempt-"));
     runCliAgentMock.mockReset();
     runEmbeddedAgentMock.mockReset();
   });
@@ -2954,7 +2951,7 @@ describe("embedded attempt harness pinning", () => {
       providerOverride: "openai",
       originalProvider: "openai",
       modelOverride: "gpt-5.4",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
@@ -3013,7 +3010,7 @@ describe("embedded attempt harness pinning", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       agentHarnessRuntimeOverride: "codex",
       sessionId: sessionEntry.sessionId,
@@ -3062,7 +3059,7 @@ describe("embedded attempt harness pinning", () => {
       providerOverride: "minimax",
       originalProvider: "minimax",
       modelOverride: "minimax-m2.7",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
@@ -3109,7 +3106,7 @@ describe("embedded attempt harness pinning", () => {
             cliBackends: { "claude-cli": { command: "claude" } },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
@@ -3155,7 +3152,7 @@ describe("embedded attempt harness pinning", () => {
       providerOverride: "openai",
       originalProvider: "openai",
       modelOverride: "gpt-5.4",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
@@ -3207,7 +3204,7 @@ describe("embedded attempt harness pinning", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
@@ -3272,7 +3269,7 @@ describe("embedded attempt harness pinning", () => {
         providerOverride: "openai",
         originalProvider: "openai",
         modelOverride: "gpt-5.4",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         sessionEntry,
         sessionId: sessionEntry.sessionId,
         sessionKey: "agent:main:main",
@@ -3319,7 +3316,7 @@ describe("embedded attempt harness pinning", () => {
       providerOverride: "openai",
       originalProvider: "openai",
       modelOverride: "gpt-5.4",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
@@ -3350,7 +3347,7 @@ describe("embedded attempt harness pinning", () => {
     const sessionEntry: SessionEntry = {
       sessionId: "stale-agent-session",
       updatedAt: Date.now(),
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
     };
     runEmbeddedAgentMock.mockResolvedValueOnce({
       meta: { durationMs: 1 },
@@ -3360,9 +3357,9 @@ describe("embedded attempt harness pinning", () => {
       providerOverride: "openai",
       originalProvider: "openai",
       modelOverride: "gpt-5.4",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessRuntimeOverride: "nova",
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
       sessionAgentId: "main",
@@ -3387,16 +3384,16 @@ describe("embedded attempt harness pinning", () => {
 
     expectMockArgFields(runEmbeddedAgentMock, {
       provider: "openai",
-      agentHarnessId: "openclaw",
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessId: "nova",
+      agentHarnessRuntimeOverride: "nova",
     });
   });
 
   it("honors an explicit Nova session runtime override", async () => {
     const sessionEntry: SessionEntry = {
-      sessionId: "explicit-openclaw-session",
+      sessionId: "explicit-nova-session",
       updatedAt: Date.now(),
-      agentRuntimeOverride: "openclaw",
+      agentRuntimeOverride: "nova",
       agentHarnessId: "codex",
     };
     runEmbeddedAgentMock.mockResolvedValueOnce({
@@ -3407,9 +3404,9 @@ describe("embedded attempt harness pinning", () => {
       providerOverride: "openai",
       originalProvider: "openai",
       modelOverride: "gpt-5.6-luna",
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       sessionEntry,
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessRuntimeOverride: "nova",
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
       sessionAgentId: "main",
@@ -3419,7 +3416,7 @@ describe("embedded attempt harness pinning", () => {
       isFallbackRetry: false,
       resolvedThinkLevel: "ultra",
       timeoutMs: 1_000,
-      runId: "run-explicit-openclaw-runtime",
+      runId: "run-explicit-nova-runtime",
       opts: {} as Parameters<typeof runAgentAttempt>[0]["opts"],
       runContext: {} as Parameters<typeof runAgentAttempt>[0]["runContext"],
       spawnedBy: undefined,
@@ -3435,8 +3432,8 @@ describe("embedded attempt harness pinning", () => {
     expectMockArgFields(runEmbeddedAgentMock, {
       provider: "openai",
       model: "gpt-5.6-luna",
-      agentHarnessId: "openclaw",
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessId: "nova",
+      agentHarnessRuntimeOverride: "nova",
       thinkLevel: "ultra",
     });
   });
@@ -3461,12 +3458,12 @@ describe("embedded attempt harness pinning", () => {
           providers: {
             openai: {
               baseUrl: "https://api.openai.com/v1",
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "nova" },
               models: [],
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",
@@ -3493,8 +3490,8 @@ describe("embedded attempt harness pinning", () => {
     expectMockArgFields(runEmbeddedAgentMock, {
       provider: "openai",
       model: "gpt-5.4",
-      agentHarnessId: "openclaw",
-      agentHarnessRuntimeOverride: "openclaw",
+      agentHarnessId: "nova",
+      agentHarnessRuntimeOverride: "nova",
       authProfileId: "openai:work",
       authProfileIdSource: "user",
     });
@@ -3519,7 +3516,7 @@ describe("embedded attempt harness pinning", () => {
             agentRuntime: { id: "claude-cli" },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       sessionEntry,
       sessionId: sessionEntry.sessionId,
       sessionKey: "agent:main:main",

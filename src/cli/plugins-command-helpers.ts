@@ -1,7 +1,7 @@
 // Shared plugin CLI helpers for install logging, file specs, and hooks.
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { theme } from "../../packages/terminal-core/src/theme.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { HOOK_INSTALL_ERROR_CODE } from "../hooks/install.js";
 import { defaultRuntime, type RuntimeEnv } from "../runtime.js";
 export { quietPluginJsonLogger } from "./plugins-json-logger.js";
@@ -54,10 +54,7 @@ export function createHookPackInstallLogger(runtime: RuntimeEnv = defaultRuntime
   };
 }
 
-export function enableInternalHookEntries(
-  config: OpenClawConfig,
-  hookNames: string[],
-): OpenClawConfig {
+export function enableInternalHookEntries(config: NovaConfig, hookNames: string[]): NovaConfig {
   const entries = { ...config.hooks?.internal?.entries } as Record<string, HookInternalEntryLike>;
 
   for (const hookName of hookNames) {
@@ -87,7 +84,7 @@ export function formatPluginInstallWithHookFallbackError(
   const formattedPluginError = formatPluginInstallAttemptError(pluginError);
   const formattedHookError = formatPluginInstallAttemptError(hookFallback.error);
   if (/plugin already exists: .+ \(delete it first\)/.test(pluginError)) {
-    return `${formattedPluginError}\nUse \`openclaw plugins update <id-or-npm-spec>\` to upgrade the tracked plugin, or rerun install with \`--force\` to replace it.`;
+    return `${formattedPluginError}\nUse \`nova plugins update <id-or-npm-spec>\` to upgrade the tracked plugin, or rerun install with \`--force\` to replace it.`;
   }
   if (
     pluginError.startsWith("Invalid extensions directory:") ||

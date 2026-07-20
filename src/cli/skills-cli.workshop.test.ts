@@ -3,15 +3,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Command } from "commander";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import { createTrackedTempDirs } from "../test-utils/tracked-temp-dirs.js";
 import { registerSkillsCli } from "./skills-cli.js";
 
 const tempDirs = createTrackedTempDirs();
-let testState: OpenClawTestState;
+let testState: NovaTestState;
 let stateDir = "";
 
 const mocks = vi.hoisted(() => {
@@ -47,7 +44,7 @@ vi.mock("../runtime.js", () => ({
 }));
 
 vi.mock("../terminal/links.js", () => ({
-  formatDocsLink: () => "docs.openclaw.ai/cli/skills",
+  formatDocsLink: () => "docs.nova.ai/cli/skills",
 }));
 
 vi.mock("../terminal/theme.js", () => ({
@@ -92,11 +89,11 @@ describe("skills workshop cli", () => {
   };
 
   beforeEach(async () => {
-    testState = await createOpenClawTestState({
+    testState = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-skills-cli-workshop-state-",
+      prefix: "nova-skills-cli-workshop-state-",
     });
-    mocks.workspaceDir = await tempDirs.make("openclaw-skills-cli-workshop-");
+    mocks.workspaceDir = await tempDirs.make("nova-skills-cli-workshop-");
     stateDir = testState.stateDir;
     mocks.runtimeStdout.length = 0;
     mocks.runtimeErrors.length = 0;
@@ -199,7 +196,7 @@ describe("skills workshop cli", () => {
     const proposalId = mocks.runtimeStdout.at(-1);
     expect(proposalId).toMatch(/^first-cli-skill-/);
 
-    mocks.workspaceDir = await tempDirs.make("openclaw-skills-cli-workshop-second-");
+    mocks.workspaceDir = await tempDirs.make("nova-skills-cli-workshop-second-");
     await runCommand(["skills", "workshop", "list"]);
     expect(mocks.runtimeStdout.at(-1)).toBe("No skill proposals.");
     await expect(runCommand(["skills", "workshop", "inspect", proposalId!])).rejects.toThrow(

@@ -44,7 +44,7 @@ import {
   writeCachedPluginToolDescriptors,
 } from "./tool-descriptor-cache.js";
 import { isPluginToolAllowed } from "./tool-grant-allowlist.js";
-import type { OpenClawPluginToolContext } from "./types.js";
+import type { NovaPluginToolContext } from "./types.js";
 
 /** MCP bridge metadata attached to plugin tools surfaced through agent tool lists. */
 export type PluginToolMcpMeta = {
@@ -200,7 +200,7 @@ function wrapPluginToolFactoryResult(
   return isAgentTool(result) ? wrapPluginToolCallbacks(entry, result) : result;
 }
 
-function resolvePluginToolFactory(entry: PluginToolRegistration, ctx: OpenClawPluginToolContext) {
+function resolvePluginToolFactory(entry: PluginToolRegistration, ctx: NovaPluginToolContext) {
   return runWithPluginToolScope(entry, () =>
     wrapPluginToolFactoryResult(entry, entry.factory(ctx)),
   );
@@ -210,7 +210,7 @@ function blocksHostRestrictedConversationReadTool(params: {
   pluginId: string;
   toolNames: readonly string[];
   bundledOwner: boolean;
-  ctx: OpenClawPluginToolContext;
+  ctx: NovaPluginToolContext;
 }): boolean {
   if (
     normalizeConversationReadInvocationOrigin(params.ctx.conversationReadOrigin) ===
@@ -227,7 +227,7 @@ function blocksHostRestrictedConversationReadTool(params: {
 function blocksHostRestrictedConversationReadRegistration(params: {
   entry: PluginToolRegistration;
   manifestPlugin: PluginManifestRecord | undefined;
-  ctx: OpenClawPluginToolContext;
+  ctx: NovaPluginToolContext;
 }): boolean {
   return (
     registrationIncludesHostRestrictedConversationReadTool(params.entry) &&
@@ -245,7 +245,7 @@ function blocksHostRestrictedConversationReadRegistration(params: {
 
 function resolveCurrentManifestPlugin(params: {
   pluginId: string;
-  ctx: OpenClawPluginToolContext;
+  ctx: NovaPluginToolContext;
   loadContext: ReturnType<typeof resolvePluginRuntimeLoadContext>;
 }): PluginManifestRecord | undefined {
   let config = params.ctx.runtimeConfig ?? params.ctx.config ?? params.loadContext.config;
@@ -454,7 +454,7 @@ function createPluginToolFactoryTiming(params: {
 
 function resolvePluginToolFactoryEntry(params: {
   entry: PluginToolRegistration;
-  ctx: OpenClawPluginToolContext;
+  ctx: NovaPluginToolContext;
   declaredNames: string[];
   factoryTimingStartedAt: number;
   logError: (message: string) => void;
@@ -727,7 +727,7 @@ function readPluginCacheSource(plugin: PluginManifestRecord): string {
 
 function buildPluginDescriptorCacheKey(params: {
   plugin: PluginManifestRecord;
-  ctx: OpenClawPluginToolContext;
+  ctx: NovaPluginToolContext;
   currentRuntimeConfig?: PluginLoadOptions["config"] | null;
   configCacheKeyMemo?: PluginToolDescriptorConfigCacheKeyMemo;
   clientCaps?: ReadonlySet<string>;
@@ -757,7 +757,7 @@ function cachedDescriptorsCoverToolNames(params: {
 function createCachedDescriptorPluginTool(params: {
   descriptor: CachedPluginToolDescriptor;
   plugin: PluginManifestRecord;
-  ctx: OpenClawPluginToolContext;
+  ctx: NovaPluginToolContext;
   loadContext: ReturnType<typeof resolvePluginRuntimeLoadContext>;
   runtimeOptions: PluginLoadOptions["runtimeOptions"];
 }): AnyAgentTool {
@@ -879,7 +879,7 @@ function resolveCachedPluginTools(params: {
   existing: Set<string>;
   existingNormalized: Set<string>;
   pluginToolOwnersByName: Map<string, string>;
-  ctx: OpenClawPluginToolContext;
+  ctx: NovaPluginToolContext;
   loadContext: ReturnType<typeof resolvePluginRuntimeLoadContext>;
   runtimeOptions: PluginLoadOptions["runtimeOptions"];
   currentRuntimeConfig?: PluginLoadOptions["config"] | null;
@@ -1211,7 +1211,7 @@ function registryHasScopedPluginTools(
 }
 
 function resolvePluginToolLoadState(params: {
-  context: OpenClawPluginToolContext;
+  context: NovaPluginToolContext;
   toolAllowlist?: string[];
   toolDenylist?: string[];
   allowGatewaySubagentBinding?: boolean;
@@ -1267,7 +1267,7 @@ function resolvePluginToolLoadState(params: {
 }
 
 export function ensureStandalonePluginToolRegistryLoaded(params: {
-  context: OpenClawPluginToolContext;
+  context: NovaPluginToolContext;
   toolAllowlist?: string[];
   toolDenylist?: string[];
   allowGatewaySubagentBinding?: boolean;
@@ -1293,7 +1293,7 @@ export function ensureStandalonePluginToolRegistryLoaded(params: {
 }
 
 export function resolvePluginTools(params: {
-  context: OpenClawPluginToolContext;
+  context: NovaPluginToolContext;
   existingToolNames?: Set<string>;
   clientCaps?: string[];
   toolAllowlist?: string[];

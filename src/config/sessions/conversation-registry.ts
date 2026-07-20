@@ -1,6 +1,6 @@
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { executeSqliteQuerySync } from "../../infra/kysely-sync.js";
-import { openOpenClawAgentDatabase } from "../../state/openclaw-agent-db.js";
+import { openNovaAgentDatabase } from "../../state/nova-agent-db.js";
 import type { ConversationIdentity, ConversationKind } from "./conversation-identity.js";
 import { upsertConversationIdentity } from "./session-accessor.sqlite-conversation.js";
 import {
@@ -104,7 +104,7 @@ function selectConversationRows(
     ...(scope.env ? { env: scope.env } : {}),
     ...(scope.storePath ? { storePath: scope.storePath } : {}),
   });
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   const db = getSessionKysely(database.db);
   let query = db
     .selectFrom("conversations as c")
@@ -190,7 +190,7 @@ export function registerConversationAddresses(
     ...(scope.env ? { env: scope.env } : {}),
     ...(scope.storePath ? { storePath: scope.storePath } : {}),
   });
-  const database = openOpenClawAgentDatabase(toDatabaseOptions(resolved));
+  const database = openNovaAgentDatabase(toDatabaseOptions(resolved));
   for (const identity of identities) {
     upsertConversationIdentity(database, identity, discoveredAt);
   }

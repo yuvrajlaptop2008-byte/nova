@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { withTempDir } from "../test-helpers/temp-dir.js";
 
 const note = vi.hoisted(() => vi.fn());
@@ -82,11 +82,11 @@ describe("noteSecurityWarnings gateway exposure", () => {
     file: Record<string, unknown>,
     run: () => Promise<void>,
   ): Promise<void> {
-    await withTempDir({ prefix: "openclaw-doctor-security-" }, async (home) => {
+    await withTempDir({ prefix: "nova-doctor-security-" }, async (home) => {
       process.env.HOME = home;
-      await fs.mkdir(path.join(home, ".openclaw"), { recursive: true });
+      await fs.mkdir(path.join(home, ".nova"), { recursive: true });
       await fs.writeFile(
-        path.join(home, ".openclaw", "exec-approvals.json"),
+        path.join(home, ".nova", "exec-approvals.json"),
         JSON.stringify(file, null, 2),
       );
       await run();
@@ -126,7 +126,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
               },
             ],
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -137,19 +137,19 @@ describe("noteSecurityWarnings gateway exposure", () => {
   }
 
   it("warns when exposed without auth", async () => {
-    const cfg = { gateway: { bind: "lan" } } as OpenClawConfig;
+    const cfg = { gateway: { bind: "lan" } } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain("CRITICAL");
     expect(message).toContain("without authentication");
     expect(message).toContain("Safer remote access");
     expect(message).toContain("ssh -N -L 18789:127.0.0.1:18789");
-    expect(message).toContain("openclaw security audit --deep");
+    expect(message).toContain("nova security audit --deep");
   });
 
   it("uses env token to avoid critical warning", async () => {
     process.env.NOVA_GATEWAY_TOKEN = "token-123";
-    const cfg = { gateway: { bind: "lan" } } as OpenClawConfig;
+    const cfg = { gateway: { bind: "lan" } } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain("WARNING");
@@ -165,7 +165,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           token: { source: "env", provider: "default", id: "NOVA_GATEWAY_TOKEN" },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain("WARNING");
@@ -180,17 +180,17 @@ describe("noteSecurityWarnings gateway exposure", () => {
           token: "config-token-456",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain("NOVA_GATEWAY_TOKEN conflicts with gateway.auth.token");
     expect(message).toContain("Direct local Gateway clients commonly prefer the env token");
-    expect(message).toContain("~/.openclaw/.env");
+    expect(message).toContain("~/.nova/.env");
   });
 
   it("does not warn when only env token is set without config token", async () => {
     process.env.NOVA_GATEWAY_TOKEN = "env-token-only";
-    const cfg = { gateway: { bind: "lan" } } as OpenClawConfig;
+    const cfg = { gateway: { bind: "lan" } } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).not.toContain("NOVA_GATEWAY_TOKEN overrides");
@@ -205,7 +205,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           token: "config-token-456",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).not.toContain("NOVA_GATEWAY_TOKEN conflicts");
@@ -216,7 +216,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
     const cfg = {
       gateway: { auth: { token: "${NOVA_GATEWAY_TOKEN}" } },
       secrets: { providers: { default: { source: "env" } } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).not.toContain("NOVA_GATEWAY_TOKEN overrides");
@@ -230,7 +230,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
         remote: { token: "remote-token" },
         auth: { token: "local-token" },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).not.toContain("NOVA_GATEWAY_TOKEN overrides");
@@ -239,20 +239,20 @@ describe("noteSecurityWarnings gateway exposure", () => {
   it("treats whitespace token as missing", async () => {
     const cfg = {
       gateway: { bind: "lan", auth: { mode: "token", token: "   " } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain("CRITICAL");
   });
 
   it("skips warning for loopback bind", async () => {
-    const cfg = { gateway: { bind: "loopback" } } as OpenClawConfig;
+    const cfg = { gateway: { bind: "loopback" } } as NovaConfig;
     await noteSecurityWarnings(cfg);
     expect(note).not.toHaveBeenCalled();
   });
 
   it("treats unset bind as loopback for host-side doctor checks", async () => {
-    const cfg = { gateway: {} } as OpenClawConfig;
+    const cfg = { gateway: {} } as NovaConfig;
     await noteSecurityWarnings(cfg);
     expect(note).not.toHaveBeenCalled();
   });
@@ -279,7 +279,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
         },
       },
     ];
-    const cfg = { session: { dmScope: "main" } } as OpenClawConfig;
+    const cfg = { session: { dmScope: "main" } } as NovaConfig;
     await noteSecurityWarnings(cfg);
     expect(listReadOnlyChannelPluginsForConfigMock).toHaveBeenCalledWith(cfg, {
       includePersistedAuthState: true,
@@ -296,12 +296,12 @@ describe("noteSecurityWarnings gateway exposure", () => {
           enabled: false,
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain("disables approval forwarding only");
     expect(message).toContain("exec-approvals.json");
-    expect(message).toContain("openclaw approvals get --gateway");
+    expect(message).toContain("nova approvals get --gateway");
   });
 
   it("warns when filesystem tools are disabled but exec remains available", async () => {
@@ -310,7 +310,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
         allow: ["read", "exec", "process"],
         deny: ["write", "edit", "apply_patch"],
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const message = lastMessage();
     expect(message).toContain("filesystem write tools are disabled, but exec is still available");
@@ -333,7 +333,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
         allow: ["read", "exec", "process"],
         deny: ["write", "edit", "apply_patch"],
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     const message = lastMessage();
     expect(message).not.toContain(
@@ -350,12 +350,12 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     const message = lastMessage();
     expect(message).toContain("plaintext secret-bearing config fields");
     expect(message).toContain("models.providers.openai.apiKey");
-    expect(message).toContain("openclaw secrets audit --check");
+    expect(message).toContain("nova secrets audit --check");
   });
 
   it("warns when sensitive model provider headers are stored as plaintext in config", async () => {
@@ -369,7 +369,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     const message = lastMessage();
     expect(message).toContain("plaintext secret-bearing config fields");
@@ -387,7 +387,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     const message = lastMessage();
     expect(message).not.toContain("plaintext secret-bearing config fields");
@@ -407,7 +407,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     const message = lastMessage();
     expect(message).toContain("plaintext secret-bearing config fields");
@@ -428,7 +428,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     const message = lastMessage();
     expect(message).not.toContain("plaintext secret-bearing config fields");
@@ -451,7 +451,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
               ask: "off",
             },
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -478,7 +478,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
               mode: "full",
             },
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -507,7 +507,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
               ask: "on-miss",
             },
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -527,7 +527,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
               ask: "always",
             },
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -560,7 +560,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           agents: {
             list: [{ id: "runner" }],
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -596,7 +596,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           agents: {
             list: [{ id: "runner" }],
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -632,7 +632,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
               ask: "always",
             },
           },
-        } as OpenClawConfig);
+        } as NovaConfig);
       },
     );
 
@@ -649,7 +649,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain("Heartbeat defaults");
@@ -669,7 +669,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).toContain('Heartbeat agent "ops"');
@@ -696,7 +696,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
       },
     ];
 
-    await noteSecurityWarnings({} as OpenClawConfig);
+    await noteSecurityWarnings({} as NovaConfig);
     expect(listReadOnlyChannelPluginsForConfigMock).toHaveBeenCalledWith(
       {},
       {
@@ -707,7 +707,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
     const message = lastMessage();
     expect(message).toContain("[secrets]");
     expect(message).toContain("failed to resolve account");
-    expect(message).toContain("Run: openclaw security audit --deep");
+    expect(message).toContain("Run: nova security audit --deep");
   });
 
   it("skips heartbeat directPolicy warning when delivery is internal-only or explicit", async () => {
@@ -728,7 +728,7 @@ describe("noteSecurityWarnings gateway exposure", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await noteSecurityWarnings(cfg);
     const message = lastMessage();
     expect(message).not.toContain("Heartbeat defaults");

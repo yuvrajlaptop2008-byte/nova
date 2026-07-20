@@ -161,7 +161,7 @@ function familyTitle(value: string): string {
     imessage: "iMessage",
     msteams: "Microsoft Teams",
     openai: "OpenAI",
-    openclaw: "Nova",
+    nova: "Nova",
     "platform-app": "Platform",
     "provider-tool": "Provider and tool",
     whatsapp: "WhatsApp",
@@ -814,7 +814,7 @@ function evidenceScorecardWarnings(
       .filter((item) => (item.profile === "all" || item.profile === "release") && !item.scorecard)
       .map(
         (item) =>
-          `${item.path}: ${item.profile} profile qa-evidence.json does not include a scorecard field; run pnpm openclaw qa run --qa-profile ${item.profile} to produce deterministic scorecard rows`,
+          `${item.path}: ${item.profile} profile qa-evidence.json does not include a scorecard field; run pnpm nova qa run --qa-profile ${item.profile} to produce deterministic scorecard rows`,
       ),
     ...coverage.warnings,
   ];

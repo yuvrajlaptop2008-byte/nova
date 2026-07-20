@@ -32,13 +32,13 @@ import { createHash } from "node:crypto";
 import {
   runAgentHarnessBeforeMessageWriteHook,
   type AgentMessage,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   withSessionTranscriptWriteLock,
   type SessionTranscriptTargetParams,
   type SessionTranscriptWriteLockContext,
   type SessionTranscriptWriteLockParams,
-} from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/session-transcript-runtime";
 
 type MirroredAgentMessage = Extract<AgentMessage, { role: "user" | "assistant" | "toolResult" }>;
 
@@ -59,20 +59,20 @@ export function attachCopilotMirrorIdentity<T extends AgentMessage>(
   identity: string,
 ): T {
   const record = message as unknown as Record<string, unknown>;
-  const existing = record["__openclaw"];
+  const existing = record["__nova"];
   const baseMeta =
     existing && typeof existing === "object" && !Array.isArray(existing)
       ? (existing as Record<string, unknown>)
       : {};
   return {
     ...record,
-    __openclaw: { ...baseMeta, [MIRROR_IDENTITY_META_KEY]: identity },
+    __nova: { ...baseMeta, [MIRROR_IDENTITY_META_KEY]: identity },
   } as unknown as T;
 }
 
 function readMirrorIdentity(message: MirroredAgentMessage): string | undefined {
-  const record = message as unknown as { __openclaw?: unknown };
-  const meta = record["__openclaw"];
+  const record = message as unknown as { __nova?: unknown };
+  const meta = record["__nova"];
   if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
     return undefined;
   }

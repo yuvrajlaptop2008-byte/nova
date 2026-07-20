@@ -11,7 +11,7 @@ import { property, state } from "lit/decorators.js";
 import type { GatewayBrowserClient } from "../../api/gateway.ts";
 import { t } from "../../i18n/index.ts";
 import { openExternalUrlSafe } from "../../lib/open-external-url.ts";
-import { OpenClawLitElement } from "../../lit/openclaw-element.ts";
+import { NovaLitElement } from "../../lit/nova-element.ts";
 import { createDockPanelLayout, type DockPanelSide } from "../dock-panel-layout.ts";
 import { panelTabStripStyles } from "../panel-tab-strip.ts";
 import {
@@ -73,7 +73,7 @@ type BrowserPanelView = {
 };
 
 const panelLayout = createDockPanelLayout({
-  storageKey: "openclaw.browser.panel.v1",
+  storageKey: "nova.browser.panel.v1",
   minHeight: 240,
   minWidth: 380,
   defaultDock: "right",
@@ -108,8 +108,8 @@ function loadImage(dataUrl: string): Promise<HTMLImageElement> {
   });
 }
 
-/** `<openclaw-browser-panel>` — the dockable gateway browser surface. */
-class OpenClawBrowserPanel extends OpenClawLitElement {
+/** `<nova-browser-panel>` — the dockable gateway browser surface. */
+class NovaBrowserPanel extends NovaLitElement {
   /** Gateway client used for browser.request RPCs; null until connected. */
   @property({ attribute: false }) client: GatewayBrowserClient | null = null;
   /** Whether the connected gateway advertises browser.request to this operator. */
@@ -1300,13 +1300,13 @@ class OpenClawBrowserPanel extends OpenClawLitElement {
 
 // Guarded define (not @customElement) so re-imports under a shared registry —
 // e.g. vitest with isolate=false — don't throw "already registered".
-if (!customElements.get("openclaw-browser-panel")) {
-  customElements.define("openclaw-browser-panel", OpenClawBrowserPanel);
+if (!customElements.get("nova-browser-panel")) {
+  customElements.define("nova-browser-panel", NovaBrowserPanel);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-browser-panel": OpenClawBrowserPanel;
+    "nova-browser-panel": NovaBrowserPanel;
   }
 }
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

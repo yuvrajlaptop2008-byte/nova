@@ -3,21 +3,21 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import { access, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { OpenClawCrablineChannelDriverSelection } from "@nova/crabline";
-import { runExec } from "openclaw/plugin-sdk/process-runtime";
-import { sleep } from "openclaw/plugin-sdk/runtime-env";
-import { appendRegularFile } from "openclaw/plugin-sdk/security-runtime";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import type { NovaCrablineChannelDriverSelection } from "@nova/crabline";
+import { runExec } from "nova/plugin-sdk/process-runtime";
+import { sleep } from "nova/plugin-sdk/runtime-env";
+import { appendRegularFile } from "nova/plugin-sdk/security-runtime";
+import { uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
+import { resolvePreferredNovaTmpDir } from "nova/plugin-sdk/temp-path";
 import type { QaProviderMode } from "./model-selection.js";
 import { resolveQaForwardedLiveEnv, resolveQaLiveProviderConfigPath } from "./providers/env.js";
 import { DEFAULT_QA_LIVE_PROVIDER_MODE, getQaProvider } from "./providers/index.js";
 import type { RuntimeId } from "./runtime-parity.js";
 import { shellQuote } from "./shell-quote.js";
 
-const MULTIPASS_MOUNTED_REPO_PATH = "/workspace/openclaw-host";
-const MULTIPASS_GUEST_REPO_PATH = "/workspace/openclaw";
-const MULTIPASS_GUEST_CODEX_HOME_PATH = "/workspace/openclaw-codex-home";
+const MULTIPASS_MOUNTED_REPO_PATH = "/workspace/nova-host";
+const MULTIPASS_GUEST_REPO_PATH = "/workspace/nova";
+const MULTIPASS_GUEST_CODEX_HOME_PATH = "/workspace/nova-codex-home";
 const MULTIPASS_GUEST_PACKAGES = [
   "build-essential",
   "ca-certificates",
@@ -80,7 +80,7 @@ type QaMultipassPlan = {
   fastMode?: boolean;
   thinkingDefault?: string;
   runtimePair?: [RuntimeId, RuntimeId];
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection;
   enabledPluginIds?: string[];
   scenarioIds: string[];
   forwardedEnv: Record<string, string>;
@@ -245,7 +245,7 @@ function createQaMultipassPlan(params: {
   scenarioIds?: string[];
   concurrency?: number;
   runtimePair?: [RuntimeId, RuntimeId];
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection;
   enabledPluginIds?: string[];
   image?: string;
   cpus?: number;
@@ -269,12 +269,12 @@ function createQaMultipassPlan(params: {
     liveProviderConfig && fs.existsSync(liveProviderConfig.path)
       ? liveProviderConfig.path
       : undefined;
-  const vmName = `openclaw-qa-${createVmSuffix()}`;
+  const vmName = `nova-qa-${createVmSuffix()}`;
   const guestOutputDir = resolveGuestMountedPath(params.repoRoot, outputDir);
   const qaCommand = appendScenarioArgs(
     [
       "pnpm",
-      "openclaw",
+      "nova",
       "qa",
       "suite",
       "--transport",
@@ -575,7 +575,7 @@ export async function runQaMultipass(params: {
   scenarioIds?: string[];
   concurrency?: number;
   runtimePair?: [RuntimeId, RuntimeId];
-  channelDriverSelection?: OpenClawCrablineChannelDriverSelection;
+  channelDriverSelection?: NovaCrablineChannelDriverSelection;
   enabledPluginIds?: string[];
   image?: string;
   cpus?: number;
@@ -608,13 +608,13 @@ export async function runQaMultipass(params: {
       );
     }
     throw new Error(
-      `Multipass is not installed on this host. Install it with '${resolveMultipassInstallHint()}', then rerun 'pnpm openclaw qa suite --runner multipass'.`,
+      `Multipass is not installed on this host. Install it with '${resolveMultipassInstallHint()}', then rerun 'pnpm nova qa suite --runner multipass'.`,
       { cause: error },
     );
   }
 
   const hostTransferDirPath = await fs.promises.mkdtemp(
-    path.join(resolvePreferredOpenClawTmpDir(), `${plan.vmName}-qa-suite-`),
+    path.join(resolvePreferredNovaTmpDir(), `${plan.vmName}-qa-suite-`),
   );
   const hostTransferScriptPath = path.join(hostTransferDirPath, "guest-run.sh");
   await writeFile(hostTransferScriptPath, renderQaMultipassGuestScript(plan), {

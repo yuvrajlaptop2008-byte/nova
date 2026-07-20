@@ -1,7 +1,7 @@
 // Telegram reaction handler registration.
 import type { ReactionTypeEmoji } from "grammy/types";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { danger, logVerbose } from "openclaw/plugin-sdk/runtime-env";
+import { resolveAgentRoute } from "nova/plugin-sdk/routing";
+import { danger, logVerbose } from "nova/plugin-sdk/runtime-env";
 import { resolveTelegramAccount } from "./accounts.js";
 import type { TelegramHandlerAuthorizationRuntime } from "./bot-handlers.authorization.runtime.js";
 import type { RegisterTelegramHandlerParams } from "./bot-native-commands.js";

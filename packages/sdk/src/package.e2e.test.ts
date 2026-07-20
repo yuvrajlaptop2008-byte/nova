@@ -275,7 +275,7 @@ function closeServer(server: Server): Promise<void> {
   });
 }
 
-async function startOpenClawRegistry(packages: PackedPackage[]): Promise<{
+async function startNovaRegistry(packages: PackedPackage[]): Promise<{
   registryUrl: string;
   close: () => Promise<void>;
 }> {
@@ -387,7 +387,7 @@ describe("Nova SDK package e2e", () => {
       repoRoot,
       entryRoot: path.join(repoRoot, "packages", "sdk"),
     });
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-sdk-consumer-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-sdk-consumer-"));
     tempDirs.push(tempDir);
 
     for (const packageRoot of packageRoots) {
@@ -414,13 +414,13 @@ describe("Nova SDK package e2e", () => {
     const sdkTarball =
       packedPackages.find((pkg) => pkg.manifest.name === "@nova/sdk")?.tarball ?? "";
     expect(sdkTarball).not.toBe("");
-    const registry = await startOpenClawRegistry(packedPackages);
+    const registry = await startNovaRegistry(packedPackages);
 
     await fs.writeFile(
       path.join(tempDir, "package.json"),
       JSON.stringify({ private: true, type: "module" }),
     );
-    await fs.writeFile(path.join(tempDir, ".npmrc"), `@openclaw:registry=${registry.registryUrl}`);
+    await fs.writeFile(path.join(tempDir, ".npmrc"), `@nova:registry=${registry.registryUrl}`);
     try {
       await runNpmCommand(["install", "--ignore-scripts", "--no-audit", "--no-fund", sdkTarball], {
         cwd: tempDir,

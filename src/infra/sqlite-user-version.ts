@@ -14,7 +14,7 @@ export function createNewerSqliteSchemaVersionError(
   supportedVersion: number,
 ): Error {
   const error = new Error(
-    `${databaseLabel} ${pathname} uses newer schema version ${schemaVersion}; this Nova build supports ${supportedVersion}. Upgrade Nova before opening this database. Do not downgrade Nova or modify the database. To run this older build, use a separate state directory or restore a compatible backup. See https://docs.openclaw.ai/reference/database-schemas.`,
+    `${databaseLabel} ${pathname} uses newer schema version ${schemaVersion}; this Nova build supports ${supportedVersion}. Upgrade Nova before opening this database. Do not downgrade Nova or modify the database. To run this older build, use a separate state directory or restore a compatible backup. See https://docs.nova.ai/reference/database-schemas.`,
   );
   error.name = "SqliteSchemaVersionError";
   return error;

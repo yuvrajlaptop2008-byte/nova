@@ -1,12 +1,8 @@
 // Whatsapp plugin module implements reconnect behavior.
 import { randomUUID } from "node:crypto";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import {
-  computeBackoff,
-  sleepWithAbort,
-  type BackoffPolicy,
-} from "openclaw/plugin-sdk/runtime-env";
-import { clamp } from "openclaw/plugin-sdk/text-utility-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { computeBackoff, sleepWithAbort, type BackoffPolicy } from "nova/plugin-sdk/runtime-env";
+import { clamp } from "nova/plugin-sdk/text-utility-runtime";
 
 export type ReconnectPolicy = BackoffPolicy & {
   maxAttempts: number;
@@ -21,7 +17,7 @@ export const DEFAULT_RECONNECT_POLICY: ReconnectPolicy = {
   maxAttempts: 12,
 };
 
-export function resolveHeartbeatSeconds(cfg: OpenClawConfig, overrideSeconds?: number): number {
+export function resolveHeartbeatSeconds(cfg: NovaConfig, overrideSeconds?: number): number {
   void cfg;
   const candidate = overrideSeconds;
   if (typeof candidate === "number" && candidate > 0) {
@@ -31,7 +27,7 @@ export function resolveHeartbeatSeconds(cfg: OpenClawConfig, overrideSeconds?: n
 }
 
 export function resolveReconnectPolicy(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   overrides?: Partial<ReconnectPolicy>,
 ): ReconnectPolicy {
   void cfg;

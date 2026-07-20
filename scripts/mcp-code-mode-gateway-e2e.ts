@@ -182,7 +182,7 @@ async function writeConfig(params: {
 }
 
 async function main() {
-  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mcp-code-mode-"));
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-mcp-code-mode-"));
   const keep = process.env.NOVA_MCP_CODE_MODE_GATEWAY_E2E_KEEP === "1";
   const previousEnv = {
     configPath: process.env.NOVA_CONFIG_PATH,
@@ -196,7 +196,7 @@ async function main() {
     const stateDir = path.join(rootDir, "state");
     const workspaceDir = path.join(rootDir, "workspace");
     const serverPath = path.join(rootDir, "mcp", "fixture-server.mjs");
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
     const gatewayPort = await freePort();
     await fs.mkdir(workspaceDir, { recursive: true });
     await writeProbeMcpServer(serverPath);
@@ -228,11 +228,11 @@ async function main() {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-openclaw-scopes": "operator.write",
-        "x-openclaw-agent": "qa",
+        "x-nova-scopes": "operator.write",
+        "x-nova-agent": "qa",
       },
       body: JSON.stringify({
-        model: "openclaw/qa",
+        model: "nova/qa",
         input: [
           {
             type: "message",

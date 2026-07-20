@@ -30,7 +30,7 @@ function createProgram(config: Record<string, unknown> = {}): Command {
 }
 
 async function createSetupPlan(args: string[]): Promise<VaultPlan> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-vault-cli-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-vault-cli-"));
   const planPath = path.join(dir, "plan.json");
   const stdout = captureStdout();
   try {

@@ -147,7 +147,7 @@ function workboardConfigSnapshot() {
   return {
     config,
     hash: "workboard-e2e-config",
-    path: "/tmp/openclaw-e2e/openclaw.json",
+    path: "/tmp/nova-e2e/nova.json",
     raw: JSON.stringify(config, null, 2),
     resolved: config,
     sourceConfig: config,
@@ -438,7 +438,7 @@ describeControlUiE2e("Control UI Workboard mocked Gateway E2E", () => {
         .getByRole("button", { name: /New card/u })
         .click();
       const createDialog = writable.page.getByRole("dialog", { name: "New card" });
-      const createForm = writable.page.locator('openclaw-modal-dialog[label="New card"]');
+      const createForm = writable.page.locator('nova-modal-dialog[label="New card"]');
       await expect.poll(() => createDialog.isVisible()).toBe(true);
       await createForm.getByLabel("Title").fill(createdCard.title);
       await createForm.getByLabel("Notes").fill(createdCard.notes ?? "");
@@ -490,7 +490,7 @@ describeControlUiE2e("Control UI Workboard mocked Gateway E2E", () => {
         .locator('button[aria-label="Edit card"]')
         .click();
       const editDialog = writable.page.getByRole("dialog", { name: "Edit card" });
-      const editForm = writable.page.locator('openclaw-modal-dialog[label="Edit card"]');
+      const editForm = writable.page.locator('nova-modal-dialog[label="Edit card"]');
       await expect.poll(() => editDialog.isVisible()).toBe(true);
       await editForm.getByLabel("Title").fill(editedCard.title);
       await editForm.getByLabel("Notes").fill(editedCard.notes ?? "");

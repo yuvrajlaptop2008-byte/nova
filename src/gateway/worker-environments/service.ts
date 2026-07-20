@@ -18,7 +18,7 @@ import type {
   WorkerInferenceStartResult,
 } from "../../../packages/gateway-protocol/src/schema/worker-inference.js";
 import { onSessionIdentityMutation } from "../../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../../config/types.js";
+import type { NovaConfig } from "../../config/types.js";
 import type { SecretRef } from "../../config/types.secrets.js";
 import { validateCloudWorkerProfileSettings } from "../../config/zod-schema.cloud-workers.js";
 import { withTimeout } from "../../infra/fs-safe.js";
@@ -105,7 +105,7 @@ export function workerEnvironmentIdForIdempotencyKey(idempotencyKey: string): st
 
 type WorkerEnvironmentServiceOptions = {
   store: WorkerEnvironmentStore;
-  getConfig: () => OpenClawConfig;
+  getConfig: () => NovaConfig;
   resolveProvider: (providerId: string) => WorkerProvider | undefined;
   prepareInstallation: (
     install: WorkerInstallationArtifact["install"],

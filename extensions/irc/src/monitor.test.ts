@@ -4,9 +4,9 @@ import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { describe, expect, it, vi } from "vitest";
 import { createIrcIngressMonitor } from "./irc-ingress.js";
 import { monitorIrcProvider } from "./monitor.js";
@@ -37,7 +37,7 @@ type IrcIngressQueue = NonNullable<Parameters<typeof createIrcIngressMonitor>[0]
 type IrcIngressPayload = Parameters<IrcIngressQueue["enqueue"]>[1];
 
 async function withIngressQueue<T>(fn: (queue: IrcIngressQueue) => Promise<T>): Promise<T> {
-  const created = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-irc-monitor-"));
+  const created = await fs.mkdtemp(path.join(os.tmpdir(), "nova-irc-monitor-"));
   const stateDir = await fs.realpath(created);
   const queue = createChannelIngressQueueForTests<IrcIngressPayload>({
     channelId: "irc",
@@ -47,7 +47,7 @@ async function withIngressQueue<T>(fn: (queue: IrcIngressQueue) => Promise<T>): 
   try {
     return await fn(queue);
   } finally {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   }
 }
@@ -343,7 +343,7 @@ describe("irc monitor reconnect", () => {
             nick: "bot",
             username: "bot",
             realname: "Nova",
-            channels: ["#openclaw"],
+            channels: ["#nova"],
           },
         },
       } as CoreConfig;
@@ -434,19 +434,19 @@ describe("irc monitor inbound target", () => {
   it.each([
     {
       label: "channel",
-      serverTarget: "#openclaw",
-      expected: { isGroup: true, target: "#openclaw", rawTarget: "#openclaw" },
+      serverTarget: "#nova",
+      expected: { isGroup: true, target: "#nova", rawTarget: "#nova" },
     },
     {
       label: "DM",
-      serverTarget: "openclaw-bot",
-      expected: { isGroup: false, target: "alice", rawTarget: "openclaw-bot" },
+      serverTarget: "nova-bot",
+      expected: { isGroup: false, target: "alice", rawTarget: "nova-bot" },
     },
     {
       label: "channel with a colonless body",
-      serverTarget: "#openclaw",
+      serverTarget: "#nova",
       colonlessBody: true,
-      expected: { isGroup: true, target: "#openclaw", rawTarget: "#openclaw" },
+      expected: { isGroup: true, target: "#nova", rawTarget: "#nova" },
     },
   ])(
     "maps $label targets through the monitor boundary",
@@ -507,9 +507,9 @@ describe("irc monitor inbound target", () => {
           receivedAt,
           connectionEpoch: "previous-connection",
           connectedNick: "receipt-bot",
-          rawLine: ":receipt-bot!ident@example.org PRIVMSG #openclaw :echo",
+          rawLine: ":receipt-bot!ident@example.org PRIVMSG #nova :echo",
         },
-        { receivedAt, laneKey: "channel:#openclaw" },
+        { receivedAt, laneKey: "channel:#nova" },
       );
       const server = await startInboundIrcServer(undefined, "reconnected-bot");
       const onMessage = vi.fn();
@@ -600,7 +600,7 @@ describe("irc monitor inbound target", () => {
     await withIngressQueue(async (ingressQueue) => {
       const activityRecord = installMonitorRuntime();
       const enqueueSpy = vi.spyOn(ingressQueue, "enqueue");
-      const server = await startInboundIrcServer("#openclaw", "bot", false, "bot");
+      const server = await startInboundIrcServer("#nova", "bot", false, "bot");
       const onMessage = vi.fn();
       let monitor: { stop: () => Promise<void> } | undefined;
       try {

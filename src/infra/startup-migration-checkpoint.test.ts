@@ -4,10 +4,10 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   NOVA_STATE_SCHEMA_VERSION,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+} from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { requireNodeSqlite } from "./node-sqlite.js";
 import {
   acquireStartupMigrationLease,
@@ -18,7 +18,7 @@ import {
 } from "./startup-migration-checkpoint.js";
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 const startupMigrationTempDirs = useAutoCleanupTempDirTracker(afterEach);
@@ -26,9 +26,9 @@ const startupMigrationTempDirs = useAutoCleanupTempDirTracker(afterEach);
 describe("startup migration checkpoint", () => {
   it("checks migration activity without creating shared state", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
-    const dbPath = resolveOpenClawStateSqlitePath(env);
+    const dbPath = resolveNovaStateSqlitePath(env);
 
     expect(hasActiveStartupMigrationLease({ env })).toBe(false);
     expect(existsSync(dbPath)).toBe(false);
@@ -36,7 +36,7 @@ describe("startup migration checkpoint", () => {
 
   it("records the migrated Nova version in shared state", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
 
     expect(readStartupMigrationVersion(env)).toBeNull();
@@ -81,7 +81,7 @@ describe("startup migration checkpoint", () => {
 
   it("keeps the fast path disabled without immutable build provenance", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
 
     recordSuccessfulStartupMigrations({
@@ -105,7 +105,7 @@ describe("startup migration checkpoint", () => {
 
   it("serializes startup migrations with an expiring shared-state lease", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
     const lease = acquireStartupMigrationLease({ env, nowMs: 1000, owner: "first" });
 
@@ -125,7 +125,7 @@ describe("startup migration checkpoint", () => {
 
   it("does not report an expired startup migration lease as active", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
     const lease = acquireStartupMigrationLease({ env, nowMs: 1000, owner: "first" });
 
@@ -136,7 +136,7 @@ describe("startup migration checkpoint", () => {
 
   it("renews startup migration leases while the owner is still running", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
     const lease = acquireStartupMigrationLease({ env, nowMs: 1000, owner: "first" });
 
@@ -151,7 +151,7 @@ describe("startup migration checkpoint", () => {
 
   it("does not checkpoint startup migrations after the lease is lost", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
     const first = acquireStartupMigrationLease({ env, nowMs: 1000, owner: "first" });
     const second = acquireStartupMigrationLease({ env, nowMs: 400_000, owner: "second" });
@@ -171,10 +171,10 @@ describe("startup migration checkpoint", () => {
 
   it("reads the checkpoint without requiring the full state schema to be canonical", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
     const sqlite = requireNodeSqlite();
-    const dbPath = resolveOpenClawStateSqlitePath(env);
+    const dbPath = resolveNovaStateSqlitePath(env);
     mkdirSync(path.dirname(dbPath), { recursive: true });
     const db = new sqlite.DatabaseSync(dbPath);
     db.exec(`
@@ -195,10 +195,10 @@ describe("startup migration checkpoint", () => {
 
   it("refuses future-version state databases before creating checkpoint tables", () => {
     const env = {
-      NOVA_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
+      NOVA_STATE_DIR: startupMigrationTempDirs.make("nova-startup-migration-"),
     };
     const sqlite = requireNodeSqlite();
-    const dbPath = resolveOpenClawStateSqlitePath(env);
+    const dbPath = resolveNovaStateSqlitePath(env);
     mkdirSync(path.dirname(dbPath), { recursive: true });
     const db = new sqlite.DatabaseSync(dbPath);
     db.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION + 1};`);

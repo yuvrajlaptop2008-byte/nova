@@ -1,8 +1,8 @@
 # 🌐 Proxyline
 
-[![npm](https://img.shields.io/npm/v/%40openclaw%2Fproxyline.svg)](https://www.npmjs.com/package/@nova/proxyline)
-[![node](https://img.shields.io/node/v/%40openclaw%2Fproxyline.svg)](https://nodejs.org/)
-[![license](https://img.shields.io/npm/l/%40openclaw%2Fproxyline.svg)](./LICENSE)
+[![npm](https://img.shields.io/npm/v/%40nova%2Fproxyline.svg)](https://www.npmjs.com/package/@nova/proxyline)
+[![node](https://img.shields.io/node/v/%40nova%2Fproxyline.svg)](https://nodejs.org/)
+[![license](https://img.shields.io/npm/l/%40nova%2Fproxyline.svg)](./LICENSE)
 
 Process-global proxy routing for Node.js. One install replaces `node:http`, `node:https`, the undici/fetch global dispatcher, and provides WebSocket and explicit HTTP CONNECT helpers for the same policy.
 

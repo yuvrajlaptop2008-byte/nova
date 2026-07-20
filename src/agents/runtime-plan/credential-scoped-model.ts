@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { shouldPreferProviderRuntimeResolvedModel } from "../../plugins/provider-runtime.js";
 import {
   resolveProviderModelMaterializationAuthMode,
@@ -27,7 +27,7 @@ type RuntimeModelAuthSelection =
 export function providerUsesCredentialScopedModelMetadata(params: {
   provider: string;
   modelId: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
@@ -154,13 +154,13 @@ export function hasPreparedAuthAttemptModelMetadata(params: {
 export function createPreparedRuntimeModelMaterializer<Model extends RuntimeRouteModel>(params: {
   provider: string;
   modelId: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   getModel(): Model;
   nativeModelOwned: boolean;
   requestedProfileId?: string;
   providerUsesProfileScopedModelMetadata: boolean;
   resolveModel(request: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     authProfileId?: string;
     authProfileMode?: ProviderModelRouteMaterializationAuthMode;
   }): Promise<{ model?: Model | null; error?: string }>;

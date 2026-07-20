@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { isRecord as isJsonObject } from "@nova/normalization-core/record-coerce";
 import { listAgentIds, resolveAgentDir } from "../agents/agent-scope.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { resolveUserPath } from "../utils.js";
 import { listAuthProfileStoreAgentDirs as listAuthProfileStoreAgentDirsFromAuthStorePaths } from "./auth-store-paths.js";
@@ -15,7 +15,7 @@ export function parseEnvAssignmentValue(raw: string): string {
 }
 
 /** Lists agent directories that own canonical auth-profile stores. */
-export function listAuthProfileStoreAgentDirs(config: OpenClawConfig, stateDir: string): string[] {
+export function listAuthProfileStoreAgentDirs(config: NovaConfig, stateDir: string): string[] {
   return listAuthProfileStoreAgentDirsFromAuthStorePaths(config, stateDir);
 }
 
@@ -61,7 +61,7 @@ function resolveActiveAgentDir(stateDir: string, env: NodeJS.ProcessEnv = proces
  * Includes active env override, implicit main agent, discovered state dirs, and configured agents.
  */
 export function listAgentModelsJsonPaths(
-  config: OpenClawConfig,
+  config: NovaConfig,
   stateDir: string,
   env: NodeJS.ProcessEnv = process.env,
 ): string[] {

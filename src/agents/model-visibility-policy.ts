@@ -2,7 +2,7 @@
  * Builds model visibility policies while retaining configured automatic fallbacks.
  */
 import { resolveAgentModelFallbackValues } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveAgentConfig, resolveAgentModelFallbacksOverride } from "./agent-scope.js";
 import type { ModelCatalogEntry } from "./model-catalog.types.js";
 import type { ModelManifestNormalizationContext } from "./model-selection-normalize.js";
@@ -16,7 +16,7 @@ export const RUNTIME_MODEL_VISIBILITY_NORMALIZATION = {
   allowPluginNormalization: true,
 } as const;
 
-function resolveAllowedFallbacks(params: { cfg: OpenClawConfig; agentId?: string }): string[] {
+function resolveAllowedFallbacks(params: { cfg: NovaConfig; agentId?: string }): string[] {
   if (params.agentId) {
     const override = resolveAgentModelFallbacksOverride(params.cfg, params.agentId);
     if (override !== undefined) {
@@ -28,7 +28,7 @@ function resolveAllowedFallbacks(params: { cfg: OpenClawConfig; agentId?: string
 
 export function createModelVisibilityPolicy(
   params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     catalog: ModelCatalogEntry[];
     defaultProvider: string;
     defaultModel?: string;

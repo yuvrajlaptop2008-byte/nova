@@ -1,7 +1,7 @@
 import type { WorkboardCard } from "@nova/workboard-contract";
 // Workboard dispatch workspace helpers keep authority resolution outside the orchestration loop.
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { canonicalPathFromExistingAncestor } from "openclaw/plugin-sdk/security-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { canonicalPathFromExistingAncestor } from "nova/plugin-sdk/security-runtime";
 import type { WorkboardStore } from "./store.js";
 import {
   assertCanonicalWorkboardRootAccess,

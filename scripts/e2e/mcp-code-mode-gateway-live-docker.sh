@@ -6,15 +6,15 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-mcp-code-mode-gateway-live-e2e" NOVA_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-mcp-code-mode-gateway-live-e2e" NOVA_IMAGE)"
 PORT="$(docker_e2e_read_tcp_port_env NOVA_MCP_CODE_MODE_LIVE_GATEWAY_PORT 18789)"
 CLIENT_TIMEOUT_MS="$(docker_e2e_read_positive_int_env NOVA_MCP_CODE_MODE_CLIENT_TIMEOUT_MS 300000)"
 CLIENT_BODY_MAX_BYTES="$(docker_e2e_read_positive_int_env NOVA_MCP_CODE_MODE_CLIENT_BODY_MAX_BYTES 1048576)"
 TOKEN="mcp-code-mode-live-e2e-$(date +%s)-$$"
-CONTAINER_NAME="openclaw-mcp-code-mode-live-e2e-$$"
-PROFILE_FILE="${NOVA_MCP_CODE_MODE_LIVE_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}}"
+CONTAINER_NAME="nova-mcp-code-mode-live-e2e-$$"
+PROFILE_FILE="${NOVA_MCP_CODE_MODE_LIVE_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.nova-testbox-live.profile}}"
 
-CLIENT_LOG="$(mktemp -t openclaw-mcp-code-mode-live-log.XXXXXX)"
+CLIENT_LOG="$(mktemp -t nova-mcp-code-mode-live-log.XXXXXX)"
 
 cleanup() {
   docker_e2e_docker_cmd rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -44,7 +44,7 @@ fi
 docker_e2e_build_or_reuse "$IMAGE_NAME" mcp-code-mode-gateway-live
 NOVA_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 mcp-code-mode-gateway-live empty)"
 
-# The profile is only a credential source. Keep this lane's OpenClaw runtime
+# The profile is only a credential source. Keep this lane's Nova runtime
 # isolated from host/testbox mode flags that can change packaged behavior.
 unset NOVA_TESTBOX
 
@@ -70,11 +70,11 @@ docker_e2e_run_with_harness \
   -e "NOVA_MCP_CODE_MODE_CLIENT_TIMEOUT_MS=$CLIENT_TIMEOUT_MS" \
   -e "NOVA_MCP_CODE_MODE_CLIENT_BODY_MAX_BYTES=$CLIENT_BODY_MAX_BYTES" \
   -e "NOVA_ALLOW_INSECURE_PRIVATE_WS=1" \
-  -e "NOVA_MCP_CODE_MODE_MODEL=${NOVA_MCP_CODE_MODE_LIVE_MODEL:-openclaw/main}" \
+  -e "NOVA_MCP_CODE_MODE_MODEL=${NOVA_MCP_CODE_MODE_LIVE_MODEL:-nova/main}" \
   "${PROFILE_MOUNT[@]}" \
   "$IMAGE_NAME" \
   bash -lc "set -euo pipefail
-    source scripts/lib/openclaw-e2e-instance.sh
+    source scripts/lib/nova-e2e-instance.sh
     for profile_path in \"\$HOME/.profile\" /home/appuser/.profile; do
       if [ -f \"\$profile_path\" ] && [ -r \"\$profile_path\" ]; then
         set +e +u
@@ -88,16 +88,16 @@ docker_e2e_run_with_harness \
       echo \"ERROR: OPENAI_API_KEY was not available inside the container.\" >&2
       exit 1
     fi
-    openclaw_e2e_eval_test_state_from_b64 \"\${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}\"
-    entry=\"\$(openclaw_e2e_resolve_entrypoint)\"
+    nova_e2e_eval_test_state_from_b64 \"\${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}\"
+    entry=\"\$(nova_e2e_resolve_entrypoint)\"
     gateway_pid=
     cleanup_inner() {
-      openclaw_e2e_stop_process \"\${gateway_pid:-}\"
+      nova_e2e_stop_process \"\${gateway_pid:-}\"
     }
     dump_logs_on_error() {
       status=\$?
       if [ \"\$status\" -ne 0 ]; then
-        openclaw_e2e_dump_logs \
+        nova_e2e_dump_logs \
           /tmp/mcp-code-mode-live-gateway.log \
           /tmp/mcp-code-mode-live-seed.log
         if [ -d \"\${NOVA_STATE_DIR:-}/agents/main/sessions\" ]; then
@@ -112,8 +112,8 @@ docker_e2e_run_with_harness \
     trap cleanup_inner EXIT
     trap dump_logs_on_error ERR
     tsx scripts/e2e/mcp-code-mode-gateway-seed.ts >/tmp/mcp-code-mode-live-seed.log
-    gateway_pid=\"\$(openclaw_e2e_start_gateway \"\$entry\" $PORT /tmp/mcp-code-mode-live-gateway.log)\"
-    openclaw_e2e_wait_gateway_ready \"\$gateway_pid\" /tmp/mcp-code-mode-live-gateway.log 480 $PORT
+    gateway_pid=\"\$(nova_e2e_start_gateway \"\$entry\" $PORT /tmp/mcp-code-mode-live-gateway.log)\"
+    nova_e2e_wait_gateway_ready \"\$gateway_pid\" /tmp/mcp-code-mode-live-gateway.log 480 $PORT
     tsx scripts/e2e/mcp-code-mode-gateway-client.ts
   " >"$CLIENT_LOG" 2>&1
 status=${PIPESTATUS[0]}

@@ -5,7 +5,7 @@
  */
 import { Type, type TSchema } from "typebox";
 import { getRuntimeConfig } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { SsrFPolicy } from "../../infra/net/ssrf.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { resolveGeneratedMediaMaxBytes } from "../../media/configured-max-bytes.js";
@@ -228,7 +228,7 @@ function createVideoGenerateToolSchema(params: { includeAudioReferences: boolean
 }
 
 function resolveVideoGenerationModelConfigForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   workspaceDir?: string;
   agentDir?: string;
   authStore?: AuthProfileStore;
@@ -244,17 +244,17 @@ function resolveVideoGenerationModelConfigForTool(params: {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.videoGenerateToolTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.videoGenerateToolTestApi")] = {
     resolveVideoGenerationModelConfigForTool,
   };
 }
 
-function hasExplicitVideoGenerationModelConfig(cfg?: OpenClawConfig): boolean {
+function hasExplicitVideoGenerationModelConfig(cfg?: NovaConfig): boolean {
   return hasToolModelConfig(coerceToolModelConfig(cfg?.agents?.defaults?.videoGenerationModel));
 }
 
 function collectVideoGenerationModelProviderIds(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   modelConfig: ToolModelConfig;
   workspaceDir?: string;
 }): Set<string> {
@@ -275,7 +275,7 @@ function collectVideoGenerationModelProviderIds(params: {
 
 function isVideoGenerationProviderConfigured(params: {
   snapshot: Pick<PluginMetadataSnapshot, "index" | "plugins">;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   agentDir?: string;
   authStore?: AuthProfileStore;
@@ -301,7 +301,7 @@ function isVideoGenerationProviderConfigured(params: {
 }
 
 function shouldExposeVideoReferenceAudioParams(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir?: string;
   authStore?: AuthProfileStore;
   workspaceDir?: string;
@@ -442,7 +442,7 @@ function normalizeReferenceInputs(params: {
 }
 
 function resolveSelectedVideoGenerationProvider(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   videoGenerationModelConfig: ToolModelConfig;
   modelOverride?: string;
 }): VideoGenerationProvider | undefined {
@@ -688,7 +688,7 @@ function isGeneratedMediaSizeLimitError(error: unknown): boolean {
 }
 
 async function executeVideoGenerationJob(params: {
-  effectiveCfg: OpenClawConfig;
+  effectiveCfg: NovaConfig;
   prompt: string;
   agentDir?: string;
   model?: string;
@@ -934,7 +934,7 @@ async function executeVideoGenerationJob(params: {
 }
 
 export function createVideoGenerateTool(options?: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentDir?: string;
   authProfileStore?: AuthProfileStore;
   agentSessionKey?: string;
@@ -945,7 +945,7 @@ export function createVideoGenerateTool(options?: {
   scheduleBackgroundWork?: MediaGenerateBackgroundScheduler;
   onAsyncTaskStarted?: MediaGenerateAsyncStartCallback;
 }): AnyAgentTool | null {
-  const cfg: OpenClawConfig = options?.config ?? getRuntimeConfig();
+  const cfg: NovaConfig = options?.config ?? getRuntimeConfig();
   if (
     !hasGenerationToolAvailability({
       cfg,

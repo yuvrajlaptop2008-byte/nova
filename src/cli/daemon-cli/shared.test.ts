@@ -47,34 +47,30 @@ describe("renderGatewayServiceStartHints", () => {
   it("resolves daemon container context from either env key", () => {
     expect(
       resolveDaemonContainerContext({
-        NOVA_CONTAINER: "openclaw-demo-container",
+        NOVA_CONTAINER: "nova-demo-container",
       } as NodeJS.ProcessEnv),
-    ).toBe("openclaw-demo-container");
+    ).toBe("nova-demo-container");
     expect(
       resolveDaemonContainerContext({
-        NOVA_CONTAINER_HINT: "openclaw-demo-container",
+        NOVA_CONTAINER_HINT: "nova-demo-container",
       } as NodeJS.ProcessEnv),
-    ).toBe("openclaw-demo-container");
+    ).toBe("nova-demo-container");
   });
 
   it("prepends a single container restart hint when NOVA_CONTAINER is set", () => {
     expect(
       renderGatewayServiceStartHints({
-        NOVA_CONTAINER: "openclaw-demo-container",
+        NOVA_CONTAINER: "nova-demo-container",
       } as NodeJS.ProcessEnv),
-    ).toContain(
-      "Restart the container or the service that manages it for openclaw-demo-container.",
-    );
+    ).toContain("Restart the container or the service that manages it for nova-demo-container.");
   });
 
   it("prepends a single container restart hint when NOVA_CONTAINER_HINT is set", () => {
     expect(
       renderGatewayServiceStartHints({
-        NOVA_CONTAINER_HINT: "openclaw-demo-container",
+        NOVA_CONTAINER_HINT: "nova-demo-container",
       } as NodeJS.ProcessEnv),
-    ).toContain(
-      "Restart the container or the service that manages it for openclaw-demo-container.",
-    );
+    ).toContain("Restart the container or the service that manages it for nova-demo-container.");
   });
 });
 
@@ -84,9 +80,9 @@ describe("filterContainerGenericHints", () => {
       filterContainerGenericHints(
         [
           "systemd user services are unavailable; install/enable systemd or run the gateway under your supervisor.",
-          "If you're in a container, run the gateway in the foreground instead of `openclaw gateway`.",
+          "If you're in a container, run the gateway in the foreground instead of `nova gateway`.",
         ],
-        { NOVA_CONTAINER: "openclaw-demo-container" } as NodeJS.ProcessEnv,
+        { NOVA_CONTAINER: "nova-demo-container" } as NodeJS.ProcessEnv,
       ),
     ).toStrictEqual([]);
   });
@@ -96,9 +92,9 @@ describe("filterContainerGenericHints", () => {
       filterContainerGenericHints(
         [
           "systemd user services are unavailable; install/enable systemd or run the gateway under your supervisor.",
-          "If you're in a container, run the gateway in the foreground instead of `openclaw gateway`.",
+          "If you're in a container, run the gateway in the foreground instead of `nova gateway`.",
         ],
-        { NOVA_CONTAINER_HINT: "openclaw-demo-container" } as NodeJS.ProcessEnv,
+        { NOVA_CONTAINER_HINT: "nova-demo-container" } as NodeJS.ProcessEnv,
       ),
     ).toStrictEqual([]);
   });

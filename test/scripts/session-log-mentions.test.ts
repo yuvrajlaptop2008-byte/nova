@@ -13,7 +13,7 @@ import {
 const tempRoots: string[] = [];
 
 function makeTempRoot() {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-session-log-mentions-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-session-log-mentions-"));
   tempRoots.push(root);
   return root;
 }
@@ -90,7 +90,7 @@ describe("session log mention scanner", () => {
   it("counts mentions from SQLite transcript rows", async () => {
     const root = makeTempRoot();
     const sessionsDir = path.join(root, "agents", "main", "sessions");
-    const sqlitePath = path.join(root, "agents", "main", "agent", "openclaw-agent.sqlite");
+    const sqlitePath = path.join(root, "agents", "main", "agent", "nova-agent.sqlite");
     await fs.mkdir(path.dirname(sqlitePath), { recursive: true });
     const db = new DatabaseSync(sqlitePath);
     try {
@@ -153,7 +153,7 @@ describe("session log mention scanner", () => {
   it("rejects oversized SQLite transcript rows before counting them", async () => {
     const root = makeTempRoot();
     const sessionsDir = path.join(root, "agents", "main", "sessions");
-    const sqlitePath = path.join(root, "agents", "main", "agent", "openclaw-agent.sqlite");
+    const sqlitePath = path.join(root, "agents", "main", "agent", "nova-agent.sqlite");
     await fs.mkdir(path.dirname(sqlitePath), { recursive: true });
     const db = new DatabaseSync(sqlitePath);
     try {

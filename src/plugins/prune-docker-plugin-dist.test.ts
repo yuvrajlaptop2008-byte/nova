@@ -17,7 +17,7 @@ function makeRepoRoot(prefix: string): string {
 function writeDistPluginFile(repoRoot: string, root: "dist" | "dist-runtime", pluginId: string) {
   const pluginDir = path.join(repoRoot, root, "extensions", pluginId);
   fs.mkdirSync(pluginDir, { recursive: true });
-  fs.writeFileSync(path.join(pluginDir, "openclaw.plugin.json"), "{}\n", "utf8");
+  fs.writeFileSync(path.join(pluginDir, "nova.plugin.json"), "{}\n", "utf8");
 }
 
 function writePluginSourcePackage(repoRoot: string, pluginId: string) {
@@ -57,7 +57,7 @@ describe("pruneDockerPluginDist", () => {
   });
 
   it("removes package-excluded plugin runtime artifacts unless Docker explicitly opts it in", () => {
-    const repoRoot = makeRepoRoot("openclaw-docker-plugin-dist-");
+    const repoRoot = makeRepoRoot("nova-docker-plugin-dist-");
     writeJsonFile(path.join(repoRoot, "package.json"), {
       files: ["dist/**", "!dist/extensions/diagnostics-otel/**", "!dist/extensions/feishu/**"],
     });
@@ -89,7 +89,7 @@ describe("pruneDockerPluginDist", () => {
   });
 
   it("honors custom bundled plugin source roots when pruning Docker runtime importers", () => {
-    const repoRoot = makeRepoRoot("openclaw-docker-plugin-source-");
+    const repoRoot = makeRepoRoot("nova-docker-plugin-source-");
     writeJsonFile(path.join(repoRoot, "package.json"), {
       files: ["dist/**", "!dist/extensions/acpx/**"],
     });
@@ -112,7 +112,7 @@ describe("pruneDockerPluginDist", () => {
   });
 
   it("removes node_modules dependency closure that only omitted Docker plugins need", () => {
-    const repoRoot = makeRepoRoot("openclaw-docker-plugin-node-modules-");
+    const repoRoot = makeRepoRoot("nova-docker-plugin-node-modules-");
     writeJsonFile(path.join(repoRoot, "package.json"), {
       files: ["dist/**", "!dist/extensions/acpx/**", "!dist/extensions/codex/**"],
       dependencies: {

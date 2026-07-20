@@ -4,7 +4,7 @@
  * policy, with plugin/channel ownership preserved.
  */
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { ProviderRuntimeModel } from "../plugins/provider-runtime-model.types.js";
 import { getActivePluginRegistry } from "../plugins/runtime.js";
 import { buildPluginToolMetadataKey, getPluginToolMeta } from "../plugins/tools.js";
@@ -177,7 +177,7 @@ function buildEffectiveToolInventoryEntries(
 /** Normalizes tools, quarantines incompatible schemas, and returns inventory output. */
 export function buildRuntimeCompatibleToolInventory(params: {
   tools: readonly AnyAgentTool[];
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   workspaceDir?: string;
   modelProvider?: string;
   modelId?: string;

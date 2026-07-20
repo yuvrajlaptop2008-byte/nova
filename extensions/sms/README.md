@@ -1,13 +1,13 @@
-# SMS OpenClaw channel
+# SMS Nova channel
 
-Official OpenClaw channel plugin for SMS.
+Official Nova channel plugin for SMS.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/sms
+nova plugins install @nova/sms
 ```
 
 ## Docs
 
-See `docs/channels/sms.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/channels/sms`.
+See `docs/channels/sms.md` in the Nova repository, or the published docs at `https://docs.nova.ai/channels/sms`.

@@ -54,7 +54,7 @@ describeControlUiE2e("Control UI chat run lifecycle", () => {
         {
           role: "system",
           timestamp: Date.now() - 1_000,
-          __openclaw: {
+          __nova: {
             kind: "compaction",
             id: "compact-entry-1",
             tokensBefore: 900_000,

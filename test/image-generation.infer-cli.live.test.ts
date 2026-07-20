@@ -23,8 +23,8 @@ function parseJsonEnvelope(stdout: string): Record<string, unknown> {
 }
 
 describeLive("image generation infer CLI live", () => {
-  it("generates an image through openclaw infer", () => {
-    const outputBase = path.join(os.tmpdir(), `openclaw-infer-image-${process.pid}.png`);
+  it("generates an image through nova infer", () => {
+    const outputBase = path.join(os.tmpdir(), `nova-infer-image-${process.pid}.png`);
     const result = spawnSync(
       process.execPath,
       [

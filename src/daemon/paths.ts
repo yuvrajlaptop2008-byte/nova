@@ -44,8 +44,8 @@ export function resolveGatewayStateDir(env: Record<string, string | undefined>):
   const home = resolveHomeDir(env);
   const suffix = resolveGatewayProfileSuffix(env.NOVA_PROFILE);
   // Profile suffixes isolate managed service files while preserving the default
-  // historical ~/.openclaw state path.
-  return path.join(home, `.openclaw${suffix}`);
+  // historical ~/.nova state path.
+  return path.join(home, `.nova${suffix}`);
 }
 
 export function resolveGatewayTaskScriptPath(env: Record<string, string | undefined>): string {

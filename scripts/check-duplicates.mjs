@@ -22,7 +22,7 @@ const targets = [
   "test",
   "skills",
   "config",
-  "openclaw.mjs",
+  "nova.mjs",
   "tsdown.ai.config.ts",
   "tsdown.config.ts",
   "vitest.config.ts",

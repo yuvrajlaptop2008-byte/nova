@@ -49,24 +49,24 @@ for (const [pluginId, expected] of Object.entries(selected)) {
   for (const entry of expected.entries) {
     assertFile(path.join(pluginRoot, entry));
   }
-  assertFile(path.join(pluginRoot, "openclaw.plugin.json"));
+  assertFile(path.join(pluginRoot, "nova.plugin.json"));
   assertFile(path.join(pluginRoot, "package.json"));
 
-  const manifest = readJson(path.join(pluginRoot, "openclaw.plugin.json"));
+  const manifest = readJson(path.join(pluginRoot, "nova.plugin.json"));
   const packageJson = readJson(path.join(pluginRoot, "package.json"));
   assert(manifest.id === pluginId, `unexpected ${pluginId} manifest id: ${manifest.id}`);
   assert(
-    packageJson.openclaw?.extensions?.includes("./index.js"),
+    packageJson.nova?.extensions?.includes("./index.js"),
     `${pluginId} package entry was not rewritten to ./index.js`,
   );
   if (expected.entries.includes("setup-entry.js")) {
     assert(
-      packageJson.openclaw?.setupEntry === "./setup-entry.js",
+      packageJson.nova?.setupEntry === "./setup-entry.js",
       `${pluginId} setup entry was not rewritten to ./setup-entry.js`,
     );
   }
 
-  const inspect = readJson(`/tmp/openclaw-${pluginId}-inspect.json`);
+  const inspect = readJson(`/tmp/nova-${pluginId}-inspect.json`);
   assert(inspect.plugin?.id === pluginId, `unexpected ${pluginId} inspect id`);
   assert(inspect.plugin?.status === "loaded", `${pluginId} runtime did not load`);
   assert(inspect.plugin?.origin === "bundled", `${pluginId} did not load from bundled dist`);
@@ -81,7 +81,7 @@ for (const [pluginId, expected] of Object.entries(selected)) {
 for (const pluginId of ["clickclack", "slack"]) {
   const packageJson = readJson(`/app/dist/extensions/${pluginId}/package.json`);
   assert(
-    packageJson.openclaw?.build?.bundledDist === false,
+    packageJson.nova?.build?.bundledDist === false,
     `${pluginId} bundledDist release metadata changed`,
   );
 }

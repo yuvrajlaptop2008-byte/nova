@@ -2,7 +2,7 @@
 
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { startHeartbeatRunner } from "./heartbeat-runner.js";
 import { computeNextHeartbeatPhaseDueMs, resolveHeartbeatPhaseMs } from "./heartbeat-schedule.js";
 
@@ -20,7 +20,7 @@ describe("heartbeat scheduler: activeHours-aware scheduling (#75487)", () => {
     every?: string;
     activeHours?: { start: string; end: string; timezone?: string };
     userTimezone?: string;
-  }): OpenClawConfig {
+  }): NovaConfig {
     return {
       agents: {
         defaults: {

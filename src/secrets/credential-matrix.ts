@@ -4,7 +4,7 @@ import { unsupportedSecretRefSurfacePolicy } from "./unsupported-surface-policy.
 
 type CredentialMatrixEntry = {
   id: string;
-  configFile: "openclaw.json" | "auth-profiles.json";
+  configFile: "nova.json" | "auth-profiles.json";
   path: string;
   refPath?: string;
   when?: { type: "api_key" | "token" };

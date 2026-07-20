@@ -105,7 +105,7 @@ export type {
   AgentToolResultMiddlewareOptions,
   AgentToolResultMiddlewareResult,
   AgentToolResultMiddlewareRuntime,
-  OpenClawAgentToolResult,
+  NovaAgentToolResult,
 } from "../plugins/agent-tool-result-middleware-types.js";
 export type {
   CodexAppServerExtensionContext,
@@ -252,7 +252,7 @@ export async function detectAndLoadAgentHarnessPromptImages(params: {
   model: { input?: string[] };
   existingImages?: ImageContent[];
   imageOrder?: PromptImageOrderEntry[];
-  config?: import("../config/types.openclaw.js").OpenClawConfig;
+  config?: import("../config/types.nova.js").NovaConfig;
   workspaceOnly?: boolean;
   localRoots?: readonly string[];
   sandbox?: { root: string; bridge: SandboxFsBridge };

@@ -18,23 +18,23 @@ import {
   type SessionAcpMeta,
   type SessionEntry,
 } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../../infra/kysely-sync.js";
 import { parseAgentSessionKey } from "../../routing/session-key.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../../state/nova-state-db.generated.js";
 import {
-  openOpenClawStateDatabase,
-  type OpenClawStateDatabaseOptions,
-  runOpenClawStateWriteTransaction,
-} from "../../state/openclaw-state-db.js";
+  openNovaStateDatabase,
+  type NovaStateDatabaseOptions,
+  runNovaStateWriteTransaction,
+} from "../../state/nova-state-db.js";
 
 /** ACP metadata joined with its legacy session-store row and config context. */
 export type AcpSessionStoreEntry = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   storePath: string;
   sessionKey: string;
@@ -45,8 +45,8 @@ export type AcpSessionStoreEntry = {
 };
 
 // ACP metadata lives in SQLite but is keyed through the legacy JSON session store.
-type AcpSessionsTable = OpenClawStateKyselyDatabase["acp_sessions"];
-type AcpSessionMetaDatabase = Pick<OpenClawStateKyselyDatabase, "acp_sessions">;
+type AcpSessionsTable = NovaStateKyselyDatabase["acp_sessions"];
+type AcpSessionMetaDatabase = Pick<NovaStateKyselyDatabase, "acp_sessions">;
 type AcpSessionRow = Selectable<AcpSessionsTable>;
 
 function resolveStoreSessionKey(
@@ -75,9 +75,9 @@ function resolveStoreSessionKey(
 /** Resolves the session store path that owns an ACP session key. */
 export function resolveSessionStorePathForAcp(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
-}): { cfg: OpenClawConfig; agentId?: string; storePath: string } {
+}): { cfg: NovaConfig; agentId?: string; storePath: string } {
   const cfg = params.cfg ?? getRuntimeConfig();
   const parsed = parseAgentSessionKey(params.sessionKey);
   const storePath = resolveStorePath(cfg.session?.store, {
@@ -161,7 +161,7 @@ function acpSessionRowMatchesEntry(
 
 export function readAcpSessionMeta(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   databasePath?: string;
 }): SessionAcpMeta | undefined {
@@ -175,7 +175,7 @@ export function readAcpSessionMeta(params: {
     env: params.env,
     clone: false,
   });
-  const database = openOpenClawStateDatabase({
+  const database = openNovaStateDatabase({
     env: params.env,
     path: params.databasePath,
   });
@@ -196,7 +196,7 @@ export function readAcpSessionMetaForEntry(params: {
   if (!sessionKey) {
     return undefined;
   }
-  const database = openOpenClawStateDatabase({
+  const database = openNovaStateDatabase({
     env: params.env,
     path: params.databasePath,
   });
@@ -207,8 +207,8 @@ export function readAcpSessionMetaForEntry(params: {
   return rowToAcpSessionMeta(row);
 }
 
-function selectAcpSessionRows(options: OpenClawStateDatabaseOptions = {}): AcpSessionRow[] {
-  const database = openOpenClawStateDatabase(options);
+function selectAcpSessionRows(options: NovaStateDatabaseOptions = {}): AcpSessionRow[] {
+  const database = openNovaStateDatabase(options);
   return executeSqliteQuerySync(
     database.db,
     getAcpSessionKysely(database.db)
@@ -237,7 +237,7 @@ export function writeAcpSessionMetaForMigration(params: {
     meta: params.meta,
     updatedAt: params.now?.() ?? Date.now(),
   });
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     (database) => {
       upsertAcpSessionMetaRow(database.db, row);
     },
@@ -259,7 +259,7 @@ export function repairAcpSessionMetaKeyForMigration(params: {
   }
 
   let repaired = false;
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     (database) => {
       const currentRow = selectAcpSessionRow(database.db, sessionKey);
       if (currentRow && acpSessionRowMatchesEntry(currentRow, params.entry)) {
@@ -349,11 +349,11 @@ function upsertAcpSessionMetaRow(db: DatabaseSync, row: Insertable<AcpSessionsTa
 
 function readSessionEntryFromStore(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   clone?: boolean;
 }): {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   storePath: string;
   storeSessionKey: string;
@@ -387,7 +387,7 @@ function readSessionEntryFromStore(params: {
 
 export function readAcpSessionEntry(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   clone?: boolean;
   env?: NodeJS.ProcessEnv;
   databasePath?: string;
@@ -397,7 +397,7 @@ export function readAcpSessionEntry(params: {
     return null;
   }
   const storeEntry = readSessionEntryFromStore(params);
-  const database = openOpenClawStateDatabase({
+  const database = openNovaStateDatabase({
     env: params.env,
     path: params.databasePath,
   });
@@ -417,7 +417,7 @@ export function readAcpSessionEntry(params: {
 }
 
 export async function listAcpSessionEntries(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   clone?: boolean;
   databasePath?: string;
@@ -519,7 +519,7 @@ async function clearLegacyEmbeddedAcpMetadata(params: {
 
 export async function upsertAcpSessionMeta(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   databasePath?: string;
   now?: () => number;
@@ -546,7 +546,7 @@ export async function upsertAcpSessionMeta(params: {
   let nextMeta: SessionAcpMeta | null | undefined;
   let preparedEntry: SessionEntry | undefined;
   const updatedAt = params.now?.() ?? Date.now();
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     (database) => {
       const currentRow = selectAcpSessionRow(database.db, storageSessionKey);
       current =
@@ -584,7 +584,7 @@ export async function upsertAcpSessionMeta(params: {
           },
         )
       : null;
-    runOpenClawStateWriteTransaction(
+    runNovaStateWriteTransaction(
       (database) => {
         const sessionKeysToDelete = new Set([storageSessionKey]);
         if (patched?.sessionKey) {
@@ -633,7 +633,7 @@ export async function upsertAcpSessionMeta(params: {
     storePath: storeEntry.storePath,
     sessionKeys: [storageSessionKey, persisted.sessionKey],
   });
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     (database) => {
       upsertAcpSessionMetaRow(
         database.db,

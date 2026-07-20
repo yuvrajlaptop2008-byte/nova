@@ -425,7 +425,7 @@ export class GitHubLinkHovercardProvider extends HTMLElement {
     const version = ++this.requestVersion;
     const card = document.createElement("div");
     nextHovercardId += 1;
-    card.id = `openclaw-github-hovercard-${nextHovercardId}`;
+    card.id = `nova-github-hovercard-${nextHovercardId}`;
     card.className = "github-link-hovercard";
     card.dataset.open = "true";
     card.setAttribute("role", "tooltip");

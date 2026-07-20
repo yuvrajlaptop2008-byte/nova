@@ -7,7 +7,7 @@ export type ExtensionPackageJson = {
   version?: string;
   dependencies?: Record<string, string>;
   optionalDependencies?: Record<string, string>;
-  openclaw?: {
+  nova?: {
     install?: unknown;
     releaseChecks?: unknown;
   };
@@ -19,10 +19,10 @@ export function collectBundledExtensionManifestErrors(extensions: BundledExtensi
   const errors: string[] = [];
 
   for (const extension of extensions) {
-    const install = extension.packageJson.openclaw?.install;
+    const install = extension.packageJson.nova?.install;
     if (install !== undefined && !isRecord(install)) {
       errors.push(
-        `bundled extension '${extension.id}' manifest invalid | openclaw.install must be an object`,
+        `bundled extension '${extension.id}' manifest invalid | nova.install must be an object`,
       );
       continue;
     }
@@ -32,7 +32,7 @@ export function collectBundledExtensionManifestErrors(extensions: BundledExtensi
       (!install.npmSpec || typeof install.npmSpec !== "string" || !install.npmSpec.trim())
     ) {
       errors.push(
-        `bundled extension '${extension.id}' manifest invalid | openclaw.install.npmSpec must be a non-empty string`,
+        `bundled extension '${extension.id}' manifest invalid | nova.install.npmSpec must be a non-empty string`,
       );
     }
     const minHostVersionCheck =

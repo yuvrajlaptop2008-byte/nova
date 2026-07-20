@@ -1,6 +1,6 @@
 /** Loads manifest and installed-index contributions used to build plugin registry snapshots. */
 import { normalizeSortedUniqueStringEntries } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   normalizePluginsConfigWithResolver,
   type NormalizedPluginsConfig,
@@ -142,7 +142,7 @@ function listManifestContributionIds(
 function resolveContributionPluginIds(params: {
   index: PluginRegistrySnapshot;
   includeDisabled?: boolean;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): readonly string[] {
   if (params.includeDisabled) {
     return params.index.plugins.map((plugin) => plugin.pluginId);
@@ -223,7 +223,7 @@ function filterContributionOwnerIds(params: {
   owners: readonly string[];
   index: PluginRegistrySnapshot;
   includeDisabled?: boolean;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 }): readonly string[] {
   const enabledPluginIds = new Set(
     resolveContributionPluginIds({
@@ -309,7 +309,7 @@ export function loadPluginManifestRegistryForPluginRegistry(
 }
 
 export function normalizePluginsConfigWithRegistry(
-  config: OpenClawConfig["plugins"] | undefined,
+  config: NovaConfig["plugins"] | undefined,
   index: PluginRegistrySnapshot,
   options: PluginRegistryIdNormalizerOptions = {},
 ): NormalizedPluginsConfig {

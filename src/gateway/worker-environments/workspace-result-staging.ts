@@ -22,11 +22,11 @@ import {
 } from "./workspace-reconcile.js";
 
 const PATCH_TIMEOUT_MS = 10 * 60_000;
-// Match managed-worktree refs/openclaw/snapshots: deleting the owning ref is
+// Match managed-worktree refs/nova/snapshots: deleting the owning ref is
 // sufficient; unreachable objects may remain until normal Git GC.
-const WORKER_RESULT_REF_PREFIX = "refs/openclaw/worker-results";
-const WORKER_RESULT_CANDIDATE_REF_PREFIX = "refs/openclaw/worker-result-candidates";
-const WORKER_RESULT_CLEANUP_REF_PREFIX = "refs/openclaw/worker-result-cleanup";
+const WORKER_RESULT_REF_PREFIX = "refs/nova/worker-results";
+const WORKER_RESULT_CANDIDATE_REF_PREFIX = "refs/nova/worker-result-candidates";
+const WORKER_RESULT_CLEANUP_REF_PREFIX = "refs/nova/worker-result-cleanup";
 const WORKER_RESULT_CLAIM_ID_PATTERN = /^[A-Za-z0-9-]+$/u;
 const STAGED_RESULT_MESSAGE = "Nova worker workspace result";
 const STAGED_RESULT_METADATA_LIMIT = 128 * 1024 * 1024 + 4_096;
@@ -311,7 +311,7 @@ async function stageWorkerWorkspaceResult(params: {
   }
   chunks.push(
     Buffer.from(
-      `commit ${stagedResultRef}\nauthor Nova <openclaw@localhost> 0 +0000\ncommitter Nova <openclaw@localhost> 0 +0000\ndata ${message.byteLength}\n`,
+      `commit ${stagedResultRef}\nauthor Nova <nova@localhost> 0 +0000\ncommitter Nova <nova@localhost> 0 +0000\ndata ${message.byteLength}\n`,
     ),
     message,
     Buffer.from("\ndeleteall\n"),
@@ -485,7 +485,7 @@ export async function applyStagedWorkerWorkspaceResult(params: {
     };
   }
   const changed = changedPaths(staged.base, staged.current);
-  const stagingRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-staged-result-"));
+  const stagingRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-staged-result-"));
   try {
     for (const entry of reconciliationEntries(staged.current.entries)) {
       if (!changed.has(entry.path)) {

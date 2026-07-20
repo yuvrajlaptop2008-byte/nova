@@ -77,7 +77,7 @@ function createGatewayHarness(
     },
     emitSystemApproval(id: string, createdAtMs: number) {
       const event: GatewayEventFrame = {
-        event: "openclaw.approval.requested",
+        event: "nova.approval.requested",
         payload: {
           id,
           createdAtMs,
@@ -159,7 +159,7 @@ describe("application approval overlays", () => {
     expect(execListRequests).toBe(1);
     expect(request).toHaveBeenCalledWith("exec.approval.list", {});
     expect(request).toHaveBeenCalledWith("plugin.approval.list", {});
-    expect(request).toHaveBeenCalledWith("openclaw.approval.list", {});
+    expect(request).toHaveBeenCalledWith("nova.approval.list", {});
 
     harness.update({ connected: false });
     expect(overlays.snapshot.approvalQueue).toEqual([]);

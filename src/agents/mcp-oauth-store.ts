@@ -17,17 +17,14 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
-import { withOpenClawStateDatabaseReadOnly } from "../state/openclaw-state-db-readonly.js";
-import { tableExists } from "../state/openclaw-state-db-schema-helpers.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import { withNovaStateDatabaseReadOnly } from "../state/nova-state-db-readonly.js";
+import { tableExists } from "../state/nova-state-db-schema-helpers.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 import { sanitizeServerName } from "./agent-bundle-mcp-names.js";
 
-type McpOAuthDatabase = Pick<OpenClawStateKyselyDatabase, "mcp_oauth_stores">;
+type McpOAuthDatabase = Pick<NovaStateKyselyDatabase, "mcp_oauth_stores">;
 
 const MCP_OAUTH_STORE_FORMAT_VERSION = 1;
 const UNINITIALIZED_STORE_FIELDS = new Set(["credentialState", "pendingAuthorizationChallenge"]);
@@ -232,16 +229,16 @@ function readFromDatabase(database: DatabaseSync, storeKey: string): McpOAuthSto
 
 /** Read canonical state, opening the writable lifecycle when runtime owns it. */
 export function readMcpOAuthStore(storeKey: string): McpOAuthStore {
-  return readFromDatabase(openOpenClawStateDatabase().db, storeKey);
+  return readFromDatabase(openNovaStateDatabase().db, storeKey);
 }
 
 /** Read status state without creating or repairing the shared database. */
 export function readMcpOAuthStoreReadOnly(storeKey: string): McpOAuthStore {
-  const databasePath = resolveOpenClawStateSqlitePath();
+  const databasePath = resolveNovaStateSqlitePath();
   if (!fs.existsSync(databasePath)) {
     return {};
   }
-  return withOpenClawStateDatabaseReadOnly(({ db }) => {
+  return withNovaStateDatabaseReadOnly(({ db }) => {
     if (!tableExists(db, "mcp_oauth_stores")) {
       return {};
     }
@@ -286,7 +283,7 @@ export function updateMcpOAuthStore(
   update: (current: McpOAuthStore) => McpOAuthStore,
   assertOwnedInTransaction?: (database: DatabaseSync) => void,
 ): McpOAuthStore {
-  return runOpenClawStateWriteTransaction(({ db }) => {
+  return runNovaStateWriteTransaction(({ db }) => {
     const current = readFromDatabase(db, storeKey);
     return replaceMcpOAuthStore(db, storeKey, update(current), assertOwnedInTransaction);
   });
@@ -299,7 +296,7 @@ export function clearMcpOAuthStore(
 ): void {
   // Explicit provenance distinguishes logout from challenge-only bootstrap state.
   // Doctor imports retired credentials only into an `uninitialized` row.
-  runOpenClawStateWriteTransaction(({ db }) => {
+  runNovaStateWriteTransaction(({ db }) => {
     replaceMcpOAuthStore(db, storeKey, { credentialState: "cleared" }, assertOwnedInTransaction);
   });
 }

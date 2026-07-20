@@ -2,11 +2,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "../state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaAgentDatabasesForTest, openNovaAgentDatabase } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import {
   buildHeartbeatOutcomeContext,
   claimHeartbeatOutcomeForRun,
@@ -16,14 +13,14 @@ import {
 const tempDirs: string[] = [];
 
 function createEnv(): NodeJS.ProcessEnv {
-  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-heartbeat-outcome-"));
+  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-heartbeat-outcome-"));
   tempDirs.push(stateDir);
   return { NOVA_STATE_DIR: stateDir };
 }
 
 afterEach(() => {
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
   for (const dir of tempDirs.splice(0)) {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -113,7 +110,7 @@ describe("heartbeat outcome store", () => {
       }),
     ).toMatchObject({ outcome: "blocked", summary: "Waiting for build", occurredAt: 200 });
     expect(
-      openOpenClawAgentDatabase({ agentId: "main", env })
+      openNovaAgentDatabase({ agentId: "main", env })
         .db.prepare("SELECT COUNT(*) AS count FROM heartbeat_outcomes")
         .get(),
     ).toEqual({ count: 1 });

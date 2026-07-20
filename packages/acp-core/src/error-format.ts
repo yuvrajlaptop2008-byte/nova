@@ -11,7 +11,7 @@ import {
   redactStructuredAuthHeaders,
 } from "./structured-auth-redaction.js";
 
-const STRUCTURED_AUTH_MARKER_PREFIX = ";__openclaw_structured_auth_redacted_";
+const STRUCTURED_AUTH_MARKER_PREFIX = ";__nova_structured_auth_redacted_";
 
 const SECRET_PATTERNS: RegExp[] = [
   /\b[A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD|CARD[_-]?NUMBER|CARD[_-]?CVC|CARD[_-]?CVV|CVC|CVV|SECURITY[_-]?CODE|PAYMENT[_-]?CREDENTIAL|SHARED[_-]?PAYMENT[_-]?TOKEN)\b\s*[=:]\s*(["']?)([^\s"'\\]+)\1/g,

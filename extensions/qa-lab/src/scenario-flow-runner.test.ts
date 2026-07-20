@@ -332,7 +332,7 @@ function createPlanningEvidenceFixture(
       },
     };
   }
-  if (scenario.execution.runtime === "openclaw" && artifactFile) {
+  if (scenario.execution.runtime === "nova" && artifactFile) {
     return {
       scenario,
       outboundText: `Built ${artifactFile}`,

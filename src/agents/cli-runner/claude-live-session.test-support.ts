@@ -16,7 +16,7 @@ type ClaudeLiveSessionTestApi = {
 
 function getTestApi(): ClaudeLiveSessionTestApi {
   return (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.claudeLiveSessionTestApi")
+    Symbol.for("nova.claudeLiveSessionTestApi")
   ] as ClaudeLiveSessionTestApi;
 }
 

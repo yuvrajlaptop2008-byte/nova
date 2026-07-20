@@ -11,14 +11,14 @@ if [[ -z "$TRUSTED_HARNESS_DIR" || ! -d "$TRUSTED_HARNESS_DIR" ]]; then
 fi
 TRUSTED_HARNESS_DIR="$(cd "$TRUSTED_HARNESS_DIR" && pwd)"
 source "$TRUSTED_HARNESS_DIR/scripts/lib/live-docker-auth.sh"
-IMAGE_NAME="${NOVA_IMAGE:-openclaw:local}"
+IMAGE_NAME="${NOVA_IMAGE:-nova:local}"
 LIVE_IMAGE_NAME="${NOVA_LIVE_IMAGE:-${IMAGE_NAME}-live}"
-CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.openclaw}"
-WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.openclaw/workspace}"
-PROFILE_FILE="$(openclaw_live_default_profile_file)"
+CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.nova}"
+WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.nova/workspace}"
+PROFILE_FILE="$(nova_live_default_profile_file)"
 CODEX_HARNESS_AUTH_MODE="${NOVA_LIVE_CODEX_HARNESS_AUTH:-codex-auth}"
 CODEX_CLI_PACKAGE_SPEC="${NOVA_LIVE_CODEX_CLI_PACKAGE_SPEC:-}"
-CODEX_HARNESS_SETUP_TIMEOUT_SECONDS="$(openclaw_live_read_positive_int_env NOVA_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS 180)"
+CODEX_HARNESS_SETUP_TIMEOUT_SECONDS="$(nova_live_read_positive_int_env NOVA_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS 180)"
 CODEX_HARNESS_TARGET_COUNT=1
 if [[ -n "${NOVA_LIVE_CODEX_HARNESS_TARGETS:-}" ]]; then
   IFS=',' read -r -a CODEX_HARNESS_TARGET_ITEMS <<<"$NOVA_LIVE_CODEX_HARNESS_TARGETS"
@@ -32,16 +32,16 @@ DOCKER_USER="${NOVA_DOCKER_USER:-node}"
 DOCKER_HOME_MOUNT=()
 DOCKER_TRUSTED_HARNESS_MOUNT=()
 DOCKER_TRUSTED_HARNESS_CONTAINER_DIR=""
-DOCKER_CACHE_CONTAINER_DIR="/tmp/openclaw-cache"
-DOCKER_CLI_TOOLS_CONTAINER_DIR="/tmp/openclaw-npm-global"
+DOCKER_CACHE_CONTAINER_DIR="/tmp/nova-cache"
+DOCKER_CLI_TOOLS_CONTAINER_DIR="/tmp/nova-npm-global"
 DOCKER_EXTRA_ENV_FILES=()
 DOCKER_AUTH_PRESTAGED=0
 
-openclaw_live_codex_harness_is_ci() {
-  openclaw_live_is_ci
+nova_live_codex_harness_is_ci() {
+  nova_live_is_ci
 }
 
-openclaw_live_codex_harness_append_build_extension() {
+nova_live_codex_harness_append_build_extension() {
   local extension="${1:?extension required}"
   local current="${NOVA_DOCKER_BUILD_EXTENSIONS:-${NOVA_EXTENSIONS:-}}"
   case " $current " in
@@ -76,7 +76,7 @@ fi
 if [[ "$CODEX_HARNESS_AUTH_MODE" != "api-key" && ! -s "$HOME/.codex/auth.json" ]]; then
   echo "ERROR: NOVA_LIVE_CODEX_HARNESS_AUTH=codex-auth requires ~/.codex/auth.json before building the live Docker image." >&2
   if [[ -n "${OPENAI_API_KEY:-}" ]]; then
-    echo "If this is a Testbox/API-key run, set NOVA_LIVE_CODEX_HARNESS_AUTH=api-key and run through openclaw-testbox-env." >&2
+    echo "If this is a Testbox/API-key run, set NOVA_LIVE_CODEX_HARNESS_AUTH=api-key and run through nova-testbox-env." >&2
   fi
   exit 1
 fi
@@ -100,39 +100,39 @@ trap cleanup_temp_dirs EXIT
 
 if [[ -n "${NOVA_DOCKER_CLI_TOOLS_DIR:-}" ]]; then
   CLI_TOOLS_DIR="${NOVA_DOCKER_CLI_TOOLS_DIR}"
-elif openclaw_live_codex_harness_is_ci; then
-  CLI_TOOLS_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-cli-tools.XXXXXX")"
+elif nova_live_codex_harness_is_ci; then
+  CLI_TOOLS_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-cli-tools.XXXXXX")"
   TEMP_DIRS+=("$CLI_TOOLS_DIR")
 else
-  CLI_TOOLS_DIR="$HOME/.cache/openclaw/docker-cli-tools"
+  CLI_TOOLS_DIR="$HOME/.cache/nova/docker-cli-tools"
 fi
 if [[ -n "${NOVA_DOCKER_CACHE_HOME_DIR:-}" ]]; then
   CACHE_HOME_DIR="${NOVA_DOCKER_CACHE_HOME_DIR}"
-elif openclaw_live_codex_harness_is_ci; then
-  CACHE_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-cache.XXXXXX")"
+elif nova_live_codex_harness_is_ci; then
+  CACHE_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-cache.XXXXXX")"
   TEMP_DIRS+=("$CACHE_HOME_DIR")
 else
-  CACHE_HOME_DIR="$HOME/.cache/openclaw/docker-cache"
+  CACHE_HOME_DIR="$HOME/.cache/nova/docker-cache"
 fi
 
-openclaw_live_prepare_bind_dir_for_container_user "$CLI_TOOLS_DIR"
-openclaw_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"
-if openclaw_live_uses_managed_bind_dirs; then
+nova_live_prepare_bind_dir_for_container_user "$CLI_TOOLS_DIR"
+nova_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"
+if nova_live_uses_managed_bind_dirs; then
   DOCKER_USER="$(id -u):$(id -g)"
-  DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-home.XXXXXX")"
+  DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-home.XXXXXX")"
   TEMP_DIRS+=("$DOCKER_HOME_DIR")
-  openclaw_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
+  nova_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
   DOCKER_HOME_MOUNT=(-v "$DOCKER_HOME_DIR":/home/node)
 fi
 if [[ "$CODEX_HARNESS_AUTH_MODE" == "api-key" ]]; then
   if [[ -z "${DOCKER_HOME_DIR:-}" ]]; then
-    DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-home.XXXXXX")"
+    DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-home.XXXXXX")"
     TEMP_DIRS+=("$DOCKER_HOME_DIR")
-    openclaw_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
+    nova_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
     DOCKER_HOME_MOUNT=(-v "$DOCKER_HOME_DIR":/home/node)
   fi
-  CONFIG_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-config.XXXXXX")"
-  WORKSPACE_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-workspace.XXXXXX")"
+  CONFIG_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-config.XXXXXX")"
+  WORKSPACE_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-workspace.XXXXXX")"
   TEMP_DIRS+=("$CONFIG_DIR" "$WORKSPACE_DIR")
   chmod 0777 "$DOCKER_HOME_DIR" "$CONFIG_DIR" "$WORKSPACE_DIR" || true
   DOCKER_CACHE_CONTAINER_DIR="/home/node/.cache"
@@ -143,7 +143,7 @@ PROFILE_MOUNT=()
 PROFILE_STATUS="none"
 if [[ "$CODEX_HARNESS_AUTH_MODE" != "api-key" && -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]]; then
   if [[ -n "${DOCKER_HOME_DIR:-}" ]]; then
-    openclaw_live_stage_profile_into_home "$DOCKER_HOME_DIR" "$PROFILE_FILE"
+    nova_live_stage_profile_into_home "$DOCKER_HOME_DIR" "$PROFILE_FILE"
   else
     PROFILE_MOUNT=(-v "$PROFILE_FILE":/home/node/.profile:ro)
   fi
@@ -160,23 +160,23 @@ if [[ "$CODEX_HARNESS_AUTH_MODE" != "api-key" ]]; then
   while IFS= read -r auth_file; do
     [[ -n "$auth_file" ]] || continue
     AUTH_FILES+=("$auth_file")
-  done < <(openclaw_live_collect_auth_files_from_csv "openai")
+  done < <(nova_live_collect_auth_files_from_csv "openai")
 fi
 
 AUTH_FILES_CSV=""
 if ((${#AUTH_FILES[@]} > 0)); then
-  AUTH_FILES_CSV="$(openclaw_live_join_csv "${AUTH_FILES[@]}")"
+  AUTH_FILES_CSV="$(nova_live_join_csv "${AUTH_FILES[@]}")"
 fi
 
 if [[ -n "${DOCKER_HOME_DIR:-}" ]]; then
-  openclaw_live_stage_auth_into_home "$DOCKER_HOME_DIR" --files "${AUTH_FILES[@]}"
+  nova_live_stage_auth_into_home "$DOCKER_HOME_DIR" --files "${AUTH_FILES[@]}"
   DOCKER_AUTH_PRESTAGED=1
 fi
 
 EXTERNAL_AUTH_MOUNTS=()
 if ((${#AUTH_FILES[@]} > 0)); then
   for auth_file in "${AUTH_FILES[@]}"; do
-    auth_file="$(openclaw_live_validate_relative_home_path "$auth_file")"
+    auth_file="$(nova_live_validate_relative_home_path "$auth_file")"
     host_path="$HOME/$auth_file"
     if [[ -f "$host_path" ]]; then
       EXTERNAL_AUTH_MOUNTS+=(-v "$host_path":/host-auth-files/"$auth_file":ro)
@@ -186,7 +186,7 @@ fi
 
 DOCKER_AUTH_ENV=()
 if [[ "$CODEX_HARNESS_AUTH_MODE" == "api-key" ]]; then
-  docker_env_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-codex-harness-env.XXXXXX")"
+  docker_env_dir="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-codex-harness-env.XXXXXX")"
   TEMP_DIRS+=("$docker_env_dir")
   docker_env_file="$docker_env_dir/openai.env"
   {
@@ -214,7 +214,7 @@ cleanup_codex_live_mounts() {
 trap cleanup_codex_live_mounts EXIT
 if [ "${NOVA_LIVE_CODEX_HARNESS_DEBUG:-}" = "1" ]; then
   id
-  mount | grep -E 'openclaw-cache|openclaw-npm|/home/node' || true
+  mount | grep -E 'nova-cache|nova-npm|/home/node' || true
   ls -ld "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_PREFIX" 2>/dev/null || true
 fi
 # Force the Codex harness to use the staged `~/.codex` auth files. This lane
@@ -271,20 +271,20 @@ if [ "${NOVA_LIVE_CODEX_HARNESS_AUTH:-codex-auth}" = "api-key" ]; then
 fi
 tmp_dir="$(mktemp -d)"
 source "$trusted_scripts_dir/lib/live-docker-stage.sh"
-openclaw_live_stage_source_tree "$tmp_dir"
-openclaw_live_stage_node_modules "$tmp_dir"
-openclaw_live_link_runtime_tree "$tmp_dir"
+nova_live_stage_source_tree "$tmp_dir"
+nova_live_stage_node_modules "$tmp_dir"
+nova_live_link_runtime_tree "$tmp_dir"
 if [ -d /app/dist-runtime/extensions/codex ]; then
   export NOVA_BUNDLED_PLUGINS_DIR=/app/dist-runtime/extensions
 elif [ -d /app/dist/extensions/codex ]; then
   export NOVA_BUNDLED_PLUGINS_DIR=/app/dist/extensions
-elif [ -f "$tmp_dir/extensions/codex/openclaw.plugin.json" ]; then
+elif [ -f "$tmp_dir/extensions/codex/nova.plugin.json" ]; then
   export NOVA_BUNDLED_PLUGINS_DIR="$tmp_dir/extensions"
 else
   echo "ERROR: staged Codex plugin not found for live harness." >&2
   exit 1
 fi
-openclaw_live_stage_state_dir "$tmp_dir/.openclaw-state"
+nova_live_stage_state_dir "$tmp_dir/.nova-state"
 if [ -n "${NOVA_LIVE_CODEX_TRUSTED_HARNESS_DIR:-}" ] && [ -d "$NOVA_LIVE_CODEX_TRUSTED_HARNESS_DIR" ]; then
   for harness_file in src/gateway/gateway-codex-harness.live-helpers.ts; do
     if [ -f "$NOVA_LIVE_CODEX_TRUSTED_HARNESS_DIR/$harness_file" ]; then
@@ -293,7 +293,7 @@ if [ -n "${NOVA_LIVE_CODEX_TRUSTED_HARNESS_DIR:-}" ] && [ -d "$NOVA_LIVE_CODEX_T
     fi
   done
 fi
-openclaw_live_prepare_staged_config
+nova_live_prepare_staged_config
 cd "$tmp_dir"
 if [ "${NOVA_LIVE_CODEX_HARNESS_USE_CI_SAFE_CODEX_CONFIG:-1}" = "1" ]; then
   node --import tsx "$trusted_scripts_dir/prepare-codex-ci-config.ts" "$HOME/.codex/config.toml" "$tmp_dir"
@@ -338,15 +338,15 @@ else
 fi
 EOF
 
-openclaw_live_codex_harness_append_build_extension codex
+nova_live_codex_harness_append_build_extension codex
 # The release package image intentionally excludes externalized plugins such as
 # Codex. This lane must rebuild the live image so the plugin-owned harness is
 # present under the bundled plugin runtime directory.
 NOVA_SKIP_DOCKER_BUILD=0
 export NOVA_SKIP_DOCKER_BUILD
 NOVA_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR" "$TRUSTED_HARNESS_DIR/scripts/test-live-build-docker.sh"
-if openclaw_live_uses_managed_bind_dirs; then
-  openclaw_live_chown_bind_dirs_for_container_user \
+if nova_live_uses_managed_bind_dirs; then
+  nova_live_chown_bind_dirs_for_container_user \
     "$LIVE_IMAGE_NAME" \
     "$DOCKER_USER" \
     "$CLI_TOOLS_DIR" \
@@ -386,7 +386,7 @@ echo "==> Codex CLI package: $CODEX_CLI_PACKAGE_SPEC"
 echo "==> Harness fallback: none"
 echo "==> Auth files: ${AUTH_FILES_CSV:-none}"
 DOCKER_RUN_ARGS=()
-openclaw_live_init_docker_run_args DOCKER_RUN_ARGS "$CODEX_HARNESS_DOCKER_RUN_TIMEOUT"
+nova_live_init_docker_run_args DOCKER_RUN_ARGS "$CODEX_HARNESS_DOCKER_RUN_TIMEOUT"
 DOCKER_RUN_ARGS+=(--rm -t \
   -u "$DOCKER_USER" \
   --entrypoint bash \
@@ -398,7 +398,7 @@ DOCKER_RUN_ARGS+=(--rm -t \
   -e COREPACK_HOME="$DOCKER_CACHE_CONTAINER_DIR/node/corepack" \
   -e NPM_CONFIG_CACHE="$DOCKER_CACHE_CONTAINER_DIR/npm" \
   -e npm_config_cache="$DOCKER_CACHE_CONTAINER_DIR/npm" \
-  -e NODE_OPTIONS="$(openclaw_live_container_node_options)" \
+  -e NODE_OPTIONS="$(nova_live_container_node_options)" \
   -e NOVA_AGENT_HARNESS_FALLBACK=none \
   -e NOVA_DOCKER_AUTH_PRESTAGED="$DOCKER_AUTH_PRESTAGED" \
   -e NOVA_CODEX_APP_SERVER_BIN="${NOVA_CODEX_APP_SERVER_BIN:-codex}" \
@@ -442,21 +442,21 @@ DOCKER_RUN_ARGS+=(--rm -t \
   -e NOVA_LIVE_CODEX_TEST_FILES="${NOVA_LIVE_CODEX_TEST_FILES:-}" \
   -e NOVA_LIVE_TEST=1 \
   -e NOVA_VITEST_FS_MODULE_CACHE=0)
-openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_AUTH_ENV
-openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_EXTRA_ENV_FILES
-openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_HOME_MOUNT
-openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT
+nova_live_append_array DOCKER_RUN_ARGS DOCKER_AUTH_ENV
+nova_live_append_array DOCKER_RUN_ARGS DOCKER_EXTRA_ENV_FILES
+nova_live_append_array DOCKER_RUN_ARGS DOCKER_HOME_MOUNT
+nova_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT
 DOCKER_RUN_ARGS+=(\
   -v "$ROOT_DIR":/src:ro \
-  -v "$CONFIG_DIR":/home/node/.openclaw \
-  -v "$WORKSPACE_DIR":/home/node/.openclaw/workspace)
+  -v "$CONFIG_DIR":/home/node/.nova \
+  -v "$WORKSPACE_DIR":/home/node/.nova/workspace)
 if [[ "$CODEX_HARNESS_AUTH_MODE" != "api-key" ]]; then
   DOCKER_RUN_ARGS+=(\
     -v "$CACHE_HOME_DIR":"$DOCKER_CACHE_CONTAINER_DIR" \
     -v "$CLI_TOOLS_DIR":"$DOCKER_CLI_TOOLS_CONTAINER_DIR")
 fi
-openclaw_live_append_array DOCKER_RUN_ARGS EXTERNAL_AUTH_MOUNTS
-openclaw_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT
+nova_live_append_array DOCKER_RUN_ARGS EXTERNAL_AUTH_MOUNTS
+nova_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT
 DOCKER_RUN_ARGS+=(\
   "$LIVE_IMAGE_NAME" \
   -lc "$LIVE_TEST_CMD")

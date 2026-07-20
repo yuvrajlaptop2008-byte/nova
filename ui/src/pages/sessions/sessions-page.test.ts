@@ -169,7 +169,7 @@ function createContext(
 }
 
 async function createPage(context: ApplicationContext): Promise<TestSessionsPage> {
-  const page = document.createElement("openclaw-sessions-page") as TestSessionsPage;
+  const page = document.createElement("nova-sessions-page") as TestSessionsPage;
   page.context = context;
   page.render = () => nothing;
   document.body.append(page);
@@ -182,7 +182,7 @@ async function createRenderedPage(
   result: SessionsListResult,
   showArchived = false,
 ): Promise<TestSessionsPage> {
-  const page = document.createElement("openclaw-sessions-page") as TestSessionsPage;
+  const page = document.createElement("nova-sessions-page") as TestSessionsPage;
   page.context = context;
   page.routeData = {
     gateway: context.gateway,
@@ -364,7 +364,7 @@ describe("sessions page lifecycle", () => {
     const mutableGateway = createGateway({} as GatewayBrowserClient);
     mutableGateway.emit({ sessionKey: key });
     const page = await createPage(createContext(mutableGateway.gateway, sessions));
-    const toast = document.createElement("openclaw-toast-host");
+    const toast = document.createElement("nova-toast-host");
     document.body.append(toast);
     await toast.updateComplete;
 
@@ -594,7 +594,7 @@ describe("sessions page lifecycle", () => {
     page.openSessionMenu(row, { x: 10, y: 20 }, document.createElement("button"));
     await page.updateComplete;
 
-    const menu = page.querySelector<TestSessionMenu>("openclaw-session-menu");
+    const menu = page.querySelector<TestSessionMenu>("nova-session-menu");
     if (!menu) {
       throw new Error("Expected sessions page menu");
     }
@@ -612,7 +612,7 @@ describe("sessions page lifecycle", () => {
     const freshResult = { count: 1, sessions: [{ key: "fresh" }] } as SessionsListResult;
     const sessions = createSessions({ list: vi.fn(async () => freshResult) });
     const context = createContext(mutableGateway.gateway, sessions);
-    const page = document.createElement("openclaw-sessions-page") as TestSessionsPage;
+    const page = document.createElement("nova-sessions-page") as TestSessionsPage;
     page.context = context;
     page.render = () => nothing;
     page.routeData = {

@@ -4,8 +4,8 @@ export {
   sanitizeAssistantVisibleText,
   sanitizeAssistantVisibleTextWithProfile,
   stripToolCallXmlTags,
-} from "openclaw/plugin-sdk/text-chunking";
-export { normalizeE164, resolveUserPath } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/text-chunking";
+export { normalizeE164, resolveUserPath } from "nova/plugin-sdk/text-utility-runtime";
 export {
   assertWebChannel,
   isSelfChatMode,

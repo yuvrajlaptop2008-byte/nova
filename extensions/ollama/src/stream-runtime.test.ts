@@ -7,12 +7,12 @@ const { fetchWithSsrFGuardMock, ollamaStreamWarnMock } = vi.hoisted(() => ({
   ollamaStreamWarnMock: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("nova/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchWithSsrFGuardMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/runtime-env", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/runtime-env")>();
+vi.mock("nova/plugin-sdk/runtime-env", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/runtime-env")>();
   return {
     ...actual,
     createSubsystemLogger: () => ({ warn: ollamaStreamWarnMock }),

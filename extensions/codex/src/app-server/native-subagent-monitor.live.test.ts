@@ -6,8 +6,8 @@ import { setTimeout as delay } from "node:timers/promises";
 import type {
   AgentHarnessTaskRecord,
   AgentHarnessTaskRuntimeScope,
-} from "openclaw/plugin-sdk/agent-harness-task-runtime";
-import { withTempDir } from "openclaw/plugin-sdk/test-env";
+} from "nova/plugin-sdk/agent-harness-task-runtime";
+import { withTempDir } from "nova/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import type { CodexAppServerClient } from "./client.js";
 import { resolveCodexAppServerRuntimeOptions } from "./config.js";
@@ -73,7 +73,7 @@ describeLive("codex native subagent monitor live", () => {
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY is required for this live test");
     }
-    await withTempDir("openclaw-codex-native-subagent-", async (root) => {
+    await withTempDir("nova-codex-native-subagent-", async (root) => {
       let client: CodexAppServerClient | undefined;
       try {
         const codexHome = path.join(root, "codex-home");

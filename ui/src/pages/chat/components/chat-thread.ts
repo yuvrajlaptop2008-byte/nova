@@ -586,7 +586,7 @@ export function renderChatSearchBar(
           requestUpdate();
         }}
       />
-      <openclaw-tooltip .content=${t("chat.thread.closeSearch")}>
+      <nova-tooltip .content=${t("chat.thread.closeSearch")}>
         <button
           class="btn btn--ghost"
           aria-label=${t("chat.thread.closeSearch")}
@@ -598,7 +598,7 @@ export function renderChatSearchBar(
         >
           ${icons.x}
         </button>
-      </openclaw-tooltip>
+      </nova-tooltip>
     </div>
   `;
 }
@@ -667,7 +667,7 @@ export function renderChatPinnedMessages(
                     <span class="agent-chat__pinned-text"
                       >${truncateUtf16Safe(text, 100)}${text.length > 100 ? "..." : ""}</span
                     >
-                    <openclaw-tooltip .content=${t("chat.thread.unpin")}>
+                    <nova-tooltip .content=${t("chat.thread.unpin")}>
                       <button
                         class="btn btn--ghost"
                         aria-label=${t("chat.thread.unpin")}
@@ -678,7 +678,7 @@ export function renderChatPinnedMessages(
                       >
                         ${icons.x}
                       </button>
-                    </openclaw-tooltip>
+                    </nova-tooltip>
                   </div>
                 `,
               )}
@@ -766,7 +766,7 @@ function createMessageActionContextButton(params: {
   button.setAttribute("aria-label", params.label);
   button.textContent = params.label;
   button.addEventListener("click", params.onClick);
-  const tooltip = document.createElement("openclaw-tooltip");
+  const tooltip = document.createElement("nova-tooltip");
   tooltip.content = params.tooltip;
   tooltip.append(button);
   return { element: tooltip, button };

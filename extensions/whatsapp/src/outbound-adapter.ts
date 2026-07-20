@@ -1,8 +1,8 @@
 // Whatsapp plugin module implements outbound adapter behavior.
-import type { ChannelOutboundAdapter } from "openclaw/plugin-sdk/channel-send-result";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { chunkText } from "openclaw/plugin-sdk/reply-chunking";
-import { shouldLogVerbose } from "openclaw/plugin-sdk/runtime-env";
+import type { ChannelOutboundAdapter } from "nova/plugin-sdk/channel-send-result";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
+import { chunkText } from "nova/plugin-sdk/reply-chunking";
+import { shouldLogVerbose } from "nova/plugin-sdk/runtime-env";
 import { createWhatsAppOutboundBase } from "./outbound-base.js";
 import { normalizeWhatsAppPayloadText } from "./outbound-media-contract.js";
 import { resolveWhatsAppOutboundTarget } from "./resolve-outbound-target.js";

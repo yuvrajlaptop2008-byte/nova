@@ -3,9 +3,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Command } from "commander";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawPluginApi } from "./api.js";
+import type { NovaPluginApi } from "./api.js";
 import type { VoiceCallRuntime } from "./runtime-entry.js";
 import type { CallRecord } from "./src/types.js";
 
@@ -16,8 +16,8 @@ vi.mock("./runtime-entry.js", () => ({
   createVoiceCallRuntime: vi.fn(async () => runtimeStub),
 }));
 
-vi.mock("openclaw/plugin-sdk/gateway-runtime", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("openclaw/plugin-sdk/gateway-runtime")>()),
+vi.mock("nova/plugin-sdk/gateway-runtime", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("nova/plugin-sdk/gateway-runtime")>()),
   callGatewayFromCli: callGatewayFromCliMock,
 }));
 
@@ -35,7 +35,7 @@ type Registered = {
   methods: Map<string, unknown>;
   methodScopes: Map<string, string | undefined>;
   tools: unknown[];
-  service?: Parameters<OpenClawPluginApi["registerService"]>[0];
+  service?: Parameters<NovaPluginApi["registerService"]>[0];
 };
 type MockCallSource = {
   mock: {
@@ -141,7 +141,7 @@ function setup(
     source: "test",
     config: {},
     pluginConfig: config,
-    runtime: { tts: { textToSpeechTelephony: vi.fn() } } as unknown as OpenClawPluginApi["runtime"],
+    runtime: { tts: { textToSpeechTelephony: vi.fn() } } as unknown as NovaPluginApi["runtime"],
     logger: noopLogger,
     registerGatewayMethod: (method: string, handler: unknown, opts?: { scope?: string }) => {
       methods.set(method, handler);
@@ -253,12 +253,12 @@ describe("voice-call plugin", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
-    delete (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.voice-call.runtime")];
+    delete (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.voice-call.runtime")];
     delete (globalThis as Record<PropertyKey, unknown>)[
-      Symbol.for("openclaw.voice-call.runtimePromise")
+      Symbol.for("nova.voice-call.runtimePromise")
     ];
     delete (globalThis as Record<PropertyKey, unknown>)[
-      Symbol.for("openclaw.voice-call.runtimeStopPromise")
+      Symbol.for("nova.voice-call.runtimeStopPromise")
     ];
   });
 
@@ -348,7 +348,7 @@ describe("voice-call plugin", () => {
   it("still starts the webhook runtime for gateway CLI processes", async () => {
     const previousArgv = process.argv;
     vi.stubEnv("NOVA_CLI", "1");
-    process.argv = ["node", "openclaw", "gateway", "run"];
+    process.argv = ["node", "nova", "gateway", "run"];
     const { service } = setup({ provider: "mock" });
 
     try {

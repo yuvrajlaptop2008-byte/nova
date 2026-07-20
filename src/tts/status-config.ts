@@ -1,7 +1,7 @@
 // TTS status config helpers resolve status output paths for speech generation.
 import { isRecord as isObjectRecord } from "@nova/normalization-core/record-coerce";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import type { TtsAutoMode, TtsConfig, TtsProvider } from "../config/types.tts.js";
 import { resolveTtsSettingsSnapshot } from "./tts-settings.js";
 
@@ -136,7 +136,7 @@ function resolveStatusProviderDetails(raw: TtsConfig, provider: TtsProvider) {
 }
 
 export function resolveStatusTtsSnapshot(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionAuto?: string;
   agentId?: string;
   channelId?: string;

@@ -1,5 +1,5 @@
 // Matrix plugin module implements reply context behavior.
-import { sliceUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+import { sliceUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import type { MatrixClient } from "../sdk.js";
 import { summarizeMatrixMessageContextEvent, trimMatrixMaybeString } from "./context-summary.js";
 import type { MatrixRawEvent } from "./types.js";

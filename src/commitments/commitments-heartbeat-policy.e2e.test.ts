@@ -1,13 +1,13 @@
 // Exercises commitment heartbeat policy through end-to-end runtime flows.
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { runHeartbeatOnce } from "../infra/heartbeat-runner.js";
 import { installHeartbeatRunnerTestRuntime } from "../infra/heartbeat-runner.test-harness.js";
 import {
   seedSessionStore,
   withTempHeartbeatSandbox,
 } from "../infra/heartbeat-runner.test-utils.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import { readCommitmentsForTest, seedCommitmentsForTest } from "./store.test-utils.js";
 import type { CommitmentRecord } from "./types.js";
@@ -19,7 +19,7 @@ describe("commitments heartbeat delivery policy e2e", () => {
   const sessionKey = "agent:main:telegram:user-155462274";
 
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     vi.unstubAllEnvs();
   });
 
@@ -54,7 +54,7 @@ describe("commitments heartbeat delivery policy e2e", () => {
   it("does not send externally when heartbeat target is none", async () => {
     await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
       await withEnvAsync({ NOVA_STATE_DIR: tmpDir }, async () => {
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           agents: {
             defaults: {
               workspace: tmpDir,

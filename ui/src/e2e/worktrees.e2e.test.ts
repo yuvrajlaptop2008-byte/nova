@@ -19,7 +19,7 @@ let server: ControlUiE2eServer;
 
 const restorableWorktree = {
   baseRef: "main",
-  branch: "openclaw/test",
+  branch: "nova/test",
   createdAt: 1,
   id: "worktree-1",
   lastActiveAt: 2,
@@ -29,7 +29,7 @@ const restorableWorktree = {
   removedAt: 3,
   repoFingerprint: "0123456789abcdef",
   repoRoot: "/tmp/repo",
-  snapshotRef: "refs/openclaw/worktree-snapshots/test",
+  snapshotRef: "refs/nova/worktree-snapshots/test",
 };
 
 describeControlUiE2e("Control UI Worktrees mocked Gateway E2E", () => {

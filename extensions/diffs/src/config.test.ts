@@ -3,7 +3,7 @@ import fs from "node:fs";
 import {
   validateJsonSchemaValue,
   type JsonSchemaObject,
-} from "openclaw/plugin-sdk/json-schema-runtime";
+} from "nova/plugin-sdk/json-schema-runtime";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
   diffsPluginConfigSchema,
@@ -52,7 +52,7 @@ beforeAll(async () => {
 
 function compileManifestConfigSchema() {
   const manifest = JSON.parse(
-    fs.readFileSync(new URL("../openclaw.plugin.json", import.meta.url), "utf8"),
+    fs.readFileSync(new URL("../nova.plugin.json", import.meta.url), "utf8"),
   ) as { configSchema: JsonSchemaObject };
   return (value: unknown) =>
     validateJsonSchemaValue({
@@ -308,9 +308,9 @@ describe("resolveDiffsPluginViewerBaseUrl", () => {
   it("normalizes configured viewer base URLs", () => {
     expect(
       resolveDiffsPluginViewerBaseUrl({
-        viewerBaseUrl: "https://example.com/openclaw/",
+        viewerBaseUrl: "https://example.com/nova/",
       }),
-    ).toBe("https://example.com/openclaw");
+    ).toBe("https://example.com/nova");
   });
 });
 
@@ -319,15 +319,15 @@ describe("diffs plugin schema surfaces", () => {
     const validate = compileManifestConfigSchema();
 
     expect(validate({ viewerBaseUrl: "javascript:alert(1)" }).ok).toBe(false);
-    expect(validate({ viewerBaseUrl: "https://example.com/openclaw?x=1" }).ok).toBe(false);
-    expect(validate({ viewerBaseUrl: "https://example.com/openclaw#frag" }).ok).toBe(false);
-    expect(validate({ viewerBaseUrl: "https://example.com/openclaw/" }).ok).toBe(true);
+    expect(validate({ viewerBaseUrl: "https://example.com/nova?x=1" }).ok).toBe(false);
+    expect(validate({ viewerBaseUrl: "https://example.com/nova#frag" }).ok).toBe(false);
+    expect(validate({ viewerBaseUrl: "https://example.com/nova/" }).ok).toBe(true);
   });
 
   it("preserves defaults and security for direct safeParse callers", () => {
     const parsed = requireRecord(
       diffsPluginConfigSchema.safeParse?.({
-        viewerBaseUrl: "https://example.com/openclaw/",
+        viewerBaseUrl: "https://example.com/nova/",
         defaults: {
           theme: "light",
           ttlSeconds: 21_600,
@@ -340,7 +340,7 @@ describe("diffs plugin schema surfaces", () => {
     );
     expect(parsed.success).toBe(true);
     const data = requireRecord(parsed.data, "parse data");
-    expect(data.viewerBaseUrl).toBe("https://example.com/openclaw");
+    expect(data.viewerBaseUrl).toBe("https://example.com/nova");
     expectFields(data.defaults, {
       fontFamily: "Fira Code",
       fontSize: 15,
@@ -398,7 +398,7 @@ describe("diffs plugin schema surfaces", () => {
 
   it("keeps the runtime json schema in sync with the manifest config schema", () => {
     const manifest = JSON.parse(
-      fs.readFileSync(new URL("../openclaw.plugin.json", import.meta.url), "utf8"),
+      fs.readFileSync(new URL("../nova.plugin.json", import.meta.url), "utf8"),
     ) as { configSchema?: unknown };
 
     expect(diffsPluginConfigSchema.jsonSchema).toEqual(manifest.configSchema);
@@ -442,20 +442,20 @@ describe("diffs viewer URL helpers", () => {
     expect(
       buildViewerUrl({
         config: {},
-        baseUrl: "https://example.com/openclaw",
+        baseUrl: "https://example.com/nova",
         viewerPath: "/plugins/diffs/view/id/token",
       }),
-    ).toBe("https://example.com/openclaw/plugins/diffs/view/id/token");
+    ).toBe("https://example.com/nova/plugins/diffs/view/id/token");
   });
 
   it("prefers normalized viewerBaseUrl strings too", () => {
     expect(
       buildViewerUrl({
         config: {},
-        baseUrl: "https://example.com/openclaw/",
+        baseUrl: "https://example.com/nova/",
         viewerPath: "/plugins/diffs/view/id/token",
       }),
-    ).toBe("https://example.com/openclaw/plugins/diffs/view/id/token");
+    ).toBe("https://example.com/nova/plugins/diffs/view/id/token");
   });
 
   it("rejects base URLs with query/hash", () => {
@@ -486,7 +486,7 @@ describe("viewer assets", () => {
     const runtime = await getServedViewerAsset(VIEWER_RUNTIME_PATH);
 
     expect(runtime?.contentType).toBe("text/javascript; charset=utf-8");
-    expect(String(runtime?.body)).toContain("openclawDiffsReady");
+    expect(String(runtime?.body)).toContain("novaDiffsReady");
     expect(String(runtime?.body)).toContain('style.width="24px"');
     expect(String(runtime?.body)).toContain('style.gap="6px"');
   });

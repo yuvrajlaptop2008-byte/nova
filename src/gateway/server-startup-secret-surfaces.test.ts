@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveGatewayStartupSecretProjection } from "./server-startup-secret-surfaces.js";
 
-function channelConfig(): OpenClawConfig {
+function channelConfig(): NovaConfig {
   return {
     channels: {
       telegram: {

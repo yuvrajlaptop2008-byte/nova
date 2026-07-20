@@ -126,7 +126,7 @@ function renderSensitiveToggleButton(params: {
       : t("configForm.revealValue")
     : t("configForm.disableStreamToReveal");
   return html`
-    <openclaw-tooltip .content=${label}>
+    <nova-tooltip .content=${label}>
       <button
         type="button"
         class="settings-secret__toggle"
@@ -137,7 +137,7 @@ function renderSensitiveToggleButton(params: {
       >
         ${state.isRevealed ? icons.eye : icons.eyeOff}
       </button>
-    </openclaw-tooltip>
+    </nova-tooltip>
   `;
 }
 
@@ -545,7 +545,7 @@ function renderTextInput(params: {
     ${wrapSensitiveControl(inputControl, revealToggle)}
     ${schema.default !== undefined
       ? html`
-          <openclaw-tooltip .content=${t("configForm.resetToDefault")}>
+          <nova-tooltip .content=${t("configForm.resetToDefault")}>
             <button
               type="button"
               class="btn btn--icon"
@@ -556,7 +556,7 @@ function renderTextInput(params: {
             >
               ↺
             </button>
-          </openclaw-tooltip>
+          </nova-tooltip>
         `
       : nothing}
   `;
@@ -967,7 +967,7 @@ function renderArray(params: {
                       <span class="settings-row__title">#${idx + 1}</span>
                     </div>
                     <div class="settings-row__control">
-                      <openclaw-tooltip .content=${t("configForm.removeItem")}>
+                      <nova-tooltip .content=${t("configForm.removeItem")}>
                         <button
                           type="button"
                           class="btn btn--icon"
@@ -982,7 +982,7 @@ function renderArray(params: {
                         >
                           ${icons.trash}
                         </button>
-                      </openclaw-tooltip>
+                      </nova-tooltip>
                     </div>
                   </div>
                   ${renderNode({
@@ -1121,7 +1121,7 @@ function renderMapField(params: {
                       />
                     </div>
                     <div class="settings-row__control">
-                      <openclaw-tooltip .content=${t("configForm.removeEntry")}>
+                      <nova-tooltip .content=${t("configForm.removeEntry")}>
                         <button
                           type="button"
                           class="btn btn--icon"
@@ -1136,7 +1136,7 @@ function renderMapField(params: {
                         >
                           ${icons.trash}
                         </button>
-                      </openclaw-tooltip>
+                      </nova-tooltip>
                     </div>
                   </div>
                   ${anySchema

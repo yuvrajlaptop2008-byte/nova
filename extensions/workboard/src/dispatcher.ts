@@ -5,9 +5,9 @@ import type {
   WorkboardExecution,
   WorkboardWorkspace,
 } from "@nova/workboard-contract";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import type { PluginRuntime } from "openclaw/plugin-sdk/plugin-runtime";
-import { canonicalPathFromExistingAncestor } from "openclaw/plugin-sdk/security-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import type { PluginRuntime } from "nova/plugin-sdk/plugin-runtime";
+import { canonicalPathFromExistingAncestor } from "nova/plugin-sdk/security-runtime";
 import {
   assertRestrictedWorkboardTarget,
   managedWorktreeName,

@@ -9,7 +9,7 @@ import { writeNodeBackedJq } from "./test-helpers.ts";
 const repoRoot = path.resolve(import.meta.dirname, "../..");
 const helperPath = path.join(
   repoRoot,
-  ".agents/skills/openclaw-pr-maintainer/scripts/github-activity.sh",
+  ".agents/skills/nova-pr-maintainer/scripts/github-activity.sh",
 );
 const tempDirs: string[] = [];
 
@@ -70,16 +70,16 @@ exit 64
   };
 }
 
-describe("openclaw-pr-maintainer github activity helper", () => {
+describe("nova-pr-maintainer github activity helper", () => {
   it("counts PRs and issues from one paginated issues response", () => {
     const { log, result } = runHelper(["--months", "1", "kevinslin"]);
 
     expect(result.status).toBe(0);
     expect(result.stderr).toBe("");
     expect(result.stdout).toContain("Kevin Lin (@kevinslin, User, account created 2010-09-21");
-    expect(result.stdout).toContain("openclaw/openclaw last 1mo: 2 PRs, 1 issues, 2 commits");
-    expect(log.match(/repos\/openclaw\/openclaw\/issues/g)).toHaveLength(1);
-    expect(log.match(/repos\/openclaw\/openclaw\/commits/g)).toHaveLength(1);
+    expect(result.stdout).toContain("nova/nova last 1mo: 2 PRs, 1 issues, 2 commits");
+    expect(log.match(/repos\/nova\/nova\/issues/g)).toHaveLength(1);
+    expect(log.match(/repos\/nova\/nova\/commits/g)).toHaveLength(1);
     expect(log).toMatch(/since=\d{4}-\d{2}-\d{2}T00:00:00Z/);
   });
 

@@ -17,7 +17,7 @@ type ExpectedTranscriptMatch = RegExp | string;
 
 export const NOVA_LIVE_TRANSCRIPT_MARKER_RE = /open(?:claw|cl|flaw|clar|core)/;
 
-export function expectOpenClawLiveTranscriptMarker(value: string): void {
+export function expectNovaLiveTranscriptMarker(value: string): void {
   expect(normalizeTranscriptForMatch(value)).toMatch(NOVA_LIVE_TRANSCRIPT_MARKER_RE);
 }
 

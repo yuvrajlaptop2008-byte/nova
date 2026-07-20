@@ -4,7 +4,7 @@
  * Normal delivery uses the durable session queue. This path exists only when
  * queue persistence failed and the immediate agent turn also missed delivery.
  */
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   resolveEventSessionKeyForPolicy,
   resolveEventSessionRoutingPolicy,
@@ -33,7 +33,7 @@ function buildDirectDeliveryWakeText(mediaLabel: string, status: "ok" | "error")
 
 /** Best-effort session continuation for the non-durable emergency fallback. */
 export function wakeSessionForGeneratedMediaDirectDelivery(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   sessionKey: string;
   mediaLabel: string;
   status: "ok" | "error";

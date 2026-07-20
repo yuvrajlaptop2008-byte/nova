@@ -66,7 +66,7 @@ describe("gateway network runtime", () => {
   it("bootstraps env proxy dispatching when the gateway starts directly", async () => {
     const envSnapshot = captureEnv([...NETWORK_GATEWAY_ENV_KEYS]);
     const originalDispatcher = getGlobalDispatcher();
-    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gw-proxy-home-"));
+    const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "nova-gw-proxy-home-"));
     let server: Awaited<ReturnType<typeof startGatewayServer>> | undefined;
 
     try {
@@ -78,7 +78,7 @@ describe("gateway network runtime", () => {
       process.env.HTTPS_PROXY = "http://127.0.0.1:9";
 
       setTestEnvValue("HOME", tempHome);
-      setTestEnvValue("NOVA_STATE_DIR", path.join(tempHome, ".openclaw"));
+      setTestEnvValue("NOVA_STATE_DIR", path.join(tempHome, ".nova"));
       process.env.NOVA_SKIP_CHANNELS = "1";
       process.env.NOVA_SKIP_GMAIL_WATCHER = "1";
       process.env.NOVA_SKIP_CRON = "1";
@@ -91,7 +91,7 @@ describe("gateway network runtime", () => {
 
       const token = `proxy-token-${process.pid}-${process.env.VITEST_POOL_ID ?? "0"}`;
       process.env.NOVA_GATEWAY_TOKEN = token;
-      const configPath = path.join(tempHome, ".openclaw", "openclaw.json");
+      const configPath = path.join(tempHome, ".nova", "nova.json");
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(
         configPath,

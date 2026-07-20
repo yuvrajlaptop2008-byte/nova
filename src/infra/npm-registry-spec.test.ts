@@ -1,10 +1,10 @@
 // Tests npm registry spec parsing for packages, tags, and versions.
 import { describe, expect, it } from "vitest";
 import {
-  compareOpenClawReleaseVersions,
+  compareNovaReleaseVersions,
   formatPrereleaseResolutionError,
   isExactSemverVersion,
-  isOpenClawOrgNpmSpec,
+  isNovaOrgNpmSpec,
   isPrereleaseSemverVersion,
   isPrereleaseResolutionAllowed,
   parseRegistryNpmSpec,
@@ -44,7 +44,7 @@ describe("npm registry spec validation", () => {
       expected: "URLs are not allowed",
     },
     {
-      spec: "git+ssh://github.com/openclaw/openclaw",
+      spec: "git+ssh://github.com/nova/nova",
       expected: "URLs are not allowed",
     },
     {
@@ -113,7 +113,7 @@ describe("npm registry spec parsing helpers", () => {
     { spec: "npm:@nova/voice-call", expected: false },
     { spec: undefined, expected: false },
   ])("detects Nova-org npm specs for %s", ({ spec, expected }) => {
-    expect(isOpenClawOrgNpmSpec(spec)).toBe(expected);
+    expect(isNovaOrgNpmSpec(spec)).toBe(expected);
   });
 
   it.each([
@@ -144,7 +144,7 @@ describe("npm registry spec parsing helpers", () => {
     { left: "2026.5.3+build", right: "2026.5.3", expected: null },
     { left: "1.2.3-1", right: "1.2.3", expected: null },
   ])("compares Nova release versions for %s and %s", ({ left, right, expected }) => {
-    expect(compareOpenClawReleaseVersions(left, right)).toBe(expected);
+    expect(compareNovaReleaseVersions(left, right)).toBe(expected);
   });
 });
 

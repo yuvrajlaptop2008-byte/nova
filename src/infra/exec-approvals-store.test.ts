@@ -89,7 +89,7 @@ function createHomeDir(): string {
 }
 
 function approvalsFilePath(homeDir: string): string {
-  return path.join(homeDir, ".openclaw", "exec-approvals.json");
+  return path.join(homeDir, ".nova", "exec-approvals.json");
 }
 
 function stateApprovalsFilePath(stateDir: string): string {
@@ -134,12 +134,12 @@ describe("exec approvals store helpers", () => {
     const dir = createHomeDir();
 
     expect(path.normalize(resolveExecApprovalsPath())).toBe(
-      path.normalize(path.join(dir, ".openclaw", "exec-approvals.json")),
+      path.normalize(path.join(dir, ".nova", "exec-approvals.json")),
     );
     expect(path.normalize(resolveExecApprovalsSocketPath())).toBe(
-      path.normalize(path.join(dir, ".openclaw", "exec-approvals.sock")),
+      path.normalize(path.join(dir, ".nova", "exec-approvals.sock")),
     );
-    expect(resolveExecApprovalsDisplayPath()).toBe("~/.openclaw/exec-approvals.json");
+    expect(resolveExecApprovalsDisplayPath()).toBe("~/.nova/exec-approvals.json");
   });
 
   it("uses NOVA_STATE_DIR for default file and socket paths", () => {
@@ -301,7 +301,7 @@ describe("exec approvals store helpers", () => {
       `${JSON.stringify({
         version: 1,
         socket: {
-          path: path.join(dir, ".openclaw", "exec-approvals.sock"),
+          path: path.join(dir, ".nova", "exec-approvals.sock"),
           token: "legacy-token",
         },
         defaults: {
@@ -343,7 +343,7 @@ describe("exec approvals store helpers", () => {
 
   it("keeps named-profile approvals isolated from the default profile", () => {
     const dir = createHomeDir();
-    const stateDir = path.join(dir, ".openclaw-work");
+    const stateDir = path.join(dir, ".nova-work");
     const defaultPath = approvalsFilePath(dir);
     fs.mkdirSync(path.dirname(defaultPath), { recursive: true });
     fs.writeFileSync(
@@ -1188,9 +1188,9 @@ describe("exec approvals store helpers", () => {
 
     saveExecApprovals({ version: 1, defaults: { security: "full" }, agents: {} });
 
-    expect(
-      fs.readFileSync(path.join(realHome, ".openclaw", "exec-approvals.json"), "utf8"),
-    ).toContain('"security": "full"');
+    expect(fs.readFileSync(path.join(realHome, ".nova", "exec-approvals.json"), "utf8")).toContain(
+      '"security": "full"',
+    );
   });
 
   it("refuses to traverse symlinked approvals components below a symlinked home", () => {
@@ -1200,7 +1200,7 @@ describe("exec approvals store helpers", () => {
     tempDirs.push(realHome, linkedHome);
     fs.mkdirSync(linkedStateTarget, { recursive: true });
     fs.symlinkSync(realHome, linkedHome, "dir");
-    fs.symlinkSync(linkedStateTarget, path.join(realHome, ".openclaw"), "dir");
+    fs.symlinkSync(linkedStateTarget, path.join(realHome, ".nova"), "dir");
     setTestEnvValue("NOVA_HOME", linkedHome);
 
     expect(() =>
@@ -1219,7 +1219,7 @@ describe("exec approvals store helpers", () => {
       tempDirs.push(realHome, linkedHome);
       fs.mkdirSync(linkedStateTarget, { recursive: true });
       fs.symlinkSync(realHome, linkedHome, "dir");
-      fs.symlinkSync(linkedStateTarget, path.join(realHome, ".openclaw"), "dir");
+      fs.symlinkSync(linkedStateTarget, path.join(realHome, ".nova"), "dir");
       setTestEnvValue("NOVA_HOME", linkedHome);
 
       await expect(

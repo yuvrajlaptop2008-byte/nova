@@ -1,7 +1,7 @@
 // Imessage tests cover monitor.media policy plugin behavior.
-import * as channelInbound from "openclaw/plugin-sdk/channel-inbound";
-import type { dispatchReplyWithBufferedBlockDispatcher } from "openclaw/plugin-sdk/reply-runtime";
-import type { waitForTransportReady } from "openclaw/plugin-sdk/transport-ready-runtime";
+import * as channelInbound from "nova/plugin-sdk/channel-inbound";
+import type { dispatchReplyWithBufferedBlockDispatcher } from "nova/plugin-sdk/reply-runtime";
+import type { waitForTransportReady } from "nova/plugin-sdk/transport-ready-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { createIMessageRpcClient } from "./client.js";
 import { monitorIMessageProvider } from "./monitor.js";
@@ -21,12 +21,12 @@ const dispatchReplyWithBufferedBlockDispatcherMock = vi.hoisted(() =>
   })),
 );
 
-vi.mock("openclaw/plugin-sdk/transport-ready-runtime", () => ({
+vi.mock("nova/plugin-sdk/transport-ready-runtime", () => ({
   waitForTransportReady: waitForTransportReadyMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/conversation-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/conversation-runtime")>();
+vi.mock("nova/plugin-sdk/conversation-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/conversation-runtime")>();
   return {
     ...actual,
     readChannelAllowFromStore: readChannelAllowFromStoreMock,
@@ -35,8 +35,8 @@ vi.mock("openclaw/plugin-sdk/conversation-runtime", async (importOriginal) => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/channel-inbound", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/channel-inbound")>();
+vi.mock("nova/plugin-sdk/channel-inbound", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/channel-inbound")>();
   return {
     ...actual,
     createChannelInboundDebouncer: vi.fn((opts) => ({
@@ -138,7 +138,7 @@ describe("iMessage monitor attachment policy", () => {
     stageIMessageAttachmentsMock.mockResolvedValue({ attachments: [], unavailableCount: 0 });
     readChannelAllowFromStoreMock.mockResolvedValue([]);
 
-    const attachmentPath = "/Users/openclaw/Library/Messages/Attachments/AA/BB/photo.heic";
+    const attachmentPath = "/Users/nova/Library/Messages/Attachments/AA/BB/photo.heic";
     let onNotification:
       | ((message: { method: string; params: unknown }) => void | Promise<void>)
       | undefined;
@@ -191,7 +191,7 @@ describe("iMessage monitor attachment policy", () => {
             groups: { "*": { requireMention: true } },
           },
         },
-        messages: { groupChat: { mentionPatterns: ["@openclaw"] } },
+        messages: { groupChat: { mentionPatterns: ["@nova"] } },
         session: { mainKey: "main" },
       } as never,
     });
@@ -205,7 +205,7 @@ describe("iMessage monitor attachment policy", () => {
       name: "admits an attachment-only message when the image is unavailable",
       attachments: [
         {
-          original_path: "/Users/openclaw/Library/Messages/Attachments/missing.heic",
+          original_path: "/Users/nova/Library/Messages/Attachments/missing.heic",
           mime_type: "image/heic",
           missing: true,
         },
@@ -217,12 +217,12 @@ describe("iMessage monitor attachment policy", () => {
       name: "uses the first materialized attachment type when earlier media is unavailable",
       attachments: [
         {
-          original_path: "/Users/openclaw/Library/Messages/Attachments/missing.heic",
+          original_path: "/Users/nova/Library/Messages/Attachments/missing.heic",
           mime_type: "image/heic",
           missing: true,
         },
         {
-          original_path: "/Users/openclaw/Library/Messages/Attachments/report.pdf",
+          original_path: "/Users/nova/Library/Messages/Attachments/report.pdf",
           mime_type: "application/pdf",
           missing: false,
         },
@@ -230,7 +230,7 @@ describe("iMessage monitor attachment policy", () => {
       staged: {
         attachments: [
           {
-            path: "/Users/openclaw/Library/Messages/Attachments/report.pdf",
+            path: "/Users/nova/Library/Messages/Attachments/report.pdf",
             contentType: "application/pdf",
           },
         ],
@@ -280,7 +280,7 @@ describe("iMessage monitor attachment policy", () => {
         channels: {
           imessage: {
             includeAttachments: true,
-            attachmentRoots: ["/Users/openclaw/Library/Messages/Attachments"],
+            attachmentRoots: ["/Users/nova/Library/Messages/Attachments"],
             dmPolicy: "allowlist",
             allowFrom: ["+15550001111"],
             groupPolicy: "open",

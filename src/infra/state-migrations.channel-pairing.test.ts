@@ -6,7 +6,7 @@ import {
   readChannelPairingStateSnapshot,
   writeChannelPairingStateSnapshot,
 } from "../pairing/pairing-store-sqlite.test-helpers.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { createTrackedTempDirs } from "../test-utils/tracked-temp-dirs.js";
 import {
   detectLegacyChannelPairingState,
@@ -16,12 +16,12 @@ import {
 const tempDirs = createTrackedTempDirs();
 
 afterEach(async () => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   await tempDirs.cleanup();
 });
 
 async function createFixture() {
-  const stateDir = await tempDirs.make("openclaw-pairing-migration-");
+  const stateDir = await tempDirs.make("nova-pairing-migration-");
   const env = { ...process.env, NOVA_STATE_DIR: stateDir };
   const sourceDir = resolveOAuthDir(env, stateDir);
   fs.mkdirSync(sourceDir, { recursive: true });
@@ -78,9 +78,7 @@ describe("legacy channel pairing state migration", () => {
       ],
       allowFrom: { default: ["1001"], alerts: ["1002"], "ops/bot": ["1003"] },
     });
-    expect(fs.existsSync(path.join(path.dirname(sourceDir), "state", "openclaw.sqlite"))).toBe(
-      true,
-    );
+    expect(fs.existsSync(path.join(path.dirname(sourceDir), "state", "nova.sqlite"))).toBe(true);
   });
 
   it("imports a built-in channel's explicit default account without channel config", async () => {

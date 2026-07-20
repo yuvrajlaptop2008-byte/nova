@@ -22,10 +22,10 @@ vi.mock("../core-api.js", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
-  const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/runtime-config-snapshot")
-  >("openclaw/plugin-sdk/runtime-config-snapshot");
+vi.mock("nova/plugin-sdk/runtime-config-snapshot", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-config-snapshot")>(
+    "nova/plugin-sdk/runtime-config-snapshot",
+  );
   return {
     ...actual,
     getRuntimeConfig: loadConfigMock,
@@ -338,7 +338,7 @@ describe("browser.request profile selection", () => {
       error: "headed mode needs a display",
       reason: "no_display_for_headed_profile",
       details: {
-        profile: "openclaw",
+        profile: "nova",
         requestedHeadless: false,
         headlessSource: "config",
         displayPresent: false,

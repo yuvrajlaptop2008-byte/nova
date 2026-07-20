@@ -130,11 +130,11 @@ export const PROFILES: Record<ProfileId, ProfileConfig> = {
 };
 
 export const STRESS_TABLE_SQL = `
-  CREATE TABLE IF NOT EXISTS openclaw_reliability_sentinel (
+  CREATE TABLE IF NOT EXISTS nova_reliability_sentinel (
     id INTEGER PRIMARY KEY CHECK (id = 1),
     payload TEXT NOT NULL
   );
-  CREATE TABLE IF NOT EXISTS openclaw_reliability_entries (
+  CREATE TABLE IF NOT EXISTS nova_reliability_entries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     batch INTEGER NOT NULL,
     ordinal INTEGER NOT NULL,

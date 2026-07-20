@@ -1,7 +1,7 @@
 // Qqbot plugin module implements register clear storage behavior.
 import fs from "node:fs";
 import path from "node:path";
-import { formatByteSize } from "openclaw/plugin-sdk/number-runtime";
+import { formatByteSize } from "nova/plugin-sdk/number-runtime";
 import { getQQBotMediaPath } from "../../utils/platform.js";
 import type { SlashCommandRegistry } from "../slash-commands.js";
 
@@ -76,7 +76,7 @@ const CLEAR_STORAGE_MAX_DISPLAY = 10;
  * Resolve the canonical QQBot downloads directory.
  *
  * All inbound attachments and outbound fallback downloads are stored directly
- * under `~/.openclaw/media/qqbot/downloads/` without appId subdivision.
+ * under `~/.nova/media/qqbot/downloads/` without appId subdivision.
  * The clear-storage command therefore cleans the entire downloads root.
  */
 function resolveQqbotDownloadsDir(): string {
@@ -144,7 +144,7 @@ export function registerClearStorageCommands(registry: SlashCommandRegistry): vo
     handler: async (ctx) => {
       const isForce = ctx.args.trim() === "--force";
       const targetDir = resolveQqbotDownloadsDir();
-      const displayDir = `~/.openclaw/media/qqbot/downloads`;
+      const displayDir = `~/.nova/media/qqbot/downloads`;
 
       if (!isForce) {
         const files = scanDirectoryFiles(targetDir);

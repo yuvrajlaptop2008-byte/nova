@@ -1,10 +1,7 @@
 // Builds provider install catalog entries from plugin metadata.
 import { isRecord } from "@nova/normalization-core/record-coerce";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import {
-  loadOpenClawProviderIndex,
-  type OpenClawProviderIndexProvider,
-} from "../model-catalog/index.js";
+import { loadNovaProviderIndex, type NovaProviderIndexProvider } from "../model-catalog/index.js";
 import { normalizePluginsConfig, resolveEffectiveEnableState } from "./config-state.js";
 import {
   describePluginInstallSource,
@@ -35,7 +32,7 @@ export type ProviderInstallCatalogEntry = ProviderAuthChoiceMetadata & {
 };
 
 type ProviderInstallCatalogParams = {
-  config?: import("../config/types.openclaw.js").OpenClawConfig;
+  config?: import("../config/types.nova.js").NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   includeUntrustedWorkspacePlugins?: boolean;
@@ -161,7 +158,7 @@ function resolveInstallInfoFromRegistryRecord(params: {
 }
 
 function resolveInstallInfoFromProviderIndex(
-  provider: OpenClawProviderIndexProvider,
+  provider: NovaProviderIndexProvider,
 ): PluginPackageInstall | null {
   const install = provider.plugin.install;
   if (!install) {
@@ -232,7 +229,7 @@ function resolveProviderIndexInstallCatalogEntries(params: {
   seenChoiceIds: ReadonlySet<string>;
 }): ProviderInstallCatalogEntry[] {
   const entries: ProviderInstallCatalogEntry[] = [];
-  const index = loadOpenClawProviderIndex();
+  const index = loadNovaProviderIndex();
   for (const provider of Object.values(index.providers)) {
     if (params.installedPluginIds.has(provider.plugin.id)) {
       continue;

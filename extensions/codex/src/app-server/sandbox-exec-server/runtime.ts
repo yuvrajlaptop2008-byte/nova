@@ -2,13 +2,11 @@
  * Runtime guards for sandbox exec-server handlers that need backend-specific
  * execution and filesystem bridges.
  */
-import type { SandboxContext } from "openclaw/plugin-sdk/sandbox";
-import type { OpenClawExecServer } from "./types.js";
+import type { SandboxContext } from "nova/plugin-sdk/sandbox";
+import type { NovaExecServer } from "./types.js";
 
 /** Returns the configured sandbox backend or fails the current JSON-RPC request. */
-export function requireBackend(
-  execServer: OpenClawExecServer,
-): NonNullable<SandboxContext["backend"]> {
+export function requireBackend(execServer: NovaExecServer): NonNullable<SandboxContext["backend"]> {
   const backend = execServer.sandbox.backend;
   if (!backend) {
     throw new Error("Nova sandbox backend is unavailable.");
@@ -18,7 +16,7 @@ export function requireBackend(
 
 /** Returns the configured filesystem bridge or fails the current JSON-RPC request. */
 export function requireFsBridge(
-  execServer: OpenClawExecServer,
+  execServer: NovaExecServer,
 ): NonNullable<SandboxContext["fsBridge"]> {
   const fsBridge = execServer.sandbox.fsBridge;
   if (!fsBridge) {

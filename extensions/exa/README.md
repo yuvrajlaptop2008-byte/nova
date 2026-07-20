@@ -1,12 +1,12 @@
-# OpenClaw Exa Plugin
+# Nova Exa Plugin
 
-Official OpenClaw plugin for Exa.
+Official Nova plugin for Exa.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/exa-plugin
-openclaw gateway restart
+nova plugins install @nova/exa-plugin
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/tools/exa-search> for setup and configuration.
+See <https://docs.nova.ai/tools/exa-search> for setup and configuration.

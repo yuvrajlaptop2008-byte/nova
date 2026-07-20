@@ -1,15 +1,15 @@
 // Google Meet composes platform strategies with the shared meeting session runtime.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   MeetingSessionRuntime,
   type MeetingSessionLeaveResult,
   type MeetingSessionRuntimeHandles,
   type MeetingSessionRuntimeJoinContext,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import type { PluginRuntime, RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
-import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import type { PluginRuntime, RuntimeLogger } from "nova/plugin-sdk/plugin-runtime";
+import { normalizeAgentId } from "nova/plugin-sdk/routing";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import type {
   GoogleMeetConfig,
   GoogleMeetMode,
@@ -124,7 +124,7 @@ export class GoogleMeetRuntime {
   constructor(
     private readonly params: {
       config: GoogleMeetConfig;
-      fullConfig: OpenClawConfig;
+      fullConfig: NovaConfig;
       runtime: PluginRuntime;
       logger: RuntimeLogger;
     },

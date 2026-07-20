@@ -11,10 +11,10 @@ import {
 import { runCommandWithTimeout, type SpawnResult } from "../../process/exec.js";
 import { createDeferred } from "../../shared/deferred.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-  type OpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  openNovaStateDatabase,
+  type NovaStateDatabase,
+} from "../../state/nova-state-db.js";
 import {
   parseWorkerLaunchDescriptor,
   type WorkerLaunchDescriptor,
@@ -49,13 +49,13 @@ function hasLoneSurrogate(value: string): boolean {
 
 describe("worker turn launcher", () => {
   let root: string;
-  let database: OpenClawStateDatabase;
+  let database: NovaStateDatabase;
   let placements: WorkerSessionPlacementStore;
   let sessionFile: string;
 
   beforeEach(async () => {
-    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-worker-turn-"));
-    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
+    root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "nova-worker-turn-"));
+    database = openNovaStateDatabase({ env: { NOVA_STATE_DIR: root } });
     placements = createWorkerSessionPlacementStore({ database });
     const manager = SessionManager.create(path.join(root, "sessions"), path.join(root, "sessions"));
     const file = manager.getSessionFile();
@@ -66,7 +66,7 @@ describe("worker turn launcher", () => {
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(root, { recursive: true, force: true });
   });
 
@@ -148,7 +148,7 @@ describe("worker turn launcher", () => {
       provisionOperationId: "provision-worker-turn",
       bootstrapReceipt: {
         bundleHash: BUNDLE_HASH,
-        openclawVersion: "2026.7.2",
+        novaVersion: "2026.7.2",
         protocolFeatures: [],
       },
       ownerEpoch: OWNER_EPOCH,
@@ -224,7 +224,7 @@ describe("worker turn launcher", () => {
         agents: {
           defaults: {
             models: {
-              "openai/gpt-test": { agentRuntime: { id: "openclaw" } },
+              "openai/gpt-test": { agentRuntime: { id: "nova" } },
             },
           },
         },
@@ -522,8 +522,8 @@ describe("worker turn launcher", () => {
         expect(command.argv).toEqual([
           "sh",
           "-c",
-          'exec node "$HOME/.openclaw-worker/$1/openclaw.mjs" worker',
-          "openclaw-worker",
+          'exec node "$HOME/.nova-worker/$1/nova.mjs" worker',
+          "nova-worker",
           BUNDLE_HASH,
         ]);
         expect(command.argv.join(" ")).not.toContain(credential().credential);
@@ -609,14 +609,14 @@ describe("worker turn launcher", () => {
 
     expect(runLocal).not.toHaveBeenCalled();
     const conflictSummary =
-      "Cloud result applied with 1 conflict(s); kept local versions: src/local.ts. Cloud versions staged at refs/openclaw/worker-results/";
+      "Cloud result applied with 1 conflict(s); kept local versions: src/local.ts. Cloud versions staged at refs/nova/worker-results/";
     expect(result.payloads).toEqual([
       { text: expect.stringContaining(`Worker reply\n\n${conflictSummary}`) },
     ]);
     expect(placements.get(SESSION_ID)?.turnClaim).toBeNull();
     expect(placements.get(SESSION_ID)?.workspaceResultConflict).toMatchObject({
       paths: ["src/local.ts"],
-      stagedResultRef: expect.stringMatching(/^refs\/openclaw\/worker-results\//u),
+      stagedResultRef: expect.stringMatching(/^refs\/nova\/worker-results\//u),
     });
     expect(onAgentEvent).toHaveBeenCalledWith({
       stream: "assistant",

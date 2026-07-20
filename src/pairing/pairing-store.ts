@@ -13,7 +13,7 @@ import type { ChannelPairingAdapter } from "../channels/plugins/pairing.types.js
 import { resolveOAuthDir, resolveStateDir } from "../config/paths.js";
 import { resolveRequiredHomeDir } from "../infra/home-dir.js";
 import { DEFAULT_ACCOUNT_ID } from "../routing/session-key.js";
-import { runOpenClawStateWriteTransaction } from "../state/openclaw-state-db.js";
+import { runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { resolveAllowFromAccountId, safeAccountKey, safeChannelKey } from "./pairing-store-keys.js";
 import {
   readChannelPairingState,
@@ -192,7 +192,7 @@ async function updateAllowFromStoreEntry(params: {
   const env = params.env ?? process.env;
   const accountId = resolveAllowFromAccountId(params.accountId);
   const normalized = normalizeAllowFromInput(params.channel, params.entry, params.pairingAdapter);
-  return runOpenClawStateWriteTransaction((database) => {
+  return runNovaStateWriteTransaction((database) => {
     const state = readChannelPairingStateFromDatabase(database, params.channel);
     const current = (state.allowFrom?.[accountId] ?? []).slice();
     if (!normalized) {
@@ -260,7 +260,7 @@ export async function listChannelPairingRequests(
   env: NodeJS.ProcessEnv = process.env,
   accountId?: string,
 ): Promise<PairingRequest[]> {
-  return runOpenClawStateWriteTransaction((database) => {
+  return runNovaStateWriteTransaction((database) => {
     const state = readChannelPairingStateFromDatabase(database, channel);
     const expired = pruneExpiredRequests(state.requests, Date.now());
     const capped = pruneExcessRequestsByAccount(expired.requests, PAIRING_PENDING_MAX);
@@ -294,7 +294,7 @@ export async function upsertChannelPairingRequest(params: {
   pairingAdapter?: ChannelPairingAdapter;
 }): Promise<{ code: string; created: boolean }> {
   const env = params.env ?? process.env;
-  return runOpenClawStateWriteTransaction((database) => {
+  return runNovaStateWriteTransaction((database) => {
     const now = new Date().toISOString();
     const id = normalizeId(params.id);
     const accountId = normalizePairingAccountId(params.accountId) || DEFAULT_ACCOUNT_ID;
@@ -364,7 +364,7 @@ export async function approveChannelPairingCode(params: {
     return null;
   }
 
-  return runOpenClawStateWriteTransaction((database) => {
+  return runNovaStateWriteTransaction((database) => {
     const state = readChannelPairingStateFromDatabase(database, params.channel);
     const pruned = pruneExpiredRequests(state.requests, Date.now());
     const accountId = normalizePairingAccountId(params.accountId);

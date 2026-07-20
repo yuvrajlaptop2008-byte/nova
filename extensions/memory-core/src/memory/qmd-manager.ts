@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import readline from "node:readline";
 import chokidar, { type FSWatcher } from "chokidar";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   createSubsystemLogger,
   resolveAgentContextLimits,
@@ -14,14 +14,14 @@ import {
   resolveGlobalSingleton,
   resolveStateDir,
   truncateUtf16Safe,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+  type NovaConfig,
+} from "nova/plugin-sdk/memory-core-host-engine-foundation";
 import {
   deriveQmdScopeChannel,
   deriveQmdScopeChatType,
   isQmdScopeAllowed,
   type QmdQueryResult,
-} from "openclaw/plugin-sdk/memory-core-host-engine-qmd";
+} from "nova/plugin-sdk/memory-core-host-engine-qmd";
 import {
   buildMemoryReadResult,
   buildMemoryReadResultFromSlice,
@@ -39,21 +39,21 @@ import {
   type MemorySyncParams,
   type ResolvedMemoryBackendConfig,
   type ResolvedQmdConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-storage";
+} from "nova/plugin-sdk/memory-core-host-engine-storage";
 import {
   isFutureDateTimestampMs,
   MAX_TIMER_TIMEOUT_MS,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
+} from "nova/plugin-sdk/number-runtime";
 import {
   PluginStateLeaseError,
   type PluginStateLeaseContext,
   type PluginStateLeaseRunner,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   uniqueValues,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import {
   attachQmdSessionArtifactHit,
   copyQmdSessionArtifactHit,
@@ -115,8 +115,8 @@ const QMD_EMBED_BACKOFF_BASE_MS = 60_000;
 const QMD_EMBED_BACKOFF_MAX_MS = 60 * 60 * 1000;
 const QMD_EMBED_LEASE_MIN_WAIT_MS = 15 * 60 * 1000;
 const QMD_WRITE_LEASE_MIN_WAIT_MS = 5 * 60 * 1000;
-const QMD_EMBED_QUEUE_KEY = Symbol.for("openclaw.qmdEmbedQueueTail");
-const QMD_UPDATE_QUEUE_KEY = Symbol.for("openclaw.qmdUpdateQueueState");
+const QMD_EMBED_QUEUE_KEY = Symbol.for("nova.qmdEmbedQueueTail");
+const QMD_UPDATE_QUEUE_KEY = Symbol.for("nova.qmdUpdateQueueState");
 const IGNORED_MEMORY_WATCH_DIR_NAMES = new Set([
   ".git",
   ".cache",
@@ -262,7 +262,7 @@ type QmdManagerRuntimeConfig = {
 };
 export class QmdMemoryManager implements MemorySearchManager {
   static async create(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     agentId: string;
     resolved: ResolvedMemoryBackendConfig;
     withLease: PluginStateLeaseRunner;
@@ -2302,10 +2302,7 @@ export class QmdMemoryManager implements MemorySearchManager {
   }
 }
 
-function resolveQmdManagerRuntimeConfig(
-  cfg: OpenClawConfig,
-  agentId: string,
-): QmdManagerRuntimeConfig {
+function resolveQmdManagerRuntimeConfig(cfg: NovaConfig, agentId: string): QmdManagerRuntimeConfig {
   return {
     workspaceDir: resolveAgentWorkspaceDir(cfg, agentId),
     syncSettings: resolveMemorySearchSyncConfig(cfg, agentId),

@@ -36,7 +36,7 @@ function makeSnapshot() {
     issues: [] as ConfigIssue[],
     warnings: [] as ConfigIssue[],
     legacyIssues: [] as ConfigIssue[],
-    path: "/tmp/openclaw.json",
+    path: "/tmp/nova.json",
   };
 }
 
@@ -99,8 +99,8 @@ describe("ensureConfigReady", () => {
     return snapshot;
   }
 
-  function useTempOpenClawHome(): string {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-config-guard-"));
+  function useTempNovaHome(): string {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-config-guard-"));
     tempRoots.push(root);
     setTestEnvValue("NOVA_HOME", root);
     deleteTestEnvValue("NOVA_NIX_MODE");
@@ -110,20 +110,20 @@ describe("ensureConfigReady", () => {
   }
 
   function writeLegacyTaskSidecarMarker(root: string): void {
-    const markerPath = path.join(root, ".openclaw", "tasks", "runs.sqlite");
+    const markerPath = path.join(root, ".nova", "tasks", "runs.sqlite");
     fs.mkdirSync(path.dirname(markerPath), { recursive: true });
     fs.writeFileSync(markerPath, "");
   }
 
   function writePendingTaskSidecarArchiveMarker(root: string): void {
-    const markerPath = path.join(root, ".openclaw", "tasks", "runs.sqlite");
+    const markerPath = path.join(root, ".nova", "tasks", "runs.sqlite");
     fs.mkdirSync(path.dirname(markerPath), { recursive: true });
     fs.writeFileSync(`${markerPath}.migrated`, "");
     fs.writeFileSync(`${markerPath}-wal`, "");
   }
 
   function writeStateMarker(root: string, relativePath: string): void {
-    const markerPath = path.join(root, ".openclaw", relativePath);
+    const markerPath = path.join(root, ".nova", relativePath);
     fs.mkdirSync(path.dirname(markerPath), { recursive: true });
     fs.writeFileSync(markerPath, "{}");
   }
@@ -141,7 +141,7 @@ describe("ensureConfigReady", () => {
     for (const root of tempRoots.splice(0)) {
       fs.rmSync(root, { recursive: true, force: true });
     }
-    useTempOpenClawHome();
+    useTempNovaHome();
     readConfigFileSnapshotMock.mockResolvedValue(makeSnapshot());
     loadAndMaybeMigrateDoctorConfigMock.mockImplementation(async () => ({
       snapshot: makeSnapshot(),
@@ -202,7 +202,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor flow when lightweight startup detection finds legacy state", async () => {
-    const root = useTempOpenClawHome();
+    const root = useTempNovaHome();
     writeLegacyTaskSidecarMarker(root);
 
     await runEnsureConfigReady(["status"]);
@@ -218,7 +218,7 @@ describe("ensureConfigReady", () => {
   it.each(["restart-sentinel.json", "restart-sentinel.json.doctor-importing"])(
     "runs doctor flow when lightweight startup detection finds %s",
     async (relativePath) => {
-      const root = useTempOpenClawHome();
+      const root = useTempNovaHome();
       writeStateMarker(root, relativePath);
 
       await runEnsureConfigReady(["status"]);
@@ -233,7 +233,7 @@ describe("ensureConfigReady", () => {
   );
 
   it("runs doctor flow when lightweight startup detection finds a pending SQLite archive", async () => {
-    const root = useTempOpenClawHome();
+    const root = useTempNovaHome();
     writePendingTaskSidecarArchiveMarker(root);
 
     await runEnsureConfigReady(["status"]);
@@ -289,8 +289,8 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor flow for legacy sessions without task sidecars", async () => {
-    const root = useTempOpenClawHome();
-    fs.mkdirSync(path.join(root, ".openclaw", "sessions"), { recursive: true });
+    const root = useTempNovaHome();
+    fs.mkdirSync(path.join(root, ".nova", "sessions"), { recursive: true });
 
     await runEnsureConfigReady(["status"]);
 
@@ -298,7 +298,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor flow before agent commands when the legacy plugin install index exists", async () => {
-    const root = useTempOpenClawHome();
+    const root = useTempNovaHome();
     writeStateMarker(root, "plugins/installs.json");
 
     await runEnsureConfigReady(["agent"]);
@@ -312,7 +312,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("preserves plugin listing migrations when the legacy plugin install index exists", async () => {
-    const root = useTempOpenClawHome();
+    const root = useTempNovaHome();
     writeStateMarker(root, "plugins/installs.json");
     const migratedSnapshot = {
       ...makeSnapshot(),
@@ -340,8 +340,8 @@ describe("ensureConfigReady", () => {
   });
 
   it("preserves plugin listing migrations when the shared state database exists", async () => {
-    const root = useTempOpenClawHome();
-    writeStateMarker(root, "state/openclaw.sqlite");
+    const root = useTempNovaHome();
+    writeStateMarker(root, "state/nova.sqlite");
 
     await runEnsureConfigReady(["plugins", "list"]);
 
@@ -356,11 +356,11 @@ describe("ensureConfigReady", () => {
   ])(
     "ignores default-state $source while $commandPath uses custom state",
     async ({ commandPath, source }) => {
-      const root = useTempOpenClawHome();
+      const root = useTempNovaHome();
       const stateDir = path.join(root, "custom-state");
       setTestEnvValue("NOVA_STATE_DIR", stateDir);
       writeStateMarker(root, source);
-      const sourcePath = path.join(root, ".openclaw", source);
+      const sourcePath = path.join(root, ".nova", source);
       const sourceRaw = fs.readFileSync(sourcePath, "utf8");
 
       await runEnsureConfigReady(commandPath);
@@ -373,9 +373,9 @@ describe("ensureConfigReady", () => {
   );
 
   it("keeps named profiles isolated from default-profile approval migrations", async () => {
-    const root = useTempOpenClawHome();
+    const root = useTempNovaHome();
     setTestEnvValue("NOVA_PROFILE", "work");
-    setTestEnvValue("NOVA_STATE_DIR", path.join(root, ".openclaw-work"));
+    setTestEnvValue("NOVA_STATE_DIR", path.join(root, ".nova-work"));
     writeStateMarker(root, "exec-approvals.json");
     writeStateMarker(root, "plugin-binding-approvals.json");
 
@@ -397,7 +397,7 @@ describe("ensureConfigReady", () => {
     ["iMessage catchup cursor", "imessage/catchup/default__37a8eec1ce19.json"],
     ["WhatsApp root auth", "credentials/creds.json"],
   ])("runs doctor flow for bundled channel legacy state: %s", async (_label, relativePath) => {
-    const root = useTempOpenClawHome();
+    const root = useTempNovaHome();
     writeStateMarker(root, relativePath);
 
     await runEnsureConfigReady(["status"]);
@@ -406,7 +406,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("uses shared tilde expansion for NOVA_HOME in the startup detector", async () => {
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-config-guard-home-"));
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-config-guard-home-"));
     tempRoots.push(root);
     setTestEnvValue("HOME", root);
     setTestEnvValue("NOVA_HOME", "~/svc");
@@ -424,7 +424,7 @@ describe("ensureConfigReady", () => {
   ])(
     "runs doctor flow for $name with configured custom session stores",
     async ({ commandPath }) => {
-      const root = useTempOpenClawHome();
+      const root = useTempNovaHome();
       const customStore = path.join(root, "sessions", "sessions.json");
       const snapshot = {
         ...makeSnapshot(),
@@ -509,19 +509,19 @@ describe("ensureConfigReady", () => {
 
     expect(plainErrorCalls(runtime)).toEqual([
       "Nova config is invalid",
-      "File: /tmp/openclaw.json",
+      "File: /tmp/nova.json",
       "Problem:",
       "  - channels.quietchat: invalid",
       "",
-      `Inspect: ${formatCliCommand("openclaw config validate")}`,
+      `Inspect: ${formatCliCommand("nova config validate")}`,
       "Audit, status, health, logs, tasks list/audit, and doctor commands still run with invalid config.",
-      `Run "${formatCliCommand("openclaw doctor --fix")}" to repair the config, then retry.`,
+      `Run "${formatCliCommand("nova doctor --fix")}" to repair the config, then retry.`,
     ]);
     expect(runtime.exit).toHaveBeenCalledWith(1);
   });
 
   it("runs doctor and retries the config guard once after consent", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempNovaHome());
     const invalidSnapshot = setInvalidSnapshot();
     const validSnapshot = {
       ...makeSnapshot(),
@@ -542,7 +542,7 @@ describe("ensureConfigReady", () => {
     );
 
     expect(confirm).toHaveBeenCalledWith(
-      `Run "${formatCliCommand("openclaw doctor --fix")}" now?`,
+      `Run "${formatCliCommand("nova doctor --fix")}" now?`,
       true,
     );
     expect(runDoctor).toHaveBeenCalledOnce();
@@ -614,7 +614,7 @@ describe("ensureConfigReady", () => {
     const calls = plainErrorCalls(runtime);
 
     expect(calls).toContain(`Fix: ${pluginPackagingRecoveryHint}`);
-    expect(calls).not.toContain(`Fix: ${formatCliCommand("openclaw doctor --fix")}`);
+    expect(calls).not.toContain(`Fix: ${formatCliCommand("nova doctor --fix")}`);
     expect(runtime.exit).toHaveBeenCalledWith(1);
 
     const gatewayRuntime = await runEnsureConfigReady(["gateway", "start"]);
@@ -693,7 +693,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("runs doctor migration flow only once per module instance", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempNovaHome());
     const runtimeA = makeRuntime();
     const runtimeB = makeRuntime();
 
@@ -703,13 +703,13 @@ describe("ensureConfigReady", () => {
   });
 
   it("still runs doctor flow when stdout suppression is enabled", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempNovaHome());
     await runEnsureConfigReady(["message"], true);
     expect(loadAndMaybeMigrateDoctorConfigMock).toHaveBeenCalledTimes(1);
   });
 
   it("prevents preflight note noise when suppression is enabled", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempNovaHome());
     loadAndMaybeMigrateDoctorConfigMock.mockImplementation(async () => {
       note("Doctor warnings", "Config warnings");
       return {
@@ -724,7 +724,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("allows preflight note noise when suppression is not enabled", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempNovaHome());
     loadAndMaybeMigrateDoctorConfigMock.mockImplementation(async () => {
       note("Doctor warnings", "Config warnings");
       return {
@@ -739,7 +739,7 @@ describe("ensureConfigReady", () => {
   });
 
   it("does not suppress unrelated concurrent stdout writes while suppressing preflight notes", async () => {
-    writeLegacyTaskSidecarMarker(useTempOpenClawHome());
+    writeLegacyTaskSidecarMarker(useTempNovaHome());
     let releasePreflight: (() => void) | undefined;
     let preflightStarted: (() => void) | undefined;
     const preflightStartedPromise = new Promise<void>((resolve) => {

@@ -10,9 +10,9 @@ import {
 export { LOCAL_BUILD_METADATA_DIST_PATHS } from "./local-build-metadata-paths.mjs";
 export { PACKAGE_DIST_INVENTORY_RELATIVE_PATH };
 
-export const PACKAGE_INSTALL_GUARD_RELATIVE_PATH = "dist/openclaw-install-guard";
+export const PACKAGE_INSTALL_GUARD_RELATIVE_PATH = "dist/nova-install-guard";
 
-const INSTALL_STAGE_DEBRIS_DIR_PATTERN = /^\.openclaw-install-stage(?:-[^/]+)?$/iu;
+const INSTALL_STAGE_DEBRIS_DIR_PATTERN = /^\.nova-install-stage(?:-[^/]+)?$/iu;
 
 function normalizeRelativePath(value: string): string {
   return value.replace(/\\/g, "/");

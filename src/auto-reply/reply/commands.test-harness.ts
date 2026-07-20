@@ -1,5 +1,5 @@
 /** Shared command-handler test harness and config fixtures. */
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { configureTaskRegistryRuntime } from "../../tasks/task-registry.store.js";
 import type { MsgContext } from "../templating.js";
 import { buildCommandContext } from "./commands-context.js";
@@ -10,11 +10,11 @@ export const baseCommandTestConfig = {
   commands: { text: true },
   channels: { whatsapp: { allowFrom: ["*"] } },
   session: { mainKey: "main", scope: "per-sender" },
-} as OpenClawConfig;
+} as NovaConfig;
 
 export function buildCommandTestParams(
   commandBody: string,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   ctxOverrides?: Partial<MsgContext>,
   options?: {
     workspaceDir?: string;
@@ -80,15 +80,15 @@ export function configureInMemoryTaskRegistryStoreForTests(): void {
 export type ConfigSnapshotMock = {
   path?: string;
   hash?: string | null;
-  parsed?: OpenClawConfig | null;
-  sourceConfig?: OpenClawConfig;
-  resolved?: OpenClawConfig;
-  runtimeConfig?: OpenClawConfig;
+  parsed?: NovaConfig | null;
+  sourceConfig?: NovaConfig;
+  resolved?: NovaConfig;
+  runtimeConfig?: NovaConfig;
 };
 
 export function buildPluginsCommandParams(params: {
   commandBodyNormalized: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   workspaceDir?: string;
   gatewayClientScopes?: string[];
 }): HandleCommandsParams {
@@ -102,7 +102,7 @@ export function buildPluginsCommandParams(params: {
           plugins: true,
         },
         plugins: { enabled: true },
-      } as OpenClawConfig),
+      } as NovaConfig),
     ctx: {
       Provider: "whatsapp",
       Surface: "whatsapp",

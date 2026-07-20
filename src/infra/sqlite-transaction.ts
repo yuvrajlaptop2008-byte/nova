@@ -29,7 +29,7 @@ type SqliteTransactionMode = "deferred" | "immediate";
 
 function nextSavepointName(): string {
   nextSavepointId += 1;
-  return `openclaw_tx_${nextSavepointId}`;
+  return `nova_tx_${nextSavepointId}`;
 }
 
 function isPromiseLike(value: unknown): value is PromiseLike<unknown> {

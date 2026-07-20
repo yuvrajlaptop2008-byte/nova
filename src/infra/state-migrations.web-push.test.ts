@@ -4,10 +4,7 @@ import fsp from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import { acquireGatewayLock } from "./gateway-lock.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "./kysely-sync.js";
@@ -29,7 +26,7 @@ describe("legacy Web Push Doctor migration", () => {
   let envSnapshot: ReturnType<typeof captureEnv> | undefined;
   const tempDirs = useAutoCleanupTempDirTracker((cleanup) => {
     afterEach(() => {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
       envSnapshot?.restore();
       envSnapshot = undefined;
       cleanup();
@@ -37,7 +34,7 @@ describe("legacy Web Push Doctor migration", () => {
   });
 
   function useStateDir(): string {
-    const stateDir = tempDirs.make("openclaw-web-push-migration-");
+    const stateDir = tempDirs.make("nova-web-push-migration-");
     envSnapshot ??= captureEnv(["NOVA_STATE_DIR", "NOVA_VAPID_SUBJECT"]);
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     return stateDir;
@@ -56,11 +53,7 @@ describe("legacy Web Push Doctor migration", () => {
 
   function vapidKeys(overrides: Partial<VapidKeyPair> = {}): VapidKeyPair {
     return {
-      ...createWebPushVapidKeyPair(
-        "legacy-public-key",
-        "legacy-private-key",
-        "https://openclaw.ai",
-      ),
+      ...createWebPushVapidKeyPair("legacy-public-key", "legacy-private-key", "https://nova.ai"),
       ...overrides,
     };
   }
@@ -97,7 +90,7 @@ describe("legacy Web Push Doctor migration", () => {
   }
 
   function seedSubscription(endpointHash: string, value: WebPushSubscription): void {
-    const database = openOpenClawStateDatabase();
+    const database = openNovaStateDatabase();
     executeSqliteQuerySync(
       database.db,
       getNodeSqliteKysely<WebPushDatabase>(database.db)
@@ -107,7 +100,7 @@ describe("legacy Web Push Doctor migration", () => {
   }
 
   function seedVapid(value: VapidKeyPair): void {
-    const database = openOpenClawStateDatabase();
+    const database = openNovaStateDatabase();
     executeSqliteQuerySync(
       database.db,
       getNodeSqliteKysely<WebPushDatabase>(database.db)
@@ -260,7 +253,7 @@ describe("legacy Web Push Doctor migration", () => {
     });
 
     expect(result.warnings).toEqual([]);
-    expect(fs.existsSync(path.join(stateDir, "state", "openclaw.sqlite"))).toBe(true);
+    expect(fs.existsSync(path.join(stateDir, "state", "nova.sqlite"))).toBe(true);
     expect(fs.existsSync(subscriptionsPath!)).toBe(false);
   });
 
@@ -398,7 +391,7 @@ describe("legacy Web Push Doctor migration", () => {
     const canonical = subscription({ keys: { p256dh: "canonical", auth: "canonical" } });
     seedSubscription(hashWebPushEndpoint(canonical.endpoint), canonical);
     seedVapid(
-      createWebPushVapidKeyPair("canonical-public", "canonical-private", "https://openclaw.ai"),
+      createWebPushVapidKeyPair("canonical-public", "canonical-private", "https://nova.ai"),
     );
     const paths = await writeLegacyState({
       stateDir,
@@ -423,7 +416,7 @@ describe("legacy Web Push Doctor migration", () => {
   it("rolls back subscription changes when only VAPID conflicts", async () => {
     const stateDir = useStateDir();
     seedVapid(
-      createWebPushVapidKeyPair("canonical-public", "canonical-private", "https://openclaw.ai"),
+      createWebPushVapidKeyPair("canonical-public", "canonical-private", "https://nova.ai"),
     );
     await writeLegacyState({
       stateDir,
@@ -549,7 +542,7 @@ describe("legacy Web Push Doctor migration", () => {
       return;
     }
     const stateDir = useStateDir();
-    const outside = tempDirs.make("openclaw-web-push-outside-");
+    const outside = tempDirs.make("nova-web-push-outside-");
     const legacy = subscription();
     const sourcePath = path.join(outside, "web-push-subscriptions.json");
     await fsp.writeFile(

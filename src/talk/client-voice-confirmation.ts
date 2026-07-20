@@ -184,7 +184,7 @@ export function resolveClientVoiceToolConfirmationPolicy(params: {
     reason:
       `VOICE_CONFIRMATION_REQUIRED:${confirmation.confirmationId} ` +
       `The high-impact voice action "${params.toolName}" was not executed. ` +
-      "Ask the user for explicit spoken confirmation, then call openclaw_agent_consult again with this confirmationId.",
+      "Ask the user for explicit spoken confirmation, then call nova_agent_consult again with this confirmationId.",
   };
 }
 
@@ -335,7 +335,6 @@ function resetClientVoiceConfirmationStateForTest(): void {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.clientVoiceConfirmationTestApi")
-  ] = { resetClientVoiceConfirmationStateForTest };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.clientVoiceConfirmationTestApi")] =
+    { resetClientVoiceConfirmationStateForTest };
 }

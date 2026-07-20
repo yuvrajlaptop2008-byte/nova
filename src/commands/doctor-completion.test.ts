@@ -33,7 +33,7 @@ function status(overrides: Partial<ShellCompletionStatus> = {}): ShellCompletion
     shell: "zsh",
     profileInstalled: true,
     cacheExists: true,
-    cachePath: "/tmp/openclaw.zsh",
+    cachePath: "/tmp/nova.zsh",
     usesSlowPattern: false,
     ...overrides,
   };
@@ -41,16 +41,16 @@ function status(overrides: Partial<ShellCompletionStatus> = {}): ShellCompletion
 
 describe("shell completion health mapping", () => {
   it("checks an explicit shell instead of the detected environment shell", async () => {
-    const homeDir = tempDirs.make("openclaw-completion-home-");
-    const stateDir = tempDirs.make("openclaw-completion-state-");
+    const homeDir = tempDirs.make("nova-completion-home-");
+    const stateDir = tempDirs.make("nova-completion-state-");
     setTestEnvValue("HOME", homeDir);
     setTestEnvValue("NOVA_STATE_DIR", stateDir);
     setTestEnvValue("SHELL", "/bin/zsh");
 
-    const current = await checkShellCompletionStatus("openclaw", { shell: "fish" });
+    const current = await checkShellCompletionStatus("nova", { shell: "fish" });
 
     expect(current.shell).toBe("fish");
-    expect(current.cachePath).toBe(path.join(stateDir, "completions", "openclaw.fish"));
+    expect(current.cachePath).toBe(path.join(stateDir, "completions", "nova.fish"));
     expect(current.profileInstalled).toBe(false);
     expect(current.cacheExists).toBe(false);
   });
@@ -69,7 +69,7 @@ describe("shell completion health mapping", () => {
       {
         kind: "state",
         action: "would-generate-completion-cache",
-        target: "/tmp/openclaw.zsh",
+        target: "/tmp/nova.zsh",
         dryRunSafe: true,
       },
       {
@@ -88,14 +88,14 @@ describe("shell completion health mapping", () => {
       expect.objectContaining({
         severity: "info",
         message: expect.stringContaining("cache is missing"),
-        fixHint: expect.stringContaining("openclaw doctor --fix"),
+        fixHint: expect.stringContaining("nova doctor --fix"),
       }),
     ]);
     expect(shellCompletionStatusToRepairEffects(current)).toEqual([
       {
         kind: "state",
         action: "would-regenerate-completion-cache",
-        target: "/tmp/openclaw.zsh",
+        target: "/tmp/nova.zsh",
         dryRunSafe: true,
       },
     ]);
@@ -140,8 +140,8 @@ function mockPrompter(confirmValue = true) {
 }
 
 async function setupDoctorCompletionTest(usesSlowPattern: boolean) {
-  const homeDir = tempDirs.make("openclaw-doctor-home-");
-  const stateDir = tempDirs.make("openclaw-doctor-state-");
+  const homeDir = tempDirs.make("nova-doctor-home-");
+  const stateDir = tempDirs.make("nova-doctor-state-");
   setTestEnvValue("HOME", homeDir);
   setTestEnvValue("NOVA_STATE_DIR", stateDir);
   setTestEnvValue("SHELL", "/bin/bash");
@@ -150,12 +150,12 @@ async function setupDoctorCompletionTest(usesSlowPattern: boolean) {
   if (usesSlowPattern) {
     await fs.writeFile(
       profilePath,
-      '# test bashrc\n[ -f "/tmp/nonexistent" ] && source <(openclaw completion bash)\n',
+      '# test bashrc\n[ -f "/tmp/nonexistent" ] && source <(nova completion bash)\n',
       "utf-8",
     );
     const cacheDir = path.join(stateDir, "completions");
     await fs.mkdir(cacheDir, { recursive: true });
-    await fs.writeFile(path.join(cacheDir, "openclaw.bash"), "# completion cache\n", "utf-8");
+    await fs.writeFile(path.join(cacheDir, "nova.bash"), "# completion cache\n", "utf-8");
   }
   return profilePath;
 }
@@ -180,12 +180,12 @@ describe("doctorShellCompletion", () => {
   ])(
     "uses explicit $generationMode cache generation even with an ambient skip guard",
     async ({ generationMode, expectedSkipValue }) => {
-      const stateDir = tempDirs.make("openclaw-doctor-state-");
+      const stateDir = tempDirs.make("nova-doctor-state-");
       setTestEnvValue("NOVA_STATE_DIR", stateDir);
       setTestEnvValue(COMPLETION_SKIP_PLUGIN_COMMANDS_ENV, "1");
 
       await expect(
-        ensureCompletionCacheExists("openclaw", {
+        ensureCompletionCacheExists("nova", {
           shell: "powershell",
           generationMode,
         }),

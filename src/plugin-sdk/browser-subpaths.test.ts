@@ -11,7 +11,7 @@ import {
 describe("plugin-sdk browser subpaths", () => {
   it("keeps browser profile helpers available on the narrow subpath", () => {
     expect(DEFAULT_NOVA_BROWSER_ENABLED).toBe(true);
-    expect(DEFAULT_BROWSER_DEFAULT_PROFILE_NAME).toBe("openclaw");
+    expect(DEFAULT_BROWSER_DEFAULT_PROFILE_NAME).toBe("nova");
     expect(resolveBrowserConfig).toBeTypeOf("function");
   });
 

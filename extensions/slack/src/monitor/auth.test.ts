@@ -8,10 +8,10 @@ let authorizeSlackSystemEventSender: typeof import("./auth.js").authorizeSlackSy
 let resolveSlackEffectiveAllowFrom: typeof import("./auth.js").resolveSlackEffectiveAllowFrom;
 let resolveSlackCommandIngress: typeof import("./auth.js").resolveSlackCommandIngress;
 
-vi.mock("openclaw/plugin-sdk/channel-ingress-runtime", async () => {
-  const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/channel-ingress-runtime")
-  >("openclaw/plugin-sdk/channel-ingress-runtime");
+vi.mock("nova/plugin-sdk/channel-ingress-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/channel-ingress-runtime")>(
+    "nova/plugin-sdk/channel-ingress-runtime",
+  );
   return {
     ...actual,
     readChannelIngressStoreAllowFromForDmPolicy: (...args: unknown[]) =>

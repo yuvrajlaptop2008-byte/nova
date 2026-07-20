@@ -1,5 +1,5 @@
 // Mistral plugin entrypoint registers its Nova integration.
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
+import { defineSingleProviderPluginEntry } from "nova/plugin-sdk/provider-entry";
 import {
   applyMistralModelCompat,
   MISTRAL_MEDIUM_3_5_ID,

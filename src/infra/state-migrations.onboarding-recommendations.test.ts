@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
-import { createOnboardingRecommendationsStore } from "../state/onboarding-recommendations.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { NovaConfig } from "../config/config.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+  closeNovaStateDatabaseForTest,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
+import { createOnboardingRecommendationsStore } from "../state/onboarding-recommendations.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -15,7 +15,7 @@ import {
 import { migrateLegacyOnboardingRecommendationsScope } from "./state-migrations.onboarding-recommendations.js";
 
 type OnboardingRecommendationsMigrationDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "onboarding_recommendations"
 >;
 
@@ -24,7 +24,7 @@ function insertRecommendationRow(params: {
   configKey: string;
   inventoryHash: string;
 }): void {
-  runOpenClawStateWriteTransaction(({ db: sqlite }) => {
+  runNovaStateWriteTransaction(({ db: sqlite }) => {
     const db = getNodeSqliteKysely<OnboardingRecommendationsMigrationDatabase>(sqlite);
     executeSqliteQuerySync(
       sqlite,
@@ -44,7 +44,7 @@ function readRecommendationKey(
   database: { env: NodeJS.ProcessEnv },
   configKey: string,
 ): { config_key: string } | undefined {
-  return runOpenClawStateWriteTransaction(({ db: sqlite }) => {
+  return runNovaStateWriteTransaction(({ db: sqlite }) => {
     const db = getNodeSqliteKysely<OnboardingRecommendationsMigrationDatabase>(sqlite);
     return executeSqliteQueryTakeFirstSync(
       sqlite,
@@ -57,49 +57,46 @@ function readRecommendationKey(
 }
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 describe("onboarding recommendations scope migration", () => {
   it("moves the legacy singleton row to the default workspace", async () => {
-    await withOpenClawTestState(
-      { label: "onboarding-recommendations-migration" },
-      async (state) => {
-        const database = { env: state.env };
-        insertRecommendationRow({
+    await withNovaTestState({ label: "onboarding-recommendations-migration" }, async (state) => {
+      const database = { env: state.env };
+      insertRecommendationRow({
+        database,
+        configKey: "primary",
+        inventoryHash: "legacy-inventory",
+      });
+
+      const result = migrateLegacyOnboardingRecommendationsScope({
+        cfg: { agents: { defaults: { workspace: state.workspaceDir } } } as NovaConfig,
+        env: state.env,
+      });
+
+      expect(result).toEqual({
+        changes: ["Migrated onboarding recommendation state to the default workspace scope."],
+        warnings: [],
+      });
+      expect(
+        createOnboardingRecommendationsStore({
+          workspaceDir: state.workspaceDir,
           database,
-          configKey: "primary",
-          inventoryHash: "legacy-inventory",
-        });
-
-        const result = migrateLegacyOnboardingRecommendationsScope({
-          cfg: { agents: { defaults: { workspace: state.workspaceDir } } } as OpenClawConfig,
-          env: state.env,
-        });
-
-        expect(result).toEqual({
-          changes: ["Migrated onboarding recommendation state to the default workspace scope."],
-          warnings: [],
-        });
-        expect(
-          createOnboardingRecommendationsStore({
-            workspaceDir: state.workspaceDir,
-            database,
-          }).read(),
-        ).toEqual({
-          inventoryHash: "legacy-inventory",
-          matches: [],
-          offeredAt: 1_000,
-          acceptedAt: 2_000,
-          updatedAt: 2_000,
-        });
-        expect(readRecommendationKey(database, "primary")).toBeUndefined();
-      },
-    );
+        }).read(),
+      ).toEqual({
+        inventoryHash: "legacy-inventory",
+        matches: [],
+        offeredAt: 1_000,
+        acceptedAt: 2_000,
+        updatedAt: 2_000,
+      });
+      expect(readRecommendationKey(database, "primary")).toBeUndefined();
+    });
   });
 
   it("keeps an existing scoped row when legacy state is also present", async () => {
-    await withOpenClawTestState(
+    await withNovaTestState(
       { label: "onboarding-recommendations-migration-conflict" },
       async (state) => {
         const database = { env: state.env };
@@ -120,7 +117,7 @@ describe("onboarding recommendations scope migration", () => {
         });
 
         const result = migrateLegacyOnboardingRecommendationsScope({
-          cfg: { agents: { defaults: { workspace: state.workspaceDir } } } as OpenClawConfig,
+          cfg: { agents: { defaults: { workspace: state.workspaceDir } } } as NovaConfig,
           env: state.env,
         });
 

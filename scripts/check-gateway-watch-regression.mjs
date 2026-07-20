@@ -72,7 +72,7 @@ export function appendBoundedWatchLog(current, chunk, maxChars = WATCH_LOG_CAPTU
 
 function formatCapturedWatchLog(text, truncated) {
   return truncated
-    ? `[openclaw] log truncated to last ${WATCH_LOG_CAPTURE_MAX_CHARS} chars\n${text}`
+    ? `[nova] log truncated to last ${WATCH_LOG_CAPTURE_MAX_CHARS} chars\n${text}`
     : text;
 }
 
@@ -493,8 +493,8 @@ export function buildTimedWatchCommand(
   port,
   deps = {},
 ) {
-  const isolatedStateDir = path.join(isolatedHomeDir, ".openclaw");
-  const isolatedConfigPath = path.join(isolatedStateDir, "openclaw.json");
+  const isolatedStateDir = path.join(isolatedHomeDir, ".nova");
+  const isolatedConfigPath = path.join(isolatedStateDir, "nova.json");
   // CI env hooks can contain bash-only `declare` lines; running the watch shell
   // under sh delays gateway readiness behind stderr noise before the idle window.
   const shellPath = deps.shellPath ?? resolveTimedWatchShell(deps);
@@ -582,7 +582,7 @@ export async function runTimedWatch(options, outputDir, deps = {}) {
   const waitReady = deps.waitForGatewayReady ?? waitForGatewayReady;
   const pidFilePath = path.join(outputDir, "watch.pid");
   const timeFilePath = path.join(outputDir, "watch.time.log");
-  const isolatedHomeDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-watch-"));
+  const isolatedHomeDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-watch-"));
   fs.writeFileSync(path.join(outputDir, "watch.home.txt"), `${isolatedHomeDir}\n`, "utf8");
   try {
     const stdoutPath = path.join(outputDir, "watch.stdout.log");

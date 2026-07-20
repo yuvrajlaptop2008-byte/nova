@@ -4,14 +4,14 @@ import {
   addGatewayClientOptions,
   callGatewayFromCli,
   type GatewayRpcOpts,
-} from "openclaw/plugin-sdk/gateway-runtime";
+} from "nova/plugin-sdk/gateway-runtime";
 import type {
   SessionCatalogHost as CodexSessionCatalogHost,
   SessionCatalogSession as CodexSessionCatalogSession,
-} from "openclaw/plugin-sdk/session-catalog";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { sanitizeTerminalText } from "openclaw/plugin-sdk/text-chunking";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/session-catalog";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
+import { sanitizeTerminalText } from "nova/plugin-sdk/text-chunking";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   CODEX_LOCAL_SESSION_HOST_ID,
   CODEX_SESSION_CATALOG_MAX_PAGE_LIMIT,

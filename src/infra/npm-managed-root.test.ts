@@ -10,10 +10,10 @@ import { createSuiteTempRootTracker } from "../test-helpers/temp-dir.js";
 import { captureEnv } from "../test-utils/env.js";
 import {
   listMissingRequiredPlatformPackages,
-  repairManagedNpmRootOpenClawPeer,
+  repairManagedNpmRootNovaPeer,
   removeManagedNpmRootDependency,
   readManagedNpmRootInstalledDependency,
-  readOpenClawManagedNpmRootOverrides,
+  readNovaManagedNpmRootOverrides,
   resolveManagedNpmRootDependencySpec,
   restoreManagedNpmRootPeerDependencySnapshot,
   syncManagedNpmRootPeerDependencies,
@@ -21,7 +21,7 @@ import {
 } from "./npm-managed-root.js";
 
 const fixtureRootTracker = createSuiteTempRootTracker({
-  prefix: "openclaw-npm-managed-root-",
+  prefix: "nova-npm-managed-root-",
 });
 const tempDirs: string[] = [];
 let npmConfigEnvSnapshot: ReturnType<typeof captureEnv> | undefined;
@@ -216,7 +216,7 @@ describe("managed npm root", () => {
             "left-pad": "1.3.0",
             qs: "6.14.0",
           },
-          openclaw: {
+          nova: {
             managedOverrides: ["axios", "qs"],
           },
         },
@@ -256,7 +256,7 @@ describe("managed npm root", () => {
           semver: "1.2.3",
         },
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["axios", "nested", "node-domexception"],
       },
     });
@@ -289,7 +289,7 @@ describe("managed npm root", () => {
           semver: "1.2.3",
         },
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["axios", "nested"],
       },
     });
@@ -306,7 +306,7 @@ describe("managed npm root", () => {
             plugin: "1.0.0",
             "runtime-peer": "4.12.23",
           },
-          openclaw: {
+          nova: {
             managedPeerDependencies: ["runtime-peer"],
           },
         },
@@ -335,7 +335,7 @@ describe("managed npm root", () => {
       overrides: {
         "runtime-peer": "4.12.18",
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["runtime-peer"],
         managedPeerDependencies: ["runtime-peer"],
       },
@@ -365,7 +365,7 @@ describe("managed npm root", () => {
       overrides: {
         axios: "1.16.0",
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["axios"],
       },
     });
@@ -393,7 +393,7 @@ describe("managed npm root", () => {
       overrides: {
         "pinned-package": { "vuln-child": "3.0.0" },
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["pinned-package"],
       },
     });
@@ -410,7 +410,7 @@ describe("managed npm root", () => {
             plugin: "1.0.0",
             "runtime-peer": "4.12.23",
           },
-          openclaw: {
+          nova: {
             managedPeerDependencies: ["runtime-peer"],
           },
         },
@@ -452,7 +452,7 @@ describe("managed npm root", () => {
             plugin: "1.0.0",
             "runtime-peer": "4.12.23",
           },
-          openclaw: {
+          nova: {
             managedPeerDependencies: ["runtime-peer"],
           },
         },
@@ -494,7 +494,7 @@ describe("managed npm root", () => {
           overrides: {
             "runtime-peer": "4.12.18",
           },
-          openclaw: {
+          nova: {
             managedOverrides: ["runtime-peer"],
             managedPeerDependencies: ["runtime-peer"],
           },
@@ -523,7 +523,7 @@ describe("managed npm root", () => {
       overrides: {
         "runtime-peer": "4.12.18",
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["runtime-peer"],
         managedPeerDependencies: ["runtime-peer"],
       },
@@ -540,7 +540,7 @@ describe("managed npm root", () => {
       axios: "1.16.0",
       "node-domexception": "npm:@nolyfill/domexception@1.0.28",
     });
-    await expect(readOpenClawManagedNpmRootOverrides()).resolves.toEqual(expectedOverrides);
+    await expect(readNovaManagedNpmRootOverrides()).resolves.toEqual(expectedOverrides);
   });
 
   it("resolves workspace pnpm overrides from packaged dist chunks", async () => {
@@ -550,7 +550,7 @@ describe("managed npm root", () => {
       path.join(packageRoot, "package.json"),
       `${JSON.stringify(
         {
-          name: "openclaw",
+          name: "nova",
         },
         null,
         2,
@@ -562,7 +562,7 @@ describe("managed npm root", () => {
     );
 
     await expect(
-      readOpenClawManagedNpmRootOverrides({
+      readNovaManagedNpmRootOverrides({
         moduleUrl: pathToFileURL(path.join(packageRoot, "dist", "install-AbCdEf.js")).toString(),
         cwd: path.join(packageRoot, "dist"),
       }),
@@ -577,7 +577,7 @@ describe("managed npm root", () => {
       path.join(packageRoot, "package.json"),
       `${JSON.stringify(
         {
-          name: "openclaw",
+          name: "nova",
           dependencies: {
             "managed-runtime": "3.1024.0",
             "node-domexception": "npm:@nolyfill/domexception@1.0.28",
@@ -604,7 +604,7 @@ describe("managed npm root", () => {
       ].join("\n"),
     );
 
-    await expect(readOpenClawManagedNpmRootOverrides({ packageRoot })).resolves.toEqual({
+    await expect(readNovaManagedNpmRootOverrides({ packageRoot })).resolves.toEqual({
       "managed-runtime": "3.1024.0",
       nested: {
         "optional-runtime": "2.0.0",
@@ -715,7 +715,7 @@ describe("managed npm root", () => {
           devDependencies: {
             "dev-plugin": "1.0.0",
           },
-          openclaw: {
+          nova: {
             managedPeerDependencies: ["old-peer"],
           },
         },
@@ -765,7 +765,7 @@ describe("managed npm root", () => {
                 peer: true,
                 version: "2.1.0",
               },
-              "node_modules/openclaw": {
+              "node_modules/nova": {
                 peer: true,
                 version: "2026.5.12",
               },
@@ -773,7 +773,7 @@ describe("managed npm root", () => {
                 peerDependencies: {
                   "existing-root": "^1.0.0",
                   "new-peer": "^2.0.0",
-                  openclaw: ">=2026.5.0",
+                  nova: ">=2026.5.0",
                 },
                 version: "1.0.0",
               },
@@ -826,7 +826,7 @@ describe("managed npm root", () => {
       devDependencies: {
         "dev-plugin": "1.0.0",
       },
-      openclaw: {
+      nova: {
         managedPeerDependencies: ["new-peer"],
       },
     });
@@ -846,7 +846,7 @@ describe("managed npm root", () => {
           overrides: {
             "runtime-peer": "4.12.18",
           },
-          openclaw: {
+          nova: {
             managedOverrides: ["runtime-peer"],
             managedPeerDependencies: ["runtime-peer"],
           },
@@ -916,7 +916,7 @@ describe("managed npm root", () => {
       overrides: {
         "runtime-peer": "4.12.18",
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["runtime-peer"],
         managedPeerDependencies: ["runtime-peer"],
       },
@@ -935,7 +935,7 @@ describe("managed npm root", () => {
             plugin: "1.0.0",
             "runtime-peer": "4.12.23",
           },
-          openclaw: {
+          nova: {
             managedPeerDependencies: ["aliased-peer", "runtime-peer"],
           },
         },
@@ -977,7 +977,7 @@ describe("managed npm root", () => {
         "aliased-peer": "npm:@scope/real@3.0.10",
         "runtime-peer": "4.12.18",
       },
-      openclaw: {
+      nova: {
         managedOverrides: ["aliased-peer", "runtime-peer"],
         managedPeerDependencies: ["aliased-peer", "runtime-peer"],
       },
@@ -995,7 +995,7 @@ describe("managed npm root", () => {
             plugin: "1.0.0",
             "runtime-peer": "2.0.0",
           },
-          openclaw: {
+          nova: {
             managedPeerDependencies: ["runtime-peer"],
           },
         },
@@ -1023,7 +1023,7 @@ describe("managed npm root", () => {
         plugin: "1.0.0",
         "runtime-peer": "2.0.0",
       },
-      openclaw: {
+      nova: {
         managedPeerDependencies: ["runtime-peer"],
       },
     });
@@ -1054,7 +1054,7 @@ describe("managed npm root", () => {
         return {
           code: 1,
           stdout: "",
-          stderr: "npm ERR! notarget No matching version found for openclaw@2026.5.99-beta.1",
+          stderr: "npm ERR! notarget No matching version found for nova@2026.5.99-beta.1",
           signal: null,
           killed: false,
           termination: "exit" as const,
@@ -1073,7 +1073,7 @@ describe("managed npm root", () => {
               },
               "node_modules/plugin": {
                 peerDependencies: {
-                  openclaw: "2026.5.99-beta.1",
+                  nova: "2026.5.99-beta.1",
                   "runtime-peer": "^2.0.0",
                 },
                 version: "1.0.0",
@@ -1105,7 +1105,7 @@ describe("managed npm root", () => {
         plugin: "1.0.0",
         "runtime-peer": "^2.0.0",
       },
-      openclaw: {
+      nova: {
         managedPeerDependencies: ["runtime-peer"],
       },
     });
@@ -1174,7 +1174,7 @@ describe("managed npm root", () => {
         plugin: "1.0.0",
         "runtime-peer": "^2.0.0",
       },
-      openclaw: {
+      nova: {
         managedPeerDependencies: ["runtime-peer"],
       },
     });
@@ -1283,16 +1283,16 @@ describe("managed npm root", () => {
     });
   });
 
-  it("repairs stale managed openclaw peer state without dropping plugin packages", async () => {
+  it("repairs stale managed nova peer state without dropping plugin packages", async () => {
     const npmRoot = await makeTempRoot();
-    await fs.mkdir(path.join(npmRoot, "node_modules", "openclaw"), { recursive: true });
+    await fs.mkdir(path.join(npmRoot, "node_modules", "nova"), { recursive: true });
     await fs.writeFile(
       path.join(npmRoot, "package.json"),
       `${JSON.stringify(
         {
           private: true,
           dependencies: {
-            openclaw: "2026.5.4",
+            nova: "2026.5.4",
             "@nova/discord": "2026.5.4",
           },
         },
@@ -1308,11 +1308,11 @@ describe("managed npm root", () => {
           packages: {
             "": {
               dependencies: {
-                openclaw: "2026.5.4",
+                nova: "2026.5.4",
                 "@nova/discord": "2026.5.4",
               },
             },
-            "node_modules/openclaw": {
+            "node_modules/nova": {
               version: "2026.5.4",
             },
             "node_modules/@nova/discord": {
@@ -1320,7 +1320,7 @@ describe("managed npm root", () => {
             },
           },
           dependencies: {
-            openclaw: {
+            nova: {
               version: "2026.5.4",
             },
           },
@@ -1330,20 +1330,20 @@ describe("managed npm root", () => {
       )}\n`,
     );
     await fs.writeFile(
-      path.join(npmRoot, "node_modules", "openclaw", "package.json"),
-      `${JSON.stringify({ name: "openclaw", version: "2026.5.4" })}\n`,
+      path.join(npmRoot, "node_modules", "nova", "package.json"),
+      `${JSON.stringify({ name: "nova", version: "2026.5.4" })}\n`,
     );
     await fs.mkdir(path.join(npmRoot, "node_modules", ".bin"), { recursive: true });
-    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "openclaw"), "shim");
-    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "openclaw.cmd"), "cmd shim");
-    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "openclaw.ps1"), "ps1 shim");
+    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "nova"), "shim");
+    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "nova.cmd"), "cmd shim");
+    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "nova.ps1"), "ps1 shim");
     await fs.writeFile(
       path.join(npmRoot, "node_modules", ".package-lock.json"),
       `${JSON.stringify(
         {
           lockfileVersion: 3,
           packages: {
-            "node_modules/openclaw": {
+            "node_modules/nova": {
               version: "2026.5.4",
             },
           },
@@ -1354,7 +1354,7 @@ describe("managed npm root", () => {
     );
 
     const runCommand = vi.fn().mockResolvedValue(successfulSpawn);
-    await expect(repairManagedNpmRootOpenClawPeer({ npmRoot, runCommand })).resolves.toBe(true);
+    await expect(repairManagedNpmRootNovaPeer({ npmRoot, runCommand })).resolves.toBe(true);
     expect(runCommand).toHaveBeenCalledTimes(1);
     const [repairArgs, rawRepairOptions] = requireFirstMockCall(runCommand, "repair command");
     const repairOptions = requireCommandOptions(rawRepairOptions, "repair");
@@ -1366,7 +1366,7 @@ describe("managed npm root", () => {
       "--ignore-scripts",
       "--no-audit",
       "--no-fund",
-      "openclaw",
+      "nova",
     ]);
     expect(repairOptions?.cwd).toBe(npmRoot);
     expect(repairOptions?.timeoutMs).toBe(300_000);
@@ -1387,11 +1387,11 @@ describe("managed npm root", () => {
     expect(lockfile.packages?.[""]?.dependencies).toEqual({
       "@nova/discord": "2026.5.4",
     });
-    expect(lockfile.packages?.["node_modules/openclaw"]).toBeUndefined();
+    expect(lockfile.packages?.["node_modules/nova"]).toBeUndefined();
     expect(lockfile.packages?.["node_modules/@nova/discord"]?.version).toBe("2026.5.4");
-    expect(lockfile.dependencies?.openclaw).toBeUndefined();
-    await expectPathMissing(path.join(npmRoot, "node_modules", "openclaw"));
-    for (const binName of ["openclaw", "openclaw.cmd", "openclaw.ps1"]) {
+    expect(lockfile.dependencies?.nova).toBeUndefined();
+    await expectPathMissing(path.join(npmRoot, "node_modules", "nova"));
+    for (const binName of ["nova", "nova.cmd", "nova.ps1"]) {
       await expectPathMissing(path.join(npmRoot, "node_modules", ".bin", binName));
     }
     await expectPathMissing(path.join(npmRoot, "node_modules", ".package-lock.json"));
@@ -1399,7 +1399,7 @@ describe("managed npm root", () => {
 
   it("does not repair the active Nova host package in a root-managed install", async () => {
     const npmRoot = await makeTempRoot();
-    const hostPackageRoot = path.join(npmRoot, "node_modules", "openclaw");
+    const hostPackageRoot = path.join(npmRoot, "node_modules", "nova");
     await fs.mkdir(path.join(hostPackageRoot, "dist"), { recursive: true });
     await fs.writeFile(
       path.join(npmRoot, "package.json"),
@@ -1407,8 +1407,8 @@ describe("managed npm root", () => {
         {
           private: true,
           dependencies: {
-            openclaw: "2026.5.12-beta.6",
-            "@xdarkicex/openclaw-memory-libravdb": "1.4.69",
+            nova: "2026.5.12-beta.6",
+            "@xdarkicex/nova-memory-libravdb": "1.4.69",
           },
         },
         null,
@@ -1423,11 +1423,11 @@ describe("managed npm root", () => {
           packages: {
             "": {
               dependencies: {
-                openclaw: "2026.5.12-beta.6",
-                "@xdarkicex/openclaw-memory-libravdb": "1.4.69",
+                nova: "2026.5.12-beta.6",
+                "@xdarkicex/nova-memory-libravdb": "1.4.69",
               },
             },
-            "node_modules/openclaw": {
+            "node_modules/nova": {
               version: "2026.5.12-beta.6",
             },
           },
@@ -1438,12 +1438,12 @@ describe("managed npm root", () => {
     );
     await fs.writeFile(
       path.join(hostPackageRoot, "package.json"),
-      `${JSON.stringify({ name: "openclaw", version: "2026.5.12-beta.6" })}\n`,
+      `${JSON.stringify({ name: "nova", version: "2026.5.12-beta.6" })}\n`,
     );
 
     const runCommand = vi.fn().mockResolvedValue(successfulSpawn);
     await expect(
-      repairManagedNpmRootOpenClawPeer({
+      repairManagedNpmRootNovaPeer({
         npmRoot,
         packageRoot: hostPackageRoot,
         runCommand,
@@ -1455,8 +1455,8 @@ describe("managed npm root", () => {
       fs.readFile(path.join(npmRoot, "package.json"), "utf8").then((raw) => JSON.parse(raw)),
     ).resolves.toMatchObject({
       dependencies: {
-        openclaw: "2026.5.12-beta.6",
-        "@xdarkicex/openclaw-memory-libravdb": "1.4.69",
+        nova: "2026.5.12-beta.6",
+        "@xdarkicex/nova-memory-libravdb": "1.4.69",
       },
     });
     await expect(
@@ -1466,24 +1466,24 @@ describe("managed npm root", () => {
 
   it("scrubs managed ownership metadata without deleting a linked active host package", async () => {
     const npmRoot = await makeTempRoot();
-    const hostPackageRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-host-package-"));
+    const hostPackageRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-host-package-"));
     tempDirs.push(hostPackageRoot);
     await fs.mkdir(path.join(npmRoot, "node_modules", ".bin"), { recursive: true });
     await fs.writeFile(
       path.join(hostPackageRoot, "package.json"),
-      `${JSON.stringify({ name: "openclaw", version: "2026.5.12-beta.6" })}\n`,
+      `${JSON.stringify({ name: "nova", version: "2026.5.12-beta.6" })}\n`,
     );
-    await fs.symlink(hostPackageRoot, path.join(npmRoot, "node_modules", "openclaw"), "dir");
-    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "openclaw"), "shim");
-    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "openclaw.cmd"), "cmd shim");
-    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "openclaw.ps1"), "ps1 shim");
+    await fs.symlink(hostPackageRoot, path.join(npmRoot, "node_modules", "nova"), "dir");
+    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "nova"), "shim");
+    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "nova.cmd"), "cmd shim");
+    await fs.writeFile(path.join(npmRoot, "node_modules", ".bin", "nova.ps1"), "ps1 shim");
     await fs.writeFile(
       path.join(npmRoot, "node_modules", ".package-lock.json"),
       `${JSON.stringify(
         {
           lockfileVersion: 3,
           packages: {
-            "node_modules/openclaw": {
+            "node_modules/nova": {
               version: "2026.5.12-beta.6",
             },
           },
@@ -1498,8 +1498,8 @@ describe("managed npm root", () => {
         {
           private: true,
           dependencies: {
-            openclaw: "2026.5.12-beta.6",
-            "@xdarkicex/openclaw-memory-libravdb": "1.4.69",
+            nova: "2026.5.12-beta.6",
+            "@xdarkicex/nova-memory-libravdb": "1.4.69",
           },
         },
         null,
@@ -1514,19 +1514,19 @@ describe("managed npm root", () => {
           packages: {
             "": {
               dependencies: {
-                openclaw: "2026.5.12-beta.6",
-                "@xdarkicex/openclaw-memory-libravdb": "1.4.69",
+                nova: "2026.5.12-beta.6",
+                "@xdarkicex/nova-memory-libravdb": "1.4.69",
               },
             },
-            "node_modules/openclaw": {
+            "node_modules/nova": {
               version: "2026.5.12-beta.6",
             },
-            "node_modules/@xdarkicex/openclaw-memory-libravdb": {
+            "node_modules/@xdarkicex/nova-memory-libravdb": {
               version: "1.4.69",
             },
           },
           dependencies: {
-            openclaw: {
+            nova: {
               version: "2026.5.12-beta.6",
             },
           },
@@ -1538,7 +1538,7 @@ describe("managed npm root", () => {
 
     const runCommand = vi.fn().mockResolvedValue(successfulSpawn);
     await expect(
-      repairManagedNpmRootOpenClawPeer({
+      repairManagedNpmRootNovaPeer({
         npmRoot,
         packageRoot: hostPackageRoot,
         runCommand,
@@ -1546,7 +1546,7 @@ describe("managed npm root", () => {
     ).resolves.toBe(true);
 
     expect(runCommand).not.toHaveBeenCalled();
-    await expect(fs.realpath(path.join(npmRoot, "node_modules", "openclaw"))).resolves.toBe(
+    await expect(fs.realpath(path.join(npmRoot, "node_modules", "nova"))).resolves.toBe(
       await fs.realpath(hostPackageRoot),
     );
     await expect(
@@ -1557,7 +1557,7 @@ describe("managed npm root", () => {
       dependencies?: Record<string, string>;
     };
     expect(manifest.dependencies).toEqual({
-      "@xdarkicex/openclaw-memory-libravdb": "1.4.69",
+      "@xdarkicex/nova-memory-libravdb": "1.4.69",
     });
 
     const lockfile = JSON.parse(
@@ -1567,14 +1567,14 @@ describe("managed npm root", () => {
       dependencies?: Record<string, unknown>;
     };
     expect(lockfile.packages?.[""]?.dependencies).toEqual({
-      "@xdarkicex/openclaw-memory-libravdb": "1.4.69",
+      "@xdarkicex/nova-memory-libravdb": "1.4.69",
     });
-    expect(lockfile.packages?.["node_modules/openclaw"]).toBeUndefined();
-    expect(lockfile.packages?.["node_modules/@xdarkicex/openclaw-memory-libravdb"]?.version).toBe(
+    expect(lockfile.packages?.["node_modules/nova"]).toBeUndefined();
+    expect(lockfile.packages?.["node_modules/@xdarkicex/nova-memory-libravdb"]?.version).toBe(
       "1.4.69",
     );
-    expect(lockfile.dependencies?.openclaw).toBeUndefined();
-    for (const binName of ["openclaw", "openclaw.cmd", "openclaw.ps1"]) {
+    expect(lockfile.dependencies?.nova).toBeUndefined();
+    for (const binName of ["nova", "nova.cmd", "nova.ps1"]) {
       await expectPathMissing(path.join(npmRoot, "node_modules", ".bin", binName));
     }
     await expectPathMissing(path.join(npmRoot, "node_modules", ".package-lock.json"));

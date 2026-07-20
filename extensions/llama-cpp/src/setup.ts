@@ -4,11 +4,11 @@ import type {
   ProviderAppGuidedSetupContext,
   ProviderAuthContext,
   ProviderAuthResult,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/plugin-entry";
 import type {
   ModelDefinitionConfig,
   ModelProviderConfig,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 import {
   DEFAULT_LLAMA_CPP_MODEL_CACHE_FILE,
   DEFAULT_LLAMA_CPP_MODEL_ID,
@@ -212,7 +212,7 @@ export async function runLlamaCppSetup(ctx: ProviderAuthContext): Promise<Provid
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.llamaCppSetupTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.llamaCppSetupTestApi")] = {
     formatLlamaCppDownloadProgress,
   };
 }

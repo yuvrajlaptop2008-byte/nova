@@ -1,8 +1,8 @@
 // Zalouser plugin module implements tool behavior.
-import { stringEnum } from "openclaw/plugin-sdk/channel-actions";
-import type { AnyAgentTool, OpenClawPluginToolContext } from "openclaw/plugin-sdk/core";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { jsonResult as json, type AgentToolResult } from "openclaw/plugin-sdk/tool-results";
+import { stringEnum } from "nova/plugin-sdk/channel-actions";
+import type { AnyAgentTool, NovaPluginToolContext } from "nova/plugin-sdk/core";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { jsonResult as json, type AgentToolResult } from "nova/plugin-sdk/tool-results";
 import { Type } from "typebox";
 import { sendImageZalouser, sendLinkZalouser, sendMessageZalouser } from "./send.js";
 import { parseZalouserOutboundTarget } from "./session-route.js";
@@ -38,7 +38,7 @@ type ToolParams = {
   url?: string;
 };
 
-type ZalouserToolContext = Pick<OpenClawPluginToolContext, "deliveryContext">;
+type ZalouserToolContext = Pick<NovaPluginToolContext, "deliveryContext">;
 
 function resolveAmbientZalouserTarget(context?: ZalouserToolContext): {
   threadId?: string;

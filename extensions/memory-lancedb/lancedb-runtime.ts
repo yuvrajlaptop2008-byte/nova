@@ -72,7 +72,7 @@ function createLanceDbRuntimeLoader(overrides: Partial<LanceDbRuntimeLoaderDeps>
 }
 
 if (process.env.VITEST === "true") {
-  Reflect.set(globalThis, Symbol.for("openclaw.memoryLanceDbRuntimeTestApi"), {
+  Reflect.set(globalThis, Symbol.for("nova.memoryLanceDbRuntimeTestApi"), {
     createRuntimeLoader: createLanceDbRuntimeLoader,
   });
 }

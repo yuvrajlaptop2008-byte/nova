@@ -18,9 +18,9 @@ const WORKFLOW_CASES = [
     scopedPath: "apps/macos/Sources/Nova/Test.swift",
   },
   {
-    name: "shared OpenClawKit",
-    path: ".github/workflows/shared-openclawkit-periphery.yml",
-    scopedPath: "apps/shared/OpenClawKit/Sources/OpenClawKit/Test.swift",
+    name: "shared NovaKit",
+    path: ".github/workflows/shared-novakit-periphery.yml",
+    scopedPath: "apps/shared/NovaKit/Sources/NovaKit/Test.swift",
   },
 ] as const;
 
@@ -164,10 +164,10 @@ describe("Periphery scope workflows", () => {
   });
 
   it("ignores scoped files added only by base-branch drift", async () => {
-    const repoRoot = makeTempRepoRoot(tempDirs, "openclaw-periphery-scope-");
+    const repoRoot = makeTempRepoRoot(tempDirs, "nova-periphery-scope-");
     git(repoRoot, ["init", "--initial-branch=main"]);
     git(repoRoot, ["config", "user.name", "Nova Test"]);
-    git(repoRoot, ["config", "user.email", "openclaw-test@example.com"]);
+    git(repoRoot, ["config", "user.email", "nova-test@example.com"]);
 
     writeFixture(repoRoot, "docs/base.md", "base\n");
     git(repoRoot, ["add", "."]);
@@ -180,25 +180,21 @@ describe("Periphery scope workflows", () => {
     git(repoRoot, ["commit", "-m", "pull request"]);
 
     git(repoRoot, ["switch", "main"]);
-    writeFixture(
-      repoRoot,
-      "apps/shared/OpenClawKit/Sources/OpenClawKit/Main.swift",
-      "struct Main {}\n",
-    );
+    writeFixture(repoRoot, "apps/shared/NovaKit/Sources/NovaKit/Main.swift", "struct Main {}\n");
     git(repoRoot, ["add", "."]);
     git(repoRoot, ["commit", "-m", "advance main"]);
     git(repoRoot, ["merge", "--no-ff", "pr", "-m", "synthetic merge"]);
 
     const oldDiff = spawnSync(
       "git",
-      ["diff", "--quiet", eventBase, "HEAD", "--", "apps/shared/OpenClawKit/"],
+      ["diff", "--quiet", eventBase, "HEAD", "--", "apps/shared/NovaKit/"],
       { cwd: repoRoot },
     );
     expect(oldDiff.status).toBe(1);
 
     const outputs = new Map<string, string>();
     const execute = compileFunction(
-      `return (async () => {\n${scopeScript(".github/workflows/shared-openclawkit-periphery.yml")}\n})();`,
+      `return (async () => {\n${scopeScript(".github/workflows/shared-novakit-periphery.yml")}\n})();`,
       ["context", "core", "exec"],
     ) as (context: unknown, core: unknown, exec: unknown) => Promise<void>;
     await execute(

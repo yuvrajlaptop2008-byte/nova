@@ -315,7 +315,7 @@ export function resolveExternalPackageAliasesForVite(): ControlUiViteAlias[] {
       replacement: path.join(
         repoRoot,
         "node_modules",
-        "@openclaw",
+        "@nova",
         "libterminal",
         "dist",
         "browser.js",
@@ -323,7 +323,7 @@ export function resolveExternalPackageAliasesForVite(): ControlUiViteAlias[] {
     },
     {
       find: "@nova/uirouter",
-      replacement: path.join(repoRoot, "node_modules", "@openclaw", "uirouter", "dist", "index.js"),
+      replacement: path.join(repoRoot, "node_modules", "@nova", "uirouter", "dist", "index.js"),
     },
   ];
 }

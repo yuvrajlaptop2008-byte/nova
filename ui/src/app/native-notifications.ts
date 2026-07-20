@@ -17,13 +17,13 @@ type NativeNotificationsWindow = Window & {
   __NOVA_NATIVE_NOTIFICATIONS__?: unknown;
   webkit?: {
     messageHandlers?: {
-      openclawNotifications?: WebKitNotificationsMessageHandler;
+      novaNotifications?: WebKitNotificationsMessageHandler;
     };
   };
 };
 
 // Wire contract with the Mac app's dashboard bridge (DashboardWindowController+Notifications.swift).
-const NATIVE_NOTIFICATIONS_STATUS_EVENT = "openclaw:native-notifications-status";
+const NATIVE_NOTIFICATIONS_STATUS_EVENT = "nova:native-notifications-status";
 
 export type NativeNotificationsCapability = {
   readonly snapshot: NativeNotificationsSnapshot;
@@ -52,8 +52,7 @@ function getNativeNotificationsPoster():
   if (typeof window === "undefined") {
     return undefined;
   }
-  const handler = (window as NativeNotificationsWindow).webkit?.messageHandlers
-    ?.openclawNotifications;
+  const handler = (window as NativeNotificationsWindow).webkit?.messageHandlers?.novaNotifications;
   return handler?.postMessage.bind(handler);
 }
 

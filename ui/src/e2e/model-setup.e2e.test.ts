@@ -42,12 +42,12 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
       featureMethods: [
         "chat.metadata",
         "chat.startup",
-        "openclaw.setup.detect",
-        "openclaw.setup.activate",
-        "openclaw.chat",
+        "nova.setup.detect",
+        "nova.setup.activate",
+        "nova.chat",
       ],
       methodResponses: {
-        "openclaw.setup.detect": {
+        "nova.setup.detect": {
           candidates: [
             {
               kind: "codex-cli",
@@ -59,16 +59,16 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
             },
           ],
           manualProviders: [{ id: "openai", label: "OpenAI" }],
-          workspace: "/tmp/openclaw-e2e",
+          workspace: "/tmp/nova-e2e",
           setupComplete: false,
         },
-        "openclaw.setup.activate": {
+        "nova.setup.activate": {
           ok: true,
           modelRef: "openai/gpt-5",
           latencyMs: 73,
           lines: ["Model ready"],
         },
-        "openclaw.chat": {
+        "nova.chat": {
           sessionId: "e2e-custodian",
           reply: "## Hi, I'm Nova",
           action: "none",
@@ -83,9 +83,9 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
       const candidate = page.locator('[data-candidate-kind="codex-cli"]');
       await candidate.getByRole("button", { name: "Test & use" }).click();
 
-      const detect = await gateway.waitForRequest("openclaw.setup.detect");
+      const detect = await gateway.waitForRequest("nova.setup.detect");
       expect(detect.params).toEqual({});
-      const activate = await gateway.waitForRequest("openclaw.setup.activate");
+      const activate = await gateway.waitForRequest("nova.setup.activate");
       expect(activate.params).toEqual({ kind: "codex-cli", modelRef: "openai/gpt-5" });
 
       await page.getByText("Your AI is ready").waitFor();
@@ -101,7 +101,7 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
         .toContain("shell--onboarding");
       expect(await page.locator(".shell-nav").isVisible()).toBe(false);
 
-      const chatRequest = await gateway.waitForRequest("openclaw.chat");
+      const chatRequest = await gateway.waitForRequest("nova.chat");
       expect(chatRequest.params).toMatchObject({
         sessionId: expect.stringMatching(/^control-ui-onboarding-/u),
         welcomeVariant: "onboarding",
@@ -134,20 +134,20 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
           featured: true,
         },
       ],
-      workspace: "/tmp/openclaw-e2e",
+      workspace: "/tmp/nova-e2e",
       setupComplete: false,
     };
     const gateway = await installMockGateway(page, {
       featureMethods: [
         "chat.metadata",
         "chat.startup",
-        "openclaw.setup.detect",
-        "openclaw.setup.auth.start",
+        "nova.setup.detect",
+        "nova.setup.auth.start",
         "wizard.next",
       ],
       methodResponses: {
-        "openclaw.setup.detect": initialDetection,
-        "openclaw.setup.auth.start": {
+        "nova.setup.detect": initialDetection,
+        "nova.setup.auth.start": {
           sessionId: "device-code-session",
           done: false,
           status: "running",
@@ -176,21 +176,20 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
       expect(response?.status()).toBe(200);
       await page.getByRole("button", { name: "Pair" }).click();
 
-      const start = await gateway.waitForRequest("openclaw.setup.auth.start");
+      const start = await gateway.waitForRequest("nova.setup.auth.start");
       expect(start.params).toMatchObject({ authChoice: "provider-device-code" });
       await page.getByText("ABCD-1234").waitFor();
       await page.getByText("Expires in 14 minutes").waitFor();
       const signInLink = page.getByRole("link", { name: "Open sign-in page" });
       await expect.poll(() => signInLink.getAttribute("href")).toBe("https://example.com/device");
 
-      await gateway.setMethodResponse("openclaw.setup.detect", {
+      await gateway.setMethodResponse("nova.setup.detect", {
         ...initialDetection,
         authOptions: [],
         configuredModel: "provider/verified-model",
         setupComplete: true,
       });
-      const detectCountBeforeCompletion = (await gateway.getRequests("openclaw.setup.detect"))
-        .length;
+      const detectCountBeforeCompletion = (await gateway.getRequests("nova.setup.detect")).length;
       await page.getByRole("button", { name: "Continue" }).click();
       await expect.poll(async () => (await gateway.getRequests("wizard.next")).length).toBe(2);
       const wizardRequests = await gateway.getRequests("wizard.next");
@@ -200,7 +199,7 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
         answer: { stepId: "device-code" },
       });
       await expect
-        .poll(async () => (await gateway.getRequests("openclaw.setup.detect")).length)
+        .poll(async () => (await gateway.getRequests("nova.setup.detect")).length)
         .toBe(detectCountBeforeCompletion + 1);
       await page.getByText("Your AI is ready").waitFor();
       await expect
@@ -219,21 +218,16 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
     });
     const page = await context.newPage();
     const gateway = await installMockGateway(page, {
-      featureMethods: [
-        "chat.metadata",
-        "chat.startup",
-        "openclaw.setup.detect",
-        "openclaw.setup.verify",
-      ],
+      featureMethods: ["chat.metadata", "chat.startup", "nova.setup.detect", "nova.setup.verify"],
       methodResponses: {
-        "openclaw.setup.detect": {
+        "nova.setup.detect": {
           candidates: [],
           manualProviders: [],
-          workspace: "/tmp/openclaw-e2e",
+          workspace: "/tmp/nova-e2e",
           configuredModel: "openai/gpt-5",
           setupComplete: true,
         },
-        "openclaw.setup.verify": {
+        "nova.setup.verify": {
           ok: true,
           modelRef: "openai/gpt-5",
           latencyMs: 1234,
@@ -245,13 +239,13 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
       const response = await page.goto(`${server.baseUrl}settings/model-setup`);
       expect(response?.status()).toBe(200);
       await page.getByRole("button", { name: "Verify connection" }).click();
-      const verify = await gateway.waitForRequest("openclaw.setup.verify");
+      const verify = await gateway.waitForRequest("nova.setup.verify");
       expect(verify.params).toEqual({});
       await page.getByText("Answered in 1234 ms").waitFor();
-      const detectCountBeforeRefresh = (await gateway.getRequests("openclaw.setup.detect")).length;
+      const detectCountBeforeRefresh = (await gateway.getRequests("nova.setup.detect")).length;
       await page.getByRole("button", { name: "Check again" }).click();
       await expect
-        .poll(async () => (await gateway.getRequests("openclaw.setup.detect")).length)
+        .poll(async () => (await gateway.getRequests("nova.setup.detect")).length)
         .toBe(detectCountBeforeRefresh + 1);
       await page.getByRole("button", { name: "Verify connection" }).waitFor();
       expect(await page.getByText("Answered in 1234 ms").count()).toBe(0);

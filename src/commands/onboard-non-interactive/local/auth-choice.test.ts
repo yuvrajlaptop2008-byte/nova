@@ -1,6 +1,6 @@
 // Non-interactive auth-choice tests cover built-in, custom, deprecated, and plugin provider dispatch.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/config.js";
+import type { NovaConfig } from "../../../config/config.js";
 import { resolveAgentModelPrimaryValue } from "../../../config/model-input.js";
 import { applyNonInteractiveAuthChoice } from "./auth-choice.js";
 
@@ -56,7 +56,7 @@ function createRuntime() {
 describe("applyNonInteractiveAuthChoice", () => {
   it("rejects an unknown auth choice and lists the valid choices", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
 
     const result = await applyNonInteractiveAuthChoice({
       nextConfig,
@@ -75,7 +75,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("continues to apply an enumerated provider auth choice", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     const resolvedConfig = { auth: { profiles: { "demo-provider:default": { mode: "api_key" } } } };
     applyNonInteractivePluginProviderChoice.mockResolvedValueOnce(resolvedConfig as never);
 
@@ -94,7 +94,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("resolves plugin provider auth before builtin custom-provider handling", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     const resolvedConfig = { auth: { profiles: { "demo-provider:default": { mode: "api_key" } } } };
     applyNonInteractivePluginProviderChoice.mockResolvedValueOnce(resolvedConfig as never);
 
@@ -112,7 +112,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("fails with manifest-owned replacement guidance for deprecated auth choices", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveManifestDeprecatedProviderAuthChoice.mockReturnValue({
       choiceId: "demo-provider-modern-api",
     } as never);
@@ -135,7 +135,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("escapes deprecated auth choice guidance for terminal output", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveManifestDeprecatedProviderAuthChoice.mockReturnValueOnce({
       choiceId: "modern\nchoice",
     } as never);
@@ -158,7 +158,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("keeps replacement guidance for deprecated install-catalog choices", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveDeprecatedProviderInstallCatalogEntry.mockReturnValueOnce({
       choiceId: "qwen-api-key",
     } as never);
@@ -181,7 +181,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("stores custom provider env refs through the local auth-choice seam", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveNonInteractiveApiKey.mockResolvedValueOnce({
       key: "custom-env-key",
       source: "env",
@@ -219,7 +219,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("stores custom provider OpenAI Responses compatibility", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveNonInteractiveApiKey.mockResolvedValueOnce(undefined);
 
     const result = await applyNonInteractiveAuthChoice({
@@ -239,7 +239,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("marks non-interactive custom provider models as image-capable when requested", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveNonInteractiveApiKey.mockResolvedValueOnce(undefined);
 
     const result = await applyNonInteractiveAuthChoice({
@@ -262,7 +262,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("infers image-capable non-interactive custom provider models by known model id", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveNonInteractiveApiKey.mockResolvedValueOnce(undefined);
 
     const result = await applyNonInteractiveAuthChoice({
@@ -284,7 +284,7 @@ describe("applyNonInteractiveAuthChoice", () => {
 
   it("honors explicit text-only override for known custom vision models", async () => {
     const runtime = createRuntime();
-    const nextConfig = { agents: { defaults: {} } } as OpenClawConfig;
+    const nextConfig = { agents: { defaults: {} } } as NovaConfig;
     resolveNonInteractiveApiKey.mockResolvedValueOnce(undefined);
 
     const result = await applyNonInteractiveAuthChoice({

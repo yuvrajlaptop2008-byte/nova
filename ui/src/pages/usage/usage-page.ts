@@ -28,7 +28,7 @@ import {
   requestSessionUsageTimeSeries,
 } from "../../lib/sessions/index.ts";
 import { normalizeLowercaseStringOrEmpty } from "../../lib/string-coerce.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import { SubscriptionsController } from "../../lit/subscriptions-controller.ts";
 import { mergeUsageCacheStatus } from "./cache-status.ts";
 import type { ProviderUsageSummary } from "./data-types.ts";
@@ -67,7 +67,7 @@ export type UsageRouteData = {
   error: string | null;
 };
 
-class UsagePage extends OpenClawLightDomElement {
+class UsagePage extends NovaLightDomElement {
   @consume({ context: applicationContext, subscribe: true })
   private context!: ApplicationContext;
 
@@ -715,6 +715,6 @@ class UsagePage extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-usage-page")) {
-  customElements.define("openclaw-usage-page", UsagePage);
+if (!customElements.get("nova-usage-page")) {
+  customElements.define("nova-usage-page", UsagePage);
 }

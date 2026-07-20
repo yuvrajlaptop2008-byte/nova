@@ -53,10 +53,10 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     metadata: DiagnosticEventMetadata,
   ) => {
     const attrs = {
-      "openclaw.channel": evt.channel ?? "unknown",
-      "openclaw.agent": lowCardinalityAttr(evt.agentId),
-      "openclaw.provider": evt.provider ?? "unknown",
-      "openclaw.model": evt.model ?? "unknown",
+      "nova.channel": evt.channel ?? "unknown",
+      "nova.agent": lowCardinalityAttr(evt.agentId),
+      "nova.provider": evt.provider ?? "unknown",
+      "nova.model": evt.model ?? "unknown",
     };
     const genAiAttrs: Record<string, string> = {
       "gen_ai.operation.name": "chat",
@@ -66,30 +66,30 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
 
     const usage = evt.usage;
     if (usage.input) {
-      tokensCounter.add(usage.input, { ...attrs, "openclaw.token": "input" });
+      tokensCounter.add(usage.input, { ...attrs, "nova.token": "input" });
       genAiTokenUsageHistogram.record(usage.input, {
         ...genAiAttrs,
         "gen_ai.token.type": "input",
       });
     }
     if (usage.output) {
-      tokensCounter.add(usage.output, { ...attrs, "openclaw.token": "output" });
+      tokensCounter.add(usage.output, { ...attrs, "nova.token": "output" });
       genAiTokenUsageHistogram.record(usage.output, {
         ...genAiAttrs,
         "gen_ai.token.type": "output",
       });
     }
     if (usage.cacheRead) {
-      tokensCounter.add(usage.cacheRead, { ...attrs, "openclaw.token": "cache_read" });
+      tokensCounter.add(usage.cacheRead, { ...attrs, "nova.token": "cache_read" });
     }
     if (usage.cacheWrite) {
-      tokensCounter.add(usage.cacheWrite, { ...attrs, "openclaw.token": "cache_write" });
+      tokensCounter.add(usage.cacheWrite, { ...attrs, "nova.token": "cache_write" });
     }
     if (usage.promptTokens) {
-      tokensCounter.add(usage.promptTokens, { ...attrs, "openclaw.token": "prompt" });
+      tokensCounter.add(usage.promptTokens, { ...attrs, "nova.token": "prompt" });
     }
     if (usage.total) {
-      tokensCounter.add(usage.total, { ...attrs, "openclaw.token": "total" });
+      tokensCounter.add(usage.total, { ...attrs, "nova.token": "total" });
     }
 
     if (evt.costUsd) {
@@ -101,13 +101,13 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     if (evt.context?.limit) {
       contextHistogram.record(evt.context.limit, {
         ...attrs,
-        "openclaw.context": "limit",
+        "nova.context": "limit",
       });
     }
     if (evt.context?.used) {
       contextHistogram.record(evt.context.used, {
         ...attrs,
-        "openclaw.context": "used",
+        "nova.context": "used",
       });
     }
 
@@ -118,11 +118,11 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
       usage.promptTokens ?? (usage.input ?? 0) + (usage.cacheRead ?? 0) + (usage.cacheWrite ?? 0);
     const spanAttrs: Record<string, string | number> = {
       ...attrs,
-      "openclaw.tokens.input": usage.input ?? 0,
-      "openclaw.tokens.output": usage.output ?? 0,
-      "openclaw.tokens.cache_read": usage.cacheRead ?? 0,
-      "openclaw.tokens.cache_write": usage.cacheWrite ?? 0,
-      "openclaw.tokens.total": usage.total ?? 0,
+      "nova.tokens.input": usage.input ?? 0,
+      "nova.tokens.output": usage.output ?? 0,
+      "nova.tokens.cache_read": usage.cacheRead ?? 0,
+      "nova.tokens.cache_write": usage.cacheWrite ?? 0,
+      "nova.tokens.total": usage.total ?? 0,
     };
     assignGenAiSpanIdentityAttrs(spanAttrs, evt);
     assignPositiveNumberAttr(spanAttrs, "gen_ai.usage.input_tokens", genAiInputTokens);
@@ -134,7 +134,7 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
       usage.cacheWrite,
     );
 
-    const span = spanWithDuration("openclaw.model.usage", spanAttrs, evt.durationMs, {
+    const span = spanWithDuration("nova.model.usage", spanAttrs, evt.durationMs, {
       parentContext: activeTrustedParentContext(evt, metadata),
       endTimeMs: evt.ts,
     });
@@ -145,8 +145,8 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     evt: Extract<DiagnosticEventPayload, { type: "webhook.received" }>,
   ) => {
     const attrs = {
-      "openclaw.channel": evt.channel ?? "unknown",
-      "openclaw.webhook": evt.updateType ?? "unknown",
+      "nova.channel": evt.channel ?? "unknown",
+      "nova.webhook": evt.updateType ?? "unknown",
     };
     webhookReceivedCounter.add(1, attrs);
   };
@@ -155,8 +155,8 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     evt: Extract<DiagnosticEventPayload, { type: "webhook.processed" }>,
   ) => {
     const attrs = {
-      "openclaw.channel": lowCardinalityAttr(evt.channel),
-      "openclaw.webhook": lowCardinalityAttr(evt.updateType),
+      "nova.channel": lowCardinalityAttr(evt.channel),
+      "nova.webhook": lowCardinalityAttr(evt.updateType),
     };
     if (typeof evt.durationMs === "number") {
       webhookDurationHistogram.record(evt.durationMs, attrs);
@@ -165,14 +165,14 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
       return;
     }
     const spanAttrs: Record<string, string | number> = { ...attrs };
-    const span = spanWithDuration("openclaw.webhook.processed", spanAttrs, evt.durationMs);
+    const span = spanWithDuration("nova.webhook.processed", spanAttrs, evt.durationMs);
     span.end();
   };
 
   const recordWebhookError = (evt: Extract<DiagnosticEventPayload, { type: "webhook.error" }>) => {
     const attrs = {
-      "openclaw.channel": lowCardinalityAttr(evt.channel),
-      "openclaw.webhook": lowCardinalityAttr(evt.updateType),
+      "nova.channel": lowCardinalityAttr(evt.channel),
+      "nova.webhook": lowCardinalityAttr(evt.updateType),
     };
     webhookErrorCounter.add(1, attrs);
     if (!tracesEnabled) {
@@ -181,9 +181,9 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     const redactedError = redactSensitiveText(evt.error);
     const spanAttrs: Record<string, string | number> = {
       ...attrs,
-      "openclaw.error": redactedError,
+      "nova.error": redactedError,
     };
-    const span = tracer.startSpan("openclaw.webhook.error", {
+    const span = tracer.startSpan("nova.webhook.error", {
       attributes: spanAttrs,
     });
     span.setStatus({ code: SpanStatusCode.ERROR, message: redactedError });
@@ -194,8 +194,8 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     evt: Extract<DiagnosticEventPayload, { type: "message.queued" }>,
   ) => {
     const attrs = {
-      "openclaw.channel": lowCardinalityAttr(evt.channel),
-      "openclaw.source": lowCardinalityAttr(evt.source),
+      "nova.channel": lowCardinalityAttr(evt.channel),
+      "nova.source": lowCardinalityAttr(evt.source),
     };
     messageQueuedCounter.add(1, attrs);
     if (typeof evt.queueDepth === "number") {
@@ -207,8 +207,8 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     evt: Extract<DiagnosticEventPayload, { type: "message.received" }>,
   ) => {
     messageReceivedCounter.add(1, {
-      "openclaw.channel": lowCardinalityAttr(evt.channel),
-      "openclaw.source": lowCardinalityAttr(evt.source),
+      "nova.channel": lowCardinalityAttr(evt.channel),
+      "nova.source": lowCardinalityAttr(evt.source),
     });
   };
 
@@ -217,8 +217,8 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     metadata: DiagnosticEventMetadata,
   ) => {
     const attrs = {
-      "openclaw.channel": lowCardinalityAttr(evt.channel),
-      "openclaw.source": lowCardinalityAttr(evt.source),
+      "nova.channel": lowCardinalityAttr(evt.channel),
+      "nova.source": lowCardinalityAttr(evt.source),
     };
     messageDispatchStartedCounter.add(1, attrs);
     if (!tracesEnabled) {
@@ -231,7 +231,7 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     trackInternalOrTrustedSpan(
       evt,
       metadata,
-      spanWithDuration("openclaw.message.processed", attrs, undefined, {
+      spanWithDuration("nova.message.processed", attrs, undefined, {
         parentContext: internalOrTrustedExplicitParentContext(evt, metadata),
         startTimeMs: evt.ts,
       }),
@@ -242,10 +242,10 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     evt: Extract<DiagnosticEventPayload, { type: "message.dispatch.completed" }>,
   ) => {
     const attrs = {
-      "openclaw.channel": lowCardinalityAttr(evt.channel),
-      "openclaw.outcome": evt.outcome,
-      "openclaw.reason": lowCardinalityAttr(evt.reason, "none"),
-      "openclaw.source": lowCardinalityAttr(evt.source),
+      "nova.channel": lowCardinalityAttr(evt.channel),
+      "nova.outcome": evt.outcome,
+      "nova.reason": lowCardinalityAttr(evt.reason, "none"),
+      "nova.source": lowCardinalityAttr(evt.source),
     };
     messageDispatchCompletedCounter.add(1, attrs);
     messageDispatchDurationHistogram.record(evt.durationMs, attrs);
@@ -256,8 +256,8 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     metadata: DiagnosticEventMetadata,
   ) => {
     const attrs = {
-      "openclaw.channel": lowCardinalityAttr(evt.channel),
-      "openclaw.outcome": evt.outcome ?? "unknown",
+      "nova.channel": lowCardinalityAttr(evt.channel),
+      "nova.outcome": evt.outcome ?? "unknown",
     };
     messageProcessedCounter.add(1, attrs);
     if (typeof evt.durationMs === "number") {
@@ -268,12 +268,12 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     }
     const spanAttrs: Record<string, string | number> = { ...attrs };
     if (evt.reason) {
-      spanAttrs["openclaw.reason"] = lowCardinalityAttr(evt.reason, "unknown");
+      spanAttrs["nova.reason"] = lowCardinalityAttr(evt.reason, "unknown");
     }
     const trackedSpan = getTrackedInternalOrTrustedSpan(evt, metadata);
     const span =
       trackedSpan ??
-      spanWithDuration("openclaw.message.processed", spanAttrs, evt.durationMs, {
+      spanWithDuration("nova.message.processed", spanAttrs, evt.durationMs, {
         parentContext: internalOrTrustedExplicitParentContext(evt, metadata),
         endTimeMs: evt.ts,
       });
@@ -290,8 +290,8 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
   };
 
   const messageDeliveryAttrs = (evt: MessageDeliveryDiagnosticEvent): Record<string, string> => ({
-    "openclaw.channel": lowCardinalityAttr(evt.channel),
-    "openclaw.delivery.kind": lowCardinalityAttr(evt.deliveryKind, "other"),
+    "nova.channel": lowCardinalityAttr(evt.channel),
+    "nova.delivery.kind": lowCardinalityAttr(evt.deliveryKind, "other"),
   });
 
   const recordMessageDeliveryStarted = (
@@ -306,17 +306,17 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
   ) => {
     const attrs = {
       ...messageDeliveryAttrs(evt),
-      "openclaw.outcome": "completed",
+      "nova.outcome": "completed",
     };
     messageDeliveryDurationHistogram.record(evt.durationMs, attrs);
     if (!tracesEnabled) {
       return;
     }
     const span = spanWithDuration(
-      "openclaw.message.delivery",
+      "nova.message.delivery",
       {
         ...attrs,
-        "openclaw.delivery.result_count": evt.resultCount,
+        "nova.delivery.result_count": evt.resultCount,
       },
       evt.durationMs,
       { parentContext: activeInternalOrTrustedContext(evt, metadata), endTimeMs: evt.ts },
@@ -330,14 +330,14 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
   ) => {
     const attrs = {
       ...messageDeliveryAttrs(evt),
-      "openclaw.outcome": "error",
-      "openclaw.errorCategory": lowCardinalityAttr(evt.errorCategory, "other"),
+      "nova.outcome": "error",
+      "nova.errorCategory": lowCardinalityAttr(evt.errorCategory, "other"),
     };
     messageDeliveryDurationHistogram.record(evt.durationMs, attrs);
     if (!tracesEnabled) {
       return;
     }
-    const span = spanWithDuration("openclaw.message.delivery", attrs, evt.durationMs, {
+    const span = spanWithDuration("nova.message.delivery", attrs, evt.durationMs, {
       parentContext: activeInternalOrTrustedContext(evt, metadata),
       endTimeMs: evt.ts,
     });
@@ -360,7 +360,7 @@ export function createUsageRecorders(runtime: DiagnosticsRecorderRuntime) {
     const span = trackTrustedSpan(
       evt,
       metadata,
-      spanWithDuration("openclaw.run", spanAttrs, undefined, {
+      spanWithDuration("nova.run", spanAttrs, undefined, {
         parentContext: activeTrustedParentContext(evt, metadata),
         startTimeMs: evt.ts,
       }),

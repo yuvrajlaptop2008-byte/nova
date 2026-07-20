@@ -1,6 +1,6 @@
 /** Tests plugin module loader cache keys and lifecycle reset behavior. */
 import path from "node:path";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { PluginModuleLoaderFactory } from "./plugin-module-loader-cache.js";
 
@@ -104,7 +104,7 @@ describe("getCachedPluginModuleLoader", () => {
       cache,
       modulePath: "/repo/dist/extensions/demo/api.ts",
       importerUrl: "file:///repo/src/plugins/public-surface-loader.ts",
-      argvEntry: "/repo/openclaw.mjs",
+      argvEntry: "/repo/nova.mjs",
       preferBuiltDist: true,
       loaderFilename: "file:///repo/src/plugins/public-surface-loader.ts",
     });
@@ -112,7 +112,7 @@ describe("getCachedPluginModuleLoader", () => {
       cache,
       modulePath: "/repo/dist/extensions/demo/api.ts",
       importerUrl: "file:///repo/src/plugins/public-surface-loader.ts",
-      argvEntry: "/repo/openclaw.mjs",
+      argvEntry: "/repo/nova.mjs",
       preferBuiltDist: true,
       loaderFilename: "file:///repo/src/plugins/bundled-channel-config-metadata.ts",
     });
@@ -143,7 +143,7 @@ describe("getCachedPluginModuleLoader", () => {
       cache,
       modulePath: "/repo/extensions/demo/index.ts",
       importerUrl: "file:///repo/src/plugins/setup-registry.ts",
-      argvEntry: "/repo/openclaw.mjs",
+      argvEntry: "/repo/nova.mjs",
       loaderFilename: "file:///repo/src/plugins/source-loader.ts",
     } as const;
 
@@ -241,7 +241,7 @@ describe("getCachedPluginModuleLoader", () => {
       tryNative: false,
     });
     expect(options.fsCache).toEqual(expect.any(String));
-    expect(String(options.fsCache)).toContain(`${path.sep}jiti${path.sep}openclaw${path.sep}`);
+    expect(String(options.fsCache)).toContain(`${path.sep}jiti${path.sep}nova${path.sep}`);
     expect(options.alias).toEqual({
       alpha: "/repo/alpha.js",
       zeta: "/repo/zeta.js",
@@ -452,7 +452,7 @@ describe("getCachedPluginModuleLoader", () => {
       importerUrl: "file:///repo/src/plugins/public-surface-loader.ts",
       loaderFilename: "file:///repo/src/plugins/public-surface-loader.ts",
       aliasMap: {
-        "openclaw/plugin-sdk/core": "/repo/dist/plugin-sdk/core.js",
+        "nova/plugin-sdk/core": "/repo/dist/plugin-sdk/core.js",
       },
       createLoader: asPluginModuleLoaderFactory(createJiti),
     });
@@ -465,7 +465,7 @@ describe("getCachedPluginModuleLoader", () => {
     const options = callArg(nativeStub, 0, 1, "native options") as {
       aliasMap?: Record<string, string>;
     };
-    expect(options.aliasMap?.["openclaw/plugin-sdk/core"]).toBe("/repo/dist/plugin-sdk/core.js");
+    expect(options.aliasMap?.["nova/plugin-sdk/core"]).toBe("/repo/dist/plugin-sdk/core.js");
     expectStats(getPluginModuleLoaderStats(), {
       calls: 1,
       nativeHits: 1,
@@ -614,7 +614,7 @@ describe("getCachedPluginModuleLoader", () => {
       modulePath: "/repo/dist/extensions/demo/api.js",
       importerUrl: "file:///repo/src/plugin-sdk/channel-entry-contract.ts",
       loaderFilename: "file:///repo/src/plugin-sdk/channel-entry-contract.ts",
-      transformOpenClawDependencies: true,
+      transformNovaDependencies: true,
       createLoader: asPluginModuleLoaderFactory(createJiti),
     });
 
@@ -642,24 +642,24 @@ describe("getCachedPluginModuleLoader", () => {
     const cache = new Map();
     const loader = getCachedPluginModuleLoader({
       cache,
-      modulePath: "C:\\Users\\alice\\openclaw\\dist\\extensions\\feishu\\api.js",
-      importerUrl: "file:///C:/Users/alice/openclaw/dist/src/plugins/public-surface-loader.js",
-      loaderFilename: "C:\\Users\\alice\\openclaw\\dist\\extensions\\feishu\\api.js",
+      modulePath: "C:\\Users\\alice\\nova\\dist\\extensions\\feishu\\api.js",
+      importerUrl: "file:///C:/Users/alice/nova/dist/src/plugins/public-surface-loader.js",
+      loaderFilename: "C:\\Users\\alice\\nova\\dist\\extensions\\feishu\\api.js",
       tryNative: true,
       createLoader: asPluginModuleLoaderFactory(createJiti),
     });
 
-    loader("C:\\Users\\alice\\openclaw\\dist\\extensions\\feishu\\api.js");
+    loader("C:\\Users\\alice\\nova\\dist\\extensions\\feishu\\api.js");
 
     const options = expectJitiOptions(
       createJiti,
       0,
-      "file:///C:/Users/alice/openclaw/dist/extensions/feishu/api.js",
+      "file:///C:/Users/alice/nova/dist/extensions/feishu/api.js",
       { tryNative: false },
     );
     expect(options.nativeModules).toEqual([]);
     expect(fromSourceTransformer).toHaveBeenCalledWith(
-      "file:///C:/Users/alice/openclaw/dist/extensions/feishu/api.js",
+      "file:///C:/Users/alice/nova/dist/extensions/feishu/api.js",
     );
   });
 
@@ -681,7 +681,7 @@ describe("getCachedPluginModuleLoader", () => {
       modulePath: "/repo/dist/extensions/demo/api.js",
       importerUrl: "file:///repo/src/plugins/bundled-capability-runtime.ts",
       loaderFilename: "file:///repo/src/plugins/bundled-capability-runtime.ts",
-      aliasMap: { "openclaw/plugin-sdk/core": "/repo/core.js" },
+      aliasMap: { "nova/plugin-sdk/core": "/repo/core.js" },
       tryNative: false,
       createLoader: asPluginModuleLoaderFactory(createJiti),
     });
@@ -690,7 +690,7 @@ describe("getCachedPluginModuleLoader", () => {
     expect(result.fromSourceTransform).toBe(true);
     const options = requireRecord(callArg(createJiti, 0, 1, "jiti options"), "jiti options");
     expect(options.tryNative).toBe(false);
-    expect(options.nativeModules).toEqual(["openclaw"]);
+    expect(options.nativeModules).toEqual(["nova"]);
     // With tryNative: false the wrapper must route every target through the source transformer
     // so its alias rewrites still apply; native require must not be consulted.
     expect(nativeStub).not.toHaveBeenCalled();
@@ -762,21 +762,21 @@ describe("getCachedPluginModuleLoader", () => {
     const cache = new Map();
     const loader = getCachedPluginModuleLoader({
       cache,
-      modulePath: "C:\\Users\\alice\\openclaw\\extensions\\feishu\\api.ts",
-      importerUrl: "file:///C:/Users/alice/openclaw/src/plugins/loader.ts",
-      loaderFilename: "C:\\Users\\alice\\openclaw\\extensions\\feishu\\api.ts",
+      modulePath: "C:\\Users\\alice\\nova\\extensions\\feishu\\api.ts",
+      importerUrl: "file:///C:/Users/alice/nova/src/plugins/loader.ts",
+      loaderFilename: "C:\\Users\\alice\\nova\\extensions\\feishu\\api.ts",
       tryNative: false,
       createLoader: asPluginModuleLoaderFactory(createJiti),
     });
 
-    loader("C:\\Users\\alice\\openclaw\\extensions\\feishu\\api.ts");
+    loader("C:\\Users\\alice\\nova\\extensions\\feishu\\api.ts");
 
     expect(nativeStub).not.toHaveBeenCalled();
-    expectJitiOptions(createJiti, 0, "file:///C:/Users/alice/openclaw/extensions/feishu/api.ts", {
+    expectJitiOptions(createJiti, 0, "file:///C:/Users/alice/nova/extensions/feishu/api.ts", {
       tryNative: false,
     });
     expect(fromSourceTransformer).toHaveBeenCalledWith(
-      "file:///C:/Users/alice/openclaw/extensions/feishu/api.ts",
+      "file:///C:/Users/alice/nova/extensions/feishu/api.ts",
     );
   });
 });

@@ -4,7 +4,7 @@
 import type { SourceReplyDeliveryMode } from "../../auto-reply/get-reply-options.types.js";
 import type { ReasoningLevel, ThinkLevel } from "../../auto-reply/thinking.js";
 import type { ChatType } from "../../channels/chat-type.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { SkillSnapshot } from "../../skills/types.js";
 import { isDefaultAgentRuntimeId, normalizeOptionalAgentRuntimeId } from "../agent-runtime-id.js";
 import {
@@ -41,7 +41,7 @@ type EmbeddedCompactionRuntimeContext = {
   workspaceDir: string;
   cwd?: string;
   agentDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   skillsSnapshot?: SkillSnapshot;
   senderIsOwner?: boolean;
   senderId?: string;
@@ -60,7 +60,7 @@ type EmbeddedCompactionRuntimeContext = {
 
 /** Resolve the configured compaction override against the actual model/runtime candidate. */
 export function resolveEmbeddedCompactionThinkingLevel(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   provider: string;
   modelId: string;
   inheritedLevel?: ThinkLevel;
@@ -94,7 +94,7 @@ export function resolveEmbeddedCompactionThinkingLevel(params: {
  * caller-supplied provider/model and optionally applying runtime defaults.
  */
 export function resolveEmbeddedCompactionTarget(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   provider?: string | null;
   modelId?: string | null;
   authProfileId?: string | null;
@@ -129,9 +129,9 @@ export function resolveEmbeddedCompactionTarget(params: {
     // defaults choose new runs; they cannot move an existing transcript.
     const useNativeHarnessRuntime =
       selectedHarnessRuntime !== undefined &&
-      selectedHarnessRuntime !== "openclaw" &&
+      selectedHarnessRuntime !== "nova" &&
       !isDefaultAgentRuntimeId(selectedHarnessRuntime);
-    const harnessRuntime = useNativeHarnessRuntime ? selectedHarnessRuntime : "openclaw";
+    const harnessRuntime = useNativeHarnessRuntime ? selectedHarnessRuntime : "nova";
     const runtimeProvider = resolveSelectedOpenAIRuntimeProvider({
       provider: targetProvider,
       harnessRuntime: harnessRuntime ?? undefined,
@@ -236,7 +236,7 @@ function normalizeCompactionConfigKey(value: string): string {
 }
 
 function hasBareConfiguredModelForProvider(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   model: string;
 }): boolean {
@@ -313,7 +313,7 @@ export function buildEmbeddedCompactionRuntimeContext(params: {
   workspaceDir: string;
   cwd?: string | null;
   agentDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   skillsSnapshot?: SkillSnapshot;
   senderIsOwner?: boolean;
   senderId?: string | null;

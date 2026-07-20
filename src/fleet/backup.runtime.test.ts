@@ -13,7 +13,7 @@ const NEXT_ATTEMPT = "22222222222222222222222222222222";
 let root: string;
 let record: FleetCellRecord;
 
-const tempRoot = createSuiteTempRootTracker({ prefix: "openclaw-fleet-backup-test-" });
+const tempRoot = createSuiteTempRootTracker({ prefix: "nova-fleet-backup-test-" });
 
 function inspection(running = false): Extract<FleetContainerInspectResult, { kind: "ok" }> {
   return {
@@ -22,11 +22,11 @@ function inspection(running = false): Extract<FleetContainerInspectResult, { kin
     state: running ? "running" : "exited",
     running,
     labels: {
-      "openclaw.fleet.tenant": "acme",
-      "openclaw.fleet.owner": cellOwnerId(record.dataDir),
-      "openclaw.fleet.attempt": ATTEMPT,
-      "openclaw.fleet.env-keys": "",
-      "openclaw.fleet.disk-limit": "10g",
+      "nova.fleet.tenant": "acme",
+      "nova.fleet.owner": cellOwnerId(record.dataDir),
+      "nova.fleet.attempt": ATTEMPT,
+      "nova.fleet.env-keys": "",
+      "nova.fleet.disk-limit": "10g",
     },
     environment: { NOVA_GATEWAY_TOKEN: "old-token" },
     imageId: "sha256:image",
@@ -51,8 +51,8 @@ function containerMock(current: FleetContainerInspectResult = inspection()) {
     inspectNetwork: vi.fn(async () => ({
       kind: "ok" as const,
       labels: {
-        "openclaw.fleet.tenant": "acme",
-        "openclaw.fleet.owner": cellOwnerId(record.dataDir),
+        "nova.fleet.tenant": "acme",
+        "nova.fleet.owner": cellOwnerId(record.dataDir),
       },
       attachedContainers: [{ id: "cell", name: record.containerName }],
       internal: false,
@@ -80,7 +80,7 @@ async function createArchive(
     path.join(source, "manifest.json"),
     JSON.stringify({
       schemaVersion: 1,
-      kind: "openclaw-fleet-cell-backup",
+      kind: "nova-fleet-cell-backup",
       tenant: params.tenant ?? "acme",
       createdAt: new Date(0).toISOString(),
       hostPort: 19100,
@@ -104,7 +104,7 @@ beforeEach(async () => {
     image: "image",
     runtime: "docker",
     hostPort: 19100,
-    containerName: "openclaw-cell-acme",
+    containerName: "nova-cell-acme",
     dataDir: path.join(root, "fleet", "cells", "acme"),
   };
   await fs.mkdir(record.dataDir, { recursive: true, mode: 0o700 });
@@ -331,7 +331,7 @@ describe("fleet restore runtime", () => {
 
     containers.inspectNetwork.mockResolvedValue({
       kind: "ok",
-      labels: { "openclaw.fleet.tenant": "acme", "openclaw.fleet.owner": "foreign" },
+      labels: { "nova.fleet.tenant": "acme", "nova.fleet.owner": "foreign" },
       attachedContainers: [],
       internal: false,
     });
@@ -355,7 +355,7 @@ describe("fleet restore runtime", () => {
     await fs.mkdir(path.join(source, "data"), { recursive: true });
     await fs.writeFile(
       path.join(source, "manifest.json"),
-      JSON.stringify({ schemaVersion: 1, kind: "openclaw-fleet-cell-backup", tenant: "acme" }),
+      JSON.stringify({ schemaVersion: 1, kind: "nova-fleet-cell-backup", tenant: "acme" }),
     );
     await mutate(source);
     const archive = path.join(root, `${path.basename(source)}.tgz`);
@@ -379,7 +379,7 @@ describe("fleet restore runtime", () => {
     await fs.mkdir(path.join(source, "data"), { recursive: true });
     await fs.writeFile(
       path.join(source, "manifest.json"),
-      JSON.stringify({ schemaVersion: 1, kind: "openclaw-fleet-cell-backup", tenant: "acme" }),
+      JSON.stringify({ schemaVersion: 1, kind: "nova-fleet-cell-backup", tenant: "acme" }),
     );
     await fs.writeFile(path.join(source, "data", "restored.txt"), "new-data");
     const archive = path.join(root, `${path.basename(source)}.tgz`);
@@ -400,7 +400,7 @@ describe("fleet restore runtime", () => {
     const drifted = inspection();
     // Losing the env-provenance label makes the replacement profile unbuildable;
     // restore must detect that before stopping or removing anything.
-    delete drifted.labels["openclaw.fleet.env-keys"];
+    delete drifted.labels["nova.fleet.env-keys"];
     const containers = containerMock(drifted);
     await expect(restoreFleetCell(restoreParams(containers, archive))).rejects.toThrow(
       /Cannot restore cell/iu,
@@ -423,7 +423,7 @@ describe("fleet restore runtime", () => {
       code: "ENOENT",
     });
     const config = JSON.parse(
-      await fs.readFile(path.join(record.dataDir, "openclaw.json"), "utf8"),
+      await fs.readFile(path.join(record.dataDir, "nova.json"), "utf8"),
     ) as { gateway?: { controlUi?: { allowedOrigins?: string[] } } };
     expect(config.gateway?.controlUi?.allowedOrigins).toContain("http://127.0.0.1:19100");
     expect(containers.run.mock.calls[0]?.[0].environment.NOVA_GATEWAY_TOKEN).toBe("new-token");
@@ -448,7 +448,7 @@ describe("fleet restore runtime", () => {
     await expect(
       restoreFleetCell({ ...restoreParams(containers, archive), force: true }),
     ).rejects.toThrow(/transient removal failure/iu);
-    expect(containers.start).toHaveBeenCalledWith("docker", "openclaw-cell-acme");
+    expect(containers.start).toHaveBeenCalledWith("docker", "nova-cell-acme");
     await expect(fs.readFile(path.join(record.dataDir, "state.txt"), "utf8")).resolves.toBe(
       "state",
     );
@@ -465,7 +465,7 @@ describe("fleet restore runtime", () => {
     containers.run.mockImplementation(async () => {
       running.running = true;
       running.state = "running";
-      running.labels["openclaw.fleet.attempt"] = NEXT_ATTEMPT;
+      running.labels["nova.fleet.attempt"] = NEXT_ATTEMPT;
     });
     let clock = 0;
     let message = "";

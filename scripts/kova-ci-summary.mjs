@@ -21,7 +21,7 @@ const keyMetricIds = [
   "peakRssMb",
   "resourcePeakGatewayRssMb",
   "cpuPercentMax",
-  "openclawEventLoopMaxMs",
+  "novaEventLoopMaxMs",
   "agentTurnP95Ms",
   "coldAgentTurnMs",
   "warmAgentTurnMs",

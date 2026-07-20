@@ -22,7 +22,7 @@ function writeFixture(params?: {
   androidVersionCode?: number;
   packageVersion?: string;
 }): string {
-  const root = makeTempDir(tempDirs, "openclaw-release-version-");
+  const root = makeTempDir(tempDirs, "nova-release-version-");
   fs.mkdirSync(path.join(root, "apps", "macos", "Sources", "Nova", "Resources"), {
     recursive: true,
   });
@@ -34,7 +34,7 @@ function writeFixture(params?: {
     path.join(root, "package.json"),
     `${JSON.stringify(
       {
-        name: "openclaw",
+        name: "nova",
         version: params?.packageVersion ?? "2026.6.11",
         private: true,
       },
@@ -128,7 +128,7 @@ describe("release version planning", () => {
     applyReleaseVersionPlan(plan);
 
     expect(readJson(path.join(root, "package.json"))).toMatchObject({
-      name: "openclaw",
+      name: "nova",
       private: true,
       version: "2026.7.2-beta.1",
     });

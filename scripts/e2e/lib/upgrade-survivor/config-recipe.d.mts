@@ -5,7 +5,7 @@ export function resolveScenarioConfigSteps(scenario: string): Array<{
   intent: string;
   argv: string[];
 }>;
-export function resolveUpgradeSurvivorOpenClawCommand(
+export function resolveUpgradeSurvivorNovaCommand(
   argv: unknown,
   params?: Record<string, unknown>,
 ):
@@ -23,7 +23,7 @@ export function resolveUpgradeSurvivorOpenClawCommand(
       shell: boolean;
       windowsVerbatimArguments?: undefined;
     };
-export function runUpgradeSurvivorOpenClawStep(
+export function runUpgradeSurvivorNovaStep(
   step: unknown,
   params?: Record<string, unknown>,
 ): {

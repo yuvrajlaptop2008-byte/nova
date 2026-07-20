@@ -15,7 +15,7 @@ function buildPatch(touchInteraction: boolean) {
     cfg: {},
     sessionAgentId: "main",
     canonicalSessionKey: "agent:main:main",
-    storePath: "/tmp/openclaw-agent-status-test.json",
+    storePath: "/tmp/nova-agent-status-test.json",
     normalizedSpawned: {},
     requestDeliveryHint: undefined,
     expectedExistingSessionId: entry.sessionId,

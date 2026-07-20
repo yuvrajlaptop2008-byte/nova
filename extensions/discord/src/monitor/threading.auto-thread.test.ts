@@ -1,5 +1,5 @@
 // Discord tests cover threading.auto thread plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChannelType } from "../internal/discord.js";
 import { EMPTY_DISCORD_TEST_CONFIG } from "../test-support/config.js";
@@ -225,12 +225,12 @@ describe("maybeCreateDiscordAutoThread autoThreadName", () => {
     patchMock.mockResolvedValueOnce({});
     generateThreadTitleMock.mockResolvedValueOnce("Deploy rollout summary");
 
-    const cfg = { agents: { defaults: { model: "anthropic/claude-opus-4-6" } } } as OpenClawConfig;
+    const cfg = { agents: { defaults: { model: "anthropic/claude-opus-4-6" } } } as NovaConfig;
     const result = await maybeCreateDiscordAutoThread(
       createBaseParams({
         baseText: "Need help with deploy rollout",
         combinedBody: "Need help with deploy rollout",
-        channelName: "openclaw",
+        channelName: "nova",
         channelDescription: "Nova development coordination and release planning",
         channelConfig: { allowed: true, autoThread: true, autoThreadName: "generated" },
         cfg,
@@ -242,7 +242,7 @@ describe("maybeCreateDiscordAutoThread autoThreadName", () => {
     await flushAsyncWork();
     expectGeneratedTitleField("agentId", "main");
     expectGeneratedTitleField("messageText", "Need help with deploy rollout");
-    expectGeneratedTitleField("channelName", "openclaw");
+    expectGeneratedTitleField("channelName", "nova");
     expectGeneratedTitleField(
       "channelDescription",
       "Nova development coordination and release planning",
@@ -261,7 +261,7 @@ describe("maybeCreateDiscordAutoThread autoThreadName", () => {
       }),
     );
 
-    const cfg = { agents: { defaults: { model: "anthropic/claude-opus-4-6" } } } as OpenClawConfig;
+    const cfg = { agents: { defaults: { model: "anthropic/claude-opus-4-6" } } } as NovaConfig;
     const result = await maybeCreateDiscordAutoThread(
       createBaseParams({
         channelConfig: { allowed: true, autoThread: true, autoThreadName: "generated" },
@@ -294,7 +294,7 @@ describe("maybeCreateDiscordAutoThread autoThreadName", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await maybeCreateDiscordAutoThread(
       createBaseParams({
         channelConfig: { allowed: true, autoThread: true, autoThreadName: "generated" },
@@ -324,7 +324,7 @@ describe("maybeCreateDiscordAutoThread autoThreadName", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     await maybeCreateDiscordAutoThread(
       createBaseParams({
         channelConfig: { allowed: true, autoThread: true, autoThreadName: "generated" },
@@ -368,7 +368,7 @@ describe("maybeCreateDiscordAutoThread autoThreadName", () => {
     getMock.mockResolvedValueOnce({});
     generateThreadTitleMock.mockResolvedValueOnce("<@123456789012345678> <#987654321098765432>");
 
-    const cfg = { agents: { defaults: { model: "anthropic/claude-opus-4-6" } } } as OpenClawConfig;
+    const cfg = { agents: { defaults: { model: "anthropic/claude-opus-4-6" } } } as NovaConfig;
     const result = await maybeCreateDiscordAutoThread(
       createBaseParams({
         baseText: "Need help with deploy rollout",

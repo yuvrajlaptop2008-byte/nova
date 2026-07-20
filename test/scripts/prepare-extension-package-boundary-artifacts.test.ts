@@ -238,7 +238,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   it.runIf(process.platform !== "win32")(
     "force-kills aborted sibling step process groups",
     async () => {
-      const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-abort-group-"));
+      const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-abort-group-"));
       tempRoots.add(rootDir);
       const descendantPidPath = path.join(rootDir, "descendant.pid");
       let descendantPid = 0;
@@ -296,7 +296,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   it.runIf(process.platform !== "win32")(
     "lets aborted sibling descendants drain during kill grace",
     async () => {
-      const rootDir = makeTempDir(tempRoots, "openclaw-boundary-abort-drain-");
+      const rootDir = makeTempDir(tempRoots, "nova-boundary-abort-drain-");
       const readyPath = path.join(rootDir, "descendant.ready");
       const drainedPath = path.join(rootDir, "descendant.drained");
       const descendantScript = [
@@ -383,7 +383,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   });
 
   it.runIf(process.platform !== "win32")("kills timed-out prep step process groups", async () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-timeout-group-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-timeout-group-"));
     tempRoots.add(rootDir);
     const descendantPidPath = path.join(rootDir, "descendant.pid");
     let descendantPid = 0;
@@ -434,7 +434,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   it.runIf(process.platform !== "win32")(
     "forwards wrapper termination to detached prep step groups",
     async () => {
-      const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-signal-group-"));
+      const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-signal-group-"));
       tempRoots.add(rootDir);
       const descendantPidPath = path.join(rootDir, "descendant.pid");
       let descendantPid = 0;
@@ -482,7 +482,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   );
 
   it("runs boundary prep steps serially for local checks", async () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-serial-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-serial-"));
     tempRoots.add(rootDir);
     const logPath = path.join(rootDir, "steps.log");
     const appendScript = (label: string) =>
@@ -508,7 +508,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   });
 
   it("passes step-specific environment overrides to child steps", async () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-env-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-env-"));
     tempRoots.add(rootDir);
     const outputPath = path.join(rootDir, "env.txt");
     const writeEnvScript =
@@ -528,7 +528,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   });
 
   it("treats artifacts as fresh only when outputs are newer than inputs", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-prep-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-prep-"));
     tempRoots.add(rootDir);
     const inputPath = path.join(rootDir, "src", "demo.ts");
     const outputPath = path.join(rootDir, "dist", "demo.tsbuildinfo");
@@ -560,7 +560,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   });
 
   it("requires generated entry-shim outputs in addition to the freshness stamp", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-boundary-entry-shims-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-boundary-entry-shims-"));
     tempRoots.add(rootDir);
     const inputPath = path.join(rootDir, "scripts", "write-plugin-sdk-entry-dts.ts");
     const stampPath = path.join(rootDir, "dist", "plugin-sdk", ".boundary-entry-shims.stamp");

@@ -8,7 +8,7 @@ describe("resolveRemoteEmbeddingBearerClient", () => {
       provider: "openai",
       defaultBaseUrl: "https://api.openai.com/v1",
       options: {
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/nova-agent",
         config: {
           models: {
             providers: {
@@ -39,8 +39,8 @@ describe("resolveRemoteEmbeddingBearerClient", () => {
         remote: {
           apiKey: "sk-test",
           headers: {
-            originator: "openclaw",
-            "User-Agent": "openclaw",
+            originator: "nova",
+            "User-Agent": "nova",
           },
         },
       },
@@ -49,9 +49,9 @@ describe("resolveRemoteEmbeddingBearerClient", () => {
     expect(client.headers).toEqual({
       Authorization: "Bearer sk-test",
       "Content-Type": "application/json",
-      originator: "openclaw",
+      originator: "nova",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "nova/2026.3.22",
     });
   });
 });

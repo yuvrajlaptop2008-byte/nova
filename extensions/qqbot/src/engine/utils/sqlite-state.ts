@@ -2,7 +2,7 @@
 import type {
   OpenKeyedStoreOptions,
   PluginStateSyncKeyedStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
+} from "nova/plugin-sdk/plugin-state-runtime";
 import { getQQBotRuntime } from "../../bridge/runtime.js";
 export { buildQQBotStateKey } from "./state-keys.js";
 

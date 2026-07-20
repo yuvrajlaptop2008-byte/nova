@@ -9,7 +9,7 @@ import { withEnv } from "../../src/test-utils/env.js";
 const tempDirs: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-npm-verify-exec-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-npm-verify-exec-"));
   tempDirs.push(root);
   return root;
 }

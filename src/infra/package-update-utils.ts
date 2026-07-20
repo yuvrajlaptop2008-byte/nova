@@ -56,15 +56,15 @@ export function readInstalledPackagePeerDependencies(dir: string): Record<string
   );
 }
 
-/** Return true when an installed package needs an openclaw peer link repair. */
-export function installedPackageNeedsOpenClawPeerLinkRepair(dir: string): boolean {
+/** Return true when an installed package needs an nova peer link repair. */
+export function installedPackageNeedsNovaPeerLinkRepair(dir: string): boolean {
   const peerDependencies = readInstalledPackagePeerDependencies(dir);
-  if (!Object.hasOwn(peerDependencies, "openclaw")) {
+  if (!Object.hasOwn(peerDependencies, "nova")) {
     return false;
   }
 
   try {
-    fsSync.statSync(path.join(dir, "node_modules", "openclaw"));
+    fsSync.statSync(path.join(dir, "node_modules", "nova"));
     return false;
   } catch (error) {
     const code = (error as NodeJS.ErrnoException | undefined)?.code;

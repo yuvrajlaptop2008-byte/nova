@@ -1,6 +1,6 @@
 // Payload tests cover successful embedded run replies, final-answer selection,
 // message-tool source replies, media directives, and tool-error warning policy.
-import type { AssistantMessage } from "openclaw/plugin-sdk/llm";
+import type { AssistantMessage } from "nova/plugin-sdk/llm";
 import { describe, expect, it } from "vitest";
 import { resolveHeartbeatReplyPayload } from "../../../auto-reply/heartbeat-reply-payload.js";
 import { resolveHeartbeatToolResponseFromReplyResult } from "../../../auto-reply/heartbeat-tool-response.js";
@@ -343,7 +343,7 @@ describe("buildEmbeddedRunPayloads tool-error warnings", () => {
   it("does not replay raw-looking accumulated tool output when final answer text is available", () => {
     const payloads = buildPayloads({
       assistantTexts: [
-        "/root/openclaw/packages/gateway-protocol/src/schema/protocol-schemas.ts:181:  PluginControlUiDescriptorSchema,",
+        "/root/nova/packages/gateway-protocol/src/schema/protocol-schemas.ts:181:  PluginControlUiDescriptorSchema,",
         "The schema export is fixed.",
       ],
       lastAssistant: {
@@ -630,9 +630,9 @@ describe("buildEmbeddedRunPayloads tool-error warnings", () => {
     const payloads = buildPayloads({
       lastToolError: {
         toolName: "exec",
-        meta: "show last 20 lines of ~/.openclaw/workspace/memory/2026-06-04.md",
+        meta: "show last 20 lines of ~/.nova/workspace/memory/2026-06-04.md",
         error:
-          "tail: cannot open '/home/user/.openclaw/workspace/memory/2026-06-04.md' for reading: No such file or directory",
+          "tail: cannot open '/home/user/.nova/workspace/memory/2026-06-04.md' for reading: No such file or directory",
       },
       isHeartbeatTrigger: true,
       verboseLevel: "off",
@@ -964,12 +964,12 @@ describe("buildEmbeddedRunPayloads tool-error warnings", () => {
 
   it("strips NO_REPLY text but keeps voice media directives", () => {
     const payloads = buildPayloads({
-      assistantTexts: ["NO_REPLY\nMEDIA:/tmp/openclaw/tts-a/voice-a.opus\n[[audio_as_voice]]"],
+      assistantTexts: ["NO_REPLY\nMEDIA:/tmp/nova/tts-a/voice-a.opus\n[[audio_as_voice]]"],
     });
 
     expect(payloads).toHaveLength(1);
-    expect(payloads[0]?.mediaUrl).toBe("/tmp/openclaw/tts-a/voice-a.opus");
-    expect(payloads[0]?.mediaUrls).toEqual(["/tmp/openclaw/tts-a/voice-a.opus"]);
+    expect(payloads[0]?.mediaUrl).toBe("/tmp/nova/tts-a/voice-a.opus");
+    expect(payloads[0]?.mediaUrls).toEqual(["/tmp/nova/tts-a/voice-a.opus"]);
     expect(payloads[0]?.audioAsVoice).toBe(true);
     expect(payloads[0]?.text).toBeUndefined();
   });

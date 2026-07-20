@@ -13,10 +13,10 @@ afterEach(async () => {
 
 describe("reserved plugin ids", () => {
   it("rejects the core-owned node-mcp id", async () => {
-    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-node-mcp-manifest-"));
+    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-node-mcp-manifest-"));
     tempDirs.push(rootDir);
     await fs.writeFile(
-      path.join(rootDir, "openclaw.plugin.json"),
+      path.join(rootDir, "nova.plugin.json"),
       JSON.stringify({ id: "node-mcp", configSchema: { type: "object" } }),
     );
 

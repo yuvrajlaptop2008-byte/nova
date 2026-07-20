@@ -4,7 +4,7 @@ import {
   renderMarkdownIRChunksWithinLimit,
   sanitizeAssistantVisibleText,
   stripMarkdown,
-} from "openclaw/plugin-sdk/text-chunking";
+} from "nova/plugin-sdk/text-chunking";
 import { sendSmsViaTwilio } from "./twilio.js";
 import type { ResolvedSmsAccount, SmsSendResult } from "./types.js";
 

@@ -12,7 +12,7 @@ import {
 } from "../config/sessions/paths.js";
 import { updateSessionStore } from "../config/sessions/store.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { parseAgentSessionKey } from "../sessions/session-key-utils.js";
 import { clearTuiLastSessionPointers } from "../tui/tui-last-session.js";
 
@@ -262,7 +262,7 @@ function moveHeartbeatMainSessionEntry(params: {
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
   (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.doctorHeartbeatMainSessionRepairTestApi")
+    Symbol.for("nova.doctorHeartbeatMainSessionRepairTestApi")
   ] = {
     TRANSCRIPT_RECORD_MAX_CHARS,
     moveHeartbeatMainSessionEntry,
@@ -278,7 +278,7 @@ if (process.env.VITEST || process.env.NODE_ENV === "test") {
  * prevents moving a newly-human main session.
  */
 export async function repairHeartbeatPoisonedMainSession(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   store: Record<string, SessionEntry>;
   absoluteStorePath: string;
   stateDir: string;

@@ -40,14 +40,14 @@ describe("qqbot storage laziness", () => {
     }
   });
 
-  it("does not create ~/.openclaw/qqbot from module imports or read-only probes", async () => {
+  it("does not create ~/.nova/qqbot from module imports or read-only probes", async () => {
     const homeDir = makeHome();
     const stateDir = makeHome();
     await useMockHome(homeDir);
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
     installQQBotRuntimeForStateTests(stateDir);
 
-    const qqbotRoot = path.join(homeDir, ".openclaw", "qqbot");
+    const qqbotRoot = path.join(homeDir, ".nova", "qqbot");
 
     await import("../session/session-store.js");
     await import("../session/known-users.js");
@@ -65,8 +65,8 @@ describe("qqbot storage laziness", () => {
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
     installQQBotRuntimeForStateTests(stateDir);
 
-    const qqbotRoot = path.join(homeDir, ".openclaw", "qqbot");
-    const sqlitePath = path.join(stateDir, "state", "openclaw.sqlite");
+    const qqbotRoot = path.join(homeDir, ".nova", "qqbot");
+    const sqlitePath = path.join(stateDir, "state", "nova.sqlite");
     const { saveCredentialBackup } = await import("../config/credential-backup.js");
 
     saveCredentialBackup("default", "123456", "secret");

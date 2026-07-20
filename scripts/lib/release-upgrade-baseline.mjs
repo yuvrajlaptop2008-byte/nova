@@ -7,7 +7,7 @@ function parseVersion(version) {
   return parseReleaseVersion(String(version ?? "").trim()) ?? undefined;
 }
 
-export function compareOpenClawVersions(leftVersion, rightVersion) {
+export function compareNovaVersions(leftVersion, rightVersion) {
   const left = parseVersion(leftVersion);
   const right = parseVersion(rightVersion);
   if (!left || !right) {
@@ -36,7 +36,7 @@ export function compareOpenClawVersions(leftVersion, rightVersion) {
 function normalizePublishedVersions(publishedVersions) {
   return [...new Set(publishedVersions.map((version) => String(version).trim()).filter(Boolean))]
     .filter((version) => parseVersion(version))
-    .toSorted((left, right) => compareOpenClawVersions(right, left));
+    .toSorted((left, right) => compareNovaVersions(right, left));
 }
 
 export function resolveDefaultReleaseUpgradeBaseline(candidateVersion, publishedVersions) {
@@ -46,16 +46,14 @@ export function resolveDefaultReleaseUpgradeBaseline(candidateVersion, published
   }
 
   const versions = normalizePublishedVersions(publishedVersions);
-  const older = versions.find((version) => compareOpenClawVersions(version, candidate.version) < 0);
+  const older = versions.find((version) => compareNovaVersions(version, candidate.version) < 0);
   if (older) {
-    return `openclaw@${older}`;
+    return `nova@${older}`;
   }
 
-  const same = versions.find(
-    (version) => compareOpenClawVersions(version, candidate.version) === 0,
-  );
+  const same = versions.find((version) => compareNovaVersions(version, candidate.version) === 0);
   if (same) {
-    return `openclaw@${same}`;
+    return `nova@${same}`;
   }
 
   throw new Error(`no published Nova baseline is <= candidate ${candidate.version}`);
@@ -88,13 +86,13 @@ function readPublishedVersions(args) {
     }
     return parsed;
   }
-  const raw = execFileSync("npm", ["view", "openclaw", "versions", "--json", "--silent"], {
+  const raw = execFileSync("npm", ["view", "nova", "versions", "--json", "--silent"], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "inherit"],
   });
   const parsed = JSON.parse(raw);
   if (!Array.isArray(parsed)) {
-    throw new Error("npm returned a non-array openclaw versions payload");
+    throw new Error("npm returned a non-array nova versions payload");
   }
   return parsed;
 }

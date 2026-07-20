@@ -7,18 +7,18 @@ import {
   expectLifecyclePatch,
   expectPendingUntilAbort,
   startAccountAndTrackLifecycle,
-} from "openclaw/plugin-sdk/channel-test-helpers";
+} from "nova/plugin-sdk/channel-test-helpers";
 import {
   createPluginSetupWizardConfigure,
   createPluginSetupWizardStatus,
   createTestWizardPrompter,
   runSetupWizardConfigure,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { WizardPrompter } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/setup";
-import type { ChannelAccountSnapshot } from "openclaw/plugin-sdk/status-helpers";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import type { WizardPrompter } from "nova/plugin-sdk/plugin-test-runtime";
+import { DEFAULT_ACCOUNT_ID } from "nova/plugin-sdk/setup";
+import type { ChannelAccountSnapshot } from "nova/plugin-sdk/status-helpers";
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { NovaConfig } from "../runtime-api.js";
 import {
   listGoogleChatAccountIds,
   resolveGoogleChatAccount,
@@ -238,7 +238,7 @@ describe("googlechat setup", () => {
 
     const result = await runSetupWizardConfigure({
       configure: googlechatConfigure,
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       prompter,
       options: {},
     });
@@ -267,7 +267,7 @@ describe("googlechat setup", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as NovaConfig,
         "alerts",
       ),
     ).toBe("allowlist");
@@ -286,7 +286,7 @@ describe("googlechat setup", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountOverrides: {
         googlechat: "alerts",
       },
@@ -310,7 +310,7 @@ describe("googlechat setup", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       accountOverrides: {},
       options: {},
     });
@@ -339,7 +339,7 @@ describe("googlechat setup", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(googlechatSetupWizard.dmPolicy?.getCurrent(cfg)).toBe("allowlist");
     expect(googlechatSetupWizard.dmPolicy?.resolveConfigKeys?.(cfg)).toEqual({
@@ -372,7 +372,7 @@ describe("googlechat setup", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       prompter,
     });
 
@@ -393,7 +393,7 @@ describe("googlechat setup", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as NovaConfig,
       "open",
       "alerts",
     );
@@ -459,7 +459,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("resolves user-relative service-account files before checking availability", () => {
-    const homeDir = makeTempDir("openclaw-googlechat-home-");
+    const homeDir = makeTempDir("nova-googlechat-home-");
     fs.writeFileSync(path.join(homeDir, "service-account.json"), "{}", { mode: 0o600 });
     vi.stubEnv("NOVA_HOME", homeDir);
     try {
@@ -495,7 +495,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("ignores env JSON credentials when they decode to a non-object value", () => {
-    const missingFile = path.join(makeTempDir("openclaw-googlechat-missing-"), "missing.json");
+    const missingFile = path.join(makeTempDir("nova-googlechat-missing-"), "missing.json");
     vi.stubEnv("GOOGLE_CHAT_SERVICE_ACCOUNT", '["not","an","object"]');
     vi.stubEnv("GOOGLE_CHAT_SERVICE_ACCOUNT_FILE", missingFile);
 
@@ -519,7 +519,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("inherits shared defaults from accounts.default for named accounts", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           accounts: {
@@ -544,7 +544,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("prefers top-level and account overrides over accounts.default", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           audienceType: "project-number",
@@ -570,7 +570,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("merges account bot loop protection over top-level defaults field-by-field", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           botLoopProtection: {
@@ -599,7 +599,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("merges account bot loop protection over accounts.default field-by-field", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           accounts: {
@@ -630,7 +630,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("does not inherit disabled state from accounts.default for named accounts", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           accounts: {
@@ -654,7 +654,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("does not inherit default-account credentials into named accounts", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           accounts: {
@@ -682,7 +682,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("does not inherit dangerous name matching from accounts.default", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           accounts: {
@@ -705,7 +705,7 @@ describe("resolveGoogleChatAccount", () => {
   });
 
   it("uses configured defaultAccount when accountId is omitted", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       channels: {
         googlechat: {
           defaultAccount: "alerts",

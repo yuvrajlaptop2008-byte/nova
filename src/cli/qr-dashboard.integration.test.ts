@@ -142,7 +142,7 @@ describe("cli integration: qr + dashboard token SecretRef", () => {
     process.env.SHARED_GATEWAY_TOKEN = "shared-token-123";
     loadConfigMock.mockReturnValue(fixture);
     readConfigFileSnapshotMock.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: true,
       valid: true,
       issues: [],
@@ -176,7 +176,7 @@ describe("cli integration: qr + dashboard token SecretRef", () => {
     const fixture = createGatewayTokenRefFixture();
     loadConfigMock.mockReturnValue(fixture);
     readConfigFileSnapshotMock.mockResolvedValue({
-      path: "/tmp/openclaw.json",
+      path: "/tmp/nova.json",
       exists: true,
       valid: true,
       issues: [],

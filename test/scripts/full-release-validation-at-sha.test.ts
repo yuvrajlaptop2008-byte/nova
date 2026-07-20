@@ -156,13 +156,13 @@ describe("full-release-validation-at-sha", () => {
   });
 
   it("supports current and legacy verifier locations in trusted workflow checkouts", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-release-verifier-path-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-release-verifier-path-"));
     try {
       const legacy = join(
         root,
         ".agents",
         "skills",
-        "release-openclaw-ci",
+        "release-nova-ci",
         "scripts",
         "release-ci-summary.mjs",
       );

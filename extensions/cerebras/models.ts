@@ -1,10 +1,10 @@
 /**
  * Cerebras model catalog helpers derived from the plugin manifest.
  */
-import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";
-import { buildManifestModelProviderConfig } from "openclaw/plugin-sdk/provider-catalog-shared";
-import type { ModelDefinitionConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import manifest from "./openclaw.plugin.json" with { type: "json" };
+import { expectDefined } from "nova/plugin-sdk/expect-runtime";
+import { buildManifestModelProviderConfig } from "nova/plugin-sdk/provider-catalog-shared";
+import type { ModelDefinitionConfig } from "nova/plugin-sdk/provider-model-shared";
+import manifest from "./nova.plugin.json" with { type: "json" };
 
 const CEREBRAS_MANIFEST_CATALOG = manifest.modelCatalog.providers.cerebras;
 

@@ -12,7 +12,7 @@ import {
 import { useAutoCleanupTempDirTracker } from "../../test/helpers/temp-dir.js";
 import { createPinnedLookup } from "../infra/net/ssrf.js";
 import { setMediaStoreNetworkDepsForTest } from "../media/store.test-support.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import {
   insertManagedImageRecord,
@@ -207,7 +207,7 @@ async function requestManagedImage(params: {
               openUrl: params.pathName,
             },
           ],
-          __openclaw: { id: "msg-1" },
+          __nova: { id: "msg-1" },
         },
       ]
     );
@@ -285,7 +285,7 @@ describe("handleManagedOutgoingImageHttpRequest", () => {
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     setMediaStoreNetworkDepsForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   });
@@ -416,7 +416,7 @@ describe("handleManagedOutgoingImageHttpRequest", () => {
       stateDir,
       pathName: `/api/chat/media/outgoing/${encodeURIComponent(sessionKey)}/${attachmentId}/full`,
       authResponse: { authMethod: "trusted-proxy", trustDeclaredOperatorScopes: true },
-      headers: { "x-openclaw-requester-session-key": sessionKey },
+      headers: { "x-nova-requester-session-key": sessionKey },
     });
 
     expect(result.statusCode).toBe(403);
@@ -429,7 +429,7 @@ describe("handleManagedOutgoingImageHttpRequest", () => {
       stateDir,
       pathName: `/api/chat/media/outgoing/${encodeURIComponent(sessionKey)}/${attachmentId}/full`,
       authResponse: { authMethod: "device-token" },
-      headers: { "x-openclaw-requester-session-key": sessionKey },
+      headers: { "x-nova-requester-session-key": sessionKey },
     });
 
     expect(result.statusCode).toBe(403);
@@ -456,7 +456,7 @@ describe("handleManagedOutgoingImageHttpRequest", () => {
       stateDir,
       pathName: `/api/chat/media/outgoing/${encodeURIComponent(sessionKey)}/${attachmentId}/full`,
       method: "POST",
-      headers: { "x-openclaw-requester-session-key": sessionKey },
+      headers: { "x-nova-requester-session-key": sessionKey },
     });
 
     expect(result.statusCode).toBe(405);
@@ -482,7 +482,7 @@ describe("handleManagedOutgoingImageHttpRequest", () => {
 
     const transcriptMessages = [
       {
-        __openclaw: { id: "msg-1" },
+        __nova: { id: "msg-1" },
         content: [
           {
             type: "image",
@@ -539,7 +539,7 @@ describe("handleManagedOutgoingImageHttpRequest", () => {
 
     const transcriptMessages = [
       {
-        __openclaw: { id: "msg-1" },
+        __nova: { id: "msg-1" },
         content: [
           {
             type: "image",
@@ -581,7 +581,7 @@ describe("handleManagedOutgoingImageHttpRequest", () => {
 
     const transcriptMessages = [
       {
-        __openclaw: { id: "msg-1" },
+        __nova: { id: "msg-1" },
         content: [
           {
             type: "image",
@@ -630,7 +630,7 @@ describe("createManagedOutgoingImageBlocks", () => {
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     setMediaStoreNetworkDepsForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   });
@@ -815,9 +815,9 @@ describe("createManagedOutgoingImageBlocks", () => {
   });
 
   it("serves managed originals from a split config-path media root", async () => {
-    const openClawHome = tempDirs.make("managed-image-home-");
+    const novaHome = tempDirs.make("managed-image-home-");
     const externalConfigDir = tempDirs.make("managed-image-config-");
-    const splitStateDir = path.join(openClawHome, ".openclaw");
+    const splitStateDir = path.join(novaHome, ".nova");
     const sourcePath = path.join(splitStateDir, "workspace", "fixtures", "dot.png");
     await fs.mkdir(path.dirname(sourcePath), { recursive: true });
     await fs.writeFile(sourcePath, Buffer.from(TINY_PNG_BASE64, "base64"));
@@ -825,7 +825,7 @@ describe("createManagedOutgoingImageBlocks", () => {
     try {
       await withEnvAsync(
         {
-          NOVA_HOME: openClawHome,
+          NOVA_HOME: novaHome,
           NOVA_CONFIG_PATH: path.join(externalConfigDir, "config.json"),
           NOVA_STATE_DIR: undefined,
         },
@@ -873,8 +873,8 @@ describe("createManagedOutgoingImageBlocks", () => {
         },
       );
     } finally {
-      closeOpenClawStateDatabaseForTest();
-      await fs.rm(openClawHome, { recursive: true, force: true });
+      closeNovaStateDatabaseForTest();
+      await fs.rm(novaHome, { recursive: true, force: true });
       await fs.rm(externalConfigDir, { recursive: true, force: true });
     }
   });
@@ -1156,7 +1156,7 @@ describe("attachManagedOutgoingImagesToMessage", () => {
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   });
 
@@ -1191,7 +1191,7 @@ describe("cleanupManagedOutgoingImageRecords", () => {
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   });
 
@@ -1321,7 +1321,7 @@ describe("cleanupManagedOutgoingImageRecords", () => {
     });
     readSessionMessagesMock.mockReturnValue([
       {
-        __openclaw: { id: "msg-1" },
+        __nova: { id: "msg-1" },
         content: [
           {
             type: "image",
@@ -1368,7 +1368,7 @@ describe("cleanupManagedOutgoingImageRecords", () => {
     });
     readSessionMessagesMock.mockReturnValue([
       {
-        __openclaw: { id: "msg-1" },
+        __nova: { id: "msg-1" },
         content: [
           {
             type: "image",

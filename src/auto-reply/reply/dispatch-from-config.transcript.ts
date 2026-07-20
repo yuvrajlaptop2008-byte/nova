@@ -1,11 +1,11 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+import { resolveSendableOutboundReplyParts } from "nova/plugin-sdk/reply-payload";
 import { runAgentHarnessBeforeMessageWriteHook } from "../../agents/harness/hook-helpers.js";
 import {
   appendAssistantMessageToSessionTranscript,
   type SessionTranscriptDeliveryMirror,
 } from "../../config/sessions/transcript.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { getReplyPayloadMetadata, type ReplyPayload } from "../reply-payload.js";
@@ -27,7 +27,7 @@ type TranscriptMirror = SourceReplyTranscriptMirror & {
 
 export async function mirrorDeliveredReplyToTranscript(params: {
   metadata?: TranscriptMirror;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): Promise<void> {
   const mirror = params.metadata;
   if (!mirror) {
@@ -194,7 +194,7 @@ export async function mirrorTranscriptAfterDispatcherSettled(params: {
   dispatcher: ReplyDispatcher;
   before: { cancelled: number; failed: number };
   metadata: () => TranscriptMirror | undefined;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 }): Promise<void> {
   const after = getDispatcherFinalOutcomeCounts(params.dispatcher);
   const metadata = params.metadata();

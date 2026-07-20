@@ -3,9 +3,9 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import {
-  closeOpenClawStateDatabaseForTest,
+  closeNovaStateDatabaseForTest,
   createChannelIngressQueueForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   buildMattermostFlushIngressLifecycle,
@@ -62,12 +62,12 @@ function createQueue(stateDir: string, accountId: string): MattermostIngressQueu
 }
 
 async function withStateDir<T>(fn: (stateDir: string) => Promise<T>): Promise<T> {
-  const created = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mattermost-ingress-"));
+  const created = await fs.mkdtemp(path.join(os.tmpdir(), "nova-mattermost-ingress-"));
   const stateDir = await fs.realpath(created);
   try {
     return await fn(stateDir);
   } finally {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   }
 }
@@ -102,7 +102,7 @@ function testLifecycle() {
 }
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   vi.restoreAllMocks();
 });
 

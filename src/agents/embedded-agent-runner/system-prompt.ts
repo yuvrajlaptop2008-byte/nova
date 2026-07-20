@@ -5,7 +5,7 @@ import type { SourceReplyDeliveryMode } from "../../auto-reply/get-reply-options
 import type { ChatType } from "../../channels/chat-type.js";
 import type { SubagentDelegationMode } from "../../config/types.agent-defaults.js";
 import type { MemoryCitationsMode } from "../../config/types.memory.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type { PreparedMemoryPromptSection } from "../../plugins/memory-state.js";
 import type { AgentPromptSurfaceKind } from "../../plugins/types.js";
 import type { ActiveProcessSessionReference } from "../bash-process-references.js";
@@ -21,7 +21,7 @@ import type { EmbeddedSandboxInfo } from "./types.js";
 import type { ReasoningLevel, ThinkLevel } from "./utils.js";
 
 export function buildEmbeddedSystemPrompt(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   workspaceDir: string;
   defaultThinkLevel?: ThinkLevel;

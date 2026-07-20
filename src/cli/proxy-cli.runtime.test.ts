@@ -50,7 +50,7 @@ describe("proxy cli runtime", () => {
   let tempDir = "";
 
   beforeEach(() => {
-    tempDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-proxy-cli-runtime-"));
+    tempDir = mkdtempSync(path.join(os.tmpdir(), "nova-proxy-cli-runtime-"));
     process.env.NOVA_STATE_DIR = tempDir;
     process.env.NOVA_DEBUG_PROXY_CERT_DIR = path.join(tempDir, "certs");
     delete process.env.NOVA_DEBUG_PROXY_ENABLED;
@@ -90,9 +90,9 @@ describe("proxy cli runtime", () => {
 
   afterEach(async () => {
     const { closeDebugProxyCaptureStore } = await import("../proxy-capture/store.sqlite.js");
-    const { closeOpenClawStateDatabaseForTest } = await import("../state/openclaw-state-db.js");
+    const { closeNovaStateDatabaseForTest } = await import("../state/nova-state-db.js");
     closeDebugProxyCaptureStore();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     vi.restoreAllMocks();
     vi.resetModules();
     process.exitCode = undefined;

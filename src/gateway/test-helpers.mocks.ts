@@ -309,7 +309,7 @@ vi.mock("../plugins/loader.js", async () => {
     await vi.importActual<typeof import("../plugins/loader.js")>("../plugins/loader.js");
   return {
     ...actual,
-    loadOpenClawPlugins: () => getTestPluginRegistry(),
+    loadNovaPlugins: () => getTestPluginRegistry(),
   };
 });
 process.env.NOVA_SKIP_CHANNELS = "1";

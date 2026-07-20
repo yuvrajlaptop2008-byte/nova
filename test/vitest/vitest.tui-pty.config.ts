@@ -42,9 +42,7 @@ function createTuiPtyVitestConfig(env?: Record<string, string | undefined>) {
       maxWorkers: 1,
       setupFiles: [
         ...new Set(
-          [...(baseTest.setupFiles ?? []), "test/setup-openclaw-runtime.ts"].map(
-            resolveRepoRootPath,
-          ),
+          [...(baseTest.setupFiles ?? []), "test/setup-nova-runtime.ts"].map(resolveRepoRootPath),
         ),
       ],
       sequence: {

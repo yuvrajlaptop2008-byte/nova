@@ -1,6 +1,6 @@
 /** Tests projecting Nova user MCP servers into Codex app-server config. */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   buildCodexUserMcpServersThreadConfigPatch,
   buildCodexUserMcpServersThreadConfigPatchForRuntime,
@@ -33,12 +33,10 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
 
   it("returns undefined when cfg has no mcp.servers (regression: #80814)", () => {
     expect(buildCodexUserMcpServersThreadConfigPatch(undefined)).toBeUndefined();
-    expect(buildCodexUserMcpServersThreadConfigPatch({} as OpenClawConfig)).toBeUndefined();
+    expect(buildCodexUserMcpServersThreadConfigPatch({} as NovaConfig)).toBeUndefined();
+    expect(buildCodexUserMcpServersThreadConfigPatch({ mcp: {} } as NovaConfig)).toBeUndefined();
     expect(
-      buildCodexUserMcpServersThreadConfigPatch({ mcp: {} } as OpenClawConfig),
-    ).toBeUndefined();
-    expect(
-      buildCodexUserMcpServersThreadConfigPatch({ mcp: { servers: {} } } as OpenClawConfig),
+      buildCodexUserMcpServersThreadConfigPatch({ mcp: { servers: {} } } as NovaConfig),
     ).toBeUndefined();
   });
 
@@ -54,7 +52,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     expect(patch).toStrictEqual({
       mcp_servers: {
         outlook: {
@@ -80,7 +78,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     expect(patch).toStrictEqual({
       mcp_servers: {
         notes: {
@@ -105,7 +103,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     expect(patch).toStrictEqual({
       mcp_servers: {
         search: {
@@ -130,7 +128,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     expect(patch).toStrictEqual({
       mcp_servers: {
         docs: {
@@ -156,7 +154,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig),
+      } as unknown as NovaConfig),
     ).toThrow(
       'Cannot project mcp.servers.docs.toolFilter.include pattern "search_*" into Codex enabled_tools',
     );
@@ -175,7 +173,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     expect(patch?.mcp_servers.search).toMatchObject({
       url: "https://mcp.example.com/mcp",
       default_tools_approval_mode: "prompt",
@@ -205,7 +203,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const atlasPatch = buildCodexUserMcpServersThreadConfigPatch(cfg, { agentId: "atlas" });
     expect(Object.keys(atlasPatch!.mcp_servers).toSorted()).toEqual(["atlas", "global"]);
@@ -232,7 +230,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       { agentId: "apolo" },
     );
     expect(patch).toBeUndefined();
@@ -254,7 +252,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     expect(patch).toStrictEqual({
       mcp_servers: {
@@ -278,7 +276,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       { agentId: "ATLAS" },
     );
     expect(patch?.mcp_servers.atlas).toMatchObject({
@@ -312,7 +310,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const patch = buildCodexUserMcpServersThreadConfigPatch(cfg, { agentId: "atlas" });
     expect(patch).toStrictEqual({
@@ -336,7 +334,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     expect(patch).toBeUndefined();
   });
 
@@ -348,7 +346,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           two: { transport: "stdio", command: "two" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     expect(patch?.mcp_servers).toBeDefined();
     expect(Object.keys(patch!.mcp_servers).toSorted()).toEqual(["one", "two"]);
     expect(patch!.mcp_servers.one).toMatchObject({ command: "one" });
@@ -397,7 +395,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     expect(patch).toStrictEqual({
       mcp_servers: {
@@ -427,7 +425,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     expect(patch).toStrictEqual({
       mcp_servers: {
@@ -460,7 +458,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as NovaConfig,
       { onServerUnavailable },
     );
 
@@ -486,7 +484,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig,
+        } as unknown as NovaConfig,
         { allowLiteralOAuthProjection: false, onServerUnavailable },
       ),
     ).resolves.toBeUndefined();
@@ -539,7 +537,7 @@ describe("buildCodexUserMcpServersThreadConfigPatch", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     expect(patch).toStrictEqual({
       mcp_servers: {

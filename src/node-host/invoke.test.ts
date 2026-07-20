@@ -194,7 +194,7 @@ describe("node host invoke", () => {
   });
 
   it("lists node-host directories for the folder browser", async () => {
-    const root = fs.realpathSync(tempDirs.make("openclaw-node-fs-listdir-"));
+    const root = fs.realpathSync(tempDirs.make("nova-node-fs-listdir-"));
     fs.mkdirSync(path.join(root, "Projects"));
     fs.writeFileSync(path.join(root, "notes.txt"), "hidden from directory listing");
     const request = vi.fn<GatewayClient["request"]>().mockResolvedValue(null);
@@ -494,7 +494,7 @@ describe("node host invoke", () => {
   it.runIf(process.platform !== "win32")(
     "resolves node skill cwd locators before preparing system.run",
     async () => {
-      const stateDir = fs.realpathSync(tempDirs.make("openclaw-node-skill-cwd-"));
+      const stateDir = fs.realpathSync(tempDirs.make("nova-node-skill-cwd-"));
       const skillDir = path.join(stateDir, "skills", "cwd-skill");
       fs.mkdirSync(skillDir, { recursive: true });
       fs.writeFileSync(
@@ -563,7 +563,7 @@ describe("node host invoke", () => {
   it.runIf(process.platform !== "win32")(
     "rejects blocked forwarded env overrides in system.run.prepare",
     async () => {
-      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-prepare-env-"));
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-prepare-env-"));
       const toolPath = path.join(tempDir, "tool");
       fs.writeFileSync(toolPath, "#!/bin/sh\nexit 0\n");
       fs.chmodSync(toolPath, 0o755);
@@ -673,7 +673,7 @@ describe("node host invoke", () => {
   });
 
   it("forwards suppressNotifyOnExit on completed system.run events", async () => {
-    const tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-node-event-suppress-"));
+    const tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "nova-node-event-suppress-"));
     try {
       await withEnvAsync({ NOVA_HOME: tempHome }, async () => {
         saveExecApprovals({

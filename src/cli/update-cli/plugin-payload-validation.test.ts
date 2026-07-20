@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
-import { resolveOpenClawPackageRootSync } from "../../infra/openclaw-root.js";
+import { resolveNovaPackageRootSync } from "../../infra/nova-root.js";
 import {
   runPluginPayloadSmokeCheck,
   runPluginPayloadSmokeCheckForManifestRecords,
@@ -19,7 +19,7 @@ type FormatMarkedBundleInstallRecord = PluginInstallRecord & {
 describe("runPluginPayloadSmokeCheck", () => {
   let tmpRoot: string;
   beforeEach(async () => {
-    tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-payload-smoke-"));
+    tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-payload-smoke-"));
   });
   afterEach(async () => {
     vi.restoreAllMocks();
@@ -81,7 +81,7 @@ describe("runPluginPayloadSmokeCheck", () => {
   }
 
   function resolveTestHostRoot(): string {
-    const hostRoot = resolveOpenClawPackageRootSync({
+    const hostRoot = resolveNovaPackageRootSync({
       argv1: process.argv[1],
       moduleUrl: import.meta.url,
       cwd: process.cwd(),
@@ -90,9 +90,9 @@ describe("runPluginPayloadSmokeCheck", () => {
     return hostRoot!;
   }
 
-  async function linkOpenClawPeerToHost(dir: string): Promise<void> {
+  async function linkNovaPeerToHost(dir: string): Promise<void> {
     await fs.mkdir(path.join(dir, "node_modules"), { recursive: true });
-    await fs.symlink(resolveTestHostRoot(), path.join(dir, "node_modules", "openclaw"), "junction");
+    await fs.symlink(resolveTestHostRoot(), path.join(dir, "node_modules", "nova"), "junction");
   }
 
   async function resolveRealPath(target: string): Promise<string> {
@@ -118,7 +118,7 @@ describe("runPluginPayloadSmokeCheck", () => {
     const dir = path.join(tmpRoot, "codex");
     await writePackage(
       dir,
-      { name: "@nova/codex", openclaw: { extensions: ["./index.js"] } },
+      { name: "@nova/codex", nova: { extensions: ["./index.js"] } },
       "export default {};",
     );
     const result = await runPluginPayloadSmokeCheckForManifestRecords({
@@ -268,7 +268,7 @@ describe("runPluginPayloadSmokeCheck", () => {
     await writeBundle({ dir, format: "codex" });
     await writePackage(dir, {
       name: "dual-format-bundle",
-      openclaw: { extensions: ["./missing-extension.js"] },
+      nova: { extensions: ["./missing-extension.js"] },
     });
     const result = await runPluginPayloadSmokeCheck({
       records: {
@@ -308,7 +308,7 @@ describe("runPluginPayloadSmokeCheck", () => {
     ]);
   });
 
-  it("accepts a manifest with no main field (Nova plugins commonly use `exports` or `openclaw.extensions`)", async () => {
+  it("accepts a manifest with no main field (Nova plugins commonly use `exports` or `nova.extensions`)", async () => {
     const dir = path.join(tmpRoot, "matrix");
     await writePackage(dir, { name: "@nova/plugin-matrix" });
     const result = await runPluginPayloadSmokeCheck({
@@ -331,11 +331,11 @@ describe("runPluginPayloadSmokeCheck", () => {
     expect(result.failures).toEqual([]);
   });
 
-  it("accepts a manifest that declares an existing `openclaw.extensions` entry and no `main`", async () => {
+  it("accepts a manifest that declares an existing `nova.extensions` entry and no `main`", async () => {
     const dir = path.join(tmpRoot, "brave");
     await writePackage(dir, {
       name: "@nova/brave-plugin",
-      openclaw: { extensions: ["./index.js"] },
+      nova: { extensions: ["./index.js"] },
     });
     await fs.writeFile(path.join(dir, "index.js"), "export default {};\n", "utf8");
     const result = await runPluginPayloadSmokeCheck({
@@ -345,11 +345,11 @@ describe("runPluginPayloadSmokeCheck", () => {
     expect(result.failures).toEqual([]);
   });
 
-  it("reports a failure when `openclaw.extensions` contains invalid entries", async () => {
+  it("reports a failure when `nova.extensions` contains invalid entries", async () => {
     const dir = path.join(tmpRoot, "brave");
     await writePackage(dir, {
       name: "@nova/brave-plugin",
-      openclaw: { extensions: ["./index.js", " "] },
+      nova: { extensions: ["./index.js", " "] },
       main: "main.js",
     });
     await fs.writeFile(path.join(dir, "index.js"), "export default {};\n", "utf8");
@@ -363,7 +363,7 @@ describe("runPluginPayloadSmokeCheck", () => {
         installPath: dir,
         reason: "missing-extension-entry",
         detail:
-          "Plugin extension entry validation failed: package.json openclaw.extensions[1] must be a non-empty string",
+          "Plugin extension entry validation failed: package.json nova.extensions[1] must be a non-empty string",
       },
     ]);
   });
@@ -372,7 +372,7 @@ describe("runPluginPayloadSmokeCheck", () => {
     const dir = path.join(tmpRoot, "brave-empty");
     await writePackage(dir, {
       name: "@nova/brave-plugin",
-      openclaw: { extensions: [] },
+      nova: { extensions: [] },
       main: "dist/index.js",
     });
     const result = await runPluginPayloadSmokeCheck({
@@ -384,8 +384,7 @@ describe("runPluginPayloadSmokeCheck", () => {
         pluginId: "brave",
         installPath: dir,
         reason: "missing-extension-entry",
-        detail:
-          "Plugin extension entry validation failed: package.json openclaw.extensions is empty",
+        detail: "Plugin extension entry validation failed: package.json nova.extensions is empty",
       },
     ]);
   });
@@ -394,7 +393,7 @@ describe("runPluginPayloadSmokeCheck", () => {
     const dir = path.join(tmpRoot, "brave");
     await writePackage(dir, {
       name: "@nova/brave-plugin",
-      openclaw: { extensions: ["./index.js"] },
+      nova: { extensions: ["./index.js"] },
       main: "dist/index.js",
     });
     await fs.writeFile(path.join(dir, "index.js"), "export default {};\n", "utf8");
@@ -416,7 +415,7 @@ describe("runPluginPayloadSmokeCheck", () => {
     const dir = path.join(tmpRoot, "codex");
     await writePackage(dir, {
       name: "@nova/codex",
-      openclaw: { extensions: ["./index.ts"] },
+      nova: { extensions: ["./index.ts"] },
     });
     await fs.mkdir(path.join(dir, "dist"), { recursive: true });
     await fs.writeFile(path.join(dir, "dist", "index.js"), "export default {};\n", "utf8");
@@ -427,14 +426,14 @@ describe("runPluginPayloadSmokeCheck", () => {
     expect(result.failures).toEqual([]);
   });
 
-  it("reports a failure when an openclaw peer link is missing", async () => {
+  it("reports a failure when an nova peer link is missing", async () => {
     const dir = path.join(tmpRoot, "codex");
     await writePackage(
       dir,
       {
         name: "@nova/codex",
         main: "dist/index.js",
-        peerDependencies: { openclaw: ">=2026.5.18-beta.1" },
+        peerDependencies: { nova: ">=2026.5.18-beta.1" },
       },
       "export default {};\n",
     );
@@ -448,28 +447,28 @@ describe("runPluginPayloadSmokeCheck", () => {
       {
         pluginId: "codex",
         installPath: dir,
-        reason: "missing-openclaw-peer-link",
-        detail: `Plugin declares peerDependency "openclaw" but peer link audit failed: missing ${path.join(
+        reason: "missing-nova-peer-link",
+        detail: `Plugin declares peerDependency "nova" but peer link audit failed: missing ${path.join(
           dir,
           "node_modules",
-          "openclaw",
+          "nova",
         )}.`,
       },
     ]);
   });
 
-  it("reports a failure when an openclaw peer link is a stale real directory", async () => {
+  it("reports a failure when an nova peer link is a stale real directory", async () => {
     const dir = path.join(tmpRoot, "codex");
     await writePackage(
       dir,
       {
         name: "@nova/codex",
         main: "dist/index.js",
-        peerDependencies: { openclaw: ">=2026.5.18-beta.1" },
+        peerDependencies: { nova: ">=2026.5.18-beta.1" },
       },
       "export default {};\n",
     );
-    const stalePeerDir = path.join(dir, "node_modules", "openclaw");
+    const stalePeerDir = path.join(dir, "node_modules", "nova");
     await fs.mkdir(stalePeerDir, { recursive: true });
 
     const result = await runPluginPayloadSmokeCheck({
@@ -481,7 +480,7 @@ describe("runPluginPayloadSmokeCheck", () => {
     expect(result.failures[0]).toMatchObject({
       pluginId: "codex",
       installPath: dir,
-      reason: "missing-openclaw-peer-link",
+      reason: "missing-nova-peer-link",
     });
     expect(result.failures[0]?.detail).toContain(`${stalePeerDir} points to`);
     expect(result.failures[0]?.detail).toContain(
@@ -489,21 +488,21 @@ describe("runPluginPayloadSmokeCheck", () => {
     );
   });
 
-  it("reports a failure when an openclaw peer link points at the wrong package root", async () => {
+  it("reports a failure when an nova peer link points at the wrong package root", async () => {
     const dir = path.join(tmpRoot, "codex");
     await writePackage(
       dir,
       {
         name: "@nova/codex",
         main: "dist/index.js",
-        peerDependencies: { openclaw: ">=2026.5.18-beta.1" },
+        peerDependencies: { nova: ">=2026.5.18-beta.1" },
       },
       "export default {};\n",
     );
-    const wrongHostRoot = path.join(tmpRoot, "old-openclaw");
+    const wrongHostRoot = path.join(tmpRoot, "old-nova");
     await fs.mkdir(wrongHostRoot, { recursive: true });
     await fs.mkdir(path.join(dir, "node_modules"), { recursive: true });
-    await fs.symlink(wrongHostRoot, path.join(dir, "node_modules", "openclaw"), "junction");
+    await fs.symlink(wrongHostRoot, path.join(dir, "node_modules", "nova"), "junction");
 
     const result = await runPluginPayloadSmokeCheck({
       records: { codex: { source: "npm", installPath: dir } },
@@ -514,31 +513,31 @@ describe("runPluginPayloadSmokeCheck", () => {
     expect(result.failures[0]).toMatchObject({
       pluginId: "codex",
       installPath: dir,
-      reason: "missing-openclaw-peer-link",
+      reason: "missing-nova-peer-link",
     });
     expect(result.failures[0]?.detail).toContain(
       `${path.join(
         dir,
         "node_modules",
-        "openclaw",
+        "nova",
       )} points to ${await resolveRealPath(wrongHostRoot)} instead of ${await resolveRealPath(
         resolveTestHostRoot(),
       )}`,
     );
   });
 
-  it("accepts an openclaw peer link when it resolves to the host package root", async () => {
+  it("accepts an nova peer link when it resolves to the host package root", async () => {
     const dir = path.join(tmpRoot, "codex");
     await writePackage(
       dir,
       {
         name: "@nova/codex",
         main: "dist/index.js",
-        peerDependencies: { openclaw: ">=2026.5.18-beta.1" },
+        peerDependencies: { nova: ">=2026.5.18-beta.1" },
       },
       "export default {};\n",
     );
-    await linkOpenClawPeerToHost(dir);
+    await linkNovaPeerToHost(dir);
 
     const result = await runPluginPayloadSmokeCheck({
       records: { codex: { source: "npm", installPath: dir } },
@@ -548,11 +547,11 @@ describe("runPluginPayloadSmokeCheck", () => {
     expect(result.failures).toEqual([]);
   });
 
-  it("reports a failure when an `openclaw.extensions` entry file is missing", async () => {
+  it("reports a failure when an `nova.extensions` entry file is missing", async () => {
     const dir = path.join(tmpRoot, "brave");
     await writePackage(dir, {
       name: "@nova/brave-plugin",
-      openclaw: { extensions: ["./dist/index.js"] },
+      nova: { extensions: ["./dist/index.js"] },
     });
     const result = await runPluginPayloadSmokeCheck({
       records: { brave: { source: "npm", installPath: dir } },

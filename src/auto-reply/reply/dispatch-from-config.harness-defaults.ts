@@ -10,7 +10,7 @@ import {
 import { resolveSessionRuntimeOverrideForProvider } from "../../agents/session-runtime-compat.js";
 import { resolveChannelModelOverride } from "../../channels/model-overrides.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { isNativeCommandTurn, resolveCommandTurnContext } from "../command-turn-context.js";
@@ -102,7 +102,7 @@ export function resolveTurnModelOverride(
 
 function resolveChannelModelCandidate(params: {
   aliasIndex: ModelAliasIndex;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   ctx: FinalizedMsgContext;
   defaultProvider: string;
   entry?: SessionEntry;
@@ -145,7 +145,7 @@ function resolveChannelModelCandidate(params: {
 }
 
 function resolveStoredModelCandidate(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   defaultProvider: string;
   entry?: SessionEntry;
   parentSessionKey?: string;
@@ -200,7 +200,7 @@ function resolveModelOverrideCandidate(params: {
 }
 
 export function resolveHarnessSourceVisibleRepliesDefault(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   ctx: FinalizedMsgContext;
   entry?: SessionEntry;
   sessionAgentId: string;

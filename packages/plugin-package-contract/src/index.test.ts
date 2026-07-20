@@ -12,20 +12,20 @@ describe("@nova/plugin-package-contract", () => {
     expect(
       normalizeExternalPluginCompatibility({
         version: "1.2.3",
-        openclaw: {
+        nova: {
           compat: {
             pluginApi: ">=2026.3.24-beta.2",
             minGatewayVersion: "2026.3.24-beta.2",
           },
           build: {
-            openclawVersion: "2026.3.24-beta.2",
+            novaVersion: "2026.3.24-beta.2",
             pluginSdkVersion: "0.9.0",
           },
         },
       }),
     ).toEqual({
       pluginApiRange: ">=2026.3.24-beta.2",
-      builtWithOpenClawVersion: "2026.3.24-beta.2",
+      builtWithNovaVersion: "2026.3.24-beta.2",
       pluginSdkVersion: "0.9.0",
       minGatewayVersion: "2026.3.24-beta.2",
     });
@@ -35,7 +35,7 @@ describe("@nova/plugin-package-contract", () => {
     expect(
       normalizeExternalPluginCompatibility({
         version: "1.2.3",
-        openclaw: {
+        nova: {
           compat: {
             pluginApi: ">=1.0.0",
           },
@@ -46,38 +46,38 @@ describe("@nova/plugin-package-contract", () => {
       }),
     ).toEqual({
       pluginApiRange: ">=1.0.0",
-      builtWithOpenClawVersion: "1.2.3",
+      builtWithNovaVersion: "1.2.3",
       minGatewayVersion: "2026.3.24-beta.2",
     });
   });
 
   it("lists the required external code-plugin fields", () => {
     expect(EXTERNAL_CODE_PLUGIN_REQUIRED_FIELD_PATHS).toEqual([
-      "openclaw.compat.pluginApi",
-      "openclaw.build.openclawVersion",
+      "nova.compat.pluginApi",
+      "nova.build.novaVersion",
     ]);
   });
 
   it("reports missing required fields with stable field paths", () => {
     const packageJson = {
-      openclaw: {
+      nova: {
         compat: {},
         build: {},
       },
     };
 
     expect(listMissingExternalCodePluginFieldPaths(packageJson)).toEqual([
-      "openclaw.compat.pluginApi",
-      "openclaw.build.openclawVersion",
+      "nova.compat.pluginApi",
+      "nova.build.novaVersion",
     ]);
     expect(validateExternalCodePluginPackageJson(packageJson).issues).toEqual([
       {
-        fieldPath: "openclaw.compat.pluginApi",
-        message: "openclaw.compat.pluginApi is required for external code plugin packages.",
+        fieldPath: "nova.compat.pluginApi",
+        message: "nova.compat.pluginApi is required for external code plugin packages.",
       },
       {
-        fieldPath: "openclaw.build.openclawVersion",
-        message: "openclaw.build.openclawVersion is required for external code plugin packages.",
+        fieldPath: "nova.build.novaVersion",
+        message: "nova.build.novaVersion is required for external code plugin packages.",
       },
     ]);
   });

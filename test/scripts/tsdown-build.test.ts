@@ -25,7 +25,7 @@ import { createScriptTestHarness } from "./test-helpers.js";
 const { createTempDir } = createScriptTestHarness();
 const NO_MEMORY_LIMIT = {
   cgroupMemoryLimitPaths: [],
-  procMeminfoPath: "/openclaw-test-missing-proc-meminfo",
+  procMeminfoPath: "/nova-test-missing-proc-meminfo",
 };
 
 function expectedTaskkillPath(): string {
@@ -167,10 +167,10 @@ describe("resolveTsdownBuildInvocation", () => {
       expect.arrayContaining(["--config", "tsdown.ai.config.ts", "--format", "esm"]),
     );
     expect(results[1]?.args).toEqual(
-      expect.arrayContaining(["--filter", "openclaw-packages", "--format", "esm"]),
+      expect.arrayContaining(["--filter", "nova-packages", "--format", "esm"]),
     );
     expect(results[2]?.args).toEqual(
-      expect.arrayContaining(["--filter", "openclaw-unified", "--format", "esm"]),
+      expect.arrayContaining(["--filter", "nova-unified", "--format", "esm"]),
     );
   });
 
@@ -203,15 +203,15 @@ describe("resolveTsdownBuildInvocation", () => {
     });
 
     expect(results).toHaveLength(3);
-    expect(results[1]?.args).toEqual(expect.arrayContaining(["--filter", "openclaw-packages"]));
-    expect(results[2]?.args).toEqual(expect.arrayContaining(["--filter", "openclaw-unified"]));
+    expect(results[1]?.args).toEqual(expect.arrayContaining(["--filter", "nova-packages"]));
+    expect(results[2]?.args).toEqual(expect.arrayContaining(["--filter", "nova-unified"]));
   });
 
   it.each([
-    ["long filter", ["--filter", "openclaw-unified"]],
-    ["long assigned filter", ["--filter=openclaw-unified"]],
-    ["short filter", ["-F", "openclaw-unified"]],
-    ["short assigned filter", ["-F=openclaw-unified"]],
+    ["long filter", ["--filter", "nova-unified"]],
+    ["long assigned filter", ["--filter=nova-unified"]],
+    ["short filter", ["-F", "nova-unified"]],
+    ["short assigned filter", ["-F=nova-unified"]],
   ])("keeps a caller-provided %s in one main invocation", (_label, args) => {
     const results = resolveTsdownBuildInvocations({
       args,
@@ -248,7 +248,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("routes Windows tsdown builds through the pnpm runner instead of shell=true", () => {
-    const rootDir = createTempDir("openclaw-pnpm-runner-");
+    const rootDir = createTempDir("nova-pnpm-runner-");
     const npmExecPath = path.join(rootDir, "pnpm.cjs");
     fs.writeFileSync(npmExecPath, "console.log('pnpm');\n");
 
@@ -472,17 +472,12 @@ describe("resolveTsdownBuildInvocation", () => {
       "packages/ai/dist",
     ]);
     expect(
-      resolveTsdownCleanOutputRoots([
-        "--config",
-        "tsdown.config.ts",
-        "--filter",
-        "openclaw-packages",
-      ]),
+      resolveTsdownCleanOutputRoots(["--config", "tsdown.config.ts", "--filter", "nova-packages"]),
     ).toEqual(expect.arrayContaining(["packages/agent-core/dist", "packages/net-policy/dist"]));
     expect(
-      resolveTsdownCleanOutputRoots(["--config=tsdown.config.ts", "--filter=openclaw-packages"]),
+      resolveTsdownCleanOutputRoots(["--config=tsdown.config.ts", "--filter=nova-packages"]),
     ).not.toContain("packages/ai/dist");
-    expect(resolveTsdownCleanOutputRoots(["-c=tsdown.config.ts", "-F=openclaw-unified"])).toEqual([
+    expect(resolveTsdownCleanOutputRoots(["-c=tsdown.config.ts", "-F=nova-unified"])).toEqual([
       "dist",
       "dist-runtime",
     ]);
@@ -491,7 +486,7 @@ describe("resolveTsdownBuildInvocation", () => {
         "--config",
         "configs/tsdown.config.ts",
         "--filter",
-        "openclaw-packages",
+        "nova-packages",
       ]),
     ).toEqual(listTsdownOutputRoots());
     expect(resolveTsdownCleanOutputRoots(["--format", "esm"])).toEqual(listTsdownOutputRoots());
@@ -520,7 +515,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("prunes stale hashed root chunk files but keeps stable aliases and nested assets", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-build-");
+    const rootDir = createTempDir("nova-tsdown-build-");
     const distDir = path.join(rootDir, "dist");
     const distRuntimeDir = path.join(rootDir, "dist-runtime");
     await fsPromises.mkdir(path.join(distDir, "control-ui"), { recursive: true });
@@ -556,7 +551,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("cleans tsdown output roots before using tsdown --no-clean", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-");
+    const rootDir = createTempDir("nova-tsdown-clean-");
     const distFile = path.join(rootDir, "dist", "stale.js");
     const pluginGeneratedFile = path.join(rootDir, "dist", "extensions", "telegram", "index.js");
     const distRuntimeFile = path.join(rootDir, "dist-runtime", "stale.js");
@@ -601,7 +596,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("cleans only selected tsdown output roots", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-selected-clean-");
+    const rootDir = createTempDir("nova-tsdown-selected-clean-");
     const aiFile = path.join(rootDir, "packages", "ai", "dist", "stale.js");
     const coreFile = path.join(rootDir, "dist", "keep.js");
     await fsPromises.mkdir(path.dirname(aiFile), { recursive: true });
@@ -616,7 +611,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("removes CLI startup metadata during default tsdown clean", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-metadata-default-");
+    const rootDir = createTempDir("nova-tsdown-clean-metadata-default-");
     const metadataFile = path.join(rootDir, "dist", "cli-startup-metadata.json");
     await fsPromises.mkdir(path.dirname(metadataFile), { recursive: true });
     await fsPromises.writeFile(metadataFile, '{"generatedBy":"test"}\n');
@@ -627,7 +622,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("preserves CLI startup metadata across opted-in build-all tsdown clean", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-metadata-");
+    const rootDir = createTempDir("nova-tsdown-clean-metadata-");
     const metadataFile = path.join(rootDir, "dist", "cli-startup-metadata.json");
     const staleFile = path.join(rootDir, "dist", "stale.js");
     const nestedStaleFile = path.join(rootDir, "dist", "nested", "stale.js");
@@ -649,7 +644,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("preserves existing package declarations when tsdown DTS output is skipped", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-skip-dts-");
+    const rootDir = createTempDir("nova-tsdown-clean-skip-dts-");
     const declarationFile = path.join(
       rootDir,
       "packages",
@@ -704,7 +699,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("prunes untracked generated declaration files that shadow source entries", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-source-dts-");
+    const rootDir = createTempDir("nova-tsdown-source-dts-");
     const signalDir = path.join(rootDir, "extensions", "signal");
     const signalSrcDir = path.join(signalDir, "src");
     await fsPromises.mkdir(signalSrcDir, { recursive: true });
@@ -756,7 +751,7 @@ describe("createTsdownOutputScanner", () => {
     scanner.append("[UNRESOLVED_IMPORT] extensions/telegram/src/index.ts\n");
     scanner.append("[UNRESOLVED_IMPORT] node_modules/example/index.js\n");
     scanner.append(
-      "[UNRESOLVED_IMPORT] ../../../../tmp/openclaw-pnpm-node-modules/baileys/lib/Utils/messages-media.js\n",
+      "[UNRESOLVED_IMPORT] ../../../../tmp/nova-pnpm-node-modules/baileys/lib/Utils/messages-media.js\n",
     );
 
     expect(scanner.finish().fatalUnresolvedImport).toBeNull();
@@ -935,7 +930,7 @@ describe("runTsdownBuildInvocation", () => {
   it.skipIf(process.platform === "win32")(
     "kills timed-out tsdown process groups when the wrapper exits first",
     async () => {
-      const rootDir = createTempDir("openclaw-tsdown-timeout-");
+      const rootDir = createTempDir("nova-tsdown-timeout-");
       const childPidPath = path.join(rootDir, "child.pid");
       const timeoutMs = 250;
       let childPid: number | undefined;
@@ -989,7 +984,7 @@ describe("runTsdownBuildInvocation", () => {
   it.skipIf(process.platform === "win32")(
     "preserves timeout grace when descendant processes exit cleanly",
     async () => {
-      const rootDir = createTempDir("openclaw-tsdown-timeout-clean-");
+      const rootDir = createTempDir("nova-tsdown-timeout-clean-");
       const readyPath = path.join(rootDir, "child.ready");
       const cleanupPath = path.join(rootDir, "child.cleanup");
       const childPidPath = path.join(rootDir, "child.pid");
@@ -1056,7 +1051,7 @@ describe("runTsdownBuildInvocation", () => {
   it.skipIf(process.platform === "win32")(
     "cleans process-group descendants before forwarding parent SIGTERM",
     async () => {
-      const rootDir = createTempDir("openclaw-tsdown-parent-signal-");
+      const rootDir = createTempDir("nova-tsdown-parent-signal-");
       const childPidPath = path.join(rootDir, "child.pid");
       const readyPath = path.join(rootDir, "child.ready");
       const scriptUrl = pathToFileURL(path.resolve("scripts/tsdown-build.mjs")).href;

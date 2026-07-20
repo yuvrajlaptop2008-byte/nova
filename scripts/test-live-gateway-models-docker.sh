@@ -11,15 +11,15 @@ if [[ -z "$TRUSTED_HARNESS_DIR" || ! -d "$TRUSTED_HARNESS_DIR" ]]; then
 fi
 TRUSTED_HARNESS_DIR="$(cd "$TRUSTED_HARNESS_DIR" && pwd)"
 source "$TRUSTED_HARNESS_DIR/scripts/lib/live-docker-auth.sh"
-IMAGE_NAME="${NOVA_IMAGE:-openclaw:local}"
+IMAGE_NAME="${NOVA_IMAGE:-nova:local}"
 LIVE_IMAGE_NAME="${NOVA_LIVE_IMAGE:-${IMAGE_NAME}-live}"
-CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.openclaw}"
-WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.openclaw/workspace}"
-PROFILE_FILE="$(openclaw_live_default_profile_file)"
+CONFIG_DIR="${NOVA_CONFIG_DIR:-$HOME/.nova}"
+WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$HOME/.nova/workspace}"
+PROFILE_FILE="$(nova_live_default_profile_file)"
 DOCKER_USER="${NOVA_DOCKER_USER:-node}"
-LIVE_GATEWAY_MAX_MODELS="$(openclaw_live_read_positive_int_env NOVA_LIVE_GATEWAY_MAX_MODELS 8)"
-LIVE_GATEWAY_STEP_TIMEOUT_MS="$(openclaw_live_read_positive_int_env NOVA_LIVE_GATEWAY_STEP_TIMEOUT_MS 45000)"
-LIVE_GATEWAY_MODEL_TIMEOUT_MS="$(openclaw_live_read_positive_int_env NOVA_LIVE_GATEWAY_MODEL_TIMEOUT_MS 90000)"
+LIVE_GATEWAY_MAX_MODELS="$(nova_live_read_positive_int_env NOVA_LIVE_GATEWAY_MAX_MODELS 8)"
+LIVE_GATEWAY_STEP_TIMEOUT_MS="$(nova_live_read_positive_int_env NOVA_LIVE_GATEWAY_STEP_TIMEOUT_MS 45000)"
+LIVE_GATEWAY_MODEL_TIMEOUT_MS="$(nova_live_read_positive_int_env NOVA_LIVE_GATEWAY_MODEL_TIMEOUT_MS 90000)"
 TEMP_DIRS=()
 DOCKER_HOME_MOUNT=()
 DOCKER_AUTH_PRESTAGED=0
@@ -33,18 +33,18 @@ cleanup_temp_dirs() {
 trap cleanup_temp_dirs EXIT
 if [[ -n "${NOVA_DOCKER_CACHE_HOME_DIR:-}" ]]; then
   CACHE_HOME_DIR="${NOVA_DOCKER_CACHE_HOME_DIR}"
-elif openclaw_live_is_ci; then
-  CACHE_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-cache.XXXXXX")"
+elif nova_live_is_ci; then
+  CACHE_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-cache.XXXXXX")"
   TEMP_DIRS+=("$CACHE_HOME_DIR")
 else
-  CACHE_HOME_DIR="$HOME/.cache/openclaw/docker-cache"
+  CACHE_HOME_DIR="$HOME/.cache/nova/docker-cache"
 fi
-openclaw_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"
-if openclaw_live_uses_managed_bind_dirs; then
+nova_live_prepare_bind_dir_for_container_user "$CACHE_HOME_DIR"
+if nova_live_uses_managed_bind_dirs; then
   DOCKER_USER="$(id -u):$(id -g)"
-  DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/openclaw-docker-home.XXXXXX")"
+  DOCKER_HOME_DIR="$(mktemp -d "${RUNNER_TEMP:-/tmp}/nova-docker-home.XXXXXX")"
   TEMP_DIRS+=("$DOCKER_HOME_DIR")
-  openclaw_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
+  nova_live_prepare_bind_dir_for_container_user "$DOCKER_HOME_DIR"
   DOCKER_HOME_MOUNT=(-v "$DOCKER_HOME_DIR":/home/node)
 fi
 
@@ -52,7 +52,7 @@ PROFILE_MOUNT=()
 PROFILE_STATUS="none"
 if [[ -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]]; then
   if [[ -n "${DOCKER_HOME_DIR:-}" ]]; then
-    openclaw_live_stage_profile_into_home "$DOCKER_HOME_DIR" "$PROFILE_FILE"
+    nova_live_stage_profile_into_home "$DOCKER_HOME_DIR" "$PROFILE_FILE"
   else
     PROFILE_MOUNT=(-v "$PROFILE_FILE":/home/node/.profile:ro)
   fi
@@ -65,49 +65,49 @@ if [[ -n "${NOVA_DOCKER_AUTH_DIRS:-}" ]]; then
   while IFS= read -r auth_dir; do
     [[ -n "$auth_dir" ]] || continue
     AUTH_DIRS+=("$auth_dir")
-  done < <(openclaw_live_collect_auth_dirs)
+  done < <(nova_live_collect_auth_dirs)
   while IFS= read -r auth_file; do
     [[ -n "$auth_file" ]] || continue
     AUTH_FILES+=("$auth_file")
-  done < <(openclaw_live_collect_auth_files)
+  done < <(nova_live_collect_auth_files)
 elif [[ -n "${NOVA_LIVE_GATEWAY_PROVIDERS:-}" ]]; then
   while IFS= read -r auth_dir; do
     [[ -n "$auth_dir" ]] || continue
     AUTH_DIRS+=("$auth_dir")
-  done < <(openclaw_live_collect_auth_dirs_from_csv "${NOVA_LIVE_GATEWAY_PROVIDERS:-}")
+  done < <(nova_live_collect_auth_dirs_from_csv "${NOVA_LIVE_GATEWAY_PROVIDERS:-}")
   while IFS= read -r auth_file; do
     [[ -n "$auth_file" ]] || continue
     AUTH_FILES+=("$auth_file")
-  done < <(openclaw_live_collect_auth_files_from_csv "${NOVA_LIVE_GATEWAY_PROVIDERS:-}")
+  done < <(nova_live_collect_auth_files_from_csv "${NOVA_LIVE_GATEWAY_PROVIDERS:-}")
 else
   while IFS= read -r auth_dir; do
     [[ -n "$auth_dir" ]] || continue
     AUTH_DIRS+=("$auth_dir")
-  done < <(openclaw_live_collect_auth_dirs)
+  done < <(nova_live_collect_auth_dirs)
   while IFS= read -r auth_file; do
     [[ -n "$auth_file" ]] || continue
     AUTH_FILES+=("$auth_file")
-  done < <(openclaw_live_collect_auth_files)
+  done < <(nova_live_collect_auth_files)
 fi
 AUTH_DIRS_CSV=""
 if ((${#AUTH_DIRS[@]} > 0)); then
-  AUTH_DIRS_CSV="$(openclaw_live_join_csv "${AUTH_DIRS[@]}")"
+  AUTH_DIRS_CSV="$(nova_live_join_csv "${AUTH_DIRS[@]}")"
 fi
 AUTH_FILES_CSV=""
 if ((${#AUTH_FILES[@]} > 0)); then
-  AUTH_FILES_CSV="$(openclaw_live_join_csv "${AUTH_FILES[@]}")"
+  AUTH_FILES_CSV="$(nova_live_join_csv "${AUTH_FILES[@]}")"
 fi
 
 if [[ -n "${DOCKER_HOME_DIR:-}" ]]; then
-  openclaw_live_stage_auth_into_home "$DOCKER_HOME_DIR" "${AUTH_DIRS[@]}" --files "${AUTH_FILES[@]}"
+  nova_live_stage_auth_into_home "$DOCKER_HOME_DIR" "${AUTH_DIRS[@]}" --files "${AUTH_FILES[@]}"
   DOCKER_AUTH_PRESTAGED=1
 fi
-CONTAINER_NODE_OPTIONS="$(openclaw_live_container_node_options)"
+CONTAINER_NODE_OPTIONS="$(nova_live_container_node_options)"
 
 EXTERNAL_AUTH_MOUNTS=()
 if ((${#AUTH_DIRS[@]} > 0)); then
   for auth_dir in "${AUTH_DIRS[@]}"; do
-    auth_dir="$(openclaw_live_validate_relative_home_path "$auth_dir")"
+    auth_dir="$(nova_live_validate_relative_home_path "$auth_dir")"
     host_path="$HOME/$auth_dir"
     if [[ -d "$host_path" ]]; then
       EXTERNAL_AUTH_MOUNTS+=(-v "$host_path":/host-auth/"$auth_dir":ro)
@@ -116,7 +116,7 @@ if ((${#AUTH_DIRS[@]} > 0)); then
 fi
 if ((${#AUTH_FILES[@]} > 0)); then
   for auth_file in "${AUTH_FILES[@]}"; do
-    auth_file="$(openclaw_live_validate_relative_home_path "$auth_file")"
+    auth_file="$(nova_live_validate_relative_home_path "$auth_file")"
     host_path="$HOME/$auth_file"
     if [[ -f "$host_path" ]]; then
       EXTERNAL_AUTH_MOUNTS+=(-v "$host_path":/host-auth-files/"$auth_file":ro)
@@ -160,18 +160,18 @@ fi
 tmp_dir="$(mktemp -d)"
 trusted_scripts_dir="${NOVA_LIVE_DOCKER_SCRIPTS_DIR:-/src/scripts}"
 source "$trusted_scripts_dir/lib/live-docker-stage.sh"
-openclaw_live_stage_source_tree "$tmp_dir"
-openclaw_live_stage_node_modules "$tmp_dir"
-openclaw_live_link_runtime_tree "$tmp_dir"
-openclaw_live_stage_state_dir "$tmp_dir/.openclaw-state"
-openclaw_live_prepare_staged_config
+nova_live_stage_source_tree "$tmp_dir"
+nova_live_stage_node_modules "$tmp_dir"
+nova_live_link_runtime_tree "$tmp_dir"
+nova_live_stage_state_dir "$tmp_dir/.nova-state"
+nova_live_prepare_staged_config
 cd "$tmp_dir"
 node scripts/test-live.mjs -- src/gateway/gateway-models.profiles.live.test.ts
 EOF
 
 NOVA_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR" "$TRUSTED_HARNESS_DIR/scripts/test-live-build-docker.sh"
-if openclaw_live_uses_managed_bind_dirs; then
-  openclaw_live_chown_bind_dirs_for_container_user \
+if nova_live_uses_managed_bind_dirs; then
+  nova_live_chown_bind_dirs_for_container_user \
     "$LIVE_IMAGE_NAME" \
     "$DOCKER_USER" \
     "$CACHE_HOME_DIR" \
@@ -184,7 +184,7 @@ echo "==> Profile file: $PROFILE_STATUS"
 echo "==> External auth dirs: ${AUTH_DIRS_CSV:-none}"
 echo "==> External auth files: ${AUTH_FILES_CSV:-none}"
 DOCKER_RUN_ARGS=()
-openclaw_live_init_docker_run_args DOCKER_RUN_ARGS "${NOVA_LIVE_GATEWAY_DOCKER_RUN_TIMEOUT:-2100s}"
+nova_live_init_docker_run_args DOCKER_RUN_ARGS "${NOVA_LIVE_GATEWAY_DOCKER_RUN_TIMEOUT:-2100s}"
 DOCKER_RUN_ARGS+=(--rm -t \
   -u "$DOCKER_USER" \
   --entrypoint bash \
@@ -223,15 +223,15 @@ DOCKER_RUN_ARGS+=(--rm -t \
   -e NOVA_LIVE_GATEWAY_STEP_TIMEOUT_MS="$LIVE_GATEWAY_STEP_TIMEOUT_MS" \
   -e NOVA_LIVE_GATEWAY_MODEL_TIMEOUT_MS="$LIVE_GATEWAY_MODEL_TIMEOUT_MS" \
   -e NOVA_VITEST_FS_MODULE_CACHE=0)
-openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_HOME_MOUNT
-openclaw_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT
+nova_live_append_array DOCKER_RUN_ARGS DOCKER_HOME_MOUNT
+nova_live_append_array DOCKER_RUN_ARGS DOCKER_TRUSTED_HARNESS_MOUNT
 DOCKER_RUN_ARGS+=(\
   -v "$CACHE_HOME_DIR":/home/node/.cache \
   -v "$ROOT_DIR":/src:ro \
-  -v "$CONFIG_DIR":/home/node/.openclaw \
-  -v "$WORKSPACE_DIR":/home/node/.openclaw/workspace)
-openclaw_live_append_array DOCKER_RUN_ARGS EXTERNAL_AUTH_MOUNTS
-openclaw_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT
+  -v "$CONFIG_DIR":/home/node/.nova \
+  -v "$WORKSPACE_DIR":/home/node/.nova/workspace)
+nova_live_append_array DOCKER_RUN_ARGS EXTERNAL_AUTH_MOUNTS
+nova_live_append_array DOCKER_RUN_ARGS PROFILE_MOUNT
 DOCKER_RUN_ARGS+=(\
   "$LIVE_IMAGE_NAME" \
   -lc "$LIVE_TEST_CMD")

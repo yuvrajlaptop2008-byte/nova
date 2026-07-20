@@ -1,5 +1,5 @@
 // Imessage tests cover monitor.gating plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { beforeEach, describe, expect, it } from "vitest";
 import { parseIMessageNotification } from "./monitor/parse-notification.js";
 import type { IMessagePayload } from "./monitor/types.js";
@@ -9,7 +9,7 @@ type InboundProcessingModule = typeof import("./monitor/inbound-processing.js");
 let buildIMessageInboundContext: InboundProcessingModule["buildIMessageInboundContext"];
 let resolveIMessageInboundDecision: InboundProcessingModule["resolveIMessageInboundDecision"];
 
-function baseCfg(): OpenClawConfig {
+function baseCfg(): NovaConfig {
   return {
     channels: {
       imessage: {
@@ -21,13 +21,13 @@ function baseCfg(): OpenClawConfig {
     },
     session: { mainKey: "main" },
     messages: {
-      groupChat: { mentionPatterns: ["@openclaw"] },
+      groupChat: { mentionPatterns: ["@nova"] },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as NovaConfig;
 }
 
 async function resolve(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   message: IMessagePayload;
   storeAllowFrom?: string[];
 }) {
@@ -51,7 +51,7 @@ async function resolve(params: {
 }
 
 async function resolveDispatchDecision(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   message: IMessagePayload;
   groupHistories?: Parameters<
     InboundProcessingModule["resolveIMessageInboundDecision"]
@@ -86,10 +86,7 @@ async function resolveDispatchDecision(params: {
   return { decision, groupHistories };
 }
 
-async function buildDispatchContextPayload(params: {
-  cfg: OpenClawConfig;
-  message: IMessagePayload;
-}) {
+async function buildDispatchContextPayload(params: { cfg: NovaConfig; message: IMessagePayload }) {
   const { cfg, message } = params;
   const { decision, groupHistories } = await resolveDispatchDecision({ cfg, message });
 
@@ -164,7 +161,7 @@ describe("imessage monitor gating + envelope builders", () => {
       chat_id: 42,
       sender: "+15550002222",
       is_from_me: false,
-      text: "@openclaw ping",
+      text: "@nova ping",
       is_group: true,
       chat_name: "Lobster Squad",
       participants: ["+1555", "+1556"],
@@ -188,7 +185,7 @@ describe("imessage monitor gating + envelope builders", () => {
       chat_identifier: "thread-42",
       sender: "+15550002222",
       is_from_me: false,
-      text: "@openclaw ping",
+      text: "@nova ping",
       is_group: true,
       chat_name: "Lobster Squad",
       participants: ["+1555", "+1556"],
@@ -233,7 +230,7 @@ describe("imessage monitor gating + envelope builders", () => {
       chat_id: 55,
       sender: "+15550001111",
       is_from_me: false,
-      text: "@openclaw replying now",
+      text: "@nova replying now",
       is_group: true,
       reply_to_id: 9001,
       reply_to_text: "blocked quote",
@@ -272,7 +269,7 @@ describe("imessage monitor gating + envelope builders", () => {
       chat_id: 55,
       sender: "+15550001111",
       is_from_me: false,
-      text: "@openclaw replying now",
+      text: "@nova replying now",
       is_group: true,
       reply_to_id: 9001,
       reply_to_text: "quoted context",
@@ -317,7 +314,7 @@ describe("imessage monitor gating + envelope builders", () => {
       chat_id: 56,
       sender: "+15559998888",
       is_from_me: false,
-      text: "@openclaw replying now",
+      text: "@nova replying now",
       is_group: true,
       reply_to_id: 9002,
       reply_to_text: "own quoted context",
@@ -356,7 +353,7 @@ describe("imessage monitor gating + envelope builders", () => {
       chat_id: 55,
       sender: "+15550001111",
       is_from_me: false,
-      text: "@openclaw replying now",
+      text: "@nova replying now",
       is_group: true,
       reply_to_id: 9001,
       reply_to_text: "quoted context",
@@ -450,12 +447,12 @@ describe("imessage monitor gating + envelope builders", () => {
         chat_id: 123,
         sender: "+15550001111",
         is_from_me: false,
-        text: "@openclaw hello",
+        text: "@nova hello",
         is_group: true,
       },
       opts: {},
-      messageText: "@openclaw hello",
-      bodyText: "@openclaw hello",
+      messageText: "@nova hello",
+      bodyText: "@nova hello",
       allowFrom: ["*"],
       groupAllowFrom: [],
       groupPolicy: "open",
@@ -482,12 +479,12 @@ describe("imessage monitor gating + envelope builders", () => {
         chat_id: 202,
         sender: "+15550003333",
         is_from_me: false,
-        text: "@openclaw hi",
+        text: "@nova hi",
         is_group: true,
       },
       opts: {},
-      messageText: "@openclaw hi",
-      bodyText: "@openclaw hi",
+      messageText: "@nova hi",
+      bodyText: "@nova hi",
       allowFrom: ["*"],
       groupAllowFrom: ["chat_id:101"],
       groupPolicy: "allowlist",
@@ -506,12 +503,12 @@ describe("imessage monitor gating + envelope builders", () => {
         chat_id: 101,
         sender: "+15550003333",
         is_from_me: false,
-        text: "@openclaw ok",
+        text: "@nova ok",
         is_group: true,
       },
       opts: {},
-      messageText: "@openclaw ok",
-      bodyText: "@openclaw ok",
+      messageText: "@nova ok",
+      bodyText: "@nova ok",
       allowFrom: ["*"],
       groupAllowFrom: ["chat_id:101"],
       groupPolicy: "allowlist",
@@ -536,7 +533,7 @@ describe("imessage monitor gating + envelope builders", () => {
         chat_id: 101,
         sender: "+15550003333",
         is_from_me: false,
-        text: "@openclaw ok",
+        text: "@nova ok",
         is_group: true,
       },
       allowFrom: ["chat_id:101"],
@@ -562,12 +559,12 @@ describe("imessage monitor gating + envelope builders", () => {
         chat_id: 101,
         sender: "+15550003333",
         is_from_me: false,
-        text: "@openclaw ok",
+        text: "@nova ok",
         is_group: true,
       },
       opts: {},
-      messageText: "@openclaw ok",
-      bodyText: "@openclaw ok",
+      messageText: "@nova ok",
+      bodyText: "@nova ok",
       allowFrom: ["chat_id:101"],
       groupAllowFrom: [],
       groupPolicy: "allowlist",
@@ -597,12 +594,12 @@ describe("imessage monitor gating + envelope builders", () => {
         chat_id: 101,
         sender: "+15550003333",
         is_from_me: false,
-        text: "@openclaw ok",
+        text: "@nova ok",
         is_group: true,
       },
       opts: {},
-      messageText: "@openclaw ok",
-      bodyText: "@openclaw ok",
+      messageText: "@nova ok",
+      bodyText: "@nova ok",
       allowFrom: ["chat_id:101"],
       groupAllowFrom: ["+15550004444"],
       groupPolicy: "allowlist",
@@ -695,12 +692,12 @@ describe("imessage monitor gating + envelope builders", () => {
         chat_id: 303,
         sender: "+15550003333",
         is_from_me: false,
-        text: "@openclaw hi",
+        text: "@nova hi",
         is_group: true,
       },
       opts: {},
-      messageText: "@openclaw hi",
-      bodyText: "@openclaw hi",
+      messageText: "@nova hi",
+      bodyText: "@nova hi",
       allowFrom: ["*"],
       groupAllowFrom: [],
       groupPolicy: "disabled",

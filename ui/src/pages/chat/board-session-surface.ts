@@ -30,7 +30,7 @@ type BoardSessionSurfaceProps = {
 let boardViewLoad: Promise<unknown> | null = null;
 
 export async function ensureBoardViewElement(): Promise<boolean> {
-  if (customElements.get("openclaw-board-view")) {
+  if (customElements.get("nova-board-view")) {
     return false;
   }
   boardViewLoad ??= isMockBoardEnabled()
@@ -133,13 +133,13 @@ export function renderBoardDockMenu(
 function renderBoardView(props: BoardSessionSurfaceProps) {
   return html`
     <div class="board-session-surface__board">
-      <openclaw-board-view
+      <nova-board-view
         .snapshot=${props.snapshot}
         .activeTabId=${props.activeTabId}
         .widgetFrameUrl=${props.widgetFrameUrl}
         .callbacks=${props.callbacks}
         .sessions=${props.sessions}
-      ></openclaw-board-view>
+      ></nova-board-view>
     </div>
   `;
 }

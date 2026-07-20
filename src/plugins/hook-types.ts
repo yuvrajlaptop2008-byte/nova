@@ -7,7 +7,7 @@ import type {
 } from "../auto-reply/reply/reply-dispatcher.types.js";
 import type { FinalizedMsgContext } from "../auto-reply/templating.js";
 import type { ChatType } from "../channels/chat-type.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { TtsAutoMode } from "../config/types.tts.js";
 import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import type {
@@ -182,7 +182,7 @@ type PluginHookChannelPairingRequestedEvent = {
   accountId?: string;
   /** Channel-scoped sender ID awaiting operator approval. */
   senderId: string;
-  /** Short-lived code accepted by `openclaw pairing approve`. */
+  /** Short-lived code accepted by `nova pairing approve`. */
   code: string;
   /** Sender-supplied channel metadata for operator notification/audit. Treat as untrusted. */
   metadata?: Record<string, string | undefined>;
@@ -508,7 +508,7 @@ export type PluginHookReplyDispatchEvent = {
 };
 
 export type PluginHookReplyDispatchContext = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   dispatcher: ReplyDispatcher;
   abortSignal?: AbortSignal;
   onReplyStart?: () => Promise<void> | void;
@@ -885,7 +885,7 @@ export type PluginHookSubagentEndedEvent = {
 
 export type PluginHookGatewayContext = {
   port?: number;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir?: string;
   getCron?: () => PluginHookGatewayCronService | undefined;
 };

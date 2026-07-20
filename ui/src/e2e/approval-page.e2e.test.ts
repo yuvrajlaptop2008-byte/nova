@@ -144,16 +144,16 @@ async function closeRecordedSurface(surface: ApprovalSurface, targetName: string
 }
 
 async function waitForApprovalPage(page: Page): Promise<void> {
-  await page.locator("openclaw-approval-page").waitFor();
+  await page.locator("nova-approval-page").waitFor();
   await page.getByText("Waiting for your decision", { exact: true }).waitFor();
 }
 
 async function expectStandaloneApprovalPage(page: Page): Promise<void> {
-  expect(await page.locator("openclaw-approval-page").count()).toBe(1);
+  expect(await page.locator("nova-approval-page").count()).toBe(1);
   expect(await page.locator(".approval-page").count()).toBe(1);
-  expect(await page.locator("openclaw-app-shell, .shell").count()).toBe(0);
-  expect(await page.locator("openclaw-app-topbar, openclaw-app-sidebar").count()).toBe(0);
-  expect(await page.locator("openclaw-exec-approval").count()).toBe(0);
+  expect(await page.locator("nova-app-shell, .shell").count()).toBe(0);
+  expect(await page.locator("nova-app-topbar, nova-app-sidebar").count()).toBe(0);
+  expect(await page.locator("nova-exec-approval").count()).toBe(0);
 }
 
 async function expectNoDecisionButtons(page: Page): Promise<void> {
@@ -396,7 +396,7 @@ describeControlUiE2e("Control UI standalone approval page", () => {
   });
 
   it("preserves a mounted deep link across the authentication gate", async () => {
-    const basePath = "/openclaw";
+    const basePath = "/nova";
     const pending = pendingApproval(basePath);
     const surface = await createSurface({
       basePath,
@@ -408,7 +408,7 @@ describeControlUiE2e("Control UI standalone approval page", () => {
     const response = await surface.page.goto(approvalUrl(basePath));
     expect(response?.status()).toBe(200);
     await surface.gateway.waitForRequest("connect");
-    await surface.page.locator("openclaw-login-gate").waitFor();
+    await surface.page.locator("nova-login-gate").waitFor();
     expect(new URL(surface.page.url()).pathname).toBe(approvalPath(basePath));
     expect(await surface.gateway.getRequests("approval.get")).toHaveLength(0);
 
@@ -430,16 +430,16 @@ describeControlUiE2e("Control UI standalone approval page", () => {
     });
     const appUrl = new URL(server?.baseUrl ?? "http://127.0.0.1/");
     const pageGatewayScope = `ws://${appUrl.host}`;
-    const selectionKey = `openclaw.control.currentGateway.v1:${pageGatewayScope}`;
+    const selectionKey = `nova.control.currentGateway.v1:${pageGatewayScope}`;
     const pageGateway = `ws://${appUrl.hostname}:18789`;
-    const pageSettingsKey = `openclaw.control.settings.v1:${pageGateway}`;
+    const pageSettingsKey = `nova.control.settings.v1:${pageGateway}`;
     const pageSettings = JSON.stringify({
       gatewayUrl: pageGateway,
       theme: "claw",
       sessionKey: "agent:page:saved",
     });
     const remoteGateway = "wss://saved-remote.example.test";
-    const remoteSettingsKey = `openclaw.control.settings.v1:${remoteGateway}`;
+    const remoteSettingsKey = `nova.control.settings.v1:${remoteGateway}`;
     await surface.page.addInitScript(
       ({
         nextPageSettings,

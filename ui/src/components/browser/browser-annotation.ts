@@ -21,7 +21,7 @@ export type BrowserAnnotationDraft = {
   fileName: string;
 };
 
-export const BROWSER_ANNOTATION_EVENT = "openclaw:browser-annotation";
+export const BROWSER_ANNOTATION_EVENT = "nova:browser-annotation";
 
 /**
  * Hands an annotation to whichever chat pane is active. Returns false when no

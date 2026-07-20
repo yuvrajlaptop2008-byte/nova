@@ -2,10 +2,10 @@
 import {
   createAccountListHelpers,
   resolveMergedAccountConfig,
-} from "openclaw/plugin-sdk/account-helpers";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk/account-id";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/account-helpers";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "nova/plugin-sdk/account-id";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 
 export const RAFT_CHANNEL_ID = "raft" as const;
 
@@ -36,12 +36,12 @@ const { listAccountIds, resolveDefaultAccountId } = createAccountListHelpers(RAF
 export const listRaftAccountIds = listAccountIds;
 export const resolveDefaultRaftAccountId = resolveDefaultAccountId;
 
-function resolveRaftConfig(cfg: OpenClawConfig): RaftAccountConfig | undefined {
+function resolveRaftConfig(cfg: NovaConfig): RaftAccountConfig | undefined {
   return cfg.channels?.[RAFT_CHANNEL_ID] as RaftAccountConfig | undefined;
 }
 
 export function resolveRaftAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
 }): ResolvedRaftAccount {
   const accountId = normalizeAccountId(params.accountId ?? resolveDefaultRaftAccountId(params.cfg));

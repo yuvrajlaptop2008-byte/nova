@@ -324,7 +324,7 @@ export function createGauntletPrebuildCommand(repoRoot) {
   };
 }
 
-function openclawCommand(repoRoot, args) {
+function novaCommand(repoRoot, args) {
   return {
     command: process.execPath,
     args: [path.join(repoRoot, "dist", "entry.js"), ...args],
@@ -354,7 +354,7 @@ function requiresBuiltEntry(options, selectedPlugins) {
   return selectedPlugins.some((plugin) => selectSlashHelpAliases(plugin, true).length > 0);
 }
 
-function sourceOpenclawCommand(repoRoot, args) {
+function sourcenovaCommand(repoRoot, args) {
   return {
     command: process.execPath,
     args: [path.join(repoRoot, "scripts", "run-node.mjs"), ...args],
@@ -398,7 +398,7 @@ function createIsolatedEnv(repoRoot, runRoot) {
     XDG_CACHE_HOME: path.join(home, ".cache"),
     XDG_DATA_HOME: path.join(home, ".local", "share"),
     NOVA_STATE_DIR: stateDir,
-    NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+    NOVA_CONFIG_PATH: path.join(stateDir, "nova.json"),
     NOVA_LOG_DIR: path.join(runRoot, "logs"),
     NOVA_QA_SUITE_PROGRESS: process.env.NOVA_QA_SUITE_PROGRESS ?? "1",
     PATH: process.env.PATH,
@@ -826,7 +826,7 @@ function buildSlashHelpProbe(params) {
     cwd: params.repoRoot,
     env: params.env,
     logDir: path.join(params.outputDir, "logs", "slash-help"),
-    ...openclawCommand(params.repoRoot, [command, "--help"]),
+    ...novaCommand(params.repoRoot, [command, "--help"]),
     label: `${params.plugin.id}-slash-${params.alias.name}`,
     phase: "slash:help",
     pluginId: params.plugin.id,
@@ -841,7 +841,7 @@ async function runPluginLifecycleCommand(params) {
       cwd: params.repoRoot,
       env: params.env,
       logDir: path.join(params.outputDir, "logs", "lifecycle"),
-      ...openclawCommand(params.repoRoot, ["plugins", ...params.args]),
+      ...novaCommand(params.repoRoot, ["plugins", ...params.args]),
       label: params.label,
       phase: `lifecycle:${params.phase}`,
       pluginId: params.pluginId,
@@ -965,7 +965,7 @@ async function runQaChunks(params) {
       cwd: params.repoRoot,
       env: params.env,
       logDir: path.join(params.outputDir, "logs", "qa-suite"),
-      ...sourceOpenclawCommand(params.repoRoot, [
+      ...sourcenovaCommand(params.repoRoot, [
         "qa",
         "suite",
         "--provider-mode",
@@ -1007,7 +1007,7 @@ async function main() {
   const repoRoot = path.resolve(options.repoRoot);
   validateOutputDir(options, repoRoot);
   fs.mkdirSync(options.outputDir, { recursive: true });
-  const runRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-gauntlet-"));
+  const runRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-gauntlet-"));
   let preserveRunRoot = options.keepRunRoot;
   const env = createIsolatedEnv(repoRoot, runRoot);
   try {

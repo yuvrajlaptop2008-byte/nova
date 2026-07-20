@@ -51,7 +51,7 @@ describe("CodexAppServerEventProjector media projection", () => {
   });
 
   it("saves raw Codex image-generation results as reply media", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-media-state-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-media-state-"));
     trackTempDir(stateDir);
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
     const projector = await createProjector();
@@ -194,7 +194,7 @@ describe("CodexAppServerEventProjector media projection", () => {
   });
 
   it("dedupes raw and typed Codex image-generation media for the same item", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-media-state-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-media-state-"));
     trackTempDir(stateDir);
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
     const projector = await createProjector();
@@ -230,7 +230,7 @@ describe("CodexAppServerEventProjector media projection", () => {
   });
 
   it("prefers gateway-managed image media when the typed event arrives first", async () => {
-    await withTempDir("openclaw-codex-media-state-", async (stateDir) => {
+    await withTempDir("nova-codex-media-state-", async (stateDir) => {
       vi.stubEnv("NOVA_STATE_DIR", stateDir);
       const projector = await createProjector();
       const savedPath = "/home/dev-user/.codex/generated_images/session-1/ig_123.png";
@@ -271,7 +271,7 @@ describe("CodexAppServerEventProjector media projection", () => {
   });
 
   it("preserves distinct raw image-generation items with identical image bytes", async () => {
-    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-media-state-"));
+    const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-media-state-"));
     trackTempDir(stateDir);
     vi.stubEnv("NOVA_STATE_DIR", stateDir);
     const projector = await createProjector();

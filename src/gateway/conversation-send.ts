@@ -8,7 +8,7 @@ import {
   type ConversationRegistryScope,
 } from "../config/sessions/conversation-registry.js";
 import { resolveStorePath } from "../config/sessions/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import {
   ConversationDeliveryRejectedError,
   defaultConversationDeliveryDeps,
@@ -31,7 +31,7 @@ const defaultDeps: ConversationSendDeps = {
 
 function resolveConversationScope(params: {
   agentId: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
 }): ConversationRegistryScope {
   const configuredStore = params.config.session?.store;
   return {
@@ -83,7 +83,7 @@ function resultForCompletedOperation(
 /** Performs one durable conversation send inside the Gateway channel owner. */
 export async function runGatewayConversationSend(
   params: {
-    config: OpenClawConfig;
+    config: NovaConfig;
     agentId: string;
     senderIsOwner: boolean;
     sourceSessionKey?: string;

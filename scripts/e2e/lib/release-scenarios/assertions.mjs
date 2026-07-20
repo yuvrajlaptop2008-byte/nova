@@ -28,9 +28,7 @@ function assert(condition, message) {
 }
 
 function configPath() {
-  return (
-    process.env.NOVA_CONFIG_PATH ?? path.join(process.env.HOME ?? "", ".openclaw", "openclaw.json")
-  );
+  return process.env.NOVA_CONFIG_PATH ?? path.join(process.env.HOME ?? "", ".nova", "nova.json");
 }
 
 function writeConfig(cfg) {
@@ -40,7 +38,7 @@ function writeConfig(cfg) {
 function authProfilesPath() {
   return path.join(
     process.env.HOME ?? "",
-    ".openclaw",
+    ".nova",
     "agents",
     "main",
     "agent",
@@ -49,14 +47,7 @@ function authProfilesPath() {
 }
 
 function authProfilesDatabasePath() {
-  return path.join(
-    process.env.HOME ?? "",
-    ".openclaw",
-    "agents",
-    "main",
-    "agent",
-    "openclaw-agent.sqlite",
-  );
+  return path.join(process.env.HOME ?? "", ".nova", "agents", "main", "agent", "nova-agent.sqlite");
 }
 
 function readAuthProfileStoreSqliteText() {
@@ -94,7 +85,7 @@ function configureMockOpenAi() {
 
 function assertOpenAiEnvRef() {
   const rawKey = process.argv[3];
-  assert(fs.existsSync(configPath()), "openclaw.json missing");
+  assert(fs.existsSync(configPath()), "nova.json missing");
   assertOpenAiEnvAuthProfileStore(readAuthProfileStoreSqliteText(), {
     missingMessage: "OpenAI env ref was not persisted",
     envRefMessage: "OpenAI env ref was not persisted",
@@ -189,13 +180,7 @@ function assertPluginUninstalled() {
   const installRecords = readPluginInstallRecords({ configPath: configPath() });
   assert(!installRecords[pluginId], `install record still present for ${pluginId}`);
   assert(!cfg.plugins?.entries?.[pluginId], `plugin config entry still present for ${pluginId}`);
-  const managedRoot = path.join(
-    process.env.HOME ?? "",
-    ".openclaw",
-    "plugins",
-    "installed",
-    pluginId,
-  );
+  const managedRoot = path.join(process.env.HOME ?? "", ".nova", "plugins", "installed", pluginId);
   assert(!fs.existsSync(managedRoot), `managed plugin directory still present: ${managedRoot}`);
   if (cliRoot) {
     const list = JSON.stringify(installRecords);

@@ -3,19 +3,19 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import {
-  startOpenClawCrablineAdapter,
-  type OpenClawCrablineChannelDriverSelection,
-  type OpenClawCrablineInbound,
-  type StartedOpenClawCrablineAdapter,
+  startNovaCrablineAdapter,
+  type NovaCrablineChannelDriverSelection,
+  type NovaCrablineInbound,
+  type StartedNovaCrablineAdapter,
 } from "@nova/crabline";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 import {
   isRecord,
   normalizeStringifiedOptionalString,
   readStringValue,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import { createQaBusState, type QaBusState } from "./bus-state.js";
 import {
   createCrablineProviderDelivery,
@@ -110,7 +110,7 @@ function readTelegramLifecycleEvent(params: {
       id: chatId,
       kind: chatId.startsWith("-") ? "group" : "direct",
     },
-    senderId: "openclaw",
+    senderId: "nova",
     senderName: "Nova QA",
     text,
     timestamp: Date.now(),
@@ -192,8 +192,8 @@ async function waitForCrablineReady(params: {
 }
 
 async function postCrablineInbound(params: {
-  adapter: StartedOpenClawCrablineAdapter;
-  providerInbound: OpenClawCrablineInbound;
+  adapter: StartedNovaCrablineAdapter;
+  providerInbound: NovaCrablineInbound;
 }) {
   const { response, release } = await fetchWithSsrFGuard({
     url: params.adapter.manifest.endpoints.adminInboundUrl,
@@ -237,7 +237,7 @@ async function postCrablineInbound(params: {
 }
 
 function createCrablineState(params: {
-  adapter: StartedOpenClawCrablineAdapter;
+  adapter: StartedNovaCrablineAdapter;
   state: QaBusState;
 }): QaCrablineTransportState {
   const baseState = params.state;
@@ -330,8 +330,8 @@ function createCrablineState(params: {
 }
 
 class QaCrablineTransport extends QaStateBackedTransportAdapter {
-  readonly #adapter: StartedOpenClawCrablineAdapter;
-  readonly #selection: OpenClawCrablineChannelDriverSelection;
+  readonly #adapter: StartedNovaCrablineAdapter;
+  readonly #selection: NovaCrablineChannelDriverSelection;
   readonly #transportPolicy?: QaTransportPolicy;
   readonly #state: QaCrablineTransportState;
   readonly sendNativeCommand?: (input: QaTransportNativeCommandInput) => Promise<void>;
@@ -341,9 +341,9 @@ class QaCrablineTransport extends QaStateBackedTransportAdapter {
   }>;
 
   constructor(params: {
-    adapter: StartedOpenClawCrablineAdapter;
+    adapter: StartedNovaCrablineAdapter;
     transportPolicy?: QaTransportPolicy;
-    selection: OpenClawCrablineChannelDriverSelection;
+    selection: NovaCrablineChannelDriverSelection;
     state: QaCrablineTransportState;
   }) {
     super({
@@ -375,7 +375,7 @@ class QaCrablineTransport extends QaStateBackedTransportAdapter {
   }
 
   createGatewayConfig = (params: { baseUrl: string }): QaTransportGatewayConfig => {
-    const config = this.#adapter.createGatewayConfig(params) as OpenClawConfig;
+    const config = this.#adapter.createGatewayConfig(params) as NovaConfig;
     if (this.#selection.channel !== "telegram") {
       return config as QaTransportGatewayConfig;
     }
@@ -430,7 +430,7 @@ class QaCrablineTransport extends QaStateBackedTransportAdapter {
   handleAction = async (_params: {
     action: QaTransportActionName;
     args: Record<string, unknown>;
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     accountId?: string | null;
   }) => {
     throw new Error(`Crabline local-provider transport does not support ${_params.action} yet.`);
@@ -449,7 +449,7 @@ class QaCrablineTransport extends QaStateBackedTransportAdapter {
 export async function createQaCrablineTransportAdapter(params: {
   outputDir: string;
   transportPolicy?: QaTransportPolicy;
-  selection: OpenClawCrablineChannelDriverSelection;
+  selection: NovaCrablineChannelDriverSelection;
   state?: QaBusState;
 }) {
   const requiresTelegramPolicy =
@@ -468,10 +468,10 @@ export async function createQaCrablineTransportAdapter(params: {
   );
   await fs.mkdir(path.dirname(recorderPath), { recursive: true });
   let observeEvent = (_event: unknown) => {};
-  const adapter = await startOpenClawCrablineAdapter({
+  const adapter = await startNovaCrablineAdapter({
     channel: params.selection.channel,
     onEvent: (event) => observeEvent(event),
-    openclawConfig: {},
+    novaConfig: {},
     recorderPath,
   });
 

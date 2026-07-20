@@ -4,11 +4,9 @@ import {
   getRuntimeConfigSourceSnapshot,
   selectApplicableRuntimeConfig,
 } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
-export function resolveAgentRuntimeToolConfig(
-  inputConfig?: OpenClawConfig,
-): OpenClawConfig | undefined {
+export function resolveAgentRuntimeToolConfig(inputConfig?: NovaConfig): NovaConfig | undefined {
   const runtimeConfig = getRuntimeConfigSnapshot() ?? undefined;
   if (!runtimeConfig) {
     return inputConfig;

@@ -26,8 +26,8 @@ const hoisted = await vi.hoisted(async () => {
         defaultFileName: string;
         contents: string;
       }) => ({
-        absolutePath: "/tmp/workspace/openclaw-session.html",
-        displayPath: "openclaw-session.html",
+        absolutePath: "/tmp/workspace/nova-session.html",
+        displayPath: "nova-session.html",
       }),
     ),
     migrateSessionEntriesMock: vi.fn((_entries: unknown[]) => undefined),
@@ -203,8 +203,8 @@ describe("buildExportSessionReply", () => {
       sandboxRuntime: { sandboxed: false, mode: "off" },
     });
     hoisted.writeSessionExportFileMock.mockResolvedValue({
-      absolutePath: "/tmp/workspace/openclaw-session.html",
-      displayPath: "openclaw-session.html",
+      absolutePath: "/tmp/workspace/nova-session.html",
+      displayPath: "nova-session.html",
     });
     hoisted.readAcpSessionMetaForEntryMock.mockReturnValue(undefined);
     hoisted.loadTranscriptEventsMock.mockImplementation(
@@ -280,7 +280,7 @@ describe("buildExportSessionReply", () => {
     expect(html).not.toContain("{{SESSION_DATA}}");
     expect(html).not.toContain("{{MARKED_JS}}");
     expect(html).not.toContain("{{HIGHLIGHT_JS}}");
-    expect(html).not.toContain("data-openclaw-export-placeholder");
+    expect(html).not.toContain("data-nova-export-placeholder");
     expect(html).toContain(
       Buffer.from(
         JSON.stringify({
@@ -497,7 +497,7 @@ describe("buildExportSessionReply", () => {
     expect(hoisted.writeSessionExportFileMock).toHaveBeenCalledWith({
       workspaceDir: "/tmp/workspace",
       requestedPath: "exports/session.html",
-      defaultFileName: expect.stringMatching(/^openclaw-session-session--.+\.html$/),
+      defaultFileName: expect.stringMatching(/^nova-session-session--.+\.html$/),
       contents: expect.stringContaining('id="session-data"'),
     });
     expect(reply.text).toContain("📄 File: exports/session.html");
@@ -519,11 +519,11 @@ describe("buildExportSessionReply", () => {
     hoisted.exportHtmlTemplateContents.set(
       "template.html",
       [
-        '<style data-openclaw-export-placeholder="CSS"></style>',
-        '<script id="session-data" type="application/json" data-openclaw-export-placeholder="SESSION_DATA"></script>',
-        '<script data-openclaw-export-placeholder="MARKED_JS"></script>',
-        '<script data-openclaw-export-placeholder="HIGHLIGHT_JS"></script>',
-        '<script data-openclaw-export-placeholder="JS"></script>',
+        '<style data-nova-export-placeholder="CSS"></style>',
+        '<script id="session-data" type="application/json" data-nova-export-placeholder="SESSION_DATA"></script>',
+        '<script data-nova-export-placeholder="MARKED_JS"></script>',
+        '<script data-nova-export-placeholder="HIGHLIGHT_JS"></script>',
+        '<script data-nova-export-placeholder="JS"></script>',
       ].join(""),
     );
     hoisted.exportHtmlTemplateContents.set("template.css", "/* {{THEME_VARS}} */$&$1");
@@ -545,11 +545,11 @@ describe("buildExportSessionReply", () => {
 
   it("exports marker-backed sessions by identity without requiring the marker as a file", async () => {
     hoisted.resolveSessionFilePathMock.mockReturnValue(
-      "sqlite:target:session-1:/tmp/target-store/openclaw-agent.sqlite",
+      "sqlite:target:session-1:/tmp/target-store/nova-agent.sqlite",
     );
     hoisted.loadSessionStoreMock.mockReturnValue({
       "agent:target:session": {
-        sessionFile: "sqlite:target:session-1:/tmp/target-store/openclaw-agent.sqlite",
+        sessionFile: "sqlite:target:session-1:/tmp/target-store/nova-agent.sqlite",
         sessionId: "session-1",
         updatedAt: 1,
       },

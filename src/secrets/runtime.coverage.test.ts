@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import type { AuthProfileStore } from "../agents/auth-profiles.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type {
   PluginOrigin,
   PluginWebFetchProviderEntry,
@@ -75,7 +75,7 @@ function createCoverageWebSearchProvider(params: {
   order: number;
 }): PluginWebSearchProviderEntry {
   const credentialPath = `plugins.entries.${params.pluginId}.config.webSearch.apiKey`;
-  const readConfiguredCredential = (config?: OpenClawConfig): unknown =>
+  const readConfiguredCredential = (config?: NovaConfig): unknown =>
     (config?.plugins?.entries?.[params.pluginId]?.config as { webSearch?: { apiKey?: unknown } })
       ?.webSearch?.apiKey;
   return {
@@ -109,7 +109,7 @@ function createCoverageWebFetchProvider(params: {
   envVar: string;
 }): PluginWebFetchProviderEntry {
   const credentialPath = `plugins.entries.${params.pluginId}.config.webFetch.apiKey`;
-  const readConfiguredCredential = (config?: OpenClawConfig): unknown =>
+  const readConfiguredCredential = (config?: NovaConfig): unknown =>
     (config?.plugins?.entries?.[params.pluginId]?.config as { webFetch?: { apiKey?: unknown } })
       ?.webFetch?.apiKey;
   return {
@@ -249,7 +249,7 @@ vi.mock("../plugins/web-provider-public-artifacts.explicit.js", () => ({
 
 type SecretRegistryEntry = {
   id: string;
-  configFile: "openclaw.json" | "auth-profiles.json";
+  configFile: "nova.json" | "auth-profiles.json";
   pathPattern: string;
   refPathPattern?: string;
   secretShape: "secret_input" | "sibling_ref";
@@ -260,7 +260,7 @@ type SecretRegistryEntry = {
 type SecretRefCredentialMatrix = {
   entries: Array<{
     id: string;
-    configFile: "openclaw.json" | "auth-profiles.json";
+    configFile: "nova.json" | "auth-profiles.json";
     path: string;
     refPath?: string;
     secretShape: SecretRegistryEntry["secretShape"];
@@ -412,7 +412,7 @@ function buildCoverageLoadablePluginOrigins(
   return origins;
 }
 
-function addCoveragePluginLoadPath(config: OpenClawConfig, pluginId: string): void {
+function addCoveragePluginLoadPath(config: NovaConfig, pluginId: string): void {
   const loadPath = COVERAGE_CONFIG_PLUGIN_SOURCE_DIRS.get(pluginId);
   if (!loadPath) {
     return;
@@ -541,19 +541,19 @@ function batchUsesRuntimeWebToolsOnly(batch: readonly SecretRegistryEntry[]): bo
   );
 }
 
-function collectOpenClawCoverageEntries(options: {
+function collectNovaCoverageEntries(options: {
   includePluginEntries: boolean;
 }): SecretRegistryEntry[] {
   return COVERAGE_REGISTRY_ENTRIES.filter(
     (entry) =>
-      entry.configFile === "openclaw.json" &&
+      entry.configFile === "nova.json" &&
       entry.id.startsWith("plugins.entries.") === options.includePluginEntries &&
       !PLUGIN_OWNED_NOVA_COVERAGE_EXCLUSIONS.has(entry.id),
   );
 }
 
-function applyConfigForOpenClawTarget(
-  config: OpenClawConfig,
+function applyConfigForNovaTarget(
+  config: NovaConfig,
   entry: SecretRegistryEntry,
   envId: string,
   wildcardToken: string,
@@ -750,7 +750,7 @@ function applyAuthStoreTarget(
 }
 
 async function prepareConfigCoverageSnapshot(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   loadablePluginOrigins?: ReadonlyMap<string, PluginOrigin>;
   includeRuntimeWebTools?: boolean;
@@ -803,7 +803,7 @@ async function prepareConfigCoverageSnapshot(params: {
 }
 
 async function prepareAuthCoverageSnapshot(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   agentDirs: string[];
   loadAuthStore: (agentDir?: string) => AuthProfileStore;
@@ -848,12 +848,12 @@ async function prepareAuthCoverageSnapshot(params: {
   };
 }
 
-async function expectOpenClawCoverageBatchResolved(
+async function expectNovaCoverageBatchResolved(
   label: string,
   batch: readonly SecretRegistryEntry[],
 ): Promise<void> {
   logCoverageBatch(label, batch);
-  const config = {} as OpenClawConfig;
+  const config = {} as NovaConfig;
   const env: Record<string, string> = {};
   for (const [index, entry] of batch.entries()) {
     const envId = toCoverageEnvRefId("NOVA_SECRET_TARGET", entry.id);
@@ -861,7 +861,7 @@ async function expectOpenClawCoverageBatchResolved(
     const expectedValue = `resolved-${entry.id}`;
     const wildcardToken = resolveCoverageWildcardToken(index);
     env[runtimeEnvId] = expectedValue;
-    applyConfigForOpenClawTarget(config, entry, envId, wildcardToken);
+    applyConfigForNovaTarget(config, entry, envId, wildcardToken);
   }
   const snapshot = await prepareConfigCoverageSnapshot({
     config,
@@ -880,10 +880,10 @@ async function expectOpenClawCoverageBatchResolved(
 }
 
 const NOVA_CORE_COVERAGE_BATCHES = buildCoverageBatches(
-  collectOpenClawCoverageEntries({ includePluginEntries: false }),
+  collectNovaCoverageEntries({ includePluginEntries: false }),
 );
 const NOVA_PLUGIN_COVERAGE_BATCHES = buildCoverageBatches(
-  collectOpenClawCoverageEntries({ includePluginEntries: true }),
+  collectNovaCoverageEntries({ includePluginEntries: true }),
 );
 const AUTH_PROFILE_COVERAGE_BATCHES = buildCoverageBatches(
   COVERAGE_REGISTRY_ENTRIES.filter((entry) => entry.configFile === "auth-profiles.json"),
@@ -922,7 +922,7 @@ describe("secrets runtime target coverage", () => {
       batch.some((entry) => entry.id === "channels.googlechat.serviceAccount"),
     );
     if (googleChatBatch) {
-      await expectOpenClawCoverageBatchResolved("openclaw.json core", googleChatBatch);
+      await expectNovaCoverageBatchResolved("nova.json core", googleChatBatch);
     }
     const webProviderBatch = NOVA_PLUGIN_COVERAGE_BATCHES.find((batch) =>
       batch.some((entry) => entry.id.includes(".config.webSearch.")),
@@ -930,25 +930,25 @@ describe("secrets runtime target coverage", () => {
     if (webProviderBatch) {
       // Warm the shared plugin snapshot once; individual target assertions then
       // measure resolution work instead of one-time manifest discovery.
-      await expectOpenClawCoverageBatchResolved("openclaw.json plugins", webProviderBatch);
+      await expectNovaCoverageBatchResolved("nova.json plugins", webProviderBatch);
     }
   });
 
-  describe("openclaw.json core and channel registry targets", () => {
+  describe("nova.json core and channel registry targets", () => {
     test.each(NOVA_CORE_COVERAGE_BATCHES.map(toCoverageBatchCase))(
       "handles $name",
       async ({ batch }) => {
-        await expectOpenClawCoverageBatchResolved("openclaw.json core", batch);
+        await expectNovaCoverageBatchResolved("nova.json core", batch);
       },
       RUNTIME_COVERAGE_TEST_TIMEOUT_MS,
     );
   });
 
-  describe("openclaw.json plugin registry targets", () => {
+  describe("nova.json plugin registry targets", () => {
     test.each(NOVA_PLUGIN_COVERAGE_BATCHES.map(toCoverageBatchCase))(
       "handles $name",
       async ({ batch }) => {
-        await expectOpenClawCoverageBatchResolved("openclaw.json plugins", batch);
+        await expectNovaCoverageBatchResolved("nova.json plugins", batch);
       },
       RUNTIME_COVERAGE_TEST_TIMEOUT_MS,
     );
@@ -970,9 +970,9 @@ describe("secrets runtime target coverage", () => {
           applyAuthStoreTarget(authStore, entry, envId, resolveCoverageWildcardToken(index));
         }
         const snapshot = await prepareAuthCoverageSnapshot({
-          config: {} as OpenClawConfig,
+          config: {} as NovaConfig,
           env,
-          agentDirs: ["/tmp/openclaw-agent-main"],
+          agentDirs: ["/tmp/nova-agent-main"],
           loadAuthStore: () => authStore,
         });
         const resolvedStore = snapshot.authStores[0]?.store;

@@ -7,10 +7,7 @@ import path from "node:path";
 import { PassThrough } from "node:stream";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createPinnedLookup } from "../infra/net/ssrf.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import { setMediaStoreDownloadDepsForTest } from "./store.download.js";
 import { saveMediaSource } from "./store.js";
 
@@ -129,7 +126,7 @@ function usePinnedResolver(timeouts?: {
 }
 
 describe("media store download timeouts", () => {
-  let testState: OpenClawTestState;
+  let testState: NovaTestState;
   let mediaRoot: string;
   let server: http.Server;
   let baseUrl: string;
@@ -138,9 +135,9 @@ describe("media store download timeouts", () => {
   let stalledSocketClosed: Promise<void> | undefined;
 
   beforeAll(async () => {
-    testState = await createOpenClawTestState({
+    testState = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-media-store-download-timeout-",
+      prefix: "nova-media-store-download-timeout-",
     });
     mediaRoot = path.join(testState.stateDir, "media");
     openSockets = new Set();

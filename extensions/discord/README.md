@@ -1,11 +1,11 @@
-# OpenClaw Discord
+# Nova Discord
 
-Official OpenClaw channel plugin for Discord servers, channels, DMs, slash commands, and app events.
+Official Nova channel plugin for Discord servers, channels, DMs, slash commands, and app events.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/discord
+nova plugin add @nova/discord
 ```
 
-Configure a Discord bot token and the channels or servers OpenClaw should handle. The plugin lets OpenClaw agents receive Discord messages and respond through the configured Discord app.
+Configure a Discord bot token and the channels or servers Nova should handle. The plugin lets Nova agents receive Discord messages and respond through the configured Discord app.

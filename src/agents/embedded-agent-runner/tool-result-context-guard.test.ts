@@ -2,7 +2,7 @@
 // prechecks, and context-engine loop hooks for oversized tool outputs.
 
 import { expectDefined } from "@nova/normalization-core";
-import type { AgentMessage } from "openclaw/plugin-sdk/agent-core";
+import type { AgentMessage } from "nova/plugin-sdk/agent-core";
 import { describe, expect, it, vi } from "vitest";
 import type { ContextEngine, ContextEngineRuntimeSettings } from "../../context-engine/types.js";
 import { sanitizeToolUseResultPairing } from "../session-transcript-repair.js";
@@ -147,7 +147,7 @@ async function applyMidTurnPrecheckGuardToContext(
   return await agent.transformContext?.(contextForNextCall, new AbortController().signal);
 }
 
-function expectOpenClawTruncation(text: string): void {
+function expectNovaTruncation(text: string): void {
   expect(text).toContain(CONTEXT_LIMIT_TRUNCATION_NOTICE);
   expect(text).toMatch(
     /\[\.\.\. \d+ more characters truncated; rerun with narrower args if needed\]$/,
@@ -221,7 +221,7 @@ describe("installToolResultContextGuard", () => {
       expectDefined(transformed[0], "transformed[0] test invariant"),
     );
     expect(newResultText.length).toBeLessThan(5_000);
-    expectOpenClawTruncation(newResultText);
+    expectNovaTruncation(newResultText);
     expect(
       getToolResultText(
         expectDefined(contextForNextCall[0], "contextForNextCall[0] test invariant"),
@@ -242,7 +242,7 @@ describe("installToolResultContextGuard", () => {
     const transformed = (await applyGuardToContext(agent, contextForNextCall)) as AgentMessage[];
 
     expect(transformed).not.toBe(contextForNextCall);
-    expectOpenClawTruncation(
+    expectNovaTruncation(
       getToolResultText(expectDefined(transformed[0], "transformed[0] test invariant")),
     );
   });
@@ -257,7 +257,7 @@ describe("installToolResultContextGuard", () => {
     );
 
     expect(typeof (transformed[0] as { content?: unknown }).content).toBe("string");
-    expectOpenClawTruncation(newResultText);
+    expectNovaTruncation(newResultText);
   });
 
   it("drops oversized tool-result details when truncating once", async () => {
@@ -272,7 +272,7 @@ describe("installToolResultContextGuard", () => {
       expectDefined(transformed[0], "transformed[0] test invariant"),
     );
 
-    expectOpenClawTruncation(newResultText);
+    expectNovaTruncation(newResultText);
     expect(result.details).toBeUndefined();
     const originalDetails = (contextForNextCall[0] as { details?: { truncation?: unknown } })
       .details;
@@ -362,7 +362,7 @@ describe("installToolResultContextGuard", () => {
       100_000,
     )) as AgentMessage[];
 
-    expectOpenClawTruncation(
+    expectNovaTruncation(
       getToolResultText(expectDefined(transformed[0], "transformed[0] test invariant")),
     );
   });
@@ -751,7 +751,7 @@ describe("installContextEngineLoopHook", () => {
       agentId: "main",
       sessionId,
       sessionKey,
-      storePath: "/tmp/state/openclaw.sqlite",
+      storePath: "/tmp/state/nova.sqlite",
     };
     installContextEngineLoopHook({
       agent,
@@ -827,17 +827,17 @@ describe("installContextEngineLoopHook", () => {
     const transformedMessage = (transformed as AgentMessage[])[0];
 
     expect(afterTurnMessage).toMatchObject({ role: "user", content: "visible prompt" });
-    expect(JSON.stringify(afterTurnMessage)).not.toContain("__openclawTranscriptPromptText");
+    expect(JSON.stringify(afterTurnMessage)).not.toContain("__novaTranscriptPromptText");
     expect(assembleMessage).toMatchObject({
       role: "user",
       content: "model-only hook context\n\nvisible prompt",
     });
-    expect(JSON.stringify(assembleMessage)).not.toContain("__openclawTranscriptPromptText");
+    expect(JSON.stringify(assembleMessage)).not.toContain("__novaTranscriptPromptText");
     expect(transformedMessage).toMatchObject({
       role: "user",
       content: "model-only hook context\n\nvisible prompt",
     });
-    expect(JSON.stringify(transformedMessage)).not.toContain("__openclawTranscriptPromptText");
+    expect(JSON.stringify(transformedMessage)).not.toContain("__novaTranscriptPromptText");
   });
 
   it("calls afterTurn and assemble when new messages are appended after the first call", async () => {

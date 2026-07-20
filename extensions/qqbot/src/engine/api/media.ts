@@ -12,8 +12,8 @@
  */
 
 import * as fs from "node:fs";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { fetchWithSsrFGuard, isBlockedHostnameOrIp } from "openclaw/plugin-sdk/ssrf-runtime";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import { fetchWithSsrFGuard, isBlockedHostnameOrIp } from "nova/plugin-sdk/ssrf-runtime";
 import {
   MediaFileType,
   type ChatScope,

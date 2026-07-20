@@ -1,11 +1,11 @@
-# OpenClaw Anthropic Vertex Provider
+# Nova Anthropic Vertex Provider
 
-Official OpenClaw provider plugin for Claude models hosted through Google Vertex AI.
+Official Nova provider plugin for Claude models hosted through Google Vertex AI.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugin add @nova/anthropic-vertex-provider
+nova plugin add @nova/anthropic-vertex-provider
 ```
 
-Configure Google Cloud credentials and the target Vertex project/region in OpenClaw, then select Claude models with the Anthropic Vertex provider.
+Configure Google Cloud credentials and the target Vertex project/region in Nova, then select Claude models with the Anthropic Vertex provider.

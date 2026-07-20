@@ -7,7 +7,7 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
 } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isDiagnosticFlagEnabled } from "../infra/diagnostic-flags.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { planManifestModelCatalogRows } from "../model-catalog/manifest-planner.js";
@@ -64,7 +64,7 @@ type DiscoveredModel = {
 export type BuildPreparedModelCatalogParams = {
   agentDir: string;
   authCredentials: Readonly<AuthStorageData>;
-  config: OpenClawConfig;
+  config: NovaConfig;
   modelRegistry: ModelRegistry;
   readOnly?: boolean;
   metadataSnapshot: PluginMetadataSnapshot;
@@ -77,7 +77,7 @@ type ManifestModelCatalogCacheEntry = {
   snapshot: PluginMetadataSnapshot;
   rows: ModelCatalogEntry[];
 };
-let manifestModelCatalogCache = new WeakMap<OpenClawConfig, ManifestModelCatalogCacheEntry>();
+let manifestModelCatalogCache = new WeakMap<NovaConfig, ManifestModelCatalogCacheEntry>();
 const modelSuppressionLoader = createLazyImportLoader(
   () => import("./model-suppression.runtime.js"),
 );
@@ -294,7 +294,7 @@ function createModelCatalogSnapshot(
 }
 
 export function loadManifestModelCatalog(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   fallbackToMetadataScan?: boolean;

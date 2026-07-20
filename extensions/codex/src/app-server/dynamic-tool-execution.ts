@@ -7,16 +7,16 @@ import {
   formatToolExecutionErrorMessage,
   resolveToolExecutionErrorKind,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import {
   hasPendingInternalDiagnosticEvent,
   type DiagnosticEventPayload,
-} from "openclaw/plugin-sdk/diagnostic-runtime";
+} from "nova/plugin-sdk/diagnostic-runtime";
 import {
   addTimerTimeoutGraceMs,
   parseStrictNonNegativeInteger,
-} from "openclaw/plugin-sdk/number-runtime";
-import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { truncateUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   createFailedDynamicToolResponse,
   type CodexDynamicToolRuntimeResponse,
@@ -356,7 +356,7 @@ type TerminalDynamicToolReleaseState = {
   currentTurnHadNonTerminalDynamicToolResult: boolean;
   activeAppServerTurnRequests: number;
   activeTurnItemIdsCount: number;
-  pendingOpenClawDynamicToolCompletionIdsCount: number;
+  pendingNovaDynamicToolCompletionIdsCount: number;
 };
 
 /** Decides whether a terminal dynamic tool response can release the Codex turn. */
@@ -370,7 +370,7 @@ export function shouldReleaseTurnAfterTerminalDynamicTool(
     !state.currentTurnHadNonTerminalDynamicToolResult &&
     state.activeAppServerTurnRequests === 0 &&
     state.activeTurnItemIdsCount === 0 &&
-    state.pendingOpenClawDynamicToolCompletionIdsCount === 0
+    state.pendingNovaDynamicToolCompletionIdsCount === 0
   );
 }
 
@@ -391,7 +391,7 @@ type TerminalDynamicToolBatchAction =
 type TerminalDynamicToolBatchState = {
   activeAppServerTurnRequests: number;
   activeTurnItemIdsCount: number;
-  pendingOpenClawDynamicToolCompletionIdsCount: number;
+  pendingNovaDynamicToolCompletionIdsCount: number;
   currentTurnHadNonTerminalDynamicToolResult: boolean;
   hasPendingTerminalDynamicToolRelease: boolean;
 };
@@ -403,7 +403,7 @@ export function resolveTerminalDynamicToolBatchAction(
   if (
     state.activeAppServerTurnRequests > 0 ||
     state.activeTurnItemIdsCount > 0 ||
-    state.pendingOpenClawDynamicToolCompletionIdsCount > 0
+    state.pendingNovaDynamicToolCompletionIdsCount > 0
   ) {
     return "wait";
   }

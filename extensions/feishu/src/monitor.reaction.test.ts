@@ -2,9 +2,9 @@
 import {
   createInboundDebouncer,
   resolveInboundDebounceMs,
-} from "openclaw/plugin-sdk/channel-inbound-debounce";
-import { hasControlCommand, isControlCommandMessage } from "openclaw/plugin-sdk/command-detection";
-import { createNonExitingRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/channel-inbound-debounce";
+import { hasControlCommand, isControlCommandMessage } from "nova/plugin-sdk/command-detection";
+import { createNonExitingRuntimeEnv } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ClawdbotConfig, PluginRuntime } from "../runtime-api.js";
 import { parseFeishuMessageEvent, type FeishuMessageEvent } from "./bot.js";

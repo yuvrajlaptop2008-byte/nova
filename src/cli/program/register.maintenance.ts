@@ -37,7 +37,7 @@ export function registerMaintenanceCommands(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/doctor", "docs.openclaw.ai/cli/doctor")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/doctor", "docs.nova.ai/cli/doctor")}\n`,
     )
     .option("--no-workspace-suggestions", "Disable workspace memory system suggestions", false)
     .option("--yes", "Accept defaults without prompting", false)
@@ -72,7 +72,7 @@ export function registerMaintenanceCommands(program: Command) {
     )
     .option(
       "--github-issue",
-      "With --session-sqlite recover: prepare and optionally create an openclaw/openclaw issue",
+      "With --session-sqlite recover: prepare and optionally create an nova/nova issue",
       false,
     )
     .option(
@@ -133,15 +133,13 @@ export function registerMaintenanceCommands(program: Command) {
       }
       if (hasSessionSqliteOnlyDoctorOptions(opts)) {
         defaultRuntime.error(
-          "doctor session SQLite options require --session-sqlite. Use `openclaw doctor --session-sqlite dry-run ...`.",
+          "doctor session SQLite options require --session-sqlite. Use `nova doctor --session-sqlite dry-run ...`.",
         );
         defaultRuntime.exit(2);
         return;
       }
       if (hasLintOnlyDoctorOptions(opts)) {
-        defaultRuntime.error(
-          "doctor lint options require --lint. Use `openclaw doctor --lint ...`.",
-        );
+        defaultRuntime.error("doctor lint options require --lint. Use `nova doctor --lint ...`.");
         defaultRuntime.exit(2);
         return;
       }
@@ -181,7 +179,7 @@ export function registerMaintenanceCommands(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/dashboard", "docs.openclaw.ai/cli/dashboard")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/dashboard", "docs.nova.ai/cli/dashboard")}\n`,
     )
     .option("--no-open", "Print URL but do not launch a browser")
     .option("--json", "Output dashboard connection details as JSON", false)
@@ -202,8 +200,7 @@ export function registerMaintenanceCommands(program: Command) {
     .description("Reset local config/state (keeps the CLI installed)")
     .addHelpText(
       "after",
-      () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/reset", "docs.openclaw.ai/cli/reset")}\n`,
+      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/reset", "docs.nova.ai/cli/reset")}\n`,
     )
     .option("--scope <scope>", "config|config+creds+sessions|full (default: interactive prompt)")
     .option("--yes", "Skip confirmation prompts", false)
@@ -227,7 +224,7 @@ export function registerMaintenanceCommands(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/uninstall", "docs.openclaw.ai/cli/uninstall")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/uninstall", "docs.nova.ai/cli/uninstall")}\n`,
     )
     .option("--service", "Remove the gateway service", false)
     .option("--state", "Remove state + config", false)

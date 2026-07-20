@@ -1,11 +1,11 @@
 // Discord type declarations define plugin contracts.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import type { ThreadBindingManager } from "./thread-bindings.js";
 
-type DiscordConfig = NonNullable<OpenClawConfig["channels"]>["discord"];
+type DiscordConfig = NonNullable<NovaConfig["channels"]>["discord"];
 
 export type DiscordCommandArgContext = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   discordConfig: DiscordConfig;
   accountId: string;
   sessionPrefix: string;

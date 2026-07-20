@@ -7,7 +7,7 @@ type PackageJson = {
   version?: string;
   devDependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
-  openclaw?: {
+  nova?: {
     install?: {
       minHostVersion?: string;
     };
@@ -15,7 +15,7 @@ type PackageJson = {
       pluginApi?: string;
     };
     build?: {
-      openclawVersion?: string;
+      novaVersion?: string;
     };
   };
 };
@@ -27,11 +27,11 @@ type SyncPluginVersionsOptions = {
 const NOVA_VERSION_RANGE_RE = /^>=\d{4}\.\d{1,2}\.\d{1,2}(?:[-.][^"\s]+)?$/u;
 const VERSION_ALIGNED_PACKAGE_DIRS = ["packages/ai"] as const;
 
-function syncOpenClawDependencyRange(
+function syncNovaDependencyRange(
   deps: Record<string, string> | undefined,
   targetVersion: string,
 ): boolean {
-  const current = deps?.openclaw;
+  const current = deps?.nova;
   if (!current || current === "workspace:*" || !NOVA_VERSION_RANGE_RE.test(current)) {
     return false;
   }
@@ -39,12 +39,12 @@ function syncOpenClawDependencyRange(
   if (current === next) {
     return false;
   }
-  deps.openclaw = next;
+  deps.nova = next;
   return true;
 }
 
 function syncPluginApiVersion(pkg: PackageJson, targetVersion: string): boolean {
-  const compat = pkg.openclaw?.compat;
+  const compat = pkg.nova?.compat;
   const current = compat?.pluginApi;
   if (!current || !NOVA_VERSION_RANGE_RE.test(current)) {
     return false;
@@ -57,16 +57,16 @@ function syncPluginApiVersion(pkg: PackageJson, targetVersion: string): boolean 
   return true;
 }
 
-function syncBuildOpenClawVersion(pkg: PackageJson, targetVersion: string): boolean {
-  const build = pkg.openclaw?.build;
-  const current = build?.openclawVersion;
+function syncBuildNovaVersion(pkg: PackageJson, targetVersion: string): boolean {
+  const build = pkg.nova?.build;
+  const current = build?.novaVersion;
   if (!current) {
     return false;
   }
   if (current === targetVersion) {
     return false;
   }
-  build.openclawVersion = targetVersion;
+  build.novaVersion = targetVersion;
   return true;
 }
 
@@ -155,18 +155,18 @@ export function syncPluginVersions(
     }
 
     const versionChanged = pkg.version !== targetVersion;
-    const devDependencyChanged = syncOpenClawDependencyRange(pkg.devDependencies, targetVersion);
-    const peerDependencyChanged = syncOpenClawDependencyRange(pkg.peerDependencies, targetVersion);
+    const devDependencyChanged = syncNovaDependencyRange(pkg.devDependencies, targetVersion);
+    const peerDependencyChanged = syncNovaDependencyRange(pkg.peerDependencies, targetVersion);
     // minHostVersion is a compatibility floor, not release alignment metadata.
     // Keep it stable unless the owning plugin intentionally raises it.
     const pluginApiChanged = syncPluginApiVersion(pkg, targetVersion);
-    const buildOpenClawVersionChanged = syncBuildOpenClawVersion(pkg, targetVersion);
+    const buildNovaVersionChanged = syncBuildNovaVersion(pkg, targetVersion);
     const packageChanged =
       versionChanged ||
       devDependencyChanged ||
       peerDependencyChanged ||
       pluginApiChanged ||
-      buildOpenClawVersionChanged;
+      buildNovaVersionChanged;
     if (!packageChanged) {
       skipped.push(pkg.name);
       continue;

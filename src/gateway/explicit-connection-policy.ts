@@ -1,6 +1,6 @@
 // Explicit connection policy decides when CLI gateway calls can avoid reading
 // config because URL and auth were fully supplied by flags.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { trimToUndefined, type ExplicitGatewayAuth } from "./credentials.js";
 
 // Explicit connection policy lets CLI paths skip config IO only when the caller
@@ -12,7 +12,7 @@ function hasExplicitGatewayConnectionAuth(auth?: ExplicitGatewayAuth): boolean {
 
 /** Returns true when url/auth flags are sufficient and loading Nova config is unnecessary. */
 export function canSkipGatewayConfigLoad(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   urlOverride?: string;
   explicitAuth?: ExplicitGatewayAuth;
 }): boolean {

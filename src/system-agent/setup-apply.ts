@@ -9,7 +9,7 @@ import {
 } from "../config/config.js";
 import { applyMergePatch } from "../config/merge-patch.js";
 import type { AgentModelEntryConfig } from "../config/types.agent-defaults.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/types.openclaw.js";
+import type { ConfigFileSnapshot, NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { enablePluginInConfig } from "../plugins/enable.js";
 import { normalizeAgentId } from "../routing/session-key.js";
@@ -49,7 +49,7 @@ export type SystemAgentSetupApplyParams = {
   /** Provider-auth config produced in the isolated manual-key flow. */
   configPatch?: unknown;
   /** Success-gated final normalization against the config held by the write lock. */
-  finalizeConfig?: (config: OpenClawConfig, sourceConfig: OpenClawConfig) => OpenClawConfig;
+  finalizeConfig?: (config: NovaConfig, sourceConfig: NovaConfig) => NovaConfig;
   /** Plugin whose enablement belongs to the successful setup transaction. */
   enablePluginId?: string;
   /** Refresh an installed plugin after its success-gated enablement commits. */
@@ -76,7 +76,7 @@ type SystemAgentSetupApplyHooks = {
 /** Prompter for quickstart-only flows: notes go to the log, prompts fail loud. */
 export function createQuickstartNotePrompter(runtime: RuntimeEnv): WizardPrompter {
   const unexpected = (kind: string) => {
-    throw new Error(`openclaw setup hit an interactive ${kind} prompt; quickstart must not ask`);
+    throw new Error(`nova setup hit an interactive ${kind} prompt; quickstart must not ask`);
   };
   return {
     intro: async () => {},
@@ -109,7 +109,7 @@ export function createQuickstartNotePrompter(runtime: RuntimeEnv): WizardPrompte
   };
 }
 
-function applySecurityAcknowledgement(config: OpenClawConfig): OpenClawConfig {
+function applySecurityAcknowledgement(config: NovaConfig): NovaConfig {
   if (config.wizard?.securityAcknowledgedAt) {
     return config;
   }
@@ -122,7 +122,7 @@ function applySecurityAcknowledgement(config: OpenClawConfig): OpenClawConfig {
 }
 
 type SystemAgentModelSelectionParams = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   model: string;
   /** Write the model onto this configured agent instead of the default route. */
   targetAgentId?: string;
@@ -140,7 +140,7 @@ type SystemAgentModelSelectionModules = {
 function applySystemAgentModelSelectionWithModules(
   params: SystemAgentModelSelectionParams,
   modules: SystemAgentModelSelectionModules,
-): OpenClawConfig {
+): NovaConfig {
   const { agentScope, modelConfig, runtimePolicy } = modules;
   const nextConfig = structuredClone(params.config);
   const targetAgentId = params.targetAgentId ? normalizeAgentId(params.targetAgentId) : undefined;
@@ -231,7 +231,7 @@ function applySystemAgentModelSelectionWithModules(
 
 export async function createSystemAgentModelSelectionUpdater(
   params: Omit<SystemAgentModelSelectionParams, "config">,
-): Promise<(config: OpenClawConfig) => OpenClawConfig> {
+): Promise<(config: NovaConfig) => NovaConfig> {
   const [agentScope, modelConfig, runtimePolicy] = await Promise.all([
     import("../agents/agent-scope.js"),
     import("../commands/models/shared.js"),
@@ -243,7 +243,7 @@ export async function createSystemAgentModelSelectionUpdater(
 
 export async function applySystemAgentModelSelection(
   params: SystemAgentModelSelectionParams,
-): Promise<OpenClawConfig> {
+): Promise<NovaConfig> {
   const update = await createSystemAgentModelSelectionUpdater(params);
   return update(params.config);
 }
@@ -299,7 +299,7 @@ export async function applySystemAgentSetup(
           import("../agents/model-selection.js"),
         ] as const)
       : undefined;
-  const assertExpectedTarget = (config: OpenClawConfig): void => {
+  const assertExpectedTarget = (config: NovaConfig): void => {
     if (!guardModules) {
       return;
     }
@@ -368,7 +368,7 @@ export async function applySystemAgentSetup(
 
   const prompter = createQuickstartNotePrompter(runtime);
   const { configureGatewayForSetup } = await import("../wizard/setup.gateway-config.js");
-  const buildSetupCandidate = async (currentBaseConfig: OpenClawConfig) => {
+  const buildSetupCandidate = async (currentBaseConfig: NovaConfig) => {
     let setupBaseConfig = currentBaseConfig;
     if (enablePluginId) {
       const enabled = enablePluginInConfig(setupBaseConfig, enablePluginId);
@@ -378,7 +378,7 @@ export async function applySystemAgentSetup(
       setupBaseConfig = enabled.config;
     }
     if (configPatch !== undefined) {
-      setupBaseConfig = applyMergePatch(setupBaseConfig, configPatch) as OpenClawConfig;
+      setupBaseConfig = applyMergePatch(setupBaseConfig, configPatch) as NovaConfig;
     }
 
     let candidate = applyLocalSetupWorkspaceConfig(setupBaseConfig, workspace);
@@ -527,13 +527,13 @@ export async function applySystemAgentSetup(
       const { updateExecApprovals } = await import("../infra/exec-approvals.js");
       await updateExecApprovals({
         update: (approvals) =>
-          approvals.agents?.openclaw
+          approvals.agents?.nova
             ? null
             : {
                 ...approvals,
                 agents: {
                   ...approvals.agents,
-                  openclaw: { security: "full", ask: "off" },
+                  nova: { security: "full", ask: "off" },
                 },
               },
       });
@@ -553,7 +553,7 @@ export async function applySystemAgentSetup(
           config: nextConfig,
           reason: "source-changed",
           workspaceDir: workspace,
-          traceCommand: "openclaw-setup",
+          traceCommand: "nova-setup",
           logger: {
             warn: (message) => lines.push(message),
           },

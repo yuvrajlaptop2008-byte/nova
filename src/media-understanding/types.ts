@@ -2,13 +2,13 @@
 // auth, decisions, and structured extraction inputs.
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
 import type { ModelProviderConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 /** Agent-owned runtime handle carried opaquely through media provider requests. */
 type MediaPreparedModelRuntime = Readonly<{
   agentDir: string;
   workspaceDir?: string;
-  config: OpenClawConfig;
+  config: NovaConfig;
   createStores: () => unknown;
 }>;
 
@@ -160,7 +160,7 @@ export type ImageDescriptionRequest = {
   agentDir: string;
   workspaceDir?: string;
   preparedModelRuntime?: MediaPreparedModelRuntime;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   model: string;
   provider: string;
 };
@@ -185,7 +185,7 @@ export type ImagesDescriptionRequest = {
   agentDir: string;
   workspaceDir?: string;
   preparedModelRuntime?: MediaPreparedModelRuntime;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 };
 
 export type ImageDescriptionResult = {
@@ -226,7 +226,7 @@ export type StructuredExtractionRequest = {
   preferredProfile?: string;
   authStore?: AuthProfileStore;
   agentDir: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   model: string;
   provider: string;
 };
@@ -245,7 +245,7 @@ type MediaUnderstandingDocumentModelDefaults = {
 };
 
 export type MediaUnderstandingProviderAuthContext = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   provider: string;
   providerConfig?: ModelProviderConfig;
 };

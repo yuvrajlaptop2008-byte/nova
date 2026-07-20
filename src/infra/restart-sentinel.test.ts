@@ -13,28 +13,25 @@ vi.mock("../logging/subsystem.js", () => ({
   createSubsystemLogger: () => ({ warn: mockWarn }),
 }));
 
-vi.mock("../state/openclaw-state-db.js", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../state/openclaw-state-db.js")>();
+vi.mock("../state/nova-state-db.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../state/nova-state-db.js")>();
   return {
     ...actual,
-    openOpenClawStateDatabase: (...args: Parameters<typeof actual.openOpenClawStateDatabase>) => {
+    openNovaStateDatabase: (...args: Parameters<typeof actual.openNovaStateDatabase>) => {
       mockThrowOpen();
-      return actual.openOpenClawStateDatabase(...args);
+      return actual.openNovaStateDatabase(...args);
     },
-    runOpenClawStateWriteTransaction: (
-      ...args: Parameters<typeof actual.runOpenClawStateWriteTransaction>
+    runNovaStateWriteTransaction: (
+      ...args: Parameters<typeof actual.runNovaStateWriteTransaction>
     ) => {
       mockThrowWrite();
-      return actual.runOpenClawStateWriteTransaction(...args);
+      return actual.runNovaStateWriteTransaction(...args);
     },
   };
 });
 
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { withTempDir } from "../test-helpers/temp-dir.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import {
@@ -70,19 +67,19 @@ beforeEach(() => {
 });
 
 async function withRestartSentinelStateDir(run: () => Promise<void>): Promise<void> {
-  await withTempDir({ prefix: "openclaw-sentinel-" }, async (tempDir) => {
+  await withTempDir({ prefix: "nova-sentinel-" }, async (tempDir) => {
     try {
       await withEnvAsync({ NOVA_STATE_DIR: tempDir }, run);
     } finally {
-      closeOpenClawStateDatabaseForTest();
+      closeNovaStateDatabaseForTest();
     }
   });
 }
 
-type GatewayRestartSentinelDatabase = Pick<OpenClawStateKyselyDatabase, "gateway_restart_sentinel">;
+type GatewayRestartSentinelDatabase = Pick<NovaStateKyselyDatabase, "gateway_restart_sentinel">;
 
 function readSentinelRow() {
-  const { db } = openOpenClawStateDatabase();
+  const { db } = openNovaStateDatabase();
   const stateDb = getNodeSqliteKysely<GatewayRestartSentinelDatabase>(db);
   return executeSqliteQueryTakeFirstSync(
     db,
@@ -94,7 +91,7 @@ function readSentinelRow() {
 }
 
 function readSentinelRevisionFloor() {
-  const { db } = openOpenClawStateDatabase();
+  const { db } = openNovaStateDatabase();
   const stateDb = getNodeSqliteKysely<GatewayRestartSentinelDatabase>(db);
   return executeSqliteQueryTakeFirstSync(
     db,
@@ -106,7 +103,7 @@ function readSentinelRevisionFloor() {
 }
 
 function deleteSentinelRevisionFloor() {
-  const { db } = openOpenClawStateDatabase();
+  const { db } = openNovaStateDatabase();
   const stateDb = getNodeSqliteKysely<GatewayRestartSentinelDatabase>(db);
   executeSqliteQuerySync(
     db,
@@ -125,7 +122,7 @@ function updateSentinelRow(
     updated_at_ms: number;
   }>,
 ) {
-  const { db } = openOpenClawStateDatabase();
+  const { db } = openNovaStateDatabase();
   const stateDb = getNodeSqliteKysely<GatewayRestartSentinelDatabase>(db);
   executeSqliteQuerySync(
     db,
@@ -383,7 +380,7 @@ describe("restart sentinel", () => {
       status: "ok" as const,
       ts: Date.now(),
       message: "Run restart-gateway.ps1 to apply config changes.",
-      doctorHint: "Run openclaw doctor --non-interactive",
+      doctorHint: "Run nova doctor --non-interactive",
       stats: { mode: "config.patch", requiresRestart: true },
     };
 
@@ -391,7 +388,7 @@ describe("restart sentinel", () => {
       [
         "Gateway restart required (config.patch)",
         "Run restart-gateway.ps1 to apply config changes.",
-        "Run openclaw doctor --non-interactive",
+        "Run nova doctor --non-interactive",
       ].join("\n"),
     );
     expect(summarizeRestartSentinel(payload)).toBe("Gateway restart required (config.patch)");
@@ -425,7 +422,7 @@ describe("restart sentinel", () => {
       status: "error" as const,
       ts: Date.now(),
       message: "Patch failed",
-      doctorHint: "Run openclaw doctor",
+      doctorHint: "Run nova doctor",
       stats: { mode: "patch", reason: "validation failed" },
     };
 
@@ -434,7 +431,7 @@ describe("restart sentinel", () => {
         "Gateway restart config-patch error (patch)",
         "Patch failed",
         "Reason: validation failed",
-        "Run openclaw doctor",
+        "Run nova doctor",
       ].join("\n"),
     );
   });
@@ -639,7 +636,7 @@ describe("control-plane update restart sentinel", () => {
     const result = {
       status: "ok" as const,
       mode: "npm" as const,
-      root: "/tmp/openclaw",
+      root: "/tmp/nova",
       before: { version: "2026.4.23" },
       after: { version: "2026.4.24" },
       steps: [],
@@ -708,7 +705,7 @@ describe("restart sentinel message dedup", () => {
 
   it("formats the non-interactive doctor command as actionability guidance", () => {
     expect(formatDoctorNonInteractiveHint({ PATH: "/usr/bin:/bin" })).toBe(
-      "Recommended follow-up: run openclaw doctor --non-interactive in a terminal or approvals-capable Nova surface.",
+      "Recommended follow-up: run nova doctor --non-interactive in a terminal or approvals-capable Nova surface.",
     );
   });
 
@@ -719,7 +716,7 @@ describe("restart sentinel message dedup", () => {
         PATH: "/usr/bin:/bin",
       }),
     ).toBe(
-      "Recommended follow-up: run openclaw --profile isolated doctor --non-interactive in a terminal or approvals-capable Nova surface.",
+      "Recommended follow-up: run nova --profile isolated doctor --non-interactive in a terminal or approvals-capable Nova surface.",
     );
   });
 });

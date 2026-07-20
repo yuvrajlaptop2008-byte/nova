@@ -1,8 +1,5 @@
 // Telegram plugin module implements outbound params behavior.
-import {
-  parseStrictInteger,
-  parseStrictNonNegativeInteger,
-} from "openclaw/plugin-sdk/number-runtime";
+import { parseStrictInteger, parseStrictNonNegativeInteger } from "nova/plugin-sdk/number-runtime";
 
 function parseIntegerId(value: unknown): number | undefined {
   return parseStrictInteger(value);

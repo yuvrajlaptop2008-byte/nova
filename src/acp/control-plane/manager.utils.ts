@@ -6,7 +6,7 @@ import {
   resolveMainSessionKey,
 } from "../../config/sessions/main-session.js";
 import type { SessionAcpMeta } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { toErrorObject } from "../../infra/errors.js";
 import {
   normalizeAgentId,
@@ -58,10 +58,7 @@ function normalizeSessionKey(sessionKey: string): string {
 }
 
 /** Canonicalizes aliases and main-session keys before ACP metadata lookup. */
-export function canonicalizeAcpSessionKey(params: {
-  cfg: OpenClawConfig;
-  sessionKey: string;
-}): string {
+export function canonicalizeAcpSessionKey(params: { cfg: NovaConfig; sessionKey: string }): string {
   const normalized = normalizeSessionKey(params.sessionKey);
   if (!normalized) {
     return "";

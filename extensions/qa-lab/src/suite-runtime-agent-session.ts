@@ -1,19 +1,19 @@
 // Qa Lab plugin module implements suite runtime agent session behavior.
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
 import {
   formatSqliteSessionFileMarker,
   listSessionEntries,
   loadTranscriptEventsSync,
   resolveStorePath,
   upsertSessionEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { appendSessionTranscriptMessageByIdentity } from "openclaw/plugin-sdk/session-transcript-runtime";
+} from "nova/plugin-sdk/session-store-runtime";
+import { appendSessionTranscriptMessageByIdentity } from "nova/plugin-sdk/session-transcript-runtime";
 import {
   isRecord,
   normalizeOptionalString as readNonEmptyString,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import {
   createDirectReplyTranscriptSentinelScanner,
   extractGatewayMessageText,
@@ -155,8 +155,8 @@ function summarizeSessionTranscriptEvents(
     if (text) {
       finalText = text;
     }
-    const openClawMeta = isRecord(message["__openclaw"]) ? message["__openclaw"] : undefined;
-    const mirrorIdentity = readNonEmptyString(openClawMeta?.mirrorIdentity);
+    const novaMeta = isRecord(message["__nova"]) ? message["__nova"] : undefined;
+    const mirrorIdentity = readNonEmptyString(novaMeta?.mirrorIdentity);
     if (mirrorIdentity && text) {
       assistantMirrors.push({ identity: mirrorIdentity, text });
     }

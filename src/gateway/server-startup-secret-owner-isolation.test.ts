@@ -10,7 +10,7 @@ import { saveAuthProfileStore } from "../agents/auth-profiles/store.js";
 import { resolveMemorySearchConfig } from "../agents/memory-search.js";
 import { resolveApiKeyForProvider } from "../agents/model-auth.js";
 import { resolveSandboxContext } from "../agents/sandbox/context.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { resolveAuthProfileSecretOwnerId } from "../secrets/runtime-auth-profile-owner.js";
 import { getActiveSecretsRuntimeSnapshot } from "../secrets/runtime.js";
 import { withEnvAsync } from "../test-utils/env.js";
@@ -40,7 +40,7 @@ const { webSearchProviders } = vi.hoisted(() => {
         setCredentialValue: (config: { apiKey?: unknown }, value: unknown) => {
           config.apiKey = value;
         },
-        getConfiguredCredentialValue: (config: OpenClawConfig | undefined) => {
+        getConfiguredCredentialValue: (config: NovaConfig | undefined) => {
           const pluginConfig = config?.plugins?.entries?.google?.config;
           return pluginConfig && typeof pluginConfig === "object"
             ? (pluginConfig as { webSearch?: { apiKey?: unknown } }).webSearch?.apiKey
@@ -80,12 +80,12 @@ vi.mock("../secrets/runtime-web-tools-fallback.runtime.js", () => ({
 installGatewayTestHooks({ scope: "suite" });
 const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
-async function writeConfig(config: OpenClawConfig): Promise<void> {
+async function writeConfig(config: NovaConfig): Promise<void> {
   const { writeConfigFile } = await import("../config/config.js");
   await writeConfigFile(config);
 }
 
-function baseConfig(): OpenClawConfig {
+function baseConfig(): NovaConfig {
   return {
     gateway: {
       mode: "local",
@@ -192,7 +192,7 @@ describe("Gateway startup SecretRef owner isolation", () => {
     if (process.platform === "win32") {
       return;
     }
-    const root = tempDirs.make("openclaw-gateway-provider-outage-");
+    const root = tempDirs.make("nova-gateway-provider-outage-");
     const callLogPath = path.join(root, "calls.log");
     const commandPath = path.join(root, "provider.sh");
     const resolverPath = path.resolve("extensions/vault/vault-secret-ref-resolver.js");
@@ -275,7 +275,7 @@ describe("Gateway startup SecretRef owner isolation", () => {
     if (process.platform === "win32") {
       return;
     }
-    const root = tempDirs.make("openclaw-gateway-vault-acl-");
+    const root = tempDirs.make("nova-gateway-vault-acl-");
     const commandPath = path.join(root, "provider.sh");
     const resolverPath = path.resolve("extensions/vault/vault-secret-ref-resolver.js");
     writeFileSync(
@@ -546,7 +546,7 @@ describe("Gateway startup SecretRef owner isolation", () => {
       },
       async () => {
         const profileId = "openai:cold";
-        const config: OpenClawConfig = {
+        const config: NovaConfig = {
           ...baseConfig(),
           agents: {
             defaults: {

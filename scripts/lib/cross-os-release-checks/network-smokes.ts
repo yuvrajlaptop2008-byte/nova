@@ -103,7 +103,7 @@ async function configureDiscordSmoke(params: {
       lane: params.lane,
       cliPath: params.cliPath,
       env: gatewayEnv,
-      logPath: join(params.cwd, `.openclaw/logs/${params.lane.name}-discord-gateway.log`),
+      logPath: join(params.cwd, `.nova/logs/${params.lane.name}-discord-gateway.log`),
     });
     if (params.gatewayHolder) {
       params.gatewayHolder.current = gateway;
@@ -213,7 +213,7 @@ export function dashboardHtmlMarkerStatus(html: string): {
   title: boolean;
 } {
   const title = html.includes("<title>Nova Control</title>");
-  const app = html.includes("<openclaw-app></openclaw-app>");
+  const app = html.includes("<nova-app></nova-app>");
   return { app, ready: title && app, title };
 }
 

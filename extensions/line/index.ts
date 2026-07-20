@@ -1,14 +1,14 @@
 // Line plugin entrypoint registers its Nova integration.
 import {
   defineBundledChannelEntry,
-  type OpenClawPluginCommandDefinition,
-  type OpenClawPluginApi,
-} from "openclaw/plugin-sdk/channel-entry-contract";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
+  type NovaPluginCommandDefinition,
+  type NovaPluginApi,
+} from "nova/plugin-sdk/channel-entry-contract";
+import { createLazyRuntimeModule } from "nova/plugin-sdk/lazy-runtime";
 
-type RegisteredLineCardCommand = OpenClawPluginCommandDefinition;
+type RegisteredLineCardCommand = NovaPluginCommandDefinition;
 
-function createLineCardCommandLoader(api: OpenClawPluginApi) {
+function createLineCardCommandLoader(api: NovaPluginApi) {
   return createLazyRuntimeModule<RegisteredLineCardCommand>(async () => {
     let registered: RegisteredLineCardCommand | null = null;
     const { registerLineCardCommand } = await import("./src/card-command.js");

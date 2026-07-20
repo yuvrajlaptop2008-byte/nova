@@ -12,7 +12,7 @@ import {
 const tempDirs: string[] = [];
 
 function createDistFixture() {
-  const distDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-control-ui-performance-"));
+  const distDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-control-ui-performance-"));
   const assetsDir = path.join(distDir, "assets");
   fs.mkdirSync(assetsDir);
   tempDirs.push(distDir);

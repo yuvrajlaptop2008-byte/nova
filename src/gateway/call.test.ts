@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { DeviceIdentity } from "../infra/device-identity.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
 import { setActivePluginRegistry } from "../plugins/runtime.js";
@@ -273,9 +273,9 @@ function resetGatewayCallMocks() {
   closeReason = "";
   helloMethods = ["health", "secrets.resolve"];
   connectError = null;
-  const loadConfigForTests = getRuntimeConfig as unknown as () => OpenClawConfig;
+  const loadConfigForTests = getRuntimeConfig as unknown as () => NovaConfig;
   const resolveGatewayPortForTests = resolveGatewayPort as unknown as (
-    cfg?: OpenClawConfig,
+    cfg?: NovaConfig,
     env?: NodeJS.ProcessEnv,
   ) => number;
   testing.setDepsForTests({
@@ -519,7 +519,7 @@ describe("callGateway url resolution", () => {
     getRuntimeConfig.mockReturnValue({
       gateway: {
         mode: "remote",
-        remote: { url: "wss://openclaw.example.test" },
+        remote: { url: "wss://nova.example.test" },
         auth: { mode: "token", allowTailscale: true },
       },
     });
@@ -527,7 +527,7 @@ describe("callGateway url resolution", () => {
 
     await callGateway({ method: "sessions.list" });
 
-    expect(lastClientOptions?.url).toBe("wss://openclaw.example.test");
+    expect(lastClientOptions?.url).toBe("wss://nova.example.test");
     expect(lastClientOptions?.token).toBeUndefined();
     expect(lastClientOptions?.password).toBeUndefined();
   });
@@ -536,7 +536,7 @@ describe("callGateway url resolution", () => {
     getRuntimeConfig.mockReturnValue({
       gateway: {
         mode: "remote",
-        remote: { url: "wss://openclaw.example.test" },
+        remote: { url: "wss://nova.example.test" },
         auth: { mode: "token" },
         tailscale: { mode: "serve" },
       },
@@ -545,7 +545,7 @@ describe("callGateway url resolution", () => {
 
     await callGateway({ method: "sessions.list" });
 
-    expect(lastClientOptions?.url).toBe("wss://openclaw.example.test");
+    expect(lastClientOptions?.url).toBe("wss://nova.example.test");
     expect(lastClientOptions?.token).toBeUndefined();
     expect(lastClientOptions?.password).toBeUndefined();
   });
@@ -678,7 +678,7 @@ describe("callGateway url resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     resolveGatewayPort.mockReturnValue(18789);
     pickPrimaryTailnetIPv4.mockReturnValue(undefined);
     process.env.NOVA_GATEWAY_URL = "wss://gateway-in-container.internal:9443/ws";
@@ -865,7 +865,7 @@ describe("callGateway url resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
     setGatewayNetworkDefaults();
 
     await callGatewayCli({ method: "node.list", useStoredDeviceAuth: true });
@@ -1140,7 +1140,7 @@ describe("buildGatewayConnectionDetails", () => {
         bind: "loopback",
         tls: { enabled: true },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     resolveGatewayPort.mockReturnValue(18800);
     testing.setDepsForTests({
       getRuntimeConfig: () => config,
@@ -1165,7 +1165,7 @@ describe("buildGatewayConnectionDetails", () => {
         mode: "local",
         bind: "loopback",
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     resolveGatewayPort.mockImplementation((_config?: unknown, env?: unknown) => {
       const candidateEnv = env as NodeJS.ProcessEnv | undefined;
       return Number(candidateEnv?.NOVA_GATEWAY_PORT ?? 18789);
@@ -1208,7 +1208,7 @@ describe("buildGatewayConnectionDetails", () => {
         mode: "remote",
         remote: { url: "wss://selected-gateway.example/ws" },
       },
-    } satisfies OpenClawConfig;
+    } satisfies NovaConfig;
     const prevUrl = process.env.NOVA_GATEWAY_URL;
     try {
       process.env.NOVA_GATEWAY_URL = "wss://unrelated-gateway.example/ws";
@@ -1360,7 +1360,7 @@ describe("buildGatewayConnectionDetails", () => {
   });
 
   it("falls back to the default config loader when test deps drift", () => {
-    const tempStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-call-"));
+    const tempStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-call-"));
     setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
     setTestEnvValue("NOVA_CONFIG_PATH", path.join(tempStateDir, "missing-config.json"));
     try {
@@ -1402,7 +1402,7 @@ describe("buildGatewayConnectionDetails", () => {
     expect((thrown as Error).message).toContain("plaintext ws://");
     expect((thrown as Error).message).toContain("wss://");
     expect((thrown as Error).message).toContain("Tailscale Serve/Funnel");
-    expect((thrown as Error).message).toContain("openclaw doctor --fix");
+    expect((thrown as Error).message).toContain("nova doctor --fix");
   });
 
   it("redacts credential-bearing target URLs from insecure ws:// errors", () => {
@@ -1449,14 +1449,14 @@ describe("buildGatewayConnectionDetails", () => {
       gateway: {
         mode: "remote",
         bind: "loopback",
-        remote: { url: "ws://openclaw-gateway.ai:18789" },
+        remote: { url: "ws://nova-gateway.ai:18789" },
       },
     });
     resolveGatewayPort.mockReturnValue(18789);
 
     const details = buildGatewayConnectionDetails();
 
-    expect(details.url).toBe("ws://openclaw-gateway.ai:18789");
+    expect(details.url).toBe("ws://nova-gateway.ai:18789");
     expect(details.urlSource).toBe("config gateway.remote.url");
   });
 
@@ -1683,7 +1683,7 @@ describe("callGateway error details", () => {
       "Connection dropped without a close frame (retry; check network and gateway load)",
     );
     expect(message).not.toContain("crashed or was terminated unexpectedly");
-    expect(message).toContain("Run `openclaw doctor`");
+    expect(message).toContain("Run `nova doctor`");
   });
 
   it("formats typed request errors for CLI JSON output", () => {
@@ -1878,11 +1878,11 @@ describe("callGateway error details", () => {
           stop() {},
           async stopAndWait() {},
         }) as never,
-      getRuntimeConfig: getRuntimeConfig as unknown as () => OpenClawConfig,
+      getRuntimeConfig: getRuntimeConfig as unknown as () => NovaConfig,
       loadOrCreateDeviceIdentity: () => deviceIdentityState.value,
       loadDeviceAuthToken: loadDeviceAuthTokenMock,
       resolveGatewayPort: resolveGatewayPort as unknown as (
-        cfg?: OpenClawConfig,
+        cfg?: NovaConfig,
         env?: NodeJS.ProcessEnv,
       ) => number,
     });
@@ -1976,11 +1976,11 @@ describe("callGateway error details", () => {
             stopStarted = true;
           },
         }) as never,
-      getRuntimeConfig: getRuntimeConfig as unknown as () => OpenClawConfig,
+      getRuntimeConfig: getRuntimeConfig as unknown as () => NovaConfig,
       loadOrCreateDeviceIdentity: () => deviceIdentityState.value,
       loadDeviceAuthToken: loadDeviceAuthTokenMock,
       resolveGatewayPort: resolveGatewayPort as unknown as (
-        cfg?: OpenClawConfig,
+        cfg?: NovaConfig,
         env?: NodeJS.ProcessEnv,
       ) => number,
     });
@@ -2041,11 +2041,11 @@ describe("callGateway error details", () => {
             stopStarted = true;
           },
         }) as never,
-      getRuntimeConfig: getRuntimeConfig as unknown as () => OpenClawConfig,
+      getRuntimeConfig: getRuntimeConfig as unknown as () => NovaConfig,
       loadOrCreateDeviceIdentity: () => deviceIdentityState.value,
       loadDeviceAuthToken: loadDeviceAuthTokenMock,
       resolveGatewayPort: resolveGatewayPort as unknown as (
-        cfg?: OpenClawConfig,
+        cfg?: NovaConfig,
         env?: NodeJS.ProcessEnv,
       ) => number,
     });
@@ -2116,11 +2116,11 @@ describe("callGateway error details", () => {
             });
           },
         }) as never,
-      getRuntimeConfig: getRuntimeConfig as unknown as () => OpenClawConfig,
+      getRuntimeConfig: getRuntimeConfig as unknown as () => NovaConfig,
       loadOrCreateDeviceIdentity: () => deviceIdentityState.value,
       loadDeviceAuthToken: loadDeviceAuthTokenMock,
       resolveGatewayPort: resolveGatewayPort as unknown as (
-        cfg?: OpenClawConfig,
+        cfg?: NovaConfig,
         env?: NodeJS.ProcessEnv,
       ) => number,
     });
@@ -2178,11 +2178,11 @@ describe("callGateway error details", () => {
             });
           },
         }) as never,
-      getRuntimeConfig: getRuntimeConfig as unknown as () => OpenClawConfig,
+      getRuntimeConfig: getRuntimeConfig as unknown as () => NovaConfig,
       loadOrCreateDeviceIdentity: () => deviceIdentityState.value,
       loadDeviceAuthToken: loadDeviceAuthTokenMock,
       resolveGatewayPort: resolveGatewayPort as unknown as (
-        cfg?: OpenClawConfig,
+        cfg?: NovaConfig,
         env?: NodeJS.ProcessEnv,
       ) => number,
     });
@@ -2381,7 +2381,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2404,7 +2404,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2427,7 +2427,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2450,7 +2450,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2477,7 +2477,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await expect(callGateway({ method: "health" })).rejects.toThrow("gateway.auth.token");
   });
@@ -2497,7 +2497,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2521,7 +2521,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2544,7 +2544,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await expect(callGateway({ method: "health" })).rejects.toThrow("gateway.auth.password");
   });
@@ -2568,7 +2568,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2592,7 +2592,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2616,7 +2616,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2640,7 +2640,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2666,7 +2666,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2691,7 +2691,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2716,7 +2716,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2741,7 +2741,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 
@@ -2766,7 +2766,7 @@ describe("callGateway password resolution", () => {
           default: { source: "env" },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as NovaConfig);
 
     await callGateway({ method: "health" });
 

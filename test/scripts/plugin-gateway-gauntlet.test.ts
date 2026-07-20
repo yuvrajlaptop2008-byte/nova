@@ -187,7 +187,7 @@ describe("plugin gateway gauntlet helpers", () => {
   it("discovers bundled plugin manifests into lifecycle matrix rows", async () => {
     await writeManifest(
       "alpha",
-      "openclaw.plugin.json",
+      "nova.plugin.json",
       JSON.stringify({
         id: "alpha",
         enabledByDefault: true,
@@ -207,7 +207,7 @@ describe("plugin gateway gauntlet helpers", () => {
     );
     await writeManifest(
       "beta",
-      "openclaw.plugin.json",
+      "nova.plugin.json",
       JSON.stringify({ id: "beta", commandAliases: ["dreaming"], onboardingScopes: ["memory"] }),
     );
 
@@ -226,7 +226,7 @@ describe("plugin gateway gauntlet helpers", () => {
       hasConfigSchema: true,
       hasRequiredConfigFields: true,
       id: "alpha",
-      manifestPath: path.join("extensions", "alpha", "openclaw.plugin.json"),
+      manifestPath: path.join("extensions", "alpha", "nova.plugin.json"),
       name: "alpha",
       onboardingScopes: ["models"],
       providers: ["openai"],
@@ -242,7 +242,7 @@ describe("plugin gateway gauntlet helpers", () => {
   });
 
   it("keeps manifest ids separate from bounded build entry ids", async () => {
-    await writeManifest("kimi-coding", "openclaw.plugin.json", JSON.stringify({ id: "kimi" }));
+    await writeManifest("kimi-coding", "nova.plugin.json", JSON.stringify({ id: "kimi" }));
 
     const matrix = discoverBundledPluginManifests(repoRoot);
 
@@ -260,9 +260,9 @@ describe("plugin gateway gauntlet helpers", () => {
   });
 
   it("skips source-only plugin dirs that are excluded from the built runtime", async () => {
-    await writeManifest("qa-lab", "openclaw.plugin.json", JSON.stringify({ id: "qa-lab" }));
-    await writeManifest("qqbot", "openclaw.plugin.json", JSON.stringify({ id: "qqbot" }));
-    await writeManifest("telegram", "openclaw.plugin.json", JSON.stringify({ id: "telegram" }));
+    await writeManifest("qa-lab", "nova.plugin.json", JSON.stringify({ id: "qa-lab" }));
+    await writeManifest("qqbot", "nova.plugin.json", JSON.stringify({ id: "qqbot" }));
+    await writeManifest("telegram", "nova.plugin.json", JSON.stringify({ id: "telegram" }));
 
     const matrix = discoverBundledPluginManifests(repoRoot);
 
@@ -1162,7 +1162,7 @@ process.exit(7);
 
   it("fails once when skip-prebuild leaves plugin lifecycle probes without a built entry", async () => {
     const outputDir = path.join(repoRoot, "artifacts");
-    await writeManifest("acpx", "openclaw.plugin.json", JSON.stringify({ id: "acpx" }));
+    await writeManifest("acpx", "nova.plugin.json", JSON.stringify({ id: "acpx" }));
 
     const result = spawnSync(
       process.execPath,
@@ -1204,7 +1204,7 @@ process.exit(7);
 
   it("allows skip-prebuild slash-only dry runs when selected plugins have no slash probes", async () => {
     const outputDir = path.join(repoRoot, "artifacts");
-    await writeManifest("acpx", "openclaw.plugin.json", JSON.stringify({ id: "acpx" }));
+    await writeManifest("acpx", "nova.plugin.json", JSON.stringify({ id: "acpx" }));
 
     const result = spawnSync(
       process.execPath,
@@ -1366,7 +1366,7 @@ process.exit(7);
     const outputDir = path.join(repoRoot, `artifacts-${mode}`);
     await writeManifest(
       "workboard",
-      "openclaw.plugin.json",
+      "nova.plugin.json",
       JSON.stringify({
         id: "workboard",
         commandAliases: [
@@ -1396,7 +1396,7 @@ process.exit(7);
         "}",
         'if (args[0] === "workboard" && args[1] === "--help") {',
         "  if (fs.existsSync(marker)) {",
-        '    console.log("Usage: openclaw workboard");',
+        '    console.log("Usage: nova workboard");',
         "    process.exit(0);",
         "  }",
         '  console.error("workboard help was probed after uninstall");',
@@ -1450,7 +1450,7 @@ process.exit(7);
       const slashHelpLogPath = slashHelpRow?.logPath;
       expect(slashHelpLogPath).toEqual(expect.any(String));
       await expect(fs.readFile(slashHelpLogPath as string, "utf8")).resolves.toContain(
-        "Usage: openclaw workboard",
+        "Usage: nova workboard",
       );
       return;
     }
@@ -1486,10 +1486,10 @@ process.exit(7);
     );
     await writeManifest(
       "alpha",
-      "openclaw.plugin.json",
+      "nova.plugin.json",
       JSON.stringify({ id: "alpha", requiresPlugins: ["beta"] }),
     );
-    await writeManifest("beta", "openclaw.plugin.json", JSON.stringify({ id: "beta" }));
+    await writeManifest("beta", "nova.plugin.json", JSON.stringify({ id: "beta" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.writeFile(path.join(repoRoot, "extensions", "beta", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
@@ -1543,10 +1543,10 @@ process.exit(7);
     const outputDir = path.join(repoRoot, "artifacts");
     await writeManifest(
       "alpha",
-      "openclaw.plugin.json",
+      "nova.plugin.json",
       JSON.stringify({ id: "alpha", requiresPlugins: ["beta"] }),
     );
-    await writeManifest("beta", "openclaw.plugin.json", JSON.stringify({ id: "beta" }));
+    await writeManifest("beta", "nova.plugin.json", JSON.stringify({ id: "beta" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.writeFile(path.join(repoRoot, "extensions", "beta", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "dist"), { recursive: true });
@@ -1613,7 +1613,7 @@ process.exit(7);
         { name: "gateway-restart-inflight-run", status: "fail", steps: [] },
       ],
     });
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "nova.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(
@@ -1695,7 +1695,7 @@ process.exit(7);
       },
       scenarios: [{ name: "channel-chat-baseline", status: "pass", steps: [] }],
     });
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "nova.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(
@@ -1773,7 +1773,7 @@ process.exit(7);
         { name: "gateway-restart-inflight-run", status: "fail", steps: [] },
       ],
     });
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "nova.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(
@@ -1834,7 +1834,7 @@ process.exit(7);
 
   it("fails successful QA chunks that do not write the requested summary", async () => {
     const outputDir = path.join(repoRoot, "artifacts");
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "nova.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(
@@ -1897,7 +1897,7 @@ process.exit(7);
 
   it("fails successful QA chunks that write unusable summary JSON", async () => {
     const outputDir = path.join(repoRoot, "artifacts");
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "nova.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(
@@ -1955,7 +1955,7 @@ process.exit(7);
 
   it("fails successful QA chunks that write oversized summary JSON", async () => {
     const outputDir = path.join(repoRoot, "artifacts");
-    await writeManifest("alpha", "openclaw.plugin.json", JSON.stringify({ id: "alpha" }));
+    await writeManifest("alpha", "nova.plugin.json", JSON.stringify({ id: "alpha" }));
     await fs.writeFile(path.join(repoRoot, "extensions", "alpha", "index.ts"), "export {};\n");
     await fs.mkdir(path.join(repoRoot, "scripts"), { recursive: true });
     await fs.writeFile(

@@ -13,13 +13,13 @@ import {
   type EmbeddedContextFile,
   type EmbeddedRunAttemptParams,
   type EmbeddedRunAttemptResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resolveAgentWorkspaceDir } from "openclaw/plugin-sdk/agent-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { resolveAgentWorkspaceDir } from "nova/plugin-sdk/agent-runtime";
 import {
   buildMemorySystemPromptAddition,
   prepareMemorySystemPromptAddition,
-} from "openclaw/plugin-sdk/core";
-import { MESSAGE_TOOL_DELIVERY_HINTS } from "openclaw/plugin-sdk/message-tool-delivery-hints";
+} from "nova/plugin-sdk/core";
+import { MESSAGE_TOOL_DELIVERY_HINTS } from "nova/plugin-sdk/message-tool-delivery-hints";
 import type { CodexDynamicToolFunctionSpec, CodexDynamicToolSpec, JsonValue } from "./protocol.js";
 import { flattenCodexDynamicToolFunctions } from "./protocol.js";
 import { isJsonObject } from "./protocol.js";
@@ -234,12 +234,10 @@ export async function buildCodexWorkspaceBootstrapContext(params: {
       excludeMemory: memoryToolsAvailable,
       memoryWorkspaceDir: params.effectiveWorkspace,
     });
-    const developerInstructionFiles = shouldInjectCodexOpenClawPromptContext(params.params)
+    const developerInstructionFiles = shouldInjectCodexNovaPromptContext(params.params)
       ? selectCodexWorkspaceInheritedDeveloperInstructionFiles(contextFiles)
       : [];
-    const turnScopedDeveloperInstructionFiles = shouldInjectCodexOpenClawPromptContext(
-      params.params,
-    )
+    const turnScopedDeveloperInstructionFiles = shouldInjectCodexNovaPromptContext(params.params)
       ? selectCodexWorkspaceTurnScopedDeveloperInstructionFiles(contextFiles)
       : [];
     const heartbeatReferenceFiles = selectCodexWorkspaceHeartbeatReferenceFiles(contextFiles);
@@ -260,7 +258,7 @@ export async function buildCodexWorkspaceBootstrapContext(params: {
       turnScopedDeveloperInstructions: renderCodexWorkspaceCollaborationDeveloperInstructions(
         turnScopedDeveloperInstructionFiles,
       ),
-      memoryCollaborationInstructions: shouldInjectCodexOpenClawPromptContext(params.params)
+      memoryCollaborationInstructions: shouldInjectCodexNovaPromptContext(params.params)
         ? await renderCodexWorkspaceMemoryCollaborationInstructions({
             files: memoryReferenceFiles,
             toolNames: params.memoryToolNames,
@@ -526,11 +524,11 @@ function readNonEmptyString(value: unknown): string | undefined {
 /**
  * Builds Nova-provided workspace prompt context for the current Codex turn.
  */
-export function buildCodexOpenClawPromptContext(params: {
+export function buildCodexNovaPromptContext(params: {
   params: EmbeddedRunAttemptParams;
   workspacePromptContext?: string;
 }): string | undefined {
-  if (!shouldInjectCodexOpenClawPromptContext(params.params)) {
+  if (!shouldInjectCodexNovaPromptContext(params.params)) {
     return undefined;
   }
   const sections = [
@@ -549,7 +547,7 @@ export function buildCodexOpenClawPromptContext(params: {
   ].join("\n");
 }
 
-function shouldInjectCodexOpenClawPromptContext(params: EmbeddedRunAttemptParams): boolean {
+function shouldInjectCodexNovaPromptContext(params: EmbeddedRunAttemptParams): boolean {
   // Lightweight cron runs are commonly exact commands. Keep the user input byte-for-byte
   // to avoid changing command intent while Codex keeps its native project-doc loader.
   return !(
@@ -562,7 +560,7 @@ export function renderCodexSkillsCollaborationInstructions(params: {
   attempt: EmbeddedRunAttemptParams;
   skillsPrompt?: string;
 }): string | undefined {
-  if (!shouldInjectCodexOpenClawPromptContext(params.attempt)) {
+  if (!shouldInjectCodexNovaPromptContext(params.attempt)) {
     return undefined;
   }
   return params.skillsPrompt?.trim()
@@ -574,7 +572,7 @@ export function renderCodexSkillsCollaborationInstructions(params: {
  * Prepends Nova context while preserving leading delivery metadata as
  * routing guidance instead of user request text.
  */
-export function prependCodexOpenClawPromptContext(
+export function prependCodexNovaPromptContext(
   prompt: string,
   context: string | undefined,
   options: { preservePromptWithoutContext?: boolean } = {},

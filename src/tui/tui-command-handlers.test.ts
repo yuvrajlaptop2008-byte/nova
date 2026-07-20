@@ -631,7 +631,7 @@ describe("tui command handlers", () => {
   it("returns to Nova with an optional request", async () => {
     const { handleCommand, addSystem, requestExit, sendChat } = createHarness();
 
-    await handleCommand("/openclaw restart gateway");
+    await handleCommand("/nova restart gateway");
 
     expect(sendChat).not.toHaveBeenCalled();
     expect(addSystem).toHaveBeenCalledWith("returning to Nova with request: restart gateway");
@@ -659,7 +659,7 @@ describe("tui command handlers", () => {
 
     expect(state.currentAgentId).toBe("work");
     expect(setSession).toHaveBeenCalledWith("");
-    expect(addSystem).toHaveBeenCalledWith("agent set to work; use /openclaw to return");
+    expect(addSystem).toHaveBeenCalledWith("agent set to work; use /nova to return");
   });
 
   it("marks the generated runId as local before gateway events arrive", async () => {
@@ -1150,15 +1150,15 @@ describe("tui command handlers", () => {
     await codex.handleCommand("/think");
     expect(codex.addSystem).toHaveBeenCalledWith(expect.not.stringContaining("ultra"));
 
-    const openclaw = createHarness({
+    const nova = createHarness({
       sessionInfo: {
         modelProvider: "openai",
         model: "gpt-5.6-luna",
-        agentRuntime: { id: "openclaw", source: "session-key" },
+        agentRuntime: { id: "nova", source: "session-key" },
       },
     });
-    await openclaw.handleCommand("/think");
-    expect(openclaw.addSystem).toHaveBeenCalledWith(expect.stringContaining("ultra"));
+    await nova.handleCommand("/think");
+    expect(nova.addSystem).toHaveBeenCalledWith(expect.stringContaining("ultra"));
   });
 
   it("hides tools locally for /verbose off without reloading history", async () => {
@@ -1626,7 +1626,7 @@ describe("tui command handlers", () => {
     expect(closeOverlay).toHaveBeenCalledTimes(1);
   });
 
-  it.each(["codex", "openclaw"])(
+  it.each(["codex", "nova"])(
     "forwards model/runtime transactions through the server directive path for %s",
     async (runtime) => {
       const sendChat = vi.fn().mockResolvedValue({ status: "ok" });

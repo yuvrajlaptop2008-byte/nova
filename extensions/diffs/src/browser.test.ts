@@ -7,12 +7,12 @@ import type {
   PluginBlobEntry,
   PluginBlobEntryInfo,
   PluginBlobStore,
-} from "openclaw/plugin-sdk/plugin-state-runtime";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
-import { createMockServerResponse } from "openclaw/plugin-sdk/test-env";
+} from "nova/plugin-sdk/plugin-state-runtime";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
+import { createMockServerResponse } from "nova/plugin-sdk/test-env";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../api.js";
-import type { OpenClawPluginApi, OpenClawPluginToolContext } from "../api.js";
+import type { NovaConfig } from "../api.js";
+import type { NovaPluginApi, NovaPluginToolContext } from "../api.js";
 import { registerDiffsPlugin } from "./plugin.js";
 import { createTempDiffRoot } from "./test-helpers.js";
 
@@ -53,7 +53,7 @@ describe("PlaywrightDiffScreenshotter", () => {
     vi.useFakeTimers();
     vi.resetModules();
     ({ PlaywrightDiffScreenshotter } = await import("./browser.js"));
-    ({ rootDir, cleanup: cleanupRootDir } = await createTempDiffRoot("openclaw-diffs-browser-"));
+    ({ rootDir, cleanup: cleanupRootDir } = await createTempDiffRoot("nova-diffs-browser-"));
     outputPath = path.join(rootDir, "preview.png");
     launchMock.mockReset();
   });
@@ -294,13 +294,13 @@ describe("diffs plugin registration", () => {
       req: IncomingMessage,
       res: ServerResponse,
     ) => boolean | Promise<boolean>;
-    type RegisteredHttpRouteParams = Parameters<OpenClawPluginApi["registerHttpRoute"]>[0];
+    type RegisteredHttpRouteParams = Parameters<NovaPluginApi["registerHttpRoute"]>[0];
 
     let registeredToolFactory:
-      | ((ctx: OpenClawPluginToolContext) => RegisteredTool | RegisteredTool[] | null | undefined)
+      | ((ctx: NovaPluginToolContext) => RegisteredTool | RegisteredTool[] | null | undefined)
       | undefined;
     let registeredHttpRouteHandler: HttpRouteHandler | undefined;
-    let configFile: OpenClawConfig = {
+    let configFile: NovaConfig = {
       gateway: {
         port: 18789,
         bind: "loopback",
@@ -309,7 +309,7 @@ describe("diffs plugin registration", () => {
         entries: {
           diffs: {
             config: {
-              viewerBaseUrl: "https://startup.example.com/openclaw",
+              viewerBaseUrl: "https://startup.example.com/nova",
               defaults: {
                 mode: "view",
                 theme: "light",
@@ -323,7 +323,7 @@ describe("diffs plugin registration", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const blobStore = createMemoryBlobStore();
 
     const api = createTestPluginApi({
@@ -338,7 +338,7 @@ describe("diffs plugin registration", () => {
         },
       },
       pluginConfig: {
-        viewerBaseUrl: "https://startup.example.com/openclaw",
+        viewerBaseUrl: "https://startup.example.com/nova",
         defaults: {
           mode: "view",
           theme: "light",
@@ -355,7 +355,7 @@ describe("diffs plugin registration", () => {
         },
         state: { openBlobStore: () => blobStore },
       } as never,
-      registerTool(tool: Parameters<OpenClawPluginApi["registerTool"]>[0]) {
+      registerTool(tool: Parameters<NovaPluginApi["registerTool"]>[0]) {
         registeredToolFactory = typeof tool === "function" ? tool : () => tool;
       },
       registerHttpRoute(params: RegisteredHttpRouteParams) {
@@ -364,7 +364,7 @@ describe("diffs plugin registration", () => {
       on: vi.fn(),
     });
 
-    registerDiffsPlugin(api as unknown as OpenClawPluginApi);
+    registerDiffsPlugin(api as unknown as NovaPluginApi);
 
     configFile = {
       ...configFile,
@@ -386,7 +386,7 @@ describe("diffs plugin registration", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const registeredTool = registeredToolFactory?.({
       agentId: "main",
@@ -428,14 +428,14 @@ describe("diffs plugin registration", () => {
       req: IncomingMessage,
       res: ServerResponse,
     ) => boolean | Promise<boolean>;
-    type RegisteredHttpRouteParams = Parameters<OpenClawPluginApi["registerHttpRoute"]>[0];
+    type RegisteredHttpRouteParams = Parameters<NovaPluginApi["registerHttpRoute"]>[0];
 
     let registeredToolFactory:
-      | ((ctx: OpenClawPluginToolContext) => RegisteredTool | RegisteredTool[] | null | undefined)
+      | ((ctx: NovaPluginToolContext) => RegisteredTool | RegisteredTool[] | null | undefined)
       | undefined;
     let registeredHttpRouteHandler: HttpRouteHandler | undefined;
     const on = vi.fn();
-    let configFile: OpenClawConfig = {
+    let configFile: NovaConfig = {
       gateway: {
         port: 18789,
         bind: "loopback",
@@ -451,7 +451,7 @@ describe("diffs plugin registration", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const blobStore = createMemoryBlobStore();
 
     const api = createTestPluginApi({
@@ -485,7 +485,7 @@ describe("diffs plugin registration", () => {
         },
         state: { openBlobStore: () => blobStore },
       } as never,
-      registerTool(tool: Parameters<OpenClawPluginApi["registerTool"]>[0]) {
+      registerTool(tool: Parameters<NovaPluginApi["registerTool"]>[0]) {
         registeredToolFactory = typeof tool === "function" ? tool : () => tool;
       },
       registerHttpRoute(params: RegisteredHttpRouteParams) {
@@ -494,7 +494,7 @@ describe("diffs plugin registration", () => {
       on,
     });
 
-    registerDiffsPlugin(api as unknown as OpenClawPluginApi);
+    registerDiffsPlugin(api as unknown as NovaPluginApi);
 
     expect(on).toHaveBeenCalledTimes(1);
     const [hookName, beforePromptBuild] = firstMockCall(on, "plugin hook registration");
@@ -561,7 +561,7 @@ describe("diffs plugin registration", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const proxiedRes = createMockServerResponse();
     const proxiedHandled = await registeredHttpRouteHandler?.(
@@ -587,13 +587,13 @@ describe("diffs plugin registration", () => {
       req: IncomingMessage,
       res: ServerResponse,
     ) => boolean | Promise<boolean>;
-    type RegisteredHttpRouteParams = Parameters<OpenClawPluginApi["registerHttpRoute"]>[0];
+    type RegisteredHttpRouteParams = Parameters<NovaPluginApi["registerHttpRoute"]>[0];
 
     let registeredToolFactory:
-      | ((ctx: OpenClawPluginToolContext) => RegisteredTool | RegisteredTool[] | null | undefined)
+      | ((ctx: NovaPluginToolContext) => RegisteredTool | RegisteredTool[] | null | undefined)
       | undefined;
     let registeredHttpRouteHandler: HttpRouteHandler | undefined;
-    let configFile: OpenClawConfig = {
+    let configFile: NovaConfig = {
       gateway: {
         port: 18789,
         bind: "loopback",
@@ -609,7 +609,7 @@ describe("diffs plugin registration", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const blobStore = createMemoryBlobStore();
 
     const api = createTestPluginApi({
@@ -634,7 +634,7 @@ describe("diffs plugin registration", () => {
         },
         state: { openBlobStore: () => blobStore },
       } as never,
-      registerTool(tool: Parameters<OpenClawPluginApi["registerTool"]>[0]) {
+      registerTool(tool: Parameters<NovaPluginApi["registerTool"]>[0]) {
         registeredToolFactory = typeof tool === "function" ? tool : () => tool;
       },
       registerHttpRoute(params: RegisteredHttpRouteParams) {
@@ -643,7 +643,7 @@ describe("diffs plugin registration", () => {
       on: vi.fn(),
     });
 
-    registerDiffsPlugin(api as unknown as OpenClawPluginApi);
+    registerDiffsPlugin(api as unknown as NovaPluginApi);
 
     const registeredTool = registeredToolFactory?.({
       agentId: "main",
@@ -664,7 +664,7 @@ describe("diffs plugin registration", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const proxiedRes = createMockServerResponse();
     const proxiedHandled = await registeredHttpRouteHandler?.(
@@ -782,12 +782,12 @@ function createMemoryBlobStore<TMetadata>(): PluginBlobStore<TMetadata> {
   };
 }
 
-function createConfig(): OpenClawConfig {
+function createConfig(): NovaConfig {
   return {
     browser: {
       executablePath: process.execPath,
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function localReq(input: {

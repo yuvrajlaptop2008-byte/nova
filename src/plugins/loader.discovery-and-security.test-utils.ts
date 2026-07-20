@@ -7,7 +7,7 @@ import { toSafeImportPath } from "../shared/import-specifier.js";
 import { withEnv } from "../test-utils/env.js";
 import { writePersistedInstalledPluginIndexInstallRecordsSync } from "./installed-plugin-index-records.js";
 import { warnWhenAllowlistIsOpen } from "./loader-provenance.js";
-import { loadOpenClawPluginCliRegistry, loadOpenClawPlugins } from "./loader.js";
+import { loadNovaPluginCliRegistry, loadNovaPlugins } from "./loader.js";
 import {
   clearPluginLoaderCache,
   EMPTY_PLUGIN_SCHEMA,
@@ -24,7 +24,7 @@ import {
   memoryPluginBody,
   setupBundledDreamingMemoryPlugins,
   writeBundledPlugin,
-  makeOpenClawDevSourceRoot,
+  makeNovaDevSourceRoot,
   writeWorkspacePlugin,
   withStateDir,
   loadRegistryFromSinglePlugin,
@@ -46,7 +46,7 @@ import {
 afterEach(globalAfterEach0);
 afterAll(globalAfterAll1);
 
-describe("loadOpenClawPlugins", () => {
+describe("loadNovaPlugins", () => {
   it("ignores unknown typed hooks from plugins and keeps loading", () => {
     useNoBundledPlugins();
     const plugin = writePlugin({
@@ -111,7 +111,7 @@ describe("loadOpenClawPlugins", () => {
               NOVA_BUNDLED_PLUGINS_DIR: undefined,
             },
             () =>
-              loadOpenClawPlugins({
+              loadNovaPlugins({
                 cache: false,
                 config: {
                   plugins: {
@@ -122,7 +122,7 @@ describe("loadOpenClawPlugins", () => {
               }),
           );
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const a = registry.plugins.find((entry) => entry.id === "memory-a");
           const b = registry.plugins.find((entry) => entry.id === "memory-b");
           expect(b?.status).toBe("loaded");
@@ -150,7 +150,7 @@ describe("loadOpenClawPlugins", () => {
             body: memoryPluginBody("memory-b"),
           });
           fs.writeFileSync(
-            path.join(memoryADir, "openclaw.plugin.json"),
+            path.join(memoryADir, "nova.plugin.json"),
             JSON.stringify(
               {
                 id: "memory-a",
@@ -163,7 +163,7 @@ describe("loadOpenClawPlugins", () => {
             "utf-8",
           );
           fs.writeFileSync(
-            path.join(memoryBDir, "openclaw.plugin.json"),
+            path.join(memoryBDir, "nova.plugin.json"),
             JSON.stringify(
               {
                 id: "memory-b",
@@ -177,7 +177,7 @@ describe("loadOpenClawPlugins", () => {
           );
           process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -191,7 +191,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const a = registry.plugins.find((entry) => entry.id === "memory-a");
           const b = registry.plugins.find((entry) => entry.id === "memory-b");
           expect(a?.status).toBe("disabled");
@@ -205,7 +205,7 @@ describe("loadOpenClawPlugins", () => {
         loadRegistry: () => {
           const { selectedId } = setupBundledDreamingMemoryPlugins();
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -218,7 +218,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           const lance = registry.plugins.find((entry) => entry.id === "memory-lancedb");
           expect(core?.status).toBe("loaded");
@@ -234,7 +234,7 @@ describe("loadOpenClawPlugins", () => {
             coreBody: `throw new Error("manifest-only snapshot should not import memory-core");`,
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             activate: false,
             loadModules: false,
@@ -249,7 +249,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           const lance = registry.plugins.find((entry) => entry.id === "memory-lancedb");
           expect(core?.status).toBe("loaded");
@@ -264,7 +264,7 @@ describe("loadOpenClawPlugins", () => {
             coreBody: `throw new Error("denied memory-core should not load");`,
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -278,7 +278,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           const lance = registry.plugins.find((entry) => entry.id === "memory-lancedb");
           expect(core?.status).toBe("disabled");
@@ -293,7 +293,7 @@ describe("loadOpenClawPlugins", () => {
             coreBody: `throw new Error("disabled memory-core should not load");`,
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -307,7 +307,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           const lance = registry.plugins.find((entry) => entry.id === "memory-lancedb");
           expect(core?.status).toBe("disabled");
@@ -323,7 +323,7 @@ describe("loadOpenClawPlugins", () => {
             coreBody: `throw new Error("non-memory selected slot should not load memory-core");`,
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -336,7 +336,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           const selected = registry.plugins.find((entry) => entry.id === "memory-lancedb");
           expect(core?.status).toBe("disabled");
@@ -367,7 +367,7 @@ describe("loadOpenClawPlugins", () => {
           });
           const openSchema = { type: "object", additionalProperties: true };
           fs.writeFileSync(
-            path.join(memoryCoreDir, "openclaw.plugin.json"),
+            path.join(memoryCoreDir, "nova.plugin.json"),
             JSON.stringify(
               { id: "memory-core", kind: "memory", configSchema: EMPTY_PLUGIN_SCHEMA },
               null,
@@ -376,7 +376,7 @@ describe("loadOpenClawPlugins", () => {
             "utf-8",
           );
           fs.writeFileSync(
-            path.join(memoryLanceDir, "openclaw.plugin.json"),
+            path.join(memoryLanceDir, "nova.plugin.json"),
             JSON.stringify(
               { id: "memory-lancedb", kind: "memory", configSchema: openSchema },
               null,
@@ -386,7 +386,7 @@ describe("loadOpenClawPlugins", () => {
           );
           process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -400,7 +400,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           const lance = registry.plugins.find((entry) => entry.id === "memory-lancedb");
           expect(core?.status).toBe("loaded");
@@ -430,7 +430,7 @@ describe("loadOpenClawPlugins", () => {
             body: memoryPluginBody("memory-lancedb"),
           });
           fs.writeFileSync(
-            path.join(memoryCoreDir, "openclaw.plugin.json"),
+            path.join(memoryCoreDir, "nova.plugin.json"),
             JSON.stringify(
               { id: "memory-core", kind: "memory", configSchema: EMPTY_PLUGIN_SCHEMA },
               null,
@@ -439,7 +439,7 @@ describe("loadOpenClawPlugins", () => {
             "utf-8",
           );
           fs.writeFileSync(
-            path.join(memoryLanceDir, "openclaw.plugin.json"),
+            path.join(memoryLanceDir, "nova.plugin.json"),
             JSON.stringify(
               { id: "memory-lancedb", kind: "memory", configSchema: EMPTY_PLUGIN_SCHEMA },
               null,
@@ -449,7 +449,7 @@ describe("loadOpenClawPlugins", () => {
           );
           process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -463,7 +463,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           const lance = registry.plugins.find((entry) => entry.id === "memory-lancedb");
           expect(core?.status).toBe("disabled");
@@ -483,7 +483,7 @@ describe("loadOpenClawPlugins", () => {
             body: `throw new Error("memory-core should not load when memory slot is none");`,
           });
           fs.writeFileSync(
-            path.join(memoryCoreDir, "openclaw.plugin.json"),
+            path.join(memoryCoreDir, "nova.plugin.json"),
             JSON.stringify(
               { id: "memory-core", kind: "memory", configSchema: EMPTY_PLUGIN_SCHEMA },
               null,
@@ -493,7 +493,7 @@ describe("loadOpenClawPlugins", () => {
           );
           process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -506,7 +506,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const core = registry.plugins.find((entry) => entry.id === "memory-core");
           expect(core?.status).toBe("disabled");
         },
@@ -525,7 +525,7 @@ describe("loadOpenClawPlugins", () => {
               NOVA_BUNDLED_PLUGINS_DIR: undefined,
             },
             () =>
-              loadOpenClawPlugins({
+              loadNovaPlugins({
                 cache: false,
                 config: {
                   plugins: {
@@ -536,7 +536,7 @@ describe("loadOpenClawPlugins", () => {
               }),
           );
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           const entry = registry.plugins.find((item) => item.id === "memory-off");
           expect(entry?.status).toBe("disabled");
         },
@@ -549,7 +549,7 @@ describe("loadOpenClawPlugins", () => {
   it("loads dreaming sidecar metadata through a restrictive selected-memory allowlist", async () => {
     const { selectedId } = setupBundledDreamingMemoryPlugins();
 
-    const registry = await loadOpenClawPluginCliRegistry({
+    const registry = await loadNovaPluginCliRegistry({
       cache: false,
       config: {
         plugins: {
@@ -585,7 +585,7 @@ describe("loadOpenClawPlugins", () => {
             body: simplePluginBody("shadow"),
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             config: {
               plugins: {
@@ -620,7 +620,7 @@ describe("loadOpenClawPlugins", () => {
               filename: "index.cjs",
             });
 
-            return loadOpenClawPlugins({
+            return loadNovaPlugins({
               cache: false,
               config: {
                 plugins: {
@@ -666,7 +666,7 @@ describe("loadOpenClawPlugins", () => {
               { stateDir },
             );
 
-            return loadOpenClawPlugins({
+            return loadNovaPlugins({
               cache: false,
               config: {
                 plugins: {
@@ -690,7 +690,7 @@ describe("loadOpenClawPlugins", () => {
         pluginId: "demo-dev-source-duplicate",
         bundledFilename: "index.cjs",
         loadRegistry: () => {
-          const devSourceRoot = makeOpenClawDevSourceRoot();
+          const devSourceRoot = makeNovaDevSourceRoot();
           const bundledPluginsDir = path.join(devSourceRoot, "extensions");
           writeBundledPlugin({
             id: "demo-dev-source-duplicate",
@@ -718,7 +718,7 @@ describe("loadOpenClawPlugins", () => {
                 { stateDir },
               );
 
-              return loadOpenClawPlugins({
+              return loadNovaPlugins({
                 cache: false,
                 config: {
                   plugins: {
@@ -747,7 +747,7 @@ describe("loadOpenClawPlugins", () => {
             body: memoryPluginBody("memory-lancedb"),
           });
           return withStateDir((stateDir) => {
-            const globalDir = path.join(stateDir, "node_modules", "@openclaw", "memory-lancedb");
+            const globalDir = path.join(stateDir, "node_modules", "@nova", "memory-lancedb");
             mkdirSafe(globalDir);
             const globalPlugin = writePlugin({
               id: "memory-lancedb",
@@ -776,7 +776,7 @@ describe("loadOpenClawPlugins", () => {
                 {
                   name: "@nova/memory-lancedb",
                   version: "2026.5.12-beta.1",
-                  openclaw: { extensions: ["./index.cjs"] },
+                  nova: { extensions: ["./index.cjs"] },
                 },
                 null,
                 2,
@@ -784,7 +784,7 @@ describe("loadOpenClawPlugins", () => {
               "utf-8",
             );
 
-            return loadOpenClawPlugins({
+            return loadNovaPlugins({
               cache: false,
               config: {
                 plugins: {
@@ -841,7 +841,7 @@ describe("loadOpenClawPlugins", () => {
             id: "warn-open-allow-config",
             body: simplePluginBody("warn-open-allow-config"),
           });
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             logger: createWarningLogger(warnings),
             config: {
@@ -862,7 +862,7 @@ describe("loadOpenClawPlugins", () => {
             id: "warn-open-allow-workspace",
           });
           return (warnings: string[]) =>
-            loadOpenClawPlugins({
+            loadNovaPlugins({
               cache: false,
               workspaceDir,
               logger: createWarningLogger(warnings),
@@ -899,7 +899,7 @@ describe("loadOpenClawPlugins", () => {
       id: "warn-explicitly-enabled-plugin",
     });
     const warnings: string[] = [];
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir,
       logger: createWarningLogger(warnings),
@@ -921,7 +921,7 @@ describe("loadOpenClawPlugins", () => {
       id: "warn-mismatch-allow-plugin",
     });
     const warnings: string[] = [];
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir,
       logger: createWarningLogger(warnings),
@@ -951,7 +951,7 @@ describe("loadOpenClawPlugins", () => {
       id: "warn-partial-allow-plugin",
     });
     const warnings: string[] = [];
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir,
       logger: createWarningLogger(warnings),
@@ -989,7 +989,7 @@ describe("loadOpenClawPlugins", () => {
       id: "warn-noise-workspace-plugin",
     });
     const warnings: string[] = [];
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir,
       logger: createWarningLogger(warnings),
@@ -1020,7 +1020,7 @@ describe("loadOpenClawPlugins", () => {
       id: "warn-open-allow-remediation",
     });
     const warnings: string[] = [];
-    loadOpenClawPlugins({
+    loadNovaPlugins({
       cache: false,
       workspaceDir,
       logger: createWarningLogger(warnings),
@@ -1035,8 +1035,8 @@ describe("loadOpenClawPlugins", () => {
     expect(openAllowWarning).toBeDefined();
     expect(openAllowWarning).toContain('"warn-open-allow-remediation"');
     expect(openAllowWarning).toContain('"plugins": { "allow": [');
-    expect(openAllowWarning).toContain("openclaw plugins list --enabled --verbose");
-    expect(openAllowWarning).toContain("openclaw plugins inspect warn-open-allow-remediation");
+    expect(openAllowWarning).toContain("nova plugins list --enabled --verbose");
+    expect(openAllowWarning).toContain("nova plugins inspect warn-open-allow-remediation");
   });
 
   it("includes actionable plugins.allow remediation hints in the untracked-provenance warning", () => {
@@ -1053,7 +1053,7 @@ describe("loadOpenClawPlugins", () => {
       });
 
       const warnings: string[] = [];
-      const registry = loadOpenClawPlugins({
+      const registry = loadNovaPlugins({
         cache: false,
         logger: createWarningLogger(warnings),
         config: {
@@ -1070,7 +1070,7 @@ describe("loadOpenClawPlugins", () => {
       );
       expect(untrackedWarning).toBeDefined();
       expect(untrackedWarning).toContain('"warn-untracked-remediation"');
-      expect(untrackedWarning).toContain("openclaw plugins inspect warn-untracked-remediation");
+      expect(untrackedWarning).toContain("nova plugins inspect warn-untracked-remediation");
       expect(untrackedWarning).toContain("reinstall from a trusted source");
 
       const diagnostic = registry.diagnostics.find(
@@ -1079,7 +1079,7 @@ describe("loadOpenClawPlugins", () => {
           entry.message.includes("loaded without install/load-path provenance"),
       );
       expect(diagnostic?.message).toContain('"warn-untracked-remediation"');
-      expect(diagnostic?.message).toContain("openclaw plugins inspect warn-untracked-remediation");
+      expect(diagnostic?.message).toContain("nova plugins inspect warn-untracked-remediation");
       expect(diagnostic?.message).toContain("reinstall from a trusted source");
     });
   });
@@ -1111,8 +1111,8 @@ describe("loadOpenClawPlugins", () => {
     expect(message).toContain("plugins.allow is empty");
     expect(message).toContain("(+2 more)");
     expect(message).not.toContain('"plugins": { "allow": [');
-    expect(message).toContain("openclaw plugins list --enabled --verbose");
-    expect(message).toContain("openclaw plugins inspect <id>");
+    expect(message).toContain("nova plugins list --enabled --verbose");
+    expect(message).toContain("nova plugins inspect <id>");
   });
 
   it("handles workspace-discovered plugins according to trust and precedence", () => {
@@ -1126,7 +1126,7 @@ describe("loadOpenClawPlugins", () => {
             id: "workspace-helper",
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             workspaceDir,
             config: {
@@ -1136,7 +1136,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expectPluginOriginAndStatus({
             registry,
             pluginId: "workspace-helper",
@@ -1155,7 +1155,7 @@ describe("loadOpenClawPlugins", () => {
             id: "workspace-helper",
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             workspaceDir,
             config: {
@@ -1166,7 +1166,7 @@ describe("loadOpenClawPlugins", () => {
             },
           });
         },
-        assert: (registry: ReturnType<typeof loadOpenClawPlugins>) => {
+        assert: (registry: ReturnType<typeof loadNovaPlugins>) => {
           expectPluginOriginAndStatus({
             registry,
             pluginId: "workspace-helper",
@@ -1190,7 +1190,7 @@ describe("loadOpenClawPlugins", () => {
             id: "shadowed",
           });
 
-          return loadOpenClawPlugins({
+          return loadNovaPlugins({
             cache: false,
             workspaceDir,
             config: {
@@ -1225,7 +1225,7 @@ describe("loadOpenClawPlugins", () => {
       body: simplePluginBody("profile-aware"),
     });
     fs.writeFileSync(
-      path.join(plugin.dir, "openclaw.plugin.json"),
+      path.join(plugin.dir, "nova.plugin.json"),
       JSON.stringify(
         {
           id: "profile-aware",
@@ -1238,7 +1238,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: bundledDir,
       config: {
@@ -1266,7 +1266,7 @@ describe("loadOpenClawPlugins", () => {
       filename: "unscoped.cjs",
     });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       config: {
         plugins: {
@@ -1298,7 +1298,7 @@ describe("loadOpenClawPlugins", () => {
             });
 
             const warnings: string[] = [];
-            const registry = loadOpenClawPlugins({
+            const registry = loadNovaPlugins({
               cache: false,
               logger: createWarningLogger(warnings),
               config: {
@@ -1327,7 +1327,7 @@ describe("loadOpenClawPlugins", () => {
             });
 
             const warnings: string[] = [];
-            const registry = loadOpenClawPlugins({
+            const registry = loadNovaPlugins({
               cache: false,
               logger: createWarningLogger(warnings),
               config: {
@@ -1346,7 +1346,7 @@ describe("loadOpenClawPlugins", () => {
         loadRegistry: () => {
           const { plugin, env } = createEnvResolvedPluginFixture("tracked-load-path");
           const warnings: string[] = [];
-          const registry = loadOpenClawPlugins({
+          const registry = loadNovaPlugins({
             cache: false,
             logger: createWarningLogger(warnings),
             env,
@@ -1372,7 +1372,7 @@ describe("loadOpenClawPlugins", () => {
         loadRegistry: () => {
           const { plugin, env } = createEnvResolvedPluginFixture("tracked-install-path");
           const warnings: string[] = [];
-          const registry = loadOpenClawPlugins({
+          const registry = loadNovaPlugins({
             cache: false,
             logger: createWarningLogger(warnings),
             env,
@@ -1412,7 +1412,7 @@ describe("loadOpenClawPlugins", () => {
 
           const pluginDir = path.join(
             realHome,
-            ".openclaw",
+            ".nova",
             "npm",
             "node_modules",
             "@example",
@@ -1432,7 +1432,7 @@ describe("loadOpenClawPlugins", () => {
                 spec: "@example/tracked-symlink-install@1.0.0",
                 installPath: path.join(
                   linkedHome,
-                  ".openclaw",
+                  ".nova",
                   "npm",
                   "node_modules",
                   "@example",
@@ -1445,7 +1445,7 @@ describe("loadOpenClawPlugins", () => {
           );
 
           const warnings: string[] = [];
-          const registry = loadOpenClawPlugins({
+          const registry = loadNovaPlugins({
             cache: false,
             logger: createWarningLogger(warnings),
             env: {
@@ -1519,7 +1519,7 @@ describe("loadOpenClawPlugins", () => {
       setRuntimeConfigSnapshot(runtimeConfig, sourceConfig);
 
       const warnings: string[] = [];
-      const registry = loadOpenClawPlugins({
+      const registry = loadNovaPlugins({
         cache: false,
         logger: createWarningLogger(warnings),
         config: runtimeConfig,
@@ -1597,7 +1597,7 @@ describe("loadOpenClawPlugins", () => {
     }
 
     process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: bundledDir,
       config: {
@@ -1668,7 +1668,7 @@ describe("loadOpenClawPlugins", () => {
       });
 
       const warnings: string[] = [];
-      const registry = loadOpenClawPlugins({
+      const registry = loadNovaPlugins({
         activate: false,
         cache: false,
         logger: createWarningLogger(warnings),
@@ -1713,7 +1713,7 @@ describe("loadOpenClawPlugins", () => {
       "utf-8",
     );
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadNovaPlugins({
       cache: false,
       workspaceDir: plugin.dir,
       config: {

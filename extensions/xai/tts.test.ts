@@ -1,5 +1,5 @@
 // Xai tests cover tts plugin behavior.
-import { mockPinnedHostnameResolution } from "openclaw/plugin-sdk/test-env";
+import { mockPinnedHostnameResolution } from "nova/plugin-sdk/test-env";
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import {
   isValidXaiTtsVoice,
@@ -179,7 +179,7 @@ describe("xai tts", () => {
       expect(init?.method).toBe("GET");
       const headers = new Headers(init?.headers);
       expect(headers.get("authorization")).toBe("Bearer xai-key");
-      expect(headers.get("user-agent")).toBe("openclaw/2026.7.9");
+      expect(headers.get("user-agent")).toBe("nova/2026.7.9");
       vi.unstubAllEnvs();
     });
 
@@ -572,7 +572,7 @@ describe("xai tts", () => {
       );
     });
 
-    it("sends an openclaw User-Agent on xAI TTS requests", async () => {
+    it("sends an nova User-Agent on xAI TTS requests", async () => {
       vi.stubEnv("NOVA_VERSION", "2026.3.22");
       const fetchMock = vi.fn(
         async (_input: RequestInfo | URL, _init?: RequestInit) =>
@@ -595,7 +595,7 @@ describe("xai tts", () => {
 
       const init = fetchMock.mock.calls.at(0)?.[1];
       const headers = new Headers(init?.headers ?? {});
-      expect(headers.get("user-agent")).toBe("openclaw/2026.3.22");
+      expect(headers.get("user-agent")).toBe("nova/2026.3.22");
       expect(headers.get("authorization")).toBe("Bearer ok-key");
       vi.unstubAllEnvs();
     });

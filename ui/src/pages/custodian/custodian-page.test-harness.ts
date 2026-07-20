@@ -29,7 +29,7 @@ type ContextHarness = {
 
 export function createContext(
   request: ReturnType<typeof vi.fn>,
-  methods: string[] = ["openclaw.chat"],
+  methods: string[] = ["nova.chat"],
 ): ContextHarness {
   const client = { request } as unknown as GatewayBrowserClient;
   let snapshot: ApplicationGatewaySnapshot = {
@@ -102,7 +102,7 @@ export async function mountPage(
   provider: ApplicationContextProvider;
 }> {
   const provider = createApplicationContextProvider(context);
-  const page = document.createElement("openclaw-custodian-page") as TestCustodianPage;
+  const page = document.createElement("nova-custodian-page") as TestCustodianPage;
   page.onboarding = options.onboarding ?? true;
   provider.append(page);
   document.body.append(provider);

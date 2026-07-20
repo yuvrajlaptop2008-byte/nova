@@ -1,8 +1,8 @@
 // Telegram reply-chain cache and prompt-context projection.
 import type { Message } from "grammy/types";
-import type { OpenClawConfig, TelegramAccountConfig } from "openclaw/plugin-sdk/config-contracts";
-import { DEFAULT_GROUP_HISTORY_LIMIT } from "openclaw/plugin-sdk/reply-history";
-import { stripInlineDirectiveTagsForDelivery } from "openclaw/plugin-sdk/text-chunking";
+import type { NovaConfig, TelegramAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { DEFAULT_GROUP_HISTORY_LIMIT } from "nova/plugin-sdk/reply-history";
+import { stripInlineDirectiveTagsForDelivery } from "nova/plugin-sdk/text-chunking";
 import type { TelegramMessageSessionRuntime } from "./bot-handlers.message-session.runtime.js";
 import type { TelegramMediaRef } from "./bot-message-context.js";
 import type {
@@ -37,9 +37,8 @@ function hasLegacyPromptContextTimestamp(
   if (node.promptContextProjectionMarker) {
     return false;
   }
-  const timestamp = (
-    node.sourceMessage as Message & { openclaw_prompt_context_timestamp_ms?: unknown }
-  ).openclaw_prompt_context_timestamp_ms;
+  const timestamp = (node.sourceMessage as Message & { nova_prompt_context_timestamp_ms?: unknown })
+    .nova_prompt_context_timestamp_ms;
   if (typeof timestamp !== "number" || !Number.isFinite(timestamp)) {
     return false;
   }
@@ -163,7 +162,7 @@ export function createTelegramMessageContextRuntime(
     ctx: TelegramContext,
     msg: Message,
     replyChainNodes: TelegramCachedMessageNode[],
-    runtimeCfg: OpenClawConfig,
+    runtimeCfg: NovaConfig,
     runtimeTelegramCfg: TelegramAccountConfig,
     options?: TelegramMessageContextOptions,
     mediaByMessageId?: ReadonlyMap<string, TelegramMediaRef>,

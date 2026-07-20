@@ -1,6 +1,6 @@
-import { ErrorCodes } from "openclaw/plugin-sdk/gateway-runtime";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { ErrorCodes } from "nova/plugin-sdk/gateway-runtime";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-entry";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
 import { describe, expect, it, vi } from "vitest";
 import plugin from "./index.js";
 
@@ -70,7 +70,7 @@ function authorizationHarness(options?: { browserError?: Error }) {
     pluginConfig: { defaultMode: "transcribe", chrome: { waitForInCallMs: 1 } },
     runtime: {
       gateway: { isAvailable: vi.fn(async () => true), request: gatewayRequest },
-    } as unknown as OpenClawPluginApi["runtime"],
+    } as unknown as NovaPluginApi["runtime"],
     logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
     registerGatewayMethod: (method: string, handler: unknown) =>
       methods.set(method, handler as GatewayHandler),
@@ -127,7 +127,7 @@ describe("Microsoft Teams meetings plugin surface", () => {
       pluginConfig: {},
       runtime: {
         gateway: { isAvailable: vi.fn(async () => false), request: vi.fn() },
-      } as unknown as OpenClawPluginApi["runtime"],
+      } as unknown as NovaPluginApi["runtime"],
       logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
       registerGatewayMethod: (method: string, handler: unknown) => methods.set(method, handler),
       registerTool: (tool: unknown) => {

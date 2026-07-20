@@ -1,4 +1,4 @@
-import { stripMarkdown } from "openclaw/plugin-sdk/text-chunking";
+import { stripMarkdown } from "nova/plugin-sdk/text-chunking";
 import { describe, expect, it } from "vitest";
 import {
   CODE_HEAVY_SPOKEN_FALLBACK,

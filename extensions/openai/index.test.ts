@@ -1,16 +1,16 @@
 // Openai tests cover index plugin behavior.
 import { expectDefined } from "@nova/normalization-core";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
-import { requireRegisteredProvider } from "openclaw/plugin-sdk/plugin-test-runtime";
-import * as providerAuth from "openclaw/plugin-sdk/provider-auth-runtime";
-import * as providerHttp from "openclaw/plugin-sdk/provider-http";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { createTestPluginApi } from "nova/plugin-sdk/plugin-test-api";
+import { requireRegisteredProvider } from "nova/plugin-sdk/plugin-test-runtime";
+import * as providerAuth from "nova/plugin-sdk/provider-auth-runtime";
+import * as providerHttp from "nova/plugin-sdk/provider-http";
 import {
   GPT5_BEHAVIOR_CONTRACT,
   GPT5_FRIENDLY_CHAT_PROMPT_OVERLAY,
   GPT5_HEARTBEAT_PROMPT_OVERLAY,
   type ProviderPlugin,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildOpenAIImageGenerationProvider } from "./image-generation-provider.js";
 import plugin from "./index.js";
@@ -24,9 +24,9 @@ const runtimeMocks = vi.hoisted(() => ({
   refreshOpenAICodexToken: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/runtime-env")>(
-    "openclaw/plugin-sdk/runtime-env",
+vi.mock("nova/plugin-sdk/runtime-env", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-env")>(
+    "nova/plugin-sdk/runtime-env",
   );
   return {
     ...actual,
@@ -286,7 +286,7 @@ describe("openai plugin", () => {
               },
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies NovaConfig,
       }),
     ).rejects.toThrow("Blocked hostname or private/internal/special-use IP address");
 

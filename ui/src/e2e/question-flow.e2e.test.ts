@@ -94,7 +94,7 @@ async function openQuestionPage() {
 }
 
 function panelFor(page: Page, prompt: string) {
-  return page.locator("openclaw-chat-question-panel").filter({ hasText: prompt });
+  return page.locator("nova-chat-question-panel").filter({ hasText: prompt });
 }
 
 async function emitRequested(
@@ -149,9 +149,7 @@ describeControlUiE2e("Control UI Gateway question flow", () => {
     await emitRequested(gateway, request);
     const panel = panelFor(page, "Where should I deploy?");
     await panel.waitFor();
-    await expect
-      .poll(() => page.locator(".chat-thread openclaw-chat-question-panel").count())
-      .toBe(0);
+    await expect.poll(() => page.locator(".chat-thread nova-chat-question-panel").count()).toBe(0);
     await expect.poll(() => panel.getByText("1/1", { exact: true }).count()).toBe(1);
     await expect.poll(() => panel.getByPlaceholder("Type your own answer here").count()).toBe(1);
     await expect.poll(() => page.locator(".agent-chat__input").count()).toBe(0);

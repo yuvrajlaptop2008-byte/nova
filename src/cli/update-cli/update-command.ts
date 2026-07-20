@@ -7,7 +7,7 @@ import {
   readConfigFileSnapshot,
 } from "../../config/config.js";
 import { formatConfigIssueLines } from "../../config/issue-format.js";
-import { disableCurrentOpenClawUpdateLaunchdJob } from "../../daemon/launchd.js";
+import { disableCurrentNovaUpdateLaunchdJob } from "../../daemon/launchd.js";
 import {
   formatExternalSupervisorUpdateRequired,
   isGatewayExternallySupervised,
@@ -37,7 +37,7 @@ import {
 import { cleanupStaleManagedServiceUpdateHandoffs } from "../../infra/update-managed-service-handoff-cleanup.js";
 import { loadInstalledPluginIndexInstallRecords } from "../../plugins/installed-plugin-index-records.js";
 import { defaultRuntime } from "../../runtime.js";
-import type { OpenClawSchemaVersions } from "../../state/openclaw-schema-versions.js";
+import type { NovaSchemaVersions } from "../../state/nova-schema-versions.js";
 import { resolveCliName } from "../cli-name.js";
 import { createUpdateProgress } from "./progress.js";
 import {
@@ -134,7 +134,7 @@ async function updateCommandInternal(
     try {
       assertConfigWriteAllowedInCurrentMode();
     } catch (err) {
-      await disableCurrentOpenClawUpdateLaunchdJob().catch(() => undefined);
+      await disableCurrentNovaUpdateLaunchdJob().catch(() => undefined);
       throw err;
     }
   }
@@ -244,7 +244,7 @@ async function updateCommandInternal(
   let packageInstallTarget: ResolvedGlobalInstallTarget | undefined;
   let installedPackageName = DEFAULT_PACKAGE_NAME;
   let packageAlreadyCurrent = false;
-  let packageTargetSchemaVersions: OpenClawSchemaVersions | undefined;
+  let packageTargetSchemaVersions: NovaSchemaVersions | undefined;
   let managedServiceRootRedirect: ManagedServiceRootRedirect | null = null;
   // Resolved independently of the root redirect so it covers the common case
   // where the package root is the same but the user's PATH-resolved node
@@ -400,7 +400,7 @@ async function updateCommandInternal(
       });
       if (targetMetadata.error || targetMetadata.version !== targetVersion) {
         defaultRuntime.error(
-          `Update refused: could not inspect exact package target openclaw@${targetVersion}: ${targetMetadata.error ?? `registry returned version ${targetMetadata.version ?? "unknown"}`}.`,
+          `Update refused: could not inspect exact package target nova@${targetVersion}: ${targetMetadata.error ?? `registry returned version ${targetMetadata.version ?? "unknown"}`}.`,
         );
         defaultRuntime.exit(1);
         return;
@@ -514,7 +514,7 @@ async function updateCommandInternal(
     if (runtimeSelection.replacedNodeRunner && !opts.json) {
       defaultRuntime.log(
         theme.warn(
-          `Managed gateway service Node (${runtimeSelection.replacedNodeRunner}) cannot run openclaw@${runtimeSelection.targetVersion ?? tag}.`,
+          `Managed gateway service Node (${runtimeSelection.replacedNodeRunner}) cannot run nova@${runtimeSelection.targetVersion ?? tag}.`,
         ),
       );
       defaultRuntime.log(
@@ -525,7 +525,7 @@ async function updateCommandInternal(
     }
   }
 
-  await disableCurrentOpenClawUpdateLaunchdJob().catch(() => undefined);
+  await disableCurrentNovaUpdateLaunchdJob().catch(() => undefined);
 
   const showProgress = !opts.json && process.stdout.isTTY;
   if (!opts.json) {

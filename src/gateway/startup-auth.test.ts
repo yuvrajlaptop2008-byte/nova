@@ -1,7 +1,7 @@
 // Startup auth tests cover weak-token rejection, startup auth repair, env secret
 // references, and merged Tailscale gateway auth config.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { assertGatewayAuthNotKnownWeak } from "./known-weak-gateway-secrets.js";
 import { ensureGatewayStartupAuth, mergeGatewayTailscaleConfig } from "./startup-auth.js";
 
@@ -11,7 +11,7 @@ const KNOWN_WEAK_GATEWAY_TOKEN_PLACEHOLDERS = [
 ] as const;
 
 const mocks = vi.hoisted(() => ({
-  replaceConfigFile: vi.fn(async (_params: { nextConfig: OpenClawConfig }) => {}),
+  replaceConfigFile: vi.fn(async (_params: { nextConfig: NovaConfig }) => {}),
 }));
 
 vi.mock("../config/mutate.js", () => ({
@@ -28,7 +28,7 @@ vi.mock("../config/mutate.js", async () => {
 
 type StartupAuthInput = Parameters<typeof ensureGatewayStartupAuth>[0];
 type StartupAuthResult = Awaited<ReturnType<typeof ensureGatewayStartupAuth>>;
-type GatewayAuthConfig = NonNullable<NonNullable<OpenClawConfig["gateway"]>["auth"]>;
+type GatewayAuthConfig = NonNullable<NonNullable<NovaConfig["gateway"]>["auth"]>;
 type GatewayAuthCheck = Parameters<typeof assertGatewayAuthNotKnownWeak>[0];
 
 function emptyEnv(): NodeJS.ProcessEnv {
@@ -39,13 +39,13 @@ function gatewayEnvSecretRef(id: string) {
   return { source: "env" as const, provider: "default", id };
 }
 
-function gatewayAuthConfig(auth: GatewayAuthConfig): OpenClawConfig {
+function gatewayAuthConfig(auth: GatewayAuthConfig): NovaConfig {
   return {
     gateway: { auth },
   };
 }
 
-function gatewayAuthConfigWithDefaultEnvProvider(auth: GatewayAuthConfig): OpenClawConfig {
+function gatewayAuthConfigWithDefaultEnvProvider(auth: GatewayAuthConfig): NovaConfig {
   return {
     ...gatewayAuthConfig(auth),
     secrets: {
@@ -69,10 +69,10 @@ describe("mergeGatewayTailscaleConfig", () => {
   it("preserves explicit serviceName overrides", () => {
     expect(
       mergeGatewayTailscaleConfig(
-        { mode: "serve", serviceName: "svc:old-openclaw", resetOnExit: false },
-        { serviceName: "svc:openclaw" },
+        { mode: "serve", serviceName: "svc:old-nova", resetOnExit: false },
+        { serviceName: "svc:nova" },
       ),
-    ).toEqual({ mode: "serve", serviceName: "svc:openclaw", resetOnExit: false });
+    ).toEqual({ mode: "serve", serviceName: "svc:nova", resetOnExit: false });
   });
 });
 
@@ -104,7 +104,7 @@ describe("ensureGatewayStartupAuth", () => {
     expect(result.auth.password).toBe(password);
   }
 
-  async function expectEphemeralGeneratedTokenWhenOverridden(cfg: OpenClawConfig) {
+  async function expectEphemeralGeneratedTokenWhenOverridden(cfg: NovaConfig) {
     const result = await runStartupAuth({
       cfg,
       authOverride: { mode: "token" },
@@ -120,7 +120,7 @@ describe("ensureGatewayStartupAuth", () => {
     mocks.replaceConfigFile.mockClear();
   });
 
-  async function expectNoTokenGeneration(cfg: OpenClawConfig, mode: string) {
+  async function expectNoTokenGeneration(cfg: NovaConfig, mode: string) {
     const result = await runStartupAuth({
       cfg,
       persist: true,
@@ -132,7 +132,7 @@ describe("ensureGatewayStartupAuth", () => {
   }
 
   async function expectResolvedToken(params: {
-    cfg: OpenClawConfig;
+    cfg: NovaConfig;
     env: NodeJS.ProcessEnv;
     authOverride?: StartupAuthInput["authOverride"];
     expectedToken: string;
@@ -154,7 +154,7 @@ describe("ensureGatewayStartupAuth", () => {
     expect(mocks.replaceConfigFile).not.toHaveBeenCalled();
   }
 
-  function createMissingGatewayTokenSecretRefConfig(): OpenClawConfig {
+  function createMissingGatewayTokenSecretRefConfig(): NovaConfig {
     return gatewayAuthConfigWithDefaultEnvProvider({
       mode: "token",
       token: gatewayEnvSecretRef("MISSING_GW_TOKEN"),
@@ -381,7 +381,7 @@ describe("ensureGatewayStartupAuth", () => {
     expect(result.auth.mode).toBe("token");
     expect(result.auth.token).toBe("shared-gateway-token-1234567890");
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("Security warning"));
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining("openclaw security audit"));
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("nova security audit"));
   });
 
   it("keeps startup non-breaking when hooks token reuses gateway password auth", async () => {

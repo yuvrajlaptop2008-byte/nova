@@ -23,7 +23,7 @@ function shellQuote(value: string): string {
 }
 
 function runGatewayPortCheck(fakeLsof: string) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
   tempRoots.push(root);
 
   const binDir = join(root, "bin");
@@ -46,7 +46,7 @@ function runGatewayPortCheck(fakeLsof: string) {
 }
 
 function runCleanupFunction(fakePs: string) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
   tempRoots.push(root);
 
   const binDir = join(root, "bin");
@@ -63,7 +63,7 @@ function runCleanupFunction(fakePs: string) {
 
   const script = readFileSync(restartScriptPath, "utf8");
   const cleanupFunction = script.slice(
-    script.indexOf("kill_all_openclaw()"),
+    script.indexOf("kill_all_nova()"),
     script.indexOf("stop_launch_agent()"),
   );
   const harnessPath = join(root, "cleanup-harness.sh");
@@ -82,7 +82,7 @@ function runCleanupFunction(fakePs: string) {
       '  printf "%s\\n" "$*" >> "$NOVA_TEST_KILL_CALLS"',
       "  return 0",
       "}",
-      "kill_all_openclaw",
+      "kill_all_nova",
     ].join("\n"),
   );
   chmodSync(harnessPath, 0o755);
@@ -103,7 +103,7 @@ function runManagedSupervisorClassifier(
   records: Array<{ domain: string; label: string; program: string; properties?: string }>,
   options: { failEnumeration?: boolean } = {},
 ) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-supervisor-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-supervisor-test-"));
   tempRoots.push(root);
   const recordsPath = join(root, "loaded-jobs.txt");
   writeFileSync(
@@ -117,8 +117,8 @@ function runManagedSupervisorClassifier(
 
   const script = readFileSync(restartScriptPath, "utf8");
   const classifierFunctions = script.slice(
-    script.indexOf("print_managed_openclaw_supervisor_label()"),
-    script.indexOf("kill_managed_openclaw()"),
+    script.indexOf("print_managed_nova_supervisor_label()"),
+    script.indexOf("kill_managed_nova()"),
   );
   const harnessPath = join(root, "supervisor-harness.sh");
   writeFileSync(
@@ -137,7 +137,7 @@ function runManagedSupervisorClassifier(
       "}",
       'TARGET_EXECUTABLE="/worktree/dist/Nova.app/Contents/MacOS/Nova"',
       'INSTALLED_EXECUTABLE="/Applications/Nova.app/Contents/MacOS/Nova"',
-      "managed_openclaw_supervisor_labels",
+      "managed_nova_supervisor_labels",
     ].join("\n"),
   );
   chmodSync(harnessPath, 0o755);
@@ -152,7 +152,7 @@ function runManagedSupervisorClassifier(
 }
 
 function runCanonicalizeAppBundle(appBundle: string) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
   tempRoots.push(root);
 
   const script = readFileSync(restartScriptPath, "utf8");
@@ -185,7 +185,7 @@ function runCanonicalizeAppBundle(appBundle: string) {
 }
 
 function runRestartArgParser(...args: string[]) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
   tempRoots.push(root);
 
   const script = readFileSync(restartScriptPath, "utf8");
@@ -217,7 +217,7 @@ function runRestartArgParser(...args: string[]) {
 }
 
 function runRestartLockHarness(lockDir: string) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
   tempRoots.push(root);
 
   const script = readFileSync(restartScriptPath, "utf8");
@@ -247,7 +247,7 @@ function runRestartLockHarness(lockDir: string) {
 }
 
 function runForeignProcessClassifier(fakePs: string) {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
   tempRoots.push(root);
   const binDir = join(root, "bin");
   mkdirSync(binDir);
@@ -267,9 +267,9 @@ function runForeignProcessClassifier(fakePs: string) {
       "#!/usr/bin/env bash",
       functions,
       'APP_EXECUTABLE_RELATIVE_PATH="Contents/MacOS/Nova"',
-      'TARGET_EXECUTABLE="/Users/steipete/openclaw/dist/Nova.app/Contents/MacOS/Nova"',
+      'TARGET_EXECUTABLE="/Users/steipete/nova/dist/Nova.app/Contents/MacOS/Nova"',
       'INSTALLED_EXECUTABLE="/Applications/Nova.app/Contents/MacOS/Nova"',
-      "foreign_openclaw_process_pids",
+      "foreign_nova_process_pids",
     ].join("\n"),
   );
   chmodSync(harnessPath, 0o755);
@@ -352,15 +352,15 @@ describe("scripts/restart-mac.sh", () => {
     const script = readFileSync(restartScriptPath, "utf8");
 
     expect(script).toContain(
-      'LOG_PATH="${NOVA_RESTART_LOG:-${TMPDIR:-/tmp}/openclaw-restart-${LOCK_KEY}.log}"',
+      'LOG_PATH="${NOVA_RESTART_LOG:-${TMPDIR:-/tmp}/nova-restart-${LOCK_KEY}.log}"',
     );
-    expect(script).not.toContain('LOG_PATH="${NOVA_RESTART_LOG:-/tmp/openclaw-restart.log}"');
+    expect(script).not.toContain('LOG_PATH="${NOVA_RESTART_LOG:-/tmp/nova-restart.log}"');
   });
 
   it("does not remove a live restart lock it did not acquire", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
     tempRoots.push(root);
-    const lockDir = join(root, "openclaw-restart-lock");
+    const lockDir = join(root, "nova-restart-lock");
     mkdirSync(lockDir);
     writeFileSync(join(lockDir, "pid"), String(process.pid), "utf8");
 
@@ -376,9 +376,9 @@ describe("scripts/restart-mac.sh", () => {
   });
 
   it("removes the restart lock it acquired", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
     tempRoots.push(root);
-    const lockDir = join(root, "openclaw-restart-lock");
+    const lockDir = join(root, "nova-restart-lock");
 
     const result = runRestartLockHarness(lockDir);
 
@@ -407,7 +407,7 @@ describe("scripts/restart-mac.sh", () => {
   it("keeps restart cleanup scoped to known Nova app and build paths", () => {
     const script = readFileSync(restartScriptPath, "utf8");
     const cleanupBlock = script.slice(
-      script.indexOf("kill_all_openclaw()"),
+      script.indexOf("kill_all_nova()"),
       script.indexOf("stop_launch_agent()"),
     );
 
@@ -427,7 +427,7 @@ describe("scripts/restart-mac.sh", () => {
   it("stops launchd supervision before killing app processes", () => {
     const script = readFileSync(restartScriptPath, "utf8");
     const stopIndex = script.indexOf("stop_launch_agent\n  log");
-    const killIndex = script.indexOf("if ! kill_all_openclaw");
+    const killIndex = script.indexOf("if ! kill_all_nova");
 
     expect(stopIndex).toBeGreaterThan(-1);
     expect(killIndex).toBeGreaterThan(-1);
@@ -445,12 +445,12 @@ describe("scripts/restart-mac.sh", () => {
       script.indexOf("# 4) Launch"),
     );
 
-    expect(initialTargetBlock).toContain("foreign_openclaw_process_pids");
-    expect(initialTargetBlock).not.toContain("kill_managed_openclaw");
+    expect(initialTargetBlock).toContain("foreign_nova_process_pids");
+    expect(initialTargetBlock).not.toContain("kill_managed_nova");
     expect(initialTargetBlock).not.toContain("stop_launch_agent");
-    expect(initialTargetBlock).not.toContain("kill_all_openclaw");
-    expect(switchTargetBlock).toContain("foreign_openclaw_process_pids");
-    expect(switchTargetBlock).toContain("kill_managed_openclaw");
+    expect(initialTargetBlock).not.toContain("kill_all_nova");
+    expect(switchTargetBlock).toContain("foreign_nova_process_pids");
+    expect(switchTargetBlock).toContain("kill_managed_nova");
     expect(script).toContain('[[ "${executable}" == "${TARGET_EXECUTABLE}" ]] && continue');
     expect(script).toContain('process_pids_for_executable "${TARGET_EXECUTABLE}"');
     expect(script).toContain("target-only restart deferred");
@@ -460,19 +460,19 @@ describe("scripts/restart-mac.sh", () => {
     const result = runManagedSupervisorClassifier([
       {
         domain: "gui/501",
-        label: "ai.openclaw.mac.custom",
+        label: "ai.nova.mac.custom",
         program: "/Applications/Nova.app/Contents/MacOS/Nova",
         properties: "keepalive | runatload",
       },
       {
         domain: "user/501",
-        label: "ai.openclaw.mac.target",
+        label: "ai.nova.mac.target",
         program: "/worktree/dist/Nova.app/Contents/MacOS/Nova",
         properties: "keepalive",
       },
       {
         domain: "gui/501",
-        label: "application.ai.openclaw.mac.123",
+        label: "application.ai.nova.mac.123",
         program: "/Applications/Nova.app/Contents/MacOS/Nova",
       },
       {
@@ -485,17 +485,15 @@ describe("scripts/restart-mac.sh", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout.trim().split("\n").toSorted()).toEqual([
-      "ai.openclaw.mac.custom",
-      "ai.openclaw.mac.target",
+      "ai.nova.mac.custom",
+      "ai.nova.mac.target",
     ]);
     expect(result.stderr).toBe("");
   });
 
   it("checks managed launchd supervisors before starting the Swift package build", () => {
     const script = readFileSync(restartScriptPath, "utf8");
-    const supervisorIndex = script.indexOf(
-      'managed_supervisors="$(managed_openclaw_supervisor_labels',
-    );
+    const supervisorIndex = script.indexOf('managed_supervisors="$(managed_nova_supervisor_labels');
     const packageIndex = script.indexOf('run_step "package app"');
 
     expect(supervisorIndex).toBeGreaterThan(-1);
@@ -544,16 +542,16 @@ describe("scripts/restart-mac.sh", () => {
   it("escalates only exact managed app processes when graceful shutdown stalls", () => {
     const script = readFileSync(restartScriptPath, "utf8");
     const managedKillBlock = script.slice(
-      script.indexOf("kill_managed_openclaw()"),
+      script.indexOf("kill_managed_nova()"),
       script.indexOf("stop_launch_agent()"),
     );
     const broadKillBlock = script.slice(
-      script.indexOf("kill_all_openclaw()"),
-      script.indexOf("known_openclaw_executables()"),
+      script.indexOf("kill_all_nova()"),
+      script.indexOf("known_nova_executables()"),
     );
 
     expect(managedKillBlock).toContain('kill -KILL "${pid}"');
-    expect(managedKillBlock).toContain("managed_openclaw_process_pids");
+    expect(managedKillBlock).toContain("managed_nova_process_pids");
     expect(broadKillBlock).not.toContain("kill -KILL");
   });
 
@@ -562,7 +560,7 @@ describe("scripts/restart-mac.sh", () => {
       [
         "#!/usr/bin/env bash",
         "printf '%s\\n' '  101 /Applications/Nova.app/Contents/MacOS/Nova --attach-only'",
-        "printf '%s\\n' '  102 /Users/steipete/openclaw/dist/Nova.app/Contents/MacOS/Nova --attach-only'",
+        "printf '%s\\n' '  102 /Users/steipete/nova/dist/Nova.app/Contents/MacOS/Nova --attach-only'",
         "printf '%s\\n' '  103 /tmp/agent/Nova.app/Contents/MacOS/Nova --attach-only'",
         "printf '%s\\n' '  104 /bin/sh test.sh /Applications/Nova.app/Contents/MacOS/Nova'",
       ].join("\n"),
@@ -592,7 +590,7 @@ describe("scripts/restart-mac.sh", () => {
   });
 
   it("normalizes custom app bundle paths before process matching", () => {
-    const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
+    const root = mkdtempSync(join(tmpdir(), "nova-restart-mac-test-"));
     tempRoots.push(root);
     const appBundle = join(root, "dist", "Nova.app");
     mkdirSync(appBundle, { recursive: true });

@@ -8,7 +8,7 @@ import {
   onSessionIdentityMutation,
   type SessionIdentityMutation,
 } from "../../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   claimAgentRunContext,
   emitAgentEventForOwner,
@@ -85,7 +85,7 @@ export type WorkerLiveEventApplicationResult =
 type WorkerLiveEventFailure = Extract<WorkerLiveEventApplicationResult, { ok: false }>;
 
 type WorkerLiveEventReceiverOptions = {
-  getConfig: () => OpenClawConfig;
+  getConfig: () => NovaConfig;
   maxActiveRuns?: number;
   maxPendingBytes?: number;
   maxSessions?: number;
@@ -103,7 +103,7 @@ function capacityExceeded(): WorkerLiveEventFailure {
 }
 
 function resolveLiveEventTarget(
-  config: OpenClawConfig,
+  config: NovaConfig,
   sessionId: string,
 ): LiveEventTarget | undefined {
   const target = resolveWorkerSessionTarget(config, sessionId);
@@ -119,7 +119,7 @@ function resolveLiveEventTarget(
 }
 
 function prepareBoundLiveSession(
-  config: OpenClawConfig,
+  config: NovaConfig,
   binding: WorkerLiveSessionBinding,
 ): BoundLiveSession | undefined {
   if (!isValidLiveSessionBinding(binding)) {
@@ -139,7 +139,7 @@ function isValidLiveSessionBinding(binding: WorkerLiveSessionBinding): boolean {
 }
 
 function prepareBoundLiveSessionSafely(
-  config: OpenClawConfig,
+  config: NovaConfig,
   binding: WorkerLiveSessionBinding,
 ): BoundLiveSession | undefined {
   try {
@@ -267,7 +267,7 @@ export function createWorkerLiveEventReceiver(options: WorkerLiveEventReceiverOp
 
   const bindSessionWithConfig = (
     binding: WorkerLiveSessionBinding,
-    config: OpenClawConfig,
+    config: NovaConfig,
   ): boolean => {
     if (!isValidLiveSessionBinding(binding)) {
       return false;
@@ -332,7 +332,7 @@ export function createWorkerLiveEventReceiver(options: WorkerLiveEventReceiverOp
   const bindSession = (binding: WorkerLiveSessionBinding): boolean =>
     bindSessionWithConfig(binding, committedConfig);
 
-  const rebindAll = (config: OpenClawConfig): void => {
+  const rebindAll = (config: NovaConfig): void => {
     committedConfig = config;
     for (const binding of sessionBindings.values()) {
       bindSessionWithConfig(binding, committedConfig);

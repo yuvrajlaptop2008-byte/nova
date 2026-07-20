@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolvePluginNpmProjectDir } from "./install-paths.js";
 import { installPluginFromNpmSpec, PLUGIN_INSTALL_ERROR_CODE } from "./install.js";
 
@@ -15,7 +15,7 @@ type PackedVersion = {
   archive: Buffer;
   dependencies?: Record<string, string>;
   integrity: string;
-  openclaw?: Record<string, unknown>;
+  nova?: Record<string, unknown>;
   optionalDependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
   peerDependenciesMeta?: Record<string, { optional?: boolean }>;
@@ -48,12 +48,12 @@ afterEach(async () => {
 });
 
 async function makeTempDir(label: string): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), `openclaw-${label}-`));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), `nova-${label}-`));
   tempDirs.push(dir);
   return dir;
 }
 
-function configWithInstalledPackageTreeBlockPolicy(): OpenClawConfig {
+function configWithInstalledPackageTreeBlockPolicy(): NovaConfig {
   return {
     security: {
       installPolicy: {
@@ -98,7 +98,7 @@ async function packPlugin(params: {
   dependencies?: Record<string, string>;
   packageName: string;
   optionalDependencies?: Record<string, string>;
-  openclaw?: Record<string, unknown>;
+  nova?: Record<string, unknown>;
   peerDependencies?: Record<string, string>;
   peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   pluginId: string;
@@ -121,7 +121,7 @@ async function packPlugin(params: {
         name: params.packageName,
         version: params.version,
         type: "module",
-        openclaw: params.openclaw ?? { extensions: ["./dist/index.js"] },
+        nova: params.nova ?? { extensions: ["./dist/index.js"] },
         ...(params.dependencies ? { dependencies: params.dependencies } : {}),
         ...(params.optionalDependencies
           ? { optionalDependencies: params.optionalDependencies }
@@ -139,7 +139,7 @@ async function packPlugin(params: {
     "utf8",
   );
   await fs.writeFile(
-    path.join(packageDir, "openclaw.plugin.json"),
+    path.join(packageDir, "nova.plugin.json"),
     `${JSON.stringify(
       {
         id: params.pluginId,
@@ -172,7 +172,7 @@ async function packPlugin(params: {
     archive,
     ...(params.dependencies ? { dependencies: params.dependencies } : {}),
     integrity: `sha512-${crypto.createHash("sha512").update(archive).digest("base64")}`,
-    ...(params.openclaw ? { openclaw: params.openclaw } : {}),
+    ...(params.nova ? { nova: params.nova } : {}),
     ...(params.optionalDependencies ? { optionalDependencies: params.optionalDependencies } : {}),
     ...(params.peerDependencies ? { peerDependencies: params.peerDependencies } : {}),
     ...(peerDependenciesMeta ? { peerDependenciesMeta } : {}),
@@ -216,7 +216,7 @@ async function startStaticRegistry(
                 {
                   name: pkg.packageName,
                   version,
-                  ...(entry.openclaw ? { openclaw: entry.openclaw } : {}),
+                  ...(entry.nova ? { nova: entry.nova } : {}),
                   ...(entry.dependencies ? { dependencies: entry.dependencies } : {}),
                   ...(entry.optionalDependencies
                     ? { optionalDependencies: entry.optionalDependencies }
@@ -302,7 +302,7 @@ async function startMutableRegistry(params: {
               {
                 name: params.packageName,
                 version,
-                ...(entry.openclaw ? { openclaw: entry.openclaw } : {}),
+                ...(entry.nova ? { nova: entry.nova } : {}),
                 ...(entry.peerDependencies ? { peerDependencies: entry.peerDependencies } : {}),
                 ...(entry.peerDependenciesMeta
                   ? { peerDependenciesMeta: entry.peerDependenciesMeta }
@@ -367,14 +367,14 @@ describe("installPluginFromNpmSpec e2e", () => {
         pluginId: packageName,
         version: "2026.5.26",
         rootDir,
-        openclaw: compatibleNova,
+        nova: compatibleNova,
       }),
       await packPlugin({
         packageName,
         pluginId: packageName,
         version: "2026.5.27",
         rootDir,
-        openclaw: incompatibleNova,
+        nova: incompatibleNova,
       }),
     ];
     const registry = await startStaticRegistry([{ packageName, latest: "2026.5.27", versions }]);
@@ -415,31 +415,31 @@ describe("installPluginFromNpmSpec e2e", () => {
     }
   });
 
-  it("scrubs root openclaw materialized by required npm peers", async () => {
+  it("scrubs root nova materialized by required npm peers", async () => {
     const rootDir = await makeTempDir("npm-plugin-required-peer-e2e");
     const npmRoot = path.join(rootDir, "managed-npm");
     const packageName = `required-peer-plugin-${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
     const versions = [
       await packPlugin({
         packageName,
-        peerDependencies: { openclaw: ">=2026.0.0" },
+        peerDependencies: { nova: ">=2026.0.0" },
         peerDependenciesMeta: {},
         pluginId: packageName,
         version: "1.0.0",
         rootDir,
       }),
     ];
-    const openClawVersions = [
+    const novaVersions = [
       await packPlugin({
-        packageName: "openclaw",
-        pluginId: "registry-openclaw-copy",
+        packageName: "nova",
+        pluginId: "registry-nova-copy",
         version: "2026.0.0",
         rootDir,
       }),
     ];
     const registry = await startStaticRegistry([
       { packageName, latest: "1.0.0", versions },
-      { packageName: "openclaw", latest: "2026.0.0", versions: openClawVersions },
+      { packageName: "nova", latest: "2026.0.0", versions: novaVersions },
     ]);
     process.env.NPM_CONFIG_REGISTRY = registry;
     process.env.npm_config_registry = registry;
@@ -473,11 +473,11 @@ describe("installPluginFromNpmSpec e2e", () => {
     ) as {
       packages?: Record<string, unknown>;
     };
-    const rawOpenClawLockEntry = rawLock.packages?.["node_modules/openclaw"] as
+    const rawNovaLockEntry = rawLock.packages?.["node_modules/nova"] as
       | { peer?: unknown; version?: unknown }
       | undefined;
-    expect(rawOpenClawLockEntry?.peer).toBe(true);
-    expect(rawOpenClawLockEntry?.version).toBe("2026.0.0");
+    expect(rawNovaLockEntry?.peer).toBe(true);
+    expect(rawNovaLockEntry?.version).toBe("2026.0.0");
 
     const result = await installPluginFromNpmSpec({
       spec: `${packageName}@1.0.0`,
@@ -495,13 +495,14 @@ describe("installPluginFromNpmSpec e2e", () => {
     ) as {
       packages?: Record<string, unknown>;
     };
-    expect(lock.packages?.["node_modules/openclaw"]).toBeUndefined();
-    await expect(
-      fs.lstat(path.join(projectRoot, "node_modules", "openclaw")),
-    ).rejects.toHaveProperty("code", "ENOENT");
+    expect(lock.packages?.["node_modules/nova"]).toBeUndefined();
+    await expect(fs.lstat(path.join(projectRoot, "node_modules", "nova"))).rejects.toHaveProperty(
+      "code",
+      "ENOENT",
+    );
     await expect(
       fs
-        .lstat(path.join(result.targetDir, "node_modules", "openclaw"))
+        .lstat(path.join(result.targetDir, "node_modules", "nova"))
         .then((stat) => stat.isSymbolicLink()),
     ).resolves.toBe(true);
   });
@@ -655,10 +656,10 @@ describe("installPluginFromNpmSpec e2e", () => {
       await fs.readFile(path.join(projectRoot, "package.json"), "utf8"),
     ) as {
       dependencies?: Record<string, string>;
-      openclaw?: { managedPeerDependencies?: string[] };
+      nova?: { managedPeerDependencies?: string[] };
     };
     expect(["1.0.0", "^1.0.0"]).toContain(rootManifest.dependencies?.[runtimePeer]);
-    expect(rootManifest.openclaw?.managedPeerDependencies ?? []).toContain(runtimePeer);
+    expect(rootManifest.nova?.managedPeerDependencies ?? []).toContain(runtimePeer);
   });
 
   it("leaves legacy flat-root peer dependencies alone during isolated later installs", async () => {
@@ -763,11 +764,11 @@ describe("installPluginFromNpmSpec e2e", () => {
       await fs.readFile(path.join(npmRoot, "package.json"), "utf8"),
     ) as {
       dependencies?: Record<string, string>;
-      openclaw?: { managedPeerDependencies?: string[] };
+      nova?: { managedPeerDependencies?: string[] };
     };
     expect(rootManifest.dependencies?.[laterPlugin]).toBeUndefined();
     expect(rootManifest.dependencies?.[runtimePeer]).toBeUndefined();
-    expect(rootManifest.openclaw?.managedPeerDependencies ?? []).not.toContain(runtimePeer);
+    expect(rootManifest.nova?.managedPeerDependencies ?? []).not.toContain(runtimePeer);
   });
 
   it("ignores legacy flat-root package cycles during isolated installs", async () => {
@@ -911,11 +912,11 @@ describe("installPluginFromNpmSpec e2e", () => {
         await fs.readFile(path.join(projectRoot, "package.json"), "utf8"),
       ) as {
         dependencies?: Record<string, string>;
-        openclaw?: { managedPeerDependencies?: string[] };
+        nova?: { managedPeerDependencies?: string[] };
       };
       expect(rootManifest.dependencies?.[blockedPlugin]).toBeUndefined();
       expect(rootManifest.dependencies?.[runtimePeer]).toBeUndefined();
-      expect(rootManifest.openclaw?.managedPeerDependencies ?? []).not.toContain(runtimePeer);
+      expect(rootManifest.nova?.managedPeerDependencies ?? []).not.toContain(runtimePeer);
     } catch (error) {
       expect((error as NodeJS.ErrnoException).code).toBe("ENOENT");
     }
@@ -964,11 +965,11 @@ describe("installPluginFromNpmSpec e2e", () => {
       await fs.readFile(path.join(projectRoot, "package.json"), "utf8"),
     ) as {
       dependencies?: Record<string, string>;
-      openclaw?: { managedPeerDependencies?: string[] };
+      nova?: { managedPeerDependencies?: string[] };
     };
     expect(rootManifest.dependencies?.[blockedPlugin]).toBe("1.0.0");
     expect(rootManifest.dependencies?.[missingPeer]).toBeUndefined();
-    expect(rootManifest.openclaw?.managedPeerDependencies ?? []).not.toContain(missingPeer);
+    expect(rootManifest.nova?.managedPeerDependencies ?? []).not.toContain(missingPeer);
     await expect(
       fs.lstat(path.join(projectRoot, "node_modules", blockedPlugin, "package.json")),
     ).resolves.toBeTruthy();
@@ -1073,15 +1074,13 @@ describe("installPluginFromNpmSpec e2e", () => {
       await fs.readFile(path.join(blockedProjectRoot, "package.json"), "utf8"),
     ) as {
       dependencies?: Record<string, string>;
-      openclaw?: { managedPeerDependencies?: string[] };
+      nova?: { managedPeerDependencies?: string[] };
     };
     expect(rootManifest.dependencies?.[existingRootDependency]).toBe("1.0.0");
     expect(rootManifest.dependencies?.[blockedPlugin]).toBeUndefined();
     expect(rootManifest.dependencies?.[runtimePeer]).toBeUndefined();
-    expect(rootManifest.openclaw?.managedPeerDependencies ?? []).not.toContain(
-      existingRootDependency,
-    );
-    expect(rootManifest.openclaw?.managedPeerDependencies ?? []).not.toContain(runtimePeer);
+    expect(rootManifest.nova?.managedPeerDependencies ?? []).not.toContain(existingRootDependency);
+    expect(rootManifest.nova?.managedPeerDependencies ?? []).not.toContain(runtimePeer);
     await expect(
       fs.lstat(
         path.join(blockedProjectRoot, "node_modules", existingRootDependency, "package.json"),
@@ -1107,8 +1106,8 @@ describe("installPluginFromNpmSpec e2e", () => {
         versions: [
           await packPlugin({
             packageName: codexName,
-            peerDependencies: { openclaw: ">=2026.5.5-beta.2" },
-            peerDependenciesMeta: { openclaw: { optional: true } },
+            peerDependencies: { nova: ">=2026.5.5-beta.2" },
+            peerDependenciesMeta: { nova: { optional: true } },
             pluginId: codexName,
             version: "1.0.0",
             rootDir,
@@ -1121,7 +1120,7 @@ describe("installPluginFromNpmSpec e2e", () => {
         versions: [
           await packPlugin({
             packageName: opikName,
-            peerDependencies: { openclaw: ">=2026.3.2" },
+            peerDependencies: { nova: ">=2026.3.2" },
             peerDependenciesMeta: {},
             pluginId: opikName,
             version: "1.0.0",
@@ -1130,12 +1129,12 @@ describe("installPluginFromNpmSpec e2e", () => {
         ],
       },
       {
-        packageName: "openclaw",
+        packageName: "nova",
         latest: "2026.5.4",
         versions: [
           await packPlugin({
-            packageName: "openclaw",
-            pluginId: "registry-openclaw-copy",
+            packageName: "nova",
+            pluginId: "registry-nova-copy",
             version: "2026.5.4",
             rootDir,
           }),
@@ -1173,24 +1172,25 @@ describe("installPluginFromNpmSpec e2e", () => {
       ) as {
         packages?: Record<string, unknown>;
       };
-      expect(lock.packages?.["node_modules/openclaw"]).toBeUndefined();
-      await expect(
-        fs.lstat(path.join(projectRoot, "node_modules", "openclaw")),
-      ).rejects.toHaveProperty("code", "ENOENT");
+      expect(lock.packages?.["node_modules/nova"]).toBeUndefined();
+      await expect(fs.lstat(path.join(projectRoot, "node_modules", "nova"))).rejects.toHaveProperty(
+        "code",
+        "ENOENT",
+      );
     }
     await expect(
       fs
-        .lstat(path.join(first.targetDir, "node_modules", "openclaw"))
+        .lstat(path.join(first.targetDir, "node_modules", "nova"))
         .then((stat) => stat.isSymbolicLink()),
     ).resolves.toBe(true);
     await expect(
       fs
-        .lstat(path.join(second.targetDir, "node_modules", "openclaw"))
+        .lstat(path.join(second.targetDir, "node_modules", "nova"))
         .then((stat) => stat.isSymbolicLink()),
     ).resolves.toBe(true);
   });
 
-  it("keeps an earlier isolated openclaw peer link after later plugin installs", async () => {
+  it("keeps an earlier isolated nova peer link after later plugin installs", async () => {
     const rootDir = await makeTempDir("npm-plugin-peer-e2e");
     const npmRoot = path.join(rootDir, "managed-npm");
     const peerPackageName = `peer-plugin-${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
@@ -1198,7 +1198,7 @@ describe("installPluginFromNpmSpec e2e", () => {
     const peerVersions = [
       await packPlugin({
         packageName: peerPackageName,
-        peerDependencies: { openclaw: ">=2026.0.0" },
+        peerDependencies: { nova: ">=2026.0.0" },
         pluginId: peerPackageName,
         version: "1.0.0",
         rootDir,
@@ -1228,7 +1228,7 @@ describe("installPluginFromNpmSpec e2e", () => {
     if (!first.ok) {
       throw new Error(first.error);
     }
-    const peerLink = path.join(first.targetDir, "node_modules", "openclaw");
+    const peerLink = path.join(first.targetDir, "node_modules", "nova");
     await expect(fs.lstat(peerLink).then((stat) => stat.isSymbolicLink())).resolves.toBe(true);
 
     const second = await installPluginFromNpmSpec({
@@ -1248,13 +1248,13 @@ describe("installPluginFromNpmSpec e2e", () => {
     ) as {
       dependencies?: Record<string, string>;
     };
-    expect(manifest.dependencies?.openclaw).toBeUndefined();
+    expect(manifest.dependencies?.nova).toBeUndefined();
     const lock = JSON.parse(
       await fs.readFile(path.join(peerProjectRoot, "package-lock.json"), "utf8"),
     ) as {
       packages?: Record<string, unknown>;
     };
-    expect(lock.packages?.["node_modules/openclaw"]).toBeUndefined();
+    expect(lock.packages?.["node_modules/nova"]).toBeUndefined();
   });
 
   it("pins a mutable npm tag to the version resolved before install", async () => {

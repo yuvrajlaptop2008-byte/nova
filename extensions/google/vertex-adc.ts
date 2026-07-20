@@ -4,16 +4,16 @@ import os from "node:os";
 import path from "node:path";
 import { gunzipSync } from "node:zlib";
 import type { GoogleAuthOptions } from "google-auth-library";
-import { buildTimeoutAbortSignal } from "openclaw/plugin-sdk/extension-shared";
+import { buildTimeoutAbortSignal } from "nova/plugin-sdk/extension-shared";
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
   resolveExpiresAtMsFromDurationSeconds,
-} from "openclaw/plugin-sdk/number-runtime";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { readSecretFileSync } from "openclaw/plugin-sdk/secret-file-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { withTimeout } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import { readSecretFileSync } from "nova/plugin-sdk/secret-file-runtime";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
+import { withTimeout } from "nova/plugin-sdk/text-utility-runtime";
 
 type GoogleAuthorizedUserCredentials = {
   type: "authorized_user";
@@ -52,7 +52,7 @@ const GOOGLE_VERTEX_TOKEN_EXPIRY_BUFFER_MS = 60_000;
 const GOOGLE_VERTEX_DEFAULT_TOKEN_LIFETIME_SECONDS = 3600;
 const GOOGLE_VERTEX_AUTHLIB_TOKEN_CACHE_MS = 5 * 60_000;
 const GOOGLE_OAUTH_TOKEN_RESPONSE_MAX_BYTES = 1024 * 1024;
-const VERTEX_ADC_TEST_API_KEY = Symbol.for("openclaw.google.vertexAdcTestApi");
+const VERTEX_ADC_TEST_API_KEY = Symbol.for("nova.google.vertexAdcTestApi");
 
 let cachedGoogleVertexAuthorizedUserToken: GoogleVertexAuthorizedUserToken | undefined;
 let cachedGoogleAuthClient:

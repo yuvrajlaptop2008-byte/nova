@@ -15,7 +15,7 @@ const ARTIFACT_ID = "789";
 const ARTIFACT_NAME = "docker-e2e-shared-images-release-aabbccddeeff-123456-2";
 const ARTIFACT_RUN_ATTEMPT = "2";
 const ARTIFACT_RUN_ID = "123456";
-const IMAGE_REFS = ["openclaw-docker-e2e-bare:pkg-test", "openclaw-docker-e2e-functional:pkg-test"];
+const IMAGE_REFS = ["nova-docker-e2e-bare:pkg-test", "nova-docker-e2e-functional:pkg-test"];
 
 function imageId(ref: string): string {
   return `sha256:${createHash("sha256").update(ref).digest("hex")}`;
@@ -80,7 +80,7 @@ function verifyUploadedArtifact(
 }
 
 function createFixture() {
-  const root = mkdtempSync(join(tmpdir(), "openclaw-shared-image-artifact-"));
+  const root = mkdtempSync(join(tmpdir(), "nova-shared-image-artifact-"));
   const bin = join(root, "bin");
   const artifactDir = join(root, "artifact");
   const dockerLog = join(root, "docker.log");
@@ -216,7 +216,7 @@ esac
     FAKE_DOCKER_LOG: dockerLog,
     FAKE_GH_LOG: ghLog,
     GH_TOKEN: "test-token",
-    GITHUB_REPOSITORY: "openclaw/openclaw",
+    GITHUB_REPOSITORY: "nova/nova",
     GITHUB_RUN_ATTEMPT: "2",
     GITHUB_RUN_ID: "123456",
     PATH: `${bin}:${process.env.PATH ?? ""}`,
@@ -245,10 +245,10 @@ describe("shared Docker image artifacts", () => {
       const verified = verifyUploadedArtifact(fixture);
       expect(verified.status, `${verified.stdout}\n${verified.stderr}`).toBe(0);
       expect(readFileSync(fixture.ghLog, "utf8")).toContain(
-        `api repos/openclaw/openclaw/actions/artifacts/${ARTIFACT_ID}`,
+        `api repos/nova/nova/actions/artifacts/${ARTIFACT_ID}`,
       );
       expect(readFileSync(fixture.ghLog, "utf8")).toContain(
-        `api repos/openclaw/openclaw/actions/runs/${ARTIFACT_RUN_ID}/attempts/${ARTIFACT_RUN_ATTEMPT}`,
+        `api repos/nova/nova/actions/runs/${ARTIFACT_RUN_ID}/attempts/${ARTIFACT_RUN_ATTEMPT}`,
       );
 
       const digestMismatch = verifyUploadedArtifact(fixture, {
@@ -299,7 +299,7 @@ describe("shared Docker image artifacts", () => {
         packageSourceSha: TARGET_SHA,
         runAttempt: 2,
         runId: 123456,
-        schema: "openclaw.shared-docker-image-artifact/v1",
+        schema: "nova.shared-docker-image-artifact/v1",
         schemaVersion: 1,
         targetSha: TARGET_SHA,
         workflowSha: WORKFLOW_SHA,
@@ -345,7 +345,7 @@ describe("shared Docker image artifacts", () => {
           env: expectedArchiveEnv(fixture),
           imageRefs: [
             expectDefined(IMAGE_REFS[0], "first shared Docker image reference"),
-            "openclaw-docker-e2e-functional:wrong",
+            "nova-docker-e2e-functional:wrong",
           ],
           expected: "image ref 1",
         },

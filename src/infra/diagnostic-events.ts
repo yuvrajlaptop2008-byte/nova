@@ -1,7 +1,7 @@
 // Defines and sanitizes runtime diagnostic event payloads.
 import { randomUUID } from "node:crypto";
 import type { EmbeddedAgentExecutionPhase } from "../agents/embedded-agent-runner/execution-phase.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { TalkBrain, TalkEventType, TalkMode, TalkTransport } from "../talk/talk-events.js";
 import { setInternalDiagnosticEventListenerCounts } from "./diagnostic-event-listener-presence.js";
 import {
@@ -926,7 +926,7 @@ type DiagnosticEventsGlobalState = {
 
 const MAX_ASYNC_DIAGNOSTIC_EVENTS = 10_000;
 const MAX_ASYNC_DIAGNOSTIC_EVENTS_PER_TURN = 100;
-const DIAGNOSTIC_EVENTS_STATE_KEY = Symbol.for("openclaw.diagnosticEvents.state.v1");
+const DIAGNOSTIC_EVENTS_STATE_KEY = Symbol.for("nova.diagnosticEvents.state.v1");
 const dispatchedTrustedDiagnosticMetadata = new WeakSet<object>();
 const ASYNC_DIAGNOSTIC_EVENT_TYPES = new Set<DiagnosticEventPayload["type"]>([
   "tool.execution.started",
@@ -1018,7 +1018,7 @@ function getDiagnosticEventsState(): DiagnosticEventsGlobalState {
 }
 
 /** Returns whether diagnostics are enabled for a loaded config; missing config defaults enabled. */
-export function isDiagnosticsEnabled(config?: OpenClawConfig): boolean {
+export function isDiagnosticsEnabled(config?: NovaConfig): boolean {
   return config?.diagnostics?.enabled !== false;
 }
 

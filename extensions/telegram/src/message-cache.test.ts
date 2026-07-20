@@ -1170,14 +1170,14 @@ describe("telegram message cache", () => {
         chat,
         message_id: 601,
         date: 1736380660,
-        text: "@openclaw_bot please check this",
+        text: "@nova_bot please check this",
         from: { id: 222, is_bot: false, first_name: "Operator" },
       },
       {
         chat,
         message_id: 602,
         date: 1736380720,
-        text: "@openclaw_bot Hello",
+        text: "@nova_bot Hello",
         from: { id: 222, is_bot: false, first_name: "Operator" },
       },
     ] satisfies Message[]) {
@@ -1192,7 +1192,7 @@ describe("telegram message cache", () => {
       replyChainNodes: [],
       recentLimit: 10,
       replyTargetWindowSize: 1,
-      includeNode: (node) => node.body?.includes("@openclaw_bot") === true,
+      includeNode: (node) => node.body?.includes("@nova_bot") === true,
     });
 
     expect(context.map((entry) => entry.node.messageId)).toEqual(["601"]);
@@ -1235,7 +1235,7 @@ describe("telegram message cache", () => {
         chat,
         message_id: 13,
         date: (timestampMs + 3000) / 1000,
-        text: "@openclaw_bot what happened?",
+        text: "@nova_bot what happened?",
         from: { id: 104, is_bot: false, first_name: "Pat" },
       },
     ] satisfies Message[]) {
@@ -1269,7 +1269,7 @@ describe("telegram message cache", () => {
     const beforeSession = Date.parse("2026-05-10T12:40:00.000Z");
     const sessionStartedAt = Date.parse("2026-05-10T17:30:43.980Z");
     const afterSession = Date.parse("2026-05-11T23:36:00.000Z");
-    const staleInstruction = "okay so we just flip in openclaw? if yes do it up";
+    const staleInstruction = "okay so we just flip in nova? if yes do it up";
     const record = (params: {
       id: number;
       text: string;
@@ -1399,7 +1399,7 @@ describe("telegram message cache", () => {
     const beforeSession = Date.parse("2026-05-10T12:40:00.000Z");
     const sessionStartedAt = Date.parse("2026-05-10T17:30:43.127Z");
     const afterSession = Date.parse("2026-05-11T23:36:00.000Z");
-    const staleInstruction = "okay so we just flip in openclaw? if yes do it up";
+    const staleInstruction = "okay so we just flip in nova? if yes do it up";
     const record = (params: {
       id: number;
       text: string;

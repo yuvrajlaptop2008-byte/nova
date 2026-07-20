@@ -6,12 +6,12 @@ import {
   readStringParam,
   type AnyAgentTool,
   type PluginRuntime,
-} from "openclaw/plugin-sdk/core";
+} from "nova/plugin-sdk/core";
 import {
   isModelSelectionLocked,
   ModelSelectionLockedError,
-} from "openclaw/plugin-sdk/model-session-runtime";
-import type { OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
+} from "nova/plugin-sdk/model-session-runtime";
+import type { NovaPluginToolContext } from "nova/plugin-sdk/plugin-entry";
 import { Type } from "typebox";
 import { resolveCodexBindingAppServerConnection } from "./app-server/binding-connection.js";
 import { CODEX_CONTROL_METHODS } from "./app-server/capabilities.js";
@@ -105,7 +105,7 @@ const CodexThreadsParamsSchema = Type.Union([
 
 type CodexThreadsToolOptions = {
   bindingStore: CodexAppServerBindingStore;
-  context: OpenClawPluginToolContext;
+  context: NovaPluginToolContext;
   runtime: PluginRuntime;
   getPluginConfig: () => unknown;
   request?: typeof codexControlRequest;
@@ -128,7 +128,7 @@ function readLimit(value: unknown): number | undefined {
 }
 
 function resolveToolSession(
-  context: OpenClawPluginToolContext,
+  context: NovaPluginToolContext,
   runtime: PluginRuntime,
 ): { sessionId: string; modelSelectionLocked: boolean } | undefined {
   const sessionKey = context.sessionKey?.trim();

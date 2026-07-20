@@ -4,18 +4,18 @@ import {
   ledgerChecks,
   ledgerFor,
   renderContributionRecordEntry,
-} from "../../.agents/skills/openclaw-changelog-update/scripts/verify-release-notes.mjs";
+} from "../../.agents/skills/nova-changelog-update/scripts/verify-release-notes.mjs";
 
 describe("renderContributionRecordEntry", () => {
   it("keeps external and linked issue references without repeating PR title references", () => {
     expect(
       renderContributionRecordEntry({
         number: 123,
-        title: "Fix local openclaw/openclaw#45 and openclaw/imsg#141",
+        title: "Fix local nova/nova#45 and nova/imsg#141",
         linkedIssues: [{ number: 45 }, { number: 67 }],
         thanks: ["alice", "bob"],
       }),
-    ).toBe("- **PR #123** Related #45, openclaw/imsg#141, #67. Thanks @alice and @bob.");
+    ).toBe("- **PR #123** Related #45, nova/imsg#141, #67. Thanks @alice and @bob.");
   });
 
   it("deduplicates resolved issues and retains seeded cross-repository references", () => {
@@ -23,7 +23,7 @@ describe("renderContributionRecordEntry", () => {
       renderContributionRecordEntry({
         number: 124,
         title: "Fix #45, #45, and Nova/imsg#141",
-        externalReferences: ["openclaw/imsg#141"],
+        externalReferences: ["nova/imsg#141"],
         priorReferences: [67],
         linkedIssues: [{ number: 45 }, { number: 67 }],
         thanks: [],
@@ -43,7 +43,7 @@ describe("renderContributionRecordEntry", () => {
   });
 
   it("retains references and credits when a compact record is seeded again", () => {
-    const line = "- **PR #125** Related #45, openclaw/imsg#141. Thanks @alice and @bob.";
+    const line = "- **PR #125** Related #45, nova/imsg#141. Thanks @alice and @bob.";
     const record = contributionRecordFor({
       source: [
         "## 2026.7.1",
@@ -58,7 +58,7 @@ describe("renderContributionRecordEntry", () => {
     const seeded = record.pullRequests.get(125);
 
     expect(seeded).toEqual({
-      externalReferences: ["openclaw/imsg#141"],
+      externalReferences: ["nova/imsg#141"],
       references: [45],
       thanks: ["alice", "bob"],
     });
@@ -129,13 +129,13 @@ describe("renderContributionRecordEntry", () => {
         "",
         "#### Pull requests",
         "",
-        "- **PR #126** Fix #46 and openclaw/imsg#142. Related #68. Thanks @alice.",
+        "- **PR #126** Fix #46 and nova/imsg#142. Related #68. Thanks @alice.",
       ].join("\n"),
     });
     const seeded = record.pullRequests.get(126);
 
     expect(seeded).toEqual({
-      externalReferences: ["openclaw/imsg#142"],
+      externalReferences: ["nova/imsg#142"],
       references: [46, 68],
       thanks: ["alice"],
     });
@@ -161,7 +161,7 @@ describe("renderContributionRecordEntry", () => {
       "",
       "#### Pull requests",
       "",
-      "- **PR #456** Related openclaw/imsg#141.",
+      "- **PR #456** Related nova/imsg#141.",
     ].join("\n");
     const entry = {
       number: 456,
@@ -248,7 +248,7 @@ describe("renderContributionRecordEntry", () => {
       title: "Internal cleanup",
       editorialEligible: false,
       priorReferences: [],
-      externalReferences: ["openclaw/imsg#143"],
+      externalReferences: ["nova/imsg#143"],
       linkedIssues: [],
       thanks: [],
     };

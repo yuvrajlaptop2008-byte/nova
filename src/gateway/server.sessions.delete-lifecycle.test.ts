@@ -22,7 +22,7 @@ import {
   beginSessionWorkAdmission,
   runExclusiveSessionLifecycleMutation,
 } from "../sessions/session-lifecycle-admission.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { embeddedRunMock, rpcReq, testState, writeSessionStore } from "./test-helpers.js";
 import {
   setupGatewaySessionsTestHarness,
@@ -58,7 +58,7 @@ async function initializeRemoteBackedGitWorkspace(root: string): Promise<string>
     workspace,
     "config",
     "user.email",
-    "openclaw-test@example.invalid",
+    "nova-test@example.invalid",
   ]);
   await fs.writeFile(path.join(workspace, "README.md"), "base\n");
   await execFileAsync("git", ["-C", workspace, "add", "README.md"]);
@@ -70,7 +70,7 @@ async function initializeRemoteBackedGitWorkspace(root: string): Promise<string>
 }
 
 afterEach(() => {
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 function expectObject(value: unknown) {
@@ -119,13 +119,11 @@ function expectThreadBindingsUnbound(targetSessionKey: string) {
 }
 
 test("sessions.delete snapshots and removes session worktrees", async () => {
-  const root = await fs.mkdtemp(
-    path.join(await fs.realpath(os.tmpdir()), "openclaw-delete-worktree-"),
-  );
+  const root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "nova-delete-worktree-"));
   const workspace = await initializeRemoteBackedGitWorkspace(root);
   const previousStateDir = process.env.NOVA_STATE_DIR;
   process.env.NOVA_STATE_DIR = path.join(root, "state");
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   testState.agentConfig = { workspace };
   await createSessionStoreDir();
   let dirtyWorktreeId: string | undefined;
@@ -149,7 +147,7 @@ test("sessions.delete snapshots and removes session worktrees", async () => {
     await expect(fs.access(cleanWorktree!.path)).rejects.toThrow();
     expect(getRegistryWorktree(process.env, cleanWorktree!.id)).toMatchObject({
       removedAt: expect.any(Number),
-      snapshotRef: expect.stringMatching(/^refs\/openclaw\/snapshots\//),
+      snapshotRef: expect.stringMatching(/^refs\/nova\/snapshots\//),
     });
     const registered = await execFileAsync("git", [
       "-C",
@@ -183,7 +181,7 @@ test("sessions.delete snapshots and removes session worktrees", async () => {
     await expect(fs.access(dirtyWorktree!.path)).rejects.toThrow();
     expect(getRegistryWorktree(process.env, dirtyWorktree!.id)).toMatchObject({
       removedAt: expect.any(Number),
-      snapshotRef: expect.stringMatching(/^refs\/openclaw\/snapshots\//),
+      snapshotRef: expect.stringMatching(/^refs\/nova\/snapshots\//),
     });
     dirtyWorktreeId = undefined;
   } finally {
@@ -193,7 +191,7 @@ test("sessions.delete snapshots and removes session worktrees", async () => {
     ) {
       await managedWorktrees.remove({ id: dirtyWorktreeId, reason: "test-cleanup", force: true });
     }
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     if (previousStateDir === undefined) {
       delete process.env.NOVA_STATE_DIR;
     } else {

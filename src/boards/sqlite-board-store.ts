@@ -14,20 +14,20 @@ import {
   runSqliteDeferredTransactionSync,
   runSqliteImmediateTransactionSync,
 } from "../infra/sqlite-transaction.js";
-import { NOVA_AGENT_BOARD_SCHEMA_SQL } from "../state/openclaw-agent-board-schema.js";
-import { withOpenClawAgentDatabaseReadOnly } from "../state/openclaw-agent-db-readonly.js";
+import { NOVA_AGENT_BOARD_SCHEMA_SQL } from "../state/nova-agent-board-schema.js";
+import { withNovaAgentDatabaseReadOnly } from "../state/nova-agent-db-readonly.js";
 import type {
   BoardTabs as BoardTabRow,
   BoardWidgets as BoardWidgetRow,
-  DB as OpenClawAgentKyselyDatabase,
-} from "../state/openclaw-agent-db.generated.js";
+  DB as NovaAgentKyselyDatabase,
+} from "../state/nova-agent-db.generated.js";
 import {
-  listOpenClawRegisteredAgentDatabases,
-  openOpenClawAgentDatabase,
-  resolveOpenClawAgentSqlitePath,
-  runOpenClawAgentWriteTransaction,
-  type OpenClawAgentDatabase,
-} from "../state/openclaw-agent-db.js";
+  listNovaRegisteredAgentDatabases,
+  openNovaAgentDatabase,
+  resolveNovaAgentSqlitePath,
+  runNovaAgentWriteTransaction,
+  type NovaAgentDatabase,
+} from "../state/nova-agent-db.js";
 import { applyBoardOps, BoardValidationError, normalizeBoardLayout } from "./board-layout.js";
 import {
   boardWidgetGrantScopeMatches,
@@ -41,10 +41,10 @@ import {
 } from "./board-store.js";
 
 type BoardDatabase = Pick<
-  OpenClawAgentKyselyDatabase,
+  NovaAgentKyselyDatabase,
   "board_tabs" | "board_widgets" | "session_entries"
 >;
-type BoardDatabaseHandle = Pick<OpenClawAgentDatabase, "db" | "path">;
+type BoardDatabaseHandle = Pick<NovaAgentDatabase, "db" | "path">;
 type SelectedBoardTabRow = Selectable<BoardTabRow>;
 type SelectedBoardWidgetRow = Selectable<BoardWidgetRow>;
 
@@ -59,7 +59,7 @@ const ensuredBoardDatabases = new WeakSet<DatabaseSync>();
 // Read-only connections cannot run the lazy DDL, and a pre-existing v13 DB has
 // no board tables until the first write. Reads must treat that as "no boards",
 // not "no such table".
-function boardTablesPresent(database: Pick<OpenClawAgentDatabase, "db">): boolean {
+function boardTablesPresent(database: Pick<NovaAgentDatabase, "db">): boolean {
   if (ensuredBoardDatabases.has(database.db)) {
     return true;
   }
@@ -73,7 +73,7 @@ function boardTablesPresent(database: Pick<OpenClawAgentDatabase, "db">): boolea
   return true;
 }
 
-function ensureBoardSchema(database: OpenClawAgentDatabase): void {
+function ensureBoardSchema(database: NovaAgentDatabase): void {
   if (ensuredBoardDatabases.has(database.db)) {
     return;
   }
@@ -378,7 +378,7 @@ export class SqliteBoardStore implements BoardStore {
     path?: string;
     sessionKey: string;
   }): void {
-    const result = withOpenClawAgentDatabaseReadOnly(
+    const result = withNovaAgentDatabaseReadOnly(
       (database) => hasSession(database, resolved.sessionKey),
       {
         agentId: resolved.agentId,
@@ -395,12 +395,12 @@ export class SqliteBoardStore implements BoardStore {
   }
 
   private prepareWrite(sessionKey: string): {
-    database: OpenClawAgentDatabase;
+    database: NovaAgentDatabase;
     resolved: { agentId: string; path?: string; sessionKey: string };
   } {
     const resolved = this.resolve(sessionKey);
     this.requireExistingSession(resolved);
-    const database = openOpenClawAgentDatabase({
+    const database = openNovaAgentDatabase({
       agentId: resolved.agentId,
       ...(resolved.path ? { path: resolved.path } : {}),
       env: this.options.env,
@@ -411,7 +411,7 @@ export class SqliteBoardStore implements BoardStore {
 
   getSnapshot(sessionKey: string): BoardSnapshot {
     const resolved = this.resolve(sessionKey);
-    const result = withOpenClawAgentDatabaseReadOnly(
+    const result = withNovaAgentDatabaseReadOnly(
       (database) =>
         hasSession(database, resolved.sessionKey) && boardTablesPresent(database)
           ? readStoredBoard(database, resolved.sessionKey).snapshot
@@ -432,7 +432,7 @@ export class SqliteBoardStore implements BoardStore {
       return this.getSnapshot(sessionKey);
     }
     const { database, resolved } = this.prepareWrite(sessionKey);
-    return runOpenClawAgentWriteTransaction(
+    return runNovaAgentWriteTransaction(
       (transactionDatabase) => {
         if (!hasSession(transactionDatabase, resolved.sessionKey)) {
           throw new BoardValidationError(
@@ -463,7 +463,7 @@ export class SqliteBoardStore implements BoardStore {
     const { database, resolved } = this.prepareWrite(params.sessionKey);
     const canonicalParams = { ...params, sessionKey: resolved.sessionKey };
     const viewGeneration = randomBytes(16).toString("hex");
-    return runOpenClawAgentWriteTransaction(
+    return runNovaAgentWriteTransaction(
       (transactionDatabase) => {
         if (!hasSession(transactionDatabase, resolved.sessionKey)) {
           throw new BoardValidationError(
@@ -545,7 +545,7 @@ export class SqliteBoardStore implements BoardStore {
     instanceId?: string,
   ): BoardSnapshot {
     const { database, resolved } = this.prepareWrite(sessionKey);
-    return runOpenClawAgentWriteTransaction(
+    return runNovaAgentWriteTransaction(
       (transactionDatabase) => {
         if (!hasSession(transactionDatabase, resolved.sessionKey)) {
           throw new BoardValidationError(
@@ -585,7 +585,7 @@ export class SqliteBoardStore implements BoardStore {
 
   readWidgetHtml(sessionKey: string, name: string): BoardWidgetDocument | undefined {
     const resolved = this.resolve(sessionKey);
-    const result = withOpenClawAgentDatabaseReadOnly(
+    const result = withNovaAgentDatabaseReadOnly(
       (database) => {
         if (!hasSession(database, resolved.sessionKey) || !boardTablesPresent(database)) {
           return undefined;
@@ -636,7 +636,7 @@ export class SqliteBoardStore implements BoardStore {
 
   readWidgetMcpApp(sessionKey: string, name: string): BoardWidgetMcpAppRead | undefined {
     const resolved = this.resolve(sessionKey);
-    const result = withOpenClawAgentDatabaseReadOnly(
+    const result = withNovaAgentDatabaseReadOnly(
       (database) => {
         if (!hasSession(database, resolved.sessionKey) || !boardTablesPresent(database)) {
           return undefined;
@@ -677,15 +677,15 @@ export class SqliteBoardStore implements BoardStore {
   listSessionsWithBoards(): string[] {
     const sessionKeys = new Set<string>();
     const agentIds = new Set(
-      listOpenClawRegisteredAgentDatabases({ env: this.options.env }).map(
+      listNovaRegisteredAgentDatabases({ env: this.options.env }).map(
         (registered) => registered.agentId,
       ),
     );
     for (const agentId of agentIds) {
       const canonicalPath =
         this.resolve(`agent:${agentId}:main`).path ??
-        resolveOpenClawAgentSqlitePath({ agentId, env: this.options.env });
-      const result = withOpenClawAgentDatabaseReadOnly(
+        resolveNovaAgentSqlitePath({ agentId, env: this.options.env });
+      const result = withNovaAgentDatabaseReadOnly(
         (database) => {
           if (!boardTablesPresent(database)) {
             return [];

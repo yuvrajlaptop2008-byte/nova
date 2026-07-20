@@ -1,5 +1,5 @@
 import { isRecord } from "@nova/normalization-core/record-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import type { ClawHubTrustErrorCode } from "../infra/clawhub-install-trust.js";
 import { parseClawHubPluginSpec } from "../infra/clawhub-spec.js";
@@ -8,7 +8,7 @@ import { unscopedPackageName } from "../infra/install-safe-path.js";
 import type { NpmSpecResolution } from "../infra/install-source-utils.js";
 import { createNpmMetadataEnv, resolveNpmSpecMetadata } from "../infra/install-source-utils.js";
 import {
-  compareOpenClawReleaseVersions,
+  compareNovaReleaseVersions,
   isExactSemverVersion,
   isPrereleaseResolutionAllowed,
   isPrereleaseSemverVersion,
@@ -78,7 +78,7 @@ export type PluginUpdateOutcome =
     });
 
 export type PluginUpdateSummary = {
-  config: OpenClawConfig;
+  config: NovaConfig;
   changed: boolean;
   outcomes: PluginUpdateOutcome[];
 };
@@ -226,7 +226,7 @@ export function expectedIntegrityForNpmUpdate(params: {
 }
 
 function compareNpmSemverForUpdate(left: string, right: string): number {
-  const releaseCmp = compareOpenClawReleaseVersions(left, right);
+  const releaseCmp = compareNovaReleaseVersions(left, right);
   if (releaseCmp !== null) {
     return releaseCmp;
   }
@@ -420,7 +420,7 @@ export function isNpmMetadataCompatibleWithCurrentHost(metadata: NpmSpecResoluti
 }
 
 export function isBundledVersionNewer(bundledVersion: string, installedVersion: string): boolean {
-  const releaseCmp = compareOpenClawReleaseVersions(bundledVersion, installedVersion);
+  const releaseCmp = compareNovaReleaseVersions(bundledVersion, installedVersion);
   if (releaseCmp !== null) {
     return releaseCmp > 0;
   }

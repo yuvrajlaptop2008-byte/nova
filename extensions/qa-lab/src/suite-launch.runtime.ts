@@ -171,7 +171,7 @@ async function resolveQaFlowChannelGroups(
   }
   // Package-only live lanes mount the QA harness without its dev tree. Load
   // Crabline only for Crabline-owned runs so unrelated transports stay isolated.
-  const { NOVA_CRABLINE_DEFAULT_CHANNEL, resolveOpenClawCrablineChannelDriverSelection } =
+  const { NOVA_CRABLINE_DEFAULT_CHANNEL, resolveNovaCrablineChannelDriverSelection } =
     await import("@nova/crabline");
   const channels = resolveQaSuiteScenarioChannels({
     defaultChannel: NOVA_CRABLINE_DEFAULT_CHANNEL,
@@ -186,7 +186,7 @@ async function resolveQaFlowChannelGroups(
         channelId: undefined,
         channelDriverSelection:
           runParams.channelDriverSelection ??
-          resolveOpenClawCrablineChannelDriverSelection({ channel: singleChannel }),
+          resolveNovaCrablineChannelDriverSelection({ channel: singleChannel }),
         scenarios: [...scenarios],
       },
     ];
@@ -196,7 +196,7 @@ async function resolveQaFlowChannelGroups(
   return channels.map((channel) => ({
     channel,
     channelId: undefined,
-    channelDriverSelection: resolveOpenClawCrablineChannelDriverSelection({ channel }),
+    channelDriverSelection: resolveNovaCrablineChannelDriverSelection({ channel }),
     scenarios: scenarios.filter(
       (scenario) =>
         (normalizeQaSuiteScenarioChannel(scenario) ?? NOVA_CRABLINE_DEFAULT_CHANNEL) === channel,

@@ -5,7 +5,7 @@ import {
   createAgentRunRestartAbortError,
 } from "../../agents/run-termination.js";
 import { resolveSessionWorkStartError } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { getAgentEventLifecycleGeneration } from "../../infra/agent-events.js";
 import {
   beginSessionWorkAdmission,
@@ -28,7 +28,7 @@ import {
 import type { GatewayRequestHandlerOptions } from "./types.js";
 
 export function createAgentAdmissionController(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runId: string;
   lifecycleGeneration: string;
   agentDedupeKeys: string[];
@@ -42,7 +42,7 @@ export function createAgentAdmissionController(params: {
   getResolvedSessionId: () => string | undefined;
   getResolvedSessionAgentId: () => string | undefined;
   getAgentId: () => string | undefined;
-  getCfgForAgent: () => OpenClawConfig | undefined;
+  getCfgForAgent: () => NovaConfig | undefined;
   getSessionPersisted: () => boolean;
   getSupersededSessionId: () => string | undefined;
   setAdmittedSessionId: (sessionId: string) => void;

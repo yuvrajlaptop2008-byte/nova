@@ -3,13 +3,10 @@ import type { DatabaseSync } from "node:sqlite";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { MAX_TIMER_TIMEOUT_MS } from "../shared/number-coercion.js";
-import { openOpenClawAgentDatabase } from "../state/openclaw-agent-db.js";
-import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { openNovaAgentDatabase } from "../state/nova-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import { withPluginStateLease } from "./plugin-state-lease.js";
 
 function deferred<T = void>() {
@@ -28,13 +25,13 @@ function abortReason(signal: AbortSignal): Error {
 
 afterEach(() => {
   vi.useRealTimers();
-  closeOpenClawAgentDatabasesForTest();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaAgentDatabasesForTest();
+  closeNovaStateDatabaseForTest();
 });
 
 describe("plugin state SQLite leases", () => {
   it("places shared and agent leases in their canonical databases", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-placement" }, async (state) => {
+    await withNovaTestState({ label: "plugin-lease-placement" }, async (state) => {
       const sharedEntered = deferred();
       const releaseShared = deferred();
       const shared = withPluginStateLease(
@@ -53,7 +50,7 @@ describe("plugin state SQLite leases", () => {
       );
       await sharedEntered.promise;
       expect(
-        openOpenClawStateDatabase({ env: state.env })
+        openNovaStateDatabase({ env: state.env })
           .db.prepare("SELECT scope, lease_key FROM state_leases")
           .all(),
       ).toEqual([{ scope: "plugin:memory-core:qmd", lease_key: "embed" }]);
@@ -78,12 +75,12 @@ describe("plugin state SQLite leases", () => {
       );
       await agentEntered.promise;
       expect(
-        openOpenClawAgentDatabase({ agentId: "main", env: state.env })
+        openNovaAgentDatabase({ agentId: "main", env: state.env })
           .db.prepare("SELECT scope, lease_key FROM state_leases")
           .all(),
       ).toEqual([{ scope: "plugin:memory-core:qmd", lease_key: "write" }]);
       expect(
-        openOpenClawStateDatabase({ env: state.env })
+        openNovaStateDatabase({ env: state.env })
           .db.prepare("SELECT scope, lease_key FROM state_leases")
           .all(),
       ).toEqual([]);
@@ -93,7 +90,7 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("serializes contenders and times out without entering the callback", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-contenders" }, async () => {
+    await withNovaTestState({ label: "plugin-lease-contenders" }, async () => {
       const firstEntered = deferred();
       const releaseFirst = deferred();
       const first = withPluginStateLease(
@@ -177,8 +174,8 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("does not enter the callback after acquisition expires", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-expired-entry" }, async (state) => {
-      const database = openOpenClawStateDatabase({ env: state.env }).db;
+    await withNovaTestState({ label: "plugin-lease-expired-entry" }, async (state) => {
+      const database = openNovaStateDatabase({ env: state.env }).db;
       const callback = vi.fn(async () => undefined);
       const now = vi.spyOn(Date, "now").mockImplementation(() => {
         const acquired = database
@@ -210,7 +207,7 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("does not serialize different per-agent databases", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-agents" }, async () => {
+    await withNovaTestState({ label: "plugin-lease-agents" }, async () => {
       const release = deferred();
       const entered: string[] = [];
       const runs = ["main", "research"].map((agentId) =>
@@ -240,7 +237,7 @@ describe("plugin state SQLite leases", () => {
   it("aborts the critical section when ownership is replaced", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(10_000);
-    await withOpenClawTestState({ label: "plugin-lease-loss" }, async (state) => {
+    await withNovaTestState({ label: "plugin-lease-loss" }, async (state) => {
       const entered = deferred();
       const run = withPluginStateLease(
         "memory-core",
@@ -260,7 +257,7 @@ describe("plugin state SQLite leases", () => {
       );
       const lost = expect(run).rejects.toMatchObject({ code: "PLUGIN_STATE_LEASE_LOST" });
       await entered.promise;
-      openOpenClawStateDatabase({ env: state.env })
+      openNovaStateDatabase({ env: state.env })
         .db.prepare(
           `UPDATE state_leases
            SET owner = 'successor', expires_at = ?, updated_at = ?
@@ -270,12 +267,12 @@ describe("plugin state SQLite leases", () => {
       await vi.advanceTimersByTimeAsync(334);
       await lost;
       expect(
-        openOpenClawStateDatabase({ env: state.env })
+        openNovaStateDatabase({ env: state.env })
           .db.prepare("SELECT owner FROM state_leases WHERE lease_key = 'embed'")
           .get(),
       ).toEqual({ owner: "successor" });
 
-      openOpenClawStateDatabase({ env: state.env })
+      openNovaStateDatabase({ env: state.env })
         .db.prepare("DELETE FROM state_leases WHERE lease_key = 'embed'")
         .run();
       const ignoredSignalEntered = deferred();
@@ -299,7 +296,7 @@ describe("plugin state SQLite leases", () => {
         code: "PLUGIN_STATE_LEASE_LOST",
       });
       await ignoredSignalEntered.promise;
-      openOpenClawStateDatabase({ env: state.env })
+      openNovaStateDatabase({ env: state.env })
         .db.prepare(
           `UPDATE state_leases
            SET owner = 'second-successor', expires_at = ?, updated_at = ?
@@ -310,7 +307,7 @@ describe("plugin state SQLite leases", () => {
       finishIgnoringSignal.resolve();
       await ignoredLost;
       expect(
-        openOpenClawStateDatabase({ env: state.env })
+        openNovaStateDatabase({ env: state.env })
           .db.prepare("SELECT owner FROM state_leases WHERE lease_key = 'embed'")
           .get(),
       ).toEqual({ owner: "second-successor" });
@@ -320,7 +317,7 @@ describe("plugin state SQLite leases", () => {
   it("renews ownership and preserves callback failures", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(30_000);
-    await withOpenClawTestState({ label: "plugin-lease-renewal" }, async (state) => {
+    await withNovaTestState({ label: "plugin-lease-renewal" }, async (state) => {
       const entered = deferred();
       const release = deferred();
       const run = withPluginStateLease(
@@ -338,7 +335,7 @@ describe("plugin state SQLite leases", () => {
         },
       );
       await entered.promise;
-      const database = openOpenClawStateDatabase({ env: state.env }).db;
+      const database = openNovaStateDatabase({ env: state.env }).db;
       expect(database.prepare("SELECT expires_at FROM state_leases").get()).toEqual({
         expires_at: 31_000,
       });
@@ -377,8 +374,8 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("retries contended cleanup without replacing the stable timeout outcome", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-release-retry" }, async () => {
-      const opened = openOpenClawStateDatabase();
+    await withNovaTestState({ label: "plugin-lease-release-retry" }, async () => {
+      const opened = openNovaStateDatabase();
       let blocker: DatabaseSync | undefined;
       let unblockTimer: ReturnType<typeof setTimeout> | undefined;
       const callback = vi.fn(async () => undefined);
@@ -434,9 +431,9 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("reclaims expired rows and aborts an active callback on caller cancellation", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-expiry-abort" }, async (state) => {
+    await withNovaTestState({ label: "plugin-lease-expiry-abort" }, async (state) => {
       const now = Date.now();
-      openOpenClawStateDatabase({ env: state.env })
+      openNovaStateDatabase({ env: state.env })
         .db.prepare(
           `INSERT INTO state_leases
              (scope, lease_key, owner, expires_at, heartbeat_at, payload_json, created_at, updated_at)
@@ -481,7 +478,7 @@ describe("plugin state SQLite leases", () => {
       controller.abort(new Error("cancelled"));
       await aborted;
       expect(
-        openOpenClawStateDatabase({ env: state.env })
+        openNovaStateDatabase({ env: state.env })
           .db.prepare("SELECT owner FROM state_leases WHERE lease_key = 'embed'")
           .get(),
       ).toBeUndefined();
@@ -516,7 +513,7 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("rejects invalid inputs and pre-aborted acquisition", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-validation" }, async () => {
+    await withNovaTestState({ label: "plugin-lease-validation" }, async () => {
       await expect(
         withPluginStateLease(
           "memory-core",
@@ -596,8 +593,8 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("bounds SQLite transaction admission by waitMs", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-admission-timeout" }, async () => {
-      const opened = openOpenClawStateDatabase();
+    await withNovaTestState({ label: "plugin-lease-admission-timeout" }, async () => {
+      const opened = openNovaStateDatabase();
       const sqlite = requireNodeSqlite();
       const blocker = new sqlite.DatabaseSync(opened.path);
       blocker.exec("PRAGMA busy_timeout = 0; BEGIN IMMEDIATE");
@@ -628,8 +625,8 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("keeps ownership checks nonblocking during SQLite contention", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-nonblocking-ownership" }, async () => {
-      const opened = openOpenClawStateDatabase();
+    await withNovaTestState({ label: "plugin-lease-nonblocking-ownership" }, async () => {
+      const opened = openNovaStateDatabase();
       await expect(
         withPluginStateLease(
           "memory-core",
@@ -660,7 +657,7 @@ describe("plugin state SQLite leases", () => {
   });
 
   it("maps database open failures to the stable storage error", async () => {
-    await withOpenClawTestState({ label: "plugin-lease-storage-error" }, async (state) => {
+    await withNovaTestState({ label: "plugin-lease-storage-error" }, async (state) => {
       const blockedStatePath = state.path("not-a-directory");
       await fs.writeFile(blockedStatePath, "blocked", "utf8");
       process.env.NOVA_STATE_DIR = blockedStatePath;

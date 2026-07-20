@@ -22,7 +22,7 @@ function shouldShowStack(argv: string[] | undefined, env: NodeJS.ProcessEnv): bo
 function pushPrefixed(out: string[], value: string): void {
   for (const line of value.split("\n")) {
     if (line.trim().length > 0) {
-      out.push(`[openclaw] ${line}`);
+      out.push(`[nova] ${line}`);
     }
   }
 }
@@ -30,21 +30,18 @@ function pushPrefixed(out: string[], value: string): void {
 export function formatCliFailureLines(options: FormatCliFailureOptions): string[] {
   // Default output stays terse; stack traces require explicit debug intent.
   const env = options.env ?? process.env;
-  const lines = [
-    `[openclaw] ${options.title}`,
-    `[openclaw] Reason: ${formatErrorMessage(options.error)}`,
-  ];
+  const lines = [`[nova] ${options.title}`, `[nova] Reason: ${formatErrorMessage(options.error)}`];
 
   if (shouldShowStack(options.argv, env)) {
-    lines.push("[openclaw] Stack:");
+    lines.push("[nova] Stack:");
     pushPrefixed(lines, formatUncaughtError(options.error));
   } else {
-    lines.push("[openclaw] Debug: set NOVA_DEBUG=1 to include the stack trace.");
+    lines.push("[nova] Debug: set NOVA_DEBUG=1 to include the stack trace.");
   }
 
   if (options.includeDoctorHint !== false) {
-    lines.push(`[openclaw] Try: ${formatCliCommand("openclaw doctor", env)}`);
+    lines.push(`[nova] Try: ${formatCliCommand("nova doctor", env)}`);
   }
-  lines.push(`[openclaw] Help: ${formatCliCommand("openclaw --help", env)}`);
+  lines.push(`[nova] Help: ${formatCliCommand("nova --help", env)}`);
   return lines;
 }

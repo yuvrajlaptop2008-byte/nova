@@ -11,7 +11,7 @@ import {
   resolveDefaultAgentId,
   type HealthCheckContext,
   type HealthFinding,
-} from "openclaw/plugin-sdk/health";
+} from "nova/plugin-sdk/health";
 import { POLICY_FIX_METADATA_BY_CHECK_ID } from "./doctor/fix-metadata.js";
 import { POLICY_CHECK_IDS, evaluatePolicy } from "./doctor/register.js";
 import {

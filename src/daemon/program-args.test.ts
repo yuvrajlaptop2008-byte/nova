@@ -46,8 +46,8 @@ afterEach(() => {
 
 describe("resolveGatewayProgramArguments", () => {
   it("prefers index.js over legacy entry.js when both exist in the same dist directory", async () => {
-    const entryPath = path.resolve("/opt/openclaw/dist/entry.js");
-    const indexPath = path.resolve("/opt/openclaw/dist/index.js");
+    const entryPath = path.resolve("/opt/nova/dist/entry.js");
+    const indexPath = path.resolve("/opt/nova/dist/index.js");
     process.argv = ["node", entryPath];
     fsMocks.realpath.mockResolvedValue(entryPath);
     fsMocks.access.mockResolvedValue(undefined);
@@ -64,9 +64,9 @@ describe("resolveGatewayProgramArguments", () => {
   });
 
   it("keeps entry.js when index.js is missing", async () => {
-    const entryPath = path.resolve("/opt/openclaw/dist/entry.js");
-    const indexPath = path.resolve("/opt/openclaw/dist/index.js");
-    const indexMjsPath = path.resolve("/opt/openclaw/dist/index.mjs");
+    const entryPath = path.resolve("/opt/nova/dist/entry.js");
+    const indexPath = path.resolve("/opt/nova/dist/index.js");
+    const indexMjsPath = path.resolve("/opt/nova/dist/index.mjs");
     process.argv = ["node", entryPath];
     fsMocks.realpath.mockResolvedValue(entryPath);
     fsMocks.access.mockImplementation(async (target: string) => {
@@ -87,8 +87,8 @@ describe("resolveGatewayProgramArguments", () => {
   });
 
   it("uses realpath-resolved dist entry when running via npx shim", async () => {
-    const argv1 = path.resolve("/tmp/.npm/_npx/63c3/node_modules/.bin/openclaw");
-    const entryPath = path.resolve("/tmp/.npm/_npx/63c3/node_modules/openclaw/dist/entry.js");
+    const argv1 = path.resolve("/tmp/.npm/_npx/63c3/node_modules/.bin/nova");
+    const entryPath = path.resolve("/tmp/.npm/_npx/63c3/node_modules/nova/dist/entry.js");
     process.argv = ["node", argv1];
     fsMocks.realpath.mockResolvedValue(entryPath);
     fsMocks.access.mockImplementation(async (target: string) => {
@@ -110,13 +110,13 @@ describe("resolveGatewayProgramArguments", () => {
   });
 
   it("prefers symlinked path over realpath for stable service config", async () => {
-    // Simulates pnpm global install where node_modules/openclaw is a symlink
-    // to .pnpm/openclaw@X.Y.Z/node_modules/openclaw
+    // Simulates pnpm global install where node_modules/nova is a symlink
+    // to .pnpm/nova@X.Y.Z/node_modules/nova
     const symlinkPath = path.resolve(
-      "/Users/test/Library/pnpm/global/5/node_modules/openclaw/dist/entry.js",
+      "/Users/test/Library/pnpm/global/5/node_modules/nova/dist/entry.js",
     );
     const realpathResolved = path.resolve(
-      "/Users/test/Library/pnpm/global/5/node_modules/.pnpm/openclaw@2026.1.21-2/node_modules/openclaw/dist/entry.js",
+      "/Users/test/Library/pnpm/global/5/node_modules/.pnpm/nova@2026.1.21-2/node_modules/nova/dist/entry.js",
     );
     process.argv = ["node", symlinkPath];
     fsMocks.realpath.mockResolvedValue(realpathResolved);
@@ -126,14 +126,14 @@ describe("resolveGatewayProgramArguments", () => {
 
     // Should use the symlinked canonical index.js path, not the realpath-resolved versioned path
     expect(result.programArguments[1]).toBe(
-      path.resolve("/Users/test/Library/pnpm/global/5/node_modules/openclaw/dist/index.js"),
+      path.resolve("/Users/test/Library/pnpm/global/5/node_modules/nova/dist/index.js"),
     );
     expect(result.programArguments[1]).not.toContain("@2026.1.21-2");
   });
 
   it("falls back to node_modules package dist when .bin path is not resolved", async () => {
-    const argv1 = path.resolve("/tmp/.npm/_npx/63c3/node_modules/.bin/openclaw");
-    const indexPath = path.resolve("/tmp/.npm/_npx/63c3/node_modules/openclaw/dist/index.js");
+    const argv1 = path.resolve("/tmp/.npm/_npx/63c3/node_modules/.bin/nova");
+    const indexPath = path.resolve("/tmp/.npm/_npx/63c3/node_modules/nova/dist/index.js");
     process.argv = ["node", argv1];
     fsMocks.realpath.mockRejectedValue(new Error("no realpath"));
     fsMocks.access.mockImplementation(async (target: string) => {
@@ -183,7 +183,7 @@ describe("resolveGatewayProgramArguments", () => {
   it("uses trusted Windows where.exe when resolving the Node runtime", async () => {
     const repoIndexPath = path.resolve("/repo/src/index.ts");
     const repoEntryPath = path.resolve("/repo/src/entry.ts");
-    const launcherPath = String.raw`D:\Nova\openclaw.exe`;
+    const launcherPath = String.raw`D:\Nova\nova.exe`;
     process.argv = [launcherPath, repoIndexPath];
     process.execPath = launcherPath;
     vi.stubEnv("SystemRoot", String.raw`D:\Windows`);
@@ -252,7 +252,7 @@ describe("resolveGatewayProgramArguments", () => {
   });
 
   it("uses an executable wrapper when provided", async () => {
-    const wrapperPath = path.resolve("/usr/local/bin/openclaw-doppler");
+    const wrapperPath = path.resolve("/usr/local/bin/nova-doppler");
     fsMocks.stat.mockResolvedValue({ isFile: () => true } as never);
     fsMocks.access.mockResolvedValue(undefined);
 
@@ -266,7 +266,7 @@ describe("resolveGatewayProgramArguments", () => {
   });
 
   it("rejects a non-executable wrapper file", async () => {
-    const wrapperPath = path.resolve("/usr/local/bin/openclaw-doppler");
+    const wrapperPath = path.resolve("/usr/local/bin/nova-doppler");
     fsMocks.stat.mockResolvedValue({ isFile: () => true } as never);
     fsMocks.access.mockRejectedValue(new Error("EACCES"));
 
@@ -281,8 +281,8 @@ describe("resolveGatewayProgramArguments", () => {
 
 describe("resolveNodeProgramArguments", () => {
   it("carries an explicit plaintext selection into the managed node command", async () => {
-    const entryPath = path.resolve("/opt/openclaw/dist/entry.js");
-    const indexPath = path.resolve("/opt/openclaw/dist/index.js");
+    const entryPath = path.resolve("/opt/nova/dist/entry.js");
+    const indexPath = path.resolve("/opt/nova/dist/index.js");
     process.argv = ["node", entryPath];
     fsMocks.realpath.mockResolvedValue(entryPath);
     fsMocks.access.mockResolvedValue(undefined);

@@ -44,9 +44,7 @@ export function normalizeCodexDynamicToolName(name: string): string {
 export function isSystemAgentOnlyCodexDynamicToolAllowlist(
   toolsAllow: readonly string[] | undefined,
 ): boolean {
-  return (
-    toolsAllow?.length === 1 && normalizeCodexDynamicToolName(toolsAllow[0] ?? "") === "openclaw"
-  );
+  return toolsAllow?.length === 1 && normalizeCodexDynamicToolName(toolsAllow[0] ?? "") === "nova";
 }
 
 /** Returns true for private QA runs that force the Codex runtime profile. */
@@ -116,18 +114,18 @@ export function filterCodexDynamicTools<T extends { name: string }>(
   env: CodexDynamicToolProfileEnv = process.env,
 ): T[] {
   return filterCodexDynamicToolsWithOptions(tools, config, env, {
-    preserveOpenClawShell: false,
+    preserveNovaShell: false,
   });
 }
 
 /** Keeps exec/process only when Codex cannot advertise an environment-backed native shell. */
-export function filterCodexDynamicToolsWithOpenClawShell<T extends { name: string }>(
+export function filterCodexDynamicToolsWithNovaShell<T extends { name: string }>(
   tools: T[],
   config: Pick<CodexPluginConfig, "codexDynamicToolsExclude">,
   env: CodexDynamicToolProfileEnv = process.env,
 ): T[] {
   return filterCodexDynamicToolsWithOptions(tools, config, env, {
-    preserveOpenClawShell: true,
+    preserveNovaShell: true,
   });
 }
 
@@ -135,7 +133,7 @@ function filterCodexDynamicToolsWithOptions<T extends { name: string }>(
   tools: T[],
   config: Pick<CodexPluginConfig, "codexDynamicToolsExclude">,
   env: CodexDynamicToolProfileEnv,
-  options: { preserveOpenClawShell: boolean },
+  options: { preserveNovaShell: boolean },
 ): T[] {
   const excludes = new Set<string>();
   for (const name of CODEX_NATIVE_GOAL_TOOL_EXCLUDES) {
@@ -143,7 +141,7 @@ function filterCodexDynamicToolsWithOptions<T extends { name: string }>(
   }
   if (!isForcedPrivateQaCodexRuntime(env)) {
     for (const name of CODEX_APP_SERVER_OWNED_DYNAMIC_TOOL_EXCLUDES) {
-      if (options.preserveOpenClawShell && CODEX_APP_SERVER_OWNED_SHELL_TOOL_EXCLUDES.has(name)) {
+      if (options.preserveNovaShell && CODEX_APP_SERVER_OWNED_SHELL_TOOL_EXCLUDES.has(name)) {
         continue;
       }
       excludes.add(name);

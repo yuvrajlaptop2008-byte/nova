@@ -5,8 +5,8 @@ import {
   DEFAULT_INGRESS_ADOPTION_STALL_MS,
   DEFAULT_INGRESS_RETRY_MAX_ATTEMPTS,
   type ChannelIngressQueue,
-} from "openclaw/plugin-sdk/channel-outbound";
-import { runDetachedWebhookWork } from "openclaw/plugin-sdk/webhook-request-guards";
+} from "nova/plugin-sdk/channel-outbound";
+import { runDetachedWebhookWork } from "nova/plugin-sdk/webhook-request-guards";
 import { ZaloApiError, type ZaloUpdate } from "./api.js";
 import type { ZaloRuntimeEnv } from "./monitor.types.js";
 import { getZaloRuntime } from "./runtime.js";

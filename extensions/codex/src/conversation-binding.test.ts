@@ -2,8 +2,8 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { ExecApprovalsFile } from "openclaw/plugin-sdk/exec-approvals-runtime";
-import { upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+import type { ExecApprovalsFile } from "nova/plugin-sdk/exec-approvals-runtime";
+import { upsertSessionEntry } from "nova/plugin-sdk/session-store-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const sharedClientMocks = vi.hoisted(() => ({
@@ -47,8 +47,8 @@ vi.mock("node:fs", async (importOriginal) => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/agent-harness-runtime", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/agent-harness-runtime")>();
+vi.mock("nova/plugin-sdk/agent-harness-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/agent-harness-runtime")>();
   return {
     ...actual,
     resolveSandboxContext: resolveSandboxContextMock,
@@ -73,15 +73,14 @@ vi.mock("./app-server/shared-client.js", () => ({
     run: (client: unknown) => Promise<unknown>;
   }) => await params.run(params.lease.client),
 }));
-vi.mock("openclaw/plugin-sdk/exec-approvals-runtime", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/exec-approvals-runtime")>();
+vi.mock("nova/plugin-sdk/exec-approvals-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("nova/plugin-sdk/exec-approvals-runtime")>();
   return {
     ...actual,
     loadExecApprovals: execApprovalsRuntimeMocks.loadExecApprovals,
   };
 });
-vi.mock("openclaw/plugin-sdk/agent-runtime", () => agentRuntimeMocks);
+vi.mock("nova/plugin-sdk/agent-runtime", () => agentRuntimeMocks);
 
 import { resolveCodexAppServerRuntimeOptions } from "./app-server/config.js";
 import {
@@ -213,7 +212,7 @@ function mockCallArg(mock: ReturnType<typeof vi.fn>, callIndex = 0, argIndex = 0
 describe("codex conversation binding", () => {
   beforeEach(async () => {
     resetCodexTestBindingStore();
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-binding-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-codex-binding-"));
   });
 
   afterEach(async () => {
@@ -2068,7 +2067,7 @@ describe("codex conversation binding", () => {
     await writeTestConversationBinding(sessionFile, {
       threadId: "thread-old",
       cwd: tempDir,
-      networkProxyProfileName: "openclaw-network-stale",
+      networkProxyProfileName: "nova-network-stale",
       networkProxyConfigFingerprint: "stale-proxy-config",
       conversationStartId: "start-1",
       conversationSourceTransferComplete: true,

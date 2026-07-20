@@ -328,7 +328,7 @@ export async function fetchBrowserScreenshotDataUrl(params: {
   );
   let blob: Blob;
   try {
-    const res = await fetch(`${basePath}/__openclaw__/assistant-media?${search.toString()}`, {
+    const res = await fetch(`${basePath}/__nova__/assistant-media?${search.toString()}`, {
       method: "GET",
       headers,
       credentials: "same-origin",

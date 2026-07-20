@@ -106,10 +106,10 @@ describe("registerBackupCommand", () => {
   });
 
   it("runs backup verify with forwarded options", async () => {
-    await runCli(["backup", "verify", "/tmp/openclaw-backup.tar.gz", "--json"]);
+    await runCli(["backup", "verify", "/tmp/nova-backup.tar.gz", "--json"]);
 
     const options = expectForwardedOptions(backupVerifyCommand);
-    expect(options.archive).toBe("/tmp/openclaw-backup.tar.gz");
+    expect(options.archive).toBe("/tmp/nova-backup.tar.gz");
     expect(options.json).toBe(true);
   });
 

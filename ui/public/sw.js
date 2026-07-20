@@ -1,7 +1,7 @@
 // Nova Control – Service Worker
 // Handles offline caching and push notifications.
 
-const CACHE_PREFIX = "openclaw-control-";
+const CACHE_PREFIX = "nova-control-";
 const EMBEDDED_CACHE_VERSION = "__NOVA_CONTROL_UI_BUILD_ID__";
 const URL_CACHE_VERSION = new URL(self.location.href).searchParams
   .get("v")
@@ -125,7 +125,7 @@ self.addEventListener("push", (event) => {
     body: data.body || "",
     icon: "./apple-touch-icon.png",
     badge: "./favicon-32.png",
-    tag: data.tag || "openclaw-notification",
+    tag: data.tag || "nova-notification",
     data: { url: data.url || "./" },
   };
 

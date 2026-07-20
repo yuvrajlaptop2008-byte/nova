@@ -1,13 +1,13 @@
-# Tavily OpenClaw plugin
+# Tavily Nova plugin
 
-Official OpenClaw plugin for Tavily.
+Official Nova plugin for Tavily.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/tavily-plugin
+nova plugins install @nova/tavily-plugin
 ```
 
 ## Docs
 
-See `docs/tools/tavily.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/tools/tavily`.
+See `docs/tools/tavily.md` in the Nova repository, or the published docs at `https://docs.nova.ai/tools/tavily`.

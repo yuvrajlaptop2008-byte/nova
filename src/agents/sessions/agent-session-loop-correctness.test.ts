@@ -4,7 +4,7 @@ import {
   type Context,
   type Model,
   type SimpleStreamOptions,
-} from "openclaw/plugin-sdk/llm";
+} from "nova/plugin-sdk/llm";
 import { Type } from "typebox";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 

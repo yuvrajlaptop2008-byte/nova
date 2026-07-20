@@ -1,5 +1,5 @@
 // Mattermost plugin module implements monitor slash behavior.
-import { isLoopbackHost } from "openclaw/plugin-sdk/gateway-runtime";
+import { isLoopbackHost } from "nova/plugin-sdk/gateway-runtime";
 import type { ResolvedMattermostAccount } from "./accounts.js";
 import {
   fetchMattermostUserTeams,
@@ -9,7 +9,7 @@ import {
 import {
   listSkillCommandsForAgents,
   parseTcpPort,
-  type OpenClawConfig,
+  type NovaConfig,
   type RuntimeEnv,
 } from "./runtime-api.js";
 import {
@@ -25,7 +25,7 @@ import {
 import { activateSlashCommands } from "./slash-state.js";
 
 function buildSlashCommands(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runtime: RuntimeEnv;
   nativeSkills: boolean;
 }): MattermostCommandSpec[] {
@@ -134,7 +134,7 @@ async function registerSlashCommandsAcrossTeams(params: {
 
 export async function registerMattermostMonitorSlashCommands(params: {
   client: MattermostClient;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runtime: RuntimeEnv;
   account: ResolvedMattermostAccount;
   baseUrl: string;

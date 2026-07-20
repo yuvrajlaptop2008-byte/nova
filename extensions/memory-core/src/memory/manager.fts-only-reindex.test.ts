@@ -3,8 +3,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
-import { resolveOpenClawAgentSqlitePath } from "openclaw/plugin-sdk/sqlite-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/memory-core-host-engine-foundation";
+import { resolveNovaAgentSqlitePath } from "nova/plugin-sdk/sqlite-runtime";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { closeAllMemorySearchManagers, getMemorySearchManager } from "./index.js";
 import type { MemoryIndexMeta } from "./manager-reindex-state.js";
@@ -49,7 +49,7 @@ describe("memory manager FTS-only reindex", () => {
   let manager: MemoryIndexManager | null = null;
 
   beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mem-fts-only-"));
+    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "nova-mem-fts-only-"));
   });
 
   beforeEach(async () => {
@@ -58,7 +58,7 @@ describe("memory manager FTS-only reindex", () => {
     await fs.mkdir(path.join(workspaceDir, "memory"), { recursive: true });
     await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), "Alpha topic\n\nKeep this note.");
     setFtsOnlyStateDir(path.join(workspaceDir, "state"));
-    indexPath = resolveOpenClawAgentSqlitePath({ agentId: "main" });
+    indexPath = resolveNovaAgentSqlitePath({ agentId: "main" });
   });
 
   afterEach(async () => {
@@ -101,7 +101,7 @@ describe("memory manager FTS-only reindex", () => {
         },
         list: [{ id: "main", default: true }],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const result = await getMemorySearchManager({ cfg, agentId: "main" });
     if (!result.manager) {
       throw new Error(result.error ?? "manager missing");

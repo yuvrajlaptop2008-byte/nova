@@ -17,14 +17,14 @@ import {
   supportsModelTools,
   type EmbeddedRunAttemptParams,
   type RuntimeToolSchemaDiagnostic,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
-import { resolveAgentDir } from "openclaw/plugin-sdk/agent-runtime";
-import { isToolAllowed } from "openclaw/plugin-sdk/sandbox";
+} from "nova/plugin-sdk/agent-harness-runtime";
+import { resolveAgentDir } from "nova/plugin-sdk/agent-runtime";
+import { isToolAllowed } from "nova/plugin-sdk/sandbox";
 import { readCodexPluginConfig, type CodexPluginConfig } from "./config.js";
 import { dynamicToolBuildState } from "./dynamic-tool-build-state.js";
 import {
   filterCodexDynamicTools,
-  filterCodexDynamicToolsWithOpenClawShell,
+  filterCodexDynamicToolsWithNovaShell,
   isSystemAgentOnlyCodexDynamicToolAllowlist,
   isForcedPrivateQaCodexRuntime,
   normalizeCodexDynamicToolName,
@@ -47,15 +47,15 @@ import {
 import { filterToolsForVisionInputs } from "./vision-tools.js";
 import { resolveCodexWebSearchPlan, type CodexNativeWebSearchSupport } from "./web-search.js";
 
-type OpenClawCodingToolsOptions = NonNullable<
-  Parameters<(typeof import("openclaw/plugin-sdk/agent-harness"))["createOpenClawCodingTools"]>[0]
+type NovaCodingToolsOptions = NonNullable<
+  Parameters<(typeof import("nova/plugin-sdk/agent-harness"))["createNovaCodingTools"]>[0]
 >;
 
 /** Factory seam for constructing Nova runtime tools without eagerly loading agent-harness. */
-type OpenClawCodingToolsFactory =
-  (typeof import("openclaw/plugin-sdk/agent-harness"))["createOpenClawCodingTools"];
-type OpenClawDynamicTool = ReturnType<OpenClawCodingToolsFactory>[number];
-type OpenClawSandboxContext = Awaited<ReturnType<typeof resolveSandboxContext>>;
+type NovaCodingToolsFactory =
+  (typeof import("nova/plugin-sdk/agent-harness"))["createNovaCodingTools"];
+type NovaDynamicTool = ReturnType<NovaCodingToolsFactory>[number];
+type NovaSandboxContext = Awaited<ReturnType<typeof resolveSandboxContext>>;
 type CodexDynamicToolBuildEvent = Parameters<
   NonNullable<EmbeddedRunAttemptParams["onAgentEvent"]>
 >[0];
@@ -72,13 +72,11 @@ function preserveRingZeroSystemAgentTool<T extends { name: string; catalogMode?:
   allTools: T[],
   filteredTools: T[],
 ): T[] {
-  const openclaw = allTools.find(
-    (tool) => tool.name === "openclaw" && tool.catalogMode === "direct-only",
-  );
-  if (!openclaw) {
+  const nova = allTools.find((tool) => tool.name === "nova" && tool.catalogMode === "direct-only");
+  if (!nova) {
     return filteredTools;
   }
-  return [openclaw, ...filteredTools.filter((tool) => tool.name !== "openclaw")];
+  return [nova, ...filteredTools.filter((tool) => tool.name !== "nova")];
 }
 /** Runtime inputs needed to derive the exact Codex dynamic tool surface for a turn. */
 type DynamicToolBuildParams = {
@@ -87,7 +85,7 @@ type DynamicToolBuildParams = {
   effectiveWorkspace: string;
   effectiveCwd?: string;
   sandboxSessionKey: string;
-  sandbox: OpenClawSandboxContext;
+  sandbox: NovaSandboxContext;
   nativeToolSurfaceEnabled?: boolean;
   nativeProviderWebSearchSupport?: CodexNativeWebSearchSupport;
   runAbortController: AbortController;
@@ -110,10 +108,10 @@ type DynamicToolBuildParams = {
   };
 };
 /** Splits sandbox and run session keys so tool calls can bind to both scopes when needed. */
-function resolveOpenClawCodingToolsSessionKeys(
+function resolveNovaCodingToolsSessionKeys(
   params: EmbeddedRunAttemptParams,
   sandboxSessionKey: string,
-): Pick<OpenClawCodingToolsOptions, "sessionKey" | "runSessionKey"> {
+): Pick<NovaCodingToolsOptions, "sessionKey" | "runSessionKey"> {
   return {
     sessionKey: sandboxSessionKey,
     runSessionKey:
@@ -226,16 +224,14 @@ export async function buildDynamicTools(input: DynamicToolBuildParams) {
   });
   const modelHasVision = params.model.input?.includes("image") ?? false;
   const agentDir = params.agentDir ?? resolveAgentDir(params.config ?? {}, input.sessionAgentId);
-  const {
-    createOpenClawCodingTools: defaultCreateOpenClawCodingTools,
-    resolveWebSearchToolPolicy,
-  } = await import("openclaw/plugin-sdk/agent-harness");
-  const createOpenClawCodingTools =
-    dynamicToolBuildState.openClawCodingToolsFactory ?? defaultCreateOpenClawCodingTools;
+  const { createNovaCodingTools: defaultCreateNovaCodingTools, resolveWebSearchToolPolicy } =
+    await import("nova/plugin-sdk/agent-harness");
+  const createNovaCodingTools =
+    dynamicToolBuildState.novaCodingToolsFactory ?? defaultCreateNovaCodingTools;
   toolBuildStages.mark("load-agent-harness-tools");
-  const sessionKeys = resolveOpenClawCodingToolsSessionKeys(params, input.sandboxSessionKey);
+  const sessionKeys = resolveNovaCodingToolsSessionKeys(params, input.sandboxSessionKey);
   const nativeExecutionPolicy = resolveCodexNativeExecutionPolicyForDynamicTools(input);
-  const allTools = createOpenClawCodingTools({
+  const allTools = createNovaCodingTools({
     agentId: input.sessionAgentId,
     ...buildEmbeddedAttemptToolRunContext(params),
     exec: {
@@ -289,7 +285,7 @@ export async function buildDynamicTools(input: DynamicToolBuildParams) {
     modelId: params.modelId,
     modelCompat:
       params.model.compat && typeof params.model.compat === "object"
-        ? (params.model.compat as OpenClawCodingToolsOptions["modelCompat"])
+        ? (params.model.compat as NovaCodingToolsOptions["modelCompat"])
         : undefined,
     modelApi: params.model.api,
     modelContextWindowTokens: params.model.contextWindow,
@@ -336,7 +332,7 @@ export async function buildDynamicTools(input: DynamicToolBuildParams) {
     allTools,
     params.sourceReplyDeliveryMode,
   );
-  toolBuildStages.mark("create-openclaw-coding-tools");
+  toolBuildStages.mark("create-nova-coding-tools");
   const preNormalizationDiagnostics: RuntimeToolSchemaDiagnostic[] = [];
   const readableAllToolProjection = filterProviderNormalizableTools(codexScopedTools);
   preNormalizationDiagnostics.push(...readableAllToolProjection.diagnostics);
@@ -347,11 +343,11 @@ export async function buildDynamicTools(input: DynamicToolBuildParams) {
     nativeProviderWebSearchSupport: input.nativeProviderWebSearchSupport,
   });
   const readableAllTools = [...readableAllToolProjection.tools];
-  const normallyProfiledTools = shouldKeepOpenClawShellDynamicTools(input, nativeExecutionPolicy)
-    ? filterCodexDynamicToolsWithOpenClawShell(readableAllTools, input.pluginConfig)
+  const normallyProfiledTools = shouldKeepNovaShellDynamicTools(input, nativeExecutionPolicy)
+    ? filterCodexDynamicToolsWithNovaShell(readableAllTools, input.pluginConfig)
     : filterCodexDynamicTools(readableAllTools, input.pluginConfig);
   const hostSystemAgentActive =
-    input.isHostScopedToolActive?.("openclaw") ?? isHostScopedAgentToolActive("openclaw");
+    input.isHostScopedToolActive?.("nova") ?? isHostScopedAgentToolActive("nova");
   const profileFilteredTools =
     hostSystemAgentActive && isSystemAgentOnlyCodexDynamicToolAllowlist(params.toolsAllow)
       ? preserveRingZeroSystemAgentTool(readableAllTools, normallyProfiledTools)
@@ -494,7 +490,7 @@ function includeForcedCodexDynamicToolAllow(
 /** Decides whether Codex native code mode can own shell/file tools for this turn. */
 export function shouldEnableCodexAppServerNativeToolSurface(
   params: EmbeddedRunAttemptParams,
-  sandbox?: OpenClawSandboxContext,
+  sandbox?: NovaSandboxContext,
   options: {
     agentId?: string;
     runtimeSessionKey?: string;
@@ -522,7 +518,7 @@ function isCodexNativeExecutionBlockedByNodeExecHost(
   options: {
     agentId?: string;
     runtimeSessionKey?: string;
-    sandbox?: OpenClawSandboxContext;
+    sandbox?: NovaSandboxContext;
   } = {},
 ): boolean {
   return !resolveCodexNativeExecutionPolicy({
@@ -547,7 +543,7 @@ function resolveCodexRuntimePolicySessionKey(
   );
 }
 function canCodexAppServerNativeToolSurfaceHonorSandbox(
-  sandbox: OpenClawSandboxContext | undefined,
+  sandbox: NovaSandboxContext | undefined,
   options: { sandboxExecServerEnabled?: boolean } = {},
 ): boolean {
   if (!sandbox?.enabled) {
@@ -585,7 +581,7 @@ function filterCodexMemoryFlushDynamicTools<T extends { name: string }>(tools: T
 }
 /** Requires a Codex sandbox environment only when native tools must run inside Nova sandboxing. */
 export function shouldRequireCodexSandboxExecServerEnvironment(params: {
-  sandbox?: OpenClawSandboxContext;
+  sandbox?: NovaSandboxContext;
   nativeToolSurfaceEnabled: boolean;
   sandboxExecServerEnabled: boolean;
 }): boolean {
@@ -654,17 +650,15 @@ function joinRemoteWorkspacePath(remoteRoot: string, suffix: string): string {
   return remoteRoot === "/" ? `/${suffix}` : `${remoteRoot}/${suffix}`;
 }
 /** Converts Nova sandbox networking into Codex's external-sandbox policy shape. */
-export function resolveCodexExternalSandboxPolicyForOpenClawSandbox(
-  sandbox: OpenClawSandboxContext | undefined,
+export function resolveCodexExternalSandboxPolicyForNovaSandbox(
+  sandbox: NovaSandboxContext | undefined,
 ): CodexSandboxPolicy {
   return {
     type: "externalSandbox",
-    networkAccess: codexNetworkAccessForOpenClawSandbox(sandbox) ? "enabled" : "restricted",
+    networkAccess: codexNetworkAccessForNovaSandbox(sandbox) ? "enabled" : "restricted",
   };
 }
-function codexNetworkAccessForOpenClawSandbox(
-  sandbox: OpenClawSandboxContext | undefined,
-): boolean {
+function codexNetworkAccessForNovaSandbox(sandbox: NovaSandboxContext | undefined): boolean {
   if (sandbox?.backendId !== "docker") {
     return true;
   }
@@ -684,10 +678,10 @@ export function disableCodexPluginThreadConfig(pluginConfig?: unknown): CodexPlu
 }
 /** Adds sandbox_exec/process aliases when native Code Mode cannot directly honor the sandbox. */
 function addSandboxShellDynamicToolsIfAvailable(
-  filteredTools: OpenClawDynamicTool[],
-  allTools: OpenClawDynamicTool[],
+  filteredTools: NovaDynamicTool[],
+  allTools: NovaDynamicTool[],
   input: DynamicToolBuildParams,
-): OpenClawDynamicTool[] {
+): NovaDynamicTool[] {
   if (
     !shouldExposeSandboxExecDynamicTool(input) ||
     isSandboxShellDynamicToolExcluded(input.pluginConfig)
@@ -701,7 +695,7 @@ function addSandboxShellDynamicToolsIfAvailable(
   if (!execTool || !processTool) {
     return filteredTools;
   }
-  const sandboxExecTool: OpenClawDynamicTool = {
+  const sandboxExecTool: NovaDynamicTool = {
     ...execTool,
     name: "sandbox_exec",
     description:
@@ -723,7 +717,7 @@ function addSandboxShellDynamicToolsIfAvailable(
       };
     },
   };
-  const sandboxProcessTool: OpenClawDynamicTool = {
+  const sandboxProcessTool: NovaDynamicTool = {
     ...processTool,
     name: "sandbox_process",
     description:
@@ -751,11 +745,11 @@ function isSandboxShellDynamicToolExcluded(config: CodexPluginConfig): boolean {
   return isCodexDynamicToolExcluded(config, ["exec", "sandbox_exec", "process", "sandbox_process"]);
 }
 function addNodeShellDynamicToolsIfNeeded(
-  filteredTools: OpenClawDynamicTool[],
-  allTools: OpenClawDynamicTool[],
+  filteredTools: NovaDynamicTool[],
+  allTools: NovaDynamicTool[],
   input: DynamicToolBuildParams,
   nodePolicy: CodexNativeExecutionPolicy,
-): OpenClawDynamicTool[] {
+): NovaDynamicTool[] {
   if (isCodexMemoryFlushRun(input.params)) {
     return filteredTools;
   }
@@ -772,7 +766,7 @@ function addNodeShellDynamicToolsIfNeeded(
   if (!execTool || !processTool) {
     return filteredTools;
   }
-  const toolsToAppend: OpenClawDynamicTool[] = [];
+  const toolsToAppend: NovaDynamicTool[] = [];
   if (
     !isCodexDynamicToolExcluded(input.pluginConfig, ["exec", CODEX_NODE_EXEC_DYNAMIC_TOOL_NAME]) &&
     !filteredTools.some(
@@ -794,7 +788,7 @@ function addNodeShellDynamicToolsIfNeeded(
   }
   return toolsToAppend.length > 0 ? [...filteredTools, ...toolsToAppend] : filteredTools;
 }
-function shouldKeepOpenClawShellDynamicTools(
+function shouldKeepNovaShellDynamicTools(
   input: DynamicToolBuildParams,
   nodePolicy: CodexNativeExecutionPolicy,
 ): boolean {

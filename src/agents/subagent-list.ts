@@ -8,7 +8,7 @@ import { resolveSubagentLabel, sortSubagentRuns } from "../auto-reply/reply/suba
 import { resolveStorePath } from "../config/sessions/paths.js";
 import { listSessionEntries } from "../config/sessions/session-accessor.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { parseAgentSessionKey, type ParsedAgentSessionKey } from "../routing/session-key.js";
 import {
   formatDurationCompact,
@@ -66,7 +66,7 @@ type SessionEntryResolution = {
   entry: SessionEntry | undefined;
 };
 
-function resolveStorePathForKey(cfg: OpenClawConfig, parsed?: ParsedAgentSessionKey | null) {
+function resolveStorePathForKey(cfg: NovaConfig, parsed?: ParsedAgentSessionKey | null) {
   return resolveStorePath(cfg.session?.store, {
     agentId: parsed?.agentId,
   });
@@ -74,7 +74,7 @@ function resolveStorePathForKey(cfg: OpenClawConfig, parsed?: ParsedAgentSession
 
 /** Resolve persisted session metadata for a session key, caching per store path. */
 export function resolveSessionEntryForKey(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   key: string;
   cache: Map<string, Record<string, SessionEntry>>;
 }): SessionEntryResolution {
@@ -233,7 +233,7 @@ function buildListText(params: {
 
 /** Build structured and text views for active and recent subagent runs. */
 export function buildSubagentList(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runs: SubagentRunRecord[];
   recentMinutes: number;
   taskMaxChars?: number;

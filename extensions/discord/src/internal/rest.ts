@@ -5,8 +5,8 @@ import {
   clampTimerTimeoutMs,
   parseFiniteNumber,
   resolveTimerTimeoutMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
 import { serializeRequestBody } from "./rest-body.js";
 import {
   DiscordError,

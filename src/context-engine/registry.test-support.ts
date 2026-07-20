@@ -6,7 +6,7 @@ type ContextEngineRegistryStateForTests = {
   quarantinedEngines: Map<string, unknown>;
 };
 
-const CONTEXT_ENGINE_REGISTRY_STATE = Symbol.for("openclaw.contextEngineRegistryState");
+const CONTEXT_ENGINE_REGISTRY_STATE = Symbol.for("nova.contextEngineRegistryState");
 
 export function resetContextEngineRuntimeQuarantineForTests(): void {
   const state = resolveGlobalSingleton<ContextEngineRegistryStateForTests>(

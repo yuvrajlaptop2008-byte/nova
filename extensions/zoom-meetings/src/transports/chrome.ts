@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   callMeetingBrowserProxyOnNode,
   createLocalMeetingRealtimeAudioTransport,
@@ -16,11 +16,11 @@ import {
   type MeetingRealtimeAudioEngineHandle,
   type MeetingRealtimeToolCallParams,
   type MeetingRuntimePlatform,
-} from "openclaw/plugin-sdk/meeting-runtime";
-import { addTimerTimeoutGraceMs } from "openclaw/plugin-sdk/number-runtime";
-import type { PluginRuntime, RuntimeLogger } from "openclaw/plugin-sdk/plugin-runtime";
+} from "nova/plugin-sdk/meeting-runtime";
+import { addTimerTimeoutGraceMs } from "nova/plugin-sdk/number-runtime";
+import type { PluginRuntime, RuntimeLogger } from "nova/plugin-sdk/plugin-runtime";
 import {
-  consultOpenClawAgentForZoomMeeting,
+  consultNovaAgentForZoomMeeting,
   handleZoomMeetingsRealtimeConsultToolCall,
   resolveZoomMeetingsRealtimeTools,
 } from "../agent-consult.js";
@@ -133,14 +133,14 @@ async function rollbackZoomBrowserJoin(params: {
 
 function realtimeBindings(params: {
   config: ZoomMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   runtime: PluginRuntime;
   logger: RuntimeLogger;
 }) {
   return {
     platform: ZOOM_MEETINGS_RUNTIME_PLATFORM,
     consultAgent: (consult: MeetingAgentConsultParams) =>
-      consultOpenClawAgentForZoomMeeting({
+      consultNovaAgentForZoomMeeting({
         config: params.config,
         fullConfig: params.fullConfig,
         runtime: params.runtime,
@@ -188,7 +188,7 @@ export async function assertBlackHole2chAvailable(params: {
 async function startLocalAudioBridge(params: {
   runtime: PluginRuntime;
   config: ZoomMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   meetingSessionId: string;
   requesterSessionKey?: string;
   mode: ZoomMeetingsMode;
@@ -245,7 +245,7 @@ async function startLocalAudioBridge(params: {
 export async function launchZoomMeetingInChrome(params: {
   runtime: PluginRuntime;
   config: ZoomMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   meetingSessionId: string;
   requesterSessionKey?: string;
   mode: ZoomMeetingsMode;
@@ -341,7 +341,7 @@ function parseNodeStartResult(raw: unknown): ZoomMeetingsNodeStartResult {
 export async function launchZoomMeetingOnNode(params: {
   runtime: PluginRuntime;
   config: ZoomMeetingsConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: NovaConfig;
   meetingSessionId: string;
   requesterSessionKey?: string;
   mode: ZoomMeetingsMode;

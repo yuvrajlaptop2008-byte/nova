@@ -4,7 +4,7 @@
  * Exposes proposal create/update/review/apply actions while the workshop service owns persistence.
  */
 import { Type } from "typebox";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import {
   applySkillProposal,
   listSkillProposals,
@@ -154,7 +154,7 @@ function buildSkillWorkshopToolSchema(proposalOnly: boolean, supportsCompletion:
 }
 type SkillWorkshopToolOptions = {
   workspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   env?: NodeJS.ProcessEnv;
   agentId?: string;
   origin?: SkillProposalOrigin;

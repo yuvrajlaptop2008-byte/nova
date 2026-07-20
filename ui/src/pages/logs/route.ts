@@ -7,6 +7,6 @@ export const page = definePage({
   component: () =>
     import("./logs-page.ts").then(() => ({
       header: true,
-      render: () => html`<openclaw-logs-page></openclaw-logs-page>`,
+      render: () => html`<nova-logs-page></nova-logs-page>`,
     })),
 });

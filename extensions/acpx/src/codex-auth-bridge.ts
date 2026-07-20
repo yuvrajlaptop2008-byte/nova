@@ -7,7 +7,7 @@ import fs from "node:fs/promises";
 import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
-import { readJsonFileWithFallback } from "openclaw/plugin-sdk/json-store";
+import { readJsonFileWithFallback } from "nova/plugin-sdk/json-store";
 import {
   parse as parseToml,
   stringify as stringifyToml,
@@ -34,7 +34,7 @@ import {
 
 const CLAUDE_ACP_PACKAGE = "@agentclientprotocol/claude-agent-acp";
 const CLAUDE_ACP_BIN = "claude-agent-acp";
-const RUN_CONFIGURED_COMMAND_SENTINEL = "--openclaw-run-configured";
+const RUN_CONFIGURED_COMMAND_SENTINEL = "--nova-run-configured";
 const requireFromHere = createRequire(import.meta.url);
 
 type PackageManifest = {
@@ -239,7 +239,7 @@ function buildAdapterWrapperScript(params: {
   installedBinPath?: string;
   envSetup: string;
   envConfigSetup?: string;
-  openClawWrapperArgs?: string[];
+  novaWrapperArgs?: string[];
   stderrLogFileNamePrefix?: string;
 }): string {
   return `#!/usr/bin/env node
@@ -253,13 +253,13 @@ ${params.envSetup}
 const stderrLogFileNamePrefix = ${params.stderrLogFileNamePrefix ? JSON.stringify(params.stderrLogFileNamePrefix) : "undefined"};
 const stderrLogMaxChars = 256 * 1024;
 
-const openClawWrapperArgs = new Set([
+const novaWrapperArgs = new Set([
   ${quoteCommandPart(NOVA_ACPX_LEASE_ID_ARG)},
   ${quoteCommandPart(NOVA_GATEWAY_INSTANCE_ID_ARG)},
-  ${(params.openClawWrapperArgs ?? []).map(quoteCommandPart).join(",\n  ")}
+  ${(params.novaWrapperArgs ?? []).map(quoteCommandPart).join(",\n  ")}
 ]);
 
-function readOpenClawWrapperArg(args, name) {
+function readNovaWrapperArg(args, name) {
   const index = args.indexOf(name);
   if (index < 0) {
     return undefined;
@@ -268,7 +268,7 @@ function readOpenClawWrapperArg(args, name) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
-function readOpenClawWrapperArgs(args, name) {
+function readNovaWrapperArgs(args, name) {
   const values = [];
   for (let index = 0; index < args.length; index += 1) {
     if (args[index] !== name) {
@@ -294,7 +294,7 @@ function resolveStderrLogPath(args) {
   }
   const leaseId =
     process.env[${JSON.stringify(NOVA_ACPX_LEASE_ID_ENV)}] ||
-    readOpenClawWrapperArg(args, ${quoteCommandPart(NOVA_ACPX_LEASE_ID_ARG)}) ||
+    readNovaWrapperArg(args, ${quoteCommandPart(NOVA_ACPX_LEASE_ID_ARG)}) ||
     "pid-" + process.pid;
   const fileName = stderrLogFileNamePrefix + "." + safeDiagnosticFilePart(leaseId) + ".log";
   return fileURLToPath(new URL("./" + fileName, import.meta.url));
@@ -413,11 +413,11 @@ function finishStderrLog() {
   writeRedactedStderrLog(text);
 }
 
-function stripOpenClawWrapperArgs(args) {
+function stripNovaWrapperArgs(args) {
   const stripped = [];
   for (let index = 0; index < args.length; index += 1) {
     const value = args[index];
-    if (openClawWrapperArgs.has(value)) {
+    if (novaWrapperArgs.has(value)) {
       index += 1;
       continue;
     }
@@ -437,7 +437,7 @@ if (stderrLogPath) {
   }
 }
 
-const configuredArgs = stripOpenClawWrapperArgs(rawConfiguredArgs);
+const configuredArgs = stripNovaWrapperArgs(rawConfiguredArgs);
 
 function resolveNpmCliPath() {
   const candidate = path.resolve(
@@ -474,7 +474,7 @@ const args =
     : [...defaultArgs, ...configuredArgs];
 
 if (!command) {
-  console.error("[openclaw] missing configured ${params.displayName} ACP command");
+  console.error("[nova] missing configured ${params.displayName} ACP command");
   process.exit(1);
 }
 
@@ -549,7 +549,7 @@ const parentWatcher =
 parentWatcher?.unref?.();
 
 child.on("error", (error) => {
-  console.error(\`[openclaw] failed to launch ${params.displayName} ACP wrapper: \${error.message}\`);
+  console.error(\`[nova] failed to launch ${params.displayName} ACP wrapper: \${error.message}\`);
   process.exit(1);
 });
 
@@ -584,7 +584,7 @@ function buildCodexAcpWrapperScript(installedBinPath?: string): string {
     binName: CODEX_ACP_BIN,
     installedBinPath,
     stderrLogFileNamePrefix: "codex-acp-wrapper.stderr",
-    openClawWrapperArgs: [NOVA_CODEX_CONFIG_ARG],
+    novaWrapperArgs: [NOVA_CODEX_CONFIG_ARG],
     envSetup: `const codexHome = fileURLToPath(new URL("./codex-home/", import.meta.url));
 const codexAuthPath = fileURLToPath(new URL("./codex-home/auth.json", import.meta.url));
 const codexApiKey = (process.env.CODEX_API_KEY || process.env.OPENAI_API_KEY || "").trim();
@@ -635,11 +635,11 @@ function mergeCodexConfig(base, override) {
   return merged;
 }
 
-const openClawCodexConfigs = readOpenClawWrapperArgs(
+const novaCodexConfigs = readNovaWrapperArgs(
   rawConfiguredArgs,
   ${quoteCommandPart(NOVA_CODEX_CONFIG_ARG)},
 );
-if (openClawCodexConfigs.length > 0) {
+if (novaCodexConfigs.length > 0) {
   let existingCodexConfig = {};
   if (typeof env.CODEX_CONFIG === "string" && env.CODEX_CONFIG.trim()) {
     try {
@@ -649,23 +649,23 @@ if (openClawCodexConfigs.length > 0) {
       }
       existingCodexConfig = parsedCodexConfig;
     } catch {
-      console.error("[openclaw] CODEX_CONFIG must be a valid JSON object");
+      console.error("[nova] CODEX_CONFIG must be a valid JSON object");
       process.exit(1);
     }
   }
-  for (const openClawCodexConfig of openClawCodexConfigs) {
+  for (const novaCodexConfig of novaCodexConfigs) {
     try {
-      const parsedOpenClawCodexConfig = JSON.parse(openClawCodexConfig);
+      const parsedNovaCodexConfig = JSON.parse(novaCodexConfig);
       if (
-        !parsedOpenClawCodexConfig ||
-        typeof parsedOpenClawCodexConfig !== "object" ||
-        Array.isArray(parsedOpenClawCodexConfig)
+        !parsedNovaCodexConfig ||
+        typeof parsedNovaCodexConfig !== "object" ||
+        Array.isArray(parsedNovaCodexConfig)
       ) {
         throw new Error("invalid Nova Codex config");
       }
-      existingCodexConfig = mergeCodexConfig(existingCodexConfig, parsedOpenClawCodexConfig);
+      existingCodexConfig = mergeCodexConfig(existingCodexConfig, parsedNovaCodexConfig);
     } catch {
-      console.error("[openclaw] invalid generated Codex ACP startup config");
+      console.error("[nova] invalid generated Codex ACP startup config");
       process.exit(1);
     }
   }

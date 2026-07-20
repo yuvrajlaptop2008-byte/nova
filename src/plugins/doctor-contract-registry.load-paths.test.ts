@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { findLegacyConfigIssues } from "../config/legacy.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import {
   applyPluginDoctorCompatibilityMigrations,
   listPluginDoctorLegacyConfigRules,
@@ -18,7 +18,7 @@ const repoRoot = path.resolve(import.meta.dirname, "../..");
 
 function makeTempDir(): string {
   const dir = fs.mkdtempSync(
-    path.join(fs.realpathSync(os.tmpdir()), "openclaw-doctor-contract-load-paths-"),
+    path.join(fs.realpathSync(os.tmpdir()), "nova-doctor-contract-load-paths-"),
   );
   tempDirs.push(dir);
   return dir;
@@ -30,7 +30,7 @@ function makeHermeticDoctorEnv(stateDir: string): NodeJS.ProcessEnv {
     HOME: stateDir,
     NOVA_HOME: stateDir,
     NOVA_STATE_DIR: stateDir,
-    NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+    NOVA_CONFIG_PATH: path.join(stateDir, "nova.json"),
     NOVA_DISABLE_BUNDLED_PLUGINS: "1",
   };
 }
@@ -38,7 +38,7 @@ function makeHermeticDoctorEnv(stateDir: string): NodeJS.ProcessEnv {
 function writeDoctorPlugin(pluginRoot: string, pluginId: string): void {
   fs.mkdirSync(pluginRoot, { recursive: true });
   fs.writeFileSync(
-    path.join(pluginRoot, "openclaw.plugin.json"),
+    path.join(pluginRoot, "nova.plugin.json"),
     JSON.stringify(
       {
         id: pluginId,
@@ -100,7 +100,7 @@ module.exports = {
 function writeDistDoctorPlugin(pluginRoot: string, pluginId: string): void {
   fs.mkdirSync(path.join(pluginRoot, "dist"), { recursive: true });
   fs.writeFileSync(
-    path.join(pluginRoot, "openclaw.plugin.json"),
+    path.join(pluginRoot, "nova.plugin.json"),
     JSON.stringify(
       {
         id: pluginId,
@@ -120,7 +120,7 @@ function writeDistDoctorPlugin(pluginRoot: string, pluginId: string): void {
         name: `@nova/${pluginId}`,
         version: "0.0.0-test",
         type: "module",
-        openclaw: {
+        nova: {
           extensions: ["./dist/index.js"],
         },
       },
@@ -149,7 +149,7 @@ module.exports = {
 function writeDoctorSessionOwnerPlugin(pluginRoot: string, pluginId: string): void {
   fs.mkdirSync(pluginRoot, { recursive: true });
   fs.writeFileSync(
-    path.join(pluginRoot, "openclaw.plugin.json"),
+    path.join(pluginRoot, "nova.plugin.json"),
     JSON.stringify(
       {
         id: pluginId,
@@ -183,7 +183,7 @@ module.exports = {
   );
 }
 
-function createDoctorPluginConfig(pluginRoot: string, pluginId: string): OpenClawConfig {
+function createDoctorPluginConfig(pluginRoot: string, pluginId: string): NovaConfig {
   return {
     plugins: {
       load: { paths: [pluginRoot] },
@@ -199,7 +199,7 @@ function createDoctorPluginConfig(pluginRoot: string, pluginId: string): OpenCla
   };
 }
 
-function readPluginLlmPolicy(config: OpenClawConfig, pluginId: string): Record<string, unknown> {
+function readPluginLlmPolicy(config: NovaConfig, pluginId: string): Record<string, unknown> {
   const entry = config.plugins?.entries?.[pluginId] as { llm?: unknown } | undefined;
   return entry?.llm && typeof entry.llm === "object" && !Array.isArray(entry.llm)
     ? (entry.llm as Record<string, unknown>)
@@ -331,7 +331,7 @@ describe("doctor contract registry load-path plugins", () => {
             },
           },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
 
       agentIds = listPluginDoctorSessionStoreAgentIds({
         config,

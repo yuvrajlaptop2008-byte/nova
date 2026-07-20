@@ -1,11 +1,11 @@
 // Discord tests cover manager plugin behavior.
 import { PassThrough, type Readable } from "node:stream";
 import { expectDefined } from "@nova/normalization-core";
-import { createOpenClawCodingTools } from "openclaw/plugin-sdk/agent-harness";
+import { createNovaCodingTools } from "nova/plugin-sdk/agent-harness";
 import type {
   RealtimeVoiceAgentControlResult,
   RealtimeVoiceSessionHarness,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "nova/plugin-sdk/realtime-voice";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChannelType } from "../internal/discord.js";
 import { createVoiceCaptureState } from "./capture-state.js";
@@ -212,40 +212,39 @@ vi.mock("./sdk-runtime.js", () => ({
   }),
 }));
 
-vi.mock("openclaw/plugin-sdk/routing", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/routing")>(
-    "openclaw/plugin-sdk/routing",
-  );
+vi.mock("nova/plugin-sdk/routing", async () => {
+  const actual =
+    await vi.importActual<typeof import("nova/plugin-sdk/routing")>("nova/plugin-sdk/routing");
   return {
     ...actual,
     resolveAgentRoute: resolveAgentRouteMock,
   };
 });
 
-vi.mock("openclaw/plugin-sdk/agent-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/agent-runtime")>(
-    "openclaw/plugin-sdk/agent-runtime",
+vi.mock("nova/plugin-sdk/agent-runtime", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/agent-runtime")>(
+    "nova/plugin-sdk/agent-runtime",
   );
   return {
     ...actual,
     agentCommandFromIngress: agentCommandMock,
-    resolveAgentDir: vi.fn(() => "/tmp/openclaw-agent"),
+    resolveAgentDir: vi.fn(() => "/tmp/nova-agent"),
   };
 });
 
-vi.mock("openclaw/plugin-sdk/realtime-bootstrap-context", async () => {
-  const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/realtime-bootstrap-context")
-  >("openclaw/plugin-sdk/realtime-bootstrap-context");
+vi.mock("nova/plugin-sdk/realtime-bootstrap-context", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/realtime-bootstrap-context")>(
+    "nova/plugin-sdk/realtime-bootstrap-context",
+  );
   return {
     ...actual,
     resolveRealtimeBootstrapContextInstructions: resolveRealtimeBootstrapContextInstructionsMock,
   };
 });
 
-vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/runtime-env")>(
-    "openclaw/plugin-sdk/runtime-env",
+vi.mock("nova/plugin-sdk/runtime-env", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/runtime-env")>(
+    "nova/plugin-sdk/runtime-env",
   );
   return {
     ...actual,
@@ -253,13 +252,13 @@ vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/system-event-runtime", () => ({
+vi.mock("nova/plugin-sdk/system-event-runtime", () => ({
   enqueueSystemEvent: enqueueSystemEventMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/realtime-voice", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/realtime-voice")>(
-    "openclaw/plugin-sdk/realtime-voice",
+vi.mock("nova/plugin-sdk/realtime-voice", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/realtime-voice")>(
+    "nova/plugin-sdk/realtime-voice",
   );
   return {
     ...actual,
@@ -555,12 +554,12 @@ describe("DiscordVoiceManager", () => {
     if (typeof args.senderIsOwner !== "boolean") {
       throw new Error("expected agent command owner identity");
     }
-    return createOpenClawCodingTools({
+    return createNovaCodingTools({
       config: {},
       senderIsOwner: args.senderIsOwner,
       messageProvider: "discord",
-      workspaceDir: "/tmp/openclaw-discord-voice-tools",
-      agentDir: "/tmp/openclaw-discord-voice-agent",
+      workspaceDir: "/tmp/nova-discord-voice-tools",
+      agentDir: "/tmp/nova-discord-voice-agent",
     }).map((tool) => tool.name);
   };
 
@@ -1089,7 +1088,7 @@ describe("DiscordVoiceManager", () => {
 
     await manager.join({ guildId: "g1", channelId: "1001" });
 
-    expect(getVoiceConnectionMock).toHaveBeenCalledWith("g1", "openclaw:default");
+    expect(getVoiceConnectionMock).toHaveBeenCalledWith("g1", "nova:default");
     expect(staleConnection.destroy).toHaveBeenCalledTimes(1);
     expectConnectedStatus(manager, "1001");
   });
@@ -1101,15 +1100,15 @@ describe("DiscordVoiceManager", () => {
     await firstManager.join({ guildId: "g1", channelId: "1001" });
     await secondManager.join({ guildId: "g1", channelId: "1002" });
 
-    expect(getVoiceConnectionMock).toHaveBeenNthCalledWith(1, "g1", "openclaw:first");
-    expect(getVoiceConnectionMock).toHaveBeenNthCalledWith(2, "g1", "openclaw:second");
+    expect(getVoiceConnectionMock).toHaveBeenNthCalledWith(1, "g1", "nova:first");
+    expect(getVoiceConnectionMock).toHaveBeenNthCalledWith(2, "g1", "nova:second");
     expect(joinVoiceChannelMock).toHaveBeenNthCalledWith(
       1,
-      expect.objectContaining({ group: "openclaw:first" }),
+      expect.objectContaining({ group: "nova:first" }),
     );
     expect(joinVoiceChannelMock).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({ group: "openclaw:second" }),
+      expect.objectContaining({ group: "nova:second" }),
     );
   });
 
@@ -2931,8 +2930,8 @@ describe("DiscordVoiceManager", () => {
     expect(bridgeParams?.autoRespondToAudio).toBe(false);
     expect(bridgeParams?.instructions).toContain("same Nova agent");
     expect(bridgeParams?.instructions).toContain("short natural backchannel");
-    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("openclaw_agent_consult");
-    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("openclaw_agent_control");
+    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("nova_agent_consult");
+    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("nova_agent_control");
     const player = getLastAudioPlayer();
     bridgeParams?.audioSink?.sendAudio(Buffer.alloc(24_000));
     expect(player.play).toHaveBeenCalled();
@@ -2942,7 +2941,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "what did I ask?" },
       },
       realtimeSessionMock,
@@ -3003,7 +3002,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-control",
         callId: "call-control",
-        name: "openclaw_agent_control",
+        name: "nova_agent_control",
         args: { text: "revísalo en WebUI", mode: "steer" },
       },
       realtimeSessionMock,
@@ -3109,7 +3108,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-control",
         callId: "call-control",
-        name: "openclaw_agent_control",
+        name: "nova_agent_control",
         args: { text: "check this", mode: "steer" },
       },
       realtimeSessionMock,
@@ -3152,7 +3151,7 @@ describe("DiscordVoiceManager", () => {
         {
           itemId: "item-empty-consult",
           callId: "call-empty-consult",
-          name: "openclaw_agent_consult",
+          name: "nova_agent_consult",
           args: {},
         },
         realtimeSessionMock,
@@ -3194,7 +3193,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-exact",
         callId: "call-exact",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: {
           question: "Speak the provided exact answer verbatim to the Discord voice channel.",
           context: 'Provided answer text: "already answered"\\nSpoken style: verbatim only',
@@ -3206,7 +3205,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-internal",
         callId: "call-internal",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: {
           question: [
             "Speak this exact Nova answer to the Discord voice channel, without adding, removing, or rephrasing words.",
@@ -4053,7 +4052,7 @@ describe("DiscordVoiceManager", () => {
   });
 
   it("accepts Nova as a default wake name before realtime agent-proxy consults", async () => {
-    agentCommandMock.mockResolvedValueOnce({ payloads: [{ text: "openclaw wake answer" }] });
+    agentCommandMock.mockResolvedValueOnce({ payloads: [{ text: "nova wake answer" }] });
     const manager = createManager(
       {
         groupPolicy: "open",
@@ -4099,7 +4098,7 @@ describe("DiscordVoiceManager", () => {
     });
     expect(lastAgentCommandArgs().message).toContain("how is it going");
     expect(lastAgentCommandArgs().message).not.toContain("Nova");
-    expectUserMessageIncludes("openclaw wake answer");
+    expectUserMessageIncludes("nova wake answer");
   });
 
   it("ignores default agent wake names longer than two words", async () => {
@@ -4233,11 +4232,11 @@ describe("DiscordVoiceManager", () => {
     expect(agentCommandArgsAt(3).message).toContain("can you hear me?");
     expect(agentCommandArgsAt(3).message).not.toContain("Marty");
 
-    const openClawTurn = entry.realtime?.beginSpeakerTurn(
+    const novaTurn = entry.realtime?.beginSpeakerTurn(
       { extraSystemPrompt: undefined, senderIsOwner: true, speakerLabel: "Owner" },
       "u-owner",
     );
-    openClawTurn?.sendInputAudio(Buffer.alloc(8));
+    novaTurn?.sendInputAudio(Buffer.alloc(8));
     await emitFinalRealtimeUserTranscript(bridgeParams, "Open claw can you still hear me?");
 
     expect(agentCommandArgsAt(4).message).toContain("can you still hear me?");
@@ -4682,7 +4681,7 @@ describe("DiscordVoiceManager", () => {
 
     expect(lastAgentCommandArgs().message).toBe("What?");
     expect(lastAgentCommandArgs().message).not.toContain("consultPolicy");
-    expect(lastAgentCommandArgs().message).not.toContain("openclaw_agent_consult");
+    expect(lastAgentCommandArgs().message).not.toContain("nova_agent_consult");
     expectUserMessageIncludes("Could you repeat that?");
   });
 
@@ -4980,7 +4979,7 @@ describe("DiscordVoiceManager", () => {
         {
           itemId: "item-owner",
           callId: "call-owner",
-          name: "openclaw_agent_consult",
+          name: "nova_agent_consult",
           args: { question: "owner question" },
         },
         realtimeSessionMock,
@@ -5046,7 +5045,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late",
         callId: "call-late",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -5070,7 +5069,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late-unsuppressed",
         callId: "call-late-unsuppressed",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -5130,7 +5129,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-cancelled",
         callId: "call-cancelled",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "cancelled question" },
       },
       realtimeSessionMock,
@@ -5198,7 +5197,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late",
         callId: "call-late",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -5231,7 +5230,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-retry",
         callId: "call-retry",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "retry question" },
       },
       realtimeSessionMock,
@@ -5294,7 +5293,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late",
         callId: "call-late",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -5370,7 +5369,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-late",
         callId: "call-late",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "late question" },
       },
       realtimeSessionMock,
@@ -5439,7 +5438,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-old",
         callId: "call-old",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "repeat question" },
       },
       realtimeSessionMock,
@@ -5461,7 +5460,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-new",
         callId: "call-new",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "repeat question" },
       },
       realtimeSessionMock,
@@ -5586,14 +5585,14 @@ describe("DiscordVoiceManager", () => {
       | undefined;
     expect(bridgeParams?.autoRespondToAudio).toBe(true);
     expect(bridgeParams?.interruptResponseOnInputAudio).toBe(false);
-    expect(bridgeParams?.instructions).toContain("Call openclaw_agent_consult");
-    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("openclaw_agent_consult");
+    expect(bridgeParams?.instructions).toContain("Call nova_agent_consult");
+    expect(bridgeParams?.tools?.map((tool) => tool.name)).toContain("nova_agent_consult");
 
     bridgeParams?.onToolCall?.(
       {
         itemId: "item-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "check my Discord" },
       },
       realtimeSessionMock,
@@ -5653,7 +5652,7 @@ describe("DiscordVoiceManager", () => {
     expect(bridgeParams?.instructions).toContain("Nova realtime voice profile context");
     expect(bridgeParams?.instructions).toContain("Name: Wilfred");
     expect(bridgeParams?.instructions).toContain("short natural backchannel");
-    expect(bridgeParams?.instructions).toContain("Call openclaw_agent_consult");
+    expect(bridgeParams?.instructions).toContain("Call nova_agent_consult");
   });
 
   it("routes bidi realtime consults through a configured voice agent session target", async () => {
@@ -5723,7 +5722,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-1",
         callId: "call-1",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "check the maintainer channel context" },
       },
       realtimeSessionMock,
@@ -5791,7 +5790,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-guest",
         callId: "call-guest",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "guest question" },
       },
       realtimeSessionMock,
@@ -5863,7 +5862,7 @@ describe("DiscordVoiceManager", () => {
       {
         itemId: "item-guest",
         callId: "call-guest",
-        name: "openclaw_agent_consult",
+        name: "nova_agent_consult",
         args: { question: "guest question" },
       },
       realtimeSessionMock,
@@ -6350,7 +6349,7 @@ describe("DiscordVoiceManager", () => {
     expect(toolNames).toContain("exec");
     expect(toolNames).not.toContain("gateway");
     expect(toolNames).not.toContain("nodes");
-    expect(toolNames).not.toContain("openclaw");
+    expect(toolNames).not.toContain("nova");
   });
 
   it("admits account wildcard voice speakers without granting owner authority", async () => {
@@ -6424,7 +6423,7 @@ describe("DiscordVoiceManager", () => {
       expect.anything(),
     );
     expect(lastAgentCommandToolNames()).toEqual(
-      expect.arrayContaining(["gateway", "nodes", "openclaw"]),
+      expect.arrayContaining(["gateway", "nodes", "nova"]),
     );
   });
 

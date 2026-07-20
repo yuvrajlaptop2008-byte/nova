@@ -207,7 +207,7 @@ describe("config footprint guardrails", () => {
       expect(source).not.toContain(schemaName);
     }
     expect(bundledSource).toContain("Bundled-channel config schemas");
-    expect(bundledSource).toContain("openclaw/plugin-sdk/channel-config-schema");
+    expect(bundledSource).toContain("nova/plugin-sdk/channel-config-schema");
     // The primitives facade re-exports the canonical channel-config-schema
     // module; only bundled provider schemas bypass it.
     const primitivesSource = readSource("src/plugin-sdk/channel-config-primitives.ts");

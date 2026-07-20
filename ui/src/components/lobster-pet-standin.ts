@@ -43,6 +43,6 @@ class LobsterLogoStandIn extends LitElement {
   }
 }
 
-if (!customElements.get("openclaw-lobster-logo-standin")) {
-  customElements.define("openclaw-lobster-logo-standin", LobsterLogoStandIn);
+if (!customElements.get("nova-lobster-logo-standin")) {
+  customElements.define("nova-lobster-logo-standin", LobsterLogoStandIn);
 }

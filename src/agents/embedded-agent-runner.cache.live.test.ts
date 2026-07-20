@@ -2,10 +2,10 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { AssistantMessage, Message, Tool } from "openclaw/plugin-sdk/llm";
+import type { AssistantMessage, Message, Tool } from "nova/plugin-sdk/llm";
 import { Type } from "typebox";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { deleteTestEnvValue, setTestEnvValue } from "../test-utils/env.js";
 import { runEmbeddedAgent } from "./embedded-agent-runner.js";
 import { compactEmbeddedAgentSessionDirect } from "./embedded-agent-runner/compact.runtime.js";
@@ -246,7 +246,7 @@ function buildEmbeddedRunnerConfig(
     modelAlias?: string;
     transport?: "sse" | "websocket";
   },
-): OpenClawConfig {
+): NovaConfig {
   const provider = params.model.provider;
   const modelKey = `${provider}/${params.model.id}`;
   const providerBaseUrl =
@@ -769,7 +769,7 @@ async function runAnthropicImageCacheProbe(params: {
 
 describeCacheLive("embedded agent runner prompt caching (live)", () => {
   beforeAll(async () => {
-    liveRunnerRootDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-cache-"));
+    liveRunnerRootDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-live-cache-"));
     liveCacheTraceFile = path.join(liveRunnerRootDir, "cache-trace.jsonl");
     liveTestPngBase64 = (await fs.readFile(LIVE_TEST_PNG_URL)).toString("base64");
     previousCacheTraceEnv = {

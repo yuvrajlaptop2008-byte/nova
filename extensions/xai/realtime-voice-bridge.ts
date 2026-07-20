@@ -3,12 +3,12 @@ import {
   captureWsEvent,
   createDebugProxyWebSocketAgent,
   resolveDebugProxySettings,
-} from "openclaw/plugin-sdk/proxy-capture";
+} from "nova/plugin-sdk/proxy-capture";
 import type {
   RealtimeVoiceBridge,
   RealtimeVoiceToolResultOptions,
-} from "openclaw/plugin-sdk/realtime-voice";
-import { sleepWithAbort } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/realtime-voice";
+import { sleepWithAbort } from "nova/plugin-sdk/runtime-env";
 import WebSocket from "ws";
 import {
   XAI_REALTIME_BASE_RECONNECT_DELAY_MS,

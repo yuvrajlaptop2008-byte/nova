@@ -2,7 +2,7 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import type { ReplyPayload } from "../../auto-reply/reply-payload.js";
 import type { FinalizedMsgContext } from "../../auto-reply/templating.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { normalizeDeliverableOutboundChannel } from "../../infra/outbound/channel-resolution.js";
 import {
   type DeliverOutboundPayloadsParams,
@@ -29,7 +29,7 @@ export type DurableInboundReplyDeliveryOptions = Pick<
 
 /** Full context required to deliver one inbound final reply through durable message sending. */
 export type DurableInboundReplyDeliveryParams = DurableInboundReplyDeliveryOptions & {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: string;
   accountId?: string;
   agentId: string;

@@ -18,7 +18,7 @@ import { sanitizeForLog } from "../../packages/terminal-core/src/ansi.js";
 import { formatDocsLink } from "../../packages/terminal-core/src/links.js";
 import { getTerminalTableWidth, renderTable } from "../../packages/terminal-core/src/table.js";
 import { isRich, theme } from "../../packages/terminal-core/src/theme.js";
-import { readBestEffortConfig, type OpenClawConfig } from "../config/config.js";
+import { readBestEffortConfig, type NovaConfig } from "../config/config.js";
 import { ADMIN_SCOPE, APPROVALS_SCOPE, type OperatorScope } from "../gateway/method-scopes.js";
 import { readFileDescriptorBounded } from "../infra/boundary-file-read.js";
 import { formatErrorMessage } from "../infra/errors.js";
@@ -76,10 +76,10 @@ type NativeExecApprovalsSnapshot =
 type ExecApprovalsSnapshot = FileExecApprovalsSnapshot | NativeExecApprovalsSnapshot;
 
 type ConfigSnapshotLike = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
 };
 type ConfigLoadResult = {
-  config: OpenClawConfig | null;
+  config: NovaConfig | null;
   timedOut: boolean;
 };
 type ApprovalsTargetSource = "gateway" | "node" | "local";
@@ -513,7 +513,7 @@ async function loadPendingApprovals(
   const [exec, plugin, systemAgent] = await Promise.all([
     listCall("exec.approval.list"),
     listCall("plugin.approval.list"),
-    listCall("openclaw.approval.list"),
+    listCall("nova.approval.list"),
   ]);
   return [
     ...readPendingApprovalList(exec, "exec"),
@@ -1114,7 +1114,7 @@ export function registerExecApprovalsCli(program: Command) {
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/approvals", "docs.openclaw.ai/cli/approvals")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/approvals", "docs.nova.ai/cli/approvals")}\n`,
     );
 
   const pendingCmd = approvals
@@ -1246,18 +1246,18 @@ export function registerExecApprovalsCli(program: Command) {
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatExample(
-          'openclaw approvals allowlist add "~/Projects/**/bin/rg"',
+          'nova approvals allowlist add "~/Projects/**/bin/rg"',
           "Allowlist a local binary pattern for the main agent.",
         )}\n${formatExample(
-          'openclaw approvals allowlist add --agent main --node <id|name|ip> "/usr/bin/uptime"',
+          'nova approvals allowlist add --agent main --node <id|name|ip> "/usr/bin/uptime"',
           "Allowlist on a specific node/agent.",
         )}\n${formatExample(
-          'openclaw approvals allowlist add --agent "*" "/usr/bin/uname"',
+          'nova approvals allowlist add --agent "*" "/usr/bin/uname"',
           "Allowlist for all agents (wildcard).",
         )}\n${formatExample(
-          'openclaw approvals allowlist remove "~/Projects/**/bin/rg"',
+          'nova approvals allowlist remove "~/Projects/**/bin/rg"',
           "Remove an allowlist pattern.",
-        )}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/approvals", "docs.openclaw.ai/cli/approvals")}\n`,
+        )}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/approvals", "docs.nova.ai/cli/approvals")}\n`,
     );
 
   registerAllowlistMutationCommand({

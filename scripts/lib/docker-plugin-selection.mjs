@@ -5,7 +5,7 @@ import { pathToFileURL } from "node:url";
 const PLUGIN_ID_RE = /^[a-z0-9][a-z0-9-]*$/u;
 
 function readManifestId(pluginDir) {
-  const manifestPath = path.join(pluginDir, "openclaw.plugin.json");
+  const manifestPath = path.join(pluginDir, "nova.plugin.json");
   if (!fs.existsSync(manifestPath)) {
     return null;
   }

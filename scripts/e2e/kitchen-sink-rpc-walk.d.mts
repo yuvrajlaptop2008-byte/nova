@@ -26,12 +26,12 @@ export function makeEnv(): {
   env: {
     HOME: string;
     USERPROFILE: string;
-    OPENCLAW_HOME: string;
-    OPENCLAW_STATE_DIR: string;
-    OPENCLAW_CONFIG_PATH: string;
-    OPENCLAW_NO_ONBOARD: string;
-    OPENCLAW_SKIP_PROVIDERS: string;
-    OPENCLAW_KITCHEN_SINK_PERSONALITY: string;
+    NOVA_HOME: string;
+    NOVA_STATE_DIR: string;
+    NOVA_CONFIG_PATH: string;
+    NOVA_NO_ONBOARD: string;
+    NOVA_SKIP_PROVIDERS: string;
+    NOVA_KITCHEN_SINK_PERSONALITY: string;
   };
 };
 export function cleanupKitchenSinkEnv(
@@ -96,7 +96,7 @@ export function createRpcCliRunOptions(
   options?: { env?: NodeJS.ProcessEnv; commandResourceOptions?: Record<string, unknown> },
 ): Record<string, unknown> & { resourceLabel: string; timeoutMs: number };
 export function findDistCallGatewayModuleFiles(cwd?: string): string[];
-export function usesBuiltOpenClawEntry(
+export function usesBuiltNovaEntry(
   runner: unknown,
   cwd?: string,
   env?: NodeJS.ProcessEnv,

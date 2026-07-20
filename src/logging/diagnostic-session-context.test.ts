@@ -3,10 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { saveCronStore } from "../cron/store.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import {
   formatCronSessionDiagnosticFields,
   formatStoppedCronSessionDiagnosticFields,
@@ -14,7 +11,7 @@ import {
 } from "./diagnostic-session-context.js";
 
 let tempDir: string | undefined;
-let testState: OpenClawTestState | undefined;
+let testState: NovaTestState | undefined;
 
 function writeJsonl(filePath: string, rows: unknown[]) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -23,9 +20,9 @@ function writeJsonl(filePath: string, rows: unknown[]) {
 
 describe("diagnostic session context", () => {
   beforeEach(async () => {
-    testState = await createOpenClawTestState({
+    testState = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-diagnostic-session-",
+      prefix: "nova-diagnostic-session-",
     });
     tempDir = testState.stateDir;
   });

@@ -36,7 +36,7 @@ function createAcpProcessEnv(stateDir?: string): NodeJS.ProcessEnv {
     NODE_OPTIONS: "--use-openssl-ca",
     NODE_USE_SYSTEM_CA: "0",
     NOVA_DISABLE_BUNDLED_PLUGINS: "1",
-    NOVA_CONFIG_PATH: stateDir ? path.join(stateDir, "openclaw.json") : undefined,
+    NOVA_CONFIG_PATH: stateDir ? path.join(stateDir, "nova.json") : undefined,
     NOVA_NO_RESPAWN: "1",
     NOVA_STATE_DIR: stateDir,
     VITEST: undefined,
@@ -97,8 +97,8 @@ function rawDataToText(data: RawData): string {
 
 describe("ACP CLI process exit", () => {
   it.each([
-    { args: ["acp", "--help"], usage: "Usage: openclaw acp [options] [command]" },
-    { args: ["acp", "client", "--help"], usage: "Usage: openclaw acp client [options]" },
+    { args: ["acp", "--help"], usage: "Usage: nova acp [options] [command]" },
+    { args: ["acp", "client", "--help"], usage: "Usage: nova acp client [options]" },
   ])(
     "exits promptly after $args",
     async ({ args, usage }) => {
@@ -151,7 +151,7 @@ describe("ACP CLI process exit", () => {
   });
 
   it("processes an initialize frame buffered before Gateway hello", async () => {
-    const stateDir = mkdtempSync(path.join(tmpdir(), "openclaw-acp-exit-"));
+    const stateDir = mkdtempSync(path.join(tmpdir(), "nova-acp-exit-"));
     const server = createServer();
     const wss = new WebSocketServer({ server });
     let child: ChildProcessWithoutNullStreams | undefined;

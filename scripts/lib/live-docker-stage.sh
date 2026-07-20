@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-openclaw_live_stage_source_tree() {
+nova_live_stage_source_tree() {
   local dest_dir="${1:?destination directory required}"
   local stage_mode="${NOVA_LIVE_DOCKER_SOURCE_STAGE_MODE:-copy}"
 
@@ -22,7 +22,7 @@ openclaw_live_stage_source_tree() {
     --exclude=.tmp \
     --exclude=.tmp-precommit-venv \
     --exclude=.worktrees \
-    --exclude=__openclaw_vitest__ \
+    --exclude=__nova_vitest__ \
     --exclude=relay.sock \
     --exclude='*.sock' \
     --exclude='*/*.sock' \
@@ -39,7 +39,7 @@ openclaw_live_stage_source_tree() {
   fi
 }
 
-openclaw_live_link_runtime_tree() {
+nova_live_link_runtime_tree() {
   local dest_dir="${1:?destination directory required}"
 
   if [ ! -e "$dest_dir/node_modules" ]; then
@@ -53,7 +53,7 @@ openclaw_live_link_runtime_tree() {
   fi
 }
 
-openclaw_live_stage_node_modules() {
+nova_live_stage_node_modules() {
   local dest_dir="${1:?destination directory required}"
   local target_dir="$dest_dir/node_modules"
 
@@ -63,9 +63,9 @@ openclaw_live_stage_node_modules() {
   mkdir -p "$target_dir/.vite-temp"
 }
 
-openclaw_live_scrub_staged_plugin_index() {
+nova_live_scrub_staged_plugin_index() {
   local dest_dir="${1:?destination directory required}"
-  local db_path="$dest_dir/state/openclaw.sqlite"
+  local db_path="$dest_dir/state/nova.sqlite"
 
   if [ ! -f "$db_path" ]; then
     return 0
@@ -93,9 +93,9 @@ try {
 NODE
 }
 
-openclaw_live_stage_state_dir() {
+nova_live_stage_state_dir() {
   local dest_dir="${1:?destination directory required}"
-  local source_dir="${HOME}/.openclaw"
+  local source_dir="${HOME}/.nova"
 
   mkdir -p "$dest_dir"
   if [ -d "$source_dir" ]; then
@@ -121,17 +121,17 @@ openclaw_live_stage_state_dir() {
       return "$status"
     fi
     chmod -R u+rwX "$dest_dir" || true
-    openclaw_live_scrub_staged_plugin_index "$dest_dir"
+    nova_live_scrub_staged_plugin_index "$dest_dir"
     if [ -d "$source_dir/workspace" ] && [ ! -e "$dest_dir/workspace" ]; then
       ln -s "$source_dir/workspace" "$dest_dir/workspace"
     fi
   fi
 
   export NOVA_STATE_DIR="$dest_dir"
-  export NOVA_CONFIG_PATH="$dest_dir/openclaw.json"
+  export NOVA_CONFIG_PATH="$dest_dir/nova.json"
 }
 
-openclaw_live_prepare_staged_config() {
+nova_live_prepare_staged_config() {
   if [ ! -f "${NOVA_CONFIG_PATH:-}" ]; then
     return 0
   fi

@@ -102,23 +102,23 @@ export function collectPluginNpmPublishedRuntimeErrors(params) {
   const errors = [];
   const extensionsResult = readPackageStringList(
     packageLabel,
-    "openclaw.extensions",
-    packageJson.openclaw?.extensions,
+    "nova.extensions",
+    packageJson.nova?.extensions,
   );
   const runtimeExtensionsResult = readPackageStringList(
     packageLabel,
-    "openclaw.runtimeExtensions",
-    packageJson.openclaw?.runtimeExtensions,
+    "nova.runtimeExtensions",
+    packageJson.nova?.runtimeExtensions,
   );
   const setupEntryResult = readOptionalPackageString(
     packageLabel,
-    "openclaw.setupEntry",
-    packageJson.openclaw?.setupEntry,
+    "nova.setupEntry",
+    packageJson.nova?.setupEntry,
   );
   const runtimeSetupEntryResult = readOptionalPackageString(
     packageLabel,
-    "openclaw.runtimeSetupEntry",
-    packageJson.openclaw?.runtimeSetupEntry,
+    "nova.runtimeSetupEntry",
+    packageJson.nova?.runtimeSetupEntry,
   );
   errors.push(
     ...extensionsResult.errors,
@@ -129,8 +129,8 @@ export function collectPluginNpmPublishedRuntimeErrors(params) {
   if (errors.length > 0) {
     return errors;
   }
-  if (!hasPackedFile(packageFiles, "openclaw.plugin.json")) {
-    errors.push(`${packageLabel} plugin npm package must include openclaw.plugin.json`);
+  if (!hasPackedFile(packageFiles, "nova.plugin.json")) {
+    errors.push(`${packageLabel} plugin npm package must include nova.plugin.json`);
     return errors;
   }
   const extensions = extensionsResult.entries;
@@ -140,7 +140,7 @@ export function collectPluginNpmPublishedRuntimeErrors(params) {
 
   if (runtimeExtensions.length > 0 && runtimeExtensions.length !== extensions.length) {
     errors.push(
-      `${packageLabel} package.json openclaw.runtimeExtensions length (${runtimeExtensions.length}) must match openclaw.extensions length (${extensions.length})`,
+      `${packageLabel} package.json nova.runtimeExtensions length (${runtimeExtensions.length}) must match nova.extensions length (${extensions.length})`,
     );
     return errors;
   }
@@ -167,9 +167,7 @@ export function collectPluginNpmPublishedRuntimeErrors(params) {
   }
 
   if (runtimeSetupEntry && !setupEntry) {
-    errors.push(
-      `${packageLabel} package.json openclaw.runtimeSetupEntry requires openclaw.setupEntry`,
-    );
+    errors.push(`${packageLabel} package.json nova.runtimeSetupEntry requires nova.setupEntry`);
     return errors;
   }
 
@@ -380,7 +378,7 @@ export function parseVerifyPublishedPluginRuntimeArgs(argv) {
 }
 
 async function verifyPublishedPluginRuntime(spec) {
-  const workingDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-npm-runtime."));
+  const workingDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-npm-runtime."));
   try {
     const tarballPath = await packPublishedPackage(spec, workingDir);
     const extractDir = path.join(workingDir, "extract");

@@ -16,7 +16,7 @@ import {
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import type { CommandEntry } from "../../packages/gateway-protocol/src/index.js";
 import { resolveAgentIdByWorkspacePath, resolveDefaultAgentId } from "../agents/agent-scope.js";
-import { getRuntimeConfig, type OpenClawConfig } from "../config/config.js";
+import { getRuntimeConfig, type NovaConfig } from "../config/config.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { tryProcessCwd } from "../infra/safe-cwd.js";
 import { registerUncaughtExceptionHandler } from "../infra/unhandled-rejections.js";
@@ -92,7 +92,7 @@ export {
   shouldEnableWindowsGitBashPasteFallback,
 } from "./tui-submit.js";
 
-const NOVA_CLI_WRAPPER_PATH = fileURLToPath(new URL("../../openclaw.mjs", import.meta.url));
+const NOVA_CLI_WRAPPER_PATH = fileURLToPath(new URL("../../nova.mjs", import.meta.url));
 const NOVA_RUN_NODE_SCRIPT_PATH = fileURLToPath(
   new URL("../../scripts/run-node.mjs", import.meta.url),
 );
@@ -111,7 +111,7 @@ type RunTuiOptions = TuiOptions & {
     password?: string;
     tlsFingerprint?: string;
   };
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   title?: string;
 };
 
@@ -184,7 +184,7 @@ export function resolveLocalAuthSpawnCwd(params: { args: string[]; defaultCwd?: 
     return defaultCwd;
   }
   const entryBase = path.basename(entryArg).toLowerCase();
-  if (entryBase === "openclaw.mjs") {
+  if (entryBase === "nova.mjs") {
     return path.dirname(entryArg);
   }
   if (entryBase === "run-node.mjs") {
@@ -219,7 +219,7 @@ export function resolveTuiSessionKey(params: {
 }
 
 export function resolveInitialTuiAgentId(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   fallbackAgentId: string;
   initialSessionInput?: string;
   cwd?: string;
@@ -250,8 +250,8 @@ export function resolveGatewayDisconnectState(reason?: string): {
       connectionStatus: `gateway disconnected: ${reasonLabel}`,
       activityStatus: "device approval needed: preview latest request",
       pairingHint:
-        "Device approval needed. Run `openclaw devices approve --latest` to preview the pending request, " +
-        "then rerun the printed `openclaw devices approve <requestId>` command " +
+        "Device approval needed. Run `nova devices approve --latest` to preview the pending request, " +
+        "then rerun the printed `nova devices approve <requestId>` command " +
         "(reuse `--token` or other auth flags if needed), then reconnect.",
     };
   }
@@ -517,7 +517,7 @@ export function scheduleProcessExitAfterTuiReturn(
     });
   const timer = setTimeoutFn(() => {
     try {
-      writeStderr("openclaw tui forcing process exit after return\n");
+      writeStderr("nova tui forcing process exit after return\n");
     } catch {
       // Best effort only; forced exit must not depend on stderr.
     }
@@ -572,7 +572,7 @@ export function resolveTuiCtrlCAction(params: {
   return resolveCtrlCAction(params);
 }
 
-function resolveEmptySessionInfoDefaults(config: OpenClawConfig): SessionInfo {
+function resolveEmptySessionInfoDefaults(config: NovaConfig): SessionInfo {
   return {
     verboseLevel: config.agents?.defaults?.verboseDefault,
   };
@@ -826,7 +826,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
       : null
     : null;
   if (isLocalMode) {
-    setConsoleSubsystemFilter(["__openclaw_tui_quiet__"]);
+    setConsoleSubsystemFilter(["__nova_tui_quiet__"]);
   }
 
   const tui = new TUI(new ProcessTerminal());
@@ -1026,7 +1026,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
   const updateHeader = () => {
     const sessionLabel = formatSessionKey(currentSessionKey);
     const agentLabel = formatAgentLabel(currentAgentId);
-    const title = opts.title ?? "openclaw tui";
+    const title = opts.title ?? "nova tui";
     header.setText(
       theme.header(
         `${title} - ${client.connection.url} - agent ${agentLabel} - session ${sessionLabel}`,
@@ -1220,7 +1220,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
       return await work();
     } finally {
       if (isLocalMode) {
-        setConsoleSubsystemFilter(["__openclaw_tui_quiet__"]);
+        setConsoleSubsystemFilter(["__nova_tui_quiet__"]);
       }
       tui.start();
       tui.setFocus(editor);
@@ -1395,7 +1395,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
   const deferredFinish = createDeferredTuiFinish();
   const forceExit = () => {
     try {
-      process.stderr.write("openclaw tui forcing exit\n");
+      process.stderr.write("nova tui forcing exit\n");
     } catch {
       // Best effort only; force exit must not depend on stderr.
     }
@@ -1424,7 +1424,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
       onError: (err) => {
         if (!isTuiTerminalLossError(err)) {
           try {
-            process.stderr.write(`openclaw tui shutdown failed: ${String(err)}\n`);
+            process.stderr.write(`nova tui shutdown failed: ${String(err)}\n`);
           } catch {
             // Best effort only; exit must still complete.
           }

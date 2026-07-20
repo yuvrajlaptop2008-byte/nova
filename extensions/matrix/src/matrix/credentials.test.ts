@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasAnyMatrixAuth } from "../../auth-presence.js";
 import { installMatrixTestRuntime } from "../test-runtime.js";
@@ -33,7 +33,7 @@ describe("matrix credentials storage", () => {
 
   beforeEach(() => {
     resetPluginStateStoreForTests();
-    stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-matrix-creds-"));
+    stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-matrix-creds-"));
     installMatrixTestRuntime({ stateDir });
   });
 
@@ -62,7 +62,7 @@ describe("matrix credentials storage", () => {
       deviceId: "DEVICE123",
     });
     expect(loadMatrixCredentials({}, "default")).toBeNull();
-    expect(fs.existsSync(path.join(stateDir, "state", "openclaw.sqlite"))).toBe(true);
+    expect(fs.existsSync(path.join(stateDir, "state", "nova.sqlite"))).toBe(true);
     expect(fs.existsSync(path.join(stateDir, "credentials", "matrix"))).toBe(false);
   });
 

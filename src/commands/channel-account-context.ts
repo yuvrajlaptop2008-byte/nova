@@ -2,7 +2,7 @@
 import { resolveChannelDefaultAccountId } from "../channels/plugins/helpers.js";
 import type { ChannelPlugin } from "../channels/plugins/types.plugin.js";
 import { inspectReadOnlyChannelAccount } from "../channels/read-only-account-inspect.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { isRecord } from "../utils.js";
 
@@ -43,7 +43,7 @@ function formatContextDiagnostic(params: {
 /** Resolve default channel account state for commands that need enabled/configured checks. */
 export async function resolveDefaultChannelAccountContext(
   plugin: ChannelPlugin,
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   options?: { mode?: ChannelAccountContextMode; commandName?: string },
 ): Promise<ChannelDefaultAccountContext> {
   const mode = options?.mode ?? "strict";

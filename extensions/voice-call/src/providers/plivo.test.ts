@@ -73,7 +73,7 @@ describe("PlivoProvider", () => {
         authToken: "test-token",
       },
       {
-        publicUrl: "https://voice.openclaw.ai/voice/webhook?provider=plivo",
+        publicUrl: "https://voice.nova.ai/voice/webhook?provider=plivo",
       },
     );
 
@@ -89,7 +89,7 @@ describe("PlivoProvider", () => {
     const callbackMap = (provider as unknown as { callUuidToWebhookUrl: Map<string, string> })
       .callUuidToWebhookUrl;
 
-    expect(callbackMap.get("call-uuid")).toBe("https://voice.openclaw.ai/voice/webhook");
+    expect(callbackMap.get("call-uuid")).toBe("https://voice.nova.ai/voice/webhook");
   });
 
   it("renders an auto-response as the prompt for the next speech input", async () => {

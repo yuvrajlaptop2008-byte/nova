@@ -10,7 +10,7 @@ import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { z } from "zod";
 import { sanitizeTerminalText } from "../../packages/terminal-core/src/safe-text.js";
 import type { AgentModelConfig } from "../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
   defaultExecAutoReviewer,
@@ -259,7 +259,7 @@ async function raceWithReviewerTimeout<T>(
 
 /** Creates an exec auto-reviewer that uses a configured model when available. */
 export function createModelExecAutoReviewer(params: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string;
   reviewer?: ExecReviewerConfig;
   deps?: ExecReviewerDeps;

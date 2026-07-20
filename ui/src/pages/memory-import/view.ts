@@ -324,7 +324,7 @@ function renderConfirmation(props: MemoryImportViewProps) {
   const title = t("memoryImport.confirmTitle", { provider: providerLabel(provider) });
   const description = t("memoryImport.confirmDescription", { count: String(count) });
   return html`
-    <openclaw-modal-dialog
+    <nova-modal-dialog
       label=${title}
       description=${description}
       @modal-cancel=${() => {
@@ -363,7 +363,7 @@ function renderConfirmation(props: MemoryImportViewProps) {
           </button>
         </div>
       </div>
-    </openclaw-modal-dialog>
+    </nova-modal-dialog>
   `;
 }
 

@@ -40,7 +40,7 @@ export class ModelSetupWizardRunner {
     this.setState({ phase: "starting", authChoice });
     try {
       const started = await client.request<SystemAgentSetupAuthStartResult>(
-        "openclaw.setup.auth.start",
+        "nova.setup.auth.start",
         { sessionId, authChoice },
         { timeoutMs: MODEL_SETUP_AUTH_START_TIMEOUT_MS, signal: abortController.signal },
       );

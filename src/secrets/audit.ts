@@ -10,7 +10,7 @@ import {
   isSecretRefHeaderValueMarker,
 } from "../agents/model-auth-markers.js";
 import { normalizeProviderId } from "../agents/model-selection.js";
-import { resolveStateDir, type OpenClawConfig } from "../config/config.js";
+import { resolveStateDir, type NovaConfig } from "../config/config.js";
 import { coerceSecretRef } from "../config/types.secrets.js";
 import { resolveSecretInputRef, type SecretRef } from "../config/types.secrets.js";
 import { formatErrorMessage } from "../infra/errors.js";
@@ -43,7 +43,7 @@ import {
 } from "./storage-scan.js";
 import { discoverConfigSecretTargets } from "./target-registry.js";
 
-/** Stable finding codes emitted by `openclaw secrets audit`. */
+/** Stable finding codes emitted by `nova secrets audit`. */
 type SecretsAuditCode = "PLAINTEXT_FOUND" | "REF_UNRESOLVED" | "REF_SHADOWED" | "LEGACY_RESIDUE";
 
 /** Audit severity used for CLI output and check-mode exit behavior. */
@@ -179,7 +179,7 @@ function collectEnvPlaintext(params: { envPath: string; collector: AuditCollecto
 }
 
 function collectConfigSecrets(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   configPath: string;
   collector: AuditCollector;
 }): void {
@@ -433,7 +433,7 @@ function collectModelsJsonSecrets(params: {
 
 async function collectUnresolvedRefFindings(params: {
   collector: AuditCollector;
-  config: OpenClawConfig;
+  config: NovaConfig;
   env: NodeJS.ProcessEnv;
   allowExec: boolean;
 }): Promise<{ refsChecked: number; skippedExecRefs: number }> {
@@ -593,7 +593,7 @@ function collectShadowingFindings(collector: AuditCollector): void {
       addFinding(collector, {
         code: "REF_SHADOWED",
         severity: "warn",
-        file: "openclaw.json",
+        file: "nova.json",
         jsonPath: configPath,
         message: `Auth profile credentials (${modeText}) take precedence for provider "${provider}", so this config ref may never be used.`,
         provider,
@@ -636,7 +636,7 @@ export async function runSecretsAudit(
 
   const stateDir = resolveStateDir(env, os.homedir);
   const envPaths = listSecretsDotEnvPaths({ configPath, stateDir });
-  const config = snapshot.valid ? snapshot.config : ({} as OpenClawConfig);
+  const config = snapshot.valid ? snapshot.config : ({} as NovaConfig);
   let resolution = {
     refsChecked: 0,
     skippedExecRefs: 0,

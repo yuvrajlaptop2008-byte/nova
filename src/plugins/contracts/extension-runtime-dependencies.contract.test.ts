@@ -172,7 +172,7 @@ function listRuntimeFiles(root: string): string[] {
 }
 
 function readManifestText(root: string): string {
-  const manifestPath = path.join(root, "openclaw.plugin.json");
+  const manifestPath = path.join(root, "nova.plugin.json");
   const resolvedManifestPath = path.resolve(REPO_ROOT, manifestPath);
   return fs.existsSync(resolvedManifestPath) ? fs.readFileSync(resolvedManifestPath, "utf8") : "";
 }
@@ -325,7 +325,7 @@ describe("extension runtime dependency manifests", () => {
       for (const filePath of listRuntimeFiles(extensionDir)) {
         for (const packageName of collectRuntimeImports(filePath)) {
           if (
-            packageName === "openclaw" ||
+            packageName === "nova" ||
             packageName.startsWith("@nova/") ||
             BUILTIN_MODULES.has(packageName) ||
             declared.has(packageName) ||

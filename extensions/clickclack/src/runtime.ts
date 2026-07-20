@@ -2,8 +2,8 @@
  * Runtime store for host-provided Nova services used by the ClickClack
  * bundled plugin.
  */
-import { createPluginRuntimeStore } from "openclaw/plugin-sdk/runtime-store";
-import type { PluginRuntime } from "openclaw/plugin-sdk/runtime-store";
+import { createPluginRuntimeStore } from "nova/plugin-sdk/runtime-store";
+import type { PluginRuntime } from "nova/plugin-sdk/runtime-store";
 
 const { setRuntime: setClickClackRuntime, getRuntime: getClickClackRuntime } =
   createPluginRuntimeStore<PluginRuntime>({

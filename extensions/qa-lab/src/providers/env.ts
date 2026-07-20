@@ -2,7 +2,7 @@
 import { existsSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { uniqueStrings } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { uniqueStrings } from "nova/plugin-sdk/string-coerce-runtime";
 import type { QaProviderMode } from "./index.js";
 import { getQaProvider } from "./index.js";
 
@@ -206,7 +206,7 @@ export function resolveQaLiveProviderConfigPath(env: NodeJS.ProcessEnv = process
   const explicit = env[QA_LIVE_PROVIDER_CONFIG_PATH_ENV]?.trim() || env.NOVA_CONFIG_PATH?.trim();
   return explicit
     ? { path: resolveUserPath(explicit, env), explicit: true }
-    : { path: path.join(os.homedir(), ".openclaw", "openclaw.json"), explicit: false };
+    : { path: path.join(os.homedir(), ".nova", "nova.json"), explicit: false };
 }
 
 export function resolveQaForwardedLiveEnv(baseEnv: NodeJS.ProcessEnv = process.env) {

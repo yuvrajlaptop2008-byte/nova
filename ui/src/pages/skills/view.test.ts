@@ -476,7 +476,7 @@ describe("renderSkills", () => {
             },
             owner: {
               displayName: "Nova",
-              handle: "openclaw",
+              handle: "nova",
             },
           },
           onClawHubInstall,
@@ -491,7 +491,7 @@ describe("renderSkills", () => {
       Array.from(container.querySelectorAll(".callout")).map((node) => normalizeText(node)),
     ).toEqual(["rate limited", "Installed github"]);
     expect(normalizeText(container.querySelector(".md-preview-dialog__body")!)).toBe(
-      "GitHub integration for Nova By Nova (@openclaw) Latest: v1.2.3 Added search support Platforms: macos, linux Install GitHub",
+      "GitHub integration for Nova By Nova (@nova) Latest: v1.2.3 Added search support Platforms: macos, linux Install GitHub",
     );
 
     const detailInstallButton = container.querySelector<HTMLButtonElement>(
@@ -584,7 +584,7 @@ describe("renderSkills", () => {
               slug: "agentreceipt",
               version: "1.2.3",
               securityAuditUrl:
-                "https://clawhub.ai/openclaw/skills/agentreceipt/security-audit?version=1.2.3",
+                "https://clawhub.ai/nova/skills/agentreceipt/security-audit?version=1.2.3",
               securityStatus: "suspicious",
               securityPassed: false,
             },
@@ -619,7 +619,7 @@ describe("renderSkills", () => {
               requestedSlug: "agentreceipt",
               requestedVersion: "1.2.3",
               securityAuditUrl:
-                "https://clawhub.ai/openclaw/skills/agentreceipt/security-audit?version=1.2.3",
+                "https://clawhub.ai/nova/skills/agentreceipt/security-audit?version=1.2.3",
               securityStatus: "suspicious",
               securityPassed: false,
             },

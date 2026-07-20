@@ -7,7 +7,7 @@ import {
 } from "../../auto-reply/thinking.js";
 import { resolveChannelModelOverride } from "../../channels/model-overrides.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { isSubagentSessionKey } from "../../routing/session-key.js";
 import { isValidAgentHarnessSessionStoreEntry } from "../../sessions/agent-harness-session-key.js";
 import {
@@ -60,7 +60,7 @@ import type { AgentCommandOpts } from "./types.js";
 type AgentRunContext = ReturnType<typeof resolveAgentRunContext>;
 
 export async function resolveEmbeddedModelSelection(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   opts: AgentCommandOpts;
   sessionEntry?: SessionEntry;
   sessionStore?: Record<string, SessionEntry>;

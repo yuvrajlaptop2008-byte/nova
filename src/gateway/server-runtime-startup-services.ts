@@ -1,6 +1,6 @@
 // Gateway startup-time runtime services.
 // Starts mode-dependent background monitors with inert handles for disabled paths.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import type { ChannelHealthMonitor } from "./channel-health-monitor.js";
 import { startChannelHealthMonitor } from "./channel-health-monitor.js";
@@ -18,7 +18,7 @@ export type GatewayChannelManager = Parameters<
 
 /** Starts channel health monitoring when gateway config enables it. */
 export function startGatewayChannelHealthMonitor(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channelManager: GatewayChannelManager;
   env?: NodeJS.ProcessEnv;
 }): ChannelHealthMonitor | null {
@@ -36,7 +36,7 @@ export function startGatewayChannelHealthMonitor(params: {
 /** Starts background runtime services and returns their stop/update handles. */
 export function startGatewayRuntimeServices(params: {
   minimalTestGateway: boolean;
-  cfgAtStart: OpenClawConfig;
+  cfgAtStart: NovaConfig;
   channelManager: GatewayChannelManager;
   log: GatewayRuntimeServiceLogger;
 }): {

@@ -80,15 +80,15 @@ describe("proxy cli", () => {
   ])("rejects invalid numeric option %s", (args, expected) => {
     const program = createProgram();
 
-    expect(() => program.parse(["node", "openclaw", ...args])).toThrow(expected);
+    expect(() => program.parse(["node", "nova", ...args])).toThrow(expected);
   });
 
   it("normalizes signed decimal numeric options through the shared parser", async () => {
     const program = createProgram();
 
-    await program.parseAsync(["node", "openclaw", "proxy", "start", "--port", "+08080"]);
-    await program.parseAsync(["node", "openclaw", "proxy", "validate", "--timeout-ms", "+01000"]);
-    await program.parseAsync(["node", "openclaw", "proxy", "sessions", "--limit", "+05"]);
+    await program.parseAsync(["node", "nova", "proxy", "start", "--port", "+08080"]);
+    await program.parseAsync(["node", "nova", "proxy", "validate", "--timeout-ms", "+01000"]);
+    await program.parseAsync(["node", "nova", "proxy", "sessions", "--limit", "+05"]);
 
     expect(runDebugProxyStartCommand).toHaveBeenCalledWith({
       host: "127.0.0.1",

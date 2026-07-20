@@ -1,6 +1,6 @@
 // Video live test helpers resolve live provider test settings from environment.
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.js";
+import type { NovaConfig } from "../config/types.js";
 import {
   parseLiveCsvFilter,
   parseProviderModelMap,
@@ -57,7 +57,7 @@ export function parseCsvFilter(raw?: string): Set<string> | null {
   return parseLiveCsvFilter(raw);
 }
 
-export function resolveConfiguredLiveVideoModels(cfg: OpenClawConfig): Map<string, string> {
+export function resolveConfiguredLiveVideoModels(cfg: NovaConfig): Map<string, string> {
   return resolveConfiguredLiveProviderModels(cfg.agents?.defaults?.videoGenerationModel);
 }
 

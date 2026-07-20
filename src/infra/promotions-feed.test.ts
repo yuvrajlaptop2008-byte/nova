@@ -1,16 +1,13 @@
 // Covers the promotions feed cache: refresh cadence, 304 revalidation,
 // sequence monotonicity, notified markers, and claim provenance.
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
 import {
-  closeOpenClawStateDatabaseForTest,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+  closeNovaStateDatabaseForTest,
+  runNovaStateWriteTransaction,
+} from "../state/nova-state-db.js";
 import { useMockHttp } from "../test-utils/mock-http.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../test-utils/nova-test-state.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "./kysely-sync.js";
 import {
   listLivePromotionEntries,
@@ -49,17 +46,17 @@ function feedPayload(overrides: Record<string, unknown> = {}) {
 }
 
 describe("promotions feed state", () => {
-  let testState: OpenClawTestState;
+  let testState: NovaTestState;
 
   beforeEach(async () => {
-    testState = await createOpenClawTestState({
+    testState = await createNovaTestState({
       layout: "state-only",
-      prefix: "openclaw-promotions-feed-",
+      prefix: "nova-promotions-feed-",
     });
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await testState.cleanup();
   });
 
@@ -167,9 +164,9 @@ describe("promotions feed state", () => {
       reply: { json: feedPayload({ sequence: 5 }), headers: { etag: '"v5"' } },
     });
     await maybeRefreshPromotionsFeed({ nowMs: NOW, fetchImpl: globalThis.fetch });
-    runOpenClawStateWriteTransaction(({ db }) => {
+    runNovaStateWriteTransaction(({ db }) => {
       const kysely =
-        getNodeSqliteKysely<Pick<OpenClawStateKyselyDatabase, "clawhub_promotions_feed_state">>(db);
+        getNodeSqliteKysely<Pick<NovaStateKyselyDatabase, "clawhub_promotions_feed_state">>(db);
       executeSqliteQuerySync(
         db,
         kysely

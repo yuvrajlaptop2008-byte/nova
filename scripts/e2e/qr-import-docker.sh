@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-build.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-container.sh"
-IMAGE_NAME="${NOVA_QR_SMOKE_IMAGE:-openclaw-qr-smoke}"
+IMAGE_NAME="${NOVA_QR_SMOKE_IMAGE:-nova-qr-smoke}"
 DOCKER_BUILD_ARGS=()
 
 if [[ "${NOVA_QR_SMOKE_FORCE_INSTALL:-0}" == "1" ]]; then

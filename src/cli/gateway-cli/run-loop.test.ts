@@ -1521,7 +1521,7 @@ describe("runGatewayLoop", () => {
       expect(gatewayLog.warn).toHaveBeenNthCalledWith(
         2,
         "An unauthorized SIGUSR1 restart signal was received and ignored. " +
-          "If a pending gateway restart needs to be applied, run `openclaw gateway restart` " +
+          "If a pending gateway restart needs to be applied, run `nova gateway restart` " +
           "or restart the gateway through your service manager.",
       );
     });
@@ -1659,7 +1659,7 @@ describe("runGatewayLoop", () => {
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     try {
       setPlatform("darwin");
-      process.env.NOVA_LAUNCHD_LABEL = "ai.openclaw.gateway";
+      process.env.NOVA_LAUNCHD_LABEL = "ai.nova.gateway";
       restartGatewayProcessWithFreshPid.mockReturnValueOnce({
         mode: "supervised",
       });
@@ -1696,7 +1696,7 @@ describe("runGatewayLoop", () => {
     consumeGatewayRestartIntentPayloadSync.mockReturnValueOnce({ reason: "gateway.restart" });
     try {
       setPlatform("darwin");
-      process.env.NOVA_LAUNCHD_LABEL = "ai.openclaw.gateway";
+      process.env.NOVA_LAUNCHD_LABEL = "ai.nova.gateway";
       restartGatewayProcessWithFreshPid.mockReturnValueOnce({
         mode: "supervised",
       });
@@ -1729,7 +1729,7 @@ describe("runGatewayLoop", () => {
     vi.clearAllMocks();
     peekGatewaySigusr1RestartReason.mockReturnValue(undefined);
     process.env.NOVA_SUPERVISOR_MODE = "external";
-    process.env.NOVA_LAUNCHD_LABEL = "ai.openclaw.gateway";
+    process.env.NOVA_LAUNCHD_LABEL = "ai.nova.gateway";
     restartGatewayProcessWithFreshPid.mockReturnValueOnce({
       mode: "supervised",
     });

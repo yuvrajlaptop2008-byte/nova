@@ -230,10 +230,10 @@ describe("normalizeApiKeyInput", () => {
 
 describe("validateApiKeyInput", () => {
   it.each([
-    "openclaw onboard --auth-choice zai-coding-global",
-    "openclaw onboard --auth-choice=zai-coding-global",
-    "openclaw onboard --non-interactive --auth-choice zai-coding-global --zai-api-key $ZAI_API_KEY",
-    "openclaw onboard --non-interactive --auth-choice=zai-coding-global --zai-api-key $ZAI_API_KEY",
+    "nova onboard --auth-choice zai-coding-global",
+    "nova onboard --auth-choice=zai-coding-global",
+    "nova onboard --non-interactive --auth-choice zai-coding-global --zai-api-key $ZAI_API_KEY",
+    "nova onboard --non-interactive --auth-choice=zai-coding-global --zai-api-key $ZAI_API_KEY",
   ])("rejects pasted Nova onboarding command %p", (value) => {
     expect(validateApiKeyInput(value)).toBe(
       "Paste the API key value, not an Nova onboarding command.",

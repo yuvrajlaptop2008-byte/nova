@@ -3,7 +3,7 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { normalizeChatType } from "../../channels/chat-type.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { parseSessionDeliveryRoute } from "../../routing/session-key.js";
 import type { SilentReplyConversationType } from "../../shared/silent-reply-policy.js";
 
@@ -59,7 +59,7 @@ export type OutboundSessionContext = {
 
 /** Builds the outbound delivery session context, omitting empty policy fields. */
 export function buildOutboundSessionContext(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   sessionKey?: string | null;
   policySessionKey?: string | null;
   conversationType?: string | null;

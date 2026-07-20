@@ -136,7 +136,7 @@ describe("e2e helper numeric env limits", () => {
   });
 
   it("rejects oversized ClickClack fixture request bodies", async () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-clickclack-fixture-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-clickclack-fixture-"));
     const port = await allocatePort();
     const child = spawn(process.execPath, [clickclackFixturePath], {
       env: {
@@ -280,7 +280,7 @@ describe("e2e helper numeric env limits", () => {
   });
 
   it("bounds generated ClickClack plugin response bodies", async () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-clickclack-plugin-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-clickclack-plugin-"));
     let headersSentResolve: (() => void) | undefined;
     const headersSent = new Promise<void>((resolve) => {
       headersSentResolve = resolve;

@@ -1,11 +1,11 @@
 // Kilocode plugin module implements stream behavior.
-import type { ProviderWrapStreamFnContext } from "openclaw/plugin-sdk/plugin-entry";
-import { resolveProviderRequestHeaders } from "openclaw/plugin-sdk/provider-http";
-import { normalizeOpenAICompatibleReasoningPayload } from "openclaw/plugin-sdk/provider-stream-shared";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { ProviderWrapStreamFnContext } from "nova/plugin-sdk/plugin-entry";
+import { resolveProviderRequestHeaders } from "nova/plugin-sdk/provider-http";
+import { normalizeOpenAICompatibleReasoningPayload } from "nova/plugin-sdk/provider-stream-shared";
+import { normalizeOptionalLowercaseString } from "nova/plugin-sdk/string-coerce-runtime";
 
 const KILOCODE_FEATURE_HEADER = "X-KILOCODE-FEATURE";
-const KILOCODE_FEATURE_DEFAULT = "openclaw";
+const KILOCODE_FEATURE_DEFAULT = "nova";
 const KILOCODE_FEATURE_ENV_VAR = "KILOCODE_FEATURE";
 
 type ThinkLevel = NonNullable<ProviderWrapStreamFnContext["thinkingLevel"]>;

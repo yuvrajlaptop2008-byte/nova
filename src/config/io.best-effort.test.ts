@@ -2,11 +2,8 @@
 import fs from "node:fs/promises";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { executeSqliteQueryTakeFirstSync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import { withEnvAsync } from "../test-utils/env.js";
 import {
   readBestEffortConfig,
@@ -14,12 +11,12 @@ import {
   readConfigFileSnapshot,
   readSourceConfigBestEffort,
 } from "./config.js";
-import { withTempHome, writeOpenClawConfig } from "./test-helpers.js";
+import { withTempHome, writeNovaConfig } from "./test-helpers.js";
 
-type ConfigHealthDatabase = Pick<OpenClawStateKyselyDatabase, "config_health_entries">;
+type ConfigHealthDatabase = Pick<NovaStateKyselyDatabase, "config_health_entries">;
 
 function readConfigHealthRow(env: NodeJS.ProcessEnv, configPath: string) {
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const healthDb = getNodeSqliteKysely<ConfigHealthDatabase>(db);
   return executeSqliteQueryTakeFirstSync(
     db,
@@ -32,18 +29,18 @@ function readConfigHealthRow(env: NodeJS.ProcessEnv, configPath: string) {
 
 describe("readBestEffortConfig", () => {
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
   });
 
   it("can read snapshots without updating config observation state", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeOpenClawConfig(home, {
+      const configPath = await writeNovaConfig(home, {
         gateway: { mode: "local" },
       });
 
       await readConfigFileSnapshot({ observe: false });
 
-      const healthPath = `${home}/.openclaw/logs/config-health.json`;
+      const healthPath = `${home}/.nova/logs/config-health.json`;
       await expect(fs.stat(healthPath)).rejects.toMatchObject({ code: "ENOENT" });
 
       await readConfigFileSnapshot();
@@ -60,7 +57,7 @@ describe("readBestEffortConfig", () => {
     await withTempHome(async (home) => {
       const key = "NOVA_ISOLATED_CONFIG_READ_TEST";
       await withEnvAsync({ [key]: undefined }, async () => {
-        await writeOpenClawConfig(home, {
+        await writeNovaConfig(home, {
           env: { vars: { [key]: "from-config" } },
           gateway: { mode: "local" },
         });
@@ -76,7 +73,7 @@ describe("readBestEffortConfig", () => {
     await withTempHome(async (home) => {
       const key = "NOVA_GATEWAY_TOKEN";
       await withEnvAsync({ [key]: "shell-token" }, async () => {
-        await writeOpenClawConfig(home, {
+        await writeNovaConfig(home, {
           env: { vars: { [key]: "config-token" } },
           gateway: { auth: { mode: "token", token: `\${${key}}` }, mode: "local" },
         });
@@ -96,7 +93,7 @@ describe("readBestEffortConfig", () => {
   it("resolves config env above normalized lower-precedence aliases in isolated snapshots", async () => {
     await withTempHome(async (home) => {
       await withEnvAsync({ ZAI_API_KEY: "shell-token", Z_AI_API_KEY: undefined }, async () => {
-        await writeOpenClawConfig(home, {
+        await writeNovaConfig(home, {
           env: { vars: { Z_AI_API_KEY: "config-token" } },
           gateway: { auth: { mode: "token", token: "${ZAI_API_KEY}" }, mode: "local" },
         });
@@ -117,7 +114,7 @@ describe("readBestEffortConfig", () => {
   it("resolves config aliases from a higher-precedence canonical value in isolated snapshots", async () => {
     await withTempHome(async (home) => {
       await withEnvAsync({ ZAI_API_KEY: "invocation-token", Z_AI_API_KEY: undefined }, async () => {
-        await writeOpenClawConfig(home, {
+        await writeNovaConfig(home, {
           env: { vars: { Z_AI_API_KEY: "config-token" } },
           gateway: { auth: { mode: "token", token: "${Z_AI_API_KEY}" }, mode: "local" },
         });
@@ -138,7 +135,7 @@ describe("readBestEffortConfig", () => {
     await withTempHome(async (home) => {
       const key = "NOVA_ISOLATED_BEST_EFFORT_CONFIG_TEST";
       await withEnvAsync({ [key]: undefined }, async () => {
-        await writeOpenClawConfig(home, {
+        await writeNovaConfig(home, {
           env: { vars: { [key]: "from-config" } },
           gateway: { mode: "local" },
         });
@@ -147,7 +144,7 @@ describe("readBestEffortConfig", () => {
 
         expect(config.gateway?.mode).toBe("local");
         expect(process.env[key]).toBeUndefined();
-        await expect(fs.stat(`${home}/.openclaw/logs/config-health.json`)).rejects.toMatchObject({
+        await expect(fs.stat(`${home}/.nova/logs/config-health.json`)).rejects.toMatchObject({
           code: "ENOENT",
         });
       });
@@ -157,7 +154,7 @@ describe("readBestEffortConfig", () => {
   it("preserves Windows case-insensitive env lookup in isolated reads", async () => {
     await withTempHome(async (home) => {
       const mixedCaseKey = "Nova_Config_Path";
-      const customConfigPath = `${home}/custom-openclaw.json`;
+      const customConfigPath = `${home}/custom-nova.json`;
       await withEnvAsync({ NOVA_CONFIG_PATH: undefined }, async () => {
         await withEnvAsync({ [mixedCaseKey]: customConfigPath }, async () => {
           const platformSpy = vi.spyOn(process, "platform", "get").mockReturnValue("win32");
@@ -182,7 +179,7 @@ describe("readBestEffortConfig", () => {
 
   it("does not restore suspicious direct edits from .bak during ordinary reads", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeOpenClawConfig(home, {
+      const configPath = await writeNovaConfig(home, {
         meta: { lastTouchedAt: "2026-04-22T00:00:00.000Z" },
         update: { channel: "beta" },
         gateway: { mode: "local" },
@@ -195,14 +192,14 @@ describe("readBestEffortConfig", () => {
 
       expect(snapshot.sourceConfig).toEqual({ update: { channel: "beta" } });
       expect(await fs.readFile(configPath, "utf-8")).toBe(directEditRaw);
-      const entries = await fs.readdir(`${home}/.openclaw`);
-      expect(entries.some((entry) => entry.startsWith("openclaw.json.clobbered."))).toBe(false);
+      const entries = await fs.readdir(`${home}/.nova`);
+      expect(entries.some((entry) => entry.startsWith("nova.json.clobbered."))).toBe(false);
     });
   });
 
   it("reuses valid snapshots while preserving load-time defaults", async () => {
     await withTempHome(async (home) => {
-      await writeOpenClawConfig(home, {
+      await writeNovaConfig(home, {
         auth: {
           profiles: {
             "anthropic:api": { provider: "anthropic", mode: "api_key" },
@@ -232,7 +229,7 @@ describe("readBestEffortConfig", () => {
 
   it("controls observation while returning source and materialized config", async () => {
     await withTempHome(async (home) => {
-      const configPath = await writeOpenClawConfig(home, {
+      const configPath = await writeNovaConfig(home, {
         auth: {
           profiles: {
             "anthropic:api": { provider: "anthropic", mode: "api_key" },
@@ -267,7 +264,7 @@ describe("readBestEffortConfig", () => {
 describe("readSourceConfigBestEffort", () => {
   it("preserves the authored source config without load-time defaults", async () => {
     await withTempHome(async (home) => {
-      await writeOpenClawConfig(home, {
+      await writeNovaConfig(home, {
         auth: {
           profiles: {
             "anthropic:api": { provider: "anthropic", mode: "api_key" },

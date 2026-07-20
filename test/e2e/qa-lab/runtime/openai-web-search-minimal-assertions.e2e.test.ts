@@ -15,7 +15,7 @@ function runAssertSuccessRequest(logPath: string) {
 
 describe("openai web-search minimal assertions", () => {
   it("accepts a success request with web_search and non-minimal reasoning", () => {
-    const dir = mkdtempSync(path.join(tmpdir(), "openclaw-web-search-minimal-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "nova-web-search-minimal-"));
     try {
       const logPath = path.join(dir, "requests.jsonl");
       writeFileSync(
@@ -38,7 +38,7 @@ describe("openai web-search minimal assertions", () => {
   });
 
   it("finds success requests split across large scan chunks", () => {
-    const dir = mkdtempSync(path.join(tmpdir(), "openclaw-web-search-minimal-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "nova-web-search-minimal-"));
     try {
       const logPath = path.join(dir, "requests.jsonl");
       writeFileSync(
@@ -63,7 +63,7 @@ describe("openai web-search minimal assertions", () => {
   });
 
   it("bounds diagnostics when the OpenAI responses endpoint was not used", () => {
-    const dir = mkdtempSync(path.join(tmpdir(), "openclaw-web-search-minimal-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "nova-web-search-minimal-"));
     try {
       const logPath = path.join(dir, "requests.jsonl");
       writeFileSync(
@@ -87,7 +87,7 @@ describe("openai web-search minimal assertions", () => {
   });
 
   it("bounds diagnostics when no success response is present", () => {
-    const dir = mkdtempSync(path.join(tmpdir(), "openclaw-web-search-minimal-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "nova-web-search-minimal-"));
     try {
       const logPath = path.join(dir, "requests.jsonl");
       writeFileSync(
@@ -114,7 +114,7 @@ describe("openai web-search minimal assertions", () => {
   });
 
   it("rejects function-shaped web_search as native Responses proof", () => {
-    const dir = mkdtempSync(path.join(tmpdir(), "openclaw-web-search-minimal-"));
+    const dir = mkdtempSync(path.join(tmpdir(), "nova-web-search-minimal-"));
     try {
       const logPath = path.join(dir, "requests.jsonl");
       writeFileSync(

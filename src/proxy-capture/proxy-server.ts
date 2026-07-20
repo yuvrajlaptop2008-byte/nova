@@ -64,7 +64,7 @@ function createProxyCaptureRecorder(params: {
     params.store.recordEvent({
       sessionId: params.settings.sessionId,
       ts: Date.now(),
-      sourceScope: "openclaw",
+      sourceScope: "nova",
       sourceProcess: params.settings.sourceProcess,
       ...event,
     });

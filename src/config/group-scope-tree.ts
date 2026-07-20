@@ -2,7 +2,7 @@
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import type { ChannelId } from "../channels/plugins/channel-id.types.js";
 import { resolveChannelGroups, resolveToolsBySender } from "./group-policy.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { NovaConfig } from "./types.nova.js";
 import type { GroupToolPolicyBySenderConfig, GroupToolPolicyConfig } from "./types.tools.js";
 
 export type ScopeNode = {
@@ -31,7 +31,7 @@ export function scopeKey(...segments: Array<readonly [prefix: string, value: str
 type ScopeToolPolicySender = Omit<Parameters<typeof resolveToolsBySender>[0], "toolsBySender">;
 
 export function buildChannelGroupsScopeTree(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   channel: ChannelId,
   accountId?: string | null,
 ): ScopeTree {

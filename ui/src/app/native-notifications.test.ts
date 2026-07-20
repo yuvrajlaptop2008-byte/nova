@@ -7,7 +7,7 @@ import {
 } from "./native-notifications.ts";
 
 // Wire contract shared with the Mac app bridge; asserted literally on purpose.
-const NATIVE_NOTIFICATIONS_STATUS_EVENT = "openclaw:native-notifications-status";
+const NATIVE_NOTIFICATIONS_STATUS_EVENT = "nova:native-notifications-status";
 
 type NativeNotificationsMessage = {
   type: "status" | "request-permission" | "send-test";
@@ -29,7 +29,7 @@ afterEach(() => {
 function installBridge() {
   const postMessage = vi.fn<(message: NativeNotificationsMessage) => void>();
   vi.stubGlobal("webkit", {
-    messageHandlers: { openclawNotifications: { postMessage } },
+    messageHandlers: { novaNotifications: { postMessage } },
   });
   return postMessage;
 }

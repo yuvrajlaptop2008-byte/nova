@@ -597,7 +597,7 @@ describe("Slack live QA runtime helpers", () => {
 
   it("extracts typed Slack approval button values from blocks", () => {
     const actionValue =
-      'openclaw:approval:v1:{"approvalId":"plugin:abc","approvalKind":"plugin","decision":"allow-once"}';
+      'nova:approval:v1:{"approvalId":"plugin:abc","approvalKind":"plugin","decision":"allow-once"}';
     expect(
       testing.collectSlackActionValues([
         {
@@ -618,8 +618,8 @@ describe("Slack live QA runtime helpers", () => {
     expect(
       testing.extractSlackNativeApprovalId({
         actionValues: [
-          'openclaw:approval:v1:{"approvalId":"plugin:abc123","approvalKind":"plugin","decision":"allow-once"}',
-          'openclaw:approval:v1:{"approvalId":"plugin:abc123","approvalKind":"plugin","decision":"deny"}',
+          'nova:approval:v1:{"approvalId":"plugin:abc123","approvalKind":"plugin","decision":"allow-once"}',
+          'nova:approval:v1:{"approvalId":"plugin:abc123","approvalKind":"plugin","decision":"deny"}',
         ],
         decision: "allow-once",
       }),
@@ -628,7 +628,7 @@ describe("Slack live QA runtime helpers", () => {
 
   it("resolves the Codex file approval target path", () => {
     expect(testing.resolveCodexFileApprovalTargetPath("MARKER")).toMatch(
-      /\.openclaw-qa-codex-file-approval-marker\.txt$/u,
+      /\.nova-qa-codex-file-approval-marker\.txt$/u,
     );
   });
 
@@ -1203,7 +1203,7 @@ describe("Slack live QA runtime helpers", () => {
                 type: "button",
                 text: { type: "plain_text", text: "Allow Once" },
                 value:
-                  'openclaw:approval:v1:{"approvalId":"plugin:abc","approvalKind":"plugin","decision":"allow-once"}',
+                  'nova:approval:v1:{"approvalId":"plugin:abc","approvalKind":"plugin","decision":"allow-once"}',
               },
             ],
           },

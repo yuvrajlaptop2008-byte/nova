@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from "vitest";
 // The single conflicting manifest entry proves installed manifests stay
 // authoritative over catalog metadata (first match wins).
 vi.mock("../plugins/manifest-metadata-scan.js", () => ({
-  listOpenClawPluginManifestMetadata: () => [
+  listNovaPluginManifestMetadata: () => [
     {
       pluginDir: "installed-conflict-fixture",
       manifest: {

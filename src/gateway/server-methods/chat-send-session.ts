@@ -3,7 +3,7 @@ import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { resolveProviderIdForAuth } from "../../agents/provider-auth-aliases.js";
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
 import { resolveSessionRoutingContract } from "../../config/sessions/main-session.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { measureDiagnosticsTimelineSpanSync } from "../../infra/diagnostics-timeline.js";
 import { resolveMissingAgentHarnessSessionError } from "../../sessions/agent-harness-session-key.js";
 import { isBrowserOperatorUiClient } from "../../utils/message-channel.js";
@@ -59,7 +59,7 @@ function loadChatSendSessionContext(params: {
   const expectedSessionRoutingContract = normalizeOptionalChatText(
     p.expectedSessionRoutingContract,
   );
-  const sessionRoutingChanged = (candidateConfig: OpenClawConfig) =>
+  const sessionRoutingChanged = (candidateConfig: NovaConfig) =>
     expectedSessionRoutingContract !== undefined &&
     expectedSessionRoutingContract.toLowerCase() !== resolveSessionRoutingContract(candidateConfig);
   return {

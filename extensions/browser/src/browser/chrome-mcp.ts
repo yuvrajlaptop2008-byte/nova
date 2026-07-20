@@ -12,19 +12,19 @@ import { setTimeout as sleepTimeout } from "node:timers/promises";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
-import { createAsyncLock } from "openclaw/plugin-sdk/async-lock-runtime";
+import { createAsyncLock } from "nova/plugin-sdk/async-lock-runtime";
 import {
   addTimerTimeoutGraceMs,
   resolveNonNegativeIntegerOption,
-} from "openclaw/plugin-sdk/number-runtime";
-import { runExec } from "openclaw/plugin-sdk/process-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { runExec } from "nova/plugin-sdk/process-runtime";
 import {
   normalizeOptionalString,
   readStringValue,
   uniqueStrings,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/string-coerce-runtime";
 import type { SsrFPolicy } from "../infra/net/ssrf.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
 import { redactToolPayloadText } from "../logging/redact.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { asRecord } from "../record-shared.js";
@@ -1155,7 +1155,7 @@ async function createRealSession(
   });
   const client = new Client(
     {
-      name: "openclaw-browser",
+      name: "nova-browser",
       version: "0.0.0",
     },
     {},
@@ -1933,7 +1933,7 @@ async function withChromeMcpTarget<T>(
 }
 
 async function withTempFile<T>(fn: (filePath: string) => Promise<T>): Promise<T> {
-  const dir = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-chrome-mcp-"));
+  const dir = await fs.mkdtemp(path.join(resolvePreferredNovaTmpDir(), "nova-chrome-mcp-"));
   const filePath = path.join(dir, randomUUID());
   try {
     return await fn(filePath);
@@ -2148,7 +2148,7 @@ export async function openChromeMcpTab(
         );
       }
       const markerUrl = normalizedProfileOptions.browserUrl
-        ? `about:blank#openclaw-${randomUUID()}`
+        ? `about:blank#nova-${randomUUID()}`
         : undefined;
       const initialUrl = markerUrl ?? "about:blank";
       const result = await callTool(

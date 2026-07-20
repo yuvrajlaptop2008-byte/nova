@@ -58,8 +58,7 @@ describe("native app i18n inventory", () => {
       entries.map((entry) => [`${entry.path}\0${entry.source}`, entry.id]),
     );
     const onboardingPath = "apps/ios/Sources/Onboarding/OnboardingWizardConnectionSections.swift";
-    const sendingPath =
-      "apps/shared/OpenClawKit/Sources/OpenClawChatUI/ChatViewModel+Sending.swift";
+    const sendingPath = "apps/shared/NovaKit/Sources/NovaChatUI/ChatViewModel+Sending.swift";
     const movedEntries = [
       { id: "native.apple.95e2c98254da2aba", path: onboardingPath, source: "Home Network" },
       {
@@ -313,9 +312,7 @@ describe("native app i18n inventory", () => {
       entries
         .filter((entry) => entry.surface === "apple")
         .every((entry) =>
-          /^(?:apps\/ios|apps\/macos\/Sources|apps\/shared\/OpenClawKit\/Sources)\//u.test(
-            entry.path,
-          ),
+          /^(?:apps\/ios|apps\/macos\/Sources|apps\/shared\/NovaKit\/Sources)\//u.test(entry.path),
         ),
     ).toBe(true);
     expect(entries.some((entry) => entry.source === "QR Scanner Unavailable")).toBe(true);
@@ -477,7 +474,7 @@ describe("native app i18n inventory", () => {
       entries.some(
         (entry) =>
           entry.source ===
-          "Paste the token configured on the gateway host. On the gateway host, run `openclaw config get gateway.auth.token`. If the gateway uses an environment variable instead, use `NOVA_GATEWAY_TOKEN`.",
+          "Paste the token configured on the gateway host. On the gateway host, run `nova config get gateway.auth.token`. If the gateway uses an environment variable instead, use `NOVA_GATEWAY_TOKEN`.",
       ),
     ).toBe(true);
     expect(
@@ -538,7 +535,7 @@ describe("native app i18n inventory", () => {
       ),
     ).toBe(true);
     expect(entries.some((entry) => entry.source === "$(PRODUCT_BUNDLE_IDENTIFIER)")).toBe(false);
-    expect(entries.some((entry) => entry.source === "ai.openclaw.screenRecord.writer")).toBe(false);
+    expect(entries.some((entry) => entry.source === "ai.nova.screenRecord.writer")).toBe(false);
     expect(
       entries.some(
         (entry) =>
@@ -591,7 +588,7 @@ describe("native app i18n inventory", () => {
 
   it("creates a first-run locale artifact and leaves a complete artifact unchanged", async () => {
     const tempDirs: string[] = [];
-    const translationsDir = makeTempDir(tempDirs, "openclaw-native-i18n-");
+    const translationsDir = makeTempDir(tempDirs, "nova-native-i18n-");
     const entries: NativeI18nEntry[] = [
       {
         id: "native.android.hello",
@@ -899,7 +896,7 @@ describe("native app i18n inventory", () => {
 
   it("rejects native printf placeholder drift", async () => {
     const tempDirs: string[] = [];
-    const translationsDir = makeTempDir(tempDirs, "openclaw-native-i18n-");
+    const translationsDir = makeTempDir(tempDirs, "nova-native-i18n-");
     const cases = [
       {
         entry: {
@@ -1088,7 +1085,7 @@ describe("native app i18n inventory", () => {
         id: "native.android.language-picker",
         kind: "conditional-branch",
         line: 89,
-        path: "apps/android/app/src/main/java/ai/openclaw/app/AppLanguage.kt",
+        path: "apps/android/app/src/main/java/ai/nova/app/AppLanguage.kt",
         source: "Nova translations · $languageTag",
         surface: "android",
       },

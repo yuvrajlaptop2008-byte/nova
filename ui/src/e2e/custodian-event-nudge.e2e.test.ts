@@ -64,9 +64,9 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
     });
     const page = await context.newPage();
     const gateway = await installMockGateway(page, {
-      featureMethods: ["chat.metadata", "chat.startup", "openclaw.chat"],
+      featureMethods: ["chat.metadata", "chat.startup", "nova.chat"],
       methodResponses: {
-        "openclaw.chat": {
+        "nova.chat": {
           sessionId: "e2e-custodian",
           reply: "I'm watching the system.",
           action: "none",
@@ -78,7 +78,7 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
       const response = await page.goto(`${server.baseUrl}custodian`);
       expect(response?.status()).toBe(200);
       await page.getByRole("heading", { name: "Nova", exact: true }).waitFor();
-      await expect.poll(async () => (await gateway.getRequests("openclaw.chat")).length).toBe(1);
+      await expect.poll(async () => (await gateway.getRequests("nova.chat")).length).toBe(1);
 
       if (captureUiProofEnabled) {
         await page.screenshot({
@@ -89,7 +89,7 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
 
       await gateway.emitGatewayEvent("config.changed", {
         hash: "config-hash",
-        path: "/tmp/openclaw.json",
+        path: "/tmp/nova.json",
         ts: Date.now(),
       });
       await settleUi(page);
@@ -113,16 +113,16 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
         });
       }
 
-      await gateway.deferNext("openclaw.chat");
+      await gateway.deferNext("nova.chat");
       await nudge.click();
-      await expect.poll(async () => (await gateway.getRequests("openclaw.chat")).length).toBe(2);
-      const requests = await gateway.getRequests("openclaw.chat");
+      await expect.poll(async () => (await gateway.getRequests("nova.chat")).length).toBe(2);
+      const requests = await gateway.getRequests("nova.chat");
       expect(requests[1]?.params).toMatchObject({
         message: "what happened with telegram?",
         sessionId: "e2e-custodian",
       });
       await page.locator(".chat-group.user", { hasText: "what happened with telegram?" }).waitFor();
-      await gateway.resolveDeferred("openclaw.chat", {
+      await gateway.resolveDeferred("nova.chat", {
         sessionId: "e2e-custodian",
         reply: "I'm watching the system.",
         action: "none",
@@ -155,9 +155,9 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
     });
     const page = await context.newPage();
     const gateway = await installMockGateway(page, {
-      featureMethods: ["chat.metadata", "chat.startup", "openclaw.chat"],
+      featureMethods: ["chat.metadata", "chat.startup", "nova.chat"],
       methodResponses: {
-        "openclaw.chat": {
+        "nova.chat": {
           sessionId: "e2e-sensitive-custodian",
           reply: "Paste your API key.",
           action: "none",
@@ -182,7 +182,7 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
       await nudge.evaluate((element) => (element as HTMLButtonElement).click());
       await settleUi(page);
 
-      expect(await gateway.getRequests("openclaw.chat")).toHaveLength(1);
+      expect(await gateway.getRequests("nova.chat")).toHaveLength(1);
       expect(await page.getByText("what happened with discord?").count()).toBe(0);
     } finally {
       await context.close();
@@ -197,9 +197,9 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
     });
     const page = await context.newPage();
     const gateway = await installMockGateway(page, {
-      featureMethods: ["chat.metadata", "chat.startup", "openclaw.chat"],
+      featureMethods: ["chat.metadata", "chat.startup", "nova.chat"],
       methodResponses: {
-        "openclaw.chat": {
+        "nova.chat": {
           sessionId: "e2e-wizard-custodian",
           reply: "Choose one.",
           action: "none",
@@ -229,24 +229,24 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
       await expect.poll(() => nudge.isDisabled()).toBe(true);
       await nudge.evaluate((element) => (element as HTMLButtonElement).click());
       await settleUi(page);
-      expect(await gateway.getRequests("openclaw.chat")).toHaveLength(1);
+      expect(await gateway.getRequests("nova.chat")).toHaveLength(1);
 
-      await gateway.setMethodResponse("openclaw.chat", {
+      await gateway.setMethodResponse("nova.chat", {
         sessionId: "e2e-wizard-custodian",
         reply: "Moving on.",
         action: "none",
       });
       await skip.click();
 
-      await expect.poll(async () => (await gateway.getRequests("openclaw.chat")).length).toBe(2);
-      const requests = await gateway.getRequests("openclaw.chat");
+      await expect.poll(async () => (await gateway.getRequests("nova.chat")).length).toBe(2);
+      const requests = await gateway.getRequests("nova.chat");
       expect(requests[1]?.params).toMatchObject({
         message: "cancel",
         sessionId: "e2e-wizard-custodian",
       });
       await page.locator(".chat-group.user", { hasText: "Skip for now" }).waitFor();
       await page.getByText("Moving on.").waitFor();
-      expect(await page.locator("openclaw-option-card").count()).toBe(0);
+      expect(await page.locator("nova-option-card").count()).toBe(0);
     } finally {
       await context.close();
     }
@@ -260,9 +260,9 @@ describeControlUiE2e("Control UI custodian event nudge mocked Gateway E2E", () =
     });
     const page = await context.newPage();
     const gateway = await installMockGateway(page, {
-      featureMethods: ["chat.metadata", "chat.startup", "openclaw.chat"],
+      featureMethods: ["chat.metadata", "chat.startup", "nova.chat"],
       methodResponses: {
-        "openclaw.chat": {
+        "nova.chat": {
           sessionId: "e2e-onboarding-custodian",
           reply: "Let's finish setup.",
           action: "none",

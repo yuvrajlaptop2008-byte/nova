@@ -89,6 +89,7 @@ export async function prewarmSessionFile(sessionFile: string): Promise<void> {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.sessionManagerCacheTestApi")] =
-    { createSessionManagerCache };
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.sessionManagerCacheTestApi")] = {
+    createSessionManagerCache,
+  };
 }

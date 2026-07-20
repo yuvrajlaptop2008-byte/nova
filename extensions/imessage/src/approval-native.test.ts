@@ -1,23 +1,20 @@
 // Imessage tests cover approval native plugin behavior.
-import type {
-  ExecApprovalRequest,
-  PluginApprovalRequest,
-} from "openclaw/plugin-sdk/approval-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { ExecApprovalRequest, PluginApprovalRequest } from "nova/plugin-sdk/approval-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { describe, expect, it } from "vitest";
 import {
   imessageApprovalCapability,
   shouldSuppressLocalIMessageExecApprovalPrompt,
 } from "./approval-native.js";
 
-type IMessageConfig = NonNullable<NonNullable<OpenClawConfig["channels"]>["imessage"]>;
+type IMessageConfig = NonNullable<NonNullable<NovaConfig["channels"]>["imessage"]>;
 
 function buildConfig(
   params: {
     imessage?: Partial<IMessageConfig>;
-    approvals?: OpenClawConfig["approvals"];
+    approvals?: NovaConfig["approvals"];
   } = {},
-): OpenClawConfig {
+): NovaConfig {
   return {
     channels: {
       imessage: {
@@ -26,7 +23,7 @@ function buildConfig(
       },
     },
     approvals: params.approvals,
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function buildExecRequest(
@@ -71,7 +68,7 @@ function buildPluginRequest(
 }
 
 function nativeShouldHandle(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   approvalKind: "exec" | "plugin";
   request: ExecApprovalRequest | PluginApprovalRequest;
   accountId?: string | null;

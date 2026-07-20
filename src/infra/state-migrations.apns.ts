@@ -4,11 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { root, type Root } from "@nova/fs-safe";
 import { isRecord } from "@nova/normalization-core/record-coerce";
-import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import type { DB as NovaStateKyselyDatabase } from "../state/nova-state-db.generated.js";
+import { openNovaStateDatabase, runNovaStateWriteTransaction } from "../state/nova-state-db.js";
 import { formatErrorMessage } from "./errors.js";
 import { acquireGatewayLock, GatewayLockError } from "./gateway-lock.js";
 import {
@@ -59,7 +56,7 @@ const RELAY_REGISTRATION_KEYS = new Set([
 ]);
 
 type ApnsMigrationDatabase = Pick<
-  OpenClawStateKyselyDatabase,
+  NovaStateKyselyDatabase,
   "apns_registrations" | "apns_registration_tombstones" | "migration_runs" | "migration_sources"
 >;
 
@@ -221,7 +218,7 @@ function receiptSourceKey(sourcePath: string): string {
 
 function readMigrationReceipt(sourcePath: string, env: NodeJS.ProcessEnv): MigrationReceipt | null {
   const sourceKey = receiptSourceKey(sourcePath);
-  const { db } = openOpenClawStateDatabase({ env });
+  const { db } = openNovaStateDatabase({ env });
   const row = executeSqliteQueryTakeFirstSync(
     db,
     getNodeSqliteKysely<ApnsMigrationDatabase>(db)
@@ -247,7 +244,7 @@ function importAndRecordReceipt(params: {
   const sourceKey = receiptSourceKey(params.sourcePath);
   const runId = `${sourceKey}:${params.snapshot.sha256.slice(0, 16)}`;
   const now = Date.now();
-  return runOpenClawStateWriteTransaction(
+  return runNovaStateWriteTransaction(
     ({ db }) => {
       const stateDb = getNodeSqliteKysely<ApnsMigrationDatabase>(db);
       const existingReceipt = executeSqliteQueryTakeFirstSync(
@@ -358,7 +355,7 @@ function importAndRecordReceipt(params: {
 }
 
 function markSourceRemoved(sourceKey: string, env: NodeJS.ProcessEnv): void {
-  runOpenClawStateWriteTransaction(
+  runNovaStateWriteTransaction(
     ({ db }) => {
       executeSqliteQuerySync(
         db,
@@ -606,7 +603,7 @@ export async function migrateLegacyApnsRegistrations(params: {
     return {
       changes: [],
       warnings: [
-        `Failed migrating legacy APNs state: ${detail}. Stop the Gateway and run \`openclaw doctor --fix\` again.`,
+        `Failed migrating legacy APNs state: ${detail}. Stop the Gateway and run \`nova doctor --fix\` again.`,
       ],
     };
   }

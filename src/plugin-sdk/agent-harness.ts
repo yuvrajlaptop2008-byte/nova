@@ -14,8 +14,8 @@ export type {
   AgentToolResultMiddlewareEvent,
   AnyAgentTool,
   EmbeddedRunAttemptParams,
-  OpenClawAgentToolResult,
+  NovaAgentToolResult,
 } from "./agent-harness-runtime.js";
-export { createOpenClawCodingTools } from "../agents/agent-tools.js";
+export { createNovaCodingTools } from "../agents/agent-tools.js";
 export { createCodexAppServerToolResultExtensionRunner } from "../agents/harness/codex-app-server-extensions.js";
 export { resolveWebSearchToolPolicy } from "../agents/web-search-tool-policy.js";

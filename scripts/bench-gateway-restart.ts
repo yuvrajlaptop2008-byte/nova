@@ -782,7 +782,7 @@ function writePluginFixtures(
       `module.exports = { id: ${JSON.stringify(id)}, register() {} };\n`,
     );
     writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       `${JSON.stringify(
         {
           id,
@@ -815,7 +815,7 @@ function writeConfig(root: string, benchCase: GatewayBenchCase): string {
         : {}),
     },
   };
-  const configPath = path.join(root, "openclaw.json");
+  const configPath = path.join(root, "nova.json");
   writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
   return configPath;
 }
@@ -829,12 +829,12 @@ function sanitizedEnv(
     CI: process.env.CI ?? "1",
     HOME: root,
     LANG: process.env.LANG ?? "en_US.UTF-8",
-    LOGNAME: process.env.LOGNAME ?? "openclaw-bench",
+    LOGNAME: process.env.LOGNAME ?? "nova-bench",
     NO_COLOR: "1",
     PATH: process.env.PATH,
     SHELL: process.env.SHELL,
     TMPDIR: process.env.TMPDIR,
-    USER: process.env.USER ?? "openclaw-bench",
+    USER: process.env.USER ?? "nova-bench",
     npm_config_update_notifier: "false",
     NOVA_CONFIG: configPath,
     NOVA_CONFIG_PATH: configPath,
@@ -1152,7 +1152,7 @@ async function runGatewaySample(options: {
   timeoutMs: number;
 }): Promise<GatewayRestartSample> {
   ensureSupportedRestartPlatform();
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-gateway-restart-bench-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-gateway-restart-bench-"));
   const port = await getFreePort();
   const configPath = writeConfig(root, options.benchCase);
   const env = sanitizedEnv(root, configPath, options.benchCase);

@@ -383,7 +383,7 @@ import {
   SystemAgentSetupDetectResultSchema,
   SystemAgentSetupVerifyParamsSchema,
   SystemAgentSetupVerifyResultSchema,
-} from "./openclaw.js";
+} from "./nova.js";
 import {
   PluginApprovalRequestParamsSchema,
   PluginApprovalResolveParamsSchema,

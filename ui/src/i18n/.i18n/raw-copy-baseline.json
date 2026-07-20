@@ -34,14 +34,14 @@
       "kind": "html-attribute",
       "name": "aria-label",
       "path": "ui/src/components/app-topbar.ts",
-      "text": "OpenClaw"
+      "text": "Nova"
     },
     {
       "count": 1,
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/components/app-topbar.ts",
-      "text": "OpenClaw"
+      "text": "Nova"
     },
     {
       "count": 1,
@@ -97,7 +97,7 @@
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/components/login-gate.ts",
-      "text": "OpenClaw"
+      "text": "Nova"
     },
     {
       "count": 1,
@@ -538,28 +538,28 @@
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/pages/config/mcp.ts",
-      "text": "openclaw mcp doctor --probe"
+      "text": "nova mcp doctor --probe"
     },
     {
       "count": 1,
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/pages/config/mcp.ts",
-      "text": "openclaw mcp login &lt;name&gt;"
+      "text": "nova mcp login &lt;name&gt;"
     },
     {
       "count": 1,
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/pages/config/mcp.ts",
-      "text": "openclaw mcp reload"
+      "text": "nova mcp reload"
     },
     {
       "count": 1,
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/pages/config/mcp.ts",
-      "text": "openclaw mcp status --verbose"
+      "text": "nova mcp status --verbose"
     },
     {
       "count": 1,
@@ -615,7 +615,7 @@
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/pages/debug/view.ts",
-      "text": "openclaw security audit --deep"
+      "text": "nova security audit --deep"
     },
     {
       "count": 1,
@@ -636,7 +636,7 @@
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/pages/profile/profile-page.ts",
-      "text": "OpenClaw"
+      "text": "Nova"
     },
     {
       "count": 2,

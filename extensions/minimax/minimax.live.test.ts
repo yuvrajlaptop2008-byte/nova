@@ -1,10 +1,10 @@
-import { resolveFfmpegBin } from "openclaw/plugin-sdk/media-runtime";
+import { resolveFfmpegBin } from "nova/plugin-sdk/media-runtime";
 // Minimax tests cover minimax plugin behavior.
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { isLiveTestEnabled } from "openclaw/plugin-sdk/test-live";
+} from "nova/plugin-sdk/plugin-test-runtime";
+import { isLiveTestEnabled } from "nova/plugin-sdk/test-live";
 import { describe, expect, it } from "vitest";
 import plugin from "./index.js";
 import { buildMinimaxSpeechProvider } from "./speech-provider.js";

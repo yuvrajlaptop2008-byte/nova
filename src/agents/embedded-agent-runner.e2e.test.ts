@@ -38,16 +38,15 @@ const resolveModelAsyncMock = vi.fn(
   async (provider: string, modelId: string): Promise<EmbeddedRunnerModelResolution> =>
     createResolvedEmbeddedRunnerModel(provider, modelId),
 );
-const ensureOpenClawModelsJsonMock = vi.fn(async () => ({ wrote: false }));
+const ensureNovaModelsJsonMock = vi.fn(async () => ({ wrote: false }));
 const loggerWarnMock = vi.fn();
 let refreshRuntimeAuthOnFirstPromptError = false;
 let clearRuntimeConfigSnapshot: typeof import("../config/config.js").clearRuntimeConfigSnapshot;
 let setRuntimeConfigSnapshot: typeof import("../config/config.js").setRuntimeConfigSnapshot;
 let getReplyPayloadMetadata: typeof import("../auto-reply/reply-payload.js").getReplyPayloadMetadata;
 
-vi.mock("openclaw/plugin-sdk/llm", async () => {
-  const actual =
-    await vi.importActual<typeof import("openclaw/plugin-sdk/llm")>("openclaw/plugin-sdk/llm");
+vi.mock("nova/plugin-sdk/llm", async () => {
+  const actual = await vi.importActual<typeof import("nova/plugin-sdk/llm")>("nova/plugin-sdk/llm");
 
   const buildAssistantMessage = (model: { api: string; provider: string; id: string }) => ({
     role: "assistant" as const,
@@ -163,14 +162,14 @@ const installRunEmbeddedMocks = () => {
     const mod = await vi.importActual<typeof import("./models-config.js")>("./models-config.js");
     return {
       ...mod,
-      ensureOpenClawModelsJson: (...args: Parameters<typeof ensureOpenClawModelsJsonMock>) =>
-        ensureOpenClawModelsJsonMock(...args),
+      ensureNovaModelsJson: (...args: Parameters<typeof ensureNovaModelsJsonMock>) =>
+        ensureNovaModelsJsonMock(...args),
     };
   });
 };
 
 let runEmbeddedAgent: typeof import("./embedded-agent-runner/run.js").runEmbeddedAgent;
-let SessionManager: typeof import("openclaw/plugin-sdk/agent-sessions").SessionManager;
+let SessionManager: typeof import("nova/plugin-sdk/agent-sessions").SessionManager;
 let e2eWorkspace: EmbeddedAgentRunnerTestWorkspace | undefined;
 let agentDir: string;
 let workspaceDir: string;
@@ -184,10 +183,9 @@ beforeAll(async () => {
   ({ getReplyPayloadMetadata } = await import("../auto-reply/reply-payload.js"));
   ({ clearRuntimeConfigSnapshot, setRuntimeConfigSnapshot } = await import("../config/config.js"));
   ({ runEmbeddedAgent } = await import("./embedded-agent-runner/run.js"));
-  const { SessionManager: LoadedSessionManager } =
-    await import("openclaw/plugin-sdk/agent-sessions");
+  const { SessionManager: LoadedSessionManager } = await import("nova/plugin-sdk/agent-sessions");
   SessionManager = LoadedSessionManager;
-  e2eWorkspace = await createEmbeddedAgentRunnerTestWorkspace("openclaw-embedded-agent-");
+  e2eWorkspace = await createEmbeddedAgentRunnerTestWorkspace("nova-embedded-agent-");
   ({ agentDir, workspaceDir } = e2eWorkspace);
 }, 180_000);
 
@@ -207,8 +205,8 @@ beforeEach(() => {
   resolveModelAsyncMock.mockImplementation(async (provider: string, modelId: string) =>
     createResolvedEmbeddedRunnerModel(provider, modelId),
   );
-  ensureOpenClawModelsJsonMock.mockReset();
-  ensureOpenClawModelsJsonMock.mockResolvedValue({ wrote: false });
+  ensureNovaModelsJsonMock.mockReset();
+  ensureNovaModelsJsonMock.mockResolvedValue({ wrote: false });
   loggerWarnMock.mockReset();
   refreshRuntimeAuthOnFirstPromptError = false;
   runEmbeddedAttemptMock.mockImplementation(async () => {
@@ -385,7 +383,7 @@ describe("runEmbeddedAgent", () => {
       });
     }
 
-    expect(ensureOpenClawModelsJsonMock).toHaveBeenCalledTimes(1);
+    expect(ensureNovaModelsJsonMock).toHaveBeenCalledTimes(1);
   });
 
   it("uses the configured default model when the caller omits provider and model", async () => {
@@ -577,7 +575,7 @@ describe("runEmbeddedAgent", () => {
     expect(
       (resolveModelCall?.[4] as { skipAgentDiscovery?: boolean } | undefined)?.skipAgentDiscovery,
     ).toBe(true);
-    expect(ensureOpenClawModelsJsonMock).toHaveBeenCalledTimes(1);
+    expect(ensureNovaModelsJsonMock).toHaveBeenCalledTimes(1);
   });
 
   it("resolves explicit OpenAI Nova runs through Codex when auth order starts with Codex OAuth", async () => {
@@ -601,7 +599,7 @@ describe("runEmbeddedAgent", () => {
         defaults: {
           models: {
             "openai/mock-1": {
-              agentRuntime: { id: "openclaw" },
+              agentRuntime: { id: "nova" },
             },
           },
         },
@@ -622,7 +620,7 @@ describe("runEmbeddedAgent", () => {
     );
 
     await runEmbeddedAgent({
-      sessionId: "codex-first-openclaw",
+      sessionId: "codex-first-nova",
       sessionFile,
       workspaceDir,
       config: cfg,
@@ -631,7 +629,7 @@ describe("runEmbeddedAgent", () => {
       model: "mock-1",
       timeoutMs: 5_000,
       agentDir,
-      runId: nextRunId("codex-first-openclaw"),
+      runId: nextRunId("codex-first-nova"),
       enqueue: immediateEnqueue,
     });
 
@@ -722,7 +720,7 @@ describe("runEmbeddedAgent", () => {
       expect.objectContaining({ skipAgentDiscovery: true }),
     );
     expect(resolveModelAsyncMock).toHaveBeenCalledTimes(1);
-    expect(ensureOpenClawModelsJsonMock).toHaveBeenCalledTimes(1);
+    expect(ensureNovaModelsJsonMock).toHaveBeenCalledTimes(1);
     expect(
       (firstRunEmbeddedAttemptParams() as { model?: { provider?: string } }).model?.provider,
     ).toBe("openai");
@@ -796,7 +794,7 @@ describe("runEmbeddedAgent", () => {
         preferBundledStaticCatalogTransport: true,
       }),
     );
-    expect(ensureOpenClawModelsJsonMock).toHaveBeenCalledTimes(1);
+    expect(ensureNovaModelsJsonMock).toHaveBeenCalledTimes(1);
     expect(
       (firstRunEmbeddedAttemptParams() as { model?: { provider?: string } }).model?.provider,
     ).toBe("openai");
@@ -826,7 +824,7 @@ describe("runEmbeddedAgent", () => {
     });
 
     expect(resolveModelAsyncMock).not.toHaveBeenCalled();
-    expect(ensureOpenClawModelsJsonMock).toHaveBeenCalledTimes(1);
+    expect(ensureNovaModelsJsonMock).toHaveBeenCalledTimes(1);
     const attempt = firstRunEmbeddedAttemptParams() as Record<string, unknown>;
     expect(attempt).toMatchObject({
       agentHarnessId: "codex",

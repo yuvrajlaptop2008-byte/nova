@@ -196,4 +196,4 @@ await withTempWorkspace({ rootDir: "/srv/site/tmp", prefix: "extract-" }, async 
 - [Atomic writes](atomic.md) — `replaceDirectoryAtomic` for staged directory replacement.
 - [Temp workspaces](temp.md) — extract into a private workspace and commit as one step.
 - [Errors](errors.md) — `FsSafeError` codes the underlying writes can raise.
-- [`extractArchive` source](https://github.com/openclaw/fs-safe/blob/main/src/archive.ts).
+- [`extractArchive` source](https://github.com/nova/fs-safe/blob/main/src/archive.ts).

@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IOS_DIR="${ROOT_DIR}/apps/ios"
 
-APP_NAME="${IOS_APP_NAME:-OpenClaw}"
+APP_NAME="${IOS_APP_NAME:-Nova}"
 CONFIGURATION="${IOS_CONFIGURATION:-Debug}"
 DERIVED_DATA_DIR="${IOS_DERIVED_DATA_DIR:-${IOS_DIR}/build/DerivedData}"
 IOS_DESTINATION="${IOS_DEST:-platform=iOS Simulator,name=iPhone 17}"
@@ -25,7 +25,7 @@ Options:
       internal simulator proof secret.
   --push-relay-base-url <url>
       Override the sandbox relay URL used with --push-sandbox-simulator.
-      Defaults to https://ios-push-relay-sandbox.openclaw.ai.
+      Defaults to https://ios-push-relay-sandbox.nova.ai.
   --simulator-proof-secret-env <name>
       Environment variable that contains the simulator proof secret.
       Defaults to NOVA_SIMULATOR_PUSH_PROOF_SECRET.
@@ -40,7 +40,7 @@ run_simctl() {
 }
 
 push_sandbox_simulator=0
-push_relay_base_url="${NOVA_PUSH_SANDBOX_RELAY_BASE_URL:-https://ios-push-relay-sandbox.openclaw.ai}"
+push_relay_base_url="${NOVA_PUSH_SANDBOX_RELAY_BASE_URL:-https://ios-push-relay-sandbox.nova.ai}"
 simulator_proof_secret_env="${NOVA_SIMULATOR_PUSH_PROOF_SECRET_ENV:-NOVA_SIMULATOR_PUSH_PROOF_SECRET}"
 
 while [[ $# -gt 0 ]]; do
@@ -116,8 +116,8 @@ cd "${IOS_DIR}"
 "${XCODEGEN_BIN}" generate
 if [[ "${push_sandbox_simulator}" == "1" ]]; then
   "${XCODEBUILD_BIN}" \
-    -project OpenClaw.xcodeproj \
-    -scheme OpenClaw \
+    -project Nova.xcodeproj \
+    -scheme Nova \
     -destination "${IOS_DESTINATION}" \
     -configuration "${CONFIGURATION}" \
     -derivedDataPath "${DERIVED_DATA_DIR}" \
@@ -125,8 +125,8 @@ if [[ "${push_sandbox_simulator}" == "1" ]]; then
     "${xcodebuild_overrides[@]}"
 else
   "${XCODEBUILD_BIN}" \
-    -project OpenClaw.xcodeproj \
-    -scheme OpenClaw \
+    -project Nova.xcodeproj \
+    -scheme Nova \
     -destination "${IOS_DESTINATION}" \
     -configuration "${CONFIGURATION}" \
     -derivedDataPath "${DERIVED_DATA_DIR}" \

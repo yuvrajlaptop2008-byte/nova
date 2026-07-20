@@ -16,7 +16,7 @@ function expectedTaskkillPath(): string {
 }
 
 function makeTempDir(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-secret-provider-proof-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "nova-secret-provider-proof-"));
   tempDirs.push(root);
   return root;
 }
@@ -90,7 +90,7 @@ function writeStallingNova(
         )}, "x"), 5);`,
       ].join("\n")
     : "";
-  const scriptPath = path.join(root, "fake-openclaw.mjs");
+  const scriptPath = path.join(root, "fake-nova.mjs");
   fs.writeFileSync(
     scriptPath,
     [
@@ -119,7 +119,7 @@ function writeStallingNova(
       "  await delay(60_000);",
       "  process.exit(0);",
       "}",
-      "console.error(`unexpected fake openclaw args: ${args.join(' ')}`);",
+      "console.error(`unexpected fake nova args: ${args.join(' ')}`);",
       "process.exit(2);",
       "",
     ].join("\n"),
@@ -129,7 +129,7 @@ function writeStallingNova(
 }
 
 function writeLeakingStartupNova(root: string): string {
-  const scriptPath = path.join(root, "fake-leaking-openclaw.mjs");
+  const scriptPath = path.join(root, "fake-leaking-nova.mjs");
   fs.writeFileSync(
     scriptPath,
     [
@@ -149,7 +149,7 @@ function writeLeakingStartupNova(root: string): string {
 }
 
 function writeSignaledStartupNova(root: string): string {
-  const scriptPath = path.join(root, "fake-signaled-openclaw.mjs");
+  const scriptPath = path.join(root, "fake-signaled-nova.mjs");
   fs.writeFileSync(
     scriptPath,
     [
@@ -172,7 +172,7 @@ function writeSignaledStartupNova(root: string): string {
 }
 
 function writeNoisySecretsConfigureNova(root: string): string {
-  const scriptPath = path.join(root, "fake-noisy-secrets-configure-openclaw.mjs");
+  const scriptPath = path.join(root, "fake-noisy-secrets-configure-nova.mjs");
   fs.writeFileSync(
     scriptPath,
     [
@@ -223,18 +223,18 @@ describe("secret provider integration proof harness", () => {
     fs.writeFileSync(fakePnpm, "#!/usr/bin/env node\n", { mode: 0o755 });
     const proof = await import(`${pathToFileURL(proofScriptPath).href}?case=${Date.now()}`);
 
-    const command = await proof.resolveOpenClawCommand(
+    const command = await proof.resolveNovaCommand(
       ["gateway", "status"],
       { ...process.env, NOVA_SECRET_PROOF_SENTINEL: "1" },
       {
         nodeExecPath: "/opt/node/bin/node",
         npmExecPath: fakePnpm,
-        runner: { pnpm: true, baseArgs: ["openclaw"], label: "pnpm openclaw" },
+        runner: { pnpm: true, baseArgs: ["nova"], label: "pnpm nova" },
       },
     );
 
     expect(command.command).toBe("/opt/node/bin/node");
-    expect(command.args).toEqual([fakePnpm, "openclaw", "gateway", "status"]);
+    expect(command.args).toEqual([fakePnpm, "nova", "gateway", "status"]);
     expect(command.options.env.NOVA_SECRET_PROOF_SENTINEL).toBe("1");
     expect(command.options.shell).toBe(false);
   });
@@ -453,7 +453,7 @@ describe("secret provider integration proof harness", () => {
     "cleans PTY configure descendants before timeout failure",
     async () => {
       const root = makeTempDir();
-      const fakeNova = path.join(root, "fake-openclaw-pty-timeout.mjs");
+      const fakeNova = path.join(root, "fake-nova-pty-timeout.mjs");
       const descendantPidPath = path.join(root, "descendant.pid");
       const readyPath = path.join(root, "ready");
       let descendantPid = 0;
@@ -605,7 +605,7 @@ describe("secret provider integration proof harness", () => {
 
     try {
       await expect(
-        proof.cleanupEnv("/tmp/openclaw-secret-provider-proof-stuck", {
+        proof.cleanupEnv("/tmp/nova-secret-provider-proof-stuck", {
           attempts: 3,
           retryDelayMs: 1,
         }),

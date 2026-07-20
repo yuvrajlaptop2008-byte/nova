@@ -30,14 +30,14 @@ describe("loadVitestExperimentalConfig", () => {
     expect(
       loadVitestExperimentalConfig(
         {
-          NOVA_VITEST_FS_MODULE_CACHE_PATH: "/tmp/openclaw-vitest-cache",
+          NOVA_VITEST_FS_MODULE_CACHE_PATH: "/tmp/nova-vitest-cache",
         },
         "linux",
       ),
     ).toEqual({
       experimental: {
         fsModuleCache: true,
-        fsModuleCachePath: "/tmp/openclaw-vitest-cache",
+        fsModuleCachePath: "/tmp/nova-vitest-cache",
       },
     });
   });

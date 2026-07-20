@@ -7,10 +7,10 @@ import {
   readTranscriptRawDelta,
 } from "../src/config/sessions/session-accessor.js";
 import {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "../src/state/openclaw-agent-db.js";
-import { closeOpenClawStateDatabaseForTest } from "../src/state/openclaw-state-db.js";
+  closeNovaAgentDatabasesForTest,
+  openNovaAgentDatabase,
+} from "../src/state/nova-agent-db.js";
+import { closeNovaStateDatabaseForTest } from "../src/state/nova-state-db.js";
 
 const EVENT_COUNT = 100_000;
 const DELTA_COUNT = 20;
@@ -38,7 +38,7 @@ function measure(operation: () => void): Timing {
 }
 
 function seedTranscript(
-  database: ReturnType<typeof openOpenClawAgentDatabase>,
+  database: ReturnType<typeof openNovaAgentDatabase>,
   sessionId: string,
   sessionKey: string,
 ): void {
@@ -76,10 +76,7 @@ function seedTranscript(
   }
 }
 
-function appendDelta(
-  database: ReturnType<typeof openOpenClawAgentDatabase>,
-  sessionId: string,
-): void {
+function appendDelta(database: ReturnType<typeof openNovaAgentDatabase>, sessionId: string): void {
   const insert = database.db.prepare(
     `INSERT INTO transcript_events (session_id, seq, event_json, created_at)
      VALUES (?, ?, ?, ?)`,
@@ -121,13 +118,13 @@ function readFrontierCursor(scope: Parameters<typeof readTranscriptRawDelta>[0])
 }
 
 function main(): void {
-  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-transcript-bench-"));
+  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-transcript-bench-"));
   const env = { ...process.env, NOVA_STATE_DIR: stateDir };
   const agentId = "benchmark";
   const sessionId = "cursor-benchmark";
   const sessionKey = `agent:${agentId}:cursor-benchmark`;
   try {
-    const database = openOpenClawAgentDatabase({ agentId, env });
+    const database = openNovaAgentDatabase({ agentId, env });
     seedTranscript(database, sessionId, sessionKey);
     const scope = { agentId, sessionId, sessionKey, storePath: database.path };
 
@@ -177,8 +174,8 @@ function main(): void {
       ),
     );
   } finally {
-    closeOpenClawAgentDatabasesForTest();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaAgentDatabasesForTest();
+    closeNovaStateDatabaseForTest();
     fs.rmSync(stateDir, { force: true, recursive: true });
   }
 }

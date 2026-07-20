@@ -14,7 +14,7 @@ const qaChannelMock = vi.hoisted(() => ({
   startAccount: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/qa-channel", () => ({
+vi.mock("nova/plugin-sdk/qa-channel", () => ({
   qaChannelPlugin: {
     config: {
       resolveAccount: qaChannelMock.resolveAccount,
@@ -139,7 +139,7 @@ const captureMock = vi.hoisted(() => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/proxy-capture", () => ({
+vi.mock("nova/plugin-sdk/proxy-capture", () => ({
   acquireDebugProxyCaptureStore: () => ({
     store: captureMock.store,
     release: captureMock.store.close,
@@ -467,7 +467,7 @@ describe("qa-lab server", () => {
       path.join(evidenceDir, "qa-evidence.json"),
       `${JSON.stringify(
         {
-          kind: "openclaw.qa.evidence-summary",
+          kind: "nova.qa.evidence-summary",
           schemaVersion: 2,
           generatedAt: "2026-06-17T12:00:00.000Z",
           evidenceMode: "full",
@@ -619,7 +619,7 @@ describe("qa-lab server", () => {
       path.join(evidenceDir, "qa-evidence.json"),
       `${JSON.stringify(
         {
-          kind: "openclaw.qa.evidence-summary",
+          kind: "nova.qa.evidence-summary",
           schemaVersion: 2,
           generatedAt: "2026-07-16T00:00:00.000Z",
           evidenceMode: "full",
@@ -1133,14 +1133,14 @@ describe("qa-lab server", () => {
       id: "qa-capture-session",
       startedAt: Date.now(),
       mode: "proxy-run",
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "nova",
+      sourceProcess: "nova",
     });
     store.recordEvent({
       sessionId: "qa-capture-session",
       ts: Date.now(),
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "nova",
+      sourceProcess: "nova",
       protocol: "https",
       direction: "outbound",
       kind: "request",
@@ -1160,8 +1160,8 @@ describe("qa-lab server", () => {
     store.recordEvent({
       sessionId: "qa-capture-session",
       ts: Date.now() + 1,
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "nova",
+      sourceProcess: "nova",
       protocol: "https",
       direction: "outbound",
       kind: "request",
@@ -1181,8 +1181,8 @@ describe("qa-lab server", () => {
     store.recordEvent({
       sessionId: "qa-capture-session",
       ts: Date.now() + 2,
-      sourceScope: "openclaw",
-      sourceProcess: "openclaw",
+      sourceScope: "nova",
+      sourceProcess: "nova",
       protocol: "https",
       direction: "outbound",
       kind: "request",

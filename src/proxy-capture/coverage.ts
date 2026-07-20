@@ -188,9 +188,9 @@ export function maybeWarnAboutDebugProxyCoverage(
     return;
   }
   warn(
-    `[openclaw proxy] debug proxy coverage: ${summary.captured}/${summary.total} captured, ${summary.proxyOnly} proxy-only, ${summary.uncovered} uncovered.`,
+    `[nova proxy] debug proxy coverage: ${summary.captured}/${summary.total} captured, ${summary.proxyOnly} proxy-only, ${summary.uncovered} uncovered.`,
   );
   warn(
-    `[openclaw proxy] remaining gaps: ${partial.map((entry) => entry.id).join(", ")}. Run \`openclaw proxy coverage\` for details.`,
+    `[nova proxy] remaining gaps: ${partial.map((entry) => entry.id).join(", ")}. Run \`nova proxy coverage\` for details.`,
   );
 }

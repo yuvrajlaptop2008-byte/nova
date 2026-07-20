@@ -22,7 +22,7 @@ import type {
   PluginHookBeforeMessageWriteResult,
 } from "../plugins/types.js";
 import { emitSessionTranscriptUpdate } from "../sessions/transcript-events.js";
-import { isTranscriptOnlyOpenClawAssistantModel } from "../shared/transcript-only-openclaw-assistant.js";
+import { isTranscriptOnlyNovaAssistantModel } from "../shared/transcript-only-nova-assistant.js";
 import { formatContextLimitTruncationNotice } from "./embedded-agent-runner/context-truncation-notice.js";
 import {
   DEFAULT_MAX_LIVE_TOOL_RESULT_CHARS,
@@ -581,13 +581,13 @@ function normalizePersistedToolResultName(
   return toolResult;
 }
 
-function isTranscriptOnlyOpenClawAssistantMessage(message: AgentMessage): boolean {
+function isTranscriptOnlyNovaAssistantMessage(message: AgentMessage): boolean {
   if (!message || message.role !== "assistant") {
     return false;
   }
   const provider = normalizeOptionalString((message as { provider?: unknown }).provider) ?? "";
   const model = normalizeOptionalString((message as { model?: unknown }).model) ?? "";
-  return isTranscriptOnlyOpenClawAssistantModel(provider, model);
+  return isTranscriptOnlyNovaAssistantModel(provider, model);
 }
 
 export function installSessionToolResultGuard(
@@ -846,7 +846,7 @@ export function installSessionToolResultGuard(
     const transcriptOnlyAssistant =
       nextRole === "assistant" &&
       toolCalls.length === 0 &&
-      isTranscriptOnlyOpenClawAssistantMessage(nextMessage);
+      isTranscriptOnlyNovaAssistantMessage(nextMessage);
     if (
       !transcriptOnlyAssistant &&
       pendingState.shouldFlushBeforeNonToolResult(nextRole, toolCalls.length)

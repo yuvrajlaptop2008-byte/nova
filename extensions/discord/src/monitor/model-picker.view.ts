@@ -4,9 +4,9 @@ import { ButtonStyle } from "discord-api-types/v10";
 import type {
   ModelsProviderData,
   ModelsRuntimeChoice,
-} from "openclaw/plugin-sdk/models-provider-runtime";
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
-import { sliceUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
+} from "nova/plugin-sdk/models-provider-runtime";
+import { normalizeProviderId } from "nova/plugin-sdk/provider-model-shared";
+import { sliceUtf16Safe } from "nova/plugin-sdk/text-utility-runtime";
 import {
   Button,
   Container,
@@ -220,7 +220,7 @@ function getRuntimeChoices(params: {
   }
   return [
     {
-      id: "openclaw",
+      id: "nova",
       label: "Nova Default",
       description: "Use the built-in Nova runtime.",
     },
@@ -243,7 +243,7 @@ function resolveSelectedRuntime(params: {
   if (current && allowed.has(current)) {
     return current;
   }
-  return choices[0]?.id ?? "openclaw";
+  return choices[0]?.id ?? "nova";
 }
 
 function resolveExplicitRuntimeState(params: {

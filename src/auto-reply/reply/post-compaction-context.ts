@@ -11,7 +11,7 @@ import {
   MAX_WORKSPACE_BOOTSTRAP_FILE_BYTES,
   readWorkspaceBootstrapFile,
 } from "../../agents/workspace-bootstrap-read.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { openRootFile } from "../../infra/boundary-file-read.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 
@@ -57,7 +57,7 @@ function matchesSectionSet(sectionNames: string[], expectedSections: string[]): 
  * daily memory files instead of guessing based on training cutoff.
  */
 type PostCompactionContextOptions = {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   agentId?: string;
   nowMs?: number;
 };

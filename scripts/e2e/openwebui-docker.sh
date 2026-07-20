@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Runs Open WebUI against a Dockerized OpenClaw Gateway and verifies the proxied
+# Runs Open WebUI against a Dockerized Nova Gateway and verifies the proxied
 # chat path with a real OpenAI-compatible request.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-openwebui-e2e" NOVA_OPENWEBUI_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-openwebui-e2e" NOVA_OPENWEBUI_E2E_IMAGE)"
 OPENWEBUI_IMAGE="${OPENWEBUI_IMAGE:-ghcr.io/open-webui/open-webui:v0.8.10}"
 MAX_MEMORY_MIB="$(docker_e2e_read_nonnegative_decimal_env NOVA_OPENWEBUI_MAX_MEMORY_MIB 8192)"
 MAX_CPU_PERCENT="$(docker_e2e_read_nonnegative_decimal_env NOVA_OPENWEBUI_MAX_CPU_PERCENT 1600)"
@@ -20,9 +20,9 @@ WEBUI_PORT="$(docker_e2e_read_tcp_port_env NOVA_OPENWEBUI_PORT 8080)"
 TOKEN="openwebui-e2e-$(date +%s)-$$"
 ADMIN_EMAIL="${NOVA_OPENWEBUI_ADMIN_EMAIL:-openwebui-e2e@example.com}"
 ADMIN_PASSWORD="${NOVA_OPENWEBUI_ADMIN_PASSWORD:-OpenWebUI-E2E-Password-$(date +%s)-$$}"
-NET_NAME="openclaw-openwebui-e2e-$$"
-GW_NAME="openclaw-openwebui-gateway-$$"
-OW_NAME="openclaw-openwebui-$$"
+NET_NAME="nova-openwebui-e2e-$$"
+GW_NAME="nova-openwebui-gateway-$$"
+OW_NAME="nova-openwebui-$$"
 PROVIDER_TIMEOUT_SECONDS="${NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS:-900}"
 DOCKER_PULL_TIMEOUT="${NOVA_OPENWEBUI_DOCKER_PULL_TIMEOUT:-600s}"
 SMOKE_MODE="${OPENWEBUI_SMOKE_MODE:-${NOVA_OPENWEBUI_SMOKE_MODE:-chat}}"
@@ -50,7 +50,7 @@ case "$SMOKE_MODE" in
     ;;
 esac
 
-PROFILE_FILE="${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}"
+PROFILE_FILE="${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.nova-testbox-live.profile}"
 if [[ -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]]; then
   set -a
   # shellcheck disable=SC1090
@@ -71,9 +71,9 @@ if [[ -z "$OPENAI_API_KEY_VALUE" ]]; then
   exit 2
 fi
 
-STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-openwebui-stats.XXXXXX")"
-PROBE_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-openwebui-probe.XXXXXX")"
-STATS_STOP_FILE="$(mktemp "${TMPDIR:-/tmp}/openclaw-openwebui-stats-stop.XXXXXX")"
+STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/nova-openwebui-stats.XXXXXX")"
+PROBE_LOG="$(mktemp "${TMPDIR:-/tmp}/nova-openwebui-probe.XXXXXX")"
+STATS_STOP_FILE="$(mktemp "${TMPDIR:-/tmp}/nova-openwebui-stats-stop.XXXXXX")"
 STATS_PIDS=()
 
 cleanup() {
@@ -150,17 +150,17 @@ docker_e2e_docker_cmd run -d \
   "$IMAGE_NAME" \
   bash -lc '
     set -euo pipefail
-    source scripts/lib/openclaw-e2e-instance.sh
-    entry="$(openclaw_e2e_resolve_entrypoint)"
+    source scripts/lib/nova-e2e-instance.sh
+    entry="$(nova_e2e_resolve_entrypoint)"
 
     openai_api_key="${OPENAI_API_KEY:?OPENAI_API_KEY required}"
-    batch_file="$(mktemp /tmp/openclaw-openwebui-config.XXXXXX.json)"
+    batch_file="$(mktemp /tmp/nova-openwebui-config.XXXXXX.json)"
     NOVA_CONFIG_BATCH_PATH="$batch_file" node scripts/e2e/lib/fixture.mjs openwebui-config "$openai_api_key"
     node "$entry" config set --batch-file "$batch_file" >/dev/null
     rm -f "$batch_file"
     node scripts/e2e/lib/fixture.mjs openwebui-workspace
 
-    openclaw_e2e_exec_gateway "$entry" '"$PORT"' lan /tmp/openwebui-gateway.log
+    nova_e2e_exec_gateway "$entry" '"$PORT"' lan /tmp/openwebui-gateway.log
   ' >/dev/null
 start_openwebui_stats_sampler
 
@@ -177,8 +177,8 @@ docker_e2e_docker_cmd run -d \
   --name "$OW_NAME" \
   --network "$NET_NAME" \
   -e ENV=prod \
-  -e WEBUI_NAME="OpenClaw E2E" \
-  -e WEBUI_SECRET_KEY="openclaw-openwebui-e2e-secret-key-v1" \
+  -e WEBUI_NAME="Nova E2E" \
+  -e WEBUI_SECRET_KEY="nova-openwebui-e2e-secret-key-v1" \
   -e OFFLINE_MODE=True \
   -e ENABLE_VERSION_UPDATE_CHECK=False \
   -e ENABLE_PERSISTENT_CONFIG=False \
@@ -191,9 +191,9 @@ docker_e2e_docker_cmd run -d \
   -e RAG_RERANKING_MODEL_AUTO_UPDATE=False \
   -e WEBUI_ADMIN_EMAIL="$ADMIN_EMAIL" \
   -e WEBUI_ADMIN_PASSWORD="$ADMIN_PASSWORD" \
-  -e WEBUI_ADMIN_NAME="OpenClaw E2E" \
+  -e WEBUI_ADMIN_NAME="Nova E2E" \
   -e ENABLE_SIGNUP=False \
-  -e DEFAULT_MODELS="openclaw/default" \
+  -e DEFAULT_MODELS="nova/default" \
   "$OPENWEBUI_IMAGE" >/dev/null
 
 echo "Waiting for Open WebUI..."
@@ -214,7 +214,7 @@ if ! docker_e2e_wait_container_bash "$GW_NAME" 90 5 "NOVA_HTTP_PROBE_BEARER='$TO
 fi
 sample_openwebui_stats_once
 
-echo "Running Open WebUI -> OpenClaw smoke..."
+echo "Running Open WebUI -> Nova smoke..."
 set +e
 docker_e2e_docker_cmd exec \
   -e "OPENWEBUI_BASE_URL=http://$OW_NAME:$WEBUI_PORT" \

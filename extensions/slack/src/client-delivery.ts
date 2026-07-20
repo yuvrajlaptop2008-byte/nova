@@ -5,11 +5,11 @@ import {
   extractErrorCode,
   PlatformMessageNotDispatchedError,
   readErrorName,
-} from "openclaw/plugin-sdk/error-runtime";
-import { buildTimeoutAbortSignal } from "openclaw/plugin-sdk/extension-shared";
-import { withTrustedEnvProxyGuardedFetchMode } from "openclaw/plugin-sdk/fetch-runtime";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { fetchWithSsrFGuard, type SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "nova/plugin-sdk/error-runtime";
+import { buildTimeoutAbortSignal } from "nova/plugin-sdk/extension-shared";
+import { withTrustedEnvProxyGuardedFetchMode } from "nova/plugin-sdk/fetch-runtime";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
+import { fetchWithSsrFGuard, type SsrFPolicy } from "nova/plugin-sdk/ssrf-runtime";
 import {
   postSlackMessageWithIdentityFallback,
   type SlackPostMessageIdentity,

@@ -1,7 +1,7 @@
 // Tests inbound metadata normalization before prompt injection.
 import { describe, expect, it, vi } from "vitest";
 import type { SessionEntry, SessionGoalStatus } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../../plugins/runtime.js";
 import { createTestRegistry } from "../../test-utils/channel-plugins.js";
 import { withEnv } from "../../test-utils/env.js";
@@ -12,10 +12,10 @@ import {
   refreshActiveGoalContext,
 } from "./inbound-meta.js";
 
-const EMPTY_CFG = {} as OpenClawConfig;
+const EMPTY_CFG = {} as NovaConfig;
 
 const { formattingHintCalls } = vi.hoisted(() => ({
-  formattingHintCalls: [] as Array<{ cfg: OpenClawConfig; accountId?: string | null }>,
+  formattingHintCalls: [] as Array<{ cfg: NovaConfig; accountId?: string | null }>,
 }));
 
 vi.mock("../../channels/plugins/registry-loaded.js", () => ({
@@ -23,10 +23,7 @@ vi.mock("../../channels/plugins/registry-loaded.js", () => ({
     channelId === "slack"
       ? {
           agentPrompt: {
-            inboundFormattingHints: (params: {
-              cfg: OpenClawConfig;
-              accountId?: string | null;
-            }) => {
+            inboundFormattingHints: (params: { cfg: NovaConfig; accountId?: string | null }) => {
               formattingHintCalls.push(params);
               return {
                 text_markup: "slack_mrkdwn",
@@ -141,7 +138,7 @@ describe("buildInboundMetaSystemPrompt", () => {
     );
 
     const payload = parseInboundMetaPayload(prompt);
-    expect(payload["schema"]).toBe("openclaw.inbound_meta.v2");
+    expect(payload["schema"]).toBe("nova.inbound_meta.v2");
     expect(payload["chat_id"]).toBeUndefined();
     expect(payload["account_id"]).toBe("work");
     expect(payload["channel"]).toBe("telegram");
@@ -295,7 +292,7 @@ describe("buildInboundMetaSystemPrompt", () => {
 
     const cfg = {
       channels: { slack: { botToken: "test-token-placeholder" } },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const prompt = buildInboundMetaSystemPrompt(
       {
         OriginatingTo: "channel:C123",
@@ -503,7 +500,7 @@ describe("buildInboundUserContextPrefix", () => {
   it("omits conversation label block for direct chats", () => {
     const text = buildInboundUserContextPrefix({
       ChatType: "direct",
-      ConversationLabel: "openclaw-tui",
+      ConversationLabel: "nova-tui",
     } as TemplateContext);
 
     expect(text).toBe("");
@@ -584,14 +581,14 @@ describe("buildInboundUserContextPrefix", () => {
   it("does not treat group chats as direct based on sender id", () => {
     const text = buildInboundUserContextPrefix({
       ChatType: "group",
-      SenderId: "openclaw-control-ui",
+      SenderId: "nova-control-ui",
       MessageSid: "123",
       ConversationLabel: "some-label",
     } as TemplateContext);
 
     const conversationInfo = parseConversationInfoPayload(text);
     expect(conversationInfo["message_id"]).toBe("123");
-    expect(conversationInfo["sender"]).toEqual({ id: "openclaw-control-ui" });
+    expect(conversationInfo["sender"]).toEqual({ id: "nova-control-ui" });
     expect(conversationInfo["conversation_label"]).toBe("some-label");
   });
 
@@ -1145,7 +1142,7 @@ describe("buildInboundUserContextPrefix", () => {
                   sender: "Bot",
                   body: "Earlier technical answer",
                   media_type: "image/png",
-                  media_path: "/home/user/.openclaw/media/inbound/sticker.webp",
+                  media_path: "/home/user/.nova/media/inbound/sticker.webp",
                   media_ref: "telegram:file/old-provider-ref",
                   is_reply_target: true,
                 },
@@ -1174,7 +1171,7 @@ describe("buildInboundUserContextPrefix", () => {
       "#1200 [reply target] Bot: Earlier technical answer [image/png media://inbound/sticker.webp]",
     );
     expect(text).not.toContain("telegram:file/old-provider-ref");
-    expect(text).not.toContain("/home/user/.openclaw/media/inbound/sticker.webp");
+    expect(text).not.toContain("/home/user/.nova/media/inbound/sticker.webp");
     expect(text).not.toContain("Current local chat window (untrusted metadata):");
     expect(text).not.toContain('"message_id": "34273"');
   });
@@ -1494,7 +1491,7 @@ describe("buildInboundUserContextPrefix", () => {
           messageId: "m-1",
           media: [
             {
-              path: "/tmp/openclaw-secret-image.png",
+              path: "/tmp/nova-secret-image.png",
               url: "https://cdn.example.test/private-token",
               contentType: "image/png",
               kind: "image",
@@ -1510,7 +1507,7 @@ describe("buildInboundUserContextPrefix", () => {
 
     expect(text).toContain("#m-1");
     expect(text).toContain("Alice: <media:image> (1 image) [image/png]");
-    expect(text).not.toContain("/tmp/openclaw-secret-image.png");
+    expect(text).not.toContain("/tmp/nova-secret-image.png");
     expect(text).not.toContain("private-token");
   });
 
@@ -1525,14 +1522,14 @@ describe("buildInboundUserContextPrefix", () => {
           messageId: "m-2",
           media: [
             {
-              path: "/tmp/openclaw-secret-image-1.png",
+              path: "/tmp/nova-secret-image-1.png",
               url: "https://cdn.example.test/private-token-1",
               contentType: "image/png",
               kind: "image",
               messageId: "m-2",
             },
             {
-              path: "/tmp/openclaw-secret-image-2.jpg",
+              path: "/tmp/nova-secret-image-2.jpg",
               url: "https://cdn.example.test/private-token-2",
               contentType: "image/jpeg",
               kind: "image",
@@ -1548,8 +1545,8 @@ describe("buildInboundUserContextPrefix", () => {
 
     expect(text).toContain("#m-2");
     expect(text).toContain("Alice: <media:image> (2 images) [image/png, image/jpeg]");
-    expect(text).not.toContain("/tmp/openclaw-secret-image-1.png");
-    expect(text).not.toContain("/tmp/openclaw-secret-image-2.jpg");
+    expect(text).not.toContain("/tmp/nova-secret-image-1.png");
+    expect(text).not.toContain("/tmp/nova-secret-image-2.jpg");
     expect(text).not.toContain("private-token-1");
     expect(text).not.toContain("private-token-2");
   });

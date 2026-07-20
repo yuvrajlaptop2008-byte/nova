@@ -1,7 +1,7 @@
 // Elevenlabs tests cover realtime transcription provider plugin behavior.
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { afterEach, describe, expect, it } from "vitest";
 import type WebSocket from "ws";
 import { WebSocketServer } from "ws";
@@ -53,7 +53,7 @@ describe("buildElevenLabsRealtimeTranscriptionProvider", () => {
   it("normalizes nested provider config", () => {
     const provider = buildElevenLabsRealtimeTranscriptionProvider();
     const resolved = provider.resolveConfig?.({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       rawConfig: {
         providers: {
           elevenlabs: {
@@ -86,7 +86,7 @@ describe("buildElevenLabsRealtimeTranscriptionProvider", () => {
   it("drops malformed numeric realtime config values", () => {
     const provider = buildElevenLabsRealtimeTranscriptionProvider();
     const resolved = provider.resolveConfig?.({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       rawConfig: {
         providers: {
           elevenlabs: {
@@ -112,7 +112,7 @@ describe("buildElevenLabsRealtimeTranscriptionProvider", () => {
   it("keeps realtime VAD numeric config inside provider ranges", () => {
     const provider = buildElevenLabsRealtimeTranscriptionProvider();
     const resolved = provider.resolveConfig?.({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       rawConfig: {
         providers: {
           elevenlabs: {

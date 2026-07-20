@@ -1,12 +1,12 @@
 // Browser tests cover plugin service plugin behavior.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "./config/config.js";
+import type { NovaConfig } from "./config/config.js";
 import { isDefaultBrowserPluginEnabled } from "./plugin-enabled.js";
 import { createBrowserPluginService } from "./plugin-service.js";
 
 const SERVICE_CONTEXT = {
   config: {},
-  stateDir: "/tmp/openclaw-state",
+  stateDir: "/tmp/nova-state",
   logger: console,
 };
 
@@ -157,7 +157,7 @@ describe("createBrowserPluginService", () => {
 
 describe("isDefaultBrowserPluginEnabled", () => {
   it("defaults to enabled", () => {
-    expect(isDefaultBrowserPluginEnabled({} as OpenClawConfig)).toBe(true);
+    expect(isDefaultBrowserPluginEnabled({} as NovaConfig)).toBe(true);
   });
 
   it("respects explicit plugin disablement", () => {
@@ -170,7 +170,7 @@ describe("isDefaultBrowserPluginEnabled", () => {
             },
           },
         },
-      } as OpenClawConfig),
+      } as NovaConfig),
     ).toBe(false);
   });
 });

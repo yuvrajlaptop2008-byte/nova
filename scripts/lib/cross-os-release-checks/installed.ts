@@ -59,13 +59,13 @@ export async function resolveInstallerTargetVersion(params: {
   if (resolvedVersion) {
     return resolvedVersion;
   }
-  const latestResult = await runCommand(npmCommand(), ["view", "openclaw@latest", "version"], {
+  const latestResult = await runCommand(npmCommand(), ["view", "nova@latest", "version"], {
     logPath: join(params.logsDir, `${params.suiteName}-latest-version.log`),
     timeoutMs: 2 * 60 * 1000,
   });
   const latestVersion = latestResult.stdout.trim();
   if (!latestVersion) {
-    throw new Error("npm view openclaw@latest version did not return a version.");
+    throw new Error("npm view nova@latest version did not return a version.");
   }
   return latestVersion;
 }
@@ -141,7 +141,7 @@ export function buildInstallerSmokeScript(
   const requestTimeoutSeconds = options.requestTimeoutSeconds ?? INSTALLER_REQUEST_TIMEOUT_SECONDS;
   if ((params.platform ?? process.platform) === "win32") {
     return `
-$installerPath = Join-Path ([System.IO.Path]::GetTempPath()) ("openclaw-installer-" + [guid]::NewGuid().ToString("N") + ".ps1")
+$installerPath = Join-Path ([System.IO.Path]::GetTempPath()) ("nova-installer-" + [guid]::NewGuid().ToString("N") + ".ps1")
 try {
   & curl.exe -fsSL --connect-timeout ${connectTimeoutSeconds} --max-time ${requestTimeoutSeconds} -o $installerPath '${powerShellSingleQuote(params.installerUrl)}'
   if ($LASTEXITCODE -ne 0) {
@@ -158,7 +158,7 @@ try {
   // Execute only a complete installer: a timed-out response may still contain an executable prefix.
   return [
     "set -euo pipefail",
-    'installer_path="$(mktemp "${TMPDIR:-/tmp}/openclaw-installer-XXXXXX")"',
+    'installer_path="$(mktemp "${TMPDIR:-/tmp}/nova-installer-XXXXXX")"',
     "trap 'rm -f \"$installer_path\"' EXIT",
     `curl -fsSL --connect-timeout ${connectTimeoutSeconds} --max-time ${requestTimeoutSeconds} -o "$installer_path" '${shellEscapeForSh(params.installerUrl)}'`,
     `bash -- "$installer_path" --version '${shellEscapeForSh(params.installTarget)}' --no-onboard`,
@@ -230,8 +230,8 @@ if ($null -ne $npmCommand) {
   if (-not [string]::IsNullOrWhiteSpace($npmPrefix)) {
     $env:Path = "$npmPrefix;$env:Path"
     foreach ($candidate in @(
-      (Join-Path $npmPrefix 'openclaw.cmd'),
-      (Join-Path $npmPrefix 'openclaw.ps1')
+      (Join-Path $npmPrefix 'nova.cmd'),
+      (Join-Path $npmPrefix 'nova.ps1')
     )) {
       if (Test-Path -LiteralPath $candidate) {
         $commandPath = $candidate
@@ -241,7 +241,7 @@ if ($null -ne $npmCommand) {
   }
 }
 if ([string]::IsNullOrWhiteSpace($commandPath)) {
-  $cmd = Get-Command openclaw -ErrorAction Stop
+  $cmd = Get-Command nova -ErrorAction Stop
   $commandPath = $cmd.Source
 }
 if ($commandPath -match '(?i)\\.ps1$') {
@@ -321,7 +321,7 @@ export async function verifyFreshShellCommand(params: {
       parseMarkerLine(result.stdout, "__NOVA_PATH__=") ?? "",
     );
     if (!cliPath) {
-      throw new Error("Failed to resolve installed openclaw path from fresh Windows shell.");
+      throw new Error("Failed to resolve installed nova path from fresh Windows shell.");
     }
     return {
       cliPath,
@@ -332,9 +332,9 @@ export async function verifyFreshShellCommand(params: {
   const script = [
     "set -euo pipefail",
     'if [ -f "$HOME/.bashrc" ]; then . "$HOME/.bashrc"; fi',
-    "command -v openclaw >/dev/null 2>&1",
-    'printf "__NOVA_PATH__=%s\\n" "$(command -v openclaw)"',
-    "openclaw --version",
+    "command -v nova >/dev/null 2>&1",
+    'printf "__NOVA_PATH__=%s\\n" "$(command -v nova)"',
+    "nova --version",
   ].join("\n");
   const result = await runPosixShellScript(script, {
     cwd: params.lane.homeDir,
@@ -345,7 +345,7 @@ export async function verifyFreshShellCommand(params: {
   const cliPath = parseMarkerLine(result.stdout, "__NOVA_PATH__=");
   const versionOutput = `${result.stdout}\n${result.stderr}`.trim();
   if (!cliPath) {
-    throw new Error("Failed to resolve installed openclaw path from fresh POSIX shell.");
+    throw new Error("Failed to resolve installed nova path from fresh POSIX shell.");
   }
   if (params.expectedNeedle && !versionOutput.includes(params.expectedNeedle)) {
     throw new Error(
@@ -406,7 +406,7 @@ export async function ensureDevUpdateGitInstall(params: {
     env: params.env,
     logPath: join(params.logsDir, "dev-update-status.log"),
   });
-  // The dev-update lane must prove that `openclaw update --channel dev` landed on
+  // The dev-update lane must prove that `nova update --channel dev` landed on
   // the expected git checkout. Falling back to a manual repair here would hide
   // updater regressions and turn the suite into a false green.
   verifyDevUpdateStatus(updateStatus.stdout, { ref: params.requestedRef });

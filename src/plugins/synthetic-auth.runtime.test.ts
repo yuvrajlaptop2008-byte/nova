@@ -87,7 +87,7 @@ describe("synthetic auth runtime refs", () => {
 
   it("loads manifest synthetic auth refs with the current runtime scope", () => {
     const config = { plugins: { allow: ["external-local"] } };
-    const env = { NOVA_HOME: "/tmp/openclaw-home" };
+    const env = { NOVA_HOME: "/tmp/nova-home" };
     pluginRegistryMocks.loadPluginRegistrySnapshotWithMetadata.mockReturnValue({
       source: "persisted",
       snapshot: {

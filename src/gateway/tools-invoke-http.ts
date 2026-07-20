@@ -69,12 +69,10 @@ export async function handleToolsInvokeHttpRequest(
   const body = (bodyUnknown ?? {}) as ToolsInvokeInput;
 
   // Resolve message channel/account hints (optional headers) for policy inheritance.
-  const messageChannel = normalizeMessageChannel(
-    getHeader(req, "x-openclaw-message-channel") ?? "",
-  );
-  const accountId = normalizeOptionalString(getHeader(req, "x-openclaw-account-id"));
-  const agentTo = normalizeOptionalString(getHeader(req, "x-openclaw-message-to"));
-  const agentThreadId = normalizeOptionalString(getHeader(req, "x-openclaw-thread-id"));
+  const messageChannel = normalizeMessageChannel(getHeader(req, "x-nova-message-channel") ?? "");
+  const accountId = normalizeOptionalString(getHeader(req, "x-nova-account-id"));
+  const agentTo = normalizeOptionalString(getHeader(req, "x-nova-message-to"));
+  const agentThreadId = normalizeOptionalString(getHeader(req, "x-nova-thread-id"));
   const senderIsOwner = resolveOpenAiCompatibleHttpSenderIsOwner(req, requestAuth);
   const outcome = await invokeGatewayTool({
     cfg,

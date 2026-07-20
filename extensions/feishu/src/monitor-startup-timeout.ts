@@ -1,4 +1,4 @@
-import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
+import { parseStrictPositiveInteger } from "nova/plugin-sdk/number-runtime";
 
 const FEISHU_STARTUP_BOT_INFO_TIMEOUT_DEFAULT_MS = 30_000;
 const FEISHU_STARTUP_BOT_INFO_TIMEOUT_ENV = "NOVA_FEISHU_STARTUP_PROBE_TIMEOUT_MS";

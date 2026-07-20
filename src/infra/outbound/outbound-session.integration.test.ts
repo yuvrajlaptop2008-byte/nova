@@ -1,14 +1,14 @@
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { useAutoCleanupTempDirTracker } from "../../../test/helpers/temp-dir.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { buildConversationIdentity } from "../../config/sessions/conversation-identity.js";
 import {
   registerConversationAddresses,
   resolveConversation,
 } from "../../config/sessions/conversation-registry.js";
 import { upsertSessionEntry } from "../../config/sessions/session-accessor.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
 import { bindOutboundSessionEntry } from "./outbound-session.js";
 
 describe("outbound session persistence", () => {
@@ -17,11 +17,11 @@ describe("outbound session persistence", () => {
   const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
   beforeEach(() => {
-    storePath = path.join(tempDirs.make("openclaw-outbound-session-"), "sessions.json");
+    storePath = path.join(tempDirs.make("nova-outbound-session-"), "sessions.json");
   });
 
   afterEach(() => {
-    closeOpenClawAgentDatabasesForTest();
+    closeNovaAgentDatabasesForTest();
   });
 
   it("binds a discovered canonical peer through a different delivery alias", async () => {
@@ -51,7 +51,7 @@ describe("outbound session persistence", () => {
     ).not.toMatchObject({ sessionId: expect.any(String) });
 
     await bindOutboundSessionEntry({
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       channel: "reef",
       accountId: "default",
       route: {
@@ -91,7 +91,7 @@ describe("outbound session persistence", () => {
     ).not.toMatchObject({ sessionId: expect.any(String) });
 
     await bindOutboundSessionEntry({
-      cfg: { session: { store: storePath } } as OpenClawConfig,
+      cfg: { session: { store: storePath } } as NovaConfig,
       channel: "reef",
       accountId: "default",
       route: {

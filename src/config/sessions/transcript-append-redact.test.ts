@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { onSessionTranscriptUpdate } from "../../sessions/transcript-events.js";
 import { resolveSessionTranscriptPathInDir } from "./paths.js";
 import { loadTranscriptEvents, replaceSessionEntry } from "./session-accessor.js";
@@ -60,7 +60,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
 
   it("masks secrets in message content before writing to disk", async () => {
     const sessionFile = resolveSessionTranscriptPathInDir("redact-on", fixture.sessionsDir());
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
 
     await appendSessionTranscriptMessage({
       transcriptPath: sessionFile,
@@ -91,7 +91,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
       "redact-image-base64",
       fixture.sessionsDir(),
     );
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
 
     await appendSessionTranscriptMessage({
       transcriptPath: sessionFile,
@@ -133,7 +133,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
 
   it("writes content unchanged when redactSensitive is off", async () => {
     const sessionFile = resolveSessionTranscriptPathInDir("redact-off", fixture.sessionsDir());
-    const config: OpenClawConfig = { logging: { redactSensitive: "off" } };
+    const config: NovaConfig = { logging: { redactSensitive: "off" } };
 
     await appendSessionTranscriptMessage({
       transcriptPath: sessionFile,
@@ -169,7 +169,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
       "redact-string-payload",
       fixture.sessionsDir(),
     );
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
 
     await appendSessionTranscriptMessage({
       transcriptPath: sessionFile,
@@ -191,7 +191,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
       "redact-structured-no-role",
       fixture.sessionsDir(),
     );
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
 
     await appendSessionTranscriptMessage({
       transcriptPath: sessionFile,
@@ -199,7 +199,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
         apiKey: "plainsecretvalue123",
         password: "hunter2",
         nested: { accessToken: ["nestedplainsecret123"] },
-        command: "OPENAI_API_KEY=sk-abcdef1234567890xyz openclaw health",
+        command: "OPENAI_API_KEY=sk-abcdef1234567890xyz nova health",
         safe: "visible",
       },
       config,
@@ -228,7 +228,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
       ),
     ).toBe("nested…t123");
     expect(expectDefined(msg, "msg test invariant").command).toBe(
-      "OPENAI_API_KEY=sk-abc…0xyz openclaw health",
+      "OPENAI_API_KEY=sk-abc…0xyz nova health",
     );
     expect(expectDefined(msg, "msg test invariant").safe).toBe("visible");
   });
@@ -265,7 +265,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
       "redact-tool-call-args",
       fixture.sessionsDir(),
     );
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
 
     await appendSessionTranscriptMessage({
       transcriptPath: sessionFile,
@@ -277,7 +277,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
             id: "call_1",
             name: "shell",
             arguments: {
-              command: "OPENAI_API_KEY=sk-abcdef1234567890xyz openclaw health",
+              command: "OPENAI_API_KEY=sk-abcdef1234567890xyz nova health",
               env: { nested: ["token sk-abcdef1234567890xyz"] },
               apiKey: "plainsecretvalue123",
               password: "hunter2",
@@ -292,8 +292,8 @@ describe("appendSessionTranscriptMessage - redaction", () => {
     expect(raw).not.toContain("sk-abcdef1234567890xyz");
     expect(raw).not.toContain("plainsecretvalue123");
     expect(raw).not.toContain("hunter2");
-    expect(raw).toContain("OPENAI_API_KEY=sk-abc…0xyz openclaw health");
-    expect(raw).toContain("openclaw health");
+    expect(raw).toContain("OPENAI_API_KEY=sk-abc…0xyz nova health");
+    expect(raw).toContain("nova health");
 
     const [msg] = readMessages(sessionFile) as Array<{
       content: Array<{
@@ -318,7 +318,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
         expectDefined(msg, "msg test invariant").content[0],
         "msg.content[0] test invariant",
       ).arguments.command,
-    ).toBe("OPENAI_API_KEY=sk-abc…0xyz openclaw health");
+    ).toBe("OPENAI_API_KEY=sk-abc…0xyz nova health");
     expect(
       expectDefined(
         expectDefined(msg, "msg test invariant").content[0],
@@ -344,7 +344,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
       "redact-tool-result-details",
       fixture.sessionsDir(),
     );
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
 
     await appendSessionTranscriptMessage({
       transcriptPath: sessionFile,
@@ -405,7 +405,7 @@ describe("appendSessionTranscriptMessage - redaction", () => {
       "issue-80379-tool-result-env-placeholders",
       fixture.sessionsDir(),
     );
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
     const toolOutput =
       'DISCORD_BOT_TOKEN="${DISCORD_BOT_TOKEN:-}"\nTELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"';
 
@@ -460,7 +460,7 @@ describe("appendExactAssistantMessageToSessionTranscript - redaction", () => {
     await seedSessionEntry({ sessionId, sessionKey, storePath });
 
     const fakeApiKey = "sk-proj-FAKEKEYFORTESTINGONLY1234567890";
-    const config: OpenClawConfig = { logging: { redactSensitive: "off" } };
+    const config: NovaConfig = { logging: { redactSensitive: "off" } };
 
     const result = await appendExactAssistantMessageToSessionTranscript({
       sessionKey,
@@ -470,7 +470,7 @@ describe("appendExactAssistantMessageToSessionTranscript - redaction", () => {
         role: "assistant",
         content: [{ type: "text", text: `Here is your key: ${fakeApiKey}` }],
         api: "openai-responses",
-        provider: "openclaw",
+        provider: "nova",
         model: "test-model",
         usage: {
           input: 0,
@@ -502,7 +502,7 @@ describe("appendExactAssistantMessageToSessionTranscript - redaction", () => {
     await seedSessionEntry({ sessionId, sessionKey, storePath });
 
     const fakeApiKey = "sk-proj-FAKEKEYFORTESTINGONLY1234567890";
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
     const updates: Array<{ message?: unknown }> = [];
     const unsubscribe = onSessionTranscriptUpdate((update) => updates.push(update));
 
@@ -515,7 +515,7 @@ describe("appendExactAssistantMessageToSessionTranscript - redaction", () => {
           role: "assistant",
           content: [{ type: "text", text: `Here is your key: ${fakeApiKey}` }],
           api: "openai-responses",
-          provider: "openclaw",
+          provider: "nova",
           model: "test-model",
           usage: {
             input: 0,
@@ -553,7 +553,7 @@ describe("appendExactAssistantMessageToSessionTranscript - redaction", () => {
     await seedSessionEntry({ sessionId, sessionKey, storePath });
 
     const fakeApiKey = "sk-proj-FAKEKEYFORTESTINGONLY1234567890";
-    const config: OpenClawConfig = { logging: { redactSensitive: "tools" } };
+    const config: NovaConfig = { logging: { redactSensitive: "tools" } };
 
     const first = await appendAssistantMessageToSessionTranscript({
       sessionKey,
@@ -598,7 +598,7 @@ describe("appendExactAssistantMessageToSessionTranscript - redaction", () => {
         role: "assistant",
         content: [{ type: "text", text: `Here is your key: ${fakeApiKey}` }],
         api: "openai-responses",
-        provider: "openclaw",
+        provider: "nova",
         model: "legacy-assistant",
         usage: {
           input: 0,

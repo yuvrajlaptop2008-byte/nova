@@ -6,13 +6,13 @@ import {
   toInboundMediaFacts,
   type ChannelInboundMediaPayload,
   type MediaPlaceholderTextFact,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { pruneMapToMaxSize } from "openclaw/plugin-sdk/collection-runtime";
+} from "nova/plugin-sdk/channel-inbound";
+import { pruneMapToMaxSize } from "nova/plugin-sdk/collection-runtime";
 import {
   asDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "openclaw/plugin-sdk/number-runtime";
-import { normalizeStringEntries } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "nova/plugin-sdk/number-runtime";
+import { normalizeStringEntries } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   buildMattermostApiUrl,
   fetchMattermostChannel,

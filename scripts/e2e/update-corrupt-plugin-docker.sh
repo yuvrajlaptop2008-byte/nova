@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Verifies `openclaw update` succeeds when a managed external plugin is corrupt.
-# The lane installs an older published OpenClaw package, corrupts an npm-managed
+# Verifies `nova update` succeeds when a managed external plugin is corrupt.
+# The lane installs an older published Nova package, corrupts an npm-managed
 # plugin payload, then updates to the prepared package artifact.
 set -euo pipefail
 
@@ -8,7 +8,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-update-corrupt-plugin-e2e" NOVA_UPDATE_CORRUPT_PLUGIN_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-update-corrupt-plugin-e2e" NOVA_UPDATE_CORRUPT_PLUGIN_E2E_IMAGE)"
 SKIP_BUILD="${NOVA_UPDATE_CORRUPT_PLUGIN_E2E_SKIP_BUILD:-0}"
 cleanup() {
   docker_e2e_cleanup_package_tgz "${PACKAGE_TGZ:-}"

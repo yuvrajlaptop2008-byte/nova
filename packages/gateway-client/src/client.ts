@@ -512,7 +512,7 @@ export class GatewayClient {
           (allowPrivateWs
             ? ""
             : "Break-glass (trusted private networks only): set NOVA_ALLOW_INSECURE_PRIVATE_WS=1. ") +
-          "Run `openclaw doctor --fix` for guidance.",
+          "Run `nova doctor --fix` for guidance.",
       );
     }
     // Allow node screen snapshots and other large responses.

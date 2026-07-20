@@ -7,7 +7,7 @@ const saveMediaBuffer = vi.fn();
 const readRemoteMediaBuffer = vi.fn();
 const rootRead = vi.fn();
 
-vi.mock("openclaw/plugin-sdk/file-access-runtime", () => ({
+vi.mock("nova/plugin-sdk/file-access-runtime", () => ({
   root: async (rootDir: string) => ({
     read: async (relativePath: string, options?: { maxBytes?: number }) =>
       await rootRead({ rootDir, relativePath, maxBytes: options?.maxBytes }),
@@ -126,7 +126,7 @@ function createChannelPostContext(params: {
       media_group_id: params.mediaGroupId,
       photo: [{ file_id: params.photoFileId }],
     },
-    me: { username: "openclaw_bot" },
+    me: { username: "nova_bot" },
     getFile: async () => ({ file_path: `photos/${params.photoFileId}.jpg` }),
   };
 }

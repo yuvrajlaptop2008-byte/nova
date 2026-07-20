@@ -4,7 +4,7 @@ import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { beforeAll, describe, test, expect, vi } from "vitest";
 import * as thinking from "../auto-reply/thinking.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { resetConfigRuntimeState, setRuntimeConfigSnapshot } from "../config/config.js";
 import type { SessionEntry } from "../config/sessions.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
@@ -26,12 +26,12 @@ import { listSessionsFromStore } from "./session-utils.js";
  */
 describe("listSessionsFromStore resolver cache", () => {
   beforeAll(async () => {
-    await withStateDirEnv("openclaw-perf-warm-", async ({ stateDir }) => {
+    await withStateDirEnv("nova-perf-warm-", async ({ stateDir }) => {
       resetPluginRuntimeStateForTest();
       setActivePluginRegistry(createEmptyPluginRegistry());
       const cfg = {
         agents: { defaults: { model: { primary: "google-vertex/gemini-3-flash-preview" } } },
-      } as OpenClawConfig;
+      } as NovaConfig;
       resetConfigRuntimeState();
       setRuntimeConfigSnapshot(cfg);
       listSessionsFromStore({
@@ -69,14 +69,14 @@ describe("listSessionsFromStore resolver cache", () => {
   });
 
   test("collapses non-lightweight per-row resolver work to O(unique provider/model tuples)", async () => {
-    await withStateDirEnv("openclaw-perf-", async ({ stateDir }) => {
+    await withStateDirEnv("nova-perf-", async ({ stateDir }) => {
       resetPluginRuntimeStateForTest();
       setActivePluginRegistry(createEmptyPluginRegistry());
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: { model: { primary: "google-vertex/gemini-3-flash-preview" } },
         },
-      } as OpenClawConfig;
+      } as NovaConfig;
       resetConfigRuntimeState();
       setRuntimeConfigSnapshot(cfg);
 

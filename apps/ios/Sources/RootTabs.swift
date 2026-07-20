@@ -1,5 +1,5 @@
-import OpenClawKit
-import OpenClawProtocol
+import NovaKit
+import NovaProtocol
 import SwiftUI
 import UIKit
 
@@ -61,7 +61,7 @@ struct RootTabs: View {
         if let requested = self.requestedInitialSidebarDestination(arguments: arguments) {
             return requested
         }
-        guard let flagIndex = arguments.firstIndex(of: "--openclaw-initial-tab") else { return .chat }
+        guard let flagIndex = arguments.firstIndex(of: "--nova-initial-tab") else { return .chat }
         let valueIndex = arguments.index(after: flagIndex)
         guard arguments.indices.contains(valueIndex) else { return .chat }
         return switch arguments[valueIndex].trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
@@ -74,7 +74,7 @@ struct RootTabs: View {
     }
 
     static func requestedInitialSidebarDestination(arguments: [String]) -> SidebarDestination? {
-        guard let flagIndex = arguments.firstIndex(of: "--openclaw-initial-destination") else {
+        guard let flagIndex = arguments.firstIndex(of: "--nova-initial-destination") else {
             return nil
         }
         let valueIndex = arguments.index(after: flagIndex)
@@ -89,7 +89,7 @@ struct RootTabs: View {
 
     private static var initialChatSessionKey: String? {
         let arguments = ProcessInfo.processInfo.arguments
-        guard let flagIndex = arguments.firstIndex(of: "--openclaw-chat-session") else {
+        guard let flagIndex = arguments.firstIndex(of: "--nova-chat-session") else {
             return nil
         }
         let valueIndex = arguments.index(after: flagIndex)
@@ -113,7 +113,7 @@ struct RootTabs: View {
             self.rootLifecycle(
                 self.rootOverlays(
                     self.sidebarSplitContent
-                        .tint(OpenClawBrand.accent))))
+                        .tint(NovaBrand.accent))))
     }
 
     private var sidebarSplitContent: some View {
@@ -173,7 +173,7 @@ struct RootTabs: View {
             self.sidebarDetailNavigationShell
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .background(OpenClawProBackground())
+        .background(NovaProBackground())
     }
 
     private func sidebarDrawerContent(
@@ -207,21 +207,21 @@ struct RootTabs: View {
         self.sidebarColumn(drawerSafeAreaInsets: safeAreaInsets)
             .frame(width: sidebarWidth, alignment: .topLeading)
             .frame(maxHeight: .infinity, alignment: .topLeading)
-            .background(OpenClawSidebarPalette.background)
+            .background(NovaSidebarPalette.background)
             .ignoresSafeArea(.container, edges: .vertical)
     }
 
     private func sidebarDrawerContentSurface(sidebarWidth: CGFloat) -> some View {
         let progress = self.sidebarContentRevealProgress(sidebarWidth: sidebarWidth)
         return RoundedRectangle(
-            cornerRadius: OpenClawProMetric.drawerRadius * progress,
+            cornerRadius: NovaProMetric.drawerRadius * progress,
             style: .continuous)
             .fill(Color(uiColor: .systemGroupedBackground))
             .overlay(
                 RoundedRectangle(
-                    cornerRadius: OpenClawProMetric.drawerRadius * progress,
+                    cornerRadius: NovaProMetric.drawerRadius * progress,
                     style: .continuous)
-                    .strokeBorder(OpenClawSidebarPalette.hairline.opacity(Double(progress)), lineWidth: 1))
+                    .strokeBorder(NovaSidebarPalette.hairline.opacity(Double(progress)), lineWidth: 1))
             .shadow(
                 color: .black.opacity(0.28 * progress),
                 radius: 20 * progress,
@@ -271,7 +271,7 @@ struct RootTabs: View {
             self.sidebarContentDismissGesture(sidebarWidth: sidebarWidth),
             isEnabled: self.isSidebarVisible && !self.reduceMotion)
         .clipShape(RoundedRectangle(
-            cornerRadius: OpenClawProMetric.drawerRadius * progress,
+            cornerRadius: NovaProMetric.drawerRadius * progress,
             style: .continuous))
         .offset(x: Self.sidebarContentOffset(
             sidebarWidth: sidebarWidth,
@@ -302,12 +302,12 @@ struct RootTabs: View {
             .safeAreaPadding(.bottom, drawerSafeAreaInsets == nil ? 8 : 0)
             // Paints the wrapper's inset strips; RootSidebar's own background
             // stops at its bounds.
-            .background(OpenClawSidebarPalette.background)
+            .background(NovaSidebarPalette.background)
     }
 
     private var sidebarVerticalSeparator: some View {
         Rectangle()
-            .fill(OpenClawSidebarPalette.hairline)
+            .fill(NovaSidebarPalette.hairline)
             .frame(width: 1 / self.displayScale)
     }
 
@@ -398,7 +398,7 @@ struct RootTabs: View {
                 headerSidebarAction: self.sidebarHeaderAction,
                 gatewayAction: { self.selectSidebarDestination(.gateway) })
         case .docs:
-            OpenClawDocsScreen(
+            NovaDocsScreen(
                 headerSidebarAction: self.sidebarHeaderAction,
                 gatewayAction: { self.selectSidebarDestination(.gateway) })
         case .settings:
@@ -471,7 +471,7 @@ struct RootTabs: View {
             layoutMode: self.isSidebarDrawerLayout ? .drawer : .split)
     }
 
-    private var sidebarHeaderAction: OpenClawSidebarHeaderAction? {
+    private var sidebarHeaderAction: NovaSidebarHeaderAction? {
         guard Self.shouldShowSidebarRevealInDestinationHeader(
             isSidebarVisible: self.isSidebarVisible,
             layoutMode: self.isSidebarDrawerLayout ? .drawer : .split)
@@ -479,13 +479,13 @@ struct RootTabs: View {
             return nil
         }
         if self.isSidebarVisible {
-            return OpenClawSidebarHeaderAction(
+            return NovaSidebarHeaderAction(
                 systemName: "line.3.horizontal",
                 accessibilityLabel: .localized("Hide Sidebar"),
                 accessibilityIdentifier: Self.sidebarHideButtonAccessibilityIdentifier,
                 action: { self.hideSidebar() })
         }
-        return OpenClawSidebarHeaderAction(
+        return NovaSidebarHeaderAction(
             systemName: "line.3.horizontal",
             accessibilityLabel: .localized("Show Sidebar"),
             accessibilityIdentifier: Self.sidebarShowButtonAccessibilityIdentifier,
@@ -818,7 +818,7 @@ struct RootTabs: View {
                     })
                     .environment(self.appModel)
                     .environment(self.gatewayController)
-                    .openClawSheetChrome()
+                    .novaSheetChrome()
                 }
             }
             .fullScreenCover(isPresented: self.$showOnboarding) {
@@ -904,7 +904,7 @@ extension RootTabs {
                 activeAgentCaption: "Routes chat and voice",
                 agentCount: agents.count,
                 agents: Array(agents.prefix(6)),
-                footer: "OpenClaw only runs phone-side capabilities while the app is connected and permitted.")
+                footer: "Nova only runs phone-side capabilities while the app is connected and permitted.")
         case .connecting:
             return RootTabsHomeCanvasPayload(
                 gatewayState: "connecting",
@@ -922,7 +922,7 @@ extension RootTabs {
         case .error, .disconnected:
             return RootTabsHomeCanvasPayload(
                 gatewayState: self.gatewayStatus == .error ? "error" : "offline",
-                eyebrow: self.gatewayStatus == .error ? "Gateway needs attention" : "OpenClaw iOS",
+                eyebrow: self.gatewayStatus == .error ? "Gateway needs attention" : "Nova iOS",
                 title: "Pair a gateway",
                 subtitle:
                 "Connect this phone as a local node for chat, realtime voice, share intake, and approved device tools.",
@@ -933,7 +933,7 @@ extension RootTabs {
                 agentCount: agents.count,
                 agents: Array(agents.prefix(4)),
                 footer:
-                "Use Settings to scan a pairing QR code or paste a setup code from your OpenClaw gateway.")
+                "Use Settings to scan a pairing QR code or paste a setup code from your Nova gateway.")
         }
     }
 

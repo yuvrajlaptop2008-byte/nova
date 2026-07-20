@@ -1,5 +1,5 @@
 import { migrateOrphanedSessionKeys } from "../../infra/state-migrations.js";
-import type { OpenClawConfig } from "../types.openclaw.js";
+import type { NovaConfig } from "../types.nova.js";
 import { sweepOrphanSessionStoreTemps } from "./store-temp-cleanup.js";
 import { resolveAllAgentSessionStoreTargetsSync } from "./targets.js";
 
@@ -15,7 +15,7 @@ export type SessionStartupMigrationLogger = {
  * fails, but warnings stay visible for operator follow-up.
  */
 export async function runSessionStartupMigration(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env?: NodeJS.ProcessEnv;
   log: SessionStartupMigrationLogger;
   deps?: {

@@ -173,7 +173,7 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "gateway.tailscale.resetOnExit":
     "Resets Tailscale Serve/Funnel state on gateway exit to avoid stale published routes after shutdown. Keep enabled unless another controller manages publish lifecycle outside the gateway.",
   "gateway.tailscale.serviceName":
-    'Optional Tailscale Service name for Serve mode, such as "svc:openclaw". The value must use Tailscale\'s svc:<dns-label> format. When set, Nova passes it to tailscale serve --service and reports the derived Service URL.',
+    'Optional Tailscale Service name for Serve mode, such as "svc:nova". The value must use Tailscale\'s svc:<dns-label> format. When set, Nova passes it to tailscale serve --service and reports the derived Service URL.',
   "gateway.tailscale.preserveFunnel":
     "When mode='serve' and an externally configured Tailscale Funnel route already covers the gateway port, skip re-applying tailscale serve on startup. Lets operators keep Funnel exposure managed outside Nova without losing it across gateway restarts.",
   "gateway.remote":
@@ -247,7 +247,7 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "talk.realtime.brain":
     "Talk reasoning strategy: agent-consult for Gateway-mediated agent help, direct-tools for local tool calls, or none.",
   "talk.realtime.consultRouting":
-    "Gateway relay fallback for final user transcripts when the realtime provider skips openclaw_agent_consult. provider-direct preserves provider replies; force-agent-consult routes through Nova.",
+    "Gateway relay fallback for final user transcripts when the realtime provider skips nova_agent_consult. provider-direct preserves provider replies; force-agent-consult routes through Nova.",
   "talk.consultThinkingLevel":
     "Use this to override the thinking level for the regular agent run behind Talk realtime consults.",
   "talk.consultFastMode":
@@ -349,7 +349,7 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "agents.list[].runtime.acp":
     "ACP runtime defaults for this agent when runtime.type=acp. Binding-level ACP overrides still take precedence per conversation.",
   "agents.list[].runtime.acp.agent":
-    "Optional ACP harness agent id to use for this Nova agent (for example codex, claude, cursor, gemini, openclaw).",
+    "Optional ACP harness agent id to use for this Nova agent (for example codex, claude, cursor, gemini, nova).",
   "agents.list[].runtime.acp.backend":
     "Optional ACP backend override for this agent's ACP sessions (falls back to global acp.backend).",
   "agents.list[].runtime.acp.mode":

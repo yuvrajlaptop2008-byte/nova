@@ -1,6 +1,6 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
+import { resolveSendableOutboundReplyParts } from "nova/plugin-sdk/reply-payload";
 import { RUN_STALE_TAKEOVER_MS } from "../../logging/diagnostic-run-activity.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import { shouldAttemptTtsPayload } from "../../tts/tts-config.js";

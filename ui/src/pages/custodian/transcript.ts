@@ -85,7 +85,7 @@ export async function readCustodianTranscript(
   try {
     return (
       await client.request<SystemAgentChatHistoryResult>(
-        "openclaw.chat.history",
+        "nova.chat.history",
         {},
         {
           timeoutMs: CUSTODIAN_TRANSCRIPT_TIMEOUT_MS,

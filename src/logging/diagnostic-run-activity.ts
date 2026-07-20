@@ -699,9 +699,7 @@ export function stopDiagnosticRunActivityTracking(): void {
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.diagnosticRunActivityTestApi")
-  ] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.diagnosticRunActivityTestApi")] = {
     markDiagnosticModelStartedForTest,
     markDiagnosticRunProgressForTest,
     markDiagnosticToolStartedForTest,

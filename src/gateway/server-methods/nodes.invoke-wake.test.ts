@@ -244,7 +244,7 @@ function directRegistration(nodeId: string) {
     nodeId,
     transport: "direct" as const,
     token: "abcd1234abcd1234abcd1234abcd1234",
-    topic: "ai.openclaw.ios",
+    topic: "ai.nova.ios",
     environment: "sandbox" as const,
     updatedAtMs: 1,
   };
@@ -257,7 +257,7 @@ function relayRegistration(nodeId: string) {
     relayHandle: "relay-handle-123",
     sendGrant: "send-grant-123",
     installationId: "install-123",
-    topic: "ai.openclaw.ios",
+    topic: "ai.nova.ios",
     environment: "production" as const,
     distribution: "official" as const,
     updatedAtMs: 1,
@@ -279,7 +279,7 @@ function mockDirectWakeConfig(nodeId: string, overrides: WakeResultOverrides = {
     ok: true,
     status: 200,
     tokenSuffix: "1234abcd",
-    topic: "ai.openclaw.ios",
+    topic: "ai.nova.ios",
     environment: "sandbox",
     transport: "direct",
     ...overrides,
@@ -305,7 +305,7 @@ function mockRelayWakeConfig(nodeId: string, overrides: WakeResultOverrides = {}
     ok: true,
     status: 200,
     tokenSuffix: "abcd1234",
-    topic: "ai.openclaw.ios",
+    topic: "ai.nova.ios",
     environment: "production",
     transport: "relay",
     ...overrides,
@@ -475,7 +475,7 @@ describe("plugin surface refresh", () => {
         client: { id: "node-1", mode: "node" },
       },
       pluginSurfaceUrls: {
-        canvas: "http://127.0.0.1:18789/__openclaw__/cap/old-token",
+        canvas: "http://127.0.0.1:18789/__nova__/cap/old-token",
       },
       pluginNodeCapabilitySurfaces: {
         canvas: { surface: "canvas", ttlMs: 100 },
@@ -489,7 +489,7 @@ describe("plugin surface refresh", () => {
       req: { type: "req", id: "r1", method: "node.pluginSurface.refresh", params: {} },
       params: {
         surface: "canvas",
-        observedUrl: "https://gateway.example/__openclaw__/cap/old-token",
+        observedUrl: "https://gateway.example/__nova__/cap/old-token",
       },
       client: client as never,
       isWebchatConnect: () => false,
@@ -508,8 +508,8 @@ describe("plugin surface refresh", () => {
     const canvasUrl = requireString(pluginSurfaceUrls.canvas, "refresh canvas url");
     const parsedCanvasUrl = new URL(canvasUrl);
     expect(parsedCanvasUrl.origin).toBe("http://127.0.0.1:18789");
-    expect(parsedCanvasUrl.pathname.startsWith("/__openclaw__/cap/")).toBe(true);
-    const capabilityToken = parsedCanvasUrl.pathname.slice("/__openclaw__/cap/".length);
+    expect(parsedCanvasUrl.pathname.startsWith("/__nova__/cap/")).toBe(true);
+    const capabilityToken = parsedCanvasUrl.pathname.slice("/__nova__/cap/".length);
     expect(capabilityToken.length).toBeGreaterThan(0);
     expect(capabilityToken).not.toBe("old-token");
     expect(client.pluginSurfaceUrls.canvas).toBe(canvasUrl);
@@ -526,7 +526,7 @@ describe("plugin surface refresh", () => {
         client: { id: "operator-1", mode: "ui" },
       },
       pluginSurfaceUrls: {
-        canvas: "http://127.0.0.1:18789/__openclaw__/cap/old-token",
+        canvas: "http://127.0.0.1:18789/__nova__/cap/old-token",
       },
       pluginNodeCapabilitySurfaces: {
         canvas: { surface: "canvas", ttlMs: 100 },
@@ -558,7 +558,7 @@ describe("plugin surface refresh", () => {
     vi.useFakeTimers();
     vi.setSystemTime(1_000);
     const respond = vi.fn();
-    const currentUrl = "http://127.0.0.1:18789/__openclaw__/cap/current-token";
+    const currentUrl = "http://127.0.0.1:18789/__nova__/cap/current-token";
     const client = {
       connect: {
         client: { id: "node-1", mode: "node" },
@@ -579,7 +579,7 @@ describe("plugin surface refresh", () => {
       req: { type: "req", id: "r2", method: "node.pluginSurface.refresh", params: {} },
       params: {
         surface: "canvas",
-        observedUrl: "https://gateway.example/__openclaw__/cap/old-token",
+        observedUrl: "https://gateway.example/__nova__/cap/old-token",
       },
       client: client as never,
       isWebchatConnect: () => false,
@@ -605,7 +605,7 @@ describe("plugin surface refresh", () => {
     vi.useFakeTimers();
     vi.setSystemTime(1_000);
     const respond = vi.fn();
-    const currentUrl = "http://127.0.0.1:18789/__openclaw__/cap/current-token";
+    const currentUrl = "http://127.0.0.1:18789/__nova__/cap/current-token";
     const client = {
       connect: {
         client: { id: "node-1", mode: "node" },
@@ -626,7 +626,7 @@ describe("plugin surface refresh", () => {
       req: { type: "req", id: "r3", method: "node.pluginSurface.refresh", params: {} },
       params: {
         surface: "canvas",
-        observedUrl: "https://gateway.example/__openclaw__/cap/old-token",
+        observedUrl: "https://gateway.example/__nova__/cap/old-token",
       },
       client: client as never,
       isWebchatConnect: () => false,
@@ -808,7 +808,7 @@ describe("node.invoke APNs wake path", () => {
     const call = firstRespondCall(respond);
     expect(call[0]).toBe(false);
     expect(call[2]?.message).toBe(
-      "node command not allowed: the node's declared command surface is pending approval; run `openclaw nodes pending`, then `openclaw nodes approve <requestId>`",
+      "node command not allowed: the node's declared command surface is pending approval; run `nova nodes pending`, then `nova nodes approve <requestId>`",
     );
     expect(nodeRegistry.invoke).not.toHaveBeenCalled();
   });
@@ -948,7 +948,7 @@ describe("node.invoke APNs wake path", () => {
       ok: true,
       status: 200,
       tokenSuffix: "1234abcd",
-      topic: "ai.openclaw.ios",
+      topic: "ai.nova.ios",
       environment: "sandbox",
       transport: "direct",
     });
@@ -1274,7 +1274,7 @@ describe("node.invoke APNs wake path", () => {
         status: 410,
         reason: "Unregistered",
         tokenSuffix: "abcd1234",
-        topic: "ai.openclaw.ios",
+        topic: "ai.nova.ios",
         environment: "production",
         transport: "relay",
       },

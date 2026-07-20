@@ -6,8 +6,8 @@ import { HEARTBEAT_TOKEN } from "../auto-reply/tokens.js";
 import { listDueCommitmentSessionKeys } from "../commitments/store.js";
 import { readCommitmentsForTest, seedCommitmentsForTest } from "../commitments/store.test-utils.js";
 import type { CommitmentRecord } from "../commitments/types.js";
-import type { OpenClawConfig } from "../config/config.js";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import type { NovaConfig } from "../config/config.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
 import { getLastHeartbeatEvent, resetHeartbeatEventsForTest } from "./heartbeat-events.js";
 import { resolveHeartbeatRunScope } from "./heartbeat-run-scope.js";
@@ -49,7 +49,7 @@ describe("runHeartbeatOnce commitments", () => {
   const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
 
   afterEach(() => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     setHeartbeatsEnabled(true);
     vi.useRealTimers();
     vi.unstubAllEnvs();
@@ -113,7 +113,7 @@ describe("runHeartbeatOnce commitments", () => {
     return await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
       setTestEnvValue("NOVA_STATE_DIR", tmpDir);
       const sessionKey = "agent:main:telegram:user-155462274";
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: {
             workspace: tmpDir,
@@ -202,7 +202,7 @@ describe("runHeartbeatOnce commitments", () => {
       async ({ tmpDir, storePath, replySpy }) => {
         setTestEnvValue("NOVA_STATE_DIR", tmpDir);
         const sessionKey = "agent:main:telegram:user-155462274";
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           agents: {
             defaults: {
               workspace: tmpDir,
@@ -296,7 +296,7 @@ describe("runHeartbeatOnce commitments", () => {
       async ({ tmpDir, storePath, replySpy }) => {
         setTestEnvValue("NOVA_STATE_DIR", tmpDir);
         const sessionKey = "agent:main:telegram:user-155462274";
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           agents: {
             defaults: {
               workspace: tmpDir,
@@ -375,7 +375,7 @@ describe("runHeartbeatOnce commitments", () => {
     await withTempHeartbeatSandbox(async ({ tmpDir, storePath }) => {
       setTestEnvValue("NOVA_STATE_DIR", tmpDir);
       const dueSessionKey = "agent:main:telegram:user-155462274";
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: {
             workspace: tmpDir,
@@ -423,7 +423,7 @@ describe("runHeartbeatOnce commitments", () => {
     await withTempHeartbeatSandbox(async ({ tmpDir, storePath }) => {
       setTestEnvValue("NOVA_STATE_DIR", tmpDir);
       const dueSessionKey = "agent:main:telegram:user-155462274";
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: {
             workspace: tmpDir,
@@ -498,7 +498,7 @@ describe("runHeartbeatOnce commitments", () => {
     await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
       setTestEnvValue("NOVA_STATE_DIR", tmpDir);
       const sessionKey = "agent:main:telegram:user-155462274";
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           defaults: {
             workspace: tmpDir,
@@ -638,7 +638,7 @@ describe("runHeartbeatOnce commitments", () => {
       async ({ tmpDir, storePath, replySpy }) => {
         setTestEnvValue("NOVA_STATE_DIR", tmpDir);
         const sessionKey = "agent:main:telegram:user-155462274";
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           agents: {
             defaults: {
               workspace: tmpDir,
@@ -730,7 +730,7 @@ tasks:
       await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
         setTestEnvValue("NOVA_STATE_DIR", tmpDir);
         const sessionKey = "agent:main:telegram:user-155462274";
-        const cfg: OpenClawConfig = {
+        const cfg: NovaConfig = {
           agents: {
             defaults: {
               workspace: tmpDir,

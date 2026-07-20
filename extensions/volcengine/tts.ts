@@ -1,7 +1,7 @@
 // Volcengine plugin module implements tts behavior.
 import * as crypto from "node:crypto";
-import { readResponseWithLimit } from "openclaw/plugin-sdk/response-limit-runtime";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
+import { readResponseWithLimit } from "nova/plugin-sdk/response-limit-runtime";
+import { fetchWithSsrFGuard } from "nova/plugin-sdk/ssrf-runtime";
 
 export type VolcengineTtsEncoding = "ogg_opus" | "mp3" | "pcm" | "wav";
 
@@ -128,7 +128,7 @@ async function seedSpeechTTS(params: VolcengineTTSParams & { apiKey: string }): 
   const audioFormat = seedAudioFormat(encoding);
 
   const payload = JSON.stringify({
-    user: { uid: "openclaw" },
+    user: { uid: "nova" },
     req_params: {
       text,
       speaker: voice,
@@ -215,7 +215,7 @@ async function legacyVolcengineTTS(
 
   const payload = JSON.stringify({
     app: { appid: appId, token, cluster },
-    user: { uid: "openclaw" },
+    user: { uid: "nova" },
     audio: {
       voice_type: voice,
       encoding,

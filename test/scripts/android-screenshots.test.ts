@@ -3,8 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const SCRIPT = "scripts/android-screenshots.sh";
-const SCREENSHOT_FIXTURE =
-  "apps/android/app/src/main/java/ai/openclaw/app/AndroidScreenshotFixture.kt";
+const SCREENSHOT_FIXTURE = "apps/android/app/src/main/java/ai/nova/app/AndroidScreenshotFixture.kt";
 
 function runAndroidScreenshots(args: string[], env: NodeJS.ProcessEnv = {}) {
   return spawnSync("bash", [SCRIPT, ...args], {

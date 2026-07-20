@@ -1343,7 +1343,7 @@ export const pt_BR: TranslationMap = {
     autoSaveFailed: "Falha ao salvar",
     autoSaveConflict: "Configurações alteradas em outro lugar",
     retry: "Tentar novamente",
-    applyBannerText: "Salvo em openclaw.json — reinicie o gateway para aplicar.",
+    applyBannerText: "Salvo em nova.json — reinicie o gateway para aplicar.",
     applyBannerAction: "Reiniciar e aplicar",
     rawDiscard: "Descartar",
     rawDraftBlocksApply:
@@ -1733,7 +1733,7 @@ export const pt_BR: TranslationMap = {
     skillWorkshop: "Revise, refine e aplique propostas antes que elas se tornem skills ativas.",
     nodes: "Dispositivos e comandos.",
     chat: "Chat do gateway para intervenções rápidas.",
-    config: "Editar openclaw.json.",
+    config: "Editar nova.json.",
     profile: "As estatísticas, sequências e vida do seu agente no recife.",
     communications: "Configurações de canais, mensagens e áudio.",
     appearance: "Configurações de tema, UI e assistente de configuração.",
@@ -2454,7 +2454,7 @@ export const pt_BR: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3474,16 +3474,16 @@ export const pt_BR: TranslationMap = {
         title: "Autenticação requerida",
         summary:
           "O Gateway está acessível, mas precisa de um token ou senha correspondente antes que este navegador possa se conectar.",
-        stepPaste: "Cole o token de openclaw dashboard --no-open ou informe a senha configurada.",
+        stepPaste: "Cole o token de nova dashboard --no-open ou informe a senha configurada.",
         stepGenerate:
-          "Se nenhum token estiver configurado, execute openclaw doctor --generate-gateway-token no host do Gateway.",
+          "Se nenhum token estiver configurado, execute nova doctor --generate-gateway-token no host do Gateway.",
         stepConnect: "Clique em Connect novamente depois de atualizar a credencial.",
       },
       authFailed: {
         title: "A autenticação não corresponde",
         summary:
           "A credencial fornecida foi rejeitada. A causa mais comum é um token antigo ou copiado de outro URL de Gateway.",
-        stepDashboard: "Execute openclaw dashboard --no-open e abra o novo URL ou cole seu token.",
+        stepDashboard: "Execute nova dashboard --no-open e abra o novo URL ou cole seu token.",
         stepReplace:
           "Substitua valores antigos de token/senha; não reutilize um token de outro URL de Gateway.",
         stepMode:
@@ -3508,8 +3508,8 @@ export const pt_BR: TranslationMap = {
           "Este navegador precisa de uma aprovação única do host do Gateway antes de poder usar o Control UI.",
         upgradeSummary:
           "Este navegador já é conhecido, mas o acesso solicitado mudou e precisa de uma nova aprovação.",
-        stepList: "Execute openclaw devices list no host do Gateway.",
-        stepApproveId: "Aprove esta solicitação: openclaw devices approve {requestId}.",
+        stepList: "Execute nova devices list no host do Gateway.",
+        stepApproveId: "Aprove esta solicitação: nova devices approve {requestId}.",
         stepApprove: "Aprove a solicitação pendente de navegador/dispositivo nessa lista.",
         stepReconnect: "Reconecte depois que a aprovação for concluída.",
       },
@@ -3535,7 +3535,7 @@ export const pt_BR: TranslationMap = {
         summary:
           "O Control UI servido e o Gateway em execução não concordam sobre o protocolo de conexão compatível.",
         stepDashboard:
-          "Reabra o dashboard servido com openclaw dashboard para que UI e Gateway venham da mesma instalação.",
+          "Reabra o dashboard servido com nova dashboard para que UI e Gateway venham da mesma instalação.",
         stepDevUi:
           "Se estiver usando pnpm ui:dev, reconstrua ou reinicie a UI de desenvolvimento com o checkout atual.",
         stepRestart:
@@ -3545,12 +3545,11 @@ export const pt_BR: TranslationMap = {
         title: "Não foi possível conectar",
         summary:
           "O navegador não conseguiu concluir a conexão ao Gateway. Verifique o destino e o transporte antes de tentar credenciais novamente.",
-        stepGateway:
-          "Confirme que o Gateway está em execução com openclaw status ou openclaw gateway run.",
+        stepGateway: "Confirme que o Gateway está em execução com nova status ou nova gateway run.",
         stepUrl:
           "Verifique o URL de WebSocket e use wss:// quando o Gateway estiver atrás de HTTPS/Tailscale Serve.",
         stepDashboard:
-          "Reabra o dashboard com openclaw dashboard --no-open para copiar novamente o URL atual e os detalhes de auth.",
+          "Reabra o dashboard com nova dashboard --no-open para copiar novamente o URL atual e os detalhes de auth.",
       },
     },
   },

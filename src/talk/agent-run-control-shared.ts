@@ -29,7 +29,7 @@ export type RealtimeVoiceAgentControlProviderResult = {
 };
 
 /** Stable provider-facing tool name for active-run voice control. */
-export const REALTIME_VOICE_AGENT_CONTROL_TOOL_NAME = "openclaw_agent_control";
+export const REALTIME_VOICE_AGENT_CONTROL_TOOL_NAME = "nova_agent_control";
 
 /** Realtime function-tool descriptor projected to voice providers. */
 export const REALTIME_VOICE_AGENT_CONTROL_TOOL: RealtimeVoiceTool = {
@@ -274,7 +274,7 @@ function parseRealtimeVoiceAgentControlToolArgsRecord(args: unknown): unknown {
 export function buildRealtimeVoiceAgentControlSpeechMessage(text: string): string {
   return [
     "Internal Nova voice control result.",
-    "Do not call openclaw_agent_consult or any other tool for this message.",
+    "Do not call nova_agent_consult or any other tool for this message.",
     "Speak this exact Nova status to the voice call, without adding, removing, or rephrasing words.",
     `Status: ${JSON.stringify(text)}`,
   ].join("\n");

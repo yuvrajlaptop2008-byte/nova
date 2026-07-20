@@ -3,15 +3,15 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resolveChannelConfigWrites } from "openclaw/plugin-sdk/channel-config-writes";
-import { normalizeAccountId, resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import type { OpenClawConfig, PluginRuntime } from "../runtime-api.js";
+import { resolveChannelConfigWrites } from "nova/plugin-sdk/channel-config-writes";
+import { normalizeAccountId, resolveAgentRoute } from "nova/plugin-sdk/routing";
+import type { NovaConfig, PluginRuntime } from "../runtime-api.js";
 import { resolveFeishuAccount } from "./accounts.js";
 import type { DynamicAgentCreationConfig } from "./types.js";
 
 type MaybeCreateDynamicAgentResult = {
   created: boolean;
-  updatedCfg: OpenClawConfig;
+  updatedCfg: NovaConfig;
   agentId?: string;
 };
 
@@ -21,16 +21,12 @@ type DynamicAgentMutationResult = {
 };
 
 class DynamicAgentMutationSkipped extends Error {
-  constructor(readonly cfg: OpenClawConfig) {
+  constructor(readonly cfg: NovaConfig) {
     super("dynamic agent mutation skipped");
   }
 }
 
-function hasDefaultDirectRoute(
-  cfg: OpenClawConfig,
-  accountId: string,
-  senderOpenId: string,
-): boolean {
+function hasDefaultDirectRoute(cfg: NovaConfig, accountId: string, senderOpenId: string): boolean {
   return (
     resolveAgentRoute({
       cfg,
@@ -42,7 +38,7 @@ function hasDefaultDirectRoute(
 }
 
 function resolveDynamicAgentConfig(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   accountId: string,
 ): DynamicAgentCreationConfig | undefined {
   return resolveFeishuAccount({ cfg, accountId }).config.dynamicAgentCreation as
@@ -50,10 +46,7 @@ function resolveDynamicAgentConfig(
     | undefined;
 }
 
-function isAtDynamicAgentLimit(
-  cfg: OpenClawConfig,
-  dynamicCfg: DynamicAgentCreationConfig,
-): boolean {
+function isAtDynamicAgentLimit(cfg: NovaConfig, dynamicCfg: DynamicAgentCreationConfig): boolean {
   if (dynamicCfg.maxAgents === undefined) {
     return false;
   }
@@ -81,11 +74,11 @@ function resolveDynamicAgentId(accountId: string, senderOpenId: string): string 
  * account policy permits config writes.
  */
 export async function maybeCreateDynamicAgent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   runtime: PluginRuntime;
   accountId: string;
   senderOpenId: string;
-  canCreateForConfig: (cfg: OpenClawConfig) => Promise<boolean>;
+  canCreateForConfig: (cfg: NovaConfig) => Promise<boolean>;
   log: (msg: string) => void;
 }): Promise<MaybeCreateDynamicAgentResult> {
   const { cfg, runtime, senderOpenId, canCreateForConfig, log } = params;
@@ -95,7 +88,7 @@ export async function maybeCreateDynamicAgent(params: {
     return { created: false, updatedCfg: cfg };
   }
 
-  const currentCfg = runtime.config.current() as OpenClawConfig;
+  const currentCfg = runtime.config.current() as NovaConfig;
   if (!hasDefaultDirectRoute(currentCfg, accountId, senderOpenId)) {
     return { created: false, updatedCfg: currentCfg };
   }
@@ -124,7 +117,7 @@ export async function maybeCreateDynamicAgent(params: {
 
   // The config mutation lock owns the final duplicate/limit checks. This keeps
   // simultaneous DM creations and policy updates from producing stale writes.
-  let skippedCfg: OpenClawConfig | undefined;
+  let skippedCfg: NovaConfig | undefined;
   const committed = await runtime.config
     .mutateConfigFile<DynamicAgentMutationResult>({
       base: "runtime",
@@ -153,10 +146,8 @@ export async function maybeCreateDynamicAgent(params: {
         }
 
         if (!agentExists) {
-          const workspaceTemplate =
-            dynamicCfg.workspaceTemplate ?? "~/.openclaw/workspace-{agentId}";
-          const agentDirTemplate =
-            dynamicCfg.agentDirTemplate ?? "~/.openclaw/agents/{agentId}/agent";
+          const workspaceTemplate = dynamicCfg.workspaceTemplate ?? "~/.nova/workspace-{agentId}";
+          const agentDirTemplate = dynamicCfg.agentDirTemplate ?? "~/.nova/agents/{agentId}/agent";
           const workspace = resolveUserPath(
             workspaceTemplate.replace("{userId}", senderOpenId).replace("{agentId}", agentId),
           );
@@ -203,7 +194,7 @@ export async function maybeCreateDynamicAgent(params: {
 
   return {
     created: committed.result?.created ?? false,
-    updatedCfg: runtime.config.current() as OpenClawConfig,
+    updatedCfg: runtime.config.current() as NovaConfig,
     agentId: committed.result?.agentId,
   };
 }

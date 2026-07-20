@@ -2,7 +2,7 @@
 import { AsyncResource } from "node:async_hooks";
 import { expectDefined } from "@nova/normalization-core";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
 import {
   interruptSessionWorkAdmissions,
@@ -290,11 +290,8 @@ describe("dispatchReplyFromConfig", () => {
       OriginatingTo: "channel:C123",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      _opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => ({ text: "hi" }) satisfies ReplyPayload;
+    const replyResolver = async (_ctx: MsgContext, _opts?: GetReplyOptions, _cfg?: NovaConfig) =>
+      ({ text: "hi" }) satisfies ReplyPayload;
     await dispatchReplyFromConfig({ ctx, cfg, dispatcher, replyResolver });
 
     expect(mocks.routeReply).not.toHaveBeenCalled();
@@ -609,7 +606,7 @@ describe("dispatchReplyFromConfig", () => {
       ChatType: "channel",
       SessionKey: "agent:main:slack:channel:C123",
     });
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as NovaConfig;
     const replyResolver = async (
       _ctx: MsgContext,
       opts?: GetReplyOptions,
@@ -1320,7 +1317,7 @@ describe("dispatchReplyFromConfig", () => {
         SessionKey: sessionKey,
         MessageSid: "visible-after-failure",
         To: "telegram:-1003774691294",
-        BodyForAgent: "@openclaw recover",
+        BodyForAgent: "@nova recover",
       }),
       cfg: automaticGroupReplyConfig,
       dispatcher,
@@ -1383,7 +1380,7 @@ describe("dispatchReplyFromConfig", () => {
         SessionKey: sessionKey,
         MessageSid: messageSid,
         To: "telegram:-1003774691295",
-        BodyForAgent: "@openclaw recover",
+        BodyForAgent: "@nova recover",
       });
 
     const firstTurn = dispatchReplyFromConfig({
@@ -1473,7 +1470,7 @@ describe("dispatchReplyFromConfig", () => {
         SessionKey: sessionKey,
         MessageSid: messageSid,
         To: "telegram:-1003774691295",
-        BodyForAgent: "@openclaw recover",
+        BodyForAgent: "@nova recover",
       });
 
     const firstTurn = dispatchReplyFromConfig({
@@ -1621,7 +1618,7 @@ describe("dispatchReplyFromConfig", () => {
         SessionKey: sessionKey,
         MessageSid: "visible-after-rotation",
         To: "telegram:-1003774691297",
-        BodyForAgent: "@openclaw recover",
+        BodyForAgent: "@nova recover",
       }),
       cfg: automaticGroupReplyConfig,
       dispatcher,
@@ -1675,11 +1672,8 @@ describe("dispatchReplyFromConfig", () => {
       OriginatingTo: "telegram:999",
     });
 
-    const replyResolver = async (
-      _ctx: MsgContext,
-      _opts?: GetReplyOptions,
-      _cfg?: OpenClawConfig,
-    ) => ({ text: "hi" }) satisfies ReplyPayload;
+    const replyResolver = async (_ctx: MsgContext, _opts?: GetReplyOptions, _cfg?: NovaConfig) =>
+      ({ text: "hi" }) satisfies ReplyPayload;
     await dispatchReplyFromConfig({ ctx, cfg, dispatcher, replyResolver });
 
     expect(dispatcher.sendFinalReply).not.toHaveBeenCalled();

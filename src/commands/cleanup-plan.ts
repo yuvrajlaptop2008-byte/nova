@@ -5,12 +5,12 @@ import {
   resolveOAuthDir,
   resolveStateDir,
 } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { buildCleanupPlan } from "./cleanup-utils.js";
 
 /** Build the cleanup plan for the current runtime config/state/credential paths on disk. */
 export function resolveCleanupPlanFromDisk(): {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   stateDir: string;
   configPath: string;
   oauthDir: string;

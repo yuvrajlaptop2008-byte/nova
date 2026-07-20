@@ -3,7 +3,7 @@ import { resolveStorePath } from "../../../config/sessions.js";
 import { resolveSessionTranscriptRuntimeReadTarget } from "../../../config/sessions/session-accessor.js";
 import type { resolveContextEngine } from "../../../context-engine/registry.js";
 import { createTrajectoryRuntimeRecorder } from "../../../trajectory/runtime.js";
-import { agentHarnessBuildsOpenClawTools } from "../../harness/selection.js";
+import { agentHarnessBuildsNovaTools } from "../../harness/selection.js";
 import { buildAgentRuntimePlan } from "../../runtime-plan/build.js";
 import { createEmbeddedRunReplayState } from "../replay-state.js";
 import { mapThinkingLevelForProvider } from "../utils.js";
@@ -195,7 +195,7 @@ export async function prepareAndDispatchEmbeddedRunAttempt(input: {
       initialReplayState: input.replayState,
       authStorage,
       authProfileStore: resolveRunAttemptAuthProfileStore(),
-      toolAuthProfileStore: agentHarnessBuildsOpenClawTools(runtime.agentHarness.id)
+      toolAuthProfileStore: agentHarnessBuildsNovaTools(runtime.agentHarness.id)
         ? attemptAuthProfileStore
         : undefined,
       modelRegistry,

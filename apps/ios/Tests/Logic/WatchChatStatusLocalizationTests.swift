@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawKit
+import NovaKit
 import Testing
 
 struct WatchChatStatusLocalizationTests {
@@ -153,13 +153,13 @@ struct WatchChatStatusLocalizationTests {
     }
 
     @Test func `gateway presentation localizes key and keeps backend override verbatim`() {
-        let localized = OpenClawWatchAppStatus(
+        let localized = NovaWatchAppStatus(
             code: .gatewayProblem,
             localizationKey: "Gateway update required")
-        let backendOverride = OpenClawWatchAppStatus(
+        let backendOverride = NovaWatchAppStatus(
             code: .gatewayProblem,
             verbatim: "Gateway says update channel beta")
-        let localizedTalkFailure = OpenClawWatchAppStatus(
+        let localizedTalkFailure = NovaWatchAppStatus(
             code: .talkFailure,
             localizationKey: "Paused")
 
@@ -176,9 +176,9 @@ struct WatchChatStatusLocalizationTests {
 
     private static func semanticPayload() -> [String: Any] {
         [
-            "type": OpenClawWatchPayloadType.appSnapshot.rawValue,
+            "type": NovaWatchPayloadType.appSnapshot.rawValue,
             "gatewayStatus": [
-                "code": OpenClawWatchAppStatusCode.gatewayProblem.rawValue,
+                "code": NovaWatchAppStatusCode.gatewayProblem.rawValue,
                 "localizationKey": "Gateway update required",
             ],
             "gatewayConnected": false,
@@ -186,14 +186,14 @@ struct WatchChatStatusLocalizationTests {
             "agentAvatarUrl": "https://example.com/avatar.png",
             "sessionKey": "main",
             "talkStatus": [
-                "code": OpenClawWatchAppStatusCode.talkOff.rawValue,
+                "code": NovaWatchAppStatusCode.talkOff.rawValue,
             ],
             "talkEnabled": false,
             "talkListening": false,
             "talkSpeaking": false,
             "pendingApprovalCount": 0,
             "chatStatus": [
-                "code": OpenClawWatchAppStatusCode.chatConnectIPhone.rawValue,
+                "code": NovaWatchAppStatusCode.chatConnectIPhone.rawValue,
             ],
         ]
     }

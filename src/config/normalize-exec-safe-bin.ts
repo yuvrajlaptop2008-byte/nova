@@ -4,10 +4,10 @@
  */
 import { normalizeSafeBinProfileFixtures } from "../infra/exec-safe-bin-policy.js";
 import { normalizeTrustedSafeBinDirs } from "../infra/exec-safe-bin-trust.js";
-import type { OpenClawConfig } from "./types.js";
+import type { NovaConfig } from "./types.js";
 
 /** Normalize exec safe-bin profiles and trusted dirs in global and per-agent config scopes. */
-export function normalizeExecSafeBinProfilesInConfig(cfg: OpenClawConfig): void {
+export function normalizeExecSafeBinProfilesInConfig(cfg: NovaConfig): void {
   const normalizeExec = (exec: unknown) => {
     if (!exec || typeof exec !== "object" || Array.isArray(exec)) {
       return;

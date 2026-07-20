@@ -2,7 +2,7 @@
 import { execFileSync } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { resolvePreferredOpenClawTmpDir, withTempWorkspace } from "openclaw/plugin-sdk/temp-path";
+import { resolvePreferredNovaTmpDir, withTempWorkspace } from "nova/plugin-sdk/temp-path";
 import { describe, expect, it } from "vitest";
 import {
   compareNormalizedPaths,
@@ -66,7 +66,7 @@ describe("scripts/bundle-a2ui.mjs", () => {
     "falls back when tracked-input discovery stalls",
     async () => {
       await withTempWorkspace(
-        { rootDir: resolvePreferredOpenClawTmpDir(), prefix: "openclaw-a2ui-git-timeout-" },
+        { rootDir: resolvePreferredNovaTmpDir(), prefix: "nova-a2ui-git-timeout-" },
         async ({ dir }) => {
           const fakeBinDir = path.join(dir, "bin");
           const fakeGitPath = path.join(fakeBinDir, "git");

@@ -317,9 +317,9 @@ export function buildBuiltinChatCommands(
       ],
     }),
     defineChatCommand({
-      key: "openclaw",
+      key: "nova",
       description: "Run the Nova setup and repair helper.",
-      textAlias: "/openclaw",
+      textAlias: "/nova",
       acceptsArgs: true,
       scope: "text",
       category: "management",

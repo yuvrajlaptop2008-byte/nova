@@ -3,7 +3,7 @@ import path from "node:path";
 import { err as resultError, ok, type Result } from "@nova/normalization-core/result";
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { clearAgentHarnesses } from "../agents/harness/registry.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
   DEFAULT_MEMORY_DREAMING_PLUGIN_ID,
@@ -60,7 +60,7 @@ export type AuthorizedDreamingSidecar = {
 };
 
 function resolveDreamingSidecarEngineId(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   memorySlot: string | null | undefined;
 }): string | null {
   const normalizedMemorySlot = normalizeLowercaseStringOrEmpty(params.memorySlot);
@@ -79,7 +79,7 @@ function resolveDreamingSidecarEngineId(params: {
 }
 
 export function resolveAuthorizedDreamingSidecar(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   normalized: NormalizedPluginsConfig;
   activationSource: PluginActivationConfigSource;
   manifestRegistry: PluginManifestRegistry;

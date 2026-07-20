@@ -13,7 +13,7 @@ import {
   type SessionNotification,
 } from "@agentclientprotocol/sdk";
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import { ensureOpenClawCliOnPath } from "../infra/path-env.js";
+import { ensureNovaCliOnPath } from "../infra/path-env.js";
 import {
   buildAcpClientStripKeys,
   resolveAcpClientSpawnEnv,
@@ -104,11 +104,11 @@ async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpClientHa
   const verbose = Boolean(opts.verbose);
   const log = verbose ? (msg: string) => console.error(`[acp-client] ${msg}`) : () => {};
 
-  ensureOpenClawCliOnPath();
+  ensureNovaCliOnPath();
   const serverArgs = buildServerArgs(opts);
 
   const entryPath = resolveSelfEntryPath();
-  const defaultServerCommand = entryPath ? process.execPath : "openclaw";
+  const defaultServerCommand = entryPath ? process.execPath : "nova";
   const defaultServerArgs = entryPath ? [entryPath, ...serverArgs] : serverArgs;
   const serverCommand = opts.serverCommand ?? defaultServerCommand;
   const effectiveArgs = opts.serverCommand || !entryPath ? serverArgs : defaultServerArgs;
@@ -170,7 +170,7 @@ async function createAcpClient(opts: AcpClientOptions = {}): Promise<AcpClientHa
       fs: { readTextFile: true, writeTextFile: true },
       terminal: true,
     },
-    clientInfo: { name: "openclaw-acp-client", version: "1.0.0" },
+    clientInfo: { name: "nova-acp-client", version: "1.0.0" },
   });
 
   log("creating session");

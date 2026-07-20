@@ -1081,18 +1081,18 @@ describe("mcp loopback server", () => {
       token: runtime?.nonOwnerToken,
       headers: jsonHeaders({
         "x-session-key": "agent:main:telegram:group:chat123",
-        "x-openclaw-session-id": "session-123",
-        "x-openclaw-account-id": "work",
-        "x-openclaw-message-channel": "telegram",
-        "x-openclaw-client-caps": "tool-events,inline-widgets",
-        "x-openclaw-current-channel-id": "telegram:chat123",
-        "x-openclaw-current-thread-ts": "42",
-        "x-openclaw-current-message-id": "reply-message-1",
-        "x-openclaw-current-inbound-audio": "true",
-        "x-openclaw-inbound-event-kind": "room_event",
-        "x-openclaw-source-reply-delivery-mode": "message_tool_only",
-        "x-openclaw-task-suggestion-delivery-mode": "gateway",
-        "x-openclaw-require-explicit-message-target": "true",
+        "x-nova-session-id": "session-123",
+        "x-nova-account-id": "work",
+        "x-nova-message-channel": "telegram",
+        "x-nova-client-caps": "tool-events,inline-widgets",
+        "x-nova-current-channel-id": "telegram:chat123",
+        "x-nova-current-thread-ts": "42",
+        "x-nova-current-message-id": "reply-message-1",
+        "x-nova-current-inbound-audio": "true",
+        "x-nova-inbound-event-kind": "room_event",
+        "x-nova-source-reply-delivery-mode": "message_tool_only",
+        "x-nova-task-suggestion-delivery-mode": "gateway",
+        "x-nova-require-explicit-message-target": "true",
       }),
       body: mcpToolsListBody(),
     });
@@ -1132,8 +1132,8 @@ describe("mcp loopback server", () => {
         token: runtime.ownerToken,
         headers: {
           "x-session-key": "agent:main:main",
-          "x-openclaw-current-message-id": currentMessageId,
-          "x-openclaw-client-caps": clientCaps,
+          "x-nova-current-message-id": currentMessageId,
+          "x-nova-client-caps": clientCaps,
         },
       });
 
@@ -1159,13 +1159,13 @@ describe("mcp loopback server", () => {
       token: grant.token,
       headers: jsonHeaders({
         "x-session-key": "agent:main:SPOOFED-other-session",
-        "x-openclaw-message-channel": "telegram",
-        "x-openclaw-client-caps": "inline-widgets",
-        "x-openclaw-account-id": "victim-account",
-        "x-openclaw-current-channel-id": "telegram:victim-chat",
-        "x-openclaw-current-thread-ts": "999",
-        "x-openclaw-source-reply-delivery-mode": "automatic",
-        "x-openclaw-inbound-event-kind": "room_event",
+        "x-nova-message-channel": "telegram",
+        "x-nova-client-caps": "inline-widgets",
+        "x-nova-account-id": "victim-account",
+        "x-nova-current-channel-id": "telegram:victim-chat",
+        "x-nova-current-thread-ts": "999",
+        "x-nova-source-reply-delivery-mode": "automatic",
+        "x-nova-inbound-event-kind": "room_event",
       }),
       body: mcpToolsListBody(),
     });
@@ -1248,20 +1248,20 @@ describe("mcp loopback server", () => {
         port,
         token: grant.token,
         headers: jsonHeaders({
-          ...(captureKey ? { "x-openclaw-cli-capture-key": captureKey } : {}),
+          ...(captureKey ? { "x-nova-cli-capture-key": captureKey } : {}),
           "x-session-key": "agent:main:main",
-          "x-openclaw-session-id": "session-spoofed",
-          "x-openclaw-message-channel": "telegram",
-          "x-openclaw-client-caps": "inline-widgets,admin",
-          "x-openclaw-account-id": "spoofed-account",
-          "x-openclaw-current-channel-id": "telegram:spoofed",
-          "x-openclaw-current-thread-ts": "spoofed-thread",
-          "x-openclaw-current-message-id": "spoofed-message",
-          "x-openclaw-current-inbound-audio": "false",
-          "x-openclaw-inbound-event-kind": "room_event",
-          "x-openclaw-source-reply-delivery-mode": "automatic",
-          "x-openclaw-task-suggestion-delivery-mode": "direct",
-          "x-openclaw-require-explicit-message-target": "false",
+          "x-nova-session-id": "session-spoofed",
+          "x-nova-message-channel": "telegram",
+          "x-nova-client-caps": "inline-widgets,admin",
+          "x-nova-account-id": "spoofed-account",
+          "x-nova-current-channel-id": "telegram:spoofed",
+          "x-nova-current-thread-ts": "spoofed-thread",
+          "x-nova-current-message-id": "spoofed-message",
+          "x-nova-current-inbound-audio": "false",
+          "x-nova-inbound-event-kind": "room_event",
+          "x-nova-source-reply-delivery-mode": "automatic",
+          "x-nova-task-suggestion-delivery-mode": "direct",
+          "x-nova-require-explicit-message-target": "false",
         }),
         body: method === "call" ? mcpToolCallBody("message") : mcpToolsListBody(),
       });
@@ -1378,7 +1378,7 @@ describe("mcp loopback server", () => {
     const responsePromise = sendLoopbackToolCall({
       token: grant.token,
       name: "exec",
-      headers: { "x-openclaw-cli-capture-key": captureKey },
+      headers: { "x-nova-cli-capture-key": captureKey },
     });
     await preparationStarted;
     expect(
@@ -1420,7 +1420,7 @@ describe("mcp loopback server", () => {
         await sendRaw({
           port: successor.port,
           token: staleGrant.token,
-          headers: jsonHeaders({ "x-openclaw-cli-capture-key": "capture-stale" }),
+          headers: jsonHeaders({ "x-nova-cli-capture-key": "capture-stale" }),
           body: mcpToolsListBody(),
         })
       ).status,
@@ -1441,7 +1441,7 @@ describe("mcp loopback server", () => {
         await sendRaw({
           port: successor.port,
           token: revokedGrant.token,
-          headers: jsonHeaders({ "x-openclaw-cli-capture-key": "capture-revoked" }),
+          headers: jsonHeaders({ "x-nova-cli-capture-key": "capture-revoked" }),
           body: mcpToolsListBody(),
         })
       ).status,
@@ -1492,8 +1492,8 @@ describe("mcp loopback server", () => {
         args: { message },
         headers: {
           "x-session-key": "agent:main:main",
-          "x-openclaw-session-id": "session-reused",
-          "x-openclaw-cli-capture-key": captureKey,
+          "x-nova-session-id": "session-reused",
+          "x-nova-cli-capture-key": captureKey,
         },
       });
     };
@@ -1520,17 +1520,17 @@ describe("mcp loopback server", () => {
         token: runtime?.ownerToken,
         headers: {
           "x-session-key": "agent:main:telegram:group:chat123",
-          "x-openclaw-message-channel": "telegram",
-          "x-openclaw-inbound-event-kind": inboundEventKind,
+          "x-nova-message-channel": "telegram",
+          "x-nova-inbound-event-kind": inboundEventKind,
           ...(sourceReplyDeliveryMode
-            ? { "x-openclaw-source-reply-delivery-mode": sourceReplyDeliveryMode }
+            ? { "x-nova-source-reply-delivery-mode": sourceReplyDeliveryMode }
             : {}),
-          ...(currentInboundAudio ? { "x-openclaw-current-inbound-audio": "true" } : {}),
+          ...(currentInboundAudio ? { "x-nova-current-inbound-audio": "true" } : {}),
           ...(requireExplicitMessageTarget
-            ? { "x-openclaw-require-explicit-message-target": "true" }
+            ? { "x-nova-require-explicit-message-target": "true" }
             : {}),
           ...(taskSuggestionDeliveryMode
-            ? { "x-openclaw-task-suggestion-delivery-mode": taskSuggestionDeliveryMode }
+            ? { "x-nova-task-suggestion-delivery-mode": taskSuggestionDeliveryMode }
             : {}),
         },
       });
@@ -1573,7 +1573,7 @@ describe("mcp loopback server", () => {
           token: runtime.ownerToken,
           headers: {
             "x-session-key": "agent:main:main",
-            ...(clientCaps ? { "x-openclaw-client-caps": clientCaps } : {}),
+            ...(clientCaps ? { "x-nova-client-caps": clientCaps } : {}),
           },
         }),
       );
@@ -1878,7 +1878,7 @@ describe("mcp loopback server", () => {
         token,
         headers: {
           "x-session-key": "agent:main:matrix:dm:test",
-          "x-openclaw-message-channel": "matrix",
+          "x-nova-message-channel": "matrix",
         },
       });
 
@@ -1901,8 +1901,8 @@ describe("mcp loopback server", () => {
       token: runtime?.nonOwnerToken,
       headers: {
         "x-session-key": "agent:main:matrix:dm:test",
-        "x-openclaw-message-channel": "matrix",
-        "x-openclaw-sender-is-owner": "true",
+        "x-nova-message-channel": "matrix",
+        "x-nova-sender-is-owner": "true",
       },
     });
 
@@ -2113,7 +2113,7 @@ describe("mcp loopback server", () => {
           token: runtime.ownerToken,
           name: "message",
           args: { action: "send", target: "chat123", message: "sent" },
-          headers: { "x-openclaw-cli-capture-key": captureKey },
+          headers: { "x-nova-cli-capture-key": captureKey },
         })
       ).status,
     ).toBe(200);
@@ -2129,7 +2129,7 @@ describe("mcp loopback server", () => {
           token: runtime.ownerToken,
           name: "message",
           args: { action: "send", target: "blocked", message: "not sent" },
-          headers: { "x-openclaw-cli-capture-key": captureKey },
+          headers: { "x-nova-cli-capture-key": captureKey },
         })
       ).status,
     ).toBe(200);
@@ -2191,7 +2191,7 @@ describe("mcp loopback server", () => {
         token: runtime.ownerToken,
         name: "message",
         args: { action: "send", target: testCase.disposition, message: "not sent" },
-        headers: { "x-openclaw-cli-capture-key": captureKey },
+        headers: { "x-nova-cli-capture-key": captureKey },
       });
       expect(response.status).toBe(200);
       expect((await readMcpPayload(response)).result?.isError).toBe(true);
@@ -2248,7 +2248,7 @@ describe("mcp loopback server", () => {
           status: testCase.status === "completed-timeout" ? "completed" : testCase.status,
           ...("timedOut" in testCase && testCase.timedOut ? { timedOut: true } : {}),
         },
-        headers: { "x-openclaw-cli-capture-key": captureKey },
+        headers: { "x-nova-cli-capture-key": captureKey },
       });
       expect(response.status).toBe(200);
       const payload = await readMcpPayload(response);
@@ -2292,7 +2292,7 @@ describe("mcp loopback server", () => {
       token: runtime.ownerToken,
       name: "message",
       args: { action: "react", target: "original-target" },
-      headers: { "x-openclaw-cli-capture-key": captureKey },
+      headers: { "x-nova-cli-capture-key": captureKey },
     });
 
     expect(updatedCalls).toHaveBeenCalledWith({
@@ -2420,7 +2420,7 @@ describe("mcp loopback server", () => {
               authorization: `Bearer ${runtime.ownerToken}`,
               "content-type": "application/json",
               "transfer-encoding": "chunked",
-              "x-openclaw-cli-capture-key": captureKey,
+              "x-nova-cli-capture-key": captureKey,
             },
           },
           (res) => {
@@ -2497,7 +2497,7 @@ describe("mcp loopback server", () => {
       token: runtime.ownerToken,
       name: "message",
       args: { action: "send", target: "chat123", message: "sent" },
-      headers: { "x-openclaw-cli-capture-key": captureKey },
+      headers: { "x-nova-cli-capture-key": captureKey },
     });
 
     expect(response.status).toBe(200);
@@ -2525,7 +2525,7 @@ describe("mcp loopback server", () => {
       token: runtime.ownerToken,
       name: "message",
       args: { action: "send", target: "chat123", message: "sent partly" },
-      headers: { "x-openclaw-cli-capture-key": captureKey },
+      headers: { "x-nova-cli-capture-key": captureKey },
     });
 
     const payload = await readMcpPayload(response);
@@ -2562,7 +2562,7 @@ describe("mcp loopback server", () => {
       token: runtime.ownerToken,
       name: "message",
       args: { action: "send", target: "chat123", message: "late" },
-      headers: { "x-openclaw-cli-capture-key": captureKey },
+      headers: { "x-nova-cli-capture-key": captureKey },
     });
 
     expect((await readMcpPayload(response)).result?.isError).toBe(true);
@@ -3174,11 +3174,11 @@ describe("createMcpLoopbackServerConfig", () => {
         { alwaysLoad?: boolean; url?: string; headers?: Record<string, string> }
       >;
     };
-    expect(config.mcpServers?.openclaw?.url).toBe("http://127.0.0.1:23119/mcp");
-    expect(config.mcpServers?.openclaw?.alwaysLoad).toBe(true);
-    expect(config.mcpServers?.openclaw?.headers).toEqual({
+    expect(config.mcpServers?.nova?.url).toBe("http://127.0.0.1:23119/mcp");
+    expect(config.mcpServers?.nova?.alwaysLoad).toBe(true);
+    expect(config.mcpServers?.nova?.headers).toEqual({
       Authorization: "Bearer ${NOVA_MCP_TOKEN}",
-      "x-openclaw-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
+      "x-nova-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
     });
   });
 
@@ -3186,7 +3186,7 @@ describe("createMcpLoopbackServerConfig", () => {
     const config = createMcpAttachGrantServerConfig(23119) as {
       mcpServers?: Record<string, { headers?: Record<string, string> }>;
     };
-    expect(config.mcpServers?.openclaw?.headers).toEqual({
+    expect(config.mcpServers?.nova?.headers).toEqual({
       Authorization: "Bearer ${NOVA_MCP_TOKEN}",
     });
   });
@@ -3220,7 +3220,7 @@ describe("createMcpLoopbackServerConfig", () => {
         method,
         headers: {
           authorization: `Bearer ${grant.token}`,
-          ...(requestCaptureKey ? { "x-openclaw-cli-capture-key": requestCaptureKey } : {}),
+          ...(requestCaptureKey ? { "x-nova-cli-capture-key": requestCaptureKey } : {}),
         },
       });
 
@@ -3365,7 +3365,7 @@ describe("createMcpLoopbackServerConfig", () => {
           await sendRaw({
             port: successor.port,
             token: successorGrant.token,
-            headers: jsonHeaders({ "x-openclaw-cli-capture-key": "capture-successor" }),
+            headers: jsonHeaders({ "x-nova-cli-capture-key": "capture-successor" }),
             body: mcpToolsListBody(),
           })
         ).status,

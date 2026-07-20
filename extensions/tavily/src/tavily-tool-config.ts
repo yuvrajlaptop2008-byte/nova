@@ -1,16 +1,16 @@
 // Tavily helper module supports tavily tool config behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import type { OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import type { NovaPluginToolContext } from "nova/plugin-sdk/plugin-entry";
+import type { NovaPluginApi } from "nova/plugin-sdk/plugin-runtime";
 
 export type TavilyToolConfigContext = Pick<
-  OpenClawPluginToolContext,
+  NovaPluginToolContext,
   "config" | "runtimeConfig" | "getRuntimeConfig"
 >;
 
 export function resolveTavilyToolConfig(
-  api: OpenClawPluginApi,
+  api: NovaPluginApi,
   ctx?: TavilyToolConfigContext,
-): OpenClawConfig {
+): NovaConfig {
   return ctx?.getRuntimeConfig?.() ?? ctx?.runtimeConfig ?? ctx?.config ?? api.config;
 }

@@ -104,7 +104,7 @@ describe("QA Lab UI evidence render", () => {
               direction: "outbound",
               id: "selected-message",
               reactions: [],
-              senderId: "openclaw",
+              senderId: "nova",
               text: "selected account message",
               timestamp: 1,
             },
@@ -114,7 +114,7 @@ describe("QA Lab UI evidence render", () => {
               direction: "outbound",
               id: "foreign-account-message",
               reactions: [],
-              senderId: "openclaw",
+              senderId: "nova",
               text: "foreign account message",
               timestamp: 2,
             },
@@ -124,7 +124,7 @@ describe("QA Lab UI evidence render", () => {
               direction: "outbound",
               id: "foreign-kind-message",
               reactions: [],
-              senderId: "openclaw",
+              senderId: "nova",
               text: "foreign kind message",
               timestamp: 3,
             },
@@ -162,7 +162,7 @@ describe("QA Lab UI evidence render", () => {
   it("renders capture startup commands without personal home paths", () => {
     const html = renderQaLabUi(evidenceState({ activeTab: "capture" }));
 
-    expect(html).toContain("$HOME/.openclaw/debug-proxy/certs/root-ca.pem");
+    expect(html).toContain("$HOME/.nova/debug-proxy/certs/root-ca.pem");
     expect(html).not.toContain("/Users/");
   });
 

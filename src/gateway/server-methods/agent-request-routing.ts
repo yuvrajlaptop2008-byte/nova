@@ -6,7 +6,7 @@ import {
   resolveAgentIdFromSessionKey,
   resolveExplicitAgentSessionKey,
 } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { emitDiagnosticEvent } from "../../infra/diagnostic-events.js";
 import { resolveAgentExplicitRecipientSession } from "../../infra/outbound/agent-delivery.js";
 import {
@@ -49,7 +49,7 @@ type AgentRequestRouting = {
 
 export async function prepareAgentRequestRouting(params: {
   request: AgentRunRequest;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   expectedSession?: ExpectedExistingSessionConstraint;
   isRawModelRun: boolean;
   execApprovalFollowupApprovalId?: string;
@@ -258,7 +258,7 @@ export async function prepareAgentRequestRouting(params: {
   };
 }
 
-function resolveAgentExplicitRecipientSessionKey(cfg: OpenClawConfig, agentId?: string) {
+function resolveAgentExplicitRecipientSessionKey(cfg: NovaConfig, agentId?: string) {
   return resolveExplicitAgentSessionKey({ cfg, agentId });
 }
 

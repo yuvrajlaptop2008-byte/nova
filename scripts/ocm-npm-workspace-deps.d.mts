@@ -15,7 +15,7 @@ export function buildInstallManifest(
 ): {
   private: boolean;
   dependencies: {
-    openclaw: string;
+    nova: string;
   };
 };
 export function resolveNpmEnvironment(args: string[], env?: NodeJS.ProcessEnv): NodeJS.ProcessEnv;
@@ -27,7 +27,7 @@ export function resolveRuntimePackEnvironment(
   env?: NodeJS.ProcessEnv,
   now?: () => Date,
   readGitCommit?: () => string | null,
-): NodeJS.ProcessEnv & { OPENCLAW_BUILD_TIMESTAMP: string; GIT_COMMIT?: string };
+): NodeJS.ProcessEnv & { NOVA_BUILD_TIMESTAMP: string; GIT_COMMIT?: string };
 export function rewriteWorkspaceDependencyVersions(
   packageJson: unknown,
   workspacePackages: unknown,

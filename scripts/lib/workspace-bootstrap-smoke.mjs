@@ -101,7 +101,7 @@ function describeExecFailure(error) {
  * Runs the installed CLI workspace bootstrap smoke and validates created files.
  */
 export function runInstalledWorkspaceBootstrapSmoke(params) {
-  const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-workspace-bootstrap-smoke-"));
+  const tempRoot = mkdtempSync(join(tmpdir(), "nova-workspace-bootstrap-smoke-"));
   const homeDir = join(tempRoot, "home");
   const cwd = join(tempRoot, "cwd");
   mkdirSync(homeDir, { recursive: true });
@@ -113,7 +113,7 @@ export function runInstalledWorkspaceBootstrapSmoke(params) {
       execFileSync(
         process.execPath,
         [
-          join(params.packageRoot, "openclaw.mjs"),
+          join(params.packageRoot, "nova.mjs"),
           "agent",
           "--message",
           "workspace bootstrap smoke",
@@ -143,7 +143,7 @@ export function runInstalledWorkspaceBootstrapSmoke(params) {
       );
     }
 
-    const workspaceDir = join(homeDir, ".openclaw", "workspace");
+    const workspaceDir = join(homeDir, ".nova", "workspace");
     const missingFiles = collectMissingBootstrapWorkspaceFiles(workspaceDir);
     if (missingFiles.length > 0) {
       const outputDetails = combinedOutput.length > 0 ? `\nCommand output:\n${combinedOutput}` : "";

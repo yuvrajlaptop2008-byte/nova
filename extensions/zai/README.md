@@ -1,13 +1,13 @@
-# Z.AI OpenClaw provider
+# Z.AI Nova provider
 
-Official OpenClaw provider plugin for Z.AI.
+Official Nova provider plugin for Z.AI.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/zai-provider
+nova plugins install @nova/zai-provider
 ```
 
 ## Docs
 
-See `docs/providers/zai.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/providers/zai`.
+See `docs/providers/zai.md` in the Nova repository, or the published docs at `https://docs.nova.ai/providers/zai`.

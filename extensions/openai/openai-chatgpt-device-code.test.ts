@@ -243,9 +243,9 @@ describe("loginOpenAICodexDeviceCode", () => {
       expect(userCodeRequest[1]?.signal).toBeInstanceOf(AbortSignal);
       expect(userCodeRequest[1]?.headers).toEqual({
         "Content-Type": "application/json",
-        originator: "openclaw",
+        originator: "nova",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "nova/2026.3.22",
       });
 
       const deviceTokenRequest = fetchCall(fetchMock, 1);
@@ -254,9 +254,9 @@ describe("loginOpenAICodexDeviceCode", () => {
       expect(deviceTokenRequest[1]?.signal).toBeInstanceOf(AbortSignal);
       expect(deviceTokenRequest[1]?.headers).toEqual({
         "Content-Type": "application/json",
-        originator: "openclaw",
+        originator: "nova",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "nova/2026.3.22",
       });
 
       const oauthTokenRequest = fetchCall(fetchMock, 3);
@@ -265,9 +265,9 @@ describe("loginOpenAICodexDeviceCode", () => {
       expect(oauthTokenRequest[1]?.signal).toBeInstanceOf(AbortSignal);
       expect(oauthTokenRequest[1]?.headers).toEqual({
         "Content-Type": "application/x-www-form-urlencoded",
-        originator: "openclaw",
+        originator: "nova",
         version: "2026.3.22",
-        "User-Agent": "openclaw/2026.3.22",
+        "User-Agent": "nova/2026.3.22",
       });
       expect(onVerification).toHaveBeenCalledWith({
         verificationUrl: "https://auth.openai.com/codex/device",

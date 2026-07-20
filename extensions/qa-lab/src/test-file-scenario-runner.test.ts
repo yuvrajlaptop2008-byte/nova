@@ -104,7 +104,7 @@ async function writeScriptProducerEvidence(params: {
     path.join(runRoot, "qa-evidence.json"),
     `${JSON.stringify(
       {
-        kind: "openclaw.qa.evidence-summary",
+        kind: "nova.qa.evidence-summary",
         schemaVersion: 2,
         generatedAt: "2026-06-14T00:00:00.000Z",
         evidenceMode: "full",
@@ -365,7 +365,7 @@ describe("qa test file scenario runner", () => {
           path.join(runRoot, "qa-evidence.json"),
           `${JSON.stringify(
             {
-              kind: "openclaw.qa.evidence-summary",
+              kind: "nova.qa.evidence-summary",
               schemaVersion: 2,
               generatedAt: "2026-06-14T00:00:00.000Z",
               evidenceMode: "full",
@@ -657,7 +657,7 @@ describe("qa test file scenario runner", () => {
           path.join(runRoot, "qa-evidence.json"),
           `${JSON.stringify(
             {
-              kind: "openclaw.qa.evidence-summary",
+              kind: "nova.qa.evidence-summary",
               schemaVersion: 2,
               generatedAt: "2026-06-14T00:00:00.000Z",
               evidenceMode: "full",
@@ -788,7 +788,7 @@ describe("qa test file scenario runner", () => {
           path.join(runRoot, "qa-evidence.json"),
           `${JSON.stringify(
             {
-              kind: "openclaw.qa.evidence-summary",
+              kind: "nova.qa.evidence-summary",
               schemaVersion: 2,
               generatedAt: "2026-06-14T00:00:00.000Z",
               evidenceMode: "full",
@@ -977,7 +977,7 @@ describe("qa test file scenario runner", () => {
         await fs.writeFile(
           path.join(scenarioOutputDir, "qa-evidence.json"),
           `${JSON.stringify({
-            kind: "openclaw.qa.evidence-summary",
+            kind: "nova.qa.evidence-summary",
             schemaVersion: 2,
             generatedAt: "2026-06-14T00:00:00.000Z",
             evidenceMode: "full",
@@ -1031,7 +1031,7 @@ describe("qa test file scenario runner", () => {
         await fs.writeFile(
           path.join(scenarioOutputDir, "qa-evidence.json"),
           `${JSON.stringify({
-            kind: "openclaw.qa.evidence-summary",
+            kind: "nova.qa.evidence-summary",
             schemaVersion: 2,
             generatedAt: "2026-06-14T00:00:00.000Z",
             evidenceMode: "full",

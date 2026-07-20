@@ -14,7 +14,7 @@ import {
   type PluginInstallLogger,
   type PluginInstallPolicyRequest,
 } from "./install-types.js";
-import { resolvePackageExtensionEntries, type OpenClawPackageManifest } from "./manifest.js";
+import { resolvePackageExtensionEntries, type NovaPackageManifest } from "./manifest.js";
 import { resolvePackagePluginApiRange } from "./package-compat.js";
 import {
   emitPluginAuditSecurityEvent,
@@ -33,22 +33,22 @@ export type PluginInstallRuntime = Awaited<ReturnType<typeof loadPluginInstallRu
 
 export const defaultLogger: PluginInstallLogger = {};
 
-export function formatUnresolvedOpenClawPeerLinkError(packageName: string): string {
-  return `Installed plugin ${packageName} declares openclaw as a peer dependency, but Nova could not create a plugin-local node_modules/openclaw link. Run from a packaged Nova install or reinstall Nova, then retry.`;
+export function formatUnresolvedNovaPeerLinkError(packageName: string): string {
+  return `Installed plugin ${packageName} declares nova as a peer dependency, but Nova could not create a plugin-local node_modules/nova link. Run from a packaged Nova install or reinstall Nova, then retry.`;
 }
 
 const MISSING_EXTENSIONS_ERROR =
-  'package.json missing openclaw.extensions; update the plugin package to include openclaw.extensions (for example ["./dist/index.js"]). See https://docs.openclaw.ai/help/troubleshooting#plugin-install-fails-with-missing-openclaw-extensions';
-function validateOpenClawPackageCompatibility(params: {
+  'package.json missing nova.extensions; update the plugin package to include nova.extensions (for example ["./dist/index.js"]). See https://docs.nova.ai/help/troubleshooting#plugin-install-fails-with-missing-nova-extensions';
+function validateNovaPackageCompatibility(params: {
   pluginId: string;
   currentHostVersion: string;
-  packageMetadata?: OpenClawPackageManifest;
+  packageMetadata?: NovaPackageManifest;
 }): PluginInstallFailureResult | null {
   const pluginApiRangeCheck = resolvePackagePluginApiRange(params.packageMetadata);
   if (!pluginApiRangeCheck.ok) {
     return {
       ok: false,
-      error: `invalid package.json openclaw.compat.pluginApi: ${pluginApiRangeCheck.error}`,
+      error: `invalid package.json nova.compat.pluginApi: ${pluginApiRangeCheck.error}`,
       code: PLUGIN_INSTALL_ERROR_CODE.INVALID_PLUGIN_API,
     };
   }
@@ -64,10 +64,10 @@ function validateOpenClawPackageCompatibility(params: {
   return null;
 }
 
-export function validateOpenClawPackageInstallCompatibility(params: {
+export function validateNovaPackageInstallCompatibility(params: {
   runtime: PluginInstallRuntime;
   pluginId: string;
-  packageMetadata?: OpenClawPackageManifest;
+  packageMetadata?: NovaPackageManifest;
 }): PluginInstallFailureResult | null {
   const currentHostVersion = params.runtime.resolveCompatibilityHostVersion();
   const minHostVersionCheck = params.runtime.checkMinHostVersion({
@@ -78,7 +78,7 @@ export function validateOpenClawPackageInstallCompatibility(params: {
     if (minHostVersionCheck.kind === "invalid") {
       return {
         ok: false,
-        error: `invalid package.json openclaw.install.minHostVersion: ${minHostVersionCheck.error}`,
+        error: `invalid package.json nova.install.minHostVersion: ${minHostVersionCheck.error}`,
         code: PLUGIN_INSTALL_ERROR_CODE.INVALID_MIN_HOST_VERSION,
       };
     }
@@ -96,7 +96,7 @@ export function validateOpenClawPackageInstallCompatibility(params: {
     };
   }
 
-  return validateOpenClawPackageCompatibility({
+  return validateNovaPackageCompatibility({
     pluginId: params.pluginId,
     currentHostVersion,
     packageMetadata: params.packageMetadata,
@@ -122,7 +122,7 @@ export async function readOptionalPackageManifest(params: {
   }
 }
 
-export function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
+export function ensureNovaExtensions(params: { manifest: PackageManifest }):
   | {
       ok: true;
       entries: string[];
@@ -143,7 +143,7 @@ export function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
   if (resolved.status === "empty") {
     return {
       ok: false,
-      error: "package.json openclaw.extensions is empty",
+      error: "package.json nova.extensions is empty",
       code: PLUGIN_INSTALL_ERROR_CODE.EMPTY_NOVA_EXTENSIONS,
     };
   }
@@ -344,7 +344,7 @@ export async function runInstallSourceScan(params: {
     });
     return {
       ok: false,
-      error: `${params.subject} installation blocked: code safety scan failed (${String(err)}). Run "openclaw security audit --deep" for details.`,
+      error: `${params.subject} installation blocked: code safety scan failed (${String(err)}). Run "nova security audit --deep" for details.`,
       code: PLUGIN_INSTALL_ERROR_CODE.SECURITY_SCAN_FAILED,
     };
   }

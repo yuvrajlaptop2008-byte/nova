@@ -1,14 +1,14 @@
-import OpenClawKit
+import NovaKit
 import SwiftUI
 
 extension AgentProTab {
     func detailMetric(label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label)
-                .font(OpenClawType.caption2Medium)
+                .font(NovaType.caption2Medium)
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(OpenClawType.subheadSemiBold)
+                .font(NovaType.subheadSemiBold)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
@@ -16,7 +16,7 @@ extension AgentProTab {
         .padding(10)
         .background(
             Color.primary.opacity(0.055),
-            in: RoundedRectangle(cornerRadius: OpenClawRadius.sm, style: .continuous))
+            in: RoundedRectangle(cornerRadius: NovaRadius.sm, style: .continuous))
     }
 
     func emptyDetailRow(icon: String, title: String, detail: String) -> some View {
@@ -24,9 +24,9 @@ extension AgentProTab {
             ProIconBadge(systemName: icon, color: .secondary)
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(OpenClawType.subheadSemiBold)
+                    .font(NovaType.subheadSemiBold)
                 Text(detail)
-                    .font(OpenClawType.caption)
+                    .font(NovaType.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
             }

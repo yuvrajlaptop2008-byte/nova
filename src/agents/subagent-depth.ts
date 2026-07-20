@@ -6,7 +6,7 @@
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { resolveStorePath } from "../config/sessions/paths.js";
 import { listSessionEntries } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { parseStrictNonNegativeInteger } from "../infra/parse-finite-number.js";
 import { getSubagentDepth, parseAgentSessionKey } from "../sessions/session-key-utils.js";
 import { resolveDefaultAgentId } from "./agent-scope.js";
@@ -42,7 +42,7 @@ function readSessionStore(storePath: string, agentId: string): Record<string, Se
   return {};
 }
 
-function buildKeyCandidates(rawKey: string, cfg?: OpenClawConfig): string[] {
+function buildKeyCandidates(rawKey: string, cfg?: NovaConfig): string[] {
   if (!cfg) {
     return [rawKey];
   }
@@ -76,7 +76,7 @@ function findEntryBySessionId(
 
 function resolveEntryForSessionKey(params: {
   sessionKey: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   store?: Record<string, SessionDepthEntry>;
   cache: Map<string, Record<string, SessionDepthEntry>>;
 }): SessionDepthEntry | undefined {
@@ -122,7 +122,7 @@ function resolveEntryForSessionKey(params: {
 export function getSubagentDepthFromSessionStore(
   sessionKey: string | undefined | null,
   opts?: {
-    cfg?: OpenClawConfig;
+    cfg?: NovaConfig;
     store?: Record<string, SessionDepthEntry>;
   },
 ): number {

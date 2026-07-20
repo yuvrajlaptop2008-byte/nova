@@ -2,9 +2,9 @@
  * Resolves whether Codex app-server native execution can own shell/file work,
  * or whether Nova must keep exec/process on a configured node host.
  */
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { resolveSandboxRuntimeStatus } from "openclaw/plugin-sdk/sandbox";
-import { getSessionEntry, type SessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { resolveSandboxRuntimeStatus } from "nova/plugin-sdk/sandbox";
+import { getSessionEntry, type SessionEntry } from "nova/plugin-sdk/session-store-runtime";
 
 type ExecHost = "sandbox" | "gateway" | "node";
 type ExecTarget = "auto" | ExecHost;
@@ -14,7 +14,7 @@ type ExecHostOverride = {
   node?: string;
 };
 
-type AgentEntry = NonNullable<NonNullable<OpenClawConfig["agents"]>["list"]>[number];
+type AgentEntry = NonNullable<NonNullable<NovaConfig["agents"]>["list"]>[number];
 
 const DEFAULT_AGENT_ID = "main";
 const VALID_AGENT_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
@@ -44,7 +44,7 @@ export function resolveCodexNodeExecToolOverrides(
 
 /** Resolves node/gateway/sandbox execution ownership from overrides, session, agent, and config. */
 export function resolveCodexNativeExecutionPolicy(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   sessionEntry?: SessionEntry;
   sessionKey?: string;
   sessionId?: string;
@@ -118,7 +118,7 @@ export function formatCodexNativeNodeExecBlock(params: {
 }
 
 function resolvePolicyAgentId(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   sessionKey?: string;
   agentId?: string;
 }): string {
@@ -135,7 +135,7 @@ function resolvePolicyAgentId(params: {
 }
 
 function resolvePolicyAgentExec(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId: string;
 }): ExecHostOverride | undefined {
   return listAgentEntries(params.config).find(
@@ -143,7 +143,7 @@ function resolvePolicyAgentExec(params: {
   )?.tools?.exec;
 }
 
-function listAgentEntries(config: OpenClawConfig): AgentEntry[] {
+function listAgentEntries(config: NovaConfig): AgentEntry[] {
   return (config.agents?.list ?? []).filter(
     (entry): entry is AgentEntry => entry !== null && typeof entry === "object",
   );
@@ -162,7 +162,7 @@ function parseAgentIdFromSessionKey(sessionKey?: string): string | undefined {
 }
 
 function shouldReadRuntimeSessionEntry(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   sessionKey?: string;
   agentId?: string;
 }): boolean {
@@ -181,7 +181,7 @@ function shouldReadRuntimeSessionEntry(params: {
 }
 
 function isDefaultAgentSessionKeyForAgent(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   agentId: string;
 }): boolean {
   return (

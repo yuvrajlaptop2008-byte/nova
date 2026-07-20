@@ -4,7 +4,7 @@ function historyMessage(role: "assistant" | "user", text: string, timestamp: num
 
 export function buildBackgroundTasksMock(baseTime: number) {
   const now = Date.now();
-  const taskSessionKey = "agent:openclaw-mock:subagent:mock-task-1";
+  const taskSessionKey = "agent:nova-mock:subagent:mock-task-1";
   return {
     "chat.history": {
       cases: [
@@ -37,7 +37,7 @@ export function buildBackgroundTasksMock(baseTime: number) {
           taskId: "task-mock-running",
           status: "running",
           runtime: "subagent",
-          agentId: "openclaw-mock",
+          agentId: "nova-mock",
           title: "Map run-status indicator code",
           createdAt: now - 25_000,
           startedAt: now - 25_000,
@@ -51,7 +51,7 @@ export function buildBackgroundTasksMock(baseTime: number) {
           taskId: "task-mock-running-2",
           status: "running",
           runtime: "subagent",
-          agentId: "openclaw-mock",
+          agentId: "nova-mock",
           title: "Audit gateway event scope guards",
           createdAt: now - 95_000,
           startedAt: now - 95_000,
@@ -62,7 +62,7 @@ export function buildBackgroundTasksMock(baseTime: number) {
           taskId: `task-mock-finished-${n}`,
           status: n === 3 ? "failed" : "completed",
           runtime: "subagent",
-          agentId: "openclaw-mock",
+          agentId: "nova-mock",
           title: `Finished mock task number ${n} with a fairly long title`,
           createdAt: now - n * 600_000,
           startedAt: now - n * 600_000,

@@ -30,7 +30,7 @@ import {
  * Keep queued message-id dedupe shared across bundled chunks so redeliveries
  * are rejected no matter which chunk receives the enqueue call.
  */
-const RECENT_QUEUE_MESSAGE_IDS_KEY = Symbol.for("openclaw.recentQueueMessageIds");
+const RECENT_QUEUE_MESSAGE_IDS_KEY = Symbol.for("nova.recentQueueMessageIds");
 
 const RECENT_QUEUE_MESSAGE_IDS = resolveGlobalDedupeCache(RECENT_QUEUE_MESSAGE_IDS_KEY, {
   ttlMs: 5 * 60 * 1000,
@@ -227,7 +227,7 @@ function resetRecentQueuedMessageIdDedupe(): void {
 }
 
 if (process.env.VITEST === "true" || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.queueEnqueueTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.queueEnqueueTestApi")] = {
     resetRecentQueuedMessageIdDedupe,
   };
 }

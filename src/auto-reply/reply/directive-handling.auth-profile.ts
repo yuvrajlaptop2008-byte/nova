@@ -4,13 +4,13 @@ import {
   ensureAuthProfileStore,
   findPersistedAuthProfileCredential,
 } from "../../agents/auth-profiles/store.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 
 /** Resolves a user-selected auth profile override for the requested provider. */
 export function resolveProfileOverride(params: {
   rawProfile?: string;
   provider: string;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentDir?: string;
 }): { profileId?: string; error?: string } {
   const raw = normalizeOptionalString(params.rawProfile);

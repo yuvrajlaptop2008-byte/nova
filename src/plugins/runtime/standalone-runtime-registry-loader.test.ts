@@ -12,15 +12,15 @@ import {
 } from "../runtime.js";
 
 const loaderMocks = vi.hoisted(() => ({
-  loadOpenClawPlugins: vi.fn<typeof import("../loader.js").loadOpenClawPlugins>(),
+  loadNovaPlugins: vi.fn<typeof import("../loader.js").loadNovaPlugins>(),
 }));
 
 vi.mock("../loader.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../loader.js")>();
   return {
     ...actual,
-    loadOpenClawPlugins: (...args: Parameters<typeof loaderMocks.loadOpenClawPlugins>) =>
-      loaderMocks.loadOpenClawPlugins(...args),
+    loadNovaPlugins: (...args: Parameters<typeof loaderMocks.loadNovaPlugins>) =>
+      loaderMocks.loadNovaPlugins(...args),
   };
 });
 
@@ -37,7 +37,7 @@ function createRegistryWithPlugin(pluginId: string): PluginRegistry {
 }
 
 beforeEach(() => {
-  loaderMocks.loadOpenClawPlugins.mockReset();
+  loaderMocks.loadNovaPlugins.mockReset();
 });
 
 afterEach(() => {
@@ -52,7 +52,7 @@ describe("ensureStandaloneRuntimePluginRegistryLoaded tool-discovery installs", 
     const channelRegistry = createRegistryWithPlugin("channel-plugin");
     pinActivePluginChannelRegistry(channelRegistry);
     const toolRegistry = createRegistryWithPlugin("tool-plugin");
-    loaderMocks.loadOpenClawPlugins.mockReturnValue(toolRegistry);
+    loaderMocks.loadNovaPlugins.mockReturnValue(toolRegistry);
 
     ensureStandaloneRuntimePluginRegistryLoaded({
       surface: "channel",
@@ -73,7 +73,7 @@ describe("ensureStandaloneRuntimePluginRegistryLoaded tool-discovery installs", 
     const activeRegistry = createRegistryWithPlugin("provider-only");
     setActivePluginRegistry(activeRegistry, "active-key", "default", "/tmp/ws");
     const toolRegistry = createRegistryWithPlugin("tool-plugin");
-    loaderMocks.loadOpenClawPlugins.mockReturnValue(toolRegistry);
+    loaderMocks.loadNovaPlugins.mockReturnValue(toolRegistry);
 
     const result = ensureStandaloneRuntimePluginRegistryLoaded({
       surface: "active",
@@ -95,7 +95,7 @@ describe("ensureStandaloneRuntimePluginRegistryLoaded tool-discovery installs", 
     const activeRegistry = createRegistryWithPlugin("provider-only");
     setActivePluginRegistry(activeRegistry, "active-key", "default", "/tmp/ws");
     const migrationRegistry = createRegistryWithPlugin("migration-plugin");
-    loaderMocks.loadOpenClawPlugins.mockReturnValue(migrationRegistry);
+    loaderMocks.loadNovaPlugins.mockReturnValue(migrationRegistry);
 
     ensureStandaloneRuntimePluginRegistryLoaded({
       surface: "active",
@@ -117,7 +117,7 @@ describe("ensureStandaloneRuntimePluginRegistryLoaded tool-discovery installs", 
     // Establish the cold-start precondition deterministically (no active registry).
     resetPluginRuntimeStateForTest();
     const toolRegistry = createRegistryWithPlugin("tool-plugin");
-    loaderMocks.loadOpenClawPlugins.mockReturnValue(toolRegistry);
+    loaderMocks.loadNovaPlugins.mockReturnValue(toolRegistry);
 
     const result = ensureStandaloneRuntimePluginRegistryLoaded({
       surface: "channel",

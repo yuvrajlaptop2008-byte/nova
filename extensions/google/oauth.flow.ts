@@ -1,11 +1,11 @@
 // Google plugin module implements oauth.flow behavior.
-import { generateHexPkceVerifierChallenge } from "openclaw/plugin-sdk/provider-auth";
+import { generateHexPkceVerifierChallenge } from "nova/plugin-sdk/provider-auth";
 import {
   generateOAuthState,
   parseOAuthCallbackInput,
   waitForLocalOAuthCallback,
-} from "openclaw/plugin-sdk/provider-auth-runtime";
-import { isWSL2Sync } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/provider-auth-runtime";
+import { isWSL2Sync } from "nova/plugin-sdk/runtime-env";
 import { resolveOAuthClientConfig } from "./oauth.credentials.js";
 import { AUTH_URL, REDIRECT_URI, SCOPES } from "./oauth.shared.js";
 

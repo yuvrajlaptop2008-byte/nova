@@ -130,16 +130,10 @@ describe("check-gateway-watch-regression", () => {
       }),
     ).toBe("/usr/bin/bash");
 
-    const command = buildTimedWatchCommand(
-      "watch.pid",
-      "watch.time",
-      "/tmp/openclaw-watch",
-      19042,
-      {
-        existsSync: (candidate: string) =>
-          candidate === "/usr/bin/bash" || candidate === "/usr/bin/time",
-      },
-    );
+    const command = buildTimedWatchCommand("watch.pid", "watch.time", "/tmp/nova-watch", 19042, {
+      existsSync: (candidate: string) =>
+        candidate === "/usr/bin/bash" || candidate === "/usr/bin/time",
+    });
     const shellIndex = command.args.indexOf("/usr/bin/bash");
 
     if (shellIndex >= 0) {
@@ -152,17 +146,11 @@ describe("check-gateway-watch-regression", () => {
 
   it("runs gateway watch through the parent Node binary", () => {
     const nodeExecPath = "/opt/hostedtoolcache/node/24.11.1/x64/bin/node";
-    const command = buildTimedWatchCommand(
-      "watch.pid",
-      "watch.time",
-      "/tmp/openclaw-watch",
-      19042,
-      {
-        existsSync: (candidate: string) =>
-          candidate === "/usr/bin/bash" || candidate === "/usr/bin/time",
-        nodeExecPath,
-      },
-    );
+    const command = buildTimedWatchCommand("watch.pid", "watch.time", "/tmp/nova-watch", 19042, {
+      existsSync: (candidate: string) =>
+        candidate === "/usr/bin/bash" || candidate === "/usr/bin/time",
+      nodeExecPath,
+    });
     const shellSource = command.args.at(-1);
 
     expect(shellSource).toContain(`exec '${nodeExecPath}' scripts/watch-node.mjs gateway --force`);
@@ -297,7 +285,7 @@ describe("check-gateway-watch-regression", () => {
   });
 
   it("refreshes runtime postbuild stamps after build stamps", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-watch-stamps-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-watch-stamps-"));
     try {
       fs.mkdirSync(path.join(rootDir, ".git"), { recursive: true });
       writeBuildAndRuntimePostBuildStamps({ cwd: rootDir });
@@ -349,7 +337,7 @@ describe("check-gateway-watch-regression", () => {
   });
 
   it("removes the isolated watch home after spawn failures", async () => {
-    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-watch-output-"));
+    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-watch-output-"));
     const child = new EventEmitter() as EventEmitter & {
       stderr: EventEmitter;
       stdout: EventEmitter;
@@ -406,7 +394,7 @@ describe("check-gateway-watch-regression", () => {
   });
 
   it("stops waiting for readiness when the watch process exits early", async () => {
-    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-watch-output-"));
+    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-watch-output-"));
     const child = new EventEmitter() as EventEmitter & {
       stderr: EventEmitter;
       stdout: EventEmitter;
@@ -461,7 +449,7 @@ describe("check-gateway-watch-regression", () => {
   });
 
   it("records a ready gateway watch exit during the settle window as unplanned", async () => {
-    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-watch-output-"));
+    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-watch-output-"));
     const child = new EventEmitter() as EventEmitter & {
       stderr: EventEmitter;
       stdout: EventEmitter;
@@ -512,7 +500,7 @@ describe("check-gateway-watch-regression", () => {
   });
 
   it("records a ready gateway watch exit during the idle window as unplanned", async () => {
-    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-watch-output-"));
+    const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-gateway-watch-output-"));
     const child = new EventEmitter() as EventEmitter & {
       stderr: EventEmitter;
       stdout: EventEmitter;

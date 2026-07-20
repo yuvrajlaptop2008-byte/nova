@@ -1,4 +1,4 @@
-export const NATIVE_HISTORY_STATE_EVENT = "openclaw:native-history-state";
+export const NATIVE_HISTORY_STATE_EVENT = "nova:native-history-state";
 
 export type NativeHistoryState = {
   canGoBack: boolean;

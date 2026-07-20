@@ -8,9 +8,9 @@ function getAbortReason(signal: AbortSignal): unknown {
 }
 
 /** Marks AbortErrors produced by abortable() so provider aborts stay retryable. */
-const NOVA_ABORTABLE_WRAPPER = Symbol.for("openclaw.abortable.wrapper");
+const NOVA_ABORTABLE_WRAPPER = Symbol.for("nova.abortable.wrapper");
 
-export function isOpenClawAbortableWrapper(err: unknown): boolean {
+export function isNovaAbortableWrapper(err: unknown): boolean {
   return err !== null && typeof err === "object" && NOVA_ABORTABLE_WRAPPER in err;
 }
 

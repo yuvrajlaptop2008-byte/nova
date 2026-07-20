@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/nova-e2e-instance.sh
 source scripts/lib/docker-e2e-logs.sh
 
 if [ -f dist/index.mjs ]; then
@@ -15,7 +15,7 @@ else
 fi
 export NOVA_ENTRY
 
-openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+nova_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 
 probe="scripts/e2e/lib/bundled-plugin-install-uninstall/probe.mjs"
 runtime_smoke="scripts/e2e/lib/bundled-plugin-install-uninstall/runtime-smoke.mjs"
@@ -30,7 +30,7 @@ run_logged_sweep_command() {
   local label="$1"
   local log_file="$2"
   shift 2
-  if openclaw_e2e_maybe_timeout "$sweep_command_timeout" "$@" >"$log_file" 2>&1; then
+  if nova_e2e_maybe_timeout "$sweep_command_timeout" "$@" >"$log_file" 2>&1; then
     return 0
   else
     local status=$?
@@ -69,8 +69,8 @@ echo "Selected ${#plugin_entries[@]} bundled plugins for shard ${NOVA_BUNDLED_PL
 plugin_index=0
 for plugin_entry in "${plugin_entries[@]}"; do
   IFS=$'\t' read -r plugin_id plugin_dir requires_config plugin_root <<<"$plugin_entry"
-  install_log="/tmp/openclaw-install-${plugin_index}.log"
-  uninstall_log="/tmp/openclaw-uninstall-${plugin_index}.log"
+  install_log="/tmp/nova-install-${plugin_index}.log"
+  uninstall_log="/tmp/nova-uninstall-${plugin_index}.log"
   plugin_started_at="$(now_ms)"
   echo "Installing bundled plugin: $plugin_id ($plugin_dir)"
   run_logged_sweep_command "install $plugin_id" "$install_log" \

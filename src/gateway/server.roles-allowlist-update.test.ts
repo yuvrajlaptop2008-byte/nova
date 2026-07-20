@@ -490,16 +490,13 @@ describe("gateway node command allowlist", () => {
 
     try {
       const systemDeviceIdentity = loadOrCreateDeviceIdentity({
-        path: path.join(
-          os.tmpdir(),
-          `openclaw-node-system-run-${Date.now()}-${Math.random()}.sqlite`,
-        ),
+        path: path.join(os.tmpdir(), `nova-node-system-run-${Date.now()}-${Math.random()}.sqlite`),
       });
       const emptyDeviceIdentity = loadOrCreateDeviceIdentity({
-        path: path.join(os.tmpdir(), `openclaw-node-empty-${Date.now()}-${Math.random()}.sqlite`),
+        path: path.join(os.tmpdir(), `nova-node-empty-${Date.now()}-${Math.random()}.sqlite`),
       });
       const allowedDeviceIdentity = loadOrCreateDeviceIdentity({
-        path: path.join(os.tmpdir(), `openclaw-node-allowed-${Date.now()}-${Math.random()}.sqlite`),
+        path: path.join(os.tmpdir(), `nova-node-allowed-${Date.now()}-${Math.random()}.sqlite`),
       });
 
       systemClient = await connectNodeClientWithPairing({
@@ -659,7 +656,7 @@ describe("gateway node command allowlist", () => {
     let configPath: string | undefined;
 
     try {
-      const deviceIdentity = createDeviceIdentityForTest("openclaw-node-current-allowlist");
+      const deviceIdentity = createDeviceIdentityForTest("nova-node-current-allowlist");
       nodeClient = await connectNodeClientWithPairing({
         port,
         commands: ["canvas.snapshot"],
@@ -695,7 +692,7 @@ describe("gateway node command allowlist", () => {
   });
 
   test("records only allowlisted commands in pending node pairing requests", async () => {
-    const deviceIdentity = createDeviceIdentityForTest("openclaw-allowlisted-pending");
+    const deviceIdentity = createDeviceIdentityForTest("nova-allowlisted-pending");
     const displayName = "node-pending-allowlisted-only";
     let nodeClient: GatewayClient | undefined;
 
@@ -719,7 +716,7 @@ describe("gateway node command allowlist", () => {
   });
 
   test("rejects reconnect metadata spoof for paired node devices", async () => {
-    const deviceIdentity = createDeviceIdentityForTest("openclaw-spoof-test-device");
+    const deviceIdentity = createDeviceIdentityForTest("nova-spoof-test-device");
 
     let iosClient: GatewayClient | undefined;
     try {
@@ -752,7 +749,7 @@ describe("gateway node command allowlist", () => {
   });
 
   test("does not promote paired desktop client id changes into host command defaults", async () => {
-    const deviceIdentity = createDeviceIdentityForTest("openclaw-client-id-promotion");
+    const deviceIdentity = createDeviceIdentityForTest("nova-client-id-promotion");
     const displayName = "node-client-id-promotion";
 
     let macClient: GatewayClient | undefined;
@@ -803,7 +800,7 @@ describe("gateway node command allowlist", () => {
   });
 
   test("allows canonical node-host reconnect for legacy pinned platform metadata", async () => {
-    const deviceIdentity = createDeviceIdentityForTest("openclaw-node-host-platform-upgrade");
+    const deviceIdentity = createDeviceIdentityForTest("nova-node-host-platform-upgrade");
     const displayName = "node-host-platform-upgrade";
 
     let legacyClient: GatewayClient | undefined;
@@ -849,7 +846,7 @@ describe("gateway node command allowlist", () => {
   });
 
   test("filters system.run for confusable iOS metadata at connect time", async () => {
-    const deviceIdentity = createDeviceIdentityForTest("openclaw-confusable-node-greek-omicron");
+    const deviceIdentity = createDeviceIdentityForTest("nova-confusable-node-greek-omicron");
     const displayName = "node-greek-omicron-family";
 
     let client: GatewayClient | undefined;

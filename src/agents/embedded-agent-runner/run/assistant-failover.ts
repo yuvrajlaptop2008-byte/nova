@@ -2,7 +2,7 @@
  * Handles assistant-stage failover decisions during embedded-agent attempts.
  */
 import { sanitizeForLog } from "../../../../packages/terminal-core/src/ansi.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import type { AssistantMessage } from "../../../llm/types.js";
 import { classifyRateLimitWindow } from "../../../llm/utils/rate-limit-window.js";
 import type { AuthProfileFailureReason } from "../../auth-profiles.js";
@@ -80,7 +80,7 @@ export async function handleAssistantFailover(params: {
   provider: string;
   activeErrorContext: { provider: string; model: string };
   lastAssistant: AssistantMessage | undefined;
-  config: OpenClawConfig | undefined;
+  config: NovaConfig | undefined;
   sessionKey?: string;
   authFailure: boolean;
   rateLimitFailure: boolean;
@@ -326,7 +326,7 @@ export async function handleAssistantFailover(params: {
 
 function resolveAssistantFailoverErrorMessage(params: {
   lastAssistant: AssistantMessage | undefined;
-  config: OpenClawConfig | undefined;
+  config: NovaConfig | undefined;
   sessionKey?: string;
   activeErrorContext: { provider: string; model: string };
   timedOut: boolean;

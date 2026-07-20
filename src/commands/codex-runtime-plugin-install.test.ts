@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 const mocks = vi.hoisted(() => ({
   loadInstalledPluginIndexInstallRecords: vi.fn(),
@@ -107,7 +107,7 @@ describe("Codex runtime plugin install repair", () => {
     mocks.loadInstalledPluginIndexInstallRecords.mockResolvedValue({
       codex: { source: "npm", installPath: process.cwd() },
     });
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       plugins: {
         allow: ["codex"],
         entries: { codex: { enabled: false } },

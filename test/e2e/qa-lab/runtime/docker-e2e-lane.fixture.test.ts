@@ -50,13 +50,13 @@ describe("QA Docker E2E lane fixture", () => {
     );
 
     const updateMigration = resolveQaDockerE2eLane("update-migration", {
-      NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC: "openclaw@custom",
+      NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC: "nova@custom",
       NOVA_UPGRADE_SURVIVOR_SCENARIO: "custom-scenario",
     });
 
     expect(updateMigration.script).toBe("scripts/e2e/upgrade-survivor-docker.sh");
     expect(updateMigration.env.NOVA_UPGRADE_SURVIVOR_PUBLISHED_BASELINE).toBe("1");
-    expect(updateMigration.env.NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC).toBe("openclaw@custom");
+    expect(updateMigration.env.NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC).toBe("nova@custom");
     expect(updateMigration.env.NOVA_UPGRADE_SURVIVOR_SCENARIO).toBe("custom-scenario");
 
     const updateRestartAuth = resolveQaDockerE2eLane("update-restart-auth", {});

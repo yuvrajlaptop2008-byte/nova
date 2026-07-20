@@ -309,7 +309,7 @@ describe("Plugin ClawHub New workflow", () => {
     expect(publishRun).toContain("GitHub Actions trusted publisher repair before OIDC migration");
     expect(publishRun).toContain('"${NOVA_CLAWHUB_CLI}" package trusted-publisher set');
     expect(publishRun).toContain("timeout --signal=TERM --kill-after=10s 300s");
-    expect(publishRun).toContain("--repository openclaw/openclaw");
+    expect(publishRun).toContain("--repository nova/nova");
     expect(publishRun).toContain("--workflow-filename plugin-clawhub-release.yml");
     expect(publishRun).not.toContain("--environment");
     expect(step(publish, "Verify exact ClawHub registry artifact bytes").run).toContain(

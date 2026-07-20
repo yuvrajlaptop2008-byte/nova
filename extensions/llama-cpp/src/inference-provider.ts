@@ -7,16 +7,10 @@ import type {
   LlamaContextSequence,
   LlamaModel,
 } from "node-llama-cpp";
-import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
-import type {
-  AssistantMessage,
-  Context,
-  StopReason,
-  ToolCall,
-  Usage,
-} from "openclaw/plugin-sdk/llm";
-import { createAssistantMessageEventStream } from "openclaw/plugin-sdk/llm";
-import type { ModelProviderConfig } from "openclaw/plugin-sdk/provider-model-shared";
+import type { StreamFn } from "nova/plugin-sdk/agent-core";
+import type { AssistantMessage, Context, StopReason, ToolCall, Usage } from "nova/plugin-sdk/llm";
+import { createAssistantMessageEventStream } from "nova/plugin-sdk/llm";
+import type { ModelProviderConfig } from "nova/plugin-sdk/provider-model-shared";
 import {
   DEFAULT_LLAMA_CPP_CONTEXT_SIZE,
   resolveLlamaCppModelCacheDir,
@@ -410,7 +404,7 @@ export function createLlamaCppStreamFn(params: { providerConfig?: ModelProviderC
 }
 
 if (process.env.VITEST || process.env.NODE_ENV === "test") {
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.llamaCppInferenceTestApi")] = {
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.llamaCppInferenceTestApi")] = {
     mapContextToLlamaChatHistory,
     mapToolsToLlamaFunctions,
     clearLlamaCppInferenceCacheForTests,

@@ -1,10 +1,10 @@
 import type { WorkboardChange } from "@nova/workboard-contract";
-import type { OpenClawPluginService } from "../api.js";
+import type { NovaPluginService } from "../api.js";
 import type { WorkboardStore } from "./store.js";
 
 const WORKBOARD_EXTERNAL_CHANGE_CHECK_MS = 1000;
 
-export function createWorkboardChangeEventService(store: WorkboardStore): OpenClawPluginService {
+export function createWorkboardChangeEventService(store: WorkboardStore): NovaPluginService {
   let unsubscribe: (() => void) | undefined;
   let timer: ReturnType<typeof setInterval> | undefined;
 

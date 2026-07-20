@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveRegistryUpdateChannel } from "../infra/update-channels.js";
 import type { PluginEnableResult } from "../plugins/enable.js";
 import { resolveNpmInstallSpecsForUpdateChannel } from "../plugins/install-channel-specs.js";
@@ -59,7 +59,7 @@ vi.mock("../plugins/clawhub.js", () => ({
 }));
 
 const enablePluginInConfig = vi.hoisted(() =>
-  vi.fn<(cfg: OpenClawConfig, pluginId: string) => PluginEnableResult>((cfg, pluginId) => ({
+  vi.fn<(cfg: NovaConfig, pluginId: string) => PluginEnableResult>((cfg, pluginId) => ({
     config: cfg,
     enabled: true,
     pluginId,
@@ -71,7 +71,7 @@ vi.mock("../plugins/enable.js", () => ({
 }));
 
 const recordPluginInstall = vi.hoisted(() =>
-  vi.fn((cfg: OpenClawConfig, update: { pluginId: string }) => ({
+  vi.fn((cfg: NovaConfig, update: { pluginId: string }) => ({
     ...cfg,
     plugins: {
       ...cfg.plugins,
@@ -158,13 +158,13 @@ function readFirstMockCall(mock: unknown, label: string): unknown[] {
 
 type NpmPackInstallCall = {
   archivePath?: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   expectedPluginId?: string;
   trustedSourceLinkedOfficialInstall?: boolean;
 };
 
 type NpmSpecInstallCall = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   expectedIntegrity?: string;
   expectedPluginId?: string;
   mode?: string;
@@ -174,7 +174,7 @@ type NpmSpecInstallCall = {
 };
 
 type ClawHubInstallCall = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   expectedPluginId?: string;
   logger?: {
     info?: (message: string) => void;
@@ -354,7 +354,7 @@ describe("ensureOnboardingPluginInstalled", () => {
 
   it("uses a guarded npm-pack install override for the matching plugin id", async () => {
     const archivePath = path.resolve("tmp/demo-plugin.tgz");
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       security: {
         installPolicy: {
           enabled: true,
@@ -375,7 +375,7 @@ describe("ensureOnboardingPluginInstalled", () => {
     installPluginFromNpmPackArchive.mockResolvedValue({
       ok: true,
       pluginId: "demo-plugin",
-      targetDir: "/tmp/openclaw/extensions/demo-plugin",
+      targetDir: "/tmp/nova/extensions/demo-plugin",
       version: "1.2.3",
       manifestName: "@demo/plugin",
       npmTarballName: "demo-plugin-1.2.3.tgz",
@@ -420,7 +420,7 @@ describe("ensureOnboardingPluginInstalled", () => {
     expect(packCall.expectedPluginId).toBe("demo-plugin");
     expect(packCall).not.toHaveProperty("trustedSourceLinkedOfficialInstall");
     const [, recordUpdate] = readFirstMockCall(recordPluginInstall, "recordPluginInstall") as [
-      OpenClawConfig,
+      NovaConfig,
       PluginInstallRecord,
     ];
     expect(recordUpdate).toEqual({
@@ -428,7 +428,7 @@ describe("ensureOnboardingPluginInstalled", () => {
       source: "npm",
       spec: "file:demo-plugin-1.2.3.tgz",
       sourcePath: archivePath,
-      installPath: "/tmp/openclaw/extensions/demo-plugin",
+      installPath: "/tmp/nova/extensions/demo-plugin",
       version: "1.2.3",
       artifactKind: "npm-pack",
       artifactFormat: "tgz",
@@ -455,7 +455,7 @@ describe("ensureOnboardingPluginInstalled", () => {
     installPluginFromNpmSpec.mockResolvedValue({
       ok: true,
       pluginId: "codex",
-      targetDir: "/tmp/openclaw/extensions/codex",
+      targetDir: "/tmp/nova/extensions/codex",
       version: "2026.5.8",
       npmResolution: {
         name: "@nova/codex",
@@ -491,7 +491,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("installs and records ClawHub provider plugins with source facts", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       security: {
         installPolicy: {
           enabled: true,
@@ -563,7 +563,7 @@ describe("ensureOnboardingPluginInstalled", () => {
     expect(update).toHaveBeenCalledWith("Downloading");
     expect(stop).toHaveBeenCalledWith("Installed Demo Provider plugin");
     const [, recordUpdate] = readFirstMockCall(recordPluginInstall, "recordPluginInstall") as [
-      OpenClawConfig,
+      NovaConfig,
       PluginInstallRecord,
     ];
     expect(recordUpdate.pluginId).toBe("demo-plugin");
@@ -649,7 +649,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("passes npm specs and optional expected integrity to npm installs with progress", async () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       security: {
         installPolicy: {
           enabled: true,
@@ -663,9 +663,9 @@ describe("ensureOnboardingPluginInstalled", () => {
       },
     };
     const npmResolution = {
-      name: "@wecom/wecom-openclaw-plugin",
+      name: "@wecom/wecom-nova-plugin",
       version: "1.2.3",
-      resolvedSpec: "@wecom/wecom-openclaw-plugin@1.2.3",
+      resolvedSpec: "@wecom/wecom-nova-plugin@1.2.3",
       integrity: "sha512-wecom",
       shasum: "deadbeef",
       resolvedAt: "2026-04-24T00:00:00.000Z",
@@ -698,7 +698,7 @@ describe("ensureOnboardingPluginInstalled", () => {
         pluginId: "demo-plugin",
         label: "WeCom",
         install: {
-          npmSpec: "@wecom/wecom-openclaw-plugin@1.2.3",
+          npmSpec: "@wecom/wecom-nova-plugin@1.2.3",
           expectedIntegrity: "sha512-wecom",
         },
         trustedSourceLinkedOfficialInstall: true,
@@ -713,7 +713,7 @@ describe("ensureOnboardingPluginInstalled", () => {
     const [npmCall] = readFirstMockCall(installPluginFromNpmSpec, "installPluginFromNpmSpec") as [
       NpmSpecInstallCall,
     ];
-    expect(npmCall.spec).toBe("@wecom/wecom-openclaw-plugin@1.2.3");
+    expect(npmCall.spec).toBe("@wecom/wecom-nova-plugin@1.2.3");
     expect(npmCall.config).toBe(cfg);
     expect(npmCall.mode).toBe("update");
     expect(npmCall.expectedPluginId).toBe("demo-plugin");
@@ -724,12 +724,12 @@ describe("ensureOnboardingPluginInstalled", () => {
     expect(stop).toHaveBeenCalledWith("Installed WeCom plugin");
     expect(buildNpmResolutionInstallFields).toHaveBeenCalledWith(npmResolution);
     const [, recordUpdate] = readFirstMockCall(recordPluginInstall, "recordPluginInstall") as [
-      OpenClawConfig,
+      NovaConfig,
       PluginInstallRecord,
     ];
     expect(recordUpdate.pluginId).toBe("demo-plugin");
     expect(recordUpdate.source).toBe("npm");
-    expect(recordUpdate.spec).toBe("@wecom/wecom-openclaw-plugin@1.2.3");
+    expect(recordUpdate.spec).toBe("@wecom/wecom-nova-plugin@1.2.3");
     expect(recordUpdate.installPath).toBe("/tmp/demo-plugin");
     expect(recordUpdate.version).toBe("1.2.3");
     expect(recordUpdate.resolvedName).toBe(installFields.resolvedName);
@@ -745,7 +745,7 @@ describe("ensureOnboardingPluginInstalled", () => {
       | undefined;
     expect(installed?.pluginId).toBe("demo-plugin");
     expect(installed?.source).toBe("npm");
-    expect(installed?.spec).toBe("@wecom/wecom-openclaw-plugin@1.2.3");
+    expect(installed?.spec).toBe("@wecom/wecom-nova-plugin@1.2.3");
     expect(clearLoadInstalledPluginIndexInstallRecordsCache).toHaveBeenCalledOnce();
     expect(clearPluginMetadataLifecycleCaches).toHaveBeenCalledOnce();
     expect(invalidatePluginRuntimeDiscoveryAfterConfigMutation).toHaveBeenCalledWith(
@@ -789,7 +789,7 @@ describe("ensureOnboardingPluginInstalled", () => {
     ];
     expect(npmCall.spec).toBe(`@nova/discord@${VERSION}`);
     const [, recordUpdate] = readFirstMockCall(recordPluginInstall, "recordPluginInstall") as [
-      OpenClawConfig,
+      NovaConfig,
       PluginInstallRecord,
     ];
     expect(recordUpdate.spec).toBe("@nova/discord");
@@ -828,7 +828,7 @@ describe("ensureOnboardingPluginInstalled", () => {
     });
 
     const [, recordUpdate] = readFirstMockCall(recordPluginInstall, "recordPluginInstall") as [
-      OpenClawConfig,
+      NovaConfig,
       PluginInstallRecord,
     ];
     expect(recordUpdate.spec).toBe("@nova/discord");
@@ -845,7 +845,7 @@ describe("ensureOnboardingPluginInstalled", () => {
       return {
         ok: true,
         pluginId: "codex",
-        targetDir: "/tmp/openclaw/extensions/codex",
+        targetDir: "/tmp/nova/extensions/codex",
         version: "2026.5.10-beta.5",
       };
     });
@@ -1198,7 +1198,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("does not offer local installs when the workspace only has a spoofed .git marker", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-spoofed-git-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-spoofed-git-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const cwdDir = path.join(temp, "cwd");
       const pluginDir = path.join(workspaceDir, "plugins", "demo");
@@ -1256,7 +1256,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("allows local installs for real gitdir checkouts and sanitizes prompt text", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-gitdir-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-gitdir-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(workspaceDir, "plugins", "demo");
       await fs.mkdir(pluginDir, { recursive: true });
@@ -1314,7 +1314,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("does not add local plugin paths when enablement is blocked by policy", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-blocked-enable-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-blocked-enable-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(workspaceDir, "plugins", "demo");
       await fs.mkdir(pluginDir, { recursive: true });
@@ -1362,7 +1362,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("allows local installs for linked git worktrees", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-worktree-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-worktree-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(workspaceDir, "plugins", "demo");
       const commonGitDir = path.join(temp, "repo.git");
@@ -1416,7 +1416,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("records local install source metadata when a local path is selected", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-local-record-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-local-record-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(workspaceDir, "plugins", "demo");
       await fs.mkdir(path.join(workspaceDir, ".git"), { recursive: true });
@@ -1443,7 +1443,7 @@ describe("ensureOnboardingPluginInstalled", () => {
       const [recordCfg, recordUpdate] = readFirstMockCall(
         recordPluginInstall,
         "recordPluginInstall",
-      ) as [OpenClawConfig, PluginInstallRecord];
+      ) as [NovaConfig, PluginInstallRecord];
       expect(recordCfg.plugins?.load?.paths).toEqual([realPluginDir]);
       expect(recordUpdate).toEqual({
         pluginId: "demo-plugin",
@@ -1472,7 +1472,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("hides the npm download option for bundled plugins so the menu matches non-npm channels", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-bundled-prompt-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-bundled-prompt-" }, async (temp) => {
       const bundledDir = path.join(temp, "dist", "extensions", "tlon");
       await fs.mkdir(bundledDir, { recursive: true });
       const realBundledDir = await fs.realpath(bundledDir);
@@ -1535,7 +1535,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("enables bundled plugins without adding their bundled directory as a local install", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-bundled-record-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-bundled-record-" }, async (temp) => {
       const bundledDir = path.join(temp, "dist", "extensions", "discord");
       await fs.mkdir(bundledDir, { recursive: true });
       const realBundledDir = await fs.realpath(bundledDir);
@@ -1581,71 +1581,68 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("records local install source metadata when npm install falls back to local", async () => {
-    await withTempDir(
-      { prefix: "openclaw-onboarding-install-npm-fallback-record-" },
-      async (temp) => {
-        const workspaceDir = path.join(temp, "workspace");
-        const pluginDir = path.join(workspaceDir, "plugins", "demo");
-        await fs.mkdir(path.join(workspaceDir, ".git"), { recursive: true });
-        await fs.mkdir(pluginDir, { recursive: true });
-        installPluginFromNpmSpec.mockResolvedValueOnce({
-          ok: false,
-          error: "registry unavailable",
-        });
-        const note = vi.fn(async () => {});
+    await withTempDir({ prefix: "nova-onboarding-install-npm-fallback-record-" }, async (temp) => {
+      const workspaceDir = path.join(temp, "workspace");
+      const pluginDir = path.join(workspaceDir, "plugins", "demo");
+      await fs.mkdir(path.join(workspaceDir, ".git"), { recursive: true });
+      await fs.mkdir(pluginDir, { recursive: true });
+      installPluginFromNpmSpec.mockResolvedValueOnce({
+        ok: false,
+        error: "registry unavailable",
+      });
+      const note = vi.fn(async () => {});
 
-        const result = await ensureOnboardingPluginInstalled({
-          cfg: {},
-          entry: {
-            pluginId: "demo-plugin",
-            label: "Demo Plugin",
-            install: {
-              npmSpec: "@demo/plugin@1.2.3",
-              localPath: "plugins/demo",
-            },
+      const result = await ensureOnboardingPluginInstalled({
+        cfg: {},
+        entry: {
+          pluginId: "demo-plugin",
+          label: "Demo Plugin",
+          install: {
+            npmSpec: "@demo/plugin@1.2.3",
+            localPath: "plugins/demo",
           },
-          prompter: {
-            select: vi.fn(async () => "npm"),
-            note,
-            confirm: vi.fn(async () => true),
-            progress: vi.fn(() => ({ update: vi.fn(), stop: vi.fn() })),
-          } as never,
-          runtime: {} as never,
-          workspaceDir,
-        });
+        },
+        prompter: {
+          select: vi.fn(async () => "npm"),
+          note,
+          confirm: vi.fn(async () => true),
+          progress: vi.fn(() => ({ update: vi.fn(), stop: vi.fn() })),
+        } as never,
+        runtime: {} as never,
+        workspaceDir,
+      });
 
-        const realPluginDir = await fs.realpath(pluginDir);
-        expect(note).toHaveBeenCalledWith(
-          "Failed to install @demo/plugin@1.2.3: registry unavailable\nReturning to selection.",
-          "Plugin install",
-        );
-        const [recordCfg, recordUpdate] = readFirstMockCall(
-          recordPluginInstall,
-          "recordPluginInstall",
-        ) as [OpenClawConfig, PluginInstallRecord];
-        expect(recordCfg.plugins?.load?.paths).toEqual([realPluginDir]);
-        expect(recordUpdate).toEqual({
+      const realPluginDir = await fs.realpath(pluginDir);
+      expect(note).toHaveBeenCalledWith(
+        "Failed to install @demo/plugin@1.2.3: registry unavailable\nReturning to selection.",
+        "Plugin install",
+      );
+      const [recordCfg, recordUpdate] = readFirstMockCall(
+        recordPluginInstall,
+        "recordPluginInstall",
+      ) as [NovaConfig, PluginInstallRecord];
+      expect(recordCfg.plugins?.load?.paths).toEqual([realPluginDir]);
+      expect(recordUpdate).toEqual({
+        pluginId: "demo-plugin",
+        source: "path",
+        sourcePath: "./plugins/demo",
+        spec: "@demo/plugin@1.2.3",
+      });
+      expect(result.installed).toBe(true);
+      expect(result.status).toBe("installed");
+      expect(result.cfg.plugins?.installs).toEqual({
+        "demo-plugin": {
           pluginId: "demo-plugin",
           source: "path",
           sourcePath: "./plugins/demo",
           spec: "@demo/plugin@1.2.3",
-        });
-        expect(result.installed).toBe(true);
-        expect(result.status).toBe("installed");
-        expect(result.cfg.plugins?.installs).toEqual({
-          "demo-plugin": {
-            pluginId: "demo-plugin",
-            source: "path",
-            sourcePath: "./plugins/demo",
-            spec: "@demo/plugin@1.2.3",
-          },
-        });
-      },
-    );
+        },
+      });
+    });
   });
 
   it("records absolute local catalog paths as workspace-relative source metadata", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-portable-record-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-portable-record-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(workspaceDir, "plugins", "demo");
       await fs.mkdir(path.join(workspaceDir, ".git"), { recursive: true });
@@ -1671,7 +1668,7 @@ describe("ensureOnboardingPluginInstalled", () => {
       const [recordCfg, recordUpdate] = readFirstMockCall(
         recordPluginInstall,
         "recordPluginInstall",
-      ) as [OpenClawConfig, PluginInstallRecord];
+      ) as [NovaConfig, PluginInstallRecord];
       expect(recordCfg).toEqual({
         plugins: {
           load: {
@@ -1688,7 +1685,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("keeps local installs available when cwd is a git repo but workspaceDir is not", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-cwd-git-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-cwd-git-" }, async (temp) => {
       const repoDir = path.join(temp, "repo");
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(repoDir, "demo-plugin");
@@ -1742,7 +1739,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("rejects local install paths outside the trusted workspace roots", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-outside-root-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-outside-root-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(temp, "external-plugin");
       await fs.mkdir(path.join(workspaceDir, ".git"), { recursive: true });
@@ -1782,7 +1779,7 @@ describe("ensureOnboardingPluginInstalled", () => {
   });
 
   it("rejects local install paths when relative resolution looks cross-drive", async () => {
-    await withTempDir({ prefix: "openclaw-onboarding-install-cross-drive-" }, async (temp) => {
+    await withTempDir({ prefix: "nova-onboarding-install-cross-drive-" }, async (temp) => {
       const workspaceDir = path.join(temp, "workspace");
       const pluginDir = path.join(workspaceDir, "plugins", "demo");
       await fs.mkdir(path.join(workspaceDir, ".git"), { recursive: true });

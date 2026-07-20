@@ -285,7 +285,7 @@ describe("run-oxlint", () => {
   });
 
   it("fails a stuck oxlint shard instead of waiting forever", async () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-oxlint-shard-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "nova-oxlint-shard-"));
     const runner = join(tempDir, "hang-runner.mjs");
     try {
       writeFileSync(runner, "setInterval(() => {}, 1000);\n", "utf8");
@@ -311,7 +311,7 @@ describe("run-oxlint", () => {
   it.runIf(process.platform !== "win32")(
     "kills timed-out shard process groups when the leader exits first",
     async () => {
-      const tempDir = createTempDir("openclaw-oxlint-timeout-group-");
+      const tempDir = createTempDir("nova-oxlint-timeout-group-");
       const runner = join(tempDir, "timeout-runner.mjs");
       const childPidPath = join(tempDir, "child.pid");
       let childPid = 0;
@@ -362,7 +362,7 @@ describe("run-oxlint", () => {
   it.runIf(process.platform !== "win32")(
     "forwards parent termination to detached oxlint shard processes",
     () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-oxlint-signal-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "nova-oxlint-signal-"));
       const runner = join(tempDir, "signal-runner.mjs");
       const harness = join(tempDir, "signal-harness.mjs");
       const readyFile = join(tempDir, "ready");
@@ -437,7 +437,7 @@ describe("run-oxlint", () => {
   it.runIf(process.platform !== "win32")(
     "force kills detached shard processes that ignore parent termination",
     () => {
-      const tempDir = mkdtempSync(join(tmpdir(), "openclaw-oxlint-signal-"));
+      const tempDir = mkdtempSync(join(tmpdir(), "nova-oxlint-signal-"));
       const runner = join(tempDir, "signal-runner.mjs");
       const harness = join(tempDir, "signal-harness.mjs");
       const readyFile = join(tempDir, "ready");
@@ -512,7 +512,7 @@ describe("run-oxlint", () => {
   it.runIf(process.platform !== "win32")(
     "kills parent-terminated shard process groups when the leader exits first",
     () => {
-      const tempDir = createTempDir("openclaw-oxlint-parent-group-");
+      const tempDir = createTempDir("nova-oxlint-parent-group-");
       const runner = join(tempDir, "signal-runner.mjs");
       const harness = join(tempDir, "signal-harness.mjs");
       const childPidPath = join(tempDir, "child.pid");

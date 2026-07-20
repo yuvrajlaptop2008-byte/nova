@@ -153,7 +153,7 @@ async function loadPlanFingerprint(overwrite = false): Promise<string> {
 
 describe("memory migration gateway handlers", () => {
   beforeEach(async () => {
-    sourceRoot = tempDirs.make("openclaw-memory-gateway-");
+    sourceRoot = tempDirs.make("nova-memory-gateway-");
     await fs.writeFile(path.join(sourceRoot, "MEMORY.md"), "reviewed memory", "utf8");
     config = createConfig();
     mocks.providers = [provider()];

@@ -4,7 +4,7 @@
 import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { normalizeProviderModelIdWithRuntime } from "../agents/provider-model-normalization.runtime.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { resetLogger, setLoggerOverride } from "../logging/logger.js";
 import { loggingState } from "../logging/state.js";
 import type { PluginManifestRecord, PluginManifestRegistry } from "../plugins/manifest-registry.js";
@@ -25,7 +25,7 @@ const normalizeProviderModelIdWithRuntimeMock = vi.hoisted(() =>
 const pluginManifestRegistryMocks = vi.hoisted(() => ({
   manifestRegistry: undefined as PluginManifestRegistry | undefined,
   loadPluginManifestRegistryForInstalledIndex: vi.fn(),
-  listOpenClawPluginManifestMetadata: vi.fn(),
+  listNovaPluginManifestMetadata: vi.fn(),
 }));
 
 vi.mock("../agents/provider-model-normalization.runtime.js", () => {
@@ -52,11 +52,11 @@ vi.mock("../plugins/manifest-metadata-scan.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../plugins/manifest-metadata-scan.js")>();
   return {
     ...actual,
-    listOpenClawPluginManifestMetadata: (
-      params?: Parameters<typeof actual.listOpenClawPluginManifestMetadata>[0],
+    listNovaPluginManifestMetadata: (
+      params?: Parameters<typeof actual.listNovaPluginManifestMetadata>[0],
     ) => {
-      pluginManifestRegistryMocks.listOpenClawPluginManifestMetadata(params);
-      return actual.listOpenClawPluginManifestMetadata(params);
+      pluginManifestRegistryMocks.listNovaPluginManifestMetadata(params);
+      return actual.listNovaPluginManifestMetadata(params);
     },
   };
 });
@@ -141,7 +141,7 @@ describe("model-pricing-cache", () => {
     clearLoadPluginMetadataSnapshotMemo();
     pluginManifestRegistryMocks.manifestRegistry = undefined;
     pluginManifestRegistryMocks.loadPluginManifestRegistryForInstalledIndex.mockClear();
-    pluginManifestRegistryMocks.listOpenClawPluginManifestMetadata.mockClear();
+    pluginManifestRegistryMocks.listNovaPluginManifestMetadata.mockClear();
     normalizeProviderModelIdWithRuntimeMock.mockClear();
   });
 
@@ -183,7 +183,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = vi.fn<typeof fetch>();
 
     await runGatewayModelPricingRefresh({ config, fetchImpl });
@@ -230,7 +230,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = vi.fn<typeof fetch>();
 
     await runGatewayModelPricingRefresh({
@@ -298,7 +298,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = vi.fn<typeof fetch>();
 
     await runGatewayModelPricingRefresh({ config, fetchImpl });
@@ -306,7 +306,7 @@ describe("model-pricing-cache", () => {
     expect(
       pluginManifestRegistryMocks.loadPluginManifestRegistryForInstalledIndex,
     ).not.toHaveBeenCalled();
-    expect(pluginManifestRegistryMocks.listOpenClawPluginManifestMetadata).not.toHaveBeenCalled();
+    expect(pluginManifestRegistryMocks.listNovaPluginManifestMetadata).not.toHaveBeenCalled();
     expect(normalizeProviderModelIdWithRuntimeMock).not.toHaveBeenCalled();
     expect(fetchImpl).not.toHaveBeenCalled();
     expect(getCachedGatewayModelPricing({ provider: "custom", model: "gpt-local" })).toEqual({
@@ -341,7 +341,7 @@ describe("model-pricing-cache", () => {
       tools: {
         subagents: { model: { primary: "my-local-gpu/qwen2.5-coder:7b" } },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = vi.fn<typeof fetch>();
 
     await runGatewayModelPricingRefresh({ config, fetchImpl });
@@ -368,7 +368,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const failingFetch = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       if (url.includes("openrouter.ai")) {
@@ -422,7 +422,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const openRouterResponse = new Response("rate limited", { status: 429 });
     const cancel = vi.spyOn(openRouterResponse.body!, "cancel").mockResolvedValue(undefined);
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
@@ -461,7 +461,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       if (url.includes("openrouter.ai")) {
@@ -502,7 +502,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
       if (url.includes("openrouter.ai")) {
@@ -552,7 +552,7 @@ describe("model-pricing-cache", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = vi.fn<typeof fetch>();
 
     await runGatewayModelPricingRefresh({ config, fetchImpl });
@@ -580,7 +580,7 @@ describe("model-pricing-cache", () => {
           },
         ],
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
@@ -665,7 +665,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "openrouter/auto" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
@@ -712,7 +712,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "volcengine/doubao-seed-2-0-pro" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
@@ -791,7 +791,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "volcengine/doubao-open" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
@@ -853,7 +853,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "dashscope/qwen-plus" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
@@ -930,7 +930,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "anthropic/claude-opus-4-6" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
@@ -977,7 +977,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "anthropic/claude-opus-4-6" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = withFetchPreconnect(
       vi.fn(async (input: RequestInfo | URL) => {
         const url =
@@ -1010,7 +1010,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "anthropic/claude-opus-4-6" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const abortedUrls: string[] = [];
     const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
     const fetchImpl = withFetchPreconnect(
@@ -1059,7 +1059,7 @@ describe("model-pricing-cache", () => {
         },
       },
       models: { pricing: { enabled: false } },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = withFetchPreconnect(vi.fn());
 
     const stop = startGatewayModelPricingRefresh({ config, fetchImpl });
@@ -1077,7 +1077,7 @@ describe("model-pricing-cache", () => {
         },
       },
       models: { pricing: { enabled: false } },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const fetchImpl = withFetchPreconnect(vi.fn());
 
     await runGatewayModelPricingRefresh({ config, fetchImpl });
@@ -1101,7 +1101,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "anthropic/claude-opus-4-6" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
     const timeoutError = new DOMException(
       "The operation was aborted due to timeout",
       "TimeoutError",
@@ -1135,7 +1135,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "kimi/kimi-k2.6" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const liteLLMCancel = vi.fn(async () => undefined);
     const fetchImpl = withFetchPreconnect(async (input: RequestInfo | URL) => {
@@ -1189,7 +1189,7 @@ describe("model-pricing-cache", () => {
           model: { primary: "kimi/kimi-k2.6" },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as NovaConfig;
 
     const liteLLMCancel = vi.fn(async () => undefined);
     let liteLLMPullCount = 0;
@@ -1259,7 +1259,7 @@ function createManifestRecord(overrides: Partial<PluginManifestRecord>): PluginM
     origin: "global",
     rootDir: "/tmp/plugin",
     source: "/tmp/plugin/index.js",
-    manifestPath: "/tmp/plugin/openclaw.plugin.json",
+    manifestPath: "/tmp/plugin/nova.plugin.json",
     ...overrides,
   };
 }

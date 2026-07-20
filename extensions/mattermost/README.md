@@ -1,13 +1,13 @@
-# Mattermost OpenClaw channel
+# Mattermost Nova channel
 
-Official OpenClaw channel plugin for Mattermost.
+Official Nova channel plugin for Mattermost.
 
 ## Install
 
 ```sh
-openclaw plugins install @nova/mattermost
+nova plugins install @nova/mattermost
 ```
 
 ## Docs
 
-See `docs/channels/mattermost.md` in the OpenClaw repository, or the published docs at `https://docs.openclaw.ai/channels/mattermost`.
+See `docs/channels/mattermost.md` in the Nova repository, or the published docs at `https://docs.nova.ai/channels/mattermost`.

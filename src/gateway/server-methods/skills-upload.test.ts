@@ -6,14 +6,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import JSZip from "jszip";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../../state/openclaw-state-db.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../../test-utils/openclaw-test-state.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../../state/nova-state-db.js";
+import { createNovaTestState, type NovaTestState } from "../../test-utils/nova-test-state.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 const agentScopeState = vi.hoisted(() => ({
@@ -53,7 +47,7 @@ vi.mock("../../infra/replace-file.js", async (importOriginal) => {
       if (
         replaceFileState.publishFailures === 0 &&
         replaceFileState.publishFailureTarget &&
-        options.from.includes(".openclaw-install-stage-") &&
+        options.from.includes(".nova-install-stage-") &&
         options.to === replaceFileState.publishFailureTarget
       ) {
         replaceFileState.publishFailures += 1;
@@ -65,7 +59,7 @@ vi.mock("../../infra/replace-file.js", async (importOriginal) => {
 });
 
 let tempDirs: string[] = [];
-let testStates: OpenClawTestState[] = [];
+let testStates: NovaTestState[] = [];
 
 type CallResult = {
   ok: boolean;
@@ -78,9 +72,9 @@ async function makeHarness(): Promise<{
   stateDir: string;
   workspaceDir: string;
 }> {
-  const testState = await createOpenClawTestState({
+  const testState = await createNovaTestState({
     layout: "state-only",
-    prefix: "openclaw-skill-upload-handler-",
+    prefix: "nova-skill-upload-handler-",
   });
   testStates.push(testState);
   const stateDir = testState.stateDir;
@@ -148,7 +142,7 @@ async function expectPathMissing(targetPath: string): Promise<void> {
 }
 
 function skillUploadExists(stateDir: string, uploadId: string): boolean {
-  const { db } = openOpenClawStateDatabase({
+  const { db } = openNovaStateDatabase({
     env: { ...process.env, NOVA_STATE_DIR: stateDir },
   });
   return Boolean(
@@ -246,7 +240,7 @@ describe("skill upload gateway handlers", () => {
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await Promise.all([
       ...tempDirs.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true })),
       ...testStates.splice(0).map((state) => state.cleanup()),
@@ -404,7 +398,7 @@ describe("skill upload gateway handlers", () => {
       archive: await makeSkillArchive({}),
       slug: "expired-skill",
     });
-    openOpenClawStateDatabase({ env: { ...process.env, NOVA_STATE_DIR: stateDir } })
+    openNovaStateDatabase({ env: { ...process.env, NOVA_STATE_DIR: stateDir } })
       .db.prepare("UPDATE skill_uploads SET expires_at = ? WHERE upload_id = ?")
       .run(Date.now() - 1, upload.uploadId);
 

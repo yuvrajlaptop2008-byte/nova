@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createCapturedPluginRegistration } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createCapturedPluginRegistration } from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, describe, expect, it } from "vitest";
 import { resolveHomePath } from "./helpers.js";
 import pluginEntry from "./index.js";
@@ -30,7 +30,7 @@ describe("Hermes migration provider", () => {
 
   it("resolves tilde source paths against the OS home when NOVA_HOME is set", () => {
     const previous = process.env.NOVA_HOME;
-    process.env.NOVA_HOME = path.join(path.sep, "tmp", "openclaw-home");
+    process.env.NOVA_HOME = path.join(path.sep, "tmp", "nova-home");
     try {
       expect(resolveHomePath("~/.hermes")).toBe(path.join(os.homedir(), ".hermes"));
     } finally {

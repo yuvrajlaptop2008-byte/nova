@@ -1,7 +1,7 @@
 /** Session MCP config loading, filtering, and catalog fingerprints. */
 import crypto from "node:crypto";
 import { resolveRuntimeConfigCacheKey } from "../config/runtime-snapshot.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { logWarn } from "../logger.js";
 import type { PluginManifestRegistry } from "../plugins/manifest-registry.js";
 import { PluginLruCache } from "../plugins/plugin-cache-primitives.js";
@@ -25,11 +25,11 @@ type SessionMcpConfigDiscoveryCacheEntry = {
 };
 
 const SESSION_MCP_CONFIG_DISCOVERY_CACHE_KEY = Symbol.for(
-  "openclaw.sessionMcpConfigDiscoveryCache.pluginLru.v1",
+  "nova.sessionMcpConfigDiscoveryCache.pluginLru.v1",
 );
 const SESSION_MCP_CONFIG_DISCOVERY_CACHE_LIMIT = 128;
 const SESSION_MCP_PREPARED_CONFIG_VARIANT_LIMIT = 64;
-const EMPTY_NOVA_CONFIG: OpenClawConfig = {};
+const EMPTY_NOVA_CONFIG: NovaConfig = {};
 
 type SessionMcpConfigDiscoveryCacheState = {
   entries: PluginLruCache<SessionMcpConfigDiscoveryCacheEntry>;
@@ -65,7 +65,7 @@ function resolveManifestRegistryCacheId(
 
 function buildSessionMcpConfigDiscoveryCacheKey(params: {
   workspaceDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
 }): string {
   return JSON.stringify({
@@ -86,7 +86,7 @@ function clonePreparedSessionMcpConfig(
 
 function loadCachedEmbeddedAgentMcpConfig(params: {
   workspaceDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
 }): SessionMcpConfigDiscoveryCacheEntry {
   const state = getSessionMcpConfigDiscoveryCacheState();
@@ -191,7 +191,7 @@ function filterMcpServers<T>(
 
 export function loadSessionMcpConfig(params: {
   workspaceDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   logDiagnostics?: boolean;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
   includeServerNames?: ReadonlySet<string>;
@@ -255,7 +255,7 @@ export function loadSessionMcpConfig(params: {
  */
 export function resolveSessionMcpConfigSummary(params: {
   workspaceDir: string;
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   manifestRegistry?: Pick<PluginManifestRegistry, "plugins">;
 }): { fingerprint: string; serverNames: string[] } {
   const { loaded, fingerprint } = loadSessionMcpConfig({

@@ -5,7 +5,7 @@ import {
   type ModelAliasIndex,
 } from "../../agents/model-selection.js";
 import { loadPreparedModelCatalog } from "../../agents/prepared-model-catalog.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import type { SkillCommandSpec } from "../../skills/types.js";
 import { isInternalMessageChannel } from "../../utils/message-channel.js";
@@ -31,7 +31,7 @@ import { stripStructuralPrefixes } from "./mentions.js";
 import { persistReplySessionEntry } from "./session-entry-persistence.js";
 import type { createTypingController } from "./typing.js";
 
-type AgentDefaults = NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]> | undefined;
+type AgentDefaults = NonNullable<NonNullable<NovaConfig["agents"]>["defaults"]> | undefined;
 type SkillCommandsRuntime = typeof import("../../skills/discovery/chat-commands.runtime.js");
 type InternalGetReplyOptions = GetReplyOptions & {
   onSessionMetadataChanges?: (changes: CommandSessionMetadataChange[]) => void;
@@ -96,7 +96,7 @@ function shouldRunInternalTextSlashCommandFastPath(
 }
 
 async function resolveNativeSlashDefaultThinkingLevel(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   provider: string;
   model: string;
@@ -120,7 +120,7 @@ async function resolveNativeSlashDefaultThinkingLevel(params: {
 
 export async function maybeResolveNativeSlashCommandFastReply(params: {
   ctx: MsgContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   agentDir: string;
   agentCfg: AgentDefaults;

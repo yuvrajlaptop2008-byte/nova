@@ -24,7 +24,7 @@ import {
 import { buildReplyPromptEnvelope } from "../../../src/auto-reply/reply/prompt-prelude.js";
 import type { TemplateContext } from "../../../src/auto-reply/templating.js";
 import { SILENT_REPLY_TOKEN } from "../../../src/auto-reply/tokens.js";
-import type { OpenClawConfig } from "../../../src/config/config.js";
+import type { NovaConfig } from "../../../src/config/config.js";
 import { makeTempWorkspace, writeWorkspaceFile } from "../../../src/test-helpers/workspace.js";
 
 // Prompt composition scenarios for system/body prompt stability tests.
@@ -570,7 +570,7 @@ async function createBootstrapWarningScenario(workspaceDir: string): Promise<Pro
         bootstrapTotalMaxChars: 2_200,
       },
     },
-  } satisfies OpenClawConfig;
+  } satisfies NovaConfig;
   const largeAgents = "# AGENTS.md\n\n" + "Rules.\n".repeat(5_000);
   const largeTools = "# TOOLS.md\n\n" + "Notes.\n".repeat(3_000);
   await writeWorkspaceFile({ dir: workspaceDir, name: "AGENTS.md", content: largeAgents });
@@ -742,7 +742,7 @@ async function createMaintenanceScenario(workspaceDir: string): Promise<PromptSc
 
 /** Create a temp workspace with prompt composition context files. */
 async function createWorkspaceWithPromptCompositionFiles(): Promise<string> {
-  const workspaceDir = await makeTempWorkspace("openclaw-prompt-cache-");
+  const workspaceDir = await makeTempWorkspace("nova-prompt-cache-");
   await writeWorkspaceFile({
     dir: workspaceDir,
     name: "AGENTS.md",
@@ -777,7 +777,7 @@ export async function createPromptCompositionScenarios(): Promise<{
   cleanup: () => Promise<void>;
 }> {
   const workspaceDir = await createWorkspaceWithPromptCompositionFiles();
-  const warningWorkspaceDir = await makeTempWorkspace("openclaw-prompt-cache-warning-");
+  const warningWorkspaceDir = await makeTempWorkspace("nova-prompt-cache-warning-");
   const scenarios = [
     createDirectScenario(workspaceDir),
     createGroupScenario(workspaceDir),

@@ -1,12 +1,10 @@
 // Google tests cover web search provider plugin behavior.
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { withEnvAsync, withFetchPreconnect } from "openclaw/plugin-sdk/test-env";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { withEnvAsync, withFetchPreconnect } from "nova/plugin-sdk/test-env";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createGeminiWebSearchProvider } from "./src/gemini-web-search-provider.js";
 
-type TestModelProviderConfig = NonNullable<
-  NonNullable<OpenClawConfig["models"]>["providers"]
->[string];
+type TestModelProviderConfig = NonNullable<NonNullable<NovaConfig["models"]>["providers"]>[string];
 
 function installGeminiFetch() {
   const mockFetch = vi.fn((_input?: RequestInfo | URL, _init?: RequestInit) =>
@@ -96,7 +94,7 @@ describe("google web search provider", () => {
       }
 
       await expect(tool.execute({ query: "Nova docs" })).resolves.toEqual({
-        docs: "https://docs.openclaw.ai/tools/web",
+        docs: "https://docs.nova.ai/tools/web",
         error: "missing_gemini_api_key",
         message:
           "web_search (gemini) needs an API key. Set GEMINI_API_KEY in the Gateway environment, configure plugins.entries.google.config.webSearch.apiKey, or reuse models.providers.google.apiKey. If you do not want to configure a search API key, use web_fetch for a specific URL or the browser tool for interactive pages.",
@@ -106,7 +104,7 @@ describe("google web search provider", () => {
 
   it("stores configured credentials at the canonical plugin config path", () => {
     const provider = createGeminiWebSearchProvider();
-    const config = {} as OpenClawConfig;
+    const config = {} as NovaConfig;
 
     provider.setConfiguredCredentialValue?.(config, "AIza-plugin-test");
 
@@ -328,7 +326,7 @@ describe("google web search provider", () => {
       await tool?.execute({ query: "Nova provider key fallback" });
 
       expect(getFetchHeaders(mockFetch)["x-goog-api-key"]).toBe("AIza-provider-test");
-      expect(getFetchHeaders(mockFetch)["x-goog-api-client"]).toMatch(/^openclaw\//u);
+      expect(getFetchHeaders(mockFetch)["x-goog-api-client"]).toMatch(/^nova\//u);
     });
   });
 
@@ -363,7 +361,7 @@ describe("google web search provider", () => {
       await tool?.execute({ query: "Nova plugin key precedence" });
 
       expect(getFetchHeaders(mockFetch)["x-goog-api-key"]).toBe("AIza-plugin-test");
-      expect(getFetchHeaders(mockFetch)["x-goog-api-client"]).toMatch(/^openclaw\//u);
+      expect(getFetchHeaders(mockFetch)["x-goog-api-client"]).toMatch(/^nova\//u);
     });
   });
 
@@ -640,7 +638,7 @@ describe("google web search provider", () => {
         date_after: "2026-04-01",
       }),
     ).resolves.toEqual({
-      docs: "https://docs.openclaw.ai/tools/web",
+      docs: "https://docs.nova.ai/tools/web",
       error: "conflicting_time_filters",
       message:
         "freshness and date_after/date_before cannot be used together. Use either freshness (day/week/month/year) or a date range (date_after/date_before), not both.",

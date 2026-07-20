@@ -16,7 +16,7 @@ import {
 import { resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { resolveRealtimeBootstrapContextInstructions } from "../../agents/realtime-bootstrap-context.js";
 import type { TalkRealtimeConfig } from "../../config/types.gateway.js";
-import type { OpenClawConfig } from "../../config/types.js";
+import type { NovaConfig } from "../../config/types.js";
 import {
   getRealtimeTranscriptionProvider,
   listRealtimeTranscriptionProviders,
@@ -64,7 +64,7 @@ export function normalizeTalkSessionBrain(params: { mode: TalkMode; brain?: stri
 }
 
 export async function resolveTalkRealtimeProviderInstructions(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   configuredInstructions?: string;
   sessionKey?: unknown;
   /** Relay sessions bind their agent lazily; injecting a guessed profile would mix agents. */
@@ -153,7 +153,7 @@ function normalizeRealtimeTransport(value: unknown): TalkRealtimeConfig["transpo
 }
 
 function getVoiceCallProviderConfig<TConfig extends Record<string, unknown>>(
-  config: OpenClawConfig,
+  config: NovaConfig,
   sectionName: "realtime" | "streaming",
 ): {
   provider?: string;
@@ -180,14 +180,14 @@ function getVoiceCallProviderConfig<TConfig extends Record<string, unknown>>(
   };
 }
 
-function getVoiceCallRealtimeConfig(config: OpenClawConfig): {
+function getVoiceCallRealtimeConfig(config: NovaConfig): {
   provider?: string;
   providers?: Record<string, RealtimeVoiceProviderConfig>;
 } {
   return getVoiceCallProviderConfig(config, "realtime");
 }
 
-function getVoiceCallStreamingConfig(config: OpenClawConfig): {
+function getVoiceCallStreamingConfig(config: NovaConfig): {
   provider?: string;
   providers?: Record<string, RealtimeTranscriptionProviderConfig>;
 } {
@@ -195,7 +195,7 @@ function getVoiceCallStreamingConfig(config: OpenClawConfig): {
 }
 
 export function listTalkTranscriptionProviders(
-  config: OpenClawConfig,
+  config: NovaConfig,
   configuredProviderIds: Iterable<string | undefined>,
 ) {
   const providers = listRealtimeTranscriptionProviders(config);
@@ -216,12 +216,12 @@ export function listTalkTranscriptionProviders(
 }
 
 type RealtimeProviderWithConfig<TConfig extends Record<string, unknown>> = VoiceModelProvider & {
-  resolveConfig?: (ctx: { cfg: OpenClawConfig; rawConfig: TConfig }) => TConfig;
-  isConfigured: (ctx: { cfg: OpenClawConfig; providerConfig: TConfig }) => boolean;
+  resolveConfig?: (ctx: { cfg: NovaConfig; rawConfig: TConfig }) => TConfig;
+  isConfigured: (ctx: { cfg: NovaConfig; providerConfig: TConfig }) => boolean;
 };
 
 function resolveConfiguredVoiceModelDefaultRef<TConfig extends Record<string, unknown>>(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   provider: string | undefined;
   providerConfigs: Record<string, TConfig>;
   providers: readonly RealtimeProviderWithConfig<TConfig>[];
@@ -258,7 +258,7 @@ function resolveConfiguredVoiceModelDefaultRef<TConfig extends Record<string, un
   return undefined;
 }
 
-export function buildTalkRealtimeConfig(config: OpenClawConfig, requestedProvider?: string) {
+export function buildTalkRealtimeConfig(config: NovaConfig, requestedProvider?: string) {
   const voiceCallRealtime = getVoiceCallRealtimeConfig(config);
   const talkRealtime = getRecord(config.talk?.realtime);
   const talkRealtimeProviderConfigs = talkRealtime?.providers as
@@ -317,7 +317,7 @@ export function buildTalkRealtimeConfig(config: OpenClawConfig, requestedProvide
   };
 }
 
-export function buildTalkTranscriptionConfig(config: OpenClawConfig, requestedProvider?: string) {
+export function buildTalkTranscriptionConfig(config: NovaConfig, requestedProvider?: string) {
   const streamingConfig = getVoiceCallStreamingConfig(config);
   const provider = normalizeOptionalString(requestedProvider) ?? streamingConfig.provider;
   const providerConfigs = streamingConfig.providers ?? {};
@@ -344,7 +344,7 @@ export function configuredOrFalse(callback: () => boolean): boolean {
 }
 
 export function resolveConfiguredRealtimeTranscriptionProvider(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   configuredProviderId?: string;
   providerConfigs: Record<string, RealtimeTranscriptionProviderConfig>;
   defaultModel?: string;

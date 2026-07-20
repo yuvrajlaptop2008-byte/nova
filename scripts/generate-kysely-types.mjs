@@ -7,17 +7,17 @@ import { DatabaseSync } from "node:sqlite";
 
 const SCHEMAS = [
   {
-    name: "openclaw-state",
-    schema: "src/state/openclaw-state-schema.sql",
-    outFile: "src/state/openclaw-state-db.generated.d.ts",
-    schemaOutFile: "src/state/openclaw-state-schema.generated.ts",
+    name: "nova-state",
+    schema: "src/state/nova-state-schema.sql",
+    outFile: "src/state/nova-state-db.generated.d.ts",
+    schemaOutFile: "src/state/nova-state-schema.generated.ts",
     schemaExport: "NOVA_STATE_SCHEMA_SQL",
   },
   {
-    name: "openclaw-agent",
-    schema: "src/state/openclaw-agent-schema.sql",
-    outFile: "src/state/openclaw-agent-db.generated.d.ts",
-    schemaOutFile: "src/state/openclaw-agent-schema.generated.ts",
+    name: "nova-agent",
+    schema: "src/state/nova-agent-schema.sql",
+    outFile: "src/state/nova-agent-db.generated.d.ts",
+    schemaOutFile: "src/state/nova-agent-schema.generated.ts",
     schemaExport: "NOVA_AGENT_SCHEMA_SQL",
   },
 ];

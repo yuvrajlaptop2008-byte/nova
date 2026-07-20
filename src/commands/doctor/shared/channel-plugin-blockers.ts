@@ -2,7 +2,7 @@
 import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { sanitizeForLog } from "../../../../packages/terminal-core/src/ansi.js";
 import { listExplicitlyDisabledChannelIdsForConfig } from "../../../channels/config-presence.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { NovaConfig } from "../../../config/types.nova.js";
 import type { HealthFinding } from "../../../flows/health-checks.js";
 import {
   hasExplicitChannelConfig,
@@ -47,9 +47,9 @@ type ScanConfiguredChannelPluginBlockerOptions = {
 
 /** Find configured channel ids whose backing plugins cannot activate. */
 export function scanConfiguredChannelPluginBlockers(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   env: NodeJS.ProcessEnv = process.env,
-  activationSourceConfig: OpenClawConfig = cfg,
+  activationSourceConfig: NovaConfig = cfg,
   options: ScanConfiguredChannelPluginBlockerOptions = {},
 ): ChannelPluginBlockerHit[] {
   const explicitChannelIds = listExplicitConfiguredChannelIdsForConfig(cfg)
@@ -238,9 +238,9 @@ type ChannelOwnerState = {
 function resolveConfiguredChannelOwnerState(params: {
   plugin: PluginManifestRecord;
   channelId: string;
-  sourceConfig: OpenClawConfig;
+  sourceConfig: NovaConfig;
   sourcePluginsConfig: ReturnType<typeof normalizePluginsConfig>;
-  effectiveConfig: OpenClawConfig;
+  effectiveConfig: NovaConfig;
   effectivePluginsConfig: ReturnType<typeof normalizePluginsConfig>;
 }): ChannelOwnerState {
   const bundledChannelConfigured =

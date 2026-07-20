@@ -24,8 +24,8 @@ function readJsonFile(filePath) {
 /** Return whether a plugin package publishes through an artifact release workflow. */
 function isPublishablePluginPackage(packageJson) {
   return (
-    packageJson.openclaw?.release?.publishToNpm === true ||
-    packageJson.openclaw?.release?.publishToClawHub === true
+    packageJson.nova?.release?.publishToNpm === true ||
+    packageJson.nova?.release?.publishToClawHub === true
   );
 }
 
@@ -38,7 +38,7 @@ function isTypeScriptEntry(entry) {
 }
 
 function resolveRuntimeBuildFormat(packageJson) {
-  return packageJson.openclaw?.build?.runtimeFormat === "cjs" ? "cjs" : "esm";
+  return packageJson.nova?.build?.runtimeFormat === "cjs" ? "cjs" : "esm";
 }
 
 function runtimeBuildExtension(runtimeFormat) {
@@ -78,7 +78,7 @@ function getRecord(value) {
 function createNeverBundleDependencyMatcher(packageJson) {
   const externalDependencies = collectExternalDependencyNames(packageJson);
   return (id) => {
-    if (id === "openclaw" || id.startsWith("openclaw/")) {
+    if (id === "nova" || id.startsWith("nova/")) {
       return true;
     }
     for (const dependency of externalDependencies) {
@@ -169,8 +169,8 @@ function resolvePluginNpmRuntimePackageFiles(plan) {
       : [],
   );
   merged.add("dist/**");
-  if (packageRelativePathExists(plan.packageDir, "openclaw.plugin.json")) {
-    merged.add("openclaw.plugin.json");
+  if (packageRelativePathExists(plan.packageDir, "nova.plugin.json")) {
+    merged.add("nova.plugin.json");
   }
   if (packageRelativePathExists(plan.packageDir, "npm-shrinkwrap.json")) {
     merged.add("npm-shrinkwrap.json");
@@ -187,7 +187,7 @@ function resolvePluginNpmRuntimePackageFiles(plan) {
   return [...merged];
 }
 
-function normalizeOpenClawPeerRange(value) {
+function normalizeNovaPeerRange(value) {
   const normalized = normalizePackageEntry(value);
   if (!normalized) {
     return "";
@@ -197,36 +197,36 @@ function normalizeOpenClawPeerRange(value) {
     : `>=${normalized}`;
 }
 
-function resolveOpenClawPeerRange(packageJson, rootPackageJson) {
+function resolveNovaPeerRange(packageJson, rootPackageJson) {
   return (
-    normalizeOpenClawPeerRange(packageJson.openclaw?.compat?.pluginApi) ||
-    normalizeOpenClawPeerRange(packageJson.peerDependencies?.openclaw) ||
-    normalizeOpenClawPeerRange(packageJson.openclaw?.build?.openclawVersion) ||
-    normalizeOpenClawPeerRange(rootPackageJson?.version) ||
-    normalizeOpenClawPeerRange(packageJson.version)
+    normalizeNovaPeerRange(packageJson.nova?.compat?.pluginApi) ||
+    normalizeNovaPeerRange(packageJson.peerDependencies?.nova) ||
+    normalizeNovaPeerRange(packageJson.nova?.build?.novaVersion) ||
+    normalizeNovaPeerRange(rootPackageJson?.version) ||
+    normalizeNovaPeerRange(packageJson.version)
   );
 }
 
 /** Resolve package peer dependency metadata for the Nova plugin API. */
 function resolvePluginNpmRuntimePackagePeerMetadata(plan) {
-  const openclawPeerRange = resolveOpenClawPeerRange(plan.packageJson, plan.rootPackageJson);
-  if (!openclawPeerRange) {
+  const novaPeerRange = resolveNovaPeerRange(plan.packageJson, plan.rootPackageJson);
+  if (!novaPeerRange) {
     throw new Error(
-      `cannot infer openclaw peerDependency range for ${plan.pluginDir}; set openclaw.compat.pluginApi or package version`,
+      `cannot infer nova peerDependency range for ${plan.pluginDir}; set nova.compat.pluginApi or package version`,
     );
   }
   const existingPeerDependencies = getStringRecord(plan.packageJson.peerDependencies);
   const existingPeerDependenciesMeta = getRecord(plan.packageJson.peerDependenciesMeta);
-  const existingOpenClawMeta = getRecord(existingPeerDependenciesMeta.openclaw);
+  const existingNovaMeta = getRecord(existingPeerDependenciesMeta.nova);
   return {
     peerDependencies: {
       ...existingPeerDependencies,
-      openclaw: openclawPeerRange,
+      nova: novaPeerRange,
     },
     peerDependenciesMeta: {
       ...existingPeerDependenciesMeta,
-      openclaw: {
-        ...existingOpenClawMeta,
+      nova: {
+        ...existingNovaMeta,
         optional: true,
       },
     },
@@ -281,15 +281,15 @@ export function resolvePluginNpmRuntimeBuildPlan(params) {
     entry,
     outDir: path.join(packageDir, "dist"),
     runtimeFormat,
-    runtimeExtensions: (Array.isArray(packageJson.openclaw?.extensions)
-      ? packageJson.openclaw.extensions
+    runtimeExtensions: (Array.isArray(packageJson.nova?.extensions)
+      ? packageJson.nova.extensions
       : []
     )
       .map(normalizePackageEntry)
       .filter(Boolean)
       .map((runtimeEntry) => toPackageRuntimeEntry(runtimeEntry, runtimeFormat)),
-    runtimeSetupEntry: normalizePackageEntry(packageJson.openclaw?.setupEntry)
-      ? toPackageRuntimeEntry(packageJson.openclaw.setupEntry, runtimeFormat)
+    runtimeSetupEntry: normalizePackageEntry(packageJson.nova?.setupEntry)
+      ? toPackageRuntimeEntry(packageJson.nova.setupEntry, runtimeFormat)
       : undefined,
   };
   return {

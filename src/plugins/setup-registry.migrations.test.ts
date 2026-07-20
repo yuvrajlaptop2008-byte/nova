@@ -1,10 +1,10 @@
 // Covers bundled config migrations through the plugin setup registry.
 import path from "node:path";
 import { describe, expect, test } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { runPluginSetupConfigMigrations } from "./setup-registry.js";
 
-function runMigration(config: OpenClawConfig) {
+function runMigration(config: NovaConfig) {
   return runPluginSetupConfigMigrations({
     env: {
       ...process.env,
@@ -47,7 +47,7 @@ describe("bundled setup config migrations", () => {
         root: "~/legacy-canvas",
         liveReload: false,
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
 
     expect(result.changes).toEqual(["migrated canvasHost to plugins.entries.canvas.config.host"]);
     expect(result.config).toEqual({

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { applyAgentBindings, removeAgentBindings } from "./agents.bindings.js";
 import { applyAgentConfig, buildAgentSummaries, pruneAgentConfig } from "./agents.config.js";
 
@@ -20,7 +20,7 @@ function requireAgentSummary(
 
 describe("agents helpers", () => {
   it("buildAgentSummaries includes default + configured agents", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: {
           workspace: "/main-ws",
@@ -64,10 +64,10 @@ describe("agents helpers", () => {
   });
 
   it("buildAgentSummaries renders local avatars and omits absent avatars", () => {
-    const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-agent-avatar-"));
+    const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "nova-agent-avatar-"));
     try {
       fs.writeFileSync(path.join(workspace, "avatar.png"), Buffer.from([0x89, 0x50, 0x4e, 0x47]));
-      const cfg: OpenClawConfig = {
+      const cfg: NovaConfig = {
         agents: {
           list: [
             { id: "main", default: true, workspace },
@@ -87,7 +87,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentConfig merges updates", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         list: [{ id: "work", workspace: "/old-ws", model: "anthropic/claude" }],
       },
@@ -108,7 +108,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentConfig clears a model override", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: { model: { primary: "openai/gpt-5.6-luna" } },
         list: [{ id: "work", workspace: "/work-ws", model: "anthropic/claude" }],
@@ -125,7 +125,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentConfig merges identity with existing", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         list: [{ id: "work", identity: { name: "Old", theme: "chill", emoji: "🐢" } }],
       },
@@ -143,7 +143,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentConfig skips identity when not provided", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         list: [{ id: "work", identity: { name: "Keep", emoji: "🐢" } }],
       },
@@ -158,7 +158,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentBindings skips duplicates and reports conflicts", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       bindings: [
         {
           agentId: "main",
@@ -216,7 +216,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentBindings upgrades channel-only binding to account-specific binding for same agent", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       bindings: [
         {
           agentId: "main",
@@ -249,7 +249,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentBindings treats role-based bindings as distinct routes", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       bindings: [
         {
           agentId: "main",
@@ -307,7 +307,7 @@ describe("agents helpers", () => {
   });
 
   it("applyAgentBindings keeps distinct bindings when persisted match fields contain pipes", () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: NovaConfig = {};
 
     const result = applyAgentBindings(cfg, [
       {
@@ -354,7 +354,7 @@ describe("agents helpers", () => {
   });
 
   it("removeAgentBindings does not remove role-based bindings when removing channel-level routes", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       bindings: [
         {
           agentId: "main",
@@ -412,7 +412,7 @@ describe("agents helpers", () => {
   });
 
   it("pruneAgentConfig removes agent, bindings, and allowlist entries", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: NovaConfig = {
       agents: {
         defaults: { subagents: { allowAgents: ["work", "home"] } },
         list: [

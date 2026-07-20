@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { withEnv } from "../test-utils/env.js";
 import { shouldIncludeHook } from "./config.js";
 import { buildWorkspaceHookStatus } from "./hooks-status.js";
@@ -12,7 +12,7 @@ const entry: HookEntry = {
   hook: {
     name: HOOK_NAME,
     description: "Requires an environment variable",
-    source: "openclaw-bundled",
+    source: "nova-bundled",
     filePath: "/tmp/HOOK.md",
     baseDir: "/tmp",
     handlerPath: "/tmp/handler.js",
@@ -24,7 +24,7 @@ const entry: HookEntry = {
   },
 };
 
-function configWithEnv(value: string): OpenClawConfig {
+function configWithEnv(value: string): NovaConfig {
   return {
     hooks: {
       internal: {
@@ -36,7 +36,7 @@ function configWithEnv(value: string): OpenClawConfig {
   };
 }
 
-function evaluate(config?: OpenClawConfig) {
+function evaluate(config?: NovaConfig) {
   const runtimeIncluded = shouldIncludeHook({ entry, config });
   const status = buildWorkspaceHookStatus("/tmp", { entries: [entry], config }).hooks[0];
   return { runtimeIncluded, status };

@@ -61,9 +61,9 @@ describe("resolveGatewayService", () => {
   });
 
   it("guards mutating service adapters when config was written by a newer Nova", async () => {
-    const tempHome = await makeTempWorkspace("openclaw-service-future-config-");
-    const stateDir = path.join(tempHome, ".openclaw");
-    const configPath = path.join(stateDir, "openclaw.json");
+    const tempHome = await makeTempWorkspace("nova-service-future-config-");
+    const stateDir = path.join(tempHome, ".nova");
+    const configPath = path.join(stateDir, "nova.json");
     const envSnapshot = captureEnv(["HOME", "NOVA_STATE_DIR", "NOVA_CONFIG_PATH"]);
     try {
       await fs.mkdir(stateDir, { recursive: true });
@@ -105,7 +105,7 @@ describe("resolveGatewayService", () => {
     const installArgs = {
       env,
       stdout: process.stdout,
-      programArguments: ["openclaw", "gateway", "run"],
+      programArguments: ["nova", "gateway", "run"],
     };
     const mutations = [
       () => service.stage(installArgs),
@@ -138,7 +138,7 @@ describe("readGatewayServiceState", () => {
     const service = createService({
       isLoaded: vi.fn(async () => true),
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "run"],
+        programArguments: ["nova", "gateway", "run"],
         environment: { NOVA_GATEWAY_PORT: "18789" },
       })),
       readRuntime: vi.fn(async () => ({ status: "running" })),
@@ -159,23 +159,23 @@ describe("readGatewayServiceState", () => {
     const service = createService({
       isLoaded: vi.fn(async () => true),
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "run"],
+        programArguments: ["nova", "gateway", "run"],
         environment: {
           NOVA_GATEWAY_PORT: "18789",
-          NOVA_SYSTEMD_UNIT: "openclaw-gateway.service",
+          NOVA_SYSTEMD_UNIT: "nova-gateway.service",
         },
       })),
       readRuntime,
     });
 
     const state = await readGatewayServiceState(service, {
-      env: { NOVA_SYSTEMD_UNIT: "openclaw-gateway-maintenance.service" },
+      env: { NOVA_SYSTEMD_UNIT: "nova-gateway-maintenance.service" },
     });
 
-    expect(state.env.NOVA_SYSTEMD_UNIT).toBe("openclaw-gateway-maintenance.service");
+    expect(state.env.NOVA_SYSTEMD_UNIT).toBe("nova-gateway-maintenance.service");
     expect(readRuntime).toHaveBeenCalledWith(
       expect.objectContaining({
-        NOVA_SYSTEMD_UNIT: "openclaw-gateway-maintenance.service",
+        NOVA_SYSTEMD_UNIT: "nova-gateway-maintenance.service",
       }),
       { timeoutMs: undefined },
     );
@@ -197,7 +197,7 @@ describe("startGatewayService", () => {
 
   it("starts stopped installed services and returns post-start state", async () => {
     const readCommand = vi.fn(async () => ({
-      programArguments: ["openclaw", "gateway", "run"],
+      programArguments: ["nova", "gateway", "run"],
       environment: { NOVA_GATEWAY_PORT: "18789" },
     }));
     const isLoaded = vi
@@ -230,7 +230,7 @@ describe("startGatewayService", () => {
   it("returns already-running without starting a loaded running service", async () => {
     const service = createService({
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "run"],
+        programArguments: ["nova", "gateway", "run"],
       })),
       isLoaded: vi.fn(async () => true),
       readRuntime: vi.fn(async () => ({ status: "running", pid: 4242 })),
@@ -251,7 +251,7 @@ describe("startGatewayService", () => {
   it("returns repair drift with an already-running service", async () => {
     const service = createService({
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "run"],
+        programArguments: ["nova", "gateway", "run"],
         environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
       })),
       isLoaded: vi.fn(async () => true),
@@ -273,7 +273,7 @@ describe("startGatewayService", () => {
   it("requests repair before start when the loaded service version is stale", async () => {
     const service = createService({
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "run"],
+        programArguments: ["nova", "gateway", "run"],
         environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
       })),
       isLoaded: vi.fn(async () => true),
@@ -297,7 +297,7 @@ describe("startGatewayService", () => {
   it("requests repair before start when the managed port differs from config", async () => {
     const service = createService({
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "--port", "18789"],
+        programArguments: ["nova", "gateway", "--port", "18789"],
         environment: { NOVA_GATEWAY_PORT: "19001" },
       })),
       isLoaded: vi.fn(async () => true),
@@ -326,7 +326,7 @@ describe("startGatewayService", () => {
   it("uses the command-line port before a stale managed environment port", async () => {
     const service = createService({
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "--port", "19001"],
+        programArguments: ["nova", "gateway", "--port", "19001"],
         environment: { NOVA_GATEWAY_PORT: "18789" },
       })),
       isLoaded: vi.fn(async () => true),
@@ -350,8 +350,8 @@ describe("startGatewayService", () => {
     const service = createService({
       readCommand: vi.fn(async () => ({
         programArguments: [
-          "/private/tmp/openclaw-ai-install-cli-pr118/tools/node/bin/node",
-          "/tmp/openclaw-ai-install-cli-pr118/lib/node_modules/openclaw/dist/index.js",
+          "/private/tmp/nova-ai-install-cli-pr118/tools/node/bin/node",
+          "/tmp/nova-ai-install-cli-pr118/lib/node_modules/nova/dist/index.js",
           "gateway",
         ],
         environment: {},
@@ -375,7 +375,7 @@ describe("startGatewayService", () => {
     const readCommand = vi
       .fn<GatewayService["readCommand"]>()
       .mockResolvedValueOnce({
-        programArguments: ["openclaw", "gateway", "run"],
+        programArguments: ["nova", "gateway", "run"],
       })
       .mockResolvedValueOnce(null);
     const service = createService({

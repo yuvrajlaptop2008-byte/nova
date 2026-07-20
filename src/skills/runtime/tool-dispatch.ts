@@ -6,7 +6,7 @@ import {
   resolveSubagentToolPolicyForSession,
 } from "../../agents/agent-tools.policy.js";
 import type { AnyAgentTool } from "../../agents/agent-tools.types.js";
-import { createOpenClawTools } from "../../agents/openclaw-tools.runtime.js";
+import { createNovaTools } from "../../agents/nova-tools.runtime.js";
 import { resolveSandboxRuntimeStatus } from "../../agents/sandbox/runtime-status.js";
 import { resolveSenderToolPolicy } from "../../agents/sender-tool-policy.js";
 import {
@@ -31,7 +31,7 @@ import {
   type CronCreatorToolAllowlistEntry,
 } from "../../agents/tools/cron-tool.js";
 import type { SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { logVerbose } from "../../globals.js";
 import { getPluginToolMeta } from "../../plugins/tools.js";
 import { resolveGatewayMessageChannel } from "../../utils/message-channel.js";
@@ -59,7 +59,7 @@ type SkillDispatchMessageContext = {
  */
 export function resolveSkillDispatchTools(params: {
   message: SkillDispatchMessageContext;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   agentDir?: string;
   sessionEntry?: SessionEntry;
@@ -179,7 +179,7 @@ export function resolveSkillDispatchTools(params: {
         },
       }
     : undefined;
-  const tools = createOpenClawTools({
+  const tools = createNovaTools({
     agentSessionKey: params.sessionKey,
     agentChannel: channel,
     agentAccountId: params.message.accountId,

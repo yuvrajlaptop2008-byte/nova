@@ -5,12 +5,8 @@ import type {
   UserTurnTranscriptRecorder,
 } from "./user-turn-transcript.types.js";
 
-const RUNTIME_USER_TURN_TRANSCRIPT_CONTEXT = Symbol.for(
-  "openclaw.runtimeUserTurnTranscriptContext",
-);
-const RUNTIME_USER_TURN_TRANSCRIPT_RECORDER = Symbol.for(
-  "openclaw.runtimeUserTurnTranscriptRecorder",
-);
+const RUNTIME_USER_TURN_TRANSCRIPT_CONTEXT = Symbol.for("nova.runtimeUserTurnTranscriptContext");
+const RUNTIME_USER_TURN_TRANSCRIPT_RECORDER = Symbol.for("nova.runtimeUserTurnTranscriptRecorder");
 
 type RuntimeUserTurnTranscriptContext = {
   message: PersistedUserTurnMessage;

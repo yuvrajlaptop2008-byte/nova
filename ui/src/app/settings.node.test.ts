@@ -130,28 +130,28 @@ describe("loadSettings default gateway URL derivation", () => {
       host: "gateway.example:8443",
       pathname: "/ignored/path",
     });
-    setControlUiBasePath(" /openclaw/ ");
+    setControlUiBasePath(" /nova/ ");
 
-    expect(loadSettings().gatewayUrl).toBe(expectedGatewayUrl("/openclaw"));
+    expect(loadSettings().gatewayUrl).toBe(expectedGatewayUrl("/nova"));
   });
 
   it("binds standalone documents to the page Gateway without persisting a selection", () => {
     setTestLocation({
       protocol: "https:",
       host: "gateway.example:8443",
-      pathname: "/openclaw/approve/exec%3A1",
+      pathname: "/nova/approve/exec%3A1",
     });
-    setControlUiBasePath("/openclaw");
+    setControlUiBasePath("/nova");
     const remote = makeSettings("wss://remote.example:8443", {
       sessionKey: "agent:remote:main",
       lastActiveSessionKey: "agent:remote:main",
     });
     const sessionCredential = ["page", "session", "credential"].join("-");
-    persistSessionToken(expectedGatewayUrl("/openclaw"), sessionCredential);
+    persistSessionToken(expectedGatewayUrl("/nova"), sessionCredential);
     const before = [...Array(localStorage.length)].map((_, index) => localStorage.key(index));
 
     expect(resolvePageGatewaySettings(remote)).toMatchObject({
-      gatewayUrl: expectedGatewayUrl("/openclaw"),
+      gatewayUrl: expectedGatewayUrl("/nova"),
       token: sessionCredential,
       sessionKey: "main",
       lastActiveSessionKey: "main",
@@ -175,10 +175,10 @@ describe("loadSettings default gateway URL derivation", () => {
     setTestLocation({
       protocol: "http:",
       host: "gateway.example:18789",
-      pathname: "/apps/openclaw/chat",
+      pathname: "/apps/nova/chat",
     });
 
-    expect(loadSettings().gatewayUrl).toBe(expectedGatewayUrl("/apps/openclaw"));
+    expect(loadSettings().gatewayUrl).toBe(expectedGatewayUrl("/apps/nova"));
   });
 
   it("skips node sessionStorage accessors that warn without a storage file", () => {
@@ -209,9 +209,9 @@ describe("loadSettings default gateway URL derivation", () => {
       host: "gateway.example:8443",
       pathname: "/",
     });
-    sessionStorage.setItem("openclaw.control.token.v1", "legacy-session-token");
-    const gatewayUrl = "wss://gateway.example:8443/openclaw";
-    const scopedKey = `openclaw.control.settings.v1:${gatewayUrl}`;
+    sessionStorage.setItem("nova.control.token.v1", "legacy-session-token");
+    const gatewayUrl = "wss://gateway.example:8443/nova";
+    const scopedKey = `nova.control.settings.v1:${gatewayUrl}`;
     localStorage.setItem(
       scopedKey,
       JSON.stringify({
@@ -220,10 +220,7 @@ describe("loadSettings default gateway URL derivation", () => {
         sessionKey: "agent",
       }),
     );
-    localStorage.setItem(
-      "openclaw.control.currentGateway.v1:wss://gateway.example:8443",
-      gatewayUrl,
-    );
+    localStorage.setItem("nova.control.currentGateway.v1:wss://gateway.example:8443", gatewayUrl);
 
     const settings = loadSettings();
     expect(settings.gatewayUrl).toBe(gatewayUrl);
@@ -235,7 +232,7 @@ describe("loadSettings default gateway URL derivation", () => {
     >;
     expect(rewritten.token).toBeUndefined();
     expect(rewritten.sessionsByGateway).toEqual({
-      "wss://gateway.example:8443/openclaw": {
+      "wss://gateway.example:8443/nova": {
         sessionKey: "agent",
         lastActiveSessionKey: "agent",
       },
@@ -342,7 +339,7 @@ describe("loadSettings default gateway URL derivation", () => {
     expect(settings.gatewayUrl).toBe(gwUrl);
     expect(settings.token).toBe("memory-only-token");
 
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}")).toEqual({
       gatewayUrl: gwUrl,
       theme: "claw",
@@ -393,7 +390,7 @@ describe("loadSettings default gateway URL derivation", () => {
     expect(loadSettings().navWidth).toBe(258);
 
     // Corrupt the persisted list; load falls back to the default pinned set.
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     const persisted = JSON.parse(localStorage.getItem(scopedKey) ?? "{}") as Record<
       string,
       unknown
@@ -418,7 +415,7 @@ describe("loadSettings default gateway URL derivation", () => {
       pathname: "/",
     });
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     const legacy = makeSettings(gwUrl) as unknown as Record<string, unknown>;
     delete legacy.sidebarEntries;
     legacy.sidebarPinnedRoutes = ["usage", "tasks", "usage", "worktrees", 7];
@@ -455,7 +452,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
     expect(loadSettings().pinnedAgentIds).toEqual(["main", "research"]);
 
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     const persisted = JSON.parse(localStorage.getItem(scopedKey) ?? "{}") as Record<
       string,
       unknown
@@ -474,7 +471,7 @@ describe("loadSettings default gateway URL derivation", () => {
 
     const gwUrl = expectedGatewayUrl("");
     localStorage.setItem(
-      `openclaw.control.settings.v1:${gwUrl}`,
+      `nova.control.settings.v1:${gwUrl}`,
       JSON.stringify({
         gatewayUrl: gwUrl,
         textScale: 123,
@@ -523,7 +520,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     saveSettings({ ...loadSettings(), chatSendShortcut: "modifier-enter" });
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}").chatSendShortcut).toBe(
       "modifier-enter",
@@ -550,7 +547,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     expect(loadSettings().chatFollowUpMode).toBeUndefined();
     saveSettings({ ...loadSettings(), chatFollowUpMode: "queue" });
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}").chatFollowUpMode).toBe("queue");
@@ -579,7 +576,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     expect(loadSettings().catalogOpenTarget).toBe("viewer");
     saveSettings({ ...loadSettings(), catalogOpenTarget: "terminal" });
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}").catalogOpenTarget).toBe("terminal");
@@ -604,7 +601,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     expect(loadSettings().sidebarLiveActivity).toBe(true);
 
     saveSettings({ ...loadSettings(), sidebarLiveActivity: false });
@@ -625,7 +622,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     saveSettings({ ...loadSettings(), realtimeTalkInputDeviceId: " usb-mic " });
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}").realtimeTalkInputDeviceId).toBe(
       "usb-mic",
@@ -646,7 +643,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     saveSettings({ ...loadSettings(), realtimeTalkVideoDeviceId: " back-camera " });
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}").realtimeTalkVideoDeviceId).toBe(
       "back-camera",
@@ -667,7 +664,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     expect(loadSettings().composerHoldToRecord).toBe(true);
 
     saveSettings({ ...loadSettings(), composerHoldToRecord: false });
@@ -689,7 +686,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     expect(loadSettings().talkCameraAutoEnable).toBeUndefined();
 
     saveSettings({ ...loadSettings(), talkCameraAutoEnable: true });
@@ -771,7 +768,7 @@ describe("loadSettings default gateway URL derivation", () => {
       sidebarEntries: [],
     });
 
-    const scopedKey = `openclaw.control.settings.v1:${gwUrl}`;
+    const scopedKey = `nova.control.settings.v1:${gwUrl}`;
     const persisted = JSON.parse(localStorage.getItem(scopedKey) ?? "{}") as Record<
       string,
       unknown
@@ -831,7 +828,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
     const gwUrl = expectedGatewayUrl("");
     localStorage.setItem(
-      `openclaw.control.settings.v1:${gwUrl}`,
+      `nova.control.settings.v1:${gwUrl}`,
       JSON.stringify({
         gatewayUrl: gwUrl,
         boardSessionViews: {
@@ -851,7 +848,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
     const gwUrl = expectedGatewayUrl("");
     localStorage.setItem(
-      `openclaw.control.settings.v1:${gwUrl}`,
+      `nova.control.settings.v1:${gwUrl}`,
       JSON.stringify({ gatewayUrl: gwUrl, chatSplitLayout: { columns: "invalid" } }),
     );
 
@@ -898,7 +895,7 @@ describe("loadSettings default gateway URL derivation", () => {
 
     const gwUrl = expectedGatewayUrl("");
     localStorage.setItem(
-      `openclaw.control.settings.v1:${gwUrl}`,
+      `nova.control.settings.v1:${gwUrl}`,
       JSON.stringify({
         gatewayUrl: gwUrl,
         theme: "custom",
@@ -968,7 +965,7 @@ describe("loadSettings default gateway URL derivation", () => {
     });
 
     const gwUrl = expectedGatewayUrl("");
-    const scopedKey = `openclaw.control.settings.v1:wss://gateway.example:8443`;
+    const scopedKey = `nova.control.settings.v1:wss://gateway.example:8443`;
 
     // Pre-seed sessionsByGateway with 11 stale gateway entries so the next
     // saveSettings call pushes the total to 12 and triggers the cap (10).
@@ -1029,7 +1026,7 @@ describe("loadSettings default gateway URL derivation", () => {
     setControlUiBasePath("/gateway-b");
 
     expect(loadSettings().gatewayUrl).toBe(expectedGatewayUrl("/gateway-b"));
-    expect(localStorage.getItem("openclaw.control.settings.v1")).toBeNull();
+    expect(localStorage.getItem("nova.control.settings.v1")).toBeNull();
   });
 
   it("keeps custom gateway selections isolated per Control UI base path", () => {
@@ -1062,16 +1059,13 @@ describe("loadSettings default gateway URL derivation", () => {
       host: "gateway.example:8443",
       pathname: "/",
     });
-    localStorage.setItem(
-      "openclaw.control.user.v1",
-      JSON.stringify({ name: "Buns", avatar: "🦞" }),
-    );
+    localStorage.setItem("nova.control.user.v1", JSON.stringify({ name: "Buns", avatar: "🦞" }));
 
     expect(loadLocalUserIdentity()).toEqual({
       name: "Buns",
       avatar: "🦞",
     });
-    expect(JSON.parse(localStorage.getItem("openclaw.control.user.v1") ?? "{}")).toEqual({
+    expect(JSON.parse(localStorage.getItem("nova.control.user.v1") ?? "{}")).toEqual({
       name: "Buns",
       avatar: "🦞",
     });
@@ -1079,7 +1073,7 @@ describe("loadSettings default gateway URL derivation", () => {
 
   it("normalizes invalid local user identity values on load", () => {
     localStorage.setItem(
-      "openclaw.control.user.v1",
+      "nova.control.user.v1",
       JSON.stringify({
         name: "  ",
         avatar: "https://example.com/avatar.png",

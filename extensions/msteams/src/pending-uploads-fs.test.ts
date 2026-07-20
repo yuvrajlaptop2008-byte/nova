@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resetPluginStateStoreForTests } from "openclaw/plugin-sdk/plugin-state-test-runtime";
+import { resetPluginStateStoreForTests } from "nova/plugin-sdk/plugin-state-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { prepareFileConsentActivityFs } from "./file-consent-helpers.js";
 import {
@@ -18,7 +18,7 @@ import { msteamsRuntimeStub } from "./test-support/runtime.js";
 const createdTempDirs: string[] = [];
 
 async function makeTempStateDir(): Promise<string> {
-  const dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-pending-"));
+  const dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "nova-msteams-pending-"));
   createdTempDirs.push(dir);
   return dir;
 }
@@ -110,7 +110,7 @@ describe("msteams pending uploads (fs-backed)", () => {
     const storePath = path.join(stateDir, "msteams-pending-uploads.json");
     await expect(fs.promises.access(storePath)).rejects.toThrow();
     await expect(
-      fs.promises.access(path.join(stateDir, "state", "openclaw.sqlite")),
+      fs.promises.access(path.join(stateDir, "state", "nova.sqlite")),
     ).resolves.toBeUndefined();
 
     // Second "process": reader using the same state dir

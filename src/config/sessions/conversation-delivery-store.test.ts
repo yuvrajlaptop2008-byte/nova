@@ -1,7 +1,7 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildConversationRef } from "../../routing/conversation-ref.js";
-import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
+import { closeNovaAgentDatabasesForTest } from "../../state/nova-agent-db.js";
 import { withTempDir } from "../../test-helpers/temp-dir.js";
 import {
   beginConversationDeliveryOperation,
@@ -22,7 +22,7 @@ async function withConversationStore(
     conversationRef: string;
   }) => Promise<void> | void,
 ): Promise<void> {
-  await withTempDir({ prefix: "openclaw-conversation-delivery-" }, async (dir) => {
+  await withTempDir({ prefix: "nova-conversation-delivery-" }, async (dir) => {
     const storePath = path.join(dir, "sessions.json");
     const scope = { agentId: "main", storePath };
     try {
@@ -50,7 +50,7 @@ async function withConversationStore(
         }),
       });
     } finally {
-      closeOpenClawAgentDatabasesForTest();
+      closeNovaAgentDatabasesForTest();
     }
   });
 }

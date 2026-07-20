@@ -31,9 +31,9 @@ describe("groupCatalogSessionsByProject", () => {
   });
 
   it.each([
-    ["/Users/dev/openclaw/.claude/worktrees/fix-1", "/Users/dev/openclaw"],
-    ["/Users/dev/openclaw/.claude/worktrees/fix-1/ui/src", "/Users/dev/openclaw"],
-    ["C:\\Users\\dev\\openclaw\\.claude\\worktrees\\fix-1", "C:\\Users\\dev\\openclaw"],
+    ["/Users/dev/nova/.claude/worktrees/fix-1", "/Users/dev/nova"],
+    ["/Users/dev/nova/.claude/worktrees/fix-1/ui/src", "/Users/dev/nova"],
+    ["C:\\Users\\dev\\nova\\.claude\\worktrees\\fix-1", "C:\\Users\\dev\\nova"],
   ])("folds worktree cwd %s into %s", (worktreeCwd, expectedProject) => {
     const result = groupCatalogSessionsByProject([
       session("direct", expectedProject),
@@ -56,8 +56,8 @@ describe("groupCatalogSessionsByProject", () => {
   });
 
   it.each([
-    [" /Users/dev/openclaw/// ", "/Users/dev/openclaw", "openclaw"],
-    ["C:\\Users\\dev\\openclaw\\", "C:\\Users\\dev\\openclaw", "openclaw"],
+    [" /Users/dev/nova/// ", "/Users/dev/nova", "nova"],
+    ["C:\\Users\\dev\\nova\\", "C:\\Users\\dev\\nova", "nova"],
   ])("normalizes %s to key %s with label %s", (cwd, expectedKey, expectedLabel) => {
     const result = groupCatalogSessionsByProject([session("one", cwd)]);
 

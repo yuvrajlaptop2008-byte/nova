@@ -2,10 +2,10 @@
 import { constants as fsConstants } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { writeExternalFileWithinRoot } from "openclaw/plugin-sdk/security-runtime";
+import { formatErrorMessage } from "nova/plugin-sdk/error-runtime";
+import { writeExternalFileWithinRoot } from "nova/plugin-sdk/security-runtime";
 import { chromium } from "playwright-core";
-import type { OpenClawConfig } from "../api.js";
+import type { NovaConfig } from "../api.js";
 import type { DiffRenderOptions, DiffTheme } from "./types.js";
 import {
   LANGUAGE_PACK_VIEWER_ASSET_PREFIX,
@@ -54,10 +54,10 @@ let sharedBrowserState: SharedBrowserState | null = null;
 let executablePathCache: ExecutablePathCache | null = null;
 
 export class PlaywrightDiffScreenshotter implements DiffScreenshotter {
-  private readonly config: OpenClawConfig;
+  private readonly config: NovaConfig;
   private readonly browserIdleMs: number;
 
-  constructor(params: { config: OpenClawConfig; browserIdleMs?: number }) {
+  constructor(params: { config: NovaConfig; browserIdleMs?: number }) {
     this.config = params.config;
     this.browserIdleMs = params.browserIdleMs ?? DEFAULT_BROWSER_IDLE_MS;
   }
@@ -137,10 +137,10 @@ export class PlaywrightDiffScreenshotter implements DiffScreenshotter {
         await page.setContent(injectBaseHref(params.html), { waitUntil: "load" });
         await page.waitForFunction(
           () => {
-            if (document.documentElement.dataset.openclawDiffsReady === "true") {
+            if (document.documentElement.dataset.novaDiffsReady === "true") {
               return true;
             }
-            return [...document.querySelectorAll("[data-openclaw-diff-host]")].every((element) => {
+            return [...document.querySelectorAll("[data-nova-diff-host]")].every((element) => {
               return (
                 element instanceof HTMLElement && element.shadowRoot?.querySelector("[data-diffs]")
               );
@@ -320,7 +320,7 @@ function injectBaseHref(html: string): string {
   return html.replace("<head>", `<head><base href="${LOCAL_VIEWER_BASE_HREF}" />`);
 }
 
-async function resolveBrowserExecutablePath(config: OpenClawConfig): Promise<string | undefined> {
+async function resolveBrowserExecutablePath(config: NovaConfig): Promise<string | undefined> {
   const cacheKey = JSON.stringify({
     configPath: config.browser?.executablePath?.trim() || "",
     env: [
@@ -349,7 +349,7 @@ async function resolveBrowserExecutablePath(config: OpenClawConfig): Promise<str
 }
 
 async function resolveBrowserExecutablePathUncached(
-  config: OpenClawConfig,
+  config: NovaConfig,
 ): Promise<string | undefined> {
   const configPath = config.browser?.executablePath?.trim();
   if (configPath) {
@@ -381,7 +381,7 @@ async function resolveBrowserExecutablePathUncached(
 }
 
 async function acquireSharedBrowser(params: {
-  config: OpenClawConfig;
+  config: NovaConfig;
   idleMs: number;
 }): Promise<BrowserLease> {
   const executablePath = await resolveBrowserExecutablePath(params.config);

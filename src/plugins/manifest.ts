@@ -24,7 +24,7 @@ import type { PluginKind } from "./plugin-kind.types.js";
 import { normalizePluginPolicyId } from "./plugin-policy-id.js";
 
 /** Canonical plugin manifest filename inside plugin roots. */
-export const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
+export const PLUGIN_MANIFEST_FILENAME = "nova.plugin.json";
 const PLUGIN_MANIFEST_FILENAMES = [PLUGIN_MANIFEST_FILENAME] as const;
 const MAX_PLUGIN_MANIFEST_BYTES = 256 * 1024;
 const MAX_PLUGIN_MANIFEST_LOAD_CACHE_ENTRIES = 512;
@@ -237,7 +237,7 @@ export type PluginManifestSetup = {
 };
 
 export type PluginManifestQaRunner = {
-  /** Subcommand mounted beneath `openclaw qa`, for example `matrix`. */
+  /** Subcommand mounted beneath `nova qa`, for example `matrix`. */
   commandName: string;
   /** Optional user-facing help text for fallback host stubs. */
   description?: string;
@@ -1948,7 +1948,7 @@ export function loadPluginManifest(
   });
 }
 
-// package.json "openclaw" metadata (used for setup/catalog)
+// package.json "nova" metadata (used for setup/catalog)
 type PluginPackageChannelApprovalFlag = "native";
 
 export type PluginPackageChannel = {
@@ -2018,7 +2018,7 @@ export type PluginPackageInstall = {
   requiredPlatformPackages?: string[];
 };
 
-type OpenClawPackageStartup = {
+type NovaPackageStartup = {
   /**
    * Opt-in for channel plugins whose `setupEntry` fully covers the gateway
    * startup surface needed before the server starts listening.
@@ -2026,35 +2026,35 @@ type OpenClawPackageStartup = {
   deferConfiguredChannelFullLoadUntilAfterListen?: boolean;
 };
 
-type OpenClawPackageSetupFeatures = {
+type NovaPackageSetupFeatures = {
   configPromotion?: boolean;
   legacyStateMigrations?: boolean;
   legacySessionSurfaces?: boolean;
 };
 
-type OpenClawPackageCompat = {
+type NovaPackageCompat = {
   pluginApi?: string;
 };
 
-export type OpenClawPackageBuild = {
+export type NovaPackageBuild = {
   bundledDist?: boolean;
 };
 
-export type OpenClawPackageManifest = {
+export type NovaPackageManifest = {
   extensions?: string[];
   runtimeExtensions?: string[];
   setupEntry?: string;
   runtimeSetupEntry?: string;
-  setupFeatures?: OpenClawPackageSetupFeatures;
+  setupFeatures?: NovaPackageSetupFeatures;
   plugin?: {
     id?: string;
     label?: string;
   };
   channel?: PluginPackageChannel;
-  compat?: OpenClawPackageCompat;
+  compat?: NovaPackageCompat;
   install?: PluginPackageInstall;
-  startup?: OpenClawPackageStartup;
-  build?: OpenClawPackageBuild;
+  startup?: NovaPackageStartup;
+  build?: NovaPackageBuild;
 };
 
 export const DEFAULT_PLUGIN_ENTRY_CANDIDATES = [
@@ -2078,11 +2078,11 @@ export type PackageManifest = {
   description?: string;
   dependencies?: Record<string, string>;
   optionalDependencies?: Record<string, string>;
-} & Partial<Record<ManifestKey, OpenClawPackageManifest>>;
+} & Partial<Record<ManifestKey, NovaPackageManifest>>;
 
 export function getPackageManifestMetadata(
   manifest: PackageManifest | undefined,
-): OpenClawPackageManifest | undefined {
+): NovaPackageManifest | undefined {
   if (!manifest) {
     return undefined;
   }
@@ -2100,7 +2100,7 @@ export function resolvePackageExtensionEntries(
     return {
       status: "invalid",
       entries: [],
-      error: "package.json openclaw must be an object",
+      error: "package.json nova must be an object",
     };
   }
   const raw = rawNova.extensions;
@@ -2111,7 +2111,7 @@ export function resolvePackageExtensionEntries(
     return {
       status: "invalid",
       entries: [],
-      error: "package.json openclaw.extensions must be an array",
+      error: "package.json nova.extensions must be an array",
     };
   }
   const entries: string[] = [];
@@ -2121,7 +2121,7 @@ export function resolvePackageExtensionEntries(
       return {
         status: "invalid",
         entries: [],
-        error: `package.json openclaw.extensions[${index}] must be a non-empty string`,
+        error: `package.json nova.extensions[${index}] must be a non-empty string`,
       };
     }
     entries.push(normalized);

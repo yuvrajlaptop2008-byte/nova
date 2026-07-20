@@ -1,6 +1,6 @@
 // Discord plugin module implements presence behavior.
-import type { DiscordAccountConfig } from "openclaw/plugin-sdk/config-contracts";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { DiscordAccountConfig } from "nova/plugin-sdk/config-contracts";
+import { normalizeOptionalString } from "nova/plugin-sdk/string-coerce-runtime";
 import type { Activity, UpdatePresenceData } from "../internal/gateway.js";
 
 const DEFAULT_CUSTOM_ACTIVITY_TYPE = 4;

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nova Live Updater"
+  short_description: "Maintain live main, CI, gateway, and Mac app"
+  default_prompt: "Use $nova-live-updater to fast-forward the canonical Nova main mirror, verify the managed runtime and exact-head CI, repair failures through a PR, or run full release validation without publishing."

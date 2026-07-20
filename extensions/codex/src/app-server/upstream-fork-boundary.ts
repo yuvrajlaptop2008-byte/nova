@@ -1,4 +1,4 @@
-import { readVisibleSessionTranscriptMessageEntries } from "openclaw/plugin-sdk/session-transcript-runtime";
+import { readVisibleSessionTranscriptMessageEntries } from "nova/plugin-sdk/session-transcript-runtime";
 import type { CodexSessionCatalogControl } from "../session-catalog-types.js";
 import type { CodexThreadItem, CodexTurn } from "./protocol.js";
 

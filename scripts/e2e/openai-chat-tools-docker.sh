@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-openai-chat-tools-e2e" NOVA_OPENAI_CHAT_TOOLS_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "nova-openai-chat-tools-e2e" NOVA_OPENAI_CHAT_TOOLS_E2E_IMAGE)"
 SKIP_BUILD="${NOVA_OPENAI_CHAT_TOOLS_E2E_SKIP_BUILD:-0}"
 PORT="$(docker_e2e_read_tcp_port_env NOVA_OPENAI_CHAT_TOOLS_PORT 18789)"
 TIMEOUT_SECONDS="$(docker_e2e_read_positive_int_env NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS 180)"
@@ -12,7 +12,7 @@ MAX_BODY_BYTES="$(
   docker_e2e_read_positive_int_env NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES 1048576
 )"
 TOKEN="openai-chat-tools-e2e-$$"
-PROFILE_FILE="${NOVA_OPENAI_CHAT_TOOLS_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}}"
+PROFILE_FILE="${NOVA_OPENAI_CHAT_TOOLS_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.nova-testbox-live.profile}}"
 if [ ! -f "$PROFILE_FILE" ] && [ -f "$HOME/.profile" ]; then
   PROFILE_FILE="$HOME/.profile"
 fi

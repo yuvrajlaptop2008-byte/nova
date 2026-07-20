@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { resolveAgentDir } from "../agents/agent-scope.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
 import type { ModelProviderConfig } from "../config/types.models.js";
 import * as providerAuthChoices from "../plugins/provider-auth-choices.js";
@@ -93,9 +93,9 @@ const detectZaiEndpoint = vi.hoisted(() => vi.fn<DetectZaiEndpoint>(async () => 
 vi.mock("../agents/agent-scope.js", () => ({
   resolveDefaultAgentId: () => "main",
   resolveAgentDir: (configForTest: unknown, agentId: string) =>
-    `${process.env.NOVA_STATE_DIR ?? "/tmp/openclaw-state"}/agents/${agentId}/agent`,
+    `${process.env.NOVA_STATE_DIR ?? "/tmp/nova-state"}/agents/${agentId}/agent`,
   resolveAgentWorkspaceDir: (configForTest: unknown, agentId: string) =>
-    `/tmp/openclaw-workspaces/${agentId}`,
+    `/tmp/nova-workspaces/${agentId}`,
   // Required by src/agents/model-runtime-policy.ts, which is transitively
   // imported through provider-auth-choice -> copilot-runtime-plugin-install ->
   // copilot-routing -> model-runtime-policy.
@@ -104,7 +104,7 @@ vi.mock("../agents/agent-scope.js", () => ({
 }));
 
 vi.mock("../agents/workspace.js", () => ({
-  resolveDefaultAgentWorkspaceDir: () => "/tmp/openclaw-workspace",
+  resolveDefaultAgentWorkspaceDir: () => "/tmp/nova-workspace",
 }));
 
 vi.mock("../infra/browser-open.js", () => ({
@@ -121,7 +121,7 @@ vi.mock("../plugins/provider-oauth-flow.js", () => ({
 
 vi.mock("../plugins/provider-auth-helpers.js", () => ({
   applyAuthProfileConfig: (
-    cfg: OpenClawConfig,
+    cfg: NovaConfig,
     params: {
       profileId: string;
       provider: string;
@@ -129,7 +129,7 @@ vi.mock("../plugins/provider-auth-helpers.js", () => ({
       email?: string;
       displayName?: string;
     },
-  ): OpenClawConfig => ({
+  ): NovaConfig => ({
     ...cfg,
     auth: {
       ...cfg.auth,
@@ -245,7 +245,7 @@ function resolveProviderPluginChoice(params: { providers: ProviderPlugin[]; choi
 function providerConfigPatch(
   providerId: string,
   patch: Record<string, unknown>,
-): Partial<OpenClawConfig> {
+): Partial<NovaConfig> {
   const providers: Record<string, ModelProviderConfig> = {
     [providerId]: patch as ModelProviderConfig,
   };
@@ -376,7 +376,7 @@ async function createApiKeyProvider(params: {
   expectedProviders?: string[];
   noteMessage?: string;
   noteTitle?: string;
-  applyConfig?: Partial<OpenClawConfig>;
+  applyConfig?: Partial<NovaConfig>;
 }): Promise<ProviderPlugin> {
   const profileIds =
     params.profileIds && params.profileIds.length > 0
@@ -415,7 +415,7 @@ async function createApiKeyProvider(params: {
                 input,
               ),
             })),
-            ...(params.applyConfig ? { configPatch: params.applyConfig as OpenClawConfig } : {}),
+            ...(params.applyConfig ? { configPatch: params.applyConfig as NovaConfig } : {}),
             ...(params.defaultModel ? { defaultModel: params.defaultModel } : {}),
           };
         },
@@ -491,7 +491,7 @@ async function createDefaultProviderPlugins(): Promise<ProviderPlugin[]> {
             credential: buildApiKeyCredential("zai", token),
           },
         ],
-        configPatch: providerConfigPatch("zai", { baseUrl }) as OpenClawConfig,
+        configPatch: providerConfigPatch("zai", { baseUrl }) as NovaConfig,
         defaultModel: `zai/${modelId}`,
       };
     },
@@ -636,7 +636,7 @@ describe("applyAuthChoice", () => {
     };
   }
   async function readAuthProfiles() {
-    return readTestAuthProfileStore(resolveAgentDir({} as OpenClawConfig, "main"));
+    return readTestAuthProfileStore(resolveAgentDir({} as NovaConfig, "main"));
   }
   async function readAuthProfilesForAgentDir(agentDir: string) {
     return readTestAuthProfileStore(agentDir);
@@ -645,7 +645,7 @@ describe("applyAuthChoice", () => {
     return (await readAuthProfiles()).profiles?.[profileId];
   }
   function expectAuthProfileConfig(
-    result: { config: OpenClawConfig },
+    result: { config: NovaConfig },
     profileId: string,
     expected: { provider: string; mode: string },
   ) {
@@ -676,7 +676,7 @@ describe("applyAuthChoice", () => {
   let defaultProviderPlugins: ProviderPlugin[] = [];
 
   beforeAll(async () => {
-    authTestRoot = (await setupAuthTestEnv("openclaw-auth-")).stateDir;
+    authTestRoot = (await setupAuthTestEnv("nova-auth-")).stateDir;
     defaultProviderPlugins = await createDefaultProviderPlugins();
     resolvePluginProviders.mockReturnValue(defaultProviderPlugins);
   });
@@ -733,7 +733,7 @@ describe("applyAuthChoice", () => {
 
     const result = await applyAuthChoice({
       authChoice: "token",
-      config: {} as OpenClawConfig,
+      config: {} as NovaConfig,
       prompter: createPrompter({}),
       runtime: createExitThrowingRuntime(),
       setDefaultModel: true,
@@ -771,7 +771,7 @@ describe("applyAuthChoice", () => {
           setDefaultModel: true,
         }),
       ).rejects.toThrow(
-        'Auth choice "openai-chatgpt-import" is no longer supported. Use "openai" instead, or run openclaw onboard to choose interactively.',
+        'Auth choice "openai-chatgpt-import" is no longer supported. Use "openai" instead, or run nova onboard to choose interactively.',
       );
     } finally {
       spy.mockRestore();
@@ -794,7 +794,7 @@ describe("applyAuthChoice", () => {
           setDefaultModel: true,
         }),
       ).rejects.toThrow(
-        'Auth choice "legacy\\u001b[31mchoice" is no longer supported. Use "modern\\nchoice" instead, or run openclaw onboard to choose interactively.',
+        'Auth choice "legacy\\u001b[31mchoice" is no longer supported. Use "modern\\nchoice" instead, or run nova onboard to choose interactively.',
       );
     } finally {
       spy.mockRestore();
@@ -818,7 +818,7 @@ describe("applyAuthChoice", () => {
           setDefaultModel: true,
         }),
       ).rejects.toThrow(
-        'Auth choice "modelstudio-api-key" is no longer supported. Use "qwen-api-key" instead, or run openclaw onboard to choose interactively.',
+        'Auth choice "modelstudio-api-key" is no longer supported. Use "qwen-api-key" instead, or run nova onboard to choose interactively.',
       );
     } finally {
       deprecatedChoiceSpy.mockRestore();
@@ -946,7 +946,7 @@ describe("applyAuthChoice", () => {
   it("uses provided tokens without prompting across alias and direct provider choices", async () => {
     const scenarios: Array<{
       authChoice: "apiKey" | "gemini-api-key";
-      config?: OpenClawConfig;
+      config?: NovaConfig;
       setDefaultModel: boolean;
       tokenProvider: string;
       token: string;

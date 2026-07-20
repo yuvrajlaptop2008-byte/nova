@@ -10,7 +10,7 @@ import {
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { resolveSandboxPath } from "../../agents/sandbox-paths.js";
 import { canonicalizePath } from "../../agents/utils/paths.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { walkDirectorySync } from "../../infra/fs-safe.js";
 import { resolveOsHomeDir } from "../../infra/home-dir.js";
 import { isPathInside } from "../../infra/path-guards.js";
@@ -24,7 +24,7 @@ import { normalizeSkillFilter } from "../discovery/filter.js";
 import { filterPromptVisibleSkillEntries } from "../discovery/skill-index.js";
 import { mergeRemoteNodeSkillEntries } from "../runtime/remote-skills.js";
 import type {
-  OpenClawSkillMetadata,
+  NovaSkillMetadata,
   ParsedSkillFrontmatter,
   SkillEligibilityContext,
   SkillEntry,
@@ -41,7 +41,7 @@ import {
   shouldIncludeSkill,
 } from "./config.js";
 import {
-  resolveOpenClawMetadata,
+  resolveNovaMetadata,
   resolveSkillInvocationPolicy,
   resolveSkillKey,
 } from "./frontmatter.js";
@@ -58,7 +58,7 @@ import { resolveAllowedSkillSymlinkTargetRealPaths, tryRealpath } from "./symlin
 
 const fsp = fs.promises;
 const skillsLogger = createSubsystemLogger("skills");
-const SKILL_SOURCE_ORIGIN_RELATIVE_PATH = path.join(".openclaw", "source-origin.json");
+const SKILL_SOURCE_ORIGIN_RELATIVE_PATH = path.join(".nova", "source-origin.json");
 const MAX_SKILL_SOURCE_ORIGIN_BYTES = 16 * 1024;
 
 /**
@@ -136,8 +136,7 @@ function resolvePromptTildeRoots(): string[] {
 function isContainerStateHomeWherePromptTildeEscapes(home: string): boolean {
   const configDir = path.resolve(resolveConfigDir());
   return (
-    home === "/data" &&
-    (configDir === "/data/.openclaw" || isPathInside("/data/.openclaw", configDir))
+    home === "/data" && (configDir === "/data/.nova" || isPathInside("/data/.nova", configDir))
   );
 }
 
@@ -198,7 +197,7 @@ function warnInvalidSkillFrontmatter(source: string, diagnostic: LocalSkillLoadD
 
 function filterSkillEntries(
   entries: SkillEntry[],
-  config?: OpenClawConfig,
+  config?: NovaConfig,
   skillFilter?: string[],
   eligibility?: SkillEligibilityContext,
 ): SkillEntry[] {
@@ -270,7 +269,7 @@ type SkillDiscoveryBudget = {
   truncated: boolean;
 };
 
-function resolveSkillsLimits(config?: OpenClawConfig, agentId?: string): ResolvedSkillsLimits {
+function resolveSkillsLimits(config?: NovaConfig, agentId?: string): ResolvedSkillsLimits {
   const limits = config?.skills?.limits;
   const agentSkillsLimits = resolveEffectiveAgentSkillsLimits(config, agentId);
   return {
@@ -469,7 +468,7 @@ function buildEscapedSkillPathReason(params: { source: string; candidatePath: st
   consoleHint: string;
 } {
   const candidateIsSymlink = isSymlinkPath(params.candidatePath);
-  if (params.source === "openclaw-bundled" && candidateIsSymlink) {
+  if (params.source === "nova-bundled" && candidateIsSymlink) {
     return {
       reason: "bundled-symlink-escape",
       consoleHint:
@@ -482,7 +481,7 @@ function buildEscapedSkillPathReason(params: { source: string; candidatePath: st
       consoleHint: "reason=symlink-escape",
     };
   }
-  if (params.source === "openclaw-bundled") {
+  if (params.source === "nova-bundled") {
     return {
       reason: "bundled-root-escape",
       consoleHint:
@@ -684,8 +683,8 @@ function readSourceInstallSkillKey(skillDir: string): string | undefined {
 function resolveSkillEntryMetadata(params: {
   frontmatter: ParsedSkillFrontmatter;
   skillDir: string;
-}): OpenClawSkillMetadata | undefined {
-  const metadata = resolveOpenClawMetadata(params.frontmatter);
+}): NovaSkillMetadata | undefined {
+  const metadata = resolveNovaMetadata(params.frontmatter);
   if (metadata?.skillKey) {
     return metadata;
   }
@@ -753,14 +752,12 @@ function isPathInsideAnyRoot(rootRealPaths: readonly string[], candidateRealPath
 }
 
 function shouldEnforceConfiguredSkillRootContainment(source: string): boolean {
-  return source !== "openclaw-managed" && source !== "agents-skills-personal";
+  return source !== "nova-managed" && source !== "agents-skills-personal";
 }
 
 function shouldUseConfiguredSymlinkTargets(source: string): boolean {
   return (
-    source === "openclaw-workspace" ||
-    source === "openclaw-extra" ||
-    source === "agents-skills-project"
+    source === "nova-workspace" || source === "nova-extra" || source === "agents-skills-project"
   );
 }
 
@@ -879,7 +876,7 @@ function loadGeneratedPluginSkillRecords(params: {
       continue;
     }
 
-    // Plugin skills live as symlinks under ~/.openclaw/plugin-skills/, so
+    // Plugin skills live as symlinks under ~/.nova/plugin-skills/, so
     // skillDir is the symlink path while skillDirRealPath is the real target.
     // We set syncSourceDir to the real path so syncSkillsToWorkspace can copy
     // the actual skill directory into the sandbox workspace, but we preserve
@@ -912,7 +909,7 @@ function loadGeneratedPluginSkillRecords(params: {
 function loadSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     agentId?: string;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
@@ -1100,7 +1097,7 @@ function loadSkillEntries(
 
       const candidatePath = path.resolve(candidate.skillDir);
       const maxGroupedDepth =
-        params.source === "openclaw-extra" &&
+        params.source === "nova-extra" &&
         !baseDirIsNestedSkillsRoot &&
         !baseDirLooksLikeSkillsRoot &&
         candidatePath !== nestedSkillsRootPath &&
@@ -1199,7 +1196,7 @@ function loadSkillEntries(
   const bundledSkills = bundledSkillsDir
     ? loadSkills({
         dir: bundledSkillsDir,
-        source: "openclaw-bundled",
+        source: "nova-bundled",
       })
     : [];
   const extraSkills = [
@@ -1207,13 +1204,13 @@ function loadSkillEntries(
       const resolved = resolveUserPath(dir);
       return loadSkills({
         dir: resolved,
-        source: "openclaw-extra",
+        source: "nova-extra",
       });
     }),
     ...loadGeneratedPluginSkillRecords({
       pluginSkillsDir,
       pluginSkillDirs,
-      source: "openclaw-extra",
+      source: "nova-extra",
       limits,
     }),
   ];
@@ -1221,7 +1218,7 @@ function loadSkillEntries(
     ? []
     : loadSkills({
         dir: managedSkillsDir,
-        source: "openclaw-managed",
+        source: "nova-managed",
       });
   const osHomeDir = resolveUserHomeDir();
   const personalAgentsSkillsDir = osHomeDir
@@ -1242,7 +1239,7 @@ function loadSkillEntries(
       });
   const workspaceSkills = loadSkills({
     dir: workspaceSkillsDir,
-    source: "openclaw-workspace",
+    source: "nova-workspace",
   });
 
   const merged = new Map<string, LoadedSkillRecord>();
@@ -1400,12 +1397,12 @@ function buildSkillsLimitNote(params: {
       params.format.kind === "compact"
         ? ` (compact format, ${params.format.descriptionMaxChars > 0 ? "descriptions shortened" : "descriptions omitted"})`
         : "";
-    return `⚠️ Skills truncated: included ${params.included} of ${params.total}${compactDetails}. Run \`openclaw skills check\` to audit.`;
+    return `⚠️ Skills truncated: included ${params.included} of ${params.total}${compactDetails}. Run \`nova skills check\` to audit.`;
   }
   if (params.format.kind === "compact") {
     const compactDetails =
       params.format.descriptionMaxChars > 0 ? "descriptions shortened" : "descriptions omitted";
-    return `⚠️ Skills catalog using compact format (${compactDetails}). Run \`openclaw skills check\` to audit.`;
+    return `⚠️ Skills catalog using compact format (${compactDetails}). Run \`nova skills check\` to audit.`;
   }
   return "";
 }
@@ -1434,7 +1431,7 @@ function buildRenderedSkillsPrompt(params: {
 
 function applySkillsPromptLimits(params: {
   skills: Skill[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   agentId?: string;
   remoteNote?: string;
 }): {
@@ -1537,7 +1534,7 @@ export const testing = {
 };
 
 type WorkspaceSkillBuildOptions = {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   managedSkillsDir?: string;
   bundledSkillsDir?: string;
   entries?: SkillEntry[];
@@ -1611,7 +1608,7 @@ function resolveWorkspaceSkillPromptState(
 export function resolveSkillsPromptForRun(params: {
   skillsSnapshot?: SkillSnapshot;
   entries?: SkillEntry[];
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   workspaceDir: string;
   agentId?: string;
   eligibility?: SkillEligibilityContext;
@@ -1699,7 +1696,7 @@ export function resolveSkillsPromptForRun(params: {
 export function loadWorkspaceSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
     pluginSkillsDir?: string;
@@ -1724,7 +1721,7 @@ export function loadWorkspaceSkillEntries(
 export function loadVisibleWorkspaceSkillEntries(
   workspaceDir: string,
   opts?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     managedSkillsDir?: string;
     bundledSkillsDir?: string;
     skillFilter?: string[];
@@ -1807,7 +1804,7 @@ async function prepareSyncedSkillsDirectory(targetSkillsDir: string): Promise<vo
 export async function syncSkillsToWorkspace(params: {
   sourceWorkspaceDir: string;
   targetWorkspaceDir: string;
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   skillFilter?: string[];
   agentId?: string;
   eligibility?: SkillEligibilityContext;
@@ -1885,7 +1882,7 @@ export async function syncSkillsToWorkspace(params: {
 export function filterWorkspaceSkillEntriesWithOptions(
   entries: SkillEntry[],
   opts?: {
-    config?: OpenClawConfig;
+    config?: NovaConfig;
     skillFilter?: string[];
     eligibility?: SkillEligibilityContext;
   },

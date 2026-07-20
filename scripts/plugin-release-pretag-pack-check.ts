@@ -59,7 +59,7 @@ function runCommand(
 
 export function runPluginReleasePretagPackCheck(rootDir = resolve(".")) {
   const targets = collectPluginReleasePretagPackTargets(rootDir);
-  const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-plugin-pretag-pack-"));
+  const tempRoot = mkdtempSync(join(tmpdir(), "nova-plugin-pretag-pack-"));
   const wrapperDir = join(tempRoot, "bin");
   mkdirSync(wrapperDir);
   const clawHubWrapper = join(wrapperDir, "clawhub");

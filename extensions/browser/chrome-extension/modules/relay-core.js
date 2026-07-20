@@ -4,8 +4,8 @@
 
 /** Tab group shown to the user; membership == what the agent may touch. */
 export const NOVA_TAB_GROUP_TITLE = "Nova";
-const EXTENSION_RELAY_PROTOCOL = "openclaw-extension-relay";
-const EXTENSION_RELAY_TOKEN_PROTOCOL_PREFIX = "openclaw-extension-token.";
+const EXTENSION_RELAY_PROTOCOL = "nova-extension-relay";
+const EXTENSION_RELAY_TOKEN_PROTOCOL_PREFIX = "nova-extension-token.";
 
 const CHROME_GROUP_COLORS = {
   grey: [128, 128, 128],
@@ -20,7 +20,7 @@ const CHROME_GROUP_COLORS = {
 };
 
 /**
- * Parse a pairing string printed by `openclaw browser extension pair`.
+ * Parse a pairing string printed by `nova browser extension pair`.
  * Shape: ws://127.0.0.1:<port>/extension?gateway=<url>#<token>
  * The additive gateway hint is not a credential; old extensions safely pass
  * it through to the relay while new extensions remove it before connecting.

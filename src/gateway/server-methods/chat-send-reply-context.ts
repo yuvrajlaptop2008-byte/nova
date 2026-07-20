@@ -4,7 +4,7 @@
 import { asOptionalRecord } from "@nova/normalization-core/record-coerce";
 import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import type { MsgContext } from "../../auto-reply/templating.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { sanitizeAssistantVisibleTextWithProfile } from "../../shared/text/assistant-visible-text.js";
 import { resolveAssistantIdentity } from "../assistant-identity.js";
 import { projectChatDisplayMessage } from "../chat-display-projection.js";
@@ -46,7 +46,7 @@ function extractReplyTargetText(message: unknown): string | undefined {
 
 function resolveReplyTargetSenderLabel(params: {
   message: unknown;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   userSenderLabel?: string;
 }): string {
@@ -81,7 +81,7 @@ export function applyChatSendReplyContextFields(
  */
 export async function resolveChatSendReplyContext(params: {
   replyToId: string | undefined;
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId?: string;
   sessionKey: string;
   sessionEntry?: SessionTranscriptReadScope["sessionEntry"];

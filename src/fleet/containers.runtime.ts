@@ -712,7 +712,7 @@ export function createFleetContainerRuntime(
 
     async run(profile: CellContainerProfile, start: boolean): Promise<void> {
       const tempRoot = await fs.realpath(os.tmpdir());
-      const tempDir = await fs.mkdtemp(path.join(tempRoot, "openclaw-fleet-env-"));
+      const tempDir = await fs.mkdtemp(path.join(tempRoot, "nova-fleet-env-"));
       const environmentFile = path.join(tempDir, "cell.env");
       try {
         const args = start

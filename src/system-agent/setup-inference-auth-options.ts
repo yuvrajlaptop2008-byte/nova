@@ -2,7 +2,7 @@ import { compareProviderAuthChoiceGroups } from "../plugins/provider-auth-choice
 import type { ProviderAuthChoiceMetadata } from "../plugins/provider-auth-choices.js";
 
 export type SetupInferenceManualProvider = {
-  /** Provider-auth choice id sent back to `openclaw.setup.activate`. */
+  /** Provider-auth choice id sent back to `nova.setup.activate`. */
   id: string;
   label: string;
   hint?: string;
@@ -11,7 +11,7 @@ export type SetupInferenceManualProvider = {
 };
 
 export type SetupInferenceAuthOption = {
-  /** Provider-auth choice id sent to `openclaw.setup.auth.start`. */
+  /** Provider-auth choice id sent to `nova.setup.auth.start`. */
   id: string;
   label: string;
   hint?: string;

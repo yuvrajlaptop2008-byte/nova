@@ -137,7 +137,7 @@ describe("agentLoop EventStream failures", () => {
 
     expect(agent.state.messages.at(-1)).toMatchObject({
       role: "custom",
-      customType: "openclaw:turn-aborted",
+      customType: "nova:turn-aborted",
     });
 
     let replayedMessages: Message[] = [];
@@ -174,7 +174,7 @@ describe("agentLoop EventStream failures", () => {
       expect.arrayContaining([
         expect.objectContaining({
           role: "custom",
-          customType: "openclaw:turn-aborted",
+          customType: "nova:turn-aborted",
         }),
       ]),
     );
@@ -1509,7 +1509,7 @@ describe("agentLoop tool termination", () => {
     expect(messages.at(-2)).toMatchObject({ role: "assistant", stopReason: "aborted" });
     expect(messages.at(-1)).toMatchObject({
       role: "custom",
-      customType: "openclaw:turn-aborted",
+      customType: "nova:turn-aborted",
       display: false,
       content: expect.stringContaining("may have partially executed"),
     });
@@ -1716,7 +1716,7 @@ describe("agentLoop tool termination", () => {
     expect(messages.at(-2)).toMatchObject({ role: "assistant", stopReason: "aborted" });
     expect(messages.at(-1)).toMatchObject({
       role: "custom",
-      customType: "openclaw:turn-aborted",
+      customType: "nova:turn-aborted",
     });
     expect(events.map((event) => event.type)).toEqual([
       "agent_start",

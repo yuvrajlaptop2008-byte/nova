@@ -75,7 +75,7 @@ export {
   resolveStrictExistingPathsWithinRoot,
 } from "../infra/root-paths.js";
 
-export { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+export { resolvePreferredNovaTmpDir } from "../infra/tmp-nova-dir.js";
 export { redactSensitiveText } from "../logging/redact.js";
 export { safeEqualSecret } from "../security/secret-equal.js";
 

@@ -22,11 +22,5 @@ export {
   type SqliteTrajectoryRuntimeScope,
 } from "../trajectory/runtime-store.sqlite.js";
 export { type TrajectoryEvent as SqliteTrajectoryRuntimeEventForTest } from "../trajectory/types.js";
-export {
-  closeOpenClawAgentDatabasesForTest,
-  openOpenClawAgentDatabase,
-} from "../state/openclaw-agent-db.js";
-export {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+export { closeNovaAgentDatabasesForTest, openNovaAgentDatabase } from "../state/nova-agent-db.js";
+export { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";

@@ -4,22 +4,19 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { SkillWorkshopProposalMutationBudget } from "../../skills/workshop/types.js";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../../test-utils/openclaw-test-state.js";
+import { createNovaTestState, type NovaTestState } from "../../test-utils/nova-test-state.js";
 import { createTrackedTempDirs } from "../../test-utils/tracked-temp-dirs.js";
-import { createOpenClawTools } from "../openclaw-tools.js";
+import { createNovaTools } from "../nova-tools.js";
 import { createSkillWorkshopTool } from "./skill-workshop-tool.js";
 
 const tempDirs = createTrackedTempDirs();
-let testState: OpenClawTestState;
+let testState: NovaTestState;
 let stateDir = "";
 
 beforeEach(async () => {
-  testState = await createOpenClawTestState({
+  testState = await createNovaTestState({
     layout: "state-only",
-    prefix: "openclaw-skill-workshop-state-",
+    prefix: "nova-skill-workshop-state-",
   });
   stateDir = testState.stateDir;
 });
@@ -31,7 +28,7 @@ afterEach(async () => {
 
 describe("skill_workshop tool", () => {
   it("describes action selection and pending-proposal discovery in its schema", () => {
-    const tool = createSkillWorkshopTool({ workspaceDir: "/tmp/openclaw" });
+    const tool = createSkillWorkshopTool({ workspaceDir: "/tmp/nova" });
     const schema = JSON.stringify(tool.parameters);
 
     expect(schema).toContain("create = new skill");
@@ -45,10 +42,10 @@ describe("skill_workshop tool", () => {
   });
 
   it("documents that proposal_content must be final skill body content, not a plan or change description", () => {
-    const tool = createSkillWorkshopTool({ workspaceDir: "/tmp/openclaw" });
+    const tool = createSkillWorkshopTool({ workspaceDir: "/tmp/nova" });
     const schema = JSON.stringify(tool.parameters);
     const proposalOnlySchema = JSON.stringify(
-      createSkillWorkshopTool({ workspaceDir: "/tmp/openclaw", proposalOnly: true }).parameters,
+      createSkillWorkshopTool({ workspaceDir: "/tmp/nova", proposalOnly: true }).parameters,
     );
 
     expect(schema).toContain("final skill body");
@@ -60,8 +57,8 @@ describe("skill_workshop tool", () => {
   });
 
   it("is exposed in the Nova tool set", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
-    const tools = createOpenClawTools({
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
+    const tools = createNovaTools({
       workspaceDir,
       config: {},
       disablePluginTools: true,
@@ -70,8 +67,8 @@ describe("skill_workshop tool", () => {
   });
 
   it("stays exposed when autonomous proposal capture is disabled", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
-    const tools = createOpenClawTools({
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
+    const tools = createNovaTools({
       workspaceDir,
       config: {
         skills: {
@@ -89,11 +86,11 @@ describe("skill_workshop tool", () => {
 
   it("does not nudge the foreground model when autonomy is enabled", () => {
     const disabled = createSkillWorkshopTool({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/nova",
       config: { skills: { workshop: { autonomous: { enabled: false } } } },
     });
     const enabled = createSkillWorkshopTool({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/nova",
       config: { skills: { workshop: { autonomous: { enabled: true } } } },
     });
 
@@ -102,8 +99,8 @@ describe("skill_workshop tool", () => {
   });
 
   it("keeps proposal state inside an injected state directory", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-isolated-workspace-");
-    const isolatedStateDir = await tempDirs.make("openclaw-skill-workshop-isolated-state-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-isolated-workspace-");
+    const isolatedStateDir = await tempDirs.make("nova-skill-workshop-isolated-state-");
     const env = { ...process.env, NOVA_STATE_DIR: isolatedStateDir };
     const isolatedTool = createSkillWorkshopTool({ workspaceDir, env, proposalOnly: true });
 
@@ -131,7 +128,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("restricts internal review runs to one pending proposal mutation", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-review-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-review-");
     const proposalMutationBudget: SkillWorkshopProposalMutationBudget = { remaining: 1 };
     const tool = createSkillWorkshopTool({
       workspaceDir,
@@ -177,7 +174,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("does not refund the review mutation budget after a failed mutation", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-review-failure-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-review-failure-");
     const proposalMutationBudget: SkillWorkshopProposalMutationBudget = { remaining: 1 };
     const tool = createSkillWorkshopTool({
       workspaceDir,
@@ -205,7 +202,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("durably completes a proposal review and blocks later work", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-review-completion-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-review-completion-");
     let completions = 0;
     const progress: Array<{ proposalIds: string[]; remaining: number }> = [];
     let releaseProgress!: () => void;
@@ -264,7 +261,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("honors a larger internal review mutation budget", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-history-review-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-history-review-");
     const proposalMutationBudget: SkillWorkshopProposalMutationBudget = { remaining: 3 };
     const tool = createSkillWorkshopTool({
       workspaceDir,
@@ -292,7 +289,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("counts repeated revisions as one distinct proposal idea", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-distinct-review-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-distinct-review-");
     const proposalMutationBudget: SkillWorkshopProposalMutationBudget = { remaining: 3 };
     const tool = createSkillWorkshopTool({
       workspaceDir,
@@ -319,8 +316,8 @@ describe("skill_workshop tool", () => {
   });
 
   it("is not exposed from sandboxed Nova tool sets", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
-    const tools = createOpenClawTools({
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
+    const tools = createNovaTools({
       workspaceDir,
       config: {},
       disablePluginTools: true,
@@ -333,7 +330,7 @@ describe("skill_workshop tool", () => {
   it.each([0, 1.5, "1.5", "25items", "many"])(
     "rejects invalid list limit %s before touching proposal state",
     async (limit) => {
-      const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
+      const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
       const tool = createSkillWorkshopTool({
         workspaceDir,
         config: {},
@@ -348,7 +345,7 @@ describe("skill_workshop tool", () => {
   );
 
   it("preserves list limits through 50 and clamps larger requests", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
     const tool = createSkillWorkshopTool({
       workspaceDir,
       config: { skills: { workshop: { maxPending: 200 } } },
@@ -377,7 +374,7 @@ describe("skill_workshop tool", () => {
   it("creates pending skill proposals without applying them", async () => {
     // Creation writes reviewable proposal artifacts under state, not live skill
     // files in the workspace.
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
     const tool = createSkillWorkshopTool({
       workspaceDir,
       config: {},
@@ -604,7 +601,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("rejects whitespace-only proposal content while preserving raw valid markdown", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
     const tool = createSkillWorkshopTool({
       workspaceDir,
       config: {},
@@ -643,7 +640,7 @@ describe("skill_workshop tool", () => {
   });
 
   it("applies, rejects, and quarantines proposals through the workshop service", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-");
+    const workspaceDir = await tempDirs.make("nova-skill-workshop-tool-");
     const tool = createSkillWorkshopTool({ workspaceDir, config: {}, agentId: "main" });
 
     const created = await tool.execute("call-1", {
@@ -780,8 +777,8 @@ describe("skill_workshop tool", () => {
   });
 
   it("scopes proposal discovery to the tool workspace", async () => {
-    const firstWorkspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-first-");
-    const secondWorkspaceDir = await tempDirs.make("openclaw-skill-workshop-tool-second-");
+    const firstWorkspaceDir = await tempDirs.make("nova-skill-workshop-tool-first-");
+    const secondWorkspaceDir = await tempDirs.make("nova-skill-workshop-tool-second-");
     const firstTool = createSkillWorkshopTool({
       workspaceDir: firstWorkspaceDir,
       config: {},

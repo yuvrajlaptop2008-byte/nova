@@ -18,7 +18,7 @@ const previousEnv = {
 };
 
 async function makeTempDir(): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-acpx-codex-auth-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-acpx-codex-auth-"));
   tempDirs.push(dir);
   return dir;
 }

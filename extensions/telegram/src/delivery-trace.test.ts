@@ -16,12 +16,12 @@ import {
   type DeliveryTraceInStep,
   type DeliveryTraceScenarioName,
   type WireRecorder,
-} from "openclaw/plugin-sdk/channel-contract-testing";
-import * as channelInbound from "openclaw/plugin-sdk/channel-inbound";
-import type { PluginRuntime } from "openclaw/plugin-sdk/core";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-payload";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+} from "nova/plugin-sdk/channel-contract-testing";
+import * as channelInbound from "nova/plugin-sdk/channel-inbound";
+import type { PluginRuntime } from "nova/plugin-sdk/core";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
+import type { ReplyPayload } from "nova/plugin-sdk/reply-payload";
+import type { RuntimeEnv } from "nova/plugin-sdk/runtime-env";
 import { afterEach, describe, it, vi } from "vitest";
 import type { TelegramBotDeps } from "./bot-deps.js";
 import {
@@ -164,8 +164,7 @@ function createTraceTelegramDeps(captured: CapturedDispatch): TelegramBotDeps {
     getRuntimeConfig: (() => ({
       config: baseTelegramMessageContextConfig,
     })) as unknown as TelegramBotDeps["getRuntimeConfig"],
-    resolveStorePath: (() =>
-      "/tmp/openclaw-trace-unused.json") as TelegramBotDeps["resolveStorePath"],
+    resolveStorePath: (() => "/tmp/nova-trace-unused.json") as TelegramBotDeps["resolveStorePath"],
     // No session entry: keeps the transcript mirror and final-text recovery
     // inert so the trace stays a pure wire recording.
     getSessionEntry: (() => undefined) as TelegramBotDeps["getSessionEntry"],

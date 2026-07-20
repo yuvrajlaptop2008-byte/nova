@@ -1,11 +1,7 @@
 /**
  * Periodic cleanup for browser tabs tracked to primary Nova sessions.
  */
-import {
-  isAcpSessionKey,
-  isCronSessionKey,
-  isSubagentSessionKey,
-} from "openclaw/plugin-sdk/routing";
+import { isAcpSessionKey, isCronSessionKey, isSubagentSessionKey } from "nova/plugin-sdk/routing";
 import { getRuntimeConfig } from "../config/config.js";
 import { resolveBrowserConfig, type ResolvedBrowserTabCleanupConfig } from "./config.js";
 import { sweepTrackedBrowserTabs } from "./session-tab-registry.js";

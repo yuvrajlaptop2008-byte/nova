@@ -1,8 +1,8 @@
 // Telegram plugin module implements outbound message context behavior.
 import type { Message } from "grammy/types";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
+import { logVerbose } from "nova/plugin-sdk/runtime-env";
+import { resolveStorePath } from "nova/plugin-sdk/session-store-runtime";
 import { buildTelegramSelfSenderName } from "./group-history-window.js";
 import { createTelegramMessageCache, resolveTelegramMessageCacheScope } from "./message-cache.js";
 import type { TelegramPromptContextProjection } from "./prompt-context-projection.js";
@@ -22,7 +22,7 @@ export type TelegramOutboundPromptContextMessage = {
   from?: TelegramOutboundPromptContextUser;
   sender_chat?: { id?: number; title?: string; username?: string };
   sender_business_bot?: TelegramOutboundPromptContextUser;
-  openclaw_prompt_context_timestamp_ms?: number;
+  nova_prompt_context_timestamp_ms?: number;
   text?: string;
   caption?: string;
   message_thread_id?: number;
@@ -62,10 +62,10 @@ function resolveOutboundCacheMessageTimestamp(
   msg: TelegramOutboundPromptContextMessage,
 ): number | undefined {
   if (
-    typeof msg.openclaw_prompt_context_timestamp_ms === "number" &&
-    Number.isFinite(msg.openclaw_prompt_context_timestamp_ms)
+    typeof msg.nova_prompt_context_timestamp_ms === "number" &&
+    Number.isFinite(msg.nova_prompt_context_timestamp_ms)
   ) {
-    return msg.openclaw_prompt_context_timestamp_ms;
+    return msg.nova_prompt_context_timestamp_ms;
   }
   return typeof msg.date === "number" && Number.isFinite(msg.date) ? msg.date * 1000 : undefined;
 }
@@ -96,7 +96,7 @@ function buildOutboundCacheMessage(params: {
     ...params.message,
     message_id: params.messageId,
     ...(params.promptContextTimestampMs !== undefined
-      ? { openclaw_prompt_context_timestamp_ms: params.promptContextTimestampMs }
+      ? { nova_prompt_context_timestamp_ms: params.promptContextTimestampMs }
       : {}),
     date:
       typeof params.message.date === "number" && Number.isFinite(params.message.date)
@@ -122,7 +122,7 @@ function buildOutboundCacheMessage(params: {
 }
 
 export async function recordOutboundMessageForPromptContext(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   account: TelegramOutboundPromptContextAccount;
   chatId: string | number;
   message: TelegramOutboundPromptContextMessage;

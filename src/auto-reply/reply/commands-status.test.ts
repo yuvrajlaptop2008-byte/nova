@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { withTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome } from "nova/plugin-sdk/test-env";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { normalizeTestText } from "../../../test/helpers/normalize-text.js";
 import { saveAuthProfileStore } from "../../agents/auth-profiles/store.js";
@@ -13,7 +13,7 @@ import {
   addSubagentRunForTests,
   resetSubagentRegistryForTests,
 } from "../../agents/subagent-registry.test-helpers.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import type { ModelDefinitionConfig } from "../../config/types.models.js";
 import type { ProviderThinkingProfile } from "../../plugins/provider-thinking.types.js";
 import {
@@ -89,9 +89,9 @@ vi.mock("../../plugins/provider-thinking-active.js", async (importOriginal) => (
 
 vi.mock("../../status/status-plugin-health.runtime.js", () => pluginHealthRuntimeMock);
 
-vi.mock("../../agents/harness/builtin-openclaw.js", () => ({
-  createOpenClawAgentHarness: () => ({
-    id: "openclaw",
+vi.mock("../../agents/harness/builtin-nova.js", () => ({
+  createNovaAgentHarness: () => ({
+    id: "nova",
     label: "Nova Default",
     supports: () => ({ supported: true, priority: 0 }),
     runAttempt: async () => {
@@ -178,7 +178,7 @@ function saveStatusTestAuthProfiles(params: {
   dir: string;
   profiles: Array<{ profileId: string; provider: "openai" | "openai-codex" | "anthropic" }>;
 }): void {
-  const agentDir = path.join(params.dir, ".openclaw", "agents", "main", "agent");
+  const agentDir = path.join(params.dir, ".nova", "agents", "main", "agent");
   fs.mkdirSync(agentDir, { recursive: true });
   saveAuthProfileStore(
     {
@@ -249,7 +249,7 @@ function writeTranscriptUsageLog(params: {
 }) {
   const logPath = path.join(
     params.dir,
-    ".openclaw",
+    ".nova",
     "agents",
     params.agentId,
     "sessions",
@@ -875,7 +875,7 @@ describe("buildStatusReply subagent summary", () => {
 
     await withTempHome(
       async (dir) => {
-        const agentDir = path.join(dir, ".openclaw", "agents", "main", "agent");
+        const agentDir = path.join(dir, ".nova", "agents", "main", "agent");
         fs.mkdirSync(agentDir, { recursive: true });
         saveAuthProfileStore(
           {
@@ -988,7 +988,7 @@ describe("buildStatusReply subagent summary", () => {
 
     await withTempHome(
       async (dir) => {
-        const agentDir = path.join(dir, ".openclaw", "agents", "main", "agent");
+        const agentDir = path.join(dir, ".nova", "agents", "main", "agent");
         const codexHome = path.join(agentDir, "codex-home");
         fs.mkdirSync(codexHome, { recursive: true });
         fs.writeFileSync(
@@ -1051,7 +1051,7 @@ describe("buildStatusReply subagent summary", () => {
 
     await withTempHome(
       async (dir) => {
-        const agentDir = path.join(dir, ".openclaw", "agents", "main", "agent");
+        const agentDir = path.join(dir, ".nova", "agents", "main", "agent");
         fs.mkdirSync(agentDir, { recursive: true });
         saveAuthProfileStore(
           {
@@ -1870,7 +1870,7 @@ describe("buildStatusReply subagent summary", () => {
   it("uses Codex OAuth auth labels for explicit OpenAI Nova auth order", async () => {
     await withTempHome(
       async (dir) => {
-        const agentDir = path.join(dir, ".openclaw", "agents", "main", "agent");
+        const agentDir = path.join(dir, ".nova", "agents", "main", "agent");
         fs.mkdirSync(agentDir, { recursive: true });
         saveAuthProfileStore(
           {
@@ -1901,7 +1901,7 @@ describe("buildStatusReply subagent summary", () => {
               defaults: {
                 models: {
                   "openai/gpt-5.5": {
-                    agentRuntime: { id: "openclaw" },
+                    agentRuntime: { id: "nova" },
                   },
                 },
               },
@@ -1923,7 +1923,7 @@ describe("buildStatusReply subagent summary", () => {
           provider: "openai",
           model: "gpt-5.5",
           contextTokens: 32_000,
-          resolvedHarness: "openclaw",
+          resolvedHarness: "nova",
           resolvedFastMode: false,
           resolvedVerboseLevel: "off",
           resolvedReasoningLevel: "off",
@@ -2138,9 +2138,9 @@ describe("buildStatusReply subagent summary", () => {
   });
 
   it("uses workspace-scoped auth evidence in /status auth labels", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-status-auth-label-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-status-auth-label-"));
     const workspaceDir = path.join(tempRoot, "workspace");
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-auth-label");
+    const pluginDir = path.join(workspaceDir, ".nova", "extensions", "workspace-auth-label");
     const bundledDir = path.join(tempRoot, "bundled");
     const stateDir = path.join(tempRoot, "state");
     const credentialPath = path.join(tempRoot, "credentials.json");
@@ -2150,7 +2150,7 @@ describe("buildStatusReply subagent summary", () => {
     fs.writeFileSync(path.join(pluginDir, "index.ts"), "export default {}\n", "utf8");
     fs.writeFileSync(credentialPath, "{}", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify({
         id: "workspace-auth-label",
         configSchema: { type: "object" },
@@ -2232,7 +2232,7 @@ describe("buildStatusReply subagent summary", () => {
         sessionId: "sess-status-pinned-agent",
         updatedAt: 0,
         fastMode: true,
-        agentRuntimeOverride: "openclaw",
+        agentRuntimeOverride: "nova",
         agentHarnessId: "codex",
       },
       sessionKey: "agent:main:main",
@@ -2346,7 +2346,7 @@ describe("buildStatusReply subagent summary", () => {
       sessionEntry: {
         sessionId: "sess-status-observed-agent",
         updatedAt: 0,
-        agentHarnessId: "openclaw",
+        agentHarnessId: "nova",
       },
       sessionKey: "agent:main:main",
       parentSessionKey: "agent:main:main",
@@ -2370,7 +2370,7 @@ describe("buildStatusReply subagent summary", () => {
 });
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */
 
-async function buildKiraStatusReply(cfg: OpenClawConfig) {
+async function buildKiraStatusReply(cfg: NovaConfig) {
   return await buildStatusReply({
     cfg,
     command: {
@@ -2401,7 +2401,7 @@ describe("buildStatusReply", () => {
       channels: {
         whatsapp: { allowFrom: ["*"] },
       },
-    } as OpenClawConfig);
+    } as NovaConfig);
   });
 
   it("shows per-agent thinkingDefault in the status card", async () => {
@@ -2422,7 +2422,7 @@ describe("buildStatusReply", () => {
       channels: {
         whatsapp: { allowFrom: ["*"] },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const reply = await buildKiraStatusReply(cfg);
 
@@ -2452,7 +2452,7 @@ describe("buildStatusReply", () => {
       channels: {
         whatsapp: { allowFrom: ["*"] },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const reply = await buildKiraStatusReply(cfg);
 
@@ -2479,7 +2479,7 @@ describe("buildStatusReply", () => {
       channels: {
         whatsapp: { allowFrom: ["*"] },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const reply = await buildKiraStatusReply(cfg);
 
@@ -2508,7 +2508,7 @@ describe("buildStatusReply", () => {
       channels: {
         whatsapp: { allowFrom: ["*"] },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const reply = await buildKiraStatusReply(cfg);
 
@@ -2538,7 +2538,7 @@ describe("buildStatusReply", () => {
       channels: {
         whatsapp: { allowFrom: ["*"] },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const reply = await buildKiraStatusReply(cfg);
 

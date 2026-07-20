@@ -202,7 +202,7 @@ describe("runMemoryFlushIfNeeded", () => {
   let rootDir = "";
 
   beforeEach(async () => {
-    rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-memory-unit-"));
+    rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-memory-unit-"));
     registerMemoryFlushPlanResolverForTest(() => ({
       softThresholdTokens: 4_000,
       forceFlushTranscriptBytes: 1_000_000_000,
@@ -451,7 +451,7 @@ describe("runMemoryFlushIfNeeded", () => {
           defaults: {
             compaction: { memoryFlush: {} },
             models: {
-              "openai/gpt-5.6-sol": { agentRuntime: { id: "openclaw" } },
+              "openai/gpt-5.6-sol": { agentRuntime: { id: "nova" } },
             },
           },
         },
@@ -1291,7 +1291,7 @@ describe("runMemoryFlushIfNeeded", () => {
       updatedAt: Date.now(),
       totalTokens: 120,
       totalTokensFresh: true,
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
       modelSelectionLocked: true,
     };
     const onCompactionNotice = vi.fn();
@@ -1324,7 +1324,7 @@ describe("runMemoryFlushIfNeeded", () => {
       preflightCompactionTrigger: "tokens",
       deferOwningContextEngineCompaction: false,
       contextTokenBudget: 100,
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
       modelSelectionLocked: true,
     });
     expect(incrementCompactionCountMock).not.toHaveBeenCalled();
@@ -1947,7 +1947,7 @@ describe("runMemoryFlushIfNeeded", () => {
       totalTokens: 347_000,
       totalTokensFresh: false,
       agentRuntimeOverride: "codex",
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
     };
 
     const entry = await runPreflightCompactionIfNeeded({
@@ -1993,7 +1993,7 @@ describe("runMemoryFlushIfNeeded", () => {
       totalTokens: 347_000,
       totalTokensFresh: true,
       agentRuntimeOverride: "codex",
-      agentHarnessId: "openclaw",
+      agentHarnessId: "nova",
     };
 
     const entry = await runPreflightCompactionIfNeeded({
@@ -2093,7 +2093,7 @@ describe("runMemoryFlushIfNeeded", () => {
       updatedAt: Date.now(),
       totalTokens: 347_000,
       totalTokensFresh: false,
-      agentRuntimeOverride: "openclaw",
+      agentRuntimeOverride: "nova",
     };
 
     const entry = await runPreflightCompactionIfNeeded({

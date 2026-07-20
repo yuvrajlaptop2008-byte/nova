@@ -65,9 +65,9 @@ export async function fetchCodexUsage(
   const defaultHeaders: Record<string, string> = {
     Authorization: `Bearer ${token}`,
     Accept: "application/json",
-    originator: "openclaw",
+    originator: "nova",
     ...(version ? { version } : {}),
-    "User-Agent": `openclaw/${version || "dev"}`,
+    "User-Agent": `nova/${version || "dev"}`,
   };
   if (accountId) {
     defaultHeaders["ChatGPT-Account-Id"] = accountId;

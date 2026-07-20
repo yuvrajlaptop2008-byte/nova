@@ -6,12 +6,12 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createReadTool } from "openclaw/plugin-sdk/agent-sessions";
+import { createReadTool } from "nova/plugin-sdk/agent-sessions";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("openclaw/plugin-sdk/llm", async () => {
+vi.mock("nova/plugin-sdk/llm", async () => {
   const original =
-    await vi.importActual<typeof import("openclaw/plugin-sdk/llm")>("openclaw/plugin-sdk/llm");
+    await vi.importActual<typeof import("nova/plugin-sdk/llm")>("nova/plugin-sdk/llm");
   return {
     ...original,
   };
@@ -20,7 +20,7 @@ vi.mock("openclaw/plugin-sdk/llm", async () => {
 import {
   createHostWorkspaceEditTool,
   createHostWorkspaceWriteTool,
-  createOpenClawReadTool,
+  createNovaReadTool,
   wrapToolMemoryFlushAppendOnlyWrite,
   wrapToolWorkspaceRootGuard,
 } from "./agent-tools.read.js";
@@ -40,7 +40,7 @@ describe("FS tools with workspaceOnly=false", () => {
     });
 
   const toolsFor = (workspaceOnly: boolean | undefined): AnyAgentTool[] => {
-    const read = createOpenClawReadTool(createReadTool(workspaceDir) as unknown as AnyAgentTool);
+    const read = createNovaReadTool(createReadTool(workspaceDir) as unknown as AnyAgentTool);
     const write = createHostWorkspaceWriteTool(workspaceDir, { workspaceOnly });
     const edit = createHostWorkspaceEditTool(workspaceDir, { workspaceOnly });
     const tools = [read, write, edit];
@@ -70,7 +70,7 @@ describe("FS tools with workspaceOnly=false", () => {
   };
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-test-"));
     workspaceDir = path.join(tmpDir, "workspace");
     await fs.mkdir(workspaceDir);
     outsideFile = path.join(tmpDir, "outside.txt");

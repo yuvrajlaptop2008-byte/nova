@@ -25,7 +25,7 @@ describe("session transcript reader facade", () => {
 
   beforeEach(() => {
     envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-transcript-readers-"));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-transcript-readers-"));
     storePath = path.join(tempDir, "sessions.json");
     setTestEnvValue("NOVA_STATE_DIR", tempDir);
   });
@@ -274,7 +274,7 @@ describe("session transcript reader facade", () => {
     ]);
     await expect(
       readSessionMessagesAsync(scope, { mode: "recent", maxMessages: 1 }),
-    ).resolves.toMatchObject([{ content: "sqlite follow-up", __openclaw: { seq: 3 } }]);
+    ).resolves.toMatchObject([{ content: "sqlite follow-up", __nova: { seq: 3 } }]);
     await expect(readSessionMessageCountAsync(scope)).resolves.toBe(3);
   });
 
@@ -349,7 +349,7 @@ describe("session transcript reader facade", () => {
     });
     await waitForSessionTranscriptIndexReconcile({
       agentId: "main",
-      path: path.join(tempDir, "openclaw-agent.sqlite"),
+      path: path.join(tempDir, "nova-agent.sqlite"),
     });
 
     const messages = await readSessionMessagesAsync(scope, {
@@ -359,10 +359,10 @@ describe("session transcript reader facade", () => {
 
     expect(messages).toMatchObject([{ content: "branch prompt" }, { content: "active branch" }]);
     expect(
-      messages.map((message) => (message as { __openclaw?: { id?: string } })["__openclaw"]?.id),
+      messages.map((message) => (message as { __nova?: { id?: string } })["__nova"]?.id),
     ).toEqual(["root", "active"]);
     expect(
-      messages.map((message) => (message as { __openclaw?: { seq?: number } })["__openclaw"]?.seq),
+      messages.map((message) => (message as { __nova?: { seq?: number } })["__nova"]?.seq),
     ).toEqual([1, 2]);
     await expect(readSessionMessageCountAsync(scope)).resolves.toBe(2);
   });
@@ -396,9 +396,7 @@ describe("session transcript reader facade", () => {
       "third",
     ]);
     expect(
-      page.messages.map(
-        (message) => (message as { __openclaw?: { seq?: number } })["__openclaw"]?.seq,
-      ),
+      page.messages.map((message) => (message as { __nova?: { seq?: number } })["__nova"]?.seq),
     ).toEqual([2, 3]);
   });
 

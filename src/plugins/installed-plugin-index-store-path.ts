@@ -1,8 +1,8 @@
 // Resolves filesystem paths for installed plugin index storage.
 import path from "node:path";
 import { resolveStateDir } from "../config/paths.js";
-import type { OpenClawStateDatabaseOptions } from "../state/openclaw-state-db.js";
-import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
+import type { NovaStateDatabaseOptions } from "../state/nova-state-db.js";
+import { resolveNovaStateSqlitePath } from "../state/nova-state-db.paths.js";
 
 const LEGACY_INSTALLED_PLUGIN_INDEX_STORE_PATH = path.join("plugins", "installs.json");
 
@@ -26,13 +26,13 @@ export function resolveInstalledPluginIndexStorePath(
   if (options.filePath) {
     return options.filePath;
   }
-  return resolveOpenClawStateSqlitePath(resolveStoreEnv(options));
+  return resolveNovaStateSqlitePath(resolveStoreEnv(options));
 }
 
 /** Resolves state database options for the installed plugin index store. */
 export function resolveInstalledPluginIndexStateDatabaseOptions(
   options: InstalledPluginIndexStoreOptions = {},
-): OpenClawStateDatabaseOptions {
+): NovaStateDatabaseOptions {
   if (options.filePath) {
     return {
       ...(options.env ? { env: options.env } : {}),

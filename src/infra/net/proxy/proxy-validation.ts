@@ -17,7 +17,7 @@ const DEFAULT_PROXY_VALIDATION_ALLOWED_URLS = ["https://example.com/"] as const;
 const DEFAULT_PROXY_VALIDATION_APNS_AUTHORITY = "https://api.sandbox.push.apple.com";
 
 const DEFAULT_PROXY_VALIDATION_TIMEOUT_MS = 5000;
-const DENIED_CANARY_HEADER = "x-openclaw-proxy-validation-canary";
+const DENIED_CANARY_HEADER = "x-nova-proxy-validation-canary";
 const APNS_REACHABILITY_REASON = "InvalidProviderToken";
 
 /** Describes where the effective proxy validation URL came from. */

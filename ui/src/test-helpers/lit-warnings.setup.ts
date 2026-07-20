@@ -91,9 +91,9 @@ function globalLocalStorageIsUsable(): boolean {
     if (!existing) {
       return false;
     }
-    existing.setItem("__openclaw_probe__", "1");
-    const roundTrips = existing.getItem("__openclaw_probe__") === "1";
-    existing.removeItem("__openclaw_probe__");
+    existing.setItem("__nova_probe__", "1");
+    const roundTrips = existing.getItem("__nova_probe__") === "1";
+    existing.removeItem("__nova_probe__");
     return roundTrips;
   } catch {
     return false;
@@ -106,9 +106,9 @@ function usableWindowLocalStorage(): Storage | null {
     if (!candidate) {
       return null;
     }
-    candidate.setItem("__openclaw_probe__", "1");
-    const roundTrips = candidate.getItem("__openclaw_probe__") === "1";
-    candidate.removeItem("__openclaw_probe__");
+    candidate.setItem("__nova_probe__", "1");
+    const roundTrips = candidate.getItem("__nova_probe__") === "1";
+    candidate.removeItem("__nova_probe__");
     return roundTrips ? candidate : null;
   } catch {
     return null;

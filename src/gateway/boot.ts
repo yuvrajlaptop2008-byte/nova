@@ -19,7 +19,7 @@ import {
 } from "../config/sessions/main-session.js";
 import { resolveStorePath } from "../config/sessions/paths.js";
 import { preserveTemporarySessionMapping } from "../config/sessions/session-accessor.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { readRegularFile } from "../infra/regular-file.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
@@ -107,7 +107,7 @@ async function loadBootFile(
 }
 
 export async function runBootOnce(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   deps: CliDeps;
   workspaceDir: string;
   agentId?: string;

@@ -7,7 +7,7 @@ import { resolveClaudeSonnet5ModelIdentity } from "@nova/llm-core";
  * Resolves agent model selection, auth, runtime policy, and missing-auth errors before simple completions run.
  */
 import type { ThinkLevel } from "../auto-reply/thinking.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { bindModelLlmRuntime, getModelLlmRuntime } from "../llm/model-runtime-binding.js";
 import { completeSimple } from "../llm/stream.js";
@@ -109,7 +109,7 @@ type PreparedSimpleCompletionModelForAgent =
     };
 
 export function resolveSimpleCompletionSelectionForAgent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   agentDir?: string;
   modelRef?: string;
@@ -163,7 +163,7 @@ export function resolveSimpleCompletionSelectionForAgent(params: {
 }
 
 function resolveSimpleCompletionRuntimeProvider(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   provider: string;
   modelId: string;
@@ -185,7 +185,7 @@ async function setRuntimeApiKeyForCompletion(params: {
   model: Model;
   apiKey: string;
   authMode: ResolvedProviderAuth["mode"];
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   workspaceDir?: string;
   profileId?: string;
 }): Promise<CompletionRuntimeCredential> {
@@ -225,7 +225,7 @@ function hasMissingApiKeyAllowance(params: {
 }
 
 export async function prepareSimpleCompletionModel(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: NovaConfig | undefined;
   agentId?: string;
   provider: string;
   modelId: string;
@@ -460,7 +460,7 @@ export async function prepareSimpleCompletionModel(params: {
 }
 
 export async function prepareSimpleCompletionModelForAgent(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   agentDir?: string;
   modelRef?: string;
@@ -523,7 +523,7 @@ export async function completeWithPreparedSimpleCompletionModel(params: {
   model: Model;
   auth: ResolvedProviderAuth;
   context: Parameters<typeof completeSimple>[1];
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   options?: SimpleCompletionModelOptions;
 }): Promise<AssistantMessage> {
   const runtime = getModelLlmRuntime(params.model);

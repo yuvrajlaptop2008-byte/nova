@@ -10,7 +10,7 @@ import { testing } from "../../scripts/check-cli-startup-memory.mjs";
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-startup-memory-test-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-startup-memory-test-"));
   tempRoots.push(root);
   return root;
 }
@@ -86,7 +86,7 @@ describe("check-cli-startup-memory", () => {
     expect(testing.cases).toContainEqual(
       expect.objectContaining({
         id: "pluginsList",
-        args: ["openclaw.mjs", "plugins", "list", "--json"],
+        args: ["nova.mjs", "plugins", "list", "--json"],
       }),
     );
   });

@@ -32,8 +32,8 @@ const COPILOT_RELAY_LABEL = {
   on: "Browser relay connected",
   error: "Browser relay reconnecting",
 };
-const RELAY_WATCHDOG_ALARM = "openclaw-relay-watchdog";
-const RELAY_OPENING_DEADLINE_ALARM = "openclaw-relay-opening-deadline";
+const RELAY_WATCHDOG_ALARM = "nova-relay-watchdog";
+const RELAY_OPENING_DEADLINE_ALARM = "nova-relay-opening-deadline";
 const RELAY_OPENING_TIMEOUT_MS = 30_000;
 
 /** @type {WebSocket|null} */
@@ -108,7 +108,7 @@ async function getCopilotConfig() {
 // Tab group management (the consent boundary)
 // ---------------------------------------------------------------------------
 
-async function findOpenClawGroups() {
+async function findNovaGroups() {
   try {
     return await chrome.tabGroups.query({ title: NOVA_TAB_GROUP_TITLE });
   } catch {
@@ -117,7 +117,7 @@ async function findOpenClawGroups() {
 }
 
 async function listSharedTabs() {
-  const groups = await findOpenClawGroups();
+  const groups = await findNovaGroups();
   const tabs = [];
   for (const group of groups) {
     const groupTabs = await chrome.tabs.query({ groupId: group.id });
@@ -126,9 +126,9 @@ async function listSharedTabs() {
   return tabs.filter((tab) => typeof tab.id === "number");
 }
 
-async function addTabToOpenClawGroup(tabId) {
+async function addTabToNovaGroup(tabId) {
   const tab = await chrome.tabs.get(tabId);
-  const groups = await findOpenClawGroups();
+  const groups = await findNovaGroups();
   const sameWindowGroup = groups.find((group) => group.windowId === tab.windowId);
   if (sameWindowGroup) {
     await chrome.tabs.group({ tabIds: [tabId], groupId: sameWindowGroup.id });
@@ -142,7 +142,7 @@ async function addTabToOpenClawGroup(tabId) {
   });
 }
 
-async function removeTabFromOpenClawGroup(tabId) {
+async function removeTabFromNovaGroup(tabId) {
   try {
     await chrome.tabs.ungroup([tabId]);
   } catch {
@@ -155,7 +155,7 @@ async function isTabShared(tabId) {
   return shared.some((tab) => tab.id === tabId);
 }
 
-async function isOpenClawGroupId(groupId) {
+async function isNovaGroupId(groupId) {
   if (!Number.isInteger(groupId) || groupId < 0) {
     return false;
   }
@@ -319,7 +319,7 @@ chrome.debugger.onDetach.addListener((source, reason) => {
     // The user hit "Cancel" on Chrome's debugging infobar: treat it as a
     // revocation and pull the tab out of the shared group so the agent does
     // not immediately re-attach.
-    void removeTabFromOpenClawGroup(source.tabId).then(scheduleTabsSync);
+    void removeTabFromNovaGroup(source.tabId).then(scheduleTabsSync);
   }
 });
 
@@ -370,7 +370,7 @@ async function handleRelayCommand(msg) {
       }
       case "createTab": {
         const tab = await chrome.tabs.create({ url: msg.url, active: msg.background !== true });
-        await addTabToOpenClawGroup(tab.id);
+        await addTabToNovaGroup(tab.id);
         scheduleTabsSync();
         send({ type: "result", seq, result: { tabId: tab.id } });
         return;
@@ -555,7 +555,7 @@ function sendPageFromChromeEntry(tabId) {
 async function installPageShareContextMenu() {
   await chrome.contextMenus.removeAll();
   chrome.contextMenus.create({
-    id: "openclaw-send-page",
+    id: "nova-send-page",
     title: "Send page to Nova",
     contexts: ["page", "selection"],
   });
@@ -564,7 +564,7 @@ async function installPageShareContextMenu() {
 copilot = createCopilotController({
   getConfig: getCopilotConfig,
   isTabShared,
-  addTabToOpenClawGroup,
+  addTabToNovaGroup,
   attachDebugger,
   detachDebugger,
   revokeDebugger: revokeCopilotDebugger,
@@ -674,11 +674,11 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         }
         if (await isTabShared(tabId)) {
           await detachDebugger(tabId);
-          await removeTabFromOpenClawGroup(tabId);
+          await removeTabFromNovaGroup(tabId);
           scheduleTabsSync();
           sendResponse({ ok: true, shared: false });
         } else {
-          await addTabToOpenClawGroup(tabId);
+          await addTabToNovaGroup(tabId);
           scheduleTabsSync();
           sendResponse({ ok: true, shared: true });
         }
@@ -732,7 +732,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   }
   // changeInfo.groupId is the event-time membership snapshot. Preserve a
   // revocation even if a later event re-shares the tab before async cleanup.
-  void isOpenClawGroupId(changeInfo.groupId).then((shared) =>
+  void isNovaGroupId(changeInfo.groupId).then((shared) =>
     copilot.onConsentChanged(tabId, { revoked: !shared }),
   );
 });
@@ -754,7 +754,7 @@ chrome.commands.onCommand.addListener((command) => {
     .then(([tab]) => (typeof tab?.id === "number" ? sendPageFromChromeEntry(tab.id) : undefined));
 });
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId !== "openclaw-send-page" || typeof tab?.id !== "number") {
+  if (info.menuItemId !== "nova-send-page" || typeof tab?.id !== "number") {
     return;
   }
   const selection = info.selectionText?.trim() ?? "";

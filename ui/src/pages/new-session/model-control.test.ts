@@ -3,7 +3,7 @@ import type { GatewayAgentRow, ModelCatalogEntry } from "../../api/types.ts";
 import type { ApplicationContext } from "../../app/context.ts";
 import { NewSessionModelControl } from "./model-control.ts";
 
-function contextWith(models: ModelCatalogEntry[], runtime = "openclaw") {
+function contextWith(models: ModelCatalogEntry[], runtime = "nova") {
   const request = vi.fn().mockResolvedValue({ models });
   const context = {
     gateway: {

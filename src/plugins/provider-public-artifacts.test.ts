@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "nova/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ModelProviderConfig } from "../config/types.models.js";
 import {
@@ -11,7 +11,7 @@ import {
 } from "./provider-public-artifacts.js";
 
 function writeExternalPolicyFixture(): string {
-  const pluginRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-provider-policy-external-"));
+  const pluginRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-provider-policy-external-"));
   fs.writeFileSync(
     path.join(pluginRoot, "provider-policy-api.js"),
     [
@@ -81,14 +81,14 @@ describe("provider public artifacts", () => {
           baseUrl: "https://api.openai.com/v1",
           authRequirement: "api-key",
           requestTransportOverrides: "none",
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
         },
         {
           api: "openai-chatgpt-responses",
           baseUrl: "https://chatgpt.com/backend-api/codex",
           authRequirement: "subscription",
           requestTransportOverrides: "none",
-          runtimePolicy: { compatibleIds: ["openclaw", "codex"] },
+          runtimePolicy: { compatibleIds: ["nova", "codex"] },
         },
       ],
     });
@@ -151,9 +151,7 @@ describe("provider public artifacts", () => {
   });
 
   it("loads trusted official external provider policy before runtime registration", () => {
-    const bundledPluginsDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-empty-bundled-plugins-"),
-    );
+    const bundledPluginsDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-empty-bundled-plugins-"));
     const pluginRoot = writeExternalPolicyFixture();
 
     try {
@@ -212,11 +210,11 @@ describe("provider public artifacts", () => {
   });
 
   it("resolves multi-provider policy artifacts by manifest-owned provider id", async () => {
-    const bundledPluginsDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-provider-policy-"));
+    const bundledPluginsDir = fs.mkdtempSync(path.join(os.tmpdir(), "nova-provider-policy-"));
     const pluginDir = path.join(bundledPluginsDir, "openai");
     fs.mkdirSync(pluginDir, { recursive: true });
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify({
         id: "openai",
         configSchema: { type: "object" },
@@ -328,7 +326,7 @@ describe("provider public artifacts", () => {
             cliBackends: [],
             hooks: [],
             origin: "bundled",
-            manifestPath: "/tmp/xai/openclaw.plugin.json",
+            manifestPath: "/tmp/xai/nova.plugin.json",
             providers: ["xai"],
             providerAuthAliases: { "x-ai": "xai" },
             rootDir: "/tmp/xai",
@@ -391,7 +389,7 @@ describe("provider public artifacts", () => {
             cliBackends: ["claude-cli"],
             hooks: [],
             origin: "bundled",
-            manifestPath: "/tmp/anthropic/openclaw.plugin.json",
+            manifestPath: "/tmp/anthropic/nova.plugin.json",
             providers: ["anthropic"],
             rootDir: "/tmp/anthropic",
             skills: [],
@@ -415,13 +413,13 @@ describe("provider public artifacts", () => {
 
   it("does not cache manifest-owned provider policy aliases across bundled metadata changes", async () => {
     const bundledPluginsDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "openclaw-provider-policy-refresh-"),
+      path.join(os.tmpdir(), "nova-provider-policy-refresh-"),
     );
     const writePlugin = (pluginId: string, providers: string[], version: number) => {
       const pluginDir = path.join(bundledPluginsDir, pluginId);
       fs.mkdirSync(pluginDir, { recursive: true });
       fs.writeFileSync(
-        path.join(pluginDir, "openclaw.plugin.json"),
+        path.join(pluginDir, "nova.plugin.json"),
         JSON.stringify({
           id: pluginId,
           name: `${pluginId} ${version}`,
@@ -514,7 +512,7 @@ describe("provider public artifacts", () => {
             cliBackends: [],
             hooks: [],
             origin: "bundled",
-            manifestPath: "/tmp/owner/openclaw.plugin.json",
+            manifestPath: "/tmp/owner/nova.plugin.json",
             providers: ["alias"],
             rootDir: "/tmp/owner",
             skills: [],

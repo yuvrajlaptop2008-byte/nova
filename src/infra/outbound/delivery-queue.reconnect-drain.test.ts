@@ -2,8 +2,8 @@
 // bypass, and concurrent drain suppression.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { controlNextRecoverySleep } from "../../../test/helpers/infra/delivery-recovery.js";
-import type { OpenClawConfig } from "../../config/config.js";
-import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
+import type { NovaConfig } from "../../config/config.js";
+import { openNovaStateDatabase } from "../../state/nova-state-db.js";
 import { loadPendingDeliveries, reserveDeliveryAttempt } from "./delivery-queue-storage.js";
 import {
   type DeliverFn,
@@ -25,7 +25,7 @@ import {
 
 const RECOVERY_REPLAY_SPACING_MS = 250;
 const MAX_RETRIES = 5;
-const stubCfg = {} as OpenClawConfig;
+const stubCfg = {} as NovaConfig;
 const NO_LISTENER_ERROR = "No active DirectChat listener";
 const sleepMock = vi.hoisted(() => vi.fn<(ms: number) => Promise<void>>());
 const resolveOutboundChannelMessageAdapterMock = vi.hoisted(() => vi.fn());
@@ -73,7 +73,7 @@ function expectLogMessageWith(logFn: ReturnType<typeof vi.fn>, text: string): vo
 }
 
 function readOutboundQueueStatus(tmpDir: string, id: string): string | undefined {
-  const { db } = openOpenClawStateDatabase({
+  const { db } = openNovaStateDatabase({
     env: { ...process.env, NOVA_STATE_DIR: tmpDir },
   });
   const row = db
@@ -575,7 +575,7 @@ describe("drainPendingDeliveries for reconnect", () => {
   });
 
   it("skips entries that an in-flight live delivery has actively claimed", async () => {
-    // Regression for openclaw/openclaw#70386: a reconnect drain that runs
+    // Regression for nova/nova#70386: a reconnect drain that runs
     // while the live send is still writing to the adapter must not re-drive
     // the same entry. The live delivery path holds an in-memory active claim
     // for `queueId` across its send; drain honors that claim via the same

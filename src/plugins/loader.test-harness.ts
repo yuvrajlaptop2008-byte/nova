@@ -13,7 +13,7 @@ import {
   listRegisteredEmbeddingProviders,
 } from "./embedding-providers.js";
 import { getGlobalHookRunner } from "./hook-runner-global.js";
-import { loadOpenClawPlugins, type PluginLoadOptions } from "./loader.js";
+import { loadNovaPlugins, type PluginLoadOptions } from "./loader.js";
 import {
   cleanupPluginLoaderFixturesForTest,
   EMPTY_PLUGIN_SCHEMA,
@@ -119,7 +119,7 @@ export function updatePluginManifest(
   plugin: Pick<TempPlugin, "dir">,
   patch: Record<string, unknown>,
 ) {
-  const manifestPath = path.join(plugin.dir, "openclaw.plugin.json");
+  const manifestPath = path.join(plugin.dir, "nova.plugin.json");
   const raw = JSON.parse(fs.readFileSync(manifestPath, "utf-8")) as Record<string, unknown>;
   fs.writeFileSync(manifestPath, JSON.stringify({ ...raw, ...patch }, null, 2), "utf-8");
 }
@@ -156,7 +156,7 @@ export function setupBundledDreamingMemoryPlugins(params?: {
   });
   const openSchema = { type: "object", additionalProperties: true };
   fs.writeFileSync(
-    path.join(memoryCoreDir, "openclaw.plugin.json"),
+    path.join(memoryCoreDir, "nova.plugin.json"),
     JSON.stringify(
       { id: "memory-core", kind: "memory", configSchema: EMPTY_PLUGIN_SCHEMA },
       null,
@@ -165,7 +165,7 @@ export function setupBundledDreamingMemoryPlugins(params?: {
     "utf-8",
   );
   fs.writeFileSync(
-    path.join(selectedMemoryDir, "openclaw.plugin.json"),
+    path.join(selectedMemoryDir, "nova.plugin.json"),
     JSON.stringify(
       {
         id: selectedId,
@@ -204,9 +204,9 @@ export function writeBundledPlugin(params: {
   return { bundledDir, plugin };
 }
 
-export function makeOpenClawDevSourceRoot() {
+export function makeNovaDevSourceRoot() {
   const root = makeTempDir();
-  fs.writeFileSync(path.join(root, "package.json"), JSON.stringify({ name: "openclaw" }), "utf-8");
+  fs.writeFileSync(path.join(root, "package.json"), JSON.stringify({ name: "nova" }), "utf-8");
   mkdirSafe(path.join(root, "src"));
   mkdirSafe(path.join(root, "extensions"));
   return root;
@@ -219,7 +219,7 @@ export function writeWorkspacePlugin(params: {
   workspaceDir?: string;
 }) {
   const workspaceDir = params.workspaceDir ?? makeTempDir();
-  const workspacePluginDir = path.join(workspaceDir, ".openclaw", "extensions", params.id);
+  const workspacePluginDir = path.join(workspaceDir, ".nova", "extensions", params.id);
   mkdirSafe(workspacePluginDir);
   const plugin = writePlugin({
     id: params.id,
@@ -242,7 +242,7 @@ export function loadBundledMemoryPluginRegistry(options?: {
 }) {
   if (!options && cachedBundledMemoryDir) {
     process.env.NOVA_BUNDLED_PLUGINS_DIR = cachedBundledMemoryDir;
-    return loadOpenClawPlugins({
+    return loadNovaPlugins({
       cache: false,
       workspaceDir: cachedBundledMemoryDir,
       config: {
@@ -270,7 +270,7 @@ export function loadBundledMemoryPluginRegistry(options?: {
           name: options.packageMeta.name,
           version: options.packageMeta.version,
           description: options.packageMeta.description,
-          openclaw: { extensions: [`./${pluginFilename}`] },
+          nova: { extensions: [`./${pluginFilename}`] },
         },
         null,
         2,
@@ -292,7 +292,7 @@ export function loadBundledMemoryPluginRegistry(options?: {
   }
   process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
-  return loadOpenClawPlugins({
+  return loadNovaPlugins({
     cache: false,
     workspaceDir: bundledDir,
     config: {
@@ -318,7 +318,7 @@ export function setupBundledTelegramPlugin() {
   process.env.NOVA_BUNDLED_PLUGINS_DIR = cachedBundledTelegramDir;
 }
 
-export function expectTelegramLoaded(registry: ReturnType<typeof loadOpenClawPlugins>) {
+export function expectTelegramLoaded(registry: ReturnType<typeof loadNovaPlugins>) {
   const telegram = registry.plugins.find((entry) => entry.id === "telegram");
   expect(telegram?.status).toBe("loaded");
   expect(registry.channels.map((entry) => entry.plugin.id)).toContain("telegram");
@@ -328,10 +328,10 @@ export function loadRegistryFromSinglePlugin(params: {
   plugin: TempPlugin;
   pluginConfig?: Record<string, unknown>;
   includeWorkspaceDir?: boolean;
-  options?: Omit<Parameters<typeof loadOpenClawPlugins>[0], "cache" | "workspaceDir" | "config">;
+  options?: Omit<Parameters<typeof loadNovaPlugins>[0], "cache" | "workspaceDir" | "config">;
 }) {
   const pluginConfig = params.pluginConfig ?? {};
-  return loadOpenClawPlugins({
+  return loadNovaPlugins({
     cache: false,
     ...(params.includeWorkspaceDir === false ? {} : { workspaceDir: params.plugin.dir }),
     ...params.options,
@@ -346,9 +346,9 @@ export function loadRegistryFromSinglePlugin(params: {
 
 export function loadRegistryFromAllowedPlugins(
   plugins: TempPlugin[],
-  options?: Omit<Parameters<typeof loadOpenClawPlugins>[0], "cache" | "config">,
+  options?: Omit<Parameters<typeof loadNovaPlugins>[0], "cache" | "config">,
 ) {
-  return loadOpenClawPlugins({
+  return loadNovaPlugins({
     cache: false,
     ...options,
     config: {
@@ -604,7 +604,7 @@ function createEscapingEntryFixture(params: { id: string; sourceBody: string }) 
   const linkedEntry = path.join(pluginDir, "entry.cjs");
   fs.writeFileSync(outsideEntry, params.sourceBody, "utf-8");
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "nova.plugin.json"),
     JSON.stringify(
       {
         id: params.id,
@@ -618,17 +618,14 @@ function createEscapingEntryFixture(params: { id: string; sourceBody: string }) 
   return { pluginDir, outsideEntry, linkedEntry };
 }
 
-function resolveLoadedPluginSource(
-  registry: ReturnType<typeof loadOpenClawPlugins>,
-  pluginId: string,
-) {
+function resolveLoadedPluginSource(registry: ReturnType<typeof loadNovaPlugins>, pluginId: string) {
   return fs.realpathSync(registry.plugins.find((entry) => entry.id === pluginId)?.source ?? "");
 }
 
 export function expectCachePartitionByPluginSource(params: {
   pluginId: string;
-  loadFirst: () => ReturnType<typeof loadOpenClawPlugins>;
-  loadSecond: () => ReturnType<typeof loadOpenClawPlugins>;
+  loadFirst: () => ReturnType<typeof loadNovaPlugins>;
+  loadSecond: () => ReturnType<typeof loadNovaPlugins>;
   expectedFirstSource: string;
   expectedSecondSource: string;
 }) {
@@ -645,8 +642,8 @@ export function expectCachePartitionByPluginSource(params: {
 }
 
 export function expectCacheMissThenHit(params: {
-  loadFirst: () => ReturnType<typeof loadOpenClawPlugins>;
-  loadVariant: () => ReturnType<typeof loadOpenClawPlugins>;
+  loadFirst: () => ReturnType<typeof loadNovaPlugins>;
+  loadVariant: () => ReturnType<typeof loadNovaPlugins>;
 }) {
   const first = params.loadFirst();
   const second = params.loadVariant();
@@ -691,7 +688,7 @@ export function createSetupEntryChannelPluginFixture(params: {
     JSON.stringify(
       {
         name: params.packageName,
-        openclaw: {
+        nova: {
           extensions: ["./index.cjs"],
           setupEntry: "./setup-entry.cjs",
           ...(params.startupDeferConfiguredChannelFullLoadUntilAfterListen
@@ -709,7 +706,7 @@ export function createSetupEntryChannelPluginFixture(params: {
     "utf-8",
   );
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "nova.plugin.json"),
     JSON.stringify(
       {
         id: params.id,
@@ -897,10 +894,10 @@ module.exports = {
 
 export function createEnvResolvedPluginFixture(pluginId: string) {
   useNoBundledPlugins();
-  const openclawHome = makeTempDir();
+  const novaHome = makeTempDir();
   const ignoredHome = makeTempDir();
   const stateDir = makeTempDir();
-  const pluginDir = path.join(openclawHome, "plugins", pluginId);
+  const pluginDir = path.join(novaHome, "plugins", pluginId);
   mkdirSafe(pluginDir);
   const plugin = writePlugin({
     id: pluginId,
@@ -910,7 +907,7 @@ export function createEnvResolvedPluginFixture(pluginId: string) {
   });
   const env = {
     ...process.env,
-    NOVA_HOME: openclawHome,
+    NOVA_HOME: novaHome,
     HOME: ignoredHome,
     NOVA_STATE_DIR: stateDir,
     NOVA_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
@@ -944,7 +941,7 @@ export function expectEscapingEntryRejected(params: {
     throw err;
   }
 
-  const registry = loadOpenClawPlugins({
+  const registry = loadNovaPlugins({
     cache: false,
     config: {
       plugins: {

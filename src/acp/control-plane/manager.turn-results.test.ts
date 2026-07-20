@@ -125,7 +125,7 @@ describe("AcpSessionManager turn results", () => {
           yield {
             type: "text_delta" as const,
             stream: "output" as const,
-            text: "Current directory is /tmp/openclaw.",
+            text: "Current directory is /tmp/nova.",
           };
         })(),
         result: Promise.resolve({
@@ -191,7 +191,7 @@ describe("AcpSessionManager turn results", () => {
         label: "Directory check",
         task: "Print the current directory",
         status: "succeeded",
-        progressSummary: "Current directory is /tmp/openclaw.",
+        progressSummary: "Current directory is /tmp/nova.",
       });
     });
   });

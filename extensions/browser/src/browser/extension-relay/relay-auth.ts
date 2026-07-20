@@ -10,7 +10,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { resolveOAuthDir } from "openclaw/plugin-sdk/state-paths";
+import { resolveOAuthDir } from "nova/plugin-sdk/state-paths";
 
 const RELAY_SECRET_FILE = "browser-extension-relay.secret";
 
@@ -35,7 +35,7 @@ export function readExtensionRelayToken(env: NodeJS.ProcessEnv = process.env): s
 
 /**
  * Read the host-local relay token, creating it on first use. Called from relay
- * startup and `openclaw browser extension pair` — both run on the machine that
+ * startup and `nova browser extension pair` — both run on the machine that
  * hosts the browser, so they resolve the same per-host secret.
  *
  * The create is atomic (O_CREAT|O_EXCL): the gateway service and the pair CLI

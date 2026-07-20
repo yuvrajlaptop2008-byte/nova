@@ -8,7 +8,7 @@ import {
   runAgentHarnessLlmOutputHook,
   runHarnessContextEngineMaintenance,
   type EmbeddedRunAttemptResult,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "nova/plugin-sdk/agent-harness-runtime";
 import { readMirroredSessionHistoryMessages } from "./attempt-context.js";
 import { classifyCodexModelCallFailureKind } from "./attempt-diagnostics.js";
 import {
@@ -85,7 +85,7 @@ export async function finalizeCodexAttempt(
   const {
     state,
     completion,
-    pendingOpenClawDynamicToolCompletionIds,
+    pendingNovaDynamicToolCompletionIds,
     activeTurnItemIds,
     activeCompletionBlockerItemIds,
     activeFinalizationHookRunIds,
@@ -109,7 +109,7 @@ export async function finalizeCodexAttempt(
     state.activeAppServerTurnRequests === 0 &&
     activeTurnItemIds.size === 0 &&
     activeCompletionBlockerItemIds.size === 0 &&
-    pendingOpenClawDynamicToolCompletionIds.size === 0 &&
+    pendingNovaDynamicToolCompletionIds.size === 0 &&
     activeFinalizationHookRunIds.size === 0 &&
     state.unsettledFinalizationHookCount === 0 &&
     state.rejectedFinalizationHookAssistant === undefined;

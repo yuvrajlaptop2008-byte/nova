@@ -20,7 +20,7 @@ const GENERIC_CLI_CONTEXT_ENGINE_HOST_CAPABILITIES = [
 ] as const satisfies readonly ContextEngineHostCapability[];
 
 export const NOVA_EMBEDDED_CONTEXT_ENGINE_HOST = {
-  id: "openclaw-embedded",
+  id: "nova-embedded",
   label: "Nova embedded runner",
   capabilities: [
     "bootstrap",

@@ -101,7 +101,7 @@ async function openSidebarTestPage() {
   const page = await context.newPage();
   await installMockGateway(page);
   await page.goto(`${server.baseUrl}chat`);
-  await page.waitForFunction(() => Boolean(customElements.get("openclaw-lobster-pet")));
+  await page.waitForFunction(() => Boolean(customElements.get("nova-lobster-pet")));
   return { context, page };
 }
 
@@ -168,7 +168,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
     try {
       await page.goto(`${server.baseUrl}chat`);
 
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       const pinnedItems = sidebar.locator(
         '.sidebar-zone-entry[data-sidebar-entry^="route:"] > .nav-item',
       );
@@ -544,7 +544,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
 
     try {
       await page.goto(`${server.baseUrl}chat`);
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       await sidebar.locator(".sidebar-nav__head-action").click();
       await expect
         .poll(() =>
@@ -569,7 +569,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
 
     try {
       await page.goto(`${server.baseUrl}chat?session=${encodeURIComponent("agent:main:work")}`);
-      await page.locator("openclaw-app-sidebar .sidebar-brand__new-thread").click();
+      await page.locator("nova-app-sidebar .sidebar-brand__new-thread").click();
 
       await expect.poll(() => new URL(page.url()).pathname).toBe("/new");
       await expect.poll(() => new URL(page.url()).searchParams.get("agent")).toBe("main");
@@ -617,8 +617,8 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
 
     try {
       await page.goto(`${server.baseUrl}chat`);
-      const sidebar = page.locator("openclaw-app-sidebar");
-      const pet = sidebar.locator(".sidebar-shell openclaw-lobster-pet");
+      const sidebar = page.locator("nova-app-sidebar");
+      const pet = sidebar.locator(".sidebar-shell nova-lobster-pet");
       await expect.poll(() => pet.count()).toBe(1);
       await expect.poll(() => outcome(pet)).toBe("error");
       await expect.poll(() => page.locator(".topbar").isVisible()).toBe(false);
@@ -639,8 +639,8 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
     const { context, page } = await openSidebarTestPage();
 
     try {
-      const sidebar = page.locator("openclaw-app-sidebar");
-      const pet = sidebar.locator("openclaw-lobster-pet");
+      const sidebar = page.locator("nova-app-sidebar");
+      const pet = sidebar.locator("nova-lobster-pet");
       const movement = await pet.evaluate(async (element) => {
         const lobster = element as HTMLElement & {
           anchor: "bar";
@@ -689,7 +689,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
     const { context, page } = await openSidebarTestPage();
 
     try {
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       const moreButton = sidebar.locator(".sidebar-nav__head-action");
       await moreButton.click();
       await sidebar
@@ -724,7 +724,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
     const { context, page } = await openSidebarTestPage();
 
     try {
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       await sidebar.locator(".sidebar-nav__head-action").click();
       const moreMenu = sidebar.locator("wa-dropdown.sidebar-more-menu");
       await expect
@@ -803,7 +803,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
 
     try {
       await page.goto(`${server.baseUrl}chat`);
-      const sidebar = page.locator("openclaw-app-sidebar");
+      const sidebar = page.locator("nova-app-sidebar");
       await sidebar.getByRole("button", { name: /Agent menu/ }).click();
       const menu = sidebar.locator("wa-dropdown.sidebar-agent-menu");
       const mainSwitch = menu.getByRole("menuitemradio", { name: "Main" });

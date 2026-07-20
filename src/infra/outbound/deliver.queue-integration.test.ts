@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import type { TrustedMessageAuditEvent } from "../../audit/message-audit-events.js";
 import { onTrustedMessageAuditEventForTest as onTrustedMessageAuditEvent } from "../../audit/message-audit-events.test-support.js";
 import type { ChannelOutboundAdapter } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { NovaConfig } from "../../config/config.js";
 import { createEmptyPluginRegistry } from "../../plugins/registry.js";
 import {
   releasePinnedPluginChannelRegistry,
@@ -58,7 +58,7 @@ async function drainMatrixReconnect(opts: { deliver: DeliverFn; stateDir: string
   await drainPendingDeliveries({
     drainKey: "matrix:reconnect-test",
     logLabel: "Matrix reconnect drain",
-    cfg: {} as OpenClawConfig,
+    cfg: {} as NovaConfig,
     log: createRecoveryLog(),
     stateDir: opts.stateDir,
     deliver: opts.deliver,
@@ -77,7 +77,7 @@ async function deliverPartialMatrixBatch(sendMatrix: ReturnType<typeof vi.fn>, t
   process.env.NOVA_STATE_DIR = tmpDir;
   await expect(
     deliverOutboundPayloads({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       channel: "matrix",
       to: "!room:example",
       payloads: [{ text: "first" }, { text: "second" }],
@@ -171,7 +171,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
 
     await expect(
       deliverOutboundPayloads({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         channel: "matrix",
         to: "!room:example",
         payloads: [{ text: "NO_REPLY" }, { text: "visible" }],
@@ -199,7 +199,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
 
     await expect(
       deliverOutboundPayloads({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         channel: "matrix",
         to: "!room:example",
         payloads: [{ text: "first" }],
@@ -228,7 +228,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
 
     await expect(
       deliverOutboundPayloads({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         channel: "matrix",
         to: "!room:example",
         payloads: [{ text: "first" }],
@@ -282,7 +282,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
 
     await expect(
       deliverOutboundPayloads({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as NovaConfig,
         channel: "matrix",
         to: "!room:example",
         payloads: [{ text: "first" }],

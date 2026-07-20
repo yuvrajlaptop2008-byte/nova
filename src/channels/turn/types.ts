@@ -18,7 +18,7 @@ import type {
 } from "../../auto-reply/templating.js";
 import type { GroupKeyResolution } from "../../config/sessions/types.js";
 import type { DmScope } from "../../config/types.base.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import type {
   DeliverOutboundPayloadsParams,
   DurableFinalDeliveryRequirements,
@@ -257,7 +257,7 @@ type ChannelTurnReplyPipelineOptions = Omit<
 
 /** Fully assembled channel turn ready to build the dispatch runner. */
 export type AssembledChannelTurn = {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   channel: string;
   accountId?: string;
   agentId: string;
@@ -346,7 +346,7 @@ export type ChannelTurnPlan = RoutedChannelTurn<
 type PreparedChannelTurnPlan<TDispatchResult = DispatchFromConfigResult> = RoutedChannelTurn<
   InboundPreparedChannelTurn<TDispatchResult>
 > & {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
 };
 
 /** Resolved turn shape returned by adapters before final run/dispatch handling. */

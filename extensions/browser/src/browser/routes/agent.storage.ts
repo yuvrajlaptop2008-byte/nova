@@ -4,10 +4,7 @@
  * Parses and applies cookies, local/session storage, geolocation, permissions,
  * and related browser-context mutations for the selected profile/tab.
  */
-import {
-  normalizeOptionalString,
-  readStringValue,
-} from "openclaw/plugin-sdk/string-coerce-runtime";
+import { normalizeOptionalString, readStringValue } from "nova/plugin-sdk/string-coerce-runtime";
 import { formatErrorMessage } from "../../infra/errors.js";
 import type { BrowserRouteContext } from "../server-context.js";
 import {

@@ -1,12 +1,12 @@
-# OpenClaw Groq Provider
+# Nova Groq Provider
 
-Official OpenClaw provider plugin for Groq.
+Official Nova provider plugin for Groq.
 
-Install from OpenClaw:
+Install from Nova:
 
 ```bash
-openclaw plugins install @nova/groq-provider
-openclaw gateway restart
+nova plugins install @nova/groq-provider
+nova gateway restart
 ```
 
-See <https://docs.openclaw.ai/providers/groq> for setup and configuration.
+See <https://docs.nova.ai/providers/groq> for setup and configuration.

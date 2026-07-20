@@ -1,16 +1,16 @@
 // Opencode Zen provider module implements model/runtime integration.
-import type { ModelCatalogEntry } from "openclaw/plugin-sdk/agent-runtime";
-import type { ProviderRuntimeModel } from "openclaw/plugin-sdk/plugin-entry";
+import type { ModelCatalogEntry } from "nova/plugin-sdk/agent-runtime";
+import type { ProviderRuntimeModel } from "nova/plugin-sdk/plugin-entry";
 import {
   getCachedLiveProviderModelRows,
   type LiveModelCatalogFetchGuard,
-} from "openclaw/plugin-sdk/provider-catalog-live-runtime";
-import { normalizeModelCompat } from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-catalog-live-runtime";
+import { normalizeModelCompat } from "nova/plugin-sdk/provider-model-shared";
 import type {
   ModelApi,
   ModelDefinitionConfig,
   ModelProviderConfig,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "nova/plugin-sdk/provider-model-shared";
 
 const PROVIDER_ID = "opencode";
 

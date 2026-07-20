@@ -20,7 +20,7 @@ import {
   writePersistedInstalledPluginIndexInstallRecords,
   applyPluginUninstallDirectoryRemoval,
 } from "../cli/plugins-cli-test-helpers.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import { hasRetainedManagedNpmInstallMarker } from "./managed-npm-retention.js";
 
 function requireMockCallArg(
@@ -41,8 +41,8 @@ function expectRuntimeLogIncludes(fragment: string) {
 
 const installWriteOptions = {
   assertConfigPathForWrite: () => {},
-  expectedConfigPath: "/tmp/openclaw.json",
-  ownedConfigPathForWrite: "/tmp/openclaw.json",
+  expectedConfigPath: "/tmp/nova.json",
+  ownedConfigPathForWrite: "/tmp/nova.json",
 };
 
 describe("persistPluginInstall", () => {
@@ -55,13 +55,13 @@ describe("persistPluginInstall", () => {
 
     expect(
       selectInstallMutationWriteOptions({
-        expectedConfigPath: "/tmp/openclaw.json",
-        ownedConfigPathForWrite: "/tmp/openclaw.json",
+        expectedConfigPath: "/tmp/nova.json",
+        ownedConfigPathForWrite: "/tmp/nova.json",
       }),
     ).toMatchObject({
       auditOrigin: "plugin-install",
-      expectedConfigPath: "/tmp/openclaw.json",
-      ownedConfigPathForWrite: "/tmp/openclaw.json",
+      expectedConfigPath: "/tmp/nova.json",
+      ownedConfigPathForWrite: "/tmp/nova.json",
     });
   });
 
@@ -71,7 +71,7 @@ describe("persistPluginInstall", () => {
       plugins: {
         allow: ["memory-core"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         allow: ["memory-core", "alpha"],
@@ -79,9 +79,9 @@ describe("persistPluginInstall", () => {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockImplementation((...args: unknown[]) => {
-      const [cfg, pluginId] = args as [OpenClawConfig, string];
+      const [cfg, pluginId] = args as [NovaConfig, string];
       expect(pluginId).toBe("alpha");
       expect(cfg.plugins?.allow).toEqual(["memory-core", "alpha"]);
       return { config: enabledConfig };
@@ -93,8 +93,8 @@ describe("persistPluginInstall", () => {
         baseHash: "config-1",
         writeOptions: {
           assertConfigPathForWrite: installWriteOptions.assertConfigPathForWrite,
-          expectedConfigPath: "/tmp/openclaw.json",
-          ownedConfigPathForWrite: "/tmp/openclaw.json",
+          expectedConfigPath: "/tmp/nova.json",
+          ownedConfigPathForWrite: "/tmp/nova.json",
           includeFileHashesForWrite: { "/tmp/plugins.json5": "include-1" },
           includeFileTargetsForWrite: { "/tmp/plugins.json5": "/tmp/plugins.json5" },
         },
@@ -124,8 +124,8 @@ describe("persistPluginInstall", () => {
       baseHash: "config-1",
       writeOptions: {
         assertConfigPathForWrite: installWriteOptions.assertConfigPathForWrite,
-        expectedConfigPath: "/tmp/openclaw.json",
-        ownedConfigPathForWrite: "/tmp/openclaw.json",
+        expectedConfigPath: "/tmp/nova.json",
+        ownedConfigPathForWrite: "/tmp/nova.json",
         includeFileHashesForWrite: { "/tmp/plugins.json5": "include-1" },
         includeFileTargetsForWrite: { "/tmp/plugins.json5": "/tmp/plugins.json5" },
         afterWrite: { mode: "restart", reason: "plugin source changed" },
@@ -150,14 +150,14 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     clearPluginRegistryLoadCache.mockImplementation(() => {
       throw new Error("cache unavailable");
@@ -188,25 +188,25 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           codex: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     setInstalledPluginIndexInstallRecords({
       codex: {
         source: "clawhub",
         spec: "clawhub:@nova/codex",
-        installPath: "/tmp/openclaw/extensions/codex",
+        installPath: "/tmp/nova/extensions/codex",
       },
     });
     planPluginUninstall.mockReturnValueOnce({
       ok: true,
-      config: {} as OpenClawConfig,
+      config: {} as NovaConfig,
       pluginId: "codex",
       actions: {
         entry: false,
@@ -220,7 +220,7 @@ describe("persistPluginInstall", () => {
         directory: false,
       },
       directoryRemoval: {
-        target: "/tmp/openclaw/extensions/codex",
+        target: "/tmp/nova/extensions/codex",
       },
     });
     applyPluginUninstallDirectoryRemoval.mockResolvedValueOnce({
@@ -238,7 +238,7 @@ describe("persistPluginInstall", () => {
       install: {
         source: "npm",
         spec: "@nova/codex",
-        installPath: "/tmp/openclaw/npm/node_modules/@nova/codex",
+        installPath: "/tmp/nova/npm/node_modules/@nova/codex",
       },
     });
 
@@ -249,7 +249,7 @@ describe("persistPluginInstall", () => {
             codex: {
               source: "clawhub",
               spec: "clawhub:@nova/codex",
-              installPath: "/tmp/openclaw/extensions/codex",
+              installPath: "/tmp/nova/extensions/codex",
             },
           },
         },
@@ -258,14 +258,14 @@ describe("persistPluginInstall", () => {
       deleteFiles: true,
     });
     expect(applyPluginUninstallDirectoryRemoval).toHaveBeenCalledWith({
-      target: "/tmp/openclaw/extensions/codex",
+      target: "/tmp/nova/extensions/codex",
     });
     const cleanupOrder =
       applyPluginUninstallDirectoryRemoval.mock.invocationCallOrder[0] ?? Number.MAX_SAFE_INTEGER;
     const refreshOrder = refreshPluginRegistry.mock.invocationCallOrder[0] ?? 0;
     expect(cleanupOrder).toBeLessThan(refreshOrder);
     expect(runtimeLogs.join("\n")).toContain(
-      "Removed previous plugin install directory: /tmp/openclaw/extensions/codex",
+      "Removed previous plugin install directory: /tmp/nova/extensions/codex",
     );
   });
 
@@ -275,20 +275,20 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           codex: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     setInstalledPluginIndexInstallRecords({
       codex: {
         source: "npm",
         spec: "@nova/codex",
-        installPath: "/tmp/openclaw/npm/node_modules/@nova/codex",
+        installPath: "/tmp/nova/npm/node_modules/@nova/codex",
       },
     });
 
@@ -302,7 +302,7 @@ describe("persistPluginInstall", () => {
       install: {
         source: "npm",
         spec: "@nova/codex@latest",
-        installPath: "/tmp/openclaw/npm/node_modules/@nova/codex",
+        installPath: "/tmp/nova/npm/node_modules/@nova/codex",
       },
     });
 
@@ -316,30 +316,25 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           codex: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-persist-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nova-plugin-persist-"));
     const previousProjectRoot = path.join(tempRoot, "npm", "projects", "codex-v1");
-    const previousInstallPath = path.join(
-      previousProjectRoot,
-      "node_modules",
-      "@openclaw",
-      "codex",
-    );
+    const previousInstallPath = path.join(previousProjectRoot, "node_modules", "@nova", "codex");
     const nextInstallPath = path.join(
       tempRoot,
       "npm",
       "projects",
       "codex-v2",
       "node_modules",
-      "@openclaw",
+      "@nova",
       "codex",
     );
     fs.mkdirSync(previousInstallPath, { recursive: true });
@@ -352,7 +347,7 @@ describe("persistPluginInstall", () => {
     });
     planPluginUninstall.mockReturnValueOnce({
       ok: true,
-      config: {} as OpenClawConfig,
+      config: {} as NovaConfig,
       pluginId: "codex",
       actions: {
         entry: false,
@@ -418,21 +413,21 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           discord: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     buildPluginSnapshotReport.mockReturnValue({
       plugins: [
         {
           id: "discord",
           origin: "config",
-          source: "/tmp/openclaw-upstream/extensions/discord/index.ts",
+          source: "/tmp/nova-upstream/extensions/discord/index.ts",
           status: "error",
         },
       ],
@@ -449,7 +444,7 @@ describe("persistPluginInstall", () => {
       install: {
         source: "npm",
         spec: "@nova/discord",
-        installPath: "/tmp/openclaw/npm/node_modules/@nova/discord/index.ts",
+        installPath: "/tmp/nova/npm/node_modules/@nova/discord/index.ts",
       },
     });
 
@@ -463,12 +458,12 @@ describe("persistPluginInstall", () => {
       'Warning: installed plugin "discord" is not the active source',
     );
     expect(runtimeLogs.join("\n")).toContain(
-      "active config source: /tmp/openclaw-upstream/extensions/discord/index.ts",
+      "active config source: /tmp/nova-upstream/extensions/discord/index.ts",
     );
     expect(runtimeLogs.join("\n")).toContain(
-      "installed npm source: /tmp/openclaw/npm/node_modules/@nova/discord/index.ts",
+      "installed npm source: /tmp/nova/npm/node_modules/@nova/discord/index.ts",
     );
-    expect(runtimeLogs.join("\n")).toContain("openclaw plugins doctor");
+    expect(runtimeLogs.join("\n")).toContain("nova plugins doctor");
   });
 
   it("does not warn when the config-selected source is inside the npm install path", async () => {
@@ -477,21 +472,21 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           discord: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     buildPluginSnapshotReport.mockReturnValue({
       plugins: [
         {
           id: "discord",
           origin: "config",
-          source: "/tmp/openclaw/npm/node_modules/@nova/discord/dist/index.js",
+          source: "/tmp/nova/npm/node_modules/@nova/discord/dist/index.js",
           status: "loaded",
         },
       ],
@@ -508,7 +503,7 @@ describe("persistPluginInstall", () => {
       install: {
         source: "npm",
         spec: "@nova/discord",
-        installPath: "/tmp/openclaw/npm/node_modules/@nova/discord",
+        installPath: "/tmp/nova/npm/node_modules/@nova/discord",
       },
     });
 
@@ -521,14 +516,14 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     refreshPluginRegistry.mockRejectedValueOnce(new Error("registry unavailable"));
 
@@ -558,14 +553,14 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
 
     const next = await persistPluginInstall({
@@ -594,7 +589,7 @@ describe("persistPluginInstall", () => {
       plugins: {
         deny: ["alpha", "other"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         deny: ["other"],
@@ -602,9 +597,9 @@ describe("persistPluginInstall", () => {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockImplementation((...args: unknown[]) => {
-      const [cfg, pluginId] = args as [OpenClawConfig, string];
+      const [cfg, pluginId] = args as [NovaConfig, string];
       expect(pluginId).toBe("alpha");
       expect(cfg.plugins?.deny).toEqual(["other"]);
       return { config: enabledConfig };
@@ -635,7 +630,7 @@ describe("persistPluginInstall", () => {
           "legacy-memory-a": { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
@@ -643,7 +638,7 @@ describe("persistPluginInstall", () => {
           "legacy-memory": { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     loadPluginManifestRegistry.mockReturnValue({
       plugins: [{ id: "legacy-memory" }],
@@ -654,7 +649,7 @@ describe("persistPluginInstall", () => {
       diagnostics: [],
     });
     applyExclusiveSlotSelection.mockImplementation(((params: {
-      config: OpenClawConfig;
+      config: NovaConfig;
       selectedId: string;
       selectedKind?: string;
       registry?: { plugins: Array<{ id: string; kind?: string }> };
@@ -712,7 +707,7 @@ describe("persistPluginInstall", () => {
           "legacy-memory-a": { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
@@ -720,14 +715,14 @@ describe("persistPluginInstall", () => {
           "memory-b": { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     loadPluginManifestRegistry.mockReturnValue({
       plugins: [{ id: "memory-b", kind: "memory" }],
       diagnostics: [],
     });
     applyExclusiveSlotSelection.mockImplementation(((params: {
-      config: OpenClawConfig;
+      config: NovaConfig;
       selectedId: string;
       selectedKind?: string;
       registry?: { plugins: Array<{ id: string; kind?: string }> };
@@ -779,14 +774,14 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     const enabledConfig = {
       plugins: {
         entries: {
           plain: { enabled: true },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
     enablePluginInConfig.mockReturnValue({ config: enabledConfig });
     loadPluginManifestRegistry.mockReturnValue({
       plugins: [{ id: "plain" }],
@@ -833,7 +828,7 @@ describe("persistPluginInstall", () => {
       plugins: {
         entries: {},
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const next = await persistPluginInstall({
       snapshot: {
@@ -875,7 +870,7 @@ describe("persistPluginInstall", () => {
         allow: ["memory-core"],
         deny: ["memory-lancedb"],
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const next = await persistPluginInstall({
       snapshot: {

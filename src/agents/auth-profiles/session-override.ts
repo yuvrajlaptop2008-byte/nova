@@ -4,7 +4,7 @@
  * across new sessions, compactions, provider changes, and cooldowns.
  */
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import {
   isConfiguredAwsSdkAuthProfileForProvider,
@@ -84,7 +84,7 @@ async function persistSessionAuthProfileOverrideState(params: {
 // Current session overrides are only valid when the selected provider can use
 // that profile, including configured aws-sdk profiles without stored secrets.
 function isProfileForProvider(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   providers: readonly string[];
   profileId: string;
   store: ReturnType<typeof ensureAuthProfileStore>;
@@ -148,7 +148,7 @@ export async function clearSessionAuthProfileOverride(params: {
 
 /** Resolves and optionally rotates the session auth-profile override. */
 export async function resolveSessionAuthProfileOverride(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   provider: string;
   agentDir: string;
   sessionEntry?: SessionEntry;

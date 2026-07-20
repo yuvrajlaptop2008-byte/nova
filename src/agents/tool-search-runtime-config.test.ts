@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { resetConfigRuntimeState, setRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { resolveAgentRuntimeToolConfig } from "./tool-runtime-config.js";
 import { resolveAgentToolSearchRuntimeConfig } from "./tool-search-runtime-config.js";
 
@@ -20,7 +20,7 @@ function createRuntimeConfigPair() {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   const runtimeConfig = {
     ...sourceConfig,
     plugins: {
@@ -30,7 +30,7 @@ function createRuntimeConfigPair() {
         },
       },
     },
-  } as OpenClawConfig;
+  } as NovaConfig;
   return { runtimeConfig, sourceConfig };
 }
 
@@ -85,14 +85,14 @@ describe("resolveAgentToolSearchRuntimeConfig", () => {
           "example-plugin": { config: { marker: "explicit" } },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(resolveAgentRuntimeToolConfig(explicitConfig)).toBe(explicitConfig);
     expect(resolveAgentToolSearchRuntimeConfig({ config: explicitConfig })).toBe(explicitConfig);
   });
 
   it("uses the input config when no runtime snapshot exists", () => {
-    const config = { tools: { toolSearch: false } } as OpenClawConfig;
+    const config = { tools: { toolSearch: false } } as NovaConfig;
 
     expect(resolveAgentRuntimeToolConfig(config)).toBe(config);
     expect(resolveAgentToolSearchRuntimeConfig({ config })).toBe(config);

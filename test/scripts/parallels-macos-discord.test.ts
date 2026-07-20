@@ -21,7 +21,7 @@ import { MacosDiscordSmoke } from "../../scripts/e2e/parallels/macos-discord.ts"
 
 describe("Parallels macOS Discord smoke", () => {
   it("bounds host Discord API connections, transfers, and processes", async () => {
-    const runDir = await mkdtemp(path.join(tmpdir(), "openclaw-parallels-macos-discord-"));
+    const runDir = await mkdtemp(path.join(tmpdir(), "nova-parallels-macos-discord-"));
     await writeFile(path.join(runDir, "fresh.discord-sent-message-id"), "message-id\n", "utf8");
     runMock.mockReturnValue({ status: 0, stderr: "", stdout: "" });
 
@@ -30,8 +30,8 @@ describe("Parallels macOS Discord smoke", () => {
         config: { channelId: "channel-id", guildId: "guild-id", token: "" },
         guest: {} as never,
         guestNode: "node",
-        guestNova: "openclaw",
-        guestOpenClawEntry: "openclaw.mjs",
+        guestNova: "nova",
+        guestNovaEntry: "nova.mjs",
         runDir,
         vmName: "macos-vm",
       });

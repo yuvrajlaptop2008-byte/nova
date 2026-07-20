@@ -1,7 +1,7 @@
 // Verifies requester and owner access checks for task records.
 import { afterEach, describe, expect, it } from "vitest";
 import { captureEnv } from "../test-utils/env.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withNovaTestState } from "../test-utils/nova-test-state.js";
 import {
   findLatestTaskForRelatedSessionKeyForOwner,
   findTaskByRunIdForOwner,
@@ -28,10 +28,10 @@ afterEach(() => {
 });
 
 async function withTaskRegistryTempDir<T>(run: () => Promise<T> | T): Promise<T> {
-  return await withOpenClawTestState(
+  return await withNovaTestState(
     {
       layout: "state-only",
-      prefix: "openclaw-task-owner-access-",
+      prefix: "nova-task-owner-access-",
     },
     async () => {
       resetTaskRegistryForTests({ persist: false });

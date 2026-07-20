@@ -20,9 +20,7 @@ type ApplyPatchTestApi = {
 };
 
 function getTestApi(): ApplyPatchTestApi {
-  const api = (globalThis as Record<PropertyKey, unknown>)[
-    Symbol.for("openclaw.applyPatchTestApi")
-  ];
+  const api = (globalThis as Record<PropertyKey, unknown>)[Symbol.for("nova.applyPatchTestApi")];
   if (!api) {
     throw new Error("apply patch test API is unavailable");
   }

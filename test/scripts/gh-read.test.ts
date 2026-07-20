@@ -38,18 +38,18 @@ describe("gh-read helpers", () => {
   });
 
   it("finds repo from gh args", () => {
-    expect(parseRepoArg(["pr", "view", "42", "-R", "openclaw/openclaw"])).toBe("openclaw/openclaw");
-    expect(parseRepoArg(["run", "list", "--repo=openclaw/docs"])).toBe("openclaw/docs");
+    expect(parseRepoArg(["pr", "view", "42", "-R", "nova/nova"])).toBe("nova/nova");
+    expect(parseRepoArg(["run", "list", "--repo=nova/docs"])).toBe("nova/docs");
     expect(parseRepoArg(["pr", "view", "42"])).toBeNull();
   });
 
   it("normalizes repo strings from common git formats", () => {
-    expect(normalizeRepo("openclaw/openclaw")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("github.com/openclaw/openclaw")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("github:openclaw/openclaw")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("https://github.com/openclaw/openclaw.git")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("git@github.com:openclaw/openclaw.git")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("https://gitlab.com/openclaw/openclaw.git")).toBeNull();
+    expect(normalizeRepo("nova/nova")).toBe("nova/nova");
+    expect(normalizeRepo("github.com/nova/nova")).toBe("nova/nova");
+    expect(normalizeRepo("github:nova/nova")).toBe("nova/nova");
+    expect(normalizeRepo("https://github.com/nova/nova.git")).toBe("nova/nova");
+    expect(normalizeRepo("git@github.com:nova/nova.git")).toBe("nova/nova");
+    expect(normalizeRepo("https://gitlab.com/nova/nova.git")).toBeNull();
     expect(normalizeRepo("invalid")).toBeNull();
   });
 
@@ -83,7 +83,7 @@ describe("gh-read helpers", () => {
   });
 
   it("bounds GitHub App private key files", () => {
-    const tempDir = mkdtempSync(path.join(os.tmpdir(), "openclaw-gh-read-key-"));
+    const tempDir = mkdtempSync(path.join(os.tmpdir(), "nova-gh-read-key-"));
     const privateKeyPath = path.join(tempDir, "app.pem");
     try {
       writeFileSync(privateKeyPath, "x".repeat(64 * 1024));

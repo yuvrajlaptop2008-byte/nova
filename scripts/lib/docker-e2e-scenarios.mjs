@@ -295,7 +295,7 @@ export const mainLanes = [
     "live-gateway",
     liveDockerScriptCommand(
       "test-live-gateway-models-docker.sh",
-      "NOVA_IMAGE=openclaw:local-live-gateway NOVA_DOCKER_BUILD_EXTENSIONS=matrix NOVA_LIVE_GATEWAY_PROVIDERS=claude-cli,google-gemini-cli",
+      "NOVA_IMAGE=nova:local-live-gateway NOVA_DOCKER_BUILD_EXTENSIONS=matrix NOVA_LIVE_GATEWAY_PROVIDERS=claude-cli,google-gemini-cli",
       { skipBuild: false },
     ),
     {
@@ -730,7 +730,7 @@ const releasePathPackageInstallOpenAiLanes = [
     "install-e2e-openai",
     liveDockerScriptCommand(
       "test-install-sh-e2e-docker.sh",
-      "NOVA_INSTALL_TAG=beta NOVA_E2E_MODELS=openai NOVA_INSTALL_E2E_IMAGE=openclaw-install-e2e-openai:local NOVA_INSTALL_E2E_AGENT_TOOL_SMOKE=0 NOVA_INSTALL_E2E_OPENAI_MODEL=openai/gpt-5.4-mini NOVA_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS=120 NOVA_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS=120",
+      "NOVA_INSTALL_TAG=beta NOVA_E2E_MODELS=openai NOVA_INSTALL_E2E_IMAGE=nova-install-e2e-openai:local NOVA_INSTALL_E2E_AGENT_TOOL_SMOKE=0 NOVA_INSTALL_E2E_OPENAI_MODEL=openai/gpt-5.4-mini NOVA_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS=120 NOVA_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS=120",
       { skipBuild: false },
     ),
     {
@@ -757,7 +757,7 @@ const releasePathPackageInstallAnthropicLanes = [
     "install-e2e-anthropic",
     liveDockerScriptCommand(
       "test-install-sh-e2e-docker.sh",
-      "NOVA_INSTALL_TAG=beta NOVA_E2E_MODELS=anthropic NOVA_INSTALL_E2E_IMAGE=openclaw-install-e2e-anthropic:local",
+      "NOVA_INSTALL_TAG=beta NOVA_E2E_MODELS=anthropic NOVA_INSTALL_E2E_IMAGE=nova-install-e2e-anthropic:local",
       { skipBuild: false },
     ),
     {

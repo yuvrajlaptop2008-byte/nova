@@ -23,7 +23,7 @@ import type {
   BoardViewWidget,
   BoardWidgetFrameUrl,
 } from "../../lib/board/view-types.ts";
-import { OpenClawLightDomElement } from "../../lit/openclaw-element.ts";
+import { NovaLightDomElement } from "../../lit/nova-element.ts";
 import "../../styles/board.css";
 import "../web-awesome-tabs.ts";
 import "../web-awesome.ts";
@@ -65,7 +65,7 @@ function itemsForWidgets(widgets: readonly BoardViewWidget[]): BoardGridItem[] {
   }));
 }
 
-class OpenClawBoardView extends OpenClawLightDomElement {
+class NovaBoardView extends NovaLightDomElement {
   @property({ attribute: false }) snapshot?: BoardViewSnapshot;
   @property({ attribute: false }) activeTabId = "";
   @property({ attribute: false }) widgetFrameUrl?: BoardWidgetFrameUrl;
@@ -269,9 +269,7 @@ class OpenClawBoardView extends OpenClawLightDomElement {
         .elementFromPoint(event.clientX, event.clientY)
         ?.closest<HTMLElement>("[data-board-tab-id]");
       const candidateTabId =
-        tabTarget?.closest("openclaw-board-view") === this
-          ? (tabTarget.dataset.boardTabId ?? "")
-          : "";
+        tabTarget?.closest("nova-board-view") === this ? (tabTarget.dataset.boardTabId ?? "") : "";
       const candidateIsValid =
         candidateTabId !== "" &&
         (this.snapshot?.tabs.some((tab) => tab.tabId === candidateTabId) ?? false);
@@ -426,7 +424,7 @@ class OpenClawBoardView extends OpenClawLightDomElement {
     }
     this.focusName = target.name;
     void this.updateComplete.then(() => {
-      const cell = [...this.querySelectorAll("openclaw-board-widget-cell")].find(
+      const cell = [...this.querySelectorAll("nova-board-widget-cell")].find(
         (entry) => entry.widget?.name === target.name,
       );
       cell?.querySelector<HTMLElement>(".board-widget")?.focus();
@@ -569,7 +567,7 @@ class OpenClawBoardView extends OpenClawLightDomElement {
               return nothing;
             }
             return html`
-              <openclaw-board-widget-cell
+              <nova-board-widget-cell
                 .widget=${widget}
                 .rect=${rect}
                 .tabs=${tabs}
@@ -582,7 +580,7 @@ class OpenClawBoardView extends OpenClawLightDomElement {
                 .positionInSet=${(logicalPosition.get(widget.name) ?? 0) + 1}
                 .setSize=${rects.length}
                 .busy=${this.mutationPending}
-              ></openclaw-board-widget-cell>
+              ></nova-board-widget-cell>
             `;
           },
         )}
@@ -623,12 +621,12 @@ class OpenClawBoardView extends OpenClawLightDomElement {
   }
 }
 
-if (!customElements.get("openclaw-board-view")) {
-  customElements.define("openclaw-board-view", OpenClawBoardView);
+if (!customElements.get("nova-board-view")) {
+  customElements.define("nova-board-view", NovaBoardView);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-board-view": OpenClawBoardView;
+    "nova-board-view": NovaBoardView;
   }
 }

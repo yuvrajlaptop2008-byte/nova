@@ -1,9 +1,6 @@
 // Qqbot plugin module implements surface behavior.
-import {
-  createStandardChannelSetupStatus,
-  setSetupChannelEnabled,
-} from "openclaw/plugin-sdk/setup";
-import type { ChannelSetupWizard } from "openclaw/plugin-sdk/setup";
+import { createStandardChannelSetupStatus, setSetupChannelEnabled } from "nova/plugin-sdk/setup";
+import type { ChannelSetupWizard } from "nova/plugin-sdk/setup";
 import { isAccountConfigured } from "../../engine/config/resolve.js";
 import { listQQBotAccountIds, resolveQQBotAccount } from "../config.js";
 import { finalizeQQBotSetup } from "./finalize.js";

@@ -7,7 +7,7 @@ import {
   clampTimerTimeoutMs,
   MAX_TIMER_TIMEOUT_MS,
 } from "@nova/normalization-core/number-coercion";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 const DEFAULT_AGENT_TIMEOUT_SECONDS = 48 * 60 * 60;
 export const DEFAULT_AGENT_TIMEOUT_MS = DEFAULT_AGENT_TIMEOUT_SECONDS * 1000;
@@ -17,7 +17,7 @@ const NO_TIMEOUT_SECONDS = Math.floor(NO_TIMEOUT_MS / 1000);
 const normalizeNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? Math.floor(value) : undefined;
 
-function resolveAgentTimeoutSeconds(cfg?: OpenClawConfig): number {
+function resolveAgentTimeoutSeconds(cfg?: NovaConfig): number {
   const raw = normalizeNumber(cfg?.agents?.defaults?.timeoutSeconds);
   // Config 0 uses the same unlimited-run sentinel as per-run overrides. The
   // LLM idle watchdog still enforces liveness under that sentinel.
@@ -29,7 +29,7 @@ function resolveAgentTimeoutSeconds(cfg?: OpenClawConfig): number {
 }
 
 export function resolveAgentTimeoutMs(opts: {
-  cfg?: OpenClawConfig;
+  cfg?: NovaConfig;
   overrideMs?: number | null;
   overrideSeconds?: number | null;
   minMs?: number;

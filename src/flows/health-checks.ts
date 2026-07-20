@@ -1,5 +1,5 @@
 // Health check types define doctor checks, results, and repair metadata.
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import type { RuntimeEnv } from "../runtime.js";
 
 // Public doctor health contracts shared by core checks, plugin checks, lint, and repair.
@@ -52,7 +52,7 @@ type HealthCheckMode = "doctor" | "lint" | "fix";
 export interface HealthCheckContext {
   readonly mode: HealthCheckMode;
   readonly runtime: RuntimeEnv;
-  readonly cfg: OpenClawConfig;
+  readonly cfg: NovaConfig;
   readonly cwd?: string;
   readonly configPath?: string;
   readonly allowExecSecretRefs?: boolean;
@@ -86,7 +86,7 @@ export interface HealthRepairEffect {
 export interface HealthRepairResult {
   readonly status?: "repaired" | "skipped" | "failed";
   readonly reason?: string;
-  readonly config?: OpenClawConfig;
+  readonly config?: NovaConfig;
   readonly changes: readonly string[];
   readonly warnings?: readonly string[];
   readonly diffs?: readonly HealthRepairDiff[];

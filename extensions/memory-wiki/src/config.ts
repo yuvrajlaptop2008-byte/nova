@@ -1,10 +1,10 @@
 // Memory Wiki helper module supports config behavior.
 import os from "node:os";
 import path from "node:path";
-import { mapPluginConfigIssues } from "openclaw/plugin-sdk/extension-shared";
-import { resolveDefaultAgentId, resolveSessionAgentId } from "openclaw/plugin-sdk/memory-host-core";
-import { buildPluginConfigSchema, z, type OpenClawPluginConfigSchema } from "../api.js";
-import type { OpenClawConfig } from "../api.js";
+import { mapPluginConfigIssues } from "nova/plugin-sdk/extension-shared";
+import { resolveDefaultAgentId, resolveSessionAgentId } from "nova/plugin-sdk/memory-host-core";
+import { buildPluginConfigSchema, z, type NovaPluginConfigSchema } from "../api.js";
+import type { NovaConfig } from "../api.js";
 
 const WIKI_VAULT_MODES = ["isolated", "bridge", "unsafe-local"] as const;
 const WIKI_VAULT_SCOPES = ["global", "agent"] as const;
@@ -109,7 +109,7 @@ export type ResolvedMemoryWikiConfig = {
 
 export type MemoryWikiConfigResolver = (
   agentId?: string,
-  appConfig?: OpenClawConfig,
+  appConfig?: NovaConfig,
 ) => ResolvedMemoryWikiConfig;
 
 const DEFAULT_WIKI_VAULT_MODE: WikiVaultMode = "isolated";
@@ -213,7 +213,7 @@ const memoryWikiConfigSchemaBase = buildPluginConfigSchema(MemoryWikiConfigSourc
   },
 });
 
-export const memoryWikiConfigSchema: OpenClawPluginConfigSchema = memoryWikiConfigSchemaBase;
+export const memoryWikiConfigSchema: NovaPluginConfigSchema = memoryWikiConfigSchemaBase;
 
 function expandHomePath(inputPath: string, homedir: string): string {
   if (inputPath === "~") {
@@ -226,11 +226,11 @@ function expandHomePath(inputPath: string, homedir: string): string {
 }
 
 function resolveDefaultMemoryWikiVaultPath(homedir = os.homedir()): string {
-  return path.join(homedir, ".openclaw", "wiki", "main");
+  return path.join(homedir, ".nova", "wiki", "main");
 }
 
 function resolveDefaultMemoryWikiVaultRoot(homedir = os.homedir()): string {
-  return path.join(homedir, ".openclaw", "wiki");
+  return path.join(homedir, ".nova", "wiki");
 }
 
 export function resolveMemoryWikiConfig(
@@ -293,9 +293,7 @@ export function resolveMemoryWikiConfig(
   };
 }
 
-export function resolveMemoryWikiConfiguredAgentIds(
-  appConfig: OpenClawConfig | undefined,
-): string[] {
+export function resolveMemoryWikiConfiguredAgentIds(appConfig: NovaConfig | undefined): string[] {
   const configured = appConfig?.agents?.list ?? [];
   const ids = configured.flatMap((entry) => {
     const rawId = entry?.id?.trim();
@@ -310,7 +308,7 @@ export function resolveMemoryWikiConfiguredAgentIds(
 /** Resolve the exact vault for one trusted runtime agent context. */
 export function resolveMemoryWikiAgentConfig(params: {
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: NovaConfig;
   agentId?: string;
 }): ResolvedMemoryWikiConfig {
   if (params.config.vault.scope === "global") {

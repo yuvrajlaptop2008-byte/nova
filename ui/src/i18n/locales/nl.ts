@@ -1348,7 +1348,7 @@ export const nl: TranslationMap = {
     autoSaveFailed: "Opslaan mislukt",
     autoSaveConflict: "Instellingen elders gewijzigd",
     retry: "Opnieuw proberen",
-    applyBannerText: "Opgeslagen in openclaw.json — herstart de gateway om toe te passen.",
+    applyBannerText: "Opgeslagen in nova.json — herstart de gateway om toe te passen.",
     applyBannerAction: "Herstarten & toepassen",
     rawDiscard: "Verwerpen",
     rawDraftBlocksApply:
@@ -1739,7 +1739,7 @@ export const nl: TranslationMap = {
     skillWorkshop: "Bekijk, verfijn en pas voorstellen toe voordat ze live Skills worden.",
     nodes: "Gekoppelde apparaten en commando's.",
     chat: "Gateway-chat voor snelle interventies.",
-    config: "Bewerk openclaw.json.",
+    config: "Bewerk nova.json.",
     profile: "De statistieken, reeksen en het leven in het rif van je agent.",
     communications: "Kanalen, berichten en audio-instellingen.",
     appearance: "Thema, UI en instellingen voor de installatiewizard.",
@@ -2459,7 +2459,7 @@ export const nl: TranslationMap = {
       onboardingTitle: "No workspaces yet",
       onboardingSubtitle:
         "Ask your agent to build a workspace, or create one from the command line.",
-      onboardingCommand: "openclaw workspaces tabs create --title Main",
+      onboardingCommand: "nova workspaces tabs create --title Main",
       tabTitle: "This workspace is empty",
       tabSubtitle: "Ask your agent to add a widget, or add one yourself.",
       noVisibleTabs: "Every workspace tab is hidden. Restore one from the hidden menu.",
@@ -3477,17 +3477,16 @@ export const nl: TranslationMap = {
         summary:
           "De Gateway is bereikbaar, maar heeft een overeenkomend token of wachtwoord nodig voordat deze browser kan verbinden.",
         stepPaste:
-          "Plak het token uit openclaw dashboard --no-open of voer het geconfigureerde wachtwoord in.",
+          "Plak het token uit nova dashboard --no-open of voer het geconfigureerde wachtwoord in.",
         stepGenerate:
-          "Als er geen token is geconfigureerd, voer dan openclaw doctor --generate-gateway-token uit op de Gateway-host.",
+          "Als er geen token is geconfigureerd, voer dan nova doctor --generate-gateway-token uit op de Gateway-host.",
         stepConnect: "Klik opnieuw op Connect nadat je de referentie hebt bijgewerkt.",
       },
       authFailed: {
         title: "Authenticatie komt niet overeen",
         summary:
           "De opgegeven referentie is geweigerd. De meest voorkomende oorzaak is een verlopen token of een token dat van een andere Gateway-URL is gekopieerd.",
-        stepDashboard:
-          "Voer openclaw dashboard --no-open uit en open de nieuwe URL of plak het token.",
+        stepDashboard: "Voer nova dashboard --no-open uit en open de nieuwe URL of plak het token.",
         stepReplace:
           "Vervang verlopen token-/wachtwoordwaarden; hergebruik geen token van een andere Gateway-URL.",
         stepMode:
@@ -3511,8 +3510,8 @@ export const nl: TranslationMap = {
           "Deze browser heeft een eenmalige goedkeuring van de Gateway-host nodig voordat Control UI kan worden gebruikt.",
         upgradeSummary:
           "Deze browser is al bekend, maar de gevraagde toegang is gewijzigd en vereist nieuwe goedkeuring.",
-        stepList: "Voer openclaw devices list uit op de Gateway-host.",
-        stepApproveId: "Keur deze aanvraag goed: openclaw devices approve {requestId}.",
+        stepList: "Voer nova devices list uit op de Gateway-host.",
+        stepApproveId: "Keur deze aanvraag goed: nova devices approve {requestId}.",
         stepApprove: "Keur de openstaande browser-/apparaat aanvraag uit die lijst goed.",
         stepReconnect: "Verbind opnieuw nadat de goedkeuring is voltooid.",
       },
@@ -3541,7 +3540,7 @@ export const nl: TranslationMap = {
         summary:
           "De geserveerde Control UI en de draaiende Gateway zijn het niet eens over het ondersteunde verbindingsprotocol.",
         stepDashboard:
-          "Open het geserveerde dashboard opnieuw met openclaw dashboard zodat UI en Gateway uit dezelfde installatie komen.",
+          "Open het geserveerde dashboard opnieuw met nova dashboard zodat UI en Gateway uit dezelfde installatie komen.",
         stepDevUi:
           "Als je pnpm ui:dev gebruikt, bouw of herstart de dev-UI tegen de huidige checkout.",
         stepRestart:
@@ -3551,11 +3550,11 @@ export const nl: TranslationMap = {
         title: "Kan niet verbinden",
         summary:
           "De browser kon de Gateway-verbinding niet voltooien. Controleer doel en transport voordat je referenties opnieuw probeert.",
-        stepGateway: "Bevestig dat de Gateway draait met openclaw status of openclaw gateway run.",
+        stepGateway: "Bevestig dat de Gateway draait met nova status of nova gateway run.",
         stepUrl:
           "Controleer de WebSocket-URL en gebruik wss:// wanneer de Gateway achter HTTPS/Tailscale Serve staat.",
         stepDashboard:
-          "Open het dashboard opnieuw met openclaw dashboard --no-open om de huidige URL en authdetails opnieuw te kopiëren.",
+          "Open het dashboard opnieuw met nova dashboard --no-open om de huidige URL en authdetails opnieuw te kopiëren.",
       },
     },
   },

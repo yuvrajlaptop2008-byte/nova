@@ -3,7 +3,7 @@ import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { generateConversationLabel } from "../auto-reply/reply/conversation-label-generator.js";
 import { updateSessionEntry } from "../config/sessions/session-accessor.js";
 import type { SessionEntry } from "../config/sessions/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { parseAgentSessionKey } from "../sessions/session-key-utils.js";
 
 const DASHBOARD_SESSION_TITLE_MAX_CHARS = 60;
@@ -48,7 +48,7 @@ function normalizeDashboardSessionTitle(raw: string): string | null {
 }
 
 export async function maybeGenerateDashboardSessionTitle(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   agentId: string;
   entry: SessionEntry | undefined;
   sessionId: string;

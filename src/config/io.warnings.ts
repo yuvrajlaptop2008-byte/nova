@@ -6,7 +6,7 @@ import {
   setBoundedConfigIoWarningEntry,
   warnedFutureTouchedVersions,
 } from "./io.state.js";
-import type { OpenClawConfig } from "./types.js";
+import type { NovaConfig } from "./types.js";
 import { shouldWarnOnTouchedVersion } from "./version.js";
 
 export function warnOnConfigMiskeys(raw: unknown, logger: Pick<typeof console, "warn">): void {
@@ -49,7 +49,7 @@ export function logConfigWarningsOnce(params: {
 }
 
 export function warnIfConfigFromFuture(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   logger: Pick<typeof console, "warn">,
 ): void {
   const touched = cfg.meta?.lastTouchedVersion;
@@ -62,8 +62,8 @@ export function warnIfConfigFromFuture(
   logger.warn(
     [
       `Your Nova config was written by version ${touched}, but this command is running ${VERSION}.`,
-      "Check: `openclaw --version`, `which openclaw`, and `openclaw gateway status --deep`.",
-      "If unexpected, update PATH so `openclaw` points to the version you want, or reinstall the Gateway service from that same Nova install.",
+      "Check: `nova --version`, `which nova`, and `nova gateway status --deep`.",
+      "If unexpected, update PATH so `nova` points to the version you want, or reinstall the Gateway service from that same Nova install.",
     ].join("\n"),
   );
 }

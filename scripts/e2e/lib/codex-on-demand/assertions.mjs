@@ -16,8 +16,8 @@ import {
 } from "../codex-install-utils.mjs";
 
 const cfg = readJson(configPath());
-const onboard = readJson("/tmp/openclaw-onboard.json");
-const inspect = readJson("/tmp/openclaw-codex-inspect.json");
+const onboard = readJson("/tmp/nova-onboard.json");
+const inspect = readJson("/tmp/nova-codex-inspect.json");
 const records = readInstallRecords();
 const codexRecord = records.codex;
 if (onboard.ok !== true || onboard.mode !== "local" || onboard.authChoice !== "openai-api-key") {
@@ -96,7 +96,7 @@ if (!/^codex-cli\s+\S+$/u.test(codexVersionStdout)) {
   );
 }
 
-const list = readJson("/tmp/openclaw-plugins-list.json");
+const list = readJson("/tmp/nova-plugins-list.json");
 const plugin = (list.plugins || []).find((entry) => entry.id === "codex");
 if (!plugin || plugin.enabled !== true || plugin.status !== "loaded") {
   throw new Error(`codex plugin was not enabled+loaded: ${JSON.stringify(plugin)}`);
@@ -126,7 +126,7 @@ if (providerRuntime && providerRuntime !== "codex") {
 }
 
 function readAuthProfileStoreText(agentDir) {
-  const dbPath = path.join(agentDir, "openclaw-agent.sqlite");
+  const dbPath = path.join(agentDir, "nova-agent.sqlite");
   if (!fs.existsSync(dbPath)) {
     throw new Error("auth profile SQLite store was not persisted");
   }
@@ -149,5 +149,5 @@ if (!authRaw) {
 assertOpenAiEnvAuthProfileStore(authRaw, {
   envRefMessage: "auth profile did not persist OPENAI_API_KEY env ref",
   rawKeyMessage: "auth profile persisted the raw OpenAI test key",
-  rawKeyNeedle: "sk-openclaw-codex-on-demand-e2e",
+  rawKeyNeedle: "sk-nova-codex-on-demand-e2e",
 });

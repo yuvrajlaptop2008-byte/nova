@@ -45,9 +45,9 @@ export {
   type AuthorizedGatewayHttpRequest,
 } from "./http-auth-utils.js";
 
-export const NOVA_MODEL_ID = "openclaw";
+export const NOVA_MODEL_ID = "nova";
 /** Default OpenAI-compatible model alias that targets the default Nova agent. */
-export const NOVA_DEFAULT_MODEL_ID = "openclaw/default";
+export const NOVA_DEFAULT_MODEL_ID = "nova/default";
 
 class UnknownGatewayAgentError extends Error {
   constructor(readonly agentId: string) {
@@ -58,7 +58,7 @@ class UnknownGatewayAgentError extends Error {
 
 class GatewaySessionKeyOverrideError extends Error {
   constructor() {
-    super("`x-openclaw-session-key` cannot use reserved internal session namespaces.");
+    super("`x-nova-session-key` cannot use reserved internal session namespaces.");
     this.name = "GatewaySessionKeyOverrideError";
   }
 }
@@ -81,8 +81,8 @@ function assertKnownAgentId(agentId: string, cfg = getRuntimeConfig()): void {
 
 function resolveAgentIdFromHeader(req: IncomingMessage): string | undefined {
   const raw =
-    normalizeOptionalString(getHeader(req, "x-openclaw-agent-id")) ||
-    normalizeOptionalString(getHeader(req, "x-openclaw-agent")) ||
+    normalizeOptionalString(getHeader(req, "x-nova-agent-id")) ||
+    normalizeOptionalString(getHeader(req, "x-nova-agent")) ||
     "";
   if (!raw) {
     return undefined;
@@ -108,7 +108,7 @@ export function resolveAgentIdFromModel(
   }
 
   const m =
-    raw.match(/^openclaw[:/](?<agentId>[a-z0-9][a-z0-9_-]{0,63})$/i) ??
+    raw.match(/^nova[:/](?<agentId>[a-z0-9][a-z0-9_-]{0,63})$/i) ??
     raw.match(/^agent:(?<agentId>[a-z0-9][a-z0-9_-]{0,63})$/i);
   const agentId = m?.groups?.agentId;
   if (!agentId) {
@@ -117,7 +117,7 @@ export function resolveAgentIdFromModel(
   return normalizeAgentId(agentId);
 }
 
-/** Validates and resolves the `x-openclaw-model` override for OpenAI-compatible requests. */
+/** Validates and resolves the `x-nova-model` override for OpenAI-compatible requests. */
 export async function resolveOpenAiCompatModelOverride(params: {
   req: IncomingMessage;
   agentId: string;
@@ -126,11 +126,11 @@ export async function resolveOpenAiCompatModelOverride(params: {
   const requestModel = params.model?.trim();
   if (requestModel && !resolveAgentIdFromModel(requestModel)) {
     return {
-      errorMessage: "Invalid `model`. Use `openclaw` or `openclaw/<agentId>`.",
+      errorMessage: "Invalid `model`. Use `nova` or `nova/<agentId>`.",
     };
   }
 
-  const raw = getHeader(params.req, "x-openclaw-model")?.trim();
+  const raw = getHeader(params.req, "x-nova-model")?.trim();
   if (!raw) {
     return {};
   }
@@ -151,7 +151,7 @@ export async function resolveOpenAiCompatModelOverride(params: {
     ...modelManifestContext,
   });
   if (!parsed) {
-    return { errorMessage: "Invalid `x-openclaw-model`." };
+    return { errorMessage: "Invalid `x-nova-model`." };
   }
 
   // Overrides must pass the same visibility policy as model picker surfaces;
@@ -203,7 +203,7 @@ function resolveSessionKey(params: {
   user?: string | undefined;
   prefix: string;
 }): string {
-  const explicit = getHeader(params.req, "x-openclaw-session-key")?.trim();
+  const explicit = getHeader(params.req, "x-nova-session-key")?.trim();
   if (explicit) {
     if (isReservedSessionKeyOverride(explicit, params.agentId)) {
       throw new GatewaySessionKeyOverrideError();
@@ -259,7 +259,7 @@ export function resolveGatewayRequestContext(params: {
   });
 
   const messageChannel = params.useMessageChannelHeader
-    ? (normalizeMessageChannel(getHeader(params.req, "x-openclaw-message-channel")) ??
+    ? (normalizeMessageChannel(getHeader(params.req, "x-nova-message-channel")) ??
       params.defaultMessageChannel)
     : params.defaultMessageChannel;
 

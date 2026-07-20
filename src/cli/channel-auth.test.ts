@@ -448,7 +448,7 @@ describe("channel-auth", () => {
     });
 
     await expect(runChannelLogin({ channel: "whatsapp" }, runtime)).rejects.toThrow(
-      'Channel "whatsapp" does not support login. Run `openclaw channels status --channel whatsapp` to inspect supported actions.',
+      'Channel "whatsapp" does not support login. Run `nova channels status --channel whatsapp` to inspect supported actions.',
     );
   });
 
@@ -654,7 +654,7 @@ describe("channel-auth", () => {
     });
 
     await expect(runChannelLogout({ channel: "whatsapp" }, runtime)).rejects.toThrow(
-      'Channel "whatsapp" does not support logout. Run `openclaw channels status --channel whatsapp` to inspect supported actions.',
+      'Channel "whatsapp" does not support logout. Run `nova channels status --channel whatsapp` to inspect supported actions.',
     );
   });
 });

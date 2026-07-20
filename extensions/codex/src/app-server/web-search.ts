@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import type { JsonObject } from "./protocol.js";
 
 export type CodexWebSearchPlan = {
@@ -30,19 +30,17 @@ function normalizeUniqueStrings(value: unknown): string[] | undefined {
   return normalized.length > 0 ? normalized : undefined;
 }
 
-function hasManagedSearchProvider(config: OpenClawConfig | undefined): boolean {
+function hasManagedSearchProvider(config: NovaConfig | undefined): boolean {
   return normalizeOptionalString(config?.tools?.web?.search?.provider) !== undefined;
 }
 
-function hasNativeDomainRestrictions(config: OpenClawConfig | undefined): boolean {
+function hasNativeDomainRestrictions(config: NovaConfig | undefined): boolean {
   return (
     normalizeUniqueStrings(config?.tools?.web?.search?.openaiCodex?.allowedDomains) !== undefined
   );
 }
 
-export function buildCodexNativeWebSearchThreadConfig(
-  config: OpenClawConfig | undefined,
-): JsonObject {
+export function buildCodexNativeWebSearchThreadConfig(config: NovaConfig | undefined): JsonObject {
   const nativeConfig = config?.tools?.web?.search?.openaiCodex;
   const threadConfig: JsonObject = {
     // Production app-server traffic rejects standalone web.run's user-defined
@@ -80,7 +78,7 @@ export function buildCodexNativeWebSearchThreadConfig(
 }
 
 export function resolveCodexWebSearchPlan(params: {
-  config?: OpenClawConfig;
+  config?: NovaConfig;
   disableTools?: boolean;
   nativeToolSurfaceEnabled?: boolean;
   nativeProviderWebSearchSupport?: CodexNativeWebSearchSupport;

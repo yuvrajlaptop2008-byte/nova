@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import { afterEach, describe, expect, it } from "vitest";
 import { listRaftAccountIds, resolveRaftAccount } from "./accounts.js";
 import { raftChannelConfigSchema } from "./config-schema.js";
@@ -31,7 +31,7 @@ describe("Raft account resolution", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(listRaftAccountIds(cfg)).toEqual(["default", "support"]);
     expect(resolveRaftAccount({ cfg })).toMatchObject({
@@ -53,14 +53,14 @@ describe("Raft account resolution", () => {
           profile: "configured-profile",
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     expect(resolveRaftAccount({ cfg }).profile).toBe("configured-profile");
   });
 
   it("keeps named account setup scoped to that account", () => {
     const next = raftSetupPlugin.setup!.applyAccountConfig({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as NovaConfig,
       accountId: "support",
       input: {
         profile: "support-profile",

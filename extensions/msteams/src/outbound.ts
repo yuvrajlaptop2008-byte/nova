@@ -1,17 +1,14 @@
 // Msteams plugin module implements outbound behavior.
-import {
-  resolveOutboundSendDep,
-  type OutboundSendDeps,
-} from "openclaw/plugin-sdk/channel-outbound";
+import { resolveOutboundSendDep, type OutboundSendDeps } from "nova/plugin-sdk/channel-outbound";
 import {
   attachChannelToResult,
   createAttachedChannelResultAdapter,
-} from "openclaw/plugin-sdk/channel-send-result";
+} from "nova/plugin-sdk/channel-send-result";
 import {
   resolvePayloadMediaUrls,
   resolveTextChunksWithFallback,
   sendPayloadMediaSequence,
-} from "openclaw/plugin-sdk/reply-payload";
+} from "nova/plugin-sdk/reply-payload";
 import {
   chunkTextForOutbound,
   normalizeStringEntries,

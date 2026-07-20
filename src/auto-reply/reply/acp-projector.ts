@@ -8,7 +8,7 @@ import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { resolveAcpToolTerminalOutcome } from "../../acp/tool-status.js";
 import { EmbeddedBlockChunker } from "../../agents/embedded-agent-block-chunker.js";
 import { formatToolSummary, resolveToolDisplay } from "../../agents/tool-display.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { prefixSystemMessage } from "../../infra/system-message.js";
 import type { ReplyPayload } from "../types.js";
 import {
@@ -168,7 +168,7 @@ type AcpReplyProjector = {
 };
 
 export function createAcpReplyProjector(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   shouldSendToolSummaries: boolean;
   shouldSendToolSummariesNow?: () => boolean;
   deliver: (

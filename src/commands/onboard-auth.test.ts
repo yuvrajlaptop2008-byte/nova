@@ -29,14 +29,14 @@ const providerEnvVarsById = vi.hoisted(
 );
 
 vi.mock("../config/paths.js", () => ({
-  resolveStateDir: () => process.env.NOVA_STATE_DIR ?? "/tmp/openclaw-state",
+  resolveStateDir: () => process.env.NOVA_STATE_DIR ?? "/tmp/nova-state",
 }));
 
 vi.mock("../agents/auth-profiles/profiles.js", async () => {
   const fsLocal = await import("node:fs");
   const pathLocal = await import("node:path");
   const upsert = (params: { profileId: string; credential: unknown; agentDir?: string }) => {
-    const stateDir = process.env.NOVA_STATE_DIR ?? "/tmp/openclaw-state";
+    const stateDir = process.env.NOVA_STATE_DIR ?? "/tmp/nova-state";
     const agentDir = params.agentDir ?? pathLocal.join(stateDir, "agents", "main", "agent");
     const file = pathLocal.join(agentDir, "auth-profiles.json");
     fsLocal.mkdirSync(agentDir, { recursive: true });
@@ -133,7 +133,7 @@ describe("writeOAuthCredentials", () => {
   });
 
   it("writes auth-profiles.json under the default agent dir", async () => {
-    const env = await setupAuthTestEnv("openclaw-oauth-");
+    const env = await setupAuthTestEnv("nova-oauth-");
     lifecycle.setStateDir(env.stateDir);
     const defaultAgentDir = path.join(env.stateDir, "agents", "main", "agent");
 
@@ -158,7 +158,7 @@ describe("writeOAuthCredentials", () => {
   });
 
   it("writes OAuth credentials to all sibling agent dirs when syncSiblingAgents=true", async () => {
-    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-oauth-sync-"));
+    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-oauth-sync-"));
     lifecycle.setStateDir(tempStateDir);
     setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
 
@@ -195,7 +195,7 @@ describe("writeOAuthCredentials", () => {
   });
 
   it("writes OAuth credentials only to target dir by default", async () => {
-    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-oauth-nosync-"));
+    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-oauth-nosync-"));
     lifecycle.setStateDir(tempStateDir);
     setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
 
@@ -227,7 +227,7 @@ describe("writeOAuthCredentials", () => {
   });
 
   it("syncs siblings from explicit agentDir outside NOVA_STATE_DIR", async () => {
-    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-oauth-external-"));
+    tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-oauth-external-"));
     lifecycle.setStateDir(tempStateDir);
     setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
 
@@ -298,7 +298,7 @@ describe("upsertApiKeyProfile secret refs", () => {
   }
 
   it("handles plaintext, ref mode, and inline env-ref provider keys", async () => {
-    const env = await setupAuthTestEnv("openclaw-onboard-auth-credentials-");
+    const env = await setupAuthTestEnv("nova-onboard-auth-credentials-");
     lifecycle.setStateDir(env.stateDir);
     process.env.MOONSHOT_API_KEY = "sk-moonshot-env"; // pragma: allowlist secret
     process.env.OPENAI_API_KEY = "sk-openai-env"; // pragma: allowlist secret
@@ -363,7 +363,7 @@ describe("upsertApiKeyProfile secret refs", () => {
   });
 
   it("stores provider-specific env refs and metadata in ref mode", async () => {
-    const env = await setupAuthTestEnv("openclaw-onboard-auth-credentials-provider-ref-");
+    const env = await setupAuthTestEnv("nova-onboard-auth-credentials-provider-ref-");
     lifecycle.setStateDir(env.stateDir);
     process.env.CLOUDFLARE_AI_GATEWAY_API_KEY = "cf-secret"; // pragma: allowlist secret
     process.env.VOLCANO_ENGINE_API_KEY = "volcengine-secret"; // pragma: allowlist secret
@@ -422,7 +422,7 @@ describe("upsertApiKeyProfile", () => {
   });
 
   it("writes to the default agent dir", async () => {
-    const env = await setupAuthTestEnv("openclaw-minimax-", { agentSubdir: "custom-agent" });
+    const env = await setupAuthTestEnv("nova-minimax-", { agentSubdir: "custom-agent" });
     lifecycle.setStateDir(env.stateDir);
     const defaultAgentDir = path.join(env.stateDir, "agents", "main", "agent");
 

@@ -169,7 +169,7 @@ describeControlUiE2e("Control UI session-list event scope", () => {
     expect(sidebarParams).not.toHaveProperty("activeMinutes");
 
     await currentPage.goto(`${server?.baseUrl ?? ""}sessions`);
-    const sessionsPage = currentPage.locator("openclaw-sessions-page");
+    const sessionsPage = currentPage.locator("nova-sessions-page");
     await sessionsPage.getByText(sessionLabel, { exact: true }).waitFor({ timeout: 10_000 });
     const initialPageRequests = await gateway.getRequests("sessions.list");
     const initialPageParams = initialPageRequests.find(

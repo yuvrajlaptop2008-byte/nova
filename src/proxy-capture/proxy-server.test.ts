@@ -9,7 +9,7 @@ import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest } from "../state/nova-state-db.js";
 import type { DebugProxySettings } from "./env.js";
 import { startDebugProxyServer } from "./proxy-server.js";
 import { closeDebugProxyCaptureStore, getDebugProxyCaptureStore } from "./store.sqlite.js";
@@ -19,7 +19,7 @@ const originalStateDir = process.env.NOVA_STATE_DIR;
 
 async function cleanupTestRoot(): Promise<void> {
   closeDebugProxyCaptureStore();
-  closeOpenClawStateDatabaseForTest();
+  closeNovaStateDatabaseForTest();
   if (originalStateDir === undefined) {
     delete process.env.NOVA_STATE_DIR;
   } else {
@@ -34,7 +34,7 @@ async function cleanupTestRoot(): Promise<void> {
 }
 
 async function makeSettings(): Promise<DebugProxySettings> {
-  testRoot = await mkdtemp(join(tmpdir(), "openclaw-debug-proxy-server-"));
+  testRoot = await mkdtemp(join(tmpdir(), "nova-debug-proxy-server-"));
   const certDir = join(testRoot, "certs");
   await mkdir(certDir, { recursive: true });
   await writeFile(join(certDir, "root-ca.pem"), "test root cert\n", "utf8");

@@ -5,7 +5,7 @@ import {
   transformConfigFileWithRetry,
   validateConfigObjectWithPlugins,
 } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { NovaConfig } from "../../config/types.nova.js";
 import { setPluginEnabledInConfig } from "../../plugins/toggle-config.js";
 
 export class AutoReplyConfigMutationError extends Error {}
@@ -17,10 +17,7 @@ export function formatAutoReplyConfigMutationError(error: unknown): string | nul
   return error instanceof AutoReplyConfigMutationError ? error.message : null;
 }
 
-function assertValidConfig(
-  next: Record<string, unknown>,
-  action: string,
-): { config: OpenClawConfig } {
+function assertValidConfig(next: Record<string, unknown>, action: string): { config: NovaConfig } {
   const validated = validateConfigObjectWithPlugins(next);
   if (!validated.ok) {
     const issue = expectDefined(validated.issues[0], "issues entry at 0");
@@ -75,7 +72,7 @@ export async function setPluginEnabledFromCommand(params: {
   pluginId: string;
   enabled: boolean;
   action: "enable" | "disable";
-}): Promise<OpenClawConfig> {
+}): Promise<NovaConfig> {
   const committed = await transformConfigFileWithRetry({
     afterWrite: { mode: "auto" },
     transform: (currentConfig) => {
@@ -101,7 +98,7 @@ type AllowlistConfigEditResult =
 type MaybePromise<T> = T | Promise<T>;
 
 type ApplyAllowlistConfigEdit = (params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   parsedConfig: Record<string, unknown>;
   accountId?: string | null;
   scope: "dm" | "group";
@@ -111,7 +108,7 @@ type ApplyAllowlistConfigEdit = (params: {
 
 /** Applies a channel allowlist edit through a plugin-provided config mutation hook. */
 export async function applyAllowlistConfigMutation(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   accountId?: string | null;
   scope: "dm" | "group";
   action: "add" | "remove";

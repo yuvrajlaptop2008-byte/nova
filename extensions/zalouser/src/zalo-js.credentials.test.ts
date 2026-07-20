@@ -2,14 +2,14 @@
 import { access, mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { MAX_TIMER_TIMEOUT_MS } from "openclaw/plugin-sdk/number-runtime";
-import type { OpenKeyedStoreOptions } from "openclaw/plugin-sdk/plugin-state-runtime";
+import { MAX_TIMER_TIMEOUT_MS } from "nova/plugin-sdk/number-runtime";
+import type { OpenKeyedStoreOptions } from "nova/plugin-sdk/plugin-state-runtime";
 import {
   createPluginStateSyncKeyedStoreForTests,
   resetPluginStateStoreForTests,
-} from "openclaw/plugin-sdk/plugin-state-test-runtime";
-import { createPluginRuntimeMock } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { withEnvAsync } from "openclaw/plugin-sdk/test-env";
+} from "nova/plugin-sdk/plugin-state-test-runtime";
+import { createPluginRuntimeMock } from "nova/plugin-sdk/plugin-test-runtime";
+import { withEnvAsync } from "nova/plugin-sdk/test-env";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { API, LoginQRCallbackEvent } from "./zca-client.js";
 import { LoginQRCallbackEventType } from "./zca-constants.js";
@@ -105,7 +105,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("does not let a delayed credential refresh undo explicit logout", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const env = { NOVA_STATE_DIR: stateDir };
     const profile = "revoked-refresh";
     const stored = {
@@ -132,7 +132,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("persists the final API cookie jar after QR login", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const profile = "qr-refresh";
     const callbackCookie = [{ key: "zpsid", value: "callback", domain: "chat.zalo.me" }];
     const refreshedCookie = [{ key: "zpsid", value: "refreshed", domain: "chat.zalo.me" }];
@@ -189,7 +189,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("revalidates setup ownership immediately before QR credentials are written", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const profile = "qr-stale-owner";
     const guardError = new Error("verified inference changed");
     const beforeCredentialPersistence = vi.fn(async () => {
@@ -268,7 +268,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("rewrites restored sessions with cookies refreshed by zca-js login", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const profile = "restore-refresh";
     const storedCookie = [{ key: "zpsid", value: "stored", domain: "chat.zalo.me" }];
     const refreshedCookie = [{ key: "zpsid", value: "refreshed", domain: "chat.zalo.me" }];
@@ -309,7 +309,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("keeps setup-style read-only API calls from rewriting refreshed credentials", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const profile = "read-only-refresh";
     const storedCookie = [{ key: "zpsid", value: "stored", domain: "chat.zalo.me" }];
     const loginCookie = [{ key: "zpsid", value: "login", domain: "chat.zalo.me" }];
@@ -349,7 +349,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("persists cookie changes after a successful API call", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const profile = "api-refresh";
     const storedCookie: unknown[] = [{ key: "zpsid", value: "stored", domain: "chat.zalo.me" }];
     const loginCookie: unknown[] = [{ key: "zpsid", value: "login", domain: "chat.zalo.me" }];
@@ -405,7 +405,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("does not rewrite credentials when the live cookie jar only reorders cookies", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const profile = "api-stable";
     const cookieA: unknown[] = [
       { key: "zpsid", value: "same", domain: "chat.zalo.me" },
@@ -450,7 +450,7 @@ describe("zalouser credential persistence", () => {
   }
 
   it("keeps reaction sends non-throwing when session restore fails", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
 
     try {
       await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
@@ -469,7 +469,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("keeps link sends non-throwing when session restore fails", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
 
     try {
       await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
@@ -484,7 +484,7 @@ describe("zalouser credential persistence", () => {
   });
 
   it("writes plugin-state SQLite without recreating the retired credential blob", async () => {
-    const stateDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-zalouser-credentials-"));
+    const stateDir = await mkdtemp(path.join(os.tmpdir(), "nova-zalouser-credentials-"));
     const profile = "sqlite-only";
     seedStoredCredentials(stateDir, profile, {
       imei: "api-imei",
@@ -497,9 +497,7 @@ describe("zalouser credential persistence", () => {
       await expect(
         access(resolveLegacyZalouserCredentialsPath(profile, { NOVA_STATE_DIR: stateDir })),
       ).rejects.toMatchObject({ code: "ENOENT" });
-      await expect(
-        access(path.join(stateDir, "state", "openclaw.sqlite")),
-      ).resolves.toBeUndefined();
+      await expect(access(path.join(stateDir, "state", "nova.sqlite"))).resolves.toBeUndefined();
     } finally {
       await rm(stateDir, { recursive: true, force: true });
     }

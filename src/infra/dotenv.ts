@@ -258,7 +258,7 @@ export function loadDotEnv(opts?: { quiet?: boolean }) {
     loadWorkspaceDotEnvFile(path.join(cwd, ".env"), { quiet });
   }
 
-  // Then load global fallback: ~/.openclaw/.env (or NOVA_STATE_DIR/.env),
+  // Then load global fallback: ~/.nova/.env (or NOVA_STATE_DIR/.env),
   // without overriding any env vars already present.
   loadGlobalRuntimeDotEnvFiles({ quiet });
 }

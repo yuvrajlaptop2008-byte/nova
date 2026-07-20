@@ -56,7 +56,7 @@ describe("plugins search command", () => {
         {
           score: 12,
           package: {
-            name: "openclaw-calendar",
+            name: "nova-calendar",
             displayName: "Calendar",
             family: "code-plugin",
             channel: "community",
@@ -72,7 +72,7 @@ describe("plugins search command", () => {
         {
           score: 10,
           package: {
-            name: "openclaw-calendar-bundle",
+            name: "nova-calendar-bundle",
             displayName: "Calendar Bundle",
             family: "bundle-plugin",
             channel: "official",
@@ -97,10 +97,8 @@ describe("plugins search command", () => {
       family: "bundle-plugin",
       limit: 5,
     });
-    expect(mocks.logs.join("\n")).toContain("openclaw-calendar");
-    expect(mocks.logs.join("\n")).toContain(
-      "Install: openclaw plugins install clawhub:openclaw-calendar",
-    );
+    expect(mocks.logs.join("\n")).toContain("nova-calendar");
+    expect(mocks.logs.join("\n")).toContain("Install: nova plugins install clawhub:nova-calendar");
   });
 
   it("writes JSON results when requested", async () => {

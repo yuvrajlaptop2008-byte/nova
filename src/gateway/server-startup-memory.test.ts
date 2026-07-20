@@ -2,7 +2,7 @@
  * Gateway startup memory-service tests.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { NovaConfig } from "../config/config.js";
 import type { MemoryQmdUpdateConfig } from "../config/types.memory.js";
 import { SecretSurfaceUnavailableError } from "../secrets/runtime-degraded-state.js";
 
@@ -18,9 +18,9 @@ vi.mock("../plugins/memory-runtime.js", () => ({
 // This suite owns startup orchestration; agent and memory config resolution have
 // separate tests. Keep those graphs out of this non-isolated Gateway shard.
 vi.mock("../agents/agent-scope.js", () => ({
-  listAgentEntries: (cfg: OpenClawConfig) => cfg.agents?.list ?? [],
-  listAgentIds: (cfg: OpenClawConfig) => cfg.agents?.list?.map((entry) => entry.id) ?? ["main"],
-  resolveDefaultAgentId: (cfg: OpenClawConfig) =>
+  listAgentEntries: (cfg: NovaConfig) => cfg.agents?.list ?? [],
+  listAgentIds: (cfg: NovaConfig) => cfg.agents?.list?.map((entry) => entry.id) ?? ["main"],
+  resolveDefaultAgentId: (cfg: NovaConfig) =>
     cfg.agents?.list?.find((entry) => entry.default)?.id ?? "main",
 }));
 
@@ -31,13 +31,13 @@ vi.mock("../agents/memory-search.js", () => ({
 import { startGatewayMemoryBackend } from "./server-startup-memory.js";
 
 function createQmdConfig(
-  agents: OpenClawConfig["agents"],
+  agents: NovaConfig["agents"],
   update: MemoryQmdUpdateConfig = { startup: "immediate" },
-): OpenClawConfig {
+): NovaConfig {
   return {
     agents,
     memory: { backend: "qmd", qmd: { update } },
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 function createGatewayLogMock() {
@@ -52,13 +52,13 @@ function createQmdManagerMock() {
   };
 }
 
-async function startMemoryBackendForTest(cfg: OpenClawConfig) {
+async function startMemoryBackendForTest(cfg: NovaConfig) {
   const log = createGatewayLogMock();
   await startGatewayMemoryBackend({ cfg, log });
   return log;
 }
 
-async function startQmdBackendWithManager(cfg: OpenClawConfig) {
+async function startQmdBackendWithManager(cfg: NovaConfig) {
   getMemorySearchManagerMock.mockResolvedValue({ manager: createQmdManagerMock() });
   return await startMemoryBackendForTest(cfg);
 }
@@ -69,12 +69,12 @@ function expectNoMemoryBackendStartup(log: ReturnType<typeof createGatewayLogMoc
   expect(log.warn).not.toHaveBeenCalled();
 }
 
-function expectQmdManagerRequests(cfg: OpenClawConfig, agentIds: string[]) {
+function expectQmdManagerRequests(cfg: NovaConfig, agentIds: string[]) {
   expectQmdManagerRequestsWithPurpose(cfg, agentIds, "cli");
 }
 
 function expectQmdManagerRequestsWithPurpose(
-  cfg: OpenClawConfig,
+  cfg: NovaConfig,
   agentIds: string[],
   purpose: "cli" | "default",
 ) {
@@ -103,7 +103,7 @@ describe("startGatewayMemoryBackend", () => {
   beforeEach(() => {
     getMemorySearchManagerMock.mockClear();
     resolveMemorySearchConfigMock.mockReset();
-    resolveMemorySearchConfigMock.mockImplementation((cfg: OpenClawConfig, agentId: string) => {
+    resolveMemorySearchConfigMock.mockImplementation((cfg: NovaConfig, agentId: string) => {
       const agent = cfg.agents?.list?.find((entry) => entry.id === agentId);
       const enabled =
         agent?.memorySearch?.enabled ?? cfg.agents?.defaults?.memorySearch?.enabled ?? true;
@@ -115,7 +115,7 @@ describe("startGatewayMemoryBackend", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
       memory: { backend: "builtin" },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const log = await startMemoryBackendForTest(cfg);
 
@@ -126,7 +126,7 @@ describe("startGatewayMemoryBackend", () => {
     const cfg = {
       agents: { list: [{ id: "main", default: true }] },
       memory: { backend: "qmd", qmd: {} },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const log = await startMemoryBackendForTest(cfg);
 
@@ -204,7 +204,7 @@ describe("startGatewayMemoryBackend", () => {
       },
       { startup: "immediate", interval: "0s", embedInterval: "0s" },
     );
-    resolveMemorySearchConfigMock.mockImplementation((_cfg: OpenClawConfig, agentId: string) => {
+    resolveMemorySearchConfigMock.mockImplementation((_cfg: NovaConfig, agentId: string) => {
       if (agentId === "cold") {
         throw new SecretSurfaceUnavailableError({
           ownerKind: "capability",
@@ -255,7 +255,7 @@ describe("startGatewayMemoryBackend", () => {
           update: { startup: "immediate", onBoot: false, interval: "0s", embedInterval: "0s" },
         },
       },
-    } as OpenClawConfig;
+    } as NovaConfig;
 
     const log = await startMemoryBackendForTest(cfg);
 

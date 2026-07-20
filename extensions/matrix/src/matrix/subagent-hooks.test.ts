@@ -1,9 +1,9 @@
 // Matrix tests cover subagent hooks plugin behavior.
-import type { OpenClawPluginApi as MatrixEntryPluginApi } from "openclaw/plugin-sdk/channel-entry-contract";
+import type { NovaPluginApi as MatrixEntryPluginApi } from "nova/plugin-sdk/channel-entry-contract";
 import {
   getRequiredHookHandler,
   registerHookHandlersForTest,
-} from "openclaw/plugin-sdk/channel-test-helpers";
+} from "nova/plugin-sdk/channel-test-helpers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { registerMatrixSubagentHooks } from "../../subagent-hooks-api.js";
 
@@ -18,7 +18,7 @@ const removeBindingRecordMock = vi.hoisted(() => vi.fn(() => false));
 const resolveMatrixBaseConfigMock = vi.hoisted(() => vi.fn((): any => ({})));
 const findMatrixAccountConfigMock = vi.hoisted(() => vi.fn((): any => undefined));
 
-vi.mock("openclaw/plugin-sdk/conversation-binding-runtime", () => ({
+vi.mock("nova/plugin-sdk/conversation-binding-runtime", () => ({
   getSessionBindingService: () => ({
     bind: bindMock,
     getCapabilities: getCapabilitiesMock,

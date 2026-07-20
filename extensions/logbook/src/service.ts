@@ -2,12 +2,8 @@
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { canonicalizeBase64 } from "openclaw/plugin-sdk/media-runtime";
-import type {
-  OpenClawConfig,
-  OpenClawPluginApi,
-  PluginLogger,
-} from "openclaw/plugin-sdk/plugin-entry";
+import { canonicalizeBase64 } from "nova/plugin-sdk/media-runtime";
+import type { NovaConfig, NovaPluginApi, PluginLogger } from "nova/plugin-sdk/plugin-entry";
 import {
   CARD_LOOKBACK_MS,
   MAX_FRAMES_PER_CALL,
@@ -114,8 +110,8 @@ export class LogbookService {
   constructor(
     private readonly config: LogbookConfig,
     private readonly deps: {
-      runtime: NonNullable<OpenClawPluginApi["runtime"]>;
-      fullConfig: OpenClawConfig;
+      runtime: NonNullable<NovaPluginApi["runtime"]>;
+      fullConfig: NovaConfig;
       logger: PluginLogger;
       dataDir: string;
     },

@@ -3,17 +3,17 @@ import path from "node:path";
 
 export type FleetContainerRuntimeName = "docker" | "podman";
 
-export const DEFAULT_FLEET_IMAGE = "ghcr.io/openclaw/openclaw:latest";
+export const DEFAULT_FLEET_IMAGE = "ghcr.io/nova/nova:latest";
 const FLEET_BASE_PORT = 19_100;
 export const FLEET_GATEWAY_PORT = 18_789;
 const FLEET_CONTAINER_HOME = "/home/node";
-const FLEET_CONTAINER_STATE_DIR = "/home/node/.openclaw";
-const FLEET_CONTAINER_AUTH_SECRET_DIR = "/home/node/.config/openclaw";
-export const FLEET_TENANT_LABEL = "openclaw.fleet.tenant";
-export const FLEET_OWNER_LABEL = "openclaw.fleet.owner";
-export const FLEET_ATTEMPT_LABEL = "openclaw.fleet.attempt";
-export const FLEET_ENV_KEYS_LABEL = "openclaw.fleet.env-keys";
-export const FLEET_DISK_LIMIT_LABEL = "openclaw.fleet.disk-limit";
+const FLEET_CONTAINER_STATE_DIR = "/home/node/.nova";
+const FLEET_CONTAINER_AUTH_SECRET_DIR = "/home/node/.config/nova";
+export const FLEET_TENANT_LABEL = "nova.fleet.tenant";
+export const FLEET_OWNER_LABEL = "nova.fleet.owner";
+export const FLEET_ATTEMPT_LABEL = "nova.fleet.attempt";
+export const FLEET_ENV_KEYS_LABEL = "nova.fleet.env-keys";
+export const FLEET_DISK_LIMIT_LABEL = "nova.fleet.disk-limit";
 const FLEET_MANAGED_ENV_KEYS = [
   "HOME",
   "NOVA_HOME",
@@ -157,7 +157,7 @@ export function buildCellEnvironment(
     HOME: FLEET_CONTAINER_HOME,
     NOVA_HOME: FLEET_CONTAINER_HOME,
     NOVA_STATE_DIR: FLEET_CONTAINER_STATE_DIR,
-    NOVA_CONFIG_PATH: `${FLEET_CONTAINER_STATE_DIR}/openclaw.json`,
+    NOVA_CONFIG_PATH: `${FLEET_CONTAINER_STATE_DIR}/nova.json`,
     NOVA_WORKSPACE_DIR: `${FLEET_CONTAINER_STATE_DIR}/workspace`,
     NOVA_GATEWAY_TOKEN: token,
     ...userEnv,
@@ -165,7 +165,7 @@ export function buildCellEnvironment(
 }
 
 export function cellContainerName(tenantId: string): string {
-  return `openclaw-cell-${validateTenantId(tenantId)}`;
+  return `nova-cell-${validateTenantId(tenantId)}`;
 }
 
 export function cellNetworkName(tenantId: string): string {

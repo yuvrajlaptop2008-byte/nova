@@ -8,7 +8,7 @@ import {
   loadExtraExcludePatternsFromEnv,
 } from "./vitest/vitest.unit.config.ts";
 
-const patternFiles = createPatternFileHelper("openclaw-vitest-unit-config-");
+const patternFiles = createPatternFileHelper("nova-vitest-unit-config-");
 
 function requireTestConfig<T extends { test?: unknown }>(config: T): NonNullable<T["test"]> {
   if (!config.test) {
@@ -117,7 +117,7 @@ describe("unit vitest config", () => {
     const testConfig = requireTestConfig(unitConfig);
     expect(normalizeConfigPaths(testConfig.setupFiles)).toEqual([
       "test/setup.ts",
-      "test/setup-openclaw-runtime.ts",
+      "test/setup-nova-runtime.ts",
     ]);
   });
 

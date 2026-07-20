@@ -2,12 +2,12 @@
 import {
   getProviderHttpMocks,
   installProviderHttpMockCleanup,
-} from "openclaw/plugin-sdk/provider-http-test-mocks";
+} from "nova/plugin-sdk/provider-http-test-mocks";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 const transcodeAudioBufferToOpusMock = vi.hoisted(() => vi.fn());
 
-vi.mock("openclaw/plugin-sdk/media-runtime", () => ({
+vi.mock("nova/plugin-sdk/media-runtime", () => ({
   transcodeAudioBufferToOpus: transcodeAudioBufferToOpusMock,
 }));
 
@@ -115,7 +115,7 @@ describe("Google speech provider", () => {
   });
 
   afterAll(() => {
-    vi.doUnmock("openclaw/plugin-sdk/media-runtime");
+    vi.doUnmock("nova/plugin-sdk/media-runtime");
     vi.resetModules();
   });
 

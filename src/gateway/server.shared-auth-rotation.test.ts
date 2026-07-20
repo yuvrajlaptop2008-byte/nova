@@ -50,14 +50,14 @@ async function openDeviceTokenWsWithDetails(
     auth?: { deviceToken?: unknown };
   };
 }> {
-  const identityPath = path.join(os.tmpdir(), `openclaw-shared-auth-${process.pid}-${port}.sqlite`);
+  const identityPath = path.join(os.tmpdir(), `nova-shared-auth-${process.pid}-${port}.sqlite`);
   const { loadOrCreateDeviceIdentity, publicKeyRawBase64UrlFromPem } =
     await import("../infra/device-identity.js");
   const { approveDevicePairing, ensureDeviceToken, requestDevicePairing, rotateDeviceToken } =
     await import("../infra/device-pairing.js");
   const client = params.browserClient
     ? {
-        id: "openclaw-control-ui",
+        id: "nova-control-ui",
         version: "1.0.0",
         platform: "test",
         mode: "webchat",

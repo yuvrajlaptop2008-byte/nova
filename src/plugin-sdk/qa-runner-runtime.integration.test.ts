@@ -56,9 +56,9 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
   });
 
   it("loads an activated qa runner from a linked plugin path without a bundled install fallback", async () => {
-    const stateDir = makeTempDir("openclaw-qa-runner-state-");
+    const stateDir = makeTempDir("nova-qa-runner-state-");
     const pluginDir = path.join(stateDir, "extensions", "qa-linked");
-    const configPath = path.join(stateDir, "openclaw.json");
+    const configPath = path.join(stateDir, "nova.json");
 
     fs.writeFileSync(
       configPath,
@@ -72,7 +72,7 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
 
     fs.mkdirSync(pluginDir, { recursive: true });
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify({
         id: "qa-linked",
         qaRunners: [
@@ -94,7 +94,7 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
       JSON.stringify({
         name: "@nova/qa-linked",
         type: "module",
-        openclaw: {
+        nova: {
           extensions: ["./index.js"],
           install: {
             npmSpec: "@nova/qa-linked",
@@ -144,15 +144,15 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
   });
 
   it("ignores operator runner metadata and state during private QA discovery", () => {
-    const stateDir = makeTempDir("openclaw-private-qa-operator-state-");
+    const stateDir = makeTempDir("nova-private-qa-operator-state-");
     const pluginDir = path.join(stateDir, "extensions", "operator-runner");
-    const stateDatabasePath = path.join(stateDir, "openclaw.sqlite");
+    const stateDatabasePath = path.join(stateDir, "nova.sqlite");
     const stateDatabaseSentinel = "operator-state-must-remain-unopened";
 
     fs.mkdirSync(pluginDir, { recursive: true });
     fs.writeFileSync(stateDatabasePath, stateDatabaseSentinel, "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "nova.plugin.json"),
       JSON.stringify({
         id: "operator-runner",
         qaRunners: [{ commandName: "operator-sentinel" }],
@@ -169,7 +169,7 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
       JSON.stringify({
         name: "@nova/operator-runner",
         type: "module",
-        openclaw: { extensions: ["./index.js"] },
+        nova: { extensions: ["./index.js"] },
       }),
       "utf8",
     );
@@ -178,7 +178,7 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
     process.env.NOVA_ENABLE_PRIVATE_QA_CLI = "1";
     process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "0";
     process.env.NOVA_STATE_DIR = stateDir;
-    process.env.NOVA_CONFIG_PATH = path.join(stateDir, "openclaw.json");
+    process.env.NOVA_CONFIG_PATH = path.join(stateDir, "nova.json");
 
     const contributions = listQaRunnerCliContributions();
 

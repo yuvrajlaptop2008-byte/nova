@@ -2,12 +2,12 @@
   "name": "@nova/crabbox-provider",
   "version": "2026.7.2",
   "private": true,
-  "description": "OpenClaw cloud worker provider backed by the Crabbox CLI",
+  "description": "Nova cloud worker provider backed by the Crabbox CLI",
   "type": "module",
   "devDependencies": {
     "@nova/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "nova": {
     "extensions": [
       "./index.ts"
     ]

@@ -1,12 +1,12 @@
 // Whatsapp tests cover configured ACP binding support.
-import { resolveConfiguredAcpBindingRecord } from "openclaw/plugin-sdk/acp-binding-resolve-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
+import { resolveConfiguredAcpBindingRecord } from "nova/plugin-sdk/acp-binding-resolve-runtime";
+import type { NovaConfig } from "nova/plugin-sdk/config-contracts";
 import {
   createEmptyPluginRegistry,
   createTestRegistry,
   resetPluginRuntimeStateForTest,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "nova/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { whatsappPlugin } from "./channel.js";
 
@@ -14,7 +14,7 @@ function createCfg(
   peerId: string,
   accountId = "work",
   peerKind: "direct" | "group" = "direct",
-): OpenClawConfig {
+): NovaConfig {
   return {
     agents: {
       list: [
@@ -46,7 +46,7 @@ function createCfg(
         },
       },
     ],
-  } as OpenClawConfig;
+  } as NovaConfig;
 }
 
 describe("WhatsApp configured ACP bindings", () => {

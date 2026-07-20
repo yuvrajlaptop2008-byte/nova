@@ -1,5 +1,5 @@
-import type { HealthCheckContext, HealthFinding } from "openclaw/plugin-sdk/health";
-import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { HealthCheckContext, HealthFinding } from "nova/plugin-sdk/health";
+import { isRecord } from "nova/plugin-sdk/string-coerce-runtime";
 import {
   collectPolicyEvidence,
   createPolicyAttestation,
@@ -140,7 +140,7 @@ async function evaluatePolicyUncached(ctx: HealthCheckContext): Promise<PolicyEv
       source: "policy",
       path: policyFile.displayName,
       target: `oc://${policyFile.ocDocName}`,
-      requirement: "oc://openclaw.config/plugins/entries/policy/config/expectedHash",
+      requirement: "oc://nova.config/plugins/entries/policy/config/expectedHash",
       fixHint: `Restore the approved policy artifact or update plugins.entries.policy.config.expectedHash after review.`,
     });
     return {
@@ -317,7 +317,7 @@ function channelFindings(
         severity: "error",
         message: `Channel '${channel.id}' uses denied provider '${channel.provider}'.`,
         source: "policy",
-        path: "openclaw config",
+        path: "nova config",
         ocPath: channel.source,
         target: channel.source,
         requirement: rule.requirement,
@@ -359,7 +359,7 @@ function policyAttestationFindings(
       source: "policy",
       path: "policy attestation",
       target: "oc://policy/attestation/current",
-      requirement: "oc://openclaw.config/plugins/entries/policy/config/expectedAttestationHash",
+      requirement: "oc://nova.config/plugins/entries/policy/config/expectedAttestationHash",
       fixHint: `Run policy check, review attestation ${current.attestationHash}, then update plugins.entries.policy.config.expectedAttestationHash and the supervisor/gateway accepted attestation.`,
     },
   ];

@@ -73,7 +73,7 @@ export type ReplyPayload = {
 
 // Private device-pair -> Gateway live-display envelope key. Do not re-export
 // through Plugin SDK; this is not a third-party plugin contract.
-const PAIRING_QR_REPLY_CHANNEL_DATA_KEY = "openclawPairingQr";
+const PAIRING_QR_REPLY_CHANNEL_DATA_KEY = "novaPairingQr";
 
 type PairingQrReplyChannelData = {
   setupCode: string;
@@ -105,7 +105,7 @@ export function readPairingQrReplyChannelData(
 export const FAST_MODE_AUTO_PROGRESS_KIND = "fast-mode-auto";
 
 export function isFastModeAutoProgressPayload(payload: Pick<ReplyPayload, "channelData">): boolean {
-  return payload.channelData?.openclawProgressKind === FAST_MODE_AUTO_PROGRESS_KIND;
+  return payload.channelData?.novaProgressKind === FAST_MODE_AUTO_PROGRESS_KIND;
 }
 
 /** Metadata for audio-only media that supplements already-visible assistant text. */

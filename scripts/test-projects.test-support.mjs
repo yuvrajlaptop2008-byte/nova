@@ -415,7 +415,7 @@ const VITEST_CONFIG_BY_KIND = {
 const BROAD_CHANGED_FALLBACK_PATTERNS = [
   /^package\.json$/u,
   /^pnpm-lock\.yaml$/u,
-  /^test\/setup(?:\.shared|\.extensions|-openclaw-runtime)?\.ts$/u,
+  /^test\/setup(?:\.shared|\.extensions|-nova-runtime)?\.ts$/u,
   /^vitest(?:\..+)?\.(?:config\.ts|paths\.mjs)$/u,
   /^test\/vitest\/vitest\.(?:config|shared\.config|scoped-config|performance-config)\.ts$/u,
   /^test\/helpers\//u,
@@ -446,7 +446,7 @@ const RUNTIME_SIDECAR_PATH_CONSUMER_TEST_TARGETS = [
   ...RUNTIME_SIDECAR_BASELINE_OWNER_TEST_TARGETS,
   "src/infra/update-global.test.ts",
   "src/infra/update-runner.test.ts",
-  "test/openclaw-npm-postpublish-verify.test.ts",
+  "test/nova-npm-postpublish-verify.test.ts",
 ];
 const OFFICIAL_EXTERNAL_CATALOG_TEST_TARGETS = [
   "src/plugins/official-external-plugin-catalog.test.ts",
@@ -538,7 +538,7 @@ const GITHUB_WORKFLOW_OWNER_TEST_TARGETS = new Map([
     ],
   ],
   [
-    ".github/workflows/shared-openclawkit-periphery.yml",
+    ".github/workflows/shared-novakit-periphery.yml",
     [
       "test/scripts/periphery-intersection.test.ts",
       "test/scripts/periphery-scope-workflows.test.ts",
@@ -596,15 +596,15 @@ const GITHUB_WORKFLOW_OWNER_TEST_TARGETS = new Map([
   ],
   [".github/workflows/android-release.yml", ["test/scripts/package-acceptance-workflow.test.ts"]],
   [
-    ".github/workflows/openclaw-cross-os-release-checks-reusable.yml",
+    ".github/workflows/nova-cross-os-release-checks-reusable.yml",
     [
-      "test/scripts/openclaw-cross-os-release-checks.test.ts",
-      "test/scripts/openclaw-cross-os-release-workflow.test.ts",
+      "test/scripts/nova-cross-os-release-checks.test.ts",
+      "test/scripts/nova-cross-os-release-workflow.test.ts",
       "test/scripts/package-acceptance-workflow.test.ts",
     ],
   ],
   [
-    ".github/workflows/openclaw-live-and-e2e-checks-reusable.yml",
+    ".github/workflows/nova-live-and-e2e-checks-reusable.yml",
     [
       "test/scripts/package-acceptance-workflow.test.ts",
       "test/scripts/release-workflow-matrix-plan.test.ts",
@@ -612,38 +612,35 @@ const GITHUB_WORKFLOW_OWNER_TEST_TARGETS = new Map([
     ],
   ],
   [
-    ".github/workflows/openclaw-npm-release.yml",
+    ".github/workflows/nova-npm-release.yml",
     [
-      "test/openclaw-npm-postpublish-verify.test.ts",
+      "test/nova-npm-postpublish-verify.test.ts",
       "test/scripts/package-acceptance-workflow.test.ts",
     ],
   ],
+  [".github/workflows/nova-performance.yml", ["test/scripts/nova-performance-workflow.test.ts"]],
   [
-    ".github/workflows/openclaw-performance.yml",
-    ["test/scripts/openclaw-performance-workflow.test.ts"],
-  ],
-  [
-    ".github/workflows/openclaw-release-checks.yml",
+    ".github/workflows/nova-release-checks.yml",
     [
-      "test/scripts/openclaw-cross-os-release-checks.test.ts",
+      "test/scripts/nova-cross-os-release-checks.test.ts",
       "test/scripts/package-acceptance-workflow.test.ts",
       "test/scripts/plugin-prerelease-test-plan.test.ts",
       "test/scripts/test-install-sh-docker.test.ts",
     ],
   ],
   [
-    ".github/workflows/openclaw-release-publish.yml",
+    ".github/workflows/nova-release-publish.yml",
     ["test/scripts/package-acceptance-workflow.test.ts"],
   ],
   [
-    ".github/workflows/openclaw-scheduled-live-checks.yml",
+    ".github/workflows/nova-scheduled-live-checks.yml",
     [
       "test/scripts/package-acceptance-workflow.test.ts",
       "test/scripts/release-no-push-workflow.test.ts",
     ],
   ],
   [
-    ".github/workflows/openclaw-stable-main-closeout.yml",
+    ".github/workflows/nova-stable-main-closeout.yml",
     ["test/scripts/package-acceptance-workflow.test.ts"],
   ],
   [
@@ -696,7 +693,7 @@ const GITHUB_WORKFLOW_OWNER_TEST_TARGETS = new Map([
 const TOOLING_SOURCE_TEST_TARGETS = new Map([
   ["Dockerfile", ROOT_DOCKERFILE_TEST_TARGETS],
   [
-    ".agents/skills/openclaw-changelog-update/scripts/verify-release-notes.mjs",
+    ".agents/skills/nova-changelog-update/scripts/verify-release-notes.mjs",
     ["test/scripts/release-notes-ledger.test.ts", "test/scripts/verify-release-notes.test.ts"],
   ],
   [".crabbox.yaml", ["test/scripts/package-acceptance-workflow.test.ts"]],
@@ -762,11 +759,11 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
     [...LIVE_MEDIA_RUNNER_IMAGE_TEST_TARGETS, "test/scripts/ci-workflow-guards.test.ts"],
   ],
   [
-    ".github/workflows/openclaw-live-and-e2e-checks-reusable.yml",
+    ".github/workflows/nova-live-and-e2e-checks-reusable.yml",
     ["test/scripts/package-acceptance-workflow.test.ts", "test/scripts/ci-workflow-guards.test.ts"],
   ],
   [
-    ".github/workflows/openclaw-release-checks.yml",
+    ".github/workflows/nova-release-checks.yml",
     ["test/scripts/package-acceptance-workflow.test.ts"],
   ],
   ["scripts/clawtributors-map.json", ["test/scripts/update-clawtributors.test.ts"]],
@@ -1100,11 +1097,11 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
       "test/scripts/security-sensitive-guard-workflow.test.ts",
     ],
   ],
-  ["scripts/github/resolve-openclaw-ref.sh", ["test/scripts/resolve-openclaw-ref.test.ts"]],
+  ["scripts/github/resolve-nova-ref.sh", ["test/scripts/resolve-nova-ref.test.ts"]],
   ["scripts/ci-hydrate-testbox-env.sh", ["test/scripts/ci-hydrate-testbox-env.test.ts"]],
   [
-    "scripts/github/run-openclaw-cross-os-release-checks.sh",
-    ["test/scripts/openclaw-cross-os-release-workflow.test.ts"],
+    "scripts/github/run-nova-cross-os-release-checks.sh",
+    ["test/scripts/nova-cross-os-release-workflow.test.ts"],
   ],
   ["scripts/mobile-release-ref.ts", ["test/scripts/mobile-release-ref.test.ts"]],
   ["scripts/apple-release-source-check.sh", ["test/scripts/apple-release-source-check.test.ts"]],
@@ -1134,16 +1131,16 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
   ["scripts/ios-validate-app-store-ipa.sh", ["test/scripts/ios-validate-app-store-ipa.test.ts"]],
   ["scripts/lib/restart-mac-gateway.sh", ["test/scripts/restart-mac.test.ts"]],
   [
-    "scripts/openclaw-release-clawhub-runtime-state.ts",
-    ["test/scripts/openclaw-release-clawhub-runtime-state.test.ts"],
+    "scripts/nova-release-clawhub-runtime-state.ts",
+    ["test/scripts/nova-release-clawhub-runtime-state.test.ts"],
   ],
-  ["scripts/openclaw-release-clawhub-plan.ts", ["test/scripts/release-wrapper-scripts.test.ts"]],
+  ["scripts/nova-release-clawhub-plan.ts", ["test/scripts/release-wrapper-scripts.test.ts"]],
   [
     "scripts/plan-release-workflow-matrix.mjs",
     ["test/scripts/release-workflow-matrix-plan.test.ts"],
   ],
   ["scripts/release-fast-pretag-check.sh", ["test/scripts/package-acceptance-workflow.test.ts"]],
-  ["scripts/openclaw-npm-resume-run.mjs", ["test/scripts/openclaw-npm-resume-run.test.ts"]],
+  ["scripts/nova-npm-resume-run.mjs", ["test/scripts/nova-npm-resume-run.test.ts"]],
   ["scripts/plugin-clawhub-release-check.ts", ["test/scripts/release-wrapper-scripts.test.ts"]],
   ["scripts/plugin-clawhub-release-plan.ts", ["test/scripts/release-wrapper-scripts.test.ts"]],
   ["scripts/plugin-npm-release-check.ts", ["test/scripts/release-wrapper-scripts.test.ts"]],
@@ -1320,10 +1317,10 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
       "src/infra/run-node.test.ts",
       "src/infra/package-dist-inventory.test.ts",
       "test/release-check.test.ts",
-      "test/openclaw-npm-release-check.test.ts",
+      "test/nova-npm-release-check.test.ts",
       "test/scripts/check-gateway-watch-regression.test.ts",
-      "test/scripts/check-openclaw-package-tarball.test.ts",
-      "test/scripts/openclaw-cross-os-release-checks.test.ts",
+      "test/scripts/check-nova-package-tarball.test.ts",
+      "test/scripts/nova-cross-os-release-checks.test.ts",
     ],
   ],
   [
@@ -1334,23 +1331,23 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
       "src/infra/run-node.test.ts",
       "src/infra/package-dist-inventory.test.ts",
       "test/release-check.test.ts",
-      "test/openclaw-npm-release-check.test.ts",
+      "test/nova-npm-release-check.test.ts",
       "test/scripts/check-gateway-watch-regression.test.ts",
-      "test/scripts/check-openclaw-package-tarball.test.ts",
-      "test/scripts/openclaw-cross-os-release-checks.test.ts",
+      "test/scripts/check-nova-package-tarball.test.ts",
+      "test/scripts/nova-cross-os-release-checks.test.ts",
     ],
   ],
   ["scripts/lib/npm-verify-exec.ts", ["test/scripts/npm-verify-exec.test.ts"]],
-  ["scripts/lib/openclaw-test-state.mjs", ["test/scripts/openclaw-test-state.test.ts"]],
+  ["scripts/lib/nova-test-state.mjs", ["test/scripts/nova-test-state.test.ts"]],
   [
     "scripts/lib/workspace-bootstrap-smoke.mjs",
-    ["test/release-check.test.ts", "test/openclaw-npm-release-check.test.ts"],
+    ["test/release-check.test.ts", "test/nova-npm-release-check.test.ts"],
   ],
   [
     "scripts/lib/package-dist-imports.mjs",
     [
       "test/scripts/check-package-dist-imports.test.ts",
-      "test/scripts/check-openclaw-package-tarball.test.ts",
+      "test/scripts/check-nova-package-tarball.test.ts",
       "test/scripts/postinstall-bundled-plugins.test.ts",
       "test/release-check.test.ts",
     ],
@@ -1385,8 +1382,8 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
     "scripts/lib/npm-publish-plan.mjs",
     [
       "test/npm-publish-plan.test.ts",
-      "test/openclaw-npm-release-check.test.ts",
-      "test/openclaw-npm-postpublish-verify.test.ts",
+      "test/nova-npm-release-check.test.ts",
+      "test/nova-npm-postpublish-verify.test.ts",
       "test/plugin-npm-release.test.ts",
       "test/plugin-clawhub-release.test.ts",
       "test/scripts/release-upgrade-baseline.test.ts",
@@ -1405,7 +1402,7 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
     "scripts/lib/npm-pack-budget.d.mts",
     ["test/release-check.test.ts", "test/scripts/test-install-sh-docker.test.ts"],
   ],
-  ["scripts/lib/openclaw-release-clawhub-plan.ts", ["test/plugin-clawhub-release.test.ts"]],
+  ["scripts/lib/nova-release-clawhub-plan.ts", ["test/plugin-clawhub-release.test.ts"]],
   [
     "scripts/lib/actions-artifact-archive.mjs",
     ["test/scripts/plugin-publication-artifact.test.ts"],
@@ -1560,8 +1557,8 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
   ["scripts/pr-prepare", ["test/scripts/pr-wrappers.test.ts"]],
   ["scripts/pr-review", ["test/scripts/pr-wrappers.test.ts"]],
   ["scripts/setup-auth-system.sh", ["test/scripts/auth-monitor.test.ts"]],
-  ["scripts/systemd/openclaw-auth-monitor.service", ["test/scripts/auth-monitor.test.ts"]],
-  ["scripts/systemd/openclaw-auth-monitor.timer", ["test/scripts/auth-monitor.test.ts"]],
+  ["scripts/systemd/nova-auth-monitor.service", ["test/scripts/auth-monitor.test.ts"]],
+  ["scripts/systemd/nova-auth-monitor.timer", ["test/scripts/auth-monitor.test.ts"]],
   ["scripts/termux-auth-widget.sh", ["test/scripts/auth-monitor.test.ts"]],
   ["scripts/termux-quick-auth.sh", ["test/scripts/auth-monitor.test.ts"]],
   ["scripts/termux-sync-widget.sh", ["test/scripts/auth-monitor.test.ts"]],
@@ -1579,7 +1576,7 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
       "test/scripts/install-sh.test.ts",
       "test/scripts/test-install-sh-docker.test.ts",
       "test/scripts/website-installer-sync-workflow.test.ts",
-      "test/scripts/openclaw-cross-os-release-checks.test.ts",
+      "test/scripts/nova-cross-os-release-checks.test.ts",
       "src/scripts/ci-changed-scope.test.ts",
     ],
   ],
@@ -1588,25 +1585,22 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
     [
       "test/scripts/install-ps1.test.ts",
       "test/scripts/website-installer-sync-workflow.test.ts",
-      "test/scripts/openclaw-cross-os-release-checks.test.ts",
+      "test/scripts/nova-cross-os-release-checks.test.ts",
       "src/scripts/ci-changed-scope.test.ts",
     ],
   ],
-  ["scripts/podman/openclaw.container.in", ["test/scripts/test-install-sh-docker.test.ts"]],
+  ["scripts/podman/nova.container.in", ["test/scripts/test-install-sh-docker.test.ts"]],
   ["scripts/ios-run.sh", ["test/scripts/ios-run.test.ts"]],
   ["scripts/ios-write-version-xcconfig.sh", ["test/scripts/ios-version.test.ts"]],
   ["scripts/create-dmg.sh", ["test/scripts/create-dmg.test.ts"]],
   ["scripts/kova-ci-summary.mjs", ["test/scripts/kova-ci-summary.test.ts"]],
   ["scripts/make_appcast.sh", ["test/scripts/make-appcast.test.ts"]],
   ["scripts/ocm-npm-workspace-deps.mjs", ["test/scripts/ocm-npm-workspace-deps.test.ts"]],
-  ["scripts/openclaw-npm-prepublish-verify.ts", ["test/openclaw-npm-prepublish-verify.test.ts"]],
-  ["scripts/openclaw-npm-postpublish-verify.ts", ["test/openclaw-npm-postpublish-verify.test.ts"]],
-  ["scripts/openclaw-npm-release-check.ts", ["test/openclaw-npm-release-check.test.ts"]],
-  ["scripts/openclaw-prepack.ts", ["test/openclaw-prepack.test.ts"]],
-  [
-    "scripts/check-openclaw-package-tarball.mjs",
-    ["test/scripts/check-openclaw-package-tarball.test.ts"],
-  ],
+  ["scripts/nova-npm-prepublish-verify.ts", ["test/nova-npm-prepublish-verify.test.ts"]],
+  ["scripts/nova-npm-postpublish-verify.ts", ["test/nova-npm-postpublish-verify.test.ts"]],
+  ["scripts/nova-npm-release-check.ts", ["test/nova-npm-release-check.test.ts"]],
+  ["scripts/nova-prepack.ts", ["test/nova-prepack.test.ts"]],
+  ["scripts/check-nova-package-tarball.mjs", ["test/scripts/check-nova-package-tarball.test.ts"]],
   ["scripts/check-package-dist-imports.mjs", ["test/scripts/check-package-dist-imports.test.ts"]],
   [
     "scripts/check-plugin-npm-runtime-builds.mjs",
@@ -1626,8 +1620,8 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
     ],
   ],
   [
-    "scripts/package-openclaw-for-docker.mjs",
-    ["test/e2e/qa-lab/runtime/package-openclaw-for-docker.e2e.test.ts"],
+    "scripts/package-nova-for-docker.mjs",
+    ["test/e2e/qa-lab/runtime/package-nova-for-docker.e2e.test.ts"],
   ],
   ["scripts/postinstall-bundled-plugins.mjs", ["test/scripts/postinstall-bundled-plugins.test.ts"]],
   ["scripts/prepare-git-hooks.mjs", ["test/scripts/prepare-git-hooks.test.ts"]],
@@ -1706,7 +1700,7 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
   ],
   [
     "scripts/e2e/onboard-docker.sh",
-    ["test/scripts/docker-build-helper.test.ts", "test/scripts/openclaw-test-state.test.ts"],
+    ["test/scripts/docker-build-helper.test.ts", "test/scripts/nova-test-state.test.ts"],
   ],
   [
     "scripts/e2e/agents-delete-shared-workspace-docker.sh",
@@ -1799,7 +1793,7 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
       "test/scripts/package-acceptance-workflow.test.ts",
       "test/scripts/upgrade-survivor-probe-gateway.test.ts",
       "test/scripts/upgrade-survivor-assertions.test.ts",
-      "test/scripts/openclaw-test-state.test.ts",
+      "test/scripts/nova-test-state.test.ts",
     ],
   ],
   ["scripts/e2e/plugin-lifecycle-matrix-docker.sh", ["test/scripts/docker-build-helper.test.ts"]],
@@ -1925,7 +1919,7 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
   ],
   [
     "scripts/e2e/lib/onboard/scenario.sh",
-    ["test/scripts/e2e-shell-tempfiles.test.ts", "test/scripts/openclaw-test-state.test.ts"],
+    ["test/scripts/e2e-shell-tempfiles.test.ts", "test/scripts/nova-test-state.test.ts"],
   ],
   ["scripts/e2e/lib/onboard/assert-config.mjs", ["test/scripts/onboard-config-fixtures.test.ts"]],
   ["scripts/e2e/lib/onboard/write-config.mjs", ["test/scripts/onboard-config-fixtures.test.ts"]],
@@ -2156,8 +2150,8 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
   ],
   ["scripts/profile-extension-memory.mjs", ["test/scripts/profile-extension-memory.test.ts"]],
   [
-    "scripts/openclaw-performance-source-summary.mjs",
-    ["test/scripts/openclaw-performance-source-summary.test.ts"],
+    "scripts/nova-performance-source-summary.mjs",
+    ["test/scripts/nova-performance-source-summary.test.ts"],
   ],
   ["scripts/check-gateway-cpu-scenarios.mjs", ["test/scripts/check-gateway-cpu-scenarios.test.ts"]],
   [
@@ -2180,7 +2174,7 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
 ]);
 
 const CROSS_OS_RELEASE_CHECK_SOURCE_PATHS = [
-  "scripts/openclaw-cross-os-release-checks.ts",
+  "scripts/nova-cross-os-release-checks.ts",
   "scripts/lib/cross-os-release-checks/agent.ts",
   "scripts/lib/cross-os-release-checks/config.ts",
   "scripts/lib/cross-os-release-checks/index.ts",
@@ -2196,7 +2190,7 @@ const CROSS_OS_RELEASE_CHECK_SOURCE_PATHS = [
 ];
 for (const sourcePath of CROSS_OS_RELEASE_CHECK_SOURCE_PATHS) {
   TOOLING_SOURCE_TEST_TARGETS.set(sourcePath, [
-    "test/scripts/openclaw-cross-os-release-checks.test.ts",
+    "test/scripts/nova-cross-os-release-checks.test.ts",
   ]);
 }
 
@@ -2209,7 +2203,7 @@ const TOOLING_DECLARATION_SOURCE_MIRRORS = [
   ],
   ["scripts/copy-bundled-plugin-metadata.d.mts", "scripts/copy-bundled-plugin-metadata.mjs"],
   ["scripts/docs-link-audit.d.mts", "scripts/docs-link-audit.mjs"],
-  ["scripts/openclaw-npm-resume-run.d.mts", "scripts/openclaw-npm-resume-run.mjs"],
+  ["scripts/nova-npm-resume-run.d.mts", "scripts/nova-npm-resume-run.mjs"],
   ["scripts/periphery-intersection.d.mts", "scripts/periphery-intersection.mjs"],
   [
     "scripts/lib/bundled-plugin-build-entries.d.mts",
@@ -2250,7 +2244,7 @@ const TOOLING_TEST_TARGETS = new Map([
   ["test/scripts/docker-e2e-helper-cli.test.ts", ["test/scripts/docker-e2e-helper-cli.test.ts"]],
   ["test/scripts/kova-ci-summary.test.ts", ["test/scripts/kova-ci-summary.test.ts"]],
   ["test/scripts/live-docker-stage.test.ts", ["test/scripts/live-docker-stage.test.ts"]],
-  ["test/scripts/openclaw-test-state.test.ts", ["test/scripts/openclaw-test-state.test.ts"]],
+  ["test/scripts/nova-test-state.test.ts", ["test/scripts/nova-test-state.test.ts"]],
   ["test/scripts/qa-lab-up.test.ts", ["test/scripts/qa-lab-up.test.ts"]],
   [
     "test/scripts/mantis-publish-pr-evidence.test.ts",
@@ -2321,7 +2315,7 @@ const SOURCE_TEST_TARGETS = new Map([
   ...PRECISE_SOURCE_TEST_TARGETS,
   ["extensions/codex/package.json", CODEX_VERSION_CONTRACT_TEST_TARGETS],
   ["extensions/codex/src/app-server/version.ts", CODEX_VERSION_CONTRACT_TEST_TARGETS],
-  ["src/test-utils/openclaw-test-state.ts", ["src/test-utils/openclaw-test-state.test.ts"]],
+  ["src/test-utils/nova-test-state.ts", ["src/test-utils/nova-test-state.test.ts"]],
   [
     "src/channels/plugins/contracts/test-helpers/manifest.ts",
     [
@@ -4778,7 +4772,7 @@ export function createVitestRunSpecs(args, params = {}) {
     const includeFilePath = plan.includePatterns
       ? path.join(
           params.tempDir ?? os.tmpdir(),
-          `openclaw-vitest-include-${randomUUID()}-${index}.json`,
+          `nova-vitest-include-${randomUUID()}-${index}.json`,
         )
       : null;
     return {

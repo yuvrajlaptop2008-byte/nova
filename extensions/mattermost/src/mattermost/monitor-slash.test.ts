@@ -97,7 +97,7 @@ describe("mattermost monitor slash", () => {
     isSlashCommandsEnabled.mockReturnValue(true);
     parseTcpPort.mockReturnValue(18888);
     fetchMattermostUserTeams.mockResolvedValue([{ id: "team-1" }, { id: "team-2" }]);
-    resolveCallbackUrl.mockReturnValue("https://openclaw.test/slash");
+    resolveCallbackUrl.mockReturnValue("https://nova.test/slash");
     listSkillCommandsForAgents.mockReturnValue([
       { name: "skill", description: "Skill run" },
       { name: "oc_ping", description: "Already prefixed" },
@@ -130,7 +130,7 @@ describe("mattermost monitor slash", () => {
       client,
       teamId: "team-1",
       creatorUserId: "bot-user",
-      callbackUrl: "https://openclaw.test/slash",
+      callbackUrl: "https://nova.test/slash",
       commands: [
         { trigger: "ping", description: "ping" },
         {
@@ -163,7 +163,7 @@ describe("mattermost monitor slash", () => {
       ]),
     );
     expect(runtime.log).toHaveBeenCalledWith(
-      "mattermost: slash commands registered (2 commands across 2 teams, callback=https://openclaw.test/slash)",
+      "mattermost: slash commands registered (2 commands across 2 teams, callback=https://nova.test/slash)",
     );
   });
 
@@ -173,7 +173,7 @@ describe("mattermost monitor slash", () => {
     isSlashCommandsEnabled.mockReturnValue(true);
     parseTcpPort.mockReturnValue(null);
     fetchMattermostUserTeams.mockResolvedValue([{ id: "team-1" }]);
-    resolveCallbackUrl.mockReturnValue("https://openclaw.test/slash");
+    resolveCallbackUrl.mockReturnValue("https://nova.test/slash");
     registerSlashCommands.mockResolvedValue([{ token: "token-1", trigger: "ping" }]);
 
     await registerMattermostMonitorSlashCommands({

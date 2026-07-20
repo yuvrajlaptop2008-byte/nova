@@ -3,7 +3,7 @@ import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
 } from "../../infra/kysely-sync.js";
-import type { OpenClawAgentDatabase } from "../../state/openclaw-agent-db.js";
+import type { NovaAgentDatabase } from "../../state/nova-agent-db.js";
 import { normalizeSqliteNumber } from "./session-accessor.sqlite-normalize.js";
 import { getSessionKysely, type ResolvedTranscriptScope } from "./session-accessor.sqlite-scope.js";
 import { deleteSessionTranscriptIndexInTransaction } from "./session-transcript-index.js";
@@ -14,7 +14,7 @@ function createTranscriptGeneration(): string {
 
 /** Read the current raw transcript generation inside the caller's transaction. */
 export function readTranscriptGenerationInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): string | undefined {
   const db = getSessionKysely(database.db);
@@ -29,7 +29,7 @@ export function readTranscriptGenerationInTransaction(
 
 /** Materialize a generation once; pure appends must preserve an existing token. */
 export function ensureTranscriptGenerationInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): string {
   const db = getSessionKysely(database.db);
@@ -46,7 +46,7 @@ export function ensureTranscriptGenerationInTransaction(
 
 /** Rotate the watermark in the same transaction as destructive transcript replacement. */
 export function rotateTranscriptGenerationInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): string {
   const db = getSessionKysely(database.db);
@@ -64,7 +64,7 @@ export function rotateTranscriptGenerationInTransaction(
 }
 
 export function ensureTranscriptSessionRoot(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   scope: ResolvedTranscriptScope,
   updatedAt: number,
 ): void {
@@ -95,7 +95,7 @@ export function ensureTranscriptSessionRoot(
 }
 
 export function writeSessionRoute(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   params: { sessionId: string; sessionKey: string; updatedAt: number },
 ): void {
   const db = getSessionKysely(database.db);
@@ -118,7 +118,7 @@ export function writeSessionRoute(
 }
 
 function writeTranscriptSessionRoute(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   params: { sessionId: string; sessionKey: string; updatedAt: number },
 ): void {
   const db = getSessionKysely(database.db);
@@ -137,7 +137,7 @@ function writeTranscriptSessionRoute(
   writeSessionRoute(database, params);
 }
 
-export function readNextTranscriptSeq(database: OpenClawAgentDatabase, sessionId: string): number {
+export function readNextTranscriptSeq(database: NovaAgentDatabase, sessionId: string): number {
   const db = getSessionKysely(database.db);
   const row = executeSqliteQueryTakeFirstSync(
     database.db,
@@ -157,7 +157,7 @@ function normalizeTranscriptMutationAtMs(value: number): number | undefined {
 }
 
 export function readTranscriptMutationStateInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): { observedAt: number | null; updatedAt: number | null } {
   const db = getSessionKysely(database.db);
@@ -175,7 +175,7 @@ export function readTranscriptMutationStateInTransaction(
 }
 
 export function advanceTranscriptMutationAtInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
   value: number,
   options: { strictly?: boolean } = {},
@@ -202,7 +202,7 @@ export function advanceTranscriptMutationAtInTransaction(
 }
 
 export function touchTranscriptMutationInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): void {
   const now = normalizeTranscriptMutationAtMs(Date.now());
@@ -212,7 +212,7 @@ export function touchTranscriptMutationInTransaction(
 }
 
 export function deleteSqliteTranscriptEventsInTransaction(
-  database: OpenClawAgentDatabase,
+  database: NovaAgentDatabase,
   sessionId: string,
 ): boolean {
   const db = getSessionKysely(database.db);

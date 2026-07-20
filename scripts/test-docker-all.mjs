@@ -20,7 +20,7 @@ import {
   laneSummary,
   laneWeight,
   lanesNeedE2eImageKind,
-  lanesNeedOpenClawPackage,
+  lanesNeedNovaPackage,
   normalizeReleaseProfile,
   parseLaneSelection,
   parseLiveMode,
@@ -48,7 +48,7 @@ const SHELL_POST_FORCE_KILL_WAIT_MS = 1_000;
 const SHELL_PROCESS_GROUP_EXIT_POLL_MS = 25;
 const MAX_TIMER_TIMEOUT_MS = 2_147_000_000;
 const DEFAULT_TIMINGS_FILE = path.join(ROOT_DIR, ".artifacts/docker-tests/lane-timings.json");
-const DEFAULT_GITHUB_WORKFLOW = "openclaw-live-and-e2e-checks-reusable.yml";
+const DEFAULT_GITHUB_WORKFLOW = "nova-live-and-e2e-checks-reusable.yml";
 const IS_MAIN = process.argv[1]
   ? path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
   : false;
@@ -542,9 +542,7 @@ export function dockerPreflightContainerNames(raw) {
   return raw
     .split(/\r?\n/)
     .map((line) => line.trim().split(/\s+/, 1)[0])
-    .filter((name) =>
-      /^(?:openclaw-[a-z0-9-]+-e2e-\d+|openclaw-openwebui(?:-gateway)?-\d+)$/u.test(name),
-    );
+    .filter((name) => /^(?:nova-[a-z0-9-]+-e2e-\d+|nova-openwebui(?:-gateway)?-\d+)$/u.test(name));
 }
 
 export function resolveDockerPreflightPlatform(arch = process.arch) {
@@ -974,7 +972,7 @@ async function runDockerPreflight(baseEnv, options) {
   console.log(`==> Docker preflight run: ${elapsedSeconds}s`);
 }
 
-async function prepareOpenClawPackage(baseEnv, logDir) {
+async function prepareNovaPackage(baseEnv, logDir) {
   const existing = baseEnv.NOVA_CURRENT_PACKAGE_TGZ;
   if (existing) {
     const packageTgz = path.resolve(existing);
@@ -985,12 +983,12 @@ async function prepareOpenClawPackage(baseEnv, logDir) {
     return;
   }
 
-  const packDir = path.join(logDir, "openclaw-package");
+  const packDir = path.join(logDir, "nova-package");
   await mkdir(packDir, { recursive: true });
-  const packageTgz = path.join(packDir, "openclaw-current.tgz");
+  const packageTgz = path.join(packDir, "nova-current.tgz");
   await runForeground(
     "Prepare Nova package once",
-    `node scripts/package-openclaw-for-docker.mjs --allow-unreleased-changelog --output-dir ${shellQuote(packDir)} --output-name openclaw-current.tgz`,
+    `node scripts/package-nova-for-docker.mjs --allow-unreleased-changelog --output-dir ${shellQuote(packDir)} --output-name nova-current.tgz`,
     baseEnv,
   );
   await fs.promises.access(packageTgz);
@@ -1633,9 +1631,9 @@ async function main() {
       });
     },
   );
-  if (lanesNeedOpenClawPackage(scheduledLanes)) {
-    await runPhase(phases, "prepare-openclaw-package", {}, async () => {
-      await prepareOpenClawPackage(baseEnv, logDir);
+  if (lanesNeedNovaPackage(scheduledLanes)) {
+    await runPhase(phases, "prepare-nova-package", {}, async () => {
+      await prepareNovaPackage(baseEnv, logDir);
     });
   } else {
     console.log("==> Nova package: not needed for selected lanes");

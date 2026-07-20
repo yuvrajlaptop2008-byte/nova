@@ -1,12 +1,7 @@
 // Nova SDK tests cover index behavior.
 import { describe, expect, it } from "vitest";
 import { EventHub, Nova, normalizeGatewayEvent } from "./index.js";
-import type {
-  GatewayEvent,
-  GatewayRequestOptions,
-  OpenClawEvent,
-  OpenClawTransport,
-} from "./types.js";
+import type { GatewayEvent, GatewayRequestOptions, NovaEvent, NovaTransport } from "./types.js";
 
 type RequestCall = {
   method: string;
@@ -22,7 +17,7 @@ type FakeResponseHandler = (
 ) => Promise<FakeResponseValue> | FakeResponseValue;
 type FakeResponse = FakeResponseValue | FakeResponseHandler;
 
-class FakeTransport implements OpenClawTransport {
+class FakeTransport implements NovaTransport {
   readonly calls: RequestCall[] = [];
   private readonly eventHub = new EventHub<GatewayEvent>({ replayLimit: 100 });
 
@@ -99,7 +94,7 @@ class ClosingEventPumpTransport extends FakeTransport {
   }
 }
 
-class EventsOnlyTransport implements OpenClawTransport {
+class EventsOnlyTransport implements NovaTransport {
   constructor(private readonly eventSource: AsyncIterable<GatewayEvent>) {}
 
   async request<T = unknown>(): Promise<T> {
@@ -945,7 +940,7 @@ describe("Nova SDK", () => {
     });
     const oc = new Nova({ transport });
     const iterator = oc.events()[Symbol.asyncIterator]();
-    let futureIterator: AsyncIterator<OpenClawEvent> | undefined;
+    let futureIterator: AsyncIterator<NovaEvent> | undefined;
 
     try {
       await expect(iterator.next()).rejects.toThrow("synthetic transport event failure");
@@ -980,7 +975,7 @@ describe("Nova SDK", () => {
     const oc = new Nova({ transport });
     const run = await oc.runs.get("run_pump_failure");
     const iterator = run.events()[Symbol.asyncIterator]();
-    let futureIterator: AsyncIterator<OpenClawEvent> | undefined;
+    let futureIterator: AsyncIterator<NovaEvent> | undefined;
 
     try {
       const first = await iterator.next();
@@ -1091,7 +1086,7 @@ describe("Nova SDK", () => {
       idempotencyKey: "chat-projection-events",
       sessionKey: "chat-projection",
     });
-    const seen: OpenClawEvent[] = [];
+    const seen: NovaEvent[] = [];
 
     for await (const event of run.events()) {
       seen.push(event);
@@ -1314,7 +1309,7 @@ describe("Nova SDK", () => {
     const oc = new Nova({ transport });
     const runId = "run_chat_delta_text_replay";
     let text = "";
-    let iterator: AsyncIterator<OpenClawEvent> | undefined;
+    let iterator: AsyncIterator<NovaEvent> | undefined;
 
     try {
       await oc.connect();

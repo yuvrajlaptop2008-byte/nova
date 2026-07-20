@@ -1,7 +1,7 @@
 // Resolves diagnostics feature flags from config and environment.
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { normalizeUniqueStringEntriesLower } from "@nova/normalization-core/string-normalization";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 
 const DIAGNOSTICS_ENV = "NOVA_DIAGNOSTICS";
 
@@ -36,7 +36,7 @@ function parseEnvFlags(raw?: string): ParsedEnvFlags {
 
 /** Resolves enabled diagnostic flags from config plus `NOVA_DIAGNOSTICS` overrides. */
 export function resolveDiagnosticFlags(
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): string[] {
   const configFlags = Array.isArray(cfg?.diagnostics?.flags) ? cfg?.diagnostics?.flags : [];
@@ -83,7 +83,7 @@ export function matchesDiagnosticFlag(flag: string, enabledFlags: string[]): boo
 /** Returns whether a diagnostic flag is enabled after config/env resolution. */
 export function isDiagnosticFlagEnabled(
   flag: string,
-  cfg?: OpenClawConfig,
+  cfg?: NovaConfig,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
   const flags = resolveDiagnosticFlags(cfg, env);

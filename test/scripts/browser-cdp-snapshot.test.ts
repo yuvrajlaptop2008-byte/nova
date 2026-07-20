@@ -9,7 +9,7 @@ const SCRIPT_PATH = "scripts/e2e/lib/browser-cdp-snapshot/assert-snapshot.mjs";
 const tempDirs: string[] = [];
 
 function makeTempRoot(): string {
-  const root = mkdtempSync(path.join(tmpdir(), "openclaw-browser-cdp-snapshot-"));
+  const root = mkdtempSync(path.join(tmpdir(), "nova-browser-cdp-snapshot-"));
   tempDirs.push(root);
   return root;
 }

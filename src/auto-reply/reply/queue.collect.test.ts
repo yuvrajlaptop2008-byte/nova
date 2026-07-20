@@ -3082,7 +3082,7 @@ describe("followup queue collect routing", () => {
   });
 
   it("persists overflow summaries to the session selected after queue admission", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-overflow-session-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "nova-overflow-session-"));
     const storePath = path.join(tempDir, "sessions.json");
     const oldTranscriptPath = path.join(tempDir, "old-session.jsonl");
     const key = `test-overflow-summary-session-rotation-${Date.now()}`;

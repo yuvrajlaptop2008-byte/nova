@@ -11,7 +11,7 @@ const SCRIPT_PATH = join(process.cwd(), "scripts/github/find-reusable-release-va
 const tempDirs = createTempDirTracker();
 const sharedTempDirs = createTempDirTracker();
 
-const REPOSITORY = "openclaw/openclaw";
+const REPOSITORY = "nova/nova";
 const PRODUCER_SHA = "0".repeat(40);
 const VERIFIER_SHA = "c".repeat(40);
 const DEFAULT_INPUTS = {
@@ -286,10 +286,10 @@ function normalizedEvidence(options: {
       1,
       2,
       "Nova Release Checks",
-      "openclaw-release-checks.yml",
+      "nova-release-checks.yml",
       "-release-checks",
     ],
-    ["productPerformance", "204", 3, 2, "Nova Performance", "openclaw-performance.yml", ""],
+    ["productPerformance", "204", 3, 2, "Nova Performance", "nova-performance.yml", ""],
   ] as const;
   const children = roles.map(
     ([role, childRunId, runAttempt, sourceParentAttempt, name, workflow, suffix]) => ({
@@ -331,7 +331,7 @@ function normalizedEvidence(options: {
     rerunGroup: "all",
     root,
     runReleaseSoak: soak,
-    schema: "openclaw.release-validation-evidence/v3",
+    schema: "nova.release-validation-evidence/v3",
     producerOnTrustedMainLineage: true,
     trustedWorkflowFullRef: "refs/heads/main",
     trustedWorkflowRef: "main",
@@ -378,7 +378,7 @@ if (
   runIndex < 0 ||
   repoIndex < 0 ||
   trustedRefIndex < 0 ||
-  process.argv[repoIndex + 1] !== "openclaw/openclaw" ||
+  process.argv[repoIndex + 1] !== "nova/nova" ||
   process.argv[trustedRefIndex + 1] !== "main"
 ) {
   console.error("validator invocation contract mismatch");
@@ -414,10 +414,7 @@ function setUpFixtures(runs: RunFixture[]): {
   writeFileSync(validatorPath, FAKE_VALIDATOR);
 
   writeFileSync(
-    fixtureName(
-      fixtures,
-      "repos/openclaw/openclaw/actions/workflows/full-release-validation.yml/runs",
-    ),
+    fixtureName(fixtures, "repos/nova/nova/actions/workflows/full-release-validation.yml/runs"),
     JSON.stringify({ workflow_runs: runs.map(({ runId }) => ({ id: Number(runId) })) }),
   );
   for (const run of runs) {

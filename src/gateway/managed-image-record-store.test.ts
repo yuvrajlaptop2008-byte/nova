@@ -9,10 +9,7 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
-import {
-  closeOpenClawStateDatabaseForTest,
-  openOpenClawStateDatabase,
-} from "../state/openclaw-state-db.js";
+import { closeNovaStateDatabaseForTest, openNovaStateDatabase } from "../state/nova-state-db.js";
 import {
   attachManagedImageRecordToMessage,
   claimManagedImageRecordCleanupIfCurrent,
@@ -58,7 +55,7 @@ describe("managed image record SQLite store", () => {
   });
 
   afterEach(async () => {
-    closeOpenClawStateDatabaseForTest();
+    closeNovaStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });
   });
 
@@ -77,7 +74,7 @@ describe("managed image record SQLite store", () => {
   it("uses typed columns when the debug JSON copy is corrupt", () => {
     const expected = record();
     insertManagedImageRecord(expected, stateDir);
-    const database = openOpenClawStateDatabase({
+    const database = openNovaStateDatabase({
       env: { ...process.env, NOVA_STATE_DIR: stateDir },
     });
     executeSqliteQuerySync(
@@ -111,7 +108,7 @@ describe("managed image record SQLite store", () => {
       retentionClass: "history",
       updatedAt: "2026-07-15T00:02:00.000Z",
     });
-    const database = openOpenClawStateDatabase({
+    const database = openNovaStateDatabase({
       env: { ...process.env, NOVA_STATE_DIR: stateDir },
     });
     const row = executeSqliteQueryTakeFirstSync(

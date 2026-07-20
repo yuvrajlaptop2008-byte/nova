@@ -1,7 +1,7 @@
 // Gateway auth-token source conflict detector.
 // Warns when local env auth can diverge from managed gateway config auth.
 import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { NovaConfig } from "../config/types.nova.js";
 import { normalizeSecretInputString, resolveSecretInputRef } from "../config/types.secrets.js";
 
 const GATEWAY_ENV_TOKEN = "NOVA_GATEWAY_TOKEN";
@@ -20,7 +20,7 @@ type GatewayAuthTokenSourceConflict = {
 
 /** Returns a warning when env token precedence can diverge from configured gateway auth. */
 export function resolveGatewayAuthTokenSourceConflict(params: {
-  cfg: OpenClawConfig;
+  cfg: NovaConfig;
   env: NodeJS.ProcessEnv;
 }): GatewayAuthTokenSourceConflict | null {
   const envToken = normalizeOptionalString(params.env.NOVA_GATEWAY_TOKEN);
@@ -67,7 +67,7 @@ export function resolveGatewayAuthTokenSourceConflict(params: {
     "prefers gateway.auth.token. If the values differ, CLI/RPC calls can fail to authenticate " +
     "with the running gateway.";
   const remediation =
-    `Remove ${GATEWAY_ENV_TOKEN} from the shell, ~/.openclaw/.env, or launchctl env if gateway.auth.token is intended, ` +
+    `Remove ${GATEWAY_ENV_TOKEN} from the shell, ~/.nova/.env, or launchctl env if gateway.auth.token is intended, ` +
     `or point gateway.auth.token at \${${GATEWAY_ENV_TOKEN}} if the env var should be canonical.`;
 
   return {

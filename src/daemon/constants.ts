@@ -2,16 +2,16 @@
 import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 
 // Default service labels (canonical + legacy compatibility)
-export const GATEWAY_LAUNCH_AGENT_LABEL = "ai.openclaw.gateway";
-const GATEWAY_SYSTEMD_SERVICE_NAME = "openclaw-gateway";
+export const GATEWAY_LAUNCH_AGENT_LABEL = "ai.nova.gateway";
+const GATEWAY_SYSTEMD_SERVICE_NAME = "nova-gateway";
 const GATEWAY_WINDOWS_TASK_NAME = "Nova Gateway";
-export const GATEWAY_SERVICE_MARKER = "openclaw";
+export const GATEWAY_SERVICE_MARKER = "nova";
 export const GATEWAY_SERVICE_KIND = "gateway";
 export const GATEWAY_SERVICE_RUNTIME_PID_ENV = "NOVA_GATEWAY_SERVICE_PID";
-const NODE_LAUNCH_AGENT_LABEL = "ai.openclaw.node";
-const NODE_SYSTEMD_SERVICE_NAME = "openclaw-node";
+const NODE_LAUNCH_AGENT_LABEL = "ai.nova.node";
+const NODE_SYSTEMD_SERVICE_NAME = "nova-node";
 const NODE_WINDOWS_TASK_NAME = "Nova Node";
-export const NODE_SERVICE_MARKER = "openclaw";
+export const NODE_SERVICE_MARKER = "nova";
 export const NODE_SERVICE_KIND = "node";
 export const NODE_WINDOWS_TASK_SCRIPT_NAME = "node.cmd";
 export const LEGACY_GATEWAY_SYSTEMD_SERVICE_NAMES: string[] = ["clawdbot-gateway"];
@@ -35,7 +35,7 @@ export function resolveGatewayLaunchAgentLabel(profile?: string): string {
   if (!normalized) {
     return GATEWAY_LAUNCH_AGENT_LABEL;
   }
-  return `ai.openclaw.${normalized}`;
+  return `ai.nova.${normalized}`;
 }
 
 export function resolveLegacyGatewayLaunchAgentLabels(profile?: string): string[] {
@@ -48,7 +48,7 @@ export function resolveGatewaySystemdServiceName(profile?: string): string {
   if (!suffix) {
     return GATEWAY_SYSTEMD_SERVICE_NAME;
   }
-  return `openclaw-gateway${suffix}`;
+  return `nova-gateway${suffix}`;
 }
 
 export function resolveGatewayWindowsTaskName(profile?: string): string {
