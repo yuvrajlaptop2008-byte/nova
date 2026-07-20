@@ -1,9 +1,9 @@
-# 🦞 OpenClaw — Personal AI Assistant
+# ⭐ Nova — Personal AI Assistant
 
 <p align="center">
     <picture>
-        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-banner-light.png">
-        <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-banner-dark.png" alt="OpenClaw — EXFOLIATE! EXFOLIATE! Your personal AI assistant, running on your own devices.">
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/docs/assets/nova-banner-light.png">
+        <img src="https://raw.githubusercontent.com/yuvrajlaptop2008-byte/nova/main/docs/assets/nova-banner-dark.png" alt="Nova — your personal AI assistant, running on your own devices.">
     </picture>
 </p>
 

@@ -5,7 +5,7 @@ Skills own workflows; root owns hard policy and routing.
 
 ## Start
 
-- Repo: `https://github.com/openclaw/openclaw`
+- Repo: `https://github.com/yuvrajlaptop2008-byte/nova`
 - Replies: repo-root refs only: `extensions/telegram/src/index.ts:80`. No absolute paths, no `~/`.
 - Docs/user-visible work: `pnpm docs:list`, then read relevant docs only.
 - Existing-solutions preflight: before proposing or building a custom system, feature, workflow, tool, integration, or automation, do a lightweight check for open-source projects, maintained libraries, existing OpenClaw plugins, or free platforms that already solve it well enough. Prefer those when adequate. Build custom only when existing options are unsuitable, too expensive, unmaintained, unsafe, non-compliant, or the user explicitly asks for custom. Avoid paid-service recommendations unless the user explicitly approves spend. Keep this to a brief preflight gate, not a broad research assignment.
@@ -43,14 +43,14 @@ Skills own workflows; root owns hard policy and routing.
 ## Map
 
 - Core TS: `src/`, `ui/`, `packages/`; plugins: `extensions/`; SDK: `src/plugin-sdk/*`; channels: `src/channels/*`; loader: `src/plugins/*`; protocol: `packages/gateway-protocol/*`; docs/apps: `docs/`, `apps/`.
-- Installers: sibling `../openclaw.ai`.
+- Installers: sibling `../nova.ai`.
 - Scoped guides: `extensions/`, `src/{plugin-sdk,channels,plugins,gateway,agents}/`, `packages/`, `test/helpers*/`, `docs/`, `ui/`, `scripts/`.
 
 ## Docs
 
-- Source docs: `docs/**`; publish repo: `openclaw/docs`; host: `https://docs.openclaw.ai`.
+- Source docs: `docs/**`; publish repo: `nova/docs`; host: `https://docs.nova.dev`.
 - Flow: source -> `docs-sync-publish.yml` -> mirror build -> R2 -> Worker router.
-- Docs AI: `openclaw/ask-molty`; see its `AGENTS.md`.
+- Docs AI: `nova/docs-ai`; see its `AGENTS.md`.
 
 ## Architecture
 
