@@ -90,7 +90,7 @@ MIT — see [LICENSE](LICENSE).
 
 - **[OpenAI](https://openai.com/)** (ChatGPT/Codex)
 
-Model note: while many providers and models are supported, prefer a current flagship model from the provider you trust and already use. See [Onboarding](https://docs.openclaw.ai/start/wizard).
+Model note: while many providers and models are supported, prefer a current flagship model from the provider you trust and already use. See [Onboarding](https://docs.nova.dev/start/wizard).
 
 ## Install (recommended)
 
@@ -109,7 +109,7 @@ OpenClaw Onboard installs the Gateway daemon (launchd/systemd user service) so i
 
 Runtime: **Node 24.15+ (recommended), Node 22.22.3+, or Node 25.9+**.
 
-Full beginner guide (auth, pairing, channels): [Getting started](https://docs.openclaw.ai/start/getting-started)
+Full beginner guide (auth, pairing, channels): [Getting started](https://docs.nova.dev/start/getting-started)
 
 Recommended daemon mode:
 
@@ -135,16 +135,16 @@ openclaw message send --target +1234567890 --message "Hello from OpenClaw"
 openclaw agent --message "Ship checklist" --thinking high
 ```
 
-Upgrading? [Updating guide](https://docs.openclaw.ai/install/updating) (and run `openclaw doctor`).
+Upgrading? [Updating guide](https://docs.nova.dev/install/updating) (and run `openclaw doctor`).
 
-Models config + CLI: [Models](https://docs.openclaw.ai/concepts/models). Auth profile rotation + fallbacks: [Model failover](https://docs.openclaw.ai/concepts/model-failover).
+Models config + CLI: [Models](https://docs.nova.dev/concepts/models). Auth profile rotation + fallbacks: [Model failover](https://docs.nova.dev/concepts/model-failover).
 
 ## Security defaults (DM access)
 
 OpenClaw connects to real messaging surfaces. Treat inbound DMs as **untrusted input**.
 
-Full security guide: [Security](https://docs.openclaw.ai/gateway/security).
-Before remote exposure, use the [Gateway exposure runbook](https://docs.openclaw.ai/gateway/security/exposure-runbook).
+Full security guide: [Security](https://docs.nova.dev/gateway/security).
+Before remote exposure, use the [Gateway exposure runbook](https://docs.nova.dev/gateway/security/exposure-runbook).
 
 Default behavior on Telegram/WhatsApp/Signal/iMessage/Microsoft Teams/Discord/Google Chat/Slack:
 
@@ -156,39 +156,39 @@ Run `openclaw doctor` to surface risky/misconfigured DM policies.
 
 ## Highlights
 
-- **[Local-first Gateway](https://docs.openclaw.ai/gateway)** — single control plane for sessions, channels, tools, and events.
-- **[Multi-channel inbox](https://docs.openclaw.ai/channels)** — WhatsApp, Telegram, Slack, Discord, Google Chat, Signal, iMessage, IRC, Microsoft Teams, Matrix, Feishu, LINE, Mattermost, Nextcloud Talk, Nostr, Synology Chat, Tlon, Twitch, Zalo, Zalo Personal, WeChat, QQ, WebChat, macOS, iOS/Android.
-- **[Multi-agent routing](https://docs.openclaw.ai/gateway/configuration)** — route inbound channels/accounts/peers to isolated agents (workspaces + per-agent sessions).
-- **[Voice Wake](https://docs.openclaw.ai/nodes/voicewake) + [Talk Mode](https://docs.openclaw.ai/nodes/talk)** — wake words on macOS/iOS and continuous voice on Android (ElevenLabs + system TTS fallback).
-- **[Live Canvas](https://docs.openclaw.ai/platforms/mac/canvas)** — agent-driven visual workspace with [A2UI](https://docs.openclaw.ai/platforms/mac/canvas#canvas-a2ui).
-- **[First-class tools](https://docs.openclaw.ai/tools)** — browser, canvas, nodes, cron, sessions, and Discord/Slack actions.
-- **[Companion apps](https://docs.openclaw.ai/platforms)** — Windows Hub, macOS menu bar app, and iOS/Android [nodes](https://docs.openclaw.ai/nodes).
-- **[Onboarding](https://docs.openclaw.ai/start/wizard) + [skills](https://docs.openclaw.ai/tools/skills)** — onboarding-driven setup with bundled/managed/workspace skills.
+- **[Local-first Gateway](https://docs.nova.dev/gateway)** — single control plane for sessions, channels, tools, and events.
+- **[Multi-channel inbox](https://docs.nova.dev/channels)** — WhatsApp, Telegram, Slack, Discord, Google Chat, Signal, iMessage, IRC, Microsoft Teams, Matrix, Feishu, LINE, Mattermost, Nextcloud Talk, Nostr, Synology Chat, Tlon, Twitch, Zalo, Zalo Personal, WeChat, QQ, WebChat, macOS, iOS/Android.
+- **[Multi-agent routing](https://docs.nova.dev/gateway/configuration)** — route inbound channels/accounts/peers to isolated agents (workspaces + per-agent sessions).
+- **[Voice Wake](https://docs.nova.dev/nodes/voicewake) + [Talk Mode](https://docs.nova.dev/nodes/talk)** — wake words on macOS/iOS and continuous voice on Android (ElevenLabs + system TTS fallback).
+- **[Live Canvas](https://docs.nova.dev/platforms/mac/canvas)** — agent-driven visual workspace with [A2UI](https://docs.nova.dev/platforms/mac/canvas#canvas-a2ui).
+- **[First-class tools](https://docs.nova.dev/tools)** — browser, canvas, nodes, cron, sessions, and Discord/Slack actions.
+- **[Companion apps](https://docs.nova.dev/platforms)** — Windows Hub, macOS menu bar app, and iOS/Android [nodes](https://docs.nova.dev/nodes).
+- **[Onboarding](https://docs.nova.dev/start/wizard) + [skills](https://docs.nova.dev/tools/skills)** — onboarding-driven setup with bundled/managed/workspace skills.
 
 ## Security model (important)
 
 - Default: tools run on the host for the `main` session, so the agent has full access when it is just you.
 - Group/channel safety: set `agents.defaults.sandbox.mode: "non-main"` to run non-`main` sessions inside sandboxes. Docker is the default sandbox backend; SSH and OpenShell backends are also available.
 - Typical sandbox default: allow `bash`, `process`, `read`, `write`, `edit`, `sessions_list`, `sessions_history`, `sessions_send`, `sessions_spawn`; deny `browser`, `canvas`, `nodes`, `cron`, `discord`, `gateway`.
-- Before exposing anything remotely, read [Security](https://docs.openclaw.ai/gateway/security), [Gateway exposure runbook](https://docs.openclaw.ai/gateway/security/exposure-runbook), [Sandboxing](https://docs.openclaw.ai/gateway/sandboxing), and [Configuration](https://docs.openclaw.ai/gateway/configuration).
+- Before exposing anything remotely, read [Security](https://docs.nova.dev/gateway/security), [Gateway exposure runbook](https://docs.nova.dev/gateway/security/exposure-runbook), [Sandboxing](https://docs.nova.dev/gateway/sandboxing), and [Configuration](https://docs.nova.dev/gateway/configuration).
 
 ## Operator quick refs
 
 - Chat commands: `/status`, `/new`, `/reset`, `/compact`, `/think <level>`, `/verbose on|off`, `/trace on|off`, `/usage off|tokens|full`, `/restart`, `/activation mention|always`
 - Session tools: `sessions_list`, `sessions_history`, `sessions_send`
 - Skills registry: [ClawHub](https://clawhub.ai)
-- Architecture overview: [Architecture](https://docs.openclaw.ai/concepts/architecture)
+- Architecture overview: [Architecture](https://docs.nova.dev/concepts/architecture)
 
 ## Docs by goal
 
-- New here: [Getting started](https://docs.openclaw.ai/start/getting-started), [Onboarding](https://docs.openclaw.ai/start/wizard), [Updating](https://docs.openclaw.ai/install/updating)
-- Channel setup: [Channels index](https://docs.openclaw.ai/channels), [WhatsApp](https://docs.openclaw.ai/channels/whatsapp), [Telegram](https://docs.openclaw.ai/channels/telegram), [Discord](https://docs.openclaw.ai/channels/discord), [Slack](https://docs.openclaw.ai/channels/slack)
-- Apps + nodes: [Windows Hub](https://docs.openclaw.ai/platforms/windows), [macOS](https://docs.openclaw.ai/platforms/macos), [iOS](https://docs.openclaw.ai/platforms/ios), [Android](https://docs.openclaw.ai/platforms/android), [Nodes](https://docs.openclaw.ai/nodes)
-- Config + security: [Configuration](https://docs.openclaw.ai/gateway/configuration), [Security](https://docs.openclaw.ai/gateway/security), [Exposure runbook](https://docs.openclaw.ai/gateway/security/exposure-runbook), [Sandboxing](https://docs.openclaw.ai/gateway/sandboxing)
-- Remote + web: [Gateway](https://docs.openclaw.ai/gateway), [Remote access](https://docs.openclaw.ai/gateway/remote), [Tailscale](https://docs.openclaw.ai/gateway/tailscale), [Web surfaces](https://docs.openclaw.ai/web)
-- Tools + automation: [Tools](https://docs.openclaw.ai/tools), [Skills](https://docs.openclaw.ai/tools/skills), [Cron jobs](https://docs.openclaw.ai/automation/cron-jobs), [Webhooks](https://docs.openclaw.ai/automation/webhook), [Gmail Pub/Sub](https://docs.openclaw.ai/automation/gmail-pubsub)
-- Internals: [Architecture](https://docs.openclaw.ai/concepts/architecture), [Agent](https://docs.openclaw.ai/concepts/agent), [Session model](https://docs.openclaw.ai/concepts/session), [Gateway protocol](https://docs.openclaw.ai/reference/rpc)
-- Troubleshooting: [Channel troubleshooting](https://docs.openclaw.ai/channels/troubleshooting), [Logging](https://docs.openclaw.ai/logging), [Docs home](https://docs.openclaw.ai)
+- New here: [Getting started](https://docs.nova.dev/start/getting-started), [Onboarding](https://docs.nova.dev/start/wizard), [Updating](https://docs.nova.dev/install/updating)
+- Channel setup: [Channels index](https://docs.nova.dev/channels), [WhatsApp](https://docs.nova.dev/channels/whatsapp), [Telegram](https://docs.nova.dev/channels/telegram), [Discord](https://docs.nova.dev/channels/discord), [Slack](https://docs.nova.dev/channels/slack)
+- Apps + nodes: [Windows Hub](https://docs.nova.dev/platforms/windows), [macOS](https://docs.nova.dev/platforms/macos), [iOS](https://docs.nova.dev/platforms/ios), [Android](https://docs.nova.dev/platforms/android), [Nodes](https://docs.nova.dev/nodes)
+- Config + security: [Configuration](https://docs.nova.dev/gateway/configuration), [Security](https://docs.nova.dev/gateway/security), [Exposure runbook](https://docs.nova.dev/gateway/security/exposure-runbook), [Sandboxing](https://docs.nova.dev/gateway/sandboxing)
+- Remote + web: [Gateway](https://docs.nova.dev/gateway), [Remote access](https://docs.nova.dev/gateway/remote), [Tailscale](https://docs.nova.dev/gateway/tailscale), [Web surfaces](https://docs.nova.dev/web)
+- Tools + automation: [Tools](https://docs.nova.dev/tools), [Skills](https://docs.nova.dev/tools/skills), [Cron jobs](https://docs.nova.dev/automation/cron-jobs), [Webhooks](https://docs.nova.dev/automation/webhook), [Gmail Pub/Sub](https://docs.nova.dev/automation/gmail-pubsub)
+- Internals: [Architecture](https://docs.nova.dev/concepts/architecture), [Agent](https://docs.nova.dev/concepts/agent), [Session model](https://docs.nova.dev/concepts/session), [Gateway protocol](https://docs.nova.dev/reference/rpc)
+- Troubleshooting: [Channel troubleshooting](https://docs.nova.dev/channels/troubleshooting), [Logging](https://docs.nova.dev/logging), [Docs home](https://docs.nova.dev)
 
 ## Apps (optional)
 
@@ -203,7 +203,7 @@ If you plan to build/run companion apps, follow the platform runbooks below.
 - WebChat + debug tools.
 - Remote gateway control over SSH.
 
-Note: signed builds required for macOS permissions to stick across rebuilds (see [macOS Permissions](https://docs.openclaw.ai/platforms/mac/permissions)).
+Note: signed builds required for macOS permissions to stick across rebuilds (see [macOS Permissions](https://docs.nova.dev/platforms/mac/permissions)).
 
 ### iOS node (optional)
 
@@ -211,13 +211,13 @@ Note: signed builds required for macOS permissions to stick across rebuilds (see
 - Voice trigger forwarding + Canvas surface.
 - Controlled via `openclaw nodes …`.
 
-Runbook: [iOS connect](https://docs.openclaw.ai/platforms/ios).
+Runbook: [iOS connect](https://docs.nova.dev/platforms/ios).
 
 ### Android node (optional)
 
 - Pairs as a WS node via device pairing (`openclaw devices ...`).
 - Exposes Connect/Chat/Voice tabs plus Canvas, Camera, Screen capture, and Android device command families.
-- Runbook: [Android connect](https://docs.openclaw.ai/platforms/android).
+- Runbook: [Android connect](https://docs.nova.dev/platforms/android).
 
 ## From source (development)
 
@@ -262,7 +262,7 @@ Note: `pnpm openclaw ...` runs TypeScript directly (via `tsx`). `pnpm build` pro
 - **dev**: moving head of `main`, npm dist-tag `dev` (when published).
 
 Switch channels (git + npm): `openclaw update --channel stable|beta|dev`.
-Details: [Development channels](https://docs.openclaw.ai/install/development-channels).
+Details: [Development channels](https://docs.nova.dev/install/development-channels).
 
 ## Agent workspace + skills
 
@@ -282,7 +282,7 @@ Minimal `~/.openclaw/openclaw.json` (model + defaults):
 }
 ```
 
-[Full configuration reference (all keys + examples).](https://docs.openclaw.ai/gateway/configuration)
+[Full configuration reference (all keys + examples).](https://docs.nova.dev/gateway/configuration)
 
 ## Star History
 
@@ -293,7 +293,7 @@ Minimal `~/.openclaw/openclaw.json` (model + defaults):
 OpenClaw was built for **Molty**, a space lobster AI assistant. 🦞
 by Peter Steinberger and the community.
 
-- [openclaw.ai](https://openclaw.ai)
+- [openclaw.ai](https://nova.dev)
 - [soul.md](https://soul.md)
 - [steipete.me](https://steipete.me)
 - [@openclaw](https://x.com/openclaw)

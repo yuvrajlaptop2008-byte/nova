@@ -374,7 +374,7 @@ const buildMissingEntryErrorMessage = async () => {
     "Build locally with `pnpm install && pnpm build`, or install a built package instead.",
   );
   lines.push(
-    "For pinned GitHub installs, use `npm install -g github:openclaw/openclaw#<ref>` instead of a raw `/archive/<ref>.tar.gz` URL.",
+    "For pinned GitHub installs, use `npm install -g github:yuvrajlaptop2008-byte/nova#<ref>` instead of a raw `/archive/<ref>.tar.gz` URL.",
   );
   lines.push("For releases, use `npm install -g openclaw@latest`.");
   return lines.join("\n");
