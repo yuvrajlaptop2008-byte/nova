@@ -1,0 +1,23 @@
+---
+summary: "HashiCorp Vault SecretRef provider integration."
+read_when:
+  - You are installing, configuring, or auditing the vault plugin
+title: "Vault plugin"
+---
+
+# Vault plugin
+
+HashiCorp Vault SecretRef provider integration.
+
+## Distribution
+
+- Package: `@nova/vault`
+- Install route: included in Nova
+
+## Surface
+
+plugin
+
+## Related docs
+
+- [vault](/plugins/vault)

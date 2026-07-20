@@ -1,0 +1,19 @@
+---
+summary: "Nova sandbox backend for the NVIDIA OpenShell CLI with mirrored local workspaces and SSH command execution."
+read_when:
+  - You are installing, configuring, or auditing the openshell plugin
+title: "Openshell plugin"
+---
+
+# Openshell plugin
+
+Nova sandbox backend for the NVIDIA OpenShell CLI with mirrored local workspaces and SSH command execution.
+
+## Distribution
+
+- Package: `@nova/openshell-sandbox`
+- Install route: npm; ClawHub
+
+## Surface
+
+plugin

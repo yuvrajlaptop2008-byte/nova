@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/nova-banner.svg" alt="Nova" width="420" />
+</p>
+
 # ⭐ Nova — Personal AI Assistant
 
 Nova is a multi-channel AI gateway you run on your own devices. It is a standalone

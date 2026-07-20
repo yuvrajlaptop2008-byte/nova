@@ -1,0 +1,22 @@
+{
+  "name": "@myorg/nova-my-plugin",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "typebox": "1.1.39"
+  },
+  "peerDependencies": {
+    "nova": ">=2026.3.24-beta.2"
+  },
+  "nova": {
+    "extensions": ["./index.ts"],
+    "compat": {
+      "pluginApi": ">=2026.3.24-beta.2",
+      "minGatewayVersion": "2026.3.24-beta.2"
+    },
+    "build": {
+      "novaVersion": "2026.3.24-beta.2",
+      "pluginSdkVersion": "2026.3.24-beta.2"
+    }
+  }
+}

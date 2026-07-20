@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Nova">
+  <defs>
+    <radialGradient id="bgS" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#0b3a6b"/>
+      <stop offset="55%" stop-color="#0a2a5e"/>
+      <stop offset="100%" stop-color="#070f29"/>
+    </radialGradient>
+    <radialGradient id="bgGlow" cx="28%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#1d4ed8" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="starS" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#cfe6ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bgS)"/>
+  <rect width="1200" height="630" fill="url(#bgGlow)"/>
+  <path d="M360 150l34 96 100 7-93 77 31 100-82-58-82 58 31-100-93-77 100-7z"
+        fill="url(#starS)" stroke="#0b1220" stroke-width="6" stroke-linejoin="round"/>
+  <text x="540" y="370" font-family="'Segoe UI',system-ui,-apple-system,sans-serif" font-size="200" font-weight="800" fill="#ffffff" letter-spacing="-6">Nova</text>
+  <text x="545" y="450" font-family="'Segoe UI',system-ui,-apple-system,sans-serif" font-size="44" font-weight="500" fill="#9fc4ff">Your AI assistant, running on your own devices.</text>
+</svg>
