@@ -139,8 +139,8 @@ USER.md
 !.agents/skills/channel-message-flows/**
 !.agents/skills/claw-score/
 !.agents/skills/claw-score/**
-!.agents/skills/clawdtributor/
-!.agents/skills/clawdtributor/**
+!.agents/skills/nova-contributor/
+!.agents/skills/nova-contributor/**
 !.agents/skills/clawsweeper/
 !.agents/skills/clawsweeper/**
 !.agents/skills/control-ui-e2e/
@@ -191,6 +191,10 @@ USER.md
 !.agents/skills/nova-test-performance/**
 !.agents/skills/nova-testing/
 !.agents/skills/nova-testing/**
+!.agents/skills/nova-learn/
+!.agents/skills/nova-learn/**
+!.agents/skills/openclaw/
+!.agents/skills/openclaw/**
 !.agents/skills/parallels-discord-roundtrip/
 !.agents/skills/parallels-discord-roundtrip/**
 !.agents/skills/release-nova-announcement/
