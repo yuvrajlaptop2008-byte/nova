@@ -83,7 +83,6 @@ const repositoryScriptEntries = [
   "scripts/secrets/nova-bws-resolver.mjs!",
   "scripts/sync-labels.ts!",
   "scripts/test-built-bundled-channel-entry-smoke.mjs!",
-  "scripts/update-clawtributors.ts!",
   "scripts/verify-stable-main-closeout.mjs!",
   "scripts/write-package-dist-inventory.ts!",
   "scripts/write-plugin-sdk-entry-dts.ts!",

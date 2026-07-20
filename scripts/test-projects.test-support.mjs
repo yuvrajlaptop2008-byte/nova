@@ -766,7 +766,6 @@ const TOOLING_SOURCE_TEST_TARGETS = new Map([
     ".github/workflows/nova-release-checks.yml",
     ["test/scripts/package-acceptance-workflow.test.ts"],
   ],
-  ["scripts/clawtributors-map.json", ["test/scripts/update-clawtributors.test.ts"]],
   ["scripts/tsconfig.json", ["test/scripts/oxlint-config.test.ts"]],
   [
     "tsconfig.scripts.json",

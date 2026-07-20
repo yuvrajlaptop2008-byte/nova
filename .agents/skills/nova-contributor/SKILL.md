@@ -1,11 +1,11 @@
 ---
-name: clawdtributor
-description: "Use for Nova clawtributors PR/issue triage: Discrawl discovery, live-open rechecks, deep review, topic grouping, and compact @handle/LOC/type/blast/verification summaries."
+name: nova-contributor
+description: "Use for Nova contributor PR/issue triage: Discrawl discovery, live-open rechecks, deep review, topic grouping, and compact @handle/LOC/type/blast/verification summaries."
 ---
 
-# Clawdtributor
+# Nova Contributor Triage
 
-Use for the `#clawtributors` queue: Discord-discovered Nova PRs/issues that need live GitHub status plus maintainer-quality review.
+Use for the `#nova-contributors` queue: Discord-discovered Nova PRs/issues that need live GitHub status plus maintainer-quality review.
 
 ## Compose with other skills
 
@@ -27,7 +27,7 @@ Resolve channel if needed:
 
 ```bash
 sqlite3 "$HOME/.discrawl/discrawl.db" \
-  "select id,name from channels where name like '%clawtributor%' order by name;"
+  "select id,name from channels where name like '%nova-contributor%' order by name;"
 ```
 
 Current known channel id from prior work: `1458141495701012561`. Re-resolve if it stops matching.

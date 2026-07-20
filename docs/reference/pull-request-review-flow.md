@@ -87,7 +87,7 @@ next-step checklist for the PR.
 5. Ask for a re-review only after the branch, PR description, evidence, and
    relevant CI results are current. Multiple update and review cycles between the
    author, maintainer, and ClawSweeper are normal.
-6. Keep discussion on the PR when possible. Move to `#clawtributors` on Discord
+6. Keep discussion on the PR when possible. Move to `#nova-contributors` on Discord
    only when the PR needs maintainer coordination, automation appears blocked,
    or the next decision is hard to settle in GitHub comments. Include the PR
    link, current status, and the specific question or remaining evidence.
@@ -143,7 +143,7 @@ Before asking for help, check:
 - the latest request is not still within the normal ClawSweeper queue delay.
 
 If there is still no ClawSweeper response several hours after the PR is current,
-or if the PR appears blocked by automation, ask in `#clawtributors` on Discord.
+or if the PR appears blocked by automation, ask in `#nova-contributors` on Discord.
 Include the PR link, what you expected, when you asked, and what changed since
 the last bot comment.
 

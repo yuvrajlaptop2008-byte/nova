@@ -1566,11 +1566,6 @@ describe("scripts/test-projects changed-target routing", () => {
       targets: ["test/scripts/dependency-ownership-surface-report.test.ts"],
     });
 
-    expect(resolveChangedTestTargetPlan(["scripts/clawtributors-map.json"])).toEqual({
-      mode: "targets",
-      targets: ["test/scripts/update-clawtributors.test.ts"],
-    });
-
     expect(resolveChangedTestTargetPlan(["scripts/docs-list.js"])).toEqual({
       mode: "targets",
       targets: ["test/scripts/docs-list.test.ts"],

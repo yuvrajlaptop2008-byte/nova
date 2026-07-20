@@ -158,7 +158,7 @@ Use the sandbox reader only:
 
 ```bash
 discrawl-sandbox search --limit 20 "query"
-discrawl-sandbox messages --channel clawtributors --days 7 --all
+discrawl-sandbox messages --channel nova-contributors --days 7 --all
 discrawl-sandbox status --json
 ```
 
