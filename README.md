@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/nova-banner.svg" alt="Nova" width="420" />
+  <img src="assets/nova-logo.jpg" alt="Nova" width="420" />
 </p>
 
 # ⭐ Nova — Personal AI Assistant

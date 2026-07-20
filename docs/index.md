@@ -20,6 +20,11 @@ title: "Nova"
         width="500"
         class="hidden dark:block"
     />
+    <img
+        src="/assets/nova-logo.jpg"
+        alt="Nova"
+        width="420"
+    />
 </p>
 
 > _"Your AI assistant, running on your own devices."_
